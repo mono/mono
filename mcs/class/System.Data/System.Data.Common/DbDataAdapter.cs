@@ -126,7 +126,7 @@ namespace System.Data.Common {
 			get { return ((IDbDataAdapter) this).UpdateCommand; }
 		}
 
-	 	#endregion // Properties
+		#endregion // Properties
 		
 		#region Events
 
@@ -169,7 +169,7 @@ namespace System.Data.Common {
 					da.SelectCommand = null;
 				}
 				if (da.InsertCommand != null) {
-					 da.InsertCommand.Dispose();
+					da.InsertCommand.Dispose();
 					da.InsertCommand = null;
 				}
 				if (da.UpdateCommand != null) {
@@ -212,7 +212,7 @@ namespace System.Data.Common {
 #if NET_2_0
 		protected override int Fill (DataTable dataTable, IDataReader dataReader) 
 #else
-		protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
+			protected virtual int Fill (DataTable dataTable, IDataReader dataReader) 
 #endif
 		{
 			if (dataReader.FieldCount == 0) {
@@ -271,7 +271,7 @@ namespace System.Data.Common {
 #if NET_2_0
 		protected override int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
 #else
-		protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
+			protected virtual int Fill (DataSet dataSet, string srcTable, IDataReader dataReader, int startRecord, int maxRecords) 
 #endif
 		{
 			if (startRecord < 0)
@@ -287,7 +287,7 @@ namespace System.Data.Common {
 				string tableName = srcTable;
 				do {
 					// Non-resultset queries like insert, delete or update aren't processed.
-                    if (dataReader.FieldCount != -1)
+					if (dataReader.FieldCount != -1)
 					{
 						tableName = SetupSchema (SchemaType.Mapped, tableName);
 						if (tableName != null) {
@@ -323,7 +323,7 @@ namespace System.Data.Common {
 		protected virtual int Fill (DataSet dataSet, int startRecord, int maxRecords, string srcTable, IDbCommand command, CommandBehavior behavior) 
 		{
 			if (MissingSchemaAction == MissingSchemaAction.AddWithKey)
-			    behavior |= CommandBehavior.KeyInfo;
+				behavior |= CommandBehavior.KeyInfo;
 			CommandBehavior commandBehavior = behavior;
 			if (command.Connection.State == ConnectionState.Closed) {
 				command.Connection.Open ();
@@ -350,9 +350,9 @@ namespace System.Data.Common {
 					sortedMapping[--length] = i;
 			}
 
-				for (int i = 0; i < startRecord; i++) {
-					dataReader.Read ();
-				}
+			for (int i = 0; i < startRecord; i++) {
+				dataReader.Read ();
+			}
 
 			while (dataReader.Read () && (maxRecords == 0 || (counter - counterStart) < maxRecords)) {
 				try {
@@ -543,8 +543,8 @@ namespace System.Data.Common {
 		[MonoTODO ("Test")]
 		private int[] BuildSchema (IDataReader reader, DataTable table, SchemaType schemaType)
 		{
-                         return BuildSchema (reader, table, schemaType, MissingSchemaAction,
-                                             MissingMappingAction, TableMappings);
+			return BuildSchema (reader, table, schemaType, MissingSchemaAction,
+					    MissingMappingAction, TableMappings);
                 }
 
                 /// <summary>
@@ -558,7 +558,7 @@ namespace System.Data.Common {
                                                    MissingMappingAction missingMapAction,
                                                    DataTableMappingCollection dtMapping
                                                    )
-               {
+		{
 			int readerIndex = 0;
 			// FIXME : this fails if query has fewer columns than a table
 			int[] mapping = new int[table.Columns.Count]; // mapping the reader indexes to the datatable indexes
@@ -611,9 +611,9 @@ namespace System.Data.Common {
 						Type columnType = (Type)schemaRow[DataTypeCol];
 						DataColumn col =
 							columnMapping.GetDataColumnBySchemaAction(
-							table ,
-							columnType,
-							missingSchAction);
+												  table ,
+												  columnType,
+												  missingSchAction);
 
 						if (col != null)
 						{
@@ -621,7 +621,7 @@ namespace System.Data.Common {
 							if (table.Columns.IndexOf(col) == -1)
 							{
 								if (missingSchAction == MissingSchemaAction.Add 
-									|| missingSchAction == MissingSchemaAction.AddWithKey)
+								    || missingSchAction == MissingSchemaAction.AddWithKey)
 									table.Columns.Add(col);
 
 								int[] tmp = new int[mapping.Length + 1];
@@ -635,9 +635,9 @@ namespace System.Data.Common {
 							value = (IsKeyCol != null) ? schemaRow[IsKeyCol] : null;
 							bool isKey = value is bool ? (bool)value : false;
 
-                            if (missingSchAction == MissingSchemaAction.AddWithKey) {
+							if (missingSchAction == MissingSchemaAction.AddWithKey) {
 	                            
-	                            value = (IsAutoIncrementCol != null) ? schemaRow[IsAutoIncrementCol] : null;
+								value = (IsAutoIncrementCol != null) ? schemaRow[IsAutoIncrementCol] : null;
 								bool isAutoIncrement = value is bool ? (bool)value : false;
 								value = (IsReadOnlyCol != null) ? schemaRow[IsReadOnlyCol] : null;
 								bool isReadOnly = value is bool ? (bool)value : false;
@@ -668,10 +668,10 @@ namespace System.Data.Common {
 							}
 
 							if (isKey) {
-                                primaryKey.Add (col);
+								primaryKey.Add (col);
 								if (allowDBNull)
 									createPrimaryKey = false;
-                            }
+							}
 							
 							// add the ordinal of the column as a key and the index of the column in the datareader as a value.
 							mapping[col.Ordinal] = readerIndex++;
@@ -730,9 +730,9 @@ namespace System.Data.Common {
 					throw new ArgumentException("dataRows[" + i + "].");
 				if (dataRows[i].Table != table)
 					throw new ArgumentException(
-						" DataRow["
-						+ i
-						+ "] is from a different DataTable than DataRow[0].");
+								    " DataRow["
+								    + i
+								    + "] is from a different DataTable than DataRow[0].");
 			}
 			
 			// get table mapping for this rows
@@ -740,10 +740,10 @@ namespace System.Data.Common {
 			if (tableMapping == null)
 			{
 				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction(
-					TableMappings,
-					table.TableName,
-					table.TableName,
-					MissingMappingAction);
+													TableMappings,
+													table.TableName,
+													table.TableName,
+													MissingMappingAction);
 				if (tableMapping != null) {
 					foreach (DataColumn col in table.Columns) {
 						if (tableMapping.ColumnMappings.IndexOf (col.ColumnName) >= 0)
@@ -759,9 +759,9 @@ namespace System.Data.Common {
 						cmc.Add (new DataColumnMapping (col.ColumnName, col.ColumnName));
 					tableMapping =
 						new DataTableMapping (
-						table.TableName,
-						table.TableName,
-						cmc.ToArray (typeof (DataColumnMapping)) as DataColumnMapping []);
+								      table.TableName,
+								      table.TableName,
+								      cmc.ToArray (typeof (DataColumnMapping)) as DataColumnMapping []);
 				}
 			}
 
@@ -777,20 +777,20 @@ namespace System.Data.Common {
 
 		public int Update (DataTable dataTable) 
 		{
-		/*
-			int index = TableMappings.IndexOfDataSetTable (dataTable.TableName);
-			if (index < 0)
-				throw new ArgumentException ();
-			return Update (dataTable, TableMappings [index]);
-		*/
+			/*
+			  int index = TableMappings.IndexOfDataSetTable (dataTable.TableName);
+			  if (index < 0)
+			  throw new ArgumentException ();
+			  return Update (dataTable, TableMappings [index]);
+			*/
 			DataTableMapping tableMapping = TableMappings.GetByDataSetTable (dataTable.TableName);
 			if (tableMapping == null)
 			{
 				tableMapping = DataTableMappingCollection.GetTableMappingBySchemaAction (
-					TableMappings,
-					dataTable.TableName,
-					dataTable.TableName,
-					MissingMappingAction);
+													 TableMappings,
+													 dataTable.TableName,
+													 dataTable.TableName,
+													 MissingMappingAction);
 				if (tableMapping != null) {
 					foreach (DataColumn col in dataTable.Columns) {
 						if (tableMapping.ColumnMappings.IndexOf (col.ColumnName) >= 0)
@@ -806,9 +806,9 @@ namespace System.Data.Common {
 						cmc.Add (new DataColumnMapping (col.ColumnName, col.ColumnName));
 					tableMapping =
 						new DataTableMapping (
-							dataTable.TableName,
-							dataTable.TableName,
-							cmc.ToArray (typeof (DataColumnMapping)) as DataColumnMapping []);
+								      dataTable.TableName,
+								      dataTable.TableName,
+								      cmc.ToArray (typeof (DataColumnMapping)) as DataColumnMapping []);
 				}
 			}
 			return Update (dataTable, tableMapping);
@@ -853,6 +853,29 @@ namespace System.Data.Common {
 
 				RowUpdatingEventArgs argsUpdating = CreateRowUpdatingEvent (row, command, statementType, tableMapping);
 				row.RowError = null;
+				OnRowUpdating(argsUpdating);
+				switch(argsUpdating.Status) {
+				case UpdateStatus.Continue :
+					//continue in update operation
+					break;
+				case UpdateStatus.ErrorsOccurred :
+					if (argsUpdating.Errors == null) {
+						argsUpdating.Errors = ExceptionHelper.RowUpdatedError();
+					}
+					row.RowError += argsUpdating.Errors.Message;
+					if (!ContinueUpdateOnError) {
+						throw argsUpdating.Errors;
+					}
+					continue;
+				case UpdateStatus.SkipAllRemainingRows :
+					return updateCount;
+				case UpdateStatus.SkipCurrentRow :
+					updateCount++;
+					continue;
+				default :
+					throw ExceptionHelper.InvalidUpdateStatus(argsUpdating.Status);
+				}
+				command = argsUpdating.Command;					
 				try {
 					if (command != null) {
 						DataColumnMappingCollection columnMappings = tableMapping.ColumnMappings;
@@ -862,12 +885,10 @@ namespace System.Data.Common {
 								if (columnMappings.Contains(parameter.SourceColumn))
 									dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
 								if (dsColumnName == null || dsColumnName.Length <= 0)
-										continue;
-								DataRowVersion rowVersion = DataRowVersion.Default;
-
+									continue;
+								
+								DataRowVersion rowVersion = parameter.SourceVersion;
 								// Parameter version is ignored for non-update commands
-								if (statementType == StatementType.Update) 
-									rowVersion = parameter.SourceVersion;
 								if (statementType == StatementType.Delete) 
 									rowVersion = DataRowVersion.Original;
 
@@ -881,31 +902,7 @@ namespace System.Data.Common {
 					argsUpdating.Status = UpdateStatus.ErrorsOccurred;
 				}
 
-				OnRowUpdating(argsUpdating);
-
-				switch(argsUpdating.Status) {
-					case UpdateStatus.Continue :
-						//continue in update operation
-						break;
-					case UpdateStatus.ErrorsOccurred :
-						if (argsUpdating.Errors == null) {
-							argsUpdating.Errors = ExceptionHelper.RowUpdatedError();
-						}
-						row.RowError += argsUpdating.Errors.Message;
-						if (!ContinueUpdateOnError) {
-							throw argsUpdating.Errors;
-						}
-						continue;
-					case UpdateStatus.SkipAllRemainingRows :
-						return updateCount;
-					case UpdateStatus.SkipCurrentRow :
-						updateCount++;
-						continue;
-					default :
-						throw ExceptionHelper.InvalidUpdateStatus(argsUpdating.Status);
-				}
-
-				command = argsUpdating.Command;					
+				
 				IDataReader reader = null;
 				try {								
 					if (command == null) {
@@ -913,7 +910,7 @@ namespace System.Data.Common {
 					}				
 				
 					CommandBehavior commandBehavior = CommandBehavior.Default;
-						if (command.Connection.State == ConnectionState.Closed) {
+					if (command.Connection.State == ConnectionState.Closed) {
 						command.Connection.Open ();
 						commandBehavior |= CommandBehavior.CloseConnection;
 					}
@@ -922,105 +919,103 @@ namespace System.Data.Common {
 					// so the connection will be closed if needed.
 					reader = command.ExecuteReader (commandBehavior);
 
-                    // update the current row, if the update command returns any resultset
-                    // ignore other than the first record.
-                    DataColumnMappingCollection columnMappings = tableMapping.ColumnMappings;
+					// update the current row, if the update command returns any resultset
+					// ignore other than the first record.
+					DataColumnMappingCollection columnMappings = tableMapping.ColumnMappings;
 
-                    if (command.UpdatedRowSource == UpdateRowSource.Both ||
-                        command.UpdatedRowSource == UpdateRowSource.FirstReturnedRecord) {
-                            if (reader.Read ()){
-                                    DataTable retSchema = reader.GetSchemaTable ();
-                                    foreach (DataRow dr in retSchema.Rows) {
-                                        string columnName = dr ["ColumnName"].ToString ();
-                                        string dstColumnName = columnName;
-                                        if (columnMappings != null &&
-                                            columnMappings.Contains(columnName))
-                                                dstColumnName = columnMappings [dstColumnName].DataSetColumn;
-                                        DataColumn dstColumn = row.Table.Columns [dstColumnName];
-                                        if (dstColumn == null
-                                            || (dstColumn.Expression != null
-                                            && dstColumn.Expression.Length > 0))
-                                                continue;
-                                        // info from : http://www.error-bank.com/microsoft.public.dotnet.framework.windowsforms.databinding/
-                                        // _35_hcsyiv0dha.2328@tk2msftngp10.phx.gbl_Thread.aspx
-                                        // disable readonly for non-expression columns.
-                                        bool readOnlyState = dstColumn.ReadOnly;
-                                        dstColumn.ReadOnly = false;
-                                        try {
-                                                row [dstColumnName] = reader [columnName];
-                                        } finally {
-                                                dstColumn.ReadOnly = readOnlyState;
-                                        }                                    
-                                    }
-                            }
-                    }
-                    reader.Close ();
+					if (command.UpdatedRowSource == UpdateRowSource.Both ||
+					    command.UpdatedRowSource == UpdateRowSource.FirstReturnedRecord) {
+						if (reader.Read ()){
+							DataTable retSchema = reader.GetSchemaTable ();
+							foreach (DataRow dr in retSchema.Rows) {
+								string columnName = dr ["ColumnName"].ToString ();
+								string dstColumnName = columnName;
+								if (columnMappings != null &&
+								    columnMappings.Contains(columnName))
+									dstColumnName = columnMappings [dstColumnName].DataSetColumn;
+								DataColumn dstColumn = row.Table.Columns [dstColumnName];
+								if (dstColumn == null
+								    || (dstColumn.Expression != null
+									&& dstColumn.Expression.Length > 0))
+									continue;
+								// info from : http://www.error-bank.com/microsoft.public.dotnet.framework.windowsforms.databinding/
+								// _35_hcsyiv0dha.2328@tk2msftngp10.phx.gbl_Thread.aspx
+								// disable readonly for non-expression columns.
+								bool readOnlyState = dstColumn.ReadOnly;
+								dstColumn.ReadOnly = false;
+								try {
+									row [dstColumnName] = reader [columnName];
+								} finally {
+									dstColumn.ReadOnly = readOnlyState;
+								}                                    
+							}
+						}
+					}
+					reader.Close ();
 
-                    int tmp = reader.RecordsAffected; // records affected is valid only after closing reader
+					int tmp = reader.RecordsAffected; // records affected is valid only after closing reader
 					// if the execute does not effect any rows we throw an exception.
 					if (tmp == 0)
 						throw new DBConcurrencyException("Concurrency violation: the " + 
                                                                                  commandName +"Command affected 0 records.");
 					updateCount += tmp;
                                         
-                    if (command.UpdatedRowSource == UpdateRowSource.Both ||
-                        command.UpdatedRowSource == UpdateRowSource.OutputParameters) {
-                            // Update output parameters to row values
-                            foreach (IDataParameter parameter in command.Parameters) {
-                                    if (parameter.Direction != ParameterDirection.InputOutput
-                                        && parameter.Direction != ParameterDirection.Output
-                                        && parameter.Direction != ParameterDirection.ReturnValue)
-                                            continue;
+					if (command.UpdatedRowSource == UpdateRowSource.Both ||
+					    command.UpdatedRowSource == UpdateRowSource.OutputParameters) {
+						// Update output parameters to row values
+						foreach (IDataParameter parameter in command.Parameters) {
+							if (parameter.Direction != ParameterDirection.InputOutput
+							    && parameter.Direction != ParameterDirection.Output
+							    && parameter.Direction != ParameterDirection.ReturnValue)
+								continue;
 
-                                    string dsColumnName = parameter.SourceColumn;
-                                    if (columnMappings != null &&
-                                        columnMappings.Contains(parameter.SourceColumn))
-                                            dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
-                                    DataColumn dstColumn = row.Table.Columns [dsColumnName];
-                                    if (dstColumn == null
-                                        || (dstColumn.Expression != null 
-                                        && dstColumn.Expression.Length > 0))
-                                            continue;
-                                    bool readOnlyState = dstColumn.ReadOnly;
-                                    dstColumn.ReadOnly  = false;
-                                    try {
-                                            row [dsColumnName] = parameter.Value;
-                                    } finally {
-                                            dstColumn.ReadOnly = readOnlyState;
-                                    }
+							string dsColumnName = parameter.SourceColumn;
+							if (columnMappings != null &&
+							    columnMappings.Contains(parameter.SourceColumn))
+								dsColumnName = columnMappings [parameter.SourceColumn].DataSetColumn;
+							DataColumn dstColumn = row.Table.Columns [dsColumnName];
+							if (dstColumn == null
+							    || (dstColumn.Expression != null 
+								&& dstColumn.Expression.Length > 0))
+								continue;
+							bool readOnlyState = dstColumn.ReadOnly;
+							dstColumn.ReadOnly  = false;
+							try {
+								row [dsColumnName] = parameter.Value;
+							} finally {
+								dstColumn.ReadOnly = readOnlyState;
+							}
                                     
-                            }
-                    }
+						}
+					}
                     
-                    RowUpdatedEventArgs updatedArgs = CreateRowUpdatedEvent(row, command, statementType, tableMapping);
-                    OnRowUpdated(updatedArgs);
-                    switch(updatedArgs.Status) {
-                    case UpdateStatus.Continue:
-                            break;
-                    case UpdateStatus.ErrorsOccurred:
-                            if (updatedArgs.Errors == null) {
-								updatedArgs.Errors = ExceptionHelper.RowUpdatedError();
-							}
-							row.RowError += updatedArgs.Errors.Message;
-							if (!ContinueUpdateOnError) {
-								throw updatedArgs.Errors;
-							}
-							break;
-                    case UpdateStatus.SkipCurrentRow:
-                            continue;
-                    case UpdateStatus.SkipAllRemainingRows:
-                            return updateCount;
-                    }
+					RowUpdatedEventArgs updatedArgs = CreateRowUpdatedEvent(row, command, statementType, tableMapping);
+					OnRowUpdated(updatedArgs);
+					switch(updatedArgs.Status) {
+					case UpdateStatus.Continue:
+						break;
+					case UpdateStatus.ErrorsOccurred:
+						if (updatedArgs.Errors == null) {
+							updatedArgs.Errors = ExceptionHelper.RowUpdatedError();
+						}
+						row.RowError += updatedArgs.Errors.Message;
+						if (!ContinueUpdateOnError) {
+							throw updatedArgs.Errors;
+						}
+						break;
+					case UpdateStatus.SkipCurrentRow:
+						continue;
+					case UpdateStatus.SkipAllRemainingRows:
+						return updateCount;
+					}
 					row.AcceptChanges ();
-				}
-				catch(Exception e) {
+				} catch(Exception e) {
 					row.RowError = e.Message;
 					if (!ContinueUpdateOnError) {
 						throw e;
 					}
-				}
-				finally {
-					if (reader != null) {
+				} finally {
+					if (reader != null && ! reader.IsClosed) {
 						reader.Close ();
 					}
 				}	
@@ -1039,8 +1034,8 @@ namespace System.Data.Common {
 
 			DataTable dataTable = dataSet.Tables[tableMapping.DataSetTable];
 			if (dataTable == null)
-			    throw new ArgumentException (String.Format ("Missing table {0}",
-									sourceTable));
+				throw new ArgumentException (String.Format ("Missing table {0}",
+									    sourceTable));
 			return Update (dataTable, tableMapping);
 		}
 

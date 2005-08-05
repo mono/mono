@@ -1,3 +1,11 @@
+2005-08-05  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DbDataAdapter.cs:
+	- Update (): set parameter values only after getting the
+	appropriate command from command builder. Close reader only if it
+	is not closed before. Use parameter's SourceVersion. Whitespace
+	corrections to comply with standard.
+
 2005-07-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataColumnMappingCollection.cs: updated attributes & attribute

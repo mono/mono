@@ -85,6 +85,7 @@ namespace System.Data.Odbc
 			Precision = 0;
 			Scale = 0;
 			SourceColumn = String.Empty;
+			Direction = ParameterDirection.Input;
 		}
 
 		public OdbcParameter (string name, object value) 

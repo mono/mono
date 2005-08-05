@@ -215,6 +215,7 @@ namespace System.Data.SqlClient {
 
 				if (!isKey) {
 					parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+					parameter.SourceVersion = DataRowVersion.Original;
 
 					dsColumnName = parameter.SourceColumn;
 					if (tableMapping != null 
@@ -231,6 +232,7 @@ namespace System.Data.SqlClient {
 					keyFound = true;
 					
 				parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				parameter.SourceVersion = DataRowVersion.Original;
 
 				dsColumnName = parameter.SourceColumn;
 				if (tableMapping != null 
@@ -278,6 +280,7 @@ namespace System.Data.SqlClient {
 				}
 
 				SqlParameter parameter = insertCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				parameter.SourceVersion = DataRowVersion.Current;
 
 				dsColumnName = parameter.SourceColumn;
 				if (tableMapping != null 
@@ -329,6 +332,7 @@ namespace System.Data.SqlClient {
 					columns.Append (" , ");
 
 				SqlParameter parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				parameter.SourceVersion = DataRowVersion.Current;
 
 				dsColumnName = parameter.SourceColumn;
 				if (tableMapping != null 
@@ -356,6 +360,7 @@ namespace System.Data.SqlClient {
 
 				if (!isKey) {
 					parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+					parameter.SourceVersion = DataRowVersion.Original;
 
 					dsColumnName = parameter.SourceColumn;
 					if (tableMapping != null 
@@ -373,6 +378,7 @@ namespace System.Data.SqlClient {
 					keyFound = true;
 					
 				parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				parameter.SourceVersion = DataRowVersion.Original;
 
 				dsColumnName = parameter.SourceColumn;
 				if (tableMapping != null 

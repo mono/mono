@@ -57,6 +57,7 @@ namespace System.Data.Odbc
 		private int currentRow;
 		private OdbcColumn[] cols;
 		private IntPtr hstmt;
+		private int _recordsAffected = -1;
 #if ONLY_1_1
 		private CommandBehavior behavior;
 #endif // ONLY_1_1
@@ -83,6 +84,13 @@ namespace System.Data.Odbc
 			cols=new OdbcColumn[colcount];
 			GetSchemaTable ();
 		}
+
+		internal OdbcDataReader (OdbcCommand command, CommandBehavior behavior,
+					 int recordAffected) : this (command, behavior)
+		{
+			_recordsAffected = recordAffected;
+		}
+		
 
 		#endregion
 
@@ -177,7 +185,7 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 int RecordsAffected {
 			get {
-				return -1;
+				return _recordsAffected;
 			}
 		}
 
@@ -542,9 +550,11 @@ namespace System.Data.Odbc
 				dataTableSchema.Columns.Add ("IsReadOnly", typeof (bool));
 
 				DataRow schemaRow;
-								
+
 				for (int i = 0; i < cols.Length; i += 1 ) 
 				{
+					string baseTableName = String.Empty;
+					bool isKey = false;
 					OdbcColumn col=GetColumn(i);
 
 					schemaRow = dataTableSchema.NewRow ();
@@ -563,32 +573,29 @@ namespace System.Data.Odbc
                                         for (int j=0; j < keys.Length; j++) {
                                                 if (keys [j] == col.ColumnName) {
                                                         schemaRow ["IsUnique"] = true;
-                                                        schemaRow ["IsKey"] = true;
+                                                        schemaRow ["IsKey"] = (isKey = true);
+							col.AllowDBNull = false;
                                                 }
                                         }
 
                                         schemaRow["BaseCatalogName"] = "";
                                         schemaRow["BaseColumnName"] = "";
                                         schemaRow["BaseSchemaName"] = "";
-                                        schemaRow["BaseTableName"] = "";
+					
+					try {
+						baseTableName = GetColumnAttributeStr (i+1, FieldIdentifier.BaseTableName);
+						schemaRow["BaseColumnName"] = GetColumnAttributeStr (i+1, FieldIdentifier.BaseColumnName);
+					} catch (Exception) {}
 
-                                        try {
-                                                schemaRow["BaseColumnName"] = GetColumnAttributeStr (i+1, FieldIdentifier.BaseColumnName);
-                                                schemaRow["BaseTableName"] = GetColumnAttributeStr (i+1, FieldIdentifier.BaseTableName);
-                                        } catch (Exception e) {
-                                                // ignore these properties as they are optional.
-                                        }
-                                        
-
-
+                                        schemaRow["BaseTableName"] = baseTableName;
 					schemaRow["DataType"] = col.DataType;
 
-					schemaRow["AllowDBNull"] = col.AllowDBNull;
+					schemaRow["AllowDBNull"] = isKey ? false : true ;
 					
 					schemaRow["ProviderType"] = (int) col.OdbcType;
 					// TODO: all of these
 					schemaRow["IsAliased"] = false;
-					schemaRow["IsExpression"] = false;
+					schemaRow["IsExpression"] = baseTableName == String.Empty;
 					schemaRow["IsIdentity"] = false;
 					schemaRow["IsAutoIncrement"] = GetColumnAttribute (i+1, FieldIdentifier.AutoUniqueValue) == 1;
 					schemaRow["IsRowVersion"] = false;

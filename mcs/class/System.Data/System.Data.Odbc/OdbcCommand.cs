@@ -48,7 +48,7 @@ namespace System.Data.Odbc
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.OdbcCommandDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
         [ToolboxItemAttribute ("System.Drawing.Design.ToolboxItem, "+ Consts.AssemblySystem_Drawing)]
 #if NET_2_0
-        public sealed class OdbcCommand : DbCommandBase, ICloneable
+	public sealed class OdbcCommand : DbCommandBase, ICloneable
 #else
 	public sealed class OdbcCommand : Component, ICloneable, IDbCommand
 #endif //NET_2_0
@@ -59,6 +59,7 @@ namespace System.Data.Odbc
 		string commandText;
 		int timeout;
 		CommandType commandType;
+		UpdateRowSource updateRowSource = UpdateRowSource.Both;
 #endif // ONLY_1_1
 
 		OdbcConnection connection;
@@ -84,6 +85,9 @@ namespace System.Data.Odbc
 			Transaction = null;
 			designTimeVisible = false;
 			dataReader = null;
+#if ONLY_1_1
+			updateRowSource = UpdateRowSource.Both;
+#endif // ONLY_1_1
 		}
 
 		public OdbcCommand (string cmdText) : this ()
@@ -98,8 +102,8 @@ namespace System.Data.Odbc
 		}
 
 		public OdbcCommand (string cmdText,
-				     OdbcConnection connection,
-				     OdbcTransaction transaction) : this (cmdText, connection)
+				    OdbcConnection connection,
+				    OdbcTransaction transaction) : this (cmdText, connection)
 		{
 			this.Transaction = transaction;
 		}
@@ -131,7 +135,7 @@ namespace System.Data.Odbc
 			}
 		}
 
-#else
+		#else
                 [OdbcCategory ("Data")]
                 [DefaultValue ("")]
                 [OdbcDescriptionAttribute ("Command text to execute")]
@@ -223,7 +227,7 @@ namespace System.Data.Odbc
 			get {
 #if ONLY_1_1
 				return _parameters;
-#else
+				#else
                                 return base.Parameters as OdbcParameterCollection;
 #endif // ONLY_1_1
 
@@ -253,13 +257,13 @@ namespace System.Data.Odbc
                 [OdbcDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow")]
 		public UpdateRowSource UpdatedRowSource { 
 			[MonoTODO]
-			get {
-				throw new NotImplementedException ();
-			}
+				get {
+					return updateRowSource;
+				}
 			[MonoTODO]
-			set {
-				throw new NotImplementedException ();
-			}
+				set {
+					updateRowSource = value;
+				}
 		}
 
 		IDbConnection IDbCommand.Connection {
@@ -288,7 +292,7 @@ namespace System.Data.Odbc
 				return Parameters;
 			}
 		}
-#else
+		#else
                 protected override DbParameterCollection DbParameterCollection
                 {
                         get { return _parameters as DbParameterCollection;}
@@ -302,7 +306,7 @@ namespace System.Data.Odbc
 				return (IDbTransaction) Transaction;
 			}
 			set {
-				 if (value is OdbcTransaction)
+				if (value is OdbcTransaction)
                                 {
                                         Transaction = (OdbcTransaction)value;
                                 }
@@ -312,7 +316,7 @@ namespace System.Data.Odbc
                                 }
 			}
 		}
-#else
+		#else
 		protected override DbTransaction DbTransaction 
                 {
 			get { return transaction; }
@@ -354,7 +358,7 @@ namespace System.Data.Odbc
 		{
 			return new OdbcParameter ();
 		}
-#else
+		#else
                 protected override DbParameter CreateDbParameter ()
                 {
                         return CreateParameter ();
@@ -417,15 +421,15 @@ namespace System.Data.Odbc
                         // DELETE  where the return value is the number of rows affected
                         // for the rest of the commands the return value is -1.
                         if ((CommandText.ToUpper().IndexOf("UPDATE")!=-1) ||
-                                    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||
-                                    (CommandText.ToUpper().IndexOf("DELETE")!=-1)) {
+			    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||
+			    (CommandText.ToUpper().IndexOf("DELETE")!=-1)) {
                                                                                                     
-                                        int numrows = 0;
-                                        OdbcReturn ret = libodbc.SQLRowCount(hstmt,ref numrows);
-                                        records = numrows;
+				int numrows = 0;
+				OdbcReturn ret = libodbc.SQLRowCount(hstmt,ref numrows);
+				records = numrows;
                         }
                         else
-                                        records = -1;
+				records = -1;
 
 			if (freeHandle && !prepared) {
 				OdbcReturn ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
@@ -474,7 +478,7 @@ namespace System.Data.Odbc
 		{
 			return ExecuteReader ();
 		}
-#else
+		#else
                 protected override DbDataReader ExecuteDbDataReader (CommandBehavior behavior)
                 {
                         return ExecuteReader (behavior);
@@ -488,8 +492,8 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 OdbcDataReader ExecuteReader (CommandBehavior behavior)
 		{
-			ExecuteNonQuery(false);
-			dataReader=new OdbcDataReader(this,behavior);
+			int recordsAffected = ExecuteNonQuery(false);
+			dataReader=new OdbcDataReader(this, behavior, recordsAffected);
 			return dataReader;
 		}
 

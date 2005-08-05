@@ -1,3 +1,8 @@
+2005-08-05  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlCommandBuilder.cs: Set SourceVersion property to the created
+	parameters as it is used by the Adapter's Update method.
+
 2005-07-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlCommandBuilder.cs, SqlParameterCollection.cs,
