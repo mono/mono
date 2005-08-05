@@ -3599,6 +3599,8 @@ if (rsrc != null)
     }
 
     private void WriteCLIHeader() {
+      if (!doDLL && entryPointToken == 0)
+      	throw new Exception ("No EntryPoint found.");
       Write(CLIHeaderSize);       // Cb
       Write((short)2);            // Major runtime version
       Write((short)0);            // Minor runtime version

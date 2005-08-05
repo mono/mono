@@ -1,5 +1,10 @@
 2005-08-05  Ankit Jain  <jankit@novell.com>
 
+	* PEAPI.cs (FileImage.WriteCLIHeader): Throw Exception if an EXE has been
+	  requested but the source file has no entrypoint defined.
+
+2005-08-05  Ankit Jain  <jankit@novell.com>
+
 	* PEAPI.cs (TypeAttr): Add HasSecurity.
 	  (MethAttr): Likewise.
 	  (SecurityAction): New enum.
