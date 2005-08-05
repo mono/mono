@@ -35,7 +35,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	class DataGridTableStyleTest : Assertion
+	class DataGridTableStyleTest
 	{
 		private bool eventhandled;
 
@@ -52,14 +52,14 @@ namespace MonoTests.System.Windows.Forms
 		{
 			DataGridTableStyle dg = new DataGridTableStyle ();
 
-			AssertEquals ("AllowSorting property", true, dg.AllowSorting);
-			AssertEquals ("ColumnHeadersVisible property", true, dg.ColumnHeadersVisible);
-			AssertEquals ("GridLineStyle property", DataGridLineStyle.Solid, dg.GridLineStyle);
-			AssertEquals ("PreferredColumnWidth property", 75, dg.PreferredColumnWidth);
-			AssertEquals ("PreferredRowHeight property", 16, dg.PreferredRowHeight);
-			AssertEquals ("ReadOnly property", false, dg.ReadOnly);
-			AssertEquals ("RowHeadersVisible property", true, dg.RowHeadersVisible);
-			AssertEquals ("RowHeaderWidth property", 35, dg.RowHeaderWidth);
+			Assert.AreEqual (true, dg.AllowSorting, "AllowSorting property");
+			Assert.AreEqual (true, dg.ColumnHeadersVisible, "ColumnHeadersVisible property");
+			Assert.AreEqual (DataGridLineStyle.Solid, dg.GridLineStyle, "GridLineStyle property");
+			Assert.AreEqual (75, dg.PreferredColumnWidth, "PreferredColumnWidth property");
+			Assert.AreEqual (16, dg.PreferredRowHeight, "PreferredRowHeight property");
+			Assert.AreEqual (false, dg.ReadOnly, "ReadOnly property");
+			Assert.AreEqual (true, dg.RowHeadersVisible, "RowHeadersVisible property");
+			Assert.AreEqual (35, dg.RowHeaderWidth, "RowHeaderWidth property");
 		}
 
 		[Test]
@@ -69,7 +69,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.AllowSortingChanged   += new EventHandler (OnEventHandler);
 			dg.AllowSorting = !dg.AllowSorting;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -79,7 +79,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.AlternatingBackColorChanged  += new EventHandler (OnEventHandler);
 			dg.AlternatingBackColor = Color.Red;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Ignore ("Microsoft lunches ForeColor event instead of BackColor")]
@@ -89,7 +89,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.BackColorChanged += new EventHandler (OnEventHandler);
 			dg.BackColor = Color.Yellow;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -99,7 +99,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.ColumnHeadersVisibleChanged   += new EventHandler (OnEventHandler);
 			dg.ColumnHeadersVisible = !dg.ColumnHeadersVisible;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Ignore ("Microsoft lunches  BackColor event instead of ForeColor")]
@@ -109,7 +109,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.ForeColorChanged   += new EventHandler (OnEventHandler);
 			dg.ForeColor = Color.Red;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -119,7 +119,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.GridLineColorChanged += new EventHandler (OnEventHandler);
 			dg.GridLineColor = Color.Red;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -129,7 +129,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.GridLineStyleChanged += new EventHandler (OnEventHandler);
 			dg.GridLineStyle = DataGridLineStyle.None;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -139,7 +139,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.HeaderBackColorChanged  += new EventHandler (OnEventHandler);
 			dg.HeaderBackColor = Color.Red;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -149,7 +149,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.HeaderFontChanged += new EventHandler (OnEventHandler);
 			dg.HeaderFont = new Font ("Arial", 20);
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -159,7 +159,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.HeaderForeColorChanged += new EventHandler (OnEventHandler);
 			dg.HeaderForeColor = Color.Red;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -169,7 +169,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.LinkColorChanged += new EventHandler (OnEventHandler);
 			dg.LinkColor = Color.Red;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 
@@ -180,7 +180,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.LinkHoverColorChanged += new EventHandler (OnEventHandler);
 			dg.LinkHoverColor = Color.Red;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -190,7 +190,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.MappingNameChanged += new EventHandler (OnEventHandler);
 			dg.MappingName = "name1";
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -200,7 +200,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.PreferredColumnWidthChanged += new EventHandler (OnEventHandler);
 			dg.PreferredColumnWidth = dg.PreferredColumnWidth++;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -210,7 +210,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.PreferredRowHeightChanged += new EventHandler (OnEventHandler);
 			dg.PreferredRowHeight = dg.PreferredRowHeight++;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 		[Test]
 		public void TestReadOnlyChangedEvent ()
@@ -219,7 +219,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.ReadOnlyChanged += new EventHandler (OnEventHandler);
 			dg.ReadOnly = !dg.ReadOnly;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -229,7 +229,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.RowHeadersVisibleChanged += new EventHandler (OnEventHandler);
 			dg.RowHeadersVisible = !dg.RowHeadersVisible;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -239,7 +239,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.RowHeaderWidthChanged += new EventHandler (OnEventHandler);
 			dg.RowHeaderWidth = dg.RowHeaderWidth++;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -249,7 +249,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.SelectionBackColorChanged   += new EventHandler (OnEventHandler);
 			dg.SelectionBackColor = Color.Red;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -259,7 +259,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.SelectionForeColorChanged  += new EventHandler (OnEventHandler);
 			dg.SelectionForeColor = Color.Red;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		public void OnEventHandler (object sender, EventArgs e)

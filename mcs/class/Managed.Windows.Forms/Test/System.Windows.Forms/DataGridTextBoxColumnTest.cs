@@ -35,33 +35,25 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	class DataGridTextBoxColumnTest : Assertion
+	class DataGridTextBoxColumnTest
 	{
 		private bool eventhandled;
 		private object Element;
 		private CollectionChangeAction Action;
-
-		[TearDown]
-		public void Clean() {}
-
-		[SetUp]
-		public void GetReady ()
-		{
-		}
 
 		[Test]
 		public void TestDefaultValues ()
 		{
 			DataGridTextBoxColumn col = new DataGridTextBoxColumn ();
 
-			AssertEquals ("HorizontalAlignment property", HorizontalAlignment.Left, col.Alignment);
-			AssertEquals ("HeaderText property", "", col.HeaderText);
-			AssertEquals ("MappingName property", "", col.MappingName);
-			AssertEquals ("NullText property", "(null)", col.NullText);
-			AssertEquals ("ReadOnly property", false, col.ReadOnly);
-			AssertEquals ("Width property", -1, col.Width);
-			AssertEquals ("Format property", "", col.Format);
-			AssertEquals ("FormatInfo property", null, col.FormatInfo);
+			Assert.AreEqual (HorizontalAlignment.Left, col.Alignment, "HorizontalAlignment property");
+			Assert.AreEqual ("", col.HeaderText, "HeaderText property");
+			Assert.AreEqual ("", col.MappingName, "MappingName property");
+			Assert.AreEqual ("(null)", col.NullText, "NullText property");
+			Assert.AreEqual (false, col.ReadOnly, "ReadOnly property");
+			Assert.AreEqual (-1, col.Width, "Width property");
+			Assert.AreEqual ("", col.Format, "Format property");
+			Assert.AreEqual (null, col.FormatInfo, "FormatInfo property");
 		}
 
 		[Test]
@@ -71,7 +63,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			col.MappingNameChanged += new EventHandler (OnEventHandler);
 			col.MappingName = "name1";
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -81,7 +73,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			col.AlignmentChanged += new EventHandler (OnEventHandler);
 			col.Alignment = HorizontalAlignment.Center;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -91,7 +83,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			col.HeaderTextChanged += new EventHandler (OnEventHandler);
 			col.HeaderText = "Header";
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -101,7 +93,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			col.NullTextChanged += new EventHandler (OnEventHandler);
 			col.NullText = "Null";
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 

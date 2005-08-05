@@ -35,19 +35,12 @@ using NUnit.Framework;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
-	class GridTableStylesCollectionTests : Assertion
+	class GridTableStylesCollectionTest
 	{
 		private bool eventhandled;
 		private object Element;
 		private CollectionChangeAction Action;
-
-		[TearDown]
-		public void Clean() {}
-
-		[SetUp]
-		public void GetReady ()
-		{
-		}
+		private int times;
 
 		[Test]
 		public void TestDefaultValues ()
@@ -55,9 +48,11 @@ namespace MonoTests.System.Windows.Forms
 			DataGrid grid = new DataGrid ();
 			GridTableStylesCollection sc = grid.TableStyles;
 
-			AssertEquals ("IsSynchronized property", false, sc.IsSynchronized);
-			AssertEquals ("SyncRoot property", false, sc.IsSynchronized);
-			AssertEquals ("IsReadOnly  property", false, sc.IsSynchronized);
+			Assert.AreEqual (false, sc.IsSynchronized, "IsSynchronized property");
+			Assert.AreEqual (0, sc.Count, "Count");
+			Assert.AreEqual (sc, sc.SyncRoot, "SyncRoot property");
+			Assert.AreEqual (false, ((IList)sc).IsFixedSize, "IsFixedSize property");
+			Assert.AreEqual (false, sc.IsReadOnly, "IsReadOnly property");
 		}
 
 		[Test]
@@ -72,16 +67,37 @@ namespace MonoTests.System.Windows.Forms
 			DataGridTableStyle ts = new DataGridTableStyle ();
 			ts.MappingName = "Table1";
 			sc.Add (ts);
-			AssertEquals (true, eventhandled);
-			AssertEquals (ts, Element);
-			AssertEquals (CollectionChangeAction.Add, Action);
+			Assert.AreEqual (true, eventhandled, "A1");
+			Assert.AreEqual (ts, Element, "A2");
+			Assert.AreEqual (CollectionChangeAction.Add, Action, "A3");
 
 			// Add multiple
 			ResetEventData ();
 			sc.AddRange (new DataGridTableStyle [] {new DataGridTableStyle (), new DataGridTableStyle ()});
-			AssertEquals (true, eventhandled);
-			AssertEquals (null, Element);
-			AssertEquals (CollectionChangeAction.Refresh, Action);
+			Assert.AreEqual (true, eventhandled, "A4");
+			Assert.AreEqual (null, Element, "A5");
+			Assert.AreEqual (CollectionChangeAction.Refresh, Action, "A6");
+		}
+
+		[Test]
+		public void TestAddRange ()
+		{
+			DataGrid grid = new DataGrid ();
+			GridTableStylesCollection sc = grid.TableStyles;		
+			sc.CollectionChanged += new CollectionChangeEventHandler (OnCollectionEventHandler);
+
+			ResetEventData ();
+			DataGridTableStyle ts1 = new DataGridTableStyle ();
+			ts1.MappingName = "Table1";
+
+			DataGridTableStyle ts2 = new DataGridTableStyle ();
+			ts2.MappingName = "Table2";
+			sc.AddRange (new DataGridTableStyle[] {ts1, ts2});
+
+			Assert.AreEqual (true, eventhandled, "A1");
+			Assert.AreEqual (null, Element, "A2");
+			Assert.AreEqual (CollectionChangeAction.Refresh, Action, "A3");
+			Assert.AreEqual (1, times, "A4");
 		}
 
 		[Test]
@@ -106,22 +122,22 @@ namespace MonoTests.System.Windows.Forms
 
 			ResetEventData ();
 			sc.Remove (ts2);
-			AssertEquals (true, eventhandled);
-			AssertEquals (ts2, Element);
-			AssertEquals (CollectionChangeAction.Remove, Action);
-			AssertEquals (2, sc.Count);
+			Assert.AreEqual (true, eventhandled, "A1");
+			Assert.AreEqual (ts2, Element, "A2");
+			Assert.AreEqual (CollectionChangeAction.Remove, Action, "A3");
+			Assert.AreEqual (2, sc.Count, "A4");
 
 			ResetEventData ();
 			sc.RemoveAt (0);
-			AssertEquals (true, eventhandled);
-			AssertEquals (ts1, Element);
-			AssertEquals (CollectionChangeAction.Remove, Action);
-			AssertEquals (1, sc.Count);
+			Assert.AreEqual (true, eventhandled, "A5");
+			Assert.AreEqual (ts1, Element, "A6");
+			Assert.AreEqual (CollectionChangeAction.Remove, Action, "A7");
+			Assert.AreEqual (1, sc.Count, "A8");
 
 			ResetEventData ();
 			sc.Clear ();
-			AssertEquals (null, Element);
-			AssertEquals (CollectionChangeAction.Refresh, Action);
+			Assert.AreEqual (null, Element, "A9");
+			Assert.AreEqual (CollectionChangeAction.Refresh, Action, "A10");
 
 		}
 
@@ -147,13 +163,14 @@ namespace MonoTests.System.Windows.Forms
 
 			ResetEventData ();
 			IList ilist = (IList) sc;
-			AssertEquals (1, ilist.IndexOf (ts2));
-			AssertEquals (false, sc.Contains ("nothing"));
-			AssertEquals (true, sc.Contains (ts3));
+			Assert.AreEqual (1, ilist.IndexOf (ts2), "A1");
+			Assert.AreEqual (false, sc.Contains ("nothing"), "A2");
+			Assert.AreEqual (true, sc.Contains (ts3), "A3");
 		}
 
 		private void ResetEventData ()
 		{
+			times = 0;
 			eventhandled = false;
 			Element = null;
 			Action = (CollectionChangeAction) 0;
@@ -166,9 +183,11 @@ namespace MonoTests.System.Windows.Forms
 
 	        private void OnCollectionEventHandler (object sender, CollectionChangeEventArgs e)
 	        {
+			times++;
 	            	eventhandled = true;
 	            	Element = e.Element;
 			Action = e.Action;			
 	        }
+
 	}
 }

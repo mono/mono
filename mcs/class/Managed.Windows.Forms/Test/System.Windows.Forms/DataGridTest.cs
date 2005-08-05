@@ -34,8 +34,24 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Windows.Forms
 {
+	// Helper classes
+
+	class TestDataGrid : DataGrid 
+	{
+		public TestDataGrid () 
+		{
+
+		}
+
+		public CurrencyManager Manager {
+			get {
+				return ListManager;
+			}
+		}	
+	}
+
 	[TestFixture]
-	class DataGridTest : Assertion
+	class DataGridTest
 	{
 		private bool eventhandled;
 
@@ -52,29 +68,29 @@ namespace MonoTests.System.Windows.Forms
 		{
 			DataGrid dg = new DataGrid ();
 
-			AssertEquals ("AllowNavigation property", true, dg.AllowNavigation);
-			AssertEquals ("AllowSorting property", true, dg.AllowSorting);
-			AssertEquals ("BorderStyle property", BorderStyle.Fixed3D, dg.BorderStyle);
-			AssertEquals ("CaptionText property", string.Empty, dg.CaptionText);
-			AssertEquals ("CaptionVisible property", true, dg.CaptionVisible);
-			AssertEquals ("ColumnHeadersVisible property", true, dg.ColumnHeadersVisible);
-			AssertEquals ("CurrentCell property", new DataGridCell (), dg.CurrentCell);
-			AssertEquals ("CurrentRowIndex property", -1, dg.CurrentRowIndex);
-			AssertEquals ("DataMember property", string.Empty, dg.DataMember);
-			AssertEquals ("DataSource property", null, dg.DataSource);
-			AssertEquals ("FirstVisibleColumn property", 0, dg.FirstVisibleColumn);
-			AssertEquals ("FlatMode property", false, dg.FlatMode);
-			AssertEquals ("GridLineStyle property", DataGridLineStyle.Solid, dg.GridLineStyle);
-			AssertEquals ("ParentRowsLabelStyle property", DataGridParentRowsLabelStyle.Both, dg.ParentRowsLabelStyle);
-			AssertEquals ("ParentRowsVisible property", true,dg.ParentRowsVisible);
-			AssertEquals ("PreferredColumnWidth property", 75, dg.PreferredColumnWidth);
-			AssertEquals ("PreferredRowHeight property", 16, dg.PreferredRowHeight);
-			AssertEquals ("ReadOnly property", false, dg.ReadOnly);
-			AssertEquals ("RowHeadersVisible property", true, dg.RowHeadersVisible);
-			AssertEquals ("RowHeaderWidth property", 35, dg.RowHeaderWidth);
-			AssertEquals ("Site property", null, dg.Site);
-			AssertEquals ("Text property", string.Empty, dg.Text);
-			AssertEquals ("VisibleColumnCount property", 0, dg.VisibleColumnCount);
+			Assert.AreEqual (true, dg.AllowNavigation, "AllowNavigation property");
+			Assert.AreEqual (true, dg.AllowSorting, "AllowSorting property");
+			Assert.AreEqual (BorderStyle.Fixed3D, dg.BorderStyle, "BorderStyle property");
+			Assert.AreEqual (string.Empty, dg.CaptionText, "CaptionText property");
+			Assert.AreEqual (true, dg.CaptionVisible, "CaptionVisible property");
+			Assert.AreEqual (true, dg.ColumnHeadersVisible, "ColumnHeadersVisible property");
+			Assert.AreEqual (new DataGridCell (), dg.CurrentCell, "CurrentCell property");
+			Assert.AreEqual (-1, dg.CurrentRowIndex, "CurrentRowIndex property");
+			Assert.AreEqual (string.Empty, dg.DataMember, "DataMember property");
+			Assert.AreEqual (null, dg.DataSource, "DataSource property");
+			Assert.AreEqual (0, dg.FirstVisibleColumn, "FirstVisibleColumn property");
+			Assert.AreEqual (false, dg.FlatMode, "FlatMode property");
+			Assert.AreEqual (DataGridLineStyle.Solid, dg.GridLineStyle, "GridLineStyle property");
+			Assert.AreEqual (DataGridParentRowsLabelStyle.Both, dg.ParentRowsLabelStyle, "ParentRowsLabelStyle property");
+			Assert.AreEqual (true, dg.ParentRowsVisible, "ParentRowsVisible property");
+			Assert.AreEqual (75, dg.PreferredColumnWidth, "PreferredColumnWidth property");
+			//Assert.AreEqual (16, dg.PreferredRowHeight, "PreferredRowHeight property");
+			Assert.AreEqual (false, dg.ReadOnly, "ReadOnly property");
+			Assert.AreEqual (true, dg.RowHeadersVisible, "RowHeadersVisible property");
+			Assert.AreEqual (35, dg.RowHeaderWidth, "RowHeaderWidth property");
+			Assert.AreEqual (null, dg.Site, "Site property");
+			Assert.AreEqual (string.Empty, dg.Text, "Text property");
+			Assert.AreEqual (0, dg.VisibleColumnCount, "VisibleColumnCount property");
 		}
 
 		[Test]
@@ -84,7 +100,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.AllowNavigationChanged += new EventHandler (OnEventHandler);
 			dg.AllowNavigation = !dg.AllowNavigation;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -94,7 +110,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.BackgroundColorChanged  += new EventHandler (OnEventHandler);
 			dg.BackgroundColor = Color.Red;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -104,7 +120,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.BorderStyleChanged  += new EventHandler (OnEventHandler);
 			dg.BorderStyle = BorderStyle.None;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -114,7 +130,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.CaptionVisibleChanged += new EventHandler (OnEventHandler);
 			dg.CaptionVisible = !dg.CaptionVisible;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -124,7 +140,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.FlatModeChanged += new EventHandler (OnEventHandler);
 			dg.FlatMode = !dg.FlatMode;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -134,7 +150,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.ParentRowsLabelStyleChanged  += new EventHandler (OnEventHandler);
 			dg.ParentRowsLabelStyle = DataGridParentRowsLabelStyle.None;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 
 		[Test]
@@ -144,7 +160,7 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.ParentRowsVisibleChanged  += new EventHandler (OnEventHandler);
 			dg.ParentRowsVisible = !dg.ParentRowsVisible;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
 		
 		[Test]
@@ -154,13 +170,145 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 			dg.ReadOnlyChanged  += new EventHandler (OnEventHandler);
 			dg.ReadOnly = !dg.ReadOnly;
-			AssertEquals (true, eventhandled);
+			Assert.AreEqual (true, eventhandled, "A1");
 		}
-
 
 		public void OnEventHandler (object sender, EventArgs e)
 	        {
 	            	eventhandled = true;
 	        }
+
+		// Property exceptions
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GridLineColorException ()
+		{
+			DataGrid dg = new DataGrid ();
+			dg.GridLineColor = Color.Empty;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void HeaderBackColorException ()
+		{
+			DataGrid dg = new DataGrid ();
+			dg.HeaderBackColor = Color.Empty;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void PreferredColumnWidthException ()
+		{
+			DataGrid dg = new DataGrid ();
+			dg.PreferredColumnWidth = -1;
+		}
+		
+		[Test]
+		public void ResetAlternatingBackColor ()
+		{
+			DataGrid dg = new DataGrid ();
+			DataGrid dg2 = new DataGrid ();
+			dg2.AlternatingBackColor = Color.Red;
+			dg2.ResetAlternatingBackColor ();
+			Assert.AreEqual (dg.AlternatingBackColor, dg2.AlternatingBackColor, "A1");
+		}
+		
+		// Test reset colour methods
+		[Test]
+		public void ResetBackColorMethod ()
+		{
+			DataGrid dg = new DataGrid ();
+			DataGrid dg2 = new DataGrid ();
+			dg2.BackColor = Color.Red;
+			dg2.ResetBackColor ();
+			Assert.AreEqual (dg.BackColor, dg2.BackColor, "A1");
+		}
+
+		[Test]
+		public void ResetForeColorMethod ()
+		{
+			DataGrid dg = new DataGrid ();
+			DataGrid dg2 = new DataGrid ();
+			dg2.ForeColor = Color.Red;
+			dg2.ResetForeColor ();
+			Assert.AreEqual (dg.ForeColor, dg2.ForeColor, "A1");
+		}
+
+		[Test]
+		public void ResetGridLineColorMethod ()
+		{			
+			DataGrid dg = new DataGrid ();
+			DataGrid dg2 = new DataGrid ();
+			dg2.GridLineColor = Color.Red;
+			dg2.ResetGridLineColor ();
+			Assert.AreEqual (dg.GridLineColor, dg2.GridLineColor, "A1");
+		}
+
+		[Test]
+		public void ResetHeaderBackColorMethod ()
+		{
+			DataGrid dg = new DataGrid ();
+			DataGrid dg2 = new DataGrid ();
+			dg2.HeaderBackColor = Color.Red;
+			dg2.ResetHeaderBackColor ();
+			Assert.AreEqual (dg.HeaderBackColor, dg2.HeaderBackColor, "A1");
+		}
+
+		[Test]
+		public void ResetHeaderFontMethod ()
+		{			
+		}
+
+		[Test]
+		public void ResetHeaderForeColorMethod ()
+		{
+			DataGrid dg = new DataGrid ();
+			DataGrid dg2 = new DataGrid ();
+			dg2.HeaderForeColor = Color.Red;
+			dg2.ResetHeaderForeColor ();
+			Assert.AreEqual (dg.HeaderForeColor, dg2.HeaderForeColor, "A1");			
+		}
+
+		[Test]
+		public void ResetLinkColorMethod ()
+		{						
+			DataGrid dg = new DataGrid ();
+			DataGrid dg2 = new DataGrid ();
+			dg2.LinkColor = Color.Red;
+			dg2.ResetLinkColor ();
+			Assert.AreEqual (dg.LinkColor, dg2.LinkColor, "A1");
+		}
+
+		[Test]
+		public void ResetLinkHoverColor ()
+		{
+			DataGrid dg = new DataGrid ();
+			DataGrid dg2 = new DataGrid ();
+			dg2.LinkHoverColor = Color.Red;
+			dg2.ResetLinkHoverColor ();
+			Assert.AreEqual (dg.LinkHoverColor, dg2.LinkHoverColor, "A1");
+		}
+
+		[Test]		
+		public void ResetSelectionBackColor ()
+		{			
+			DataGrid dg = new DataGrid ();
+			DataGrid dg2 = new DataGrid ();
+			dg2.SelectionBackColor = Color.Red;
+			dg2.ResetSelectionBackColor ();
+			Assert.AreEqual (dg.SelectionBackColor, dg2.SelectionBackColor, "A1");
+		}
+
+		[Test]
+		public void ResetSelectionForeColor ()
+		{
+			DataGrid dg = new DataGrid ();
+			DataGrid dg2 = new DataGrid ();
+			dg2.SelectionForeColor = Color.Red;
+			dg2.ResetSelectionForeColor ();
+			Assert.AreEqual (dg.SelectionForeColor, dg2.SelectionForeColor, "A1");
+		}
+
 	}
 }

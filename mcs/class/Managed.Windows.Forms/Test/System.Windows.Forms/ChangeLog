@@ -1,3 +1,12 @@
+2005-08-05  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridTextBoxColumnTest.cs: test fixes and enhancements
+	* GridTableStylesCollectionTest.cs: test fixes and enhancements
+	* DataGridTest.cs: test fixes and enhancements
+	* DataGridCellTest.cs: New unit test
+	* GridColumnStylesCollectionTest.cs: test fixes and enhancements
+	* DataGridTableStyleTest.cs: test fixes and enhancements
+
 2005-08-04  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* ControlTest.cs: Cleanup, fixed commented out tests with syntax 
