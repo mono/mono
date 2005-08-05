@@ -373,7 +373,7 @@ namespace System.Data
 					XmlElement cel = n as XmlElement;
 					string childLocalName = XmlConvert.DecodeName (cel.LocalName);
 
-					switch (GetElementMappingType (cel, ignoredNamespaces)) {
+					switch (GetElementMappingType (cel, ignoredNamespaces, null)) {
 					case ElementMappingType.Simple:
 						InferColumnElement (table, cel);
 						break;
@@ -404,7 +404,7 @@ namespace System.Data
 			TableMapping map = tables [tableName];
 			if (map != null) {
 				if (parent != null && map.ParentTable != null && map.ParentTable != parent)
-					throw new DataException (String.Format ("The table {0} is already allocated as another table's child table.", tableName));
+					throw new DataException (String.Format ("The table '{0}' is already allocated as a child of another table '{1}'. Cannot set table '{2}' as parent table.", tableName, map.ParentTable.Table.TableName, parent.Table.TableName));
 			} else {
 				map = new TableMapping (tableName, ns);
 				map.ParentTable = parent;
@@ -456,28 +456,56 @@ namespace System.Data
 			return col;
 		}
 
-		private static ElementMappingType GetElementMappingType (
-			XmlElement el, ArrayList ignoredNamespaces)
+		private static void SetAsExistingTable (XmlElement el, Hashtable existingTables)
 		{
+			if (existingTables == null)
+				return;
+			ArrayList al = existingTables [el.NamespaceURI] as ArrayList;
+			if (al == null) {
+				al = new ArrayList ();
+				existingTables [el.NamespaceURI] = al;
+			}
+			if (al.Contains (el.LocalName))
+				return;
+			al.Add (el.LocalName);
+		}
+
+		private static ElementMappingType GetElementMappingType (
+			XmlElement el, ArrayList ignoredNamespaces, Hashtable existingTables)
+		{
+			if (existingTables != null) {
+				ArrayList al = existingTables [el.NamespaceURI] as ArrayList;
+				if (al != null && al.Contains (el.LocalName))
+					// this is not precise, but it is enough
+					// for IsDocumentElementTable().
+					return ElementMappingType.Complex;
+			}
+
 			foreach (XmlAttribute attr in el.Attributes) {
 				if (attr.NamespaceURI == XmlConstants.XmlnsNS)
 					continue;
 				if (ignoredNamespaces != null && ignoredNamespaces.Contains (attr.NamespaceURI))
 					continue;
+				SetAsExistingTable (el, existingTables);
 				return ElementMappingType.Complex;
 			}
-			foreach (XmlNode n in el.ChildNodes)
-				if (n.NodeType == XmlNodeType.Element)
+			foreach (XmlNode n in el.ChildNodes) {
+				if (n.NodeType == XmlNodeType.Element) {
+					SetAsExistingTable (el, existingTables);
 					return ElementMappingType.Complex;
+				}
+			}
 
-			for (XmlNode n = el.NextSibling; n != null; n = n.NextSibling)
-				if (n.NodeType == XmlNodeType.Element && n.LocalName == el.LocalName)
-					return GetElementMappingType (
-						n as XmlElement,
-						ignoredNamespaces)
+			for (XmlNode n = el.NextSibling; n != null; n = n.NextSibling) {
+				if (n.NodeType == XmlNodeType.Element && n.LocalName == el.LocalName) {
+					SetAsExistingTable (el, existingTables);
+					return GetElementMappingType (n as XmlElement,
+						ignoredNamespaces, null)
 						== ElementMappingType.Complex ?
 						ElementMappingType.Complex :
 						ElementMappingType.Repeated;
+				}
+			}
 
 			return ElementMappingType.Simple;
 		}
@@ -501,11 +529,13 @@ namespace System.Data
 				// document element has attributes other than xmlns
 				return true;
 			}
+			Hashtable existingTables = new Hashtable ();
 			foreach (XmlNode n in top.ChildNodes) {
 				XmlElement el = n as XmlElement;
 				if (el == null)
 					continue;
-				if (GetElementMappingType (el, ignoredNamespaces)
+				if (GetElementMappingType (el, ignoredNamespaces,
+					existingTables)
 					== ElementMappingType.Simple)
 					return true;
 			}
