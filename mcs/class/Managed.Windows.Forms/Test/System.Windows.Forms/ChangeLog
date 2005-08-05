@@ -1,3 +1,9 @@
+2005-08-04  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ControlTest.cs: Cleanup, fixed commented out tests with syntax 
+	  errors, streamlined a few tests, added full tab order test, still
+	  work in progress
+
 2005-08-02  Ritvik Mayank  <mritvik@novell.com>
 	
 	* FormTest.cs : Test case for Form
