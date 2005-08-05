@@ -3332,7 +3332,7 @@ namespace Mono.MonoBASIC {
 
 			if (vi.Alias != null && vi.Static) {
 				ArrayList fields = ec.TypeContainer.Fields;
-				FieldBase fb;						
+				FieldBase fb = null;
 				for (int i = 0; i < fields.Count; i++) {
 					if (((Field) fields[i]).Name == vi.Alias) {
 						fb = (Field) fields[i];
@@ -3360,7 +3360,7 @@ namespace Mono.MonoBASIC {
 
 			if (vi.Alias != null && vi.Static) {
 				ArrayList fields = ec.TypeContainer.Fields;
-				FieldBase fb;						
+				FieldBase fb = null;
 				for (int i = 0; i < fields.Count; i++) {
 					if (((Field) fields[i]).Name == vi.Alias) {
 						fb = (Field) fields[i];
@@ -3389,7 +3389,7 @@ namespace Mono.MonoBASIC {
 
 			if (vi.Alias != null && vi.Static) {
 				ArrayList fields = ec.TypeContainer.Fields;
-				FieldBase fb;						
+				FieldBase fb = null;
 				for (int i = 0; i < fields.Count; i++) {
 					if (((Field) fields[i]).Name == vi.Alias) {
 						fb = (Field) fields[i];

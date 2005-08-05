@@ -1,3 +1,8 @@
+2005-08-05 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* expression.cs: Initialize FieldBase variable. Fixes build using csc
+	because of bug #75721.
+
 2005-08-05 Satya Sudha K <ksathyasudha@novell.com>
 	* expression.cs :
 		'ConstructArgumentList': Converting the default value to the param type before
