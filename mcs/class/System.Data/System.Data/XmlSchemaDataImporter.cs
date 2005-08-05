@@ -245,6 +245,28 @@ namespace System.Data
 		public bool CreateConstraint;
 	}
 
+	internal class ConstraintStructure
+	{
+		public readonly string TableName;
+		public readonly string [] Columns;
+		public readonly bool [] IsAttribute;
+		public readonly string ConstraintName;
+		public readonly bool IsPrimaryKey;
+		public readonly string ReferName;
+		public readonly bool IsNested;
+
+		public ConstraintStructure (string tname, string [] cols, bool [] isAttr, string cname, bool isPK, string refName, bool isNested)
+		{
+			TableName = tname;
+			Columns = cols;
+			IsAttribute = isAttr;
+			ConstraintName = cname;
+			IsPrimaryKey = isPK;
+			ReferName = refName;
+			IsNested = isNested;
+		}
+	}
+
 	internal class XmlSchemaDataImporter
 	{
 		static readonly XmlSchemaDatatype schemaIntegerType;
@@ -277,6 +299,7 @@ namespace System.Data
 		XmlSchema schema;
 
 		ArrayList relations = new ArrayList ();
+		Hashtable reservedConstraints = new Hashtable ();
 
 		// such element that has an attribute msdata:IsDataSet="true"
 		XmlSchemaElement datasetElement;
@@ -311,6 +334,31 @@ namespace System.Data
 				dataset.DataSetName = schema.Id; // default. Overridable by "DataSet element"
 			dataset.Namespace = schema.TargetNamespace;
 
+			// Find dataset element
+			foreach (XmlSchemaObject obj in schema.Items) {
+				XmlSchemaElement el = obj as XmlSchemaElement;
+				if (el != null) {
+					if (datasetElement == null &&
+						IsDataSetElement (el))
+						datasetElement = el;
+					if (el.ElementType is XmlSchemaComplexType &&
+el.ElementType != schemaAnyType)
+						targetElements.Add (obj);
+				}
+			}
+
+			// make reservation of identity constraints
+			if (datasetElement != null) {
+				// keys/uniques.
+				foreach (XmlSchemaObject obj in datasetElement.Constraints)
+					if (! (obj is XmlSchemaKeyref))
+						ReserveSelfIdentity ((XmlSchemaIdentityConstraint) obj);
+				// keyrefs.
+				foreach (XmlSchemaObject obj in datasetElement.Constraints)
+					if (obj is XmlSchemaKeyref)
+						ReserveRelationIdentity (datasetElement, (XmlSchemaKeyref) obj);
+			}
+
 			foreach (XmlSchemaObject obj in schema.Items) {
 				if (obj is XmlSchemaElement) {
 					XmlSchemaElement el = obj as XmlSchemaElement;
@@ -340,11 +388,11 @@ el.ElementType != schemaAnyType)
 				// Handle constraints in the DataSet element. First keys.
 				foreach (XmlSchemaObject obj in datasetElement.Constraints)
 					if (! (obj is XmlSchemaKeyref))
-						ProcessParentKey ((XmlSchemaIdentityConstraint) obj);
+						ProcessSelfIdentity (reservedConstraints [obj] as ConstraintStructure);
 				// Then keyrefs.
 				foreach (XmlSchemaObject obj in datasetElement.Constraints)
 					if (obj is XmlSchemaKeyref)
-						ProcessReferenceKey (datasetElement, (XmlSchemaKeyref) obj);
+						ProcessRelationIdentity (datasetElement, reservedConstraints [obj] as ConstraintStructure);
 			}
 
 			foreach (RelationStructure rs in this.relations)
@@ -353,6 +401,22 @@ el.ElementType != schemaAnyType)
 
 		private bool IsDataSetElement (XmlSchemaElement el)
 		{
+			if (el.UnhandledAttributes != null) {
+				foreach (XmlAttribute attr in el.UnhandledAttributes) {
+					if (attr.LocalName == "IsDataSet" &&
+						attr.NamespaceURI == XmlConstants.MsdataNamespace) {
+						switch (attr.Value) {
+						case "true": // case sensitive
+							return true;
+						case "false":
+							break;
+						default:
+							throw new DataException (String.Format ("Value {0} is invalid for attribute 'IsDataSet'.", attr.Value));
+						}
+					}
+				}
+			}
+
 			if (schema.Elements.Count != 1)
 				return false;
 			if (!(el.SchemaType is XmlSchemaComplexType))
@@ -398,24 +462,6 @@ el.ElementType != schemaAnyType)
 			// in previously-imported elements), just ignore.
 			if (dataset.Tables.Contains (el.QualifiedName.Name))
 				return;
-
-			// Check if element is DataSet element
-			if (el.UnhandledAttributes != null) {
-				foreach (XmlAttribute attr in el.UnhandledAttributes) {
-					if (attr.LocalName == "IsDataSet" &&
-						attr.NamespaceURI == XmlConstants.MsdataNamespace) {
-						switch (attr.Value) {
-						case "true": // case sensitive
-							ProcessDataSetElement (el);
-							return;
-						case "false":
-							break;
-						default:
-							throw new DataException (String.Format ("Value {0} is invalid for attribute 'IsDataSet'.", attr.Value));
-						}
-					}
-				}
-			}
 
 			// If type is not complex, just skip this element
 			if (! (el.ElementType is XmlSchemaComplexType && el.ElementType != schemaAnyType))
@@ -490,7 +536,7 @@ el.ElementType != schemaAnyType)
 				}
 			}
 
-			// Handle complex type (NOTE: It is or should be 
+			// Handle complex type (NOTE: It is (or should be)
 			// impossible the type is other than complex type).
 			XmlSchemaComplexType ct = (XmlSchemaComplexType) el.ElementType;
 
@@ -673,7 +719,9 @@ el.ElementType != schemaAnyType)
 
 			if (el.Annotation != null)
 				HandleAnnotations (el.Annotation, true);
-			else {
+			// If xsd:keyref for this table exists, then don't add
+			// relation here manually.
+			else if (!DataSetDefinesPrimaryKey (elName)) {
 				AddParentKeyColumn (parent, el, col);
 				DataColumn pkey = currentTable.PrimaryKey;
 
@@ -691,6 +739,14 @@ el.ElementType != schemaAnyType)
 			if (el.RefName == XmlQualifiedName.Empty)
 				targetElements.Add (el);
 
+		}
+
+		private bool DataSetDefinesPrimaryKey (string name)
+		{
+			foreach (ConstraintStructure c in reservedConstraints.Values)
+				if (c.TableName == name && c.IsPrimaryKey)
+					return true;
+			return false;
 		}
 
 		private void AddParentKeyColumn (XmlSchemaElement parent, XmlSchemaElement el, DataColumn col)
@@ -840,17 +896,13 @@ el.ElementType != schemaAnyType)
 			return XmlConvert.DecodeName (tableName);
 		}
 
-		private void ProcessParentKey (XmlSchemaIdentityConstraint ic)
+		private void ReserveSelfIdentity (XmlSchemaIdentityConstraint ic)
 		{
-			// Basic concept came from XmlSchemaMapper.cs
-
 			string tableName = GetSelectorTarget (ic.Selector.XPath);
-			
-			DataTable dt = dataset.Tables [tableName];
-			if (dt == null)
-				throw new DataException (String.Format ("Invalid XPath selection inside selector. Cannot find: {0}", tableName));
 
-			DataColumn [] cols = new DataColumn [ic.Fields.Count];
+			string [] cols = new string [ic.Fields.Count];
+			bool [] isAttrSpec = new bool [cols.Length];
+
 			int i = 0;
 			foreach (XmlSchemaXPath Field in ic.Fields) {
 				string colName = Field.XPath;
@@ -862,15 +914,8 @@ el.ElementType != schemaAnyType)
 					colName = colName.Substring (1);
 
 				colName = XmlConvert.DecodeName (colName);
-				DataColumn col = dt.Columns [colName];
-				if (col == null)
-					throw new DataException (String.Format ("Invalid XPath selection inside field. Cannot find: {0}", tableName));
-				if (isAttr && col.ColumnMapping != MappingType.Attribute)
-					throw new DataException ("The XPath specified attribute field, but mapping type is not attribute.");
-				if (!isAttr && col.ColumnMapping != MappingType.Element)
-					throw new DataException ("The XPath specified simple element field, but mapping type is not simple element.");
-
-				cols [i] = dt.Columns [colName];
+				cols [i] = colName;
+				isAttrSpec [i] = isAttr;
 				i++;
 			}
 			
@@ -892,22 +937,50 @@ el.ElementType != schemaAnyType)
 					}
 				}
 			}
-			UniqueConstraint c = new UniqueConstraint (constraintName, cols, isPK);
-			dt.Constraints.Add (c);
+			reservedConstraints.Add (ic,
+				new ConstraintStructure (tableName, cols,
+					isAttrSpec, constraintName, isPK, null, false));
 		}
 
-		private void ProcessReferenceKey (XmlSchemaElement element, XmlSchemaKeyref keyref)
+		private void ProcessSelfIdentity (ConstraintStructure c)
+		{
+			// Basic concept came from XmlSchemaMapper.cs
+
+			string tableName = c.TableName;
+			
+			DataTable dt = dataset.Tables [tableName];
+			if (dt == null)
+				throw new DataException (String.Format ("Invalid XPath selection inside selector. Cannot find: {0}", tableName));
+
+			DataColumn [] cols = new DataColumn [c.Columns.Length];
+			for (int i = 0; i < cols.Length; i++) {
+				string colName = c.Columns [i];
+				bool isAttr = c.IsAttribute [i];
+				DataColumn col = dt.Columns [colName];
+				if (col == null)
+					throw new DataException (String.Format ("Invalid XPath selection inside field. Cannot find: {0}", tableName));
+				if (isAttr && col.ColumnMapping != MappingType.Attribute)
+					throw new DataException ("The XPath specified attribute field, but mapping type is not attribute.");
+				if (!isAttr && col.ColumnMapping != MappingType.Element)
+					throw new DataException ("The XPath specified simple element field, but mapping type is not simple element.");
+
+				cols [i] = dt.Columns [colName];
+			}
+			
+			bool isPK = c.IsPrimaryKey;
+			string constraintName = c.ConstraintName;
+			dt.Constraints.Add (new UniqueConstraint (
+				constraintName, cols, isPK));
+		}
+
+		private void ReserveRelationIdentity (XmlSchemaElement element, XmlSchemaKeyref keyref)
 		{
 			// Basic concept came from XmlSchemaMapper.cs
 
 			string tableName = GetSelectorTarget (keyref.Selector.XPath);
 
-			DataColumn [] cols;
-			DataTable dt = dataset.Tables [tableName];
-			if (dt == null)
-				throw new DataException (String.Format ("Invalid XPath selection inside selector. Cannot find: {0}", tableName));
-
-			cols = new DataColumn [keyref.Fields.Count];
+			string [] cols = new string [keyref.Fields.Count];
+			bool [] isAttrSpec = new bool [cols.Length];
 			int i = 0;
 			foreach (XmlSchemaXPath Field in keyref.Fields) {
 				string colName = Field.XPath;
@@ -919,27 +992,64 @@ el.ElementType != schemaAnyType)
 					colName = colName.Substring (1);
 
 				colName = XmlConvert.DecodeName (colName);
+				cols [i] = colName;
+				isAttrSpec [i] = isAttr;
+				i++;
+			}
+			string constraintName = keyref.Name;
+			bool isNested = false;
+			if (keyref.UnhandledAttributes != null) {
+				foreach (XmlAttribute attr in keyref.UnhandledAttributes) {
+					if (attr.NamespaceURI != XmlConstants.MsdataNamespace)
+						continue;
+					switch (attr.LocalName) {
+					case XmlConstants.ConstraintName:
+						constraintName = attr.Value;
+						break;
+					case XmlConstants.IsNested:
+						if (attr.Value == "true")
+							isNested = true;
+						break;
+					}
+				}
+			}
+
+			reservedConstraints.Add (keyref, new ConstraintStructure (
+				tableName, cols, isAttrSpec, constraintName,
+				false, keyref.Refer.Name, isNested));
+		}
+
+		private void ProcessRelationIdentity (XmlSchemaElement element, ConstraintStructure c)
+		{
+			// Basic concept came from XmlSchemaMapper.cs
+
+			string tableName = c.TableName;
+
+			DataColumn [] cols;
+			DataTable dt = dataset.Tables [tableName];
+			if (dt == null)
+				throw new DataException (String.Format ("Invalid XPath selection inside selector. Cannot find: {0}", tableName));
+
+			cols = new DataColumn [c.Columns.Length];
+			for (int i = 0; i < cols.Length; i++) {
+				string colName = c.Columns [i];
+				bool isAttr = c.IsAttribute [i];
 				DataColumn col = dt.Columns [colName];
 				if (isAttr && col.ColumnMapping != MappingType.Attribute)
 					throw new DataException ("The XPath specified attribute field, but mapping type is not attribute.");
 				if (!isAttr && col.ColumnMapping != MappingType.Element)
 					throw new DataException ("The XPath specified simple element field, but mapping type is not simple element.");
 				cols [i] = col;
-				i++;
 			}
-			string name = keyref.Refer.Name;
+			string name = c.ReferName;
 			// get the unique constraint for the releation
 			UniqueConstraint uniq = FindConstraint (name, element);
 			// generate the FK.
-			ForeignKeyConstraint fkc = new ForeignKeyConstraint(keyref.Name, uniq.Columns, cols);
+			ForeignKeyConstraint fkc = new ForeignKeyConstraint(c.ConstraintName, uniq.Columns, cols);
 			dt.Constraints.Add (fkc);
 			// generate the relation.
-			DataRelation rel = new DataRelation (keyref.Name, uniq.Columns, cols, false);
-			if (keyref.UnhandledAttributes != null) {
-				foreach (XmlAttribute attr in keyref.UnhandledAttributes)
-					if (attr.LocalName == "IsNested" && attr.Value == "true" && attr.NamespaceURI == XmlConstants.MsdataNamespace)
-						rel.Nested = true;
-			}
+			DataRelation rel = new DataRelation (c.ConstraintName, uniq.Columns, cols, false);
+			rel.Nested = c.IsNested;
 			rel.SetParentKeyConstraint (uniq);
 			rel.SetChildKeyConstraint (fkc);
 

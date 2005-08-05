@@ -1,5 +1,12 @@
 2005-08-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaDataImporter.cs : When "dataset element" has identity
+	  constraints, then first reserve constraints room for them and then
+	  process elements, skipping pkey creation if there is already
+	  reserved one. Fixed bug #75711.
+
+2005-08-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDataInferenceLoader.cs : in GetElementMappingType(), don't guess
 	  the same (QNamed) element again when it was already evaluated as
 	  not simple type. Fixed one part of bug #75711.
