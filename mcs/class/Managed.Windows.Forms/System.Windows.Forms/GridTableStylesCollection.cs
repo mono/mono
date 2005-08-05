@@ -204,7 +204,8 @@ namespace System.Windows.Forms
 		
 		#region Private Instance Methods
 		private int AddInternal (DataGridTableStyle table)
-		{				
+		{		
+			// TODO: MS allows duplicate columns. How they diferenciate between them?		
 			if (FromTableNameToIndex (table.MappingName) != -1) {
 				throw new ArgumentException ("The TableStyles collection already has a TableStyle with this mapping name");
 			}

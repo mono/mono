@@ -241,6 +241,7 @@ namespace System.Windows.Forms
 		#region Private Instance Methods
 		private int AddInternal (DataGridColumnStyle column)
 		{				
+			// TODO: MS allows duplicate columns. How they diferenciate between them?
 			if (FromColumnNameToIndex (column.MappingName) != -1) {
 				throw new ArgumentException ("The ColumnStyles collection already has a column with this mapping name");
 			}

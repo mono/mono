@@ -1,3 +1,7 @@
+2005-08-05  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGrid.cs: fixes bugs exposed by new tests
+
 2005-08-04  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Mime.cs: Compile Mono assembly references only if compiling

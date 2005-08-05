@@ -164,8 +164,6 @@ namespace System.Windows.Forms
 		private GridTableStylesCollection styles_collection;
 		private DataGridParentRowsLabelStyle parentrowslabel_style;
 		internal DataGridCell current_cell;
-		private Color forecolor;
-		private Color backcolor;
 		private DataGridTableStyle default_style;
 		private DataGridTableStyle current_style;
 		internal HScrollBar horiz_scrollbar;
@@ -231,9 +229,7 @@ namespace System.Windows.Forms
 			is_editing = false;
 			is_changing = false;
 			is_adding = false;
-			forecolor = SystemColors.WindowText;
 			parentrowslabel_style = DataGridParentRowsLabelStyle.Both;
-			backcolor = SystemColors.Window;
 			selected_rows = new Hashtable ();
 			ctrl_pressed = false;
 			shift_pressed = false;
@@ -303,13 +299,10 @@ namespace System.Windows.Forms
 
 		public Color BackColor {
 			get {
-				return backcolor;
+				return base.BackColor;
 			}
 			set {
-				if (backcolor != value) {
-					backcolor = value;
-					Refresh ();
-				}
+				base.BackColor = value;
 			}
 		}
 
@@ -578,15 +571,11 @@ namespace System.Windows.Forms
 
 		public Color ForeColor {
 			get {
-				return forecolor;
+				return base.ForeColor;
 			}
 
 			set {
-				if (forecolor != value) {
-					forecolor = value;
-					OnForeColorChanged (EventArgs.Empty);
-					Refresh ();
-				}
+				base.ForeColor = value;
 			}
 		}
 
@@ -597,7 +586,7 @@ namespace System.Windows.Forms
 
 			set {
 				if (value == Color.Empty) {
-					throw new ArgumentNullException ("Color.Empty value is invalid.");
+					throw new ArgumentException ("Color.Empty value is invalid.");
 				}
 
 				if (gridline_color != value) {
@@ -628,7 +617,7 @@ namespace System.Windows.Forms
 
 			set {
 				if (value == Color.Empty) {
-					throw new ArgumentNullException ("Color.Empty value is invalid.");
+					throw new ArgumentException ("Color.Empty value is invalid.");
 				}
 
 				if (header_backcolor != value) {
@@ -1582,7 +1571,7 @@ namespace System.Windows.Forms
 
 		public override void ResetBackColor ()
 		{
-			background_color = def_background_color;
+			base.ResetBackColor ();
 		}
 
 		public override void ResetForeColor ()
