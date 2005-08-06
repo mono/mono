@@ -1,3 +1,7 @@
+2005-08-06  Ankit Jain  <jankit@novell.com>
+
+	* Makefile ($(the_il)): Add /dll switch.
+
 2005-07-05  Manjula GHM  <mmanjula@novell.com>
 	* DateType.cs : Support "#" in string to DateTime conversion, eg: #7/29/2004#
 

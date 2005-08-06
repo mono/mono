@@ -36,7 +36,7 @@ $(TXT_RES): %.resources: %.txt
 #	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
 
 $(the_lib): $(the_il)
-	$(ILASM) $(IL_FLAGS) /out:$@ $<
+	$(ILASM) $(IL_FLAGS) /out:$@ /dll $<
 	$(SN) $(SNFLAGS) $@ $(topdir)/class/mono.snk
 
 $(the_il): $(build_lib) fixup/fixup.pl
