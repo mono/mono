@@ -29,12 +29,16 @@
 
 #if NET_1_1
 
-namespace System.Runtime.InteropServices {
+using System.Reflection.Emit;
 
+namespace System.Runtime.InteropServices {
+#if NET_2_0
 	[ComVisible (true)]
+#endif
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("007D8A14-FDF3-363E-9A0B-FEC0618260A2")]
+	[TypeLibImportClass (typeof (MethodBuilder))]
 	public interface _MethodBuilder {
 
 		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);

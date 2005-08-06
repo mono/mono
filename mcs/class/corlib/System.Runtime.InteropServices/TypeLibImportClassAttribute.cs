@@ -1,11 +1,14 @@
 //
-// System.Runtime.InteropServices._ConstructorBuilder interface
+// System.Runtime.InteropServices.TypeLibImportClassAttribute.cs
 //
 // Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
-//	Andreas Nahr <ClassDevelopment@A-SoftTech.com>
+//   Gert Driesen (drieseng@users.sourceforge.net)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005 Novell
+//
+
+//
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,29 +30,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_1_1
-
-using System.Reflection.Emit;
+using System;
 
 namespace System.Runtime.InteropServices {
-#if NET_2_0
-	[ComVisible (true)]
-#endif
-	[CLSCompliant (false)]
-	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
-	[Guid ("ED3E4384-D7E2-3FA7-8FFD-8940D330519A")]
-	[TypeLibImportClass (typeof (ConstructorBuilder))]
-	public interface _ConstructorBuilder {
 
-		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
+	[AttributeUsage(AttributeTargets.Interface, Inherited=false)]
+	public sealed class TypeLibImportClassAttribute : Attribute {
+		private string _importClass;
+		
+		public TypeLibImportClassAttribute (Type importClass) {
+			_importClass = importClass.ToString ();
+		}
 
-		void GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);
-
-		void GetTypeInfoCount (out uint pcTInfo);
-
-		void Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
-			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
+		public string Value {
+			get { return _importClass; }
+		}
 	}
 }
-
-#endif

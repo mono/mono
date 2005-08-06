@@ -13,8 +13,9 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	[CLSCompliant (false)]
-	[InterfaceType (ComInterfaceType.InterfaceIsDual)]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("9DE59C64-D889-35A1-B897-587D74469E5B")]
+	[TypeLibImportClass (typeof (EventInfo))]
 	public interface _EventInfo
 	{
 		void AddEventHandler (object target, Delegate handler);
@@ -30,6 +31,15 @@ namespace System.Runtime.InteropServices
 		object[] GetCustomAttributes (Type attributeType, bool inherit);
 
 		int GetHashCode ();
+
+		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
+
+		void GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);
+
+		void GetTypeInfoCount (out uint pcTInfo);
+
+		void Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
+			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
 
 		MethodInfo GetRaiseMethod ();
 

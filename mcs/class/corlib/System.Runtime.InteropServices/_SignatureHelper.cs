@@ -29,12 +29,16 @@
 
 #if NET_1_1
 
-namespace System.Runtime.InteropServices {
+using System.Reflection.Emit;
 
+namespace System.Runtime.InteropServices {
+#if NET_2_0
 	[ComVisible (true)]
+#endif
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("7D13DD37-5A04-393C-BBCA-A5FEA802893D")]
+	[TypeLibImportClass (typeof (SignatureHelper))]
 	public interface _SignatureHelper {
 
 		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);

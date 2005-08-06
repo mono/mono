@@ -1,3 +1,69 @@
+2005-08-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* _Activator.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _Assembly.cs: ComVisible should only be set in 2.0 profile. Added
+	TypeLibImportClass attribute. Fixes InterfaceType to match MS.NET.
+	* _AssemblyBuilder.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _AssemblyName.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _Attribute.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _ConstructorBuilder.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _ConstructorInfo.cs: Fixed InterfaceType to match MS.NET. Added
+	TypeLibImportClass attribute. Added missing methods.
+	* _CustomAttributeBuilder.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _EnumBuilder.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _EventBuilder.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _EventInfo.cs: Fixed InterfaceType to match MS.NET. Added
+	TypeLibImportClass attribute. Added missing methods.
+	* _FieldBuilder.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _FieldInfo.cs: Fixed InterfaceType to match MS.NET. Added
+	TypeLibImportClass attribute. Added missing methods.
+	* _ILGenerator.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _LocalBuilder.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _MemberInfo.cs: Fixed InterfaceType to match MS.NET. Added
+	TypeLibImportClass attribute. Added missing methods. 
+	* _MethodBase.cs: Fixed InterfaceType to match MS.NET. Added
+	TypeLibImportClass attribute. Added missing methods.
+	* _MethodInfo.cs: Fixed InterfaceType to match MS.NET. Added
+	TypeLibImportClass attribute. Added missing methods.
+	* _MethodBuilder.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _MethodRental.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _Module.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _ModuleBuilder.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _ParameterBuilder.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _ParameterInfo.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _PropertyBuilder.cs: ComVisible should only be setin 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _PropertyInfo.cs: Fixed InterfaceType to match MS.NET. Added
+	TypeLibImportClass attribute. Added missing methods.
+	* _SignatureHelper.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _Type.cs: Added TypeLibImportClass attribute. Fixed InterfaceType 
+	to match MS.NET. Added missing method to match MS.NET.
+	* _Thread.cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* _TypeBuilder:cs: ComVisible should only be set in 2.0 profile.
+	Added TypeLibImportClass attribute.
+	* Marshal.cs: Removed MarshalAs attribute from parameter to fix
+	API compatibility with MS.NET.
+	* TypeLibImportClassAttribute.cs: Added.
+
 2005-07-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* GCHandle.cs: Add 2.0 FromIntPtr/ToIntPtr methods.

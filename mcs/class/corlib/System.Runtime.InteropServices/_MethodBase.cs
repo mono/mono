@@ -14,8 +14,9 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	[CLSCompliant (false)]
-	[InterfaceType (ComInterfaceType.InterfaceIsDual)]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("6240837A-707F-3181-8E98-A36AE086766B")]
+	[TypeLibImportClass (typeof (MethodBase))]
 	public interface _MethodBase
 	{
 		bool Equals (object obj);
@@ -29,6 +30,15 @@ namespace System.Runtime.InteropServices
 		MethodImplAttributes GetMethodImplementationFlags ();
 		
 		ParameterInfo[] GetParameters ();
+
+		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
+
+		void GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);
+
+		void GetTypeInfoCount (out uint pcTInfo);
+
+		void Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
+			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
 		
 		Type GetType ();
 

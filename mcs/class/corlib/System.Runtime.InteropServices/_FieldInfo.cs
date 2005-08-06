@@ -14,8 +14,9 @@ using System.Reflection;
 namespace System.Runtime.InteropServices
 {
 	[CLSCompliant (false)]
-	[InterfaceType (ComInterfaceType.InterfaceIsDual)]
+	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("8A7C1442-A9FB-366B-80D8-4939FFA6DBE0")]
+	[TypeLibImportClass (typeof (FieldInfo))]
 	public interface _FieldInfo
 	{
 		bool Equals (object obj);
@@ -28,8 +29,18 @@ namespace System.Runtime.InteropServices
 
 		Type GetType ();
 
+		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
+
+		void GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);
+
+		void GetTypeInfoCount (out uint pcTInfo);
+
+		void Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams,
+			IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);
+
 		object GetValue (object obj);
 
+		[CLSCompliant (false)]
 		object GetValueDirect (TypedReference obj);
 
 		bool IsDefined (Type attributeType, bool inherit);
@@ -38,6 +49,7 @@ namespace System.Runtime.InteropServices
 
 		void SetValue (object obj, object value, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
 
+		[CLSCompliant (false)]
 		void SetValueDirect (TypedReference obj, object value);
 
 		string ToString ();

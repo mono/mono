@@ -710,7 +710,7 @@ namespace System.Runtime.InteropServices
 		public extern static void WriteInt16 (IntPtr ptr, int ofs, char val);
 
 		[MonoTODO]
-		public static void WriteInt16([In, Out, MarshalAs(UnmanagedType.AsAny)] object ptr, int ofs, char val) {
+		public static void WriteInt16([In, Out] object ptr, int ofs, char val) {
 			throw new NotImplementedException ();
 		}
 

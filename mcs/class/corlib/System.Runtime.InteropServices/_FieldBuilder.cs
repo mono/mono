@@ -29,12 +29,16 @@
 
 #if NET_1_1
 
-namespace System.Runtime.InteropServices {
+using System.Reflection.Emit;
 
+namespace System.Runtime.InteropServices {
+#if NET_2_0
 	[ComVisible (true)]
+#endif
 	[CLSCompliant (false)]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	[Guid ("CE1A3BF5-975E-30CC-97C9-1EF70F8F3993")]
+	[TypeLibImportClass (typeof (FieldBuilder))]
 	public interface _FieldBuilder {
 
 		void GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);
