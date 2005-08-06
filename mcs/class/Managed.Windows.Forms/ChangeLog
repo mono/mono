@@ -1,3 +1,8 @@
+2005-08-06  Ritvik Mayank  <mritvik@novell.com>
+	
+	* System.Windows.Forms_test.dll.sources : sorted and removed test-cases for Form
+	  and TextBox as these are still under development.
+
 2005-08-04  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* SWF.csproj: Updated

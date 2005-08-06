@@ -1,3 +1,7 @@
+2005-08-06  Ritvik Mayank  <mritvik@novell.com>
+
+	* ComboBoxTest.cs, ListBoxTest.cs : Cleanup, added few more tests   
+
 2005-08-05  Ritvik Mayank  <mritvik@novell.com>
 
 	* ButtonTest.cs, ImageListTest.cs, ControlEventTest.cs,
