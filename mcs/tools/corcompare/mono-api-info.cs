@@ -782,18 +782,11 @@ namespace Mono.AssemblyInfo
 	class AttributeData : BaseData
 	{
 		object [] atts;
-		string target;
 
-		AttributeData (XmlDocument doc, XmlNode parent, object[] attributes, string target)
+		AttributeData (XmlDocument doc, XmlNode parent, object[] attributes)
 			: base (doc, parent)
 		{
 			atts = attributes;
-			this.target = target;
-		}
-
-		AttributeData (XmlDocument doc, XmlNode parent, object [] attributes)
-			: this (doc, parent, attributes, null)
-		{
 		}
 
 		public override void DoOutput ()
@@ -856,23 +849,13 @@ namespace Mono.AssemblyInfo
 					}
 				}
 
-				if (target != null) {
-					AddAttribute (node, "target", target);
-				}
-
 				natts.AppendChild (node);
 			}
 		}
 
 		public static void OutputAttributes (XmlDocument doc, XmlNode parent, object[] attributes)
 		{
-			AttributeData ad = new AttributeData (doc, parent, attributes, null);
-			ad.DoOutput ();
-		}
-
-		public static void OutputAttributes (XmlDocument doc, XmlNode parent, object [] attributes, string target)
-		{
-			AttributeData ad = new AttributeData (doc, parent, attributes, target);
+			AttributeData ad = new AttributeData (doc, parent, attributes);
 			ad.DoOutput ();
 		}
 

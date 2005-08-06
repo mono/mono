@@ -1077,15 +1077,45 @@ namespace Mono.AssemblyCompare
 
 		public override string GetNodeKey (string name, XmlNode node)
 		{
-			string target = string.Empty;
-			if (node.Attributes["target"] != null)
-				target = node.Attributes["target"].Value;
-			int i = 0;
-			while (keys.ContainsKey (name)) {
-				name = String.Format ("{0} [{1}]:{1}", name, target, i++);
+			string key = null;
+
+			// if multiple attributes with the same name (type) exist, then we 
+			// cannot be sure which attributes correspond, so we must use the
+			// name of the attribute (type) and the name/value of its properties
+			// as key
+
+			XmlNodeList attributes = node.ParentNode.SelectNodes("attribute[@name='" + name + "']");
+			if (attributes.Count > 1) {
+				ArrayList keyParts = new ArrayList ();
+
+				XmlNodeList properties = node.SelectNodes ("properties/property");
+				foreach (XmlNode property in properties) {
+					XmlAttributeCollection attrs = property.Attributes;
+					if (attrs["value"] != null) {
+						keyParts.Add (attrs["name"].Value + "=" + attrs["value"].Value);
+					} else {
+						keyParts.Add (attrs["name"].Value + "=");
+					}
+				}
+
+				// sort properties by name, as order of properties in XML is 
+				// undefined
+				keyParts.Sort ();
+
+				// insert name (type) of attribute
+				keyParts.Insert (0, name);
+
+				StringBuilder sb = new StringBuilder ();
+				foreach (string value in keyParts) {
+					sb.Append (value);
+					sb.Append (';');
+				}
+				key = sb.ToString ();
+			} else {
+				key = name;
 			}
 
-			return name;
+			return key;
 		}
 
 		protected override void LoadExtraData(string name, XmlNode node)
@@ -1107,7 +1137,6 @@ namespace Mono.AssemblyCompare
 				properties[name] = p;
 			}
 		}
-
 
 		public override string GroupName {
 			get { return "attributes"; }

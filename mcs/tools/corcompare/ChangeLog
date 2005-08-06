@@ -1,3 +1,11 @@
+2005-08-06  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* mono-api-diff.cs: When multiple attributes of the same type
+	exist, then we must use a key that is composed of the attribute
+	type and key/value pairs for each property. Fixed line endings.
+	* mono-api-info.cs: target is not used for AttributeData. Removed
+	unused ctor and OutputAttributes overload.
+
 2005-06-24  Martin Baulig  <martin@ximian.com>
 
 	* mono-api-info.cs: Use `Type.ToString()' everywhere instead of
