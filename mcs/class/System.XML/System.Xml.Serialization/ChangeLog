@@ -1,3 +1,7 @@
+2005-08-06  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlTypeMapping.cs: Added null check.
+
 2005-08-05  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlTypeMapping.cs: Added ListMembers property that returns

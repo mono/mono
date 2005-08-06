@@ -283,7 +283,7 @@ namespace System.Xml.Serialization
 				_elements.Add (key, elem);
 			}
 			
-			if (member.TypeData.IsListType && !member.TypeData.Type.IsArray) {
+			if (member.TypeData.IsListType && member.TypeData.Type != null && !member.TypeData.Type.IsArray) {
 				if (_listMembers == null) _listMembers = new ArrayList ();
 				_listMembers.Add (member);
 			}
