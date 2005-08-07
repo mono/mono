@@ -116,7 +116,7 @@ namespace System.ComponentModel
 			if (tran == null) return;
 			
 			if (commit) {
-				Component com = obj as Component;
+				IComponent com = obj as IComponent;
 				IComponentChangeService ccs = (IComponentChangeService) com.Site.GetService (typeof(IComponentChangeService));
 				if (ccs != null)
 					ccs.OnComponentChanged (com, this, oldValue, newValue);
