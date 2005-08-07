@@ -501,7 +501,7 @@ namespace System.Drawing
 		
 		public override int GetHashCode ()
 		{
-			return ToArgb().GetHashCode();
+			return ToArgb().GetHashCode () ^ Name.GetHashCode ();
 		}
 
 		/// <summary>

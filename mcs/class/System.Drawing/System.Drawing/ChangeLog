@@ -1,4 +1,8 @@
-﻿2005-08-07 Vladimir Krasnov <vladimirk@mainsoft.com>
+2005-08-07 Andrew Skiba <andrews@mainsoft.com>
+
+	* Color.cs: GetHashCode is affected by Name, too
+
+2005-08-07 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Pen.jvm.cs: Fixed ctor, LineCap, SetLineCap
 	
