@@ -1,5 +1,9 @@
 2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
 
+	* Color.cs: many new testcases added
+
+2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
+
 	* Size.cs, SizeF.cs: GetHashCode and ToString tests
 
 2005-08-07  Andrew Skiba  <andrews@mainsoft.com>

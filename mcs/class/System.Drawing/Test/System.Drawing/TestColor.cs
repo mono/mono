@@ -938,6 +938,88 @@ namespace MonoTests.System.Drawing
 			Assert ("Empty color", color.IsEmpty);
 			Assert ("Not empty color", !Color.FromArgb (0, Color.Black).IsEmpty);
 		}
+		[Test]
+		public void IsKnownColor ()
+		{
+			Assert ("KnownColor", Color.FromKnownColor(KnownColor.AliceBlue).IsKnownColor);
+			Assert ("KnownColor", Color.FromName("AliceBlue").IsKnownColor);
+			AssertEquals ("Not KnownColor", false,
+				Color.FromArgb (50, 100, 150, 200).IsKnownColor);
+		}
+		[Test]
+		public void IsNamedColor ()
+		{
+			Assert ("NamedColor", Color.AliceBlue.IsNamedColor);
+			Assert ("NamedColor", Color.FromKnownColor(KnownColor.AliceBlue).IsNamedColor);
+			Assert ("NamedColor", Color.FromName("AliceBlue").IsNamedColor);
+			AssertEquals ("Not NamedColor", false,
+				Color.FromArgb (50, 100, 150, 200).IsNamedColor);
+		}
+		[Test]
+		public void IsSystemColor () {
+			Assert ("SystemColor#1", Color.FromKnownColor(KnownColor.ActiveBorder).IsSystemColor);
+			Assert ("SystemColor#2", Color.FromName("ActiveBorder").IsSystemColor);
+			AssertEquals ("Not SystemColor#1", false,
+				Color.FromArgb (50, 100, 150, 200).IsSystemColor);
+			AssertEquals ("Not SystemColor#2", false,
+				Color.FromKnownColor(KnownColor.AliceBlue).IsSystemColor);
+			AssertEquals ("Not SystemColor#3", false,
+				Color.FromName("AliceBlue").IsSystemColor);
+		}
+		[Test]
+		public void Name ()
+		{
+			AssertEquals ("Color.Name#1", "AliceBlue", Color.AliceBlue.Name);
+			AssertEquals ("Color.Name#2", "ActiveBorder",
+				Color.FromKnownColor (KnownColor.ActiveBorder).Name);
+			AssertEquals ("Color.Name#3", "1122ccff",
+				Color.FromArgb(0x11, 0x22, 0xcc, 0xff).Name);
+		}
+		[Test]
+		public void GetHashCodeTest ()
+		{
+			Color c = Color.AliceBlue;
+			AssertEquals ("GHC#1", false, Color.FromArgb (c.A, c.R, c.G, c.B).GetHashCode () ==
+				c.GetHashCode ());
+			AssertEquals ("GHC#2", c.GetHashCode (), Color.FromName ("AliceBlue").GetHashCode ());
+		}
+		[Test]
+		public void ToArgb ()
+		{
+			AssertEquals (0x11cc8833, Color.FromArgb (0x11, 0xcc, 0x88, 0x33).ToArgb());
+			AssertEquals (unchecked((int)0xf1cc8833), Color.FromArgb (0xf1, 0xcc, 0x88, 0x33).ToArgb());
+		}
+
+		[Test]
+		public void ToKnownColor ()
+		{
+			AssertEquals ("TKC#1", KnownColor.ActiveBorder, Color.FromName ("ActiveBorder").ToKnownColor ());
+			AssertEquals ("TKC#2", KnownColor.AliceBlue, Color.AliceBlue.ToKnownColor ());
+			KnownColor zero = Color.FromArgb (1, 2, 3, 4).ToKnownColor ();
+			AssertEquals ("TKC#3", (KnownColor)0, zero);
+		}
+
+		[Test]
+		public void ToStringTest ()
+		{
+			AssertEquals ("TS#1", "Color [AliceBlue]", Color.AliceBlue.ToString ());
+			AssertEquals ("TS#2", "Color [ActiveBorder]",
+				Color.FromKnownColor (KnownColor.ActiveBorder).ToString ());
+			AssertEquals ("TS#3", "Color [A=1, R=2, G=3, B=4]",
+				Color.FromArgb(1, 2, 3, 4).ToString ());
+		}
+
+		[Test]
+		public void Equality ()
+		{
+			Color c = Color.AliceBlue;
+			Assert ("EQ#1", c == Color.FromName ("AliceBlue"));
+			AssertEquals ("EQ#2", false, c == Color.FromArgb (c.A, c.R, c.G, c.B));
+			Assert ("EQ#3", c.Equals (Color.FromName ("AliceBlue")));
+			AssertEquals ("EQ#4", false, c.Equals(Color.FromArgb (c.A, c.R, c.G, c.B)));
+			AssertEquals ("EQ#5", false, c != Color.FromName ("AliceBlue"));
+			Assert("EQ#6", c != Color.FromArgb (c.A, c.R, c.G, c.B));
+		}
 	}
 }
 
