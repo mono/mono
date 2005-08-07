@@ -57,9 +57,9 @@ namespace System.Xml.Schema
 			set{ name = value; }
 		}
 
-		[XmlElement("all",typeof(XmlSchemaAll),Namespace=XmlSchema.Namespace)]
-		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace=XmlSchema.Namespace)]
-		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace=XmlSchema.Namespace)]
+		[XmlElement("all",typeof(XmlSchemaAll))]
+		[XmlElement("choice",typeof(XmlSchemaChoice))]
+		[XmlElement("sequence",typeof(XmlSchemaSequence))]
 		public XmlSchemaGroupBase Particle
 		{
 			get{ return  particle; }

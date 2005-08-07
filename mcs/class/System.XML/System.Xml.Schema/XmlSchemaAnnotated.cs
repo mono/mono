@@ -41,14 +41,14 @@ namespace System.Xml.Schema
 		public XmlSchemaAnnotated()
 		{}
 		
-		[System.Xml.Serialization.XmlAttribute("id")]
+		[System.Xml.Serialization.XmlAttribute("id", DataType="ID")]
 		public string Id 
 		{ 
 			get{ return  id; } 
 			set{ id = value; } 
 		}
 		
-		[XmlElement("annotation",Namespace=XmlSchema.Namespace)]
+		[XmlElement("annotation", Type=typeof(XmlSchemaAnnotation))]
 		public XmlSchemaAnnotation Annotation 
 		{ 
 			get{ return  annotation; } 

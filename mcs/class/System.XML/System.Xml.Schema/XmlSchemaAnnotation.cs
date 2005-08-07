@@ -43,15 +43,15 @@ namespace System.Xml.Schema
 			items = new XmlSchemaObjectCollection();
 		}
 
-		[System.Xml.Serialization.XmlAttribute("id")]
+		[System.Xml.Serialization.XmlAttribute("id", DataType="ID")]
 		public string Id 
 		{
 			get{ return  id; } 
 			set{ id = value; }
 		}
 		
-		[XmlElement("appinfo",typeof(XmlSchemaAppInfo),Namespace=XmlSchema.Namespace)]
-		[XmlElement("documentation",typeof(XmlSchemaDocumentation),Namespace=XmlSchema.Namespace)]
+		[XmlElement("appinfo",typeof(XmlSchemaAppInfo))]
+		[XmlElement("documentation",typeof(XmlSchemaDocumentation))]
 		public XmlSchemaObjectCollection Items
 		{
 			get{ return items; }

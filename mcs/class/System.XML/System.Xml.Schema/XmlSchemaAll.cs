@@ -48,7 +48,7 @@ namespace System.Xml.Schema
 			items = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement("element",typeof(XmlSchemaElement),Namespace=XmlSchema.Namespace)]
+		[XmlElement("element",typeof(XmlSchemaElement))]
 		public override XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }

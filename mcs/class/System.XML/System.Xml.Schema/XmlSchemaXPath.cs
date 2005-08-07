@@ -46,7 +46,7 @@ namespace System.Xml.Schema
 		public XmlSchemaXPath()
 		{
 		}
-		[DefaultValue(null)]
+		[DefaultValue("")]
 		[System.Xml.Serialization.XmlAttribute("xpath")]
 		public string XPath 
 		{

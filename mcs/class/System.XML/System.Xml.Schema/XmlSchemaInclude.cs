@@ -38,7 +38,7 @@ namespace System.Xml.Schema
 		public XmlSchemaInclude()
 		{
 		}
-		[XmlElement("annotation",Namespace=XmlSchema.Namespace)]
+		[XmlElement("annotation", Type=typeof (XmlSchemaAnnotation))]
 		public XmlSchemaAnnotation Annotation 
 		{
 			get{ return  annotation; } 

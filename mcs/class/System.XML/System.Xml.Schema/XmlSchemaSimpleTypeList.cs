@@ -56,7 +56,7 @@ namespace System.Xml.Schema
 			}
 		}
 
-		[XmlElement("simpleType",Namespace=XmlSchema.Namespace)]
+		[XmlElement("simpleType", Type=typeof (XmlSchemaSimpleType))]
 		public XmlSchemaSimpleType ItemType 
 		{
 			get{ return itemType; } 

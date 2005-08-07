@@ -51,8 +51,8 @@ namespace System.Xml.Schema
 			set{ isMixed = value; }
 		}
 
-		[XmlElement("restriction",typeof(XmlSchemaComplexContentRestriction),Namespace=XmlSchema.Namespace)]
-		[XmlElement("extension",typeof(XmlSchemaComplexContentExtension),Namespace=XmlSchema.Namespace)]
+		[XmlElement("restriction",typeof(XmlSchemaComplexContentRestriction))]
+		[XmlElement("extension",typeof(XmlSchemaComplexContentExtension))]
 		public override XmlSchemaContent Content 
 		{
 			get{ return  content; } 

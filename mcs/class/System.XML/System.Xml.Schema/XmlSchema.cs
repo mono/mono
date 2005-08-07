@@ -133,38 +133,38 @@ namespace System.Xml.Schema
 			set{ elementFormDefault = value; }
 		}
 
-		[System.Xml.Serialization.XmlAttribute ("targetNamespace")]
+		[System.Xml.Serialization.XmlAttribute ("targetNamespace", DataType="anyURI")]
 		public string TargetNamespace
 		{
 			get{ return targetNamespace; }
 			set{ targetNamespace = value; }
 		}
 
-		[System.Xml.Serialization.XmlAttribute ("version")]
+		[System.Xml.Serialization.XmlAttribute ("version", DataType="token")]
 		public string Version
 		{
 			get{ return version; }
 			set{ version = value; }
 		}
 
-		[XmlElement ("include",typeof(XmlSchemaInclude), Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement ("import",typeof(XmlSchemaImport), Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement ("redefine",typeof(XmlSchemaRedefine), Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement ("include",typeof(XmlSchemaInclude))]
+		[XmlElement ("import",typeof(XmlSchemaImport))]
+		[XmlElement ("redefine",typeof(XmlSchemaRedefine))]
 		public XmlSchemaObjectCollection Includes
 		{
 			get{ return includes;}
 		}
 
-		[XmlElement ("simpleType", typeof (XmlSchemaSimpleType), Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement ("complexType", typeof (XmlSchemaComplexType), Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement ("group", typeof (XmlSchemaGroup),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement ("simpleType", typeof (XmlSchemaSimpleType))]
+		[XmlElement ("complexType", typeof (XmlSchemaComplexType))]
+		[XmlElement ("group", typeof (XmlSchemaGroup))]
 			//Only Schema's attributeGroup has type XmlSchemaAttributeGroup.
 			//Others (complextype, restrictions etc) must have XmlSchemaAttributeGroupRef
-		[XmlElement ("attributeGroup", typeof (XmlSchemaAttributeGroup), Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement ("element", typeof (XmlSchemaElement), Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement ("attribute", typeof (XmlSchemaAttribute), Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement ("notation", typeof (XmlSchemaNotation), Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement ("annotation", typeof (XmlSchemaAnnotation), Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement ("attributeGroup", typeof (XmlSchemaAttributeGroup))]
+		[XmlElement ("element", typeof (XmlSchemaElement))]
+		[XmlElement ("attribute", typeof (XmlSchemaAttribute))]
+		[XmlElement ("notation", typeof (XmlSchemaNotation))]
+		[XmlElement ("annotation", typeof (XmlSchemaAnnotation))]
 		public XmlSchemaObjectCollection Items
 		{
 			get{ return items; }
@@ -200,7 +200,7 @@ namespace System.Xml.Schema
 			get{ return elements; }
 		}
 
-		[System.Xml.Serialization.XmlAttribute ("id")]
+		[System.Xml.Serialization.XmlAttribute ("id", DataType="ID")]
 		public string Id
 		{
 			get{ return id; }

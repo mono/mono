@@ -133,7 +133,7 @@ namespace System.Xml.Schema
 			set{ schemaTypeName = value;}
 		}
 
-		[XmlElement("simpleType",Namespace=XmlSchema.Namespace)]
+		[XmlElement("simpleType")]
 		public XmlSchemaSimpleType SchemaType 
 		{
 			get{ return schemaType;}

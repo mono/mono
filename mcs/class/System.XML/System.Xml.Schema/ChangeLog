@@ -1,3 +1,36 @@
+2005-08-06  Gert Driesen <drieseng@users.souceforge.net>
+
+	* XmlSchema.cs: XmlElementAttribute, XmlAttributeAttribute and
+	DefaultValueAttribute corrections to match MS.NET.
+	* XmlSchemaAll.cs:
+	* XmlSchemaAnnotated.cs: 
+	* XmlSchemaAnnotation.cs:
+	* XmlSchemaAppInfo.cs:
+	* XmlSchemaAttribute.cs:
+	* XmlSchemaAttributeGroup.cs:
+	* XmlSchemaChoice.cs:
+	* XmlSchemaComplexContent.cs:
+	* XmlSchemaComplexContentExtension.cs:
+	* XmlSchemaComplexContentRestriction.cs:
+	* XmlSchemaComplexType.cs:
+	* XmlSchemaDocumentation.cs:
+	* XmlSchemaElement.cs:
+	* XmlSchemaExternal.cs:
+	* XmlSchemaGroup.cs:
+	* XmlSchemaIdentityConstraint.cs:
+	* XmlSchemaImport.cs:
+	* XmlSchemaInclude.cs:
+	* XmlSchemaRedefine.cs:
+	* XmlSchemaSequence.cs:
+	* XmlSchemaSimpleContent.cs:
+	* XmlSchemaSimpleContentExtension.cs:
+	* XmlSchemaSimpleContentRestriction.cs:
+	* XmlSchemaSimpleType.cs:
+	* XmlSchemaSimpleTypeList.cs:
+	* XmlSchemaSimpleTypeRestriction.cs:
+	* XmlSchemaSimpleTypeUnion.cs:
+	* XmlSchemaXPath.cs:
+
 2005-08-03  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* XmlSchemaInference.cs: Is sealed in Beta 2.

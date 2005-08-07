@@ -55,14 +55,14 @@ namespace System.Xml.Schema
 			set{ name = value; }
 		}
 
-		[XmlElement("selector",typeof(XmlSchemaXPath),Namespace=XmlSchema.Namespace)]
+		[XmlElement("selector",typeof(XmlSchemaXPath))]
 		public XmlSchemaXPath Selector 
 		{
 			get{ return  selector; } 
 			set{ selector = value; }
 		}
 
-		[XmlElement("field",typeof(XmlSchemaXPath),Namespace=XmlSchema.Namespace)]
+		[XmlElement("field",typeof(XmlSchemaXPath))]
 		public XmlSchemaObjectCollection Fields 
 		{
 			get{ return fields; }

@@ -46,7 +46,7 @@ namespace System.Xml.Schema
 			baseTypes = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace=XmlSchema.Namespace)]
+		[XmlElement("simpleType",typeof(XmlSchemaSimpleType))]
 		public XmlSchemaObjectCollection BaseTypes 
 		{
 			get{ return baseTypes; }

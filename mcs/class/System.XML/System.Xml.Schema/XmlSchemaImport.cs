@@ -40,14 +40,14 @@ namespace System.Xml.Schema
 		{
 		}
 		
-		[System.Xml.Serialization.XmlAttribute("namespace")]
+		[System.Xml.Serialization.XmlAttribute("namespace", DataType="anyURI")]
 		public string Namespace 
 		{
 			get{ return  nameSpace; } 
 			set{ nameSpace = value; }
 		}
 
-		[XmlElement("annotation",Namespace=XmlSchema.Namespace)]
+		[XmlElement("annotation", Type=typeof (XmlSchemaAnnotation))]
 		public XmlSchemaAnnotation Annotation 
 		{
 			get{ return  annotation; } 

@@ -213,9 +213,9 @@ namespace System.Xml.Schema
 		{
 		}
 
-		[XmlElement("restriction",typeof(XmlSchemaSimpleTypeRestriction),Namespace=XmlSchema.Namespace)]
-		[XmlElement("list",typeof(XmlSchemaSimpleTypeList),Namespace=XmlSchema.Namespace)]
-		[XmlElement("union",typeof(XmlSchemaSimpleTypeUnion),Namespace=XmlSchema.Namespace)]
+		[XmlElement("restriction",typeof(XmlSchemaSimpleTypeRestriction))]
+		[XmlElement("list",typeof(XmlSchemaSimpleTypeList))]
+		[XmlElement("union",typeof(XmlSchemaSimpleTypeUnion))]
 		public XmlSchemaSimpleTypeContent Content
 		{
 			get{ return  content; } 

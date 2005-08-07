@@ -43,8 +43,8 @@ namespace System.Xml.Schema
 		{
 		}
 
-		[XmlElement("restriction",typeof(XmlSchemaSimpleContentRestriction),Namespace=XmlSchema.Namespace)]
-		[XmlElement("extension",typeof(XmlSchemaSimpleContentExtension),Namespace=XmlSchema.Namespace)]
+		[XmlElement("restriction",typeof(XmlSchemaSimpleContentRestriction))]
+		[XmlElement("extension",typeof(XmlSchemaSimpleContentExtension))]
 		public override XmlSchemaContent Content 
 		{
 			get{ return  content; } 

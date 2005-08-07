@@ -62,8 +62,8 @@ namespace System.Xml.Schema
 			set{ name = value;}
 		}
 
-		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace=XmlSchema.Namespace)]
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace=XmlSchema.Namespace)]
+		[XmlElement("attribute",typeof(XmlSchemaAttribute))]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef))]
 		public XmlSchemaObjectCollection Attributes 
 		{
 			get{ return attributes;}
@@ -78,7 +78,7 @@ namespace System.Xml.Schema
 			get { return anyAttributeUse; }
 		}
 
-		[XmlElement("anyAttribute",Namespace=XmlSchema.Namespace)]
+		[XmlElement("anyAttribute")]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
 			get{ return anyAttribute;}

@@ -44,11 +44,11 @@ namespace System.Xml.Schema
 			items = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement("element",typeof(XmlSchemaElement),Namespace=XmlSchema.Namespace)]
-		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace=XmlSchema.Namespace)]
-		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace=XmlSchema.Namespace)]
-		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace=XmlSchema.Namespace)]
-		[XmlElement("any",typeof(XmlSchemaAny),Namespace=XmlSchema.Namespace)]
+		[XmlElement("element",typeof(XmlSchemaElement))]
+		[XmlElement("group",typeof(XmlSchemaGroupRef))]
+		[XmlElement("choice",typeof(XmlSchemaChoice))]
+		[XmlElement("sequence",typeof(XmlSchemaSequence))]
+		[XmlElement("any",typeof(XmlSchemaAny))]
 		public override XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }

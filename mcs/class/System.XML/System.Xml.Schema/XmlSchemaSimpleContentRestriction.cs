@@ -54,38 +54,38 @@ namespace System.Xml.Schema
 			set{ baseTypeName = value; }
 		}
 
-		[XmlElement("simpleType",Namespace=XmlSchema.Namespace)]
+		[XmlElement("simpleType", Type=typeof (XmlSchemaSimpleType))]
 		public XmlSchemaSimpleType BaseType 
 		{ 
 			get{ return  baseType; } 
 			set{ baseType = value; } 
 		}
 		
-		[XmlElement("minExclusive",typeof(XmlSchemaMinExclusiveFacet),Namespace=XmlSchema.Namespace)]
-		[XmlElement("minInclusive",typeof(XmlSchemaMinInclusiveFacet),Namespace=XmlSchema.Namespace)] 
-		[XmlElement("maxExclusive",typeof(XmlSchemaMaxExclusiveFacet),Namespace=XmlSchema.Namespace)]
-		[XmlElement("maxInclusive",typeof(XmlSchemaMaxInclusiveFacet),Namespace=XmlSchema.Namespace)]
-		[XmlElement("totalDigits",typeof(XmlSchemaTotalDigitsFacet),Namespace=XmlSchema.Namespace)]
-		[XmlElement("fractionDigits",typeof(XmlSchemaFractionDigitsFacet),Namespace=XmlSchema.Namespace)]
-		[XmlElement("length",typeof(XmlSchemaLengthFacet),Namespace=XmlSchema.Namespace)]
-		[XmlElement("minLength",typeof(XmlSchemaMinLengthFacet),Namespace=XmlSchema.Namespace)]
-		[XmlElement("maxLength",typeof(XmlSchemaMaxLengthFacet),Namespace=XmlSchema.Namespace)]
-		[XmlElement("enumeration",typeof(XmlSchemaEnumerationFacet),Namespace=XmlSchema.Namespace)]
-		[XmlElement("whiteSpace",typeof(XmlSchemaWhiteSpaceFacet),Namespace=XmlSchema.Namespace)]
-		[XmlElement("pattern",typeof(XmlSchemaPatternFacet),Namespace=XmlSchema.Namespace)]
+		[XmlElement("minExclusive",typeof(XmlSchemaMinExclusiveFacet))]
+		[XmlElement("minInclusive",typeof(XmlSchemaMinInclusiveFacet))] 
+		[XmlElement("maxExclusive",typeof(XmlSchemaMaxExclusiveFacet))]
+		[XmlElement("maxInclusive",typeof(XmlSchemaMaxInclusiveFacet))]
+		[XmlElement("totalDigits",typeof(XmlSchemaTotalDigitsFacet))]
+		[XmlElement("fractionDigits",typeof(XmlSchemaFractionDigitsFacet))]
+		[XmlElement("length",typeof(XmlSchemaLengthFacet))]
+		[XmlElement("minLength",typeof(XmlSchemaMinLengthFacet))]
+		[XmlElement("maxLength",typeof(XmlSchemaMaxLengthFacet))]
+		[XmlElement("enumeration",typeof(XmlSchemaEnumerationFacet))]
+		[XmlElement("whiteSpace",typeof(XmlSchemaWhiteSpaceFacet))]
+		[XmlElement("pattern",typeof(XmlSchemaPatternFacet))]
 		public XmlSchemaObjectCollection Facets 
 		{ 
 			get{ return facets; } 
 		}
 
-		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace=XmlSchema.Namespace)]
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace=XmlSchema.Namespace)]
+		[XmlElement("attribute",typeof(XmlSchemaAttribute))]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef))]
 		public XmlSchemaObjectCollection Attributes 
 		{
 			get{ return attributes; }
 		}
 
-		[XmlElement("anyAttribute",Namespace=XmlSchema.Namespace)]
+		[XmlElement("anyAttribute")]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
 			get{ return  any; }

@@ -46,11 +46,11 @@ namespace System.Xml.Schema
 			items = new XmlSchemaObjectCollection();
 		}
 
-		[XmlElement("element",typeof(XmlSchemaElement),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("any",typeof(XmlSchemaAny),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("element",typeof(XmlSchemaElement))]
+		[XmlElement("group",typeof(XmlSchemaGroupRef))]
+		[XmlElement("choice",typeof(XmlSchemaChoice))]
+		[XmlElement("sequence",typeof(XmlSchemaSequence))]
+		[XmlElement("any",typeof(XmlSchemaAny))]
 		public override XmlSchemaObjectCollection Items 
 		{
 			get{ return items; }

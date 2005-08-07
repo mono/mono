@@ -56,14 +56,14 @@ namespace System.Xml.Schema
 			set{ baseTypeName = value; }
 		}
 
-		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace=XmlSchema.Namespace)]
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace=XmlSchema.Namespace)]
+		[XmlElement("attribute",typeof(XmlSchemaAttribute))]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef))]
 		public XmlSchemaObjectCollection Attributes 
 		{
 			get{ return attributes; }
 		}
 
-		[XmlElement("anyAttribute",Namespace=XmlSchema.Namespace)]
+		[XmlElement("anyAttribute")]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
 			get{ return  any; }

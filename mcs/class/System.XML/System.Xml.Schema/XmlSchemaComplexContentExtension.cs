@@ -56,24 +56,24 @@ namespace System.Xml.Schema
 			set{ baseTypeName = value; }
 		}
 
-		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace=XmlSchema.Namespace)]
-		[XmlElement("all",typeof(XmlSchemaAll),Namespace=XmlSchema.Namespace)]
-		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace=XmlSchema.Namespace)]
-		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace=XmlSchema.Namespace)]
+		[XmlElement("group",typeof(XmlSchemaGroupRef))]
+		[XmlElement("all",typeof(XmlSchemaAll))]
+		[XmlElement("choice",typeof(XmlSchemaChoice))]
+		[XmlElement("sequence",typeof(XmlSchemaSequence))]
 		public XmlSchemaParticle Particle
 		{
 			get{ return  particle; }
 			set{ particle = value; }
 		}
 
-		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace=XmlSchema.Namespace)]
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace=XmlSchema.Namespace)]
+		[XmlElement("attribute",typeof(XmlSchemaAttribute))]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef))]
 		public XmlSchemaObjectCollection Attributes 
 		{
 			get{ return attributes; }
 		}
 
-		[XmlElement("anyAttribute",Namespace=XmlSchema.Namespace)]
+		[XmlElement("anyAttribute")]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
 			get{ return any; }

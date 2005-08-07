@@ -40,7 +40,7 @@ namespace System.Xml.Schema
 		protected XmlSchemaExternal()
 		{}
 		
-		[System.Xml.Serialization.XmlAttribute("schemaLocation")]
+		[System.Xml.Serialization.XmlAttribute("schemaLocation", DataType="anyURI")]
 		public string SchemaLocation 
 		{
 			get{ return  location; } 
@@ -54,7 +54,7 @@ namespace System.Xml.Schema
 			set{ schema = value; }
 		}
 
-		[System.Xml.Serialization.XmlAttribute("id")]
+		[System.Xml.Serialization.XmlAttribute("id", DataType="ID")]
 		public string Id 
 		{
 			get{ return  id; }

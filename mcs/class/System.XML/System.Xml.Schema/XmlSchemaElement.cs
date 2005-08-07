@@ -151,7 +151,7 @@ namespace System.Xml.Schema
 			set{ form = value; }
 		}
 
-		[DefaultValue(null)]
+		[DefaultValue("")]
 		[System.Xml.Serialization.XmlAttribute("name")]
 		public string Name 
 		{
@@ -191,17 +191,17 @@ namespace System.Xml.Schema
 
 		#region Elements
 
-		[XmlElement("simpleType",typeof(XmlSchemaSimpleType),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("complexType",typeof(XmlSchemaComplexType),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("simpleType",typeof(XmlSchemaSimpleType))]
+		[XmlElement("complexType",typeof(XmlSchemaComplexType))]
 		public XmlSchemaType SchemaType 
 		{
 			get{ return  schemaType; }
 			set{ schemaType = value; }
 		}
 
-		[XmlElement("unique",typeof(XmlSchemaUnique),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("key",typeof(XmlSchemaKey),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("keyref",typeof(XmlSchemaKeyref),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("unique",typeof(XmlSchemaUnique))]
+		[XmlElement("key",typeof(XmlSchemaKey))]
+		[XmlElement("keyref",typeof(XmlSchemaKeyref))]
 		public XmlSchemaObjectCollection Constraints 
 		{
 			get{ return constraints; }

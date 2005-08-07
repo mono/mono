@@ -119,8 +119,8 @@ namespace System.Xml.Schema
 		
 		#region Elements
 				
-		[XmlElement("simpleContent",typeof(XmlSchemaSimpleContent),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("complexContent",typeof(XmlSchemaComplexContent),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("simpleContent",typeof(XmlSchemaSimpleContent))]
+		[XmlElement("complexContent",typeof(XmlSchemaComplexContent))]
 		public XmlSchemaContentModel ContentModel 
 		{
 			get{ return  contentModel; } 
@@ -128,24 +128,24 @@ namespace System.Xml.Schema
 		}
 
 		//LAMESPEC: The default value for particle in Schema is of Type EmptyParticle (internal?)
-		[XmlElement("group",typeof(XmlSchemaGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("all",typeof(XmlSchemaAll),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("choice",typeof(XmlSchemaChoice),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("sequence",typeof(XmlSchemaSequence),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("group",typeof(XmlSchemaGroupRef))]
+		[XmlElement("all",typeof(XmlSchemaAll))]
+		[XmlElement("choice",typeof(XmlSchemaChoice))]
+		[XmlElement("sequence",typeof(XmlSchemaSequence))]
 		public XmlSchemaParticle Particle 
 		{
 			get{ return  particle; } 
 			set{ particle = value; }
 		}
 
-		[XmlElement("attribute",typeof(XmlSchemaAttribute),Namespace="http://www.w3.org/2001/XMLSchema")]
-		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef),Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("attribute",typeof(XmlSchemaAttribute))]
+		[XmlElement("attributeGroup",typeof(XmlSchemaAttributeGroupRef))]
 		public XmlSchemaObjectCollection Attributes 
 		{
 			get{ return attributes; }
 		}
 
-		[XmlElement("anyAttribute",Namespace="http://www.w3.org/2001/XMLSchema")]
+		[XmlElement("anyAttribute")]
 		public XmlSchemaAnyAttribute AnyAttribute 
 		{
 			get{ return  anyAttribute; }

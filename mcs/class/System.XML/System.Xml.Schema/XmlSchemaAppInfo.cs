@@ -39,7 +39,7 @@ namespace System.Xml.Schema
 		{
 		}
 
-		[System.Xml.Serialization.XmlAttribute("source")]
+		[System.Xml.Serialization.XmlAttribute("source", DataType="anyURI")]
 		public string Source 
 		{
 			get{ return  source; } 
