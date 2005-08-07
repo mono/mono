@@ -54,8 +54,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.AliceBlue;
 				Fail ("P1#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P1#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P1#3", true);
 			}
 		}
 
@@ -69,8 +69,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.AntiqueWhite;
 				Fail ("P2#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P2#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P2#3", true);
 			}
 		}
 
@@ -84,8 +84,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Aqua;
 				Fail ("P3#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P3#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P3#3", true);
 			}
 		}
 
@@ -99,8 +99,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Aquamarine;
 				Fail ("P4#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P4#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P4#3", true);
 			}
 		}
 
@@ -114,8 +114,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Azure;
 				Fail ("P5#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P5#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P5#3", true);
 			}
 		}
 
@@ -129,8 +129,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Beige;
 				Fail ("P6#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P6#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P6#3", true);
 			}
 		}
 
@@ -144,8 +144,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Bisque;
 				Fail ("P7#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P7#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P7#3", true);
 			}
 		}
 
@@ -159,8 +159,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Black;
 				Fail ("P8#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P8#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P8#3", true);
 			}
 		}
 
@@ -174,8 +174,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.BlanchedAlmond;
 				Fail ("P9#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P9#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P9#3", true);
 			}
 		}
 
@@ -189,8 +189,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Blue;
 				Fail ("P10#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P10#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P10#3", true);
 			}
 		}
 
@@ -204,8 +204,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.BlueViolet;
 				Fail ("P11#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P11#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P11#3", true);
 			}
 		}
 
@@ -219,8 +219,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Brown;
 				Fail ("P12#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P12#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P12#3", true);
 			}
 		}
 
@@ -234,8 +234,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.BurlyWood;
 				Fail ("P13#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P13#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P13#3", true);
 			}
 		}
 
@@ -249,8 +249,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.CadetBlue;
 				Fail ("P14#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P14#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P14#3", true);
 			}
 		}
 
@@ -264,8 +264,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Chartreuse;
 				Fail ("P15#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P15#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P15#3", true);
 			}
 		}
 
@@ -279,8 +279,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Chocolate;
 				Fail ("P16#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P16#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P16#3", true);
 			}
 		}
 
@@ -294,8 +294,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Coral;
 				Fail ("P17#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P17#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P17#3", true);
 			}
 		}
 
@@ -309,8 +309,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.CornflowerBlue;
 				Fail ("P18#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P18#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P18#3", true);
 			}
 		}
 
@@ -324,8 +324,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Cornsilk;
 				Fail ("P19#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P19#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P19#3", true);
 			}
 		}
 
@@ -339,8 +339,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Crimson;
 				Fail ("P20#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P20#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P20#3", true);
 			}
 		}
 
@@ -354,8 +354,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Cyan;
 				Fail ("P21#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P21#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P21#3", true);
 			}
 		}
 
@@ -369,8 +369,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkBlue;
 				Fail ("P22#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P22#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P22#3", true);
 			}
 		}
 
@@ -384,8 +384,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkCyan;
 				Fail ("P23#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P23#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P23#3", true);
 			}
 		}
 
@@ -399,8 +399,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkGoldenrod;
 				Fail ("P24#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P24#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P24#3", true);
 			}
 		}
 
@@ -414,8 +414,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkGray;
 				Fail ("P25#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P25#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P25#3", true);
 			}
 		}
 
@@ -429,8 +429,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkGreen;
 				Fail ("P26#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P26#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P26#3", true);
 			}
 		}
 
@@ -444,8 +444,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkKhaki;
 				Fail ("P27#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P27#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P27#3", true);
 			}
 		}
 
@@ -459,8 +459,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkMagenta;
 				Fail ("P28#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P28#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P28#3", true);
 			}
 		}
 
@@ -474,8 +474,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkOliveGreen;
 				Fail ("P29#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P29#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P29#3", true);
 			}
 		}
 
@@ -489,8 +489,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkOrange;
 				Fail ("P30#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P30#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P30#3", true);
 			}
 		}
 
@@ -504,8 +504,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkOrchid;
 				Fail ("P31#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P31#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P31#3", true);
 			}
 		}
 
@@ -519,8 +519,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkRed;
 				Fail ("P32#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P32#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P32#3", true);
 			}
 		}
 
@@ -534,8 +534,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkSalmon;
 				Fail ("P33#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P33#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P33#3", true);
 			}
 		}
 
@@ -549,8 +549,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkSeaGreen;
 				Fail ("P34#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P34#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P34#3", true);
 			}
 		}
 
@@ -564,8 +564,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkSlateBlue;
 				Fail ("P35#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P35#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P35#3", true);
 			}
 		}
 
@@ -579,8 +579,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkSlateGray;
 				Fail ("P36#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P36#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P36#3", true);
 			}
 		}
 
@@ -594,8 +594,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkTurquoise;
 				Fail ("P37#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P37#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P37#3", true);
 			}
 		}
 
@@ -609,8 +609,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DarkViolet;
 				Fail ("P38#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P38#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P38#3", true);
 			}
 		}
 
@@ -624,8 +624,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DeepPink;
 				Fail ("P39#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P39#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P39#3", true);
 			}
 		}
 
@@ -639,8 +639,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DeepSkyBlue;
 				Fail ("P40#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P40#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P40#3", true);
 			}
 		}
 
@@ -654,8 +654,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DimGray;
 				Fail ("P41#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P41#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P41#3", true);
 			}
 		}
 
@@ -669,8 +669,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.DodgerBlue;
 				Fail ("P42#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P42#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P42#3", true);
 			}
 		}
 
@@ -684,8 +684,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Firebrick;
 				Fail ("P43#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P43#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P43#3", true);
 			}
 		}
 
@@ -699,8 +699,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.FloralWhite;
 				Fail ("P44#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P44#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P44#3", true);
 			}
 		}
 
@@ -714,8 +714,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.ForestGreen;
 				Fail ("P45#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P45#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P45#3", true);
 			}
 		}
 
@@ -729,8 +729,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Fuchsia;
 				Fail ("P46#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P46#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P46#3", true);
 			}
 		}
 
@@ -744,8 +744,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Gainsboro;
 				Fail ("P47#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P47#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P47#3", true);
 			}
 		}
 
@@ -759,8 +759,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.GhostWhite;
 				Fail ("P48#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P48#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P48#3", true);
 			}
 		}
 
@@ -774,8 +774,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Gold;
 				Fail ("P49#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P49#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P49#3", true);
 			}
 		}
 
@@ -789,8 +789,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Goldenrod;
 				Fail ("P50#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P50#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P50#3", true);
 			}
 		}
 
@@ -804,8 +804,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Gray;
 				Fail ("P51#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P51#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P51#3", true);
 			}
 		}
 
@@ -819,8 +819,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Green;
 				Fail ("P52#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P52#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P52#3", true);
 			}
 		}
 
@@ -834,8 +834,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.GreenYellow;
 				Fail ("P53#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P53#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P53#3", true);
 			}
 		}
 
@@ -849,8 +849,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Honeydew;
 				Fail ("P54#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P54#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P54#3", true);
 			}
 		}
 
@@ -864,8 +864,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.HotPink;
 				Fail ("P55#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P55#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P55#3", true);
 			}
 		}
 
@@ -879,8 +879,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.IndianRed;
 				Fail ("P56#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P56#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P56#3", true);
 			}
 		}
 
@@ -894,8 +894,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Indigo;
 				Fail ("P57#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P57#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P57#3", true);
 			}
 		}
 
@@ -909,8 +909,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Ivory;
 				Fail ("P58#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P58#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P58#3", true);
 			}
 		}
 
@@ -924,8 +924,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Khaki;
 				Fail ("P59#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P59#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P59#3", true);
 			}
 		}
 
@@ -939,8 +939,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Lavender;
 				Fail ("P60#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P60#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P60#3", true);
 			}
 		}
 
@@ -954,8 +954,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LavenderBlush;
 				Fail ("P61#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P61#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P61#3", true);
 			}
 		}
 
@@ -969,8 +969,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LawnGreen;
 				Fail ("P62#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P62#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P62#3", true);
 			}
 		}
 
@@ -984,8 +984,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LemonChiffon;
 				Fail ("P63#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P63#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P63#3", true);
 			}
 		}
 
@@ -999,8 +999,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightBlue;
 				Fail ("P64#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P64#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P64#3", true);
 			}
 		}
 
@@ -1014,8 +1014,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightCoral;
 				Fail ("P65#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P65#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P65#3", true);
 			}
 		}
 
@@ -1029,8 +1029,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightCyan;
 				Fail ("P66#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P66#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P66#3", true);
 			}
 		}
 
@@ -1044,8 +1044,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightGoldenrodYellow;
 				Fail ("P67#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P67#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P67#3", true);
 			}
 		}
 
@@ -1059,8 +1059,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightGray;
 				Fail ("P68#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P68#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P68#3", true);
 			}
 		}
 
@@ -1074,8 +1074,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightGreen;
 				Fail ("P69#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P69#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P69#3", true);
 			}
 		}
 
@@ -1089,8 +1089,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightPink;
 				Fail ("P70#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P70#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P70#3", true);
 			}
 		}
 
@@ -1104,8 +1104,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightSalmon;
 				Fail ("P71#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P71#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P71#3", true);
 			}
 		}
 
@@ -1119,8 +1119,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightSeaGreen;
 				Fail ("P72#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P72#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P72#3", true);
 			}
 		}
 
@@ -1134,8 +1134,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightSkyBlue;
 				Fail ("P73#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P73#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P73#3", true);
 			}
 		}
 
@@ -1149,8 +1149,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightSlateGray;
 				Fail ("P74#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P74#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P74#3", true);
 			}
 		}
 
@@ -1164,8 +1164,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightSteelBlue;
 				Fail ("P75#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P75#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P75#3", true);
 			}
 		}
 
@@ -1179,8 +1179,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LightYellow;
 				Fail ("P76#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P76#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P76#3", true);
 			}
 		}
 
@@ -1194,8 +1194,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Lime;
 				Fail ("P77#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P77#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P77#3", true);
 			}
 		}
 
@@ -1209,8 +1209,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.LimeGreen;
 				Fail ("P78#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P78#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P78#3", true);
 			}
 		}
 
@@ -1224,8 +1224,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Linen;
 				Fail ("P79#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P79#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P79#3", true);
 			}
 		}
 
@@ -1239,8 +1239,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Magenta;
 				Fail ("P80#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P80#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P80#3", true);
 			}
 		}
 
@@ -1254,8 +1254,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Maroon;
 				Fail ("P81#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P81#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P81#3", true);
 			}
 		}
 
@@ -1269,8 +1269,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MediumAquamarine;
 				Fail ("P82#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P82#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P82#3", true);
 			}
 		}
 
@@ -1284,8 +1284,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MediumBlue;
 				Fail ("P83#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P83#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P83#3", true);
 			}
 		}
 
@@ -1299,8 +1299,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MediumOrchid;
 				Fail ("P84#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P84#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P84#3", true);
 			}
 		}
 
@@ -1314,8 +1314,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MediumPurple;
 				Fail ("P85#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P85#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P85#3", true);
 			}
 		}
 
@@ -1329,8 +1329,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MediumSeaGreen;
 				Fail ("P86#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P86#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P86#3", true);
 			}
 		}
 
@@ -1344,8 +1344,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MediumSlateBlue;
 				Fail ("P87#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P87#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P87#3", true);
 			}
 		}
 
@@ -1359,8 +1359,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MediumSpringGreen;
 				Fail ("P88#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P88#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P88#3", true);
 			}
 		}
 
@@ -1374,8 +1374,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MediumTurquoise;
 				Fail ("P89#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P89#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P89#3", true);
 			}
 		}
 
@@ -1389,8 +1389,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MediumVioletRed;
 				Fail ("P90#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P90#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P90#3", true);
 			}
 		}
 
@@ -1404,8 +1404,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MidnightBlue;
 				Fail ("P91#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P91#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P91#3", true);
 			}
 		}
 
@@ -1419,8 +1419,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MintCream;
 				Fail ("P92#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P92#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P92#3", true);
 			}
 		}
 
@@ -1434,8 +1434,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.MistyRose;
 				Fail ("P93#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P93#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P93#3", true);
 			}
 		}
 
@@ -1449,8 +1449,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Moccasin;
 				Fail ("P94#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P94#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P94#3", true);
 			}
 		}
 
@@ -1464,8 +1464,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.NavajoWhite;
 				Fail ("P95#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P95#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P95#3", true);
 			}
 		}
 
@@ -1479,8 +1479,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Navy;
 				Fail ("P96#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P96#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P96#3", true);
 			}
 		}
 
@@ -1494,8 +1494,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.OldLace;
 				Fail ("P97#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P97#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P97#3", true);
 			}
 		}
 
@@ -1509,8 +1509,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Olive;
 				Fail ("P98#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P98#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P98#3", true);
 			}
 		}
 
@@ -1524,8 +1524,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.OliveDrab;
 				Fail ("P99#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P99#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P99#3", true);
 			}
 		}
 
@@ -1539,8 +1539,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Orange;
 				Fail ("P100#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P100#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P100#3", true);
 			}
 		}
 
@@ -1554,8 +1554,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.OrangeRed;
 				Fail ("P101#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P101#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P101#3", true);
 			}
 		}
 
@@ -1569,8 +1569,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Orchid;
 				Fail ("P102#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P102#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P102#3", true);
 			}
 		}
 
@@ -1584,8 +1584,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.PaleGoldenrod;
 				Fail ("P103#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P103#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P103#3", true);
 			}
 		}
 
@@ -1599,8 +1599,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.PaleGreen;
 				Fail ("P104#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P104#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P104#3", true);
 			}
 		}
 
@@ -1614,8 +1614,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.PaleTurquoise;
 				Fail ("P105#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P105#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P105#3", true);
 			}
 		}
 
@@ -1629,8 +1629,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.PaleVioletRed;
 				Fail ("P106#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P106#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P106#3", true);
 			}
 		}
 
@@ -1644,8 +1644,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.PapayaWhip;
 				Fail ("P107#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P107#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P107#3", true);
 			}
 		}
 
@@ -1659,8 +1659,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.PeachPuff;
 				Fail ("P108#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P108#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P108#3", true);
 			}
 		}
 
@@ -1674,8 +1674,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Peru;
 				Fail ("P109#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P109#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P109#3", true);
 			}
 		}
 
@@ -1689,8 +1689,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Pink;
 				Fail ("P110#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P110#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P110#3", true);
 			}
 		}
 
@@ -1704,8 +1704,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Plum;
 				Fail ("P111#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P111#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P111#3", true);
 			}
 		}
 
@@ -1719,8 +1719,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.PowderBlue;
 				Fail ("P112#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P112#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P112#3", true);
 			}
 		}
 
@@ -1734,8 +1734,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Purple;
 				Fail ("P113#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P113#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P113#3", true);
 			}
 		}
 
@@ -1749,8 +1749,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Red;
 				Fail ("P114#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P114#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P114#3", true);
 			}
 		}
 
@@ -1764,8 +1764,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.RosyBrown;
 				Fail ("P115#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P115#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P115#3", true);
 			}
 		}
 
@@ -1779,8 +1779,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.RoyalBlue;
 				Fail ("P116#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P116#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P116#3", true);
 			}
 		}
 
@@ -1794,8 +1794,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.SaddleBrown;
 				Fail ("P117#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P117#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P117#3", true);
 			}
 		}
 
@@ -1809,8 +1809,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Salmon;
 				Fail ("P118#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P118#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P118#3", true);
 			}
 		}
 
@@ -1824,8 +1824,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.SandyBrown;
 				Fail ("P119#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P119#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P119#3", true);
 			}
 		}
 
@@ -1839,8 +1839,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.SeaGreen;
 				Fail ("P120#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P120#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P120#3", true);
 			}
 		}
 
@@ -1854,8 +1854,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.SeaShell;
 				Fail ("P121#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P121#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P121#3", true);
 			}
 		}
 
@@ -1869,8 +1869,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Sienna;
 				Fail ("P122#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P122#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P122#3", true);
 			}
 		}
 
@@ -1884,8 +1884,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Silver;
 				Fail ("P123#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P123#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P123#3", true);
 			}
 		}
 
@@ -1899,8 +1899,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.SkyBlue;
 				Fail ("P124#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P124#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P124#3", true);
 			}
 		}
 
@@ -1914,8 +1914,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.SlateBlue;
 				Fail ("P125#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P125#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P125#3", true);
 			}
 		}
 
@@ -1929,8 +1929,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.SlateGray;
 				Fail ("P126#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P126#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P126#3", true);
 			}
 		}
 
@@ -1944,8 +1944,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Snow;
 				Fail ("P127#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P127#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P127#3", true);
 			}
 		}
 
@@ -1959,8 +1959,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.SpringGreen;
 				Fail ("P128#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P128#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P128#3", true);
 			}
 		}
 
@@ -1974,8 +1974,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.SteelBlue;
 				Fail ("P129#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P129#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P129#3", true);
 			}
 		}
 
@@ -1989,8 +1989,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Tan;
 				Fail ("P130#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P130#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P130#3", true);
 			}
 		}
 
@@ -2004,8 +2004,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Teal;
 				Fail ("P131#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P131#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P131#3", true);
 			}
 		}
 
@@ -2019,8 +2019,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Thistle;
 				Fail ("P132#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P132#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P132#3", true);
 			}
 		}
 
@@ -2034,8 +2034,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Tomato;
 				Fail ("P133#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P133#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P133#3", true);
 			}
 		}
 
@@ -2049,8 +2049,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Transparent;
 				Fail ("P134#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P134#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P134#3", true);
 			}
 		}
 
@@ -2064,8 +2064,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Turquoise;
 				Fail ("P135#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P135#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P135#3", true);
 			}
 		}
 
@@ -2079,8 +2079,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Violet;
 				Fail ("P136#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P136#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P136#3", true);
 			}
 		}
 
@@ -2094,8 +2094,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Wheat;
 				Fail ("P137#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P137#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P137#3", true);
 			}
 		}
 
@@ -2109,8 +2109,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.White;
 				Fail ("P138#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P138#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P138#3", true);
 			}
 		}
 
@@ -2124,8 +2124,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.WhiteSmoke;
 				Fail ("P139#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P139#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P139#3", true);
 			}
 		}
 
@@ -2139,8 +2139,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.Yellow;
 				Fail ("P140#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P140#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P140#3", true);
 			}
 		}
 
@@ -2154,8 +2154,8 @@ namespace MonoTests.System.Drawing
 			try {
 				pen.Color = Color.YellowGreen;
 				Fail ("P141#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P141#3", e is  ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P141#3", true);
 			}
 		}
 	}
@@ -2178,8 +2178,8 @@ namespace MonoTests.System.Drawing
 //	Console.WriteLine("\t\t\ttry {");
 //	Console.WriteLine("\t\t\t\tpen.Color = Color." + property.Name + ";");
 //	Console.WriteLine("\t\t\t\tFail (\"P" + count + "#3: must throw ArgumentException\");");
-//	Console.WriteLine("\t\t\t} catch (Exception e) {");
-//	Console.WriteLine("\t\t\t\tAssert (\"P" + count + "#3\", e is  ArgumentException);");
+//	Console.WriteLine("\t\t\t} catch (ArgumentException) {");
+//	Console.WriteLine("\t\t\t\tAssert (\"P" + count + "#3\", true);");
 //	Console.WriteLine("\t\t\t}");
 //	Console.WriteLine("\t\t}");
 //	count++;

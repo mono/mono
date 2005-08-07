@@ -53,22 +53,22 @@ namespace MonoTests.System.Drawing
 			try {
 				brush.Color = Color.Red;
 				Fail ("P1#3: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P1#3", e is ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P1#3", true);
 			}
 
 			try {
 				brush.Color = SystemColors.ActiveBorder;
 				Fail ("P1#4: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P1#4", e is ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P1#4", true);
 			}
 
 			try {
 				brush.Dispose();
 				Fail ("P1#5: must throw ArgumentException");
-			} catch (Exception e) {
-				Assert ("P1#5", e is ArgumentException);
+			} catch (ArgumentException) {
+				Assert ("P1#5", true);
 			}
 		}
 

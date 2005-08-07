@@ -1,6 +1,12 @@
+2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
+
+	* TestPens.cs, TestSystemBrushes.cs, TestSystemPens.cs: don't rethrow exceptions, keep
+	the original stack trace.
+
 2005-07-27  Andrew Skiba  <andrews@mainsoft.com>
 
-	* TestColor.cs: added tests for equality operators, IsEmpty property and fixed GetHBS tests to use tolerance.
+	* TestColor.cs: added tests for equality operators, IsEmpty property and fixed GetHBS
+	tests to use tolerance.
 
 2005-05-10 Juraj Skripsky <juraj@hotfeet.ch>
 
