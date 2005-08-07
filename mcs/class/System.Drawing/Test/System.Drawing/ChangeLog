@@ -1,5 +1,11 @@
 2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
 
+	* TestPoint.cs: GetHashCode and ToString tests added
+	* TestPointF.cs: GetHashCode and ToString tests added, Addition and Substraction
+	tests improved
+
+2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
+
 	* TestPens.cs, TestSystemBrushes.cs, TestSystemPens.cs: don't rethrow exceptions, keep
 	the original stack trace.
 

@@ -176,6 +176,24 @@ namespace MonoTests.System.Drawing{
 			pt.Offset (0, -1);
 			AssertEquals (pt, pt1_0);
 		}
+		
+		[Test]
+		public void GetHashCodeTest ()
+		{
+			AssertEquals (0, pt1_1.GetHashCode ());
+			AssertEquals (1, pt1_0.GetHashCode ());
+			AssertEquals (1, pt0_1.GetHashCode ());
+			Point pt = new Point(0xFF, 0xFF00);
+			AssertEquals (0xFFFF, pt.GetHashCode ());
+		}
+
+		[Test]
+		public void ToStringTest ()
+		{
+			AssertEquals ("{X=1,Y=1}", pt1_1.ToString ());
+			AssertEquals ("{X=1,Y=0}", pt1_0.ToString ());
+			AssertEquals ("{X=0,Y=1}", pt0_1.ToString ());
+		}
 	}
 }
 

@@ -94,6 +94,7 @@ namespace MonoTests.System.Drawing
 		{
 			AssertEquals ("ADD#1", pt11_0, pt11_0 + new Size (0, 0));
 			AssertEquals ("ADD#2", pt0_11, pt0_11 + new Size (0, 0));
+			AssertEquals ("ADD#3", new PointF (2, 5.1F), pt0_11 + new Size (2, 4));
 		}
 
 		[Test]
@@ -121,8 +122,29 @@ namespace MonoTests.System.Drawing
 		{
 			AssertEquals ("SUB#1", pt11_0, pt11_0 - new Size (0, 0));
 			AssertEquals ("SUB#2", pt0_11, pt0_11 - new Size (0, 0));
+			PointF expected = new PointF (0.1F, 1.9F);
+			PointF actual = pt11_99 - new Size (1, 8);
+			//need to permit a small delta on floating point
+			AssertEquals ("SUB#3", expected.X, actual.X, 1e-5);
+			AssertEquals ("SUB#3", expected.Y, actual.Y, 1e-5);
 		}
-	
+
+		[Test]
+		public void GetHashCodeTest ()
+		{
+			PointF pt = new PointF (1.1F, 9.9F);
+			AssertEquals ("GHC#3", pt.GetHashCode (), pt11_99.GetHashCode ());
+		}
+
+		[Test]
+		public void ToStringTest ()
+		{
+			AssertEquals ("TS#1", "{X=0, Y=1.1}", pt0_11.ToString ());
+			AssertEquals ("TS#2", "{X=1.1, Y=0}", pt11_0.ToString ());
+			AssertEquals ("TS#3", "{X=1.1, Y=9.9}", pt11_99.ToString ());
+			PointF pt = new PointF (float.NaN, float.NegativeInfinity);
+			AssertEquals ("TS#4", "{X=NaN, Y=-Infinity}", pt.ToString ());
+		}
 	}
 }
 
