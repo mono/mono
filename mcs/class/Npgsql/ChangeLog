@@ -1,4 +1,8 @@
+2005-08-06  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
+        * NpgsqlCommand.cs: Fixed problem when using commandtype.storedprocedure with command texts which have parameters with ' or any other value which needed to be escaped. Now they are properly handled. Thanks Dalibor (dalxxx at email dot com) for heads up and tests.
+
+        
 2005-08-05  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
 	* NpgsqlConnection.cs:  Fixed documentation about User Id connection string key. Thanks peyn at tlen dot pl for heads up. Fixes gborg 1388
