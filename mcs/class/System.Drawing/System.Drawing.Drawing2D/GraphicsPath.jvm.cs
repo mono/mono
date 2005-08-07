@@ -8,176 +8,6 @@ namespace System.Drawing.Drawing2D
 {
 	public sealed class GraphicsPath : BasicShape, ICloneable
 	{
-#if OLDCODE
-		internal class SegmentWrapper
-		{
-			internal GeneralPath segment = new GeneralPath();
-			Point2D startPoint = null;
-			Point2D endPoint = null;
-			bool isFirstAdd = true;
-			bool nonTrackable = false;
-			bool bLastWasArc = false;
-			//ArrayList concats = new ArrayList();
-
-			public SegmentWrapper()
-			{
-			}
-
-			public SegmentWrapper(GeneralPath path)
-			{
-				nonTrackable = true;
-				segment=(GeneralPath)path.clone();
-			}
-
-			public void flatten (AffineTransform tr, float flat)
-			{
-				if(tr != null)
-					transform(tr);
-				//TODO
-				//after this start and stop points probably could be invalid
-				//we should check this later
-				GeneralPath gp = new GeneralPath();
-			    gp.append(segment.getPathIterator(null,(double)flat),false);
-				segment = gp;
-			}
-			public void transform(AffineTransform tr)
-			{
-				segment.transform(tr);
-				if(startPoint != null)
-					tr.transform(startPoint,startPoint);
-			}
-
-			public void generalappend(Shape s,bool connect)
-			{
-				segment.append(s,connect);
-			}
-
-			public void append(PathIterator s)
-			{
-				nonTrackable = true;
-				NativeObject.append(s,false);
-				//???
-				bLastWasArc = false;
-			}
-
-			public void append(GeneralPath s, bool connect)
-			{
-				//REVIEW
-				isFirstAdd = false;
-				NativeObject.append(s,connect);
-				//endPoint= s.getCurrentPoint();
-				bLastWasArc = false;
-			}
-			
-			public Point2D LastPoint
-			{
-				get
-				{
-						return NativeObject.getCurrentPoint();
-				}
-			}
-			public Point2D FirstPoint
-			{
-				get
-				{
-					return startPoint;
-				}
-				set
-				{
-					startPoint = value;
-					isFirstAdd = false;
-				}
-			}
-
-			public void append(Shape s)
-			{
-				throw new NotSupportedException("Add support for this shape explicitly");
-			}
-
-			public void append(Line2D s)
-			{
-				bool append = true;
-				Point2D startPoint = s.getP1();
-				if(startPoint.equals(segment.getCurrentPoint()))
-					append = true;
-//				endPoint = s.getP2();
-				if(isFirstAdd)
-					this.startPoint = startPoint;
-				isFirstAdd = false;
-				generalappend(s,append);
-			}
-			public void append(Rectangle2D s)
-			{
-				bool append = true;
-				Point2D startPoint = new Point2D.Double(s.getX(),s.getY());
-				if(startPoint.equals(segment.getCurrentPoint()))
-					append = true;
-//				endPoint   = new Point2D.Double(s.getMaxX(),s.getMaxY());
-				if(isFirstAdd)
-					this.startPoint = startPoint;
-				isFirstAdd = false;
-				generalappend(s,append);
-			}
-			public void append(Arc2D s)
-			{
-				bool append = true;
-				Point2D startPoint = s.getStartPoint();
-				if(startPoint.equals(segment.getCurrentPoint()))
-					append = true;
-//				endPoint = s.getEndPoint();
-				if(isFirstAdd)
-					this.startPoint = startPoint;				
-				isFirstAdd = false;
-				generalappend(s,append);
-			}
-			public void append(Ellipse2D s)
-			{
-				//REVIEW
-				isFirstAdd = true;
-				generalappend(s,false);
-			}
-			public void append(CubicCurve2D s)
-			{
-				bool append = true;
-				Point2D startPoint = s.getP1();
-				if(startPoint.equals(segment.getCurrentPoint()))
-					append = true;
-//				endPoint = s.getP2();
-				if(isFirstAdd)
-					this.startPoint = startPoint;				
-				isFirstAdd = false;
-				generalappend(s,append);
-			}
-			public void append(QuadCurve2D s)
-			{
-				bool append = true;
-				Point2D startPoint = s.getP1();
-				if(startPoint.equals(segment.getCurrentPoint()))
-					append = true;
-//				endPoint = s.getP2();				
-				if(isFirstAdd)
-					this.startPoint = startPoint;				
-				isFirstAdd = false;
-				generalappend(s,append);
-			}
-			public GeneralPath NativeObject
-			{
-				get
-				{
-					return segment;
-				}
-			}
-			public void close()
-			{
-				if(startPoint == null)
-					NativeObject.closePath();
-				else
-					generalappend(new Line2D.Float(NativeObject.getCurrentPoint(),startPoint),true);
-				startPoint = null;
-				isFirstAdd = true;
-			}
-		}
-#endif 
 		enum JPI {
 			SEG_MOVETO = 0,
 			SEG_LINETO = 1,
@@ -187,7 +17,7 @@ namespace System.Drawing.Drawing2D
 		}
 
 		#region Vars
-//		internal PathData _pathData;		
+
 		bool _isNewFigure = true;
 		
 		#endregion
@@ -556,8 +386,8 @@ namespace System.Drawing.Drawing2D
 		{
 			if(matrix == null)
 				return;
-			AffineTransform tr = new AffineTransform(matrix.Elements[0],matrix.Elements[1],matrix.Elements[2],matrix.Elements[3],matrix.Elements[4],matrix.Elements[5]);
-			NativeObject.transform(tr);
+
+			NativeObject.transform(matrix.NativeObject);
 		}
 		#endregion
 
@@ -599,10 +429,10 @@ namespace System.Drawing.Drawing2D
                 
 		public bool IsVisible (float x, float y, Graphics graphics)
 		{
-			bool gCont = true;
-			if(graphics != null)
-				gCont = graphics.IsVisible(x,y);
-			return NativeObject.contains(x,y) && gCont;
+			if (graphics != null && !graphics.IsVisible(x,y))
+				return false;
+
+			return NativeObject.contains(x,y);
 		}
 		#endregion
         
@@ -644,246 +474,6 @@ namespace System.Drawing.Drawing2D
 		//the second one - to draw curve ourself with all interpolation staff
 		//here. I preffer the first one because we could utilize java antialiasing and
 		//flattening features, otherwise curves will be more strict but less cool
-#if !AUTONOMOUS_CURVE_DRAW		
-		internal void AppendCurve (GeneralPath path, Point [] points,float tension)
-		{
-			int i, length = points.Length;
-			
-
-			if (points.Length <= 0)
-				return;
-
-			float coefficient = tension / 3.0f;			
-
-			PointF []tangents = new PointF[points.Length];
-
-			/* initialize everything to zero to begin with */
-			for (i = 0; i < length; i++) 
-			{
-				tangents [i].X = 0;
-				tangents [i].Y = 0;
-			}
-
-			if (length > 2)
-			{
-				for (i = 1; i < length - 1; i++) 
-				{
-					int r = i + 1;
-					int s = i - 1;
-
-					if (r >= length) r = length - 1;
-					if (s < 0) s = 0;
-
-					tangents [i].X += (coefficient * ((float)points [r].X - (float)points [s].X));
-					tangents [i].Y += (coefficient * ((float)points [r].Y - (float)points [s].Y));
-				}
-			}			
-			length = points.Length - 1;
-			for (i = 1; i <= length; i++) 
-			{
-
-				int j = i - 1;
-				int k = (i < points.Length) ? i : 0;
-
-				double x0 = (double)points [j].X;
-				double y0 = (double)points [j].Y;
-
-				double x1 = (double)points [j].X + tangents [j].X;
-				double y1 = (double)points [j].Y + tangents [j].Y;
-
-				double x2 = (double)points [k].X - tangents [k].X;
-				double y2 = (double)points [k].Y - tangents [k].Y;
-
-				double x3 = (double)points [k].X;
-				double y3 = (double)points [k].Y;
-				CubicCurve2D cc = new CubicCurve2D.Double(x0,y0,x1,y1,x2,y2,x3,y3);
-				if(i==1)
-					path.append(cc,false);
-				else
-					path.append(cc,true);
-			}
-		}
-
-		internal void AppendCurve (GeneralPath path, PointF [] points,float tension)
-		{
-			int i, length = points.Length;
-
-			if (points.Length <= 0)
-				return;
-
-			float coefficient = tension / 3.0f;			
-
-			PointF []tangents = new PointF[points.Length];
-
-			/* initialize everything to zero to begin with */
-			for (i = 0; i < length; i++) 
-			{
-				tangents [i].X = 0;
-				tangents [i].Y = 0;
-			}
-
-			if (length > 2)
-			{
-				for (i = 1; i < length - 1; i++) 
-				{
-					int r = i + 1;
-					int s = i - 1;
-
-					if (r >= length) r = length - 1;
-					if (s < 0) s = 0;
-
-					tangents [i].X += (coefficient * (points [r].X - points [s].X));
-					tangents [i].Y += (coefficient * (points [r].Y - points [s].Y));
-				}
-			}
-			length = points.Length - 1;
-			for (i = 1; i <= length; i++) 
-			{
-
-				int j = i - 1;
-				int k = (i < points.Length) ? i : 0;
-
-				double x0 = (double)points [j].X;
-				double y0 = (double)points [j].Y;
-
-				double x1 = (double)points [j].X + tangents [j].X;
-				double y1 = (double)points [j].Y + tangents [j].Y;
-
-				double x2 = (double)points [k].X - tangents [k].X;
-				double y2 = (double)points [k].Y - tangents [k].Y;
-
-				double x3 = (double)points [k].X;
-				double y3 = (double)points [k].Y;
-				CubicCurve2D cc = new CubicCurve2D.Double(x0,y0,x1,y1,x2,y2,x3,y3);
-				if(i==1)
-					path.append(cc,false);
-				else
-					path.append(cc,true);
-			}
-		}
-
-#else
-		internal static void InternalAddCurve(GeneralPath path,PointF []pts,float tension)		
-		{
-			float jtension = tension/3;
-			int segLen = 13;
-			int n = pts.Length;
-			int n1 = n + 1;
-			int n2 = n + 2;
-			float []Px = new float[n2];
-			float []Py = new float[n2];
-			for(int i = 0; i < n; i++)
-			{
-				Px[i + 1] = pts[i].X;
-				Py[i + 1] = pts[i].Y;
-			}
-
-			float t = 0.0F;
-			float []B0 = new float[segLen];
-			float []B1 = new float[segLen];
-			float []B2 = new float[segLen];
-			float []B3 = new float[segLen];
-			for(int i = 0; i < segLen; i++)
-			{
-				float t1 = (float)1 - t;
-				float t12 = t1 * t1;
-				float t2 = t * t;
-				B0[i] = t1 * t12;
-				B1[i] = (float)3 * t * t12;
-				B2[i] = (float)3 * t2 * t1;
-				B3[i] = t * t2;
-				t = (float)((double)t + 0.080000000000000002D);
-				//t = (float)((double)t + 0.040000000000000001D);
-			}
-
-			float Xo = Px[1];
-			float Yo = Py[1];
-			float Xold = Xo;
-			float Yold = Yo;
-			Px[0] = Px[1] - (Px[2] - Px[1]);
-			Py[0] = Py[1] - (Py[2] - Py[1]);
-			Px[n1] = Px[n] + (Px[n] - Px[n - 1]);
-			Py[n1] = Py[n] + (Py[n] - Py[n - 1]);
-			path.moveTo(Xold, Yold);
-			for(int i = 1; i < n; i++)
-			{
-				for(int k = 0; k < segLen; k++)
-				{
-					float X = (float)Px[i] * B0[k] + ((float)Px[i] + (float)(Px[i + 1] - Px[i - 1]) * jtension) * B1[k] + ((float)Px[i + 1] - (float)(Px[i + 2] - Px[i]) * jtension) * B2[k] + (float)Px[i + 1] * B3[k];
-					float Y = (float)Py[i] * B0[k] + ((float)Py[i] + (float)(Py[i + 1] - Py[i - 1]) * jtension) * B1[k] + ((float)Py[i + 1] - (float)(Py[i + 2] - Py[i]) * jtension) * B2[k] + (float)Py[i + 1] * B3[k];
-					path.lineTo(X, Y);
-				}
-
-			}
-		}
-
-		internal void InternalAddCurve(GeneralPath path,Point []pts,float tension)		
-		{
-			float jtention = tension / 3;
-			int segLen = 13;
-			int n = pts.Length;
-			int n1 = n + 1;
-			int n2 = n + 2;
-			float []Px = new float[n2];
-			float []Py = new float[n2];
-			for(int i = 0; i < n; i++)
-			{
-				Px[i + 1] = (float)pts[i].X;
-				Py[i + 1] = (float)pts[i].Y;
-			}
-
-			float t = 0.0F;
-			float []B0 = new float[segLen];
-			float []B1 = new float[segLen];
-			float []B2 = new float[segLen];
-			float []B3 = new float[segLen];
-			for(int i = 0; i < segLen; i++)
-			{
-				float t1 = (float)1 - t;
-				float t12 = t1 * t1;
-				float t2 = t * t;
-				B0[i] = t1 * t12;
-				B1[i] = (float)3 * t * t12;
-				B2[i] = (float)3 * t2 * t1;
-				B3[i] = t * t2;
-				t = (float)((double)t + 0.080000000000000002D);
-				//t = (float)((double)t + 0.040000000000000001D);
-			}
-
-			float Xo = Px[1];
-			float Yo = Py[1];
-			float Xold = Xo;
-			float Yold = Yo;
-			Px[0] = Px[1] - (Px[2] - Px[1]);
-			Py[0] = Py[1] - (Py[2] - Py[1]);
-			Px[n1] = Px[n] + (Px[n] - Px[n - 1]);
-			Py[n1] = Py[n] + (Py[n] - Py[n - 1]);
-			path.moveTo(Xold, Yold);
-			for(int i = 1; i < n; i++)
-			{
-				float x = (float)Px[i];
-				float y = (float)Py[i];
-
-				float x1 = (float)Px[i+1];
-				float y1 = (float)Py[i+1];
-				float x2 = (float)Px[i+1];
-				float y2 = (float)Py[i+1];
-
-				float xe = (float)Px[i+1];
-				float ye = (float)Py[i+1];
-
-
-//				for(int k = 0; k < segLen; k++)
-//				{
-//					float X = (float)Px[i] * B0[k] + ((float)Px[i] + (float)(Px[i + 1] - Px[i - 1]) * jtention) * B1[k] + ((float)Px[i + 1] - (float)(Px[i + 2] - Px[i]) * jtention) * B2[k] + (float)Px[i + 1] * B3[k];
-//					float Y = (float)Py[i] * B0[k] + ((float)Py[i] + (float)(Py[i + 1] - Py[i - 1]) * jtention) * B1[k] + ((float)Py[i + 1] - (float)(Py[i + 2] - Py[i]) * jtention) * B2[k] + (float)Py[i + 1] * B3[k];
-//					path.lineTo(X, Y);
-//				}
-
-			}
-		}
-#endif
-
 		public void AddCurve (Point [] points)
 		{
 			AddCurve(points,0.3F);
@@ -896,32 +486,107 @@ namespace System.Drawing.Drawing2D
                 
 		public void AddCurve (Point [] points, float tension)
 		{
-			//REVIEW
-			//maybe last point of current figure should be prepended to array
-			GeneralPath gp = new GeneralPath();
-			AppendCurve(gp,points,tension);			
-			NativeObject.append(gp,!_isNewFigure);
-			_isNewFigure = false;
-//			LastFigure.append(new FlatteningPathIterator(gp.getPathIterator(null),1.0)/*,false*/);
+			AddCurve(points, 0, points.Length-1, tension);
 		}
                 
 		public void AddCurve (PointF [] points, float tension)
 		{
-			GeneralPath gp = new GeneralPath();
-			AppendCurve(gp,points,tension);
-			NativeObject.append(gp,!_isNewFigure);
-			_isNewFigure = false;
-//			LastFigure.append(new FlatteningPathIterator(gp.getPathIterator(null),1.0)/*,false*/);
+			AddCurve(points, 0, points.Length-1, tension);
 		}
 
 		public void AddCurve (Point [] points, int offset, int numberOfSegments, float tension)
 		{
-			throw new NotImplementedException ();
+			int nPoints = numberOfSegments + 1;
+			int length = nPoints*2 + 4;
+			float[] pts = new float[length];
+
+			int lastP = offset + nPoints;
+			if (lastP == points.Length) {
+				lastP--;
+				pts[--length] = points[lastP].Y;
+				pts[--length] = points[lastP].X;
+			}
+
+			for (; length > 0 && lastP >= 0; lastP--) {
+				pts[--length] = points[lastP].Y;
+				pts[--length] = points[lastP].X;
+			}
+
+			if (length > 0) {
+				pts[1] = points[0].Y;
+				pts[0] = points[0].X;
+			}
+
+			AddCurve(pts, !_isNewFigure, tension);
+			_isNewFigure = false;
 		}
                 
 		public void AddCurve (PointF [] points, int offset, int numberOfSegments, float tension)
 		{
-			throw new NotImplementedException ();
+			int nPoints = numberOfSegments + 1;
+			int length = nPoints*2 + 4;
+			float[] pts = new float[length];
+
+			int lastP = offset + nPoints;
+			if (lastP == points.Length) {
+				lastP--;
+				pts[--length] = points[lastP].Y;
+				pts[--length] = points[lastP].X;
+			}
+
+			for (; length > 0 && lastP >= 0; lastP--) {
+				pts[--length] = points[lastP].Y;
+				pts[--length] = points[lastP].X;
+			}
+
+			if (length > 0) {
+				pts[1] = points[0].Y;
+				pts[0] = points[0].X;
+			}
+
+			AddCurve(pts, !_isNewFigure, tension);
+			_isNewFigure = false;
+		}
+
+		/// <summary>
+		/// Based on http://pubpages.unh.edu/~cs770/a5/cardinal.html
+		/// </summary>
+		/// <param name="pts">point array (x1,y1,x2,y2 ...).
+		/// The first and last points considered only for calculations, but are not added.</param>
+		void AddCurve(float[] pts, bool connect, float tension) {
+			tension /= 3f; //looks like a good pick
+
+			if (connect)
+				NativeObject.lineTo(pts[2],pts[3]);
+			else
+				NativeObject.moveTo(pts[2],pts[3]);
+
+			float dx = pts[4] - pts[0];
+			float dy = pts[5] - pts[1];
+
+			float sx = pts[2] + tension*dx;
+			float sy = pts[3] + tension*dy;
+
+			for (int offset = 2, total = pts.Length-4; offset < total; offset += 2) {
+				int cur_offset = offset;
+				int pX = cur_offset++;
+				int pY = cur_offset++;
+				int X = cur_offset++;
+				int Y = cur_offset++;
+				int nX = cur_offset++;
+				int nY = cur_offset++;
+
+				dx = pts[nX] - pts[pX];
+				dy = pts[nY] - pts[pY];
+
+				float rx = pts[X] - tension*dx;
+				float ry = pts[Y] - tension*dy;
+				
+				NativeObject.curveTo(sx, sy, rx, ry, pts[X], pts[Y]);
+
+				sx = pts[X] + tension*dx;
+				sy = pts[Y] + tension*dy;
+			}
 		}
 		#endregion
 

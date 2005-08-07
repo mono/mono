@@ -1,3 +1,7 @@
+2005-08-07 Konstantin Triger <kostat@mainsoft.com>
+
+	* GraphicsPath.cs: Fix AddCurve implementation and cosmetic changes.
+
 2005-08-07 Andrew Skiba <andrews@mainsoft.com>
 
 	* GraphicsPath.cs: BasicShape as a base class and cosmetic changes
