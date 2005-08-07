@@ -765,27 +765,28 @@ namespace Npgsql
                 NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetClearCommandText");
 
             Boolean addProcedureParenthesis = false;    // Do not add procedure parenthesis by default.
-            
+
             Boolean functionReturnsRecord = false;      // Functions don't return record by default.
-            
-            Boolean functionReturnsRefcursor = false;   // Functions don't return refcursor by default.   
-            
+
+            Boolean functionReturnsRefcursor = false;   // Functions don't return refcursor by default.
+
             String result = text;
 
             if (type == CommandType.StoredProcedure)
             {
-                
-                functionReturnsRecord = CheckFunctionReturnRecord();
-                
-                functionReturnsRefcursor = CheckFunctionReturnRefcursor();
-                
+
+                if (Parameters.Count > 0)
+                    functionReturnsRecord = CheckFunctionReturn("record");
+
+                functionReturnsRefcursor = CheckFunctionReturn("refcursor");
+
                 // Check if just procedure name was passed. If so, does not replace parameter names and just pass parameter values in order they were added in parameters collection.
-                if (!result.Trim().EndsWith(")"))  
+                if (!result.Trim().EndsWith(")"))
                 {
                     addProcedureParenthesis = true;
                     result += "(";
                 }
-                
+
                 if (Connector.SupportsPrepare)
                     result = "select * from " + result; // This syntax is only available in 7.3+ as well SupportsPrepare.
                 else
@@ -798,162 +799,131 @@ namespace Npgsql
             {
                 if (addProcedureParenthesis)
                     result += ")";
-                
-                
-                // If function returns ref cursor just process refcursor-result function call 
+
+
+                // If function returns ref cursor just process refcursor-result function call
                 // and return command which will be used to return data from refcursor.
-                
+
                 if (functionReturnsRefcursor)
                     return ProcessRefcursorFunctionReturn(result);
-                
-                        
+
+
                 if (functionReturnsRecord)
                     result = AddFunctionReturnsRecordSupport(result);
-                
-                
-                result = AddSingleRowBehaviorSupport(result);
-                                           
-                return result;
-            }   
 
-             
+
+                result = AddSingleRowBehaviorSupport(result);
+
+                return result;
+            }
+
+
             // Get parameters in query string to translate them to their actual values.
-             
-            // This regular expression gets all the parameters in format :param or @param 
+
+            // This regular expression gets all the parameters in format :param or @param
             // and everythingelse.
             // This is only needed if query string has parameters. Else, just append the
             // parameter values in order they were put in parameter collection.
-            
-            
+
+
             // If parenthesis don't need to be added, they were added by user with parameter names. Replace them.
             if (!addProcedureParenthesis)
             {
-            
+
                 Regex a = new Regex(@"(:[\w]*)|(@[\w]*)|(.)", RegexOptions.Singleline);
-                
+
                 //CheckParameters();
-    
+
                 StringBuilder sb = new StringBuilder();
-                
+
                 for ( Match m = a.Match(result); m.Success; m = m.NextMatch() )
                 {
                     String s = m.Groups[0].ToString();
-                    
+
                     if ((s.StartsWith(":") ||
                          s.StartsWith("@")) &&
                          Parameters.Contains(s))
                     {
                         // It's a parameter. Lets handle it.
-                    
+
                         NpgsqlParameter p = Parameters[s];
                         if ((p.Direction == ParameterDirection.Input) ||
                              (p.Direction == ParameterDirection.InputOutput))
                         {
-                            
+
                             // FIXME DEBUG ONLY
                             // adding the '::<datatype>' on the end of a parameter is a highly
                             // questionable practice, but it is great for debugging!
                             sb.Append(p.TypeInfo.ConvertToBackend(p.Value, false));
-                            
+
                             // Only add data type info if we are calling an stored procedure.
-                            
+
                             if (type == CommandType.StoredProcedure)
                             {
                                 sb.Append("::");
                                 sb.Append(p.TypeInfo.Name);
-                                
+
                                 if (p.TypeInfo.UseSize && (p.Size > 0))
                                     sb.Append("(").Append(p.Size).Append(")");
                             }
                         }
-                            
-                    }   
-                    else 
+
+                    }
+                    else
                         sb.Append(s);
-                    
+
                 }
-                
+
                 result = sb.ToString();
             }
-                
-                
+
+
             else
             {
-                                
+
                 for (Int32 i = 0; i < parameters.Count; i++)
                 {
                     NpgsqlParameter Param = parameters[i];
-    
-                    
+
+
                     if ((Param.Direction == ParameterDirection.Input) ||
                          (Param.Direction == ParameterDirection.InputOutput))
-                    
-                        
+
+
                         result += Param.TypeInfo.ConvertToBackend(Param.Value, false) + "::" + Param.TypeInfo.Name + ",";
                 }
-            
-            
+
+
                 // Remove a trailing comma added from parameter handling above. If any.
                 // Maybe there are only output parameters. If so, there will be no comma.
                 if (result.EndsWith(","))
                     result = result.Remove(result.Length - 1, 1);
-                
+
                 result += ")";
             }
 
             if (functionReturnsRecord)
                 result = AddFunctionReturnsRecordSupport(result);
-            
-            // If function returns ref cursor just process refcursor-result function call 
+
+            // If function returns ref cursor just process refcursor-result function call
             // and return command which will be used to return data from refcursor.
-                
+
             if (functionReturnsRefcursor)
                 return ProcessRefcursorFunctionReturn(result);
-                
-                
+
+
             return AddSingleRowBehaviorSupport(result);
         }
         
         
         
-        private Boolean CheckFunctionReturnRecord()
+        private Boolean CheckFunctionReturn(String ReturnType)
         {
-        
-            if (Parameters.Count == 0)
-                return false;
-                
-            String returnRecordQuery = "select count(*) > 0 from pg_proc where prorettype = ( select oid from pg_type where typname = 'record' ) and proargtypes='{0}' and proname='{1}';";
-            
+
+            String returnRecordQuery = "select count(*) > 0 from pg_proc where prorettype = ( select oid from pg_type where typname = :typename ) and proargtypes=:proargtypes and proname=:proname;";
+
             StringBuilder parameterTypes = new StringBuilder("");
-            
-            foreach(NpgsqlParameter p in Parameters)
-            {
-                if ((p.Direction == ParameterDirection.Input) ||
-                (p.Direction == ParameterDirection.InputOutput))
-                {
-                    parameterTypes.Append(Connection.Connector.OidToNameMapping[p.TypeInfo.Name].OID + " ");
-                }
-            }
-        
-                
-            NpgsqlCommand c = new NpgsqlCommand(String.Format(returnRecordQuery, parameterTypes.ToString(), CommandText), Connection);
-            
-            Boolean ret = (Boolean) c.ExecuteScalar();
-            
-            // reset any responses just before getting new ones
-            connector.Mediator.ResetResponses();
-            return ret;
-            
-        
-        }
-        
-        private Boolean CheckFunctionReturnRefcursor()
-        {
-            
-            String returnRecordQuery = "select count(*) > 0 from pg_proc where prorettype = ( select oid from pg_type where typname = 'refcursor' ) and proargtypes='{0}' and proname='{1}';";
-            
-            StringBuilder parameterTypes = new StringBuilder("");
-            
+
             foreach(NpgsqlParameter p in Parameters)
             {
                 if ((p.Direction == ParameterDirection.Input) ||
@@ -962,17 +932,26 @@ namespace Npgsql
                     parameterTypes.Append(Connection.Connector.OidToNameMapping[p.TypeInfo.Name].OID + " ");
                 }
             }
-        
-                
-            NpgsqlCommand c = new NpgsqlCommand(String.Format(returnRecordQuery, parameterTypes.ToString(), CommandText), Connection);
+
+
+            NpgsqlCommand c = new NpgsqlCommand(returnRecordQuery, Connection);
             
+            c.Parameters.Add(new NpgsqlParameter("typename", NpgsqlDbType.Text));
+            c.Parameters.Add(new NpgsqlParameter("proargtypes", NpgsqlDbType.Text));
+            c.Parameters.Add(new NpgsqlParameter("proname", NpgsqlDbType.Text));
+            
+            c.Parameters[0].Value = ReturnType;
+            c.Parameters[1].Value = parameterTypes.ToString();
+            c.Parameters[2].Value = CommandText;
+            
+
             Boolean ret = (Boolean) c.ExecuteScalar();
-            
+
             // reset any responses just before getting new ones
             connector.Mediator.ResetResponses();
             return ret;
-            
-        
+
+
         }
         
         
