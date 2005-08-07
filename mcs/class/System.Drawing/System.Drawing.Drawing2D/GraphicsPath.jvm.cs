@@ -6,16 +6,7 @@ using java.awt;
 
 namespace System.Drawing.Drawing2D
 {
-	public enum JPI
-	{
-		SEG_MOVETO = 0,
-		SEG_LINETO = 1,
-		SEG_QUADTO = 2,
-		SEG_CUBICTO = 3,
-		SEG_CLOSE = 4
-	}
-
-	public sealed class GraphicsPath : MarshalByRefObject, ICloneable, IDisposable 
+	public sealed class GraphicsPath : BasicShape, ICloneable
 	{
 #if OLDCODE
 		internal class SegmentWrapper
@@ -187,11 +178,17 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 #endif 
-		#region Vars
+		enum JPI {
+			SEG_MOVETO = 0,
+			SEG_LINETO = 1,
+			SEG_QUADTO = 2,
+			SEG_CUBICTO = 3,
+			SEG_CLOSE = 4
+		}
 
-		GeneralPath _nativePath = null;
+		#region Vars
 //		internal PathData _pathData;		
-		bool isNewFigure = true;
+		bool _isNewFigure = true;
 		
 		#endregion
 
@@ -200,13 +197,12 @@ namespace System.Drawing.Drawing2D
 		{
 			get 
 			{
-				return _nativePath;
+				return (GeneralPath)Shape;
 			}
 		}
 
-		GraphicsPath (GeneralPath ptr)
+		GraphicsPath (GeneralPath ptr) : base(ptr)
 		{
-			_nativePath = ptr;
 		}
 		#endregion
 
@@ -216,39 +212,36 @@ namespace System.Drawing.Drawing2D
 		{
 		}
                 
-		public GraphicsPath (FillMode fillMode)
+		public GraphicsPath (FillMode fillMode) : this(new GeneralPath())
 		{
-			_nativePath = new GeneralPath();
-			if(fillMode == FillMode.Alternate)
-				_nativePath.setWindingRule(GeneralPath.WIND_NON_ZERO);
-			else
-				_nativePath.setWindingRule(GeneralPath.WIND_EVEN_ODD);
+			NativeObject.setWindingRule(
+				fillMode == FillMode.Alternate ? 
+				GeneralPath.WIND_NON_ZERO : GeneralPath.WIND_EVEN_ODD);
 		}
                 
-		public GraphicsPath (Point[] pts, byte[] types)
+		public GraphicsPath (Point[] pts, byte[] types) : this(null)
 		{
 			throw new NotImplementedException();
 		}
                 
-		public GraphicsPath (PointF[] pts, byte[] types)
+		public GraphicsPath (PointF[] pts, byte[] types) : this(null)
 		{
 			throw new NotImplementedException();
 		}
                 
-		public GraphicsPath (Point[] pts, byte[] types, FillMode fillMode)
+		public GraphicsPath (Point[] pts, byte[] types, FillMode fillMode) : this(null)
 		{
 			throw new NotImplementedException();		
 		}
 
-		public GraphicsPath (PointF[] pts, byte[] types, FillMode fillMode)
+		public GraphicsPath (PointF[] pts, byte[] types, FillMode fillMode) : this(null)
 		{
 			throw new NotImplementedException();
 		}
 	
-		GraphicsPath (GraphicsPath gp)
+		GraphicsPath (GeneralPath path, bool isNewFigure) : this(path)
 		{
-			_nativePath = (GeneralPath)gp.NativeObject.clone();
-			_nativePath.setWindingRule(gp.NativeObject.getWindingRule());
+			_isNewFigure = isNewFigure;
 		}
 
 		#endregion
@@ -256,17 +249,7 @@ namespace System.Drawing.Drawing2D
 		#region Clone
 		public object Clone ()
 		{
-			return new GraphicsPath (this);
-		}
-		#endregion
-
-		#region Dispose
-		public void Dispose ()
-		{
-		}
-		
-		void Dispose (bool disposing)
-		{		
+			return new GraphicsPath ((GeneralPath)NativeObject.clone(), _isNewFigure);
 		}
 		#endregion
 
@@ -345,8 +328,8 @@ namespace System.Drawing.Drawing2D
 		public void AddArc (float x, float y, float width, float height, float start_angle, float sweep_angle)
 		{
 			Arc2D a = new Arc2D.Float(x, y,width,height,-start_angle,-sweep_angle,0/*OPEN*/);
-			NativeObject.append(a,!isNewFigure);
-			isNewFigure = false;
+			NativeObject.append(a,!_isNewFigure);
+			_isNewFigure = false;
 			//LastFigure.append(a); 
 		}
 
@@ -371,8 +354,8 @@ namespace System.Drawing.Drawing2D
 		public void AddBezier (float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 		{
 			CubicCurve2D cc = new CubicCurve2D.Float(x1,y1,x2,y2,x3,y3,x4,y4);
-			NativeObject.append(cc,!isNewFigure);
-			isNewFigure = false;
+			NativeObject.append(cc,!_isNewFigure);
+			_isNewFigure = false;
 		}
 
 		public void AddBeziers (Point [] pts)
@@ -391,7 +374,7 @@ namespace System.Drawing.Drawing2D
 		{
 			Ellipse2D e = new Ellipse2D.Float(x,y,width,height);
 			NativeObject.append(e,false);
-			isNewFigure = true;
+			_isNewFigure = true;
 		}
 
 		public void AddEllipse (RectangleF r)
@@ -414,8 +397,8 @@ namespace System.Drawing.Drawing2D
 		public void AddLine (float x1, float y1, float x2, float y2)
 		{
 			Line2D l = new Line2D.Float(x1,y1,x2,y2);
-			NativeObject.append(l,!isNewFigure);
-			isNewFigure = false;
+			NativeObject.append(l,!_isNewFigure);
+			_isNewFigure = false;
 		}
 
 		public void AddLine (Point a, Point b)
@@ -451,7 +434,7 @@ namespace System.Drawing.Drawing2D
 		{
 			Arc2D a = new Arc2D.Float(x,y,width,height,-startAngle,-sweepAngle,2/*PIE*/);
 			NativeObject.append(a,false);
-			isNewFigure = true;
+			_isNewFigure = true;
 		}
 
 		public void AddPie (Rectangle rect, float startAngle, float sweepAngle)
@@ -476,7 +459,7 @@ namespace System.Drawing.Drawing2D
 				NativeObject.lineTo((float)points[i].X,(float)points[i].Y);
 			}
 			NativeObject.closePath();
-			isNewFigure = true;
+			_isNewFigure = true;
 		}
 
 		public void AddPolygon (PointF [] points)
@@ -489,7 +472,7 @@ namespace System.Drawing.Drawing2D
 				NativeObject.lineTo(points[i].X,points[i].Y);
 			}
 			NativeObject.closePath();
-			isNewFigure = true;
+			_isNewFigure = true;
 		}
 		#endregion
 
@@ -498,7 +481,7 @@ namespace System.Drawing.Drawing2D
 		{
 			Rectangle2D r = new Rectangle2D.Float(x,y,w,h);
 			NativeObject.append(r,false);
-			isNewFigure = true;
+			_isNewFigure = true;
 		}
 		public void AddRectangle (RectangleF rect)
 		{
@@ -527,7 +510,7 @@ namespace System.Drawing.Drawing2D
 		public void AddPath (GraphicsPath addingPath, bool connect)
 		{
 			NativeObject.append(addingPath.NativeObject,connect);
-			isNewFigure = false;
+			_isNewFigure = false;
 		}
 		#endregion
 
@@ -542,24 +525,26 @@ namespace System.Drawing.Drawing2D
 		#region Reset
 		public void Reset ()
 		{
-			_nativePath.reset();
+			NativeObject.reset();
+			_isNewFigure = true;
 		}
 		#endregion
 
 		#region GetBounds
 		public RectangleF GetBounds ()
 		{
-			//TBD: use getBounds2D
-			java.awt.Rectangle rect = NativeObject.getBounds();
+			Rectangle2D rect = NativeObject.getBounds2D();
 			return new RectangleF((float)rect.getX(),(float)rect.getY(),(float)rect.getWidth(),(float)rect.getHeight());
 		}  		
 
 		public RectangleF GetBounds (Matrix matrix)
 		{
-			return GetBounds (matrix, null);
+			Shape shape = matrix != null ? 
+				NativeObject.createTransformedShape(matrix.NativeObject) : NativeObject;
+			Rectangle2D rect = shape.getBounds2D();
+			return new RectangleF((float)rect.getX(),(float)rect.getY(),(float)rect.getWidth(),(float)rect.getHeight());
 		}
 
-		
 		public RectangleF GetBounds (Matrix matrix, Pen pen)
 		{
 			throw new NotImplementedException();
@@ -915,8 +900,8 @@ namespace System.Drawing.Drawing2D
 			//maybe last point of current figure should be prepended to array
 			GeneralPath gp = new GeneralPath();
 			AppendCurve(gp,points,tension);			
-			NativeObject.append(gp,!isNewFigure);
-			isNewFigure = false;
+			NativeObject.append(gp,!_isNewFigure);
+			_isNewFigure = false;
 //			LastFigure.append(new FlatteningPathIterator(gp.getPathIterator(null),1.0)/*,false*/);
 		}
                 
@@ -924,8 +909,8 @@ namespace System.Drawing.Drawing2D
 		{
 			GeneralPath gp = new GeneralPath();
 			AppendCurve(gp,points,tension);
-			NativeObject.append(gp,!isNewFigure);
-			isNewFigure = false;
+			NativeObject.append(gp,!_isNewFigure);
+			_isNewFigure = false;
 //			LastFigure.append(new FlatteningPathIterator(gp.getPathIterator(null),1.0)/*,false*/);
 		}
 
@@ -1009,8 +994,8 @@ namespace System.Drawing.Drawing2D
 				pi.next();
 			}
 
-			_nativePath = p;
-			//isNewFigure = (lastSeg == PathIterator.SEG_CLOSE);
+			Shape = p;
+			//_isNewFigure = (lastSeg == PathIterator.SEG_CLOSE);
 		}  	
                 
 		public void CloseFigure()
@@ -1038,10 +1023,10 @@ namespace System.Drawing.Drawing2D
 				tr = matrix.NativeObject;
 
 			//REVIEW. Perfomance reasons.
-			PathIterator pi = _nativePath.getPathIterator(tr,flatness);
+			PathIterator pi = NativeObject.getPathIterator(tr,flatness);
 			GeneralPath newPath = new GeneralPath();
 			newPath.append(pi,false);
-			_nativePath = newPath;
+			Shape = newPath;
 		}
 		#endregion
         
@@ -1097,7 +1082,7 @@ namespace System.Drawing.Drawing2D
 		#region StartFigure
 		public void StartFigure()
 		{
-			isNewFigure = true;
+			_isNewFigure = true;
 		}
 		#endregion
   		        
