@@ -15,6 +15,7 @@
 				<Reference Name="J2SE.Helpers" AssemblyName="J2SE.Helpers" HintPath="..\..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\J2SE.Helpers.dll" Private="False"/>
 				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\..\..\..\..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Xml.dll" Private="False"/>
 				<Reference Name="Exocortex.DSP.v1.J2EE" Project="{8D602CEF-DC13-48F1-AF0C-F6201A634FD2}" Package="{83B010C7-76FC-4FAD-A26C-00D7EFE60256}"/>
+				<Reference Name="nunit.framework" AssemblyName="nunit.framework" HintPath="..\..\..\..\..\..\..\..\Program Files\Mainsoft\Visual MainWin for J2EE\jgac\vmw4j2ee_110\nunit.framework.dll" Private="False"/>
 			</References>
 		</Build>
 		<Files>

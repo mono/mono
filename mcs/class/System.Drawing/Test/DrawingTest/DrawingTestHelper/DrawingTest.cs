@@ -21,6 +21,8 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 #endif
 
+using NUnit.Framework;
+
 namespace DrawingTestHelper
 {
 	#region Results serialization classes
@@ -158,6 +160,10 @@ namespace DrawingTestHelper
 	/// Summary description for DrawingTest.
 	/// </summary>
 	public abstract class DrawingTest {
+
+		public const float DEFAULT_FLOAT_TOLERANCE = 1e-5f; 
+		public const int DEFAULT_IMAGE_TOLERANCE = 10; 
+
 		Graphics _graphics;
 		protected Bitmap _bitmap;
 		static string _callingFunction;
@@ -297,14 +303,54 @@ namespace DrawingTestHelper
 			}
 		}
 
+		public static void AssertAlmostEqual (float expected, float actual)
+		{
+			AssertAlmostEqual (expected, actual, DEFAULT_FLOAT_TOLERANCE);
+		}
+		
+		public static void AssertAlmostEqual (float expected, float actual, float tolerance)
+		{
+			string msg = String.Format("\nExpected : {0} \nActual : {1}",expected.ToString(),actual.ToString());
+			AssertAlmostEqual (expected, actual, tolerance, msg);
+		}
+
+		private static void AssertAlmostEqual (float expected, float actual, float tolerance, string message)
+		{
+			float error = Math.Abs (expected - actual) / (expected + actual + float.Epsilon);
+			Assert.IsTrue (error < tolerance, message);
+		}
+
+		public static void AssertAlmostEqual (PointF expected, PointF actual)
+		{
+			string msg = String.Format("\nExpected : {0} \n  Actual : {1}",expected.ToString(),actual.ToString());
+			AssertAlmostEqual (expected.X, actual.X, DEFAULT_FLOAT_TOLERANCE, msg);
+			AssertAlmostEqual (expected.Y, actual.Y, DEFAULT_FLOAT_TOLERANCE, msg);
+		}
+
+		public bool Compare () {
+			CheckCounter ();
+			return (CompareToExpectedInternal()*100) < DEFAULT_IMAGE_TOLERANCE;
+		}
+
 		/// <summary>
 		/// Checks that the given bitmap norm is similar to expected
 		/// </summary>
 		/// <param name="tolerance">tolerance in percents (0..100)</param>
 		/// <returns></returns>
+		/// 
 		public bool Compare (double tolerance) {
 			CheckCounter ();
 			return (CompareToExpectedInternal()*100) < tolerance;
+		}
+
+		public void AssertCompare () {
+			CheckCounter ();
+			Assert.IsTrue ((CompareToExpectedInternal () * 100) < DEFAULT_IMAGE_TOLERANCE);
+		}
+
+		public void AssertCompare (double tolerance) {
+			CheckCounter ();
+			Assert.IsTrue ((CompareToExpectedInternal () * 100) < tolerance);
 		}
 		
 		public double CompareToExpected () {
