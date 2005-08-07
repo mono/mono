@@ -105,10 +105,7 @@ namespace System.ComponentModel
 					}
 				}
 
-				//
-				// Is this a good default if we cant find the property?
-				//
-				return DesignerSerializationVisibility.Hidden;
+				return DesignerSerializationVisibility.Visible;
 			}
 		}
 

@@ -179,7 +179,7 @@ namespace System.ComponentModel
                         return ((BrowsableAttribute) attr).Browsable;
                 }
 
-                return false;
+                return true;
             }
         }
 

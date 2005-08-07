@@ -98,7 +98,7 @@ namespace System.ComponentModel
 		
 		DesignerTransaction CreateTransaction (object obj)
 		{
-			Component com = obj as Component;
+			IComponent com = obj as IComponent;
 			if (com == null || com.Site == null) return null;
 			
 			IDesignerHost dh = (IDesignerHost) com.Site.GetService (typeof(IDesignerHost));

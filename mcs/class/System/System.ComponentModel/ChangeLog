@@ -1,3 +1,18 @@
+2005-08-07  Michael Hutchinson <m.j.hutchinson@dur.ac.uk>
+
+	Patch from Michael Hutchinson to make the aspnet editor work. 
+	
+	* ReflectionPropertyDescriptor.cs: Create transactions and raise
+	component change events for all IComponents, not just base
+	implementation 'Component' derivatives.
+
+	* MemberDescriptor.cs: Make members 'Browsable' by default, as per
+	MS spec.
+
+	* PropertyDescriptor.cs: Changed default
+	DesignerSerializationVisibility value to Visible rather than
+	Hidden, as per MS spec.
+
 2005-07-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TypeDescriptor.cs: (GetProperties) throw exception if 'component' is
