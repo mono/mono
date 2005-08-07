@@ -846,13 +846,24 @@ namespace System.Drawing {
 		public void DrawLines (Pen pen, PointF [] points) {
 			if(points.Length < 2)
 				return;
+			
+			java.awt.geom.GeneralPath p = new java.awt.geom.GeneralPath();
 			for(int i = 0;i<points.Length-1;i++)
-				DrawLine(pen,points[i].X,points[i].Y,points[i+1].X,points[i+1].Y);
+				p.lineTo((float)points[i].X, (float)points[i].Y);
+				//DrawLine(pen,points[i].X,points[i].Y,points[i+1].X,points[i+1].Y);
+
+			DrawShape(this, pen, p);
 		}
 
 		public void DrawLines (Pen pen, Point [] points) {
-			for(int i = 0;i<points.Length-1;i++)
-				DrawLine(pen,points[i].X,points[i].Y,points[i+1].X,points[i+1].Y);
+			java.awt.geom.GeneralPath p = new java.awt.geom.GeneralPath();
+
+			p.moveTo((float)points[0].X, points[0].Y);
+			for(int i = 1;i<points.Length;i++)
+				p.lineTo((float)points[i].X, (float)points[i].Y);
+				//DrawLine(pen,points[i].X,points[i].Y,points[i+1].X,points[i+1].Y);
+
+			DrawShape(this, pen, p);
 		}
 		#endregion
 
@@ -896,8 +907,10 @@ namespace System.Drawing {
 				return;
 			java.awt.geom.GeneralPath path = new java.awt.geom.GeneralPath();
 			path.moveTo((float)points[0].X,(float)points[0].Y);
-			for(int i = points.Length - 1; i >= 0; i--)
+			for(int i = points.Length - 1; i > 0; i--)
 				path.lineTo(points[i].X,points[i].Y);
+
+			path.closePath();
 			DrawShape(this,pen,path);
 		}
 
@@ -906,8 +919,10 @@ namespace System.Drawing {
 				return;
 			java.awt.geom.GeneralPath path = new java.awt.geom.GeneralPath();
 			path.moveTo(points[0].X,points[0].Y);
-			for(int i = points.Length - 1; i >= 0; i--)
+			for(int i = points.Length - 1; i > 0; i--)
 				path.lineTo(points[i].X,points[i].Y);
+
+			path.closePath();
 			DrawShape(this,pen,path);
 		}
 		#endregion

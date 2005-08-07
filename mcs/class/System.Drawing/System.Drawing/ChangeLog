@@ -1,3 +1,7 @@
+﻿2005-08-07 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Graphics.jvm.cs: Fixed DrawLines, DrawPolygon
+
 2005-08-03 Andrew Skiba <andrews@mainsoft.com>
 
 	* SolidBrush.jvm.cs: fix a typo
