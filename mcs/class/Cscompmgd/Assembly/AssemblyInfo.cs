@@ -29,22 +29,42 @@
 //
 
 using System;
+#if NET_2_0
+using System.Diagnostics;
+#endif
 using System.Reflection;
+#if NET_2_0
+using System.Resources;
+using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
+#endif
 using System.Runtime.InteropServices;
 
 #if (NET_1_0)
+	[assembly: AssemblyDescription ("Managed interface for C# compiler")]
+	[assembly: AssemblyFileVersion ("7.0.9466.0")]
+	[assembly: AssemblyTitle ("Managed C# Compiler")]
 	[assembly: AssemblyVersion ("7.0.3300.0")]
 #elif (NET_2_0)
-        [assembly: AssemblyVersion("8.0.3600.0")]
+	[assembly: AssemblyDefaultAlias ("cscompmgd.dll")]
+	[assembly: AssemblyDescription ("cscompmgd.dll")]
+	[assembly: AssemblyFileVersion ("8.0.50215.44")]
+	[assembly: AssemblyInformationalVersion ("8.0.50215.44")]
+	[assembly: AssemblyTitle ("cscompmgd.dll")]
+	[assembly: AssemblyVersion ("8.0.3600.0")]
+	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+	[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+	[assembly: NeutralResourcesLanguage ("en-US")]
+	[assembly: ReliabilityContract(Consistency.MayCorruptProcess, Cer.None)]
+	[assembly: SatelliteContractVersion ("8.0.0.0")]
 #elif (NET_1_1)
+	[assembly: AssemblyDescription ("Managed interface for C# compiler")]
+	[assembly: AssemblyFileVersion ("7.10.3052.4")]
+	[assembly: AssemblyTitle ("Managed C# Compiler")]
 	[assembly: AssemblyVersion ("7.0.5000.0")]
 #endif
 
-[assembly: AssemblyTitle ("Managed C# Compiler")]
-[assembly: AssemblyDescription ("Interface for the managed C# compiler")]
-
 [assembly: CLSCompliant (true)]
-[assembly: AssemblyFileVersion ("0.0.0.1")]
 
 [assembly: ComVisible (false)]
 
