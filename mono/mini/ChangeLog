@@ -1,3 +1,7 @@
+2005-08-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Fix
+	ordering of disasm cases. Fixes #74957.
 
 Thu Aug 4 19:47:24 BST 2005 Paolo Molaro <lupus@ximian.com>
 
