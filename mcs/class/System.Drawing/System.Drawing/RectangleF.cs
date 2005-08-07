@@ -101,10 +101,7 @@ namespace System.Drawing
 		
 		public void Inflate (float width, float height)
 		{
-                        x -= width;
-                        y -= height;
-                        width += width * 2;
-                        height += height * 2;                        
+			Inflate (new SizeF (width, height));
 		}
 
 		/// <summary>
@@ -117,7 +114,10 @@ namespace System.Drawing
 		
 		public void Inflate (SizeF sz)
 		{
-			Inflate (sz.Width, sz.Height);
+                        x -= sz.Width;
+                        y -= sz.Height;
+                        width += sz.Width * 2;
+                        height += sz.Height * 2;                        
 		}
 
 		/// <summary>
@@ -132,9 +132,14 @@ namespace System.Drawing
 		public static RectangleF Intersect (RectangleF r1, 
 						    RectangleF r2)
 		{
-			RectangleF r = new RectangleF (r1.X, r1.Y, r1.Width, r1.Height);
-			r.Intersect (r2);
-			return r;
+			if (!r1.IntersectsWith (r2)) 
+				return Empty;
+
+			return FromLTRB (
+				Math.Max (r1.Left, r2.Left),
+				Math.Max (r1.Top, r2.Top),
+				Math.Min (r1.Right, r2.Right),
+				Math.Min (r1.Bottom, r2.Bottom));
 		}
 
 		/// <summary>
@@ -148,17 +153,7 @@ namespace System.Drawing
 		
 		public void Intersect (RectangleF r)
 		{
-			if (!IntersectsWith (r)) {
-                                x = 0;
-                                y = 0;
-                                width = 0;
-                                height = 0;
-			}
-
-			x = Math.Max (Left, r.Left);
-			y = Math.Max (Top, r.Top);
-			width = Math.Min (Right, r.Right) - X;
-			height = Math.Min (Bottom, r.Bottom) - Y;
+			this = RectangleF.Intersect (this, r);
 		}
 
 		/// <summary>

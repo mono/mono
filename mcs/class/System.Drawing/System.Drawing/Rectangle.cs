@@ -157,9 +157,14 @@ namespace System.Drawing
 		
 		public static Rectangle Intersect (Rectangle r1, Rectangle r2)
 		{
-			Rectangle r = new Rectangle (r1.Location, r1.Size);
-			r.Intersect (r2);
-			return r;
+			if (!r1.IntersectsWith (r2))
+				return Empty;
+
+			return Rectangle.FromLTRB (
+				Math.Max (r1.Left, r2.Left),
+				Math.Max (r1.Top, r2.Top),
+				Math.Min (r1.Right, r2.Right),
+				Math.Min (r1.Bottom, r2.Bottom));
 		}
 
 		/// <summary>
@@ -173,17 +178,7 @@ namespace System.Drawing
 		
 		public void Intersect (Rectangle r)
 		{
-			if (!IntersectsWith (r)) {
-				x = 0;
-				y = 0;
-				width = 0;
-				height = 0;
-			}
-
-			x = Math.Max (Left, r.Left);
-			y = Math.Max (Top, r.Top);
-			width = Math.Min (Right, r.Right) - X;
-			height = Math.Min (Bottom, r.Bottom) - Y;
+			this = Rectangle.Intersect (this, r);
 		}
 
 		/// <summary>
