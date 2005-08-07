@@ -66,7 +66,7 @@ namespace System.Drawing
 		public Pen (Color color, float width)			
 		{
 			brush = new SolidBrush(color);
-			nativeObject = new java.awt.BasicStroke(width);
+			nativeObject = new java.awt.BasicStroke(width, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER);
 		}
 
 		public Pen (Brush brush, float width)
@@ -332,7 +332,7 @@ namespace System.Drawing
 		{
 			get 
 			{
-				//TODO
+				//FALLBACK: StartCap, EndCap and DashCap are the same
                 return EndCap;           
 			}
 
@@ -361,18 +361,31 @@ namespace System.Drawing
 
 			set 
 			{
-				int cap;
-				if((value == LineCap.Square) ||
-					(value == LineCap.SquareAnchor))
-					cap = BasicStroke.CAP_SQUARE;
-				else if ((value == LineCap.Round) || 
-					(value == LineCap.RoundAnchor))
-					cap = BasicStroke.CAP_ROUND;
-				else if ((value == LineCap.Flat))
-					cap = BasicStroke.CAP_BUTT;
+				if (isModifiable)
+				{
+					int cap;
+					if((value == LineCap.Square) ||
+						(value == LineCap.SquareAnchor))
+						cap = BasicStroke.CAP_SQUARE;
+					else if ((value == LineCap.Round) || 
+						(value == LineCap.RoundAnchor))
+						cap = BasicStroke.CAP_ROUND;
+					else if ((value == LineCap.Flat))
+						cap = BasicStroke.CAP_BUTT;
+					else
+						//TODO:default
+						cap = BasicStroke.CAP_SQUARE;
+
+					nativeObject = new java.awt.BasicStroke(
+						nativeObject.getLineWidth(),
+						cap,
+						nativeObject.getLineJoin(),
+						nativeObject.getMiterLimit(),
+						nativeObject.getDashArray(),
+						nativeObject.getDashPhase());
+				}
 				else
-					//TODO:default
-					cap = BasicStroke.CAP_SQUARE;						 
+					throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 			}
 		}
 		#endregion
@@ -582,7 +595,8 @@ namespace System.Drawing
 		#endregion
 		public void SetLineCap (LineCap startCap, LineCap endCap, DashCap dashCap)
 		{
-			throw new NotImplementedException();
+			//FALLBACK: StartCap, EndCap and DashCap are the same
+			EndCap = endCap;
 		}
 	}
 }

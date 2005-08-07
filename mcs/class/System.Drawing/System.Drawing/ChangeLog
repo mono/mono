@@ -1,5 +1,9 @@
 ﻿2005-08-07 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* Pen.jvm.cs: Fixed ctor, LineCap, SetLineCap
+	
+2005-08-07 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* Graphics.jvm.cs: Fixed DrawLines, DrawPolygon
 
 2005-08-03 Andrew Skiba <andrews@mainsoft.com>
