@@ -70,6 +70,13 @@ namespace System.Reflection {
 		}
 #endif
 
+#if ONLY_1_1
+		public new Type GetType ()
+		{
+			return base.GetType ();
+		}
+#endif
+
 		public abstract bool IsDefined (Type attribute_type, bool inherit);
 
 		public abstract object [] GetCustomAttributes (bool inherit);
@@ -84,6 +91,26 @@ namespace System.Reflection {
 		virtual extern int MetadataToken {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
+		}
+
+		void _MemberInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MemberInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MemberInfo.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MemberInfo.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

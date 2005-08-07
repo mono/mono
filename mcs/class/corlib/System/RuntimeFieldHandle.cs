@@ -82,7 +82,6 @@ namespace System
 
 #if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public override bool Equals (object obj)
 		{
 			if (obj == null || GetType () != obj.GetType ())
@@ -91,9 +90,7 @@ namespace System
 			return value == ((RuntimeFieldHandle)obj).Value;
 		}
 
-#if NET_2_0
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-#endif
 		public bool Equals (RuntimeFieldHandle handle)
 		{
 			return value == handle.Value;
@@ -103,5 +100,6 @@ namespace System
 		{
 			return value.GetHashCode ();
 		}
+#endif
 	}
 }

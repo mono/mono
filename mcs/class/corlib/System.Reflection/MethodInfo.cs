@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -44,9 +45,47 @@ namespace System.Reflection {
 
 		protected MethodInfo() {
 		}
+
+#if ONLY_1_1
+		public new Type GetType ()
+		{
+			return base.GetType ();
+		}
+#endif
+
 		public override MemberTypes MemberType { get {return MemberTypes.Method;} }
 		public abstract Type ReturnType { get; }
-		public abstract ICustomAttributeProvider ReturnTypeCustomAttributes { get; } 
-	}
+		public abstract ICustomAttributeProvider ReturnTypeCustomAttributes { get; }
 
+		// FIXME: when this method is uncommented, corlib fails
+		// to build
+/*
+		[DebuggerStepThrough]
+		[DebuggerHidden]
+		public new object Invoke (object obj, object[] parameters)
+		{
+			return base.Invoke (obj, parameters);
+		}
+*/
+
+		void _MethodInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodInfo.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodInfo.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+	}
 }

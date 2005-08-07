@@ -680,6 +680,7 @@ System.Runtime.InteropServices/TypeLibConverter.cs
 System.Runtime.InteropServices/TypeLibExporterFlags.cs
 System.Runtime.InteropServices/TypeLibFuncAttribute.cs
 System.Runtime.InteropServices/TypeLibFuncFlags.cs
+System.Runtime.InteropServices/TypeLibImportClassAttribute.cs
 System.Runtime.InteropServices/TypeLibImporterFlags.cs
 System.Runtime.InteropServices/TypeLibTypeAttribute.cs
 System.Runtime.InteropServices/TypeLibTypeFlags.cs

@@ -33,10 +33,10 @@ namespace System.Reflection.Emit
 {
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-	[ComDefaultInterfaceAttribute (typeof (_MethodRental))]
+	[ComDefaultInterface (typeof (_MethodRental))]
 #endif
-	public sealed class MethodRental {
+	[ClassInterface (ClassInterfaceType.None)]
+	public sealed class MethodRental : _MethodRental {
 
 		public const int JitImmediate = 1;
 		public const int JitOnDemand = 0;
@@ -59,6 +59,27 @@ namespace System.Reflection.Emit
 
 			throw new NotImplementedException ();
 		}
+
+		void _MethodRental.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodRental.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodRental.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodRental.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
+
 	}
 }
 

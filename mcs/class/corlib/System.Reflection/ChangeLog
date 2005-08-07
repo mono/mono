@@ -1,3 +1,23 @@
+2005-08-05  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Assembly.cs: Added GetType() method in 1.1 to match MS.NET.
+	* ConstructorInfo.cs: Added GetType() method in 1.1 to match
+	MS.NET, implemented _ConstructorInfo.
+	* EventInfo.cs: Added GetType() method in 1.1 to match MS.NET,
+	implemented _EventInfo.
+	* FieldInfo.cs: Added GetType() method in 1.1 to match MS.NET,
+	implemented _FieldInfo.
+	* MemberInfo.cs: Added GetType() method in 1.1 to match MS.NET,
+	implemented _MemberInfo.
+	* MethodBase.cs: Added GetType() method in 1.1 to match MS.NET,
+	implemented _MethodBase.
+	* MethodInfo.cs: Added GetType() method in 1.1 to match MS.NET,
+	implemented _MethodInfo.
+	* PropertyInfo.cs: Added GetType() method in 1.1 to match MS.NET,
+	implemented _PropertyInfo.
+	* TypeAttributes.cs: CustomFormatMask and CustomFormatClass should
+	only be exposed in 2.0 profile.
+
 2005-07-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* CustomAttributeTypedArgument: Return the name of the

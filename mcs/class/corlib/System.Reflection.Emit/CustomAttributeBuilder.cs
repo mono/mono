@@ -40,10 +40,10 @@ using System.Runtime.InteropServices;
 namespace System.Reflection.Emit {
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-	[ComDefaultInterfaceAttribute (typeof (_CustomAttributeBuilder))]
+	[ComDefaultInterface (typeof (_CustomAttributeBuilder))]
 #endif
-	public class CustomAttributeBuilder {
+	[ClassInterface (ClassInterfaceType.None)]
+	public class CustomAttributeBuilder : _CustomAttributeBuilder {
 		ConstructorInfo ctor;
 		byte[] data;
 
@@ -384,6 +384,26 @@ namespace System.Reflection.Emit {
 			}
 
 			return info;
+		}
+
+		void _CustomAttributeBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _CustomAttributeBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _CustomAttributeBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _CustomAttributeBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

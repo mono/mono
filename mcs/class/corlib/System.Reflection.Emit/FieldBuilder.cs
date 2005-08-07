@@ -41,10 +41,10 @@ using System.Runtime.InteropServices;
 namespace System.Reflection.Emit {
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-	[ComDefaultInterfaceAttribute (typeof (_FieldBuilder))]
+	[ComDefaultInterface (typeof (_FieldBuilder))]
 #endif
-	public sealed class FieldBuilder : FieldInfo {
+	[ClassInterface (ClassInterfaceType.None)]
+	public sealed class FieldBuilder : FieldInfo, _FieldBuilder {
 		private FieldAttributes attrs;
 		private Type type;
 		private String name;
@@ -213,6 +213,26 @@ namespace System.Reflection.Emit {
 			}
 		}
 #endif
+
+		void _FieldBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _FieldBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _FieldBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _FieldBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

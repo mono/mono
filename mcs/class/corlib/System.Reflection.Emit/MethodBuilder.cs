@@ -43,10 +43,10 @@ using System.Diagnostics.SymbolStore;
 namespace System.Reflection.Emit {
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-	[ComDefaultInterfaceAttribute (typeof (_MethodBuilder))]
+	[ComDefaultInterface (typeof (_MethodBuilder))]
 #endif
-	public sealed class MethodBuilder : MethodInfo {
+	[ClassInterface (ClassInterfaceType.None)]
+	public sealed class MethodBuilder : MethodInfo, _MethodBuilder {
 		private RuntimeMethodHandle mhandle;
 		private Type rtype;
 		private Type[] parameters;
@@ -543,6 +543,27 @@ namespace System.Reflection.Emit {
 			}
 		}
 #endif
+
+                void _MethodBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                void _MethodBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                void _MethodBuilder.GetTypeInfoCount (out uint pcTInfo)
+                {
+                        throw new NotImplementedException ();
+                }
+
+                void _MethodBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+                {
+                        throw new NotImplementedException ();
+                }
+
 	}
 }
 

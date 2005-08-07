@@ -54,7 +54,7 @@ using System.Runtime.InteropServices;
 #endif
 
 //[assembly: AssemblyTitle("mscorlib.dll")]
-[assembly: AssemblyDescription("mscorlib.dll")]
+[assembly: AssemblyDescription("Common Language Runtime Library")]
 //[assembly: AssemblyConfiguration("Development version")]
 //[assembly: AssemblyCompany("MONO development team")]
 //[assembly: AssemblyProduct("MONO CLI")]

@@ -46,7 +46,9 @@ namespace System.Runtime.CompilerServices {
 		int mid;
 		int low;
 
+#if NET_2_0
 		[CLSCompliant (false)]
+#endif
 		public DecimalConstantAttribute (byte scale, byte sign, uint hi, uint mid, uint low)
 		{
 			this.scale = scale;

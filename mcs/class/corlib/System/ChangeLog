@@ -1,3 +1,16 @@
+2005-08-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Array.cs: Changed protected ctor to private. Fixes API compatibility
+	with MS.NET.
+	* RuntimeFieldHandle.cs: Equals methods and GetHashCode should only
+	be exposed in 2.0 profile.
+	* RuntimeMethodHandle.cs: Equals methods and GetHashCode should only
+	be exposed in 2.0 profile.
+	* RuntimeTypeHandle.cs: Equals methods and GetHashCode should only
+	be exposed in 2.0 profile.
+	* Type.cs: Added GetType method and implemented _Type interface.
+	Fixes API compatibility with MS.NET.
+
 2005-07-28  Marek Safar  <marek.safar@seznam.cz>
 
 	* StringComparer.cs: Add generics version of string interfaces.

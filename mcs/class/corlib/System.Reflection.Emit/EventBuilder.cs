@@ -41,10 +41,10 @@ using System.Runtime.InteropServices;
 namespace System.Reflection.Emit {
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-	[ComDefaultInterfaceAttribute (typeof (_EventBuilder))]
+	[ComDefaultInterface (typeof (_EventBuilder))]
 #endif
-	public sealed class EventBuilder {
+	[ClassInterface (ClassInterfaceType.None)]
+	public sealed class EventBuilder : _EventBuilder {
 		string name;
 		Type type;
 		TypeBuilder typeb;
@@ -133,6 +133,26 @@ namespace System.Reflection.Emit {
 		private void RejectIfCreated () {
 			if (typeb.is_created)
 				throw new InvalidOperationException ("Type definition of the method is complete.");
+		}
+
+		void _EventBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _EventBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _EventBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _EventBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

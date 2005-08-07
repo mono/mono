@@ -43,10 +43,10 @@ namespace System.Reflection.Emit {
 
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-	[ComDefaultInterfaceAttribute (typeof (_ConstructorBuilder))]
+	[ComDefaultInterface (typeof (_ConstructorBuilder))]
 #endif
-	public sealed class ConstructorBuilder : ConstructorInfo {
+	[ClassInterface (ClassInterfaceType.None)]
+	public sealed class ConstructorBuilder : ConstructorInfo, _ConstructorBuilder {
 		private RuntimeMethodHandle mhandle;
 		private ILGenerator ilgen;
 		private Type[] parameters;
@@ -317,6 +317,26 @@ namespace System.Reflection.Emit {
 
 		private Exception not_after_created () {
 			return new InvalidOperationException ("Unable to change after type has been created.");
+		}
+
+		void _ConstructorBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ConstructorBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ConstructorBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ConstructorBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

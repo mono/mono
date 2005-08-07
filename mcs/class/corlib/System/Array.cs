@@ -51,7 +51,7 @@ namespace System
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
 	{
 		// Constructor
-		protected Array ()
+		private Array ()
 		{
 		}
 

@@ -179,10 +179,9 @@ namespace System.Reflection.Emit {
 
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-	[ComDefaultInterfaceAttribute (typeof (_ILGenerator))]
 #endif
-	public class ILGenerator: Object {
+	[ClassInterface (ClassInterfaceType.None)]
+	public class ILGenerator: _ILGenerator {
 		private struct LabelFixup {
 			public int offset;    // The number of bytes between pos and the
 							      // offset of the jump
@@ -487,7 +486,9 @@ namespace System.Reflection.Emit {
 			code [code_len++] = val;
 		}
 		
+#if NET_2_0
 		[ComVisible (true)]
+#endif
 		public virtual void Emit (OpCode opcode, ConstructorInfo constructor)
 		{
 			int token = token_gen.GetToken (constructor);
@@ -956,6 +957,26 @@ namespace System.Reflection.Emit {
 		internal static int Mono_GetCurrentOffset (ILGenerator ig)
 		{
 			return ig.code_len;
+		}
+
+		void _ILGenerator.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ILGenerator.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ILGenerator.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _ILGenerator.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 	

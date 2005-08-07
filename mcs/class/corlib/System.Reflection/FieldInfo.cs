@@ -138,6 +138,13 @@ namespace System.Reflection {
 
 		public abstract void SetValue (object obj, object val, BindingFlags invokeAttr, Binder binder, CultureInfo culture);
 
+#if ONLY_1_1
+		public new Type GetType ()
+		{
+			return base.GetType ();
+		}
+#endif
+
 		[DebuggerHidden]
 		[DebuggerStepThrough]
 		public void SetValue (object obj, object value)
@@ -243,5 +250,25 @@ namespace System.Reflection {
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public abstract FieldInfo Mono_GetGenericFieldDefinition ();
 #endif
+
+		void _FieldInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _FieldInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _FieldInfo.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _FieldInfo.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

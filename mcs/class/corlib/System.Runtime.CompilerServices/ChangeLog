@@ -1,3 +1,8 @@
+2005-08-06  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* DecimalConstantAttribute.cs: Only mark ctor not CLSCompliant on 2.0 
+	profile to match MS.NET.
+
 2005-08-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* InternalsVisibleToAttribute.cs: Add BOOTSTRAP_NET_2_0

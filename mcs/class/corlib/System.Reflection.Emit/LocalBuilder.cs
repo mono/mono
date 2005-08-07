@@ -44,13 +44,13 @@ using System.Diagnostics.SymbolStore;
 namespace System.Reflection.Emit {
 #if NET_2_0
 	[ComVisible (true)]
-	[ClassInterfaceAttribute (ClassInterfaceType.None)]
-	[ComDefaultInterfaceAttribute (typeof (_LocalBuilder))]
+	[ComDefaultInterface (typeof (_LocalBuilder))]
 #endif
+	[ClassInterface (ClassInterfaceType.None)]
 #if NET_2_0
-	public sealed class LocalBuilder : LocalVariableInfo {
+	public sealed class LocalBuilder : LocalVariableInfo, _LocalBuilder {
 #else
-	public sealed class LocalBuilder {
+	public sealed class LocalBuilder : _LocalBuilder {
 #endif
 
 #if NET_2_0
@@ -125,6 +125,26 @@ namespace System.Reflection.Emit {
 		
 		internal int EndOffset {
 			get { return endOffset; }
+		}
+
+		void _LocalBuilder.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _LocalBuilder.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _LocalBuilder.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _LocalBuilder.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

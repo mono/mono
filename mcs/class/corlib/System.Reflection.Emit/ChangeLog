@@ -1,3 +1,36 @@
+2005-08-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* AssemblyBuilder.cs: Implement _AssemblyBuilder, CA fixes to 
+	correspond with MS.NET
+	* ConstructorBuilder.cs: Implement _ConstructorBuilder, CA fixes to 
+	correspond with MS.NET
+	* CustomAttributeBuilder.cs: Implement _CustomAttributeBuilder, CA 
+	fixes to correspond with MS.NET
+	* EnumBuilder.cs: Implement _EnumBuilder, CA fixes to correspond with 
+	MS.NET
+	* EventBuilder.cs: Implement _EventBuilder, CA fixes to correspond 
+	with MS.NET
+	* FieldBuilder.cs: Implement _FieldBuilder, CA fixes to correspond 
+	with MS.NET
+	* LocalBuilder.cs: Implement _LocalBuilder, CA fixes to correspond 
+	with MS.NET
+	* MethodBuilder.cs: Implement _MethodBuilder, CA fixes to correspond 
+	with MS.NET
+	* MethodRental.cs: CA fixes to correspond with MS.NET, implemented
+	_MethodRental.
+	* ModuleBuilder.cs: Implement _ModuleBuilder, CA fixes to correspond 
+	with MS.NET
+	* ILGenerator.cs: Implement _ILGenerator, CA fixes to correspond 
+	with MS.NET
+	* ParameterBuilder.cs Implement _ParameterBuilder, CA fixes to 
+	correspond with MS.NET
+	* PropertyBuilder.cs: Implement _PropertyBuilder, CA fixes to 
+	correspond with MS.NET
+	* SignatureHelper.cs: Implement _SignatureHelper, CA fixes to 
+	correspond with MS.NET
+	* TypeBuilder.cs: Implement _TypeBuilder, CA fixes to correspond 
+	with MS.NET
+
 2005-07-21  Jb Evain  <jbevain@gmail.com>
 
 	* ILGenerator.cs: Implement filter blocks support.

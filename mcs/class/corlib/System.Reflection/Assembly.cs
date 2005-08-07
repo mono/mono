@@ -197,6 +197,13 @@ namespace System.Reflection {
 			UnitySerializationHolder.GetAssemblyData (this, info, context);
 		}
 
+#if ONLY_1_1
+		public new Type GetType ()
+		{
+			return base.GetType ();
+		}
+#endif
+
 		public virtual bool IsDefined (Type attributeType, bool inherit)
 		{
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);

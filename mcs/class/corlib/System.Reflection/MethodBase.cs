@@ -70,6 +70,13 @@ namespace System.Reflection {
 			return pi.Length;
 		}
 
+#if ONLY_1_1
+		public new Type GetType ()
+		{
+			return base.GetType ();
+		}
+#endif
+
 		[DebuggerHidden]
 		[DebuggerStepThrough]		
 #if NET_2_0 || BOOTSTRAP_NET_2_0
@@ -220,5 +227,25 @@ namespace System.Reflection {
 			throw new NotSupportedException ();
 		}
 #endif
+
+		void _MethodBase.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodBase.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodBase.GetTypeInfoCount (out uint pcTInfo)
+		{
+			throw new NotImplementedException ();
+		}
+
+		void _MethodBase.Invoke (uint dispIdMember, [In] ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
