@@ -162,6 +162,19 @@ namespace MonoTests.System.Drawing
 	
 			AssertEquals ("SF2PF#1", pf1, pf2);
 		}
+
+		[Test]
+		public void GetHashCodeTest ()
+		{
+			AssertEquals (sz11_0.GetHashCode (), new SizeF (1.1f, 0).GetHashCode ());
+			AssertEquals (Size.Empty.GetHashCode (), new SizeF (0, 0).GetHashCode ());
+		}
+
+		[Test]
+		public void ToStringTest () {
+			AssertEquals ("{Width=1.1, Height=0}", sz11_0.ToString ());
+			AssertEquals ("{Width=0, Height=0}", SizeF.Empty.ToString ());
+		}
 	}
 }
 
