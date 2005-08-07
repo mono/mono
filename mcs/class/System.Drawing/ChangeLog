@@ -1,3 +1,7 @@
+2005-08-07 Konstantin Triger <kostat@mainsoft.com>
+
+	* System.Drawing.vmwcsproj: removed source control dependency
+
 2005-08-03  Andrew Skiba  <andrews@mainsoft.com>
 
 	* System.Drawing.vmwcsproj, System.Drawing.sln: add a project file and solution for building System.Drawing for Grasshopper
