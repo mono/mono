@@ -1,5 +1,9 @@
 2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
 
+	* TestRectangle.cs, TestRectangleF.cs: add new testcases
+
+2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
+
 	* TestPoint.cs: GetHashCode and ToString tests added
 	* TestPointF.cs: GetHashCode and ToString tests added, Addition and Substraction
 	tests improved
