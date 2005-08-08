@@ -1,5 +1,11 @@
 2005-08-08  Ankit Jain  <jankit@novell.com>
 
+	* PEAPI.cs (CodeBlock): Set maxCodeSize to 255 instead of 256 for checking
+	  Fat format.
+	  (CILInstructions.CheckCode): Use 255 instead of 256 for checking Fat format.
+
+2005-08-08  Ankit Jain  <jankit@novell.com>
+
 	* PEAPI.cs (FileImage.WriteCLIHeader): Move the check for no entrypoint
 	  in case of an EXE to ilasm/codegen/CodeGen.cs to avoid creating unnecessary
 	  .exe.

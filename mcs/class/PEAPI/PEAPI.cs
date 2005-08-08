@@ -1423,7 +1423,7 @@ namespace PEAPI
           uint data_size = ExHeaderSize + numExceptClauses *
                  (fatExceptionFormat ? FatExClauseSize : SmlExClauseSize);
 
-          if (data_size > 256)
+          if (data_size > 255)
                   fatExceptionFormat = true;
                   
           // Console.WriteLine("numexceptclauses = " + numExceptClauses);
@@ -1528,7 +1528,7 @@ namespace PEAPI
   /**************************************************************************/  
   public abstract class CodeBlock {
 
-    private static readonly int maxCodeSize = 256;
+    private static readonly int maxCodeSize = 255;
     protected CILLabel start, end;
     protected bool small = true;
 
