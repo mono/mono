@@ -254,7 +254,7 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern IntPtr GetManifestResourceInternal (String name, out int size, out Module module);
+		internal extern IntPtr GetManifestResourceInternal (String name, out int size, out Module module);
 
 		public virtual Stream GetManifestResourceStream (String name)
 		{

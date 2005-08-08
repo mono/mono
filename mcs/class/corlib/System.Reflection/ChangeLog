@@ -1,3 +1,8 @@
+2005-08-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Assembly.cs: made GetManifestResourceInternal internal. Fixes the
+	build.
+
 2005-08-05  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Assembly.cs: Added GetType() method in 1.1 to match MS.NET.
