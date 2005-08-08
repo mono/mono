@@ -316,7 +316,7 @@ namespace DrawingTestHelper
 
 		private static void AssertAlmostEqual (float expected, float actual, float tolerance, string message)
 		{
-			float error = Math.Abs (expected - actual) / (expected + actual + float.Epsilon);
+			float error = System.Math.Abs (expected - actual) / (expected + actual + float.Epsilon);
 			Assert.IsTrue (error < tolerance, message);
 		}
 

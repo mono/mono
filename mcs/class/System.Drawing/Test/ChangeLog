@@ -1,3 +1,6 @@
+2005-08-08  Andrew Skiba <andrews@mainsoft.com>
+	* Test.dotnet.csproj, Test.vmcsproj: move these projects from DrawingTest/Test and include Mono tests in addition to Mainsoft tests.
+
 2004-03-17  Ravindra <rkumar@novell.com>
 	* System.Drawing.Drawing2D: Created repository for tests of
 	this namespace.

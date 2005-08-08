@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.dotnet", "Test\Test.dotnet.csproj", "{DFE29E81-D6A8-45D4-A627-161F462BE767}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.dotnet", "..\Test.dotnet.csproj", "{DFE29E81-D6A8-45D4-A627-161F462BE767}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject

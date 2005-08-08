@@ -1,3 +1,8 @@
+2005-08-08 Andrew Skiba <andrews@mainsoft.com>
+
+	* System.Drawing.Test.dotnet.sln, System.Drawing.Test.sln: move projects to the parent dir
+	so it's easy to include Mono tests
+
 2005-08-04 Andrew Skiba <andrews@mainsoft.com>
 
 	* Test/Test.dotnet.csproj, System.Drawing.Test.dotnet.sln,
