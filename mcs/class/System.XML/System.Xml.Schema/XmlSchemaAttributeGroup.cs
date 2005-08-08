@@ -193,7 +193,7 @@ namespace System.Xml.Schema
 			attributeUses = new XmlSchemaObjectTable ();
 			errorCount += XmlSchemaUtil.ValidateAttributesResolved (attributeUses,
 				h, schema, actualAttributes, AnyAttribute, 
-				ref anyAttributeUse, redefined);
+				ref anyAttributeUse, redefined, false);
 			ValidationId = schema.ValidationId;
 			return errorCount;
 		}

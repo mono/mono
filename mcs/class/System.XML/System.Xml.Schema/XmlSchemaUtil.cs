@@ -48,6 +48,7 @@ namespace System.Xml.Schema
 		internal static XmlSchemaDerivationMethod ElementBlockAllowed;
 		internal static XmlSchemaDerivationMethod ComplexTypeBlockAllowed;
 
+
 		public static void AddToTable (XmlSchemaObjectTable table, XmlSchemaObject obj,
 			XmlQualifiedName qname, ValidationEventHandler h)
 		{
@@ -496,11 +497,14 @@ namespace System.Xml.Schema
 			XmlSchemaObjectCollection attributes,
 			XmlSchemaAnyAttribute anyAttribute,
 			ref XmlSchemaAnyAttribute anyAttributeUse,
-			XmlSchemaAttributeGroup redefined)
+			XmlSchemaAttributeGroup redefined,
+			bool skipEquivalent)
 		{
 			int errorCount = 0;
 			if (anyAttribute != null && anyAttributeUse == null)
 				anyAttributeUse = anyAttribute;
+
+			ArrayList newAttrNames = new ArrayList ();
 
 			foreach (XmlSchemaObject xsobj in attributes) {
 				XmlSchemaAttributeGroupRef grpRef = xsobj as XmlSchemaAttributeGroupRef;
@@ -537,22 +541,27 @@ namespace System.Xml.Schema
 						if (attr.Use == XmlSchemaUse.Prohibited)
 							continue;
 #endif
-						if (attr.RefName != null && attr.RefName != XmlQualifiedName.Empty)
+						if (attr.RefName != null && attr.RefName != XmlQualifiedName.Empty && (!skipEquivalent || !AreAttributesEqual (attr, attributesResolved [attr.RefName] as XmlSchemaAttribute)))
 							AddToTable (attributesResolved, attr, attr.RefName, h);
-						else
+						else if (!skipEquivalent || !AreAttributesEqual (attr, attributesResolved [attr.QualifiedName] as XmlSchemaAttribute))
 							AddToTable (attributesResolved, attr, attr.QualifiedName, h);
 					}
 				} else {
 					XmlSchemaAttribute attr = xsobj as XmlSchemaAttribute;
 					if (attr != null) {
 						errorCount += attr.Validate (h, schema);
+
+						if (newAttrNames.Contains (attr.QualifiedName))
+							attr.error (h, String.Format ("Duplicate attributes was found for '{0}'", attr.QualifiedName));
+						newAttrNames.Add (attr.QualifiedName);
+
 #if BUGGY_MS_COMPLIANT
 						if (attr.Use == XmlSchemaUse.Prohibited)
 							continue;
 #endif
-						if (attr.RefName != null && attr.RefName != XmlQualifiedName.Empty)
+						if (attr.RefName != null && attr.RefName != XmlQualifiedName.Empty && (!skipEquivalent || !AreAttributesEqual (attr, attributesResolved [attr.RefName] as XmlSchemaAttribute)))
 							AddToTable (attributesResolved, attr, attr.RefName, h);
-						else
+						else if (!skipEquivalent || !AreAttributesEqual (attr, attributesResolved [attr.QualifiedName] as XmlSchemaAttribute))
 							AddToTable (attributesResolved, attr, attr.QualifiedName, h);
 					} else {
 						if (anyAttribute == null) {
@@ -563,6 +572,18 @@ namespace System.Xml.Schema
 				}
 			}
 			return errorCount;
+		}
+
+		internal static bool AreAttributesEqual (XmlSchemaAttribute one,
+			XmlSchemaAttribute another)
+		{
+			if (one == null || another == null)
+				return false;
+			return one.AttributeType == another.AttributeType &&
+				one.Form == another.Form &&
+				one.ValidatedUse == another.ValidatedUse &&
+				one.ValidatedDefaultValue == another.ValidatedDefaultValue &&
+				one.ValidatedFixedValue == another.ValidatedFixedValue;
 		}
 
 #if NET_2_0

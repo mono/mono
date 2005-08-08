@@ -644,7 +644,7 @@ namespace System.Xml.Schema
 			// also checks 3.4.6 Properties Correct :: 4 (Distinct attributes)
 			attributeUses = new XmlSchemaObjectTable ();
 			XmlSchemaUtil.ValidateAttributesResolved (attributeUses,
-				h, schema, attributes, anyAttribute, ref attributeWildcard, null);
+				h, schema, attributes, anyAttribute, ref attributeWildcard, null, false);
 		}
 
 		private void ValidateContentModel (ValidationEventHandler h, XmlSchema schema)
@@ -754,7 +754,7 @@ namespace System.Xml.Schema
 				// attributes
 				errorCount += XmlSchemaUtil.ValidateAttributesResolved (
 					this.attributeUses, h, schema, cce.Attributes, 
-					cce.AnyAttribute , ref attributeWildcard, null);
+					cce.AnyAttribute , ref attributeWildcard, null, true);
 
 				// After adding them, test extension validity.
 				if (baseComplexType != null)
@@ -783,7 +783,7 @@ namespace System.Xml.Schema
 				// and its {attribute uses} and {attribute wildcard} are done here (descendantly)
 				errorCount += XmlSchemaUtil.ValidateAttributesResolved (
 					this.attributeUses, h, schema, ccr.Attributes, 
-					ccr.AnyAttribute, ref attributeWildcard, null);
+					ccr.AnyAttribute, ref attributeWildcard, null, false);
 				foreach (DictionaryEntry entry in baseComplexType.AttributeUses) {
 					XmlSchemaAttribute attr = (XmlSchemaAttribute) entry.Value;
 					if (attributeUses [attr.QualifiedName] == null)
@@ -799,7 +799,7 @@ namespace System.Xml.Schema
 			if (sce != null) {
 				errorCount += XmlSchemaUtil.ValidateAttributesResolved (
 					this.attributeUses, h, schema, sce.Attributes, 
-					sce.AnyAttribute, ref attributeWildcard, null);
+					sce.AnyAttribute, ref attributeWildcard, null, true);
 
 				// Attributes
 				// I don't think 3.4.6 Derivation Valid (Extension) :: 1.2
@@ -839,7 +839,7 @@ namespace System.Xml.Schema
 				// and its {attribute uses} and {attribute wildcard} are done here (descendantly)
 				errorCount += XmlSchemaUtil.ValidateAttributesResolved (
 					this.attributeUses, h, schema, scr.Attributes, 
-					scr.AnyAttribute, ref attributeWildcard, null);
+					scr.AnyAttribute, ref attributeWildcard, null, false);
 			}
 
 			// Common process of AttributeWildcard.
@@ -862,9 +862,12 @@ namespace System.Xml.Schema
 				return;
 			if (bst != null && (resolvedDerivedBy & bst.FinalResolved) != 0) // 1.
 				error (h, "Derivation type " + resolvedDerivedBy + " is prohibited by the base type.");
-			if (BaseXmlSchemaType == b) // 2.2
+			// FIXME: here BaseSchemaType should be 
+			// BaseXmlSchemaType, however for some case it 
+			// seems not working.
+			if (BaseSchemaType == b) // 2.2
 				return;
-			if (BaseXmlSchemaType == null || BaseXmlSchemaType == XmlSchemaComplexType.AnyType) { // 2.3.1
+			if (BaseSchemaType == null || BaseXmlSchemaType == XmlSchemaComplexType.AnyType) { // 2.3.1
 				error (h, "Derived type's base schema type is anyType.");
 				return;
 			}

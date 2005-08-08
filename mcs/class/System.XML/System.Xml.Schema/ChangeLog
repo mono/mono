@@ -1,3 +1,15 @@
+2005-08-08  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaComplexType.cs : Fixed ValidateTypeDerivationOK (complex)
+	  that missed primitive simple types as base types (BaseXmlSchemaType
+	  is not working fine; it is the actual culprit to be fixed).
+	* XmlSchemaUtil.cs,
+	  XmlSchemaAttributeGroup.cs,
+	  XmlSchemaComplexType.cs : 
+	  fixed XmlSchemaUtil.ValidateAttributesResolved(). If there is a 
+	  corresponding attribute definition in the derived extension type,
+	  then it should be allowed.
+
 2005-08-06  Gert Driesen <drieseng@users.souceforge.net>
 
 	* XmlSchema.cs: XmlElementAttribute, XmlAttributeAttribute and
