@@ -2,6 +2,9 @@
 
 ** XmlTextReader and XmlValidatingReader conformance test
 
+	!!!WARNING!!! this test code is outdated. For XmlReader tests, use
+	Test/System.Xml/W3C/xmlconf.cs instead.
+
 	This is a small standalone test system using W3C XML test collection.
 	http://www.w3.org/XML/Test/
 

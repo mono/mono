@@ -1,3 +1,7 @@
+2005-08-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* README, xmltest.cs : it's outdated now.
+
 2005-05-08  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile : care of timestamps to make a minimal build

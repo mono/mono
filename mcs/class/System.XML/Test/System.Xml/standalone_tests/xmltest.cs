@@ -1,3 +1,4 @@
+#warning USE Test/System.Xml/W3C/xmlconf.cs instead.
 using System;
 using System.IO;
 using System.Xml;
@@ -10,6 +11,7 @@ public class Test
 
 	public static void Main ()
 	{
+		Console.WriteLine ("WARNING: This test code is outdated. Use Test/System.Xml/W3C/xmlconf.exe instead.");
 Console.WriteLine ("Started:  " + DateTime.Now.ToString ("yyyy-MM-dd HH:mm:ss.fff"));
 		RunInvalidTest ("xmltest", false);
 		RunInvalidTest ("ibm", false);
