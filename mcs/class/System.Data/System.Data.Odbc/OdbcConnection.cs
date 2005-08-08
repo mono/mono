@@ -378,6 +378,7 @@ namespace System.Data.Odbc
                                 FreeHandles ();
                                 throw;
                         }
+			disposed = false;
 		}
 
 		[MonoTODO]

@@ -1,5 +1,8 @@
 2005-08-08  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* OdbcConnection.cs: Open (): set disposed to false so that close
+	will be called in Dispose.
+
 	* OdbcCommand.cs: Prepare (): Split SQLPrepare and SQLBind so that
 	already prepared statements can be reused with new parameter
 	values. ExecSQL (): create new statement handle, if not prepared
