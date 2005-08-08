@@ -1,5 +1,11 @@
 2005-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* class.c (class_compute_field_layout): Rename this to mono_class_setup_fields.
+
+	* class-internals.h (MonoCachedClassInfo): Add some new fields.
+
+	* class.c (mono_class_init): Load field info lazily in the AOT case.	
+
 	* reflection.c (mono_image_load_module): Fix error checking. Fixes #75660.
 
 2005-08-03  Ankit Jain  <jankit@novell.com>
