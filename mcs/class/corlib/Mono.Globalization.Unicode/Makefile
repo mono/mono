@@ -39,7 +39,7 @@ distclean :
 clean : clean-collation clean-normalization clean-mscompat clean-normtest
 
 clean-collation :
-	rm -f CollationElementTable.cs $(COLL_ELEM_FILENAME).exe* ../collation.*.bin
+	rm -f CollationElementTable.cs $(COLL_ELEM_FILENAME).exe* ../resources/collation.*.bin
 
 clean-normalization :
 	rm -f $(NORM_FILENAME) $(NORMGEN_FILENAME).exe*

@@ -1,5 +1,11 @@
 2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfo.cs :
+	  Added managed collation support. It won't be activated unless you 
+	  explicitly set environment MONO_USE_MANAGED_COLLATION=yes.
+
+2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfo.cs : LastIndexOf() which takes startIndex without length
 	  should use startIndex+1 as length.
 

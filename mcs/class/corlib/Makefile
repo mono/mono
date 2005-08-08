@@ -3,6 +3,15 @@ SUBDIRS =
 include ../../build/rules.make
 export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/corlib
 
+RESOURCE_FILES = \
+	resources/collation.core.bin \
+	resources/collation.tailoring.bin \
+	resources/collation.cjkCHS.bin \
+	resources/collation.cjkCHT.bin \
+	resources/collation.cjkJA.bin \
+	resources/collation.cjkKO.bin \
+	resources/collation.cjkKOlv2.bin
+
 corlib_flags = -unsafe -nostdlib
 LOCAL_MCS_FLAGS = -nowarn:169,612,618,649 -d:INSIDE_CORLIB
 
@@ -12,7 +21,7 @@ endif
 
 LIBRARY = corlib.dll
 LIBRARY_NAME = mscorlib.dll
-LIB_MCS_FLAGS = $(corlib_flags)
+LIB_MCS_FLAGS = $(corlib_flags) $(RESOURCE_FILES:%=/resource:%)
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 LIBRARY_COMPILE = $(BOOT_COMPILE)

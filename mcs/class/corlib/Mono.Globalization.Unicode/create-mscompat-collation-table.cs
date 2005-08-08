@@ -526,7 +526,7 @@ sw.Close ();
 */
 
 #if Binary
-			using (FileStream fs = File.Create ("../collation.core.bin")) {
+			using (FileStream fs = File.Create ("../resources/collation.core.bin")) {
 				byte [] array = ms.ToArray ();
 				fs.Write (array, 0, array.Length);
 			}
@@ -603,7 +603,7 @@ sw.Close ();
 			CSResult.WriteLine ("};");
 			CSResult.WriteLine ();
 #if Binary
-			using (FileStream fs = File.Create (String.Format ("../collation.{0}.bin", name))) {
+			using (FileStream fs = File.Create (String.Format ("../resources/collation.{0}.bin", name))) {
 				byte [] array = ms.ToArray ();
 				fs.Write (array, 0, array.Length);
 			}
@@ -640,7 +640,7 @@ sw.Close ();
 			CSResult.WriteLine ("};");
 			CSResult.WriteLine ();
 #if Binary
-			using (FileStream fs = File.Create (String.Format ("../collation.{0}.bin", name))) {
+			using (FileStream fs = File.Create (String.Format ("../resources/collation.{0}.bin", name))) {
 				byte [] array = ms.ToArray ();
 				fs.Write (array, 0, array.Length);
 			}
@@ -724,7 +724,7 @@ sw.Close ();
 			binary.Write (rawdata, 0, rawdata.Length);
 
 
-			using (FileStream fs = File.Create ("../collation.tailoring.bin")) {
+			using (FileStream fs = File.Create ("../resources/collation.tailoring.bin")) {
 				byte [] array = ms.ToArray ();
 				fs.Write (array, 0, array.Length);
 			}

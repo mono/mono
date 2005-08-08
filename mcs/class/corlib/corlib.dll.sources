@@ -8,6 +8,12 @@ Microsoft.Win32/RegistryHive.cs
 Microsoft.Win32/Win32RegistryApi.cs
 Microsoft.Win32/Win32ResultCode.cs
 Microsoft.Win32.SafeHandles/SafeFileHandle.cs
+Mono.Globalization.Unicode/CodePointIndexer.cs
+Mono.Globalization.Unicode/MSCompatUnicodeTable.cs
+Mono.Globalization.Unicode/MSCompatUnicodeTableUtil.cs
+Mono.Globalization.Unicode/SimpleCollator.cs
+Mono.Globalization.Unicode/SortKey.cs
+Mono.Globalization.Unicode/SortKeyBuffer.cs
 Mono/Runtime.cs
 Mono.Math/BigInteger.cs
 Mono.Math.Prime/ConfidenceFactor.cs
@@ -303,7 +309,6 @@ System.Globalization/KoreanCalendar.cs
 System.Globalization/NumberFormatInfo.cs
 System.Globalization/NumberStyles.cs
 System.Globalization/RegionInfo.cs
-System.Globalization/SortKey.cs
 System.Globalization/StringInfo.cs
 System.Globalization/TaiwanCalendar.cs
 System.Globalization/TextElementEnumerator.cs

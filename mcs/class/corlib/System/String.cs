@@ -768,7 +768,7 @@ namespace System
 			if (this.length < value.length)
 				return false;
 
-			return (0 == Compare (this, 0, value, 0 , value.length));
+			return CultureInfo.CurrentCulture.CompareInfo.IsPrefix (this, value);
 		}
 
 		/* This method is culture insensitive */

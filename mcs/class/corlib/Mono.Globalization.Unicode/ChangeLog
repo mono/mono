@@ -1,3 +1,8 @@
+2005-08-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* create-mscompat-collation-table.cs,
+	  Makefile : changed resources output directory.
+
 2005-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* create-normalization-tests.cs,
