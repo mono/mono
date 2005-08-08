@@ -1,5 +1,16 @@
 2005-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* jit-icalls.c (helper_ldstr): New helper function.
+
+	* mini.c (get_basic_blocks): Set out_of_line for bblocks containing a throw.
+
+	* mini.c (mono_method_to_ir): If an LDSTR instruction is in a bblock with a
+	throw, load the string using a helper call instead of creating a string object.
+
+	* aot.c: Update after LDSTR changes.
+
+	* mini.h: Bump AOT file version.
+	
 	* aot.c: Save class size info into the AOT file. Print more statistics during
 	compilation.
 
