@@ -68,8 +68,9 @@ namespace System.Data.Odbc
 
 		bool designTimeVisible;
 		bool prepared=false;
-		OdbcDataReader dataReader;
-		IntPtr hstmt;
+		IntPtr hstmt = IntPtr.Zero;
+
+		bool disposed = false;
 		
 		#endregion // Fields
 
@@ -84,7 +85,6 @@ namespace System.Data.Odbc
 			_parameters = new OdbcParameterCollection ();
 			Transaction = null;
 			designTimeVisible = false;
-			dataReader = null;
 #if ONLY_1_1
 			updateRowSource = UpdateRowSource.Both;
 #endif // ONLY_1_1
@@ -367,19 +367,59 @@ namespace System.Data.Odbc
 #endif // ONLY_1_1
 
 		
-		[MonoTODO]
 		protected override void Dispose (bool disposing)
 		{
+			if (disposed)
+				return;
+			
+			FreeStatement (); // free handles
+			Connection = null;
+			Transaction = null;
+			disposed = true;
+		}
+
+		~OdbcCommand ()
+		{
+			Dispose (false);
+		}
+
+		private IntPtr ReAllocStatment ()
+		{
+			OdbcReturn ret;
+
+			if (hstmt != IntPtr.Zero)
+				FreeStatement ();
+
+			ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLAllocHandle",OdbcHandleType.Dbc,Connection.hDbc));
+			disposed = false;
+			return hstmt;
+		}
+
+		private void FreeStatement ()
+		{
+			if (hstmt == IntPtr.Zero)
+				return;
+			
+			// free previously allocated handle.
+			OdbcReturn ret = libodbc.SQLFreeStmt (hstmt, libodbc.SQLFreeStmtOptions.Close);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLCloseCursor",OdbcHandleType.Stmt,hstmt));
+			
+			ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,hstmt));
+			hstmt = IntPtr.Zero;
 		}
 		
 		private void ExecSQL(string sql)
 		{
 			OdbcReturn ret;
 			if (! prepared && Parameters.Count <= 0) {
-				ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLAllocHandle",OdbcHandleType.Dbc,Connection.hDbc));
 
+				ReAllocStatment ();
+				
 				ret=libodbc.SQLExecDirect(hstmt, sql, sql.Length);
 				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 					throw new OdbcException(new OdbcError("SQLExecDirect",OdbcHandleType.Stmt,hstmt));
@@ -393,6 +433,12 @@ namespace System.Data.Odbc
 			ret=libodbc.SQLExecute(hstmt);
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 				throw new OdbcException(new OdbcError("SQLExecute",OdbcHandleType.Stmt,hstmt));
+		}
+
+		internal void FreeIfNotPrepared ()
+		{
+			if (! prepared)
+				FreeStatement ();
 		}
 
 		public
@@ -429,11 +475,9 @@ namespace System.Data.Odbc
                         else
 				records = -1;
 
-			if (freeHandle && !prepared) {
-				OdbcReturn ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,hstmt));
-			}
+			if (freeHandle && !prepared)
+				FreeStatement ();
+			
 			return records;
 		}
 
@@ -443,10 +487,9 @@ namespace System.Data.Odbc
 #endif // NET_2_0
                 void Prepare()
 		{
-			OdbcReturn ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLAllocHandle",OdbcHandleType.Dbc,Connection.hDbc));
-
+			ReAllocStatment ();
+			
+			OdbcReturn ret;
 			ret=libodbc.SQLPrepare(hstmt, CommandText, CommandText.Length);
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 				throw new OdbcException(new OdbcError("SQLPrepare",OdbcHandleType.Stmt,hstmt));
@@ -493,7 +536,7 @@ namespace System.Data.Odbc
                 OdbcDataReader ExecuteReader (CommandBehavior behavior)
 		{
 			int recordsAffected = ExecuteNonQuery(false);
-			dataReader=new OdbcDataReader(this, behavior, recordsAffected);
+			OdbcDataReader dataReader=new OdbcDataReader(this, behavior, recordsAffected);
 			return dataReader;
 		}
 

@@ -1,13 +1,22 @@
 2005-08-08  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* OdbcDataReader.cs: Implemented Dispose pattern. Cache
+	schematable for same result set. don't free command's statements
+	if the command is prepared.
+
 	* OdbcConnection.cs: Open (): set disposed to false so that close
 	will be called in Dispose.
 
-	* OdbcCommand.cs: Prepare (): Split SQLPrepare and SQLBind so that
+	* OdbcCommand.cs:
+	- Prepare (): Split SQLPrepare and SQLBind so that
 	already prepared statements can be reused with new parameter
-	values. ExecSQL (): create new statement handle, if not prepared
+	values.
+	- ExecSQL (): create new statement handle, if not prepared
 	and there are no parameters. if there are parameters, prepare and
 	use.
+	- Implemented Dispose pattern
+	- Streamlined the allocation and de-allocation of statement
+	handles.
 
 2005-08-05  Sureshkumar T  <tsureshkumar@novell.com>
 

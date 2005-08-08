@@ -58,6 +58,8 @@ namespace System.Data.Odbc
 		private OdbcColumn[] cols;
 		private IntPtr hstmt;
 		private int _recordsAffected = -1;
+		bool disposed = false;
+		private DataTable _dataTableSchema;
 #if ONLY_1_1
 		private CommandBehavior behavior;
 #endif // ONLY_1_1
@@ -254,25 +256,19 @@ namespace System.Data.Odbc
                 void Close ()
 		{
 			// FIXME : have to implement output parameter binding
-			OdbcReturn ret = libodbc.SQLFreeStmt (hstmt, libodbc.SQLFreeStmtOptions.Close);
-			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-				throw new OdbcException(new OdbcError("SQLCloseCursor",OdbcHandleType.Stmt,hstmt));
-	
 			open = false;
 			currentRow = -1;
 
-			ret = libodbc.SQLFreeHandle( (ushort) OdbcHandleType.Stmt, hstmt);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLFreeHandle",OdbcHandleType.Stmt,hstmt));
+			this.command.FreeIfNotPrepared ();
 
-				if ((this.CommandBehavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection)
-					this.command.Connection.Close();
+			if ((this.CommandBehavior & CommandBehavior.CloseConnection)==CommandBehavior.CloseConnection) {
+				this.command.Connection.Close();
+			}
 		}
 
 		~OdbcDataReader ()
 		{
-			if (open)
-				Close ();
+			this.Dispose (false);
 		}
 
 		public 
@@ -511,9 +507,10 @@ namespace System.Data.Odbc
                         // * Map OdbcType to System.Type and assign to DataType.
                         //   This will eliminate the need for IsStringType in
                         //   OdbcColumn.
-                        // * Cache this DataTable so that it is not contacting 
-                        //   datasource everytime for the same result set.
 
+			if (_dataTableSchema != null)
+				return _dataTableSchema;
+			
 			DataTable dataTableSchema = null;
 			// Only Results from SQL SELECT Queries 
 			// get a DataTable for schema of the result
@@ -612,7 +609,7 @@ namespace System.Data.Odbc
 				}
                                 dataTableSchema.AcceptChanges();
 			}
-                        return dataTableSchema;
+                        return (_dataTableSchema = dataTableSchema);
 		}
 
 		public 
@@ -795,16 +792,40 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+#if ONLY_1_1
 		void IDisposable.Dispose ()
 		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
 		}
-
+#else
+		public override void Dispose ()
+		{
+			Dispose (true);
+			GC.SuppressFinalize (this);
+		}
+#endif
                 IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return new DbEnumerator (this);
 		}
 #endif // ONLY_1_1
+
+		private void Dispose (bool disposing)
+		{
+			if (disposed)
+				return;
+
+			if (disposing) {
+				// dispose managed resources
+				Close ();
+			}
+
+			command = null;
+			cols = null;
+			_dataTableSchema = null;
+			disposed = true;
+		}
 
 		public
 #if NET_2_0
@@ -830,6 +851,7 @@ namespace System.Data.Odbc
 				short colcount = 0;
 				libodbc.SQLNumResultCols (hstmt, ref colcount);
 				cols = new OdbcColumn [colcount];
+				_dataTableSchema = null; // force fresh creation
 				GetSchemaTable ();
 			}	
 			return (ret==OdbcReturn.Success);
