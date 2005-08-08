@@ -1,4 +1,10 @@
 2005-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
+	
+	* Pen.cs: Added LineCaps and LineJoin tests
+	* Image.cs: Added png interop test
+	* Added test images bitmap_gh.png, bitmap_net.png
+
+2005-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Added Brushes.cs: Brushes and SystemBrushes tests
 	* Added Colors.cs: Colors, SystemColors tests

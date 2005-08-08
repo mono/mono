@@ -27,7 +27,6 @@ namespace Test.Sys.Drawing
 			Assert.AreEqual (PenAlignment.Center, p.Alignment);
 		}
 		[Test]
-		[Category ("test1")]
 		public void Width () {
 			Assert.AreEqual (10, p.Width);
 			t.Graphics.DrawLine (p, 0, 0, 64, 64);
@@ -143,7 +142,7 @@ namespace Test.Sys.Drawing
 			t.Graphics.DrawPolygon (p, points);
 			t.Graphics.DrawPolygon (Pens.White, points);
 			t.Show ();
-			Assert.IsTrue (t.Compare (10));
+			Assert.IsTrue (t.Compare (35));
 
 			p.LineJoin = LineJoin.MiterClipped;
 			points = new Point [] {
@@ -152,7 +151,7 @@ namespace Test.Sys.Drawing
 			t.Graphics.DrawPolygon (p, points);
 			t.Graphics.DrawPolygon (Pens.White, points);
 			t.Show ();
-			Assert.IsTrue (t.Compare (10));
+			Assert.IsTrue (t.Compare (50));
 
 			p.LineJoin = LineJoin.Round;
 			points = new Point [] {
@@ -161,13 +160,136 @@ namespace Test.Sys.Drawing
 			t.Graphics.DrawPolygon (p, points);
 			t.Graphics.DrawPolygon (Pens.White, points);
 			t.Show ();
+			Assert.IsTrue (t.Compare (60));
+		}
+		[Test]
+		public void LineJoinTest_Miter () {
+			p.LineJoin = LineJoin.Miter;
+			Point [] points = new Point [] {
+											   new Point(200, 217), new Point (215, 55),
+											   new Point (230, 217)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			p.LineJoin = LineJoin.Miter;
+			points = new Point [] {
+									  new Point(140, 217), new Point (155, 75),
+									  new Point (170, 217)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			p.LineJoin = LineJoin.Miter;
+			points = new Point [] {
+									  new Point(100, 217), new Point (105, 100),
+									  new Point (110, 217)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			p.LineJoin = LineJoin.Miter;
+			points = new Point [] {
+									  new Point(43, 210), new Point (70, 100),
+									  new Point (80, 20)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+		}
+		[Test]
+		public void LineJoinTest_MiterClipped () {
+			p.LineJoin = LineJoin.MiterClipped;
+			Point [] points = new Point [] {
+											   new Point(200, 217), new Point (215, 55),
+											   new Point (230, 217)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			p.LineJoin = LineJoin.MiterClipped;
+			points = new Point [] {
+									  new Point(140, 217), new Point (155, 75),
+									  new Point (170, 217)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			p.LineJoin = LineJoin.MiterClipped;
+			points = new Point [] {
+									  new Point(100, 217), new Point (105, 100),
+									  new Point (110, 217)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			p.LineJoin = LineJoin.MiterClipped;
+			points = new Point [] {
+									  new Point(43, 210), new Point (70, 100),
+									  new Point (80, 20)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+		}
+		[Test]
+		public void LineJoinTest_Bevel () {
+			p.LineJoin = LineJoin.Bevel;
+			Point [] points = new Point [] {
+											   new Point(200, 217), new Point (215, 55),
+											   new Point (230, 217)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			p.LineJoin = LineJoin.Bevel;
+			points = new Point [] {
+									  new Point(140, 217), new Point (155, 75),
+									  new Point (170, 217)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			p.LineJoin = LineJoin.Bevel;
+			points = new Point [] {
+									  new Point(100, 217), new Point (105, 100),
+									  new Point (110, 217)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			p.LineJoin = LineJoin.Bevel;
+			points = new Point [] {
+									  new Point(43, 210), new Point (70, 100),
+									  new Point (80, 20)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			p.LineJoin = LineJoin.Bevel;
+			points = new Point [] {
+									  new Point(100, 50), new Point (150, 50),
+									  new Point (150, 20), new Point (200, 20)};
+			t.Graphics.DrawLines (p, points);
+			t.Graphics.DrawLines (Pens.White, points);
+			t.Show ();
 			Assert.IsTrue (t.Compare (10));
 		}
 		[Test]
 		public void PenAlignmentTest () {
 			Point [] points = new Point [] {
-				new Point (20, 20), new Point (40, 40), new Point (60, 20),
-				new Point (60, 60), new Point (20, 60)};
+											   new Point (20, 20), new Point (40, 40), new Point (60, 20),
+											   new Point (60, 60), new Point (20, 60)};
 			GraphicsPath path = new GraphicsPath ();
 			path.AddPolygon (points);
 			Matrix mx = new Matrix (1, 0, 0, 1, 90, 0);
@@ -262,6 +384,248 @@ namespace Test.Sys.Drawing
 			t.Graphics.DrawArc (p, 0, 0, 100, 100, 0, 360);
 			t.Graphics.DrawArc (Pens.White, 0, 0, 100, 100, 0, 360);
 			t.Show ();
+		}
+		[Test]
+		[Category ("Extended")]
+		public void StartCap() {
+			Assert.AreEqual(LineCap.Flat, p.StartCap);
+
+			int x = 20;
+			int y = 20;
+			p.StartCap = LineCap.Flat;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.StartCap = LineCap.Round;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.StartCap = LineCap.Square;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.StartCap = LineCap.AnchorMask;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.StartCap = LineCap.ArrowAnchor;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.StartCap = LineCap.DiamondAnchor;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.StartCap = LineCap.NoAnchor;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y = 20;
+			x += 140;
+
+			p.StartCap = LineCap.RoundAnchor;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.StartCap = LineCap.SquareAnchor;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.StartCap = LineCap.Triangle;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.StartCap = LineCap.Custom;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+		}
+		[Test]
+		[Category ("Extended")]
+		public void EndCap() {
+			Assert.AreEqual(LineCap.Flat, p.EndCap);
+
+			int x = 20;
+			int y = 20;
+			p.EndCap = LineCap.Flat;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.EndCap = LineCap.Round;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.EndCap = LineCap.Square;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.EndCap = LineCap.AnchorMask;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.EndCap = LineCap.ArrowAnchor;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.EndCap = LineCap.DiamondAnchor;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.EndCap = LineCap.NoAnchor;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y = 20;
+			x += 120;
+
+			p.EndCap = LineCap.RoundAnchor;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.EndCap = LineCap.SquareAnchor;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.EndCap = LineCap.Triangle;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 30;
+			p.EndCap = LineCap.Custom;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+		}
+		[Test]
+		public void StartEndCapBasic() {
+			Assert.AreEqual(LineCap.Flat, p.StartCap);
+
+			p.Width = 21;
+
+			int x = 20;
+			int y = 20;
+			p.EndCap = LineCap.Flat;
+			p.StartCap = LineCap.Flat;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 50;
+			p.EndCap = LineCap.Round;
+			p.StartCap = LineCap.Round;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (40));
+
+			y += 50;
+			p.EndCap = LineCap.Square;
+			p.StartCap = LineCap.Square;
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (50));
+
+			y += 50;
+			p.EndCap = LineCap.Round;
+			p.StartCap = LineCap.Round;
+			p.DashCap = DashCap.Round;
+			p.Width = 15;
+			p.DashStyle = DashStyle.DashDotDot;
+			t.Graphics.DrawLine (p, x, y, x+200, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+200, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+		}
+		[Test]
+		public void SetLineCap() {
+			Assert.AreEqual(LineCap.Flat, p.StartCap);
+
+			p.Width = 21;
+
+			int x = 20;
+			int y = 20;
+			p.SetLineCap(LineCap.Flat, LineCap.Flat, DashCap.Flat);
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 50;
+			p.SetLineCap(LineCap.Round, LineCap.Round, DashCap.Round);
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
+
+			y += 50;
+			p.SetLineCap(LineCap.Square, LineCap.Square, DashCap.Flat);
+			t.Graphics.DrawLine (p, x, y, x+80, y);
+			t.Graphics.DrawLine (Pens.White, x, y, x+80, y);
+			t.Show ();
+			Assert.IsTrue (t.Compare (10));
 		}
 	}
 }

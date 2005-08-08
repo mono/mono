@@ -13,7 +13,7 @@ namespace Test.Sys.Drawing {
 		[SetUp]
 		public void SetUp () {
 			t = DrawingTest.Create (256, 256);
-			Image im=new Bitmap (@"C:\views\andrews_main\studio\GH\DevQA\utils\drawings\SystemDrawingTests\Test\Bitmap1.png"); 
+			Image im=new Bitmap (@"..\..\Bitmap1.png"); 
 			t.Graphics.DrawImageUnscaled (im, 0, 0);
 		}
 		[Test]
@@ -197,6 +197,27 @@ namespace Test.Sys.Drawing {
 		public void FrameDimensionsList () {
 			Assert.AreEqual (new Guid [] {FrameDimension.Page.Guid},
 				t.Bitmap.FrameDimensionsList);
+		}
+		[Test]
+		[Category ("Create")]
+		public void PNG_Interop()
+		{
+
+			string file_name = @"..\..\bitmap_gh.png";
+			using (FileStream r = new FileStream (file_name, FileMode.Open)) 
+			{
+				Image im = new Bitmap (r);
+				t.Graphics.DrawImageUnscaled (im, 0, 0);
+				Assert.IsTrue(t.Compare(2));
+			}
+
+			file_name = @"..\..\bitmap_net.png";
+			using (FileStream r = new FileStream (file_name, FileMode.Open)) 
+			{
+				Image im = new Bitmap (r);
+				t.Graphics.DrawImageUnscaled (im, 0, 0);
+				Assert.IsTrue(t.Compare(2));
+			}
 		}
 	}
 }
