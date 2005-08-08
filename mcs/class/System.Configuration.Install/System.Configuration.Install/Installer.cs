@@ -78,7 +78,7 @@ namespace System.Configuration.Install
 
 		[TypeConverter ("System.Configuration.Design.InstallerParentConverter")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[BrowsableAttribute (false)]
+		[BrowsableAttribute (true)]
 		public Installer Parent {
 			get {
 				return parent;
