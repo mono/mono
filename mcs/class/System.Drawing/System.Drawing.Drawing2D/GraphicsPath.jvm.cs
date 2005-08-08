@@ -293,8 +293,18 @@ namespace System.Drawing.Drawing2D
 			if (points == null)
 				throw new ArgumentNullException("points");
 
-			for (int i = 0; i < points.Length - 1; i += 1) 
-				AddLine(points[i].X, points [i].Y, points [i+1].X, points [i+1].Y);
+			if (points.Length == 0)
+				return;
+
+			if (_isNewFigure)
+				NativeObject.moveTo(points[0].X, points[0].Y);
+			else
+				NativeObject.lineTo(points[0].X, points[0].Y);
+
+			_isNewFigure = false;
+
+			for (int i = 1; i < points.Length; i ++)
+				NativeObject.lineTo(points[i].X, points[i].Y);
 		}
 
 		public void AddLines (PointF [] points)
@@ -302,8 +312,18 @@ namespace System.Drawing.Drawing2D
 			if (points == null)
 				throw new ArgumentNullException("points");
 
-			for (int i = 0; i < points.Length - 1; i += 1) 
-				AddLine(points[i].X, points [i].Y, points [i+1].X, points [i+1].Y);
+			if (points.Length == 0)
+				return;
+
+			if (_isNewFigure)
+				NativeObject.moveTo(points[0].X, points[0].Y);
+			else
+				NativeObject.lineTo(points[0].X, points[0].Y);
+
+			_isNewFigure = false;
+
+			for (int i = 1; i < points.Length; i ++)
+				NativeObject.lineTo(points[i].X, points[i].Y);
 		}
 		#endregion
         

@@ -1,5 +1,9 @@
 2005-08-08 Konstantin Triger <kostat@mainsoft.com>
 
+        * GraphicsPath.cs: Fix AddLines
+
+2005-08-08 Konstantin Triger <kostat@mainsoft.com>
+
         * GraphicsPath.cs: Fix AddArc/AddPie
 
 2005-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
