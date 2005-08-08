@@ -1,4 +1,8 @@
-﻿2005-08-07 Vladimir Krasnov <vladimirk@mainsoft.com>
+﻿2005-08-07 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: Refactoring
+
+2005-08-07 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Graphics.jvm.cs: Fixed DrawLines, DrawPolygon to use GraphicsPath
 

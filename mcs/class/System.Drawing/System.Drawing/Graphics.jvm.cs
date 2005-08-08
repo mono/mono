@@ -361,49 +361,9 @@ namespace System.Drawing {
 		}
 
 		public void DrawArc (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle) {
-			if (sweepAngle >= 360) {
-				DrawEllipse(pen, x, y, width, height);
-				return;
-			}
-
-			double d1Tod2 = width/height;
-			double sqrd1Tod2 = d1Tod2*d1Tod2;
-			float start = (float)ConvertArcAngle(sqrd1Tod2, startAngle);
-			float extent = (float)ConvertArcAngle(sqrd1Tod2, startAngle+sweepAngle) - start;
-			DrawShape(this,pen,
-				new java.awt.geom.Arc2D.Float(x,y,width,height,-start,-extent,java.awt.geom.Arc2D.OPEN));
-		}
-
-		/// <summary>
-		/// .Net computes an angle by intersection of ellipse with a ray
-		/// java does the following: x1 = d1*cos(a), y1 = d2*sin(a)
-		/// where: d1 = width/2, d2 = height/2
-		/// we need to find angle x, which satisfies:
-		/// x1 = m*cos(a) = d1*cos(x)
-		/// y1 = m*sin(a) = d2*sin(x)
-		/// (x1*x1)/(d1*d1) + (x2*x2)/(d2*d2) = 1
-		/// </summary>
-		/// <param name="sqrd1Tod2">(d1/d2)*(d1/d2)</param>
-		/// <param name="angle">angle in degrees</param>
-		/// <returns>converted angle in degrees</returns>
-		static double ConvertArcAngle(double sqrd1Tod2, double angle) {
-			double angleRad = java.lang.Math.toRadians(angle);
-			double tan = Math.Tan(angleRad);
-			double cosx = 1/Math.Sqrt( sqrd1Tod2 * (tan*tan) + 1);
-			double xRad = Math.Acos(cosx);
-			double x = java.lang.Math.toDegrees(xRad);
-			int q = ((int)angle)/90;
-
-			switch (q&3) {
-				default:
-					return x;
-				case 1:
-					return 180-x;
-				case 2:
-					return 180+x;
-				case 3:
-					return 360-x;
-			}
+			GraphicsPath path = new GraphicsPath();
+			path.AddArc(x, y, width, height, startAngle, sweepAngle);
+			DrawPath(pen, path);
 		}
 		#endregion
 
@@ -870,7 +830,7 @@ namespace System.Drawing {
 
 		#region DrawPath
 		public void DrawPath (Pen pen, GraphicsPath path) {
-			DrawShape(this,pen,path.NativeObject,true);
+			DrawShape(this,pen,path,true);
 		}
 		#endregion
 		
@@ -884,17 +844,9 @@ namespace System.Drawing {
 		}
 		
 		public void DrawPie (Pen pen, float x, float y, float width, float height, float startAngle, float sweepAngle) {
-			if (sweepAngle >= 360) {
-				DrawEllipse(pen, x, y, width, height);
-				return;
-			}
-
-			double d1Tod2 = width/height;
-			double sqrd1Tod2 = d1Tod2*d1Tod2;
-			float start = (float)ConvertArcAngle(sqrd1Tod2, startAngle);
-			float extent = (float)ConvertArcAngle(sqrd1Tod2, startAngle+sweepAngle) - start;
-
-			DrawShape(this,pen,new java.awt.geom.Arc2D.Float(x,y,width,height,-start,-extent,java.awt.geom.Arc2D.PIE));
+			GraphicsPath path = new GraphicsPath();
+			path.AddPie(x, y, width, height, startAngle, sweepAngle);
+			DrawPath(pen, path);
 		}
 		
 		public void DrawPie (Pen pen, int x, int y, int width, int height, int startAngle, int sweepAngle) {
@@ -1281,7 +1233,7 @@ namespace System.Drawing {
 
 		#region FillPath
 		public void FillPath (Brush brush, GraphicsPath path) {
-			FillShape(brush,path.NativeObject);
+			FillShape(brush,path);
 		}
 		#endregion
 
@@ -1295,24 +1247,9 @@ namespace System.Drawing {
 		}
 
 		public void FillPie (Brush brush, float x, float y, float width, float height, float startAngle, float sweepAngle) {
-			if (sweepAngle >= 360) {
-				FillEllipse(brush, x, y, width, height);
-				return;
-			}
-
-			double d1Tod2 = width/height;
-			double sqrd1Tod2 = d1Tod2*d1Tod2;
-			float start = (float)ConvertArcAngle(sqrd1Tod2, startAngle);
-			float extent = (float)ConvertArcAngle(sqrd1Tod2, startAngle+sweepAngle) - start;
-
-			FillShape(brush,new java.awt.geom.Arc2D.Float(
-				x,
-				y,
-				width,
-				height,
-				-start,
-				-extent,
-				java.awt.geom.Arc2D.PIE));
+			GraphicsPath path = new GraphicsPath();
+			path.AddPie(x, y, width, height, startAngle, sweepAngle);
+			FillPath(brush, path);
 		}
 		#endregion
 
