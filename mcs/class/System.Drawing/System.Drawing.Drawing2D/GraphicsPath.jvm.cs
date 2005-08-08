@@ -207,7 +207,7 @@ namespace System.Drawing.Drawing2D
 
 		#endregion
 		
-		#region AddBezier(s) [s - TODO]
+		#region AddBezier(s)
 		public void AddBezier (Point pt1, Point pt2, Point pt3, Point pt4)
 		{
 			AddBezier(pt1.X,pt1.Y,pt2.X,pt2.Y,pt3.X,pt3.Y,pt4.X,pt4.Y);
@@ -232,12 +232,38 @@ namespace System.Drawing.Drawing2D
 
 		public void AddBeziers (Point [] pts)
 		{
-			throw new NotImplementedException();
+			if (pts == null)
+				throw new ArgumentNullException("points");
+
+			AddBezier(pts [0].X,pts [0].Y,
+					pts [1].X,pts [1].Y,
+					pts [2].X,pts [2].Y,
+					pts [3].X,pts [3].Y);
+
+			for (int i = 4; i < pts.Length; i += 3) {
+				NativeObject.curveTo(	
+					pts [i].X,pts [i].Y,
+					pts [i+1].X,pts [i+1].Y,
+					pts [i+2].X,pts [i+2].Y);
+			}
 		}
 
 		public void AddBeziers (PointF [] pts)
 		{
-			throw new NotImplementedException();
+			if (pts == null)
+				throw new ArgumentNullException("points");
+
+			AddBezier(pts [0].X,pts [0].Y,
+				pts [1].X,pts [1].Y,
+				pts [2].X,pts [2].Y,
+				pts [3].X,pts [3].Y);
+
+			for (int i = 4; i < pts.Length; i += 3) {
+				NativeObject.curveTo(	
+					pts [i].X,pts [i].Y,
+					pts [i+1].X,pts [i+1].Y,
+					pts [i+2].X,pts [i+2].Y);
+			}
 		}
 		#endregion
 

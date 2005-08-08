@@ -1,3 +1,7 @@
+2005-08-08 Konstantin Triger <kostat@mainsoft.com>
+
+        * GraphicsPath.cs: Implemented AddBeziers
+
 2005-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* GraphicsPath.jvm.cs: Fixed AddPolygon methods
