@@ -102,10 +102,13 @@ namespace Microsoft.VisualBasic {
 			public object Current {
 				get {
 					if (Index == 0) {
+#if NET_2_0
+						return null;
+#else
 						// FIXME : spec says throw InvalidOperation, 
 						// but MS throws IndexOutOfRange
 						throw new IndexOutOfRangeException();
-						// throw new InvalidOperationException();
+#endif
 					}
 					else {
 						return Item;
@@ -154,13 +157,30 @@ namespace Microsoft.VisualBasic {
 					throw new IndexOutOfRangeException();
 				}
 			}
-#if NET_2_0
 		}
 
 		System.Object IList.this[System.Int32 Index] {
-#endif
+			get {
+				if (Index + 1 > Count || (Index == -1 && Count == 0)) {
+					throw new ArgumentOutOfRangeException ("Index");
+				}
+
+				if (Index == -1) {
+					return this[1];
+				}
+
+				return this[Index + 1]; 
+			}
 			set {
-				throw new NotImplementedException();
+				if (Index + 1 > Count || (Index == -1 && Count == 0)) {
+					throw new ArgumentOutOfRangeException ("Index");
+				}
+
+				if (Index == -1) {
+					m_Hashtable[m_HashIndexers[0]] = value;
+				} else {
+					m_Hashtable[m_HashIndexers[Index]] = value;
+				}
 			}
 		}
 
@@ -183,25 +203,32 @@ namespace Microsoft.VisualBasic {
 		}
 
 		// Methods
-		System.Int32 IList.IndexOf (System.Object value) 
-		{ 
-			int LastPos = 0;
-			bool Found = false;
+		System.Int32 IList.IndexOf (System.Object value)
+		{
+			int index = -1;
 
-			while (!Found) {
-				LastPos = m_HashIndexers.IndexOf(value.GetHashCode(), LastPos);
-				if (LastPos == -1) {
-					Found = true;
-				} else if (m_Hashtable[m_HashIndexers[LastPos]] == value) {
-					Found = true;
+			foreach (DictionaryEntry entry in m_Hashtable) {
+				if (entry.Value == value) {
+					index = m_HashIndexers.IndexOf (entry.Key);
+					break;
+				}
+
+				// also allow value comparison to work for types that do not 
+				// override equality operator
+				if (entry.Value.GetType () == value.GetType ()) {
+					if (object.Equals (entry.Value, value)) {
+						index = m_HashIndexers.IndexOf (entry.Key);
+						break;
+					}
 				}
 			}
-			return LastPos;
+
+			return index;
 		}
 
 		System.Boolean IList.Contains (System.Object value) 
-		{ 
-			return m_Hashtable.ContainsValue(value);
+		{
+			return ((IList) this).IndexOf (value) != -1;
 		}
 
 		void IList.Clear () 
@@ -239,20 +266,25 @@ namespace Microsoft.VisualBasic {
 			}
 		}
 
-		void IList.Remove (System.Object value)	
+		void IList.Remove (System.Object value)
 		{
-			if (value == null) {
-				throw new ArgumentNullException();
+			int index = ((IList) this).IndexOf (value);
+			if (index != -1) {
+				Remove (index + 1);
 			}
-			if (!(value is string)) {
-				throw new ArgumentException();
-			}
-			Remove((string)value);
 		}
 
 		void IList.RemoveAt (System.Int32 index) 
 		{
-			Remove(index);
+			if (index + 1 > Count || (index == -1 && Count == 0)) {
+				throw new ArgumentOutOfRangeException ("Index");
+			}
+
+			if (index == -1) {
+				Remove (1);
+			} else {
+				Remove (index + 1);
+			}
 		}
 
 		void IList.Insert (System.Int32 index, System.Object value) 
@@ -300,7 +332,7 @@ namespace Microsoft.VisualBasic {
 			//Position must be from 1 to value of collections Count 
 			if (Position > m_HashIndexers.Count) {
 				throw new ArgumentOutOfRangeException();
-                        }
+			}
  
 			return Position;
 		}

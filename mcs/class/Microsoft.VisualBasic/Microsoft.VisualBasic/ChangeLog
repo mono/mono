@@ -1,3 +1,11 @@
+2005-08-08  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Collection.cs: Various fixes to match the MS.NET IList 
+	implementation; IEnumerator.Current returns null if MoveNext has
+	not been called on .NET 2.0. IList index-based members use first
+	entry if -1 is specified as index value (and there's at lease one 
+	entry).	
+
 2005-08-05  Satya Sudha K  <ksathyasudha@novell.com>
 	* Strings.cs : Minor fixes to a few functions
 

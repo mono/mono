@@ -38,15 +38,16 @@ using System.Collections;
 
 namespace MonoTests.Microsoft.VisualBasic
 {
-        [TestFixture]
-	public class CollectionTest : Assertion
+	[TestFixture]
+	public class CollectionTest
 	{
-		
 		[SetUp]
-		public void GetReady() {}
+		public void GetReady () {
+		}
 
 		[TearDown]
-		public void Clean() {}
+		public void Clean () {
+		}
 
 		// Test Constructor
 		[Test]
@@ -54,10 +55,10 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			Collection c;
 
-			c = new Collection();
+			c = new Collection ();
 
-			AssertNotNull("#N01", c);
-			AssertEquals("#N02", 0, c.Count);
+			Assert.IsNotNull (c, "#N01");
+			Assert.AreEqual (0, c.Count, "#N02");
 		}
 
 		// Test Add method with Key == null
@@ -66,17 +67,16 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			Collection c;
 
-			c = new Collection();
+			c = new Collection ();
 
-			c.Add(typeof(int), null, null, null);
-			c.Add(typeof(double), null, null, null);
-			c.Add(typeof(string), null, null, null);
-			
-			AssertEquals("#ANK01", 3, c.Count);
+			c.Add (typeof (int), null, null, null);
+			c.Add (typeof (double), null, null, null);
+			c.Add (typeof (string), null, null, null);
+
+			Assert.AreEqual (3, c.Count, "#ANK01");
 
 			// Collection class is 1-based
-			AssertEquals("#ANK02", typeof(string), c[3]);
-
+			Assert.AreEqual (typeof (string), c[3], "#ANK02");
 		}
 
 		// Test Add method with Key specified
@@ -85,19 +85,18 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			Collection c;
 
-			c = new Collection();
+			c = new Collection ();
 
-			c.Add("Baseball", "Base", null, null);
-			c.Add("Football", "Foot", null, null);
-			c.Add("Basketball", "Basket", null, null);
-			c.Add("Volleyball", "Volley", null, null);
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Football", "Foot", null, null);
+			c.Add ("Basketball", "Basket", null, null);
+			c.Add ("Volleyball", "Volley", null, null);
 
-			AssertEquals("#AK01", 4, c.Count);
+			Assert.AreEqual (4, c.Count, "#AK01");
 
 			// Collection class is 1-based
-			AssertEquals("#AK02", "Baseball", c[1]);
-			AssertEquals("#AK03", "Volleyball", c["Volley"]);
-
+			Assert.AreEqual ("Baseball", c[1], "#AK02");
+			Assert.AreEqual ("Volleyball", c["Volley"], "#AK03");
 		}
 
 		// Test Add method with Before specified and Key == null
@@ -106,20 +105,19 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			Collection c;
 
-			c = new Collection();
+			c = new Collection ();
 
-			c.Add(typeof(int), null, null, null);
-			c.Add(typeof(double), null, 1, null);
-			c.Add(typeof(string), null, 2, null);
-			c.Add(typeof(object), null, 2, null);
+			c.Add (typeof (int), null, null, null);
+			c.Add (typeof (double), null, 1, null);
+			c.Add (typeof (string), null, 2, null);
+			c.Add (typeof (object), null, 2, null);
 
-			AssertEquals("#ABNK01", 4, c.Count);
+			Assert.AreEqual (4, c.Count, "#ABNK01");
 
 			// Collection class is 1-based
-			AssertEquals("#ABNK02", typeof(int), c[4]);
-			AssertEquals("#ABNK03", typeof(double), c[1]);
-			AssertEquals("#ABNK04", typeof(object), c[2]);
-
+			Assert.AreEqual (typeof (int), c[4], "#ABNK02");
+			Assert.AreEqual (typeof (double), c[1], "#ABNK03");
+			Assert.AreEqual (typeof (object), c[2], "#ABNK04");
 		}
 
 		// Test Add method with Before and Key
@@ -128,19 +126,18 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			Collection c;
 
-			c = new Collection();
+			c = new Collection ();
 
-			c.Add("Baseball", "Base", null, null);
-			c.Add("Football", "Foot", 1, null);
-			c.Add("Basketball", "Basket", 1, null);
-			c.Add("Volleyball", "Volley", 3, null);
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Football", "Foot", 1, null);
+			c.Add ("Basketball", "Basket", 1, null);
+			c.Add ("Volleyball", "Volley", 3, null);
 
-			AssertEquals("#ABK01", 4, c.Count);
-			AssertEquals("#ABK02", "Basketball", c[1]);
-			AssertEquals("#ABK03", "Baseball", c[4]);
-			AssertEquals("#ABK04", "Volleyball", c["Volley"]);
-			AssertEquals("#ABK05", "Football", c["Foot"]);
-
+			Assert.AreEqual (4, c.Count, "#ABK01");
+			Assert.AreEqual ("Basketball", c[1], "#ABK02");
+			Assert.AreEqual ("Baseball", c[4], "#ABK03");
+			Assert.AreEqual ("Volleyball", c["Volley"], "#ABK04");
+			Assert.AreEqual ("Football", c["Foot"], "#ABK05");
 		}
 
 		// Test Add method with After specified and Key == null
@@ -149,20 +146,17 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			Collection c;
 
-			c = new Collection();
+			c = new Collection ();
 
-			c.Add(typeof(int), null, null, 0);
-			c.Add(typeof(double), null, null, 1);
-			c.Add(typeof(string), null, null, 1);
-			c.Add(typeof(object), null, null, 3);
+			c.Add (typeof (int), null, null, 0);
+			c.Add (typeof (double), null, null, 1);
+			c.Add (typeof (string), null, null, 1);
+			c.Add (typeof (object), null, null, 3);
 
-			AssertEquals("#AANK01", 4, c.Count);
-
-			// Collection class is 1-based
-			AssertEquals("#AANK02", typeof(object), c[4]);
-			AssertEquals("#AANK03", typeof(int), c[1]);
-			AssertEquals("#AANK04", typeof(string), c[2]);
-
+			Assert.AreEqual (4, c.Count, "#AANK01");
+			Assert.AreEqual (typeof (object), c[4], "#AANK02");
+			Assert.AreEqual (typeof (int), c[1], "#AANK03");
+			Assert.AreEqual (typeof (string), c[2], "#AANK04");
 		}
 
 		// Test Add method with After and Key
@@ -171,20 +165,18 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			Collection c;
 
-			c = new Collection();
+			c = new Collection ();
 
-			c.Add("Baseball", "Base", null, 0);
-			c.Add("Football", "Foot", null, 1);
-			c.Add("Basketball", "Basket", null, 1);
-			c.Add("Volleyball", "Volley", null, 2);
+			c.Add ("Baseball", "Base", null, 0);
+			c.Add ("Football", "Foot", null, 1);
+			c.Add ("Basketball", "Basket", null, 1);
+			c.Add ("Volleyball", "Volley", null, 2);
 
-			AssertEquals("#AAK01", 4, c.Count);
-
-			// Collection class is 1-based
-			AssertEquals("#AAK02", "Baseball", c[1]);
-			AssertEquals("#AAK03", "Football", c[4]);
-			AssertEquals("#AAK04", "Basketball", c["Basket"]);
-			AssertEquals("#AAK05", "Volleyball", c["Volley"]);
+			Assert.AreEqual (4, c.Count, "#AAK01");
+			Assert.AreEqual ("Baseball", c[1], "#AAK02");
+			Assert.AreEqual ("Football", c[4], "#AAK03");
+			Assert.AreEqual ("Basketball", c["Basket"], "#AAK04");
+			Assert.AreEqual ("Volleyball", c["Volley"], "#AAK05");
 		}
 
 		// Test GetEnumerator method
@@ -197,27 +189,26 @@ namespace MonoTests.Microsoft.VisualBasic
 				typeof(double), typeof(string), typeof(object)};
 			int i = 0;
 
-			c = new Collection();
+			c = new Collection ();
 
-			c.Add(typeof(int), null, null, null);
-			c.Add(typeof(double), null, null, null);
-			c.Add(typeof(string), null, null, null);
-			c.Add(typeof(object), null, null, null);
+			c.Add (typeof (int), null, null, null);
+			c.Add (typeof (double), null, null, null);
+			c.Add (typeof (string), null, null, null);
+			c.Add (typeof (object), null, null, null);
 
-			e = c.GetEnumerator();
+			e = c.GetEnumerator ();
 
-			AssertNotNull("#GE01", e);
+			Assert.IsNotNull (e, "#GE01");
 
-			while (e.MoveNext()) {
-				AssertEquals("#GE02." + i.ToString(), o[i], e.Current);
+			while (e.MoveNext ()) {
+				Assert.AreEqual (o[i], e.Current, "#GE02." + i.ToString ());
 				i++;
 			}
 
-			e.Reset();
-			e.MoveNext();
+			e.Reset ();
+			e.MoveNext ();
 
-			AssertEquals("#GE03", o[0], e.Current);
-
+			Assert.AreEqual (o[0], e.Current, "#GE03");
 		}
 
 		// Test GetEnumerator method again, this time using foreach
@@ -228,20 +219,20 @@ namespace MonoTests.Microsoft.VisualBasic
 			object[] o = new object[4] {typeof(int), 
 				typeof(double), typeof(string), typeof(object)};
 			int i = 0;
-			
-			c = new Collection();
 
-			c.Add(typeof(int), null, null, null);
-			c.Add(typeof(double), null, null, null);
-			c.Add(typeof(string), null, null, null);
-			c.Add(typeof(object), null, null, null);
+			c = new Collection ();
 
-			
+			c.Add (typeof (int), null, null, null);
+			c.Add (typeof (double), null, null, null);
+			c.Add (typeof (string), null, null, null);
+			c.Add (typeof (object), null, null, null);
+
+
 			foreach (object item in c) {
-				AssertEquals("#fe01." + i.ToString(), o[i], item);
+				Assert.AreEqual (o[i], item, "#fe01." + i.ToString ());
 				i++;
 			}
-			
+
 		}
 
 		// Test Remove method with Index
@@ -250,37 +241,36 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			Collection c;
 
-			c = new Collection();
+			c = new Collection ();
 
-			c.Add(typeof(int), null, null, null);
-			c.Add(typeof(double), null, null, null);
-			c.Add(typeof(string), null, null, null);
-			c.Add(typeof(object), null, null, null);
+			c.Add (typeof (int), null, null, null);
+			c.Add (typeof (double), null, null, null);
+			c.Add (typeof (string), null, null, null);
+			c.Add (typeof (object), null, null, null);
 
-			AssertEquals("#RNK01", 4, c.Count);
+			Assert.AreEqual (4, c.Count, "#RNK01");
 
-			c.Remove(3);
+			c.Remove (3);
 
-			AssertEquals("#RNK02", 3, c.Count);
+			Assert.AreEqual (3, c.Count, "#RNK02");
 
 			// Collection class is 1-based
-			AssertEquals("#RNK03", typeof(object), c[3]);
+			Assert.AreEqual (typeof (object), c[3], "#RNK03");
 
-			c.Remove(1);
+			c.Remove (1);
 
-			AssertEquals("#RNK04", 2, c.Count);
-			AssertEquals("#RNK05", typeof(double), c[1]);
-			AssertEquals("#RNK06", typeof(object), c[2]);
+			Assert.AreEqual (2, c.Count, "#RNK04");
+			Assert.AreEqual (typeof (double), c[1], "#RNK05");
+			Assert.AreEqual (typeof (object), c[2], "#RNK06");
 
-			c.Remove(2);
+			c.Remove (2);
 
-			AssertEquals("#RNK07", 1, c.Count);
-			AssertEquals("#RNK08", typeof(double), c[1]);
+			Assert.AreEqual (1, c.Count, "#RNK07");
+			Assert.AreEqual (typeof (double), c[1], "#RNK08");
 
-			c.Remove(1);
+			c.Remove (1);
 
-			AssertEquals("#RNK09", 0, c.Count);
-		
+			Assert.AreEqual (0, c.Count, "#RNK09");
 		}
 
 		// Test Remove method with Key
@@ -289,278 +279,409 @@ namespace MonoTests.Microsoft.VisualBasic
 		{
 			Collection c;
 
-			c = new Collection();
+			c = new Collection ();
 
-			c.Add("Baseball", "Base", null, null);
-			c.Add("Football", "Foot", null, null);
-			c.Add("Basketball", "Basket", null, null);
-			c.Add("Volleyball", "Volley", null, null);
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Football", "Foot", null, null);
+			c.Add ("Basketball", "Basket", null, null);
+			c.Add ("Volleyball", "Volley", null, null);
 
-			AssertEquals("#RK01", 4, c.Count);
+			Assert.AreEqual (4, c.Count, "#RK01");
 
-			c.Remove("Foot");
+			c.Remove ("Foot");
 
-			AssertEquals("#RK02", 3, c.Count);
-			AssertEquals("#RK03", "Basketball", c["Basket"]);
+			Assert.AreEqual (3, c.Count, "#RK02");
+			Assert.AreEqual ("Basketball", c["Basket"], "#RK03");
 
 			// Collection class is 1-based
-			AssertEquals("#RK04", "Volleyball", c[3]);
+			Assert.AreEqual ("Volleyball", c[3], "#RK04");
 
-			c.Remove("Base");
+			c.Remove ("Base");
 
-			AssertEquals("#RK05", 2, c.Count);
-			AssertEquals("#RK06", "Basketball", c[1]);
-			AssertEquals("#RK07", "Volleyball", c["Volley"]);
+			Assert.AreEqual (2, c.Count, "#RK05");
+			Assert.AreEqual ("Basketball", c[1], "#RK06");
+			Assert.AreEqual ("Volleyball", c["Volley"], "#RK07");
 
-			c.Remove(2);
+			c.Remove (2);
 
-			AssertEquals("#RK08", 1, c.Count);
-			AssertEquals("#RK09", "Basketball", c[1]);
-			AssertEquals("#RK10", "Basketball", c["Basket"]);
+			Assert.AreEqual (1, c.Count, "#RK08");
+			Assert.AreEqual ("Basketball", c[1], "#RK09");
+			Assert.AreEqual ("Basketball", c["Basket"], "#RK10");
 
-			c.Remove(1);
+			c.Remove (1);
 
-			AssertEquals("#RK11", 0, c.Count);
+			Assert.AreEqual (0, c.Count, "#RK11");
 		}
 
 		// Test all the Exceptions we're supposed to throw
 		[Test]
 		public void Exception ()
 		{
-			Collection c;
-			bool caughtException = false;
-
-			c = new Collection();
+			Collection c = new Collection ();
 
 			try {
 				// nothing in Collection yet
 				object o = c[0];
-			}
-			catch (Exception e) {
-				AssertEquals("#E01", typeof(IndexOutOfRangeException), e.GetType());
-				caughtException = true;
+				Assert.Fail ("#E02");
+			} catch (IndexOutOfRangeException) {
 			}
 
-			AssertEquals("#E02", true, caughtException);
-                
-			c.Add("Baseball", "Base", null, null);
-			c.Add("Football", "Foot", null, null);
-			c.Add("Basketball", "Basket", null, null);
-			c.Add("Volleyball", "Volley", null, null);
-
-			caughtException = false;
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Football", "Foot", null, null);
+			c.Add ("Basketball", "Basket", null, null);
+			c.Add ("Volleyball", "Volley", null, null);
 
 			try {
 				// only 4 elements
 				object o = c[5];
-			}
-			catch (Exception e) {
-				AssertEquals("#E03", typeof(IndexOutOfRangeException), e.GetType());
-				caughtException = true;
+				Assert.Fail ("#E04");
+			} catch (IndexOutOfRangeException) {
 			}
 
-			AssertEquals("#E04", true, caughtException);
-            
-			caughtException = false;
-			
 			try {
 				// Collection class is 1-based
 				object o = c[0];
-			}
-			catch (Exception e) {
-				AssertEquals("#E05", typeof(IndexOutOfRangeException), e.GetType());
-				caughtException = true;
+				Assert.Fail ("#E06");
+			} catch (IndexOutOfRangeException) {
 			}
 
-			AssertEquals("#E06", true, caughtException);
-            
-			caughtException = false;
-			
 			try {
 				// no member with Key == "Kick"
 				object o = c["Kick"];
-			}
-			catch (Exception e) {
+				Assert.Fail ("#E08");
+			} catch (ArgumentException) {
 				// FIXME
 				// VB Language Reference says IndexOutOfRangeException 
 				// here, but MS throws ArgumentException
-				// AssertEquals("#E07", typeof(IndexOutOfRangeException), e.GetType());
-				AssertEquals("#E07", typeof(ArgumentException), e.GetType());
-				caughtException = true;
 			}
 
-			AssertEquals("#E08", true, caughtException);
-         
-			caughtException = false;
-			
 			try {
 				// Even though Indexer is an object, really it's a string
-				object o = c[typeof(int)];
-			}
-			catch (Exception e) {
-				AssertEquals("#E09", typeof(ArgumentException), e.GetType());
-				caughtException = true;
+				object o = c[typeof (int)];
+				Assert.Fail ("#E10");
+			} catch (ArgumentException) {
 			}
 
-			AssertEquals("#E10", true, caughtException);
-         
-			caughtException = false;
-			
 			try {
 				// can't specify both Before and After
-				c.Add("Kickball", "Kick", "Volley", "Foot");
-			}
-			catch (Exception e) {
-				AssertEquals("#E11", typeof(ArgumentException), e.GetType());
-				caughtException = true;
+				c.Add ("Kickball", "Kick", "Volley", "Foot");
+				Assert.Fail ("#E12");
+			} catch (ArgumentException) {
 			}
 
-			AssertEquals("#E12", true, caughtException);
-         
-			caughtException = false;
-			
 			try {
 				// Key "Foot" already exists
-				c.Add("Kickball", "Foot", null, null);
-			}
-			catch (Exception e) {
-				AssertEquals("#E13", typeof(ArgumentException), e.GetType());
-				caughtException = true;
+				c.Add ("Kickball", "Foot", null, null);
+				Assert.Fail ("#E14");
+			} catch (ArgumentException) {
 			}
 
-			AssertEquals("#E14", true, caughtException);
-
-			caughtException = false;
-			
 			try {
 				// Even though Before is object, it's really a string
-				c.Add("Dodgeball", "Dodge", typeof(int), null);
-			}
-			catch (Exception e) {
-				AssertEquals("#E15", typeof(InvalidCastException), e.GetType());
-				caughtException = true;
+				c.Add ("Dodgeball", "Dodge", typeof (int), null);
+				Assert.Fail ("#E16");
+			} catch (InvalidCastException) {
 			}
 
-			AssertEquals("#E16", true, caughtException);
-        
-			caughtException = false;
-			
 			try {
 				// Even though After is object, it's really a string
-				c.Add("Wallyball", "Wally", null, typeof(int));
-			}
-			catch (Exception e) {
-				AssertEquals("#E17", typeof(InvalidCastException), e.GetType());
-				caughtException = true;
+				c.Add ("Wallyball", "Wally", null, typeof (int));
+				Assert.Fail ("#E18");
+			} catch (InvalidCastException) {
 			}
 
-			AssertEquals("#E18", true, caughtException);
-        
-			caughtException = false;
-			
 			try {
 				// have to pass a legitimate value to remove
-				c.Remove(null);
-			}
-			catch (Exception e) {
-				AssertEquals("#E19", typeof(ArgumentNullException), e.GetType());
-				caughtException = true;
+				c.Remove (null);
+				Assert.Fail ("#E20");
+			} catch (ArgumentNullException) {
 			}
 
-			AssertEquals("#E20", true, caughtException);
-        
-			caughtException = false;
-			
 			try {
 				// no Key "Golf" exists
-				c.Remove("Golf");
-			}
-			catch (Exception e) {
-				AssertEquals("#E21", typeof(ArgumentException), e.GetType());
-				caughtException = true;
+				c.Remove ("Golf");
+				Assert.Fail ("#E22");
+			} catch (ArgumentException) {
 			}
 
-			AssertEquals("#E22", true, caughtException);
-        
-			caughtException = false;
-			
 			try {
 				// no Index 10 exists
-				c.Remove(10);
-			}
-			catch (Exception e) {
-				AssertEquals("#E23", typeof(IndexOutOfRangeException), e.GetType());
-				caughtException = true;
+				c.Remove (10);
+				Assert.Fail ("#E24");
+			} catch (IndexOutOfRangeException) {
 			}
 
-			AssertEquals("#E24", true, caughtException);
-        
-			caughtException = false;
-			
 			try {
-				IEnumerator e = c.GetEnumerator();
-				
+				IEnumerator e = c.GetEnumerator ();
+
 				// Must MoveNext before Current
 				object item = e.Current;
-			}
-			catch (Exception e) {
-				// FIXME
-				// On-line help says InvalidOperationException here, 
-				// but MS throws IndexOutOfRangeException
-				// AssertEquals("#E25", typeof(InvalidOperationException), e.GetType());
-				AssertEquals("#E25", typeof(IndexOutOfRangeException), e.GetType());
-				caughtException = true;
+#if NET_2_0
+				Assert.IsNull (item, "#E25");
+#else
+				Assert.Fail ("#E26");
+#endif
+			} catch (IndexOutOfRangeException) {
+#if NET_2_0
+				Assert.Fail ("#E27");
+#endif
 			}
 
-			AssertEquals("#E26", true, caughtException);
-        
-			caughtException = false;
-			
 			try {
-				IEnumerator e = c.GetEnumerator();
-				e.MoveNext();
+				IEnumerator e = c.GetEnumerator ();
+				e.MoveNext ();
 
-				c.Add("Paintball", "Paint", null, null);
+				c.Add ("Paintball", "Paint", null, null);
 
 				// Can't MoveNext if Collection has been modified
-				e.MoveNext();
-			}
-			catch (Exception e) {
+				e.MoveNext ();
+
 				// FIXME
 				// On-line help says this should throw an error. MS doesn't.
-				AssertEquals("#E27", typeof(InvalidOperationException), e.GetType());
-				caughtException = true;
+			} catch (Exception) {
+				Assert.Fail ("#E28");
 			}
 
-			// FIXME
-			// What to do about this?  MS doesn't throw an error
-			// AssertEquals("#E28", true, caughtException);
-			AssertEquals("#E28", false, caughtException);
-        
-			caughtException = false;
-			
 			try {
-				IEnumerator e = c.GetEnumerator();
-				e.MoveNext();
+				IEnumerator e = c.GetEnumerator ();
+				e.MoveNext ();
 
-				c.Add("Racketball", "Racket", null, null);
+				c.Add ("Racketball", "Racket", null, null);
 
 				// Can't Reset if Collection has been modified
-				e.Reset();
-			}
-			catch (Exception e) {
+				e.Reset ();
+
 				// FIXME
-				// On-line help says this should throw an error.  MS doesn't.
-				AssertEquals("#E29", typeof(InvalidOperationException), e.GetType());
-				caughtException = true;
+				// On-line help says this should throw an error. MS doesn't.
+			} catch (InvalidOperationException) {
+				Assert.Fail ("#E30");
+			}
+		}
+
+		[Test]
+		public void IList_Remove ()
+		{
+			Collection c = new Collection ();
+			IList list = (IList) c;
+
+			list.Remove (null);
+
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Paintball", "Paint", null, null);
+
+			Assert.AreEqual (2, c.Count, "#1");
+
+			try {
+				list.Contains (null);
+				Assert.Fail ("#2");
+			} catch (NullReferenceException) {
 			}
 
-			// FIXME
-			// What to do about this?  MS doesn't throw an error
-			// AssertEquals("#E30", true, caughtException);
-			AssertEquals("#E30", false, caughtException);
+			Assert.AreEqual (2, c.Count, "#3");
 
-			caughtException = false;
+			list.Remove (c.GetType ());
+			Assert.AreEqual (2, c.Count, "#4");
+
+			list.Remove (1);
+			Assert.AreEqual (2, c.Count, "#5");
+
+			list.Remove ("Something");
+			Assert.AreEqual (2, c.Count, "#6");
+
+			list.Remove ("Baseball");
+			Assert.AreEqual (1, c.Count, "#7");
+			Assert.AreEqual ("Paintball", c[1], "#8");
+		}
+
+		[Test]
+		public void IList_RemoveAt ()
+		{
+			Collection c = new Collection ();
+			IList list = (IList) c;
+
+			try {
+				list.RemoveAt (0);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				list.RemoveAt (-1);
+				Assert.Fail ("#2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Paintball", "Paint", null, null);
+
+			Assert.AreEqual (2, c.Count, "#3");
+			Assert.AreEqual ("Baseball", list[0], "#4");
+
+			list.RemoveAt (0);
+			Assert.AreEqual (1, c.Count, "#5");
+			Assert.AreEqual ("Paintball", list[0], "#6");
+
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Basketball", "Basket", null, null);
+
+			Assert.AreEqual ("Paintball", list[0], "#7");
+			Assert.AreEqual ("Baseball", list[1], "#8");
+			Assert.AreEqual ("Basketball", list[2], "#9");
+
+			try {
+				list.RemoveAt (3);
+				Assert.Fail ("#10");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			list.RemoveAt (-1);
+			Assert.AreEqual (2, c.Count, "#11");
+			Assert.AreEqual ("Baseball", list[0], "#12");
+			Assert.AreEqual ("Basketball", list[1], "#13");
+		}
+
+		[Test]
+		public void IList_IndexOf ()
+		{
+			Collection c = new Collection ();
+			IList list = (IList) c;
+
+			Assert.AreEqual (-1, list.IndexOf (null), "#1");
+
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Paintball", "Paint", null, null);
+			c.Add (5, "6", null, null);
+
+			try {
+				list.IndexOf (null);
+				Assert.Fail ("#2");
+			} catch (NullReferenceException) {
+			}
+
+			Assert.AreEqual (0, list.IndexOf ("Baseball"), "#3");
+			Assert.AreEqual (-1, list.IndexOf ("Base"), "#4");
+
+			Assert.AreEqual (1, list.IndexOf ("Paintball"), "#5");
+			Assert.AreEqual (-1, list.IndexOf ("Pain"), "#6");
+
+			Assert.AreEqual (2, list.IndexOf (5), "#7");
+			Assert.AreEqual (-1, list.IndexOf (6), "#8");
+
+			Assert.AreEqual (-1, list.IndexOf ("Something"), "#9");
+		}
+
+		[Test]
+		public void IList_Contains ()
+		{
+			Collection c = new Collection ();
+			IList list = (IList) c;
+
+			Assert.IsFalse (list.Contains (null), "#1");
+
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Paintball", "Paint", null, null);
+			c.Add (5, "6", null, null);
+
+			try {
+				list.Contains (null);
+				Assert.Fail ("#2");
+			} catch (NullReferenceException) {
+			}
+
+			Assert.AreEqual (true, list.Contains ("Baseball"), "#3");
+			Assert.AreEqual (false, list.Contains ("Base"), "#4");
+
+			Assert.AreEqual (true, list.Contains ("Paintball"), "#5");
+			Assert.AreEqual (false, list.Contains ("Paint"), "#6");
+
+			Assert.AreEqual (true, list.Contains (5), "#7");
+			Assert.AreEqual (false, list.Contains (6), "#8");
+
+			Assert.AreEqual (false, list.Contains ("Something"), "#9");
+		}
+
+		[Test]
+		public void IList_Indexer_Get ()
+		{
+			Collection c = new Collection ();
+			IList list = (IList) c;
+
+			try {
+				object value = list[0];
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				object value = list[-1];
+				Assert.Fail ("#2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Paintball", "Paint", null, null);
+			c.Add (5, "6", null, null);
+
+			Assert.AreEqual ("Baseball", list[0], "#3");
+			Assert.AreEqual ("Paintball", list[1], "#4");
+			Assert.AreEqual (5, list[2], "#5");
+
+			try {
+				object value = list[3];
+				Assert.Fail ("#6");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			object val = list[-1];
+			Assert.AreEqual ("Baseball", val, "#6");
+		}
+
+		[Test]
+#if !NET_2_0
+		[Category ("NotDotNet")] // setter is badly broken in MS.NET 1.x
+#endif
+		public void IList_Indexer_Set ()
+		{
+			Collection c = new Collection ();
+			IList list = (IList) c;
+
+			try {
+				list[0] = "Baseball";
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			try {
+				list[-1] = "Baseball";
+				Assert.Fail ("#2");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			c.Add ("Baseball", "Base", null, null);
+			c.Add ("Paintball", "Paint", null, null);
+			c.Add (5, "6", null, null);
+
+			Assert.AreEqual (3, c.Count, "#3");
+
+			list[0] = "Basketball";
+			list[2] = "Six";
+
+			Assert.AreEqual (3, c.Count, "#4");
+			Assert.AreEqual ("Basketball", list[0], "#5");
+			Assert.AreEqual ("Paintball", list[1], "#6");
+			Assert.AreEqual ("Six", list[2], "#7");
+
+			try {
+				list[3] = "Baseball";
+				Assert.Fail ("#8");
+			} catch (ArgumentOutOfRangeException) {
+			}
+
+			list[-1] = "Whatever";
+			Assert.AreEqual (3, c.Count, "#8");
+			Assert.AreEqual ("Whatever", list[0], "#9");
+			Assert.AreEqual ("Paintball", list[1], "#10");
+			Assert.AreEqual ("Six", list[2], "#11");
 		}
 	}
 }

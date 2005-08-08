@@ -1,4 +1,9 @@
-2005-08-02	Rafael Teixeira <rafaelteixeirabr@hotmail.com>
+2005-08-08 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CollectionTest.cs: Added tests for IList implementation. No longer
+	inherit from Assertion. Fixed tests to pass on MS.NET 1.x and 2.0.
+
+2005-08-02 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* StringsTest.cs:
 		Implement tests for InStrRev
 
