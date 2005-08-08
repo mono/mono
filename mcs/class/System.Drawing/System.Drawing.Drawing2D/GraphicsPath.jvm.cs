@@ -248,13 +248,19 @@ namespace System.Drawing.Drawing2D
 
 		public void AddLines (Point [] points)
 		{			
-			for (int i = 0; i < points.Length - 2; i += 2) 
+			if (points == null)
+				throw new ArgumentNullException("points");
+
+			for (int i = 0; i < points.Length - 1; i += 1) 
 				AddLine(points[i].X, points [i].Y, points [i+1].X, points [i+1].Y);
 		}
 
 		public void AddLines (PointF [] points)
 		{
-			for (int i = 0; i < points.Length - 2; i += 2) 
+			if (points == null)
+				throw new ArgumentNullException("points");
+
+			for (int i = 0; i < points.Length - 1; i += 1) 
 				AddLine(points[i].X, points [i].Y, points [i+1].X, points [i+1].Y);
 		}
 		#endregion
