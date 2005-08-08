@@ -1,3 +1,8 @@
+2005-08-08  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBoxTest.cs: new tests for properties, exceptions, and colletions
+	* ListBoxTest.cs: new tests for properties, exceptions, and colletionss
+
 2005-08-06  Ritvik Mayank  <mritvik@novell.com>
 
 	* ComboBoxTest.cs, ListBoxTest.cs : Cleanup, added few more tests   
