@@ -267,7 +267,7 @@ namespace System.Windows.Forms
 		public int ColumnWidth {
 			get { return column_width; }
 			set {
-				if (column_width < 0)
+				if (value < 0)
 					throw new ArgumentException ("A value less than zero is assigned to the property.");
 
     				column_width = value;
@@ -299,7 +299,7 @@ namespace System.Windows.Forms
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for DrawMode", value));
 					
 				if (value == DrawMode.OwnerDrawVariable && multicolumn == true)
-					throw new InvalidEnumArgumentException ("Cannot have variable height and multicolumn");
+					throw new ArgumentException ("Cannot have variable height and multicolumn");
 
 				if (draw_mode == value)
 					return;
@@ -435,9 +435,6 @@ namespace System.Windows.Forms
 		public override RightToLeft RightToLeft {
 			get { return base.RightToLeft; }
 			set {
-				if (base.RightToLeft == value)
-					return;
-
     				base.RightToLeft = value;    				
 				base.Refresh ();
 			}
@@ -678,6 +675,9 @@ namespace System.Windows.Forms
 
 		public int FindString (string s,  int startIndex)
 		{
+			if (Items.Count == 0)
+				return -1; // No exception throwing if empty
+
 			if (startIndex < -1 || startIndex >= Items.Count - 1)
 				throw new ArgumentOutOfRangeException ("Index of out range");
 
@@ -697,6 +697,9 @@ namespace System.Windows.Forms
 
 		public int FindStringExact (string s,  int startIndex)
 		{
+			if (Items.Count == 0)
+				return -1; // No exception throwing if empty
+
 			if (startIndex < -1 || startIndex >= Items.Count - 1)
 				throw new ArgumentOutOfRangeException ("Index of out range");
 

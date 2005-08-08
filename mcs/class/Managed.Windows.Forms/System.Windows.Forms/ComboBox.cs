@@ -62,7 +62,7 @@ namespace System.Windows.Forms
 		private ComboListBox listbox_ctrl;		
 		private TextBox textbox_ctrl;
 		private bool process_textchanged_event;
-		private bool has_focus;		
+		private bool has_focus;	
 
 		[ComVisible(true)]
 		public class ChildAccessibleObject : AccessibleObject {
@@ -94,6 +94,7 @@ namespace System.Windows.Forms
 			internal int original_height;		/* Control's height is recalculated for not Simple Styles */
 			internal Rectangle listbox_area;	/* ListBox area in Simple combox, not used in the rest */
 			internal bool droppeddown;		/* Is the associated ListBox dropped down? */
+			internal int combosimple_height;	/* Simple default height */
 
 			public ComboBoxInfo ()
 			{
@@ -102,6 +103,7 @@ namespace System.Windows.Forms
 				item_height = 0;
 				droppeddown = false;
 				original_height = -1;
+				combosimple_height = 150;
 			}
 		}
 
@@ -250,10 +252,8 @@ namespace System.Windows.Forms
 				dropdown_style = value;					
 				
 				if (dropdown_style == ComboBoxStyle.Simple) {
-					CBoxInfo.show_button = false;
-					
-					if (combobox_info.original_height != -1)
-						Height = combobox_info.original_height;
+					CBoxInfo.show_button = false;					
+					Height = combobox_info.combosimple_height;
 					
 					CreateComboListBox ();
 
@@ -361,7 +361,7 @@ namespace System.Windows.Forms
 			get { return combobox_info.item_height; }
 			set {
 				if (value < 0)
-					throw new ArgumentOutOfRangeException ("The item height value is less than zero");
+					throw new ArgumentException ("The item height value is less than zero");
 
 				combobox_info.item_height = value;
 				CalcTextArea ();
@@ -420,7 +420,7 @@ namespace System.Windows.Forms
 		public override int SelectedIndex {
 			get { return selected_index; }
 			set {
-				if (value < -2 || value >= Items.Count)
+				if (value <= -2 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("Index of out range");
 
 				if (selected_index == value)
@@ -626,6 +626,9 @@ namespace System.Windows.Forms
 
 		public int FindString (string s, int startIndex)
 		{
+			if (Items.Count == 0) 
+				return -1; // No exception throwing if empty
+
 			if (startIndex < -1 || startIndex >= Items.Count - 1)
 				throw new  ArgumentOutOfRangeException ("Index of out range");
 
@@ -645,6 +648,9 @@ namespace System.Windows.Forms
 
 		public int FindStringExact (string s, int startIndex)
 		{
+			if (Items.Count == 0) 
+				return -1; // No exception throwing if empty
+
 			if (startIndex < -1 || startIndex >= Items.Count - 1)
 				throw new ArgumentOutOfRangeException ("Index of out range");
 
@@ -777,6 +783,7 @@ namespace System.Windows.Forms
 
 			if (listbox_ctrl != null) {
 				Controls.Add (listbox_ctrl);
+				Height = combobox_info.combosimple_height;
 			}
 			
 			if (textbox_ctrl != null) {
@@ -872,6 +879,9 @@ namespace System.Windows.Forms
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
 		{
+			if ((specified & BoundsSpecified.Height) != 0)
+				combobox_info.combosimple_height = height;
+
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
