@@ -844,26 +844,27 @@ namespace System.Drawing {
 		}
 
 		public void DrawLines (Pen pen, PointF [] points) {
-			if(points.Length < 2)
-				return;
-			
-			java.awt.geom.GeneralPath p = new java.awt.geom.GeneralPath();
-			for(int i = 0;i<points.Length-1;i++)
-				p.lineTo((float)points[i].X, (float)points[i].Y);
-				//DrawLine(pen,points[i].X,points[i].Y,points[i+1].X,points[i+1].Y);
+			if (pen == null)
+				throw new ArgumentNullException("pen");
 
-			DrawShape(this, pen, p);
+			if (points == null)
+				throw new ArgumentNullException("points");
+
+			GraphicsPath path = new GraphicsPath();
+			path.AddLines(points);
+			DrawShape(this, pen, path);
 		}
 
 		public void DrawLines (Pen pen, Point [] points) {
-			java.awt.geom.GeneralPath p = new java.awt.geom.GeneralPath();
+			if (pen == null)
+				throw new ArgumentNullException("pen");
+			
+			if (points == null)
+				throw new ArgumentNullException("points");
 
-			p.moveTo((float)points[0].X, points[0].Y);
-			for(int i = 1;i<points.Length;i++)
-				p.lineTo((float)points[i].X, (float)points[i].Y);
-				//DrawLine(pen,points[i].X,points[i].Y,points[i+1].X,points[i+1].Y);
-
-			DrawShape(this, pen, p);
+			GraphicsPath path = new GraphicsPath();
+			path.AddLines(points);
+			DrawShape(this, pen, path);
 		}
 		#endregion
 
@@ -903,26 +904,34 @@ namespace System.Drawing {
 
 		#region DrawPolygon
 		public void DrawPolygon (Pen pen, Point [] points) {
-			if(points.Length < 1)
-				return;
-			java.awt.geom.GeneralPath path = new java.awt.geom.GeneralPath();
-			path.moveTo((float)points[0].X,(float)points[0].Y);
-			for(int i = points.Length - 1; i > 0; i--)
-				path.lineTo(points[i].X,points[i].Y);
+			if (pen == null)
+				throw new ArgumentNullException("pen");
 
-			path.closePath();
+			if (points == null)
+				throw new ArgumentNullException("points");
+
+			if(points.Length < 2)
+				return;
+			
+			GraphicsPath path = new GraphicsPath();
+			path.AddLines(points);
+			path.CloseFigure();
 			DrawShape(this,pen,path);
 		}
 
 		public void DrawPolygon (Pen pen, PointF [] points) {
-			if(points.Length < 1)
-				return;
-			java.awt.geom.GeneralPath path = new java.awt.geom.GeneralPath();
-			path.moveTo(points[0].X,points[0].Y);
-			for(int i = points.Length - 1; i > 0; i--)
-				path.lineTo(points[i].X,points[i].Y);
+			if (pen == null)
+				throw new ArgumentNullException("pen");
 
-			path.closePath();
+			if (points == null)
+				throw new ArgumentNullException("points");
+			
+			if(points.Length < 2)
+				return;
+			
+			GraphicsPath path = new GraphicsPath();
+			path.AddLines(points);
+			path.CloseFigure();
 			DrawShape(this,pen,path);
 		}
 		#endregion
