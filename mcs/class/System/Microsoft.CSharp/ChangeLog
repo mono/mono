@@ -1,3 +1,9 @@
+2005-08-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: added missing colon after the line,column
+	parenthesis in the regex that parses the errors to make this work with
+	HEAD mcs.
+
 2005-07-30 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CSharpCodeGenerator.cs: Fixed code generated for NewSlot members.
