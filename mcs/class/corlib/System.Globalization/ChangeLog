@@ -1,3 +1,8 @@
+2005-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CompareInfo.cs: Marked UseManagedCollation internal to have API 
+	match that of MS.NET.
+
 2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs :

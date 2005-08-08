@@ -45,7 +45,7 @@ namespace System.Globalization
 			Environment.GetEnvironmentVariable ("MONO_USE_MANAGED_COLLATION")
 			== "yes";
 
-		public static bool UseManagedCollation {
+		internal static bool UseManagedCollation {
 			get { return useManagedCollation && MSCompatUnicodeTable.IsReady; }
 		}
 
