@@ -71,7 +71,7 @@ namespace System.Data.Odbc
                         Init (connectionString);
 		}
 
-                public void Init (string connectionString)
+                private void Init (string connectionString)
                 {
                         connectionTimeout = 15;
                         ConnectionString = connectionString;

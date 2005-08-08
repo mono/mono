@@ -496,7 +496,7 @@ namespace System.Data.Odbc
 			prepared=true;
 		}
 
-		public void BindParameters ()
+		private void BindParameters ()
 		{
 			int i=1;
 			foreach (OdbcParameter p in Parameters)
