@@ -1,5 +1,10 @@
 2005-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* aot.c: Save class size info into the AOT file. Print more statistics during
+	compilation.
+
+	* mini.h: Bump AOT file version.
+
 	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Fix
 	ordering of disasm cases. Fixes #74957.
 
