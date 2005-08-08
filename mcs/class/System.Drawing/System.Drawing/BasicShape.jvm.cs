@@ -15,7 +15,7 @@ namespace System.Drawing
 	{
 		awt.Shape _shape;
 
-		public BasicShape(awt.Shape shape)
+		protected BasicShape(awt.Shape shape)
 		{
 			_shape = shape;
 		}
