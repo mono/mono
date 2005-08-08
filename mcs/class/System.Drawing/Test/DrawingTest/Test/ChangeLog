@@ -1,0 +1,4 @@
+Andrew Skiba <andrews@mainsoft.com>
+
+	* Test.dotnet.csproj, Test.vmwcsproj: move project to sys.drawing/Test so it's easy to include Mono tests
+
