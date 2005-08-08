@@ -362,10 +362,14 @@ namespace System.Drawing.Drawing2D
 		#region AddPolygon
 		public void AddPolygon (Point [] points)
 		{
-			if(points.Length < 2)
-				return;
+			if (points == null)
+				throw new ArgumentNullException("points");
+
+			if (points.Length < 3)
+				throw new ArgumentException("Invalid parameter used.");
+
 			NativeObject.moveTo((float)points[0].X,(float)points[0].Y);
-			for(int i = 1; i< points.Length - 1;i++)
+			for (int i = 1; i< points.Length; i++)
 			{
 				NativeObject.lineTo((float)points[i].X,(float)points[i].Y);
 			}
@@ -375,10 +379,14 @@ namespace System.Drawing.Drawing2D
 
 		public void AddPolygon (PointF [] points)
 		{
-			if(points.Length < 2)
-				return;
+			if (points == null)
+				throw new ArgumentNullException("points");
+
+			if (points.Length < 3)
+				throw new ArgumentException("Invalid parameter used.");
+
 			NativeObject.moveTo(points[0].X,points[0].Y);
-			for(int i = 1; i< points.Length - 1;i++)
+			for (int i = 1; i < points.Length; i++)
 			{
 				NativeObject.lineTo(points[i].X,points[i].Y);
 			}
