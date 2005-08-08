@@ -1,3 +1,8 @@
+2005-08-08  Kamil Skalski  <nazgul@nemerle.org>
+
+	* Queue.cs, Stack.cs: remove implementation of ICollection<T>,
+	since it is no longer in b2 API
+
 2005-06-20  David Waite  <mass@akuma.org>
 
 	* Collection.cs, ReadOnlyCollection.cs: removed as they are no longer in the b2 API

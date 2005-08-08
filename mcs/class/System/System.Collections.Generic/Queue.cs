@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 namespace System.Collections.Generic
 {
 	[ComVisible(false)]
-	public class Queue<T> : ICollection<T>, ICollection
+	public class Queue<T> : IEnumerable <T>, ICollection, IEnumerable
 	{
 		T [] data;
 		int head;
@@ -214,11 +214,6 @@ namespace System.Collections.Generic
 			get { return size; }
 		}
 		
-		
-		bool ICollection <T>.IsReadOnly {
-			get { return false; }
-		}
-		
 		bool ICollection.IsSynchronized {
 			get { return false; }
 		}
@@ -227,17 +222,6 @@ namespace System.Collections.Generic
 			get { return this; }
 		}
 		
-		void ICollection <T>.Add (T t)
-		{
-			Enqueue (t);
-		}
-		
-		bool ICollection <T>.Remove (T t)
-		{
-			throw new InvalidOperationException ("");
-		}
-		
-
 		public Enumerator GetEnumerator ()
 		{
 			return new Enumerator (this);

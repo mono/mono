@@ -38,7 +38,7 @@ using System.Runtime.InteropServices;
 namespace System.Collections.Generic
 {
 	[ComVisible (false)]
-	public class Stack <T> : ICollection <T>, IEnumerable <T>, ICollection, IEnumerable {
+	public class Stack <T> : IEnumerable <T>, ICollection, IEnumerable {
 		
 		T [] data;
 		int size;
@@ -149,26 +149,12 @@ namespace System.Collections.Generic
 			get { return size; }
 		}
 		
-		bool ICollection <T>.IsReadOnly {
-			get { return false; }
-		}
-		
 		bool ICollection.IsSynchronized {
 			get { return false; }
 		}
 		
 		object ICollection.SyncRoot {
 			get { return this; }
-		}
-		
-		void ICollection <T>.Add (T t)
-		{
-			Push (t);
-		}
-		
-		bool ICollection <T>.Remove (T t)
-		{
-			throw new InvalidOperationException ("");
 		}
 		
 		void ICollection.CopyTo (Array dest, int idx)
