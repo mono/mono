@@ -1,3 +1,8 @@
+2005-08-08  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (method_decl | D_ENTRYPOINT): Set codegen.HasEntryPoint
+	  to true.
+
 2005-08-05  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (class_decl, method_decl | sec_decl): Use

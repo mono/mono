@@ -63,6 +63,7 @@ namespace Mono.ILASM {
 		private string debug_file;
                 private bool is_dll;
                 private bool is_assembly;
+                private bool entry_point;
 
                 private string module_name;
 
@@ -91,6 +92,7 @@ namespace Mono.ILASM {
                         sub_system = -1;
                         cor_flags = -1;
                         image_base = -1;
+                        entry_point = false;
                 }
 
 		private string CreateDebugFile (string output_file)
@@ -153,6 +155,16 @@ namespace Mono.ILASM {
 
                 public TypeManager TypeManager {
                         get { return type_manager; }
+                }
+
+                public bool HasEntryPoint {
+                        get { return entry_point; }
+                        set { 
+                                /* if (!value) error: unsetting entrypoint ? */
+                                if (entry_point)
+                                        throw new Exception ("Multiple .entrypoint declarations.");
+                                entry_point = value;
+                        }                
                 }
 
                 public void SetSubSystem (int sub_system)
@@ -372,6 +384,9 @@ namespace Mono.ILASM {
                         FileStream out_stream = null;
 
                         try {
+                                if (!is_dll && !HasEntryPoint)
+                                        throw new Exception ("No EntryPoint found.");
+
                                 out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
                                 pefile = new PEFile (assembly_name, module_name, is_dll, is_assembly, out_stream);
                                 PEAPI.Assembly asmb = pefile.GetThisAssembly ();

@@ -1,3 +1,11 @@
+2005-08-08  Ankit Jain  <jankit@novell.com>
+
+	* CodeGen.cs (CodeGen.entry_point): New bool field.
+	  (CodeGen.HasEntryPoint): New. Property to mark that the assembly
+	  has an entrypoint.
+	  (CodeGen.Write): Throw Exception if an EXE has been requested but the
+	  source file has no entrypoint defined.
+
 2005-08-05  Ankit Jain  <jankit@novell.com>
 
 	* DeclSecurity.cs: New File.
