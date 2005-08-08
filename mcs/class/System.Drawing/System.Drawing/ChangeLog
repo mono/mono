@@ -1,4 +1,9 @@
-﻿2005-08-07 Konstantin Triger <kostat@mainsoft.com>
+﻿2005-08-08 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: Refactoring
+	* Pen.jvm.cs: setting awt.Stroke as a base
+
+2005-08-07 Konstantin Triger <kostat@mainsoft.com>
 
 	* Graphics.jvm.cs: Refactoring
 

@@ -15,11 +15,12 @@ using System;
 using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 using java.awt;
+using awt = java.awt;
 
 namespace System.Drawing 
 {
 
-	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable 
+	public sealed class Pen : MarshalByRefObject, ICloneable, IDisposable, awt.Stroke
 	{
 		#region Member Vars
 		java.awt.BasicStroke nativeObject;
@@ -598,5 +599,13 @@ namespace System.Drawing
 			//FALLBACK: StartCap, EndCap and DashCap are the same
 			EndCap = endCap;
 		}
+
+		#region Stroke Members
+
+		awt.Shape awt.Stroke.createStrokedShape(awt.Shape arg_0) {
+			return NativeObject.createStrokedShape(arg_0);
+		}
+
+		#endregion
 	}
 }

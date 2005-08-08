@@ -124,36 +124,20 @@ namespace System.Drawing {
 			}
 		}
 
-		//Ooh. This is exactly where java GeneralPath does not do its job
-		//well. Geometry of strait lines could be completelly missed
-		//Remember: setting stroke to DC works far more better than precreating
-		//stroked shape.
-		//		internal java.awt.Shape ShapeToDraw(Pen pen,java.awt.Shape sh)
-		//		{			
-		//			if(pen != null)
-		//			{
-		//				return pen.NativeObject.createStrokedShape(sh);
-		//			}
-		//			return sh;
-		//		}
+		void DrawShape(Pen pen, awt.Shape shape) {
+			if (pen == null)
+				throw new ArgumentNullException("pen");
 
-		internal void DrawShape(Graphics g,Pen pen,java.awt.Shape sh) {
-			DrawShape(g,pen,sh,true);
-		}
+			awt.Stroke stroke = NativeObject.getStroke();
 
-		internal void DrawShape(Graphics g,Pen pen,java.awt.Shape sh,bool fSetStroke) {
-			java.awt.Graphics2D ng = NativeObject;
-			java.awt.Stroke bs = ng.getStroke();
-			if(pen != null) {
-				Color c = pen.Color;
-				//ng.setColor(new java.awt.Color(c.R,c.G,c.B,c.A));
-				ng.setPaint((awt.Paint)pen.Brush);
-				if(fSetStroke)
-					//ng.draw(ShapeToDraw(pen,sh));
-					ng.setStroke(pen.NativeObject);
+			try {
+				NativeObject.setPaint(pen.Brush);
+				NativeObject.setStroke(pen);
+				NativeObject.draw(shape);
 			}
-			ng.draw(/*ShapeToDraw(pen,*/sh/*)*/);
-			ng.setStroke(bs);
+			finally {
+				NativeObject.setStroke(stroke);
+			}
 		}
 
 		void FillShape(Brush brush,java.awt.Shape sh) {
@@ -380,7 +364,7 @@ namespace System.Drawing {
 			geom.GeneralPath path = new geom.GeneralPath();
 			path.moveTo(x1,y1);
 			path.curveTo(x2,y2,x3,y3,x4,y4);
-			DrawShape(this,pen,path);
+			DrawShape(pen, path);
 		}
 
 		public void DrawBeziers (Pen pen, Point [] points) {
@@ -484,7 +468,7 @@ namespace System.Drawing {
 		}
 
 		public void DrawEllipse (Pen pen, float x, float y, float width, float height) {
-			DrawShape(this,pen,new java.awt.geom.Ellipse2D.Float(x,y,width,height));
+			DrawShape(pen, new geom.Ellipse2D.Float(x,y,width,height));
 		}
 		#endregion
 
@@ -800,7 +784,7 @@ namespace System.Drawing {
 		}
 
 		public void DrawLine (Pen pen, float x1, float y1, float x2, float y2) {
-			DrawShape(this,pen,new java.awt.geom.Line2D.Float(x1,y1,x2,y2));
+			DrawShape(pen, new geom.Line2D.Float(x1,y1,x2,y2));
 		}
 
 		public void DrawLines (Pen pen, PointF [] points) {
@@ -812,7 +796,7 @@ namespace System.Drawing {
 
 			GraphicsPath path = new GraphicsPath();
 			path.AddLines(points);
-			DrawShape(this, pen, path);
+			DrawShape(pen, path);
 		}
 
 		public void DrawLines (Pen pen, Point [] points) {
@@ -824,13 +808,13 @@ namespace System.Drawing {
 
 			GraphicsPath path = new GraphicsPath();
 			path.AddLines(points);
-			DrawShape(this, pen, path);
+			DrawShape(pen, path);
 		}
 		#endregion
 
 		#region DrawPath
 		public void DrawPath (Pen pen, GraphicsPath path) {
-			DrawShape(this,pen,path,true);
+			DrawShape(pen, path);
 		}
 		#endregion
 		
@@ -868,7 +852,7 @@ namespace System.Drawing {
 			GraphicsPath path = new GraphicsPath();
 			path.AddLines(points);
 			path.CloseFigure();
-			DrawShape(this,pen,path);
+			DrawShape(pen,path);
 		}
 
 		public void DrawPolygon (Pen pen, PointF [] points) {
@@ -884,7 +868,7 @@ namespace System.Drawing {
 			GraphicsPath path = new GraphicsPath();
 			path.AddLines(points);
 			path.CloseFigure();
-			DrawShape(this,pen,path);
+			DrawShape(pen, path);
 		}
 		#endregion
 
@@ -898,7 +882,7 @@ namespace System.Drawing {
 		}
 
 		public void DrawRectangle (Pen pen, float x, float y, float width, float height) {
-			DrawShape(this,pen,new java.awt.geom.Rectangle2D.Float(x,y,width,height));
+			DrawShape(pen, new geom.Rectangle2D.Float(x,y,width,height));
 		}
 
 		public void DrawRectangle (Pen pen, int x, int y, int width, int height) {
