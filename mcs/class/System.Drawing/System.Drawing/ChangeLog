@@ -1,4 +1,8 @@
-﻿2005-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
+﻿2005-08-08 Konstantin Triger <kostat@mainsoft.com>
+
+        * Graphics.jvm.cs: Refactoring
+
+2005-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Graphics.jvm.cs: Fixed DrawPolygon
 

@@ -368,31 +368,15 @@ namespace System.Drawing {
 		}
 
 		public void DrawBeziers (Pen pen, Point [] points) {
-			int length = points.Length-1;
-			if (length < 3)
-				return;
-
-			for (int i = 0; i < length; i += 3) {
-				DrawBezier(pen,	
-					points [i].X,points [i].Y,
-					points [i+1].X,points [i+1].Y,
-					points [i+2].X,points [i+2].Y,
-					points [i+3].X,points [i+3].Y);
-			}
+			GraphicsPath path = new GraphicsPath();
+			path.AddBeziers(points);
+			DrawPath(pen, path);
 		}
 
 		public void DrawBeziers (Pen pen, PointF [] points) {
-			int length = points.Length-1;
-			if (length < 3)
-				return;
-
-			for (int i = 0; i < length; i += 3) {
-				DrawBezier(pen,	
-					points [i].X,points [i].Y,
-					points [i+1].X,points [i+1].Y,
-					points [i+2].X,points [i+2].Y,
-					points [i+3].X,points [i+3].Y);
-			}
+			GraphicsPath path = new GraphicsPath();
+			path.AddBeziers(points);
+			DrawPath(pen, path);
 		}
 		#endregion 
 
@@ -788,24 +772,12 @@ namespace System.Drawing {
 		}
 
 		public void DrawLines (Pen pen, PointF [] points) {
-			if (pen == null)
-				throw new ArgumentNullException("pen");
-
-			if (points == null)
-				throw new ArgumentNullException("points");
-
 			GraphicsPath path = new GraphicsPath();
 			path.AddLines(points);
 			DrawShape(pen, path);
 		}
 
 		public void DrawLines (Pen pen, Point [] points) {
-			if (pen == null)
-				throw new ArgumentNullException("pen");
-			
-			if (points == null)
-				throw new ArgumentNullException("points");
-
 			GraphicsPath path = new GraphicsPath();
 			path.AddLines(points);
 			DrawShape(pen, path);
