@@ -840,35 +840,15 @@ namespace System.Drawing {
 
 		#region DrawPolygon
 		public void DrawPolygon (Pen pen, Point [] points) {
-			if (pen == null)
-				throw new ArgumentNullException("pen");
-
-			if (points == null)
-				throw new ArgumentNullException("points");
-
-			if(points.Length < 2)
-				return;
-			
 			GraphicsPath path = new GraphicsPath();
-			path.AddLines(points);
-			path.CloseFigure();
-			DrawShape(pen,path);
+			path.AddPolygon(points);
+			DrawPath(pen, path);
 		}
 
 		public void DrawPolygon (Pen pen, PointF [] points) {
-			if (pen == null)
-				throw new ArgumentNullException("pen");
-
-			if (points == null)
-				throw new ArgumentNullException("points");
-			
-			if(points.Length < 2)
-				return;
-			
 			GraphicsPath path = new GraphicsPath();
-			path.AddLines(points);
-			path.CloseFigure();
-			DrawShape(pen, path);
+			path.AddPolygon(points);
+			DrawPath(pen, path);
 		}
 		#endregion
 
