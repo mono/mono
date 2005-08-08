@@ -375,18 +375,7 @@ namespace System.Data.Odbc
 		private void ExecSQL(string sql)
 		{
 			OdbcReturn ret;
-
-			if ((Parameters.Count>0) && !prepared)
-				Prepare();
-	
-			if (prepared)
-			{
-				ret=libodbc.SQLExecute(hstmt);
-				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
-					throw new OdbcException(new OdbcError("SQLExecute",OdbcHandleType.Stmt,hstmt));
-			}
-			else
-			{
+			if (! prepared && Parameters.Count <= 0) {
 				ret=libodbc.SQLAllocHandle(OdbcHandleType.Stmt, Connection.hDbc, ref hstmt);
 				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 					throw new OdbcException(new OdbcError("SQLAllocHandle",OdbcHandleType.Dbc,Connection.hDbc));
@@ -394,7 +383,16 @@ namespace System.Data.Odbc
 				ret=libodbc.SQLExecDirect(hstmt, sql, sql.Length);
 				if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 					throw new OdbcException(new OdbcError("SQLExecDirect",OdbcHandleType.Stmt,hstmt));
+				return;
 			}
+
+			if (!prepared)
+				Prepare();
+
+			BindParameters ();
+			ret=libodbc.SQLExecute(hstmt);
+			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
+				throw new OdbcException(new OdbcError("SQLExecute",OdbcHandleType.Stmt,hstmt));
 		}
 
 		public
@@ -452,15 +450,17 @@ namespace System.Data.Odbc
 			ret=libodbc.SQLPrepare(hstmt, CommandText, CommandText.Length);
 			if ((ret!=OdbcReturn.Success) && (ret!=OdbcReturn.SuccessWithInfo)) 
 				throw new OdbcException(new OdbcError("SQLPrepare",OdbcHandleType.Stmt,hstmt));
+			prepared=true;
+		}
 
+		public void BindParameters ()
+		{
 			int i=1;
 			foreach (OdbcParameter p in Parameters)
 			{
 				p.Bind(hstmt, i);
 				i++;
 			}
-
-			prepared=true;
 		}
 
 

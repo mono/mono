@@ -1,3 +1,11 @@
+2005-08-08  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcCommand.cs: Prepare (): Split SQLPrepare and SQLBind so that
+	already prepared statements can be reused with new parameter
+	values. ExecSQL (): create new statement handle, if not prepared
+	and there are no parameters. if there are parameters, prepare and
+	use.
+
 2005-08-05  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcDataReader.cs: RecordsAffected: get value from command.
