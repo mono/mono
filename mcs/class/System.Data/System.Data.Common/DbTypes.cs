@@ -2,7 +2,7 @@ using System;
 
 namespace System.Data.Common
 {
-	public class DbTypes
+	internal class DbTypes
 	{
 #if TARGET_JVM
 		#region java.sql.Types constants

@@ -1,3 +1,7 @@
+2005-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DbTypes.cs: Marked internal to fix public API.
+
 2005-08-05  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DbDataAdapter.cs:
