@@ -119,7 +119,7 @@ namespace System.Data.OleDb
 		#region Properties
 
 		[BrowsableAttribute (false)]
-		[DataSysDescriptionAttribute ("The parameter generic type")]
+		[DataSysDescriptionAttribute ("The parameter generic type.")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[DataCategory ("DataCategory_Data")]
@@ -131,7 +131,8 @@ namespace System.Data.OleDb
 			}
 		}
 		
-		[DataSysDescriptionAttribute ("Input, output, or bidirectional parameter")]			    [DefaultValue (ParameterDirection.Input)]
+		[DataSysDescriptionAttribute ("Input, output, or bidirectional parameter.")]
+		[DefaultValue (ParameterDirection.Input)]
 		[DataCategory ("DataCategory_Data")]
 		public ParameterDirection Direction {
 			get { return direction; }
@@ -139,7 +140,7 @@ namespace System.Data.OleDb
 		}
 		
 		[BrowsableAttribute (false)]
-		[DataSysDescriptionAttribute ("A design-time property used for strongly typed code generation")]
+		[DataSysDescriptionAttribute ("a design-time property used for strongly typed code-generation.")]
 		[DesignOnlyAttribute (true)]
                 [EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
 		[DefaultValue (false)]
@@ -149,7 +150,7 @@ namespace System.Data.OleDb
 		}
 
 		[DefaultValue (OleDbType.VarWChar)]
-		[DataSysDescriptionAttribute ("The parameter native type")]
+		[DataSysDescriptionAttribute ("The parameter native type.")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		[DataCategory ("DataCategory_Data")]
 		public OleDbType OleDbType {
@@ -161,14 +162,14 @@ namespace System.Data.OleDb
 		}
 		
 		[DefaultValue ("")]
-		[DataSysDescriptionAttribute ("Name of the parameter")]
+		[DataSysDescriptionAttribute ("Name of the parameter.")]
 		public string ParameterName {
 			get { return name; }
 			set { name = value; }
 		}
 
 		[DefaultValue (0)]
-                [DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes")]
+                [DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes.")]
 		[DataCategory ("DataCategory_Data")]
 		public byte Precision {
 			get { return precision; }
@@ -176,7 +177,7 @@ namespace System.Data.OleDb
 		}
 		
 		[DefaultValue (0)]
-                [DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes")]
+                [DataSysDescriptionAttribute ("For decimal, numeric, varnumeric DBTypes.")]
 		[DataCategory ("DataCategory_Data")]
 		public byte Scale {
 			get { return scale; }
@@ -185,7 +186,7 @@ namespace System.Data.OleDb
 		
 
 		[DefaultValue (0)]
-                [DataSysDescriptionAttribute ("Size of variable length data types (string & arrays)")]
+                [DataSysDescriptionAttribute ("Size of variable length data types (string & arrays).")]
 		[DataCategory ("DataCategory_Data")]
 		public int Size {
 			get { return size; }
@@ -193,7 +194,7 @@ namespace System.Data.OleDb
 		}
 
 		[DefaultValue ("")]
-                [DataSysDescriptionAttribute ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow")]
+                [DataSysDescriptionAttribute ("When used by a DataAdapter.Update, the source column name that is used to find the DataSetColumn name in the ColumnMappings. This is to copy a value between the parameter and a datarow.")]
 		[DataCategory ("DataCategory_Data")]
 		public string SourceColumn {
 			get { return sourceColumn; }
@@ -201,7 +202,7 @@ namespace System.Data.OleDb
 		}
 		
 		[DefaultValue (DataRowVersion.Current)]
-                [DataSysDescriptionAttribute ("When used by a DataAdapter.Update(UpdateCommand only), the version of the DataRow value that is used to update the data source")]
+                [DataSysDescriptionAttribute ("When used by a DataAdapter.Update (UpdateCommand only), the version of the DataRow value that is used to update the data source.")]
 		[DataCategory ("DataCategory_Data")]
 		public DataRowVersion SourceVersion {
 			get { return sourceVersion; }
@@ -209,7 +210,7 @@ namespace System.Data.OleDb
 		}
 		
 		[DefaultValue (null)]
-                [DataSysDescriptionAttribute ("value of the parameter")]
+                [DataSysDescriptionAttribute ("Value of the parameter.")]
 		[TypeConverter (typeof (StringConverter))]
 		[DataCategory ("DataCategory_Data")]
 		public object Value {

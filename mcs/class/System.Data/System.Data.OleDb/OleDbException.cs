@@ -35,6 +35,7 @@
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
@@ -55,8 +56,7 @@ namespace System.Data.OleDb
 		#endregion // Constructors
 		
 		#region Properties
-		// FIXME : On .NET the string is System.Data.OleDb.OleDbException+ErrorConverter 
-		[TypeConverterAttribute (typeof (OleDbException))]
+		[TypeConverterAttribute (typeof (OleDbException.ErrorCodeConverter))]
 		public override int ErrorCode {	
 			get {
 				GdaList glist;
@@ -72,7 +72,7 @@ namespace System.Data.OleDb
 			}
 		}
 		
-		[ DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
+		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public OleDbErrorCollection Errors {
 			get {
 				GdaList glist;
@@ -149,5 +149,13 @@ namespace System.Data.OleDb
 		}
 
 		#endregion // Methods
+
+		internal sealed class ErrorCodeConverter : Int32Converter
+		{
+			[MonoTODO]
+			public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType) {
+				return base.ConvertTo (context, culture, value, destinationType);
+			}
+		}
 	}
 }

@@ -113,7 +113,7 @@ namespace System.Data.OleDb
 	
 		[DataCategory ("Data")]
 		[DefaultValue ("")]
-                [DataSysDescriptionAttribute ("Command text to execute")]
+                [DataSysDescriptionAttribute ("Command text to execute.")]
                 [EditorAttribute ("Microsoft.VSDesigner.Data.ADO.Design.OleDbCommandTextEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public string CommandText 
@@ -126,7 +126,7 @@ namespace System.Data.OleDb
 			}
 		}
 
-		[DataSysDescriptionAttribute ("Time to wait for command to execute")]
+		[DataSysDescriptionAttribute ("Time to wait for command to execute.")]
 		[DefaultValue (30)]
 		public int CommandTimeout {
 			get {
@@ -139,7 +139,7 @@ namespace System.Data.OleDb
 
 		[DataCategory ("Data")]
                 [DefaultValue ("Text")]
-		[DataSysDescriptionAttribute ("How to interpret the CommandText")]
+		[DataSysDescriptionAttribute ("How to interpret the CommandText.")]
 		[RefreshPropertiesAttribute (RefreshProperties.All)]
 		public CommandType CommandType { 
 			get {
@@ -151,7 +151,7 @@ namespace System.Data.OleDb
 		}
 
 		[DataCategory ("Behavior")]
-		[DataSysDescriptionAttribute ("Connection used by the command")]
+		[DataSysDescriptionAttribute ("Connection used by the command.")]
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DbConnectionEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbConnection Connection { 
@@ -176,7 +176,7 @@ namespace System.Data.OleDb
 		}
 
 		[DataCategory ("Data")]
-		[DataSysDescriptionAttribute ("The parameters collection")]
+		[DataSysDescriptionAttribute ("The parameters collection.")]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
 		public OleDbParameterCollection Parameters {
 			get {
@@ -185,7 +185,7 @@ namespace System.Data.OleDb
 		}
 		
 		[BrowsableAttribute (false)]
-		[DataSysDescriptionAttribute ("The transaction used by the command")]
+		[DataSysDescriptionAttribute ("The transaction used by the command.")]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public OleDbTransaction Transaction {
 			get {
@@ -198,7 +198,7 @@ namespace System.Data.OleDb
 
 		[DataCategory ("Behavior")]
 		[DefaultValue (UpdateRowSource.Both)]
-		[DataSysDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow")]
+		[DataSysDescriptionAttribute ("When used by a DataAdapter.Update, how command results are applied to the current DataRow.")]
 		public UpdateRowSource UpdatedRowSource { 
 			[MonoTODO]
 			get {

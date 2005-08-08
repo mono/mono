@@ -1,3 +1,12 @@
+2005-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* OleDbDataAdapter.cs: Fixed custom attributes to match MS.NET.
+	* OleDbCommand.cs: Fixed custom attributes to match MS.NET.
+	* OleDbParameter.cs: Fixed custom attribute to match MS.NET.
+	* OleDbException.cs: Added ErrorTypeConverter, assigned to ErrorCode
+	property to match MS.NET.
+	* OleDbConnection.cs: Fixed custom attributes to match MS.NET.
+
 2005-02-16  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* OleDbCommand.cs: Make it inherit from the correct base class in 2.0,

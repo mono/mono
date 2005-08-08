@@ -84,9 +84,9 @@ namespace System.Data.OleDb
 
 		#region Properties
 		
-		[DefaultValue ("")]
+		[DefaultValue (null)]
 		[DataCategory ("Update")]
-		[DataSysDescriptionAttribute ("Used during Update for deleted rows in DataSet")]
+		[DataSysDescriptionAttribute ("Used during Update for deleted rows in DataSet.")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand DeleteCommand {
 			get {
@@ -97,9 +97,9 @@ namespace System.Data.OleDb
 			}
 		}
 
-		[DefaultValue ("")]
+		[DefaultValue (null)]
 		[DataCategory ("Update")]
-                [DataSysDescriptionAttribute ("Used during Update for new rows in DataSet")]
+                [DataSysDescriptionAttribute ("Used during Update for new rows in DataSet.")]
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand InsertCommand {
 			get {
@@ -110,9 +110,9 @@ namespace System.Data.OleDb
 			}
 		}
 
-		[DefaultValue ("")]
+		[DefaultValue (null)]
 		[DataCategory ("Fill")]
-                [DataSysDescriptionAttribute ("Used during Fill/FillSchema")]
+                [DataSysDescriptionAttribute ("Used during Fill/FillSchema.")]
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand SelectCommand {
 			get {
@@ -123,9 +123,9 @@ namespace System.Data.OleDb
 			}
 		}
 
-		[DefaultValue ("")]
+		[DefaultValue (null)]
 		[DataCategory ("Update")]
-                [DataSysDescriptionAttribute ("Used during Update for modified rows in DataSet")]
+                [DataSysDescriptionAttribute ("Used during Update for modified rows in DataSet.")]
                 [EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
 		public OleDbCommand UpdateCommand {
 			get {
@@ -251,11 +251,11 @@ namespace System.Data.OleDb
 
 		#region Events and Delegates
 
-		[DataSysDescription ("DbDataAdapter_RowUpdated")]
+		[DataSysDescription ("Event triggered before every DataRow during Update.")]
                 [DataCategory ("DataCategory_Update")]
 		public event OleDbRowUpdatedEventHandler RowUpdated;
 
-		[DataSysDescription ("DbDataAdapter_RowUpdating")]
+		[DataSysDescription ("Event triggered after every DataRow during Update.")]
                 [DataCategory ("DataCategory_Update")]
 		public event OleDbRowUpdatingEventHandler RowUpdating;
 
