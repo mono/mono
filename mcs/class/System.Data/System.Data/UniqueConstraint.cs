@@ -404,7 +404,7 @@ namespace System.Data {
 			Index = null;
 		}
 
-		protected internal override bool IsConstraintViolated()
+		internal override bool IsConstraintViolated()
 		{	
 			if (Index == null) {
 				Index = Table.GetIndex(Columns,null,DataViewRowState.None,null,false);

@@ -37,12 +37,12 @@ namespace System.Data
 	[DesignerAttribute ("Microsoft.VSDesigner.Data.VS.DataViewDesigner, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.IDesigner")]
 	public class DataView : MarshalByValueComponent, IBindingList, IList, ICollection, IEnumerable, ITypedList, ISupportInitialize
 	{
-		protected internal DataTable dataTable = null;
+		internal DataTable dataTable = null;
 		string rowFilter = String.Empty;
 		IExpression rowFilterExpr;
 		string sort = String.Empty;
-		protected internal DataViewRowState rowState;
-		protected internal DataRowView[] rowCache = new DataRowView [0];
+		internal DataViewRowState rowState;
+		internal DataRowView[] rowCache = new DataRowView [0];
 
 		// BeginInit() support
 		bool isInitPhase = false;
@@ -287,6 +287,7 @@ namespace System.Data
 			}
 		}
 
+		[TypeConverter (typeof (DataTableTypeConverter))]
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the table this DataView uses to get data.")]
 		[DefaultValue (null)]

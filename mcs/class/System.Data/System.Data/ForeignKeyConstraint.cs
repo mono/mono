@@ -477,7 +477,7 @@ namespace System.Data {
 			Index = null;
 		}
 		
-		protected internal override bool IsConstraintViolated()
+		internal override bool IsConstraintViolated()
 		{
 			if (Table.DataSet == null || RelatedTable.DataSet == null) 
 				return false;

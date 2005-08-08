@@ -122,7 +122,7 @@ namespace System.Data {
 		//will throw an exception to prevent the add if a rule is broken
 		internal abstract void AddToConstraintCollectionSetup (ConstraintCollection collection);
 					
-		protected internal abstract bool IsConstraintViolated ();
+		internal abstract bool IsConstraintViolated ();
 		
 		internal static void ThrowConstraintException(){
 			throw new ConstraintException("Failed to enable constraints. One or more rows contain values violating non-null, unique, or foreign-key constraints.");
