@@ -44,9 +44,7 @@ namespace System.Drawing.Drawing2D
                 
 		public GraphicsPath (FillMode fillMode) : this(new GeneralPath())
 		{
-			NativeObject.setWindingRule(
-				fillMode == FillMode.Alternate ? 
-				GeneralPath.WIND_NON_ZERO : GeneralPath.WIND_EVEN_ODD);
+			FillMode = fillMode;
 		}
                 
 		public GraphicsPath (Point[] pts, byte[] types) : this(null)
@@ -140,27 +138,71 @@ namespace System.Drawing.Drawing2D
 		#endregion
                         
 		#region AddArc
-		public void AddArc (Rectangle rect, float start_angle, float sweep_angle)
+		public void AddArc (Rectangle rect, float startAngle, float sweepAngle)
 		{
-			AddArc(rect.X,rect.Y,rect.Width,rect.Height,start_angle,sweep_angle);			
+			AddArc(rect.X,rect.Y,rect.Width,rect.Height,startAngle,sweepAngle);			
 		}
 
-		public void AddArc (RectangleF rect, float start_angle, float sweep_angle)
+		public void AddArc (RectangleF rect, float startAngle, float sweepAngle)
 		{
-			AddArc(rect.X,rect.Y,rect.Width,rect.Height,start_angle,sweep_angle);
+			AddArc(rect.X,rect.Y,rect.Width,rect.Height,startAngle,sweepAngle);
 		}
 
-		public void AddArc (int x, int y, int width, int height, float start_angle, float sweep_angle)
+		public void AddArc (int x, int y, int width, int height, float startAngle, float sweepAngle)
 		{
-			AddArc((float)x,(float)y,(float)width,(float)height,start_angle,sweep_angle);
+			AddArc((float)x,(float)y,(float)width,(float)height,startAngle,sweepAngle);
 		}
 
-		public void AddArc (float x, float y, float width, float height, float start_angle, float sweep_angle)
+		public void AddArc (float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
-			Arc2D a = new Arc2D.Float(x, y,width,height,-start_angle,-sweep_angle,0/*OPEN*/);
-			NativeObject.append(a,!_isNewFigure);
+			Shape shape = null;
+
+			if (sweepAngle >= 360)
+				shape = new Ellipse2D.Float(x, y, width, height);
+			else {
+
+				double d1Tod2 = width/height;
+				double sqrd1Tod2 = d1Tod2*d1Tod2;
+				double start = ConvertArcAngle(sqrd1Tod2, startAngle);
+				double extent = ConvertArcAngle(sqrd1Tod2, startAngle+sweepAngle) - start;
+
+				shape = new Arc2D.Double(x,y,width,height,-start,-extent,Arc2D.OPEN);
+			}
+
+			NativeObject.append(shape,!_isNewFigure);
 			_isNewFigure = false;
-			//LastFigure.append(a); 
+		}
+
+		/// <summary>
+		/// .Net computes an angle by intersection of ellipse with a ray
+		/// java does the following: x1 = d1*cos(a), y1 = d2*sin(a)
+		/// where: d1 = width/2, d2 = height/2
+		/// we need to find angle x, which satisfies:
+		/// x1 = m*cos(a) = d1*cos(x)
+		/// y1 = m*sin(a) = d2*sin(x)
+		/// (x1*x1)/(d1*d1) + (x2*x2)/(d2*d2) = 1
+		/// </summary>
+		/// <param name="sqrd1Tod2">(d1/d2)*(d1/d2)</param>
+		/// <param name="angle">angle in degrees</param>
+		/// <returns>converted angle in degrees</returns>
+		static double ConvertArcAngle(double sqrd1Tod2, double angle) {
+			double angleRad = java.lang.Math.toRadians(angle);
+			double tan = Math.Tan(angleRad);
+			double cosx = 1/Math.Sqrt( sqrd1Tod2 * (tan*tan) + 1);
+			double xRad = Math.Acos(cosx);
+			double x = java.lang.Math.toDegrees(xRad);
+			int q = ((int)angle)/90;
+
+			switch (q&3) {
+				default:
+					return x;
+				case 1:
+					return 180-x;
+				case 2:
+					return 180+x;
+				case 3:
+					return 360-x;
+			}
 		}
 
 		#endregion
@@ -268,8 +310,21 @@ namespace System.Drawing.Drawing2D
 		#region AddPie
 		public void AddPie (float x, float y, float width, float height, float startAngle, float sweepAngle)
 		{
-			Arc2D a = new Arc2D.Float(x,y,width,height,-startAngle,-sweepAngle,2/*PIE*/);
-			NativeObject.append(a,false);
+			Shape shape = null;
+
+			if (sweepAngle >= 360)
+				shape = new Ellipse2D.Float(x, y, width, height);
+			else {
+
+				double d1Tod2 = width/height;
+				double sqrd1Tod2 = d1Tod2*d1Tod2;
+				double start = ConvertArcAngle(sqrd1Tod2, startAngle);
+				double extent = ConvertArcAngle(sqrd1Tod2, startAngle+sweepAngle) - start;
+
+				shape = new Arc2D.Double(x,y,width,height,-start,-extent,Arc2D.PIE);
+			}
+
+			NativeObject.append(shape,false);
 			_isNewFigure = true;
 		}
 
