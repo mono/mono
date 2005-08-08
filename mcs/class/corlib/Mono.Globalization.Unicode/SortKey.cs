@@ -36,6 +36,7 @@ using System.Globalization;
 
 namespace System.Globalization
 {
+	[Serializable]
 	public class SortKey
 	{
 		#region Static members
