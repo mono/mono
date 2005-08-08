@@ -1,3 +1,7 @@
+2005-08-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (mono_image_load_module): Fix error checking. Fixes #75660.
+
 2005-08-03  Ankit Jain  <jankit@novell.com>
 
 	Fix #75683.
