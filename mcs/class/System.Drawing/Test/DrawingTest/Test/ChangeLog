@@ -1,3 +1,10 @@
+2005-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Added Brushes.cs: Brushes and SystemBrushes tests
+	* Added Colors.cs: Colors, SystemColors tests
+	* Added Enums.cs: Various enums tests
+	* Added Pens.cs: Pens, SystemPent tests
+
 Andrew Skiba <andrews@mainsoft.com>
 
 	* Test.dotnet.csproj, Test.vmwcsproj: move project to sys.drawing/Test so it's easy to include Mono tests
