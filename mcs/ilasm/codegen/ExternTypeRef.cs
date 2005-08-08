@@ -55,7 +55,7 @@ namespace Mono.ILASM {
                 
                 public ExternTypeRef Clone ()
                 {
-                        return new ExternTypeRef (extern_ref, FullName, is_valuetype,
+                        return new ExternTypeRef (extern_ref, full_name, is_valuetype,
                                         extern_table, (ArrayList) ConversionList.Clone ());
                 }
                 

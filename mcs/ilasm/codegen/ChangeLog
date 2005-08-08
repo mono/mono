@@ -1,5 +1,10 @@
 2005-08-08  Ankit Jain  <jankit@novell.com>
 
+	* ExternTypeRef.cs (ExternTypeRef.Clone): Use full_name instead of FullName
+	  to avoid cloning modifiers (like []).
+
+2005-08-08  Ankit Jain  <jankit@novell.com>
+
 	* CodeGen.cs (CodeGen.entry_point): New bool field.
 	  (CodeGen.HasEntryPoint): New. Property to mark that the assembly
 	  has an entrypoint.
