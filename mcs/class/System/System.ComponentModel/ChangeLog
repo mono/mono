@@ -1,3 +1,9 @@
+2005-08-09  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* IComponent.cs: Fixed Designer attribute to match MS.NET.
+	* DesignerAttribute.cs: DesignerBaseTypeName defaults to fullname of
+	IDesigner to match MS.NET.
+
 2005-08-07  Michael Hutchinson <m.j.hutchinson@dur.ac.uk>
 
 	Patch from Michael Hutchinson to make the aspnet editor work. 

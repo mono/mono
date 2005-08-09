@@ -30,16 +30,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel.Design;
+
 namespace System.ComponentModel 
 {
 
 	/// <summary>
 	///   Designer Attribute for classes. 
 	/// </summary>
-	
-	/// <remarks>
-	/// </remarks>
-	
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
 	public sealed class DesignerAttribute : Attribute
 	{
@@ -49,6 +47,7 @@ namespace System.ComponentModel
 		public DesignerAttribute (string designerTypeName)
 		{
 			name = designerTypeName;
+			basetypename = typeof(IDesigner).FullName;
 		}
 
 		public DesignerAttribute (Type designerType)
