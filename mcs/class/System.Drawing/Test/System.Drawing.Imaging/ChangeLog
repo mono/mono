@@ -1,5 +1,11 @@
 2005-08-09  Andrew Skiba <andrews@mainsoft.com>
 
+
+	* TestImageCodecInfo.cs: FormatID, CodecName, DllName, FilenameExtension,
+	Flags, FormatDescription, MimeType properties checked
+
+2005-08-09  Andrew Skiba <andrews@mainsoft.com>
+
 	* TestImageCodecInfo.cs: refactor to make possible to add tests for all
 	properties, not only FormatID.
 
