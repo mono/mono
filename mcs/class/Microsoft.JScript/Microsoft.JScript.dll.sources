@@ -36,6 +36,7 @@ Microsoft.JScript/DateConstructor.cs
 Microsoft.JScript/DateObject.cs
 Microsoft.JScript/DatePrototype.cs
 Microsoft.JScript/DebugBreak.cs
+Microsoft.JScript/Decompiler.cs
 Microsoft.JScript/DocumentContext.cs
 Microsoft.JScript/Empty.cs
 Microsoft.JScript/Enum.cs
