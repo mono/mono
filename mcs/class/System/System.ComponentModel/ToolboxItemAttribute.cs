@@ -45,7 +45,7 @@ namespace System.ComponentModel
 
 		static ToolboxItemAttribute ()
 		{
-			defaultItemType = "System.Drawing.Desing.ToolboxItem" + Consts.AssemblySystem_Drawing;
+			defaultItemType = "System.Drawing.Design.ToolboxItem" + Consts.AssemblySystem_Drawing;
 		}
 
 		public ToolboxItemAttribute (bool defaultType)

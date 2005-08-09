@@ -1,3 +1,8 @@
+2005-08-09  Michael Hutchinson <m.j.hutchinson@gmail.com>
+
+	* ToolboxItemCollection.cs: Call base constructor
+	* ToolboxItem: Implemented CreateComponentsCore, GetType, Initialize
+
 2005-08-03  Andrew Skiba <andrews@mainsoft.com>
 
 	* UITypeEditor.cs: Added TARGET_JVM support

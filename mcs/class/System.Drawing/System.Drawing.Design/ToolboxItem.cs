@@ -122,7 +122,8 @@ namespace System.Drawing.Design
 		
 		protected void CheckUnlocked ()
 		{
-			throw new InvalidOperationException ("The ToolboxItem is locked");
+			if (locked)
+				throw new InvalidOperationException ("The ToolboxItem is locked");
 		}
 
 		public IComponent[] CreateComponents () 
@@ -138,10 +139,23 @@ namespace System.Drawing.Design
 			return Comp;
 		}
 
-		[MonoTODO]
+		[MonoTODO ("get error handling logic correct")] 
 		protected virtual IComponent[] CreateComponentsCore (IDesignerHost host)
 		{
-			throw new NotImplementedException ();
+			if (host == null)
+				throw new ArgumentNullException("host");
+
+			OnComponentsCreating(new ToolboxComponentsCreatingEventArgs(host));
+			
+			IComponent[] components;
+			Type type = GetType(host, assembly, name, true);
+			if (type == null)
+				components = new IComponent[] { };
+			else
+				components = new IComponent[] { host.CreateComponent(type) };
+
+			OnComponentsCreated(new ToolboxComponentsCreatedEventArgs(components));
+			return components;
 		}
 
 		protected virtual void Deserialize (SerializationInfo info, StreamingContext context)
@@ -177,21 +191,31 @@ namespace System.Drawing.Design
 		[MonoTODO]
 		protected virtual Type GetType (IDesignerHost host, AssemblyName assemblyName, string typeName, bool reference)
 		{
-			throw new NotImplementedException ();
+			if (host == null)
+				throw new ArgumentNullException("host");
+
+			//get ITypeResolutionService from host, as we have no other IServiceProvider here
+			ITypeResolutionService typeRes = host.GetService(typeof(ITypeResolutionService)) as ITypeResolutionService;
+			if (typeRes == null)
+				throw new Exception("Host does not provide an ITypeResolutionService");
+
+			//TODO: Using Assembly loader to throw errors. Silent fail and return null?
+			Assembly assembly = typeRes.GetAssembly(assemblyName, true);
+			if (reference)
+				typeRes.ReferenceAssembly(assemblyName);
+			return assembly.GetType(typeName, true);
 		}
 
 		[MonoTODO]
 		public virtual void Initialize (Type type) 
 		{
-			// assembly = // FIXME we need to get the AssemblyName data from somewhere or create a new one
+			assembly = type.Assembly.GetName();
 			displayname = type.Name;
 			name = type.FullName;
 			// seems to be a right place to create the bitmap
-			bitmap = new Bitmap (16, 16); // FIXME set some default bitmap !?
+			bitmap = new Bitmap (16, 16); // FIXME: load bitmap from resources if present, else set some default bitmap 
 
 			filter = type.GetCustomAttributes (typeof (ToolboxItemFilterAttribute), true);
-
-			throw new NotImplementedException ();
 		}
 			
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)

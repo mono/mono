@@ -39,12 +39,12 @@ namespace System.Drawing.Design
 	public sealed class ToolboxItemCollection : ReadOnlyCollectionBase
 	{
 
-		public ToolboxItemCollection (ToolboxItem[] value)
+		public ToolboxItemCollection (ToolboxItem[] value) : base()
 		{
 			InnerList.AddRange (value);
 		}
 
-		public ToolboxItemCollection (ToolboxItemCollection value)
+		public ToolboxItemCollection (ToolboxItemCollection value) : base()
 		{
 			InnerList.AddRange (value);
 		}

@@ -1,3 +1,7 @@
+2005-08-09  Michael Hutchinson <m.j.hutchinson@gmail.com>
+
+	* ToolboxItemAttribute.cs: Fixed typo
+
 2005-08-09  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* IComponent.cs: Fixed Designer attribute to match MS.NET.
