@@ -123,8 +123,21 @@ namespace Mono.Data.Tds {
 
 		internal string Prepare ()
 		{
-			StringBuilder result = new StringBuilder (String.Format ("{0} {1}", ParameterName, TypeName));
-			switch (TypeName) {
+			string typeName = TypeName;
+			
+			if (typeName == "varbinary") {
+				int size = Size;
+				if (size <= 0) {
+					size = GetActualSize ();
+				}
+				
+				if (size > 8000) {
+					typeName = "image";
+				}
+			}
+			
+			StringBuilder result = new StringBuilder (String.Format ("{0} {1}", ParameterName, typeName));
+			switch (typeName) {
 			case "decimal":
 			case "numeric":
 				result.Append (String.Format ("({0},{1})", Precision, Scale));

@@ -1,3 +1,8 @@
+2005-08-02  Joerg Rosenkranz <joergr@voelcker.com>
+
+	* TdsMetaParameter.cs: Send binary parameters with size > 8000
+	as image instead of varbinary. This fixes #75684.
+	
 2005-05-27  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* TdsMetaParameter.cs: Prepare: in SQL, a variable declaration
