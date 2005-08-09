@@ -1,3 +1,7 @@
+2005-08-09  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Decompiler.cs: Added to the repository.
+
 2005-08-04  Jb Evain  <jbevain@gmail.com>
 
 	* CodeGenerator.cs: write a valid RequestAttribute on the assembly
