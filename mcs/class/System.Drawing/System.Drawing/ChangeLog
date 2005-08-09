@@ -1,5 +1,9 @@
 ﻿2005-08-09 Andrew Skiba <andrews@mainsoft.com>
 
+	* FontConverter.cs: exclude not implemented destructor from TARGET_JVM
+
+2005-08-09 Andrew Skiba <andrews@mainsoft.com>
+
 	* ColorConverter.cs, ColorTranslator.cs: fixes to pass tests
 	committed in r48150
 

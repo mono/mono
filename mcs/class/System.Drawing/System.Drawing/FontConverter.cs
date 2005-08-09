@@ -67,9 +67,9 @@ namespace System.Drawing
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext context,
-						  CultureInfo culture,
-						  object value,
-						  Type destinationType)
+			CultureInfo culture,
+			object value,
+			Type destinationType)
 		{
 			if ((destinationType == typeof (string)) && (value is Font)) {
 				Font font = (Font) value;
@@ -78,9 +78,9 @@ namespace System.Drawing
 				sb.Append (font.Size);
 
 				switch (font.Unit) {
-				// MS throws ArgumentException, if unit is set 
-				// to GraphicsUnit.Display
-				// Don't know what to append for GraphicsUnit.Display
+					// MS throws ArgumentException, if unit is set 
+					// to GraphicsUnit.Display
+					// Don't know what to append for GraphicsUnit.Display
 				case GraphicsUnit.Display:
 					sb.Append ("display"); break;
 
@@ -124,8 +124,8 @@ namespace System.Drawing
 		}
 
 		public override object ConvertFrom (ITypeDescriptorContext context,
-						    CultureInfo culture,
-						    object value)
+			CultureInfo culture,
+			object value)
 		{
 			string fontFamily = value as string;
 			if (fontFamily == null)
@@ -137,7 +137,7 @@ namespace System.Drawing
 		}
 
 		public override object CreateInstance (ITypeDescriptorContext context,
-						       IDictionary propertyValues)
+			IDictionary propertyValues)
 		{
 			Object value;
 			byte charSet = 1;
@@ -227,8 +227,8 @@ namespace System.Drawing
 		}
 
 		public override PropertyDescriptorCollection GetProperties
-						(ITypeDescriptorContext context,
-						object value, Attribute [] attributes)
+			(ITypeDescriptorContext context,
+			object value, Attribute [] attributes)
 		{
 			if (value is Font)
 				return TypeDescriptor.GetProperties (value, attributes);
@@ -257,8 +257,8 @@ namespace System.Drawing
 
 			[MonoTODO]
 			public override object ConvertFrom (ITypeDescriptorContext context,
-							    CultureInfo culture,
-							    object value)
+				CultureInfo culture,
+				object value)
 			{
 				throw new NotImplementedException ();
 			}
@@ -280,11 +280,13 @@ namespace System.Drawing
 				return true;
 			}
 
+#if !TARGET_JVM
 			[MonoTODO]
 			~FontNameConverter ()
 			{
 				throw new NotImplementedException ();
 			}
+#endif
 		}
 
 		public class FontUnitConverter : EnumConverter
@@ -294,7 +296,7 @@ namespace System.Drawing
 			}
 
 			[MonoTODO]
-			public override StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
+			public override TypeConverter.StandardValuesCollection GetStandardValues (ITypeDescriptorContext context)
 			{
 				throw new NotImplementedException ();
 			}
