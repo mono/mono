@@ -102,17 +102,28 @@ namespace MonoTests.oasis_xslt {
 			Categories = arr;
 		}
 
+		static string EscapeString (string res)
+		{
+			MemoryStream s = new MemoryStream ();
+			XmlTextWriter w = new XmlTextWriter (s, System.Text.Encoding.ASCII);
+			w.WriteString (res);
+			w.Close ();	
+			
+			StringBuilder sb = new StringBuilder (res.Length);
+			byte [] arr = s.ToArray ();
+			foreach (byte b in arr)
+				sb.Append (Convert.ToChar (b));
+
+			return sb.ToString ();
+		}
+
 		string CompareResult (string actual, string expected)
 		{
 			//TODO: add xml comparison
 			if (actual == expected)
 				return null;
-			else
-#if !FAILURE_DETAILED_MESSAGE
-				return "Different.";
-#else
-				return "Different.\nActual*****\n"+actual+"\nReference*****\n"+expected;
-#endif
+			string res = "Different.\nActual*****\n"+actual+"\nReference*****\n"+expected;
+			return EscapeString (res);
 		}
 
 		string CompareException (Exception actual, string testid)

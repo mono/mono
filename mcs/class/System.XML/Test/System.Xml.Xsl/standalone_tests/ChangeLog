@@ -1,16 +1,20 @@
-2004-07-06  Andrew Skiba  <andrews@mainsoft.com>
+2005-08-09  Andrew Skiba  <andrews@mainsoft.com>
+
+	* xslttest.cs: fix the different results message
+
+2005-07-06  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile, xslttest.cs: convert to be executed from NUnit
 	* XsltTestUtils.cs, generate.cs: added
 	* fixme.lst: update with currently failing tests
 
-2004-06-28  Andrew Skiba  <andrews@mainsoft.com>
+2005-06-28  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile: touch file, not directory, doh!
 	* fixme.lst: added
 	* knownFailures: remove fixed testcases
 
-2004-06-09  Andrew Skiba  <andrews@mainsoft.com>
+2005-06-09  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile, catalog-fixed.diff : Patch the fixed catalog to correct things 
 	I could not fix with sed script
