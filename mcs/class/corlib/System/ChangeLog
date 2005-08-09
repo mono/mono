@@ -1,3 +1,8 @@
+2005-08-09  Miguel de Icaza  <miguel@novell.com>
+
+	* ConsoleKey.cs: Include a few aliases for a few values that were
+	introduced recently.
+
 2005-08-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConsoleKey.cs: added Backspace, which has the same value as BackSpace.
