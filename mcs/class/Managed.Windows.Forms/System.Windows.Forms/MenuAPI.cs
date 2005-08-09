@@ -434,8 +434,10 @@ namespace System.Windows.Forms
 			((PopUpWindow)menu_parent.Wnd).LostFocus ();
 			tracker.hCurrentMenu = hMenu;
 
-			if (menu.Wnd == null)
-				menu.Wnd = new PopUpWindow (hMenu, tracker);
+			if (menu.Wnd != null)
+				menu.Wnd.Dispose ();
+				
+			menu.Wnd = new PopUpWindow (hMenu, tracker);
 			
 			pnt.X = item.rect.X + item.rect.Width;
 			pnt.Y = item.rect.Y + 1;

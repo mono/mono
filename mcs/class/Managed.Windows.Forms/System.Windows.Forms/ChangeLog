@@ -1,3 +1,8 @@
+2005-08-07  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Menu.cs: fixes bug 75700
+	* MenuAPI.cs: fixes navigation issues
+
 2005-08-09  Umadevi S <sumadevi@novell.com>
 	* CheckedListBox.cs - simple fix for GetItemChecked.
 

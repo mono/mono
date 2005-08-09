@@ -130,7 +130,7 @@ namespace System.Windows.Forms
 			menu_items = new MenuItemCollection (this);
 
 			for (int i = 0; i < menuSrc.MenuItems.Count ; i++)
-				menu_items.Add (menuSrc.MenuItems [i]);
+				menu_items.Add (menuSrc.MenuItems [i].CloneMenu ());
 		}
 
 		protected virtual IntPtr CreateMenuHandle ()
