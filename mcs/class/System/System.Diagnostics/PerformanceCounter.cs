@@ -38,7 +38,7 @@ using System.Diagnostics;
 namespace System.Diagnostics {
 
 	// must be safe for multithreaded operations
-	[Designer ("Microsoft.VisualStudio.Install.PerformanceCounterDesigner, Microsoft.VisualStudio, " + Consts.AssemblyMicrosoft_VisualStudio, typeof (IDesigner))]
+	[Designer ("Microsoft.VisualStudio.Install.PerformanceCounterDesigner, " + Consts.AssemblyMicrosoft_VisualStudio)]
 	[InstallerType (typeof (PerformanceCounterInstaller))]
 	public sealed class PerformanceCounter : Component, ISupportInitialize 
 	{

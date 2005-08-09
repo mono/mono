@@ -43,7 +43,7 @@ using System.Threading;
 
 namespace System.Diagnostics {
 	[DefaultEvent ("Exited"), DefaultProperty ("StartInfo")]
-	[Designer ("System.Diagnostics.Design.ProcessDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Diagnostics.Design.ProcessDesigner, " + Consts.AssemblySystem_Design)]
 	public class Process : Component 
 	{
 		[StructLayout(LayoutKind.Sequential)]
@@ -498,7 +498,7 @@ namespace System.Diagnostics {
 
 		private ProcessStartInfo start_info=null;
 		
-		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden), Browsable (false)]
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content), Browsable (false)]
 		[MonitoringDescription ("Information for the start of this process.")]
 		public ProcessStartInfo StartInfo {
 			get {
@@ -911,7 +911,7 @@ namespace System.Diagnostics {
 			return(false);
 		}
 
-		[Category ()]
+		[Category ("Behavior")]
 		[MonitoringDescription ("Raised when this process exits.")]
 		public event EventHandler Exited;
 

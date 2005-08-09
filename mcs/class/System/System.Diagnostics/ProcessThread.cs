@@ -34,7 +34,7 @@ using System.ComponentModel.Design;
 
 namespace System.Diagnostics 
 {
-	[Designer ("System.Diagnostics.Design.ProcessThreadDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Diagnostics.Design.ProcessThreadDesigner, " + Consts.AssemblySystem_Design)]
 	public class ProcessThread : Component 
 	{
 

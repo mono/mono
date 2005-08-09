@@ -1,3 +1,14 @@
+2005-08-09  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* EventLog.cs: Fixed Designer attribute to match MS.NET.
+	* ICollectData.cs: Added marshalling attribute to match MS.NET.
+	* PerformanceCounter.cs: Fixed Designer attribute to match MS.NET.
+	* Process.cs: Fixed Designer attribute to match MS.NET, modified
+	* ProcessModule.cs: Fixed Designer attribute to match MS.NET.
+	* ProcessThread.cs: Fixed Designer attribute to match MS.NET.
+	DesignerSerializationVisibility on StartInfo to match MS.NET, changed
+	Category attribute on Exited event to match MS.NET.
+
 2005-06-09  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* TraceImpl.cs: Adjust internal indentlevel and indentsize before 

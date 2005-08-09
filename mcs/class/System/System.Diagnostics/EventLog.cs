@@ -37,8 +37,9 @@ using System.ComponentModel.Design;
 
 namespace System.Diagnostics 
 {
-	[DefaultEvent ("EntryWritten"), InstallerType (typeof (EventLogInstaller))]
-	[Designer ("Microsoft.VisualStudio.Install.EventLogInstallableComponentDesigner, " + Consts.AssemblyMicrosoft_VisualStudio, typeof (IDesigner))]
+	[DefaultEvent ("EntryWritten")]
+	[InstallerType (typeof (EventLogInstaller))]
+	[Designer ("Microsoft.VisualStudio.Install.EventLogInstallableComponentDesigner, " + Consts.AssemblyMicrosoft_VisualStudio)]
 	public class EventLog : Component, ISupportInitialize 
 	{
 

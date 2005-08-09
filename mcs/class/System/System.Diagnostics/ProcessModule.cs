@@ -36,7 +36,7 @@ using System.ComponentModel.Design;
 
 namespace System.Diagnostics 
 {
-	[Designer ("System.Diagnostics.Design.ProcessModuleDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
+	[Designer ("System.Diagnostics.Design.ProcessModuleDesigner, " + Consts.AssemblySystem_Design)]
 	public class ProcessModule : Component 
 	{
 		private IntPtr baseaddr;
