@@ -279,14 +279,6 @@ namespace System.Drawing
 			{
 				return true;
 			}
-
-#if !TARGET_JVM
-			[MonoTODO]
-			~FontNameConverter ()
-			{
-				throw new NotImplementedException ();
-			}
-#endif
 		}
 
 		public class FontUnitConverter : EnumConverter
