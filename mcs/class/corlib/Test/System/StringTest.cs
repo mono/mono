@@ -1600,6 +1600,97 @@ public class StringTest : Assertion
 		// according to bug 63981, this behavior is for all cultures
 		AssertEquals ("#1", -1, String.Compare ("foo.obj", "foobar.obj", false));
 	}
+
+#if NET_2_0
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void SplitString_NegativeCount ()
+	{
+		"A B".Split (new String [] { "A" }, -1, StringSplitOptions.None);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void SplitString_InvalidOptions ()
+	{
+		"A B".Split (new String [] { "A" }, 0, (StringSplitOptions)4096);
+	}
+
+	[Test]
+	public void SplitString ()
+	{
+		String[] res;
+		
+		// count == 0
+		res = "A B C".Split (new String [] { "A" }, 0, StringSplitOptions.None);
+		AssertEquals (0, res.Length);
+
+		// empty and RemoveEmpty
+		res = "".Split (new String [] { "A" }, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals (0, res.Length);
+
+		// Not found
+		res = "A B C".Split (new String [] { "D" }, StringSplitOptions.None);
+		AssertEquals (1, res.Length);
+		AssertEquals ("A B C", res [0]);
+
+		// A normal test
+		res = "A B C DD E".Split (new String[] { "B", "D" }, StringSplitOptions.None);
+		AssertEquals (4, res.Length);
+		AssertEquals ("A ", res [0]);
+		AssertEquals (" C ", res [1]);
+		AssertEquals ("", res [2]);
+		AssertEquals (" E", res [3]);
+
+		// Same with RemoveEmptyEntries
+		res = "A B C DD E".Split (new String[] { "B", "D" }, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals (3, res.Length);
+		AssertEquals ("A ", res [0]);
+		AssertEquals (" C ", res [1]);
+		AssertEquals (" E", res [2]);
+
+		// Delimiter at the beginning and at the end
+		res = "B C DD B".Split (new String[] { "B" }, StringSplitOptions.None);
+		AssertEquals (3, res.Length);
+		AssertEquals ("", res [0]);
+		AssertEquals (" C DD ", res [1]);
+		AssertEquals ("", res [2]);
+
+		res = "B C DD B".Split (new String[] { "B" }, StringSplitOptions.RemoveEmptyEntries);
+		AssertEquals (1, res.Length);
+		AssertEquals (" C DD ", res [0]);
+
+		// count
+		res = "A B C DD E".Split (new String[] { "B", "D" }, 2, StringSplitOptions.None);
+		AssertEquals (2, res.Length);
+		AssertEquals ("A ", res [0]);
+		AssertEquals (" C DD E", res [1]);
+
+		// Ordering
+		res = "ABCDEF".Split (new String[] { "EF", "BCDE" }, StringSplitOptions.None);
+		AssertEquals (2, res.Length);
+		AssertEquals ("A", res [0]);
+		AssertEquals ("F", res [1]);
+
+		res = "ABCDEF".Split (new String[] { "BCD", "BC" }, StringSplitOptions.None);
+		AssertEquals (2, res.Length);
+		AssertEquals ("A", res [0]);
+		AssertEquals ("EF", res [1]);
+
+		// Whitespace
+		res = "A B\nC".Split ((String[])null, StringSplitOptions.None);
+		AssertEquals (3, res.Length);
+		AssertEquals ("A", res [0]);
+		AssertEquals ("B", res [1]);
+		AssertEquals ("C", res [2]);
+
+		res = "A B\nC".Split (new String [0], StringSplitOptions.None);
+		AssertEquals (3, res.Length);
+		AssertEquals ("A", res [0]);
+		AssertEquals ("B", res [1]);
+		AssertEquals ("C", res [2]);
+	}
+#endif
 }
 
 }

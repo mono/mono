@@ -1,3 +1,7 @@
+2005-08-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* StringTest.cs: Add tests for Split(String[]).
+
 2005-07-25  Raja R Harinath  <rharinath@novell.com>
 
 	* EnumTest.cs (TestParse2): Enable testcases.
