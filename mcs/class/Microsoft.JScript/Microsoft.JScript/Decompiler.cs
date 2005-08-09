@@ -326,7 +326,7 @@ internal class Decompiler {
 					: "\t\t";
 				Console.WriteLine (tokenname
 					 + pad + (int) source [j]
-				         + "\t'" + EscapeString (source.Substring (j, j + 1))
+				         + "\t'" + EscapeString (source.Substring (j, 1))
 					 + "'");
 			}
 		        Console.WriteLine ();
