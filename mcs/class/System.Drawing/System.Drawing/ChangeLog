@@ -1,5 +1,9 @@
 ﻿2005-08-09 Konstantin Triger <kostat@mainsoft.com>
 
+	* StrokeFactory.jvm.cs: use correct stroke
+
+2005-08-09 Konstantin Triger <kostat@mainsoft.com>
+
 	* Added AdvancedStoke.jvm.cs and StrokeFactory.jvm.cs
 	* Pen refactoring.
 

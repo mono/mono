@@ -35,13 +35,13 @@ namespace System.Drawing {
 		static readonly StrokeCreator Creator;
 		static StrokeFactory() {
 			try {
-				java.lang.Class.forName(typeof(Mainsoft.Drawing.AdvancedStroke).Name).newInstance();
+				Type type = typeof(Mainsoft.Drawing.AdvancedStroke);
+				java.lang.Class.forName(type.FullName).newInstance();
 				Creator = new AdvancedCreator();
 			}
 			catch{
+				Creator = new DefaultCreator();
 			}
-
-			Creator = new DefaultCreator();
 		}
 
 		static public awt.Stroke CreateStroke(float width, int cap, int join, float miterlimit,
