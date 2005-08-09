@@ -1,3 +1,13 @@
+2005-08-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs,
+	  MSCompatUnicodeTable.cs :
+	  - Now IsIgnorable() is aggregated to be one invokation to check 
+	    completely ignorable, nonspacing and symbols.
+	  - Introduced "already checked" flags for IndexOf() and LastIndexOf()
+	    to skip sortkey binary check on the same characters. Significant
+	    perf. improvement for such case as IndexOf("AABCBABC...Z",'Z').
+
 2005-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SortKey.cs: Marked Serializable to match MS.NET.

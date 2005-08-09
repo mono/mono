@@ -86,6 +86,7 @@ namespace Mono.Globalization.Unicode
 		bool ignoreWidth;
 		bool ignoreCase;
 		bool ignoreKanaType;
+		byte ignoreFilter;
 		TextInfo textInfo; // for ToLower().
 		bool frenchSort;
 		unsafe readonly byte* cjkCatTable;
@@ -102,6 +103,10 @@ namespace Mono.Globalization.Unicode
 		readonly byte [] unsafeFlags;
 
 		const int UnsafeFlagLength = 0x300 / 8;
+
+		// This array is internally used inside IndexOf() to store
+		// "no need to check" ASCII characters
+		byte [] checkedFlags = new byte [128 / 8];
 
 		// temporary sortkey buffer for index search/comparison
 		byte [] charSortKey = new byte [4];
@@ -239,6 +244,9 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			this.ignoreWidth = (options & CompareOptions.IgnoreWidth) != 0;
 			this.ignoreCase = (options & CompareOptions.IgnoreCase) != 0;
 			this.ignoreKanaType = (options & CompareOptions.IgnoreKanaType) != 0;
+			this.ignoreFilter = (byte) (1 +
+				(ignoreSymbols ? 2 : 0) +
+				(ignoreNonSpace ? 4 : 0));
 			previousChar = previousChar2 = -1;
 			previousSortKey = previousSortKey2 = null;
 			escape1.Source = escape2.Source = null;
@@ -441,9 +449,10 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		bool IsIgnorable (int i)
 		{
-			return Uni.IsIgnorable (i) ||
-				ignoreSymbols && Uni.IsIgnorableSymbol (i) ||
-				ignoreNonSpace && Uni.IsIgnorableNonSpacing (i);
+//			return Uni.IsIgnorable (i) ||
+//				ignoreSymbols && Uni.IsIgnorableSymbol (i) ||
+//				ignoreNonSpace && Uni.IsIgnorableNonSpacing (i);
+			return Uni.IsIgnorable (i, ignoreFilter);
 		}
 
 		bool IsSafe (int i)
@@ -641,6 +650,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			int min = len1 < len2 ? len1 : len2;
 			int end1 = idx1 + min;
 			int end2 = idx2 + min;
+			if (idx1 < 0 || idx2 < 0 || end1 > s1.Length || end2 > s2.Length)
+				throw new SystemException (String.Format ("CompareInfo Internal Error: Should not happen. {0} {1} {2} {3} {4} {5}", idx1, idx2, len1, len2, s1.Length, s2.Length));
 			for (int i1 = idx1, i2 = idx2;
 				i1 < end1 && i2 < end2; i1++, i2++)
 				if (s1 [i1] != s2 [i2])
@@ -1097,7 +1108,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 		public bool IsPrefix (string s, string target, int start, int length, bool stringSort, bool skipHeadingExtenders)
 		{
 			bool consumed, dummy;
-			int ret = CompareInternal (s, start, length,
+			CompareInternal (s, start, length,
 				target, 0, target.Length, stringSort,
 				out consumed, out dummy, skipHeadingExtenders);
 			return consumed;
@@ -1261,6 +1272,10 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		{
 			int end = start + length;
 			int idx = start;
+
+			for (int i = 0; i < checkedFlags.Length; i++)
+				checkedFlags [i] = 0;
+
 			while (idx < end) {
 				int cur = idx;
 				if (MatchesForward (s, ref idx, end, ti, sortkey, noLv4))
@@ -1380,6 +1395,9 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		// Searches target byte[] keydata
 		int LastIndexOfSortKey (string s, int start, int orgStart, int length, byte [] sortkey, char target, int ti, bool noLv4)
 		{
+			for (int i = 0; i < checkedFlags.Length; i++)
+				checkedFlags [i] = 0;
+
 			int end = start - length;
 			int idx = start;
 			while (idx > end) {
@@ -1463,9 +1481,24 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 
 		private bool MatchesForward (string s, ref int idx, int end, int ti, byte [] sortkey, bool noLv4)
 		{
-			int si = -1;
+			int si = s [idx];
+			if (si < 128 && (checkedFlags [si / 8] & (1 << (si % 8))) != 0) {
+				idx++;
+				return false;
+			}
 			ExtenderType ext = GetExtenderType (s [idx]);
 			Contraction ct = null;
+			if (MatchesForwardCore (s, ref idx, end, ti, sortkey, noLv4, ext, ref ct))
+				return true;
+			if (ct == null && ext == ExtenderType.None && si < 128) {
+				checkedFlags [si / 8] |= (byte) (1 << (si % 8));
+			}
+			return false;
+		}
+
+		private bool MatchesForwardCore (string s, ref int idx, int end, int ti, byte [] sortkey, bool noLv4, ExtenderType ext, ref Contraction ct)
+		{
+			int si = -1;
 			if (ext == ExtenderType.None)
 				ct = GetContraction (s, idx, end);
 			else if (previousChar < 0) {
@@ -1563,9 +1596,25 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 
 		private bool MatchesBackward (string s, ref int idx, int end, int orgStart, int ti, byte [] sortkey, bool noLv4)
 		{
+			int si = s [idx];
+			if (si < 128 && (checkedFlags [si / 8] & (1 << (si % 8))) != 0) {
+				idx--;
+				return false;
+			}
+			ExtenderType ext = GetExtenderType (s [idx]);
+			Contraction ct = null;
+			if (MatchesBackwardCore (s, ref idx, end, orgStart, ti, sortkey, noLv4, ext, ref ct))
+				return true;
+			if (ct == null && ext == ExtenderType.None && si < 128) {
+				checkedFlags [si / 8] |= (byte) (1 << (si % 8));
+			}
+			return false;
+		}
+
+		private bool MatchesBackwardCore (string s, ref int idx, int end, int orgStart, int ti, byte [] sortkey, bool noLv4, ExtenderType ext, ref Contraction ct)
+		{
 			int cur = idx;
 			int si = -1;
-			ExtenderType ext = GetExtenderType (s [idx]);
 			// To handle extenders in source, we need to
 			// check next _primary_ character.
 			if (ext != ExtenderType.None) {
@@ -1597,7 +1646,6 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				}
 				idx--;
 			}
-			Contraction ct = null;
 			if (ext == ExtenderType.None)
 				ct = GetContraction (s, idx, end);
 			// if lv4 exists, it never matches contraction

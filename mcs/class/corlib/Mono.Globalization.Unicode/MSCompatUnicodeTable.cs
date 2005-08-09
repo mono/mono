@@ -300,15 +300,22 @@ namespace Mono.Globalization.Unicode
 
 		public static bool IsIgnorable (int cp)
 		{
-			UnicodeCategory uc = Char.GetUnicodeCategory ((char) cp);
-			// This check eliminates some extraneous code areas
-			if (uc == UnicodeCategory.OtherNotAssigned)
-				return true;
-			// Some characters in Surrogate area are ignored.
-			if (0xD880 <= cp && cp < 0xDB80)
-				return true;
+			return IsIgnorable (cp, 1);
+		}
+
+		public static bool IsIgnorable (int cp, byte flag)
+		{
+			if ((flag & 1) != 0) {
+				UnicodeCategory uc = Char.GetUnicodeCategory ((char) cp);
+				// This check eliminates some extraneous code areas
+				if (uc == UnicodeCategory.OtherNotAssigned)
+					return true;
+				// Some characters in Surrogate area are ignored.
+				if (0xD880 <= cp && cp < 0xDB80)
+					return true;
+			}
 			int i = UUtil.Ignorable.ToIndex (cp);
-			return i >= 0 && ignorableFlags [i] == 7;
+			return i >= 0 && (ignorableFlags [i] & flag) != 0;
 		}
 		// Verifier:
 		// for (int i = 0; i <= char.MaxValue; i++)
@@ -319,14 +326,17 @@ namespace Mono.Globalization.Unicode
 
 		public static bool IsIgnorableSymbol (int cp)
 		{
-			int i = UUtil.Ignorable.ToIndex (cp);
-			return i >= 0 && (ignorableFlags [i] & 0x2) != 0;
+			return IsIgnorable (cp, 2);
+//			int i = UUtil.Ignorable.ToIndex (cp);
+//			return i >= 0 && (ignorableFlags [i] & 0x2) != 0;
 		}
 
 		public static bool IsIgnorableNonSpacing (int cp)
 		{
-			int i = UUtil.Ignorable.ToIndex (cp);
-			return i >= 0 && (ignorableFlags [i] & 0x4) != 0;
+			return IsIgnorable (cp, 4);
+//			int i = UUtil.Ignorable.ToIndex (cp);
+//			return i >= 0 && (ignorableFlags [i] & 0x4) != 0;
+
 			// It could be implemented this way, but the above
 			// is faster.
 //			return categories [UUtil.Category.ToIndex (cp)] == 1;
