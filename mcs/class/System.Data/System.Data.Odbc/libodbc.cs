@@ -142,11 +142,28 @@ namespace System.Data.Odbc
 	internal class libodbc
 	{
                 #region global constants
-		internal static int		SQL_OV_ODBC2		= 2;
-		internal static int		SQL_OV_ODBC3		= 3;
+		internal const int		SQL_OV_ODBC2		= 2;
+		internal const int		SQL_OV_ODBC3		= 3;
 
-                internal static string          SQLSTATE_RIGHT_TRUNC    = "01004";
-                internal static char            C_NULL                  = '\0';
+                internal const string		SQLSTATE_RIGHT_TRUNC	= "01004";
+                internal const char		C_NULL                  = '\0';
+
+		internal const short		SQL_TRUE		= 1;
+		internal const short		SQL_FALSE		= 0;
+
+		// SQLStatistics
+		internal const short		SQL_INDEX_UNIQUE	= 0;
+		internal const short		SQL_INDEX_ALL		= 1;
+		internal const short		SQL_QUICK		= 0;
+		internal const short		SQL_ENSURE		= 1;
+
+		// SQLColumnAttribute
+		internal const short		SQL_NO_NULLS		= 0;
+		internal const short		SQL_NULLABLE		= 1;
+		internal const short		SQL_NULLABLE_UNKNOWN	= 2;
+		internal const short		SQL_ATTR_READONLY	= 0;
+		internal const short		SQL_ATTR_WRITE		= 1;
+		internal const short		SQL_ATTR_READWRITE_UNKNOWN = 2;
                 #endregion
 
 		internal static OdbcInputOutputDirection ConvertParameterDirection(
@@ -314,10 +331,31 @@ namespace System.Data.Odbc
                                                                    );
 
                 [DllImport ("odbc32.dll")]
+                internal static extern OdbcReturn SQLStatistics (IntPtr StmtHandle,
+								 string catalog,
+								 int catalogLength,
+								 string schema, 
+								 int schemaLength,
+								 string tableName,
+								 int tableLength,
+								 short unique,
+								 short Reserved
+								 );
+
+                [DllImport ("odbc32.dll")]
                 internal static extern OdbcReturn SQLBindCol (IntPtr StmtHandle,
                                                                    int column,
                                                                    SQL_C_TYPE targetType,
                                                                    byte [] buffer, 
+                                                                   int bufferLength,
+                                                                   ref int indicator
+                                                                   );
+
+		[DllImport ("odbc32.dll")]
+                internal static extern OdbcReturn SQLBindCol (IntPtr StmtHandle,
+                                                                   int column,
+                                                                   SQL_C_TYPE targetType,
+                                                                   ref short value, 
                                                                    int bufferLength,
                                                                    ref int indicator
                                                                    );

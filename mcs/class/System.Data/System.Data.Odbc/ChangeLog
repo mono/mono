@@ -1,5 +1,11 @@
 2005-08-09  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* OdbcDataReader.cs: GetSchemaTable (): set values for the column
+	attributes using SQLColAttribute. If SQLPrimaryKeys does not
+	yeild, try SQLStatistics. Optimized primary key logic.
+
+	* libodbc.cs: Added api SQLStatistics and constants.
+
 	* OdbcParameter.cs: setBuffer (): allocate a short int buffer for
 	OdbcType.SmallInt. fixes bug #75600.
 
