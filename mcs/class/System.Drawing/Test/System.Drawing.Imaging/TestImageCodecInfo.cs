@@ -34,7 +34,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using NUnit.Framework;
-using System.IO;
+using System.Collections;
 
 namespace MonoTests.System.Drawing
 {
@@ -42,85 +42,91 @@ namespace MonoTests.System.Drawing
 	[TestFixture]	
 	public class TestImageCodecInfo 
 	{
-		
-		[TearDown]
-		public void Clean() {}
-		
-		[SetUp]
-		public void GetReady()		
+		Hashtable decoders;
+		Hashtable encoders;
+
+		ImageCodecInfo GetDecoder (string clsid)
 		{
-		
+			return GetDecoder (new Guid (clsid));
 		}
-		
-		internal void isPresent (ImageCodecInfo[] codecs, string clsid, string formatID)
-		{			
-			for (int i = 0; i < codecs.Length; i++) {
-				if (codecs[i].FormatID.ToString() == formatID) {
-					Assert.AreEqual (codecs[i].Clsid.ToString(), clsid);
-					return;
-				}
-			}
 
-			Assert.IsTrue (false);
-		}
-		
-		/*
-			This test makes sure that we deliver at least the BMP, GIF, JPEG
-			and PNG encoders
-		*/
-		[Test]
-		public void Encoders()
+		ImageCodecInfo GetDecoder (Guid clsid)
 		{
-		
-			ImageCodecInfo[] decoders =  ImageCodecInfo.GetImageDecoders();			
-			ImageCodecInfo[] encoders =  ImageCodecInfo.GetImageEncoders();	
-
-
-			/* BMP */
-			isPresent (encoders, "557cf400-1a04-11d3-9a73-0000f81ef32e", 
-				"b96b3cab-0728-11d3-9d7b-0000f81ef32e");
-
-			/* GIF */
-			isPresent (encoders, "557cf402-1a04-11d3-9a73-0000f81ef32e", 
-				"b96b3cb0-0728-11d3-9d7b-0000f81ef32e");
-
-			/* JPEG */
-			isPresent (encoders, "557cf401-1a04-11d3-9a73-0000f81ef32e", 
-				"b96b3cae-0728-11d3-9d7b-0000f81ef32e");
-
-			/* PNG */
-			isPresent (encoders, "557cf406-1a04-11d3-9a73-0000f81ef32e", 
-				"b96b3caf-0728-11d3-9d7b-0000f81ef32e");
-
+			return (ImageCodecInfo) decoders [clsid];
 		}
 
-		/*
-			This test makes sure that we deliver at least the BMP, GIF, JPEG
-			and PNG decoders
-		*/
+		ImageCodecInfo GetEncoder (string clsid)
+		{
+			return GetEncoder (new Guid (clsid));
+		}
+
+		ImageCodecInfo GetEncoder (Guid clsid)
+		{
+			return (ImageCodecInfo) encoders [clsid];
+		}
+
+		[TestFixtureSetUp]
+		public void FixtureGetReady()		
+		{
+			decoders = new Hashtable ();
+			encoders = new Hashtable ();
+
+			foreach (ImageCodecInfo decoder in ImageCodecInfo.GetImageDecoders())
+				decoders[decoder.Clsid] = decoder;
+		
+			foreach (ImageCodecInfo encoder in ImageCodecInfo.GetImageEncoders())
+				encoders[encoder.Clsid] = encoder;
+		}
+		
 		[Test]
-		public void Decoders()
-		{		
-			ImageCodecInfo[] decoders =  ImageCodecInfo.GetImageDecoders();			
-
-			/* BMP */
-			isPresent (decoders, "557cf400-1a04-11d3-9a73-0000f81ef32e", 
-				"b96b3cab-0728-11d3-9d7b-0000f81ef32e");
-
-			/* GIF */
-			isPresent (decoders, "557cf402-1a04-11d3-9a73-0000f81ef32e", 
-				"b96b3cb0-0728-11d3-9d7b-0000f81ef32e");
-
-			/* JPEG */
-			isPresent (decoders, "557cf401-1a04-11d3-9a73-0000f81ef32e", 
-				"b96b3cae-0728-11d3-9d7b-0000f81ef32e");
-
-			/* PNG */
-			isPresent (decoders, "557cf406-1a04-11d3-9a73-0000f81ef32e", 
-				"b96b3caf-0728-11d3-9d7b-0000f81ef32e");
+		public void BMPDecoder()
+		{
+			Assert.AreEqual (ImageFormat.Bmp.Guid,
+				GetDecoder ("557cf400-1a04-11d3-9a73-0000f81ef32e").FormatID, "BMP");
 		}
 
-	
+		[Test]
+		public void GifDecoder()
+		{
+			Assert.AreEqual (ImageFormat.Gif.Guid,
+				GetDecoder ("557cf402-1a04-11d3-9a73-0000f81ef32e").FormatID, "GIF");
+		}
 		
+		[Test]
+		public void JpegDecoder()
+		{
+			Assert.AreEqual (ImageFormat.Jpeg.Guid,
+				GetDecoder ("557cf401-1a04-11d3-9a73-0000f81ef32e").FormatID, "JPEG");
+		}
+
+		[Test]
+		public void PngDecoder()
+		{
+			Assert.AreEqual (ImageFormat.Png.Guid,
+				GetDecoder ("557cf406-1a04-11d3-9a73-0000f81ef32e").FormatID, "PNG");
+		}
+		[Test]
+		public void BMPEncoder() {
+			Assert.AreEqual (ImageFormat.Bmp.Guid,
+				GetEncoder ("557cf400-1a04-11d3-9a73-0000f81ef32e").FormatID, "BMP");
+		}
+
+		[Test]
+		public void GifEncoder() {
+			Assert.AreEqual (ImageFormat.Gif.Guid,
+				GetEncoder ("557cf402-1a04-11d3-9a73-0000f81ef32e").FormatID, "GIF");
+		}
+		
+		[Test]
+		public void JpegEncoder() {
+			Assert.AreEqual (ImageFormat.Jpeg.Guid,
+				GetEncoder ("557cf401-1a04-11d3-9a73-0000f81ef32e").FormatID, "JPEG");
+		}
+
+		[Test]
+		public void PngEncoder() {
+			Assert.AreEqual (ImageFormat.Png.Guid,
+				GetEncoder ("557cf406-1a04-11d3-9a73-0000f81ef32e").FormatID, "PNG");
+		}
 	}
 }

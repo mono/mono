@@ -1,3 +1,8 @@
+2005-08-09  Andrew Skiba <andrews@mainsoft.com>
+
+	* TestImageCodecInfo.cs: refactor to make possible to add tests for all
+	properties, not only FormatID.
+
 2004-03-22  Jordi Mas i Hernandez <jordi@ximian.com>
                                                                                 
 	* TestColorMatrix.cs: added test case
