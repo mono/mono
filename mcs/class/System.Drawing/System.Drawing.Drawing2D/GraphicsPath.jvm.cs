@@ -8,7 +8,7 @@ namespace System.Drawing.Drawing2D
 {
 	public sealed class GraphicsPath : BasicShape, ICloneable
 	{
-		enum JPI {
+		internal enum JPI {
 			SEG_MOVETO = 0,
 			SEG_LINETO = 1,
 			SEG_QUADTO = 2,

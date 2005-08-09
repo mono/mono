@@ -1,3 +1,7 @@
+2005-08-09 Konstantin Triger <kostat@mainsoft.com>
+
+	* System.Drawing.vmwcsproj: Added AdvancedStoke.jvm.cs and StrokeFactory.jvm.cs
+
 2005-08-09 Andrew Skiba <andrews@mainsoft.com>
 
 	* System.Drawing_test.dll.sources: add ColorConverter.cs and ColorTranslator.cs

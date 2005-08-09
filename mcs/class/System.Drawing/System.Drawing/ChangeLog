@@ -1,4 +1,9 @@
-﻿2005-08-09 Andrew Skiba <andrews@mainsoft.com>
+﻿2005-08-09 Konstantin Triger <kostat@mainsoft.com>
+
+	* Added AdvancedStoke.jvm.cs and StrokeFactory.jvm.cs
+	* Pen refactoring.
+
+2005-08-09 Andrew Skiba <andrews@mainsoft.com>
 
 	* FontConverter.cs: exclude not implemented destructor from TARGET_JVM
 

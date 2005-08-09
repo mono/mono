@@ -45,13 +45,4 @@ namespace System.Drawing.Drawing2D
 		Dot = 2,
 		Solid = 0
 	}
-#if TARGET_JVM
-	internal class DashAttribs
-	{
-		public  static float [] DASH_ARRAY = {4.0f,1.0f};
-		public  static float [] DASHDOT_ARRAY = {4.0f,1.0f,1.0f,1.0f};
-		public  static float [] DASHDOTDOT_ARRAY = {4.0f,1.0f,1.0f,1.0f,1.0f,1.0f};
-		public  static float [] DOT_ARRAY = {1.0f,1.0f};
-	}
-#endif
 }

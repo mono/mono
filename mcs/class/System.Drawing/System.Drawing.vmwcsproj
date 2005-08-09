@@ -17,6 +17,7 @@
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\Consts.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing\AdvancedStroke.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\BasicShape.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Bitmap.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Brush.jvm.cs" SubType="Code" BuildAction="Compile"/>
@@ -59,6 +60,7 @@
 				<File RelPath="System.Drawing\StringFormatFlags.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\StringTrimming.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\StringUnit.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing\StrokeFactory.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\SystemBrushes.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\SystemColors.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\SystemIcons.cs" SubType="Code" BuildAction="Compile"/>
