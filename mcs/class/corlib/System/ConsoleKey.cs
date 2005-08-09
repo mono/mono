@@ -30,6 +30,7 @@
 #if NET_2_0
 namespace System {
 	public enum ConsoleKey {
+		Backspace = 8,
 		BackSpace = 8,
 		Tab = 9,
 		Clear = 12,

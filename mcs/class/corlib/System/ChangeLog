@@ -1,3 +1,8 @@
+2005-08-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ConsoleKey.cs: added Backspace, which has the same value as BackSpace.
+	Fixes bug #75697.
+
 2005-08-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* String.cs : (StartsWith) compared string lengths are not always the
