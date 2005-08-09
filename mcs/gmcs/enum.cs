@@ -640,7 +640,11 @@ namespace Mono.CSharp {
  				MemberCore conflict = (MemberCore)ht [locase];
  				Report.SymbolRelatedToPreviousError (conflict);
  				conflict = GetDefinition (name);
- 				Report.Error (3005, conflict.Location, "Identifier `{0}' differing only in case is not CLS-compliant", conflict.GetSignatureForError ());
+
+				//
+				// On C# 8.0 this is a warning, not an error
+				//
+ 				Report.Warning (3005, conflict.Location, "Identifier `{0}' differing only in case is not CLS-compliant", conflict.GetSignatureForError ());
   			}
   		}
 

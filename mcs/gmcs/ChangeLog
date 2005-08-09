@@ -1,3 +1,8 @@
+2005-08-09  Miguel de Icaza  <miguel@novell.com>
+
+	* enum.cs: On the new compiler CLS error 3005 is now a warning not
+	an error. 
+
 2005-08-03  Martin Baulig  <martin@ximian.com>
 
 	Make iterators in generic methods work; see gtest-191.cs.
