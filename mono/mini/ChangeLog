@@ -1,3 +1,8 @@
+2005-08-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c: Get rid of most of the helper_sig_... constants using
+	mono_create_icall_signature ().
+
 2005-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* jit-icalls.c (helper_ldstr): New helper function.
