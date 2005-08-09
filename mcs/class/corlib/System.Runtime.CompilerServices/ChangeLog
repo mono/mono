@@ -1,3 +1,7 @@
+2005-08-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* SpecialNameAttribute.cs: New file.
+
 2005-08-06  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DecimalConstantAttribute.cs: Only mark ctor not CLSCompliant on 2.0 
