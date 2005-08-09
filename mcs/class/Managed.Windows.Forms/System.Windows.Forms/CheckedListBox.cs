@@ -185,7 +185,7 @@ namespace System.Windows.Forms
 
 		public bool GetItemChecked (int index)
 		{
-			return (GetItemCheckState (index) == CheckState.Checked);
+			return (GetItemCheckState (index) != CheckState.Unchecked);
 		}
 		
 		public CheckState GetItemCheckState (int index)

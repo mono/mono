@@ -1,3 +1,6 @@
+2005-08-09  Umadevi S <sumadevi@novell.com>
+	* CheckedListBox.cs - simple fix for GetItemChecked.
+
 2005-08-08  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: Serveral fixes
