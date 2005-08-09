@@ -80,7 +80,7 @@ internal class Decompiler {
 	private int sourceTop;
 
 	// whether to do a debug print of the source information, when decompiling.
-	private const bool printSource = true;
+	private const bool printSource = false;
 
 	internal string GetEncodedSource ()
 	{
@@ -218,13 +218,7 @@ internal class Decompiler {
 		if (L >= 0x8000) {
 			// Use 2 chars to encode strings exceeding 32K, were the highest
 			// bit in the first char indicates presence of the next byte
-
-			// FIXME: in C# we don't have >>>
-			// sourceBuffer [sourceTop] = (char) (0x8000 | (L >>> 16));
-
-			// Florian suggestion
-			sourceBuffer [sourceTop] = (char) (0x8000 | ((uint) L >> 16));
-
+			sourceBuffer [sourceTop] = (char) (0x8000 | BitwiseBinary.UnsignedRightShift (L, 16));
 			++sourceTop;
 		}
 		sourceBuffer [sourceTop] = (char) L;
@@ -316,7 +310,7 @@ internal class Decompiler {
 				// is true.
 				string tokenname = null;
 				if (Token.PrintNames)
-					tokenname = Token.Name (source [j]);
+					tokenname = Token.Name (source [j], true);
 
 			        if (tokenname == null)
 					tokenname = "---";
@@ -369,96 +363,78 @@ internal class Decompiler {
 			} else if (t == Token.NUMBER) {
 				i = PrintSourceNumber (source, i + 1, result);
 				continue;
-			} else if (t == Token.TRUE) {
+			} else if (t == Token.TRUE)
 				result.Append ("true");
-				break;
-			} else if (t == Token.FALSE) {
+			else if (t == Token.FALSE)
 				result.Append ("false");
-				break;
-			} else if (t == Token.NULL) {
+			else if (t == Token.NULL)
 				result.Append ("null");
-				break;
-			} else if (t == Token.THIS) {
+			else if (t == Token.THIS)
 				result.Append ("this");
-				break;
-			} else if (t == Token.FUNCTION) {
+			else if (t == Token.FUNCTION) {
 				++i; // skip function type
 				result.Append ("function ");
-				break;
 			} else if (t == FUNCTION_END) {
 				// Do nothing
-				break;
-			} else if (t == Token.COMMA) {
+			} else if (t == Token.COMMA)
 				result.Append (", ");
-				break;
-			} else if (t ==  Token.LC) {
+			else if (t == Token.LC) {
 				++braceNesting;
 				if (Token.EOL == GetNext (source, length, i))
 					indent += indentGap;
 				result.Append ('{');
-				break;
 			} else if (t == Token.RC) {
 				--braceNesting;
 				/* don't print the closing RC if it closes the
 				 * toplevel function and we're called from
 				 * decompileFunctionBody.
 				 */
-				if (justFunctionBody && braceNesting == 0)
-					break;
-
-				result.Append ('}');
-				int tt = GetNext (source, length, i);
-				if (tt == Token.EOL || tt == FUNCTION_END) {
-					indent -= indentGap;
-					break;
-				} else if (tt == Token.WHILE || tt == Token.ELSE) {
-					indent -= indentGap;
-					result.Append (' ');
-					break;
+				if (!(justFunctionBody && braceNesting == 0)) {
+					result.Append ('}');
+					int tt = GetNext (source, length, i);
+					if (tt == Token.EOL || tt == FUNCTION_END)
+						indent -= indentGap;
+					else if (tt == Token.WHILE || tt == Token.ELSE) {
+						indent -= indentGap;
+						result.Append (' ');
+					}
 				}
-				break;
-			} else if (t == Token.LP) {
+			} else if (t == Token.LP)
 				result.Append ('(');
-				break;
-			} else if (t == Token.RP) {
+			else if (t == Token.RP) {
 				result.Append (')');
 				if (Token.LC == GetNext (source, length, i))
 					result.Append (' ');
-				break;
-			} else if (t == Token.LB) {
+			} else if (t == Token.LB)
 				result.Append ('[');
-				break;
-			} else if (t == Token.RB) {
+			else if (t == Token.RB)
 				result.Append (']');
-				break;
-			} else if (t == Token.EOL) {
-				if (toSource)
-					break;
-				bool newLine = true;
-				if (!afterFirstEOL) {
-					afterFirstEOL = true;
-					if (justFunctionBody) {
-						/* throw away just added 'function name(...) {'
-						 * and restore the original indent
-						 */
-						result.Length = 0;
-						indent -= indentGap;
-						newLine = false;
+			else if (t == Token.EOL) {
+				if (!toSource) {
+					bool newLine = true;
+					if (!afterFirstEOL) {
+						afterFirstEOL = true;
+						if (justFunctionBody) {
+							/* throw away just added 'function name(...) {'
+							 * and restore the original indent
+							 */
+							result.Length = 0;
+							indent -= indentGap;
+							newLine = false;
+						}
 					}
-				}
-				if (newLine)
-					result.Append ('\n');
+					if (newLine)
+						result.Append ('\n');
 
-				/* add indent if any tokens remain,
-				 * less setback if next token is
-				 * a label, case or default.
-				 */
-				if (i + 1 < length) {
-					int less = 0;
-					int nextToken = source [i + 1];
-					if (nextToken == Token.CASE
-					    || nextToken == Token.DEFAULT)
-						{
+					/* add indent if any tokens remain,
+					 * less setback if next token is
+					 * a label, case or default.
+					 */
+					if (i + 1 < length) {
+						int less = 0;
+						int nextToken = source [i + 1];
+						if (nextToken == Token.CASE
+							|| nextToken == Token.DEFAULT) {
 							less = indentGap - caseGap;
 						} else if (nextToken == Token.RC) {
 							less = indentGap;
@@ -468,143 +444,106 @@ internal class Decompiler {
 					 * following inlined NAME and look for a COLON.
 					 */
 					else if (nextToken == Token.NAME) {
-						int afterName = GetSourceStringEnd (source, i + 2);
-						if (source [afterName] == Token.COLON)
-							less = indentGap;
-					}
+							int afterName = GetSourceStringEnd (source, i + 2);
+							if (source [afterName] == Token.COLON)
+								less = indentGap;
+						}
 
-					for (; less < indent; less++)
-						result.Append (' ');
+						for (; less < indent; less++)
+							result.Append (' ');
+					}
 				}
-				break;
-			} else if (t == Token.DOT) {
+			} else if (t == Token.DOT)
 				result.Append ('.');
-				break;
-			} else if (t == Token.NEW) {
+			else if (t == Token.NEW)
 				result.Append ("new ");
-				break;
-			} else if (t == Token.DELPROP) {
+			else if (t == Token.DELPROP)
 				result.Append ("delete ");
-				break;
-			} else if (t == Token.IF) {
+			else if (t == Token.IF)
 				result.Append ("if ");
-				break;
-			} else if (t == Token.ELSE) {
+			else if (t == Token.ELSE)
 				result.Append ("else ");
-				break;
-			} else if (t == Token.FOR) {
+			else if (t == Token.FOR)
 				result.Append ("for ");
-				break;
-			} else if (t == Token.IN) {
+			else if (t == Token.IN)
 				result.Append (" in ");
-				break;
-			} else if (t == Token.WITH) {
+			else if (t == Token.WITH)
 				result.Append ("with ");
-				break;
-			} else if (t == Token.WHILE) {
+			else if (t == Token.WHILE)
 				result.Append ("while ");
-				break;
-			} else if (t == Token.DO) {
+			else if (t == Token.DO)
 				result.Append ("do ");
-				break;
-			} else if (t == Token.TRY) {
+			else if (t == Token.TRY)
 				result.Append ("try ");
-				break;
-			} else if (t == Token.CATCH) {
+			else if (t == Token.CATCH)
 				result.Append ("catch ");
-				break;
-			} else if (t == Token.FINALLY) {
+			else if (t == Token.FINALLY)
 				result.Append ("finally ");
-				break;
-			} else if (t == Token.THROW) {
+			else if (t == Token.THROW)
 				result.Append ("throw ");
-				break;
-			} else if (t == Token.SWITCH) {
+			else if (t == Token.SWITCH)
 				result.Append ("switch ");
-				break;
-			} else if (t == Token.BREAK) {
+			else if (t == Token.BREAK) {
 				result.Append ("break");
 				if (Token.NAME == GetNext (source, length, i))
 					result.Append (' ');
-				break;
 			} else if (t == Token.CONTINUE) {
 				result.Append ("continue");
 				if (Token.NAME == GetNext (source, length, i))
 					result.Append (' ');
-				break;
-			} else if (t == Token.CASE) {
+			} else if (t == Token.CASE)
 				result.Append ("case ");
-				break;
-			} else if (t == Token.DEFAULT) {
+			else if (t == Token.DEFAULT)
 				result.Append ("default");
-				break;
-			} else if (t == Token.RETURN) {
+			else if (t == Token.RETURN) {
 				result.Append ("return");
 				if (Token.SEMI != GetNext (source, length, i))
 					result.Append (' ');
-				break;
-			} else if (t == Token.VAR) {
+			} else if (t == Token.VAR)
 				result.Append ("var ");
-				break;
-			} else if (t == Token.SEMI) {
+			else if (t == Token.SEMI) {
 				result.Append (';');
 				if (Token.EOL != GetNext(source, length, i)) {
 					// separators in FOR
 					result.Append (' ');
 				}
-				break;
-			} else if (t == Token.ASSIGN) {
+			} else if (t == Token.ASSIGN)
 				result.Append (" = ");
-				break;
-			} else if (t == Token.ASSIGNOP) {
+			else if (t == Token.ASSIGNOP) {
 				i++;
 				int op = source [i];
 				
-				if (op == Token.ADD) {
+				if (op == Token.ADD)
 					result.Append (" += ");
-					break;
-				} else if (op == Token.SUB) {
+				else if (op == Token.SUB)
 					result.Append (" -= ");
-					break;
-				} else if (op == Token.MUL) {
+				else if (op == Token.MUL)
 					result.Append (" *= ");
-					break;
-				} else if (op == Token.DIV) {
+				else if (op == Token.DIV)
 					result.Append (" /= ");
-					break;
-				} else if (op == Token.MOD) {
+				else if (op == Token.MOD)
 					result.Append (" %= ");
-					break;
-				} else if (op == Token.BITOR) {
+				else if (op == Token.BITOR)
 					result.Append (" |= ");
-					break;
-				} else if (op == Token.BITXOR) {
+				else if (op == Token.BITXOR)
 					result.Append (" ^= ");
-					break;
-				} else if (op == Token.BITAND) {
+				else if (op == Token.BITAND)
 					result.Append (" &= ");
-					break;
-				} else if (op == Token.LSH) {
+				else if (op == Token.LSH)
 					result.Append (" <<= ");
-					break;
-				} else if (op == Token.RSH) {
+				else if (op == Token.RSH)
 					result.Append (" >>= ");
-					break;
-				} else if (op == Token.URSH) {
+				else if (op == Token.URSH)
 					result.Append (" >>>= ");
-					break;
-				}
-			} else if (t == Token.HOOK) {
+			} else if (t == Token.HOOK)
 				result.Append (" ? ");
-				break;
-			} else if (t == Token.OBJECTLIT) {
+			else if (t == Token.OBJECTLIT) {
 				// pun OBJECTLIT to mean colon in objlit property
 				// initialization.
 				// This needs to be distinct from COLON in the general case
 				// to distinguish from the colon in a ternary... which needs
 				// different spacing.
 				result.Append (':');
-				break;
 			} else if (t == Token.COLON) {
 				if (Token.EOL == GetNext(source, length, i))
 					// it's the end of a label
@@ -612,98 +551,67 @@ internal class Decompiler {
 				else
 					// it's the middle part of a ternary
 					result.Append (" : ");
-				break;
-			} else if (t == Token.OR) {
+			} else if (t == Token.OR)
 				result.Append (" || ");
-				break;
-			} else if (t == Token.AND) {
+			else if (t == Token.AND)
 				result.Append (" && ");
-				break;
-			} else if (t == Token.BITOR) {
+			else if (t == Token.BITOR)
 				result.Append (" | ");
-				break;
-			} else if (t == Token.BITXOR) {
+			else if (t == Token.BITXOR)
 				result.Append (" ^ ");
-				break;
-			} else if (t == Token.BITAND) {
+			else if (t == Token.BITAND)
 				result.Append (" & ");
-				break;
-			} else if (t == Token.SHEQ) {
+			else if (t == Token.SHEQ)
 				result.Append (" === ");
-				break;
-			} else if (t == Token.SHNE) {
+			else if (t == Token.SHNE)
 				result.Append (" !== ");
-				break;
-			} else if (t == Token.EQ) {
+			else if (t == Token.EQ)
 				result.Append (" == ");
-				break;
-			} else if (t == Token.NE) {
+			else if (t == Token.NE)
 				result.Append (" != ");
-				break;
-			} else if (t == Token.LE) {
+			else if (t == Token.LE)
 				result.Append (" <= ");
-				break;
-			} else if (t == Token.LT) {
+			else if (t == Token.LT)
 				result.Append (" < ");
-				break;
-			} else if (t == Token.GE) {
+			else if (t == Token.GE)
 				result.Append (" >= ");
-				break;
-			} else if (t == Token.GT) {
+			else if (t == Token.GT)
 				result.Append (" > ");
-				break;
-			} else if (t == Token.INSTANCEOF) {
+			else if (t == Token.INSTANCEOF)
 				result.Append (" instanceof ");
-				break;
-			} else if (t == Token.LSH) {
+			else if (t == Token.LSH)
 				result.Append (" << ");
-				break;
-			} else if (t == Token.RSH) {
+			else if (t == Token.RSH)
 				result.Append (" >> ");
-				break;
-			} else if (t == Token.URSH) {
+			else if (t == Token.URSH)
 				result.Append (" >>> ");
-				break;
-			} else if (t == Token.TYPEOF) {
+			else if (t == Token.TYPEOF)
 				result.Append ("typeof ");
-			        break;
-			} else if (t == Token.VOID) {
+			else if (t == Token.VOID)
 				result.Append ("void ");
-				break;
-			} else if (t == Token.NOT) {
+			else if (t == Token.NOT)
 				result.Append ('!');
-				break;
-			} else if (t == Token.BITNOT) {
+			else if (t == Token.BITNOT)
 				result.Append ('~');
-				break;
-			} else if (t == Token.POS) {
+			else if (t == Token.POS)
 				result.Append ('+');
-				break;
-			} else if (t == Token.NEG) {
+			else if (t == Token.NEG)
 				result.Append ('-');
-				break;
-			} else if (t == Token.INC) {
+			else if (t == Token.INC)
 				result.Append ("++");
-				break;
-			} else if (t == Token.DEC) {
+			else if (t == Token.DEC)
 				result.Append ("--");
-				break;
-			} else if (t == Token.ADD) {
+			else if (t == Token.ADD)
 				result.Append (" + ");
-				break;
-			} else if (t == Token.SUB) {
+			else if (t == Token.SUB)
 				result.Append (" - ");
-				break;
-			} else if (t == Token.MUL) {
+			else if (t == Token.MUL)
 				result.Append (" * ");
-				break;
-			} else if (t == Token.DIV) {
+			else if (t == Token.DIV)
 				result.Append (" / ");
-				break;
-			} else if (t == Token.MOD) {
+			else if (t == Token.MOD)
 				result.Append (" % ");
-				break;
-			} else {
+			else {
 				// If we don't know how to decompile it, raise an exception.
 				throw new Exception ("If we don't know how to decompile it, raise an exception.");
 			}
@@ -740,7 +648,7 @@ internal class Decompiler {
 			++offset;
 		}
 		if (sb != null) {
-			string str = source.Substring (offset, offset + length);
+			string str = source.Substring (offset, length);
 			if (!asQuotedString) {
 				sb.Append (str);
 			} else {

@@ -90,9 +90,16 @@ namespace Microsoft.JScript {
 		int nesting_of_function;
 		int nesting_of_with;
 		bool allow_member_expr_as_function_name;
+		Decompiler decompiler; 
+		string encoded_source;
 
 		internal Parser ()
 		{
+		}
+
+		internal Decompiler CreateDecompiler ()
+		{
+			return new Decompiler ();
 		}
 
 		/// <summary>
@@ -145,7 +152,11 @@ namespace Microsoft.JScript {
 	
 		AST Parse ()
 		{
+			decompiler = CreateDecompiler ();
 			current_script_or_fn = new ScriptBlock (new Location (ts.SourceName, ts.LineNumber));
+			decompiler.GetCurrentOffset ();
+			encoded_source = null;
+			decompiler.AddToken (Token.SCRIPT);
 			ok = true;
 
 			try {
@@ -178,6 +189,8 @@ namespace Microsoft.JScript {
 			if (!ok)
 				return null;
 
+			encoded_source = decompiler.GetEncodedSource ();
+			this.decompiler = null; // It helps GC
 			return current_script_or_fn;
 		}
 
@@ -225,6 +238,7 @@ namespace Microsoft.JScript {
 						// Extension to ECMA: if 'function <name>' does not follow
 						// by '(', assume <name> starts memberExpr
 						// FIXME: is StringLiteral the correct AST to build?
+						decompiler.AddName (name);
 						AST member_expr_head = new StringLiteral (null, name, 
 									  new Location (ts.SourceName, ts.LineNumber));
 						name = "";
@@ -246,8 +260,10 @@ namespace Microsoft.JScript {
 				MustMatchToken (Token.LP, "msg.no.paren.parms");
 			}
 
-			if (member_expr != null)
+			if (member_expr != null) {
 				synthetic_type = FunctionType.Expression;
+				decompiler.AddToken (Token.ASSIGN);
+			}
 			
 			bool nested = InsideFunction;
 			Function fn = CreateFunction (parent, synthetic_type, name);
@@ -263,7 +279,11 @@ namespace Microsoft.JScript {
 				// of with object.
 				fn.IgnoreDynamicScope = true;
 			}
-			
+
+			// FIXME: which is old version of Decompiler.MarkFunctionStart
+			int functionSourceStart = decompiler.MarkFunctionStart ((int) synthetic_type);
+			int functionSourceEnd;
+
 			ScriptBlock saved_script_or_fn = current_script_or_fn;
 			int saved_nesting_of_with = nesting_of_with;
 			nesting_of_with = 0;
@@ -272,20 +292,37 @@ namespace Microsoft.JScript {
 			Block body;
 
 			try {
+				decompiler.AddToken (Token.LP);
 				if (!ts.MatchToken (Token.RP)) {
+					bool first = true;
 					do {
+						if (!first)
+							decompiler.AddToken (Token.COMMA);
+						first = false;
 						MustMatchToken (Token.NAME, "msg.no.parm");
 						string s = ts.GetString;
 						_params.Add (s, String.Empty, new Location (ts.SourceName, ts.LineNumber));
+						decompiler.AddName (s);
 					} while (ts.MatchToken (Token.COMMA));
 					MustMatchToken (Token.RP, "msg.no.paren.after.parms");
 				}
+				decompiler.AddToken (Token.RP);
+
 				MustMatchToken (Token.LC, "msg.no.brace.body");
+				decompiler.AddEOL (Token.LC);
 				body = ParseFunctionBody (fn);
 				MustMatchToken (Token.RC, "msg.no.brace.after.body");
 
-				if (ft != FunctionType.Expression)
+				decompiler.AddToken (Token.RC);
+				functionSourceEnd = decompiler.MarkFunctionEnd (functionSourceStart);
+
+				if (ft != FunctionType.Expression) {
 					CheckWellTerminatedFunction ();
+					if (member_expr == null)
+						decompiler.AddToken (Token.EOL);
+					else
+						decompiler.AddEOL (Token.SEMI);
+				}
 			} finally {
 				current_script_or_fn = saved_script_or_fn;
 				nesting_of_with = saved_nesting_of_with;
@@ -341,8 +378,10 @@ namespace Microsoft.JScript {
 		{
 			AST pn;
 			MustMatchToken (Token.LP, "msg.no.paren.cond");
+			decompiler.AddToken (Token.LP);
 			pn = Expr (parent, false);
 			MustMatchToken (Token.RP, "msg.no.paren.after.cond");
+			decompiler.AddToken (Token.RP);
 			return pn;
 		}
 
@@ -411,31 +450,59 @@ namespace Microsoft.JScript {
 
 			if (tt == Token.IF) {
 				skip_semi = true;
+
+				decompiler.AddToken (Token.IF);
+
 				AST cond = Condition (parent);
+
+				decompiler.AddToken (Token.LC);
+
 				AST if_true = Statement (parent);
 				AST if_false = null;
-				if (ts.MatchToken (Token.ELSE))
+
+				if (ts.MatchToken (Token.ELSE)) {
+					decompiler.AddToken (Token.RC);
+					decompiler.AddToken (Token.ELSE);
+					decompiler.AddEOL (Token.LC);
 					if_false = Statement (parent);
+				}
+				decompiler.AddEOL (Token.RC);
 				pn = new If (parent, cond, if_true, if_false, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.SWITCH) {
 				skip_semi = true;
+
+				decompiler.AddToken (Token.SWITCH);
+
 				pn = new Switch (parent, new Location (ts.SourceName, ts.LineNumber));
 				Clause cur_case;
 				MustMatchToken (Token.LP, "msg.no.paren.switch");
+
+				decompiler.AddToken (Token.LP);
+
 				((Switch) pn).exp = Expr (parent, false);
 				MustMatchToken (Token.RP, "msg.no.paren.after.switch");
+
+				decompiler.AddToken (Token.RP);
+
 				MustMatchToken (Token.LC, "msg.no.brace.switch");
+
+				decompiler.AddEOL (Token.LC);
+
 				ClauseType clause_type = ClauseType.Case;
 
 				while ((tt = ts.GetToken ()) != Token.RC && tt != Token.EOF) {
 					if (tt == Token.CASE) {
+						decompiler.AddToken (Token.CASE);
 						cur_case = new Clause (pn, new Location (ts.SourceName, ts.LineNumber));
 						cur_case.exp = Expr (pn, false);
+						decompiler.AddEOL (Token.COLON);
 						if (clause_type == ClauseType.Default)
 							clause_type = ClauseType.CaseAfterDefault;
 					} else if (tt == Token.DEFAULT) {
 						cur_case = null;
 						clause_type = ClauseType.Default;
+						decompiler.AddToken (Token.DEFAULT);
+						decompiler.AddEOL (Token.COLON);
 					} else {
 						cur_case = null;
 						ReportError ("msg.bad.switch");
@@ -450,26 +517,36 @@ namespace Microsoft.JScript {
 					}
 					((Switch) pn).AddClause (cur_case, clause_type);
 				}
+				decompiler.AddEOL (Token.RC);
 			} else if (tt == Token.WHILE) {
 				skip_semi = true;
+				decompiler.AddToken (Token.WHILE);
 				While w = new While (new Location (ts.SourceName, ts.LineNumber));
 				AST cond = Condition (w);
+				decompiler.AddEOL (Token.LC);
 				AST body = Statement (w);
+				decompiler.AddEOL (Token.RC);
 				w.Init (parent, cond, body);
 				pn = w;
 			} else if (tt == Token.DO) {
+				decompiler.AddToken (Token.DO);
+				decompiler.AddEOL (Token.LC);
 				int line_number = ts.LineNumber;
 				DoWhile do_while = new DoWhile (new Location (ts.SourceName, ts.LineNumber));
 				AST body = Statement (do_while);
+				decompiler.AddToken (Token.RC);
 				MustMatchToken (Token.WHILE, "msg.no.while.do");
+				decompiler.AddToken (Token.WHILE);
 				AST cond = Condition (do_while);
 				do_while.Init (parent, body, cond);
 				pn  = do_while;
 			} else if (tt == Token.FOR) {
 				skip_semi = true;
+				decompiler.AddToken (Token.FOR);
 				AST init, cond, incr = null, body;
 
 				MustMatchToken (Token.LP, "msg.no.paren.for");
+				decompiler.AddToken (Token.LP);
 				tt = ts.PeekToken ();
 
 				if (tt == Token.SEMI)
@@ -483,11 +560,13 @@ namespace Microsoft.JScript {
 						init = Expr (parent, true);
 				}
 				
-				if (ts.MatchToken (Token.IN))
+				if (ts.MatchToken (Token.IN)) {
+					decompiler.AddToken (Token.IN);
 					cond = Expr (parent, false); // 'cond' is the object over which we're iterating
-				else { 
+				} else { 
 					// ordinary for loop
 					MustMatchToken (Token.SEMI, "msg.no.semi.for");
+					decompiler.AddToken (Token.SEMI);
 					
 					if (ts.PeekToken () == Token.SEMI)
 						cond = null; // no loop condition
@@ -495,7 +574,8 @@ namespace Microsoft.JScript {
 						cond = Expr (parent, false);
 
 					MustMatchToken (Token.SEMI, "msg.no.semi.for.cond");
-					
+					decompiler.AddToken (Token.SEMI);
+
 					if (ts.PeekToken () == Token.RP)
 						incr = null;
 					else
@@ -503,8 +583,11 @@ namespace Microsoft.JScript {
 				}
 
 				MustMatchToken (Token.RP, "msg.no.paren.for.ctrl");
+				decompiler.AddToken (Token.RP);
+				decompiler.AddEOL (Token.LC);
 				body = Statement (pn);
-								
+				decompiler.AddEOL (Token.RC);
+
 				if (incr == null) // cond could be null if 'in obj' got eaten by the init node. 
 					pn = new ForIn (parent, init, cond, body, new Location (ts.SourceName, ts.LineNumber));
 				else
@@ -517,8 +600,11 @@ namespace Microsoft.JScript {
 				AST finally_block = null;
 
 				skip_semi = true;
+				decompiler.AddToken (Token.TRY);
+				decompiler.AddEOL (Token.LC);
 
 				try_block = Statement (parent);
+				decompiler.AddEOL (Token.RC);
 				catch_blocks = new ArrayList ();
 
 				bool saw_default_catch = false;
@@ -528,47 +614,76 @@ namespace Microsoft.JScript {
 					while (ts.MatchToken (Token.CATCH)) {
 						if (saw_default_catch)
 							ReportError ("msg.catch.unreachable");
+						decompiler.AddToken (Token.CATCH);
 						MustMatchToken (Token.LP, "msg.no.paren.catch");
+						decompiler.AddToken (Token.LP);
 						MustMatchToken (Token.NAME, "msg.bad.catchcond");
 						string var_name = ts.GetString;
+						decompiler.AddName (var_name);
 						AST catch_cond = null;
 						
-						if (ts.MatchToken (Token.IF))
+						if (ts.MatchToken (Token.IF)) {
+							decompiler.AddToken (Token.IF);
 							catch_cond = Expr (parent, false);
-						else
+						} else
 							saw_default_catch = true;
 						
 						MustMatchToken (Token.RP, "msg.bad.catchcond");
+						decompiler.AddToken (Token.RP);
 						MustMatchToken (Token.LC, "msg.no.brace.catchblock");
+						decompiler.AddEOL (Token.LC);
 
 						catch_blocks.Add (new Catch (var_name, catch_cond, 
 									     Statements (null), parent, new Location (ts.SourceName, ts.LineNumber)));
 						MustMatchToken (Token.RC, "msg.no.brace.after.body");
+						decompiler.AddEOL (Token.RC);
 					}
 				} else if (peek != Token.FINALLY)
 					MustMatchToken (Token.FINALLY, "msg.try.no.catchfinally");
 				
-				if (ts.MatchToken (Token.FINALLY))
+				if (ts.MatchToken (Token.FINALLY)) {
+					decompiler.AddToken (Token.FINALLY);
+					decompiler.AddEOL (Token.LC);
 					finally_block = Statement (parent);
+					decompiler.AddEOL (Token.RC);
+				}
 				pn = new Try (try_block, catch_blocks, finally_block, parent, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.THROW) {
 				int line_number = ts.LineNumber;
+				decompiler.AddToken (Token.THROW);
 				pn = new Throw (Expr (parent, false), new Location (ts.SourceName, ts.LineNumber));
 
 				if (line_number == ts.LineNumber)
 					CheckWellTerminated ();
 			} else if (tt == Token.BREAK) {
+				decompiler.AddToken (Token.BREAK);
+
 				// MatchLabel only matches if there is one
 				string label = MatchLabel ();
+
+				if (label != null)
+					decompiler.AddName (label);
+
 				pn = new Break (parent, label, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.CONTINUE) {
+				decompiler.AddToken (Token.CONTINUE);
+
+				// MatchLabel only matches if there is one
 				string label = MatchLabel ();
+
+				if (label != null)
+					decompiler.AddName (label);
+
 				pn = new Continue (parent, label, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.WITH) {
 				skip_semi = true;
+				decompiler.AddToken (Token.WITH);
 				MustMatchToken (Token.LP, "msg.no.paren.with");
+				decompiler.AddToken (Token.LP);
 				AST obj = Expr (parent, false);
 				MustMatchToken (Token.RP, "msg.no.paren.after.with");
+				decompiler.AddToken (Token.RP);
+				decompiler.AddToken (Token.LC);
 				++nesting_of_with;
 				AST body;
 				try {
@@ -576,6 +691,7 @@ namespace Microsoft.JScript {
 				} finally {
 					--nesting_of_with;
 				}
+				decompiler.AddEOL (Token.RC);
 				pn = new With (parent, obj, body, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.VAR) {
 				int line_number = ts.LineNumber;
@@ -584,6 +700,7 @@ namespace Microsoft.JScript {
 					CheckWellTerminated ();
 			} else if (tt == Token.RETURN) {
 				AST ret_expr = null;
+				decompiler.AddToken (Token.RETURN);
 				pn = new Return (new Location (ts.SourceName, ts.LineNumber));
 
 				if (!InsideFunction)
@@ -634,6 +751,9 @@ namespace Microsoft.JScript {
 					Labelled labelled = new Labelled (parent, new Location (ts.SourceName, ts.LineNumber));
 					labelled.Init (parent, name, Statement (labelled), new Location (ts.SourceName, ts.LineNumber));
 					pn = labelled;
+					// depend on decompiling lookahead to guess that that
+					// last name was a label.
+					decompiler.AddEOL (Token.COLON);
 					return pn;
 				}
 				// FIXME:
@@ -642,21 +762,35 @@ namespace Microsoft.JScript {
 					CheckWellTerminated ();
 			}
 			ts.MatchToken (Token.SEMI);
+
+			if (!skip_semi)
+				decompiler.AddEOL (Token.SEMI);
+
 			return pn;
 		}
 		
 		AST Variables (AST parent, bool in_for_init)
 		{
 			VariableStatement pn = new VariableStatement (parent, new Location (ts.SourceName, ts.LineNumber));
+			bool first = true;
+			decompiler.AddToken (Token.VAR);
+
 			for (;;) {
 				VariableDeclaration name;
 				AST init = null;
 				MustMatchToken (Token.NAME, "msg.bad.var");
-				string s = ts.GetString;				
+				string s = ts.GetString;
+
+				if (!first)
+					decompiler.AddToken (Token.COMMA);
+				first = false;
+				
+				decompiler.AddName (s);
 				name = new VariableDeclaration (parent, s, null, null, new Location (ts.SourceName, ts.LineNumber));
 
 				// ommited check for argument hiding				
 				if (ts.MatchToken (Token.ASSIGN)) {
+					decompiler.AddToken (Token.ASSIGN);
 					init = AssignExpr (parent, in_for_init);
 					name.val = init;
 				}
@@ -677,8 +811,10 @@ namespace Microsoft.JScript {
 			if (init == null)
 				throw new Exception ("Expr, L680, AST is null");
 			
-			while (ts.MatchToken (Token.COMMA))
+			while (ts.MatchToken (Token.COMMA)) {
+				decompiler.AddToken (Token.COMMA);
 				pn.Add (AssignExpr (parent, in_for_init));
+			}
 			return pn;
 		}
 
@@ -690,11 +826,13 @@ namespace Microsoft.JScript {
 			// omitted: "invalid assignment left-hand side" check.
 			if (tt == Token.ASSIGN) {
 				ts.GetToken ();
+				decompiler.AddToken (Token.ASSIGN);
 				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), JSToken.Assign, false, new Location (ts.SourceName, ts.LineNumber));
 				return pn;
 			} else if (tt == Token.ASSIGNOP) {
 				ts.GetToken ();
 				int op = ts.GetOp ();
+				decompiler.AddAssignOp (op);
 				pn = new Assign (parent, pn, AssignExpr (parent, in_for_init), ToJSToken (op, tt), false, 
 					 new Location (ts.SourceName, ts.LineNumber));
 			}
@@ -708,8 +846,10 @@ namespace Microsoft.JScript {
 			AST pn = OrExpr (parent, in_for_init);
 
 			if (ts.MatchToken (Token.HOOK)) {
+				decompiler.AddToken (Token.HOOK);
 				if_true = AssignExpr (parent, false);
 				MustMatchToken (Token.COLON, "msg.no.colon.cond");
+				decompiler.AddToken (Token.COLON);
 				if_false = AssignExpr (parent, in_for_init);
 				return new Conditional (parent, pn, if_true, if_false, new Location (ts.SourceName, ts.LineNumber));
 			}
@@ -719,9 +859,11 @@ namespace Microsoft.JScript {
 		AST OrExpr (AST parent, bool in_for_init)
 		{
 			AST pn = AndExpr (parent, in_for_init);
-			if (ts.MatchToken (Token.OR))
+			if (ts.MatchToken (Token.OR)) {
+				decompiler.AddToken (Token.OR);
 				return new Binary (parent, pn, OrExpr (parent, in_for_init), JSToken.LogicalOr, 
 					   new Location (ts.SourceName, ts.LineNumber));
+			}
 			return pn;
 		}
 
@@ -729,6 +871,7 @@ namespace Microsoft.JScript {
 		{
 			AST pn = BitOrExpr (parent, in_for_init);
 			if (ts.MatchToken (Token.AND)) {
+				decompiler.AddToken (Token.AND);
 				return new Binary (parent, pn, AndExpr (parent, in_for_init), JSToken.LogicalAnd,
 					   new Location (ts.SourceName, ts.LineNumber));
 			}
@@ -739,6 +882,7 @@ namespace Microsoft.JScript {
 		{
 			AST pn = BitXorExpr (parent, in_for_init);
 			while (ts.MatchToken (Token.BITOR)) {
+				decompiler.AddToken (Token.BITOR);
 				pn = new Binary (parent, pn, BitXorExpr (parent, in_for_init), JSToken.BitwiseOr,
 					 new Location (ts.SourceName, ts.LineNumber));
 			}
@@ -748,18 +892,22 @@ namespace Microsoft.JScript {
 		AST BitXorExpr (AST parent, bool in_for_init)
 		{
 			AST pn = BitAndExpr (parent, in_for_init);
-			while (ts.MatchToken (Token.BITXOR))
+			while (ts.MatchToken (Token.BITXOR)) {
+				decompiler.AddToken (Token.BITXOR);
 				pn = new Binary (parent, pn, BitAndExpr (parent, in_for_init), JSToken.BitwiseXor,
 					 new Location (ts.SourceName, ts.LineNumber));
+			}
 			return pn;
 		}
 
 		AST BitAndExpr (AST parent, bool in_for_init)
 		{
 			AST pn = EqExpr (parent, in_for_init);
-			while (ts.MatchToken (Token.BITAND))
+			while (ts.MatchToken (Token.BITAND)) {
+				decompiler.AddToken (Token.BITAND);
 				pn = new Binary (parent, pn, EqExpr (parent, in_for_init), JSToken.BitwiseAnd,
 					 new Location (ts.SourceName, ts.LineNumber));
+			}
 			return pn;
 		}
 
@@ -768,6 +916,7 @@ namespace Microsoft.JScript {
 			AST pn = RelExpr (parent, in_for_init);
 			for (;;) {
 				int tt = ts.PeekToken ();
+				decompiler.AddToken (tt);
 				if (tt == Token.EQ || tt == Token.NE) {
 					ts.GetToken ();
 					pn = new Equality (parent, pn, RelExpr (parent, in_for_init), ToJSToken (tt), 
@@ -793,6 +942,7 @@ namespace Microsoft.JScript {
 						break;
 				} else if (tt == Token.INSTANCEOF || tt == Token.LE || tt == Token.LT || tt == Token.GE || tt == Token.GT) {
 					ts.GetToken ();
+					decompiler.AddToken (tt);
 					pn = new Relational (parent, pn, ShiftExpr (parent), ToJSToken (tt), new Location (ts.SourceName, ts.LineNumber));
 					continue;
 				}
@@ -808,7 +958,15 @@ namespace Microsoft.JScript {
 				int tt = ts.PeekToken ();
 				if (tt == Token.LSH || tt == Token.URSH || tt == Token.RSH) {
 					ts.GetToken ();
-					pn = new Binary (parent, pn, AddExpr (parent), JSToken.LeftShift,
+					decompiler.AddToken (tt);
+					
+					JSToken op = JSToken.LeftShift;
+					if (tt == Token.RSH)
+						op = JSToken.RightShift;
+					else if (tt == Token.URSH)
+						op = JSToken.UnsignedRightShift;
+
+					pn = new Binary (parent, pn, AddExpr (parent), op,
 						 new Location (ts.SourceName, ts.LineNumber));
 					continue;
 				}
@@ -824,6 +982,7 @@ namespace Microsoft.JScript {
 				int tt = ts.PeekToken ();
 				if (tt == Token.ADD || tt == Token.SUB) {
 					ts.GetToken ();
+					decompiler.AddToken (tt);
 					pn = new Binary (parent, pn, MulExpr (parent), ToJSToken (tt),
 						 new Location (ts.SourceName, ts.LineNumber));
 					continue;
@@ -839,7 +998,8 @@ namespace Microsoft.JScript {
 			for (;;) {
 				int tt = ts.PeekToken ();
 				if (tt == Token.MUL || tt == Token.DIV || tt == Token.MOD) {
-					ts.GetToken ();					
+					ts.GetToken ();
+					decompiler.AddToken (tt);
 					pn = new Binary (parent, pn, UnaryExpr (parent), ToJSToken (tt),
 						 new Location (ts.SourceName, ts.LineNumber));
 					continue;
@@ -859,10 +1019,20 @@ namespace Microsoft.JScript {
 
 			if (tt == Token.VOID || tt == Token.NOT || tt == Token.BITNOT || tt == Token.TYPEOF ||
 			    tt == Token.ADD || tt == Token.SUB || tt == Token.DELPROP) {
+				if (tt == Token.VOID || tt == Token.NOT || tt == Token.BITNOT || tt == Token.TYPEOF)
+					decompiler.AddToken (tt);
+				else if (tt == Token.ADD)
+					decompiler.AddToken (Token.POS);
+				else if (tt == Token.SUB)
+					decompiler.AddToken (Token.NEG);
+				else 
+					decompiler.AddToken (tt);
+
 				Unary u = new Unary (parent, ToJSToken (tt), new Location (ts.SourceName, ts.LineNumber));
 				u.operand = UnaryExpr (u);
 				return u;
 			} else if (tt == Token.INC || tt == Token.DEC) {
+				decompiler.AddToken (tt);
 				return new PostOrPrefixOperator (parent, MemberExpr (parent, true), ToJSToken (tt), true,
 							 new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.ERROR) {
@@ -883,6 +1053,7 @@ namespace Microsoft.JScript {
 				int peeked;				
 				if (((peeked = ts.PeekToken ()) == Token.INC || peeked == Token.DEC) && ts.LineNumber == line_number) {
 					int pf = ts.GetToken ();
+					decompiler.AddToken (pf);
 					return new PostOrPrefixOperator (parent, pn, ToJSToken (peeked), false,
 								 new Location (ts.SourceName, ts.LineNumber));
 				}
@@ -979,7 +1150,11 @@ namespace Microsoft.JScript {
 			ts.allow_reg_exp = false;
 
 			if (!matched) {
+				bool first = true;
 				do {
+					if (!first)
+						decompiler.AddToken (Token.COMMA);
+					first = false;
 					list.AddArg (AssignExpr (parent, false));
 				} while (ts.MatchToken (Token.COMMA));				
 				MustMatchToken (Token.RP, "msg.no.paren.arg");
@@ -999,13 +1174,16 @@ namespace Microsoft.JScript {
 			if (tt == Token.NEW) {
 				/* Eat the NEW token. */
 				ts.GetToken ();
+				decompiler.AddToken (Token.NEW);
 
 				/* Make a NEW node to append to. */
 				pn = new New (parent, MemberExpr (parent, false), new Location (ts.SourceName, ts.LineNumber));
 
-				if (ts.MatchToken (Token.LP))
+				if (ts.MatchToken (Token.LP)) {
+					decompiler.AddToken (Token.LP);
 					ArgumentList (parent, (ICallable) pn);
-				
+				}
+
 				/* XXX there's a check in the C source against
 				 * "too many constructor arguments" - how many
 				 * do we claim to support?
@@ -1030,20 +1208,25 @@ namespace Microsoft.JScript {
 
 			while ((tt = ts.GetToken ()) > Token.EOF) {
 				if (tt == Token.DOT) {
+					decompiler.AddToken (Token.DOT);
 					MustMatchToken (Token.NAME, "msg.no.name.after.dot");
 					string s = ts.GetString;
+					decompiler.AddName (s);
 					// FIXME: is 'new Identifier' appropriate here?
 					pn = new Binary (parent, pn, 
 						 new Identifier (parent, ts.GetString, new Location (ts.SourceName, ts.LineNumber)),
 						 JSToken.AccessField, new Location (ts.SourceName, ts.LineNumber));
 				} else if (tt == Token.LB) {
+					decompiler.AddToken (Token.LB);
 					Binary b = new Binary (parent, pn, JSToken.LeftBracket, 
 						       new Location (ts.SourceName, ts.LineNumber));
 					b.right = Expr (b, false);
 					pn = b;
 					MustMatchToken (Token.RB, "msg.no.bracket.index");
+					decompiler.AddToken (Token.RB);
 				} else if (allow_call_syntax && tt == Token.LP) {
 					/* make a call node */
+					decompiler.AddToken (Token.LP);
 					pn = new Call (parent, pn, new Location (ts.SourceName, ts.LineNumber));
 					
 					/* Add the arguments to pn, if any are supplied. */
@@ -1070,6 +1253,7 @@ namespace Microsoft.JScript {
 			} else if (tt == Token.LB) {
 				ASTList elems = new ASTList (parent, new Location (ts.SourceName, ts.LineNumber));
 				int skip_count = 0;
+				decompiler.AddToken (Token.LB);
 				bool after_lb_or_comma = true;
 				for (;;) {
 					ts.allow_reg_exp = true;
@@ -1078,6 +1262,7 @@ namespace Microsoft.JScript {
 					
 					if (tt == Token.COMMA) {
 						ts.GetToken ();
+						decompiler.AddToken (Token.COMMA);
 						if (!after_lb_or_comma) 
 							after_lb_or_comma = true;
 						else {
@@ -1086,6 +1271,7 @@ namespace Microsoft.JScript {
 						}
 					} else if (tt == Token.RB) {
 						ts.GetToken ();
+						decompiler.AddToken (Token.RB);
 						break;
 					} else {
 						if (!after_lb_or_comma) 
@@ -1099,6 +1285,7 @@ namespace Microsoft.JScript {
 			} else if (tt == Token.LC) {
 				Location location = new Location (ts.SourceName, ts.LineNumber);
 				ArrayList elems = new ArrayList ();
+				decompiler.AddToken (Token.LC);
 
 				if (!ts.MatchToken (Token.RC)) {
 					bool first = true;
@@ -1108,7 +1295,7 @@ namespace Microsoft.JScript {
 						ObjectLiteralItem property;
 
 						if (!first)
-							;
+							decompiler.AddToken (Token.COMMA);
 						else
 							first = false;
 						
@@ -1116,9 +1303,14 @@ namespace Microsoft.JScript {
 						
 						if (tt == Token.NAME || tt == Token.STRING) {
 							string s = ts.GetString;
+							if (tt == Token.NAME)
+								decompiler.AddName (s);
+							else
+								decompiler.AddString (s);
 							property = new ObjectLiteralItem (s);
 						} else if (tt == Token.NUMBER) {
 							double n = ts.GetNumber;
+							decompiler.AddNumber (n);
 							property = new ObjectLiteralItem (n);
 						} else if (tt == Token.RC) {
 							// trailing comma is OK
@@ -1129,6 +1321,9 @@ namespace Microsoft.JScript {
 							goto leave_commaloop;
 						}
 						MustMatchToken (Token.COLON, "msg.no.colon.prop");
+						// OBJLIT is used as ':' in object literal for
+						// decompilation to solve spacing ambiguity.
+						decompiler.AddToken (Token.OBJECTLIT);
 						property.exp = AssignExpr (parent, false);
 						elems.Add (property);
 					} while (ts.MatchToken (Token.COMMA));
@@ -1140,29 +1335,38 @@ namespace Microsoft.JScript {
 				return new ObjectLiteral (elems, location);
 			} else if (tt == Token.LP) {
 				pn = Expr (parent, false);
+				decompiler.AddToken (Token.RP);
 				MustMatchToken (Token.RP, "msg.no.paren");
 				return pn;
 			} else if (tt == Token.NAME) {
 				string name = ts.GetString;
+				decompiler.AddName (name);
 				return new Identifier (parent, name, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.NUMBER) {
 				double n = ts.GetNumber;
+				decompiler.AddNumber (n);
+				Location location = new Location (ts.SourceName, ts.LineNumber);
 				return new NumericLiteral (parent, n, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.STRING) {
 				string s = ts.GetString;
+				decompiler.AddString (s);
 				return new StringLiteral (null, s, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.REGEXP) {
 				string flags = ts.reg_exp_flags;
 				ts.reg_exp_flags = null;
 				string re = ts.GetString;
+				decompiler.AddRegexp (re, flags);
 				return new RegExpLiteral (parent, re, flags, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.NULL) {
+				decompiler.AddToken (tt);
 				// FIXME, build the null object;
 				return null;
 			} else if (tt ==  Token.THIS) {
+				decompiler.AddToken (tt);
 				return new This (parent, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.FALSE || tt == Token.TRUE) {
-				bool v;	
+				decompiler.AddToken (tt);
+				bool v;
 				if (tt == Token.FALSE)
 					v = false;
 				else
@@ -1175,6 +1379,6 @@ namespace Microsoft.JScript {
 			} else
 				ReportError ("msg.syntax");
 			return null; // should never reach here
-		}		
+		}
 	}
 }

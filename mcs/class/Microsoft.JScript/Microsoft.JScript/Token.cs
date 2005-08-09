@@ -33,6 +33,9 @@ using System;
 
 namespace Microsoft.JScript {
 internal class Token  {
+
+	internal static bool PrintNames = true;
+
 	internal static int
 		ERROR = -1,
 		EOF = 0,
@@ -179,10 +182,14 @@ internal class Token  {
 
 		LAST_TOKEN  = 126;
 
-	public static string Name (int token)
+	public static string Name (int token, bool ignore_error)
 	{
-		if (!(-1 <= token && token <= LAST_TOKEN))
-			throw new Exception ("Invalid argument = " + token.ToString ());
+		if (!(-1 <= token && token <= LAST_TOKEN)) {
+			if (ignore_error)
+				return null;
+			else
+				throw new Exception ("Invalid argument = " + token.ToString ());
+		}
 
 		if (token == ERROR)
 			return "ERROR";
@@ -432,7 +439,10 @@ internal class Token  {
 			return "SET_REF_OP";
 
 		// Token without name
-		throw new Exception("Illegal state, " + token.ToString ());
+		if (ignore_error)
+			return null;
+		else
+			throw new Exception("Illegal state, " + token.ToString ());
 	}
 }
 }

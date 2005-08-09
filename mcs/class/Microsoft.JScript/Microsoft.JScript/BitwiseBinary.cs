@@ -54,10 +54,21 @@ namespace Microsoft.JScript {
 				return num1 ^ num2;
 			case JSToken.BitwiseOr:
 				return num1 | num2;
+			case JSToken.LeftShift:
+				return num1 << num2;
+			case JSToken.RightShift:
+				return num1 >> num2;
+			case JSToken.UnsignedRightShift:
+				return UnsignedRightShift (num1, num2);
 			}
 
 			Console.WriteLine ("EvaluateBitwiseBinary: operatorTok = {0}", operatorTok);
 			throw new NotImplementedException ();
+		}
+
+		internal static uint UnsignedRightShift (int num1, int num2)
+		{
+			return (uint) num1 >> num2;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
