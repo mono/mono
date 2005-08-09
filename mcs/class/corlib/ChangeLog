@@ -1,3 +1,7 @@
+2005-08-09  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib.dll.sources: Add System.Runtime.CompilerServices/SpecialNameAttribute.cs.
+
 2005-08-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib.dll.sources : added managed collation classes

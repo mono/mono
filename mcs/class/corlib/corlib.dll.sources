@@ -537,7 +537,8 @@ System.Runtime.CompilerServices/NGenAttribute.cs
 System.Runtime.CompilerServices/NGenHint.cs
 System.Runtime.CompilerServices/RequiredAttributeAttribute.cs
 System.Runtime.CompilerServices/RuntimeHelpers.cs
-System.Runtime.CompilerServices/ScopelessEnumAttribute.cs 
+System.Runtime.CompilerServices/SpecialNameAttribute.cs 
+System.Runtime.CompilerServices/ScopelessEnumAttribute.cs
 System.Runtime.CompilerServices/StringFreezingAttribute.cs 
 System.Runtime.CompilerServices/SuppressMergeCheckAttribute.cs 
 System.Runtime.CompilerServices/UnsafeValueTypeAttribute.cs
