@@ -67,10 +67,10 @@ namespace Microsoft.VisualBasic
 			close(iArr);
 		}
 
-		public static void FileClose(int[] fileNumbers)
+		public static void FileClose(params int[] fileNumbers)
 		{
 			int[] iArr = null;
-			if (fileNumbers.Length == 0)
+			if (fileNumbers == null || fileNumbers.Length == 0)
 			{
 				ICollection keySet = FileSystem._openFilesMap.Keys;
 				iArr = new int[keySet.Count];
@@ -545,7 +545,7 @@ namespace Microsoft.VisualBasic
 			return vbFile.readLine();
 		}
 
-		public static void Print(int fileNumber, Object[] output)
+		public static void Print(int fileNumber, params Object[] output)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.print(output);
@@ -558,19 +558,19 @@ namespace Microsoft.VisualBasic
 //			vbFile.printLine(null);
 //		}
 
-		public static void PrintLine(int fileNumber, Object[] output)
+		public static void PrintLine(int fileNumber, params Object[] output)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.printLine(output);
 		}
 
-		public static void Write(int fileNumber, Object[] output)
+		public static void Write(int fileNumber, params Object[] output)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.write(output);
 		}
 
-		public static void WriteLine(int fileNumber, Object[] output)
+		public static void WriteLine(int fileNumber, params Object[] output)
 		{
 			VBFile vbFile = getVBFile(fileNumber);
 			vbFile.writeLine(output);

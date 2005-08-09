@@ -259,7 +259,7 @@ namespace Microsoft.VisualBasic {
 		}
 		
 
-		public static Object CallByName (Object objRef, String name, CallType userCallType, Object[] args)
+		public static Object CallByName (Object objRef, String name, CallType userCallType, params Object[] args)
 		{
 			Type[] argsType = null;
 
@@ -304,7 +304,7 @@ namespace Microsoft.VisualBasic {
 		}
 
 
-		public static System.Object Choose (System.Double Index, System.Object[] Choice)
+		public static System.Object Choose (System.Double Index, params System.Object[] Choice)
 		{ 
 			int i;
 

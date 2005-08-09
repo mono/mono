@@ -1,3 +1,7 @@
+2005-08-09  Manjula GHM <mmanjula@novell.com>
+        *Interaction.cs:
+        *FileSystem.cs : Add ParamArray keyword in relevant location
+
 2005-08-08  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Collection.cs: Various fixes to match the MS.NET IList 
