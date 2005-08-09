@@ -1,5 +1,10 @@
 2005-08-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SimpleCollator.cs : made "checkedFlags" as nullable and made it as
+	  an argument of every index methods (to make it thread safe).
+
+2005-08-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs,
 	  MSCompatUnicodeTable.cs :
 	  - Now IsIgnorable() is aggregated to be one invokation to check 
