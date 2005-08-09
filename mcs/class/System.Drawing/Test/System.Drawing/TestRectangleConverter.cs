@@ -358,5 +358,72 @@ namespace MonoTests.System.Drawing
 			propsColl = rconv.GetProperties (null, rect, attrs);
 			AssertEquals ("GP3#13", 0, propsColl.Count);
 		}
+
+		[Test]
+		public void ConvertFromInvariantString_string () {
+			AssertEquals ("CFISS#1", rect, rconv
+				.ConvertFromInvariantString (rectStr));
+			AssertEquals ("CFISS#2", rectneg, rconv
+				.ConvertFromInvariantString (rectnegStr));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromInvariantString_string_exc_1 () {
+			rconv.ConvertFromInvariantString ("1, 2, 3");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromInvariantString_string_exc_2 () {
+			rconv.ConvertFromInvariantString ("hello");
+		}
+
+		[Test]
+		public void ConvertFromString_string () {
+			AssertEquals ("CFSS#1", rect, rconv.ConvertFromString (rectStr));
+			AssertEquals ("CFSS#2", rectneg, rconv.ConvertFromString (rectnegStr));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromString_string_exc_1 () {
+			rconv.ConvertFromString ("1, 2, 3, 4, 5");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromString_string_exc_2 () {
+			rconv.ConvertFromString ("hello");
+		}
+
+		[Test]
+		public void ConvertToInvariantString_string () {
+			AssertEquals ("CFISS#1", rectStr, rconv.ConvertToInvariantString (rect));
+			AssertEquals ("CFISS#2", rectnegStr, rconv.ConvertToInvariantString (rectneg));
+		}
+
+		[Test]
+		public void ConvertToString_string () {
+			AssertEquals ("CFISS#1", rectStr, rconv.ConvertToString (rect));
+			AssertEquals ("CFISS#2", rectnegStr, rconv.ConvertToString (rectneg));
+		}
+
+		[Test]
+		public void GetStandardValuesSupported () {
+			Assert (! rconv.GetStandardValuesSupported ());
+		}
+
+		[Test]
+		public void GetStandardValues () {
+			AssertEquals (null, rconv.GetStandardValues ());
+		}
+
+		[Test]
+		public void GetStandardValuesExclusive () {
+			AssertEquals (false, rconv.GetStandardValuesExclusive ());
+		}
 	}
 }

@@ -291,5 +291,73 @@ namespace MonoTests.System.Drawing
 			propsColl = ptconv.GetProperties (null, pt, attrs);
 			AssertEquals ("GP3#5", 0, propsColl.Count);
 		}
+
+		[Test]
+		public void ConvertFromInvariantString_string ()
+		{
+			AssertEquals ("CFISS#1", pt, ptconv
+				.ConvertFromInvariantString ("1, 2"));
+			AssertEquals ("CFISS#2", ptneg, ptconv
+				.ConvertFromInvariantString ("-2, -3"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromInvariantString_string_exc_1 ()
+		{
+			ptconv.ConvertFromInvariantString ("1");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromInvariantString_string_exc_2 () {
+			ptconv.ConvertFromInvariantString ("hello");
+		}
+
+		[Test]
+		public void ConvertFromString_string () {
+			AssertEquals ("CFSS#1", pt, ptconv.ConvertFromString ("1, 2"));
+			AssertEquals ("CFSS#2", ptneg, ptconv.ConvertFromString ("-2, -3"));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromString_string_exc_1 () {
+			ptconv.ConvertFromString ("1");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromString_string_exc_2 () {
+			ptconv.ConvertFromString ("hello");
+		}
+
+		[Test]
+		public void ConvertToInvariantString_string () {
+			AssertEquals ("CFISS#1", "1, 2", ptconv.ConvertToInvariantString (pt));
+			AssertEquals ("CFISS#2", "-2, -3", ptconv.ConvertToInvariantString (ptneg));
+		}
+
+		[Test]
+		public void ConvertToString_string () {
+			AssertEquals ("CFISS#1", "1, 2", ptconv.ConvertToString (pt));
+			AssertEquals ("CFISS#2", "-2, -3", ptconv.ConvertToString (ptneg));
+		}
+		[Test]
+		public void GetStandardValuesSupported () {
+			Assert (! ptconv.GetStandardValuesSupported ());
+		}
+
+		[Test]
+		public void GetStandardValues () {
+			AssertEquals (null, ptconv.GetStandardValues ());
+		}
+
+		[Test]
+		public void GetStandardValuesExclusive () {
+			AssertEquals (false, ptconv.GetStandardValuesExclusive ());
+		}
 	}
 }

@@ -1,3 +1,9 @@
+2005-08-09  Andrew Skiba  <andrews@mainsoft.com>
+
+	* ColorConverter.cs, ColorTranslator.cs: added
+	* TestPointConverter.cs, TestRectangleConverter.cs, TestSizeConverter.cs: new
+	tests for convert to/from string
+
 2005-08-07  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Color.cs: many new testcases added

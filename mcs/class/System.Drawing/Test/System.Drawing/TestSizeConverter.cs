@@ -293,5 +293,72 @@ namespace MonoTests.System.Drawing
 			propsColl = szconv.GetProperties (null, sz, attrs);
 			AssertEquals ("GP3#5", 0, propsColl.Count);
 		}
+
+		[Test]
+		public void ConvertFromInvariantString_string () {
+			AssertEquals ("CFISS#1", sz, szconv
+				.ConvertFromInvariantString (szStr));
+			AssertEquals ("CFISS#2", szneg, szconv
+				.ConvertFromInvariantString (sznegStr));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromInvariantString_string_exc_1 () {
+			szconv.ConvertFromInvariantString ("1, 2, 3");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromInvariantString_string_exc_2 () {
+			szconv.ConvertFromInvariantString ("hello");
+		}
+
+		[Test]
+		public void ConvertFromString_string () {
+			AssertEquals ("CFSS#1", sz, szconv.ConvertFromString (szStr));
+			AssertEquals ("CFSS#2", szneg, szconv.ConvertFromString (sznegStr));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromString_string_exc_1 () {
+			szconv.ConvertFromString ("1, 2, 3, 4, 5");
+		}
+
+		[Test]
+		[NUnit.Framework.Category ("NotDotNet")]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ConvertFromString_string_exc_2 () {
+			szconv.ConvertFromString ("hello");
+		}
+
+		[Test]
+		public void ConvertToInvariantString_string () {
+			AssertEquals ("CFISS#1", szStr, szconv.ConvertToInvariantString (sz));
+			AssertEquals ("CFISS#2", sznegStr, szconv.ConvertToInvariantString (szneg));
+		}
+
+		[Test]
+		public void ConvertToString_string () {
+			AssertEquals ("CFISS#1", szStr, szconv.ConvertToString (sz));
+			AssertEquals ("CFISS#2", sznegStr, szconv.ConvertToString (szneg));
+		}
+
+		[Test]
+		public void GetStandardValuesSupported () {
+			Assert (! szconv.GetStandardValuesSupported ());
+		}
+
+		[Test]
+		public void GetStandardValues () {
+			AssertEquals (null, szconv.GetStandardValues ());
+		}
+
+		[Test]
+		public void GetStandardValuesExclusive () {
+			AssertEquals (false, szconv.GetStandardValuesExclusive ());
+		}
 	}
 }
