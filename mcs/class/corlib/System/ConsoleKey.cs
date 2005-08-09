@@ -31,13 +31,11 @@
 namespace System {
 	public enum ConsoleKey {
 		Backspace = 8,
-		BackSpace = 8,
 		Tab = 9,
 		Clear = 12,
 		Enter = 13,
 		Pause = 19,
 		Escape = 27,
-		SpaceBar = 32,
 		Spacebar = 32,
 		PageUp = 33,
 		PageDown = 34,
@@ -176,6 +174,14 @@ namespace System {
 		NoName = 252,
 		Pa1 = 253,
 		OemClear = 254,
+
+#pragma warning disable 3005
+		// These are the old names
+		
+		BackSpace = 8,
+		SpaceBar = 32,
+#pragma warning restore
+		
 	}
 }
 #endif
