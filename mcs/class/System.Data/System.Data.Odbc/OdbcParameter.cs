@@ -298,7 +298,7 @@ namespace System.Data.Odbc
                         
 			// Bind parameter based on type
                         int ind = -3;
-			if (odbcType == OdbcType.Int)
+			if (odbcType == OdbcType.Int || odbcType == OdbcType.SmallInt)
                                 ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
                                                                ctype, sqltype, Convert.ToUInt32(Size),
                                                                0, ref intbuf, 0, ref ind);
@@ -315,6 +315,8 @@ namespace System.Data.Odbc
 			// Load buffer with new value
 			if (odbcType == OdbcType.Int)
                                 intbuf = Value == null ? new int () : (int) Value;
+			else if (odbcType == OdbcType.SmallInt)
+				intbuf = Value == null ? new short () : Convert.ToInt16(Value);
 			else if (odbcType == OdbcType.Numeric
 				 || odbcType == OdbcType.Decimal) {
 				// for numeric, the buffer is a packed decimal struct.
