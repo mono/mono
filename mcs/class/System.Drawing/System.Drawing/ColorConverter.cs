@@ -136,8 +136,13 @@ namespace System.Drawing
 		{
 			if ((destinationType == typeof (string)) && (value is Color)) {
 				Color color = (Color) value;
+				if (color.IsNamedColor)
+					return color.Name;
+
 				StringBuilder sb = new StringBuilder ();
-				sb.Append (color.A); sb.Append (", ");
+				if (color.A != 255) {
+					sb.Append (color.A); sb.Append (", ");
+				}
 				sb.Append (color.R); sb.Append (", ");
 				sb.Append (color.G); sb.Append (", ");
 				sb.Append (color.B);
@@ -187,24 +192,28 @@ namespace System.Drawing
 		private int GetNumber (String str)
 		{
 			int number;
+			try {
+				if (str.StartsWith ("#0x") || str.StartsWith ("#0X")) 
+					// #0xRRGGBB format. Parse hex string.
+					number = Int32.Parse (str.Substring (3), NumberStyles.HexNumber);
 
-			if (str.StartsWith ("#0x") || str.StartsWith ("#0X")) 
-				// #0xRRGGBB format. Parse hex string.
-				number = Int32.Parse (str.Substring (3), NumberStyles.HexNumber);
+				else if (str [0] == '#') 
+					// #RRGGBB format. Parse hex string.
+					number = Int32.Parse (str.Substring (1), NumberStyles.HexNumber);
 
-			else if (str [0] == '#') 
-				// #RRGGBB format. Parse hex string.
-				number = Int32.Parse (str.Substring (1), NumberStyles.HexNumber);
+				else if (str.StartsWith ("0x") || str.StartsWith ("0X"))
+					// 0xRRGGBB format. Parse hex string.
+					number = Int32.Parse (str.Substring (2), NumberStyles.HexNumber);
 
-			else if (str.StartsWith ("0x") || str.StartsWith ("0X"))
-				// 0xRRGGBB format. Parse hex string.
-				number = Int32.Parse (str.Substring (2), NumberStyles.HexNumber);
+				else    // if (str [0] == '-' || str [0] == '+' || Char.IsDigit (str [0]))
+					// [+/-]RRGGBB format. Parse decimal string.
+					number = Int32.Parse (str, NumberStyles.Integer);
 
-			else    // if (str [0] == '-' || str [0] == '+' || Char.IsDigit (str [0]))
-				// [+/-]RRGGBB format. Parse decimal string.
-				number = Int32.Parse (str, NumberStyles.Integer);
-
-			return number;
+				return number;
+			}
+			catch (FormatException e) {
+				throw new ArgumentException ("Can not convert this string to color: "+str, e);
+			}
 		}
 
 		class CompareColors : IComparer

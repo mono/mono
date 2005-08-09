@@ -44,6 +44,20 @@ namespace System.Drawing
 
 		public static Color FromHtml (string HtmlFromColor)
 		{
+			switch (HtmlFromColor) {
+			case "buttonface":
+				return SystemColors.Control;
+			case "captiontext":
+				return SystemColors.ActiveCaptionText;
+			case "threeddarkshadow":
+				return SystemColors.ControlDarkDark;
+			case "background":
+				return SystemColors.Desktop;
+			case "buttontext":
+				return SystemColors.ControlText;
+			case "infobackground":
+				return SystemColors.Info;
+			}
 			TypeConverter converter = TypeDescriptor.GetConverter (typeof (Color));
 			return (Color) converter.ConvertFromString (HtmlFromColor);
 		}

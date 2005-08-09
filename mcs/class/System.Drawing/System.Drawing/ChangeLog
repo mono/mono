@@ -1,6 +1,11 @@
-﻿2005-08-08 Konstantin Triger <kostat@mainsoft.com>
+﻿2005-08-09 Andrew Skiba <andrews@mainsoft.com>
 
-        * Graphics.jvm.cs: Refactoring
+	* ColorConverter.cs, ColorTranslator.cs: fixes to pass tests
+	committed in r48150
+
+2005-08-08 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: Refactoring
 
 2005-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
 
