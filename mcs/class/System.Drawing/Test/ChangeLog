@@ -1,3 +1,7 @@
+2005-08-09  Andrew Skiba <andrews@mainsoft.com>
+
+	* Test.dotnet.csproj, Test.vmcsproj: add ColorConverter.cs and ColorTranslator.cs
+
 2005-08-08  Andrew Skiba <andrews@mainsoft.com>
 	* Test.dotnet.csproj, Test.vmcsproj: move these projects from DrawingTest/Test and include Mono tests in addition to Mainsoft tests.
 

@@ -154,6 +154,16 @@
                     BuildAction = "Content"
                 />
                 <File
+                    RelPath = "System.Drawing\ColorConverter.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Drawing\ColorTranslator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Drawing\TestBitmap.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
