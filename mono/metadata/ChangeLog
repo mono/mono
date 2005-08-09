@@ -1,3 +1,9 @@
+2005-08-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* threadpool.c: if a work item in the thread pool has a callback that
+	catches a exception, don't propagate it after invoking the callback.
+	Fixes bug #75336.
+
 2005-08-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class.c (class_compute_field_layout): Rename this to mono_class_setup_fields.
