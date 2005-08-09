@@ -1,3 +1,8 @@
+2005-08-09 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* mb-parser.jay: Define as used the function's return variable,
+	because of bug #75747.
+	Fix Event errors with Shared modifiers.
+
 2005-08-05 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* expression.cs: Initialize FieldBase variable. Fixes build using csc

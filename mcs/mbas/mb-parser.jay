@@ -1657,7 +1657,8 @@ func_declaration
 		// for return value
 		ArrayList retval = new ArrayList ();
 		retval.Add (new VariableDeclaration ((string) $2, (Expression) ftype, (Location)$5));
-		declare_local_variables ((Expression) ftype, retval, (Location)$5);
+		Block implicit_block = declare_local_variables ((Expression) ftype, retval, (Location)$5);
+		implicit_block.GetVariableInfo((string) $2).Used = true;
 	  }	  
 	  opt_statement_list
 	  opt_end_block 
@@ -1769,9 +1770,10 @@ event_declaration
 		if ($5 == null) {
 			delName = (string) $2;
 			delName = delName + "EventHandler";
+			int modifiers = (implicit_modifiers) ? (current_modifiers & ~ (Modifiers.STATIC) ): current_modifiers;
 			Mono.MonoBASIC.Delegate del = new Mono.MonoBASIC.Delegate 
 							(current_container, TypeManager.system_void_expr, 
-							(int) current_modifiers, MakeName(delName), (Parameters) $4, 
+							(int) modifiers, MakeName(delName), (Parameters) $4, 
 							(Attributes) current_attributes, (Location)$3);
 						     	  
 			del.Namespace = current_namespace;
