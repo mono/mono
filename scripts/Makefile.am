@@ -20,6 +20,7 @@ scripts_1_0 = \
 	mkbundle		\
 	monop			\
 	mono-shlib-cop 		\
+	nunit-console		\
 	permview		\
 	prj2make		\
 	resgen			\
