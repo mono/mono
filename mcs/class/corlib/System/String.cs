@@ -205,22 +205,106 @@ namespace System
 #if NET_2_0
 		[ComVisible (false)]
 		[MonoTODO]
-		public String[] Split (char[] separator, StringSplitOptions options)
+		public String[] Split (char[] separator, int count, StringSplitOptions options)
 		{
+			if (separator == null || separator.Length == 0)
+				return Split (WhiteChars, count, options);
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "Count cannot be less than zero.");
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
 				throw new ArgumentException ("options must be one of the values in the StringSplitOptions enumeration", "options");
 
-			throw new NotImplementedException ();
+			bool removeEmpty = (options & StringSplitOptions.RemoveEmptyEntries) == StringSplitOptions.RemoveEmptyEntries;
+
+			if (!removeEmpty)
+				return Split (separator, count);
+			else
+				throw new NotImplementedException ();
 		}
 
 		[ComVisible (false)]
-		[MonoTODO]
-		public String[] Split (string[] separator, StringSplitOptions options)
+		public String[] Split (string[] separator, int count, StringSplitOptions options)
 		{
+			if (separator == null || separator.Length == 0)
+				return Split (WhiteChars, count, options);
+
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count", "Count cannot be less than zero.");
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
 				throw new ArgumentException ("Illegal enum value: " + options + ".", "options");
 
-			throw new NotImplementedException ();
+			bool removeEmpty = (options & StringSplitOptions.RemoveEmptyEntries) == StringSplitOptions.RemoveEmptyEntries;
+
+			if (count == 0 || (this == String.Empty && removeEmpty))
+				return new String [0];
+
+			ArrayList arr = new ArrayList ();
+
+			int pos = 0;
+			while (pos < this.Length) {
+				int matchIndex = -1;
+				int matchPos = Int32.MaxValue;
+
+				// Find the first position where any of the separators matches
+				for (int i = 0; i < separator.Length; ++i) {
+					string sep = separator [i];
+					if (sep == null || sep == String.Empty)
+						continue;
+
+					int match = IndexOf (sep, pos);
+					if (match > -1 && match < matchPos) {
+						matchIndex = i;
+						matchPos = match;
+					}
+				}
+
+				if (matchIndex == -1)
+					break;
+
+				if (matchPos == pos && removeEmpty) {
+					pos = matchPos + separator [matchIndex].Length;
+				}
+				else {
+					arr.Add (this.Substring (pos, matchPos - pos));
+
+					pos = matchPos + separator [matchIndex].Length;
+
+					if (arr.Count == count - 1) {
+						break;
+					}
+				}
+			}
+
+			if (arr.Count == 0)
+				return new String [] { this };
+			else {
+				if (removeEmpty && pos == this.Length) {
+					String[] res = new String [arr.Count];
+					arr.CopyTo (0, res, 0, arr.Count);
+
+					return res;
+				}
+				else {
+					String[] res = new String [arr.Count + 1];
+					arr.CopyTo (0, res, 0, arr.Count);
+					res [arr.Count] = this.Substring (pos);
+
+					return res;
+				}
+			}
+		}
+
+		[ComVisible (false)]
+		public String[] Split (char[] separator, StringSplitOptions options)
+		{
+			return Split (separator, Int32.MaxValue, options);
+		}
+
+		[ComVisible (false)]
+		public String[] Split (String[] separator, StringSplitOptions options)
+		{
+			return Split (separator, Int32.MaxValue, options);
 		}
 #endif
 
