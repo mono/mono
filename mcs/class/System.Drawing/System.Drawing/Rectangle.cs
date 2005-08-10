@@ -157,7 +157,9 @@ namespace System.Drawing
 		
 		public static Rectangle Intersect (Rectangle r1, Rectangle r2)
 		{
-			if (!r1.IntersectsWith (r2))
+			// MS.NET returns a non-empty rectangle if the two rectangles
+			// touch each other
+			if (!r1.IntersectsWithInclusive (r2))
 				return Empty;
 
 			return Rectangle.FromLTRB (
@@ -582,6 +584,12 @@ namespace System.Drawing
 		{
 			return !((Left >= r.Right) || (Right <= r.Left) ||
 			    (Top >= r.Bottom) || (Bottom <= r.Top));
+		}
+
+		private bool IntersectsWithInclusive (Rectangle r)
+		{
+			return !((Left > r.Right) || (Right < r.Left) ||
+			    (Top > r.Bottom) || (Bottom < r.Top));
 		}
 
 		/// <summary>
