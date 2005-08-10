@@ -1,5 +1,10 @@
 2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Normalization.cs : remove warned code.
+	* managed-collation.patch : now it's not required anymore.
+
+2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MSCompatUnicodeTable.cs : added IsSortable(string).
 
 2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>

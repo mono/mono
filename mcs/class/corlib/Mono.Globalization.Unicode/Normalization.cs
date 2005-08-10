@@ -166,7 +166,6 @@ namespace Mono.Globalization.Unicode
 					if (!CanBePrimaryComposite ((int) sb [i]))
 						break;
 				i++;
-				int starter = i;
 				int idx = 0;
 				for (; i < cur; i++) {
 					idx = GetPrimaryCompositeMapIndex (sb, (int) sb [i], i);
