@@ -1,3 +1,7 @@
+2005-08-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* TestRectangle.cs: Add new test.
+
 2005-08-09  Andrew Skiba  <andrews@mainsoft.com>
 
 	* ColorConverter.cs, ColorTranslator.cs: added

@@ -169,6 +169,9 @@ namespace MonoTests.System.Drawing
 			rect_0.Intersect (rect_5);
 			AssertEquals ("INT#3", new Rectangle (40, 40, 10, 10), rect_0);
 			AssertEquals ("INT#4", Rectangle.Empty, Rectangle.Intersect (rect_1, rect_5));
+
+			// Two rectangles touching each other
+			AssertEquals ("INT#5", new Rectangle (3, 0, 0, 7), Rectangle.Intersect (new Rectangle (0, 0, 3, 7), new Rectangle (3, 0, 8, 14)));
 		}
 
 		[Test]
