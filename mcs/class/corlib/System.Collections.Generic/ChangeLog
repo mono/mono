@@ -1,3 +1,9 @@
+2005-08-10  Kamil Skalski  <nazgul@nemerle.org>
+
+	* KeyValuePair.cs, Dictionary.cs: Change Key and Value to properties to match
+	.NET 2.0 July CTP. Update its use in Dictionary, since now we
+	cannot write to them.
+	
 2005-07-10  Kamil Skalski <nazgul@nemerle.org>
 
 	* Comparer.cs, EqualityComparer.cs: Use MakeGenericType instead of BindGenericParameters.

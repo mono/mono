@@ -59,8 +59,7 @@ namespace System.Collections.Generic {
 
 			public Slot (TKey Key, TValue Value, Slot Next)
 			{
-				this.Data.Key = Key;
-				this.Data.Value = Value;
+				this.Data = new KeyValuePair<TKey,TValue> (Key, Value);
 				this.Next = Next;
 			}
 		}
@@ -99,7 +98,7 @@ namespace System.Collections.Generic {
 					DoAdd (index, key, value);
 				} else {
 					++_generation;
-					slot.Data.Value = value;
+					slot.Data = new KeyValuePair<TKey, TValue> (key, value);
 				}
 			}
 		}

@@ -37,13 +37,21 @@ using System.Runtime.InteropServices;
 namespace System.Collections.Generic {
 	[Serializable]
 	public struct KeyValuePair<TKey,TValue> {
-		public TKey Key;
-		public TValue Value;
+		private TKey key;
+		private TValue value;
+
+		public TKey Key {
+			get { return key; }
+		}
+
+		public TValue Value {
+			get { return value; }
+		}
 		
 		public KeyValuePair (TKey Key, TValue Value)
 		{
-			this.Key = Key;
-			this.Value = Value;
+			this.key = Key;
+			this.value = Value;
 		}
 
 		public override string ToString()
