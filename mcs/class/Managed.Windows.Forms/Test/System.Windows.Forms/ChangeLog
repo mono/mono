@@ -1,3 +1,8 @@
+2005-08-10  Ritvik Mayank  <mritvik@novell.com>
+
+	* ControlTest.cs : Commented out test for GetChildAtPointSkip (feature not
+	  yet implemented)
+
 2005-08-08  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBoxTest.cs: new tests for properties, exceptions, and colletions
