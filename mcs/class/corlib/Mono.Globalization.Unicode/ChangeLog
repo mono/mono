@@ -1,3 +1,12 @@
+2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : Now all collator methods are thread safe.
+
+	  All instance non-readonly fields turned into arguments of every
+	  methods that use those fields.
+	  (Sadly it is the end of no-memory-cost collator era. mcs bootstrap
+	  now needs +100KB memory consumption.)
+
 2005-08-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : made "checkedFlags" as nullable and made it as
