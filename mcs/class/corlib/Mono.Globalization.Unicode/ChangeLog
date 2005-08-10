@@ -1,5 +1,9 @@
 2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MSCompatUnicodeTable.cs : added IsSortable(string).
+
+2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs : Now all collator methods are thread safe.
 
 	  All instance non-readonly fields turned into arguments of every

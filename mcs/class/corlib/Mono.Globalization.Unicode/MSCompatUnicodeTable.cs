@@ -278,6 +278,14 @@ namespace Mono.Globalization.Unicode
 			return level3 [UUtil.Level3.ToIndex (cp)];
 		}
 
+		public static bool IsSortable (string s)
+		{
+			foreach (char c in s)
+				if (!IsSortable (c))
+					return false;
+			return true;
+		}
+
 		public static bool IsSortable (int cp)
 		{
 			// LAMESPEC: they should strictly match with
