@@ -1,3 +1,8 @@
+
+Wed Aug 10 17:15:52 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* dump.c: dump the marshal signature blob on --marshal.
+
 2005-08-04  Ankit Jain <jankit@novell.com>
 
 	* main.c (dis_directive_moduleref): Always escape module ref names.
