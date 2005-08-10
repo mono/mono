@@ -1,5 +1,9 @@
 2005-08-10 Konstantin Triger <kostat@mainsoft.com>
 
+	* GraphicsPath.jvm.cs: implemented GraphicsPath.Widen
+
+2005-08-10 Konstantin Triger <kostat@mainsoft.com>
+
 	* GraphicsPath.jvm.cs: fix default curve tension.
 
 2005-08-0 9Konstantin Triger <kostat@mainsoft.com>

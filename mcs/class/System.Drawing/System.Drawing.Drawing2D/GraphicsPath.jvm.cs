@@ -888,20 +888,21 @@ namespace System.Drawing.Drawing2D
 		}
 		#endregion
         
-		#region Widen [TODO]
+		#region Widen
 		public void Widen (Pen pen)
 		{
-			Widen (pen, null, 1.0f / 4.0f);
+			Widen (pen, null);
 		}  		
                 
 		public void Widen (Pen pen, Matrix matrix)
 		{	
-			Widen (pen, matrix, 1.0f / 4.0f);
+			Widen (pen, matrix, 2f/3f);
 		}  		
                 		
 		public void Widen (Pen pen, Matrix matrix, float flatness)
 		{
-			throw new NotImplementedException();
+			Shape = new GeneralPath(((Stroke)pen).createStrokedShape(this));
+			Flatten(matrix, flatness);
 		} 
 		#endregion
 	}
