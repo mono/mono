@@ -1,3 +1,8 @@
+2005-08-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib.dll.sources: Add System.Runtime.InteropServices/SafeHandle.cs
+	and Microsoft.Win32.SafeHandles/SafeHandleZeroOrMinusOneIsInvalid.cs.
+
 2005-08-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* corlib.dll.sources: Add System.Runtime.CompilerServices/SpecialNameAttribute.cs.
