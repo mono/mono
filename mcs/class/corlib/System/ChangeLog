@@ -1,3 +1,10 @@
+2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* String.cs : added new StartsWith()/EndsWith() override, fixing
+	  existing EndsWith() which incorrectly assumed that both string
+	  lengths must be equivalent (they are not always equal).
+	* StringComparer.cs : added Ordinal and OrdinalIgnoreCase.
+
 2005-08-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* String.cs: Implement Split(String[]) methods.

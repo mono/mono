@@ -69,8 +69,76 @@ namespace System
 			}
 		}
 
+		class OrdinalComparer : StringComparer
+		{
+			public OrdinalComparer ()
+			{
+			}
+
+			public override int Compare (string x, string y)
+			{
+				return String.CompareOrdinal (x, y);
+			}
+
+			public override bool Equals (string x, string y)
+			{
+				return x == y;
+			}
+
+			public override int GetHashCode (string s)
+			{
+				return s.GetHashCode ();
+			}
+		}
+
+		class OrdinalIgnoreCaseComparer : StringComparer
+		{
+			public OrdinalIgnoreCaseComparer ()
+			{
+			}
+
+			public override int Compare (string x, string y)
+			{
+				// copied from String.CompareOrdinal()
+				if (x == null) {
+					if (y == null)
+						return 0;
+					else
+						return -1;
+				}
+				else if (y == null) {
+					return 1;
+				}
+
+				int max = x.Length > y.Length ? y.Length : x.Length;
+				for (int i = 0; i < max; i++) {
+					if (x [i] == y [i])
+						continue;
+					char xc = Char.ToUpperInvariant (x [i]);
+					char yc = Char.ToUpperInvariant (y [i]);
+					if (xc != yc)
+						return xc - yc;
+				}
+				return max < x.Length ? -1 :
+					max == y.Length ? 0 : 1;
+			}
+
+			public override bool Equals (string x, string y)
+			{
+				return Compare (x, y) != 0;
+			}
+
+			public override int GetHashCode (string s)
+			{
+				return s.ToUpperInvariant ().GetHashCode ();
+			}
+		}
+
 		static StringComparer invariantCultureIgnoreCase = new StringCultureComparer (CultureInfo.InvariantCulture, true);
 		static StringComparer invariantCulture = new StringCultureComparer (CultureInfo.InvariantCulture, false);
+		static StringComparer ordinalIgnoreCase =
+			new OrdinalIgnoreCaseComparer ();
+		static StringComparer ordinal = new OrdinalComparer ();
 
 		// Constructors
 		protected StringComparer ()
@@ -102,7 +170,20 @@ namespace System
 			}
 		}
 
+		public static StringComparer Ordinal {
+			get { return ordinal; }
+		}
+
+		public static StringComparer OrdinalIgnoreCase {
+			get { return ordinalIgnoreCase; }
+		}
+
 		// Methods
+		public static StringComparer Create (CultureInfo culture, bool ignoreCase)
+		{
+			return new StringCultureComparer (culture, ignoreCase);
+		}
+
 		public int Compare (object x, object y)
 		{
 			if (x == y)

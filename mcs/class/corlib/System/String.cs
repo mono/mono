@@ -549,16 +549,19 @@ namespace System
 
 		public bool EndsWith (String value)
 		{
-			if (value == null)
-				throw new ArgumentNullException ("value");
+			return EndsWith (value, false, CultureInfo.CurrentCulture);
+		}
 
-			if (value.Length == 0)
-				return true;
-
-			if (value.length > this.length)
-				return false;
-
-			return (0 == Compare (this, length - value.length, value, 0, value.length));
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		bool EndsWith (String value, bool ignoreCase, CultureInfo culture)
+		{
+			return (culture.CompareInfo.IsSuffix (this, value,
+				ignoreCase ? CompareOptions.IgnoreCase :
+				CompareOptions.None));
 		}
 
 		public int IndexOfAny (char [] anyOf)
@@ -843,16 +846,19 @@ namespace System
 
 		public bool StartsWith (String value)
 		{
-			if (value == null)
-				throw new ArgumentNullException ("value");
-			
-			if (value.Length == 0)
-				return true;
+			return StartsWith (value, false, CultureInfo.CurrentCulture);
+		}
 
-			if (this.length < value.length)
-				return false;
-
-			return CultureInfo.CurrentCulture.CompareInfo.IsPrefix (this, value);
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		bool StartsWith (String value, bool ignoreCase, CultureInfo culture)
+		{
+			return (culture.CompareInfo.IsPrefix (this, value,
+				ignoreCase ? CompareOptions.IgnoreCase :
+				CompareOptions.None));
 		}
 
 		/* This method is culture insensitive */
