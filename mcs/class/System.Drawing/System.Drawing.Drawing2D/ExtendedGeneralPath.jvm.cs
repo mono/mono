@@ -24,7 +24,6 @@ namespace System.Drawing.Drawing2D
 		public const sbyte SEG_MASK	  = SEG_MOVETO | SEG_LINETO | SEG_QUADTO | SEG_CUBICTO | SEG_CLOSE; // mask to eliminate SEG_CLOSE and SEG_MARKER
 
 		private const sbyte SEG_MARKER = 32; // path marker
-		private const sbyte SEG_UNMARK_MASK = 95; // path unmarker
 		
 
 		private sbyte [] _types;
@@ -392,7 +391,7 @@ namespace System.Drawing.Drawing2D
 		public void ClearMarkers()
 		{
 			for (int i = 0; i < TypesCount; i++)
-				Types [i] &= SEG_UNMARK_MASK;
+				Types [i] &= ~SEG_MARKER;
 		}
 
 		#endregion //Methods

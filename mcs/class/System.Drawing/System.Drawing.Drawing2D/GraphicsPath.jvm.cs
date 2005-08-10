@@ -620,28 +620,69 @@ namespace System.Drawing.Drawing2D
 		}
 		#endregion
              
-		#region AddClosedCurve [TODO]
-		//this could be simply implemented using the same 
-		//mechnizm as AddCurve. Simply use the last point for 
-		//first point tangent calculation
+		#region AddClosedCurve
 		public void AddClosedCurve (Point [] points)
 		{
-			throw new NotImplementedException ();
+			AddClosedCurve(points, 0.5f);
 		}
 
 		public void AddClosedCurve (PointF [] points)
 		{
-			throw new NotImplementedException ();
+			AddClosedCurve(points, 0.5f);
 		}
 
 		public void AddClosedCurve (Point [] points, float tension)
 		{
-			throw new NotImplementedException ();
+			if (points == null)
+				throw new ArgumentNullException("points");
+
+			if (points.Length < 3)
+				throw new ArgumentException("Invalid parameter used.");
+
+			int length = (points.Length + 3)*2;
+
+			float[] pts = new float[length];
+			pts[--length] = points[1].Y;
+			pts[--length] = points[1].X;
+			pts[--length] = points[0].Y;
+			pts[--length] = points[0].X;
+
+			for (int i = points.Length-1; i >= 0; i--) {
+				pts[--length] = points[i].Y;
+				pts[--length] = points[i].X;
+			}
+
+			pts[--length] = points[points.Length-1].Y;
+			pts[--length] = points[points.Length-1].X;
+
+			AddCurve(pts, !NativeObject.LastFigureClosed, tension);
 		}
 
 		public void AddClosedCurve (PointF [] points, float tension)
 		{
-			throw new NotImplementedException ();
+			if (points == null)
+				throw new ArgumentNullException("points");
+
+			if (points.Length < 3)
+				throw new ArgumentException("Invalid parameter used.");
+
+			int length = (points.Length + 3)*2;
+
+			float[] pts = new float[length];
+			pts[--length] = points[1].Y;
+			pts[--length] = points[1].X;
+			pts[--length] = points[0].Y;
+			pts[--length] = points[0].X;
+
+			for (int i = points.Length-1; i >= 0; i--) {
+				pts[--length] = points[i].Y;
+				pts[--length] = points[i].X;
+			}
+
+			pts[--length] = points[points.Length-1].Y;
+			pts[--length] = points[points.Length-1].X;
+
+			AddCurve(pts, !NativeObject.LastFigureClosed, tension);
 		}
 		#endregion
 
