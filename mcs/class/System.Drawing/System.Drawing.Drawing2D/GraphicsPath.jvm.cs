@@ -901,6 +901,9 @@ namespace System.Drawing.Drawing2D
                 		
 		public void Widen (Pen pen, Matrix matrix, float flatness)
 		{
+			if (pen == null)
+				throw new ArgumentNullException("pen");
+
 			Shape = new GeneralPath(((Stroke)pen).createStrokedShape(this));
 			Flatten(matrix, flatness);
 		} 
