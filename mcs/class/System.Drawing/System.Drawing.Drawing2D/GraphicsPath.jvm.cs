@@ -591,12 +591,12 @@ namespace System.Drawing.Drawing2D
 		//flattening features, otherwise curves will be more strict but less cool
 		public void AddCurve (Point [] points)
 		{
-			AddCurve(points,0.3F);
+			AddCurve(points,0.5F);
 		}
                 
 		public void AddCurve (PointF [] points)
 		{
-			AddCurve(points,0.3f);
+			AddCurve(points,0.5f);
 		}
                 
 		public void AddCurve (Point [] points, float tension)
