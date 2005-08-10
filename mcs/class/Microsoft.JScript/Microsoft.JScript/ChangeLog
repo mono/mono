@@ -1,4 +1,4 @@
-2005-08-03  Florian Gross  <flgr@ccan.de>
+2005-08-09  Florian Gross  <flgr@ccan.de>
 
 	* BitwiseBinary.cs: Implement LeftShift, RightShift and
 	UnsignedRightShift evaluation. Add method UnsignedRightShift.
