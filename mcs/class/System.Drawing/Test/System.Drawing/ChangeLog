@@ -1,3 +1,7 @@
+2005-08-10 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestRegion.cs: new cases for Combine and Intersect
+
 2005-08-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* TestRectangle.cs: Add new test.

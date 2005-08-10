@@ -122,9 +122,8 @@ namespace MonoTests.System.Drawing
 			Bitmap bmp = new Bitmap (600, 800);
 			Graphics dc = Graphics.FromImage (bmp);        					
 			Rectangle rect1, rect2;		
-			Region rgn1, rgn2;								
+			Region rgn1;								
 			RectangleF [] rects;
-			RectangleF [] rects2;
 			Matrix matrix = new Matrix ();		
 			
 			rect1 = new Rectangle (500, 30, 60, 80);		
@@ -267,7 +266,34 @@ namespace MonoTests.System.Drawing
 			AssertEquals (70, rects[5].X);	
 			AssertEquals (400, rects[5].Y);	
 			AssertEquals (40, rects[5].Width);	
-			AssertEquals (10, rects[5].Height);						
+			AssertEquals (10, rects[5].Height);	
+
+			rect1 = new Rectangle (10, 20, 50, 50);
+			rect2 = new Rectangle (100, 100, 60, 60);
+			rect3 = new Rectangle (200, 200, 80, 80);		
+
+			rgn1 = new Region (rect1);
+			rgn1.Union (rect2);
+			rgn1.Union (rect3);					
+		
+			rects = rgn1.GetRegionScans (matrix);	
+			
+			AssertEquals (3, rects.Length);	
+			
+			AssertEquals (10, rects[0].X);	
+			AssertEquals (20, rects[0].Y);	
+			AssertEquals (50, rects[0].Width);	
+			AssertEquals (50, rects[0].Height);	
+			
+			AssertEquals (100, rects[1].X);	
+			AssertEquals (100, rects[1].Y);	
+			AssertEquals (60, rects[1].Width);	
+			AssertEquals (60, rects[1].Height);	
+			
+			AssertEquals (200, rects[2].X);	
+			AssertEquals (200, rects[2].Y);	
+			AssertEquals (80, rects[2].Width);	
+			AssertEquals (80, rects[2].Height);					
 		}	
 		
 		[Test]
@@ -338,7 +364,7 @@ namespace MonoTests.System.Drawing
 			Graphics dc = Graphics.FromImage (bmp);        		
 			Matrix matrix = new Matrix ();		
 			Rectangle rect1, rect2;		
-			Region rgn1, rgn2;					
+			Region rgn1;					
 			RectangleF [] rects;
 			
 			rect1 = new Rectangle (130, 30, 60, 80);		
@@ -370,6 +396,7 @@ namespace MonoTests.System.Drawing
 			RectangleF rect3, rect4;
 			Region rgn3, rgn4;
 			
+			/* Two simple areas */
 			Rectangle rect1 = new Rectangle (260, 30, 60, 80);		
 			Rectangle rect2 = new Rectangle (290, 40, 60, 80);		
 			Region rgn1 = new Region (rect1);
@@ -384,6 +411,7 @@ namespace MonoTests.System.Drawing
 			AssertEquals (30, rects[0].Width);	
 			AssertEquals (70, rects[0].Height);	
 			
+			/* No intersect */
 			rect1 = new Rectangle (20, 330, 40, 50);		
 			rect2 = new Rectangle (50, 340, 40, 50);		
 			rect3 = new Rectangle (70, 360, 30, 50);		
@@ -396,9 +424,51 @@ namespace MonoTests.System.Drawing
 			rgn1.Intersect (rgn2);
 			rgn1.Intersect (rgn3);
 			rgn1.Intersect (rgn4);
-			rects = rgn1.GetRegionScans (matrix);			
-			
+			rects = rgn1.GetRegionScans (matrix);	
 			AssertEquals (0, rects.Length);							
+
+			/* Several areas combinated */
+
+			rect1 = new Rectangle (10, 10, 50, 50);
+			rect2 = new Rectangle (100, 100, 60, 60);
+			rect3 = new Rectangle (200, 200, 80, 80);
+			rgn1 = new Region (rect1);
+			rgn1.Union (rect2);
+			rgn1.Union (rect3);
+
+			rect1 = new Rectangle (30, 30, 80, 80);
+			rect2 = new Rectangle (45, 45, 200, 200);
+			rect3 = new Rectangle (260, 260, 10, 10);
+			rect4 = new Rectangle (270, 260, 10, 10);
+			rgn2 = new Region (rect1);
+			rgn2.Union (rect2);
+			rgn2.Union (rect3);
+			rgn2.Union (rect4);
+
+			rgn1.Intersect (rgn2);
+
+			rects = rgn1.GetRegionScans (matrix);	
+			AssertEquals (4, rects.Length);							
+
+			AssertEquals (30, rects[0].X);
+			AssertEquals (30, rects[0].Y);
+			AssertEquals (30, rects[0].Width);
+			AssertEquals (30, rects[0].Height);
+
+			AssertEquals (100, rects[1].X);
+			AssertEquals (100, rects[1].Y);
+			AssertEquals (60, rects[1].Width);
+			AssertEquals (60, rects[1].Height);
+			
+			AssertEquals (200, rects[2].X);
+			AssertEquals (200, rects[2].Y);
+			AssertEquals (45, rects[2].Width);
+			AssertEquals (45, rects[2].Height);
+
+			AssertEquals (260, rects[3].X);
+			AssertEquals (260, rects[3].Y);
+			AssertEquals (20, rects[3].Width);
+			AssertEquals (10, rects[3].Height);			
 		}
 		
 		[Test]
