@@ -1,3 +1,7 @@
+2005-08-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* SafeHandle.cs: New file.
+
 2005-08-06  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* _Activator.cs: ComVisible should only be set in 2.0 profile.
