@@ -1111,6 +1111,11 @@ namespace System {
 			get;
 		}
 
+		public extern bool IsGenericType {
+			[MethodImplAttribute(MethodImplOptions.InternalCall)]
+			get;
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type BindGenericParameters (Type gt, Type [] types);
 

@@ -1,3 +1,7 @@
+2005-08-10  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Type.cs: Add IsGenericType property from NET 2.0.
+
 2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* String.cs : added new StartsWith()/EndsWith() override, fixing
