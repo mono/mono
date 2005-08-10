@@ -1,8 +1,8 @@
 //
-// Microsoft.Win32.SafeHandles.SafeFileHandle
+// Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid
 //
 // Author
-//	Sebastien Pouliot  <sebastien@ximian.com>
+//	 Zoltan Varga (vargaz@gmail.com)
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -29,22 +29,12 @@
 #if NET_2_0
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace Microsoft.Win32.SafeHandles {
 
 	[MonoTODO]
-	public sealed class SafeFileHandle : SafeHandleZeroOrMinusOneIsInvalid {
-
-		public SafeFileHandle (IntPtr preexistingHandle, bool ownsHandle)
-		{
-		}
-
-		public override bool IsInvalid {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
+	public abstract class SafeHandleZeroOrMinusOneIsInvalid : SafeHandle, IDisposable {
 	}
 }
 
