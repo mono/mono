@@ -1,3 +1,6 @@
+2005-08-10  Umadevi S <sumadevi@novell.com>
+	* CheckedListBox.cs: Fixed event firing on Adding to the CheckedListBox
+
 2005-08-07  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Menu.cs: fixes bug 75700

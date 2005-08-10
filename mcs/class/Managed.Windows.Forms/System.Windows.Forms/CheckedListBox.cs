@@ -364,9 +364,11 @@ namespace System.Windows.Forms
 
 		public class ObjectCollection : ListBox.ObjectCollection
 		{		
+			private CheckedListBox owner;
+
 			public ObjectCollection (CheckedListBox owner) : base (owner)
 			{
-				
+				this.owner = owner;				
 			}
 
 			public int Add (object item,  bool isChecked)
@@ -385,6 +387,8 @@ namespace System.Windows.Forms
 				box_item.State = check;
 				object_items.Add (item);
 				listbox_items.Add (box_item);
+				if (check == CheckState.Checked)
+					owner.OnItemCheck (new ItemCheckEventArgs (cnt, check, CheckState.Unchecked));
 				return cnt;
 			}
 		}
