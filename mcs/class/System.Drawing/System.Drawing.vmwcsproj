@@ -79,8 +79,10 @@
 				<File RelPath="System.Drawing.Drawing2D\CustomLineCap.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\DashCap.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\DashStyle.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing.Drawing2D\ExtendedGeneralPath.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\FillMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\FlushIntention.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing.Drawing2D\GeneralPathIterator.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\GraphicsContainer.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\GraphicsPath.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\GraphicsPathIterator.jvm.cs" SubType="Code" BuildAction="Compile"/>

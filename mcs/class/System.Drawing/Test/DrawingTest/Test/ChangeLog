@@ -1,3 +1,6 @@
+2005-08-10 Boris Kirzner <borisk@mainsoft.com>
+	* GraphicsPath.cs: Added new class. Test fixture for GraphicsPath.
+
 2005-08-08 Vladimir Krasnov <vladimirk@mainsoft.com>
 	
 	* Pen.cs: Added LineCaps and LineJoin tests
@@ -13,5 +16,6 @@
 
 Andrew Skiba <andrews@mainsoft.com>
 
-	* Test.dotnet.csproj, Test.vmwcsproj: move project to sys.drawing/Test so it's easy to include Mono tests
+	* Test.dotnet.csproj, Test.vmwcsproj: move project to sys.drawing/Test so
+	it's easy to include Mono tests
 

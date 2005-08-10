@@ -1,3 +1,19 @@
+2005-08-10 Boris Kirzner <borisk@mainsoft.com>
+	* ExtendedGeneralPath.jvm.cs: Added new class. Extends java GeneralPath
+	functionality.
+	* GeneralPathIterator.jvm.cs: Added new class. Implements java PathIterator.
+	* GraphicsPath.jvm.cs:
+		- Redefined JPI enums so their values are defined in the single place.
+		- NativeObject is now of type ExtendedGeneralPath.
+		- Implemented missing constructors.
+		- Implemented PathData and PointCount.
+		- Decision about connecting to previous figure is now handled in 
+		ExtendedGeneralPath.
+		- Reimplemented AddRectangle to obtain right number of points.
+		- Reimplemented GetLastPoint using ExtendedGeneralPath.
+		- CloseAllFigures must close path at the end.
+		- Fixed StartFigure.		
+
 2005-08-10 Konstantin Triger <kostat@mainsoft.com>
 
 	* GraphicsPath.jvm.cs: implemented GraphicsPath.Widen

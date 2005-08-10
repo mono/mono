@@ -1,3 +1,6 @@
+2005-08-10 Boris Kirzner <borisk@mainsoft.com>
+	* System.Drawing.vmwcsproj: Added ExtendedGeneralPath.jvm.cs and GeneralPathIterator.jvm.cs.
+
 2005-08-09 Konstantin Triger <kostat@mainsoft.com>
 
 	* System.Drawing.vmwcsproj: Added AdvancedStoke.jvm.cs and StrokeFactory.jvm.cs

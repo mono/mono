@@ -9,29 +9,24 @@ namespace System.Drawing.Drawing2D
 	public sealed class GraphicsPath : BasicShape, ICloneable
 	{
 		internal enum JPI {
-			SEG_MOVETO = 0,
-			SEG_LINETO = 1,
-			SEG_QUADTO = 2,
-			SEG_CUBICTO = 3,
-			SEG_CLOSE = 4
+			SEG_MOVETO = ExtendedGeneralPath.SEG_MOVETO,
+			SEG_LINETO = ExtendedGeneralPath.SEG_LINETO,
+			SEG_QUADTO = ExtendedGeneralPath.SEG_QUADTO,
+			SEG_CUBICTO = ExtendedGeneralPath.SEG_CUBICTO,
+			SEG_CLOSE = ExtendedGeneralPath.SEG_CLOSE
 		}
 
-		#region Vars
-
-		bool _isNewFigure = true;
-		
-		#endregion
-
 		#region Internal
-		internal GeneralPath NativeObject
+
+		internal ExtendedGeneralPath NativeObject
 		{
 			get 
 			{
-				return (GeneralPath)Shape;
+				return (ExtendedGeneralPath)Shape;
 			}
 		}
 
-		GraphicsPath (GeneralPath ptr) : base(ptr)
+		GraphicsPath (ExtendedGeneralPath ptr) : base(ptr)
 		{
 		}
 		#endregion
@@ -42,34 +37,67 @@ namespace System.Drawing.Drawing2D
 		{
 		}
                 
-		public GraphicsPath (FillMode fillMode) : this(new GeneralPath())
+		public GraphicsPath (FillMode fillMode) : this(new ExtendedGeneralPath ())
 		{
 			FillMode = fillMode;
 		}
                 
-		public GraphicsPath (Point[] pts, byte[] types) : this(null)
+		public GraphicsPath (Point[] pts, byte[] types) : this(pts, types, FillMode.Alternate)
 		{
-			throw new NotImplementedException();
 		}
                 
-		public GraphicsPath (PointF[] pts, byte[] types) : this(null)
+		public GraphicsPath (PointF [] pts, byte [] types) : this(pts, types, FillMode.Alternate)
 		{
-			throw new NotImplementedException();
 		}
                 
-		public GraphicsPath (Point[] pts, byte[] types, FillMode fillMode) : this(null)
+		public GraphicsPath (Point [] pts, byte [] types, FillMode fillMode) : this(new ExtendedGeneralPath ())
 		{
-			throw new NotImplementedException();		
+			FillMode = fillMode;
+			for (int i=0; i < pts.Length; i++) {
+				switch ((PathPointType)types [i]) {
+					case PathPointType.Start :
+						NativeObject.moveTo (pts [i].X, pts [i].Y);
+						break;
+					case PathPointType.Bezier3 :
+						float x1 = pts [i].X;
+						float y1 = pts [i].Y;
+						i++;
+						float x2 = pts [i].X;
+						float y2 = pts [i].Y;
+						i++;
+						float x3 = pts [i].X;
+						float y3 = pts [i].Y;
+						NativeObject.curveTo (x1,y1, x2, y2, x3, y3);
+						break;						
+				}
+				if (((PathPointType)types [i] & PathPointType.CloseSubpath) != 0)
+					NativeObject.closePath();
+			}	
 		}
 
-		public GraphicsPath (PointF[] pts, byte[] types, FillMode fillMode) : this(null)
+		public GraphicsPath (PointF [] pts, byte [] types, FillMode fillMode) : this(new ExtendedGeneralPath ())
 		{
-			throw new NotImplementedException();
-		}
-	
-		GraphicsPath (GeneralPath path, bool isNewFigure) : this(path)
-		{
-			_isNewFigure = isNewFigure;
+			FillMode = fillMode;
+			for (int i=0; i < pts.Length; i++) {
+				switch ((PathPointType)types [i]) {
+					case PathPointType.Start :
+						NativeObject.moveTo (pts [i].X, pts [i].Y);
+						break;
+					case PathPointType.Bezier3 :
+						float x1 = pts [i].X;
+						float y1 = pts [i].Y;
+						i++;
+						float x2 = pts [i].X;
+						float y2 = pts [i].Y;
+						i++;
+						float x3 = pts [i].X;
+						float y3 = pts [i].Y;
+						NativeObject.curveTo (x1,y1, x2, y2, x3, y3);
+						break;
+				}
+				if (((PathPointType)types [i] & PathPointType.CloseSubpath) != 0)
+					NativeObject.closePath();
+			}
 		}
 
 		#endregion
@@ -77,7 +105,7 @@ namespace System.Drawing.Drawing2D
 		#region Clone
 		public object Clone ()
 		{
-			return new GraphicsPath ((GeneralPath)NativeObject.clone(), _isNewFigure);
+			return new GraphicsPath ((ExtendedGeneralPath) NativeObject.Clone ());
 		}
 		#endregion
 
@@ -93,10 +121,10 @@ namespace System.Drawing.Drawing2D
 
 			set 
 			{
-				if(value == FillMode.Alternate)
-					NativeObject.setWindingRule(GeneralPath.WIND_NON_ZERO);
+				if (value == FillMode.Alternate)
+					NativeObject.setWindingRule (GeneralPath.WIND_NON_ZERO);
 				else
-					NativeObject.setWindingRule(GeneralPath.WIND_EVEN_ODD);
+					NativeObject.setWindingRule (GeneralPath.WIND_EVEN_ODD);
 			}
 		}
 
@@ -104,7 +132,48 @@ namespace System.Drawing.Drawing2D
 		{
 			get 
 			{
-				throw new NotImplementedException();
+				PathIterator iter = NativeObject.getPathIterator(null);
+				PathData pathData = new PathData();
+				pathData.Types = new byte [PointCount];
+				pathData.Points = new PointF [PointCount];
+				int tpos = 0;
+				int ppos = 0;
+				float [] jpoints = new float [6];
+				while (!iter.isDone ()) {
+					//if (tpos == 0)
+					//	pathData.Types [tpos++] = PathPointType.Start;
+
+					JPI segmentType = (JPI)iter.currentSegment (jpoints);
+					switch (segmentType) {
+						case JPI.SEG_CLOSE:
+							pathData.Types [tpos - 1] = (byte) (pathData.Types [tpos - 1] | (byte) PathPointType.CloseSubpath);
+							break;
+						case JPI.SEG_MOVETO:
+							pathData.Types [tpos++] = (byte) PathPointType.Start;
+							pathData.Points [ppos++] = new PointF (jpoints [0], jpoints [1]);
+							break;
+						case JPI.SEG_LINETO:
+							pathData.Types [tpos++] = (byte) PathPointType.Line;
+							pathData.Points [ppos++] = new PointF (jpoints [0], jpoints [1]);
+							break;
+						case JPI.SEG_QUADTO:
+							pathData.Types [tpos++] = (byte) PathPointType.Bezier;
+							pathData.Points [ppos++] = new PointF (jpoints [0], jpoints [1]);
+							pathData.Types [tpos++] = (byte) PathPointType.Bezier;
+							pathData.Points [ppos++] = new PointF (jpoints [2], jpoints [3]);
+							break;
+						case JPI.SEG_CUBICTO:
+							pathData.Types [tpos++] = (byte) PathPointType.Bezier3;
+							pathData.Points [ppos++] = new PointF (jpoints [0], jpoints [1]);
+							pathData.Types [tpos++] = (byte) PathPointType.Bezier3;
+							pathData.Points [ppos++] = new PointF (jpoints [2], jpoints [3]);
+							pathData.Types [tpos++] = (byte) PathPointType.Bezier3;
+							pathData.Points [ppos++] = new PointF (jpoints [4], jpoints [5]);
+							break;
+					}		
+					iter.next ();
+				}
+				return pathData;
 			}
 		}
 
@@ -131,8 +200,7 @@ namespace System.Drawing.Drawing2D
 
 			get 
 			{
-				//TODO
-				throw new NotImplementedException();
+				return NativeObject.CoordsCount / 2;
 			}
 		}
 		#endregion
@@ -169,8 +237,7 @@ namespace System.Drawing.Drawing2D
 				shape = new Arc2D.Double(x,y,width,height,-start,-extent,Arc2D.OPEN);
 			}
 
-			NativeObject.append(shape,!_isNewFigure);
-			_isNewFigure = false;
+			NativeObject.append(shape);
 		}
 
 		/// <summary>
@@ -226,8 +293,7 @@ namespace System.Drawing.Drawing2D
 		public void AddBezier (float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4)
 		{
 			CubicCurve2D cc = new CubicCurve2D.Float(x1,y1,x2,y2,x3,y3,x4,y4);
-			NativeObject.append(cc,!_isNewFigure);
-			_isNewFigure = false;
+			NativeObject.append(cc);
 		}
 
 		public void AddBeziers (Point [] pts)
@@ -272,7 +338,6 @@ namespace System.Drawing.Drawing2D
 		{
 			Ellipse2D e = new Ellipse2D.Float(x,y,width,height);
 			NativeObject.append(e,false);
-			_isNewFigure = true;
 		}
 
 		public void AddEllipse (RectangleF r)
@@ -295,8 +360,7 @@ namespace System.Drawing.Drawing2D
 		public void AddLine (float x1, float y1, float x2, float y2)
 		{
 			Line2D l = new Line2D.Float(x1,y1,x2,y2);
-			NativeObject.append(l,!_isNewFigure);
-			_isNewFigure = false;
+			NativeObject.append(l);
 		}
 
 		public void AddLine (Point a, Point b)
@@ -322,12 +386,10 @@ namespace System.Drawing.Drawing2D
 			if (points.Length == 0)
 				return;
 
-			if (_isNewFigure)
+			if (NativeObject.LastFigureClosed)
 				NativeObject.moveTo(points[0].X, points[0].Y);
 			else
 				NativeObject.lineTo(points[0].X, points[0].Y);
-
-			_isNewFigure = false;
 
 			for (int i = 1; i < points.Length; i ++)
 				NativeObject.lineTo(points[i].X, points[i].Y);
@@ -341,12 +403,10 @@ namespace System.Drawing.Drawing2D
 			if (points.Length == 0)
 				return;
 
-			if (_isNewFigure)
+			if (NativeObject.LastFigureClosed)
 				NativeObject.moveTo(points[0].X, points[0].Y);
 			else
 				NativeObject.lineTo(points[0].X, points[0].Y);
-
-			_isNewFigure = false;
 
 			for (int i = 1; i < points.Length; i ++)
 				NativeObject.lineTo(points[i].X, points[i].Y);
@@ -371,7 +431,6 @@ namespace System.Drawing.Drawing2D
 			}
 
 			NativeObject.append(shape,false);
-			_isNewFigure = true;
 		}
 
 		public void AddPie (Rectangle rect, float startAngle, float sweepAngle)
@@ -400,7 +459,6 @@ namespace System.Drawing.Drawing2D
 				NativeObject.lineTo((float)points[i].X,(float)points[i].Y);
 			}
 			NativeObject.closePath();
-			_isNewFigure = true;
 		}
 
 		public void AddPolygon (PointF [] points)
@@ -417,16 +475,19 @@ namespace System.Drawing.Drawing2D
 				NativeObject.lineTo(points[i].X,points[i].Y);
 			}
 			NativeObject.closePath();
-			_isNewFigure = true;
 		}
 		#endregion
 
 		#region AddRectangle(s)
 		internal void AddRectangle(float x,float y, float w, float h)
 		{
-			Rectangle2D r = new Rectangle2D.Float(x,y,w,h);
-			NativeObject.append(r,false);
-			_isNewFigure = true;
+			if (NativeObject.LastFigureClosed)
+				NativeObject.moveTo(x, y);
+
+			NativeObject.lineTo (x + w, y);
+			NativeObject.lineTo (x + w, y + h);
+			NativeObject.lineTo (x, y + h);
+			NativeObject.closePath ();
 		}
 		public void AddRectangle (RectangleF rect)
 		{
@@ -455,15 +516,17 @@ namespace System.Drawing.Drawing2D
 		public void AddPath (GraphicsPath addingPath, bool connect)
 		{
 			NativeObject.append(addingPath.NativeObject,connect);
-			_isNewFigure = false;
 		}
 		#endregion
 
 		#region GetLastPoint
 		public PointF GetLastPoint ()
 		{
-			java.awt.geom.Point2D p2d = NativeObject.getCurrentPoint();
-			return new PointF((float)p2d.getX(),(float)p2d.getY());
+			int length = NativeObject.CoordsCount;
+			if (length == 0)
+				throw new System.ArgumentException ("Invalid parameter used.");
+
+			return new PointF (NativeObject.Coords [length - 2], NativeObject.Coords [length - 1]);
 		}
 		#endregion
 
@@ -471,7 +534,6 @@ namespace System.Drawing.Drawing2D
 		public void Reset ()
 		{
 			NativeObject.reset();
-			_isNewFigure = true;
 		}
 		#endregion
 
@@ -632,8 +694,7 @@ namespace System.Drawing.Drawing2D
 				pts[0] = points[0].X;
 			}
 
-			AddCurve(pts, !_isNewFigure, tension);
-			_isNewFigure = false;
+			AddCurve(pts, !NativeObject.LastFigureClosed, tension);
 		}
                 
 		public void AddCurve (PointF [] points, int offset, int numberOfSegments, float tension)
@@ -659,8 +720,7 @@ namespace System.Drawing.Drawing2D
 				pts[0] = points[0].X;
 			}
 
-			AddCurve(pts, !_isNewFigure, tension);
-			_isNewFigure = false;
+			AddCurve(pts, !NativeObject.LastFigureClosed, tension);
 		}
 
 		/// <summary>
@@ -739,7 +799,7 @@ namespace System.Drawing.Drawing2D
 
 		public void CloseAllFigures()
 		{
-			GeneralPath p = new GeneralPath();
+			ExtendedGeneralPath p = new ExtendedGeneralPath();
 			PathIterator pi = NativeObject.getPathIterator(null);
 			JPI lastSeg = JPI.SEG_CLOSE;
 			float [] points = new float[6];
@@ -774,6 +834,7 @@ namespace System.Drawing.Drawing2D
 				pi.next();
 			}
 
+			p.closePath();
 			Shape = p;
 			//_isNewFigure = (lastSeg == PathIterator.SEG_CLOSE);
 		}  	
@@ -804,7 +865,7 @@ namespace System.Drawing.Drawing2D
 
 			//REVIEW. Perfomance reasons.
 			PathIterator pi = NativeObject.getPathIterator(tr,flatness);
-			GeneralPath newPath = new GeneralPath();
+			ExtendedGeneralPath newPath = new ExtendedGeneralPath();
 			newPath.append(pi,false);
 			Shape = newPath;
 		}
@@ -862,7 +923,7 @@ namespace System.Drawing.Drawing2D
 		#region StartFigure
 		public void StartFigure()
 		{
-			_isNewFigure = true;
+			NativeObject.Types [NativeObject.TypesCount - 1] |= ExtendedGeneralPath.SEG_START;
 		}
 		#endregion
   		        
