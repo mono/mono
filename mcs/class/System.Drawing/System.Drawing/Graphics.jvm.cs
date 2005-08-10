@@ -423,18 +423,16 @@ namespace System.Drawing {
 		}
 
 		public void DrawCurve (Pen pen, Point [] points, int offset, int numberOfSegments, float tension) {
-			//TBD: provide a correct implementation
-			Point[] pts = new Point[numberOfSegments+1];
-			Array.Copy(points, offset, pts, 0, pts.Length);
-			DrawLines(pen, pts);
+			GraphicsPath path = new GraphicsPath();
+			path.AddCurve(points, offset, numberOfSegments, tension);
+			DrawPath(pen, path);
 		}
 
 		
 		public void DrawCurve (Pen pen, PointF [] points, int offset, int numberOfSegments, float tension) {
-			//TBD: provide a correct implementation
-			PointF[] pts = new PointF[numberOfSegments+1];
-			Array.Copy(points, offset, pts, 0, pts.Length);
-			DrawLines(pen, pts);
+			GraphicsPath path = new GraphicsPath();
+			path.AddCurve(points, offset, numberOfSegments, tension);
+			DrawPath(pen, path);
 		}
 		#endregion
 
