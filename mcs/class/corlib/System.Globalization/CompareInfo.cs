@@ -751,6 +751,18 @@ namespace System.Globalization
 					       value, options, false));
 		}
 
+#if NET_2_0
+		public bool IsSortable (char c)
+		{
+			return MSCompatUnicodeTable.IsSortable (c);
+		}
+
+		public bool IsSortable (string s)
+		{
+			return MSCompatUnicodeTable.IsSortable (s);
+		}
+#endif
+
 		public override string ToString()
 		{
 			return("CompareInfo - "+culture);

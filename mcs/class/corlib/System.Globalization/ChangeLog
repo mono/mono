@@ -1,3 +1,7 @@
+2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfo.cs : added IsSortable(). (NET_2_0)
+
 2005-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CompareInfo.cs: Marked UseManagedCollation internal to have API 
