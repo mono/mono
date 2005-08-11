@@ -1,3 +1,9 @@
+2005-08-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Al.cs: Use AssemblyBuilder.AddResourceFile instead of
+	AddResourceFile when linkin to a resource, just as .NET
+	does.
+	
 2005-07-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Al.cs: Applied patch from Sridhar Kulkarni (sridharkulkarni@msn.com).

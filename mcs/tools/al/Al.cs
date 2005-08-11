@@ -706,8 +706,8 @@ namespace Mono.AssemblyLinker
 						res.fileName = res.target;
 					}
 
-					ab.DefineResource (res.name, "", res.fileName, 
-									   res.isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public);
+					ab.AddResourceFile (res.name, res.fileName,
+							res.isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public);
 				}
 			}
 
