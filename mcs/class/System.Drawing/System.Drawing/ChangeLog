@@ -1,5 +1,9 @@
 2005-08-11 Konstantin Triger <kostat@mainsoft.com>
 
+        * Graphics.jvm.cs: Fixed Clear, Refactoring
+
+2005-08-11 Konstantin Triger <kostat@mainsoft.com>
+
 	* Graphics.jvm.cs: Fixed FillClosedCurve
 
 2005-08-10  Zoltan Varga  <vargaz@freemail.hu>

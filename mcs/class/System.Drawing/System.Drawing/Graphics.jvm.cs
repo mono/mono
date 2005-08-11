@@ -128,21 +128,22 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException("pen");
 
-			awt.Stroke stroke = NativeObject.getStroke();
-
-			try {
-				NativeObject.setPaint(pen.Brush);
-				NativeObject.setStroke(pen);
-				NativeObject.draw(shape);
-			}
-			finally {
-				NativeObject.setStroke(stroke);
-			}
+			shape = ((awt.Stroke)pen).createStrokedShape(shape);
+			FillShape(pen.Brush, shape);
 		}
 
-		void FillShape(Brush brush,java.awt.Shape sh) {
-			InternalSetBrush(brush);
-			NativeObject.fill(sh);
+		void FillShape(awt.Paint paint, awt.Shape shape) {
+			if (paint == null)
+				throw new ArgumentNullException("brush");
+
+			awt.Paint old = NativeObject.getPaint();
+			NativeObject.setPaint(paint);
+			try {
+				NativeObject.fill(shape);
+			}
+			finally {
+				NativeObject.setPaint(old);
+			}
 		}
 
 		internal SizeF MeasureDraw (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format, bool fDraw) {			
@@ -306,9 +307,14 @@ namespace System.Drawing {
 		
 		#region Clear
 		public void Clear (Color color) {
-			java.awt.Graphics2D g = NativeObject;
-			g.setColor(new java.awt.Color(color.R,color.G,color.B,color.A));			
-			g.fillRect(0,0,_image.Width,_image.Height);			
+			geom.AffineTransform old = NativeObject.getTransform();
+			NativeObject.setTransform(new geom.AffineTransform());
+			try {
+				FillShape(color.NativeObject, new awt.Rectangle(0,0,_image.Width,_image.Height));
+			}
+			finally {
+				NativeObject.setTransform(old);
+			}
 		}
 		#endregion
 
@@ -380,7 +386,7 @@ namespace System.Drawing {
 		}
 		#endregion 
 
-		#region DrawClosedCurve [TODO]
+		#region DrawClosedCurve
 		public void DrawClosedCurve (Pen pen, PointF [] points) {
 			DrawClosedCurve(pen, points, 0.5f, FillMode.Alternate);
 		}
@@ -402,7 +408,7 @@ namespace System.Drawing {
 		}
 		#endregion
 
-		#region DrawCurve [TODO]
+		#region DrawCurve
 		public void DrawCurve (Pen pen, Point [] points) {
 			DrawCurve(pen, points, 0.5f);
 		}
