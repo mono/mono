@@ -1,3 +1,8 @@
+2005-09-12  Lluis Sanchez  <lluis@ximian.com>
+
+	* process.c: Don't close a thread handle when it's NULL. This is a
+	workaround for bug #75733.
+
 2005-08-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c (mono_marshal_get_string_encoding): Fix handling of CharSet.Auto. Fixes #75769.
