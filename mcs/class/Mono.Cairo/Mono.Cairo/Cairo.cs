@@ -225,6 +225,9 @@ namespace Cairo {
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_clip (IntPtr cr);
+		
+                [DllImport (CairoImp)]
+                public static extern void cairo_reset_clip (IntPtr cr);
 
                 //
                 // Font / Text

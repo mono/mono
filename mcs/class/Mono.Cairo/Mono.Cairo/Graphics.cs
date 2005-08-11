@@ -391,6 +391,11 @@ namespace Cairo {
                         CairoAPI.cairo_clip (state);
                 }
 
+		public void ClipReset ()
+		{
+			CairoAPI.cairo_reset_clip (state);
+		}
+		
 		public bool InStroke (double x, double y)
 		{
 			return CairoAPI.cairo_in_stroke (state, x, y);
