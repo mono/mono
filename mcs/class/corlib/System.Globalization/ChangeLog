@@ -1,5 +1,10 @@
 2005-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CultureInfo.cs : lazy load OptionalCalendars (and always non-null).
+	* DateTimeFormatInfo.cs : GetEraNames() should work.
+
+2005-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CultureInfo.cs : added BootstrapCultureID for RegionInfo.
 	* RegionInfo.cs : implemented CurrentRegion. Added MonoTODOs.
 

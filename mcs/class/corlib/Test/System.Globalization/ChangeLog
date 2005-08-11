@@ -1,3 +1,9 @@
+2005-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CultureInfoTest.cs : added OptionalCalendars().
+	* CompareInfoTest.cs : added possible bug test for checkedFlags 
+	  optimization.
+
 2005-07-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoTest.cs : Some GetSortKey That tests got working.

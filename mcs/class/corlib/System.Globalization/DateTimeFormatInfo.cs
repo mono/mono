@@ -188,19 +188,11 @@ namespace System.Globalization
 			return -1;
 		}
 
-		[MonoTODO]
-		public string GetEraName(int era)
+		public string GetEraName (int era)
 		{
-//			if (era < _Calendar.Eras.Length || era >= _Calendar.Eras.Length)
-//				throw new ArgumentOutOfRangeException();
-			try {
-				return INVARIANT_ERA_NAMES[era - 1];
-			}
-			catch {
-				//FIXME: implement me
-				notImplemented();
-				return null;
-			}
+			if (era < 0 || era > _Calendar.EraNames.Length)
+				throw new ArgumentOutOfRangeException ("era", era.ToString ());
+			return _Calendar.EraNames [era - 1];
 		}
 
 		public string GetMonthName(int month)

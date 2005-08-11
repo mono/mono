@@ -520,7 +520,7 @@ public class CompareInfoTest : Assertion
 		AssertSortKey ("#inv-2", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 2, 2, 0xE, 1, 1, 1, 0}, "cot\u00E9");
 		AssertCompare ("#inv-3", 1, "c\u00F4te", "cot\u00E9");
 		AssertCompare ("#inv-4", 1, "co\u0302te", "cote\u0306");
-		AssertCompare ("#inv-4", 1, "co\u030Cte", "cote\u0306");
+		AssertCompare ("#inv-5", 1, "co\u030Cte", "cote\u0306");
 
 		// french
 		AssertSortKey ("#fr-1", new byte [] {0xE, 0xA, 0xE, 0x7C, 0xE, 0x99, 0xE, 0x21, 1, 2, 2, 0x12, 1, 1, 1, 0}, "c\u00F4te", CompareOptions.None, french);
@@ -753,6 +753,7 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#6", 4, "ABCABC", 'B', 2, 4, CompareOptions.IgnoreCase, invariant);
 		AssertIndexOf ("#7", 1, "\u30D1\u30FC", '\u30A2', CompareOptions.IgnoreNonSpace);
 		AssertIndexOf ("#8", 1, "UAE", '\u00C6');
+		AssertIndexOf ("#8-2", 1, "AAE", '\u00C6');
 		AssertIndexOf ("#9", -1, "UA", '\u00C6');
 		AssertIndexOf ("#10", -1, "UE", '\u00C6');
 	}
@@ -781,6 +782,7 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#6", 4, "ABCABC", 'B', 4, 4);
 		AssertLastIndexOf ("#7", -1, "ABCABC", 'B', 5, 1);
 		AssertLastIndexOf ("#8", 1, "UAE", '\u00C6');
+		AssertLastIndexOf ("#8-2", 1, "UAEE", '\u00C6');
 		AssertLastIndexOf ("#9", -1, "UA", '\u00C6');
 		AssertLastIndexOf ("#10", -1, "UE", '\u00C6');
 	}

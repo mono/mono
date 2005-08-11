@@ -37,6 +37,16 @@ namespace MonoTests.System.Globalization
 		{
 			Thread.CurrentThread.CurrentCulture = new CultureInfo ("ar");
 		}
+
+		[Test]
+		// make sure that all CultureInfo holds non-null calendars.
+		public void OptionalCalendars ()
+		{
+			foreach (CultureInfo ci in CultureInfo.GetCultures (
+				CultureTypes.AllCultures))
+				AssertNotNull (String.Format ("{0} {1}",
+					ci.LCID, ci.Name), ci.OptionalCalendars);
+		}
 	}
 }
 

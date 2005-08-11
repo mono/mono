@@ -178,6 +178,12 @@ namespace System.Globalization
 		public virtual Calendar[] OptionalCalendars
 		{
 			get {
+				if (optional_calendars == null) {
+					lock (this) {
+						if (optional_calendars == null)
+							ConstructCalendars ();
+					}
+				}
 				return optional_calendars;
 			}
 		}
@@ -475,7 +481,6 @@ namespace System.Globalization
 		{
 			if (!construct_internal_locale_from_name (locale))
 				return false;
-			ConstructCalendars ();
 			return true;
 		}
 
@@ -483,7 +488,6 @@ namespace System.Globalization
 		{
 			if (!construct_internal_locale_from_lcid (lcid))
 				return false;
-			ConstructCalendars ();
 			return true;
 		}
 
@@ -491,7 +495,6 @@ namespace System.Globalization
 		{
 			if (!construct_internal_locale_from_specific_name (ci, name))
 				return false;
-			ci.ConstructCalendars ();
 			return true;
 		}
 
@@ -499,7 +502,6 @@ namespace System.Globalization
 		{
 			if (!construct_internal_locale_from_current_locale (ci))
 				return false;
-			ci.ConstructCalendars ();
 			return true;
 		}
 
@@ -511,9 +513,6 @@ namespace System.Globalization
 			// 'neutral' is true. We fill it in with the InvariantCulture.
 			if (neutral && cis.Length > 0 && cis [0] == null)
 				cis [0] = InvariantCulture;
-
-			foreach (CultureInfo ci in cis)
-				ci.ConstructCalendars ();
 
 			return cis;
 		}
@@ -606,7 +605,6 @@ namespace System.Globalization
 			if (!ConstructInternalLocaleFromName (name.ToLowerInvariant ()))
 				throw new ArgumentException ("Culture name " + name +
 						" is not supported.", "name");
-			ConstructCalendars ();
 		}
 
 		public CultureInfo (string name) : this (name, true) {}
@@ -618,8 +616,10 @@ namespace System.Globalization
 
 		unsafe internal void ConstructCalendars ()
 		{
-			if (calendar_data == null)
+			if (calendar_data == null) {
+				optional_calendars = new Calendar [] {new GregorianCalendar (GregorianCalendarTypes.Localized)};
 				return;
+			}
 
 			optional_calendars = new Calendar [NumOptionalCalendars];
 
