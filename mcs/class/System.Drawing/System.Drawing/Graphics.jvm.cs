@@ -390,13 +390,15 @@ namespace System.Drawing {
 		}
  			
 		public void DrawClosedCurve (Pen pen, Point [] points, float tension, FillMode fillmode) {
-			//TBD: provide a correct implementation
-			DrawPolygon(pen, points);
+			GraphicsPath path = new GraphicsPath(fillmode);
+			path.AddClosedCurve(points, tension);
+			DrawPath(pen, path);
 		}
 		
 		public void DrawClosedCurve (Pen pen, PointF [] points, float tension, FillMode fillmode) {
-			//TBD: provide a correct implementation
-			DrawPolygon(pen, points);
+			GraphicsPath path = new GraphicsPath(fillmode);
+			path.AddClosedCurve(points, tension);
+			DrawPath(pen, path);
 		}
 		#endregion
 
@@ -1137,13 +1139,15 @@ namespace System.Drawing {
 		}
 
 		public void FillClosedCurve (Brush brush, PointF [] points, FillMode fillmode, float tension) {
-			//TBD: provide corrrect impl (tension) correct
-			FillPolygon(brush, points, fillmode);
+			GraphicsPath path = new GraphicsPath(fillmode);
+			path.AddClosedCurve(points, tension);
+			FillPath(brush, path);
 		}
 
 		public void FillClosedCurve (Brush brush, Point [] points, FillMode fillmode, float tension) {
-			//TBD: provide corrrect impl (tension) correct
-			FillPolygon(brush, points, fillmode);
+			GraphicsPath path = new GraphicsPath(fillmode);
+			path.AddClosedCurve(points, tension);
+			FillPath(brush, path);
 		}
 		#endregion
 

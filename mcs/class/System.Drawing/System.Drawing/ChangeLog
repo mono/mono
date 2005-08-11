@@ -1,25 +1,13 @@
+2005-08-11 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: Fixed FillClosedCurve
+
 2005-08-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Rectangle.cs (Intersect): Return a non-empty rectangle if the two
 	rectangles touch each other.
 
 2005-08-09 Konstantin Triger <kostat@mainsoft.com>
-
-	* Graphics.jvm.cs: Fixed DrawCurve.2005-08-10 Konstantin Triger <kostat@mainsoft.com>
-
-	* Graphics.jvm.cs: Fixed DrawCurve.2005-08-10 Konstantin Triger <kostat@mainsoft.com>
-
-	* Graphics.jvm.cs: Fixed DrawCurve.2005-08-10 Konstantin Triger <kostat@mainsoft.com>
-
-	* Graphics.jvm.cs: Fixed DrawCurve.2005-08-10 Konstantin Triger <kostat@mainsoft.com>
-
-	* Graphics.jvm.cs: Fixed DrawCurve.2005-08-10 Konstantin Triger <kostat@mainsoft.com>
-
-	* Graphics.jvm.cs: Fixed DrawCurve.2005-08-10 Konstantin Triger <kostat@mainsoft.com>
-
-	* Graphics.jvm.cs: Fixed DrawCurve.2005-08-10 Konstantin Triger <kostat@mainsoft.com>
-
-	* Graphics.jvm.cs: Fixed DrawCurve.2005-08-10 Konstantin Triger <kostat@mainsoft.com>
 
 	* Graphics.jvm.cs: Fixed DrawCurve.
 
