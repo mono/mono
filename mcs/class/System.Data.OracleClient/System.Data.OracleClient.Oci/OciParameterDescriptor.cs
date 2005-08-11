@@ -120,6 +120,8 @@ namespace System.Data.OracleClient.Oci {
 				return OracleType.VarChar;
 			case OciDataType.OciDate:
 				return OracleType.DateTime;
+			case OciDataType.TimeStamp:
+				return OracleType.Timestamp;
 			default:
 				throw new NotImplementedException ();
 			}
@@ -179,6 +181,8 @@ namespace System.Data.OracleClient.Oci {
 			case "OciString":
 				return typeof (System.String);
 			case "OciDate":
+				return typeof (System.DateTime);
+			case "TimeStamp":
 				return typeof (System.DateTime);
 			default:
 				// FIXME: are these types correct?
@@ -242,6 +246,8 @@ namespace System.Data.OracleClient.Oci {
 					return "OciString";
 				case OciDataType.OciDate:
 					return "OciDate";
+				case OciDataType.TimeStamp:
+					return "TimeStamp";
 				default:
 					return "Unknown";
 			}

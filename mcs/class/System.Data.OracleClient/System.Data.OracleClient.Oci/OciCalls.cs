@@ -8,8 +8,10 @@
 // Namespace: System.Data.OracleClient.Oci
 //
 // Authors: Joerg Rosenkranz <joergr@voelcker.com>
+//          Daniel Morgan <danielmorgan@verizon.net>
 //
 // Copyright (C) Joerg Rosenkranz, 2004
+// Copyright (C) Daniel Morgan, 2005
 //
 // Licensed under the MIT/X11 License.
 //
@@ -79,7 +81,23 @@ namespace System.Data.OracleClient.Oci
 				IntPtr valuep,
 				int value_sz,
 				[MarshalAs (UnmanagedType.U2)] OciDataType dty,
-				int indp,
+				ref short indp,
+				IntPtr alenp,
+				IntPtr rcodep,
+				uint maxarr_len,
+				IntPtr curelp,
+				uint mode);
+
+			[DllImport ("oci", EntryPoint = "OCIBindByName")]
+			internal static extern int OCIBindByNameRef (IntPtr stmtp,
+				out IntPtr bindpp,
+				IntPtr errhp,
+				string placeholder,
+				int placeh_len,
+				ref IntPtr valuep,
+				int value_sz,
+				[MarshalAs (UnmanagedType.U2)] OciDataType dty,
+				ref short indp,
 				IntPtr alenp,
 				IntPtr rcodep,
 				uint maxarr_len,
@@ -95,7 +113,7 @@ namespace System.Data.OracleClient.Oci
 				byte[] valuep,
 				int value_sz,
 				[MarshalAs (UnmanagedType.U2)] OciDataType dty,
-				int indp,
+				ref short indp,
 				IntPtr alenp,
 				IntPtr rcodep,
 				uint maxarr_len,
@@ -439,7 +457,7 @@ namespace System.Data.OracleClient.Oci
 			IntPtr valuep,
 			int value_sz,
 			OciDataType dty,
-			int indp,
+			ref short indp,
 			IntPtr alenp,
 			IntPtr rcodep,
 			uint maxarr_len,
@@ -448,8 +466,28 @@ namespace System.Data.OracleClient.Oci
 		{
 			Trace.WriteLineIf(traceOci, "OCIBindByName", "OCI");
 			return OciNativeCalls.OCIBindByName (stmtp, out bindpp, errhp, placeholder, placeh_len, valuep, 
-				value_sz, dty, indp, alenp, rcodep, maxarr_len, curelp, mode);
+				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
 		}
+
+		internal static int OCIBindByNameRef (IntPtr stmtp,
+			out IntPtr bindpp,
+			IntPtr errhp,
+			string placeholder,
+			int placeh_len,
+			ref IntPtr valuep,
+			int value_sz,
+			OciDataType dty,
+			ref short indp,
+			IntPtr alenp,
+			IntPtr rcodep,
+			uint maxarr_len,
+			IntPtr curelp,
+			uint mode) {
+			Trace.WriteLineIf(traceOci, "OCIBindByName", "OCI");
+			return OciNativeCalls.OCIBindByNameRef (stmtp, out bindpp, errhp, placeholder, placeh_len, ref valuep, 
+				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
+		}
+		
 		internal static int OCIBindByNameBytes (IntPtr stmtp,
 			out IntPtr bindpp,
 			IntPtr errhp,
@@ -458,7 +496,7 @@ namespace System.Data.OracleClient.Oci
 			byte[] valuep,
 			int value_sz,
 			[MarshalAs (UnmanagedType.U2)] OciDataType dty,
-			int indp,
+			ref short indp,
 			IntPtr alenp,
 			IntPtr rcodep,
 			uint maxarr_len,
@@ -467,9 +505,40 @@ namespace System.Data.OracleClient.Oci
 		{
 			Trace.WriteLineIf(traceOci, "OCIBindByName", "OCI");
 			return OciNativeCalls.OCIBindByNameBytes (stmtp, out bindpp, errhp, placeholder, placeh_len, valuep, 
-				value_sz, dty, indp, alenp, rcodep, maxarr_len, curelp, mode);
+				value_sz, dty, ref indp, alenp, rcodep, maxarr_len, curelp, mode);
 
 		}
+
+		[DllImport ("oci")]
+		internal static extern void OCIDateTimeConstruct (IntPtr hndl,
+			IntPtr err,
+			IntPtr datetime,
+			short year,
+			byte month,
+			byte day,
+			byte hour,
+			byte min,
+			byte sec,
+			uint fsec,
+			byte[] timezone,
+			uint timezone_length);
+
+		[DllImport ("oci")]
+		internal static extern void OCIDateTimeGetDate (IntPtr hndl,
+			IntPtr err,
+			IntPtr datetime,
+			out short year,
+			out byte month,
+			out byte day);
+
+		[DllImport ("oci")]
+		internal static extern void OCIDateTimeGetTime (IntPtr hndl,
+			IntPtr err,
+			IntPtr datetime,
+			out byte hour,
+			out byte min,
+			out byte sec,
+			out uint fsec);
 
 		internal static int OCIDefineByPos (IntPtr stmtp,
 			out IntPtr defnpp,
@@ -879,6 +948,10 @@ namespace System.Data.OracleClient.Oci
 			
 			return OciNativeCalls.OCIUnicodeToCharSet (svchp, dst, dst!=null ? dst.Length : 0, src, src.Length, out rsize);
 		}
+
+		[DllImport ("oci")]
+		internal static extern int OCIDateTimeCheck (IntPtr hndl,
+			IntPtr err, IntPtr date, out uint valid);
 
 		#endregion
 	}

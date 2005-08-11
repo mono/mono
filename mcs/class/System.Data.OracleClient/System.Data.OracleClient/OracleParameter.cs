@@ -50,13 +50,16 @@ namespace System.Data.OracleClient {
 		object value = DBNull.Value;
 		OciLobLocator lobLocator = null;  // only if Blob or Clob
 		IntPtr bindOutValue = IntPtr.Zero;
+		OciDateTimeDescriptor dateTimeDesc = null;
 
 		OracleParameterCollection container = null;
 		OciBindHandle bindHandle;
 		OciErrorHandle errorHandle;
 		OracleConnection connection;
+		byte[] bytes = null;
+		IntPtr bindValue = IntPtr.Zero;
 
-		int indicator = 0; // TODO: handle indicator to indicate NULL value for OUT parameters
+		short indicator = 0; // TODO: handle indicator to indicate NULL value for OUT parameters
 		int bindSize = 0;
 
 		#endregion // Fields
@@ -202,7 +205,7 @@ namespace System.Data.OracleClient {
 			set { srcColumn = value; }
 		}
 
-		[DefaultValue (DataRowVersion.Current)]
+		[DefaultValue ("Current")]
 		public DataRowVersion SourceVersion {
 			get { return srcVersion; }
 			set { srcVersion = value; }
@@ -252,11 +255,9 @@ namespace System.Data.OracleClient {
 				size = InferSize ();
 
 			bindSize = size;
-			byte[] bytes = null;
 			object v = value;
 			int status = 0;
 			OciDataType bindType = ociType;
-			IntPtr bindValue = IntPtr.Zero;
 			int rsize = 0;
 
 			// TODO: handle InputOutput and Return parameters
@@ -286,6 +287,17 @@ namespace System.Data.OracleClient {
 						bindType = OciDataType.Date;
 						bindOutValue = Marshal.AllocHGlobal (bindSize);
 						break;
+					case OciDataType.TimeStamp:
+						dateTimeDesc = (OciDateTimeDescriptor) connection.Environment.Allocate (OciHandleType.TimeStamp);
+						if (dateTimeDesc == null) {
+							OciErrorInfo info = connection.ErrorHandle.HandleError ();
+							throw new OracleException (info.ErrorCode, info.ErrorMessage);
+						}
+						dateTimeDesc.ErrorHandle = connection.ErrorHandle;
+						bindSize = 11;
+						bindType = OciDataType.TimeStamp;
+						bindOutValue = dateTimeDesc.Handle;
+						break;
 					case OciDataType.Number:
 						bindSize = 22;
 						bindType = OciDataType.Char;
@@ -308,7 +320,7 @@ namespace System.Data.OracleClient {
 							OciErrorInfo info = connection.ErrorHandle.HandleError ();
 							throw new OracleException (info.ErrorCode, info.ErrorMessage);
 						}
-						value = lobLocator.Handle;
+						bindOutValue = lobLocator.Handle;
 						lobLocator.ErrorHandle = connection.ErrorHandle;
 						lobLocator.Service = statement.Service;
 						break;
@@ -326,12 +338,48 @@ namespace System.Data.OracleClient {
 			else {
 				// TODO: do other data types and oracle data types
 				// should I be using IConvertible to convert?
-				if (oracleType == OracleType.DateTime) {
-					string oraDateFormat = connection.GetSessionDateFormat ();
-					string sysDateFormat = OracleDateTime.ConvertOracleDateFormatToSystemDateTime (oraDateFormat);
-
-					string sDate = "";
-					DateTime dt = DateTime.MinValue;
+				string sDate = "";
+				DateTime dt = DateTime.MinValue;
+				if (oracleType == OracleType.Timestamp){
+					bindType = OciDataType.TimeStamp;
+					bindSize = 11;
+					dt = DateTime.MinValue;
+					sDate = "";
+					if (v is String){
+						sDate = (string) v;
+						dt = DateTime.Parse (sDate);
+					}
+					else if (v is DateTime)
+						dt = (DateTime) v;
+					else if (v is OracleString){
+						sDate = (string) v;
+						dt = DateTime.Parse (sDate);
+					}
+					else
+						throw new NotImplementedException (); // ?
+					
+					short year = (short) dt.Year;
+					byte month = (byte) dt.Month;
+					byte day = (byte) dt.Day;
+					byte hour = (byte) dt.Hour;
+					byte min = (byte) dt.Minute;
+					byte sec = (byte) dt.Second;
+					uint fsec = (uint) dt.Millisecond;
+					string timezone = "";
+					dateTimeDesc = (OciDateTimeDescriptor) connection.Environment.Allocate (OciHandleType.TimeStamp);
+					if (dateTimeDesc == null) {
+						OciErrorInfo info = connection.ErrorHandle.HandleError ();
+						throw new OracleException (info.ErrorCode, info.ErrorMessage);
+					}
+					dateTimeDesc.ErrorHandle = connection.ErrorHandle;
+					dateTimeDesc.SetDateTime (connection.Session,
+						connection.ErrorHandle, 
+						year, month, day, hour, min, sec, fsec,
+						timezone);
+				}
+				else if (oracleType == OracleType.DateTime) {
+					sDate = "";
+					dt = DateTime.MinValue;
 					if (v is String) {
 						sDate = (string) v;
 						dt = DateTime.Parse (sDate);
@@ -389,13 +437,29 @@ namespace System.Data.OracleClient {
 					bytes = new byte[rsize];
 					OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
 
-					//bindValue = Marshal.StringToHGlobalAnsi (value.ToString ());
 					bindType = OciDataType.VarChar2;
 					bindSize = v.ToString ().Length;
 				}
 			}
 
-			if (bytes != null) {
+			if (dateTimeDesc != null) {
+				bindValue = dateTimeDesc.Handle;
+				status = OciCalls.OCIBindByNameRef (statement,
+					out tmpHandle,
+					connection.ErrorHandle,
+					ParameterName,
+					ParameterName.Length,
+					ref bindValue,
+					bindSize,
+					bindType,
+					ref indicator,
+					IntPtr.Zero,
+					IntPtr.Zero,
+					0,
+					IntPtr.Zero,
+					0);
+			}
+			else if (bytes != null) {
 				status = OciCalls.OCIBindByNameBytes (statement,
 					out tmpHandle,
 					connection.ErrorHandle,
@@ -404,7 +468,7 @@ namespace System.Data.OracleClient {
 					bytes,
 					bindSize,
 					bindType,
-					indicator,
+					ref indicator,
 					IntPtr.Zero,
 					IntPtr.Zero,
 					0,
@@ -420,14 +484,13 @@ namespace System.Data.OracleClient {
 					bindValue,
 					bindSize,
 					bindType,
-					indicator,
+					ref indicator,
 					IntPtr.Zero,
 					IntPtr.Zero,
 					0,
 					IntPtr.Zero,
 					0);
 			}
-
 
 			if (status != 0) {
 				OciErrorInfo info = connection.ErrorHandle.HandleError ();
@@ -513,7 +576,10 @@ namespace System.Data.OracleClient {
 				break;
 			case OciDataType.Date:
 				newSize = 7;
-				break;	
+				break;
+			case OciDataType.TimeStamp:
+				newSize = 11;
+ 				break;		
 			case OciDataType.Blob:
 			case OciDataType.Clob:
 				newSize = -1;
@@ -637,10 +703,13 @@ namespace System.Data.OracleClient {
 				dbType = DbType.AnsiStringFixedLength;
 				ociType = OciDataType.Char;
 				break;
-			case OracleType.DateTime:
 			case OracleType.Timestamp:
 			case OracleType.TimestampLocal:
 			case OracleType.TimestampWithTZ:
+				dbType = DbType.DateTime;
+				ociType = OciDataType.TimeStamp;
+				break;
+			case OracleType.DateTime:
 				dbType = DbType.DateTime;
 				ociType = OciDataType.Date;
 				break;
@@ -702,10 +771,9 @@ namespace System.Data.OracleClient {
 		{
 			// used to update the parameter value
 			// for Output, the output of InputOutput, and Return parameters
-
-			// TODO: handle NULL values by using the indicator variable
-			//       referenced in call to OCIBindByName
 			value = DBNull.Value;
+			if (indicator == -1)
+				return;
 
 			byte[] buffer = null;
 			object tmp = null;
@@ -738,6 +806,9 @@ namespace System.Data.OracleClient {
 				tmp = Marshal.PtrToStringAnsi (bindOutValue, bindSize);
 				if (tmp != null)
 					value = Decimal.Parse (String.Copy ((string) tmp));
+				break;
+			case OciDataType.TimeStamp:
+				value = dateTimeDesc.GetDateTime (connection.Environment, dateTimeDesc.ErrorHandle);
 				break;
 			case OciDataType.Date:
 				value = UnpackDate (bindOutValue);

@@ -1,3 +1,25 @@
+2005-08-10  Daniel Morgan <danielmorgan@verizon.net>
+
+	* System.Data.OracleClient/OracleCommandBuilder.cs: update 
+	based on changes Suresh did to OdbcCommandBuilder, SqlCommandBuilder, 
+	and DbDataAdapter
+	
+	* System.Data.OracleClient/OracleParameter.cs
+	* System.Data.OracleClient.Oci/OciHandle.cs
+	* System.Data.OracleClient.Oci/OciCalls.cs
+	* System.Data.OracleClient.Oci/OciDataType.cs
+	* System.Data.OracleClient.Oci/OciParameterDescriptor.cs
+	* System.Data.OracleClient.Oci/OciStatementHandle.cs
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs: with help
+	from Hubert FONGARNAND <informatique.internet@fiducial.fr>
+	implement TIMESTAMP support via OciDateTime descriptor
+	
+	* System.Data.OracleClient.dll.sources: add
+	OciDateTimeDescriptor.cs to build
+	
+	* System.Data.OracleClient.Oci/OciDateTimeDescriptor.cs: add new
+	file to support Oracle TIMESTAMP using OciDateTime descriptor
+
 2005-07-25  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleParameter.cs: apply

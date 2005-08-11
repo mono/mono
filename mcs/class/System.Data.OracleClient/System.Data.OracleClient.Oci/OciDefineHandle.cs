@@ -53,6 +53,7 @@ namespace System.Data.OracleClient.Oci
 		OciErrorHandle errorHandle;
 
 		OciLobLocator lobLocator;
+		OciDateTimeDescriptor dateTimeDesc;
 		byte[] date;
 	
 		#endregion // Fields
@@ -126,6 +127,9 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Date:
 				DefineDate (position); 
 				return;
+			case OciDataType.TimeStamp:
+				DefineTimeStamp (position);
+				return;
 			case OciDataType.Clob:
 			case OciDataType.Blob:
 				DefineLob (position, definedType);
@@ -149,6 +153,43 @@ namespace System.Data.OracleClient.Oci
 			default:
 				DefineChar (position); // HANDLE ALL OTHERS AS CHAR FOR NOW
 				return;
+			}
+		}
+
+		void DefineTimeStamp (int position) 
+		{
+			definedSize = -1;
+			ociType = OciDataType.TimeStamp;
+			fieldType = typeof(System.DateTime);
+		
+			dateTimeDesc = (OciDateTimeDescriptor) Parent.Parent.Allocate (OciHandleType.TimeStamp);
+			if (dateTimeDesc == null) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+			}
+
+			value = dateTimeDesc.Handle;
+			dateTimeDesc.ErrorHandle = ErrorHandle;
+			
+			int status = 0;
+
+			status = OciCalls.OCIDefineByPosPtr (Parent,
+				out handle,
+				ErrorHandle,
+				position + 1,
+				ref value,
+				definedSize,
+				ociType,
+				ref indicator,
+				ref rlenp,
+				IntPtr.Zero,
+				0);
+
+			definedSize = 11;
+		
+			if (status != 0) {
+				OciErrorInfo info = ErrorHandle.HandleError ();
+				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 		}
 
@@ -418,6 +459,8 @@ namespace System.Data.OracleClient.Oci
 				if (tmp != null)
 					return Decimal.Parse (String.Copy ((string) tmp));
 				break;
+			case OciDataType.TimeStamp:
+				return dateTimeDesc.GetDateTime (Parent.Parent, dateTimeDesc.ErrorHandle);
 			case OciDataType.Date:
 				return UnpackDate ();
 			case OciDataType.Raw:
@@ -475,6 +518,13 @@ namespace System.Data.OracleClient.Oci
 			byte hour = Marshal.ReadByte (value, 4);
 			byte minute = Marshal.ReadByte (value, 5);
 			byte second = Marshal.ReadByte (value, 6);
+
+			if (hour == 0) 
+				hour ++;
+			if (minute == 0) 
+				minute ++;
+			if (second == 0) 
+				second ++;
 
 			return new DateTime ((century - 100) * 100 + (year - 100),
 						month,

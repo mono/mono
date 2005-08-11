@@ -214,6 +214,7 @@ namespace System.Data.OracleClient {
 
 				if (!isKey) {
 					parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+					parameter.SourceVersion = DataRowVersion.Original;
 
 					dsColumnName = parameter.SourceColumn;
 					if (tableMapping != null 
@@ -230,6 +231,7 @@ namespace System.Data.OracleClient {
 					keyFound = true;
 					
 				parameter = deleteCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				parameter.SourceVersion = DataRowVersion.Original;
 
 				dsColumnName = parameter.SourceColumn;
 				if (tableMapping != null 
@@ -277,6 +279,7 @@ namespace System.Data.OracleClient {
 				}
 
 				OracleParameter parameter = insertCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				parameter.SourceVersion = DataRowVersion.Current;
 
 				dsColumnName = parameter.SourceColumn;
 				if (tableMapping != null 
@@ -284,7 +287,7 @@ namespace System.Data.OracleClient {
 					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 
 				if (row != null)
-					parameter.Value = row [dsColumnName];
+					parameter.Value = row [dsColumnName, DataRowVersion.Current];
 
 				columns.Append (GetQuotedString (parameter.SourceColumn));
 				values.Append (":" + parameter.ParameterName);
@@ -326,6 +329,7 @@ namespace System.Data.OracleClient {
 					columns.Append (" , ");
 
 				OracleParameter parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				parameter.SourceVersion = DataRowVersion.Current;
 
 				dsColumnName = parameter.SourceColumn;
 				if (tableMapping != null 
@@ -333,7 +337,7 @@ namespace System.Data.OracleClient {
 					dsColumnName = tableMapping.ColumnMappings [parameter.SourceColumn].DataSetColumn;
 
 				if (row != null)
-					parameter.Value = row [dsColumnName];
+					parameter.Value = row [dsColumnName, DataRowVersion.Current];
 
 				columns.Append (String.Format ("{0} = {1}", GetQuotedString (parameter.SourceColumn), ":" + parameter.ParameterName));
 			}
@@ -352,6 +356,7 @@ namespace System.Data.OracleClient {
 
 				if (!isKey) {
 					parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+					parameter.SourceVersion = DataRowVersion.Original;
 
 					dsColumnName = parameter.SourceColumn;
 					if (tableMapping != null 
@@ -369,6 +374,7 @@ namespace System.Data.OracleClient {
 					keyFound = true;
 					
 				parameter = updateCommand.Parameters.Add (CreateParameter (parmIndex++, schemaRow));
+				parameter.SourceVersion = DataRowVersion.Original;
 
 				dsColumnName = parameter.SourceColumn;
 				if (tableMapping != null 
@@ -527,52 +533,25 @@ namespace System.Data.OracleClient {
 
 		#region Event Handlers
 
-		private void RowUpdatingHandler (object sender, OracleRowUpdatingEventArgs e) 
+		private void RowUpdatingHandler (object sender, OracleRowUpdatingEventArgs args) 
 		{
-			if (e.Status != UpdateStatus.Continue)
+			if (args.Command != null)
 				return;
-
-			switch (e.StatementType) {
-			case StatementType.Delete:
-				deleteCommand = e.Command;
-				break;
-			case StatementType.Insert:
-				insertCommand = e.Command;
-				break;
-			case StatementType.Update:
-				updateCommand = e.Command;
-				break;
-			default:
-				return;
-			}
-
 			try {
-				BuildCache (false);
-
-				switch (e.StatementType) {
-				case StatementType.Delete:
-					e.Command = CreateDeleteCommand (e.Row, e.TableMapping);
-					e.Status = UpdateStatus.Continue;
-					break;
+				switch (args.StatementType) {
 				case StatementType.Insert:
-					e.Command = CreateInsertCommand (e.Row, e.TableMapping);
-					e.Status = UpdateStatus.Continue;
+					args.Command = GetInsertCommand ();
 					break;
 				case StatementType.Update:
-					e.Command = CreateUpdateCommand (e.Row, e.TableMapping);
-					e.Status = UpdateStatus.Continue;
+					args.Command = GetUpdateCommand ();
+					break;
+				case StatementType.Delete:
+					args.Command = GetDeleteCommand ();
 					break;
 				}
-
-				if (e.Command != null && e.Row != null) {
-					if (e.StatementType != StatementType.Delete)
-						e.Row.AcceptChanges ();
-					e.Status = UpdateStatus.Continue;
-				}
-			}
-			catch (Exception exception) {
-				e.Errors = exception;
-				e.Status = UpdateStatus.ErrorsOccurred;
+			} catch (Exception e) {
+				args.Errors = e;
+				args.Status = UpdateStatus.ErrorsOccurred;
 			}
 		}
 

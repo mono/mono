@@ -11,8 +11,10 @@
 // 
 // Author: 
 //     Tim Coleman <tim@timcoleman.com>
+//     Daniel Morgan <danielmorgan@verizon.net>
 //         
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Daniel Morgan, 2005
 // 
 
 using System;
@@ -98,6 +100,8 @@ namespace System.Data.OracleClient.Oci {
 				return new OciLobLocator (this, newHandle);
 			case OciHandleType.RowId:
 				return new OciRowIdDescriptor (this, newHandle);
+			case OciHandleType.TimeStamp:
+				return new OciDateTimeDescriptor (this, newHandle);
 			}
 			return null;
 		}

@@ -43,6 +43,7 @@ namespace System.Data.OracleClient.Oci {
 		Blob = 0x71,
 		BFile = 0x72,
 		OciString = 0x9b,
-		OciDate = 0x9c
+		OciDate = 0x9c,
+		TimeStamp = 0xbb
 	}
 }
