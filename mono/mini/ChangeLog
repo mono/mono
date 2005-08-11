@@ -1,5 +1,9 @@
 2005-08-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-exceptions.c mini-x86.h: Move VC stuff into macros in mini-x86.h.
+
+	* mini-codegen.c: Fix VC build.
+
 	* cpu-pentium.md: Increase length of atomic_exhange_i4.
 
 2005-08-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
