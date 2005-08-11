@@ -1333,22 +1333,25 @@ namespace System.Drawing {
 		#endregion
 
 		#region IntersectClip
-		public void IntersectClip (Region region) {
+		void IntersectClip (geom.Area area) {
 			geom.Area clip = GetNativeClip();
-			clip.intersect(region.NativeObject);
-			SetNativeClip(clip);
-		}
-		
-		public void IntersectClip (RectangleF rect) {
-			geom.Area clip = GetNativeClip();
-			clip.intersect(new geom.Area(rect.NativeObject));
+			clip.intersect(area);
 			SetNativeClip(clip);
 		}
 
+		public void IntersectClip (Region region) {
+			if (region == null)
+				throw new ArgumentNullException("region");
+
+			IntersectClip(region.NativeObject);
+		}
+		
+		public void IntersectClip (RectangleF rect) {
+			IntersectClip(new geom.Area(rect.NativeObject));
+		}
+
 		public void IntersectClip (Rectangle rect) {			
-			geom.Area clip = GetNativeClip();
-			clip.intersect(new geom.Area(rect.NativeObject));
-			SetNativeClip(clip);
+			IntersectClip(new geom.Area(rect.NativeObject));
 		}
 		#endregion
 
