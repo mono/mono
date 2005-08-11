@@ -1,4 +1,10 @@
+2005-08-11  Ankit Jain <jankit@novell.com>
 
+	* get.c (element_type_map): Use "typedref" instead of "TypedByRef" for
+	  MONO_TYPE_TYPEDBYREF.
+	  (get_ret_type): Use "typedref" instead of "typedbyref".
+	  (get_param): Likewise.
+	  
 Wed Aug 10 17:15:52 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* dump.c: dump the marshal signature blob on --marshal.
