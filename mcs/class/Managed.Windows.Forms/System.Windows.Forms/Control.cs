@@ -3286,9 +3286,9 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void WndProc(ref Message m) {
-
+#if debug
 			Console.WriteLine("Control received message {0}", (Msg)m.Msg);
-
+#endif
 			if ((this.control_style & ControlStyles.EnableNotifyMessage) != 0) {
 				OnNotifyMessage(m);
 			}
