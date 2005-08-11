@@ -1,3 +1,8 @@
+2005-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CultureInfo.cs : added BootstrapCultureID for RegionInfo.
+	* RegionInfo.cs : implemented CurrentRegion. Added MonoTODOs.
+
 2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs : added IsSortable(). (NET_2_0)

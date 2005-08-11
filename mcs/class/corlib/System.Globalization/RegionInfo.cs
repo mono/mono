@@ -26,8 +26,13 @@ using System.Globalization;
 namespace System.Globalization {
 
 	[Serializable]
+	[MonoTODO ("This class should be implemented from scratch.")]
 	public class RegionInfo {
 		int NLS_id;
+
+		static object forLock = new object ();
+
+		static RegionInfo currentRegion;
 
 		public RegionInfo (int culture) {
 			
@@ -1159,6 +1164,7 @@ namespace System.Globalization {
 			}
 		}
 
+		[MonoTODO]
 		public virtual string CurrencySymbol {
 			get {
 				switch (NLS_id) {
@@ -1168,13 +1174,25 @@ namespace System.Globalization {
 			}
 		}
 
-		[MonoTODO]
+		// This property is not synchronized with CurrentCulture, so
+		// we need to use bootstrap CurrentCulture LCID.
 		public static RegionInfo CurrentRegion {
 			get {
-				return null;
+				if (currentRegion == null) {
+					CultureInfo ci = CultureInfo.CurrentCulture;
+					// If current culture is invariant then region is not available.
+					if (CultureInfo.BootstrapCultureID == 0x7F)
+						return null;
+					lock (forLock) {
+						// make sure to fill BootstrapCultureID.
+						currentRegion = new RegionInfo (CultureInfo.BootstrapCultureID);
+					}
+				}
+				return currentRegion;
 			}
 		}
 
+		[MonoTODO]
 		public virtual string DisplayName {
 			get {
 				switch (NLS_id) {
@@ -1675,6 +1693,7 @@ namespace System.Globalization {
 			}
 		}
 
+		[MonoTODO]
 		public virtual bool IsMetric {
 			get {
 				switch (NLS_id) {
@@ -1688,6 +1707,7 @@ namespace System.Globalization {
 			}
 		}
 
+		[MonoTODO]
 		public virtual string ISOCurrencySymbol {
 			get {
 				switch (NLS_id) {
@@ -1732,7 +1752,8 @@ namespace System.Globalization {
 		//
 		// methods
 
-		public override bool Equals(object value) {
+		[MonoTODO]
+		public override bool Equals (object value) {
 			return value == this;
 		}
 
@@ -1740,10 +1761,9 @@ namespace System.Globalization {
 			return NLS_id.GetHashCode ();
 		}
 
-		[MonoTODO]
-		public override string ToString()
+		public override string ToString ()
 		{
-			throw new NotImplementedException();
+			return Name;
 		}
 		
 	}

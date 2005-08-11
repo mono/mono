@@ -40,6 +40,7 @@ namespace System.Globalization
 	public class CultureInfo : ICloneable, IFormatProvider
 	{
 		static volatile CultureInfo invariant_culture_info;
+		internal static int BootstrapCultureID;
 
 		const int NumOptionalCalendars = 5;
 		const int GregorianTypeMask = 0x00FFFFFF;
@@ -140,6 +141,7 @@ namespace System.Globalization
 			CultureInfo ci = new CultureInfo ();
 			if (!ConstructInternalLocaleFromCurrentLocale (ci))
 				ci = InvariantCulture;
+			BootstrapCultureID = ci.cultureID;
 			return ci;
 		}
 
