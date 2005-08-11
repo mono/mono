@@ -393,17 +393,15 @@ namespace System.Windows.Forms
 			public virtual void Remove(Control value) {
 				owner.OnControlRemoved(new ControlEventArgs(value));
 				list.Remove(value);
+				value.parent = null;
 				owner.UpdateZOrder();
 			}
 
 			public void RemoveAt(int index) {
-				if (index<0 || index>=list.Count) {
+				if (index < 0 || index >= list.Count) {
 					throw new ArgumentOutOfRangeException("index", index, "ControlCollection does not have that many controls");
 				}
-
-				owner.OnControlRemoved(new ControlEventArgs((Control)list[index]));
-				list.RemoveAt(index);
-				owner.UpdateZOrder();
+				Remove ((Control)list[index]);
 			}
 
 			public void SetChildIndex(Control child, int newIndex) {
@@ -2574,7 +2572,7 @@ namespace System.Windows.Forms
 		}
 
 		public virtual void ResetText() {
-			text = "";
+			text = String.Empty;
 		}
 
 		public void ResumeLayout() {

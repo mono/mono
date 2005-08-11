@@ -1,4 +1,7 @@
 2005-08-11 Umadevi S <sumadevi@novell.com>
+	* Control.cs: Fixed Remove & RemoveAt to make the parent of the control null.
+
+2005-08-11 Umadevi S <sumadevi@novell.com>
 	* Contorl.cs: Fixed ResetRightToLeft and ResetImeMode to work correctly
 
 2005-08-10  Umadevi S <sumadevi@novell.com>
