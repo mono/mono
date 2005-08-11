@@ -1,5 +1,10 @@
 2005-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* regions.xml : ugh, it does not match something .net returns, so
+	  remove it.
+
+2005-08-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* regions.xml : new file. All region IDs from existing RegionInfo.cs.
 
 2005-07-07  Atsushi Enomoto  <atsushi@ximian.com>
