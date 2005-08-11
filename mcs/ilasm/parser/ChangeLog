@@ -1,3 +1,10 @@
+2005-08-11  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (class_ref | slashed_name): Don't use PrimitiveTypeRef for
+	  primitive types if the assembly being compiled is 'mscorlib'.
+	  (seh_clause | K_CATCH ..): Report error if exception(class_ref) is a 
+	  PrimitiveTypeRef.
+
 2005-08-08  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (method_decl | D_ENTRYPOINT): Set codegen.HasEntryPoint

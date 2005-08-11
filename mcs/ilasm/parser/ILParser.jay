@@ -638,7 +638,7 @@ class_ref		: OPEN_BRACKET slashed_name CLOSE_BRACKET slashed_name
                           {
                                 PrimitiveTypeRef prim = PrimitiveTypeRef.GetPrimitiveType ((string) $1);
 
-                                if (prim != null)
+                                if (prim != null && !codegen.IsThisAssembly ("mscorlib"))
                                         $$ = prim;
                                 else
                                         $$ = new TypeRef ((string) $1, false, null);
@@ -1863,6 +1863,10 @@ seh_clauses		: seh_clause
 
 seh_clause		: K_CATCH class_ref handler_block
                           {
+				if ($2.GetType () == typeof (PrimitiveTypeRef))
+					/* FIXME: Report Error here */
+					Console.Error.WriteLine ("Exception not be of a primitive type.");
+					
                                 IClassRef type = (IClassRef) $2;
                                 CatchBlock cb = new CatchBlock (type);
                                 cb.SetHandlerBlock ((HandlerBlock) $3);
