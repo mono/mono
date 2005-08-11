@@ -1,3 +1,7 @@
+2005-08-11 Konstantin Triger <kostat@mainsoft.com>
+
+        * System.Drawing.vmwcsproj: changing JAVA to TARGET_JVM in release builds
+
 2005-08-10 Boris Kirzner <borisk@mainsoft.com>
 	* System.Drawing.vmwcsproj: Added ExtendedGeneralPath.jvm.cs and GeneralPathIterator.jvm.cs.
 
