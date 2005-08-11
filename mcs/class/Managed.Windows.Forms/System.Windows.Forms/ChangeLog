@@ -1,3 +1,6 @@
+2005-08-11 Umadevi S <sumadevi@novell.com>
+	* Contorl.cs: Fixed ResetRightToLeft and ResetImeMode to work correctly
+
 2005-08-10  Umadevi S <sumadevi@novell.com>
 	* CheckedListBox.cs: Fixed event firing on Adding to the CheckedListBox
 

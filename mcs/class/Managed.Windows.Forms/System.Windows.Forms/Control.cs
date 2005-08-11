@@ -1564,6 +1564,12 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		public ImeMode ImeMode {
 			get {
+				 if (ime_mode == DefaultImeMode) {
+                                	if (parent != null)
+                                                return parent.ImeMode;
+                                        else
+                                                return ImeMode.NoControl; // default value
+                                }
 				return ime_mode;
 			}
 
@@ -1765,6 +1771,12 @@ namespace System.Windows.Forms
 		[Localizable(true)]
 		public virtual RightToLeft RightToLeft {
 			get {
+				if (right_to_left == RightToLeft.Inherit) {
+					if (parent != null)
+						return parent.RightToLeft;
+					else
+						return RightToLeft.No; // default value
+				}
 				return right_to_left;
 			}
 
@@ -2562,7 +2574,7 @@ namespace System.Windows.Forms
 		}
 
 		public virtual void ResetText() {
-			text = null;
+			text = "";
 		}
 
 		public void ResumeLayout() {
@@ -3274,9 +3286,9 @@ namespace System.Windows.Forms
 		}
 
 		protected virtual void WndProc(ref Message m) {
-#if debug
+
 			Console.WriteLine("Control received message {0}", (Msg)m.Msg);
-#endif
+
 			if ((this.control_style & ControlStyles.EnableNotifyMessage) != 0) {
 				OnNotifyMessage(m);
 			}
