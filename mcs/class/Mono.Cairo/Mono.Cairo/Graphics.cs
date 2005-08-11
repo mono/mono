@@ -373,6 +373,11 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_stroke (state);
                 }
+		
+                public void StrokePreserve ()
+                {
+                        CairoAPI.cairo_stroke_preserve (state);
+                }		
 
                 public void Fill ()
                 {

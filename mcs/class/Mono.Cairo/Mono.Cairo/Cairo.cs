@@ -210,6 +210,9 @@ namespace Cairo {
                 //
                 [DllImport (CairoImp)]
                 public static extern void cairo_stroke (IntPtr cr);
+		
+                [DllImport (CairoImp)]
+                public static extern void cairo_stroke_preserve (IntPtr cr);
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_fill (IntPtr cr);
