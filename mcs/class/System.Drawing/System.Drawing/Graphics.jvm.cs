@@ -1207,35 +1207,15 @@ namespace System.Drawing {
 		}
 
 		public void FillPolygon (Brush brush, Point [] points, FillMode fillMode) {
-			if (points.Length < 3)
-				//nothing to fill
-				return;
-
-			geom.GeneralPath path = new geom.GeneralPath(
-				fillMode == FillMode.Alternate ? 
-				geom.GeneralPath.WIND_NON_ZERO : geom.GeneralPath.WIND_EVEN_ODD);
-			
-			path.moveTo(points[0].X,points[0].Y);
-			for(int i = points.Length - 1; i >= 0; i--)
-				path.lineTo(points[i].X,points[i].Y);
-
-			FillShape(brush,path);
+			GraphicsPath path = new GraphicsPath(fillMode);
+			path.AddPolygon(points);
+			FillPath(brush,path);
 		}
 
 		public void FillPolygon (Brush brush, PointF [] points, FillMode fillMode) {
-			if (points.Length < 3)
-				//nothing to fill
-				return;
-
-			geom.GeneralPath path = new geom.GeneralPath(
-				fillMode == FillMode.Alternate ? 
-				geom.GeneralPath.WIND_NON_ZERO : geom.GeneralPath.WIND_EVEN_ODD);
-			
-			path.moveTo(points[0].X,points[0].Y);
-			for(int i = points.Length - 1; i >= 0; i--)
-				path.lineTo(points[i].X,points[i].Y);
-
-			FillShape(brush,path);
+			GraphicsPath path = new GraphicsPath(fillMode);
+			path.AddPolygon(points);
+			FillPath(brush,path);
 		}
 		#endregion
 
@@ -1257,13 +1237,15 @@ namespace System.Drawing {
 		}
 
 		public void FillRectangles (Brush brush, Rectangle [] rects) {
-			for(int len = rects.Length, i = 0; i < len; i++)
-				FillRectangle(brush,rects[i].X,rects[i].Y,rects[i].Width,rects[i].Height);
+			GraphicsPath path = new GraphicsPath();
+			path.AddRectangles(rects);
+			FillPath(brush,path);
 		}
 
 		public void FillRectangles (Brush brush, RectangleF [] rects) {
-			for(int len = rects.Length, i = 0; i < len; i++)
-				FillRectangle(brush,rects[i].X,rects[i].Y,rects[i].Width,rects[i].Height);
+			GraphicsPath path = new GraphicsPath();
+			path.AddRectangles(rects);
+			FillPath(brush,path);
 		}
 		#endregion
 
