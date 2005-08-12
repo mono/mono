@@ -1,3 +1,8 @@
+2005-08-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X520Attributes.cs: Don't select PRINTABLESTRING for non 7bits 
+	values. Fix bug #75782. Based on patch from Daniel Granath.
+
 2005-06-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CRL.cs: Fix the case where no entry are present in the CRL (as

@@ -137,11 +137,18 @@ namespace Mono.Security.X509 {
 
 			private byte SelectBestEncoding ()
 			{
-				char[] notPrintableString = { '@', '_' };
-				if (attrValue.IndexOfAny (notPrintableString) != -1)
-					return 0x1E; // BMPSTRING
-				else
-					return 0x13; // PRINTABLESTRING
+				foreach (char c in attrValue) {
+					switch (c) {
+					case '@':
+					case '_':
+						return 0x1E; // BMPSTRING
+					default:
+						if (c > 127)
+							return 0x1E; // BMPSTRING
+						break;
+					}
+				}
+				return 0x13; // PRINTABLESTRING
 			}
 		}
 
