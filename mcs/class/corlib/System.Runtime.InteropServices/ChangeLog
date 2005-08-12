@@ -1,3 +1,10 @@
+2005-08-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* SetWin32ContextInIDispatchAttribute.cs: Make this attribute also
+	available in 1.0 profile (.NET 1.1).
+	* VariantWrapper.cs: Class is also exposed in .NET 1.1. Only 
+	serializable in 2.0 profile.
+
 2005-08-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* SafeHandle.cs: New file.
