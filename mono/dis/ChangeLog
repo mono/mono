@@ -1,3 +1,9 @@
+2005-08-12  Jb Evain  <jbevain@gmail.com>
+
+	* get.c (dis_stringify_method_signature): handle case when a method
+	  has parameters but no corresponding Param row.
+	  Patch forged with Ankit.
+
 2005-08-12  Ankit Jain <jankit@novell.com>
 
 	* get.c (dis_stringify_variant_type): New. Stringify MonoMarshalVariant.
