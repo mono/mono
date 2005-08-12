@@ -553,53 +553,26 @@ namespace System.Data.SqlClient {
 
 		#region Event Handlers
 
-		private void RowUpdatingHandler (object sender, SqlRowUpdatingEventArgs e)
+		private void RowUpdatingHandler (object sender, SqlRowUpdatingEventArgs args)
 		{
-			if (e.Status != UpdateStatus.Continue)
+			if (args.Command != null)
 				return;
-
-			switch (e.StatementType) {
-			case StatementType.Delete:
-				deleteCommand = e.Command;
-				break;
-			case StatementType.Insert:
-				insertCommand = e.Command;
-				break;
-			case StatementType.Update:
-				updateCommand = e.Command;
-				break;
-			default:
-				return;
-			}
-
 			try {
-				BuildCache (false);
-
-				switch (e.StatementType) {
-				case StatementType.Delete:
-					e.Command = CreateDeleteCommand (e.Row, e.TableMapping);
-					e.Status = UpdateStatus.Continue;
-					break;
+				switch (args.StatementType) {
 				case StatementType.Insert:
-					e.Command = CreateInsertCommand (e.Row, e.TableMapping);
-					e.Status = UpdateStatus.Continue;
+					args.Command = GetInsertCommand ();
 					break;
 				case StatementType.Update:
-					e.Command = CreateUpdateCommand (e.Row, e.TableMapping);
-					e.Status = UpdateStatus.Continue;
+					args.Command = GetUpdateCommand ();
+					break;
+				case StatementType.Delete:
+					args.Command = GetDeleteCommand ();
 					break;
 				}
-
-				if (e.Command != null && e.Row != null) {
-					if (e.StatementType != StatementType.Delete)
-						e.Row.AcceptChanges ();
-					e.Status = UpdateStatus.Continue;
-				}
-			}
-			catch (Exception exception) {
-				e.Errors = exception;
-				e.Status = UpdateStatus.ErrorsOccurred;
-			}
+			} catch (Exception e) {
+				args.Errors = e;
+				args.Status = UpdateStatus.ErrorsOccurred;
+			}		
 		}
 
 #if NET_2_0
