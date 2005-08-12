@@ -184,6 +184,11 @@ namespace Cairo {
 			}
 		}
 		
+		public void XlibSetSize (int w, int h)
+		{
+			CairoAPI.cairo_xlib_surface_set_size (surface, w, h);
+		}
+		
 		public void Destroy()
 		{
 			CairoAPI.cairo_surface_destroy (surface);

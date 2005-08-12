@@ -423,7 +423,7 @@ namespace Cairo {
 		public void SetTargetDrawable (IntPtr dpy, IntPtr drawable, IntPtr visual, int width, int height)
 		{
 			CairoAPI.cairo_xlib_surface_create (dpy, drawable, visual, width, height);
-		}
+		}		
 #endregion
 
                 public void Rotate (double angle)

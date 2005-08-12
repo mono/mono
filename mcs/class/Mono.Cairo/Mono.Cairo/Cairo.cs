@@ -361,9 +361,12 @@ namespace Cairo {
                 // Surface Manipulation
                 //
                 
-		[DllImport (CairoImp)]                
+		[DllImport (CairoImp)]
                 public static extern IntPtr cairo_xlib_surface_create (IntPtr dpi,
 			IntPtr win, IntPtr visual, int w, int h);
+		
+		[DllImport (CairoImp)]
+                public static extern void cairo_xlib_surface_set_size (IntPtr surface, int width, int height);
 		
 		[DllImport (CairoImp)]                
                 public static extern Cairo.Status cairo_surface_finish (IntPtr surface);
