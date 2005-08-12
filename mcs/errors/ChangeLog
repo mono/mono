@@ -1,3 +1,8 @@
+2005-08-12  Martin Baulig  <martin@ximian.com>
+
+	* known-issues-gmcs: Ignore cs3005-13.cs since it's supposed to
+	produce a warning and not an error on .NET 2.0.
+
 2005-08-03  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0431.cs, cs0432.cs, cs0432-2.cs, cs0440.cs, cs0687.cs:

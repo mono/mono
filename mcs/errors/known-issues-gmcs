@@ -77,3 +77,5 @@ cs2007.cs
 cs2015.cs
 gcs0694.cs NO ERROR
 gcs1644-2.cs NO ERROR
+
+cs3005-13.cs IGNORE # This is a warning in .NET 2.0 and an error in 1.x.
