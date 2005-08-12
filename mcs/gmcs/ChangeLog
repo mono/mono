@@ -1,3 +1,8 @@
+2005-08-12  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (MemberAccess.ResolveNamespaceOrType): Only search
+	for nested types here to avoid hitting the cache too early.
+
 2005-08-09  Miguel de Icaza  <miguel@novell.com>
 
 	* enum.cs: On the new compiler CLS error 3005 is now a warning not

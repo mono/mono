@@ -7574,7 +7574,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			Expression member_lookup = MemberLookup (ec, expr_type, expr_type, lookup_id, loc);
+			Expression member_lookup = MemberLookup (
+				ec, ec.ContainerType, expr_type, expr_type, lookup_id,
+				MemberTypes.NestedType, BindingFlags.Public | BindingFlags.NonPublic, loc);
 			if (member_lookup == null) {
 				int errors = Report.Errors;
 				MemberLookupFailed (ec, expr_type, expr_type, lookup_id, null, false, loc);
