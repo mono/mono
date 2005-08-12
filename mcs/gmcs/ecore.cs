@@ -191,7 +191,7 @@ namespace Mono.CSharp {
 			// If only accessible to the current class or children
 			//
 			if (ma == MethodAttributes.Private)
-				return invocation_type == mi.DeclaringType ||
+				return TypeManager.IsPrivateAccessible (invocation_type, mi.DeclaringType) ||
 					TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType);
 
 			if (mi.DeclaringType.Assembly == invocation_type.Assembly) {

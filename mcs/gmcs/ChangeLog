@@ -35,6 +35,14 @@
 	`TypeManager.IsEqual' instead of `Type.Equals'; fixes gtest-190.cs.
 	(TypeManager.GetFullName_recursed): Improved.
 
+2005-07-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	Fix #75417
+	* ecore.cs (Expression.IsAccessorAccessible): Change the check for
+	Private accessor case, using TypeManager.IsPrivateAccessible instead of
+	invocation_type == mi.DeclaringType, since the first one also checks
+	other condition used by generic instances.
+	
 2005-07-27  Martin Baulig  <martin@ximian.com>
 
 	* anonymous.cs (CaptureContext.AddField): Added
