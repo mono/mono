@@ -1,3 +1,8 @@
+2005-08-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X520AttributesTest.cs: New. Test cases from Daniel Granath to check
+	best encoding selection for values.
+
 2005-06-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CrlTest.cs: New. Add regression test for bug #75406.
