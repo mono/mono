@@ -505,9 +505,9 @@ namespace Cairo {
                 }
 		 */ 
 
-                public void ScaleFont (double scale)
+                public void FontSetSize (double scale)
                 {
-                        CairoAPI.cairo_scale_font (state, scale);
+                        CairoAPI.cairo_set_font_size (state, scale);
                 }
                 
 		/*

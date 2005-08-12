@@ -250,9 +250,6 @@ namespace Cairo {
 							     Matrix_T matrix);
 		
                 [DllImport (CairoImp)]
-                public static extern void cairo_scale_font (IntPtr cr, double scale);
-
-                [DllImport (CairoImp)]
                 public static extern void cairo_transform_font (IntPtr cr, IntPtr matrix);
 
                 [DllImport (CairoImp)]

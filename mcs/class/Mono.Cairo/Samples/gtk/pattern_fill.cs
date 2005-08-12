@@ -80,7 +80,8 @@ public class CairoGraphic : DrawingArea
 		int i;
 		double x;
 		double y;
-		char text[] = "KAPOW!";
+		string text = "KAPOW!";
+		
 		cairo_text_extents_t extents;
 		
 		srand (45);
