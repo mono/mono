@@ -109,6 +109,8 @@ public class InputVBFile : BaseVBFile
 
 		if (str[0] == '#' && str.Length != 1)
 			str = str.Substring(1, str.Length - 1);
+		if (str[str.Length-1] == '#' && str.Length != 1)
+			str = str.Substring(0, str.Length - 1);
 		Object obj = str;
 
 		// TODO
@@ -192,6 +194,8 @@ public class InputVBFile : BaseVBFile
 		string str = readString().Trim();
 		if (str[0] == '#' && str.Length != 1)
 			str = str.Substring(1, str.Length - 1);
+		if (str[str.Length-1] == '#' && str.Length != 1)
+			str = str.Substring(0, str.Length - 1);
 		Value = DateTime.Parse(str);
 	}
     

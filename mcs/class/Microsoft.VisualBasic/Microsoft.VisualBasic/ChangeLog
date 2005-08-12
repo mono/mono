@@ -1,3 +1,6 @@
+2005-08-12  Manjula GHM <mmanjula@novell.com>
+	*InputVBFile.cs: Handle trailing '#" for bool and date in Input function
+
 2005-08-09  Manjula GHM <mmanjula@novell.com>
         *Interaction.cs:
         *FileSystem.cs : Add ParamArray keyword in relevant location
