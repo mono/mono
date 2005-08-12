@@ -1,3 +1,7 @@
+2005-08-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-exceptions.c (ves_icall_get_frame_info): Fix IA64 build.
+
 2005-08-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-exceptions.c mini-x86.h: Move VC stuff into macros in mini-x86.h.
