@@ -505,10 +505,15 @@ namespace Cairo {
                 }
 		 */ 
 
-                public void FontSetSize (double scale)
+                public void FontSetSize (double size)
                 {
-                        CairoAPI.cairo_set_font_size (state, scale);
+                        CairoAPI.cairo_set_font_size (state, size);
                 }
+		
+		public void FontSetMatrix (Matrix m)
+		{
+			CairoAPI.cairo_set_font_matrix (state, m.Pointer);
+		}
                 
 		/*
                 public void TransformFont (Matrix matrix)
