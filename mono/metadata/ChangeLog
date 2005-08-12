@@ -1,3 +1,8 @@
+2005-08-12  Ankit Jain <jankit@novell.com>
+
+	* get.c (dis_stringify_variant_type): New. Stringify MonoMarshalVariant.
+	  (dis_stringify_marshal_spec): Add new case for MONO_NATIVE_SAFEARRAY. 
+
 2005-09-12  Lluis Sanchez  <lluis@ximian.com>
 
 	* process.c: Don't close a thread handle when it's NULL. This is a
