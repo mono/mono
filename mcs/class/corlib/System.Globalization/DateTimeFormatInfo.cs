@@ -162,14 +162,11 @@ namespace System.Globalization
 			return (formatType == GetType()) ? this : null;
 		}
 
-		[MonoTODO]
-		public string GetAbbreviatedEraName(int era)
+		public string GetAbbreviatedEraName (int era)
 		{
-			if (era < _Calendar.Eras.Length || era >= _Calendar.Eras.Length)
-				throw new ArgumentOutOfRangeException();
-			notImplemented();
-			//FIXME: implement me
-			return null;
+			if (era < 0 || era >= _Calendar.AbbreviatedEraNames.Length)
+				throw new ArgumentOutOfRangeException ("era", era.ToString ());
+			return _Calendar.AbbreviatedEraNames [era];
 		}
 
 		public string GetAbbreviatedMonthName(int month)
@@ -178,13 +175,16 @@ namespace System.Globalization
 			return _AbbreviatedMonthNames[month-1];
 		}
 
-		[MonoTODO]
-		public int GetEra(string eraName)
+		public int GetEra (string eraName)
 		{
-			if (eraName == null) throw new ArgumentNullException();
-			eraName = eraName.ToUpper();
-			notImplemented();
-			//FIXME: implement me
+			if (eraName == null)
+				throw new ArgumentNullException ();
+			string [] eras = _Calendar.EraNames;
+			for (int i = 0; i < eras.Length; i++)
+				if (CultureInfo.InvariantCulture.CompareInfo
+					.Compare (eraName, eras [i],
+					CompareOptions.IgnoreCase) == 0)
+					return i;
 			return -1;
 		}
 
@@ -674,11 +674,6 @@ namespace System.Globalization
 				return list;
 			}
 			return null;
-		}
-
-		private static void notImplemented()
-		{
-			throw new Exception("Not implemented");
 		}
 	}
 }

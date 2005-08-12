@@ -1,3 +1,7 @@
+2005-08-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeFormatInfo.cs : GetAbbreviatedEraNames() and GetEra().
+
 2005-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CultureInfo.cs : lazy load OptionalCalendars (and always non-null).
