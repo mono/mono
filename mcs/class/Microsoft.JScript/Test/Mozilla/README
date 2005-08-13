@@ -63,8 +63,7 @@ Directories: (Standards are available from http://www.mozilla.org/js/language/#)
 
 Tests for Java interaction and e4x support have been removed.
 
-Here's an overview of different ECMAScript versions: (From "JavaScript: The
-Definitive Guide, 4th Edition")
+Here's an overview of different ECMAScript versions:
 
 JavaScript 1.0:          The original version of the language. It was buggy and
                          is now essentially obsolete. Implemented by Netscape 2.
@@ -118,6 +117,10 @@ ECMA v2:                 A maintenance release of the standard that included
 ECMA v3:                 Standardized the switch statement, regular expressions,
                          and exception handling. Conformant implementations are
                          JavaScript 1.5 and JScript 5.5. 
+
+Excerpted from JavaScript: The Definitive Guide, Fourth Edition by David
+Flanagan (ISBN: 0-596-00048-0), section 1.2.  Copyright 2001, O'Reilly &
+Associates.  All rights reserved.
 
 
 3. What To Do After Fixing Bugs
@@ -226,9 +229,8 @@ a real implementation of eval. It also replaces `new TestCase' with `TestCase'.
 Note that implementing proprietary features is okay as long as they do not
 contradict behavior described in the ECMA-262 standard.
 
-Netscape's JavaScript 1.2 Incompatibilities: (From "JavaScript: The Definitive
-Guide, 4th Edition"; note that some of these only happen when version 1.2 is
-explicitely requested by the user.)
+Netscape's JavaScript 1.2 Incompatibilities: (Note that some of these only
+happen when version 1.2 is explicitely requested by the user.)
 
 * The equality and inequality operators behave like the identity and
   non-identity operators. That is, == works like === and != works like !==.
@@ -266,6 +268,10 @@ explicitely requested by the user.)
   the specified separator character is a single space, it discards any leading
   and trailing whitespace in the string before splitting the remainder of the
   string.
+
+Excerpted from JavaScript: The Definitive Guide, Fourth Edition by David
+Flanagan (ISBN: 0-596-00048-0), section 11.6.  Copyright 2001, O'Reilly &
+Associates.  All rights reserved.
 
 If any tests are failing because of one of these incompatibilities their source
 code should be changed to fit the ECMA-262 behavior.
