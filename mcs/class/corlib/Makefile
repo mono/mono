@@ -33,7 +33,8 @@ EXTRA_DISTFILES = \
 	Test/ms_run_test.sh			\
 	Test/resources/MyResources.resources	\
 	Test/resources/Empty.resources		\
-	Test/resources/AFile.txt
+	Test/resources/AFile.txt			\
+	$(RESOURCE_FILES)
 
 CLEAN_FILES = $(cmplib) $(reslib) $(plattestlib) $(plattestlib).sources \
 	       $(cmp_response) $(cmp_makefrag) \
