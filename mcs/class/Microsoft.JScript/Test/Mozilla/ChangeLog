@@ -1,0 +1,6 @@
+2005-08-13  Florian Gross  <flgr@ccan.de>
+
+	* mjs.preamble: Removed arguments declaration
+	* mjs-most.fail, mjs-most.tests: Adjusted for run time fixes and
+	additions
+	* README: Adjusted O'Reilly attributions to suggested style

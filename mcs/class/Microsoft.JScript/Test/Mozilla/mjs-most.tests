@@ -41,7 +41,7 @@ ecma/Array/15.4.2.2-1.js
 ecma/Array/15.4.2.2-2.js
 # Freezes
 #ecma/Array/15.4.2.3.js
-# Needs delete
+# Invalid IL
 #ecma/Array/15.4.3.1-2.js
 # Freezes
 #ecma/Array/15.4.3.2.js
@@ -50,7 +50,6 @@ ecma/Array/15.4.3.js
 #ecma/Array/15.4.4.1.js
 # Invalid IL
 #ecma/Array/15.4.4.2.js
-# Needs delete
 #ecma/Array/15.4.4.3-1.js
 #ecma/Array/15.4.4.4-1.js
 #ecma/Array/15.4.4.4-2.js
@@ -63,7 +62,7 @@ ecma/Array/15.4.4.js
 # Invalid IL
 #ecma/Array/15.4.5.1-1.js
 ecma/Array/15.4.5.1-2.js
-# Need to implement delete
+# Needs ToForInObject
 #ecma/Array/15.4.5.2-1.js
 # Invalid IL
 #ecma/Array/15.4.5.2-2.js
@@ -176,7 +175,7 @@ ecma/Date/15.9.4.2.js
 #ecma/Date/15.9.5.18.js
 #ecma/Date/15.9.5.19.js
 ecma/Date/15.9.5.2-1.js
-# Needs Invoke on user function
+# Needs new Function
 #ecma/Date/15.9.5.2-2-n.js
 ecma/Date/15.9.5.2.js
 # Invalid IL
@@ -197,20 +196,19 @@ ecma/Date/15.9.5.2.js
 #ecma/Date/15.9.5.22-6.js
 #ecma/Date/15.9.5.22-7.js
 #ecma/Date/15.9.5.22-8.js
-# Needs Invoke on user function
-#ecma/Date/15.9.5.23-1.js
-#ecma/Date/15.9.5.23-10.js
-#ecma/Date/15.9.5.23-11.js
-#ecma/Date/15.9.5.23-12.js
-#ecma/Date/15.9.5.23-13.js
-#ecma/Date/15.9.5.23-14.js
-#ecma/Date/15.9.5.23-15.js
-#ecma/Date/15.9.5.23-16.js
+ecma/Date/15.9.5.23-1.js
+ecma/Date/15.9.5.23-10.js
+ecma/Date/15.9.5.23-11.js
+ecma/Date/15.9.5.23-12.js
+ecma/Date/15.9.5.23-13.js
+ecma/Date/15.9.5.23-14.js
+ecma/Date/15.9.5.23-15.js
+ecma/Date/15.9.5.23-16.js
+# Invalid IL
 #ecma/Date/15.9.5.23-17.js
 #ecma/Date/15.9.5.23-18.js
-# Invalid IL
 #ecma/Date/15.9.5.23-2.js
-# Needs Invoke on user function
+# Needs eval
 #ecma/Date/15.9.5.23-3-n.js
 # Invalid IL
 #ecma/Date/15.9.5.23-4.js
@@ -219,11 +217,10 @@ ecma/Date/15.9.5.2.js
 #ecma/Date/15.9.5.23-7.js
 #ecma/Date/15.9.5.23-8.js
 #ecma/Date/15.9.5.23-9.js
-# Needs Invoke on user function
-#ecma/Date/15.9.5.24-1.js
-#ecma/Date/15.9.5.24-2.js
-#ecma/Date/15.9.5.24-3.js
-#ecma/Date/15.9.5.24-4.js
+ecma/Date/15.9.5.24-1.js
+ecma/Date/15.9.5.24-2.js
+ecma/Date/15.9.5.24-3.js
+ecma/Date/15.9.5.24-4.js
 ecma/Date/15.9.5.25-1.js
 # Invalid IL
 #ecma/Date/15.9.5.26-1.js
@@ -231,8 +228,7 @@ ecma/Date/15.9.5.27-1.js
 # Invalid IL
 #ecma/Date/15.9.5.28-1.js
 ecma/Date/15.9.5.29-1.js
-# Needs Invoke on user function
-#ecma/Date/15.9.5.3-1-n.js
+ecma/Date/15.9.5.3-1-n.js
 ecma/Date/15.9.5.3-2.js
 # Invalid IL
 #ecma/Date/15.9.5.30-1.js
@@ -255,7 +251,7 @@ ecma/Date/15.9.5.31-1.js
 #ecma/Date/15.9.5.37-4.js
 #ecma/Date/15.9.5.37-5.js
 ecma/Date/15.9.5.4-1.js
-# Needs Invoke on user function
+# Needs eval
 #ecma/Date/15.9.5.4-2-n.js
 # Invalid IL
 #ecma/Date/15.9.5.5.js
@@ -267,21 +263,19 @@ ecma/Date/15.9.5.4-1.js
 #ecma/Date/15.9.5.js
 #ecma/ExecutionContexts/10.1.3-1.js
 ecma/ExecutionContexts/10.1.3.js
-# Needs Invoke on user-function
+# Invalid IL
 #ecma/ExecutionContexts/10.1.4-1.js
 ecma/ExecutionContexts/10.1.4-10.js
-# Needs Invoke on user-function
+# Invalid IL
 #ecma/ExecutionContexts/10.1.4-2.js
 #ecma/ExecutionContexts/10.1.4-3.js
 #ecma/ExecutionContexts/10.1.4-4.js
 #ecma/ExecutionContexts/10.1.4-5.js
-# Invalid IL
 #ecma/ExecutionContexts/10.1.4-6.js
-# Needs delete operator
+# Needs with
 #ecma/ExecutionContexts/10.1.4-7.js
-# Needs Invoke on user-function
-#ecma/ExecutionContexts/10.1.4-8.js
 # Invalid IL
+#ecma/ExecutionContexts/10.1.4-8.js
 #ecma/ExecutionContexts/10.1.4-9.js
 #ecma/ExecutionContexts/10.1.5-1.js
 # Needs eval
@@ -330,8 +324,7 @@ ecma/Expressions/11.12-3.js
 #ecma/Expressions/11.2.1-4-n.js
 #ecma/Expressions/11.2.1-5.js
 #ecma/Expressions/11.2.2-1-n.js
-# Needs Invoke on user functions
-#ecma/Expressions/11.2.2-1.js
+ecma/Expressions/11.2.2-1.js
 ecma/Expressions/11.2.2-10-n.js
 # Needs new Function
 #ecma/Expressions/11.2.2-11.js
@@ -351,8 +344,7 @@ ecma/Expressions/11.2.3-4-n.js
 ecma/Expressions/11.2.3-5.js
 ecma/Expressions/11.3.1.js
 ecma/Expressions/11.3.2.js
-# Needs eval and delete
-#ecma/Expressions/11.4.1-n.js
+# Needs eval
 #ecma/Expressions/11.4.1.js
 ecma/Expressions/11.4.2.js
 # NotImplementedException from Binary:emit_access
@@ -369,7 +361,7 @@ ecma/Expressions/11.5.1.js
 # Freezes
 #ecma/Expressions/11.5.2.js
 #ecma/Expressions/11.5.3.js
-# Needs Invoke on user function
+# Needs new Function
 #ecma/Expressions/11.6.1-1.js
 #ecma/Expressions/11.6.1-2.js
 #ecma/Expressions/11.6.1-3.js
@@ -387,7 +379,6 @@ ecma/Expressions/11.6.3.js
 #ecma/Expressions/11.9.1.js
 #ecma/Expressions/11.9.2.js
 #ecma/Expressions/11.9.3.js
-# Freezes
 #ecma/FunctionObjects/15.3.1.1-1.js
 # Needs new Function
 #ecma/FunctionObjects/15.3.1.1-2.js
@@ -403,9 +394,8 @@ ecma/Expressions/11.6.3.js
 #ecma/FunctionObjects/15.3.3.1-1.js
 # Needs for in
 #ecma/FunctionObjects/15.3.3.1-2.js
-# Needs delete
-#ecma/FunctionObjects/15.3.3.1-3.js
 # Invalid IL
+#ecma/FunctionObjects/15.3.3.1-3.js
 #ecma/FunctionObjects/15.3.3.1-4.js
 # Freezes
 #ecma/FunctionObjects/15.3.3.2.js
@@ -500,7 +490,6 @@ ecma/LexicalConventions/7.2-6.js
 #ecma/LexicalConventions/7.4.3-14-n.js
 #ecma/LexicalConventions/7.4.3-15-n.js
 #ecma/LexicalConventions/7.4.3-16-n.js
-# Needs eval
 #ecma/LexicalConventions/7.4.3-2-n.js
 #ecma/LexicalConventions/7.4.3-3-n.js
 #ecma/LexicalConventions/7.4.3-4-n.js
@@ -537,35 +526,20 @@ ecma/Math/15.8-2-n.js
 #ecma/Math/15.8-3-n.js
 # Invalid IL
 #ecma/Math/15.8.1.1-1.js
-# Needs delete
 #ecma/Math/15.8.1.1-2.js
-# Invalid IL
 #ecma/Math/15.8.1.2-1.js
-# Needs delete
 #ecma/Math/15.8.1.2-2.js
-# Invalid IL
 #ecma/Math/15.8.1.3-1.js
-# Needs delete
 #ecma/Math/15.8.1.3-2.js
-# Invalid IL
 #ecma/Math/15.8.1.4-1.js
-# Needs delete
 #ecma/Math/15.8.1.4-2.js
-# Invalid IL
 #ecma/Math/15.8.1.5-1.js
-# Needs delete
 #ecma/Math/15.8.1.5-2.js
-# Invalid IL
 #ecma/Math/15.8.1.6-1.js
-# Needs delete
 #ecma/Math/15.8.1.6-2.js
-# Invalid IL
 #ecma/Math/15.8.1.7-1.js
-# Needs delete
 #ecma/Math/15.8.1.7-2.js
-# Invalid IL
 #ecma/Math/15.8.1.8-1.js
-# Needs delete
 #ecma/Math/15.8.1.8-2.js
 #ecma/Math/15.8.1.8-3.js
 # Needs for in
@@ -597,48 +571,41 @@ ecma/Math/15.8-2-n.js
 #ecma/NativeObjects/15-1.js
 # NullReferenceException from SemanticAnalyser:contains
 #ecma/NativeObjects/15-2.js
-# Needs Invoke on user function
+# Needs new Function
 #ecma/Number/15.7.1.js
 ecma/Number/15.7.2.js
-# Needs delete
-#ecma/Number/15.7.3.1-1.js
 # Invalid IL
+#ecma/Number/15.7.3.1-1.js
 #ecma/Number/15.7.3.1-2.js
 # Needs for in
 #ecma/Number/15.7.3.1-3.js
 ecma/Number/15.7.3.2-1.js
-# Needs delete
-#ecma/Number/15.7.3.2-2.js
 # Invalid IL
+#ecma/Number/15.7.3.2-2.js
 #ecma/Number/15.7.3.2-3.js
 # Needs for in
 #ecma/Number/15.7.3.2-4.js
 ecma/Number/15.7.3.3-1.js
-# Needs delete
-#ecma/Number/15.7.3.3-2.js
 # Invalid IL
+#ecma/Number/15.7.3.3-2.js
 #ecma/Number/15.7.3.3-3.js
 # Needs for in
 #ecma/Number/15.7.3.3-4.js
 ecma/Number/15.7.3.4-1.js
-# Needs delete
-#ecma/Number/15.7.3.4-2.js
 # Invalid IL
+#ecma/Number/15.7.3.4-2.js
 #ecma/Number/15.7.3.4-3.js
 # Needs for in
 #ecma/Number/15.7.3.4-4.js
 # Freezes
 #ecma/Number/15.7.3.5-1.js
-# Needs delete
 #ecma/Number/15.7.3.5-2.js
-# Freezes
 #ecma/Number/15.7.3.5-3.js
 # Needs for in
 #ecma/Number/15.7.3.5-4.js
 ecma/Number/15.7.3.6-1.js
-# Needs delete
-#ecma/Number/15.7.3.6-2.js
 # Invalid IL
+#ecma/Number/15.7.3.6-2.js
 #ecma/Number/15.7.3.6-3.js
 # Needs for in
 #ecma/Number/15.7.3.6-4.js
@@ -665,11 +632,9 @@ ecma/ObjectObjects/15.2.2.2.js
 #ecma/ObjectObjects/15.2.3-1.js
 # Needs eval
 #ecma/ObjectObjects/15.2.3.1-1.js
-# Needs delete
-#ecma/ObjectObjects/15.2.3.1-2.js
 # Invalid IL
+#ecma/ObjectObjects/15.2.3.1-2.js
 #ecma/ObjectObjects/15.2.3.1-3.js
-# Needs delete
 #ecma/ObjectObjects/15.2.3.1-4.js
 # Freezes
 #ecma/ObjectObjects/15.2.3.js
@@ -733,7 +698,6 @@ ecma/String/15.5.2.js
 #ecma/String/15.5.3.1-1.js
 # Invalid IL
 #ecma/String/15.5.3.1-2.js
-# Needs delete
 #ecma/String/15.5.3.1-3.js
 #ecma/String/15.5.3.1-4.js
 # NotImplementedException from Binary:emit_access
@@ -744,7 +708,7 @@ ecma/String/15.5.2.js
 # Freezes
 #ecma/String/15.5.3.js
 #ecma/String/15.5.4.1.js
-# Needs delete
+# Invalid IL
 #ecma/String/15.5.4.10-1.js
 # Needs eval
 #ecma/String/15.5.4.11-1.js
@@ -753,9 +717,8 @@ ecma/String/15.5.2.js
 #ecma/String/15.5.4.11-4.js
 #ecma/String/15.5.4.11-5.js
 #ecma/String/15.5.4.11-6.js
-# Needs delete
-#ecma/String/15.5.4.12-1.js
 # Invalid IL
+#ecma/String/15.5.4.12-1.js
 #ecma/String/15.5.4.12-2.js
 # Needs eval
 #ecma/String/15.5.4.12-3.js
@@ -773,16 +736,14 @@ ecma/String/15.5.4.3-2.js
 #ecma/String/15.5.4.3-3-n.js
 # Invalid IL
 #ecma/String/15.5.4.4-1.js
-# Needs Invoke on user function
+# Needs new Function
 #ecma/String/15.5.4.4-2.js
 #ecma/String/15.5.4.4-3.js
-# Needs new Function
 #ecma/String/15.5.4.4-4.js
 # Invalid IL
 #ecma/String/15.5.4.5-1.js
 # Needs new Function
 #ecma/String/15.5.4.5-2.js
-# Needs Invoke on user function
 #ecma/String/15.5.4.5-3.js
 # Invalid IL
 #ecma/String/15.5.4.5-4.js
@@ -795,16 +756,15 @@ ecma/String/15.5.4.6-2.js
 # Needs eval
 #ecma/String/15.5.4.7-2.js
 ecma/String/15.5.4.7-3.js
-# Needs delete
-#ecma/String/15.5.4.8-1.js
 # Invalid IL
+#ecma/String/15.5.4.8-1.js
 #ecma/String/15.5.4.8-2.js
 # Needs for in
 #ecma/String/15.5.4.8-3.js
-# Needs delete
+# Invalid IL
 #ecma/String/15.5.4.9-1.js
-#ecma/String/15.5.4.js
-#ecma/String/15.5.5.1.js
+ecma/String/15.5.4.js
+ecma/String/15.5.5.1.js
 # Needs eval
 #ecma/TypeConversion/9.2.js
 # Invalid IL
@@ -820,24 +780,25 @@ ecma/TypeConversion/9.4-1.js
 ecma/TypeConversion/9.4-2.js
 # Freezes
 #ecma/TypeConversion/9.5-2.js
-ecma/TypeConversion/9.6.js
+# Invalid IL
+#ecma/TypeConversion/9.6.js
 # Freezes
 #ecma/TypeConversion/9.7.js
 ecma/TypeConversion/9.8.1.js
-# Needs Invoke on user function
+# Needs new Function
 #ecma/TypeConversion/9.9-1.js
 ecma/Types/8.1.js
 # Invalid IL
 #ecma/Types/8.4.js
-# Needs Invoke on user function
+# Needs new Function
 #ecma/Types/8.6.2.1-1.js
 # NotImplementedException from Try:JScriptExceptionValue
 #ecma_2/Exceptions/boolean-001.js
 #ecma_2/Exceptions/boolean-002.js
-# Needs Invoke on user function
 #ecma_2/Exceptions/date-001.js
 #ecma_2/Exceptions/date-002.js
-#ecma_2/Exceptions/date-003.js
+ecma_2/Exceptions/date-003.js
+# NotImplementedException from Try:JScriptExceptionValue
 #ecma_2/Exceptions/date-004.js
 ecma_2/Exceptions/exception-001.js
 ecma_2/Exceptions/exception-002.js
@@ -852,8 +813,8 @@ ecma_2/Exceptions/exception-002.js
 ecma_2/Exceptions/exception-009.js
 # Needs eval
 #ecma_2/Exceptions/expression-001.js
-# Needs Invoke on user functions
-#ecma_2/Exceptions/expression-002.js
+ecma_2/Exceptions/expression-002.js
+# NotImplementedException from Try:JScriptExceptionValue
 #ecma_2/Exceptions/expression-003.js
 #ecma_2/Exceptions/expression-004.js
 ecma_2/Exceptions/expression-005.js
@@ -964,8 +925,7 @@ ecma_2/Expressions/StrictEquality-001.js
 #ecma_2/Expressions/instanceof-004-n.js
 #ecma_2/Expressions/instanceof-005-n.js
 #ecma_2/Expressions/instanceof-006.js
-# Needs Invoke on user function
-#ecma_2/FunctionObjects/call-1.js
+ecma_2/FunctionObjects/call-1.js
 # Needs eval
 #ecma_2/LexicalConventions/keywords-001.js
 ecma_2/LexicalConventions/regexp-literals-001.js
@@ -998,8 +958,7 @@ ecma_2/Statements/dowhile-003.js
 # Invalid IL
 #ecma_2/Statements/dowhile-005.js
 ecma_2/Statements/dowhile-006.js
-# Needs Invoke on user function
-#ecma_2/Statements/dowhile-007.js
+ecma_2/Statements/dowhile-007.js
 # Needs for in
 #ecma_2/Statements/forin-001.js
 #ecma_2/Statements/forin-002.js
@@ -1013,19 +972,17 @@ ecma_2/Statements/switch-003.js
 ecma_2/Statements/switch-004.js
 # NotImplementedException from Try:JScriptExceptionValue
 #ecma_2/Statements/try-001.js
-# Needs Invoke on user function
 #ecma_2/Statements/try-003.js
 #ecma_2/Statements/try-004.js
-# NotImplementedException from Try:JScriptExceptionValue
 #ecma_2/Statements/try-005.js
-# Needs Invoke on user function
+# Needs new Function
 #ecma_2/Statements/try-006.js
 # Needs for in
 #ecma_2/Statements/try-007.js
 # Invalid IL
 #ecma_2/Statements/try-008.js
 ecma_2/Statements/try-009.js
-# Needs Invoke on user functions
+# NotImplementedException from Try:JScriptExceptionValue
 #ecma_2/Statements/try-010.js
 #ecma_2/Statements/try-012.js
 ecma_2/Statements/while-001.js
@@ -1079,7 +1036,7 @@ js1_2/function/nesting-1.js
 js1_2/function/nesting.js
 js1_2/function/regexparg-1.js
 js1_2/function/regexparg-2-n.js
-# Needs Invoke on user functions
+# Needs new Function
 #js1_2/function/tostring-1.js
 #js1_2/function/tostring-2.js
 # Endless loop
@@ -1154,38 +1111,33 @@ js1_3/Boolean/boolean-001.js
 # Needs for in
 #js1_3/Script/delete-001.js
 js1_3/Script/function-001-n.js
-# Needs Invoke on user function
-#js1_3/Script/function-002.js
+js1_3/Script/function-002.js
 js1_3/Script/in-001.js
 # Invalid IL
 #js1_3/Script/new-001.js
 js1_3/Script/script-001.js
 js1_3/Script/switch-001.js
-# Needs Invoke on user functions
-#js1_3/inherit/proto_1.js
+js1_3/inherit/proto_1.js
 # Freezes
 #js1_3/inherit/proto_10.js
-# Needs Invoke on user function
+# Invalid IL
 #js1_3/inherit/proto_11.js
 #js1_3/inherit/proto_12.js
 # Endless loop
 #js1_3/inherit/proto_2.js
-# Needs Invoke on user function
-#js1_3/inherit/proto_3.js
-#js1_3/inherit/proto_4.js
+js1_3/inherit/proto_3.js
+js1_3/inherit/proto_4.js
 # Endless loop
 #js1_3/inherit/proto_5.js
-# Needs Invoke on user function
-#js1_3/inherit/proto_6.js
-#js1_3/inherit/proto_7.js
-#js1_3/inherit/proto_8.js
-#js1_3/inherit/proto_9.js
+js1_3/inherit/proto_6.js
+js1_3/inherit/proto_7.js
+js1_3/inherit/proto_8.js
+js1_3/inherit/proto_9.js
 # Needs for in
 #js1_3/regress/delete-001.js
 # Needs eval
 #js1_3/regress/function-001-n.js
-# Needs Invoke on user function
-#js1_3/regress/function-002.js
+js1_3/regress/function-002.js
 js1_3/regress/in-001.js
 # Invalid IL
 #js1_3/regress/new-001.js
@@ -1195,8 +1147,7 @@ js1_3/regress/switch-001.js
 #js1_4/Eval/eval-002.js
 js1_4/Eval/eval-003.js
 js1_4/Functions/function-001.js
-# Needs Invoke on user functions
-#js1_4/Regress/date-001-n.js
+js1_4/Regress/date-001-n.js
 js1_4/Regress/function-001.js
 # Freezes
 #js1_4/Regress/function-002.js

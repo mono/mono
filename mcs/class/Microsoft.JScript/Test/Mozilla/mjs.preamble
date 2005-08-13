@@ -26,8 +26,6 @@ var testcases = [];
 var tc = 0;
 var GLOBAL = "[object global]";
 
-// This should be handled by us.
-var arguments;
 // These are needed because we currently don't support assignment to
 // undeclared variables.
 var NEW_PROPERTY; var DESCRIPTION; var DateCase; var test_times;
