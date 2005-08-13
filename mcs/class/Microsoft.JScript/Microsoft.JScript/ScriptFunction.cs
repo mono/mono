@@ -32,21 +32,52 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Globalization;
 using System.Collections;
+using Microsoft.JScript.Vsa;
+using System.Text;
 
 namespace Microsoft.JScript {
 
 	public abstract class ScriptFunction : JSObject {
 
+		public string name = "";
 		internal MethodInfo method;
 		internal MethodAttributes attr;
+		internal VsaEngine vsa_engine;
+		internal Type return_type;
+		internal FormalParameterList parameters;
 		internal ScriptObject _prototype;
+		internal string source;
 
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]
-		public Object CreateInstance  (params Object [] args)
+		public Object CreateInstance (params Object [] args)
 		{
-			throw new NotImplementedException ();
+			Type t = this.GetType ();
+			// Built-in constructor?
+			if (t != typeof (FunctionObject)) {
+				MethodInfo method = t.GetMethod ("CreateInstance");
+				return method.Invoke (this, new object [] { args });
+			}
+
+			Type prototype = SemanticAnalyser.map_to_prototype (this.prototype);
+			MemberInfo [] members = prototype.GetMember ("constructor");
+			PropertyInfo field = members [0] as PropertyInfo;
+			ScriptFunction ctr = field.GetValue (prototype, null) as ScriptFunction;
+			if (ctr == null)
+				Console.WriteLine ("No constructor for {0}", this);
+			ScriptObject new_obj = ctr.CreateInstance (args) as ScriptObject;
+
+			vsa_engine.PushScriptObject (new_obj);
+			Invoke (new_obj, args);
+			//
+			// NOTE: I think the result of calling an user function as a constructor
+			// should not be the resturn value of the user function. I think it should
+			// always be the newly constructed object.
+			//
+			// TODO: This has yet to be verified.
+			//
+			return vsa_engine.PopScriptObject ();
 		}
 
 		[DebuggerStepThroughAttribute]
@@ -56,12 +87,12 @@ namespace Microsoft.JScript {
 		{
 			if (method != null) {
 				if ((attr & MethodAttributes.Static) != 0)
-					return method.Invoke (null, LateBinding.assemble_args (thisOb, method, args, null));
+					return method.Invoke (null, LateBinding.assemble_args (thisOb, method, args, vsa_engine));
 				else
-					return method.Invoke (thisOb, LateBinding.assemble_args (null, method, args, null));
+					return method.Invoke (thisOb, LateBinding.assemble_args (null, method, args, vsa_engine));
 			}
 
-			Console.WriteLine ("Called ScriptFunction:Invoke on user function");
+			Console.WriteLine ("Called ScriptFunction:Invoke on unknown user function");
 			throw new NotImplementedException ();
 		}
 
@@ -93,7 +124,29 @@ namespace Microsoft.JScript {
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			if (source != null)
+				return source;
+
+			StringBuilder sb = new StringBuilder ();
+
+			sb.Append ("function");
+			if (name != "") {
+				sb.Append (" ");
+				sb.Append (name);
+			}
+			sb.Append ("(");
+
+			if (parameters != null)
+				sb.Append (this.parameters.ToString ());
+
+			sb.Append (")");
+			if (return_type != null && return_type != typeof (void))
+				sb.Append (" : " + return_type);
+			sb.Append (" {\n");
+			sb.Append ("    [native code]\n");
+			sb.Append ("}");
+
+			return sb.ToString ();
 		}
 
 		public Object prototype {
@@ -104,7 +157,16 @@ namespace Microsoft.JScript {
 				} else
 					return _prototype;
 			}
-			set { throw new NotImplementedException (); }
+			set {
+				JSObject proto = value as JSObject;
+				// TODO: Needs better checking
+				if (proto != null)
+					_prototype = proto;
+				else {
+					Console.WriteLine ("Unexpected prototype value {0} ({1})", value, value.GetType ());
+					throw new NotImplementedException ();
+				}
+			}
 		}
 
 		public override int GetHashCode ()
@@ -123,6 +185,11 @@ namespace Microsoft.JScript {
 				else
 					throw new NotImplementedException ("Called Equals on user function");
 			}
+		}
+
+		internal override object GetDefaultValue (Type hint, bool avoid_toString)
+		{
+			return ToString ();
 		}
 	}
 }

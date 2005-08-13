@@ -51,7 +51,6 @@ namespace Microsoft.JScript {
 			return fun.Invoke (thisArg, args);
 		}
 
-
 		public static FunctionConstructor constructor {
 			get { return FunctionConstructor.Ctr; }
 		}
@@ -59,8 +58,8 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Function_toString)]
 		public static string toString (object thisObj)
 		{
-			if (thisObj is FunctionObject)
-				return (((FunctionObject) thisObj).ToString ());
+			if (thisObj is ScriptFunction)
+				return (((ScriptFunction) thisObj).ToString ());
 
 			throw new JScriptException (JSError.FunctionExpected);
 		}

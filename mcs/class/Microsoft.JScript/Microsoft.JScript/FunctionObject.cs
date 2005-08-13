@@ -37,21 +37,20 @@ namespace Microsoft.JScript {
 
 	public class FunctionObject : ScriptFunction {
 
-		public string name;
 		internal string type_annot;
-		internal Type return_type;
-		internal FormalParameterList parameters;
 		internal Block body;
 
 		internal Location location;
 
 		internal FunctionObject (string name)
 		{
+			this._prototype = ObjectPrototype.Proto;
 			this.name = name;
 		}
 
 		internal FunctionObject (MethodInfo info)
 		{
+			this._prototype = ObjectPrototype.Proto;
 			this.method = info;
 			this.name = info.Name;
 			this.attr = info.Attributes;
@@ -60,6 +59,7 @@ namespace Microsoft.JScript {
 
 		internal FunctionObject (string name, FormalParameterList p, string ret_type, Block body, Location location)
 		{
+			this._prototype = ObjectPrototype.Proto;
 			//
 			// FIXME
 			// 1) Must collect the attributes given.
@@ -95,32 +95,6 @@ namespace Microsoft.JScript {
 		internal FunctionObject ()
 		{
 			this.parameters = new FormalParameterList (location);
-		}
-
-		public override string ToString ()
-		{
-			StringBuilder sb = new StringBuilder ();
-
-			sb.Append ("function ");
-			sb.Append (name);
-			sb.Append ("(");
-
-			if (parameters != null)
-				sb.Append (this.parameters.ToString ());
-					
-			sb.Append (")");
-			if (return_type != null && return_type != typeof (void))
-				sb.Append (" : " + return_type);
-			sb.Append (" {\n");
-
-			if (body != null)
-				sb.Append (body.ToString ());
-			else
-				sb.Append ("    [native code]");
-
-			sb.Append ("\n}");
-
-			return sb.ToString ();		
 		}
 
 		internal Type [] params_types ()

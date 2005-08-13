@@ -91,6 +91,8 @@ namespace Microsoft.JScript {
 			// Regular objects
 			prototypes.Add (typeof (object), typeof (ObjectPrototype));
 			prototypes.Add (typeof (FunctionObject), typeof (FunctionPrototype));
+			prototypes.Add (typeof (ScriptFunction), typeof (FunctionPrototype));
+			prototypes.Add (typeof (Closure), typeof (FunctionPrototype));
 			prototypes.Add (typeof (ArrayObject), typeof (ArrayPrototype));
 			prototypes.Add (typeof (StringObject), typeof (StringPrototype));
 			prototypes.Add (typeof (StringLiteral), typeof (StringPrototype));

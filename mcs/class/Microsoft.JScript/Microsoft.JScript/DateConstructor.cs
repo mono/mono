@@ -49,6 +49,7 @@ namespace Microsoft.JScript {
 		internal DateConstructor ()
 		{
 			_prototype = DatePrototype.Proto;
+			name = "Date";
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]

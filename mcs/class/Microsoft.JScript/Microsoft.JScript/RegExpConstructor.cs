@@ -40,6 +40,7 @@ namespace Microsoft.JScript {
 		internal RegExpConstructor ()
 		{
 			_prototype = RegExpPrototype.Proto;
+			name = "RegExp";
 			AddField ("$_");
 			AddField ("$&");
 			AddField ("$+");

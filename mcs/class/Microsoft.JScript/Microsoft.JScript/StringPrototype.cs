@@ -262,19 +262,19 @@ namespace Microsoft.JScript {
 			RegExpObject regex_obj = (RegExpObject) regExp;
 			int count = regex_obj.global ? -1 : 1;
 
-			if (!(replacement is FunctionObject))
+			if (!(replacement is ScriptFunction))
 				return regex_obj.regex.Replace (string_obj, Convert.ToString (replacement), count);
 
-			FunctionObject fun = (FunctionObject) replacement;
+			ScriptFunction fun = (ScriptFunction) replacement;
 			MatchEvaluator wrap_fun = new MatchEvaluator (new ReplaceDelegate (fun, string_obj).Replace);
 			return regex_obj.regex.Replace (string_obj, wrap_fun, count);
 		}
 
 		private class ReplaceDelegate {
-			private FunctionObject fun;
+			private ScriptFunction fun;
 			private string string_obj;
 
-			internal ReplaceDelegate (FunctionObject fun, string string_obj)
+			internal ReplaceDelegate (ScriptFunction fun, string string_obj)
 			{
 				this.fun = fun;
 				this.string_obj = string_obj;

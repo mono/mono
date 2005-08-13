@@ -88,10 +88,10 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (operand != null)
-				operand.Emit (ec);
 			if (!(operand is NumericLiteral) || (oper != JSToken.Minus))
 				emit_unary_op (ec);
+			else
+				operand.Emit (ec);
 		}
 
 		internal void emit_unary_op (EmitContext ec)
@@ -99,32 +99,71 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			switch (oper) {
 			case JSToken.Void:
+				operand.Emit (ec);
 				ig.Emit (OpCodes.Pop);
 				ig.Emit (OpCodes.Ldnull);
 				break;
+
 			case JSToken.Typeof:
+				operand.Emit (ec);
 				ig.Emit (OpCodes.Call, typeof (Typeof).GetMethod ("JScriptTypeof"));
 				break;
+
+			case JSToken.Delete:
+				Expression exp = operand as Expression;
+				if (exp != null)
+					operand = exp.exprs [exp.exprs.Count - 1] as AST;
+
+				Binary arg = operand as Binary;
+				if (arg != null) {
+					if (arg.op == JSToken.LeftBracket || arg.op == JSToken.AccessField) {
+						arg.left.Emit (ec);
+						arg.right.Emit (ec);
+					} else {
+						Console.WriteLine ("emit_unary_op: Delete: unknown operand type {0}", arg.op);
+						throw new NotImplementedException ();
+					}
+				} else {
+					Console.WriteLine ("emit_unary_op: Delete: unknown operand {0} ({1})", operand, operand.GetType ());
+					throw new NotImplementedException ();
+				}
+
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToString",
+					new Type [] { typeof (object), typeof (bool) }));
+				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("DeleteMember",
+					new Type [] { typeof (object), typeof (string) }));
+				ig.Emit (OpCodes.Pop);
+				break;
+
 			case JSToken.Plus:
+				operand.Emit (ec);
 				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] { typeof (object) }));
 				/* all clear */
 				break;
+
 			case JSToken.Minus:
+				operand.Emit (ec);
 				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] { typeof (object) }));
 				ig.Emit (OpCodes.Neg);
 				break;
+
 			case JSToken.BitwiseNot:
+				operand.Emit (ec);
 				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToInt32"));
 				ig.Emit (OpCodes.Not);
 				break;
+
 			case JSToken.LogicalNot:
+				operand.Emit (ec);
 				// FIXME: here we can infer the type
 				// of the operand so that unneeded
 				// ToBoolean can be avoided
-				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToBoolean", new Type [] { typeof(object) }));
+				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToBoolean", new Type [] { typeof (object) }));
 				ig.Emit (OpCodes.Ldc_I4_1);
 				ig.Emit (OpCodes.Sub);
 				break;
+
 			default:
 				Console.WriteLine ("Unimplemented Unary Op: {0}", oper);
 				throw new NotImplementedException ();
@@ -1915,6 +1954,10 @@ namespace Microsoft.JScript {
 				}
 				if (type != null)
 					ig.Emit (OpCodes.Call, type.GetMethod ("CreateInstance"));
+				else
+					throw new NotImplementedException (String.Format (
+						"Should emit LateBinding.CallValue logic for unknown constructor {0}",
+						(exp as Identifier).name.Value));
 			}
 		}
 		

@@ -74,13 +74,38 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		static string ErrorTypeToName (ErrorType type)
+		{
+			switch (type) {
+			case ErrorType.EvalError:
+				return "EvalError";
+			case ErrorType.OtherError:
+				return "Error"; // TODO: Is this correct?
+			case ErrorType.RangeError:
+				return "RangeError";
+			case ErrorType.ReferenceError:
+				return "ReferenceError";
+			case ErrorType.SyntaxError:
+				return "SyntaxError";
+			case ErrorType.TypeError:
+				return "TypeError";
+			case ErrorType.URIError:
+				return "URIError";
+			}
+
+			Console.WriteLine ("ErrorTypeToName: unknown type {0}", type);
+			throw new NotImplementedException ();
+		}
+
 		internal ErrorConstructor ()
 		{
+			name = "Error";
 		}
 
 		internal ErrorConstructor (ErrorType errorType)
 		{
 			error_type = errorType;
+			name = ErrorTypeToName (errorType);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]

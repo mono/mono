@@ -76,6 +76,10 @@ namespace Microsoft.JScript {
 								  Object declaringObject, VsaEngine engine)
 		{
 			FunctionObject f = new FunctionObject (name, null, null, null, null);
+			f.source = text;
+			MethodInfo method = engine.ScriptObjectStackTop ().GetType ().GetMethod (methodName);
+			f.method = method;
+			f.vsa_engine = engine;
 			return new Closure (f);
 		}
 
@@ -111,7 +115,7 @@ namespace Microsoft.JScript {
 				local_func = ig.DeclareLocal (typeof (Microsoft.JScript.ScriptFunction));
 				TypeManager.AddLocalScriptFunction (name, local_func);
 			}
-			build_closure (ec, full_name);
+			build_closure (ec, full_name, func_obj.source);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -140,7 +144,7 @@ namespace Microsoft.JScript {
 		}
 		
 
-		internal void build_closure (EmitContext ec, string full_name)
+		internal void build_closure (EmitContext ec, string full_name, string encodedSource)
 		{
 			ILGenerator ig = ec.ig;
 			string name = func_obj.name;
@@ -164,7 +168,7 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Ldc_I4_0);
 
 			ig.Emit (OpCodes.Ldc_I4_0); // FIXME: this hard coded for now.
-			ig.Emit (OpCodes.Ldstr, "STRING_REPRESENTATION_OF_THE_FUNCTION"); // FIXME
+			ig.Emit (OpCodes.Ldstr, Decompiler.Decompile (encodedSource, 0, 0).Trim ());
 			ig.Emit (OpCodes.Ldnull); // FIXME: this hard coded for now.
 
 			CodeGenerator.load_engine (InFunction, ig);

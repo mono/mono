@@ -57,12 +57,12 @@ internal class Decompiler {
 	//
 	// Decompilation property to specify initial ident value.
 	//
-	internal const int INITIAL_INDENT_PROP = 1;
+	internal const int INITIAL_INDENT_PROP = 0;
 
 	//
 	// Decompilation property to specify default identation offset.
 	//
-	internal const int INDENT_GAP_PROP = 2;
+	internal const int INDENT_GAP_PROP = 4;
 
 	//
 	// Decompilation property to specify identation offset for case labels.
@@ -120,7 +120,8 @@ internal class Decompiler {
 		if (!(0 <= token && token <= Token.LAST_TOKEN))
 			throw new Exception ("Illegal argument");
 
-		Append ((char) token);
+		if (sourceTop > 0 && sourceBuffer [sourceTop - 1] != Token.SEMI)
+			Append ((char) token);
 		Append ((char) Token.EOL);
 	}
 
@@ -175,9 +176,8 @@ internal class Decompiler {
 		if (lbits != n) {
 			// if it's floating point, save as a Double bit pattern.
 			// (12/15/97 our scanner only returns Double for f.p.)
-			// lbits = Double.doubleToLongBits (n);
-			// FIXME: which is the simil for Double.doubleToLongBits?
-			lbits = (long) n;
+			lbits = BitConverter.DoubleToInt64Bits (n);
+			
 			Append ('D');
 			Append ((char) (lbits >> 48));
 			Append ((char) (lbits >> 32));
@@ -278,13 +278,17 @@ internal class Decompiler {
 
 	internal static string Decompile (string source, int flags)
 	{
+		return Decompile (source, flags, INITIAL_INDENT_PROP);
+	}
+
+	internal static string Decompile (string source, int flags, int indentCount)
+	{
 		int length = source.Length;
 
 		if (length == 0)
 			return "";
 
-		int indent = INITIAL_INDENT_PROP;
-		
+		int indent = indentCount * INDENT_GAP_PROP;
 		if (indent < 0)
 			throw new Exception ("Illegal argument");
 
@@ -503,7 +507,7 @@ internal class Decompiler {
 				result.Append ("var ");
 			else if (t == Token.SEMI) {
 				result.Append (';');
-				if (Token.EOL != GetNext(source, length, i)) {
+				if (Token.EOL != GetNext (source, length, i)) {
 					// separators in FOR
 					result.Append (' ');
 				}
@@ -660,7 +664,7 @@ internal class Decompiler {
 		return offset + length;
 	}
 
-	private static int PrintSourceNumber(string source, int offset, StringBuilder sb)
+	private static int PrintSourceNumber (string source, int offset, StringBuilder sb)
 	{
 		double number = 0.0;
 		char type = source [offset];
@@ -681,9 +685,7 @@ internal class Decompiler {
 				if (type == 'J') {
 					number = lbits;
 				} else {
-					// FIXME: what's the simil for Double.longBitsToDouble?
-					//number = Double.longBitsToDouble(lbits);
-					number = lbits;
+					number = BitConverter.Int64BitsToDouble (lbits);
 				}
 			}
 			offset += 4;
@@ -692,7 +694,11 @@ internal class Decompiler {
 			throw new Exception("Runtime exception");
 		}
 		if (sb != null) {
-			sb.Append (Convert.ToString (number));
+			string str = Convert.ToString (number);
+			sb.Append (str);
+			bool forceDouble = offset < source.Length && source [offset] == Token.DOT;
+			if (forceDouble && str.IndexOf ('.') == -1)
+				sb.Append (".0");
 		}
 		return offset;
 	}

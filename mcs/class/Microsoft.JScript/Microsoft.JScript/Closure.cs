@@ -39,12 +39,14 @@ namespace Microsoft.JScript {
 
 		public Closure (FunctionObject func)
 		{
+			this.method = func.method;
+			this.vsa_engine = func.vsa_engine;
 			this.func = func;
 		}
 
 		public override string ToString ()
 		{
-			return "[closure " + func.ToString () + "]";
+			return func.ToString ();
 		}
 	}
 }

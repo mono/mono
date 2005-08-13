@@ -60,11 +60,11 @@ namespace Microsoft.JScript {
 									bool hasArgumentsObject, string text,
 									VsaEngine engine)
 		{
-			// FIXME: return something useful
-			Console.WriteLine ("JScriptFunctionExpression({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})",
-				handle, name, methodName, formalParams, fields,
-				mustSaveStackLocals, hasArgumentsObject, text);
-			return new FunctionObject (null, null, null, null, null);
+			MethodInfo method = engine.ScriptObjectStackTop ().GetType ().GetMethod (methodName);
+			FunctionObject fun = new FunctionObject (method);
+			fun.source = text;
+			fun.vsa_engine = engine;
+			return fun;
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -129,14 +129,14 @@ namespace Microsoft.JScript {
 				} else
 					local_func = ig.DeclareLocal (typeof (FunctionObject));
 			}
-			build_closure (ec, full_name);
+			build_closure (ec, full_name, func_obj.source);
 			func_obj.body.Emit (new_ec);
 			new_ec.ig.Emit (OpCodes.Ret);
 
 			TypeManager.EndScope ();
 		}
 
-		internal void build_closure (EmitContext ec, string full_name)
+		internal void build_closure (EmitContext ec, string full_name, string encodedSource)
 		{
 			ILGenerator ig = ec.ig;
 			string name = func_obj.name;
@@ -156,7 +156,7 @@ namespace Microsoft.JScript {
 
 			ig.Emit (OpCodes.Ldc_I4_0); // FIXME: this hard coded for now.
 			ig.Emit (OpCodes.Ldc_I4_0); // FIXME: this hard coded for now.
-			ig.Emit (OpCodes.Ldstr, "STRING_REPRESENTATION_OF_THE_FUNCTION"); // FIXME
+			ig.Emit (OpCodes.Ldstr, Decompiler.Decompile (encodedSource, 0, 0).Trim ());
 			CodeGenerator.load_engine (InFunction, ig);
 			ig.Emit (OpCodes.Call, typeof (FunctionExpression).GetMethod ("JScriptFunctionExpression"));
 			ig.Emit (OpCodes.Stloc, local_func);

@@ -1,3 +1,43 @@
+2005-08-13  Florian Gross  <flgr@ccan.de>
+
+	* DateConstructor.cs, StringConstructor.cs, ObjectConstructor.cs,
+	NumberConstructor.cs, FunctionConstructor.cs, BooleanConstructor.cs,
+	ArrayConstructor.cs, RegExpConstructor.cs, ErrorConstructor.cs:
+	Added name
+	* ScriptObject.cs: Added HasMethod, CallMethod uses
+	SemanticAnalyser.map_to_prototype and forwards engine
+	* ArrayPrototype.cs: Implemented sort, added SortHelper
+	* expression.cs: Implemented delete operator code generation
+	* NumericUnary.cs: Implemented EvaluateUnary (currently unused)
+	* ObjectPrototype.cs: smartToString falls back to toString instead
+	of duplicated code
+	* StringPrototype.cs: Fixed replace logic for replacement functions
+	* FunctionDeclaration.cs: More user function infrastructure
+	* FunctionObject.cs: Implemented ToString for user functions. Moved
+	name, return_type, parameters, ToString up to ScriptFunction.
+	Constructors set _prototype
+	* Closure.cs: More user function infrastructure
+	* Convert.cs: ToString Uses smartToString if no custom toString
+	exists
+	* BooleanObject.cs: Constructor now uses Convert.ToBoolean
+	* LateBindings.cs: GetMethodFlags logic for anonymous functions.
+	Initial implementation of DeleteMember. Implemented constructor
+	cases in Call and CallValue
+	* Relational.cs: Implemented EvaluateRelational, JScriptCompare
+	* Parser.cs: Fixed bugs in decompiler calls so that the decompiled
+	source code matches the original one
+	* FunctionPrototype.cs: Fixed toString function check
+	* Decompiler.cs: Adjusted indent properties. Made AddEOL not add
+	semicolons to lines which already end with one. Implemented double
+	literal logic
+	* SemanticAnalyser.cs: Added more prototype mappings
+	* ErrorConstructor.cs: Added ErrorTypeToName
+	* FunctionExpression.cs: More user function infrastructure
+	* ScriptFunction.cs: Added vsa_engine. Moved name, return_type,
+	parameters, encodedSource, ToString up from FunctionObject.
+	Implemented CreateInstance. Added initial setter for prototype.
+	Added GetDefaultValue
+
 2005-08-09  Florian Gross  <flgr@ccan.de>
 
 	* BitwiseBinary.cs: Implement LeftShift, RightShift and

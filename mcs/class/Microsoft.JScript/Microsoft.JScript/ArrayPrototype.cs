@@ -234,9 +234,116 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Array_sort)]
 		public static object sort (object thisObj, object function)
 		{
-			throw new NotImplementedException ();
+			// TODO: Shouldn't this be generic?
+			SemanticAnalyser.assert_type (thisObj, typeof (ArrayObject));
+			ArrayObject array_obj = (ArrayObject) thisObj;
+			ScriptFunction fun = function as ScriptFunction;
+			uint n = (uint) array_obj.length;
+			if (n > 1)
+				SortHelper.qsort (array_obj.elems, 0, n - 1, SortHelper.CompareDelegateFor (fun));
+			return array_obj;
 		}
 
+		private class SortHelper {
+			internal delegate sbyte CompareDelegate (Hashtable elems, bool b1, object o1, uint i2);
+			private ScriptFunction cmp;
+
+			internal static CompareDelegate CompareDelegateFor (ScriptFunction fun) {
+				if (fun == null)
+					return new CompareDelegate (SortHelper.nativeCompare);
+
+				SortHelper helper = new SortHelper (fun);
+				return new CompareDelegate (helper.userCompare);
+			}
+
+			internal SortHelper (ScriptFunction cmp)
+			{
+				this.cmp = cmp;
+			}
+
+			// Calls a user supplied compare ScriptFunction
+			internal sbyte userCompare (Hashtable elems, bool b1, object o1, uint i2)
+			{
+				bool b2 = !elems.ContainsKey (i2);
+				if (b1 && b2)
+					return 0;
+				else if (b1)
+					return 1;
+				else if (b2)
+					return -1;
+
+				object o2 = elems [i2];
+				if (o1 == null && o2 == null)
+					return 0;
+				if (o1 == null)
+					return 1;
+				else if (o2 == null)
+					return -1;
+
+				int res = Convert.ToInt32 (cmp.Invoke (null, o1, o2));
+				if (res < 0)
+					return -1;
+				else if (res > 0)
+					return 1;
+				else
+					return 0;
+			}
+
+			// Uses a built-in compare function
+			internal static sbyte nativeCompare (Hashtable elems, bool b1, object o1_, uint i2)
+			{
+				bool b2 = !elems.ContainsKey (i2);
+				if (b1 && b2)
+					return 0;
+				else if (b1)
+					return 1;
+				else if (b2)
+					return -1;
+
+				IComparable o1 = o1_ as IComparable;
+				IComparable o2 = elems [i2] as IComparable;
+				if (o1 == null && o2 == null)
+					return 0;
+				if (o1 == null)
+					return 1;
+				else if (o2 == null)
+					return -1;
+
+				return (sbyte) Relational.JScriptCompare (o1, o2);
+			}
+
+			internal static void swap (Hashtable elems, uint i1, uint i2)
+			{
+				object temp = elems [i1];
+				elems [i1] = elems [i2];
+				elems [i2] = temp;
+			}
+
+			internal static uint partition (Hashtable elems, uint left, uint right, CompareDelegate cmp)
+			{
+				uint pivotIndex = left + (uint) MathObject.random_gen.Next ((int) right - (int) left + 1);
+				bool pivotMissing = !elems.ContainsKey (pivotIndex);
+				object pivotValue = elems [pivotIndex];
+				swap (elems, pivotIndex, right);
+				uint storeIndex = left;
+				for (uint i = left; i < right; i++)
+					if (cmp (elems, pivotMissing, pivotValue, i) >= 0)
+						swap (elems, storeIndex++, i);
+				swap (elems, right, storeIndex);
+				return storeIndex;
+			}
+
+			internal static void qsort (Hashtable elems, uint beg, uint end, CompareDelegate cmp)
+			{
+				if (end > beg) {
+					uint index = partition (elems, beg, end, cmp);
+					if (index > 0)
+						qsort (elems, beg, index - 1, cmp);
+					qsort (elems, index + 1, end, cmp);
+				}
+			}
+		}
+	
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs | JSFunctionAttributeEnum.HasEngine, JSBuiltin.Array_splice)]
 		public static ArrayObject splice (object thisObj, VsaEngine engine,
 						  double start, double deleteCnt, 

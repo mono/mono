@@ -99,7 +99,7 @@ namespace Microsoft.JScript {
 			JSObject obj = (JSObject) thisObj;
 			object val = obj.GetDefaultValue (typeof (string), true);
 			if (val == thisObj)
-				return "[object " + obj.ClassName + "]";
+				return toString (thisObj);
 			else
 				return Convert.ToString (val);
 		}

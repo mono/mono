@@ -43,44 +43,8 @@ namespace Microsoft.JScript {
 
 		internal BooleanObject (object value)
 		{
-			if (value == null)
-				this.value = false;
-			else {
-				IConvertible ic = value as IConvertible;
-
-				if (ic == null) {
-					this.value = true;
-					return;
-				}
-
-				TypeCode tc = ic.GetTypeCode ();
-				
-				switch (tc) {
-				case TypeCode.Boolean:
-					this.value = ic.ToBoolean (null);
-					break;
-				case TypeCode.String:
-					string str = ic.ToString (null);
-					if (str == string.Empty)
-						this.value = false;
-					else 
-						this.value = true;
-					break;
-				case TypeCode.Double:
-					double d = ic.ToDouble (null);
-					if (d.Equals (Double.NaN) || d == 0)
-						this.value = false;
-					else
-						this.value = true;
-					break;
-				case TypeCode.DBNull:
-					this.value = false;
-					break;
-				default:
-					throw new Exception ("Unknown TypeCode, " + tc.ToString ());
-				}
-			}
-		}		
+			this.value = Convert.ToBoolean (value);
+		}
 
 		public new Type GetType ()
 		{

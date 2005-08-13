@@ -65,6 +65,25 @@ namespace Microsoft.JScript {
 			if (construct) {
 				if (brackets) {
 				} else {
+					JSFieldInfo field = null;
+					JSObject js_obj = obj as JSObject;
+					if (js_obj != null)
+						field = js_obj.GetField (right_hand_side) as JSFieldInfo;
+					if (field != null) {
+						JSObject val = field.GetValue (right_hand_side) as JSObject;
+						return CallValue (obj, val, arguments, construct, brackets, engine);
+					}
+
+					JSObject proto_obj = js_obj.proto as JSObject;
+					if (proto_obj != null) {
+						JSFieldInfo fi = proto_obj.GetField (right_hand_side);
+						if (fi != null) {
+							JSObject val = fi.GetValue (right_hand_side) as JSObject;
+							return CallValue (obj, val, arguments, construct, brackets, engine);
+						}
+					}
+
+					Console.WriteLine ("LateBinding:Call: no constructor for {0}.{1}", obj, right_hand_side);
 				}
 			} else {
 				if (brackets) {
@@ -107,7 +126,7 @@ namespace Microsoft.JScript {
 							}
 						}
 					}
-					
+
 					if (method == null)
 						Console.WriteLine ("LateBinding:Call: method is null for {0}.{1}!", obj, right_hand_side);
 
@@ -132,6 +151,17 @@ namespace Microsoft.JScript {
 
 		internal static void GetMethodFlags (MethodInfo method, out bool has_engine, out bool has_var_args, out bool has_this)
 		{
+			//
+			// Very hackish. It would be better if the
+			// anonymous methods could be decorated with the right attributes.
+			//
+			if (method.DeclaringType.IsSubclassOf (typeof (GlobalScope))) {
+				has_engine = true;
+				has_var_args = false;
+				has_this = true;
+				return;
+			}
+
 			JSFunctionAttribute [] custom_attrs = (JSFunctionAttribute [])
 				method.GetCustomAttributes (typeof (JSFunctionAttribute), true);
 			//
@@ -276,9 +306,9 @@ namespace Microsoft.JScript {
 				}
 
 				if (val is Closure)
-					return ((Closure) val).func.Invoke (thisObj, arguments);
+					return ((Closure) val).func.CreateInstance (arguments);
 				else if (val is FunctionObject)
-					return ((FunctionObject) val).Invoke (thisObj, arguments);
+					return ((FunctionObject) val).CreateInstance (arguments);
 			} else if (brackets) {
 				if (!(val is JSObject))
 					throw new Exception ("val has to be a JSObject, but is " + (val == null ? "null" : val.GetType ().ToString ()));
@@ -325,6 +355,24 @@ namespace Microsoft.JScript {
 
 		public static bool DeleteMember (object obj, string name)
 		{
+			if (obj is Closure)
+				obj = ((Closure) obj).func;
+
+			if (obj is JSObject) {
+				JSObject js_obj = (JSObject) obj;
+				uint index = Convert.ToUint32 (name);
+				// Numeric index?
+				if (Convert.ToString (index) == Convert.ToString (name) && js_obj.elems.ContainsKey (index)) {
+					js_obj.elems.Remove (index);
+					return true;
+				} else if (js_obj.elems.ContainsKey (name)) {
+					js_obj.elems.Remove (name);
+					return true;
+				} else
+					return false;
+			}
+
+			Console.WriteLine ("DeleteMember: obj = {0}, rhs = {1}", obj, name);
 			throw new NotImplementedException ();
 		}
 
@@ -335,6 +383,13 @@ namespace Microsoft.JScript {
 			if (obj is Closure)
 				obj = ((Closure) obj).func;
 
+			ScriptObject jsobj = obj as ScriptObject;
+			if (jsobj != null) {
+				JSFieldInfo field = jsobj.GetField (right_hand_side);
+				if (field != null)
+					return field.GetValue (right_hand_side);
+			}
+
 			Type type = obj.GetType ();
 			if (obj is GlobalScope)
 				type = typeof (GlobalObject);
@@ -342,12 +397,8 @@ namespace Microsoft.JScript {
 			MemberInfo [] members = type.GetMember (right_hand_side,
 				BindingFlags.FlattenHierarchy | BindingFlags.GetField | BindingFlags.GetProperty |
 				BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-			if (obj is ScriptObject && members.Length == 0) {
-				ScriptObject jsobj = obj as ScriptObject;
-				JSFieldInfo field = jsobj.GetField (right_hand_side);
-				if (field != null)
-					return field.GetValue (right_hand_side);
 
+			if (jsobj != null && members.Length == 0) {
 				type = SemanticAnalyser.map_to_prototype (jsobj);
 				if (type == null)
 					Console.WriteLine ("prototype for {0} ({1}) is null!", jsobj, jsobj.GetType ());

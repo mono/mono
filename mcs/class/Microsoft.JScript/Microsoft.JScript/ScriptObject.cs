@@ -171,6 +171,13 @@ namespace Microsoft.JScript {
 			get { throw new NotImplementedException (); }
 		}
 
+		internal bool HasMethod (string name)
+		{
+			Type prototype = SemanticAnalyser.map_to_prototype (this);
+			MethodInfo method = prototype.GetMethod (name, BindingFlags.Public | BindingFlags.Static);
+			return method != null;
+		}
+
 		internal object CallMethod (string name, params object [] args)
 		{
 			Type prototype = SemanticAnalyser.map_to_prototype (this);
@@ -184,7 +191,7 @@ namespace Microsoft.JScript {
 
 		internal object CallMethod (MethodInfo method, params object [] args)
 		{
-			return method.Invoke (null, LateBinding.assemble_args (this, method, args, null));
+			return method.Invoke (null, LateBinding.assemble_args (this, method, args, engine));
 		}
 	}
 }	

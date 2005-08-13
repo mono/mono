@@ -52,13 +52,23 @@ namespace Microsoft.JScript {
 		[DebuggerHiddenAttribute]
 		public double EvaluateRelational (object v1, object v2)
 		{
-			return -1;
+			return JScriptCompare (v1, v2);
 		}
 
 
 		public static double JScriptCompare (object v1, object v2)
 		{
-			throw new NotImplementedException ();
+			object p1 = Convert.ToPrimitive (v1, null);
+			object p2 = Convert.ToPrimitive (v2, null);
+			if (Convert.IsString (p1) && Convert.IsString (p2)) {
+				string s1 = Convert.ToString (p1);
+				string s2 = Convert.ToString (p2);
+				return s1.CompareTo (s2);
+			} else {
+				double n1 = Convert.ToNumber (p1);
+				double n2 = Convert.ToNumber (p2);
+				return n1 - n2;
+			}
 		}
 
 		internal override bool Resolve (IdentificationTable context)

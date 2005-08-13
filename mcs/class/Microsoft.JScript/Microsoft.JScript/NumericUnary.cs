@@ -45,6 +45,21 @@ namespace Microsoft.JScript {
 		[DebuggerHiddenAttribute]
 		public object EvaluateUnary (object v)
 		{
+			switch (oper) {
+			case JSToken.Minus:
+				return -Convert.ToNumber (v);
+
+			case JSToken.Plus:
+				return Convert.ToNumber (v);
+
+			case JSToken.BitwiseNot:
+				return ~Convert.ToInt32 (v);
+
+			case JSToken.LogicalNot:
+				return !Convert.ToBoolean (v);
+			}
+
+			Console.WriteLine ("EvaluateUnary: unknown oper {0}", oper);
 			throw new NotImplementedException ();
 		}
 

@@ -391,6 +391,13 @@ namespace Microsoft.JScript {
 			return ToObject (value, engine);
 		}
 
+		internal static RegExpObject ToRegExp (object regExp)
+		{
+			if (regExp is RegExpObject)
+				return (RegExpObject) regExp;
+			else
+				return RegExpConstructor.Ctr.Invoke (regExp);
+		}
 
 		internal static string ToString (object obj)
 		{
@@ -427,10 +434,13 @@ namespace Microsoft.JScript {
 			case TypeCode.Object:
 				if (value is StringObject)
 					return ((StringObject) value).value;
-				else if (value is Closure)
-					return FunctionPrototype.toString (((Closure) value).func);
-				else if (value is ScriptObject)
-					return (string) ((ScriptObject) value).CallMethod ("toString");
+				else if (value is ScriptObject) {
+					ScriptObject obj_value = (ScriptObject) value;
+					if (obj_value.HasMethod ("toString"))
+						return (string) obj_value.CallMethod ("toString");
+					else
+						return (string) ObjectPrototype.smartToString ((JSObject) obj_value);
+				}
 
 				Console.WriteLine ("value.GetType = {0}", value.GetType ());
 				throw new NotImplementedException ();
@@ -444,14 +454,6 @@ namespace Microsoft.JScript {
 				Console.WriteLine ("tc = {0}", tc);
 				throw new NotImplementedException ();
 			}
-		}
-
-		internal static RegExpObject ToRegExp (object regExp)
-		{
-			if (regExp is RegExpObject)
-				return (RegExpObject) regExp;
-			else
-				return RegExpConstructor.Ctr.Invoke (regExp);
 		}
 
 		public static string ToString (bool b)

@@ -38,6 +38,7 @@ namespace Microsoft.JScript {
 		internal BooleanConstructor ()
 		{
 			_prototype = BooleanPrototype.Proto;
+			name = "Boolean";
 		}
 
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]	
