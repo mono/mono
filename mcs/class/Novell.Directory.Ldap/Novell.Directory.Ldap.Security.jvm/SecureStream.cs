@@ -180,7 +180,7 @@ namespace Novell.Directory.Ldap.Security
 			_stream.Write (wrappedToken, 0, wrappedToken.Length);
 		}
 
-		private static int NetworkByteOrderToInt(byte [] buf, int start, int count) 
+		internal static int NetworkByteOrderToInt(byte [] buf, int start, int count) 
 		{
 			int answer = 0;
 			for (int i = 0; i < count; i++) {
@@ -190,7 +190,7 @@ namespace Novell.Directory.Ldap.Security
 			return answer;
 		}
 
-		private static void IntToNetworkByteOrder(int num, byte [] buf, int start, int count) 
+		internal static void IntToNetworkByteOrder(int num, byte [] buf, int start, int count) 
 		{
 			for (int i = count-1; i >= 0; i--) {
 				buf [start + i] = (byte)(num & 0xff);

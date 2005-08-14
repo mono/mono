@@ -1,3 +1,9 @@
+2005-14-08  Boris Kirzner <borisk@mainsoft.com>
+	* LdapConnection.cs: 
+		- Values from app settings are not stored anymore in app domain.
+		- Exchange tokens until negotiatin is complete.
+		- Added new property for authentication mech, stored in app settings.
+
 2005-28-07  Boris Kirzner <borisk@mainsoft.com>
 	* Novell.Directory.Ldap.Security.jvm: added new directory containing 
 	TARGET_JVM specific classes for kerberos authentication.

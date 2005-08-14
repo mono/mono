@@ -41,6 +41,12 @@ namespace Novell.Directory.Ldap.Security
 {
 	internal class Krb5Helper
 	{
+		enum QOP {
+			NO_PROTECTION = 1,
+			INTEGRITY_ONLY_PROTECTION = 2,
+			PRIVACY_PROTECTION = 4
+		}
+
 		#region Fields
 
 		internal static readonly sbyte [] EmptyToken = new sbyte [0];
@@ -92,8 +98,39 @@ namespace Novell.Directory.Ldap.Security
 
 		public sbyte [] ExchangeTokens(sbyte [] clientToken)
 		{
-			if (Context.isEstablished ())
-				return Krb5Helper.EmptyToken;
+			if (Context.isEstablished ()) {
+				if (clientToken == null || clientToken.Length == 0)
+					return Krb5Helper.EmptyToken;
+
+				MessageProp messageProp = new MessageProp (0, false);
+
+				//final handshake
+				byte [] challengeData = (byte []) TypeUtils.ToByteArray (clientToken);
+				byte [] gssOutToken = Unwrap (challengeData, 0, challengeData.Length, messageProp);
+
+				QOP myCop = QOP.NO_PROTECTION;
+
+				if (_encryption)
+					myCop = QOP.PRIVACY_PROTECTION;
+				else if (_signing || (((QOP)gssOutToken [0] & QOP.INTEGRITY_ONLY_PROTECTION) != 0))
+					myCop = QOP.INTEGRITY_ONLY_PROTECTION;
+
+				if ((myCop & (QOP)gssOutToken [0]) == 0)
+					throw new LdapException ("Server does not support the requested security level", 80, "");
+
+				int srvMaxBufSize = SecureStream.NetworkByteOrderToInt (gssOutToken, 1, 3);
+
+				//int rawSendSize = Context.getWrapSizeLimit(0, _encryption, srvMaxBufSize);
+
+				byte [] gssInToken = new byte [4];
+				gssInToken [0] = (byte) myCop;
+
+				SecureStream.IntToNetworkByteOrder (srvMaxBufSize, gssInToken, 1, 3);
+
+				gssOutToken = Wrap (gssInToken, 0, gssInToken.Length, messageProp);
+
+				return TypeUtils.ToSByteArray (gssOutToken);
+			}
 
 			sbyte [] token;
 			try {
@@ -121,13 +158,25 @@ namespace Novell.Directory.Ldap.Security
 			return token;
 		}
 
-		public byte [] Wrap(byte [] outgoing, int start, int len)
+		public byte [] Wrap(byte [] outgoing, int start, int len) 
+		{
+			return Wrap (outgoing, start, len, _messageProperties);
+		}
+
+		public byte [] Wrap(byte [] outgoing, int start, int len, MessageProp messageProp)
 		{
 			if (!Context.isEstablished ())
 				throw new LdapException ("GSSAPI authentication not completed",LdapException.OTHER,"");
 
+			if (!(Context.getConfState () || Context.getIntegState ())) {
+				// in the case no encryption and no integrity required - return the original data
+				byte [] buff = new byte [len];
+				Array.Copy (outgoing, start, buff, 0, len);
+				return buff;
+			}
+
 			try {
-				WrapPrivilegedAction action = new WrapPrivilegedAction (Context, outgoing, start, len, _messageProperties);
+				WrapPrivilegedAction action = new WrapPrivilegedAction (Context, outgoing, start, len, messageProp);
 				return (byte []) Subject.doAs (_subject, action);				
 			} 
 			catch (PrivilegedActionException e) {
@@ -135,13 +184,25 @@ namespace Novell.Directory.Ldap.Security
 			}
 		}
 
-		public byte [] Unwrap(byte [] incoming, int start, int len)
+		public byte [] Unwrap(byte [] incoming, int start, int len) 
+		{
+			return Unwrap (incoming, start, len, _messageProperties);
+		}
+
+		public byte [] Unwrap(byte [] incoming, int start, int len, MessageProp messageProp)
 		{
 			if (!Context.isEstablished ())
 				throw new LdapException ("GSSAPI authentication not completed",LdapException.OTHER,"");
 
+			if (!(Context.getConfState () || Context.getIntegState ())) {
+				// in the case no encryption and no integrity required - return the original data
+				byte [] buff = new byte [len];
+				Array.Copy (incoming, start, buff, 0, len);
+				return buff;
+			}
+
 			try {
-				UnwrapPrivilegedAction action = new UnwrapPrivilegedAction (Context, incoming, start, len, _messageProperties);
+				UnwrapPrivilegedAction action = new UnwrapPrivilegedAction (Context, incoming, start, len, messageProp);
 				return (byte []) Subject.doAs (_subject, action);
 			} 
 			catch (PrivilegedActionException e) {

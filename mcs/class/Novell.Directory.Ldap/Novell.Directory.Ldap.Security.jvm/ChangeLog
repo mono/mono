@@ -1,3 +1,9 @@
+2005-14-08  Boris Kirzner <borisk@mainsoft.com>
+	* Krb5Helper.cs: ExchangeTokens does proper final handshaking. Wrap/Unwrap
+	perform no action if no integrity and encryption accured.
+	* SecureStream.cs: Private convertion methods became internal, used by 
+	Krb5Helper.
+
 2005-28-07  Boris Kirzner <borisk@mainsoft.com>
 	* Novell.Directory.Ldap.Security.jvm/ExchangeTokenPrivilegedAction.cs,
 	Novell.Directory.Ldap.Security.jvm/CreateContextPrivilegedAction.cs,

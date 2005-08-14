@@ -480,9 +480,6 @@ namespace Novell.Directory.Ldap
 		private static System.Object nameLock; // protect agentNum
 		private static int lConnNum = 0; // Debug, LdapConnection number
 		private System.String name; // String name for debug
-
-		private const string LDAP_SECURITY_MECH = "System.DirectoryServices.SecurityMech";
-		private const string LDAP_SECURITY_APP_NAME = "System.DirectoryServices.SecurityAppName";
 		
 		/// <summary> Used with search to specify that the scope of entrys to search is to
 		/// search only the base obect.
@@ -1559,7 +1556,17 @@ namespace Novell.Directory.Ldap
 #if TARGET_JVM
 			// stopping reader to enable stream replace after secure binding is complete, see Connection.ReplaceStreams()
 			if (mech != null)
+			{
+				if (conn.BindSemIdClear) {
+					// need to acquire a semaphore only if bindSemId is clear
+					// because if we receive SASL_BIND_IN_PROGRESS the semaphore is not
+					// released when the response is queued
+					conn.acquireWriteSemaphore(msgId);
+					conn.BindSemId = msgId;
+				}
 				conn.stopReaderOnReply(msgId);
+			}
+			else
 #endif
 			// The semaphore is released when the bind response is queued.
 			conn.acquireWriteSemaphore(msgId);
@@ -1586,11 +1593,19 @@ namespace Novell.Directory.Ldap
 				Krb5Helper krb5Helper = new Krb5Helper ("ldap@" + conn.Host, subject, authenticationTypes, SecurityMech);
 				sbyte [] token = krb5Helper.ExchangeTokens (Krb5Helper.EmptyToken);
 
-				LdapResponseQueue queue = Bind(LdapConnection.Ldap_V3, username, token, null, null, "GSS-SPNEGO");
-				LdapResponse res = (LdapResponse) queue.getResponse ();
-				token = ((RfcBindResponse)res.Asn1Object.Response).ServerSaslCreds.byteValue ();
+				for (;;) {
+					LdapResponseQueue queue = Bind(LdapConnection.Ldap_V3, username, token, null, null, AuthenticationMech);
+					LdapResponse res = (LdapResponse) queue.getResponse ();
+					Asn1OctetString serverSaslCreds = ((RfcBindResponse)res.Asn1Object.Response).ServerSaslCreds;
+					token = serverSaslCreds != null ? serverSaslCreds.byteValue () : null;
 
-				token = krb5Helper.ExchangeTokens(token == null ? Krb5Helper.EmptyToken : token);
+					token = krb5Helper.ExchangeTokens(token == null ? Krb5Helper.EmptyToken : token);
+
+					if (res.ResultCode != LdapException.SASL_BIND_IN_PROGRESS)
+						break;
+
+					conn.ReplaceStreams (conn.InputStream,conn.OutputStream);
+				}
 
 				System.IO.Stream inStream = conn.InputStream;
 				System.IO.Stream newIn = new SecureStream (inStream, krb5Helper);
@@ -1603,9 +1618,7 @@ namespace Novell.Directory.Ldap
 		private string SecurityMech
 		{
 			get {
-				string securityMech = (string) AppDomain.CurrentDomain.GetData (LDAP_SECURITY_MECH);
-
-				if (securityMech == null) {
+				string securityMech = null;
 					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
 					if (config != null) 
 						securityMech = config ["securitymech"];
@@ -1613,8 +1626,6 @@ namespace Novell.Directory.Ldap
 					if (securityMech == null) 
 						throw new ArgumentException("Security mechanism id not found in application settings");
 
-					AppDomain.CurrentDomain.SetData (LDAP_SECURITY_MECH,securityMech);
-				}
 				return securityMech;
 			}
 		}
@@ -1622,9 +1633,7 @@ namespace Novell.Directory.Ldap
 		private string SecurityAppName
 		{
 			get {
-				string securityAppName = (string) AppDomain.CurrentDomain.GetData (LDAP_SECURITY_APP_NAME);
-
-				if (securityAppName == null) {
+				string securityAppName = null; 
 					NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
 					if (config != null) 
 						securityAppName = config ["securityappname"];
@@ -1632,9 +1641,22 @@ namespace Novell.Directory.Ldap
 					if (securityAppName == null) 
 						throw new ArgumentException("Application section name not found in application settings");
 
-					AppDomain.CurrentDomain.SetData (LDAP_SECURITY_APP_NAME,securityAppName);
-				}
 				return securityAppName;
+			}
+		}
+
+		private string AuthenticationMech
+		{
+			get {
+				string authenticationMech = null;
+				NameValueCollection config = (NameValueCollection) ConfigurationSettings.GetConfig ("System.DirectoryServices/Settings");
+				if (config != null) 
+					authenticationMech = config ["authenticationmech"];
+
+				if (authenticationMech == null) 
+					throw new ArgumentException("Authentication mechanism not found in application settings");
+
+				return authenticationMech;
 			}
 		}
 #endif
