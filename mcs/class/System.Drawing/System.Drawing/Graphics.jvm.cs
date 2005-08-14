@@ -15,6 +15,20 @@ namespace System.Drawing {
 
 		readonly awt.Graphics2D _nativeObject;
 		readonly Image _image;
+		
+		Matrix _transform;
+		GraphicsUnit _pageUnit = GraphicsUnit.Display;
+		float _pageScale = 1.0f;
+
+		static readonly float [] _unitConversion = {
+													   1,								// World
+													   1,								// Display
+													   1,								// Pixel
+													   DefaultScreenResolution / 72.0f,	// Point
+													   DefaultScreenResolution,			// Inch
+													   DefaultScreenResolution / 300.0f,// Document
+													   DefaultScreenResolution / 25.4f	// Millimeter
+												   };
 
 		static internal readonly bool IsHeadless;
 	
@@ -35,6 +49,8 @@ namespace System.Drawing {
 		private Graphics (Image image) {
 			_nativeObject = (awt.Graphics2D)image.NativeObject.getGraphics();
 			_image = image;
+			_transform = new Matrix ();
+			_nativeObject.setTransform( _transform.NativeObject );
 
 //			NativeObject.setRenderingHint(awt.RenderingHints.KEY_TEXT_ANTIALIASING,awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 //
@@ -530,13 +546,28 @@ namespace System.Drawing {
 
 		
 		public void DrawImage (Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit) {
-			//TODO:GraficsUnit
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+
 			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,destRect.X,destRect.Y,destRect.Width,destRect.Height,srcRect.X,srcRect.Y,srcRect.Width,srcRect.Height,null);
+			g.drawImage(image.NativeObject,
+				destRect.X,
+				destRect.Y,
+				destRect.X + destRect.Width,
+				destRect.Y + destRect.Height,
+				srcRect.X,
+				srcRect.Y,
+				srcRect.X + srcRect.Width,
+				srcRect.Y + srcRect.Height,
+				null);
 		}
 		
 		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit) {			
-			//TODO:GraficsUnit
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+
 			java.awt.Graphics2D g = NativeObject;
 			g.drawImage(image.NativeObject,
 				(int)destRect.X,
@@ -564,7 +595,12 @@ namespace System.Drawing {
 		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
 			ImageAttributes imageAttr) {
-			//TBD: GraphicsUnit, ImageAttributes
+			
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+			
+			//TBD: ImageAttributes
 			Matrix m = new Matrix(srcRect, destPoints);
 			NativeObject.drawImage(image.NativeObject,m.NativeObject,null);
 		}
@@ -577,14 +613,22 @@ namespace System.Drawing {
 		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, 
 			ImageAttributes imageAttr) {
-			//TBD: GraphicsUnit, ImageAttributes
+
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+
+			//TBD: ImageAttributes
 			Matrix m = new Matrix(srcRect, destPoints);
 			NativeObject.drawImage(image.NativeObject,m.NativeObject,null);
 		}
 
 		
 		public void DrawImage (Image image, int x, int y, Rectangle srcRect, GraphicsUnit srcUnit) {			
-			//TODO:units
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+
 			java.awt.Graphics2D g = NativeObject;
 			g.drawImage(image.NativeObject,x,y,srcRect.Width,srcRect.Height,srcRect.X,srcRect.Y,srcRect.Width,srcRect.Height,null);
 		}
@@ -595,7 +639,11 @@ namespace System.Drawing {
 		}
 
 		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit) {	
-			//TODO:units,casts
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+			
+			//TBD: casts
 			java.awt.Graphics2D g = NativeObject;
 			g.drawImage(image.NativeObject,
 				(int)x,
@@ -629,7 +677,10 @@ namespace System.Drawing {
 #endif
 		
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit) {
-			//TODO:units
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+
 			java.awt.Graphics2D g = NativeObject;
 			g.drawImage(image.NativeObject,
 				(int)destRect.X,
@@ -650,14 +701,20 @@ namespace System.Drawing {
 #endif
 		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit) {
-			//TODO:units
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+
 			java.awt.Graphics2D g = NativeObject;
 			g.drawImage(image.NativeObject,destRect.X,destRect.Y,destRect.Width,destRect.Height,srcX,srcY,srcWidth,srcHeight,null);
 		}
 
 		
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs) {
-			//TODO:units
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+
 			java.awt.Graphics2D g = NativeObject;
 			g.drawImage(image.NativeObject,
 				(int)destRect.X,
@@ -671,7 +728,11 @@ namespace System.Drawing {
 		}
 		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr) {			
-			//TODO:units,attributes
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+			
+			//TBD: attributes
 			java.awt.Graphics2D g = NativeObject;
 			g.drawImage(image.NativeObject,
 				destRect.X,
@@ -687,14 +748,14 @@ namespace System.Drawing {
 #if INTPTR_SUPPORT		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			//TODO:units,attributes, callback
+			//TBD:units,attributes, callback
 			java.awt.Graphics2D g = (java.awt.Graphics2D)nativeObject;
 			g.drawImage(image.NativeObject,destRect.X,destRect.Y,destRect.Width,destRect.Height,srcX,srcY,srcWidth,srcHeight,null);
 		}
 		
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
-			//TODO:units,attributes, callback
+			//TBD:units,attributes, callback
 			java.awt.Graphics2D g = (java.awt.Graphics2D)nativeObject;
 			g.drawImage(image.NativeObject,
 				(int)destRect.X,
@@ -709,7 +770,7 @@ namespace System.Drawing {
 
 		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, IntPtr callbackData)
 		{
-			//TODO:units,attributes, callback
+			//TBD:units,attributes, callback
 			java.awt.Graphics2D g = (java.awt.Graphics2D)nativeObject;
 			g.drawImage(image.NativeObject,
 				(int)destRect.X,
@@ -724,7 +785,7 @@ namespace System.Drawing {
 		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, IntPtr callbackData)
 		{
-			//TODO:units,attributes, callback
+			//TBD:units,attributes, callback
 			java.awt.Graphics2D g = (java.awt.Graphics2D)nativeObject;
 			g.drawImage(image.NativeObject,
 				destRect.X,
@@ -1434,13 +1495,13 @@ namespace System.Drawing {
 
 		
 		public SizeF MeasureString (string text, Font font, PointF origin, StringFormat format) {
-			//TODO: MeasureDraw still not dealing with clipping region of dc
+			//TBD: MeasureDraw still not dealing with clipping region of dc
 			return MeasureDraw(text,font,null,new RectangleF(origin.X,origin.Y,99999f,99999f),format,false);
 		}
 
 		
 		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, out int charactersFitted, out int linesFilled) {	
-			//TODO: charcount
+			//TBD: charcount
 			throw new NotImplementedException();
 		}
 		#endregion
@@ -1598,7 +1659,7 @@ namespace System.Drawing {
 		
 		#region TransformPoints
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF [] pts) {
-			//TODO:CoordinateSpace
+			//TBD:CoordinateSpace
 			java.awt.Graphics2D g = NativeObject;
 			java.awt.geom.AffineTransform tr = g.getTransform();
 			float[] fpts = new float[2];
@@ -1612,7 +1673,7 @@ namespace System.Drawing {
 		}
 
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, Point [] pts) {						
-			//TODO:CoordinateSpace
+			//TBD:CoordinateSpace
 			java.awt.Graphics2D g = NativeObject;
 			java.awt.geom.AffineTransform tr = g.getTransform();
 			float[] fpts = new float[2];
@@ -1647,7 +1708,7 @@ namespace System.Drawing {
 		
 		public void TranslateTransform (float dx, float dy, MatrixOrder order) {
 			ConcatenateTransform(
-				geom.AffineTransform.getTranslateInstance(dx, dy),
+				geom.AffineTransform.getTranslateInstance(dx, dy), 
 				order);
 		}
 		#endregion
@@ -1679,7 +1740,7 @@ namespace System.Drawing {
 		}
 
 		public CompositingMode CompositingMode {
-			//TODO:check this carefully
+			//TBD:check this carefully
 			get {
 				return (NativeObject.getComposite() == awt.AlphaComposite.SrcOver) ?
 					CompositingMode.SourceOver : CompositingMode.SourceCopy;
@@ -1709,7 +1770,7 @@ namespace System.Drawing {
 
 		public float DpiY {
 			get {
-				//TODO: assume 72 (screen) for now
+				//TBD: assume 72 (screen) for now
 				return DpiX;
 			}
 		}
@@ -1735,27 +1796,43 @@ namespace System.Drawing {
 
 		public bool IsVisibleClipEmpty {
 			get {
-				//TODO:correct this
+				//TBD:correct this
 				return IsClipEmpty;
 			}
 		}
 
 		public float PageScale {
 			get {
-				throw new NotImplementedException();
+				return _pageScale;
 			}
 			set {
-				throw new NotImplementedException();
+				_pageScale = value;
+				UpdateInternalTransform();
 			}
 		}
 
 		public GraphicsUnit PageUnit {
 			get {
-				throw new NotImplementedException();
+				return _pageUnit;
 			}
 			set {
-				throw new NotImplementedException();
+				_pageUnit = value;
+				UpdateInternalTransform();
 			}
+		}
+
+		internal void UpdateInternalTransform()
+		{
+			float new_scale = _pageScale * _unitConversion[ (int)PageUnit ];
+			Matrix mx = _transform.Clone();
+
+			mx.Scale( new_scale, new_scale, MatrixOrder.Prepend );
+			mx.Translate(
+				mx.OffsetX * new_scale - mx.OffsetX,
+				mx.OffsetY * new_scale - mx.OffsetY, MatrixOrder.Append);
+
+			java.awt.Graphics2D g = NativeObject;
+			g.setTransform( mx.NativeObject );
 		}
 
 		public PixelOffsetMode PixelOffsetMode {
@@ -1811,18 +1888,18 @@ namespace System.Drawing {
 					g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
 				else
 					g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,java.awt.RenderingHints.VALUE_ANTIALIAS_OFF);
-				//TODO:make it good
+				//TBD:make it good
 			}
 		}
 
 		public int TextContrast {
 			get {
-				//TODO:implement this
+				//TBD:implement this
 				throw new NotImplementedException();
 			}
 
 			set {
-				//TODO:implement this
+				//TBD:implement this
 				throw new NotImplementedException();
 			}
 		}
@@ -1844,34 +1921,33 @@ namespace System.Drawing {
 			}
 
 			set {
-				//TODO: implement this
+				//TBD: implement this
 				throw new NotImplementedException();
 			}
 		}
 
 		public Matrix Transform {
 			get {
-				java.awt.Graphics2D g = NativeObject;
-				Matrix matrix = new Matrix (g.getTransform());
-				return matrix;
+				return _transform;
 			}
 			set {
-				java.awt.Graphics2D g = NativeObject;
-				g.setTransform(value.NativeObject);
+				_transform = value.Clone();
+				UpdateInternalTransform();
 			}
 		}
 
 		public RectangleF VisibleClipBounds {
 			get {
-				//TODO: implement this
+				//TBD: implement this
 				throw new NotImplementedException();
 			}
 		}
 
 		void ConcatenateTransform(geom.AffineTransform transform, MatrixOrder order) {
-			geom.AffineTransform at = NativeObject.getTransform();
+			geom.AffineTransform at = _transform.NativeObject;
 			Matrix.Multiply(at, transform, order);
-			NativeObject.setTransform(at);
+
+			UpdateInternalTransform();
 		}
 		#endregion
 	}

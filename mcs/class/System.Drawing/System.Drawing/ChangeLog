@@ -1,5 +1,11 @@
 ﻿2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* Graphics.jvm.cs: Implemented PageUnit, PageScale. 
+	Added UpdateInternalTransform
+	Fixed DrawImage, Transform, ConcatenateTransform
+
+2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* Icon.jvm.cs: Internal constructor from bitmap
 	* Added SystemIcons.jvm.cs with implementation of SystemIcons
 	
