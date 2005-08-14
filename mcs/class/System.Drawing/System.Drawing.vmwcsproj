@@ -63,7 +63,7 @@
 				<File RelPath="System.Drawing\StrokeFactory.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\SystemBrushes.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\SystemColors.jvm.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing\SystemIcons.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing\SystemIcons.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\SystemPens.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\TextureBrush.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\ToolboxBitmapAttribute.cs" SubType="Code" BuildAction="Compile"/>

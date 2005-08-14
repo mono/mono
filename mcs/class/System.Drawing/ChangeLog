@@ -1,3 +1,7 @@
+2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* System.Drawing.vmwcsproj: Added SystemIcons.jvm.cs, excluded SystemIcons.cs
+	
 2005-08-11 Konstantin Triger <kostat@mainsoft.com>
 
         * System.Drawing.vmwcsproj: changing JAVA to TARGET_JVM in release builds
