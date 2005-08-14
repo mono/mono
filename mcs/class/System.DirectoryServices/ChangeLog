@@ -1,3 +1,6 @@
+2005-14-08  Boris Kirzner <borisk@mainsoft.com>
+	* App.config: added "authenticationmech" supported key example.
+
 2005-28-07  Boris Kirzner <borisk@mainsoft.com>
 	* System.DirectoryServices.vmwcsproj: updated TARGET_JVM project file.
 	* App.config: added addition supported key examples.
