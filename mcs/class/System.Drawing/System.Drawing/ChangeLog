@@ -1,5 +1,10 @@
 ﻿2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* Icon.jvm.cs: Internal constructor from bitmap
+	* Added SystemIcons.jvm.cs with implementation of SystemIcons
+	
+2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* Region.jvm.cs: Fixed GetBounds, IsVisible, IsEmpty, IsInfinite, Equals
 	(all methods that use Graphics object)	
 

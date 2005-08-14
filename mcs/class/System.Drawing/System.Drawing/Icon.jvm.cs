@@ -79,6 +79,10 @@ namespace System.Drawing
 		private Icon () {
 		}
 		
+		internal Icon (Bitmap bitmap) {
+			_bitmap = bitmap;
+		}
+
 		public Icon (Icon original, int width, int height) {			
 			_bitmap = original._bitmap;
 			SelectSize (width, height);
