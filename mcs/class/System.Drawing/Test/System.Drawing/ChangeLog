@@ -1,5 +1,12 @@
 2005-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* ColorConverter.cs: Merged tests from TestColorConverter.cs. Fixed
+	tests using current culture.
+	* TestColorConverter.cs: Merged tests with ColorConverter.cs and 
+	removed.
+
+2005-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* TestColor.cs: Added test for ToString() on uninitialized color.
 	* TestColorConverter.cs: Added tests for ColorConverter.
 

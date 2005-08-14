@@ -1,5 +1,10 @@
 2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* ColorConverter.cs: Use TextInfo.ListSeparator as separator, as this
+	appears to be what MS.NET uses.
+
+2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* Point.cs: Use invariant culture for converting numbers to string.
 	* PointF.cs: same
 	* SizeF.cs: same

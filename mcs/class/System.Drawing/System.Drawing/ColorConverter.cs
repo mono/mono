@@ -87,7 +87,7 @@ namespace System.Drawing
 			if (named != null)
 				return (Color) named;
 
-			String numSeparator = culture.NumberFormat.NumberGroupSeparator;
+			String numSeparator = culture.TextInfo.ListSeparator;
 
 			int A, R, G, B;
 			if (s.IndexOf (numSeparator) > 0) { // "A, R, G, B" format
@@ -151,12 +151,22 @@ namespace System.Drawing
 				if (color.IsNamedColor)
 					return color.Name;
 
+				String numSeparator = culture.TextInfo.ListSeparator;
+
 				StringBuilder sb = new StringBuilder ();
 				if (color.A != 255) {
-					sb.Append (color.A); sb.Append (", ");
+					sb.Append (color.A);
+					sb.Append (numSeparator);
+					sb.Append (" ");
 				}
-				sb.Append (color.R); sb.Append (", ");
-				sb.Append (color.G); sb.Append (", ");
+				sb.Append (color.R);
+				sb.Append (numSeparator);
+				sb.Append (" ");
+
+				sb.Append (color.G);
+				sb.Append (numSeparator);
+				sb.Append (" ");
+
 				sb.Append (color.B);
 				return sb.ToString ();
 			}

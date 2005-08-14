@@ -1,26 +1,29 @@
 using System;
-using System.Drawing;
-using NUnit.Framework;
-using System.ComponentModel;
-using System.Globalization;
 using System.Collections;
+using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
+using System.Drawing;
+using System.Globalization;
 
+using NUnit.Framework;
 
 namespace MonoTests.System.Drawing {
 
-	[TestFixture]	
+	[TestFixture]
 	public class ColorConverterFixture
 	{
 		Color col;
 		Color colnamed;
 		ColorConverter colconv;
 		String colStr;
+		String colStrInvariant;
 		String colnamedStr;
 
 		[SetUp]
 		public void SetUp () {
 			col = Color.FromArgb (10, 20, 30);
-			colStr = "10, 20, 30";
+			colStr = string.Format ("10{0} 20{0} 30", CultureInfo.CurrentCulture.TextInfo.ListSeparator);
+			colStrInvariant = string.Format ("10{0} 20{0} 30", CultureInfo.InvariantCulture.TextInfo.ListSeparator);
 
 			colnamed = Color.ForestGreen;
 			colnamedStr = "ForestGreen";
@@ -54,15 +57,21 @@ namespace MonoTests.System.Drawing {
 			Assert.IsTrue (! colconv.CanConvertTo (null, typeof (SizeF)), "CCT#7");
 			Assert.IsTrue (! colconv.CanConvertTo (null, typeof (Object)), "CCT#8");
 			Assert.IsTrue (! colconv.CanConvertTo (null, typeof (int)), "CCT#9");
+			Assert.IsTrue (colconv.CanConvertTo (typeof (InstanceDescriptor)), "CCT#10");
 		}
 
 		[Test]
 		public void ConvertFrom ()
 		{
 			Assert.AreEqual (col, (Color) colconv.ConvertFrom (null,
-				CultureInfo.InvariantCulture, "10, 20, 30"), "CF#1");
+				CultureInfo.InvariantCulture, colStrInvariant), "CF#1");
 			Assert.AreEqual (colnamed, (Color) colconv.ConvertFrom (null,
-				CultureInfo.InvariantCulture, "ForestGreen"), "CF#2");
+				CultureInfo.InvariantCulture, colnamedStr), "CF#2");
+
+			Assert.AreEqual (Color.Empty, colconv.ConvertFrom (string.Empty), "CF#3");
+			Assert.AreEqual (Color.Empty, colconv.ConvertFrom (" "), "CF#4");
+			Assert.AreEqual (Color.Red, colconv.ConvertFrom ("Red"), "CF#5");
+			Assert.AreEqual (Color.Red, colconv.ConvertFrom (" Red "), "CF#6");
 		}
 
 		[Test]
@@ -157,14 +166,19 @@ namespace MonoTests.System.Drawing {
 		[Test]
 		public void ConvertTo ()
 		{
-			Assert.AreEqual ("10, 20, 30", colconv.ConvertTo (null, CultureInfo.InvariantCulture,
+			Assert.AreEqual (colStrInvariant, colconv.ConvertTo (null, CultureInfo.InvariantCulture,
 				Color.FromArgb (10, 20, 30), typeof (String)), "CT#1");
-			Assert.AreEqual ("10, 20, 30", colconv.ConvertTo (null, CultureInfo.InvariantCulture,
+			Assert.AreEqual (colStrInvariant, colconv.ConvertTo (null, CultureInfo.InvariantCulture,
 				Color.FromArgb (255, 10, 20, 30), typeof (String)), "CT#2");
 			Assert.AreEqual ("10, 20, 30, 40", colconv.ConvertTo (null, CultureInfo.InvariantCulture,
 				Color.FromArgb (10, 20, 30, 40), typeof (String)), "CT#3");
 			Assert.AreEqual (colnamedStr, colconv.ConvertTo (null, CultureInfo.InvariantCulture,
 				colnamed, typeof (String)), "CT#4");
+
+			Assert.AreEqual (string.Empty, colconv.ConvertTo (Color.Empty, typeof (string)), "CT#5");
+			Assert.AreEqual ("Red", colconv.ConvertTo (Color.Red, typeof (string)), "CT#6");
+			Assert.AreEqual (string.Empty, colconv.ConvertTo (null, typeof (string)), "CT#7");
+			Assert.AreEqual ("test", colconv.ConvertTo ("test", typeof (string)), "CT#8");
 		}
 
 		[Test]
@@ -249,7 +263,7 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		public void ConvertFromInvariantString_string () {
-			Assert.AreEqual (col, colconv.ConvertFromInvariantString (colStr), "CFISS#1");
+			Assert.AreEqual (col, colconv.ConvertFromInvariantString (colStrInvariant), "CFISS#1");
 			Assert.AreEqual (colnamed, colconv.ConvertFromInvariantString (colnamedStr), "CFISS#2");
 		}
 
@@ -287,7 +301,7 @@ namespace MonoTests.System.Drawing {
 
 		[Test]
 		public void ConvertToInvariantString_string () {
-			Assert.AreEqual (colStr, colconv.ConvertToInvariantString (col), "CFISS#1");
+			Assert.AreEqual (colStrInvariant, colconv.ConvertToInvariantString (col), "CFISS#1");
 			Assert.AreEqual (colnamedStr, colconv.ConvertToInvariantString (colnamed), "CFISS#2");
 		}
 

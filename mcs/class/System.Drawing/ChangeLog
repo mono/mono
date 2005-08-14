@@ -1,4 +1,9 @@
-2005-08-14 Gert Driesen <drieseng#users.sourceforge.net>
+2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
+	
+	* System.Drawing.dll.sources: Removed TestColorConverter again, as 
+	there was already a test class for ColorConverter.
+
+2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System.Drawing.dll.sources: Added TestColorConverter.cs.
 
