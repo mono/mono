@@ -30,6 +30,21 @@ public class TextInfoTest : Assertion
 	}
 
 	[Test]
+	public void ListSeparator ()
+	{
+		TextInfo ti;
+
+		ti = new CultureInfo ("en-US", false).TextInfo;
+		AssertEquals ("#1", ",", ti.ListSeparator);
+
+		ti = CultureInfo.InvariantCulture.TextInfo;
+		AssertEquals ("#2", ",", ti.ListSeparator);
+
+		ti = new CultureInfo ("nl-BE", false).TextInfo;
+		AssertEquals ("#3", ";", ti.ListSeparator);
+	}
+
+	[Test]
 	public void TitleCase2 ()
 	{
 		foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.AllCultures)) {

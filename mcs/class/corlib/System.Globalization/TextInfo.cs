@@ -78,7 +78,7 @@ namespace System.Globalization {
 				this.data = *(Data*) data;
 			else {
 				this.data = new Data ();
-				this.data.list_sep = (byte) '.';
+				this.data.list_sep = (byte) ',';
 			}
 
 			CultureInfo tmp = ci;

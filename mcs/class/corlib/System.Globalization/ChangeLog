@@ -1,3 +1,7 @@
+2005-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+        * TextInfo.cs: For invariant culture, ListSeparator is a comma.
+
 2005-08-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeFormatInfo.cs : GetAbbreviatedEraNames() and GetEra().

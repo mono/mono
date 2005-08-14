@@ -1,3 +1,7 @@
+2005-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TextInfoTest.cs: Added ListSeparator test.
+
 2005-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CultureInfoTest.cs : added OptionalCalendars().
