@@ -16,7 +16,7 @@ namespace System.Drawing.Drawing2D
                 
 		#region ctors
 
-		internal Matrix (geom.AffineTransform ptr)
+		Matrix (geom.AffineTransform ptr)
 		{
 			_nativeMatrix = ptr;
 		}

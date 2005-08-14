@@ -1,3 +1,7 @@
+2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Matrix.jvm.cs: Refactoring
+	
 2005-08-10 Konstantin Triger <kostat@mainsoft.com>
 
 	* GraphicsPath.jvm.cs: Implemented DrawClosedCurve.
