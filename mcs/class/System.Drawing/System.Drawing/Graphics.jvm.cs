@@ -496,52 +496,50 @@ namespace System.Drawing {
 		#endregion
 
 		#region DrawImage
-		public void DrawImage (Image image, RectangleF rect) {
-			geom.AffineTransform at = geom.AffineTransform.getTranslateInstance(rect.X, rect.Y);
-			at.scale(rect.Width/image.Width, rect.Height/image.Height);
-			NativeObject.drawImage(image.NativeObject,at,null);
+
+		public void DrawImage (Image image, Point point) 
+		{
+			DrawImage(image, (int)point.X, (int)point.Y);
 		}
 
-		
-		public void DrawImage (Image image, PointF point) {
-			geom.AffineTransform at = geom.AffineTransform.getTranslateInstance(point.X, point.Y);
-			NativeObject.drawImage(image.NativeObject,at,null);
+		public void DrawImage (Image image, PointF point) 
+		{
+			DrawImage(image, (int)point.X, (int)point.Y);
 		}
 
 		
 		public void DrawImage (Image image, Point [] destPoints) {
 			Matrix m = new Matrix(new Rectangle(0, 0, image.Width, image.Height), destPoints);
-			NativeObject.drawImage(image.NativeObject,m.NativeObject,null);
+			DrawImage(image, m);
 		}
 
-		
-		public void DrawImage (Image image, Point point) {
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,point.X,point.Y,null);
-		}
-
-		
-		public void DrawImage (Image image, Rectangle rect) {
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,rect.X,rect.Y,rect.Width,rect.Height,null);
-		}
-
-		
-		public void DrawImage (Image image, PointF [] destPoints) {
+		public void DrawImage (Image image, PointF [] destPoints) 
+		{
 			Matrix m = new Matrix(new RectangleF(0, 0, image.Width, image.Height), destPoints);
-			NativeObject.drawImage(image.NativeObject,m.NativeObject,null);
+			DrawImage(image, m);
 		}
 
 		
-		public void DrawImage (Image image, int x, int y) {
-			java.awt.Graphics2D g =  NativeObject;
-			g.drawImage(image.NativeObject,x,y,null);
+		public void DrawImage (Image image, Rectangle rect) 
+		{
+			DrawImage(image, rect.X, rect.Y, rect.Width, rect.Height);
+		}
+
+		public void DrawImage (Image image, RectangleF rect) 
+		{
+			DrawImage(image, (int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
 		}
 
 		
-		public void DrawImage (Image image, float x, float y) {
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,(int)x,(int)y,null);
+		public void DrawImage (Image image, int x, int y) 
+		{
+			//FIXME: add page scale fix
+			NativeObject.drawImage(image.NativeObject, x, y, null);
+		}
+
+		public void DrawImage (Image image, float x, float y) 
+		{
+			DrawImage(image, (int)x, (int)y);
 		}
 
 		
@@ -550,8 +548,7 @@ namespace System.Drawing {
 				throw new NotImplementedException();
 				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
 
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,
+			NativeObject.drawImage(image.NativeObject,
 				destRect.X,
 				destRect.Y,
 				destRect.X + destRect.Width,
@@ -563,98 +560,104 @@ namespace System.Drawing {
 				null);
 		}
 		
-		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit) {			
-			if (srcUnit != GraphicsUnit.Pixel)
-				throw new NotImplementedException();
-			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
-
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,
-				(int)destRect.X,
-				(int)destRect.Y,
-				(int)destRect.X + (int)destRect.Width,
-				(int)destRect.Y + (int)destRect.Height,
-				(int)srcRect.X,
-				(int)srcRect.Y,
-				(int)srcRect.X + (int)srcRect.Width,
-				(int)srcRect.Y + (int)srcRect.Height,
-				null);
+		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit) {
+			DrawImage(
+				image, 
+				new Rectangle((int)destRect.X, (int)destRect.Y, (int)destRect.Width, (int)destRect.Height),
+				new Rectangle((int)srcRect.X, (int)srcRect.Y, (int)srcRect.Width, (int)srcRect.Height),
+				srcUnit);
 		}
 
 		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit) {
+			//FIXME: Function not working
 			DrawImage(image, destPoints, srcRect, srcUnit, null);
 		}
 
-		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit) {
-			
+			//FIXME: Function not working
 			DrawImage(image, destPoints, srcRect, srcUnit, null);
 		}
 
 		
-		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, 
-			ImageAttributes imageAttr) {
+		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr) {
+			//TBD: ImageAttributes
+			//FIXME: Function not working
 			
 			if (srcUnit != GraphicsUnit.Pixel)
 				throw new NotImplementedException();
-			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
-			
-			//TBD: ImageAttributes
+				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+
 			Matrix m = new Matrix(srcRect, destPoints);
-			NativeObject.drawImage(image.NativeObject,m.NativeObject,null);
+			DrawImage(image, m);
 		}
 		
+		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr) {
+			//TBD: ImageAttributes
+			//FIXME: Function not working
+
+			if (srcUnit != GraphicsUnit.Pixel)
+				throw new NotImplementedException();
+				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+
+			Matrix m = new Matrix(srcRect, destPoints);
+			DrawImage(image, m);
+		}
+
+
+		public void DrawImage (Image image, int x, int y, int width, int height) {
+			//FIXME: add page scale fix
+			NativeObject.drawImage(image.NativeObject, x, y, width, height, null);
+		}
+
 		public void DrawImage (Image image, float x, float y, float width, float height) {
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,(int)x,(int)y,(int)width,(int)height,null);
-		}
-
-		
-		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, 
-			ImageAttributes imageAttr) {
-
-			if (srcUnit != GraphicsUnit.Pixel)
-				throw new NotImplementedException();
-			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
-
-			//TBD: ImageAttributes
-			Matrix m = new Matrix(srcRect, destPoints);
-			NativeObject.drawImage(image.NativeObject,m.NativeObject,null);
+			DrawImage(image, (int)x, (int)y, (int)width, (int)height);
 		}
 
 		
 		public void DrawImage (Image image, int x, int y, Rectangle srcRect, GraphicsUnit srcUnit) {			
-			if (srcUnit != GraphicsUnit.Pixel)
-				throw new NotImplementedException();
-			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
-
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,x,y,srcRect.Width,srcRect.Height,srcRect.X,srcRect.Y,srcRect.Width,srcRect.Height,null);
+			DrawImage(image, new Rectangle(x, y, srcRect.Width, srcRect.Height), srcRect, srcUnit);
 		}
 		
-		public void DrawImage (Image image, int x, int y, int width, int height) {
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,x,y,width,height,null);
+		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit) {	
+			DrawImage(image, new RectangleF(x, y, srcRect.Width, srcRect.Height), srcRect, srcUnit);
 		}
 
-		public void DrawImage (Image image, float x, float y, RectangleF srcRect, GraphicsUnit srcUnit) {	
-			if (srcUnit != GraphicsUnit.Pixel)
-				throw new NotImplementedException();
-			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
-			
-			//TBD: casts
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,
-				(int)x,
-				(int)y,
-				(int)srcRect.Width,
-				(int)srcRect.Height,
-				(int)srcRect.X,
-				(int)srcRect.Y,
-				(int)srcRect.Width,
-				(int)srcRect.Height,null);
+
+		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit) {
+			DrawImage(image, destRect, srcX, srcY, srcWidth, srcHeight, srcUnit, null);
 		}
+
+		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit) {
+			DrawImage(image, destRect, srcX, srcY, srcWidth, srcHeight, srcUnit, null);
+		}
+		
+
+		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr) {			
+			//TBD: attributes
+			DrawImage(
+				image, 
+				destRect,
+				new Rectangle(srcX, srcY, srcWidth, srcHeight),
+				srcUnit);
+		}
+		
+		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs) 
+		{
+			DrawImage(
+				image, 
+				destRect,
+				new Rectangle((int)srcX, (int)srcY, (int)srcWidth, (int)srcHeight),
+				srcUnit);
+		}
+		
+
+		internal void DrawImage (Image image, Matrix m) 
+		{
+			//FIXME: add page scale fix
+			NativeObject.drawImage(image.NativeObject, m.NativeObject, null);
+		}
+		
 
 #if INTPTR_SUPPORT
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
@@ -675,76 +678,14 @@ namespace System.Drawing {
 			throw new NotImplementedException();
 		}
 #endif
-		
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit) {
-			if (srcUnit != GraphicsUnit.Pixel)
-				throw new NotImplementedException();
-			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
 
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,
-				(int)destRect.X,
-				(int)destRect.Y,
-				(int)destRect.Width,
-				(int)destRect.Height,
-				(int)srcX,
-				(int)srcY,
-				(int)srcWidth,
-				(int)srcHeight,null);
-		}
-		
 #if INTPTR_SUPPORT		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback, int callbackData)
 		{
 			throw new NotImplementedException();
 		}
 #endif
-		
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit) {
-			if (srcUnit != GraphicsUnit.Pixel)
-				throw new NotImplementedException();
-			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
 
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,destRect.X,destRect.Y,destRect.Width,destRect.Height,srcX,srcY,srcWidth,srcHeight,null);
-		}
-
-		
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs) {
-			if (srcUnit != GraphicsUnit.Pixel)
-				throw new NotImplementedException();
-			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
-
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,
-				(int)destRect.X,
-				(int)destRect.Y,
-				(int)destRect.Width,
-				(int)destRect.Height,
-				(int)srcX,
-				(int)srcY,
-				(int)srcWidth,
-				(int)srcHeight,null);
-		}
-		
-		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr) {			
-			if (srcUnit != GraphicsUnit.Pixel)
-				throw new NotImplementedException();
-			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
-			
-			//TBD: attributes
-			java.awt.Graphics2D g = NativeObject;
-			g.drawImage(image.NativeObject,
-				destRect.X,
-				destRect.Y,
-				destRect.X + destRect.Width,
-				destRect.Y+destRect.Height,
-				srcX,
-				srcY,
-				srcX+srcWidth,
-				srcX+srcHeight,null);
-		}
-		
 #if INTPTR_SUPPORT		
 		public void DrawImage (Image image, Rectangle destRect, int srcX, int srcY, int srcWidth, int srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttr, DrawImageAbort callback)
 		{
@@ -799,7 +740,8 @@ namespace System.Drawing {
 		}		
 #endif
 		
-		public void DrawImageUnscaled (Image image, Point point) {
+		public void DrawImageUnscaled (Image image, Point point) 
+		{
 			DrawImageUnscaled (image, point.X, point.Y);
 		}
 		
