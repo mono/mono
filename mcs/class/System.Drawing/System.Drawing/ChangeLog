@@ -1,3 +1,8 @@
+﻿2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Region.jvm.cs: Fixed GetBounds, IsVisible, IsEmpty, IsInfinite, Equals
+	(all methods that use Graphics object)	
+
 2005-08-11 Konstantin Triger <kostat@mainsoft.com>
 
         * Graphics.jvm.cs: Refactoring

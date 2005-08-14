@@ -204,7 +204,7 @@ namespace System.Drawing
 		{
 			if (graphics == null)
 				throw new ArgumentNullException("graphics");
-			geom.Rectangle2D r = NativeObject.createTransformedArea(graphics.NativeObject.getTransform()).getBounds2D();
+			geom.Rectangle2D r = NativeObject.getBounds2D();
 			return new RectangleF((float)r.getX(),(float)r.getY(),(float)r.getWidth(),(float)r.getHeight());                        
 		}
 		#endregion
@@ -292,7 +292,7 @@ namespace System.Drawing
 		{
 			if (g == null)
 				throw new ArgumentNullException("graphics");
-			return NativeObject.createTransformedArea(g.NativeObject.getTransform()).contains(x,y);
+			return NativeObject.contains(x,y);
 		}
 
 		public bool IsVisible (float x, float y, float width, float height)
@@ -304,7 +304,7 @@ namespace System.Drawing
 		{
 			if (g == null)
 				throw new ArgumentNullException("graphics");
-			return NativeObject.createTransformedArea(g.NativeObject.getTransform()).contains(x,y,width,height);
+			return NativeObject.contains(x,y,width,height);
 		}
 		#endregion
 
@@ -313,7 +313,7 @@ namespace System.Drawing
 		{
 			if (g == null)
 				throw new ArgumentNullException("graphics");
-			return NativeObject.createTransformedArea(g.NativeObject.getTransform()).isEmpty();
+			return NativeObject.isEmpty();
 		}
 		#endregion
 
@@ -323,7 +323,7 @@ namespace System.Drawing
 			if (g == null)
 				throw new ArgumentNullException("graphics");
 			//probably too naive.
-			return NativeObject.createTransformedArea(g.NativeObject.getTransform()).equals(InfiniteRegion.NativeObject);
+			return NativeObject.equals(InfiniteRegion.NativeObject);
 		}
 		#endregion
 
@@ -346,7 +346,7 @@ namespace System.Drawing
 		{
 			if (g == null)
 				throw new ArgumentNullException("graphics");
-			return NativeObject.createTransformedArea(g.NativeObject.getTransform()).equals(region.NativeObject);
+			return NativeObject.equals(region.NativeObject);
 		}
 		#endregion
 				
