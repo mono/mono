@@ -1,3 +1,8 @@
+2005-08-13  Jb Evain  <jbevain@gmail.com>
+
+	* get.c (get_token): handle the case when
+	  the token is a member ref pointing to a method.
+
 2005-08-12  Ankit Jain  <jankit@novell.com>
 
 	* get.c (init_key_table): Add "xor" to the table.
