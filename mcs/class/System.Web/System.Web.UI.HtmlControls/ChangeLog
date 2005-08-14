@@ -1,3 +1,8 @@
+2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* HtmlForm.cs: Added UniqueID override to match MS.NET. Fixed line
+	endings.
+
 2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlTableCell.cs:

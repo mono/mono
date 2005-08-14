@@ -165,7 +165,16 @@ namespace System.Web.UI.HtmlControls{
 			}
 			set {
 			}
-		}		
+		}
+
+		public override string UniqueID {
+			get {
+				if (NamingContainer == Page) {
+					return base.UniqueID;
+				}
+				return "__aspnetForm";
+			}
+		}
 	} // class HtmlForm
 } // namespace System.Web.UI.HtmlControls
 
