@@ -1,3 +1,8 @@
+2005-08-14  Kamil Skalski  <nazgul@nemerle.org>
+
+	* reflection.c (resolve_object): handle all kinds of MonoMethod
+	including generic ones
+
 2005-08-12  Ankit Jain <jankit@novell.com>
 
 	* get.c (dis_stringify_variant_type): New. Stringify MonoMarshalVariant.
