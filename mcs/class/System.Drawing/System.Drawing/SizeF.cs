@@ -32,6 +32,7 @@
 //
 
 using System;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
 
@@ -287,7 +288,8 @@ namespace System.Drawing
 		
 		public override string ToString ()
 		{
-			return String.Format ("{{Width={0}, Height={1}}}", wd, ht);
+			return string.Format ("{{Width={0}, Height={1}}}", wd.ToString (CultureInfo.InvariantCulture),
+				ht.ToString (CultureInfo.InvariantCulture));
 		}
 	}
 }

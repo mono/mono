@@ -1,5 +1,11 @@
 2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* Point.cs: Use invariant culture for converting numbers to string.
+	* PointF.cs: same
+	* SizeF.cs: same
+
+2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* Color.cs: Fixed ToString for uninitialized color.
 	* ColorConverter.cs: Support conversion from whitespace-only string to
 	Color.Empty. Fixed conversion from Color.Empty and known colors to
