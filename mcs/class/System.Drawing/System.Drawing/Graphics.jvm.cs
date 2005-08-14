@@ -14,6 +14,8 @@ namespace System.Drawing {
 		#region Variables
 
 		readonly awt.Graphics2D _nativeObject;
+		PixelOffsetMode _pixelOffsetMode = PixelOffsetMode.Default;
+		int _textContrast = 4;
 		readonly Image _image;
 		
 		Matrix _transform;
@@ -52,26 +54,9 @@ namespace System.Drawing {
 			_transform = new Matrix ();
 			_nativeObject.setTransform( _transform.NativeObject );
 
-//			NativeObject.setRenderingHint(awt.RenderingHints.KEY_TEXT_ANTIALIASING,awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-//
-//							((java.awt.Graphics2D)NativeObject).setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-//							((java.awt.Graphics2D)NativeObject).setRenderingHint(java.awt.RenderingHints.KEY_STROKE_CONTROL,java.awt.RenderingHints.VALUE_STROKE_NORMALIZE);
-//							((java.awt.Graphics2D)NativeObject).setRenderingHint(java.awt.RenderingHints.KEY_FRACTIONALMETRICS,java.awt.RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-//							((java.awt.Graphics2D)NativeObject).setRenderingHint(java.awt.RenderingHints.KEY_RENDERING,java.awt.RenderingHints.VALUE_RENDER_QUALITY);
-//							((java.awt.Graphics2D)NativeObject).setRenderingHint(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING,java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-//							//((java.awt.Graphics2D)NativeObject).setRenderingHint(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING,java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-//							((java.awt.Graphics2D)NativeObject).setComposite(java.awt.AlphaComposite.SrcOver);
-//							((java.awt.Graphics2D)NativeObject).setRenderingHint(java.awt.RenderingHints.KEY_INTERPOLATION,java.awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-//							((java.awt.Graphics2D)NativeObject).setRenderingHint(java.awt.RenderingHints.KEY_ALPHA_INTERPOLATION,java.awt.RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-//							((java.awt.Graphics2D)NativeObject).setRenderingHint(java.awt.RenderingHints.KEY_DITHERING,java.awt.RenderingHints.VALUE_DITHER_DISABLE);
-//							((java.awt.Graphics2D)NativeObject).setBackground(java.awt.Color.WHITE);
-
+			NativeObject.setRenderingHint(awt.RenderingHints.KEY_COLOR_RENDERING, awt.RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 		}
 
-		//		~Graphics ()
-		//		{
-		//			nativeObject.finalize();
-		//		}
 		#endregion
 		
 		#region Internal Accessors
@@ -1595,7 +1580,7 @@ namespace System.Drawing {
 
 		geom.Area GetNativeClip() {
 			awt.Shape clip = NativeObject.getClip();
-			return clip != null ? new geom.Area(clip) : Region.InfiniteRegion.NativeObject;
+			return clip != null ? new geom.Area(clip) : (geom.Area)Region.InfiniteRegion.NativeObject.clone();
 		}
 		#endregion
 		
@@ -1697,10 +1682,44 @@ namespace System.Drawing {
 
 		public CompositingQuality CompositingQuality {
 			get {
-				throw new NotImplementedException();
+				awt.RenderingHints hints = NativeObject.getRenderingHints();
+				if(hints.containsKey(awt.RenderingHints.KEY_ALPHA_INTERPOLATION)) {
+					object value_ai = hints.get(awt.RenderingHints.KEY_ALPHA_INTERPOLATION);
+
+					if (value_ai == awt.RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED)
+						return CompositingQuality.HighSpeed;
+					if (value_ai == awt.RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY)
+						return CompositingQuality.HighQuality;
+					if (value_ai == awt.RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT)
+						return CompositingQuality.Default;
+				}
+
+				return CompositingQuality.Default;
+					
 			}
 			set {
-				throw new NotImplementedException();
+				awt.RenderingHints hints = NativeObject.getRenderingHints();
+				switch (value) {
+					case CompositingQuality.AssumeLinear:
+					case CompositingQuality.Default:
+					case CompositingQuality.GammaCorrected:
+						hints.put(awt.RenderingHints.KEY_ALPHA_INTERPOLATION,
+							awt.RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
+						break;
+					case CompositingQuality.HighQuality:
+						hints.put(awt.RenderingHints.KEY_ALPHA_INTERPOLATION,
+							awt.RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+						break;
+					case CompositingQuality.HighSpeed:
+						hints.put(awt.RenderingHints.KEY_ALPHA_INTERPOLATION,
+							awt.RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+						break;
+//					case CompositingQuality.Invalid:
+//						if(hints.containsKey(awt.RenderingHints.KEY_ALPHA_INTERPOLATION))
+//							hints.remove(awt.RenderingHints.KEY_ALPHA_INTERPOLATION);
+				}
+
+				NativeObject.setRenderingHints(hints);
 			}
 		}
 
@@ -1719,10 +1738,45 @@ namespace System.Drawing {
 
 		public InterpolationMode InterpolationMode {
 			get {				
-				throw new NotImplementedException();
+				awt.RenderingHints hints = NativeObject.getRenderingHints();
+				if(hints.containsKey(awt.RenderingHints.KEY_INTERPOLATION)) {
+					object value_i = hints.get(awt.RenderingHints.KEY_INTERPOLATION);
+
+					if (value_i == awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR)
+						return InterpolationMode.Bilinear;
+					if (value_i == awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC)
+						return InterpolationMode.Bicubic;
+					if (value_i == awt.RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR)
+						return InterpolationMode.NearestNeighbor;
+				}
+
+				return InterpolationMode.Default;
 			}
 			set {
-				throw new NotImplementedException();
+				awt.RenderingHints hints = NativeObject.getRenderingHints();
+
+				switch (value) {
+					case InterpolationMode.Bicubic:
+					case InterpolationMode.HighQualityBicubic:
+						hints.put(awt.RenderingHints.KEY_INTERPOLATION, awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+						break;
+					case InterpolationMode.High:
+					case InterpolationMode.Bilinear:
+					case InterpolationMode.HighQualityBilinear:
+						hints.put(awt.RenderingHints.KEY_INTERPOLATION, awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+						break;
+					case InterpolationMode.Default:
+					case InterpolationMode.Invalid:
+					case InterpolationMode.Low:
+						if (hints.containsKey(awt.RenderingHints.KEY_INTERPOLATION))
+							hints.remove(awt.RenderingHints.KEY_INTERPOLATION);
+						break;
+					case InterpolationMode.NearestNeighbor:
+						hints.put(awt.RenderingHints.KEY_INTERPOLATION, awt.RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+						break;
+				}
+
+				NativeObject.setRenderingHints(hints);
 			}
 		}
 
@@ -1738,8 +1792,10 @@ namespace System.Drawing {
 
 		public bool IsVisibleClipEmpty {
 			get {
-				//TBD:correct this
-				return IsClipEmpty;
+				awt.Shape clip = NativeObject.getClip();
+				if (clip == null)
+					return false;
+				return !clip.intersects(0, 0, _image.Width, _image.Height);
 			}
 		}
 
@@ -1779,10 +1835,10 @@ namespace System.Drawing {
 
 		public PixelOffsetMode PixelOffsetMode {
 			get {
-				throw new NotImplementedException();
+				return _pixelOffsetMode;
 			}
 			set {
-				throw new NotImplementedException();
+				_pixelOffsetMode = value;
 			}
 		}
 
@@ -1797,60 +1853,73 @@ namespace System.Drawing {
 
 		public SmoothingMode SmoothingMode {
 			get {
-				java.awt.Graphics2D g = NativeObject;
+				awt.RenderingHints hints = NativeObject.getRenderingHints();
+				if(hints.containsKey(awt.RenderingHints.KEY_ANTIALIASING)) {
+					object value_aa = hints.get(awt.RenderingHints.KEY_ANTIALIASING);
+					if (value_aa == awt.RenderingHints.VALUE_ANTIALIAS_ON) {
+						if(hints.containsKey(awt.RenderingHints.KEY_RENDERING)) {
+							object value_render = hints.get(awt.RenderingHints.KEY_RENDERING);
+							if (value_render == awt.RenderingHints.VALUE_RENDER_QUALITY)
+								return SmoothingMode.HighQuality;
+							if (value_render == awt.RenderingHints.VALUE_RENDER_SPEED)
+								return SmoothingMode.HighSpeed;
+						}
 
-				awt.RenderingHints hints = g.getRenderingHints();
-				if(hints.containsKey(java.awt.RenderingHints.KEY_ANTIALIASING) &&
-					hints.get(java.awt.RenderingHints.KEY_ANTIALIASING) == 
-					java.awt.RenderingHints.VALUE_ANTIALIAS_ON) {
-					
-
-					if(hints.containsKey(java.awt.RenderingHints.KEY_RENDERING)) {
-						if(hints.get(java.awt.RenderingHints.KEY_RENDERING) == 
-							java.awt.RenderingHints.VALUE_RENDER_QUALITY)
-							return SmoothingMode.HighQuality;
-						if(hints.get(java.awt.RenderingHints.KEY_RENDERING) == 
-							java.awt.RenderingHints.VALUE_RENDER_SPEED)
-							return SmoothingMode.HighSpeed;
-						if(hints.get(java.awt.RenderingHints.KEY_RENDERING) == 
-							java.awt.RenderingHints.VALUE_RENDER_DEFAULT)
-							return SmoothingMode.AntiAlias;
+						return SmoothingMode.AntiAlias;
 					}
-					return SmoothingMode.AntiAlias;
+
+					if (value_aa == awt.RenderingHints.VALUE_ANTIALIAS_DEFAULT)
+						return SmoothingMode.Default;
 				}
-				return SmoothingMode.Default;
+				return SmoothingMode.None;
 
 			}
 
 			set {
-				java.awt.Graphics2D g = NativeObject;
+				awt.RenderingHints hints = NativeObject.getRenderingHints();
 
-				awt.RenderingHints hints = g.getRenderingHints();
-				if(value ==  SmoothingMode.AntiAlias)
-					g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,java.awt.RenderingHints.VALUE_ANTIALIAS_ON);
-				else
-					g.setRenderingHint(java.awt.RenderingHints.KEY_ANTIALIASING,java.awt.RenderingHints.VALUE_ANTIALIAS_OFF);
-				//TBD:make it good
+				switch (value) {
+					case SmoothingMode.None:
+					case SmoothingMode.Invalid:
+						if(hints.containsKey(awt.RenderingHints.KEY_ANTIALIASING))
+							hints.remove(awt.RenderingHints.KEY_ANTIALIASING);
+						if(hints.containsKey(awt.RenderingHints.KEY_RENDERING))
+							hints.remove(awt.RenderingHints.KEY_RENDERING);
+						break;
+					case SmoothingMode.AntiAlias:
+						hints.put(awt.RenderingHints.KEY_ANTIALIASING, awt.RenderingHints.VALUE_ANTIALIAS_ON);
+						break;
+					case SmoothingMode.HighQuality:
+						hints.put(awt.RenderingHints.KEY_RENDERING, awt.RenderingHints.VALUE_RENDER_QUALITY);
+						goto case SmoothingMode.AntiAlias;
+					case SmoothingMode.HighSpeed:
+						hints.put(awt.RenderingHints.KEY_RENDERING, awt.RenderingHints.VALUE_RENDER_SPEED);
+						goto case SmoothingMode.AntiAlias;
+					case SmoothingMode.Default:
+						hints.put(awt.RenderingHints.KEY_RENDERING, awt.RenderingHints.VALUE_RENDER_DEFAULT);
+						goto case SmoothingMode.AntiAlias;
+				}
+
+				NativeObject.setRenderingHints(hints);
 			}
 		}
 
+		/// <summary>
+		/// Java does not have similar functionality
+		/// </summary>
 		public int TextContrast {
 			get {
-				//TBD:implement this
-				throw new NotImplementedException();
+				return _textContrast;
 			}
 
 			set {
-				//TBD:implement this
-				throw new NotImplementedException();
+				_textContrast = value;
 			}
 		}
 
 		public TextRenderingHint TextRenderingHint {
 			get {
-				java.awt.Graphics2D g = NativeObject;
-
-				awt.RenderingHints hints = g.getRenderingHints();
+				awt.RenderingHints hints = NativeObject.getRenderingHints();
 				if(hints.containsKey(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING)) {
 					if(hints.get(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING) == 
 						java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
@@ -1863,8 +1932,17 @@ namespace System.Drawing {
 			}
 
 			set {
-				//TBD: implement this
-				throw new NotImplementedException();
+				// TODO implement
+				awt.RenderingHints hints = NativeObject.getRenderingHints();
+				switch (value) {
+					case TextRenderingHint.AntiAlias:
+					case TextRenderingHint.AntiAliasGridFit:
+					case TextRenderingHint.ClearTypeGridFit:
+					case TextRenderingHint.SingleBitPerPixel:
+					case TextRenderingHint.SingleBitPerPixelGridFit:
+					case TextRenderingHint.SystemDefault:
+						break;
+				}
 			}
 		}
 
@@ -1880,8 +1958,9 @@ namespace System.Drawing {
 
 		public RectangleF VisibleClipBounds {
 			get {
-				//TBD: implement this
-				throw new NotImplementedException();
+				RectangleF bounds = ClipBounds;
+				bounds.Intersect(new RectangleF(0, 0, _image.Width, _image.Height));
+				return bounds;
 			}
 		}
 

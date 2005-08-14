@@ -1,4 +1,8 @@
-﻿2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
+﻿2005-08-14 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: Initial properties implementation
+
+2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Graphics.jvm.cs: DrawImage refactoring
 	
