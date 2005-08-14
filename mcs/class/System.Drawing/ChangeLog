@@ -1,3 +1,7 @@
+2005-08-14 Gert Driesen <drieseng#users.sourceforge.net>
+
+	* System.Drawing.dll.sources: Added TestColorConverter.cs.
+
 2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* System.Drawing.vmwcsproj: Added SystemIcons.jvm.cs, excluded SystemIcons.cs

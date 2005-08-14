@@ -1,3 +1,8 @@
+2005-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TestColor.cs: Added test for ToString() on uninitialized color.
+	* TestColorConverter.cs: Added tests for ColorConverter.
+
 2005-08-10 Jordi Mas i Hernandez <jordi@ximan.com>
 
 	* TestRegion.cs: new cases for Combine and Intersect

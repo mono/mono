@@ -1,4 +1,11 @@
-﻿2005-08-14 Konstantin Triger <kostat@mainsoft.com>
+2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Color.cs: Fixed ToString for uninitialized color.
+	* ColorConverter.cs: Support conversion from whitespace-only string to
+	Color.Empty. Fixed conversion from Color.Empty and known colors to
+	string.
+
+2005-08-14 Konstantin Triger <kostat@mainsoft.com>
 
 	* Graphics.jvm.cs: Initial properties implementation
 

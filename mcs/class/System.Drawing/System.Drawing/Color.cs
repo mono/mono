@@ -514,6 +514,9 @@ namespace System.Drawing
 		
 		public override string ToString ()
 		{
+			if (IsEmpty)
+				return "Color [Empty]";
+
 			if (myname != "")
 				return "Color [" + myname + "]";
 

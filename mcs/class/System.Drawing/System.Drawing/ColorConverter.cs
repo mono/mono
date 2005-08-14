@@ -59,9 +59,6 @@ namespace System.Drawing
 
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			if (destinationType == typeof (String))
-				return true;
-
 			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 
@@ -75,6 +72,12 @@ namespace System.Drawing
 			string s = value as string;
 			if (s == null)
 				return base.ConvertFrom (context, culture, value);
+
+			s = s.Trim ();
+
+			if (s.Length == 0) {
+				return Color.Empty;
+			}
 
 			object named = Color.NamedColors [s];
 			if (named != null)
@@ -136,6 +139,15 @@ namespace System.Drawing
 		{
 			if ((destinationType == typeof (string)) && (value is Color)) {
 				Color color = (Color) value;
+
+				if (color == Color.Empty) {
+					return string.Empty;
+				}
+
+				if (color.IsKnownColor) {
+					return color.Name;
+				}
+
 				if (color.IsNamedColor)
 					return color.Name;
 

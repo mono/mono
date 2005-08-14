@@ -1007,6 +1007,7 @@ namespace MonoTests.System.Drawing
 				Color.FromKnownColor (KnownColor.ActiveBorder).ToString ());
 			AssertEquals ("TS#3", "Color [A=1, R=2, G=3, B=4]",
 				Color.FromArgb(1, 2, 3, 4).ToString ());
+			AssertEquals ("TS#4", "Color [Empty]", Color.Empty.ToString ());
 		}
 
 		[Test]
