@@ -225,7 +225,12 @@ namespace System.Web.Services.Discovery {
 					throw new InvalidOperationException ("Unrecognized file type '" + url + "'. Extension must be one of .wsdl or .xsd");
 			}
 		}
-		
+
+		[Obsolete ("This method will be removed from a future version. The method call is no longer required for resource discovery", false)]
+		public void LoadExternals ()
+		{
+		}
+
 		public DiscoveryClientResultCollection ReadAll (string topLevelFilename)
 		{
 			StreamReader sr = new StreamReader (topLevelFilename);

@@ -83,7 +83,7 @@ namespace System.Web.Services.Discovery {
 			set { href = value; }
 		}
 		
-		[DefaultValue("")]
+		[DefaultValue(null)]
 		[XmlAttribute("targetNamespace")]
 		public string TargetNamespace {
 			get { return targetNamespace; }
