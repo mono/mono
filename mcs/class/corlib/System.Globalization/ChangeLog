@@ -1,3 +1,7 @@
+2005-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RegionInfo.cs : reimplemented to use unicode CLDR.
+
 2005-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
         * TextInfo.cs: For invariant culture, ListSeparator is a comma.
