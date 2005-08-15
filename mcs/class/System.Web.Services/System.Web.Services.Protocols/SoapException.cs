@@ -33,7 +33,9 @@ using System.Xml;
 
 namespace System.Web.Services.Protocols 
 {
+#if NET_2_0
 	[Serializable]
+#endif
 	public class SoapException : SystemException 
 	{
 		#region Fields

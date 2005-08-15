@@ -112,7 +112,7 @@ namespace System.Web.Services.Protocols {
 			set { preAuthenticate = value; }
 		}
 
-		[DefaultValue ("")]
+		[DefaultValue (null)]
 		[RecommendedAsConfigurable (true)]
 		[WebServicesDescription ("The encoding to use for requests.")]
 		public Encoding RequestEncoding {
