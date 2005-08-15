@@ -32,7 +32,7 @@ using System.ComponentModel;
 
 namespace System.Runtime.Remoting.Services
 {
-	public class RemotingClientProxy: Component
+	public abstract class RemotingClientProxy: Component
 	{
 		protected object _tp;
 		protected Type _type;
