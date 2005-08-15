@@ -44,7 +44,7 @@ namespace System.Web.Services.Configuration {
 		public XmlFormatExtensionPointAttribute (string memberName)
 		{
 			this.memberName = memberName;
-			allowElements = false; // FIXME
+			allowElements = true;
 		}
 
 		#endregion // Constructors
