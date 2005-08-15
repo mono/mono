@@ -41,8 +41,9 @@ namespace System.Web.Services.Description
 		RequiredExtensionsIgnored = 0x4,
 		UnsupportedBindingsIgnored = 0x10,
 		UnsupportedOperationsIgnored = 0x8,
-		[Obsolete] OperationConformanceClaimIgnored = 0x100,
+#if NET_2_0
 		SchemaValidation = 0x40,
 		WsiConformance = 0x80
+#endif
 	}
 }

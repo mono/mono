@@ -1,3 +1,16 @@
+2005-08-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* DocumentableItem.cs: DocumentationElement is also available in .NET
+	1.1.
+	* MimeMultipartRelatedBinding.cs: Changed XmlElement name of Parts
+	property to match MS.NET.
+	* OperationMessageCollection.cs: Removed GetKey override to match
+	MS.NET.
+	* ServiceDescriptionImportWarnings.cs: SchemaValidation and 
+	WsiConformance should only be exposed in 2.0 profile.
+	* ServiceDescriptionFormatExtension.cs: Parent should not be ignored 
+	on 2.0 profile.
+
 2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SoapProtocolReflector.cs: Set the part name when using bare encoded format.

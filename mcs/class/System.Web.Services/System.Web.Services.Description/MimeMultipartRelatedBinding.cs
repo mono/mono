@@ -52,7 +52,7 @@ namespace System.Web.Services.Description {
 
 		#region Properties
 
-		[XmlElement ("parts")]	
+		[XmlElement ("part")]
 		public MimePartCollection Parts {
 			get { return parts; }
 		}

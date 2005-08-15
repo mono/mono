@@ -61,9 +61,6 @@ namespace System.Web.Services.Description {
 			set { handled = value; }
 		}
 
-#if !NET_2_0
-		[XmlIgnore]
-#endif
 		public object Parent {
 			get { return parent; }
 		}

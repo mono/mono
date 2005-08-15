@@ -98,13 +98,6 @@ namespace System.Web.Services.Description {
 
 		#region Methods
 
-		protected override string GetKey (object value) 
-		{
-			if (!(value is OperationMessage))
-				throw new InvalidCastException ();
-			return ((OperationMessage) value).Name;
-		}
-
 		public int Add (OperationMessage operationMessage) 
 		{
 			Insert (Count, operationMessage);

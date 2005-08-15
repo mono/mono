@@ -29,6 +29,7 @@
 //
 
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Xml.Serialization;
 using System.Xml;
 
@@ -37,11 +38,7 @@ namespace System.Web.Services.Description {
 
 		#region Fields
 
-		string documentation;
-
-#if NET_2_0
 		XmlElement docElement;
-#endif
 
 		#endregion // Fields
 
@@ -49,14 +46,12 @@ namespace System.Web.Services.Description {
 
 		protected DocumentableItem ()
 		{
-			documentation = String.Empty;
 		}
 		
 		#endregion // Constructors
 
 		#region Properties
 
-#if NET_2_0
 		[XmlIgnore]
 		public string Documentation {
 			get { 
@@ -73,27 +68,14 @@ namespace System.Web.Services.Description {
 				}
 			}
 		}
-		
-		[System.Runtime.InteropServices.ComVisible(false)]
+
+		[ComVisible (false)]
 		[XmlAnyElement (Name="documentation", Namespace="http://schemas.xmlsoap.org/wsdl/")]
-		public XmlElement DocumentationElement {
+		public XmlElement DocumentationElement
+		{
 			get { return docElement; }
 			set { docElement = value; }
 		}
-#else
-		[XmlElement ("documentation")]
-		[DefaultValue ("")]
-		public string Documentation {
-			get { return documentation; }
-			set {
-				if (value == null)
-					documentation = String.Empty;
-				else
-					documentation = value;
-			}
-		}
-		
-#endif
 	
 		#endregion // Properties
 	}
