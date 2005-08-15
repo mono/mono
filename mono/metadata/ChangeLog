@@ -1,3 +1,12 @@
+2005-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* object-internals.h,
+	  locales.h,
+	  locales.c,
+	  culture-info.h,
+	  icall.c : added RegionInfo table support.
+	* culture-info-table.h : regenerated for region support.
+
 2005-08-14  Kamil Skalski  <nazgul@nemerle.org>
 
 	* reflection.c (resolve_object): handle all kinds of MonoMethod

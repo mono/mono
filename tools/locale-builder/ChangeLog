@@ -1,3 +1,9 @@
+2005-08-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RegionInfoEntry.cs,
+	  Driver.cs,
+	  Makefile.am : added RegionInfo table output support.
+
 2005-08-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* regions.xml : ugh, it does not match something .net returns, so

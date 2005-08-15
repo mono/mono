@@ -22,6 +22,7 @@ locale_builder_sources = Driver.cs		\
 			 CultureInfoEntry.cs	\
 			 DateTimeFormatEntry.cs	\
 			 NumberFormatEntry.cs	\
+			 RegionInfoEntry.cs     \
 			 TextInfoEntry.cs	\
 			 Entry.cs
 
