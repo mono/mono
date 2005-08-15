@@ -1,3 +1,7 @@
+﻿2005-08-15 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Graphics.jvm.cs: Fixed DrawImage
+
 2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ColorConverter.cs: Use TextInfo.ListSeparator as separator, as this

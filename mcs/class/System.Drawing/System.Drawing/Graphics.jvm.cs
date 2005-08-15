@@ -518,8 +518,19 @@ namespace System.Drawing {
 		
 		public void DrawImage (Image image, int x, int y) 
 		{
-			//FIXME: add page scale fix
-			NativeObject.drawImage(image.NativeObject, x, y, null);
+			float current_scale = PageScale;
+			if (current_scale != 1)
+				PageScale = 1;
+
+			try
+			{
+				NativeObject.drawImage(image.NativeObject, x, y, null);
+			}
+			finally
+			{
+				if (current_scale != 1)
+					PageScale = current_scale;
+			}
 		}
 
 		public void DrawImage (Image image, float x, float y) 
@@ -533,16 +544,28 @@ namespace System.Drawing {
 				throw new NotImplementedException();
 				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
 
-			NativeObject.drawImage(image.NativeObject,
-				destRect.X,
-				destRect.Y,
-				destRect.X + destRect.Width,
-				destRect.Y + destRect.Height,
-				srcRect.X,
-				srcRect.Y,
-				srcRect.X + srcRect.Width,
-				srcRect.Y + srcRect.Height,
-				null);
+			float current_scale = PageScale;
+			if (current_scale != 1)
+				PageScale = 1;
+
+			try
+			{
+				NativeObject.drawImage(image.NativeObject,
+					destRect.X,
+					destRect.Y,
+					destRect.X + destRect.Width,
+					destRect.Y + destRect.Height,
+					srcRect.X,
+					srcRect.Y,
+					srcRect.X + srcRect.Width,
+					srcRect.Y + srcRect.Height,
+					null);
+			}
+			finally
+			{
+				if (current_scale != 1)
+					PageScale = current_scale;
+			}
 		}
 		
 		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit) {
@@ -555,44 +578,75 @@ namespace System.Drawing {
 
 		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit) {
-			//FIXME: Function not working
 			DrawImage(image, destPoints, srcRect, srcUnit, null);
 		}
 
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit) {
-			//FIXME: Function not working
 			DrawImage(image, destPoints, srcRect, srcUnit, null);
 		}
 
 		
 		public void DrawImage (Image image, Point [] destPoints, Rectangle srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr) {
 			//TBD: ImageAttributes
-			//FIXME: Function not working
-			
 			if (srcUnit != GraphicsUnit.Pixel)
 				throw new NotImplementedException();
 				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
 
-			Matrix m = new Matrix(srcRect, destPoints);
-			DrawImage(image, m);
+			Matrix mx = new Matrix(srcRect, destPoints);
+
+			Region region = new Region(srcRect);
+			region.Transform (mx);
+			
+			geom.Area current_clip = (geom.Area)GetNativeClip().clone();
+			IntersectClip(region);
+			try
+			{
+				DrawImage(image, mx);
+			}
+			finally
+			{
+				SetNativeClip(current_clip);
+			}
 		}
 		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr) {
 			//TBD: ImageAttributes
-			//FIXME: Function not working
-
 			if (srcUnit != GraphicsUnit.Pixel)
 				throw new NotImplementedException();
 				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
 
-			Matrix m = new Matrix(srcRect, destPoints);
-			DrawImage(image, m);
+			Matrix mx = new Matrix(srcRect, destPoints);
+
+			Region region = new Region(srcRect);
+			region.Transform (mx);
+			
+			geom.Area current_clip = (geom.Area)GetNativeClip().clone();
+			IntersectClip(region);
+			try
+			{
+				DrawImage(image, mx);
+			}
+			finally
+			{
+				SetNativeClip(current_clip);
+			}
 		}
 
 
 		public void DrawImage (Image image, int x, int y, int width, int height) {
-			//FIXME: add page scale fix
-			NativeObject.drawImage(image.NativeObject, x, y, width, height, null);
+			float current_scale = PageScale;
+			if (current_scale != 1)
+				PageScale = 1;
+
+			try
+			{
+				NativeObject.drawImage(image.NativeObject, x, y, width, height, null);
+			}
+			finally
+			{
+				if (current_scale != 1)
+					PageScale = current_scale;
+			}
 		}
 
 		public void DrawImage (Image image, float x, float y, float width, float height) {
@@ -627,8 +681,8 @@ namespace System.Drawing {
 				srcUnit);
 		}
 		
-		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs) 
-		{
+		public void DrawImage (Image image, Rectangle destRect, float srcX, float srcY, float srcWidth, float srcHeight, GraphicsUnit srcUnit, ImageAttributes imageAttrs) {
+			//TBD: attributes
 			DrawImage(
 				image, 
 				destRect,
@@ -637,10 +691,20 @@ namespace System.Drawing {
 		}
 		
 
-		internal void DrawImage (Image image, Matrix m) 
-		{
-			//FIXME: add page scale fix
-			NativeObject.drawImage(image.NativeObject, m.NativeObject, null);
+		internal void DrawImage (Image image, Matrix m) {
+			float current_scale = PageScale;
+			if (current_scale != 1)
+				PageScale = 1;
+
+			try
+			{
+				NativeObject.drawImage(image.NativeObject, m.NativeObject, null);
+			}
+			finally
+			{
+				if (current_scale != 1)
+					PageScale = current_scale;
+			}
 		}
 		
 
