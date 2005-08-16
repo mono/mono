@@ -989,21 +989,43 @@ namespace System
 			}
 
 			// 3
-			bool unixAbsPath = scheme == UriSchemeFile && uriString.StartsWith ("///");
+			if (IsPredefinedScheme (scheme) && scheme != UriSchemeMailto && scheme != UriSchemeNews && (
+				(uriString.Length < 2) ||
+				(uriString.Length >= 2 && uriString [0] == '/' && uriString [1] != '/')))				
+				throw new UriFormatException ("Invalid URI: The Authority/Host could not be parsed.");
+			
+			
+			bool unixAbsPath = scheme == UriSchemeFile && (uriString.StartsWith ("///") || uriString == "//");
 			if (uriString.StartsWith ("//")) {
-				if (uriString.StartsWith ("////"))
-					unixAbsPath = false;
-				uriString = uriString.TrimStart (new char [] {'/'});
+				if (scheme != UriSchemeMailto && scheme != UriSchemeNews)
+					uriString = uriString.Substring (2);
+
+				if (scheme == UriSchemeFile) {
+					int num_leading_slash = 2;
+					for (int i = 0; i < uriString.Length; i++) {
+						if (uriString [i] != '/')
+							break;
+						num_leading_slash++;
+					}
+					if (num_leading_slash >= 4) {
+						unixAbsPath = false;
+						uriString = uriString.TrimStart ('/');
+					} else if (num_leading_slash >= 3) {
+						uriString = uriString.Substring (1);
+					}
+				}
+				
 				if (uriString.Length > 1 && uriString [1] == ':')
 					unixAbsPath = false;
+
 			} else if (!IsPredefinedScheme (scheme)) {
 				path = uriString;
 				isOpaquePart = true;
 				return;
 			}
-			
+
 			// 5 path
-			pos = uriString.IndexOfAny (new char[] {'/'});
+			pos = uriString.IndexOf ('/');
 			if (unixAbsPath)
 				pos = -1;
 			if (pos == -1) {
@@ -1072,10 +1094,12 @@ namespace System
 			} else if (isUnixFilePath) {
 				uriString = "//" + uriString;
 				host = String.Empty;
-			} else if (host.Length == 0) {
-				throw new UriFormatException ("Invalid URI: The hostname could not be parsed");
 			} else if (scheme == UriSchemeFile) {
 				isUnc = true;
+			} else if (host.Length == 0 &&
+				(scheme == UriSchemeHttp || scheme == UriSchemeGopher || scheme == UriSchemeNntp
+				 || scheme == UriSchemeHttps || scheme == UriSchemeFtp)) {
+				throw new UriFormatException ("Invalid URI: The hostname could not be parsed");
 			}
 
 			if ((scheme != Uri.UriSchemeMailto) &&

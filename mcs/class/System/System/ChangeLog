@@ -1,3 +1,7 @@
+2005-08-16  Daniel Drake  <dsd@gentoo.org>
+
+	* Uri.cs: Various parsing fixes from bug #75144.
+
 2005-07-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Uri.cs: Modified fix for bug #71053 to match both MS.NET 1.x and
