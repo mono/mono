@@ -1,3 +1,7 @@
+2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : added case for bug #53023.
+
 2005-08-10  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Type.cs: Add IsGenericType property from NET 2.0.

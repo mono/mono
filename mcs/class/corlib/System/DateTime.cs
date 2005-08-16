@@ -104,6 +104,8 @@ namespace System
 			"yyyy/M/d HH:mm:ss",
 			// bug #47720
 			"yyyy/MM/dd HH:mm:ss 'GMT'",
+			// bug #53023
+			"MM/dd/yyyy",
 			// Close to RFC1123, but without 'GMT'
 			"ddd, d MMM yyyy HH:mm:ss",
 			// use UTC ('Z'; not literal "'Z'")
