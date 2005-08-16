@@ -13,7 +13,9 @@ namespace Test.Sys.Drawing {
 		[SetUp]
 		public void SetUp () {
 			t = DrawingTest.Create (256, 256);
-			Image im=new Bitmap (@"..\..\Bitmap1.png"); 
+			Image im=new Bitmap (GetType().Assembly.GetManifestResourceStream (
+				"Test.DrawingTest.Test.Bitmap1.bmp"));
+
 			t.Graphics.DrawImageUnscaled (im, 0, 0);
 		}
 		[Test]
@@ -82,13 +84,13 @@ namespace Test.Sys.Drawing {
 		}
 		[Test]
 		public void Save_string () {
-			t.Bitmap.Save ("test.png");
-			using (FileStream r = new FileStream ("test.png", FileMode.Open)) {
+			t.Bitmap.Save ("test.bmp");
+			using (FileStream r = new FileStream ("test.bmp", FileMode.Open)) {
 				Bitmap b1 = new Bitmap (r);
 				Assert.AreEqual (DrawingTest.CalculateNorm (t.Bitmap),
 					DrawingTest.CalculateNorm (b1));
 			}
-			File.Delete ("test.png");
+			File.Delete ("test.bmp");
 		}
 		[Test]
 		public void Save_Stream_ImageFormat () {

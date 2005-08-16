@@ -1,3 +1,14 @@
+2005-08-16 Andrew Skiba <andrews@mainsoft.com>
+
+	* Test.dotnet.csproj, Test.vmwcsproj: make Bitmap1.png embedded resource,
+	add Bitmap1.bmp
+	* Bitmap1.bmp: added to make tests on java without jai
+	* Bitmap.cs: open bitmap from resources, to get rid of dir dependency
+	* Color.cs: remove unnecessary using DrawingTestHelper
+	* Graphics.cs: naive StringAlignment tests, must be improved later
+	* Image.cs: same as Bitmap.cs + use test.bmp instead of test.png (works
+	immediately on java w/o jai)
+
 2005-08-10 Boris Kirzner <borisk@mainsoft.com>
 	* GraphicsPath.cs: Added new class. Test fixture for GraphicsPath.
 

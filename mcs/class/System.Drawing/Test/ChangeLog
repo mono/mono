@@ -1,3 +1,7 @@
+2005-08-16 Andrew Skiba <andrews@mainsoft.com>
+
+	* Test.dotnet.csproj, Test.vmwcsproj: Embed Bitmap1.png, add Bitmap1.bmp
+
 2005-08-10 Boris Kirzner <borisk@mainsoft.com>
 	* Test.dotnet.csproj, Test.vmwcsproj: Added GraphicsPath.cs.
 

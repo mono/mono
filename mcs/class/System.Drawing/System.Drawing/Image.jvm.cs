@@ -253,18 +253,23 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 	#endregion
 
 	#region Save
-	protected abstract void InternalSave (ImageOutputStream output, ImageFormat format);
+	protected abstract void InternalSave (ImageOutputStream output, Guid clsid);
 
-	public void Save(Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams)
+	public void Save (Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams)
 	{
 		//FIXME: ignoring encoderParams
-		Save (stream, new ImageFormat (encoder.FormatID));
+		java.io.OutputStream jos = vmw.common.IOUtils.ToOutputStream (stream);
+		MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(jos);
+		
+		InternalSave (output, encoder.Clsid);
 	}
 	
 	public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams)
 	{
 		//FIXME: ignoring encoderParams
-		Save (filename, new ImageFormat (encoder.FormatID));
+		java.io.File jf = vmw.common.IOUtils.getJavaFile (filename);
+		FileImageOutputStream output = new FileImageOutputStream (jf);
+		InternalSave (output, encoder.Clsid);
 	}
 
 	public void Save (string filename)
@@ -274,16 +279,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 
 	public void Save (Stream stream, ImageFormat format)
 	{
-		java.io.OutputStream jos = vmw.common.IOUtils.ToOutputStream (stream);
-		MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(jos);
-		InternalSave (output, format);
+		Save (stream, ImageCodecInfo.FindEncoder (
+			ImageCodecInfo.ImageFormatToClsid (format)), null);
 	}
 
 	public void Save(string filename, ImageFormat format) 
 	{
-		java.io.File jf = vmw.common.IOUtils.getJavaFile (filename);
-		FileImageOutputStream output = new FileImageOutputStream (jf);
-		InternalSave (output, format);
+		Save (filename, ImageCodecInfo.FindEncoder (
+			ImageCodecInfo.ImageFormatToClsid (format)), null);
 	}
 	#endregion
 

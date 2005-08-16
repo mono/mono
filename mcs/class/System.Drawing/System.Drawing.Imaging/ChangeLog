@@ -1,5 +1,11 @@
 2005-08-03 Andrew Skiba <andrews@mainsoft.com>
 
+	* ImageCodecInfo.jvm.cs: implement via java imageio, add internal APIs for
+	fast read-only requests
+	* Methafile.jvm.cs: change in not implemented api to match image.jvm.cs
+
+2005-08-03 Andrew Skiba <andrews@mainsoft.com>
+
 	* Metafile.jvm.cs: add TARGET_JVM implementation
 
 2005-08-03 Andrew Skiba <andrews@mainsoft.com>

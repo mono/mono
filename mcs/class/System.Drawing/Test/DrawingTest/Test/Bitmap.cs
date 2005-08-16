@@ -16,7 +16,8 @@ namespace Test.Sys.Drawing
 		[SetUp]
 		public void SetUp () {
 			t = DrawingTest.Create (64, 64);
-			Bitmap b = new Bitmap (@"..\..\..\Test\Bitmap1.png");
+			Bitmap b = new Bitmap (GetType().Assembly.GetManifestResourceStream (
+				"Test.DrawingTest.Test.Bitmap1.bmp"));
 			t.Graphics.DrawImageUnscaled (b, 0, 0);
 		}
 		[Test]

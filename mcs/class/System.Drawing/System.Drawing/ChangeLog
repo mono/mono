@@ -1,3 +1,9 @@
+2005-08-16 Andrew Skiba <andrews@mainsoft.com>
+
+	* Icon.jvm.cs: match Bitmap internal constructor change
+	* Image.jvm.cs: use ImageCodecInfo.Clsid as primary format id, not ImageFormat
+	* Bitmap.jvm.cs: started changes for supporting ImageCodecInfo
+
 2005-08-16 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* Color.cs: To match MS.NET, throw ArgumentException instead of 

@@ -285,7 +285,7 @@ namespace System.Drawing.Imaging {
 		}
 		// properties
 
-		protected override void InternalSave(javax.imageio.stream.ImageOutputStream output, ImageFormat format) {
+		protected override void InternalSave (javax.imageio.stream.ImageOutputStream output, Guid clsid) {
 			throw new NotImplementedException ();
 		}
 

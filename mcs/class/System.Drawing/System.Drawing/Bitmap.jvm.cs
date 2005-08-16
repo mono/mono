@@ -2,11 +2,11 @@ using System;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Runtime.Serialization;
-using java.io;
-using javax.imageio;
-using javax.imageio.stream;
-using javax.imageio.spi;
 
+using io = java.io;
+using imageio = javax.imageio;
+using stream = javax.imageio.stream;
+using spi = javax.imageio.spi;
 using BufferedImage = java.awt.image.BufferedImage;
 using JavaImage = java.awt.Image;
 using awt = java.awt;
@@ -68,25 +68,25 @@ namespace System.Drawing
 		}
 
 		public Bitmap (Stream stream, bool useIcm)
-			:this (stream, null) {}
+			:this (stream, useIcm, null) {}
 
 		public Bitmap (string filename, bool useIcm)
-			//FIXME: useIcm param
-			:this (filename, null) {}
+			:this (filename, useIcm, null) {}
 
-		internal Bitmap (Stream stream, ImageFormat format) {
+		internal Bitmap (Stream stream, bool useIcm, ImageFormat format) {
 			//FIXME: useIcm param
 			//FIXME: use direct ImageInputStream wrapper for NET Stream
-			InputStream jis = vmw.common.IOUtils.ToInputStream (stream);
-            Initialize (new MemoryCacheImageInputStream (jis), format);
+			io.InputStream jis = vmw.common.IOUtils.ToInputStream (stream);
+            Initialize (new stream.MemoryCacheImageInputStream (jis), format);
 		}
 
-		internal Bitmap (string filename, ImageFormat format) {
+		internal Bitmap (string filename, bool useIcm, ImageFormat format) {
+			//FIXME: useIcm param
 			java.io.File file = vmw.common.IOUtils.getJavaFile (filename);
 			if (!file.exists ())
 				//TBD: check what exception throws NET
 				throw new System.IO.IOException ("File not found: "+filename);
-			Initialize (new FileImageInputStream (file), format);
+			Initialize (new stream.FileImageInputStream (file), format);
 		}
 
 		public Bitmap (Type type, string resource) {
@@ -94,42 +94,49 @@ namespace System.Drawing
 				if (s == null)
 					//TBD: check what type is thrown in MS
 					throw new Exception("Resource name was not found: `" + resource + "'");
-				InputStream jis = vmw.common.IOUtils.ToInputStream (s);
-				Initialize (new MemoryCacheImageInputStream (jis), null);
-			}
-		}
-
-		private void Initialize (ImageInputStream input, ImageFormat format) {
-			if (format != null) {
-				ImageReader r = format.ImageReaderSpi.createReaderInstance ();
-				r.setInput (input);
-				Initialize (r, format);
-			}
-			else {
-				java.util.Iterator iter = ImageIO.getImageReaders (input);
-				if (!iter.hasNext ())
-					throw new ArgumentException ("Format not found"); //TBD: make same text as MS
-
-				//following vars are initialized in the try block
-				string mimeType;
-				javax.imageio.spi.ImageReaderSpi readerSpi;
-				ImageReader r;
+				io.InputStream jis = vmw.common.IOUtils.ToInputStream (s);
 				try {
-					r = (ImageReader) iter.next ();
-					r.setInput (input);
-					readerSpi = r.getOriginatingProvider();
-					mimeType = readerSpi.getMIMETypes() [0];
+					Initialize (new stream.MemoryCacheImageInputStream (jis), null);
 				}
 				catch (Exception e) {
-					//TBD: make same text as MS
-					throw new ArgumentException ("Error reading", e);
+					//FIXME: catch and throw right exception
+					throw new Exception ("java exception", e);
 				}
-				format = new ImageFormat (mimeType, readerSpi, null);
-				Initialize (r, format);
 			}
 		}
 
-		private void Initialize (ImageReader r, ImageFormat format) {
+		//FIXME: should go to imageio helpers class
+		static ImageFormat MimeTypesToImageFormat (string [] mimeTypes)
+		{
+			foreach (ImageCodecInfo codec in ImageCodecInfo.Decoders.Values)
+				for (int i=0; i<mimeTypes.Length; i++)
+					if (codec.MimeType == mimeTypes [i])
+						return new ImageFormat (codec.FormatID);
+			return null;
+		}
+
+		private void Initialize (stream.ImageInputStream input, ImageFormat format) {
+			java.util.Iterator iter = null;
+			if (format != null)
+				iter = imageio.ImageIO.getImageReadersByMIMEType (
+					ImageCodecInfo.ImageFormatToMimeType (format));
+			else 
+				iter = imageio.ImageIO.getImageReaders (input);
+
+			if (!iter.hasNext ())
+				throw new ArgumentException ("Format not found"); //TBD: make same text as MS
+
+			imageio.ImageReader r = (imageio.ImageReader) iter.next ();
+
+			r.setInput (input);
+
+			if (format == null)
+				format = MimeTypesToImageFormat (r.getOriginatingProvider ().getMIMETypes ());
+
+			Initialize (r, format);
+		}
+
+		private void Initialize (imageio.ImageReader r, ImageFormat format) {
 			java.awt.Image [] nativeObjects;
 			java.awt.Image [] thumbnails = null;
 			try {
@@ -161,29 +168,31 @@ namespace System.Drawing
 		#endregion
 
 		#region InternalSave
-		protected override void InternalSave (ImageOutputStream output, ImageFormat format) {
-			ImageWriterSpi spi = format.ImageWriterSpi;
-			if (spi == null)
-				spi = ImageFormat.Png.ImageWriterSpi;
-
-			ImageWriter writer = spi.createWriterInstance ();
-			writer.setOutput (output);
-			if (NativeObjectsCount == 1)
-				writer.write (NativeObject);
-			else if (writer.canWriteSequence ())
-				SaveSequence ();
-			else
-				throw new NotImplementedException ();
+		protected override void InternalSave (stream.ImageOutputStream output, Guid clsid) {
+			string mime=ImageCodecInfo.FindEncoder (clsid).MimeType;
+			imageio.ImageWriter writer = null;;
+			try {
+				writer = (imageio.ImageWriter) imageio.ImageIO.getImageWritersByMIMEType (mime).next ();
+				writer.setOutput (output);
+				if (NativeObjectsCount == 1)
+					writer.write (NativeObject);
+				else if (writer.canWriteSequence ())
+					SaveSequence (writer);
+				else
+					throw new NotImplementedException ();
+			}
+			catch (Exception e) {
+				//FIXME: check dotnet exceptions in save, and throw same types
+				throw new Exception ("java threw an exception", e);
+			}
 		}
 
-		void SaveSequence () {
+		void SaveSequence (imageio.ImageWriter writer) {
 			//FIXME: does not supports metadata and thumbnails for now
-			ImageWriter writer = RawFormat.ImageWriterSpi.createWriterInstance ();
-
 			writer.prepareWriteSequence (null);
 
 			for (int i = 0; i < NativeObjectsCount; i++) {
-				IIOImage iio = new IIOImage ((BufferedImage)this[i], null, null);
+				imageio.IIOImage iio = new imageio.IIOImage ((BufferedImage)this[i], null, null);
 				writer.writeToSequence (iio, null);
 			}
 

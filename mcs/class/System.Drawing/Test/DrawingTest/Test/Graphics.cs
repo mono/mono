@@ -238,6 +238,34 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 		}
 
 		[Test]
+		public void DrawStringAlighnment () {
+			StringFormat f = new StringFormat ();
+			DrawingTest.ShowForms = true;
+	
+			Rectangle r1 = new Rectangle (30, 30, 200, 20);
+			t.Graphics.DrawRectangle (Pens.Blue, r1);
+			f.Alignment = StringAlignment.Near;
+			t.Graphics.DrawString ("Near", new Font ("Arial", 10), Brushes.Black,
+				r1, f);
+			t.Show ();
+
+			Rectangle r2 = new Rectangle (30, 60, 200, 20);
+			t.Graphics.DrawRectangle (Pens.Blue, r2);
+			f.Alignment = StringAlignment.Center;
+			t.Graphics.DrawString ("Center", new Font ("Arial", 10), Brushes.Black,
+				r2, f);
+			t.Show ();
+
+			Rectangle r3 = new Rectangle (30, 90, 200, 20);
+			t.Graphics.DrawRectangle (Pens.Blue, r3);
+			f.Alignment = StringAlignment.Far;
+			t.Graphics.DrawString ("Far", new Font ("Arial", 10), Brushes.Black,
+				r3, f);
+			t.Show ();
+
+		}
+
+		[Test]
 		public void BeginContainerTest() {
 			// Define transformation for container.
 			RectangleF srcRect = new RectangleF(0.0F, 0.0F, 200.0F, 200.0F);

@@ -35,6 +35,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using NUnit.Framework;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace MonoTests.System.Drawing
 {
@@ -57,35 +58,52 @@ namespace MonoTests.System.Drawing
 		[TestFixtureSetUp]
 		public void FixtureGetReady()		
 		{
+			ImageCodecInfo [] arrEnc  = ImageCodecInfo.GetImageDecoders ();
+			ImageCodecInfo [] arrDec = ImageCodecInfo.GetImageEncoders ();
 			decoders = new Hashtable ();
 			encoders = new Hashtable ();
 
-			foreach (ImageCodecInfo decoder in ImageCodecInfo.GetImageDecoders())
+			foreach (ImageCodecInfo decoder in arrDec)
 				decoders[decoder.Clsid] = decoder;
 		
-			foreach (ImageCodecInfo encoder in ImageCodecInfo.GetImageEncoders())
+			foreach (ImageCodecInfo encoder in arrEnc)
 				encoders[encoder.Clsid] = encoder;
 		}
 
 		static void Check (ImageCodecInfo e, ImageCodecInfo d, Guid FormatID, string CodecName, string DllName,
 			string FilenameExtension, ImageCodecFlags Flags, string FormatDescription,
-			string MimeType/*, byte [][] SignatureMasks*/)
+			string MimeType, int Version)
 		{
-			Assert.AreEqual (FormatID, e.FormatID, "Encoder.FormatID");
-			Assert.AreEqual (CodecName, e.CodecName, "Encoder.CodecName");
-			Assert.AreEqual (DllName, e.DllName, "Encoder.DllName");
-			Assert.AreEqual (FilenameExtension, e.FilenameExtension, "Encoder.FilenameExtension");
-			Assert.AreEqual (Flags, e.Flags, "Encoder.Flags");
-			Assert.AreEqual (FormatDescription, e.FormatDescription, "Encoder.FormatDescription");
-			Assert.AreEqual (MimeType, e.MimeType, "Encoder.MimeType");
+			Regex extRegex = new Regex (@"^(\*\.\w+(;(\*\.\w+))*;)?"+
+				Regex.Escape (FilenameExtension)+@"(;\*\.\w+(;(\*\.\w+))*)?$",
+				RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-			Assert.AreEqual (FormatID, d.FormatID, "Decoder.FormatID");
-			Assert.AreEqual (CodecName, d.CodecName, "Decoder.CodecName");
-			Assert.AreEqual (DllName, d.DllName, "Decoder.DllName");
-			Assert.AreEqual (FilenameExtension, d.FilenameExtension, "Decoder.FilenameExtension");
-			Assert.AreEqual (Flags, d.Flags, "Decoder.Flags");
-			Assert.AreEqual (FormatDescription, d.FormatDescription, "Decoder.FormatDescription");
-			Assert.AreEqual (MimeType, d.MimeType, "Decoder.MimeType");
+			if (e != null) {
+				Assert.AreEqual (FormatID, e.FormatID, "Encoder.FormatID");
+				Assert.IsTrue (e.CodecName.IndexOf (CodecName)>=0,
+					"Encoder.CodecName contains "+CodecName);
+				Assert.AreEqual (DllName, e.DllName, "Encoder.DllName");
+				Assert.IsTrue (extRegex.IsMatch (e.FilenameExtension),
+					"Encoder.FilenameExtension is a right list with "+FilenameExtension);
+				Assert.AreEqual (Flags, e.Flags, "Encoder.Flags");
+				Assert.IsTrue (e.FormatDescription.IndexOf (FormatDescription)>=0,
+					"Encoder.FormatDescription contains "+FormatDescription);
+				Assert.IsTrue (e.MimeType.IndexOf (MimeType)>=0,
+					"Encoder.MimeType contains "+MimeType);
+			}
+			if (d != null) {
+				Assert.AreEqual (FormatID, d.FormatID, "Decoder.FormatID");
+				Assert.IsTrue (d.CodecName.IndexOf (CodecName)>=0,
+					"Decoder.CodecName contains "+CodecName);
+				Assert.AreEqual (DllName, d.DllName, "Decoder.DllName");
+				Assert.IsTrue (extRegex.IsMatch (d.FilenameExtension),
+					"Decoder.FilenameExtension is a right list with "+FilenameExtension);
+				Assert.AreEqual (Flags, d.Flags, "Decoder.Flags");
+				Assert.IsTrue (d.FormatDescription.IndexOf (FormatDescription)>=0,
+					"Decoder.FormatDescription contains "+FormatDescription);
+				Assert.IsTrue (d.MimeType.IndexOf (MimeType)>=0,
+					"Decoder.MimeType contains "+MimeType);
+			}
 			/*
 			if (SignatureMasks == null) {
 				Assert.AreEqual (null, e.SignatureMasks, "Encoder.SignatureMasks");
@@ -108,6 +126,7 @@ namespace MonoTests.System.Drawing
 				}
 			}
 			*/
+			
 		}
 
 		[Test]
@@ -115,9 +134,9 @@ namespace MonoTests.System.Drawing
 		{
 			Guid g = new Guid ("557cf400-1a04-11d3-9a73-0000f81ef32e");
 			Check (GetEncoder (g), GetDecoder (g), ImageFormat.Bmp.Guid,
-				"Built-in BMP Codec", null, "*.BMP;*.DIB;*.RLE",
+				"BMP", null, "*.BMP",
 				ImageCodecFlags.Builtin|ImageCodecFlags.Encoder|ImageCodecFlags.Decoder|ImageCodecFlags.SupportBitmap,
-				"BMP", "image/bmp");
+				"BMP", "image/bmp", 1);
 		}
 
 		[Test]
@@ -125,9 +144,9 @@ namespace MonoTests.System.Drawing
 		{
 			Guid g = new Guid ("557cf402-1a04-11d3-9a73-0000f81ef32e");
 			Check (GetEncoder (g), GetDecoder (g), ImageFormat.Gif.Guid,
-				"Built-in GIF Codec", null, "*.GIF",
+				"GIF", null, "*.GIF",
 				ImageCodecFlags.Builtin|ImageCodecFlags.Encoder|ImageCodecFlags.Decoder|ImageCodecFlags.SupportBitmap,
-				"GIF", "image/gif");
+				"GIF", "image/gif", 1);
 		}
 		
 		[Test]
@@ -135,9 +154,9 @@ namespace MonoTests.System.Drawing
 		{
 			Guid g = new Guid ("557cf401-1a04-11d3-9a73-0000f81ef32e");
 			Check (GetEncoder (g), GetDecoder (g), ImageFormat.Jpeg.Guid,
-				"Built-in JPEG Codec", null, "*.JPG;*.JPEG;*.JPE;*.JFIF",
+				"JPEG", null, "*.JPG",
 				ImageCodecFlags.Builtin|ImageCodecFlags.Encoder|ImageCodecFlags.Decoder|ImageCodecFlags.SupportBitmap,
-				"JPEG", "image/jpeg");
+				"JPEG", "image/jpeg", 1);
 		}
 
 		[Test]
@@ -145,9 +164,18 @@ namespace MonoTests.System.Drawing
 		{
 			Guid g = new Guid ("557cf406-1a04-11d3-9a73-0000f81ef32e");
 			Check (GetEncoder (g), GetDecoder (g), ImageFormat.Png.Guid,
-				"Built-in PNG Codec", null, "*.PNG",
+				"PNG", null, "*.PNG",
 				ImageCodecFlags.Builtin|ImageCodecFlags.Encoder|ImageCodecFlags.Decoder|ImageCodecFlags.SupportBitmap,
-				"PNG", "image/png");
+				"PNG", "image/png", 1);
 		}
+		[Test]
+		public void IconCodec() {
+			Guid g = new Guid ("557cf407-1a04-11d3-9a73-0000f81ef32e");
+			Check (null, GetDecoder (g), ImageFormat.Bmp.Guid,
+				"ICO", null, "*.ICO",
+				ImageCodecFlags.Builtin|ImageCodecFlags.Encoder|ImageCodecFlags.SupportBitmap,
+				"ICO", "image/x-icon", 1);
+		}
+
 	}
 }

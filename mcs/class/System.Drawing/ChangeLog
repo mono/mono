@@ -1,3 +1,7 @@
+2005-08-16 Andrew Skiba <andrews@mainsoft.com>
+
+	* System.Drawing.vmwcsproj: use ImageFormat.cs instead of jvm.cs
+
 2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* System.Drawing.dll.sources: Removed TestColorConverter again, as 

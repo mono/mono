@@ -98,12 +98,12 @@ namespace System.Drawing
 
 		public Icon (Stream stream, int width, int height)
 		{
-			_bitmap = new Bitmap (stream, ImageFormat.Icon);
+			_bitmap = new Bitmap (stream, false, ImageFormat.Icon);
 			SelectSize (width, height);
 		}
 
 		public Icon (string fileName) {
-			_bitmap = new Bitmap (fileName, ImageFormat.Icon);
+			_bitmap = new Bitmap (fileName, false, ImageFormat.Icon);
 		}
 
 		public Icon (Type type, string resource)
@@ -111,7 +111,7 @@ namespace System.Drawing
 			using (Stream s = type.Assembly.GetManifestResourceStream (resource)) {
 				if (s == null)
 					throw new FileNotFoundException ("Resource name was not found: `" + resource + "'");
-				_bitmap = new Bitmap (s, ImageFormat.Icon);
+				_bitmap = new Bitmap (s, false, ImageFormat.Icon);
 			}
 		}
 
