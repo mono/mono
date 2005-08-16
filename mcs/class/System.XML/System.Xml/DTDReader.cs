@@ -145,7 +145,7 @@ namespace System.Xml
 					DTD.BaseURI,
 					currentLinkedNodeLineNumber,
 					currentLinkedNodeLinePosition);
-				currentInput.InitialState = false;
+				currentInput.AllowTextDecl = false;
 				do {
 					more = ProcessDTDSubset ();
 					if (PeekChar () == -1 && parserInputStack.Count > 0)
@@ -246,7 +246,7 @@ namespace System.Xml
 			default:
 				throw NotWFError (String.Format ("Syntax Error inside doctypedecl markup : {0}({1})", c2, (char) c2));
 			}
-			currentInput.InitialState = false;
+			currentInput.AllowTextDecl = false;
 			return true;
 		}
 
@@ -1323,7 +1323,7 @@ namespace System.Xml
 		// the leading '<!--'.
 		private void ReadComment ()
 		{
-			currentInput.InitialState = false;
+			currentInput.AllowTextDecl = false;
 
 			while (PeekChar () != -1) {
 				int ch = ReadChar ();
@@ -1356,7 +1356,7 @@ namespace System.Xml
 			} else if (String.Compare (target, "xml", true, CultureInfo.InvariantCulture) == 0)
 				throw NotWFError ("Not allowed processing instruction name which starts with 'X', 'M', 'L' was found.");
 
-			currentInput.InitialState = false;
+			currentInput.AllowTextDecl = false;
 
 			if (!SkipWhitespace ())
 				if (PeekChar () != '?')
@@ -1375,10 +1375,10 @@ namespace System.Xml
 		// The reader is positioned after "<?xml "
 		private void ReadTextDeclaration ()
 		{
-			if (!currentInput.InitialState)
+			if (!currentInput.AllowTextDecl)
 				throw NotWFError ("Text declaration cannot appear in this state.");
 
-			currentInput.InitialState = false;
+			currentInput.AllowTextDecl = false;
 
 			SkipWhitespace ();
 

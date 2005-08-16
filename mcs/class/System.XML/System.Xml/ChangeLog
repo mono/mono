@@ -1,3 +1,8 @@
+2005-08-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* DTDReader.cs, XmlParserInput.cs :
+	  let's fix #51495. First of all, refactoring.
+
 2005-08-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAttribute.cs : When there was only one child in attribute

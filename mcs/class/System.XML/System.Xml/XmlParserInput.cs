@@ -156,9 +156,9 @@ namespace System.Xml
 			get { return column; }
 		}
 
-		public bool InitialState {
-			get { return initialState; }
-			set { initialState = value; }
+		public bool AllowTextDecl {
+			get { return allowTextDecl; }
+			set { allowTextDecl = value; }
 		}
 
 		#endregion
@@ -172,7 +172,7 @@ namespace System.Xml
 		StringBuilder peBuffer = new StringBuilder ();
 		string baseURI;
 		bool peStored = false;
-		bool initialState = true;
+		bool allowTextDecl = true;
 		int peBufferIndex;
 
 		private XmlException ReaderError (string message)
