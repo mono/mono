@@ -1,3 +1,10 @@
+2005-08-16  Ankit Jain  <jankit@novell.com>
+
+	* test-marshal-array.il: New. Added test for marshalling as native type array.
+	* test-marshal.il: New. Added test for marshal info for method params.
+	* test-fixedarray.il: New. Added test for marshalling as fixed array.
+	* test-safearray.il: New. Added test for marshalling as safe array.
+
 2004-12-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* test-sn.il: New. Added test when including a public key to test for

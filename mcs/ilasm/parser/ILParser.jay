@@ -964,9 +964,12 @@ native_type		: /* EMPTY */
 			| K_CUSTOM OPEN_PARENS comp_qstring COMMA comp_qstring CLOSE_PARENS
 			| K_FIXED K_SYSSTRING OPEN_BRACKET int32 CLOSE_BRACKET
                           {
-                                $$ = NativeType.FixedSysString;
+                                $$ = new FixedSysString ((uint) (int)$4);
                           }
 			| K_FIXED K_ARRAY OPEN_BRACKET int32 CLOSE_BRACKET
+			  {
+                                $$ = new FixedArray ((int) $4);        
+                          }
 			| K_VARIANT
 			| K_CURRENCY
                           {
@@ -1024,9 +1027,23 @@ native_type		: /* EMPTY */
                           }
 			| native_type STAR
 			| native_type OPEN_BRACKET CLOSE_BRACKET
+			  {
+                                $$ = new NativeArray ((NativeType) $1);
+			  }
 			| native_type OPEN_BRACKET int32 CLOSE_BRACKET
+                          {
+                		$$ = new NativeArray ((NativeType) $1, (int) $3, 0, 0);
+			  }
 			| native_type OPEN_BRACKET int32 PLUS int32 CLOSE_BRACKET
+                          {
+                                //FIXME: Allowed only for methods, !fields
+                                $$ = new NativeArray ((NativeType) $1, (int) $3, (int) $5);
+			  }
 			| native_type OPEN_BRACKET PLUS int32 CLOSE_BRACKET
+			  {
+                                //FIXME: Allowed only for methods, !fields
+                                $$ = new NativeArray ((NativeType) $1, -1, (int) $4);
+			  }
 			| K_DECIMAL
 			| K_DATE
 			| K_BSTR
@@ -1063,6 +1080,12 @@ native_type		: /* EMPTY */
                                 $$ = NativeType.Interface;
                           }
 			| K_SAFEARRAY variant_type
+                          {
+                                if ($2 == null)
+                                        $$ = new SafeArray ();
+                                else        
+                                        $$ = new SafeArray ((SafeArrayType) $2);
+                          }
 			| K_SAFEARRAY variant_type COMMA comp_qstring
 			| K_INT
                           {
@@ -1090,6 +1113,9 @@ native_type		: /* EMPTY */
                                 $$ = NativeType.VariantBool;
                           }
 			| K_METHOD
+                          {
+                                $$ = NativeType.FuncPtr;
+                          }	
 			| K_AS K_ANY
                           {
                                 $$ = NativeType.AsAny;
@@ -1100,34 +1126,91 @@ native_type		: /* EMPTY */
 variant_type		: /* EMPTY */
 			| K_NULL
 			| K_VARIANT
+			  {
+                                $$ = SafeArrayType.variant;
+			  }
 			| K_CURRENCY
+			  {
+                                $$ = SafeArrayType.currency;
+			  }
 			| K_VOID
 			| K_BOOL
+			  {
+                                $$ = SafeArrayType.boolean;
+			  }
 			| K_INT8
+			  {
+                                $$ = SafeArrayType.int8;
+			  }
 			| K_INT16
+			  {
+                                $$ = SafeArrayType.int16;
+			  }
 			| K_INT32
+			  {
+                                $$ = SafeArrayType.int32;
+			  }
 			| K_INT64
 			| K_FLOAT32
+			  {
+                                $$ = SafeArrayType.float32;
+			  }
 			| K_FLOAT64
+			  {
+                                $$ = SafeArrayType.float64;
+			  }
 			| K_UNSIGNED K_INT8
+			  {
+                                $$ = SafeArrayType.uint8;
+			  }
 			| K_UNSIGNED K_INT16
+			  {
+                                $$ = SafeArrayType.uint16;
+			  }
 			| K_UNSIGNED K_INT32
+			  {
+                                $$ = SafeArrayType.uint32;
+			  }
 			| K_UNSIGNED K_INT64
 			| STAR
 			| variant_type OPEN_BRACKET CLOSE_BRACKET
 			| variant_type K_VECTOR
 			| variant_type AMPERSAND
 			| K_DECIMAL
+			  {
+                                $$ = SafeArrayType.Decimal;
+			  }
 			| K_DATE
+			  {
+                                $$ = SafeArrayType.date;
+			  }
 			| K_BSTR
+			  {
+                                $$ = SafeArrayType.bstr;
+			  }
 			| K_LPSTR
 			| K_LPWSTR
 			| K_IUNKNOWN
+			  {
+                                $$ = SafeArrayType.unknown;
+			  }
 			| K_IDISPATCH
+			  {
+                                $$ = SafeArrayType.unknown;
+			  }
 			| K_SAFEARRAY
 			| K_INT
+			  {
+                                $$ = SafeArrayType.Int;
+			  }
 			| K_UNSIGNED K_INT
+			  {
+                                $$ = SafeArrayType.UInt;
+			  }
 			| K_ERROR
+			  {
+                                $$ = SafeArrayType.error;
+			  }
 			| K_HRESULT
 			| K_CARRAY
 			| K_USERDEFINED
@@ -1151,7 +1234,7 @@ field_decl		: D_FIELD repeat_opt field_attr type id at_opt init_opt
                                 codegen.CurrentCustomAttrTarget = field_def;
                                 
                                 if ($2 != null) {
-                                        field_def.SetOffset ((uint) $2);
+                                        field_def.SetOffset ((uint) (int)$2);
                                 }
 
                                 if ($6 != null) {
@@ -1221,7 +1304,8 @@ field_attr		: /* EMPTY */
                           }
 			| field_attr K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS
                           {
-                                
+                               codegen.AddFieldMarshalInfo ((NativeType) $4);
+                               $$ = (FieldAttr) $1 | FieldAttr.HasFieldMarshal;
                           }
 			| field_attr K_LITERAL
                           {
@@ -1523,6 +1607,20 @@ method_head		: D_METHOD meth_attr call_conv param_attr type method_name
 			| D_METHOD meth_attr call_conv param_attr type 
 			  K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS method_name
 			  OPEN_PARENS sig_args CLOSE_PARENS impl_attr
+			  {
+                                MethodDef methdef = new MethodDef (
+                              		codegen, (MethAttr) $2, (CallConv) $3,
+                                        (ImplAttr) $14, (string) $10, (ITypeRef) $5,
+                                        (ArrayList) $12, tokenizer.Reader.Location);
+
+                                if (pinvoke_info) {
+                                        ExternModule mod = codegen.ExternTable.AddModule (pinvoke_mod);
+                                        methdef.AddPInvokeInfo (pinvoke_attr, mod, pinvoke_meth);
+                                        pinvoke_info = false;
+                                }
+		                
+                                methdef.AddRetTypeMarshalInfo ((NativeType) $8);
+			  }
 			;
 
 meth_attr		: /* EMPTY */                   { $$ = new MethAttr (); }
@@ -1639,7 +1737,19 @@ sig_arg			: param_attr type
                                 // $$ = ParamDef.Ellipsis;
                           }
 			| param_attr type K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS
+			  {
+                                ParamDef param_def = new ParamDef ((ParamAttr) $1, null, (ITypeRef) $2);
+                                param_def.AddMarshalInfo ((PEAPI.NativeType) $5);
+
+                                $$ = param_def;
+			  }
 			| param_attr type K_MARSHAL OPEN_PARENS native_type CLOSE_PARENS id
+			  {
+                                ParamDef param_def = new ParamDef ((ParamAttr) $1, (string) $7, (ITypeRef) $2);
+                                param_def.AddMarshalInfo ((PEAPI.NativeType) $5);
+
+                                $$ = param_def;
+			  }
 			;
 
 type_list               : /* EMPTY */

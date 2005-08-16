@@ -20,6 +20,7 @@ namespace Mono.ILASM {
                 private PEAPI.FieldAttr attr;
                 private PEAPI.FieldDef field_def;
                 private ArrayList customattr_list;
+                private PEAPI.NativeType native_type;
 
                 private bool offset_set;
                 private bool datavalue_set;
@@ -88,6 +89,11 @@ namespace Mono.ILASM {
 
                         customattr_list.Add (customattr);
                 }
+                
+                public void AddMarshalInfo (PEAPI.NativeType native_type)
+                {
+                        this.native_type = native_type;        
+                }
 
                 public PEAPI.FieldDef Resolve (CodeGen code_gen)
                 {
@@ -113,6 +119,9 @@ namespace Mono.ILASM {
                         if (customattr_list != null)
                                 foreach (CustomAttr customattr in customattr_list)
                                         customattr.AddTo (code_gen, field_def);
+
+                        if (native_type != null)
+                                field_def.SetMarshalInfo (native_type);
 
                         is_resolved = true;
 

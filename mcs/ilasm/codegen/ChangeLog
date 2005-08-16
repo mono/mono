@@ -1,3 +1,21 @@
+2005-08-16  Ankit Jain  <jankit@novell.com>
+
+	* CodeGen.cs (CodeGen.current_field_native_type): New.
+	  (CodeGen.AddFieldMarshalInfo): New. Add marshal info for the current field.
+	  (CodeGen.AddFieldDef): Add marshal info for the field.
+	* FieldDef.cs (FieldDef.native_type): New. Native type for marshalling.
+	  (FieldDef.AddMarshalInfo): New. Set native_type.
+	  (FieldDef.Resolve): Set MarshalInfo for field_def.
+	* MethodDef.cs (MethodDef.ret_native_type): New. Native type for return type.  
+	  (MethodDef.AddRetTypeMarshalInfo): New.
+	  (MethodDef.EntryPoint): Throw exception is the method is not static.
+	  (MethodDef.Resolve): Call overload with class_def=null.
+	  (MethodDef.Resolve): Add global methods to code_gen.PEFile. 
+	  Add marshal info for return type.
+	* ParamDef.cs (ParamDef.native_type): New. Native type for marshalling.
+	  (ParamDef.AddMarshalInfo): New.
+	  (ParamDef.Define): Add marshal info to peapi_param.
+
 2005-08-08  Ankit Jain  <jankit@novell.com>
 
 	* ExternTypeRef.cs (ExternTypeRef.Clone): Use full_name instead of FullName

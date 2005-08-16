@@ -34,6 +34,7 @@ namespace Mono.ILASM {
 		private SymbolWriter symwriter;
                 private ICustomAttrTarget current_customattrtarget;
                 private IDeclSecurityTarget current_declsectarget;
+                private PEAPI.NativeType current_field_native_type;
 
                 private byte [] assembly_public_key;
                 private int assembly_major_version;
@@ -261,8 +262,18 @@ namespace Mono.ILASM {
 			typedef_stack_top++;
                 }
 
+                public void AddFieldMarshalInfo (PEAPI.NativeType native_type)
+                {
+                        current_field_native_type = native_type;
+                }
+
                 public void AddFieldDef (FieldDef fielddef)
                 {
+                        if (current_field_native_type != null) {
+                                fielddef.AddMarshalInfo (current_field_native_type);
+                                current_field_native_type = null;
+                        }
+
                         if (current_typedef != null) {
                                 current_typedef.AddFieldDef (fielddef);
                         } else {

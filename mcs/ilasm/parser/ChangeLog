@@ -1,3 +1,20 @@
+2005-08-16  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (native_type | K_FIXED K_SYSSTRING ..): Instantiate 
+	  object of PEAPI.FixedSysString.
+	  (native_type | native_type OPEN_BRACKET ..): Instantiate object of
+	  NativeArray with the proper arguments.
+	  (native_type | K_METHOD): Use NativeType.FuncPtr.
+	  (native_type | K_FIXED K_ARRAY ..): Instantiate object of FixedArray.
+	  (native_type | K_SAFEARRAY ..): Instantiate object of SafeArray.
+	  (variant_type): Use appropriate values from SafeArrayType enum.
+	  (field_decl | D_FIELD ..): Cast repeat_opt to int before casting to uint 
+	  as repeat_opt is int32.
+	  (field_attr | field_attr K_MARSHAL ..): Add Marshal info for field.
+	  Set field attr to HasFieldMarshal.
+	  (method_head): Add Marshal info for return type if specified.
+	  (sig_arg | param_attr ..): Create ParamDef and add marshal info.
+
 2005-08-11  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (class_ref | slashed_name): Don't use PrimitiveTypeRef for

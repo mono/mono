@@ -51,6 +51,7 @@ namespace Mono.ILASM {
                 private string pinvoke_name;
                 private PEAPI.PInvokeAttr pinvoke_attr;
 		private SourceMethod source;
+                private PEAPI.NativeType ret_native_type;
 
                 public MethodDef (CodeGen codegen, PEAPI.MethAttr meth_attr,
 				  PEAPI.CallConv call_conv, PEAPI.ImplAttr impl_attr,
@@ -192,6 +193,11 @@ namespace Mono.ILASM {
                         declsecurity_list.Add (declsecurity);
                 }
 
+                public void AddRetTypeMarshalInfo (PEAPI.NativeType native_type)
+                {
+                        this.ret_native_type = native_type;
+                }
+
                 public void AddLocals (ArrayList local_list)
                 {
                         int slot_pos = this.local_list.Count;
@@ -251,6 +257,8 @@ namespace Mono.ILASM {
 
                 public void EntryPoint ()
                 {
+                        if (!IsStatic)
+                                throw new Exception ("Non-static method as entrypoint.");
                         entry_point = true;
                 }
 
@@ -266,20 +274,7 @@ namespace Mono.ILASM {
 
                 public PEAPI.MethodDef Resolve (CodeGen code_gen)
                 {
-                        if (is_resolved)
-                                return methoddef;
-
-                        PEAPI.Param [] param_array = GenerateParams (code_gen);
-                        FixAttributes ();
-                        ret_type.Resolve (code_gen);
-
-                        methoddef = code_gen.PEFile.AddMethod (meth_attr, impl_attr,
-                                        name, ret_type.PeapiType, param_array);
-
-                        methoddef.AddCallConv (call_conv);
-                        is_resolved = true;
-
-                        return methoddef;
+                        return Resolve (code_gen, null);
                 }
 
                 public PEAPI.MethodDef Resolve (CodeGen code_gen, PEAPI.ClassDef classdef)
@@ -291,10 +286,18 @@ namespace Mono.ILASM {
                         FixAttributes ();
                         ret_type.Resolve (code_gen);
 
-                        methoddef = classdef.AddMethod (meth_attr, impl_attr,
-                                        name, ret_type.PeapiType, param_array);
+                        if (classdef == null)
+                                methoddef = code_gen.PEFile.AddMethod (meth_attr, impl_attr,
+                                                name, ret_type.PeapiType, param_array);
+                        else			
+                                methoddef = classdef.AddMethod (meth_attr, impl_attr,
+                                                name, ret_type.PeapiType, param_array);
 
                         methoddef.AddCallConv (call_conv);
+
+                        if (ret_native_type != null)
+                                methoddef.AddRetTypeMarshallInfo (ret_native_type);
+
                         is_resolved = true;
 
                         return methoddef;

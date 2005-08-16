@@ -26,6 +26,7 @@ namespace Mono.ILASM {
                 private PEAPI.Param peapi_param;
                 private PEAPI.Constant defval;
                 private ArrayList customattr_list;
+                private PEAPI.NativeType native_type;
 
                 public static readonly ParamDef Ellipsis = new ParamDef (new PEAPI.ParamAttr (), "ELLIPSIS", null);
 
@@ -49,6 +50,11 @@ namespace Mono.ILASM {
                                 customattr_list = new ArrayList ();
 
                         customattr_list.Add (customattr);
+                }
+
+                public void AddMarshalInfo (PEAPI.NativeType native_type)
+                {
+                        this.native_type = native_type;
                 }
 
                 public ITypeRef Type {
@@ -88,6 +94,9 @@ namespace Mono.ILASM {
                         if (customattr_list != null)
                                 foreach (CustomAttr customattr in customattr_list)
                                         customattr.AddTo (code_gen, peapi_param);
+
+                        if (native_type != null)
+                                peapi_param.AddMarshallInfo (native_type);
 
                         is_defined = true;
                 }
