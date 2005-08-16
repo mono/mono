@@ -17,7 +17,7 @@ namespace Mono.CSharp {
 	///   This is an Expression to allow it to be referenced in the
 	///   compiler parse/intermediate tree during name resolution.
 	/// </summary>
-	public class Namespace : FullNamedExpression, IAlias {
+	public class Namespace : FullNamedExpression {
 		static ArrayList all_namespaces;
 		static Hashtable namespaces_map;
 		
@@ -25,7 +25,7 @@ namespace Mono.CSharp {
 		string fullname;
 		ArrayList entries;
 		Hashtable namespaces;
-		Hashtable defined_names;
+		Hashtable declspaces;
 		Hashtable cached_types;
 
 		public readonly MemberName MemberName;
@@ -75,7 +75,7 @@ namespace Mono.CSharp {
 
 			entries = new ArrayList ();
 			namespaces = new Hashtable ();
-			defined_names = new Hashtable ();
+			declspaces = new Hashtable ();
 			cached_types = new Hashtable ();
 
 			all_namespaces.Add (this);
@@ -146,7 +146,7 @@ namespace Mono.CSharp {
 				te = (TypeExpr) cached_types [name];
 			} else {
 				Type t;
-				DeclSpace tdecl = defined_names [name] as DeclSpace;
+				DeclSpace tdecl = declspaces [name] as DeclSpace;
 				if (tdecl != null) {
 					//
 					// Note that this is not:
@@ -178,30 +178,24 @@ namespace Mono.CSharp {
 			entries.Add (entry);
 		}
 
-		public void DefineName (string name, IAlias o)
+		public void AddDeclSpace (string name, DeclSpace ds)
 		{
-			defined_names.Add (name, o);
+			declspaces.Add (name, ds);
 		}
 
 		static public ArrayList UserDefinedNamespaces {
-			get {
-				return all_namespaces;
-			}
+			get { return all_namespaces; }
 		}
 
 		/// <summary>
 		///   The qualified name of the current namespace
 		/// </summary>
 		public string Name {
-			get {
-				return fullname;
-			}
+			get { return fullname; }
 		}
 
 		public override string FullName {
-			get {
-				return fullname;
-			}
+			get { return fullname; }
 		}
 
 		/// <summary>
@@ -209,9 +203,7 @@ namespace Mono.CSharp {
 		///   the current namespace declaration
 		/// </summary>
 		public Namespace Parent {
-			get {
-				return parent;
-			}
+			get { return parent; }
 		}
 
 		public static void DefineNamespaces (SymbolWriter symwriter)
@@ -240,15 +232,6 @@ namespace Mono.CSharp {
 				return "Namespace (<root>)";
 			else
 				return String.Format ("Namespace ({0})", Name);
-		}
-
-		bool IAlias.IsType {
-			get { return false; }
-		}
-
-		TypeExpr IAlias.ResolveAsType (EmitContext ec)
-		{
-			throw new InvalidOperationException ();
 		}
 	}
 

@@ -592,7 +592,7 @@ namespace Mono.CSharp {
 	///   provides the common foundation for managing those name
 	///   spaces.
 	/// </remarks>
-	public abstract class DeclSpace : MemberCore, IAlias {
+	public abstract class DeclSpace : MemberCore {
 		/// <summary>
 		///   This points to the actual definition that is being
 		///   created with System.Reflection.Emit
@@ -724,9 +724,7 @@ namespace Mono.CSharp {
 		// why there is a non-obvious test down here.
 		//
 		public bool IsTopLevel {
-			get {
-				return (Parent != null && Parent.Parent == null);
-			}
+			get { return (Parent != null && Parent.Parent == null); }
 		}
 
 		public virtual void CloseType ()
@@ -751,9 +749,7 @@ namespace Mono.CSharp {
 		}
 
 		protected virtual TypeAttributes TypeAttr {
-			get {
-				return CodeGen.Module.DefaultCharSetType;
-			}
+			get { return CodeGen.Module.DefaultCharSetType; }
 		}
 
 		/// <remarks>
@@ -1319,29 +1315,8 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		bool IAlias.IsType {
-			get { return true; }
-		}
-
-		string IAlias.Name {
-			get { return Name; }
-		}
-
-		TypeExpr IAlias.ResolveAsType (EmitContext ec)
-		{
-			if (TypeBuilder == null)
-				throw new InvalidOperationException ();
-
-			if (CurrentType != null)
-				return new TypeExpression (CurrentType, Location);
-			else
-				return new TypeExpression (TypeBuilder, Location);
-		}
-
 		public override string[] ValidAttributeTargets {
-			get {
-				return attribute_targets;
-			}
+			get { return attribute_targets; }
 		}
 	}
 

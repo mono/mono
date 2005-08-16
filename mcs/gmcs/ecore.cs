@@ -91,23 +91,6 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   We are either a namespace or a type.
-	///   If we're a type, `IsType' is true and we may use `Type' to get
-	///   a TypeExpr representing that type.
-	/// </summary>
-	public interface IAlias {
-		bool IsType {
-			get;
-		}
-
-		string Name {
-			get;
-		}
-
-		TypeExpr ResolveAsType (EmitContext ec);
-	}
-
-	/// <summary>
 	///   This interface is implemented by variables
 	/// </summary>
 	public interface IVariable {
@@ -127,19 +110,12 @@ namespace Mono.CSharp {
 		protected Location loc;
 		
 		public Type Type {
-			get {
-				return type;
-			}
-
-			set {
-				type = value;
-			}
+			get { return type; }
+			set { type = value; }
 		}
 
 		public Location Location {
-			get {
-				return loc;
-			}
+			get { return loc; }
 		}
 
 		/// <summary>

@@ -49,6 +49,17 @@
 	`AnonymousContainer am' argument; compute its toplevel scope if
 	it's not already computed.  Fixes #75649.
 
+2005-07-14  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (IAlias): Remove.
+	* decl.cs (DeclSpace): Don't derive from IAlias.  Remove members
+	that implement the interface.
+	* namespace.cs (Namespace): Likewise.
+	(Namespace.declspaces): Renamed from 'defined_names'.
+	(Namespace.AddDeclSpace): Renamed from 'DefineName'.  Take a
+	DeclSpace instead of an IAlias.
+	* tree.cs (Tree.AddDecl): Update.
+
 2005-07-12  Raja R Harinath  <rharinath@novell.com>
 
 	* statement.cs (Block.Flags); Remove HasVarargs.
