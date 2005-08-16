@@ -33,7 +33,7 @@ using System.IO;
 using System.Collections;
 
 // Provide All Data required by the diffderent tests e.g.DataTable, DataRow ...
-namespace MonoTests.System.Data.Test.Utils
+namespace MonoTests.System.Data.Utils
 {
 	public class DataProvider
 	{

@@ -31,7 +31,7 @@ using System;
 using System.Text;
 using System.IO;
 using System.Data;
-using MonoTests.System.Data.Test.Utils;
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests_System.Data
 {

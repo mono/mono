@@ -1,3 +1,9 @@
+2005-08-16  Martin Baulig  <martin@ximian.com>
+
+	* System.Data.Test.Utils/DataProvider.cs: Renamed namespace
+	`MonoTests.System.Data.Test.Utils' -> `MonoTests.System.Data.Utils'
+	to make it compile.
+
 2005-05-26  Eyal Alaluf <eyala@mainsoft.com>
 	* Added System.Data.Test.Utils - Keeps utilities comon for all tests
 

@@ -29,7 +29,7 @@
 using NUnit.Framework;
 using System;
 using System.Data;
-using MonoTests.System.Data.Test.Utils;
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests_System.Data
 {

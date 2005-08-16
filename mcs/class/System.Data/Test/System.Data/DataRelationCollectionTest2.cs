@@ -31,7 +31,7 @@ using System;
 using System.ComponentModel;
 using System.Collections;
 using System.Data;
-using MonoTests.System.Data.Test.Utils;
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests.System.Data
 {

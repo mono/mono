@@ -27,7 +27,7 @@
 //
 
 using NUnit.Framework;
-using MonoTests.System.Data.Test.Utils;
+using MonoTests.System.Data.Utils;
 using System;
 using System.Collections;
 using System.ComponentModel;

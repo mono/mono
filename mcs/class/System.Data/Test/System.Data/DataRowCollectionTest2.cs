@@ -32,7 +32,7 @@ using System.IO;
 using System.Collections;
 using System.ComponentModel;
 using System.Data;
-using MonoTests.System.Data.Test.Utils;
+using MonoTests.System.Data.Utils;
 
 namespace MonoTests.System.Data
 {
