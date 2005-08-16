@@ -28,36 +28,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using NUnit.Framework;
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
+using System.Threading;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Drawing
 {
-	[TestFixture]	
+	[TestFixture]
 	public class SizeConverterTest : Assertion
 	{
 		Size sz;
 		Size szneg;
 		SizeConverter szconv;
-		String szStr;
-		String sznegStr;
-
-		[TearDown]
-		public void TearDown () {}
+		String szStrInvariant;
+		String sznegStrInvariant;
 
 		[SetUp]
-		public void SetUp ()		
+		public void SetUp ()
 		{
 			sz = new Size (10, 20);
-			szStr = sz.Width + ", " + sz.Height;
+			szStrInvariant = sz.Width + ", " + sz.Height;
 
 			szneg = new Size (-20, -30);
-			sznegStr = szneg.Width + ", " + szneg.Height;
+			sznegStrInvariant = szneg.Width + ", " + szneg.Height;
 
 			szconv = (SizeConverter) TypeDescriptor.GetConverter (sz);
 		}
@@ -174,10 +172,10 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestConvertTo ()
 		{
-			AssertEquals ("CT#1", szStr, (String) szconv.ConvertTo (null,
+			AssertEquals ("CT#1", szStrInvariant, (String) szconv.ConvertTo (null,
 								CultureInfo.InvariantCulture,
 								sz, typeof (String)));
-			AssertEquals ("CT#2", sznegStr, (String) szconv.ConvertTo (null,
+			AssertEquals ("CT#2", sznegStrInvariant, (String) szconv.ConvertTo (null,
 							CultureInfo.InvariantCulture, szneg, 
 							typeof (String)));
 
@@ -295,70 +293,152 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		public void ConvertFromInvariantString_string () {
+		public void ConvertFromInvariantString_string ()
+		{
 			AssertEquals ("CFISS#1", sz, szconv
-				.ConvertFromInvariantString (szStr));
+				.ConvertFromInvariantString (szStrInvariant));
 			AssertEquals ("CFISS#2", szneg, szconv
-				.ConvertFromInvariantString (sznegStr));
+				.ConvertFromInvariantString (sznegStrInvariant));
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromInvariantString_string_exc_1 () {
+		public void ConvertFromInvariantString_string_exc_1 ()
+		{
 			szconv.ConvertFromInvariantString ("1, 2, 3");
 		}
 
 		[Test]
 		[NUnit.Framework.Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromInvariantString_string_exc_2 () {
+		public void ConvertFromInvariantString_string_exc_2 ()
+		{
 			szconv.ConvertFromInvariantString ("hello");
 		}
 
 		[Test]
-		public void ConvertFromString_string () {
-			AssertEquals ("CFSS#1", sz, szconv.ConvertFromString (szStr));
-			AssertEquals ("CFSS#2", szneg, szconv.ConvertFromString (sznegStr));
+		public void ConvertFromString_string ()
+		{
+			// save current culture
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+
+			try {
+				PerformConvertFromStringTest (new CultureInfo ("en-US"));
+				PerformConvertFromStringTest (new CultureInfo ("nl-BE"));
+				PerformConvertFromStringTest (new MyCultureInfo ());
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromString_string_exc_1 () {
+		public void ConvertFromString_string_exc_1 ()
+		{
 			szconv.ConvertFromString ("1, 2, 3, 4, 5");
 		}
 
 		[Test]
 		[NUnit.Framework.Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromString_string_exc_2 () {
+		public void ConvertFromString_string_exc_2 ()
+		{
 			szconv.ConvertFromString ("hello");
 		}
 
 		[Test]
-		public void ConvertToInvariantString_string () {
-			AssertEquals ("CFISS#1", szStr, szconv.ConvertToInvariantString (sz));
-			AssertEquals ("CFISS#2", sznegStr, szconv.ConvertToInvariantString (szneg));
+		public void ConvertToInvariantString_string ()
+		{
+			AssertEquals ("CFISS#1", szStrInvariant, szconv.ConvertToInvariantString (sz));
+			AssertEquals ("CFISS#2", sznegStrInvariant, szconv.ConvertToInvariantString (szneg));
 		}
 
 		[Test]
-		public void ConvertToString_string () {
-			AssertEquals ("CFISS#1", szStr, szconv.ConvertToString (sz));
-			AssertEquals ("CFISS#2", sznegStr, szconv.ConvertToString (szneg));
+		public void ConvertToString_string ()
+		{
+			// save current culture
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+
+			try {
+				PerformConvertToStringTest (new CultureInfo ("en-US"));
+				PerformConvertToStringTest (new CultureInfo ("nl-BE"));
+				PerformConvertToStringTest (new MyCultureInfo ());
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
 		}
 
 		[Test]
-		public void GetStandardValuesSupported () {
+		public void GetStandardValuesSupported ()
+		{
 			Assert (! szconv.GetStandardValuesSupported ());
 		}
 
 		[Test]
-		public void GetStandardValues () {
+		public void GetStandardValues ()
+		{
 			AssertEquals (null, szconv.GetStandardValues ());
 		}
 
 		[Test]
-		public void GetStandardValuesExclusive () {
+		public void GetStandardValuesExclusive ()
+		{
 			AssertEquals (false, szconv.GetStandardValuesExclusive ());
+		}
+
+		private void PerformConvertFromStringTest (CultureInfo culture)
+		{
+			// set current culture
+			Thread.CurrentThread.CurrentCulture = culture;
+
+			// perform tests
+			AssertEquals ("CFSS#1-" + culture.Name, sz, szconv.ConvertFromString (CreateSizeString (culture, sz)));
+			AssertEquals ("CFSS#2-" + culture.Name, szneg, szconv.ConvertFromString (CreateSizeString (culture, szneg)));
+		}
+
+		private void PerformConvertToStringTest (CultureInfo culture)
+		{
+			// set current culture
+			Thread.CurrentThread.CurrentCulture = culture;
+
+			// perform tests
+			AssertEquals ("CFISS#1-" + culture.Name, CreateSizeString (culture, sz),
+				szconv.ConvertToString (sz));
+			AssertEquals ("CFISS#2-" + culture.Name, CreateSizeString (culture, szneg),
+				szconv.ConvertToString (szneg));
+		}
+
+		private static string CreateSizeString (Size size)
+		{
+			return CreateSizeString (CultureInfo.CurrentCulture, size);
+		}
+
+		private static string CreateSizeString (CultureInfo culture, Size size)
+		{
+			return string.Format ("{0}{1} {2}", size.Width.ToString (culture),
+				culture.TextInfo.ListSeparator, size.Height.ToString (culture));
+		}
+
+		[Serializable]
+		private sealed class MyCultureInfo : CultureInfo
+		{
+			internal MyCultureInfo () : base ("en-US")
+			{
+			}
+
+			public override object GetFormat (Type formatType)
+			{
+				if (formatType == typeof (NumberFormatInfo)) {
+					NumberFormatInfo nfi = (NumberFormatInfo) ((NumberFormatInfo) base.GetFormat (formatType)).Clone ();
+
+					nfi.NegativeSign = "myNegativeSign";
+					return NumberFormatInfo.ReadOnly (nfi);
+				} else {
+					return base.GetFormat (formatType);
+				}
+			}
 		}
 	}
 }

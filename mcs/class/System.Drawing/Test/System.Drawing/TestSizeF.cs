@@ -28,25 +28,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using NUnit.Framework;
 using System;
 using System.Drawing;
+using System.Globalization;
+using System.Threading;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Drawing 
 {
-	[TestFixture]	
-	public class SizeFTest : Assertion 
+	[TestFixture]
+	public class SizeFTest
 	{
 		SizeF sz11_99;
 		SizeF sz11_0;
 		SizeF sz0_11;
 
-		[TearDown]
-		public void TearDown () {}
-
 		[SetUp]
-		public void SetUp ()		
+		public void SetUp ()
 		{
 			sz11_99 = new SizeF (1.1F, 9.9F);
 			sz11_0 = new SizeF (1.1F, 0F);
@@ -57,48 +56,48 @@ namespace MonoTests.System.Drawing
 		public void TestConstructors ()
 		{
 			SizeF sz_wh = new SizeF (1.5F, 5.8F);
-			AssertEquals ("C#1", 1.5F, sz_wh.Width);
-			AssertEquals ("C#2", 5.8F, sz_wh.Height);
+			Assert.AreEqual (1.5F, sz_wh.Width, "C#1");
+			Assert.AreEqual (5.8F, sz_wh.Height, "C#2");
 
 			SizeF sz_pf = new SizeF (new PointF (1.5F, 5.8F));
-			AssertEquals ("C#3", 1.5F, sz_pf.Width);
-			AssertEquals ("C#4", 5.8F, sz_pf.Height);
+			Assert.AreEqual (1.5F, sz_pf.Width, "C#3");
+			Assert.AreEqual (5.8F, sz_pf.Height, "C#4");
 
 			SizeF sz_sz = new SizeF (sz_wh);
-			AssertEquals ("C#5", 1.5F, sz_sz.Width);
-			AssertEquals ("C#6", 5.8F, sz_sz.Height);
+			Assert.AreEqual (1.5F, sz_sz.Width, "C#5");
+			Assert.AreEqual (5.8F, sz_sz.Height, "C#6");
 
-			AssertEquals ("C#7", sz_wh, sz_pf);
-			AssertEquals ("C#8", sz_pf, sz_sz);
-			AssertEquals ("C#9", sz_wh, sz_sz);
+			Assert.AreEqual (sz_wh, sz_pf, "C#7");
+			Assert.AreEqual (sz_pf, sz_sz, "C#8");
+			Assert.AreEqual (sz_wh, sz_sz, "C#9");
 		}
 
 		[Test]
 		public void TestEmptyField () 
 		{
 			SizeF sz = new SizeF (0.0F, 0.0F);
-			AssertEquals ("EMP#1", sz, SizeF.Empty);
+			Assert.AreEqual (sz, SizeF.Empty, "EMP#1");
 		}
 
 		[Test]
 		public void TestProperties () 
 		{
 			SizeF sz = new SizeF (0.0F, 0.0F);
-	
-			Assert ("P#1", sz.IsEmpty);
-			Assert ("P#2", ! sz11_99.IsEmpty);
-			AssertEquals ("P#3", 1.1F, sz11_0.Width);
-			AssertEquals ("P#4", 1.1F, sz0_11.Height);
+
+			Assert.IsTrue (sz.IsEmpty, "P#1");
+			Assert.IsFalse (sz11_99.IsEmpty, "P#2");
+			Assert.AreEqual (1.1F, sz11_0.Width, "P#3");
+			Assert.AreEqual (1.1F, sz0_11.Height, "P#4");
 		}
 
 		[Test]
 		public void TestEquals () 
 		{
-			AssertEquals ("EQ#1", sz11_99, sz11_99);
-			AssertEquals ("EQ#2", sz11_99, new SizeF (1.1F, 9.9F));
-			Assert ("EQ#3", ! sz11_99.Equals (sz11_0));
-			Assert ("EQ#4", ! sz11_99.Equals (sz0_11));
-			Assert ("EQ#5", ! sz11_0.Equals (sz0_11));
+			Assert.AreEqual (sz11_99, sz11_99, "EQ#1");
+			Assert.AreEqual (sz11_99, new SizeF (1.1F, 9.9F), "EQ#2");
+			Assert.IsFalse (sz11_99.Equals (sz11_0), "EQ#3");
+			Assert.IsFalse (sz11_99.Equals (sz0_11), "EQ#4");
+			Assert.IsFalse (sz11_0.Equals (sz0_11), "EQ#5");
 		}
 
 		[Test]
@@ -107,7 +106,7 @@ namespace MonoTests.System.Drawing
 			PointF p1 = new PointF (1.1F, 9.9F);
 			PointF p2 = sz11_99.ToPointF ();
 
-			AssertEquals ("2PF#1", p1, p2);
+			Assert.AreEqual (p1, p2, "2PF#1");
 		}
 		
 		[Test]
@@ -116,42 +115,42 @@ namespace MonoTests.System.Drawing
 			Size sz1 = new Size (1, 9);
 			Size sz2 = sz11_99.ToSize ();
 
-			AssertEquals ("2SZ#1", sz1, sz2);
+			Assert.AreEqual (sz1, sz2, "2SZ#1");
 		}
 
 		
 		[Test]
 		public void TestAddition ()
 		{
-			AssertEquals ("ADD#1", sz11_99, sz11_0 + new SizeF (0.0F, 9.9F));
-			AssertEquals ("ADD#2", sz11_99, new SizeF (0.0F, 0.0F) + new SizeF (1.1F, 9.9F));
+			Assert.AreEqual (sz11_99, sz11_0 + new SizeF (0.0F, 9.9F), "ADD#1");
+			Assert.AreEqual (sz11_99, new SizeF (0.0F, 0.0F) + new SizeF (1.1F, 9.9F), "ADD#2");
 		}
 
 		[Test]
 		public void TestEqualityOp () 
 		{
-			Assert ("EOP#1", sz11_99 == sz11_99);
-			Assert ("EOP#2", sz11_99 == new SizeF (1.1F, 9.9F));
-			Assert ("EOP#3", ! (sz11_99 == sz11_0));
-			Assert ("EOP#4", ! (sz11_99 == sz0_11));
-			Assert ("EOP#5", ! (sz11_0 == sz0_11));
+			Assert.IsTrue (sz11_99 == sz11_99, "EOP#1");
+			Assert.IsTrue (sz11_99 == new SizeF (1.1F, 9.9F), "EOP#2");
+			Assert.IsFalse (sz11_99 == sz11_0, "EOP#3");
+			Assert.IsFalse (sz11_99 == sz0_11, "EOP#4");
+			Assert.IsFalse (sz11_0 == sz0_11, "EOP#5");
 		}
 
 		[Test]
 		public void TestInequalityOp () 
 		{
-			Assert ("IOP#1", ! (sz11_99 != sz11_99));
-			Assert ("IOP#2", ! (sz11_99 != new SizeF (1.1F, 9.9F)));
-			Assert ("IOP#3", sz11_99 != sz11_0);
-			Assert ("IOP#4", sz11_99 != sz0_11);
-			Assert ("IOP#5", sz11_0 != sz0_11);
+			Assert.IsFalse (sz11_99 != sz11_99, "IOP#1");
+			Assert.IsFalse (sz11_99 != new SizeF (1.1F, 9.9F), "IOP#2");
+			Assert.IsTrue (sz11_99 != sz11_0, "IOP#3");
+			Assert.IsTrue (sz11_99 != sz0_11, "IOP#4");
+			Assert.IsTrue (sz11_0 != sz0_11, "IOP#5");
 		}
 	
 		[Test]
 		public void TestSubtraction () 
 		{
-			AssertEquals ("SUB#1", sz11_0, sz11_99 - new SizeF (0.0F, 9.9F));
-			AssertEquals ("SUB#2", sz0_11, new SizeF (1.1F, 1.1F) - new SizeF (1.1F, 0.0F));
+			Assert.AreEqual (sz11_0, sz11_99 - new SizeF (0.0F, 9.9F), "SUB#1");
+			Assert.AreEqual (sz0_11, new SizeF (1.1F, 1.1F) - new SizeF (1.1F, 0.0F), "SUB#2");
 		}
 	
 		[Test]
@@ -159,21 +158,52 @@ namespace MonoTests.System.Drawing
 		{
 			PointF pf1 = new PointF (1.1F, 9.9F);
 			PointF pf2 = (PointF) sz11_99;
-	
-			AssertEquals ("SF2PF#1", pf1, pf2);
+
+			Assert.AreEqual (pf1, pf2, "SF2PF#1");
 		}
 
 		[Test]
 		public void GetHashCodeTest ()
 		{
-			AssertEquals (sz11_0.GetHashCode (), new SizeF (1.1f, 0).GetHashCode ());
-			AssertEquals (Size.Empty.GetHashCode (), new SizeF (0, 0).GetHashCode ());
+			Assert.AreEqual (sz11_0.GetHashCode (), new SizeF (1.1f, 0).GetHashCode (), "GHC#1");
+			Assert.AreEqual (Size.Empty.GetHashCode (), new SizeF (0, 0).GetHashCode (), "GHC#2");
 		}
 
 		[Test]
 		public void ToStringTest () {
-			AssertEquals ("{Width=1.1, Height=0}", sz11_0.ToString ());
-			AssertEquals ("{Width=0, Height=0}", SizeF.Empty.ToString ());
+			// save current culture
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+
+			try {
+				PerformToStringTest (new CultureInfo ("en-US"));
+				PerformToStringTest (new CultureInfo ("nl-BE"));
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
+		}
+
+		private void PerformToStringTest (CultureInfo culture)
+		{
+			// set current culture
+			Thread.CurrentThread.CurrentCulture = culture;
+
+			// perform tests
+			Assert.AreEqual (GetExpectedToString (culture, sz11_0), sz11_0.ToString (),
+				"TS#1-" + culture.Name);
+			Assert.AreEqual (GetExpectedToString (culture, sz0_11), sz0_11.ToString (),
+				"TS#2-" + culture.Name);
+			Assert.AreEqual (GetExpectedToString (culture, SizeF.Empty), SizeF.Empty.ToString (),
+				"TS#3-" + culture.Name);
+			SizeF size = new SizeF (float.NaN, float.NegativeInfinity);
+			Assert.AreEqual (GetExpectedToString (culture, size), size.ToString (),
+				"TS#4-" + culture.Name);
+		}
+
+		private static string GetExpectedToString (CultureInfo culture, SizeF size)
+		{
+			return string.Format ("{{Width={0}, Height={1}}}", size.Width.ToString (culture),
+				size.Height.ToString (culture));
 		}
 	}
 }

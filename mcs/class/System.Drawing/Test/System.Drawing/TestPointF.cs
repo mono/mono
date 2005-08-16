@@ -27,15 +27,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using NUnit.Framework;
 using System;
 using System.Drawing;
+using System.Globalization;
+using System.Threading;
 
-namespace MonoTests.System.Drawing 
+using NUnit.Framework;
+
+namespace MonoTests.System.Drawing
 {
-	[TestFixture]	
-	public class PointFTest : Assertion 
+	[TestFixture]
+	public class PointFTest
 	{
 		PointF pt11_99;
 		PointF pt11_0;
@@ -45,7 +47,7 @@ namespace MonoTests.System.Drawing
 		public void TearDown () {}
 
 		[SetUp]
-		public void SetUp ()		
+		public void SetUp ()
 		{
 			pt11_99 = new PointF (1.1F, 9.9F);
 			pt11_0 = new PointF (1.1F, 0F);
@@ -56,15 +58,15 @@ namespace MonoTests.System.Drawing
 		public void TestConstructors ()
 		{
 			PointF pt = new PointF (1.5F, 5.8F);
-			AssertEquals ("C#1", 1.5F, pt.X);
-			AssertEquals ("C#2", 5.8F, pt.Y);
+			Assert.AreEqual (1.5F, pt.X, "C#1");
+			Assert.AreEqual (5.8F, pt.Y, "C#2");
 		}
 
 		[Test]
 		public void TestEmptyField () 
 		{
 			PointF pt = new PointF (0.0F, 0.0F);
-			AssertEquals ("EMP#1", pt, PointF.Empty);
+			Assert.AreEqual (pt, PointF.Empty, "#EMP1");
 		}
 
 		[Test]
@@ -72,78 +74,106 @@ namespace MonoTests.System.Drawing
 		{
 			PointF pt = new PointF (0.0F, 0.0F);
 	
-			Assert ("P#1", pt.IsEmpty);
-			Assert ("P#2", ! pt11_99.IsEmpty);
-			AssertEquals ("P#3", 1.1F, pt11_0.X);
-			AssertEquals ("P#4", 1.1F, pt0_11.Y);
+			Assert.IsTrue (pt.IsEmpty, "P#1");
+			Assert.IsTrue (!pt11_99.IsEmpty, "P#2");
+			Assert.AreEqual (1.1F, pt11_0.X, "P#3");
+			Assert.AreEqual (1.1F, pt0_11.Y, "P#4");
 		}
 
 		[Test]
 		public void TestEquals () 
 		{
-			AssertEquals ("EQ#1", pt11_99, pt11_99);
-			AssertEquals ("EQ#2", pt11_99, new PointF (1.1F, 9.9F));
-			Assert ("EQ#3", ! pt11_99.Equals (pt11_0));
-			Assert ("EQ#4", ! pt11_99.Equals (pt0_11));
-			Assert ("EQ#5", ! pt11_0.Equals (pt0_11));
+			Assert.AreEqual (pt11_99, pt11_99, "EQ#1");
+			Assert.AreEqual (pt11_99, new PointF (1.1F, 9.9F), "EQ#2");
+			Assert.IsFalse (pt11_99.Equals (pt11_0), "EQ#3");
+			Assert.IsFalse (pt11_99.Equals (pt0_11), "EQ#4");
+			Assert.IsFalse (pt11_0.Equals (pt0_11), "EQ#5");
 		}
 
 		
 		[Test]
 		public void TestAddition ()
 		{
-			AssertEquals ("ADD#1", pt11_0, pt11_0 + new Size (0, 0));
-			AssertEquals ("ADD#2", pt0_11, pt0_11 + new Size (0, 0));
-			AssertEquals ("ADD#3", new PointF (2, 5.1F), pt0_11 + new Size (2, 4));
+			Assert.AreEqual (pt11_0, pt11_0 + new Size (0, 0), "ADD#1");
+			Assert.AreEqual (pt0_11, pt0_11 + new Size (0, 0), "ADD#2");
+			Assert.AreEqual (new PointF (2, 5.1F), pt0_11 + new Size (2, 4), "ADD#3");
 		}
 
 		[Test]
 		public void TestEqualityOp () 
 		{
-			Assert ("EOP#1", pt11_99 == pt11_99);
-			Assert ("EOP#2", pt11_99 == new PointF (1.1F, 9.9F));
-			Assert ("EOP#3", ! (pt11_99 == pt11_0));
-			Assert ("EOP#4", ! (pt11_99 == pt0_11));
-			Assert ("EOP#5", ! (pt11_0 == pt0_11));
+			Assert.IsTrue (pt11_99 == pt11_99, "EOP#1");
+			Assert.IsTrue (pt11_99 == new PointF (1.1F, 9.9F), "EOP#2");
+			Assert.IsFalse (pt11_99 == pt11_0, "EOP#3");
+			Assert.IsFalse (pt11_99 == pt0_11, "EOP#4");
+			Assert.IsFalse (pt11_0 == pt0_11, "EOP#5");
 		}
 
 		[Test]
 		public void TestInequalityOp () 
 		{
-			Assert ("IOP#1", ! (pt11_99 != pt11_99));
-			Assert ("IOP#2", ! (pt11_99 != new PointF (1.1F, 9.9F)));
-			Assert ("IOP#3", pt11_99 != pt11_0);
-			Assert ("IOP#4", pt11_99 != pt0_11);
-			Assert ("IOP#5", pt11_0 != pt0_11);
+			Assert.IsFalse (pt11_99 != pt11_99, "IOP#1");
+			Assert.IsFalse (pt11_99 != new PointF (1.1F, 9.9F), "IOP#2");
+			Assert.IsTrue (pt11_99 != pt11_0, "IOP#3");
+			Assert.IsTrue (pt11_99 != pt0_11, "IOP#4");
+			Assert.IsTrue (pt11_0 != pt0_11, "IOP#5");
 		}
 	
 		[Test]
 		public void TestSubtraction () 
 		{
-			AssertEquals ("SUB#1", pt11_0, pt11_0 - new Size (0, 0));
-			AssertEquals ("SUB#2", pt0_11, pt0_11 - new Size (0, 0));
+			Assert.AreEqual (pt11_0, pt11_0 - new Size (0, 0), "SUB#1");
+			Assert.AreEqual (pt0_11, pt0_11 - new Size (0, 0), "SUB#2");
 			PointF expected = new PointF (0.1F, 1.9F);
 			PointF actual = pt11_99 - new Size (1, 8);
 			//need to permit a small delta on floating point
-			AssertEquals ("SUB#3", expected.X, actual.X, 1e-5);
-			AssertEquals ("SUB#3", expected.Y, actual.Y, 1e-5);
+			Assert.AreEqual (expected.X, actual.X, 1e-5, "SUB#3");
+			Assert.AreEqual (expected.Y, actual.Y, 1e-5, "SUB#4");
 		}
 
 		[Test]
 		public void GetHashCodeTest ()
 		{
 			PointF pt = new PointF (1.1F, 9.9F);
-			AssertEquals ("GHC#3", pt.GetHashCode (), pt11_99.GetHashCode ());
+			Assert.AreEqual (pt.GetHashCode (), pt11_99.GetHashCode (), "GHC#1");
 		}
 
 		[Test]
 		public void ToStringTest ()
 		{
-			AssertEquals ("TS#1", "{X=0, Y=1.1}", pt0_11.ToString ());
-			AssertEquals ("TS#2", "{X=1.1, Y=0}", pt11_0.ToString ());
-			AssertEquals ("TS#3", "{X=1.1, Y=9.9}", pt11_99.ToString ());
+			// save current culture
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+
+			try {
+				PerformToStringTest (new CultureInfo ("en-US"));
+				PerformToStringTest (new CultureInfo ("nl-BE"));
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
+		}
+
+		private void PerformToStringTest(CultureInfo culture)
+		{
+			// set current culture
+			Thread.CurrentThread.CurrentCulture = culture;
+
+			// perform tests
+			Assert.AreEqual (GetExpectedToString (culture, pt0_11), pt0_11.ToString (),
+				"TS#1-" + culture.Name);
+			Assert.AreEqual (GetExpectedToString (culture, pt11_0), pt11_0.ToString (),
+				"TS#2-" + culture.Name);
+			Assert.AreEqual (GetExpectedToString (culture, pt11_99), pt11_99.ToString (),
+				"TS#3-" + culture.Name);
 			PointF pt = new PointF (float.NaN, float.NegativeInfinity);
-			AssertEquals ("TS#4", "{X=NaN, Y=-Infinity}", pt.ToString ());
+			Assert.AreEqual (GetExpectedToString (culture, pt), pt.ToString (),
+				"TS#4-" + culture.Name);
+		}
+
+		private static string GetExpectedToString (CultureInfo culture, PointF point)
+		{
+			return string.Format ("{{X={0}, Y={1}}}", point.X.ToString (culture),
+				point.Y.ToString (culture));
 		}
 	}
 }

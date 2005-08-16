@@ -18,8 +18,7 @@
 // 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
 // NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
@@ -28,13 +27,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using NUnit.Framework;
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
+using System.Threading;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Drawing
 {
@@ -47,11 +47,8 @@ namespace MonoTests.System.Drawing
 		String ptStr;
 		String ptnegStr;
 
-		[TearDown]
-		public void TearDown () {}
-
 		[SetUp]
-		public void SetUp ()		
+		public void SetUp ()
 		{
 			pt = new Point (1, 2);
 			ptStr = pt.X + ", " + pt.Y;
@@ -311,53 +308,134 @@ namespace MonoTests.System.Drawing
 		[Test]
 		[NUnit.Framework.Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromInvariantString_string_exc_2 () {
+		public void ConvertFromInvariantString_string_exc_2 ()
+		{
 			ptconv.ConvertFromInvariantString ("hello");
 		}
 
 		[Test]
-		public void ConvertFromString_string () {
-			AssertEquals ("CFSS#1", pt, ptconv.ConvertFromString ("1, 2"));
-			AssertEquals ("CFSS#2", ptneg, ptconv.ConvertFromString ("-2, -3"));
+		public void ConvertFromString_string ()
+		{
+			// save current culture
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+
+			try {
+				PerformConvertFromStringTest (new CultureInfo ("en-US"));
+				PerformConvertFromStringTest (new CultureInfo ("nl-BE"));
+				PerformConvertFromStringTest (new MyCultureInfo ());
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromString_string_exc_1 () {
+		public void ConvertFromString_string_exc_1 ()
+		{
 			ptconv.ConvertFromString ("1");
 		}
 
 		[Test]
 		[NUnit.Framework.Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromString_string_exc_2 () {
+		public void ConvertFromString_string_exc_2 ()
+		{
 			ptconv.ConvertFromString ("hello");
 		}
 
 		[Test]
-		public void ConvertToInvariantString_string () {
+		public void ConvertToInvariantString_string ()
+		{
 			AssertEquals ("CFISS#1", "1, 2", ptconv.ConvertToInvariantString (pt));
 			AssertEquals ("CFISS#2", "-2, -3", ptconv.ConvertToInvariantString (ptneg));
 		}
 
 		[Test]
-		public void ConvertToString_string () {
-			AssertEquals ("CFISS#1", "1, 2", ptconv.ConvertToString (pt));
-			AssertEquals ("CFISS#2", "-2, -3", ptconv.ConvertToString (ptneg));
+		public void ConvertToString_string ()
+		{
+			// save current culture
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+
+			try {
+				PerformConvertToStringTest (new CultureInfo ("en-US"));
+				PerformConvertToStringTest (new CultureInfo ("nl-BE"));
+				PerformConvertToStringTest (new MyCultureInfo ());
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
 		}
+
 		[Test]
-		public void GetStandardValuesSupported () {
+		public void GetStandardValuesSupported ()
+		{
 			Assert (! ptconv.GetStandardValuesSupported ());
 		}
 
 		[Test]
-		public void GetStandardValues () {
+		public void GetStandardValues ()
+		{
 			AssertEquals (null, ptconv.GetStandardValues ());
 		}
 
 		[Test]
-		public void GetStandardValuesExclusive () {
+		public void GetStandardValuesExclusive ()
+		{
 			AssertEquals (false, ptconv.GetStandardValuesExclusive ());
+		}
+
+		private void PerformConvertFromStringTest (CultureInfo culture)
+		{
+			// set current culture
+			Thread.CurrentThread.CurrentCulture = culture;
+
+			// perform tests
+			AssertEquals ("CFSS#1-" + culture.Name, pt, ptconv.ConvertFromString (CreatePointString (culture, pt)));
+			AssertEquals ("CFSS#2-" + culture.Name, ptneg, ptconv.ConvertFromString (CreatePointString (culture, ptneg)));
+		}
+
+		private void PerformConvertToStringTest (CultureInfo culture)
+		{
+			// set current culture
+			Thread.CurrentThread.CurrentCulture = culture;
+
+			// perform tests
+			AssertEquals ("CFISS#1-" + culture.Name, CreatePointString (culture, pt),
+				ptconv.ConvertToString (pt));
+			AssertEquals ("CFISS#2-" + culture.Name, CreatePointString (culture, ptneg),
+				ptconv.ConvertToString (ptneg));
+		}
+
+		private static string CreatePointString (Point point)
+		{
+			return CreatePointString (CultureInfo.CurrentCulture, point);
+		}
+
+		private static string CreatePointString (CultureInfo culture, Point point)
+		{
+			return string.Format ("{0}{1} {2}", point.X.ToString (culture),
+				culture.TextInfo.ListSeparator, point.Y.ToString (culture));
+		}
+
+		[Serializable]
+		private sealed class MyCultureInfo : CultureInfo
+		{
+			internal MyCultureInfo () : base ("en-US")
+			{
+			}
+
+			public override object GetFormat (Type formatType)
+			{
+				if (formatType == typeof (NumberFormatInfo)) {
+					NumberFormatInfo nfi = (NumberFormatInfo) ((NumberFormatInfo) base.GetFormat (formatType)).Clone ();
+
+					nfi.NegativeSign = "myNegativeSign";
+					return NumberFormatInfo.ReadOnly (nfi);
+				} else {
+					return base.GetFormat (formatType);
+				}
+			}
 		}
 	}
 }
