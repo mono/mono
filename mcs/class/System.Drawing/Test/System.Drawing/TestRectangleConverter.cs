@@ -28,36 +28,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using NUnit.Framework;
 using System;
-using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
+using System.Threading;
+
+using NUnit.Framework;
 
 namespace MonoTests.System.Drawing
 {
-	[TestFixture]	
+	[TestFixture]
 	public class RectangleConverterTest : Assertion
 	{
 		Rectangle rect;
 		Rectangle rectneg;
 		RectangleConverter rconv;
-		String rectStr;
-		String rectnegStr;
-
-		[TearDown]
-		public void TearDown () {}
+		String rectStrInvariant;
+		String rectnegStrInvariant;
 
 		[SetUp]
-		public void SetUp ()		
+		public void SetUp ()
 		{
 			rect = new Rectangle (10, 10, 20, 30);
-			rectStr = rect.X + ", " + rect.Y + ", " + rect.Width + ", " + rect.Height;
+			rectStrInvariant = rect.X + ", " + rect.Y + ", " + rect.Width + ", " + rect.Height;
 
 			rectneg = new Rectangle (-10, -10, 20, 30);
-			rectnegStr = rectneg.X + ", " + rectneg.Y + ", " + rectneg.Width + ", " + rectneg.Height;
+			rectnegStrInvariant = rectneg.X + ", " + rectneg.Y + ", " + rectneg.Width + ", " + rectneg.Height;
 
 			rconv = (RectangleConverter) TypeDescriptor.GetConverter (rect);
 		}
@@ -199,10 +197,10 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestConvertTo ()
 		{
-			AssertEquals ("CT#1", rectStr, (String) rconv.ConvertTo (null,
+			AssertEquals ("CT#1", rectStrInvariant, (String) rconv.ConvertTo (null,
 								CultureInfo.InvariantCulture,
 								rect, typeof (String)));
-			AssertEquals ("CT#2", rectnegStr, (String) rconv.ConvertTo (null, 
+			AssertEquals ("CT#2", rectnegStrInvariant, (String) rconv.ConvertTo (null, 
 								CultureInfo.InvariantCulture,
 								rectneg, typeof (String)));
 
@@ -360,70 +358,153 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		public void ConvertFromInvariantString_string () {
+		public void ConvertFromInvariantString_string ()
+		{
 			AssertEquals ("CFISS#1", rect, rconv
-				.ConvertFromInvariantString (rectStr));
+				.ConvertFromInvariantString (rectStrInvariant));
 			AssertEquals ("CFISS#2", rectneg, rconv
-				.ConvertFromInvariantString (rectnegStr));
+				.ConvertFromInvariantString (rectnegStrInvariant));
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromInvariantString_string_exc_1 () {
+		public void ConvertFromInvariantString_string_exc_1 ()
+		{
 			rconv.ConvertFromInvariantString ("1, 2, 3");
 		}
 
 		[Test]
 		[NUnit.Framework.Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromInvariantString_string_exc_2 () {
+		public void ConvertFromInvariantString_string_exc_2 ()
+		{
 			rconv.ConvertFromInvariantString ("hello");
 		}
 
 		[Test]
-		public void ConvertFromString_string () {
-			AssertEquals ("CFSS#1", rect, rconv.ConvertFromString (rectStr));
-			AssertEquals ("CFSS#2", rectneg, rconv.ConvertFromString (rectnegStr));
+		public void ConvertFromString_string ()
+		{
+			// save current culture
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+
+			try {
+				PerformConvertFromStringTest (new CultureInfo ("en-US"));
+				PerformConvertFromStringTest (new CultureInfo ("nl-BE"));
+				PerformConvertFromStringTest (new MyCultureInfo ());
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromString_string_exc_1 () {
+		public void ConvertFromString_string_exc_1 ()
+		{
 			rconv.ConvertFromString ("1, 2, 3, 4, 5");
 		}
 
 		[Test]
 		[NUnit.Framework.Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
-		public void ConvertFromString_string_exc_2 () {
+		public void ConvertFromString_string_exc_2 ()
+		{
 			rconv.ConvertFromString ("hello");
 		}
 
 		[Test]
-		public void ConvertToInvariantString_string () {
-			AssertEquals ("CFISS#1", rectStr, rconv.ConvertToInvariantString (rect));
-			AssertEquals ("CFISS#2", rectnegStr, rconv.ConvertToInvariantString (rectneg));
+		public void ConvertToInvariantString_string ()
+		{
+			AssertEquals ("CFISS#1", rectStrInvariant, rconv.ConvertToInvariantString (rect));
+			AssertEquals ("CFISS#2", rectnegStrInvariant, rconv.ConvertToInvariantString (rectneg));
 		}
 
 		[Test]
 		public void ConvertToString_string () {
-			AssertEquals ("CFISS#1", rectStr, rconv.ConvertToString (rect));
-			AssertEquals ("CFISS#2", rectnegStr, rconv.ConvertToString (rectneg));
+			// save current culture
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+
+			try {
+				PerformConvertToStringTest (new CultureInfo ("en-US"));
+				PerformConvertToStringTest (new CultureInfo ("nl-BE"));
+				PerformConvertToStringTest (new MyCultureInfo ());
+			} finally {
+				// restore original culture
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+			}
 		}
 
 		[Test]
-		public void GetStandardValuesSupported () {
+		public void GetStandardValuesSupported ()
+		{
 			Assert (! rconv.GetStandardValuesSupported ());
 		}
 
 		[Test]
-		public void GetStandardValues () {
+		public void GetStandardValues ()
+		{
 			AssertEquals (null, rconv.GetStandardValues ());
 		}
 
 		[Test]
-		public void GetStandardValuesExclusive () {
+		public void GetStandardValuesExclusive ()
+		{
 			AssertEquals (false, rconv.GetStandardValuesExclusive ());
+		}
+
+		private void PerformConvertFromStringTest (CultureInfo culture)
+		{
+			// set current culture
+			Thread.CurrentThread.CurrentCulture = culture;
+
+			// perform tests
+			AssertEquals ("CFSS#1-" + culture.Name, rect, rconv.ConvertFromString (CreateRectangleString (rect)));
+			AssertEquals ("CFSS#2-" + culture.Name, rectneg, rconv.ConvertFromString (CreateRectangleString (rectneg)));
+		}
+
+		private void PerformConvertToStringTest (CultureInfo culture)
+		{
+			// set current culture
+			Thread.CurrentThread.CurrentCulture = culture;
+
+			// perform tests
+			AssertEquals ("CFISS#1-" + culture.Name, CreateRectangleString (rect), 
+				rconv.ConvertToString (rect));
+			AssertEquals ("CFISS#2-" + culture.Name, CreateRectangleString (rectneg), 
+				rconv.ConvertToString (rectneg));
+		}
+
+		private static string CreateRectangleString (Rectangle rectangle)
+		{
+			return CreateRectangleString (CultureInfo.CurrentCulture, rectangle);
+		}
+
+		private static string CreateRectangleString (CultureInfo culture, Rectangle rectangle)
+		{
+			return string.Format ("{0}{1} {2}{1} {3}{1} {4}", rectangle.X.ToString (culture),
+				culture.TextInfo.ListSeparator, rectangle.Y.ToString (culture),
+				rectangle.Width.ToString (culture), rectangle.Height.ToString (culture));
+		}
+
+		[Serializable]
+		private sealed class MyCultureInfo : CultureInfo
+		{
+			internal MyCultureInfo ()
+				: base ("en-US")
+			{
+			}
+
+			public override object GetFormat (Type formatType)
+			{
+				if (formatType == typeof (NumberFormatInfo)) {
+					NumberFormatInfo nfi = (NumberFormatInfo) ((NumberFormatInfo) base.GetFormat (formatType)).Clone ();
+
+					nfi.NegativeSign = "myNegativeSign";
+					return NumberFormatInfo.ReadOnly (nfi);
+				} else {
+					return base.GetFormat (formatType);
+				}
+			}
 		}
 	}
 }

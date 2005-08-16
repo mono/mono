@@ -526,21 +526,24 @@ namespace System.Drawing
 		private static void CheckRGBValues (int red,int green,int blue)
 		{
 			if( (red > 255) || (red < 0))
-				throw new System.ArgumentOutOfRangeException
-					("red",red,"Value must be in the range 0 - 255");
+				throw CreateColorArgumentException(red, "red");
 			if( (green > 255) || (green < 0))
-				throw new System.ArgumentOutOfRangeException
-					("green",green,"Value must be in the range 0 - 255");
+				throw CreateColorArgumentException (green, "green");
 			if( (blue > 255) || (blue < 0))
-				throw new System.ArgumentOutOfRangeException
-					("blue",blue,"Value must be in the range 0 - 255");
+				throw CreateColorArgumentException (blue, "blue");
+		}
+
+		private static ArgumentException CreateColorArgumentException (int value, string color)
+		{
+			return new ArgumentException (string.Format ("'{0}' is not a valid"
+				+ " value for '{1}'. '{1}' should be greater or equal to 0 and"
+				+ " less than or equal to 255.", value, color));
 		}
 
 		private static void CheckARGBValues (int alpha,int red,int green,int blue)
 		{
 			if( (alpha > 255) || (alpha < 0))
-				throw new System.ArgumentOutOfRangeException
-					("alpha",alpha,"Value must be in the range 0 - 255");
+				throw CreateColorArgumentException (alpha, "alpha");
 			CheckRGBValues(red,green,blue);
 		}
 

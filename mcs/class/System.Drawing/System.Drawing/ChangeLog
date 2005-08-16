@@ -1,5 +1,12 @@
 2005-08-16 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* Color.cs: To match MS.NET, throw ArgumentException instead of 
+	ArgumentOutOfRangeException when color is not between 0 and 255.
+	* RectangleConverter.cs: Take culture into account when converting
+	to/from string. Use culture's ListSeparator as separator character.
+
+2005-08-16 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* Color.cs: Fixed line endings. Set eol-style to native.
 	* ColorConverter.cs: Fixed line endings. Set eol-style to native.
 	* Size.cs: Set eol-style to native.

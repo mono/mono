@@ -1,3 +1,11 @@
+2005-08-16  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ColorConverter.cs: Mono now also throws ArgumentException when
+	color value is not between 0 and 255.
+	* TestColor.cs: Added tests for invalid color values.
+	* TestRectangleConverter.cs: Fixed tests for conversion to/from 
+	string. Added tests that verify results using specific cultures.
+
 2005-08-14  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* ColorConverter.cs: Merged tests from TestColorConverter.cs. Fixed

@@ -1021,6 +1021,118 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("EQ#5", false, c != Color.FromName ("AliceBlue"));
 			Assert("EQ#6", c != Color.FromArgb (c.A, c.R, c.G, c.B));
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidAlpha1 ()
+		{
+			Color.FromArgb (-1, Color.Red);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidAlpha2 ()
+		{
+			Color.FromArgb (256, Color.Red);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidAlpha3 ()
+		{
+			Color.FromArgb (-1, 0, 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidAlpha4 ()
+		{
+			Color.FromArgb (256, 0, 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidRed1 ()
+		{
+			Color.FromArgb (-1, 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidRed2 ()
+		{
+			Color.FromArgb (256, 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidRed3 ()
+		{
+			Color.FromArgb (0, -1, 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidRed4 ()
+		{
+			Color.FromArgb (0, 256, 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidGreen1 ()
+		{
+			Color.FromArgb (0, -1, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidGreen2 ()
+		{
+			Color.FromArgb (0, 256, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidGreen3 ()
+		{
+			Color.FromArgb (0, 0, -1, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidGreen4 ()
+		{
+			Color.FromArgb (0, 0, 256, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidBlue1 ()
+		{
+			Color.FromArgb (0, 0, -1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidBlue2 ()
+		{
+			Color.FromArgb (0, 0, 256);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidBlue3 ()
+		{
+			Color.FromArgb (0, 0, 0, -1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FromArgb_InvalidBlue4 ()
+		{
+			Color.FromArgb (0, 0, 0, 256);
+		}
 	}
 }
 

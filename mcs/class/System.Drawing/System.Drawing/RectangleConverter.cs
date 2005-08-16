@@ -81,15 +81,14 @@ namespace System.Drawing
 			if (s == null)
 				return base.ConvertFrom (context, culture, value);
 
-			// FIXME: use culture
-			string [] subs = s.Split (',');
+			string [] subs = s.Split (culture.TextInfo.ListSeparator.ToCharArray ());
 			if (subs.Length != 4)
 				throw new ArgumentException ("Failed to parse Text(" + s + ") expected text in the format \"x,y,Width,Height.\"");
 
-			int x = Int32.Parse (subs [0]);
-			int y = Int32.Parse (subs [1]);
-			int width = Int32.Parse (subs [2]);
-			int height = Int32.Parse (subs [3]);
+			int x = Int32.Parse (subs [0], culture);
+			int y = Int32.Parse (subs [1], culture);
+			int width = Int32.Parse (subs [2], culture);
+			int height = Int32.Parse (subs [3], culture);
 
 			return new Rectangle (x, y, width, height);
 		}
@@ -104,12 +103,19 @@ namespace System.Drawing
 			// type is string." MS does not behave as per the specs.
 			// Oh well, we have to be compatible with MS.
 			if ((destinationType == typeof (string)) && (value is Rectangle)) {
+				string separator = culture.TextInfo.ListSeparator;
 				Rectangle rect = (Rectangle) value;
 				StringBuilder sb = new StringBuilder ();
-				sb.Append (rect.X); sb.Append (", ");
-				sb.Append (rect.Y); sb.Append (", ");
-				sb.Append (rect.Width); sb.Append (", ");
-				sb.Append (rect.Height);
+				sb.Append (rect.X.ToString (culture));
+				sb.Append (separator);
+				sb.Append (" ");
+				sb.Append (rect.Y.ToString (culture));
+				sb.Append (separator);
+				sb.Append (" ");
+				sb.Append (rect.Width.ToString (culture));
+				sb.Append (separator);
+				sb.Append (" ");
+				sb.Append (rect.Height.ToString (culture));
 				return sb.ToString ();
 			}
 			

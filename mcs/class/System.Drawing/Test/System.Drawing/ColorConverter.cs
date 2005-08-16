@@ -81,22 +81,12 @@ namespace MonoTests.System.Drawing {
 				colconv.ConvertFrom (null, CultureInfo.InvariantCulture, "10, 20");
 		}
 
-
 		[Test]
-		//[ExpectedException (typeof (ArgumentException))]
-		//use try-catch, because dotnet throws ArgumentException and 
-		//mono throws ArgumentOutOfRangeException
+		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFrom_x2 ()
 		{
-			try {
-				colconv.ConvertFrom ("-10, 20, 30");
-				Assert.Fail ("ArgumentException was expected");
-			}
-			catch (ArgumentException) {
-				Assert.IsTrue (true);
-			}
+			colconv.ConvertFrom (null, CultureInfo.InvariantCulture, "-10, 20, 30");
 		}
-
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
@@ -105,7 +95,6 @@ namespace MonoTests.System.Drawing {
 			colconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 					"1, 1, 1, 1, 1");
 		}
-
 
 		[Test]
 		//[ExpectedException (typeof (Exception))]
@@ -122,7 +111,6 @@ namespace MonoTests.System.Drawing {
 				Assert.IsTrue (true);
 			}
 		}
-
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
