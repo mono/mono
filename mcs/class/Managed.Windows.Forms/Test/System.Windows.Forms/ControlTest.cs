@@ -14,7 +14,7 @@ using System.Runtime.Remoting;
 
 using NUnit.Framework;
 
-namespace MWF.Test
+namespace MWF.MonoTest
 {
 	[TestFixture]
 	public class ControlTest

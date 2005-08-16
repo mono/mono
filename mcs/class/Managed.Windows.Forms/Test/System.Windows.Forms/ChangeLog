@@ -1,3 +1,8 @@
+2005-08-16  Martin Baulig  <martin@ximian.com>
+
+	* ControlTest.cs: Renamed namespace `MWF.Test' -> `MWF.MonoTest'
+	to make it compile.
+
 2005-08-16  Ritvik Mayank  <mritvik@novell.com>
 	
 	* ScrollBarTest.cs, ImageListTest.cs, CheckedListBoxTest.cs, CheckedListBoxEventTest.cs, MenuTest.cs,
