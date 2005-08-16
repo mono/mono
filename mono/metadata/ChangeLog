@@ -1,3 +1,7 @@
+2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* locales.c : indentation fixie.
+
 2005-08-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* object-internals.h,
