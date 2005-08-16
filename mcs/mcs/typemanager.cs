@@ -287,7 +287,6 @@ public class TypeManager {
 		builder_to_method = null;
 		
 		fields = null;
-		builder_to_constant = null;
 		fieldbuilders_to_fields = null;
 		events = null;
 		priv_fields_events = null;
@@ -480,11 +479,6 @@ public class TypeManager {
 	public static Delegate LookupDelegate (Type t)
 	{
 		return builder_to_declspace [t] as Delegate;
-	}
-
-	public static Enum LookupEnum (Type t)
-	{
-		return builder_to_declspace [t] as Enum;
 	}
 
 	public static Class LookupClass (Type t)
@@ -1449,11 +1443,12 @@ public class TypeManager {
 	
 	public static bool IsEnumType (Type t)
 	{
-		if (t.IsSubclassOf (TypeManager.enum_type))
+		if (builder_to_declspace [t] is Enum)
 			return true;
-		else
-			return false;
+
+		return t.IsEnum;
 	}
+
 	public static bool IsBuiltinOrEnum (Type t)
 	{
 		if (IsBuiltinType (t))
@@ -1617,27 +1612,6 @@ public class TypeManager {
 	{
 		return t.IsArray || t.IsPointer || t.IsByRef;
 	}
-
-	static Hashtable builder_to_constant;
-
-	public static void RegisterConstant (FieldBuilder fb, Const c)
-	{
-		if (builder_to_constant == null)
-			builder_to_constant = new PtrHashtable ();
-
-		if (builder_to_constant.Contains (fb))
-			return;
-
-		builder_to_constant.Add (fb, c);
-	}
-
-	public static Const LookupConstant (FieldBuilder fb)
-	{
-		if (builder_to_constant == null)
-			return null;
-		
-		return (Const) builder_to_constant [fb];
-	}
 	
 	/// <summary>
 	///   Gigantic work around for missing features in System.Reflection.Emit follows.
@@ -1747,23 +1721,17 @@ public class TypeManager {
 		}
 	}
 	
-	// <remarks>
-	//  This is a workaround the fact that GetValue is not
-	//  supported for dynamic types
-	// </remarks>
-	static public bool RegisterFieldValue (FieldBuilder fb, object value)
+	public static void RegisterConstant (FieldInfo fb, IConstant ic)
 	{
-		if (fields.Contains (fb))
-			return false;
-
-		fields.Add (fb, value);
-
-		return true;
+		fields.Add (fb, ic);
 	}
 
-	static public object GetValue (FieldBuilder fb)
+	public static IConstant GetConstant (FieldInfo fb)
 	{
-		return fields [fb];
+		if (fb == null)
+			return null;
+
+		return (IConstant)fields [fb];
 	}
 
 	static public bool RegisterFieldBase (FieldBuilder fb, FieldBase f)

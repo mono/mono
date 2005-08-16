@@ -19,20 +19,26 @@ using System.Globalization;
 
 namespace Mono.CSharp {
 
-	class EnumMember: MemberCore {
+	public class EnumMember: MemberCore, IConstant {
 		static string[] attribute_targets = new string [] { "field" };
 
-		Enum parent_enum;
 		public FieldBuilder builder;
-		internal readonly Expression Type;
 
-		public EnumMember (Enum parent_enum, Expression expr, string name, Location loc,
-				   Attributes attrs):
-			base (null, new MemberName (name, loc), attrs)
+		readonly Enum parent_enum;
+		readonly Expression ValueExpr;
+		readonly EnumMember prev_member;
+
+		Constant value;
+		bool in_transit;
+
+		public EnumMember (Enum parent_enum, EnumMember prev_member, Expression expr,
+				MemberName name, Attributes attrs):
+			base (parent_enum.Parent, name, attrs)
 		{
 			this.parent_enum = parent_enum;
 			this.ModFlags = parent_enum.ModFlags;
-			this.Type = expr;
+			this.ValueExpr = expr;
+			this.prev_member = prev_member;
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
@@ -59,23 +65,90 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void DefineMember (TypeBuilder tb)
+		bool IsValidEnumType (Type t)
 		{
-			FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static
-				| FieldAttributes.Literal;
-			
-			builder = tb.DefineField (Name, tb, attr);
+			return (t == TypeManager.int32_type || t == TypeManager.uint32_type || t == TypeManager.int64_type ||
+				t == TypeManager.byte_type || t == TypeManager.sbyte_type || t == TypeManager.short_type ||
+				t == TypeManager.ushort_type || t == TypeManager.uint64_type || t == TypeManager.char_type ||
+				t.IsEnum);
 		}
-
+	
 		public override bool Define ()
 		{
-			throw new NotImplementedException ();
+			const FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal;
+			TypeBuilder tb = parent_enum.TypeBuilder;
+			builder = tb.DefineField (Name, tb, attr);
+
+			TypeManager.RegisterConstant (builder, this);
+			return true;
+		}
+
+		public bool ResolveValue ()
+		{
+			if (value != null)
+				return true;
+
+			if (in_transit) {
+				// suppress cyclic errors
+				value = new EnumConstant (New.Constantify (parent_enum.UnderlyingType), parent_enum.TypeBuilder);
+				Const.Error_CyclicDeclaration (this);
+				return false;
+			}
+
+			if (ValueExpr != null) {
+				in_transit = true;
+
+				Constant c = ValueExpr.ResolveAsConstant (parent_enum.EmitContext, this);
+				if (c == null)
+					return false;
+
+				if (c is EnumConstant)
+					c = ((EnumConstant)c).Child;
+					
+				c = c.ToType (parent_enum.UnderlyingType, Location);
+				if (c == null)
+					return false;
+
+				if (!IsValidEnumType (c.Type)) {
+					Report.Error (1008, Location, "Type byte, sbyte, short, ushort, int, uint, long or ulong expected");
+					return false;
+				}
+
+				in_transit = false;
+				value = new EnumConstant (c, parent_enum.TypeBuilder);
+				return true;
+			}
+
+			if (prev_member == null) {
+				value = new EnumConstant (New.Constantify (parent_enum.UnderlyingType), parent_enum.TypeBuilder);
+				return true;
+			}
+
+			if (!prev_member.ResolveValue ())
+				return false;
+
+			in_transit = true;
+
+			try {
+				value = prev_member.value.Increment ();
+			}
+			catch (OverflowException) {
+				Report.Error (543, Location, "The enumerator value `{0}' is too large to fit in its type `{1}'",
+					GetSignatureForError (), TypeManager.CSharpName (parent_enum.UnderlyingType));
+				return false;
+			}
+			in_transit = false;
+
+			return true;
 		}
 
 		public void Emit (EmitContext ec)
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this); 
+
+			if (ResolveValue ())
+				builder.SetConstant (value.GetValue ());
 
 			Emit ();
 		}
@@ -106,31 +179,26 @@ namespace Mono.CSharp {
 		public override string DocCommentHeader {
 			get { return "F:"; }
 		}
+
+		#region IConstant Members
+
+		public Constant Value {
+			get {
+				return value;
+			}
+		}
+
+		#endregion
 	}
 
 	/// <summary>
 	///   Enumeration container
 	/// </summary>
 	public class Enum : DeclSpace {
-		public ArrayList ordered_enums;
-		
-		public Expression BaseType;
-		
+		Expression BaseType;
 		public Type UnderlyingType;
 
-		Hashtable member_to_location;
-
-		//
-		// This is for members that have been defined
-		//
-		Hashtable member_to_value;
-
-		//
-		// This is used to mark members we're currently defining
-		//
-		Hashtable in_transit;
-		
-		ArrayList field_builders;
+		static MemberList no_list = new MemberList (new object[0]);
 		
 		public const int AllowedModifiers =
 			Modifiers.NEW |
@@ -146,34 +214,17 @@ namespace Mono.CSharp {
 			this.BaseType = type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags,
 						    IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE, name.Location);
-
-			ordered_enums = new ArrayList ();
-			member_to_location = new Hashtable ();
-			member_to_value = new Hashtable ();
-			in_transit = new Hashtable ();
-			field_builders = new ArrayList ();
 		}
 
-		/// <summary>
-		///   Adds @name to the enumeration space, with @expr
-		///   being its definition.  
-		/// </summary>
-		public void AddEnumMember (string name, Expression expr, Location loc, Attributes opt_attrs, string documentation)
+		public void AddEnumMember (EnumMember em)
 		{
-			if (name == "value__") {
-				Report.Error (76, loc, "An item in an enumeration cannot have an identifier `value__'");
+			if (em.Name == "value__") {
+				Report.Error (76, em.Location, "An item in an enumeration cannot have an identifier `value__'");
 				return;
 			}
 
-			EnumMember em = new EnumMember (this, expr, name, loc, opt_attrs);
-			em.DocComment = documentation;
-			if (!AddToContainer (em, name))
+			if (!AddToContainer (em, em.Name))
 				return;
-
-
-			// TODO: can be almost deleted
-			ordered_enums.Add (name);
-			member_to_location.Add (name, loc);
 		}
 		
 		public override TypeBuilder DefineType ()
@@ -231,377 +282,16 @@ namespace Mono.CSharp {
 
 			TypeManager.AddUserType (Name, this);
 
+			foreach (EnumMember em in defined_names.Values) {
+				if (!em.Define ())
+					return null;
+			}
+
 			return TypeBuilder;
-		}
-
-	        bool IsValidEnumConstant (Expression e)
-		{
-			if (!(e is Constant))
-				return false;
-
-			if (e is IntConstant || e is UIntConstant || e is LongConstant ||
-			    e is ByteConstant || e is SByteConstant || e is ShortConstant ||
-			    e is UShortConstant || e is ULongConstant || e is EnumConstant ||
-			    e is CharConstant)
-				return true;
-			else
-				return false;
-		}
-
-		object GetNextDefaultValue (object default_value)
-		{
-			if (UnderlyingType == TypeManager.int32_type) {
-				int i = (int) default_value;
-				
-				if (i < System.Int32.MaxValue)
-					return ++i;
-				else
-					return null;
-			} else if (UnderlyingType == TypeManager.uint32_type) {
-				uint i = (uint) default_value;
-
-				if (i < System.UInt32.MaxValue)
-					return ++i;
-				else
-					return null;
-			} else if (UnderlyingType == TypeManager.int64_type) {
-				long i = (long) default_value;
-
-				if (i < System.Int64.MaxValue)
-					return ++i;
-				else
-					return null;
-			} else if (UnderlyingType == TypeManager.uint64_type) {
-				ulong i = (ulong) default_value;
-
-				if (i < System.UInt64.MaxValue)
-					return ++i;
-				else
-					return null;
-			} else if (UnderlyingType == TypeManager.short_type) {
-				short i = (short) default_value;
-
-				if (i < System.Int16.MaxValue)
-					return ++i;
-				else
-					return null;
-			} else if (UnderlyingType == TypeManager.ushort_type) {
-				ushort i = (ushort) default_value;
-
-				if (i < System.UInt16.MaxValue)
-					return ++i;
-				else
-					return null;
-			} else if (UnderlyingType == TypeManager.byte_type) {
-				byte i = (byte) default_value;
-
-				if (i < System.Byte.MaxValue)
-					return ++i;
-				else
-					return null;
-			} else if (UnderlyingType == TypeManager.sbyte_type) {
-				sbyte i = (sbyte) default_value;
-
-				if (i < System.SByte.MaxValue)
-					return ++i;
-				else
-					return null;
-			}
-
-			return null;
-		}
-
-		/// <summary>
-		///  Determines if a standard implicit conversion exists from
-		///  expr_type to target_type
-		/// </summary>
-		public static bool ImplicitConversionExists (Type expr_type, Type target_type)
-		{
-			expr_type = TypeManager.TypeToCoreType (expr_type);
-
-			if (expr_type == TypeManager.void_type)
-				return false;
-			
-			if (expr_type == target_type)
-				return true;
-
-			// First numeric conversions 
-
-			if (expr_type == TypeManager.sbyte_type){
-				//
-				// From sbyte to short, int, long, float, double.
-				//
-				if ((target_type == TypeManager.int32_type) || 
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type)  ||
-				    (target_type == TypeManager.short_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-				
-			} else if (expr_type == TypeManager.byte_type){
-				//
-				// From byte to short, ushort, int, uint, long, ulong, float, double
-				// 
-				if ((target_type == TypeManager.short_type) ||
-				    (target_type == TypeManager.ushort_type) ||
-				    (target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.uint32_type) ||
-				    (target_type == TypeManager.uint64_type) ||
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-	
-			} else if (expr_type == TypeManager.short_type){
-				//
-				// From short to int, long, float, double
-				// 
-				if ((target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-					
-			} else if (expr_type == TypeManager.ushort_type){
-				//
-				// From ushort to int, uint, long, ulong, float, double
-				//
-				if ((target_type == TypeManager.uint32_type) ||
-				    (target_type == TypeManager.uint64_type) ||
-				    (target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-				    
-			} else if (expr_type == TypeManager.int32_type){
-				//
-				// From int to long, float, double
-				//
-				if ((target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-					
-			} else if (expr_type == TypeManager.uint32_type){
-				//
-				// From uint to long, ulong, float, double
-				//
-				if ((target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.uint64_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-					
-			} else if ((expr_type == TypeManager.uint64_type) ||
-				   (expr_type == TypeManager.int64_type)) {
-				//
-				// From long/ulong to float, double
-				//
-				if ((target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-				    
-			} else if (expr_type == TypeManager.char_type){
-				//
-				// From char to ushort, int, uint, long, ulong, float, double
-				// 
-				if ((target_type == TypeManager.ushort_type) ||
-				    (target_type == TypeManager.int32_type) ||
-				    (target_type == TypeManager.uint32_type) ||
-				    (target_type == TypeManager.uint64_type) ||
-				    (target_type == TypeManager.int64_type) ||
-				    (target_type == TypeManager.float_type) ||
-				    (target_type == TypeManager.double_type) ||
-				    (target_type == TypeManager.decimal_type))
-					return true;
-
-			} else if (expr_type == TypeManager.float_type){
-				//
-				// float to double
-				//
-				if (target_type == TypeManager.double_type)
-					return true;
-			}	
-			
-			return false;
-		}
-
-		/// <summary>
-		///  This is used to lookup the value of an enum member. If the member is undefined,
-		///  it attempts to define it and return its value
-		/// </summary>
-		public object LookupEnumValue (string name, Location loc)
-		{
-			if (ec == null)
-				Report.Error (-1, loc, "Enum.LookupEnumValue () called too soon");
-			
-			object default_value = null;
-			Constant c = null;
-
-			default_value = member_to_value [name];
-
-			if (default_value != null)
-				return default_value;
-
-			//
-			// This may happen if we're calling a method in System.Enum, for instance
-			// Enum.IsDefined().
-			//
-			if (!defined_names.Contains (name))
-				return null;
-
-			if (in_transit.Contains (name)) {
-				Report.Error (110, loc, "The evaluation of the constant value for `" +
-					      Name + "." + name + "' involves a circular definition.");
-				return null;
-			}
-
-			//
-			// So if the above doesn't happen, we have a member that is undefined
-			// We now proceed to define it 
-			//
-			Expression val = this [name];
-
-			if (val == null) {
-				
-				int idx = ordered_enums.IndexOf (name);
-
-				if (idx == 0)
-					default_value = 0;
-				else {
-					for (int i = 0; i < idx; ++i) {
-						string n = (string) ordered_enums [i];
-						Location m_loc = (Mono.CSharp.Location)
-							member_to_location [n];
-						in_transit.Add (name, true);
-						default_value = LookupEnumValue (n, m_loc);
-						in_transit.Remove (name);
-						if (default_value == null)
-							return null;
-					}
-					
-					default_value = GetNextDefaultValue (default_value);
-				}
-				
-			} else {
-				in_transit.Add (name, true);
-				val = val.Resolve (EmitContext);
-				in_transit.Remove (name);
-
-				if (val == null)
-					return null;
-
-				if (!IsValidEnumConstant (val)) {
-					Report.Error (1008, loc,
-						"Type byte, sbyte, short, ushort, int, uint, long or ulong expected");
-					return null;
-				}
-
-				c = (Constant) val;
-				default_value = c.GetValue ();
-
-				if (default_value == null) {
-					c.Error_ConstantValueCannotBeConverted (loc, UnderlyingType);
-					return null;
-				}
-
-				if (val is EnumConstant){
-					Type etype = TypeManager.EnumToUnderlying (c.Type);
-					
-					if (!ImplicitConversionExists (etype, UnderlyingType)){
-						Convert.Error_CannotImplicitConversion (
-							loc, c.Type, UnderlyingType);
-						return null;
-					}
-				}
-			}
-
-			EnumMember em = (EnumMember) defined_names [name];
-			em.DefineMember (TypeBuilder);
-
-			bool fail;
-			default_value = TypeManager.ChangeType (default_value, UnderlyingType, out fail);
-			if (fail){
-				c.Error_ConstantValueCannotBeConverted (loc, UnderlyingType);
-				return null;
-			}
-
-			em.builder.SetConstant (default_value);
-			field_builders.Add (em.builder);
-			member_to_value [name] = default_value;
-
-			if (!TypeManager.RegisterFieldValue (em.builder, default_value))
-				return null;
-
-			return default_value;
 		}
 		
 		public override bool Define ()
 		{
-			//
-			// If there was an error during DefineEnum, return
-			//
-			if (TypeBuilder == null)
-				return false;
-
-			if (ec == null)
-				throw new InternalErrorException ("Enum.Define () called too soon");
-			
-			object default_value = 0;
-			
-		
-			foreach (string name in ordered_enums) {
-				//
-				// Have we already been defined, thanks to some cross-referencing ?
-				// 
-				if (member_to_value.Contains (name))
-					continue;
-				
-				Location loc = (Mono.CSharp.Location) member_to_location [name];
-
-				if (this [name] != null) {
-					default_value = LookupEnumValue (name, loc);
-
-					if (default_value == null)
-						return true;
-				} else {
-					EnumMember em = (EnumMember) defined_names [name];
-
-					em.DefineMember (TypeBuilder);
-					FieldBuilder fb = em.builder;
-					
-					if (default_value == null) {
-					   Report.Error (543, loc, "The enumerator value `{0}.{1}' is too large to fit in its type `{2}'",
-						   GetSignatureForError (), name, TypeManager.CSharpName (this.UnderlyingType));
-						return false;
-					}
-
-					bool fail;
-					default_value = TypeManager.ChangeType (default_value, UnderlyingType, out fail);
-					if (fail){
-						//TODO: really interested if can be reached
-						throw new NotImplementedException ();
-					}
-
-					fb.SetConstant (default_value);
-					field_builders.Add (fb);
-					member_to_value [name] = default_value;
-					
-					if (!TypeManager.RegisterFieldValue (fb, default_value))
-						return false;
-				}
-
-				default_value = GetNextDefaultValue (default_value);
-			}
-
 			return true;
 		}
 
@@ -617,7 +307,24 @@ namespace Mono.CSharp {
 
 			base.Emit ();
 		}
-		
+
+		//
+		// IMemberFinder
+		//
+		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
+			MemberFilter filter, object criteria)
+		{
+			if ((mt & MemberTypes.Field) == 0)
+				return no_list;
+
+			EnumMember em = defined_names [criteria] as EnumMember;
+			if (em == null)
+				return no_list;
+
+			FieldBuilder[] fb = new FieldBuilder[] { em.builder };
+			return new MemberList (fb);
+		}
+
  		void VerifyClsName ()
   		{
 			HybridDictionary dict = new HybridDictionary (defined_names.Count, true);
@@ -651,44 +358,11 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-		
-		//
-		// IMemberFinder
-		//
-		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
-							MemberFilter filter, object criteria)
-		{
-			ArrayList members = new ArrayList ();
-
-			if ((mt & MemberTypes.Field) != 0) {
-				if (criteria is string && member_to_value [criteria] == null) {
-					LookupEnumValue ((string) criteria, Location.Null);
-				}
-				
-				foreach (FieldBuilder fb in field_builders)
-					if (filter (fb, criteria) == true)
-						members.Add (fb);
-			}
-
-			return new MemberList (members);
-		}
+	
 
 		public override MemberCache MemberCache {
 			get {
 				return null;
-			}
-		}
-
-		public ArrayList ValueNames {
-			get {
-				return ordered_enums;
-			}
-		}
-
-		// indexer
-		public Expression this [string name] {
-			get {
-				return ((EnumMember) defined_names [name]).Type;
 			}
 		}
 
@@ -706,7 +380,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-
 		protected override void VerifyObsoleteAttribute()
 		{
 			// UnderlyingType is never obsolete
@@ -718,7 +391,11 @@ namespace Mono.CSharp {
 		//
 		internal override void GenerateDocComment (DeclSpace ds)
 		{
-			DocUtil.GenerateEnumDocComment (this, ds);
+			base.GenerateDocComment (ds);
+
+			foreach (EnumMember em in defined_names.Values) {
+				em.GenerateDocComment (this);
+			}
 		}
 
 		//

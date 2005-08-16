@@ -1304,15 +1304,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (source is Constant){
-				Constant c = (Constant) source;
-
-				c.Error_ConstantValueCannotBeConverted (loc, target_type);
-				return null;
-			}
-			
-			Error_CannotImplicitConversion (loc, source.Type, target_type);
-
+			source.Error_ValueCannotBeConverted (loc, target_type);
 			return null;
 		}
 
@@ -1880,12 +1872,10 @@ namespace Mono.CSharp {
 			if (ne != null)
 				return ne;
 
-			if (expr is NullLiteral){
-				((NullLiteral)expr).Error_ConstantValueCannotBeConverted (loc, target_type);
-				return null;
-			}
-
-			Error_CannotConvertType (loc, original_expr_type, target_type);
+			if (expr is Constant)
+				expr.Error_ValueCannotBeConverted (loc, target_type);
+			else
+				Error_CannotConvertType (loc, original_expr_type, target_type);
 			return null;
 		}
 

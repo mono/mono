@@ -2349,11 +2349,16 @@ enum_declaration
 		if (RootContext.Documentation != null)
 			e.DocComment = enumTypeComment;
 
+
+		EnumMember em = null;
 		foreach (VariableDeclaration ev in (ArrayList) $8) {
-			e.AddEnumMember (ev.identifier, 
-					 (Expression) ev.expression_or_array_initializer,
-					 ev.Location, ev.OptAttributes,
-					 ev.DocComment);
+			em = new EnumMember (e, em, (Expression) ev.expression_or_array_initializer,
+				new MemberName (ev.identifier, ev.Location), ev.OptAttributes);
+
+//			if (RootContext.Documentation != null)
+				em.DocComment = ev.DocComment;
+
+			e.AddEnumMember (em);
 		}
 
 		current_container.AddEnum (e);

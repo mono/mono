@@ -1,11 +1,15 @@
-// cs0619-19.cs: `MainClass' is obsolete: `'
-// Line: 8
+// cs0619-19.cs: `O' is obsolete: `'
+// Line: 12
 
 [System.Obsolete("", true)]
+class O
+{
+}
+
 class MainClass {
         public void Method ()
         {
-                lock (new MainClass ()) {
+                lock (new O ()) {
                 }
         }
 }

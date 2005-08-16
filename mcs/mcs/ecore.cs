@@ -273,6 +273,11 @@ namespace Mono.CSharp {
 			Report.Error (122, loc, "`{0}' is inaccessible due to its protection level", name);
 		}
 
+		public virtual void Error_ValueCannotBeConverted (Location loc, Type t)
+		{
+			Convert.Error_CannotImplicitConversion (loc, Type, t);
+		}
+
 		ResolveFlags ExprClassToResolveFlags ()
 		{
 			switch (eclass) {
@@ -354,6 +359,31 @@ namespace Mono.CSharp {
 				return null;
 			}
 			return e;
+		}
+
+		public Constant ResolveAsConstant (EmitContext ec, MemberCore mc)
+		{
+			Expression e = Resolve (ec);
+			if (e != null) {
+				Constant c = e as Constant;
+				if (c != null)
+					return c;
+
+				EmptyCast empty = e as EmptyCast;
+				if (empty != null) {
+					c = empty.Child as Constant;
+					if (c != null) {
+						// TODO: not sure about this maybe there is easier way how to use EmptyCast
+						if (e.Type.IsEnum)
+							c.Type = e.Type;
+
+						return c;
+					}
+				}
+			}
+
+			Const.Error_ExpressionMustBeConstant (loc, mc.GetSignatureForError ());
+			return null;
 		}
 
 		/// <summary>
@@ -850,268 +880,6 @@ namespace Mono.CSharp {
 		{
 			Report.Error (214, loc, "Pointers and fixed size buffers may only be used in an unsafe context");
 		}
-		
-		/// <summary>
-		///   Converts the IntConstant, UIntConstant, LongConstant or
-		///   ULongConstant into the integral target_type.   Notice
-		///   that we do not return an `Expression' we do return
-		///   a boxed integral type.
-		///
-		///   FIXME: Since I added the new constants, we need to
-		///   also support conversions from CharConstant, ByteConstant,
-		///   SByteConstant, UShortConstant, ShortConstant
-		///
-		///   This is used by the switch statement, so the domain
-		///   of work is restricted to the literals above, and the
-		///   targets are int32, uint32, char, byte, sbyte, ushort,
-		///   short, uint64 and int64
-		/// </summary>
-		public static object ConvertIntLiteral (Constant c, Type target_type, Location loc)
-		{
-			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, c, target_type)){
-				Convert.Error_CannotImplicitConversion (loc, c.Type, target_type);
-				return null;
-			}
-			
-			if (c.Type == target_type)
-				return ((Constant) c).GetValue ();
-
-			//
-			// Make into one of the literals we handle, we dont really care
-			// about this value as we will just return a few limited types
-			// 
-			if (c is EnumConstant)
-				c = ((EnumConstant)c).WidenToCompilerConstant ();
-
-			if (c is IntConstant){
-				int v = ((IntConstant) c).Value;
-				
-				if (target_type == TypeManager.uint32_type){
-					if (v >= 0)
-						return (uint) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
-				} else if (target_type == TypeManager.byte_type){
-					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return (byte) v;
-				} else if (target_type == TypeManager.sbyte_type){
-					if (v >= SByte.MinValue && v <= SByte.MaxValue)
-						return (sbyte) v;
-				} else if (target_type == TypeManager.short_type){
-					if (v >= Int16.MinValue && v <= UInt16.MaxValue)
-						return (short) v;
-				} else if (target_type == TypeManager.ushort_type){
-					if (v >= UInt16.MinValue && v <= UInt16.MaxValue)
-						return (ushort) v;
-				} else if (target_type == TypeManager.int64_type)
-					return (long) v;
-			        else if (target_type == TypeManager.uint64_type){
-					if (v > 0)
-						return (ulong) v;
-				}
-
-			} else if (c is UIntConstant){
-				uint v = ((UIntConstant) c).Value;
-
-				if (target_type == TypeManager.int32_type){
-					if (v <= Int32.MaxValue)
-						return (int) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
-				} else if (target_type == TypeManager.byte_type){
-					if (v <= Byte.MaxValue)
-						return (byte) v;
-				} else if (target_type == TypeManager.sbyte_type){
-					if (v <= SByte.MaxValue)
-						return (sbyte) v;
-				} else if (target_type == TypeManager.short_type){
-					if (v <= UInt16.MaxValue)
-						return (short) v;
-				} else if (target_type == TypeManager.ushort_type){
-					if (v <= UInt16.MaxValue)
-						return (ushort) v;
-				} else if (target_type == TypeManager.int64_type)
-					return (long) v;
-			        else if (target_type == TypeManager.uint64_type)
-					return (ulong) v;
-			} else if (c is LongConstant){ 
-				long v = ((LongConstant) c).Value;
-
-				if (target_type == TypeManager.int32_type){
-					if (v >= UInt32.MinValue && v <= UInt32.MaxValue)
-						return (int) v;
-				} else if (target_type == TypeManager.uint32_type){
-					if (v >= 0 && v <= UInt32.MaxValue)
-						return (uint) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
-				} else if (target_type == TypeManager.byte_type){
-					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return (byte) v;
-				} else if (target_type == TypeManager.sbyte_type){
-					if (v >= SByte.MinValue && v <= SByte.MaxValue)
-						return (sbyte) v;
-				} else if (target_type == TypeManager.short_type){
-					if (v >= Int16.MinValue && v <= UInt16.MaxValue)
-						return (short) v;
-				} else if (target_type == TypeManager.ushort_type){
-					if (v >= UInt16.MinValue && v <= UInt16.MaxValue)
-						return (ushort) v;
-			        } else if (target_type == TypeManager.uint64_type){
-					if (v > 0)
-						return (ulong) v;
-				}
-			} else if (c is ULongConstant){
-				ulong v = ((ULongConstant) c).Value;
-
-				if (target_type == TypeManager.int32_type){
-					if (v <= Int32.MaxValue)
-						return (int) v;
-				} else if (target_type == TypeManager.uint32_type){
-					if (v <= UInt32.MaxValue)
-						return (uint) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
-				} else if (target_type == TypeManager.byte_type){
-					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return (byte) v;
-				} else if (target_type == TypeManager.sbyte_type){
-					if (v <= (int) SByte.MaxValue)
-						return (sbyte) v;
-				} else if (target_type == TypeManager.short_type){
-					if (v <= UInt16.MaxValue)
-						return (short) v;
-				} else if (target_type == TypeManager.ushort_type){
-					if (v <= UInt16.MaxValue)
-						return (ushort) v;
-			        } else if (target_type == TypeManager.int64_type){
-					if (v <= Int64.MaxValue)
-						return (long) v;
-				}
-			} else if (c is ByteConstant){
-				byte v = ((ByteConstant) c).Value;
-				
-				if (target_type == TypeManager.int32_type)
-					return (int) v;
-				else if (target_type == TypeManager.uint32_type)
-					return (uint) v;
-				else if (target_type == TypeManager.char_type)
-					return (char) v;
-				else if (target_type == TypeManager.sbyte_type){
-					if (v <= SByte.MaxValue)
-						return (sbyte) v;
-				} else if (target_type == TypeManager.short_type)
-					return (short) v;
-				else if (target_type == TypeManager.ushort_type)
-					return (ushort) v;
-			        else if (target_type == TypeManager.int64_type)
-					return (long) v;
-				else if (target_type == TypeManager.uint64_type)
-					return (ulong) v;
-			} else if (c is SByteConstant){
-				sbyte v = ((SByteConstant) c).Value;
-				
-				if (target_type == TypeManager.int32_type)
-					return (int) v;
-				else if (target_type == TypeManager.uint32_type){
-					if (v >= 0)
-						return (uint) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= 0)
-						return (char) v;
-				} else if (target_type == TypeManager.byte_type){
-					if (v >= 0)
-						return (byte) v;
-				} else if (target_type == TypeManager.short_type)
-					return (short) v;
-				else if (target_type == TypeManager.ushort_type){
-					if (v >= 0)
-						return (ushort) v;
-			        } else if (target_type == TypeManager.int64_type)
-					return (long) v;
-				else if (target_type == TypeManager.uint64_type){
-					if (v >= 0)
-						return (ulong) v;
-				}
-			} else if (c is ShortConstant){
-				short v = ((ShortConstant) c).Value;
-				
-				if (target_type == TypeManager.int32_type){
-					return (int) v;
-				} else if (target_type == TypeManager.uint32_type){
-					if (v >= 0)
-						return (uint) v;
-				} else if (target_type == TypeManager.char_type){
-					if (v >= 0)
-						return (char) v;
-				} else if (target_type == TypeManager.byte_type){
-					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return (byte) v;
-				} else if (target_type == TypeManager.sbyte_type){
-					if (v >= SByte.MinValue && v <= SByte.MaxValue)
-						return (sbyte) v;
-				} else if (target_type == TypeManager.ushort_type){
-					if (v >= 0)
-						return (ushort) v;
-			        } else if (target_type == TypeManager.int64_type)
-					return (long) v;
-				else if (target_type == TypeManager.uint64_type)
-					return (ulong) v;
-			} else if (c is UShortConstant){
-				ushort v = ((UShortConstant) c).Value;
-				
-				if (target_type == TypeManager.int32_type)
-					return (int) v;
-				else if (target_type == TypeManager.uint32_type)
-					return (uint) v;
-				else if (target_type == TypeManager.char_type){
-					if (v >= Char.MinValue && v <= Char.MaxValue)
-						return (char) v;
-				} else if (target_type == TypeManager.byte_type){
-					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return (byte) v;
-				} else if (target_type == TypeManager.sbyte_type){
-					if (v <= SByte.MaxValue)
-						return (byte) v;
-				} else if (target_type == TypeManager.short_type){
-					if (v <= Int16.MaxValue)
-						return (short) v;
-			        } else if (target_type == TypeManager.int64_type)
-					return (long) v;
-				else if (target_type == TypeManager.uint64_type)
-					return (ulong) v;
-
-			} else if (c is CharConstant){
-				char v = ((CharConstant) c).Value;
-				
-				if (target_type == TypeManager.int32_type)
-					return (int) v;
-				else if (target_type == TypeManager.uint32_type)
-					return (uint) v;
-				else if (target_type == TypeManager.byte_type){
-					if (v >= Byte.MinValue && v <= Byte.MaxValue)
-						return (byte) v;
-				} else if (target_type == TypeManager.sbyte_type){
-					if (v <= SByte.MaxValue)
-						return (sbyte) v;
-				} else if (target_type == TypeManager.short_type){
-					if (v <= Int16.MaxValue)
-						return (short) v;
-				} else if (target_type == TypeManager.ushort_type)
-					return (short) v;
-			        else if (target_type == TypeManager.int64_type)
-					return (long) v;
-				else if (target_type == TypeManager.uint64_type)
-					return (ulong) v;
-
-			}
-			c.Error_ConstantValueCannotBeConverted (loc, target_type);
-			return null;
-		}
 
 		//
 		// Load the object from the pointer.  
@@ -1483,6 +1251,11 @@ namespace Mono.CSharp {
 			child.Emit (ec);
 		}
 
+		public override Constant Increment ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				throw new NotImplementedException ();
@@ -1528,69 +1301,21 @@ namespace Mono.CSharp {
 			return Child.GetValue ();
 		}
 
-		public object GetValueAsEnumType ()
+		public override object GetTypedValue ()
 		{
+			// FIXME: runtime is not ready to work with just emited enums
+			if (!RootContext.StdLib) {
+				return Child.GetValue ();
+			}
+
 			return System.Enum.ToObject (type, Child.GetValue ());
 		}
-
-		//
-		// Converts from one of the valid underlying types for an enumeration
-		// (int32, uint32, int64, uint64, short, ushort, byte, sbyte) to
-		// one of the internal compiler literals: Int/UInt/Long/ULong Literals.
-		//
-		public Constant WidenToCompilerConstant ()
-		{
-			Type t = TypeManager.EnumToUnderlying (Child.Type);
-			object v = ((Constant) Child).GetValue ();;
-			
-			if (t == TypeManager.int32_type)
-				return new IntConstant ((int) v);
-			if (t == TypeManager.uint32_type)
-				return new UIntConstant ((uint) v);
-			if (t == TypeManager.int64_type)
-				return new LongConstant ((long) v);
-			if (t == TypeManager.uint64_type)
-				return new ULongConstant ((ulong) v);
-			if (t == TypeManager.short_type)
-				return new ShortConstant ((short) v);
-			if (t == TypeManager.ushort_type)
-				return new UShortConstant ((ushort) v);
-			if (t == TypeManager.byte_type)
-				return new ByteConstant ((byte) v);
-			if (t == TypeManager.sbyte_type)
-				return new SByteConstant ((sbyte) v);
-
-			throw new Exception ("Invalid enumeration underlying type: " + t);
-		}
-
-		//
-		// Extracts the value in the enumeration on its native representation
-		//
-		public object GetPlainValue ()
-		{
-			Type t = TypeManager.EnumToUnderlying (Child.Type);
-			object v = ((Constant) Child).GetValue ();;
-			
-			if (t == TypeManager.int32_type)
-				return (int) v;
-			if (t == TypeManager.uint32_type)
-				return (uint) v;
-			if (t == TypeManager.int64_type)
-				return (long) v;
-			if (t == TypeManager.uint64_type)
-				return (ulong) v;
-			if (t == TypeManager.short_type)
-				return (short) v;
-			if (t == TypeManager.ushort_type)
-				return (ushort) v;
-			if (t == TypeManager.byte_type)
-				return (byte) v;
-			if (t == TypeManager.sbyte_type)
-				return (sbyte) v;
-
-			return null;
-		}
 		
+		public override void Error_ValueCannotBeConverted (Location loc, Type t)
+		{
+			Convert.Error_CannotImplicitConversion (loc, Type, t);
+		}
+
 		public override string AsString ()
 		{
 			return Child.AsString ();
@@ -1626,6 +1351,11 @@ namespace Mono.CSharp {
 			return Child.ConvertToInt ();
 		}
 
+		public override Constant Increment()
+		{
+			return new EnumConstant (Child.Increment (), type);
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Child.IsDefaultValue;
@@ -1641,6 +1371,27 @@ namespace Mono.CSharp {
 				return Child.IsNegative;
 			}
 		}
+
+		public override Constant ToType (Type type, Location loc)
+		{
+			if (Type == type) {
+				// This is workaround of mono bug. It can be removed when the latest corlib spreads enough
+				if (TypeManager.IsEnumType (type.UnderlyingSystemType))
+					return this;
+
+				if (type.UnderlyingSystemType != Child.Type)
+					Child = Child.ToType (type.UnderlyingSystemType, loc);
+				return this;
+			}
+
+			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, this, type)){
+				Error_ValueCannotBeConverted (loc, type);
+				return null;
+			}
+
+			return Child.ToType (type, loc);
+		}
+
 	}
 
 	/// <summary>
@@ -2878,86 +2629,39 @@ namespace Mono.CSharp {
 		public override Expression ResolveMemberAccess (EmitContext ec, Expression left, Location loc,
 								SimpleName original)
 		{
-			bool left_is_type = left is TypeExpr;
+			if (FieldInfo.IsLiteral) {
+				IConstant ic = TypeManager.GetConstant (FieldInfo);
+				if (ic == null) {
+					ic = new ExternalConstant (FieldInfo);
+					TypeManager.RegisterConstant (FieldInfo, ic);
+				}
 
-			Type decl_type = FieldInfo.DeclaringType;
-			
+				bool left_is_type = left is TypeExpr;
+				if (!left_is_type && (original == null || !original.IdenticalNameAndTypeName (ec, left, loc))) {
+					Report.SymbolRelatedToPreviousError (FieldInfo);
+					error176 (loc, TypeManager.GetFullNameSignature (FieldInfo));
+					return null;
+				}
+
+				if (ic.ResolveValue ())
+					ic.CheckObsoleteness (loc);
+
+				return ic.Value;
+			}
+
 			bool is_emitted = FieldInfo is FieldBuilder;
 			Type t = FieldInfo.FieldType;
 			
-			if (is_emitted) {
-				Const c = TypeManager.LookupConstant ((FieldBuilder) FieldInfo);
-				
-				if (c != null) {
-					object o;
-					if (!c.LookupConstantValue (out o))
-						return null;
-
-					c.SetMemberIsUsed ();
-					object real_value = ((Constant) c.Expr).GetValue ();
-
-					Expression exp = Constantify (real_value, t);
-					
-					if (!left_is_type && 
-					    (original == null || !original.IdenticalNameAndTypeName (ec, left, loc))) {
-						Report.SymbolRelatedToPreviousError (c);
-						error176 (loc, c.GetSignatureForError ());
-						return null;
-					}
-					
-					return exp;
-				}
-			}
-
 			//
 			// Decimal constants cannot be encoded in the constant blob, and thus are marked
 			// as IsInitOnly ('readonly' in C# parlance).  We get its value from the 
 			// DecimalConstantAttribute metadata.
 			//
+			//TODO: incorporare in GetContant otherwise we miss all error checks + obsoleteness check
 			if (FieldInfo.IsInitOnly && !is_emitted && t == TypeManager.decimal_type) {
 				object[] attrs = FieldInfo.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
 				if (attrs.Length == 1)
 					return new DecimalConstant (((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value);
-			}
-			
-			if (FieldInfo.IsLiteral) {
-				object o;
-				
-				if (is_emitted)
-					o = TypeManager.GetValue ((FieldBuilder) FieldInfo);
-				else
-					o = FieldInfo.GetValue (FieldInfo);
-				
-				if (decl_type.IsSubclassOf (TypeManager.enum_type)) {
-					if (!left_is_type &&
-					    (original == null || !original.IdenticalNameAndTypeName (ec, left, loc))) {
-						error176 (loc, TypeManager.GetFullNameSignature (FieldInfo));
-						return null;
-					}					
-					
-					Expression enum_member = MemberLookup (
-					       ec, decl_type, "value__", MemberTypes.Field,
-					       AllBindingFlags | BindingFlags.NonPublic, loc); 
-					
-					Enum en = TypeManager.LookupEnum (decl_type);
-					
-					Constant c;
-					if (en != null)
-						c = Constantify (o, en.UnderlyingType);
-					else 
-						c = Constantify (o, enum_member.Type);
-					
-					return new EnumConstant (c, decl_type);
-				}
-
-				Expression exp = Constantify (o, t);
-				
-				if (!left_is_type) {
-					error176 (loc, TypeManager.GetFullNameSignature (FieldInfo));
-					return null;
-				}
-				
-				return exp;
 			}
 			
 			if (t.IsPointer && !ec.InUnsafe) {
@@ -3012,9 +2716,7 @@ namespace Mono.CSharp {
 				ObsoleteAttribute oa;
 				FieldBase f = TypeManager.GetField (FieldInfo);
 				if (f != null) {
-					oa = f.GetObsoleteAttribute (f.Parent);
-					if (oa != null)
-						AttributeTester.Report_ObsoleteMessage (oa, f.GetSignatureForError (), loc);
+					f.CheckObsoleteness (loc);
                                 
 					// To be sure that type is external because we do not register generated fields
 				} else if (!(FieldInfo.DeclaringType is TypeBuilder)) {                                

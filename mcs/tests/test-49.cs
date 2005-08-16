@@ -318,6 +318,8 @@ class X {
 			return 5;
 		case null:
 			return 9;
+		case "new":
+			goto case null;
 		default:
 			return 6;
 		}
@@ -463,7 +465,7 @@ class X {
 			return 20;
 
 		case TestEnum.c:
-			return 30;
+			goto case TestEnum.b;
 
 		default:
 			return 40;
@@ -477,7 +479,7 @@ class X {
 			return 1;
 		if (testSwitchEnumLong (TestEnum.b) != 20)
 			return 2;
-		if (testSwitchEnumLong (TestEnum.c) != 30)
+		if (testSwitchEnumLong (TestEnum.c) != 20)
 			return 3;
 		if (testSwitchEnumLong ((TestEnum)5) != 40)
 			return 4;
@@ -549,6 +551,9 @@ class X {
 			return 10;
 		if (tests ("blah") != 6)
 			return 11;
+		if (tests ("new") != 9)
+			return 110;
+
 
 		if (testn ("one") != 1)
 			return 12;

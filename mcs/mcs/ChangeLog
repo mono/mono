@@ -1,3 +1,60 @@
+2005-08-16  Marek Safar  <marek.safar@seznam.cz>
+
+	The big constants rewrite
+	Fix #75746, #75685 and more
+	As a side effect saved 1MB for MWF ;-)
+	
+	* attribute.cs (GetAttributeArgumentExpression): Use ToType, GetTypedValue.
+	(GetMarshal, GetMethodImplOptions, GetLayoutKindValue): Values are not
+	enum based for corlib compilation.
+	
+	* cfold.cs (BinaryFold): Convert operand for enum additions. Fixed enum
+	subtractions.
+	
+	* class.cs (FixedField.Define): Use ResolveAsConstant.
+	
+	* const.cs (IConstant): Interface constants and enums.
+	(Const.ResolveValue): New method for constant resolvning.
+	(ExternalConstant): Constants from imported assemblies.
+	
+	* constant.cs (Constant.GetTypedValue): Used to get constant with forced
+	conversion; like enums.
+	(Constant.ToType): Converts this constant to different type.
+	(Constant.Increment): Adds 1.
+	
+	* convert.cs (ImplicitConversionRequired): Simplified.
+	
+	* cs-parser.jay: Create EnumMember directly.
+	
+	* decl.cs (MemberCore.CheckObsoleteness): Checks for ObsoleteAttribute presence.
+	
+	* doc.cs (GenerateEnumDocComment): Removed.
+	
+	* ecore.cs (Expression.ResolveAsConstant): New constant specific method.
+	(ConvertIntLiteral): Removed.
+	(FieldExpr.ResolveMemberAccess): Refactored to remove constant specific if(s).
+	
+	* enum.cs (EnumMember): Implement IConstant.
+	(Enum.IsValidEnumConstant): Removed.
+	(Enum.GetNextDefaultValue): Removed.
+	(Enum.FindMembers): Updated.
+	(Enum.GenerateDocComment): Iterate enum members.
+	
+	* expression.cs (Cast.TryReduce): Handle enums correctly.
+	(New.Constantify): Made public.
+	(MemberAccess.DoResolve): Removed contant specific if(s).
+	
+	* literal.cs (NullLiteral): Implement new abstract methods.
+	
+	* statement.cs (GotoCase.Resolve): Use new constant methods.
+	(SwitchLabel.ResolveAndReduce): Use new constant methods.
+	
+	* typemanager.cs (LookupEnum): Removed.
+	(IsEnumType): Fixed to work with corlib.
+	(RegisterConstant): Removed.
+	(LookupConstant): Removed.
+	(GetConstant): Changed to work with IConstant.
+
 2005-08-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* location.cs : Fixed overflown (>255) column number.

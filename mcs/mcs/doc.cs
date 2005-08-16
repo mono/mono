@@ -742,16 +742,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		// Enum
-		public static void GenerateEnumDocComment (Enum e, DeclSpace ds)
-		{
-			GenerateDocComment (e, ds);
-			foreach (string name in e.ordered_enums) {
-				MemberCore mc = e.GetDefinition (name);
-				GenerateDocComment (mc, e);
-			}
-		}
-
 		private static void Normalize (MemberCore mc, ref string name)
 		{
 			if (name.Length > 0 && name [0] == '@')
@@ -885,7 +875,7 @@ namespace Mono.CSharp {
 
 			if (root.Enums != null)
 				foreach (Enum e in root.Enums)
-					DocUtil.GenerateEnumDocComment (e, null);
+					e.GenerateDocComment (null);
 
 			IDictionary table = new ListDictionary ();
 			foreach (ClassPart cp in PartialComments.Keys) {

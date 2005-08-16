@@ -240,26 +240,14 @@ namespace Mono.CSharp {
 		//
 		public static bool GetAttributeArgumentExpression (Expression e, Location loc, Type arg_type, out object result)
 		{
-			if (e is EnumConstant) {
-				if (RootContext.StdLib)
-					result = ((EnumConstant)e).GetValueAsEnumType ();
-				else
-					result = ((EnumConstant)e).GetValue ();
-
-				return true;
-			}
-
 			Constant constant = e as Constant;
 			if (constant != null) {
-				if (e.Type != arg_type) {
-					constant = Const.ChangeType (loc, constant, arg_type);
-					if (constant == null) {
-						result = null;
-						Error_AttributeArgumentNotValid (loc);
-						return false;
-					}
+				constant = constant.ToType (arg_type, loc);
+				if (constant == null) {
+					result = null;
+					return false;
 				}
-				result = constant.GetValue ();
+				result = constant.GetTypedValue ();
 				return true;
 			} else if (e is TypeOf) {
 				result = ((TypeOf) e).TypeArg;
@@ -952,7 +940,11 @@ namespace Mono.CSharp {
 
 		public UnmanagedMarshal GetMarshal (Attributable attr)
 		{
-			UnmanagedType UnmanagedType = (UnmanagedType)System.Enum.Parse (typeof (UnmanagedType), pos_values [0].ToString ());
+			UnmanagedType UnmanagedType;
+			if (!RootContext.StdLib || pos_values [0].GetType () != typeof (UnmanagedType))
+				UnmanagedType = (UnmanagedType)System.Enum.ToObject (typeof (UnmanagedType), pos_values [0]);
+			else
+				UnmanagedType = (UnmanagedType) pos_values [0];
 
 			object value = GetFieldValue ("SizeParamIndex");
 			if (value != null && UnmanagedType != UnmanagedType.LPArray) {
@@ -1025,12 +1017,17 @@ namespace Mono.CSharp {
 
 		public MethodImplOptions GetMethodImplOptions ()
 		{
-			return (MethodImplOptions)System.Enum.Parse (typeof (MethodImplOptions), pos_values [0].ToString ());
+			if (pos_values [0].GetType () != typeof (MethodImplOptions))
+				return (MethodImplOptions)System.Enum.ToObject (typeof (MethodImplOptions), pos_values [0]);
+			return (MethodImplOptions)pos_values [0];
 		}
 
 		public LayoutKind GetLayoutKindValue ()
 		{
-			return (LayoutKind)System.Enum.Parse (typeof (LayoutKind), pos_values [0].ToString ());
+			if (!RootContext.StdLib || pos_values [0].GetType () != typeof (LayoutKind))
+				return (LayoutKind)System.Enum.ToObject (typeof (LayoutKind), pos_values [0]);
+
+			return (LayoutKind)pos_values [0];
 		}
 
 		/// <summary>

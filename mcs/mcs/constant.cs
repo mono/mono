@@ -38,6 +38,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public abstract object GetValue ();
 
+		public virtual object GetTypedValue ()
+		{
+			return GetValue ();
+		}
+
 		/// <summary>
 		///   Constants are always born in a fully resolved state
 		/// </summary>
@@ -46,10 +51,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public virtual void Error_ConstantValueCannotBeConverted (Location loc, Type t)
+		public override void Error_ValueCannotBeConverted (Location loc, Type t)
 		{
-			Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-				AsString (), TypeManager.CSharpName (t));
+			// string is not real constant
+			if (type == TypeManager.string_type)
+				base.Error_ValueCannotBeConverted (loc, t);
+			else
+				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
+					AsString (), TypeManager.CSharpName (t));
 		}
 
 
@@ -134,6 +143,73 @@ namespace Mono.CSharp {
 			return c;
 		}
 
+		public virtual Constant ToType (Type type, Location loc)
+		{
+			if (Type == type)
+				return this;
+
+			if (type == TypeManager.object_type)
+				return this;
+
+			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, this, type)){
+				Error_ValueCannotBeConverted (loc, type);
+				return null;
+			}
+
+			// Special-case: The 0 literal can be converted to an enum value,
+			// and ImplicitStandardConversionExists will return true in that case.
+			if (IsZeroInteger && Type == TypeManager.int32_type && TypeManager.IsEnumType (type)) {
+				return new EnumConstant (this, type);
+			}
+
+			bool fail;			
+			object constant_value = TypeManager.ChangeType (GetValue (), type, out fail);
+			if (fail){
+				Convert.Error_CannotImplicitConversion (loc, Type, type);
+				
+				//
+				// We should always catch the error before this is ever
+				// reached, by calling Convert.ImplicitStandardConversionExists
+				//
+				throw new Exception (
+					String.Format ("LookupConstantValue: This should never be reached {0} {1}", Type, type));
+			}
+
+			Constant retval;
+			if (type == TypeManager.int32_type)
+				retval = new IntConstant ((int) constant_value);
+			else if (type == TypeManager.uint32_type)
+				retval = new UIntConstant ((uint) constant_value);
+			else if (type == TypeManager.int64_type)
+				retval = new LongConstant ((long) constant_value);
+			else if (type == TypeManager.uint64_type)
+				retval = new ULongConstant ((ulong) constant_value);
+			else if (type == TypeManager.float_type)
+				retval = new FloatConstant ((float) constant_value);
+			else if (type == TypeManager.double_type)
+				retval = new DoubleConstant ((double) constant_value);
+			else if (type == TypeManager.string_type)
+				retval = new StringConstant ((string) constant_value);
+			else if (type == TypeManager.short_type)
+				retval = new ShortConstant ((short) constant_value);
+			else if (type == TypeManager.ushort_type)
+				retval = new UShortConstant ((ushort) constant_value);
+			else if (type == TypeManager.sbyte_type)
+				retval = new SByteConstant ((sbyte) constant_value);
+			else if (type == TypeManager.byte_type)
+				retval = new ByteConstant ((byte) constant_value);
+			else if (type == TypeManager.char_type)
+				retval = new CharConstant ((char) constant_value);
+			else if (type == TypeManager.bool_type)
+				retval = new BoolConstant ((bool) constant_value);
+			else if (type == TypeManager.decimal_type)
+				retval = new DecimalConstant ((decimal) constant_value);
+			else
+				throw new Exception ("LookupConstantValue: Unhandled constant type: " + type);
+			
+			return retval;
+		}
+
 		public virtual DecimalConstant ConvertToDecimal ()
 		{
 			return null;
@@ -168,6 +244,8 @@ namespace Mono.CSharp {
 		{
 			return null;
 		}
+
+		public abstract Constant Increment ();
 		
 		public abstract bool IsDefaultValue {
 			get;
@@ -214,6 +292,11 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ldc_I4_1);
 			else
 				ec.ig.Emit (OpCodes.Ldc_I4_0);
+		}
+
+		public override Constant Increment ()
+		{
+			throw new NotSupportedException ();
 		}
 	
 		public override bool IsDefaultValue {
@@ -286,6 +369,11 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return new IntConstant (Value);
+		}
+
+		public override Constant Increment ()
+		{
+			return new ByteConstant (checked ((byte)(Value + 1)));
 		}
 
 		public override bool IsDefaultValue {
@@ -388,6 +476,11 @@ namespace Mono.CSharp {
 		{
 			return new IntConstant (Value);
 		}
+
+		public override Constant Increment ()
+		{
+			return new CharConstant (checked ((char)(Value + 1)));
+		}
 		
 		public override bool IsDefaultValue {
 			get {
@@ -464,6 +557,11 @@ namespace Mono.CSharp {
 			return new IntConstant (Value);
 		}
 
+		public override Constant Increment ()
+		{
+		    return new SByteConstant (checked((sbyte)(Value + 1)));
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Value == 0;
@@ -534,6 +632,11 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return new IntConstant (Value);
+		}
+
+		public override Constant Increment ()
+		{
+			return new ShortConstant (checked((short)(Value + 1)));
 		}
 
 		public override bool IsDefaultValue {
@@ -608,6 +711,11 @@ namespace Mono.CSharp {
 			return new IntConstant (Value);
 		}
 	
+		public override Constant Increment ()
+		{
+			return new UShortConstant (checked((ushort)(Value + 1)));
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Value == 0;
@@ -743,6 +851,11 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override Constant Increment ()
+		{
+			return new IntConstant (checked(Value + 1));
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Value == 0;
@@ -814,7 +927,12 @@ namespace Mono.CSharp {
 		{
 			return null;
 		}
-		
+	
+		public override Constant Increment ()
+		{
+			return new UIntConstant (checked(Value + 1));
+		}
+	
 		public override bool IsDefaultValue {
 			get {
 				return Value == 0;
@@ -901,6 +1019,11 @@ namespace Mono.CSharp {
 		{
 			return null;
 		}
+
+		public override Constant Increment ()
+		{
+			return new LongConstant (checked(Value + 1));
+		}
 		
 		public override bool IsDefaultValue {
 			get {
@@ -976,6 +1099,11 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public override Constant Increment ()
+		{
+			return new ULongConstant (checked(Value + 1));
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Value == 0;
@@ -1041,6 +1169,11 @@ namespace Mono.CSharp {
 		public override IntConstant ConvertToInt ()
 		{
 			return null;
+		}
+
+		public override Constant Increment ()
+		{
+			return new FloatConstant (checked(Value + 1));
 		}
 
 		public override bool IsDefaultValue {
@@ -1111,6 +1244,11 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public override Constant Increment ()
+		{
+			return new DoubleConstant (checked(Value + 1));
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Value == 0;
@@ -1177,6 +1315,11 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
 		}
 
+		public override Constant Increment ()
+		{
+			return new DecimalConstant (checked (Value + 1));
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Value == 0;
@@ -1217,6 +1360,11 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Ldnull);
 			else
 				ec.ig.Emit (OpCodes.Ldstr, Value);
+		}
+
+		public override Constant Increment ()
+		{
+			throw new NotSupportedException ();
 		}
 
 		public override bool IsDefaultValue {

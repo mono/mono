@@ -80,6 +80,11 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Ldnull);
 		}
 
+		public override Constant Increment ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return true;
@@ -101,11 +106,20 @@ namespace Mono.CSharp {
 			return "null";
 		}
 
-		public override void Error_ConstantValueCannotBeConverted (Location loc, Type t)
+		public override void Error_ValueCannotBeConverted (Location loc, Type t)
 		{
 			Report.Error (37, loc, "Cannot convert null to `{0}' because it is a value type",
 				TypeManager.CSharpName (t));
 		}
+
+		public override Constant ToType (Type type, Location loc)
+		{
+			if (!type.IsValueType && !TypeManager.IsEnumType (type))
+				return NullLiteral.Null;
+
+			return base.ToType (type, loc);
+		}
+
 	}
 
 	//

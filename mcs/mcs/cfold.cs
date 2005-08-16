@@ -450,13 +450,17 @@ namespace Mono.CSharp {
 					if (right is EnumConstant){
 						return null;
 					}
-					if (((EnumConstant) left).Child.Type != right.Type)
+
+					right = right.ToType (((EnumConstant) left).Child.Type, loc);
+					if (right == null)
 						return null;
 
 					wrap_as = left.Type;
 				} else if (right is EnumConstant){
-					if (((EnumConstant) right).Child.Type != left.Type)
+					left = left.ToType (((EnumConstant) right).Child.Type, loc);
+					if (left == null)
 						return null;
+
 					wrap_as = right.Type;
 				}
 
@@ -564,18 +568,32 @@ namespace Mono.CSharp {
 				wrap_as = null;
 				if (left is EnumConstant){
 					if (right is EnumConstant){
-						if (left.Type == right.Type)
-							wrap_as = TypeManager.EnumToUnderlying (left.Type);
-						else
+						if (left.Type != right.Type) {
+							Binary.Error_OperatorCannotBeApplied (loc, "-", left.Type, right.Type);
+							return null;
+						}
+
+						wrap_as = TypeManager.EnumToUnderlying (left.Type);
+						right = ((EnumConstant) right).Child.ToType (wrap_as, loc);
+						if (right == null)
+							return null;
+
+						left = ((EnumConstant) left).Child.ToType (wrap_as, loc);
+						if (left == null)
 							return null;
 					}
-					if (((EnumConstant) left).Child.Type != right.Type)
+					else {
+						right = right.ToType (((EnumConstant) left).Child.Type, loc);
+						if (right == null)
+							return null;
+
+						wrap_as = left.Type;
+					}
+				} else if (right is EnumConstant){
+					left = left.ToType (((EnumConstant) right).Child.Type, loc);
+					if (left == null)
 						return null;
 
-					wrap_as = left.Type;
-				} else if (right is EnumConstant){
-					if (((EnumConstant) right).Child.Type != left.Type)
-						return null;
 					wrap_as = right.Type;
 				}
 

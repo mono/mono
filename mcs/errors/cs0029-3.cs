@@ -1,4 +1,4 @@
-// cs1008.cs: Type byte, sbyte, short, ushort, int, uint, long or ulong expected
+// cs0029-3.cs: Cannot implicitly convert type `string' to `int'
 // Line : 7
 
 public class Blah {
