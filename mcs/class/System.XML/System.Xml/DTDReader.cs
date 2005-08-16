@@ -641,7 +641,7 @@ namespace System.Xml
 
 		private void ResolveExternalEntityReplacementText (DTDEntityBase decl)
 		{
-			if (decl.LiteralEntityValue.StartsWith ("<?xml")) {
+			if (decl.SystemId != null && decl.SystemId.Length > 0) {
 				// FIXME: not always it should be read in Element context
 				XmlTextReader xtr = new XmlTextReader (decl.LiteralEntityValue, XmlNodeType.Element, null);
 				if (decl is DTDEntityDeclaration && DTD.EntityDecls [decl.Name] == null) {
@@ -712,17 +712,6 @@ namespace System.Xml
 			}
 			decl.ReplacementText = CreateValueString ();
 
-			if (decl is DTDEntityDeclaration && DTD.EntityDecls [decl.Name] == null) {
-				// GE - also checked as valid contents
-				// FIXME: not always it should be read in Element context
-				XmlTextReader xtr = new XmlTextReader (decl.ActualUri, new StringReader (decl.ReplacementText), XmlNodeType.Element);
-				StringBuilder sb = new StringBuilder ();
-				xtr.Normalization = this.Normalization;
-				xtr.Read ();
-				while (!xtr.EOF)
-					sb.Append (xtr.ReadOuterXml ());
-				decl.ReplacementText = sb.ToString ();
-			}
 			ClearValueBuffer ();
 		}
 

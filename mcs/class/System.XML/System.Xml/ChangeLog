@@ -1,5 +1,12 @@
 2005-08-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* DTDReader.cs : no need to skip text declaration for such entity
+	  declaration that has literal entity. It should not expand entities
+	  inside ResolveExternalEntityReplacementText().
+	  Finally fixed bug #51495.
+
+2005-08-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs, XmlTextReader2.cs : added internal .ctor() to
 	  receive both TextReader, XmlNodeType and BaseURI for entity
 	  resolution (though it would be removed later).
