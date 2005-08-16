@@ -1,8 +1,16 @@
 2005-08-16 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* System_test.dll.sources: Added ByteConverterTests.cs,
+	Int16ConverterTests.cs and Int32ConverterTests.cs.
+	* Makefile: We also need to reference System.Drawing assembly to
+	build test assembly.
+
+2005-08-16 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* System_test.dll.sources: Added ToolboxItemAttributeTests.cs from
 	System.ComponentModel.
 
+>>>>>>> .r48427
 2005-07-24 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CodeTypeDelegateTest.cs from

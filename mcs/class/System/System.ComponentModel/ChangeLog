@@ -1,5 +1,10 @@
 2005-08-16  Gert Driesen <drieseng@users.sourceforge.net>
 
+	* BaseNumberConverter.cs: In ConvertFrom, wrap all exceptions that
+	are thrown while converting from string in an Exception.
+
+2005-08-16  Gert Driesen <drieseng@users.sourceforge.net>
+
 	* ToolboxItemAttribute.cs: Fixed GetHashCode to correspond with MS.NET.
 	Fixed initialization order. Throw ArgumentException if item type 
 	cannot be loaded.

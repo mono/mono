@@ -1,5 +1,11 @@
 2005-08-16 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* ByteConverterTests.cs: Added tests for ByteConverter.
+	* Int16ConverterTests.cs: Added tests for Int16Converter.
+	* Int32ConverterTests.cs: Added tests for Int32Converter.
+
+2005-08-16 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* ToolboxItemAttributeTests.cs: Added tests for ToolboxItemAttribute.
 
 2005-06-04 Gert Driesen <drieseng@users.sourceforge.net>

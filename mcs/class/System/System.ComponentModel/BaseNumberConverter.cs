@@ -67,10 +67,9 @@ namespace System.ComponentModel
 				try {
 					return Convert.ChangeType (value, InnerType, culture.NumberFormat);
 				} catch (Exception e) {
-					// LAMESPEC MS just seems to pass the internal Exception on to the user
-					// so it throws a pure Exception here. We should probably throw a 
-					// ArgumentException or something like that
-					throw e;
+					// LAMESPEC MS wraps the actual exception in an Exception
+					throw new Exception (value.ToString() + " is not a valid "
+						+ "value for " + InnerType.Name + ".", e);
 				}
 			}
 

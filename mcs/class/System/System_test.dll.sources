@@ -30,7 +30,10 @@ System.Collections.Specialized/HybridDictionaryTest.cs
 System.Collections.Specialized/ListDictionaryTest.cs
 System.Collections.Specialized/NameValueCollectionTest.cs
 System.Collections.Specialized/StringCollectionTest.cs
+System.ComponentModel/ByteConverterTests.cs
 System.ComponentModel/EventHandlerListTests.cs
+System.ComponentModel/Int16ConverterTests.cs
+System.ComponentModel/Int32ConverterTests.cs
 System.ComponentModel/LicenseManagerTests.cs
 System.ComponentModel/ToolboxItemAttributeTests.cs
 System.ComponentModel/TypeDescriptorTests.cs
