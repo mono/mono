@@ -762,6 +762,23 @@ public class DateTimeTest : Assertion
 	}
 
 	[Test]
+	public void ParseCOMDependentFormat ()
+	{
+		// Japanese format.
+		DateTime.Parse (String.Format (
+			"{0}\u5E74{1}\u6708{2}\u65E5 {3}\u6642{4}\u5206{5}\u79D2",
+			2006, 3, 1, 15, 32, 42), new CultureInfo (""));
+		try {
+			// incorrect year mark.
+			DateTime.Parse (String.Format (
+				"{0}\u4E00{1}\u6708{2}\u65E5 {3}\u6642{4}\u5206{5}\u79D2",
+				2006, 3, 1, 15, 32, 42), new CultureInfo (""));
+			Fail ();
+		} catch (FormatException) {
+		}
+	}
+
+	[Test]
 	[ExpectedException(typeof (FormatException))]
 	public void ParseFormatException1 ()
 	{

@@ -1,5 +1,10 @@
 2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : added another COM dependent pattern (rather to describe
+	  how it works on .NET than to add the pattern itself...).
+
+2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : added case for bug #53023.
 
 2005-08-10  Zoltan Varga  <vargaz@freemail.hu>

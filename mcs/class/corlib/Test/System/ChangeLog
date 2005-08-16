@@ -1,5 +1,9 @@
 2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeTest.cs : added ParseCOMDependent().
+
+2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeTest.cs : added EmptyFormatPattern() failure case.
 	* StringTest.cs : number asserts.
 
