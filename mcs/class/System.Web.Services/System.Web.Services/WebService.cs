@@ -54,7 +54,7 @@ namespace System.Web.Services {
 		#region Properties
 
 		[Browsable (false)]
-		[Description ("The ASP.NET application object for the current request.")]
+		[WebServicesDescription ("The ASP.NET application object for the current request.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpApplicationState Application {
 			get { return _context.Application; }
