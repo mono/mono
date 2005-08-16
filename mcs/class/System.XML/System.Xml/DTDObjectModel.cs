@@ -953,9 +953,12 @@ namespace Mono.Xml
 		string systemId;
 		string literalValue;
 		string replacementText;
+		string uriString;
+		Uri absUri;
 		bool isInvalid;
 //		Exception loadException;
 		bool loadFailed;
+		XmlResolver resolver;
 
 		protected DTDEntityBase (DTDObjectModel root)
 		{
@@ -997,33 +1000,49 @@ namespace Mono.Xml
 			set { replacementText = value; }
 		}
 
-		public void Resolve (XmlResolver resolver)
+		public XmlResolver XmlResolver {
+			set { resolver = value; }
+		}
+
+		public string ActualUri {
+			get {
+				if (uriString == null) {
+					if (resolver == null || SystemId == null || SystemId.Length == 0)
+						uriString = BaseURI;
+					else {
+						Uri baseUri = null;
+						try {
+							if (BaseURI != null && BaseURI.Length > 0)
+								baseUri = new Uri (BaseURI);
+						} catch (UriFormatException) {
+						}
+
+						absUri = resolver.ResolveUri (baseUri, SystemId);
+						uriString = absUri != null ? absUri.ToString () : String.Empty;
+					}
+				}
+				return uriString;
+			}
+		}
+
+		public void Resolve ()
 		{
-			if (resolver == null || SystemId == null || SystemId.Length == 0) {
+			if (ActualUri == String.Empty) {
 				LoadFailed = true;
 				LiteralEntityValue = String.Empty;
 				return;
 			}
 
-			Uri baseUri = null;
-			try {
-				if (BaseURI != null && BaseURI.Length > 0)
-					baseUri = new Uri (BaseURI);
-			} catch (UriFormatException) {
-			}
-
-			Uri absUri = resolver.ResolveUri (baseUri, SystemId);
-			string absPath = absUri != null ? absUri.ToString () : String.Empty;
-			if (Root.ExternalResources.ContainsKey (absPath))
-				LiteralEntityValue = (string) Root.ExternalResources [absPath];
+			if (Root.ExternalResources.ContainsKey (ActualUri))
+				LiteralEntityValue = (string) Root.ExternalResources [ActualUri];
 			Stream s = null;
 			try {
 				s = resolver.GetEntity (absUri, null, typeof (Stream)) as Stream;
-				XmlTextReaderImpl xtr = new XmlTextReaderImpl (absPath, s, Root.NameTable);
+				XmlTextReaderImpl xtr = new XmlTextReaderImpl (ActualUri, s, Root.NameTable);
 				// Don't skip Text declaration here. LiteralEntityValue contains it. See spec 4.5
 				LiteralEntityValue = xtr.GetRemainder ().ReadToEnd ();
 
-				Root.ExternalResources.Add (absPath, LiteralEntityValue);
+				Root.ExternalResources.Add (ActualUri, LiteralEntityValue);
 				if (Root.ExternalResources.Count > DTDObjectModel.AllowedExternalEntitiesMax)
 					throw new InvalidOperationException ("The total amount of external entities exceeded the allowed number.");
 
@@ -1031,7 +1050,7 @@ namespace Mono.Xml
 //				loadException = ex;
 				LiteralEntityValue = String.Empty;
 				LoadFailed = true;
-//				throw NotWFError ("Cannot resolve external entity. URI is " + absPath + " .");
+//				throw NotWFError ("Cannot resolve external entity. URI is " + ActualUri + " .");
 			} finally {
 				if (s != null)
 					s.Close ();

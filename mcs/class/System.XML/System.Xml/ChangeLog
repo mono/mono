@@ -1,5 +1,22 @@
 2005-08-16  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs, XmlTextReader2.cs : added internal .ctor() to
+	  receive both TextReader, XmlNodeType and BaseURI for entity
+	  resolution (though it would be removed later).
+	* XmlParserInput.cs : Now to handle nested PE insertion and correct
+	  BaseURI, it internally holds a stack of "input source".
+	* DTDObjectModel.cs,
+	  DTDReader.cs :
+	  Required fixes for XmlParserInput.
+	  Handle BaseURI as expected. Added ActualUri for resolved actual
+	  source URI (to resolve nested entities). Pass ActualUri to internal
+	  XmlTextReader.ctor() in ResolveExternalEntityReplacementText()
+	  (well, yes I remember, it is problematic.)
+
+	  Incorrect Base URI handling bug (part of #51495) is fixed.
+
+2005-08-16  Atsushi Enomoto <atsushi@ximian.com>
+
 	* DTDReader.cs, XmlParserInput.cs :
 	  let's fix #51495. First of all, refactoring.
 

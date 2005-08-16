@@ -123,6 +123,11 @@ namespace System.Xml
 		{
 		}
 
+		internal XmlTextReader (string baseURI, TextReader xmlFragment, XmlNodeType fragType)
+			: this (baseURI, xmlFragment, fragType, null)
+		{
+		}
+
 		public XmlTextReader (string url, Stream input, XmlNameTable nt)
 			: this (url, new XmlStreamReader (input), nt)
 		{

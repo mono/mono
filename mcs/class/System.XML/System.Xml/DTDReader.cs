@@ -203,10 +203,10 @@ namespace System.Xml
 					DTD.InternalSubsetHasPEReference = true;
 				string peName = ReadName ();
 				Expect (';');
-				string peValue = GetPEValue (peName);
-				if (peValue == String.Empty)
+				DTDParameterEntityDeclaration peDecl = GetPEDecl (peName);
+				if (peDecl == null)
 					break;
-				currentInput.InsertParameterEntityBuffer (peValue);
+				currentInput.PushPEBuffer (peDecl);
 //				int currentLine = currentInput.LineNumber;
 //				int currentColumn = currentInput.LinePosition;
 				while (currentInput.HasPEBuffer)
@@ -581,6 +581,7 @@ namespace System.Xml
 			DTDParameterEntityDeclaration decl = 
 				new DTDParameterEntityDeclaration (DTD);
 			decl.BaseURI = BaseURI;
+			decl.XmlResolver = DTD.Resolver;
 
 			decl.Name = ReadName ();
 			if (!SkipWhitespace ())
@@ -592,7 +593,7 @@ namespace System.Xml
 				decl.PublicId = cachedPublicId;
 				decl.SystemId = cachedSystemId;
 				SkipWhitespace ();
-				decl.Resolve (this.DTD.Resolver);
+				decl.Resolve ();
 
 				ResolveExternalEntityReplacementText (decl);
 			} else {
@@ -714,7 +715,7 @@ namespace System.Xml
 			if (decl is DTDEntityDeclaration && DTD.EntityDecls [decl.Name] == null) {
 				// GE - also checked as valid contents
 				// FIXME: not always it should be read in Element context
-				XmlTextReader xtr = new XmlTextReader (decl.ReplacementText, XmlNodeType.Element, null);
+				XmlTextReader xtr = new XmlTextReader (decl.ActualUri, new StringReader (decl.ReplacementText), XmlNodeType.Element);
 				StringBuilder sb = new StringBuilder ();
 				xtr.Normalization = this.Normalization;
 				xtr.Read ();
@@ -747,19 +748,26 @@ namespace System.Xml
 
 		private string GetPEValue (string peName)
 		{
+			DTDParameterEntityDeclaration peDecl = GetPEDecl (peName);
+			return peDecl != null ? 
+				peDecl.ReplacementText : String.Empty;
+		}
+
+		private DTDParameterEntityDeclaration GetPEDecl (string peName)
+		{
 			DTDParameterEntityDeclaration peDecl =
 				DTD.PEDecls [peName] as DTDParameterEntityDeclaration;
 			if (peDecl != null) {
 				if (peDecl.IsInternalSubset)
 					throw NotWFError ("Parameter entity is not allowed in internal subset entity '" + peName + "'");
-				return peDecl.ReplacementText;
+				return peDecl;
 			}
 			// See XML 1.0 section 4.1 for both WFC and VC.
 			if ((DTD.SystemId == null && !DTD.InternalSubsetHasPEReference) || DTD.IsStandalone)
 				throw NotWFError (String.Format ("Parameter entity '{0}' not found.",peName));
 			HandleError (new XmlSchemaException (
 				"Parameter entity " + peName + " not found.", null));
-			return "";
+			return null;
 		}
 
 		private bool TryExpandPERef ()
@@ -798,15 +806,15 @@ namespace System.Xml
 				HandleError (new XmlSchemaException ("Parameter entity " + peName + " not found.", null));
 				return;	// do nothing
 			}
-			// FIXME: These leading/trailing ' ' is anyways supplied inside this method!
-//			currentInput.InsertParameterEntityBuffer (" " + peDecl.ReplacementText + " ");
-			currentInput.InsertParameterEntityBuffer (peDecl.ReplacementText);
+			currentInput.PushPEBuffer (peDecl);
 		}
 
 		// The reader is positioned on the head of the name.
 		private DTDEntityDeclaration ReadEntityDecl ()
 		{
 			DTDEntityDeclaration decl = new DTDEntityDeclaration (DTD);
+			decl.BaseURI = BaseURI;
+			decl.XmlResolver = DTD.Resolver;
 			decl.IsInternalSubset = this.processingInternalSubset;
 			TryExpandPERef ();
 			decl.Name = ReadName ();
@@ -829,7 +837,7 @@ namespace System.Xml
 					}
 				}
 				if (decl.NotationName == null) {
-					decl.Resolve (this.DTD.Resolver);
+					decl.Resolve ();
 					ResolveExternalEntityReplacementText (decl);
 				} else {
 					// Unparsed entity.
@@ -1604,7 +1612,8 @@ namespace System.Xml
 			} catch (UriFormatException) {
 			}
 
-			Uri absUri = DTD.Resolver.ResolveUri (baseUri, url);
+			Uri absUri = url != null && url.Length > 0 ?
+				DTD.Resolver.ResolveUri (baseUri, url) : baseUri;
 			string absPath = absUri != null ? absUri.ToString () : String.Empty;
 
 			foreach (XmlParserInput i in parserInputStack.ToArray ()) {

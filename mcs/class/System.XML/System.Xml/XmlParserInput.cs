@@ -28,27 +28,84 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections;
 using System.IO;
 using System.Text;
 using System.Xml;
 using System.Globalization;
+using Mono.Xml;
 
 namespace System.Xml
 {
 	internal class XmlParserInput
 	{
+		class XmlParserInputSource
+		{
+			public readonly string BaseURI;
+			readonly TextReader reader;
+			public int state;
+			public bool isPE;
+			int line;
+			int column;
+
+			public XmlParserInputSource (
+				TextReader reader, string baseUri, bool pe,
+				int line, int column)
+			{
+				BaseURI = baseUri;
+				this.reader = reader;
+				this.isPE = pe;
+				this.line = line;
+				this.column = column;
+			}
+
+			public int LineNumber {
+				get { return line; }
+			}
+
+			public int LinePosition {
+				get { return column; }
+			}
+
+			public void Close ()
+			{
+				reader.Close ();
+			}
+
+			public int Read ()
+			{
+				if (state == 2)
+					return -1;
+				if (isPE && state == 0) {
+					state = 1;
+					return ' ';
+				}
+				int v = reader.Read ();
+
+				if (v == '\n') {
+					line++;
+					column = 1;
+				} else if (v >= 0) {
+					column++;
+				}
+
+				if (v < 0 && state == 1) {
+					state = 2;
+					return ' ';
+				}
+				return v;
+			}
+		}
+
 		#region ctor
 		public XmlParserInput (TextReader reader, string baseURI)
-			: this (reader, baseURI, 1, 1)
+			: this (reader, baseURI, 1, 0)
 		{
 		}
 
 		public XmlParserInput (TextReader reader, string baseURI, int line, int column)
 		{
-			this.reader = reader;
-			this.line = line;
-			this.column = column;
-			this.baseURI = baseURI;
+			this.source = new XmlParserInputSource (reader, baseURI, false, line, column);
 		}
 		#endregion
 
@@ -57,7 +114,9 @@ namespace System.Xml
 		// specified character.
 		public void Close ()
 		{
-			this.reader.Close ();
+			while (sourceStack.Count > 0)
+				((XmlParserInputSource) sourceStack.Pop ()).Close ();
+			source.Close ();
 		}
 
 		public void Expect (int expected)
@@ -82,26 +141,33 @@ namespace System.Xml
 				Expect (expected[i]);
 		}
 
-		public void InsertParameterEntityBuffer (string value)
+		public void PushPEBuffer (DTDParameterEntityDeclaration pe)
 		{
-			this.peBuffer.Insert (peBufferIndex, ' ');
-			this.peBuffer.Insert (peBufferIndex + 1, value);
-			this.peBuffer.Insert (peBufferIndex + value.Length + 1, ' ');
-			peStored = true;
+			sourceStack.Push (source);
+			source = new XmlParserInputSource (
+				new StringReader (pe.ReplacementText),
+				pe.ActualUri, true, 1, 0);
+		}
+
+		private int ReadSourceChar ()
+		{
+			int v = source.Read ();
+			while (v < 0 && sourceStack.Count > 0) {
+				source = sourceStack.Pop () as XmlParserInputSource;
+				v = source.Read ();
+			}
+			return v;
 		}
 
 		public int PeekChar ()
 		{
-			if (peStored)
-				return peBuffer [peBufferIndex];
-
 			if (has_peek)
 				return peek_char;
 
-			peek_char = reader.Read ();
+			peek_char = ReadSourceChar ();
 			if (peek_char >= 0xD800 && peek_char <= 0xDBFF) {
 				peek_char = 0x10000+((peek_char-0xD800)<<10);
-				int i = reader.Read ();
+				int i = ReadSourceChar ();
 				if (i >= 0xDC00 && i <= 0xDFFF)
 					peek_char += (i-0xDC00);
 			}
@@ -113,27 +179,9 @@ namespace System.Xml
 		{
 			int ch;
 
-			if (peStored) {
-				ch = peBuffer [peBufferIndex];
-				peBufferIndex++;
-				if (peBufferIndex == peBuffer.Length) {
-					peStored = false;
-					peBuffer.Length = 0;
-					peBufferIndex = 0;
-				}
-				// I decided not to add character to currentTag with respect to PERef value
-				return ch;
-			}
-
 			ch = PeekChar ();
 			has_peek = false;
 
-			if (ch == '\n') {
-				line++;
-				column = 1;
-			} else {
-				column++;
-			}
 			return ch;
 		}
 
@@ -141,19 +189,19 @@ namespace System.Xml
 
 		#region Public Properties
 		public string BaseURI {
-			get { return baseURI; }
+			get { return source.BaseURI; }
 		}
 
 		public bool HasPEBuffer {
-			get { return peStored; }
+			get { return sourceStack.Count > 0; }
 		}
 		
 		public int LineNumber {
-			get { return line; }
+			get { return source.LineNumber; }
 		}
 
 		public int LinePosition {
-			get { return column; }
+			get { return source.LinePosition; }
 		}
 
 		public bool AllowTextDecl {
@@ -164,20 +212,15 @@ namespace System.Xml
 		#endregion
 
 		#region Privates
-		TextReader reader;
+		Stack sourceStack = new Stack ();
+		XmlParserInputSource source;
 		bool has_peek;
 		int peek_char;
-		int line;
-		int column;
-		StringBuilder peBuffer = new StringBuilder ();
-		string baseURI;
-		bool peStored = false;
 		bool allowTextDecl = true;
-		int peBufferIndex;
 
 		private XmlException ReaderError (string message)
 		{
-			return new XmlException (message, null, line, column);
+			return new XmlException (message, null, LineNumber, LinePosition);
 		}
 		#endregion
 	}
