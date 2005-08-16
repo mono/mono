@@ -493,8 +493,8 @@ namespace DrawingTestHelper
 					md.update ((sbyte) ((x>>24) & 0xFF));
 				}
 			}
-			
-			return md.ToString ();
+			byte [] resdata = (byte[])vmw.common.TypeUtils.ToByteArray(md.digest());
+			return Convert.ToBase64String (resdata);
 		}
 	}
 #else

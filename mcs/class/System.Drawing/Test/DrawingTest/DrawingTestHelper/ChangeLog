@@ -1,3 +1,7 @@
+2005-08-16 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* DrawingTest.cs: fixed JavaDrawingTest.CalculateSHA1()
+
 2005-08-08 Andrew Skiba <andrews@mainsoft.com>
 
 	* DrawingTestHelper.cs: fix ambiguity between System.Math and java.lang.Math
