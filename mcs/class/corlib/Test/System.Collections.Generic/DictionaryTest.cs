@@ -362,8 +362,6 @@ namespace MonoTests.System.Collections.Generic {
 				object o = itr.Current;
 				Assert.AreEqual (typeof (KeyValuePair <string, object>), o.GetType (), "Current should return a type of DictionaryEntry");
 				KeyValuePair <string, object> entry = (KeyValuePair <string, object>)itr.Current;
-				if (entry.Key.ToString () == "key4")
-					entry.Value = "value33";
 			}
 			Assert.AreEqual ("value4", _dictionary ["key4"].ToString (), "");
 	

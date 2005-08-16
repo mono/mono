@@ -1,3 +1,8 @@
+2005-08-16  Martin Baulig  <martin@ximian.com>
+
+	* DictionaryTest.cs (IEnumeratorGenericTest): Reflect latest
+	`KeyValuePair<K,V>' API changes.
+
 2005-06-27  Raja R Harinath  <rharinath@novell.com>
 
 	* DictionaryTest.cs (FailFastTest1, FailFastTest2, FailFastTest3):
