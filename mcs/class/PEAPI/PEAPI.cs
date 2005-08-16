@@ -583,7 +583,7 @@ namespace PEAPI
   public enum FieldAttr {Default, Private, FamAndAssem, Assembly, 
     Family, FamOrAssem, Public, Static = 0x10, PublicStatic = 0x16, 
     Initonly = 0x20, Literal = 0x40, Notserialized = 0x80, 
-    SpecialName = 0x200, RTSpecialName = 0x400 }
+    SpecialName = 0x200, RTSpecialName = 0x400, HasFieldMarshal = 0x1000 }
   
   /// <summary>
   /// Attributes for a method
@@ -613,7 +613,7 @@ namespace PEAPI
   /// <summary>
   /// Modes for a parameter
   /// </summary>
-  public enum ParamAttr { Default, In, Out, Opt = 16 }
+  public enum ParamAttr { Default, In, Out, Opt = 16, HasDefault = 0x1000, HasFieldMarshal = 0x2000 }
 
   /// <summary>
   /// CIL instructions
@@ -3027,7 +3027,6 @@ namespace PEAPI
   public class FieldDef : Field
         {
     //private static readonly uint PInvokeImpl = 0x2000;
-    private static readonly ushort HasFieldMarshal = 0x1000;
     private static readonly ushort HasFieldRVA = 0x100;
     private static readonly ushort HasDefault = 0x8000;
 
@@ -3087,7 +3086,7 @@ namespace PEAPI
     /// </summary>
     /// <param name="mInf"></param>
     public void SetMarshalInfo(NativeType marshallType) {
-      flags |= HasFieldMarshal;
+      flags |= (ushort) FieldAttr.HasFieldMarshal;
       marshalInfo = new FieldMarshal(this,marshallType);
     }
 
@@ -4470,9 +4469,9 @@ if (rsrc != null)
     internal ManifestResource (ManifestResource mres) {
       mrName = mres.mrName;
       flags = mres.flags;
-      this.rRef = rRef;
-      this.fileOffset = fileOffset;
-      this.resourceBytes = resourceBytes;
+      rRef = mres.rRef;
+      fileOffset = mres.fileOffset;
+      resourceBytes = mres.resourceBytes;
     }
 
     private void InitResource (string name, uint flags) {
@@ -5531,6 +5530,7 @@ CalcHeapSizes ();
     LocalSig localSig;
                 ArrayList varArgSigList;
     ImplMap pinvokeImpl;
+	Param ret_param;
 
 
                 internal MethodDef(MetaData md, string name, Type retType, Param[] pars) : base(name,retType) {
@@ -5603,6 +5603,12 @@ CalcHeapSizes ();
       this.initLocals = initLocals;
     }
 
+    /* Add Marshal info for return type */
+    public void AddRetTypeMarshallInfo (NativeType marshallType) {
+	ret_param = new Param (ParamAttr.HasFieldMarshal, "", retType);	
+	ret_param.AddMarshallInfo (marshallType);
+    }
+
     /// <summary>
     /// Mark this method as having an entry point
     /// </summary>
@@ -5642,6 +5648,8 @@ CalcHeapSizes ();
                 internal sealed override void TypeSig(MemoryStream sig) {
                         sig.WriteByte((byte)callConv);
                         MetaData.CompressNum((uint)numPars,sig);
+			if (ret_param != null)
+				ret_param.seqNo = 0;
                         retType.TypeSig(sig);
                         for (ushort i=0; i < numPars; i++) {
                                 parList[i].seqNo = (ushort)(i+1);
@@ -5670,6 +5678,10 @@ CalcHeapSizes ();
       nameIx = md.AddToStringsHeap(name);
       sigIx = GetSigIx(md);
       parIx = md.TableIndex(MDTable.Param);
+			if (ret_param != null) {
+                                md.AddToTable(MDTable.Param, ret_param);
+                                ret_param.BuildTables(md);
+			}
                         for (int i=0; i < numPars; i++) {
                                 md.AddToTable(MDTable.Param,parList[i]);
                                 parList[i].BuildTables(md);
@@ -6126,7 +6138,6 @@ CalcHeapSizes ();
     protected byte typeIndex;
 
     internal NativeType(byte tyIx) { typeIndex = tyIx; }
-
     internal byte GetTypeIndex() { return typeIndex; }
 
     internal virtual byte[] ToBlob() {
@@ -6137,25 +6148,49 @@ CalcHeapSizes ();
 
    }
 
+  public class FixedSysString : NativeType 
+  {
+    uint size;
+
+    public FixedSysString (uint size) : base (NativeType.FixedSysString.GetTypeIndex ())
+    {
+	this.size = size;
+    }
+
+    internal override byte [] ToBlob () 
+    {
+	MemoryStream str = new MemoryStream ();
+	str.WriteByte (GetTypeIndex ());
+	MetaData.CompressNum (size, str);
+	return str.ToArray ();	
+    }
+
+  }  
+
   public class NativeArray : NativeType 
   {
     NativeType elemType;
-    uint len = 0, parNum = 0;
+    int numElem = -1, parNum = -1, elemMult = -1;
 
-    /*
-    public NativeArray(NativeType elemType) : base(0x2A) {
+    
+    public NativeArray(NativeType elemType) : this (elemType, -1, -1, -1) {
       this.elemType = elemType;
     }
 
-    public NativeArray(NativeType elemType, int len) : base(0x2A) {
+/*    public NativeArray(NativeType elemType, int len) : base(0x2A) {
       this.elemType = elemType;
       this.len = len;
     }
 */
-    public NativeArray(NativeType elemType, int numElem, int parNumForLen) : base(0x2A) {
+    public NativeArray(NativeType elemType, int numElem, int parNumForLen, int elemMult) : base(0x2A) {
       this.elemType = elemType;
-      len = (uint)numElem;
-      parNum = (uint)parNumForLen;
+      this.numElem = numElem;
+      parNum = parNumForLen;
+      this.elemMult = elemMult;
+    }
+
+    public NativeArray(NativeType elemType, int numElem, int parNumForLen) 
+    	: this (elemType, numElem, parNumForLen, -1) {
     }
 
     internal override byte[] ToBlob() {
@@ -6163,9 +6198,32 @@ CalcHeapSizes ();
       str.WriteByte(GetTypeIndex());
       if (elemType == null) str.WriteByte(0x50);  // no info (MAX)
       else str.WriteByte(elemType.GetTypeIndex());
-      MetaData.CompressNum(parNum,str);
-      str.WriteByte(1);
-      MetaData.CompressNum(len,str);
+
+      /* see : mono/metadata/metadata.c:mono_metadata_parse_marshal_spec
+       * LAMESPEC: Older spec versions say elemMult comes before
+       * len. Newer spec versions don't talk about elemMult at
+       * all, but csc still emits it, and it is used to distinguish
+       * between parNum being 0, and parNum being omitted.
+       */	
+
+      if (parNum == -1)
+        // <native_type> []
+        return str.ToArray ();
+
+      MetaData.CompressNum((uint) parNum,str);
+      if (numElem != -1) {
+	MetaData.CompressNum ((uint) numElem, str);
+	if (elemMult != -1)
+              // <native_type> [ int32 ]
+	      MetaData.CompressNum((uint) elemMult,str);
+        //else <native_type> [ int32 + int32 ]
+      }	else if (elemMult != -1) {
+              // When can this occur ?
+	      MetaData.CompressNum (0, str);
+	      MetaData.CompressNum((uint) elemMult,str);
+      }
+      //else <native_type> [ + int32 ]
+
       return str.ToArray();
     }
 
@@ -6174,15 +6232,21 @@ CalcHeapSizes ();
   public class SafeArray : NativeType 
   {
     SafeArrayType elemType;
+    bool hasElemType;
+
+    public SafeArray() : base(0x1D) {
+    }
 
     public SafeArray(SafeArrayType elemType) : base(0x1D) {
       this.elemType = elemType;
+      hasElemType = true;
     }
 
     internal override byte[] ToBlob() {
-      byte[] bytes = new byte[2];
+      byte[] bytes = new byte[hasElemType ? 2 : 1];
       bytes[0] = GetTypeIndex();
-      bytes[1] = (byte)elemType;
+      if (hasElemType)
+        bytes[1] = (byte)elemType;
       return bytes;
     }
 
@@ -6193,8 +6257,9 @@ CalcHeapSizes ();
     NativeType elemType;
     uint numElem;
 
-    public FixedArray(NativeType elemType, int numElems) : base(0x1E) {
-      this.elemType = elemType;
+    //public FixedArray(NativeType elemType, int numElems) : base(0x1E) {
+    public FixedArray(int numElems) : base(0x1E) {
+      //this.elemType = elemType;
       numElem = (uint)numElems;
     }
 
@@ -6202,8 +6267,14 @@ CalcHeapSizes ();
       MemoryStream str = new MemoryStream();
       str.WriteByte(GetTypeIndex());
       MetaData.CompressNum(numElem,str);
+      /* FIXME: 
+        fixed array [5] lpstr [2]
+	This format is not supported by ilasm 1.1.4322.2032, 
+	but is supported by 2.0.5125..
+	ilasm 1.1 only supports "fixed array [5]" 
       if (elemType == null) str.WriteByte(0x50);  // no info (MAX)
-      else str.WriteByte(elemType.GetTypeIndex());
+      else str.WriteByte(elemType.GetTypeIndex());*/
+
       return str.ToArray();
     }
 
@@ -6243,8 +6314,6 @@ CalcHeapSizes ();
         /// </summary>
   public class Param : MetaDataElement
         {
-    private static readonly ushort hasDefault = 0x1000;
-    private static readonly ushort hasFieldMarshal = 0x2000;
 
     Type pType;
     string pName;
@@ -6273,14 +6342,14 @@ CalcHeapSizes ();
     /// <param name="c">the default value for the parameter</param>
     public void AddDefaultValue(Constant cVal) {
       defaultVal = new ConstantElem(this,cVal);
-      parMode |= hasDefault;
+      parMode |= (ushort) ParamAttr.HasDefault;
     }
 
     /// <summary>
     /// Add marshalling information about this parameter
     /// </summary>
     public void AddMarshallInfo(NativeType marshallType) {
-      parMode |= hasFieldMarshal;
+      parMode |= (ushort) ParamAttr.HasFieldMarshal;
       marshalInfo = new FieldMarshal(this,marshallType);
     }
 

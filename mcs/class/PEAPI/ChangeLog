@@ -1,3 +1,25 @@
+2005-08-16  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (FieldAttr): Move HasFieldMarshal from FieldDef to this.
+	  (ParamAttr): Move HasDefault and HasFieldMarshal from Param to this.
+	  (ManifestResource.ctor): Use 'mres' param to clone.
+	  (MethodDef.ret_param): New.
+	  (MethodDef.AddRetTypeMarshallInfo): New.
+	  (MethodDef.TypeSig): Set seqNo for ret_param to zero.
+	  (MethodDef.BuildTables): Add ret_param to Param table, and BuildTables
+	  for it.
+	  (FixedSysString): New. Class to represent Fixed SysString native type.
+	  (NativeArray): Rename len to numElem. Init numElem, parNum and elemMult
+	  to -1.
+	  (NativeArray.ctor): Uncomment ctor with one param (elemType).
+	  (NativeArray.ctor): Move ctor logic to the one with all params.
+	  (NativeArray.ToBlob): Emit values in correct order.
+	  (SafeArray.hasElemType): New. bool var to indicate presence of ElemType.
+	  (SafeArray.ctor): New. Parameterless constructor.
+	  (SafeArray.ToBlob): Emit correctly.
+	  (FixedArray.ctor): Remove elemType param.
+	  (FixedArray.ToBlob): Don't emit elemType.
+
 2005-08-08  Ankit Jain  <jankit@novell.com>
 
 	* PEAPI.cs (CodeBlock): Set maxCodeSize to 255 instead of 256 for checking
