@@ -35,18 +35,12 @@ namespace System.ComponentModel
 	[AttributeUsage(AttributeTargets.All)]
 	public class ToolboxItemAttribute : Attribute
 	{
-		static string defaultItemType;
-
+		private const string defaultItemType = "System.Drawing.Design.ToolboxItem, " + Consts.AssemblySystem_Drawing;
 		public static readonly ToolboxItemAttribute Default = new ToolboxItemAttribute (defaultItemType);
 		public static readonly ToolboxItemAttribute None = new ToolboxItemAttribute (false);
 
 		private Type itemType;
 		private string itemTypeName;
-
-		static ToolboxItemAttribute ()
-		{
-			defaultItemType = "System.Drawing.Design.ToolboxItem" + Consts.AssemblySystem_Drawing;
-		}
 
 		public ToolboxItemAttribute (bool defaultType)
 		{
@@ -68,7 +62,12 @@ namespace System.ComponentModel
 		{
 			get {
 				if (itemType == null && itemTypeName != null)
-					itemType = Type.GetType (itemTypeName);
+					try {
+						itemType = Type.GetType (itemTypeName, true);
+					} catch (Exception ex) {
+						throw new ArgumentException ("Failed to create ToolboxItem of type: "
+							+ itemTypeName, ex);
+					}
 				return itemType;
 			}
 		}
@@ -78,7 +77,7 @@ namespace System.ComponentModel
 			get {
 				if (itemTypeName == null) {
 					if (itemType == null)
-						return "";
+						return string.Empty;
 					itemTypeName = itemType.AssemblyQualifiedName;
 				}
 
@@ -88,14 +87,20 @@ namespace System.ComponentModel
 		
 		public override bool Equals (object o)
 		{
-			if (!(o is ToolboxItemAttribute))
+			ToolboxItemAttribute item = o as ToolboxItemAttribute;
+
+			if (item == null)
 				return false;
 
-			return (((ToolboxItemAttribute) o).ToolboxItemTypeName == ToolboxItemTypeName);
+			return (item.ToolboxItemTypeName == ToolboxItemTypeName);
 		}
 
 		public override int GetHashCode ()
 		{
+			if (itemTypeName != null) {
+				return itemTypeName.GetHashCode ();
+			}
+
 			return base.GetHashCode ();
 		}
 

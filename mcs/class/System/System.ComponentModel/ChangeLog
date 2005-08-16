@@ -1,3 +1,9 @@
+2005-08-16  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ToolboxItemAttribute.cs: Fixed GetHashCode to correspond with MS.NET.
+	Fixed initialization order. Throw ArgumentException if item type 
+	cannot be loaded.
+
 2005-08-09  Michael Hutchinson <m.j.hutchinson@gmail.com>
 
 	* ToolboxItemAttribute.cs: Fixed typo
