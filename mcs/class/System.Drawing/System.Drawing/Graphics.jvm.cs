@@ -1822,6 +1822,7 @@ namespace System.Drawing {
 				switch (value) {
 					case InterpolationMode.Bicubic:
 					case InterpolationMode.HighQualityBicubic:
+					case InterpolationMode.Low:
 						hints.put(awt.RenderingHints.KEY_INTERPOLATION, awt.RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 						break;
 					case InterpolationMode.High:
@@ -1830,14 +1831,16 @@ namespace System.Drawing {
 						hints.put(awt.RenderingHints.KEY_INTERPOLATION, awt.RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 						break;
 					case InterpolationMode.Default:
-					case InterpolationMode.Invalid:
-					case InterpolationMode.Low:
 						if (hints.containsKey(awt.RenderingHints.KEY_INTERPOLATION))
 							hints.remove(awt.RenderingHints.KEY_INTERPOLATION);
 						break;
 					case InterpolationMode.NearestNeighbor:
 						hints.put(awt.RenderingHints.KEY_INTERPOLATION, awt.RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 						break;
+					case InterpolationMode.Invalid:
+						throw new ArgumentException();
+					default:
+						throw new ArgumentOutOfRangeException();
 				}
 
 				NativeObject.setRenderingHints(hints);

@@ -1,4 +1,8 @@
-﻿2005-08-15 Vladimir Krasnov <vladimirk@mainsoft.com>
+﻿2005-08-16 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Graphics.jvm.cs: Fixed InterpolationMode property
+
+2005-08-15 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Graphics.jvm.cs: Fixed DrawImage
 
