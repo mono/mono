@@ -22,6 +22,7 @@ test-435.cs
 test-436.cs
 test-437.cs
 
+test-49.cs
 test-50.cs IGNORE	# Windows-only test
 test-67.cs IGNORE	# Windows-only test
 test-anon-27.cs

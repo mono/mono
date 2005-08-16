@@ -1,3 +1,7 @@
+2005-08-16  Martin Baulig  <martin@ximian.com>
+
+	* known-issues-gmcs: Add test-49.cs for the moment.
+
 2005-08-03  Raja R Harinath  <rharinath@novell.com>
 
 	* test-426.cs, test-427.cs, test-428.cs, test-429.cs,
