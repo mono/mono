@@ -67,7 +67,7 @@ namespace System.Globalization
 
 		public RegionInfo (int lcid)
 		{
-			if (!ConstructInternalRegionFromLcid (lcid))
+			if (!construct_internal_region_from_lcid (lcid))
 				throw new ArgumentException (
 					String.Format ("Region ID {0} (0x{0:X4}) is not a " +
 							"supported region.", lcid), "lcid");
@@ -78,23 +78,9 @@ namespace System.Globalization
 			if (name == null)
 				throw new ArgumentNullException ();
 
-			if (!ConstructInternalRegionFromName (name.ToUpperInvariant ()))
+			if (!construct_internal_region_from_name (name.ToUpperInvariant ()))
 				throw new ArgumentException ("Region name " + name +
 						" is not supported.", "name");
-		}
-
-		bool ConstructInternalRegionFromName (string locale)
-		{
-			if (!construct_internal_region_from_name (locale))
-				return false;
-			return true;
-		}
-
-		bool ConstructInternalRegionFromLcid (int lcid)
-		{
-			if (!construct_internal_region_from_lcid (lcid))
-				return false;
-			return true;
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]

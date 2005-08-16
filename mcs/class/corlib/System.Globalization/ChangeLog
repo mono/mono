@@ -1,3 +1,7 @@
+2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RegionInfo.cs : removed extraneous icall wrappers.
+
 2005-08-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RegionInfo.cs : reimplemented to use unicode CLDR.
