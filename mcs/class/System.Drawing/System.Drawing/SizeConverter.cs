@@ -80,13 +80,12 @@ namespace System.Drawing
 			if (s == null)
 				return base.ConvertFrom (context, culture, value);
 
-			// FIXME: use culture
-			string [] subs = s.Split (',');
+			string[] subs = s.Split (culture.TextInfo.ListSeparator.ToCharArray ());
 			if (subs.Length != 2)
 				throw new ArgumentException ("Failed to parse Text(" + s + ") expected text in the format \"Width,Height.\"");
 
-			int width = Int32.Parse (subs [0]);
-			int height = Int32.Parse (subs [1]);
+			int width = Int32.Parse (subs [0], culture);
+			int height = Int32.Parse (subs [1], culture);
 
 			return new Size (width, height);
 		}
@@ -101,7 +100,8 @@ namespace System.Drawing
 			// type is string." MS does not behave as per the specs.
 			// Oh well, we have to be compatible with MS.
 			if ((destinationType == typeof (string)) && (value is Size))
-				return ((Size) value).Width + ", " + ((Size) value).Height;
+				return ((Size) value).Width.ToString(culture) + culture.TextInfo.ListSeparator 
+					+ " " + ((Size) value).Height.ToString(culture);
 			
 			if (destinationType == typeof (InstanceDescriptor) && value is Size) {
 				Size s = (Size) value;

@@ -43,7 +43,7 @@ namespace System.Drawing
 	/// </summary>
 	public class PointConverter : TypeConverter
 	{
-		public PointConverter()	{ }
+		public PointConverter() { }
 
 		public override bool CanConvertFrom (ITypeDescriptorContext context,
 						     Type sourceType)
@@ -74,13 +74,12 @@ namespace System.Drawing
 			if (s == null)
 				return base.ConvertFrom (context, culture, value);
 
-			// FIXME: use culture
-			string [] subs = s.Split (',');
+			string [] subs = s.Split (culture.TextInfo.ListSeparator.ToCharArray ());
 			if (subs.Length != 2)
 				throw new ArgumentException ("Failed to parse Text(" + s + ") expected text in the format \"x, y.\"");
 
-			int x = Int32.Parse (subs [0]);
-			int y = Int32.Parse (subs [1]);
+			int x = Int32.Parse (subs [0], culture);
+			int y = Int32.Parse (subs [1], culture);
 
 			return new Point (x, y);
 		}
@@ -95,7 +94,8 @@ namespace System.Drawing
 			// type is string." MS does not behave as per the specs.
 			// Oh well, we have to be compatible with MS.
 			if ((destinationType == typeof (string)) && (value is Point))
-				return ((Point) value).X + ", " + ((Point) value).Y;
+				return ((Point) value).X.ToString(culture) + culture.TextInfo.ListSeparator 
+					+ " " + ((Point) value).Y.ToString(culture);
 			
 			if (destinationType == typeof (InstanceDescriptor) && value is Point) {
 				Point c = (Point)value;

@@ -288,8 +288,8 @@ namespace System.Drawing
 		
 		public override string ToString ()
 		{
-			return string.Format ("{{Width={0}, Height={1}}}", wd.ToString (CultureInfo.InvariantCulture),
-				ht.ToString (CultureInfo.InvariantCulture));
+			return string.Format ("{{Width={0}, Height={1}}}", wd.ToString (CultureInfo.CurrentCulture),
+				ht.ToString (CultureInfo.CurrentCulture));
 		}
 	}
 }

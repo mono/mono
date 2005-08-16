@@ -227,8 +227,8 @@ namespace System.Drawing
 		
 		public override string ToString ()
 		{
-			return String.Format ("{{X={0}, Y={1}}}", x.ToString (CultureInfo.InvariantCulture),
-				y.ToString (CultureInfo.InvariantCulture));
+			return String.Format ("{{X={0}, Y={1}}}", x.ToString (CultureInfo.CurrentCulture),
+				y.ToString (CultureInfo.CurrentCulture));
 		}
 	}
 }

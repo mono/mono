@@ -1,4 +1,20 @@
-﻿2005-08-16 Vladimir Krasnov <vladimirk@mainsoft.com>
+2005-08-16 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Color.cs: Fixed line endings. Set eol-style to native.
+	* ColorConverter.cs: Fixed line endings. Set eol-style to native.
+	* Size.cs: Set eol-style to native.
+	* SizeF.cs: Use current culture in ToString(), set eol-style to native.
+	* SizeConverter.cs: Take culture into account when converting to/from
+	string. Set eol-style to native.
+	* Point.cs: Fixed line endings. Set eol-style to native.
+	* PointF.cs: Use current culture in ToString(), set eol-style to native.
+	* PointConverter.cs: Take culture into account when converting to/from
+	string. Set eol-style to native.
+	* ImageFormatConverter.cs: Fixed line endings. Set eol-style to
+	native.
+	* RectangleConverter.cs: Fixed line endings. Set eol-style to native.
+
+2005-08-16 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Graphics.jvm.cs: Fixed InterpolationMode property
 
