@@ -253,10 +253,10 @@ namespace Mono.CSharp {
 		// exist.
 		//
 		public class UsingEntry {
-			public MemberName Name;
-			public Expression Expr;
-			public readonly NamespaceEntry NamespaceEntry;
-			public readonly Location Location;
+			public readonly MemberName Name;
+			readonly Expression Expr;
+			readonly NamespaceEntry NamespaceEntry;
+			readonly Location Location;
 			
 			public UsingEntry (NamespaceEntry entry, MemberName name, Location loc)
 			{
@@ -266,19 +266,29 @@ namespace Mono.CSharp {
 				Location = loc;
 			}
 
-			internal FullNamedExpression resolved;
+			internal Namespace resolved;
 
 			public Namespace Resolve ()
 			{
 				if (resolved != null)
-					return resolved as Namespace;
+					return resolved;
 
 				DeclSpace root = RootContext.Tree.Types;
 				root.NamespaceEntry = NamespaceEntry;
-				resolved = Expr.ResolveAsTypeStep (root.EmitContext);
+				FullNamedExpression fne = Expr.ResolveAsTypeStep (root.EmitContext, false);
 				root.NamespaceEntry = null;
 
-				return resolved as Namespace;
+				if (fne == null) {
+					Error_NamespaceNotFound (Location, Name.ToString ());
+					return null;
+				}
+
+				resolved = fne as Namespace;
+				if (resolved == null) {
+					Report.Error (138, Location,
+						"`{0} is a type not a namespace. A using namespace directive can only be applied to namespaces", Name.ToString ());
+				}
+				return resolved;
 			}
 		}
 
@@ -305,7 +315,7 @@ namespace Mono.CSharp {
 
 				DeclSpace root = RootContext.Tree.Types;
 				root.NamespaceEntry = NamespaceEntry;
-				resolved = Alias.ResolveAsTypeStep (root.EmitContext);
+				resolved = Alias.ResolveAsTypeStep (root.EmitContext, false);
 				root.NamespaceEntry = null;
 
 				return resolved;
@@ -536,7 +546,7 @@ namespace Mono.CSharp {
 
 		// Our cached computation.
 		Namespace [] namespace_using_table;
-		public Namespace[] GetUsingTable ()
+		Namespace[] GetUsingTable ()
 		{
 			if (namespace_using_table != null)
 				return namespace_using_table;
@@ -637,15 +647,7 @@ namespace Mono.CSharp {
 		{
 			if (using_clauses != null){
 				foreach (UsingEntry ue in using_clauses){
-					if (ue.Resolve () != null)
-						continue;
-
-					if (ue.resolved == null)
-						Error_NamespaceNotFound (ue.Location, ue.Name.ToString ());
-					else
-						Report.Error (138, ue.Location,
-							"`{0} is a type not a namespace. A using namespace directive can only be applied to namespaces", ue.Name);
-
+					ue.Resolve ();
 				}
 			}
 

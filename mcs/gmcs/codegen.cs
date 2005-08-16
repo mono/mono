@@ -1079,6 +1079,7 @@ namespace Mono.CSharp {
 					// TODO: This code is buggy: comparing Attribute name without resolving is wrong.
 					//       However, this is invoked by CodeGen.Init, when none of the namespaces
 					//       are loaded yet.
+					// TODO: Does not handle quoted attributes properly
 					switch (a.Name) {
 						case "AssemblyKeyFile":
                                                case "AssemblyKeyFileAttribute":
@@ -1284,7 +1285,7 @@ namespace Mono.CSharp {
 					Report.Warning (3012, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
 				}
 				else if (CodeGen.Assembly.IsClsCompliant != a.GetBoolean ()) {
-					Report.SymbolRelatedToPreviousError (CodeGen.Assembly.ClsCompliantAttribute.Location, CodeGen.Assembly.ClsCompliantAttribute.Name);
+					Report.SymbolRelatedToPreviousError (CodeGen.Assembly.ClsCompliantAttribute.Location, CodeGen.Assembly.ClsCompliantAttribute.GetSignatureForError ());
 					Report.Error (3017, a.Location, "You cannot specify the CLSCompliant attribute on a module that differs from the CLSCompliant attribute on the assembly");
 					return;
 				}

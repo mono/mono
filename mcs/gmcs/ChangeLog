@@ -1,3 +1,8 @@
+2005-07-15  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (MemberAccess.ResolveNamespaceOrType): Don't report nested
+	type as namespace.
+
 2005-08-12  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (MemberAccess.ResolveNamespaceOrType): Only search
@@ -48,6 +53,27 @@
 	* anonymous.cs (CaptureContext.AddField): Added
 	`AnonymousContainer am' argument; compute its toplevel scope if
 	it's not already computed.  Fixes #75649.
+
+2005-07-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (Attribute.ResolveAttributeType): Renamed from
+	CheckAttributeType and refactored.
+	(Attribute.ResolvePossibleAttributeType): Changed to reuse
+	ResolveAsTypeTerminal error handling.
+	(ResolveAsTypeTerminal): Introduced because of global attributes extra
+	handling.
+	(GetSignatureForError): Print errors in same way.
+
+	* class.cs,
+	* codegen.cs: Reflect attribute GetSignatureForError change.
+
+	* ecore.cs,
+	* expression.cs: Add silent parameter to ResolveAsTypeStep.
+
+	* namespace.cs (UsingEntry): Refactored to make fields private.
+
+	* assign.cs,
+	statement.cs: Error_UnexpectedKind has extra parameter.
 
 2005-07-14  Raja R Harinath  <rharinath@novell.com>
 

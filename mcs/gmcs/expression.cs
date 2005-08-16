@@ -879,7 +879,7 @@ namespace Mono.CSharp {
 				if (expr == null)
 					return null;
 			} else {
-				expr.Error_UnexpectedKind ("variable, indexer or property access", loc);
+				expr.Error_UnexpectedKind (ec, "variable, indexer or property access", loc);
 				return null;
 			}
 
@@ -5917,7 +5917,7 @@ namespace Mono.CSharp {
 			value_target = value;
 			value_target_set = true;
 			if (!(value_target is IMemoryLocation)){
-				Error_UnexpectedKind ("variable", loc);
+				Error_UnexpectedKind (null, "variable", loc);
 				return false;
 			}
 			return true;
@@ -6084,7 +6084,7 @@ namespace Mono.CSharp {
 			
 			if (! (ml is MethodGroupExpr)){
 				if (!is_struct){
-					ml.Error_UnexpectedKind ("method group", loc);
+					ml.Error_UnexpectedKind (ec, "method group", loc);
 					return null;
 				}
 			}
@@ -6575,7 +6575,7 @@ namespace Mono.CSharp {
 						   AllBindingFlags, loc);
 				
 				if (!(ml is MethodGroupExpr)) {
-					ml.Error_UnexpectedKind ("method group", loc);
+					ml.Error_UnexpectedKind (ec, "method group", loc);
 					return null;
 				}
 				
@@ -7537,14 +7537,14 @@ namespace Mono.CSharp {
 			return DoResolve (ec, right_side);
 		}
 
-		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec)
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
 		{
-			return ResolveNamespaceOrType (ec, false);
+			return ResolveNamespaceOrType (ec, silent);
 		}
 
 		public FullNamedExpression ResolveNamespaceOrType (EmitContext ec, bool silent)
 		{
-			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec);
+			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec, silent);
 
 			if (new_expr == null)
 				return null;
@@ -7581,15 +7581,15 @@ namespace Mono.CSharp {
 				int errors = Report.Errors;
 				MemberLookupFailed (ec, expr_type, expr_type, lookup_id, null, false, loc);
 
-				if (!silent && errors == Report.Errors)
-					Report.Error (234, loc, "The type or namespace name `{0}' does not exist in the namespace `{1}'. Are you missing an assembly reference?", 
-						      lookup_id, new_expr.FullName);
+				if (!silent && errors == Report.Errors) {
+					Report.Error (426, loc, "The nested type `{0}' does not exist in the type `{1}'",
+						Identifier, new_expr.GetSignatureForError ());
+				}
 				return null;
 			}
 
 			if (!(member_lookup is TypeExpr)) {
-				Report.Error (118, loc, "`{0}.{1}' denotes a `{2}', where a type was expected",
-					      new_expr.FullName, lookup_id, member_lookup.ExprClassName ());
+				new_expr.Error_UnexpectedKind (ec, "type", loc);
 				return null;
 			}
 
