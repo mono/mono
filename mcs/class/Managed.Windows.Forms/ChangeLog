@@ -1,3 +1,8 @@
+2005-08-16  Ritvik Mayank  <mritvik@novell.com>
+	
+	* System.Windows.Forms_test.dll.sources : added ImageListTest.cs,
+	  RadioButtonTest.cs, ScrollBarTest.cs and StatusBarTest.cs . 
+	  
 2005-08-06  Ritvik Mayank  <mritvik@novell.com>
 	
 	* System.Windows.Forms_test.dll.sources : sorted and removed test-cases for Form

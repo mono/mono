@@ -1,3 +1,10 @@
+2005-08-16  Ritvik Mayank  <mritvik@novell.com>
+
+	* ImageListTest.cs   : Test case for ImageList
+	* RadioButtonTest.cs : Test case for RadioButton
+	* ScrollBarTest.cs   : Test case for ScrollBar
+	* StatusBatTest.cs   : Test case for StatusBar
+
 2005-08-10  Ritvik Mayank  <mritvik@novell.com>
 
 	* ControlTest.cs : Commented out test for GetChildAtPointSkip (feature not
