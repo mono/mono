@@ -242,10 +242,10 @@ public class StringTest : Assertion
 		AssertEquals(0, String.CompareOrdinal(null, null));
 		AssertEquals(1, String.CompareOrdinal(lesser, null));
 
-		Assert (String.CompareOrdinal (lesser, greater) < 0);
-		Assert (String.CompareOrdinal (greater, lesser) > 0);
-		Assert (String.CompareOrdinal (lesser, lesser) == 0);
-		Assert (String.CompareOrdinal (lesser, medium) < 0);
+		Assert ("#1", String.CompareOrdinal (lesser, greater) < 0);
+		Assert ("#2", String.CompareOrdinal (greater, lesser) > 0);
+		Assert ("#3", String.CompareOrdinal (lesser, lesser) == 0);
+		Assert ("#4", String.CompareOrdinal (lesser, medium) < 0);
 
 		string needle = "ab";
 		string haystack = "abbcbacab";

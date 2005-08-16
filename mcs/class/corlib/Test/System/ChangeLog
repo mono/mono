@@ -1,5 +1,10 @@
 2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeTest.cs : added EmptyFormatPattern() failure case.
+	* StringTest.cs : number asserts.
+
+2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeTest.cs : added test for M/d/yyyy. Uncommented B14 in
 	  TestToString() (working). Commented some part of TestParseExact3()
 	  (timezone dependent). Commented one case in TestParse5() (fails

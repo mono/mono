@@ -1198,6 +1198,13 @@ public class DateTimeTest : Assertion
 	}
 
 	[Test]
+	[ExpectedException (typeof (FormatException))]
+	public void EmptyFormatPattern ()
+	{
+		DateTime.ParseExact (String.Empty, String.Empty, null);
+	}
+
+	[Test]
 	[ExpectedException (typeof (InvalidCastException))]
 	public void IConvertible_ToType_Boolean () 
 	{
