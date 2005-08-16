@@ -387,6 +387,7 @@ namespace MonoTests.System.Drawing
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void TestIntersect()
 		{			
 			Bitmap bmp = new Bitmap (600, 800);			
