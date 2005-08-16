@@ -23,7 +23,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ScrollBarPropertyTest ()
 		{	
-			Form myform = new Form ();
 			ScrollBar myscrlbar = new HScrollBar (); // Could be checked for VScrollBar as well 
 				
 			// B

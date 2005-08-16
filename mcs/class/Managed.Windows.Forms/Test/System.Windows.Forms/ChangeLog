@@ -1,4 +1,9 @@
 2005-08-16  Ritvik Mayank  <mritvik@novell.com>
+	
+	* ScrollBarTest.cs, ImageListTest.cs, CheckedListBoxTest.cs, CheckedListBoxEventTest.cs, MenuTest.cs,
+	  ListViewTest.cs: enhancement and cleanup
+
+2005-08-16  Ritvik Mayank  <mritvik@novell.com>
 
 	* ImageListTest.cs   : Test case for ImageList
 	* RadioButtonTest.cs : Test case for RadioButton

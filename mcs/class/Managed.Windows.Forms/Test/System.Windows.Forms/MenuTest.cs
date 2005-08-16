@@ -46,8 +46,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void MergeMenuTest ()
 		{
-			Form myform = new Form ();
-			Menu mymenu = new MainMenu ();
 			MainMenu mymainmenu1 = new MainMenu ();
 			MainMenu mymainmenu2 = new MainMenu ();
 			MenuItem mymenuitem1 = new MenuItem ();
@@ -63,8 +61,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void CloneMenuTest ()
 		{
-			Form myform = new Form ();
-			Menu mymenu = new MainMenu ();
 			MainMenu mymainmenu1 = new MainMenu ();
 			MenuItem menuitem1 = new MenuItem ();
 			MenuItem menuitem2 = new MenuItem ();
@@ -81,13 +77,24 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Form myform = new Form ();
 			myform.Name = "New Form";
-			Menu mymenu = new MainMenu ();
 			MainMenu mymainmenu1 = new MainMenu ();
 			MenuItem menuitem1 = new MenuItem ();
 			menuitem1.Text = "item1";
 			mymainmenu1.MenuItems.Add (menuitem1);
 			myform.Menu = mymainmenu1;
 			Assert.AreEqual ("New Form", mymainmenu1.GetForm().Name, "#10");
+		}
+		
+		[Test]
+		public void GetContextMenuTest ()
+		{
+			Form myform = new Form ();
+			ContextMenu mycontextmenu = new ContextMenu ();
+			myform.ContextMenu= mycontextmenu;
+			MenuItem menuItem1 = new MenuItem ();
+			menuItem1.Text = "1";
+			mycontextmenu.MenuItems.Add (menuItem1);
+			Assert.AreEqual (mycontextmenu, menuItem1.GetContextMenu (),"#11");
 		}
 	}
 }

@@ -24,7 +24,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ImageListPropertyTest ()
 		{
-			Form myform = new Form ();
 			ImageList myimagelist = new ImageList ();
 
 			// C

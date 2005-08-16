@@ -21,7 +21,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ListViewPropertyTest ()
 		{
-			Form myform = new Form ();
 			ListView mylistview = new ListView ();
 			Assert.AreEqual (ItemActivation.Standard, mylistview.Activation, "#1");
 			Assert.AreEqual (ListViewAlignment.Top, mylistview.Alignment, "#2");
@@ -89,7 +88,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void ClearTest ()
 		{
-			Control mycontrol = new Control ();
 			Form myform = new Form ();
 			myform.Visible = true;
 			ListView mylistview = new ListView ();
@@ -107,7 +105,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void EnsureVisibleTest ()
 		{
-			Control mycontrol = new Control ();
 			Form myform = new Form ();
 			myform.Visible = true;
 			ListView mylistview = new ListView ();
@@ -124,7 +121,6 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void GetItemRectTest ()
 		{
-			Form myform = new Form ();
 			ListView mylistview = new ListView ();
 			mylistview.Items.Add ("Item 1");
 			mylistview.Items.Add ("Item 2");

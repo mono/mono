@@ -26,12 +26,17 @@ namespace MonoTests.System.Windows.Forms
 		{
 			Form myform = new Form ();
 			CheckedListBox mychklstbox = new CheckedListBox ();
+			mychklstbox.Items.Add ("test1"); 
+			mychklstbox.Items.Add ("test2"); 
 			//Test ItemCheck Event
 			mychklstbox.ItemCheck += new ItemCheckEventHandler (ItemCheck_EventHandler);		
 			mychklstbox.Items.Add ("test1",CheckState.Checked);
 			myform.Controls.Add (mychklstbox);
 			myform.Show ();
 			Assert.AreEqual (true, eventhandled, "#A1");
+			eventhandled = false;
+			mychklstbox.SetItemChecked (1,true);
+			Assert.AreEqual (true, eventhandled, "#A2");
 		}
 	}
 }

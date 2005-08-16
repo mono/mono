@@ -23,7 +23,6 @@ namespace MonoTests.System.Windows.Forms
 			Form myform = new Form ();
 			myform.Visible = true;
 			CheckedListBox mychklistbox = new CheckedListBox ();
-			ListBox mylistbox = new ListBox ();
 			ArrayList checked_items = new ArrayList (2);
 			ArrayList checked_pos = new ArrayList (2);
 			mychklistbox.Items.Add ("test1", true);
