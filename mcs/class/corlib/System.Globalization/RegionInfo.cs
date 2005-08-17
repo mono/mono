@@ -35,7 +35,6 @@ namespace System.Globalization
 	[Serializable]
 	public class RegionInfo
 	{
-		static object forLock = new object ();
 		static RegionInfo currentRegion;
 
 		// This property is not synchronized with CurrentCulture, so
@@ -43,14 +42,12 @@ namespace System.Globalization
 		public static RegionInfo CurrentRegion {
 			get {
 				if (currentRegion == null) {
+					// make sure to fill BootstrapCultureID.
 					CultureInfo ci = CultureInfo.CurrentCulture;
 					// If current culture is invariant then region is not available.
 					if (ci == null || CultureInfo.BootstrapCultureID == 0x7F)
 						return null;
-					lock (forLock) {
-						// make sure to fill BootstrapCultureID.
-						currentRegion = new RegionInfo (CultureInfo.BootstrapCultureID);
-					}
+					currentRegion = new RegionInfo (CultureInfo.BootstrapCultureID);
 				}
 				return currentRegion;
 			}
