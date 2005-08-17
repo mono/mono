@@ -1,3 +1,7 @@
+2005-08-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ia64/ia64-codegen.h: Add dependency information for all instructions.
+
 2005-07-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ia64/ia64-codegen.h: Ongoing IA64 work.
