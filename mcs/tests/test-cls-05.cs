@@ -106,3 +106,13 @@ public enum CLSEnum {
         [CLSCompliant (false)]
         Label
 }
+
+namespace System.Web
+{
+	public partial class HttpBrowserCapabilities {
+
+	}
+
+	public partial class HttpBrowserCapabilities {
+	}
+}
