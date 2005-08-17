@@ -1,3 +1,8 @@
+2005-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* locales.c, culture-info.h : removed RegionLCIDMap.
+	* culture-info-tables.h : regenerated.
+
 2005-08-16  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_type_get_name_recurse): Small fix.
