@@ -2382,8 +2382,8 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (string value, int fromBase)
 		{
-			return (ulong) ConvertFromBase (value, fromBase, true);
-		}					      
+			return (ulong) ConvertFromBase64 (value, fromBase, true);
+		}
 
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (uint value) 
@@ -2487,61 +2487,90 @@ namespace System {
 			int i=0; 
 			int len = value.Length;
 			bool negative = false;
+			bool hexPrefix = false;
 
 			// special processing for some bases
 			switch (fromBase) {
-			case 10:
-				if (value[i] == '-') {
-					if (unsigned) {
-						throw new OverflowException (
-							Locale.GetText ("Cannot convert negative to unsigned"));
+				case 10:
+					if (value.Substring (i, 1) == "-") {
+						if (unsigned) {
+							throw new OverflowException (
+								Locale.GetText ("The string was being parsed as"
+								+ " an unsigned number and could not have a"
+								+ " negative sign."));
+						}
+						negative = true;
+						i++;
 					}
-					negative = true;
-					i++;
-				}
-				break;
-			case 16:
-				if (len >= i+2) {
-					// 0x00 or 0X00
-					if ((value[i] == '0') && ((value [i+1] == 'x') || (value [i+1] == 'X'))) {
-						i+=2;
+					break;
+				case 16:
+					if (value.Substring (i, 1) == "-") {
+						throw new ArgumentException ("String cannot contain a "
+							+ "minus sign if the base is not 10.");
 					}
-					if (len == i) {
-						throw new FormatException (
-							Locale.GetText ("Missing number after prefix"));
+					if (len >= i + 2) {
+						// 0x00 or 0X00
+						if ((value[i] == '0') && ((value [i+1] == 'x') || (value [i+1] == 'X'))) {
+							hexPrefix = true;
+							i+=2;
+						}
 					}
-				}
-				break;
+					break;
+				default:
+					if (value.Substring (i, 1) == "-") {
+						throw new ArgumentException ("String cannot contain a "
+							+ "minus sign if the base is not 10.");
+					}
+					break;
+			}
+
+			if (len == i) {
+				throw new FormatException ("Could not find any parsable digits.");
 			}
 
 			if (value[i] == '+') {
 				i++;
 			}
 
-			while(i<len) {
+			while (i < len) {
 				char c = value[i++];
-				if (Char.IsNumber (c))
+				if (Char.IsNumber (c)) {
 					digitValue = c - '0';
-				else if (Char.IsLetter (c))
+				} else if (Char.IsLetter (c)) {
 					digitValue = Char.ToLowerInvariant (c) - 'a' + 10;
-				else if (c == '-')
-					throw new ArgumentException ("Negative are valid only for base 10");
-				else
-					throw new FormatException ("This is an invalid string: " + value);
+				} else {
+					if (chars > 0) {
+						throw new FormatException ("Additional unparsable "
+							+ "characters are at the end of the string.");
+					} else {
+						throw new FormatException ("Could not find any parsable"
+							+ " digits.");
+					}
+				}
 
-				if (digitValue >= fromBase)
-					throw new FormatException ("the digits are invalid.");
+				if (digitValue >= fromBase) {
+					if (chars > 0) {
+						throw new FormatException ("Additional unparsable "
+							+ "characters are at the end of the string.");
+					} else {
+						throw new FormatException ("Could not find any parsable"
+							+ " digits.");
+					}
+				}
 
 				result = (fromBase) * result + digitValue;
 				chars ++;
 			}
 
-
 			if (chars == 0)
-				throw new FormatException ("Could not find any digits.");
+				throw new FormatException ("Could not find any parsable digits.");
 
-			if (result > Int32.MaxValue || result < Int32.MinValue)
-				throw new OverflowException ("There is an overflow.");
+			if (fromBase == 16 && hexPrefix && !unsigned) {
+				if (result < UInt32.MinValue) {
+					throw new OverflowException ("Value was either too large or"
+						+ " too small for a UInt32.");
+				}
+			}
 			
 			if (negative)
 				return -result;
@@ -2559,38 +2588,91 @@ namespace System {
 
 			int chars = 0;
 			int digitValue = -1;
-			uint Base = (uint) fromBase;
-			ulong result = 0;
+			long result = 0;
 			bool negative = false;
 
-			foreach (char c in value) {
-				if (Char.IsNumber (c))
+			int i = 0;
+			int len = value.Length;
+
+			// special processing for some bases
+			switch (fromBase) {
+				case 10:
+					if (value.Substring(i, 1) == "-") {
+						if (unsigned) {
+							throw new OverflowException (
+								Locale.GetText ("The string was being parsed as"
+								+ " an unsigned number and could not have a"
+								+ " negative sign."));
+						}
+						negative = true;
+						i++;
+					}
+					break;
+				case 16:
+					if (value.Substring (i, 1) == "-") {
+						throw new ArgumentException ("String cannot contain a "
+							+ "minus sign if the base is not 10.");
+					}
+					if (len >= i + 2) {
+						// 0x00 or 0X00
+						if ((value[i] == '0') && ((value[i + 1] == 'x') || (value[i + 1] == 'X'))) {
+							i += 2;
+						}
+					}
+					break;
+				default:
+					if (value.Substring (i, 1) == "-") {
+						throw new ArgumentException ("String cannot contain a "
+							+ "minus sign if the base is not 10.");
+					}
+					break;
+			}
+
+			if (len == i) {
+				throw new FormatException ("Could not find any parsable digits.");
+			}
+
+			if (value[i] == '+') {
+				i++;
+			}
+
+			while (i < len) {
+				char c = value[i++];
+				if (Char.IsNumber (c)) {
 					digitValue = c - '0';
-				else if (Char.IsLetter (c))
+				} else if (Char.IsLetter (c)) {
 					digitValue = Char.ToLowerInvariant (c) - 'a' + 10;
-				else if ((c == '-') && (!unsigned)) {
-					if (fromBase != 10)
-						throw new ArgumentException ("Negative are valid only for base 10");
-					negative = true;
-					continue;
+				} else {
+					if (chars > 0) {
+						throw new FormatException ("Additional unparsable "
+							+ "characters are at the end of the string.");
+					} else {
+						throw new FormatException ("Could not find any parsable"
+							+ " digits.");
+					}
 				}
-				else
-					throw new FormatException ("This is an invalid string: " + value);
 
-				if (digitValue >= fromBase)
-					throw new FormatException ("the digits are invalid.");
+				if (digitValue >= fromBase) {
+					if (chars > 0) {
+						throw new FormatException ("Additional unparsable "
+							+ "characters are at the end of the string.");
+					} else {
+						throw new FormatException ("Could not find any parsable"
+							+ " digits.");
+					}
+				}
 
-				result = (ulong) (Base * result + (uint)digitValue);
+				result = (fromBase * result + digitValue);
 				chars ++;
 			}
 
 			if (chars == 0)
-				throw new FormatException ("Could not find any digits.");
+				throw new FormatException ("Could not find any parsable digits.");
 
 			if (negative)
-				return -1 * (long) result;
+				return -1 * result;
 			else
-				return (long) result;
+				return result;
 		}
 
 		private static void EndianSwap (ref byte[] value)

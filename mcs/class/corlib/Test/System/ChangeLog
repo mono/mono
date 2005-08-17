@@ -1,3 +1,10 @@
+2005-08-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* ConvertTest.cs: Added tests for hex prefixed value, bad hex prefixes,
+	negative hex values, invalid chars for base 10 and 16 values, empty
+	base values, values containing only hex prefix, values containing only
+	negative sign.
+
 2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : added ParseCOMDependent().

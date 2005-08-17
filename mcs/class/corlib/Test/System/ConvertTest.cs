@@ -1207,7 +1207,7 @@ namespace MonoTests.System {
 				AssertEquals("#J38", typeof(FormatException), e.GetType());
 			}
 			
-			try {							
+			try {
 				Convert.ToInt16("-33000");
 				Fail();
 			}
@@ -1255,7 +1255,7 @@ namespace MonoTests.System {
 				AssertEquals("#J44", typeof(FormatException), e.GetType());
 			}
 			
-			try {							
+			try {
 				Convert.ToInt16("-33000", ci);
 				Fail();
 			}
@@ -1263,7 +1263,7 @@ namespace MonoTests.System {
 				AssertEquals("#J45", typeof(OverflowException), e.GetType());
 			}
 
-			try {							
+			try {
 				Convert.ToInt16("321", 11);
 				Fail();
 			}
@@ -1271,7 +1271,7 @@ namespace MonoTests.System {
 				AssertEquals("#J46", typeof(ArgumentException), e.GetType());
 			}
 
-			try {							
+			try {
 				Convert.ToInt16("D8BF1", 16);
 				Fail();
 			}
@@ -1352,7 +1352,7 @@ namespace MonoTests.System {
 				AssertEquals("#K30", typeof(OverflowException), e.GetType());
 			}
 
-			try {							
+			try {
 				Convert.ToInt32(-tryInt64);
 				Fail();
 			}
@@ -1368,7 +1368,7 @@ namespace MonoTests.System {
 				AssertEquals("#K32", typeof(InvalidCastException), e.GetType());
 			}
 
-			try {							
+			try {
 				Convert.ToInt32((float)tryMax);
 				Fail();
 			}
@@ -1384,7 +1384,7 @@ namespace MonoTests.System {
 				AssertEquals("#K34", typeof(OverflowException), e.GetType());
 			}
 			
-			try {							
+			try {
 				Convert.ToInt32(tryStr, ci);
 				Fail();
 			}
@@ -1392,7 +1392,7 @@ namespace MonoTests.System {
 				AssertEquals("#K35", typeof(FormatException), e.GetType());
 			}
 
-			try {							
+			try {
 				Convert.ToInt32("-46565465123");
 				Fail();
 			}
@@ -1400,7 +1400,7 @@ namespace MonoTests.System {
 				AssertEquals("#K36", typeof(OverflowException), e.GetType());
 			}
 
-			try {							
+			try {
 				Convert.ToInt32("46565465123");
 				Fail();
 			}
@@ -1456,6 +1456,7 @@ namespace MonoTests.System {
 				AssertEquals("#K43", typeof(ArgumentException), e.GetType());
 			}
 		}
+
 		public void TestToInt64() {
 			decimal longMax = long.MaxValue;
 			longMax += 1000000;
@@ -1578,7 +1579,7 @@ namespace MonoTests.System {
 				AssertEquals("#L32b", typeof(FormatException), e.GetType());
 			}
 			
-			try {							
+			try {
 				Convert.ToInt64(longMin.ToString(), ci);
 				Fail();
 			}
@@ -1586,7 +1587,7 @@ namespace MonoTests.System {
 				AssertEquals("#L33", typeof(OverflowException), e.GetType());
 			}
 
-			try {							
+			try {
 				Convert.ToInt64("321", 11);
 				Fail();
 			}
@@ -1823,7 +1824,7 @@ namespace MonoTests.System {
 				AssertEquals("#M47", typeof(FormatException), e.GetType());
 			}
 			
-			try {							
+			try {
 				Convert.ToSByte("325", ci);
 				Fail();
 			}
@@ -2655,6 +2656,11 @@ namespace MonoTests.System {
 			catch (Exception e) {
 				AssertEquals("#R43", typeof(ArgumentException), e.GetType());
 			}
+
+
+			AssertEquals ("#L35", (ulong) 256, Convert.ToUInt64 ("0x100", 16));
+			AssertEquals ("#L36", (ulong) 256, Convert.ToUInt64 ("0X100", 16));
+			AssertEquals ("#L37", ulong.MaxValue, Convert.ToUInt64 ("0xFFFFFFFFFFFFFFFF", 16));
 		}
 
 		[Test]
@@ -2956,28 +2962,28 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
-		public void ConvertEmpty ()
+		public void FromBase64_Empty ()
 		{
 			Convert.FromBase64String ("");
 		}
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
-		public void ConvertOnlyWhiteSpace ()
+		public void FromBase64_OnlyWhiteSpace ()
 		{
 			Convert.FromBase64String ("  \r\t");
 		}
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
-		public void ConvertInvalidChar ()
+		public void FromBase64_InvalidChar ()
 		{
 			Convert.FromBase64String ("amVsb3U=\u0100");
 		}
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
-		public void ConvertMin ()
+		public void FromBase64_Min ()
 		{
 			Convert.FromBase64String ("amVsb3U=   \r \n\u007B");
 		}
@@ -3006,7 +3012,7 @@ namespace MonoTests.System {
 				Convert.ToChar (null as string);
 				Fail ();
 			} catch (Exception e) {
-				AssertEquals ("#W18", typeof (ArgumentNullException), e.GetType ());						
+				AssertEquals ("#W18", typeof (ArgumentNullException), e.GetType ());
 			}
 			
 			AssertEquals ("#W19", new DateTime (1,1,1,0,0,0), Convert.ToDateTime (null as string));
@@ -3020,7 +3026,7 @@ namespace MonoTests.System {
 			AssertEquals ("#W27", null, Convert.ToString (null as string));
 			AssertEquals ("#W28", 0, Convert.ToUInt16 (null as string));
 			AssertEquals ("#W29", 0, Convert.ToUInt32 (null as string));
-			AssertEquals ("#W30", 0, Convert.ToUInt64 (null as string));					
+			AssertEquals ("#W30", 0, Convert.ToUInt64 (null as string));
 		}
 
 		[Test]
@@ -3037,13 +3043,6 @@ namespace MonoTests.System {
 			AssertEquals ("0XFF", 255, Convert.ToByte ("0XFF", 16));
 
 			AssertEquals ("0x0", Byte.MinValue, Convert.ToByte ("0x0", 16));
-		}
-
-		[Test]
-		[ExpectedException (typeof (FormatException))]
-		public void ToByte_BadHexPrefix () 
-		{
-			Convert.ToByte ("0x", 16);
 		}
 
 		[Test]
@@ -3164,6 +3163,7 @@ namespace MonoTests.System {
 		public void ToByte_MaxValue ()
 		{
 			AssertEquals ("ff,16", Byte.MaxValue, Convert.ToByte ("ff", 16));
+			AssertEquals ("0xFF,16", Byte.MaxValue, Convert.ToByte ("0XFF", 16));
 			AssertEquals ("255,10", Byte.MaxValue, Convert.ToByte ("255", 10));
 			AssertEquals ("377,8", Byte.MaxValue, Convert.ToByte ("377", 8));
 			AssertEquals ("11111111,2", Byte.MaxValue, Convert.ToByte ("11111111", 2));
@@ -3173,6 +3173,7 @@ namespace MonoTests.System {
 		public void ToByte_MinValue ()
 		{
 			AssertEquals ("0,16", Byte.MinValue, Convert.ToByte ("0", 16));
+			AssertEquals ("0x0,16", Byte.MinValue, Convert.ToByte ("0x0", 16));
 			AssertEquals ("0,10", Byte.MinValue, Convert.ToByte ("0", 10));
 			AssertEquals ("0,8", Byte.MinValue, Convert.ToByte ("0", 8));
 			AssertEquals ("0,2", Byte.MinValue, Convert.ToByte ("0", 2));
@@ -3182,6 +3183,7 @@ namespace MonoTests.System {
 		public void ToUInt16_MaxValue ()
 		{
 			AssertEquals ("ffff,16", UInt16.MaxValue, Convert.ToUInt16 ("ffff", 16));
+			AssertEquals ("0XFFFF,16", UInt16.MaxValue, Convert.ToUInt16 ("0XFFFF", 16));
 			AssertEquals ("65535,10", UInt16.MaxValue, Convert.ToUInt16 ("65535", 10));
 			AssertEquals ("177777,8", UInt16.MaxValue, Convert.ToUInt16 ("177777", 8));
 			AssertEquals ("1111111111111111,2", UInt16.MaxValue, Convert.ToUInt16 ("1111111111111111", 2));
@@ -3191,6 +3193,7 @@ namespace MonoTests.System {
 		public void ToUInt16_MinValue ()
 		{
 			AssertEquals ("0,16", UInt16.MinValue, Convert.ToUInt16 ("0", 16));
+			AssertEquals ("0x0,16", UInt16.MinValue, Convert.ToUInt16 ("0x0", 16));
 			AssertEquals ("0,10", UInt16.MinValue, Convert.ToUInt16 ("0", 10));
 			AssertEquals ("0,8", UInt16.MinValue, Convert.ToUInt16 ("0", 8));
 			AssertEquals ("0,2", UInt16.MinValue, Convert.ToUInt16 ("0", 2));
@@ -3200,6 +3203,7 @@ namespace MonoTests.System {
 		public void ToUInt32_MaxValue ()
 		{
 			AssertEquals ("ffffffff,16", UInt32.MaxValue, Convert.ToUInt32 ("ffffffff", 16));
+			AssertEquals ("0XFFFFFFFF,16", UInt32.MaxValue, Convert.ToUInt32 ("0XFFFFFFFF", 16));
 			AssertEquals ("4294967295,10", UInt32.MaxValue, Convert.ToUInt32 ("4294967295", 10));
 			AssertEquals ("37777777777,8", UInt32.MaxValue, Convert.ToUInt32 ("37777777777", 8));
 			AssertEquals ("11111111111111111111111111111111,2", UInt32.MaxValue, Convert.ToUInt32 ("11111111111111111111111111111111", 2));
@@ -3209,6 +3213,7 @@ namespace MonoTests.System {
 		public void ToUInt32_MinValue ()
 		{
 			AssertEquals ("0,16", UInt32.MinValue, Convert.ToUInt32 ("0", 16));
+			AssertEquals ("0x0,16", UInt32.MinValue, Convert.ToUInt32 ("0x0", 16));
 			AssertEquals ("0,10", UInt32.MinValue, Convert.ToUInt32 ("0", 10));
 			AssertEquals ("0,8", UInt32.MinValue, Convert.ToUInt32 ("0", 8));
 			AssertEquals ("0,2", UInt32.MinValue, Convert.ToUInt32 ("0", 2));
@@ -3218,6 +3223,7 @@ namespace MonoTests.System {
 		public void ToUInt64_MaxValue ()
 		{
 			AssertEquals ("ffffffffffffffff,16", UInt64.MaxValue, Convert.ToUInt64 ("ffffffffffffffff", 16));
+			AssertEquals ("0XFFFFFFFFFFFFFFFF,16", UInt64.MaxValue, Convert.ToUInt64 ("0XFFFFFFFFFFFFFFFF", 16));
 			AssertEquals ("18446744073709551615,10", UInt64.MaxValue, Convert.ToUInt64 ("18446744073709551615", 10));
 			AssertEquals ("1777777777777777777777,8", UInt64.MaxValue, Convert.ToUInt64 ("1777777777777777777777", 8));
 			AssertEquals ("1111111111111111111111111111111111111111111111111111111111111111,2", UInt64.MaxValue, Convert.ToUInt64 ("1111111111111111111111111111111111111111111111111111111111111111", 2));
@@ -3227,6 +3233,7 @@ namespace MonoTests.System {
 		public void ToUInt64_MinValue ()
 		{
 			AssertEquals ("0,16", UInt64.MinValue, Convert.ToUInt64 ("0", 16));
+			AssertEquals ("0x0,16", UInt64.MinValue, Convert.ToUInt64 ("0x0", 16));
 			AssertEquals ("0,10", UInt64.MinValue, Convert.ToUInt64 ("0", 10));
 			AssertEquals ("0,8", UInt64.MinValue, Convert.ToUInt64 ("0", 8));
 			AssertEquals ("0,2", UInt64.MinValue, Convert.ToUInt64 ("0", 2));
@@ -3238,6 +3245,7 @@ namespace MonoTests.System {
 		public void ToSByte_MaxValue ()
 		{
 			AssertEquals ("7F,16", SByte.MaxValue, Convert.ToSByte ("7f", 16));
+			AssertEquals ("0X7F,16", SByte.MaxValue, Convert.ToSByte ("0X7F", 16));
 			AssertEquals ("127,10", SByte.MaxValue, Convert.ToSByte ("127", 10));
 			AssertEquals ("177,8", SByte.MaxValue, Convert.ToSByte ("177", 8));
 			AssertEquals ("1111111,2", SByte.MaxValue, Convert.ToSByte ("1111111", 2));
@@ -3256,6 +3264,7 @@ namespace MonoTests.System {
 		public void ToInt16_MaxValue ()
 		{
 			AssertEquals ("7FFF,16", Int16.MaxValue, Convert.ToInt16 ("7fff", 16));
+			AssertEquals ("0X7FFF,16", Int16.MaxValue, Convert.ToInt16 ("0X7FFF", 16));
 			AssertEquals ("32767,10", Int16.MaxValue, Convert.ToInt16 ("32767", 10));
 			AssertEquals ("77777,8", Int16.MaxValue, Convert.ToInt16 ("77777", 8));
 			AssertEquals ("111111111111111,2", Int16.MaxValue, Convert.ToInt16 ("111111111111111", 2));
@@ -3274,6 +3283,7 @@ namespace MonoTests.System {
 		public void ToInt32_MaxValue ()
 		{
 			AssertEquals ("7fffffff,16", Int32.MaxValue, Convert.ToInt32 ("7fffffff", 16));
+			AssertEquals ("0X7FFFFFFF,16", Int32.MaxValue, Convert.ToInt32 ("0X7FFFFFFF", 16));
 			AssertEquals ("2147483647,10", Int32.MaxValue, Convert.ToInt32 ("2147483647", 10));
 			AssertEquals ("17777777777,8", Int32.MaxValue, Convert.ToInt32 ("17777777777", 8));
 			AssertEquals ("1111111111111111111111111111111,2", Int32.MaxValue, Convert.ToInt32 ("1111111111111111111111111111111", 2));
@@ -3292,6 +3302,7 @@ namespace MonoTests.System {
 		public void ToInt64_MaxValue ()
 		{
 			AssertEquals ("7fffffffffffffff,16", Int64.MaxValue, Convert.ToInt64 ("7fffffffffffffff", 16));
+			AssertEquals ("0X7FFFFFFFFFFFFFFF,16", Int64.MaxValue, Convert.ToInt64 ("0X7FFFFFFFFFFFFFFF", 16));
 			AssertEquals ("9223372036854775807,10", Int64.MaxValue, Convert.ToInt64 ("9223372036854775807", 10));
 			AssertEquals ("777777777777777777777,8", Int64.MaxValue, Convert.ToInt64 ("777777777777777777777", 8));
 			AssertEquals ("111111111111111111111111111111111111111111111111111111111111111,2", Int64.MaxValue, Convert.ToInt64 ("111111111111111111111111111111111111111111111111111111111111111", 2));
@@ -3301,6 +3312,7 @@ namespace MonoTests.System {
 		public void ToInt64_MinValue ()
 		{
 			AssertEquals ("8000000000000000,16", Int64.MinValue, Convert.ToInt64 ("8000000000000000", 16));
+			AssertEquals ("0x8000000000000000,16", Int64.MinValue, Convert.ToInt64 ("0x8000000000000000", 16));
 			AssertEquals ("-9223372036854775808,10", Int64.MinValue, Convert.ToInt64 ("-9223372036854775808", 10));
 			AssertEquals ("1000000000000000000000,8", Int64.MinValue, Convert.ToInt64 ("1000000000000000000000", 8));
 			AssertEquals ("1000000000000000000000000000000000000000000000000000000000000000,2", Int64.MinValue, Convert.ToInt64 ("1000000000000000000000000000000000000000000000000000000000000000", 2));
@@ -3584,6 +3596,923 @@ namespace MonoTests.System {
 			AssertEquals ("Int64.MaxValue base 8",  "777777777777777777777", Convert.ToString (Int64.MaxValue, 8));
 			AssertEquals ("Int64.MaxValue base 10", "9223372036854775807", Convert.ToString (Int64.MaxValue, 10));
 			AssertEquals ("Int64.MaxValue base 16", "7fffffffffffffff", Convert.ToString (Int64.MaxValue, 16));
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToByte_BadHexPrefix1 ()
+		{
+			Convert.ToByte ("#10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToByte_BadHexPrefix2 ()
+		{
+			Convert.ToByte ("&H10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToByte_BadHexPrefix3 ()
+		{
+			Convert.ToByte ("&h10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt16_BadHexPrefix1 ()
+		{
+			Convert.ToInt16 ("#10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt16_BadHexPrefix2 ()
+		{
+			Convert.ToInt16 ("&H10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt16_BadHexPrefix3 ()
+		{
+			Convert.ToInt16 ("&h10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt32_BadHexPrefix1 ()
+		{
+			Convert.ToInt32 ("#10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt32_BadHexPrefix2 ()
+		{
+			Convert.ToInt32 ("&H10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt32_BadHexPrefix3 ()
+		{
+			Convert.ToInt32 ("&h10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt64_BadHexPrefix1 ()
+		{
+			Convert.ToInt64 ("#10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt64_BadHexPrefix2 ()
+		{
+			Convert.ToInt64 ("&H10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt64_BadHexPrefix3 ()
+		{
+			Convert.ToInt64 ("&h10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToSByte_BadHexPrefix1 ()
+		{
+			Convert.ToSByte ("#10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToSByte_BadHexPrefix2 ()
+		{
+			Convert.ToSByte ("&H10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToSByte_BadHexPrefix3 ()
+		{
+			Convert.ToSByte ("&h10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt16_BadHexPrefix1 ()
+		{
+			Convert.ToUInt16 ("#10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt16_BadHexPrefix2 ()
+		{
+			Convert.ToUInt16 ("&H10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt16_BadHexPrefix3 ()
+		{
+			Convert.ToUInt16 ("&h10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt32_BadHexPrefix1 ()
+		{
+			Convert.ToUInt32 ("#10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt32_BadHexPrefix2 ()
+		{
+			Convert.ToUInt32 ("&H10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt32_BadHexPrefix3 ()
+		{
+			Convert.ToUInt32 ("&h10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt64_BadHexPrefix1 ()
+		{
+			Convert.ToUInt64 ("#10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt64_BadHexPrefix2 ()
+		{
+			Convert.ToUInt64 ("&H10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt64_BadHexPrefix3 ()
+		{
+			Convert.ToUInt64 ("&h10", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToSByte_NegativeHex ()
+		{
+			AssertEquals ("0xFFFFFFFFFFFFFF80,16", SByte.MinValue, Convert.ToSByte ("0xFFFFFFFFFFFFFF80", 16));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt16_NegativeHex ()
+		{
+			AssertEquals ("0xFFFFFFFFFFFF8000,16", Int16.MinValue, Convert.ToInt16 ("0xFFFFFFFFFFFF8000", 16));
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt32_NegativeHex ()
+		{
+			AssertEquals ("0xFFFFFFFF80000000,16", Int32.MinValue, Convert.ToInt32 ("0xFFFFFFFF80000000", 16));
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToByte_Base10_InvalidChars1 ()
+		{
+			Convert.ToByte ("0-1", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToByte_Base10_InvalidChars2 ()
+		{
+			Convert.ToByte ("FF", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt16_Base10_InvalidChars1 ()
+		{
+			Convert.ToInt16 ("0-1", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt16_Base10_InvalidChars2 ()
+		{
+			Convert.ToInt16 ("FF", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt32_Base10_InvalidChars1 ()
+		{
+			Convert.ToInt32 ("0-1", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt32_Base10_InvalidChars2 ()
+		{
+			Convert.ToInt32 ("FF", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt64_Base10_InvalidChars1 ()
+		{
+			Convert.ToInt64 ("0-1", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt64_Base10_InvalidChars2 ()
+		{
+			Convert.ToInt64 ("FF", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToSByte_Base10_InvalidChars1 ()
+		{
+			Convert.ToSByte ("0-1", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToSByte_Base10_InvalidChars2 ()
+		{
+			Convert.ToSByte ("FF", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt16_Base10_InvalidChars1 ()
+		{
+			Convert.ToUInt16 ("0-1", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt16_Base10_InvalidChars2 ()
+		{
+			Convert.ToUInt16 ("FF", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt32_Base10_InvalidChars1 ()
+		{
+			Convert.ToUInt32 ("0-1", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt32_Base10_InvalidChars2 ()
+		{
+			Convert.ToUInt32 ("FF", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt64_Base10_InvalidChars1 ()
+		{
+			Convert.ToUInt64 ("0-1", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt64_Base10_InvalidChars2 ()
+		{
+			Convert.ToUInt64 ("FF", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToByte_Base16_InvalidChars1 ()
+		{
+			Convert.ToByte ("0-1", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToByte_Base16_InvalidChars2 ()
+		{
+			Convert.ToByte ("GG", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt16_Base16_InvalidChars1 ()
+		{
+			Convert.ToInt16 ("0-1", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt16_Base16_InvalidChars2 ()
+		{
+			Convert.ToInt16 ("GG", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt32_Base16_InvalidChars1 ()
+		{
+			Convert.ToInt32 ("0-1", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt32_Base16_InvalidChars2 ()
+		{
+			Convert.ToInt32 ("GG", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt64_Base16_InvalidChars1 ()
+		{
+			Convert.ToInt64 ("0-1", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt64_Base16_InvalidChars2 ()
+		{
+			Convert.ToInt64 ("GG", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToSByte_Base16_InvalidChars1 ()
+		{
+			Convert.ToSByte ("0-1", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToSByte_Base16_InvalidChars2 ()
+		{
+			Convert.ToSByte ("GG", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt16_Base16_InvalidChars1 ()
+		{
+			Convert.ToUInt16 ("0-1", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt16_Base16_InvalidChars2 ()
+		{
+			Convert.ToUInt16 ("GG", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt32_Base16_InvalidChars1 ()
+		{
+			Convert.ToUInt32 ("0-1", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt32_Base16_InvalidChars2 ()
+		{
+			Convert.ToUInt32 ("GG", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt64_Base16_InvalidChars1 ()
+		{
+			Convert.ToUInt64 ("0-1", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt64_Base16_InvalidChars2 ()
+		{
+			Convert.ToUInt64 ("GG", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToByte_Base2_Empty ()
+		{
+			Convert.ToByte ("", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToByte_Base8_Empty ()
+		{
+			Convert.ToByte ("", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToByte_Base10_Empty ()
+		{
+			Convert.ToByte ("", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToByte_Base16_Empty ()
+		{
+			Convert.ToByte ("", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt16_Base2_Empty ()
+		{
+			Convert.ToInt16 ("", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt16_Base8_Empty ()
+		{
+			Convert.ToInt16 ("", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt16_Base10_Empty ()
+		{
+			Convert.ToInt16 ("", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt16_Base16_Empty ()
+		{
+			Convert.ToInt16 ("", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt32_Base2_Empty ()
+		{
+			Convert.ToInt32 ("", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt32_Base8_Empty ()
+		{
+			Convert.ToInt32 ("", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt32_Base10_Empty ()
+		{
+			Convert.ToInt32 ("", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt32_Base16_Empty ()
+		{
+			Convert.ToInt32 ("", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt64_Base2_Empty ()
+		{
+			Convert.ToInt64 ("", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt64_Base8_Empty ()
+		{
+			Convert.ToInt64 ("", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt64_Base10_Empty ()
+		{
+			Convert.ToInt64 ("", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToInt64_Base16_Empty ()
+		{
+			Convert.ToInt64 ("", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToSByte_Base2_Empty ()
+		{
+			Convert.ToSByte ("", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToSByte_Base8_Empty ()
+		{
+			Convert.ToSByte ("", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToSByte_Base10_Empty ()
+		{
+			Convert.ToSByte ("", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToSByte_Base16_Empty ()
+		{
+			Convert.ToSByte ("", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt16_Base2_Empty ()
+		{
+			Convert.ToUInt16 ("", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt16_Base8_Empty ()
+		{
+			Convert.ToUInt16 ("", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt16_Base10_Empty ()
+		{
+			Convert.ToUInt16 ("", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt16_Base16_Empty ()
+		{
+			Convert.ToUInt16 ("", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt32_Base2_Empty ()
+		{
+			Convert.ToUInt32 ("", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt32_Base8_Empty ()
+		{
+			Convert.ToUInt32 ("", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt32_Base10_Empty ()
+		{
+			Convert.ToUInt32 ("", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt32_Base16_Empty ()
+		{
+			Convert.ToUInt32 ("", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt64_Base2_Empty ()
+		{
+			Convert.ToUInt64 ("", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt64_Base8_Empty ()
+		{
+			Convert.ToUInt64 ("", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt64_Base10_Empty ()
+		{
+			Convert.ToUInt64 ("", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ToUInt64_Base16_Empty ()
+		{
+			Convert.ToUInt64 ("", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToByte_HexPrefixOnly ()
+		{
+			Convert.ToByte ("0x", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt16_HexPrefixOnly ()
+		{
+			Convert.ToInt16 ("0x", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt32_HexPrefixOnly ()
+		{
+			Convert.ToInt32 ("0x", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt64_HexPrefixOnly ()
+		{
+			Convert.ToInt64 ("0x", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToSByte_HexPrefixOnly ()
+		{
+			Convert.ToSByte ("0x", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt16_HexPrefixOnly ()
+		{
+			Convert.ToUInt16 ("0x", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt32_HexPrefixOnly ()
+		{
+			Convert.ToUInt32 ("0x", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToUInt64_HexPrefixOnly ()
+		{
+			Convert.ToUInt64 ("0x", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToByte_Base2_NegativeSignOnly ()
+		{
+			Convert.ToByte ("-", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToByte_Base8_NegativeSignOnly ()
+		{
+			Convert.ToByte ("-", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToByte_Base10_NegativeSignOnly ()
+		{
+			Convert.ToByte ("-", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToByte_Base16_NegativeSignOnly ()
+		{
+			Convert.ToByte ("-", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToInt16_Base2_NegativeSignOnly ()
+		{
+			Convert.ToInt16 ("-", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToInt16_Base8_NegativeSignOnly ()
+		{
+			Convert.ToInt16 ("-", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt16_Base10_NegativeSignOnly ()
+		{
+			Convert.ToInt16 ("-", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToInt16_Base16_NegativeSignOnly ()
+		{
+			Convert.ToInt16 ("-", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToInt32_Base2_NegativeSignOnly ()
+		{
+			Convert.ToInt32 ("-", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToInt32_Base8_NegativeSignOnly ()
+		{
+			Convert.ToInt32 ("-", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt32_Base10_NegativeSignOnly ()
+		{
+			Convert.ToInt32 ("-", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToInt32_Base16_NegativeSignOnly ()
+		{
+			Convert.ToInt32 ("-", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToInt64_Base2_NegativeSignOnly ()
+		{
+			Convert.ToInt64 ("-", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToInt64_Base8_NegativeSignOnly ()
+		{
+			Convert.ToInt64 ("-", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToInt64_Base10_NegativeSignOnly ()
+		{
+			Convert.ToInt64 ("-", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToInt64_Base16_NegativeSignOnly ()
+		{
+			Convert.ToInt64 ("-", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToSByte_Base2_NegativeSignOnly ()
+		{
+			Convert.ToSByte ("-", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToSByte_Base8_NegativeSignOnly ()
+		{
+			Convert.ToSByte ("-", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ToSByte_Base10_NegativeSignOnly ()
+		{
+			Convert.ToSByte ("-", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToSByte_Base16_NegativeSignOnly ()
+		{
+			Convert.ToSByte ("-", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt16_Base2_NegativeSignOnly ()
+		{
+			Convert.ToUInt16 ("-", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt16_Base8_NegativeSignOnly ()
+		{
+			Convert.ToUInt16 ("-", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt16_Base10_NegativeSignOnly ()
+		{
+			Convert.ToUInt16 ("-", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt16_Base16_NegativeSignOnly ()
+		{
+			Convert.ToUInt16 ("-", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt32_Base2_NegativeSignOnly ()
+		{
+			Convert.ToUInt32 ("-", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt32_Base8_NegativeSignOnly ()
+		{
+			Convert.ToUInt32 ("-", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt32_Base10_NegativeSignOnly ()
+		{
+			Convert.ToUInt32 ("-", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt32_Base16_NegativeSignOnly ()
+		{
+			Convert.ToUInt32 ("-", 16);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt64_Base2_NegativeSignOnly ()
+		{
+			Convert.ToUInt64 ("-", 2);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt64_Base8_NegativeSignOnly ()
+		{
+			Convert.ToUInt64 ("-", 8);
+		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToUInt64_Base10_NegativeSignOnly ()
+		{
+			Convert.ToUInt64 ("-", 10);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ToUInt64_Base16_NegativeSignOnly ()
+		{
+			Convert.ToUInt64 ("-", 16);
 		}
 	}
 }

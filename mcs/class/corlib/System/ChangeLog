@@ -1,3 +1,11 @@
+2005-08-17  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Convert.cs: Numerous fixed in overloads taking base to match 
+	behaviour of MS.NET. Throw ArgumentOutOfRangeException is string is
+	empty. If base is 16, 8 or 2, then throw ArgumentException if first 
+	character is a negative sign. Throw OverflowException if hex prefixed 
+	value is negative for signed types (other than int64) to match MS.NET. 
+
 2005-08-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : added another COM dependent pattern (rather to describe
