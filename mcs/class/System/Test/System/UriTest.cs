@@ -197,6 +197,113 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		// some tests from bug 75144
+		public void LeadingSlashes ()
+		{
+			Uri u;
+			AssertEquals ("#1", "file:///", new Uri ("file:///").ToString());
+			AssertEquals ("#2", "file:///", new Uri ("file://").ToString());
+
+			u = new Uri ("file:///foo/bar");
+			AssertEquals ("#3", "file:///foo/bar", u.ToString());
+			AssertEquals ("#4", false, u.IsUnc);
+
+			u = new Uri ("file://foo/bar");
+			AssertEquals ("#5", "file://foo/bar", u.ToString());
+			AssertEquals ("#6", true, u.IsUnc);
+
+			u = new Uri ("file:////foo/bar");
+			AssertEquals ("#7", "file://foo/bar", u.ToString());
+			AssertEquals ("#8", true, u.IsUnc); 
+
+			AssertEquals ("#9", "file://foo/bar", new Uri ("file://///foo/bar").ToString());
+
+			AssertEquals ("#10", "mailto:", new Uri ("mailto:").ToString());
+			AssertEquals ("#11", "mailto:foo", new Uri ("mailto:foo").ToString());
+			AssertEquals ("#12", "mailto:/", new Uri ("mailto:/").ToString());
+			AssertEquals ("#13", "mailto:/foo", new Uri ("mailto:/foo").ToString());
+			AssertEquals ("#14", "mailto://foo", new Uri ("mailto://foo").ToString());
+			AssertEquals ("#15", "mailto:///foo", new Uri ("mailto:///foo").ToString());
+
+			AssertEquals ("#16", "news:", new Uri ("news:").ToString());
+			AssertEquals ("#17", "news:foo", new Uri ("news:foo").ToString());
+			AssertEquals ("#18", "news:/", new Uri ("news:/").ToString());
+			AssertEquals ("#19", "news:/foo", new Uri ("news:/foo").ToString());
+			AssertEquals ("#20", "news://foo", new Uri ("news://foo").ToString());
+			AssertEquals ("#21", "news:///foo", new Uri ("news:///foo").ToString());
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void HttpHostname1 ()
+		{
+			new Uri ("http:");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void HttpHostname2 ()
+		{
+			new Uri ("http:a");
+		}
+		
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void HttpHostname3 ()
+		{
+			new Uri ("http:/");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void HttpHostname4 ()
+		{
+			new Uri ("http:/foo");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void HttpHostname5 ()
+		{
+			new Uri ("http://");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void HttpHostname6 ()
+		{
+			new Uri ("http:///");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void HttpHostname7 ()
+		{
+			new Uri ("http:///foo");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void InvalidFile1 ()
+		{
+			new Uri ("file:");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void InvalidFile2 ()
+		{
+			new Uri ("file:/");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void InvalidFile3 ()
+		{
+			new Uri ("file:/foo");
+		}	
+
+		[Test]
 		[ExpectedException (typeof (UriFormatException))]
 		public void InvalidScheme ()
 		{
