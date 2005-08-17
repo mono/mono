@@ -232,6 +232,9 @@ namespace System.Security.Cryptography {
 					if (Char.IsWhiteSpace ((char)inputBuffer [i]))
 						ws++;
 				}
+				// no more (useful) data
+				if (ws == inputCount)
+					return new byte [0];
 				// there may be whitespace after the terminator
 				int k = inputOffset + inputCount - 1;
 				int n = Math.Min (2, inputCount);
