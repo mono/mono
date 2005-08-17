@@ -4,6 +4,11 @@
 		<calendars>
 			<calendar type="gregorian">
 				<dateFormats>
+					<dateFormatLength type="long">
+						<dateFormat >
+							<pattern>dddd d MMMM yyyy</pattern>
+						</dateFormat>
+					</dateFormatLength >
 					<dateFormatLength type="short">
 						<extraPatterns>
 							<pattern>d/MM/yyyy</pattern>
@@ -11,6 +16,20 @@
 						</extraPatterns>
 					</dateFormatLength >
 				</dateFormats>
+				<timeFormats>
+					<timeFormatLength type="long">
+						<timeFormat >
+							<pattern>HH:mm:ss</pattern>
+						</timeFormat>
+					</timeFormatLength >
+				</timeFormats>
+				<dateTimeFormats>
+					<dateTimeFormatLength >
+						<dateTimeFormat>
+							<pattern>{1} {0}</pattern>
+						</dateTimeFormat>
+					</dateTimeFormatLength >
+				</dateTimeFormats>
 			</calendar>
 		</calendars>
 	</dates>

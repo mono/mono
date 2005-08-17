@@ -1,5 +1,11 @@
 2005-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Driver.cs : add primary date/time pattern strings as the first
+	  entry of for each "whole specific patterns".
+	  (e.g. LongDatePatterns[0] should be LongDatePattern.)
+
+2005-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CultureInfoEntry.cs : added RegionId.
 	* Driver.cs : modified to not write RegionLCIDMap and use
 	  CultureInfoEntry for that lookup purpose instead.

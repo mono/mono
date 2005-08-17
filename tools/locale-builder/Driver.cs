@@ -534,11 +534,13 @@ namespace Mono.Tools.LocaleBuilder {
 						ext = df_nav.Select ("extraPatterns/pattern");
 						if (ext.MoveNext ()) {
 							df.LongDatePatterns.Clear ();
+							AddPattern (df.LongDatePatterns, df.LongDatePattern);
 							do {
 								df.LongDatePatterns.Add (ext.Current.Value);
 							} while (ext.MoveNext ());
 						}
-						AddPattern (df.LongDatePatterns, df.LongDatePattern);
+						else
+							AddPattern (df.LongDatePatterns, df.LongDatePattern);
 						break;
 					case "short":
 						if (value != null)
@@ -546,11 +548,13 @@ namespace Mono.Tools.LocaleBuilder {
 						ext = df_nav.Select ("extraPatterns/pattern");
 						if (ext.MoveNext ()) {
 							df.ShortDatePatterns.Clear ();
+							AddPattern (df.ShortDatePatterns, df.ShortDatePattern);
 							do {
 								df.ShortDatePatterns.Add (ext.Current.Value);
 							} while (ext.MoveNext ());
 						}
-						AddPattern (df.ShortDatePatterns, df.ShortDatePattern);
+						else
+							AddPattern (df.ShortDatePatterns, df.ShortDatePattern);
 						break;
 					case "year_month":
 						if (value != null)
@@ -578,11 +582,13 @@ namespace Mono.Tools.LocaleBuilder {
 						ext = df_nav.Select ("extraPatterns/pattern");
 						if (ext.MoveNext ()) {
 							df.LongTimePatterns.Clear ();
+							AddPattern (df.LongTimePatterns, df.LongTimePattern);
 							do {
 								df.LongTimePatterns.Add (ext.Current.Value);
 							} while (ext.MoveNext ());
 						}
-						AddPattern (df.LongTimePatterns, df.LongTimePattern);
+						else
+							AddPattern (df.LongTimePatterns, df.LongTimePattern);
 						break;
 					case "short":
 						if (value != null)
@@ -590,11 +596,13 @@ namespace Mono.Tools.LocaleBuilder {
 						ext = df_nav.Select ("extraPatterns/pattern");
 						if (ext.MoveNext ()) {
 							df.ShortTimePatterns.Clear ();
+							AddPattern (df.ShortTimePatterns, df.ShortTimePattern);
 							do {
 								df.ShortTimePatterns.Add (ext.Current.Value);
 							} while (ext.MoveNext ());
 						}
-						AddPattern (df.ShortTimePatterns, df.ShortTimePattern);
+						else
+							AddPattern (df.ShortTimePatterns, df.ShortTimePattern);
 						break;
 					}
 				}

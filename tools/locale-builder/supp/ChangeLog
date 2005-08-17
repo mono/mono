@@ -1,3 +1,8 @@
+2005-08-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* fr.xml : fixed long date pattern and dateTimeFormats.
+	* ja.xml : fixed long time pattern and dateTimeFormats.
+
 2005-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* fr.xml : more date pattern.
