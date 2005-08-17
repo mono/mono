@@ -120,8 +120,6 @@ namespace Mono.Tools.LocaleBuilder {
 			foreach (RegionInfoEntry r in regionList)
 				r.RegionId = number++;
 
-			ArrayList regionMap = new ArrayList ();
-
 			foreach (CultureInfoEntry e in cultures) {
 				int lcid = int.Parse (e.Lcid.Substring (2),
 					NumberStyles.HexNumber);
@@ -147,7 +145,7 @@ namespace Mono.Tools.LocaleBuilder {
 					Console.Error.WriteLine ("No definition for region {0}", name);
 					continue;
 				}
-				regionMap.Add (new RegionLCIDMap (lcid, rm.RegionId));
+				e.RegionId = rm.RegionId;
 			}
 
                         /**
@@ -165,7 +163,6 @@ namespace Mono.Tools.LocaleBuilder {
 
                                 writer.WriteLine ("#define NUM_CULTURE_ENTRIES " + cultures.Count);
                                 writer.WriteLine ("#define NUM_REGION_ENTRIES " + regionList.Count);
-                                writer.WriteLine ("#define NUM_REGION_LCID_MAP " + regionMap.Count);
                                 writer.WriteLine ("\n");
 
                                 // Sort the cultures by lcid
@@ -261,21 +258,6 @@ namespace Mono.Tools.LocaleBuilder {
                                 writer.WriteLine ("static const RegionInfoNameEntry region_name_entries [] = {");
                                 writer.Write (builder);
                                 writer.WriteLine ("};\n\n");
-
-                                builder = new StringBuilder ();
-                                for (int i = 0; i < regionMap.Count; i++) {
-                                        RegionLCIDMap map = (RegionLCIDMap) regionMap [i];
-                                        builder.Append ("\t{" + map.LCID + ", ");
-                                        builder.Append (map.RegionId + "}");
-                                        if (i + 1 < regionMap.Count)
-                                                builder.Append (',');
-                                        builder.Append ('\n');
-                                }
-
-                                writer.WriteLine ("static const RegionLCIDMap region_lcid_map [] = {");
-                                writer.Write (builder);
-                                writer.WriteLine ("};\n\n");
-
 
                                 writer.WriteLine ("static const char locale_strings [] = {");
                                 writer.Write (Entry.GetStrings ());

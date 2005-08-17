@@ -33,6 +33,7 @@ namespace Mono.Tools.LocaleBuilder {
                 public string Lcid;
                 public string ParentLcid;
                 public string SpecificLcid;
+                public int RegionId = -1;
                 public DateTimeFormatEntry DateTimeFormatEntry;
                 public NumberFormatEntry NumberFormatEntry;
                 public TextInfoEntry TextInfoEntry;
@@ -76,13 +77,13 @@ namespace Mono.Tools.LocaleBuilder {
                 public void AppendTableRow (StringBuilder builder)
                 {
                         builder.Append ("\t{");
-                        builder.AppendFormat ("{0}, {1}, {2}, " +
-                                        "{3}, {4}, {5}, " +
-                                        "{6}, {7}, {8}, " +
-                                        "{9}, {10}, " +
-                                        "{11}, " +
-                                        "{12}, {13}, {14}",
-                                        Lcid, ParentLcid, SpecificLcid,
+                        builder.AppendFormat ("{0}, {1}, {2}, {3}," +
+                                        "{4}, {5}, {6}, " +
+                                        "{7}, {8}, {9}, " +
+                                        "{10}, {11}, " +
+                                        "{12}, " +
+                                        "{13}, {14}, {15}",
+                                        Lcid, ParentLcid, SpecificLcid, RegionId,
                                         EncodeStringIdx (Name), EncodeStringIdx (IcuName), EncodeStringIdx (EnglishName),
                                         EncodeStringIdx (DisplayName), EncodeStringIdx (NativeName), EncodeStringIdx (Win3Lang),
                                         EncodeStringIdx (ISO3Lang), EncodeStringIdx (ISO2Lang),
