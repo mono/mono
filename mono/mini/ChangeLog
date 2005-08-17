@@ -1,5 +1,10 @@
 2005-08-17  Zoltan Varga  <vargaz@freemail.hu>
 
+	* arrays.cs: Add regression test for #75832.
+
+	* inssel-amd64.brg cpu-amd64.md mini-amd64.c: Fix LDELEMA optimization
+	rules. Fixes #75832.
+
 	* mini-ia64.c tramp-ia64.c exceptions-ia64.c: Implement improved
 	instruction scheduling.
 
