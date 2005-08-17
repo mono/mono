@@ -153,7 +153,7 @@ namespace MonoTests.W3C_xmlconf {
 	class TestFromCatalog: NUnit.Core.TestCase
 	{
 		XmlElement _test;
-		string _stackTrace;
+		string _errorString;
 		bool _inverseResult;
 
 		public TestFromCatalog (string testId, XmlElement test, bool inverseResult)
@@ -172,7 +172,7 @@ namespace MonoTests.W3C_xmlconf {
 				return true;
 			}
 			catch (Exception e) {
-				_stackTrace = e.StackTrace;
+				_errorString = e.ToString ();
 				return false;
 			}
 			finally {
@@ -191,7 +191,7 @@ namespace MonoTests.W3C_xmlconf {
 				return true;
 			}
 			catch (Exception e) {
-				_stackTrace = e.StackTrace; //rewrites existing, possibly, but it's ok
+				_errorString = e.ToString (); //rewrites existing, possibly, but it's ok
 				return false;
 			}
 			finally {
@@ -226,7 +226,7 @@ namespace MonoTests.W3C_xmlconf {
 				message += " non-validating passed:"+nonValidatingPassed.ToString();
 				message += " validating passed:"+validatingPassed.ToString();
 				message += " description:"+_test.InnerText;
-				res.Failure (message, _stackTrace);
+				res.Failure (message, _errorString);
 			}
 		}
 
