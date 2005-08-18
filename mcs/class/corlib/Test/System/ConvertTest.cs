@@ -3767,24 +3767,42 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[ExpectedException (typeof (OverflowException))]
-		public void ToSByte_NegativeHex ()
+		public void ToSByte_Base16_MinMax ()
 		{
-			AssertEquals ("0xFFFFFFFFFFFFFF80,16", SByte.MinValue, Convert.ToSByte ("0xFFFFFFFFFFFFFF80", 16));
+			AssertEquals ("80,16", SByte.MinValue, Convert.ToSByte ("80", 16));
+			AssertEquals ("0x80,16", SByte.MinValue, Convert.ToSByte ("0x80", 16));
+			AssertEquals ("0X80,16", SByte.MinValue, Convert.ToSByte ("0X80", 16));
+
+			AssertEquals ("7f,16", SByte.MaxValue, Convert.ToSByte ("7f", 16));
+			AssertEquals ("7F,16", SByte.MaxValue, Convert.ToSByte ("7F", 16));
+			AssertEquals ("0x7f,16", SByte.MaxValue, Convert.ToSByte ("0x7f", 16));
+			AssertEquals ("0X7F,16", SByte.MaxValue, Convert.ToSByte ("0X7F", 16));
 		}
 
 		[Test]
-		[ExpectedException (typeof (OverflowException))]
-		public void ToInt16_NegativeHex ()
+		public void ToInt16_Base16_MinMax ()
 		{
-			AssertEquals ("0xFFFFFFFFFFFF8000,16", Int16.MinValue, Convert.ToInt16 ("0xFFFFFFFFFFFF8000", 16));
+			AssertEquals ("8000,16", short.MinValue, Convert.ToInt16 ("8000", 16));
+			AssertEquals ("0x8000,16", short.MinValue, Convert.ToInt16 ("0x8000", 16));
+			AssertEquals ("0X8000,16", short.MinValue, Convert.ToInt16 ("0X8000", 16));
+
+			AssertEquals ("7fff,16", short.MaxValue, Convert.ToInt16 ("7fff", 16));
+			AssertEquals ("7FFF,16", short.MaxValue, Convert.ToInt16 ("7FFF", 16));
+			AssertEquals ("0x7fff,16", short.MaxValue, Convert.ToInt16 ("0x7fff", 16));
+			AssertEquals ("0X7FFF,16", short.MaxValue, Convert.ToInt16 ("0X7FFF", 16));
 		}
 
 		[Test]
-		[ExpectedException (typeof (OverflowException))]
-		public void ToInt32_NegativeHex ()
+		public void ToInt32_Base16_MinMax ()
 		{
-			AssertEquals ("0xFFFFFFFF80000000,16", Int32.MinValue, Convert.ToInt32 ("0xFFFFFFFF80000000", 16));
+			AssertEquals ("80000000,16", int.MinValue, Convert.ToInt32 ("80000000", 16));
+			AssertEquals ("0x80000000,16", int.MinValue, Convert.ToInt32 ("0x80000000", 16));
+			AssertEquals ("0X80000000,16", int.MinValue, Convert.ToInt32 ("0X80000000", 16));
+
+			AssertEquals ("7fffffff,16", int.MaxValue, Convert.ToInt32 ("7fffffff", 16));
+			AssertEquals ("7FFFFFFF,16", int.MaxValue, Convert.ToInt32 ("7FFFFFFF", 16));
+			AssertEquals ("0x7fffffff,16", int.MaxValue, Convert.ToInt32 ("0x7fffffff", 16));
+			AssertEquals ("0X7FFFFFFF,16", int.MaxValue, Convert.ToInt32 ("0X7FFFFFFF", 16));
 		}
 
 		[Test]
