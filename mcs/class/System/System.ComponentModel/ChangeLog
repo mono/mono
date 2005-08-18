@@ -1,3 +1,14 @@
+2005-08-18  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* EditorBrowsableState.cs: Changed line ending from CRLF to LF to
+	match other sources. Set eol-style to native.
+	* ExtenderProvidedPropertyAttribute.cs: Changed line ending from CRLF
+	to LF to match other sources. Set eol-style to native.
+	* RefreshEventHandler.cs: Changed line ending from CRLF to LF to match
+	other sources. Set eol-style to native.
+	* TypeDescriptor.cs: Changed line ending from CRLF to LF to match 
+	other sources. Set eol-style to native.
+
 2005-08-16  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* BaseNumberConverter.cs: In ConvertFrom, wrap all exceptions that
