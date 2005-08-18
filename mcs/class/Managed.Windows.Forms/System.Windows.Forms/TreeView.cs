@@ -457,7 +457,7 @@ namespace System.Windows.Forms {
 
 		public override string ToString () {
 			int count = Nodes.Count;
-			if (count < 0)
+			if (count <= 0)
 				return String.Concat (base.ToString (), "Node Count: 0");
 			return String.Concat (base.ToString (), "Node Count: ", count, " Nodes[0]: ", Nodes [0]);
 						
@@ -506,7 +506,7 @@ namespace System.Windows.Forms {
 			OpenTreeNodeEnumerator ne;
 
 			switch (e.KeyData & Keys.KeyCode) {
-                        case Keys.Add:
+			case Keys.Add:
 				if (selected_node != null && selected_node.IsExpanded)
 					selected_node.Expand ();
 				break;
@@ -584,10 +584,10 @@ namespace System.Windows.Forms {
 					SelectedNode = ne.CurrentNode;
 				}
 				break;
-                        case Keys.Multiply:
-                                if (selected_node != null)
-                                        selected_node.ExpandAll ();
-                                break;
+			case Keys.Multiply:
+				if (selected_node != null)
+					selected_node.ExpandAll ();
+				break;
 			}
 			base.OnKeyDown (e);
 
@@ -599,13 +599,12 @@ namespace System.Windows.Forms {
 				OnBeforeCheck (args);
 				if (!args.Cancel) {
 					selected_node.Checked = !selected_node.Checked;
-					OnAfterCheck (new TreeViewEventArgs (selected_node,
-								      TreeViewAction.ByKeyboard));
+					OnAfterCheck (new TreeViewEventArgs (selected_node, TreeViewAction.ByKeyboard));
 				}
 				e.Handled = true;
 			}
 		}
-                
+		
 		protected virtual void OnAfterCheck (TreeViewEventArgs e) {
 			if (on_after_check != null)
 				on_after_check (this, e);
@@ -862,7 +861,7 @@ namespace System.Windows.Forms {
 				add_hscroll = max_node_width > ClientRectangle.Width - ThemeEngine.Current.VScrollBarDefaultSize.Width;
 			if (add_hscroll)
 				add_vscroll = (open_node_count * ItemHeight) > ClientRectangle.Height - ThemeEngine.Current.HScrollBarDefaultSize.Height;
-                        
+			
 			if (add_hscroll) {
 				AddHorizontalScrollBar ();
 			} else if (hbar != null) {
@@ -921,7 +920,7 @@ namespace System.Windows.Forms {
 		}
 
 		private void DrawNodeLines (TreeNode node, Graphics dc, bool visible, Pen dash, int x, int y,
-                                int middle, int item_height, int node_count)
+				int middle, int item_height, int node_count)
 		{
 			int ladjust = 9; // left adjust
 			int radjust = 0; // right adjust
@@ -1070,7 +1069,7 @@ namespace System.Windows.Forms {
 					if (SelectedNode == node)
 						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilight), r);
 					if (focused_node == node)
-                                                ControlPaint.DrawFocusRectangle (dc, r, ForeColor, BackColor);
+						ControlPaint.DrawFocusRectangle (dc, r, ForeColor, BackColor);
 				} else {
 					if (!HideSelection && SelectedNode == node)
 						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), r);
