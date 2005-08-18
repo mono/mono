@@ -1,5 +1,8 @@
 2005-08-18  Zoltan Varga  <vargaz@freemail.hu>
 
+	* assembly.c (mono_assembly_load_full): Consider .exe extension as
+	well. Fixes #75809.
+
 	* reflection.c (create_custom_attr): Fix unmanaged memory leak. Fixes #75784.
 	
 	* reflection.c (create_custom_attr_data): Ditto.
