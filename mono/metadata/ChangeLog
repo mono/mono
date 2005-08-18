@@ -1,5 +1,11 @@
 2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* threadpool.c: disable printing stack traces when we get a exception
+	in a threadpool thread. I need to do more testing to figure out which
+	cases actually print this. Fixes bug #75828.
+
+2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* icall.c: there might be ignored whitespace after the last '='. This
 	fixes length computation and bug #75840.
 
