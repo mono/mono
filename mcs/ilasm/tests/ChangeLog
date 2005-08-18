@@ -1,5 +1,9 @@
 2005-08-18  Ankit Jain  <jankit@novell.com>
 
+	* test-ldcr-bytes.il: New. Test for "ldc.r8/r4" followed by a byte array.
+
+2005-08-18  Ankit Jain  <jankit@novell.com>
+
 	* test-cattr-declsec.il: New. Added test for custom attrs and decl sec 
 	  on interface methods.
 

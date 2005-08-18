@@ -1,5 +1,10 @@
 2005-08-18  Ankit Jain  <jankit@novell.com>
 
+	* ILParser.jay (instr | INSTR_R bytes_list): Convert bytes_list to single/double
+	  and add the corresponding instruction.
+
+2005-08-18  Ankit Jain  <jankit@novell.com>
+
 	* ILParser.jay: Comment out K_PUBLICKEY keyword, not used in the grammar.
 
 2005-08-16  Ankit Jain  <jankit@novell.com>
