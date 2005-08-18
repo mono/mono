@@ -109,7 +109,7 @@ namespace MonoTests.System.Reflection
 			// corlib doesn't reference anything
 			Assert.AreEqual (0, corlib.GetReferencedAssemblies ().Length, "GetReferencedAssemblies");
 #if NET_2_0
-			Assert.AreEqual ("mscorlib, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", corlib.FullName, "FullName");
+			Assert.AreEqual ("mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089", corlib.FullName, "FullName");
 			// not really "true" but it's even more trusted so...
 			Assert.IsTrue (corlib.GlobalAssemblyCache, "GlobalAssemblyCache");
 			Assert.AreEqual (0, corlib.HostContext, "HostContext");

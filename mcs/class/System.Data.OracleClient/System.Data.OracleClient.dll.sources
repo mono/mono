@@ -1,6 +1,6 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
-Assembly/Consts.cs
+../../build/common/Consts.cs
 System.Data.OracleClient.Oci/OciAttributeType.cs
 System.Data.OracleClient.Oci/OciBindHandle.cs
 System.Data.OracleClient.Oci/OciCalls.cs

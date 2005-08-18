@@ -86,7 +86,7 @@ public class GregorianCalendar : Calendar {
 	public virtual GregorianCalendarTypes CalendarType {
 		get { return M_CalendarType; }
 		set { 
-			// mscorlib 1:0:33000:0 doesn't check anything here
+			// mscorlib 1:0:3300:0 doesn't check anything here
 			M_CalendarType = value;
 		}
 	}

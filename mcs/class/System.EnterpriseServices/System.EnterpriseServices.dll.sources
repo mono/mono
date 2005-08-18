@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
 System.EnterpriseServices/AccessChecksLevelOption.cs
 System.EnterpriseServices/ActivationOption.cs
 System.EnterpriseServices/Activity.cs

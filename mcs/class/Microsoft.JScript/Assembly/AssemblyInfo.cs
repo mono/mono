@@ -34,16 +34,15 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Resources;
 
+[assembly: AssemblyVersion (Consts.VsVersion)]
 #if (NET_2_0)
-	[assembly: AssemblyVersion ("8.0.3600.0")]
 //	[assembly: CLSCompliant (true)]
-#elif (NET_1_1)
-	[assembly: AssemblyVersion("7.0.5000.0")]
-	[assembly: SatelliteContractVersion("7.0.5000.0")]
-	[assembly: TypeLibVersion(7, 1)]
 #else
-	[assembly: AssemblyVersion("7.0.3300.0")]
-	[assembly: SatelliteContractVersion("7.0.3300.0")]
+[assembly: SatelliteContractVersion (Consts.VsVersion)]
+#endif
+
+#if (ONLY_1_1)
+	[assembly: TypeLibVersion(7, 1)]
 #endif
 
 [assembly: AssemblyTitle ("Microsoft.JScript")]

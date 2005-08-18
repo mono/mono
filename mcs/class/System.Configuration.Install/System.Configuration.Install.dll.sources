@@ -1,6 +1,6 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Locale.cs
-Assembly/Consts.cs
+../../build/common/Consts.cs
 System.Configuration.Install/AssemblyInstaller.cs
 System.Configuration.Install/IManagedInstaller.cs
 System.Configuration.Install/Installer.cs

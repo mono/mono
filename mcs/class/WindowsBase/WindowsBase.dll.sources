@@ -8,3 +8,4 @@ System.Windows/LocalValueEnumerator.cs
 System.Windows/PropertyMetadata.cs
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs

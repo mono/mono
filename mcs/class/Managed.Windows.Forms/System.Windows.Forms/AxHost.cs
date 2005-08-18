@@ -109,7 +109,7 @@ namespace System.Windows.Forms {
 			
 			#region AxHost.State Class
 			[Serializable]
-			[TypeConverter("System.ComponentModel.TypeConverter, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+			[TypeConverter("System.ComponentModel.TypeConverter, " + Consts.AssemblySystem)]
 			public class State : ISerializable {
 				public State(Stream ms, int storageType, bool manualUpdate, string licKey) {
 					throw new NotImplementedException("COM/ActiveX support is not implemented");

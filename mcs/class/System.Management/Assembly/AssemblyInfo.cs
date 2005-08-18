@@ -37,13 +37,9 @@ using System.Runtime.InteropServices;
 
 // General Information about the System.Management assembly
 
-#if (NET_1_0)
-	[assembly: AssemblyVersion ("1.0.3300.0")]
-#elif (NET_2_0)
-        [assembly: AssemblyVersion("2.0.3600.0")]
-	[assembly: SatelliteContractVersion("2.0.3600.0")]
-#elif (NET_1_1)
-	[assembly: AssemblyVersion ("1.0.5000.0")]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+#if (NET_2_0)
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
 #endif
 
 [assembly: AssemblyTitle ("System.Management.dll")]

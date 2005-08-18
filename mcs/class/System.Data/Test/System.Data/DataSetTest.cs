@@ -270,7 +270,7 @@ namespace MonoTests.System.Data
 			// This is original DataSet.WriteXmlSchema() output
 //			AssertEquals ("test#16", "              <xs:element name=\"second\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" type=\"xs:string\" minOccurs=\"0\" />", substring);
 #if NET_2_0
-			AssertEquals ("test#16", "              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring);
+			AssertEquals ("test#16", "              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring);
 #else
 			AssertEquals ("test#16", "              <xs:element minOccurs=\"0\" msdata:DataType=\"System.Data.SqlTypes.SqlGuid, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" name=\"second\" type=\"xs:string\" />", substring);
 #endif

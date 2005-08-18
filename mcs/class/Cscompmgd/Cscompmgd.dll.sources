@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
 ../../build/common/Locale.cs
 Microsoft.CSharp/Compiler.cs
 Microsoft.CSharp/CompilerError.cs

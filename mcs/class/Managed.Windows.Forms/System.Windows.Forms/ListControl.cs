@@ -60,7 +60,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue(null)]
 		[RefreshProperties(RefreshProperties.Repaint)]
-		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
 		public object DataSource {
 			get { return data_source; }
 			set {
@@ -80,7 +80,7 @@ namespace System.Windows.Forms
 
 		[DefaultValue("")]
 		[Editor("System.Windows.Forms.Design.DataMemberFieldEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
-		[TypeConverter("System.Windows.Forms.Design.DataMemberFieldConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[TypeConverter("System.Windows.Forms.Design.DataMemberFieldConverter, " + Consts.AssemblySystem_Design)]
 		public string DisplayMember {
 			get { 
 				return display_member;				

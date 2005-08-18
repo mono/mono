@@ -34,10 +34,10 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 	[ToolboxItemFilter("System.Windows.Forms")]
-	[ProvideProperty("ShowHelp", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-	[ProvideProperty("HelpNavigator", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-	[ProvideProperty("HelpKeyword", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-	[ProvideProperty("HelpString", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+	[ProvideProperty("ShowHelp", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
+	[ProvideProperty("HelpNavigator", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
+	[ProvideProperty("HelpKeyword", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
+	[ProvideProperty("HelpString", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
 	public class HelpProvider : Component, IExtenderProvider {
 		#region HelpProperty Class
 		private class HelpProperty {
@@ -106,7 +106,7 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Properties
 		[DefaultValue(null)]
-		[Editor ("System.Windows.Forms.Design.HelpNamespaceEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[Editor ("System.Windows.Forms.Design.HelpNamespaceEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[Localizable(true)]
 		public string HelpNamespace {
 			get {

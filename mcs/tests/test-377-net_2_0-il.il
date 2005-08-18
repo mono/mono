@@ -1,6 +1,6 @@
 .assembly extern mscorlib
 {
-  .ver 2:0:3600:0
+  .ver 2:0:0:0
   .publickeytoken = (B7 7A 5C 56 19 34 E0 89 ) // .z\V.4..
 }
 .assembly 'test-377-net_2_0-il'

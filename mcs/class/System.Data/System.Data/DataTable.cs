@@ -445,7 +445,7 @@ namespace System.Data {
 		[DataCategory ("Data")]
 		[DataSysDescription ("Indicates the column(s) that represent the primary key for this table.")]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.PrimaryKeyEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		[TypeConverterAttribute ("System.Data.PrimaryKeyTypeConverter, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+		[TypeConverterAttribute ("System.Data.PrimaryKeyTypeConverter, " + Consts.AssemblySystem_Data)]
 		public DataColumn[] PrimaryKey {
 			get {
 				if (_primaryKeyConstraint == null) { 

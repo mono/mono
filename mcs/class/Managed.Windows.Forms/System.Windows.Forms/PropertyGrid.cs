@@ -488,7 +488,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue(null)]
-		[TypeConverter("System.Windows.Forms.PropertyGrid+SelectedObjectConverter, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+		[TypeConverter("System.Windows.Forms.PropertyGrid+SelectedObjectConverter, " + Consts.AssemblySystem_Windows_Forms)]
 		public object SelectedObject {
 			get {
 				return selected_objects[0];

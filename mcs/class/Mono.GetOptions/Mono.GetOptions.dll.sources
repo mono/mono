@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
 Mono/AboutAttribute.cs
 Mono/AuthorAttribute.cs
 Mono/UsageComplementAttribute.cs

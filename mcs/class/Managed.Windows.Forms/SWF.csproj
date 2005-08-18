@@ -89,7 +89,7 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "Assembly\Consts.cs"
+                    RelPath = "..\..\build\common\Consts.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

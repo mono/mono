@@ -37,8 +37,8 @@ using System.Runtime.InteropServices;
 
 // General Information about the System.Configuration.Install assembly
 
-[assembly: AssemblyVersion("2.0.3600.0")]
-[assembly: SatelliteContractVersion("2.0.3600.0")]
+[assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
 
 [assembly: AssemblyTitle ("System.Configuration.dll")]
 [assembly: AssemblyDescription ("System.Configuration.dll")]

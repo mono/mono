@@ -33,9 +33,9 @@ using System.Drawing;
 
 namespace System.Windows.Forms {
 	[ToolboxItemFilter("System.Windows.Forms")]
-	[ProvideProperty("IconAlignment", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-	[ProvideProperty("IconPadding", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
-	[ProvideProperty("Error", "System.Windows.Forms.Control, System.Windows.Forms, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089")]
+	[ProvideProperty("IconAlignment", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
+	[ProvideProperty("IconPadding", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
+	[ProvideProperty("Error", "System.Windows.Forms.Control, " + Consts.AssemblySystem_Windows_Forms)]
 	public class ErrorProvider : Component, IExtenderProvider {
 		#region Private Classes
 		private class ErrorProperty {
@@ -318,7 +318,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		[DefaultValue(null)]
-		[Editor ("System.Windows.Forms.Design.DataMemberListEditor, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", "System.Drawing.Design.UITypeEditor, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[Editor ("System.Windows.Forms.Design.DataMemberListEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string DataMember {
 			get {
 				return datamember;
@@ -332,7 +332,7 @@ namespace System.Windows.Forms {
 
 		[MonoTODO]
 		[DefaultValue(null)]
-		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, System.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[TypeConverter("System.Windows.Forms.Design.DataSourceConverter, " + Consts.AssemblySystem_Design)]
 		public object DataSource {
 			get {
 				return datasource;

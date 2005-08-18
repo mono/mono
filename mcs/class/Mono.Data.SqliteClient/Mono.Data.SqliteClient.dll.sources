@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
 ../../build/common/Locale.cs
 Mono.Data.SqliteClient/Sqlite.cs
 Mono.Data.SqliteClient/SqliteCommand.cs

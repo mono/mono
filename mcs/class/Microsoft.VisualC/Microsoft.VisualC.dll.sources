@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
 ../../build/common/Locale.cs
 Microsoft.VisualC/DebugInfoInPDBAttribute.cs
 Microsoft.VisualC/DecoratedNameAttribute.cs

@@ -1,4 +1,5 @@
 ../Assembly/AssemblyInfo.cs
+../../../build/common/Consts.cs
 CP1251.cs
 CP1257.cs
 CP1258.cs

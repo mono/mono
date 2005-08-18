@@ -81,38 +81,23 @@ namespace System.Security.Policy {
 			MsFinal,
 		}
 
+		private const string DnsPermissionClass = "System.Net.DnsPermission, " + Consts.AssemblySystem;
+		private const string EventLogPermissionClass = "System.Diagnostics.EventLogPermission, " + Consts.AssemblySystem;
+		private const string PrintingPermissionClass = "System.Drawing.Printing.PrintingPermission, " + Consts.AssemblySystem_Drawing;
+		private const string SocketPermissionClass = "System.Net.SocketPermission, " + Consts.AssemblySystem;
+		private const string WebPermissionClass = "System.Net.WebPermission, " + Consts.AssemblySystem;
+		private const string PerformanceCounterPermissionClass = "System.Diagnostics.PerformanceCounterPermission, " + Consts.AssemblySystem;
+		private const string DirectoryServicesPermissionClass = "System.DirectoryServices.DirectoryServicesPermission, " + Consts.AssemblySystem_DirectoryServices;
+		private const string MessageQueuePermissionClass = "System.Messaging.MessageQueuePermission, " + Consts.AssemblySystem_Messaging;
+		private const string ServiceControllerPermissionClass = "System.ServiceProcess.ServiceControllerPermission, " + Consts.AssemblySystem_ServiceProcess;
+		private const string OleDbPermissionClass = "System.Data.OleDb.OleDbPermission, " + Consts.AssemblySystem_Data;
+		private const string SqlClientPermissionClass = "System.Data.SqlClient.SqlClientPermission, " + Consts.AssemblySystem_Data;
 #if NET_2_0
-		private const string DnsPermissionClass = "System.Net.DnsPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string EventLogPermissionClass = "System.Diagnostics.EventLogPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string PrintingPermissionClass = "System.Drawing.Printing.PrintingPermission, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-		private const string SocketPermissionClass = "System.Net.SocketPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string WebPermissionClass = "System.Net.WebPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string PerformanceCounterPermissionClass = "System.Diagnostics.PerformanceCounterPermission, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string DirectoryServicesPermissionClass = "System.DirectoryServices.DirectoryServicesPermission, System.DirectoryServices, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-		private const string MessageQueuePermissionClass = "System.Messaging.MessageQueuePermission, System.Messaging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-		private const string ServiceControllerPermissionClass = "System.ServiceProcess.ServiceControllerPermission, System.ServiceProcess, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-		private const string OleDbPermissionClass = "System.Data.OleDb.OleDbPermission, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string SqlClientPermissionClass = "System.Data.SqlClient.SqlClientPermission, System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-
-		private const string DataProtectionPermissionClass = "System.Security.Permissions.DataProtectionPermission, System.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-		private const string StorePermissionClass = "System.Security.Permissions.StorePermission, System.Security, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-
-		private static Version Runtime = new Version (2, 0, 0, 0);
-#else
-		private const string DnsPermissionClass = "System.Net.DnsPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string EventLogPermissionClass = "System.Diagnostics.EventLogPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string PrintingPermissionClass = "System.Drawing.Printing.PrintingPermission, System.Drawing, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-		private const string SocketPermissionClass = "System.Net.SocketPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string WebPermissionClass = "System.Net.WebPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string PerformanceCounterPermissionClass = "System.Diagnostics.PerformanceCounterPermission, System, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string DirectoryServicesPermissionClass = "System.DirectoryServices.DirectoryServicesPermission, System.DirectoryServices, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-		private const string MessageQueuePermissionClass = "System.Messaging.MessageQueuePermission, System.Messaging, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-		private const string ServiceControllerPermissionClass = "System.ServiceProcess.ServiceControllerPermission, System.ServiceProcess, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-		private const string OleDbPermissionClass = "System.Data.OleDb.OleDbPermission, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-		private const string SqlClientPermissionClass = "System.Data.SqlClient.SqlClientPermission, System.Data, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
-
-		private static Version Runtime = new Version (1, 0, 5000, 0);
+		private const string DataProtectionPermissionClass = "System.Security.Permissions.DataProtectionPermission, " + Consts.AssemblySystem_Security;
+		private const string StorePermissionClass = "System.Security.Permissions.StorePermission, " + Consts.AssemblySystem_Security;
 #endif
+
+		private static Version _fxVersion;
 		private static byte[] _ecmaKey = new byte [16] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 		private static StrongNamePublicKeyBlob _ecma;
 		private static byte[] _msFinalKey = new byte [160] { 
@@ -221,6 +206,7 @@ namespace System.Security.Policy {
 		public static StrongNameMembershipCondition FullTrustMembership (string name, Key key)
 		{
 			StrongNamePublicKeyBlob snkb = null;
+
 			switch (key) {
 			case Key.Ecma:
 				if (_ecma == null) {
@@ -236,7 +222,12 @@ namespace System.Security.Policy {
 				break;
 			}
 
-			return new StrongNameMembershipCondition (snkb, name, Runtime);
+			if (_fxVersion == null)
+			{
+				_fxVersion = new Version (Consts.FxVersion);
+			}
+
+			return new StrongNameMembershipCondition (snkb, name, _fxVersion);
 		}
 
 		// internal stuff

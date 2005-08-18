@@ -80,33 +80,24 @@ public class CryptoConfig {
 #endif
 
 	// LAMESPEC: undocumented names in CryptoConfig
-#if (NET_2_0)
-	private const string xmlAssembly = ", System.Security, Version=2.0.3600.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-#elif (NET_1_1)
-	private const string xmlAssembly = ", System.Security, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-#elif (NET_1_0)
-	private const string xmlAssembly = ", System.Security, Version=1.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
-#else
-	private const string xmlAssembly = ", System.Security, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null";
-#endif
-	private const string defaultC14N = defaultNamespace + "Xml.XmlDsigC14NTransform" + xmlAssembly;
-	private const string defaultC14NWithComments = defaultNamespace + "Xml.XmlDsigC14NWithCommentsTransform" + xmlAssembly;
-	private const string defaultBase64 = defaultNamespace + "Xml.XmlDsigBase64Transform" + xmlAssembly;
-	private const string defaultXPath = defaultNamespace + "Xml.XmlDsigXPathTransform" + xmlAssembly;
-	private const string defaultXslt = defaultNamespace + "Xml.XmlDsigXsltTransform" + xmlAssembly;
-	private const string defaultEnveloped = defaultNamespace + "Xml.XmlDsigEnvelopedSignatureTransform" + xmlAssembly;
+	private const string defaultC14N = defaultNamespace + "Xml.XmlDsigC14NTransform, " + Consts.AssemblySystem_Security;
+	private const string defaultC14NWithComments = defaultNamespace + "Xml.XmlDsigC14NWithCommentsTransform, " + Consts.AssemblySystem_Security;
+	private const string defaultBase64 = defaultNamespace + "Xml.XmlDsigBase64Transform, " + Consts.AssemblySystem_Security;
+	private const string defaultXPath = defaultNamespace + "Xml.XmlDsigXPathTransform, " + Consts.AssemblySystem_Security;
+	private const string defaultXslt = defaultNamespace + "Xml.XmlDsigXsltTransform, " + Consts.AssemblySystem_Security;
+	private const string defaultEnveloped = defaultNamespace + "Xml.XmlDsigEnvelopedSignatureTransform, " + Consts.AssemblySystem_Security;
 #if NET_2_0
-	private const string defaultXmlDecryption = defaultNamespace + "Xml.XmlDecryptionTransform" + xmlAssembly;
-	private const string defaultExcC14N = defaultNamespace + "Xml.XmlDsigExcC14NTransform" + xmlAssembly;
-	private const string defaultExcC14NWithComments = defaultNamespace + "Xml.XmlDsigExcC14NWithCommentsTransform" + xmlAssembly;
+	private const string defaultXmlDecryption = defaultNamespace + "Xml.XmlDecryptionTransform, " + Consts.AssemblySystem_Security;
+	private const string defaultExcC14N = defaultNamespace + "Xml.XmlDsigExcC14NTransform, " + Consts.AssemblySystem_Security;
+	private const string defaultExcC14NWithComments = defaultNamespace + "Xml.XmlDsigExcC14NWithCommentsTransform, " + Consts.AssemblySystem_Security;
 #endif
 
 	// LAMESPEC: only documentated in ".NET Framework Security" book
-	private const string defaultX509Data = defaultNamespace + "Xml.KeyInfoX509Data" + xmlAssembly;
-	private const string defaultKeyName = defaultNamespace + "Xml.KeyInfoName" + xmlAssembly;
-	private const string defaultKeyValueDSA = defaultNamespace + "Xml.DSAKeyValue" + xmlAssembly;
-	private const string defaultKeyValueRSA = defaultNamespace + "Xml.RSAKeyValue" + xmlAssembly;
-	private const string defaultRetrievalMethod = defaultNamespace + "Xml.KeyInfoRetrievalMethod" + xmlAssembly;
+	private const string defaultX509Data = defaultNamespace + "Xml.KeyInfoX509Data, " + Consts.AssemblySystem_Security;
+	private const string defaultKeyName = defaultNamespace + "Xml.KeyInfoName, " + Consts.AssemblySystem_Security;
+	private const string defaultKeyValueDSA = defaultNamespace + "Xml.DSAKeyValue, " + Consts.AssemblySystem_Security;
+	private const string defaultKeyValueRSA = defaultNamespace + "Xml.RSAKeyValue, " + Consts.AssemblySystem_Security;
+	private const string defaultRetrievalMethod = defaultNamespace + "Xml.KeyInfoRetrievalMethod, " + Consts.AssemblySystem_Security;
 
 	private const string managedSHA1 = defaultNamespace + "SHA1Managed";
 

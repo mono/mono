@@ -34,7 +34,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 
 namespace System.Windows.Forms {
-	[Editor("System.Drawing.Design.CursorEditor, System.Drawing.Design, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.Drawing.Design.UITypeEditor))]
+	[Editor("System.Drawing.Design.CursorEditor, " + Consts.AssemblySystem_Drawing_Design, typeof(System.Drawing.Design.UITypeEditor))]
 	[Serializable]
 	[TypeConverter(typeof(CursorConverter))]
 	public sealed class Cursor : IDisposable, ISerializable {

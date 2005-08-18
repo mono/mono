@@ -16,18 +16,15 @@ using System.Runtime.InteropServices;
 
 // General Information about the system assembly
 
+[assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: SatelliteContractVersion (Consts.FxVersion)]
+
 #if (NET_1_0)
-	[assembly: AssemblyVersion("1.0.3300.0")]
-	[assembly: SatelliteContractVersion("1.0.3300.0")]
 	[assembly: AssemblyInformationalVersion("1.0.3705.0")]
 #elif (NET_2_0)
-        [assembly: AssemblyVersion("2.0.3600.0")]
-	[assembly: SatelliteContractVersion("2.0.3600.0")]
 	[assembly: AssemblyInformationalVersion("2.0.40301.9")]
 	[assembly: AssemblyFileVersion("2.0.40301.9")]
 #elif (NET_1_1)
-	[assembly: AssemblyVersion("1.0.5000.0")]
-	[assembly: SatelliteContractVersion("1.0.5000.0")]
 	[assembly: AssemblyInformationalVersion("1.1.4322.573")]
 #endif
 

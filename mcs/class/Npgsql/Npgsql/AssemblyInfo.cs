@@ -48,13 +48,7 @@ using System.Runtime.CompilerServices;
 // You can specify all values by your own or you can build default build and revision
 // numbers with the '*' character (the default):
 
-#if (NET_2_0)
-	[assembly: AssemblyVersion ("2.0.3600.0")]
-#elif (NET_1_1)
-	[assembly: AssemblyVersion ("1.0.5000.0")]
-#else
-	[assembly: AssemblyVersion ("1.0.3300.0")]
-#endif
+[assembly: AssemblyVersion (Consts.FxVersion)]
 
 // The following attributes specify the key for the sign of your assembly. See the
 // .NET Framework documentation for more information about signing.

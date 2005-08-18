@@ -1,5 +1,5 @@
 Assembly/AssemblyInfo.cs
-Assembly/Consts.cs
+../../build/common/Consts.cs
 Assembly/Locale.cs
 System.Resources/ResXNullRef.cs
 System.Resources/ResXFileRef.cs

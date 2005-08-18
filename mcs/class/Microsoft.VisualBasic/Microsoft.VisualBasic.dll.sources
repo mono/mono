@@ -1,4 +1,5 @@
 Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 Microsoft.VisualBasic/AppWinStyle.cs

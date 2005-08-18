@@ -1,4 +1,4 @@
 Assembly/AssemblyInfo.cs
-Assembly/Consts.cs
+../../build/common/Consts.cs
 ../../build/common/Locale.cs
 monoresgen.cs

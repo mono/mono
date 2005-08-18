@@ -1,4 +1,5 @@
 ../Assembly/AssemblyInfo.cs
+../../../build/common/Consts.cs
 CP866.cs
 CP1026.cs
 CP869.cs

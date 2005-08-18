@@ -1,4 +1,5 @@
 ../Assembly/AssemblyInfo.cs
+../../../build/common/Consts.cs
 Big5Convert.cs
 CP932.cs
 CP50221.cs
