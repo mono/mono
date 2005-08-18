@@ -368,7 +368,7 @@ namespace Mono.ILASM {
 %token K_FULLORIGIN
 // %token K_NAN
 // %token K_INF
-%token K_PUBLICKEY
+// %token K_PUBLICKEY
 %token K_ENABLEJITTRACKING
 %token K_DISABLEJITOPTIMIZER
 %token K_PRESERVESIG

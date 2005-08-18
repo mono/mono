@@ -287,7 +287,7 @@ namespace Mono.ILASM {
                                 keywords ["fullorigin"] = new ILToken (Token.K_FULLORIGIN, "fullorigin");
                                 // keywords ["nan"] = new ILToken (Token.K_NAN, "nan");
                                 // keywords ["inf"] = new ILToken (Token.K_INF, "inf");
-                                keywords ["publickey"] = new ILToken (Token.K_PUBLICKEY, "publickey");
+                                // keywords ["publickey"] = new ILToken (Token.K_PUBLICKEY, "publickey");
                                 keywords ["enablejittracking"] = new ILToken (Token.K_ENABLEJITTRACKING, "enablejittracking");
                                 keywords ["disablejitoptimizer"] = new ILToken (Token.K_DISABLEJITOPTIMIZER, "disablejitoptimizer");
                                 keywords ["preservesig"] = new ILToken (Token.K_PRESERVESIG, "preservesig");
