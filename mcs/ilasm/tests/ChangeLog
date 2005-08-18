@@ -1,3 +1,8 @@
+2005-08-18  Ankit Jain  <jankit@novell.com>
+
+	* test-cattr-declsec.il: New. Added test for custom attrs and decl sec 
+	  on interface methods.
+
 2005-08-16  Ankit Jain  <jankit@novell.com>
 
 	* test-marshal-array.il: New. Added test for marshalling as native type array.

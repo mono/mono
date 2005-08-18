@@ -393,6 +393,19 @@ namespace Mono.ILASM {
 
                 protected void WriteCode (CodeGen code_gen, PEAPI.MethodDef methoddef)
                 {
+                        /// Add the custrom attributes to this method
+                        if (customattr_list != null)
+                                foreach (CustomAttr customattr in customattr_list)
+                                        customattr.AddTo (code_gen, methoddef);
+
+                        /// Add declarative security to this method
+                        if (declsecurity_list != null) {
+                                foreach (DeclSecurity declsecurity in declsecurity_list)
+                                        declsecurity.AddTo (code_gen, methoddef);
+
+                                methoddef.AddMethAttribute (PEAPI.MethAttr.HasSecurity);
+                        }        
+
                         if (IsAbstract)
                                 return;
 
@@ -423,23 +436,9 @@ namespace Mono.ILASM {
                                 max_stack = 8;
                         methoddef.SetMaxStack (max_stack);
 
-                        /// Add the custrom attributes to this method
-                        if (customattr_list != null)
-                                foreach (CustomAttr customattr in customattr_list)
-                                        customattr.AddTo (code_gen, methoddef);
-
-                        /// Add declarative security to this method
-                        if (declsecurity_list != null) {
-                                foreach (DeclSecurity declsecurity in declsecurity_list)
-                                        declsecurity.AddTo (code_gen, methoddef);
-
-                                methoddef.AddMethAttribute (PEAPI.MethAttr.HasSecurity);
-                        }        
-
                         if (pinvoke_info) {
                                 methoddef.AddPInvokeInfo (pinvoke_mod.ModuleRef,
                                                 (pinvoke_name != null ? pinvoke_name : name), pinvoke_attr);
-
                         }
 
                         if (inst_list.Count < 1)
