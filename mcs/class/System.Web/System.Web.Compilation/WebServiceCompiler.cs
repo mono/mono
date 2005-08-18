@@ -105,12 +105,16 @@ namespace System.Web.Compilation
 
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);
-			if (results.CompiledAssembly == null)
-				throw new CompilationException (inputFile, results.Errors,
-					"No assembly returned after compilation!?");
+			Assembly assembly = results.CompiledAssembly;
+			if (assembly == null) {
+				if (!File.Exists (compilerParameters.OutputAssembly))
+					throw new CompilationException (inputFile, results.Errors,
+						"No assembly returned after compilation!?");
+				assembly = Assembly.LoadFrom (compilerParameters.OutputAssembly);
+			}
 
 			results.TempFiles.Delete ();
-			type = results.CompiledAssembly.GetType (parser.ClassName, true);
+			type = assembly.GetType (parser.ClassName, true);
 			CachingCompiler.InsertType (type, parser.PhysicalPath);
 			return type;
 		}
