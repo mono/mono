@@ -1,3 +1,9 @@
+2005-08-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* reflection.c (create_custom_attr): Fix unmanaged memory leak. Fixes #75784.
+	
+	* reflection.c (create_custom_attr_data): Ditto.
+
 2005-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* locales.c, culture-info.h : removed RegionLCIDMap.
