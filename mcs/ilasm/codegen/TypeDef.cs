@@ -361,8 +361,11 @@ namespace Mono.ILASM {
                         }
 
                         if (customattr_list != null) {
-                                foreach (CustomAttr customattr in customattr_list)
+                                foreach (CustomAttr customattr in customattr_list) {
                                         customattr.AddTo (code_gen, classdef);
+                                        if (customattr.IsSuppressUnmanaged (code_gen))
+                                                classdef.AddAttribute (PEAPI.TypeAttr.HasSecurity);
+				}
                         }
                         
                         /// Add declarative security to this method

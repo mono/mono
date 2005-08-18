@@ -44,6 +44,10 @@ namespace Mono.ILASM {
 			set { call_conv = value; }
 		}
 
+		public ITypeRef Owner {
+			get { return owner; }
+		}
+
                 public void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)

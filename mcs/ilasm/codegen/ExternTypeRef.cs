@@ -77,6 +77,10 @@ namespace Mono.ILASM {
                         set { sig_mod = value; }
                 }
 
+		public ExternRef ExternRef {
+			get { return extern_ref; }
+		}
+
                 public void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)

@@ -34,6 +34,24 @@ namespace Mono.ILASM {
                         code_gen.PEFile.AddCustomAttribute (method_ref.PeapiMethod, data, elem);
                 }
 
+                public bool IsSuppressUnmanaged (CodeGen codegen)
+                {
+			string asmname = "";
+			
+			ITypeRef owner = method_ref.Owner;
+			if (owner == null)
+				return false;
+				
+			ExternTypeRef etr = owner as ExternTypeRef;
+			if (etr != null) {
+				ExternAssembly ea = etr.ExternRef as ExternAssembly;
+				if (ea != null)
+					asmname = ea.Name;
+			}	
+
+                       	return (owner.FullName == "System.Security.SuppressUnmanagedCodeSecurityAttribute" 
+				&& (asmname == "mscorlib" || codegen.IsThisAssembly ("mscorlib")) );
+                }
         }
 
 }

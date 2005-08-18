@@ -25,6 +25,10 @@ namespace Mono.ILASM {
 		}
 
                 void Resolve (CodeGen code_gen);
+
+		ITypeRef Owner {
+			get;
+		}
         }
 
 }

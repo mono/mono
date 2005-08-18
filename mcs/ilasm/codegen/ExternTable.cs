@@ -30,6 +30,10 @@ namespace Mono.ILASM {
                         class_table = new Hashtable ();
                 }
 
+		public string Name {
+			get { return name; }
+		}
+
                 public void AddCustomAttribute (CustomAttr customattr)
                 {
                         if (customattr_list == null)

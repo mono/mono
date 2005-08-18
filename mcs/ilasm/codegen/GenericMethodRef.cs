@@ -34,6 +34,10 @@ namespace Mono.ILASM {
                         set { meth.CallConv = value; }
                 }
 
+		public ITypeRef Owner {
+			get { return null; }
+		}
+
                 public void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)

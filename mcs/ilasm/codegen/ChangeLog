@@ -1,5 +1,23 @@
 2005-08-18  Ankit Jain  <jankit@novell.com>
 
+	* IMethodRef.cs (IMethodRef.Owner): New. Returns owner of the method.
+	* GlobalMethodRef.cs (GlobalMethodRef),
+	  MethodRef.cs (MethodRef),
+	  ExternMethodRef.cs (ExternMethodRef),
+	  GenericMethodRef.cs (GenericMethodRef),
+	  TypeSpecMethodRef.cs (TypeSpecMethodRef): Implement IMethodRef.Owner.
+	* CustomAttr.cs (CustomAttr.IsSuppressUnmanaged): New. Checks if the
+	  it is a "System.Security.SuppressUnmanagedCodeSecurityAttribute" and 
+	  is from "mscorlib" or the current assembly is mscorlib itself.
+	* TypeDef.cs (TypeDef.DefineContents),
+	  MethodDef.cs (MethodDef.WriteCode): Set HasSecurity attribute if
+	  SuppressUnmanagedCodeSecurity custom attribute is present.
+	* ExternTable.cs (ExternRef.Name): New.  
+	* ExternTypeRef.cs (ExternTypeRef.ExternRef): New. Returns the corresponding
+	  extern ref.
+
+2005-08-18  Ankit Jain  <jankit@novell.com>
+
 	* MethodDef.cs (MethodDef.WriteCode): Process custom attributes and decl security
 	  lists even for abstract methods.
 

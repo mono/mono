@@ -395,8 +395,11 @@ namespace Mono.ILASM {
                 {
                         /// Add the custrom attributes to this method
                         if (customattr_list != null)
-                                foreach (CustomAttr customattr in customattr_list)
+                                foreach (CustomAttr customattr in customattr_list) {
                                         customattr.AddTo (code_gen, methoddef);
+                                        if (customattr.IsSuppressUnmanaged (code_gen))
+                                                methoddef.AddMethAttribute (PEAPI.MethAttr.HasSecurity);
+				}
 
                         /// Add declarative security to this method
                         if (declsecurity_list != null) {
