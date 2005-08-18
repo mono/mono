@@ -82,7 +82,7 @@ namespace System.Drawing
 #if TARGET_JVM
 		internal java.awt.Color NativeObject {
 			get {
-				return new java.awt.Color (R/256F, G/256F, B/256F, A/256F);
+				return new java.awt.Color (R, G, B, A);
 			}
 		}
 #endif

@@ -274,7 +274,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 
 	public void Save (string filename)
 	{
-		Save (filename, RawFormat);
+		Save (filename, ImageFormat.Png);
 	}
 
 	public void Save (Stream stream, ImageFormat format)

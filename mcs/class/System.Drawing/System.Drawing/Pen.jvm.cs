@@ -444,31 +444,24 @@ namespace System.Drawing
 
 		awt.Shape awt.Stroke.createStrokedShape(awt.Shape arg_0) {
 			float[] dashPattern = null;
-			//spivak.BUGBUG
-			//You will see many magic numbers above this place
-			//behaviours of dash patterns in .NET and JAVA are not similar
-			//also it looks like JAVA have some design flaw there.
-			//The issue is that in java only switched on (ODD) entries are
-			//looks to be dependent on current line with. Switched off (EVEN)
-			//entries allways remains exact width as you specify. So we should 
-			//do some calculations to determine actual java pattern 
-			//Also note that ODD entries does not grow proportionally with line width
-			//so they should be sligntly ajusted also.
-			//Well, i know that potential perfomance of this staf could be bad, but
-			//that is solution for now. Note, that .NET have also numerous bugs in this
-			//region, for example they mandatory could not tolerate patternalising
-			//lines of 1 pixel width - look will be BAD.
+
 			switch (DashStyle) {
 				case DashStyle.Custom:
 					if (DashPattern != null) {
 						dashPattern = new float[DashPattern.Length];
 						for(int i = 0; i < DashPattern.Length; i++) {
-							if((i & 1) == 0) {
-								if (DashPattern[i] > 1.0f)
-									dashPattern[i] = DashPattern[i] + (DashPattern[i]-1.0f) * Width / 2f;
-							}
+
+							if (EndCap == LineCap.Flat)
+								dashPattern[i] = DashPattern[i] * Width;
 							else
-								dashPattern[i] = DashPattern[i] * Width * 2f;
+							{
+								if ((i & 1) == 0)
+									// remove the size of caps from the opaque parts
+									dashPattern[i] = (DashPattern[i] * Width) - Width;
+								else
+									// add the size of caps to the transparent parts
+									dashPattern[i] = (DashPattern[i] * Width) + Width;
+							}
 						}
 					}
 					break;

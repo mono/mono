@@ -1,3 +1,9 @@
+﻿2005-08-18 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Pen.jvm.cs: Fixed DashSpacing in createStrokedShape
+	* Color.cs: Fixed java NativeObject property
+	* Image.jvm.cs: Fixed Save method
+
 2005-08-16 Andrew Skiba <andrews@mainsoft.com>
 
 	* Icon.jvm.cs: match Bitmap internal constructor change
