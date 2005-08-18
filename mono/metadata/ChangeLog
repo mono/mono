@@ -1,9 +1,15 @@
+2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* icall.c: there might be ignored whitespace after the last '='. This
+	fixes length computation and bug #75840.
+
 2005-08-18  Zoltan Varga  <vargaz@freemail.hu>
 
 	* assembly.c (mono_assembly_load_full): Consider .exe extension as
 	well. Fixes #75809.
 
-	* reflection.c (create_custom_attr): Fix unmanaged memory leak. Fixes #75784.
+	* reflection.c (create_custom_attr): Fix unmanaged memory leak. Fixes
+	#75784.
 	
 	* reflection.c (create_custom_attr_data): Ditto.
 
@@ -16099,4 +16105,5 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
+
 
