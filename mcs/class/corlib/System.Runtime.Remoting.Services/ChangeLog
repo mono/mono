@@ -1,3 +1,8 @@
+2005-08-18  Lluis Sanchez Gual  <lluis@ximian.com>
+
+	* TrackingServices.cs: Properly generate an array from the
+	ArrayList. Added fast empty list check in the notification methods.
+
 2005-05-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* TrackingServices.cs: Lock on arraylist syncroot rather than

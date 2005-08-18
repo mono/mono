@@ -74,27 +74,48 @@ namespace System.Runtime.Remoting.Services {
 						return new ITrackingHandler[0];
 
 
-					return (ITrackingHandler[]) _handlers.ToArray();
+					return (ITrackingHandler[]) _handlers.ToArray (typeof(ITrackingHandler));
 				}
 			}
 		}
 
-		internal static void NotifyMarshaledObject(Object obj, ObjRef or) {
-			ITrackingHandler[] handlers = RegisteredHandlers;
+		internal static void NotifyMarshaledObject(Object obj, ObjRef or)
+		{
+			ITrackingHandler[] handlers;
+			
+			lock (_handlers.SyncRoot) {
+				if (_handlers.Count == 0) return;
+				handlers = (ITrackingHandler[]) _handlers.ToArray (typeof(ITrackingHandler));
+			}
+			
 			for(int i = 0; i < handlers.Length; i++) {
 				handlers[i].MarshaledObject (obj, or);
 			}
 		}
     
-		internal static void NotifyUnmarshaledObject(Object obj, ObjRef or) {
-			ITrackingHandler[] handlers = RegisteredHandlers;
+		internal static void NotifyUnmarshaledObject(Object obj, ObjRef or)
+		{
+			ITrackingHandler[] handlers;
+			
+			lock (_handlers.SyncRoot) {
+				if (_handlers.Count == 0) return;
+				handlers = (ITrackingHandler[]) _handlers.ToArray (typeof(ITrackingHandler));
+			}
+			
 			for(int i = 0; i < handlers.Length; i++) {
 				handlers[i].UnmarshaledObject (obj, or);
 			}
 		}
 
-		internal static void NotifyDisconnectedObject(Object obj) {
-			ITrackingHandler[] handlers = RegisteredHandlers;
+		internal static void NotifyDisconnectedObject(Object obj)
+		{
+			ITrackingHandler[] handlers;
+			
+			lock (_handlers.SyncRoot) {
+				if (_handlers.Count == 0) return;
+				handlers = (ITrackingHandler[]) _handlers.ToArray (typeof(ITrackingHandler));
+			}
+			
 			for(int i = 0; i < handlers.Length; i++) {
 				handlers[i].DisconnectedObject (obj);
 			}
