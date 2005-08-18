@@ -562,8 +562,8 @@ namespace MonoTests.System.Drawing
 			Bitmap bmp = new Bitmap (600, 800);
 			Graphics dc = Graphics.FromImage (bmp);
 			Matrix matrix = new Matrix ();
-			Rectangle rect1, rect2, rect3;
-			Region rgn1, rgn2, rgn3;
+			Rectangle rect1, rect2;
+			Region rgn1, rgn2;
 			RectangleF [] rects;
 
 			rect1 = new Rectangle (20, 30, 60, 80);
@@ -888,7 +888,8 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestIntersect()
 		{
-			return;
+
+
 			Bitmap bmp = new Bitmap (600, 800);
 			Graphics dc = Graphics.FromImage (bmp);
 			Matrix matrix = new Matrix ();
@@ -909,7 +910,7 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (290, rects[0].X);
 			Assert.AreEqual (40, rects[0].Y);
 			Assert.AreEqual (30, rects[0].Width);
-			Assert.AreEqual (70, rects[0].Height);
+			Assert.AreEqual (70, rects[0].Height);							
 
 			/* No intersect */
 			rect1 = new Rectangle (20, 330, 40, 50);
@@ -926,49 +927,6 @@ namespace MonoTests.System.Drawing
 			rgn1.Intersect (rgn4);
 			rects = rgn1.GetRegionScans (matrix);
 			Assert.AreEqual (0, rects.Length);
-
-			/* Several areas combinated */
-
-			rect1 = new Rectangle (10, 10, 50, 50);
-			rect2 = new Rectangle (100, 100, 60, 60);
-			rect3 = new Rectangle (200, 200, 80, 80);
-			rgn1 = new Region (rect1);
-			rgn1.Union (rect2);
-			rgn1.Union (rect3);
-
-			rect1 = new Rectangle (30, 30, 80, 80);
-			rect2 = new Rectangle (45, 45, 200, 200);
-			rect3 = new Rectangle (260, 260, 10, 10);
-			rect4 = new Rectangle (270, 260, 10, 10);
-			rgn2 = new Region (rect1);
-			rgn2.Union (rect2);
-			rgn2.Union (rect3);
-			rgn2.Union (rect4);
-
-			rgn1.Intersect (rgn2);
-
-			rects = rgn1.GetRegionScans (matrix);
-			Assert.AreEqual (4, rects.Length);
-
-			Assert.AreEqual (30, rects[0].X);
-			Assert.AreEqual (30, rects[0].Y);
-			Assert.AreEqual (30, rects[0].Width);
-			Assert.AreEqual (30, rects[0].Height);
-
-			Assert.AreEqual (100, rects[1].X);
-			Assert.AreEqual (100, rects[1].Y);
-			Assert.AreEqual (60, rects[1].Width);
-			Assert.AreEqual (60, rects[1].Height);
-
-			Assert.AreEqual (200, rects[2].X);
-			Assert.AreEqual (200, rects[2].Y);
-			Assert.AreEqual (45, rects[2].Width);
-			Assert.AreEqual (45, rects[2].Height);
-
-			Assert.AreEqual (260, rects[3].X);
-			Assert.AreEqual (260, rects[3].Y);
-			Assert.AreEqual (20, rects[3].Width);
-			Assert.AreEqual (10, rects[3].Height);
 		}
 
 		[Test]
