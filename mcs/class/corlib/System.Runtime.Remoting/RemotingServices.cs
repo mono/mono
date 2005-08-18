@@ -48,6 +48,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using System.Runtime.Remoting.Services;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
@@ -104,7 +105,12 @@ namespace System.Runtime.Remoting
 			ReturnMessage result;
 			
 			Type tt = target.GetType ();
-			MethodBase method = reqMsg.MethodBase.DeclaringType == tt ? reqMsg.MethodBase : tt.GetMethod(reqMsg.MethodName, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, (Type[]) reqMsg.MethodSignature, null);
+			MethodBase method;
+			if (reqMsg.MethodBase.DeclaringType == tt /*|| reqMsg.MethodBase.DeclaringType.IsInterface*/)
+				method = reqMsg.MethodBase;
+			else
+				method = tt.GetMethod (reqMsg.MethodName, BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance, null, (Type[]) reqMsg.MethodSignature, null);
+				
 			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
 			
 			try 
@@ -195,6 +201,7 @@ namespace System.Runtime.Remoting
 			{
 				LifetimeServices.StopTrackingLifetime (identity);
 				DisposeIdentity (identity);
+				TrackingServices.NotifyDisconnectedObject (obj);
 				return true;
 			}
 		}
@@ -224,18 +231,27 @@ namespace System.Runtime.Remoting
 			Type classToProxy = fRefine ? objref.ServerType : typeof (MarshalByRefObject);
 			if (classToProxy == null) classToProxy = typeof (MarshalByRefObject);
 
-			if (objref.IsReferenceToWellKnow)
-				return GetRemoteObject(objref, classToProxy);
+			if (objref.IsReferenceToWellKnow) {
+				object obj = GetRemoteObject(objref, classToProxy);
+				TrackingServices.NotifyUnmarshaledObject (obj, objref);
+				return obj;
+			}
 			else
 			{
-				if (classToProxy.IsContextful)
-				{
+				object obj;
+				
+				if (classToProxy.IsContextful) {
 					// Look for a ProxyAttribute
 					ProxyAttribute att = (ProxyAttribute) Attribute.GetCustomAttribute (classToProxy, typeof(ProxyAttribute),true);
-					if (att != null)
-						return att.CreateProxy (objref, classToProxy, null, null).GetTransparentProxy();
+					if (att != null) {
+						obj = att.CreateProxy (objref, classToProxy, null, null).GetTransparentProxy();
+						TrackingServices.NotifyUnmarshaledObject (obj, objref);
+						return obj;
+					}
 				}
-				return GetProxyForRemoteObject (objref, classToProxy);
+				obj = GetProxyForRemoteObject (objref, classToProxy);
+				TrackingServices.NotifyUnmarshaledObject (obj, objref);
+				return obj;
 			}
 		}
 
@@ -271,7 +287,9 @@ namespace System.Runtime.Remoting
 					else if (uri != null)
 						throw new RemotingException ("It is not possible marshal a proxy of a remote object.");
 
-					return proxy.ObjectIdentity.CreateObjRef(requested_type);
+					ObjRef or = proxy.ObjectIdentity.CreateObjRef(requested_type);
+					TrackingServices.NotifyMarshaledObject (obj, or);
+					return or;
 				}
 			}
 
@@ -292,10 +310,15 @@ namespace System.Runtime.Remoting
 					CreateClientActivatedServerIdentity (obj, requested_type, uri);
 			}
 
+			ObjRef oref;
+			
 			if (IsTransparentProxy (obj))
-				return RemotingServices.GetRealProxy(obj).ObjectIdentity.CreateObjRef (requested_type);
+				oref = RemotingServices.GetRealProxy(obj).ObjectIdentity.CreateObjRef (requested_type);
 			else
-				return obj.CreateObjRef(requested_type);
+				oref = obj.CreateObjRef(requested_type);
+			
+			TrackingServices.NotifyMarshaledObject (obj, oref);
+			return oref;
 		}
 
 		static string NewUri ()

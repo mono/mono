@@ -1,3 +1,8 @@
+2004-08-18  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingServices.cs: Notify marshals, unmarshals and disconnections
+	to TrackingServices. Fixes bug #75814.
+
 2005-06-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* ObjRef.cs RemotingServices.cs: Add some missing 2.0 attributes.
