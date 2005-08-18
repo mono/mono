@@ -1,3 +1,7 @@
+2005-08-18  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* MenuAPI.cs: fixes bug 75716
+
 2005-08-11 Umadevi S <sumadevi@novell.com>
 	* Control.cs: Fixed Remove & RemoveAt to make the parent of the control null.
 

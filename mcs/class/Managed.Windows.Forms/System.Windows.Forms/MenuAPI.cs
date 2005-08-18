@@ -228,16 +228,6 @@ namespace System.Windows.Forms
 				MenuAPI.SelectItem (hMenu, select_item, false, tracker);
 			}
 
-			// Make sure the menu is always visible and does not 'leave' the screen
-			// What is menu.Width/Height? It seemed to be 0/0
-			if ((pnt.X + menu.Wnd.Width) > SystemInformation.WorkingArea.Width) {
-				pnt.X -= menu.Wnd.Width;
-			}
-
-			if ((pnt.X + menu.Wnd.Height) > SystemInformation.WorkingArea.Height) {
-				pnt.Y -= menu.Wnd.Height;
-			}
-
 			menu.Wnd.Location =  menu.Wnd.PointToClient (pnt);
 				
 			if (menu.menu.IsDirty) {				
@@ -851,6 +841,7 @@ namespace System.Windows.Forms
 		{
 			Show ();
 			Capture = true;			
+			RefreshItems ();
 			Refresh ();
 		}
 		
@@ -964,6 +955,13 @@ namespace System.Windows.Forms
 		{
 			MenuAPI.MENU menu = MenuAPI.GetMenuFromID (hMenu);
 			ThemeEngine.Current.CalcPopupMenuSize (DeviceContext, hMenu);
+
+			if ((Location.X + menu.Width) > SystemInformation.WorkingArea.Width) {
+				Location = new Point (Location.X - menu.Width, Location.Y);
+			}
+			if ((Location.Y + menu.Height) > SystemInformation.WorkingArea.Height) {
+				Location = new Point (Location.X, Location.Y - menu.Height);
+			}
 
 			Width = menu.Width;
 			Height = menu.Height;			
