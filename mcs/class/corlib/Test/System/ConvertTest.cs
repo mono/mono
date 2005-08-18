@@ -2988,6 +2988,21 @@ namespace MonoTests.System {
 			Convert.FromBase64String ("amVsb3U=   \r \n\u007B");
 		}
 
+		[Test]
+		public void FromBase64_TrailingEqualAndSpaces () // From bug #75840.
+		{
+			string base64 = "\n     fdy6S2NLpnT4fMdokUHSHsmpcvo=    ";
+			byte [] bytes = Convert.FromBase64String (base64);
+			AssertEquals ("#01", 20, bytes.Length);
+			byte [] target = new byte [] { 0x7D, 0xDC, 0xBA, 0x4B, 0x63, 0x4B, 0xA6, 0x74, 0xF8, 0x7C, 0xC7,
+							0x68, 0x91, 0x41, 0xD2, 0x1E, 0xC9, 0xA9, 0x72, 0xFA };
+
+			for (int i = 0; i < 20; i++) {
+				if (bytes [i] != target [i])
+					Fail ("Item #" + i);
+			}
+		}
+
 		public void TestConvertFromNull() {
 			
 			AssertEquals ("#W1", false, Convert.ToBoolean (null as object));
