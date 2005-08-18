@@ -1,0 +1,4 @@
+2005-08-18  Boris Kirzner <borisk@mainsoft.com>
+
+	* SqlCommand.cs: added GetReturnParameter method.
+	

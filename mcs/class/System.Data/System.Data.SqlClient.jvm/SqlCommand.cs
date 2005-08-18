@@ -159,6 +159,18 @@ namespace System.Data.SqlClient
 			return null;
 		}
 
+		protected override AbstractDbParameter GetReturnParameter (IList userParametersList)
+		{
+			for(int i=0; i < userParametersList.Count; i++) {
+				AbstractDbParameter userParameter = (AbstractDbParameter)userParametersList[i];
+				if (userParameter.Direction == ParameterDirection.ReturnValue) {
+					return userParameter;
+				}
+			}
+
+			return null; 
+		}
+
 		protected override DbParameter CreateParameterInternal()
 		{
 			return new SqlParameter();

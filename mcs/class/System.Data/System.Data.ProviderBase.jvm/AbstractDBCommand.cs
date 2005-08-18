@@ -81,18 +81,19 @@ namespace System.Data.ProviderBase
 #if USE_DOTNET_REGEXP			
 			internal static readonly Regex NamedParameterStoredProcedureRegExp = new Regex(@"^\s*{?\s*((?<RETVAL>@\w+)\s*=\s*)?call\s+(?<PROCNAME>(((\[[^\]]*\])|([^\.\(])*)\s*\.\s*){0,2}(\[[^\]]*\]|((\s*[^\.\(\)\{\}\s])+)))\s*(\(\s*(?<USERPARAM>((""([^""]|(""""))*"")|('([^']|(''))*')|[^,])*)?\s*(,\s*(?<USERPARAM>((""([^""]|(""""))*"")|('([^']|(''))*')|[^,])*)\s*)*\))?\s*}?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 			internal static readonly Regex SimpleParameterStoredProcedureRegExp = new Regex(@"^\s*{?\s*((?<RETVAL>\?)\s*=\s*)?call\s+(?<PROCNAME>(((\[[^\]]*\])|([^\.\(])*)\s*\.\s*){0,2}(\[[^\]]*\]|((\s*[^\.\(\)\{\}\s])+)))\s*(\(\s*(?<USERPARAM>((""([^""]|(""""))*"")|('([^']|(''))*')|[^,])*)?\s*(,\s*(?<USERPARAM>((""([^""]|(""""))*"")|('([^']|(''))*')|[^,])*)\s*)*\))?\s*}?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+			internal static readonly Regex SelectFromStatementReqExp = new Regex(@"^\s*SELECT\s+(((\[[^\[\]]*\])|(""([^""]|(""""))*"")|('([^']|(''))*')|[^'""\[])*\s+)*FROM\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+			internal static readonly Regex ForBrowseStatementReqExp = new Regex(@"\s+FOR\s+BROWSE\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 #else
 			internal static readonly Pattern NamedParameterStoredProcedureRegExp = Pattern.compile(@"^\s*\{?\s*(?:(@\w+)\s*=\s*)?call\s+((?:(?:(?:\[[^\]]*\])|(?:[^\.\(\)\{\}\[\]])*)\s*\.\s*){0,2}(?:\[[^\]]*\]|(?:(?:\s*[^\.\(\)\{\}\[\]])+)))\s*(?:\((.*)\))?\s*\}?\s*$", Pattern.CASE_INSENSITIVE);
 			internal static readonly Pattern SimpleParameterStoredProcedureRegExp = Pattern.compile(@"^\s*\{?\s*(?:(\?)\s*=\s*)?call\s+((?:(?:(?:\[[^\]]*\])|(?:[^\.\(\)\{\}\[\]])*)\s*\.\s*){0,2}(?:\[[^\]]*\]|(?:(?:\s*[^\.\(\)\{\}\[\]])+)))\s*(?:\((.*)\))?\s*\}?\s*$", Pattern.CASE_INSENSITIVE);
+			internal static readonly Pattern SelectFromStatementReqExp = Pattern.compile(@"^\s*SELECT\s+(((\[[^\[\]]*\])|(""([^""]|(""""))*"")|('([^']|(''))*')|[^'""\[])*\s+)*FROM\s+", Pattern.CASE_INSENSITIVE);
+			internal static readonly Pattern ForBrowseStatementReqExp = Pattern.compile(@"\s+FOR\s+BROWSE\s*$", Pattern.CASE_INSENSITIVE);
 #endif
 
 //			internal static readonly Regex NamedParameterRegExp = new Regex(@"((?<USERPARAM>@\w+)|(\[[^\[\]]*\])|(""([^""]|(""""))*"")|('([^']|(''))*'))*", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 //			internal static readonly Regex SimpleParameterRegExp = new Regex(@"((?<USERPARAM>\?)|(\[[^\[\]]*\])|(""([^""]|(""""))*"")|('([^']|(''))*'))*", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 			internal static readonly SimpleRegex NamedParameterRegExp = new SqlParamsRegex();
 			internal static readonly SimpleRegex SimpleParameterRegExp = new OleDbParamsRegex();
-
-			internal static readonly Regex SelectFromStatementReqExp = new Regex(@"^\s*SELECT\s+(((\[[^\[\]]*\])|(""([^""]|(""""))*"")|('([^']|(''))*')|[^'""\[])*\s+)*FROM\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
-			internal static readonly Regex ForBrowseStatementReqExp = new Regex(@"\s+FOR\s+BROWSE\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 
 			internal static readonly SimpleRegex CompoundStatementSplitterReqExp = new CharacterSplitterRegex(';');
 			internal static readonly SimpleRegex ProcedureParameterSplitterReqExp = new CharacterSplitterRegex(',');
@@ -444,33 +445,22 @@ namespace System.Data.ProviderBase
 			if (trimedProcedureName.Length > 0 && trimedProcedureName[trimedProcedureName.Length-1] == ')')
 				addParas = false;
 			
-			if (derivedParams.Count > 0 && ((AbstractDbParameter)derivedParams[curDerivedPos]).Direction == ParameterDirection.ReturnValue) {
 				AbstractDbParameter derivedParam = (AbstractDbParameter)derivedParams[curDerivedPos++];
 
-				AbstractDbParameter userParameter = GetUserParameter(derivedParam.Placeholder, userParams, curUserPos);
-				if (userParameter != null && userParameter.Direction == ParameterDirection.ReturnValue) {
+				AbstractDbParameter returnValueParameter = GetReturnParameter (userParams);
+				if (returnValueParameter != null) {
+
 					curUserPos++;
-					InternalParameters.Add(userParameter);
+					InternalParameters.Add(returnValueParameter);
 					sb.Append("{? = call ");
 
-					if (derivedParam != null && !userParameter.IsDbTypeSet) {
-						userParameter.JdbcType = derivedParam.JdbcType;
+					if (derivedParam != null && !returnValueParameter.IsDbTypeSet) {
+						returnValueParameter.JdbcType = derivedParam.JdbcType;
 					}
 				}
 				else {
 					sb.Append("{call ");
 				}
-			}
-			else {
-				if (userParams.Count > 0 && 
-					((AbstractDbParameter)userParams[0]).Direction == ParameterDirection.ReturnValue) {
-					curUserPos++;
-					InternalParameters.Add(userParams[0]);
-					sb.Append("{? = call ");
-				}
-				else
-					sb.Append("{call ");
-			}
 
 			sb.Append(procedureName);
 			if (addParas)
@@ -702,6 +692,16 @@ namespace System.Data.ProviderBase
 			return null;
 		}
 
+		protected virtual AbstractDbParameter GetReturnParameter (IList userParametersList)
+		{
+			AbstractDbParameter param = GetUserParameter ("?", userParametersList, 0); 
+
+			if (param != null && param.Direction == ParameterDirection.ReturnValue)
+				return param;
+
+			return null;
+		}
+
 		int PrepareSimpleQuery(StringBuilder sb, string query, IList userParametersList, int userParametersListStart)
 		{
 			int queryCurrentPosition = 0;
@@ -749,9 +749,15 @@ namespace System.Data.ProviderBase
 
 			string dbname = connection.JdbcConnection.getMetaData().getDatabaseProductName();
 			if (dbname == "Microsoft SQL Server") {	//must add "FOR BROWSE" for selects
+#if USE_DOTNET_REGEX
 				if (SqlStatementsHelper.SelectFromStatementReqExp.IsMatch(query))
 					if (!SqlStatementsHelper.ForBrowseStatementReqExp.IsMatch(query))
 						sb.Append(" FOR BROWSE");
+#else
+				if (SqlStatementsHelper.SelectFromStatementReqExp.matcher ((java.lang.CharSequence)(object)query).matches ())
+					if (!SqlStatementsHelper.ForBrowseStatementReqExp.matcher ((java.lang.CharSequence)(object)query).matches ())
+						sb.Append (" FOR BROWSE");
+#endif
 			}
 
 			return userParamsConsumed;
@@ -792,9 +798,10 @@ namespace System.Data.ProviderBase
 				if (Behavior != CommandBehavior.SchemaOnly) {
 					_recordsAffected = -1;
 
-					if ((Behavior & CommandBehavior.SingleRow) != 0) {
-						_statement.setMaxRows(1);
-					}
+					// FIXME: this causes SP in MS Sql Server to create no mor than one row.
+//					if ((Behavior & CommandBehavior.SingleRow) != 0) {
+//						_statement.setMaxRows(1);
+//					}
 				
 					if(_statement is PreparedStatement) {
 						BindParameters(InternalParameters);

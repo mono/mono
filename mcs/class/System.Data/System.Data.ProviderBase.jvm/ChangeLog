@@ -1,3 +1,11 @@
+2005-18-08 Boris Kirzner <borisk@mainsoft.com>
+	* AbstractDBCommand.cs: 
+		- Using Java regex instead of .Net ones.
+		- Added GetReturnParameter method, used in resolving return value 
+		user parameter for stored procedures.
+		- Do not set max rows for jdbc statement - this causes sp on sql server
+		to fail in creating additional rows.
+
 2005-22-06  Konstantin Triger <kostat@mainsoft.com>
 
 	* AbstractDataReader.cs: GetBytes should return the data length if target buffer is null
