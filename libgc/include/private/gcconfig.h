@@ -1752,7 +1752,7 @@
 #   endif
 #   ifdef LINUX
 #       define OS_TYPE "LINUX"
-#       define HEURISTIC1
+#       define LINUX_STACKBOTTOM
 #       undef STACK_GRAN
 #       define STACK_GRAN 0x10000000
 #       define USE_GENERIC_PUSH_REGS
