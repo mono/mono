@@ -1,3 +1,12 @@
+2005-08-19  Ankit Jain <jankit@novell.com>
+
+	Fix #75847.
+	* marshal.c (mono_marshal_get_ptr_to_struct): Build method signature 
+	  here rather than using the method signature of a arbitrary function
+	  named 'System.Runtime.InteropServices.Marshal::PtrToStructure' with 
+	  two arguments.
+	  Hack done with Harinath.
+
 2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* threadpool.c: disable printing stack traces when we get a exception
