@@ -37,6 +37,8 @@ namespace Microsoft.JScript {
 
 		internal EnumeratorConstructor ()
 		{
+			name = "Enumerator";
+			_prototype = EnumeratorPrototype.Proto;
 		}
 
 		[JSFunctionAttribute(JSFunctionAttributeEnum.HasVarArgs)]

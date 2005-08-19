@@ -124,7 +124,7 @@ namespace Microsoft.JScript {
 		public override void SetValue (object obj, object value, BindingFlags invokeAttr,
 					       System.Reflection.Binder binder, CultureInfo culture)
 		{
-			throw new NotImplementedException ();
+			SetValue (obj, value);
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0

@@ -46,8 +46,8 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject | JSFunctionAttributeEnum.HasVarArgs, JSBuiltin.Function_call)]
 		public static object call (object thisObj, object thisArg, params object [] args)
 		{
-			SemanticAnalyser.assert_type (thisObj, typeof (FunctionObject));
-			FunctionObject fun = (FunctionObject) thisObj;
+			SemanticAnalyser.assert_type (thisObj, typeof (ScriptFunction));
+			ScriptFunction fun = (ScriptFunction) thisObj;
 			return fun.Invoke (thisArg, args);
 		}
 

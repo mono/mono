@@ -40,6 +40,7 @@ namespace Microsoft.JScript {
 		internal ArrayConstructor ()
 		{
 			_prototype = ArrayPrototype.Proto;
+			_length = 1;
 			name = "Array";
 		}
 

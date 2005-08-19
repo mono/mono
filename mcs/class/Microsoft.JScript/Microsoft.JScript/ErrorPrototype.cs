@@ -34,6 +34,8 @@ namespace Microsoft.JScript {
 
 	public class ErrorPrototype : JSObject {
 
+		internal static ErrorPrototype Proto = new ErrorPrototype ();
+
 		public readonly string name;
 
 		public ErrorConstructor constructor {

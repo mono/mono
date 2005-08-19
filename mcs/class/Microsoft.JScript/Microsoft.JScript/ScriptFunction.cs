@@ -46,6 +46,7 @@ namespace Microsoft.JScript {
 		internal Type return_type;
 		internal FormalParameterList parameters;
 		internal ScriptObject _prototype;
+		internal int _length = -1;
 		internal string source;
 
 		[DebuggerStepThroughAttribute]
@@ -67,12 +68,13 @@ namespace Microsoft.JScript {
 			if (ctr == null)
 				Console.WriteLine ("No constructor for {0}", this);
 			ScriptObject new_obj = ctr.CreateInstance (args) as ScriptObject;
+			new_obj._proto = this.prototype;
 
 			vsa_engine.PushScriptObject (new_obj);
 			Invoke (new_obj, args);
 			//
 			// NOTE: I think the result of calling an user function as a constructor
-			// should not be the resturn value of the user function. I think it should
+			// should not be the return value of the user function. I think it should
 			// always be the newly constructed object.
 			//
 			// TODO: This has yet to be verified.
@@ -108,6 +110,9 @@ namespace Microsoft.JScript {
 
 		public virtual int length {
 			get {
+				if (_length != -1)
+					return _length;
+
 				if (method != null)
 					return LateBinding.GetRequiredArgumentCount (method);
 
@@ -183,7 +188,7 @@ namespace Microsoft.JScript {
 				if (other.method != null && this.method != null)
 					return other.method == this.method;
 				else
-					throw new NotImplementedException ("Called Equals on user function");
+					return this == obj;
 			}
 		}
 

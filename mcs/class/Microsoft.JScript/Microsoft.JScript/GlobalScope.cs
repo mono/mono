@@ -31,6 +31,7 @@ using System.Reflection;
 using System;
 using System.Runtime.InteropServices.Expando;
 using Microsoft.JScript.Vsa;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
@@ -39,17 +40,15 @@ namespace Microsoft.JScript {
 		public GlobalScope (GlobalScope parent, VsaEngine engine)
 			: this (parent, engine, engine != null)
 		{
+			this.elems = new Hashtable ();
+			this.property_cache = new Hashtable ();
 		}
 
 		internal GlobalScope (GlobalScope parent, VsaEngine engine, bool is_comp_scope)
 		{
+			this.elems = new Hashtable ();
 			this.parent = parent;
 			this.engine = engine;
-		}
-
-		public FieldInfo AddField (string name)
-		{
-			throw new NotImplementedException ();
 		}
 
 		PropertyInfo IExpando.AddProperty (string name)
@@ -74,7 +73,7 @@ namespace Microsoft.JScript {
 
 		public override FieldInfo GetField (string name, int lexLevel)
 		{
-			throw new NotImplementedException ();
+			return GetField (name);
 		}
 
 		public override FieldInfo [] GetFields (BindingFlags bidFlags)

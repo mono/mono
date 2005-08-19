@@ -38,6 +38,7 @@ namespace Microsoft.JScript {
 		internal StringConstructor ()
 		{
 			_prototype = StringPrototype.Proto;
+			_length = 1;
 			name = "String";
 		}
 

@@ -173,8 +173,8 @@ namespace Microsoft.JScript {
 
 	internal class Binary : BinaryOp, IAssignable {
 
-		bool assign, late_bind = false;
-		AST right_side;
+		internal bool assign, late_bind = false;
+		internal AST right_side;
 
 		internal Binary (AST parent, AST left, JSToken op, Location location)
 			: this (parent, left, null, op, location)
@@ -362,6 +362,16 @@ namespace Microsoft.JScript {
 		void emit_late_get_or_set (EmitContext ec, LocalBuilder lb_builder)
 		{
 			ILGenerator ig = ec.ig;
+			LocalBuilder right_obj = ig.DeclareLocal (typeof (object));
+			//
+			// If right_side isn't supplied we take the new value from the stack.
+			// This case is used by PostOrPrefixOperator.Emit when it encounters a
+			// Binary node as its operand.
+			//
+			if (right_side == null && assign) {
+				ig.Emit (OpCodes.Box, typeof (object));
+				ig.Emit (OpCodes.Stloc, right_obj);
+			}
 			Type type = SemanticAnalyser.IsLiteral (left);
 
 			if (type == null) {
@@ -392,7 +402,10 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Stfld, lb_type.GetField ("obj"));
 			
 			if (assign) {
-				right_side.Emit (ec);
+				if (right_side != null)
+					right_side.Emit (ec);
+				else
+					ig.Emit (OpCodes.Ldloc, right_obj);
 				ig.Emit (OpCodes.Call, lb_type.GetMethod ("SetValue"));
 			} else
 				ig.Emit (OpCodes.Call, lb_type.GetMethod ("GetNonMissingValue"));
@@ -416,6 +429,14 @@ namespace Microsoft.JScript {
 		internal void emit_array_access (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
+			LocalBuilder right_obj = ig.DeclareLocal (typeof (object));
+			if (right_side == null && assign) {
+				LocalBuilder val_obj = ig.DeclareLocal (typeof (object));
+				ig.Emit (OpCodes.Stloc, val_obj);
+				ig.Emit (OpCodes.Box, typeof (object));
+				ig.Emit (OpCodes.Stloc, right_obj);
+				ig.Emit (OpCodes.Ldloc, val_obj);
+			}
 			ig.Emit (OpCodes.Ldc_I4_1);
 			ig.Emit (OpCodes.Newarr, typeof (object));
 			ig.Emit (OpCodes.Dup);
@@ -427,6 +448,8 @@ namespace Microsoft.JScript {
 			if (assign) {
 				if (right_side != null)
 					right_side.Emit (ec);
+				else
+					ig.Emit (OpCodes.Ldloc, right_obj);
 				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("SetIndexedPropertyValueStatic"));
 			} else {
 				ig.Emit (OpCodes.Ldc_I4_0);
@@ -472,12 +495,12 @@ namespace Microsoft.JScript {
 			Label false_label = ig.DefineLabel ();
 			Label exit_label = ig.DefineLabel ();
 			CodeGenerator.fall_true (ec, this, false_label);
-			ig.Emit (OpCodes.Ldc_I4_1);			
+			ig.Emit (OpCodes.Ldc_I4_1);	
 			ig.Emit (OpCodes.Box, t);			
 			ig.Emit (OpCodes.Br, exit_label);
 			ig.MarkLabel (false_label);
 			ig.Emit (OpCodes.Ldc_I4_0);			
-			ig.Emit (OpCodes.Box, t);			
+			ig.Emit (OpCodes.Box, t);
 			ig.MarkLabel (exit_label);
 		}
 
@@ -1107,6 +1130,8 @@ namespace Microsoft.JScript {
 		bool no_field;
 		LocalBuilder local_builder;
 
+		private bool undeclared = false;
+
 		internal Identifier (AST parent, string id, Location location)
 			: base (parent, location)
 		{
@@ -1138,6 +1163,9 @@ namespace Microsoft.JScript {
 						SemanticAnalyser.AddMethodVarsUsedNested (decl.GetContainerFunction.func_obj.name, decl);
 					}
 				}
+			} else if (SemanticAnalyser.NoFast) {
+				undeclared = true;
+				Console.WriteLine ("warning JS1135: Variable '" + name + "' has not been declared");
 			} else
 				throw new Exception (location.SourceName + "(" + location.LineNumber + 
 				     ",0) : error JS1135: Variable '" + name + "' has not been declared");
@@ -1202,7 +1230,8 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			if (assign && right_side != null)
+
+			if (assign && right_side != null && !undeclared)
 				right_side.Emit (ec);
 			if (binding is FormalParam) {
 				FormalParam f = binding as FormalParam;
@@ -1239,13 +1268,111 @@ namespace Microsoft.JScript {
 				binding.Emit (ec);
 			else if (binding is FunctionDeclaration)
 				load_script_func (ec, (FunctionDeclaration) binding);
-			else if (binding == null) // it got referenced before was declared and initialized
-				; // Console.WriteLine ("id = {0}, Identifier.Emit, binding == null? {1}", name.Value, binding == null);
-			else
+			else if (binding == null) { // it got referenced before was declared and initialized
+				if (undeclared) {
+					if (assign)
+						emit_undeclared_assignment (ec);
+					else
+						emit_undeclared_use (ig);
+				}
+			} else
 				Console.WriteLine ("Identifier.Emit, binding.GetType = {0}", binding.GetType ());
 
-			if (!assign && no_effect)
-				ig.Emit (OpCodes.Pop);				
+			if (!assign && no_effect && !undeclared)
+				ig.Emit (OpCodes.Pop);
+  		}
+  
+		private void emit_undeclared_assignment (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			string name = this.name.Value;
+			Type lb_type = typeof (LateBinding);
+			bool in_function = InFunction;
+
+			MethodInfo script_object_stack_top = typeof (VsaEngine).GetMethod ("ScriptObjectStackTop");
+			Type iactivation_obj = typeof (IActivationObject);
+
+			Label label_no_field = ig.DefineLabel ();
+			Label label_end = ig.DefineLabel ();
+
+			LocalBuilder lb_local = ig.DeclareLocal (lb_type);
+			LocalBuilder field_builder = ig.DeclareLocal (typeof (FieldInfo));
+			LocalBuilder tmp_helper = ig.DeclareLocal (typeof (object));
+
+			ig.Emit (OpCodes.Ldstr, name);
+			CodeGenerator.load_engine (in_function, ig);
+			ig.Emit (OpCodes.Call, script_object_stack_top);
+			ig.Emit (OpCodes.Newobj, lb_type.GetConstructor (new Type [] { typeof (string), typeof (object) }));
+			ig.Emit (OpCodes.Stloc, lb_local);
+			CodeGenerator.load_engine (in_function, ig);
+			ig.Emit (OpCodes.Call, script_object_stack_top);
+			ig.Emit (OpCodes.Castclass, iactivation_obj);
+			ig.Emit (OpCodes.Ldstr, name);
+
+			// FIXME: compute the needed lexical level, for now is hardcoded
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Callvirt, iactivation_obj.GetMethod ("GetField"));
+			ig.Emit (OpCodes.Stloc, field_builder);
+
+			ig.Emit (OpCodes.Ldloc, lb_local);
+
+			right_side.Emit (ec);
+			ig.Emit (OpCodes.Box, typeof (object));
+
+			ig.Emit (OpCodes.Ldloc, field_builder);		
+			ig.Emit (OpCodes.Ldnull);
+			ig.Emit (OpCodes.Beq_S, label_no_field);
+
+			ig.Emit (OpCodes.Stloc, tmp_helper); // Store value
+			ig.Emit (OpCodes.Pop); // Pop local builder
+			
+			ig.Emit (OpCodes.Ldloc, field_builder);
+			ig.Emit (OpCodes.Ldstr, name);
+			ig.Emit (OpCodes.Ldloc, tmp_helper);
+			ig.Emit (OpCodes.Callvirt, typeof (FieldInfo).GetMethod ("SetValue", new Type [] { typeof (object), typeof (object) }));
+			
+			ig.Emit (OpCodes.Br_S, label_end);
+
+			ig.MarkLabel (label_no_field);
+			ig.Emit (OpCodes.Call, lb_type.GetMethod ("SetValue"));
+			ig.MarkLabel (label_end);
+		}
+
+		private void emit_undeclared_use (ILGenerator ig)
+		{
+			Label merge = ig.DefineLabel ();
+
+			string name = this.name.Value;
+			Type lb_type = typeof (LateBinding);
+			LocalBuilder lb_local = ig.DeclareLocal (lb_type);
+			bool in_function = InFunction;
+			MethodInfo script_object_stack_top = typeof (VsaEngine).GetMethod ("ScriptObjectStackTop");
+			Type iactivation_obj = typeof (IActivationObject);
+
+			ig.Emit (OpCodes.Ldstr, name);
+			CodeGenerator.load_engine (in_function, ig);
+			ig.Emit (OpCodes.Call, script_object_stack_top);
+			ig.Emit (OpCodes.Newobj, lb_type.GetConstructor (new Type [] { typeof (string), typeof (object) }));
+			ig.Emit (OpCodes.Stloc, lb_local);
+			CodeGenerator.load_engine (in_function, ig);
+			ig.Emit (OpCodes.Call, script_object_stack_top);
+			ig.Emit (OpCodes.Castclass, iactivation_obj);
+			ig.Emit (OpCodes.Ldstr, name);
+
+			// FIXME: compute the needed lexical level, for now is hardcoded
+			ig.Emit (OpCodes.Ldc_I4_0);
+
+			ig.Emit (OpCodes.Callvirt, iactivation_obj.GetMethod ("GetMemberValue"));
+			ig.Emit (OpCodes.Dup);
+			ig.Emit (OpCodes.Call, typeof (Binding).GetMethod ("IsMissing"));
+
+			ig.Emit (OpCodes.Brfalse, merge);
+
+			ig.Emit (OpCodes.Pop);
+
+			ig.Emit (OpCodes.Ldloc, lb_local);
+			ig.Emit (OpCodes.Call, lb_type.GetMethod ("GetValue2"));
+			ig.MarkLabel (merge);
 		}
 
 		internal void EmitStore (EmitContext ec)

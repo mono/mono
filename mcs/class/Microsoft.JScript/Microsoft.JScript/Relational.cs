@@ -103,7 +103,7 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Call, typeof (Instanceof).GetMethod ("JScriptInstanceof"));
 				ig.Emit (OpCodes.Box, typeof (Boolean));
 				return;
-			} else 	if (op == JSToken.In) {
+			} else if (op == JSToken.In) {
 				if (left != null)
 					left.Emit (ec);
 				if (right != null)

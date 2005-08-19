@@ -950,6 +950,12 @@ namespace Microsoft.JScript {
 				if (tt == Token.IN) {
 					if (in_for_init)
 						break;
+					else {
+						ts.GetToken ();
+						decompiler.AddToken (tt);
+						pn = new Relational (parent, pn, ShiftExpr (parent), ToJSToken (tt), new Location (ts.SourceName, ts.LineNumber));
+						continue;
+					}
 				} else if (tt == Token.INSTANCEOF || tt == Token.LE || tt == Token.LT || tt == Token.GE || tt == Token.GT) {
 					ts.GetToken ();
 					decompiler.AddToken (tt);
@@ -1106,6 +1112,8 @@ namespace Microsoft.JScript {
 				return JSToken.Divide;
 			else if (tt == Token.MOD)
 				return JSToken.Modulo;
+			else if (tt == Token.IN)
+				return JSToken.In;
 			else if (tt == Token.INSTANCEOF)
 				return JSToken.Instanceof;
 			else if (tt == Token.LE)

@@ -60,7 +60,8 @@ namespace Microsoft.JScript {
 
 		public static bool IsMissing (Object value)
 		{
-			throw new NotImplementedException ();
+			// FIXME
+			return false;
 		}	    
 	}
 }		

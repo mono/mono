@@ -39,6 +39,7 @@ namespace Microsoft.JScript {
 		internal FunctionConstructor ()
 		{
 			_prototype = FunctionPrototype.Proto;
+			_length = 1;
 			name = "Function";
 		}
 

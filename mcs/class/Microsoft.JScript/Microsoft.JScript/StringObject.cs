@@ -60,7 +60,7 @@ namespace Microsoft.JScript {
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return value.GetHashCode ();
 		}
 
 		public new Type GetType ()

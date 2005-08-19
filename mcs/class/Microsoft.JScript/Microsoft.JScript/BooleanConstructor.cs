@@ -38,6 +38,7 @@ namespace Microsoft.JScript {
 		internal BooleanConstructor ()
 		{
 			_prototype = BooleanPrototype.Proto;
+			_length = 1;
 			name = "Boolean";
 		}
 

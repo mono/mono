@@ -65,7 +65,7 @@ namespace Microsoft.JScript {
 		/// </summary>
 		internal static Symbol CreateSymbol (string n)
 		{
-			n = LateBinding.MapToInternalName (n).Replace ("$", "dollar_");
+			n = LateBinding.MapToInternalName (n);
 			string u = String.Intern (n);
 			Symbol s = (Symbol) dict [u];
 		

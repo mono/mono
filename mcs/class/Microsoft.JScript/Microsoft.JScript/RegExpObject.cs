@@ -104,8 +104,8 @@ namespace Microsoft.JScript {
 				options |= RegexOptions.Multiline;
 			try {
 				regex = new Regex (source, options);
-			} catch (ArgumentException) {
-				throw new JScriptException (JSError.RegExpSyntax);
+			} catch (ArgumentException err) {
+				throw new JScriptException (JSError.RegExpSyntax, err.Message);
 			}
 		}
 

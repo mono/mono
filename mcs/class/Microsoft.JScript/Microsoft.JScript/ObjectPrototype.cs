@@ -81,8 +81,8 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_toString)]
 		public static string toString (object thisObj)
 		{
-			if (thisObj is JSObject) {
-				JSObject obj = (JSObject) thisObj;
+			if (thisObj is ScriptObject) {
+				ScriptObject obj = (ScriptObject) thisObj;
 				return "[object " + obj.ClassName + "]";
 			} else
 				throw new NotImplementedException ();

@@ -34,6 +34,8 @@ namespace Microsoft.JScript {
 
 	public class EnumeratorPrototype : JSObject {
 
+		internal static EnumeratorPrototype Proto = new EnumeratorPrototype ();
+
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Enumerator_atEnd)]
 		public static bool atEnd (object thisObj)
 		{

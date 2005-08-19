@@ -57,6 +57,7 @@ namespace Microsoft.JScript {
 		public object EvaluatePostOrPrefix (ref object v)
 		{
 			double value = Convert.ToNumber (v);
+			v = value;
 			int oper = (int) this.oper;
 			if (oper % 2 == 1) /* prefix? */
 				return value + 1;
@@ -105,9 +106,23 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Newobj, post_prefix.GetConstructor (new Type [] { typeof (int) }));
 				ig.Emit (OpCodes.Stloc, post_prefix_local);
 
+				Binary assign = null;
 				if (operand is Identifier)
 					((Identifier) operand).EmitLoad (ec);
-				else {
+				else if (operand is Binary) {
+					Binary binary = operand as Binary;
+					binary.no_effect = false;
+					binary.assign = false;
+					assign = new Binary (binary.parent, binary.left, binary.right, binary.op, binary.location);
+					assign.assign = true;
+					assign.late_bind = true;
+					assign.no_effect = false;
+					if (binary.op == JSToken.LeftBracket || binary.op == JSToken.AccessField) {
+						binary.Emit (ec);
+						ig.Emit (OpCodes.Box, typeof (object));
+					} else
+						throw new NotImplementedException (String.Format ("Unhandled binary op {0}", operand));
+				} else {
 					Console.WriteLine ("PostOrPrefixOperator: prefix = {0}, oper = {1}, operand = {2}",
 						prefix, oper, operand.GetType ());
 					throw new NotImplementedException ();
@@ -128,7 +143,10 @@ namespace Microsoft.JScript {
 
 				if (operand is Identifier)
 					((Identifier) operand).EmitStore (ec);
-				else throw new NotImplementedException ();
+				else if (operand is Binary)
+					assign.Emit (ec);
+				else
+					throw new NotImplementedException ();
 
 				//
 				// If value will be used, load the

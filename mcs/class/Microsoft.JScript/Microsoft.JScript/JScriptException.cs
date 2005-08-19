@@ -32,6 +32,7 @@
 using System;
 using Microsoft.Vsa;
 using System.Runtime.Serialization;
+using System.Text;
 
 namespace Microsoft.JScript {
 
@@ -40,10 +41,17 @@ namespace Microsoft.JScript {
 
 		private JSError error_number;
 		private string user_error = null;
+		private string extra_data = "";
 
 		public JScriptException (JSError errorNumber)
 		{
 			error_number = errorNumber;
+		}
+
+		internal JScriptException (JSError errorNumber, string extraData)
+		{
+			error_number = errorNumber;
+			extra_data = extraData;
 		}
 
 		internal JScriptException (string user_err)
@@ -68,10 +76,35 @@ namespace Microsoft.JScript {
 
 
 		public string Description {
-			get { throw new NotImplementedException (); }
+			get {
+				if (error_number == JSError.NoError)
+					return user_error;
+				else if (error_number == JSError.ArrayLengthConstructIncorrect)
+					return "Array length must be zero or a positive integer";
+				else if (error_number == JSError.PrecisionOutOfRange)
+					return "The number of fractional digits is out of range";
+				else if (error_number == JSError.RegExpSyntax)
+					return "Syntax error in regular expression";
+				else if (error_number == JSError.TypeMismatch)
+					return "Unexpected type";
+				else if (error_number == JSError.BooleanExpected)
+					return "Invoked Boolean.prototype.toString or Boolean.prototype.valueOf method on non-boolean";
+				else if (error_number == JSError.NumberExpected)
+					return "Invoked Number.prototype.toString or Number.prototype.valueOf method on non-number";
+				else if (error_number == JSError.StringExpected)
+					return "Invoked String.prototype.toString or String.prototype.valueOf method on non-string";
+				else if (error_number == JSError.FunctionExpected)
+					return "Invoked Function.prototype.toString on non-function";
+				else if (error_number == JSError.AssignmentToReadOnly)
+					return "Tried to assign to read only property";
+				else {
+					Console.WriteLine ("JScriptException:get_Message: unknown error_number {0}", error_number);
+					throw new NotImplementedException ();
+				}
+			}
 		}
-
 		
+
 		public int EndLine {
 			get { throw new NotImplementedException (); }
 		}
@@ -81,9 +114,9 @@ namespace Microsoft.JScript {
 			get { throw new NotImplementedException (); }
 		}
 
-
+	
 		public int Number {
-			get { throw new NotImplementedException (); }
+			get { return (int) error_number; }
 		}
 
 
@@ -109,27 +142,14 @@ namespace Microsoft.JScript {
 
 
 		public override string Message {
-			get {
-				if (error_number == JSError.NoError)
-					return user_error;
-				else if (error_number == JSError.ArrayLengthConstructIncorrect)
-					return "Array length must be zero or a positive integer";
-				else if (error_number == JSError.PrecisionOutOfRange)
-					return "The number of fractional digits is out of range";
-				else if (error_number == JSError.RegExpSyntax)
-					return "Syntax error in regular expression";
-				else if (error_number == JSError.TypeMismatch)
-					return "Unexpected type";
-				else if (error_number == JSError.NumberExpected)
-					return "Invoked Number.prototype.toString or Number.prototype.valueOf method on non-number";
-				else if (error_number == JSError.StringExpected)
-					return "Invoked String.prototype.toString or String.prototype.valueOf method on non-string";
-				else if (error_number == JSError.FunctionExpected)
-					return "Invoked Function.prototype.toString on non-function";
-				else {
-					Console.WriteLine ("JScriptException:get_Message: unknown error_number {0}", error_number);
-					throw new NotImplementedException ();
+			get
+			{
+				StringBuilder result = new StringBuilder (Description);
+				if (extra_data != "") {
+					result.Append (": ");
+					result.Append (extra_data);
 				}
+				return result.ToString ();
 			}
 		}
 

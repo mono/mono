@@ -38,6 +38,7 @@ namespace Microsoft.JScript {
 		internal NumberConstructor ()
 		{
 			_prototype = NumberPrototype.Proto;
+			_length = 1;
 			name = "Number";
 		}
 

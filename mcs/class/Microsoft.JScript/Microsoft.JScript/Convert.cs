@@ -44,6 +44,23 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
+		internal static bool IsBoolean (object value)
+		{
+			IConvertible ic = value as IConvertible;
+			TypeCode tc = Convert.GetTypeCode (value, ic);
+			switch (tc) {
+			case TypeCode.Boolean:
+				return true;
+
+			case TypeCode.Object:
+				if (value is BooleanObject)
+					return true;
+				break;
+			}
+
+			return false;
+		}
+
 		internal static bool IsNumber (object value)
 		{
 			IConvertible ic = value as IConvertible;
@@ -170,6 +187,8 @@ namespace Microsoft.JScript {
 			case TypeCode.Object:
 				if (value is JSObject)
 					return ((JSObject) value).GetDefaultValue (hint);
+				else if (value is GlobalScope)
+					return "[object global]";
 				else {
 					Console.WriteLine ("value = {0} ({1})", value, value.GetType ());
 					throw new NotImplementedException ();

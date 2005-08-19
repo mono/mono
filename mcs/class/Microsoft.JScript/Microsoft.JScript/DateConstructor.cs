@@ -49,6 +49,7 @@ namespace Microsoft.JScript {
 		internal DateConstructor ()
 		{
 			_prototype = DatePrototype.Proto;
+			_length = 7;
 			name = "Date";
 		}
 

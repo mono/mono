@@ -36,6 +36,7 @@ namespace Microsoft.JScript {
 
 		internal ActiveXObjectConstructor ()
 		{
+			name = "ActiveXObject";
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]

@@ -1,3 +1,38 @@
+2005-08-17  Florian Gross  <flgr@ccan.de>
+
+	* ScriptObject.cs: Added settable _proto for __proto__. This isn't
+	currently exposed to JScript, but set by
+	FunctionConstructor.CreateInstance. Moved AddField, ClassName,
+	proper_array_index up from JSObject
+	* Constructors: Added _length
+	* JSObject.cs: Moved AddField, ClassName, proper_array_index up to
+	ScriptObject. Added precaching of prototype fields
+	* PostOrPrefixOperator.cs: EvaluatePostOrPrefix correctly promotoes
+	old value to number. Implemented ++obj.a and obj["a"]--
+	* ActivationObject.cs: Added GetMemberValue
+	* expression.cs: Added logic for undeclared variables from cesar and
+	got it to work
+	* ObjectPrototype.cs: toString works on ScriptObjects now
+	* JScriptException.cs: Added extra_data for adding details to the
+	built-in messages
+	* IdentificationTable.cs: Adjusted internal name mapping logic
+	* Bindings.cs: Added stubbed IsMissing
+	* JSFieldInfo.cs: Added SetValue with Binder and CultureInfo stub
+	* Convert.cs: Added IsBoolean, implemented ToString for GlobalScope
+	* LateBindings.cs: Added name, obj constructor. Heavily refactored
+	by adding GetObjectProperty, TryDirectGetObjectProperty,
+	TryGetNativeProperty, DirectSetObjectProperty, TrySetNativeProperty
+	and changed methods to use them. We now do prototypes correctly in
+	general which also slows us down. MapToInternalName does
+	substituation of $ to dollar_. Implemented a simple property cache
+	* BooleanPrototype.cs: Better implementations of toString, valueOf
+	* Parser.cs: Fixed parsing of "in" keyword in argument lists
+	* FunctionPrototype.cs: Works with all ScriptFunctions
+	* RegExpObject.cs: Added extra data to RegExpSyntax exception
+	* GlobalScope.cs: Initializes elems, removed redundant AddField
+	override and implemented stub GetField with lex level
+	* ScriptFunctions.cs: Correctly sets __proto__ on result
+
 2005-08-13  Florian Gross  <flgr@ccan.de>
 
 	* DateConstructor.cs, StringConstructor.cs, ObjectConstructor.cs,

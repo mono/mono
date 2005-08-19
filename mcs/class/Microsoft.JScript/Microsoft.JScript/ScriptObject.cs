@@ -40,6 +40,9 @@ namespace Microsoft.JScript {
 	public abstract class ScriptObject : IReflect {
 		public object proto {
 			get {
+				if (_proto != null)
+					return _proto;
+
 				if (this == ObjectPrototype.Proto)
 					return DBNull.Value;
 
@@ -48,12 +51,11 @@ namespace Microsoft.JScript {
 					Console.WriteLine ("No prototype for {0}", this.GetType ());
 				FieldInfo field = prototype.GetField ("Proto", BindingFlags.NonPublic | BindingFlags.Static);
 				if (field != null) {
-					JSObject result = field.GetValue (prototype) as JSObject;
+					ScriptObject result = field.GetValue (prototype) as ScriptObject;
 					if (result != null)
 						return result;
 				}
 
-				Console.WriteLine ("No Proto for {0}", prototype);
 				throw new NotImplementedException ();
 			}
 		}
@@ -61,6 +63,26 @@ namespace Microsoft.JScript {
 		public VsaEngine engine;
 		protected GlobalScope parent;
 		internal Hashtable elems;
+		internal Hashtable property_cache;
+		internal object _proto = null;
+
+		public FieldInfo AddField (string name)
+		{
+			JSFieldInfo fi = new JSFieldInfo (name);
+			elems.Add (name, fi);
+			return fi;
+		}
+
+		internal void AddField (object name, object value)
+		{
+			string str_name = Convert.ToString (name);
+
+			if (proper_array_index (str_name)) {
+				JSFieldInfo field = (JSFieldInfo) AddField (str_name);
+				field.SetValue (str_name, value);
+			} else
+				throw new Exception ("Not a valid index array");
+		}
 
 		public FieldInfo GetField (string name, BindingFlags bindFlags)
 		{
@@ -192,6 +214,54 @@ namespace Microsoft.JScript {
 		internal object CallMethod (MethodInfo method, params object [] args)
 		{
 			return method.Invoke (null, LateBinding.assemble_args (this, method, args, engine));
+		}
+
+
+		internal string ClassName {
+			get {
+				if (this is GlobalScope)
+					return "global";
+				else if (this is ObjectPrototype)
+					return "Object";
+				else if (this is ArrayObject)
+					return "Array";
+				else if (this is FunctionObject)
+					return "Function";
+				else if (this is BooleanObject)
+					return "Boolean";
+				else if (this is StringObject)
+					return "String";
+				else if (this is NumberObject)
+					return "Number";
+				else if (this is DateObject)
+					return "Date";
+				else if (this is EvalErrorObject)
+					return "EvalError";
+				else if (this is RangeErrorObject)
+					return "RangeError";
+				else if (this is ReferenceErrorObject)
+					return "ReferenceError";
+				else if (this is RegExpObject)
+					return "RegExp";
+				else if (this is SyntaxErrorObject)
+					return "SyntaxError";
+				else if (this is TypeErrorObject)
+					return "TypeError";
+				else if (this is URIErrorObject)
+					return "URIError";
+				else if (this is ErrorObject)
+					return "Error";
+				else
+					return this.GetType ().ToString ();
+			}
+		}
+
+		//
+		// FIXME: 
+		//
+		private bool proper_array_index (object name)
+		{
+			return true;
 		}
 	}
 }	

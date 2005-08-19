@@ -34,6 +34,7 @@ using System.Reflection;
 using System.Diagnostics;
 using Microsoft.JScript.Vsa;
 using System.Collections;
+using System.Text.RegularExpressions;
 
 namespace Microsoft.JScript {
 
@@ -51,7 +52,8 @@ namespace Microsoft.JScript {
 
 		public LateBinding (string name, object obj)
 		{
-			throw new NotImplementedException ();
+			this.right_hand_side = name;
+			this.obj = obj;
 		}
 
 		[DebuggerStepThroughAttribute]
@@ -59,82 +61,12 @@ namespace Microsoft.JScript {
 		public object Call (object [] arguments, bool construct, bool brackets,
 					VsaEngine engine)
 		{
-			if (obj is Closure)
-				obj = ((Closure) obj).func;
+			ScriptObject js_obj = (ScriptObject) obj;
+			object fun = GetObjectProperty (js_obj, right_hand_side);
 
-			if (construct) {
-				if (brackets) {
-				} else {
-					JSFieldInfo field = null;
-					JSObject js_obj = obj as JSObject;
-					if (js_obj != null)
-						field = js_obj.GetField (right_hand_side) as JSFieldInfo;
-					if (field != null) {
-						JSObject val = field.GetValue (right_hand_side) as JSObject;
-						return CallValue (obj, val, arguments, construct, brackets, engine);
-					}
-
-					JSObject proto_obj = js_obj.proto as JSObject;
-					if (proto_obj != null) {
-						JSFieldInfo fi = proto_obj.GetField (right_hand_side);
-						if (fi != null) {
-							JSObject val = fi.GetValue (right_hand_side) as JSObject;
-							return CallValue (obj, val, arguments, construct, brackets, engine);
-						}
-					}
-
-					Console.WriteLine ("LateBinding:Call: no constructor for {0}.{1}", obj, right_hand_side);
-				}
-			} else {
-				if (brackets) {
-				} else {
-					MethodInfo method = null;
-
-					JSFieldInfo field = null;
-					JSObject js_obj = obj as JSObject;
-					if (js_obj != null)
-						field = js_obj.GetField (right_hand_side) as JSFieldInfo;
-					if (field != null) {
-						object value = field.GetValue (right_hand_side);
-						if (value is ScriptFunction)
-							method = ((ScriptFunction) value).method;
-					}
-
-					string name = MapToInternalName (right_hand_side);
-					Type type = null;
-					if (method == null) {
-						type = obj.GetType ();
-						method = type.GetMethod (name, BindingFlags.Public | BindingFlags.Static);
-					}
-
-					if (js_obj != null) {
-						if (method == null) {
-							type = SemanticAnalyser.map_to_prototype (js_obj);
-							if (type == null)
-								Console.WriteLine ("prototype is null for {0} ({1})", js_obj, js_obj.GetType ());
-							method = type.GetMethod (name, BindingFlags.Public | BindingFlags.Static);
-						}
-
-						if (method == null) {
-							JSObject proto_obj = js_obj.proto as JSObject;
-							if (proto_obj != null) {
-								JSFieldInfo fi = proto_obj.GetField (right_hand_side);
-								if (fi != null) {
-									JSObject val = fi.GetValue (right_hand_side) as JSObject;
-									return CallValue (obj, val, arguments, false, false, engine);
-								}
-							}
-						}
-					}
-
-					if (method == null)
-						Console.WriteLine ("LateBinding:Call: method is null for {0}.{1}!", obj, right_hand_side);
-
-					object [] args = assemble_args (obj, method, arguments, engine);
-					return method.Invoke (obj, args);
-				}
-			}
-			throw new NotImplementedException ();
+			if (fun == null)
+				Console.WriteLine ("Call: No function for {0} ({1}).{2}", obj, obj.GetType (), right_hand_side);
+			return CallValue (obj, fun, arguments, construct, brackets, engine);
 		}
 
 		internal static string MapToInternalName (string name)
@@ -145,7 +77,19 @@ namespace Microsoft.JScript {
 			case "__proto__":
 				return "proto";
 			default:
-				return name;
+				return name.Replace ("$", "dollar_");
+			}
+		}
+
+		internal static object MapToExternalName (string name)
+		{
+			switch (name) {
+			case "lastIndexOfGood":
+				return "lastIndexOf";
+			case "proto":
+				return "__proto__";
+			default:
+				return name.Replace ("dollar_", "$");
 			}
 		}
 
@@ -310,27 +254,17 @@ namespace Microsoft.JScript {
 				else if (val is FunctionObject)
 					return ((FunctionObject) val).CreateInstance (arguments);
 			} else if (brackets) {
-				if (!(val is JSObject))
-					throw new Exception ("val has to be a JSObject, but is " + (val == null ? "null" : val.GetType ().ToString ()));
-
-				JSObject js_val = (JSObject) val;
-				JSFieldInfo field = js_val.GetField (Convert.ToString (arguments [0]));
-				if (field != null)
-					return field.GetValue (arguments [0]);
-				else {
-					object result = js_val.elems [Convert.ToUint32 (arguments [0])];
-					if (result != null)
-						return result;
-					else
-						return null;
-				}
+				object first_arg = arguments.Length > 0 ? arguments [0] : null;
+				return GetObjectProperty ((ScriptObject) val, Convert.ToString (first_arg));
 			} else {
 				if (val is Closure)
 					return ((Closure) val).func.Invoke (thisObj, arguments);
 				else if (val is FunctionObject)
 					return ((FunctionObject) val).Invoke (thisObj, arguments);
-				else if (val is RegExpObject)
-					return RegExpPrototype.exec (val, arguments [0]);
+				else if (val is RegExpObject) {
+					object first_arg = arguments.Length > 0 ? arguments [0] : null;
+					return RegExpPrototype.exec (val, first_arg);
+				}
 			}
 
 			Console.WriteLine ("CallValue: construct = {0}, brackets = {1}, this = {2}, val = {3} ({4}), arg[0] = {5}",
@@ -358,75 +292,32 @@ namespace Microsoft.JScript {
 			if (obj is Closure)
 				obj = ((Closure) obj).func;
 
-			if (obj is JSObject) {
-				JSObject js_obj = (JSObject) obj;
-				uint index = Convert.ToUint32 (name);
-				// Numeric index?
-				if (Convert.ToString (index) == Convert.ToString (name) && js_obj.elems.ContainsKey (index)) {
-					js_obj.elems.Remove (index);
-					return true;
-				} else if (js_obj.elems.ContainsKey (name)) {
-					js_obj.elems.Remove (name);
-					return true;
-				} else
-					return false;
-			}
+			ScriptObject js_obj = (ScriptObject) obj;
 
-			Console.WriteLine ("DeleteMember: obj = {0}, rhs = {1}", obj, name);
-			throw new NotImplementedException ();
+			// Numeric index on Array?
+			uint index;
+			if (js_obj is ArrayObject && IsArrayIndex (name, out index)) {
+				if (js_obj.elems.ContainsKey (index)) {
+					js_obj.elems.Remove (index);
+					// Note: It appears that deleting an element should never update length
+					return true;
+				}
+			}
+			
+			if (js_obj.elems.ContainsKey (name)) {
+				InvalidateCacheEntry (js_obj, name);
+				js_obj.elems.Remove (name);
+				return true;
+			}
+ 
+			return false;
 		}
 
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public object GetNonMissingValue ()
 		{
-			if (obj is Closure)
-				obj = ((Closure) obj).func;
-
-			ScriptObject jsobj = obj as ScriptObject;
-			if (jsobj != null) {
-				JSFieldInfo field = jsobj.GetField (right_hand_side);
-				if (field != null)
-					return field.GetValue (right_hand_side);
-			}
-
-			Type type = obj.GetType ();
-			if (obj is GlobalScope)
-				type = typeof (GlobalObject);
-
-			MemberInfo [] members = type.GetMember (right_hand_side,
-				BindingFlags.FlattenHierarchy | BindingFlags.GetField | BindingFlags.GetProperty |
-				BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-
-			if (jsobj != null && members.Length == 0) {
-				type = SemanticAnalyser.map_to_prototype (jsobj);
-				if (type == null)
-					Console.WriteLine ("prototype for {0} ({1}) is null!", jsobj, jsobj.GetType ());
-				else
-					members = type.GetMember (right_hand_side);
-			}
-
-			if (members.Length > 0) {
-				MemberInfo member = members [0];
-				MemberTypes member_type = member.MemberType;
-
-				switch (member_type) {
-				case MemberTypes.Field:
-					return ((FieldInfo) member).GetValue (obj);
-				case MemberTypes.Property:
-					MethodInfo method = ((PropertyInfo) member).GetGetMethod ();
-					return method.Invoke (obj, new object [] { });
-				case MemberTypes.Method:
-					return new FunctionObject ((MethodInfo) member);
-				default:
-					Console.WriteLine ("GetNonMissingValue: type = {0}, member_type = {1}", type, member_type);
-					break;
-				}
-			}
-
-			Console.WriteLine ("members.Length = {0}, obj = {1}, type = {2}, rhs = {3}",
-				members.Length, obj, type, right_hand_side);
-			throw new NotImplementedException ();
+			return GetObjectProperty ((ScriptObject) obj, right_hand_side);
 		}
 
 		[DebuggerStepThroughAttribute]
@@ -436,94 +327,272 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		private static void SetArrayLength (ArrayObject ary, object field)
-		{
-			uint old_len = (uint) ary.length;
-			uint index = Convert.ToUint32 (field);
-			if (index > 0 && index != 4294967295 && index > old_len &&
-				Convert.ToString (index) == Convert.ToString (field))
-				ary.length = index + 1;
-		}
-
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public static void SetIndexedPropertyValueStatic (object obj, object [] arguments,
 								  object value)
 		{
-			if (!(obj is JSObject))
-				throw new Exception ("obj should be a JSObject");
-
-			JSObject js_obj = (JSObject) obj;
-			foreach (object o in arguments) {
-				if (js_obj.elems.ContainsKey (o)) {
-					object old_value = js_obj.elems [o];
-					JSFieldInfo field = old_value as JSFieldInfo;
-					if (field != null)
-						field.SetValue (o, value);
-					else
-						js_obj.elems [o] = value;
-				} else {
-					ArrayObject ary = js_obj as ArrayObject;
-					if (ary != null)
-						SetArrayLength(ary, o);
-
-					js_obj.AddField (o, value);
-				}
-			}
+			ScriptObject js_obj = (ScriptObject) obj;
+			foreach (object key in arguments)
+				DirectSetObjectProperty (js_obj, Convert.ToString (key), value);
 		}
 
 		[DebuggerStepThroughAttribute]
 		[DebuggerHiddenAttribute]
 		public void SetValue (object value)
 		{
+			//
+			// FIXME: We should look for native properties in the prototype chain before we
+			// create a new property in the object itself.
+			//
+			DirectSetObjectProperty ((ScriptObject) obj, right_hand_side, value);
+		}
+
+		private static void DirectSetObjectProperty (ScriptObject obj, string rhs, object value)
+		{		
+			ArrayObject ary = obj as ArrayObject;
+
+			InvalidateCacheEntry (obj, rhs);
+
+			// Numeric index on Array?
+			uint index;
+			if (ary != null && IsArrayIndex (rhs, out index)) {
+				Hashtable elems = obj.elems;
+				bool had_value = elems.ContainsKey (index);
+				elems [index] = value;
+				if (!had_value)
+					AdjustArrayLength (ary, index);
+			} else if (!TrySetNativeProperty (obj, rhs, value)) {
+				FieldInfo field = obj.GetField (rhs);
+				if (field == null)
+					field = obj.AddField (rhs);
+				field.SetValue (rhs, value);
+			}
+		}
+
+		private static void AdjustArrayLength (ArrayObject ary, uint index)
+		{
+			uint old_len = (uint) ary.length;
+			if (index > 0 && index != 4294967295 && index > old_len)
+				ary.length = index + 1;
+		}
+
+		private static bool TrySetNativeProperty (ScriptObject obj, string key, object value)
+		{
+			key = MapToInternalName (key);
+			// * seems to be a wilcard inside member names
+			if (key.IndexOf ('*') != -1)
+				return false;
+
 			if (obj is Closure)
 				obj = ((Closure) obj).func;
 
-			Type type = obj.GetType ();
-			if (obj is GlobalScope)
-				type = typeof (GlobalObject);
-			
-			MemberInfo [] members = type.GetMember (right_hand_side);
-			if (obj is JSObject && members.Length == 0) {
-				type = SemanticAnalyser.map_to_prototype ((JSObject) obj);
-				if (type == null)
-					Console.WriteLine ("prototype is null for {0} ({1})", obj, obj.GetType ());
-				members = type.GetMember (right_hand_side);
-			}
+			Type type = (obj is GlobalScope) ? typeof (GlobalObject) : obj.GetType ();
+			MemberInfo [] members = type.GetMember (key);
 
-			if (members.Length > 0) {
+			if (members.Length != 0) {
 				MemberInfo member = members [0];
-				MemberTypes member_type = member.MemberType;
 
-				switch (member_type) {
+				switch (member.MemberType) {
 				case MemberTypes.Property:
 					MethodInfo method = ((PropertyInfo) member).GetSetMethod ();
+					if (method == null) {
+						return true;
+						// Strict behavior: /fast+
+						//throw new JScriptException (JSError.AssignmentToReadOnly, type + ":" + key);
+					}
 					method.Invoke (obj, new object [] { value });
-					return;
+					return true;
+
+				case MemberTypes.Method:
+					break;
+
+				default:
+					Console.WriteLine ("TrySetNativeProperty: Unsupported member type {0} for {1}.{2}",
+						member.MemberType, obj, key);
+					break;
 				}
 			}
 
-			if (obj is JSObject) {
-				JSObject js_obj = (JSObject) obj;
-				if (js_obj.elems.ContainsKey (right_hand_side)) {
-					object old_value = js_obj.elems [right_hand_side];
-					if (old_value is JSFieldInfo) {
-						JSFieldInfo field = (JSFieldInfo) old_value;
-						field.SetValue (right_hand_side, value);
-					} else
-						js_obj.elems [right_hand_side] = value;
-				} else {
-					ArrayObject ary = js_obj as ArrayObject;
-					if (ary != null)
-						SetArrayLength (ary, right_hand_side);
+			return false;
+		}
 
-					js_obj.AddField (right_hand_side, value);
+		private static object GetObjectProperty (ScriptObject obj, string key)
+		{
+			return GetObjectProperty (obj, key, 0);
+		}
+
+		private static object GetObjectProperty (ScriptObject obj, string key, int nesting)
+		{
+			object result;
+
+			ScriptObject prop_obj;
+			if (nesting > 0 && GetCacheEntry (out prop_obj, obj, key)) {
+				if (prop_obj == null)
+					return null;
+
+				if (TryDirectGetObjectProperty (out result, prop_obj, key))
+					return result;
+			}
+
+			if (TryDirectGetObjectProperty (out result, obj, key)) {
+				if (nesting > 0)
+					SetCacheEntry (obj, key, obj);
+				return result;
+			}
+
+			ScriptObject cur_obj = obj.proto as ScriptObject;
+			if (cur_obj != null) {
+				result = GetObjectProperty (cur_obj, key, nesting + 1);
+				if (nesting > 0)
+					SetCacheEntry (obj, key, cur_obj);
+				return result;
+			}
+
+			if (nesting > 0)
+				SetCacheEntry (obj, key, null);
+			return null;
+		}
+
+		private static bool TryDirectGetObjectProperty (out object result, ScriptObject obj, string rhs)
+		{
+			ArrayObject ary = obj as ArrayObject;
+			Hashtable elems = obj.elems;
+
+			// Numeric index on array?
+			uint index;
+			if (ary != null && IsArrayIndex (rhs, out index)) {
+				result = elems [index];
+				return true;
+			}
+
+			if (elems.ContainsKey (rhs)) {
+				object val = elems [rhs];
+				JSFieldInfo field = val as JSFieldInfo;
+				if (field != null)
+					result = field.GetValue (rhs);
+				else
+					result = val;
+				return true;
+			}
+
+			bool success = TryGetNativeProperty (out result, obj, rhs);
+			return success;
+		}
+
+		private static bool TryGetNativeProperty (out object result, ScriptObject obj, string key)
+		{
+			// * seems to be a wilcard inside member names
+			if (key.IndexOf ('*') != -1) {
+				result = null;
+				return false;
+			}
+			key = MapToInternalName (key);
+			
+			if (obj is Closure)
+				obj = ((Closure) obj).func;
+
+			Type type = (obj is GlobalScope) ? typeof (GlobalObject) : obj.GetType ();
+			MemberInfo [] members = type.GetMember (key,
+				BindingFlags.FlattenHierarchy | BindingFlags.GetField | BindingFlags.GetProperty |
+				BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
+
+			if (members.Length != 0) {
+				MemberInfo member = members [0];
+
+				switch (member.MemberType) {
+				case MemberTypes.Field:
+					result = ((FieldInfo) member).GetValue (obj);
+					return true;
+
+				case MemberTypes.Property:
+					MethodInfo method = ((PropertyInfo) member).GetGetMethod ();
+					result = method.Invoke (obj, new object [] { });
+					return true;
+
+				case MemberTypes.Method:
+					result = new FunctionObject ((MethodInfo) member);
+					return true;
+
+				default:
+					Console.WriteLine ("TryGetNativeProperty: Unsupported member type {0} for {1}.{2}",
+						member.MemberType, obj, key);
+					break;
 				}
+			}
+
+			result = null;
+			return false;
+		}
+
+		#region Cache Helpers
+		private const bool USE_CACHE = true;
+
+		private static bool GetCacheEntry (out ScriptObject prop_obj, ScriptObject obj, string key)
+		{
+			if (USE_CACHE) {
+				//Console.WriteLine ("Getting cache for {0} ({1}) property {2}", obj, obj.GetType (), key);
+				Hashtable property_cache = obj.property_cache;
+				if (property_cache.ContainsKey (key)) {
+					//Console.WriteLine ("\t=> in cache: {0} ({1})", property_cache [cache_key],
+					//	property_cache [cache_key].GetType ());
+					prop_obj = property_cache [key] as ScriptObject;
+					return true;
+				}
+			}
+			//Console.WriteLine ("\t=> not in cache");
+			prop_obj = null;
+			return false;
+		}
+
+		private static void SetCacheEntry (ScriptObject obj, string key, ScriptObject prop_obj)
+		{
+			if (!USE_CACHE)
 				return;
-			}
 
-			Console.WriteLine ("SetValue: obj = {0}, rhs = {1}, count = {2}", obj, right_hand_side, members.Length);
-			throw new NotImplementedException ();
+			ArrayObject ary = obj as ArrayObject;
+			// Ignore numeric indices on arrays
+			if (ary != null && IsArrayIndex (key))
+				return;
+
+			//Console.WriteLine ("Setting cache for {0} ({1}) property {2} to {3} ({4})", obj, obj.GetType (),
+			//	key, prop_obj, prop_obj.GetType ());
+
+			Hashtable property_cache = obj.property_cache;
+			property_cache.Remove (key);
+			property_cache.Add (key, prop_obj);
+		}
+
+		private static void InvalidateCacheEntry (ScriptObject obj, string key)
+		{
+			if (!USE_CACHE)
+				return;
+
+			//Console.WriteLine ("Invalidating cache for {0} ({1}) property {2}", obj, obj.GetType (), key);
+
+			obj.property_cache.Remove (key);
+		}
+		#endregion
+
+		private static readonly Regex NonDigitRegex = new Regex (@"\D",
+			RegexOptions.Compiled | RegexOptions.ECMAScript);
+
+		internal static bool IsArrayIndex (string key, out uint index)
+		{
+			if (key == "" || NonDigitRegex.IsMatch (key)) {
+				index = 0;
+				return false;
+			}
+			index = Convert.ToUint32 (key);
+			return Convert.ToString (index) == key;
+		}
+
+		internal static bool IsArrayIndex (string key)
+		{
+			if (key == "" || NonDigitRegex.IsMatch (key))
+				return false;
+			uint index = Convert.ToUint32 (key);
+			return Convert.ToString (index) == key;
 		}
 	}
 }

@@ -43,7 +43,12 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Boolean_toString)]
 		public static string toString (object thisObj)
 		{
-			SemanticAnalyser.assert_type (thisObj, typeof (BooleanObject));
+			if (!Convert.IsBoolean (thisObj))
+				throw new JScriptException (JSError.BooleanExpected);
+
+			if (thisObj is bool)
+				return (bool) thisObj ? "true" : "false";
+
 			BooleanObject bo = thisObj as BooleanObject;
 			return bo.value ? "true" : "false";
 		}
@@ -51,7 +56,12 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Boolean_valueOf)]
 		public static object valueOf (object thisObj)
 		{
-			SemanticAnalyser.assert_type (thisObj, typeof (BooleanObject));
+			if (!Convert.IsBoolean (thisObj))
+				throw new JScriptException (JSError.BooleanExpected);
+
+			if (thisObj is bool)
+				return thisObj;
+
 			BooleanObject bo = thisObj as BooleanObject;
 			return bo.value;
 		}

@@ -53,6 +53,8 @@ namespace Microsoft.JScript {
 		//
 		private static Type global_obj = typeof (GlobalObject);
 
+		internal static bool NoFast = true;
+
 		static SemanticAnalyser ()
 		{
 			label_set = new IdentificationTable ();

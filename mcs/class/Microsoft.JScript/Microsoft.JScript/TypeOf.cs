@@ -53,6 +53,9 @@ namespace Microsoft.JScript {
 
 			case TypeCode.Object:
 			case TypeCode.DBNull:
+				if (value is ScriptFunction || value is RegExpObject)
+					return "function";
+
 				return "object";
 
 			case TypeCode.Empty:

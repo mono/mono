@@ -77,7 +77,10 @@ namespace Microsoft.JScript {
 		[DebuggerHiddenAttribute]
 		public Object GetMemberValue (string name, int lexLevel)
 		{
-			throw new NotImplementedException ();
+			FieldInfo field = GetField (name);
+			if (field == null)
+				return null;
+			return field.GetValue (name);
 		}
 	}
 }

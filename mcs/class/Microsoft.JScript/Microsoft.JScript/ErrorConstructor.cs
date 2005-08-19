@@ -100,12 +100,16 @@ namespace Microsoft.JScript {
 		internal ErrorConstructor ()
 		{
 			name = "Error";
+			_prototype = ErrorPrototype.Proto;
+			_length = 1;
 		}
 
 		internal ErrorConstructor (ErrorType errorType)
 		{
 			error_type = errorType;
 			name = ErrorTypeToName (errorType);
+			_prototype = ErrorPrototype.Proto;
+			_length = 1;
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasVarArgs)]

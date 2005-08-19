@@ -38,15 +38,25 @@ namespace Microsoft.JScript {
 	public class JSObject : ScriptObject, IEnumerable, IExpando {
 
 		public JSObject ()
-		{		
-			elems = new Hashtable ();
-		}
-
-		public FieldInfo AddField (string name)
 		{
-			JSFieldInfo fi = new JSFieldInfo (name);
-			elems.Add (name, fi);
-			return fi;
+			elems = new Hashtable ();
+			property_cache = new Hashtable ();
+			
+			/* Initialize cache for common properties if this is a Prototype */
+			Type type = this.GetType ();
+			if (type.GetField ("Proto", BindingFlags.NonPublic | BindingFlags.Static) != null)
+				foreach (MemberInfo field in type.GetMembers ()) {
+					if (field.DeclaringType != type)
+						continue;
+
+					string name = field.Name;
+					if (name.StartsWith ("get_"))
+						name = name.Substring (4);
+					if (name == "Item" || name.StartsWith ("set_") || name.StartsWith ("."))
+						continue;
+
+					property_cache [LateBinding.MapToExternalName (name)] = this;
+				}
 		}
 
 		IEnumerator IEnumerable.GetEnumerator()
@@ -100,60 +110,6 @@ namespace Microsoft.JScript {
 		public override string ToString ()
 		{
 			return String.Format ("[{0}]", ClassName);
-		}
-
-		internal string ClassName {
-			get {
-				if (this is ObjectPrototype)
-					return "Object";
-				else if (this is ArrayObject)
-					return "Array";
-				else if (this is BooleanObject)
-					return "Boolean";
-				else if (this is StringObject)
-					return "String";
-				else if (this is NumberObject)
-					return "Number";
-				else if (this is DateObject)
-					return "Date";
-				else if (this is EvalErrorObject)
-					return "EvalError";
-				else if (this is RangeErrorObject)
-					return "RangeError";
-				else if (this is ReferenceErrorObject)
-					return "ReferenceError";
-				else if (this is RegExpObject)
-					return "RegExp";
-				else if (this is SyntaxErrorObject)
-					return "SyntaxError";
-				else if (this is TypeErrorObject)
-					return "TypeError";
-				else if (this is URIErrorObject)
-					return "URIError";
-				else if (this is ErrorObject)
-					return "Error";
-				else
-					return this.GetType ().ToString ();
-			}
-		}
-
-		internal void AddField (object name, object value)
-		{
-			string str_name = Convert.ToString (name);
-			
-			if (proper_array_index (str_name)) {
-				JSFieldInfo field = (JSFieldInfo) AddField (str_name);
-				field.SetValue (str_name, value);
-			} else
-				throw new Exception ("Not a valid index array");
-		}
-
-		//
-		// FIXME: 
-		//
-		private bool proper_array_index (object name)
-		{
-			return true;
 		}
 
 		internal virtual object GetDefaultValue (Type hint, bool avoid_toString)

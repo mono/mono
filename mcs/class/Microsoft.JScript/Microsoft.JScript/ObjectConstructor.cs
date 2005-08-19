@@ -38,6 +38,7 @@ namespace Microsoft.JScript {
 		internal ObjectConstructor ()
 		{
 			_prototype = ObjectPrototype.Proto;
+			_length = 1;
 			name = "Object";
 		}
 
