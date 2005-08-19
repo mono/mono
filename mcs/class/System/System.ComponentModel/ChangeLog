@@ -1,3 +1,40 @@
+2005-08-19  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* SingleConverter.cs: Implement conversion from string to match MS.NET.
+	Set eol-style to native.
+	* TypeConverter.cs: Always support conversion from InstanceDescriptor. 
+	Set eol-style to native.
+	* UInt16Converter.cs: Implement conversion from string to match MS.NET.
+	Added support for converting string containing hex prefix. Set 
+	eol-style to native.
+	* SByteConverter.cs: Implement conversion from string to match MS.NET.
+	Added support for converting string containing hex prefix. Set
+	eol-style to native.
+	* Int16Converter.cs: Implement conversion from string to match MS.NET.
+	Added support for converting string containing hex prefix. Set 
+	eol-style to native.
+	* UInt64Converter.cs: Implement conversion from string to match MS.NET.
+	Added support for converting string containing hex prefix. Set 
+	eol-style to native.
+	* DecimalConverter.cs: Implement conversion from string to match MS.NET.
+	Set eol-style to native.
+	* Int64Converter.cs: Implement conversion from string to match MS.NET.
+	Added support for converting string containing hex prefix. Set 
+	eol-style to native.
+	* UInt32Converter.cs: Implement conversion from string to match MS.NET.
+	Added support for converting string containing hex prefix. Set 
+	eol-style to native.
+	* Int32Converter.cs: Implement conversion from string to match MS.NET.
+	Added support for converting string containing hex prefix. Set 
+	eol-style to native.
+	* DoubleConverter.cs: Implement conversion from string to match MS.NET.
+	Set eol-style to native.
+	* BaseNumberConverter.cs: Support conversion from string containing 
+	hex prefixes. Set eol-style to native.
+	* ByteConverter.cs: Implement conversion from string to match MS.NET.
+	Added support for converting string containing hex prefix. Set 
+	eol-style to native.
+
 2005-08-18  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* EditorBrowsableState.cs: Changed line ending from CRLF to LF to

@@ -36,11 +36,14 @@ namespace System.ComponentModel
 {
 	public abstract class BaseNumberConverter : TypeConverter
 	{
-
 		internal Type InnerType;
 
 		protected BaseNumberConverter()
 		{
+		}
+
+		internal abstract bool SupportHex {
+			get;
 		}
 
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
@@ -63,9 +66,20 @@ namespace System.ComponentModel
 			if (culture == null)
 				culture = CultureInfo.CurrentCulture;
 
-			if (value is string) {
+			string text = value as string;
+			if (text != null) {
 				try {
-					return Convert.ChangeType (value, InnerType, culture.NumberFormat);
+					if (SupportHex) {
+						if (text.Length >= 1 && text[0] == '#') {
+							return ConvertFromString (text.Substring (1), 16);
+						}
+
+						if (text.StartsWith ("0x") || text.StartsWith ("0X")) {
+							return ConvertFromString (text, 16);
+						}
+					}
+
+					return ConvertFromString (text, culture.NumberFormat);
 				} catch (Exception e) {
 					// LAMESPEC MS wraps the actual exception in an Exception
 					throw new Exception (value.ToString() + " is not a valid "
@@ -90,6 +104,16 @@ namespace System.ComponentModel
 
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
+
+		internal abstract object ConvertFromString (string value, NumberFormatInfo format);
+
+		internal virtual object ConvertFromString (string value, int fromBase)
+		{
+			if (SupportHex) {
+				throw new NotImplementedException ();
+			} else {
+				throw new InvalidOperationException ();
+			}
+		}
 	}
 }
-

@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
+
 namespace System.ComponentModel
 {
 	public class SByteConverter : BaseNumberConverter
@@ -35,6 +37,21 @@ namespace System.ComponentModel
 		public SByteConverter()
 		{
 			InnerType = typeof (SByte);
+		}
+
+		internal override bool SupportHex
+		{
+			get { return true; }
+		}
+
+		internal override object ConvertFromString (string value, NumberFormatInfo format)
+		{
+			return sbyte.Parse (value, NumberStyles.Integer, format);
+		}
+
+		internal override object ConvertFromString (string value, int fromBase)
+		{
+			return Convert.ToSByte (value, fromBase);
 		}
 	}
 }

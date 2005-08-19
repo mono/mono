@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
+
 namespace System.ComponentModel
 {
 	public class UInt16Converter : BaseNumberConverter
@@ -35,6 +37,20 @@ namespace System.ComponentModel
 		public UInt16Converter()
 		{
 			InnerType = typeof (UInt16);
+		}
+
+		internal override bool SupportHex {
+			get { return true; }
+		}
+
+		internal override object ConvertFromString (string value, NumberFormatInfo format)
+		{
+			return ushort.Parse (value, NumberStyles.Integer, format);
+		}
+
+		internal override object ConvertFromString (string value, int fromBase)
+		{
+			return Convert.ToUInt16 (value, fromBase);
 		}
 	}
 }

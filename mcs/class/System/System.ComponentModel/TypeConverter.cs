@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
@@ -47,6 +48,10 @@ namespace System.ComponentModel
 
 		public virtual bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
+			if (sourceType == typeof (InstanceDescriptor)) {
+				return true;
+			}
+
 			return false;
 		}
 
@@ -67,6 +72,10 @@ namespace System.ComponentModel
 
 		public virtual object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
+			if (value is InstanceDescriptor) {
+				return ((InstanceDescriptor) value).Invoke ();
+			}
+
 			throw new NotSupportedException (this.ToString() + " cannot be created from '" +
 						         value.GetType().ToString() + "'");
 		}

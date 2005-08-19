@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Globalization;
+
 namespace System.ComponentModel
 {
 	public class SingleConverter : BaseNumberConverter
@@ -35,6 +37,15 @@ namespace System.ComponentModel
 		public SingleConverter()
 		{
 			InnerType = typeof (Single);
+		}
+
+		internal override bool SupportHex {
+			get { return false; }
+		}
+
+		internal override object ConvertFromString (string value, NumberFormatInfo format)
+		{
+			return float.Parse (value, NumberStyles.Float, format);
 		}
 	}
 }

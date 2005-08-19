@@ -36,11 +36,15 @@ using System.ComponentModel.Design.Serialization;
 
 namespace System.ComponentModel
 {
-    public class DecimalConverter : BaseNumberConverter
+	public class DecimalConverter : BaseNumberConverter
 	{
 		public DecimalConverter()
 		{
 			InnerType = typeof(Decimal);
+		}
+
+		internal override bool SupportHex {
+			get { return false; }
 		}
 
 		public override bool CanConvertTo (ITypeDescriptorContext context,
@@ -59,8 +63,13 @@ namespace System.ComponentModel
 				ConstructorInfo ctor = typeof(Decimal).GetConstructor (new Type[] {typeof(int[])});
 				return new InstanceDescriptor (ctor, new object[] {Decimal.GetBits (cval)});
 			}
-			Console.WriteLine (Environment.StackTrace);
+
 			return base.ConvertTo(context, culture, value, destinationType);
+		}
+
+		internal override object ConvertFromString (string value, NumberFormatInfo format)
+		{
+			return decimal.Parse (value, NumberStyles.Float, format);
 		}
 	}
 }
