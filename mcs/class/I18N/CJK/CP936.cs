@@ -74,10 +74,10 @@ namespace I18N.CJK
 			while(charCount-- > 0) {
 				ch = chars[charIndex++];
 				
-				if (posn >= byteLength) {
+				if (posn >= byteLength)
 					throw new ArgumentException ("bytes", Strings.GetString ("Arg_InsufficientSpace"));
-				}
 
+/*
 				if (ch <= 0x80 || ch == 0xFF) {
 					// Character maps to itself
 					bytes[posn++] = (byte)ch;
@@ -271,6 +271,16 @@ namespace I18N.CJK
 				} else {
 					bytes[posn++] = (byte)(byte1 + 0x80);
 					bytes[posn++] = (byte)(byte2 + 0x80);
+				}
+*/
+				if ((posn + 1) >= byteLength)
+					throw new ArgumentException ("bytes", (Strings.GetString ("Arg_InsufficientSpace")));
+				int val = convert.UcsToGbk (ch);
+				if (val < 0)
+					bytes [posn++] = (byte) '?';
+				else {
+					bytes [posn++] = (byte) (val / 0x100);
+					bytes [posn++] = (byte) (val % 0x100);
 				}
 			}
 			
@@ -518,6 +528,7 @@ namespace I18N.CJK
 					b = bytes[byteIndex++];
 					byteCount--;
 
+					/*
 					if (lastByte == 0) {
 						if (posn >= charLength) {
 							throw new ArgumentException ("chars", (Strings.GetString ("Arg_InsufficientSpace")));
@@ -565,6 +576,19 @@ namespace I18N.CJK
 
 						lastByte = 0;
 					}
+					*/
+
+					if (b == 0) {
+						chars [posn++] = '\x0';
+						continue;
+					}
+
+					if (lastByte == 0 && posn >= charLength)
+						throw new ArgumentException ("chars", (Strings.GetString ("Arg_InsufficientSpace")));
+
+					char c = convert.BytePairToChar (ref lastByte, b);
+					if (c != char.MaxValue)
+						chars [posn++] = c == char.MinValue ? '?' : c;
 				}
 
 				return (posn - charIndex);

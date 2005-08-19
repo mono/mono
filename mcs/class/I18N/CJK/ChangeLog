@@ -1,0 +1,11 @@
+2005-08-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	why didn't we have it? ;-)
+
+	* README.gb18030,
+	  gb18030.table,
+	  GB18030Encoding.cs,
+	  GB18030Source.cs,
+	  Makefile,
+	  I18N.CJK.dll.sources : added support for GB18030 encoding.
+	* Gb2312Convert.cs : added utility conversion methods.

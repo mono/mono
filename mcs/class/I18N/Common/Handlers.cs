@@ -47,6 +47,8 @@ public sealed class Handlers
         "I18N.CJK.ENCiso_2022_jp",
         "I18N.CJK.ENCeuc_jp",
         "I18N.CJK.ENCuhc",
+        "I18N.CJK.ENCgb18030",
+        "I18N.CJK.GB18030Encoding",
         "I18N.MidEast.CP1254",
         "I18N.MidEast.ENCwindows_1254",
         "I18N.MidEast.CP1255",

@@ -11,5 +11,7 @@ CodeTable.cs
 DbcsEncoding.cs
 DbcsConvert.cs
 Gb2312Convert.cs
+GB18030Encoding.cs
+GB18030Source.cs
 JISConvert.cs
 KSConvert.cs
