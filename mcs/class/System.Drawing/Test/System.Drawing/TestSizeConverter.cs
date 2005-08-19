@@ -52,10 +52,10 @@ namespace MonoTests.System.Drawing
 		public void SetUp ()
 		{
 			sz = new Size (10, 20);
-			szStrInvariant = sz.Width + ", " + sz.Height;
+			szStrInvariant = sz.Width + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " " + sz.Height;
 
 			szneg = new Size (-20, -30);
-			sznegStrInvariant = szneg.Width + ", " + szneg.Height;
+			sznegStrInvariant = szneg.Width + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " " + szneg.Height;
 
 			szconv = (SizeConverter) TypeDescriptor.GetConverter (sz);
 		}
@@ -95,10 +95,10 @@ namespace MonoTests.System.Drawing
 		{
 			AssertEquals ("CF#1", sz, (Size) szconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
-								"10, 20"));
+								"10" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 20"));
 			AssertEquals ("CF#2", szneg, (Size) szconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
-								"-20, -30"));
+								"-20" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " -30"));
 
 			try {
 				szconv.ConvertFrom (null, CultureInfo.InvariantCulture, "10");

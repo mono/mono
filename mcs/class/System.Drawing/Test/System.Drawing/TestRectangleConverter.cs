@@ -52,10 +52,15 @@ namespace MonoTests.System.Drawing
 		public void SetUp ()
 		{
 			rect = new Rectangle (10, 10, 20, 30);
-			rectStrInvariant = rect.X + ", " + rect.Y + ", " + rect.Width + ", " + rect.Height;
+			rectStrInvariant = rect.X + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " " +
+			rect.Y + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " " +
+			rect.Width + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " " + 
+			rect.Height;
 
 			rectneg = new Rectangle (-10, -10, 20, 30);
-			rectnegStrInvariant = rectneg.X + ", " + rectneg.Y + ", " + rectneg.Width + ", " + rectneg.Height;
+			rectnegStrInvariant = rectneg.X + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " " 
+			+ rectneg.Y + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " " + 
+			rectneg.Width + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " " + rectneg.Height;
 
 			rconv = (RectangleConverter) TypeDescriptor.GetConverter (rect);
 		}
@@ -95,10 +100,16 @@ namespace MonoTests.System.Drawing
 		{
 			AssertEquals ("CF#1", rect, (Rectangle) rconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
-								"10, 10, 20, 30"));
+								"10" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + 
+								" 10" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + 
+								" 20" + CultureInfo.InvariantCulture.TextInfo.ListSeparator +
+								" 30"));
 			AssertEquals ("CF#2", rectneg, (Rectangle) rconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
-								"-10, -10, 20, 30"));
+								"-10" + CultureInfo.InvariantCulture.TextInfo.ListSeparator +
+								" -10" +  CultureInfo.InvariantCulture.TextInfo.ListSeparator +
+								" 20" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + 
+								" 30"));
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture, 

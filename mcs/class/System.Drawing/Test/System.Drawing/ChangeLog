@@ -1,3 +1,10 @@
+2005-08-19 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestPointConverter.cs: Fixes and changes to make the test locale unsensitive
+	* TestRectangleConverter.cs: Fixes and changes to make the test locale unsensitive
+	* TestSizeConverter.cs:  Fixes and changes to make the test locale unsensitive
+	* ColorConverter.cs: Fixes and changes to make the test locale unsensitive
+
 2005-08-17 Jordi Mas i Hernandez <jordi@ximan.com>
 
 	* TestRegion.cs: Adds many new cases for the new region implementation

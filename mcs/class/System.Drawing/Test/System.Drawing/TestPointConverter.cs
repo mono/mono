@@ -51,10 +51,10 @@ namespace MonoTests.System.Drawing
 		public void SetUp ()
 		{
 			pt = new Point (1, 2);
-			ptStr = pt.X + ", " + pt.Y;
+			ptStr = pt.X + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " " + pt.Y;
 
 			ptneg = new Point (-2, -3);
-			ptnegStr = ptneg.X + ", " + ptneg.Y;
+			ptnegStr = ptneg.X + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " " + ptneg.Y;
 
 			ptconv = (PointConverter) TypeDescriptor.GetConverter (pt);
 		}
@@ -94,10 +94,10 @@ namespace MonoTests.System.Drawing
 		{
 			AssertEquals ("CF#1", pt, (Point) ptconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
-								"1, 2"));
+								"1" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 2"));
 			AssertEquals ("CF#2", ptneg, (Point) ptconv.ConvertFrom (null,
 								CultureInfo.InvariantCulture,
-								"-2, -3"));
+								"-2" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " -3"));
 			try {
 				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture, "1");
 				Fail ("CF#3: must throw ArgumentException");
@@ -114,7 +114,8 @@ namespace MonoTests.System.Drawing
 
 			try {
 				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    "1, 1, 1");
+						    "1" + CultureInfo.InvariantCulture.TextInfo.ListSeparator +  " 1" +
+						    CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 1");
 				Fail ("CF#4: must throw ArgumentException");
 			} catch (Exception e) {
 				Assert ("CF#4", e is ArgumentException);
@@ -122,7 +123,7 @@ namespace MonoTests.System.Drawing
 
 			try {
 				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    "*1, 1");
+						    "*1" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 1");
 				Fail ("CF#5: must throw Exception");
 			} catch {
 			}
@@ -293,9 +294,9 @@ namespace MonoTests.System.Drawing
 		public void ConvertFromInvariantString_string ()
 		{
 			AssertEquals ("CFISS#1", pt, ptconv
-				.ConvertFromInvariantString ("1, 2"));
+				.ConvertFromInvariantString ("1" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 2"));
 			AssertEquals ("CFISS#2", ptneg, ptconv
-				.ConvertFromInvariantString ("-2, -3"));
+				.ConvertFromInvariantString ("-2" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " -3"));
 		}
 
 		[Test]
@@ -347,8 +348,8 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void ConvertToInvariantString_string ()
 		{
-			AssertEquals ("CFISS#1", "1, 2", ptconv.ConvertToInvariantString (pt));
-			AssertEquals ("CFISS#2", "-2, -3", ptconv.ConvertToInvariantString (ptneg));
+			AssertEquals ("CFISS#1", "1" +  CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 2", ptconv.ConvertToInvariantString (pt));
+			AssertEquals ("CFISS#2", "-2" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " -3", ptconv.ConvertToInvariantString (ptneg));
 		}
 
 		[Test]

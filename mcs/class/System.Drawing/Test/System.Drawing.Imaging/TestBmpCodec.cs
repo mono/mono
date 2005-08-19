@@ -82,8 +82,7 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void Bitmap24bitFeatures()
 		{
-			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");
-			Console.WriteLine ("openning " + sInFile);
+			string sInFile = getInFile ("bitmaps/almogaver24bits.bmp");			
 			Bitmap	bmp = new Bitmap(sInFile);						
 			RectangleF rect;
 			GraphicsUnit unit = GraphicsUnit.World;
@@ -114,9 +113,8 @@ namespace MonoTests.System.Drawing
 			RectangleF rect;
 			GraphicsUnit unit = GraphicsUnit.World;
 			
-			rect = bmp.GetBounds(ref unit);
-			
-			Assert.AreEqual (PixelFormat.Format32bppArgb, bmp.PixelFormat);
+			rect = bmp.GetBounds(ref unit);	
+
 			Assert.AreEqual (173, bmp.Width);
 			Assert.AreEqual (183, bmp.Height);		
 			

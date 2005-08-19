@@ -158,8 +158,13 @@ namespace MonoTests.System.Drawing {
 				Color.FromArgb (10, 20, 30), typeof (String)), "CT#1");
 			Assert.AreEqual (colStrInvariant, colconv.ConvertTo (null, CultureInfo.InvariantCulture,
 				Color.FromArgb (255, 10, 20, 30), typeof (String)), "CT#2");
-			Assert.AreEqual ("10, 20, 30, 40", colconv.ConvertTo (null, CultureInfo.InvariantCulture,
+			Assert.AreEqual ("10" + CultureInfo.InvariantCulture.TextInfo.ListSeparator +
+				" 20" + CultureInfo.InvariantCulture.TextInfo.ListSeparator +
+				" 30" + CultureInfo.InvariantCulture.TextInfo.ListSeparator +
+				" 40",
+				colconv.ConvertTo (null, CultureInfo.InvariantCulture,
 				Color.FromArgb (10, 20, 30, 40), typeof (String)), "CT#3");
+				
 			Assert.AreEqual (colnamedStr, colconv.ConvertTo (null, CultureInfo.InvariantCulture,
 				colnamed, typeof (String)), "CT#4");
 
