@@ -18,6 +18,10 @@ function startTest() { }
 function stopTest() { }
 function writeHeaderToLog(header) { }
 function writeLineToLog(line) { }
+function enterFunc(f) { }
+function exitFunc(f) { }
+function printBugNumber(i) { }
+function printStatus(s) { }
 
 var test_count = 0;
 var fail_count = 0;
@@ -26,10 +30,9 @@ var testcases = [];
 var tc = 0;
 var GLOBAL = "[object global]";
 
-// These are needed because we currently don't support assignment to
-// undeclared variables.
+// These are needed to get rid of warnings.
 var NEW_PROPERTY; var DESCRIPTION; var DateCase; var test_times;
-var a; var b; var d; var e; var f; var h; var i; var j; var k; var l;
+var a; var b; var d; var e; var h; var i; var j; var k; var l;
 var m; var n; var o; var p; var s; var u; var v; var x; var y; var z;
 var THIS; var value; var SOMEVAR; var VAR; var VAR1; var VAR2;
 var MYVAR1; var EXPECTED; var shiftpow; var power; var shiftexp;
@@ -40,14 +43,14 @@ var myvar; var MYOB; var td; var ZERO; var ValueArray; var string;
 var result1; var result2; var result6; var result7; var result8;
 var result; var split_1; var length; var re; var description;
 var OBJECT; var VALUE_OF; var object; var num; var debugger;
-var nullvalueOf; var UNDEFINED; var expect; var expression; var f1;
+var nullvalueOf; var UNDEFINED; var expect; var expression;
 var innerFinally; var check; var ONE; var property; var re_1;
 var PropertyArray; var genA; var exception; var outerCatch;
 var dec1; var bar; var Script; var types; var version; var t1;
 var array1; var theproto; var split_2; var outerFinally; var TRUE;
 var result3; var dec2; var types_2; var t2; var f3; var date;
 var blen; var array2; var lim; var FALSE; var result4; var t3;
-var size; var R; var NULL; var array3; var t4; var f2; var cap;
+var size; var R; var NULL; var array3; var t4; var cap;
 var t5; var T; var ab; var s1; var s2; var s3; var TIME; var HOURS;
 var DAY; var DATE; var MONTH; var YEAR; var UTC_HOURS; var UTC_DAY;
 var UTC_DATE; var UTC_MONTH; var UTC_YEAR; var SEPARATOR;
@@ -55,6 +58,12 @@ var TEST_LENGTH; var TEST_STRING; var ARGUMENTS; var TEST_RESULT;
 var TEST_ARRAY; var TZ_ADJUST; var TimeWithinDay; var re_2;
 var re_3; var re_4; var re_5; var re_6; var re_7; var re_8;
 var re_9; var re_10;
+
+function inSection(i) { return "section " + i; }
+
+function reportCompare(expected, actual, desc) {
+  return TestCase("", desc, expected, actual);
+}
 
 function TestCase(section, desc, expected, actual) {
   test_count++;
@@ -93,6 +102,19 @@ function writeTestCaseResult (expect, actual, string) {
 
 function test() {
   print("Ran " + test_count + " tests. " + fail_count + " failed.");
+}
+
+function testRegExp(statuses, patterns, strings, actualmatches, expectedmatches) {
+  for (var i = 0; i < patterns.length; i++) {
+    var status = statuses[i];
+    var pattern = patterns[i];
+    var string = strings[i];
+    var actualmatch = actualmatches[i];
+    var expectedmatch = expectedmatches[i];
+    var desc = "test " + i + ": status = " + status + ", pattern = " + pattern + ", string = " + string;
+ 
+    TestCase ("", desc, expectedmatch, actualmatch);
+  }
 }
 
 var msPerDay = 86400000;

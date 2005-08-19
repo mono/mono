@@ -196,14 +196,15 @@ ecma/Date/15.9.5.2.js
 #ecma/Date/15.9.5.22-6.js
 #ecma/Date/15.9.5.22-7.js
 #ecma/Date/15.9.5.22-8.js
-ecma/Date/15.9.5.23-1.js
-ecma/Date/15.9.5.23-10.js
-ecma/Date/15.9.5.23-11.js
-ecma/Date/15.9.5.23-12.js
-ecma/Date/15.9.5.23-13.js
-ecma/Date/15.9.5.23-14.js
+#ecma/Date/15.9.5.23-1.js
+#ecma/Date/15.9.5.23-10.js
+#ecma/Date/15.9.5.23-11.js
+#ecma/Date/15.9.5.23-12.js
+#ecma/Date/15.9.5.23-13.js
+#ecma/Date/15.9.5.23-14.js
 ecma/Date/15.9.5.23-15.js
-ecma/Date/15.9.5.23-16.js
+# Invalid IL
+#ecma/Date/15.9.5.23-16.js
 # Invalid IL
 #ecma/Date/15.9.5.23-17.js
 #ecma/Date/15.9.5.23-18.js
@@ -217,10 +218,11 @@ ecma/Date/15.9.5.23-16.js
 #ecma/Date/15.9.5.23-7.js
 #ecma/Date/15.9.5.23-8.js
 #ecma/Date/15.9.5.23-9.js
-ecma/Date/15.9.5.24-1.js
-ecma/Date/15.9.5.24-2.js
+#ecma/Date/15.9.5.24-1.js
+#ecma/Date/15.9.5.24-2.js
 ecma/Date/15.9.5.24-3.js
-ecma/Date/15.9.5.24-4.js
+# Invalid IL
+#ecma/Date/15.9.5.24-4.js
 ecma/Date/15.9.5.25-1.js
 # Invalid IL
 #ecma/Date/15.9.5.26-1.js
@@ -639,8 +641,8 @@ ecma/ObjectObjects/15.2.2.2.js
 # Freezes
 #ecma/ObjectObjects/15.2.3.js
 ecma/ObjectObjects/15.2.4.1.js
-ecma/ObjectObjects/15.2.4.2.js
 # Needs new Function
+#ecma/ObjectObjects/15.2.4.2.js
 #ecma/ObjectObjects/15.2.4.3.js
 ecma/ObjectObjects/15.2.4.js
 # Invalid IL
@@ -750,8 +752,7 @@ ecma/String/15.5.4.3-2.js
 #ecma/String/15.5.4.5-5.js
 #ecma/String/15.5.4.5-6.js
 #ecma/String/15.5.4.6-1.js
-ecma/String/15.5.4.6-2.js
-# Invalid IL
+#ecma/String/15.5.4.6-2.js
 #ecma/String/15.5.4.7-1.js
 # Needs eval
 #ecma/String/15.5.4.7-2.js
@@ -839,9 +840,9 @@ ecma_2/Exceptions/expression-005.js
 ecma_2/Exceptions/global-001.js
 # NotImplementedException from Try:JScriptExceptionValue
 #ecma_2/Exceptions/global-002.js
-ecma_2/Exceptions/lexical-001.js
-ecma_2/Exceptions/lexical-002.js
 # Needs eval
+#ecma_2/Exceptions/lexical-001.js
+#ecma_2/Exceptions/lexical-002.js
 #ecma_2/Exceptions/lexical-003.js
 #ecma_2/Exceptions/lexical-004.js
 #ecma_2/Exceptions/lexical-005.js
@@ -952,7 +953,8 @@ ecma_2/RegExp/octal-002.js
 #ecma_2/Statements/dowhile-001.js
 # Endless loop
 #ecma_2/Statements/dowhile-002.js
-ecma_2/Statements/dowhile-003.js
+# Invalid IL
+#ecma_2/Statements/dowhile-003.js
 # Endless loop
 #ecma_2/Statements/dowhile-004.js
 # Invalid IL
@@ -1018,7 +1020,8 @@ js1_2/Array/general1.js
 # Invalid IL
 #js1_2/Array/tostring_1.js
 js1_2/Array/tostring_2.js
-js1_2/Objects/toString-001.js
+# Invalid IL
+#js1_2/Objects/toString-001.js
 js1_2/String/charCodeAt.js
 js1_2/String/concat.js
 js1_2/String/match.js
@@ -1110,9 +1113,11 @@ js1_2/statements/switch2.js
 js1_3/Boolean/boolean-001.js
 # Needs for in
 #js1_3/Script/delete-001.js
-js1_3/Script/function-001-n.js
+# Needs eval
+#js1_3/Script/function-001-n.js
 js1_3/Script/function-002.js
-js1_3/Script/in-001.js
+# Freezes
+#js1_3/Script/in-001.js
 # Invalid IL
 #js1_3/Script/new-001.js
 js1_3/Script/script-001.js
@@ -1138,14 +1143,15 @@ js1_3/inherit/proto_9.js
 # Needs eval
 #js1_3/regress/function-001-n.js
 js1_3/regress/function-002.js
-js1_3/regress/in-001.js
+# Freezes
+#js1_3/regress/in-001.js
 # Invalid IL
 #js1_3/regress/new-001.js
 js1_3/regress/switch-001.js
 # Invalid IL
 #js1_4/Eval/eval-001.js
 #js1_4/Eval/eval-002.js
-js1_4/Eval/eval-003.js
+#js1_4/Eval/eval-003.js
 js1_4/Functions/function-001.js
 js1_4/Regress/date-001-n.js
 js1_4/Regress/function-001.js

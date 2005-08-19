@@ -1,3 +1,9 @@
+2005-08-19  Florian Gross  <flgr@ccan.de>
+
+	* mjs-most.fail, mjs-most.tests: Adjusted for run time fixes and
+	additions
+	* Everything: Set SVN end line style to native
+
 2005-08-13  Florian Gross  <flgr@ccan.de>
 
 	* mjs.preamble: Removed arguments declaration
