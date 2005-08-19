@@ -322,6 +322,12 @@ namespace System.Windows.Forms {
 				selected_node = value;
 				focused_node = value;
 
+				if (full_row_select) {
+					invalid.X = 0;
+					invalid.Width = ViewportRectangle.Width;
+				}
+				invalid.Y += 2;
+				
 				Invalidate (invalid);
 				
 				OnAfterSelect (new TreeViewEventArgs (value, TreeViewAction.Unknown));
@@ -445,7 +451,7 @@ namespace System.Windows.Forms {
 
 		public TreeNode GetNodeAt (int x, int y) {
 			TreeNode node = GetNodeAt (y);
-			if (node == null || !IsTextArea (node, x))
+			if (node == null || !(IsTextArea (node, x) || full_row_select))
 				return null;
 			return node;
 					
@@ -810,13 +816,13 @@ namespace System.Windows.Forms {
 		internal void UpdateBelow (TreeNode node)
 		{
 			// We need to update the current node so the plus/minus block gets update too
-			Rectangle invalid = new Rectangle (0, node.Bounds.Top, Width, Height - node.Bounds.Top);
+			Rectangle invalid = new Rectangle (0, node.Bounds.Top + 2, Width, Height - node.Bounds.Top);
 			Invalidate (invalid);
 		}
 
 		internal void UpdateNode (TreeNode node)
 		{
-			Rectangle invalid = new Rectangle (0, node.Bounds.Top, Width, node.Bounds.Height);
+			Rectangle invalid = new Rectangle (0, node.Bounds.Top + 2, Width, node.Bounds.Height);
 			Invalidate (invalid);
 		}
 
@@ -843,12 +849,11 @@ namespace System.Windows.Forms {
 
 			int depth = 0;
 			int item_height = ItemHeight;
-			Font font = Font;
 			int height = ClientRectangle.Height;
 
 			open_node_count = 0;
 			foreach (TreeNode node in nodes) {
-				DrawNode (node, dc, clip, ref depth, item_height, font, height);
+				DrawNode (node, dc, clip, ref depth, item_height, height);
 				depth = 0;
 			}
 
@@ -883,11 +888,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void DrawNodePlusMinus (TreeNode node, Graphics dc, Rectangle clip, int x, int y, int middle)
+		private void DrawNodePlusMinus (TreeNode node, Graphics dc, int x, int middle)
 		{
-			if (!RectsIntersect (clip, x, middle - 4, 8, 8))
-				return;
-
 			dc.DrawRectangle (SystemPens.ControlDark, x, middle - 4, 8, 8);
 
 			if (node.IsExpanded) {
@@ -898,24 +900,18 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		private void DrawNodeCheckBox (TreeNode node, Graphics dc, Rectangle clip, int x, int y)
+		private void DrawNodeCheckBox (TreeNode node, Graphics dc, int x, int middle)
 		{
-			int offset = (ItemHeight - 13);
-
-			// new rectangle that factors in line width
-			if (!RectsIntersect (clip, x + 3, y + offset, 12, 12))
-				return;
-
-			dc.DrawRectangle (new Pen (Color.Black, 2), x + 0.5F + 3, y + 0.5F + offset, 11, 11);
+			dc.DrawRectangle (new Pen (Color.Black, 2), x + 0.5F + 3, middle - 4.5F, 11, 11);
 
 			if (node.Checked) {
 				Pen check_pen = new Pen (Color.Black, 1);
 
-				dc.DrawLine (check_pen, x + 6, y + offset + 5, x + 8, y + offset + 8);
-				dc.DrawLine (check_pen, x + 6, y + offset + 6, x + 8, y + offset + 9);
+				dc.DrawLine (check_pen, x + 6, middle + 0, x + 8, middle + 3);
+				dc.DrawLine (check_pen, x + 6, middle + 1, x + 8, middle + 4);
 
-				dc.DrawLine (check_pen, x + 7, y + offset + 8, x + 13, y + offset + 3);
-				dc.DrawLine (check_pen, x + 7, y + offset + 9, x + 13, y + offset + 4);
+				dc.DrawLine (check_pen, x + 7, middle + 3, x + 13, middle - 2);
+				dc.DrawLine (check_pen, x + 7, middle + 4, x + 13, middle - 1);
 			}
 		}
 
@@ -944,7 +940,7 @@ namespace System.Windows.Forms {
 				dc.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);
 			} else if (node.Parent != null) {
 				int myadjust = (node.Nodes.Count > 0 && show_plus_minus ? 4 : 0);
-				ly = node.Parent.Bounds.Bottom - 1;
+				ly = node.Parent.Bounds.Bottom + 1;
 				dc.DrawLine (dash, x - indent + 9, middle - myadjust, x - indent + 9, ly);
 			}
 		}
@@ -1003,17 +999,44 @@ namespace System.Windows.Forms {
 		{
 			edit_text_box.Visible = false;
 			edit_node.EndEdit (false);
-			Invalidate (edit_node.Bounds);
+			UpdateNode(edit_node);
 		}
 
-		private void UpdateNodeBounds (TreeNode node, int x, int y, int item_height)
+		[MonoTODO("When Graphics.MeasureString starts to work correctly use it")]
+		private void UpdateNodeBounds (TreeNode node, int x, int y, int item_height, Graphics dc)
 		{
-			int width = (int) (node.Text.Length * Font.Size);
+//			SizeF size = dc.MeasureString (Text, Font, ClientSize.Width, new StringFormat ());
+//    		int width = (int) size.Width + 3;
+			int width = (int)(node.Text.Length * node.NodeFont.Size * 0.85);
 			node.UpdateBounds (x, y, width, item_height);
 		}
+		
+		private void DrawSelectionAndFocus(TreeNode node, Graphics dc, Rectangle r)
+		{
+			if (!HideSelection && SelectedNode == node)
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), r);
+			else
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (node.BackColor), r);
+			if (Focused && focused_node == node)
+				ControlPaint.DrawFocusRectangle (dc, r, ForeColor, BackColor);
+		}
+		 
+		private void DrawStaticNode (TreeNode node, Graphics dc)
+		{
+			Rectangle r = node.Bounds;
+			StringFormat format = new StringFormat ();
+			format.LineAlignment = StringAlignment.Center;
 
-		private void DrawNode (TreeNode node, Graphics dc, Rectangle clip, ref int depth, int item_height,
-				Font font, int max_height)
+			r.Y += 2; // we have to adjust this to get nice middle alignment
+			if (!full_row_select)
+				DrawSelectionAndFocus(node, dc, r);
+			r.X += 4;
+			r.Width -= 8;
+			Color text_color = (Focused && SelectedNode == node ? ThemeEngine.Current.ColorHilightText : node.ForeColor);
+			dc.DrawString (node.Text, node.NodeFont, ThemeEngine.Current.ResPool.GetSolidBrush (text_color), r, format);
+		}
+
+		private void DrawNode (TreeNode node, Graphics dc, Rectangle clip, ref int depth, int item_height, int max_height)
 		{
 			open_node_count++;
 			int x = (!show_root_lines && node.Parent != null ? depth  - 1 : depth) * indent - hbar_offset;
@@ -1026,11 +1049,16 @@ namespace System.Windows.Forms {
 			if (clip.Top > y + ItemHeight || clip.Bottom < y)
 				visible = false;
 
+			if (visible && full_row_select) {
+				Rectangle r = new Rectangle(1, y+2, ViewportRectangle.Width-2, item_height);
+				DrawSelectionAndFocus(node, dc, r);
+			}
+
 			if (show_root_lines || node.Parent != null) {
 				x += 5;
 				if (_n_count > 0) {
 					if (show_plus_minus && visible) {
-						DrawNodePlusMinus (node, dc, clip, x, y, middle);
+						DrawNodePlusMinus (node, dc, x, middle);
 					}
 				}
 				x += indent - 5; 
@@ -1039,7 +1067,7 @@ namespace System.Windows.Forms {
 			int ox = x;
 
 			if (visible && checkboxes) {
-				DrawNodeCheckBox (node, dc, clip, ox, y);
+				DrawNodeCheckBox (node, dc, ox, middle);
 				ox += 19;
 			}
 
@@ -1047,39 +1075,22 @@ namespace System.Windows.Forms {
 				DrawNodeLines (node, dc, visible, dash, x, y, middle, item_height, _n_count);
 
 			if (visible && ImageList != null) {
-				if (visible)
-					DrawNodeImage (node, dc, clip, ox, y);
+				DrawNodeImage (node, dc, clip, ox, y);
 				// MS leaves the space for the image if the ImageList is
 				// non null regardless of whether or not an image is drawn
 				ox += ImageList.ImageSize.Width + 3; // leave a little space so the text isn't against the image
 			}
 
-			UpdateNodeBounds (node, ox, y, item_height);
+			UpdateNodeBounds (node, ox, y, item_height, dc);
 
-			bool bounds_in_clip = clip.IntersectsWith (node.Bounds);
-			if (visible &&	bounds_in_clip && !node.IsEditing) {
-				Rectangle r = node.Bounds;
-				StringFormat format = new StringFormat ();
-				format.LineAlignment = StringAlignment.Center;
-
-				r.Y += 2; // we have to adjust this to get nice middle alignment
-				
-				Color text_color = (Focused && SelectedNode == node ? ThemeEngine.Current.ColorHilightText : node.ForeColor);
-				if (Focused) {
-					if (SelectedNode == node)
-						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilight), r);
-					if (focused_node == node)
-						ControlPaint.DrawFocusRectangle (dc, r, ForeColor, BackColor);
-				} else {
-					if (!HideSelection && SelectedNode == node)
-						dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), r);
-				}
-				dc.DrawString (node.Text, font, ThemeEngine.Current.ResPool.GetSolidBrush (text_color), r, format);
-				y += item_height + 1;
-			} else if (visible && bounds_in_clip) {
-				DrawEditNode (node);
+			bool bounds_in_clip = clip.IntersectsWith (node.Bounds) || full_row_select;
+			if (visible &&	bounds_in_clip) {
+				if (node.IsEditing)
+					DrawEditNode (node);
+				else
+					DrawStaticNode (node, dc);
 			}
-
+			
 			if (node.Bounds.Right > max_node_width) {
 				max_node_width = node.Bounds.Right;
 				if (max_node_width > ClientRectangle.Width && !add_hscroll) {
@@ -1092,7 +1103,7 @@ namespace System.Windows.Forms {
 			if (node.IsExpanded) {
 				for (int i = 0; i < _n_count; i++) {
 					int tdepth = depth;
-					DrawNode (node.nodes [i], dc, clip, ref tdepth, item_height, font, max_height);
+					DrawNode (node.nodes [i], dc, clip, ref tdepth, item_height, max_height);
 				}
 			}
 
@@ -1228,31 +1239,32 @@ namespace System.Windows.Forms {
 			if (node == null)
 				return;
 
-			if (IsTextArea (node, e.X)) {
-				TreeNode old_selected = selected_node;
-				selected_node = node;
-				if (label_edit && e.Clicks == 1 && selected_node == old_selected) {
-					Rectangle invalid = node.Bounds;
-					node.BeginEdit ();
-					if (edit_node != null) {
-						invalid = Rectangle.Union (invalid, edit_node.Bounds);
-						edit_node.EndEdit (false);
-					}
-					edit_node = node;
-					Invalidate (selected_node.Bounds);
-				} else if (selected_node != focused_node) {
-					select_mmove = true;
-					Rectangle invalid = (old_selected == null ? Rectangle.Empty : old_selected.Bounds);
-					invalid = Rectangle.Union (invalid, selected_node.Bounds);
-					Invalidate (invalid);
-				}
-			} else if (show_plus_minus && IsPlusMinusArea (node, e.X)) {
+			if (show_plus_minus && IsPlusMinusArea (node, e.X)) {
 				node.Toggle ();
 				return;
 			} else if (checkboxes && IsCheckboxArea (node, e.X)) {
 				node.Checked = !node.Checked;
+				UpdateNode(node);
 				return;
-			}
+			} else if (IsTextArea (node, e.X) || full_row_select) {
+				TreeNode old_selected = selected_node;
+				selected_node = node;
+				if (label_edit && e.Clicks == 1 && selected_node == old_selected) {
+					node.BeginEdit ();
+					if (edit_node != null) {
+						edit_node.EndEdit (false);
+						UpdateNode (edit_node);
+					}
+					edit_node = node;
+					UpdateNode (edit_node);
+				} else if (selected_node != focused_node) {
+					select_mmove = true;
+					Rectangle invalid = (old_selected == null ? Rectangle.Empty : old_selected.Bounds);
+					invalid = Rectangle.Union (invalid, selected_node.Bounds);
+					invalid.Y += 2;
+					Invalidate (invalid);
+				}
+			} 
 		}
 
 		private void MouseUpHandler (object sender, MouseEventArgs e) {
@@ -1272,6 +1284,7 @@ namespace System.Windows.Forms {
 					invalid = selected_node.Bounds;
 				focused_node = selected_node;
 				OnAfterSelect (new TreeViewEventArgs (selected_node, TreeViewAction.ByMouse));
+				invalid.Y += 2;
 				Invalidate (invalid);
 			} else {
 				selected_node = focused_node;
