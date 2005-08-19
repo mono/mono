@@ -238,6 +238,7 @@ namespace Microsoft.VisualBasic {
 				case TypeCode.DateTime:
 				case TypeCode.DBNull:
 				case TypeCode.Object:
+				default:
 					throw new ArgumentException (
 					"Type of argument 'Number' is '" + 
 					Number.GetType().FullName + 
