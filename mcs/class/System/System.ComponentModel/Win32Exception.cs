@@ -41,7 +41,7 @@ namespace System.ComponentModel
 	{
 		private int native_error_code;
 
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
+//		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
 		public Win32Exception ()
 			: base (W32ErrorMessage (Marshal.GetLastWin32Error ()),
 				Marshal.GetLastWin32Error ()) 
@@ -49,14 +49,14 @@ namespace System.ComponentModel
 			native_error_code = Marshal.GetLastWin32Error ();
 		}
 
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
+//		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
 		public Win32Exception (int error)
 			: base (W32ErrorMessage (error), error) 
 		{
 			native_error_code = error;
 		}
 
-		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
+//		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]		
 		public Win32Exception (int error, string message) 
 			: base (message, error)
 		{
