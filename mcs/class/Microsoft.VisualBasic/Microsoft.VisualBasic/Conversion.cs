@@ -209,8 +209,12 @@ namespace Microsoft.VisualBasic {
 				case TypeCode.Single:
 					return Int (Convert.ToSingle (Number));
 				case TypeCode.String:
+					// Just to throw the right exception
+					return Int (DoubleType.FromString (Number.ToString ()));
+				/*
 					return Int (Double.Parse (
 					CastToString(Number)));
+				*/
 
 				// Int on integer types does nothing
 				case TypeCode.Byte:
@@ -227,13 +231,13 @@ namespace Microsoft.VisualBasic {
 				case TypeCode.Empty:
 					return 0;
 
-				// otherwise, it's we can't cast to a numeric
 				case TypeCode.Boolean:
+					return Int (Convert.ToDouble (Number));
+				// otherwise, it's we can't cast to a numeric
 				case TypeCode.Char:
 				case TypeCode.DateTime:
 				case TypeCode.DBNull:
 				case TypeCode.Object:
-				default:
 					throw new ArgumentException (
 					"Type of argument 'Number' is '" + 
 					Number.GetType().FullName + 

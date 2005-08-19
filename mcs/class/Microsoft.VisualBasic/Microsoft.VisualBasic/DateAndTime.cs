@@ -496,7 +496,7 @@ namespace Microsoft.VisualBasic
 		{ 
 			string[] expectedFormats = {"D", "d", "G", "g", "f" ,"F", "m", "M", "r", "R",
 							"s", "T", "t", "U", "u", "Y", "y",
-							"MMM dd, yy", "MMMM dd, yy", "MMM dd, yyyy", "MMMM dd, yyyy"};
+							"MMM dd, yy", "MMMM dd, yy", "MMM dd, yyyy", "MMMM dd, yyyy", "MM/dd/yy"};
 			
 			try {
 				return DateTime.ParseExact(StringDate, expectedFormats,
@@ -576,10 +576,15 @@ namespace Microsoft.VisualBasic
 			if (Weekday < 1 || Weekday > 7) {
 				throw new ArgumentException();
 			}
-			Weekday += (int)FirstDayOfWeekValue;
-			if (Weekday > 7) {
-				Weekday -= 7;
-			}
+
+			DateTimeFormatInfo dti = Utils.GetCultureInfo ().DateTimeFormat;
+			if (FirstDayOfWeekValue == FirstDayOfWeek.System)
+				FirstDayOfWeekValue = (FirstDayOfWeek) dti.FirstDayOfWeek;
+			else
+				FirstDayOfWeekValue = (FirstDayOfWeek) (FirstDayOfWeekValue - 1);
+
+			Weekday += (int)FirstDayOfWeekValue - (int)FirstDayOfWeek.Sunday;
+			Weekday %= 7;
 			if (Abbreviate) {
 				return CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedDayName((DayOfWeek)Weekday);
 			}

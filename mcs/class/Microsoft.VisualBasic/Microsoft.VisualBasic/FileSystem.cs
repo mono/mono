@@ -584,8 +584,8 @@ namespace Microsoft.VisualBasic
 										   VBErrors.FileAlreadyExists);
 			try
 			{
-				Directory.Move(oldPath, newPath);
-			}catch (DirectoryNotFoundException e){
+				File.Move(oldPath, newPath);
+			}catch (Exception e){
 				throw (ArgumentException)ExceptionUtils.VbMakeException(VBErrors.IllegalFuncCall);
 			}
 		}
@@ -600,6 +600,7 @@ namespace Microsoft.VisualBasic
 				throw new ArgumentException(
 							    Utils.GetResourceString("Argument_PathNullOrEmpty"));
 			}
+
 
 			if ((destination == null) || (destination.Length == 0))
 			{
@@ -635,11 +636,14 @@ namespace Microsoft.VisualBasic
 
 			}
 
+/*
 			f = new FileInfo(destination);
 			if (f.Exists)
 				throw (IOException) ExceptionUtils.VbMakeException(
 										   VBErrors.FileAlreadyExists);
-			File.Copy(source, destination);
+*/
+
+			File.Copy(source, destination, true);
 		}
 
 		public static void MkDir(String path)

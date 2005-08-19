@@ -1,3 +1,16 @@
+2005-08-19 Satya Sudha K <ksathyasudha@novell.com>
+	* Interaction.cs : 
+		'CallByName' : Checking for the correct call type.
+	* Conversion.cs :
+		'Int' : Support converion of bool/string to int
+	* Strings.cs : Implemented the 'Split' method (was using 'System.String.Split'
+			for spitting and was not correct since it splits on char and 
+			not on strings)
+	* DateAndTime.cs :
+			Minor fixes to the 'DateValue' and the 'WeekDayName' methods
+	* FileSystem.cs : Using 'File.Move' instead of 'Directory.Move'
+
+
 2005-08-12  Manjula GHM <mmanjula@novell.com>
 	*InputVBFile.cs: Handle trailing '#" for bool and date in Input function
 

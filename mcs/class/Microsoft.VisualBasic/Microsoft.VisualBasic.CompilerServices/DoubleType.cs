@@ -101,6 +101,9 @@ namespace Microsoft.VisualBasic.CompilerServices
 			if (Value is string)
 				return FromString((string) Value, numberFormat);
 
+			if (Value is bool)
+				return - (Convert.ToDouble (Value));
+
 			//try {
 			return Convert.ToDouble(Value, numberFormat);
 			//}

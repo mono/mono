@@ -1006,37 +1006,52 @@ namespace Microsoft.VisualBasic
 					     CompareMethod Compare)
 		{
 			if (Expression == null)
-				return new string[1];
+				return new string[1] {""};
 
 			if ((Delimiter == null) || (Delimiter.Length == 0)){
 				string [] ret = new string[1];
 				ret[0] = Expression;
 				return ret;
 			}
-			if (Limit == 0)
-				Limit = 1; 
-			else if (Limit < -1)
+			if (Limit < -1)
 				throw new OverflowException("Arithmetic operation resulted in an overflow.");
 
-			if (Limit != -1) {
-				switch (Compare){
-				case CompareMethod.Binary:
-					return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
-				case CompareMethod.Text:
-					return Expression.Split(Delimiter.ToCharArray(0, 1), Limit);
-				default:
-					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
-				}
-			} else {
-				switch (Compare) {
-				case CompareMethod.Binary:
-					return Expression.Split(Delimiter.ToCharArray(0, 1));
-				case CompareMethod.Text:
-					return Expression.Split(Delimiter.ToCharArray(0, 1));
-				default:
-					throw new System.ArgumentException("Argument 'Compare' must be CompareMethod.Binary or CompareMethod.Text.", "Compare");
-				}
+			string source = Expression;
+			string limitStr = Delimiter;
+			if (Compare == CompareMethod.Text) {
+				source = Expression.ToLower ();
+				limitStr = Delimiter.ToLower ();
 			}
+
+			if (Limit == 0)
+				return new string [0] {};
+
+			if (Limit == -1)
+				Limit = Expression.Length;
+			string [] retArray = new string [Limit];
+			int numMatches = 0;
+			int curIndex = 0;
+			int beg = 0;
+			while (beg + limitStr.Length <= source.Length) {
+				string tmpStr = source.Substring (beg);
+				int indexOf = tmpStr.IndexOf (limitStr);
+				if (indexOf == -1)
+					break;
+
+				retArray [numMatches ++] = Expression.Substring (beg, indexOf);
+				if (numMatches == Limit)
+					break;
+				beg += (indexOf + limitStr.Length); 
+			}
+
+			if (numMatches == 0)
+				return new string [1] {Expression};
+
+			string [] newArray = new string [numMatches];
+			for (int i = 0; i < numMatches; i++)
+				newArray [i] = retArray [i];
+
+			return newArray;
 		}
 
 		public static int StrComp(string String1, 

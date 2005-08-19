@@ -262,9 +262,13 @@ namespace Microsoft.VisualBasic {
 		public static Object CallByName (Object objRef, String name, CallType userCallType, params Object[] args)
 		{
 			Type[] argsType = null;
+			if (userCallType != CallType.Method &&
+			    userCallType != CallType.Get &&
+			    userCallType != CallType.Set &&
+			    userCallType != CallType.Let)
+				throw new ArgumentException (Utils.GetResourceString("Argument_InvalidValue1", "CallType"));
 
-
-			if(args != null && args.Length != 0) {
+			if(args != null) {
 				argsType = new Type[args.Length];
 
 				for(int i = 0; i < args.Length; i++) 
@@ -280,16 +284,16 @@ namespace Microsoft.VisualBasic {
 				MethodInfo methodInfo = null;
 
 				if(userCallType == CallType.Method) {
-					Console.WriteLine("Method");
+					//Console.WriteLine("Method");
 					methodInfo = objType.GetMethod(name, argsType);
 				}
 				else if(userCallType == CallType.Get) {
-					Console.WriteLine("GetMethod");
+					//Console.WriteLine("GetMethod");
 					methodInfo = objType.GetProperty(name).GetGetMethod();
 				}
 				else if(userCallType == CallType.Set) {
 
-					Console.WriteLine("SetMethod");
+					//Console.WriteLine("SetMethod");
 					methodInfo = objType.GetProperty(name).GetSetMethod();
 				}
 
