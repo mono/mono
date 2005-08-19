@@ -1,3 +1,8 @@
+2005-08-19  Dick Porter  <dick@ximian.com>
+
+	* threads.c, threads.h, thread-private.h: Use a gsize to store the
+	thread ID, so it can hold a 64 bit value if needed.
+
 2005-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* error.c: map ENOENT to WSAECONNREFUSED. It might happen when
