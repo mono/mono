@@ -33,7 +33,7 @@ do-profile-check:
 	if $$ok; then :; else \
 	    echo "*** The compiler '$(EXTERNAL_MCS)' doesn't appear to be usable." 1>&2 ; \
 	    if test -f $(topdir)/class/lib/monolite/mcs.exe; then \
-		monolite_corlib_version=`$(ILDISASM) $(topdir)/class/lib/monolite/mscorlib.dll | sed -n 's,.*mono_corlib_version.*int32.*(\([0-9]*\)),\1,p'`; \
+		monolite_corlib_version=`$(ILDISASM) $(topdir)/class/lib/monolite/mscorlib.dll | sed -n 's,.*mono_corlib_version.*int32.*(\([^)]*\)),\1,p'`; \
 		source_corlib_version=`sed -n 's,.*mono_corlib_version.*=[^0-9]*\([0-9]*\)[^0-9]*$$,\1,p' $(topdir)/class/corlib/System/Environment.cs`; \
 		if test x$$monolite_corlib_version = x$$source_corlib_version; then \
 	            echo "*** Falling back to using pre-compiled binaries.  Be warned, this may not work." 1>&2 ; \
@@ -47,6 +47,7 @@ do-profile-check:
 		else \
 		    echo "*** The contents of your 'monolite' directory are out-of-date" 1>&2; \
 		    echo "*** You may want to try 'make get-monolite-latest'" 1>&2; \
+		    echo "*** The source has version $$source_corlib_version, but monolite has version $$monolite_corlib_version" 1>&2; \
 		    exit 1; fi; \
 	    else \
                 echo "*** You need a C# compiler installed to build MCS (make sure mcs works from the command line)" 1>&2 ; \
