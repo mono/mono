@@ -1080,6 +1080,10 @@ namespace System {
 		{
 			int result = ConvertFromBase (value, fromBase, false);
 			if (fromBase != 10) {
+				if (result > ushort.MaxValue) {
+					throw new OverflowException ("Value was either too large or too small for an Int16.");
+				}
+
 				// note: no sign are available to detect negatives
 				if (result > Int16.MaxValue) {
 					// return negative 2's complement
@@ -2565,15 +2569,6 @@ namespace System {
 			if (chars == 0)
 				throw new FormatException ("Could not find any parsable digits.");
 
-			/*
-			if (fromBase == 16 && hexPrefix && !unsigned) {
-				if (result < UInt32.MinValue) {
-					throw new OverflowException ("Value was either too large or"
-						+ " too small for a UInt32.");
-				}
-			}
-			*/
-			
 			if (negative)
 				return -result;
 			else

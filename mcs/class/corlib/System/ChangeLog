@@ -1,3 +1,8 @@
+2005-08-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Convert.cs: Throw OverflowException if result is larger than
+	ushort.MaxValue to match MS.NET. Remove commented code.
+
 2005-08-17  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Convert.cs: For now, do not throw OverflowException if hex prefixed
