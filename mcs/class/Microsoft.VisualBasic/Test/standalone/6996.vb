@@ -34,7 +34,7 @@ Public Class TestClass
         caughtException = False
         Try
             fget = FreeFile()
-            FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "\data\random.txt", OpenMode.Random, , , 22)
+            FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "/data/random.txt", OpenMode.Random, , , 22)
             FileGetobject(fget, str1, 0)
         Catch e As ArgumentException
             If Err.Number = 63 Then
@@ -66,7 +66,7 @@ Public Class TestClass
         caughtException = False
         Try
             fget = FreeFile()
-            FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "\data\random.txt", OpenMode.Output, , , 22)
+            FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "/data/random.txt", OpenMode.Output, , , 22)
             FileGetobject(fget, str1)
         Catch e As IOException
             If Err.Number = 54 Then

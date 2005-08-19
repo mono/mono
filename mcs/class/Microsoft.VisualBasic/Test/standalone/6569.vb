@@ -32,8 +32,8 @@ Public Class TestClass
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
-        SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
-        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\6569.txt"
+        SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
+        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/6569.txt"
         Dim f As System.IO.FileInfo = New System.IO.FileInfo(DestinationFile)
         If (f.Exists) Then
             Kill(DestinationFile)
@@ -44,7 +44,7 @@ Public Class TestClass
         Try
             For i = 0 To 255
                 fn = FreeFile()
-                FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6569.txt", OpenMode.Input, , OpenShare.Shared)
+                FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6569.txt", OpenMode.Input, , OpenShare.Shared)
             Next i
         Catch e As IOException
             If Err.Number = 67 Then

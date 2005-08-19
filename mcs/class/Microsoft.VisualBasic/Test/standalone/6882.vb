@@ -31,8 +31,8 @@ Public Class TestClass
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
-        SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
-        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\6882.txt"
+        SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
+        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/6882.txt"
         Dim f As System.IO.FileInfo = New System.IO.FileInfo(DestinationFile)
         If (f.Exists) Then
             Kill(DestinationFile)
@@ -42,7 +42,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn = FreeFile()
-            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6882.txt", OpenMode.Input)
+            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6882.txt", OpenMode.Input)
             Printline(fn, "abc")
             FileClose(fn)
         Catch e As IOException

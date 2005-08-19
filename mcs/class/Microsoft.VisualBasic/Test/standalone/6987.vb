@@ -50,11 +50,11 @@ Public Class TestClass
         Dim oDT12_1 As Date = #5/31/1993#
         Dim oDT12_2 As Date
         fput = FreeFile()
-        FileOpen(fput, System.IO.Directory.GetCurrentDirectory() + "\data\6987.txt", OpenMode.Output)
+        FileOpen(fput, System.IO.Directory.GetCurrentDirectory() + "/data/6987.txt", OpenMode.Output)
         Write(fput, oDT2_1, oDT3_1, oDT4_1, oDT5_1, oDT6_1, oDT7_1, oDT8_1, oDT9_1, oDT10_1, oDT11_1, oDT12_1)
         FileClose(fput)
         fget = FreeFile()
-        FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "\data\6987.txt", OpenMode.Input)
+        FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "/data/6987.txt", OpenMode.Input)
         Input(fget, oDT2_2)
         Input(fget, oDT3_2)
         Input(fget, oDT4_2)

@@ -25,7 +25,7 @@ Public Class TestClass
         Dim fn As Integer
         'open and close one file
         fn = FreeFile()
-        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt", OpenMode.Input)
+        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt", OpenMode.Input)
         FileClose(fn)
         Return "success"
     End Function

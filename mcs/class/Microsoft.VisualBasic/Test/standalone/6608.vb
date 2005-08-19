@@ -29,7 +29,7 @@ Public Class TestClass
         '// PathName is invalid or contains wildcards
         caughtException = False
         Try
-            d = FileDateTime(System.IO.Directory.GetCurrentDirectory() + "\data\*.txt")
+            d = FileDateTime(System.IO.Directory.GetCurrentDirectory() + "/data/*.txt")
         Catch e As ArgumentException
             If Err.Number = 52 Then
                 caughtException = True
@@ -39,7 +39,7 @@ Public Class TestClass
         '// Target file does not exist
         caughtException = False
         Try
-            d = FileDateTime(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")
+            d = FileDateTime(System.IO.Directory.GetCurrentDirectory() + "/data/notfound.txt")
         Catch e As FileNotFoundException
             If Err.Number = 53 Then
                 caughtException = True

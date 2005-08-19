@@ -29,7 +29,7 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-        strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
+        strPathName = System.IO.Directory.GetCurrentDirectory() + "/data/"
         OldName = "rename.txt"
         NewName = "rename2.txt"
         ' create the file

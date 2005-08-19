@@ -26,11 +26,11 @@ Public Class TestClass
         Dim strFileName As String
         Dim strPathName As String
         Dim i As Integer
-        strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
+        strPathName = System.IO.Directory.GetCurrentDirectory() + "/data/"
         strFileName = "hidden.txt"
         'test all enums
         For i = 0 To 64
-            str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "\data\*.ini", i)
+            str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "/data/*.ini", i)
             If str1 = "" Then Return i.ToString
         Next i
         'check if directory has Archive files

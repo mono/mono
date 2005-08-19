@@ -36,7 +36,7 @@ Public Class TestClass
         fn = FreeFile()
         ' Calculate the record length.
         RecLength = Len(Employee)
-        FileOpen(fn, "data\random.txt", OpenMode.Random, , , RecLength)
+        FileOpen(fn, "data/random.txt", OpenMode.Random, , , RecLength)
         FileClose(fn)
         Return "success"
     End Function

@@ -50,7 +50,7 @@ Public Class TestClass
         Dim oDT12_1 As Date = #5/31/1993#
         Dim oDT12_2 As Date
         fput = FreeFile()
-        FileOpen(fput, "data\6966.txt", OpenMode.Output)
+        FileOpen(fput, "data/6966.txt", OpenMode.Output)
         PrintLine(fput, oDT2_1)
         PrintLine(fput, oDT3_1)
         PrintLine(fput, oDT4_1)
@@ -64,7 +64,7 @@ Public Class TestClass
         PrintLine(fput, oDT12_1)
         FileClose(fput)
         fget = FreeFile()
-        FileOpen(fget, "data\6966.txt", OpenMode.Binary)
+        FileOpen(fget, "data/6966.txt", OpenMode.Binary)
         Input(fget, oDT2_2)
         Input(fget, oDT3_2)
         Input(fget, oDT4_2)

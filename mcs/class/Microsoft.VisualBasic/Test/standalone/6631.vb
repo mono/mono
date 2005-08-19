@@ -32,8 +32,8 @@ Public Class TestClass
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
         '// create a file for the test
-        SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
-        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\6631.txt"
+        SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
+        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/6631.txt"
         Dim f As System.IO.FileInfo = New System.IO.FileInfo(DestinationFile)
         If (f.Exists) Then
             Kill(DestinationFile)
@@ -43,7 +43,7 @@ Public Class TestClass
         caughtException = False
         Try
             SourceFile = ""
-            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\copy1.txt"
+            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/copy1.txt"
             FileCopy(SourceFile, DestinationFile)
         Catch e As ArgumentException
             If Err.Number = 52 Then
@@ -53,7 +53,7 @@ Public Class TestClass
         If caughtException = False Then Return "sub test 1 failed"
         caughtException = False
         Try
-            SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
+            SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
             DestinationFile = ""
             FileCopy(SourceFile, DestinationFile)
         Catch e As ArgumentException
@@ -65,8 +65,8 @@ Public Class TestClass
         '// File is already open.
         caughtException = False
         Try
-            SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
-            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\copy1.txt"
+            SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
+            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/copy1.txt"
             fn1 = FreeFile()
             FileOpen(fn1, SourceFile, OpenMode.Input)
             FileCopy(SourceFile, DestinationFile)
@@ -81,8 +81,8 @@ Public Class TestClass
         '// missing target directory
         caughtException = False
         Try
-            SourceFile = System.IO.Directory.GetCurrentDirectory() + "\bad_directory\textfile.txt"
-            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.tmp"
+            SourceFile = System.IO.Directory.GetCurrentDirectory() + "/bad_directory/textfile.txt"
+            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.tmp"
             FileCopy(SourceFile, DestinationFile)
         Catch e As FileNotFoundException
             If Err.Number = 53 Then
@@ -93,8 +93,8 @@ Public Class TestClass
         '// missing target directory
         caughtException = False
         Try
-            SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
-            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\bad_directory\textfile.tmp"
+            SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
+            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/bad_directory/textfile.tmp"
             FileCopy(SourceFile, DestinationFile)
         Catch e As DirectoryNotFoundException
             If Err.Number = 55 Then
@@ -105,8 +105,8 @@ Public Class TestClass
         '// missing source file
         caughtException = False
         Try
-            SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.mis"
-            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.tmp"
+            SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.mis"
+            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.tmp"
             FileCopy(SourceFile, DestinationFile)
         Catch e As FileNotFoundException
             If Err.Number = 53 Then
@@ -118,8 +118,8 @@ Public Class TestClass
         '// The target directory already exists
         caughtException = False
         Try
-            SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
-            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\"
+            SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
+            DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/"
             FileCopy(SourceFile, DestinationFile)
         Catch e As IOException
             If Err.Number = 55 Then

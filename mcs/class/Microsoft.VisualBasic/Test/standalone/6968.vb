@@ -43,7 +43,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn = FreeFile()
-            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6968.txt", OpenMode.input)
+            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6968.txt", OpenMode.input)
             write(fn, str1)
             FileClose(fn)
         Catch e As IOException

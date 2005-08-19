@@ -30,7 +30,7 @@ Public Class TestClass
         Dim mode As OpenMode
         Dim strFileName As String
         Dim strPathName As String
-        strPathName = "data\"
+        strPathName = "data/"
         strFileName = "6581.txt"
         fn = FreeFile()
         FileOpen(fn, strPathName & strFileName, OpenMode.Append)

@@ -33,13 +33,13 @@ Public Class TestClass
         '// Target file(s) open.
         caughtException = False
         fn = FreeFile()
-        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6829.txt", OpenMode.Output)
-        Kill(System.IO.Directory.GetCurrentDirectory() + "\data\6829.txt")
+        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6829.txt", OpenMode.Output)
+        Kill(System.IO.Directory.GetCurrentDirectory() + "/data/6829.txt")
         If caughtException = False Then Return "sub test 1 failed"
         FileClose(fn)
         '// Target file(s) missing.
         caughtException = False
-        Kill(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")
+        Kill(System.IO.Directory.GetCurrentDirectory() + "/data/notfound.txt")
         If caughtException = False Then Return "sub test 2 failed"
         Return "success"
 Handle_Exception:

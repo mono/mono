@@ -26,25 +26,25 @@ Public Class TestClass
         ' wildcards character * and ?
         '
         'check if directory has files
-        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "\data\*.txt")
+        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "/data/*.txt")
         If str1 = "" Then Return "failed to check if directory has files"
         'make sure that this file exists
-        If (str1 <> Dir(System.IO.Directory.GetCurrentDirectory() + "\data\" & str1)) Then Return "failed at sub test 1"
+        If (str1 <> Dir(System.IO.Directory.GetCurrentDirectory() + "/data/" & str1)) Then Return "failed at sub test 1"
         'check if directory has files with any extension
-        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "\data\*.???")
+        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "/data/*.???")
         If str1 = "" Then Return "failed to check if directory has files with any extension"
         'make sure that this file exists
-        If (str1 <> Dir(System.IO.Directory.GetCurrentDirectory() + "\data\" & str1)) Then Return "failed at sub test 2"
+        If (str1 <> Dir(System.IO.Directory.GetCurrentDirectory() + "/data/" & str1)) Then Return "failed at sub test 2"
         'check if directory has files with any extension
-        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "\data\*.?x?")
+        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "/data/*.?x?")
         If str1 = "" Then Return "failed to check if directory has files with any extension"
         'make sure that this file exists
-        If (str1 <> Dir(System.IO.Directory.GetCurrentDirectory() + "\data\" & str1)) Then Return "failed at sub test 3"
+        If (str1 <> Dir(System.IO.Directory.GetCurrentDirectory() + "/data/" & str1)) Then Return "failed at sub test 3"
         'check if directory has files that start with w and whatever
-        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "\data\t*.?x?")
+        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "/data/t*.?x?")
         If str1 = "" Then Return "failed to check if directory has files that start with"
         'make sure that this file exists
-        If (str1 <> Dir(System.IO.Directory.GetCurrentDirectory() + "\data\" & str1)) Then Return "failed at sub test 4"
+        If (str1 <> Dir(System.IO.Directory.GetCurrentDirectory() + "/data/" & str1)) Then Return "failed at sub test 4"
         Return "success"
     End Function
 End Class

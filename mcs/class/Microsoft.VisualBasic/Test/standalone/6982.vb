@@ -31,7 +31,7 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-        strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
+        strPathName = System.IO.Directory.GetCurrentDirectory() + "/data/"
         strFileName = "6982.txt"
         Dim f as FileInfo = new FileInfo(strPathName & strFileName)
         If (f.Exists) Then

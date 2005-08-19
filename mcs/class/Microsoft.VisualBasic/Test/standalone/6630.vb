@@ -25,8 +25,8 @@ Public Class TestClass
     Public Function Test() As String
         Dim SourceFile As String
         Dim DestinationFile As String
-        SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
-        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\6630.txt"
+        SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
+        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/6630.txt"
         Dim f as FileInfo = new FileInfo(DestinationFile)
         If (f.Exists) Then
             Kill(DestinationFile)

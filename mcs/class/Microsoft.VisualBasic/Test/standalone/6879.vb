@@ -57,7 +57,7 @@ Public Class TestClass
         oDT1_1(1) = "def"
         oDT1_1(2) = "ghi"
         oDT1_1(3) = "jkl"
-        strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
+        strPathName = System.IO.Directory.GetCurrentDirectory() + "/data/"
         strFileName = "6879.txt"
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then

@@ -29,8 +29,8 @@ Public Class TestClass
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
-        SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
-        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\6926.txt"
+        SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
+        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/6926.txt"
         Dim f As System.IO.FileInfo = New System.IO.FileInfo(DestinationFile)
         If (f.Exists) Then
             Kill(DestinationFile)
@@ -38,9 +38,9 @@ Public Class TestClass
         FileCopy(SourceFile, DestinationFile)
         'open and close one file
         FileNum1 = FreeFile()
-        FileOpen(FileNum1, System.IO.Directory.GetCurrentDirectory() + "\data\6926.txt", OpenMode.Input)
+        FileOpen(FileNum1, System.IO.Directory.GetCurrentDirectory() + "/data/6926.txt", OpenMode.Input)
         Reset()
-        FileOpen(FileNum1, System.IO.Directory.GetCurrentDirectory() + "\data\6926.txt", OpenMode.Input)
+        FileOpen(FileNum1, System.IO.Directory.GetCurrentDirectory() + "/data/6926.txt", OpenMode.Input)
         Return 0
     End Function
 End Class

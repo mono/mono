@@ -50,15 +50,15 @@ Public Class TestClass
         Dim oDT12_1 As Date = #5/31/1993#
         Dim oDT12_2 As Date
         'if this file exists - kill it
-        If ("6990.txt" = Dir(System.IO.Directory.GetCurrentDirectory() + "\data\6990.txt")) Then
-            Kill(System.IO.Directory.GetCurrentDirectory() + "\data\6990.txt")
+        If ("6990.txt" = Dir(System.IO.Directory.GetCurrentDirectory() + "/data/6990.txt")) Then
+            Kill(System.IO.Directory.GetCurrentDirectory() + "/data/6990.txt")
         End If
         fput = FreeFile()
-        FileOpen(fput, System.IO.Directory.GetCurrentDirectory() + "\data\6990.txt", OpenMode.Output)
+        FileOpen(fput, System.IO.Directory.GetCurrentDirectory() + "/data/6990.txt", OpenMode.Output)
         Print(fput, oDT2_1, oDT3_1, oDT4_1, oDT5_1, oDT6_1, oDT7_1, oDT8_1, oDT9_1, oDT10_1, oDT11_1, oDT12_1)
         FileClose(fput)
         fget = FreeFile()
-        FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "\data\6990.txt", OpenMode.Binary)
+        FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "/data/6990.txt", OpenMode.Binary)
         Dim strIn As String
         strIn = Space(1000)
         FileGet(fget, strIn)

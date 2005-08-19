@@ -59,7 +59,7 @@ Public Class TestClass
         'output string array
         'record len = (2 + 8 * NumberOfDimensions) + (dim1 size * ... * dimN size * size of data)
         'record len = (2 + 8 * 1) + (4 * 3) = 22
-        FileOpen(fput, System.IO.Directory.GetCurrentDirectory() + "\data\6995.txt", OpenMode.Random)
+        FileOpen(fput, System.IO.Directory.GetCurrentDirectory() + "/data/6995.txt", OpenMode.Random)
         FilePutObject(fput, oDT1_1)
         FilePutObject(fput, oDT2_1)
         FilePutObject(fput, oDT3_1)
@@ -80,7 +80,7 @@ Public Class TestClass
         fget = FreeFile()
         'input string array
         'record len = (2 + string size=2) * array size
-        FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "\data\6995.txt", OpenMode.Random)
+        FileOpen(fget, System.IO.Directory.GetCurrentDirectory() + "/data/6995.txt", OpenMode.Random)
         FileGetObject(fget, oDT1_2)
         FileGetObject(fget, oDT2_2)
         FileGetObject(fget, oDT3_2)

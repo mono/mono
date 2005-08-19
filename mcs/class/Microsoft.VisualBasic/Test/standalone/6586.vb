@@ -28,8 +28,8 @@ Public Class TestClass
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
-        SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
-        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\6586.txt"
+        SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
+        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/6586.txt"
         Dim f As System.IO.FileInfo = New System.IO.FileInfo(DestinationFile)
         If (f.Exists) Then
             Kill(DestinationFile)
@@ -37,12 +37,12 @@ Public Class TestClass
         FileCopy(SourceFile, DestinationFile)
         'open and close one file
         fn = FreeFile()
-        FileOpen(fn, "data\6586.txt", OpenMode.Input)
+        FileOpen(fn, "data/6586.txt", OpenMode.Input)
         'flush - close all
         FileClose()
         ' now, try to open it again
         fn = FreeFile()
-        FileOpen(fn, "data\6586.txt", OpenMode.Input)
+        FileOpen(fn, "data/6586.txt", OpenMode.Input)
         'and, close it again
         FileClose()
         Return "success"

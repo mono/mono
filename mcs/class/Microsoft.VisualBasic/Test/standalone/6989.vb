@@ -32,14 +32,14 @@ Public Class TestClass
         '// create a file for the test
         Dim SourceFile As String
         Dim DestinationFile As String
-        SourceFile = System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt"
-        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "\data\6989.txt"
+        SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
+        DestinationFile = System.IO.Directory.GetCurrentDirectory() + "/data/6989.txt"
         Dim f As System.IO.FileInfo = New System.IO.FileInfo(DestinationFile)
         If (f.Exists) Then
             Kill(DestinationFile)
         End If
         FileCopy(SourceFile, DestinationFile)
-        strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
+        strPathName = System.IO.Directory.GetCurrentDirectory() + "/data/"
         strFileName = "6989.txt"
         ' Input text from a file.
         fn = FreeFile()

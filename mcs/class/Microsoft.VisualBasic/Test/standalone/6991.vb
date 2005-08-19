@@ -25,7 +25,7 @@ Public Class TestClass
     Public Function Test() As String
         Dim str1 As String
         'check if directory has files
-        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "\data\notfound")
+        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "/data/notfound")
         If str1 <> "" Then Return "failed to check that directory not found"
         Return "success"
     End Function

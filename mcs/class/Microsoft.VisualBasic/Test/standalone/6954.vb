@@ -30,14 +30,14 @@ Public Class TestClass
         Microsoft.VisualBasic.FileSystem.Reset()
         'create and write into file
         fn = FreeFile()
-        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6954.txt", OpenMode.Output)
+        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6954.txt", OpenMode.Output)
         WriteLine(fn, "abcdefghijklmnopqrstuvwxyz")
         WriteLine(fn, "0123456789")
         WriteLine(fn, "abcdefghijklmnopqrstuvwxyz")
         FileClose(fn)
         'For files opened in modes other than Random mode, 
         'Seek sets the byte position at which the next operation takes place.
-        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6954.txt", OpenMode.input)
+        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6954.txt", OpenMode.input)
         Seek(fn, 3)   ' Move to the third character.
         Input(fn, strbuffer)
         FileClose(fn)

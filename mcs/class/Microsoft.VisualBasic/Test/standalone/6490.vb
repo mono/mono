@@ -24,10 +24,10 @@ Public Class TestClass
     Public Function Test() As String
         Dim str1 As String
         'check if directory has files
-        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "\data\")
+        str1 = Dir(System.IO.Directory.GetCurrentDirectory() + "/data/")
         If str1 = "" Then Return "failed to check if directory has files"
         'check if file exists
-        If (str1 <> Dir(System.IO.Directory.GetCurrentDirectory() + "\data\" & str1)) Then Return "failed to check if file exists"
+        If (str1 <> Dir(System.IO.Directory.GetCurrentDirectory() + "/data/" & str1)) Then Return "failed to check if file exists"
         Return "success"
     End Function
 End Class

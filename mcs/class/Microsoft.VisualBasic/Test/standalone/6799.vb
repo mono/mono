@@ -33,8 +33,8 @@ Public Class TestClass
         caughtException = False
         Try
             fn = FreeFile()
-            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6799.txt", OpenMode.Output)
-            kill(System.IO.Directory.GetCurrentDirectory() + "\data\6799.txt")
+            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6799.txt", OpenMode.Output)
+            kill(System.IO.Directory.GetCurrentDirectory() + "/data/6799.txt")
         Catch e As IOException
             If err.number = 55 Then
                 caughtException = True
@@ -45,7 +45,7 @@ Public Class TestClass
         '// Target file(s) missing.
         caughtException = False
         Try
-            kill(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")
+            kill(System.IO.Directory.GetCurrentDirectory() + "/data/notfound.txt")
         Catch e As FileNotFoundException
             If err.number = 53 Then
                 caughtException = True

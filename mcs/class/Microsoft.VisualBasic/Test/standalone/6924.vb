@@ -49,7 +49,7 @@ Public Class TestClass
         '// Directory does not exist.
         caughtException = False
         Try
-            RmDir(System.IO.Directory.GetCurrentDirectory() + "\data\not_found")
+            RmDir(System.IO.Directory.GetCurrentDirectory() + "/data/not_found")
         Catch e As DirectoryNotFoundException
             If Err.Number = 76 Then
                 caughtException = True

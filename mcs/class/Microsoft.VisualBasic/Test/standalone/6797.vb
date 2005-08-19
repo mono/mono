@@ -33,7 +33,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn = FreeFile()
-            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6796.txt", OpenMode.Output)
+            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6796.txt", OpenMode.Output)
             FileWidth(256, 5)
         Catch e As IOException
             If Err.Number = 52 Then
@@ -55,7 +55,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn = FreeFile()
-            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6797.txt", OpenMode.Output)
+            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6797.txt", OpenMode.Output)
             FileWidth(fn, -1)
         Catch e As ArgumentException
             If Err.Number = 5 Then
@@ -67,7 +67,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn = FreeFile()
-            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6797.txt", OpenMode.Output)
+            FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6797.txt", OpenMode.Output)
             FileWidth(fn, 256)
         Catch e As ArgumentException
             If Err.Number = 5 Then

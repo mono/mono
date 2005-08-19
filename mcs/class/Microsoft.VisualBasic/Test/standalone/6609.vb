@@ -23,7 +23,7 @@ Imports Microsoft.VisualBasic
 Public Class TestClass
     Public Function Test() As Long
         Dim w As Long
-        w = Filelen(System.IO.Directory.GetCurrentDirectory() + "\data\textfile.txt")
+        w = Filelen(System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt")
         Return w
     End Function
 End Class

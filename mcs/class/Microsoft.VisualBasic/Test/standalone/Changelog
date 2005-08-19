@@ -1,3 +1,6 @@
+2005-08-19  Satya Sudha K <ksathyasudha@novell.com>
+	* Modified all the FileSystem-related testcases to use unix-style paths.
+
 2005-08-04  Satya Sudha K <ksathyasudha@novell.com>
 
 	* Replaced '^M' characters with new lines (was affecting compilation of few files)

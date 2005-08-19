@@ -29,7 +29,7 @@ Public Class TestClass
         '// File does not exist
         caughtException = False
         Try
-            w = Filelen(System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt")
+            w = Filelen(System.IO.Directory.GetCurrentDirectory() + "/data/notfound.txt")
         Catch e As FileNotFoundException
             If Err.Number = 53 Then
                 caughtException = True

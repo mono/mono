@@ -32,7 +32,7 @@ Public Class TestClass
         Microsoft.VisualBasic.FileSystem.Reset()
         '// create the file
         fn1 = FreeFile()
-        FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Append)
+        FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "/data/6794.txt", OpenMode.Append)
         FileClose(fn1)
         '// Invalid Access, Share, or Mode
         'caughtException = False
@@ -47,7 +47,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn1 = FreeFile()
-            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Input, OpenAccess.Write)
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "/data/6794.txt", OpenMode.Input, OpenAccess.Write)
         Catch e As ArgumentException
             If Err.Number = 5 Then
                 caughtException = True
@@ -58,7 +58,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn1 = FreeFile()
-            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Output, OpenAccess.Read)
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "/data/6794.txt", OpenMode.Output, OpenAccess.Read)
         Catch e As ArgumentException
             If Err.Number = 5 Then
                 caughtException = True
@@ -69,7 +69,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn1 = FreeFile()
-            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Append, OpenAccess.Read)
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "/data/6794.txt", OpenMode.Append, OpenAccess.Read)
         Catch e As ArgumentException
             If Err.Number = 5 Then
                 caughtException = True
@@ -80,7 +80,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn1 = FreeFile()
-            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random, , , 0)
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "/data/6794.txt", OpenMode.Random, , , 0)
         Catch e As ArgumentException
             If Err.Number = 5 Then
                 caughtException = True
@@ -90,7 +90,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn1 = FreeFile()
-            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random, , , -2)
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "/data/6794.txt", OpenMode.Random, , , -2)
         Catch e As ArgumentException
             If Err.Number = 5 Then
                 caughtException = True
@@ -101,7 +101,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn1 = FreeFile()
-            FileOpen(256, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random)
+            FileOpen(256, System.IO.Directory.GetCurrentDirectory() + "/data/6794.txt", OpenMode.Random)
         Catch e As IOException
             If Err.Number = 52 Then
                 caughtException = True
@@ -112,8 +112,8 @@ Public Class TestClass
         caughtException = False
         Try
             fn1 = FreeFile()
-            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random)
-            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\6794.txt", OpenMode.Random)
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "/data/6794.txt", OpenMode.Random)
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "/data/6794.txt", OpenMode.Random)
         Catch e As IOException
             If Err.Number = 55 Then
                 caughtException = True
@@ -124,7 +124,7 @@ Public Class TestClass
         caughtException = False
         Try
             fn1 = FreeFile()
-            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "\data\notfound.txt", OpenMode.Input)
+            FileOpen(fn1, System.IO.Directory.GetCurrentDirectory() + "/data/notfound.txt", OpenMode.Input)
         Catch e As IOException
             If Err.Number = 53 Then
                 caughtException = True

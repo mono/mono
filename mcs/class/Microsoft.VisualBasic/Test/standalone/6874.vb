@@ -32,7 +32,7 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-        strPathName = System.IO.Directory.GetCurrentDirectory() + "\data\"
+        strPathName = System.IO.Directory.GetCurrentDirectory() + "/data/"
         strFileName = "6874.txt"
         'if this file exists - kill it
         If (strFileName = Dir(strPathName & strFileName)) Then

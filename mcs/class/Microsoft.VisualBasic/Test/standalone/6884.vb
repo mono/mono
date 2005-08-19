@@ -28,7 +28,7 @@ Public Class TestClass
         
         '// make sure all files are closed
         Microsoft.VisualBasic.FileSystem.Reset()
-        strPathName1 = System.IO.Directory.GetCurrentDirectory() + "\data\6884\"
+        strPathName1 = System.IO.Directory.GetCurrentDirectory() + "/data/6884/"
         'make directory 
         Try
              Try

@@ -34,13 +34,13 @@ Public Class TestClass
         Microsoft.VisualBasic.FileSystem.Reset()
         'create and write into file
         fn = FreeFile()
-        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6946.txt", OpenMode.Output)
+        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6946.txt", OpenMode.Output)
         WriteLine(fn, "abcdefghijklmnopqrstuvwxyz")
         WriteLine(fn, "0123456789")
         WriteLine(fn, "abcdefghijklmnopqrstuvwxyz")
         FileClose(fn)
         'read from file and check the location
-        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "\data\6946.txt", OpenMode.Binary)
+        FileOpen(fn, System.IO.Directory.GetCurrentDirectory() + "/data/6946.txt", OpenMode.Binary)
         location = 0 
         While location < LOF(fn)
             FileGet(fn, oneChar)
