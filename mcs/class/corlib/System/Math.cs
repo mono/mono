@@ -365,6 +365,8 @@ namespace System
 			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
 				throw new ArgumentException ("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
 
+			if (mode == MidpointRounding.ToEven)
+				return Round (d);
 			throw new NotImplementedException ();
 		}
 
@@ -374,6 +376,8 @@ namespace System
 			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
 				throw new ArgumentException ("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
 
+			if (mode == MidpointRounding.ToEven)
+				return Round (d, decimals);
 			throw new NotImplementedException ();
 		}
 #endif
@@ -394,13 +398,17 @@ namespace System
 
 
 #if NET_2_0
-		[MonoTODO]
 		public static double Round (double value, MidpointRounding mode)
 		{
 			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
 				throw new ArgumentException ("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
 
-			throw new NotImplementedException ();
+			if (mode == MidpointRounding.ToEven)
+				return Round (value);
+			if (value > 0)
+				return Floor (value + 0.5);
+			else
+				return Ceiling (value - 0.5);
 		}
 
 		[MonoTODO]
@@ -409,6 +417,8 @@ namespace System
 			if ((mode != MidpointRounding.ToEven) && (mode != MidpointRounding.AwayFromZero))
 				throw new ArgumentException ("The value '" + mode + "' is not valid for this usage of the type MidpointRounding.", "mode");
 
+			if (mode == MidpointRounding.ToEven)
+				return Round (value, digits);
 			throw new NotImplementedException ();
 		}
 #endif
