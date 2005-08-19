@@ -1,3 +1,10 @@
+2005-08-18 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added DecimalConverterTests.cs,
+	DoubleConverterTests.cs, Int64ConverterTests.cs, SByteConverterTests.cs
+	SingleConverterTests.cs, UInt16ConverterTests.cs, 
+	UInt32ConverterTests.cs, UInt64ConverterTests.cs.
+
 2005-08-16 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added ByteConverterTests.cs,
