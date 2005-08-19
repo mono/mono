@@ -252,9 +252,10 @@ namespace JSTestRunner {
 			bool fail_expected = Array.IndexOf (fail_tests, test) != -1;
 			Console.WriteLine ("Failed {0}: {1}!", test, reason);
 			Console.WriteLine (); Console.WriteLine (); Console.WriteLine ();
-			if (!config.full_run && !fail_expected) {
-				Console.WriteLine ("Unexpected failure. Aborting run.");
-				Environment.Exit (1);
+			if (!fail_expected) {
+				Console.WriteLine ("CRITICAL: Unexpected failure of {0}. Aborting run.", test);
+				if (!config.full_run)
+					Environment.Exit (1);
 			}
 		}
 	}
