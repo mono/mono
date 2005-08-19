@@ -1,6 +1,7 @@
 2005-08-19  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make (do-profile-check): Add some debugging output.
+	Handle disassemblers that print corlib version in hex.
 
 2005-07-26  Raja R Harinath  <rharinath@novell.com>
 
