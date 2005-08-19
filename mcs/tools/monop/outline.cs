@@ -80,12 +80,13 @@ public class Outline {
 			o.Write (GetTypeName (t));
 			o.Write (" (");
 			OutlineParams (method.GetParameters ());
-			o.WriteLine (")");
+			o.Write (")");
 
 #if NET_2_0
 			WriteGenericConstraints (t.GetGenericArguments ());
 #endif			
-
+	
+			o.WriteLine (";"); 
 			return;
 		}
 		
@@ -473,6 +474,27 @@ public class Outline {
 	{
 		if (method.IsStatic)
 			return "static ";
+
+		if (method.IsFinal) {
+			// This will happen if you have
+			// class X : IA {
+			//   public void A () {}
+			//   static void Main () {}
+			// }
+			// interface IA {
+			//   void A ();
+			// }
+			//
+			// A needs to be virtual (the CLR requires
+			// methods implementing an iface be virtual),
+			// but can not be inherited. It also can not
+			// be inherited. In C# this is represented
+			// with no special modifiers
+
+			if (method.IsVirtual)
+				return null;
+			return "sealed ";
+		}
 		
 		// all interface methods are "virtual" but we don't say that in c#
 		if (method.IsVirtual && !method.DeclaringType.IsInterface) {

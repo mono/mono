@@ -1,3 +1,10 @@
+2005-08-19  Ben Maurer  <bmaurer@novell.com>
+
+	* outline.cs:
+	   - Support for `sealed'
+	   - Handle iface impls with non-virtual methods
+	   - ';' for delegates
+
 2005-07-11  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (PROGRAM): Make profile specific.
