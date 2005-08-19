@@ -67,7 +67,7 @@ namespace System.Threading {
 		private object abort_exc;
 		internal object abort_state;
 		/* thread_id is only accessed from unmanaged code */
-		private int thread_id;
+		private Int64 thread_id;
 		
 		/* start_notify is used by the runtime to signal that Start()
 		 * is ok to return
@@ -155,7 +155,7 @@ namespace System.Threading {
 
 		internal static int CurrentThreadId {
 			get {
-				return CurrentThread.thread_id;
+				return (int)(CurrentThread.thread_id);
 			}
 		}
 
@@ -818,7 +818,7 @@ namespace System.Threading {
 
 		public int ManagedThreadId {
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
-			get { return thread_id; }
+			get { return (int)thread_id; }
 		}
 
 		[MonoTODO]
@@ -890,7 +890,7 @@ namespace System.Threading {
 		public override int GetHashCode ()
 		{
 			// ??? overridden but not guaranteed to be unique ???
-			return thread_id;
+			return (int)thread_id;
 		}
 
 		public void Start (object parameter)

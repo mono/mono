@@ -1,3 +1,7 @@
+2005-08-19  Dick Porter  <dick@ximian.com>
+
+	* Thread.cs: Reserve 64 bits for the thread ID.
+
 2005-07-19  Martin Baulig  <martin@ximian.com>
 
 	* Timer.cs (Timer.Runner.Start): Fix a race condition which was
