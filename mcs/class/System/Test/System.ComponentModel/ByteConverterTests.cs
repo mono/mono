@@ -9,6 +9,7 @@
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 
 using NUnit.Framework;
@@ -31,7 +32,8 @@ namespace MonoTests.System.ComponentModel
 		{
 			Assert.IsTrue (converter.CanConvertFrom (typeof (string)), "#1");
 			Assert.IsFalse (converter.CanConvertFrom (typeof (byte)), "#2");
-			Assert.IsFalse (converter.CanConvertFrom (typeof (object)), "#2");
+			Assert.IsFalse (converter.CanConvertFrom (typeof (object)), "#3");
+			Assert.IsTrue (converter.CanConvertFrom (typeof (InstanceDescriptor)), "#4");
 		}
 
 		[Test]
@@ -42,9 +44,24 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		public void ConvertFrom_String ()
+		public void ConvertFrom_MinValue ()
 		{
-			Assert.AreEqual ((short) 10, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "10"), "#1");
+			Assert.AreEqual (byte.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0"), "#1");
+			Assert.AreEqual (byte.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0x0"), "#2");
+			Assert.AreEqual (byte.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0X0"), "#3");
+			Assert.AreEqual (byte.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0x0"), "#4");
+			Assert.AreEqual (byte.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0X0"), "#5");
+		}
+
+		[Test]
+		public void ConvertFrom_MaxValue ()
+		{
+			Assert.AreEqual (byte.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#ff"), "#1");
+			Assert.AreEqual (byte.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#FF"), "#2");
+			Assert.AreEqual (byte.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0xff"), "#3");
+			Assert.AreEqual (byte.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0XFF"), "#4");
+			Assert.AreEqual (byte.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0xff"), "#5");
+			Assert.AreEqual (byte.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0XFF"), "#6");
 		}
 
 		[Test]
@@ -58,7 +75,7 @@ namespace MonoTests.System.ComponentModel
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_Byte ()
 		{
-			converter.ConvertFrom ((byte) 254);
+			converter.ConvertFrom (byte.MaxValue);
 		}
 
 		[Test]
@@ -76,97 +93,71 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		public void ConvertTo_Invariant ()
+		public void ConvertTo_MinValue ()
 		{
-			Assert.AreEqual ("255", converter.ConvertTo (null, CultureInfo.InvariantCulture, 
-				(byte) 255, typeof (string)), "#1");
+			Assert.AreEqual (byte.MinValue.ToString (CultureInfo.InvariantCulture),
+				converter.ConvertTo (null, CultureInfo.InvariantCulture, byte.MinValue,
+				typeof (string)), "#1");
+			Assert.AreEqual (byte.MinValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertTo (null, CultureInfo.CurrentCulture, byte.MinValue,
+				typeof (string)), "#2");
+			Assert.AreEqual (byte.MinValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertTo (byte.MinValue, typeof (string)), "#3");
 		}
 
 		[Test]
-		public void ConvertFromString_Invalid1 ()
+		public void ConvertTo_MaxValue ()
 		{
-			try {
-				converter.ConvertFromString (null, CultureInfo.InvariantCulture, "*1");
-				Assert.Fail ("#1");
-			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.InnerException, "#3");
-				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
-			}
+			Assert.AreEqual (byte.MaxValue.ToString (CultureInfo.InvariantCulture),
+				converter.ConvertTo (null, CultureInfo.InvariantCulture, byte.MaxValue,
+				typeof (string)), "#1");
+			Assert.AreEqual (byte.MaxValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertTo (null, CultureInfo.CurrentCulture, byte.MaxValue,
+				typeof (string)), "#2");
+			Assert.AreEqual (byte.MaxValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertTo (byte.MaxValue, typeof (string)), "#3");
 		}
 
 		[Test]
-		public void ConvertFromString_Invalid2 ()
+		public void ConvertToString_MinValue ()
 		{
-			try {
-				converter.ConvertFromString (null, CultureInfo.InvariantCulture,
-					double.MaxValue.ToString(CultureInfo.InvariantCulture));
-				Assert.Fail ("#1");
-			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.InnerException, "#3");
-				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
-			}
+			Assert.AreEqual (byte.MinValue.ToString (CultureInfo.InvariantCulture),
+				converter.ConvertToString (null, CultureInfo.InvariantCulture,
+				byte.MinValue), "#1");
+
+			Assert.AreEqual (byte.MinValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertToString (null, byte.MinValue), "#2");
+			Assert.AreEqual (byte.MinValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertToString (null, CultureInfo.CurrentCulture,
+				byte.MinValue), "#3");
+			Assert.AreEqual (byte.MinValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertToString (byte.MinValue), "#4");
 		}
 
 		[Test]
-		public void ConvertFromString_Invalid3 ()
+		public void ConvertToString_MaxValue ()
 		{
-			try {
-				converter.ConvertFromString ("*1");
-				Assert.Fail ("#1");
-			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.InnerException, "#3");
-				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
-			}
+			Assert.AreEqual (byte.MaxValue.ToString (CultureInfo.InvariantCulture),
+				converter.ConvertToString (null, CultureInfo.InvariantCulture,
+				byte.MaxValue), "#1");
+
+			Assert.AreEqual (byte.MaxValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertToString (null, byte.MaxValue), "#2");
+			Assert.AreEqual (byte.MaxValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertToString (null, CultureInfo.CurrentCulture,
+				byte.MaxValue), "#3");
+			Assert.AreEqual (byte.MaxValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertToString (byte.MaxValue), "#4");
 		}
 
 		[Test]
-		public void ConvertFromString_Invalid4 ()
-		{
-			try {
-				converter.ConvertFromString ("256");
-				Assert.Fail ("#1");
-			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.InnerException, "#3");
-				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
-			}
-		}
-
-		[Test]
-		public void ConvertFrom_InvalidString1 ()
-		{
-			try {
-				converter.ConvertFrom (null, CultureInfo.InvariantCulture, "*1");
-				Assert.Fail ("#1");
-			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.InnerException, "#3");
-				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
-			}
-		}
-
-		[Test]
-		public void ConvertFrom_InvalidString2 ()
-		{
-			try {
-				converter.ConvertFrom (null, CultureInfo.InvariantCulture, "256");
-				Assert.Fail ("#1");
-			} catch (Exception ex) {
-				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
-				Assert.IsNotNull (ex.InnerException, "#3");
-				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
-			}
-		}
-
-		[Test]
-		public void ConvertFrom_InvalidString3 ()
+		public void ConvertFrom_InvalidValue ()
 		{
 			try {
 				converter.ConvertFrom ("*1");
 				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
 			} catch (Exception ex) {
 				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
@@ -175,11 +166,339 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		public void ConvertFrom_InvalidString4 ()
+		public void ConvertFrom_InvalidValue_Invariant ()
 		{
 			try {
-				converter.ConvertFrom ("256");
+				converter.ConvertFrom (null, CultureInfo.InvariantCulture, "*1");
 				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFrom_Base10_MinOverflow ()
+		{
+			string minOverflow = ((int) (byte.MinValue - 1)).ToString (
+				CultureInfo.CurrentCulture);
+
+			try {
+				converter.ConvertFrom (minOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFrom_Base10_MinOverflow_Invariant ()
+		{
+			string minOverflow = ((int) (byte.MinValue - 1)).ToString (
+				CultureInfo.InvariantCulture);
+
+			try {
+				converter.ConvertFrom (null, CultureInfo.InvariantCulture, 
+					minOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFrom_Base10_MaxOverflow ()
+		{
+			string maxOverflow = ((int) (byte.MaxValue + 1)).ToString (
+				CultureInfo.CurrentCulture);
+
+			try {
+				converter.ConvertFrom (maxOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFrom_Base10_MaxOverflow_Invariant ()
+		{
+			string maxOverflow = ((int) (byte.MaxValue + 1)).ToString (
+				CultureInfo.InvariantCulture);
+
+			try {
+				converter.ConvertFrom (null, CultureInfo.InvariantCulture, 
+					maxOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFrom_Base16_MinOverflow ()
+		{
+			string minOverflow = ((int) (byte.MinValue - 1)).ToString ("x", 
+				CultureInfo.CurrentCulture);
+
+			try {
+				converter.ConvertFrom ("#" + minOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFrom_Base16_MinOverflow_Invariant ()
+		{
+			string minOverflow = ((int) (byte.MinValue - 1)).ToString ("x",
+				CultureInfo.InvariantCulture);
+
+			try {
+				converter.ConvertFrom (null, CultureInfo.InvariantCulture, 
+					"#" + minOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFrom_Base16_MaxOverflow ()
+		{
+			string maxOverflow = ((int) (byte.MaxValue + 1)).ToString ("x",
+				CultureInfo.CurrentCulture);
+
+			try {
+				converter.ConvertFrom ("#" + maxOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFrom_Base16_MaxOverflow_Invariant ()
+		{
+			string maxOverflow = ((int) (byte.MaxValue + 1)).ToString ("x",
+				CultureInfo.InvariantCulture);
+
+			try {
+				converter.ConvertFrom (null, CultureInfo.InvariantCulture, 
+					"#" + maxOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFromString_InvalidValue ()
+		{
+			try {
+				converter.ConvertFromString ("*1");
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFromString_InvalidValue_Invariant ()
+		{
+			try {
+				converter.ConvertFromString (null, CultureInfo.InvariantCulture, "*1");
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFromString_Base10_MinOverflow ()
+		{
+			string minOverflow = ((int) (byte.MinValue - 1)).ToString (
+				CultureInfo.CurrentCulture);
+
+			try {
+				converter.ConvertFromString (minOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFromString_Base10_MinOverflow_Invariant ()
+		{
+			string minOverflow = ((int) (byte.MinValue - 1)).ToString (
+				CultureInfo.InvariantCulture);
+
+			try {
+				converter.ConvertFromString (null, CultureInfo.InvariantCulture,
+					minOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFromString_Base10_MaxOverflow ()
+		{
+			string maxOverflow = ((int) (byte.MaxValue + 1)).ToString (
+				CultureInfo.CurrentCulture);
+
+			try {
+				converter.ConvertFromString (maxOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFromString_Base10_MaxOverflow_Invariant ()
+		{
+			string maxOverflow = ((int) (byte.MaxValue + 1)).ToString (
+				CultureInfo.InvariantCulture);
+
+			try {
+				converter.ConvertFromString (null, CultureInfo.InvariantCulture,
+					maxOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFromString_Base16_MinOverflow ()
+		{
+			string minOverflow = ((int) (byte.MinValue - 1)).ToString ("x",
+				CultureInfo.CurrentCulture);
+
+			try {
+				converter.ConvertFromString ("#" + minOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFromString_Base16_MinOverflow_Invariant ()
+		{
+			string minOverflow = ((int) (byte.MinValue - 1)).ToString ("x",
+				CultureInfo.InvariantCulture);
+
+			try {
+				converter.ConvertFromString (null, CultureInfo.InvariantCulture,
+					"#" + minOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFromString_Base16_MaxOverflow ()
+		{
+			string maxOverflow = ((int) (byte.MaxValue + 1)).ToString ("x",
+				CultureInfo.CurrentCulture);
+
+			try {
+				converter.ConvertFromString ("#" + maxOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Test]
+		public void ConvertFromString_Base16_MaxOverflow_Invariant ()
+		{
+			string maxOverflow = ((int) (byte.MaxValue + 1)).ToString ("x",
+				CultureInfo.InvariantCulture);
+
+			try {
+				converter.ConvertFromString (null, CultureInfo.InvariantCulture,
+					"#" + maxOverflow);
+				Assert.Fail ("#1");
+			} catch (AssertionException) {
+				throw;
 			} catch (Exception ex) {
 				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
@@ -188,4 +507,3 @@ namespace MonoTests.System.ComponentModel
 		}
 	}
 }
-

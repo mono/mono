@@ -1,5 +1,5 @@
 //
-// System.ComponentModel.Int32Converter test cases
+// System.ComponentModel.UInt32Converter test cases
 //
 // Authors:
 // 	Gert Driesen (drieseng@users.sourceforge.net)
@@ -17,21 +17,21 @@ using NUnit.Framework;
 namespace MonoTests.System.ComponentModel
 {
 	[TestFixture]
-	public class Int32ConverterTests
+	public class UInt32ConverterTests
 	{
-		private Int32Converter converter;
+		private UInt32Converter converter;
 		
 		[SetUp]
 		public void SetUp ()
 		{
-			converter = new Int32Converter ();
+			converter = new UInt32Converter ();
 		}
 
 		[Test]
 		public void CanConvertFrom ()
 		{
 			Assert.IsTrue (converter.CanConvertFrom (typeof (string)), "#1");
-			Assert.IsFalse (converter.CanConvertFrom (typeof (int)), "#2");
+			Assert.IsFalse (converter.CanConvertFrom (typeof (uint)), "#2");
 			Assert.IsFalse (converter.CanConvertFrom (typeof (object)), "#3");
 			Assert.IsTrue (converter.CanConvertFrom (typeof (InstanceDescriptor)), "#4");
 		}
@@ -46,22 +46,22 @@ namespace MonoTests.System.ComponentModel
 		[Test]
 		public void ConvertFrom_MinValue ()
 		{
-			Assert.AreEqual (int.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#80000000"), "#1");
-			Assert.AreEqual (int.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0x80000000"), "#2");
-			Assert.AreEqual (int.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0X80000000"), "#3");
-			Assert.AreEqual (int.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0x80000000"), "#4");
-			Assert.AreEqual (int.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0X80000000"), "#5");
+			Assert.AreEqual (uint.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0"), "#1");
+			Assert.AreEqual (uint.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0x0"), "#2");
+			Assert.AreEqual (uint.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0X0"), "#3");
+			Assert.AreEqual (uint.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0x0"), "#4");
+			Assert.AreEqual (uint.MinValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0X0"), "#5");
 		}
 
 		[Test]
 		public void ConvertFrom_MaxValue ()
 		{
-			Assert.AreEqual (int.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#7fffffff"), "#1");
-			Assert.AreEqual (int.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#7FFFFFFF"), "#2");
-			Assert.AreEqual (int.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0x7fffffff"), "#3");
-			Assert.AreEqual (int.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0X7FFFFFFF"), "#4");
-			Assert.AreEqual (int.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0x7fffffff"), "#5");
-			Assert.AreEqual (int.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0X7FFFFFFF"), "#6");
+			Assert.AreEqual (uint.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#ffffffff"), "#1");
+			Assert.AreEqual (uint.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#FFFFFFFF"), "#2");
+			Assert.AreEqual (uint.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0xffffffff"), "#3");
+			Assert.AreEqual (uint.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "#0XFFFFFFFF"), "#4");
+			Assert.AreEqual (uint.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0xffffffff"), "#5");
+			Assert.AreEqual (uint.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0XFFFFFFFF"), "#6");
 		}
 
 		[Test]
@@ -72,36 +72,29 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
-		[ExpectedException (typeof (NotSupportedException))]
-		public void ConvertFrom_Int32 ()
-		{
-			converter.ConvertFrom (int.MaxValue);
-		}
-
-		[Test]
 		public void ConvertTo_MinValue ()
 		{
-			Assert.AreEqual (int.MinValue.ToString (CultureInfo.InvariantCulture),
-				converter.ConvertTo (null, CultureInfo.InvariantCulture, int.MinValue,
+			Assert.AreEqual (uint.MinValue.ToString (CultureInfo.InvariantCulture),
+				converter.ConvertTo (null, CultureInfo.InvariantCulture, uint.MinValue,
 				typeof (string)), "#1");
-			Assert.AreEqual (int.MinValue.ToString (CultureInfo.CurrentCulture),
-				converter.ConvertTo (null, CultureInfo.CurrentCulture, int.MinValue,
+			Assert.AreEqual (uint.MinValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertTo (null, CultureInfo.CurrentCulture, uint.MinValue,
 				typeof (string)), "#2");
-			Assert.AreEqual (int.MinValue.ToString (CultureInfo.CurrentCulture),
-				converter.ConvertTo (int.MinValue, typeof (string)), "#3");
+			Assert.AreEqual (uint.MinValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertTo (uint.MinValue, typeof (string)), "#3");
 		}
 
 		[Test]
 		public void ConvertTo_MaxValue ()
 		{
-			Assert.AreEqual (int.MaxValue.ToString (CultureInfo.InvariantCulture),
-				converter.ConvertTo (null, CultureInfo.InvariantCulture, int.MaxValue,
+			Assert.AreEqual (uint.MaxValue.ToString (CultureInfo.InvariantCulture),
+				converter.ConvertTo (null, CultureInfo.InvariantCulture, uint.MaxValue,
 				typeof (string)), "#1");
-			Assert.AreEqual (int.MaxValue.ToString (CultureInfo.CurrentCulture),
-				converter.ConvertTo (null, CultureInfo.CurrentCulture, int.MaxValue,
+			Assert.AreEqual (uint.MaxValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertTo (null, CultureInfo.CurrentCulture, uint.MaxValue,
 				typeof (string)), "#2");
-			Assert.AreEqual (int.MaxValue.ToString (CultureInfo.CurrentCulture),
-				converter.ConvertTo (int.MaxValue, typeof (string)), "#3");
+			Assert.AreEqual (uint.MaxValue.ToString (CultureInfo.CurrentCulture),
+				converter.ConvertTo (uint.MaxValue, typeof (string)), "#3");
 		}
 
 		[Test]

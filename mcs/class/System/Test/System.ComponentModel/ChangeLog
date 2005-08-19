@@ -1,3 +1,21 @@
+2005-08-19 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ToolboxItemAttributeTests.cs: Fixed typo in eol-style property.
+	* ByteConverterTests.cs: Added tests for hex string and min/max
+	conversions.
+	* Int16ConverterTests.cs: Added tests for hex string and min/max
+	conversions.
+	* Int32ConverterTests.cs: Added tests for hex string and min/max
+	conversions.
+	* DecimalConverterTests.cs: Added tests for DecimalConverter.
+	* DoubleConverterTests.cs: Added tests for DoubleConverter.
+	* Int64ConverterTests.cs: Added tests for Int64Converter.
+	* SByteConverterTests.cs: Added tests for SByteConverter.
+	* SingleConverterTests.cs: Added tests for SingleConverter.
+	* UInt16ConverterTests.cs: Added tests for UInt16Converter.
+	* UInt32ConverterTests.cs: Added tests for UInt32Converter.
+	* UInt64ConverterTests.cs: Added tests for UInt64Converter.
+
 2005-08-16 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ByteConverterTests.cs: Added tests for ByteConverter.
