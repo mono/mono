@@ -135,13 +135,11 @@ namespace System.Reflection.Emit {
 		{
 			if (delegateType == null)
 				throw new ArgumentNullException ("delegateType");
-			if (deleg != null)
-				return deleg;
 
 			CreateDynMethod ();
 
-			deleg = Delegate.CreateDelegate (delegateType, target, this);
-			return deleg;
+			/* Can't cache the delegate since it is different for each target */
+			return Delegate.CreateDelegate (delegateType, target, this);
 		}
 		
 		[MonoTODO]

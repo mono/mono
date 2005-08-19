@@ -1,5 +1,8 @@
 2005-08-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* DynamicMethod.cs (CreateDelegate): Don't cache the delegate since it
+	needs to be different for each target.
+	
 	* DynamicMethod.cs (CreateDynMethod): Call ilgen.label_fixup ().
 
 	* DynamicMethod.cs (AddRef): Reserve every second ref slot for use by the
