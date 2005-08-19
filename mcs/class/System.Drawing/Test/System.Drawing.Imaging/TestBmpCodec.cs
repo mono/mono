@@ -90,7 +90,7 @@ namespace MonoTests.System.Drawing
 			
 			rect = bmp.GetBounds(ref unit);
 			
-			//Assert.AreEqual (PixelFormat.Format24bppRgb, bmp.PixelFormat);
+			Assert.AreEqual (PixelFormat.Format24bppRgb, bmp.PixelFormat);
 			Assert.AreEqual (173, bmp.Width);
 			Assert.AreEqual (183, bmp.Height);		
 			
@@ -116,7 +116,7 @@ namespace MonoTests.System.Drawing
 			
 			rect = bmp.GetBounds(ref unit);
 			
-			//Assert.AreEqual (PixelFormat.Format32bppArgb, bmp.PixelFormat);
+			Assert.AreEqual (PixelFormat.Format32bppArgb, bmp.PixelFormat);
 			Assert.AreEqual (173, bmp.Width);
 			Assert.AreEqual (183, bmp.Height);		
 			

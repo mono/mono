@@ -1,3 +1,7 @@
+2005-08-19  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	*  TestBmpCodec.cs: Enable PixelFormat tests                                                  
+
 2005-08-16  Andrew Skiba <andrews@mainsoft.com>
 
 	* TestImageCodecInfo.cs: use regular expressions for results that may vary

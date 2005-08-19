@@ -8,11 +8,11 @@ if [ $# -eq 0 ]; then
 	exit 1
 fi
 
-cp ../../System.Drawing_test.dll .
+cp ../../System.Drawing_test_default.dll .
 
 topdir=../../../..
-NUNITCONSOLE=$topdir/class/lib/nunit-console.exe
-MONO_PATH=$topdir/nunit20:$topdir/class/lib:.
+NUNITCONSOLE=$topdir/class/lib/default/nunit-console.exe
+MONO_PATH=$topdir/nunit20:$topdir/class/lib/default:.
 
 
 for i in $@; do
@@ -22,7 +22,7 @@ for i in $@; do
 		fixture="/fixture:MonoTests.${i}"
 	fi
 	MONO_PATH=$MONO_PATH \
-		mono --debug ${NUNITCONSOLE} System.Drawing_test.dll $fixture
+		mono --debug ${NUNITCONSOLE} System.Drawing_test_default.dll $fixture
 done
 
 
