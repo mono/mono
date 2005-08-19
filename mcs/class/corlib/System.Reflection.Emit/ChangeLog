@@ -1,3 +1,10 @@
+2005-08-19  Zoltan Varga  <vargaz@freemail.hu>
+
+	* DynamicMethod.cs (CreateDynMethod): Call ilgen.label_fixup ().
+
+	* DynamicMethod.cs (AddRef): Reserve every second ref slot for use by the
+	runtime.
+
 2005-08-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* AssemblyBuilder.cs: Implement _AssemblyBuilder, CA fixes to 

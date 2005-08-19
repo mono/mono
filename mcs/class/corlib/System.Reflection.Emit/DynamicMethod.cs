@@ -109,8 +109,11 @@ namespace System.Reflection.Emit {
 		private extern void create_dynamic_method (DynamicMethod m);
 
 		private void CreateDynMethod () {
-			if (mhandle.Value == IntPtr.Zero)
+			if (mhandle.Value == IntPtr.Zero) {
+				if (ilgen != null)
+					ilgen.label_fixup ();
 				create_dynamic_method (this);
+			}
 		}
 
 		[ComVisible (true)]
@@ -322,14 +325,16 @@ namespace System.Reflection.Emit {
 		internal int AddRef (object reference) {
 			if (refs == null)
 				refs = new object [4];
-			if (nrefs >= refs.Length) {
+			if (nrefs >= refs.Length - 1) {
 				object [] new_refs = new object [refs.Length * 2];
 				System.Array.Copy (refs, new_refs, refs.Length);
 				refs = new_refs;
 			}
 			refs [nrefs] = reference;
-			nrefs ++;
-			return nrefs;
+			/* Reserved by the runtime */
+			refs [nrefs + 1] = null;
+			nrefs += 2;
+			return nrefs - 1;
 		}
 	}
 
