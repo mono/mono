@@ -1,7 +1,7 @@
 2005-08-19  Jb Evain  <jbevain@gmail.com>
 
 	* NameObjectCollectionBase (GetEnumerator):
-		Remove the virtual modifier.
+		Use the virtual modifier only in 2.0 profile.
 
 2005-08-03  Raja R Harinath  <rharinath@novell.com>
 

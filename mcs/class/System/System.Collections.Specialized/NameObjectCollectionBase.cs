@@ -275,7 +275,11 @@ namespace System.Collections.Specialized
 		/// <remark>This enumerator returns the keys of the collection as strings.</remark>
 		/// </summary>
 		/// <returns></returns>
-		public IEnumerator GetEnumerator()
+		public
+#if NET_2_0		
+		virtual
+#endif
+		IEnumerator GetEnumerator()
 		{
 			return new _KeysEnumerator(this);
 		}
