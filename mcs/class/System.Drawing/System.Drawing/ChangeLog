@@ -1,3 +1,8 @@
+2005-08-19 Jordi Mas i Hernandez <jordi@ximian.com> 
+
+	* gdipFunctions.cs: Before calling GdiplusShutdown we make that all of handles
+	from gdiplus have been released
+
 ﻿2005-08-18 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Pen.jvm.cs: Fixed DashSpacing in createStrokedShape

@@ -66,7 +66,11 @@ namespace System.Drawing
 		static ulong GdiPlusToken;
 
 		static void ProcessExit (object sender, EventArgs e)
-		{			
+		{		
+			// Called all pending objects and claim any pending handle before
+			// shutting down
+			GC.Collect ();	
+			GC.WaitForPendingFinalizers ();
 			GdiplusShutdown (ref GdiPlusToken);
 
 			if (UseX11Drawable && Display != IntPtr.Zero) {
