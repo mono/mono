@@ -1,8 +1,12 @@
 2005-08-19  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mini_get_method): Move handling of wrapper data here.
+
+	* mini.c (mono_method_to_ir): Add support for dynamic methods.
+
 	* mini.c (mono_method_to_ir): Convert nonvirtual calls to abstract methods into
 	virtual.
-	
+
 	* mini.c (mono_method_to_ir): Emit IR for CEE_NOP as well, so 
 	bblock->code does not remain empty.
 
