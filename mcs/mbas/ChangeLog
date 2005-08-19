@@ -1,3 +1,12 @@
+2005-08-19 Satya Sudha K <ksathyasudha@novell.com>
+	* expression.cs :
+		Preventing conversion of an 'object' to 't[]' where the latter is a 
+		ParamArray parameter
+	* statement.cs :
+	* codegen.cs :
+		Fixed handling of 'Return' and 'Exit' statements from within 
+		Try/Catch blocks
+
 2005-08-09 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	* mb-parser.jay: Define as used the function's return variable,
 	because of bug #75747.

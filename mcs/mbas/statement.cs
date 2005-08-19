@@ -829,8 +829,10 @@ namespace Mono.MonoBASIC {
 			if (ec.CurrentBranching.InTryBlock ())
 				ec.CurrentBranching.AddFinallyVector (vector);
 
-			vector.Returns = FlowReturns.ALWAYS;
-			vector.Breaks = FlowReturns.ALWAYS;
+			if (! ec.InTry && ! ec.InCatch) {
+				vector.Returns = FlowReturns.ALWAYS;
+				vector.Breaks = FlowReturns.ALWAYS;
+			}
 			return true;
 		}
 		
@@ -1280,11 +1282,8 @@ namespace Mono.MonoBASIC {
 				}
 			
 				if (ec.InTry || ec.InCatch) {
-					if (!ec.HasReturnLabel) {
-						ec.ReturnLabel = ec.ig.DefineLabel ();
-						ec.HasReturnLabel = true;
-					}
-					ec.ig.Emit (OpCodes.Leave, ec.ReturnLabel);
+					if (ec.HasExitLabel)
+						ec.ig.Emit (OpCodes.Leave, ec.ExitLabel);
 				} else {
 					if(type == ExitType.SUB) {   
                                                 ec.ig.Emit (OpCodes.Ret);
@@ -4449,11 +4448,13 @@ namespace Mono.MonoBASIC {
 		protected override bool DoEmit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			Label finish = ig.DefineLabel ();;
 			bool returns;
 
 			ec.TryCatchLevel++;
-			ig.BeginExceptionBlock ();
+			Label finish = ig.BeginExceptionBlock ();
+			ec.HasExitLabel = true;
+			ec.ExitLabel = finish;
+
 			bool old_in_try = ec.InTry;
 			ec.InTry = true;
 			returns = Block.Emit (ec);
@@ -4523,7 +4524,6 @@ namespace Mono.MonoBASIC {
 
 			ec.InCatch = old_in_catch;
 
-			ig.MarkLabel (finish);
 			if (Fini != null){
 				ig.BeginFinallyBlock ();
 				bool old_in_finally = ec.InFinally;
@@ -4537,15 +4537,6 @@ namespace Mono.MonoBASIC {
 
 			if (!returns || ec.InTry || ec.InCatch)
 				return returns;
-
-			// Unfortunately, System.Reflection.Emit automatically emits a leave
-			// to the end of the finally block.  This is a problem if 'returns'
-			// is true since we may jump to a point after the end of the method.
-			// As a workaround, emit an explicit ret here.
-
-			if (ec.ReturnType != null)
-				ec.ig.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
-			ec.ig.Emit (OpCodes.Ret);
 
 			return true;
 		}

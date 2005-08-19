@@ -336,6 +336,16 @@ namespace Mono.MonoBASIC {
 		public bool HasReturnLabel;
 
 		/// <summary>
+		///   The location where to exit
+		/// </summary>
+		public Label ExitLabel;
+
+		/// <summary>
+		///   If we already defined the ExitLabel
+		/// </summary>
+		public bool HasExitLabel;
+
+		/// <summary>
 		///   Whether we are in a Finally block
 		/// </summary>
 		public bool InFinally;
@@ -596,6 +606,14 @@ namespace Mono.MonoBASIC {
 				}
 			}
 
+			if (HasReturnLabel)
+				ig.MarkLabel (ReturnLabel);
+			if (return_value != null){
+				ig.Emit (OpCodes.Ldloc, return_value);
+				ig.Emit (OpCodes.Ret);
+				return;
+			}
+
 			if (ReturnType != null && !has_ret){
 				//
 				// mcs here would report an error (and justly so), but functions without
@@ -613,16 +631,11 @@ namespace Mono.MonoBASIC {
 				return;
 			}
 
-			if (HasReturnLabel)
-				ig.MarkLabel (ReturnLabel);
-			if (return_value != null){
-				ig.Emit (OpCodes.Ldloc, return_value);
-				ig.Emit (OpCodes.Ret);
-			} else {
-				if (!InTry){
-					if (!has_ret || HasReturnLabel)
-						ig.Emit (OpCodes.Ret);
-				}
+			if (!InTry){
+				if (!has_ret)
+					ig.Emit (OpCodes.Ret);
+				else if (ReturnType == null)
+					ig.Emit (OpCodes.Ret);
 			}
 		}
 

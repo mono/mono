@@ -3868,6 +3868,11 @@ namespace Mono.MonoBASIC {
 			if (a_mod == p_mod ||
 				(a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 				// if (a_mod == Parameter.Modifier.NONE) {
+					if (p_mod == Parameter.Modifier.PARAMS) {
+						if (!(a.Expr is NullLiteral))
+							if (ptype.IsArray && !a.Expr.Type.IsArray)
+								return ConversionType.None;
+					}
 					if (! WideningConversionExists (a.Expr, ptype) ) {
 
 						if (! NarrowingConversionExists (ec, a.Expr, ptype) )
