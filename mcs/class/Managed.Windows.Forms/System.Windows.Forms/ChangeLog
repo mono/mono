@@ -1,3 +1,7 @@
+2005-08-19  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ImageList.cs: Makes ToString method compatible with MS
+
 2005-08-18  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* MenuAPI.cs: fixes bug 75716

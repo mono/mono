@@ -476,7 +476,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			return "ImageList Size "+this.size.Width.ToString()+"x"+this.size.Height.ToString()+", Depth "+this.color_depth.ToString()+", Transparency color "+this.transparency_color.ToString();
+			return base.ToString () + " Images.Count: " + Images.Count + ", ImageSize: " + ImageSize;
 		}
 		#endregion	// Public Instance Methods
 
