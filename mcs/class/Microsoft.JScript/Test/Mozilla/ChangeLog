@@ -1,5 +1,22 @@
 2005-08-19  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* mjs-most.tests: Uncomment tests ecma/Array/15.4.2.3.js,
+	ecma/Array/15.4.3.2.js, ecma/Boolean/15.6.3.1-5.js,
+	ecma/Boolean/15.6.3.1.js, ecma/Boolean/15.6.3.js,
+	ecma/Boolean/15.6.4-1.js, ecma/Boolean/15.6.4.1.js,
+	ecma/Boolean/15.6.4.js, ecma/Date/15.9.5.1.js,
+	ecma/Date/15.9.5.js, ecma/Expressions/11.4.6.js,
+	ecma/Expressions/11.5.2.js, ecma/FunctionObjects/15.3.3.1-1.js,
+	ecma/FunctionObjects/15.3.3.2.js, ecma/GlobalObject/15.1.2.2-2.js,
+	ecma/Math/15.8.2.3.js, ecma/NativeObjects/15-1.js,
+	ecma/Number/15.7.3.5-1.js, ecma/Number/15.7.3.js,
+	ecma/Number/15.7.4-1.js, ecma/ObjectObjects/15.2.3-1.js,
+	ecma/ObjectObjects/15.2.3.js, ecma/String/15.5.3.js,
+	ecma/String/15.5.4.2.js, ecma/TypeConversion/9.3.1-1.js,
+	ecma_2/RegExp/properties-001.js, ecma_2/RegExp/properties-002.js
+	
+	as they are no longer freezing.
+	
 	* mjs-most.tests: comment js1_2/regexp/regress-9141.js as the
 	value/ref patch exposes bugs that make it freeze.
 
