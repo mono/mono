@@ -1,5 +1,13 @@
 2005-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* object.c (mono_delegate_ctor): Add support for IA64 function descriptors.
+
+	* marshal.c (mono_delegate_free_ftnptr): Ditto.
+
+	* object.c (mono_get_addr_from_ftnptr): New helper function.
+
+	* object.h (mono_array_addr): Fix unaligned access warnings on IA64.
+
 	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
 
 2005-08-19  Dick Porter  <dick@ximian.com>
