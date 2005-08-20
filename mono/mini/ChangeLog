@@ -1,5 +1,13 @@
 2005-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-ia64.c: Remove LMF fixmes.
+
+	* mini-ia64.h: Remove most fields from LMF.
+
+	* inssel-ia64.brg (stmt): Fix unaligned access errors.
+
+	* mini-trampolines.c: Add support for IA64 function descriptors.
+
 	* mini.h mini.c jit-icalls.c exceptions-ia64.cdriver.c: Add support
 	for IA64 function descriptors.
 
