@@ -1,3 +1,9 @@
+2005-08-20  Ankit Jain  <jankit@novell.com>
+
+	* dis-cil.c (dissasemble_cil): Specify precision to enable
+	  roundtripping of floats.
+	* get.c (get_constant): Likewise.  
+
 2005-08-13  Jb Evain  <jbevain@gmail.com>
 
 	* get.c (get_token): handle the case when
