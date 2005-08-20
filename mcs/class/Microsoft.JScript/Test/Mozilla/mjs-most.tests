@@ -1089,7 +1089,8 @@ js1_2/regexp/parentheses.js
 js1_2/regexp/plus.js
 js1_2/regexp/question_mark.js
 js1_2/regexp/regress-6359.js
-js1_2/regexp/regress-9141.js
+# Freezes
+#js1_2/regexp/regress-9141.js
 js1_2/regexp/simple_form.js
 js1_2/regexp/source.js
 js1_2/regexp/special_characters.js

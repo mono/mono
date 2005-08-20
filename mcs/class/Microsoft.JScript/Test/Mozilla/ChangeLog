@@ -1,3 +1,13 @@
+2005-08-19  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* mjs-most.tests: comment js1_2/regexp/regress-9141.js as the
+	value/ref patch exposes bugs that make it freeze.
+
+	* mjs-most.fail: added js1_2/regexp/octal.js and
+	js1_2/regexp/special_characters.js waiting for a RE patch to the
+	base class library.
+
+
 2005-08-19  Florian Gross  <flgr@ccan.de>
 
 	* mjs-most.fail, mjs-most.tests: Adjusted for run time fixes and

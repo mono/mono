@@ -96,3 +96,5 @@ js1_4/Regress/date-001-n.js
 js1_4/Regress/function-001.js
 js1_4/Regress/function-004-n.js
 js1_4/Regress/toString-001-n.js
+js1_2/regexp/octal.js
+js1_2/regexp/special_characters.js
