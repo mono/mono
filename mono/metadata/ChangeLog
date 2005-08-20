@@ -1,3 +1,47 @@
+2005-08-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	This patch implements a big portion of publisher policy
+	support, used to bind assembly versions and redirect
+	one assembly from version A to version B.
+
+	* assembly.c:
+	New GSList loaded_assembly_bindings, for storing the cached
+	assembly bindings.
+	(assembly_binding_maps_name): New static function for checking if a 
+	assembly binding information maps an assembly name.
+	(mono_assembly_binding_info_free): New function for freeing
+	assembly binding information resources.
+	(get_publisher_policy_info): New static function for retrieving 
+	assembly binding information from a MonoImage.
+	(compare_versions): New static function for comparing an assembly
+	binding information data and the version of an assembly name.
+	(check_policy_versions): New static function for checking if an
+	assembly binding info mapping an assembly name is valid for it.
+	(mono_assembly_load_publisher_policy): New static function for
+	loading the 'policy.major.minor.MyAssembly' image for an assembly
+	with an assembly name 'aname'.
+	(mono_assembly_bind_version): New static function for updating
+	assembly redirection.
+	(mono_assembly_apply_binding): New static function for applying
+	assembly binding.
+	(search_binding_loaded): New static function for searching 
+	loaded assembly binding infos in the cache domain.
+	(mono_assembly_load_full): Don't apply assembly binding for
+	reflection only assemblies.
+
+	* metadata-internals.h: Add MonoAssemblyBindingInfo,
+	which contains information about assembly binding. Also
+	declare signature for mono_config_parse_publisher_policy ()
+	function, used to retrieve pub policy info.
+	
+	* mono-config.c:
+	(publisher_policy_start): New static function used to parse publisher 
+	policy config files.
+	(publisher_policy_parser): New static MonoParseHandler containing 
+	the functions used when parsing config files.
+	(mono_config_parse_publisher_policy): New function for parsing
+	publisher policy files.
+	
 2005-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_delegate_ctor): Add support for IA64 function descriptors.
