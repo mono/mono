@@ -993,7 +993,7 @@ namespace System.Data.Odbc
 			return keys;
 		}
 		
-		private ArrayList GetPrimaryKeysBySQLStatistics (string catalog, string schema, string table)
+		private unsafe ArrayList GetPrimaryKeysBySQLStatistics (string catalog, string schema, string table)
 		{
 			ArrayList keys = new ArrayList ();
 			IntPtr handle = IntPtr.Zero;

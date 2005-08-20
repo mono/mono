@@ -1,3 +1,8 @@
+2005-08-20 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* Makefile: Allow unsafe code. This fixes the build on Windows (using
+	csc).
+
 2005-07-27 Boris Kirzner <borisk@mainsoft.com>
 	* System.Data.vmwcsproj: changed location of rt.dll in TARGET_JVM project file.
 	
