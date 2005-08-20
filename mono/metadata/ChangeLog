@@ -1,3 +1,7 @@
+2005-08-20  Zoltan Varga  <vargaz@freemail.hu>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
 2005-08-19  Dick Porter  <dick@ximian.com>
 
 	* threads.c, threads.h, appdomain.c, appdomain.h,
