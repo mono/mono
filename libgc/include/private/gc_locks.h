@@ -108,7 +108,7 @@
 #	ifndef __INTEL_COMPILER
 	  __asm__ __volatile__("xchg4 %0=%1,%2"
 		: "=r"(oldval), "=m"(*addr)
-		: "r"(n), "1"(*addr) : "memory");
+		: "r"(n) : "memory");
 #	else
 	  oldval = _InterlockedExchange(addr, n);
 #	endif
