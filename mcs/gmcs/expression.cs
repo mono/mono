@@ -5660,7 +5660,7 @@ namespace Mono.CSharp {
 				if (!omit_args) {
 					Type t = null;
 					if (this_call) {
-						ig.Emit (OpCodes.Ldarg_0);
+						ec.EmitThis ();
 						t = decl_type;
 					} else {
 						Type iexpr_type = instance_expr.Type;

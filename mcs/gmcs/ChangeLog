@@ -1,3 +1,12 @@
+2005-08-20  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs (CaptureContext.CaptureThis): Create the topmost
+	scope if we don't already have it.
+
+	* expression.cs (Invocation.EmitCall): Use `ec.EmitThis ()' rather
+	than `ig.Emit (OpCodes.Ldarg_0)' to make it work inside iterators;
+	fixes #75867.
+
 2005-07-31  Miguel de Icaza  <miguel@novell.com>
 
 	* statement.cs: Copy the local exception into the exception
