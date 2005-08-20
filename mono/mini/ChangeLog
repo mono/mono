@@ -1,3 +1,11 @@
+
+Sat Aug 20 16:51:44 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-arm.c: patch the vtable for virtual calls. Added
+	support code to register/unregister the LMF.
+	* mini-arm.c, mini-arm.h: warning fixes, fixes, speedups,
+	more LMF work.
+
 2005-08-19  Dick Porter  <dick@ximian.com>
 
 	* mini.c: Use a gsize to store the thread ID, so it can hold a 64
