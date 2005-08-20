@@ -1,5 +1,8 @@
 2005-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_create_class_init_trampoline): Fix bug caused by last
+	change.
+
 	* mini-ia64.c: Remove LMF fixmes.
 
 	* mini-ia64.h: Remove most fields from LMF.
