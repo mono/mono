@@ -261,7 +261,7 @@ namespace Mono.CSharp
 				return null;
 
 			CompilerError error=new CompilerError();
-			Regex reg = new Regex (@"^(\s*(?<file>.*)\((?<line>\d*)(,(?<column>\d*))?\):\s+)*(?<level>\w+)\s*(?<number>.*):\s(?<message>.*)",
+			Regex reg = new Regex (@"^(\s*(?<file>.*)\((?<line>\d*)(,(?<column>\d*))?\)(:)?\s+)*(?<level>\w+)\s*(?<number>.*):\s(?<message>.*)",
 				RegexOptions.Compiled | RegexOptions.ExplicitCapture);
 			Match match=reg.Match(error_string);
 			if (!match.Success) return null;
