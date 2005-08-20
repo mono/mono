@@ -35,7 +35,7 @@ using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
-	public class ArrayLiteral : AST {
+	public class ArrayLiteral : AST, ICanLookupPrototype {
 
 		internal ASTList elems;
 		int skip_count;
@@ -62,6 +62,17 @@ namespace Microsoft.JScript {
 			return r;
 		}
 
+		bool ICanLookupPrototype.ResolveFieldAccess (AST ast)
+		{
+			if (ast is Identifier) {
+				Identifier name = (Identifier) ast;
+				Type prototype = typeof (StringPrototype);
+				MemberInfo [] members = prototype.GetMember (name.name.Value);
+				return members.Length > 0;
+			} else
+				return false;
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
 			int i = 0;
@@ -75,9 +86,10 @@ namespace Microsoft.JScript {
 			foreach (AST ast in exps) {
 				ig.Emit (OpCodes.Dup);
  				ig.Emit (OpCodes.Ldc_I4, i);
-				if (ast != null)
+				if (ast != null) {
 					ast.Emit (ec);
-				else 
+					CodeGenerator.EmitBox (ig, ast);
+				} else 
 					ig.Emit (OpCodes.Ldsfld, missing);
  				ig.Emit (OpCodes.Stelem_Ref);
 				i++;

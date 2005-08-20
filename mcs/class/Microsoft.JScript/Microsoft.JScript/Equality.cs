@@ -176,10 +176,14 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Ldloc, local_builder);
 			}
 
-			if (left != null)
+			if (left != null) {
 				left.Emit (ec);
-			if (right != null)
+				CodeGenerator.EmitBox (ig, left);
+			}
+			if (right != null) {
 				right.Emit (ec);
+				CodeGenerator.EmitBox (ig, right);
+			}
 
 			if (op == JSToken.Equal || op == JSToken.NotEqual) {
 				ig.Emit (OpCodes.Call, typeof (Equality).GetMethod ("EvaluateEquality"));

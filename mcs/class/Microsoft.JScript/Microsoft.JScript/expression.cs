@@ -72,11 +72,12 @@ namespace Microsoft.JScript {
 		internal override bool Resolve (IdentificationTable context)
 		{
 			bool r = false;		       
-			
-			if (operand is Exp)
+
+			if (operand is Exp) {
 				if (oper != JSToken.Increment && oper != JSToken.Decrement)
 					r = ((Exp) operand).Resolve (context, no_effect);
-			r = ((AST) operand).Resolve (context);			
+			} else 
+				r = operand.Resolve (context);
 			return r;
 		}
 
@@ -88,15 +89,8 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (!(operand is NumericLiteral) || (oper != JSToken.Minus))
-				emit_unary_op (ec);
-			else
-				operand.Emit (ec);
-		}
-
-		internal void emit_unary_op (EmitContext ec)
-		{
 			ILGenerator ig = ec.ig;
+
 			switch (oper) {
 			case JSToken.Void:
 				operand.Emit (ec);
@@ -106,6 +100,7 @@ namespace Microsoft.JScript {
 
 			case JSToken.Typeof:
 				operand.Emit (ec);
+				CodeGenerator.EmitBox (ig, operand);
 				ig.Emit (OpCodes.Call, typeof (Typeof).GetMethod ("JScriptTypeof"));
 				break;
 
@@ -139,35 +134,66 @@ namespace Microsoft.JScript {
 			case JSToken.Plus:
 				operand.Emit (ec);
 				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] { typeof (object) }));
-				/* all clear */
+				//
+				// FIXME: investigate the real
+				// discriminate for generating this
+				// box.
+				if (!no_effect)
+					ig.Emit (OpCodes.Box, typeof (double));
 				break;
 
 			case JSToken.Minus:
-				operand.Emit (ec);
-				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] { typeof (object) }));
-				ig.Emit (OpCodes.Neg);
+				if (SemanticAnalyser.IsNumericConstant (operand)) {
+					operand.Emit (ec);
+					ig.Emit (OpCodes.Neg);
+				} else if (operand is Identifier && 
+					   ((Identifier) operand).name.Value == "Infinity")
+					ig.Emit (OpCodes.Ldc_R8, Double.NegativeInfinity);
+				else
+					emit_non_numeric_unary (ec, operand, (byte) 47);
 				break;
 
 			case JSToken.BitwiseNot:
-				operand.Emit (ec);
-				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToInt32"));
-				ig.Emit (OpCodes.Not);
+				if (SemanticAnalyser.IsNumericConstant (operand)) {
+					operand.Emit (ec);
+					ig.Emit (OpCodes.Not);
+				} else
+					emit_non_numeric_unary (ec, operand, (byte) 40);
 				break;
 
 			case JSToken.LogicalNot:
 				operand.Emit (ec);
-				// FIXME: here we can infer the type
-				// of the operand so that unneeded
-				// ToBoolean can be avoided
-				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToBoolean", new Type [] { typeof (object) }));
-				ig.Emit (OpCodes.Ldc_I4_1);
-				ig.Emit (OpCodes.Sub);
+				if (SemanticAnalyser.NeedsToBoolean (operand)) {
+					CodeGenerator.EmitBox (ec.ig, operand);
+					ig.Emit (OpCodes.Ldc_I4_1);
+					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToBoolean",
+										   new Type [] { typeof (object), typeof (bool) }));
+				}
+				ig.Emit (OpCodes.Ldc_I4_0);
+				ig.Emit (OpCodes.Ceq);
 				break;
 
 			default:
 				Console.WriteLine ("Unimplemented Unary Op: {0}", oper);
 				throw new NotImplementedException ();
 			}
+		}
+
+		private void emit_non_numeric_unary (EmitContext ec, AST operand, byte oper)
+		{
+			ILGenerator ig = ec.ig;
+
+			Type unary_type = typeof (NumericUnary);
+			LocalBuilder unary_builder = ig.DeclareLocal (unary_type);
+
+			ig.Emit (OpCodes.Ldc_I4_S, oper);
+			ig.Emit (OpCodes.Newobj, unary_type.GetConstructor (new Type [] { typeof (int) }));
+			ig.Emit (OpCodes.Stloc, unary_builder);
+			ig.Emit (OpCodes.Ldloc, unary_builder);
+
+			operand.Emit (ec);
+
+			ig.Emit (OpCodes.Call, unary_type.GetMethod ("EvaluateUnary"));
 		}
 	}
 
@@ -202,6 +228,10 @@ namespace Microsoft.JScript {
 
 		internal bool AccessField {
 			get { return op == JSToken.AccessField; }
+		}
+
+		internal bool LateBinding {
+			get { return late_bind; }
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -269,10 +299,14 @@ namespace Microsoft.JScript {
 					emit_access (left, right, ec);
 			} else {
 				emit_operator (ig);
-				if (left != null)
+				if (left != null) {
 					left.Emit (ec);
-				if (right != null)
+					CodeGenerator.EmitBox (ig, left);
+				}
+				if (right != null) {
 					right.Emit (ec);
+					CodeGenerator.EmitBox (ig, right);
+				}
 				emit_op_eval (ig);
 			}
 			if (no_effect)
@@ -379,7 +413,7 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Dup);
 			}				
 			left.Emit (ec);
-			
+
 			LocalBuilder local_literal = null;
 
 			//
@@ -406,6 +440,7 @@ namespace Microsoft.JScript {
 					right_side.Emit (ec);
 				else
 					ig.Emit (OpCodes.Ldloc, right_obj);
+				CodeGenerator.EmitBox (ig, right_side);
 				ig.Emit (OpCodes.Call, lb_type.GetMethod ("SetValue"));
 			} else
 				ig.Emit (OpCodes.Call, lb_type.GetMethod ("GetNonMissingValue"));
@@ -413,13 +448,7 @@ namespace Microsoft.JScript {
 		
 		internal void get_default_this (ILGenerator ig)
 		{
-			if (InFunction)
-				ig.Emit (OpCodes.Ldarg_1);
-			else {
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			}
-		       
+			CodeGenerator.load_engine (InFunction, ig);
 			ig.Emit (OpCodes.Call, typeof (Microsoft.JScript.Vsa.VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
 			ig.Emit (OpCodes.Castclass, iact_obj);
@@ -441,26 +470,24 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Newarr, typeof (object));
 			ig.Emit (OpCodes.Dup);
 			ig.Emit (OpCodes.Ldc_I4_0);
-			if (right != null)
+			if (right != null) {
 				right.Emit (ec);
+				CodeGenerator.EmitBox (ig, right);
+			}
 			ig.Emit (OpCodes.Stelem_Ref);			
 
 			if (assign) {
-				if (right_side != null)
+				if (right_side != null) {
 					right_side.Emit (ec);
+					CodeGenerator.EmitBox (ig, right_side);
+				}
 				else
 					ig.Emit (OpCodes.Ldloc, right_obj);
 				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("SetIndexedPropertyValueStatic"));
 			} else {
 				ig.Emit (OpCodes.Ldc_I4_0);
 				ig.Emit (OpCodes.Ldc_I4_1);
-
-				if (InFunction)
-					ig.Emit (OpCodes.Ldarg_1);
-				else {
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-				}
+				CodeGenerator.load_engine (InFunction, ig);
 				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
 			}
 		}
@@ -613,12 +640,16 @@ namespace Microsoft.JScript {
 			Label false_label = ig.DefineLabel ();
 			Label merge_label = ig.DefineLabel ();
 			CodeGenerator.fall_true (ec, cond_exp, false_label);
-			if (true_exp != null)
+			if (true_exp != null) {
 				true_exp.Emit (ec);
+				CodeGenerator.EmitBox (ig, true_exp);
+			}
 			ig.Emit (OpCodes.Br, merge_label);
 			ig.MarkLabel (false_label);
-			if (false_exp != null)
+			if (false_exp != null) {
 				false_exp.Emit (ec);
+				CodeGenerator.EmitBox (ig, false_exp);
+			}
 			ig.MarkLabel (merge_label);
 			if (no_effect)
 				ig.Emit (OpCodes.Pop);
@@ -780,8 +811,10 @@ namespace Microsoft.JScript {
 				if (member_type == MemberTypes.Method) {
 					if (member_exp is Binary) {
 						Binary bin = (Binary) member_exp;
-						if (bin.left is StringLiteral && need_this)
+						if (bin.left is ICanLookupPrototype && need_this ) {
 							bin.left.Emit (ec);
+							CodeGenerator.EmitBox (ig, bin.left);
+						}
 					}						
 					args.Emit (ec);
 					MethodInfo method = (MethodInfo) minfo;
@@ -823,7 +856,8 @@ namespace Microsoft.JScript {
 			for (int i = 0; i <= n; i++) {
 				ast = args.get_element (i);
 				ast.Emit (ec);
-				
+				CodeGenerator.EmitBox (ig, ast);
+
 				if (ast is StringLiteral)
 					;
 				else {
@@ -847,6 +881,7 @@ namespace Microsoft.JScript {
 				Binary bin = member_exp as Binary;
 				if (SemanticAnalyser.IsLiteral (bin.left) != null) {
 					member_exp.Emit (ec);
+					CodeGenerator.EmitBox (ig, member_exp);
 					setup_late_call_args (ec);
 					ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
 				} else if (bin.right is Identifier) {
@@ -863,13 +898,18 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("Call"));
 				} else {
 					bin.left.Emit (ec);
+					CodeGenerator.EmitBox (ig, bin.left);
+
 					member_exp.Emit (ec);
+					CodeGenerator.EmitBox (ig, member_exp);
+
 					setup_late_call_args (ec);
 					ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
 				}
 			} else {
 				get_global_scope_or_this (ec.ig);
 				member_exp.Emit (ec);
+				CodeGenerator.EmitBox (ig, member_exp);
 				setup_late_call_args (ec);
 				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
 			}
@@ -909,9 +949,9 @@ namespace Microsoft.JScript {
 			
 			AST left = (member_exp as Binary).left;
 			left.Emit (ec);
-			
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+
+			CodeGenerator.load_engine (InFunction, ig);
+
 			ig.Emit (OpCodes.Call , typeof (Convert).GetMethod ("ToObject"));
 
 			Type lb_type = typeof (LateBinding);
@@ -923,6 +963,7 @@ namespace Microsoft.JScript {
 		{
 			ILGenerator ig = ec.ig;
 			int n = args.Size;
+			AST ast = null;
 
 			ig.Emit (OpCodes.Ldc_I4, n);
 			ig.Emit (OpCodes.Newarr, typeof (object));
@@ -930,7 +971,9 @@ namespace Microsoft.JScript {
 			for (int i = 0; i < n; i++) {
 				ig.Emit (OpCodes.Dup);
 				ig.Emit (OpCodes.Ldc_I4, i);
-				args.get_element (i).Emit (ec);
+				ast = args.get_element (i);
+				ast.Emit (ec);
+				CodeGenerator.EmitBox (ig, ast);
 				ig.Emit (OpCodes.Stelem_Ref);
 			}
 
@@ -972,18 +1015,24 @@ namespace Microsoft.JScript {
 
 			ILGenerator ig = ec.ig;
 			int n = args.Size;
+			AST ast = null;
 			
 			if (n >= 1 && (member_exp.ToString () == "String" || member_exp.ToString () == "Boolean" || member_exp.ToString () == "Number")) {
-				args.get_element (0).Emit (ec);
+				ast = args.get_element (0);
+				ast.Emit (ec);
+				CodeGenerator.EmitBox (ig, ast);
 				return;
 			}
 
 			ig.Emit (OpCodes.Ldc_I4, n);
 			ig.Emit (OpCodes.Newarr, typeof (object));
+
 			for (int i = 0; i < n; i++) {
 				ig.Emit (OpCodes.Dup);
 				ig.Emit (OpCodes.Ldc_I4, i);
-				args.get_element (i).Emit (ec);
+				ast = args.get_element (i);
+				ast.Emit (ec);
+				CodeGenerator.EmitBox (ig, ast);
 				ig.Emit (OpCodes.Stelem_Ref);
 			}
 		}
@@ -1168,7 +1217,7 @@ namespace Microsoft.JScript {
 				Console.WriteLine ("warning JS1135: Variable '" + name + "' has not been declared");
 			} else
 				throw new Exception (location.SourceName + "(" + location.LineNumber + 
-				     ",0) : error JS1135: Variable '" + name + "' has not been declared");
+					     ",0) : error JS1135: Variable '" + name + "' has not been declared");
 			return true;
 		}
 
@@ -1231,8 +1280,10 @@ namespace Microsoft.JScript {
 		{
 			ILGenerator ig = ec.ig;
 
-			if (assign && right_side != null && !undeclared)
+			if (assign && right_side != null && !undeclared) {
 				right_side.Emit (ec);
+				CodeGenerator.EmitBox (ig, right_side);
+			}
 			if (binding is FormalParam) {
 				FormalParam f = binding as FormalParam;
 				if (assign)
@@ -1509,6 +1560,12 @@ namespace Microsoft.JScript {
 			get { return BoundToMethod is Function; }
 		}
 
+		private bool in_new = false;
+		internal bool InNew {
+			set { in_new = value; }
+			get { return in_new; }
+		}
+
 		private int expected_args = 0;
 		private bool has_this = false;
 		private bool var_args = false;
@@ -1555,17 +1612,21 @@ namespace Microsoft.JScript {
 				expected_args = method.GetParameters ().Length;
 			} else if (BoundToMethod is BuiltIn) {
 				BuiltIn built_in = (BuiltIn) BoundToMethod;
-				if (built_in.IsConstructor)
-					expected_args = elems.Count;
+				if (built_in.IsConstructor || InNew)
+					expected_args = (elems == null) ? 0 : elems.Count;
 				else
 					expected_args = ((BuiltIn) BoundToMethod).NumOfArgs;
 			}
 
-			int n = Size;
+			if (elems == null)
+				return true;
+			
+			int n = elems.Count;
 
 			for (int i = 0; i < n; i++) {
 				tmp = (AST) elems [i];
-				r &= tmp.Resolve (context);
+				if (tmp != null)
+					r &= tmp.Resolve (context);
 			}
 			return r;
 		}
@@ -1624,7 +1685,7 @@ namespace Microsoft.JScript {
 				}
 			}
 
-			if (strong_type)
+			if (BoundToMethod is MethodInfo)
 				parameters = ((MethodInfo) BoundToMethod).GetParameters ();
 
 			if (has_engine)
@@ -1633,7 +1694,7 @@ namespace Microsoft.JScript {
 			if (var_args) {
 				if (expected_args > 1)
 					emit_default_args_case (ec, expected_args, strong_type, parameters);
-
+				
 				ILGenerator ig = ec.ig;
 
 				int remains = elems.Count - expected_args;
@@ -1654,6 +1715,7 @@ namespace Microsoft.JScript {
 						ig.Emit (OpCodes.Dup);
 						ig.Emit (OpCodes.Ldc_I4, k);
 						ast.Emit (ec);
+						CodeGenerator.EmitBox (ig, ast);
 						ig.Emit (OpCodes.Stelem_Ref);
 					}
 				}
@@ -1684,6 +1746,8 @@ namespace Microsoft.JScript {
 					ast.Emit (ec);
 					if (strong_type)
 						force_strong_type (ig, ast, parameters [j]);
+					else
+						CodeGenerator.EmitBox (ig, ast);
 				} else {
 					//
 					// ast was null and we need
@@ -1697,31 +1761,28 @@ namespace Microsoft.JScript {
 			}
 		}
 
-		internal void force_strong_type (ILGenerator ig, AST ast, ParameterInfo pinfo)
+		internal void force_strong_type (ILGenerator ig, AST ast, object obj)
 		{
-			Type param_type = pinfo.ParameterType;
-			if (ast.GetType () == typeof (NumericLiteral)) {
-				if (param_type == typeof (double)) {
-					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] { typeof (object) }));
-					//ig.Emit (OpCodes.Conv_R8);
-				} else if (param_type == typeof (object))
-					;
-				else {
-					Console.WriteLine ("#1. ast.GetType = {0}, param_type = {1}", ast.GetType (), param_type);
-					throw new NotImplementedException ();
-				}
-			} else {
+			Type param_type = null;
+			if (obj is ParameterInfo)
+				param_type = ((ParameterInfo) obj).ParameterType;
+			else
+				param_type = obj.GetType ();
+
+			if (SemanticAnalyser.IsNumericConstant (ast)) {
 				if (param_type == typeof (double))
-					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber", new Type [] {typeof (object)}));
-				else if (param_type == typeof (string)) {
-					ig.Emit (OpCodes.Ldc_I4_1);
-					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToString", new Type [] {typeof (object), typeof (bool)}));
-				} else if (param_type == typeof (object))
-					;
-				else {
-					Console.WriteLine ("#2. ast.GetType = {0}, param_type = {1}", ast.GetType (), param_type);
+					CodeGenerator.EmitConv (ig, param_type);
+				else if (param_type == typeof (object))
+					CodeGenerator.EmitBox (ig, ast);
+				else
 					throw new NotImplementedException ();
-				}
+			} else {
+				if (ast is Unary) {
+					Unary unary = (Unary) ast;
+					force_strong_type (ig, unary.operand, obj);
+				} else if (param_type == typeof (double))
+					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToNumber",
+										   new Type [] { typeof (object) }));
 			}
 		}
 	}
@@ -1745,6 +1806,10 @@ namespace Microsoft.JScript {
 			exprs.Add (a);
 		}
 
+		internal AST Last {
+			get { return (AST) exprs [Size - 1]; }
+		}
+
 		public override string ToString ()
 		{
 			int size = exprs.Count;		
@@ -1755,10 +1820,7 @@ namespace Microsoft.JScript {
 
 				for (i = 0; i < size; i++)
 					sb.Append (exprs [i].ToString ());
-
-				sb.Append ("\n");
 				return sb.ToString ();
-
 			} else return String.Empty;
 		}
 
@@ -1803,6 +1865,7 @@ namespace Microsoft.JScript {
 			for (i = 0; i < n; i++) {
 				exp = (AST) exprs [i];
 				exp.Emit (ec);
+				CodeGenerator.EmitBox (ec.ig, exp);
 			}
 		}
 	}
@@ -1866,8 +1929,10 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Stloc, aux);
 					ig.Emit (OpCodes.Ldloc, local);
 					ig.Emit (OpCodes.Ldloc, aux);
-					if (right != null)
+					if (right != null) {
 						right.Emit (ec);
+						CodeGenerator.EmitBox (ig, right);
+					}
 					ig.Emit (OpCodes.Call, type.GetMethod ("EvaluatePlus"));
 					if (left is Identifier)
 						((Identifier) left).EmitStore (ec);
@@ -2007,8 +2072,10 @@ namespace Microsoft.JScript {
 			} 
 			exp.Resolve (context);
 
-			if (args != null)
+			if (args != null) {
+				args.InNew = true;
 				r &= args.Resolve (context);
+			}
 			return r;
 		}
 
@@ -2017,8 +2084,9 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 
 			if (exp != null) {
-				if (late_bind) {					
-					CodeGenerator.emit_get_default_this (ec.ig);
+				if (late_bind) {
+					AST ast = null;
+					CodeGenerator.emit_get_default_this (ec.ig, InFunction);
 					exp.Emit (ec);
 
 					ig.Emit (OpCodes.Ldc_I4, args.Size);
@@ -2027,15 +2095,16 @@ namespace Microsoft.JScript {
 					for (int i = 0; i < args.Size; i++) {
 						ig.Emit (OpCodes.Dup);
 						ig.Emit (OpCodes.Ldc_I4, i);
-						args.get_element (i).Emit (ec);
+						ast = args.get_element (i);
+						ast.Emit (ec);
+						CodeGenerator.EmitBox (ig, ast);
 						ig.Emit (OpCodes.Stelem_Ref);
 					}
-					
+
 					ig.Emit (OpCodes.Ldc_I4_1);
 					ig.Emit (OpCodes.Ldc_I4_0);
 
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+					CodeGenerator.load_engine (InFunction, ig);
 
 					ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("CallValue"));
 				} else {
@@ -2095,10 +2164,14 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldc_I4, args.Size);
 			ig.Emit (OpCodes.Newarr, typeof (object));
 
+			AST ast = null;
+
 			for (int i = 0; i < n; i++) {
 				ig.Emit (OpCodes.Dup);
 				ig.Emit (OpCodes.Ldc_I4, i);
-				args.get_element (i).Emit (ec);
+				ast = args.get_element (i);
+				ast.Emit (ec);
+				CodeGenerator.EmitBox (ig, ast);
 				ig.Emit (OpCodes.Stelem_Ref);
 			}
 		}
@@ -2167,16 +2240,16 @@ namespace Microsoft.JScript {
 			/* value properties of the Global Object */
 			case "NaN":
 				ig.Emit (OpCodes.Ldc_R8, Double.NaN);
-				ig.Emit (OpCodes.Box, typeof (Double));
 				break;				
+
 			case "Infinity":
 				ig.Emit (OpCodes.Ldc_R8, Double.PositiveInfinity);
-				// FIXME: research when not to generate the Boxing
-				ig.Emit (OpCodes.Box, typeof (Double));
 				break;
+
 			case "undefined":
 				ig.Emit (OpCodes.Ldnull);
 				break;
+
 			case "null":
 				ig.Emit (OpCodes.Ldsfld, typeof (DBNull).GetField ("Value"));
 				break;
@@ -2191,71 +2264,92 @@ namespace Microsoft.JScript {
 #endif
 				ig.Emit (OpCodes.Call, typeof (Eval).GetMethod ("JScriptEvaluate", method_args));
 				break;
+
 			case "parseInt":				
 				ig.Emit (OpCodes.Call, go.GetMethod ("parseInt"));
 				ig.Emit (OpCodes.Box, typeof (Double));
 				break;
+
 			case "parseFloat":
 				ig.Emit (OpCodes.Call, go.GetMethod ("parseFloat"));
 				ig.Emit (OpCodes.Box, typeof (Double));
 				break;
+
 			case "isNaN":
 				ig.Emit (OpCodes.Call, go.GetMethod ("isNaN"));
 				ig.Emit (OpCodes.Box, typeof (bool));
 				break;
+
 			case "isFinite":
 				ig.Emit (OpCodes.Call, go.GetMethod ("isFinite"));
 				ig.Emit (OpCodes.Box, typeof (bool));
 				break;
+
 			case "decodeURI":
 				ig.Emit (OpCodes.Call, go.GetMethod ("decodeURI"));
 				break;
+
 			case "decodeURIComponent":
 				ig.Emit (OpCodes.Call, go.GetMethod ("decodeURIComponent"));
 				break;
+
 			case "encodeURI":
 				ig.Emit (OpCodes.Call, go.GetMethod ("encodeURI"));
 				break;
+
 			case "encodeURIComponent":
 				ig.Emit (OpCodes.Call, go.GetMethod ("encodeURIComponent"));
 				break;
+
 			case "escape":
 				ig.Emit (OpCodes.Call, go.GetMethod ("escape"));
 				break;
+
 			case "unescape":
 				ig.Emit (OpCodes.Call, go.GetMethod ("unescape"));
 				break;
+
 			/* constructor properties of the Global object */
 			case "Object":
 				ig.Emit (OpCodes.Call, go.GetProperty ("Object").GetGetMethod ());
 				break;
+
 			case "Function":
 				ig.Emit (OpCodes.Call, go.GetProperty ("Function").GetGetMethod ());
 				break;
+
 			case "Array":
 				ig.Emit (OpCodes.Call, go.GetProperty ("Array").GetGetMethod ());
 				break;
+
 			case "String":
 				ig.Emit (OpCodes.Call, go.GetProperty ("String").GetGetMethod ());
 				break;
+
 			case "Boolean":
 				ig.Emit (OpCodes.Call, go.GetProperty ("Boolean").GetGetMethod ());
 				break;
+
 			case "Number":
 				ig.Emit (OpCodes.Call, go.GetProperty ("Number").GetGetMethod ());
 				break;
+
 			case "Date":
 				ig.Emit (OpCodes.Call, go.GetProperty ("Date").GetGetMethod ());
 				break;
+
 			case "RegExp":
 				ig.Emit (OpCodes.Call, go.GetProperty ("RegExp").GetGetMethod ());
 				break;
+
 			case "Error":
 				ig.Emit (OpCodes.Call, go.GetProperty ("Error").GetGetMethod ());
 				break;
+
 			case "EvalError":
 				ig.Emit (OpCodes.Call, go.GetProperty ("EvalError").GetGetMethod ());
 				break;
+
 			case "RangeError":
 				ig.Emit (OpCodes.Call, go.GetProperty ("RangeError").GetGetMethod ());
 				break;

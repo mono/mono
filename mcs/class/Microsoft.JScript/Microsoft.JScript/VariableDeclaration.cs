@@ -115,16 +115,17 @@ namespace Microsoft.JScript {
 					       && parent.GetType () != typeof (FunctionExpression))) {
 				if (val != null) {
 					val.Emit (ec);
+					CodeGenerator.EmitBox (ig, val);
 					ig.Emit (OpCodes.Stsfld, field_info);
 				}
 			} else {
 				if (val != null) {
 					val.Emit (ec);
+					CodeGenerator.EmitBox (ig, val);
 					ig.Emit (OpCodes.Stloc, local_builder);
 				}
 			}
 		}
-
 
 		internal override bool Resolve (IdentificationTable context)
 		{

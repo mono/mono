@@ -1,3 +1,53 @@
+2005-08-19  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* SemanticAnalyser.cs: Added ArrayLiteral, StringLiteral,
+	BooleanConstant, ByteConstant, ShortConstant, IntConstant,
+	LongConstant, FloatConstant, DoubleConstant to the
+	prototypes. Added methods IsNumericConstant, NeedsToBoolean.
+
+	* Parser.cs: Added methods InRangeOf, HasNoDecimals which help on
+	building the property AST node depending on how big and precise
+	the number is.
+
+	* CodeGenerator.cs: (emit_get_default_this) Receives an extra
+	argument which indicates if we are inside a method, use
+	load_engine. Added method EmitBox, EmitConv, GetBoxType
+
+	* Literal.cs: Add abstract class Constant. Renamed BooleanLiteral
+	to BooleanConstant. Delete NumericLiteral, handle the number code
+	generation properly categorizing in ByteConstant, ShortConstant,
+	IntConstant, LongConstant, FloatConstant and DoubleConstant which
+	inherit from NumericConstant. (ObjectLiteral) Handle boxing issue.
+
+	* Statement.cs, Relational.cs: (If) Handle boxing issue.
+
+	* VariableDeclaration.cs: Handle the boxing issue when
+	we have initializers.
+
+	* Equality.cs, StrictEquality.cs: Handle the boxing issue before invoking
+	EvaluateEquality, JScriptStrictEquals.
+
+	* ArrayLiteral.cs: Implement ICanLookupPrototype so we can
+	optimize access to methods through the prototype and not
+	generating IL code that uses late binding. Handle the boxing
+	issue.
+
+	* expression.cs: (Unary.Emit) Nuke emit_unary_op. Take care of
+	properly boxing the operands of methods that evaluate the unary
+	operators at runtime. Fix the minus logic for IL generation, add
+	method emit_non_numeric_unary. Optimize the numeric
+	cases. (Binary) Add LateBinding internal
+	property. (Binary.emit_late_get_or_set, emit_array_access,
+	Conditional.Emit, Call.Emit, emit_print_stm, emit_late_call,
+	setup_late_call_args, EmitBuiltInArgs, Identifier.Emit, Args.Emit,
+	Expression.Emit, Assign.Emit, New.Emit)
+	Take care of properly boxing the built in .NET
+	values. (force_strong_type) Change the type from ParameterInfo to
+	object, take care specifically. (Expression) Add Last internal
+	property. In general, the point is that value types like integers,
+	booleans, etc... do not have to generate a box operation, the user
+	of the arg must handle that.
+
 2005-08-17  Florian Gross  <flgr@ccan.de>
 
 	* ScriptObject.cs: Added settable _proto for __proto__. This isn't

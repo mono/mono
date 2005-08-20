@@ -5,6 +5,7 @@
 //	Cesar Lopez Nataren (cesar@ciencias.unam.mx)
 //
 // (C) 2003, Cesar Lopez Nataren
+// Copyright (C) 2005, Novell Inc (http://novell.com)
 //
 
 //
@@ -38,7 +39,7 @@ namespace Microsoft.JScript {
 		public NumericUnary (int operatorTok)
 			: base (null, null)
 		{
-			throw new NotImplementedException ();
+			oper = (JSToken) operatorTok;
 		}
 
 		[DebuggerStepThroughAttribute]

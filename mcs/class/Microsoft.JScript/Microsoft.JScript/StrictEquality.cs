@@ -110,10 +110,14 @@ namespace Microsoft.JScript {
 
 		internal override void Emit (EmitContext ec)
 		{
-			if (left != null)
+			if (left != null) {
 				left.Emit (ec);
-			if (right != null)
+				CodeGenerator.EmitBox (ec.ig, left);
+			}
+			if (right != null) {
 				right.Emit (ec);
+				CodeGenerator.EmitBox (ec.ig, right);
+			}
 			ec.ig.Emit (OpCodes.Call, typeof (StrictEquality).GetMethod ("JScriptStrictEquals"));
 		}
 	}

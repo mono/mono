@@ -90,8 +90,9 @@ namespace Microsoft.JScript {
 			Label false_lbl = ig.DefineLabel ();
 			Label merge_lbl = ig.DefineLabel ();
 			CodeGenerator.fall_true (ec, cond, false_lbl);
+			CodeGenerator.EmitBox (ig, cond);
 			if (true_stm != null)
-				true_stm.Emit (ec);			
+				true_stm.Emit (ec);
 			ig.Emit (OpCodes.Br, merge_lbl);
 			ig.MarkLabel (false_lbl);
 			if (false_stm != null)

@@ -97,7 +97,6 @@ namespace Microsoft.JScript {
 			prototypes.Add (typeof (Closure), typeof (FunctionPrototype));
 			prototypes.Add (typeof (ArrayObject), typeof (ArrayPrototype));
 			prototypes.Add (typeof (StringObject), typeof (StringPrototype));
-			prototypes.Add (typeof (StringLiteral), typeof (StringPrototype));
 			prototypes.Add (typeof (BooleanObject), typeof (BooleanPrototype));
 			prototypes.Add (typeof (NumberObject), typeof (NumberPrototype));
 			prototypes.Add (typeof (DateObject), typeof (DatePrototype));
@@ -110,6 +109,21 @@ namespace Microsoft.JScript {
 			prototypes.Add (typeof (SyntaxErrorObject), typeof (ErrorPrototype));
 			prototypes.Add (typeof (TypeErrorObject), typeof (ErrorPrototype));
 			prototypes.Add (typeof (URIErrorObject), typeof (ErrorPrototype));
+
+
+			// literals, used when accessing a method from the prototype
+			// through the literal
+			prototypes.Add (typeof (ArrayLiteral), typeof (ArrayPrototype));
+			prototypes.Add (typeof (StringLiteral), typeof (StringPrototype));
+			prototypes.Add (typeof (BooleanConstant), typeof (BooleanPrototype));
+
+			Type number_prototype = typeof (NumberPrototype);
+			prototypes.Add (typeof (ByteConstant), number_prototype);
+			prototypes.Add (typeof (ShortConstant), number_prototype);
+			prototypes.Add (typeof (IntConstant), number_prototype);
+			prototypes.Add (typeof (LongConstant), number_prototype);
+			prototypes.Add (typeof (FloatConstant), number_prototype);
+			prototypes.Add (typeof (DoubleConstant), number_prototype);
 		}
 
 		internal static string ImplementationName (string name)
@@ -216,7 +230,7 @@ namespace Microsoft.JScript {
 					obj =  ((Identifier) left).name.Value;
 					prop_name = ((Identifier) right).name.Value;
 					target_type = SemanticAnalyser.map_to_ctr (obj);
-				} else if (left is StringLiteral && right_is_identifier) {
+				} else if (left is ICanLookupPrototype && right_is_identifier) {
 					prop_name = ((Identifier) right).name.Value;
 					target_type = SemanticAnalyser.map_to_prototype (left);
 				}
@@ -298,6 +312,32 @@ namespace Microsoft.JScript {
 					return type;
 			}
 			return null;
+		}
+
+		internal static bool IsNumericConstant (object o)
+		{
+			return o is ByteConstant || o is ShortConstant ||
+				o is IntConstant || o is LongConstant ||
+				o is FloatConstant || o is DoubleConstant;
+		}
+
+		internal static bool NeedsToBoolean (AST ast)
+		{
+			if (ast is BooleanConstant || ast is StrictEquality)
+				return false;
+			else if (ast is Expression)
+				return NeedsToBoolean (((Expression) ast).Last);
+			else if (ast is Unary) {
+				Unary unary = (Unary) ast;
+				if (unary.oper != JSToken.LogicalNot)
+					return true;
+				return false;
+			} else if (ast is Call || ast is Identifier)
+				return true;
+			else {
+				Console.WriteLine ("ast.LineNumber = {0}", ast.Location.LineNumber);
+				throw new NotImplementedException ();
+			}
 		}
 
 		internal static bool Needs (JSFunctionAttributeEnum targetAttr, MethodInfo method)

@@ -54,23 +54,15 @@ namespace Microsoft.JScript {
 			if (InFunction)
 				ec.ig.Emit (OpCodes.Ldarg_0);
 			else
-				CodeGenerator.emit_get_default_this (ec.ig);
+				CodeGenerator.emit_get_default_this (ec.ig, InFunction);
 		}
 	}
 
-	internal class BooleanLiteral : Exp {
+	internal abstract class Constant : Exp {
 
-		internal bool val;
-
-		internal BooleanLiteral (AST parent, bool val, Location location)
+		internal Constant (AST parent, Location location)
 			: base (parent, location)
 		{
-			this.val = val;
-		}
-
-		public override string ToString ()
-		{
-			return val.ToString ();
 		}
 
 		internal override bool Resolve (IdentificationTable context)
@@ -80,63 +72,218 @@ namespace Microsoft.JScript {
 
 		internal override bool Resolve (IdentificationTable context, bool no_effect)
 		{
-			this.no_effect = no_effect;
-			return true;
-		}
-
-		internal override void Emit (EmitContext ec)
-		{
-			ILGenerator ig = ec.ig;
-
-			if (val)
-				ig.Emit (OpCodes.Ldc_I4_1);
-			else
-				ig.Emit (OpCodes.Ldc_I4_0);
-
-			ig.Emit (OpCodes.Box, typeof (System.Boolean));
-
-			if (no_effect)
-				ig.Emit (OpCodes.Pop);
-		}
-	}
-
-	internal class NumericLiteral : Exp {
-
-		double val;
-
-		internal NumericLiteral (AST parent, double val, Location location)
-			: base (parent, location)
-		{
-			this.val = val;
-		}
-
-		public override string ToString ()
-		{
-			return val.ToString ();
-		}
-
-		internal override bool Resolve (IdentificationTable context)
-		{
-			return true;
-		}
-
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
-		{			
 			this.no_effect = no_effect;
 			return Resolve (context);
 		}
+	}
+
+	internal class BooleanConstant : Constant, ICanLookupPrototype {
+		internal bool Value;
+
+		internal BooleanConstant (AST parent, bool val, Location location)
+			: base (parent, location)
+		{
+			this.Value = val;
+		}
+
+		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		{
+			this.no_effect = no_effect;
+			return true;
+		}
 
 		internal override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
-			if (parent is Unary && (parent as Unary).oper == JSToken.Minus)
-				ig.Emit (OpCodes.Ldc_R8, (double) (val * -1));
+
+			if (Value)
+				ig.Emit (OpCodes.Ldc_I4_1);
 			else
-				ig.Emit (OpCodes.Ldc_R8, (double) val);
-			ig.Emit (OpCodes.Box, typeof (System.Double));
+				ig.Emit (OpCodes.Ldc_I4_0);
+			
 			if (no_effect)
 				ig.Emit (OpCodes.Pop);
 		}
+
+		bool ICanLookupPrototype.ResolveFieldAccess (AST ast)
+		{
+			if (ast is Identifier) {
+				Identifier name = (Identifier) ast;
+				Type prototype = typeof (NumberPrototype);
+				MemberInfo [] members = prototype.GetMember (name.name.Value);
+				return members.Length > 0;
+			} else
+				return false;
+		}
+	}
+
+	internal abstract class NumericConstant : Constant, ICanLookupPrototype {
+		
+		internal NumericConstant (AST parent, Location location)
+			: base (parent, location)
+		{
+		}
+
+		bool ICanLookupPrototype.ResolveFieldAccess (AST ast)
+		{
+			if (ast is Identifier) {
+				Identifier name = (Identifier) ast;
+				Type prototype = typeof (NumberPrototype);
+				MemberInfo [] members = prototype.GetMember (name.name.Value);
+				return members.Length > 0;
+			} else
+				return false;
+		}
+	}
+
+	internal class ByteConstant : NumericConstant {
+		byte Value;
+			
+		internal ByteConstant (AST parent, byte v, Location location)
+			: base (parent, location)
+		{
+			Value = v;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			IntConstant.EmitInt (ec.ig, Value);
+		}
+	}
+
+	internal class ShortConstant : NumericConstant {
+		short Value;
+
+		internal ShortConstant (AST parent, short v, Location location)
+			: base (parent, location)
+		{
+			Value = v;
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			IntConstant.EmitInt (ec.ig, Value);
+		}
+	}
+
+	internal class IntConstant : NumericConstant {
+		int Value;
+
+		internal IntConstant (AST parent, int v, Location location)
+			: base (parent, location)
+		{
+			Value = v;
+		}
+
+		static public void EmitInt (ILGenerator ig, int i)
+		{
+			switch (i){
+			case -1:
+				ig.Emit (OpCodes.Ldc_I4_M1);
+				break;
+				
+			case 0:
+				ig.Emit (OpCodes.Ldc_I4_0);
+				break;
+				
+			case 1:
+				ig.Emit (OpCodes.Ldc_I4_1);
+				break;
+				
+			case 2:
+				ig.Emit (OpCodes.Ldc_I4_2);
+				break;
+				
+			case 3:
+				ig.Emit (OpCodes.Ldc_I4_3);
+				break;
+				
+			case 4:
+				ig.Emit (OpCodes.Ldc_I4_4);
+				break;
+				
+			case 5:
+				ig.Emit (OpCodes.Ldc_I4_5);
+				break;
+				
+			case 6:
+				ig.Emit (OpCodes.Ldc_I4_6);
+				break;
+				
+			case 7:
+				ig.Emit (OpCodes.Ldc_I4_7);
+				break;
+				
+			case 8:
+				ig.Emit (OpCodes.Ldc_I4_8);
+				break;
+
+			default:
+				if (i >= -128 && i <= 127){
+					ig.Emit (OpCodes.Ldc_I4_S, (sbyte) i);
+				} else
+					ig.Emit (OpCodes.Ldc_I4, i);
+				break;
+			}
+		}
+
+		internal override void Emit (EmitContext ec)
+		{
+			EmitInt (ec.ig, Value);
+		}
+	}
+
+	internal class LongConstant : NumericConstant {
+		long Value;
+
+                internal LongConstant (AST parent, long v, Location location)
+			: base (parent, location)
+                {
+                        Value = v;
+                }
+
+                internal override void Emit (EmitContext ec)
+                {
+                        ILGenerator ig = ec.ig;
+
+                        EmitLong (ig, Value);
+                }
+
+                static internal void EmitLong (ILGenerator ig, long l)
+                {
+			ig.Emit (OpCodes.Ldc_I8, l);
+                }
+	}
+
+	internal class FloatConstant : NumericConstant {
+		float Value;
+
+                internal FloatConstant (AST parent, float v, Location location)
+			: base (parent, location)
+                {
+                        Value = v;
+                }
+
+                internal override void Emit (EmitContext ec)
+                {
+                        ec.ig.Emit (OpCodes.Ldc_R4, Value);
+                }
+	}
+
+
+        internal class DoubleConstant : NumericConstant {
+		double Value;
+
+		internal DoubleConstant (AST parent, double v, Location location)
+			: base (parent, location)
+                {
+                        Value = v;
+                }
+
+		internal override void Emit (EmitContext ec)
+                {
+                        ec.ig.Emit (OpCodes.Ldc_R8, Value);
+                }
 	}
 
 	internal class ObjectLiteral : Exp {
@@ -207,6 +354,7 @@ namespace Microsoft.JScript {
 		{
 			ec.ig.Emit (OpCodes.Ldstr, property_name);
 			exp.Emit (ec);
+			CodeGenerator.EmitBox (ec.ig, exp);
 		}
 	}
 

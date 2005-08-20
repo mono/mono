@@ -96,10 +96,14 @@ namespace Microsoft.JScript {
 				left.Emit (ec);
 				return;
 			} else if (op == JSToken.Instanceof) {
-				if (left != null)
+				if (left != null) {
 					left.Emit (ec);
-				if (right != null)
+					CodeGenerator.EmitBox (ig, left);
+				}
+				if (right != null) {
 					right.Emit (ec);
+					CodeGenerator.EmitBox (ig, right);
+				}
 				ig.Emit (OpCodes.Call, typeof (Instanceof).GetMethod ("JScriptInstanceof"));
 				ig.Emit (OpCodes.Box, typeof (Boolean));
 				return;
@@ -135,10 +139,14 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Stloc, loc);
 			ig.Emit (OpCodes.Ldloc, loc);
 			
-			if (left != null)
+			if (left != null) {
 				left.Emit (ec);
-			if (right != null)
+				CodeGenerator.EmitBox (ig, left);
+			}
+			if (right != null) {
 				right.Emit (ec);
+				CodeGenerator.EmitBox (ig, right);
+			}
 			
 			ig.Emit (OpCodes.Call, t.GetMethod ("EvaluateRelational"));
 

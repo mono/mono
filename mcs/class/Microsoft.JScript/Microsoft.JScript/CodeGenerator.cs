@@ -426,7 +426,7 @@ namespace Microsoft.JScript {
 					ff_emit_relational (ec, last_exp, lbl);
 				else if (last_exp is Binary)
 					ff_binary_recursion (ec, last_exp, lbl);
-				else if (last_exp is Identifier || last_exp is BooleanLiteral)
+				else if (last_exp is Identifier || last_exp is BooleanConstant)
 					emit_default_case (ec, last_exp, OpCodes.Brtrue, lbl);
  				else if (last_exp is Equality) 
 					ff_emit_equality_cond (ec, last_exp, lbl);
@@ -458,7 +458,7 @@ namespace Microsoft.JScript {
 				Expression exp = ast as Expression;
 				int n = exp.exprs.Count - 1;
 				AST tmp = (AST) exp.exprs [n];
-				if (tmp is Equality || tmp is Relational || tmp is BooleanLiteral)
+				if (tmp is Equality || tmp is Relational || tmp is BooleanConstant)
 					return false;
 				else
 					return true;
@@ -484,10 +484,9 @@ namespace Microsoft.JScript {
 			}
 		}
 		
-		internal static void emit_get_default_this (ILGenerator ig) 
+		internal static void emit_get_default_this (ILGenerator ig, bool inFunction) 
 		{
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			CodeGenerator.load_engine (inFunction, ig);
 			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("ScriptObjectStackTop"));
 			Type iact_obj = typeof (IActivationObject);
 			ig.Emit (OpCodes.Castclass, iact_obj);
@@ -562,6 +561,71 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Call, typeof (ScriptObject).GetMethod ("GetParent"));
 		}
 
+		internal static void EmitBox (ILGenerator ig, object obj)
+		{
+			if (obj == null) 
+				return;
+
+			Type box_type = GetBoxType (obj);
+
+			if (box_type == null)
+				;
+			else
+				ig.Emit (OpCodes.Box, box_type);
+		}
+
+		internal static void EmitConv (ILGenerator ig, Type type)
+		{
+			TypeCode tc = Type.GetTypeCode (type);
+			
+			switch (tc) {
+			case TypeCode.Double:
+				ig.Emit (OpCodes.Conv_R8);
+				break;
+
+			default:
+				throw new NotImplementedException ();
+			}
+		}
+
+		private static Type GetBoxType (object obj)
+		{
+			if (obj is ByteConstant || obj is ShortConstant || obj is IntConstant)
+				return typeof (int);
+			else if (obj is LongConstant)
+				return typeof (long);
+			else if (obj is FloatConstant || obj is DoubleConstant)
+				return typeof (double);
+			else if (obj is BooleanConstant || obj is StrictEquality || obj is Equality)
+				return typeof (bool);
+			else if (obj is Unary) {
+				Unary unary = (Unary) obj;
+				JSToken oper = unary.oper;
+				AST operand = unary.operand;
+				
+				if (oper == JSToken.Minus || oper == JSToken.Plus ||
+				    oper == JSToken.Increment || oper == JSToken.Decrement ||
+				    oper == JSToken.BitwiseNot)
+					return GetBoxType (operand);
+				else if (oper == JSToken.LogicalNot)
+					return typeof (bool);
+			} else if (obj is Identifier) {
+				Identifier id = (Identifier) obj;
+				string name = id.name.Value;
+				if  (name == "NaN" || name == "Infinity")
+					return typeof (double);
+			} else if (obj is Binary) {
+				Binary bin = obj as Binary;
+				if (bin.AccessField && !bin.LateBinding) {
+					MemberInfo binding = bin.Binding;
+					MemberTypes member_type = binding.MemberType;
+					if (member_type == MemberTypes.Property)
+						return ((PropertyInfo) binding).PropertyType;
+				}
+			}
+			return null;
+		}
+
 		internal static void emit_default_value (ILGenerator ig, ParameterInfo param)
 		{
 			Type param_type = param.ParameterType;
@@ -570,10 +634,8 @@ namespace Microsoft.JScript {
 				ig.Emit (OpCodes.Ldc_R8, GlobalObject.NaN);
 			else if (param_type == typeof (object))
 				ig.Emit (OpCodes.Ldsfld, typeof (Missing).GetField ("Value"));
-			else {
-				Console.WriteLine ("param_type = " + param_type);
+			else
 				throw new NotImplementedException ();
-			}
 		}
 	}
 }

@@ -102,6 +102,19 @@ namespace Microsoft.JScript {
 		}
 
 		/// <summary>
+		/// Test if n is between the range stablished by min and max
+		/// </summary>
+		private bool InRangeOf (double n, double min, double max)
+		{
+			return min <= n && n <= max;
+		}
+
+		private bool HasNoDecimals (double v)
+		{
+			return Math.Round (v) == v;
+		}
+
+		/// <summary>
 		///   Build a parse tree from a given source_string
 		/// </summary>
 		///
@@ -1366,7 +1379,28 @@ namespace Microsoft.JScript {
 			} else if (tt == Token.NUMBER) {
 				double n = ts.GetNumber;
 				decompiler.AddNumber (n);
- 				return new NumericLiteral (parent, n, new Location (ts.SourceName, ts.LineNumber));
+
+				Location location = new Location (ts.SourceName, ts.LineNumber);
+
+				if (HasNoDecimals (n)) {
+					if (InRangeOf (n, Byte.MinValue, Byte.MaxValue))
+						return new ByteConstant (parent, (byte) n, location);
+					else if (InRangeOf (n, Int16.MinValue, Int16.MaxValue))
+						return new ShortConstant (parent, (short) n, location);
+					else if (InRangeOf (n, Int32.MinValue, Int32.MaxValue))
+						return new IntConstant (parent, (int) n, location);
+					else if (InRangeOf (n, Int64.MinValue, Int64.MaxValue))
+						return new LongConstant (parent, (long) n, location);
+					else
+						return new DoubleConstant (parent, n, location);
+				} else {
+					if (InRangeOf (n, Single.MinValue, Single.MaxValue))
+						return new FloatConstant (parent, (float) n, location);
+					else if (InRangeOf (n, Double.MinValue, Double.MaxValue))
+						return new DoubleConstant (parent, n, location);
+					else
+						return new DoubleConstant (parent, n, location);
+				}
 			} else if (tt == Token.STRING) {
 				string s = ts.GetString;
 				decompiler.AddString (s);
@@ -1391,7 +1425,7 @@ namespace Microsoft.JScript {
 					v = false;
 				else
 					v = true;
-				return new BooleanLiteral (null, v, new Location (ts.SourceName, ts.LineNumber));
+				return new BooleanConstant (null, v, new Location (ts.SourceName, ts.LineNumber));
 			} else if (tt == Token.RESERVED) {
 				ReportError ("msg.reserved.id");
 			} else if (tt == Token.ERROR) {
