@@ -1,4 +1,11 @@
-2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2005-08-19  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ConvertTest.cs: FromBase64String always return zero-length byte 
+	array for a zero-length string. On 2.0 profile, FromBase64String also
+	returns a zero-length byte array for a whitespace-only string.
+	Added tests for empty and whitespace-only byte array.
+
+2005-08-18  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ConvertTest.cs: added test for bug #75840.
 

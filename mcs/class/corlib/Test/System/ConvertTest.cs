@@ -2833,9 +2833,24 @@ namespace MonoTests.System {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		public void FromBase64CharArray_Null () 
+		public void FromBase64CharArray_Null ()
 		{
 			Convert.FromBase64CharArray (null, 1, 5);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void FromBase64CharArray_Empty ()
+		{
+			Convert.FromBase64CharArray (new char[0], 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void FormatBase64CharArray_OnlyWhitespace ()
+		{
+			Convert.FromBase64CharArray (new char[3] {' ', 
+				'\r', '\t'}, 0, 3);
 		}
 
 		[Test]
@@ -2961,17 +2976,22 @@ namespace MonoTests.System {
 		}
 
 		[Test]
-		[ExpectedException (typeof (FormatException))]
 		public void FromBase64_Empty ()
 		{
-			Convert.FromBase64String ("");
+			AssertEquals (new byte[0], Convert.FromBase64String (string.Empty));
 		}
 
 		[Test]
+#if !NET_2_0
 		[ExpectedException (typeof (FormatException))]
+#endif
 		public void FromBase64_OnlyWhiteSpace ()
 		{
+#if NET_2_0
+			AssertEquals (new byte[0], Convert.FromBase64String ("  \r\t"));
+#else
 			Convert.FromBase64String ("  \r\t");
+#endif
 		}
 
 		[Test]

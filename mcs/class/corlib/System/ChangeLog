@@ -1,3 +1,10 @@
+2005-08-21  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* Convert.cs: In FromBase64String, return empty byte array for zero
+	length string. Pass bool to InternalFromBase64String to control 
+	whether to allow a whitespace-only string.
+	* Environment.cs: Bump corlib version.
+
 2005-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Environment.cs: Bump corlib version.

@@ -110,7 +110,7 @@ namespace System {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		extern static byte [] InternalFromBase64String (string str);
+		extern static byte [] InternalFromBase64String (string str, bool allowWhitespaceOnly);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static byte [] InternalFromBase64CharArray (char [] arr, int offset, int length);
@@ -135,7 +135,15 @@ namespace System {
 			if (s == null)
 				throw new ArgumentNullException ("s");
 
-			return InternalFromBase64String (s);
+			if (s.Length == 0) {
+				return new byte[0];
+			}
+
+#if NET_2_0
+			return InternalFromBase64String (s, true);
+#else
+			return InternalFromBase64String (s, false);
+#endif
 		}
 
 		public static TypeCode GetTypeCode (object value)
