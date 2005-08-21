@@ -1,3 +1,7 @@
+2005-21-08 Boris Kirzner <borisk@mainsoft.com>
+	* ReaderCache.cs: no not create guid if the value fetched is null.
+	* SqlClientStrings.resx: fixed CON_PORT key value.
+
 2005-18-08 Boris Kirzner <borisk@mainsoft.com>
 	* AbstractDBCommand.cs: 
 		- Using Java regex instead of .Net ones.

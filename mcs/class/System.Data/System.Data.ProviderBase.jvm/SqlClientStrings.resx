@@ -116,7 +116,7 @@
 		<value>user id,user,uid</value>
 	</data>
 	<data name="CON_PORT">
-		<value>1433</value>
+		<value>port</value>
 	</data>
 	<data name="SQL_CON_PORT">
 		<value>1433</value>

@@ -252,7 +252,9 @@ namespace System.Data.Common
 
 		protected override void FetchInternal(ResultSet rs, int columnIndex)
 		{
-			_g = new Guid(rs.getString(columnIndex));
+			string s = rs.getString(columnIndex);
+			if (s != null)
+				_g = new Guid();
 		}
 
 		public override object GetValue()
