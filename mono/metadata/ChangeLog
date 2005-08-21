@@ -1,3 +1,13 @@
+2005-08-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* class-internals.h object.c: Add a new kind of trampoline called a delegate 
+	trampoline.
+
+	* domain-internals.h domain.c: Add a has for delegate trampolines to MonoDomain.
+	
+	* object.c (mono_delegate_ctor): Replace the original function address with
+	a delegate trampoline.
+
 2005-08-21 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* icall.c: add boolean argument to base64_to_byte_array and 
