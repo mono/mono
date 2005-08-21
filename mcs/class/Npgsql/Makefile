@@ -52,8 +52,7 @@ RESX_RES = \
 	Npgsql/NpgsqlEventLog.resources				\
 	Npgsql/NpgsqlException.resources			\
 	Npgsql/PGUtil.resources					\
-	NpgsqlTypes/NpgsqlTypesHelper.resources			\
-	Npgsql/Design/ConnectionStringEditorForm.resources
+	NpgsqlTypes/NpgsqlTypesHelper.resources			
 
 include ../../build/library.make
 

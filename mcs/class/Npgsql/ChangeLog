@@ -1,3 +1,7 @@
+2005-08-21  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+	* Makefile,
+	Npgsql.dll.resources: Removed references to design time support. This is not needed when compiling Npgsql with mono.
+
 2005-08-06  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 
         * NpgsqlCommand.cs: Fixed problem when using commandtype.storedprocedure with command texts which have parameters with ' or any other value which needed to be escaped. Now they are properly handled. Thanks Dalibor (dalxxx at email dot com) for heads up and tests.

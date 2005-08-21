@@ -1,6 +1,3 @@
--resource:Npgsql/NpgsqlConnection.bmp,Npgsql.NpgsqlConnection.bmp
--resource:Npgsql/NpgsqlCommand.bmp,Npgsql.NpgsqlCommand.bmp
--resource:Npgsql/NpgsqlDataAdapter.bmp,Npgsql.NpgsqlDataAdapter.bmp
 -resource:Npgsql/NpgsqlState.resources,Npgsql.NpgsqlState.resources
 -resource:Npgsql/NpgsqlClosedState.resources,Npgsql.NpgsqlClosedState.resources
 -resource:Npgsql/NpgsqlParameterCollection.resources,Npgsql.NpgsqlParameterCollection.resources
@@ -14,6 +11,5 @@
 -resource:Npgsql/NpgsqlException.resources,Npgsql.NpgsqlException.resources
 -resource:Npgsql/PGUtil.resources,Npgsql.PGUtil.resources
 -resource:NpgsqlTypes/NpgsqlTypesHelper.resources,NpgsqlTypes.NpgsqlTypesHelper.resources
--resource:Npgsql/Design/ConnectionStringEditorForm.resources,Npgsql.Design.ConnectionStringEditorForm.resources
 
 
