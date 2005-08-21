@@ -1,5 +1,7 @@
 2005-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.h: Add delegate trampolines.
+
 	* mini.h mini.c mini-trampolines.c tramp-amd64.c: Add delegate trampolines.
 
 	* inssel-amd64.brg: Add optimized call rules.
