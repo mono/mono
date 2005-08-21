@@ -1,5 +1,9 @@
 2005-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini.c mini-trampolines.c tramp-amd64.c: Add delegate trampolines.
+
+	* inssel-amd64.brg: Add optimized call rules.
+	
 	* mini-ia64.c tramp-ia64.c: Improve instruction scheduling.
 
 	* inssel-ia64.brg: Add optimized ldind(reg) rules.
