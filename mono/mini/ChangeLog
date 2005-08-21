@@ -1,5 +1,10 @@
 2005-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h mini-trampolines.c: Pass the trampoline argument to 
+	mono_arch_patch_delegate_trampoline.
+
+	* mini-ia64.h mini-ia64.c tramp-ia64.c: Add support for delegate trampolines.
+
 	* mini-trampolines.c: Fix build.
 
 	* mini-amd64.h: Add delegate trampolines.
