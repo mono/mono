@@ -1,3 +1,9 @@
+2005-08-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.h tramp-x86.c: Add support for delegate trampolines.
+
+	* inssel-x86.brg: Add some optimized call rules.
+
 2005-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_create_delegate_trampoline): Do not return an already compiled
