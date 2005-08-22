@@ -17,7 +17,7 @@
 		<Files>
 			<Include>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Assembly\Consts.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Assembly\Consts.cs" Link="..\..\build\common\Consts.cs" SubType="Code" BuildAction="Compile"/>
 <File RelPath="Assembly\Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
  <File RelPath="Assembly\MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Data.SqlExpressions\Aggregation.cs" SubType="Code" BuildAction="Compile"/>
