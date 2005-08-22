@@ -8,7 +8,7 @@ PLATFORM_MCS_FLAGS = /nologo /optimize
 PLATFORM_RUNTIME = 
 PLATFORM_CORLIB = mscorlib.dll
 
-EXTERNAL_MCS = csc.exe
+EXTERNAL_MCS = mcs
 EXTERNAL_MBAS = vbc.exe
 EXTERNAL_RUNTIME =
 
