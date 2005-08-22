@@ -1,5 +1,8 @@
 2005-08-22  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_method_to_ir): Remove instructions inserted after a branch
+	in the tail recursion optimization.
+
 	* mini.h helpers.c (mono_disassemble_code): Emit starts of basic blocks as 
 	debug info into the assembly file.
 
