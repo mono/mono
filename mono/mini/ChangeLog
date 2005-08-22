@@ -1,5 +1,10 @@
 2005-08-22  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.c (mono_create_delegate_trampoline): Fix memory leak. Put back
+	the check for an already compiled method on non-ia64 platforms.
+	(mono_create_jump_trampoline): Store the MonoJitInfo structure into the
+	proper domain.
+
 	* mini-x86.h tramp-x86.c: Add support for delegate trampolines.
 
 	* inssel-x86.brg: Add some optimized call rules.
