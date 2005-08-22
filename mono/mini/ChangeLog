@@ -1,3 +1,10 @@
+2005-08-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* tramp-amd64.c (mono_arch_patch_delegate_trampoline): Add some debug
+	code.
+
+	* mini.c (optimize_branches): Don't quit after 1000 iterations on large
+	methods.
 
 Mon Aug 22 19:16:29 BST 2005 Paolo Molaro <lupus@ximian.com>
 
