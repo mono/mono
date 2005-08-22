@@ -118,7 +118,7 @@ namespace System.Web.UI.WebControls
 #if !NET_2_0
 		[Bindable (true)]
 #endif
-		[DefaultValue (null), WebCategory ("Appearance")]
+		[DefaultValue (typeof(Color), ""), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The background color for the WebControl.")]
 		public virtual Color BackColor
@@ -137,7 +137,7 @@ namespace System.Web.UI.WebControls
 #if !NET_2_0
 		[Bindable (true)]
 #endif
-		[DefaultValue (null), WebCategory ("Appearance")]
+		[DefaultValue (typeof(Color), ""), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The border color for the WebControl.")]
 		public virtual Color BorderColor
@@ -174,7 +174,7 @@ namespace System.Web.UI.WebControls
 #if !NET_2_0
 		[Bindable (true)]
 #endif
-		[DefaultValue (null), WebCategory ("Appearance")]
+		[DefaultValue (typeof (Unit), ""), WebCategory ("Appearance")]
 		[WebSysDescription ("The width of the border used for the WebControl.")]
 		public virtual Unit BorderWidth
 		{
@@ -277,7 +277,7 @@ namespace System.Web.UI.WebControls
 #if !NET_2_0
 		[Bindable (true)]
 #endif
-		[DefaultValue (null), WebCategory ("Appearance")]
+		[DefaultValue (typeof(Color), ""), WebCategory ("Appearance")]
 		[TypeConverter (typeof (WebColorConverter))]
 		[WebSysDescription ("The color that is used to paint the primary display of the WebControl.")]
 		public virtual Color ForeColor
@@ -296,7 +296,7 @@ namespace System.Web.UI.WebControls
 #if !NET_2_0
 		[Bindable (true)]
 #endif
-		[DefaultValue (null), WebCategory ("Layout")]
+		[DefaultValue (typeof(Unit), ""), WebCategory ("Layout")]
 		[WebSysDescription ("The height of this WebControl.")]
 		public virtual Unit Height
 		{
@@ -322,7 +322,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (0), WebCategory ("Behavior")]
+		[DefaultValue (typeof (short), "0"), WebCategory ("Behavior")]
 		[WebSysDescription ("The order in which this WebControl gets tabbed through.")]
 		public virtual short TabIndex
 		{
@@ -366,7 +366,7 @@ namespace System.Web.UI.WebControls
 #if !NET_2_0
 		[Bindable (true)]
 #endif
-		[DefaultValue (null), WebCategory ("Layout")]
+		[DefaultValue ( typeof (Unit), ""), WebCategory ("Layout")]
 		[WebSysDescription ("The width of this WebControl.")]
 		public virtual Unit Width
 		{

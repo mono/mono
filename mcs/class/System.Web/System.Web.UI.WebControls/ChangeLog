@@ -1,3 +1,8 @@
+2005-08-22 Michael Hutchinson <m.j.hutchinson@gmail.com>
+
+	* WebControl.cs: Correct type for some default values
+	* UnitConverter.cs: Fix potential infinite loop
+
 2005-07-29  Kornél Pál <kornelpal@hotmail.com>
 
 	* *.cs: Replaced assembly references with constants in Consts.cs.

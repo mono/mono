@@ -52,7 +52,7 @@ namespace System.Web.UI.WebControls
 		{
 			if(sourceType == typeof(string))
 				return true;
-			return CanConvertFrom(context, sourceType);
+			return base.CanConvertFrom(context, sourceType);
 		}
 
 #if NET_2_0
@@ -81,7 +81,7 @@ namespace System.Web.UI.WebControls
 				}
 				return (culture == null ? Unit.Parse(val) : Unit.Parse(val, culture));
 			}
-			return ConvertFrom(context, culture, value);
+			return base.ConvertFrom(context, culture, value);
 		}
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
@@ -110,7 +110,7 @@ namespace System.Web.UI.WebControls
 			}
 #endif
 			
-			return ConvertTo(context, culture, value, destinationType);
+			return base.ConvertTo(context, culture, value, destinationType);
 		}
 	}
 }
