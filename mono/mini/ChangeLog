@@ -1,5 +1,7 @@
 2005-08-22  Zoltan Varga  <vargaz@freemail.hu>
 
+	* inssel-x86.brg: Fix assert in patch_delegate_trampoline.
+
 	* tramp-x86.c (mono_arch_patch_delegate_trampoline): Add some debug
 	code.
 
