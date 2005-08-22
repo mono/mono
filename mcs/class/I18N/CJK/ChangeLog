@@ -1,3 +1,7 @@
+2005-08-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Add README.gb18030 and gb18030.table.
+
 2005-08-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	why didn't we have it? ;-)
