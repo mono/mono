@@ -1,3 +1,8 @@
+2005-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CSharpCodeCompiler.cs: patch from Maksim Vorobiev that prevents
+	InvalidOperationException if the thread running mcs is aborted.
+
 2005-08-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: made the colon optional so that both mcs and
