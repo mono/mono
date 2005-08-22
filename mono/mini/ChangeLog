@@ -1,3 +1,12 @@
+2005-08-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.h helpers.c (mono_disassemble_code): Emit starts of basic blocks as 
+	debug info into the assembly file.
+
+	* iltests.il: Add test for filter regions.
+
+	* mini.c (mono_method_to_ir): Fix handling of nested FILTER clauses. Fix
+	initial stack of filter regions. Fixes #75755.
 
 Mon Aug 22 17:49:16 BST 2005 Paolo Molaro <lupus@ximian.com>
 
