@@ -51,7 +51,7 @@ internal
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 	public const string FxVersion = "2.0.0.0";
 	public const string VsVersion = "8.0.0.0";
-#elif NET_1_1
+#elif NET_1_1 || TARGET_JVM
 	public const string FxVersion = "1.0.5000.0";
 	public const string VsVersion = "7.0.5000.0";
 #elif NET_1_0
