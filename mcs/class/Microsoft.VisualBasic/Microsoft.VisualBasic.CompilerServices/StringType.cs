@@ -258,9 +258,32 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				(Value is char[])
 				&& ((Array)Value).Rank == 1)
 				return new string(CharArrayType.FromObject(Value));
-            
-			return Convert.ToString(Value);   
 
+			TypeCode typecode = Type.GetTypeCode (Value.GetType ());
+			switch (typecode) {
+				case TypeCode.Boolean:
+					return FromBoolean ((bool) Value);
+				case TypeCode.Byte:
+					return FromByte ((byte) Value);
+				case TypeCode.Int16:
+					return FromShort ((short) Value);
+				case TypeCode.Int32:
+					return FromInteger ((int) Value);
+				case TypeCode.Int64:
+					return FromLong ((long) Value);
+				case TypeCode.Single:
+					return FromSingle ((float) Value);
+				case TypeCode.Double:
+					return FromDouble ((double) Value);
+				case TypeCode.DateTime:
+					return FromDate ((DateTime) Value);
+				case TypeCode.Char:
+					return FromChar ((char) Value);
+				case TypeCode.Decimal:
+					return FromDecimal ((decimal) Value);
+			}
+            
+			throw new InvalidCastException (Utils.GetResourceString ("InvalidCast_FromTo", Value.ToString (), "String"));
 		}
 
 

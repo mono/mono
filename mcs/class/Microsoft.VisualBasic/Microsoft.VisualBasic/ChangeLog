@@ -1,3 +1,6 @@
+2005-08-22 Satya Sudha K <ksathyasudha@novell.com>
+	* Conversion.cs : Minor fix for the 'Val' function
+
 2005-08-19 Satya Sudha K <ksathyasudha@novell.com>
 	* Interaction.cs : 
 		'CallByName' : Checking for the correct call type.

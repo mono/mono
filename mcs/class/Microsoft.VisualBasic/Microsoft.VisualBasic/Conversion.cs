@@ -704,7 +704,7 @@ namespace Microsoft.VisualBasic {
 			}
 		
 			try {
-				return Val (CastToString (Expression)); 
+				return Val (StringType.FromObject (Expression)); 
 			} 
 			catch {
 				
