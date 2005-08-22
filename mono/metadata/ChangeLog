@@ -1,3 +1,8 @@
+2005-08-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* threads.c (ves_icall_System_Threading_Thread_Thread_internal): Remove the 
+	BROKEN_THREAD_START stuff.
+
 2005-08-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* class-internals.h object.c: Add a new kind of trampoline called a delegate 
