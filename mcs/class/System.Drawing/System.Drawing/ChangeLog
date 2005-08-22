@@ -1,3 +1,10 @@
+2005-08-22 Jordi Mas i Hernandez <jordi@ximian.com> 
+
+	* SolidBrush.cs: Fixes Dispose to avoid non-disposing some objects
+	* Brush.cs Fixes Dispose to avoid non-disposing some objects
+	* Pen.cs: Fixes Dispose to avoid non-disposing some objects
+	* Region.cs: Dipose always frees if the resource was allocated
+
 2005-08-19 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* gdipFunctions.cs: Before calling GdiplusShutdown we make that all of handles

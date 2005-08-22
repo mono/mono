@@ -45,7 +45,6 @@ namespace System.Drawing
 		internal Color color;
 		private CustomLineCap startCap;
 		private CustomLineCap endCap;
-		private bool disposed;
 
                 internal Pen (IntPtr p)
                 {
@@ -65,24 +64,15 @@ namespace System.Drawing
 			Status status = GDIPlus.GdipCreatePen2 (brush.nativeObject, width, Unit.UnitWorld, out nativeObject);
 			GDIPlus.CheckStatus (status);
 		
-			this.brush = brush;
-			if (brush is SolidBrush) {
-				color = ((SolidBrush) brush).Color;
-				status = GDIPlus.GdipSetPenColor (nativeObject, color.ToArgb ());
-				GDIPlus.CheckStatus (status);
-			}			
+			this.brush = brush;			
 		}
 
 		public Pen (Color color, float width)
 		{
-
 			Status status = GDIPlus.GdipCreatePen1 (color.ToArgb (), width, Unit.UnitWorld, out nativeObject);
 			GDIPlus.CheckStatus (status);
 
 			this.color = color;
-			brush = new SolidBrush (color);
-			status = GDIPlus.GdipSetPenBrushFill (nativeObject, brush.nativeObject);
-			GDIPlus.CheckStatus (status);			
 		}
 
 		//
@@ -447,26 +437,16 @@ namespace System.Drawing
 			System.GC.SuppressFinalize (this);
 		}
 
-		void Dispose (bool disposing)
+		private void Dispose (bool disposing)
 		{
-			lock (this){
-				if (isModifiable == false) {
-					throw new ArgumentException ("This Pen object can't be modified.");
-				}
+			if (disposing == true && isModifiable == false) {
+				throw new ArgumentException ("This Pen object can't be modified.");
+			}
 					
-				// Pen is disposed if and only if it is not disposed and
-				// it is modifiable OR it is not disposed and it is being
-				// collected by GC.
-				if (!disposed) {
-					if (isModifiable || disposing == false) {
-						if (nativeObject != IntPtr.Zero) {
-							Status status = GDIPlus.GdipDeletePen (nativeObject);
-							GDIPlus.CheckStatus (status);
-							nativeObject = IntPtr.Zero;
-							disposed = true;
-						}
-					}
-				}				
+			if (nativeObject != IntPtr.Zero) {
+				Status status = GDIPlus.GdipDeletePen (nativeObject);
+				GDIPlus.CheckStatus (status);
+				nativeObject = IntPtr.Zero;
 			}
 		}
 

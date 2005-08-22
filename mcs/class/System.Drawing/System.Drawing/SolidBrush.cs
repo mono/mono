@@ -87,19 +87,11 @@ namespace System.Drawing
 		
 		protected override void Dispose (bool disposing)
 		{
-			// SolidBrush is disposed if and only if it is not disposed
-			// and it is modifiable OR it is not disposed and it is being
-			// collected by GC.
-			if (! disposed) {
-				if (isModifiable || disposing == false) {
-					Status status = GDIPlus.GdipDeleteBrush (nativeObject);
-					nativeObject = IntPtr.Zero;
-					GDIPlus.CheckStatus (status);
-					disposed = true;					
-				}
-				else
-					throw new ArgumentException ("This SolidBrush object can't be modified.");
+			if (disposing == true && isModifiable == false) {
+				throw new ArgumentException ("This SolidBrush object can't be modified.");
 			}
+
+			base.Dispose (disposing); 
 		}
 	}
 }

@@ -535,13 +535,13 @@ namespace System.Drawing
 
 		public void Dispose ()
 		{
-			Dispose (true);
+			DisposeHandle ();
 			System.GC.SuppressFinalize (this);
 		}
 
-		void Dispose (bool disposing)
+		private void DisposeHandle ()
 		{
-			if (disposing) {
+			if (nativeRegion != IntPtr.Zero) {
 				GDIPlus.GdipDeleteRegion (nativeRegion);
 				nativeRegion = IntPtr.Zero;
 			}
@@ -549,7 +549,7 @@ namespace System.Drawing
 
 		~Region ()
 		{
-			Dispose (false);
+			DisposeHandle ();
 		}
 
                 internal IntPtr NativeObject
