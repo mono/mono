@@ -1,3 +1,9 @@
+
+Mon Aug 22 10:41:41 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* include/private/gc_locks.h: make gcc generate correct code for swp
+	(patch by tomba@bat.org, Tomi Valkeinen).
+
 2005-08-20  Zoltan Varga  <vargaz@freemail.hu>
 
 	* include/private/gc_locks.h: Fix compilation of GC_test_and_set on IA64 with gcc-3.3.5.
