@@ -1,3 +1,8 @@
+
+Mon Aug 22 19:16:29 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* tramp-arm.c: allocate less memory for the trampoline and fix typo.
+
 2005-08-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_method_to_ir): Remove instructions inserted after a branch
