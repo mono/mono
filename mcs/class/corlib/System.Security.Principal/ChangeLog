@@ -1,3 +1,7 @@
+2005-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GenericPrincipal.cs: Roles are case-insensitive.
+
 2005-06-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IdentityReference.cs: Constructor is internal (which means it the

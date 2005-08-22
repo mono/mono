@@ -1,8 +1,9 @@
 //
 // System.Security.Principal.GenericPrincipal.cs
 //
-// Author:
-//   Miguel de Icaza (miguel@ximian.com)
+// Authors:
+//	Miguel de Icaza (miguel@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
@@ -62,10 +63,13 @@ namespace System.Security.Principal {
 			if (roles == null)
 				return false;
 
-			foreach (string r in roles)
-				if (role == r)
-					return true;
-
+			int l = role.Length;
+			foreach (string r in roles) {
+				if ((r != null) && (l == r.Length)) {
+					if (String.Compare (role, 0, r, 0, l, true) == 0)
+						return true;
+				}
+			}
 			return false;
 		}
 	}
