@@ -1,5 +1,7 @@
 2005-08-22  Zoltan Varga  <vargaz@freemail.hu>
 
+	* delegate.cs: Restructure and add long delegate test.
+
 	* thread-2.cs: New file.
 
 2005-08-20  Zoltan Varga  <vargaz@freemail.hu>
