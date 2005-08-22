@@ -1,3 +1,9 @@
+
+Mon Aug 22 17:49:16 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c, cpu-arm.c: fixes and support for methods with bigger
+	stack requirements.
+
 2005-08-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c (mono_create_delegate_trampoline): Fix memory leak. Put back
