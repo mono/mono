@@ -528,7 +528,7 @@ public class TypeManager {
 		foreach(string Namespace in namespaces)
 		{ 
 			for(int i = 0; i < standardModules.Length; i++) {
-				if (standardModules[i].Namespace == Namespace) {
+				if (standardModules[i].Namespace.ToLower () == Namespace.ToLower ()) {
 					string name = standardModules[i].ToString();
 					Type t = LookupType(name);
 					if (t == null) {

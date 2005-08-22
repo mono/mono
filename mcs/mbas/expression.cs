@@ -4575,6 +4575,8 @@ namespace Mono.MonoBASIC {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (method != null)	// already resolved
+				return this;
 			//
 			// First, resolve the expression that is used to
 			// trigger the invocation
