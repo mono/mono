@@ -25,27 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-//
-//
-//
-//
-// As you may be aware, testing a parser is something of a beastly job. The
-// approach taken by these tests is to feed a file to XamlParser and see if it
-// tells the code generator to do what you'd expect. This tests both the parsing
-// and type-checking bits of XamlParser.
-//
-// The various Happening classes each represent methods on the IXamlWriter
-// interface that XamlParser could call. The constructor of a Happening takes 
-// the same arguments as the IXamlWriter method it represents, and merely stashes
-// those values in the suitable public fields.
-//
-// The ParserTester class takes a Xaml document and a list of Happenings, and 
-// handles comparison of the calls to ParserTester's methods to the expected 
-// sequence of Happenings.
-//
-// I think this strikes a tolerable balance between the need to keep the tests 
-// simple and the need to avoid writing 10 zillion lines of hard-to-follow test
-// code.
 
 using NUnit.Framework;
 using System;
@@ -54,6 +33,7 @@ using System.IO;
 using System.Xml;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Serialization;
 using Mono.Windows.Serialization;
 using Xaml.TestVocab.Console;
 
@@ -61,7 +41,7 @@ namespace MonoTests.System.Windows.Serialization
 {
 
 [TestFixture]
-public class XamlParserTest : Assertion {
+public class XamlParserTest {
 	const string MAPPING = "<?Mapping ClrNamespace=\"Xaml.TestVocab.Console\" Assembly=\"./TestVocab.dll\" XmlNamespace=\"console\" ?>\n";
 	
 	[SetUp]
@@ -73,28 +53,44 @@ public class XamlParserTest : Assertion {
 	[TearDown]
 	public void Clean() {}
 
+	private void makeGoBang(string s)
+	{
+		XamlNode n;
+		XamlParser p = new XamlParser(new StringReader(s));
+		do {
+			n = p.GetNextNode();
+		} while (!(n is XamlDocumentEndNode));
+	}
+
 	[Test]
 	[ExpectedException(typeof(Exception), "Unknown processing instruction.")]
 	public void TestIncorrectPIName()
 	{
 		string s = "<?Mapppping ClrNamespace=\"Xaml.TestVocab.Console\" Assembly=\"./TestVocab.dll\" XmlNamespace=\"console\" ?>\n";
-		ParserTester pt = new ParserTester(s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null), 
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
-
+		makeGoBang(s);
 	}
 
 	[Test]
 	public void TestTopLevel()
 	{
 		string s = "<ConsoleApp xmlns=\"console\"></ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null), 
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		XamlNode n;
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "B1");
+		Assert.AreEqual(0, n.Depth, "B2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "C1");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode, "D1");
+
 	}
 
 	[Test]
@@ -102,11 +98,7 @@ public class XamlParserTest : Assertion {
 	public void TestTopLevelWithIncorrectClassName()
 	{
 		string s = "<ConsoleApple xmlns=\"console\"></ConsoleApple>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null), 
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 
 	[Test]
@@ -114,11 +106,8 @@ public class XamlParserTest : Assertion {
 	public void TestTopLevelWithWrongEndingTag()
 	{
 		string s = "<ConsoleApp xmlns=\"console\"></ConsoleApple>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null), 
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
+
 	}
 
 	[Test]
@@ -126,11 +115,8 @@ public class XamlParserTest : Assertion {
 	public void TestTopLevelWithoutNamespace()
 	{
 		string s = "<ConsoleApp></ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null), 
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
+
 	}
 
 	[Test]
@@ -138,11 +124,23 @@ public class XamlParserTest : Assertion {
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Class=\"nnn\">\n"+
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), "nnn"), 
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		XamlNode n;
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "B1");
+		Assert.AreEqual(0, n.Depth, "B2");
+		Assert.AreEqual("nnn", ((XamlElementStartNode)n).name, "B3");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B4");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "C1");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode, "D1");
 	}
 	
 	[Test]
@@ -151,12 +149,7 @@ public class XamlParserTest : Assertion {
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Name=\"nnn\">\n"+
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), "nnn"), // this is a lie, actually we expect
-											// an exception just before this
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 
 	[Test]
@@ -165,13 +158,32 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter></ConsoleWriter>" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+
+		XamlNode n;
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode);
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode);
+		Assert.AreEqual(n.Depth, 0);
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode);
+		Assert.AreEqual(n.Depth, 1);
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode);
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode);
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode);
+
 	}
 
 	[Test]
@@ -180,13 +192,33 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter x:Name=\"XXX\"></ConsoleWriter>" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), "XXX"),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+
+		XamlNode n;
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "B1");
+		Assert.AreEqual(n.Depth, 0, "B2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "C1");
+		Assert.AreEqual(1, n.Depth, "C2");
+		Assert.AreEqual("XXX", ((XamlElementStartNode)n).name, "C3");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter), "C4");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "D1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "E1");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode, "F1");
+
 	}
 
 
@@ -197,13 +229,7 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWritttter></ConsoleWritttter>" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 	
 	[Test]
@@ -213,13 +239,7 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter x:Class=\"abc\"></ConsoleWriter>" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), "abc"),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 
 
@@ -229,14 +249,36 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter>Hello</ConsoleWriter>" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreateObjectTextHappening("Hello"),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+
+		XamlNode n;
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode);
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode);
+		Assert.AreEqual(n.Depth, 0);
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode);
+		Assert.AreEqual(n.Depth, 1);
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlTextNode);
+		Assert.AreEqual(((XamlTextNode)n).TextContent, "Hello");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode);
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode);
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode);
+
 	}
 	
 	[Test]
@@ -245,35 +287,11 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter Text=\"Hello\" />" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreatePropertyHappening(typeof(ConsoleWriter).GetProperty("Text")),
-				new CreatePropertyTextHappening("Hello", typeof(ConsoleValue)),
-				new EndPropertyHappening(),
-				new EndObjectHappening(), //ConsoleWriter
-				new EndObjectHappening(), //ConsoleApp
-				new FinishHappening());
-		pt.Test();
-	}
 
-	[Test]
-	[ExpectedException(typeof(Exception), "Property 'Texxxt' not found on 'ConsoleWriter'.")]
-	public void TestTextPropertyWithIncorrectName()
-	{
-		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
-			"<ConsoleWriter Texxxt=\"Hello\" />" +
-			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreatePropertyHappening(typeof(ConsoleWriter).GetProperty("Text")),
-				new CreatePropertyTextHappening("Hello", typeof(ConsoleValue)),
-				new EndPropertyHappening(),
-				new EndObjectHappening(), //ConsoleWriter
-				new EndObjectHappening(), //ConsoleApp
-				new FinishHappening());
-		pt.Test();
+		XamlNode n;
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+
+		basicPropertyTestStream(p, 0);
 	}
 
 	[Test]
@@ -284,16 +302,57 @@ public class XamlParserTest : Assertion {
 			"<ConsoleWriter.Text>Hello</ConsoleWriter.Text>\n" +
 			"</ConsoleWriter>\n" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreatePropertyHappening(typeof(ConsoleWriter).GetProperty("Text")),
-				new CreatePropertyTextHappening("Hello", typeof(ConsoleValue)),
-				new EndPropertyHappening(),
-				new EndObjectHappening(), //ConsoleWriter
-				new EndObjectHappening(), //ConsoleApp
-				new FinishHappening());
-		pt.Test();
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+
+		basicPropertyTestStream(p, 1);
+	}
+
+
+
+	private void basicPropertyTestStream(XamlParser p, int depthIncreaseForProperty)
+	{
+		XamlNode n;
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "B1");
+		Assert.AreEqual(0, n.Depth, "B2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "C1");
+		Assert.AreEqual(1, n.Depth, "C2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter), "C3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlPropertyNode, "D1");
+		Assert.AreEqual(1 + depthIncreaseForProperty, n.Depth, "D2");
+		Assert.AreEqual(((XamlPropertyNode)n).PropInfo, typeof(ConsoleWriter).GetProperty("Text"), "D3");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlTextNode, "E1");
+		Assert.AreEqual(((XamlTextNode)n).TextContent, "Hello", "E2");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "F1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "F2");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode, "F3");
+
+	}
+
+	[Test]
+	[ExpectedException(typeof(Exception), "Property 'Texxxt' not found on 'ConsoleWriter'.")]
+	public void TestTextPropertyWithIncorrectName()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter Texxxt=\"Hello\" />" +
+			"</ConsoleApp>";
+		makeGoBang(MAPPING + s);
 	}
 
 	[Test]
@@ -305,16 +364,7 @@ public class XamlParserTest : Assertion {
 			"<ConsoleWriter.Text z=\"y\">Hello</ConsoleWriter.Text>\n"+
 			"</ConsoleWriter>\n" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreatePropertyHappening(typeof(ConsoleWriter).GetProperty("Text")),
-				new CreatePropertyTextHappening("Hello", typeof(ConsoleValue)),
-				new EndPropertyHappening(),
-				new EndObjectHappening(), //ConsoleWriter
-				new EndObjectHappening(), //ConsoleApp
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 
 	[Test]
@@ -326,16 +376,7 @@ public class XamlParserTest : Assertion {
 			"<ConsoleWriter.Texxxt>Hello</ConsoleWriter.Text>\n" + 
 			"</ConsoleWriter>\n" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s, 
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreatePropertyHappening(typeof(ConsoleWriter).GetProperty("Text")),
-				new CreatePropertyTextHappening("Hello", typeof(ConsoleValue)),
-				new EndPropertyHappening(),
-				new EndObjectHappening(), //ConsoleWriter
-				new EndObjectHappening(), //ConsoleApp
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 
 	[Test]
@@ -344,16 +385,40 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter ConsoleApp.Repetitions=\"3\" />" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
-				new CreateDependencyPropertyTextHappening("3", typeof(int)),
-				new EndDependencyPropertyHappening(),
-				new EndObjectHappening(), // ConsoleWriter
-				new EndObjectHappening(), // ConsoleApp
-				new FinishHappening());
-		pt.Test();
+
+		XamlNode n;
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode);
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode);
+		Assert.AreEqual(n.Depth, 0);
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode);
+		Assert.AreEqual(n.Depth, 1);
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlPropertyNode);
+		Assert.AreEqual(((XamlPropertyNode)n).DP, ConsoleApp.RepetitionsProperty);
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlTextNode);
+		Assert.AreEqual(((XamlTextNode)n).TextContent, "3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode);
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode);
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode);
+
 	}
 
 	[Test]
@@ -363,16 +428,7 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleValueString ConsoleApp.Repetitions=\"3\" />" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleValueString), null),
-				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
-				new CreateDependencyPropertyTextHappening("3", typeof(int)),
-				new EndDependencyPropertyHappening(),
-				new EndObjectHappening(), // ConsoleWriter
-				new EndObjectHappening(), // ConsoleApp
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 
 	[Test]
@@ -382,16 +438,7 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter ConsoleApp.Reps=\"3\" />" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
-				new CreateDependencyPropertyTextHappening("3", typeof(int)),
-				new EndDependencyPropertyHappening(),
-				new EndObjectHappening(), // ConsoleWriter
-				new EndObjectHappening(), // ConsoleApp
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 
 
@@ -403,16 +450,41 @@ public class XamlParserTest : Assertion {
 			"<ConsoleApp.Repetitions>3</ConsoleApp.Repetitions>\n" +
 			"</ConsoleWriter>" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
-				new CreateDependencyPropertyTextHappening("3", typeof(int)),
-				new EndDependencyPropertyHappening(),
-				new EndObjectHappening(), // ConsoleWriter
-				new EndObjectHappening(), // ConsoleApp
-				new FinishHappening());
-		pt.Test();
+
+		XamlNode n;
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode);
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode);
+		Assert.AreEqual(n.Depth, 0);
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode);
+		Assert.AreEqual(n.Depth, 1);
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter));
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlPropertyNode);
+		Assert.AreEqual(n.Depth, 2);
+		Assert.AreEqual(((XamlPropertyNode)n).DP, ConsoleApp.RepetitionsProperty);
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlTextNode);
+		Assert.AreEqual(((XamlTextNode)n).TextContent, "3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode);
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode);
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode);
+
 	}
 
 	[Test]
@@ -424,16 +496,7 @@ public class XamlParserTest : Assertion {
 			"<ConsoleApp.Reps>3</ConsoleApp.Reps>\n" + 
 			"</ConsoleWriter>" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreateDependencyPropertyHappening(typeof(ConsoleApp), "Repetitions", typeof(int)),
-				new CreateDependencyPropertyTextHappening("3", typeof(int)),
-				new EndDependencyPropertyHappening(),
-				new EndObjectHappening(), // ConsoleWriter
-				new EndObjectHappening(), // ConsoleApp
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 
 
@@ -445,17 +508,46 @@ public class XamlParserTest : Assertion {
 			"<ConsoleReader.Prompt><ConsoleWriter /></ConsoleReader.Prompt>\n" +
 			"</ConsoleReader>\n" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleReader), null),
-				new CreatePropertyHappening(typeof(ConsoleReader).GetProperty("Prompt")),
-				new CreatePropertyObjectHappening(typeof(ConsoleWriter), null),
-				new EndPropertyObjectHappening(typeof(ConsoleWriter)),
-				new EndPropertyHappening(),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+		XamlNode n;
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "B1");
+		Assert.AreEqual(n.Depth, 0, "B2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "C1");
+		Assert.AreEqual(1, n.Depth, "C2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleReader), "C3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlPropertyNode, "D1");
+		Assert.AreEqual(2, n.Depth, "D3");
+		Assert.AreEqual(((XamlPropertyNode)n).PropInfo, typeof(ConsoleReader).GetProperty("Prompt"), "D2");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "E1" + n.GetType());
+		Assert.AreEqual(3, n.Depth, "E2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter), "E3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "F1" + n.GetType());
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlPropertyComplexEndNode, "G1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "H1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "I1");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode, "J1");
+
 	}
 
 	[Test]
@@ -467,15 +559,7 @@ public class XamlParserTest : Assertion {
 			"<ConsoleWriter />" +
 			"</ConsoleValueString>\n" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleValueString), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 
 	[Test]
@@ -487,15 +571,7 @@ public class XamlParserTest : Assertion {
 			"ABC" +
 			"</ConsoleValueString>\n" +
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleValueString), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 	
 	[Test]
@@ -503,14 +579,26 @@ public class XamlParserTest : Assertion {
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" SomethingHappened=\"handleSomething\">\n"+
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateEventHappening(typeof(ConsoleApp).GetEvent("SomethingHappened")),
-				new CreateEventDelegateHappening("handleSomething", typeof(SomethingHappenedHandler)),
-				new EndEventHappening(),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+		XamlNode n;
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "B1");
+		Assert.AreEqual(n.Depth, 0, "B2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlClrEventNode, "C1");
+		Assert.AreEqual(((XamlClrEventNode)n).EventMember, typeof(ConsoleApp).GetEvent("SomethingHappened"), "C2");
+		
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "D1");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode, "E1");
 	}
 
 	[Test]
@@ -519,16 +607,40 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<ConsoleWriter Filter=\"filterfilter\" />\n"+
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateObjectHappening(typeof(ConsoleWriter), null),
-				new CreatePropertyHappening(typeof(ConsoleWriter).GetProperty("Filter")),
-				new CreatePropertyDelegateHappening("filterfilter", typeof(Filter)),
-				new EndPropertyHappening(),
-				new EndObjectHappening(),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+		XamlNode n;
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "B1");
+		Assert.AreEqual(n.Depth, 0, "B2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "C1");
+		Assert.AreEqual(n.Depth, 1, "C2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter), "C3");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlPropertyNode, "D1");
+		Assert.AreEqual(n.Depth, 1, "D2");
+		Assert.AreEqual(((XamlPropertyNode)n).PropInfo, typeof(ConsoleWriter).GetProperty("Filter"), "D3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlClrEventNode, "E1");
+		Assert.AreEqual((MemberInfo)((XamlClrEventNode)n).EventMember, typeof(ConsoleWriter).GetProperty("Filter"), "E2");
+		Assert.AreEqual(((XamlClrEventNode)n).Value, "filterfilter", "E3");
+		
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "F1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "G1");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode, "H1");
 	}
 
 	[Test]
@@ -537,12 +649,26 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<x:Code><![CDATA[Hi there <thing /> here there everywhere]]></x:Code>\n"+
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateCodeHappening("Hi there <thing /> here there everywhere"),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		XamlParser p = new XamlParser(new StringReader(MAPPING + s));
+		XamlNode n;
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementStartNode, "B1");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B3");
+
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlLiteralContentNode, "C1");
+		Assert.AreEqual("Hi there <thing /> here there everywhere", ((XamlLiteralContentNode)n).Content, "C2");
+		
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlElementEndNode, "D1");
+		
+		n = p.GetNextNode();
+		Assert.IsTrue(n is XamlDocumentEndNode, "E1");
+
 	}
 
 
@@ -553,12 +679,7 @@ public class XamlParserTest : Assertion {
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
 			"<x:Code>Hi there <thing /> here there everywhere</x:Code>\n"+
 			"</ConsoleApp>";
-		ParserTester pt = new ParserTester(MAPPING + s,
-				new CreateTopLevelHappening(typeof(ConsoleApp), null),
-				new CreateCodeHappening("Hi there <thing /> here there everywhere"),
-				new EndObjectHappening(),
-				new FinishHappening());
-		pt.Test();
+		makeGoBang(MAPPING + s);
 	}
 
 }
@@ -730,11 +851,12 @@ class ParserTester : IXamlWriter {
 	}
 	public void Test()
 	{
-		XamlParser p = new XamlParser(new StringReader(document),
+/*		XamlParser p = new XamlParser(new StringReader(document),
 				this);
 		p.Parse();
 		// if this fails, then we haven't consumed all the happenings
-		Assert.AreEqual(happenings.Length, c);
+		Assert.AreEqual(happenings.Length, c);*/
+		Assert.IsTrue(false);
 	}
 	Happening getHappening()
 	{

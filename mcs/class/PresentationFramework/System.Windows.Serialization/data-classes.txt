@@ -1,0 +1,34 @@
+XamlAttributeNode; string Value
+XamlClrEventNode(XamlAttributeNode): string eventName, MemberInfo eventMember, +string value
+XamlConstructorParametersEndNode
+XamlConstructorParametersStartNode
+XamlConstructorParameterTypeNode: string valueTypeFullName, string valueAssemblyName, Type valueElementType
+XamlDefAttributeKeyTypeNode(XamlAttributeNode): string assemblyName, string valueType
+XamlDefAttributeNode(XamlAttributeNode): string name, +string value
+XamlDefTagNode(XamlAttributeNode): bool isEmptyElement, System.Xml.XmlReader xmlReader, string defTagName
+XamlDocumentEndNode
+XamlDocumentStartNode
+XamlElementStartNode: string assemblyName, string typeFullName, Type elementType, Type serializerType; string name, bool propertyObject
+XamlElementEndNode; bool propertyObject
+XamlEndAttributesNode: bool compact
+XamlKeyElementEndNode(XamlElementEndNode)
+XamlKeyElementStartNode(XamlElementStartNode)
+XamlLanguageNode: string language
+XamlLiteralContentNode: string content
+XamlNode(object): XamlNodeType tokenType, int lineNumber, int linePosition, int depth
+XamlPIMappingNode: string xmlNamespace, string clrNamespace, string assemblyName
+XamlPropertyArrayEndNode
+XamlPropertyArrayStartNode(XamlPropertyComplexStartNode)
+XamlPropertyComplexEndNode; Type finalType
+XamlPropertyComplexStartNode: Object propertyMember, string assemblyName, string typeFullName, string propertyName; PropertyInfo PropInfo, DependencyProperty DP, MethodInfo AttachedPropertySetter
+XamlPropertyIDictionaryEndNode
+XamlPropertyIDictionaryStartNode(XamlPropertyComplexStartNode)
+XamlPropertyIListEndNode
+XamlPropertyIListStartNode(XamlPropertyComplexStartNode)
+XamlPropertyNode(XamlPropertyComplexStartNode): string value, string xmlNamespace, BamlAttributeUsage attributeUsage, bool complexAsSimple
+XamlPropertyWithTypeNode(XamlPropertyComplexStartNode): String valueTypeFullName, string valueAssemblyFullName, Type valueElementType, string valueSerializerTypeFullName, string valueSerializerTypeAssemblyName, string xmlNamespace
+XamlRoutedEventNode(XamlAttributeNode): System.Windows.RoutedEvent routedEvent, string assemblyName, string typeFullName, string routedEventName, +string value
+XamlTextNode: string textContent; XamlParseMode mode, Type finalType
+XamlUnknownAttributeNode(XamlAttributeNode): string xmlNamespace, string name, +string value
+XamlUnknownTagEndNode
+XamlUnknownTagStartNode(XamlAttributeNode): string xmlNamespace, +string value

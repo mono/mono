@@ -1,3 +1,28 @@
+2005-08-23  Iain McCoy  <iain@mccoy.id.au>
+
+	* System.Windows.Serialization/XamlParser.cs: rearrange class so that
+	it presents a ReadNextNode() method, repeated calling of which will
+	produce the next node with information about the Xaml file being
+	parsed
+	* Test/XamlParser.cs: rewrite tests so that they use the new interface
+	of the parser
+	* System.Windows.Serialization/CodeWriter.cs: changed code generator
+	so that it consumes the event stream from the parser
+	* Test/CodeWriter.cs: made tests friendly to the new way CodeWriter
+	works
+	* System.Windows.Serialization/CodeWriter.cs: changed object builder
+	so that it consumes the event stream from the parser
+	* Test/ObjectWriter.cs: made tests friendly to the new way ObjectWriter
+	works
+
+2005-08-07  Iain McCoy  <iain@mccoy.id.au>
+
+	* System.Windows.Serialization/data-classes-builder.pl,
+	  System.Windows.Serialization/data-classes.txt: add stuff to generate
+	the zillion little classes to carry information around
+	* PresentationFramework.dll.sources, Makefile: invoke
+	data-classes-builder.pl as needed.
+
 2005-07-25  Iain McCoy  <iain@mccoy.id.au>
 
 	* Test/CodeWriter.cs: updated tests to reflect change in code

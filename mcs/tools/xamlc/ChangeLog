@@ -1,3 +1,8 @@
+2005-08-23  Iain McCoy  <iain@mccoy.id.au>
+
+	* xamlc.cs: consume the new CodeWriter interface
+	* demo/runtimetest.cs: consume the new ObjectWriter interface
+
 2005-07-28  Iain McCoy  <iain@mccoy.id.au>
 
 	* xamlc.cs: added support for choosing source code language to

@@ -44,23 +44,23 @@ namespace MonoTests.System.Windows.Serialization
 
 [TestFixture]
 public class ObjectWriterTest {
-	ObjectWriter ow;
+	string code;
 	
 	[SetUp]
 	public void GetReady()
 	{
-		ow = new ObjectWriter();
 	}
 
 	[TearDown]
-	public void Clean() {}
+	public void Clean()
+	{
+		code = null;
+	}
 
 	[Test]
 	public void TestTopLevel()
 	{
-		ow.CreateTopLevel(typeof(ConsoleApp), null);
-		ow.EndObject();
-		ow.Finish();
+		code = "<ConsoleApp xmlns=\"console\"></ConsoleApp>";
 		ConsoleApp app = new ConsoleApp();
 		compare(app);
 	}
@@ -68,9 +68,8 @@ public class ObjectWriterTest {
 	[Test]
 	public void TestTopLevelWithClassName()
 	{
-		ow.CreateTopLevel(typeof(ConsoleApp), "MyConsoleApp");
-		ow.EndObject();
-		ow.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Class=\"nnn\">\n"+
+			"</ConsoleApp>";
 		ConsoleApp app = new ConsoleApp();
 		compare(app);
 	}
@@ -78,9 +77,8 @@ public class ObjectWriterTest {
 	[Test]
 	public void TestTopLevelWithClassNameAndNamespace()
 	{
-		ow.CreateTopLevel(typeof(ConsoleApp), "Test.Thing.MyConsoleApp");
-		ow.EndObject();
-		ow.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Class=\"Test.Thing.nnn\">\n"+
+			"</ConsoleApp>";
 		ConsoleApp app = new ConsoleApp();
 		compare(app);
 	}
@@ -88,12 +86,10 @@ public class ObjectWriterTest {
 	[Test]
 	public void TestSimplestAddChild()
 	{
-		ow.CreateTopLevel(typeof(ConsoleApp), null);
-		ow.CreateObject(typeof(ConsoleWriter), null);
-		ow.EndObject();
-		ow.EndObject();
-		ow.Finish();
 
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter></ConsoleWriter>" +
+			"</ConsoleApp>";
 		ConsoleApp app = new ConsoleApp();
 		ConsoleWriter writer = new ConsoleWriter();
 		app.AddChild(writer);
@@ -104,11 +100,9 @@ public class ObjectWriterTest {
 	[Test]
 	public void TestSimplestAddChildWithInstanceName()
 	{
-		ow.CreateTopLevel(typeof(ConsoleApp), null);
-		ow.CreateObject(typeof(ConsoleWriter), "XX");
-		ow.EndObject();
-		ow.EndObject();
-		ow.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter x:Name=\"XXX\"></ConsoleWriter>" +
+			"</ConsoleApp>";
 
 		ConsoleApp app = new ConsoleApp();
 		ConsoleWriter writer = new ConsoleWriter();
@@ -121,12 +115,9 @@ public class ObjectWriterTest {
 	[Test]
 	public void TestSimplestAddChildAndText()
 	{
-		ow.CreateTopLevel(typeof(ConsoleApp), null);
-		ow.CreateObject(typeof(ConsoleWriter), null);
-		ow.CreateObjectText("Hello");
-		ow.EndObject();
-		ow.EndObject();
-		ow.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter>Hello</ConsoleWriter>" +
+			"</ConsoleApp>";
 
 		ConsoleApp app = new ConsoleApp();
 		ConsoleWriter writer = new ConsoleWriter();
@@ -139,14 +130,9 @@ public class ObjectWriterTest {
 	[Test]
 	public void TestTextProperty()
 	{
-		ow.CreateTopLevel(typeof(ConsoleApp), null);
-		ow.CreateObject(typeof(ConsoleWriter), null);
-		ow.CreateProperty(typeof(ConsoleWriter).GetProperty("Text"));
-		ow.CreatePropertyText("Hello", typeof(ConsoleValue));
-		ow.EndProperty();
-		ow.EndObject();
-		ow.EndObject();
-		ow.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter Text=\"Hello\" />" +
+			"</ConsoleApp>";
 
 		ConsoleApp app = new ConsoleApp();
 		ConsoleWriter writer = new ConsoleWriter();
@@ -159,14 +145,9 @@ public class ObjectWriterTest {
 	[Test]
 	public void TestDependencyProperty()
 	{
-		ow.CreateTopLevel(typeof(ConsoleApp), null);
-		ow.CreateObject(typeof(ConsoleWriter), null);
-		ow.CreateDependencyProperty(typeof(ConsoleApp), "Repetitions", typeof(int));
-		ow.CreateDependencyPropertyText("3", typeof(int));
-		ow.EndDependencyProperty();
-		ow.EndObject();
-		ow.EndObject();
-		ow.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter ConsoleApp.Repetitions=\"3\" />" +
+			"</ConsoleApp>";
 
 		ConsoleApp app = new ConsoleApp();
 		ConsoleWriter writer = new ConsoleWriter();
@@ -179,15 +160,11 @@ public class ObjectWriterTest {
 	[Test]
 	public void TestObjectAsPropertyValue()
 	{
-		ow.CreateTopLevel(typeof(ConsoleApp), null);
-		ow.CreateObject(typeof(ConsoleReader), null);
-		ow.CreateProperty(typeof(ConsoleReader).GetProperty("Prompt"));
-		ow.CreatePropertyObject(typeof(ConsoleWriter), null);
-		ow.EndPropertyObject(typeof(ConsoleWriter));
-		ow.EndProperty();
-		ow.EndObject();
-		ow.EndObject();
-		ow.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleReader>\n" +
+			"<ConsoleReader.Prompt><ConsoleWriter /></ConsoleReader.Prompt>\n" +
+			"</ConsoleReader>\n" +
+			"</ConsoleApp>";
 
 		ConsoleApp app = new ConsoleApp();
 		ConsoleReader reader = new ConsoleReader();
@@ -201,7 +178,9 @@ public class ObjectWriterTest {
 
 	private void compare(object expected)
 	{
-		Assert.AreEqual(expected, ow.instance);
+		string mapping = "<?Mapping ClrNamespace=\"Xaml.TestVocab.Console\" Assembly=\"./TestVocab.dll\" XmlNamespace=\"console\" ?>\n";
+		object o = ObjectWriter.Parse(new XmlTextReader(new StringReader(mapping + code)));
+		Assert.AreEqual(expected, o);
 	}
 
 }

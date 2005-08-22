@@ -71,11 +71,11 @@ class Driver {
 		}
 		ICodeGenerator generator = getGenerator(options.OutputLanguage);
 		XmlTextReader xr = new XmlTextReader(input);
-		TextWriter tw = new StreamWriter(options.OutputFile);
-		CodeWriter cw = new CodeWriter(generator, tw, options.Partial);
-		XamlParser r = new XamlParser(xr, cw);
 		try {
-			r.Parse();
+			string result = CodeWriter.Parse(xr, generator, options.Partial);
+			TextWriter tw = new StreamWriter(options.OutputFile);
+			tw.Write(result);
+			tw.Close();
 		}
 		catch (Exception ex) {
 			Console.WriteLine("Line " + xr.LineNumber + ", Column " + xr.LinePosition);

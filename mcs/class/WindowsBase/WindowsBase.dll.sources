@@ -6,6 +6,7 @@ System.Windows/DependencyPropertyKey.cs
 System.Windows/LocalValueEntry.cs
 System.Windows/LocalValueEnumerator.cs
 System.Windows/PropertyMetadata.cs
+System.Windows/RoutedEvent.cs
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs

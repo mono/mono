@@ -44,26 +44,23 @@ namespace MonoTests.System.Windows.Serialization
 
 [TestFixture]
 public class CodeWriterTest {
-	CodeWriter cw;
-	StringWriter w;
+	string code;
 	
 	[SetUp]
 	public void GetReady()
 	{
-		ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
-		w = new StringWriter();
-		cw = new CodeWriter(generator, w, false);
 	}
 
 	[TearDown]
-	public void Clean() {}
+	public void Clean()
+	{
+		code = null;
+	}
 
 	[Test]
 	public void TestTopLevel()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\"></ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -74,60 +71,30 @@ public class CodeWriterTest {
 		);							
 	}
 
-#if NET_2_0
 	[Test]
-	public void TestPartialTopLevel()
-	{
-		// we duplicate the setup code here, with the one change that
-		// the third parameter (determining partialness) of CodeWriter's
-		// constructor is set to true
-		ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
-		w = new StringWriter();
-		cw = new CodeWriter(generator, w, true);
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.EndObject();
-		cw.Finish();
-		compare(
-				"namespace DefaultNamespace {\n"+
-				"	public partial class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
-				"		private derivedConsoleApp() {\n"+
-				"		}\n" +
-				"	}\n" +
-				"}"
-		);							
-	}
-#else
+#if !NET_2_0
 	[ExpectedException(typeof(Exception), "Cannot create partial class")]
-	[Test]
+#endif
 	public void TestPartialTopLevel()
 	{
-		// we duplicate the setup code here, with the one change that
-		// the third parameter (determining partialness) of CodeWriter's
-		// constructor is set to true
-		ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
-		w = new StringWriter();
-		cw = new CodeWriter(generator, w, true);
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\"></ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public partial class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
 				"		private derivedConsoleApp() {\n"+
 				"		}\n" +
 				"	}\n" +
-				"}"
+				"}",
+				true
 		);							
 	}
-#endif
 
 
 	[Test]
 	public void TestTopLevelWithClassName()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), "MyConsoleApp");
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Class=\"MyConsoleApp\">\n"+
+			"</ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class MyConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -141,9 +108,8 @@ public class CodeWriterTest {
 	[Test]
 	public void TestTopLevelWithClassNameAndNamespace()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), "Test.Thing.MyConsoleApp");
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Class=\"Test.Thing.MyConsoleApp\">\n"+
+			"</ConsoleApp>";
 		compare(
 				"namespace Test.Thing {\n"+
 				"	public class MyConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -157,11 +123,9 @@ public class CodeWriterTest {
 	[Test]
 	public void TestSimplestAddChild()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.CreateObject(typeof(ConsoleWriter), null);
-		cw.EndObject();
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter></ConsoleWriter>" +
+			"</ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -177,11 +141,9 @@ public class CodeWriterTest {
 	[Test]
 	public void TestSimplestAddChildWithInstanceName()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.CreateObject(typeof(ConsoleWriter), "XX");
-		cw.EndObject();
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter x:Name=\"XX\"></ConsoleWriter>" +
+			"</ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -198,12 +160,9 @@ public class CodeWriterTest {
 	[Test]
 	public void TestSimplestAddChildAndText()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.CreateObject(typeof(ConsoleWriter), null);
-		cw.CreateObjectText("Hello");
-		cw.EndObject();
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter>Hello</ConsoleWriter>" +
+			"</ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -220,14 +179,9 @@ public class CodeWriterTest {
 	[Test]
 	public void TestTextProperty()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.CreateObject(typeof(ConsoleWriter), null);
-		cw.CreateProperty(typeof(ConsoleWriter).GetProperty("Text"));
-		cw.CreatePropertyText("Hello", typeof(ConsoleValue));
-		cw.EndProperty();
-		cw.EndObject();
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter Text=\"Hello\" />" +
+			"</ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -244,14 +198,9 @@ public class CodeWriterTest {
 	[Test]
 	public void TestDependencyProperty()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.CreateObject(typeof(ConsoleWriter), null);
-		cw.CreateDependencyProperty(typeof(ConsoleApp), "Repetitions", typeof(int));
-		cw.CreateDependencyPropertyText("3", typeof(int));
-		cw.EndDependencyProperty();
-		cw.EndObject();
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter ConsoleApp.Repetitions=\"3\" />" +
+			"</ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -271,15 +220,11 @@ public class CodeWriterTest {
 	[Test]
 	public void TestObjectAsPropertyValue()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.CreateObject(typeof(ConsoleReader), null);
-		cw.CreateProperty(typeof(ConsoleReader).GetProperty("Prompt"));
-		cw.CreatePropertyObject(typeof(ConsoleWriter), null);
-		cw.EndPropertyObject(typeof(ConsoleWriter));
-		cw.EndProperty();
-		cw.EndObject();
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleReader>\n" +
+			"<ConsoleReader.Prompt><ConsoleWriter /></ConsoleReader.Prompt>\n" +
+			"</ConsoleReader>\n" +
+			"</ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -298,15 +243,11 @@ public class CodeWriterTest {
 	[Test]
 	public void TestObjectAsPropertyValueWithSpecifiedName()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.CreateObject(typeof(ConsoleReader), null);
-		cw.CreateProperty(typeof(ConsoleReader).GetProperty("Prompt"));
-		cw.CreatePropertyObject(typeof(ConsoleWriter), "prompt");
-		cw.EndPropertyObject(typeof(ConsoleWriter));
-		cw.EndProperty();
-		cw.EndObject();
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleReader>\n" +
+			"<ConsoleReader.Prompt><ConsoleWriter x:Name=\"prompt\" /></ConsoleReader.Prompt>\n" +
+			"</ConsoleReader>\n" +
+			"</ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -326,12 +267,7 @@ public class CodeWriterTest {
 	[Test]
 	public void TestEvent()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.CreateEvent(typeof(ConsoleApp).GetEvent("SomethingHappened"));
-		cw.CreateEventDelegate("handleSomething", typeof(SomethingHappenedHandler));
-		cw.EndEvent();
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" SomethingHappened=\"handleSomething\"></ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -346,14 +282,9 @@ public class CodeWriterTest {
 	[Test]
 	public void TestDelegateAsPropertyValue()
 	{
-		cw.CreateTopLevel(typeof(ConsoleApp), null);
-		cw.CreateObject(typeof(ConsoleWriter), null);
-		cw.CreateProperty(typeof(ConsoleWriter).GetProperty("Filter"));
-		cw.CreatePropertyDelegate("filterfilter", typeof(Filter));
-		cw.EndProperty();
-		cw.EndObject();
-		cw.EndObject();
-		cw.Finish();
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter Filter=\"filterfilter\" />\n"+
+			"</ConsoleApp>";
 		compare(
 				"namespace DefaultNamespace {\n"+
 				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
@@ -370,7 +301,14 @@ public class CodeWriterTest {
 
 	private void compare(string expected)
 	{
+		compare(expected, false);
+	}
+	private void compare(string expected, bool isPartial)
+	{
 		int i, j;
+		ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
+		string mapping = "<?Mapping ClrNamespace=\"Xaml.TestVocab.Console\" Assembly=\"./TestVocab.dll\" XmlNamespace=\"console\" ?>\n";
+		string w = CodeWriter.Parse(new XmlTextReader(new StringReader(mapping + code)), generator, isPartial);
 		string[] actualLines = w.ToString().Split('\n');
 		for (i = 0; i < actualLines.Length; i++) {
 			// set commented-out lines to null

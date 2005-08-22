@@ -30,12 +30,15 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.IO;
+using System.Xml;
 using System.Collections;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Windows.Serialization;
+using System.Windows;
 
 namespace Mono.Windows.Serialization {
-	public class CodeWriter : IXamlWriter {
+	public class CodeWriter {
 		TextWriter writer;
 		ICodeGenerator generator;
 		bool isPartial;
@@ -47,16 +50,101 @@ namespace Mono.Windows.Serialization {
 		CodeCompileUnit code;
 		CodeTypeDeclaration type;
 		CodeConstructor constructor;
-		
+
+		public static string Parse(XmlTextReader reader, ICodeGenerator generator,  bool isPartial)
+		{
+			CodeWriter cw = new CodeWriter(reader, generator, isPartial);
+			return ((StringWriter)cw.writer).ToString();
+		}
+
 		// pushes: the code writer
-		public CodeWriter(ICodeGenerator generator, TextWriter writer, bool isPartial)
+		private void init(ICodeGenerator generator, bool isPartial)
 		{
 			this.generator = generator;
-			this.writer = writer;
 			this.isPartial = isPartial;
+			this.writer = new StringWriter();
 			code = new CodeCompileUnit();
-			objects.Add(code);
+			push(code);
 		}
+
+		
+		private CodeWriter(XmlTextReader reader, ICodeGenerator generator, bool isPartial)
+		{
+			init(generator, isPartial);
+			XamlParser p = new XamlParser(reader);
+			XamlNode n;
+			while (true) {
+				n = p.GetNextNode();
+				if (n == null)
+					break;
+				Debug.WriteLine("CodeWriter: INCOMING " + n.GetType());
+				if (n is XamlDocumentStartNode) {
+					Debug.WriteLine("CodeWriter: document begins");
+					// do nothing
+				} else if (n is XamlElementStartNode && n.Depth == 0) {
+					Debug.WriteLine("CodeWriter: element begins as top-level");
+					CreateTopLevel(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
+				} else if (n is XamlElementStartNode && ((XamlElementStartNode)n).propertyObject) {
+					Debug.WriteLine("CodeWriter: element begins as property value");
+					CreatePropertyObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
+				} else if (n is XamlElementStartNode) {
+					Debug.WriteLine("CodeWriter: element begins");
+					CreateObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
+				} else if (n is XamlPropertyNode && ((XamlPropertyNode)n).PropInfo != null) {
+					Debug.WriteLine("CodeWriter: normal property begins");
+					CreateProperty(((XamlPropertyNode)n).PropInfo);
+				} else if (n is XamlPropertyNode && ((XamlPropertyNode)n).DP != null) {
+					Debug.WriteLine("CodeWriter: dependency property begins");
+					DependencyProperty dp = ((XamlPropertyNode)n).DP;
+					Type typeAttachedTo = dp.OwnerType;
+					string propertyName = ((XamlPropertyNode)n).PropertyName;
+					
+					CreateDependencyProperty(typeAttachedTo, propertyName, dp.PropertyType);
+				} else if (n is XamlClrEventNode && !(((XamlClrEventNode)n).EventMember is EventInfo)) {
+					Debug.WriteLine("CodeWriter: delegate property");
+					CreatePropertyDelegate(((XamlClrEventNode)n).Value, ((PropertyInfo)((XamlClrEventNode)n).EventMember).PropertyType);
+					EndProperty();
+
+
+				} else if (n is XamlClrEventNode) {
+					Debug.WriteLine("CodeWriter: event");
+					CreateEvent((EventInfo)((XamlClrEventNode)n).EventMember);
+					CreateEventDelegate(((XamlClrEventNode)n).Value, ((EventInfo)((XamlClrEventNode)n).EventMember).EventHandlerType);
+					EndEvent();
+
+				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.Object){
+					Debug.WriteLine("CodeWriter: text for object");
+					CreateObjectText(((XamlTextNode)n).TextContent);
+				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.Property){
+					Debug.WriteLine("CodeWriter: text for property");
+					CreatePropertyText(((XamlTextNode)n).TextContent, ((XamlTextNode)n).finalType);
+					EndProperty();
+				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.DependencyProperty){
+					Debug.WriteLine("CodeWriter: text for dependency property");
+					CreateDependencyPropertyText(((XamlTextNode)n).TextContent, ((XamlTextNode)n).finalType);
+					EndDependencyProperty();
+				} else if (n is XamlPropertyComplexEndNode) {
+					Debug.WriteLine("CodeWriter: end complex property");
+					Debug.WriteLine("CodeWriter: final type is " + ((XamlPropertyComplexEndNode)n).finalType);
+					EndPropertyObject(((XamlPropertyComplexEndNode)n).finalType);
+					EndProperty();
+				} else if (n is XamlLiteralContentNode) {
+					Debug.WriteLine("CodeWriter: literal content");
+					CreateCode(((XamlLiteralContentNode)n).Content);
+				} else if (n is XamlElementEndNode) {
+					Debug.WriteLine("CodeWriter: end element");
+					if (!((XamlElementEndNode)n).propertyObject)
+						EndObject();
+				} else if (n is XamlDocumentEndNode) {
+					Debug.WriteLine("CodeWriter: end document");
+					Finish();
+				} else {
+					throw new Exception("Unknown node " + n.GetType());
+				}
+			}
+
+		}
+			
 	
 		// pushes: a CodeVariableReferenceExpression to the present
 		// 	instance
@@ -91,7 +179,7 @@ namespace Mono.Windows.Serialization {
 			type.Members.Add(constructor);
 			ns.Types.Add(type);
 			
-			objects.Add(new CodeThisReferenceExpression());
+			push(new CodeThisReferenceExpression());
 		}
 
 		// bottom of stack holds CodeVariableReferenceExpression
@@ -133,11 +221,11 @@ namespace Mono.Windows.Serialization {
 			}
 			CodeVariableReferenceExpression varRef = new CodeVariableReferenceExpression(varName);
 			CodeMethodInvokeExpression addChild = new CodeMethodInvokeExpression(
-					(CodeExpression)objects[objects.Count - 1],
+					(CodeExpression)peek(),
 					"AddChild",
 					varRef);
 			constructor.Statements.Add(addChild);
-			objects.Add(varRef);
+			push(varRef);
 		}
 
 		// top of stack is a reference to an object
@@ -146,9 +234,9 @@ namespace Mono.Windows.Serialization {
 		{
 			debug();
 			CodePropertyReferenceExpression prop = new CodePropertyReferenceExpression(
-					(CodeExpression)objects[objects.Count - 1],
+					(CodeExpression)peek(),
 					property.Name);
-			objects.Add(prop);
+			push(prop);
 		}
 
 		// top of stack is a reference to an object
@@ -157,9 +245,9 @@ namespace Mono.Windows.Serialization {
 		{
 			debug();
 			CodeEventReferenceExpression expr = new CodeEventReferenceExpression(
-					(CodeExpression)objects[objects.Count - 1],
+					(CodeExpression)peek(),
 					evt.Name);
-			objects.Add(expr);
+			push(expr);
 		}
 
 		// top of stack is a reference to an object
@@ -180,21 +268,19 @@ namespace Mono.Windows.Serialization {
 			CodeMethodInvokeExpression call = new CodeMethodInvokeExpression(
 					new CodeTypeReferenceExpression(attachedTo),
 					"Set" + propertyName,
-					(CodeExpression)objects[objects.Count - 1],
+					(CodeExpression)peek(),
 					new CodeVariableReferenceExpression(varName));
 
-			objects.Add(call);
-			objects.Add(new CodeVariableReferenceExpression(varName));
+			push(call);
+			push(new CodeVariableReferenceExpression(varName));
 		}
 
 		// pops 2 items: the name of the property, and the object to attach to
 		public void EndDependencyProperty()
 		{
 			debug();
-			objects.RemoveAt(objects.Count - 1); // pop the variable name - we don't need it since it's already 
-							     // baked into the call
-			CodeExpression call = (CodeExpression)(objects[objects.Count - 1]);
-			objects.RemoveAt(objects.Count - 1);
+			pop(); // pop the variable name - we don't need it since it's already baked into the call
+			CodeExpression call = (CodeExpression)pop();
 			constructor.Statements.Add(call);
 		}
 
@@ -202,7 +288,7 @@ namespace Mono.Windows.Serialization {
 		public void CreateObjectText(string text)
 		{
 			debug();
-			CodeVariableReferenceExpression var = (CodeVariableReferenceExpression)objects[objects.Count - 1];
+			CodeVariableReferenceExpression var = (CodeVariableReferenceExpression)peek();
 			CodeMethodInvokeExpression call = new CodeMethodInvokeExpression(
 					var,
 					"AddText",
@@ -220,7 +306,7 @@ namespace Mono.Windows.Serialization {
 							new CodeThisReferenceExpression(),
 							functionName));
 			CodeAttachEventStatement attach = new CodeAttachEventStatement(
-					(CodeEventReferenceExpression)objects[objects.Count - 1],
+					(CodeEventReferenceExpression)peek(),
 					expr);
 			constructor.Statements.Add(attach);
 
@@ -235,7 +321,7 @@ namespace Mono.Windows.Serialization {
 							new CodeThisReferenceExpression(),
 							functionName));
 			CodeAssignStatement assignment = new CodeAssignStatement(
-					(CodeExpression)objects[objects.Count - 1],
+					(CodeExpression)peek(),
 					expr);
 			constructor.Statements.Add(assignment);
 		}
@@ -269,7 +355,7 @@ namespace Mono.Windows.Serialization {
 								expr));
 			}
 			CodeAssignStatement assignment = new CodeAssignStatement(
-					(CodeExpression)objects[objects.Count - 1],
+					(CodeExpression)peek(),
 					expr);
 			
 			constructor.Statements.Add(assignment);
@@ -311,20 +397,18 @@ namespace Mono.Windows.Serialization {
 			}
 			CodeVariableReferenceExpression varRef = new CodeVariableReferenceExpression(varName);
 
-			objects.Add(type);
-			objects.Add(varRef);
+			push(type);
+			push(varRef);
 		
 		}
 
 		public void EndPropertyObject(Type destType)
 		{
 			debug();
-			CodeExpression varRef = (CodeExpression)objects[objects.Count - 1];
-			objects.RemoveAt(objects.Count - 1);
-			Type sourceType = (Type)objects[objects.Count - 1];
-			objects.RemoveAt(objects.Count - 1);
+			CodeExpression varRef = (CodeExpression)pop();
+			Type sourceType = (Type)pop();
 
-			Debug.WriteLine(destType + "->" + sourceType);
+			Debug.WriteLine("CodeWriter: " + destType + "->" + sourceType);
 
 			
 			CodeExpression expr;
@@ -339,7 +423,7 @@ namespace Mono.Windows.Serialization {
 								varRef,
 								new CodeTypeOfExpression(destType)));
 			CodeAssignStatement assignment = new CodeAssignStatement(
-					(CodeExpression)objects[objects.Count - 1],
+					(CodeExpression)peek(),
 					expr);
 			constructor.Statements.Add(assignment);
 		}
@@ -347,19 +431,19 @@ namespace Mono.Windows.Serialization {
 		public void EndObject()
 		{
 			debug();
-			objects.RemoveAt(objects.Count - 1);
+			pop();
 		}
 
 		public void EndProperty()
 		{
 			debug();
-			objects.RemoveAt(objects.Count - 1);
+			pop();
 		}
 		
 		public void EndEvent()
 		{
 			debug();
-			objects.RemoveAt(objects.Count - 1);
+			pop();
 		}
 
 		public void Finish()
@@ -377,7 +461,28 @@ namespace Mono.Windows.Serialization {
 
 		private void debug()
 		{
-			Debug.WriteLine(new System.Diagnostics.StackTrace());
+			Debug.WriteLine("CodeWriter: " + new System.Diagnostics.StackTrace());
+		}
+		
+		private object pop()
+		{
+			object v = objects[objects.Count - 1];
+			objects.RemoveAt(objects.Count - 1);
+			Debug.WriteLine("CodeWriter: POPPING");
+			return v;
+		}
+		private void push(object v)
+		{
+			Debug.WriteLine("CodeWriter: PUSHING " + v);
+			objects.Add(v);
+		}
+		private object peek()
+		{
+			return peek(0);
+		}
+		private object peek(int i)
+		{
+			return objects[objects.Count - 1 - i];
 		}
 	}
 }

@@ -11,7 +11,10 @@
 	<ConsoleWriter x:Name="_greeter" Text="Hello World" />
 	<!-- create a ConsoleWriter with the text property again set with an
 	     xml attribute but also set a property with a delegate type -->
-	<ConsoleWriter Text="I'm surrounded!" Filter="stringFilter" />
+	<ConsoleWriter Text="I'm surrounded!" Filter="stringFilter" /> 
+
+
+
 	<!-- create a ConsoleReader and explicitly set its prompt to a 
 	     ConsoleWriter -->
 	<ConsoleReader Variable="thingo">
