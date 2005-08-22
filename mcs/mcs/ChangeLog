@@ -1,3 +1,9 @@
+2005-08-22  Ben Maurer  <bmaurer@ximian.com>
+
+	* anonymous.cs: If the anon method is pulled into a helper class,
+	it needs to be `internal' not `private'. Fixes runtime behavior on
+	msft. bug #75704
+
 2005-08-20  Martin Baulig  <martin@ximian.com>
 
 	* anonymous.cs (CaptureContext.CaptureThis): Create the topmost

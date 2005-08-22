@@ -158,6 +158,9 @@ namespace Mono.CSharp {
 			
 			if (type_host == null)
 				throw new Exception (String.Format ("Type host is null, Scope is {0}", Scope == null ? "null" : "Not null"));
+
+			if (current_type != type_host)
+				method_modifiers = Modifiers.INTERNAL;
 			
 			if (current_type == type_host && ec.IsStatic){
 				if (ec.IsStatic){
