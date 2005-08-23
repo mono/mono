@@ -1,5 +1,8 @@
 2005-08-23  Raja R Harinath  <rharinath@novell.com>
 
+	* support.cs (SeekableStreamReader.Position): Avoid an expensive
+	loop that performs 'max (pos, char_count)'.
+
 	Fix #75862.
 	* expression.cs (Unary.ResolveOperator): Don't discard implicit
 	converted value in Operator.OnesComplement.
