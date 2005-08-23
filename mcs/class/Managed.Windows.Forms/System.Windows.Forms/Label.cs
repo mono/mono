@@ -487,7 +487,11 @@ namespace System.Windows.Forms
     		protected override void OnFontChanged (EventArgs e)
     		{
 			base.OnFontChanged (e);
-			CalcPreferredHeight ();
+			if (autosize) {
+				CalcAutoSize();
+			} else {
+				CalcPreferredHeight ();
+			}
 			Refresh ();
     		}
 
@@ -512,8 +516,11 @@ namespace System.Windows.Forms
     		protected override void OnTextChanged (EventArgs e)
     		{
 			base.OnTextChanged (e);			
-			CalcPreferredWidth ();
-			CalcAutoSize ();
+			if (autosize) {
+				CalcAutoSize ();
+			} else {
+				CalcPreferredWidth ();
+			}
 			Refresh ();
     		}
 

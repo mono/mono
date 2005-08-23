@@ -1,4 +1,9 @@
-2005-08-19:2  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
+2005-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Label.cs: Now properly recalculates width and height on Font and Text
+	  changes if AutoSize is set
+
+2005-08-19  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
 	* TreeView.cs : Revamped drawing logic, and support for FullRowSelect
 
 2005-08-19  Jordi Mas i Hernandez <jordi@ximian.com>
