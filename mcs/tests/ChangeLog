@@ -1,3 +1,7 @@
+2005-08-23  Raja R Harinath  <rharinath@novell.com>
+
+	* test-439.cs: New test from #75862.
+
 2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* test-438.cs : test for bug #67711.

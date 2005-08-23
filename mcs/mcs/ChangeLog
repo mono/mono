@@ -1,3 +1,9 @@
+2005-08-23  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75862.
+	* expression.cs (Unary.ResolveOperator): Don't discard implicit
+	converted value in Operator.OnesComplement.
+
 2005-08-22  Ben Maurer  <bmaurer@ximian.com>
 
 	* anonymous.cs: If the anon method is pulled into a helper class,
