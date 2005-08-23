@@ -1,5 +1,10 @@
 2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* expression.cs : add CS0652 check for constant and integral
+	  expression. Fixed bug #53974.
+
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* expression.cs : in DoNumericPromotions(), check if there is implicit
 	  conversion overload for string (to check CS0034). Fixed bug #52492.
 

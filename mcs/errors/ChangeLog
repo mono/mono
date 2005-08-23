@@ -1,5 +1,10 @@
 2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* known-issues-mcs : removed cs0652.cs (working now)
+	* cs0652-2.cs, cs0652-3.cs cs0652-4.cs : for bug #53974 plus alpha.
+
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* cs0034-3.cs : for bug #73709.
 
 2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>

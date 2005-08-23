@@ -2814,7 +2814,106 @@ namespace Mono.CSharp {
 					return e;
 			}
 
+			// Check CS0652 warning here (before resolving operator).
+			if (oper == Operator.Equality ||
+			    oper == Operator.Inequality ||
+			    oper == Operator.LessThanOrEqual ||
+			    oper == Operator.LessThan ||
+			    oper == Operator.GreaterThanOrEqual ||
+			    oper == Operator.GreaterThan){
+				CheckUselessComparison (left as Constant, right.Type);
+				CheckUselessComparison (right as Constant, left.Type);
+			}
+
 			return ResolveOperator (ec);
+		}
+
+		private void CheckUselessComparison (Constant c, Type type)
+		{
+			if (c == null || !IsTypeIntegral (type)
+				|| c is StringConstant
+				|| c is BoolConstant
+				|| c is CharConstant
+				|| c is FloatConstant
+				|| c is DoubleConstant
+				|| c is DecimalConstant
+				)
+				return;
+
+			long value = 0;
+
+			if (c is ULongConstant) {
+				ulong uvalue = ((ULongConstant) c).Value;
+				if (uvalue > long.MaxValue && (
+				    type == TypeManager.byte_type ||
+				    type == TypeManager.sbyte_type ||
+				    type == TypeManager.short_type ||
+				    type == TypeManager.ushort_type ||
+				    type == TypeManager.int32_type ||
+				    type == TypeManager.uint32_type ||
+				    type == TypeManager.int64_type)) {
+					WarnUselessComparison (type);
+					return;
+				}
+				value = (long) uvalue;
+			}
+			else if (c is ByteConstant)
+				value = ((ByteConstant) c).Value;
+			else if (c is SByteConstant)
+				value = ((SByteConstant) c).Value;
+			else if (c is ShortConstant)
+				value = ((ShortConstant) c).Value;
+			else if (c is UShortConstant)
+				value = ((UShortConstant) c).Value;
+			else if (c is IntConstant)
+				value = ((IntConstant) c).Value;
+			else if (c is UIntConstant)
+				value = ((UIntConstant) c).Value;
+			else if (c is LongConstant)
+				value = ((LongConstant) c).Value;
+
+			if (value != 0) {
+				if (IsValueOutOfRange (value, type))
+					WarnUselessComparison (type);
+				return;
+			}
+		}
+
+		private bool IsValueOutOfRange (long value, Type type)
+		{
+			if (IsTypeUnsigned (type) && value < 0)
+				return true;
+			return type == TypeManager.sbyte_type && (value >= 0x80 || value < -0x80) ||
+				type == TypeManager.byte_type && value >= 0x100 ||
+				type == TypeManager.short_type && (value >= 0x8000 || value < -0x8000) ||
+				type == TypeManager.ushort_type && value >= 0x10000 ||
+				type == TypeManager.int32_type && (value >= 0x80000000 || value < -0x80000000) ||
+				type == TypeManager.uint32_type && value >= 0x100000000;
+		}
+
+		private static bool IsTypeIntegral (Type type)
+		{
+			return type == TypeManager.uint64_type ||
+				type == TypeManager.int64_type ||
+				type == TypeManager.uint32_type ||
+				type == TypeManager.int32_type ||
+				type == TypeManager.ushort_type ||
+				type == TypeManager.short_type ||
+				type == TypeManager.sbyte_type ||
+				type == TypeManager.byte_type;
+		}
+
+		private static bool IsTypeUnsigned (Type type)
+		{
+			return type == TypeManager.uint64_type ||
+				type == TypeManager.uint32_type ||
+				type == TypeManager.ushort_type ||
+				type == TypeManager.byte_type;
+		}
+
+		private void WarnUselessComparison (Type type)
+		{
+			Report.Warning (652, 2, loc, "Comparison to integral constant is useless; the constant is outside the range of type '{0}'", type);
 		}
 
 		/// <remarks>
