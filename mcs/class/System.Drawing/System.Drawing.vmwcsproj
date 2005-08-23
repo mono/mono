@@ -16,7 +16,7 @@
 				<File RelPath="Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Assembly\Consts.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Assembly\Consts.cs" Link="..\..\build\common\Consts.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\AdvancedStroke.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\BasicShape.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Bitmap.jvm.cs" SubType="Code" BuildAction="Compile"/>

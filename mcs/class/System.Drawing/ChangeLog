@@ -1,3 +1,6 @@
+2005-08-23 Boris Kirzner <borisk@mainsoft.com>
+	* System.Drawing.vmwcsproj: Changed reference to Consts.cs.
+
 2005-08-16 Andrew Skiba <andrews@mainsoft.com>
 
 	* System.Drawing.vmwcsproj: use ImageFormat.cs instead of jvm.cs
