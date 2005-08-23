@@ -1,3 +1,32 @@
+2005-08-23  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (MSCorLib.systemClasses): Change type from ClassRef[] to
+	  Class[].
+	  (MSCorLib.ctor): Add assembly ref to mscorlib for non-mscorlib assemblies
+	  only.
+	  (MSCorLib.AddClass): Use Class instead of ClassRef.
+	  (MSCorLib.GetSpecialClass): Change return type to Class from ClassRef.
+	  Don't instantiate object of SystemClass if this assembly is mscorlib.
+	  (MSCorLib.SetSpecialSystemClass): New. Set a System.* class for primitive
+	  types, used for compiling mscorlib.
+	  (MSCorLib.GetValueClass): Change to handle new type of systemClasses.
+	  (MSCorLib.ValueType),
+	  (MSCorLib.EnumType): Don't instantiate ClassRef if this assembly is mscorlib.
+	  (ClassDef.ctor): Don't superType to System.Object for System.Object and <Module>. 
+	  (ClassDef.MakeValueClass): Set typeIndex to ValueType's typeIndex.
+	  (ClassDef.IsValueType),
+	  (ClassDef.IsEnum): Use "==" instead of .CompareTo for string comparison.
+	  (ClassDef.AddNestedClass): Set typeIndexChecked = true for the nested class.
+	  (PEFile.isMSCorlib): New. bool field.
+	  (PEFile.ctor): Move all ctor logic into one overload and call that from others.
+	  (PEFile.ctor): Add outputDir parameter.
+	  (PEFile.SetName): Set name of the assembly and set isMSCorlib accordingly.
+	  (PEFile.IsMSCorlib): New. bool Property.
+	  (PEFile.AddClass): Call overload.
+	  (PEFile.AddClass): Set superType and SetSpecialSystemClass if compiling mscorlib.
+	  (PEFile.AddValueClass): Call MakeValueClass only if the class is not System.ValueType
+	  or System.Enum itself, else set the supertype correctly.
+
 2005-08-16  Ankit Jain  <jankit@novell.com>
 
 	* PEAPI.cs (FieldAttr): Move HasFieldMarshal from FieldDef to this.

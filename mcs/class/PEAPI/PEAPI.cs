@@ -735,7 +735,7 @@ namespace PEAPI
         {
     private static readonly int valueTypeIx = 18;
     private readonly string systemName = "System";
-    private ClassRef[] systemClasses = new ClassRef[valueTypeIx+2];
+    private Class[] systemClasses = new Class[valueTypeIx+2];
     private PrimitiveType[] systemTypes = new PrimitiveType[valueTypeIx];
     private TypeSpec[] specialTypeSpecs = new TypeSpec[valueTypeIx];
     private static int[] specialNames = {
@@ -762,7 +762,8 @@ namespace PEAPI
     };
 
     internal MSCorLib(MetaData md) : base(md,"mscorlib") {
-      md.AddToTable(MDTable.AssemblyRef,this);
+      if (!PEFile.IsMSCorlib)
+	      md.AddToTable(MDTable.AssemblyRef,this);
       systemTypes[PrimitiveType.Void.GetSystemTypeIx()] = PrimitiveType.Void;
       systemTypes[PrimitiveType.Boolean.GetSystemTypeIx()] = PrimitiveType.Boolean;
       systemTypes[PrimitiveType.Char.GetSystemTypeIx()] = PrimitiveType.Char;
@@ -790,44 +791,60 @@ namespace PEAPI
     /// <param name="name">class name</param>
     /// <returns></returns>
     public override ClassRef AddClass(string nsName, string name) {
-      ClassRef aClass = GetSpecialClass(nsName,name);
+      /* This gets called by !mscorlib, for adding references INTO mscorlib, so
+         it should be returning ClassRef ..*/
+      Class aClass = GetSpecialClass(nsName,name);
       if (aClass == null) {
         aClass = new ClassRef(nsName,name,metaData);
         metaData.AddToTable(MDTable.TypeRef,aClass);
-        aClass.SetParent(this);
+	if (aClass is ClassRef)
+	        ((ClassRef) aClass).SetParent(this);
       }
-      return aClass;
+      //FIXME: Check for !ClassRef here?
+      return (ClassRef) aClass;
     }
 
-    private ClassRef GetSpecialClass(string nsName,string name) {
+    private Class GetSpecialClass(string nsName,string name) {
       if (nsName.CompareTo(systemName) != 0) return null;
       int hash = name.GetHashCode();
       for (int i=0; i < specialNames.Length; i++) {
-        if (hash == specialNames[i]) {
-          if (systemClasses[i] == null) {
-            if (i < valueTypeIx) {
-              systemClasses[i] = new SystemClass(systemTypes[i],this,metaData);
-              if ((systemTypes[i] != PrimitiveType.Object) &&
-                (systemTypes[i] != PrimitiveType.String)) {
-                systemClasses[i].MakeValueClass(ValueClass.ValueType);
-              }
-            } else {
-              systemClasses[i] = new ClassRef(nsName,name,metaData);
-              systemClasses[i].SetParent(this);
-              if (!ClassDef.IsValueType (nsName, name) && !ClassDef.IsEnum (nsName, name))
-                systemClasses[i].MakeValueClass(ValueClass.ValueType);
+        if (hash != specialNames[i])
+          continue;
+        if (systemClasses[i] == null) {
+          if (i < valueTypeIx) {
+            systemClasses[i] = new SystemClass(systemTypes[i],this,metaData);
+            if ((systemTypes[i] != PrimitiveType.Object) &&
+              (systemTypes[i] != PrimitiveType.String)) {
+              systemClasses[i].MakeValueClass(ValueClass.ValueType);
             }
-            metaData.AddToTable(MDTable.TypeRef,systemClasses[i]);
+          } else {
+            systemClasses[i] = new ClassRef(nsName,name,metaData);
+            ((ClassRef) systemClasses[i]).SetParent(this);
+            if (!ClassDef.IsValueType (nsName, name) && !ClassDef.IsEnum (nsName, name))
+              systemClasses[i].MakeValueClass(ValueClass.ValueType);
           }
-          return systemClasses[i];
+          metaData.AddToTable(MDTable.TypeRef,systemClasses[i]);
         }
+        return systemClasses[i];
       }
       return null;
     }
 
-    internal ClassRef GetSpecialSystemClass(PrimitiveType pType) {
+    internal void SetSpecialSystemClass (string nsName, string name, Class aClass) {
+      if (nsName != systemName) return;
+      int hash = name.GetHashCode ();
+      for (int i = 0; i < specialNames.Length; i++) {
+        if (hash != specialNames [i])
+          continue;
+        if (systemClasses [i] == null) {
+          systemClasses [i] = aClass;
+        }
+      }
+    }
+
+    internal Class GetSpecialSystemClass(PrimitiveType pType) {
       int ix = pType.GetSystemTypeIx();
-      if (systemClasses[ix] == null) {
+      if (systemClasses[ix] == null && !PEFile.IsMSCorlib) {
         systemClasses[ix] = new SystemClass(pType,this,metaData);
         metaData.AddToTable(MDTable.TypeRef,systemClasses[ix]);
       }
@@ -835,19 +852,22 @@ namespace PEAPI
     }
         
     private ClassRef GetValueClass(string name, int hash) {
+      /* Called by MSCorLib.AddValueClass, which is called by
+         !mscorlib, for adding ref to value class INTO mscorlib,
+         so this should be classref */
       int ix = valueTypeIx;
       if (hash != specialNames[valueTypeIx]) ix++;
       if (systemClasses[ix] == null) {
         systemClasses[ix] = new ClassRef(systemName,name,metaData);
-        systemClasses[ix].SetParent(this);
-        systemClasses[ix].MakeValueClass(ValueClass.ValueType);
+        ((ClassRef) systemClasses[ix]).SetParent(this);
+        ((ClassRef) systemClasses[ix]).MakeValueClass(ValueClass.ValueType);
         metaData.AddToTable(MDTable.TypeRef,systemClasses[ix]);
       }
-      return systemClasses[ix];
+      return (ClassRef) systemClasses[ix];
     }
 
-    internal ClassRef ValueType() {
-      if (systemClasses[valueTypeIx] == null) {
+    internal Class ValueType() {
+      if (systemClasses[valueTypeIx] == null && !PEFile.IsMSCorlib) {
         ClassRef valType = new ClassRef("System","ValueType",metaData);
         valType.SetParent(this);
         valType.MakeValueClass(ValueClass.ValueType);
@@ -857,9 +877,11 @@ namespace PEAPI
       return systemClasses[valueTypeIx];
     }
 
-    internal ClassRef EnumType() {
+    internal Class EnumType() {
+      /* Called by both mscorlib & !mscorlib, so can be
+         either ClassRef or ClassDef */
       //systemClasses [ valueTypeIx + 1] -> System.Enum
-      if (systemClasses[valueTypeIx + 1] == null) {
+      if (systemClasses[valueTypeIx + 1] == null && !PEFile.IsMSCorlib) {
         ClassRef valType = new ClassRef("System","Enum",metaData);
         valType.SetParent(this);
         valType.MakeValueClass(ValueClass.Enum);
@@ -1798,7 +1820,9 @@ namespace PEAPI
     internal ClassDef(TypeAttr attrSet, string nsName, string name, 
                       MetaData md) : base(nsName, name, md) {
                         metaData = md;
-      superType = metaData.mscorlib.GetSpecialSystemClass(PrimitiveType.Object);
+      if (! ((nsName == "" && name == "<Module>") || (nsName == "System" && name == "Object")) ) {
+        superType = metaData.mscorlib.GetSpecialSystemClass(PrimitiveType.Object);
+      }
       flags = (uint)attrSet;
       tabIx = MDTable.TypeDef;
     }
@@ -1817,7 +1841,7 @@ namespace PEAPI
       else  
         superType = metaData.mscorlib.ValueType();
 
-      typeIndex = superType.GetTypeIndex();
+      typeIndex = PrimitiveType.ValueType.GetTypeIndex ();
     }
 
     public void SpecialNoSuper() {
@@ -1964,14 +1988,12 @@ namespace PEAPI
     
     public static bool IsValueType (string nsName, string name)
     {
-      return ((nsName.CompareTo ("System") == 0) && 
-        (name.CompareTo ("ValueType") == 0));
+      return (nsName == "System" && name == "ValueType");
     }
 
     public static bool IsEnum (string nsName, string name)
     {
-      return ((nsName.CompareTo ("System") == 0) && 
-        (name.CompareTo ("Enum") == 0));
+      return (nsName == "System" && name == "Enum");
     }
 
     /// <summary>
@@ -1995,6 +2017,7 @@ namespace PEAPI
       if (ClassDef.IsValueType (sType) || ClassDef.IsEnum (sType))
         nClass.SetTypeIndex (PrimitiveType.ValueType.GetTypeIndex ());
 
+      nClass.typeIndexChecked = true;
       return (nClass);
     }
 
@@ -6406,6 +6429,7 @@ CalcHeapSizes ();
     private ArrayList classDefList = new ArrayList();
     private ArrayList resources = new ArrayList ();
     private Assembly thisAssembly;
+    private static bool isMSCorlib;
     private int corFlags = 1;
     FileImage fileImage;
                 MetaData metaData;
@@ -6418,13 +6442,11 @@ CalcHeapSizes ();
     /// <param name="hasAssembly">this file is an assembly and 
     /// will contain the assembly manifest.  The assembly name is the 
     /// same as the module name</param>
-    public PEFile(string name, bool isDLL, bool hasAssembly) {
+    public PEFile(string name, bool isDLL, bool hasAssembly)
+      : this (name, null, isDLL, hasAssembly, null, null) {
       // Console.WriteLine(Hex.Byte(0x12));
       // Console.WriteLine(Hex.Short(0x1234));
       // Console.WriteLine(Hex.Int(0x12345678));
-      string fName = MakeFileName(null,name,isDLL);
-      fileImage = new FileImage(isDLL,fName);
-      InitPEFile(name, fName, hasAssembly);
     }
 
     /// <summary>
@@ -6437,13 +6459,11 @@ CalcHeapSizes ();
     /// same as the module name</param>
     /// <param name="outputDir">write the PEFile to this directory.  If this
     /// string is null then the output will be to the current directory</param>
-    public PEFile(string name, bool isDLL, bool hasAssembly, string outputDir) {
+    public PEFile(string name, bool isDLL, bool hasAssembly, string outputDir)
+      : this (name, null, isDLL, hasAssembly, outputDir, null) {
       // Console.WriteLine(Hex.Byte(0x12));
       // Console.WriteLine(Hex.Short(0x1234));
       // Console.WriteLine(Hex.Int(0x12345678));
-      string fName = MakeFileName(outputDir,name,isDLL);
-                        fileImage = new FileImage(isDLL,fName);
-      InitPEFile(name, fName, hasAssembly);
     }
 
     /// <summary>
@@ -6456,14 +6476,25 @@ CalcHeapSizes ();
     /// same as the module name</param>
     /// <param name="outStream">write the PEFile to this stream instead
     /// of to a new file</param>
-    public PEFile(string name, bool isDLL, bool hasAssembly, Stream outStream) {
-      fileImage = new FileImage(isDLL,outStream);
-      InitPEFile(name, MakeFileName(null,name,isDLL), hasAssembly);
+    public PEFile(string name, bool isDLL, bool hasAssembly, Stream outStream)
+      : this (name, null, isDLL, hasAssembly, null, outStream) {
     }
 
-    public PEFile(string name, string module_name, bool isDLL, bool hasAssembly, Stream outStream) {
-      fileImage = new FileImage(isDLL,outStream);
-      InitPEFile(name, (module_name == null ? MakeFileName(null,name,isDLL) : module_name), hasAssembly);
+    public PEFile(string name, string module_name, bool isDLL, bool hasAssembly, string outputDir, Stream outStream) {
+      SetName (name);
+      string fname = module_name == null ? MakeFileName (outputDir, name, isDLL) : module_name;
+      if (outStream == null)
+        fileImage = new FileImage (isDLL, fname);
+      else  
+        fileImage = new FileImage (isDLL, outStream);
+
+      InitPEFile (name, fname, hasAssembly);
+    }
+
+    private void SetName (string name)
+    {
+      if (name == "mscorlib")
+        isMSCorlib = true;
     }
 
     private void InitPEFile(string name, string fName, bool hasAssembly) {
@@ -6478,6 +6509,9 @@ CalcHeapSizes ();
       metaData.AddToTable(MDTable.Module,thisMod);
     }
  
+    internal static bool IsMSCorlib {
+      get { return isMSCorlib; }
+    }
 
     public ClassDef ModuleClass {
             get { return moduleClass; }
@@ -6614,9 +6648,7 @@ CalcHeapSizes ();
     /// <param name="name">class name</param>
     /// <returns>a descriptor for this new class</returns>
     public ClassDef AddClass(TypeAttr attrSet, string nsName, string name) {
-      ClassDef aClass = new ClassDef(attrSet,nsName,name,metaData);
-      metaData.AddToTable(MDTable.TypeDef,aClass);
-      return aClass;
+      return AddClass (attrSet, nsName, name, null);
     }
 
     /// <summary>
@@ -6628,7 +6660,16 @@ CalcHeapSizes ();
     /// <returns>a descriptor for this new class</returns>
     public ClassDef AddValueClass(TypeAttr attrSet, string nsName, string name, ValueClass vClass) {
       ClassDef aClass = new ClassDef(attrSet,nsName,name,metaData);
-      aClass.MakeValueClass(vClass);
+      if (!ClassDef.IsValueType (nsName, name) && !ClassDef.IsEnum (nsName, name)) {
+        aClass.MakeValueClass(vClass);
+      } else {
+        if (ClassDef.IsEnum (nsName, name))
+               aClass.SetSuper (metaData.mscorlib.ValueType ());
+        else
+               aClass.SetSuper (metaData.mscorlib.GetSpecialSystemClass (PrimitiveType.Object));
+
+        metaData.mscorlib.SetSpecialSystemClass (nsName, name, aClass);
+      }
       aClass.SetTypeIndex (PrimitiveType.ValueType.GetTypeIndex ());
       metaData.AddToTable(MDTable.TypeDef,aClass);
       return aClass;
@@ -6644,7 +6685,10 @@ CalcHeapSizes ();
     /// <returns>a descriptor for this new class</returns>
     public ClassDef AddClass(TypeAttr attrSet, string nsName, string name, Class superType) {
       ClassDef aClass = new ClassDef(attrSet,nsName,name,metaData);
-      aClass.SetSuper(superType);
+      if (superType != null)
+        aClass.SetSuper(superType);
+      if (PEFile.IsMSCorlib)
+        metaData.mscorlib.SetSpecialSystemClass (nsName, name, aClass);
       metaData.AddToTable(MDTable.TypeDef,aClass);
       return aClass;
     }
