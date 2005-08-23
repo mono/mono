@@ -1,7 +1,9 @@
 # -*- makefile -*-
 
+with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
+
 BOOTSTRAP_MCS = $(EXTERNAL_MCS)
-MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_MCS)
+MCS = $(with_mono_path) $(INTERNAL_MCS)
 
 PROFILE_MCS_FLAGS = -d:NET_1_1 -d:ONLY_1_1 -d:BOOTSTRAP_WITH_OLDLIB
 NO_SIGN_ASSEMBLY = yes
@@ -33,7 +35,7 @@ do-profile-check:
 	if $$ok; then :; else \
 	    echo "*** The compiler '$(EXTERNAL_MCS)' doesn't appear to be usable." 1>&2 ; \
 	    if test -f $(topdir)/class/lib/monolite/mcs.exe; then \
-		monolite_corlib_version=`$(ILDISASM) $(topdir)/class/lib/monolite/mscorlib.dll | sed -n 's,.*mono_corlib_version.*int32.*(\([^)]*\)),\1,p'`; \
+		monolite_corlib_version=`$(with_mono_path) $(ILDISASM) $(topdir)/class/lib/monolite/mscorlib.dll | sed -n 's,.*mono_corlib_version.*int32.*(\([^)]*\)),\1,p'`; \
 		source_corlib_version=`sed -n 's,.*mono_corlib_version.*=[^0-9]*\([0-9]*\)[^0-9]*$$,\1,p' $(topdir)/class/corlib/System/Environment.cs`; \
 		case $$monolite_corlib_version in \
 		0x* | 0X*) monolite_corlib_version=`echo $$monolite_corlib_version | sed s,^0[xX],,`; \
