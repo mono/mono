@@ -1,3 +1,14 @@
+2005-08-23  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_encoded_user_string_or_bytearray): New. Print a string if possible
+	  or else a bytearray from the US heap.
+	  (get_encoded_user_string_bytearray): New. Print a bytearray from the US heap.
+	  (get_constant): Use get_encoded_user_string_or_bytearray for MONO_TYPE_STRING.
+	* get.h (get_encoded_user_string_or_bytearray): Add the new function. 
+	* dis-cil.c (get_encoded_user_string): Move to get.c .
+	  (disassemble_cil): Use get_encoded_user_string_or_bytearray instead of 
+	  get_encoded_user_string.
+
 2005-08-20  Ankit Jain  <jankit@novell.com>
 
 	* dis-cil.c (dissasemble_cil): Specify precision to enable
