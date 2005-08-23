@@ -43,6 +43,15 @@ namespace MonoTests.System.Drawing
 
 		[TearDown]
 		public void TearDown () { }
+		
+		[Test]
+		public void TestEquals ()
+		{
+			Pen pen1 = Pens.Blue;
+			Pen pen2 = Pens.Blue;
+			
+			AssertEquals ("Equals", true, pen1.Equals (pen2));			
+		}
 
 		[Test]
 		public void TestAliceBlue ()

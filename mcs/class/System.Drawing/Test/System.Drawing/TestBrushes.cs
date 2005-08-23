@@ -42,6 +42,15 @@ namespace MonoTests.System.Drawing
 
 		[TearDown]
 		public void TearDown () { }
+		
+		[Test]
+		public void TestEquals ()
+		{
+			Brush brush1 = Brushes.Blue;
+			Brush brush2 = Brushes.Blue;
+			
+			AssertEquals ("Equals", true, brush1.Equals (brush2));			
+		}
 
 		[Test]
 		public void TestProperties ()

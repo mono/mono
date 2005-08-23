@@ -1,3 +1,8 @@
+2005-08-23 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestPens.cs: Add test for Equals method
+	* TestBrushes.cs: Add test for Equals method
+
 2005-08-19 Jordi Mas i Hernandez <jordi@ximan.com>
 
 	* TestPointConverter.cs: Fixes and changes to make the test locale unsensitive
