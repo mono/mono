@@ -562,12 +562,12 @@ namespace System.Data.Odbc
 					schemaRow ["NumericScale"] 	= GetColumnAttribute (i+1, FieldIdentifier.Scale);
 					schemaRow ["BaseTableName"]   	= GetColumnAttributeStr (i+1, FieldIdentifier.TableName);
 					schemaRow ["BaseSchemaName"]  	= GetColumnAttributeStr (i+1, FieldIdentifier.SchemaName);
-					schemaRow ["BaseCatalogName"] 	= GetColumnAttributeStr (1+1, FieldIdentifier.CatelogName);
+					schemaRow ["BaseCatalogName"] 	= GetColumnAttributeStr (i+1, FieldIdentifier.CatelogName);
 					schemaRow ["BaseColumnName"] 	= GetColumnAttributeStr (i+1, FieldIdentifier.BaseColumnName);
 					schemaRow ["DataType"] 		= col.DataType;
 					schemaRow ["IsUnique"] 		= false;
 					schemaRow ["IsKey"] 		= DBNull.Value;
-					schemaRow ["AllowDBNull"] 	= GetColumnAttribute (1+1, FieldIdentifier.Nullable) != libodbc.SQL_NO_NULLS;
+					schemaRow ["AllowDBNull"] 	= GetColumnAttribute (i+1, FieldIdentifier.Nullable) != libodbc.SQL_NO_NULLS;
 					schemaRow ["ProviderType"] 	= (int) col.OdbcType;
 					schemaRow ["IsAutoIncrement"] 	= GetColumnAttribute (i+1, FieldIdentifier.AutoUniqueValue) == libodbc.SQL_TRUE;
 					schemaRow ["IsExpression"] 	= schemaRow.IsNull ("BaseTableName") || (string) schemaRow ["BaseTableName"] == String.Empty;
