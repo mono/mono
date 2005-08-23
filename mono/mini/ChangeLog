@@ -1,4 +1,9 @@
 
+Tue Aug 23 21:38:50 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: do no break at the first valuetype to init found
+	(fixes bug #75791).
+
 Tue Aug 23 16:53:21 BST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* cpu-arm.md, mini-arm.c: more fixes and LMF support.
