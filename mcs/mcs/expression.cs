@@ -4038,7 +4038,7 @@ namespace Mono.CSharp {
 		{
 			DoResolveBase (ec);
 
-			if (is_out && ec.DoFlowAnalysis && !IsAssigned (ec, loc))
+			if (is_out && ec.DoFlowAnalysis && (!ec.OmitStructFlowAnalysis || !vi.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
 				return null;
 
 			return this;
@@ -6871,7 +6871,7 @@ namespace Mono.CSharp {
 			if (!ResolveBase (ec))
 				return null;
 
-			if ((variable_info != null) && !variable_info.IsAssigned (ec)) {
+			if ((variable_info != null) && !(type.IsValueType && ec.OmitStructFlowAnalysis) && !variable_info.IsAssigned (ec)) {
 				Error (188, "The `this' object cannot be used before all of its fields are assigned to");
 				variable_info.SetAssigned (ec);
 				return this;
@@ -7304,7 +7304,7 @@ namespace Mono.CSharp {
 			SimpleName original = expr as SimpleName;
 			Expression new_expr = expr.Resolve (ec,
 				ResolveFlags.VariableOrValue | ResolveFlags.Type |
-				ResolveFlags.Intermediate | ResolveFlags.DisableFlowAnalysis);
+				ResolveFlags.Intermediate | ResolveFlags.DisableStructFlowAnalysis);
 
 			if (new_expr == null)
 				return null;

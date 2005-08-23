@@ -255,6 +255,11 @@ namespace Mono.CSharp {
 		public bool DoFlowAnalysis;
 
 		/// <summary>
+		///   Whether we're control flow analysis disabled on struct
+		/// </summary>
+		public bool OmitStructFlowAnalysis;
+
+		/// <summary>
 		///   Keeps track of the Type to LocalBuilder temporary storage created
 		///   to store structures (used to compute the address of the structure
 		///   value on structure method invocations)

@@ -1895,7 +1895,9 @@ namespace Mono.CSharp
 
 		public bool IsAssigned (EmitContext ec)
 		{
-			return !ec.DoFlowAnalysis || ec.CurrentBranching.IsAssigned (this);
+			return !ec.DoFlowAnalysis ||
+				ec.OmitStructFlowAnalysis && TypeInfo.IsStruct ||
+				ec.CurrentBranching.IsAssigned (this);
 		}
 
 		public bool IsAssigned (EmitContext ec, Location loc)
@@ -1955,7 +1957,9 @@ namespace Mono.CSharp
 
 		public bool IsFieldAssigned (EmitContext ec, string name, Location loc)
 		{
-			if (!ec.DoFlowAnalysis || ec.CurrentBranching.IsFieldAssigned (this, name))
+			if (!ec.DoFlowAnalysis ||
+				ec.OmitStructFlowAnalysis && TypeInfo.IsStruct ||
+				ec.CurrentBranching.IsFieldAssigned (this, name))
 				return true;
 
 			Report.Error (170, loc,

@@ -1,3 +1,7 @@
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs0165-10.cs, cs0165-11.cs : for bug #75721.
+
 2005-08-12  Martin Baulig  <martin@ximian.com>
 
 	* known-issues-gmcs: Ignore cs3005-13.cs since it's supposed to
