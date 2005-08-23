@@ -1,5 +1,9 @@
 2005-08-23  Ankit Jain  <jankit@novell.com>
 
+	* PEAPI.cs (MetaData.version): Change from 1.0.3705 to 1.1.4322.
+
+2005-08-23  Ankit Jain  <jankit@novell.com>
+
 	* PEAPI.cs (MSCorLib.systemClasses): Change type from ClassRef[] to
 	  Class[].
 	  (MSCorLib.ctor): Add assembly ref to mscorlib for non-mscorlib assemblies

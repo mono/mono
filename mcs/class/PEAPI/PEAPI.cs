@@ -4608,7 +4608,7 @@ if (rsrc != null)
     private static readonly uint max3BitSmlIx = 0x1FFF;
     private static readonly uint max5BitSmlIx = 0x7FF;
     // NOTE: version and stream name strings MUST always be quad padded
-    private static readonly string version = "v1.0.3705\0\0\0";
+    private static readonly string version = "v1.1.4322\0\0\0";
     private static readonly char[] tildeName = {'#','~','\0','\0'};
     private static readonly char[] stringsName = {'#','S','t','r','i','n','g','s','\0','\0','\0','\0'};
     private static readonly char[] usName = {'#','U','S','\0'};
