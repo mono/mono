@@ -1,3 +1,9 @@
+2005-08-23  Ankit Jain  <jankit@novell.com>
+
+	* ILParser (method_ref : call_conv..): Use TypeRef instead of PrimitiveTypeRef
+	  if this assembly is mscorlib.
+	  (type | ..): Correct names of primitive types.
+
 2005-08-18  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay (instr | INSTR_R bytes_list): Convert bytes_list to single/double

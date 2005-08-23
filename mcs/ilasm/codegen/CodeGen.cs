@@ -186,6 +186,8 @@ namespace Mono.ILASM {
                 public void SetAssemblyName (string name)
                 {
                         assembly_name = name;
+                        if (assembly_name != "mscorlib")
+                                ExternTable.AddCorlib ();
                 }
 
                 public void SetModuleName (string module_name)
@@ -399,7 +401,7 @@ namespace Mono.ILASM {
                                         throw new Exception ("No EntryPoint found.");
 
                                 out_stream = new FileStream (output_file, FileMode.Create, FileAccess.Write);
-                                pefile = new PEFile (assembly_name, module_name, is_dll, is_assembly, out_stream);
+                                pefile = new PEFile (assembly_name, module_name, is_dll, is_assembly, null, out_stream);
                                 PEAPI.Assembly asmb = pefile.GetThisAssembly ();
 
                                 if (file_ref != null)

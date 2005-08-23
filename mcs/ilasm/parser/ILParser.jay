@@ -802,11 +802,11 @@ type			: K_CLASS class_ref
                           }
 			| K_BOOL
                           {
-                                $$ = new PrimitiveTypeRef (PrimitiveType.Boolean, "System.Bool");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Boolean, "System.Boolean");
                           }
 			| K_INT8
                           {
-                                $$ = new PrimitiveTypeRef (PrimitiveType.Int8, "System.Int8");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Int8, "System.SByte");
                           }
 			| K_INT16
                           {
@@ -822,15 +822,15 @@ type			: K_CLASS class_ref
                           }
 			| K_FLOAT32
                           {
-                                $$ = new PrimitiveTypeRef (PrimitiveType.Float32, "System.Float32");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Float32, "System.Single");
                           }
 			| K_FLOAT64
                           {
-                                $$ = new PrimitiveTypeRef (PrimitiveType.Float64, "System.Float64");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.Float64, "System.Double");
                           }
 			| K_UNSIGNED K_INT8
                           {
-                                $$ = new PrimitiveTypeRef (PrimitiveType.UInt8, "System.UInt8");
+                                $$ = new PrimitiveTypeRef (PrimitiveType.UInt8, "System.Byte");
                           }
 			| K_UNSIGNED K_INT16
                           {
@@ -2218,6 +2218,12 @@ method_ref		: call_conv type type_spec DOUBLE_COLON method_name
                                         param_list = (ITypeRef[]) arg_list.ToArray (typeof (ITypeRef));
                                 else
                                         param_list = new ITypeRef[0];
+
+                                if (codegen.IsThisAssembly ("mscorlib")) {
+                                        PrimitiveTypeRef prim = owner as PrimitiveTypeRef;
+                                        if (prim != null && prim.SigMod == "")
+                                                owner = new TypeRef (prim.Name, false, null);
+                                }
 
                                 methref = owner.GetMethodRef ((ITypeRef) $2,
                                         (CallConv) $1, (string) $5, param_list);

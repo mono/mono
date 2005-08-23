@@ -205,7 +205,7 @@ namespace Mono.ILASM {
                 Hashtable assembly_table;
                 Hashtable module_table;
                 
-                public ExternTable ()
+                public void AddCorlib ()
                 {
                         // Add mscorlib
                         string mscorlib_name = "mscorlib";
@@ -258,9 +258,9 @@ namespace Mono.ILASM {
 
                 public void Resolve (CodeGen code_gen)
                 {
-                        // Assembly table is never null because we add mscorlib
-                        foreach (ExternAssembly ext in assembly_table.Values)
-                                ext.Resolve (code_gen);
+                        if (assembly_table != null)
+                                foreach (ExternAssembly ext in assembly_table.Values)
+                                        ext.Resolve (code_gen);
                         if (module_table == null)
                                 return;
                         foreach (ExternModule ext in module_table.Values)
@@ -269,8 +269,13 @@ namespace Mono.ILASM {
 
                 public ExternTypeRef GetTypeRef (string asmb_name, string full_name, bool is_valuetype)
                 {
-                        ExternAssembly ext_asmb;
-                        ext_asmb = assembly_table[asmb_name] as ExternAssembly;
+                        ExternAssembly ext_asmb = null;
+                        if (assembly_table == null && (asmb_name == "mscorlib" || asmb_name == "corlib"))
+                                /* AddCorlib if mscorlib is being referenced but
+                                   we haven't encountered a ".assembly 'name'" as yet. */
+                                AddCorlib ();
+                        if (assembly_table != null)
+                                ext_asmb = assembly_table[asmb_name] as ExternAssembly;
 
                         if (ext_asmb == null)
                                 throw new Exception (String.Format ("Assembly {0} not defined.", asmb_name));

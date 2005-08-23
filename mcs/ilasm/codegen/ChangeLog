@@ -1,3 +1,15 @@
+2005-08-23  Ankit Jain  <jankit@novell.com>
+
+	* ExternTable.cs (ExternTable.ctor): Remove. Move the initialization code
+	  to the new method AddCorlib.
+	  (ExternTable.AddCorlib): New.
+	  (ExternTable.Resolve): Assembly_table can be null so check before using it.
+	  (ExternTable.GetTypeRef): AddCorlib if mscorlib is being referenced but
+	  assembly_table is still null.
+	* CodeGen.cs (CodeGen.SetAssemblyName): Call AddCorlib if name is not mscorlib.
+	  (CodeGen.Write): Pass null for new outputDir param for PEFile ctor. 
+	* (PrimitiveTypeRef.Name): New. Returns the full_name.
+
 2005-08-18  Ankit Jain  <jankit@novell.com>
 
 	* IMethodRef.cs (IMethodRef.Owner): New. Returns owner of the method.

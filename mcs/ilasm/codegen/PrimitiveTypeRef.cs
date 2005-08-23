@@ -33,6 +33,10 @@ namespace Mono.ILASM {
                         is_resolved = false;
                 }
 
+		public string Name {
+			get { return full_name; }
+		}
+
                 public string FullName {
                         get { return full_name + sig_mod; }
                 }
