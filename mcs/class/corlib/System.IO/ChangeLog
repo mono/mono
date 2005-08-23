@@ -1,3 +1,8 @@
+2005-08-23  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75679.
+	* StreamReader.cs (DiscardBufferedData): Reset the decoder too.
+
 2005-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BinaryReader.cs: use Buffer.BlockCopy instead of Array.Copy when

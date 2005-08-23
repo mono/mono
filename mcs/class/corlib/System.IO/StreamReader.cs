@@ -284,6 +284,8 @@ namespace System.IO {
 		{
 			pos = decoded_count = 0;
 			mayBlock = false;
+			// Discard internal state of the decoder too.
+			decoder = encoding.GetDecoder ();
 		}
 		
 		// the buffer is empty, fill it again
