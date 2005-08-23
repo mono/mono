@@ -1,3 +1,9 @@
+2005-08-23 Jordi Mas i Hernandez <jordi@ximian.com> 
+
+	* Brushes: Do not create the objects every time that they are requested
+	as in Pens we create and cache them only once when need it. This also 
+	fixes the Equals method between two objects requested to Brushes
+
 2005-08-22 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* SolidBrush.cs: Fixes Dispose to avoid non-disposing some objects
