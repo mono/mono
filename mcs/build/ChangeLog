@@ -1,7 +1,7 @@
 2005-08-23  Raja R Harinath  <rharinath@novell.com>
 
-	* profiles/basic.make (do-profile-check): Set MONO_PATH when
-	running disassembler.
+	* profiles/basic.make (do-profile-check): Set MONO_PATH to
+	monolite directory when running disassembler.
 
 2005-08-22  Raja R Harinath  <rharinath@novell.com>
 
