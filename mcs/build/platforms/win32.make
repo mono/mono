@@ -15,7 +15,7 @@ EXTERNAL_RUNTIME =
 # Disabled since it needs the SDK
 #RESGEN = resgen.exe
 #ILDISASM = ildasm.exe /test
-RESGEN = $(topdir)/tools/resgen/resgen.exe
+RESGEN = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_RESGEN)
 
 #ILDISASM = monodis.bat
 ## Gross hack
