@@ -1515,7 +1515,8 @@ namespace System.Drawing {
 		}
 
 		public void ResetTransform () {
-			NativeObject.setTransform(new java.awt.geom.AffineTransform(1,0,0,1,0,0));
+			_transform = new Matrix(1,0,0,1,0,0);
+			UpdateInternalTransform();
 		}
 		#endregion
 
@@ -1651,8 +1652,7 @@ namespace System.Drawing {
 		#region TransformPoints
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, PointF [] pts) {
 			//TBD:CoordinateSpace
-			java.awt.Graphics2D g = NativeObject;
-			java.awt.geom.AffineTransform tr = g.getTransform();
+			java.awt.geom.AffineTransform tr = this.Transform.NativeObject;
 			float[] fpts = new float[2];
 			for(int i = 0; i< pts.Length; i++) {
 				fpts[0] = pts[i].X;
@@ -1665,8 +1665,7 @@ namespace System.Drawing {
 
 		public void TransformPoints (CoordinateSpace destSpace, CoordinateSpace srcSpace, Point [] pts) {						
 			//TBD:CoordinateSpace
-			java.awt.Graphics2D g = NativeObject;
-			java.awt.geom.AffineTransform tr = g.getTransform();
+			java.awt.geom.AffineTransform tr = this.Transform.NativeObject;
 			float[] fpts = new float[2];
 			for(int i = 0; i< pts.Length; i++) {
 				fpts[0] = pts[i].X;
@@ -1947,7 +1946,6 @@ namespace System.Drawing {
 
 				switch (value) {
 					case SmoothingMode.None:
-					case SmoothingMode.Invalid:
 						if(hints.containsKey(awt.RenderingHints.KEY_ANTIALIASING))
 							hints.remove(awt.RenderingHints.KEY_ANTIALIASING);
 						if(hints.containsKey(awt.RenderingHints.KEY_RENDERING))
@@ -1961,10 +1959,12 @@ namespace System.Drawing {
 						goto case SmoothingMode.AntiAlias;
 					case SmoothingMode.HighSpeed:
 						hints.put(awt.RenderingHints.KEY_RENDERING, awt.RenderingHints.VALUE_RENDER_SPEED);
-						goto case SmoothingMode.AntiAlias;
+						goto case SmoothingMode.None;
 					case SmoothingMode.Default:
 						hints.put(awt.RenderingHints.KEY_RENDERING, awt.RenderingHints.VALUE_RENDER_DEFAULT);
 						goto case SmoothingMode.AntiAlias;
+					case SmoothingMode.Invalid:
+						throw new ArgumentException("Invalid parameter used.");
 				}
 
 				NativeObject.setRenderingHints(hints);

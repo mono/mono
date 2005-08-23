@@ -1,3 +1,8 @@
+2005-08-23 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Graphics.jvm.cs: Fixed ResetTransform, TransfromPoints
+	Fixed SmoothingMode property
+
 2005-08-23 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* Brushes: Do not create the objects every time that they are requested
