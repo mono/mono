@@ -2019,7 +2019,7 @@ namespace Mono.CSharp {
 		// type, otherwise ConvertImplict() already finds the user-defined conversion for us,
 		// so we don't explicitly check for performance reasons.
  		//
-		bool DoNumericPromotions (EmitContext ec, Type l, Type r, bool check_user_conv)
+		bool DoNumericPromotions (EmitContext ec, Type l, Type r, Expression lexpr, Expression rexpr, bool check_user_conv)
 		{
 			if (IsOfType (ec, l, r, TypeManager.double_type, check_user_conv)){
 				//
@@ -2170,6 +2170,12 @@ namespace Mono.CSharp {
 			} else {
 				left = ForceConversion (ec, left, TypeManager.int32_type);
 				right = ForceConversion (ec, right, TypeManager.int32_type);
+
+				bool strConv =
+					Convert.ImplicitConversionExists (ec, lexpr, TypeManager.string_type) &&
+					Convert.ImplicitConversionExists (ec, rexpr, TypeManager.string_type);
+				if (strConv && left != null && right != null)
+					Error_OperatorAmbiguous (loc, oper, l, r);
 
 				type = TypeManager.int32_type;
 			}
@@ -2705,7 +2711,7 @@ namespace Mono.CSharp {
 			// This will leave left or right set to null if there is an error
 			//
 			bool check_user_conv = is_user_defined (l) && is_user_defined (r);
-			DoNumericPromotions (ec, l, r, check_user_conv);
+			DoNumericPromotions (ec, l, r, left, right, check_user_conv);
 			if (left == null || right == null){
 				Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 				return null;
@@ -5050,7 +5056,6 @@ namespace Mono.CSharp {
 					method_params = cand_params;
 				}
 			}
-
 			//
 			// Now check that there are no ambiguities i.e the selected method
 			// should be better than all the others

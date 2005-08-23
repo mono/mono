@@ -1,5 +1,9 @@
 2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* cs0034-2.cs : for bug #52492.
+
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* cs1010-2.cs : for bug #75245.
 
 2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
