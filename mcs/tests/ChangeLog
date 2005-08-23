@@ -1,5 +1,9 @@
 2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* test-441.cs : test to not warn incorrect ulong const comparison.
+
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* test-440.cs : non-CS0034 case (overload for double and int is valid).
 
 2005-08-23  Raja R Harinath  <rharinath@novell.com>

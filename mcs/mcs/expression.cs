@@ -2844,15 +2844,15 @@ namespace Mono.CSharp {
 
 			if (c is ULongConstant) {
 				ulong uvalue = ((ULongConstant) c).Value;
-				if (uvalue > long.MaxValue && (
-				    type == TypeManager.byte_type ||
-				    type == TypeManager.sbyte_type ||
-				    type == TypeManager.short_type ||
-				    type == TypeManager.ushort_type ||
-				    type == TypeManager.int32_type ||
-				    type == TypeManager.uint32_type ||
-				    type == TypeManager.int64_type)) {
-					WarnUselessComparison (type);
+				if (uvalue > long.MaxValue) {
+					if (type == TypeManager.byte_type ||
+					    type == TypeManager.sbyte_type ||
+					    type == TypeManager.short_type ||
+					    type == TypeManager.ushort_type ||
+					    type == TypeManager.int32_type ||
+					    type == TypeManager.uint32_type ||
+					    type == TypeManager.int64_type)
+						WarnUselessComparison (type);
 					return;
 				}
 				value = (long) uvalue;
