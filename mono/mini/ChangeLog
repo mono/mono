@@ -1,4 +1,8 @@
 
+Tue Aug 23 16:53:21 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-arm.md, mini-arm.c: more fixes and LMF support.
+
 Tue Aug 23 15:11:44 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* cpu-g4.md: fixed instruction length exposed by the nemerle compiler.
