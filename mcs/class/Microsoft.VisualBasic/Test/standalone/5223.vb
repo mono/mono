@@ -29,7 +29,7 @@ Public Class TestClass
 	Public Function Test() As Long
 		'Begin Code
 			dim result as String
-			FileOpen(1, "5223.txt", OpenMode.Random)
+			FileOpen(1, "./data/5223.txt", OpenMode.Random)
 			FileGet (1, result, 10)
 			Return seek (1)
 		'End Code

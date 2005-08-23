@@ -29,7 +29,7 @@ Public Class TestClass
 	Public Function Test() As String
 		'Begin Code
 			dim result as String
-			FileOpen (1, "5258.txt", OpenMode.Input)
+			FileOpen (1, "./data/5258.txt", OpenMode.Input)
 			result = LineInput (1)
 			result = LineInput (1)
 			Try

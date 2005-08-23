@@ -28,7 +28,7 @@ Imports System
 Public Class TestClass 
 	Public Function Test() As Long
 		'Begin Code	
-			FileOpen (1, "5250.txt", OpenMode.Input)
+			FileOpen (1, "./data/5250.txt", OpenMode.Input)
 			Return LOF (1)
 		'End Code
 	End Function

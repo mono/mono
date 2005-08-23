@@ -28,7 +28,7 @@ Imports System
 Public Class TestClass 
 	Public Function Test() As String
 		'Begin Code
-			FileOpen (1, "5209.txt", OpenMode.Input)
+			FileOpen (1, "./data/5209.txt", OpenMode.Input)
 			Try
 				Write (1, "Just a test")
 			Catch e As Exception

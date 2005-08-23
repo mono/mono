@@ -34,7 +34,7 @@ Public Class TestClass
         Dim SourceFile As String
         Dim DestFile As String
         DestFile = System.IO.Directory.GetCurrentDirectory() + "/data/textfile.txt"
-        SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/6499.txt"
+        SourceFile = System.IO.Directory.GetCurrentDirectory() + "/data/7018.txt"
         FileCopy(SourceFile, DestFile)
         fn = freefile
         FileOpen(fn, "data/textfile.txt", OpenMode.Input)

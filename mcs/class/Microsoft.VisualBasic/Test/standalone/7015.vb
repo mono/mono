@@ -31,7 +31,7 @@ Public Class TestClass
         Dim strPathName As String
         Dim curDir As String =  System.IO.Directory.GetCurrentDirectory()
         Dim i As Integer
-        strPathName = "/home/banirban/sudha/tests/data/"
+        strPathName = "./data/"
         strFileName = "hidden.txt"
         'check if directory has ReadOnly files
         str1 = Dir(strPathName, vbNormal)

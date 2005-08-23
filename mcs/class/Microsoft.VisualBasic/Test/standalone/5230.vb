@@ -29,7 +29,7 @@ Public Class TestClass
 	Public Function Test() As String
 		'Begin Code
 			dim result as String
-			FileOpen(1, "5230.txt", OpenMode.Append)
+			FileOpen(1, "./data/5230.txt", OpenMode.Append)
 			WriteLine (1, "Hello World")
 			Seek (1, 1)
 			WriteLine (1, "H")

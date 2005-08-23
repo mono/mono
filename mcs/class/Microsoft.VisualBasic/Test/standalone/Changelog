@@ -1,3 +1,6 @@
+2005-08-23  Satya Sudha K <ksathyasudha@novell.com>
+	* Fixed the filepaths in some testcases
+
 2005-08-19  Satya Sudha K <ksathyasudha@novell.com>
 	* Modified all the FileSystem-related testcases to use unix-style paths.
 
