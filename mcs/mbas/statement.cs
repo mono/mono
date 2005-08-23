@@ -812,6 +812,7 @@ namespace Mono.MonoBASIC {
 		
 		public Return (Expression expr, Location l)
 		{
+			expr = Parser.SetValueRequiredFlag (expr);
 			Expr = expr;
 			loc = l;
 		}
@@ -2835,6 +2836,7 @@ namespace Mono.MonoBASIC {
 		bool isIndexerAccess;
 		string memberName;
 		Expression type_expr;
+		bool is_resolved = false;
 
 		public StatementSequence (Block parent, Location loc, Expression expr) 
 			: this (parent, loc, expr, null)
@@ -2911,10 +2913,13 @@ namespace Mono.MonoBASIC {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
+			if (is_resolved)
+				return this;
 			if (!stmtBlock.Resolve (ec))
 				return null;
 			eclass = ExprClass.Value;
 			type = TypeManager.object_type;
+			is_resolved = true;
 			return this;
 		}
 

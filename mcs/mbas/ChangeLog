@@ -1,3 +1,9 @@
+2005-08-23 Satya Sudha K <ksathyasudha@novell.com>
+	* statement.cs : 
+		StatementSequence : Avoid Resolving multiple times
+	* ecore.cs :
+		Minor fix to 'Constantify' method
+
 2005-08-22 Satya Sudha K <ksathyasudha@novell.com>
 	* expression.cs : 
 		Invocation's DoResolve method : Avoid resolving multiple times.

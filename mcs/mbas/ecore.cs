@@ -507,7 +507,7 @@ namespace Mono.MonoBASIC {
 			else if (t == TypeManager.decimal_type)
 				return new DecimalConstant ((decimal)v);
 			else if (TypeManager.IsEnumType (t)){
-				Constant e = Constantify (v, TypeManager.TypeToCoreType (v.GetType ()));
+				Constant e = Constantify (v, TypeManager.EnumToUnderlying (v.GetType ()));
 
 				return new EnumConstant (e, t);
 			} else
