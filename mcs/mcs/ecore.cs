@@ -129,9 +129,9 @@ namespace Mono.CSharp {
 		public void Error (int error, string s)
 		{
 			if (loc.IsNull)
-				Report.Error (error, loc, s);
-			else
 				Report.Error (error, s);
+			else
+				Report.Error (error, loc, s);
 		}
 
 		/// <summary>
