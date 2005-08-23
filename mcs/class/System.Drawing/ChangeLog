@@ -1,3 +1,6 @@
+2005-08-23 Eyal Alalyf <eyala@mainsoft.com>
+	* System.Drawing.vmwcsproj: Change it to be developer edition project file
+
 2005-08-23 Boris Kirzner <borisk@mainsoft.com>
 	* System.Drawing.vmwcsproj: Changed reference to Consts.cs.
 
