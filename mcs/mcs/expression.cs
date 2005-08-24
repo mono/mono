@@ -7882,7 +7882,9 @@ namespace Mono.CSharp {
 			} else if (type.IsValueType){
 				ig.Emit (OpCodes.Ldelema, type);
 				ig.Emit (OpCodes.Ldobj, type);
-			} else 
+			} else if (type.IsPointer)
+				ig.Emit (OpCodes.Ldelem_I);
+			else
 				ig.Emit (OpCodes.Ldelem_Ref);
 		}
 
@@ -7917,7 +7919,9 @@ namespace Mono.CSharp {
 			} else if (t.IsValueType) {
 				is_stobj = true;
 				return OpCodes.Stobj;
-			} else
+			} else if (t.IsPointer)
+				return OpCodes.Stelem_I;
+			else
 				return OpCodes.Stelem_Ref;
 		}
 

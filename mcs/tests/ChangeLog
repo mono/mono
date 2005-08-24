@@ -1,3 +1,7 @@
+2005-08-24  Raja R Harinath  <rharinath@novell.com>
+
+	* test-442.cs: New test from #75874.
+
 2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* test-441.cs : test to not warn incorrect ulong const comparison.
