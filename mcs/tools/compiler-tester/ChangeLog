@@ -1,6 +1,15 @@
+2005-06-24  Marek Safar  <marek.safar@seznam.cz>
+
+	* compiler-tester:.cs Enabled error/warning message checking.
+
+2005-06-13  Marek Safar  <marek.safar@seznam.cz>
+
+	* compiler-tester.cs: Add check for correct error test case
+	syntax.
+
 2005-06-09  Marek Safar  <marek.safar@seznam.cz>
 
-	* compiler-tester: Add process test runner to cope with
+	* compiler-tester.cs: Add process test runner to cope with
 	too many files in AppDomain(s).
 
 2005-06-06  Raja R Harinath  <harinath@gmail.com>

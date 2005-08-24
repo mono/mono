@@ -470,17 +470,21 @@ namespace TestRunner {
 	{
 		string expected_message;
 		string error_message;
+		bool check_msg;
+		bool check_error_line;
 
 		protected enum CompilerError {
 			Expected,
 			Wrong,
 			Missing,
-			WrongMessage
+			WrongMessage,
+			MissingLocation
 		}
 
-		public NegativeChecker (ITester tester, string log_file, string issue_file):
+		public NegativeChecker (ITester tester, string log_file, string issue_file, bool check_msg):
 			base (tester, log_file, issue_file)
 		{
+			this.check_msg = check_msg;
 		}
 
 		protected override bool AnalyzeTestFile(int row, string line)
@@ -497,6 +501,17 @@ namespace TestRunner {
 				}
 
 				expected_message = line.Substring (index + 1).Trim ();
+			}
+
+			if (row == 2) {
+				string filtered = line.Replace (" ", "");
+				check_error_line = !filtered.StartsWith ("//Line:0");
+
+				if (!filtered.StartsWith ("//Line:")) {
+					LogLine ("IGNORING: Wrong test syntax (second line must have `// Line: xx' syntax");
+					++ignored;
+					return false;
+				}
 			}
 
 			return base.AnalyzeTestFile (row, line);
@@ -547,11 +562,23 @@ namespace TestRunner {
 			while (line != null) {
 
 				if (line.IndexOf (tested_text) != -1) {
-//					string msg = line.Substring (line.IndexOf (':', 22) + 1).TrimEnd ('.').Trim ();
-//					if (msg != expected_message && msg != expected_message.Replace ('`', '\'')) {
-//						error_message = msg;
-//						return CompilerError.WrongMessage;
-//					}
+					if (check_msg) {
+						int first = line.IndexOf (':');
+						int second = line.IndexOf (':', first + 1);
+						if (second == -1) {
+							if (check_error_line)
+								return CompilerError.MissingLocation;
+							second = first;
+						}
+
+						string msg = line.Substring (second + 1).TrimEnd ('.').Trim ();
+						if (msg != expected_message && msg != expected_message.Replace ('`', '\'')) {
+							if (check_error_line && line.IndexOf (".cs(") == -1)
+								return CompilerError.MissingLocation;
+							error_message = msg;
+							return CompilerError.WrongMessage;
+						}
+					}
 					return CompilerError.Expected;
 				}
 
@@ -603,8 +630,8 @@ namespace TestRunner {
 					}
 					else {
 						LogLine ("REGRESSION (CORRECT ERROR -> WRONG ERROR MESSAGE)");
-						Console.WriteLine ("E: {0}", expected_message);
-						Console.WriteLine ("W: {0}", error_message);
+						LogLine ("Exp: {0}", expected_message);
+						LogLine ("Was: {0}", error_message);
 					}
 					break;
 
@@ -624,6 +651,27 @@ namespace TestRunner {
 					}
 
 					break;
+
+				case CompilerError.MissingLocation:
+					LogLine ("");
+					return true;
+
+					// Temporary disabled
+/*
+					if (know_issues.Contains (file)) {
+						LogLine ("KNOWN ISSUE (Missing error location)");
+						know_issues.Remove (file);
+						return false;
+					}
+					if (no_error_list.Contains (file)) {
+						LogLine ("REGRESSION (NO ERROR -> MISSING ERROR LOCATION)");
+						no_error_list.Remove (file);
+					}
+					else {
+						LogLine ("REGRESSION (CORRECT ERROR -> MISSING ERROR LOCATION)");
+					}
+					break;*/
+
 			}
 
 			regression.Add (file);
@@ -664,7 +712,7 @@ namespace TestRunner {
 			Checker checker;
 			switch (mode) {
 				case "negative":
-					checker = new NegativeChecker (tester, log_fname, issue_file);
+					checker = new NegativeChecker (tester, log_fname, issue_file, true);
 					break;
 				case "positive":
 					checker = new PositiveChecker (tester, log_fname, issue_file);
