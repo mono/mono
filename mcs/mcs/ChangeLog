@@ -1,3 +1,17 @@
+2005-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-parser.jay: report CS0642 at warning level 3
+	  and report CS0642 for an if else statement also
+	  fixes bug #74745. Patch by John Luke (and a bit
+	  modified by me).
+	  Removed extra CS0642 warning check for "while",
+	  "for" and "fixed".
+	* statement.cs: In Block.Resolve(), CS0642 check
+	  is reimplemented to check a sequence of an empty
+	  statement and a block.
+
+	  Both fix bug #66777.
+
 2005-08-24  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (GetMethodObsoleteAttribute): Disabled obsolete properties

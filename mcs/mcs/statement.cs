@@ -410,7 +410,7 @@ namespace Mono.CSharp {
 		Expression Test;
 		readonly Statement InitStatement;
 		readonly Statement Increment;
-		readonly Statement Statement;
+		public readonly Statement Statement;
 		bool infinite, empty;
 		
 		public For (Statement initStatement,
@@ -1857,6 +1857,36 @@ namespace Mono.CSharp {
 		bool unreachable_shown;
 		bool unreachable;
 
+		private void CheckPossibleMistakenEmptyStatement (Statement s)
+		{
+			Statement body;
+
+			// Some statements are wrapped by a Block. Since
+			// others' internal could be changed, here I treat
+			// them as possibly wrapped by Block equally.
+			Block b = s as Block;
+			if (b != null && b.statements.Count == 1)
+				s = (Statement) b.statements [0];
+
+			if (s is Lock)
+				body = ((Lock) s).Statement;
+			else if (s is For)
+				body = ((For) s).Statement;
+			else if (s is Foreach)
+				body = ((Foreach) s).Statement;
+			else if (s is While)
+				body = ((While) s).Statement;
+			else if (s is Using)
+				body = ((Using) s).Statement;
+			else if (s is Fixed)
+				body = ((Fixed) s).Statement;
+			else
+				return;
+
+			if (body == null || body is EmptyStatement)
+				Report.Warning (642, 3, s.loc, "Possible mistaken empty statement");
+		}
+
 		public override bool Resolve (EmitContext ec)
 		{
 			Block prev_block = ec.CurrentBlock;
@@ -1872,6 +1902,11 @@ namespace Mono.CSharp {
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
 				Statement s = (Statement) statements [ix];
+				// Check possible empty statement (CS0642)
+				if (RootContext.WarningLevel >= 3 &&
+					ix + 1 < statement_count &&
+						statements [ix + 1] is Block)
+					CheckPossibleMistakenEmptyStatement (s);
 
 				//
 				// Warn if we detect unreachable code.
@@ -3051,7 +3086,7 @@ namespace Mono.CSharp {
 
 	public class Lock : ExceptionStatement {
 		Expression expr;
-		Statement Statement;
+		public Statement Statement;
 		LocalBuilder temp;
 			
 		public Lock (Expression expr, Statement stmt, Location l)
@@ -3320,6 +3355,10 @@ namespace Mono.CSharp {
 			declarators = decls;
 			statement = stmt;
 			loc = l;
+		}
+
+		public Statement Statement {
+			get { return statement; }
 		}
 
 		public override bool Resolve (EmitContext ec)
@@ -3754,7 +3793,7 @@ namespace Mono.CSharp {
 
 	public class Using : ExceptionStatement {
 		object expression_or_block;
-		Statement Statement;
+		public Statement Statement;
 		ArrayList var_list;
 		Expression expr;
 		Type expr_type;
@@ -4067,7 +4106,11 @@ namespace Mono.CSharp {
 			statement = stmt;
 			loc = l;
 		}
-		
+
+		public Statement Statement {
+			get { return statement; }
+		}
+
 		public override bool Resolve (EmitContext ec)
 		{
 			expr = expr.Resolve (ec);
