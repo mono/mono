@@ -26,6 +26,9 @@ Mono MCS Errors.
 
 	// cs0057.cs: Inconsistent accessibility. Parameter type is less accessible than operator.
 	// Line: 10
+	
+	** Note: If your error or warning message does not contain source line
+	location use syntax `// Line : 0'
 
 	There should not be more than one error per tests.  Each test
 	should only contain one error.
