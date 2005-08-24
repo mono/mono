@@ -11,6 +11,9 @@ ifeq (default, $(PROFILE))
 MCS = $(with_mono_path) $(INTERNAL_MCS)
 endif
 
+ilasm = $(topdir)/class/lib/net_1_1_bootstrap/ilasm.exe
+ILASM = $(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
+
 GENERICS_COMPILE = $(CSCOMPILE) /target:library
 
 DISTFILES = \
@@ -18,6 +21,7 @@ DISTFILES = \
 	errors.txt 		\
 	do-tests.pl		\
 	$(wildcard *.cs)	\
+	$(wildcard *.il)	\
 	$(wildcard *.inc)	\
 	$(wildcard *.pub)	\
 	$(wildcard *.response)	\
@@ -26,8 +30,8 @@ DISTFILES = \
 TEST_SUPPORT_FILES = \
 	CS0118-2-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll CS0433-lib.dll CS0433-2-lib.dll \
 	CS0534-3-lib.dll CS0534-4-lib.dll CS0571-3-lib.dll \
-	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll \
-	CS2015-lib.dll CS3005-16-lib.dll CS3013-module.dll
+	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll CS0619-42-lib.dll \
+	CS1546-lib.dll CS2015-lib.dll CS3005-16-lib.dll CS3013-module.dll
 
 all-local:
 
@@ -71,3 +75,6 @@ install-local uninstall-local:
 
 %-module.dll: %-module.cs
 	$(CSCOMPILE) /target:module /out:$@ $<
+
+%-lib.dll: %-lib.il
+	$(ILASM) /dll /out:$@ $<
