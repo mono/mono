@@ -2913,7 +2913,8 @@ namespace Mono.CSharp {
 
 		private void WarnUselessComparison (Type type)
 		{
-			Report.Warning (652, 2, loc, "Comparison to integral constant is useless; the constant is outside the range of type '{0}'", type);
+			Report.Warning (652, 2, loc, "Comparison to integral constant is useless; the constant is outside the range of type `{0}'",
+				TypeManager.CSharpName (type));
 		}
 
 		/// <remarks>
@@ -5428,12 +5429,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if ((method.Attributes & MethodAttributes.SpecialName) != 0) {
-				if (TypeManager.LookupDeclSpace (method.DeclaringType) != null || TypeManager.IsSpecialMethod (method)) {
-					Report.Error (571, loc, "`{0}': cannot explicitly call operator or accessor",
-						TypeManager.CSharpSignature (method, true));
-					return null;
-				}
+			if ((method.Attributes & MethodAttributes.SpecialName) != 0 && IsSpecialMethodInvocation (method)) {
+				return null;
 			}
 
 			if (mg.InstanceExpression != null)
@@ -5441,6 +5438,32 @@ namespace Mono.CSharp {
 
 			eclass = ExprClass.Value;
 			return this;
+		}
+
+		bool IsSpecialMethodInvocation (MethodBase method)
+		{
+			IMethodData md = TypeManager.GetMethod (method);
+			if (md != null) {
+				if (!(md is AbstractPropertyEventMethod) && !(md is Operator))
+					return false;
+			} else {
+				if (!TypeManager.IsSpecialMethod (method))
+					return false;
+
+				int args = TypeManager.GetParameterData (method).Count;
+				if (method.Name.StartsWith ("get_") && args > 0)
+					return false;
+				else if (method.Name.StartsWith ("set_") && args > 2)
+					return false;
+
+				// TODO: check operators and events as well ?
+			}
+
+			Report.SymbolRelatedToPreviousError (method);
+			Report.Error (571, loc, "`{0}': cannot explicitly call operator or accessor",
+				TypeManager.CSharpSignature (method, true));
+	
+			return true;
 		}
 
 		// <summary>
@@ -6039,11 +6062,13 @@ namespace Mono.CSharp {
 			}
 
 			if (type.IsAbstract && type.IsSealed) {
+				Report.SymbolRelatedToPreviousError (type);
 				Report.Error (712, loc, "Cannot create an instance of the static class `{0}'", TypeManager.CSharpName (type));
 				return null;
 			}
 
 			if (type.IsInterface || type.IsAbstract){
+				Report.SymbolRelatedToPreviousError (type);
 				Report.Error (144, loc, "Cannot create an instance of the abstract class or interface `{0}'", TypeManager.CSharpName (type));
 				return null;
 			}

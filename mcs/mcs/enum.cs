@@ -155,7 +155,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError()
 		{
-			return String.Concat (parent_enum.GetSignatureForError (), '.', base.GetSignatureForError ());
+			return String.Concat (parent_enum.GetSignatureForError (), '.', Name);
 		}
 
 		public override string[] ValidAttributeTargets {

@@ -1630,7 +1630,7 @@ interface_property_declaration
 		MemberName name = new MemberName (lt.Value, lt.Location);
 
 		if ($3 == TypeManager.system_void_expr) {
-			Report.Error (547, lt.Location, "`{0}': property or indexer cannot have void type", $4);
+			Report.Error (547, lt.Location, "`{0}': property or indexer cannot have void type", lt.Value);
 			break;
 		}
 
@@ -1702,7 +1702,8 @@ interface_event_declaration
 		$$ = null;
 	  }
 	| opt_attributes opt_new EVENT type IDENTIFIER ASSIGN  {
-		Report.Error (68, (Location) $3, "`{0}.{1}': event in interface cannot have initializer", current_container.Name, $5);
+		LocatedToken lt = (LocatedToken) $5;
+		Report.Error (68, lt.Location, "`{0}.{1}': event in interface cannot have initializer", current_container.Name, lt.Value);
 		$$ = null;
 	  }
 	| opt_attributes opt_new EVENT type IDENTIFIER OPEN_BRACE

@@ -283,6 +283,12 @@ namespace Mono.CSharp {
 			Convert.Error_CannotImplicitConversion (loc, Type, t);
 		}
 
+		protected static void Error_TypeDoesNotContainDefinition (Location loc, Type type, string name)
+		{
+			Report.Error (117, loc, "`{0}' does not contain a definition for `{1}'",
+				TypeManager.CSharpName (type), name);
+		}
+
 		ResolveFlags ExprClassToResolveFlags ()
 		{
 			switch (eclass) {
@@ -520,6 +526,8 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Returns a fully formed expression after a MemberLookup
 		/// </summary>
+		/// 
+		// TODO: This can be heavily cached
 		public static Expression ExprClassFromMemberInfo (EmitContext ec, MemberInfo mi, Location loc)
 		{
 			if (mi is EventInfo)
@@ -723,9 +731,7 @@ namespace Mono.CSharp {
 					Report.Error (103, loc, "The name `{0}' does not exist in the context of `{1}'",
 						name, class_name);
 				else
-					Report.Error (
-						117, loc, "`" + TypeManager.CSharpName (queried_type) + "' does not contain a " +
-						"definition for `" + name + "'");
+					Error_TypeDoesNotContainDefinition (loc, queried_type, name);
 				return;
 			}
 
@@ -3178,6 +3184,26 @@ namespace Mono.CSharp {
 
 			return true;
 		}
+
+		void Error_PropertyNotFound (MethodInfo mi, bool getter)
+		{
+			// TODO: correctly we should compare arguments but it will lead to bigger changes
+			if (mi is MethodBuilder) {
+				Error_TypeDoesNotContainDefinition (loc, PropertyInfo.DeclaringType, Name);
+				return;
+			}
+
+			StringBuilder sig = new StringBuilder (TypeManager.CSharpName (mi.DeclaringType));
+			sig.Append ('.');
+			ParameterData iparams = TypeManager.GetParameterData (mi);
+			sig.Append (getter ? "get_" : "set_");
+			sig.Append (Name);
+			sig.Append (iparams.GetSignatureForError ());
+
+			Report.SymbolRelatedToPreviousError (mi);
+			Report.Error (1546, loc, "Property `{0}' is not supported by the C# language. Try to call the accessor method `{1}' directly",
+				Name, sig.ToString ());
+		}
 		
 		override public Expression DoResolve (EmitContext ec)
 		{
@@ -3186,10 +3212,7 @@ namespace Mono.CSharp {
 
 			if (getter != null){
 				if (TypeManager.GetArgumentTypes (getter).Length != 0){
-					Report.Error (
-						117, loc, "`{0}' does not contain a " +
-						"definition for `{1}'.", getter.DeclaringType,
-						Name);
+					Error_PropertyNotFound (getter, true);
 					return null;
 				}
 			}
@@ -3264,10 +3287,7 @@ namespace Mono.CSharp {
 			}
 
 			if (TypeManager.GetArgumentTypes (setter).Length != 1){
-				Report.Error (
-					117, loc, "`{0}' does not contain a " +
-					"definition for `{1}'.", getter.DeclaringType,
-					Name);
+				Error_PropertyNotFound (setter, false);
 				return null;
 			}
 

@@ -1512,7 +1512,7 @@ namespace Mono.CSharp {
 			// treat it as if the variable declaration was in error.
 			//
 			Report.SymbolRelatedToPreviousError (loc, name);
-			Error_AlreadyDeclared (kvi.Location, name, "child");
+			Error_AlreadyDeclared (kvi.Location, name, "parent or current");
 			return false;
 		}
 
