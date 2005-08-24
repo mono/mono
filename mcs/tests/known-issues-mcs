@@ -9,6 +9,5 @@ test-67.cs IGNORE	# Windows-only test
 
 test-49.cs IGNORE
 
-test-377.cs
 test-anon-27.cs
 test-xml-027.cs

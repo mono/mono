@@ -1,4 +1,4 @@
-// Compiler options: -t:library -r:test-377-PROFILE-il.dll
+// Compiler options: -r:test-377-lib.dll
 
 using System;
 using System.Reflection;
@@ -9,4 +9,6 @@ public class Tests {
 		Foo f = null;
 		f.foo (5);
 	}
+	
+	public static void Main () {}
 }
