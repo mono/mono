@@ -39,36 +39,27 @@ namespace System.Drawing
 	[AttributeUsage (AttributeTargets.Class)]
 	public class ToolboxBitmapAttribute : Attribute
 	{
-		private Image smallImage;
-		private Image bigImage;
+		private Image smallImage = null;
+		private Image bigImage = null;
 		public static readonly ToolboxBitmapAttribute Default = new ToolboxBitmapAttribute();
 
 		private ToolboxBitmapAttribute ()
 		{
 		}
 
-		[MonoTODO ("implement")]
 		public ToolboxBitmapAttribute (string imageFile)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+			smallImage = new Bitmap (imageFile);
 		}
 		
-		[MonoTODO ("implement")]
 		public ToolboxBitmapAttribute (Type t)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+			smallImage = GetImageFromResource (t, null, false);
 		}
 		
-		[MonoTODO ("implement")]
 		public ToolboxBitmapAttribute (Type t, string name)
 		{
-			//
-			// TODO: Add constructor logic here
-			//
+			smallImage = GetImageFromResource (t, name, false);
 		}
 
 		public override bool Equals (object value)
@@ -105,16 +96,41 @@ namespace System.Drawing
 			return GetImage (type, null, large);
 		}
 
-		[MonoTODO ("implement")]
 		public Image GetImage (Type type, string imgName, bool large)
 		{
-			return null;
+			if (smallImage == null)
+					smallImage = GetImageFromResource (type, imgName, false);
+			
+			if (large) {
+				if (bigImage == null)
+					bigImage = new Bitmap (smallImage, 32, 32);
+				return bigImage;
+			}
+			else
+				return smallImage;
 		}
 
-		[MonoTODO ("implement")]
 		public static Image GetImageFromResource (Type t, string imageName, bool large)
 		{
-			return null;
+			Bitmap bitmap;
+			if (imageName == null)
+				imageName = t.Name + ".bmp";
+			
+			using (System.IO.Stream s = t.Assembly.GetManifestResourceStream (t.Namespace + "." + imageName)){
+				if (s == null) {
+					return null;
+				}
+				else {
+					bitmap = new Bitmap (s, false);
+				}
+			}
+			
+			//FIXME: thrown too easily
+			//if (bitmap.Width != 16 || bitmap.Height != 16)
+			//	throw new Exception ("ToolboxBitmap must be 16x16 pixels");
+			
+			if (large) return new Bitmap (bitmap, 32, 32);
+			return bitmap;
 		}
 	}
 }

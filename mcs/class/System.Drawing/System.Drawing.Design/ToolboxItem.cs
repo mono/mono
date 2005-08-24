@@ -46,7 +46,7 @@ namespace System.Drawing.Design
 	{
 
 		private AssemblyName assembly;
-		private Bitmap bitmap;
+		private Bitmap bitmap = null;
 		private ICollection filter = new ToolboxItemFilterAttribute[0];
 		private string displayname = string.Empty;
 		private bool locked = false;
@@ -203,17 +203,35 @@ namespace System.Drawing.Design
 			Assembly assembly = typeRes.GetAssembly(assemblyName, true);
 			if (reference)
 				typeRes.ReferenceAssembly(assemblyName);
-			return assembly.GetType(typeName, true);
+			return typeRes.GetType(typeName, true);
 		}
 
-		[MonoTODO]
+		[MonoTODO ("Should we be returning empty bitmap, or null?")]
 		public virtual void Initialize (Type type) 
 		{
 			assembly = type.Assembly.GetName();
 			displayname = type.Name;
 			name = type.FullName;
+			
 			// seems to be a right place to create the bitmap
-			bitmap = new Bitmap (16, 16); // FIXME: load bitmap from resources if present, else set some default bitmap 
+			System.Drawing.Image image = null;
+			foreach (object attribute in type.GetCustomAttributes(true)) {
+				ToolboxBitmapAttribute tba = attribute as ToolboxBitmapAttribute;
+				if (tba != null) {
+					image = tba.GetImage (type);
+					break;
+				}
+			}
+			//fallback: check for image even if not attribute
+			if (image == null)
+				image = ToolboxBitmapAttribute.GetImageFromResource (type, null, false);
+			
+			if (image != null) {
+				if (image is Bitmap)
+					bitmap = (Bitmap) image;
+				else
+					bitmap = new Bitmap (image);
+			}
 
 			filter = type.GetCustomAttributes (typeof (ToolboxItemFilterAttribute), true);
 		}

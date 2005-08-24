@@ -1,3 +1,7 @@
+2005-05-24 Michael Hutchinson <m.j.hutchinson@gmail.com>
+
+	* ToolboxBitmapAttribute.cs: Implemented retrieving the image
+
 2005-08-23 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Graphics.jvm.cs: Fixed ResetTransform, TransfromPoints
