@@ -1,3 +1,13 @@
+2005-08-24  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* Makefile: Removed System.Runtime.Remoting dependency.
+	* Mono.Posix.dll.sources: Added new files:
+	Mono.Remoting.Channels.Unix/UnixBinaryClientFormatterSink.cs
+	Mono.Remoting.Channels.Unix/UnixBinaryClientFormatterSinkProvider.cs
+	Mono.Remoting.Channels.Unix/UnixBinaryCore.cs
+	Mono.Remoting.Channels.Unix/UnixBinaryServerFormatterSink.cs
+	Mono.Remoting.Channels.Unix/UnixBinaryServerFormatterSinkProvider.
+
 2005-07-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : csc build fix.

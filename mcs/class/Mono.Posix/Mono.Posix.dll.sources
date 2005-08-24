@@ -34,6 +34,11 @@
 ./Mono.Posix/PeerCred.cs
 ./Mono.Posix/Syscall.cs
 ./Mono.Posix/UnixEndPoint.cs
+./Mono.Remoting.Channels.Unix/UnixBinaryClientFormatterSink.cs
+./Mono.Remoting.Channels.Unix/UnixBinaryClientFormatterSinkProvider.cs
+./Mono.Remoting.Channels.Unix/UnixBinaryCore.cs
+./Mono.Remoting.Channels.Unix/UnixBinaryServerFormatterSink.cs
+./Mono.Remoting.Channels.Unix/UnixBinaryServerFormatterSinkProvider.cs
 ./Mono.Remoting.Channels.Unix/UnixChannel.cs
 ./Mono.Remoting.Channels.Unix/UnixClientChannel.cs
 ./Mono.Remoting.Channels.Unix/UnixClientTransportSink.cs
