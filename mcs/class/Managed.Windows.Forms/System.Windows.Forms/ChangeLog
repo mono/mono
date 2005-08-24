@@ -1,3 +1,16 @@
+2005-08-24  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
+	-- Making Windows with Menus layout correctly --
+	* Form.cs : The first leg of the fix
+		Menu setter - adjust Client Size as needed to make space for the menu
+		SetClientSizeCore - doesn't call base version to be able to pass the 
+			menu handle to XplatUI.CalculateWindowRect
+	* Hwnd.cs: Fix for menu_height, now gets from MenuAPI.MENU
+	* XplatUIX11.cs: The critical second leg of the fix
+		GetWindowPos needs to use a recalculated client_rect
+		so that resizing the window doesn't break layout of child controls. 
+		Also a more complete rule to avoid X Server roundtrips in SetWindowPos
+		Lots of \t\n killed
+
 2005-08-23  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Label.cs: Now properly recalculates width and height on Font and Text

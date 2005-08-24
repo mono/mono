@@ -156,9 +156,9 @@ namespace System.Windows.Forms {
 		                                  EventMask.VisibilityChangeMask |
 		                                  EventMask.SubstructureNotifyMask |
 		                                  EventMask.StructureNotifyMask;
-		
+
 		static readonly object lockobj = new object ();
-		
+
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -859,7 +859,7 @@ namespace System.Windows.Forms {
 				lock (XlibLock) {
 					XNextEvent (DisplayHandle, ref xevent);
 				}
-				
+
 				switch (xevent.type) {
 					case XEventName.Expose:
 						AddExpose (xevent);
@@ -1581,7 +1581,7 @@ namespace System.Windows.Forms {
 				XSetSelectionOwner(DisplayHandle, NetAtoms[(int)NA.CLIPBOARD], IntPtr.Zero, IntPtr.Zero);
 			}
 		}
-		
+
 		internal override void CreateCaret(IntPtr handle, int width, int height) {
 			XGCValues	gc_values;
 			Hwnd		hwnd;
@@ -1665,7 +1665,7 @@ namespace System.Windows.Forms {
 					Attributes.override_redirect = true;
 				}
 			}
-			
+
 			Attributes.bit_gravity = Gravity.NorthWestGravity;
 			Attributes.win_gravity = Gravity.NorthWestGravity;
 
@@ -1711,7 +1711,7 @@ namespace System.Windows.Forms {
 
 			// for now make all windows dnd enabled
 			Dnd.SetAllowDrop (hwnd, true);
-			
+
 			return hwnd.Handle;
 		}
 
@@ -2604,12 +2604,12 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (hwnd != null) {
-				rect = hwnd.ClientRect;
-
 				x = hwnd.x;
 				y = hwnd.y;
 				width = hwnd.width;
 				height = hwnd.height;
+
+				rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle, hwnd.title_style, width, height);
 
 				client_width = rect.Width;
 				client_height = rect.Height;
@@ -2675,7 +2675,7 @@ namespace System.Windows.Forms {
 
 		internal override void GrabWindow(IntPtr handle, IntPtr confine_to_handle) {
 			Hwnd	hwnd;
-			IntPtr	confine_to_window;	
+			IntPtr	confine_to_window;
 
 			confine_to_window = IntPtr.Zero;
 
@@ -2825,7 +2825,7 @@ namespace System.Windows.Forms {
 
 			// FIXME - imlement filtering
 
-			if ((flags & (uint)PeekMessageFlags.PM_REMOVE) == 0) {		
+			if ((flags & (uint)PeekMessageFlags.PM_REMOVE) == 0) {
 				throw new NotImplementedException("PeekMessage PM_NOREMOVE is not implemented yet");	// FIXME - Implement PM_NOREMOVE flag
 			}
 
@@ -2936,7 +2936,7 @@ namespace System.Windows.Forms {
 			gc = XCreateGC(DisplayHandle, hwnd.client_window, 0, ref gc_values);
 
 			XCopyArea(DisplayHandle, hwnd.client_window, hwnd.client_window, gc, area.X - XAmount, area.Y - YAmount, area.Width, area.Height, area.X, area.Y);
-			
+
 			// Generate an expose for the area exposed by the horizontal scroll
 			if (XAmount > 0) {
 				hwnd.AddInvalidArea (area.X, area.Y, XAmount, area.Height);
@@ -2959,7 +2959,7 @@ namespace System.Windows.Forms {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.GetObjectFromWindow(handle);
-	
+
 			ScrollWindow(handle, hwnd.ClientRect, XAmount, YAmount, with_children);
 		}
 
@@ -3188,10 +3188,6 @@ namespace System.Windows.Forms {
 			Rectangle	client_rect;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			// Save a server roundtrip (and prevent a feedback loop)
-			if ((hwnd.x == x) && (hwnd.y == y) && (hwnd.width == width) && (hwnd.height == height)) {
-				return;
-			}
 
 			// X requires a sanity check for width & height; otherwise it dies
 			if (width < 1) {
@@ -3203,6 +3199,13 @@ namespace System.Windows.Forms {
 			}
 
 			client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle, hwnd.title_style, width, height);
+
+			// Save a server roundtrip (and prevent a feedback loop)
+			if ((hwnd.x == x) && (hwnd.y == y) && 
+				(hwnd.width == width) && (hwnd.height == height) &&
+				(hwnd.ClientRect == client_rect)) {
+				return;
+			}
 
 			lock (XlibLock) {
 				XMoveResizeWindow(DisplayHandle, hwnd.whole_window, x, y, width, height);

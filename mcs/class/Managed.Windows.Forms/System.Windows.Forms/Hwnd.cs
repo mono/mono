@@ -39,7 +39,7 @@ namespace System.Windows.Forms {
 	internal class Hwnd : IDisposable {
 		#region Local Variables
 		private static Hashtable	windows	= new Hashtable(100, 0.5f);
-		private const int	menu_height = 14;			// FIXME - Read this value from somewhere
+		//private const int	menu_height = 14;			// FIXME - Read this value from somewhere
 		private const int	caption_height = 0;			// FIXME - Read this value from somewhere
 		private const int	tool_caption_height = 0;		// FIXME - Read this value from somewhere
 
@@ -139,8 +139,13 @@ Console.WriteLine("Disposing window {0:X} (whole: {1:X})", client_window.ToInt32
 			rect = new Rectangle(client_rect.Location, client_rect.Size);
 
 			if (menu_handle != IntPtr.Zero) {
-				rect.Y -= menu_height;
-				rect.Height += menu_height;
+				MenuAPI.MENU menu = MenuAPI.GetMenuFromID (menu_handle);
+				if (menu != null) {
+					int menu_height = menu.Height;
+					rect.Y -= menu_height;
+					rect.Height += menu_height;
+				} else
+					Console.WriteLine("Hwnd.GetWindowRectangle: No MENU for menu_handle = {0}", menu_handle);
 			}
 
 			if (border_style == BorderStyle.Fixed3D) {
@@ -172,8 +177,13 @@ Console.WriteLine("Disposing window {0:X} (whole: {1:X})", client_window.ToInt32
 			rect = new Rectangle(0, 0, width, height);
 
 			if (menu_handle != IntPtr.Zero) {
-				rect.Y += menu_height;
-				rect.Height -= menu_height;
+				MenuAPI.MENU menu = MenuAPI.GetMenuFromID (menu_handle);
+				if (menu != null) {
+					int menu_height = menu.Height;
+					rect.Y += menu_height;
+					rect.Height -= menu_height;
+				} else
+					Console.WriteLine("Hwnd.GetClientRectangle: No MENU for menu_handle = {0}", menu_handle);
 			}
 
 			if (border_style == BorderStyle.Fixed3D) {

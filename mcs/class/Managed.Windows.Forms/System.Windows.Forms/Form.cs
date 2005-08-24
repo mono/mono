@@ -186,7 +186,7 @@ namespace System.Windows.Forms {
 			set {
 			}
 		}
-			
+
 		[DefaultValue(true)]
 		public bool AutoScale {
 			get {
@@ -480,21 +480,22 @@ namespace System.Windows.Forms {
 				return menu;
 			}
 
-			set {				
-				if (menu != value) {					
+			set {
+				if (menu != value) {
 					menu = value;
 
-					menu.SetForm (this);
-					MenuAPI.SetMenuBarWindow (menu.Handle, this);
-				
-					if (IsHandleCreated && menu != null) {	
-						XplatUI.SetMenu(window.Handle, menu.Handle);
-					}
+					if (menu != null) {
+						menu.SetForm (this);
+						MenuAPI.SetMenuBarWindow (menu.Handle, this);
 
-					// FIXME - Do we still need this?
-					this.SetBoundsCore(0, 0, 0, 0, BoundsSpecified.None);
+						if (IsHandleCreated) {
+							XplatUI.SetMenu (window.Handle, menu.Handle);
+						}
 
-					ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu.Handle, ClientSize.Width);
+						UpdateBounds (bounds.X, bounds.Y, bounds.Width, bounds.Height, ClientSize.Width, ClientSize.Height - 
+							ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu.Handle, ClientSize.Width));
+					} else
+						UpdateBounds ();
 				}
 			}
 		}
@@ -733,7 +734,7 @@ namespace System.Windows.Forms {
 //				}
 				cp.Width = Width;
 				cp.Height = Height;
-				
+
 				cp.Style = (int)(WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN);
 
 				switch (FormBorderStyle) {
@@ -807,7 +808,7 @@ namespace System.Windows.Forms {
 			get {
 				return new Size (250, 250);
 			}
-		}		
+		}
 
 		protected Rectangle MaximizedBounds {
 			get {
@@ -1059,8 +1060,8 @@ namespace System.Windows.Forms {
 
 				this.is_visible = visible;
 			}
-			
-			switch (StartPosition) {			
+
+			switch (StartPosition) {
 				case FormStartPosition.CenterScreen:
 					this.CenterToScreen();
 					break;
@@ -1068,12 +1069,12 @@ namespace System.Windows.Forms {
 					this.CenterToParent ();
 					break;
 			}
-						
-			
+
+
 			if (menu != null) {
 				XplatUI.SetMenu(window.Handle, menu.Handle);
 			}
-			
+
 			OnLoad(EventArgs.Empty);
 
 			// Send initial location
@@ -1168,8 +1169,8 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnPaint (PaintEventArgs pevent) {
 			base.OnPaint (pevent);
-		}		
-		
+		}
+
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnResize(EventArgs e) {
 			base.OnResize(e);
@@ -1274,7 +1275,14 @@ namespace System.Windows.Forms {
 				y = maximum_size.Height;
 			}
 
-			base.SetClientSizeCore (x, y);
+			Rectangle ClientRect = new Rectangle(0, 0, x, y);
+			Rectangle WindowRect;
+			CreateParams cp = this.CreateParams;
+
+			IntPtr menu_handle = (menu == null)?IntPtr.Zero:menu.Handle;
+
+			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, cp.ExStyle, menu_handle, out WindowRect) )
+				SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
@@ -1335,7 +1343,7 @@ namespace System.Windows.Forms {
 				case Msg.WM_NCLBUTTONDOWN: {
 					if (this.menu != null) {
 						int x = LowOrder ((int) m.LParam.ToInt32 ()) ;
-						int y = HighOrder ((int) m.LParam.ToInt32 ());						
+						int y = HighOrder ((int) m.LParam.ToInt32 ());
 						menu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, x, y, 0));
 					}
 					base.WndProc(ref m);
