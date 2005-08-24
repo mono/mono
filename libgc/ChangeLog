@@ -1,3 +1,6 @@
+2005-08-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* solaris_threads.c (GC_thread_register_foreign): Add dummy implementation.
 
 Mon Aug 22 10:41:41 BST 2005 Paolo Molaro <lupus@ximian.com>
 
