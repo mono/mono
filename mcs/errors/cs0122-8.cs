@@ -1,5 +1,5 @@
 // cs0122-8.cs: `A.member' is inaccessible due to its protection level
-//
+// Line: 17
 // NOTE: if `member' were a field or a property, this'd be CS1540
 
 using System;

@@ -1,4 +1,4 @@
-// cs0652.cs: Comparison to integral constant is useless; the constant is outside the range of type 'type'
+// cs0652.cs: Comparison to integral constant is useless; the constant is outside the range of type `byte'
 // Line: 9
 // Compiler options: -warnaserror -warn:2
 

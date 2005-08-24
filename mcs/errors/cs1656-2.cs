@@ -1,5 +1,5 @@
 // cs1656-2.cs: Cannot assign to `p' because it is a `fixed variable'
-// line: 10
+// Line: 10
 // Compiler options: -unsafe
 
 unsafe class X {

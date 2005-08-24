@@ -1,5 +1,5 @@
 // cs0038.cs: Cannot access a nonstatic member of outer type `A' via nested type `B.C'
-// line: 15
+// Line: 15
 
 public class A {
 	public int Foo { get { return 1; } }

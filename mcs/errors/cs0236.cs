@@ -1,4 +1,5 @@
 // cs0236.cs: A field initializer cannot reference the nonstatic field, method, or property `X.Foo'
+// Line: 12
 
 class X
 {

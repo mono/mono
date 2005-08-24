@@ -1,4 +1,5 @@
 // cs0625.cs: `cs0625.GValue.name': Instance field types marked with StructLayout(LayoutKind.Explicit) must have a FieldOffset attribute
+// Line: 11
 
 using System;
 using System.Runtime.InteropServices;

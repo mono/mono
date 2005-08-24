@@ -1,5 +1,5 @@
 // cs0557-2.cs: Duplicate user-defined conversion in type `C'
-// 
+// Line: 9
 class C {
 		public static bool operator != (C a, C b) 
 		{

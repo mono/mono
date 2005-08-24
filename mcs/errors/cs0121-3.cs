@@ -1,5 +1,5 @@
 // cs0121-3.cs: The call is ambigious between `IInteger.Add (int)' and `IDouble.Add (double)'
-// line 28
+// Line: 28
 
 // (note, this is taken from `13.2.5 Interface member access')
 interface IInteger {

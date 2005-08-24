@@ -1,5 +1,5 @@
 // cs0039.cs: Cannot convert type `decimal' to `string' via a built-in conversion
-// line: 8
+// Line: 8
 class A {
         public static void Main ()
         {

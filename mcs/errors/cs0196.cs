@@ -1,5 +1,5 @@
 // cs0196.cs: A pointer must be indexed by only one value
-// line: 10
+// Line: 10
 // Compiler options: -unsafe
 using System;
 

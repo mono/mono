@@ -1,4 +1,4 @@
-// cs0619-39.cs: `c.ob' is obsolete: `ooo'
+// cs0619-40.cs: `C.ob' is obsolete: `ooo'
 // Line: 13
 
 using System;

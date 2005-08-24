@@ -1,5 +1,5 @@
 // CS0230.cs: Type and identifier are both required in a foreach statement
-// Lise: 12
+// Line: 12
 
 using System;
 

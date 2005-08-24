@@ -1,5 +1,5 @@
 // cs0200.cs: Property or indexer `X.P' cannot be assigned to (it is read only)
-// line: 12
+// Line: 12
 class X {
 	static int P {
 		get {

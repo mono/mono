@@ -1,4 +1,4 @@
-// cs0136-6.cs: A local variable named `top' cannot be declared in this scope because it would give a different meaning to `top', which is already used in a `child' scope
+// cs0136-6.cs: A local variable named `top' cannot be declared in this scope because it would give a different meaning to `top', which is already used in a `parent or current' scope
 // Line: 19
 
 using System.Collections;

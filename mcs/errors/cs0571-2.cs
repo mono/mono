@@ -1,4 +1,5 @@
 // cs0571-2.cs: `System.Reflection.MemberInfo.Name.get': cannot explicitly call operator or accessor
+// Line: 8
 using System;
 
 public class EntryPoint {

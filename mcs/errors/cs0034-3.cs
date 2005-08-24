@@ -1,4 +1,4 @@
-// cs0034-2.cs : Operator '+' is ambiguous on operands of type 'Y' and 'X'
+// cs0034-2.cs : Operator `+' is ambiguous on operands of type `Y' and `X'
 // Line: 22
 public class Y {
 	public static implicit operator int (Y y) {

@@ -1,4 +1,4 @@
-// cs0652-3.cs : Comparison to integral constant is useless; the constant is outside the range of type 'ushort'
+// cs0652-3.cs : Comparison to integral constant is useless; the constant is outside the range of type `ushort'
 // Line: 11
 // Compiler options: /warn:2 /warnaserror
 using System;

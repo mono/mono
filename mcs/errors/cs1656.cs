@@ -1,5 +1,5 @@
 // cs1656.cs: Cannot assign to `m' because it is a `using variable'
-// line: 10
+// Line: 10
 using System.IO;
 
 class X {

@@ -1,4 +1,4 @@
-// cs0019-10.cs: Operator `+' cannot be applied to operands of type `A' and `B'
+// cs0019-10.cs: Operator `-' cannot be applied to operands of type `A' and `B'
 // Line : 20
 
 enum A

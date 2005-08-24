@@ -1,4 +1,5 @@
 // CS0636: The FieldOffset attribute can only be placed on members of types marked with the StructLayout(LayoutKind.Explicit)
+// Line: 10
 
 using System;
 using System.Runtime.InteropServices;
