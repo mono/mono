@@ -28,7 +28,7 @@
                     BaseAddress = "285212672"
                     CheckForOverflowUnderflow = "false"
                     ConfigurationOverrideFile = ""
-                    DefineConstants = ""
+                    DefineConstants = "NET_1_1"
                     DocumentationFile = ""
                     DebugSymbols = "true"
                     FileAlignment = "4096"
@@ -74,15 +74,24 @@
         <Files>
             <Include>
                 <File
-                    RelPath = "Assembly\Consts.cs"
+                    RelPath = "Consts.cs"
+                    Link = "..\..\build\common\Consts.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Assembly\Locale.cs"
+                    RelPath = "Locale.cs"
+                    Link = "..\..\build\common\Locale.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "MonoTODOAttribute.cs"
+                    Link = "..\..\build\common\MonoTODOAttribute.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <Folder RelPath = "Assembly\" />
                 <File
                     RelPath = "System.Drawing\Bitmap.cs"
                     SubType = "Code"
@@ -95,6 +104,11 @@
                 />
                 <File
                     RelPath = "System.Drawing\Brushes.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Drawing\carbonFunctions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -115,6 +129,16 @@
                 />
                 <File
                     RelPath = "System.Drawing\ColorTranslator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Drawing\ComIStreamMarshaler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Drawing\ComIStreamWrapper.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -590,11 +614,6 @@
                 />
                 <File
                     RelPath = "System.Drawing.Drawing2D\SmoothingMode.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "System.Drawing.Drawing2D\TODOAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
