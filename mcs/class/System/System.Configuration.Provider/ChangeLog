@@ -1,3 +1,8 @@
+2005-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ProviderException.cs: New (2.0). Seems to replace the older 
+	NotSupportedByProviderException class.
+
 2004-11-18  Lluis Sanchez Gual <lluis@novell.com>
 
 	* IProvider.cs, ProviderCollection.cs: IProvider has been Replaced by

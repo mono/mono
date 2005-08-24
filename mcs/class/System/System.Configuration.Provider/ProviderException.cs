@@ -1,12 +1,11 @@
 //
-// System.Configuration.Provider.NotSupportedByProviderException
+// System.Configuration.Provider.ProviderException
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,12 +31,29 @@
 using System.Runtime.Serialization;
 
 namespace System.Configuration.Provider {
+
 	[Serializable]
-	public class NotSupportedByProviderException : Exception {
-		public NotSupportedByProviderException () : base () {}
-		protected NotSupportedByProviderException (SerializationInfo info, StreamingContext context)  : base (info, context) {}
-		public NotSupportedByProviderException (string message) : base (message) {}
-		public NotSupportedByProviderException (string message, Exception innerException)  : base (message, innerException) {}
+	public class ProviderException : Exception {
+
+		public ProviderException ()
+			: base ()
+		{
+		}
+
+		protected ProviderException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
+		}
+
+		public ProviderException (string message)
+			: base (message)
+		{
+		}
+
+		public ProviderException (string message, Exception innerException)
+			: base (message, innerException)
+		{
+		}
 	}
 }
 #endif
