@@ -46,7 +46,7 @@ namespace Mono.Remoting.Channels.Unix
         
         public UnixClientChannel ()
         {
-            _sinkProvider = new BinaryClientFormatterSinkProvider ();
+            _sinkProvider = new UnixBinaryClientFormatterSinkProvider ();
             _sinkProvider.Next = new UnixClientTransportSinkProvider ();
         }
 
@@ -72,7 +72,7 @@ namespace Mono.Remoting.Channels.Unix
             }
             else
             {
-                _sinkProvider = new BinaryClientFormatterSinkProvider ();
+                _sinkProvider = new UnixBinaryClientFormatterSinkProvider ();
                 _sinkProvider.Next = new UnixClientTransportSinkProvider ();
             }
 

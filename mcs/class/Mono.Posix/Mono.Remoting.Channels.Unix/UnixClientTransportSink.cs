@@ -74,7 +74,7 @@ namespace Mono.Remoting.Channels.Unix
 			try
 			{
 				if (headers == null) headers = new TransportHeaders();
-				headers [CommonTransportKeys.RequestUri] = ((IMethodMessage)msg).Uri;
+				headers ["__RequestUri"] = ((IMethodMessage)msg).Uri;
 				
 				// Sends the stream using a connection from the pool
 				// and creates a WorkItem that will wait for the
@@ -161,7 +161,7 @@ namespace Mono.Remoting.Channels.Unix
 			try
 			{
 				if (requestHeaders == null) requestHeaders = new TransportHeaders();
-				requestHeaders [CommonTransportKeys.RequestUri] = ((IMethodMessage)msg).Uri;
+				requestHeaders ["__RequestUri"] = ((IMethodMessage)msg).Uri;
 				
 				// Sends the message
 				connection = UnixConnectionPool.GetConnection (_path);

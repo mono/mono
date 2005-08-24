@@ -61,7 +61,7 @@ namespace Mono.Remoting.Channels.Unix
         {
             if (serverSinkProvider == null) 
             {
-                serverSinkProvider = new BinaryServerFormatterSinkProvider ();
+                serverSinkProvider = new UnixBinaryServerFormatterSinkProvider ();
             }
             
             // Gets channel data from the chain of channel providers

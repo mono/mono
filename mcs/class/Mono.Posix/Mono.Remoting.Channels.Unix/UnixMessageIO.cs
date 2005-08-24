@@ -107,7 +107,7 @@ namespace Mono.Remoting.Channels.Unix
 			networkStream.Write(dotnetHeader, 0, dotnetHeader.Length);
 
 			// Writes header tag (0x0000 if request stream, 0x0002 if response stream)
-			if(requestHeaders[CommonTransportKeys.RequestUri]!=null) buffer [0] = (byte) 0;
+			if(requestHeaders["__RequestUri"]!=null) buffer [0] = (byte) 0;
 			else buffer[0] = (byte) 2;
 			buffer [1] = (byte) 0 ;
 
@@ -163,7 +163,7 @@ namespace Mono.Remoting.Channels.Unix
 					DictionaryEntry hdr = (DictionaryEntry)e.Current;
 					switch (hdr.Key.ToString())
 					{
-						case CommonTransportKeys.RequestUri: 
+						case "__RequestUri": 
 							networkStream.Write (msgUriTransportKey, 0, 4);
 							break;
 						case "Content-Type": 
@@ -194,7 +194,7 @@ namespace Mono.Remoting.Channels.Unix
 				StreamRead (networkStream, buffer, 1);	// byte 1
 				switch (headerType)
 				{
-					case 4: key = CommonTransportKeys.RequestUri; break;
+					case 4: key = "__RequestUri"; break;
 					case 6: key = "Content-Type"; break;
 					case 1: key = ReceiveString (networkStream, buffer); break;
 					default: throw new NotSupportedException ("Unknown header code: " + headerType);

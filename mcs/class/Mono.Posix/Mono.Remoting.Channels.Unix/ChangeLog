@@ -1,3 +1,18 @@
+2005-08-24  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* UnixServerChannel.cs:
+	* UnixClientChannel.cs: Use the internal binary formatter sink.
+	
+	* UnixBinaryServerFormatterSink.cs:
+	* UnixBinaryClientFormatterSinkProvider.cs:
+	* UnixBinaryClientFormatterSink.cs:
+	* UnixBinaryCore.cs:
+	* UnixBinaryServerFormatterSinkProvider.cs: New internal formatter sink,
+	to avoid dependency with System.Runtime.Remoting.dll.
+	
+	* UnixClientTransportSink.cs:
+	* UnixMessageIO.cs: Don't use CommonTransportKeys.
+
 2005-07-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* UnixChannel.cs, UnixClientChannel.cs, UnixClientTransportSink.cs,
