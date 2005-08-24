@@ -1,4 +1,10 @@
 
+Wed Aug 24 19:39:36 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: when running under valgrind, set the stack bottom for
+	the GC at the actual approximate stack for the app (fixes running
+	mono with valgrind).
+
 Tue Aug 23 21:38:50 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: do no break at the first valuetype to init found
