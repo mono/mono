@@ -10,6 +10,7 @@
 //
 
 using System;
+using System.ComponentModel;
 using System.Collections;
 using System.Xml.Serialization;
 using System.Xml;
@@ -203,5 +204,35 @@ namespace MonoTests.System.Xml.TestClasses
 		public string dat {
 			get { return "fff"; }
 		} 
+	}
+	
+	[XmlRoot("root")]
+	public class ListDefaults
+	{
+		public ListDefaults ()
+		{
+			ed = new SimpleClass ();
+			str = "hola";
+		}
+		
+	    public ArrayList list2;
+	    
+	    public MyList list3;
+	    
+	    public string[] list4;
+	    
+		[XmlElement("e", typeof(SimpleClass))]
+	    public ArrayList list5;
+	    
+		[DefaultValue (null)]
+	    public SimpleClass ed;
+	    
+		[DefaultValue (null)]
+	    public string str; 
+	}
+	
+	public class clsPerson
+	{
+		public IList EmailAccounts;
 	}
 }

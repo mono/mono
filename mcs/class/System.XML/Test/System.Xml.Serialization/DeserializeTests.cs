@@ -201,5 +201,27 @@ namespace MonoTests.System.XmlSerialization
 			Assertion.AssertEquals ("#1", 4, ts.elem);
 			Assertion.AssertEquals ("#2", 5, ts.attr);
 		}
+		
+		[Test]
+		public void TestDeserializeDefaults ()
+		{
+			ListDefaults d2 = (ListDefaults) Deserialize (typeof(ListDefaults), "<root/>");
+	        
+	        Assertion.AssertNotNull ("list2", d2.list2);
+	        Assertion.AssertNull ("list3", d2.list3);
+	        Assertion.AssertNull ("list4", d2.list4);
+	        Assertion.AssertNotNull ("list5", d2.list5);
+	        Assertion.AssertNotNull ("ed", d2.ed);
+	        Assertion.AssertNotNull ("str", d2.str);
+	        
+			d2 = (ListDefaults) Deserialize (typeof(ListDefaults), "<root></root>");
+	        
+	        Assertion.AssertNotNull ("2 list2", d2.list2);
+	        Assertion.AssertNull ("2 list3", d2.list3);
+	        Assertion.AssertNull ("2 list4", d2.list4);
+	        Assertion.AssertNotNull ("2 list5", d2.list5);
+	        Assertion.AssertNotNull ("2 ed", d2.ed);
+	        Assertion.AssertNotNull ("2 str", d2.str);
+		}
 	}
 }

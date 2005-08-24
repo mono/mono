@@ -731,6 +731,17 @@ namespace MonoTests.System.XmlSerialization
 			AssertEquals(Infoset("<ReadOnlyProperties xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' />"), WriterText);
 		}
 		
+		[Test]
+		public void TestSerializeIList()
+		{
+			clsPerson k = new clsPerson();
+			k.EmailAccounts = new ArrayList();
+			k.EmailAccounts.Add("a");
+			k.EmailAccounts.Add("b");
+			Serialize (k);
+			AssertEquals (Infoset("<clsPerson xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><EmailAccounts><anyType xsi:type=\"xsd:string\">a</anyType><anyType xsi:type=\"xsd:string\">b</anyType></EmailAccounts></clsPerson>"), WriterText);
+		}
+		
 		public static string Infoset (string sx)
 		{
 			XmlDocument doc = new XmlDocument ();
