@@ -24,6 +24,7 @@ System.Drawing/TestIcon.cs
 System.Drawing.Drawing2D/TestBlend.cs
 System.Drawing.Drawing2D/TestColorBlend.cs
 System.Drawing.Drawing2D/TestHatchBrush.cs
+System.Drawing.Drawing2D/TestMatrix.cs
 System.Drawing/TestRegion.cs
 System.Drawing.Imaging/TestImageCodecInfo.cs
 System.Drawing.Imaging/TestBmpCodec.cs

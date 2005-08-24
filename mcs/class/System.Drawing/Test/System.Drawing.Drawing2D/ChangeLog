@@ -1,3 +1,7 @@
+2005-08-24 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* TestMatrix.cs: New Matrix unit case
+
 2004-06-03  Ravindra  <rkumar@novell.com>
 
 	* TestHatchBrush.cs: Added missing test cases for all the hatch
