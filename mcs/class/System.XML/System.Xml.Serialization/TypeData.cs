@@ -75,7 +75,7 @@ namespace System.Xml.Serialization
 				this.elementName = elementName;
 
 			if (sType == SchemaTypes.Array || sType == SchemaTypes.Class) {
-				hasPublicConstructor = (type.IsArray || type.GetConstructor (Type.EmptyTypes) != null || type.IsAbstract || type.IsValueType);
+				hasPublicConstructor = !type.IsInterface && (type.IsArray || type.GetConstructor (Type.EmptyTypes) != null || type.IsAbstract || type.IsValueType);
 			}
 		}
 

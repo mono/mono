@@ -401,7 +401,7 @@ namespace System.Xml.Serialization
 			}
 			else if (ob is ICollection)
 			{
-				int count = (int) listType.Type.GetProperty ("Count").GetValue(ob,null);
+				int count = (int) ob.GetType().GetProperty ("Count").GetValue(ob,null);
 				PropertyInfo itemProp = TypeData.GetIndexerProperty (listType.Type);
 				object[] index = new object[1];
 				for (int n=0; n<count; n++)

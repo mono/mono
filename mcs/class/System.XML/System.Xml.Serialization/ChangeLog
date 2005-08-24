@@ -1,3 +1,14 @@
+2005-08-24  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* TypeData.cs: Reset the hasPublicConstructor flag when the
+	type is an interface.
+	* XmlSerializationWriterInterpreter.cs: Get the Count property
+	from the object type instead of the property type (it didn't
+	work for IList). 
+	* ReflectionHelper.cs: In CheckSerializableType, don't trow
+	if the type is a collection interface. All this fixes
+	bug #75855.
+
 2005-08-06  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlTypeMapping.cs: Added null check.

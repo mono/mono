@@ -78,7 +78,7 @@ namespace System.Xml.Serialization
 			if (!allowPrivateConstructors && type.GetConstructor (Type.EmptyTypes) == null && !type.IsAbstract && !type.IsValueType)
 				throw new InvalidOperationException (type.FullName + " cannot be serialized because it does not have a default public constructor");
 				
-			if (type.IsInterface)
+			if (type.IsInterface && !TypeTranslator.GetTypeData (type).IsListType)
 				throw new InvalidOperationException (type.FullName + " cannot be serialized because it is an interface");
 				
 			Type t = type;
