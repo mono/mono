@@ -1,3 +1,12 @@
+2005-08-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_local_regalloc): Avoid allocating dreg and sreg1/2
+	to the same register if dreg is just a base register.
+	(print_ins): Improve printing of membase opcodes.
+
+	* inssel-x86.brg: Add optimized ldind(reg) rules.
+
+	* mini-x86.c cpu-pentium.md: Changes required to support the new rules.
 
 Wed Aug 24 19:39:36 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
