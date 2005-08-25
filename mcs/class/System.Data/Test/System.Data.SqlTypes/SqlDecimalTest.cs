@@ -41,7 +41,8 @@ using System.Globalization;
 namespace MonoTests.System.Data.SqlTypes
 {
 	[TestFixture]
-        public class SqlDecimalTest : Assertion {
+        public class SqlDecimalTest 
+	{
 
 		private SqlDecimal Test1;
         	private SqlDecimal Test2;
@@ -64,58 +65,58 @@ namespace MonoTests.System.Data.SqlTypes
                 {
                 	// SqlDecimal (decimal)
 			SqlDecimal Test = new SqlDecimal (30.3098m);
-                	AssertEquals ("#A01", (decimal)30.3098, Test.Value);
+                	Assert.AreEqual ((decimal)30.3098, Test.Value, "#A01");
                 	
                 	try {
                                 decimal d = Decimal.MaxValue;
                 		SqlDecimal test = new SqlDecimal (d + 1);
-                		Fail ("#A02");                		
+                		Assert.Fail ("#A02");                		
                 	} catch (Exception e) {
-                		AssertEquals ("#A03", typeof (OverflowException), e.GetType ());
+                		Assert.AreEqual (typeof (OverflowException), e.GetType (), "#A03");
                 	}
                 	
                 	// SqlDecimal (double)
                 	Test = new SqlDecimal (10E+10d);
-                	AssertEquals ("#A05", 100000000000.00000m, Test.Value);
+                	Assert.AreEqual (100000000000.00000m, Test.Value, "#A05");
                 	
                 	try {
                 		SqlDecimal test = new SqlDecimal (10E+200d);
-                		Fail ("#A06");                		
+                		Assert.Fail ("#A06");                		
                 	} catch (Exception e) {
-                		AssertEquals ("#A07", typeof (OverflowException), e.GetType ());
+                		Assert.AreEqual (typeof (OverflowException), e.GetType (), "#A07");
                 	}
                 	
                 	// SqlDecimal (int)
                 	Test = new SqlDecimal (-1);
-                	AssertEquals ("#A08", -1m, Test.Value);
+                	Assert.AreEqual (-1m, Test.Value, "#A08");
                 
 			// SqlDecimal (long)
                 	Test = new SqlDecimal ((long)(-99999));
-                	AssertEquals ("#A09", -99999m, Test.Value);
+                	Assert.AreEqual (-99999m, Test.Value, "#A09");
                 
                 	// SqlDecimal (byte, byte, bool. int[]
                  	Test = new SqlDecimal (10, 3, false, new int [4] {200, 1, 0, 0});
-                	AssertEquals ("#A10", -4294967.496m, Test.Value);
+                	Assert.AreEqual (-4294967.496m, Test.Value, "#A10");
                 	
                 	try {                		
                 		Test = new SqlDecimal (100, 100, false, 
                 		                       new int [4] {Int32.MaxValue, 
                 		                       Int32.MaxValue, Int32.MaxValue, 
                 		                       Int32.MaxValue});
-                		Fail ("#A11");
+                		Assert.Fail ("#A11");
                 	} catch (SqlTypeException) {
                 	}
 
 			// sqlDecimal (byte, byte, bool, int, int, int, int)
 			Test = new SqlDecimal (12, 2, true, 100, 100, 0, 0);
-                	AssertEquals ("#A13", 4294967297.00m, Test.Value);
+                	Assert.AreEqual (4294967297.00m, Test.Value, "#A13");
                 	
                 	try {                		
                 		Test = new SqlDecimal (100, 100, false, 
                 		                       Int32.MaxValue, 
                 		                       Int32.MaxValue, Int32.MaxValue, 
                 		                       Int32.MaxValue);
-                		Fail ("#A14");
+                		Assert.Fail ("#A14");
                 	} catch (SqlTypeException) {
                 	}                	
                 }
@@ -124,16 +125,16 @@ namespace MonoTests.System.Data.SqlTypes
 		[Test]
                 public void PublicFields()
                 {
-                        AssertEquals ("#B01", (byte)38, SqlDecimal.MaxPrecision);
-                        AssertEquals ("#B02", (byte)38, SqlDecimal.MaxScale);
+                        Assert.AreEqual ((byte)38, SqlDecimal.MaxPrecision, "#B01");
+                        Assert.AreEqual ((byte)38, SqlDecimal.MaxScale, "#B02");
                         
                         // FIXME: on windows: Conversion overflow
-			AssertEquals  ("#B03a", 1262177448, SqlDecimal.MaxValue.Data [3]);
+			Assert.AreEqual  (1262177448, SqlDecimal.MaxValue.Data [3], "#B03a");
 
 
-                        AssertEquals ("#B04", 1262177448, SqlDecimal.MinValue.Data [3]);
-                	Assert ("#B05", SqlDecimal.Null.IsNull);
-                	Assert ("#B06", !Test1.IsNull);
+                        Assert.AreEqual (1262177448, SqlDecimal.MinValue.Data [3], "#B04");
+                	Assert.IsTrue (SqlDecimal.Null.IsNull, "#B05");
+                	Assert.IsTrue (!Test1.IsNull, "#B06");
                 }
 
                 // Test properties
@@ -141,20 +142,20 @@ namespace MonoTests.System.Data.SqlTypes
                 public void Properties()
                 {
                 	byte[] b = Test1.BinData;
-                	AssertEquals ("#C01", (byte)64, b [0]);
+                	Assert.AreEqual ((byte)64, b [0], "#C01");
                 	
                 	int[] i = Test1.Data;
-                	AssertEquals ("#C02", 64646464, i [0]);
+                	Assert.AreEqual (64646464, i [0], "#C02");
                 
-                        Assert ("#C03", SqlDecimal.Null.IsNull);
-                        Assert ("#C04", Test1.IsPositive);
-                        Assert ("#C05", !Test4.IsPositive);
-                        AssertEquals ("#C06", (byte)8, Test1.Precision);
-                	AssertEquals ("#C07", (byte)2, Test2.Scale);
-                	AssertEquals ("#C08", 6464.6464m, Test1.Value); 
-                	AssertEquals ("#C09", (byte)4, Test1.Scale);
-                        AssertEquals ("#C10", (byte)7, Test2.Precision);
-                        AssertEquals ("#C11", (byte)1, Test4.Precision);
+                        Assert.IsTrue (SqlDecimal.Null.IsNull, "#C03");
+                        Assert.IsTrue (Test1.IsPositive, "#C04");
+                        Assert.IsTrue (!Test4.IsPositive, "#C05");
+                        Assert.AreEqual ((byte)8, Test1.Precision, "#C06");
+                	Assert.AreEqual ((byte)2, Test2.Scale, "#C07");
+                	Assert.AreEqual (6464.6464m, Test1.Value, "#C08"); 
+                	Assert.AreEqual ((byte)4, Test1.Scale, "#C09");
+                        Assert.AreEqual ((byte)7, Test2.Precision, "#C10");
+                        Assert.AreEqual ((byte)1, Test4.Precision, "#C11");
                 }
 
                 // PUBLIC METHODS
@@ -164,90 +165,90 @@ namespace MonoTests.System.Data.SqlTypes
                 {
 
 			// Abs
-			AssertEquals ("#D01", (SqlDecimal)6m, SqlDecimal.Abs (Test4));
-                	AssertEquals ("#D02", new SqlDecimal (6464.6464m).Value, SqlDecimal.Abs (Test1).Value);
+			Assert.AreEqual ((SqlDecimal)6m, SqlDecimal.Abs (Test4), "#D01");
+                	Assert.AreEqual (new SqlDecimal (6464.6464m).Value, SqlDecimal.Abs (Test1).Value, "#D02");
                 	
-                	AssertEquals ("#D03", SqlDecimal.Null, SqlDecimal.Abs (SqlDecimal.Null));
+                	Assert.AreEqual (SqlDecimal.Null, SqlDecimal.Abs (SqlDecimal.Null), "#D03");
                 	
                         // Add()
-                        AssertEquals ("#D04", 16464.6464m, SqlDecimal.Add (Test1, Test2).Value);
+                        Assert.AreEqual (16464.6464m, SqlDecimal.Add (Test1, Test2).Value, "#D04");
 
                         try {
                                 SqlDecimal test = SqlDecimal.Add (SqlDecimal.MaxValue, SqlDecimal.MaxValue);
-                                Fail ("#D05");
+                                Assert.Fail ("#D05");
                         } catch (OverflowException) {
                         }
                         
-			AssertEquals ("#D07", (SqlDecimal)6465m, SqlDecimal.Ceiling(Test1));
-                	AssertEquals ("#D08", SqlDecimal.Null, SqlDecimal.Ceiling(SqlDecimal.Null));
+			Assert.AreEqual ((SqlDecimal)6465m, SqlDecimal.Ceiling(Test1), "#D07");
+                	Assert.AreEqual (SqlDecimal.Null, SqlDecimal.Ceiling(SqlDecimal.Null), "#D08");
                 	
                         // Divide()
-                        AssertEquals ("#D09", (SqlDecimal)(-1077.441066m), SqlDecimal.Divide (Test1, Test4));
-                        AssertEquals ("#D10", 1.54687501546m, SqlDecimal.Divide (Test2, Test1).Value);
+                        Assert.AreEqual ((SqlDecimal)(-1077.441066m), SqlDecimal.Divide (Test1, Test4), "#D09");
+                        Assert.AreEqual (1.54687501546m, SqlDecimal.Divide (Test2, Test1).Value, "#D10");
 
                         try {
                                 SqlDecimal test = SqlDecimal.Divide(Test1, new SqlDecimal(0)).Value;
-                                Fail ("#D11");
+                                Assert.Fail ("#D11");
                         } catch(Exception e) {
-                                AssertEquals ("#D12", typeof (DivideByZeroException), e.GetType ());
+                                Assert.AreEqual (typeof (DivideByZeroException), e.GetType (), "#D12");
                         }
 
-			AssertEquals ("#D13", (SqlDecimal)6464m, SqlDecimal.Floor (Test1));
+			Assert.AreEqual ((SqlDecimal)6464m, SqlDecimal.Floor (Test1), "#D13");
                 	
                         // Multiply()
-                        AssertEquals ("#D14", 64646464.000000m, SqlDecimal.Multiply (Test1, Test2).Value);
-                        AssertEquals ("#D15", -38787.8784m, SqlDecimal.Multiply (Test1, Test4).Value);
+                        Assert.AreEqual (64646464.000000m, SqlDecimal.Multiply (Test1, Test2).Value, "#D14");
+                        Assert.AreEqual (-38787.8784m, SqlDecimal.Multiply (Test1, Test4).Value, "#D15");
 
                         try {
                                 SqlDecimal test = SqlDecimal.Multiply (SqlDecimal.MaxValue, Test1);
-                                Fail ("#D16");
+                                Assert.Fail ("#D16");
                         } catch (Exception e) {
-                                AssertEquals ("#D17", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "#D17");
                         }
                         
                         // Power
-                        AssertEquals ("#D18", (SqlDecimal)41791653.0770m, SqlDecimal.Power (Test1, 2));
+                        Assert.AreEqual ((SqlDecimal)41791653.0770m, SqlDecimal.Power (Test1, 2), "#D18");
                        
                        	// Round
-                      	AssertEquals ("#D19", (SqlDecimal)6464.65m, SqlDecimal.Round (Test1, 2));
+                      	Assert.AreEqual ((SqlDecimal)6464.65m, SqlDecimal.Round (Test1, 2), "#D19");
                 	
                         // Subtract()
-                        AssertEquals ("#D20", -3535.3536m, SqlDecimal.Subtract (Test1, Test3).Value);
+                        Assert.AreEqual (-3535.3536m, SqlDecimal.Subtract (Test1, Test3).Value, "#D20");
 
                         try {
                                 SqlDecimal test = SqlDecimal.Subtract(SqlDecimal.MinValue, SqlDecimal.MaxValue);
-                                Fail ("#D21");
+                                Assert.Fail ("#D21");
                         } catch (Exception e) {
-                                AssertEquals ("#D22", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "#D22");
                         }                           
                         
-                        AssertEquals ("#D23", (SqlInt32)1, SqlDecimal.Sign (Test1));
-                        AssertEquals ("#D24", new SqlInt32(-1), SqlDecimal.Sign (Test4));
+                        Assert.AreEqual ((SqlInt32)1, SqlDecimal.Sign (Test1), "#D23");
+                        Assert.AreEqual (new SqlInt32(-1), SqlDecimal.Sign (Test4), "#D24");
                 }
 
 		[Test]
 		public void AdjustScale()
 		{
-			AssertEquals ("#E01", "6464.646400", SqlDecimal.AdjustScale (Test1, 2, false).Value.ToString ());
-			AssertEquals ("#E02", "6464.65", SqlDecimal.AdjustScale (Test1, -2, true).Value.ToString ());
-			AssertEquals ("#E03", "6464.64", SqlDecimal.AdjustScale (Test1, -2, false).Value.ToString ());
-			AssertEquals ("#E01", "10000.000000000000", SqlDecimal.AdjustScale (Test2, 10, false).Value.ToString ());
+			Assert.AreEqual ("6464.646400", SqlDecimal.AdjustScale (Test1, 2, false).Value.ToString (), "#E01");
+			Assert.AreEqual ("6464.65", SqlDecimal.AdjustScale (Test1, -2, true).Value.ToString (), "#E02");
+			Assert.AreEqual ("6464.64", SqlDecimal.AdjustScale (Test1, -2, false).Value.ToString (), "#E03");
+			Assert.AreEqual ("10000.000000000000", SqlDecimal.AdjustScale (Test2, 10, false).Value.ToString (), "#E01");
 		}
 		
 		[Test]
 		[Category ("NotWorking")]
 		public void ConvertToPrecScale()
 		{
-			AssertEquals ("#F01", new SqlDecimal(6464.6m).Value, SqlDecimal.ConvertToPrecScale (Test1, 5, 1).Value);
+			Assert.AreEqual (new SqlDecimal(6464.6m).Value, SqlDecimal.ConvertToPrecScale (Test1, 5, 1).Value, "#F01");
 			
 			try {
 				SqlDecimal test =  SqlDecimal.ConvertToPrecScale (Test1, 6, 5);
-				Fail ("#F02");
+				Assert.Fail ("#F02");
 			} catch (Exception e) {
-				AssertEquals ("#F03", typeof (SqlTruncateException), e.GetType ());
+				Assert.AreEqual (typeof (SqlTruncateException), e.GetType (), "#F03");
 			}
 			
-			AssertEquals ("#F01", (SqlString)"10000.00", SqlDecimal.ConvertToPrecScale (Test2, 7, 2).ToSqlString ());			
+			Assert.AreEqual ((SqlString)"10000.00", SqlDecimal.ConvertToPrecScale (Test2, 7, 2).ToSqlString (), "#F01");			
 		}
 		
 		[Test]
@@ -255,35 +256,35 @@ namespace MonoTests.System.Data.SqlTypes
                 {
                         SqlString TestString = new SqlString ("This is a test");
 
-                        Assert ("#G01", Test1.CompareTo (Test3) < 0);
-                        Assert ("#G02", Test2.CompareTo (Test1) > 0);
-                        Assert ("#G03", Test2.CompareTo (Test3) == 0);
-                        Assert ("#G04", Test4.CompareTo (SqlDecimal.Null) > 0);
+                        Assert.IsTrue (Test1.CompareTo (Test3) < 0, "#G01");
+                        Assert.IsTrue (Test2.CompareTo (Test1) > 0, "#G02");
+                        Assert.IsTrue (Test2.CompareTo (Test3) == 0, "#G03");
+                        Assert.IsTrue (Test4.CompareTo (SqlDecimal.Null) > 0, "#G04");
 
                         try {
                                 Test1.CompareTo (TestString);
-                                Fail("#G05");
+                                Assert.Fail("#G05");
                         } catch(Exception e) {
-                                AssertEquals ("#G06", typeof (ArgumentException), e.GetType ());
+                                Assert.AreEqual (typeof (ArgumentException), e.GetType (), "#G06");
                         }
                 }
 
 		[Test]
                 public void EqualsMethods()
                 {
-                        Assert ("#H01", !Test1.Equals (Test2));
-                        Assert ("#H02", !Test2.Equals (new SqlString ("TEST")));
-                        Assert ("#H03", Test2.Equals (Test3));
+                        Assert.IsTrue (!Test1.Equals (Test2), "#H01");
+                        Assert.IsTrue (!Test2.Equals (new SqlString ("TEST")), "#H02");
+                        Assert.IsTrue (Test2.Equals (Test3), "#H03");
 
                         // Static Equals()-method
-                        Assert ("#H05", SqlDecimal.Equals (Test2, Test2).Value);
-                        Assert ("#H06", !SqlDecimal.Equals (Test1, Test2).Value);
+                        Assert.IsTrue (SqlDecimal.Equals (Test2, Test2).Value, "#H05");
+                        Assert.IsTrue (!SqlDecimal.Equals (Test1, Test2).Value, "#H06");
                 	
                 	// NotEquals
-                        Assert ("#H07", SqlDecimal.NotEquals (Test1, Test2).Value);
-                        Assert ("#H08", SqlDecimal.NotEquals (Test4, Test1).Value);
-                        Assert ("#H09", !SqlDecimal.NotEquals (Test2, Test3).Value);
-                        Assert ("#H10", SqlDecimal.NotEquals (SqlDecimal.Null, Test3).IsNull);                 
+                        Assert.IsTrue (SqlDecimal.NotEquals (Test1, Test2).Value, "#H07");
+                        Assert.IsTrue (SqlDecimal.NotEquals (Test4, Test1).Value, "#H08");
+                        Assert.IsTrue (!SqlDecimal.NotEquals (Test2, Test3).Value, "#H09");
+                        Assert.IsTrue (SqlDecimal.NotEquals (SqlDecimal.Null, Test3).IsNull, "#H10");                 
                 }
 
 		/* Don't do such environment-dependent test. It will never succeed under Portable.NET and MS.NET
@@ -291,45 +292,45 @@ namespace MonoTests.System.Data.SqlTypes
                 public void GetHashCodeTest()
                 {
                         // FIXME: Better way to test HashCode
-                        AssertEquals ("#I01", -1281249885, Test1.GetHashCode ());
+                        Assert.AreEqual (-1281249885, Test1.GetHashCode (), "#I01");
                 }
 		*/
 
 		[Test]
                 public void GetTypeTest()
                 {
-                        AssertEquals ("#J01", "System.Data.SqlTypes.SqlDecimal", 
-                                      Test1.GetType ().ToString ());
-                        AssertEquals ("#J02", "System.Decimal", Test1.Value.GetType ().ToString ());
+                        Assert.AreEqual ("System.Data.SqlTypes.SqlDecimal", 
+                                      Test1.GetType ().ToString (), "#J01");
+                        Assert.AreEqual ("System.Decimal", Test1.Value.GetType ().ToString (), "#J02");
                 }
 
 		[Test]
                 public void Greaters()
                 {
                         // GreateThan ()
-                        Assert ("#K01", !SqlDecimal.GreaterThan (Test1, Test2).Value);
-                        Assert ("#K02", SqlDecimal.GreaterThan (Test2, Test1).Value);
-                        Assert ("#K03", !SqlDecimal.GreaterThan (Test2, Test3).Value);
+                        Assert.IsTrue (!SqlDecimal.GreaterThan (Test1, Test2).Value, "#K01");
+                        Assert.IsTrue (SqlDecimal.GreaterThan (Test2, Test1).Value, "#K02");
+                        Assert.IsTrue (!SqlDecimal.GreaterThan (Test2, Test3).Value, "#K03");
 
                         // GreaterTharOrEqual ()
-                        Assert ("#K04", !SqlDecimal.GreaterThanOrEqual (Test1, Test2).Value);
-                        Assert ("#K05", SqlDecimal.GreaterThanOrEqual (Test2, Test1).Value);
-                        Assert ("#K06", SqlDecimal.GreaterThanOrEqual (Test2, Test3).Value);
+                        Assert.IsTrue (!SqlDecimal.GreaterThanOrEqual (Test1, Test2).Value, "#K04");
+                        Assert.IsTrue (SqlDecimal.GreaterThanOrEqual (Test2, Test1).Value, "#K05");
+                        Assert.IsTrue (SqlDecimal.GreaterThanOrEqual (Test2, Test3).Value, "#K06");
                 }
 
 		[Test]
                 public void Lessers()
                 {
                         // LessThan()
-                        Assert ("#L01", !SqlDecimal.LessThan (Test3, Test2).Value);
-                        Assert ("#L02", !SqlDecimal.LessThan (Test2, Test1).Value);
-                        Assert ("#L03", SqlDecimal.LessThan (Test1, Test2).Value);
+                        Assert.IsTrue (!SqlDecimal.LessThan (Test3, Test2).Value, "#L01");
+                        Assert.IsTrue (!SqlDecimal.LessThan (Test2, Test1).Value, "#L02");
+                        Assert.IsTrue (SqlDecimal.LessThan (Test1, Test2).Value, "#L03");
 
                         // LessThanOrEqual ()
-                        Assert ("#L04", SqlDecimal.LessThanOrEqual (Test1, Test2).Value);
-                        Assert ("#L05", !SqlDecimal.LessThanOrEqual (Test2, Test1).Value);
-                        Assert ("#L06", SqlDecimal.LessThanOrEqual (Test2, Test3).Value);
-                        Assert ("#L07", SqlDecimal.LessThanOrEqual (Test1, SqlDecimal.Null).IsNull);
+                        Assert.IsTrue (SqlDecimal.LessThanOrEqual (Test1, Test2).Value, "#L04");
+                        Assert.IsTrue (!SqlDecimal.LessThanOrEqual (Test2, Test1).Value, "#L05");
+                        Assert.IsTrue (SqlDecimal.LessThanOrEqual (Test2, Test3).Value, "#L06");
+                        Assert.IsTrue (SqlDecimal.LessThanOrEqual (Test1, SqlDecimal.Null).IsNull, "#L07");
                 }
 
 		[Test]
@@ -338,34 +339,34 @@ namespace MonoTests.System.Data.SqlTypes
                 {
                         try {
                                 SqlDecimal.Parse (null);
-                                Fail ("#m01");
+                                Assert.Fail ("#m01");
                         } catch (Exception e) {
-                                AssertEquals ("#M02", typeof (ArgumentNullException), e.GetType ());
+                                Assert.AreEqual (typeof (ArgumentNullException), e.GetType (), "#M02");
                         }
 
                         try {
                                 SqlDecimal.Parse ("not-a-number");
-                                Fail ("#M03");
+                                Assert.Fail ("#M03");
                         } catch (Exception e) {
-                                AssertEquals ("#M04", typeof (FormatException), e.GetType ());
+                                Assert.AreEqual (typeof (FormatException), e.GetType (), "#M04");
                         }
 
                          try {
                                 SqlDecimal test = SqlDecimal.Parse ("9e300");
-                                Fail ("#M05");
+                                Assert.Fail ("#M05");
                         } catch (FormatException) {
                         }
 
-                        AssertEquals("#M07", 150m, SqlDecimal.Parse ("150").Value);
+                        Assert.AreEqual(150m, SqlDecimal.Parse ("150").Value, "#M07");
 
 			// decimal.Parse() does not pass this string.
 			string max  = "99999999999999999999999999999999999999";
 			SqlDecimal dx = SqlDecimal.Parse (max);
-			AssertEquals ("#M08", max, dx.ToString ());
+			Assert.AreEqual (max, dx.ToString (), "#M08");
 
 			try {
 				dx = SqlDecimal.Parse (max + ".0");
-				Fail ("#M09");
+				Assert.Fail ("#M09");
 			} catch (FormatException) {
 			}
                 }
@@ -374,86 +375,86 @@ namespace MonoTests.System.Data.SqlTypes
                 public void Conversions()
                 {
                 	// ToDouble
-                	AssertEquals ("N01", 6464.6464, Test1.ToDouble ());
+                	Assert.AreEqual (6464.6464, Test1.ToDouble (), "N01");
                 	
                         // ToSqlBoolean ()
-                       	AssertEquals ("#N02", new SqlBoolean(1), Test1.ToSqlBoolean ());
+                       	Assert.AreEqual (new SqlBoolean(1), Test1.ToSqlBoolean (), "#N02");
                         
                         SqlDecimal Test = new SqlDecimal (0);
-                        Assert ("#N03", !Test.ToSqlBoolean ().Value);
+                        Assert.IsTrue (!Test.ToSqlBoolean ().Value, "#N03");
                 	
                 	Test = new SqlDecimal (0);
-                	Assert ("#N04", !Test.ToSqlBoolean ().Value);
-                        Assert ("#N05", SqlDecimal.Null.ToSqlBoolean ().IsNull);
+                	Assert.IsTrue (!Test.ToSqlBoolean ().Value, "#N04");
+                        Assert.IsTrue (SqlDecimal.Null.ToSqlBoolean ().IsNull, "#N05");
 
                         // ToSqlByte ()
                         Test = new SqlDecimal (250);
-                        AssertEquals ("#N06", (byte)250, Test.ToSqlByte ().Value);
+                        Assert.AreEqual ((byte)250, Test.ToSqlByte ().Value, "#N06");
 
                         try {
                                 SqlByte b = (byte)Test2.ToSqlByte ();
-                                Fail ("#N07");
+                                Assert.Fail ("#N07");
                         } catch (Exception e) {
-                                AssertEquals ("#N08", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "#N08");
                         }
 
                         // ToSqlDouble ()
-                        AssertEquals ("#N09", (SqlDouble)6464.6464, Test1.ToSqlDouble ());
+                        Assert.AreEqual ((SqlDouble)6464.6464, Test1.ToSqlDouble (), "#N09");
 
                         // ToSqlInt16 ()
-                        AssertEquals ("#N10", (short)1, new SqlDecimal (1).ToSqlInt16 ().Value);
+                        Assert.AreEqual ((short)1, new SqlDecimal (1).ToSqlInt16 ().Value, "#N10");
 
                         try {
                                 SqlInt16 test = SqlDecimal.MaxValue.ToSqlInt16().Value;
-                                Fail ("#N11");
+                                Assert.Fail ("#N11");
                         } catch (Exception e) {
-                                AssertEquals ("#N12", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "#N12");
                         }        
 
                         // ToSqlInt32 () 
                         // LAMESPEC: 6464.6464 --> 64646464 ??? with windows
 			// MS.NET seems to return the first 32 bit integer (i.e. 
 			// Data [0]) but we don't have to follow such stupidity.
-//			AssertEquals ("#N13a", (int)64646464, Test1.ToSqlInt32 ().Value);
-//			AssertEquals ("#N13b", (int)1212, new SqlDecimal(12.12m).ToSqlInt32 ().Value);
+//			Assert.AreEqual ((int)64646464, Test1.ToSqlInt32 ().Value, "#N13a");
+//			Assert.AreEqual ((int)1212, new SqlDecimal(12.12m).ToSqlInt32 ().Value, "#N13b");
                 	
                         try {
                                 SqlInt32 test = SqlDecimal.MaxValue.ToSqlInt32 ().Value;
-                                Fail ("#N14");
+                                Assert.Fail ("#N14");
                         } catch (Exception e) { 
-                                AssertEquals ("#N15", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "#N15");
                         }
 
                         // ToSqlInt64 ()
-                        AssertEquals ("#N16", (long)6464, Test1.ToSqlInt64 ().Value);
+                        Assert.AreEqual ((long)6464, Test1.ToSqlInt64 ().Value, "#N16");
 
                         // ToSqlMoney ()
-                        AssertEquals ("#N17", (decimal)6464.6464, Test1.ToSqlMoney ().Value);
+                        Assert.AreEqual ((decimal)6464.6464, Test1.ToSqlMoney ().Value, "#N17");
 
                         try {
                                 SqlMoney test = SqlDecimal.MaxValue.ToSqlMoney ().Value;
-                                Fail ("#N18");
+                                Assert.Fail ("#N18");
                         } catch (Exception e) {
-                                AssertEquals ("#N19", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "#N19");
                         }        
 
                         // ToSqlSingle ()
-                        AssertEquals ("#N20", (float)6464.6464, Test1.ToSqlSingle ().Value);
+                        Assert.AreEqual ((float)6464.6464, Test1.ToSqlSingle ().Value, "#N20");
 
                         // ToSqlString ()
-                        AssertEquals ("#N21", "6464.6464", Test1.ToSqlString ().Value);
+                        Assert.AreEqual ("6464.6464", Test1.ToSqlString ().Value, "#N21");
 
                         // ToString ()
-                        AssertEquals ("#N22", "6464.6464", Test1.ToString ());                        
-			AssertEquals ("#N23", (SqlDouble)1E+38, SqlDecimal.MaxValue.ToSqlDouble ());
+                        Assert.AreEqual ("6464.6464", Test1.ToString (), "#N22");                        
+			Assert.AreEqual ((SqlDouble)1E+38, SqlDecimal.MaxValue.ToSqlDouble (), "#N23");
 
                 }
                 
 		[Test]
                 public void Truncate()
                 {
-//                	AssertEquals ("#O01", new SqlDecimal (6464.6400m).Value, SqlDecimal.Truncate (Test1, 2).Value);
-                	AssertEquals ("#O01", 6464.6400m, SqlDecimal.Truncate (Test1, 2).Value);
+//                	Assert.AreEqual (new SqlDecimal (6464.6400m).Value, SqlDecimal.Truncate (Test1, 2).Value, "#O01");
+                	Assert.AreEqual (6464.6400m, SqlDecimal.Truncate (Test1, 2).Value, "#O01");
                 }
                 
                 // OPERATORS
@@ -463,46 +464,46 @@ namespace MonoTests.System.Data.SqlTypes
                 public void ArithmeticOperators()
                 {
                         // "+"-operator
-                        AssertEquals ("#P01", new SqlDecimal(16464.6464m), Test1 + Test2);
+                        Assert.AreEqual (new SqlDecimal(16464.6464m), Test1 + Test2, "#P01");
      
                         try {
                                 SqlDecimal test = SqlDecimal.MaxValue + SqlDecimal.MaxValue;
-                                Fail ("#P02");
+                                Assert.Fail ("#P02");
                         } catch (Exception e) {
-                                AssertEquals ("#P03", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "#P03");
                         }
 
                         // "/"-operator
-                        AssertEquals ("#P04", (SqlDecimal)1.54687501546m, Test2 / Test1);
+                        Assert.AreEqual ((SqlDecimal)1.54687501546m, Test2 / Test1, "#P04");
 
                         try {
                                 SqlDecimal test = Test3 / new SqlDecimal (0);
-                                Fail ("#P05");
+                                Assert.Fail ("#P05");
                         } catch (Exception e) {
-                                AssertEquals ("#P06", typeof (DivideByZeroException), e.GetType ());
+                                Assert.AreEqual (typeof (DivideByZeroException), e.GetType (), "#P06");
                         }
 
                         // "*"-operator
-                        AssertEquals ("#P07", (SqlDecimal)64646464m, Test1 * Test2);
+                        Assert.AreEqual ((SqlDecimal)64646464m, Test1 * Test2, "#P07");
 
                         try {
                                 SqlDecimal test = SqlDecimal.MaxValue * Test1;
-                                Fail ("#P08");
+                                Assert.Fail ("#P08");
                         } catch (Exception e) {
-                                AssertEquals ("#P09", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "#P09");
                         }
 
                         // "-"-operator
-                        AssertEquals ("#P10", (SqlDecimal)3535.3536m, Test2 - Test1);
+                        Assert.AreEqual ((SqlDecimal)3535.3536m, Test2 - Test1, "#P10");
 
                         try {
                                 SqlDecimal test = SqlDecimal.MinValue - SqlDecimal.MaxValue;
-                                Fail ("#P11");
+                                Assert.Fail ("#P11");
                         } catch  (Exception e) {
-                                AssertEquals ("#P12", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "#P12");
                         }
                         
-                        AssertEquals ("#P13", SqlDecimal.Null, SqlDecimal.Null + Test1);
+                        Assert.AreEqual (SqlDecimal.Null, SqlDecimal.Null + Test1, "#P13");
                 }
 
 		[Test]
@@ -510,47 +511,47 @@ namespace MonoTests.System.Data.SqlTypes
                 {
 
                         // == -operator
-                        Assert ("#Q01", (Test2 == Test3).Value);
-                        Assert ("#Q02", !(Test1 == Test2).Value);
-                        Assert ("#Q03", (Test1 == SqlDecimal.Null).IsNull);
+                        Assert.IsTrue ((Test2 == Test3).Value, "#Q01");
+                        Assert.IsTrue (!(Test1 == Test2).Value, "#Q02");
+                        Assert.IsTrue ((Test1 == SqlDecimal.Null).IsNull, "#Q03");
                         
                         // != -operator
-                        Assert ("#Q04", !(Test2 != Test3).Value);
-                        Assert ("#Q05", (Test1 != Test3).Value);
-                        Assert ("#Q06", (Test4 != Test3).Value);
-                        Assert ("#Q07", (Test1 != SqlDecimal.Null).IsNull);
+                        Assert.IsTrue (!(Test2 != Test3).Value, "#Q04");
+                        Assert.IsTrue ((Test1 != Test3).Value, "#Q05");
+                        Assert.IsTrue ((Test4 != Test3).Value, "#Q06");
+                        Assert.IsTrue ((Test1 != SqlDecimal.Null).IsNull, "#Q07");
 
                         // > -operator
-                        Assert ("#Q08", (Test2 > Test1).Value);
-                        Assert ("#Q09", !(Test1 > Test3).Value);
-                        Assert ("#Q10", !(Test2 > Test3).Value);
-                        Assert ("#Q11", (Test1 > SqlDecimal.Null).IsNull);
+                        Assert.IsTrue ((Test2 > Test1).Value, "#Q08");
+                        Assert.IsTrue (!(Test1 > Test3).Value, "#Q09");
+                        Assert.IsTrue (!(Test2 > Test3).Value, "#Q10");
+                        Assert.IsTrue ((Test1 > SqlDecimal.Null).IsNull, "#Q11");
 
                         // >=  -operator
-                        Assert ("#Q12", !(Test1 >= Test3).Value);
-                        Assert ("#Q13", (Test3 >= Test1).Value);
-                        Assert ("#Q14", (Test2 >= Test3).Value);
-                        Assert ("#Q15", (Test1 >= SqlDecimal.Null).IsNull);
+                        Assert.IsTrue (!(Test1 >= Test3).Value, "#Q12");
+                        Assert.IsTrue ((Test3 >= Test1).Value, "#Q13");
+                        Assert.IsTrue ((Test2 >= Test3).Value, "#Q14");
+                        Assert.IsTrue ((Test1 >= SqlDecimal.Null).IsNull, "#Q15");
 
                         // < -operator
-                        Assert ("#Q16", !(Test2 < Test1).Value);
-                        Assert ("#Q17", (Test1 < Test3).Value);
-                        Assert ("#Q18", !(Test2 < Test3).Value);
-                        Assert ("#Q19", (Test1 < SqlDecimal.Null).IsNull);
+                        Assert.IsTrue (!(Test2 < Test1).Value, "#Q16");
+                        Assert.IsTrue ((Test1 < Test3).Value, "#Q17");
+                        Assert.IsTrue (!(Test2 < Test3).Value, "#Q18");
+                        Assert.IsTrue ((Test1 < SqlDecimal.Null).IsNull, "#Q19");
 
                         // <= -operator
-                        Assert ("#Q20", (Test1 <= Test3).Value);
-                        Assert ("#Q21", !(Test3 <= Test1).Value);
-                        Assert ("#Q22", (Test2 <= Test3).Value);
-                        Assert ("#Q23", (Test1 <= SqlDecimal.Null).IsNull);
+                        Assert.IsTrue ((Test1 <= Test3).Value, "#Q20");
+                        Assert.IsTrue (!(Test3 <= Test1).Value, "#Q21");
+                        Assert.IsTrue ((Test2 <= Test3).Value, "#Q22");
+                        Assert.IsTrue ((Test1 <= SqlDecimal.Null).IsNull, "#Q23");
                 }
 
 		[Test]
                 public void UnaryNegation()
                 {
-                        AssertEquals ("#R01", 6m, -Test4.Value);
-                        AssertEquals ("#R02", -6464.6464m, -Test1.Value);
-                        AssertEquals ("#R03", SqlDecimal.Null, SqlDecimal.Null);
+                        Assert.AreEqual (6m, -Test4.Value, "#R01");
+                        Assert.AreEqual (-6464.6464m, -Test1.Value, "#R02");
+                        Assert.AreEqual (SqlDecimal.Null, SqlDecimal.Null, "#R03");
                 }
 
 		[Test]
@@ -561,37 +562,37 @@ namespace MonoTests.System.Data.SqlTypes
 
                         Result = (SqlDecimal)TestBoolean;
 
-                        AssertEquals ("#S01", 1m, Result.Value);
+                        Assert.AreEqual (1m, Result.Value, "#S01");
 
                         Result = (SqlDecimal)SqlBoolean.Null;
-                        Assert ("#S02", Result.IsNull);
-                	AssertEquals ("#S03", SqlDecimal.Null, (SqlDecimal)SqlBoolean.Null);
+                        Assert.IsTrue (Result.IsNull, "#S02");
+                	Assert.AreEqual (SqlDecimal.Null, (SqlDecimal)SqlBoolean.Null, "#S03");
                 }
 		
 		[Test]
 		public void SqlDecimalToDecimal()
 		{
-			AssertEquals ("#T01", 6464.6464m, (Decimal)Test1);
+			Assert.AreEqual (6464.6464m, (Decimal)Test1, "#T01");
 		}
 
 		[Test]
                 public void SqlDoubleToSqlDecimal()
                 {
                         SqlDouble Test = new SqlDouble (12E+10);
-                        AssertEquals ("#U01", 120000000000.00000m, ((SqlDecimal)Test).Value);
+                        Assert.AreEqual (120000000000.00000m, ((SqlDecimal)Test).Value, "#U01");
                 }
                 
 		[Test]
                 public void SqlSingleToSqlDecimal()
                 {
                 	SqlSingle Test = new SqlSingle (1E+9);
-                	AssertEquals ("#V01", 1000000000.0000000m, ((SqlDecimal)Test).Value);
+                	Assert.AreEqual (1000000000.0000000m, ((SqlDecimal)Test).Value, "#V01");
                 	
                 	try {
                 		SqlDecimal test = (SqlDecimal)SqlSingle.MaxValue;
-                		Fail ("#V02");
+                		Assert.Fail ("#V02");
                 	} catch (Exception e) {
-                		AssertEquals ("#V03", typeof (OverflowException), e.GetType ());
+                		Assert.AreEqual (typeof (OverflowException), e.GetType (), "#V03");
                 	}
                 }
 
@@ -601,20 +602,20 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlString TestString = new SqlString ("Test string");
                         SqlString TestString100 = new SqlString ("100");
 
-                        AssertEquals ("#W01", 100m, ((SqlDecimal)TestString100).Value);
+                        Assert.AreEqual (100m, ((SqlDecimal)TestString100).Value, "#W01");
 
                         try {
                                 SqlDecimal test = (SqlDecimal)TestString;
-                                Fail ("#W02");
+                                Assert.Fail ("#W02");
                         } catch(Exception e) {
-                                AssertEquals ("#W03", typeof (FormatException), e.GetType ());
+                                Assert.AreEqual (typeof (FormatException), e.GetType (), "#W03");
                         }
                         
                         try {
                         	SqlDecimal test = (SqlDecimal)new SqlString("9E+100");
-                        	Fail ("#W04");
+                        	Assert.Fail ("#W04");
                         } catch (Exception e) {
-                        	AssertEquals ("#W05", typeof (FormatException), e.GetType());
+                        	Assert.AreEqual (typeof (FormatException), e.GetType(), "#W05");
                         }
                 }
 
@@ -622,13 +623,13 @@ namespace MonoTests.System.Data.SqlTypes
 		public void DecimalToSqlDecimal()
 		{
 			decimal d = 1000.1m;
-			AssertEquals ("#X01", (SqlDecimal)1000.1m, (SqlDecimal)d);		
+			Assert.AreEqual ((SqlDecimal)1000.1m, (SqlDecimal)d, "#X01");		
 		}
 		
 		[Test]
                 public void ByteToSqlDecimal()
                 {                      
-                        AssertEquals ("#Y01", 255m, ((SqlDecimal)SqlByte.MaxValue).Value);
+                        Assert.AreEqual (255m, ((SqlDecimal)SqlByte.MaxValue).Value, "#Y01");
                 }
                 
 		[Test]
@@ -637,24 +638,24 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test64 = new SqlInt16 (64);
                         SqlInt32 Test640 = new SqlInt32 (640);
                         SqlInt64 Test64000 = new SqlInt64 (64000);
-                        AssertEquals ("#Z01", 64m, ((SqlDecimal)Test64).Value);
-                        AssertEquals ("#Z02", 640m,((SqlDecimal)Test640).Value);
-                        AssertEquals ("#Z03", 64000m, ((SqlDecimal)Test64000).Value);
+                        Assert.AreEqual (64m, ((SqlDecimal)Test64).Value, "#Z01");
+                        Assert.AreEqual (640m,((SqlDecimal)Test640).Value, "#Z02");
+                        Assert.AreEqual (64000m, ((SqlDecimal)Test64000).Value, "#Z03");
                 }
 
 		[Test]
                 public void SqlMoneyToSqlDecimal()
                 {
                         SqlMoney TestMoney64 = new SqlMoney(64);
-                        AssertEquals ("#AA01", 64.0000M, ((SqlDecimal)TestMoney64).Value);
+                        Assert.AreEqual (64.0000M, ((SqlDecimal)TestMoney64).Value, "#AA01");
                 }
 
 		[Test]
 		public void ToStringTest ()
 		{
-			AssertEquals ("#01", "Null", SqlDecimal.Null.ToString ());
-			AssertEquals ("#02", "-99999999999999999999999999999999999999", SqlDecimal.MinValue.ToString ());
-			AssertEquals ("#03", "99999999999999999999999999999999999999", SqlDecimal.MaxValue.ToString ());
+			Assert.AreEqual ("Null", SqlDecimal.Null.ToString (), "#01");
+			Assert.AreEqual ("-99999999999999999999999999999999999999", SqlDecimal.MinValue.ToString (), "#02");
+			Assert.AreEqual ("99999999999999999999999999999999999999", SqlDecimal.MaxValue.ToString (), "#03");
 		}
 
 		[Test]

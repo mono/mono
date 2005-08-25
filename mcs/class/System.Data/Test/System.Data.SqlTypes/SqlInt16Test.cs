@@ -39,27 +39,27 @@ using System.Data.SqlTypes;
 namespace MonoTests.System.Data.SqlTypes
 {
 	[TestFixture]
-        public class SqlInt16Test : Assertion {
+        public class SqlInt16Test {
 
                 // Test constructor
 		[Test]
                 public void Create()
                 {
                         SqlInt16 TestShort = new SqlInt16 (29);
-                        AssertEquals ("Test#1", (short)29, TestShort.Value);
+                        Assert.AreEqual ((short)29, TestShort.Value, "Test#1");
 
                         TestShort = new SqlInt16 (-9000);
-                        AssertEquals ("Test#2", (short)-9000, TestShort.Value);
+                        Assert.AreEqual ((short)-9000, TestShort.Value, "Test#2");
                 }
 
                 // Test public fields
 		[Test]
                 public void PublicFields()
                 {
-                        AssertEquals ("Test#1", (SqlInt16)32767, SqlInt16.MaxValue);
-                        AssertEquals ("Test#2", (SqlInt16)(-32768), SqlInt16.MinValue);
-                        Assert ("Test#3", SqlInt16.Null.IsNull);
-                        AssertEquals ("Test#4", (short)0, SqlInt16.Zero.Value);
+                        Assert.AreEqual ((SqlInt16)32767, SqlInt16.MaxValue, "Test#1");
+                        Assert.AreEqual ((SqlInt16)(-32768), SqlInt16.MinValue, "Test#2");
+                        Assert.IsTrue (SqlInt16.Null.IsNull, "Test#3");
+                        Assert.AreEqual ((short)0, SqlInt16.Zero.Value, "Test#4");
                 }
 
                 // Test properties
@@ -68,9 +68,9 @@ namespace MonoTests.System.Data.SqlTypes
                 {
                         SqlInt16 Test5443 = new SqlInt16 (5443);
                         SqlInt16 Test1 = new SqlInt16 (1);
-                        Assert ("Test#1", SqlInt16.Null.IsNull);
-                        AssertEquals ("Test#2", (short)5443, Test5443.Value);
-                        AssertEquals ("Test#3", (short)1, Test1.Value);
+                        Assert.IsTrue (SqlInt16.Null.IsNull, "Test#1");
+                        Assert.AreEqual ((short)5443, Test5443.Value, "Test#2");
+                        Assert.AreEqual ((short)1, Test1.Value, "Test#3");
                 }
 
                 // PUBLIC METHODS
@@ -84,57 +84,57 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 TestMax = new SqlInt16 (SqlInt16.MaxValue.Value);
 
                         // Add()
-                        AssertEquals ("Test#1", (short)64, SqlInt16.Add (Test64, Test0).Value);
-                        AssertEquals ("Test#2", (short)228, SqlInt16.Add (Test64, Test164).Value);
-                        AssertEquals ("Test#3", (short)164, SqlInt16.Add (Test0, Test164).Value);
-                        AssertEquals ("Test#4", (short)SqlInt16.MaxValue, SqlInt16.Add (TestMax, Test0).Value);
+                        Assert.AreEqual ((short)64, SqlInt16.Add (Test64, Test0).Value, "Test#1");
+                        Assert.AreEqual ((short)228, SqlInt16.Add (Test64, Test164).Value, "Test#2");
+                        Assert.AreEqual ((short)164, SqlInt16.Add (Test0, Test164).Value, "Test#3");
+                        Assert.AreEqual ((short)SqlInt16.MaxValue, SqlInt16.Add (TestMax, Test0).Value, "Test#4");
 
                         try {
                                 SqlInt16.Add (TestMax, Test64);
-                                Fail ("Test#5");
+                                Assert.Fail ("Test#5");
                         } catch (Exception e) {
-                                AssertEquals ("Test#6", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "Test#6");
                         }
 
                         // Divide()
-                        AssertEquals ("Test#7", (short)2, SqlInt16.Divide (Test164, Test64).Value);
-                        AssertEquals ("Test#8", (short)0, SqlInt16.Divide (Test64, Test164).Value);
+                        Assert.AreEqual ((short)2, SqlInt16.Divide (Test164, Test64).Value, "Test#7");
+                        Assert.AreEqual ((short)0, SqlInt16.Divide (Test64, Test164).Value, "Test#8");
                         try {
                                 SqlInt16.Divide(Test64, Test0);
-                                Fail ("Test#9");
+                                Assert.Fail ("Test#9");
                         } catch(Exception e) {
-                                AssertEquals ("Test#10", typeof (DivideByZeroException), e.GetType ());
+                                Assert.AreEqual (typeof (DivideByZeroException), e.GetType (), "Test#10");
                         }
 
                         // Mod()
-                        AssertEquals ("Test#11", (SqlInt16)36, SqlInt16.Mod (Test164, Test64));
-                        AssertEquals ("Test#12",  (SqlInt16)64, SqlInt16.Mod (Test64, Test164));
+                        Assert.AreEqual ((SqlInt16)36, SqlInt16.Mod (Test164, Test64), "Test#11");
+                        Assert.AreEqual ((SqlInt16)64, SqlInt16.Mod (Test64, Test164), "Test#12");
 
                         // Multiply()
-                        AssertEquals ("Test#13", (short)10496, SqlInt16.Multiply (Test64, Test164).Value);
-                        AssertEquals ("Test#14", (short)0, SqlInt16.Multiply (Test64, Test0).Value);
+                        Assert.AreEqual ((short)10496, SqlInt16.Multiply (Test64, Test164).Value, "Test#13");
+                        Assert.AreEqual ((short)0, SqlInt16.Multiply (Test64, Test0).Value, "Test#14");
 
                         try {
                                 SqlInt16.Multiply (TestMax, Test64);
-                                Fail ("Test#15");
+                                Assert.Fail ("Test#15");
                         } catch(Exception e) {
-                                AssertEquals ("Test#16", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "Test#16");
                         }
 
                         // Subtract()
-                        AssertEquals ("Test#17", (short)100, SqlInt16.Subtract (Test164, Test64).Value);
+                        Assert.AreEqual ((short)100, SqlInt16.Subtract (Test164, Test64).Value, "Test#17");
 
                         try {
                                 SqlInt16.Subtract (SqlInt16.MinValue, Test164);
-                                Fail("Test#18");
+                                Assert.Fail("Test#18");
                         } catch(Exception e) {
-                                AssertEquals ("Test#19", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "Test#19");
                         }
 			
 			#if NET_2_0
 			// Modulus ()
-                        AssertEquals ("Test#20", (SqlInt16)36, SqlInt16.Modulus (Test164, Test64));
-                        AssertEquals ("Test#21",  (SqlInt16)64, SqlInt16.Modulus (Test64, Test164));
+                        Assert.AreEqual ((SqlInt16)36, SqlInt16.Modulus (Test164, Test64), "Test#20");
+                        Assert.AreEqual ((SqlInt16)64, SqlInt16.Modulus (Test64, Test164), "Test#21");
 			#endif
                                                                                                     
 
@@ -150,14 +150,14 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 TestInt3 = new SqlInt16 (21845);
 
                         // BitwiseAnd
-                        AssertEquals ("Test#1", (short)21845, SqlInt16.BitwiseAnd (TestInt3, TestIntMax).Value);
-                        AssertEquals ("Test#2", (short)0, SqlInt16.BitwiseAnd (TestInt2, TestInt3).Value);
-                        AssertEquals ("Test#3", (short)10922, SqlInt16.BitwiseAnd (TestInt2, TestIntMax).Value);
+                        Assert.AreEqual ((short)21845, SqlInt16.BitwiseAnd (TestInt3, TestIntMax).Value, "Test#1");
+                        Assert.AreEqual ((short)0, SqlInt16.BitwiseAnd (TestInt2, TestInt3).Value, "Test#2");
+                        Assert.AreEqual ((short)10922, SqlInt16.BitwiseAnd (TestInt2, TestIntMax).Value, "Test#3");
 
                         //BitwiseOr
-                        AssertEquals ("Test#4", (short)MaxValue, SqlInt16.BitwiseOr (TestInt2, TestInt3).Value);
-                        AssertEquals ("Test#5", (short)21845, SqlInt16.BitwiseOr (TestInt, TestInt3).Value);
-                        AssertEquals ("Test#6", (short)MaxValue, SqlInt16.BitwiseOr (TestIntMax, TestInt2).Value);
+                        Assert.AreEqual ((short)MaxValue, SqlInt16.BitwiseOr (TestInt2, TestInt3).Value, "Test#4");
+                        Assert.AreEqual ((short)21845, SqlInt16.BitwiseOr (TestInt, TestInt3).Value, "Test#5");
+                        Assert.AreEqual ((short)MaxValue, SqlInt16.BitwiseOr (TestIntMax, TestInt2).Value, "Test#6");
                 }
 
 		[Test]
@@ -169,16 +169,16 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 TestInt10000 = new SqlInt16 (10000);
                         SqlString TestString = new SqlString ("This is a test");
 
-                        Assert ("Test#1", TestInt4000.CompareTo (TestInt10) > 0);
-                        Assert ("Test#2", TestInt10.CompareTo (TestInt4000) < 0);
-                        Assert ("Test#3", TestInt4000II.CompareTo (TestInt4000) == 0);
-                        Assert ("Test#4", TestInt4000II.CompareTo (SqlInt16.Null) > 0);
+                        Assert.IsTrue (TestInt4000.CompareTo (TestInt10) > 0, "Test#1");
+                        Assert.IsTrue (TestInt10.CompareTo (TestInt4000) < 0, "Test#2");
+                        Assert.IsTrue (TestInt4000II.CompareTo (TestInt4000) == 0, "Test#3");
+                        Assert.IsTrue (TestInt4000II.CompareTo (SqlInt16.Null) > 0, "Test#4");
 
                         try {
                                 TestInt10.CompareTo (TestString);
-                                Fail ("Test#5");
+                                Assert.Fail ("Test#5");
                         } catch(Exception e) {
-                                AssertEquals ("Test#6", typeof (ArgumentException), e.GetType ());
+                                Assert.AreEqual (typeof (ArgumentException), e.GetType (), "Test#6");
                         }
                 }
 
@@ -190,10 +190,10 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test180 = new SqlInt16 (180);
                         SqlInt16 Test180II = new SqlInt16 (180);
 
-                        Assert ("Test#1", !Test0.Equals (Test158));
-                        Assert ("Test#2", !Test158.Equals (Test180));
-                        Assert ("Test#3", !Test180.Equals (new SqlString ("TEST")));
-                        Assert ("Test#4", Test180.Equals (Test180II));
+                        Assert.IsTrue (!Test0.Equals (Test158), "Test#1");
+                        Assert.IsTrue (!Test158.Equals (Test180), "Test#2");
+                        Assert.IsTrue (!Test180.Equals (new SqlString ("TEST")), "Test#3");
+                        Assert.IsTrue (Test180.Equals (Test180II), "Test#4");
                 }
 
 		[Test]
@@ -203,9 +203,9 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test34II = new SqlInt16 (34);
                         SqlInt16 Test15 = new SqlInt16 (15);
 
-                        Assert ("Test#1", SqlInt16.Equals (Test34, Test34II).Value);
-                        Assert ("Test#2", !SqlInt16.Equals (Test34, Test15).Value);
-                        Assert ("Test#3", !SqlInt16.Equals (Test15, Test34II).Value);
+                        Assert.IsTrue (SqlInt16.Equals (Test34, Test34II).Value, "Test#1");
+                        Assert.IsTrue (!SqlInt16.Equals (Test34, Test15).Value, "Test#2");
+                        Assert.IsTrue (!SqlInt16.Equals (Test15, Test34II).Value, "Test#3");
                 }
 
 		[Test]
@@ -214,14 +214,14 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test15 = new SqlInt16 (15);
 
                         // FIXME: Better way to test GetHashCode()-methods
-                        AssertEquals ("Test#1", Test15.GetHashCode (), Test15.GetHashCode ());
+                        Assert.AreEqual (Test15.GetHashCode (), Test15.GetHashCode (), "Test#1");
                 }
 
 		[Test]
                 public void GetTypeTest()
                 {
                         SqlInt16 Test = new SqlInt16 (84);
-                        AssertEquals ("Test#1", "System.Data.SqlTypes.SqlInt16", Test.GetType ().ToString ());
+                        Assert.AreEqual ("System.Data.SqlTypes.SqlInt16", Test.GetType ().ToString (), "Test#1");
                 }
 
 		[Test]
@@ -232,14 +232,14 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test110 = new SqlInt16 (110);
 
                         // GreateThan ()
-                        Assert ("Test#1", !SqlInt16.GreaterThan (Test10, Test110).Value);
-                        Assert ("Test#2", SqlInt16.GreaterThan (Test110, Test10).Value);
-                        Assert ("Test#3", !SqlInt16.GreaterThan (Test10II, Test10).Value);
+                        Assert.IsTrue (!SqlInt16.GreaterThan (Test10, Test110).Value, "Test#1");
+                        Assert.IsTrue (SqlInt16.GreaterThan (Test110, Test10).Value, "Test#2");
+                        Assert.IsTrue (!SqlInt16.GreaterThan (Test10II, Test10).Value, "Test#3");
 
                         // GreaterTharOrEqual ()
-                        Assert ("Test#4", !SqlInt16.GreaterThanOrEqual (Test10, Test110).Value);
-                        Assert ("Test#5", SqlInt16.GreaterThanOrEqual (Test110, Test10).Value);
-                        Assert ("Test#6", SqlInt16.GreaterThanOrEqual (Test10II, Test10).Value);
+                        Assert.IsTrue (!SqlInt16.GreaterThanOrEqual (Test10, Test110).Value, "Test#4");
+                        Assert.IsTrue (SqlInt16.GreaterThanOrEqual (Test110, Test10).Value, "Test#5");
+                        Assert.IsTrue (SqlInt16.GreaterThanOrEqual (Test10II, Test10).Value, "Test#6");
                 }
 
 		[Test]
@@ -250,15 +250,15 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test110 = new SqlInt16 (110);
 
                         // LessThan()
-                        Assert ("Test#1", SqlInt16.LessThan (Test10, Test110).Value);
-                        Assert ("Test#2", !SqlInt16.LessThan (Test110, Test10).Value);
-                        Assert ("Test#3", !SqlInt16.LessThan (Test10II, Test10).Value);
+                        Assert.IsTrue (SqlInt16.LessThan (Test10, Test110).Value, "Test#1");
+                        Assert.IsTrue (!SqlInt16.LessThan (Test110, Test10).Value, "Test#2");
+                        Assert.IsTrue (!SqlInt16.LessThan (Test10II, Test10).Value, "Test#3");
 
                         // LessThanOrEqual ()
-                        Assert ("Test#4", SqlInt16.LessThanOrEqual (Test10, Test110).Value);
-                        Assert ("Test#5", !SqlInt16.LessThanOrEqual (Test110, Test10).Value);
-                        Assert ("Test#6", SqlInt16.LessThanOrEqual (Test10II, Test10).Value);
-                        Assert ("Test#7", SqlInt16.LessThanOrEqual (Test10II, SqlInt16.Null).IsNull);
+                        Assert.IsTrue (SqlInt16.LessThanOrEqual (Test10, Test110).Value, "Test#4");
+                        Assert.IsTrue (!SqlInt16.LessThanOrEqual (Test110, Test10).Value, "Test#5");
+                        Assert.IsTrue (SqlInt16.LessThanOrEqual (Test10II, Test10).Value, "Test#6");
+                        Assert.IsTrue (SqlInt16.LessThanOrEqual (Test10II, SqlInt16.Null).IsNull, "Test#7");
                 }
 
 		[Test]
@@ -268,13 +268,13 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test128 = new SqlInt16 (128);
                         SqlInt16 Test128II = new SqlInt16 (128);
 
-                        Assert ("Test#1", SqlInt16.NotEquals (Test12, Test128).Value);
-                        Assert ("Test#2", SqlInt16.NotEquals (Test128, Test12).Value);
-                        Assert ("Test#3", SqlInt16.NotEquals (Test128II, Test12).Value);
-                        Assert ("Test#4", !SqlInt16.NotEquals (Test128II, Test128).Value);
-                        Assert ("Test#5", !SqlInt16.NotEquals (Test128, Test128II).Value);
-                        Assert ("Test#6", SqlInt16.NotEquals (SqlInt16.Null, Test128II).IsNull);
-                        Assert ("Test#7", SqlInt16.NotEquals (SqlInt16.Null, Test128II).IsNull);
+                        Assert.IsTrue (SqlInt16.NotEquals (Test12, Test128).Value, "Test#1");
+                        Assert.IsTrue (SqlInt16.NotEquals (Test128, Test12).Value, "Test#2");
+                        Assert.IsTrue (SqlInt16.NotEquals (Test128II, Test12).Value, "Test#3");
+                        Assert.IsTrue (!SqlInt16.NotEquals (Test128II, Test128).Value, "Test#4");
+                        Assert.IsTrue (!SqlInt16.NotEquals (Test128, Test128II).Value, "Test#5");
+                        Assert.IsTrue (SqlInt16.NotEquals (SqlInt16.Null, Test128II).IsNull, "Test#6");
+                        Assert.IsTrue (SqlInt16.NotEquals (SqlInt16.Null, Test128II).IsNull, "Test#7");
                 }
 
 		[Test]
@@ -283,8 +283,8 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test12 = new SqlInt16(12);
                         SqlInt16 Test128 = new SqlInt16(128);
 
-                        AssertEquals ("Test#1", (SqlInt16)(-13), SqlInt16.OnesComplement (Test12));
-                        AssertEquals ("Test#2", (SqlInt16)(-129), SqlInt16.OnesComplement (Test128));
+                        Assert.AreEqual ((SqlInt16)(-13), SqlInt16.OnesComplement (Test12), "Test#1");
+                        Assert.AreEqual ((SqlInt16)(-129), SqlInt16.OnesComplement (Test128), "Test#2");
                 }
 
 		[Test]
@@ -292,27 +292,27 @@ namespace MonoTests.System.Data.SqlTypes
                 {
                         try {
                                 SqlInt16.Parse (null);
-                                Fail ("Test#1");
+                                Assert.Fail ("Test#1");
                         } catch (Exception e) {
-                                AssertEquals ("Test#2", typeof (ArgumentNullException), e.GetType ());
+                                Assert.AreEqual (typeof (ArgumentNullException), e.GetType (), "Test#2");
                         }
 
                         try {
                                 SqlInt16.Parse ("not-a-number");
-                                Fail ("Test#3");
+                                Assert.Fail ("Test#3");
                         } catch (Exception e) {
-                                AssertEquals ("Test#4", typeof (FormatException), e.GetType ());
+                                Assert.AreEqual (typeof (FormatException), e.GetType (), "Test#4");
                         }
 
                         try {
                                 int OverInt = (int)SqlInt16.MaxValue + 1;
                                 SqlInt16.Parse (OverInt.ToString ());
-                                Fail ("Test#5");
+                                Assert.Fail ("Test#5");
                         } catch (Exception e) {
-                                AssertEquals ("Test#6", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "Test#6");
                         }
 
-                        AssertEquals("Test#7", (short)150, SqlInt16.Parse ("150").Value);
+                        Assert.AreEqual((short)150, SqlInt16.Parse ("150").Value, "Test#7");
                 }
 
 		[Test]
@@ -325,60 +325,60 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test288 = new SqlInt16(288);
 
                         // ToSqlBoolean ()
-                        Assert ("TestA#1", Test12.ToSqlBoolean ().Value);
-                        Assert ("TestA#2", !Test0.ToSqlBoolean ().Value);
-                        Assert ("TestA#3", TestNull.ToSqlBoolean ().IsNull);
+                        Assert.IsTrue (Test12.ToSqlBoolean ().Value, "TestA#1");
+                        Assert.IsTrue (!Test0.ToSqlBoolean ().Value, "TestA#2");
+                        Assert.IsTrue (TestNull.ToSqlBoolean ().IsNull, "TestA#3");
 
                         // ToSqlByte ()
-                        AssertEquals ("TestB#1", (byte)12, Test12.ToSqlByte ().Value);
-                        AssertEquals ("TestB#2", (byte)0, Test0.ToSqlByte ().Value);
+                        Assert.AreEqual ((byte)12, Test12.ToSqlByte ().Value, "TestB#1");
+                        Assert.AreEqual ((byte)0, Test0.ToSqlByte ().Value, "TestB#2");
 
                         try {
                                 SqlByte b = (byte)Test1000.ToSqlByte ();
-                                Fail ("TestB#4");
+                                Assert.Fail ("TestB#4");
                         } catch (Exception e) {
-                                AssertEquals ("TestB#5", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "TestB#5");
                         }
 
                         // ToSqlDecimal ()
-                        AssertEquals ("TestC#1", (decimal)12, Test12.ToSqlDecimal ().Value);
-                        AssertEquals ("TestC#2", (decimal)0, Test0.ToSqlDecimal ().Value);
-                        AssertEquals ("TestC#3", (decimal)288, Test288.ToSqlDecimal ().Value);
+                        Assert.AreEqual ((decimal)12, Test12.ToSqlDecimal ().Value, "TestC#1");
+                        Assert.AreEqual ((decimal)0, Test0.ToSqlDecimal ().Value, "TestC#2");
+                        Assert.AreEqual ((decimal)288, Test288.ToSqlDecimal ().Value, "TestC#3");
 
                         // ToSqlDouble ()
-                        AssertEquals ("TestD#1", (double)12, Test12.ToSqlDouble ().Value);
-                        AssertEquals ("TestD#2", (double)0, Test0.ToSqlDouble ().Value);
-                        AssertEquals ("TestD#3", (double)1000, Test1000.ToSqlDouble ().Value);
+                        Assert.AreEqual ((double)12, Test12.ToSqlDouble ().Value, "TestD#1");
+                        Assert.AreEqual ((double)0, Test0.ToSqlDouble ().Value, "TestD#2");
+                        Assert.AreEqual ((double)1000, Test1000.ToSqlDouble ().Value, "TestD#3");
 
                         // ToSqlInt32 ()
-                        AssertEquals ("TestE#1", (int)12, Test12.ToSqlInt32 ().Value);
-                        AssertEquals ("TestE#2", (int)0, Test0.ToSqlInt32 ().Value);
-                        AssertEquals ("TestE#3", (int)288, Test288.ToSqlInt32().Value);
+                        Assert.AreEqual ((int)12, Test12.ToSqlInt32 ().Value, "TestE#1");
+                        Assert.AreEqual ((int)0, Test0.ToSqlInt32 ().Value, "TestE#2");
+                        Assert.AreEqual ((int)288, Test288.ToSqlInt32().Value, "TestE#3");
 
                         // ToSqlInt64 ()
-                        AssertEquals ("TestF#1", (long)12, Test12.ToSqlInt64 ().Value);
-                        AssertEquals ("TestF#2", (long)0, Test0.ToSqlInt64 ().Value);
-                        AssertEquals ("TestF#3", (long)288, Test288.ToSqlInt64 ().Value);
+                        Assert.AreEqual ((long)12, Test12.ToSqlInt64 ().Value, "TestF#1");
+                        Assert.AreEqual ((long)0, Test0.ToSqlInt64 ().Value, "TestF#2");
+                        Assert.AreEqual ((long)288, Test288.ToSqlInt64 ().Value, "TestF#3");
 
                         // ToSqlMoney ()
-                        AssertEquals ("TestG#1", 12.0000M, Test12.ToSqlMoney ().Value);
-                        AssertEquals ("TestG#2", (decimal)0, Test0.ToSqlMoney ().Value);
-                        AssertEquals ("TestG#3", 288.0000M, Test288.ToSqlMoney ().Value);
+                        Assert.AreEqual (12.0000M, Test12.ToSqlMoney ().Value, "TestG#1");
+                        Assert.AreEqual ((decimal)0, Test0.ToSqlMoney ().Value, "TestG#2");
+                        Assert.AreEqual (288.0000M, Test288.ToSqlMoney ().Value, "TestG#3");
 
                         // ToSqlSingle ()
-                        AssertEquals ("TestH#1", (float)12, Test12.ToSqlSingle ().Value);
-                        AssertEquals ("TestH#2", (float)0, Test0.ToSqlSingle ().Value);
-                        AssertEquals ("TestH#3", (float)288, Test288.ToSqlSingle().Value);
+                        Assert.AreEqual ((float)12, Test12.ToSqlSingle ().Value, "TestH#1");
+                        Assert.AreEqual ((float)0, Test0.ToSqlSingle ().Value, "TestH#2");
+                        Assert.AreEqual ((float)288, Test288.ToSqlSingle().Value, "TestH#3");
 
                         // ToSqlString ()
-                        AssertEquals ("TestI#1", "12", Test12.ToSqlString ().Value);
-                        AssertEquals ("TestI#2", "0", Test0.ToSqlString ().Value);
-                        AssertEquals ("TestI#3", "288", Test288.ToSqlString ().Value);
+                        Assert.AreEqual ("12", Test12.ToSqlString ().Value, "TestI#1");
+                        Assert.AreEqual ("0", Test0.ToSqlString ().Value, "TestI#2");
+                        Assert.AreEqual ("288", Test288.ToSqlString ().Value, "TestI#3");
 
                         // ToString ()
-                        AssertEquals ("TestJ#1", "12", Test12.ToString ());
-                        AssertEquals ("TestJ#2", "0", Test0.ToString ());
-                        AssertEquals ("TestJ#3", "288", Test288.ToString ());
+                        Assert.AreEqual ("12", Test12.ToString (), "TestJ#1");
+                        Assert.AreEqual ("0", Test0.ToString (), "TestJ#2");
+                        Assert.AreEqual ("288", Test288.ToString (), "TestJ#3");
                 }
 
 		[Test]
@@ -390,11 +390,11 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 TestMax = new SqlInt16 (SqlInt16.MaxValue.Value);
                         SqlInt16 Test0 = new SqlInt16 (0);
 
-                        AssertEquals ("Test#1", (short)52, SqlInt16.Xor (Test14, Test58).Value);
-                        AssertEquals ("Test#2", (short)140, SqlInt16.Xor (Test14, Test130).Value);
-                        AssertEquals ("Test#3", (short)184, SqlInt16.Xor (Test58, Test130).Value);
-                        AssertEquals ("Test#4", (short)0, SqlInt16.Xor (TestMax, TestMax).Value);
-                        AssertEquals ("Test#5", TestMax.Value, SqlInt16.Xor (TestMax, Test0).Value);
+                        Assert.AreEqual ((short)52, SqlInt16.Xor (Test14, Test58).Value, "Test#1");
+                        Assert.AreEqual ((short)140, SqlInt16.Xor (Test14, Test130).Value, "Test#2");
+                        Assert.AreEqual ((short)184, SqlInt16.Xor (Test58, Test130).Value, "Test#3");
+                        Assert.AreEqual ((short)0, SqlInt16.Xor (TestMax, TestMax).Value, "Test#4");
+                        Assert.AreEqual (TestMax.Value, SqlInt16.Xor (TestMax, Test0).Value, "Test#5");
                 }
 
                 // OPERATORS
@@ -408,49 +408,49 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test0 = new SqlInt16 (0);
 
                         // "+"-operator
-                        AssertEquals ("TestA#1", (SqlInt16)2614,Test2550 + Test64);
+                        Assert.AreEqual ((SqlInt16)2614,Test2550 + Test64, "TestA#1");
                         try {
                                 SqlInt16 result = Test64 + SqlInt16.MaxValue;
-                                Fail ("TestA#2");
+                                Assert.Fail ("TestA#2");
                         } catch (Exception e) {
-                                AssertEquals ("TestA#3", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "TestA#3");
                         }
 
                         // "/"-operator
-                        AssertEquals ("TestB#1", (SqlInt16)39, Test2550 / Test64);
-                        AssertEquals ("TestB#2", (SqlInt16)0, Test24 / Test64);
+                        Assert.AreEqual ((SqlInt16)39, Test2550 / Test64, "TestB#1");
+                        Assert.AreEqual ((SqlInt16)0, Test24 / Test64, "TestB#2");
 
                         try {
                                 SqlInt16 result = Test2550 / Test0;
-                                Fail ("TestB#3");
+                                Assert.Fail ("TestB#3");
                         } catch (Exception e) {
-                                AssertEquals ("TestB#4", typeof (DivideByZeroException), e.GetType ());
+                                Assert.AreEqual (typeof (DivideByZeroException), e.GetType (), "TestB#4");
                         }
 
                         // "*"-operator
-                        AssertEquals ("TestC#1", (SqlInt16)1536, Test64 * Test24);
+                        Assert.AreEqual ((SqlInt16)1536, Test64 * Test24, "TestC#1");
 
                         try {
                                 SqlInt16 test = (SqlInt16.MaxValue * Test64);
-                                Fail ("TestC#2");
+                                Assert.Fail ("TestC#2");
                         } catch (Exception e) {
-                                AssertEquals ("TestC#3", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "TestC#3");
                         }
 
                         // "-"-operator
-                        AssertEquals ("TestD#1", (SqlInt16)2526, Test2550 - Test24);
+                        Assert.AreEqual ((SqlInt16)2526, Test2550 - Test24, "TestD#1");
 
                         try {
                                 SqlInt16 test = SqlInt16.MinValue - Test64;
-                                Fail ("TestD#2");
+                                Assert.Fail ("TestD#2");
                         } catch (Exception e) {
-                                AssertEquals ("OverflowException", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "OverflowException");
                         }
 
                         // "%"-operator
-                        AssertEquals ("TestE#1", (SqlInt16)54, Test2550 % Test64);
-                        AssertEquals ("TestE#2", (SqlInt16)24, Test24 % Test64);
-                        AssertEquals ("TestE#1", (SqlInt16)0, new SqlInt16 (100) % new SqlInt16 (10));
+                        Assert.AreEqual ((SqlInt16)54, Test2550 % Test64, "TestE#1");
+                        Assert.AreEqual ((SqlInt16)24, Test24 % Test64, "TestE#2");
+                        Assert.AreEqual ((SqlInt16)0, new SqlInt16 (100) % new SqlInt16 (10), "TestE#1");
                 }
 
 		[Test]
@@ -461,18 +461,18 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test2550 = new SqlInt16 (2550);
 
                         // & -operator
-                        AssertEquals ("TestA#1", (SqlInt16)0, Test2 & Test4);
-                        AssertEquals ("TestA#2", (SqlInt16)2, Test2 & Test2550);
-                        AssertEquals ("TestA#3", (SqlInt16)0,  SqlInt16.MaxValue & SqlInt16.MinValue);
+                        Assert.AreEqual ((SqlInt16)0, Test2 & Test4, "TestA#1");
+                        Assert.AreEqual ((SqlInt16)2, Test2 & Test2550, "TestA#2");
+                        Assert.AreEqual ((SqlInt16)0,  SqlInt16.MaxValue & SqlInt16.MinValue, "TestA#3");
 
                         // | -operator
-                        AssertEquals ("TestB#1", (SqlInt16)6,Test2 | Test4);
-                        AssertEquals ("TestB#2", (SqlInt16)2550, Test2 | Test2550);
-                        AssertEquals ("TestB#3", (SqlInt16)(-1), SqlInt16.MinValue | SqlInt16.MaxValue);
+                        Assert.AreEqual ((SqlInt16)6,Test2 | Test4, "TestB#1");
+                        Assert.AreEqual ((SqlInt16)2550, Test2 | Test2550, "TestB#2");
+                        Assert.AreEqual ((SqlInt16)(-1), SqlInt16.MinValue | SqlInt16.MaxValue, "TestB#3");
 
                         //  ^ -operator
-                        AssertEquals("TestC#1", (SqlInt16)2546, (Test2550 ^ Test4));
-                        AssertEquals("TestC#2", (SqlInt16)6, (Test2 ^ Test4));
+                        Assert.AreEqual((SqlInt16)2546, (Test2550 ^ Test4), "TestC#1");
+                        Assert.AreEqual((SqlInt16)6, (Test2 ^ Test4), "TestC#2");
                 }
 
 		[Test]
@@ -484,39 +484,39 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test255 = new SqlInt16 (2550);
 
                         // == -operator
-                        Assert ("TestA#1", (Test100 == Test100II).Value);
-                        Assert ("TestA#2", !(Test165 == Test100).Value);
-                        Assert ("TestA#3", (Test165 == SqlInt16.Null).IsNull);
+                        Assert.IsTrue ((Test100 == Test100II).Value, "TestA#1");
+                        Assert.IsTrue (!(Test165 == Test100).Value, "TestA#2");
+                        Assert.IsTrue ((Test165 == SqlInt16.Null).IsNull, "TestA#3");
 
                         // != -operator
-                        Assert ("TestB#1", !(Test100 != Test100II).Value);
-                        Assert ("TestB#2", (Test100 != Test255).Value);
-                        Assert ("TestB#3", (Test165 != Test255).Value);
-                        Assert ("TestB#4", (Test165 != SqlInt16.Null).IsNull);
+                        Assert.IsTrue (!(Test100 != Test100II).Value, "TestB#1");
+                        Assert.IsTrue ((Test100 != Test255).Value, "TestB#2");
+                        Assert.IsTrue ((Test165 != Test255).Value, "TestB#3");
+                        Assert.IsTrue ((Test165 != SqlInt16.Null).IsNull, "TestB#4");
 
                         // > -operator
-                        Assert ("TestC#1", (Test165 > Test100).Value);
-                        Assert ("TestC#2", !(Test165 > Test255).Value);
-                        Assert ("TestC#3", !(Test100 > Test100II).Value);
-                        Assert ("TestC#4", (Test165 > SqlInt16.Null).IsNull);
+                        Assert.IsTrue ((Test165 > Test100).Value, "TestC#1");
+                        Assert.IsTrue (!(Test165 > Test255).Value, "TestC#2");
+                        Assert.IsTrue (!(Test100 > Test100II).Value, "TestC#3");
+                        Assert.IsTrue ((Test165 > SqlInt16.Null).IsNull, "TestC#4");
 
                         // >=  -operator
-                        Assert ("TestD#1", !(Test165 >= Test255).Value);
-                        Assert ("TestD#2", (Test255 >= Test165).Value);
-                        Assert ("TestD#3", (Test100 >= Test100II).Value);
-                        Assert ("TestD#4", (Test165 >= SqlInt16.Null).IsNull);
+                        Assert.IsTrue (!(Test165 >= Test255).Value, "TestD#1");
+                        Assert.IsTrue ((Test255 >= Test165).Value, "TestD#2");
+                        Assert.IsTrue ((Test100 >= Test100II).Value, "TestD#3");
+                        Assert.IsTrue ((Test165 >= SqlInt16.Null).IsNull, "TestD#4");
 
                         // < -operator
-                        Assert ("TestE#1", !(Test165 < Test100).Value);
-                        Assert ("TestE#2", (Test165 < Test255).Value);
-                        Assert ("TestE#3", !(Test100 < Test100II).Value);
-                        Assert ("TestE#4", (Test165 < SqlInt16.Null).IsNull);
+                        Assert.IsTrue (!(Test165 < Test100).Value, "TestE#1");
+                        Assert.IsTrue ((Test165 < Test255).Value, "TestE#2");
+                        Assert.IsTrue (!(Test100 < Test100II).Value, "TestE#3");
+                        Assert.IsTrue ((Test165 < SqlInt16.Null).IsNull, "TestE#4");
 
                         // <= -operator
-                        Assert ("TestF#1", (Test165 <= Test255).Value);
-                        Assert ("TestF#2", !(Test255 <= Test165).Value);
-                        Assert ("TestF#3", (Test100 <= Test100II).Value);
-                        Assert ("TestF#4", (Test165 <= SqlInt16.Null).IsNull);
+                        Assert.IsTrue ((Test165 <= Test255).Value, "TestF#1");
+                        Assert.IsTrue (!(Test255 <= Test165).Value, "TestF#2");
+                        Assert.IsTrue ((Test100 <= Test100II).Value, "TestF#3");
+                        Assert.IsTrue ((Test165 <= SqlInt16.Null).IsNull, "TestF#4");
                 }
 
 		[Test]
@@ -525,9 +525,9 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 Test12 = new SqlInt16 (12);
                         SqlInt16 Test128 = new SqlInt16 (128);
 
-                        AssertEquals ("Test#1", (SqlInt16)(-13), ~Test12);
-                        AssertEquals ("Test#2", (SqlInt16)(-129), ~Test128);
-                        AssertEquals ("Test#3", SqlInt16.Null, ~SqlInt16.Null);
+                        Assert.AreEqual ((SqlInt16)(-13), ~Test12, "Test#1");
+                        Assert.AreEqual ((SqlInt16)(-129), ~Test128, "Test#2");
+                        Assert.AreEqual (SqlInt16.Null, ~SqlInt16.Null, "Test#3");
                 }
 
 		[Test]
@@ -537,10 +537,10 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt16 TestNeg = new SqlInt16 (-3000);
 
                         SqlInt16 Result = -Test;
-                        AssertEquals ("Test#1", (short)(-2000), Result.Value);
+                        Assert.AreEqual ((short)(-2000), Result.Value, "Test#1");
 
                         Result = -TestNeg;
-                        AssertEquals ("Test#2", (short)3000, Result.Value);
+                        Assert.AreEqual ((short)3000, Result.Value, "Test#2");
                 }
 
 		[Test]
@@ -551,10 +551,10 @@ namespace MonoTests.System.Data.SqlTypes
 
                         Result = (SqlInt16)TestBoolean;
 
-                        AssertEquals ("Test#1", (short)1, Result.Value);
+                        Assert.AreEqual ((short)1, Result.Value, "Test#1");
 
                         Result = (SqlInt16)SqlBoolean.Null;
-                        Assert ("Test#2", Result.IsNull);
+                        Assert.IsTrue (Result.IsNull, "Test#2");
                 }
 
 		[Test]
@@ -563,14 +563,14 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlDecimal TestDecimal64 = new SqlDecimal (64);
                         SqlDecimal TestDecimal900 = new SqlDecimal (90000);
 
-                        AssertEquals ("Test#1", (short)64, ((SqlInt16)TestDecimal64).Value);
-                        AssertEquals ("Test#2", SqlInt16.Null, ((SqlInt16)SqlDecimal.Null));
+                        Assert.AreEqual ((short)64, ((SqlInt16)TestDecimal64).Value, "Test#1");
+                        Assert.AreEqual (SqlInt16.Null, ((SqlInt16)SqlDecimal.Null), "Test#2");
 
                         try {
                                 SqlInt16 test = (SqlInt16)TestDecimal900;
-                                Fail ("Test#3");
+                                Assert.Fail ("Test#3");
                         } catch (Exception e) {
-                                AssertEquals("Test#4", typeof(OverflowException), e.GetType ());
+                                Assert.AreEqual(typeof(OverflowException), e.GetType (), "Test#4");
                         }
                 }
 
@@ -580,14 +580,14 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlDouble TestDouble64 = new SqlDouble (64);
                         SqlDouble TestDouble900 = new SqlDouble (90000);
 
-                        AssertEquals ("Test#1", (short)64, ((SqlInt16)TestDouble64).Value);
-                        AssertEquals ("Test#2", SqlInt16.Null, ((SqlInt16)SqlDouble.Null));
+                        Assert.AreEqual ((short)64, ((SqlInt16)TestDouble64).Value, "Test#1");
+                        Assert.AreEqual (SqlInt16.Null, ((SqlInt16)SqlDouble.Null), "Test#2");
 
                         try {
                                 SqlInt16 test = (SqlInt16)TestDouble900;
-                                Fail ("Test#3");
+                                Assert.Fail ("Test#3");
                         } catch (Exception e) {
-                                AssertEquals("Test#4", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual(typeof (OverflowException), e.GetType (), "Test#4");
                         }
                 }
 
@@ -596,7 +596,7 @@ namespace MonoTests.System.Data.SqlTypes
                 {
                         SqlInt16 Test = new SqlInt16(12);
                         Int16 Result = (Int16)Test;
-                        AssertEquals("Test#1", (short)12, Result);
+                        Assert.AreEqual((short)12, Result, "Test#1");
                 }
 
 		[Test]
@@ -605,13 +605,13 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt32 Test64 = new SqlInt32 (64);
                         SqlInt32 Test900 = new SqlInt32 (90000);
 
-                        AssertEquals ("Test#1", (short)64, ((SqlInt16)Test64).Value);
+                        Assert.AreEqual ((short)64, ((SqlInt16)Test64).Value, "Test#1");
 
                         try {
                                 SqlInt16 test = (SqlInt16)Test900;
-                                Fail ("Test#2");
+                                Assert.Fail ("Test#2");
                         } catch (Exception e) {
-                                AssertEquals ("Test#3", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "Test#3");
                         }
                 }
 
@@ -621,13 +621,13 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlInt64 Test64 = new SqlInt64 (64);
                         SqlInt64 Test900 = new SqlInt64 (90000);
 
-                        AssertEquals ("Test#1", (short)64, ((SqlInt16)Test64).Value);
+                        Assert.AreEqual ((short)64, ((SqlInt16)Test64).Value, "Test#1");
 
                         try {
                                 SqlInt16 test = (SqlInt16)Test900;
-                                Fail ("Test#2");
+                                Assert.Fail ("Test#2");
                         } catch (Exception e) {
-                                AssertEquals("Test#3", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual(typeof (OverflowException), e.GetType (), "Test#3");
                         }
                 }
 
@@ -637,13 +637,13 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlMoney TestMoney64 = new SqlMoney(64);
                         SqlMoney TestMoney900 = new SqlMoney(90000);
 
-                        AssertEquals ("Test#1", (short)64, ((SqlInt16)TestMoney64).Value);
+                        Assert.AreEqual ((short)64, ((SqlInt16)TestMoney64).Value, "Test#1");
 
                         try {
                                 SqlInt16 test = (SqlInt16)TestMoney900;
-                                Fail ("Test#2");
+                                Assert.Fail ("Test#2");
                         } catch (Exception e) {
-                                AssertEquals("test#3", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual(typeof (OverflowException), e.GetType (), "test#3");
                         }
                 }
 
@@ -653,13 +653,13 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlSingle TestSingle64 = new SqlSingle(64);
                         SqlSingle TestSingle900 = new SqlSingle(90000);
 
-                        AssertEquals("Test#1", (short)64, ((SqlInt16)TestSingle64).Value);
+                        Assert.AreEqual((short)64, ((SqlInt16)TestSingle64).Value, "Test#1");
 
                         try {
                                 SqlInt16 test = (SqlInt16)TestSingle900;
-                                Fail ("Test#2");
+                                Assert.Fail ("Test#2");
                         } catch (Exception e) {
-                                AssertEquals ("Test#3", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "Test#3");
                         }
                 }
 
@@ -670,20 +670,20 @@ namespace MonoTests.System.Data.SqlTypes
                         SqlString TestString100 = new SqlString("100");
                         SqlString TestString1000 = new SqlString("100000");
 
-                        AssertEquals ("Test#1", (short)100, ((SqlInt16)TestString100).Value);
+                        Assert.AreEqual ((short)100, ((SqlInt16)TestString100).Value, "Test#1");
 
                         try {
                                 SqlInt16 test = (SqlInt16)TestString1000;
-                                Fail ("Test#2");
+                                Assert.Fail ("Test#2");
                         } catch(Exception e) {
-                                AssertEquals ("Test#3", typeof (OverflowException), e.GetType ());
+                                Assert.AreEqual (typeof (OverflowException), e.GetType (), "Test#3");
                         }
 
                         try {
                                 SqlInt16 test = (SqlInt16)TestString;
-                                Fail ("Test#3");
+                                Assert.Fail ("Test#3");
                         } catch(Exception e) {
-                                AssertEquals ("Test#4", typeof (FormatException), e.GetType ());
+                                Assert.AreEqual (typeof (FormatException), e.GetType (), "Test#4");
                         }
                 }
 
@@ -691,7 +691,7 @@ namespace MonoTests.System.Data.SqlTypes
                 public void ByteToSqlInt16()
                 {
                         short TestShort = 14;
-                        AssertEquals ("Test#1", (short)14, ((SqlInt16)TestShort).Value);
+                        Assert.AreEqual ((short)14, ((SqlInt16)TestShort).Value, "Test#1");
                 }
         }
 }
