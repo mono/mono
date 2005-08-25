@@ -1,5 +1,10 @@
 2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* driver.cs : kinda reverting the default encoding changes (not exact 
+	  revert since I noticed that "codepage:reset" might not work fine).
+
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* class.cs : (AbstractPropertyEventMethod) SetupName() now takes
 	  Location. Now getter and setter store location correctly.
 	  (errors/cs0111-12.cs now reports the expected location.)
