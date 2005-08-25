@@ -161,5 +161,21 @@ namespace System.Drawing
 			Marshal.Copy (gdipProp.value, prop.Value, 0, gdipProp.len);
 		}
 	}
+
+	[StructLayout(LayoutKind.Sequential)]
+	internal struct IconInfo
+	{
+		int fIcon;
+		public int xHotspot;
+		public int yHotspot;
+		IntPtr hbmMask;
+		IntPtr hbmColor;
+
+		public bool IsIcon {
+			get {
+				return fIcon == 1;
+			}
+		}
+	}
 }
 

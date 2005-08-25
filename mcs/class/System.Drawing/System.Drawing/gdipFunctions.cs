@@ -559,7 +559,7 @@ namespace System.Drawing
 		[DllImport("gdiplus.dll", CharSet=CharSet.Unicode)]
 		static internal extern Status GdipDrawString (IntPtr graphics, string text, int len, IntPtr font, ref RectangleF rc, IntPtr format, IntPtr brush);
 		[DllImport("gdiplus.dll")]
-		static internal extern Status GdipGetDC (IntPtr graphics, out int hdc);
+		static internal extern Status GdipGetDC (IntPtr graphics, out IntPtr hdc);
 		[DllImport("gdiplus.dll")]
 		static internal extern Status GdipReleaseDC (IntPtr graphics, IntPtr hdc);
 		[DllImport("gdiplus.dll")]
@@ -1384,6 +1384,9 @@ namespace System.Drawing
 		internal static extern int ReleaseDC(IntPtr hdc);
 		[DllImport("gdi32.dll", EntryPoint="SelectObject", CallingConvention = CallingConvention.StdCall, CharSet = CharSet.Ansi)]
 		internal static extern IntPtr SelectObject(IntPtr hdc, IntPtr obj);	
+		[DllImport("user32.dll", SetLastError=true)]
+		internal static extern bool GetIconInfo (IntPtr hIcon, out IconInfo iconinfo);
+ 
 
 		// Some special X11 stuff
 		[DllImport("libX11", EntryPoint="XOpenDisplay")]

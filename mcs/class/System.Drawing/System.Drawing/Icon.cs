@@ -95,9 +95,28 @@ namespace System.Drawing
 		private IconDir	iconDir;
 		private ushort id;
 		private IconImage [] imageData;
+		bool destroyIcon = true;
 			
 		private Icon ()
 		{
+		}
+
+		[MonoTODO ("Implement fully")]
+		private Icon (IntPtr handle)
+		{
+			this.winHandle = handle;
+
+			IconInfo ii;
+			GDIPlus.GetIconInfo (winHandle, out ii);
+			if (ii.IsIcon) {
+				// If this structure defines an icon, the hot spot is always in the center of the icon
+				iconSize = new Size (ii.xHotspot * 2, ii.yHotspot * 2);
+			}
+			else {
+				throw new NotImplementedException ();
+			}
+
+			this.destroyIcon = false;
 		}
 		
 		public Icon (Icon original, int width, int height) : this (original, new Size(width, height))
@@ -161,7 +180,7 @@ namespace System.Drawing
 			}
 		}
 
-       		private Icon (SerializationInfo info, StreamingContext context)
+		private Icon (SerializationInfo info, StreamingContext context)
 		{
 			MemoryStream dataStream = null;
 			int width=0;
@@ -192,9 +211,19 @@ namespace System.Drawing
 
 		public void Dispose ()
 		{
-			//FIXME What needs to be called to free memory pointed by handle
-			if (winHandle!=IntPtr.Zero)
+			DisposeIcon ();
+			GC.SuppressFinalize(this);
+		}
+
+		void DisposeIcon ()
+		{
+			if (winHandle ==IntPtr.Zero)
+				return;
+
+			if (destroyIcon) {
+				//TODO: will have to call some win32 icon stuff
 				winHandle = IntPtr.Zero;
+			}
 		}
 
 		public object Clone ()
@@ -202,10 +231,12 @@ namespace System.Drawing
 			return new Icon (this, this.Width, this.Height);
 		}
 
-		[MonoTODO ("Implement")]
 		public static Icon FromHandle (IntPtr handle)
 		{
-			throw new NotImplementedException ();
+			if (handle == IntPtr.Zero)
+				throw new ArgumentException ("handle");
+
+			return new Icon (handle);
 		}
 
 		public void Save (Stream outputStream)
@@ -390,7 +421,7 @@ namespace System.Drawing
 
 		~Icon ()
 		{
-			Dispose ();
+			DisposeIcon ();
 		}
 			
 		private void InitFromStreamWithSize (Stream stream, int width, int height)

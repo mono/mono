@@ -1283,6 +1283,11 @@ namespace System.Drawing
 
 			if (image == null) throw new ArgumentException ();
 
+			if ((image.PixelFormat & PixelFormat.Indexed) != PixelFormat.Undefined) {
+				// And MS ignores its own rules again
+				throw new Exception ("A Graphics object cannot be created from an image that has an indexed pixel format");
+			}
+
 			Status status = GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
 			GDIPlus.CheckStatus (status);
 			Graphics result = new Graphics (graphics);
@@ -1313,11 +1318,12 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
 		public IntPtr GetHdc ()
 		{
-			return nativeObject;
+			IntPtr hdc;
+			GDIPlus.CheckStatus (GDIPlus.GdipGetDC (this.nativeObject, out hdc));
+			return hdc;
 		}
 
 		

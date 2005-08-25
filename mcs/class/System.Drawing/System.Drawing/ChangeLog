@@ -1,3 +1,15 @@
+2005-08-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* gdipFunctions.cs: GetIconInfo new user32 method.
+	GdipGetDC uses IntPtr.
+	
+	* gdipStructs.cs: Defined IconInfo struct.
+	
+	* Graphics.cs: FromImage throws exception when image has an indexed format.
+	GetHdc fixed.
+	
+	* Icon.cs: Implemented FromHandle, Dispose.
+
 2005-05-24 Michael Hutchinson <m.j.hutchinson@gmail.com>
 
 	* ToolboxBitmapAttribute.cs: Implemented retrieving the image
