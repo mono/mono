@@ -61,9 +61,56 @@ namespace MonoTests.System.Drawing.Drawing2D
 				AssertEquals ("C#7", 50, matrix.Elements[4]);
 				AssertEquals ("C#8", 60, matrix.Elements[5]);
 			}
-
-
 		}
+
+		// Properties
+
+		[Test]
+		public void Invertible ()
+		{
+			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
+			AssertEquals ("I#1", false, matrix.IsInvertible);
+
+			matrix = new Matrix (156, 46, 0, 0, 106, 19);
+			AssertEquals ("I#2", false, matrix.IsInvertible);
+
+			matrix = new Matrix (146, 66, 158, 104, 42, 150);
+			AssertEquals ("I#3", true, matrix.IsInvertible);
+
+			matrix = new Matrix (119, 140, 145, 74, 102, 58);
+			AssertEquals ("I#4", true, matrix.IsInvertible);
+		}
+		
+		[Test]
+		public void IsIdentity ()
+		{
+			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
+			AssertEquals ("N#1", false, matrix.IsIdentity);
+			
+			matrix = new Matrix (1, 0, 0, 1, 0, 0);
+			AssertEquals ("N#2", true, matrix.IsIdentity);			
+		}
+		
+		[Test]
+		public void IsOffsetX ()
+		{
+			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
+			AssertEquals ("X#1", 47, matrix.OffsetX);			
+		}
+		
+		[Test]
+		public void IsOffsetY ()
+		{
+			Matrix matrix = new Matrix (123, 24, 82, 16, 47, 30);
+			AssertEquals ("Y#1", 30, matrix.OffsetY);			
+		}
+		
+		// Elements Property is checked implicity in other test
+
+		//
+		// Methods
+		//
+		
 
 		[Test]
 		public void Clone ()
@@ -148,6 +195,112 @@ namespace MonoTests.System.Drawing.Drawing2D
 			AssertEquals ("E#2", false, mat2.Equals (mat3));
 			AssertEquals ("E#3", false, mat1.Equals (mat3));
 		}
+		
+		[Test]
+		public void Invert ()
+		{
+			Matrix matrix = new Matrix (1, 2, 3, 4, 5, 6);
+			matrix.Invert ();
+			
+			AssertEquals ("V#1", -2, matrix.Elements[0]);
+			AssertEquals ("V#2", 1, matrix.Elements[1]);
+			AssertEquals ("V#3", 1.5, matrix.Elements[2]);
+			AssertEquals ("V#4", -0.5, matrix.Elements[3]);
+			AssertEquals ("V#5", 1, matrix.Elements[4]);
+			AssertEquals ("V#6", -2, matrix.Elements[5]);			
+		}
+		
+		[Test]
+		public void Scale ()
+		{
+			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
+			matrix.Scale (2, 4);
 
+			AssertEquals ("S#1", 20, matrix.Elements[0]);
+			AssertEquals ("S#2", 40, matrix.Elements[1]);
+			AssertEquals ("S#3", 120, matrix.Elements[2]);
+			AssertEquals ("S#4", 160, matrix.Elements[3]);
+			AssertEquals ("S#5", 50, matrix.Elements[4]);
+			AssertEquals ("S#6", 60, matrix.Elements[5]);			
+		}
+		
+		[Test]
+		public void Shear ()
+		{
+			Matrix matrix = new Matrix (10, 20, 30, 40, 50, 60);
+			matrix.Shear (2, 4);
+
+			AssertEquals ("H#1", 130, matrix.Elements[0]);
+			AssertEquals ("H#2", 180, matrix.Elements[1]);
+			AssertEquals ("H#3", 50, matrix.Elements[2]);
+			AssertEquals ("H#4", 80, matrix.Elements[3]);
+			AssertEquals ("H#5", 50, matrix.Elements[4]);
+			AssertEquals ("H#6", 60, matrix.Elements[5]);
+			
+			matrix = new Matrix (5, 3, 9, 2, 2, 1);
+			matrix.Shear  (10, 20);			
+			
+			AssertEquals ("H#7", 185, matrix.Elements[0]);
+			AssertEquals ("H#8", 43, matrix.Elements[1]);
+			AssertEquals ("H#9", 59, matrix.Elements[2]);
+			AssertEquals ("H#10", 32, matrix.Elements[3]);
+			AssertEquals ("H#11", 2, matrix.Elements[4]);
+			AssertEquals ("H#12", 1, matrix.Elements[5]);			    
+		}
+		
+		[Test]
+		public void TransformPoints ()
+		{
+			Matrix matrix = new Matrix (2, 4, 6, 8, 10, 12);
+			PointF [] pointsF = new PointF [] {new PointF (2, 4), new PointF (4, 8)};
+			matrix.TransformPoints (pointsF);
+						
+			AssertEquals ("K#1", 38, pointsF[0].X);
+			AssertEquals ("K#2", 52, pointsF[0].Y);
+			AssertEquals ("K#3", 66, pointsF[1].X);
+			AssertEquals ("K#4", 92, pointsF[1].Y);
+			
+			Point [] points = new Point [] {new Point (2, 4), new Point (4, 8)};
+			matrix.TransformPoints (points);
+			AssertEquals ("K#5", 38, pointsF[0].X);
+			AssertEquals ("K#6", 52, pointsF[0].Y);
+			AssertEquals ("K#7", 66, pointsF[1].X);
+			AssertEquals ("K#8", 92, pointsF[1].Y);						    
+		}
+		
+		[Test]
+		public void TransformVectors  ()
+		{
+			Matrix matrix = new Matrix (2, 4, 6, 8, 10, 12);
+			PointF [] pointsF = new PointF [] {new PointF (2, 4), new PointF (4, 8)};
+			matrix.TransformVectors (pointsF);
+						
+			AssertEquals ("N#1", 28, pointsF[0].X);
+			AssertEquals ("N#2", 40, pointsF[0].Y);
+			AssertEquals ("N#3", 56, pointsF[1].X);
+			AssertEquals ("N#4", 80, pointsF[1].Y);
+			
+			Point [] points = new Point [] {new Point (2, 4), new Point (4, 8)};
+			matrix.TransformVectors (points);
+			AssertEquals ("N#5", 28, pointsF[0].X);
+			AssertEquals ("N#6", 40, pointsF[0].Y);
+			AssertEquals ("N#7", 56, pointsF[1].X);
+			AssertEquals ("N#8", 80, pointsF[1].Y);						    
+		}		
+		
+		[Test]
+		public void Translate  ()
+		{
+			Matrix matrix = new Matrix (2, 4, 6, 8, 10, 12);			
+			matrix.Translate (5, 10);
+						
+			AssertEquals ("Y#1", 2, matrix.Elements[0]);
+			AssertEquals ("Y#2", 4, matrix.Elements[1]);
+			AssertEquals ("Y#3", 6, matrix.Elements[2]);
+			AssertEquals ("Y#4", 8, matrix.Elements[3]);
+			AssertEquals ("Y#5", 80, matrix.Elements[4]);
+			AssertEquals ("Y#6", 112, matrix.Elements[5]);			
+									    
+		}			
 	}
 }

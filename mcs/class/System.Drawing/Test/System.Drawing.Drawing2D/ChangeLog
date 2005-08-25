@@ -1,3 +1,7 @@
+2005-08-25 Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* TestMatrix.cs: New test cases
+	
 2005-08-24 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* TestMatrix.cs: New Matrix unit case
