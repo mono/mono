@@ -1,3 +1,7 @@
+2005-08-25 Atsushi Enomoto <atsushi@ximian.com>
+
+	* Makefile: build fix for some utf8-defaulted environment.
+
 2005-07-25  Eyal Alalouf  <eyala@mainsoft.com>
 	* System.Web.vmwcsproj removed System.Web/TimeoutManager.cs from TARGET_J2EE
 

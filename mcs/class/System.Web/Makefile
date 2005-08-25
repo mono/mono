@@ -51,6 +51,7 @@ endif
 LIBRARY = System.Web.dll
 LIB_MCS_FLAGS = \
 	/nowarn:649  	\
+	/codepage:28591	\
 	/r:$(corlib)	 		\
 	/r:System.dll 			\
 	/r:System.Drawing.dll 		\
