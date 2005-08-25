@@ -1,3 +1,7 @@
+2005-08-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* rand.c: Use wincrypt.h instead of WinCrypt.h.
+
 2005-08-24  Ankit Jain  <jankit@novell.com>
 	    Raja R Harinath  <rharinath@novell.com>
 
