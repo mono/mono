@@ -1,3 +1,8 @@
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : /codepage:28591 (otherwise the build is broken on utf8
+	  environment).
+
 2004-11-26  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (OTHER_RES): New.  List of resources.
