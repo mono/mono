@@ -1,3 +1,8 @@
+2005-08-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Tds.cs: ProcessColumnDetail (): expression columns don't have
+	baseTableName.
+
 2005-08-05  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Tds70.cs: Reset (): remove exec.

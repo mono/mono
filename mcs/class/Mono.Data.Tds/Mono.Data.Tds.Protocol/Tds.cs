@@ -990,13 +990,15 @@ namespace Mono.Data.Tds.Protocol {
 				if ((values[2] & (byte) TdsColumnStatus.Hidden) == 0) {
 					byte index = (byte) (values[0] - (byte) 1);
 					byte tableIndex = (byte) (values[1] - (byte) 1);
+					bool isExpression = ((values[2] & (byte) TdsColumnStatus.IsExpression) != 0);
 
-					columns [index]["IsExpression"] = ((values[2] & (byte) TdsColumnStatus.IsExpression) != 0);
+					columns [index]["IsExpression"] = isExpression;
 					columns [index]["IsKey"] = ((values[2] & (byte) TdsColumnStatus.IsKey) != 0);
 
 					if ((values[2] & (byte) TdsColumnStatus.Rename) != 0)
 						columns [index]["BaseColumnName"] = baseColumnName;
-					columns [index]["BaseTableName"] = tableNames [tableIndex];
+					if (! isExpression)
+						columns [index]["BaseTableName"] = tableNames [tableIndex];
 				}
 			}
 		}
