@@ -1,5 +1,9 @@
 2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* driver.cs : reverting default encoding change as well as mcs.
+
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* driver.cs, support.cs : merged r48826.
 	  Marek Safer wrote:
 	  > could you integrate your mcs changes to gmcs otherwise
