@@ -1,3 +1,7 @@
+2005-08-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_emit_prolog): Fix calling of mono_jit_thread_attach () under windows.
+	
 2005-08-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_local_regalloc): Avoid allocating dreg and sreg1/2
