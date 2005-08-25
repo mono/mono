@@ -701,7 +701,7 @@ namespace System
 				cb.Append (digitLowerTable [exponent / 100 % 10]);
 				cb.Append (digitLowerTable [exponent / 10 % 10]);
 				cb.Append (digitLowerTable [exponent % 10]);
-			/*} else { // exponent range is 0`}324
+			/*} else { // exponent range is 0...+-324
 				int pos = cb.Length;
 				int count = 3;
 				while (exponent > 0 || --count > 0) {

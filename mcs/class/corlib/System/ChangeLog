@@ -1,3 +1,7 @@
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NumberFormatter.cs : eliminate non-ASCII character.
+
 2005-08-25  Marek Safar  <marek.safar@seznam.cz>
 
 	* Enum.cs: Better exception message.
