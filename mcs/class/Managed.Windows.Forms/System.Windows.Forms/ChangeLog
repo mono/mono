@@ -1,3 +1,7 @@
+2005-08-25  Jonathan Chambers  <jonathan.chambers@ansys.com> 
+
+	* Splitter.cs: Resize docked control and its neighbor.
+
 2005-08-24  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
 	-- Making Windows with Menus layout correctly --
 	* Form.cs : The first leg of the fix

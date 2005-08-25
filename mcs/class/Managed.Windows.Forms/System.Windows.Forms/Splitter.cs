@@ -226,7 +226,7 @@ namespace System.Windows.Forms
 				Capture = true;
 				drag_form.Height = this.Height;
 				drag_form.Width = this.Width;
-				drag_form.Location = PointToScreen(this.Location);
+				drag_form.Location = PointToScreen(new Point(0,0));
 				drag_form.Show();
 			}
 		}
@@ -241,9 +241,9 @@ namespace System.Windows.Forms
 				Point splitterLocation;
 
 				if (horz) 
-					splitterLocation = new Point(this.Location.X,e.Y-cursor_offset_y);
+					splitterLocation = new Point(0,e.Y-cursor_offset_y);
 				else 
-					splitterLocation = new Point(e.X-cursor_offset_x,this.Location.Y);
+					splitterLocation = new Point(e.X-cursor_offset_x,0);
 				
 				drag_form.Location = PointToScreen(splitterLocation);
 
@@ -317,14 +317,34 @@ namespace System.Windows.Forms
 			{
 				if (adjacent.Height == parentPoint.Y)
 					return;
-				adjacent.Height = parentPoint.Y;
+
+                if (this.Dock == DockStyle.Top)
+                {
+                    int height = parentPoint.Y - adjacent.Top;
+                    adjacent.SetBounds(adjacent.Left, adjacent.Top, adjacent.Width, height);
+                }
+                else if (this.Dock == DockStyle.Bottom)
+                {
+                    int height = adjacent.Bottom - parentPoint.Y;
+                    adjacent.SetBounds(adjacent.Left, this.Bottom, adjacent.Width, height);
+                    adjacent.Top = this.Bottom; // need this for some reason
+                }
 				return;
 			}
 
 			if (adjacent.Width == parentPoint.X)
 				return;
-			
-			adjacent.Width = parentPoint.X;
+            if (this.Dock == DockStyle.Right)
+            {
+                int width = adjacent.Right - parentPoint.X;//parentPoint.X-adjacent.Left;
+                adjacent.SetBounds(this.Right, adjacent.Top, width, adjacent.Height);
+                adjacent.Left = this.Right; // need this for some reason
+            }
+            else if (this.Dock == DockStyle.Left)
+            {
+                int width = parentPoint.X - adjacent.Left;
+                adjacent.SetBounds(adjacent.Left, adjacent.Top, width, adjacent.Height);
+            }
 		}
 
 		private Control FindAdjacentControl () 
