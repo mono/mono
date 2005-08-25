@@ -74,7 +74,13 @@ extern LONG WINAPI GC_write_fault_handler(struct _EXCEPTION_POINTERS *exc_info);
 
 int GC_thread_is_registered (void)
 {
+#if defined(GC_DLL) || defined(GC_INSIDE_DLL)
+	/* Registered by DllMain */
 	return 1;
+#else
+	/* FIXME: */
+	return 0;
+#endif
 }
 
 /*
@@ -753,7 +759,7 @@ int GC_pthread_detach(pthread_t thread)
  * We avoid acquiring locks here, since this doesn't seem to be preemptable.
  * Pontus Rydin suggests wrapping the thread start routine instead.
  */
-#ifdef GC_DLL
+#if defined(GC_DLL) || defined(GC_INSIDE_DLL)
 BOOL WINAPI DllMain(HINSTANCE inst, ULONG reason, LPVOID reserved)
 {
   switch (reason) {

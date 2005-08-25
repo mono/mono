@@ -49,6 +49,10 @@ esac
 
 THREADS=$with_libgc_threads
 
+AC_ARG_ENABLE(win32-dllmain,
+[  --enable-win32-dllmain    Define the DllMain function in win32_threads.c even if the collector is not built as a dll],
+)
+
 AC_ARG_ENABLE(parallel-mark,
 [  --enable-parallel-mark	parallelize marking and free list construction],
    [case "$THREADS" in
@@ -169,6 +173,9 @@ case "$THREADS" in
     AC_DEFINE(GC_WIN32_THREADS)
     dnl Wine getenv may not return NULL for missing entry
     AC_DEFINE(NO_GETENV)
+	if test "${enable_win32_dllmain}" = yes; then
+	   AC_DEFINE(GC_INSIDE_DLL)
+	fi
     ;;
  dgux386)
     THREADS=dgux386
