@@ -1,3 +1,8 @@
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-444.cs :
+	  UTF-8 BOM autodetect test (for encoding detection patch).
+
 2005-08-24  Marek Safar <marek.safar@seznam.cz>
 
 	* Makefile: Re-enabled ilasm files.

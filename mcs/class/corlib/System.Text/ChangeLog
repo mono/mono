@@ -1,3 +1,8 @@
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF8Encoding.cs : (InternalGetChars/InternalGetCharCount):
+	  Don't exclude FEFF in the resulting text.
+
 2005-06-21  Ben Maurer  <bmaurer@ximian.com>
 
 	* StringBuilder.cs (Replace): Do the correct thing when we replace

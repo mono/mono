@@ -1,3 +1,11 @@
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* driver.cs : Use default encoding on the environment.
+	  Removed (now that) extra parameter for SeekableStreamReader.
+	* support.cs : (SeekableStreamReader) third .ctor() argument for
+	  StreamReader is not required (always true). preamble size could
+	  be acquired in simpler and safe way.
+
 2005-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs-parser.jay: report CS0642 at warning level 3

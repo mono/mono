@@ -1,3 +1,8 @@
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : added /codepage:65001 (otherwise the build gets broken
+	  on KeyboardLayout.cs on some non-iso-8859-1 environment).
+
 2005-08-18  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
 	* System.Windows.Forms/TreeView.cs: some spaces to tabs
 		FIX: ToString() was generating exception on empty Nodes 

@@ -359,40 +359,12 @@ namespace Mono.CSharp {
 			// Let the StreamWriter autodetect the encoder
 			reader.Peek ();
 			
-			reader.BaseStream.Position = 0;
 			Encoding enc = reader.CurrentEncoding;
-			// First of all, get at least a char
-			
-			byte[] auxb = new byte [50];
-			int num_bytes = 0;
-			int num_chars = 0;
-			int br = 0;
-			do {
-				br = reader.BaseStream.Read (auxb, num_bytes, auxb.Length - num_bytes);
-				num_bytes += br;
-				num_chars = enc.GetCharCount (auxb, 0, num_bytes);
-			}
-			while (num_chars == 0 && br > 0);
-			
-			if (num_chars != 0)
-			{
-				// Now, check which bytes at the beginning have no effect in the
-				// char count
-				
-				int p = 0;
-				while (enc.GetCharCount (auxb, p, num_bytes-p) >= num_chars)
-					p++;
-				
-				preamble_size = p - 1;
-				reader.BaseStream.Position = 0;
-				reader.DiscardBufferedData ();
-				
-				buffer_start = preamble_size;
-			}
+			preamble_size = (int) reader.BaseStream.Position;
 		}
 
-		public SeekableStreamReader (Stream stream, Encoding encoding, bool detect_encoding_from_bytemarks)
-			: this (new StreamReader (stream, encoding, detect_encoding_from_bytemarks))
+		public SeekableStreamReader (Stream stream, Encoding encoding)
+			: this (new StreamReader (stream, encoding, true))
 		{ }
 
 		StreamReader reader;

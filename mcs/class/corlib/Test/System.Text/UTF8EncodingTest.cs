@@ -877,5 +877,23 @@ namespace MonoTests.System.Text {
 			// exception is "really" expected here
 			AssertEquals ("MS FX 1.1 behaviour", 65535, s [0]);
 		}
+
+		[Test]
+		// bug #75065 and #73086.
+		public void GetCharsFEFF ()
+		{
+			byte [] data = new byte [] {0xEF, 0xBB, 0xBF};
+			Encoding enc = new UTF8Encoding (false, true);
+			string s = enc.GetString (data);
+			AssertEquals ("\uFEFF", s);
+
+			Encoding utf = Encoding.UTF8;
+			char[] testChars = {'\uFEFF','A'};
+
+			byte[] bytes = utf.GetBytes(testChars);
+			char[] chars = utf.GetChars(bytes);
+			AssertEquals ("#1", '\uFEFF', chars [0]);
+			AssertEquals ("#2", 'A', chars [1]);
+		}
 	}
 }

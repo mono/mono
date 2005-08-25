@@ -91,14 +91,9 @@ namespace Mono.CSharp
 		static DateTime last_time, first_time;
 
 		//
-		// Encoding: ISO-Latin1 is 28591
+		// Encoding.
 		//
 		static Encoding encoding;
-
-		//
-		// Whether the user has specified a different encoder manually
-		//
-		static bool using_default_encoder = true;
 
 
 		static public void Reset ()
@@ -114,7 +109,6 @@ namespace Mono.CSharp
 			defines = null;
 			output_file = null;
 			encoding = null;
-			using_default_encoder = true;
 			first_source = null;
 		}
 
@@ -158,7 +152,7 @@ namespace Mono.CSharp
 			}
 
 			using (input){
-				SeekableStreamReader reader = new SeekableStreamReader (input, encoding, using_default_encoder);
+				SeekableStreamReader reader = new SeekableStreamReader (input, encoding);
 				Tokenizer lexer = new Tokenizer (reader, file, defines);
 				int token, tokens = 0, errors = 0;
 
@@ -186,7 +180,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			SeekableStreamReader reader = new SeekableStreamReader (input, encoding, using_default_encoder);
+			SeekableStreamReader reader = new SeekableStreamReader (input, encoding);
 
 			// Check 'MZ' header
 			if (reader.Read () == 77 && reader.Read () == 90) {
@@ -1304,27 +1298,21 @@ namespace Mono.CSharp
 				return true;
 
 			case "/codepage":
-				int cp = -1;
-
-				if (value == "utf8"){
+				switch (value) {
+				case "utf8":
 					encoding = new UTF8Encoding();
-					using_default_encoder = false;
-					return true;
-				}
-				if (value == "reset"){
-					//
-					// 28591 is the code page for ISO-8859-1 encoding.
-					//
-					cp = 28591;
-					using_default_encoder = true;
-				}
-				
-				try {
-					cp = Int32.Parse (value);
-					encoding = Encoding.GetEncoding (cp);
-					using_default_encoder = false;
-				} catch {
-					Report.Error (2016, "Code page `{0}' is invalid or not installed", value);
+					break;
+				case "reset":
+					encoding = Encoding.Default;
+					break;
+				default:
+					try {
+						encoding = Encoding.GetEncoding (
+						Int32.Parse (value));
+					} catch {
+						Report.Error (2016, "Code page `{0}' is invalid or not installed", value);
+					}
+					break;
 				}
 				return true;
 			}
@@ -1373,13 +1361,8 @@ namespace Mono.CSharp
 			int i;
 			bool parsing_options = true;
 
-			try {
-				encoding = Encoding.GetEncoding (28591);
-			} catch {
-				Console.WriteLine ("Error: could not load encoding 28591, trying 1252");
-				encoding = Encoding.GetEncoding (1252);
-			}
-			
+			encoding = Encoding.Default;
+
 			references = new ArrayList ();
 			soft_references = new ArrayList ();
 			modules = new ArrayList ();
