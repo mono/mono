@@ -410,7 +410,7 @@ namespace System.Xml.Schema
 																				ValidationEventHandler h) {
 			if (totf != null) {
 			/* totalDigits is the maximum number of digits in values of datatypes
-			 * ·derived· from decimal. The value of totalDigits ·must· be a
+			 * derived from decimal. The value of totalDigits must be a
 			 * positiveInteger. */
 				try {
 					decimal newTotalDigits = decimal.Parse (totf.Value.Trim (), lengthStyle, CultureInfo.InvariantCulture);
