@@ -8,7 +8,6 @@
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 //
-// TODO: Mucho left to implement.
 //
 
 //
@@ -345,7 +344,7 @@ namespace System
 			try {
 				return ToObject (enumType, Convert.ChangeType (value, typeCode));
 			} catch (Exception e) {
-				throw new ArgumentException ("The requested value was not found", e);
+				throw new ArgumentException (String.Format ("The requested value `{0}' was not found", value), e);
 			}
 		}
 

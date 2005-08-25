@@ -1,3 +1,7 @@
+2005-08-25  Marek Safar  <marek.safar@seznam.cz>
+
+	* Enum.cs: Better exception message.
+	
 2005-08-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* Convert.cs: In FromBase64String, return empty byte array for zero
