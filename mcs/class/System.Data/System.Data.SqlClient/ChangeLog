@@ -1,3 +1,8 @@
+2005-08-25  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlCommandBuilder.cs: BuildInformation (): continue on columns
+	who don't have basetablename.
+
 2005-08-12  Daniel Morgan <danielmorgan@verizon.net>
 
 	* SqlCommandBuilder.cs: update command builder based on

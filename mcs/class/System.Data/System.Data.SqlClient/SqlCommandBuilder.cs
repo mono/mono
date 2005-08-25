@@ -176,14 +176,17 @@ namespace System.Data.SqlClient {
 		{
 			tableName = String.Empty;
 			foreach (DataRow schemaRow in schemaTable.Rows) {
+				if (schemaRow.IsNull ("BaseTableName") ||
+				    schemaRow ["BaseTableName"] == String.Empty)
+					continue;
+
 				if (tableName == String.Empty) 
-					tableName = schemaRow.IsNull ("BaseTableName") ? null : (string) schemaRow ["BaseTableName"];
-				else if (schemaRow.IsNull ("BaseTableName")) {
-					if (tableName != null)
-						throw new InvalidOperationException ("Dynamic SQL generation is not supported against multiple base tables.");
-				} else if (tableName != (string) schemaRow["BaseTableName"])
+					tableName = (string) schemaRow ["BaseTableName"];
+				else if (tableName != (string) schemaRow["BaseTableName"])
 					throw new InvalidOperationException ("Dynamic SQL generation is not supported against multiple base tables.");
 			}
+			if (tableName == String.Empty)
+				throw new InvalidOperationException ("Dynamic SQL generation is not supported with no base table.");
 			dbSchemaTable = schemaTable;
 		}
 
