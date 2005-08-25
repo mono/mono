@@ -799,9 +799,9 @@ namespace System.Data.ProviderBase
 					_recordsAffected = -1;
 
 					// FIXME: this causes SP in MS Sql Server to create no mor than one row.
-//					if ((Behavior & CommandBehavior.SingleRow) != 0) {
-//						_statement.setMaxRows(1);
-//					}
+					if ((Behavior & CommandBehavior.SingleRow) != 0) {
+						_statement.setFetchSize(1);
+					}
 				
 					if(_statement is PreparedStatement) {
 						BindParameters(InternalParameters);
