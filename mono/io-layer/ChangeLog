@@ -1,3 +1,7 @@
+2005-08-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* io-layer.h: Include winbase.h not WinBase.h.
+
 2005-08-19  Dick Porter  <dick@ximian.com>
 
 	* threads.c, threads.h, thread-private.h: Use a gsize to store the
