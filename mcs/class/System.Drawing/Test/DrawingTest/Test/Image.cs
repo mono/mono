@@ -13,9 +13,7 @@ namespace Test.Sys.Drawing {
 		[SetUp]
 		public void SetUp () {
 			t = DrawingTest.Create (256, 256);
-			Image im=new Bitmap (GetType().Assembly.GetManifestResourceStream (
-				"Test.DrawingTest.Test.Bitmap1.bmp"));
-
+			Image im=new Bitmap (@"..\..\Bitmap1.png"); 
 			t.Graphics.DrawImageUnscaled (im, 0, 0);
 		}
 		[Test]
@@ -42,7 +40,9 @@ namespace Test.Sys.Drawing {
 			Assert.AreEqual (GraphicsUnit.Pixel, unit);
 		}
 		[Test]
+#if TARGET_JVM
 		[Category ("NotWorking")]
+#endif
 		public void GetEncoderParameterList () {
 			Assert.Fail ("Test not implemented - undocumented parameter");
 		}
@@ -53,12 +53,16 @@ namespace Test.Sys.Drawing {
 			Assert.AreEqual (1, t.Bitmap.GetFrameCount (new FrameDimension (Guid.NewGuid ())));
 		}
 		[Test]
+#if TARGET_JVM
 		[Category ("NotWorking")]
+#endif
 		public void GetPropertyItem () {
 			Assert.Fail ("Test not implemented - undocumented parameter");
 		}
 		[Test]
+#if TARGET_JVM
 		[Category ("NotWorking")]
+#endif
 		public void RemovePropertyItem () {
 			Assert.Fail ("Test not implemented - undocumented parameter");
 		}
@@ -66,6 +70,9 @@ namespace Test.Sys.Drawing {
 			return false;
 		}
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")] // FIXME: IntPtr
+#endif
 		public void GetThumbnailImage() {
 			t.Show ();
 			Image.GetThumbnailImageAbort myCallback =
@@ -76,6 +83,9 @@ namespace Test.Sys.Drawing {
 			t.Show ();
 		}
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")] // FIXME: Image.RotateFlip is not implemented for now.
+#endif
 		public void RotateFlip () {
 			t.Show ();
 			t.Bitmap.RotateFlip (RotateFlipType.Rotate90FlipY);
@@ -84,13 +94,13 @@ namespace Test.Sys.Drawing {
 		}
 		[Test]
 		public void Save_string () {
-			t.Bitmap.Save ("test.bmp");
-			using (FileStream r = new FileStream ("test.bmp", FileMode.Open)) {
+			t.Bitmap.Save ("test.png");
+			using (FileStream r = new FileStream ("test.png", FileMode.Open)) {
 				Bitmap b1 = new Bitmap (r);
 				Assert.AreEqual (DrawingTest.CalculateNorm (t.Bitmap),
 					DrawingTest.CalculateNorm (b1));
 			}
-			File.Delete ("test.bmp");
+			File.Delete ("test.png");
 		}
 		[Test]
 		public void Save_Stream_ImageFormat () {
@@ -115,7 +125,9 @@ namespace Test.Sys.Drawing {
 			File.Delete ("test.png");
 		}
 		[Test]
+#if TARGET_JVM
 		[Category("NotWorking")]
+#endif
 		public void Save_Stream_ImageCodecInfo_EncoderParameters () {
 			using (FileStream w = new FileStream ("test.png", FileMode.OpenOrCreate)) {
 				foreach (ImageCodecInfo i in ImageCodecInfo.GetImageEncoders()) {
@@ -133,7 +145,9 @@ namespace Test.Sys.Drawing {
 			File.Delete ("test.png");
 		}
 		[Test]
+#if TARGET_JVM
 		[Category("NotWorking")]
+#endif
 		public void Save_string_ImageCodecInfo_EncoderParameters () {
 			foreach (ImageCodecInfo i in ImageCodecInfo.GetImageEncoders()) {
 				if (i.FilenameExtension.IndexOf ("png") != -1) {
@@ -149,12 +163,16 @@ namespace Test.Sys.Drawing {
 			File.Delete ("test.png");
 		}
 		[Test]
+#if TARGET_JVM
 		[Category ("NotWorking")]
+#endif
 		public void SaveAdd () {
 			Assert.Fail ("Test not implemented");
 		}
 		[Test]
+#if TARGET_JVM
 		[Category ("NotWorking")]
+#endif
 		public void SelectActiveFrame () {
 			Assert.Fail ("Test not implemented");
 		}
@@ -165,7 +183,7 @@ namespace Test.Sys.Drawing {
 		}
 		[Test]
 		public new void ToString () {
-			Assert.AreEqual ("System.Drawing.Bitmap", t.Bitmap.ToString ());
+			Assert.IsTrue (t.Bitmap.ToString().ToLower().StartsWith("system.drawing.bitmap"));
 		}
 		[Test]
 		public void Height () {
@@ -176,10 +194,16 @@ namespace Test.Sys.Drawing {
 			Assert.AreEqual (256, t.Bitmap.Width);
 		}
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")] // FIXME: Image.HorizontalResolution is not implemented for now.
+#endif
 		public void HorizontalResolution () {
 			Assert.AreEqual (96, t.Bitmap.HorizontalResolution);
 		}
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")] // FIXME: Image.VerticalResolution is not implemented for now.
+#endif
 		public void VerticalResolution () {
 			Assert.AreEqual (96, t.Bitmap.VerticalResolution);
 		}
@@ -188,10 +212,16 @@ namespace Test.Sys.Drawing {
 			Assert.AreEqual (PixelFormat.Format32bppArgb, t.Bitmap.PixelFormat);
 		}
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")] // FIXME: Image.PropertyIdList is not implemented for now.
+#endif
 		public void PropertyIdList () {
 			Assert.AreEqual (new int [0], t.Bitmap.PropertyIdList);
 		}
 		[Test]
+#if TARGET_JVM
+		[Category ("NotWorking")] // FIXME: Image.PropertyItems is not implemented for now.
+#endif
 		public void PropertyItems () {
 			Assert.AreEqual (new PropertyItem [0], t.Bitmap.PropertyItems);
 		}
@@ -220,6 +250,21 @@ namespace Test.Sys.Drawing {
 				t.Graphics.DrawImageUnscaled (im, 0, 0);
 				Assert.IsTrue(t.Compare(2));
 			}
+		}
+		[Test]
+		public void DefaultSaveFormat()
+		{
+			Bitmap b = new Bitmap(64, 64);
+			b.Save("saveFormat.xxx");
+
+			StreamReader sr = new StreamReader("saveFormat.xxx");
+			char [] buffer = new char[4];
+			sr.Read(buffer, 0, 4);
+			sr.Close();
+
+			Assert.AreEqual('P', buffer[0]);
+			Assert.AreEqual('N', buffer[1]);
+			Assert.AreEqual('G', buffer[2]);
 		}
 	}
 }
