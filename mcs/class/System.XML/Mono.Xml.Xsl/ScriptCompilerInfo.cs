@@ -67,6 +67,8 @@ namespace Mono.Xml.Xsl
 
 		public abstract string SourceTemplate { get; }
 
+		public abstract string FormatSource (IXmlLineInfo li, string file, string code);
+
 		public virtual string GetCompilerArguments (string targetFileName)
 		{
 			return String.Concat (DefaultCompilerOptions, " ", targetFileName);
@@ -95,12 +97,12 @@ namespace Mono.Xml.Xsl
 
 			// get source location
 			IXmlLineInfo li = scriptNode as IXmlLineInfo;
-			string lineInfoLine = 
-				li != null && li.LineNumber > 0 ?
-				String.Format (CultureInfo.InvariantCulture, "\n#line {0} \"{1}\"", li.LineNumber, filename) :
-				String.Empty;
 
-			string source = SourceTemplate.Replace ("{0}", DateTime.Now.ToString ()).Replace ("{1}", classSuffix).Replace ("{2}", lineInfoLine + code);
+			string source = SourceTemplate.Replace ("{0}",
+				DateTime.Now.ToString (CultureInfo.InvariantCulture))
+				.Replace ("{1}", classSuffix)
+				.Replace ("{2}", code);
+			source = FormatSource (li, filename, code);
 
 			CompilerResults res = compiler.CompileAssemblyFromSource (parameters, source);
 			foreach (CompilerError err in res.Errors)
@@ -174,6 +176,13 @@ public class Script{1}
 }";
 			}
 		}
+
+		public override string FormatSource (IXmlLineInfo li, string file, string source)
+		{
+			if (li == null)
+				return source;
+			return String.Format (CultureInfo.InvariantCulture, "#line {0} \"{1}\"\n{2}", li.LineNumber, file, source);
+		}
 	}
 
 	internal class VBCompilerInfo : ScriptCompilerInfo
@@ -215,6 +224,13 @@ end Class
 end namespace
 ";
 			}
+		}
+
+		public override string FormatSource (IXmlLineInfo li, string file, string source)
+		{
+			if (li == null)
+				return source;
+			return String.Format (CultureInfo.InvariantCulture, "# ExternalSource ({1}, line {0})\n{2}\n#end ExternalSource", li.LineNumber, file, source);
 		}
 	}
 
@@ -268,6 +284,24 @@ class Script{1} {
 }
 ";
 			}
+		}
+
+		public override string FormatSource (IXmlLineInfo li, string file, string source)
+		{
+#if true // remove when mjs got @set @position support
+			return source;
+#else
+			if (li == null)
+				return source;
+			return String.Format (CultureInfo.InvariantCulture,
+				"@set @position ({0}{1}{2}line={3};column={4})\n{5}",
+				file != null ? "file=" : String.Empty,
+				file,
+				file != null ? "; " : String.Empty,
+				li.LineNumber,
+				li.LinePosition,
+				source);
+#endif
 		}
 	}
 }
