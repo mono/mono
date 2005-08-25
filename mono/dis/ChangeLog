@@ -1,3 +1,11 @@
+2005-08-25  Ankit Jain  <jankit@novell.com>
+
+	* get.c (get_encoded_user_string_or_bytearray): Add len param.
+	  (get_constant): Pass len param to get_encoded_user_string_or_bytearray.
+	* dis-cil.c (dissasemble_cil): Calculate len of the userstring and pass to
+	  get_encoded_user_string_or_bytearray.
+	* get.h (get_encoded_user_string_or_bytearray): Add len param.
+
 2005-08-23  Ankit Jain  <jankit@novell.com>
 
 	Fix #75186.
