@@ -26,9 +26,19 @@ namespace System.Web.UI.HtmlControls{
 		private AttributeCollection _attributes;
 
 		
-		public HtmlControl() : this ("span") {}
+#if NET_2_0
+		protected
+#else
+		public
+#endif
+		HtmlControl() : this ("span") {}
 		
-		public HtmlControl(string tag)
+#if NET_2_0
+		protected
+#else
+		public
+#endif
+		HtmlControl(string tag)
 		{
 			_tagName = tag;
 		}
@@ -63,6 +73,20 @@ namespace System.Web.UI.HtmlControls{
 				}
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		protected virtual string GetAttribute (string name)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual void SetAttribute (string name, string value)
+		{
+			throw new NotImplementedException ();
+		}
+#endif		
 		
 		string System.Web.UI.IAttributeAccessor.GetAttribute(string name){
 			return Attributes[name];
@@ -79,7 +103,12 @@ namespace System.Web.UI.HtmlControls{
 			writer.Write ('>');
 		}
 
-		protected override void Render (HtmlTextWriter writer)
+#if NET_2_0
+		protected internal
+#else
+		protected
+#endif
+		override void Render (HtmlTextWriter writer)
 		{
 			RenderBeginTag (writer);
 		}
@@ -105,6 +134,10 @@ namespace System.Web.UI.HtmlControls{
 		[DefaultValue(false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebCategory("Behavior")]
+#if NET_2_0
+		/* Can't find this type in the docs */
+		//[TypeConverter (typeof(System.Web.UI.MinimizableAttributeTypeConverter))]
+#endif
 		public bool Disabled
 		{
 			get {

@@ -73,6 +73,12 @@ namespace System.Web.UI.WebControls
 			
 			return DataSource as IHierarchicalDataSource;
 		}
+
+		[MonoTODO]
+		protected void MarkAsDataBound ()
+		{
+			throw new NotImplementedException ();
+		}
 		
 		protected override void OnDataPropertyChanged ()
 		{
@@ -84,7 +90,7 @@ namespace System.Web.UI.WebControls
 			RequiresDataBinding = true;
 		}
 
-		protected override void OnLoad (EventArgs e)
+		protected internal override void OnLoad (EventArgs e)
 		{
 			if (IsBoundUsingDataSourceID && (!Page.IsPostBack || !EnableViewState))
 				RequiresDataBinding = true;

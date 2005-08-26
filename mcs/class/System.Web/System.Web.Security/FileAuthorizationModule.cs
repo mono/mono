@@ -5,8 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,10 +27,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Web;
-
 namespace System.Web.Security
 {
+	[MonoTODO ("that's only a stub")]
 	public sealed class FileAuthorizationModule : IHttpModule
 	{
 		public void Dispose ()
@@ -43,6 +41,13 @@ namespace System.Web.Security
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static bool CheckFileAccessForUser (string virtualPath, IntPtr token, string verb)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
-

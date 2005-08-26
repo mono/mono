@@ -36,6 +36,7 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
+	[Designer ("System.Web.UI.Design.WebControls.SiteMapPathDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class SiteMapPath: CompositeControl
 	{
 		SiteMapProvider provider;
@@ -271,7 +272,7 @@ namespace System.Web.UI.WebControls
 		
 	    [DefaultValueAttribute ("")]
 	    [ThemeableAttribute (false)]
-		public string SiteMapProvider {
+		public virtual string SiteMapProvider {
 			get {
 				object o = ViewState ["SiteMapProvider"];
 				if (o != null) return (string) o;
@@ -282,13 +283,37 @@ namespace System.Web.UI.WebControls
 				UpdateControls ();
 			}
 		}
+
+		[Localizable (true)]
+		[MonoTODO]
+		public virtual string SkipLinkText 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
 		
 		void UpdateControls ()
 		{
 			ChildControlsCreated = false;
 		}
+
+		[MonoTODO]
+		public override void DataBind ()
+		{
+			throw new NotImplementedException ();
+		}
 		
-		protected override void CreateChildControls ()
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
+		{
+			base.AddAttributesToRender (writer);
+		}
+		
+		protected internal override void CreateChildControls ()
 		{
 			Controls.Clear ();
 			CreateControlHierarchy ();
@@ -434,6 +459,22 @@ namespace System.Web.UI.WebControls
 			if (states[2] != null) ((IStateManager)NodeStyle).LoadViewState (states[2]);
 			if (states[3] != null) ((IStateManager)PathSeparatorStyle).LoadViewState (states[3]);
 			if (states[4] != null) ((IStateManager)RootNodeStyle).LoadViewState (states[4]);
+		}
+
+		[MonoTODO]
+		protected override void OnDataBinding (EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected internal override void Render (HtmlTextWriter w)
+		{
+			base.Render (w);
+		}
+
+		protected internal override void RenderContents (HtmlTextWriter w)
+		{
+			base.RenderContents (w);
 		}
 		
 		protected override object SaveViewState ()

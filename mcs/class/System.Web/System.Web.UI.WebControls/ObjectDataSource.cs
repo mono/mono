@@ -34,6 +34,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Security.Permissions;
+using System.Drawing;
 
 namespace System.Web.UI.WebControls
 {
@@ -45,6 +46,7 @@ namespace System.Web.UI.WebControls
 	[PersistChildrenAttribute (false)]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[ToolboxBitmap ("bitmap file goes here")]
 	public class ObjectDataSource : DataSourceControl
 	{
 		ObjectDataSourceView defaultView;
@@ -132,12 +134,64 @@ namespace System.Web.UI.WebControls
 			remove { DefaultView.Updating -= value; }
 		}
 
+		[DefaultValue (0)]
+		[TypeConverter ("System.Web.UI.DataSourceCacheDurationConverter, " + Consts.AssemblySystem_Web)]
+		[MonoTODO]
+		public virtual int CacheDuration 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[DefaultValue (DataSourceCacheExpiry.Absolute)]
+		[MonoTODO]
+		public virtual DataSourceCacheExpiry CacheExpirationPolicy 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[DefaultValue ("")]
+		[MonoTODO]
+		public virtual string CacheKeyDependency 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+		
+		
 	    [WebCategoryAttribute ("Data")]
 	    [DefaultValueAttribute (ConflictOptions.OverwriteChanges)]
 		public ConflictOptions ConflictDetection {
 			get { return DefaultView.ConflictDetection; }
 			set { DefaultView.ConflictDetection = value; }
 		}
+
+		[DefaultValue (false)]
+		[MonoTODO]
+		public bool ConvertNullToDBNull
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
 		
 	    [WebCategoryAttribute ("Data")]
 	    [DefaultValueAttribute ("")]
@@ -161,6 +215,19 @@ namespace System.Web.UI.WebControls
 		public ParameterCollection DeleteParameters {
 			get { return DefaultView.DeleteParameters; }
 		}
+
+		[DefaultValue (false)]
+		[MonoTODO]
+		public virtual bool EnableCaching 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
 		
 	    [WebCategoryAttribute ("Paging")]
 	    [DefaultValueAttribute (false)]
@@ -244,6 +311,19 @@ namespace System.Web.UI.WebControls
 			get { return DefaultView.SortParameterName; }
 			set { DefaultView.SortParameterName = value; }
 		}
+
+		[DefaultValue ("")]
+		[MonoTODO]
+		public virtual string SqlCacheDependency
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
 		
 	    [WebCategoryAttribute ("Paging")]
 	    [DefaultValueAttribute ("startRowIndex")]
@@ -308,7 +388,7 @@ namespace System.Web.UI.WebControls
 			return DefaultView.Insert (empty);
 		}
 		
-		protected override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
 			Page.LoadComplete += OnPageLoadComplete;
 		}

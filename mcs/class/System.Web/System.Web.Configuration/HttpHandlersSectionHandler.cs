@@ -43,7 +43,7 @@ namespace System.Web.Configuration
 			if (parent is HandlerFactoryConfiguration)
 				mapper = new HandlerFactoryConfiguration ((HandlerFactoryConfiguration) parent);
 			else
-				mapper = new HandlerFactoryConfiguration ();
+				mapper = new HandlerFactoryConfiguration (null);
 			
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				HandlersUtil.ThrowException ("Unrecognized attribute", section);
@@ -84,8 +84,7 @@ namespace System.Web.Configuration
 					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
-					HandlerItem item = new HandlerItem (verb, path, type, validate);
-					mapper.Add (item);
+					mapper.Add (verb, path, type, validate);
 					continue;
 				}
 

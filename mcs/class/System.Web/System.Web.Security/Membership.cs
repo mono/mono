@@ -47,11 +47,11 @@ namespace System.Web.Security
 		
 		static Membership ()
 		{
-			System.Configuration.Configuration conf = WebConfigurationManager.OpenWebConfiguration ("/");
-			MembershipSection section = (MembershipSection) conf.GetSection ("system.web/membership");
+/* FIXME		System.Configuration.Configuration conf = WebConfigurationManager.OpenWebConfiguration ("/");
+			MembershipSection section = (MembershipSection) conf.GetSection ("system.web/membership");*/
 			providers = new MembershipProviderCollection ();
-			
-			foreach (ProviderSettings prov in section.Providers) {
+
+/*			foreach (ProviderSettings prov in section.Providers) {
 				Type t = Type.GetType (prov.Type);
 				if (t == null)
 					throw new ConfigurationException ("Cannot find type: " + prov.Type);
@@ -66,14 +66,14 @@ namespace System.Web.Security
 
 				providers.Add (pr);
 			}
-			
+*/
 			if (providers.Count == 0) {
 				provider = new SqlMembershipProvider ();
 				NameValueCollection attributes = new NameValueCollection ();
 				provider.Initialize ("AspNetSqlMembershipProvider", attributes);
 				providers.Add (provider);
 			}
-			onlineTimeWindow = (int) section.UserIsOnlineTimeWindow.TotalMinutes;
+//			onlineTimeWindow = (int) section.UserIsOnlineTimeWindow.TotalMinutes;
 		}
 		
 		public static MembershipUser CreateUser (string username, string password)

@@ -43,13 +43,13 @@ namespace System.Web.Caching {
 		private string status_desc;
 		private int content_length;
 		private ArrayList headers;
-		private HttpResponseHeader date_header;
+		private BaseResponseHeader date_header;
 		private byte[] buffer;
 		
 		internal CachedRawResponse (HttpCachePolicy policy)
 		{
 			this.policy = policy;
-			this.buffer = new byte [HttpWriter.MaxBufferSize];
+			this.buffer = new byte [32*1024];
 		}
 
 		internal HttpCachePolicy Policy {
@@ -81,7 +81,7 @@ namespace System.Web.Caching {
 			get { return headers; }
 		}
 
-		internal HttpResponseHeader DateHeader {
+		internal BaseResponseHeader DateHeader {
 			get { return date_header; }
 			set { date_header = value; }
 		}

@@ -1,13 +1,12 @@
 //
-// System.Web.Security.IMembershipProvider
+// System.Web.Security.MembershipProvider
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -73,6 +72,18 @@ namespace System.Web.Security
 		{
 			if (ValidatingPassword != null)
 				ValidatingPassword (this, args);
+		}
+
+		[MonoTODO]
+		protected virtual byte[] DecryptPassword (byte[] encodedPassword)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected virtual byte[] EncryptPassword (byte[] password)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		public event MembershipValidatePasswordEventHandler ValidatingPassword;

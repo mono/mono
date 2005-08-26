@@ -1,3 +1,47 @@
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* FormsAuthentication.cs: With 2.0 we can get the default properties 
+	and call Initialize without a NRE.
+
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ActiveDirectoryConnectionProtection.cs: New (2.0) enum.
+	* ActiveDirectoryMembershipProvider.cs: Fixed 2.0 API.
+	* AnonymousIdentificationEventArgs.cs: Fixed AnonymousID property case.
+	* AnonymousIdentificationModule.cs: Fixed 2.0 API.
+	* FileAuthorizationModule.cs: Added static CheckFileAccessForUser in 
+	2.0 profile (TODO).
+	* FormsAuthentication.cs: Added missing 2.0 properties with their 
+	default values.
+	* MembershipCreateStatus.cs: Fixed enum values/names.
+	* MembershipProvider.cs: Added stub for [Decrypt|Encrypt]Password. Both
+	methods don't seems to work without an active provider.
+	* PassportIdentity.cs: Added IDispose for 2.0 profile.
+	* Roles.cs: Added missing beta2 bits and default values (which are the
+	only things working without a role provider (web.config).
+	* RolePrincipal.cs: Fixed 2.0 API. Implemented a few bits.
+	* SqlRoleProvider.cs: Fixed 2.0 API.
+	* UrlAuthorizationModule.cs: Added static CheckUrlAccessForPrincipal in
+	2.0 profile (TODO).
+
+2005-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MembershipUserCollection.cs: Fix exceptions.
+
+2005-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FormsAuthentication.cs: Add some 2.0 stuff required for Login* 
+	controls to compile.
+
+2005-08-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Membership.cs: Commented unworking parts of the .cctor to allow 
+	testing the Login control.
+	* MembershipProviderCollection.cs: Fixed exception handling.
+	* SqlMembershipProvider.cs: Don't throw NotImplementedException 
+	everywhere so Membership's .cctor (somewhat) works. Removed 
+	Description property (not in beta2).
+
 2005-07-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* FormsAuthentication.cs: allow hardware acceleration support if
@@ -13,6 +57,11 @@
 2005-07-25  Eyal Alaluf <eyala@mainsoft.com>
 
 	* FormsAuthenticationModule.cs: Check for null config
+
+2005-07-25  Miguel de Icaza  <miguel@novell.com>
+
+	* FormsAuthentication.cs (SignOut): Force the cookie to have it
+	expire in the past.
 
 2005-07-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

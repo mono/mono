@@ -37,6 +37,9 @@ namespace System.Web.UI {
 
 	[ToolboxItem(false)]
 	public sealed class DataBoundLiteralControl : Control
+#if NET_2_0
+	, ITextControl
+#endif
 	{
 		private string [] staticLiterals;
 		private string [] dataBoundLiterals;
@@ -80,7 +83,12 @@ namespace System.Web.UI {
 			}
 		}
 
-		protected override void Render (HtmlTextWriter output)
+#if NET_2_0
+		protected internal
+#else
+		protected
+#endif
+		override void Render (HtmlTextWriter output)
 		{
 			output.Write (Text);
 		}
@@ -101,6 +109,18 @@ namespace System.Web.UI {
 		{
 			staticLiterals [index] = s;
 		}
+
+#if NET_2_0
+		string ITextControl.Text 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif		
 	}
 }
 

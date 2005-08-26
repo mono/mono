@@ -65,7 +65,12 @@ namespace System.Web.UI
 				text = (string) savedState;
 		}
 
-		protected override void Render (HtmlTextWriter output)
+#if NET_2_0
+		protected internal
+#else
+		protected
+#endif
+		override void Render (HtmlTextWriter output)
 		{
 			output.Write (text);
 		}

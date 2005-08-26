@@ -3,10 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,14 +32,20 @@
 using System.Configuration.Provider;
 
 namespace System.Web.Security {
+
 	public sealed class MembershipProviderCollection : ProviderCollection
 	{
 		public override void Add (ProviderBase provider)
 		{
+			if (provider == null)
+				throw new ArgumentNullException ("provider");
+
 			if (provider is MembershipProvider)
 				base.Add (provider);
-			else
-				throw new HttpException ();
+			else {
+				throw new ArgumentException ("provider", Locale.GetText (
+					"Wrong type, expected {0}.", "MembershipProvider"));
+			}
 		}
 		
 		public void CopyTo (MembershipProvider[] array, int index)

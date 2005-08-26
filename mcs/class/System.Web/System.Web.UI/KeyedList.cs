@@ -74,7 +74,9 @@ namespace System.Web.UI
 		public void Remove (object key)
 		{
 			objectTable.Remove (key);
-			objectList.RemoveAt (IndexOf (key));
+			int index = IndexOf (key);
+			if (index >= 0)
+				objectList.RemoveAt (index);
 		}
 
 		public void RemoveAt (int idx)

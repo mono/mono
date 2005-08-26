@@ -43,7 +43,7 @@ namespace System.Web.Configuration
 			if (parent is ModulesConfiguration)
 				mapper = new ModulesConfiguration ((ModulesConfiguration) parent);
 			else
-				mapper = new ModulesConfiguration ();
+				mapper = new ModulesConfiguration (null);
 			
 			if (section.Attributes != null && section.Attributes.Count != 0)
 				HandlersUtil.ThrowException ("Unrecognized attribute", section);
@@ -67,7 +67,7 @@ namespace System.Web.Configuration
 					continue;
 				}
 
-				string nameAtt = HandlersUtil.ExtractAttributeValue ("name", child);
+				string name_attr = HandlersUtil.ExtractAttributeValue ("name", child);
 				if (name == "add") {
 					string type = HandlersUtil.ExtractAttributeValue ("type", child);
 					if (child.Attributes.Count != 0)
@@ -77,8 +77,7 @@ namespace System.Web.Configuration
 					if (type.StartsWith ("System.Web.Mobile"))
 						continue;
 
-					ModuleItem item = new ModuleItem (nameAtt, type);
-					mapper.Add (item);
+					mapper.Add (name_attr, type);
 					continue;
 				}
 
@@ -86,7 +85,7 @@ namespace System.Web.Configuration
 					if (child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
-					if (mapper.Remove (nameAtt) == null)
+					if (mapper.Remove (name_attr) == null)
 						HandlersUtil.ThrowException ("Module not loaded", child);
 					continue;
 				}
@@ -94,7 +93,8 @@ namespace System.Web.Configuration
 				HandlersUtil.ThrowException ("Unrecognized element", child);
 			}
 
-			mapper.Add (new ModuleItem ("DefaultAuthentication", typeof (DefaultAuthenticationModule)));
+			mapper.Add ("DefaultAuthentication", typeof (DefaultAuthenticationModule));
+			
 			return mapper;
 		}
 	}

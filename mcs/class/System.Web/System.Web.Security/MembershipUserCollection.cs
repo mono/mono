@@ -5,8 +5,7 @@
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,19 +30,21 @@
 #if NET_2_0
 using System.Collections;
 using System.Web.UI;
-using System;
 
-namespace System.Web.Security
-{
+namespace System.Web.Security {
+
 	[Serializable]
-	public class MembershipUserCollection : ICollection
-	{
+	public sealed class MembershipUserCollection : ICollection {
+
 		public MembershipUserCollection ()
 		{
 		}
 		
 		public void Add (MembershipUser user)
 		{
+			if (user == null)
+				throw new ArgumentNullException ("user");
+
 			CheckNotReadOnly ();
 			store.Add (user.UserName, user);
 		}
@@ -99,7 +100,7 @@ namespace System.Web.Security
 		void CheckNotReadOnly ()
 		{
 			if (readOnly)
-				throw new InvalidOperationException ();
+				throw new NotSupportedException ();
 		}
 		
 		KeyedList store = new KeyedList ();

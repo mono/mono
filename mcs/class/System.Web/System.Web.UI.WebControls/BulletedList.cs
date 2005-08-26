@@ -145,7 +145,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		protected override void RenderContents (HtmlTextWriter writer)
+		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
 			cacheIsEnabled = this.Enabled;
 			int idx = 0;
@@ -154,6 +154,12 @@ namespace System.Web.UI.WebControls {
 				this.RenderBulletText (i, idx ++, writer);
 				writer.RenderEndTag ();
 			}
+		}
+
+		[MonoTODO]
+		protected internal override void Render (HtmlTextWriter w)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
@@ -177,7 +183,8 @@ namespace System.Web.UI.WebControls {
 			set { throw new NotSupportedException (String.Format ("This property is not supported in {0}", GetType ())); }
 		}
 		
-	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
+		[Bindable (false)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public override int SelectedIndex {
 			get { return base.SelectedIndex; }
 			set { throw new NotSupportedException (String.Format ("This property is not supported in {0}", GetType ())); }
@@ -186,6 +193,19 @@ namespace System.Web.UI.WebControls {
 	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public override ListItem SelectedItem {
 			get { return base.SelectedItem; }
+		}
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Bindable (false)]
+		[MonoTODO]
+		public override string SelectedValue 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[DefaultValueAttribute ("")]
@@ -276,7 +296,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-	    [DefaultValueAttribute ("")]
+		[DefaultValueAttribute ("")]
+		[TypeConverter (typeof (TargetConverter))]
 		public virtual string Target {
 			get {
 				object ret = ViewState ["Target"];
@@ -289,6 +310,19 @@ namespace System.Web.UI.WebControls {
 				ViewState ["Target"] = value;
 			}
 		}
+
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[MonoTODO]
+		public override string Text
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
 		
 		static readonly object ClickEvent = new object ();
 		public event BulletedListEventHandler Click

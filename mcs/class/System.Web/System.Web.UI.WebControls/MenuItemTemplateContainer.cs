@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 		[MonoTODO]
-		protected override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			base.Render (writer);
 		}

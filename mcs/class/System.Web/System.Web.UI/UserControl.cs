@@ -39,10 +39,19 @@ namespace System.Web.UI
 {
 	[ControlBuilder (typeof (UserControlControlBuilder))]
 	[DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
-	[ToolboxItem (false), ParseChildren (true)]
+	[ToolboxItem (false)]
 	[Designer ("System.Web.UI.Design.UserControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
+#if NET_2_0
+	[Designer ("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (IRootDesigner))]
+	[ParseChildren (true, "", ChildControlType = typeof (Control))]
+#else
+	[ParseChildren (true)]
+#endif
 	public class UserControl : TemplateControl, IAttributeAccessor, IUserControlDesignerAccessor
+#if NET_2_0
+	, INamingContainer
+#endif
 	{
 		private bool initialized;
 		private AttributeCollection attributes;
@@ -95,6 +104,17 @@ namespace System.Web.UI
 				return p.Cache;
 			}
 		}
+
+#if NET_2_0
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
+		public ControlCachePolicy CachePolicy 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif		
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
@@ -203,7 +223,12 @@ namespace System.Web.UI
 
 		}
 
-		protected override void OnInit (EventArgs e)
+#if NET_2_0
+		protected internal
+#else
+		protected
+#endif
+		override void OnInit (EventArgs e)
 		{
 			InitializeAsUserControl (Page);
 

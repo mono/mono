@@ -1,3 +1,10 @@
+2005-08-17  Chris Toshok  <toshok@ximian.com>
+
+	* WebPart.cs: add basic stubbed out (and mostly NYI)
+	methods/properties.
+
+	* Part.cs: same.
+
 2005-05-06  Lluis Sanchez Gual <lluis@novell.com>
 
 	* ConnectionPoint.cs: Fix warning.

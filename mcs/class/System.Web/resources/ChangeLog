@@ -1,3 +1,65 @@
+2005-08-04  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js (CustomValidatorEvaluateIsValid): correct the
+	args.IsValid check.
+
+2005-08-04  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js (ValidatorOnLoad): set "enabled" == "true" if
+	there's no attribute present.
+	(Page_ClientValidate): a validator succeeds if it's disabled.
+
+2005-07-27  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js (ValidatorCommonOnSubmit): fix formatting of
+	List and SingleParagraph mode ValidationSummaries.
+	(ValidatorTrim): use two regexps instead of two while loops.
+	(CustomValidatorEvaluateIsValid): new function.
+
+2005-07-26  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js: fix the summary mode for
+	ValidationSummaries.
+
+2005-07-25  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js (RangeValidatorEvaluateIsValid): fix this -
+	GetAttribute is dead, long live validator.getAttribute.
+
+2005-07-24  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js: add support for validation summaries, both
+	in summary and messagebox mode.
+
+2005-07-22  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js: the JSUnit tests pointed out that
+	validator.evaluationfunction is not a string after OnLoad.  do
+	this as well so the tests pass, and deal with the difference
+	between o[attr], o.getAttribute(attr), and o.attr. Ugh.
+
+2005-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js (RequiredFieldValidatorEvaluateIsValid): trim
+	both the initial value and the control's value.
+
+2005-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js: handle validators that use
+	Display="Dynamic".
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js (ValidatorTrim): new function.
+	(RangeValidatorEvaluateIsValid): use ValidatorGetValue and
+	ValidatorTrim.
+	(RegularExpressionValidatorEvaluateIsValid): same.
+	(RequiredFieldValidatorEvaluateIsValid): same.
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js: new file.
+
 2005-03-11  Lluis Sanchez Gual <lluis@novell.com>
 
 	* webform.js: ClientSubmit option set to true means submit

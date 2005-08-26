@@ -3,10 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,14 +29,38 @@
 //
 
 #if NET_2_0
-using System.Collections;
-using System.Collections.Specialized;
-using System.Text;
 
-namespace System.Web.Security
-{
-	public sealed class Roles
-	{
+using System.Configuration.Provider;
+
+namespace System.Web.Security {
+
+	[MonoTODO ("read infos from web.config")]
+	public static class Roles {
+
+		private static RoleProvider provider;
+		private static bool cookie_cache_roles;
+		private static string cookie_name;
+		private static string cookie_path;
+		private static CookieProtection cookie_protection;
+		private static bool cookie_ssl;
+		private static bool cookie_sliding;
+		private static int cookie_timeout;
+		private static bool cookie_persistent;
+		private static string domain;
+		private static int max_cached_result;
+
+		static Roles ()
+		{
+			// default values (when not supplied in web.config)
+			cookie_name = ".ASPXROLES";
+			cookie_path = "/";
+			cookie_protection = CookieProtection.All;
+			cookie_sliding = true;
+			cookie_timeout = 30;
+			max_cached_result = 25;
+		}
+
+
 		public static void AddUsersToRole (string [] usernames, string rolename)
 		{
 			Provider.AddUsersToRoles (usernames, new string[] {rolename});
@@ -142,7 +166,7 @@ namespace System.Web.Security
 			return Provider.RoleExists (rolename);
 		}
 		
-		public static string[] FinsUsersInRole (string rolename, string usernameToMatch)
+		public static string[] FindUsersInRole (string rolename, string usernameToMatch)
 		{
 			return Provider.FindUsersInRole (rolename, usernameToMatch);
 		}
@@ -152,56 +176,74 @@ namespace System.Web.Security
 			set { Provider.ApplicationName = value; }
 		}
 		
-		[MonoTODO]
 		public static bool CacheRolesInCookie {
-			get { throw new NotImplementedException (); }
+			get { return cookie_cache_roles; }
 		}
 		
-		[MonoTODO]
 		public static string CookieName {
-			get { throw new NotImplementedException (); }
+			get { return cookie_name; }
 		}
 		
-		[MonoTODO]
 		public static string CookiePath {
-			get { throw new NotImplementedException (); }
+			get { return cookie_path; }
 		}
 		
-		[MonoTODO]
 		public static CookieProtection CookieProtectionValue {
-			get { throw new NotImplementedException (); }
+			get { return cookie_protection; }
 		}
 		
-		[MonoTODO]
 		public static bool CookieRequireSSL {
-			get { throw new NotImplementedException (); }
+			get { return cookie_ssl; }
 		}
 		
-		[MonoTODO]
 		public static bool CookieSlidingExpiration {
-			get { throw new NotImplementedException (); }
+			get { return cookie_sliding; }
 		}
 		
-		[MonoTODO]
 		public static int CookieTimeout {
-			get { throw new NotImplementedException (); }
+			get { return cookie_timeout; }
 		}
-		
-		[MonoTODO]
+
+		public static bool CreatePersistentCookie {
+			get { return cookie_persistent; }
+		}
+
+		public static string Domain {
+			get { return domain; }
+		}
+
 		public static bool Enabled {
-			get { throw new NotImplementedException (); }
+			get { return (provider != null); }
+		}
+
+		public static int MaxCachedResults {
+			get { return max_cached_result; }
 		}
 		
 		[MonoTODO]
 		public static RoleProvider Provider {
-			get { throw new NotImplementedException (); }
+			get {
+				CheckProvider ();
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[MonoTODO]
 		public static RoleProviderCollection Providers {
-			get { throw new NotImplementedException (); }
+			get {
+				CheckProvider ();
+				throw new NotImplementedException ();
+			}
+		}
+
+		// private stuff
+
+		private static void CheckProvider ()
+		{
+			if (!Enabled)
+				throw new ProviderException ();
 		}
 	}
 }
-#endif
 
+#endif

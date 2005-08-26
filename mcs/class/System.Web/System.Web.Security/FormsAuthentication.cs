@@ -29,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.IO;
 using System.Security.Cryptography;
@@ -57,13 +56,27 @@ namespace System.Web.Security
 		static bool requireSSL;
 		static bool slidingExpiration;
 #endif
-
+#if NET_2_0
+		static string cookie_domain;
+		static HttpCookieMode cookie_mode;
+		static bool cookies_supported;
+		static string default_url;
+		static bool enable_crossapp_redirects;
+		static string login_url;
+#endif
 		// same names and order used in xsp
 		static string [] indexFiles = { "index.aspx",
 						"Default.aspx",
 						"default.aspx",
 						"index.html",
 						"index.htm" };
+
+#if NET_2_0
+		[Obsolete]
+#endif
+		public FormsAuthentication ()
+		{
+		}
 
 		public static bool Authenticate (string name, string password)
 		{
@@ -281,11 +294,6 @@ namespace System.Web.Security
 			return returnUrl;
 		}
 
-		static string GetHexString (string str)
-		{
-			return GetHexString (Encoding.UTF8.GetBytes (str));
-		}
-
 		static string GetHexString (byte [] bytes)
 		{
 			StringBuilder result = new StringBuilder (bytes.Length * 2);
@@ -325,10 +333,13 @@ namespace System.Web.Security
 					return;
 
 				HttpContext context = HttpContext.Current;
-				if (context == null)
-					throw new HttpException ("Context is null!");
-
+#if NET_2_0
+				AuthConfig authConfig = null;
+				if (context != null)
+					authConfig = context.GetConfig (authConfigPath) as AuthConfig;
+#else
 				AuthConfig authConfig = context.GetConfig (authConfigPath) as AuthConfig;
+#endif
 				if (authConfig != null) {
 					cookieName = authConfig.CookieName;
 					timeout = authConfig.Timeout;
@@ -338,6 +349,14 @@ namespace System.Web.Security
 					requireSSL = authConfig.RequireSSL;
 					slidingExpiration = authConfig.SlidingExpiration;
 #endif
+#if NET_2_0
+					cookie_domain = authConfig.CookieDomain;
+					cookie_mode = authConfig.CookieMode;
+					cookies_supported = authConfig.CookiesSupported;
+					default_url = authConfig.DefaultUrl;
+					enable_crossapp_redirects = authConfig.EnableCrossAppRedirects;
+					login_url = authConfig.LoginUrl;
+#endif
 				} else {
 					cookieName = ".MONOAUTH";
 					timeout = 30;
@@ -345,6 +364,13 @@ namespace System.Web.Security
 					protection = FormsProtectionEnum.All;
 #if NET_1_1
 					slidingExpiration = true;
+#endif
+#if NET_2_0
+					cookie_domain = String.Empty;
+					cookie_mode = HttpCookieMode.UseDeviceProfile;
+					cookies_supported = true;
+					default_url = "/default.aspx";
+					login_url = "/login.aspx";
 #endif
 				}
 
@@ -374,8 +400,7 @@ namespace System.Web.Security
 
 			Initialize ();
 			SetAuthCookie (userName, createPersistentCookie, strCookiePath);
-			HttpResponse resp = HttpContext.Current.Response;
-			resp.Redirect (GetRedirectUrl (userName, createPersistentCookie), false);
+			Redirect (GetRedirectUrl (userName, createPersistentCookie));
 		}
 
 		public static FormsAuthenticationTicket RenewTicketIfOld (FormsAuthenticationTicket tOld)
@@ -425,7 +450,12 @@ namespace System.Web.Security
 			if (response == null)
 				throw new HttpException ("Response is null!");
 
-			response.Cookies.MakeCookieExpire (cookieName, cookiePath);
+			HttpCookieCollection cc = response.Cookies;
+			cc.Remove (cookieName);
+			HttpCookie expiration_cookie = new HttpCookie (cookieName, "");
+			expiration_cookie.Expires = new DateTime (1999, 10, 12);
+			expiration_cookie.Path = cookiePath;
+			cc.Add (expiration_cookie);
 		}
 
 		public static string FormsCookieName
@@ -458,6 +488,47 @@ namespace System.Web.Security
 			}
 		}
 #endif
+
+#if NET_2_0
+		public static string CookieDomain {
+			get { return cookie_domain; }
+		}
+
+		public static HttpCookieMode CookieMode {
+			get { return cookie_mode; }
+		}
+
+		public static bool CookiesSupported {
+			get { return cookies_supported; }
+		}
+
+		public static string DefaultUrl {
+			get { return default_url; }
+		}
+
+		public static bool EnableCrossAppRedirects {
+			get { return enable_crossapp_redirects; }
+		}
+
+		public static string LoginUrl {
+			get { return login_url; }
+		}
+
+		public static void RedirectToLoginPage ()
+		{
+			Redirect (LoginUrl);
+		}
+
+		[MonoTODO ("needs more tests")]
+		public static void RedirectToLoginPage (string extraQueryString)
+		{
+			// TODO: if ? is in LoginUrl (legal?), ? in query (legal?) ...
+			Redirect (LoginUrl + "?" + extraQueryString);
+		}
+#endif
+		private static void Redirect (string url)
+		{
+			HttpContext.Current.Response.Redirect (url);
+		}
 	}
 }
-

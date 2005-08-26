@@ -88,7 +88,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			if (CommandName.Length > 0 || ButtonType == ButtonType.Button)
 			{
@@ -103,7 +103,9 @@ namespace System.Web.UI.WebControls
 					postScript = Page.ClientScript.GetPostBackClientEvent (this, "");
 
 				if (CausesValidation && Page.Validators.Count > 0) {
-					postScript = Utils.GetClientValidatedEvent (Page) + postScript;
+					// TOSHOK: review if this is the correct usage of the "fresh" client side stuff
+					ClientScriptManager csm = new ClientScriptManager (Page);
+					postScript = csm.GetClientValidationEvent () + postScript;
 				}
 				
 				if (AllowCallback) {

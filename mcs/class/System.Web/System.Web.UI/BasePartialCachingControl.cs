@@ -95,13 +95,23 @@ namespace System.Web.UI
 			}
 		}
 
-		protected override void OnInit (EventArgs e)
+#if NET_2_0
+		protected internal
+#else
+		protected
+#endif
+		override void OnInit (EventArgs e)
 		{
 			control = CreateControl ();
 			Controls.Add (control);
 		}
 
-		protected override void Render (HtmlTextWriter output)
+#if NET_2_0
+		protected internal
+#else
+		protected
+#endif
+		override void Render (HtmlTextWriter output)
 		{
 			Cache cache = HttpRuntime.Cache;
 			string key = CreateKey ();
@@ -130,6 +140,15 @@ namespace System.Web.UI
 						Cache.NoSlidingExpiration,
 						CacheItemPriority.Normal, null);
 		}
+
+#if NET_2_0
+		public ControlCachePolicy CachePolicy 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 
 		public CacheDependency Dependency {
 			get {return dependency;}

@@ -2,7 +2,10 @@ thisdir = class/System.Web
 SUBDIRS = Test
 include ../../build/rules.make
 
-RESOURCE_FILES = \
+RESOURCE_FILES_1= \
+	resources/WebUIValidation.js
+
+RESOURCE_FILES_2 = \
 	resources/arrow_minus.gif \
 	resources/arrow_noexpand.gif \
 	resources/arrow_plus.gif \
@@ -43,26 +46,28 @@ RESOURCE_FILES = \
 	System.Web.UI.WebControls/TreeView.js \
 	System.Web.UI.WebControls/Menu.js
 
+OTHER_RES = $(RESOURCE_FILES_1)
 ifeq (net_2_0, $(PROFILE))
-OTHER_RES = $(RESOURCE_FILES)
-OTHER_LIB_MCS_FLAGS = /r:System.Configuration.dll
+OTHER_RES += $(RESOURCE_FILES_2)
+OTHER_LIB_MCS_FLAGS = -r:System.Configuration.dll
 endif
+
 
 LIBRARY = System.Web.dll
 LIB_MCS_FLAGS = \
-	/nowarn:649  	\
-	/codepage:28591	\
-	/r:$(corlib)	 		\
-	/r:System.dll 			\
-	/r:System.Drawing.dll 		\
-	/r:System.Data.dll		\
-	/r:System.Xml.dll		\
-	/r:System.EnterpriseServices.dll \
+	-unsafe \
+	-nowarn:649  	\
+	-r:$(corlib)	 		\
+	-r:System.dll 			\
+	-r:System.Drawing.dll 		\
+	-r:System.Data.dll		\
+	-r:System.Xml.dll		\
+	-r:System.EnterpriseServices.dll \
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(OTHER_RES:%=/resource:%)
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:219
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:219 -nowarn:169
 
-EXTRA_DISTFILES = $(RESOURCE_FILES)
+EXTRA_DISTFILES = $(RESOURCE_FILES_2) $(RESOURCE_FILES_1)
 
 include ../../build/library.make

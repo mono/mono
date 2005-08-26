@@ -103,7 +103,7 @@ namespace System.Web.UI.WebControls
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 	    [EditorAttribute ("System.Web.UI.Design.WebControls.MenuBindingsEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [MergablePropertyAttribute (false)]
-		public virtual MenuItemBindingCollection DataBindings {
+		public MenuItemBindingCollection DataBindings {
 			get {
 				if (dataBindings == null) {
 					dataBindings = new MenuItemBindingCollection ();
@@ -116,7 +116,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (500)]
 		[ThemeableAttribute (false)]
-		public virtual int DisappearAfter {
+		public int DisappearAfter {
 			get {
 				object o = ViewState ["DisappearAfter"];
 				if (o != null) return (int)o;
@@ -130,8 +130,8 @@ namespace System.Web.UI.WebControls
 		[ThemeableAttribute (true)]
 		[DefaultValue ("")]
 		[UrlProperty]
-		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		public virtual string DynamicBottomSeparatorImageUrl {
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		public string DynamicBottomSeparatorImageUrl {
 			get {
 				object o = ViewState ["dbsiu"];
 				if (o != null) return (string)o;
@@ -143,7 +143,7 @@ namespace System.Web.UI.WebControls
 		}
 
 	    [DefaultValueAttribute ("")]
-		public virtual string DynamicItemFormatString {
+		public string DynamicItemFormatString {
 			get {
 				object o = ViewState ["DynamicItemFormatString"];
 				if (o != null) return (string)o;
@@ -157,8 +157,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		[UrlProperty]
 		[WebCategory ("Appearance")]
-		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		public virtual string DynamicTopSeparatorImageUrl {
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		public string DynamicTopSeparatorImageUrl {
 			get {
 				object o = ViewState ["dtsiu"];
 				if (o != null) return (string)o;
@@ -172,7 +172,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		[UrlProperty]
 		[WebCategory ("Appearance")]
-		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string StaticBottomSeparatorImageUrl {
 			get {
 				object o = ViewState ["sbsiu"];
@@ -187,7 +187,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue ("")]
 		[UrlProperty]
 		[WebCategory ("Appearance")]
-		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string StaticTopSeparatorImageUrl {
 			get {
 				object o = ViewState ["stsiu"];
@@ -200,7 +200,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (Orientation.Vertical)]
-		public virtual Orientation Orientation {
+		public Orientation Orientation {
 			get {
 				object o = ViewState ["Orientation"];
 				if (o != null) return (Orientation) o;
@@ -212,8 +212,8 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (1)]
-		[ThemeableAttribute (false)]
-		public virtual int StaticDisplayLevels {
+		[ThemeableAttribute (true)]
+		public int StaticDisplayLevels {
 			get {
 				object o = ViewState ["StaticDisplayLevels"];
 				if (o != null) return (int)o;
@@ -226,7 +226,7 @@ namespace System.Web.UI.WebControls
 		}
 
 	    [DefaultValueAttribute ("")]
-		public virtual string StaticItemFormatString {
+		public string StaticItemFormatString {
 			get {
 				object o = ViewState ["StaticItemFormatString"];
 				if (o != null) return (string)o;
@@ -252,7 +252,7 @@ namespace System.Web.UI.WebControls
 
 		[ThemeableAttribute (true)]
 		[DefaultValue (3)]
-		public virtual int MaximumDynamicDisplayLevels {
+		public int MaximumDynamicDisplayLevels {
 			get {
 				object o = ViewState ["MaximumDynamicDisplayLevels"];
 				if (o != null) return (int)o;
@@ -265,7 +265,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (0)]
-		public virtual int DynamicVerticalOffset {
+		public int DynamicVerticalOffset {
 			get {
 				object o = ViewState ["DynamicVerticalOffset"];
 				if (o != null) return (int)o;
@@ -277,7 +277,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (0)]
-		public virtual int DynamicHorizontalOffset {
+		public int DynamicHorizontalOffset {
 			get {
 				object o = ViewState ["DynamicHorizontalOffset"];
 				if (o != null) return (int)o;
@@ -289,7 +289,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (true)]
-		public virtual bool DynamicEnableDefaultPopOutImage {
+		public bool DynamicEnableDefaultPopOutImage {
 			get {
 				object o = ViewState ["dedpoi"];
 				if (o != null) return (bool)o;
@@ -301,7 +301,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (true)]
-		public virtual bool StaticEnableDefaultPopOutImage {
+		public bool StaticEnableDefaultPopOutImage {
 			get {
 				object o = ViewState ["sedpoi"];
 				if (o != null) return (bool)o;
@@ -314,9 +314,9 @@ namespace System.Web.UI.WebControls
 
 	    [DefaultValueAttribute (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[Editor ("System.Web.UI.Design.MenuItemCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Editor ("System.Web.UI.Design.MenuItemCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [MergablePropertyAttribute (false)]
-		public virtual MenuItemCollection Items {
+		public MenuItemCollection Items {
 			get {
 				if (items == null) {
 					items = new MenuItemCollection (this);
@@ -328,7 +328,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ('/')]
-		public virtual char PathSeparator {
+		public char PathSeparator {
 			get {
 				object o = ViewState ["PathSeparator"];
 				if(o != null) return (char)o;
@@ -340,7 +340,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (false)]
-		public virtual bool ItemWrap {
+		public bool ItemWrap {
 			get {
 				object o = ViewState ["ItemWrap"];
 				if(o != null) return (bool)o;
@@ -355,7 +355,7 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual MenuItemStyle DynamicMenuItemStyle {
+		public MenuItemStyle DynamicMenuItemStyle {
 			get {
 				if (dynamicMenuItemStyle == null) {
 					dynamicMenuItemStyle = new MenuItemStyle ();
@@ -370,7 +370,7 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual MenuItemStyle DynamicSelectedStyle {
+		public MenuItemStyle DynamicSelectedStyle {
 			get {
 				if (dynamicSelectedStyle == null) {
 					dynamicSelectedStyle = new MenuItemStyle ();
@@ -385,7 +385,7 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual SubMenuStyle DynamicMenuStyle {
+		public SubMenuStyle DynamicMenuStyle {
 			get {
 				if (dynamicMenuStyle == null) {
 					dynamicMenuStyle = new SubMenuStyle ();
@@ -400,7 +400,7 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual MenuItemStyle StaticMenuItemStyle {
+		public MenuItemStyle StaticMenuItemStyle {
 			get {
 				if (staticMenuItemStyle == null) {
 					staticMenuItemStyle = new MenuItemStyle ();
@@ -415,7 +415,7 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual MenuItemStyle StaticSelectedStyle {
+		public MenuItemStyle StaticSelectedStyle {
 			get {
 				if (staticSelectedStyle == null) {
 					staticSelectedStyle = new MenuItemStyle ();
@@ -430,7 +430,7 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual SubMenuStyle StaticMenuStyle {
+		public SubMenuStyle StaticMenuStyle {
 			get {
 				if (staticMenuStyle == null) {
 					staticMenuStyle = new SubMenuStyle ();
@@ -443,8 +443,8 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public virtual MenuItemStyleCollection LevelMenuItemStyles {
+	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		public MenuItemStyleCollection LevelMenuItemStyles {
 			get {
 				if (levelMenuItemStyles == null) {
 					levelMenuItemStyles = new MenuItemStyleCollection ();
@@ -457,8 +457,8 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public virtual MenuItemStyleCollection LevelSelectedStyles {
+	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		public MenuItemStyleCollection LevelSelectedStyles {
 			get {
 				if (levelSelectedStyles == null) {
 					levelSelectedStyles = new MenuItemStyleCollection ();
@@ -471,8 +471,8 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-	    [Editor ("System.Web.UI.Design.WebControls.MenuItemStyleCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public virtual SubMenuStyleCollection LevelSubMenuStyles {
+	    [Editor ("System.Web.UI.Design.WebControls.SubMenuStyleCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		public SubMenuStyleCollection LevelSubMenuStyles {
 			get {
 				if (levelSubMenuStyles == null) {
 					levelSubMenuStyles = new SubMenuStyleCollection ();
@@ -487,7 +487,7 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual Style DynamicHoverStyle {
+		public Style DynamicHoverStyle {
 			get {
 				if (dynamicHoverStyle == null) {
 					dynamicHoverStyle = new Style ();
@@ -502,7 +502,7 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public virtual Style StaticHoverStyle {
+		public Style StaticHoverStyle {
 			get {
 				if (staticHoverStyle == null) {
 					staticHoverStyle = new Style ();
@@ -515,7 +515,7 @@ namespace System.Web.UI.WebControls
 		
 		[DefaultValue ("")]
 		[UrlProperty]
-		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string ScrollDownImageUrl {
 			get {
 				object o = ViewState ["sdiu"];
@@ -529,7 +529,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue ("")]
 		[UrlProperty]
-		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string ScrollUpImageUrl {
 			get {
 				object o = ViewState ["suiu"];
@@ -542,7 +542,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string ScrollDownText {
+		public string ScrollDownText {
 			get {
 				object o = ViewState ["ScrollDownText"];
 				if (o != null) return (string) o;
@@ -554,7 +554,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string ScrollUpText {
+		public string ScrollUpText {
 			get {
 				object o = ViewState ["ScrollUpText"];
 				if (o != null) return (string) o;
@@ -565,10 +565,22 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[MonoTODO]
+		public string DynamicPopOutImageTextFormatString 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+
 		[DefaultValue ("")]
 		[UrlProperty]
-		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-		public virtual string DynamicPopOutImageUrl {
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		public string DynamicPopOutImageUrl {
 			get {
 				object o = ViewState ["dpoiu"];
 				if (o != null) return (string)o;
@@ -579,9 +591,21 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		[MonoTODO]
+		public string StaticPopOutImageTextFormatString
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
+
 		[DefaultValue ("")]
 		[UrlProperty]
-		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
+		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string StaticPopOutImageUrl {
 			get {
 				object o = ViewState ["spoiu"];
@@ -594,7 +618,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ("")]
-		public virtual string Target {
+		public string Target {
 			get {
 				object o = ViewState ["Target"];
 				if (o != null) return (string) o;
@@ -641,6 +665,19 @@ namespace System.Web.UI.WebControls
 		public string SelectedValue {
 			get { return selectedItem != null ? selectedItem.Value : null; }
 		}
+
+		[MonoTODO]
+		[Localizable (true)]
+		public string SkipLinkText 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+		
 
 		internal void SetSelectedItem (MenuItem item)
 		{
@@ -721,12 +758,18 @@ namespace System.Web.UI.WebControls
 			node.SetDataItem (dataItem);
 		}
 		
-		public void RaisePostBackEvent (string eventArgument)
+		protected internal virtual void RaisePostBackEvent (string eventArgument)
 		{
 			MenuItem item = FindItemByPos (eventArgument);
 			if (item == null) return;
 			item.Selected = true;
 			OnMenuItemClick (new MenuEventArgs (item));
+		}
+
+		[MonoTODO]
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		MenuItem FindItemByPos (string path)
@@ -848,7 +891,7 @@ namespace System.Web.UI.WebControls
 				((IStateManager)LevelSubMenuStyles).LoadViewState(states[13]);
 		}
 		
-		protected override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
 			Page.RegisterRequiresControlState (this);
 			base.OnInit (e);
@@ -873,7 +916,7 @@ namespace System.Web.UI.WebControls
 				return null;
 		}
 		
-		protected override void CreateChildControls ()
+		protected internal override void CreateChildControls ()
 		{
 			base.CreateChildControls ();
 		}
@@ -882,7 +925,19 @@ namespace System.Web.UI.WebControls
 		{
 			base.EnsureDataBound ();
 		}
-		
+
+		[MonoTODO]
+		protected override IDictionary GetDesignModeState ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void SetDesignModeState (IDictionary data)
+		{
+			throw new NotImplementedException ();
+		}
+				
 		public override ControlCollection Controls {
 			get { return base.Controls; }
 		}
@@ -892,7 +947,19 @@ namespace System.Web.UI.WebControls
 			base.DataBind ();
 		}
 		
-		protected override void OnPreRender (EventArgs e)
+		[MonoTODO]
+		protected override bool OnBubbleEvent (object source, EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override void OnDataBinding (EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 			
@@ -972,7 +1039,7 @@ namespace System.Web.UI.WebControls
 			Page.Header.StyleSheet.CreateStyleRule (ts, "." + baseStyle.RegisteredCssClass + " A", this);
 		}
 		
-		protected override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			base.Render (writer);
 		}
@@ -999,7 +1066,7 @@ namespace System.Web.UI.WebControls
 			dynamicMenus = null;
 		}
 		
-		protected override void RenderContents (HtmlTextWriter writer)
+		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
 			dynamicMenus = new ArrayList ();
 			RenderMenuBody (writer, Items, Orientation == Orientation.Vertical, false);

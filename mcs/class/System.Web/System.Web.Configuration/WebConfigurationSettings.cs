@@ -588,10 +588,30 @@ namespace System.Web.Configuration
 			return iconf.Create (parentConfig, fileName, doc.DocumentElement);
 		}
 
+		string MakeRelative (string fullUrl, string relativeTo)
+		{
+                        if (fullUrl == relativeTo)
+                                return String.Empty;
+
+                        if (fullUrl.IndexOf (relativeTo) != 0)
+                                return null;
+
+                        string leftOver = fullUrl.Substring (relativeTo.Length);
+                        if (leftOver.Length > 0 && leftOver [0] == '/')
+                                leftOver = leftOver.Substring (1);
+
+                        leftOver = UrlUtils.Canonic (leftOver); 
+                        if (leftOver.Length > 0 && leftOver [0] == '/')
+                                leftOver = leftOver.Substring (1);
+
+                        return leftOver;
+		}
+		
+					    
 		public object GetConfig (string sectionName, HttpContext context)
 		{
 			if (locations != null && dirname != null) {
-				string reduced = UrlUtils.MakeRelative (context.Request.CurrentExecutionFilePath, dirname);
+				string reduced = MakeRelative (context.Request.CurrentExecutionFilePath, dirname);
 				string [] parts = reduced.Split ('/');
 				Location location = null;
 

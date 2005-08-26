@@ -1,19 +1,1858 @@
-2005-08-22 Michael Hutchinson <m.j.hutchinson@gmail.com>
+2005-08-26  Chris Toshok  <toshok@ximian.com>
 
-	* WebControl.cs: Correct type for some default values
-	* UnitConverter.cs: Fix potential infinite loop
+	* TextBox.cs: implement ValidationGroup and CausesValidation
+	properties.
 
-2005-07-29  Kornél Pál <kornelpal@hotmail.com>
+2005-08-26  Lluis Sanchez Gual  <lluis@novell.com> 
 
-	* *.cs: Replaced assembly references with constants in Consts.cs.
+	* Style.cs: Implemented FillStyleAttributes, GetStyleAttributes and
+	SetDirty.
 
-2005-07-25  Eyal Alaluf <eyala@mainsoft.com>
-	* Table.cs Label.cs Image.cs BaseDataList.cs DataList.cs RepeatInfo.cs
-	  DataGrid.cs TableCaptionAlign.cs: Accessiblity feature is part of NET_1_1
-	  service pack fixes. In Mono it was available only under NET_2_0 config.
+2005-08-26  Chris Toshok  <toshok@ximian.com>
 
-2005-07-19  Eyal Alaluf <eyala@mainsoft.com>
-	* Added XmlBuilder.jvm.cs for the TARGET_J2EE configuration.
+	* Unit.cs: implement the 2.0 ToString(IFormatProvider) method.
+
+	* FontUnit.cs: add two 2.0 ctors, and the 2.0
+	ToString(IFormatProvider) method.
+
+2005-08-26  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* CheckListBox.cs: Nothing is rendered (i.e. no empty table) in 2.0 if
+	no items are present in the list.
+	* RoleGroup.cs: Added missing attributes.
+	* RoleGroupCollection.cs: Added missing attributes and some (yet-to-be-
+	documented) methods.
+	* TableStyle.cs: *for 2.0* adding a "url({0})" to background image 
+	must be done in the HtmlTextWriter (not in the TableStyle).
+
+2005-08-26  Chris Toshok  <toshok@ximian.com>
+
+	* Calendar.cs (UseAccessibleHeader): implement.
+	(RaisePostBackEvent): some #ifdef ugliness to get this all working
+	propertly between 1.x and 2.0
+	(WriteDayHeader): if UseAccessibleHeader == true, render header
+	cells as th's, not td's, and add abbr and scope attributes.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* Calendar.cs (Caption, CaptionAlign): implement these properties.
+	(Render): if we have a non-empty caption, show it.
+	(WriteCaption): new method, output the caption.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* Calendar.cs (Render): Copy the entire style from the Calendar to
+	the Table, not just the font.
+	(WriteDay): don't just write the link/text/etc.  Create a
+	LiteralControl as a child of the cell, before the call to
+	OnDayRender, with its text set to the day number.  After
+	OnDayRender, set the literal's text to either the number again (if
+	it's not selectable) or the full text of the js __doPostBack
+	hyperlink (if it is.)  Also, use cell.RenderControl here so we can
+	render child controls with the id's listed properly (and arguably
+	incorrectly).
+	(ApplyTitleStyleCell): remove.
+	(WriteTitle): apply the titleStyle to the enclosing table, not the
+	table cell containing the month name.  Also, copy from the
+	Calendar's ControlStyle to populate tableTitle's style initially.
+	We end up with more (superfluous) style attributes than MS, but
+	it's better than having less.
+
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HyperLink.cs: Fixed 2.0 rendering for Alt and Border|BorderWidth when
+	an image is used.
+
+2005-08-25  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Style.cs: Implemented 2.0 CopyTextStylesFrom(), SetRegisteredCssClass()
+	  and RegisteredCssClass property
+
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* LoginView.cs: Fixed attributes.
+	* Style.cs: Change SetRegisteredCssClass to internal and not to throw
+	an exception to allow pages to work on 2.x.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* LinkButton.cs (PostBackUrl): correct the UrlProperty attribute.
+
+	* Unit.cs: add [Serializable] and the 2.0 specific ToString(), not
+	yet implemented.
+
+	* HiddenField.cs: stub out this class and label everything
+	MonoTODO.
+
+2005-08-25  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Disable the pager row if there no paging enabled
+	or available.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* SqlDataSourceFilteringEventArgs.cs: add some usings, and fix a
+	typo.
+
+	* SqlDataSourceSelectingEventArgs.cs: IDbCommand -> DbCommand, and
+	add a using statement.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* SqlDataSourceFilteringEventArgs.cs: new 2.0 class, as per
+	corcompare.
+
+	* SqlDataSourceFilteringEventHandler.cs: new 2.0 delegate, as per
+	corcompare.
+
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Login.cs: Added rendering and fixed parts of the authentication.
+	Now using IStateManager to allow compilation in another assembly (e.g.
+	to test the control under IIS). Needs more tests (error conditions) 
+	once we get a "real" Membership provider running.
+	* Style.cs: Fixed IsStyleEmpty (name ;-) and when null is provided 
+	(returns true).
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* SqlDataSourceCommandType.cs: new 2.0 enum, as per corcompare.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* AdRotator.cs: stub out enough of the 2.0 methods/properties by
+	calling base.Foo to get the standalone adrotator (1.0) tests to
+	run without throwing exceptions.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* ValidationSummary.cs (ValidationGroup): implement.
+	(Render): use Page.GetValidators in .net 2.0, so we can support
+	ValidationGroups.  Also, <br>'s get rendered as <br /> in .net
+	2.0.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* ImageButton.cs (TagKey): disable (but flag) the "virtual new"
+	2.0 attribute modifiers, and revert back to "override".
+
+	* ListBox.cs (BorderColor): disable (but flag) the "virtual new"
+	2.0 attribute modifiers, and revert back to "override".
+	(BorderStyle): same.
+	(BorderWidth): same.
+
+	* TextBox.cs (SaveViewState): implement naively, calling
+	base.SaveViewState.
+	(TagKey): disable (but flag) the "virtual new" 2.0 attribute
+	modifiers, and revert back to "override".
+
+2005-08-25  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Style.cs, TableStyle.cs, TableItemStyle.cs, DataGridPagerStyle.cs:
+	  Load ViewState for derived classes; no public LoadViewState override 
+	  exists in those classes
+	* Style.cs: Added 2.0 IsStyleEmpty method
+
+2005-08-25  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: The number of pages set in the pager is specified
+	by PageButtonCount.
+
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* LoginView.cs: New (2.0). Work in progress.
+
+2005-08-24  Chris Toshok  <toshok@ximian.com>
+
+	* Button.cs, DetailsView.cs, FontInfo.cs, Style.cs, Xml.cs,
+	Menu.cs, ObjectDataSource.cs, CheckBox.cs, RadioButton.cs,
+	ListControl.cs, SiteMapPath.cs, BulletedList.cs,
+	DataBoundControl.cs, ListItemCollection.cs, GridView.cs,
+	Wizard.cs, TextBox.cs, CheckBoxList.cs, RadioButtonList.cs,
+	PagedDataSource.cs, FormView.cs, AdRotator.cs, Repeater.cs,
+	DropDownList.cs, MultiView.cs, HierarchicalDataBoundControl.cs,
+	Calendar.cs, ListBox.cs, WebControl.cs, Literal.cs,
+	ValidationSummary.cs, ImageButton.cs, LinkButton.cs, TreeView.cs:
+	Add MonoTODO's for all things that throw NotImplementException.
+
+2005-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RoleGroup.cs: New (2.0). Complete implementation.
+	* RoleGroupCollection.cs: New (2.0). Mostly complete implementation.
+
+2005-08-23  Chris Toshok  <toshok@ximian.com>
+
+	* BaseCompareValidator.cs (GetFullYear): it turns out the docs up
+	on msdn.microsoft.com tell exactly how the .net 2.0 stuff works,
+	even though they were written for the 1.0 stuff.
+
+2005-08-23  Chris Toshok  <toshok@ximian.com>
+
+	* RepeatInfo.cs: some massaging to support both the 1.x and 2.0
+	output.  Our tests now pass on both mono and ms, with both 1.x and
+	2.0 profiles.
+
+2005-08-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Login.cs: Throw exception if the specified provider doesn't exists.
+	* LoginStatus.cs: Complete events.
+
+2005-08-22  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs (CreateControlHierarchy): Clear out the old pager after creating the
+	controls.
+	(InitializeNumericPager): Now that the pager actually renders
+	properly I can see that I was computing it incorrectly.
+
+2005-08-22  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs (RenderTable): Make sure the new table gets the
+	correct style.
+	(CreateColumnSet): Clear the data source columnbs before adding
+	new ones regardless of whether or not a property descriptor was
+	found.
+	(InitializePager): pager_cell needs to be a member so it isn't
+	created more then once per a render.
+	(InitializeNumericPager): Compute start and end more
+	correctly.
+	- Link commands are 1 indexed.
+	(CreateControlHierarchy): Clear the table before we begin
+	rendering.
+	- Revert patch that made adding the pagers conditional. This is
+	incorrect, the pagers are always added. Only their visibility is
+	affected by the pager style.
+	- Save the entire count in the viewstate, not just the rendered
+	count. So when paging is enabled the pager's count isn't broken by
+	postback.
+
+2005-08-22  Chris Toshok  <toshok@ximian.com>
+
+	* LinkButton.cs (ValidationGroup): implement.
+	(IPostBackEventHandler.RaisePostBackEvent): in the 2.0 profile,
+	pass ValidationGroup to Page.Validate.
+
+2005-08-22  Chris Toshok  <toshok@ximian.com>
+
+	* ImageButton.cs (ValidationGroup): implement.
+	(IPostBackEventHandler.RaisePostBackEvent): if we cause
+	validation, call Page.Validate properly (in both profiles).
+
+2005-08-22  Chris Toshok  <toshok@ximian.com>
+
+	* Button.cs (IPostBackEventHandler.RaisePostBackEvent): in the 2.0
+	case, pass ValidationGroup to Page.Validate.
+	(ValidationGroup): implement using ViewState.
+
+2005-08-22  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (Text): 2.0 only.  implement naively, just
+	get/set base.Text.
+	(OnInit): add 2.0 support for validation groups.
+	(OnUnload): same.
+
+2005-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* LoginName.cs: New (2.0) web control.
+	* LoginStatus.cs: New (2.0) web control.
+
+2005-08-19  Chris Toshok  <toshok@ximian.com>
+
+	* LinkButton.cs (ValidationGroup): implement getter/setter.
+	(RaisePostBackEvent): implement naively, by c&p'ing the old
+	implementation of IPostBackEventHandler.RaisePostBackEvent, but
+	making use of the ValidationGroup in the call to Page.Validate.
+
+	* Button.cs: same.
+
+	* Style.cs (LoadViewState): set our style flags for all the things
+	we have flags for.  Seems like the subclass flags should be
+	handled in overridden LoadViewState methods, but none of the Style
+	subclasses seem to override this method.
+
+2005-08-19  Chris Toshok  <toshok@ximian.com>
+
+	* TableStyle.cs (Merge, MergeWith): make these look a bit more
+	like Copy/CopyFrom, with the styles checks instead of just
+	ViewState checks.
+
+	* TableItemStyle.cs: same, only also make Copy/CopyFrom work as in
+	TableStyle.cs.
+
+2005-08-19  Chris Toshok  <toshok@ximian.com>
+
+	* DataGrid.cs (InitializePager): don't unconditionally set
+	pager_cell to the numeric pager (especially after setting it
+	conditionally to the nextprev pager.)
+	(InitializeNumericPager): the link buttons don't participate in
+	validation.
+	(InitializeNextPrevPager): same.
+	(CreateControlHierarchy): create the top/bottom pagers only if the
+	PagerStyle says too.
+
+2005-08-19  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* TableCell.cs: Added AssociatedHeaderCellID property for 2.0.
+
+2005-08-18  Chris Toshok  <toshok@ximian.com>
+
+	* DataList.cs (CreateControlHierarchy): Call Controls.Clear() at
+	the start of this method so templates are created properly.
+
+2005-08-18  Dick Porter  <dick@ximian.com>
+
+	* Button.cs, DetailsView.cs, Xml.cs, Table.cs, Menu.cs,
+	DataControlButton.cs, Label.cs, ObjectDataSource.cs, CheckBox.cs,
+	RadioButton.cs, ListControl.cs, Image.cs, SiteMapPath.cs,
+	BaseDataList.cs, DataList.cs, BulletedList.cs,
+	DataBoundControl.cs, Login.cs, GridView.cs,
+	CompositeDataBoundControl.cs, Wizard.cs, BaseValidator.cs,
+	TextBox.cs, CheckBoxList.cs, RadioButtonList.cs, FormView.cs,
+	AdRotator.cs, Repeater.cs, MenuItemTemplateContainer.cs,
+	DropDownList.cs, HyperLink.cs, ImageMap.cs, MultiView.cs,
+	CompositeControl.cs, HierarchicalDataBoundControl.cs, Calendar.cs,
+	ListBox.cs, TableCell.cs, WebControl.cs, Literal.cs,
+	BaseDataBoundControl.cs, ValidationSummary.cs, ImageButton.cs,
+	LinkButton.cs, TreeView.cs: 2.0 API fixes and stubs, and attribute
+	fixes
+
+2005-08-18  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* BaseDataList.cs: Added a TODO for DataKeyField as we're not using it
+	anywhere...
+	* DataList.cs: Reworked CreateControlHierarchy to avoid allocating an
+	empty array of objects just to get the number of items.
+	* Login.cs: Implemented OnBubbleEvent and parts of the authentication
+	but we're missing some bits from the class lib to complete all this...
+
+2005-08-17  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Only create one pager and add it to both the top
+	and bottom of the grid, this way all the id numbers stay the same
+	and we save a bunch of cycles.
+
+2005-08-17  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: The top and bottom pagers are always created. Just
+	the visibility is changed by the PagerStyle::Position.
+
+2005-08-17  Chris Toshok  <toshok@ximian.com>
+
+	* CompositeControl.cs (RecreateChildControls): implement naively -
+	just call CreateChildControls.  We might need to call
+	Controls.Clear() as well, but for the time being, this is ok.
+
+2005-08-17  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* BaseDataList.cs: Completed implementation for 2.0.
+
+2005-08-16  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* BaseDataList.cs: Added missing properties/methods/attributes for 2.0.
+	* DataList.cs: Added missing [Browseable] attribute on SelectedValue.
+
+2005-08-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BaseDataList.cs: Removed old internal ctor as DataList TagKey was 
+	fixed for 2.0.
+	* DataList.cs: Implemented {Load|Save}ControlState and OnInit (2.0).
+	Adjusted size and ordering of the ViewState (new element #0 is still
+	unknown). Properly fixed the TagKey in 2.0.
+	* Login.cs: Implemented {Load|Save|Track}ViewState. Added checks for 
+	all properties using enums.
+	* Panel.cs: Fixed NoWrap rendering unit test (for 2.0).
+	* TableItemStyle.cs: Fixed attribute rendering to use style to render
+	"nowrap" in 2.0 (it used the HTML nowrap attribute in 1.x).
+
+2005-08-15  Jackson Harper  <jackson@ximian.com>
+
+	* EditCommandColumn.cs: Use a normal LinkButton.
+
+2005-08-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Image.cs: Don't remove GenerateEmptyAlternateText (2.0) from the 
+	viewstate (even if assigned to the default value).
+	* TableRow.cs: Implement TableSection property (2.0). It has no effect
+	on the rendering of the table row.
+
+2005-08-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BaseDataList.cs: Added new [Themeable] and [Localizable] attributes
+	and removed [Bindable] attributes for 2.0.
+	* DataList.cs: Added new 2.0 attributes on class and removed [Bindable] 
+	attributes (for 2.0).
+	* DataListCommandEventArgs.cs: Not sealed in 2.0.
+	* DataListItemEventArgs.cs: Not sealed in 2.0.
+	* Image.cs: Fixed [Designer] attribute on class and all [Editor] 
+	attributes for URLs.
+	* Login.cs: Fixed [Designer] attribute on class and all [Editor] 
+	attributes for URLs.
+	* Table.cs: Fixed [Editor] attribute for 2.0.
+	* TableCellCollection.cs: Fixed [Editor] attribute for 2.0.
+	* TableCell.cs: Fixed [Designer] attribute. Fixed property name for 
+	AssociatedHeaderCellID and it's [DefaultValue] attribute.
+	* TableHeaderCell.cs: Fix [DefaultValue] attributes for CategoryText 
+	and Scope attributes.
+	* TableRow.cs: Fixed [Designer] attribute. Added missing [DefaultValue]
+	on TableSection attribute.
+	* TableRowCollection.cs: Fixed [Editor] attribute for 2.0.
+
+2005-08-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Image.cs: Fixed attributes for 2.0 profile.
+	* Login.cs: Fixed some attributes and default values.
+	* Table.cs: Fixed attributes for 2.0 profile. Added protected method
+	RaisePostBackEvent (TODO) in 2.0 profile.
+	* TableCell.cs: Fix properties (Bindable, Localizable, Designer...) 
+	and added AssociateHeaderCellID property (TODO).
+	* TableCellCollection.cs: Fixed [Editor] attribute for 2.0.
+	* TableFooterRow.cs: New (2.0). TableRow that always shows on each
+	page (if the device requires to breaks the table into multiple pages).
+	This seems to be a "flag" class, the real work will be in Table.
+	* TableHeaderCell.cs: Added CategoryText and Scope properties for 2.0.
+	* TableHeaderRow.cs: New (2.0). TableRow that always shows on each
+	page (if the device requires to breaks the table into multiple pages).
+	This seems to be a "flag" class, the real work will be in Table.
+	* TableItemStyle.cs: Remove [Bindable (true)] from 2.0 profile.
+	* TableRow.cs: Remove [Bindable (true)] from properties and add
+	[Bindable (false)] and [Designer] on class. Added new TableSection 
+	property (TODO).
+	* TableRowCollection.cs: Fixed [Editor] attribute for 2.0.
+	* TableSectionStyle.cs: New (2.0). Add Visible to Style - but it's 
+	broken (int beta2) for IsEmpty, CopyFrom, MergeWith...
+	* TableStyle.cs: Fixed attributes for 2.0 profile. Added new 
+	FillStyleAttributes method (2.0).
+
+2005-08-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Login.cs: New (2.0). Mostly a stub with copy-n-pasted code and 
+	attributes from existing controls.
+	* LoginCancelEventArgs.cs: New (2.0). Required to build Login.
+	* LoginCancelEventHandler.cs: New (2.0). Required to build Login.
+
+2005-08-12  Jackson Harper  <jackson@ximian.com>
+
+	* TableRow.cs: No AutoID for TableRows.
+
+2005-08-12  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs (CreateRenderColumns): If we aren't using data
+	binding grab the rendercols from the data source columns.
+	(LoadViewState): Restore the bound columns when reloading the
+	viewstate.
+	(InitializeNumericPager): Create elipsised pagers.
+	(CreateItem): Don't set the item's ID.
+	(CreateItem): Add the control to the table before it is databound
+	so that it's value is saved in the viewstate.
+	(CreateControlHierarchy): Create a fake data source when not using
+	databinding. Don't add controls to the table as they are added in
+	CreateItem now.
+	(PrepareControlHierarchy): Make footers and header non visible if
+	they aren't enabled.
+
+2005-08-12  Chris Toshok  <toshok@ximian.com>
+
+	* CompositeControl.cs (DataBind, Render, get_Controls): the MSDN
+	docs says these methods/properties "ensure the child controls are
+	created" -- so call EnsureChildControls() before invoking the base
+	class's code.
+
+2005-08-12  Jackson Harper  <jackson@ximian.com>
+
+	* BoundColumn.cs: Set the controls text instead of adding a
+	literal control. So it is saved in the controls viewstate.
+
+2005-08-11  Jackson Harper  <jackson@ximian.com>
+
+	* CheckBoxList.cs: Set the tabindex on the checkbox control and
+	don't render it on the main table (Setting it to zero causes it to
+	not be rendered). Also use the invariant culture on the id.
+
+2005-08-11  Dick Porter  <dick@ximian.com>
+
+	* CheckBox.cs: Let ViewState manage removals; apply styles and
+	"style" attributes in a surrounding <span>.  Fixes unit tests.
+
+2005-08-10  Chris Toshok  <toshok@ximian.com>
+
+	* Label.cs (LoadViewState): set the Text attribute from our
+	ViewState (if it exists) to clear out any child controls.  Fixes
+	jsunit test label/label-child-control-postback.aspx.
+
+2005-08-10  Jackson Harper  <jackson@ximian.com>
+
+	* PagedDataSource.cs: Respect paging with all data source types.
+
+2005-08-09  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* BaseDataList.cs: Changed Controls property from "virtual new" 
+	(2.0 doc) to "override" (monop) to fix the Visible bug (see
+	datalist-invisible.aspx). Fixed AddParsedSubObject not to accept
+	any controls (required due to change to Controls). Implemented 
+	DataBind(bool) for 2.0.
+	* DataListItem.cs: Fix the multiple table when extractRows is used.
+	Removed extra span tags by rendering contents (not control). Added
+	support for IDataItemContainer (2.0).
+
+2005-08-08  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Apply the styles to each item type. 
+
+2005-08-08  Jackson Harper  <jackson@ximian.com>
+
+	* PagedDataSource.cs: If paging is not enabled keep enumerating to
+	the end of the list.
+
+2005-08-08  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* BaseDataList.cs: Remove old compatibility stuff.
+	* DataList.cs: Fix the edit|update for datalist-style-edit.aspx.
+	* WebControl.cs: Always call CreateControlStyle to create the 
+	ControlStyle. Fix the exception for datalist-style-edit.aspx.
+
+2005-08-05  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Don't make the current page index a link in the
+	pager.
+
+2005-08-05  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Honour PagerPosition.
+
+2005-08-05  Jackson Harper  <jackson@ximian.com>
+
+	* PagedDataSource.cs: Round PageCount properly.
+
+2005-08-05  Dick Porter  <dick@ximian.com>
+
+	* CheckBox.cs: Shut corcompare up a bit more.  Still need to
+	figure out how to not use AddAttributesToRender to get it
+	completely silent.
+
+	* ButtonColumn.cs: Implement Initialize() and InitializeCell()
+
+	* DataGridColumn.cs: Added the duplicate viewstate manipulation
+	methods
+
+2005-08-05  Chris Toshok  <toshok@ximian.com>
+
+	* HyperLinkColumn.cs (FormatDataNavigateUrlValue): treat "" as
+	null when it comes to the format string.
+	(FormatDataTextValue): same.
+
+2005-08-04  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (Validate): only test a validator if it's both
+	enabled and visible.
+
+2005-08-04  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (AddAttributesToRender): add "enabled" if
+	!Enabled.
+
+2005-08-04  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Add a new space control for each link. Also make
+	the link's text 1 indexed. Don't add the space after the last
+	item.
+
+2005-08-04  Ben Maurer  <bmaurer@ximian.com>
+
+	* LinkButton.cs: Fix up the test suite here.
+
+	* Panel.cs: Fix up nowrap
+
+2005-08-04  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ListBox.cs: Use WriteXXXX to render HTML, this way it matches MS output
+	* ListControl.cs: Clear item list before adding data (again)
+
+2005-08-04  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* Calendar.cs: fixes issues with OnDayRender event and others
+
+2005-08-04  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* DataGrid.cs(CreateControlHierarchy): Consider the EditItemIndex when
+	  creating rows
+	* ListControl.cs(OnDataBinding): Only apply DataTextFormatString to text
+	  if DataTextField is bound
+	* EditCommandColumn.cs(InitializeCell): MS inserts a &nbsp; between the 
+	  two controls in edit mode, lets do the same
+
+2005-08-03  Jackson Harper  <jackson@ximian.com>
+
+	* BoundColumn.cs: Respek for the thisExpr when data binding.
+
+2005-08-03  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* EditCommandColumn.cs: No need to offer edit when in edit mode.
+	  Flipped output
+
+2005-08-04  Dick Porter  <dick@ximian.com>
+
+	* DataGridColumn.cs: New implementation
+
+	* DataGrid.cs: 
+	* DataGridColumnCollection.cs: Set the DataGridColumn's owner
+
+2005-08-03  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* WebControl.cs(CopyBaseAttributes): Use Enabled setter to also
+	  set tracking var
+
+2005-08-03  Ben Maurer  <bmaurer@ximian.com>
+
+	* RepeatInfo.cs: Finally figured out how to use base control
+
+2005-08-03  Jackson Harper  <jackson@ximian.com>
+
+	* ButtonColumn.cs: Partial implementation.
+
+2005-08-03  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* DataGridPagerStyle.cs(PageButtonCount): Throw exception on
+	  negative value
+
+2005-08-03  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* Calendar.cs: fixes Save/Load state
+
+2005-08-03  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* Calendar.cs: bug fixes
+
+2005-08-03  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Merge the table style with the render table. Some
+	initial work on the numeric pager. Remove some debugging code.
+	
+2005-08-03  Jackson Harper  <jackson@ximian.com>
+
+	* BoundColumn.cs: Implement Initialize and InitializeCell. When
+	Data is formated it uses the DataFormatString that was set at the
+	time Initialize was called (or null if initialize was never
+	called).
+
+2005-08-02  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* RadioButtonList.cs: bug fixes
+
+2005-08-02  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* CheckBox.cs, RadioButton.cs: mecanism to avoid exposing  
+	AddAttributesToRender
+	* RadioButtonList.cs: Implementation
+
+2005-08-01  Jackson Harper  <jackson@ximian.com>
+
+	* TableStyle.cs: Copy style bit when copying from another style.
+
+2005-08-01  Jackson Harper  <jackson@ximian.com>
+
+	* PagedDataSource.cs: Implement missing properties, use yield for
+	the Enumerator methods. Only allow the enums to return one page at
+	a time.
+
+2005-08-01  Chris Toshok  <toshok@ximian.com>
+
+	* HyperLinkColumn.cs (ItemDataBinding): remove incorrect comment.
+
+2005-08-01  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* WebControl.cs: Track enabled state across sessions
+
+2005-08-01  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ListControl.cs(OnDatabinding): Value is equivalent to text if
+	  by default
+
+2005-08-01  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* ImageButton.cs: fixes, complete missing parts
+
+2005-07-31  Ben Maurer  <bmaurer@ximian.com>
+
+	* TextBox.cs: Html encode for multiline text boxes
+
+	* HyperLink.cs: Resolve images
+
+2005-07-30  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs: initial version of 2.0 properties
+	ValidationGroup and SetFocusOnError.
+
+2005-07-30  Chris Toshok  <toshok@ximian.com>
+
+	* HyperLinkColumn.cs (InitializeCell): clean this up.
+
+2005-07-30  Chris Toshok  <toshok@ximian.com>
+
+	* HyperLinkColumn.cs (FormatDataNavigateUrlValue): just use
+	DataBinder.FormatResult.
+	(FormatDataTextValue): same.
+	(Initialize): call base.Initialize.
+	(ItemDataBinding): new function, get the text/navigateurl and set
+	them on our HyperLink control.
+	(InitializeCell): create a hyperlink control in the
+	Item/EditItem/AlternatingItem case.
+
+2005-07-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* RepeatInfo.cs: Handle 0 items situations correctly
+
+	* HyperLink.cs: Resolve urls correctly
+
+	* CheckBox.cs: use the correct ID for the label element.
+
+	* Label.cs: Correct AddParsedSubObject impl. See FAQ
+
+2005-07-29  Chris Toshok  <toshok@ximian.com>
+
+	* BaseCompareValidator.cs (GetDateElementOrder): implement.
+
+2005-07-29  Chris Toshok  <toshok@ximian.com>
+
+	* BaseCompareValidator.cs (GetFullYear): implement two ways.  The
+	#if'ed out version follows microsoft's docs on msdn, but doesn't
+	match ms's behavior.  The other matches their behavior but not
+	their docs.  we use the latter.  go figure.
+	(get_CutoffYear): implement using
+	CultureInfo.CurrentCulture.Calendar.TwoDigitYearMax.
+
+2005-07-27  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* FontInfo.cs:
+	  - Name property now throws exception when set to null
+	  - Names now handles situation where our bit tells us we have
+	    a font, but it's not in the StateBag (null removal)
+	* RangeValidator.cs: Removed unused vars
+
+2005-07-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* Label.cs: ClientID should be used rather than UniqueID to get
+	the For attribute
+
+2005-07-29  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (Validatate): not sure if this is entirely
+	correct (some fairly deep testing required), but setting Enabled =
+	false has the effect of setting IsValid = true.
+
+2005-07-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* RadioButton.cs: The "remove from groupstate" isn't needed any
+	more, now that statebag is correct.
+
+2005-07-29  Dick Porter  <dick@ximian.com>
+
+	* RadioButton.cs: Hide nonstandard API; remove GroupName from the
+	ViewState when it is null.
+
+	* CheckBox.cs: Hide nonstandard API
+
+2005-07-29  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* Calendar.cs: fixes exceptions, bug fixes, new features
+	* SelectedDatesCollection.cs: Fixes bugs discovered by the tests
+ 	* CalendarDay.cs: fixes default value
+
+2005-07-28  Ben Maurer  <bmaurer@ximian.com>
+
+	* CompositeControl.cs: Stub
+
+2005-07-27  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* EditCommandColumn.cs: Implemented
+
+2005-07-27  Chris Toshok  <toshok@ximian.com>
+
+	* RegularExpressionValidator.cs (EvaluateIsValid): "" is valid.
+
+2005-07-27  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* CustomValidator.cs: Bug fixes (Thanks to Chris for creating the 
+	  client side code)
+
+2005-07-27  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DataGrid.cs: DataGridPagerStyle does not need DataGrid as argument
+	  for it's constructor, so remove it
+	* DataGridPagerStyle.cs: Removed DataGrid argument from constructor
+
+2005-07-27  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* DataGridPagerStyle.cs: Implemented
+	* TableItemStyle.cs (MergeWith): Now only sets style bits it owns
+	* Style.cs: Added Styles enum values for DataGridPagerStyle
+
+2005-07-27  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* Calendar.cs: get the styles right, honors more properties, fixes, fix 
+	var names style
+
+2005-07-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DataGridItem.cs: Implemented
+
+2005-07-26  Chris Toshok  <toshok@ximian.com>
+
+	* LinkButton.cs (AddParsedSubObject): reversed the order of
+	Controls.Add() and Text = null
+	(set_Text): call Controls.Clear()
+	(RenderContents): use HasControls() for the if test instead of
+	Text != "".
+
+	* HyperLink.cs (AddParsedSubObject): reversed the order of
+	Controls.Add () and Text = null;
+
+2005-07-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DataGridItemCollection.cs: Implemented
+
+2005-07-26  Chris Toshok  <toshok@ximian.com>
+
+	* LinkButton.cs (AddParsedSubObject): copy implementation from
+	HyperLink.
+	(RenderContents): only call writer.Write(Text) if Text != "".
+	Otherwise default to base.RenderContents.
+
+2005-07-26  Chris Toshok  <toshok@ximian.com>
+	
+	* Button.cs, CheckBox.cs, TextBox.cs, DropDownList.cs, ListBox.cs,
+	ImageButton.cs, LinkButton.cs (AddAttributesToRender): add if
+	(Page != null) around my last commit.
+	
+2005-07-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FontInfo.cs, CheckBox.cs, RadioButton.cs, ListItemCollection.cs:
+	  Fixed use of literal strings, instead using Consts
+	* Xml.cs, RegularExpressionValidator.cs, TemplateColumn.cs,
+	  TextBox.cs, RequiredFieldValidator.cs, Repeater.cs, RepeaterItem.cs,
+	  Panel.cs, Literal.cs: Added attributes
+	* BaseValidator.cs: Added missing override
+
+2005-07-26  Chris Toshok  <toshok@ximian.com>
+
+	* Button.cs, CheckBox.cs, TextBox.cs, DropDownList.cs, ListBox.cs,
+	ImageButton.cs, LinkButton.cs (AddAttributesToRender): call
+	Page.VerifyRenderingInServerFormHere.
+
+2005-07-26  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs: remove some MonoTODO's about the client side
+	validator stuff.
+
+2005-07-26  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* Calendar.cs: selection of dates, state load, save, track, support
+	for new properties, many fixes. 
+
+2005-07-26  Miguel de Icaza  <miguel@novell.com>
+
+	* Style.cs: Temporary methods to help buliding .NET 2.x
+
+2005-07-25  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* BaseValidator.cs: Added AssociateControlID (new in sp1), fixed 
+	  attributes
+	* Xml.cs: Fixed base class, attributes
+	* Button.cs, DataGridColumnCollection.cs, HyperLinkColumn.cs, 
+	  Label.cs, ListItem.cs, ListControl.cs, CustomValidator.cs, 
+	  CheckBoxList.cs, AdRotator.cs, DropDownList.cs, HyperLink.cs, 
+	  DataGrid.cs, ButtonColumn.cs, CompareValidator.cs, Calendar.cs, 
+	  ListBox.cs, ImageButton.cs, LinkButton.cs: Attribute fixes
+
+2005-07-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* RepeatInfo.cs: WOOHOOO! all tests pass. Boy is this class
+	cracktastic.
+	
+2005-07-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* RepeatInfo.cs: If the repeater has one column, the separators
+	are rendered on a different line
+
+2005-07-25  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* DataGridSortCommandEventArgs: Sealed class
+	* ButtonColumn.cs, Calendar.cs: Added Attributes
+
+2005-07-25  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Button.cs, Style.cs, BaseCompareValidator.cs, RangeValidator.cs,
+	  BaseValidator.cs, AdRotator.cs, BoundColumn.cs: Added Attributes
+
+2005-07-25  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* FontInfo.cs, Style.cs, RangeValidator.cs, ListItemCollection.cs,
+	  DropDownList.cs, WebControl.cs, ValidationSummary.cs: Added Attributes
+
+2005-07-25  Chris Toshok  <toshok@ximian.com>
+
+	* ValidationSummary.cs (AddAttributesToRender): add client side
+	support.
+	(OnPreRender): set the "been here" flag.
+	(Render): add client side support.
+
+2005-07-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* RepeatInfo.cs: Split the horiz and vertical cases, because this
+	class has rules that are beyond strange. Continue working to make
+	my tests work.
+
+2005-07-25  Ben Maurer  <bmaurer@ximian.com>
+
+	* RepeatInfo.cs: Misc fixes for my test suite.
+
+2005-07-25  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Set the command name and args on the link buttons.
+
+2005-07-25  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Lots o implementation.
+
+2005-07-25  Jackson Harper  <jackson@ximian.com>
+
+	* BoundColumn.cs: Partial implementation to get the DataGrid tests
+	passing again.
+
+2005-07-23  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* Button.cs: fixes events, adds attributes
+
+2005-07-23  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (GetControlValidateValue): handle ListItems as
+	prop.GetValue results.
+	(Render): fix the static non-uplevel case, so that we display text
+	when there's an error.
+
+2005-07-22  Chris Toshok  <toshok@ximian.com>
+
+	* RegularExpressionValidator.cs (AddAttributesToRender): only
+	output ValidationExpression if it's != null.
+
+2005-07-22  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (AddAttributesToRender): fix up the Display
+	rendering such it matches MS's output.
+	(Render): stop using the huge complicated if's for each output
+	stage and move to boolean flags, and fix the static-nonuplevel
+	case, where a validator outputs as nothing but &nbsp;
+
+2005-07-22  Jordi Mas i Hernandez  <jordi@ximian.com>
+	* Calendar.cs: Initial implementation
+	* CalendarSelectionMode.cs: fix enum order
+
+2005-07-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataList.cs: Rewrote the IRepeatInfoUser.RenderItem to support all
+	(or more?) specific cases - including correct support for separators.
+	Added some (commented) debugging code.
+	* HyperLink.cs: Only render href and target attributes if they're not
+	empty. Add "border=0" when rendering <img> tag. Fix Target default 
+	value.
+
+2005-07-22  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Style.cs (CopyFrom): Reset must go, MS doesn't do it (See tests)
+
+2005-07-22  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Style.cs (CopyFrom): Reset our styles and don't set bits from
+	  target explicitly, properties will set them
+
+2005-07-22  Dick Porter  <dick@ximian.com>
+
+	* BoundColumn.cs: 
+	* ButtonColumn.cs: Initial stubs
+
+2005-07-22  Dick Porter  <dick@ximian.com>
+
+	* RadioButton.cs:
+	* CheckBox.cs: Add assembly attributes
+
+2005-07-22  Ben Maurer  <bmaurer@ximian.com>
+
+	* HyperLink.cs: Handle non-literal children.
+
+2005-07-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* Label.cs: SP1 stuff
+
+2005-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (RegisterValidatorCommonScript): remove the NS4
+	stuff that I c&p'ed from elsewhere - NS4 doesn't support the DOM1
+	stuff WebUIValidation.js uses, so we don't support it for uplevel
+	rendering.
+
+2005-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (DetermineRenderUplevel): include checks for
+	the EcmaScriptVersion and W3CDomVersion.
+
+2005-07-21  Sebastien Pouliot  <sebastien@ximian.com> 
+  
+	* BaseDataList.cs: Support IEnumerable.
+	* DataList.cs: Fix alternate items.
+	* TableCell.cs: Fixed AddParsedSubObject to work nicely with existing
+	controls and the Text property.
+
+2005-07-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* TextBoxMode.cs: Wrong ordering of enum...
+
+2005-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (OnPreRender): call DetermineRenderUplevel and
+	cache the results.
+
+2005-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (get_PropertiesValid): use our containing
+	NamingContainer, not ourselves, to look up controls.
+	(CheckControlValidationProperty): same.
+	(GetControlRenderID): same.
+	(GetControlValidationValue): same.
+	(AddAttributesToRender): add the display style attribute if
+	Display != Static, and add the value of IsValid if it's false.
+	(DetermineRenderUplevel): use a try block around (Page.Request)
+	since that can raise an exception.
+	(OnPreRender): set pre_render_called, so we can consult it in
+	Render.
+	(Render): complicate this method more to handle more of the
+	Display/pre_render_called permutations.
+
+2005-07-21  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* CustomValidator.cs: Initial implementation, still work in progress
+
+2005-07-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataList.cs: Fix rendering for special items (-1).
+
+2005-07-21  Ben Maurer  <bmaurer@ximian.com>
+
+	* RepeatInfo.cs: Fix most of the tests.
+
+2005-07-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Image.cs: Call ResolveUrl for ImageUrl and DescriptionUrl properties.
+	Add a border=0 attribute if no style is defined.
+	* TableCell.cs: Use HtmlTextWriterTag (not a string).
+	* TableHeaderCell.cs: Use HtmlTextWriterTag (not a string).
+	* TableRow.cs: Use HtmlTextWriterTag (not a string).
+
+2005-07-21  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* BaseDataList.cs: Fix attributes.
+	* HorizontalAlign.cs: Fix attributes.
+	* Image.cs: Fix attributes and enums checks.
+	* Table.cs: Fix attributes an enums checks.
+	* TableCell.cs: Fix attributes.
+	* TableCellCollection.cs: Fix attributes.
+	* TableItemStyle.cs: Fix attributes and enums checks.
+	* TableRowCollection.cs: Fix attributes.
+	* TableRow.cs: Fix attributes.
+	* TableStyle.cs: Fix attributes and enums checks.
+	* VerticalAlign.cs: Fix attributes.
+
+2005-07-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BaseDataList.cs: Remove/#if-out useless/2.0 stuff.
+	* DataList.cs: Added rendering support when ExtractTemplatesRows
+	property is true (but RepeatInfo needs to be fixed to see it works).
+	* DataListItem.cs: Added rendering support when extractRows parameter
+	is true (but RepeatInfo still needs to be fixed ;-)
+
+2005-07-21  Duncan Mak  <duncan@novell.com>
+
+	* HyperLinkColumn.cs: Initial implementation.
+	Todo: Figure out Initialize and InitializeCell.
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs: don't use Page.FindControl, use this Control's
+	FindControl, so it'll use the same naming container.
+
+2005-07-21  Duncan Mak  <duncan@novell.com>
+
+        * DataGridCommandEventArgs.cs: 
+        * DataGridPageChangedEventArgs.cs: 
+        * RepeaterCommandEventArgs.cs:  Fixed visibility.
+
+	* DataGridPageChangedEventArgs.cs (CommandSource): Fixed typo.
+	* DataGridSortCommandEventArgs.cs (CommandSource): Ditto..       
+	
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* Button.cs: hook up the client side validation stuff.
+
+	* ImageButton.cs: same.
+
+	* LinkButton.cs: same, although it's a little more complicated
+	here.
+
+2005-07-20  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* DropDownList.cs: 
+	  - Implemented RaisePostDataChangedEvent()
+	  - Spewing postback command if AutoPostBack is true
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs: another Page != null check when uplevel
+	rendering.
+	
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs: check Page != null when determining if we're
+	rendering uplevel or not.
+
+2005-07-20  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ListItemCollection.cs: Removed obsolete method that's no longer
+	  referenced
+
+2005-07-20  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DropDownList.cs: Oops. Forgot to implement LoadPostData
+	* ListItemCollection.cs: Added convenience method to have faster
+	  PostData handling
+
+2005-07-20  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DropDownList.cs:
+	  - Automatically select the first item if none are selected
+	  - Throw exception if more than one item is selected
+
+2005-07-20  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* DataList.cs: Fix style handling for RepeatLayout.Flow (which isn't
+	handled by RepeatInfo).
+
+2005-07-20  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Store the data source created columns in a 
+	  DataGridColumnCollection. This way they can be put in the 
+	  view state more easily, and accessed without casting.
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs (AddAttributesToRender): render the client side
+	attributes if we're in uplevel mode.
+	(DetermineRenderUplevel): flesh out a bit - for now basically
+	return true unless the control has it disabled.
+	(OnInit): only add the validator to Page's list if there is, in
+	fact, a page.
+	(OnUnload): same for removal.
+	(OnPreRender): hook up client scripting stuff here.  Only the call
+	to RegisterValidatorCommonScript is a for sure thing here, the
+	registering of the submit statement and startup script should
+	probably go elsewhere, but I don't know where.
+	(RegisterValidatorCommonScript): register the <script
+	src=".../WebUIValidation.js"> tag, if it's not already there.
+	(RegisterValidatorDeclaration): add our span object to the
+	Page_Validators JS array.
+	(Render): always render the tags (although this is probably not
+	right), and call RegisterValidatorDeclaration here.
+	
+	* BaseCompareValidator.cs (AddAttributesToRender): render the
+	client side attributes if we're in uplevel mode.
+	(DetermineRenderUplevel): add MonoTODO.. why override this?  Just
+	call base.DetermineRenderUplevel for now.
+
+	* RegularExpressionValidator.cs (AddAttributesToRender): render
+	the client side attributes if we're in uplevel mode.
+	
+	* RequiredFieldValidator.cs (AddAttributesToRender): same.
+
+	* CompareValidator.cs (AddAttributesToRender): same.
+	
+2005-07-20  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Save the data source created column set in the 
+	  view state.
+
+2005-07-20  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* DataList.cs: Fix events and properties exceptions. Give the right
+	informations to RenderItem.
+
+2005-07-20  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ValidationSummary.cs: Implemented rendering
+
+2005-07-20  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: column names are cached and only regenerated if useDataSource
+	  is set to true. Otherwise they are just fetched from the last set that 
+	  was generated from the source.
+
+2005-07-20  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Assign some properties of newly created BoundColumns.
+
+2005-07-20  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* DataList.cs: Fix viewstate ordering.
+
+2005-07-20  Ben Maurer  <bmaurer@ximian.com>
+
+	* SelectedDatesCollection.cs: Apprarently, I don't write code well
+	at 1 am.
+
+	* Repeater.cs: Uh, actually add stuff to the items collection
+	 (thanks sp ;-)
+
+2005-07-20  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* BaseDataList.cs: EnsureChildControls on Controls property.
+	* DataList.cs: Fix rendering and Controls/Items differences.
+	* DataListItem.cs: Added rendering of controls.
+
+2005-07-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BaseDataList.cs: Don't call base.Render (or we'll get an extra span).
+
+2005-07-20  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Add some of the collections. Implement
+          column creation.
+
+2005-07-20  Jackson Harper  <jackson@ximian.com>
+
+	* PagedDataSource.cs: Implement GetItemProperties, this is
+	  needed for the datagrid.
+
+2005-07-20  Ben Maurer  <bmaurer@ximian.com>
+
+	* DataGridColumnCollection.cs: New impl
+
+	* TemplateColumn.cs: New impl
+
+2005-07-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BaseDataList.cs: Call PrepareControlHierarchy from Render.
+	* DataList.cs: Work in progress... Added attributes, proper 
+	IRepeatInfoUser support and cool things stolen from other classes.
+	* DataListCommandEventArgs.cs: Class is sealed.
+	* DataListItem.cs: RenderItem is public.
+
+2005-07-19  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: Use Events Add/RemoveHandler. Don't create
+	  a viewstate object if all the viewstate stuff is null.
+
+2005-07-19  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Implement style properties and viewstate 
+	  saving/loading/tracking.
+
+2005-07-19  Chris Toshok  <toshok@ximian.com>
+	
+	* BaseValidator.cs: more fixes from pdb.
+
+2005-07-19  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs: some test-driven fixes.
+
+2005-07-19  Chris Toshok  <toshok@ximian.com>
+
+	* BaseValidator.cs: Initial implementation.
+
+2005-07-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Repeater.cs: Fix small typo.
+
+2005-07-19  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ValidationSummaryTest.cs: Started implementation
+	* RangeValidator.cs: Implemented
+	* ValidatedControlConverter.cs: Implemented
+	* DropDownList.cs: Implemented
+
+2005-07-19  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: Implement bubble event.
+
+2005-07-19  Jackson Harper  <jackson@ximian.com>
+
+	* DataGrid.cs: New implementation. Just properties and events for 
+	  now.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* BaseCompareValidator.cs: Initial implementation, with some NYI.
+
+2005-07-19  Ben Maurer  <bmaurer@ximian.com>
+
+	* FontUnit.cs: Corcompare fixes
+
+	* UnitConverter.cs: Fix api diffs
+
+2005-07-18  Ben Maurer  <bmaurer@ximian.com>
+
+	* ListControl.cs: Fix api differences
+
+2005-07-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Table.cs: Fix indentation for caption. Simplify check when adding 
+	controls.
+	* TableRow.cs: Simplify check when adding controls.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* CompareValidator.cs: wtf, just use the base class's methods.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* CompareValidator.cs: do comparisons based on
+	BaseCompareValidator.Type.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* CompareValidator.cs: initial implementation.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* RegularExpressionValidator.cs: initial implementation.
+
+2005-07-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataList.cs: Fixed to match 1.1 behaviour (and new unit tests).
+
+2005-07-18  Jackson Harper  <jackson@ximian.com>
+
+	* CheckBoxList.cs: Implement LoadPostBackData. Also register 
+	  checkboxes for postback if they are checked so we can find
+	  out when they are unchecked. Copy the AutoPostBack variable 
+	  to the to be rendered checkbox when rendering.
+
+2005-07-18  Ben Maurer  <bmaurer@ximian.com>
+
+	* TextBox.cs: Finish this up.
+
+	* AdRotator.cs: Fix issues in the test suite. Minor style
+	cleanups.
+
+	* Repeater.cs: Fix a bug where the datasource is null and we do
+	the binding
+
+	* WebColorConverter.cs: Optimize by not doing a concat on a
+	formatted string.
+
+2005-07-17  Ben Maurer  <bmaurer@ximian.com>
+
+	* ListItemCollection.cs: Multiple uses of equals rather than
+	string.compare as below. Remove unreachable code warning.
+
+	* WebColorConverter.cs (ConvertTo): Use the == operator on string
+	rather than an invariant non-case ignoring compare. They are
+	exactly the same thing. Use proper coding style in this method.
+
+	* WebControl.cs: Return null when saving the view state if there
+	is no state in any of the things we save. This creates a fairly
+	large savings, because we can avoid saving anything about many
+	levels of deaply nested controls.
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* CheckBoxList.cs: Use the index as the ID, the rest of the 
+	  id is built by being in the NamingContainer.
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: Use enum instead of string. Saves a lookup. 
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* CheckBoxList.cs: FindControl always returns 'this' according
+	  to my probing.
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* CheckBoxList.cs: New impl.
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* WebControl.cs: Use the ClientID when rendering a controls ID
+	  attribute so that naming containers are honoured. 
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: use the state manager interface for tracking
+	  the viewstate.
+
+2005-07-15  Ben Maurer  <bmaurer@ximian.com>
+
+	* Repeater.cs (DoItem): Add the DataItem before we call user
+	methods, as it seems to be there with msft.
+
+2005-07-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BaseDataList.cs: New. (mostly complete) implementation.
+	* DataKeyCollection.cs: New. Implementation (complete).
+	* DataList.cs: New. (mostly incomplete) implementation.
+	* DataListItem.cs: New. (mostly complete) implementation.
+	* DataListItemCollection.cs: New. Implementation (complete).
+
+2005-07-15  Ben Maurer  <bmaurer@ximian.com>
+
+	* Repeater.cs (DoItem): We need to .Add the control *before* we
+	data bind it so that the state gets tracked correctly. Fixes the
+	postback test case.
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: Simplify comparison. 
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs:
+	* Repeater.cs: Use new utility class for resolving data sources.
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: Add attributes so the sub items get parsed 
+	  properly. Remove old unneeded code for resolving lists.
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: Use the DataSourceHelper so DataMembers are 
+	  resolved properly.
+
+2005-07-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* WebControl.cs:
+	  - Some optimizations
+	    * Don't use enum formatting stuff, it is 1) expensive 2) does 
+	      allocations. Use a new method in HtmlControl to do the right
+	      formatting.
+	    * Don't use Enum.IsDefined but an explicit check.
+	    * (x == "" || x.Length < 2) is not needed since "".Length == 0 < 2
+	  - Use the correct coding style.
+	
+2005-07-14  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* WebColorConverter.cs: 
+	  - Alpha of 255 is only set if the hex number is exactly 6 digits
+	  - Ben didn't like the catch { throw; } (even though MS documents to
+	    do so)
+	  - Use Invariant Culture for parsing (thanks, Ben)
+
+2005-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: Use DataBinder.Eval for data binding. This is more
+	code-reuse-arific. Also use the IStateManager interface for loading
+	data instead of the old internal method.
+
+2005-07-14  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* WebColorConverter.cs: Implemented
+
+2005-07-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* Repeater.cs: Cleanup; use the DataSourceHelper thingy.
+
+2005-07-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* Repeater.cs: Get it working
+
+2005-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: Initial implementation of Databinding. Make sure
+	that the ListItemCollection is created when we load its ViewState. 
+
+2005-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: Fix typo.
+
+2005-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* ListControl.cs: New Implementation. Lacks databinding support.
+
+2005-07-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* Repeater.cs: The beginnings of this control
+
+2005-07-14  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TargetConverter.cs: Implemented
+
+2005-07-14  Duncan Mak  <duncan@novell.com>
+
+	* PagedDataSource.cs: Initial implementation.
+
+	Methods that need to be figured out:
+	CopyTo, GetItemProperties, PageCount, IsLastPage.
+
+	To complete: CollectionEnumerator, ListEnumerator.
+
+2005-07-13  Duncan Mak  <duncan@novell.com>
+
+	* RepeatDirection.cs:
+	* RepeatLayout.cs:
+	* ValidationCompareOperator.cs:
+	* ValidationDataType.cs:
+	* ValidationSummaryDisplayMode.cs: 
+	* ValidatorDisplay.cs: Added remaining enumerations.
+	
+2005-07-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FontNamesConverter.cs: Implemented
+
+2005-07-13  Ben Maurer  <bmaurer@ximian.com>
+
+	* RepeaterItem.cs: Compile fix
+
+	* RepeaterItemCollection.cs: New file
+
+	* RepeaterItem.cs: get OnBubbleEvent right.
+
+2005-07-13  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ListItemCollection.cs: Count can be derived from the array, which
+	  allows us to use a Pair instead of a Triplet and save some space
+
+2005-07-13  Ben Maurer  <bmaurer@ximian.com>
+
+	* RepeaterItem.cs: Stub
+
+2005-07-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ListItemCollection.cs: Implemented
+	* WebControl.cs: Added check for enumeration validity (thanks Jackson)
+
+2005-07-13  Ben Maurer  <bmaurer@ximian.com>
+
+	* RepeatInfo.cs: Impl.
+
+2005-07-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FirstDayOfWeek.cs: Added
+
+2005-07-13  Jackson Harper  <jackson@ximian.com>
+
+	* ListBox.cs: Some parameter checking.
+
+2005-07-13  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* Image.cs: Added support for DescriptionUrl as this property was
+	added in Fx 1.1 SP1.
+
+2005-07-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Style.cs (AddAttributesToRender): Don't render attributes if they
+	  contain only their default value
+
+2005-07-13  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Table.cs: New. Initial re-implementation.
+	* TableCell.cs: New. Initial re-implementation.
+	* TableCellCollection.cs: New. Initial re-implementation.
+	* TableHeaderCell.cs: New. Initial re-implementation.
+	* TableItemStyle.cs: New. Initial re-implementation.
+	* TableRow.cs: New. Initial re-implementation.
+	* TableRowCollection.cs: New. Initial re-implementation.
+	* TableStyle.cs: New. Initial re-implementation.
+
+2005-07-13  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* Style.cs: Removed the call to Reset in CopyFrom. This fix the new
+	unit tests (for Style) and more tests in Table* classes.
+
+2005-07-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Style.cs: TableStyle and TableItemStyle don't override IsEmpty, 
+	however IsEmpty returns false if any of their properties are set.
+	Looks ugly but it's compatible with MS implementation (feature and
+	signature wise).
+
+2005-07-13  Dick Porter  <dick@ximian.com>
+
+	* CheckBox.cs: Reverted Ben's enum-to-int ViewState change, remove
+	null Text properties from the ViewState, test for TextAlign being
+	out of range.  All to make tests pass on both mono and ms
+	runtimes.
+
+2005-07-13  Jackson Harper  <jackson@ximian.com>
+
+	* ListBox.cs: Use invariant culture when doing a ToString,
+	  set value to the item's value, not to its Text.
+
+2005-07-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* WebControl.cs (AddAttributesToRender): Added ID to rendered
+	  attributes
+
+2005-07-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Style.cs(MergeWith): Handle null styles
+
+2005-07-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TableCaptionAlign.cs: This enum was added in 1.1 SP1 so I removed
+	the #if NET_2_0 on it.
+
+2005-07-12  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Style.cs: Only render font elements if fontinfo object exists
+	* WebControl.cs:
+	  - Implemented SaveViewState()
+	  - Added loading of Style to LoadViewState
+	  - Implemented IAttributeAccessor methods
+
+2005-07-12  Jackson Harper  <jackson@ximian.com>
+
+	* ListBox.cs: Even track default values in the viewstate. Call
+	  base's RenderContents.
+
+2005-07-12  Jackson Harper  <jackson@ximian.com>
+
+	* ListBox.cs: New impl.
+
+2005-07-12  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* WebControl.cs: 
+	  - Implemented methods
+	  - Fixed brackets
+
+2005-07-12  Ben Maurer  <bmaurer@ximian.com>
+
+	* ListItem.cs: New impl.
+
+2005-07-12  Duncan Mak  <duncan@novell.com>
+
+	* DayNameFormat.cs: Added.
+
+2005-07-12  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* WebControl.cs: Implemented properties
+
+2005-07-12  Ben Maurer  <bmaurer@ximian.com>
+
+	* TextBox.cs: Passwords seem 1) not to be rendered to the client
+	if set, 2) not kept in view state (for security reasons...)
+
+	* LinkButton.cs: 
+	* Button.cs: Page.Validate () if needed. Gets the validator tests
+	working again.
+
+	* TextBox.cs: Properties to get the validator stuff to work.
+
+2005-07-12  Miguel de Icaza  <miguel@novell.com>
+
+	* Unit.cs: If the units are pixels, then truncate the value. 
+
+2005-07-12  Dick Porter  <dick@ximian.com>
+
+	* RadioButton.cs: New implementation
+
+	* CheckBox.cs: Rearrange the attributes rendering to allow
+	RadioButton to derive from this
+
+2005-07-12  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* TitleFormat.cs: Add attribute
+	* TextBoxMode.cs: Add attribute
+	* CalendarDay.cs: Initial implementation
+	* ImageButton.cs: Initial implementation
+	* CalendarSelectionMode.cs:Initial implementation
+
+2005-07-12  Jordi Mas i Hernandez  <jordi@ximian.com>
+
+	* TextBoxMode.cs: simple enum
+	* TitleFormat.cs: simple enum
+
+2005-07-11  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* FontInfo.cs: Now using BenM's fancy internal StateBag methods
+
+2005-07-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FontUnit.cs: Added TypeConverter attribute to class
+	* FontUnitConverter.cs: Implemented
+
+2005-07-11  Ben Maurer  <bmaurer@ximian.com>
+
+	* LinkButton.cs: 
+	* Button.cs: Bubble the Command event.
+
+2005-07-11  Ben Maurer  <bmaurer@ximian.com>
+
+	* Button.cs:
+	  - Clean up style (with my wonderful state bag hack!)
+	  - Fix a view state typo.
+	  - Use AddAttributesToRender
+	  - Don't add an extra <span>
+
+2005-07-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Style.cs: Handle null constructor argument for bag
+
+2005-07-11  Dick Porter  <dick@ximian.com>
+
+	* CheckBox.cs: New implementation
+
+	* RadioButton.cs: Initial stubbed version that just compiles
+
+2005-07-10  Jordi Mas i Hernandez  <jordi@ximian.com> 
+ 
+	* Button.cs: Initial Button implementation
+
+2005-07-10  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* VerticalAlign.cs: Fixed enum name (copy/paste from HorizontalAlign).
+
+2005-07-09  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HorizontalAlign.cs: Typo in header.
+	* VerticalAlign.cs: New. Required enum for TableRow control.
+
+2005-07-09  Ben Maurer  <bmaurer@ximian.com>
+
+	* TextBox.cs: More work on this
+
+2005-07-09  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* GridLines.cs: New. Required enum for Table control.
+	* HorizontalAlign.cs: New. Required enum for Table control.
+
+2005-07-09  Duncan Mak  <duncan@novell.com>
+
+	* CommandEventHandler.cs:
+	* DataGridCommandEventHandler.cs:
+	* DataGridItemEventHandler.cs:
+	* DataGridPageChangedEventHandler.cs:
+	* DataGridSortCommandEventHandler.cs:
+	* DataListCommandEventHandler.cs:
+	* DayRenderEventHandler.cs:
+	* RepeaterCommandEventHandler.cs:
+	* ServerValidateEventHandler.cs: Add delegates.
+	
+	* ListItemType.cs:
+	* ListSelectionMode.cs:
+	* NextPrevFormat.cs:
+	* PagerMode.cs
+	* PagerPosition.cs: Add enums.
+
+2005-07-09  Ben Maurer  <bmaurer@ximian.com>
+
+	* TextBox.cs: Add the work I did on this today. It's not complete
+	yet, but its a start!
+
+2005-07-09  Duncan Mak  <duncan@novell.com>
+
+	* CommandEventArgs.cs:
+	* DataGridCommandEventArgs.cs:
+	* DataGridItemEventArgs.cs:
+	* DataGridPageChangedEventArgs.cs:
+	* DataGridSortCommandEventArgs.cs:
+	* DataListCommandEventArgs.cs:
+	* DataListItemEventArgs.cs:
+	* DayRenderEventArgs.cs:
+	* RepeaterCommandEventArgs.cs:
+	* RepeaterItemEventArgs.cs:
+	* ServerValidateEventArgs.cs: Implemented.
+	
+2005-07-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Image.cs: New. Image class implementation.
+	* ImageAlign.cs: New. ImageAlign enum definitions.
+
+2005-07-08  Jackson Harper  <jackson@ximian.com>
+
+	* Literal.cs: New implentation.
+	* MonthChangedEventArgs.cs: new
+	* MonthChangedEventHandler.cs: new
+	
+2005-07-08  Ben Maurer  <bmaurer@ximian.com>
+
+	* LinkButton.cs: Command impl
+
+2005-07-08  Ben Maurer  <bmaurer@ximian.com>
+
+	* LinkButton.cs: Initial impl
+
+2005-07-08  Jackson Harper  <jackson@ximian.com>
+
+	* AdCreatedeventArgs.cs: New implementation.
+
+2005-07-08  Dick Porter  <dick@ximian.com>
+
+	* TextAlign.cs: 
+	* BorderStyle.cs: Added
+
+2005-07-07  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FontInfo.cs: Fixed behaviour discrepancies showed by tests
+
+2005-07-07  Miguel de Icaza  <miguel@novell.com>
+
+	* Xml.cs: New implementation.  R00lz.
+
+2005-07-07  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FontInfo.cs: Added and implemented.
+	* Style.cs: Fixed behaviour discrepancies showed by tests
+
+2005-07-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* PlaceHolderControlBuilder.cs: new file
+
+	* LabelControlBuilder.cs: New file
+
+	* HyperLink.cs: use control builder; fix parsing stuff
+
+	* HyperLinkControlBuilder.cs: new file
+
+	* Panel.cs: misc fixes
+
+2005-07-07  Miguel de Icaza  <miguel@novell.com>
+
+	* Unit.cs: Add TypeConverter, so that web_panel.aspx works again.
+
+	* UnitConverter.cs: Add new file, learned from the
+	System.Drawing.ColorConverter.
+
+2005-07-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* PlaceHolder.cs: New file. Seems to do nothing
+
+	* Label.cs: Use my new statebag trick to reduce typing
+
+	* HyperLink.cs: New file
+
+2005-07-06  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Style.cs: Added and implemented.
+
+2005-07-06  Miguel de Icaza  <miguel@novell.com>
+
+	* FontUnit.cs: New file.
+
+	* Unit.cs: New file. 
+
+	Added support for null and empty string constructors.
+
+2005-07-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* Unit.cs: cctor not needed; static fields are 0 init'd by default
+
+	* WebControl.cs: Kothari & Datye's book explains how these work.
+
+	* IRepeatInfoUser.cs: Reimpl.
+
+2005-07-06  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* WebControl.cs: Added stub
+
+2005-07-05  Miguel de Icaza  <miguel@novell.com>
+
+	* Label.cs: First control.
 
 2005-06-27  Lluis Sanchez Gual <lluis@novell.com>
 
@@ -753,7 +2592,7 @@
 2004-10-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListItemCollection.cs: fixed bug when indexing changed elements in
-	LoadViewState. Patch from Alois Bělaška.
+	LoadViewState. Patch from Alois BÄ»laÅ¡ka.
 
 2004-10-20 Sanjay Gupta <gsanjay@novell.com>
 	

@@ -31,6 +31,7 @@
 
 using System;
 using System.Web.UI;
+using System.ComponentModel;
 
 namespace System.Web.UI.HtmlControls
 {
@@ -43,13 +44,23 @@ namespace System.Web.UI.HtmlControls
 			LiteralControl lit = obj as LiteralControl;
 			if (lit != null) text = lit.Text;
 		}
+
+		/* Appears in corcompare */
+		protected override ControlCollection CreateControlCollection ()
+		{
+			return (base.CreateControlCollection ());
+		}
 		
-		public string Text {
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[DefaultValue ("")]
+		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
+		[Localizable (true)]
+		public virtual string Text {
 			get { return text; }
 			set { text = value; }
 		}
 		
-		protected override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			writer.RenderBeginTag (HtmlTextWriterTag.Title);
 			writer.Write (text);

@@ -45,6 +45,17 @@ namespace System.Web.UI.WebControls
 		bool initialized;
 		bool requiresDataBinding;
 		
+		protected BaseDataBoundControl ()
+		{
+		}
+
+		/* Used for controls that used to inherit from
+		 * WebControl, so the tag can propagate upwards
+		 */
+		internal BaseDataBoundControl (HtmlTextWriterTag tag) : base (tag)
+		{
+		}
+		
 		[BindableAttribute (true)]
 		[ThemeableAttribute (false)]
 		[DefaultValueAttribute (null)]
@@ -97,7 +108,7 @@ namespace System.Web.UI.WebControls
 			RequiresDataBinding = false;
 			PerformSelect ();
 		}
-		
+
 		protected virtual void EnsureDataBound ()
 		{
 			if (RequiresDataBinding && IsBoundUsingDataSourceID)
@@ -115,7 +126,7 @@ namespace System.Web.UI.WebControls
 			RequiresDataBinding = true;
 		}
 		
-		protected override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
 			Page.PreLoad += new EventHandler (OnPagePreLoad);
@@ -126,7 +137,7 @@ namespace System.Web.UI.WebControls
 			ConfirmInitState ();
 		}
 		
-		protected override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			EnsureDataBound ();
 			base.OnPreRender (e);

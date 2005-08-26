@@ -676,6 +676,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[Category ("Layout")]
 		[DefaultValueAttribute (HorizontalAlign.NotSet)]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
@@ -758,7 +759,8 @@ namespace System.Web.UI.WebControls
 		
 		
 		[DefaultValue (null)]
-		[TemplateContainer (typeof(GridView), BindingDirection.OneWay)]
+		/* DataControlPagerCell isnt specified in the docs */
+		//[TemplateContainer (typeof(DataControlPagerCell), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 	    [Browsable (false)]
 		public ITemplate PagerTemplate {
@@ -1189,6 +1191,12 @@ namespace System.Web.UI.WebControls
 
 			return dataSource.DataSourceCount;
 		}
+
+		[MonoTODO]
+		protected override Style CreateControlStyle ()
+		{
+			throw new NotImplementedException ();
+		}
 		
 		DataControlRowState GetRowState (int index)
 		{
@@ -1331,12 +1339,18 @@ namespace System.Web.UI.WebControls
 			base.DataBind ();
 		}
 		
-		protected override void PerformDataBinding (IEnumerable data)
+		protected internal override void PerformDataBinding (IEnumerable data)
 		{
 			base.PerformDataBinding (data);
 		}
+
+		[MonoTODO]
+		protected internal virtual void PrepareControlHierarchy ()
+		{
+			throw new NotImplementedException ();
+		}
 		
-		protected override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
 			Page.RegisterRequiresControlState (this);
 			base.OnInit (e);
@@ -1737,7 +1751,13 @@ namespace System.Web.UI.WebControls
 				return null;
 		}
 		
-		protected override void OnPreRender (EventArgs e)
+		[MonoTODO]
+		protected override void OnPagePreLoad (object sender, EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 			
@@ -1761,7 +1781,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			if (EnableSortingAndPagingCallbacks)
 				base.RenderBeginTag (writer);

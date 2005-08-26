@@ -39,7 +39,7 @@ using System.Collections;
 namespace System.Web.UI.HtmlControls
 {
 	[ControlBuilder (typeof(HtmlHeadBuilder))]
-	public class HtmlHead: HtmlContainerControl, IPageHeader
+	public sealed class HtmlHead: HtmlGenericControl, IPageHeader, IParserAccessor
 	{
 		HtmlTitle title;
 		Hashtable metadata;
@@ -48,12 +48,16 @@ namespace System.Web.UI.HtmlControls
 		
 		public HtmlHead(): base("head") {}
 
-		protected override void OnInit (EventArgs e)
+		public HtmlHead (string tag) : base (tag)
+		{
+		}
+		
+		protected internal override void OnInit (EventArgs e)
 		{
 			Page.SetHeader (this);
 		}
 		
-		protected override void RenderChildren (HtmlTextWriter writer)
+		protected internal override void RenderChildren (HtmlTextWriter writer)
 		{
 			base.RenderChildren (writer);
 			if (metadata != null) {
@@ -80,6 +84,13 @@ namespace System.Web.UI.HtmlControls
 		protected internal override void AddedControl (Control control, int index)
 		{
 			base.AddedControl (control, index);
+		}
+
+		/* Shows up in corcompare */
+		[MonoTODO]
+		protected internal override void RemovedControl (Control control)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		IList IPageHeader.LinkedStyleSheets {

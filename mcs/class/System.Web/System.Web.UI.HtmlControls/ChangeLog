@@ -1,7 +1,320 @@
-2005-08-14 Gert Driesen <drieseng@users.sourceforge.net>
+2005-08-26  Chris Toshok  <toshok@ximian.com>
 
-	* HtmlForm.cs: Added UniqueID override to match MS.NET. Fixed line
-	endings.
+	* HtmlButton.cs (ValidationGroup): implement.
+	(RaisePostBackEvent): gross #ifdef-iry to make sure we only have
+	one body of the actual RaisePostBackEvent code.  Also, call
+	Page.Validate(ValidationGroup) in the 2.0 case.
+
+2005-08-25  Miguel de Icaza  <miguel@novell.com>
+
+	* HtmlHead.cs: Implement constructor, pass the tag.
+
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlHead.cs: Fixed base class (to HtmlGenericControl).
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlForm.cs (CreateControlCollection, OnPreRender,
+	RenderControl): implement naively, just calling base.Method.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlForm.cs (RenderAttributes): don't strip off the stuff after
+	the last '/' when rendering the action.  Fixes comments in
+	nGallery.
+
+2005-08-24  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlInputButton.cs, HtmlInputFile.cs, HtmlHead.cs,
+	HtmlInputImage.cs, HtmlForm.cs, HtmlInputCheckBox.cs,
+	HtmlInputHidden.cs, HtmlButton.cs, HtmlSelect.cs, HtmlControl.cs:
+	Add MonoTODO's for all NotImplementedException's.
+
+2005-08-18  Dick Porter  <dick@ximian.com>
+
+	* HtmlTable.cs, HtmlInputButton.cs, HtmlInputFile.cs, HtmlHead.cs,
+	HtmlInputImage.cs, HtmlForm.cs, HtmlInputText.cs,
+	HtmlInputCheckBox.cs, HtmlAnchor.cs, HtmlInputRadioButton.cs,
+	HtmlButton.cs, HtmlInputHidden.cs, HtmlTextArea.cs,
+	HtmlTableRow.cs, HtmlSelect.cs, HtmlControl.cs, HtmlTitle.cs,
+	HtmlContainerControl.cs: 2.0 API fixes and stubs and attribute fixes
+
+2005-08-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlInputRadioButton.cs, HtmlInputText.cs, HtmlTextArea.cs: Renamed 
+	Load method (bad choice) to DefaultLoadPostData.
+
+2005-08-15  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HtmlAnchor.cs: Fixed protected RaisePostBackEvent in 2.0.
+	* HtmlInputRadioButton.cs: Fixed Value property and LoadPostData 
+	method. Fixed support for protected LoadPostData and 
+	RaisePostDataChangedEvent in 2.0 (recursion).
+	* HtmlInputText.cs: Fixed LoadPostData. Fixed support for protected
+	LoadPostData and RaisePostDataChangedEvent in 2.0 (recursion).
+	* HtmlTextArea.cs: Fixed LoadPostData. Fixed support for protected
+	LoadPostData and RaisePostDataChangedEvent in 2.0 (recursion).
+
+2005-08-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlTableCell.cs: Added "string" [TypeConverter] attribute to NoWrap 
+	for 2.0	profile. The class seems to be internal and not (yet?) 
+	implemented.
+
+2005-08-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlAnchor.cs: Add Localizable attribute to 2.0 profile.
+	* HtmlEmptyTagControlBuilder.cs: New. ControlBuilder required for
+	(at least) HtmlInputControl in 2.0 profile.
+	* HtmlInputControl.cs: Use a new ControlBuilder class for 2.0 profile.
+	* HtmlInputText.cs: Fix DefaultValue attribute for 2.0 profile.
+
+2005-08-09  Dick Porter  <dick@ximian.com>
+
+	* HtmlSelect.cs: Clear databindings when adding a new one; cope
+	with assorted combinations of empty text and value fields; write
+	<option> tags manually to match ms HTML output.  All fix nunit
+	tests.
+
+2005-08-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlInputControl.cs: Remove code to handle password (wrong place) 
+	and fixed type handling for 2.0.
+	* HtmlInputText.cs: Added code to remove (only in 1.x) the value when
+	the type == password. Tests indicates that the value is present for 
+	2.0.
+
+2005-08-05  Dick Porter  <dick@ximian.com>
+
+	* HtmlSelect.cs: Fix databinding when one or other of Name and
+	Value aren't supplied (thanks to Peter for the patch); Make
+	<option> indenting match ms output.
+
+2005-07-30  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlForm.cs: Make sure we actually put the "?" in the url
+
+2005-07-29  Dick Porter  <dick@ximian.com>
+
+	* HtmlForm.cs: Simplify the rendering code by using QueryStringRaw
+	instead of building the query string by hand
+
+2005-07-27  Dick Porter  <dick@ximian.com>
+
+	* HtmlInputCheckBox.cs: New implementation
+
+2005-07-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* HtmlSelect.cs: Added missing attributes
+
+2005-07-26  Dick Porter  <dick@ximian.com>
+
+	* HtmlSelect.cs: New implementation
+
+2005-07-26  Miguel de Icaza  <miguel@novell.com>
+
+	* HtmlForm.cs: It is possible to have keys with no values in the
+	query string, do not try to process those on the foreach loop.
+	
+	The question is: what should happen if I only get the key?
+
+	Example: file_with_a_form.aspx?a
+
+2005-07-25  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* HtmlForml.cs: Implemented UniqueID (new in sp1)
+	* HtmlButton.cs, HtmlInputButton.cs, HtmlInputImage.cs: Attribute fixes
+
+2005-07-24  Dick Porter  <dick@ximian.com>
+
+	* HtmlForm.cs: Add the trailing query string to the form action;
+	fixes bug shown in Test/standalone/htmlform/qs_postback.aspx
+
+2005-07-22  Dick Porter  <dick@ximian.com>
+
+	* HtmlInputFile.cs: Add assembly attributes
+
+2005-07-21  Dick Porter  <dick@ximian.com>
+
+	* HtmlImage.cs: The src attribute needs to be a relative URL;
+	close the HTML element when rendering attributes, to match the MS
+	impl.
+
+	* HtmlForm.cs: Added assembly attributes; don't render ID twice;
+	don't render enctype and target if they are empty strings;
+	implement a Render overload to keep corcompare quiet.
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlForm.cs (RenderAttributes): if there are submit statements,
+	we need to render those.
+
+	* HtmlInputImage.cs: same.
+
+	* HtmlInputButton.cs: hook up the client validation stuff.
+
+	* HtmlButton.cs: same, except a lot more complicated due to
+	postback handling.
+
+2005-07-19  Dick Porter  <dick@ximian.com>
+
+	* HtmlImage.cs: Added attributes; use Int32.Parse instead of
+	Convert.ToInt32
+
+2005-07-18  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HtmlInputControl.cs: Fix Type when using ctor(null). Now use 
+	ControlID for Name (and not ID). Added ControlBuilder attribute.
+	* HtmlTable.cs: Simplify check when adding controls.
+	* HtmlTableRow.cs: Simplify check when adding controls.
+
+2005-07-18  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlInputHidden.cs: Use Events Add/Remove. Add DefaultEvent
+	attribute.
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlInputImage.cs: Use Events Add/Remove. Remove uneeded
+	constant. Update fetching from viewstate code to use new
+	convenience method.
+
+2005-07-15  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlInputButton.cs: Add DefaultEventAttribute.
+
+2005-07-15  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* HtmlInputControl.cs: Removed internal property (no more required to 
+	compile).
+	* HtmlInputRadioButton.cs: Optimized events.
+	* HtmlInputText.cs: Optimized events.
+	* HtmlTable.cs: Added CultureInfo.InvariantCulture when parsing 
+	strings to integers.
+	* HtmlTableCell.cs: Added CultureInfo.InvariantCulture when parsing 
+	strings to integers.
+	* HtmlTextArea.cs: Optimized events.
+
+2005-07-15  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HtmlAnchor.cs: Added URL resolution (doesn't get me the expected 
+	result) and fixed compatibility for a weird behaviour of the HRef 
+	attribute handling. Optimized events.
+
+2005-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlInputButton.cs: Use Events Add/Remove. Remove Causesvalidation
+	string constant. Use new method for accessing ViewState
+	data. Don't remove value from the view state if it is the default.
+
+2005-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlButton.cs: Use Events Add/Remove. Remove Causesvalidation
+	string constant. Use new method for accessing ViewState
+	data. Don't remove value from the view state if it is the default.
+	
+2005-07-14  Dick Porter  <dick@ximian.com>
+
+	* HtmlInputFile.cs: New implementation
+
+2005-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlInputControl.cs: Use ClientID for input controls name.
+
+2005-07-14  Dick Porter  <dick@ximian.com>
+
+	* HtmlForm.cs: New Implementation
+
+2005-07-13  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HtmlTable.cs: Added missing attributes.
+	* HtmlTableCell.cs: Added missing attributes except for ControlBuilder
+	as the builder's type isn't public.
+	* HtmlInputControl.cs: Added missing attributes.
+	* HtmlInputText.cs: Added missing attributes.
+	* HtmlInputRadioButton.cs: Added missing attributes.
+	* HtmlAnchor.cs: Added missing attributes.
+	* HtmlTextArea.cs: Added missing attributes.
+	* HtmlTableRow.cs: Added missing attributes.
+
+2005-07-12  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HtmlAnchor.cs: Added DefaultValue attributes.
+	* HtmlInputControl.cs: Added DefaultValue attributes.
+	* HtmlInputRadioButton.cs: Added DefaultValue attributes.
+	* HtmlInputText.cs: Added DefaultValue attributes. Added method 
+	RenderAttributes in 1.1 profile.
+	* HtmlTable.cs: Fix DefaultValue to "".
+	* HtmlTextArea.cs: Added DefaultValue attributes.
+
+2005-07-12  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HtmlTableCell.cs: Added DefaultValue attributes.
+	* HtmlTable.cs: Added DefaultValue and ParseChildren attributes.
+	* HtmlTableRowCollection.cs: Reworked collection to share data with
+	HtmlTable.Controls.
+	* HtmlTableCellCollection.cs: Reworked collection to share data with
+	HtmlTableRow.Controls.
+	* HtmlTableRow.cs: Added DefaultValue and ParseChildren attributes.
+
+2005-07-09  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HtmlTableRowCollection.cs: Fixed property name to IsReadOnly.
+
+2005-07-08  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HtmlTextArea.cs: Use CultureInfo.InvariantCulture in ToString ().
+
+2005-07-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlContainerControl.cs: Fixed removal of attribute/viewstate for
+	"innerhtml".
+	* HtmlTextArea.cs: New implementation.
+
+2005-07-07  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlInputImage.cs: New implementation.
+
+2005-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlAnchor.cs: protected RaisePostBackEvent is in 2.0 only.
+	* HtmlInputControl.cs: New implementation.
+	* HtmlInputRadioButton.cs: New implementation.
+	* HtmlInputText.cs: New implementation.
+
+2005-07-07  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlInputHidden.cs: New implementation.
+
+2005-07-07  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlAnchor.cs: Call base OnPreRender from override.
+
+2005-07-07  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlInputButton.cs: New implementation.
+
+2005-07-07  Dick Porter  <dick@ximian.com>
+
+	* HtmlImage.cs: New implementation
+
+2005-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlAnchor.cs: Fixed to remove attributes properly.
+	* HtmlTable.cs: New implementation.
+	* HtmlTableCell.cs: New implementation.
+	* HtmlTableCellCollection.cs: New implementation.
+	* HtmlTableRow.cs: New implementation.
+	* HtmlTableRowCollection.cs: New implementation.
+
+2005-07-06  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlButton.cs: New implementation.
+
+2005-07-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlAnchor.cs: New implementation.
 
 2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

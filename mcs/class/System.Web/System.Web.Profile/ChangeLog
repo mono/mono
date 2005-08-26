@@ -1,3 +1,7 @@
+2005-08-19  Chris Toshok  <toshok@ximian.com>
+
+	* ProfileInfo.cs: I was bored.  implement this.
+
 2004-08-02  Duncan Mak  <duncan@ximian.com>
 
 	* ProfileAuthenticationOption.cs: Added enumeration.

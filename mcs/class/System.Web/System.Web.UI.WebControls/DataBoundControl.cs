@@ -39,7 +39,7 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
 
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.HierarchicalDataBoundControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.DataBoundControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public abstract class DataBoundControl : BaseDataBoundControl
 	{
 		DataSourceSelectArguments selectArguments;
@@ -48,8 +48,16 @@ namespace System.Web.UI.WebControls {
 		protected DataBoundControl ()
 		{
 		}
+
+		/* Used for controls that used to inherit from
+		 * WebControl, so the tag can propagate upwards
+		 */
+		internal DataBoundControl (HtmlTextWriterTag tag) : base (tag)
+		{
+		}
 		
-		protected IDataSource GetDataSource ()
+		
+		protected virtual IDataSource GetDataSource ()
 		{
 			if (IsBoundUsingDataSourceID) {
 				Control ctrl = NamingContainer.FindControl (DataSourceID);
@@ -71,7 +79,7 @@ namespace System.Web.UI.WebControls {
 			throw new HttpException (string.Format ("Unexpected data source type: {0}", DataSource.GetType()));
 		}
 		
-		protected DataSourceView GetData ()
+		protected virtual DataSourceView GetData ()
 		{
 			if (currentView == null)
 				UpdateViewData ();
@@ -121,8 +129,7 @@ namespace System.Web.UI.WebControls {
 				view.DataSourceViewChanged += new EventHandler (OnDataSourceViewChanged);
 		}
 		
-		// should be `internal protected' (why, oh WHY did they do that !?!)
-		protected override void OnLoad (EventArgs e)
+		protected internal override void OnLoad (EventArgs e)
 		{
 			if (IsBoundUsingDataSourceID && (!Page.IsPostBack || !EnableViewState))
 				RequiresDataBinding = true;
@@ -130,7 +137,7 @@ namespace System.Web.UI.WebControls {
 			base.OnLoad(e);
 		}
 		
-		protected virtual void PerformDataBinding (IEnumerable data)
+		protected internal virtual void PerformDataBinding (IEnumerable data)
 		{
 		}
 
@@ -144,7 +151,7 @@ namespace System.Web.UI.WebControls {
 		[ThemeableAttribute (false)]
 		[DefaultValueAttribute ("")]
 		[WebCategoryAttribute ("Data")]
-		public string DataMember
+		public virtual string DataMember
 		{
 			get {
 				object o = ViewState["DataMember"];
@@ -157,7 +164,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-	    [IDReferencePropertyAttribute (typeof(HierarchicalDataSourceControl))]
+		[IDReferencePropertyAttribute (typeof(DataSourceControl))]
 		public override string DataSourceID {
 			get {
 				object o = ViewState ["DataSourceID"];
@@ -197,6 +204,12 @@ namespace System.Web.UI.WebControls {
 					selectArguments = CreateDataSourceSelectArguments ();
 				return selectArguments;
 			}
+		}
+
+		[MonoTODO]
+		protected void MarkAsDataBound ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

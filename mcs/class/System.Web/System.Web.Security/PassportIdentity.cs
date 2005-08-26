@@ -6,8 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,13 +28,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Security.Principal;
 
-namespace System.Web.Security
-{
-	public sealed class PassportIdentity : IIdentity
-	{
+namespace System.Web.Security {
+
+#if NET_2_0
+	public sealed class PassportIdentity : IIdentity, IDisposable {
+#else
+	public sealed class PassportIdentity : IIdentity {
+#endif
 		[MonoTODO]
 		public PassportIdentity ()
 		{
@@ -484,6 +485,12 @@ namespace System.Web.Security
 				throw new NotImplementedException ();
 			}
 		}
+
+#if NET_2_0
+		void IDisposable.Dispose ()
+		{
+		}
+#endif
 	}
 }
 

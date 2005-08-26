@@ -1,6 +1,12 @@
-2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+2005-07-15  Ben Maurer  <bmaurer@ximian.com>
 
-	* Icalls.jvm.cs: Added TARGET_JVM Grasshopper specific version of the file.
+	* DataSourceHelper.cs: Obsolete
+
+	* DataSourceResolver.cs: Moved from DataSourceHelper.
+
+2005-07-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* DataSourceHelper.cs: Helper method used for data binding.
 
 2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

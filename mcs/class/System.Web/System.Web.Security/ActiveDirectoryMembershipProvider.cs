@@ -6,8 +6,7 @@
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,11 +29,12 @@
 //
 
 #if NET_2_0
-using System.Collections;
+
 using System.Collections.Specialized;
-using System.Text;
 
 namespace System.Web.Security {
+
+	[MonoTODO ("that's only a stub")]
 	public class ActiveDirectoryMembershipProvider : MembershipProvider {
 		
 		[MonoTODO]
@@ -150,9 +150,9 @@ namespace System.Web.Security {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-		
+
 		[MonoTODO]
-		public virtual string Description {
+		public ActiveDirectoryConnectionProtection CurrentConnectionProtection {
 			get { throw new NotImplementedException (); }
 		}
 		
@@ -163,6 +163,11 @@ namespace System.Web.Security {
 		
 		[MonoTODO]
 		public override bool EnablePasswordRetrieval {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public bool EnableSearchMethods {
 			get { throw new NotImplementedException (); }
 		}
 		
@@ -198,6 +203,11 @@ namespace System.Web.Security {
 		
 		[MonoTODO]
 		public override int PasswordAttemptWindow {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public int PasswordAnswerAttemptLockoutDuration {
 			get { throw new NotImplementedException (); }
 		}
 		

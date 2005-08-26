@@ -3,10 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,53 +29,58 @@
 //
 
 #if NET_2_0
-using System.Collections;
-using System.Collections.Specialized;
-using System.Text;
-using System.Security;
+
+using System.Security.Permissions;
 using System.Security.Principal;
 
 namespace System.Web.Security {
+
+	[Serializable]
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class RolePrincipal : IPrincipal {
+
+		private IIdentity identity;
+		private string providerName;
+		private bool listChanged;
+		private bool listCached;
 		
+		public RolePrincipal (IIdentity identity)
+		{
+			if (identity == null)
+				throw new ArgumentNullException ("identity");
+			this.identity = identity;
+		}
+
 		[MonoTODO]
-		public RolePrincipal ()
+		public RolePrincipal (IIdentity identity, string encryptedTicket)
+			: this (identity)
 		{
 			throw new NotImplementedException ();
 		}
-		
+
 		[MonoTODO]
-		public RolePrincipal (bool createFromCookie)
+		public RolePrincipal (string providerName, IIdentity identity)
+			: this (identity)
 		{
+			if (providerName == null)
+				throw new ArgumentNullException ("providerName");
+
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public RolePrincipal (string providerName, IIdentity identity, string encryptedTicket)
+			: this (identity)
+		{
+			if (providerName == null)
+				throw new ArgumentNullException ("providerName");
+
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
-		public RolePrincipal (string encryptedTicket)
-		{
-			throw new NotImplementedException ();
-		}
 		
 		[MonoTODO]
 		public string [] GetRoles ()
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public void Init ()
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public void InitFromCookie (string cookieName)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		public void InitFromEncryptedTicket (string strTicket)
 		{
 			throw new NotImplementedException ();
 		}
@@ -92,9 +97,8 @@ namespace System.Web.Security {
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public bool CachedListChanged {
-			get { throw new NotImplementedException (); }
+			get { return listChanged; }
 		}
 		
 		[MonoTODO]
@@ -112,14 +116,12 @@ namespace System.Web.Security {
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
 		public IIdentity Identity {
-			get { throw new NotImplementedException (); }
+			get { return identity; }
 		}
 		
-		[MonoTODO]
 		public bool IsRoleListCached {
-			get { throw new NotImplementedException (); }
+			get { return listCached; }
 		}
 		
 		[MonoTODO]
@@ -127,14 +129,19 @@ namespace System.Web.Security {
 			get { throw new NotImplementedException (); }
 		}
 		
-		[MonoTODO]
-		public string UserData {
-			get { throw new NotImplementedException (); }
+		public string ProviderName {
+			get { return providerName; }
 		}
 		
 		[MonoTODO]
 		public int Version {
 			get { throw new NotImplementedException (); }
+		}
+
+		public void SetDirty ()
+		{
+			listChanged = true;
+			listCached = false;
 		}
 	}
 }

@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls
 	[DefaultEventAttribute ("PageIndexChanging")]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class DetailsView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IDataItemContainer
+	public class DetailsView: CompositeDataBoundControl, ICallbackEventHandler, ICallbackContainer, IDataItemContainer, INamingContainer
 	{
 		object dataItem;
 		
@@ -719,6 +719,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
+		[Category ("Layout")]
 		[DefaultValueAttribute (HorizontalAlign.NotSet)]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
@@ -803,7 +804,8 @@ namespace System.Web.UI.WebControls
 		
 		
 		[DefaultValue (null)]
-		[TemplateContainer (typeof(DetailsView), BindingDirection.OneWay)]
+		/* DataControlPagerCell isnt specified in the docs */
+		//[TemplateContainer (typeof(DataControlPagerCell), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 	    [Browsable (false)]
 		public ITemplate PagerTemplate {
@@ -983,6 +985,12 @@ namespace System.Web.UI.WebControls
 			return table;
 		}
 	
+		[MonoTODO]
+		protected override Style CreateControlStyle ()
+		{
+			throw new NotImplementedException ();
+		}
+		
 		protected override int CreateChildControls (IEnumerable data, bool dataBinding)
 		{
 			PagedDataSource dataSource;
@@ -1118,6 +1126,12 @@ namespace System.Web.UI.WebControls
 			
 			return dataSource.DataSourceCount;
 		}
+
+		[MonoTODO]
+		protected override void EnsureDataBound ()
+		{
+			throw new NotImplementedException ();
+		}
 		
 		DataControlRowState GetRowState (int index)
 		{
@@ -1240,12 +1254,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected override void PerformDataBinding (IEnumerable data)
+		protected internal override void PerformDataBinding (IEnumerable data)
 		{
 			base.PerformDataBinding (data);
 		}
+
+		[MonoTODO]
+		protected internal virtual void PrepareControlHierarchy ()
+		{
+			throw new NotImplementedException ();
+		}
 		
-		protected override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
 			Page.RegisterRequiresControlState (this);
 			base.OnInit (e);
@@ -1625,6 +1645,12 @@ namespace System.Web.UI.WebControls
 			RenderGrid (writer);
 			return sw.ToString ();
 		}
+
+		[MonoTODO]
+		protected virtual string GetCallbackScript (IButtonControl buttonControl, string argument)
+		{
+			throw new NotImplementedException ();
+		}
 		
 		string ICallbackContainer.GetCallbackScript (IButtonControl control, string argument)
 		{
@@ -1633,8 +1659,14 @@ namespace System.Web.UI.WebControls
 			else
 				return null;
 		}
+
+		[MonoTODO]
+		protected override void OnPagePreLoad (object sender, EventArgs e)
+		{
+			throw new NotImplementedException ();
+		}
 		
-		protected override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 			
@@ -1657,7 +1689,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			if (EnablePagingCallbacks)
 				base.RenderBeginTag (writer);

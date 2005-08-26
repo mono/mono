@@ -38,8 +38,16 @@ using System.Web.UI;
 
 // General Information about the System.Web assembly
 
-[assembly: AssemblyVersion (Consts.FxVersion)]
-[assembly: SatelliteContractVersion (Consts.FxVersion)]
+#if (NET_1_0)
+	[assembly: AssemblyVersion("1.0.3300.0")]
+	[assembly: SatelliteContractVersion("1.0.3300.0")]
+#elif (NET_2_0)
+	[assembly: AssemblyVersion ("2.0.0.0")]
+	[assembly: SatelliteContractVersion ("2.0.0.0")]
+#elif (NET_1_1)
+	[assembly: AssemblyVersion("1.0.5000.0")]
+	[assembly: SatelliteContractVersion("1.0.5000.0")]
+#endif
 
 [assembly: AssemblyTitle("System.Web.dll")]
 [assembly: AssemblyDescription("System.Web.dll")]
@@ -48,11 +56,8 @@ using System.Web.UI;
 [assembly: AssemblyProduct("MONO CLI")]
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 [assembly: AssemblyTrademark("")]
-#if TARGET_JVM
-[assembly: CLSCompliant(false)]
-#else
+
 [assembly: CLSCompliant(true)]
-#endif
 [assembly: ComVisible(false)]
 [assembly: AssemblyDefaultAlias("System.Web.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
@@ -60,10 +65,9 @@ using System.Web.UI;
 
 [assembly: AllowPartiallyTrustedCallers()]
 [assembly: TagPrefix("System.Web.UI.WebControls", "asp")]
-#if !TARGET_JVM
+
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../msfinal.pub")]
-#endif
 
 // Resources
 
@@ -111,3 +115,5 @@ using System.Web.UI;
 [assembly: WebResource ("webform.js", "text/javascript")]
 
 #endif
+
+[assembly: WebResource ("WebUIValidation.js", "text/javascript")]

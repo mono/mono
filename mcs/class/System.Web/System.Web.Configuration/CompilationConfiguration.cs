@@ -75,7 +75,7 @@ namespace System.Web.Configuration
 		{
 			CompilationConfiguration config;
 			if (context == null)
-				context = HttpContext.Context;
+				context = HttpContext.Current;
 
 			config = context.GetConfig ("system.web/compilation") as CompilationConfiguration;
 

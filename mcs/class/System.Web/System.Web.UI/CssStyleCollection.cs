@@ -6,8 +6,7 @@
 // 	Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.IO;
 using System.Collections;
 using System.Text;
 
@@ -82,10 +81,10 @@ namespace System.Web.UI {
 
 		internal string BagToString ()
 		{
-			StringBuilder sb = new StringBuilder ();
+			HtmlTextWriter writer = new HtmlTextWriter (new StringWriter ());
 			foreach (string k in style.Keys)
-				sb.AppendFormat ("{0}: {1}; ", k, style [k]);
-			return sb.ToString ();
+				writer.WriteStyleAttribute ((k as string), (style [k] as string));
+			return writer.InnerWriter.ToString ();
 		}
 		
 		public int Count
@@ -140,6 +139,29 @@ namespace System.Web.UI {
 					bag ["style"] = BagToString ();
 			}
 		}
+#if NET_2_0
+		public string this [HtmlTextWriterStyle key] {
+			get {
+				return style [HtmlTextWriter.StaticGetStyleName (key)] as string;
+			}
+			set {
+				Add (HtmlTextWriter.StaticGetStyleName (key), value);
+			}
+		}
+
+		public string Value {
+			get { return BagToString (); }
+			set {
+				Clear ();
+				FillStyle (value);
+			}
+		}
+
+		public void Remove (HtmlTextWriterStyle key)
+		{
+			Remove (HtmlTextWriter.StaticGetStyleName (key));
+		}
+#endif
 	}
 }
 

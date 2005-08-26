@@ -37,7 +37,12 @@ namespace System.Web.UI.HtmlControls
 {
 	public abstract class HtmlContainerControl : HtmlControl{
 		
-		public HtmlContainerControl () : this ("span") {}
+#if NET_2_0
+		protected
+#else
+		public
+#endif
+		HtmlContainerControl () : this ("span") {}
 		
 		public HtmlContainerControl (string tag) : base(tag) {}
 
@@ -70,7 +75,10 @@ namespace System.Web.UI.HtmlControls
 			set {
 				Controls.Clear ();
 				Controls.Add (new LiteralControl (value));
-				ViewState ["innerhtml"] = value;
+				if (value == null)
+					ViewState.Remove ("innerhtml");
+				else
+					ViewState ["innerhtml"] = value;
 			}
 		}
 
@@ -88,7 +96,12 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 		
-		protected override void Render (HtmlTextWriter writer)
+#if NET_2_0
+		protected internal
+#else
+		protected
+#endif		
+		override void Render (HtmlTextWriter writer)
 		{
 			RenderBeginTag (writer);
 			RenderChildren (writer);

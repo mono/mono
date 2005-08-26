@@ -5,8 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Web;
 using System.Web.Configuration;
 using System.Security.Principal;
 
@@ -69,6 +66,14 @@ namespace System.Web.Security
 				app.CompleteRequest ();
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static bool CheckUrlAccessForPrincipal (string virtualPath, IPrincipal user, string verb)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
 

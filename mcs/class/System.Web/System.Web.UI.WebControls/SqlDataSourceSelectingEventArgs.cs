@@ -29,13 +29,14 @@
 //
 
 #if NET_2_0
+using System.Data.Common;
 
 namespace System.Web.UI.WebControls {
 	public class SqlDataSourceSelectingEventArgs : SqlDataSourceCommandEventArgs {
 		DataSourceSelectArguments arguments;
 		bool executeSelect;
 		
-		public SqlDataSourceSelectingEventArgs (IDbCommand command, DataSourceSelectArguments argument, 
+		public SqlDataSourceSelectingEventArgs (DbCommand command, DataSourceSelectArguments argument, 
 			bool executeSelect) : base (command)
 		{
 			this.arguments = argument;

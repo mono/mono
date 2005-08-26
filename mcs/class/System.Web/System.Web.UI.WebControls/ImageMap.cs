@@ -46,6 +46,7 @@ namespace System.Web.UI.WebControls
 		
 		private static readonly object ClickEvent = new object();
 		
+		[Category ("Action")]
 		public event ImageMapEventHandler Click
 		{
 			add { Events.AddHandler (ClickEvent, value); }
@@ -137,7 +138,7 @@ namespace System.Web.UI.WebControls
 			writer.AddAttribute (HtmlTextWriterAttribute.Usemap, "#ImageMap" + ClientID);
 		}
 		
-		protected override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			base.Render (writer);
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, "ImageMap" + ClientID);

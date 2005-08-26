@@ -1,41 +1,708 @@
-2005-07-26  Eyal Alalouf  <eyala@mainsoft.com>
-	* HttpResponse.cs: OnCookieAdd should not be TARGET_J2EE specific
+2005-08-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-2005-07-26  Eyal Alalouf  <eyala@mainsoft.com>
-	* HttpRuntime.cs: Under TARGET_J2EE dispose the cache as well in Dispose.
+	* HttpRequest.cs:
+	* IntPtrStream.cs: now we only have a read-only MemoryStream or an
+	IntPtrStream. The copy is moved into HttpRequest.
 
-2005-07-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2005-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* HttpContext.cs: fixed typo when checking for local address. Patch by
-	Mike Morano that closes bug #75633.
+	* WebCategoryAttribute.cs: New. Required internal attribute.
+	* WebSysDescriptionAttribute.cs: New. Required internal attribute.
 
-2005-07-25  Eyal Alalouf  <eyala@mainsoft.com>
+2005-08-26  Jackson Harper  <jackson@ximian.com>
 
-	* HttpContext.cs HttpRuntime.cs HttpApplication.cs: timeout is not supported
-	  in TARGET_J2EE configuration (no Thread.Abort support).
+	* HttpResponseStream.cs: Use GetBuffer so the memory isn't
+	duplicated.
 
-2005-07-25  Eyal Alalouf  <eyala@mainsoft.com>
+2005-08-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* QueueManager.cs: TARGET_J2EE fixes.
-	* HttpApplicationFactory.cs: TARGET_J2EE fixes.
+	* HttpApplication.cs: GetHandler might return null when, for example,
+	a web service fails, but that does not mean that returning a null
+	handler should throw another exception, as the web service code
+	serialized the error as a faultString. So if the handler is null, just
+	don't call ProcessRequest and keep going.
 
-2005-07-24  Eyal Alalouf  <eyala@mainsoft.com>
-	* HttpRequest.cs: Removed GhFilePath property from TARGET_J2EE.
+2005-08-26  Jackson Harper  <jackson@ximian.com>
 
-2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
-	* CapabilitiesLoader.cs: Indentation fixes in TARGET_J2EE specific code.
+	* HttpResponse.cs: Send the cached headers if this is a cached
+	response. Save the headers, date header, and page data. Fix a typo.
+	* HttpResponseStream.cs: Add new accesor to get a byte [] of the
+	page data.
 
-2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
-	* Grasshopper compilation fixes. Disabled use of unsupported features under TARGET_JVM/J2EE configuration.
+2005-08-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+	* HttpWorkerRequest.cs: SetEndOfSendNotification is a noop. No matter
+	what callback you use that never gets called. In XSP I actually
+	implement something for this method.
+	* HttpServerUtility.cs: unused variable.
 
-	* HttpRequest.cs: Fix compilation error in TARGET_J2EE config.
-	* HttpApplicationFactory.cs: Fix compilation error in TARGET_J2EE config.
+2005-08-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+	* HttpInputStream.cs: new ctor that takes a byte [].
+	* IntPtrStream.cs: make it work on a byte [] too.
 
-	* CapabilitiesLoader.cs: Fix compilation error in TARGET_J2EE config.
+	* HttpRequest.cs:
+	(ContentLength): return 0 for negative numbers or error parsing, but
+	keep content_length negative in those cases.
+	(MakeInputStream): when there's no content-length (or it's negative),
+	we still read the request into a MemoryStream. Use
+	IsEntireEntityIsPreloaded() as a fast path.
+
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpClientCertificate.cs: On 1.x the .ctor throws a 
+	ArgumentNullException (but 2.0 throws a NRE).
+
+2005-08-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: HttpMethod deserves its own field. Fix IsLocal.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* HttpApplication.cs (IsReusable): return true.
+	(InitOnce): remove the initialization of handler_factory from
+	here.
+	(GetHandler) and move it here, so we make sure to load handlers
+	from all needed web.config files.
+
+2005-08-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpServerUtility.cs: use GetHandler().
+	* HttpApplication.cs: remove obsolete method. Now Transfe/Execute work.
+
+2005-08-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: no need for the local var. here.
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* HttpApplication.cs (InitOnce): move the initialization of
+	modules above the call to HttpApplicationFactory.AttachEvents,
+	since that method accesses HttpApplication.Modules.  Fixes
+	nGallery.
+	(IsReusable): mark TODO.
+
+2005-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseHeader.cs: removed obsolete class.
+	* HttpResponse.cs: no more 'obsolete' warnings.
+
+2005-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRuntime.cs: implemeted some missing properties.
+
+2005-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: implemented RemoveOutputCacheItem().
+
+2005-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: implemented GetVaryByCustomString().
+
+2005-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: implemented SetHeader (allows adding a header
+	circumventing the read-only protection of the collection) and SetForm,
+	which just assigns a value of the 'form' collection.
+	* HttpServerUtility.cs: NameValueCollection -> WebROCollection.
+
+2005-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs:
+	* HttpRequest.cs: implemented RewritePath and supporting methods.
+
+2005-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpRequest.cs: Avoid NRE if work_request if null in the ctor.
+	* HttpResponse.cs: Avoid NRE if work_request if null in the ctor.
+
+2005-08-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: if there's any exception thrown when getting the
+	handler, don't add an extra error to the context, as we already have
+	one.
+
+2005-08-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpWriter.cs:
+	* HttpResponse.cs:
+	* HttpWorkerRequest.cs:
+	* HttpApplication.cs: added mising attributes and enabled methods
+	present in 1.1 SP1.
+
+2005-08-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebROCollection.cs: a collection that allows setting IsReadOnly.
+	* HttpRequest.cs: implemented MapImageCoordinates(). Use WebROCollection
+	instead of a NameValueCollection in Form, Headers, Params, QueryString.
+
+2005-08-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpInputStream.cs: new copy ctor.
+	* IntPtrStream.cs: getters for base_address and size.
+	* HttpRequest.cs: implemented SaveAs(). Use a wrapper on top of
+	InputStream so that reading POST form or files does not modify the state
+	if InputStream. Don't use uri_builder.Query in QueryStringRaw, as it
+	returns the '?'.
+
+2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: implemented UserLanguages and reuse code from
+	AcceptTypes.
+
+2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: implemented AcceptTypes.
+
+2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: implemented this[] in terms of Params. Don't add the
+	header collection in Params.
+
+2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: fix Files property.
+	* HttpApplication.cs: invoke the default authentication event after all 
+	the other auth. modules.
+
+2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ServerVariablesCollection.cs: mark the collection as read-only except
+	when we fill it. Add the HTTP_blah key/value pairs too.
+
+2005-08-18  Chris Toshok  <toshok@ximian.com>
+
+	* HttpRequest.cs (get_Params): implement.
+
+2005-08-17  Chris Toshok  <toshok@ximian.com>
+
+	* HttpResponse.cs: HttpResponse's Cookie's collection acts
+	differently than HttpRequests in that it never returns null from
+	the "this [string]" accessor.
+
+2005-08-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: check length 0 case when reading a POST.
+
+2005-08-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs: added security attributes for User and
+	SkipAuthorization properties.
+	* HttpApplicationFactory.cs: AttachEvents is now called form the
+	application .ctor. Recycle instead of dispose.
+	* HttpApplication.cs: attach events to the newly created application.
+
+2005-08-15  Jackson Harper  <jackson@ximian.com>
+
+	* ApplicationShutdownReason.cs: make build
+
+2005-08-15  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplication.cs: Update comments
+
+	* HttpPostedFile.cs: Use a substream to read from the uploaded
+	multiparts. 
+
+	* HttpRequest.cs: use new code to read the uploaded files.
+
+2005-08-12  Miguel de Icaza  <miguel@novell.com>
+
+	2.x API fixage and small additions:
+	
+	* HttpResponse.cs: Make constructor internal.
+
+	* HttpRequest.cs (IsLocal): Expose if NET_2.x
+
+	* HttpContext.cs: Remove internal routine.
+
+	* HttpApplication.cs: Add 2.x events. 
+
+	* HttpRequest.cs: Another iFolder issue: I was not setting up the
+	uri_builder here.
+
+	Fixes to get iFolder to work:
+	
+	* HttpApplicationFactory.cs: Set the context when we are initting
+	the application.
+
+	* HttpApplication.cs (SetContext): helper routine. 
+
+	* HttpResponse.cs: Implement the various cache operations:n
+	Expires, ExpiresAbsolute, CacheControl.
+
+	Actually produce the Cache-Control header, the "Cache" property
+	takes precedence over the compatibility settings (Expires,
+	ExpiresAbsolutely and CacheControl). 
+
+	* HttpCachePolicy.cs: Fix style.
+
+	Fix the generation of the headers, use lower-case values, do not
+	add the max-value if the value is zero.  
+
+	Allow for all possible values in SetCacheability. 
+
+	* HttpRuntime.cs (ClrInstallDirectory): Implement.
+
+	* HttpResponseStream.cs: Remove debugging stuff. 
+
+2005-08-11  Miguel de Icaza  <miguel@novell.com>
+
+	Big chunked handling rewrite, and integration of Ben's unmanaged
+	output stream.
+
+	* HttpWriter.cs: Delegate chunked encoding writing to the
+	HttpResponse. 
+
+	* HttpResponse.cs: Rework the chunked encoding system, centralize
+	it all. 
+
+	* HttpResponseStream.cs: Deploy Ben's bucket-base unmanaged
+	buffers code. 
+
+	Changed the way that we handle chunked encoding, centralize it
+	all;  
+
+	Remove a lot of manual handling of buffering turned off, and
+	instead delegate it all to Flush, fixes several issues with the
+	new framework.
+
+	* HttpWorkerRequest.cs (SendResponseFromMemory (IntPtr, int)):
+	Provide a default implementation since currently XSP does not have
+	this method implemented. 
+
+2005-08-11  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HttpClientCertificate.cs: Culture insensitive int parsing. Fixed
+	NET_2_0 build.
+
+2005-08-10  Miguel de Icaza  <miguel@novell.com>
+
+	* ServerVariablesCollection.cs: For Ben.  Implement the header
+	fetching here, do not implement it in HttpRequest.cs.
+
+2005-08-10  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HttpClientCertificate.cs: Changed IsPresent logic so that new unit
+	tests will work as expected.
+
+2005-08-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpClientCertificate.cs: Implemented, except for validation. Note 
+	that the HttpWorkerRequest derived classes must be updated to supply 
+	the required informations.
+	* HttpRequest.cs: Create an HttpClientCertificate on first call to
+	ClientCertificate.
+
+2005-08-09  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpRuntime.cs (AspInstallDirectory): Implement.
+
+2005-08-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpClientCertificate.cs: New. Stub. It won't be fun to test.
+
+2005-08-04  Ben Maurer  <bmaurer@ximian.com>
+
+	* HttpContext.cs: Kill a NIE.
+
+2005-08-04  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplicationFactory.cs: Change "Start" event like the "End"
+	event, and only do this once, when we init the type.
+
+	Fire the "Application_Start" event after we create the type.
+
+2005-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: catch a ThreadAbort (coming from Response.End)
+	here too.
+
+2005-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: setting the Status property resets the
+	StatusDescription (see the tests) and the default value for the
+	description is the one provided by GetStatusDescription() in
+	HttpWorkerRequest.
+
+2005-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: s/boundry/boundary/ and fix typo in array creation.
+
+2005-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: add call to EndOfRequest when everything is said
+	and done.
+
+2005-08-02  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpResponse.cs: Stub for TransmitFile.
+
+	* HttpRequest.cs (IsAuthenticated): Implement.
+
+2005-08-01  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpRequest.cs: Cope with implementations of HttpWorkerRequest
+	(unpatched xsp) that do not send back the PreloadedEntityBody. 
+
+	* HttpApplication.cs: keep track of the factory. 
+	(Dispose): Only dispose once, clean up other variables, release
+	the ManualResetEvent.
+	Release the handler to the factory.
+
+	* HttpApplicationFactory.cs: Implement a stack to reuse the
+	applications. 
+
+	* HttpRequest.cs: On uploads, if the ContentLenght is zero, throw
+	a 411.
+
+	* HttpRuntime.cs: Recycle the application after using it.
+
+	* HttpPostedFile.cs: Implement SaveAs.
+
+	* HttpContext.cs: Return the "Server" property.
+
+2005-08-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpServerUtility.cs: implemented missing bits.
+
+2005-08-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: query string was getting a '?' as the start of the
+	first variable name. This makes the asmx help page work again.
+
+2005-08-01  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpRequest.cs (Cookies, Forms): Add validation.
+	(Forms): Add application/x-www-form-urlencoded parsing and
+	multipart/form-data parsing.
+	
+	(HttpMultiPart): Implement new class to load multi-part data from
+	a stream since there is no longer a byte [] that holds the data
+	(currently we have an unmanaged IntPtr buffer wrapped as a
+	stream).  Also the 2.x framework will add support for large
+	uploads which are sent directly to disk, which will require the
+	FileStream interface. 
+	
+	(Path, PathInfo): Fill a couple more methods to avoid crashes.
+
+	* HttpContext.cs: Fill another one to get web services summary
+	page painting.  The page does not work though.
+	
+	* HttpApplication.cs: Rework the pipeline to not depend on
+	`finally', as `finally' would not be invoked if we choose not to
+	call the pipeline again (which happens if the `stop' variable is
+	set). 
+
+	Instead force the pipeline to go to the shutdown, and yield from
+	there after all the release-state callbacks have been invoked. 
+
+2005-07-31  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplication.cs: Remove debugging messages since the compiler
+	bug has been fixed.
+
+	You must use at least mcs from revision 47879 for the application
+	pipeline to work. 
+
+2005-07-30  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpContext.cs: Error handling methods.
+
+	* HttpResponse.cs: Trigger the last event.
+
+	* HttpRuntime.cs: Add queueing of the next request. 
+
+	* HttpApplication.cs: Deploy the new yield-based application
+	pipeline, add error handling to the pipeline.
+	
+	* HttpApplication.cs (AsyncRequestState): Just use the done event
+	from the parent.
+
+2005-07-29  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpResponseStream.cs, HttpRequest.cs: Fix bugs found by nunit.
+
+	* HttpApplication.cs: Fix a race condition. 
+
+	* HttpResponseStream.cs: Fix bug, send the size of the buffer that
+	we have so far instead of the internal size of the buffer.   This
+	will need work later to ensure we enforce the Content-Length
+	maximum output size if set.
+
+	* ServerVariablesCollection.cs: This class now inherits from
+	NameValueCollection, we should probably review what the middle
+	class did, there are no dependencies on it.
+
+	I need to write tests to investigate if something is missing or
+	has changed in this implementation. 
+
+2005-07-27  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpRequest.cs: No happy replies here, send a 411.
+
+2005-07-27  Chris Toshok  <toshok@ximian.com>
+
+	* HttpResponseHeader.cs: remove spew.
+	
+2005-07-27  Chris Toshok  <toshok@ximian.com>
+
+	* HttpResponseHeader.cs (HttpResponseHandler..ctor): use
+	HttpWorkerRequest.GetKnownResponseHeaderName instead of
+	GetKnownRequestHeaderName.  Fixes Response.Redirect until miguel's
+	new HttpReponse is online.
+
+2005-07-26  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpResponse.cs: use_chunked is now a byte-array, if not null,
+	we use it to hold the size of the chunked so we do not have to
+	allocate many of these. 
+	(SendSize): Helper routine to send the chunked headers.
+	(BinaryWrite): First user of the chunked writer.
+
+	* HttpApplication.cs: Do not crash if they request a Server
+	instance, but throw a NotImplementedException.
+
+	* HttpRequest.cs: fix a few problems exposed by the regression
+	test suite.
+
+	* HttpRequest.cs (Cookies): use Chris' new constructor to get the
+	cookies parsed.
+
+	: The big Uri rework: instead of using QueryString
+	as the population mechanism, populate an UriBuilder from the
+	various HttpWorkerRequest methods.
+
+	* HttpWorkerRequest.cs (GetProtocol): Implement in terms of
+	IsSecure().
+
+	* HttpResponse.cs: Pointed by Ben, Write (null) is a nop instead
+	of a crash.
+
+	* HttpContext.cs: Add a couple of properties to help the 2.x
+	build.
+	
+	* HttpResponse.cs: Make ContentLength a long, add back support for
+	session's app_path_mod.
+	(ApplyAppPathmodifier): put back.
+	(End): Pass a flag to abort so we can tell the exceptions appart
+	in HttpApplication.
+	(WriteHeaders): Send the HTTP status.
+	(Redirect): Implement.
+	(Write): Use the Output property to load writer when needed.
+	
+	* HttpRequest.cs (ctor): Temporary use of InitFromWR, will fix
+	later. 
+	(MakeInputStream): check content-length size, use routines to load
+	the preloaded data, handle incomplete transfers.
+	(Query): Do not insert null keys into the collection.
+	(Url): implement.
+	(UrlReferer): implement.
+
+	* HttpApplication.cs (RunHooks): Catch Thread.Abort, and call
+	Thread.ResetAbort after each step.
+
+	Ensure that ReleaseState is called if we ever succeed in acquiring
+	the state even if we have stopped the request pipeline.
+
+	Report file not found, directory not found.
+
+2005-07-25  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpCookieCollection.cs: Add expiration of the cookie. 
+
+	* HttpRequest.cs: Add check for ContentLength, use
+	GetPreloadedEntityBody, correct number of bytes uploaded.
+
+2005-07-21  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpResponseHeader.cs: Our implementation of HttpResponse only
+	uses the text headers, does not use any constants as XSP would go
+	through a slower code path anyways.
+
+2005-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* HttpBrowserCapabilities.cs: enable support for the W3CDomVersion
+	and EcmaScriptVersion properties.
+
+2005-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* HttpResponseHeader.cs: hi, i'm stupid and missed String.Replace.
+	
+2005-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* HttpResponseHeader.cs: url encode just \r and \n if they're
+	present in the value.
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* HttpPostedFile.cs: add missing ContentLength property.
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookieCollection.cs: add a new ctor that takes a string (the
+	contents of the Cookies: header).
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookieCollection.cs: add another ctor (internal, but not
+	obsolete, so we aren't passing a stupid HttpResponse in in order
+	to change the behavior of the collection.)
+
+	* HttpCookie.cs: init this.values in the internal ctor.
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookieCollection.cs: use "auto-fill mode" when we're dealing
+	with an HttpResponse's cookie collection.  That is, create the
+	cookie if the consumer looks it up.
+
+2005-07-20  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplication.cs: Ongoing work on pipeline, I will need to
+	redo this later.
+
+2005-07-19  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpContext.cs (GetService): Implement.  Return all of the
+	properties that we have access to.  Make HttpWorkerRequest the
+	first match as this is the only likely reason people need to use
+	this. 
+
+	* IntPtrStream.cs: Bring from corlib.
+
+	* MultiPartContentParser.cs: use a MemoryStream as HttpInputStream
+	will now be using IntPtrStream. 
+
+	* HttpRequest.cs (MakeInputStream): move code that loads the
+	request here
+	(CloseInputStream): Helper method that we will call later to
+	ensure that we dispose properly the malloced() block. 
+	(BinaryRead): Implemented.
+
+	* HttpInputStream.cs: Rewrite to be a descendant of
+	IntPtrStream.cs 
+
+2005-07-18  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplication.cs (Modules): Add modules support and
+	AsyncResult.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* HttpResponseHeader.cs: initial implementation.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* HttpModuleCollection.cs (HttpModuleCollection.GetKey): add
+	missing method.
+
+	* HttpFileCollection.cs: initial implementation.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* HttpModuleCollection.cs (HttpModuleCollection.CopyTo): implement
+	missing method.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* HttpModuleCollection.cs: initial implementation.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCacheVaryByHeaders.cs: only add the header if it's not
+	already in the hash.
+
+	* HttpCacheVaryByParams.cs: only add the param if it's not already
+	in the hash.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookie.cs (HttpCookie+CookieNVC.Set): new override to fix an
+	MS quirk.
+
+2005-07-17  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpRequest.cs (Headers, InputStream): implemented two more
+	properties.
+
+	* HttpInputStream.cs: All we need is a MemoryStream with writable
+	set to false.
+
+	* HttpPostedFile.cs: Use a Stream.
+
+2005-07-16  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCacheVaryByHeaders.cs: make sure we set vary_by_unspecified
+	= false in the custom setter.
+
+2005-07-16  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCacheVaryByParams.cs: initial implementation.
+
+2005-07-16  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCacheVaryByHeaders.cs: initial implementation.
+
+2005-07-15  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookie.cs: one more time.
+
+2005-07-15  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookie.cs (HttpCookie.GetCookieHeader): use
+	expires.ToString().
+	
+2005-07-15  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookie.cs (HttpCookie.GetCookieHeader): implement to fix
+	ben's bug.
+
+2005-07-15  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookieCollection.cs: initial implementation (with a couple
+	of labeled inefficiencies.)
+
+2005-07-15  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookie.cs (HttpCookie.get_HasKeys): use values.HasKeys()
+	instead of trying to be smart about it ourselves.
+
+2005-07-15  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookie.cs: initial implementation.  we fail one unit test,
+	but it might be due to a bug in NameValueCollection.
+
+2005-07-15  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpRequest.cs: 
+
+2005-07-14  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpRuntime.cs: Return a few of the values from the AppDomain
+	data. 
+
+	Put the application shutdown process.
+
+	* HttpApplicationFactory.cs (AddEvent): Fixed bug when more than
+	one method existed.
+	
+	(FireEvent): Do not ignore errors.
+
+	* HttpContext.cs (GetAppConfig, GetConfig): First success, use
+	ConfigurationSettings.GetConfig to get the value that QueueManager
+	needed.
+
+2005-07-14  Dick Porter  <dick@ximian.com>
+
+	* HttpPostedFile.cs: New basic implementation; needs someone to
+	figure out what a HttpRequestStream does
+
+2005-07-13  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpRequest.cs: More work on this file
+
+	* HttpRequest.cs, HttpApplication.cs, HttpContext.cs,
+	HttpRuntime.cs: New from scratch implementation.
 
 2005-07-01  Lluis Sanchez Gual <lluis@novell.com>
 

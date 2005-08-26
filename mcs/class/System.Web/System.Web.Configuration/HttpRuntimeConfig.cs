@@ -68,7 +68,7 @@ namespace System.Web.Configuration
 		{
 			HttpRuntimeConfig config;
 			if (context == null)
-				context = HttpContext.Context;
+				context = HttpContext.Current;
 
 			config = context.GetConfig ("system.web/httpRuntime") as HttpRuntimeConfig;
 

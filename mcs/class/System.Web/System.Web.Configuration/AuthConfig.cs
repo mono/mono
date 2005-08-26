@@ -5,6 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Configuration;
 using System.Xml;
@@ -50,6 +50,13 @@ namespace System.Web.Configuration
 		bool requireSSL;
 		bool slidingExpiration;
 #endif
+#if NET_2_0
+		string cookie_domain;
+		HttpCookieMode cookie_mode;
+		bool cookies_supported;
+		string default_url;
+		bool enable_crossapp_redirects;
+#endif
 
 		internal AuthConfig (object parent)
 		{
@@ -66,6 +73,13 @@ namespace System.Web.Configuration
 #if NET_1_1
 				requireSSL = p.requireSSL;
 				slidingExpiration = p.slidingExpiration;
+#endif
+#if NET_2_0
+				cookie_domain = p.cookie_domain;
+				cookie_mode = p.cookie_mode;
+				cookies_supported = p.cookies_supported;
+				default_url = p.default_url;
+				enable_crossapp_redirects = p.enable_crossapp_redirects;
 #endif
 				credentialUsers = new Hashtable (p.CredentialUsers);
 			}
@@ -209,6 +223,33 @@ namespace System.Web.Configuration
 		internal bool SlidingExpiration {
 			get { return slidingExpiration; }
 			set { slidingExpiration = value; }
+		}
+#endif
+
+#if NET_2_0
+		internal string CookieDomain {
+			get { return cookie_domain; }
+			set { cookie_domain = value; }
+		}
+
+		internal HttpCookieMode CookieMode {
+			get { return cookie_mode; }
+			set { cookie_mode = value; }
+		}
+
+		internal bool CookiesSupported {
+			get { return cookies_supported; }
+			set { cookies_supported = value; }
+		}
+
+		internal string DefaultUrl {
+			get { return default_url; }
+			set { default_url = value; }
+		}
+
+		internal bool EnableCrossAppRedirects {
+			get { return enable_crossapp_redirects; }
+			set { enable_crossapp_redirects = value; }
 		}
 #endif
 	}

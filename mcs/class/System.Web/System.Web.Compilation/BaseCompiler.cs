@@ -42,7 +42,7 @@ namespace System.Web.Compilation
 {
 	abstract class BaseCompiler
 	{
-		protected static string dynamicBase = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
+		string dynamic_dir;
 		TemplateParser parser;
 		CodeDomProvider provider;
 		ICodeCompiler compiler;
@@ -286,6 +286,34 @@ namespace System.Web.Compilation
 			throw new CompilationException (parser.InputFile, results.Errors, writer.ToString ());
 		}
 
+		protected string DynamicDir ()
+		{
+			if (dynamic_dir != null)
+				return dynamic_dir;
+
+			dynamic_dir = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
+			if (dynamic_dir != null && dynamic_dir != "")
+				return dynamic_dir;
+			
+			for (int i = 0; ; i++){
+				string d = Path.Combine (
+					Path.GetTempPath (),
+					String.Format ("{0}-temp-aspnet-{1:x}", Environment.UserName, i));
+			
+				try {
+					Directory.CreateDirectory (d);
+					string stamp = Path.Combine (d, "stamp");
+					Directory.CreateDirectory (stamp);
+					dynamic_dir = d;
+					Directory.Delete (stamp);
+					break;
+				} catch (UnauthorizedAccessException){
+					continue;
+				}
+			}
+			return dynamic_dir;
+		}
+		
 		public virtual Type GetCompiledType () 
 		{
 			Type type = CachingCompiler.GetTypeFromCache (parser.InputFile);
@@ -311,13 +339,15 @@ namespace System.Web.Compilation
 
 			compilerParameters.WarningLevel = config.GetWarningLevel (lang);
 			bool keepFiles = (Environment.GetEnvironmentVariable ("MONO_ASPNET_NODELETE") != null);
-			if (!Directory.Exists (dynamicBase))
-				Directory.CreateDirectory (dynamicBase);
 
-			TempFileCollection tempcoll = new TempFileCollection (config.TempDirectory, keepFiles);
+			string tempdir = config.TempDirectory;
+			if (tempdir == null || tempdir == "")
+				tempdir = DynamicDir ();
+				
+			TempFileCollection tempcoll = new TempFileCollection (tempdir, keepFiles);
 			compilerParameters.TempFiles = tempcoll;
 			string dllfilename = Path.GetFileName (tempcoll.AddExtension ("dll", true));
-			compilerParameters.OutputAssembly = Path.Combine (dynamicBase, dllfilename);
+			compilerParameters.OutputAssembly = Path.Combine (DynamicDir (), dllfilename);
 
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);

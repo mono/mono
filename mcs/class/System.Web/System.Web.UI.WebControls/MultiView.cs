@@ -111,6 +111,18 @@ namespace System.Web.UI.WebControls
 				UpdateViewVisibility ();
 			}
 		}
+
+		[Browsable (true)]
+		[MonoTODO]
+		public virtual new bool EnableTheming
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
 		
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
 		[Browsable (false)]
@@ -150,7 +162,7 @@ namespace System.Web.UI.WebControls
 			return false;
 		}
 		
-		protected override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
 			initied = true;
 			Page.RegisterRequiresControlState (this);
@@ -200,7 +212,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			if (!initied) viewIndex = initialIndex;
 			if (viewIndex != -1)

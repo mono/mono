@@ -1,6 +1,15 @@
-2005-07-29  Kornél Pál <kornelpal@hotmail.com>
+2005-08-18  Dick Porter  <dick@ximian.com>
 
-	* Consts.cs: Added NET_2_0 assembly references.
+	* Consts.cs: Added System.Web and Microsoft.VisualStudio.Web
+	constants for 2.0
+
+2005-08-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Consts.cs: Added constant for System.dll (only in 2.0)
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* AssemblyInfo.cs: add WebUIValidation.js attribute.
 
 2005-06-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

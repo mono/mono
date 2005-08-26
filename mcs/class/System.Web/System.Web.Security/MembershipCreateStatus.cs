@@ -5,8 +5,7 @@
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,17 +29,20 @@
 
 #if NET_2_0
 namespace System.Web.Security {
+
 	public enum MembershipCreateStatus {
-		Success = 0,
-		UserNotFound = 1,
-		InvalidPassword = 2,
-		InvalidQuestion = 3,
-		InvalidAnswer = 4,
-		InvalidEmail = 5,
-		DuplicateUsername = 6,
-		DuplicateEmail = 7,
-		UserRejected = 8,
-		ProviderError = 9
+		Success,
+		InvalidUserName,
+		InvalidPassword,
+		InvalidQuestion,
+		InvalidAnswer,
+		InvalidEmail,
+		DuplicateUserName,
+		DuplicateEmail,
+		UserRejected,
+		InvalidProviderUserKey,
+		DuplicateProviderUserKey,
+		ProviderError
 	}
 }
 #endif

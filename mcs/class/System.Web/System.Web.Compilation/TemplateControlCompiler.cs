@@ -323,10 +323,12 @@ namespace System.Web.Compilation
 		}
 #endif
 
+		/*
 		static bool InvariantCompare (string a, string b)
 		{
 			return (0 == String.Compare (a, b, false, CultureInfo.InvariantCulture));
 		}
+		*/
 
 		static bool InvariantCompareNoCase (string a, string b)
 		{

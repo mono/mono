@@ -49,18 +49,13 @@ namespace System.Web.Caching {
 
 		public void Init (HttpApplication app)
 		{
-			app.AddOnResolveRequestCacheAsync (
-				new BeginEventHandler (OnBeginRequestCache),
-				new EndEventHandler (OnEndRequestCache));
-
-			app.AddOnUpdateRequestCacheAsync (
-				new BeginEventHandler (OnBeginUpdateCache),
-				new EndEventHandler (OnEndUpdateCache));
+			app.ResolveRequestCache += OnResolveRequestCache;
+			app.UpdateRequestCache += OnUpdateRequestCache;
  
 			response_removed = new CacheItemRemovedCallback (OnRawResponseRemoved);
 		}
 
-		IAsyncResult OnBeginRequestCache (object o, EventArgs args, AsyncCallback cb, object data)
+		void OnResolveRequestCache (object o, EventArgs args)
 		{
 			HttpApplication app = (HttpApplication) o;
 			HttpContext context = app.Context;
@@ -71,7 +66,7 @@ namespace System.Web.Caching {
 			CachedRawResponse c;
 
 			if (varyby == null)
-				goto leave;
+				return;
 
 			key = varyby.CreateKey (vary_key, context);
 			c = context.Cache [key] as CachedRawResponse;
@@ -90,35 +85,17 @@ namespace System.Web.Caching {
 				
 				app.CompleteRequest ();
 			} 
-
-		leave:
-			HttpAsyncResult result = new HttpAsyncResult (cb,this);
-			result.Complete (true, o, null);
-			
-			return result;
 		}
 
-		void OnEndRequestCache (IAsyncResult result)
-		{
-		}
-
-		IAsyncResult OnBeginUpdateCache (object o, EventArgs args, AsyncCallback cb, object data)
+		void OnUpdateRequestCache (object o, EventArgs args)
 		{
 			HttpApplication app = (HttpApplication) o;
 			HttpContext context = app.Context;
-			HttpAsyncResult result;
 
 			if (context.Response.IsCached && context.Response.StatusCode == 200 && 
 			    !context.Trace.IsEnabled)
 				DoCacheInsert (context);
 
-			result = new HttpAsyncResult (cb, this);
-			result.Complete (true, o, null);
-			return result;
-		}
-
-		void OnEndUpdateCache (IAsyncResult result)
-		{
 		}
 
 		private void DoCacheInsert (HttpContext context)

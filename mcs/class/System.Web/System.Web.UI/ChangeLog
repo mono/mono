@@ -1,34 +1,288 @@
-2005-07-25 Eyal Alaluf (eyala@mainsoft.com)
-	* HtmlTextWriter.cs: Make several structs into clases under TARGET_JVM.
-	  (Perf issue with array of structs under TARGET_JVM).
+2005-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
-2005-07-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+	* CssStyleCollection.cs: Implemented setter for Value (2.0) using the
+	existing (but internal) FillStyle method. Rewrote BagToString to use an
+	HtmlTextWriter so we get the "right" format for background-image url.
 
-	* TemplateParser.cs: if there are no commas in the assembly name, just
-	LoadWithPartialName, as Load will throw.
+2005-08-26  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* CssStyleCollection.cs: Implemented this[HtmlTextWriterStyle], 
+	Remove(HtmlTextWriterStyle) and the getter for Value (all 2.0). Removed
+	the extra space from last patch because they break some unit tests.
 
-2005-07-24 Eyal Alaluf (eyala@mainsoft.com)
+2005-08-26  Lluis Sanchez Gual  <lluis@novell.com> 
 
-	* TemplateControl.jvm.cs: fixed resource loading
-	* PageHandlerFactory.jvm.cs: Added file
+	* CssStyleCollection.cs: Added some spacing.
+	* HtmlTextWriter.cs: Made style and attribute tables static.
+	  Implemented StaticGetStyleName().
 
-2005-07-19 Eyal Alaluf (eyala@mainsoft.com)
-	* Added TemplateControl.jvm.cs that implements Grasshopper (TARGET_J2EE)
-	  limited model of compiling ASP pages.
+2005-08-26  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* CssStyleCollection.cs: Stubbed new 2.0 stuff to allow TableStyleTest
+	compilation. 
+	* HtmlTextWriter.cs: Fix style rendering for BackgroundImage in 2.0.
+	The new rendering formats the value as "url(" + original + ")".
 
-2005-07-19 Eyal Alaluf (eyala@mainsoft.com)
+2005-08-26  Sebastien Pouliot  <sebastien@ximian.com> 
 
-	* Added ControlBuilder.jvm.cs ObjectTagBuilder.jvm.cs as part of the TARGET_J2EE configuration.
+	* HtmlTextWriter.cs: Added support for VerticalAlign style (as it 
+	depends on the HtmlTextWriterStyle ordering).
 
-2005-07-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2005-08-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* AttributeCollection.cs: create the style collection if it wasn't
-	created before Add ("style"...).
+	* HtmlTextWriter.cs: remove 'mistaken end of statement' and FIXME.
 
-2005-07-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
-	* AttributeCollection.cs: when the key added is 'style', use the style
-	collection.
+	* HtmlTextWriterStyle.cs: Added missing VerticalAlign in 2.0 (which 
+	fixed the rest of the enum values).
+	* UrlPropertyAttribute.cs: Removed the .ctor accepting an UrlTypes
+	parameter to match 2.0 API. Added a setter to the AllowedTypes 
+	property.
+
+2005-08-24  Chris Toshok  <toshok@ximian.com>
+
+	* Control.cs (get_Adapter): Instead of throwing an exception, just
+	return null, so we can write the rest of the Control specific
+	Adapter code and just not enable any of those code paths until we
+	have actual adapters.  Also flag TODO.
+	(EnsureChildControls): Call out to Adapter.CreateChildControls if
+	we have an adapter.
+	(RenderChildren): call "RenderControl (writer, adapter)" if we
+	have an adapter.
+	(RenderControl): implement the adapter case naively.
+	(LoadRecursive): call out to Adapter.OnLoad if we have one.
+	(PreRenderRecursiveInternal): call out to Adapter.OnPrerender if
+	we have one.
+	(InitRecursive): call out to Adapter.OnInit if we have one.
+
+2005-08-24  Chris Toshok  <toshok@ximian.com>
+
+	* Page.cs (GetPostBackEventReference): track change to
+	ClientScriptManager and don't call a removed method.
+
+	* ClientScriptManager.cs: track more recent docs and corcompare
+	output.
+
+2005-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyedList.cs: Fixed bug when removing an unexisting object.
+	* StateManagedCollection.cs: Fixed API for beta2. Fixed buglets found 
+	in implementing RoleGroupCollection.
+
+2005-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Page.cs: Use Control property (and not the _control variable) to get
+	the User (so the virtual Control property can be overriden properly).
+	Sadly this doesn't seems to be the case for other properties (like 
+	Request).
+
+2005-08-18  Dick Porter  <dick@ximian.com>
+
+	* ControlCachePolicy.cs, PersistChildrenAttribute.cs,
+	UserControl.cs, DesignerDataBoundLiteralControl.cs,
+	PageStatePersister.cs, DataBoundLiteralControl.cs, Control.cs,
+	BasePartialCachingControl.cs, LiteralControl.cs: 2.0 API fixes and
+	stubs and attribute fixes
+
+2005-08-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Control.cs: Add protected virtual SetDesignModeState, in 2.0 
+	profile, as this is required for the Login control.
+
+2005-08-11  Dick Porter  <dick@ximian.com>
+
+	* CssStyleCollection.cs: Tweak the css string format to pass a
+	unit test
+
+	* AttributeCollection.cs: Don't NRE if someone sets the "style"
+	attribute to null.
+
+2005-08-05  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlTextWriter.cs: Revert the patch below, see test case
+
+2005-08-05  Dick Porter  <dick@ximian.com>
+
+	* HtmlTextWriter.cs: Make <option> tags render inline, to match
+	the ms output
+
+2005-08-03  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlTextWriter.cs: Optmize this not to do insane amounts of
+	allocation for large pages, etc.
+
+2005-07-30  Chris Toshok  <toshok@ximian.com>
+
+	* Page.cs (VerifyRenderingInServerForm): copy MS's error message
+	since our form-errors jsunit tests depend on it.
+
+2005-07-30  Chris Toshok  <toshok@ximian.com>
+
+	* DataBinder.cs (FormatResult): make internal, not private.
+
+2005-07-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* StateBag.cs: Don't remove when tracking viewstate, as per msft
+	docs.
+
+2005-07-29  Ben Maurer  <bmaurer@ximian.com>
+
+	* StateBag.cs: Actually *remove* items that are null. Duh.
+
+2005-07-21  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Page.cs: Need to throw exception when accessing Request but no
+	  context exists
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* ClientScriptManager.cs (GetClientValidationEvent): the JS we
+	stick in onclick handlers for buttons/links/etc.
+
+	* Page.cs (GetSubmitStatements): new function to return
+	scriptManager.WriteSubmitStatements.  Used by HtmlForm.
+	(AreValidatorsUplevel): used by many of the button/linkbutton
+	controls (the ones that can CauseValidation) to tell whether or
+	not to emit client side validation calls.
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* WebResourceAttribute.cs: make internal (and available) in
+	!NET_2_0.
+
+2005-07-20  Chris Toshok  <toshok@ximian.com>
+
+	* ClientScriptManager.cs (GetWebResourceUrl): make internal (but
+	available) in !NET_2_0.
+
+2005-07-18  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Added IDataBindingsAccessor interface methods
+
+2005-07-18  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlTextWriter.cs: Fix nested indentation
+
+2005-07-18  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Added missing IParserAccessor.AddParsedSubObject 
+	  interface method
+
+2005-07-18  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlTextWriter.cs: Fix indentation (somewhat at least)
+
+2005-07-18  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs:
+	  - Default name for controls on MS.Net is "_ctl" not "_ctrl"
+	  - MS does not append 'a' for auto-generated names
+
+2005-07-17  Ben Maurer  <bmaurer@ximian.com>
+
+	* AttributeCollection.cs: Use the invariant culture.
+
+	* StateBag.cs: "Duh" optimization: return null when there are no
+	dirty items in the view state
+
+2005-07-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* StateBag.cs: A "short" version of my favorite method.
+
+	* HtmlTextWriter.cs: New method to get the tag name staticly.
+
+2005-07-14  Duncan Mak  <duncan@novell.com>
+
+	* DataBindingHandlerAttribute.cs: Fixed after receiving some
+	comments from Gonzalo.
+
+2005-07-13  Jackson Harper  <jackson@ximian.com>
+
+	* PropertyConverter.cs: No public constructors.
+
+2005-07-13  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlTextWriter.cs: Remove debugging spew. Style cleanup
+
+2005-07-12  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlTextWriter.cs: Make styles work.
+
+2005-07-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* AttributeCollection.cs: 
+	  - Changes to match MS behaviour, the "style" attribute is always 
+	    added to the list, in addition to being added to the 
+	    CssStyleCollection. Also added check for "style" attribute when 
+	    setting via index setter
+	  - When "Style" attribute is added, CssStyleCollection is 
+	    automatically created
+	  - The style keyword needs to be lowercase
+
+2005-07-11  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlTextWriter.cs: Missing a PopEndTag here.
+
+	* PropertyConverter.cs: Pass tests
+
+2005-07-09  Miguel de Icaza  <miguel@novell.com>
+
+	* DataBindingHandlerAttribute.cs: Create the "Default" property.
+
+2005-07-09  Duncan Mak  <duncan@novell.com>
+
+	* DataBindingHandlerAttribute.cs: Implemented.
+
+2005-07-08  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlTextWriter.cs: Much better compliance with msft
+
+2005-07-08  Jackson Harper  <jackson@ximian.com>
+
+	* ToolbarDataAttribute.cs: New implementation.
+
+2005-07-07  Jackson Harper  <jackson@ximian.com>
+
+	* PropertyConverter.cs: New implementation.
+
+2005-07-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* StateBag.cs: Noticed an issue where SetDirty was called when the
+	key did not exist.
+
+2005-07-07  Ben Maurer  <bmaurer@ximian.com>
+
+	* StateBag.cs: Add a method that gets a string or else a default
+	value.
+
+2005-07-07  Dick Porter  <dick@ximian.com>
+
+	* StateBag.cs: Added internal SetDirty (void) method to fix the
+	build
+
+2005-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlTextWriter.cs: Small fixlet when attribute has no value.
+
+2005-07-07  Miguel de Icaza  <miguel@novell.com>
+
+	* HtmlTextWriter.cs: Return the stuff in lowercase to pass the
+	tests. 
+
+	* StateBag.cs: Add NET_2_0 SetDirty method to get the build
+	going. 
+
+2005-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlTextWriter.cs: Small fixlet (required for the unit tests).
+
+2005-07-06  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlTextWriter.cs: Make sure to clear attributes when they are
+	written.
+
+	* StateBag.cs: New impl
 
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

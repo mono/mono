@@ -49,7 +49,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected override void CreateChildControls ()
+		protected internal override void CreateChildControls ()
 		{
 			base.CreateChildControls ();
 
@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-		protected override void PerformDataBinding (IEnumerable data)
+		protected internal override void PerformDataBinding (IEnumerable data)
 		{
 			ViewState ["_ItemCount"] = CreateChildControls (data, true);
 		}

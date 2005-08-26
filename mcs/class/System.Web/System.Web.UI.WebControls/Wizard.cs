@@ -39,6 +39,7 @@ namespace System.Web.UI.WebControls
 	[DefaultEventAttribute ("FinishButtonClick")]
 	[BindableAttribute (false)]
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.WizardDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[ToolboxData ("<{0}:Wizard runat=\"server\"> <WizardSteps> <asp:WizardStep title=\"Step 1\" runat=\"server\"></asp:WizardStep> <asp:WizardStep title=\"Step 2\" runat=\"server\"></asp:WizardStep> </WizardSteps> </{0}:Wizard>")]
 	public class Wizard: CompositeControl
 	{
 		public static readonly string CancelCommandName = "Cancel";
@@ -197,7 +198,7 @@ namespace System.Web.UI.WebControls
 		
 	    [DefaultValueAttribute (-1)]
 	    [ThemeableAttribute (false)]
-		public int ActiveStepIndex {
+		public virtual int ActiveStepIndex {
 			get {
 				return activeStepIndex;
 			}
@@ -217,7 +218,7 @@ namespace System.Web.UI.WebControls
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
 	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public string CancelButtonImageUrl {
+		public virtual string CancelButtonImageUrl {
 			get {
 				object v = ViewState ["CancelButtonImageUrl"];
 				return v != null ? (string)v : string.Empty;
@@ -244,7 +245,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [LocalizableAttribute (true)]
-		public string CancelButtonText {
+		public virtual string CancelButtonText {
 			get {
 				object v = ViewState ["CancelButtonText"];
 				return v != null ? (string)v : "Cancel";
@@ -256,7 +257,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [DefaultValueAttribute (ButtonType.Button)]
-		public ButtonType CancelButtonType {
+		public virtual ButtonType CancelButtonType {
 			get {
 				object v = ViewState ["CancelButtonType"];
 				return v != null ? (ButtonType)v : ButtonType.Button;
@@ -268,9 +269,9 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [UrlPropertyAttribute]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+	    [EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [DefaultValueAttribute ("")]
-		public string CancelDestinationPageUrl {
+		public virtual string CancelDestinationPageUrl {
 			get {
 				object v = ViewState ["CancelDestinationPageUrl"];
 				return v != null ? (string)v : string.Empty;
@@ -281,7 +282,7 @@ namespace System.Web.UI.WebControls
 		}
 	    
 	    [DefaultValueAttribute (0)]
-		public int CellPadding {
+		public virtual int CellPadding {
 			get {
 				object v = ViewState ["CellPadding"];
 				return v != null ? (int)v : 0;
@@ -293,7 +294,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [DefaultValueAttribute (0)]
-		public int CellSpacing {
+		public virtual int CellSpacing {
 			get {
 				object v = ViewState ["CellSpacing"];
 				return v != null ? (int)v : 0;
@@ -333,7 +334,7 @@ namespace System.Web.UI.WebControls
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
 	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public string FinishCompleteButtonImageUrl {
+		public virtual string FinishCompleteButtonImageUrl {
 			get {
 				object v = ViewState ["FinishCompleteButtonImageUrl"];
 				return v != null ? (string)v : string.Empty;
@@ -360,7 +361,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [LocalizableAttribute (true)]
-		public string FinishCompleteButtonText {
+		public virtual string FinishCompleteButtonText {
 			get {
 				object v = ViewState ["FinishCompleteButtonText"];
 				return v != null ? (string)v : "Finish";
@@ -372,7 +373,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [DefaultValueAttribute (ButtonType.Button)]
-		public ButtonType FinishCompleteButtonType {
+		public virtual ButtonType FinishCompleteButtonType {
 			get {
 				object v = ViewState ["FinishCompleteButtonType"];
 				return v != null ? (ButtonType)v : ButtonType.Button;
@@ -384,9 +385,9 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [UrlPropertyAttribute]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+	    [EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [DefaultValueAttribute ("")]
-		public string FinishDestinationPageUrl {
+		public virtual string FinishDestinationPageUrl {
 			get {
 				object v = ViewState ["FinishDestinationPageUrl"];
 				return v != null ? (string)v : string.Empty;
@@ -400,7 +401,7 @@ namespace System.Web.UI.WebControls
 		[TemplateContainer (typeof(Wizard), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 	    [Browsable (false)]
-		public ITemplate FinishNavigationTemplate {
+		public virtual ITemplate FinishNavigationTemplate {
 			get { return finishNavigationTemplate; }
 			set { finishNavigationTemplate = value; UpdateControls (); }
 		}
@@ -408,7 +409,7 @@ namespace System.Web.UI.WebControls
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
 	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public string FinishPreviousButtonImageUrl {
+		public virtual string FinishPreviousButtonImageUrl {
 			get {
 				object v = ViewState ["FinishPreviousButtonImageUrl"];
 				return v != null ? (string)v : string.Empty;
@@ -435,7 +436,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [LocalizableAttribute (true)]
-		public string FinishPreviousButtonText {
+		public virtual string FinishPreviousButtonText {
 			get {
 				object v = ViewState ["FinishPreviousButtonText"];
 				return v != null ? (string)v : "Previous";
@@ -447,7 +448,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [DefaultValueAttribute (ButtonType.Button)]
-		public ButtonType FinishPreviousButtonType {
+		public virtual ButtonType FinishPreviousButtonType {
 			get {
 				object v = ViewState ["FinishPreviousButtonType"];
 				return v != null ? (ButtonType)v : ButtonType.Button;
@@ -477,14 +478,14 @@ namespace System.Web.UI.WebControls
 		[TemplateContainer (typeof(Wizard), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 	    [Browsable (false)]
-		public ITemplate HeaderTemplate {
+		public virtual ITemplate HeaderTemplate {
 			get { return headerTemplate; }
 			set { headerTemplate = value; UpdateControls (); }
 		}
 		
 	    [DefaultValueAttribute ("")]
 	    [LocalizableAttribute (true)]
-		public string HeaderText {
+		public virtual string HeaderText {
 			get {
 				object v = ViewState ["HeaderText"];
 				return v != null ? (string)v : string.Empty;
@@ -559,16 +560,28 @@ namespace System.Web.UI.WebControls
 		[TemplateContainer (typeof(Wizard), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 	    [Browsable (false)]
-		public ITemplate SideBarTemplate {
+		public virtual ITemplate SideBarTemplate {
 			get { return sideBarTemplate; }
 			set { sideBarTemplate = value; UpdateControls (); }
+		}
+
+		[Localizable (true)]
+		[MonoTODO]
+		public virtual string SkipLinkText 
+		{
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		[DefaultValue (null)]
 		[TemplateContainer (typeof(Wizard), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 	    [Browsable (false)]
-		public ITemplate StartNavigationTemplate {
+		public virtual ITemplate StartNavigationTemplate {
 			get { return startNavigationTemplate; }
 			set { startNavigationTemplate = value; UpdateControls (); }
 		}
@@ -576,7 +589,7 @@ namespace System.Web.UI.WebControls
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
 	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public string StartNextButtonImageUrl {
+		public virtual string StartNextButtonImageUrl {
 			get {
 				object v = ViewState ["StartNextButtonImageUrl"];
 				return v != null ? (string)v : string.Empty;
@@ -603,7 +616,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [LocalizableAttribute (true)]
-		public string StartNextButtonText {
+		public virtual string StartNextButtonText {
 			get {
 				object v = ViewState ["StartNextButtonText"];
 				return v != null ? (string)v : "Next";
@@ -615,7 +628,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [DefaultValueAttribute (ButtonType.Button)]
-		public ButtonType StartNextButtonType {
+		public virtual ButtonType StartNextButtonType {
 			get {
 				object v = ViewState ["StartNextButtonType"];
 				return v != null ? (ButtonType)v : ButtonType.Button;
@@ -630,7 +643,7 @@ namespace System.Web.UI.WebControls
 		[TemplateContainer (typeof(Wizard), BindingDirection.OneWay)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 	    [Browsable (false)]
-		public ITemplate StepNavigationTemplate {
+		public virtual ITemplate StepNavigationTemplate {
 			get { return stepNavigationTemplate; }
 			set { stepNavigationTemplate = value; UpdateControls (); }
 		}
@@ -638,7 +651,7 @@ namespace System.Web.UI.WebControls
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
 	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public string StepNextButtonImageUrl {
+		public virtual string StepNextButtonImageUrl {
 			get {
 				object v = ViewState ["StepNextButtonImageUrl"];
 				return v != null ? (string)v : string.Empty;
@@ -665,7 +678,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [LocalizableAttribute (true)]
-		public string StepNextButtonText {
+		public virtual string StepNextButtonText {
 			get {
 				object v = ViewState ["StepNextButtonText"];
 				return v != null ? (string)v : "Next";
@@ -677,7 +690,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [DefaultValueAttribute (ButtonType.Button)]
-		public ButtonType StepNextButtonType {
+		public virtual ButtonType StepNextButtonType {
 			get {
 				object v = ViewState ["StepNextButtonType"];
 				return v != null ? (ButtonType)v : ButtonType.Button;
@@ -691,7 +704,7 @@ namespace System.Web.UI.WebControls
 	    [UrlPropertyAttribute]
 	    [DefaultValueAttribute ("")]
 	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public string StepPreviousButtonImageUrl {
+		public virtual string StepPreviousButtonImageUrl {
 			get {
 				object v = ViewState ["StepPreviousButtonImageUrl"];
 				return v != null ? (string)v : string.Empty;
@@ -718,7 +731,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [LocalizableAttribute (true)]
-		public string StepPreviousButtonText {
+		public virtual string StepPreviousButtonText {
 			get {
 				object v = ViewState ["StepPreviousButtonText"];
 				return v != null ? (string)v : "Previous";
@@ -730,7 +743,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [DefaultValueAttribute (ButtonType.Button)]
-		public ButtonType StepPreviousButtonType {
+		public virtual ButtonType StepPreviousButtonType {
 			get {
 				object v = ViewState ["StepPreviousButtonType"];
 				return v != null ? (ButtonType)v : ButtonType.Button;
@@ -757,14 +770,22 @@ namespace System.Web.UI.WebControls
 		}
 		
 	    [DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Content)]
-	    [EditorAttribute ("System.Web.UI.Design.WebControls.WizardStepCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+	    [EditorAttribute ("System.Web.UI.Design.WebControls.WizardStepCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 	    [PersistenceModeAttribute (PersistenceMode.InnerProperty)]
 	    [ThemeableAttribute (false)]
-		public WizardStepCollection WizardSteps {
+		public virtual WizardStepCollection WizardSteps {
 			get {
 				if (steps == null)
 					steps = new WizardStepCollection (this);
 				return steps;
+			}
+		}
+
+		[MonoTODO]
+		protected virtual new HtmlTextWriterTag TagKey
+		{
+			get {
+				throw new NotImplementedException ();
 			}
 		}
 		
@@ -806,7 +827,7 @@ namespace System.Web.UI.WebControls
 			return WizardSteps [index].AllowReturn;
 		} 
 		
-		protected override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
 			Page.RegisterRequiresControlState (this);
 			base.OnInit (e);
@@ -819,7 +840,7 @@ namespace System.Web.UI.WebControls
 			return col;
 		}
 		
-		protected override void CreateChildControls ()
+		protected internal override void CreateChildControls ()
 		{
 			CreateControlHierarchy ();
 		}
@@ -1002,6 +1023,12 @@ namespace System.Web.UI.WebControls
 		protected override Style CreateControlStyle ()
 		{
 			return new TableStyle ();
+		}
+
+		[MonoTODO]
+		protected override IDictionary GetDesignModeState ()
+		{
+			throw new NotImplementedException ();
 		}
 		
 		protected internal override void LoadControlState (object ob)
@@ -1190,7 +1217,7 @@ namespace System.Web.UI.WebControls
 			UpdateControls ();
 		}
 		
-		protected override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			wizardTable.ApplyStyle (ControlStyle);
 

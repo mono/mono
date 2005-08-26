@@ -5,8 +5,7 @@
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,11 +28,11 @@
 //
 
 #if NET_2_0
-using System.Collections;
+
 using System.Collections.Specialized;
-using System.Text;
 
 namespace System.Web.Security {
+
 	public class SqlRoleProvider: RoleProvider {
 		
 		[MonoTODO]
@@ -106,11 +105,6 @@ namespace System.Web.Security {
 		public override string ApplicationName {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		public virtual string Description {
-			get { throw new NotImplementedException (); }
 		}
 	}
 }

@@ -6,8 +6,7 @@
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -118,7 +117,7 @@ namespace System.Web.Security {
 		[MonoTODO]
 		public override void Initialize (string name, NameValueCollection config)
 		{
-			throw new NotImplementedException ();
+			base.Initialize (name, config);
 		}
 		
 		[MonoTODO]
@@ -136,7 +135,7 @@ namespace System.Web.Security {
 		[MonoTODO]
 		public override bool ValidateUser (string username, string password)
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 		
 		[MonoTODO]
@@ -149,11 +148,6 @@ namespace System.Web.Security {
 		public override string ApplicationName {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
-		}
-		
-		[MonoTODO]
-		public virtual string Description {
-			get { throw new NotImplementedException (); }
 		}
 		
 		[MonoTODO]

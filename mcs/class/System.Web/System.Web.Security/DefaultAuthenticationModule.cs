@@ -58,8 +58,6 @@ namespace System.Web.Security
 
 			if (context.User == null)
 				context.User = new GenericPrincipal (defaultIdentity, new string [0]);
-
-			app.SetPrincipal (context.User);
 		}
 	}
 }

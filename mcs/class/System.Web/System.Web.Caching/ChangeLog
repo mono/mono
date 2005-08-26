@@ -1,9 +1,21 @@
-2005-07-26 Eyal Alaluf <eyala@mainsoft.com>
-    * Cache.cs CacheExpires.cs: In TARGET_j2EE dispose the timer thread when done.
+2005-08-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-2005-07-25 Eyal Alaluf <eyala@mainsoft.com>
-    * ExpiresBuckets.cs: Removed unused field (that if used would lead to
-	  serious runtime errors).
+	* CacheDependency.cs: add missing ctor.
+
+2005-08-15  Jackson Harper  <jackson@ximian.com>
+
+	* CacheItemPriority.cs:
+	* CacheItemRemovedCallback.cs:
+	* CacheItemRemovedReason.cs: New implementations.
+
+2005-07-30  Miguel de Icaza  <miguel@novell.com>
+
+	* OutputCacheModule.cs: Make synchronous.
+
+2005-07-15 Lluis Sanchez Gual <lluis@novell.com>
+
+	* Cache.cs: New implementation.
+	* CacheDependency.cs: New implementation.
 
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

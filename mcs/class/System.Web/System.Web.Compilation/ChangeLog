@@ -3,14 +3,20 @@
 	* WebServiceCompiler.cs: apply the same fix as in r45440 that fixed bug
 	75146 for pages/controls.
 
-2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
+2005-08-09  Miguel de Icaza  <miguel@novell.com>
 
-	* Location.cs: Added set to the FileName property.
+	* WebServiceCompiler.cs: Use the new DynamicDir method.
 
-2005-07-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+	* BaseCompiler.cs: Use the DynamicBase property as a hint, but
+	since this value is null most of the time, compute the real value.
 
-	* TemplateControlCompiler.cs: in these cases, we're only interested in
-	public properties/fields, not protected.
+	Added Bonus: if the directory has some kind of permission problem,
+	try a different directory name.
+
+2005-07-13  Miguel de Icaza  <miguel@novell.com>
+
+	* AspGenerator.cs (AspGenerator.CheckLanguage): Use
+	BaseParser.Context for the context. 
 
 2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

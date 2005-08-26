@@ -90,9 +90,6 @@ namespace System.Web.Compilation
 			tempcoll = new TempFileCollection (config.TempDirectory, keepFiles);
 			compilerParameters.TempFiles = tempcoll;
 
-			if (!Directory.Exists (dynamicBase))
-				Directory.CreateDirectory (dynamicBase);
-
 			inputFile = tempcoll.AddExtension (provider.FileExtension);
 			Stream st = File.OpenWrite (inputFile);
 			StreamWriter sw = new StreamWriter (st);
@@ -101,7 +98,7 @@ namespace System.Web.Compilation
 
 			string dllfilename = Path.GetFileName (tempcoll.AddExtension ("dll", true));
 
-			compilerParameters.OutputAssembly = Path.Combine (dynamicBase, dllfilename);
+			compilerParameters.OutputAssembly = Path.Combine (DynamicDir (), dllfilename);
 
 			CompilerResults results = CachingCompiler.Compile (this);
 			CheckCompilerErrors (results);

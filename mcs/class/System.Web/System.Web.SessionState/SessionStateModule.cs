@@ -42,7 +42,10 @@ namespace System.Web.SessionState
 		internal static readonly string CookieName = "ASPSESSION";
 		internal static readonly string HeaderName = "AspFilterSessionId";
 		
-#if TARGET_J2EE		
+#if !TARGET_J2EE		
+		static SessionConfig config;
+		static Type handlerType;
+#else
 		static private SessionConfig config {
 			get {
 				return (SessionConfig)AppDomain.CurrentDomain.GetData("SessionStateModule.config");
@@ -59,9 +62,6 @@ namespace System.Web.SessionState
 				AppDomain.CurrentDomain.SetData("SessionStateModule.handlerType", value);
 			}
 		}
-#else
-		static SessionConfig config;
-		static Type handlerType;
 #endif		
 		ISessionHandler handler;
 		bool sessionForStaticFiles;
@@ -90,16 +90,11 @@ namespace System.Web.SessionState
 				if (config ==  null)
 					config = new SessionConfig (null);
 
-#if TARGET_J2EE
-				if (config.Mode == SessionStateMode.SQLServer || config.Mode == SessionStateMode.StateServer)
-					throw new NotImplementedException("You must use web.xml to specify session state handling");
-#else
 				if (config.Mode == SessionStateMode.StateServer)
 					handlerType = typeof (SessionStateServerHandler);
 
 				if (config.Mode == SessionStateMode.SQLServer)
 					handlerType = typeof (SessionSQLServerHandler);
-#endif
 				
 				if (config.Mode == SessionStateMode.InProc)
 					handlerType = typeof (SessionInProcHandler);
@@ -110,11 +105,8 @@ namespace System.Web.SessionState
 
 			if (config.CookieLess)
 				app.BeginRequest += new EventHandler (OnBeginRequest);
-			
-			app.AddOnAcquireRequestStateAsync (
-				new BeginEventHandler (OnBeginAcquireState),
-				new EndEventHandler (OnEndAcquireState));
 
+			app.AcquireRequestState += new EventHandler (OnAcquireState);
 			app.ReleaseRequestState += new EventHandler (OnReleaseRequestState);
 			app.EndRequest += new EventHandler (OnEndRequest);
 			
@@ -154,7 +146,7 @@ namespace System.Web.SessionState
 		{
 		}
 
-		IAsyncResult OnBeginAcquireState (object o, EventArgs args, AsyncCallback cb, object data)
+		void OnAcquireState (object o, EventArgs args)
 		{
 			HttpApplication application = (HttpApplication) o;
 			HttpContext context = application.Context;
@@ -199,20 +191,7 @@ namespace System.Web.SessionState
 					context.Response.AppendCookie (cookie);
 				}
 			}
-			
-			// In the future, we might want to move the Async stuff down to
-			// the interface level, if we're going to support other than
-			// InProc, we might actually want to do things async, now we
-			// simply fake it.
-			HttpAsyncResult result=new HttpAsyncResult (cb,this);
-			result.Complete (true, o, null);
-			if (isNew && Start != null)
-				Start (this, args);
-
-			return result;
 		}
-
-		void OnEndAcquireState (IAsyncResult result) { }
 
 		internal void OnSessionRemoved (string key, object value, CacheItemRemovedReason reason)
 		{

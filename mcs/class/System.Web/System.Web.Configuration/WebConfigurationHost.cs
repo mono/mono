@@ -201,12 +201,12 @@ namespace System.Web.Configuration
 				virtualPath = virtualPath.Replace (System.IO.Path.DirectorySeparatorChar, '/');
 
 			if (UrlUtils.IsRooted (virtualPath)) {
-				virtualPath = UrlUtils.Reduce (virtualPath);
+				virtualPath = UrlUtils.Canonic (virtualPath);
 			} else {
 				if (map.VirtualDirectories.Count > 0) {
 					string root = map.VirtualDirectories [0].VirtualDirectory;
 					virtualPath = UrlUtils.Combine (root, virtualPath);
-					virtualPath = UrlUtils.Reduce (virtualPath);
+					virtualPath = UrlUtils.Canonic (virtualPath);
 				}
 			}
 			return virtualPath;

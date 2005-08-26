@@ -35,12 +35,24 @@ namespace System.Web.UI {
 	public sealed class PersistChildrenAttribute : Attribute
 	{
 		bool persist;
+#if NET_2_0
+		bool usesCustomPersistence;
+#endif		
 		
 		public PersistChildrenAttribute (bool persist)
 		{
 			this.persist = persist;
 		}
 
+#if NET_2_0
+		public PersistChildrenAttribute (bool persist,
+						 bool usesCustomPersistence)
+		{
+			this.persist = persist;
+			this.usesCustomPersistence = usesCustomPersistence;
+		}
+#endif		
+		
 		public static readonly PersistChildrenAttribute Default = new PersistChildrenAttribute (true);
 		public static readonly PersistChildrenAttribute Yes = new PersistChildrenAttribute (true);
 		public static readonly PersistChildrenAttribute No = new PersistChildrenAttribute (false);
@@ -49,12 +61,27 @@ namespace System.Web.UI {
 			get { return persist; }
 		}
 
+#if NET_2_0
+		public bool UsesCustomPersistence 
+		{
+			get {
+				return (usesCustomPersistence);
+			}
+		}
+#endif
+		
 		public override bool Equals (object obj)
 		{
 			if (!(obj is PersistChildrenAttribute))
 				return false;
 
-			return (((PersistChildrenAttribute) obj).persist == persist);
+			PersistChildrenAttribute pobj = obj as PersistChildrenAttribute;
+
+			return (pobj.persist == persist
+#if NET_2_0
+				&& pobj.usesCustomPersistence == usesCustomPersistence
+#endif
+				);
 		}
 
 		public override int GetHashCode ()
@@ -64,6 +91,10 @@ namespace System.Web.UI {
 
 		public override bool IsDefaultAttribute ()
 		{
+			/* No idea what the usesCustomPersistence
+			 * default is (I assume false, but its not
+			 * documented)
+			 */
 			return (persist == true);
 		}
 	}

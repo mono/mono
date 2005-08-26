@@ -30,6 +30,8 @@
 
 
 using System;
+using System.Collections;
+using System.IO;
 using System.Text;
 using System.Data;
 using System.Web.UI;
@@ -48,6 +50,7 @@ namespace System.Web {
 		private DataTable cookie_data;
 		private DataTable header_data;
 		private DataTable servervar_data;
+		//private DataTable viewstate_data;
 
 		private string request_path;
 		private string session_id;
@@ -56,6 +59,7 @@ namespace System.Web {
 		private Encoding response_encoding;
 		private string request_type;
 		private int status_code;
+		private Page page;
 
 		public TraceData ()
 		{
@@ -84,6 +88,12 @@ namespace System.Web {
 			servervar_data = new DataTable ();
 			servervar_data.Columns.Add (new DataColumn ("Name", typeof (string)));
 			servervar_data.Columns.Add (new DataColumn ("Value", typeof (string)));
+
+			/* TODO
+			viewstate_data = new DataTable ();
+			viewstate_data.Columns.Add (new DataColumn ("ControlId", typeof (string)));
+			viewstate_data.Columns.Add (new DataColumn ("Data", typeof (string)));
+			*/
 
 			is_first_time = true;
 		}
@@ -153,22 +163,49 @@ namespace System.Web {
 			return res.Replace (" ", "&nbsp;");
 		}
 		
-		public void AddControlTree (Page page)
+		public void AddControlTree (Page page, Hashtable ctrl_vs)
 		{
-			AddControl (page, 0);
+			this.page = page;
+			page.SetRenderingTrace (true);
+			AddControl (page, 0, ctrl_vs);
+			page.SetRenderingTrace (false);
 		}
 
-		private void AddControl (Control c, int control_pos)
+		private void AddControl (Control c, int control_pos, Hashtable ctrl_vs)
 		{
 			DataRow r = control_data.NewRow ();
 			r ["ControlId"] = c.UniqueID;
 			r ["Type"] = c.GetType ();
 			r ["Depth"] = control_pos;
+			r ["RenderSize"] = GetRenderSize (c);
+			r ["ViewstateSize"] = GetViewStateSize (c, (ctrl_vs != null) ? ctrl_vs [c] : null);
 
 			control_data.Rows.Add (r);
-			
-			foreach (Control child in c.Controls)
-				AddControl (child, control_pos + 1);
+
+			if (c.HasControls ()) {
+				foreach (Control child in c.Controls)
+					AddControl (child, control_pos + 1, ctrl_vs);
+			}
+		}
+
+		static int GetRenderSize (Control c)
+		{
+			StringWriter sr = new StringWriter ();
+			HtmlTextWriter output = new HtmlTextWriter (sr);
+			c.RenderControl (output);
+			output.Flush ();
+			return sr.GetStringBuilder ().Length;
+		}
+
+		static int GetViewStateSize (Control ctrl, object vs)
+		{
+			if (vs == null)
+				return 0;
+
+			StringWriter sr = new StringWriter ();
+			LosFormatter fmt = new LosFormatter ();
+			fmt.Serialize (sr, vs);
+			return sr.GetStringBuilder ().Length;
 		}
 
 		public void AddCookie (string name, string value)
@@ -254,10 +291,12 @@ namespace System.Web {
 		{
 			Table table = CreateTable ();
 			
+			int page_vs_size = GetViewStateSize (page, page.GetSavedViewState ());
 			table.Rows.Add (AltRow ("Control Tree"));
 			table.Rows.Add (SubHeadRow ("Control Id", "Type",
-							"Render Size Bytes (including children)",
-							"View state Size Bytes (excluding children)"));
+						"Render Size Bytes (including children)",
+						String.Format ("View state Size (total: {0} bytes)(excluding children)",
+								page_vs_size)));
 			
 			int pos = 0;
 			foreach (DataRow r in control_data.Rows) {
@@ -266,12 +305,13 @@ namespace System.Web {
 				for (int i=0; i<depth; i++)
 					prefix += "&nbsp;&nbsp;&nbsp;&nbsp;";
 				RenderAltRow (table, pos++, prefix + r ["ControlId"],
-						r ["Type"].ToString (), "&nbsp;", "&nbsp;");
+						r ["Type"].ToString (), r ["RenderSize"].ToString (),
+						r ["ViewstateSize"].ToString ());
 			}
 			
 			table.RenderControl (output);
 		}
-		   
+
 		private void RenderCookies (HtmlTextWriter output)
 		{
 			Table table = CreateTable ();

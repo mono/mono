@@ -3,10 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,19 +29,29 @@
 //
 
 #if NET_2_0
+
 using System.Collections;
-using System.Collections.Specialized;
-using System.Text;
 
 namespace System.Web.UI {
-	public abstract class StateManagedCollection : IList, IStateManager
-	{
+
+	public abstract class StateManagedCollection : IList, IStateManager {
+
 		ArrayList items = new ArrayList ();
 		bool saveEverything = false;
 		IStateManager[] originalItems;
-		
-		protected abstract object CreateKnownType (int index);
+
+		protected virtual object CreateKnownType (int index)
+		{
+			return null;
+		}
+
+		public void SetDirty ()
+		{
+			saveEverything = true;
+		}
+
 		protected abstract void SetDirtyObject (object o);
+
 		protected virtual Type [] GetKnownTypes ()
 		{
 			return null;
@@ -206,24 +216,12 @@ namespace System.Web.UI {
 				saveEverything = true;
 		}
 		
-		public int IndexOf (object o)
-		{
-			if (o == null)
-				return -1;
-			return items.IndexOf (o);
-		}
-		
-		public bool Contains (object o)
-		{
-			return o != null && items.Contains (o);
-		}
-		
 		public IEnumerator GetEnumerator ()
 		{
 			return items.GetEnumerator ();
 		}
 		
-		void System.Collections.ICollection.CopyTo (Array array, int index)
+		public void CopyTo (Array array, int index)
 		{
 			items.CopyTo (array, index);
 		}
@@ -268,8 +266,11 @@ namespace System.Web.UI {
 			if (value == null)
 				return;
 			OnValidate (value);
-			((IList)this).RemoveAt (IndexOf (value));
+			int i = items.IndexOf (value);
+			if (i >= 0)
+				((IList)this).RemoveAt (i);
 		}
+
 		void IList.RemoveAt (int index)
 		{
 			object o = items [index];
@@ -293,7 +294,7 @@ namespace System.Web.UI {
 				return false;
 			
 			OnValidate (value);
-			return Contains (value);
+			return items.Contains (value);
 		}
 		
 		int IList.IndexOf (object value)
@@ -302,7 +303,7 @@ namespace System.Web.UI {
 				return -1;
 			
 			OnValidate (value);
-			return IndexOf (value);
+			return items.IndexOf (value);
 		}
 
 		public int Count {

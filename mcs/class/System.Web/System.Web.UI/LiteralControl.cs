@@ -38,6 +38,9 @@ namespace System.Web.UI
 {
 	[ToolboxItem(false)]
         public class LiteralControl : Control
+#if NET_2_0
+	, ITextControl
+#endif	
         {
                 string _text;
 
@@ -57,7 +60,12 @@ namespace System.Web.UI
                         }
                 }
 
-                protected override void Render (HtmlTextWriter writer)
+#if NET_2_0
+		protected internal
+#else		
+                protected
+#endif		
+		override void Render (HtmlTextWriter writer)
                 {
                         writer.Write (_text);
                 }

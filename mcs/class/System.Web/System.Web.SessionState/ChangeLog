@@ -1,14 +1,7 @@
-2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
-	* SessionStateModule.cs: Reorder TARGET_J2EE ifdefs for readability
+2005-08-15  Miguel de Icaza  <miguel@novell.com>
 
-2005-07-19  Eyal Alalouf  <eyala@mainsoft.com>
-	* SessionStateModule.cs: In TARGET_J2EE configuration the servlet container
-	  is reponsible for session management. So we don't support the .Net session
-	  state server or .Net storing sessions in SQLServer.
-
-2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
-	* Added HttpSessionState.jvm.cs
-	* Added SessionInProcHandler.jvm.cs
+	* SessionStateModule.cs: Make this use the synch api as the module
+	was synchronous anyways
 
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

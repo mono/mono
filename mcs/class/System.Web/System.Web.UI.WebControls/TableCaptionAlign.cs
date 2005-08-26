@@ -25,8 +25,9 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_1_1
 namespace System.Web.UI.WebControls {
+
+	// present in Fx 1.1 SP1
         public enum TableCaptionAlign {
                 NotSet = 0,
 		Top = 1,
@@ -35,4 +36,3 @@ namespace System.Web.UI.WebControls {
 		Right = 4		
         }
 }
-#endif

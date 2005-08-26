@@ -1,3 +1,23 @@
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* HandlerFactoryConfiguration.cs: implement the slow path for
+	PathMatches using Regex.  Also, make the fast path for exact
+	matches faster (and more correct).
+
+2005-08-25  Chris Toshok  <toshok@ximian.com>
+
+	* HandlerFactoryConfiguration.cs: chain up to the parent
+	Configuration if we don't have a match, instead of adding the
+	parent's handlers to our list (and thereby overriding ours).
+
+2005-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthConfig.cs: Add new 2.0 stuff (required for Forms Authentication).
+
+2005-08-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MachineKeyConfig.cs: we don't honor IsolateApp.
+
 2005-07-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MachineKeyConfigHandler.cs:
