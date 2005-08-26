@@ -1,5 +1,10 @@
 2005-08-26  Ankit Jain  <jankit@novell.com>
 
+	* PEAPI.cs (PEFile.ctor): Restore old constructor overload to avoid
+	  changing public API.
+
+2005-08-26  Ankit Jain  <jankit@novell.com>
+
 	* PEAPI.cs (IResolutionScope): New. Empty interface.
 	  (ClassRef): Implement IResolutionScope.
 	  (ClassRef.parent): Change type from ResolutionScope to IResolutionScope.

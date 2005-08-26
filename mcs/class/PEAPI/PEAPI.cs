@@ -6495,6 +6495,10 @@ CalcHeapSizes ();
       : this (name, null, isDLL, hasAssembly, null, outStream) {
     }
 
+    public PEFile(string name, string module_name, bool isDLL, bool hasAssembly, Stream outStream)
+      : this (name, module_name, isDLL, hasAssembly, null, outStream) {
+    }  
+
     public PEFile(string name, string module_name, bool isDLL, bool hasAssembly, string outputDir, Stream outStream) {
       SetName (name);
       string fname = module_name == null ? MakeFileName (outputDir, name, isDLL) : module_name;
