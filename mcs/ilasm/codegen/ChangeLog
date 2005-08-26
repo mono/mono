@@ -1,3 +1,21 @@
+2005-08-26  Ankit Jain  <jankit@novell.com>
+
+	* ExternTable.cs (IScope): New. Interface for ResolutionScope.
+	  (ExternRef): Implement IScope.
+	  (ExternRef.GetTypeRef): Handle references to nested classes.
+	  (ExternRef.GetValueType): Remove. Logic combined with GetType.
+	  (ExternRef.GetType): Add param 'is_valuetype' and handle accordingly.
+	* ExternTypeRef.cs (ExternTypeRef): Implement IScope.
+	  (ExternTypeRef.extern_ref),
+	  (ExternTypeRef.ctor),
+	  (ExternTypeRef.ExternRef): Change extern_ref type from ExternRef to IScope.
+	  (ExternTypeRef.nestedtypes_table),
+	  (ExternTypeRef.nestedclass_table): New. Hashtables for nested classes.
+	  (ExternTypeRef.Resolve): Resolve parent if it is ExternTypeRef type.
+	  (ExternTypeRef.GetTypeRef): New.
+	  (ExternTypeRef.GetExternTypeRef): New. Returns the resolve PEAPI type.
+	  (ExternTypeRef.GetType): New.
+
 2005-08-23  Ankit Jain  <jankit@novell.com>
 
 	* ExternTable.cs (ExternTable.ctor): Remove. Move the initialization code

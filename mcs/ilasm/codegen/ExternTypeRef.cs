@@ -16,10 +16,10 @@ namespace Mono.ILASM {
         /// <summary>
         /// A reference to a type in another assembly
         /// </summary>
-        public class ExternTypeRef : ModifiableType, IClassRef {
+        public class ExternTypeRef : ModifiableType, IClassRef, IScope {
 
                 private PEAPI.Type type;
-                private ExternRef extern_ref;
+                private IScope extern_ref;
                 private string full_name;
                 private string sig_mod;
                 private bool is_valuetype;
@@ -27,10 +27,12 @@ namespace Mono.ILASM {
 
                 private bool is_resolved;
 
+                private Hashtable nestedtypes_table;
+                private Hashtable nestedclass_table;
                 private Hashtable method_table;
                 private Hashtable field_table;
                 
-                public ExternTypeRef (ExternRef extern_ref, string full_name,
+                public ExternTypeRef (IScope extern_ref, string full_name,
                                 bool is_valuetype, ExternTable extern_table)
                 {
                         this.extern_ref = extern_ref;
@@ -39,13 +41,15 @@ namespace Mono.ILASM {
                         this.extern_table = extern_table;
                         sig_mod = String.Empty;
 
+                        nestedclass_table = new Hashtable ();
+                        nestedtypes_table = new Hashtable ();
                         method_table = new Hashtable ();
                         field_table = new Hashtable ();
                         
                         is_resolved = false;
                 }
 
-                private ExternTypeRef (ExternRef extern_ref, string full_name,
+                private ExternTypeRef (IScope extern_ref, string full_name,
                                 bool is_valuetype, ExternTable extern_table,
                                 ArrayList conv_list) : this (extern_ref, full_name,
                                                 is_valuetype, extern_table)
@@ -77,20 +81,21 @@ namespace Mono.ILASM {
                         set { sig_mod = value; }
                 }
 
-		public ExternRef ExternRef {
-			get { return extern_ref; }
-		}
+                public IScope ExternRef {
+                        get { return extern_ref; }
+                }
 
                 public void Resolve (CodeGen code_gen)
                 {
                         if (is_resolved)
                                 return;
 
-                        if (is_valuetype)
-                                type = extern_ref.GetValueType (full_name);
-                        else
-                                type = extern_ref.GetType (full_name);
+                        ExternTypeRef etr = extern_ref as ExternTypeRef;        
+                        if (etr != null)        
+                                //This is a nested class, so resolve parent
+                                etr.Resolve (code_gen);
 
+                        type = extern_ref.GetType (full_name, is_valuetype);
                         type = Modify (code_gen, type);
 
                         is_resolved = true;
@@ -126,6 +131,58 @@ namespace Mono.ILASM {
 
                         return fr;
                 }
+
+                public ExternTypeRef GetTypeRef (string _name, bool is_valuetype, ExternTable table)
+                {
+                        string first= _name;
+                        string rest = "";
+                        int slash = _name.IndexOf ('/');
+
+                        if (slash > 0) {
+                                first = _name.Substring (0, slash);
+                                rest = _name.Substring (slash + 1);
+                        }
+
+                        ExternTypeRef ext_typeref = nestedtypes_table [first] as ExternTypeRef;
+                        
+                        if (ext_typeref != null) {
+                                if (is_valuetype && rest == "")
+                                        ext_typeref.MakeValueClass ();
+                        } else {
+                                ext_typeref = new ExternTypeRef (this, first, is_valuetype, table);
+                                nestedtypes_table [first] = ext_typeref;
+                        }        
+                        
+                        return (rest == "" ? ext_typeref : ext_typeref.GetTypeRef (rest, is_valuetype, table));
+                }
+
+                public PEAPI.IExternRef GetExternTypeRef ()
+                {
+                        //called by GetType for a nested type
+                        //should this cant be 'modified' type, so it should
+                        //be ClassRef 
+                        return (PEAPI.ClassRef) type;
+                }
+
+                public PEAPI.ClassRef GetType (string _name, bool is_valuetype)
+                {
+                        PEAPI.ClassRef klass = nestedclass_table [_name] as PEAPI.ClassRef;
+                        
+                        if (klass != null)
+                                return klass;
+
+                        string name_space, name;
+                        ExternTable.GetNameAndNamespace (_name, out name_space, out name);
+
+                        if (is_valuetype)
+                                klass = (PEAPI.ClassRef) GetExternTypeRef ().AddValueClass (name_space, name);
+                        else        
+                                klass = (PEAPI.ClassRef) GetExternTypeRef ().AddClass (name_space, name);
+
+                        nestedclass_table [_name] = klass;
+
+                        return klass;
+                }        
         }
 
 }

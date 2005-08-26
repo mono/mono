@@ -13,7 +13,12 @@ using System.Reflection;
 
 namespace Mono.ILASM {
 
-        public abstract class ExternRef : ICustomAttrTarget {
+        public interface IScope {
+                ExternTypeRef GetTypeRef (string full_name, bool is_valuetype, ExternTable table);
+                PEAPI.ClassRef GetType (string full_name, bool is_valuetype);
+        }
+	
+        public abstract class ExternRef : ICustomAttrTarget, IScope {
 
                 protected string name;
                 protected Hashtable class_table;
@@ -44,21 +49,28 @@ namespace Mono.ILASM {
 
                 public ExternTypeRef GetTypeRef (string full_name, bool is_valuetype, ExternTable table)
                 {
-                        ExternTypeRef type_ref = typeref_table [full_name] as ExternTypeRef;
+                        string first= full_name;
+                        string rest = "";
+                        int slash = full_name.IndexOf ('/');
+                        if (slash > 0) {
+                                first = full_name.Substring (0, slash);
+                                rest = full_name.Substring (slash + 1);
+                        }
+				
+                        ExternTypeRef type_ref = typeref_table [first] as ExternTypeRef;
                         
                         if (type_ref != null) {
-                                if (is_valuetype)
+                                if (is_valuetype && rest == "")
                                         type_ref.MakeValueClass ();
-                                return type_ref;
-                        }        
-                        
-                        type_ref = new ExternTypeRef (this, full_name, is_valuetype, table);
-                        typeref_table [full_name] = type_ref;
-                        
-                        return type_ref;
+                        } else {
+                                type_ref = new ExternTypeRef (this, first, is_valuetype, table);
+                                typeref_table [first] = type_ref;
+                        }
+
+                        return (rest == "" ? type_ref : type_ref.GetTypeRef (rest, is_valuetype, table));
                 }
 
-                public PEAPI.ClassRef GetType (string full_name)
+                public PEAPI.ClassRef GetType (string full_name, bool is_valuetype)
                 {
                         PEAPI.ClassRef klass = class_table[full_name] as PEAPI.ClassRef;
                         
@@ -68,27 +80,15 @@ namespace Mono.ILASM {
                         string name_space, name;
                         ExternTable.GetNameAndNamespace (full_name, out name_space, out name);
 
-                        klass = (PEAPI.ClassRef) GetExternRef ().AddClass (name_space, name);
-                        class_table[full_name] = klass;
+                        if (is_valuetype)
+                                klass = (PEAPI.ClassRef) GetExternRef ().AddValueClass (name_space, name);
+                        else        
+                                klass = (PEAPI.ClassRef) GetExternRef ().AddClass (name_space, name);
 
+                        class_table [full_name] = klass;
                         return klass;
                 }
 
-                public PEAPI.ClassRef GetValueType (string full_name)
-                {
-                        PEAPI.ClassRef klass = class_table[full_name] as PEAPI.ClassRef;
-
-                        if (klass != null) 
-                                return klass;
-
-                        string name_space, name;
-                        ExternTable.GetNameAndNamespace (full_name, out name_space, out name);
-
-                        klass = (PEAPI.ClassRef) GetExternRef ().AddValueClass (name_space, name);
-                        class_table[full_name] = klass;
-
-                        return klass;
-                }
         }
 
         public class ExternModule : ExternRef {
