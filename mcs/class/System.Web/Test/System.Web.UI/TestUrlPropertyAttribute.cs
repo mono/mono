@@ -4,9 +4,7 @@
 // Author:
 //	Sanjay Gupta (gsanjay@novell.com)
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -59,7 +57,8 @@ namespace MonoTests.System.Web.UI
 			urlTypes = UrlTypes.DocRelative;
 			upa = new UrlPropertyAttribute ();
 			upa1 = new UrlPropertyAttribute (filter);
-			upa2 = new UrlPropertyAttribute (filter, urlTypes);
+			upa2 = new UrlPropertyAttribute (filter);
+			upa2.AllowedTypes = urlTypes;
 		}
 
 		[Test]
@@ -101,9 +100,11 @@ namespace MonoTests.System.Web.UI
 
 			Assert.IsFalse (upa1.Equals (upa2), "Equals#3");
 			
-			upa1 = new UrlPropertyAttribute ("sanjay", UrlTypes.Absolute);
+			upa1 = new UrlPropertyAttribute ("sanjay");
+			upa1.AllowedTypes = UrlTypes.Absolute;
 			Assert.IsFalse (upa2.Equals (upa1), "Equals#4");
-			upa1 = new UrlPropertyAttribute ("sanjay", UrlTypes.DocRelative);
+			upa1 = new UrlPropertyAttribute ("sanjay");
+			upa1.AllowedTypes = UrlTypes.DocRelative;
 			//Assert.IsTrue (upa2.Equals (upa1), "Equals#5");
 
 		}

@@ -90,9 +90,9 @@ namespace MonoTests.System.Web {
 				string encoded = HttpUtility.HtmlEncode (str);
 				if ((i > 159 && i < 256 ) || i == '&' || i == '<' || i == '>' || i == '"') {
 					if (encoded [0] != '&' || encoded [encoded.Length - 1] != ';')
-						Assertion.Fail ("Failed for i = " + i);
+						Assert.Fail ("Failed for i = " + i);
 				} else if (encoded.Length != 1) {
-					Assertion.Fail ("Wrong length for i = " + i);
+					Assert.Fail ("Wrong length for i = " + i);
 				}
 			}
 		}
