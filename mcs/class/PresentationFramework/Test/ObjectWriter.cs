@@ -1,5 +1,5 @@
 // 
-// ObjectWriter.cs - NUnit Test Cases for the xaml object builder
+// Parser.cs - NUnit Test Cases for the xaml object builder
 // 
 // Author:
 //   Iain McCoy (iain@mccoy.id.au)
@@ -37,13 +37,14 @@ using System.Reflection;
 using System.Windows;
 using System.CodeDom.Compiler;
 using Mono.Windows.Serialization;
+using System.Windows.Serialization;
 using Xaml.TestVocab.Console;
 
 namespace MonoTests.System.Windows.Serialization
 {
 
 [TestFixture]
-public class ObjectWriterTest {
+public class ParserTest {
 	string code;
 	
 	[SetUp]
@@ -179,7 +180,7 @@ public class ObjectWriterTest {
 	private void compare(object expected)
 	{
 		string mapping = "<?Mapping ClrNamespace=\"Xaml.TestVocab.Console\" Assembly=\"./TestVocab.dll\" XmlNamespace=\"console\" ?>\n";
-		object o = ObjectWriter.Parse(new XmlTextReader(new StringReader(mapping + code)));
+		object o = Parser.LoadXml(new XmlTextReader(new StringReader(mapping + code)));
 		Assert.AreEqual(expected, o);
 	}
 

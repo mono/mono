@@ -51,6 +51,8 @@ namespace Mono.Windows.Serialization {
 		CodeTypeDeclaration type;
 		CodeConstructor constructor;
 
+		private static readonly Type xamlParserType = typeof(XamlParser);
+
 		public static string Parse(XmlTextReader reader, ICodeGenerator generator,  bool isPartial)
 		{
 			CodeWriter cw = new CodeWriter(reader, generator, isPartial);

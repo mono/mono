@@ -35,20 +35,25 @@ using System.CodeDom.Compiler;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Serialization;
+using Mono.Windows.Serialization;
 using System.Xml;
 
-namespace Mono.Windows.Serialization {
-	public class ObjectWriter {
-		public object instance;
+namespace System.Windows.Serialization {
+	public class Parser {
+		private object instance;
 		ArrayList objects = new ArrayList();
 
-		public static object Parse(XmlTextReader reader)
+		public static object LoadXml(Stream s)
 		{
-			ObjectWriter ow = new ObjectWriter(reader);
-			return ow.instance;
+			return LoadXml(new XmlTextReader(s));
 		}
-		private ObjectWriter(XmlTextReader reader)
+		// TODO: this should take a XmlReader in order to be same as MSFT
+		public static object LoadXml(XmlTextReader reader)
+		{
+			Parser r = new Parser(reader);
+			return r.instance;
+		}
+		private Parser(XmlTextReader reader)
 		{
 			XamlParser p = new XamlParser(reader);
 			XamlNode n;

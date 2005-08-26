@@ -37,7 +37,7 @@ using System.Windows;
 using System.Windows.Serialization;
 
 namespace Mono.Windows.Serialization {
-	public class XamlParser {
+	internal class XamlParser {
 		public const string XAML_NAMESPACE = "http://schemas.microsoft.com/winfx/xaml/2005";
 		private Mapper mapper = new Mapper(new string[] { });
 		private XmlTextReader reader;

@@ -1,11 +1,11 @@
 System.Windows.Serialization/IAddChild.cs
 System.Windows.Serialization/Mapper.cs
 System.Windows.Serialization/NamespaceMapEntry.cs
+System.Windows.Serialization/Parser.cs
 System.Windows.Serialization/XamlNodeType.cs
 System.Windows.Serialization/XamlParseMode.cs
 System.Windows.Serialization/BamlAttributeUsage.cs
 Mono.Windows.Serialization/CodeWriter.cs
-Mono.Windows.Serialization/ObjectWriter.cs
 Mono.Windows.Serialization/Exceptions.cs
 Mono.Windows.Serialization/XamlParser.cs
 Mono.Windows.Serialization/IXamlWriter.cs

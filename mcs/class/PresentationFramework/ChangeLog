@@ -1,3 +1,18 @@
+2005-08-24  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/ObjectWriter.cs,
+	System.Windows.Serialization/Parser.cs: renamed ObjectWriter to
+	Parser, made interface more similar
+	* Test/ObjectWriter.cs: changed to test the new Parser class
+
+2005-08-24  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlParser.cs: make internal
+	* Mono.Windows.Serialization/CodeWriter.cs: add private member so that
+	the tests can get at the type for XamlParser
+	* Test/XamlParser.cs: use reflection to get the XamlParser type out of
+	CodeWriter, create an instance of it and get nodes from it
+
 2005-08-23  Iain McCoy  <iain@mccoy.id.au>
 
 	* System.Windows.Serialization/XamlParser.cs: rearrange class so that
