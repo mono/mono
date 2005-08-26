@@ -565,11 +565,8 @@ namespace TestRunner {
 					if (check_msg) {
 						int first = line.IndexOf (':');
 						int second = line.IndexOf (':', first + 1);
-						if (second == -1) {
-							if (check_error_line)
-								return CompilerError.MissingLocation;
+						if (second == -1)
 							second = first;
-						}
 
 						string msg = line.Substring (second + 1).TrimEnd ('.').Trim ();
 						if (msg != expected_message && msg != expected_message.Replace ('`', '\'')) {
@@ -653,7 +650,7 @@ namespace TestRunner {
 					break;
 
 				case CompilerError.MissingLocation:
-					LogLine ("");
+					LogLine ("OK (Missing location information)");
 					return true;
 
 					// Temporary disabled

@@ -1,3 +1,10 @@
+2005-08-26  Raja R Harinath  <rharinath@novell.com>
+
+	* compiler-tester.cs (NegativeChecker.GetCompilerError): Don't
+	look for exactly two ':'s in the error message.
+	(NegativeChecker.HandleFailure): Print an informative message when
+	CompilerError.MissingLocation.
+
 2005-06-24  Marek Safar  <marek.safar@seznam.cz>
 
 	* compiler-tester:.cs Enabled error/warning message checking.
