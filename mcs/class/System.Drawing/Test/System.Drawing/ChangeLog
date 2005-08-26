@@ -1,3 +1,8 @@
+2005-08-26 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ColorConverter.cs: Add hex string tests. Fixed tests to pass on
+	MS.NET.
+
 2005-08-23 Jordi Mas i Hernandez <jordi@ximan.com>
 
 	* TestPens.cs: Add test for Equals method
