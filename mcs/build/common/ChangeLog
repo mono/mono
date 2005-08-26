@@ -1,5 +1,10 @@
 2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
 
+	* Consts.cs.in: Use Microsoft.VisualStudio.Web only in profile NET_2_0 as
+	  the assembly does not exists in older versions. Fixed to use VsVersion.
+
+2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
+
 	* ChangeLog: Added.
 	* Consts.cs: Renamed to Consts.cs.in.
 	* Consts.cs.in: Added MonoVersion.
