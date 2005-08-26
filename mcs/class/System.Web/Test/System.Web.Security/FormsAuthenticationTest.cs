@@ -10,6 +10,7 @@
 using System;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web;
 using System.Web.Security;
 
 using NUnit.Framework;
@@ -18,6 +19,40 @@ namespace MonoTests.System.Web.Security {
 
 	[TestFixture]
 	public class FormsAuthenticationTest {
+
+		[Test]
+#if ONLY_1_1
+		[ExpectedException (typeof (NullReferenceException))]
+#endif
+		public void DefaultValues ()
+		{
+			// MS use ".ASPXAUTH" while Mono use ".MONOAUTH"
+			string str = FormsAuthentication.FormsCookieName;
+			Assert.IsTrue ((str.Length == 9 && str [0] == '.' && str.EndsWith ("AUTH")), "FormsCookieName");
+			Assert.AreEqual ("/", FormsAuthentication.FormsCookiePath, "FormsCookiePath");
+			Assert.IsFalse (FormsAuthentication.RequireSSL, "RequireSSL");
+			Assert.IsTrue (FormsAuthentication.SlidingExpiration, "SlidingExpiration");
+#if NET_2_0
+			Assert.AreEqual (String.Empty, FormsAuthentication.CookieDomain, "CookieDomain");
+			Assert.AreEqual (HttpCookieMode.UseDeviceProfile, FormsAuthentication.CookieMode, "CookieMode");
+			Assert.IsTrue (FormsAuthentication.CookiesSupported, "CookiesSupported");
+			Assert.AreEqual ("/default.aspx", FormsAuthentication.DefaultUrl);
+			Assert.IsFalse (FormsAuthentication.EnableCrossAppRedirects, "EnableCrossAppRedirects");
+			Assert.AreEqual ("/login.aspx", FormsAuthentication.LoginUrl, "LoginUrl");
+#endif
+		}
+
+		[Test]
+#if ONLY_1_1
+		[ExpectedException (typeof (NullReferenceException))]
+#endif
+		public void Initialize ()
+		{
+			// calling Initialize without an HttpContext
+			FormsAuthentication.Initialize ();
+			// and that doesn't change the default values
+			DefaultValues ();
+		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
@@ -63,5 +98,27 @@ namespace MonoTests.System.Web.Security {
 		{
 			FormsAuthentication.HashPasswordForStoringInConfigFile ("mono", "SHA256");
 		}
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void RedirectToLoginPage ()
+		{
+			FormsAuthentication.RedirectToLoginPage ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void RedirectToLoginPage_XtraQuery_Null ()
+		{
+			FormsAuthentication.RedirectToLoginPage (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void RedirectToLoginPage_XtraQuery_Empty ()
+		{
+			FormsAuthentication.RedirectToLoginPage (String.Empty);
+		}
+#endif
 	}
 }

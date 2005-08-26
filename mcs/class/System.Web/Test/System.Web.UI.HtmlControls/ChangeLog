@@ -1,0 +1,116 @@
+2005-08-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlButtonTest.cs: Fix 1.1 build. ValidationGroup is only present in
+	the 2.0 profile.
+
+2005-08-26  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlButtonTest.cs: add view state tests (to make sure
+	ValidationGroup and CausesValidation are there.)
+
+2005-08-22  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlInputCheckBoxTest.cs: 2.0-ify these tests.
+
+	* HtmlInputButtonTest.cs: same.
+
+2005-08-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlAnchorTest.cs: Added test cases for IPostBackEventHandler (in 
+	1.x) and for protected RaisePostBackEvent (in 2.0).
+	* HtmlInputControlTest.cs: Added test to ensure HtmlInputRadioButton's
+	Value behaviour wasn't inherited.
+	* HtmlInputTextTest.cs: Added test cases for IPostBackDataHandler (in 
+	1.x) and for new protected LoadPostData and RaisePostDataChangedEvent
+	methods (in 2.0).
+	* HtmlInputRadioButtonTest.cs: Added test cases for Value property and
+	it's relattion to ID. Added tests cases for IPostBackDataHandler (in 
+	1.x) and for new protected LoadPostData and RaisePostDataChangedEvent
+	methods (in 2.0).
+	* HtmlTextAreaTest.cs: Added test cases for IPostBackDataHandler (in 
+	1.x) and for new protected LoadPostData and RaisePostDataChangedEvent
+	methods (in 2.0).
+
+2005-08-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlInputControlTest.cs: Added a new test to see if the value 
+	removal for type==password was done at this level (it's not).
+	* HtmlInputTextTest.cs: Fixed tests to execute without failure on both
+	1.1 SP1 and 2.0 beta 2.
+
+2005-07-27  Dick Porter  <dick@ximian.com>
+
+	* HtmlInputCheckBoxTest.cs: Tests for HtmlInputCheckBox
+
+2005-07-26  Dick Porter  <dick@ximian.com>
+
+	* HtmlSelectTest.cs: Tests for HtmlSelect
+
+2005-07-21  Dick Porter  <dick@ximian.com>
+
+	* HtmlImageTest.cs: The order of attribute rendering has changed,
+	and now matches MS
+
+2005-07-19  Dick Porter  <dick@ximian.com>
+
+	* HtmlImageTest.cs: Added tests for negative values in int
+	properties
+
+2005-07-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlInputControlTest.cs: Added a test when using null in the ctor
+	(type is empty, not null). Test UniqueID, not only ID, when changing
+	the Name property.
+
+2005-07-18  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlInputHiddenTest.cs: New test.
+
+2005-07-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlAnchorTest.cs: Added tests for resolving the URL and the 
+	mysterious disappearance of the HRef attribute after rendering.
+
+2005-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlInputButton.cs: New tests for HtmlInputButton.
+
+2005-07-14  Jackson Harper  <jackson@ximian.com>
+
+	* HtmlButtonTest.cs: New tests for HtmlButton.
+
+2005-07-14  Dick Porter  <dick@ximian.com>
+
+	* HtmlFormTest.cs: New set of tests
+
+2005-07-08  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* HtmlTextAreaTest.cs: Added checks to see that Attributes are moved
+	into the StateView.
+
+2005-07-08  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HtmlContainerControlTest.cs: Unit tests for HtmlContainerControl.
+	Basically to check for removal of attributes/viewstate informations.
+	* HtmlTextAreaTest.cs: Unit tests for HtmlTextArea.
+
+2005-07-07  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HtmlInputRadioButtonTest.cs: Unit tests for HtmlInputRadioButton.
+	* HtmlInputTextTest.cs: More tests to check for password erasure fu.
+
+2005-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlInputControlTest.cs: Unit tests for HtmlInputControl.
+	* HtmlInputTextTest.cs: Unit tests for HtmlInputText.
+
+2005-07-07  Dick Porter  <dick@ximian.com>
+
+	* HtmlImageTest.cs: Unit tests for HtmlImage
+
+2005-07-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlAnchorTest.cs: Unit tests for HtmlAnchor.
+	* HtmlTableTest.cs: Unit tests for HtmlTable.
+	* HtmlTableCellTest.cs: Unit tests for HtmlTableCell.
+	* HtmlTableRowTest.cs: Unit tests for HtmlTableRow.

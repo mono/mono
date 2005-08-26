@@ -1,3 +1,30 @@
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FormsAuthenticationTest.cs: Some results are different in 1.x.
+	Some results are different for Mono too (Gonzalo's beautification).
+
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FormsAuthenticationTest.cs: Added tests for default properties
+	(both 1.x and 2.0).
+	* MembershipProviderCollectionTest.cs: Add test case for unexisting
+	membership provider.
+	* MembershipUserCollectionTest.cs: New (2.0). Unit tests for 
+	MembershipUserCollection.
+	* RolesTest.cs: New (2.0). Basic tests for Roles default properties 
+	(sadly anything else requires settings in web.config).
+
+2005-08-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FormsAuthentication.cs: Added basic tests for new some 2.0 stuff.
+	Normalized line endings.
+
+2005-08-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MembershipTest.cs: New. Unit tests for Membership class.
+	* MembershipProviderCollectionTest.cs: New. Unit tests for 
+	MembershipProviderCollection class.
+
 2005-05-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FormsAuthenticationTest.cs: New. Unit tests for FormsAuthentication.
