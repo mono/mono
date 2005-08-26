@@ -72,7 +72,7 @@ class Driver {
 		ICodeGenerator generator = getGenerator(options.OutputLanguage);
 		XmlTextReader xr = new XmlTextReader(input);
 		try {
-			string result = CodeWriter.Parse(xr, generator, options.Partial);
+			string result = ParserToCode.Parse(xr, generator, options.Partial);
 			TextWriter tw = new StreamWriter(options.OutputFile);
 			tw.Write(result);
 			tw.Close();

@@ -5,7 +5,7 @@ System.Windows.Serialization/Parser.cs
 System.Windows.Serialization/XamlNodeType.cs
 System.Windows.Serialization/XamlParseMode.cs
 System.Windows.Serialization/BamlAttributeUsage.cs
-Mono.Windows.Serialization/CodeWriter.cs
+Mono.Windows.Serialization/ParserToCode.cs
 Mono.Windows.Serialization/Exceptions.cs
 Mono.Windows.Serialization/XamlParser.cs
 Mono.Windows.Serialization/IXamlWriter.cs

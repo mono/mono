@@ -1,3 +1,11 @@
+2005-08-26  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/CodeWriter.cs,
+	Mono.Windows.Serialization/ParserToCode.cs: renamed CodeWriter to
+	ParserToCode in order to more closely parallel
+	System.Windows.Serialization.Parser
+	* Test/CodeWriter.cs: changed to test the new ParserToCode class
+
 2005-08-24  Iain McCoy  <iain@mccoy.id.au>
 
 	* Mono.Windows.Serialization/ObjectWriter.cs,

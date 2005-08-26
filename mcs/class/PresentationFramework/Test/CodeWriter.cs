@@ -1,5 +1,5 @@
 // 
-// CodeWriter.cs - NUnit Test Cases for the xaml code generator
+// ParserToCode.cs - NUnit Test Cases for the xaml code generator
 // 
 // Author:
 //   Iain McCoy (iain@mccoy.id.au)
@@ -43,7 +43,7 @@ namespace MonoTests.System.Windows.Serialization
 {
 
 [TestFixture]
-public class CodeWriterTest {
+public class ParserToCodeTest {
 	string code;
 	
 	[SetUp]
@@ -308,7 +308,7 @@ public class CodeWriterTest {
 		int i, j;
 		ICodeGenerator generator = (new Microsoft.CSharp.CSharpCodeProvider()).CreateGenerator();
 		string mapping = "<?Mapping ClrNamespace=\"Xaml.TestVocab.Console\" Assembly=\"./TestVocab.dll\" XmlNamespace=\"console\" ?>\n";
-		string w = CodeWriter.Parse(new XmlTextReader(new StringReader(mapping + code)), generator, isPartial);
+		string w = ParserToCode.Parse(new XmlTextReader(new StringReader(mapping + code)), generator, isPartial);
 		string[] actualLines = w.ToString().Split('\n');
 		for (i = 0; i < actualLines.Length; i++) {
 			// set commented-out lines to null

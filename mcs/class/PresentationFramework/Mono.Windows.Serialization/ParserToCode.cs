@@ -1,5 +1,5 @@
 //
-// CodeWriter.cs
+// ParserToCode.cs
 //
 // Author:
 //   Iain McCoy (iain@mccoy.id.au)
@@ -38,7 +38,7 @@ using System.Windows.Serialization;
 using System.Windows;
 
 namespace Mono.Windows.Serialization {
-	public class CodeWriter {
+	public class ParserToCode {
 		TextWriter writer;
 		ICodeGenerator generator;
 		bool isPartial;
@@ -55,7 +55,7 @@ namespace Mono.Windows.Serialization {
 
 		public static string Parse(XmlTextReader reader, ICodeGenerator generator,  bool isPartial)
 		{
-			CodeWriter cw = new CodeWriter(reader, generator, isPartial);
+			ParserToCode cw = new ParserToCode(reader, generator, isPartial);
 			return ((StringWriter)cw.writer).ToString();
 		}
 
@@ -70,7 +70,7 @@ namespace Mono.Windows.Serialization {
 		}
 
 		
-		private CodeWriter(XmlTextReader reader, ICodeGenerator generator, bool isPartial)
+		private ParserToCode(XmlTextReader reader, ICodeGenerator generator, bool isPartial)
 		{
 			init(generator, isPartial);
 			XamlParser p = new XamlParser(reader);
@@ -79,66 +79,66 @@ namespace Mono.Windows.Serialization {
 				n = p.GetNextNode();
 				if (n == null)
 					break;
-				Debug.WriteLine("CodeWriter: INCOMING " + n.GetType());
+				Debug.WriteLine("ParserToCode: INCOMING " + n.GetType());
 				if (n is XamlDocumentStartNode) {
-					Debug.WriteLine("CodeWriter: document begins");
+					Debug.WriteLine("ParserToCode: document begins");
 					// do nothing
 				} else if (n is XamlElementStartNode && n.Depth == 0) {
-					Debug.WriteLine("CodeWriter: element begins as top-level");
+					Debug.WriteLine("ParserToCode: element begins as top-level");
 					CreateTopLevel(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
 				} else if (n is XamlElementStartNode && ((XamlElementStartNode)n).propertyObject) {
-					Debug.WriteLine("CodeWriter: element begins as property value");
+					Debug.WriteLine("ParserToCode: element begins as property value");
 					CreatePropertyObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
 				} else if (n is XamlElementStartNode) {
-					Debug.WriteLine("CodeWriter: element begins");
+					Debug.WriteLine("ParserToCode: element begins");
 					CreateObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
 				} else if (n is XamlPropertyNode && ((XamlPropertyNode)n).PropInfo != null) {
-					Debug.WriteLine("CodeWriter: normal property begins");
+					Debug.WriteLine("ParserToCode: normal property begins");
 					CreateProperty(((XamlPropertyNode)n).PropInfo);
 				} else if (n is XamlPropertyNode && ((XamlPropertyNode)n).DP != null) {
-					Debug.WriteLine("CodeWriter: dependency property begins");
+					Debug.WriteLine("ParserToCode: dependency property begins");
 					DependencyProperty dp = ((XamlPropertyNode)n).DP;
 					Type typeAttachedTo = dp.OwnerType;
 					string propertyName = ((XamlPropertyNode)n).PropertyName;
 					
 					CreateDependencyProperty(typeAttachedTo, propertyName, dp.PropertyType);
 				} else if (n is XamlClrEventNode && !(((XamlClrEventNode)n).EventMember is EventInfo)) {
-					Debug.WriteLine("CodeWriter: delegate property");
+					Debug.WriteLine("ParserToCode: delegate property");
 					CreatePropertyDelegate(((XamlClrEventNode)n).Value, ((PropertyInfo)((XamlClrEventNode)n).EventMember).PropertyType);
 					EndProperty();
 
 
 				} else if (n is XamlClrEventNode) {
-					Debug.WriteLine("CodeWriter: event");
+					Debug.WriteLine("ParserToCode: event");
 					CreateEvent((EventInfo)((XamlClrEventNode)n).EventMember);
 					CreateEventDelegate(((XamlClrEventNode)n).Value, ((EventInfo)((XamlClrEventNode)n).EventMember).EventHandlerType);
 					EndEvent();
 
 				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.Object){
-					Debug.WriteLine("CodeWriter: text for object");
+					Debug.WriteLine("ParserToCode: text for object");
 					CreateObjectText(((XamlTextNode)n).TextContent);
 				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.Property){
-					Debug.WriteLine("CodeWriter: text for property");
+					Debug.WriteLine("ParserToCode: text for property");
 					CreatePropertyText(((XamlTextNode)n).TextContent, ((XamlTextNode)n).finalType);
 					EndProperty();
 				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.DependencyProperty){
-					Debug.WriteLine("CodeWriter: text for dependency property");
+					Debug.WriteLine("ParserToCode: text for dependency property");
 					CreateDependencyPropertyText(((XamlTextNode)n).TextContent, ((XamlTextNode)n).finalType);
 					EndDependencyProperty();
 				} else if (n is XamlPropertyComplexEndNode) {
-					Debug.WriteLine("CodeWriter: end complex property");
-					Debug.WriteLine("CodeWriter: final type is " + ((XamlPropertyComplexEndNode)n).finalType);
+					Debug.WriteLine("ParserToCode: end complex property");
+					Debug.WriteLine("ParserToCode: final type is " + ((XamlPropertyComplexEndNode)n).finalType);
 					EndPropertyObject(((XamlPropertyComplexEndNode)n).finalType);
 					EndProperty();
 				} else if (n is XamlLiteralContentNode) {
-					Debug.WriteLine("CodeWriter: literal content");
+					Debug.WriteLine("ParserToCode: literal content");
 					CreateCode(((XamlLiteralContentNode)n).Content);
 				} else if (n is XamlElementEndNode) {
-					Debug.WriteLine("CodeWriter: end element");
+					Debug.WriteLine("ParserToCode: end element");
 					if (!((XamlElementEndNode)n).propertyObject)
 						EndObject();
 				} else if (n is XamlDocumentEndNode) {
-					Debug.WriteLine("CodeWriter: end document");
+					Debug.WriteLine("ParserToCode: end document");
 					Finish();
 				} else {
 					throw new Exception("Unknown node " + n.GetType());
@@ -410,7 +410,7 @@ namespace Mono.Windows.Serialization {
 			CodeExpression varRef = (CodeExpression)pop();
 			Type sourceType = (Type)pop();
 
-			Debug.WriteLine("CodeWriter: " + destType + "->" + sourceType);
+			Debug.WriteLine("ParserToCode: " + destType + "->" + sourceType);
 
 			
 			CodeExpression expr;
@@ -463,19 +463,19 @@ namespace Mono.Windows.Serialization {
 
 		private void debug()
 		{
-			Debug.WriteLine("CodeWriter: " + new System.Diagnostics.StackTrace());
+			Debug.WriteLine("ParserToCode: " + new System.Diagnostics.StackTrace());
 		}
 		
 		private object pop()
 		{
 			object v = objects[objects.Count - 1];
 			objects.RemoveAt(objects.Count - 1);
-			Debug.WriteLine("CodeWriter: POPPING");
+			Debug.WriteLine("ParserToCode: POPPING");
 			return v;
 		}
 		private void push(object v)
 		{
-			Debug.WriteLine("CodeWriter: PUSHING " + v);
+			Debug.WriteLine("ParserToCode: PUSHING " + v);
 			objects.Add(v);
 		}
 		private object peek()

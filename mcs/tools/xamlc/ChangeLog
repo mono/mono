@@ -1,5 +1,10 @@
 2005-08-26  Iain McCoy  <iain@mccoy.id.au>
 
+	* xamlc.cs: use the newly-renamed ParserToCode class instead of the
+	interim CodeWriter
+
+2005-08-26  Iain McCoy  <iain@mccoy.id.au>
+
 	* demo/runtimetest.cs: use the newly-renamed Parser class instead of
 	the interim ObjectWriter
 

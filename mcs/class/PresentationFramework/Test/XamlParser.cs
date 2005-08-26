@@ -698,7 +698,7 @@ public class XamlParserTest {
 
 	object buildParser(TextReader input)
 	{
-		Type xamlParserType = (Type)typeof(Mono.Windows.Serialization.CodeWriter).GetField("xamlParserType", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
+		Type xamlParserType = (Type)typeof(Mono.Windows.Serialization.ParserToCode).GetField("xamlParserType", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null);
 		Assert.IsTrue(xamlParserType != null, "couldn't get type of parser");
 		object p = Activator.CreateInstance(xamlParserType, new object[] { input});
 		Assert.IsTrue(p != null, "couldn't get instance of parser");
