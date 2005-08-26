@@ -376,8 +376,33 @@ namespace Mono.Data.Tds.Protocol {
 			
 		public override void ExecProc (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
 		{
-			Parameters = parameters;
-			ExecuteQuery (BuildProcedureCall (commandText), timeout, wantResults);
+			if (parameters != null && parameters.Count > 0) {
+				Parameters = parameters;
+				ExecuteQuery (BuildProcedureCall (commandText), timeout, wantResults);
+			} else {
+				ExecRPC (commandText, parameters, timeout, wantResults);
+			}
+		}
+
+		protected override void ExecRPC (string rpcName, TdsMetaParameterCollection parameters, 
+						 int timeout, bool wantResults)
+		{
+			// clean up 
+			InitExec ();
+			
+			Comm.StartPacket (TdsPacketType.RPC);
+
+			Comm.Append ( (short) rpcName.Length);
+			Comm.Append (rpcName);
+			Comm.Append ( (short) 0); //no meta data
+
+			// FIXME : support parameters here
+
+			Comm.SendPacket ();
+			CheckForData (timeout);
+			if (!wantResults) 
+				SkipToEnd ();
+
 		}
 
 		public override void Execute (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)

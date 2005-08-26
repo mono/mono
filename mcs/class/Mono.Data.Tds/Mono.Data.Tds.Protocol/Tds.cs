@@ -189,6 +189,15 @@ namespace Mono.Data.Tds.Protocol {
 
 		#region Public Methods
 
+		internal protected void InitExec () 
+		{
+			// clean up 
+			moreResults = true;
+			doneProc = false;
+			messages.Clear ();
+			outputParameters.Clear ();
+		}
+
 		public void Cancel ()
 		{
 			if (queryInProgress) {
@@ -249,15 +258,34 @@ namespace Mono.Data.Tds.Protocol {
 
 		protected void ExecuteQuery (string sql, int timeout, bool wantResults)
 		{
-			moreResults = true;
-			doneProc = false;
-			messages.Clear ();
-			outputParameters.Clear ();
+			InitExec ();
 
 			Comm.StartPacket (TdsPacketType.Query);
 			Comm.Append (sql);
 			Comm.SendPacket ();
 
+			CheckForData (timeout);
+			if (!wantResults) 
+				SkipToEnd ();
+		}
+
+		protected virtual void ExecRPC (string rpcName, TdsMetaParameterCollection parameters,
+						int timeout, bool wantResults)
+		{
+			Comm.StartPacket (TdsPacketType.DBRPC);
+
+			byte [] rpcNameBytes = Comm.Encoder.GetBytes (rpcName);
+			byte rpcNameLength = (byte) rpcNameBytes.Length;
+			ushort mask = 0x0000;
+			ushort packetLength =  (ushort) (sizeof (byte) + rpcNameLength +
+						sizeof (ushort));
+
+			Comm.Append (packetLength);
+			Comm.Append (rpcNameLength);
+			Comm.Append (rpcNameBytes);
+			Comm.Append (mask);
+			
+			Comm.SendPacket ();
 			CheckForData (timeout);
 			if (!wantResults) 
 				SkipToEnd ();
@@ -1335,10 +1363,7 @@ namespace Mono.Data.Tds.Protocol {
                 protected IAsyncResult BeginExecuteQueryInternal (string sql, bool wantResults, 
                                                           AsyncCallback callback, object state)
                 {
-                        moreResults = true;
-			doneProc = false;
-			messages.Clear ();
-			outputParameters.Clear ();
+			InitExec ();
 
                         TdsAsyncResult ar = new TdsAsyncResult (callback, state);
                         ar.TdsAsyncState.WantResults = wantResults;

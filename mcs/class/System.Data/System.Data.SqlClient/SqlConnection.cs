@@ -501,15 +501,10 @@ namespace System.Data.SqlClient {
 						pool.ReleaseConnection (tds);
 					throw;
 				}
+			} else if (connectionReset) {
+				tds.Reset ();
 			}
 
-			/* Not sure ebout removing these 2 lines.
-			 * The command that gets to the sql server is just
-			 * 'sp_reset_connection' and it fails.
-			 * Either remove them definitely or fix it
-			else if (connectionReset)
-				tds.ExecProc ("sp_reset_connection");
-			*/
                         disposed = false; // reset this, so using () would call Close ().
 			ChangeState (ConnectionState.Open);
 		}

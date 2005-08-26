@@ -42,6 +42,8 @@ namespace Mono.Data.Tds.Protocol {
 		Logon70 = 0x10,
 		SspAuth = 0x11,
 		Logoff = 0x71,
-		Normal = 0x0f
+		Normal = 0x0f,
+		DBRPC = 0xe6,
+		RPC = 0x3
 	}
 }

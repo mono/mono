@@ -1,3 +1,12 @@
+2005-08-26  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Tds70.cs (ExecProc): if no parameters, execute via RPC. parameter
+	support has to be added.
+
+	* Tds.cs (ExecRPC): added virtual method to execute via RPC.
+
+	This fixes bug #68978 by enabling execution of sp_reset_connection.
+
 2005-08-24  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Tds.cs: ProcessColumnDetail (): expression columns don't have

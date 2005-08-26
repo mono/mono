@@ -126,6 +126,7 @@ namespace Mono.Data.Tds.Protocol {
 		}
 
 		internal Encoding Encoder {
+			get { return encoder; }
 			set { encoder = value; }
 		}
 		
