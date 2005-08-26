@@ -1,3 +1,11 @@
+2005-08-26  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (IResolutionScope): New. Empty interface.
+	  (ClassRef): Implement IResolutionScope.
+	  (ClassRef.parent): Change type from ResolutionScope to IResolutionScope.
+	  (ClassRef.AddClass): New. Add nested class.
+	  (ClassRef.AddValueClass): New. Add nested value class.
+
 2005-08-23  Ankit Jain  <jankit@novell.com>
 
 	* PEAPI.cs (MetaData.version): Change from 1.0.3705 to 1.1.4322.

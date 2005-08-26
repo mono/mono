@@ -2172,9 +2172,9 @@ namespace PEAPI
         /// Descriptor for a class/interface declared in another module of THIS 
         /// assembly, or in another assembly.
         /// </summary>
-        public class ClassRef : Class
+        public class ClassRef : Class, IExternRef, IResolutionScope
         {
-    protected ResolutionScope parent;
+    protected IResolutionScope parent;
     ExternClass externClass;
     protected MetaData metaData;
 
@@ -2222,7 +2222,22 @@ namespace PEAPI
       return field;
     }
 
-    internal void SetParent(ResolutionScope par) {
+    public ClassRef AddClass (string nsName, string name)
+    {
+      ClassRef aClass = new ClassRef(nsName,name,metaData);
+      metaData.AddToTable(MDTable.TypeRef,aClass);
+      aClass.SetParent(this);
+      return aClass;
+    }
+
+    public ClassRef AddValueClass (string nsName, string name)
+    {
+      ClassRef aClass = AddClass (nsName, name);
+      aClass.MakeValueClass (ValueClass.ValueType);
+      return aClass;
+    }
+
+    internal void SetParent(IResolutionScope par) {
       parent = par;
     }
 
@@ -2239,7 +2254,7 @@ namespace PEAPI
     }
 
     internal sealed override void Write(FileImage output) {
-      output.WriteCodedIndex(CIx.ResolutionScope,parent);
+      output.WriteCodedIndex(CIx.ResolutionScope,(MetaDataElement) parent);
       output.StringsIndex(nameIx);
       output.StringsIndex(nameSpaceIx);
     }
@@ -6986,11 +7001,16 @@ CalcHeapSizes ();
     public UnmanagedPointer(Type baseType) : base(baseType, 0x0F) { }
 
   }
+
+  public interface IResolutionScope 
+  {
+  }
+  
   /**************************************************************************/  
         /// <summary>
         /// Base class for scopes (extended by Module, ModuleRef, Assembly, AssemblyRef)
         /// </summary>
-  public abstract class ResolutionScope : MetaDataElement
+  public abstract class ResolutionScope : MetaDataElement, IResolutionScope
         {
     protected uint nameIx = 0;
     protected MetaData metaData;
