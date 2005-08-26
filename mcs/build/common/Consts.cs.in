@@ -1,5 +1,5 @@
 //
-// Consts.cs
+// Consts.cs.in
 //
 // Author:
 //   Kornél Pál <http://www.kornelpal.hu/>
@@ -47,6 +47,8 @@ internal
 	//
 	// Use these assembly version constants to make code more maintainable.
 	//
+
+	public const string MonoVersion = "@MONO_VERSION@";
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 	public const string FxVersion = "2.0.0.0";

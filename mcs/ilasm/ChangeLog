@@ -1,3 +1,8 @@
+2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyInfo.cs: Using Consts.MonoVersion instead of MonoVersion.cs.
+	* ilasm.exe.sources: Using Consts.MonoVersion instead of MonoVersion.cs.
+
 2005-08-05  Ankit Jain  <jankit@novell.com>
 
 	* ilasm.exe.sources: Add DeclSecurity.cs to the build.

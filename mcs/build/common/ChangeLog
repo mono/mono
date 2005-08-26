@@ -1,0 +1,5 @@
+2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
+
+	* ChangeLog: Added.
+	* Consts.cs: Renamed to Consts.cs.in.
+	* Consts.cs.in: Added MonoVersion.

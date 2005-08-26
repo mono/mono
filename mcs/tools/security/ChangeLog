@@ -1,3 +1,8 @@
+2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyInfo.cs: Using Consts.MonoVersion instead of MonoVersion.cs.
+	* Makefile: Using Consts.MonoVersion instead of MonoVersion.cs.
+
 2005-06-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: restored version numbers in security tools;

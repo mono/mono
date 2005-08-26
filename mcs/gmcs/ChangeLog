@@ -1,3 +1,8 @@
+2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyInfo.cs: Using Consts.MonoVersion instead of MonoVersion.cs.
+	* gmcs.exe.sources: Using Consts.MonoVersion instead of MonoVersion.cs.
+
 2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* driver.cs : reverting default encoding change as well as mcs.

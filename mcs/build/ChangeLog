@@ -1,3 +1,7 @@
+2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
+
+	* Makefile: Added Consts.cs.in. Removed MonoVersion.cs.
+
 2005-08-23  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make (do-profile-check): Set MONO_PATH to

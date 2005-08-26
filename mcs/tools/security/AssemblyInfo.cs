@@ -18,6 +18,7 @@ using System.Text;
 [assembly: AssemblyCompany("Motus Technologies, Novell")]
 [assembly: AssemblyProduct("Mono Security Tools")]
 [assembly: AssemblyCopyright("Copyright 2002, 2003 Motus Technologies. Copyright 2004-2005 Novell. BSD licensed.")]
+[assembly: AssemblyVersion (Consts.MonoVersion)]
 
 //[assembly: AssemblyConfiguration("")]
 //[assembly: AssemblyTrademark("")]

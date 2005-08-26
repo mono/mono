@@ -15,9 +15,9 @@ PROFILES = \
 
 COMMON_SRCS = \
 	Consts.cs			\
+	Consts.cs.in			\
 	Locale.cs			\
 	MonoTODOAttribute.cs		\
-	MonoVersion.cs			\
 	TestConfiguration.cs
 
 DISTFILES = \
