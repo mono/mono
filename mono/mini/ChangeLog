@@ -1,3 +1,9 @@
+
+Fri Aug 26 11:09:28 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* inssel-arm.brg: apply changes tested by Brian Koropoff
+	<briank@marakicorp.com>.
+
 2005-08-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_emit_prolog): Fix calling of mono_jit_thread_attach () under windows.
