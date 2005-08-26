@@ -1,3 +1,8 @@
+2005-08-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PrintingPermissionTest.cs, PrintingPermissionAttributeTest.cs :
+	  removed BOM. LF as eol.
+
 2005-05-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrintingPermissionTest.cs: Added tests for unification as this 

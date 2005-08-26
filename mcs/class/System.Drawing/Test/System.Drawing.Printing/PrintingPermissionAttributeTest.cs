@@ -1,4 +1,4 @@
-﻿//
+//
 // PrintingPermissionAttributeTest.cs -
 //	NUnit Test Cases for PrintingPermissionAttribute
 //

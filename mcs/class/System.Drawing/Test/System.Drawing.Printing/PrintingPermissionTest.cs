@@ -1,4 +1,4 @@
-﻿//
+//
 // PrintingPermissionTest.cs - NUnit Test Cases for PrintingPermission
 //
 // Author:
