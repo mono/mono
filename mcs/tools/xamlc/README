@@ -46,8 +46,131 @@ Goodbye.
 Bye
 Bye
 
-
-Hopefully you can work out how that is produced from the test.xaml file.
-
 In the same directory, "make run2" should demonstrate the runtime creation of
 objects from xaml files.
+
+How it works
+============
+The compiler's main job is to identify the types to which your xaml file refers
+and use that to ensure that correct types appear in the output xaml file. This 
+is also an issue when performing creation of objects from the xaml file at 
+runtime because of the need to perform conversions between types.
+
+The following examples are given in terms of objects being instantiated directly
+by the parser at runtime; if this is not your chosen approach, then things work
+somewhat differently. The former approach, of calling Parser.LoadXml(), will
+create the object at runtime, while the latter approach of invoking xamlc will
+create a source code file representing the object that would otherwise have
+been created at runtime. The process by which this functions is that the class
+is defined as inheriting the class being represented by the top-level element of
+the xml tree, and every other object mentioned is either a variable local to the
+function or a field of the class.
+
+A xaml file is an Xml file where meaning is derived from processing 
+instructions, text, elements, and attributes. Elements typically indicate class
+instances or properties, attributes refer mainly to properties, and processing
+instructions are used to allow types to be resolved correctly.
+
+In order to facilitate the correct resolution of types, every element must have
+a specified XML namespace. The XML namespace is an arbitrary string that has
+been defined as the identifier for an Assembly-ClrNamespace pair. The 
+definition of these pairs is achieved with processing instructions (PIs). A line
+<?Mapping ClrNamespace="Org.Project" Assembly="myassembly.dll" XmlNamespace="cc" ?>
+
+indicates that every element in the cc namespace corresponds to a type defined 
+in myassembly.dll in the Org.Project namespace. There is substantial similarity
+of purpose between the Mapping PI and C#'s using statement, but the Mapping PI
+is substantially more precise.
+
+Elements representing class instances in XAML files are required to have the
+name of the class to be instantiated as the element name. The top-level element
+must therefore be named according to what kind of object you wish to be produced
+by the compilation process. For example, if "XX" is defined (in the manner
+described above) as corresponding to an assembly where the relevant namespace
+defines a Window class, the xaml document <x:Window xmlns:x="XX" /> will have a
+similar effect to the C# code "new Window()".
+
+If Xaml is to succeed in its goal of simplifying code in the style of that which
+is commonly used to initialize GUIs, it must have a way of adding objects as
+children to other objects. This maps to child elements in Xml - the standard
+case is for a child element of an object element to represent an object which 
+is a child of the aforementioned object. The notion of a child object is defined
+by the System.Windows.Serialization.IAddChild interface, which provides an
+AddChild method for making objects children of the implementor of the interface.
+
+We can therefore see that given a namespace defined similarly to that in the
+previous example containing Window and Button objects that the following
+document:
+
+<x:Window xmlns:x="XX">
+	<Button />
+	<Button />
+</x:Window>
+
+Is equivalent to the following C# code:
+Window w = new Window();
+((System.Windows.IAddChild)w).AddChild(new Button());
+((System.Windows.IAddChild)w).AddChild(new Button());
+
+The same mechanism also allows for the addition of text. The document:
+<x:Button xmlns:x="XX">I Am Button.</x:Button>
+
+Is equivalent to:
+Button b = new Button();
+((System.Windows.IAddChild)b).AddText("I Am Button.");
+
+
+So far, we've seen mechanisms for type resolution, making an element a child of
+another one, and adding text for an element. We still need mechanisms for 
+setting properties and event handlers.
+
+The basic mechanism by which properties can be set is the xml attribute. The 
+name of the attribute corresponds to the name of the property, and the value is
+converted from a string with .net's standard TypeConverter framework and 
+assigned to the property. If our hypothetical Window class has a property 
+Title of type String, we could do something like the following:
+<x:Window Title="The title of a window" xmlns:x="XX" />
+
+To produce code equivalent to
+Window w = new Window();
+w.Title = "The title of a window";
+
+While if Window defined a SecondsToDestruction property of type Int32, code like
+<x:Window SecondsToDestruction="5" xmlns:x="XX" />
+
+To produce code equivalent to:
+Window w = new Window();
+w.SecondsToDestruction = (new Int32Converter()).ConvertFromString("5");
+
+This system means that any property, the type of which has a converter allowing
+instances to be created from strings, can be assigned to in your Xaml code.
+
+While this is sufficiently general for many cases, it is impractical for cases
+where you are unable for whatever reason to express the property value as a
+string. For cases like these the complex property syntax is provided. In order
+to use this syntax, you define an element as a child of the element representing
+the object the property of which you want to set. The elements name should be 
+the name of the class with the property as member, followed by a ., followed by
+the name of the property. Continuing on with our Window example, if the Window
+had a Thumbnail property we might do something like this:
+<x:Window xmlns:x="XX">
+	<Window.Thumbnail>
+		<Button />
+	</Window.Thumbnail>
+</x:Window>
+
+In order to produce code equivalent to:
+Window w = new Window();
+w.Thumbnail = new Button();
+
+This syntax allows arbitrarily complex objects to be used as property values.
+
+The syntax for events follows the syntax for properties. In order to add an
+event handler, all that is neccesary is to add an attribute to the object's
+element with the name of the event as its name and the name of the event handler
+as its value. For example, if the Window has an OnClose event:
+<x:Window OnClose="close_handler" xmlns:x="XX" />
+
+Would correspond to code like:
+Window w = new Window();
+w.OnClose += close_handler;
