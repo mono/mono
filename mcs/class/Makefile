@@ -40,6 +40,7 @@ SUBDIRS = \
 	System.Data			\
 	Mono.Data			\
 	Mono.GetOptions			\
+	System.Web			\
 	System.Web.Services		\
 	System.Runtime.Serialization.Formatters.Soap \
 	System.Runtime.Remoting		\
