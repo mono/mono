@@ -206,7 +206,6 @@ System.Web/ProcessStatus.cs
 System.Web.Profile/ProfileAuthenticationOption.cs
 System.Web.Profile/ProfileInfo.cs
 System.Web/QueueManager.cs
-System.Web/ReusableMemoryStream.cs
 System.Web.Security/ActiveDirectoryConnectionProtection.cs
 System.Web.Security/ActiveDirectoryMembershipProvider.cs
 System.Web.Security/AnonymousIdentificationEventArgs.cs
@@ -908,7 +907,6 @@ System.Web.Util/AltSerialization.cs
 System.Web.Util/DataSourceHelper.cs
 System.Web.Util/DataSourceResolver.cs
 System.Web.Util/ICalls.cs
-System.Web.Util/NativeFileChangeEventHandler.cs
 System.Web.Util/StrUtils.cs
 System.Web.Util/TimeUtil.cs
 System.Web.Util/TransactedCallback.cs
