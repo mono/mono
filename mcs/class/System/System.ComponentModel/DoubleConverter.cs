@@ -43,6 +43,11 @@ namespace System.ComponentModel
 			get { return false; }
 		}
 
+		internal override string ConvertToString (object value, NumberFormatInfo format)
+		{
+			return ((double) value).ToString ("R", format);
+		}
+
 		internal override object ConvertFromString (string value, NumberFormatInfo format)
 		{
 			return double.Parse (value, NumberStyles.Float, format);

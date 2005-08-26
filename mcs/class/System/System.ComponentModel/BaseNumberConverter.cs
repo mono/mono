@@ -79,7 +79,8 @@ namespace System.ComponentModel
 						}
 					}
 
-					return ConvertFromString (text, culture.NumberFormat);
+ 					NumberFormatInfo numberFormatInfo = (NumberFormatInfo) culture.GetFormat(typeof(NumberFormatInfo));
+					return ConvertFromString (text, numberFormatInfo);
 				} catch (Exception e) {
 					// LAMESPEC MS wraps the actual exception in an Exception
 					throw new Exception (value.ToString() + " is not a valid "
@@ -99,11 +100,15 @@ namespace System.ComponentModel
 			if (culture == null)
 				culture = CultureInfo.CurrentCulture;
 
-			if (destinationType == typeof (string) && value.GetType() == InnerType)
-				return Convert.ChangeType (value, typeof (string), culture.NumberFormat);
+			if (destinationType == typeof (string) && value.GetType () == InnerType) {
+				NumberFormatInfo numberFormatInfo = (NumberFormatInfo) culture.GetFormat (typeof (NumberFormatInfo));
+				return ConvertToString (value, numberFormatInfo);
+			}
 
 			return base.ConvertTo (context, culture, value, destinationType);
 		}
+
+		internal abstract string ConvertToString (object value, NumberFormatInfo format);
 
 		internal abstract object ConvertFromString (string value, NumberFormatInfo format);
 

@@ -43,6 +43,11 @@ namespace System.ComponentModel
 			get { return true; }
 		}
 
+		internal override string ConvertToString (object value, NumberFormatInfo format)
+		{
+			return ((long) value).ToString ("G", format);
+		}
+
 		internal override object ConvertFromString (string value, NumberFormatInfo format)
 		{
 			return long.Parse (value, NumberStyles.Integer, format);

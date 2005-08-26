@@ -67,6 +67,11 @@ namespace System.ComponentModel
 			return base.ConvertTo(context, culture, value, destinationType);
 		}
 
+		internal override string ConvertToString (object value, NumberFormatInfo format)
+		{
+			return ((decimal) value).ToString ("G", format);
+		}
+
 		internal override object ConvertFromString (string value, NumberFormatInfo format)
 		{
 			return decimal.Parse (value, NumberStyles.Float, format);

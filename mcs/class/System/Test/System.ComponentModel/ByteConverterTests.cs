@@ -65,6 +65,15 @@ namespace MonoTests.System.ComponentModel
 		}
 
 		[Test]
+		public void ConvertToString ()
+		{
+			CultureInfo culture = new MyCultureInfo ();
+			NumberFormatInfo numberFormatInfo = (NumberFormatInfo) culture.GetFormat (typeof (NumberFormatInfo));
+
+			Assert.AreEqual (culture.NumberFormat.NegativeSign + "5", converter.ConvertToString (null, culture, -5));
+		}
+
+		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_Object ()
 		{
@@ -503,6 +512,27 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
 				Assert.IsNotNull (ex.InnerException, "#3");
 				Assert.AreEqual (typeof (OverflowException), ex.InnerException.GetType (), "#3");
+			}
+		}
+
+		[Serializable]
+		private sealed class MyCultureInfo : CultureInfo
+		{
+			internal MyCultureInfo ()
+				: base ("en-US")
+			{
+			}
+
+			public override object GetFormat (Type formatType)
+			{
+				if (formatType == typeof (NumberFormatInfo)) {
+					NumberFormatInfo nfi = (NumberFormatInfo) ((NumberFormatInfo) base.GetFormat (formatType)).Clone ();
+
+					nfi.NegativeSign = "myNegativeSign";
+					return NumberFormatInfo.ReadOnly (nfi);
+				} else {
+					return base.GetFormat (formatType);
+				}
 			}
 		}
 	}

@@ -1,3 +1,20 @@
+2005-08-26  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* BaseNumberConverter.cs: Use CultureInfo.GetFormat to obtain
+	NumberFormatInfo to match MS.NET. Added ConvertToString abstract 
+	method for conversion to string.
+	* ByteConverter.cs: Implemented ConvertToString.
+	* DecimalConverter.cs: Implemented ConvertToString.
+	* DoubleConverter.cs: Implemented ConvertToString.
+	* Int16Converter.cs: Implemented ConvertToString.
+	* Int32Converter.cs: Implemented ConvertToString.
+	* Int64Converter.cs: Implemented ConvertToString.
+	* SByteConverter.cs: Implemented ConvertToString.
+	* SingleConverter.cs: Implemented ConvertToString.
+	* UInt16Converter.cs: Implemented ConvertToString.
+	* UInt32Converter.cs: Implemented ConvertToString.
+	* UInt64Converter.cs: Implemented ConvertToString.
+
 2005-08-19  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* SingleConverter.cs: Implement conversion from string to match MS.NET.

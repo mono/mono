@@ -64,6 +64,7 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (long.MaxValue, converter.ConvertFrom (null, CultureInfo.InvariantCulture, "0X7FFFFFFFFFFFFFFF"), "#6");
 		}
 
+
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
 		public void ConvertFrom_Object ()
@@ -102,6 +103,25 @@ namespace MonoTests.System.ComponentModel
 				typeof (string)), "#2");
 			Assert.AreEqual (long.MaxValue.ToString (CultureInfo.CurrentCulture),
 				converter.ConvertTo (long.MaxValue, typeof (string)), "#3");
+		}
+
+		[Test]
+		public void ConvertToString ()
+		{
+			CultureInfo culture = new MyCultureInfo ();
+			NumberFormatInfo numberFormatInfo = (NumberFormatInfo) culture.GetFormat (typeof (NumberFormatInfo));
+
+			Assert.AreEqual (numberFormatInfo.NegativeSign + "5", converter.ConvertToString (null, culture, (long) -5), "#1");
+			Assert.AreEqual (culture.NumberFormat.NegativeSign + "5", converter.ConvertToString (null, culture, (int) -5), "#2");
+		}
+
+		[Test]
+		public void ConvertFromString ()
+		{
+			CultureInfo culture = new MyCultureInfo ();
+			NumberFormatInfo numberFormatInfo = (NumberFormatInfo) culture.GetFormat (typeof (NumberFormatInfo));
+
+			Assert.AreEqual (-5, converter.ConvertFrom (null, culture, numberFormatInfo.NegativeSign + "5"));
 		}
 
 		[Test]
@@ -225,6 +245,26 @@ namespace MonoTests.System.ComponentModel
 				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
 			}
 		}
+
+		[Serializable]
+		private sealed class MyCultureInfo : CultureInfo
+		{
+			internal MyCultureInfo ()
+				: base ("en-US")
+			{
+			}
+
+			public override object GetFormat (Type formatType)
+			{
+				if (formatType == typeof (NumberFormatInfo)) {
+					NumberFormatInfo nfi = (NumberFormatInfo) ((NumberFormatInfo) base.GetFormat (formatType)).Clone ();
+
+					nfi.NegativeSign = "myNegativeSign";
+					return NumberFormatInfo.ReadOnly (nfi);
+				} else {
+					return base.GetFormat (formatType);
+				}
+			}
+		}
 	}
 }
-

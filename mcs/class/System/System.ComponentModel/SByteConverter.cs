@@ -44,6 +44,11 @@ namespace System.ComponentModel
 			get { return true; }
 		}
 
+		internal override string ConvertToString (object value, NumberFormatInfo format)
+		{
+			return ((sbyte) value).ToString ("G", format);
+		}
+
 		internal override object ConvertFromString (string value, NumberFormatInfo format)
 		{
 			return sbyte.Parse (value, NumberStyles.Integer, format);

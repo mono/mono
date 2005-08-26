@@ -1,3 +1,18 @@
+2005-08-26 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ByteConverterTests.cs: Added ConvertToString and ConvertFromString
+	tests with culture that has overriden GetFormat for NumberFormatInfo.
+	* DecimalConverterTests.cs: same.
+	* DoubleConverterTests.cs: same.
+	* Int16ConverterTests.cs: same.
+	* Int32ConverterTests.cs: same.
+	* Int64ConverterTests.cs: same.
+	* SByteConverterTests.cs: same.
+	* SingleConverterTests.cs: same.
+	* UInt16ConverterTests.cs: same.
+	* UInt32ConverterTests.cs: same.
+	* UInt64ConverterTests.cs: same.
+
 2005-08-19 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ToolboxItemAttributeTests.cs: Fixed typo in eol-style property.

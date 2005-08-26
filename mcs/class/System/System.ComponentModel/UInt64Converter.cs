@@ -43,6 +43,11 @@ namespace System.ComponentModel
 			get { return true; }
 		}
 
+		internal override string ConvertToString (object value, NumberFormatInfo format)
+		{
+			return ((ulong) value).ToString ("G", format);
+		}
+
 		internal override object ConvertFromString (string value, NumberFormatInfo format)
 		{
 			return ulong.Parse (value, NumberStyles.Integer, format);
