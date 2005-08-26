@@ -82,15 +82,17 @@ namespace System.Drawing
 				return base.ConvertFrom (context, culture, value);
 
 			string [] subs = s.Split (culture.TextInfo.ListSeparator.ToCharArray ());
+
+			Int32Converter converter = new Int32Converter ();
+			int[] numSubs = new int[subs.Length];
+			for (int i = 0; i < numSubs.Length; i++) {
+				numSubs[i] = (int) converter.ConvertFromString (context, culture, subs[i]);
+			}
+
 			if (subs.Length != 4)
 				throw new ArgumentException ("Failed to parse Text(" + s + ") expected text in the format \"x,y,Width,Height.\"");
 
-			int x = Int32.Parse (subs [0], culture);
-			int y = Int32.Parse (subs [1], culture);
-			int width = Int32.Parse (subs [2], culture);
-			int height = Int32.Parse (subs [3], culture);
-
-			return new Rectangle (x, y, width, height);
+			return new Rectangle (numSubs[0], numSubs[1], numSubs[2], numSubs[3]);
 		}
 
 		public override object ConvertTo (ITypeDescriptorContext context,

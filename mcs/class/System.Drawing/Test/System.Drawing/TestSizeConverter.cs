@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 using System.Globalization;
 using System.Threading;
@@ -40,7 +41,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]
-	public class SizeConverterTest : Assertion
+	public class SizeConverterTest
 	{
 		Size sz;
 		Size szneg;
@@ -63,168 +64,168 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestCanConvertFrom ()
 		{
-			Assert ("CCF#1", szconv.CanConvertFrom (typeof (String)));
-			Assert ("CCF#1a", szconv.CanConvertFrom (null, typeof (String)));
-			Assert ("CCF#2", ! szconv.CanConvertFrom (null, typeof (Rectangle)));
-			Assert ("CCF#3", ! szconv.CanConvertFrom (null, typeof (RectangleF)));
-			Assert ("CCF#4", ! szconv.CanConvertFrom (null, typeof (Point)));
-			Assert ("CCF#5", ! szconv.CanConvertFrom (null, typeof (PointF)));
-			Assert ("CCF#6", ! szconv.CanConvertFrom (null, typeof (Size)));
-			Assert ("CCF#7", ! szconv.CanConvertFrom (null, typeof (SizeF)));
-			Assert ("CCF#8", ! szconv.CanConvertFrom (null, typeof (Object)));
-			Assert ("CCF#9", ! szconv.CanConvertFrom (null, typeof (int)));
+			Assert.IsTrue (szconv.CanConvertFrom (typeof (String)), "CCF#1");
+			Assert.IsTrue (szconv.CanConvertFrom (null, typeof (String)), "CCF#2");
+			Assert.IsFalse (szconv.CanConvertFrom (null, typeof (Rectangle)), "CCF#3");
+			Assert.IsFalse (szconv.CanConvertFrom (null, typeof (RectangleF)), "CCF#4");
+			Assert.IsFalse (szconv.CanConvertFrom (null, typeof (Point)), "CCF#5");
+			Assert.IsFalse (szconv.CanConvertFrom (null, typeof (PointF)), "CCF#6");
+			Assert.IsFalse (szconv.CanConvertFrom (null, typeof (Size)), "CCF#7");
+			Assert.IsFalse (szconv.CanConvertFrom (null, typeof (SizeF)), "CCF#8");
+			Assert.IsFalse (szconv.CanConvertFrom (null, typeof (Object)), "CCF#9");
+			Assert.IsFalse (szconv.CanConvertFrom (null, typeof (int)), "CCF#10");
+			Assert.IsTrue (szconv.CanConvertFrom (null, typeof (InstanceDescriptor)), "CCF#11");
 		}
 
 		[Test]
 		public void TestCanConvertTo ()
 		{
-			Assert ("CCT#1", szconv.CanConvertTo (typeof (String)));
-			Assert ("CCT#1a", szconv.CanConvertTo (null, typeof (String)));
-			Assert ("CCT#2", ! szconv.CanConvertTo (null, typeof (Rectangle)));
-			Assert ("CCT#3", ! szconv.CanConvertTo (null, typeof (RectangleF)));
-			Assert ("CCT#4", ! szconv.CanConvertTo (null, typeof (Point)));
-			Assert ("CCT#5", ! szconv.CanConvertTo (null, typeof (PointF)));
-			Assert ("CCT#6", ! szconv.CanConvertTo (null, typeof (Size)));
-			Assert ("CCT#7", ! szconv.CanConvertTo (null, typeof (SizeF)));
-			Assert ("CCT#8", ! szconv.CanConvertTo (null, typeof (Object)));
-			Assert ("CCT#9", ! szconv.CanConvertTo (null, typeof (int)));
+			Assert.IsTrue (szconv.CanConvertTo (typeof (String)), "CCT#1");
+			Assert.IsTrue (szconv.CanConvertTo (null, typeof (String)), "CCT#2");
+			Assert.IsFalse (szconv.CanConvertTo (null, typeof (Rectangle)), "CCT#3");
+			Assert.IsFalse (szconv.CanConvertTo (null, typeof (RectangleF)), "CCT#4");
+			Assert.IsFalse (szconv.CanConvertTo (null, typeof (Point)), "CCT#5");
+			Assert.IsFalse (szconv.CanConvertTo (null, typeof (PointF)), "CCT#6");
+			Assert.IsFalse (szconv.CanConvertTo (null, typeof (Size)), "CCT#7");
+			Assert.IsFalse (szconv.CanConvertTo (null, typeof (SizeF)), "CCT#8");
+			Assert.IsFalse (szconv.CanConvertTo (null, typeof (Object)), "CCT#9");
+			Assert.IsFalse (szconv.CanConvertTo (null, typeof (int)), "CCT#10");
 		}
 
 		[Test]
 		public void TestConvertFrom ()
 		{
-			AssertEquals ("CF#1", sz, (Size) szconv.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								"10" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 20"));
-			AssertEquals ("CF#2", szneg, (Size) szconv.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								"-20" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " -30"));
+			Assert.AreEqual (sz, (Size) szconv.ConvertFrom (null, CultureInfo.InvariantCulture,
+				"10, 20"), "CF#1");
+			Assert.AreEqual (szneg, (Size) szconv.ConvertFrom (null, CultureInfo.InvariantCulture,
+				"-20, -30"), "CF#2");
 
 			try {
 				szconv.ConvertFrom (null, CultureInfo.InvariantCulture, "10");
-				Fail ("CF#3: must throw ArgumentException");
+				Assert.Fail ("CF#3: must throw ArgumentException");
 			} catch (Exception e) {
-				Assert ("CF#3", e is ArgumentException);
+				Assert.IsTrue (e is ArgumentException, "CF#3");
 			}
 
 			try {
 				szconv.ConvertFrom ("10");
-				Fail ("CF#3a: must throw ArgumentException");
+				Assert.Fail ("CF#3a: must throw ArgumentException");
 			} catch (Exception e) {
-				Assert ("CF#3a", e is ArgumentException);
+				Assert.IsTrue (e is ArgumentException, "CF#3a");
 			}
 
 			try {
 				szconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    "1, 1, 1");
-				Fail ("CF#4: must throw ArgumentException");
+					"1, 1, 1");
+				Assert.Fail ("CF#4: must throw ArgumentException");
 			} catch (Exception e) {
-				Assert ("CF#4", e is ArgumentException);
+				Assert.IsTrue (e is ArgumentException, "CF#4");
 			}
 
 			try {
 				szconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    "*1, 1");
-				Fail ("CF#5: must throw Exception");
-			} catch {
+					"*1, 1");
+				Assert.Fail ("CF#5-1: must throw Exception");
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "CF#5-2");
+				Assert.IsNotNull (ex.InnerException, "CF#5-3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "CF#5-4");
 			}
 
 			try {
 				szconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    new Point (10, 10));
-				Fail ("CF#6: must throw NotSupportedException");
+					new Point (10, 10));
+				Assert.Fail ("CF#6: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#6", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#6");
 			}
 
 			try {
 				szconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    new PointF (10, 10));
-				Fail ("CF#7: must throw NotSupportedException");
+					new PointF (10, 10));
+				Assert.Fail ("CF#7: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#7", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#7");
 			}
 
 			try {
 				szconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    new Size (10, 10));
-				Fail ("CF#8: must throw NotSupportedException");
+					new Size (10, 10));
+				Assert.Fail ("CF#8: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#8", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#8");
 			}
 
 			try {
 				szconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    new SizeF (10, 10));
-				Fail ("CF#9: must throw NotSupportedException");
+					new SizeF (10, 10));
+				Assert.Fail ("CF#9: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#9", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#9");
 			}
 
 			try {
 				szconv.ConvertFrom (null, CultureInfo.InvariantCulture, 0x10);
-				Fail ("CF#10: must throw NotSupportedException");
+				Assert.Fail ("CF#10: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#10", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#10");
 			}
 		}
 
 		[Test]
 		public void TestConvertTo ()
 		{
-			AssertEquals ("CT#1", szStrInvariant, (String) szconv.ConvertTo (null,
-								CultureInfo.InvariantCulture,
-								sz, typeof (String)));
-			AssertEquals ("CT#2", sznegStrInvariant, (String) szconv.ConvertTo (null,
-							CultureInfo.InvariantCulture, szneg, 
-							typeof (String)));
+			Assert.AreEqual (szStrInvariant, (String) szconv.ConvertTo (null,
+				CultureInfo.InvariantCulture, sz, typeof (String)), "CT#1");
+			Assert.AreEqual (sznegStrInvariant, (String) szconv.ConvertTo (null,
+				CultureInfo.InvariantCulture, szneg, typeof (String)), "CT#2");
 
 			try {
 				szconv.ConvertTo (null, CultureInfo.InvariantCulture, sz,
-						  typeof (Size));
-				Fail ("CT#3: must throw NotSupportedException");
+					typeof (Size));
+				Assert.Fail ("CT#3: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#3", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#3");
 			}
 
 			try {
 				szconv.ConvertTo (null, CultureInfo.InvariantCulture, sz,
-						  typeof (SizeF));
-				Fail ("CT#4: must throw NotSupportedException");
+					typeof (SizeF));
+				Assert.Fail ("CT#4: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#4", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#4");
 			}
 
 			try {
 				szconv.ConvertTo (null, CultureInfo.InvariantCulture, sz,
-						  typeof (Point));
-				Fail ("CT#5: must throw NotSupportedException");
+					typeof (Point));
+				Assert.Fail ("CT#5: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#5", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#5");
 			}
 
 			try {
 				szconv.ConvertTo (null, CultureInfo.InvariantCulture, sz,
-						  typeof (PointF));
-				Fail ("CT#6: must throw NotSupportedException");
+					typeof (PointF));
+				Assert.Fail ("CT#6: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#6", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#6");
 			}
 
 			try {
 				szconv.ConvertTo (null, CultureInfo.InvariantCulture, sz,
-						  typeof (int));
-				Fail ("CT#7: must throw NotSupportedException");
+					typeof (int));
+				Assert.Fail ("CT#7: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#7", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#7");
 			}
 		}
 
 		[Test]
 		public void TestGetCreateInstanceSupported ()
 		{
-			Assert ("GCIS#1", szconv.GetCreateInstanceSupported ());
-			Assert ("GCIS#2", szconv.GetCreateInstanceSupported (null));
+			Assert.IsTrue (szconv.GetCreateInstanceSupported (), "GCIS#1");
+			Assert.IsTrue (szconv.GetCreateInstanceSupported (null), "GCIS#2");
 		}
 
 		[Test]
@@ -236,13 +237,13 @@ namespace MonoTests.System.Drawing
 			ht.Add ("Width", 10); ht.Add ("Height", 20);
 
 			szInstance = (Size) szconv.CreateInstance (ht);
-			AssertEquals ("CI#1", sz, szInstance);
+			Assert.AreEqual (sz, szInstance, "CI#1");
 
 			ht.Clear ();
 			ht.Add ("Width", -20); ht.Add ("Height", -30);
 
 			szInstance = (Size) szconv.CreateInstance (null, ht);
-			AssertEquals ("CI#2", szneg, szInstance);
+			Assert.AreEqual (szneg, szInstance, "CI#2");
 
 			// Property names are case-sensitive. It should throw 
 			// NullRefExc if any of the property names does not match
@@ -250,17 +251,17 @@ namespace MonoTests.System.Drawing
 			ht.Add ("width", 20); ht.Add ("Height", 30);
 			try {
 				szInstance = (Size) szconv.CreateInstance (null, ht);
-				Fail ("CI#3: must throw NullReferenceException");
+				Assert.Fail ("CI#3: must throw NullReferenceException");
 			} catch (Exception e) {
-				Assert ("CI#3", e is NullReferenceException);
+				Assert.IsTrue (e is NullReferenceException, "CI#3");
 			}
 		}
 
 		[Test]
 		public void TestGetPropertiesSupported ()
 		{
-			Assert ("GPS#1", szconv.GetPropertiesSupported ());
-			Assert ("GPS#2", szconv.GetPropertiesSupported (null));
+			Assert.IsTrue (szconv.GetPropertiesSupported (), "GPS#1");
+			Assert.IsTrue (szconv.GetPropertiesSupported (null), "GPS#2");
 		}
 
 		[Test]
@@ -271,34 +272,34 @@ namespace MonoTests.System.Drawing
 			PropertyDescriptorCollection propsColl;
 
 			propsColl = szconv.GetProperties (sz);
-			AssertEquals ("GP1#1", 2, propsColl.Count);
-			AssertEquals ("GP1#2", sz.Width, propsColl ["Width"].GetValue (sz));
-			AssertEquals ("GP1#3", sz.Height, propsColl ["Height"].GetValue (sz));
+			Assert.AreEqual (2, propsColl.Count, "GP1#1");
+			Assert.AreEqual (sz.Width, propsColl["Width"].GetValue (sz), "GP1#2");
+			Assert.AreEqual (sz.Height, propsColl["Height"].GetValue (sz), "GP1#3");
 
 			propsColl = szconv.GetProperties (null, szneg);
-			AssertEquals ("GP2#1", 2, propsColl.Count);
-			AssertEquals ("GP2#2", szneg.Width, propsColl ["Width"].GetValue (szneg));
-			AssertEquals ("GP2#3", szneg.Height, propsColl ["Height"].GetValue (szneg));
+			Assert.AreEqual (2, propsColl.Count, "GP2#1");
+			Assert.AreEqual (szneg.Width, propsColl["Width"].GetValue (szneg), "GP2#2");
+			Assert.AreEqual (szneg.Height, propsColl["Height"].GetValue (szneg), "GP2#3");
 
 			propsColl = szconv.GetProperties (null, sz, null);
-			AssertEquals ("GP3#1", 3, propsColl.Count);
-			AssertEquals ("GP3#2", sz.Width, propsColl ["Width"].GetValue (sz));
-			AssertEquals ("GP3#3", sz.Height, propsColl ["Height"].GetValue (sz));
-			AssertEquals ("GP3#4", sz.IsEmpty, propsColl ["IsEmpty"].GetValue (sz));
+			Assert.AreEqual (3, propsColl.Count, "GP3#1");
+			Assert.AreEqual (sz.Width, propsColl["Width"].GetValue (sz), "GP3#2");
+			Assert.AreEqual (sz.Height, propsColl["Height"].GetValue (sz), "GP3#3");
+			Assert.AreEqual (sz.IsEmpty, propsColl["IsEmpty"].GetValue (sz), "GP3#4");
 
 			Type type = typeof (Size);
 			attrs = Attribute.GetCustomAttributes (type, true);
 			propsColl = szconv.GetProperties (null, sz, attrs);
-			AssertEquals ("GP3#5", 0, propsColl.Count);
+			Assert.AreEqual (0, propsColl.Count, "GP3#5");
 		}
 
 		[Test]
 		public void ConvertFromInvariantString_string ()
 		{
-			AssertEquals ("CFISS#1", sz, szconv
-				.ConvertFromInvariantString (szStrInvariant));
-			AssertEquals ("CFISS#2", szneg, szconv
-				.ConvertFromInvariantString (sznegStrInvariant));
+			Assert.AreEqual (sz, szconv.ConvertFromInvariantString (szStrInvariant),
+				"CFISS#1");
+			Assert.AreEqual (szneg, szconv.ConvertFromInvariantString (sznegStrInvariant),
+				"CFISS#2");
 		}
 
 		[Test]
@@ -309,11 +310,16 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotDotNet")]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromInvariantString_string_exc_2 ()
 		{
-			szconv.ConvertFromInvariantString ("hello");
+			try {
+				szconv.ConvertFromInvariantString ("hello");
+				Assert.Fail ("#1");
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
+			}
 		}
 
 		[Test]
@@ -336,22 +342,31 @@ namespace MonoTests.System.Drawing
 		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromString_string_exc_1 ()
 		{
-			szconv.ConvertFromString ("1, 2, 3, 4, 5");
+			CultureInfo culture = CultureInfo.CurrentCulture;
+			szconv.ConvertFromString (string.Format(culture,
+				"1{0} 2{0} 3{0} 4{0} 5", culture.TextInfo.ListSeparator));
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotDotNet")]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromString_string_exc_2 ()
 		{
-			szconv.ConvertFromString ("hello");
+			try {
+				szconv.ConvertFromString ("hello");
+				Assert.Fail ("#1");
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
+			}
 		}
 
 		[Test]
 		public void ConvertToInvariantString_string ()
 		{
-			AssertEquals ("CFISS#1", szStrInvariant, szconv.ConvertToInvariantString (sz));
-			AssertEquals ("CFISS#2", sznegStrInvariant, szconv.ConvertToInvariantString (szneg));
+			Assert.AreEqual (szStrInvariant, szconv.ConvertToInvariantString (sz),
+				"CFISS#1");
+			Assert.AreEqual (sznegStrInvariant, szconv.ConvertToInvariantString (szneg),
+				"CFISS#2");
 		}
 
 		[Test]
@@ -373,19 +388,19 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void GetStandardValuesSupported ()
 		{
-			Assert (! szconv.GetStandardValuesSupported ());
+			Assert.IsFalse (szconv.GetStandardValuesSupported ());
 		}
 
 		[Test]
 		public void GetStandardValues ()
 		{
-			AssertEquals (null, szconv.GetStandardValues ());
+			Assert.IsNull (szconv.GetStandardValues ());
 		}
 
 		[Test]
 		public void GetStandardValuesExclusive ()
 		{
-			AssertEquals (false, szconv.GetStandardValuesExclusive ());
+			Assert.IsFalse (szconv.GetStandardValuesExclusive ());
 		}
 
 		private void PerformConvertFromStringTest (CultureInfo culture)
@@ -394,8 +409,10 @@ namespace MonoTests.System.Drawing
 			Thread.CurrentThread.CurrentCulture = culture;
 
 			// perform tests
-			AssertEquals ("CFSS#1-" + culture.Name, sz, szconv.ConvertFromString (CreateSizeString (culture, sz)));
-			AssertEquals ("CFSS#2-" + culture.Name, szneg, szconv.ConvertFromString (CreateSizeString (culture, szneg)));
+			Assert.AreEqual (sz, szconv.ConvertFromString (CreateSizeString (culture, sz)),
+				"CFSS#1-" + culture.Name);
+			Assert.AreEqual (szneg, szconv.ConvertFromString (CreateSizeString (culture, szneg)),
+				"CFSS#2-" + culture.Name);
 		}
 
 		private void PerformConvertToStringTest (CultureInfo culture)
@@ -404,10 +421,10 @@ namespace MonoTests.System.Drawing
 			Thread.CurrentThread.CurrentCulture = culture;
 
 			// perform tests
-			AssertEquals ("CFISS#1-" + culture.Name, CreateSizeString (culture, sz),
-				szconv.ConvertToString (sz));
-			AssertEquals ("CFISS#2-" + culture.Name, CreateSizeString (culture, szneg),
-				szconv.ConvertToString (szneg));
+			Assert.AreEqual (CreateSizeString (culture, sz), szconv.ConvertToString (sz),
+				"CFISS#1-" + culture.Name);
+			Assert.AreEqual (CreateSizeString (culture, szneg), szconv.ConvertToString (szneg),
+				"CFISS#2-" + culture.Name);
 		}
 
 		private static string CreateSizeString (Size size)

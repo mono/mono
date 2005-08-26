@@ -1,5 +1,12 @@
 2005-08-26 Gert Driesen <drieseng@users.sourceforge.net>
 
+	* PointConverter.cs: Use Int32Converter instead of Int32.Parse. First
+	convert string to int before checking number of components.
+	* RectangleConverter.cs: same.
+	* SizeConverter.cs: same.
+
+2005-08-26 Gert Driesen <drieseng@users.sourceforge.net>
+
 	* ColorConverter.cs: Use Int32Converter instead of Int32.Parse to
 	convert individual components. Special case string containing hex
 	prefix. Convert components before checking count.

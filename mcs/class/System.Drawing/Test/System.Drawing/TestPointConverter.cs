@@ -30,6 +30,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 using System.Globalization;
 using System.Threading;
@@ -39,7 +40,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]	
-	public class PointConverterTest : Assertion
+	public class PointConverterTest
 	{
 		Point pt;
 		Point ptneg;
@@ -62,167 +63,166 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestCanConvertFrom ()
 		{
-			Assert ("CCF#1", ptconv.CanConvertFrom (typeof (String)));
-			Assert ("CCF#1a", ptconv.CanConvertFrom (null, typeof (String)));
-			Assert ("CCF#2", ! ptconv.CanConvertFrom (null, typeof (Rectangle)));
-			Assert ("CCF#3", ! ptconv.CanConvertFrom (null, typeof (RectangleF)));
-			Assert ("CCF#4", ! ptconv.CanConvertFrom (null, typeof (Point)));
-			Assert ("CCF#5", ! ptconv.CanConvertFrom (null, typeof (PointF)));
-			Assert ("CCF#6", ! ptconv.CanConvertFrom (null, typeof (Size)));
-			Assert ("CCF#7", ! ptconv.CanConvertFrom (null, typeof (SizeF)));
-			Assert ("CCF#8", ! ptconv.CanConvertFrom (null, typeof (Object)));
-			Assert ("CCF#9", ! ptconv.CanConvertFrom (null, typeof (int)));
+			Assert.IsTrue (ptconv.CanConvertFrom (typeof (String)), "CCF#1");
+			Assert.IsTrue (ptconv.CanConvertFrom (null, typeof (String)), "CCF#2");
+			Assert.IsFalse (ptconv.CanConvertFrom (null, typeof (Rectangle)), "CCF#3");
+			Assert.IsFalse (ptconv.CanConvertFrom (null, typeof (RectangleF)), "CCF#4");
+			Assert.IsFalse (ptconv.CanConvertFrom (null, typeof (Point)), "CCF#5");
+			Assert.IsFalse (ptconv.CanConvertFrom (null, typeof (PointF)), "CCF#6");
+			Assert.IsFalse (ptconv.CanConvertFrom (null, typeof (Size)), "CCF#7");
+			Assert.IsFalse (ptconv.CanConvertFrom (null, typeof (SizeF)), "CCF#8");
+			Assert.IsFalse (ptconv.CanConvertFrom (null, typeof (Object)), "CCF#9");
+			Assert.IsFalse (ptconv.CanConvertFrom (null, typeof (int)), "CCF#10");
+			Assert.IsTrue (ptconv.CanConvertFrom (null, typeof (InstanceDescriptor)), "CCF#11");
 		}
 
 		[Test]
 		public void TestCanConvertTo ()
 		{
-			Assert ("CCT#1", ptconv.CanConvertTo (typeof (String)));
-			Assert ("CCT#1a", ptconv.CanConvertTo (null, typeof (String)));
-			Assert ("CCT#2", ! ptconv.CanConvertTo (null, typeof (Rectangle)));
-			Assert ("CCT#3", ! ptconv.CanConvertTo (null, typeof (RectangleF)));
-			Assert ("CCT#4", ! ptconv.CanConvertTo (null, typeof (Point)));
-			Assert ("CCT#5", ! ptconv.CanConvertTo (null, typeof (PointF)));
-			Assert ("CCT#6", ! ptconv.CanConvertTo (null, typeof (Size)));
-			Assert ("CCT#7", ! ptconv.CanConvertTo (null, typeof (SizeF)));
-			Assert ("CCT#8", ! ptconv.CanConvertTo (null, typeof (Object)));
-			Assert ("CCT#9", ! ptconv.CanConvertTo (null, typeof (int)));
+			Assert.IsTrue (ptconv.CanConvertTo (typeof (String)), "CCT#1");
+			Assert.IsTrue (ptconv.CanConvertTo (null, typeof (String)), "CCT#2");
+			Assert.IsFalse (ptconv.CanConvertTo (null, typeof (Rectangle)), "CCT#3");
+			Assert.IsFalse (ptconv.CanConvertTo (null, typeof (RectangleF)), "CCT#4");
+			Assert.IsFalse (ptconv.CanConvertTo (null, typeof (Point)), "CCT#5");
+			Assert.IsFalse (ptconv.CanConvertTo (null, typeof (PointF)), "CCT#6");
+			Assert.IsFalse (ptconv.CanConvertTo (null, typeof (Size)), "CCT#7");
+			Assert.IsFalse (ptconv.CanConvertTo (null, typeof (SizeF)), "CCT#8");
+			Assert.IsFalse (ptconv.CanConvertTo (null, typeof (Object)), "CCT#9");
+			Assert.IsFalse (ptconv.CanConvertTo (null, typeof (int)), "CCT#10");
 		}
 
 		[Test]
 		public void TestConvertFrom ()
 		{
-			AssertEquals ("CF#1", pt, (Point) ptconv.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								"1" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 2"));
-			AssertEquals ("CF#2", ptneg, (Point) ptconv.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								"-2" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " -3"));
+			Assert.AreEqual (pt, (Point) ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
+								"1, 2"), "CF#1");
+			Assert.AreEqual (ptneg, (Point) ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
+								"-2, -3"), "CF#2");
+
 			try {
 				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture, "1");
-				Fail ("CF#3: must throw ArgumentException");
+				Assert.Fail ("CF#3: must throw ArgumentException");
 			} catch (Exception e) {
-				Assert ("CF#3", e is ArgumentException);
+				Assert.IsTrue (e is ArgumentException, "CF#3");
 			}
 
 			try {
 				ptconv.ConvertFrom ("1");
-				Fail ("CF#3a: must throw ArgumentException");
+				Assert.Fail ("CF#3a: must throw ArgumentException");
 			} catch (Exception e) {
-				Assert ("CF#3a", e is ArgumentException);
+				Assert.IsTrue (e is ArgumentException, "CF#3a");
+			}
+
+			try {
+				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture, "1, 1, 1");
+				Assert.Fail ("CF#4: must throw ArgumentException");
+			} catch (Exception e) {
+				Assert.IsTrue (e is ArgumentException, "CF#4");
+			}
+
+			try {
+				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture, "*1, 1");
+				Assert.Fail ("CF#5-1");
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "CF#5-2");
+				Assert.IsNotNull (ex.InnerException, "CF#5-3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "CF#5-4");
+			}
+
+			try {
+				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture, 
+					new Point (1, 1));
+				Assert.Fail ("CF#6: must throw NotSupportedException");
+			} catch (Exception e) {
+				Assert.IsTrue (e is NotSupportedException, "CF#6");
 			}
 
 			try {
 				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    "1" + CultureInfo.InvariantCulture.TextInfo.ListSeparator +  " 1" +
-						    CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 1");
-				Fail ("CF#4: must throw ArgumentException");
+					new PointF (1, 1));
+				Assert.Fail ("CF#7: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#4", e is ArgumentException);
+				Assert.IsTrue (e is NotSupportedException, "CF#7");
+			}
+
+			try {
+				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture, 
+					new Size (1, 1));
+				Assert.Fail ("CF#8: must throw NotSupportedException");
+			} catch (Exception e) {
+				Assert.IsTrue (e is NotSupportedException, "CF#8");
 			}
 
 			try {
 				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    "*1" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 1");
-				Fail ("CF#5: must throw Exception");
-			} catch {
-			}
-
-			try {
-				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    new Point (1, 1));
-				Fail ("CF#6: must throw NotSupportedException");
+					new SizeF (1, 1));
+				Assert.Fail ("CF#9: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#6", e is NotSupportedException);
-			}
-
-			try {
-				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    new PointF (1, 1));
-				Fail ("CF#7: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert ("CF#7", e is NotSupportedException);
-			}
-
-			try {
-				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    new Size (1, 1));
-				Fail ("CF#8: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert ("CF#8", e is NotSupportedException);
-			}
-
-			try {
-				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture,
-						    new SizeF (1, 1));
-				Fail ("CF#9: must throw NotSupportedException");
-			} catch (Exception e) {
-				Assert ("CF#9", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#9");
 			}
 
 			try {
 				ptconv.ConvertFrom (null, CultureInfo.InvariantCulture, 0x10);
-				Fail ("CF#10: must throw NotSupportedException");
+				Assert.Fail ("CF#10: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#10", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#10");
 			}
 		}
 
 		[Test]
 		public void TestConvertTo ()
 		{
-			AssertEquals ("CT#1", ptStr, (String) ptconv.ConvertTo (null,
-								CultureInfo.InvariantCulture,
-								pt, typeof (String)));
-			AssertEquals ("CT#2", ptnegStr, (String) ptconv.ConvertTo (null,
-								CultureInfo.InvariantCulture,
-								ptneg, typeof (String)));
+			Assert.AreEqual (ptStr, (String) ptconv.ConvertTo (null, CultureInfo.InvariantCulture,
+								pt, typeof (String)), "CT#1");
+			Assert.AreEqual (ptnegStr, (String) ptconv.ConvertTo (null, CultureInfo.InvariantCulture,
+								ptneg, typeof (String)), "CT#2");
+
 			try {
 				ptconv.ConvertTo (null, CultureInfo.InvariantCulture, pt,
 						  typeof (Size));
-				Fail ("CT#3: must throw NotSupportedException");
+				Assert.Fail ("CT#3: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#3", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#3");
 			}
 
 			try {
 				ptconv.ConvertTo (null, CultureInfo.InvariantCulture, pt,
 						  typeof (SizeF));
-				Fail ("CT#4: must throw NotSupportedException");
+				Assert.Fail ("CT#4: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#4", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#4");
 			}
 
 			try {
 				ptconv.ConvertTo (null, CultureInfo.InvariantCulture, pt,
 						  typeof (Point));
-				Fail ("CT#5: must throw NotSupportedException");
+				Assert.Fail ("CT#5: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#5", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#5");
 			}
 
 			try {
 				ptconv.ConvertTo (null, CultureInfo.InvariantCulture, pt,
 						  typeof (PointF));
-				Fail ("CT#6: must throw NotSupportedException");
+				Assert.Fail ("CT#6: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#6", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#6");
 			}
 
 			try {
 				ptconv.ConvertTo (null, CultureInfo.InvariantCulture, pt,
 						  typeof (int));
-				Fail ("CT#7: must throw NotSupportedException");
+				Assert.Fail ("CT#7: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#7", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#7");
 			}
 		}
 
 		[Test]
 		public void TestGetCreateInstanceSupported ()
 		{
-			Assert ("GCIS#1", ptconv.GetCreateInstanceSupported ());
-			Assert ("GCIS#2", ptconv.GetCreateInstanceSupported (null));
+			Assert.IsTrue (ptconv.GetCreateInstanceSupported (), "GCIS#1");
+			Assert.IsTrue (ptconv.GetCreateInstanceSupported (null), "GCIS#2");
 		}
 
 		[Test]
@@ -234,13 +234,13 @@ namespace MonoTests.System.Drawing
 			ht.Add ("X", 1); ht.Add ("Y", 2);
 
 			ptInstance = (Point) ptconv.CreateInstance (ht);
-			AssertEquals ("CI#1", pt, ptInstance);
+			Assert.AreEqual (pt, ptInstance, "CI#1");
 
 			ht.Clear ();
 			ht.Add ("X", -2); ht.Add ("Y", -3);
 
 			ptInstance = (Point) ptconv.CreateInstance (null, ht);
-			AssertEquals ("CI#2", ptneg, ptInstance);
+			Assert.AreEqual (ptneg, ptInstance, "CI#2");
 
 			// Property names are case-sensitive. It should throw 
 			// NullRefExc if any of the property names does not match
@@ -248,17 +248,17 @@ namespace MonoTests.System.Drawing
 			ht.Add ("x", 2); ht.Add ("Y", 3);
 			try {
 				ptInstance = (Point) ptconv.CreateInstance (null, ht);
-				Fail ("CI#3: must throw NullReferenceException");
+				Assert.Fail ("CI#3: must throw NullReferenceException");
 			} catch (Exception e) {
-				Assert ("CI#3", e is NullReferenceException);
+				Assert.IsTrue (e is NullReferenceException, "CI#3");
 			}
 		}
 
 		[Test]
 		public void TestGetPropertiesSupported ()
 		{
-			Assert ("GPS#1", ptconv.GetPropertiesSupported ());
-			Assert ("GPS#2", ptconv.GetPropertiesSupported (null));
+			Assert.IsTrue (ptconv.GetPropertiesSupported (), "GPS#1");
+			Assert.IsTrue (ptconv.GetPropertiesSupported (null), "GPS#2");
 		}
 
 		[Test]
@@ -269,34 +269,32 @@ namespace MonoTests.System.Drawing
 			PropertyDescriptorCollection propsColl;
 
 			propsColl = ptconv.GetProperties (pt);
-			AssertEquals ("GP1#1", 2, propsColl.Count);
-			AssertEquals ("GP1#2", pt.X, propsColl ["X"].GetValue (pt));
-			AssertEquals ("GP1#3", pt.Y, propsColl ["Y"].GetValue (pt));
+			Assert.AreEqual (2, propsColl.Count, "GP1#1");
+			Assert.AreEqual (pt.X, propsColl["X"].GetValue (pt), "GP1#2");
+			Assert.AreEqual (pt.Y, propsColl["Y"].GetValue (pt), "GP1#3");
 
 			propsColl = ptconv.GetProperties (null, ptneg);
-			AssertEquals ("GP2#1", 2, propsColl.Count);
-			AssertEquals ("GP2#2", ptneg.X, propsColl ["X"].GetValue (ptneg));
-			AssertEquals ("GP2#3", ptneg.Y, propsColl ["Y"].GetValue (ptneg));
+			Assert.AreEqual (2, propsColl.Count, "GP2#1");
+			Assert.AreEqual (ptneg.X, propsColl["X"].GetValue (ptneg), "GP2#2");
+			Assert.AreEqual (ptneg.Y, propsColl["Y"].GetValue (ptneg), "GP2#3");
 
 			propsColl = ptconv.GetProperties (null, pt, null);
-			AssertEquals ("GP3#1", 3, propsColl.Count);
-			AssertEquals ("GP3#2", pt.X, propsColl ["X"].GetValue (pt));
-			AssertEquals ("GP3#3", pt.Y, propsColl ["Y"].GetValue (pt));
-			AssertEquals ("GP3#4", pt.IsEmpty, propsColl ["IsEmpty"].GetValue (pt));
+			Assert.AreEqual (3, propsColl.Count, "GP3#1");
+			Assert.AreEqual (pt.X, propsColl["X"].GetValue (pt), "GP3#2");
+			Assert.AreEqual (pt.Y, propsColl["Y"].GetValue (pt), "GP3#3");
+			Assert.AreEqual (pt.IsEmpty, propsColl["IsEmpty"].GetValue (pt), "GP3#4");
 
 			Type type = typeof (Point);
 			attrs = Attribute.GetCustomAttributes (type, true);
 			propsColl = ptconv.GetProperties (null, pt, attrs);
-			AssertEquals ("GP3#5", 0, propsColl.Count);
+			Assert.AreEqual (0, propsColl.Count, "GP3#5");
 		}
 
 		[Test]
 		public void ConvertFromInvariantString_string ()
 		{
-			AssertEquals ("CFISS#1", pt, ptconv
-				.ConvertFromInvariantString ("1" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 2"));
-			AssertEquals ("CFISS#2", ptneg, ptconv
-				.ConvertFromInvariantString ("-2" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " -3"));
+			Assert.AreEqual (pt, ptconv.ConvertFromInvariantString ("1, 2"), "CFISS#1");
+			Assert.AreEqual (ptneg, ptconv.ConvertFromInvariantString ("-2, -3"), "CFISS#2");
 		}
 
 		[Test]
@@ -307,11 +305,16 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotDotNet")]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromInvariantString_string_exc_2 ()
 		{
-			ptconv.ConvertFromInvariantString ("hello");
+			try {
+				ptconv.ConvertFromInvariantString ("hello");
+				Assert.Fail ("#1");
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
+			}
 		}
 
 		[Test]
@@ -338,18 +341,25 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotDotNet")]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromString_string_exc_2 ()
 		{
-			ptconv.ConvertFromString ("hello");
+			try {
+				ptconv.ConvertFromString ("hello");
+				Assert.Fail ("#1");
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
+			}
 		}
 
 		[Test]
 		public void ConvertToInvariantString_string ()
 		{
-			AssertEquals ("CFISS#1", "1" +  CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 2", ptconv.ConvertToInvariantString (pt));
-			AssertEquals ("CFISS#2", "-2" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " -3", ptconv.ConvertToInvariantString (ptneg));
+			Assert.AreEqual ("1" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " 2",
+				ptconv.ConvertToInvariantString (pt), "CFISS#1");
+			Assert.AreEqual ("-2" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + " -3",
+				ptconv.ConvertToInvariantString (ptneg), "CFISS#2");
 		}
 
 		[Test]
@@ -371,19 +381,19 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void GetStandardValuesSupported ()
 		{
-			Assert (! ptconv.GetStandardValuesSupported ());
+			Assert.IsFalse (ptconv.GetStandardValuesSupported ());
 		}
 
 		[Test]
 		public void GetStandardValues ()
 		{
-			AssertEquals (null, ptconv.GetStandardValues ());
+			Assert.IsNull (ptconv.GetStandardValues ());
 		}
 
 		[Test]
 		public void GetStandardValuesExclusive ()
 		{
-			AssertEquals (false, ptconv.GetStandardValuesExclusive ());
+			Assert.IsFalse (ptconv.GetStandardValuesExclusive ());
 		}
 
 		private void PerformConvertFromStringTest (CultureInfo culture)
@@ -392,8 +402,10 @@ namespace MonoTests.System.Drawing
 			Thread.CurrentThread.CurrentCulture = culture;
 
 			// perform tests
-			AssertEquals ("CFSS#1-" + culture.Name, pt, ptconv.ConvertFromString (CreatePointString (culture, pt)));
-			AssertEquals ("CFSS#2-" + culture.Name, ptneg, ptconv.ConvertFromString (CreatePointString (culture, ptneg)));
+			Assert.AreEqual (pt, ptconv.ConvertFromString (CreatePointString (culture, pt)),
+				"CFSS#1-" + culture.Name);
+			Assert.AreEqual (ptneg, ptconv.ConvertFromString (CreatePointString (culture, ptneg)),
+				"CFSS#2-" + culture.Name);
 		}
 
 		private void PerformConvertToStringTest (CultureInfo culture)
@@ -402,10 +414,10 @@ namespace MonoTests.System.Drawing
 			Thread.CurrentThread.CurrentCulture = culture;
 
 			// perform tests
-			AssertEquals ("CFISS#1-" + culture.Name, CreatePointString (culture, pt),
-				ptconv.ConvertToString (pt));
-			AssertEquals ("CFISS#2-" + culture.Name, CreatePointString (culture, ptneg),
-				ptconv.ConvertToString (ptneg));
+			Assert.AreEqual (CreatePointString (culture, pt), ptconv.ConvertToString (pt),
+				"CFISS#1-" + culture.Name);
+			Assert.AreEqual (CreatePointString (culture, ptneg), ptconv.ConvertToString (ptneg),
+				"CFISS#2-" + culture.Name);
 		}
 
 		private static string CreatePointString (Point point)

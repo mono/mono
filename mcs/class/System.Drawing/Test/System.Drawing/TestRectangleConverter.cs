@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 using System.Globalization;
 using System.Threading;
@@ -40,7 +41,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]
-	public class RectangleConverterTest : Assertion
+	public class RectangleConverterTest
 	{
 		Rectangle rect;
 		Rectangle rectneg;
@@ -68,223 +69,217 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void TestCanConvertFrom ()
 		{
-			Assert ("CCF#1", rconv.CanConvertFrom (typeof (String)));
-			Assert ("CCF#1a", rconv.CanConvertFrom (null, typeof (String)));
-			Assert ("CCF#2", ! rconv.CanConvertFrom (null, typeof (Rectangle)));
-			Assert ("CCF#3", ! rconv.CanConvertFrom (null, typeof (RectangleF)));
-			Assert ("CCF#4", ! rconv.CanConvertFrom (null, typeof (Point)));
-			Assert ("CCF#5", ! rconv.CanConvertFrom (null, typeof (PointF)));
-			Assert ("CCF#6", ! rconv.CanConvertFrom (null, typeof (Size)));
-			Assert ("CCF#7", ! rconv.CanConvertFrom (null, typeof (SizeF)));
-			Assert ("CCF#8", ! rconv.CanConvertFrom (null, typeof (Object)));
-			Assert ("CCF#9", ! rconv.CanConvertFrom (null, typeof (int)));
+			Assert.IsTrue (rconv.CanConvertFrom (typeof (String)), "CCF#1");
+			Assert.IsTrue (rconv.CanConvertFrom (null, typeof (String)), "CCF#2");
+			Assert.IsFalse (rconv.CanConvertFrom (null, typeof (Rectangle)), "CCF#3");
+			Assert.IsFalse (rconv.CanConvertFrom (null, typeof (RectangleF)), "CCF#4");
+			Assert.IsFalse (rconv.CanConvertFrom (null, typeof (Point)), "CCF#5");
+			Assert.IsFalse (rconv.CanConvertFrom (null, typeof (PointF)), "CCF#6");
+			Assert.IsFalse (rconv.CanConvertFrom (null, typeof (Size)), "CCF#7");
+			Assert.IsFalse (rconv.CanConvertFrom (null, typeof (SizeF)), "CCF#8");
+			Assert.IsFalse (rconv.CanConvertFrom (null, typeof (Object)), "CCF#9");
+			Assert.IsFalse (rconv.CanConvertFrom (null, typeof (int)), "CCF#10");
+			Assert.IsTrue (rconv.CanConvertFrom (null, typeof (InstanceDescriptor)), "CCF#11");
 		}
 
 		[Test]
 		public void TestCanConvertTo ()
 		{
-			Assert ("CCT#1", rconv.CanConvertTo (typeof (String)));
-			Assert ("CCT#1a", rconv.CanConvertTo (null, typeof (String)));
-			Assert ("CCT#2", ! rconv.CanConvertTo (null, typeof (Rectangle)));
-			Assert ("CCT#3", ! rconv.CanConvertTo (null, typeof (RectangleF)));
-			Assert ("CCT#4", ! rconv.CanConvertTo (null, typeof (Point)));
-			Assert ("CCT#5", ! rconv.CanConvertTo (null, typeof (PointF)));
-			Assert ("CCT#6", ! rconv.CanConvertTo (null, typeof (Size)));
-			Assert ("CCT#7", ! rconv.CanConvertTo (null, typeof (SizeF)));
-			Assert ("CCT#8", ! rconv.CanConvertTo (null, typeof (Object)));
-			Assert ("CCT#9", ! rconv.CanConvertTo (null, typeof (int)));
+			Assert.IsTrue (rconv.CanConvertTo (typeof (String)), "CCT#1");
+			Assert.IsTrue (rconv.CanConvertTo (null, typeof (String)), "CCT#2");
+			Assert.IsFalse (rconv.CanConvertTo (null, typeof (Rectangle)), "CCT#3");
+			Assert.IsFalse (rconv.CanConvertTo (null, typeof (RectangleF)), "CCT#4");
+			Assert.IsFalse (rconv.CanConvertTo (null, typeof (Point)), "CCT#5");
+			Assert.IsFalse (rconv.CanConvertTo (null, typeof (PointF)), "CCT#6");
+			Assert.IsFalse (rconv.CanConvertTo (null, typeof (Size)), "CCT#7");
+			Assert.IsFalse (rconv.CanConvertTo (null, typeof (SizeF)), "CCT#8");
+			Assert.IsFalse (rconv.CanConvertTo (null, typeof (Object)), "CCT#9");
+			Assert.IsFalse (rconv.CanConvertTo (null, typeof (int)), "CCT#10");
 		}
 
 		[Test]
 		public void TestConvertFrom ()
 		{
-			AssertEquals ("CF#1", rect, (Rectangle) rconv.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								"10" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + 
-								" 10" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + 
-								" 20" + CultureInfo.InvariantCulture.TextInfo.ListSeparator +
-								" 30"));
-			AssertEquals ("CF#2", rectneg, (Rectangle) rconv.ConvertFrom (null,
-								CultureInfo.InvariantCulture,
-								"-10" + CultureInfo.InvariantCulture.TextInfo.ListSeparator +
-								" -10" +  CultureInfo.InvariantCulture.TextInfo.ListSeparator +
-								" 20" + CultureInfo.InvariantCulture.TextInfo.ListSeparator + 
-								" 30"));
+			Assert.AreEqual (rect, (Rectangle) rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
+								"10, 10, 20, 30"), "CF#1");
+			Assert.AreEqual (rectneg, (Rectangle) rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
+								"-10, -10, 20, 30"), "CF#2");
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture, 
 						   "10, 10");
-				Fail ("CF#3: must throw ArgumentException");
+				Assert.Fail ("CF#3: must throw ArgumentException");
 			} catch (Exception e) {
-				Assert ("CF#3", e is ArgumentException);
+				Assert.IsTrue (e is ArgumentException, "CF#3");
 			}
 
 			try {
 				rconv.ConvertFrom ("10");
-				Fail ("CF#3a: must throw ArgumentException");
+				Assert.Fail ("CF#3a: must throw ArgumentException");
 			} catch (Exception e) {
-				Assert ("CF#3a", e is ArgumentException);
+				Assert.IsTrue (e is ArgumentException, "CF#3a");
 			}
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   "1, 1, 1, 1, 1");
-				Fail ("CF#4: must throw ArgumentException");
+				Assert.Fail ("CF#4: must throw ArgumentException");
 			} catch (Exception e) {
-				Assert ("CF#4", e is ArgumentException);
+				Assert.IsTrue (e is ArgumentException, "CF#4");
 			}
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   "*1, 1, 1, 1");
-				Fail ("CF#5: must throw Exception");
-			} catch {
+				Assert.Fail ("CF#5: must throw Exception");
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "CF#5-2");
+				Assert.IsNotNull (ex.InnerException, "CF#5-3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "CF#5-4");
 			}
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Rectangle (10, 10, 100, 100));
-				Fail ("CF#6: must throw NotSupportedException");
+				Assert.Fail ("CF#6: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#6", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#6");
 			}
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new RectangleF (10, 10, 100, 100));
-				Fail ("CF#7: must throw NotSupportedException");
+				Assert.Fail ("CF#7: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#7", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#7");
 			}
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Point (10, 10));
-				Fail ("CF#8: must throw NotSupportedException");
+				Assert.Fail ("CF#8: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#8", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#8");
 			}
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new PointF (10, 10));
-				Fail ("CF#9: must throw NotSupportedException");
+				Assert.Fail ("CF#9: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#9", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#9");
 			}
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Size (10, 10));
-				Fail ("CF#10: must throw NotSupportedException");
+				Assert.Fail ("CF#10: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#10", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#10");
 			}
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new SizeF (10, 10));
-				Fail ("CF#11: must throw NotSupportedException");
+				Assert.Fail ("CF#11: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#11", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#11");
 			}
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture,
 						   new Object ());
-				Fail ("CF#12: must throw NotSupportedException");
+				Assert.Fail ("CF#12: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#12", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#12");
 			}
 
 			try {
 				rconv.ConvertFrom (null, CultureInfo.InvariantCulture, 1001);
-				Fail ("CF#13: must throw NotSupportedException");
+				Assert.Fail ("CF#13: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CF#13", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CF#13");
 			}
 		}
 
 		[Test]
 		public void TestConvertTo ()
 		{
-			AssertEquals ("CT#1", rectStrInvariant, (String) rconv.ConvertTo (null,
-								CultureInfo.InvariantCulture,
-								rect, typeof (String)));
-			AssertEquals ("CT#2", rectnegStrInvariant, (String) rconv.ConvertTo (null, 
-								CultureInfo.InvariantCulture,
-								rectneg, typeof (String)));
+			Assert.AreEqual (rectStrInvariant, (String) rconv.ConvertTo (null,
+				CultureInfo.InvariantCulture, rect, typeof (String)), "CT#1");
+			Assert.AreEqual (rectnegStrInvariant, (String) rconv.ConvertTo (null,
+				CultureInfo.InvariantCulture, rectneg, typeof (String)), "CT#2");
 
 			try {
 				rconv.ConvertTo (null, CultureInfo.InvariantCulture, 
 						 rect, typeof (Rectangle));
-				Fail ("CT#3: must throw NotSupportedException");
+				Assert.Fail ("CT#3: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#3", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#3");
 			}
 
 			try {
 				rconv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 rect, typeof (RectangleF));
-				Fail ("CT#4: must throw NotSupportedException");
+				Assert.Fail ("CT#4: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#4", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#4");
 			}
 
 			try {
 				rconv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 rect, typeof (Size));
-				Fail ("CT#5: must throw NotSupportedException");
+				Assert.Fail ("CT#5: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#5", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#5");
 			}
 
 			try {
 				rconv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 rect, typeof (SizeF));
-				Fail ("CT#6: must throw NotSupportedException");
+				Assert.Fail ("CT#6: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#6", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#6");
 			}
 
 			try {
 				rconv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 rect, typeof (Point));
-				Fail ("CT#7: must throw NotSupportedException");
+				Assert.Fail ("CT#7: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#7", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#7");
 			}
 
 			try {
 				rconv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 rect, typeof (PointF));
-				Fail ("CT#8: must throw NotSupportedException");
+				Assert.Fail ("CT#8: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#8", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#8");
 			}
 
 			try {
 				rconv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 rect, typeof (Object));
-				Fail ("CT#9: must throw NotSupportedException");
+				Assert.Fail ("CT#9: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#9", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#9");
 			}
 
 			try {
 				rconv.ConvertTo (null, CultureInfo.InvariantCulture,
 						 rect, typeof (int));
-				Fail ("CT#10: must throw NotSupportedException");
+				Assert.Fail ("CT#10: must throw NotSupportedException");
 			} catch (Exception e) {
-				Assert ("CT#10", e is NotSupportedException);
+				Assert.IsTrue (e is NotSupportedException, "CT#10");
 			}
 		}
 
 		[Test]
 		public void TestGetCreateInstanceSupported ()
 		{
-			Assert ("GCIS#1", rconv.GetCreateInstanceSupported ());
-			Assert ("GCIS#2", rconv.GetCreateInstanceSupported (null));
+			Assert.IsTrue (rconv.GetCreateInstanceSupported (), "GCIS#1");
+			Assert.IsTrue (rconv.GetCreateInstanceSupported (null), "GCIS#2");
 		}
 
 		[Test]
@@ -297,14 +292,14 @@ namespace MonoTests.System.Drawing
 			ht.Add ("Width", 20); ht.Add ("Height", 30);
 
 			rectInstance = (Rectangle) rconv.CreateInstance (ht);
-			AssertEquals ("CI#1", rect, rectInstance);
+			Assert.AreEqual (rect, rectInstance, "CI#1");
 
 			ht.Clear ();
 			ht.Add ("X", -10); ht.Add ("Y", -10);
 			ht.Add ("Width", 20); ht.Add ("Height", 30);
 
 			rectInstance = (Rectangle) rconv.CreateInstance (null, ht);
-			AssertEquals ("CI#2", rectneg, rectInstance);
+			Assert.AreEqual (rectneg, rectInstance, "CI#2");
 
 			// Property names are case-sensitive. It should throw 
 			// NullRefExc if any of the property names does not match
@@ -313,17 +308,17 @@ namespace MonoTests.System.Drawing
 			ht.Add ("Width", 20); ht.Add ("Height", 30);
 			try {
 				rectInstance = (Rectangle) rconv.CreateInstance (null, ht);
-				Fail ("CI#3: must throw NullReferenceException");
+				Assert.Fail ("CI#3: must throw NullReferenceException");
 			} catch (Exception e) {
-				Assert ("CI#3", e is NullReferenceException);
+				Assert.IsTrue (e is NullReferenceException, "CI#3");
 			}
 		}
 
 		[Test]
 		public void TestGetPropertiesSupported ()
 		{
-			Assert ("GPS#1", rconv.GetPropertiesSupported ());
-			Assert ("GPS#2", rconv.GetPropertiesSupported (null));
+			Assert.IsTrue (rconv.GetPropertiesSupported (), "GPS#1");
+			Assert.IsTrue (rconv.GetPropertiesSupported (null), "GPS#2");
 		}
 
 		[Test]
@@ -334,47 +329,47 @@ namespace MonoTests.System.Drawing
 			PropertyDescriptorCollection propsColl;
 
 			propsColl = rconv.GetProperties (rect);
-			AssertEquals ("GP1#1", 4, propsColl.Count);
-			AssertEquals ("GP1#2", rect.X, propsColl ["X"].GetValue (rect));
-			AssertEquals ("GP1#3", rect.Y, propsColl ["Y"].GetValue (rect));
-			AssertEquals ("GP1#4", rect.Width, propsColl ["Width"].GetValue (rect));
-			AssertEquals ("GP1#5", rect.Height, propsColl ["Height"].GetValue (rect));
+			Assert.AreEqual (4, propsColl.Count, "GP1#1");
+			Assert.AreEqual (rect.X, propsColl["X"].GetValue (rect), "GP1#2");
+			Assert.AreEqual (rect.Y, propsColl["Y"].GetValue (rect), "GP1#3");
+			Assert.AreEqual (rect.Width, propsColl["Width"].GetValue (rect), "GP1#4");
+			Assert.AreEqual (rect.Height, propsColl["Height"].GetValue (rect), "GP1#5");
 
 			propsColl = rconv.GetProperties (null, rectneg);
-			AssertEquals ("GP2#1", 4, propsColl.Count);
-			AssertEquals ("GP2#2", rectneg.X, propsColl ["X"].GetValue (rectneg));
-			AssertEquals ("GP2#3", rectneg.Y, propsColl ["Y"].GetValue (rectneg));
-			AssertEquals ("GP2#4", rectneg.Width, propsColl ["Width"].GetValue (rectneg));
-			AssertEquals ("GP2#5", rectneg.Height, propsColl ["Height"].GetValue (rectneg));
+			Assert.AreEqual (4, propsColl.Count, "GP2#1");
+			Assert.AreEqual (rectneg.X, propsColl["X"].GetValue (rectneg), "GP2#2");
+			Assert.AreEqual (rectneg.Y, propsColl["Y"].GetValue (rectneg), "GP2#3");
+			Assert.AreEqual (rectneg.Width, propsColl["Width"].GetValue (rectneg), "GP2#4");
+			Assert.AreEqual (rectneg.Height, propsColl["Height"].GetValue (rectneg), "GP2#5");
 
 			propsColl = rconv.GetProperties (null, rect, null);
-			AssertEquals ("GP3#1", 11, propsColl.Count);
-			AssertEquals ("GP3#2", rect.X, propsColl ["X"].GetValue (rect));
-			AssertEquals ("GP3#3", rect.Y, propsColl ["Y"].GetValue (rect));
-			AssertEquals ("GP3#4", rect.Width, propsColl ["Width"].GetValue (rect));
-			AssertEquals ("GP3#5", rect.Height, propsColl ["Height"].GetValue (rect));
+			Assert.AreEqual (11, propsColl.Count, "GP3#1");
+			Assert.AreEqual (rect.X, propsColl["X"].GetValue (rect), "GP3#2");
+			Assert.AreEqual (rect.Y, propsColl["Y"].GetValue (rect), "GP3#3");
+			Assert.AreEqual (rect.Width, propsColl["Width"].GetValue (rect), "GP3#4");
+			Assert.AreEqual (rect.Height, propsColl["Height"].GetValue (rect), "GP3#5");
 
-			AssertEquals ("GP3#6", rect.Top, propsColl ["Top"].GetValue (rect));
-			AssertEquals ("GP3#7", rect.Bottom, propsColl ["Bottom"].GetValue (rect));
-			AssertEquals ("GP3#8", rect.Left, propsColl ["Left"].GetValue (rect));
-			AssertEquals ("GP3#9", rect.Right, propsColl ["Right"].GetValue (rect));
-			AssertEquals ("GP3#10", rect.Location, propsColl ["Location"].GetValue (rect));
-			AssertEquals ("GP3#11", rect.Size, propsColl ["Size"].GetValue (rect));
-			AssertEquals ("GP3#12", rect.IsEmpty, propsColl ["IsEmpty"].GetValue (rect));
+			Assert.AreEqual (rect.Top, propsColl["Top"].GetValue (rect), "GP3#6");
+			Assert.AreEqual (rect.Bottom, propsColl["Bottom"].GetValue (rect), "GP3#7");
+			Assert.AreEqual (rect.Left, propsColl["Left"].GetValue (rect), "GP3#8");
+			Assert.AreEqual (rect.Right, propsColl["Right"].GetValue (rect), "GP3#9");
+			Assert.AreEqual (rect.Location, propsColl["Location"].GetValue (rect), "GP3#10");
+			Assert.AreEqual (rect.Size, propsColl["Size"].GetValue (rect), "GP3#11");
+			Assert.AreEqual (rect.IsEmpty, propsColl["IsEmpty"].GetValue (rect), "GP3#12");
 
 			Type type = typeof (Rectangle);
 			attrs = Attribute.GetCustomAttributes (type, true);
 			propsColl = rconv.GetProperties (null, rect, attrs);
-			AssertEquals ("GP3#13", 0, propsColl.Count);
+			Assert.AreEqual (0, propsColl.Count, "GP3#13");
 		}
 
 		[Test]
 		public void ConvertFromInvariantString_string ()
 		{
-			AssertEquals ("CFISS#1", rect, rconv
-				.ConvertFromInvariantString (rectStrInvariant));
-			AssertEquals ("CFISS#2", rectneg, rconv
-				.ConvertFromInvariantString (rectnegStrInvariant));
+			Assert.AreEqual (rect, rconv.ConvertFromInvariantString (rectStrInvariant),
+				"CFISS#1");
+			Assert.AreEqual (rectneg, rconv.ConvertFromInvariantString (rectnegStrInvariant),
+				"CFISS#2");
 		}
 
 		[Test]
@@ -385,11 +380,16 @@ namespace MonoTests.System.Drawing
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotDotNet")]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromInvariantString_string_exc_2 ()
 		{
-			rconv.ConvertFromInvariantString ("hello");
+			try {
+				rconv.ConvertFromInvariantString ("hello");
+				Assert.Fail ("#1");
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
+			}
 		}
 
 		[Test]
@@ -412,22 +412,31 @@ namespace MonoTests.System.Drawing
 		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromString_string_exc_1 ()
 		{
-			rconv.ConvertFromString ("1, 2, 3, 4, 5");
+			CultureInfo culture = CultureInfo.CurrentCulture;
+			rconv.ConvertFromString (string.Format(culture,
+				"1{0} 2{0} 3{0} 4{0} 5", culture.TextInfo.ListSeparator));
 		}
 
 		[Test]
-		[NUnit.Framework.Category ("NotDotNet")]
-		[ExpectedException (typeof (ArgumentException))]
 		public void ConvertFromString_string_exc_2 ()
 		{
-			rconv.ConvertFromString ("hello");
+			try {
+				rconv.ConvertFromString ("hello");
+				Assert.Fail ("#1");
+			} catch (Exception ex) {
+				Assert.AreEqual (typeof (Exception), ex.GetType (), "#2");
+				Assert.IsNotNull (ex.InnerException, "#3");
+				Assert.AreEqual (typeof (FormatException), ex.InnerException.GetType (), "#3");
+			}
 		}
 
 		[Test]
 		public void ConvertToInvariantString_string ()
 		{
-			AssertEquals ("CFISS#1", rectStrInvariant, rconv.ConvertToInvariantString (rect));
-			AssertEquals ("CFISS#2", rectnegStrInvariant, rconv.ConvertToInvariantString (rectneg));
+			Assert.AreEqual (rectStrInvariant, rconv.ConvertToInvariantString (rect),
+				"CFISS#1");
+			Assert.AreEqual (rectnegStrInvariant, rconv.ConvertToInvariantString (rectneg),
+				"CFISS#2");
 		}
 
 		[Test]
@@ -448,19 +457,19 @@ namespace MonoTests.System.Drawing
 		[Test]
 		public void GetStandardValuesSupported ()
 		{
-			Assert (! rconv.GetStandardValuesSupported ());
+			Assert.IsFalse (rconv.GetStandardValuesSupported ());
 		}
 
 		[Test]
 		public void GetStandardValues ()
 		{
-			AssertEquals (null, rconv.GetStandardValues ());
+			Assert.IsNull (rconv.GetStandardValues ());
 		}
 
 		[Test]
 		public void GetStandardValuesExclusive ()
 		{
-			AssertEquals (false, rconv.GetStandardValuesExclusive ());
+			Assert.IsFalse (rconv.GetStandardValuesExclusive ());
 		}
 
 		private void PerformConvertFromStringTest (CultureInfo culture)
@@ -469,8 +478,10 @@ namespace MonoTests.System.Drawing
 			Thread.CurrentThread.CurrentCulture = culture;
 
 			// perform tests
-			AssertEquals ("CFSS#1-" + culture.Name, rect, rconv.ConvertFromString (CreateRectangleString (rect)));
-			AssertEquals ("CFSS#2-" + culture.Name, rectneg, rconv.ConvertFromString (CreateRectangleString (rectneg)));
+			Assert.AreEqual (rect, rconv.ConvertFromString (CreateRectangleString (rect)),
+				"CFSS#1-" + culture.Name);
+			Assert.AreEqual (rectneg, rconv.ConvertFromString (CreateRectangleString (rectneg)),
+				"CFSS#2-" + culture.Name);
 		}
 
 		private void PerformConvertToStringTest (CultureInfo culture)
@@ -479,10 +490,10 @@ namespace MonoTests.System.Drawing
 			Thread.CurrentThread.CurrentCulture = culture;
 
 			// perform tests
-			AssertEquals ("CFISS#1-" + culture.Name, CreateRectangleString (rect), 
-				rconv.ConvertToString (rect));
-			AssertEquals ("CFISS#2-" + culture.Name, CreateRectangleString (rectneg), 
-				rconv.ConvertToString (rectneg));
+			Assert.AreEqual (CreateRectangleString (rect), rconv.ConvertToString (rect),
+				"CFISS#1-" + culture.Name);
+			Assert.AreEqual (CreateRectangleString (rectneg), rconv.ConvertToString (rectneg),
+				"CFISS#2-" + culture.Name);
 		}
 
 		private static string CreateRectangleString (Rectangle rectangle)
