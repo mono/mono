@@ -186,8 +186,13 @@ for $class (keys %classes) {
 		$propname = substr($prop, index($prop, " ") + 1);
 		$fieldname = "_$propname";
 
+		if ($propname =~ m/^[a-z]/) {
+			$access = "internal";
+		} else {
+			$access = "public";
+		}
 
-		print X "\n\tpublic $proptype $propname {\n";
+		print X "\n\t$access $proptype $propname {\n";
 		print X "\t\tget { return $fieldname; }\n";
 		print X "\t}\n";
 		print X "\n\tinternal void set$propname($proptype v) {\n";

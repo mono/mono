@@ -134,7 +134,8 @@ public class XamlParserTest {
 		n = getNextNode(p);
 		Assert.IsTrue(n is XamlElementStartNode, "B1");
 		Assert.AreEqual(0, n.Depth, "B2");
-		Assert.AreEqual("nnn", ((XamlElementStartNode)n).name, "B3");
+		string name = (string)n.GetType().GetProperty("name", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(n, null);
+		Assert.AreEqual("nnn", name, "B3");
 		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B4");
 
 		n = getNextNode(p);
@@ -208,7 +209,8 @@ public class XamlParserTest {
 		n = getNextNode(p);
 		Assert.IsTrue(n is XamlElementStartNode, "C1");
 		Assert.AreEqual(1, n.Depth, "C2");
-		Assert.AreEqual("XXX", ((XamlElementStartNode)n).name, "C3");
+		string name = (string)n.GetType().GetProperty("name", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(n, null);
+		Assert.AreEqual("XXX", name, "C3");
 		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter), "C4");
 
 		n = getNextNode(p);
