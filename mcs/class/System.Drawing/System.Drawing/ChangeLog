@@ -1,4 +1,10 @@
-2005-08-25  Marek Safar  <marek.safar@seznam.cz>
+2005-08-26 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ColorConverter.cs: Use Int32Converter instead of Int32.Parse to
+	convert individual components. Special case string containing hex
+	prefix. Convert components before checking count.
+
+2005-08-25 Marek Safar  <marek.safar@seznam.cz>
 
 	* gdipFunctions.cs: GetIconInfo new user32 method.
 	GdipGetDC uses IntPtr.

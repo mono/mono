@@ -89,44 +89,59 @@ namespace System.Drawing
 
 			String numSeparator = culture.TextInfo.ListSeparator;
 
-			int A, R, G, B;
-			if (s.IndexOf (numSeparator) > 0) { // "A, R, G, B" format
+			Int32Converter converter = new Int32Converter ();
+
+			object result = null;
+
+			if (s.IndexOf (numSeparator) == -1) {
+				if ((s.Length == 8 && (s.StartsWith ("0x") || s.StartsWith ("0X"))) 
+					|| (s.Length == 7 && s.StartsWith ("#"))) {
+					result = Color.FromArgb (-16777216 | (int) converter.
+						ConvertFromString (context, culture, s));
+				}
+			}
+
+			if (result == null) {
 				String [] components = s.Split (numSeparator.ToCharArray ());
-				if (components.Length == 3) {
-					A = 255;
-					R = GetNumber (components [0].Trim ());
-					G = GetNumber (components [1].Trim ());
-					B = GetNumber (components [2].Trim ());
+
+				// MS seems to convert the indivual component to int before
+				// checking the number of components
+				int[] numComponents = new int[components.Length];
+				for (int i = 0; i < numComponents.Length; i++) {
+					numComponents[i] = (int) converter.ConvertFrom (context,
+						culture, components[i]);
 				}
-				else if (components.Length == 4) {
-					A = GetNumber (components [0].Trim ());
-					R = GetNumber (components [1].Trim ());
-					G = GetNumber (components [2].Trim ());
-					B = GetNumber (components [3].Trim ());
+
+				switch (components.Length) {
+					case 1:
+						result = Color.FromArgb (numComponents[0]);
+						break;
+					case 3:
+						result = Color.FromArgb (numComponents[0], numComponents[1],
+							numComponents[2]);
+						break;
+					case 4:
+						result = Color.FromArgb (numComponents[0], numComponents[1],
+							numComponents[2], numComponents[3]);
+						break;
+					default:
+						throw new ArgumentException (s + " is not a valid color value.");
 				}
-				else
-					throw new ArgumentException (s + " is not a valid color value.");
 			} 
-			else { // #RRGGBB format
-				int i = GetNumber (s.Trim ());
-				A = (int) (i >> 24) & 0xFF;
-				if (A == 0)
-					A = 255;
-				R = (i >> 16) & 0xFF;
-				G = (i >> 8) & 0xFF;
-				B = i & 0xFF;
-			}
 
-			Color result = Color.FromArgb (A, R, G, B);
-			// Look for a named or system color with those values
-			foreach (Color c in Color.NamedColors.Values) {
-				if (c == result)
-					return c;
-			}
+			if (result != null) {
+				Color resultColor = (Color) result;
 
-			foreach (Color c in Color.SystemColors.Values) {
-				if (c == result)
-					return c;
+				// Look for a named or system color with those values
+				foreach (Color c in Color.NamedColors.Values) {
+					if (c == resultColor)
+						return c;
+				}
+
+				foreach (Color c in Color.SystemColors.Values) {
+					if (c == resultColor)
+						return c;
+				}
 			}
 
 			return result;
@@ -209,33 +224,6 @@ namespace System.Drawing
 		public override bool GetStandardValuesSupported (ITypeDescriptorContext context)
 		{
 			return true;
-		}
-
-		private int GetNumber (String str)
-		{
-			int number;
-			try {
-				if (str.StartsWith ("#0x") || str.StartsWith ("#0X")) 
-					// #0xRRGGBB format. Parse hex string.
-					number = Int32.Parse (str.Substring (3), NumberStyles.HexNumber);
-
-				else if (str [0] == '#') 
-					// #RRGGBB format. Parse hex string.
-					number = Int32.Parse (str.Substring (1), NumberStyles.HexNumber);
-
-				else if (str.StartsWith ("0x") || str.StartsWith ("0X"))
-					// 0xRRGGBB format. Parse hex string.
-					number = Int32.Parse (str.Substring (2), NumberStyles.HexNumber);
-
-				else    // if (str [0] == '-' || str [0] == '+' || Char.IsDigit (str [0]))
-					// [+/-]RRGGBB format. Parse decimal string.
-					number = Int32.Parse (str, NumberStyles.Integer);
-
-				return number;
-			}
-			catch (FormatException e) {
-				throw new ArgumentException ("Can not convert this string to color: "+str, e);
-			}
 		}
 
 		class CompareColors : IComparer
