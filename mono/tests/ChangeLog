@@ -1,3 +1,7 @@
+2005-08-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c (mono_test_empty_struct): Work around bug in intel icc.
+
 2005-08-23  Zoltan Varga  <vargaz@freemail.hu>
 
 	* delegate.cs: Add float and double tests.
