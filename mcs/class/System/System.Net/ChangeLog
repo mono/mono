@@ -1,3 +1,9 @@
+2005-08-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* GlobalProxySelection.cs: remove double lock.
+	* HttpWebRequest.cs: remove double lock in GetServicePoint() and use
+	a private object when locking.
+
 2005-07-15  Miguel de Icaza  <miguel@novell.com>
 
 	* DigestClient.cs: Fix bug #75556, the qop argument must be

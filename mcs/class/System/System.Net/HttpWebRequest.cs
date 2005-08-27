@@ -91,6 +91,7 @@ namespace System.Net
 		int bodyBufferLength;
 		bool getResponseCalled;
 		Exception saved_exc;
+		object locker = new object ();
 #if NET_1_1
 		int maxResponseHeadersLength;
 		static int defaultMaxResponseHeadersLength;
@@ -502,10 +503,7 @@ namespace System.Net
 		
 		internal ServicePoint GetServicePoint ()
 		{
-			if (!hostChanged && servicePoint != null)
-				return servicePoint;
-
-			lock (this) {
+			lock (locker) {
 				if (hostChanged || servicePoint == null) {
 					servicePoint = ServicePointManager.FindServicePoint (actualUri, proxy);
 					hostChanged = false;
@@ -584,7 +582,7 @@ namespace System.Net
 
 			CommonChecks (send);
 			
-			lock (this)
+			lock (locker)
 			{
 				if (asyncWrite != null) {
 					throw new InvalidOperationException ("Cannot re-call start of asynchronous " +
@@ -1047,7 +1045,7 @@ namespace System.Net
 			}
 
 			if (wexc == null && (method == "POST" || method == "PUT")) {
-				lock (this) {
+				lock (locker) {
 					CheckSendError (data);
 					if (saved_exc != null)
 						wexc = (WebException) saved_exc;

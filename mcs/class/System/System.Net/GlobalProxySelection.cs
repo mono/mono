@@ -46,9 +46,6 @@ namespace System.Net
 		
 		static IWebProxy GetProxy ()
 		{
-			if (proxy != null)
-				return proxy;
-
 			lock (lockobj) {
 				if (proxy != null)
 					return proxy;
