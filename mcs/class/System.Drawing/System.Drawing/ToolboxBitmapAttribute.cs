@@ -49,7 +49,6 @@ namespace System.Drawing
 
 		public ToolboxBitmapAttribute (string imageFile)
 		{
-			smallImage = new Bitmap (imageFile);
 		}
 		
 		public ToolboxBitmapAttribute (Type t)
