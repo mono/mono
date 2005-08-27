@@ -1,3 +1,7 @@
+2005-08-27  Kornél Pál  <kornelpal@hotmail.com>
+
+	* HtmlTableCell.cs: Fixed to use Consts.
+
 2005-08-26  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlButton.cs (ValidationGroup): implement.

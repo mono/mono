@@ -1,3 +1,7 @@
+2005-08-27  Kornél Pál  <kornelpal@hotmail.com>
+
+	* System.Web.dll.sources: Fixed 48519 to 48944 regressions.
+
 2005-08-25  Chris Toshok  <toshok@ximian.com>
 
 	* System.Web.dll.sources: add

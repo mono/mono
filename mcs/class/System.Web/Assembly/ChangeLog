@@ -1,3 +1,8 @@
+2005-08-27  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyInfo.cs: Fixed 48519 to 48944 regressions.
+	* Consts.cs: Removed to fix regression.
+
 2005-08-18  Dick Porter  <dick@ximian.com>
 
 	* Consts.cs: Added System.Web and Microsoft.VisualStudio.Web

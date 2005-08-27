@@ -124,7 +124,7 @@ namespace System.Web.UI.HtmlControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #if NET_2_0
 		[MonoTODO ("duplicate internal class for TypeConverter ?")]
-		[TypeConverter ("System.Web.UI.MinimizableAttributeTypeConverter, System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+		[TypeConverter ("System.Web.UI.MinimizableAttributeTypeConverter, " + Consts.AssemblySystem_Web)]
 #endif
 		public bool NoWrap {
 			get { return (Attributes ["nowrap"] == "nowrap"); }
