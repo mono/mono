@@ -1,5 +1,8 @@
 2005-08-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mono-compiler.h (MONO_THREAD_VAR_OFFSET): Disable this when using
+	intel icc.
+
 	* strtod.c (Storeinc): Modify code which is miscompiled by intel icc.
 
 Thu Aug 4 20:06:28 BST 2005 Paolo Molaro <lupus@ximian.com>
