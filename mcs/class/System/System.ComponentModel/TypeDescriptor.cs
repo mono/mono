@@ -41,7 +41,7 @@ namespace System.ComponentModel
 
 public sealed class TypeDescriptor
 {
-	private static readonly string creatingDefaultConverters = "creatingDefaultConverters";
+	private static readonly object creatingDefaultConverters = new object ();
 	private static Hashtable defaultConverters;
 	private static IComNativeDescriptorHandler descriptorHandler;
 	private static Hashtable componentTable = new Hashtable ();
@@ -209,9 +209,6 @@ public sealed class TypeDescriptor
 	private static Hashtable DefaultConverters
 	{
 		get {
-			if (defaultConverters != null)
-				return defaultConverters;
-
 			lock (creatingDefaultConverters) {
 				if (defaultConverters != null)
 					return defaultConverters;

@@ -1,3 +1,7 @@
+2005-08-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TypeDescriptor.cs: remove double lock in DefaultConverter.
+
 2005-08-26  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* BaseNumberConverter.cs: Use CultureInfo.GetFormat to obtain
