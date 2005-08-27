@@ -36,6 +36,7 @@ Npgsql/NpgsqlReadyState.cs
 Npgsql/NpgsqlResultSet.cs
 Npgsql/NpgsqlRow.cs
 Npgsql/NpgsqlRowDescription.cs
+Npgsql/NpgsqlSchema.cs
 Npgsql/NpgsqlStartupPacket.cs
 Npgsql/NpgsqlStartupState.cs
 Npgsql/NpgsqlState.cs
