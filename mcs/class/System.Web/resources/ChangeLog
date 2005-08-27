@@ -1,3 +1,9 @@
+2005-08-27  Chris Toshok  <toshok@ximian.com>
+
+	* webform.js: add copyright blurb, and add implementation of
+	WebForm_AutoFocus, used by the 2.0 HtmlForm properties
+	DefaultButton and DefaultFocus.
+
 2005-08-04  Chris Toshok  <toshok@ximian.com>
 
 	* WebUIValidation.js (CustomValidatorEvaluateIsValid): correct the
