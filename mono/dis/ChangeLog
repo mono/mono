@@ -1,3 +1,8 @@
+2005-08-27  Ankit Jain  <jankit@novell.com>
+
+	* get.c (init_key_table): Add keywords - ldelem, stelem, stloc, stobj,
+	  stsfld, sub, sub.ovf, sub.ovf.un, unbox to the table.
+
 2005-08-25  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_encoded_user_string_or_bytearray): Add len param.
