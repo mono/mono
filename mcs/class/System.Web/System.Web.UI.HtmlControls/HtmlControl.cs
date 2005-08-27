@@ -75,16 +75,16 @@ namespace System.Web.UI.HtmlControls{
 		}
 
 #if NET_2_0
-		[MonoTODO]
+		/* keep these two methods in sync with the
+		 * IAttributeAccessor iface methods below */
 		protected virtual string GetAttribute (string name)
 		{
-			throw new NotImplementedException ();
+			return Attributes[name];
 		}
 
-		[MonoTODO]
 		protected virtual void SetAttribute (string name, string value)
 		{
-			throw new NotImplementedException ();
+			Attributes[name] = value;
 		}
 #endif		
 		

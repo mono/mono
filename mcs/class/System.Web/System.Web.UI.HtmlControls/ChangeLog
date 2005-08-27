@@ -1,5 +1,9 @@
 2005-08-27  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlControl.cs (GetAttribute, SetAttribute): implement.
+
+2005-08-27  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlForm.cs (DefaultButton, DefaultFocus): implement properties.
 	(OnPreRender): figure out (hackishly) if we're uplevel rendering.
 	If we have a default button/focus control set, register webform.js

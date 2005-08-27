@@ -109,7 +109,6 @@ using System.Web.UI;
 [assembly: WebResource ("GridView.js", "text/javascript")]
 [assembly: WebResource ("callback.js", "text/javascript")]
 [assembly: WebResource ("webform.js", "text/javascript")]
-
 #endif
 
 [assembly: WebResource ("WebUIValidation.js", "text/javascript")]
