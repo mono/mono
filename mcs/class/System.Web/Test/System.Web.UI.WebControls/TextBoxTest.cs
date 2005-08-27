@@ -127,6 +127,23 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("VG", copy.ValidationGroup, "A1");
 			Assert.IsTrue (copy.CausesValidation, "A2");
 		}
+
+		[Test]
+		public void ValidationRender ()
+		{
+			/* test to show that the validation settings
+			 * have no effect on downlevel rendering */
+			Poker t = new Poker ();
+
+			t.TrackState();
+
+			t.ValidationGroup = "VG";
+			t.CausesValidation = true;
+			t.TextMode = TextBoxMode.MultiLine;
+
+			string exp = "<textarea rows=\"0\" cols=\"0\"></textarea>";
+			Assert.AreEqual (exp, t.Render ());
+		}
 #endif
 	}
 }

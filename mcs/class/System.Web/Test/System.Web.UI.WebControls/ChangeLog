@@ -1,3 +1,8 @@
+2005-08-27  Chris Toshok  <toshok@ximian.com>
+
+	* TextBoxTest.cs: add 2.0 test to show that validation properties
+	have no effect on downlevel rendering.
+
 2005-08-26  Chris Toshok  <toshok@ximian.com>
 
 	* TextBoxTest.cs: add tests for the 2.0 validation properties, and
