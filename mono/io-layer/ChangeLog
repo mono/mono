@@ -1,3 +1,7 @@
+2005-08-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* atomic.h: Add support for intel icc.
+
 2005-08-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* io-layer.h: Include winbase.h not WinBase.h.
