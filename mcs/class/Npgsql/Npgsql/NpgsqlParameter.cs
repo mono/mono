@@ -74,6 +74,7 @@ namespace Npgsql
         {
             resman = new System.Resources.ResourceManager(this.GetType());
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, CLASSNAME);
+            type_info = NpgsqlTypesHelper.GetNativeTypeInfo(typeof(String));
         }
 
         /// <summary>

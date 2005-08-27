@@ -1,3 +1,18 @@
+
+2005-08-27  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
+    * NpgsqlParameter.cs: Applied patch to fix a NullReferenceException when using Design Time support. Thanks Josh Cooley ( jbnpgsql at tuxinthebox dot net ) for patch.
+    * NpgsqlDataReader.cs: Updated ProviderType metadata from NpgsqlDataReader.GetResultsetSchema to be the string for the type rather than the oid.  Fixed ColumnSize, NumericPrecision, NumericScale, BaseColumnName, AllowDBNull, and IsAliased. Also integrated patch from (rlp at bamafolks dot com), gborg 751. Thanks Josh Cooley (jbnpgsql at tuxinthebox dot net) for patches!
+    * NpgsqlConnection.cs,
+    NpgsqlSchema.cs: Josh Cooley (jbnpgsql at tuxinthebox dot net) improved Metadata support in Npgsql. Added support for the following collections through NpgsqlConnection.GetSchema() methods: MetaDataCollections, Restrictions, Databases, Tables, Columns, Views and Users. Also added support for restrictions when getting info about these collections.
+    * NpgsqlCommand.cs: Fixed problem with stored procedure command texts which finished with a ";". Npgsql was adding incorrectly a trailing "()" when calling this command text.
+    * NpgsqlDbType.cs,
+    NpgsqlTypesHelper.cs: Added refcursor parameter support. Now, refcursors can be passed as arguments for functions. Thanks Jon Asher for heads up and tests.
+    * Npgsql.dll.sources: Added helper metadata class. Thanks Josh Cooley (jbnpgsql at tuxinthebox dot net).
+    * NpgsqlDataAdapter: Updated constructor documentation.
+    * NpgsqlConnectorPool: Fixed concurrent problem when using MinPoolSize > 1. Thanks Josh Cooley (jbnpgsql at tuxinthebox dot net) for patch.
+    * NpgsqlParameterCollection.cs: Fixed problems with parameters with "@" prefix. They weren't correctly recognized. Thanks Pejvan Beigui ( pejvan at gmail dot com) for heads up.
+    * NpgsqlCommandBuilder.cs: Updated documentation.
+    
 2005-08-21  Francisco Figueiredo Jr.  <fxjrlists@yahoo.com.br>
 	* Makefile,
 	Npgsql.dll.resources: Removed references to design time support. This is not needed when compiling Npgsql with mono.

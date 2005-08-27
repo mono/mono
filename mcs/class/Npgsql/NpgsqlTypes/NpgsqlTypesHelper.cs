@@ -167,7 +167,9 @@ namespace NpgsqlTypes
                 // to type mapping has the last entry, in this case, text, as the map value
                 // for DbType.String.
                 
-                NativeTypeMapping.AddType("char", NpgsqlDbType.Char, DbType.String, true, null);
+                NativeTypeMapping.AddType("refcursor", NpgsqlDbType.Refcursor, DbType.String, true, null);
+                
+		NativeTypeMapping.AddType("char", NpgsqlDbType.Char, DbType.String, true, null);
                 
                 NativeTypeMapping.AddType("varchar", NpgsqlDbType.Varchar, DbType.String, true, null);
 
@@ -302,6 +304,9 @@ namespace NpgsqlTypes
                     new NpgsqlBackendTypeInfo(0, "unknown", NpgsqlDbType.Text, DbType.String, typeof(String),
                         null),
 
+                    new NpgsqlBackendTypeInfo(0, "refcursor", NpgsqlDbType.Refcursor, DbType.String, typeof(String),
+                        null),
+			
                     new NpgsqlBackendTypeInfo(0, "char", NpgsqlDbType.Char, DbType.String, typeof(String),
                         null),
 

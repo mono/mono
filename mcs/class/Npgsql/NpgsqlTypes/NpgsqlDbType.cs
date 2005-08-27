@@ -28,6 +28,10 @@ namespace NpgsqlTypes
 {
     public enum NpgsqlDbType
     {
+
+    	// This list used to be ordered. But this ordering would break compiled applications
+	// as enum values would change after each insertion. Now, just append new types.
+	
         Bigint,
         Boolean,
         Box,
@@ -49,7 +53,8 @@ namespace NpgsqlTypes
         Text,
         Time,
         Timestamp,
-        Varchar
+        Varchar,
+        Refcursor
 
     }
 

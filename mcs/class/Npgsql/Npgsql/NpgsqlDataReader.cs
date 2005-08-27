@@ -26,6 +26,7 @@
 using System;
 using System.Data;
 using System.Collections;
+using System.Text;
 
 using NpgsqlTypes;
 
@@ -646,18 +647,10 @@ namespace Npgsql
 
         private DataTable GetResultsetSchema()
         {
-
             NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "GetResultsetSchema");
             DataTable result = null;
 
-
             NpgsqlRowDescription rd = _currentResultset.RowDescription;
-
-
-            ArrayList list = null;
-
-            list = GetPrimaryKeys(GetTableNameFromQuery());
-
 
             Int16 numFields = rd.NumFields;
             if(numFields > 0)
@@ -677,7 +670,7 @@ namespace Npgsql
                 result.Columns.Add ("BaseTableName", typeof (string));
                 result.Columns.Add ("DataType", typeof(Type));
                 result.Columns.Add ("AllowDBNull", typeof (bool));
-                result.Columns.Add ("ProviderType", typeof (int));
+                result.Columns.Add ("ProviderType", typeof (string));
                 result.Columns.Add ("IsAliased", typeof (bool));
                 result.Columns.Add ("IsExpression", typeof (bool));
                 result.Columns.Add ("IsIdentity", typeof (bool));
@@ -687,50 +680,148 @@ namespace Npgsql
                 result.Columns.Add ("IsLong", typeof (bool));
                 result.Columns.Add ("IsReadOnly", typeof (bool));
 
-                DataRow row;
-
-
-
-
-
-                for (Int16 i = 0; i < numFields; i++)
+                if (_connection.Connector.BackendProtocolVersion == ProtocolVersion.Version2)
                 {
-                    row = result.NewRow();
-
-                    row["ColumnName"] = GetName(i);
-                    row["ColumnOrdinal"] = i + 1;
-                    row["ColumnSize"] = (int) rd[i].type_size;
-                    row["NumericPrecision"] = 0;
-                    row["NumericScale"] = 0;
-                    row["IsUnique"] = false;
-                    row["IsKey"] = IsKey(GetName(i), list);
-                    row["BaseCatalogName"] = "";
-                    row["BaseColumnName"] = GetName(i);
-                    row["BaseSchemaName"] = "";
-                    row["BaseTableName"] = "";
-                    row["DataType"] = GetFieldType(i);
-                    row["AllowDBNull"] = IsNullable(i);
-                    row["ProviderType"] = (int) rd[i].type_oid;
-                    row["IsAliased"] = false;
-                    row["IsExpression"] = false;
-                    row["IsIdentity"] = false;
-                    row["IsAutoIncrement"] = false;
-                    row["IsRowVersion"] = false;
-                    row["IsHidden"] = false;
-                    row["IsLong"] = false;
-                    row["IsReadOnly"] = false;
-
-                    result.Rows.Add(row);
+                    FillSchemaTable_v2(result);
                 }
-
-
-
-
-
+                else if (_connection.Connector.BackendProtocolVersion == ProtocolVersion.Version3)
+                {
+                    FillSchemaTable_v3(result);
+                }
             }
 
             return result;
 
+        }
+
+        private void FillSchemaTable_v2(DataTable schema)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "FillSchemaTable_v2");
+            NpgsqlRowDescription rd = _currentResultset.RowDescription;
+            ArrayList keyList = GetPrimaryKeys(GetTableNameFromQuery());
+            DataRow row;
+
+            for (Int16 i = 0; i < rd.NumFields; i++)
+            {
+                row = schema.NewRow();
+
+                row["ColumnName"] = GetName(i);
+                row["ColumnOrdinal"] = i + 1;
+                if (rd[i].type_modifier != -1 && (rd[i].type_info.Name == "varchar" || rd[i].type_info.Name == "bpchar"))
+                    row["ColumnSize"] = rd[i].type_modifier - 4;
+                else if (rd[i].type_modifier != -1 && (rd[i].type_info.Name == "bit" || rd[i].type_info.Name == "varbit"))
+                    row["ColumnSize"] = rd[i].type_modifier;
+                else
+                    row["ColumnSize"] = (int) rd[i].type_size;
+                if (rd[i].type_modifier != -1 && rd[i].type_info.Name == "numeric")
+                {
+                    row["NumericPrecision"] = ((rd[i].type_modifier-4)>>16)&ushort.MaxValue;
+                    row["NumericScale"] = (rd[i].type_modifier-4)&ushort.MaxValue;
+                }
+                else
+                {
+                    row["NumericPrecision"] = 0;
+                    row["NumericScale"] = 0;
+                }
+                row["IsUnique"] = false;
+                row["IsKey"] = IsKey(GetName(i), keyList);
+                row["BaseCatalogName"] = "";
+                row["BaseSchemaName"] = "";
+                row["BaseTableName"] = "";
+                row["BaseColumnName"] = GetName(i);
+                row["DataType"] = GetFieldType(i);
+                row["AllowDBNull"] = IsNullable(null, i);
+                row["ProviderType"] = rd[i].type_info.Name;
+                row["IsAliased"] = false;
+                row["IsExpression"] = false;
+                row["IsIdentity"] = false;
+                row["IsAutoIncrement"] = false;
+                row["IsRowVersion"] = false;
+                row["IsHidden"] = false;
+                row["IsLong"] = false;
+                row["IsReadOnly"] = false;
+
+                schema.Rows.Add(row);
+            }
+        }
+
+        private void FillSchemaTable_v3(DataTable schema)
+        {
+            NpgsqlEventLog.LogMethodEnter(LogLevel.Debug, CLASSNAME, "FillSchemaTable_v3");
+            NpgsqlRowDescription rd = _currentResultset.RowDescription;
+
+            ArrayList tableOids = new ArrayList();
+            for(short i=0; i<rd.NumFields; ++i)
+            {
+                if (rd[i].table_oid != 0 && !tableOids.Contains(rd[i].table_oid))
+                    tableOids.Add(rd[i].table_oid);
+            }
+            Hashtable oidTableLookup = GetTablesFromOids(tableOids);
+
+            ArrayList keyList = null;
+            if (oidTableLookup != null && oidTableLookup.Count == 1)
+            {
+                // only 1, but we can't index into the Hashtable
+                foreach(DictionaryEntry entry in oidTableLookup)
+                {
+                    GetPrimaryKeys(((object[])entry.Value)[Tables.table_name].ToString());
+                }
+            }
+
+            Hashtable columnLookup = GetColumns();
+
+            DataRow row;
+            for (Int16 i = 0; i < rd.NumFields; i++)
+            {
+                row = schema.NewRow();
+
+                row["ColumnName"] = GetName(i);
+                row["ColumnOrdinal"] = i + 1;
+                if (rd[i].type_modifier != -1 && (rd[i].type_info.Name == "varchar" || rd[i].type_info.Name == "bpchar"))
+                    row["ColumnSize"] = rd[i].type_modifier - 4;
+                else if (rd[i].type_modifier != -1 && (rd[i].type_info.Name == "bit" || rd[i].type_info.Name == "varbit"))
+                    row["ColumnSize"] = rd[i].type_modifier;
+                else
+                    row["ColumnSize"] = (int) rd[i].type_size;
+                if (rd[i].type_modifier != -1 && rd[i].type_info.Name == "numeric")
+                {
+                    row["NumericPrecision"] = ((rd[i].type_modifier-4)>>16)&ushort.MaxValue;
+                    row["NumericScale"] = (rd[i].type_modifier-4)&ushort.MaxValue;
+                }
+                else
+                {
+                    row["NumericPrecision"] = 0;
+                    row["NumericScale"] = 0;
+                }
+                row["IsUnique"] = false;
+                row["IsKey"] = IsKey(GetName(i), keyList);
+                if (rd[i].table_oid != 0 && oidTableLookup != null)
+                {
+                    row["BaseCatalogName"] = ((object[])oidTableLookup[rd[i].table_oid])[Tables.table_catalog];
+                    row["BaseSchemaName"] = ((object[])oidTableLookup[rd[i].table_oid])[Tables.table_schema];
+                    row["BaseTableName"] = ((object[])oidTableLookup[rd[i].table_oid])[Tables.table_name];
+                }
+                else
+                {
+                    row["BaseCatalogName"] = "";
+                    row["BaseSchemaName"] = "";
+                    row["BaseTableName"] = "";
+                }
+                row["BaseColumnName"] = GetBaseColumnName(columnLookup, i);
+                row["DataType"] = GetFieldType(i);
+                row["AllowDBNull"] = IsNullable(columnLookup, i);
+                row["ProviderType"] = rd[i].type_info.Name;
+                row["IsAliased"] = string.CompareOrdinal((string)row["ColumnName"], (string)row["BaseColumnName"]) != 0;
+                row["IsExpression"] = false;
+                row["IsIdentity"] = false;
+                row["IsAutoIncrement"] = false;
+                row["IsRowVersion"] = false;
+                row["IsHidden"] = false;
+                row["IsLong"] = false;
+                row["IsReadOnly"] = false;
+
+                schema.Rows.Add(row);
+            }
         }
 
 
@@ -779,9 +870,30 @@ namespace Npgsql
 
 
 
-        private Boolean IsNullable(Int32 FieldIndex)
+        private Boolean IsNullable(Hashtable columnLookup, Int32 FieldIndex)
         {
-            return true;
+            if (columnLookup == null || _currentResultset.RowDescription[FieldIndex].table_oid == 0)
+                return true;
+
+            string lookupKey = _currentResultset.RowDescription[FieldIndex].table_oid.ToString() + "," + _currentResultset.RowDescription[FieldIndex].column_attribute_number;
+            object[] row = (object[])columnLookup[lookupKey];
+            if (row != null)
+                return !(bool)row[Columns.column_notnull];
+            else
+                return true;
+        }
+
+        private string GetBaseColumnName(Hashtable columnLookup, Int32 FieldIndex)
+        {
+            if (columnLookup == null || _currentResultset.RowDescription[FieldIndex].table_oid == 0)
+                return GetName(FieldIndex);
+            
+            string lookupKey = _currentResultset.RowDescription[FieldIndex].table_oid.ToString() + "," + _currentResultset.RowDescription[FieldIndex].column_attribute_number;
+            object[] row = (object[])columnLookup[lookupKey];
+            if (row != null)
+                return (string)row[Columns.column_name];
+            else
+                return GetName(FieldIndex);
         }
 
 
@@ -808,6 +920,100 @@ namespace Npgsql
 
             return tableName;
 
+        }
+
+        private struct Tables
+        {
+            public const int table_catalog = 0;
+            public const int table_schema = 1;
+            public const int table_name = 2;
+            public const int table_id = 3;
+        }
+
+        private Hashtable GetTablesFromOids(ArrayList oids)
+        {
+            if (oids.Count == 0)
+                return null;
+
+            StringBuilder sb = new StringBuilder();
+
+            // the column index is used to find data.
+            // any changes to the order of the columns needs to be reflected in struct Tables
+            sb.Append("SELECT current_database() AS table_catalog, nc.nspname AS table_schema, c.relname AS table_name, c.oid as table_id");
+            sb.Append(" FROM pg_namespace nc, pg_class c WHERE c.relnamespace = nc.oid AND (c.relkind = 'r' OR c.relkind = 'v') AND c.oid IN (");
+            bool first = true;
+            foreach(int oid in oids)
+            {
+                if (!first)
+                    sb.Append(',');
+                sb.Append(oid);
+                first = false;
+            }
+            sb.Append(')');
+
+            using (NpgsqlConnection connection = _connection.Clone())
+            using (NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), connection))
+            using (NpgsqlDataReader reader = command.ExecuteReader())
+            {
+                Hashtable oidLookup = new Hashtable();
+                int columnCount = reader.FieldCount;
+                while (reader.Read())
+                {
+                    object[] values = new object[columnCount];
+                    reader.GetValues(values);
+                    oidLookup[Convert.ToInt32(reader[Tables.table_id])] = values;
+                }
+                return oidLookup;
+            }
+        }
+
+        private struct Columns
+        {
+            public const int column_name = 0;
+            public const int column_notnull = 1;
+            public const int table_id = 2;
+            public const int column_num = 3;
+        }
+
+        private Hashtable GetColumns()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // the column index is used to find data.
+            // any changes to the order of the columns needs to be reflected in struct Columns
+            sb.Append("SELECT a.attname AS column_name, a.attnotnull AS column_notnull, a.attrelid AS table_id, a.attnum AS column_num");
+            sb.Append(" from pg_attribute a WHERE a.attnum > 0 AND (");
+            bool first = true;
+            for(int i=0; i<_currentResultset.RowDescription.NumFields; ++i)
+            {
+                if (_currentResultset.RowDescription[i].table_oid != 0)
+                {
+                    if (!first)
+                        sb.Append(" OR ");
+                    sb.AppendFormat("(a.attrelid={0} AND a.attnum={1})", _currentResultset.RowDescription[i].table_oid, _currentResultset.RowDescription[i].column_attribute_number);
+                    first = false;
+                }
+            }
+            sb.Append(')');
+
+            // if the loop ended without setting first to false, then there will be no results from the query
+            if (first)
+                return null;
+
+            using (NpgsqlConnection connection = _connection.Clone())
+            using (NpgsqlCommand command = new NpgsqlCommand(sb.ToString(), connection))
+            using (NpgsqlDataReader reader = command.ExecuteReader())
+            {
+                Hashtable columnLookup = new Hashtable();
+                int columnCount = reader.FieldCount;
+                while(reader.Read())
+                {
+                    object[] values = new object[columnCount];
+                    reader.GetValues(values);
+                    columnLookup[reader[Columns.table_id].ToString() + "," + reader[Columns.column_num].ToString()] = values;
+                }
+                return columnLookup;
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator ()

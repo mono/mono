@@ -255,7 +255,7 @@ namespace Npgsql
 
             foreach(NpgsqlParameter parameter in this)
             {
-                if (parameter.ParameterName == parameterName)
+                if (parameter.ParameterName.Remove(0, 1) == parameterName.Remove(0, 1))
                     return index;
                 index++;
             }

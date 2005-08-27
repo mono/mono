@@ -780,8 +780,8 @@ namespace Npgsql
 
                 functionReturnsRefcursor = CheckFunctionReturn("refcursor");
 
-                // Check if just procedure name was passed. If so, does not replace parameter names and just pass parameter values in order they were added in parameters collection.
-                if (!result.Trim().EndsWith(")"))
+                // Check if just procedure name was passed. If so, does not replace parameter names and just pass parameter values in order they were added in parameters collection. Also check if command text finishes in a ";" which would make Npgsql incorrectly append a "()" when executing this command text.
+                if ((!result.Trim().EndsWith(")")) && (!result.Trim().EndsWith(";")))
                 {
                     addProcedureParenthesis = true;
                     result += "(";

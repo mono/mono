@@ -46,6 +46,9 @@ namespace Npgsql
     public delegate void NpgsqlRowUpdatingEventHandler(Object sender, NpgsqlRowUpdatingEventArgs e);
 
 
+    /// <summary>
+    /// This class represents an adapter from many commands: select, update, insert and delete to fill <see cref="System.Data.DataSet">Datasets.</see>
+    /// </summary>
     public sealed class NpgsqlDataAdapter : DbDataAdapter, IDbDataAdapter
     {
 

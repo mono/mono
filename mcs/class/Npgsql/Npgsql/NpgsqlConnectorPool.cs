@@ -312,7 +312,7 @@ namespace Npgsql
                     Spare.CertificateValidationCallback -= Connection.CertificateValidationCallbackDelegate;
                     Spare.PrivateKeySelectionCallback -= Connection.PrivateKeySelectionCallbackDelegate;
 
-                    Queue.Enqueue(Connector);
+                    Queue.Enqueue(Spare);
                 }
             }
 

@@ -725,81 +725,59 @@ namespace Npgsql
         
         
         /// <summary>
-        /// This method returns the collections we support.
+        /// Returns the supported collections
         /// <summary>
         public DataTable GetSchema()
         {
-            
-            
-            DataTable result = new DataTable("Schema");
-            
-            result.Columns.Add ("CollectionName", typeof (string));
-            result.Columns.Add ("NumberOfRestrictions", typeof (int));
-            
-            
-            DataRow row = result.NewRow();
-            row["CollectionName"] = "Databases";
-            row["NumberOfRestrictions"] = 0;
-            
-            result.Rows.Add(row);
-            
-            return result;
+            return NpgsqlSchema.GetMetaDataCollections();
+        }
+
+        /// <summary>
+        /// Returns the schema collection specified by the collection name.
+        /// </summary>
+        /// <param name="collectionName">The collection name.</param>
+        /// <returns>The collection specified.</returns>
+        public DataTable GetSchema(string collectionName)
+        {
+            return GetSchema(collectionName, null);
         }
         
         /// <summary>
-        /// This method returns the collection data.
-        ///
-        /// <summary>
-        public DataTable GetSchema(String CollectionName)
+        /// Returns the schema collection specified by the collection name filtered by the restrictions.
+        /// </summary>
+        /// <param name="collectionName">The collection name.</param>
+        /// <param name="restrictions">
+        /// The restriction values to filter the results.  A description of the restrictions is contained
+        /// in the Restrictions collection.
+        /// </param>
+        /// <returns>The collection specified.</returns>
+        public DataTable GetSchema(string collectionName, string[] restrictions)
         {
-           
-            if (CollectionName == "Databases")
-                return GetSchemaDatabases();
-            
-            throw new NotSupportedException(); 
-            
-        }
-        
-        
-        private DataTable GetSchemaDatabases()
-        {
-            NpgsqlConnection conn = new NpgsqlConnection(this.ConnectionString);
-            conn.Open();
-            NpgsqlCommand c = new NpgsqlCommand("SELECT d.datname as \"Name\", u.usename as \"Owner\", pg_catalog.pg_encoding_to_char(d.encoding) as \"Encoding\" FROM pg_catalog.pg_database d LEFT JOIN pg_catalog.pg_user u ON d.datdba = u.usesysid ORDER BY 1;", conn);
-            
-            
-            DataTable result = new DataTable("Databases");
-            
-            result.Columns.Add ("Name", typeof (string));
-            result.Columns.Add ("Owner", typeof (string));
-            result.Columns.Add ("Encoding", typeof (string));
-            
-            
-            NpgsqlDataReader dr = c.ExecuteReader();
-                        
-            while (dr.Read())
+            switch(collectionName)
             {
-                        
-                DataRow row = result.NewRow();
-                row["Name"] = dr["Name"];
-                row["Owner"] = dr["Owner"];
-                row["Encoding"] = dr["Encoding"];
-                
-                result.Rows.Add(row);
+                case "MetaDataCollections":
+                    return NpgsqlSchema.GetMetaDataCollections();
+                case "Restrictions":
+                    return NpgsqlSchema.GetRestrictions();
+                case "DataSourceInformation":
+                case "DataTypes":
+                case "ReservedWords":
+                    throw new NotSupportedException();
+                    // custom collections for npgsql
+                case "Databases":
+                    return new NpgsqlSchema(new NpgsqlConnection(ConnectionString)).GetDatabases(restrictions);
+                case "Tables":
+                    return new NpgsqlSchema(new NpgsqlConnection(ConnectionString)).GetTables(restrictions);
+                case "Columns":
+                    return new NpgsqlSchema(new NpgsqlConnection(ConnectionString)).GetColumns(restrictions);
+                case "Views":
+                    return new NpgsqlSchema(new NpgsqlConnection(ConnectionString)).GetViews(restrictions);
+                case "Users":
+                    return new NpgsqlSchema(new NpgsqlConnection(ConnectionString)).GetUsers(restrictions);
+                default:
+                    throw new NotSupportedException();
             }
-            
-            
-            dr.Close();
-            
-            conn.Close();
-            
-
-            return result;
         }
-        
-        
-        
-
     }
 
 

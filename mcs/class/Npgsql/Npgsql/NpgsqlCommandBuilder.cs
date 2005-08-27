@@ -33,6 +33,9 @@ using System.ComponentModel;
 namespace Npgsql
 {
 
+    ///<summary>
+    /// This class is responsible to create database commands for automatic insert, update and delete operations.
+    ///</summary>
     public sealed class NpgsqlCommandBuilder : Component
     {
 
