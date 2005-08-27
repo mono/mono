@@ -1,3 +1,14 @@
+2005-08-27  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlForm.cs (DefaultButton, DefaultFocus): implement properties.
+	(OnPreRender): figure out (hackishly) if we're uplevel rendering.
+	If we have a default button/focus control set, register webform.js
+	as a client script block, and emit some JS to focus the control.
+	(RenderAttributes): verify that the DefaultButton attribute points
+	to a valid IButtonControl implementing control.  Also remove the
+	defaultfocus/defaultbutton attributes before calling
+	base.RenderAttributes.
+
 2005-08-27  Kornél Pál  <kornelpal@hotmail.com>
 
 	* HtmlTableCell.cs: Fixed to use Consts.

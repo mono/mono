@@ -28,6 +28,7 @@
 
 using System.ComponentModel;
 using System.Collections.Specialized;
+using System.Web.UI.WebControls;
 
 namespace System.Web.UI.HtmlControls 
 {
@@ -39,26 +40,44 @@ namespace System.Web.UI.HtmlControls
 
 #if NET_2_0
 		[DefaultValue ("")]
-		[MonoTODO]
 		public string DefaultButton
 		{
 			get {
-				throw new NotImplementedException ();
+				string defaultbutton = Attributes["defaultbutton"];
+
+				if (defaultbutton == null) {
+					return (String.Empty);
+				}
+
+				return (defaultbutton);
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == null) {
+					Attributes.Remove ("defaultbutton");
+				} else {
+					Attributes["defaultbutton"] = value;
+				}
 			}
 		}
 
 		[DefaultValue ("")]
-		[MonoTODO]
 		public string DefaultFocus
 		{
 			get {
-				throw new NotImplementedException ();
+				string defaultfocus = Attributes["defaultfocus"];
+
+				if (defaultfocus == null) {
+					return (String.Empty);
+				}
+
+				return (defaultfocus);
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == null) {
+					Attributes.Remove ("defaultfocus");
+				} else {
+					Attributes["defaultfocus"] = value;
+				}
 			}
 		}
 #endif		
@@ -204,10 +223,66 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
-		[MonoTODO("Probably something about validators here")]
 		protected internal override void OnPreRender (EventArgs e)
 		{
+			string focus_id = null;
+			bool render_uplevel = false;
+			bool need_script_block = false;
+
 			base.OnPreRender(e);
+
+			/* this bit is c&p'ed from BaseValidator.DetermineRenderUplevel */
+			try {
+				if (Page != null && Page.Request != null)
+					render_uplevel = (
+						/* From someplace on the web: "JavaScript 1.2
+						 * and later (also known as ECMAScript) has
+						 * built-in support for regular
+						 * expressions" */
+						((Page.Request.Browser.EcmaScriptVersion.Major == 1
+						  && Page.Request.Browser.EcmaScriptVersion.Minor >= 2)
+						 || (Page.Request.Browser.EcmaScriptVersion.Major > 1))
+
+						/* document.getElementById, .getAttribute,
+						 * etc, are all DOM level 1.  I don't think we
+						 * use anything in level 2.. */
+						&& Page.Request.Browser.W3CDomVersion.Major >= 1);
+			}
+			catch {
+				/* this can happen with a fake Page in nunit
+				 * tests, since Page.Context == null */
+				;
+			}
+
+
+			/* figure out if we have some control we're going to focus */
+			if (DefaultFocus != null && DefaultFocus != "")
+				focus_id = DefaultFocus;
+			else if (DefaultButton != null && DefaultButton != "")
+				focus_id = DefaultButton;
+
+			/* presumably there are other conditions to
+			 * this test, not just whether or not we have
+			 * a default focus/button */
+			need_script_block = (focus_id != null);
+
+			if (render_uplevel) {
+				if (need_script_block && !Page.IsClientScriptBlockRegistered ("Mono-System.Web-HtmlScriptBlock")) {
+					Page.RegisterClientScriptBlock ("Mono-System.Web-HtmlScriptBlock",
+									String.Format ("<script language=\"JavaScript\" src=\"{0}\"></script>",
+										       Page.ClientScript.GetWebResourceUrl (GetType(),
+															    "webform.js")));
+				}
+
+
+				if (focus_id != null) {
+					Page.RegisterStartupScript ("HtmlForm-DefaultButton-StartupScript",
+								    String.Format ("<script language=\"JavaScript\">\n" + 
+										   "<!--\n" + 
+										   "WebForm_AutoFocus('{0}');// -->\n" + 
+										   "</script>\n", focus_id));
+				}
+			}
 		}
 #endif		
 
@@ -251,7 +326,18 @@ namespace System.Web.UI.HtmlControls
 			if (target != null && target != "") {
 				w.WriteAttribute ("target", target);
 			}
-			
+
+#if NET_2_0
+			string defaultbutton = DefaultButton;
+			if (defaultbutton != null && defaultbutton != "") {
+				Control c = FindControl (defaultbutton);
+
+				if (c == null || !(c is IButtonControl))
+					throw new InvalidOperationException(String.Format ("The DefaultButton of '{0}' must be the ID of a control of type IButtonControl.",
+											   ID));
+			}
+#endif
+
 			/* Now remove them from the hash so the base
 			 * RenderAttributes can do all the rest
 			 */
@@ -259,6 +345,10 @@ namespace System.Web.UI.HtmlControls
 			Attributes.Remove ("method");
 			Attributes.Remove ("enctype");
 			Attributes.Remove ("target");
+#if NET_2_0
+			Attributes.Remove ("defaultfocus");
+			Attributes.Remove ("defaultbutton");
+#endif
 
 			base.RenderAttributes (w);
 		}
