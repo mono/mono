@@ -1,3 +1,10 @@
+2005-08-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c (mono_arch_setup_jit_tls_data): Add support for intel
+	icc.
+
+	* tramp-ia64.c (mono_arch_create_trampoline_code): Use st8.spill for
+	saving registers.
 
 Fri Aug 26 11:09:28 BST 2005 Paolo Molaro <lupus@ximian.com>
 
