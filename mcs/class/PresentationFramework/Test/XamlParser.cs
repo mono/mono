@@ -458,35 +458,35 @@ public class XamlParserTest {
 		object p = buildParser(new StringReader(MAPPING + s));
 
 		n = getNextNode(p);
-		Assert.IsTrue(n is XamlDocumentStartNode);
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
 
 		n = getNextNode(p);
-		Assert.IsTrue(n is XamlElementStartNode);
-		Assert.AreEqual(n.Depth, 0);
-		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp));
+		Assert.IsTrue(n is XamlElementStartNode, "B2");
+		Assert.AreEqual(n.Depth, 0, "B3");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B4");
 
 		n = getNextNode(p);
-		Assert.IsTrue(n is XamlElementStartNode);
-		Assert.AreEqual(n.Depth, 1);
-		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter));
+		Assert.IsTrue(n is XamlElementStartNode, "C1");
+		Assert.AreEqual(n.Depth, 1, "C2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter), "C3");
 
 		n = getNextNode(p);
-		Assert.IsTrue(n is XamlPropertyNode);
-		Assert.AreEqual(n.Depth, 2);
-		Assert.AreEqual(((XamlPropertyNode)n).DP, ConsoleApp.RepetitionsProperty);
+		Assert.IsTrue(n is XamlPropertyNode, "D1");
+		Assert.AreEqual(n.Depth, 2, "D2");
+		Assert.AreEqual(((XamlPropertyNode)n).DP, ConsoleApp.RepetitionsProperty, "D3");
 
 		n = getNextNode(p);
-		Assert.IsTrue(n is XamlTextNode);
-		Assert.AreEqual(((XamlTextNode)n).TextContent, "3");
+		Assert.IsTrue(n is XamlTextNode, "E1");
+		Assert.AreEqual(((XamlTextNode)n).TextContent, "3", "E2");
 
 		n = getNextNode(p);
-		Assert.IsTrue(n is XamlElementEndNode);
+		Assert.IsTrue(n is XamlElementEndNode, "F1");
 
 		n = getNextNode(p);
-		Assert.IsTrue(n is XamlElementEndNode);
+		Assert.IsTrue(n is XamlElementEndNode, "G1");
 		
 		n = getNextNode(p);
-		Assert.IsTrue(n is XamlDocumentEndNode);
+		Assert.IsTrue(n is XamlDocumentEndNode, "H1");
 
 	}
 
@@ -535,9 +535,11 @@ public class XamlParserTest {
 		Assert.IsTrue(n is XamlElementStartNode, "E1" + n.GetType());
 		Assert.AreEqual(3, n.Depth, "E2");
 		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter), "E3");
+		assertPropState(n, true, false, "E4");
 
 		n = getNextNode(p);
 		Assert.IsTrue(n is XamlElementEndNode, "F1" + n.GetType());
+		assertPropState(n, true, false, "F2");
 
 		n = getNextNode(p);
 		Assert.IsTrue(n is XamlPropertyComplexEndNode, "G1");
@@ -552,6 +554,59 @@ public class XamlParserTest {
 		Assert.IsTrue(n is XamlDocumentEndNode, "J1");
 
 	}
+
+	[Test]
+	public void TestObjectAsDependencyPropertyValue()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleReader>\n" +
+			"<ConsoleApp.Repetitions><ConsoleWriter /></ConsoleApp.Repetitions>\n" +
+			"</ConsoleReader>\n" +
+			"</ConsoleApp>";
+		object p = buildParser(new StringReader(MAPPING + s));
+		XamlNode n;
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementStartNode, "B1");
+		Assert.AreEqual(n.Depth, 0, "B2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B3");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementStartNode, "C1");
+		Assert.AreEqual(1, n.Depth, "C2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleReader), "C3");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlPropertyNode, "D1");
+		Assert.AreEqual(2, n.Depth, "D2");
+		Assert.AreEqual(((XamlPropertyNode)n).DP, ConsoleApp.RepetitionsProperty, "D3");
+		
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementStartNode, "E1" + n.GetType());
+		Assert.AreEqual(3, n.Depth, "E2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter), "E3");
+		assertPropState(n, false, true, "E4");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementEndNode, "F1" + n.GetType());
+		assertPropState(n, false, true, "F2");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlPropertyComplexEndNode, "G1");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementEndNode, "H1");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementEndNode, "I1");
+		
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlDocumentEndNode, "J1");
+
+	}
+
 
 	[Test]
 	[ExpectedException(typeof(Exception), "Cannot add object to instance of 'Xaml.TestVocab.Console.ConsoleValueString'.")]
@@ -683,6 +738,12 @@ public class XamlParserTest {
 			"<x:Code>Hi there <thing /> here there everywhere</x:Code>\n"+
 			"</ConsoleApp>";
 		makeGoBang(MAPPING + s);
+	}
+
+	void assertPropState(object n, bool prop, bool dprop, string label) {
+		bool dpropx = (bool)n.GetType().GetProperty("depPropertyObject", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(n, null);
+		bool propx = (bool)n.GetType().GetProperty("propertyObject", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(n, null);
+		Assert.IsTrue(dpropx == dprop && prop == propx, label + propx + dpropx);
 	}
 
 	XamlNode getNextNode(object p)

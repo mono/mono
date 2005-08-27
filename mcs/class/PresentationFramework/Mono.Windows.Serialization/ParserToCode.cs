@@ -72,6 +72,7 @@ namespace Mono.Windows.Serialization {
 		
 		private ParserToCode(XmlTextReader reader, ICodeGenerator generator, bool isPartial)
 		{
+			int justClosed = 0;
 			init(generator, isPartial);
 			XamlParser p = new XamlParser(reader);
 			XamlNode n;
@@ -89,6 +90,10 @@ namespace Mono.Windows.Serialization {
 				} else if (n is XamlElementStartNode && ((XamlElementStartNode)n).propertyObject) {
 					Debug.WriteLine("ParserToCode: element begins as property value");
 					CreatePropertyObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
+				} else if (n is XamlElementStartNode && ((XamlElementStartNode)n).depPropertyObject) {
+					Debug.WriteLine("ParserToCode: element begins as dependency property value");
+					CreateDependencyPropertyObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
+
 				} else if (n is XamlElementStartNode) {
 					Debug.WriteLine("ParserToCode: element begins");
 					CreateObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
@@ -127,16 +132,29 @@ namespace Mono.Windows.Serialization {
 					EndDependencyProperty();
 				} else if (n is XamlPropertyComplexEndNode) {
 					Debug.WriteLine("ParserToCode: end complex property");
-					Debug.WriteLine("ParserToCode: final type is " + ((XamlPropertyComplexEndNode)n).finalType);
-					EndPropertyObject(((XamlPropertyComplexEndNode)n).finalType);
-					EndProperty();
+					if (justClosed == 2) {
+						EndProperty();
+					} else if (justClosed == 1) {
+						EndDependencyProperty();
+					} else {
+						throw new NotImplementedException("justClosed of " + justClosed);
+					}
+					justClosed = 0;
 				} else if (n is XamlLiteralContentNode) {
 					Debug.WriteLine("ParserToCode: literal content");
 					CreateCode(((XamlLiteralContentNode)n).Content);
 				} else if (n is XamlElementEndNode) {
 					Debug.WriteLine("ParserToCode: end element");
-					if (!((XamlElementEndNode)n).propertyObject)
+					Type ft = ((XamlElementEndNode)n).finalType;
+					if (((XamlElementEndNode)n).propertyObject) {
+						EndPropertyObject(ft);
+						justClosed = 2;
+					} else if (((XamlElementEndNode)n).depPropertyObject) {
+						EndDependencyPropertyObject(ft);
+						justClosed = 1;
+					} else {
 						EndObject();
+					}
 				} else if (n is XamlDocumentEndNode) {
 					Debug.WriteLine("ParserToCode: end document");
 					Finish();
@@ -363,6 +381,11 @@ namespace Mono.Windows.Serialization {
 			constructor.Statements.Add(assignment);
 		}
 
+		public void CreateDependencyPropertyObject(Type type, string varName)
+		{
+			CreatePropertyObject(type, varName);
+		}
+
 		public void CreatePropertyObject(Type type, string varName)
 		{
 			debug();
@@ -404,6 +427,10 @@ namespace Mono.Windows.Serialization {
 		
 		}
 
+		public void EndDependencyPropertyObject(Type destType)
+		{
+			EndPropertyObject(destType);
+		}
 		public void EndPropertyObject(Type destType)
 		{
 			debug();

@@ -52,6 +52,14 @@ I say.
 		<ConsoleWriter.Text>Goodbye.</ConsoleWriter.Text>
 	</ConsoleWriter>
 	<!-- Create a ConsoleWriter and set the ConsoleApp.Repetitions
+	     dependency property as an element using an object instance as
+	     the property value -->
+	<ConsoleWriter>
+		<ConsoleApp.Repetitions><ConsoleValueString Text="2" /></ConsoleApp.Repetitions>
+		<ConsoleWriter.Text>Goodbye.</ConsoleWriter.Text>
+	</ConsoleWriter>
+
+	<!-- Create a ConsoleWriter and set the ConsoleApp.Repetitions
 	     dependency property as an attribute -->
 	<ConsoleWriter ConsoleApp.Repetitions="2">Bye</ConsoleWriter>
 	<!-- a fairly standard Code element -->

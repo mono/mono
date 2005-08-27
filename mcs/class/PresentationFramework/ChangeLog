@@ -1,3 +1,15 @@
+2005-08-27  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlParser.cs: added support for objects
+	as values of dependency properties
+	* Mono.Windows.Serialization/ParserToCode.cs: added support for code
+	generation for objects as values of dependency properties
+	* Test/XamlParser.cs: a test of same
+	* System.Windows.Serialization/data-classes.txt: some minor
+	refinements to enable the above
+	* System.Windows.Serialization/Parser.cs: stubs for instantiating
+	objects as values of dependency properties
+
 2005-08-26  Iain McCoy  <iain@mccoy.id.au>
 
 	* System.Windows.Serialization/data-classes-builder.pl: tighten up

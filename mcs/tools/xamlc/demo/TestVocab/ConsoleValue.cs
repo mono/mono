@@ -27,7 +27,7 @@ namespace Xaml.TestVocab.Console {
 		}
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type t)
 		{
-			return (t == typeof(string));
+			return (t == typeof(string)) || (t == typeof(int));
 		}
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, Object o)
 		{
@@ -38,13 +38,18 @@ namespace Xaml.TestVocab.Console {
 		}
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, Object o, Type destinationType)
 		{
-			if (destinationType != typeof(string))
+			if (destinationType != typeof(string) &&
+					destinationType != typeof(int))
 				throw new NotSupportedException();
 
-			if (o is ConsoleValue)
-				return ((ConsoleValue)o).Value;
-			else
+			if (o is ConsoleValue) {
+				if (destinationType == typeof(string))
+					return ((ConsoleValue)o).Value;
+				else
+					return Int32.Parse(((ConsoleValue)o).Value);
+			} else {
 				throw new NotSupportedException();
+			}
 		}
 	}
 
@@ -52,6 +57,11 @@ namespace Xaml.TestVocab.Console {
 
 	public class ConsoleValueString : ConsoleValue {
 		string val;
+
+		public ConsoleValueString()
+		{
+			this.val = "";
+		}
 		public ConsoleValueString(string val)
 		{
 			this.val = val;
@@ -59,6 +69,10 @@ namespace Xaml.TestVocab.Console {
 
 		public override string Value {
 			get { return val; }
+		}
+
+		public string Text {
+			set { val = value; }
 		}
 
 	}

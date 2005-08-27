@@ -1,3 +1,11 @@
+2005-08-27  Iain McCoy  <iain@mccoy.id.au>
+
+	* demo/TestVocab/ConsoleValue.cs: some new features so that objects as
+	values of dependency properties can be used in a vaguely sensible
+	fashion
+	* demo/test.xaml: added a demonstration of objects as values of
+	dependency properties
+
 2005-08-26  Iain McCoy  <iain@mccoy.id.au>
 
 	* README: some documentative notes for xaml-the-language

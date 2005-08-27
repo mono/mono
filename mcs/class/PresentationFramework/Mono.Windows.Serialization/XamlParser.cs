@@ -47,6 +47,7 @@ namespace Mono.Windows.Serialization {
 			Property, 
 			PropertyObject,
 			DependencyProperty,
+			DependencyPropertyObject,
 	       		Code }
 
 		private class ParserState {
@@ -56,9 +57,12 @@ namespace Mono.Windows.Serialization {
 	
 		private bool begun = false;
 
-		private ParserState currentState() {
+		private ParserState currentState(int x) {
 			if (oldStates.Count == 0) return null;
-			return (ParserState)oldStates[oldStates.Count - 1];
+			return (ParserState)oldStates[oldStates.Count - 1 - x];
+		}
+		private ParserState currentState() {
+			return currentState(0);
 		}
 		private ArrayList oldStates = new ArrayList();
 
@@ -184,7 +188,8 @@ namespace Mono.Windows.Serialization {
 			//  name before the dot.
 			int dotPosition = reader.LocalName.IndexOf('.');
 			if (dotPosition < 0 ||
-					currentState().type == CurrentType.Property) {
+					currentState().type == CurrentType.Property ||
+					currentState().type == CurrentType.DependencyProperty) {
 				parseObjectElement();
 				return;
 			}
@@ -225,6 +230,7 @@ namespace Mono.Windows.Serialization {
 			switch (currentState().type) {
 			case CurrentType.Object:
 			case CurrentType.PropertyObject:
+			case CurrentType.DependencyPropertyObject:
 				abortIfNotAddChild("text");
 				((XamlTextNode)topNode()).setmode(XamlParseMode.Object);
 //				writer.CreateObjectText(reader.Value);
@@ -361,13 +367,17 @@ namespace Mono.Windows.Serialization {
 				name = reader.GetAttribute("Name", reader.NamespaceURI);
 
 			Debug.WriteLine("XamlParser: parent is " + parent);
-			if (currentState().type == CurrentType.Object) {
+			if (currentState().type == CurrentType.Object ||
+					currentState().type == CurrentType.PropertyObject ||
+					currentState().type == CurrentType.DependencyPropertyObject) {
 				abortIfNotAddChild("object");
 				addChild(parent, name);
 			} else if (currentState().type == CurrentType.Property) {
 				addPropertyChild(parent, name);
+			} else if (currentState().type == CurrentType.DependencyProperty) {
+				addDependencyPropertyChild(parent, name);
 			} else {
-				throw new NotImplementedException();
+				throw new NotImplementedException(currentState().type.ToString());
 			}
 		}
 		void processObjectAttributes()
@@ -400,13 +410,27 @@ namespace Mono.Windows.Serialization {
 					reader.LinePosition,
 					getDepth()));
 				((XamlElementEndNode)topNode()).setpropertyObject(true);
+				((XamlElementEndNode)topNode()).setfinalType(((PropertyInfo)currentState(1).obj).PropertyType);
 				nodeQueue.Add(new XamlPropertyComplexEndNode(
 					reader.LineNumber,
 					reader.LinePosition,
 					getDepth()));
-				((XamlPropertyComplexEndNode)topNode()).setfinalType((Type)currentState().obj);
 //				ParserState state = (ParserState)oldStates[oldStates.Count - 1];
 //				writer.EndPropertyObject(((PropertyInfo)state.obj).PropertyType);
+			} else if (currentState().type == CurrentType.DependencyPropertyObject) {
+				nodeQueue.Add(new XamlElementEndNode(
+					reader.LineNumber,
+					reader.LinePosition,
+					getDepth()));
+				((XamlElementEndNode)topNode()).setdepPropertyObject(true);
+				((XamlElementEndNode)topNode()).setfinalType(((DependencyProperty)currentState(1).obj).PropertyType);
+				nodeQueue.Add(new XamlPropertyComplexEndNode(
+					reader.LineNumber,
+					reader.LinePosition,
+					getDepth()));
+//				ParserState state = (ParserState)oldStates[oldStates.Count - 1];
+//				writer.EndPropertyObject(((PropertyInfo)state.obj).PropertyType);
+
 			}
 			tempStateCount --;
 			pop();
@@ -464,6 +488,25 @@ namespace Mono.Windows.Serialization {
 
 			push(CurrentType.PropertyObject, type);
 		}
+
+		void addDependencyPropertyChild(Type type, string objectName)
+		{
+//			writer.CreatePropertyObject(type, objectName);
+			nodeQueue.Add(new XamlElementStartNode(
+					reader.LineNumber,
+					reader.LinePosition,
+					getDepth(),
+					type.Assembly.FullName,
+					type.AssemblyQualifiedName,
+					type,
+					null));
+			((XamlElementStartNode)topNode()).setname(objectName);
+			((XamlElementStartNode)topNode()).setdepPropertyObject(true);
+
+
+			push(CurrentType.DependencyPropertyObject, type);
+		}
+
 
 
 		
@@ -544,7 +587,8 @@ namespace Mono.Windows.Serialization {
 			Type typeAttachedTo = null;
 			foreach (ParserState state in oldStates) {
 				if ((state.type == CurrentType.Object || 
-						state.type == CurrentType.PropertyObject) &&
+						state.type == CurrentType.PropertyObject ||
+						state.type == CurrentType.DependencyPropertyObject) &&
 						((Type)state.obj).Name == attachedTo) {
 					typeAttachedTo = (Type)state.obj;
 					break;
@@ -573,7 +617,7 @@ namespace Mono.Windows.Serialization {
 			ensureDependencyObject(currentType);
 			Type typeAttachedTo = findTypeToAttachTo(attachedTo, propertyName);
 			DependencyProperty dp = getDependencyProperty(typeAttachedTo, propertyName);
-			
+		
 			nodeQueue.Add(new XamlPropertyNode(
 					reader.LineNumber,
 					reader.LinePosition,
@@ -622,25 +666,29 @@ namespace Mono.Windows.Serialization {
 						reader.LinePosition,
 						getDepth()));
 				((XamlElementEndNode)topNode()).setpropertyObject(true);
+				((XamlElementEndNode)topNode()).setfinalType(((PropertyInfo)currentState(1).obj).PropertyType);
 				nodeQueue.Add(new XamlPropertyComplexEndNode(
 						reader.LineNumber,
 						reader.LinePosition,
 						getDepth()));
-				Debug.WriteLine("XamlParser: XXXXXXXX" + currentState().obj);
-				Debug.WriteLine("XamlParser: XXXXXXXX" + (currentState().obj is Type));
-				((XamlPropertyComplexEndNode)topNode()).setfinalType((Type)currentState().obj);
-				Debug.WriteLine("XamlParser: XXXXXXXX" + ((XamlPropertyComplexEndNode)topNode()).finalType);
-				Debug.WriteLine("TTTTTTTTT " + ((ParserState)oldStates[oldStates.Count - 1]).obj.GetType());
-				Debug.WriteLine("TTTTTTTTT " + ((ParserState)oldStates[oldStates.Count - 1]).type);
-				Debug.WriteLine("TTTTTTTTT " + ((ParserState)oldStates[oldStates.Count - 2]).obj.GetType());
-				Debug.WriteLine("TTTTTTTTT " + ((ParserState)oldStates[oldStates.Count - 2]).type);
-				Debug.WriteLine("TTTTTTTTT " + ((ParserState)oldStates[oldStates.Count - 3]).obj.GetType());
-				Debug.WriteLine("TTTTTTTTT " + ((ParserState)oldStates[oldStates.Count - 3]).type);
-				Debug.WriteLine("TTTTTTTTT " + ((ParserState)oldStates[oldStates.Count - 4]).obj.GetType());
-				Debug.WriteLine("TTTTTTTTT " + ((ParserState)oldStates[oldStates.Count - 4]).type);
 //				writer.EndPropertyObject((Type)currentState().obj);
 //				return;
 				break;
+			case CurrentType.DependencyPropertyObject:
+				nodeQueue.Add(new XamlElementEndNode(
+						reader.LineNumber,
+						reader.LinePosition,
+						getDepth()));
+				((XamlElementEndNode)topNode()).setdepPropertyObject(true);
+				((XamlElementEndNode)topNode()).setfinalType(((DependencyProperty)currentState(1).obj).PropertyType);
+				nodeQueue.Add(new XamlPropertyComplexEndNode(
+						reader.LineNumber,
+						reader.LinePosition,
+						getDepth()));
+//				writer.EndPropertyObject((Type)currentState().obj);
+//				return;
+				break;
+
 			// these next two happen automatically in the new model
 			case CurrentType.Property:
 //				writer.EndProperty();

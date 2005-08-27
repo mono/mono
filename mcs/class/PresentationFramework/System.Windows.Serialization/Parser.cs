@@ -61,64 +61,78 @@ namespace System.Windows.Serialization {
 				n = p.GetNextNode();
 				if (n == null)
 					break;
-				Debug.WriteLine("ObjectWriter: INCOMING " + n.GetType());
+				Debug.WriteLine("ParserToCode: INCOMING " + n.GetType());
 				if (n is XamlDocumentStartNode) {
-					Debug.WriteLine("ObjectWriter: document begins");
+					Debug.WriteLine("ParserToCode: document begins");
 					// do nothing
 				} else if (n is XamlElementStartNode && n.Depth == 0) {
-					Debug.WriteLine("ObjectWriter: element begins as top-level");
+					Debug.WriteLine("ParserToCode: element begins as top-level");
 					CreateTopLevel(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
-				} else if (n is XamlElementStartNode && peek() is PropertyInfo) {
-					Debug.WriteLine("ObjectWriter: element begins as property value");
+				} else if (n is XamlElementStartNode && ((XamlElementStartNode)n).propertyObject) {
+					Debug.WriteLine("ParserToCode: element begins as property value");
 					CreatePropertyObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
+				} else if (n is XamlElementStartNode && ((XamlElementStartNode)n).depPropertyObject) {
+					Debug.WriteLine("ParserToCode: element begins as dependency property value");
+					CreateDependencyPropertyObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
+
 				} else if (n is XamlElementStartNode) {
-					Debug.WriteLine("ObjectWriter: element begins");
+					Debug.WriteLine("ParserToCode: element begins");
 					CreateObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
 				} else if (n is XamlPropertyNode && ((XamlPropertyNode)n).PropInfo != null) {
-					Debug.WriteLine("ObjectWriter: normal property begins");
+					Debug.WriteLine("ParserToCode: normal property begins");
 					CreateProperty(((XamlPropertyNode)n).PropInfo);
 				} else if (n is XamlPropertyNode && ((XamlPropertyNode)n).DP != null) {
-					Debug.WriteLine("ObjectWriter: dependency property begins");
+					Debug.WriteLine("ParserToCode: dependency property begins");
 					DependencyProperty dp = ((XamlPropertyNode)n).DP;
 					Type typeAttachedTo = dp.OwnerType;
 					string propertyName = ((XamlPropertyNode)n).PropertyName;
 					
 					CreateDependencyProperty(typeAttachedTo, propertyName, dp.PropertyType);
+				} else if (n is XamlClrEventNode && !(((XamlClrEventNode)n).EventMember is EventInfo)) {
+					Debug.WriteLine("ParserToCode: delegate property");
+					CreatePropertyDelegate(((XamlClrEventNode)n).Value, ((PropertyInfo)((XamlClrEventNode)n).EventMember).PropertyType);
+					EndProperty();
+
+
 				} else if (n is XamlClrEventNode) {
-					Debug.WriteLine("ObjectWriter: event");
+					Debug.WriteLine("ParserToCode: event");
 					CreateEvent((EventInfo)((XamlClrEventNode)n).EventMember);
 					CreateEventDelegate(((XamlClrEventNode)n).Value, ((EventInfo)((XamlClrEventNode)n).EventMember).EventHandlerType);
 					EndEvent();
 
 				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.Object){
-					Debug.WriteLine("ObjectWriter: text for object");
+					Debug.WriteLine("ParserToCode: text for object");
 					CreateObjectText(((XamlTextNode)n).TextContent);
 				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.Property){
-					Debug.WriteLine("ObjectWriter: text for property");
-					Debug.WriteLine("THINGTYPE = " + peek().GetType());
-					CreatePropertyText(((XamlTextNode)n).TextContent, ((PropertyInfo)peek()).PropertyType);
+					Debug.WriteLine("ParserToCode: text for property");
+					CreatePropertyText(((XamlTextNode)n).TextContent, ((XamlTextNode)n).finalType);
 					EndProperty();
 				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.DependencyProperty){
-					Debug.WriteLine("ObjectWriter: text for dependency property");
-					string propertyName = (string)peek();
-					Type attachedTo = (Type)peek(1);
-					CreateDependencyPropertyText(((XamlTextNode)n).TextContent, ((DependencyProperty)attachedTo.GetField(propertyName + "Property").GetValue(null)).PropertyType);
+					Debug.WriteLine("ParserToCode: text for dependency property");
+					CreateDependencyPropertyText(((XamlTextNode)n).TextContent, ((XamlTextNode)n).finalType);
 					EndDependencyProperty();
 				} else if (n is XamlPropertyComplexEndNode) {
-					Debug.WriteLine("ObjectWriter: end complex property");
-					Debug.WriteLine("ObjectWriter: final type is " + ((XamlPropertyComplexEndNode)n).finalType);
-					EndPropertyObject(((XamlPropertyComplexEndNode)n).finalType);
+					Debug.WriteLine("ParserToCode: end complex property");
 					EndProperty();
+				} else if (n is XamlLiteralContentNode) {
+					Debug.WriteLine("ParserToCode: literal content");
+					CreateCode(((XamlLiteralContentNode)n).Content);
 				} else if (n is XamlElementEndNode) {
-					Debug.WriteLine("ObjectWriter: end element");
-					if (!((XamlElementEndNode)n).propertyObject)
+					Debug.WriteLine("ParserToCode: end element");
+					Type ft = ((XamlElementEndNode)n).finalType;
+					if (((XamlElementEndNode)n).propertyObject)
+						EndPropertyObject(ft);
+					else if (((XamlElementEndNode)n).depPropertyObject)
+						EndDependencyPropertyObject(ft);
+					else
 						EndObject();
 				} else if (n is XamlDocumentEndNode) {
-					Debug.WriteLine("ObjectWriter: end document");
+					Debug.WriteLine("ParserToCode: end document");
 					Finish();
 				} else {
 					throw new Exception("Unknown node " + n.GetType());
 				}
+
 			}
 		}
 
@@ -214,6 +228,15 @@ namespace System.Windows.Serialization {
 			PropertyInfo p = (PropertyInfo)peek();
 			object o = peek(1);
 			p.SetValue(o, value, null);
+		}
+
+		public void CreateDependencyPropertyObject(Type type, string name)
+		{
+			throw new NotImplementedException();
+		}
+		public void EndDependencyPropertyObject(Type finalType)
+		{
+			throw new NotImplementedException();
 		}
 
 		// top of stack is reference to an attached property
