@@ -1,3 +1,9 @@
+2005-08-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* ia64/ia64-codegen.h: Fix some bugs.
+
+	* ia64/codegen.c: Update to work with latest ia64-codegen.h
+
 2005-08-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* ia64/Makefile.am: Distribute ia64-codegen.h.
