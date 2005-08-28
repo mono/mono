@@ -81,17 +81,13 @@ namespace System.Data.ProviderBase
 #if USE_DOTNET_REGEXP			
 			internal static readonly Regex NamedParameterStoredProcedureRegExp = new Regex(@"^\s*{?\s*((?<RETVAL>@\w+)\s*=\s*)?call\s+(?<PROCNAME>(((\[[^\]]*\])|([^\.\(])*)\s*\.\s*){0,2}(\[[^\]]*\]|((\s*[^\.\(\)\{\}\s])+)))\s*(\(\s*(?<USERPARAM>((""([^""]|(""""))*"")|('([^']|(''))*')|[^,])*)?\s*(,\s*(?<USERPARAM>((""([^""]|(""""))*"")|('([^']|(''))*')|[^,])*)\s*)*\))?\s*}?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 			internal static readonly Regex SimpleParameterStoredProcedureRegExp = new Regex(@"^\s*{?\s*((?<RETVAL>\?)\s*=\s*)?call\s+(?<PROCNAME>(((\[[^\]]*\])|([^\.\(])*)\s*\.\s*){0,2}(\[[^\]]*\]|((\s*[^\.\(\)\{\}\s])+)))\s*(\(\s*(?<USERPARAM>((""([^""]|(""""))*"")|('([^']|(''))*')|[^,])*)?\s*(,\s*(?<USERPARAM>((""([^""]|(""""))*"")|('([^']|(''))*')|[^,])*)\s*)*\))?\s*}?\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
-			internal static readonly Regex SelectFromStatementReqExp = new Regex(@"^\s*SELECT\s+(((\[[^\[\]]*\])|(""([^""]|(""""))*"")|('([^']|(''))*')|[^'""\[])*\s+)*FROM\s+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 			internal static readonly Regex ForBrowseStatementReqExp = new Regex(@"\s+FOR\s+BROWSE\s*$", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 #else
 			internal static readonly Pattern NamedParameterStoredProcedureRegExp = Pattern.compile(@"^\s*\{?\s*(?:(@\w+)\s*=\s*)?call\s+((?:(?:(?:\[[^\]]*\])|(?:[^\.\(\)\{\}\[\]])*)\s*\.\s*){0,2}(?:\[[^\]]*\]|(?:(?:\s*[^\.\(\)\{\}\[\]])+)))\s*(?:\((.*)\))?\s*\}?\s*$", Pattern.CASE_INSENSITIVE);
 			internal static readonly Pattern SimpleParameterStoredProcedureRegExp = Pattern.compile(@"^\s*\{?\s*(?:(\?)\s*=\s*)?call\s+((?:(?:(?:\[[^\]]*\])|(?:[^\.\(\)\{\}\[\]])*)\s*\.\s*){0,2}(?:\[[^\]]*\]|(?:(?:\s*[^\.\(\)\{\}\[\]])+)))\s*(?:\((.*)\))?\s*\}?\s*$", Pattern.CASE_INSENSITIVE);
-			internal static readonly Pattern SelectFromStatementReqExp = Pattern.compile(@"^\s*SELECT\s+(((\[[^\[\]]*\])|(""([^""]|(""""))*"")|('([^']|(''))*')|[^'""\[])*\s+)*FROM\s+", Pattern.CASE_INSENSITIVE);
 			internal static readonly Pattern ForBrowseStatementReqExp = Pattern.compile(@"\s+FOR\s+BROWSE\s*$", Pattern.CASE_INSENSITIVE);
 #endif
 
-//			internal static readonly Regex NamedParameterRegExp = new Regex(@"((?<USERPARAM>@\w+)|(\[[^\[\]]*\])|(""([^""]|(""""))*"")|('([^']|(''))*'))*", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
-//			internal static readonly Regex SimpleParameterRegExp = new Regex(@"((?<USERPARAM>\?)|(\[[^\[\]]*\])|(""([^""]|(""""))*"")|('([^']|(''))*'))*", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
 			internal static readonly SimpleRegex NamedParameterRegExp = new SqlParamsRegex();
 			internal static readonly SimpleRegex SimpleParameterRegExp = new OleDbParamsRegex();
 
@@ -750,12 +746,10 @@ namespace System.Data.ProviderBase
 			string dbname = connection.JdbcConnection.getMetaData().getDatabaseProductName();
 			if (dbname == "Microsoft SQL Server") {	//must add "FOR BROWSE" for selects
 #if USE_DOTNET_REGEX
-				if (SqlStatementsHelper.SelectFromStatementReqExp.IsMatch(query))
 					if (!SqlStatementsHelper.ForBrowseStatementReqExp.IsMatch(query))
 						sb.Append(" FOR BROWSE");
 #else
-				if (SqlStatementsHelper.SelectFromStatementReqExp.matcher ((java.lang.CharSequence)(object)query).matches ())
-					if (!SqlStatementsHelper.ForBrowseStatementReqExp.matcher ((java.lang.CharSequence)(object)query).matches ())
+					if (!SqlStatementsHelper.ForBrowseStatementReqExp.matcher ((java.lang.CharSequence)(object)query).find ())
 						sb.Append (" FOR BROWSE");
 #endif
 			}

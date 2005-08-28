@@ -1,3 +1,8 @@
+2005-28-08 Boris Kirzner <borisk@mainsoft.com>
+	* AbstractDBCommand.cs: 
+		- Do not check for "select ... from", just add "for browse" if needed.
+		Removed unused regex.
+
 2005-25-08 Boris Kirzner <borisk@mainsoft.com>
 	* AbstractDBCommand.cs: 
 		- Set max fetch size for jdbc statement.
