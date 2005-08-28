@@ -170,6 +170,15 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			pbeh.RaisePostBackEvent ("mono");
 			Assert.IsTrue (serverClick, "ServerClick");
 		}
+
+		[Test]
+		public void AbsoluteHRef ()
+		{
+			TestHtmlAnchor a = new TestHtmlAnchor ();
+			a.HRef = "http://127.0.0.1/";
+			HtmlTextWriter writer = a.GetWriter ();
+			Assert.AreEqual (" href=\"http://127.0.0.1/\"", writer.InnerWriter.ToString (), "#01");
+		}
 #if NET_2_0
 		[Test]
 		public void RaisePostBackEvent ()

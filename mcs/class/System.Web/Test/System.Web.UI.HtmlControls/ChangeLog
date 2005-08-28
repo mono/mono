@@ -1,3 +1,7 @@
+2005-08-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlAnchorTest.cs: add test for HRef with an absolute URI.
+
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlInputResetTest.cs: new tests for HtmlInputReset.  Missing
