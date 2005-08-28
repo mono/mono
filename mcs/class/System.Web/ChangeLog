@@ -1,5 +1,9 @@
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* System.Web.dll.sources: add IAdaptableTextWriter.cs
+
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* System.Web_test.dll.sources: add HtmlInputPasswordTest.cs and
 	HtmlInputResetTest.cs
 

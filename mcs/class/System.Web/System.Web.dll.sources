@@ -392,6 +392,7 @@ System.Web.UI/IFilterResolutionService.cs
 System.Web.UI/IgnoreUnknownContentAttribute.cs
 System.Web.UI/IHierarchicalDataSource.cs
 System.Web.UI/IHierarchicalEnumerable.cs
+System.Web.UI/IAdaptableTextWriter.cs
 System.Web.UI/IHierarchyData.cs
 System.Web.UI/IItemPaginationInfo.cs
 System.Web.UI/ImageClickEventArgs.cs
