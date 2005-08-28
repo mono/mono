@@ -1,3 +1,11 @@
+2005-08-28  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/ParserConsumerBase.cs: move dispatching
+	to handlers based on nodes returned from the parser into a base class
+	* Mono.Windows.Serialization/ParserToCode.cs: use ParserConsumerBase
+	* System.Windows.Serialization/Parser.cs: use ParserConsumerBase,
+	support for objects as values of dependency properties
+
 2005-08-27  Iain McCoy  <iain@mccoy.id.au>
 
 	* Mono.Windows.Serialization/XamlParser.cs: added support for objects

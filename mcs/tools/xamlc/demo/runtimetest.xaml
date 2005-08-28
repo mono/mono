@@ -14,6 +14,7 @@
 		<ConsoleValueVar Variable="comment" />
 	</ConsoleWriter>
 	<ConsoleWriter>
+		<ConsoleApp.Repetitions><ConsoleValueString Text="2" /></ConsoleApp.Repetitions>
 		<ConsoleWriter.Text>Goodbye.</ConsoleWriter.Text>
 	</ConsoleWriter>
 	<ConsoleWriter>Bye</ConsoleWriter>
