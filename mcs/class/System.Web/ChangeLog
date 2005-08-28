@@ -1,3 +1,11 @@
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
+	* System.Web_test.dll.sources: add HtmlInputPasswordTest.cs and
+	HtmlInputResetTest.cs
+
+	* System.Web.dll.sources: add HtmlInputPassword.cs and
+	HtmlInputReset.cs.
+
 2005-08-27  Kornél Pál  <kornelpal@hotmail.com>
 
 	* System.Web.dll.sources: Fixed 48519 to 48944 regressions.
