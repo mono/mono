@@ -1,5 +1,12 @@
 2005-08-28  Iain McCoy  <iain@mccoy.id.au>
 
+	* System.Windows.Serialization/Parser.cs: a bit more refactoring to
+	reduce code duplication
+	* Mono.Windows.Serialization/ParserToCode.cs: similarly, refactoring
+	to reduce code duplication
+
+2005-08-28  Iain McCoy  <iain@mccoy.id.au>
+
 	* Mono.Windows.Serialization/ParserConsumerBase.cs: move dispatching
 	to handlers based on nodes returned from the parser into a base class
 	* Mono.Windows.Serialization/ParserToCode.cs: use ParserConsumerBase

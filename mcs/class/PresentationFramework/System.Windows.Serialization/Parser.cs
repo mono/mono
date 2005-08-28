@@ -96,7 +96,6 @@ namespace System.Windows.Serialization {
 
 
 				MethodInfo setter = attachedTo.GetMethod("Set" + propertyName);
-				Console.WriteLine(attachedTo.GetType()+ ".Set" + propertyName + "("  + peek().GetType() + ", " + value.GetType() + ")");
 				setter.Invoke(null, new object[] { peek(), value});
 			}
 
@@ -122,11 +121,7 @@ namespace System.Windows.Serialization {
 
 			public override void CreatePropertyText(string text, Type propertyType)
 			{
-				object value = text;
-				if (propertyType != typeof(string)) {
-					TypeConverter tc = TypeDescriptor.GetConverter(propertyType);
-					value = tc.ConvertFromString(text);
-				}
+				object value = convertText(propertyType, text);
 				storeToProperty(value);
 			}
 			
@@ -138,7 +133,7 @@ namespace System.Windows.Serialization {
 			}
 			public override void EndPropertyObject(Type destType)
 			{
-				object value = convertPropertyObjectValue(destType);
+				object value = convertPropertyObjectValue(destType, pop());
 				storeToProperty(value);
 			}
 			private void storeToProperty(object value)
@@ -147,16 +142,23 @@ namespace System.Windows.Serialization {
 				object o = peek(1);
 				p.SetValue(o, value, null);
 			}
-			private object convertPropertyObjectValue(Type destType)
+			private object convertPropertyObjectValue(Type destType, object value)
 			{
-				object value = pop();
 				Type sourceType = value.GetType();
-				Debug.WriteLine("ObjectWriter: EndPropertyObject has a " + value + value.GetType() + ", needs a " + destType);
 				if (destType != sourceType && !sourceType.IsSubclassOf(destType)) {
 					TypeConverter tc = TypeDescriptor.GetConverter(sourceType);
 					value = tc.ConvertTo(value, destType);
 				}
 				return value;
+			}
+			private object convertText(Type propertyType, string text)
+			{
+				if (propertyType != typeof(string)) {
+					TypeConverter tc = TypeDescriptor.GetConverter(propertyType);
+					return tc.ConvertFromString(text);
+				} else {
+					return text;
+				}
 			}
 
 			public override void CreateDependencyPropertyObject(Type type, string name)
@@ -165,17 +167,13 @@ namespace System.Windows.Serialization {
 			}
 			public override void EndDependencyPropertyObject(Type finalType)
 			{
-				push(convertPropertyObjectValue(finalType));
+				push(convertPropertyObjectValue(finalType, pop()));
 			}
 
 			// top of stack is reference to an attached property
 			public override void CreateDependencyPropertyText(string text, Type propertyType)
 			{
-				object value = text;
-				if (propertyType != typeof(string)) {
-					TypeConverter tc = TypeDescriptor.GetConverter(propertyType);
-					value = tc.ConvertFromString(text);
-				}
+				object value = convertText(propertyType, text);
 				push(value);
 			}
 			
@@ -215,12 +213,12 @@ namespace System.Windows.Serialization {
 			{
 				object v = objects[objects.Count - 1];
 				objects.RemoveAt(objects.Count - 1);
-				Debug.WriteLine("ObjectWriter POPPING");
+				Debug.WriteLine("ObjectWriter: POPPING");
 				return v;
 			}
 			private void push(object v)
 			{
-				Debug.WriteLine("ObjectWriter PUSHING " + v);
+				Debug.WriteLine("ObjectWriter: PUSHING " + v);
 				objects.Add(v);
 			}
 		}

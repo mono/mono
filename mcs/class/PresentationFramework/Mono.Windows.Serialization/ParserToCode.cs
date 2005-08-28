@@ -231,11 +231,7 @@ namespace Mono.Windows.Serialization {
 			public override void CreateEventDelegate(string functionName, Type eventDelegateType)
 			{
 				debug();
-				CodeExpression expr = new CodeObjectCreateExpression(
-						eventDelegateType,
-						new CodeMethodReferenceExpression(
-								new CodeThisReferenceExpression(),
-								functionName));
+				CodeExpression expr = buildDelegate(eventDelegateType, functionName);
 				CodeAttachEventStatement attach = new CodeAttachEventStatement(
 						(CodeEventReferenceExpression)peek(),
 						expr);
@@ -246,15 +242,20 @@ namespace Mono.Windows.Serialization {
 			public override void CreatePropertyDelegate(string functionName, Type propertyType)
 			{
 				debug();
-				CodeExpression expr = new CodeObjectCreateExpression(
-						propertyType,
-						new CodeMethodReferenceExpression(
-								new CodeThisReferenceExpression(),
-								functionName));
+				CodeExpression expr = buildDelegate(propertyType, functionName);
 				CodeAssignStatement assignment = new CodeAssignStatement(
 						(CodeExpression)peek(),
 						expr);
 				constructor.Statements.Add(assignment);
+			}
+			private CodeExpression buildDelegate(Type propertyType, string functionName)
+			{
+				return new CodeObjectCreateExpression(
+						propertyType,
+						new CodeMethodReferenceExpression(
+								new CodeThisReferenceExpression(),
+								functionName));
+
 			}
 
 			private CodeExpression fetchConverter(Type propertyType)
