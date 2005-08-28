@@ -162,7 +162,7 @@ namespace DrawingTestHelper
 	public abstract class DrawingTest {
 
 		public const float DEFAULT_FLOAT_TOLERANCE = 1e-5f; 
-		public const int DEFAULT_IMAGE_TOLERANCE = 10; 
+		public const int DEFAULT_IMAGE_TOLERANCE = 3; 
 
 		Graphics _graphics;
 		protected Bitmap _bitmap;
@@ -171,6 +171,8 @@ namespace DrawingTestHelper
 		static Hashtable _mpFuncCount = new Hashtable();
 		static bool _showForms = false;
 		static bool _createResults = true;
+		protected string _ownerClass = "";
+		protected Hashtable _specialTolerance = null;
 
 		protected readonly static ExpectedResultsHash ExpectedResults = new ExpectedResultsHash ();
 		protected readonly static Cache cache = new Cache ();
@@ -178,7 +180,20 @@ namespace DrawingTestHelper
 		public Graphics Graphics {get {return _graphics;}}
 		public Bitmap Bitmap {get { return _bitmap; }}
 
-		public static bool ShowForms {
+		public Hashtable SpecialTolerance 
+		{
+			get {return _specialTolerance;}
+			set {_specialTolerance = value;}
+		}
+
+		public string OwnerClass 
+		{
+			get {return _ownerClass;}
+			set {_ownerClass = value;}
+		}
+
+		public static bool ShowForms 
+		{
 			get {return _showForms;}
 			set {_showForms = value;}
 		}
@@ -283,6 +298,7 @@ namespace DrawingTestHelper
 			if (double.IsNaN (norm)) {
 				norm = CalculateNorm (_bitmap);
 				cache.Add (TestName, sha1, norm);
+				//_bitmap.Save(TestName.Replace(":", "_"));
 			}
 			return norm;
 		}
@@ -329,7 +345,25 @@ namespace DrawingTestHelper
 
 		public bool Compare () {
 			CheckCounter ();
-			return (CompareToExpectedInternal()*100) < DEFAULT_IMAGE_TOLERANCE;
+			double error = CompareToExpectedInternal()*100;
+			if (SpecialTolerance != null)
+				return error <= GetSpecialTolerance(TestName);
+
+			return error <= DEFAULT_IMAGE_TOLERANCE;
+		}
+
+		protected double GetSpecialTolerance(string testName) {
+			try	{
+				string shortTestName = testName.Substring( testName.LastIndexOf(".") + 1 );
+				object o = SpecialTolerance[shortTestName];
+				if (o == null)
+					return DEFAULT_IMAGE_TOLERANCE;
+
+				return Convert.ToDouble(o);
+			}
+			catch (System.Exception) {
+				return DEFAULT_IMAGE_TOLERANCE;
+			}
 		}
 
 		/// <summary>
@@ -340,7 +374,8 @@ namespace DrawingTestHelper
 		/// 
 		public bool Compare (double tolerance) {
 			CheckCounter ();
-			return (CompareToExpectedInternal()*100) < tolerance;
+			double error = CompareToExpectedInternal()*100;
+			return error <= tolerance;
 		}
 
 		public void AssertCompare () {
@@ -368,6 +403,9 @@ namespace DrawingTestHelper
 		}
 
 		public static DrawingTest Create (int width, int height) {
+			return Create(width, height, "GraphicsFixture");
+		}
+		public static DrawingTest Create (int width, int height, string ownerClass) {
 			DrawingTest test;
 #if TARGET_JVM
 			test = new JavaDrawingTest ();
@@ -375,6 +413,7 @@ namespace DrawingTestHelper
 			test = new NetDrawingTest ();
 #endif
 			test.Init (width, height);
+			test.OwnerClass = ownerClass;
 			return test;
 		}
 	}
@@ -477,7 +516,7 @@ namespace DrawingTestHelper
 			java.lang.StackTraceElement [] els = (java.lang.StackTraceElement [])
 				m.invoke (e, new object [0]);
 			java.lang.StackTraceElement el = els [4];
-			return el.getClassName () + "." + el.getMethodName ();
+			return el.getClassName () + "." + _ownerClass + "." + el.getMethodName ();
 		}
 
 		public override string CalculateSHA1() {
@@ -531,7 +570,7 @@ namespace DrawingTestHelper
 			StackFrame sf = new StackFrame (3, true);
 			MethodBase mb = sf.GetMethod ();
 
-			string name = mb.DeclaringType.FullName + "." + mb.Name;
+			string name = mb.DeclaringType.FullName + "." + _ownerClass + "." + mb.Name;
 			return name;
 		}
 
