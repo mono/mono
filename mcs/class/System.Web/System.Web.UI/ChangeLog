@@ -1,5 +1,14 @@
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* Page.cs (.ctor): set our initial ID to "__Page".
+	(SmartNavigation): obsolete in 2.0.
+	(FindControl): new implementation.  Just check our own ID against
+	the control we're looking for.  otherwise pass it along to
+	base.FindControl.
+	(GetPostBackClientHyperlink): obsolete in 2.0.
+
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* ClientScriptManager.cs: public sealed in 2.0
 
 	* IAdaptableTextWriter.cs: new 2.0 interface.

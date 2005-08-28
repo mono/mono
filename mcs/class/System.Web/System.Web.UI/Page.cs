@@ -110,6 +110,7 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		scriptManager = new ClientScriptManager (this);
 		Page = this;
+		ID = "__Page";
 	}
 
 	#endregion		
@@ -378,7 +379,8 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 #if NET_2_0
-    [FilterableAttribute (false)]
+	[FilterableAttribute (false)]
+	[Obsolete]
 #endif
 	[Browsable (false)]
 	public bool SmartNavigation
@@ -542,6 +544,15 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 #if NET_2_0
+	public override Control FindControl (string id) {
+		if (id == ID)
+			return this;
+		else
+			return base.FindControl (id);
+	}
+#endif
+
+#if NET_2_0
 	[Obsolete]
 #endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -551,7 +562,7 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 #if NET_2_0
-	//[Obsolete]
+	[Obsolete]
 #endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackClientHyperlink (Control control, string argument)
@@ -886,7 +897,7 @@ public class Page : TemplateControl, IHttpHandler
 			ProcessPostData (_requestValueCollection, false);
 			Trace.Write ("aspx.page", "End ProcessPostData");
 		}
-		
+
 #if NET_2_0
 		if (IsCrossPagePostBack)
 			return;
