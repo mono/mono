@@ -1,5 +1,13 @@
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* ClientScriptManager.cs: public sealed in 2.0
+
+	* IAdaptableTextWriter.cs: new 2.0 interface.
+
+	* IHierarchyData.cs: fix return type for GetParent.
+
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* Pair.cs: mark serializable and sealed in 2.0.
 
 2005-08-26  Sebastien Pouliot  <sebastien@ximian.com>

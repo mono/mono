@@ -39,7 +39,7 @@ using System.Text;
 namespace System.Web.UI
 {
 	#if NET_2_0
-	public
+	public sealed
 	#else
 	internal
 	#endif
@@ -127,6 +127,8 @@ namespace System.Web.UI
 
 		public string GetCallbackEventReference (string target, string argument, string clientCallback, string context, string clientErrorCallback, bool useAsync)
 		{
+			page.RequiresPostBackScript ();
+
 			if (!IsClientScriptIncludeRegistered (typeof(Page), "callback"))
 				RegisterClientScriptInclude (typeof(Page), "callback", GetWebResourceUrl (typeof(Page), "callback.js"));
 			

@@ -1,10 +1,10 @@
 //
-// System.Web.UI.IHierarchyData
+// System.Web.UI.IAdaptableTextWriter
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2003 Ben Maurer
+// (C) 2005 Novell, Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,13 +28,10 @@
 
 #if NET_2_0
 namespace System.Web.UI {
-	public interface IHierarchyData {
-		IHierarchicalEnumerable GetChildren ();
-		IHierarchyData GetParent ();
-		bool HasChildren { get; }
-		object Item { get; }
-		string Path { get; }
-		string Type { get; }
+
+	public interface IAdaptableTextWriter {
+		void AddRecognizedAttribute (string elementName, string attributeName);
+		void RemoveRecognizedAttribute (string elementName, string attributeName);
 	}
 }
 #endif
