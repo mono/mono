@@ -107,6 +107,7 @@ namespace System.Drawing.Imaging {
 			#endregion
 
 			public Hashtable Iterate () {
+				// TBD: Insert Exception handling here
 				NameValueCollection nvc = (NameValueCollection) System.Configuration.ConfigurationSettings
 					.GetConfig ("system.drawing/codecs");
 				Hashtable codecs = new Hashtable (10);
@@ -114,9 +115,13 @@ namespace System.Drawing.Imaging {
 				for (int i=0; i<nvc.Count; i++) {
 					Guid clsid = new Guid (nvc.GetKey (i));
 					ImageFormat format = ClsidToImageFormat (clsid);
-					ImageCodecInfo codec = ProcessOneCodec (clsid, format.Guid, nvc[i]);
-					if (codec.FilenameExtension != null)
-						codecs [clsid] = codec;
+					string [] codecMimeTypes = nvc[i].Split(',');
+					for (int j = 0; j < codecMimeTypes.Length; j++) 
+					{
+						ImageCodecInfo codec = ProcessOneCodec (clsid, format.Guid, codecMimeTypes[j].Trim());
+						if (codec.FilenameExtension != null)
+							codecs [clsid] = codec;
+					}
 				}
 				return codecs;
 			}

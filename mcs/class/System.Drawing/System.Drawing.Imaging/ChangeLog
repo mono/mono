@@ -1,3 +1,7 @@
+2005-08-28 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* ImageCodecInfo.jvm.cs: Fixed Iterate
+
 2005-08-03 Andrew Skiba <andrews@mainsoft.com>
 
 	* ImageCodecInfo.jvm.cs: implement via java imageio, add internal APIs for
