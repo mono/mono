@@ -1,5 +1,10 @@
 2005-08-25 Vladimir Krasnov <vladimirk@mainsoft.com>
 	
+	* Graphics.cs: Added tests for Graphics.Begin/EndContaioner, 
+	Graphics.Save/Restore, Transforms
+
+2005-08-25 Vladimir Krasnov <vladimirk@mainsoft.com>
+	
 	* Pen.cs: Refactoring
 	* Image.cs: Refactoring
 	* Bitmap.cs: Refactoring

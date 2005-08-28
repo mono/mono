@@ -39,8 +39,7 @@ using System.Drawing.Imaging;
 using DrawingTestHelper;
 using System.IO;
 
-namespace Test.Sys.Drawing.GraphicsFixtures
-{
+namespace Test.Sys.Drawing.GraphicsFixtures {
 	#region GraphicsFixtureProps
 
 	[TestFixture]
@@ -149,6 +148,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 
 		[Test] //TBD
 		public void InterpolationModeTest() {
+			Assert.AreEqual(InterpolationMode.Bilinear, t.Graphics.InterpolationMode);
 		}
 
 		[Test]
@@ -238,8 +238,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 	/// Summary description for Graphics.
 	/// </summary>
 	[TestFixture]
-	public class GraphicsFixture
-	{
+	public class GraphicsFixture {
 		protected DrawingTest t;
 		protected int TOLERANCE = 3; //in %;
 		protected Hashtable st = new Hashtable();
@@ -248,8 +247,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 		public virtual void SetUp() {
 			SetUp("GraphicsFixture");
 		}
-		public virtual void SetUp(string ownerClass) 
-		{
+		public virtual void SetUp(string ownerClass) {
 			t = DrawingTest.Create(512, 512, ownerClass);
 
 			// hashtable of differents tolerance values for specified tests.
@@ -271,9 +269,6 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Graphics.BeginContainer is not implemented
-#endif
 		public void BeginContainerTest() {
 			// Define transformation for container.
 			RectangleF srcRect = new RectangleF(0.0F, 0.0F, 200.0F, 200.0F);
@@ -304,7 +299,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 		}
 
 		[Test]
-		public void DrawArcTest(){
+		public void DrawArcTest() {
 			// Create pen.
 			Pen blackPen= new Pen(Color.Black, 1);
 			// Create coordinates of rectangle to bound ellipse.
@@ -320,20 +315,20 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			t.Show();
 			Assert.IsTrue(t.Compare());
 			SetUp();
-			 startAngle =  10.0F;
-			 sweepAngle = 120.0F;
+			startAngle =  10.0F;
+			sweepAngle = 120.0F;
 			t.Graphics.DrawArc(blackPen, new Rectangle((int)x, (int)y, (int)width, (int)height), startAngle, sweepAngle);
 			t.Show();
 			Assert.IsTrue(t.Compare());
 			SetUp();
-			 startAngle =  10.0F;
-			 sweepAngle = 190.0F;
+			startAngle =  10.0F;
+			sweepAngle = 190.0F;
 			t.Graphics.DrawArc(blackPen, x, y, width, height, startAngle, sweepAngle);
 			t.Show();
 			Assert.IsTrue(t.Compare());
 			SetUp();
-			 startAngle =  10.0F;
-			 sweepAngle = 300.0F;
+			startAngle =  10.0F;
+			sweepAngle = 300.0F;
 			t.Graphics.DrawArc(blackPen, new RectangleF(x, y, width, height), startAngle, sweepAngle);
 			t.Show();
 			Assert.IsTrue(t.Compare());
@@ -388,9 +383,9 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			Point control4 = new Point(650, 250);
 			Point end2 = new Point(500, 300);
 			Point[] bezierPoints = {
-				start, control1, control2, end1,
-				control3, control4, end2
-			};
+									   start, control1, control2, end1,
+									   control3, control4, end2
+								   };
 			// Draw arc to screen.
 			t.Graphics.DrawBeziers(blackPen, bezierPoints);
 			t.Show();
@@ -405,9 +400,9 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			PointF control4F = new PointF(650.0F, 250.0F);
 			PointF end2F = new PointF(500.0F, 300.0F);
 			PointF[] bezierPointsF = {
-										startF, control1F, control2F, end1F,
-										control3F, control4F, end2F
-									};
+										 startF, control1F, control2F, end1F,
+										 control3F, control4F, end2F
+									 };
 			// Draw arc to screen.
 			t.Graphics.DrawBeziers(blackPen, bezierPointsF);
 			t.Show();
@@ -415,7 +410,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 		}
 
 		[Test]
-		public void DrawClosedCurveTest(){
+		public void DrawClosedCurveTest() {
 			// Create pens.
 			Pen redPen   = new Pen(Color.Red, 3);
 			Pen greenPen = new Pen(Color.Green, 3);
@@ -428,14 +423,14 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			PointF point6 = new PointF(350.0F, 200.0F);
 			PointF point7 = new PointF(250.0F, 250.0F);
 			PointF[] curvePoints = {
-				point1,
-				point2,
-				point3,
-				point4,
-				point5,
-				point6,
-				point7
-			};
+									   point1,
+									   point2,
+									   point3,
+									   point4,
+									   point5,
+									   point6,
+									   point7
+								   };
 			// Draw lines between original points to screen.
 			t.Graphics.DrawLines(redPen, curvePoints);
 			// Create tension and fill mode.
@@ -468,14 +463,14 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			Point point6 = new Point(350, 200);
 			Point point7 = new Point(250, 250);
 			Point[] curvePoints = {
-				point1,
-				point2,
-				point3,
-				point4,
-				point5,
-				point6,
-				point7
-			};
+									  point1,
+									  point2,
+									  point3,
+									  point4,
+									  point5,
+									  point6,
+									  point7
+								  };
 			// Draw lines between original points to screen.
 			t.Graphics.DrawLines(redPen, curvePoints);
 			// Create offset, number of segments, and tension.
@@ -626,8 +621,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 		[Category ("NotWorking")] // FIXME: ImageFormat.Icon is not supported yet.
 									// java external library should be installed.
 #endif
-		public void DrawIconUnstretchedTest() 
-		{
+		public void DrawIconUnstretchedTest() {
 			// Create icon.
 			Icon newIcon = new Icon(getInFile ("SampIcon.ico"));
 			// Create rectangle for icon.
@@ -767,11 +761,11 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			Pen pen = new Pen(Color.Black, 3);
 			// Create array of points that define lines to draw.
 			Point[] points = {
-				new Point( 10,  10),
-				new Point( 10, 100),
-				new Point(200,  50),
-				new Point(250, 300)
-			};
+								 new Point( 10,  10),
+								 new Point( 10, 100),
+								 new Point(200,  50),
+								 new Point(250, 300)
+							 };
 			//Draw lines to screen.
 			t.Graphics.DrawLines(pen, points);
 			t.Show();
@@ -867,14 +861,14 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			Point point6 = new Point(350, 200);
 			Point point7 = new Point(250, 250);
 			Point[] curvePoints = {
-				point1,
-				point2,
-				point3,
-				point4,
-				point5,
-				point6,
-				point7
-			};
+									  point1,
+									  point2,
+									  point3,
+									  point4,
+									  point5,
+									  point6,
+									  point7
+								  };
 			// Draw polygon to screen.
 			t.Graphics.DrawPolygon(blackPen, curvePoints);
 			t.Show();
@@ -894,14 +888,14 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			PointF point6 = new PointF(350, 200);
 			PointF point7 = new PointF(250, 250);
 			PointF[] curvePoints = {
-									  point1,
-									  point2,
-									  point3,
-									  point4,
-									  point5,
-									  point6,
-									  point7
-								  };
+									   point1,
+									   point2,
+									   point3,
+									   point4,
+									   point5,
+									   point6,
+									   point7
+								   };
 			// Draw polygon to screen.
 			t.Graphics.DrawPolygon(blackPen, curvePoints);
 			t.Show();
@@ -939,10 +933,10 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create array of rectangles.
 			RectangleF[] rects = {
-				new RectangleF(  20.0F,   20.0F, 100.0F, 200.0F),
-				new RectangleF(100.0F, 200.0F, 250.0F,  50.0F),
-				new RectangleF(300.0F,   20.0F,  50.0F, 100.0F)
-			};
+									 new RectangleF(  20.0F,   20.0F, 100.0F, 200.0F),
+									 new RectangleF(100.0F, 200.0F, 250.0F,  50.0F),
+									 new RectangleF(300.0F,   20.0F,  50.0F, 100.0F)
+								 };
 			// Draw rectangles to screen.
 			t.Graphics.DrawRectangles(blackPen, rects);
 			t.Show();
@@ -955,10 +949,10 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			Pen blackPen = new Pen(Color.Black, 3);
 			// Create array of rectangles.
 			Rectangle[] rects = {
-									 new Rectangle(  20,   20, 100, 200),
-									 new Rectangle(100, 200, 250,  50),
-									 new Rectangle(300,   20,  50, 100)
-								 };
+									new Rectangle(  20,   20, 100, 200),
+									new Rectangle(100, 200, 250,  50),
+									new Rectangle(300,   20,  50, 100)
+								};
 			// Draw rectangles to screen.
 			t.Graphics.DrawRectangles(blackPen, rects);
 			t.Show();
@@ -999,9 +993,6 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Graphics.EndContainer is not implemented
-#endif
 		public void EndContainerState() {
 			// Begin graphics container.
 			GraphicsContainer containerState = t.Graphics.BeginContainer();
@@ -1190,14 +1181,14 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			Point point6 = new Point(350, 200);
 			Point point7 = new Point(250, 250);
 			Point[] curvePoints = {
-									   point1,
-									   point2,
-									   point3,
-									   point4,
-									   point5,
-									   point6,
-									   point7
-								   };
+									  point1,
+									  point2,
+									  point3,
+									  point4,
+									  point5,
+									  point6,
+									  point7
+								  };
 
 			// Fill polygon to screen.
 			t.Graphics.FillPolygon(blueBrush, curvePoints, FillMode.Winding);
@@ -1228,14 +1219,14 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			PointF point6 = new PointF(350.0F, 200.0F);
 			PointF point7 = new PointF(250.0F, 250.0F);
 			PointF[] curvePoints = {
-				point1,
-				point2,
-				point3,
-				point4,
-				point5,
-				point6,
-				point7
-			};
+									   point1,
+									   point2,
+									   point3,
+									   point4,
+									   point5,
+									   point6,
+									   point7
+								   };
 
 			// Fill polygon to screen.
 			t.Graphics.FillPolygon(blueBrush, curvePoints, FillMode.Winding);
@@ -1299,10 +1290,10 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			SolidBrush blueBrush = new SolidBrush(Color.Blue);
 			// Create array of rectangles.
 			Rectangle[] rects = {
-				new Rectangle(  0,   0, 100, 200),
-				new Rectangle(100, 200, 250,  50),
-				new Rectangle(300,   0,  50, 100)
-			};
+									new Rectangle(  0,   0, 100, 200),
+									new Rectangle(100, 200, 250,  50),
+									new Rectangle(300,   0,  50, 100)
+								};
 			// Fill rectangles to screen.
 			t.Graphics.FillRectangles(blueBrush, rects);
 			t.Show();
@@ -1406,9 +1397,9 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			Font stringFont = new Font("Times New Roman", 16.0F);
 			// Set character ranges to "First" and "Second".
 			CharacterRange[] characterRanges = {
-				new CharacterRange(0, 5),
-				new CharacterRange(10, 6)
-			};
+												   new CharacterRange(0, 5),
+												   new CharacterRange(10, 6)
+											   };
 			// Create rectangle for layout.
 			float x = 50.0F;
 			float y = 50.0F;
@@ -1571,9 +1562,6 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 		}
 
 		[Test]
-#if TARGET_JVM
-		[Category ("NotWorking")] // FIXME: Graphics.Save / Restore is not implemented 
-#endif
 		public void SaveRestoreTranslate() {
 			// Translate transformation matrix.
 			t.Graphics.TranslateTransform(100, 0);
@@ -1711,6 +1699,83 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 			t.Graphics.TranslateTransform(100.0F, 0.0F, MatrixOrder.Prepend);
 			// Draw rotated, translated ellipse to screen.
 			t.Graphics.DrawEllipse(new Pen(Color.Blue, 3), 0, 0, 200, 80);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+
+		[Test]
+		public void TransfromPageScaleUnits() {
+			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
+			t.Graphics.PageScale = 1.0F;
+			t.Graphics.DrawLine(Pens.Red, 10, 70, 70, 10);
+
+			t.Graphics.PageUnit = GraphicsUnit.Document;
+			t.Graphics.PageScale = 10.0F;
+			t.Graphics.DrawLine(Pens.Blue, 10, 70, 70, 10);
+
+			t.Graphics.PageUnit = GraphicsUnit.Inch;
+			t.Graphics.PageScale = 0.055F;
+			t.Graphics.DrawLine(Pens.Green, 10, 70, 70, 10);
+
+			Matrix mx=new Matrix(0.5f,0,0,0.5f,0,0);
+			t.Graphics.Transform = mx;
+
+			t.Graphics.PageUnit = GraphicsUnit.Inch;
+			t.Graphics.DrawLine(Pens.Black, 10, 70, 70, 10);
+
+			t.Graphics.PageUnit = GraphicsUnit.Point;
+			t.Graphics.PageScale = 2.7F;
+			t.Graphics.DrawLine(Pens.Yellow, 10, 70, 70, 10);
+
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+
+		[Test]
+		public void TransfromPageScaleUnits_2() {
+			t.Graphics.RotateTransform(45);
+			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
+			t.Graphics.PageScale = 1.0F;
+			t.Graphics.DrawLine(Pens.Red, 10, 70, 70, 10);
+
+			t.Graphics.TranslateTransform(100, 0);
+			t.Graphics.PageUnit = GraphicsUnit.Pixel;
+			t.Graphics.PageScale = 2.0F;
+			t.Graphics.DrawLine(Pens.Blue, 10, 70, 70, 10);
+
+			t.Graphics.ResetTransform();
+			t.Graphics.DrawLine(Pens.Green, 10, 70, 70, 10);
+
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void TransfromPageScaleUnits_3() {
+			t.Graphics.TranslateTransform(20, 20);
+			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
+			t.Graphics.PageScale = 1.0F;
+			t.Graphics.DrawLine(Pens.Red, 10, 70, 70, 10);
+		
+			t.Graphics.TranslateTransform(10, 10);
+			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
+			t.Graphics.PageScale = 1.0F;
+			t.Graphics.DrawLine(Pens.Red, 10, 70, 70, 10);
+		
+			t.Graphics.RotateTransform(15);
+		
+			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
+			t.Graphics.PageScale = 0.5F;
+			t.Graphics.DrawLine(Pens.Red, 10, 70, 70, 10);
+		
+			t.Graphics.PageUnit = GraphicsUnit.Pixel;
+			t.Graphics.PageScale = 0.5F;
+			t.Graphics.DrawLine(Pens.Red, 10, 70, 70, 10);
+					
+			t.Graphics.PageUnit = GraphicsUnit.Pixel;
+			t.Graphics.TranslateTransform(0, 0);
+			t.Graphics.PageScale = 1.5F;
+			t.Graphics.DrawLine(Pens.Red, 10, 70, 70, 10);
+
 			t.Show();
 			Assert.IsTrue(t.Compare());
 		}
@@ -1904,14 +1969,14 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 		}
 	}
 
-//	[TestFixture]
-//	public class GraphicsFixturePropPageUnit7 : GraphicsFixture {
-//		public override void SetUp() {
-//			base.SetUp ();
-//
-//			t.Graphics.PageUnit = GraphicsUnit.World;
-//		}
-//	}
+	//	[TestFixture]
+	//	public class GraphicsFixturePropPageUnit7 : GraphicsFixture {
+	//		public override void SetUp() {
+	//			base.SetUp ();
+	//
+	//			t.Graphics.PageUnit = GraphicsUnit.World;
+	//		}
+	//	}
 
 	#endregion
 
@@ -2010,6 +2075,158 @@ namespace Test.Sys.Drawing.GraphicsFixtures
 		}
 	}
 
+	#endregion
+
+	#region GraphicsFixtureGraphicsState
+
+	[TestFixture]
+	public class GraphicsFixtureGraphicsState {
+		protected DrawingTest t;
+		protected int TOLERANCE = 3; //in %;
+
+		[SetUp]
+		public virtual void SetUp() {
+			t = DrawingTest.Create(512, 512, "GraphicsFixtureGraphicsState");
+		}
+
+		[TearDown]
+		public void TearDown() {
+		}
+
+		[Test]
+		public void BeginEndContainer() {
+			t.Graphics.FillRectangle( Brushes.Blue, 0, 0, 100, 100 );
+
+			GraphicsContainer c1 = t.Graphics.BeginContainer( 
+				new Rectangle(100, 100, 100, 100), 
+				new Rectangle(0, 0, 100, 100), 
+				GraphicsUnit.Pixel);
+
+			t.Graphics.FillRectangle( Brushes.Green, 0, 0, 100, 100 );
+
+			GraphicsContainer c2 = t.Graphics.BeginContainer( 
+				new Rectangle(100, 100, 100, 100), 
+				new Rectangle(0, 0, 100, 100), 
+				GraphicsUnit.Pixel);
+
+			t.Graphics.FillRectangle( Brushes.Red, 0, 0, 100, 100 );
+
+			GraphicsState s1 = t.Graphics.Save();
+			t.Graphics.PageUnit = GraphicsUnit.Pixel;
+
+			t.Graphics.PageScale = 0.7f;
+			t.Graphics.FillRectangle( Brushes.SeaGreen, 0, 0, 100, 100 );
+
+			t.Graphics.EndContainer(c2);
+			t.Graphics.PageScale = 0.7f;
+			t.Graphics.FillRectangle( Brushes.SeaGreen, 0, 0, 100, 100 );
+
+			t.Graphics.EndContainer(c1);
+			t.Graphics.PageScale = 0.7f;
+			t.Graphics.FillRectangle( Brushes.SeaGreen, 0, 0, 100, 100 );
+
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+
+		[Test]
+		public void SaveRestoreGraphicsProps() {
+			t.Graphics.CompositingQuality = CompositingQuality.GammaCorrected;
+			t.Graphics.CompositingMode = CompositingMode.SourceCopy;
+			t.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+			t.Graphics.PageScale = 7;
+			t.Graphics.PageUnit = GraphicsUnit.Inch;
+			t.Graphics.PixelOffsetMode = PixelOffsetMode.Half;
+			t.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+			t.Graphics.Transform = new Matrix(1, 2, 3, 4, 5, 6);
+			t.Graphics.TextContrast = 10;
+			t.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+
+			GraphicsContainer c1 = t.Graphics.BeginContainer();
+
+			Assert.AreEqual(CompositingQuality.Default, t.Graphics.CompositingQuality);
+			Assert.AreEqual(CompositingMode.SourceOver, t.Graphics.CompositingMode);
+			Assert.AreEqual(InterpolationMode.Bilinear, t.Graphics.InterpolationMode);
+			Assert.AreEqual(1.0F, t.Graphics.PageScale);
+			Assert.AreEqual(GraphicsUnit.Display, t.Graphics.PageUnit);
+			Assert.AreEqual(PixelOffsetMode.Default, t.Graphics.PixelOffsetMode);
+			Assert.AreEqual(SmoothingMode.None, t.Graphics.SmoothingMode);
+			Assert.AreEqual(true, t.Graphics.Transform.IsIdentity);
+			Assert.AreEqual(4.0f, t.Graphics.TextContrast);
+			Assert.AreEqual(TextRenderingHint.SystemDefault, t.Graphics.TextRenderingHint);
+
+			t.Graphics.EndContainer(c1);
+		}
+		[Test]
+		public void SaveRestoreGraphicsProps_2() {
+			GraphicsState s = t.Graphics.Save();
+
+			t.Graphics.CompositingQuality = CompositingQuality.GammaCorrected;
+			t.Graphics.CompositingMode = CompositingMode.SourceCopy;
+			t.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+			t.Graphics.PageScale = 7;
+			t.Graphics.PageUnit = GraphicsUnit.Inch;
+			t.Graphics.PixelOffsetMode = PixelOffsetMode.Half;
+			t.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+			t.Graphics.Transform = new Matrix(1, 2, 3, 4, 5, 6);
+			t.Graphics.TextContrast = 10;
+			t.Graphics.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+
+			t.Graphics.Restore(s);
+
+			Assert.AreEqual(CompositingQuality.Default, t.Graphics.CompositingQuality);
+			Assert.AreEqual(CompositingMode.SourceOver, t.Graphics.CompositingMode);
+			Assert.AreEqual(InterpolationMode.Bilinear, t.Graphics.InterpolationMode);
+			Assert.AreEqual(1.0F, t.Graphics.PageScale);
+			Assert.AreEqual(GraphicsUnit.Display, t.Graphics.PageUnit);
+			Assert.AreEqual(PixelOffsetMode.Default, t.Graphics.PixelOffsetMode);
+			Assert.AreEqual(SmoothingMode.None, t.Graphics.SmoothingMode);
+			Assert.AreEqual(true, t.Graphics.Transform.IsIdentity);
+			Assert.AreEqual(4.0f, t.Graphics.TextContrast);
+			Assert.AreEqual(TextRenderingHint.SystemDefault, t.Graphics.TextRenderingHint);
+		}
+
+		[Test]
+		public void SaveRestoreGraphicsProps_3() {
+			t.Graphics.PageScale = 2;
+			GraphicsContainer c1 = t.Graphics.BeginContainer();
+
+			t.Graphics.PageScale = 3;
+			GraphicsContainer c2 = t.Graphics.BeginContainer();
+
+			t.Graphics.PageScale = 4;
+			GraphicsContainer c3 = t.Graphics.BeginContainer();
+
+			t.Graphics.EndContainer(c2);
+			Assert.AreEqual(3, t.Graphics.PageScale);
+
+			t.Graphics.PageScale = 5;
+			GraphicsState c5 = t.Graphics.Save();
+
+			t.Graphics.EndContainer(c3);
+			Assert.AreEqual(5, t.Graphics.PageScale);
+
+			t.Graphics.Restore(c5);
+			Assert.AreEqual(5, t.Graphics.PageScale);
+
+			t.Graphics.EndContainer(c1);
+			Assert.AreEqual(2, t.Graphics.PageScale);
+		}
+		[Test]
+		public void SaveRestoreGraphicsProps_4() {
+			t.Graphics.PageScale = 2;
+			GraphicsContainer c1 = t.Graphics.BeginContainer();
+
+			t.Graphics.PageScale = 3;
+			GraphicsState c2 = t.Graphics.Save();
+
+			t.Graphics.EndContainer(c1);
+			Assert.AreEqual(2, t.Graphics.PageScale);
+
+			t.Graphics.Restore(c2);
+			Assert.AreEqual(2, t.Graphics.PageScale);
+		}
+	}
 	#endregion
 
 	#region GraphicsFixturePropTextRenderingHint
