@@ -48,16 +48,25 @@ using System.Web.SessionState;
 using System.Web.Util;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+#if NET_2_0
+using System.Web.UI.Adapters;
+#endif
 
 namespace System.Web.UI
 {
 
-#if !NET_2_0
+#if NET_2_0
+[RootDesignerSerializer ("Microsoft.VisualStudio.Web.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VisualStudio_Web, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
+#else
 [RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 #endif
 [DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 [ToolboxItem (false)]
+#if NET_2_0
+[Designer ("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (IRootDesigner))]
+#else
 [Designer ("Microsoft.VSDesigner.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VSDesigner, typeof (IRootDesigner))]
+#endif
 public class Page : TemplateControl, IHttpHandler
 {
 	private bool _viewState = true;
@@ -317,6 +326,14 @@ public class Page : TemplateControl, IHttpHandler
 #else
 	protected int LCID {
 		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
+	}
+#endif
+
+#if NET_2_0
+	public PageAdapter PageAdapter {
+		get {
+			return (PageAdapter)Adapter;
+		}
 	}
 #endif
 
@@ -1508,6 +1525,7 @@ public class Page : TemplateControl, IHttpHandler
 	}
 
 
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected internal void AddContentTemplate (string templateName, ITemplate template)
 	{
 		Master.AddContentTemplate (templateName, template);

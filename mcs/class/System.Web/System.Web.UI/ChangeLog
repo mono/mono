@@ -1,5 +1,10 @@
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* Page.cs: more random corcompare work.
+	(PageAdapter): implement.
+	
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* Page.cs (.ctor): set our initial ID to "__Page".
 	(SmartNavigation): obsolete in 2.0.
 	(FindControl): new implementation.  Just check our own ID against
