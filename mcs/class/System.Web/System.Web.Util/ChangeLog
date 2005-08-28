@@ -1,3 +1,9 @@
+2005-08-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: removed 2 unused methods. IsRelativeUrl returns false if
+	there's a colon in the string, assuming it's the beginning of the ://
+	after the schema.
+
 2005-07-15  Ben Maurer  <bmaurer@ximian.com>
 
 	* DataSourceHelper.cs: Obsolete

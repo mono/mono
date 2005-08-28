@@ -204,19 +204,9 @@ namespace System.Web.Util {
 			return false;
 		}
 
-		internal static string MakeRelative (string path)
-		{
-			throw new NotImplementedException ();
-		}
-
-		internal static string MakeRelative (string path, string xxx)
-		{
-			throw new NotImplementedException ();
-		}
-
 		internal static bool IsRelativeUrl (string path)
 		{
-			return path [0] != '/';
+			return (path [0] != '/' && path.IndexOf (':') == -1);
 		}
 
                 public static string ResolveVirtualPathFromAppAbsolute (string path)
