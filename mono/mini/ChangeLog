@@ -1,5 +1,8 @@
 2005-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_method_to_ir): Disable the MUL->MUL_IMM optimization
+	when ssapre is enabled.
+
 	* inssel-long.brg: Fix bug in previous patch.
 
 	* mini-ia64.c mini-ia64.h mini.c inssel-long.brg: Optimize 
