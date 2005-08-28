@@ -66,9 +66,8 @@ namespace System.Web
 				response.AddHeader ("Last-Modified", lastWT.ToString ("r"));
 
 				response.ContentType = MimeTypes.GetMimeType (fileName);
-				response.WriteFile (fileName);
+				response.TransmitFile (fileName);
 			} catch (Exception e) {
-				Console.WriteLine ("Exception is" + e);
 				throw new HttpException (403, "Forbidden.");
 			}
 		}

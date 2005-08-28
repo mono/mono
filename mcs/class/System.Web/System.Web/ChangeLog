@@ -1,3 +1,8 @@
+2005-08-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StaticFileHandler.cs: use TransmitFile instead of WriteFile. This way
+	xsp will use sendfile().
+
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
 	* SiteMapNode.cs: fix IHierarchyData.GetParent.
