@@ -1,3 +1,7 @@
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
+	* Pair.cs: mark serializable and sealed in 2.0.
+
 2005-08-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CssStyleCollection.cs: Implemented setter for Value (2.0) using the

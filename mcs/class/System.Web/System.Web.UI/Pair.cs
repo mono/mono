@@ -27,7 +27,14 @@
 //
 
 namespace System.Web.UI {
-	public class Pair {
+#if NET_2_0
+	[Serializable]
+#endif
+	public 
+#if NET_2_0
+	sealed
+#endif
+	class Pair {
 	
 		public Pair (object first, object second)
 		{
