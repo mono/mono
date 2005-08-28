@@ -30,15 +30,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.Reflection;
-using System.ComponentModel.Design.Serialization;
 
 namespace System.ComponentModel
 {
 	public class DateTimeConverter : TypeConverter
 	{
-
 		public DateTimeConverter()
 		{
 		}
@@ -52,8 +51,6 @@ namespace System.ComponentModel
 
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			if (destinationType == typeof (string))
-				return true;
 			if (destinationType == typeof (InstanceDescriptor))
 				return true;
 			return base.CanConvertTo (context, destinationType);
@@ -61,15 +58,15 @@ namespace System.ComponentModel
 
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			if (value.GetType() == typeof (string)) {
-				string DateString = (String) value;
+			if (value is string) {
+				string DateString = (string) value;
 				try {
-					if (culture == null)
-						// try to parse string
+					if (culture == null) {
 						return DateTime.Parse (DateString);
-					else
-						// try to parse string
-						return DateTime.Parse (DateString, culture.DateTimeFormat);
+					} else {
+						DateTimeFormatInfo info = (DateTimeFormatInfo) culture.GetFormat (typeof (DateTimeFormatInfo));
+						return DateTime.Parse (DateString, info);
+					}
 				} catch {
 					throw new FormatException (DateString + "is not a valid DateTime value.");
 				}
@@ -80,23 +77,29 @@ namespace System.ComponentModel
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value,
 						  Type destinationType)
 		{
-			if (destinationType == typeof (string) && value != null && (value is DateTime)) {
-				CultureInfo CurrentCulture = culture;
-				if (CurrentCulture == null)
-					CurrentCulture = CultureInfo.CurrentCulture;
-				DateTime ConvertTime = (DateTime) value;
+			if (destinationType == typeof (string) && value is DateTime) {
+				if (culture == null) {
+					culture = CultureInfo.CurrentCulture;
+				}
+				DateTime datetime = (DateTime) value;
+				if (datetime == DateTime.MinValue) {
+					return string.Empty;
+				}
 
-				if (CurrentCulture.Equals(CultureInfo.InvariantCulture)) {
-					if (ConvertTime.Equals(ConvertTime.Date))
-						return ConvertTime.ToString("yyyy-mm-dd");
-					else
-						return ConvertTime.ToString ();
+				DateTimeFormatInfo info = (DateTimeFormatInfo) culture.GetFormat (typeof (DateTimeFormatInfo));
+
+				if (culture == CultureInfo.InvariantCulture) {
+					if (datetime.Equals (datetime.Date)) {
+						return datetime.ToString ("yyyy-mm-dd", culture);
+					}
+					return datetime.ToString (culture);
 				} else {
-					if (ConvertTime.Equals(ConvertTime.Date))
-						return ConvertTime.ToString (CurrentCulture.DateTimeFormat.ShortDatePattern);
-					else
-						return ConvertTime.ToString (CurrentCulture.DateTimeFormat.ShortDatePattern + 
-							" " + CurrentCulture.DateTimeFormat.ShortTimePattern);
+					if (datetime == datetime.Date) {
+						return datetime.ToString (info.ShortDatePattern, culture);
+					} else {
+						return datetime.ToString (info.ShortDatePattern + " " + 
+							info.ShortTimePattern, culture);
+					}
 				}
 			}
 			if (destinationType == typeof (InstanceDescriptor) && value is DateTime) {

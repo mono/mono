@@ -1,3 +1,7 @@
+2005-08-28 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* DateTimeConverterTests.cs: Added tests for DateTimeConverter.
+
 2005-08-26 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* ByteConverterTests.cs: Added ConvertToString and ConvertFromString

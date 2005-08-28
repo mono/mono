@@ -1,3 +1,7 @@
+2005-08-28 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added DateTimeConverterTests.cs.
+
 2005-08-23  Raja R Harinath  <rharinath@novell.com>
 
 	* System.dll.sources: Update.

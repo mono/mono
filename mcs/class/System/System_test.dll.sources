@@ -31,6 +31,7 @@ System.Collections.Specialized/ListDictionaryTest.cs
 System.Collections.Specialized/NameValueCollectionTest.cs
 System.Collections.Specialized/StringCollectionTest.cs
 System.ComponentModel/ByteConverterTests.cs
+System.ComponentModel/DateTimeConverterTests.cs
 System.ComponentModel/DecimalConverterTests.cs
 System.ComponentModel/DoubleConverterTests.cs
 System.ComponentModel/EventHandlerListTests.cs
