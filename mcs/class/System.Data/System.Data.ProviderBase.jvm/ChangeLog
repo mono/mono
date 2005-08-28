@@ -1,4 +1,8 @@
 2005-28-08 Boris Kirzner <borisk@mainsoft.com>
+	* ReaderCache.cs: 
+		- Create Guid from the string fetched.
+
+2005-28-08 Boris Kirzner <borisk@mainsoft.com>
 	* AbstractDBCommand.cs: 
 		- Do not check for "select ... from", just add "for browse" if needed.
 		Removed unused regex.

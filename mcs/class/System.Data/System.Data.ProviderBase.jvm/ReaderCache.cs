@@ -254,7 +254,7 @@ namespace System.Data.Common
 		{
 			string s = rs.getString(columnIndex);
 			if (s != null)
-				_g = new Guid();
+				_g = new Guid(s);
 		}
 
 		public override object GetValue()
