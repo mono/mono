@@ -1,5 +1,9 @@
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlInputReset.cs: mostly complete implementation.
+
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlInputPassword.cs: doh, make this NET_2_0 only.
 
 2005-08-28  Chris Toshok  <toshok@ximian.com>
