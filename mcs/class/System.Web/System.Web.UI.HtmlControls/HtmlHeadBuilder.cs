@@ -34,7 +34,7 @@ using System.Collections;
 
 namespace System.Web.UI.HtmlControls
 {
-	class HtmlHeadBuilder : ControlBuilder
+	public class HtmlHeadBuilder : ControlBuilder
 	{
 		public override bool AllowWhitespaceLiterals ()
 		{

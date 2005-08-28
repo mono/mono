@@ -131,7 +131,7 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		[MonoTODO]
-		protected virtual void RaisePostBackEvent ()
+		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
 			throw new NotImplementedException ();
 		}
@@ -168,7 +168,11 @@ namespace System.Web.UI.HtmlControls {
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
 			if (CausesValidation)
+#if NET_2_0
+				Page.Validate (ValidationGroup);
+#else
 				Page.Validate ();
+#endif
 			OnServerClick (new ImageClickEventArgs (clicked_x, clicked_y));
 		}
 

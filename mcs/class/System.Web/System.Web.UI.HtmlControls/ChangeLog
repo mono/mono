@@ -1,5 +1,17 @@
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlHeadBuilder.cs: this is public.
+
+	* HtmlSelectBuilder.cs: in 2.0 this is public.
+
+	* HtmlInputButton.cs: fix boilerplate.
+
+	* HtmlInputImage.cs (RaisePostBackEvent): add missing argument.
+	(IPostBackEventHandler.RaisePostBackEvent): in 2.0, call
+	Page.Validation(ValidationGroup).
+
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlInputReset.cs: mostly complete implementation.
 
 2005-08-28  Chris Toshok  <toshok@ximian.com>

@@ -13,6 +13,9 @@ using System.Web.UI.WebControls;
 
 namespace System.Web.UI.HtmlControls
 {
+#if NET_2_0
+	public
+#endif
 	class HtmlSelectBuilder : ControlBuilder
 	{
 		public override bool AllowWhitespaceLiterals () 
