@@ -329,10 +329,9 @@ namespace System.Web {
 		
 		#region INavigateUIData
 		IHierarchicalEnumerable System.Web.UI.IHierarchyData.GetChildren () { return ChildNodes; }
-		IHierarchicalEnumerable System.Web.UI.IHierarchyData.GetParent ()
+		IHierarchyData System.Web.UI.IHierarchyData.GetParent ()
 		{
-			if (ParentNode == null) return null; 
-			return SiteMapNodeCollection.ReadOnly (new SiteMapNodeCollection (ParentNode));
+			return ParentNode;
 		}
 
 		bool System.Web.UI.IHierarchyData.HasChildren { get { return HasChildNodes; } }
