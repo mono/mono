@@ -58,6 +58,7 @@ namespace System.Drawing {
 			_nativeObject.setTransform( _transform.NativeObject );
 
 			NativeObject.setRenderingHint(awt.RenderingHints.KEY_COLOR_RENDERING, awt.RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+			InterpolationMode = InterpolationMode.Bilinear;
 		}
 
 		#endregion

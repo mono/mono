@@ -1,3 +1,7 @@
+2005-08-28 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Graphics.jvm.cs: fixed .ctor (InterpolationMode)
+
 2005-08-28 Konstantin Triger <kostat@mainsoft.com>
 
 	* StrokeFactory.jvm.cs, AdvancedStroke.jvm.cs, Pen.jvm.cs
