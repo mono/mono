@@ -1,5 +1,9 @@
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlInputPassword.cs: implement.
+
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlImage.cs: corcompare fixes.
 
 	* HtmlInputCheckBox.cs: same.
