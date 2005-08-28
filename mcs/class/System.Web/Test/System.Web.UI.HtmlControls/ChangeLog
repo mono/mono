@@ -1,5 +1,10 @@
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlInputResetTest.cs: new tests for HtmlInputReset.  Missing
+	event tests.
+
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlInputPasswordTest.cs: new tests for HtmlInputPassword.
 
 2005-08-26  Sebastien Pouliot  <sebastien@ximian.com>
