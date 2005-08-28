@@ -1,3 +1,9 @@
+2005-08-28 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* System.Drawing.vmwcsproj: Added GraphicsContainer.jvm.cs, GraphicsState.jvm.cs
+	Excluded: GraphicsContainer.cs, GraphicsState.cs
+	Fixed: const.cs.in
+
 2005-08-25 Atsushi Enomoto <atsushi@ximian.com>
 
 	* Makefile: build fix for some utf8-defaulted environment.

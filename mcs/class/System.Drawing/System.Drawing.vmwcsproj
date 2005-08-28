@@ -16,7 +16,7 @@
 				<File RelPath="Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Assembly\Consts.cs" Link="..\..\build\common\Consts.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Assembly\Consts.cs.in" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\AdvancedStroke.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\BasicShape.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Bitmap.jvm.cs" SubType="Code" BuildAction="Compile"/>
@@ -83,10 +83,10 @@
 				<File RelPath="System.Drawing.Drawing2D\FillMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\FlushIntention.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\GeneralPathIterator.jvm.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing.Drawing2D\GraphicsContainer.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing.Drawing2D\GraphicsContainer.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\GraphicsPath.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\GraphicsPathIterator.jvm.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Drawing.Drawing2D\GraphicsState.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing.Drawing2D\GraphicsState.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\HatchBrush.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\HatchStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Drawing2D\InterpolationMode.cs" SubType="Code" BuildAction="Compile"/>
