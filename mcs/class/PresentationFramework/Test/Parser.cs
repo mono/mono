@@ -169,19 +169,34 @@ public class ParserTest {
 
 		ConsoleApp app = new ConsoleApp();
 		ConsoleReader reader = new ConsoleReader();
+		app.AddChild(reader);
 		ConsoleWriter writer = new ConsoleWriter();
 		reader.Prompt = writer;
-		app.AddChild(reader);
 		
 		compare(app);
 	}
 
+	[Test]
+	public void TestObjectAsDependencyPropertyValue()
+	{
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleReader>\n" +
+			"<ConsoleApp.Repetitions><ConsoleValueString Text=\"3\" /></ConsoleApp.Repetitions>\n" +
+			"</ConsoleReader>\n" +
+			"</ConsoleApp>";
 
-	private void compare(object expected)
+		ConsoleApp app = new ConsoleApp();
+		ConsoleReader reader = new ConsoleReader();
+		app.AddChild(reader);
+		ConsoleApp.SetRepetitions(reader, 3);
+		
+		compare(app);
+	}
+	private void compare(ConsoleApp expected)
 	{
 		string mapping = "<?Mapping ClrNamespace=\"Xaml.TestVocab.Console\" Assembly=\"./TestVocab.dll\" XmlNamespace=\"console\" ?>\n";
-		object o = Parser.LoadXml(new XmlTextReader(new StringReader(mapping + code)));
-		Assert.AreEqual(expected, o);
+		object actual = Parser.LoadXml(new XmlTextReader(new StringReader(mapping + code)));
+		Assert.AreEqual(expected, actual);
 	}
 
 }

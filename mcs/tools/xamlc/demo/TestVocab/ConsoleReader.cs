@@ -24,7 +24,9 @@ namespace Xaml.TestVocab.Console {
 		public override bool Equals(object o)
 		{
 			ConsoleReader reader = (ConsoleReader)o;
-			return (reader.variable == variable) && (reader.prompt == prompt) && (ConsoleApp.GetRepetitions(reader) == ConsoleApp.GetRepetitions(this));
+			return (reader.variable == variable) && 
+					((reader.prompt == null && prompt == null) || reader.prompt.Equals(prompt)) && 
+					(ConsoleApp.GetRepetitions(reader) == ConsoleApp.GetRepetitions(this));
 		}
 		public override int GetHashCode()
 		{

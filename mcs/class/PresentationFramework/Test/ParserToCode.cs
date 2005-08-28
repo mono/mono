@@ -265,6 +265,59 @@ public class ParserToCodeTest {
 	}
 
 	[Test]
+	public void TestObjectAsDependencyPropertyValue()
+	{
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleReader>\n" +
+			"<ConsoleApp.Repetitions><ConsoleValueString Text=\"3\" /></ConsoleApp.Repetitions>\n" +
+			"</ConsoleReader>\n" +
+			"</ConsoleApp>";
+
+		compare(
+				"namespace DefaultNamespace {\n"+
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"		private derivedConsoleApp() {\n"+
+				"			Xaml.TestVocab.Console.ConsoleReader consoleReader1 = new Xaml.TestVocab.Console.ConsoleReader();\n"+
+				"			this.AddChild(consoleReader1);\n" +
+				"			int temp0;\n" +
+				"			Xaml.TestVocab.Console.ConsoleValueString consoleValueString1 = new Xaml.TestVocab.Console.ConsoleValueString();\n" +
+				"			consoleValueString1.Text = \"3\";\n" +
+				"			temp0 = ((int)(System.ComponentModel.TypeDescriptor.GetConverter(typeof(Xaml.TestVocab.Console.ConsoleValueString)).ConvertTo(consoleValueString1, typeof(int))));\n" +
+				"			Xaml.TestVocab.Console.ConsoleApp.SetRepetitions(consoleReader1, temp0);\n" +
+				"		}\n" +
+				"	}\n" +
+				"}"
+		);							
+	}
+
+	[Test]
+	public void TestObjectAsDependencyPropertyValueWithSpecifiedName()
+	{
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleReader>\n" +
+			"<ConsoleApp.Repetitions><ConsoleValueString Text=\"3\" x:Name=\"xyz\"/></ConsoleApp.Repetitions>\n" +
+			"</ConsoleReader>\n" +
+			"</ConsoleApp>";
+
+		compare(
+				"namespace DefaultNamespace {\n"+
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"		private Xaml.TestVocab.Console.ConsoleValueString xyz = new Xaml.TestVocab.Console.ConsoleValueString();\n" +
+				"		private derivedConsoleApp() {\n"+
+				"			Xaml.TestVocab.Console.ConsoleReader consoleReader1 = new Xaml.TestVocab.Console.ConsoleReader();\n"+
+				"			this.AddChild(consoleReader1);\n" +
+				"			int temp0;\n" +
+				"			xyz.Text = \"3\";\n" +
+				"			temp0 = ((int)(System.ComponentModel.TypeDescriptor.GetConverter(typeof(Xaml.TestVocab.Console.ConsoleValueString)).ConvertTo(xyz, typeof(int))));\n" +
+				"			Xaml.TestVocab.Console.ConsoleApp.SetRepetitions(consoleReader1, temp0);\n" +
+				"		}\n" +
+				"	}\n" +
+				"}"
+		);							
+	}
+
+
+	[Test]
 	public void TestEvent()
 	{
 		code = "<ConsoleApp xmlns=\"console\" SomethingHappened=\"handleSomething\"></ConsoleApp>";

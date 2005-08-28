@@ -1,5 +1,12 @@
 2005-08-28  Iain McCoy  <iain@mccoy.id.au>
 
+	* demo/TestVocab/ConsoleApp.cs, 
+	demo/TestVocab/ConsoleReader.cs,
+	demo/TestVocab/ConsoleWriter.cs: fixed up incredibly broken tests for
+	equality.
+
+2005-08-28  Iain McCoy  <iain@mccoy.id.au>
+
 	* demo/runtimetest.xaml: added a demonstration of objects as values of
 	dependency properties
 

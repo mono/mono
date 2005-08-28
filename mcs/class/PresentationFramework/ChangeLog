@@ -1,5 +1,16 @@
 2005-08-28  Iain McCoy  <iain@mccoy.id.au>
 
+	* Test/Parser.cs, Test/ParserToCode.cs: added tests for objects as
+	values of dependency properties
+
+2005-08-28  Iain McCoy  <iain@mccoy.id.au>
+
+	* Test/ObjectWriter.cs, Test/Parser.cs: renamed to match the new world
+	* Test/CodeWriter.cs, Test/ParserToCode.cs: renamed to match the new
+	world
+
+2005-08-28  Iain McCoy  <iain@mccoy.id.au>
+
 	* System.Windows.Serialization/Parser.cs: a bit more refactoring to
 	reduce code duplication
 	* Mono.Windows.Serialization/ParserToCode.cs: similarly, refactoring

@@ -52,7 +52,9 @@ namespace Xaml.TestVocab.Console {
 		public override bool Equals(object o)
 		{
 			ConsoleWriter writer = (ConsoleWriter)o;
-			return (writer.filter == filter) && (writer.text == text) && (ConsoleApp.GetRepetitions(writer) == ConsoleApp.GetRepetitions(this));
+			return (writer.filter == filter)  && 
+					(writer.text.Equals(text)) && 
+					(ConsoleApp.GetRepetitions(writer) == ConsoleApp.GetRepetitions(this));
 		}
 		public override int GetHashCode()
 		{

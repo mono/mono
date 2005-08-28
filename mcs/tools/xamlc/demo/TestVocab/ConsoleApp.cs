@@ -58,7 +58,7 @@ namespace Xaml.TestVocab.Console {
 				return false;
 
 			for (int i = 0; i < actions.Count; i++) {
-				if (actions[i].Equals(app.actions[i]))
+				if (!actions[i].Equals(app.actions[i]))
 					return false;
 			}
 			return true;
