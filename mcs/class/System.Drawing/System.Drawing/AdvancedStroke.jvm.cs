@@ -7,7 +7,7 @@ using java.awt.geom;
 using sun.dc.path;
 using sun.dc.pr;
 
-namespace Mainsoft.Drawing {
+namespace System.Drawing {
 	internal class AdvancedStroke : Stroke {
 
 		/**
@@ -230,6 +230,12 @@ namespace Mainsoft.Drawing {
 				float my = 0.0f;
 				float[] point  = new float[6];
 
+				// normalize
+				const float norm = 0.5f;
+				//const float rnd = (0.5f - norm);
+				float ax = 0.0f;
+				float ay = 0.0f;
+
 				while (!pi.isDone()) {
 					int type = pi.currentSegment(point);
 					if (pathClosed == true) {
@@ -238,6 +244,51 @@ namespace Mainsoft.Drawing {
 							// Force current point back to last moveto point
 							consumer.beginSubpath(mx, my);
 						}
+					}
+					int index;
+					switch ((GraphicsPath.JPI)type) {
+						case GraphicsPath.JPI.SEG_CUBICTO:
+							index = 4;
+							break;
+						case GraphicsPath.JPI.SEG_QUADTO:
+							index = 2;
+							break;
+						case GraphicsPath.JPI.SEG_MOVETO:
+						case GraphicsPath.JPI.SEG_LINETO:
+							index = 0;
+							break;
+						case GraphicsPath.JPI.SEG_CLOSE:
+						default:
+							index = -1;
+							break;
+					}
+					if (index >= 0) {
+						float ox = point[index];
+						float oy = point[index+1];
+						float newax = (float) java.lang.Math.floor(ox/* + rnd*/) + norm;
+						float neway = (float) java.lang.Math.floor(oy/* + rnd*/) + norm;
+						point[index] = newax;
+						point[index+1] = neway;
+						newax -= ox;
+						neway -= oy;
+						switch ((GraphicsPath.JPI)type) {
+							case GraphicsPath.JPI.SEG_CUBICTO:
+								point[0] += ax;
+								point[1] += ay;
+								point[2] += newax;
+								point[3] += neway;
+								break;
+							case GraphicsPath.JPI.SEG_QUADTO:
+								point[0] += (newax + ax) / 2;
+								point[1] += (neway + ay) / 2;
+								break;
+//							case GraphicsPath.JPI.SEG_MOVETO:
+//							case GraphicsPath.JPI.SEG_LINETO:
+//							case GraphicsPath.JPI.SEG_CLOSE:
+//								break;
+						}
+						ax = newax;
+						ay = neway;
 					}
 					switch ((GraphicsPath.JPI)type) {
 						case GraphicsPath.JPI.SEG_MOVETO:

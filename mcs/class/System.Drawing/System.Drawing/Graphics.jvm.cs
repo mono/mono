@@ -132,8 +132,26 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException("pen");
 
-			shape = ((awt.Stroke)pen).createStrokedShape(shape);
-			FillShape(pen.Brush, shape);
+			if (pen.RequiresWidening && StrokeFactory.CanCreateAdvancedStroke) {
+				FillShape(pen.Brush, ((awt.Stroke)pen).createStrokedShape(shape));
+			}
+			else {
+				awt.Stroke oldStroke = NativeObject.getStroke();
+				NativeObject.setStroke(pen.NativeObject);
+				try {
+					awt.Paint oldPaint = NativeObject.getPaint();
+					try {
+						NativeObject.setPaint(pen.Brush);
+						NativeObject.draw(shape);
+					}
+					finally {
+						NativeObject.setPaint(oldPaint);
+					}
+				}
+				finally {
+					NativeObject.setStroke(oldStroke);
+				}
+			}
 		}
 
 		void FillShape(awt.Paint paint, awt.Shape shape) {

@@ -16,7 +16,7 @@ namespace System.Drawing {
 			#region StrokeCreator Members
 
 			public awt.Stroke Create(float width, int cap, int join, float miterlimit, float[] dash, float dash_phase, geom.AffineTransform penTransform) {
-				return new Mainsoft.Drawing.AdvancedStroke(width, cap, join, miterlimit, dash, dash_phase, penTransform);
+				return new System.Drawing.AdvancedStroke(width, cap, join, miterlimit, dash, dash_phase, penTransform);
 			}
 
 			#endregion
@@ -35,12 +35,18 @@ namespace System.Drawing {
 		static readonly StrokeCreator Creator;
 		static StrokeFactory() {
 			try {
-				Type type = typeof(Mainsoft.Drawing.AdvancedStroke);
-				java.lang.Class.forName(type.FullName).newInstance();
+				Type type = typeof(System.Drawing.AdvancedStroke);
+				Activator.CreateInstance(type);
 				Creator = new AdvancedCreator();
 			}
 			catch{
 				Creator = new DefaultCreator();
+			}
+		}
+
+		static public bool CanCreateAdvancedStroke {
+			get {
+				return !(Creator is DefaultCreator);
 			}
 		}
 
