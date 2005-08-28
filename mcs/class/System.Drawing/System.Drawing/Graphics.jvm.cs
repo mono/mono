@@ -3,6 +3,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.ComponentModel;
+using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text;
 using awt = java.awt;
@@ -21,6 +22,8 @@ namespace System.Drawing {
 		Matrix _transform;
 		GraphicsUnit _pageUnit = GraphicsUnit.Display;
 		float _pageScale = 1.0f;
+
+		Stack _stateContainerStack = new Stack(3);
 
 		static readonly float [] _unitConversion = {
 													   1,								// World
@@ -957,20 +960,76 @@ namespace System.Drawing {
 
 		#region Container [TODO]
 		public void EndContainer (GraphicsContainer container) {
-			throw new NotImplementedException ();
+			if (_stateContainerStack.Contains(container.StateObject))
+			{
+				GraphicsState gs = (GraphicsState)_stateContainerStack.Pop();
+				while ( !gs.Equals(container.StateObject) )
+					gs = (GraphicsState)_stateContainerStack.Pop();
+
+				gs.RestoreState(this);
+				UpdateInternalTransform();
+			}
 		}
 
 		public GraphicsContainer BeginContainer () {
-			throw new NotImplementedException ();
+			GraphicsState graphicsState = new GraphicsState(this, true);
+			GraphicsContainer container = new GraphicsContainer(graphicsState);
+
+			_stateContainerStack.Push( graphicsState );
+			return container;
 		}
 		
 		public GraphicsContainer BeginContainer (Rectangle dstrect, Rectangle srcrect, GraphicsUnit unit) {
-			throw new NotImplementedException ();
+			GraphicsState graphicsState = new GraphicsState(this, true);
+			GraphicsContainer container = new GraphicsContainer(graphicsState);
+
+			Matrix containerTransfrom =
+				new Matrix(	srcrect,
+				new Point [] {	 new Point (dstrect.X, dstrect.Y), 
+								 new Point (dstrect.X + dstrect.Width, dstrect.Y), 
+								 new Point (dstrect.X, dstrect.Y + dstrect.Height) });
+
+			if (_stateContainerStack.Count != 0) 
+			{
+				GraphicsState gs = (GraphicsState)_stateContainerStack.Peek();
+				if (gs.ContainerTransfrom != null)
+					Matrix.Multiply(
+						containerTransfrom.NativeObject, 
+						gs.ContainerTransfrom.NativeObject, MatrixOrder.Append);
+			}
+
+			graphicsState.ContainerTransfrom = containerTransfrom;
+			
+			_stateContainerStack.Push( graphicsState );
+			UpdateInternalTransform();
+			return container;
 		}
 
 		
 		public GraphicsContainer BeginContainer (RectangleF dstrect, RectangleF srcrect, GraphicsUnit unit) {
-			throw new NotImplementedException ();
+			GraphicsState graphicsState = new GraphicsState(this, true);
+			GraphicsContainer container = new GraphicsContainer(graphicsState);
+
+			Matrix containerTransfrom =
+				new Matrix(	srcrect,
+				new PointF [] {	 new PointF (dstrect.X, dstrect.Y), 
+								 new PointF (dstrect.X + dstrect.Width, dstrect.Y), 
+								 new PointF (dstrect.X, dstrect.Y + dstrect.Height) });
+
+			if (_stateContainerStack.Count != 0) 
+			{
+				GraphicsState gs = (GraphicsState)_stateContainerStack.Peek();
+				if (gs.ContainerTransfrom != null)
+					Matrix.Multiply(
+						containerTransfrom.NativeObject, 
+						gs.ContainerTransfrom.NativeObject, MatrixOrder.Append);
+			}
+
+			graphicsState.ContainerTransfrom = containerTransfrom;
+			
+			_stateContainerStack.Push( graphicsState );
+			UpdateInternalTransform();
+			return container;
 		}
 
 		#endregion
@@ -1521,11 +1580,28 @@ namespace System.Drawing {
 		#endregion
 
 		public GraphicsState Save () {
-			throw new NotImplementedException();
+			GraphicsState graphicsState = new GraphicsState(this, false);
+
+			if (_stateContainerStack.Count != 0) 
+			{
+				GraphicsState gs = (GraphicsState)_stateContainerStack.Peek();
+				if (gs.ContainerTransfrom != null)
+					graphicsState.ContainerTransfrom = gs.ContainerTransfrom;
+			}
+			_stateContainerStack.Push( graphicsState );
+			return graphicsState;
 		}
 
-		public void Restore (GraphicsState gstate) {
-			throw new NotImplementedException();
+		public void Restore (GraphicsState graphicsState) {
+			if (_stateContainerStack.Contains(graphicsState))
+			{
+				GraphicsState gs = (GraphicsState)_stateContainerStack.Pop();
+				while ( !gs.Equals(graphicsState) )
+					gs = (GraphicsState)_stateContainerStack.Pop();
+
+				graphicsState.RestoreState(this);
+				UpdateInternalTransform();
+			}
 		}
 
 		#region RotateTransform
@@ -1894,6 +1970,12 @@ namespace System.Drawing {
 			mx.Translate(
 				mx.OffsetX * new_scale - mx.OffsetX,
 				mx.OffsetY * new_scale - mx.OffsetY, MatrixOrder.Append);
+
+			if (_stateContainerStack.Count != 0) {
+				GraphicsState gs = (GraphicsState)_stateContainerStack.Peek();
+				if (gs.ContainerTransfrom != null)
+					Matrix.Multiply(mx.NativeObject, gs.ContainerTransfrom.NativeObject, MatrixOrder.Append);
+			}
 
 			java.awt.Graphics2D g = NativeObject;
 			g.setTransform( mx.NativeObject );

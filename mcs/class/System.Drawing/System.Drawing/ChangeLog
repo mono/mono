@@ -1,3 +1,8 @@
+2005-08-28 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Graphics.jvm.cs: Implemented BeginContainer, EndContainer,
+	Save, Restore
+
 2005-08-26 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* PointConverter.cs: Use Int32Converter instead of Int32.Parse. First
