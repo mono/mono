@@ -1,3 +1,8 @@
+2005-08-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c mini-ia64.h mini.c inssel-long.brg: Optimize 
+	multiplication by a constant.
+
 2005-08-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c (mono_arch_setup_jit_tls_data): Add support for intel
