@@ -31,7 +31,11 @@ using System.Globalization;
 
 namespace System.Web.UI.HtmlControls 
 {
+#if NET_2_0
+	[ControlBuilder (typeof (HtmlEmptyTagControlBuilder))]
+#else
 	[ControlBuilder (typeof (HtmlControlBuilder))]
+#endif
 	public class HtmlImage : HtmlControl 
 	{
 		public HtmlImage () : base ("img")
@@ -65,6 +69,9 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if NET_2_0
+		[Localizable (true)]
+#endif
 		public string Alt 
 		{
 			get {
