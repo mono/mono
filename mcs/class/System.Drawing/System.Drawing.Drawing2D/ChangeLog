@@ -1,3 +1,8 @@
+2005-08-28 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Added: GraphicsContainer.jvm.cs
+	* Added: GraphicsState.jvm.cs
+
 2005-08-14 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Matrix.jvm.cs: Refactoring
