@@ -1,3 +1,8 @@
+2005-08-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlAnchor.cs: no need for the resolvedHRef field, as it might be set
+	but not used.  Call ResolveUrl when rendering the attributes instead.
+
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlHeadBuilder.cs: this is public.

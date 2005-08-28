@@ -32,11 +32,7 @@ namespace System.Web.UI.HtmlControls {
 
 	[DefaultEvent ("ServerClick")]
 	public class HtmlAnchor : HtmlContainerControl, IPostBackEventHandler {
-
 		private static readonly object serverClickEvent = new object ();
-
-		private string resolvedHRef;
-
 
 		public HtmlAnchor ()
 			: base ("a")
@@ -54,10 +50,8 @@ namespace System.Web.UI.HtmlControls {
 			set {
 				if (value == null) {
 					Attributes.Remove ("href");
-					resolvedHRef = null;
 				} else {
 					Attributes ["href"] = value;
-					resolvedHRef = ResolveUrl (value);
 				}
 			}
 		}
@@ -137,8 +131,9 @@ namespace System.Web.UI.HtmlControls {
 				ClientScriptManager csm = new ClientScriptManager (Page);
 				Attributes ["href"] = csm.GetPostBackClientHyperlink (this, String.Empty);
 			} else {
-				// the resolved URL
-				Attributes ["href"] = resolvedHRef;
+				string hr = HRef;
+				if (hr != "")
+					HRef = ResolveUrl (hr);
 			}
 			base.RenderAttributes (writer);
 
