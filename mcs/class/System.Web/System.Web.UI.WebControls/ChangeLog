@@ -1,3 +1,7 @@
+2005-08-28  Chris Toshok  <toshok@ximian.com>
+
+	* XmlHierarchyData.cs: fix IHierarchyData.GetParent.
+
 2005-08-26  Chris Toshok  <toshok@ximian.com>
 
 	* TextBox.cs: implement ValidationGroup and CausesValidation

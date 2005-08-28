@@ -127,11 +127,9 @@ namespace System.Web.UI.WebControls {
 			return new XmlHierarchicalEnumerable (item.ChildNodes);
 		}
 		
-		IHierarchicalEnumerable IHierarchyData.GetParent ()
+		IHierarchyData IHierarchyData.GetParent ()
 		{
-			if (item.ParentNode == null)
-				return null;
-			return new XmlHierarchicalEnumerable (item.ParentNode.ChildNodes);
+			return new XmlHierarchyData (item.ParentNode);
 		}
 		
 		bool IHierarchyData.HasChildren {
