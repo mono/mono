@@ -1,5 +1,8 @@
 2005-08-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h cpu-ia64.md inssel-ia64.brg mini-ia64.c: Optimize
+	memset/memcpy.
+
 	* mini.c (mono_method_to_ir): Disable the MUL->MUL_IMM optimization
 	when ssapre is enabled.
 
