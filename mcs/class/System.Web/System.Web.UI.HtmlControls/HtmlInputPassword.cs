@@ -29,6 +29,8 @@
 using System.ComponentModel;
 using System.Collections.Specialized;
 
+#if NET_2_0
+
 namespace System.Web.UI.HtmlControls {
 
 	[DefaultEvent ("ServerChange")]
@@ -70,3 +72,4 @@ namespace System.Web.UI.HtmlControls {
 	}
 
 }
+#endif
