@@ -316,6 +316,7 @@ System.Windows.Forms/TextControl.cs
 System.Windows.Forms/Theme.cs
 System.Windows.Forms/ThemeEngine.cs
 System.Windows.Forms/ThemeGtk.cs
+System.Windows.Forms/ThemeNice.cs
 System.Windows.Forms/ThemeWin32Classic.cs
 System.Windows.Forms/ThreadExceptionDialog.cs
 System.Windows.Forms/TickStyle.cs
