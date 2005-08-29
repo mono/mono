@@ -1,4 +1,7 @@
 2005-08-29 Eyal Alaluf <eyala@mainsoft.com>
+    * HttpRequest.cs: Disable use of IntPtrStream for TARGET_JVM
+
+2005-08-29 Eyal Alaluf <eyala@mainsoft.com>
     * HttpContext.cs: Compilation fixes for TARGET_J2EE/JVM
 
 2005-08-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>

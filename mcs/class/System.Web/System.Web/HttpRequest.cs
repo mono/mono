@@ -330,8 +330,10 @@ namespace System.Web {
 
 		static Stream StreamCopy (Stream stream)
 		{
+#if !TARGET_JVM
 			if (stream is IntPtrStream)
 				return new IntPtrStream (stream);
+#endif
 
 			if (stream is MemoryStream) {
 				MemoryStream other = (MemoryStream) stream;
@@ -487,8 +489,63 @@ namespace System.Web {
 			}
 		}
 
+
+#if TARGET_JVM	
+		const int INPUT_BUFFER_SIZE = 1024;
+
+		void MakeInputStream ()
+		{
+			if (worker_request == null)
+				throw new HttpException ("No HttpWorkerRequest");
+
+			// consider for perf:
+			//    return ((ServletWorkerRequest)worker_request).InputStream();
+
+			//
+			// Use an unmanaged memory block as this might be a large
+			// upload
+			//
+			int content_length = ContentLength;
+
+			if (content_length == 0 && HttpMethod == "POST")
+				throw new HttpException (411, "Length expected");
+			
+			HttpRuntimeConfig config = (HttpRuntimeConfig) HttpContext.GetAppConfig ("system.web/httpRuntime");
+			
+			if (content_length > (config.MaxRequestLength * 1024))
+				throw new HttpException ("File exceeds httpRuntime limit");
+			
+			byte[] content = new byte[content_length];
+			if (content == null)
+				throw new HttpException (String.Format ("Not enough memory to allocate {0} bytes", content_length));
+
+			int total;
+			byte [] buffer;
+			buffer = worker_request.GetPreloadedEntityBody ();
+			if (buffer != null){
+				total = buffer.Length;
+				Array.Copy (buffer, content, total);
+			} else
+				total = 0;
+			
+			
+			buffer = new byte [INPUT_BUFFER_SIZE];
+			while (total < content_length){
+				int n;
+				n = worker_request.ReadEntityBody (buffer, Math.Min (content_length-total, INPUT_BUFFER_SIZE));
+				if (n <= 0)
+					break;
+				Array.Copy (buffer, 0, content, total, n);
+				total += n;
+			} 
+			if (total < content_length)
+				throw new HttpException (411, "The uploaded file is incomplete");
+							 
+			input_stream = new MemoryStream (content);
+		}
+#else
 		const int INPUT_BUFFER_SIZE = 32*1024;
-		
+
 		void MakeInputStream ()
 		{
 			if (worker_request == null)
@@ -562,7 +619,7 @@ namespace System.Web {
 			if (total < content_length)
 				throw new HttpException (411, "The request body is incomplete.");
 		}
-
+#endif
 		internal void ReleaseResources ()
 		{
 			if (input_stream != null){
