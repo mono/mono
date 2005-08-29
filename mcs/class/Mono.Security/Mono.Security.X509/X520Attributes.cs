@@ -5,9 +5,7 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,6 +40,10 @@ namespace Mono.Security.X509 {
 	//	http://www.itu.int/rec/recommendation.asp?type=folders&lang=e&parent=T-REC-X.520 
 	// 2.	Internet X.509 Public Key Infrastructure Certificate and CRL Profile
 	//	http://www.ietf.org/rfc/rfc3280.txt
+	// 3.	A Summary of the X.500(96) User Schema for use with LDAPv3
+	//	http://www.faqs.org/rfcs/rfc2256.html
+	// 4.	RFC 2247 - Using Domains in LDAP/X.500 Distinguished Names
+	//	http://www.faqs.org/rfcs/rfc2247.html
 
 	/* 
 	 * AttributeTypeAndValue ::= SEQUENCE {
@@ -166,6 +168,16 @@ namespace Mono.Security.X509 {
 			}
 		}
 
+		// RFC2256, Section 5.6
+		public class SerialNumber : AttributeTypeAndValue {
+
+			// max length 64 bytes, Printable String only
+			public SerialNumber ()
+				: base ("2.5.4.5", 64, 0x13)
+			{
+			}
+		}
+
 		public class LocalityName : AttributeTypeAndValue {
 
 			public LocalityName () : base ("2.5.4.7", 128)
@@ -195,9 +207,36 @@ namespace Mono.Security.X509 {
 		}
 
 		// NOTE: Not part of RFC2253
-		public class EmailAddress : AttributeTypeAndValue 
-		{
+		public class EmailAddress : AttributeTypeAndValue {
+
 			public EmailAddress () : base ("1.2.840.113549.1.9.1", 128, 0x16)
+			{
+			}
+		}
+
+		// RFC2247, Section 4
+		public class DomainComponent : AttributeTypeAndValue {
+
+			// no maximum length defined
+			public DomainComponent ()
+				: base ("0.9.2342.19200300.100.1.25", Int32.MaxValue, 0x16)
+			{
+			}
+		}
+
+		// RFC1274, Section 9.3.1
+		public class UserId : AttributeTypeAndValue {
+
+			public UserId ()
+				: base ("0.9.2342.19200300.100.1.1", 256)
+			{
+			}
+		}
+
+		public class Oid : AttributeTypeAndValue {
+
+			public Oid (string oid)
+				: base (oid, Int32.MaxValue)
 			{
 			}
 		}
@@ -215,7 +254,9 @@ namespace Mono.Security.X509 {
 		 */
 		public class Title : AttributeTypeAndValue {
 
-			public Title () : base ("2.5.4.12", 64) {}
+			public Title () : base ("2.5.4.12", 64)
+			{
+			}
 		}
 
 		public class CountryName : AttributeTypeAndValue {

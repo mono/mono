@@ -1,3 +1,11 @@
+2005-08-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X501Name.cs: Fixed quoted (bug #75780) and escaped values. Added
+	parsing for "direct" OID values. Plugged DC and UID with new X520 
+	classes.
+	* X520Attributes.cs: Added support for SerialNumber (fix bug #75783),
+	DomainComponent, UserId and Oid.
+
 2005-08-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X520Attributes.cs: Don't select PRINTABLESTRING for non 7bits 
