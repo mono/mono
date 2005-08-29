@@ -1,3 +1,8 @@
+2005-08-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_thread_interrupt_checkpoint_call): Load the
+	flag using LDIND_U4 since it leads to smaller and faster code on ia64.
+
 2005-08-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* rand.c: Use wincrypt.h instead of WinCrypt.h.
