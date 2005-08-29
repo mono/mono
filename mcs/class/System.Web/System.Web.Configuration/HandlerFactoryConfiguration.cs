@@ -42,6 +42,7 @@ namespace System.Web.Configuration {
 
 		// If set, we can fast-path the patch with string.EndsWith (FMI.EndsWith)
 		public string EndsWith;
+		public Regex RegExp;
 		
 		public FileMatchingInfo (string s)
 		{
@@ -52,6 +53,9 @@ namespace System.Web.Configuration {
 
 			if (s.IndexOf ('*') == -1)
 				MatchExact = "/" + s;
+
+			if (MatchExpr != "*")
+				RegExp = new Regex (MatchExpr.Replace(".", "\\.").Replace("?", "\\?").Replace("*", ".*"));
 		}
 	}
 	
@@ -110,6 +114,10 @@ namespace System.Web.Configuration {
 
 		public bool PathMatches (string p)
 		{
+			int slash = p.LastIndexOf ('/');
+			if (slash != -1)
+				p = p.Substring (slash);
+
 			for (int j = files.Length; j > 0; ){
 				j--;
 				FileMatchingInfo fm = files [j];
@@ -124,8 +132,7 @@ namespace System.Web.Configuration {
 					return true;
 
 				/* convert to regexp */
-				string match_regexp = fm.MatchExpr.Replace(".", "\\.").Replace("?", "\\?").Replace("*", ".*");
-				return Regex.IsMatch (p, match_regexp);
+				return fm.RegExp.IsMatch (p);
 			}
 			return false;
 		}

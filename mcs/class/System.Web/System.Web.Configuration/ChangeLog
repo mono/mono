@@ -1,3 +1,9 @@
+2005-08-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HandlerFactoryConfiguration.cs: fix path matching so that
+	/xxx/WebResource.axd works. If we're going to match using a regexp,
+	generate it in the constructor, not on every request.
+
 2005-08-25  Chris Toshok  <toshok@ximian.com>
 
 	* HandlerFactoryConfiguration.cs: implement the slow path for
