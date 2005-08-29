@@ -5,10 +5,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -158,8 +158,8 @@ namespace System.Windows.Forms {
 				return flat_style;
 			}
 
-			set { 
-				flat_style = value; 
+			set {
+				flat_style = value;
 				Redraw();
 			}
 		}
@@ -171,7 +171,7 @@ namespace System.Windows.Forms {
 				return image;
 			}
 
-			set { 
+			set {
 				image = value;
 				Redraw();
 			}
@@ -318,7 +318,7 @@ namespace System.Windows.Forms {
 							text_format.LineAlignment=StringAlignment.Far;
 							break;
 						}
-					}	
+					}
 					Redraw();
 				}
 			}
@@ -328,7 +328,7 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Properties
 		protected override CreateParams CreateParams {
-			get { 
+			get {
 				CreateParams	cp;
 
 				cp=base.CreateParams;
@@ -427,17 +427,15 @@ namespace System.Windows.Forms {
 
 		protected override void OnMouseEnter(EventArgs e) {
 			is_entered=true;
-			if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
+			if ( is_enabled )
 				Redraw();
-			}
 			base.OnMouseEnter(e);
 		}
 
 		protected override void OnMouseLeave(EventArgs e) {
 			is_entered=false;
-			if ((this.flat_style == FlatStyle.Flat) || (this.flat_style == FlatStyle.Popup)) {
+			if ( is_enabled )
 				Redraw();
-			}
 			base.OnMouseLeave(e);
 		}
 

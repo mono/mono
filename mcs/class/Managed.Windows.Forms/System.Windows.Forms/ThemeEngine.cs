@@ -34,7 +34,7 @@ namespace System.Windows.Forms
 		static private Theme theme = null;
 		
 		static ThemeEngine ()
-		{	
+		{
 			string theme_var;
 
 			theme_var = Environment.GetEnvironmentVariable("MONO_THEME");
@@ -47,8 +47,11 @@ namespace System.Windows.Forms
 			if (theme_var == "gtk")
 				theme = new ThemeGtk ();
 			else
+			if ( theme_var == "nice" )
+				theme = new ThemeNice ();
+			else
 				theme = new ThemeWin32Classic ();
-		}	
+		}
 		
 			
 		public static Theme Current {

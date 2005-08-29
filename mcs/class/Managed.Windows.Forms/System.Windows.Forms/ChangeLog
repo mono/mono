@@ -1,3 +1,15 @@
+2005-08-29  Alexander Olk  <xenomorph2@onlinehome.de>
+	* ThemeNice.cs: New theme for MWF, based on ThemWin32Classic
+	  use export MONO_THEME=nice to activate it.
+	  Currently supported controls:
+	  - Button
+	  - ComboBox
+	  - ScrollBar
+	  - TabControl (TabAlignment.Top only, other will follow)
+	* ThemeEngine.cs: Add theme nice
+	* ButtonBase.cs: Redraw button on MouseEnter and MouseLeave everytime,
+	  if enabled
+
 2005-08-25  Jonathan Chambers  <jonathan.chambers@ansys.com> 
 
 	* Splitter.cs: Resize docked control and its neighbor.
