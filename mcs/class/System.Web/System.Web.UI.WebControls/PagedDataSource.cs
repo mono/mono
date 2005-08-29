@@ -223,8 +223,7 @@ namespace System.Web.UI.WebControls {
 				return GetListEnum (list, FirstIndexInPage,
 						FirstIndexInPage + PageSize);
 
-			return GetEnumeratorEnum (source.GetEnumerator (),
-					FirstIndexInPage, FirstIndexInPage + PageSize);
+			return source.GetEnumerator ();
 		}
 
 		public PropertyDescriptorCollection GetItemProperties (

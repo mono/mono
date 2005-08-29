@@ -1,3 +1,8 @@
+2005-08-29  Jackson Harper  <jackson@ximian.com>
+
+	* PagedDataSource.cs: If it's not a list or collection we don't
+	use a bounded enumerator.
+
 2005-08-29  Chris Toshok  <toshok@ximian.com>
 
 	* LinkButton.cs: fix some 2.0 Page/ClientScript obsolete warnings.
