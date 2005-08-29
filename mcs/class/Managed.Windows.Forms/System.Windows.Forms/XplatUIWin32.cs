@@ -1624,7 +1624,6 @@ Console.WriteLine("Hit Clear background");
 			nid = new NOTIFYICONDATA();
 
 			nid.cbSize = (uint)Marshal.SizeOf(nid);
-			nid.hIcon = icon.Handle;
 			nid.hWnd = hwnd;
 			nid.uID = 1;
 			nid.uCallbackMessage = (uint)Msg.WM_USER;
