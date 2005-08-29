@@ -870,6 +870,16 @@ namespace Mono.CSharp {
 			}
 		}
 
+		bool CanElideInitializer (Type field_type, Constant c)
+		{
+			if (field_type == c.Type)
+				return true;
+			if (TypeManager.IsValueType (field_type) || TypeManager.HasElementType (field_type))
+				return false;
+			// Reference type with null initializer.
+			return c.Type == TypeManager.null_type;
+		}
+
 		//
 		// Emits the instance field initializers
 		//
@@ -904,10 +914,8 @@ namespace Mono.CSharp {
 					return false;
 
 				Constant c = e as Constant;
-				if (c != null) {
-					if (c.IsDefaultValue)
-						continue;
-				}
+				if (c != null && c.IsDefaultValue && CanElideInitializer (f.MemberType, c))
+					continue;
 
 				a.EmitStatement (ec);
 			}
