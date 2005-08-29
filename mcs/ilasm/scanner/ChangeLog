@@ -1,3 +1,8 @@
+2005-08-29  Ankit Jain  <jankit@novell.com>
+
+	* ILTables.cs (keywords): Comment out lcid keyword. Its not recognised as a
+	  keyword by ilasm (ms.net) 1.1
+
 2005-08-18  Ankit Jain  <jankit@novell.com>
 
 	* ILTables.cs: Comment out publickey keyword.

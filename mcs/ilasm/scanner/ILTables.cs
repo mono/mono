@@ -142,7 +142,8 @@ namespace Mono.ILASM {
                                 keywords ["in"] = new ILToken (Token.K_IN, "in");
                                 keywords ["out"] = new ILToken (Token.K_OUT, "out");
                                 keywords ["opt"] = new ILToken (Token.K_OPT, "opt");
-                                keywords ["lcid"] = new ILToken (Token.K_LCID, "lcid");
+                                // Not a keyword according to ilasm 1.1
+                                // keywords ["lcid"] = new ILToken (Token.K_LCID, "lcid");
                                 keywords ["retval"] = new ILToken (Token.K_RETVAL, "retval");
                                 keywords ["static"] = new ILToken (Token.K_STATIC, "static");
                                 keywords ["public"] = new ILToken (Token.K_PUBLIC, "public");

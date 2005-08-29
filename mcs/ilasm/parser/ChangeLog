@@ -1,5 +1,9 @@
 2005-08-29  Ankit Jain  <jankit@novell.com>
 
+	* ILParser.jay : Comment out K_LCID token.
+
+2005-08-29  Ankit Jain  <jankit@novell.com>
+
 	* ILParser.jay (native_type | K_CUSTOM ..): Instantiate object of CustomMarshaller
 	  class.
 	

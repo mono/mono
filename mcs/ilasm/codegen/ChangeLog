@@ -1,3 +1,7 @@
+2005-08-29  Ankit Jain  <jankit@novell.com>
+
+	* InstrTable.cs (inst_table): Comment out stelem and ldelem opcodes.
+
 2005-08-26  Ankit Jain  <jankit@novell.com>
 
 	* ExternTable.cs (IScope): New. Interface for ResolutionScope.

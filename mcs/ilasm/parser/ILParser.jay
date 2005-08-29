@@ -224,7 +224,7 @@ namespace Mono.ILASM {
 %token K_IN
 %token K_OUT
 %token K_OPT
-%token K_LCID
+// %token K_LCID
 %token K_RETVAL
 %token K_STATIC
 %token K_PUBLIC
