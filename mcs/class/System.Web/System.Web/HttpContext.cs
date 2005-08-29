@@ -161,13 +161,15 @@ namespace System.Web {
 					(Request.WorkerRequest.GetLocalAddress () != Request.UserHostAddress);
 			}
 		}
-
+#if TARGET_JVM
+		public bool IsDebuggingEnabled { get { return false; } }
+#else
 		public bool IsDebuggingEnabled {
 			get {
 				return CompilationConfiguration.GetInstance (this).Debug;
 			}
 		}
-
+#endif
 		public IDictionary Items {
 			get {
 				if (items == null)
