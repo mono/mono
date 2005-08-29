@@ -1,5 +1,12 @@
 2005-08-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpResponse.cs: don't duplicate the 'charset=' and don't send a
+	charset for unknown MIME types.
+	* StaticFileHandler.cs: set the Content-Length header here.
+	* HttpRequest.cs: prevent nullrefs when we have no 'charset='.
+
+2005-08-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* StaticFileHandler.cs: use TransmitFile instead of WriteFile. This way
 	xsp will use sendfile().
 

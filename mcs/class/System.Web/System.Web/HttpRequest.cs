@@ -195,12 +195,13 @@ namespace System.Web {
 						throw new HttpException ("No HttpWorkerRequest");
 					
 					string content_type = ContentType;
-					if (content_type == "")
+					string parameter = GetParameter (content_type, "; charset=");
+					if (parameter == null) {
 						encoding = WebEncoding.RequestEncoding;
-					else {
+					} else {
 						try {
 							// Do what the #1 web server does
-							encoding = Encoding.GetEncoding (GetParameter (content_type, "; charset="));
+							encoding = Encoding.GetEncoding (parameter);
 						} catch {
 							encoding = WebEncoding.RequestEncoding;
 						}

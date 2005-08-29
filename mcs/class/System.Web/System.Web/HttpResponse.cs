@@ -56,7 +56,8 @@ namespace System.Web {
 		string status_description = "OK";
 
 		string content_type = "text/html";
-		string charset = "utf-8";
+		string charset;
+		bool charset_set;
 		CachedRawResponse cached_response;
 		string cache_control = "private";
 		string redirect_location;
@@ -151,10 +152,11 @@ namespace System.Web {
 			get {
 				if (encoding == null){
 					string client_content_type = context.Request.ContentType;
-					if (client_content_type != ""){
+					string parameter = HttpRequest.GetParameter (client_content_type, "; charset=");
+					if (parameter != null){
 						try {
 							// Do what the #1 web server does
-							encoding = Encoding.GetEncoding (HttpRequest.GetParameter (content_type, "; charset="));
+							encoding = Encoding.GetEncoding (parameter);
 						} catch {
 							encoding = WebEncoding.ResponseEncoding;
 						}
@@ -194,6 +196,7 @@ namespace System.Web {
 			}
 
 			set {
+				charset_set = true;
 				charset = value;
 			}
 		}
@@ -606,15 +609,14 @@ namespace System.Web {
 			// Content-Type
 			//
 			if (content_type != null){
-				string header = content_type + ((charset == null || charset == "") ? "" : "; " + charset);
+				string header = content_type;
 
-				if (content_type == "text/html")
-					header = "text/html; charset=" + Charset;
-				else {
-					if (charset == null || charset == "")
-						header = content_type;
-					else
-						header = content_type + "; charset=" + charset;
+				if (charset_set || header == "text/plain" || header == "text/html") {
+					if (header.IndexOf ("charset=") == -1) {
+						if (charset == null || charset == "")
+							charset = ContentEncoding.HeaderName;
+						header += "; charset=" + charset;
+					}
 				}
 				
 				write_headers.Add (new UnknownResponseHeader ("Content-Type", header));
