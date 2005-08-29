@@ -235,7 +235,7 @@ namespace System.Web.UI.WebControls
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[WebSysDescription ("Bindings for tree nodes.")]
 		[Editor ("System.Web.UI.Design.WebControls.TreeViewBindingsEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [DefaultValueAttribute (null)]
+	    [DefaultValue (null)]
 	    [MergablePropertyAttribute (false)]
 		public TreeNodeBindingCollection DataBindings {
 			get {
@@ -353,7 +353,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValue (null)]
 		[WebCategory ("Styles")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[Editor ("System.Web.UI.Design.WebControls.TreeNodeStyleCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[Editor ("System.Web.UI.Design.WebControls.TreeNodeStyleCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public TreeNodeStyleCollection LevelStyles {
 			get {
 				if (levelStyles == null) {
