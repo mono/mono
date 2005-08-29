@@ -662,7 +662,7 @@ namespace Mono.CSharp {
 				// we just inline it
 				//
 				long v = ((LongConstant) expr).Value;
-				if (v > 0)
+				if (v >= 0)
 					return true;
 			}
 			

@@ -1,5 +1,7 @@
 2005-08-29  Raja R Harinath  <rharinath@novell.com>
 
+	* test-446.cs: New test from #75927.
+
 	* test-445.cs: New test from #75848.
 
 2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
