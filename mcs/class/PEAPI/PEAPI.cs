@@ -6330,17 +6330,31 @@ CalcHeapSizes ();
       this.marshallerName = marshallerName;
       cookie = optCookie;
     }
+    
+    public CustomMarshaller(string marshallerName, string optCookie)
+      :this (null, marshallerName, optCookie) {
+    }
 
     internal override byte[] ToBlob() {
       MemoryStream str = new MemoryStream();
       BinaryWriter bw = new BinaryWriter(str,new UTF8Encoding());
       bw.Write(GetTypeIndex());
-      bw.Write(typeName.ToCharArray());
-      bw.Write((byte)0);
-      bw.Write(marshallerName.ToCharArray());
-      bw.Write((byte)0);
-      if (cookie != null) bw.Write(cookie.ToCharArray());
-      bw.Write((byte)0);
+      //Native type name & unmanaged type - unused
+      //See mono/metadata/metadata.c : mono_metadata_parse_marshal_spec
+      bw.Write ((byte) 0); // Native Type name, unused 
+      bw.Write ((byte) 0); // Unmanaged type, unused 
+      if (marshallerName != null) {
+        MetaData.CompressNum ((uint)marshallerName.Length, str);
+        bw.Write(marshallerName.ToCharArray());
+      } else { 
+        bw.Write ((byte) 0);
+      }
+      if (cookie != null) {
+        MetaData.CompressNum ((uint)cookie.Length, str);
+        bw.Write(cookie.ToCharArray());
+      }	else {
+        bw.Write ((byte) 0);
+      }	
       bw.Flush();
       return str.ToArray();
     }
