@@ -1,3 +1,10 @@
+2005-08-29  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlInputSubmitTest.cs: new, base-level tests.
+
+	* HtmlInputButtonTest.cs: add CausesValidation/ValidationGroup
+	view state tests.
+
 2005-08-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlAnchorTest.cs: add test for HRef with an absolute URI.

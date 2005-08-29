@@ -1,9 +1,9 @@
 //
-// HtmlInputButtonTest.cs
-//	- Unit tests for System.Web.UI.HtmlControls.HtmlInputButton
+// HtmlInputSubmitTest.cs
+//	- Unit tests for System.Web.UI.HtmlControls.HtmlInputSubmit
 //
 // Author:
-//	Jackson Harper	(jackson@ximian.com)
+//	Chris Toshok <toshok@ximian.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -34,11 +34,13 @@ using System.Web.UI.HtmlControls;
 
 using NUnit.Framework;
 
+#if NET_2_0
+
 namespace MonoTests.System.Web.UI.HtmlControls {
 
-	public class HtmlInputButtonPoker : HtmlInputButton {
+	public class HtmlInputSubmitPoker : HtmlInputSubmit {
 
-		public HtmlInputButtonPoker ()
+		public HtmlInputSubmitPoker ()
 		{
 			TrackViewState ();
 		}
@@ -60,20 +62,21 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 	}
 
 	[TestFixture]
-	public class HtmlInputButtonTest {
+	public class HtmlInputSubmitTest {
 
 		[Test]
 		public void Defaults ()
 		{
-			HtmlInputButtonPoker p = new HtmlInputButtonPoker ();
+			HtmlInputSubmitPoker p = new HtmlInputSubmitPoker ();
 
 			Assert.IsTrue (p.CausesValidation, "A1");
+			Assert.AreEqual ("", p.ValidationGroup, "A2");
 		}
 
 		[Test]
 		public void CleanProperties ()
 		{
-			HtmlInputButtonPoker p = new HtmlInputButtonPoker ();
+			HtmlInputSubmitPoker p = new HtmlInputSubmitPoker ();
 
 			p.CausesValidation = false;
 			Assert.IsFalse (p.CausesValidation, "A1");
@@ -83,24 +86,12 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 			p.CausesValidation = false;
 			Assert.IsFalse (p.CausesValidation, "A3");
-		}
 
-		[Test]
-		public void ViewState ()
-		{
-			HtmlInputButtonPoker p = new HtmlInputButtonPoker ();
-#if NET_2_0
-			p.CausesValidation = false;
-			p.ValidationGroup = "VG";
-#endif
-			object s = p.SaveState();
-			HtmlInputButtonPoker copy = new HtmlInputButtonPoker ();
-			copy.LoadState (s);
+			p.ValidationGroup = "hi";
+			Assert.AreEqual ("hi", p.ValidationGroup, "A4");
 
-#if NET_2_0
-			Assert.IsFalse (copy.CausesValidation, "A1");
-			Assert.AreEqual ("VG", p.ValidationGroup, "A2");
-#endif
+			p.ValidationGroup = "";
+			Assert.AreEqual ("", p.ValidationGroup, "A4");
 		}
 
 		[Test]
@@ -109,21 +100,14 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			StringWriter sw = new StringWriter ();
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
 
-			HtmlInputButtonPoker p = new HtmlInputButtonPoker ();
+			HtmlInputSubmitPoker p = new HtmlInputSubmitPoker ();
 
-#if NET_2_0
 			Assert.AreEqual (p.Attributes.Count, 0, "A1");
-#else
-			Assert.AreEqual (p.Attributes.Count, 1, "A1");
-#endif
 
 			p.DoRenderAttributes (tw);
-			Assert.AreEqual (sw.ToString (), " name type=\"button\" /", "A2");
-		}
-
-		private static void EmptyHandler (object sender, EventArgs e)
-		{
+			Assert.AreEqual (sw.ToString (), " name type=\"submit\" /", "A2");
 		}
 	}	
 }
 
+#endif
