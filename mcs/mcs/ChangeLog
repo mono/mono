@@ -1,3 +1,8 @@
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* statement.cs : (Continue.Resolve()) Unlike break, continue is not
+	  allowed inside a switch (without loop). Fixed bug #75433.
+
 2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
 
 	* AssemblyInfo.cs: Using Consts.MonoVersion instead of MonoVersion.cs.

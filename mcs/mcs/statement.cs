@@ -950,7 +950,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (EmitContext ec)
 		{
-			if (!ec.CurrentBranching.InLoop () && !ec.CurrentBranching.InSwitch ()){
+			if (!ec.CurrentBranching.InLoop ()){
 				Error (139, "No enclosing loop out of which to break or continue");
 				return false;
 			} else if (ec.InFinally) {
