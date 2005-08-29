@@ -267,20 +267,22 @@ namespace System.Web.UI.HtmlControls
 			need_script_block = (focus_id != null);
 
 			if (render_uplevel) {
-				if (need_script_block && !Page.IsClientScriptBlockRegistered ("Mono-System.Web-HtmlScriptBlock")) {
-					Page.RegisterClientScriptBlock ("Mono-System.Web-HtmlScriptBlock",
-									String.Format ("<script language=\"JavaScript\" src=\"{0}\"></script>",
-										       Page.ClientScript.GetWebResourceUrl (GetType(),
-															    "webform.js")));
+				Page.RequiresPostBackScript();
+
+				if (need_script_block && !Page.ClientScript.IsClientScriptBlockRegistered ("Mono-System.Web-HtmlScriptBlock")) {
+					Page.ClientScript.RegisterClientScriptBlock ("Mono-System.Web-HtmlScriptBlock",
+										     String.Format ("<script language=\"JavaScript\" src=\"{0}\"></script>",
+												    Page.ClientScript.GetWebResourceUrl (GetType(),
+																	 "webform.js")));
 				}
 
 
 				if (focus_id != null) {
-					Page.RegisterStartupScript ("HtmlForm-DefaultButton-StartupScript",
-								    String.Format ("<script language=\"JavaScript\">\n" + 
-										   "<!--\n" + 
-										   "WebForm_AutoFocus('{0}');// -->\n" + 
-										   "</script>\n", focus_id));
+					Page.ClientScript.RegisterStartupScript ("HtmlForm-DefaultButton-StartupScript",
+										 String.Format ("<script language=\"JavaScript\">\n" + 
+												"<!--\n" + 
+												"WebForm_AutoFocus('{0}');// -->\n" + 
+												"</script>\n", focus_id));
 				}
 			}
 		}

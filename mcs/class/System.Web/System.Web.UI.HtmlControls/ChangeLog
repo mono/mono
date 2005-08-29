@@ -2,6 +2,8 @@
 
 	* HtmlButton.cs: Fix some 2.0 Page/ClientScript obsolete warnings.
 
+	* HtmlForm.cs: same.
+
 2005-08-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlAnchor.cs: no need for the resolvedHRef field, as it might be set
