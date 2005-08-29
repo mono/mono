@@ -1,5 +1,10 @@
 2005-08-29  Chris Toshok  <toshok@ximian.com>
 
+	* TreeView.cs: Use the StateBag accessors Ben added, and implement
+	SkipLinkText and Visible.
+
+2005-08-29  Chris Toshok  <toshok@ximian.com>
+
 	* TreeView.cs: fix typo in an attribute.
 
 2005-08-29  Jackson Harper  <jackson@ximian.com>
