@@ -1,4 +1,4 @@
-﻿//
+//
 // DBDataPermissionTest.cs - NUnit Test Cases for DBDataPermission
 //
 // Author:
