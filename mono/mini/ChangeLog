@@ -1,3 +1,8 @@
+2005-08-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.h mini-ia64.c: Implement frame pointer elimination. Keep
+	arguments in their original register.
+
 2005-08-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h cpu-ia64.md inssel-ia64.brg mini-ia64.c: Optimize
