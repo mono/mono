@@ -1,3 +1,7 @@
+2005-08-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X501NameTest.cs: Added test cases for quoted and escaped values.
+
 2005-08-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X520AttributesTest.cs: New. Test cases from Daniel Granath to check
