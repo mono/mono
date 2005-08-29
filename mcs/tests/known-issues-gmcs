@@ -26,6 +26,7 @@ test-439.cs IGNORE		# Compiles to invalid IL
 test-442.cs IGNORE		# Compiles to invalid IL
 test-443.cs
 test-445.cs
+test-446.cs
 
 test-49.cs
 test-50.cs IGNORE	# Windows-only test
