@@ -1,3 +1,15 @@
+2005-08-29  Chris Toshok  <toshok@ximian.com>
+
+	* LinkButton.cs: fix some 2.0 Page/ClientScript obsolete warnings.
+
+	* CheckBox.cs: same.
+	
+	* BaseValidator.cs: same.
+	
+	* DropDownList.cs: same.
+	
+	* ValidationSummary.cs: same.
+
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
 	* XmlHierarchyData.cs: fix IHierarchyData.GetParent.

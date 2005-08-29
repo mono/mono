@@ -67,7 +67,7 @@ namespace System.Web.UI.WebControls {
 							       csm.GetPostBackEventReference (this, String.Empty)));
 				w.AddAttribute ("language", "javascript");
 			} else {
-				w.AddAttribute (HtmlTextWriterAttribute.Href, Page.GetPostBackClientHyperlink (this, ""));
+				w.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 			}
 		}
 

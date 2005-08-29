@@ -256,7 +256,7 @@ namespace System.Web.UI.WebControls {
 					NameAttribute);
 			
 			if (AutoPostBack) {
-				w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.GetPostBackClientHyperlink (this, ""));
+				w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 			}
 
 			if (Checked) {

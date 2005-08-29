@@ -117,7 +117,7 @@ namespace System.Web.UI.WebControls {
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID, true);
 
 			if (AutoPostBack) {
-				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.GetPostBackClientHyperlink (this, ""));
+				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 			}
 
 			base.AddAttributesToRender(writer);

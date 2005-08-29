@@ -387,22 +387,22 @@ namespace System.Web.UI.WebControls {
 			if (RenderUplevel) {
 				RegisterValidatorCommonScript ();
 
-				Page.RegisterOnSubmitStatement ("Mono-System.Web-ValidationOnSubmitStatement",
-								"if (!ValidatorCommonOnSubmit()) return false;");
-				Page.RegisterStartupScript ("Mono-System.Web-ValidationStartupScript",
-							    "<script language=\"JavaScript\">\n" + 
-							    "<!--\n" + 
-							    "var Page_ValidationActive = false;\n" + 
-							    "ValidatorOnLoad();\n" +
-							    "\n" + 
-							    "function ValidatorOnSubmit() {\n" + 
-							    "        if (Page_ValidationActive) {\n" + 
-							    "                return ValidatorCommonOnSubmit();\n" + 
-							    "        }\n" + 
-							    "        return true;\n" + 
-							    "}\n" + 
-							    "// -->\n" + 
-							    "</script>\n");
+				Page.ClientScript.RegisterOnSubmitStatement ("Mono-System.Web-ValidationOnSubmitStatement",
+									     "if (!ValidatorCommonOnSubmit()) return false;");
+				Page.ClientScript.RegisterStartupScript ("Mono-System.Web-ValidationStartupScript",
+									 "<script language=\"JavaScript\">\n" + 
+									 "<!--\n" + 
+									 "var Page_ValidationActive = false;\n" + 
+									 "ValidatorOnLoad();\n" +
+									 "\n" + 
+									 "function ValidatorOnSubmit() {\n" + 
+									 "        if (Page_ValidationActive) {\n" + 
+									 "                return ValidatorCommonOnSubmit();\n" + 
+									 "        }\n" + 
+									 "        return true;\n" + 
+									 "}\n" + 
+									 "// -->\n" + 
+									 "</script>\n");
 			}
 		}
 
@@ -428,18 +428,18 @@ namespace System.Web.UI.WebControls {
 
 		protected void RegisterValidatorCommonScript ()
 		{
-			if (!Page.IsClientScriptBlockRegistered ("Mono-System.Web-ValidationClientScriptBlock")) {
-				Page.RegisterClientScriptBlock ("Mono-System.Web-ValidationClientScriptBlock",
-								String.Format ("<script language=\"JavaScript\" src=\"{0}\"></script>",
-									       Page.ClientScript.GetWebResourceUrl (GetType(),
-														    "WebUIValidation.js")));
+			if (!Page.ClientScript.IsClientScriptBlockRegistered ("Mono-System.Web-ValidationClientScriptBlock")) {
+				Page.ClientScript.RegisterClientScriptBlock ("Mono-System.Web-ValidationClientScriptBlock",
+									     String.Format ("<script language=\"JavaScript\" src=\"{0}\"></script>",
+											    Page.ClientScript.GetWebResourceUrl (GetType(),
+																 "WebUIValidation.js")));
 			}
 		}
 
 		protected virtual void RegisterValidatorDeclaration ()
 		{
-			Page.RegisterArrayDeclaration ("Page_Validators",
-						       String.Format ("document.getElementById ('{0}')", ID));
+			Page.ClientScript.RegisterArrayDeclaration ("Page_Validators",
+								    String.Format ("document.getElementById ('{0}')", ID));
 		}
 
 #if NET_2_0

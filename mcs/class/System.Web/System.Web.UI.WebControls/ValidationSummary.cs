@@ -205,8 +205,8 @@ namespace System.Web.UI.WebControls {
 			}
 
 			if (EnableClientScript && pre_render_called) {
-				Page.RegisterArrayDeclaration ("Page_ValidationSummaries",
-							       String.Format ("document.getElementById ('{0}')", ID));
+				Page.ClientScript.RegisterArrayDeclaration ("Page_ValidationSummaries",
+									    String.Format ("document.getElementById ('{0}')", ID));
 			}
 
 			// We have validators

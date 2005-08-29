@@ -100,7 +100,7 @@ namespace System.Web.UI.WebControls
 					PostBackOptions ops = pcner.GetPostBackOptions (this);
 					postScript = container.Page.ClientScript.GetPostBackEventReference (ops);
 				} else
-					postScript = Page.ClientScript.GetPostBackClientEvent (this, "");
+					postScript = Page.ClientScript.GetPostBackEventReference (this, "");
 
 				if (CausesValidation && Page.Validators.Count > 0) {
 					// TOSHOK: review if this is the correct usage of the "fresh" client side stuff
