@@ -62,14 +62,13 @@ namespace System.Web.UI.HtmlControls {
 
 #if NET_2_0
 		[DefaultValue ("")]
-		[MonoTODO]
 		public string ValidationGroup
 		{
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetString ("ValidationGroup", "");
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["ValidationGroup"] = value;
 			}
 		}
 #endif

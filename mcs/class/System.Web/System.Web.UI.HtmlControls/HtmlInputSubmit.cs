@@ -1,5 +1,5 @@
 //
-// System.Web.UI.HtmlControls.HtmlInputReset.cs
+// System.Web.UI.HtmlControls.HtmlInputSubmit.cs
 //
 // Author:
 //	Chris Toshok  <toshok@ximian.com>
@@ -32,52 +32,23 @@ using System.ComponentModel;
 namespace System.Web.UI.HtmlControls {
 
 	[DefaultEventAttribute ("")]
-	public class HtmlInputReset : HtmlInputButton
+	public class HtmlInputSubmit : HtmlInputButton, IPostBackEventHandler
 	{
-		private static readonly object ServerClickEvent = new object();
-
-		public HtmlInputReset ()
-			: base ("reset")
+		public HtmlInputSubmit ()
+			: base ("submit")
 		{
 		}
 
-		public HtmlInputReset (string type)
+		public HtmlInputSubmit (string type)
 			: base (type)
 		{
 		}
 
-		[MonoTODO("Why override?")]
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override bool CausesValidation {
-			get {
-				return ViewState.GetBool ("CausesValidation", true);
-			}
-			set {
-				ViewState ["CausesValidation"] = value;
-			}
-		}
-
-		[MonoTODO("Why new?")]
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new string ValidationGroup
+		[MonoTODO]
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
-			get {
-				return ViewState.GetString ("ValidationGroup", "");
-			}
-			set {
-				ViewState ["ValidationGroup"] = value;
-			}
+			base.RaisePostBackEvent (eventArgument);
 		}
-
-		[Browsable (false)]
-		[EditorBrowsable (EditorBrowsableState.Never)]
-		public new event EventHandler ServerClick {
-			add { Events.AddHandler (ServerClickEvent, value); }
-			remove { Events.RemoveHandler (ServerClickEvent, value); }
-		}
-
 	}
 }
 #endif

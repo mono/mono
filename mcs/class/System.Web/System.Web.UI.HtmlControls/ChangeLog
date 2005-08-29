@@ -1,5 +1,13 @@
 2005-08-29  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlInputSubmit.cs: new implementation.
+	
+	* HtmlInputReset.cs (ValidationGroup): implement
+
+	* HtmlInputButton.cs (ValidationGroup): implement.
+
+2005-08-29  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlButton.cs: Fix some 2.0 Page/ClientScript obsolete warnings.
 
 	* HtmlForm.cs: same.
