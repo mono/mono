@@ -72,7 +72,7 @@ namespace System.Windows.Forms {
 		private SizeGripStyle		size_grip_style;
 		private Rectangle		maximized_bounds;
 		private Rectangle		default_maximized_bounds;
-		private double			opacity;
+		private double			opacity = 1.0;
 		Color				transparency_key;
 
 		#endregion	// Local Variables
