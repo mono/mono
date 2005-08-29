@@ -1,3 +1,7 @@
+2005-08-29  Ankit Jain  <jankit@novell.com>
+
+	* get.c (dis_stringify_marshal_spec): Add new case for MONO_NATIVE_CUSTOM.
+	
 2005-08-27  Ankit Jain  <jankit@novell.com>
 
 	* get.c (init_key_table): Add keywords - ldelem, stelem, stloc, stobj,
