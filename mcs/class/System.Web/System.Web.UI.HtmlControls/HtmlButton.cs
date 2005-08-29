@@ -126,7 +126,7 @@ namespace System.Web.UI.HtmlControls {
 			}
 			else if (postback) {
 				writer.AddAttribute ("onclick",
-						     Page.GetPostBackClientHyperlink (this, ""));
+						     Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 
 				writer.WriteAttribute ("language", "javascript");
 			}
