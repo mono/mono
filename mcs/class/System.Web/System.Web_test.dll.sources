@@ -31,6 +31,7 @@ System.Web.UI.HtmlControls/HtmlInputHiddenTest.cs
 System.Web.UI.HtmlControls/HtmlInputPasswordTest.cs
 System.Web.UI.HtmlControls/HtmlInputRadioButtonTest.cs
 System.Web.UI.HtmlControls/HtmlInputResetTest.cs
+System.Web.UI.HtmlControls/HtmlInputSubmitTest.cs
 System.Web.UI.HtmlControls/HtmlInputTextTest.cs
 System.Web.UI.HtmlControls/HtmlSelectTest.cs
 System.Web.UI.HtmlControls/HtmlTableCellTest.cs

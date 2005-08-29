@@ -1,3 +1,9 @@
+2005-08-29  Chris Toshok  <toshok@ximian.com>
+
+	* System.Web.dll.sources: add HtmlInputSubmit.cs
+
+	* System.Web_test.dll.sources: add HtmlInputSubmitTest.cs
+
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
 	* System.Web.dll.sources: add IAdaptableTextWriter.cs
