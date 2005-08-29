@@ -1,3 +1,7 @@
+2005-08-29  Chris Toshok  <toshok@ximian.com>
+
+	* StateBag.cs (GetChar): add.
+
 2005-08-28  Chris Toshok  <toshok@ximian.com>
 
 	* Page.cs: more random corcompare work.

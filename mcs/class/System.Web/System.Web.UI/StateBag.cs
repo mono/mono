@@ -129,6 +129,12 @@ namespace System.Web.UI
 			return o == null ? def : (bool) o;
 		}
 
+		internal char GetChar (string key, char def)
+		{
+			object o = this [key];
+			return o == null ? def : (char) o;
+		}
+
 		internal int GetInt (string key, int def)
 		{
 			object o = this [key];
