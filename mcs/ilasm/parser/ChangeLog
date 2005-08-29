@@ -1,3 +1,8 @@
+2005-08-29  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (native_type | K_CUSTOM ..): Instantiate object of CustomMarshaller
+	  class.
+	
 2005-08-23  Ankit Jain  <jankit@novell.com>
 
 	* ILParser (method_ref : call_conv..): Use TypeRef instead of PrimitiveTypeRef

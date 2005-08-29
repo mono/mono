@@ -962,6 +962,9 @@ call_kind		: /* EMPTY */
 
 native_type		: /* EMPTY */
 			| K_CUSTOM OPEN_PARENS comp_qstring COMMA comp_qstring CLOSE_PARENS
+			  {
+				$$ = new CustomMarshaller ((string) $3, (string) $5);
+			  }
 			| K_FIXED K_SYSSTRING OPEN_BRACKET int32 CLOSE_BRACKET
                           {
                                 $$ = new FixedSysString ((uint) (int)$4);
