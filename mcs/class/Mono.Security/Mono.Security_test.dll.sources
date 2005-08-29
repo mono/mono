@@ -32,5 +32,6 @@ Mono.Security.Protocol.Ntlm/Type1MessageTest.cs
 Mono.Security.Protocol.Ntlm/Type2MessageTest.cs
 Mono.Security.Protocol.Ntlm/Type3MessageTest.cs
 Mono.Security.X509/PKCS12Test.cs
+Mono.Security.X509/X501NameTest.cs
 Mono.Security.X509/X509CrlTest.cs
 Mono.Security.X509/X520AttributesTest.cs
