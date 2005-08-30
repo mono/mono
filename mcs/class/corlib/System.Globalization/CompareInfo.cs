@@ -42,7 +42,7 @@ namespace System.Globalization
 	public class CompareInfo : IDeserializationCallback
 	{
 		static readonly bool useManagedCollation =
-			Environment.GetEnvironmentVariable ("MONO_USE_MANAGED_COLLATION")
+			Environment.internalGetEnvironmentVariable ("MONO_USE_MANAGED_COLLATION")
 			== "yes";
 
 		internal static bool UseManagedCollation {

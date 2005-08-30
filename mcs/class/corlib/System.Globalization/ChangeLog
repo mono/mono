@@ -1,3 +1,9 @@
+2005-08-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CompareInfo.cs: Use Environment.internalGetEnvironmentVariable as
+	the .cctor gets executed before the security manager is ready to be
+	activated (and cause recursion with --security).
+
 2005-08-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* RegionInfo.cs : unlocked CurrentRegion creation.
