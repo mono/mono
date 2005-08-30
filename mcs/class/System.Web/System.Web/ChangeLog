@@ -1,5 +1,7 @@
 2005-08-30  Miguel de Icaza  <miguel@novell.com>
 
+	* HttpCookie.cs (HttpOnly): Add 2.x cookie header.
+
 	* BrowserCapabilities.cs: Move the core of the capabilities into a
 	separate file.  Use partial classes to choose what version to
 	compile against.

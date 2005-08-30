@@ -33,13 +33,19 @@ using System.Collections.Specialized;
 
 namespace System.Web {
 
+	[Flags]
+	internal enum CookieFlags : byte {
+		Secure = 1,
+		HttpOnly = 2
+	}
+	
 	public sealed class HttpCookie {
 
 		string path = "/";
 		string domain;
 		DateTime expires = DateTime.MinValue;
 		string name;
-		bool secure;
+		CookieFlags flags = 0;
 		NameValueCollection values;
 
 		[Obsolete]
@@ -88,8 +94,12 @@ namespace System.Web {
 				builder.Append (expires.ToUniversalTime().ToString("r"));
 			}
 
-			if (secure) {
+			if ((flags & CookieFlags.Secure) != 0) {
 				builder.Append ("; secure");
+			}
+
+			if ((flags & CookieFlags.HttpOnly) != 0){
+				builder.Append ("; HttpOnly");
 			}
 
 			return new UnknownResponseHeader ("Set-Cookie", builder.ToString());
@@ -149,10 +159,10 @@ namespace System.Web {
 
 		public bool Secure {
 			get {
-				return secure;
+				return (flags & CookieFlags.Secure) == CookieFlags.Secure;
 			}
 			set {
-				secure = value;
+				flags |= CookieFlags.Secure;
 			}
 		}
 
@@ -186,6 +196,17 @@ namespace System.Web {
 			}
 		}
 
+#if NET_2_0
+		public bool HttpOnly {
+			get {
+				return (flags & CookieFlags.HttpOnly) == CookieFlags.HttpOnly;
+			}
+
+			set {
+				flags |= CookieFlags.HttpOnly;
+			}
+		}
+#endif
 
 		/*
 		 * simple utility class that just overrides ToString
