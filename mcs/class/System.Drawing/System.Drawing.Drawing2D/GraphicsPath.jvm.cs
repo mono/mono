@@ -1006,7 +1006,7 @@ namespace System.Drawing.Drawing2D
 			if (pen == null)
 				throw new ArgumentNullException("pen");
 
-			Shape = new GeneralPath(((Stroke)pen).createStrokedShape(this));
+			Shape = new ExtendedGeneralPath(((Stroke)pen).createStrokedShape(this));
 			Flatten(matrix, flatness);
 		} 
 		#endregion
