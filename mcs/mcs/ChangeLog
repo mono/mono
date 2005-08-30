@@ -1,3 +1,7 @@
+2005-08-30  Jb Evain  <jbevain@gmail.com>
+
+	* attribute.cs: handles as expression in parameters.
+
 2005-08-30  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75802.
