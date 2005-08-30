@@ -1065,24 +1065,12 @@ namespace Mono.CSharp {
 			AdjustMethodScope (am, topmost);
 		}
 
-		public void CaptureThis (AnonymousContainer am)
+		public void CaptureThis ()
 		{
 			CaptureContext parent = ParentCaptureContext;
-			if (parent != null) {
-				parent.CaptureThis (am);
-				return;
-			}
+			if (parent != null)
+				parent.CaptureThis ();
 			referenced_this = true;
-
-			if (topmost == null){
-				//
-				// Create one ScopeInfo, if there are none.
-				//
-				topmost = new ScopeInfo (this, toplevel_owner);
-				scopes [toplevel_owner.ID] = topmost;
-			}
-			
-			AdjustMethodScope (am, topmost);
 		}
 
 		public bool HaveCapturedVariables {

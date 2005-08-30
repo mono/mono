@@ -1811,7 +1811,13 @@ namespace Mono.CSharp {
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
 		{
 			int errors = Report.Errors;
-			FullNamedExpression fne = ec.DeclSpace.LookupType (Name, loc, /*ignore_cs0104=*/ false);
+		FullNamedExpression fne=null;
+	try {
+			fne = ec.DeclSpace.LookupType (Name, loc, /*ignore_cs0104=*/ false);
+	} catch {
+
+			Console.WriteLine ("Looking up: " + Name);
+	}
 
 			if (fne != null)
 				return fne;

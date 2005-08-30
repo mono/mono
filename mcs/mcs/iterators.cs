@@ -495,7 +495,7 @@ namespace Mono.CSharp {
 				Type t = container.TypeBuilder;
 				args.Add (new Argument (
 					new ThisParameterReference (t, Location)));
-				cc.CaptureThis (move_next_method);
+				cc.CaptureThis ();
 			}
 
 			args.Add (new Argument (new BoolLiteral (false)));
