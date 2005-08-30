@@ -65,6 +65,100 @@ namespace System.Web {
 			this.response = response;
 		}
 		
+#if TARGET_JVM
+		class Chunk
+		{
+			public byte[] data;
+			public int size;
+			public const int Length = 32 * 1024;
+			
+			public Chunk Next, Prev;
+
+			public Chunk () 
+			{
+				data = new byte[Length];
+				size = Length;
+			}
+	
+			public void Dispose ()
+			{
+			}
+	
+			public static Chunk Unlink (ref Chunk head, Chunk b)
+			{
+				if (head == b)
+					head = head.Next;
+				if (b.Prev != null)
+					b.Prev.Next = b.Next;
+				if (b.Next != null)
+					b.Next.Prev = b.Prev;
+
+				b.Next = b.Prev = null;
+				return b;
+			}
+	
+			public static Chunk Link (Chunk head, Chunk b)
+			{
+				b.Next = head;
+				if (head != null)
+					head.Prev = b;
+				return b;
+			}
+
+			public static void Copy(byte[] buff, int offset, Chunk c, int pos, int len)
+			{
+				Array.Copy(buff, offset, c.data, pos, len);
+			}
+
+			public static void Copy(Chunk c, int pos, byte[] buff, int offset, int len)
+			{
+				Array.Copy(c.data, pos, buff, offset, len);
+			}
+		}
+
+		sealed class BufferManager {
+			static Chunk filled;
+			static Chunk empty;
+	
+			// TODO: if cb > chunk size, try to get a larger chunk
+			public static Chunk GetChunk (int cb)
+			{
+				Chunk c;
+				if (empty == null)
+					empty = new Chunk ();
+				
+				c = empty;
+				filled = Chunk.Link (filled, Chunk.Unlink (ref empty, c));
+				return c;
+			}
+	
+			public static void DisposeChunk (Chunk c)
+			{
+				empty = Chunk.Link (empty, Chunk.Unlink (ref filled, c));
+			}
+	
+			public static void DisposeEmptyChunks ()
+			{
+				for (Chunk c = empty; c != null; c = c.Next)
+					c.Dispose ();
+				empty = null;
+			}
+			
+	
+			public static void PrintState ()
+			{
+				Console.WriteLine ("Filled blocks:");
+				for (Chunk c = filled; c != null; c = c.Next)
+					Console.WriteLine ("\t{0}", c);
+				Console.WriteLine ("Empty blocks:");
+				for (Chunk c = empty; c != null; c = c.Next)
+					Console.WriteLine ("\t{0}", c);	
+				
+			}
+		}
+
+#else // TARGET_JVM
+		
 		unsafe class Block {
 			byte* data;
 			public const int Length = 128 * 1024;
@@ -162,10 +256,19 @@ namespace System.Web {
 			public int size;
 			public int block_area;
 			public Block block;
+
+			public static void Copy(byte[] buff, int offset, Chunk c, int pos, int len)
+			{
+				Marshal.Copy (buff, offset, (IntPtr) (c.data + pos), len);
+			}
+
+			public static void Copy(Chunk c, int pos, byte[] buff, int offset, int len)
+			{
+				Marshal.Copy ((IntPtr) (c.data + pos), buff, offset, len);
+			}
 		}
 		
-		
-		unsafe sealed class BufferManager {
+		sealed class BufferManager {
 	
 			static Block filled;
 			static Block part_filled;
@@ -230,7 +333,7 @@ namespace System.Web {
 			}
 			
 		}
-		
+#endif		
 	
 		abstract class Bucket {
 			public Bucket Next;
@@ -243,12 +346,11 @@ namespace System.Web {
 			public abstract void Send (Stream stream);
 		}
 	
-		unsafe class ByteBucket : Bucket {
+		class ByteBucket : Bucket {
 			Chunk c;
-			byte* start;
-			byte* pos;
+			int start;
+			int pos;
 			int rem;
-			int len;
 			bool partial;
 	
 			ByteBucket () {}
@@ -256,8 +358,8 @@ namespace System.Web {
 			public ByteBucket (int cb)
 			{
 				c = BufferManager.GetChunk (cb);
-				start = pos = c.data;
-				rem = len = c.size;
+				start = pos = 0;
+				rem = c.size;
 			}
 			
 			public int Write (byte [] buf, int offset, int count)
@@ -266,7 +368,7 @@ namespace System.Web {
 				if (copy == 0)
 					return copy;
 				
-				Marshal.Copy (buf, offset, (IntPtr) pos, copy);
+				Chunk.Copy (buf, offset, c, pos, copy);
 				
 				pos += copy;
 				rem -= copy;
@@ -280,13 +382,11 @@ namespace System.Web {
 				if (rem < 4 * 1024)
 					return null;
 	
-				len = (int) (pos - start);
-				
 				ByteBucket b = new ByteBucket ();
 				b.partial = true;
 				b.c = c;
 				b.start = b.pos = pos;
-				b.len = b.rem = rem;
+				b.rem = rem;
 				return b;
 			}
 			
@@ -299,7 +399,7 @@ namespace System.Web {
 
 			public override void Send (HttpWorkerRequest wr)
 			{
-				len = (int) (pos - start);
+				int len = pos - start;
 #if false
 				for (int i = 0; i < len; i++)
 					Console.Write ("[{0}:{1}]", start [i], start [i]);
@@ -307,23 +407,26 @@ namespace System.Web {
 				Console.WriteLine (Environment.StackTrace);
 #endif
 				
+#if TARGET_JVM
+				if (start == 0)
+					wr.SendResponseFromMemory (c.data, len);
+				else
+				{
+					byte[] buf = new byte[len];
+					Chunk.Copy(c, start, buf, 0, len);
+				}
+#else
 				wr.SendResponseFromMemory ((IntPtr) start, len);
+#endif
 			}
 
 			public override void Send (Stream stream)
 			{
 				int len = (int) (pos - start);
 				byte [] copy = new byte [len];
-				Marshal.Copy ((IntPtr) start, copy, 0, len);
+				Chunk.Copy (c, start, copy, 0, len);
 				stream.Write (copy, 0, len);
 			}
-
-			public override string ToString ()
-			{
-				len = (int) (pos - start);
-				return String.Format ("0x{0:x} len {1}", (IntPtr) start, len);
-			}
-			
 		}
 	
 		class BufferedFileBucket : Bucket {
