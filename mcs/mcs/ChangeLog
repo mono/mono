@@ -1,3 +1,11 @@
+2005-08-30  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75802.
+	* class.cs (TypeContainer.VerifyClsName): Don't use a
+	PartialContainer when verifying CLS compliance.
+	(AbstractPropertyEventMethod): Set Parent here, ...
+	(PropertyMethod): ... not here.
+
 2005-08-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* attribute.cs : escaped attribute name should not be allowed to be
