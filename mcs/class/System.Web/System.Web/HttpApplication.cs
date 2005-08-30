@@ -4,7 +4,6 @@
 // Author:
 //	Miguel de Icaza (miguel@novell.com)
 //	Gonzalo Paniagua (gonzalo@ximian.com)
-//
 //    
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)

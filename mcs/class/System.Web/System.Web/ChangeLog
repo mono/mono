@@ -1,3 +1,11 @@
+2005-08-30  Miguel de Icaza  <miguel@novell.com>
+
+	* BrowserCapabilities.cs: Move the core of the capabilities into a
+	separate file.  Use partial classes to choose what version to
+	compile against.
+
+	* HttpBrowserCapabilities.cs: Update to move the code elsewhere.
+
 2005-08-30 Eyal Alaluf <eyala@mainsoft.com>
     * HttpResponseStream.cs: Fix a bug introduced by last fix (thanks to Ben)
 

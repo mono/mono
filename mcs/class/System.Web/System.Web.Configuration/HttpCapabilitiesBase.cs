@@ -35,13 +35,14 @@ namespace System.Web.Configuration
 	using System.Collections;
 	using System.Web;
 	
-	public class HttpCapabilitiesBase
+	public partial class HttpCapabilitiesBase
 	{
 		Hashtable capabilities;
 
 		public HttpCapabilitiesBase () { }
 
-		public virtual string this [string key] {
+		public virtual string this [string key]
+		{
 			get { return capabilities [key] as string; }
 		}
 

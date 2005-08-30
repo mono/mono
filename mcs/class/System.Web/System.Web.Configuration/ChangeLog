@@ -1,3 +1,8 @@
+2005-08-30  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpCapabilitiesBase.cs: Make partial to pull the implementation
+	from another class.
+
 2005-08-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HandlerFactoryConfiguration.cs: fix path matching so that

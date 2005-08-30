@@ -14,6 +14,7 @@ System.Web.Caching/CachedRawResponse.cs
 System.Web.Caching/CachedVaryBy.cs
 System.Web.Caching/OutputCacheModule.cs
 System.Web/CapabilitiesLoader.cs
+System.Web/BrowserCapabilities.cs
 System.Web.Compilation/AspComponentFoundry.cs
 System.Web.Compilation/AspGenerator.cs
 System.Web.Compilation/AspParser.cs
