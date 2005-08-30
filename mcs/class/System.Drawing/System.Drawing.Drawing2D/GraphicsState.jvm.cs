@@ -71,7 +71,7 @@ namespace System.Drawing.Drawing2D
 			set {_containerTransform = value;}
 		}
 
-		internal void SaveState(Graphics g)
+		private void SaveState(Graphics g)
 		{
 			if (g != null)
 			{
@@ -127,7 +127,7 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
-		public void ResetState(Graphics g)
+		private void ResetState(Graphics g)
 		{
 			if (g != null)
 			{

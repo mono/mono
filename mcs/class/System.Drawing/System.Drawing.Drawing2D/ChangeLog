@@ -1,3 +1,8 @@
+2005-08-30 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* LinearGradientBrush.jvm.cs: Refactoring, bug fix
+	* GraphicsState.jvm.cs: fixed SaveState, ResetState
+
 2005-08-30 Konstantin Triger <kostat@mainsoft.com>
 
         * GraphicsPath.jvm.cs: use correct object in Widen
