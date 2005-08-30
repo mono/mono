@@ -47,17 +47,39 @@ using vmw.common;
 namespace System.Web {
 	class HttpApplicationFactory {
 		// Initialized in InitType
-		static bool needs_init = true;
-		static Type app_type;
-		static HttpApplicationState app_state;
-		static FileSystemWatcher app_file_watcher;
-		static FileSystemWatcher bin_watcher;
-		static Stack available = new Stack ();
+#if TARGET_J2EE
+		static HttpApplicationFactory theFactory {
+			get
+			{
+				HttpApplicationFactory factory = (HttpApplicationFactory)AppDomain.CurrentDomain.GetData("HttpApplicationFactory");
+				if (factory == null) {
+					lock(typeof(HttpApplicationFactory)) {
+						factory = (HttpApplicationFactory)AppDomain.CurrentDomain.GetData("HttpApplicationFactory");
+						if (factory == null) {
+							factory = new HttpApplicationFactory();
+							System.Threading.Thread.Sleep(1);
+							AppDomain.CurrentDomain.SetData("HttpApplicationFactory", factory);
+						}
+					}
+				}
+				return factory;
+			}
+		}
+#else
+		static HttpApplicationFactory theFactory = new HttpApplicationFactory();
+#endif
+
+		bool needs_init = true;
+		Type app_type;
+		HttpApplicationState app_state;
+		FileSystemWatcher app_file_watcher;
+		FileSystemWatcher bin_watcher;
+		Stack available = new Stack ();
 		
 		// Watch this thing out when getting an instance
-		static IHttpHandler custom_application;
+		IHttpHandler custom_application;
 
-		static bool IsEventHandler (MethodInfo m)
+		bool IsEventHandler (MethodInfo m)
 		{
 			if (m.ReturnType != typeof (void))
 				return false;
@@ -77,7 +99,7 @@ namespace System.Web {
 			return true;
 		}
 
-		static void AddEvent (MethodInfo method, Hashtable appTypeEventHandlers)
+		void AddEvent (MethodInfo method, Hashtable appTypeEventHandlers)
 		{
 			string name = method.Name.Replace ("_On", "_");
 			if (appTypeEventHandlers [name] == null) {
@@ -97,7 +119,7 @@ namespace System.Web {
 			list.Add (method);
 		}
 		
-		static Hashtable GetApplicationTypeEvents (HttpApplication app)
+		Hashtable GetApplicationTypeEvents (HttpApplication app)
 		{
 			Type appType = app.GetType ();
 			Hashtable appTypeEventHandlers = new Hashtable ();
@@ -115,7 +137,7 @@ namespace System.Web {
 			return appTypeEventHandlers;
 		}
 
-		static bool FireEvent (string method_name, object target, object [] args)
+		bool FireEvent (string method_name, object target, object [] args)
 		{
 			Hashtable possibleEvents = GetApplicationTypeEvents ((HttpApplication) target);
 			MethodInfo method = possibleEvents [method_name] as MethodInfo;
@@ -130,7 +152,7 @@ namespace System.Web {
 			return true;
 		}
 
-		internal static void FireOnAppStart (HttpContext context)
+		void FireOnAppStart (HttpContext context)
 		{
 			HttpApplication app = (HttpApplication) Activator.CreateInstance (app_type, true);
 			app.SetContext (context);
@@ -139,7 +161,7 @@ namespace System.Web {
 			Recycle (app);
 		}
 
-		static void FireOnAppEnd ()
+		void FireOnAppEnd ()
 		{
 			if (app_type == null)
 				return; // we didn't even get an application
@@ -155,10 +177,10 @@ namespace System.Web {
 		//
 		public static void Dispose ()
 		{
-			FireOnAppEnd ();
+			theFactory.FireOnAppEnd ();
 		}
 			
-		static FileSystemWatcher CreateWatcher (string file, FileSystemEventHandler hnd)
+		FileSystemWatcher CreateWatcher (string file, FileSystemEventHandler hnd)
 		{
 			FileSystemWatcher watcher = new FileSystemWatcher ();
 
@@ -174,7 +196,7 @@ namespace System.Web {
 			return watcher;
 		}
 
-		static void OnAppFileChanged (object sender, FileSystemEventArgs args)
+		void OnAppFileChanged (object sender, FileSystemEventArgs args)
 		{
 			bin_watcher.EnableRaisingEvents = false;
 			app_file_watcher.EnableRaisingEvents = false;
@@ -183,7 +205,8 @@ namespace System.Web {
 
 		internal static void AttachEvents (HttpApplication app)
 		{
-			Hashtable possibleEvents = GetApplicationTypeEvents (app);
+			HttpApplicationFactory factory = theFactory;
+			Hashtable possibleEvents = factory.GetApplicationTypeEvents (app);
 			foreach (string key in possibleEvents.Keys) {
 				int pos = key.IndexOf ('_');
 				if (pos == -1 || key.Length <= pos + 1)
@@ -210,17 +233,17 @@ namespace System.Web {
 					continue;
 
 				if (methodData is MethodInfo) {
-					AddHandler (evt, target, app, (MethodInfo) methodData);
+					factory.AddHandler (evt, target, app, (MethodInfo) methodData);
 					continue;
 				}
 
 				ArrayList list = (ArrayList) methodData;
 				foreach (MethodInfo method in list)
-					AddHandler (evt, target, app, method);
+					factory.AddHandler (evt, target, app, method);
 			}
 		}
 
-		static void AddHandler (EventInfo evt, object target, HttpApplication app, MethodInfo method)
+		void AddHandler (EventInfo evt, object target, HttpApplication app, MethodInfo method)
 		{
 			int length = method.GetParameters ().Length;
 
@@ -246,33 +269,41 @@ namespace System.Web {
 			return coll;
 		}
 		
-		static internal HttpApplicationState ApplicationState {
+		internal static HttpApplicationState ApplicationState {
+#if TARGET_J2EE
 			get {
-				if (app_state == null) {
+				HttpApplicationFactory factory = theFactory;
+				if (factory.app_state == null)
+					factory.app_state = new HttpApplicationState (null, null);
+				return factory.app_state;
+			}
+#else
+			get {
+				if (theFactory.app_state == null) {
 					HttpStaticObjectsCollection app = MakeStaticCollection (GlobalAsaxCompiler.ApplicationObjects);
 					HttpStaticObjectsCollection ses = MakeStaticCollection (GlobalAsaxCompiler.SessionObjects);
 
-					app_state = new HttpApplicationState (app, ses);
+					theFactory.app_state = new HttpApplicationState (app, ses);
 				}
-
-				return app_state;
+				return theFactory.app_state;
 			}
+#endif
 		}
 
 		public static void SetCustomApplication (IHttpHandler customApplication)
 		{
-			custom_application = customApplication;
+			theFactory.custom_application = customApplication;
 		}
 
-		static internal Type AppType {
+		internal static Type AppType {
 			get {
-				return app_type;
+				return theFactory.app_type;
 			}
 		}
 
-		static void InitType (HttpContext context)
+		void InitType (HttpContext context)
 		{
-			lock (typeof (HttpApplicationFactory)){
+			lock (this) {
 				if (!needs_init)
 					return;
 				
@@ -286,6 +317,9 @@ namespace System.Web {
 				WebConfigurationSettings.Init (context);
 				
 				if (File.Exists (app_file)) {
+#if TARGET_J2EE
+					app_type = System.Web.J2EE.PageMapper.GetObjectType(app_file);
+#else
 					app_type = ApplicationFileParser.GetCompiledApplicationType (app_file, context);
 					if (app_type == null) {
 						string msg = String.Format ("Error compiling application file ({0}).", app_file);
@@ -293,6 +327,7 @@ namespace System.Web {
 					}
 					
 					app_file_watcher = CreateWatcher (app_file, new FileSystemEventHandler (OnAppFileChanged));
+#endif
 				} else {
 					app_type = typeof (System.Web.HttpApplication);
 					app_state = new HttpApplicationState ();
@@ -312,26 +347,31 @@ namespace System.Web {
 		//
 		internal static HttpApplication GetApplication (HttpContext context)
 		{
-			if (needs_init){
-				InitType (context);
-				FireOnAppStart (context);
+			HttpApplicationFactory factory = theFactory;
+			if (factory.needs_init){
+				if (context == null)
+					return null;
+
+				factory.InitType (context);
+				factory.FireOnAppStart (context);
 			}
 
-			lock (typeof (HttpApplicationFactory)){
-				if (available.Count > 0)
-					return (HttpApplication) available.Pop ();
+			lock (factory) {
+				if (factory.available.Count > 0)
+					return (HttpApplication) factory.available.Pop ();
 			}
 			
-			HttpApplication app = (HttpApplication) Activator.CreateInstance (app_type, true);
+			HttpApplication app = (HttpApplication) Activator.CreateInstance (factory.app_type, true);
 
 			return app;
 		}
 
 		internal static void Recycle (HttpApplication app)
 		{
-			lock (typeof (HttpApplication)){
-				if (available.Count < 32)
-					available.Push (app);
+			HttpApplicationFactory factory = theFactory;
+			lock (factory) {
+				if (factory.available.Count < 32)
+					factory.available.Push (app);
 				else
 					app.Dispose ();
 			}
