@@ -19,6 +19,7 @@ namespace System.Drawing
 		awt.PaintContext awt.Paint.createContext (image.ColorModel cm,
 			awt.Rectangle deviceBounds, geom.Rectangle2D userBounds, geom.AffineTransform xform,
 			awt.RenderingHints hints) {
+			Matrix.Multiply(xform, _brushTransform.NativeObject, MatrixOrder.Append);
 			return NativeObject.createContext (cm, deviceBounds, userBounds, xform, hints);
 		}
 
@@ -36,6 +37,8 @@ namespace System.Drawing
 		protected virtual void Dispose (bool disposing)
 		{
 		}
+
+		protected internal Matrix _brushTransform = new Matrix();
 
 //		~Brush ()
 //		{
