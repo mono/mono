@@ -690,7 +690,8 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.GetObjectFromWindow(xevent.AnyEvent.window);
 
 			// Don't waste time
-			if (hwnd == null || !hwnd.visible) {
+			//if (hwnd == null || !hwnd.visible) {	// Can'd check visible; we might loose expose for whole_windows
+			if (hwnd == null) {	
 				return;
 			}
 

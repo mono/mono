@@ -81,7 +81,6 @@ namespace System.Windows.Forms {
 					cp.Parent = IntPtr.Zero;
 					cp.Style = (int)WindowStyles.WS_POPUP;
 					cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
-					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 
 					cp.ExStyle = (int)(WindowStyles.WS_EX_TOOLWINDOW);
 

@@ -1,3 +1,12 @@
+2005-08-30  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* NotifyIcon.cs: Don't set the window to visible; this screws
+	  up Win32 (causes WM_NCPAINT to be sent on Win32, which calls
+	  OnPaint without a bitmap)
+	* XplatUIX11.cs: Removed Visible optimization in AddExpose; doesn't 
+	  happen very often anyway; we could add the check to the WM_PAINT 
+	  event generation code
+
 2005-08-30  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* NotifyIcon.cs: Fill the icon area with a background color, to 
