@@ -1,3 +1,9 @@
+2005-08-30  Florian Gross  <flgr@ccan.de>
+
+	* Cleaned up mjs-most.fail, added failure reasons
+	* Uncoummented working tests in mjs-most.tests
+	(Implemented Try:JScriptExceptionValue)
+
 2005-08-19  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs-most.tests: Uncomment tests ecma/Array/15.4.2.3.js,

@@ -6,95 +6,87 @@
 # Tests should go here if they cause the run time or compiler to
 # shutdown, but are not very frequent errors.
 #
-ecma/Array/15.4.1.js
+
+# System.Exception: error JS5040: 't' it's read only.
 ecma/ExecutionContexts/10.1.3.js
 ecma/ExecutionContexts/10.1.4-10.js
+
+# System.InvalidCastException: Cannot cast from source type to destination type.
 ecma/Expressions/11.2.2-1.js
-ecma/Expressions/11.2.2-10-n.js
-ecma/Expressions/11.2.3-1.js
-ecma/Expressions/11.2.3-2-n.js
-ecma/Expressions/11.2.3-3-n.js
-ecma/Expressions/11.2.3-4-n.js
-ecma/Statements/12.10.js
-ecma/Statements/12.2-1.js
-ecma/Statements/12.6.3-10.js
-ecma/Statements/12.6.3-19.js
-ecma/TypeConversion/9.4-1.js
-ecma/TypeConversion/9.4-2.js
-ecma/Types/8.1.js
-ecma/Date/15.9.5.2-2-n.js
-ecma/Date/15.9.5.23-15.js
-ecma/Date/15.9.5.24-2.js
-ecma/Date/15.9.5.24-3.js
-ecma/Date/15.9.5.24-5.js
-ecma/Date/15.9.5.24-6.js
-ecma/Date/15.9.5.24-7.js
-ecma/Date/15.9.5.24-8.js
-ecma/Date/15.9.5.25-1.js
-ecma/Date/15.9.5.26-1.js
-ecma/Date/15.9.5.26-1.js
-ecma/Date/15.9.5.27-1.js
-ecma/Date/15.9.5.29-1.js
-ecma/Date/15.9.5.31-1.js
-ecma/Math/15.8-2-n.js
-ecma/Number/15.7.2.js
-ecma/String/15.5.5.1.js
-ecma/String/15.5.3.1-3.js
-ecma/String/15.5.3.1-4.js
-ecma/FunctionObjects/15.3.4.1.js
-ecma/FunctionObjects/15.3.4-1.js
-ecma_2/Exceptions/exception-001.js
-ecma_2/Exceptions/exception-002.js
-ecma_2/Exceptions/expression-002.js
-ecma_2/Exceptions/expression-005.js
-ecma_2/Exceptions/global-001.js
-ecma_2/Exceptions/string-001.js
-ecma_2/FunctionObjects/call-1.js
-ecma_2/RegExp/constructor-001.js
-ecma_2/RegExp/exec-002.js
-ecma_2/RegExp/function-001.js
-ecma_2/Statements/dowhile-003.js
-ecma_2/Statements/dowhile-006.js
-ecma_2/Statements/dowhile-007.js
-ecma_2/Statements/label-002.js
-ecma_2/Statements/try-009.js
-ecma_2/Statements/while-002.js
-ecma_2/Statements/while-003.js
-ecma_2/String/match-004.js
-js1_2/Array/tostring_2.js
-js1_2/function/Function_object.js
-js1_2/function/String.js
-js1_2/function/definition-1.js
-js1_2/function/nesting-1.js
-js1_2/function/regexparg-1.js
-js1_2/function/regexparg-2-n.js
-js1_2/regexp/RegExp_dollar_number.js
-js1_2/regexp/RegExp_lastIndex.js
-js1_2/regexp/RegExp_lastMatch.js
-js1_2/regexp/RegExp_lastParen.js
-js1_2/regexp/RegExp_leftContext.js
-js1_2/regexp/RegExp_multiline.js
-js1_2/regexp/RegExp_rightContext.js
-js1_2/regexp/beginLine.js
-js1_2/regexp/compile.js
-js1_2/regexp/endLine.js
-js1_2/regexp/global.js
-js1_2/regexp/ignoreCase.js
-js1_2/regexp/source.js
-js1_2/statements/do_while.js
-js1_2/statements/switch2.js
-js1_3/inherit/proto_1.js
-js1_3/inherit/proto_3.js
-js1_3/inherit/proto_4.js
+ecma_2/Exceptions/date-001.js
+ecma_2/Statements/try-003.js
+ecma_2/Statements/try-004.js
+ecma_2/Statements/try-012.js
 js1_3/inherit/proto_6.js
 js1_3/inherit/proto_7.js
 js1_3/inherit/proto_8.js
-js1_3/inherit/proto_9.js
+
+# System.NotImplementedException: Should emit LateBinding.CallValue logic for unknown constructor Math
+ecma/Expressions/11.2.2-10-n.js
+ecma/Math/15.8-2-n.js
+ecma_2/Exceptions/exception-002.js
+ecma_2/Exceptions/expression-005.js
+
+# System.Exception: must create expr stm with 
+ecma/Expressions/11.2.3-2-n.js
+ecma_2/Exceptions/statement-007.js
+
+# Microsoft.JScript.JScriptException: Unexpected type: value is null or undefined (Convert:ToObject)
+ecma/Expressions/11.2.3-3-n.js
+ecma/Expressions/11.2.3-4-n.js
+ecma_2/RegExp/exec-002.js
+js1_4/Regress/function-001.js
+
+# System.NullReferenceException: Object reference not set to an instance of an object
+ecma/Statements/12.10.js
+ecma/Date/15.9.5.23-15.js
+ecma/Date/15.9.5.24-3.js
+ecma/Date/15.9.5.25-1.js
+ecma/Date/15.9.5.27-1.js
+ecma/Date/15.9.5.29-1.js
+ecma/Date/15.9.5.31-1.js
+js1_2/function/Function_object.js
+js1_2/function/definition-1.js
 js1_3/Script/script-001.js
 js1_4/Functions/function-001.js
-js1_4/Regress/date-001-n.js
-js1_4/Regress/function-001.js
-js1_4/Regress/function-004-n.js
-js1_4/Regress/toString-001-n.js
+
+# System.NotImplementedException: The requested feature is not implemented. (ForIn:Emit)
+ecma/Statements/12.6.3-10.js
+ecma/Statements/12.6.3-19.js
+
+# System.NotImplementedException: The requested feature is not implemented. (Convert:ToForInObject)
+ecma/String/15.5.5.1.js
+
+# System.NotImplementedException: The requested feature is not implemented.
+# (Call:Emit, member_type = Property, member_exp = Function AccessField prototype)
+ecma/FunctionObjects/15.3.4-1.js
+
+# System.Exception: error JS5002 A: function expected.
+ecma_2/Exceptions/exception-001.js
+
+# System.NotImplementedException: The requested feature is not implemented.
+# (Convert:ToPrimitive, value = System.Object[])
+ecma_2/Exceptions/global-001.js
+
+# System.Exception: uknown type: Microsoft.JScript.Call
+# (fall_false, last_exp.GetType () == looping Microsoft.JScript.Args)
+ecma_2/Statements/dowhile-006.js
+# System.Exception: uknown type: Microsoft.JScript.Assign
+# (fall_false, last_exp.GetType () == expression Assign object AccessField whileExpression)
+ecma_2/Statements/while-002.js
+ecma_2/Statements/while-003.js
+# System.Exception: uknown type: Microsoft.JScript.Unary
+# (fall_false, last_exp.GetType () == FirstOp done)
+js1_2/statements/do_while.js
+
+# System.Exception: A break statement can't be outside a switch or iteration stm
+ecma_2/Statements/label-002.js
+ecma_2/Statements/try-009.js
+
+# System.ArgumentException: The label was already defined
+js1_2/statements/switch2.js
+
+# These two need the patch implementing back reference / octal escape logic applied to
+# System.Text.RegularExpressions. It's available at http://flgr.dyndns.org/mono/RegEx2+3.patch
 js1_2/regexp/octal.js
 js1_2/regexp/special_characters.js
