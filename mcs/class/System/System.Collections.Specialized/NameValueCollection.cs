@@ -176,8 +176,10 @@ namespace System.Collections.Specialized{
 			for (int i=0; i < max; i++){
 				string key = c.GetKey (i);
 				string [] values = c.GetValues (i);
-				foreach (string value in values)
-					Add (key, value);
+				if (values != null) {
+					foreach (string value in values)
+						Add (key, value);
+				}
 			}
 		}
 

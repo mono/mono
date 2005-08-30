@@ -95,6 +95,17 @@ namespace MonoTests.System.Collections.Specialized {
 		}
 
 		[Test]
+		public void Add_NVC_Null2 ()
+		{
+			NameValueCollection a = new NameValueCollection ();
+			NameValueCollection b = new NameValueCollection ();
+
+			b.Add ("Test", null);
+			a.Add (b);
+			AssertEquals ("Count", 1, a.Count);
+		}
+
+		[Test]
 		public void Set_New ()
 		{
 			NameValueCollection c = new NameValueCollection ();

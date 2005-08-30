@@ -1,3 +1,8 @@
+2005-08-30  Jackson Harper  <jackson@ximian.com>
+
+	* NameValueCollection.cs: Don't crash when we have empty
+	collections.
+
 2005-08-19  Jb Evain  <jbevain@gmail.com>
 
 	* NameObjectCollectionBase (GetEnumerator):
