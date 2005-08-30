@@ -1,3 +1,7 @@
+2005-08-30  Ankit Jain  <jankit@novell.com>
+
+	* test-anon-31.cs: New test for #75934.
+
 2005-08-30  Raja R Harinath  <rharinath@novell.com>
 
 	* test-451.cs: New test based on #75929.
