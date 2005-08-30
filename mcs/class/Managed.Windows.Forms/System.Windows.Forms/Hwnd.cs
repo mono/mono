@@ -96,7 +96,6 @@ namespace System.Windows.Forms {
 				Marshal.FreeHGlobal((IntPtr)marshal_free_list[i]);
 			}
 			marshal_free_list.Clear();
-Console.WriteLine("Disposing window {0:X} (whole: {1:X})", client_window.ToInt32(), whole_window.ToInt32());
 		}
 		#endregion
 

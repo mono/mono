@@ -631,9 +631,21 @@ namespace System.Windows.Forms
 		#endregion	// Internal Properties
 
 		#region Private & Internal Methods
-		internal static IAsyncResult BeginInvokeInternal (Delegate method, object [] args) {
-			AsyncMethodResult result = new AsyncMethodResult ();
-			AsyncMethodData data = new AsyncMethodData ();
+		internal IAsyncResult BeginInvokeInternal (Delegate method, object [] args) {
+			AsyncMethodResult	result;
+			AsyncMethodData		data;
+			Control			p;
+
+			p = this;
+			do {
+				if (!p.IsHandleCreated) {
+					throw new InvalidOperationException("Cannot call Invoke or InvokeAsync on a control until the window handle is created");
+				}
+				p = p.parent;
+			} while (p != null);
+
+			result = new AsyncMethodResult ();
+			data = new AsyncMethodData ();
 
 			data.Method = method;
 			data.Args = args;
@@ -644,9 +656,11 @@ namespace System.Windows.Forms
 				data.Context = ExecutionContext.Capture ();
 			}
 #else
+#if !MWF_ON_MSRUNTIME
 			if (SecurityManager.SecurityEnabled) {
 				data.Stack = CompressedStack.GetCompressedStack ();
 			}
+#endif
 #endif
 
 			XplatUI.SendAsyncMethod (data);
@@ -1686,11 +1700,12 @@ namespace System.Windows.Forms
 						parent.Controls.Add(this);
 					}
 
-					XplatUI.SetParent(Handle, value.Handle);
-
-					InitLayout();
+					if (IsHandleCreated) {
+						XplatUI.SetParent(Handle, value.Handle);
+					}
 
 					OnParentChanged(EventArgs.Empty);
+					InitLayout();
 				}
 			}
 		}
@@ -2530,8 +2545,16 @@ namespace System.Windows.Forms
 
 		public virtual void Refresh() {			
 			if (IsHandleCreated == true) {
+				int	end;
+
 				Invalidate();
 				XplatUI.UpdateWindow(window.Handle);
+
+				end = child_controls.Count;
+				for (int i=0; i < end; i++) {
+					child_controls[i].Refresh();
+				}
+				
 			}
 		}
 
@@ -3278,7 +3301,7 @@ namespace System.Windows.Forms
 #else
 			children = child_controls.Count;
 			for (int i = 1; i < children; i++ ) {
-				XplatUI.SetZOrder(child_controls[i].window.Handle, child_controls[i-1].window.Handle, false, false); 
+				XplatUI.SetZOrder(child_controls[i].Handle, child_controls[i-1].Handle, false, false); 
 			}
 #endif
 		}
@@ -3305,12 +3328,12 @@ namespace System.Windows.Forms
 				case Msg.WM_PAINT: {				
 					PaintEventArgs	paint_event;
 
-					paint_event = XplatUI.PaintEventStart(Handle);
+					paint_event = XplatUI.PaintEventStart(Handle, true);
 
 					if (!needs_redraw) {
 						// Just blit the previous image
 						paint_event.Graphics.DrawImage (ImageBuffer, paint_event.ClipRectangle, paint_event.ClipRectangle, GraphicsUnit.Pixel);
-						XplatUI.PaintEventEnd(Handle);
+						XplatUI.PaintEventEnd(Handle, true);
 						return;
 					}
 
@@ -3331,7 +3354,7 @@ namespace System.Windows.Forms
 						needs_redraw = false;
 					}
 
-					XplatUI.PaintEventEnd(Handle);
+					XplatUI.PaintEventEnd(Handle, true);
 
 					if (!GetStyle(ControlStyles.UserPaint)) {
 						DefWndProc(ref m);
@@ -3566,6 +3589,7 @@ namespace System.Windows.Forms
 
 					XplatUI.SetCursor(window.Handle, cursor.handle);
 					m.Result = (IntPtr)1;
+
 					return;
 				}
 

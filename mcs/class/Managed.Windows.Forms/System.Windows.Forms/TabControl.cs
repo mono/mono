@@ -519,9 +519,9 @@ namespace System.Windows.Forms {
 			switch ((Msg) m.Msg) {
 			case Msg.WM_PAINT:
 				PaintEventArgs	paint_event;
-				paint_event = XplatUI.PaintEventStart (Handle);
+				paint_event = XplatUI.PaintEventStart (Handle, true);
 				PaintInternal (paint_event);
-				XplatUI.PaintEventEnd (Handle);
+				XplatUI.PaintEventEnd (Handle, true);
 				break;
 			default:
 				base.WndProc (ref m);

@@ -144,8 +144,8 @@ namespace System.Windows.Forms {
 
 		internal abstract void UpdateWindow(IntPtr handle);
 		internal abstract void SetWindowBackground(IntPtr handle, Color color);
-		internal abstract PaintEventArgs PaintEventStart(IntPtr handle);
-		internal abstract void PaintEventEnd(IntPtr handle);
+		internal abstract PaintEventArgs PaintEventStart(IntPtr handle, bool client);
+		internal abstract void PaintEventEnd(IntPtr handle, bool client);
 
 		internal abstract void SetWindowPos(IntPtr handle, int x, int y, int width, int height);
 		internal abstract void GetWindowPos(IntPtr handle, bool is_toplevel, out int x, out int y, out int width, out int height, out int client_width, out int client_height);
@@ -262,12 +262,13 @@ namespace System.Windows.Forms {
 		internal static void ExecuteClientMessage (GCHandle gchandle) {
 			AsyncMethodData data = (AsyncMethodData) gchandle.Target;
 			CompressedStack original = null;
-
+#if !MWF_ON_MSRUNTIME
 			// Stack is non-null only if the security manager is active
 			if (data.Stack != null) {
 				original = Thread.CurrentThread.GetCompressedStack ();
 				Thread.CurrentThread.SetCompressedStack (data.Stack);
 			}
+#endif
 
 			try {
 				AsyncMethodResult result = data.Result.Target as AsyncMethodResult;
@@ -278,11 +279,13 @@ namespace System.Windows.Forms {
 				}
 			}
 			finally {
+#if !MWF_ON_MSRUNTIME
 				if (data.Stack != null) {
 					// whatever occurs we must revert to the original compressed
 					// stack (null being a valid, empty, value in this case).
 					Thread.CurrentThread.SetCompressedStack (original);
 				}
+#endif
 				gchandle.Free ();
 			}
 		}

@@ -1348,7 +1348,7 @@ namespace System.Windows.Forms {
 			throw new NotImplementedException ();
 		}
 
-		internal override PaintEventArgs PaintEventStart(IntPtr handle) {
+		internal override PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
 			PaintEventArgs	paint_event;
 			Hwnd		hwnd;
 
@@ -1370,7 +1370,7 @@ namespace System.Windows.Forms {
 			return paint_event;
 		}
 		
-		internal override void PaintEventEnd(IntPtr handle) {
+		internal override void PaintEventEnd(IntPtr handle, bool client) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);

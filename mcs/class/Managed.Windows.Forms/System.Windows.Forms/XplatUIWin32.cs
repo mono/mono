@@ -1037,8 +1037,8 @@ namespace System.Windows.Forms {
 			Win32SetWindowLong(handle, WindowLong.GWL_USERDATA, (IntPtr)color.ToArgb());
 		}
 
-		[MonoTODO("Add support for internal table of windows/DCs for cleanup")]
-		internal override PaintEventArgs PaintEventStart(IntPtr handle) {
+		[MonoTODO("FIXME - Add support for internal table of windows/DCs for cleanup; handle client=false to draw in NC area")]
+		internal override PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
 			IntPtr		hdc;
 			PAINTSTRUCT	ps;
 			PaintEventArgs	paint_event;
@@ -1077,7 +1077,7 @@ Console.WriteLine("Hit Clear background");
 			return paint_event;
 		}
 
-		internal override void PaintEventEnd(IntPtr handle) {
+		internal override void PaintEventEnd(IntPtr handle, bool client) {
 			Hwnd		hwnd;
 			PAINTSTRUCT	ps;
 

@@ -81,6 +81,7 @@ namespace System.Windows.Forms {
 					cp.Parent = IntPtr.Zero;
 					cp.Style = (int)WindowStyles.WS_POPUP;
 					cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
+					cp.Style |= (int)WindowStyles.WS_VISIBLE;
 
 					cp.ExStyle = (int)(WindowStyles.WS_EX_TOOLWINDOW);
 
@@ -90,6 +91,16 @@ namespace System.Windows.Forms {
 
 			protected override void WndProc(ref Message m) {
 				switch((Msg)m.Msg) {
+					case Msg.WM_NCPAINT: {
+						PaintEventArgs	paint_event;
+
+						
+						paint_event = XplatUI.PaintEventStart(Handle, false);
+						OnPaint(paint_event);
+						XplatUI.PaintEventEnd(Handle, false);
+						break;
+					}
+
 					case Msg.WM_USER: {
 						switch ((Msg)m.LParam.ToInt32()) {
 							case Msg.WM_LBUTTONDOWN: {
@@ -232,9 +243,11 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (icon != null) {
-				icon_bitmap = icon.ToBitmap();
+			if (icon == null) {
+				return;
 			}
+
+			icon_bitmap = icon.ToBitmap();
 
 			systray_active = true;
 			XplatUI.SystrayAdd(window.Handle, text, icon, out tooltip);

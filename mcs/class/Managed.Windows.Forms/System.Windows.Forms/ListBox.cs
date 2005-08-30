@@ -973,9 +973,9 @@ namespace System.Windows.Forms
 
 			case Msg.WM_PAINT: {
 				PaintEventArgs	paint_event;
-				paint_event = XplatUI.PaintEventStart (Handle);
+				paint_event = XplatUI.PaintEventStart (Handle, true);
 				OnPaintLB (paint_event);
-				XplatUI.PaintEventEnd (Handle);
+				XplatUI.PaintEventEnd (Handle, true);
 				return;
 			}
 

@@ -72,7 +72,7 @@ namespace System.Windows.Forms {
 		private SizeGripStyle		size_grip_style;
 		private Rectangle		maximized_bounds;
 		private Rectangle		default_maximized_bounds;
-		private double			opacity = 1.0;
+		private double			opacity;
 		Color				transparency_key;
 
 		#endregion	// Local Variables
@@ -115,6 +115,7 @@ namespace System.Windows.Forms {
 			start_position = FormStartPosition.WindowsDefaultLocation;
 			formBorderStyle = FormBorderStyle.Sizable;
 			key_preview = false;
+			opacity = 1D;
 			menu = null;
 			icon = null;
 			minimum_size = new Size(0, 0);

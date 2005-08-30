@@ -487,9 +487,9 @@ namespace System.Windows.Forms
 				{
 					PaintEventArgs	paint_event;
 
-					paint_event = XplatUI.PaintEventStart (Handle);
+					paint_event = XplatUI.PaintEventStart (Handle, true);
 					OnPaintSB (paint_event);
-					XplatUI.PaintEventEnd (Handle);
+					XplatUI.PaintEventEnd (Handle, true);
 					return;
 				}
 

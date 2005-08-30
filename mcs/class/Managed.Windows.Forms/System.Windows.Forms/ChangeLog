@@ -1,3 +1,46 @@
+2005-08-30  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Form.cs: Set proper default for Opacity property
+	* NotifyIcon.cs:
+	  - ShowSystray(): Don't bother creating telling the OS
+	    about the systray item if no icon is provided
+	  - Now handles WM_NCPAINT message to deal with whole/client window
+	    split
+	  - Create window as visible to not get caught by Expose optimization
+	* Hwnd.cs: Removed debug message
+	* ComboBox.cs, ScrollBar.cs, ListBox.cs, TrackBar.cs, TabControl.cs,
+	  StatusBar.cs, TreeView.cs, XplatUIOSX.cs, XplatUIWin32.cs: Switched 
+	    PaintEventStart/End to use new client argument
+	* TextBoxBase.cs:
+	  - Commented out debug messages
+	  - Switched PaintEventStart/End to use new client argument
+	* XplatUI.cs: Added client window bool to PaintEventStart()/
+	  PaintEventEnd() calls, to support drawing in non-client areas
+	* XplatUIDriver.cs: 
+	  - Added client window bool to PaintEventStart()/PaintEventEnd() 
+	    calls, to support drawing in non-client areas
+	  - Added conditional compile to allow using MWF BeginInvoke 
+	    on MS runtime
+	* XplatUIX11.cs:
+	  - Added some conditional debug output
+	  - Fixed SystrayAdd() method to support new (for SystrayAdd, anyway)
+	    whole/client window split
+	  - Implemented handling of client argument to PaintEventStart()/End()
+	* Control.cs:
+	  - Throw exception if BeginInvoke() is called and the window handle
+	    or one of the window's parent handles is not created
+	  - Added conditional compile to allow using MWF BeginInvoke on
+	    MS runtime
+	  - get_Parent(): Only sets parent if handle is created. This avoids
+	    forcing window handle creation when parent is set.
+	  - Now fires Layout and Parent changed events in proper order
+	  - Switched to use Handle instead of window.Handle for Z-Order setting,
+	    the get_Parent() patch above causes us to possibly get null for 'window'
+	  - Implemented handling of client argument to PaintEventStart()/End()
+	  - Now reports back to windows that WM_SETCURSOR was handled (to avoid
+	    default handling)
+	  - Now sends a Refresh() to all child windows when Refresh() is called
+
 2005-08-29  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Form.cs: Added (non-functional) Opacity property

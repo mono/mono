@@ -950,7 +950,9 @@ namespace System.Windows.Forms {
 								XDeleteProperty(DisplayHandle, FosterParent, xevent.SelectionEvent.property);
 								if (!Clipboard.Formats.Contains(xevent.SelectionEvent.property)) {
 									Clipboard.Formats.Add(xevent.SelectionEvent.property);
-									Console.WriteLine("Got supported clipboard atom format: {0}", xevent.SelectionEvent.property);
+									#if DriverDebugExtra
+										Console.WriteLine("Got supported clipboard atom format: {0}", xevent.SelectionEvent.property);
+									#endif
 								}
 							}
 						} else if (Clipboard.Retrieving) {
@@ -2215,7 +2217,7 @@ namespace System.Windows.Forms {
 			// Handle messages for windows that are already destroyed
 			if (hwnd == null) {
 				#if DriverDebug
-					Console.WriteLine("GetMessage(): Got message for non-existent window {0:X}", xevent.AnyEvent.window.ToInt32());
+					Console.WriteLine("GetMessage(): Got message {0} for non-existent window {1:X}", xevent.type, xevent.AnyEvent.window.ToInt32());
 				#endif
 				goto ProcessNextMessage;
 			}
@@ -2374,6 +2376,9 @@ namespace System.Windows.Forms {
 
 				case XEventName.MotionNotify: {
 					if (client) {
+						#if DriverDebugExtra
+							Console.WriteLine("GetMessage(): Window {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
+						#endif
 						NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
 
 						msg.message = Msg.WM_MOUSEMOVE;
@@ -2385,6 +2390,9 @@ namespace System.Windows.Forms {
 
 						break;
 					} else {
+						#if DriverDebugExtra
+							Console.WriteLine("GetMessage(): non-client area {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
+						#endif
 						msg.message = Msg.WM_NCHITTEST;
 						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
 
@@ -2550,6 +2558,13 @@ namespace System.Windows.Forms {
 						msg.lParam = xevent.ClientMessageEvent.ptr4;
 						break;
 					}
+
+					#if dontcare
+					if  (xevent.ClientMessageEvent.message_type == (IntPtr)NetAtoms[(int)NA._XEMBED]) {
+						Console.WriteLine("GOT EMBED MESSAGE {0:X}", xevent.ClientMessageEvent.ptr2.ToInt32());
+						break;
+					}
+					#endif
 
 					if  (xevent.ClientMessageEvent.message_type == (IntPtr)NetAtoms[(int)NA.WM_PROTOCOLS]) {
 						if (xevent.ClientMessageEvent.ptr1 == (IntPtr)NetAtoms[(int)NA.WM_DELETE_WINDOW]) {
@@ -2779,7 +2794,7 @@ namespace System.Windows.Forms {
 			OverrideCursorHandle = cursor;
 		}
 
-		internal override PaintEventArgs PaintEventStart(IntPtr handle) {
+		internal override PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
 			PaintEventArgs	paint_event;
 			Hwnd		hwnd;
 
@@ -2790,25 +2805,34 @@ namespace System.Windows.Forms {
 				HideCaret();
 			}
 
-			if (hwnd.erase_pending) {
-				// In our implementation WM_ERASEBKGND always returns 1; otherwise we'd check the result and only call clear if it returned 0
-				NativeWindow.WndProc(hwnd.client_window, Msg.WM_ERASEBKGND, IntPtr.Zero, IntPtr.Zero);
-				hwnd.erase_pending = false;
+			if (client) {
+				if (hwnd.erase_pending) {
+					// In our implementation WM_ERASEBKGND always returns 1; otherwise we'd check the result and only call clear if it returned 0
+					NativeWindow.WndProc(hwnd.client_window, Msg.WM_ERASEBKGND, IntPtr.Zero, IntPtr.Zero);
+					hwnd.erase_pending = false;
+				}
+
+				hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
+				hwnd.client_dc.SetClip(hwnd.invalid);
+				paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
+
+				return paint_event;
+			} else {
+				hwnd.client_dc = Graphics.FromHwnd (hwnd.whole_window);
+				paint_event = new PaintEventArgs(hwnd.client_dc, new Rectangle(0, 0, hwnd.width, hwnd.height));
+
+				return paint_event;
 			}
-
-			hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
-			hwnd.client_dc.SetClip(hwnd.invalid);
-			paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
-
-			return paint_event;
 		}
 
-		internal override void PaintEventEnd(IntPtr handle) {
+		internal override void PaintEventEnd(IntPtr handle, bool client) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
-			hwnd.ClearInvalidArea();
+			if (client) {
+				hwnd.ClearInvalidArea();
+			}
 
 			hwnd.client_dc.Flush();
 			hwnd.client_dc.Dispose();
@@ -3326,6 +3350,12 @@ namespace System.Windows.Forms {
 				Hwnd		hwnd;
 
 				hwnd = Hwnd.ObjectFromHandle(handle);
+				#if DriverDebug
+					Console.WriteLine("Adding Systray Whole:{0:X}, Client:{1:X}", hwnd.whole_window.ToInt32(), hwnd.client_window.ToInt32());
+				#endif
+
+				XUnmapWindow(DisplayHandle, hwnd.whole_window);
+				XUnmapWindow(DisplayHandle, hwnd.client_window);
 
 				size_hints = new XSizeHints();
 
@@ -3342,7 +3372,7 @@ namespace System.Windows.Forms {
 
 				atoms = new uint[2];
 				atoms[0] = 1;	// Version 1
-				atoms[1] = 1;	// We're not mapped
+				atoms[1] = 0;	// We're not mapped
 
 				// This line cost me 3 days...
 				XChangeProperty(DisplayHandle, hwnd.whole_window, NetAtoms[(int)NA._XEMBED_INFO], NetAtoms[(int)NA._XEMBED_INFO], 32, PropertyMode.Replace, atoms, 2);

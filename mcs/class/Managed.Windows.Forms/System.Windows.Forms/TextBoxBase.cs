@@ -579,7 +579,7 @@ namespace System.Windows.Forms {
 			} else {
 				document.MoveCaret(CaretDirection.CtrlEnd);
 				document.InsertStringAtCaret(text, true);
-Console.WriteLine("TextBox.cs(582) Invalidate called in AppendText");
+//blah Console.WriteLine("TextBox.cs(582) Invalidate called in AppendText");
 				Invalidate();
 			}
 			OnTextChanged(EventArgs.Empty);
@@ -941,10 +941,10 @@ Console.WriteLine("TextBox.cs(582) Invalidate called in AppendText");
 				case Msg.WM_PAINT: {
 					PaintEventArgs	paint_event;
 
-					paint_event = XplatUI.PaintEventStart(Handle);
+					paint_event = XplatUI.PaintEventStart(Handle, true);
 					
 					PaintControl(paint_event);
-					XplatUI.PaintEventEnd(Handle);
+					XplatUI.PaintEventEnd(Handle, true);
 					DefWndProc(ref m);
 					return;
 				}
@@ -1058,7 +1058,7 @@ static int current;
 			// Fill background
 			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), pevent.ClipRectangle);
 			pevent.Graphics.TextRenderingHint=TextRenderingHint.AntiAlias;
-Console.WriteLine("Redrawing {0}", pevent.ClipRectangle);
+//blah Console.WriteLine("Redrawing {0}", pevent.ClipRectangle);
 			// Draw the viewable document
 			document.Draw(pevent.Graphics, pevent.ClipRectangle);
 
@@ -1174,7 +1174,7 @@ Console.WriteLine("Redrawing {0}", pevent.ClipRectangle);
 		protected void CalculateDocument() {
 			document.RecalculateDocument(CreateGraphics());
 			CalculateScrollBars();
-Console.WriteLine("TextBox.cs(1175) Invalidate called in CalculateDocument");
+//blah Console.WriteLine("TextBox.cs(1175) Invalidate called in CalculateDocument");
 			Invalidate();	// FIXME - do we need this?
 		}
 

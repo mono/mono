@@ -521,18 +521,18 @@ namespace System.Windows.Forms {
 			driver.OverrideCursor(cursor);
 		}
 
-		internal static void PaintEventEnd(IntPtr handle) {
+		internal static void PaintEventEnd(IntPtr handle, bool client) {
 			#if DriverDebug
-				Console.WriteLine("PaintEventEnd({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("PaintEventEnd({0:X}, {1}): Called", handle.ToInt32(), client);
 			#endif
-			driver.PaintEventEnd(handle);
+			driver.PaintEventEnd(handle, client);
 		}
 
-		internal static PaintEventArgs PaintEventStart(IntPtr handle) {
+		internal static PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
 			#if DriverDebug
-				Console.WriteLine("PaintEventStart({0:X}): Called", handle.ToInt32());
+				Console.WriteLine("PaintEventStart({0:X}, {1}): Called", handle.ToInt32(), client);
 			#endif
-			return driver.PaintEventStart(handle);
+			return driver.PaintEventStart(handle, client);
 		}
 
 		internal static bool PeekMessage(ref MSG msg, IntPtr hWnd, int wFilterMin, int wFilterMax, uint flags) {
