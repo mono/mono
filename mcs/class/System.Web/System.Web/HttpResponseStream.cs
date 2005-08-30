@@ -345,7 +345,10 @@ namespace System.Web {
 			public abstract void Send (HttpWorkerRequest wr);
 			public abstract void Send (Stream stream);
 		}
-	
+
+#if !TARGET_JVM
+		unsafe
+#endif
 		class ByteBucket : Bucket {
 			Chunk c;
 			int start;
