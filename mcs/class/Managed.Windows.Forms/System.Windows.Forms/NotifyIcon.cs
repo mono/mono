@@ -94,7 +94,6 @@ namespace System.Windows.Forms {
 					case Msg.WM_NCPAINT: {
 						PaintEventArgs	paint_event;
 
-						
 						paint_event = XplatUI.PaintEventStart(Handle, false);
 						OnPaint(paint_event);
 						XplatUI.PaintEventEnd(Handle, false);
@@ -175,6 +174,7 @@ namespace System.Windows.Forms {
 
 			private void HandlePaint(object sender, PaintEventArgs e) {
 				if (owner.icon != null) {
+					e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(SystemColors.Window), rect);
 					e.Graphics.DrawImage(owner.icon_bitmap, rect);
 
 				}

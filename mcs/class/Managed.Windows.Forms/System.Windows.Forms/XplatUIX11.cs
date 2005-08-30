@@ -2040,7 +2040,7 @@ namespace System.Windows.Forms {
 					XDestroyWindow(DisplayHandle, hwnd.client_window);
 				}
 
-				if (hwnd.whole_window != IntPtr.Zero) {
+				if ((hwnd.whole_window != IntPtr.Zero) && (hwnd.whole_window != hwnd.client_window)) {
 					XDestroyWindow(DisplayHandle, hwnd.whole_window);
 				}
 			}
@@ -3356,6 +3356,10 @@ namespace System.Windows.Forms {
 
 				XUnmapWindow(DisplayHandle, hwnd.whole_window);
 				XUnmapWindow(DisplayHandle, hwnd.client_window);
+
+				// Oh boy.
+				XDestroyWindow(DisplayHandle, hwnd.client_window);
+				hwnd.client_window = hwnd.whole_window;
 
 				size_hints = new XSizeHints();
 

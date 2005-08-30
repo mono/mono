@@ -1,3 +1,12 @@
+2005-08-30  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* NotifyIcon.cs: Fill the icon area with a background color, to 
+	  avoid 'residue' when transparent icons are drawn
+	* XplatUIX11.cs:
+	  - Handle whole_window == client_window when destroying windows
+	  - SystrayAdd(): Set client_window to whole_window value to
+	    get mouse and other events passed to NotifyIcon
+
 2005-08-30  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Form.cs: Set proper default for Opacity property
