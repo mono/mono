@@ -87,7 +87,7 @@ namespace System.Web.SessionState
 						read_only); //readonly
 
 			TimeSpan timeout = new TimeSpan (0, config.Timeout, 0);
-			cache.InsertPrivate ("@@@InProc@" + sessionID, state, null, DateTime.Now + timeout,
+			cache.InsertPrivate ("@@@InProc@" + sessionID, state, null, Cache.NoAbsoluteExpiration,
 					timeout, CacheItemPriority.AboveNormal, removedCB);
 
 			isNew = true;

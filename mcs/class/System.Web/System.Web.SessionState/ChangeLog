@@ -1,3 +1,9 @@
+2005-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionStateModule.cs: added lock around 'config'.
+	* SessionInProcHandler.cs: when inserting in the the session in the
+	Cache, use sliding expiration only.  
+
 2005-08-15  Miguel de Icaza  <miguel@novell.com>
 
 	* SessionStateModule.cs: Make this use the synch api as the module

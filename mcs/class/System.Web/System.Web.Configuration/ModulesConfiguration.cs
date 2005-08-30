@@ -50,6 +50,10 @@ namespace System.Web.Configuration
 	{
 		public ArrayList Modules;
 
+		private ModulesConfiguration ()
+		{
+		}
+
 		public ModulesConfiguration (ModulesConfiguration parent)
 		{
 			if (parent != null)
@@ -100,6 +104,13 @@ namespace System.Web.Configuration
 		public void Clear ()
 		{
 			Modules.Clear ();
+		}
+
+		public ModulesConfiguration Clone ()
+		{
+			ModulesConfiguration modules = new ModulesConfiguration ();
+			modules.Modules = new ArrayList (Modules);
+			return modules;
 		}
 
 		public void LoadModules (HttpApplication app)

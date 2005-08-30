@@ -140,6 +140,7 @@ namespace System.Web {
 					return;
 
 				modules = (ModulesConfiguration) HttpContext.GetAppConfig ("system.web/httpModules");
+				modules = modules.Clone ();
 				modules.LoadModules (this);
 
 				HttpApplicationFactory.AttachEvents (this);
@@ -655,15 +656,29 @@ namespace System.Web {
 				foreach (bool stop in RunHooks (ResolveRequestCache))
 					yield return stop;
 
+			// Obtain the handler for the request.
+			IHttpHandler handler = null;
+			try {
+				handler = GetHandler (context);
+			} catch (FileNotFoundException fnf){
+				if (context.Request.IsLocal)
+					ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf));
+				else
+					ProcessError (new HttpException (404, "File not found", fnf));
+			} catch (DirectoryNotFoundException dnf){
+				ProcessError (new HttpException (404, "Directory not found", dnf));
+			} catch (Exception e) {
+				ProcessError (e);
+			}
+
+			if (stop_processing)
+				yield return false;
+
 #if NET_2_0
 			if (PostResolveRequestCache != null)
 				foreach (bool stop in RunHooks (PostResolveRequestCache))
 					yield return stop;
 
-			//
-			// TODO: clearly here we have to put request mapping.
-			//
-			
 			if (PostMapRequestHandler != null)
 				foreach (bool stop in RunHooks (PostMapRequestHandler))
 					yield return stop;
@@ -686,23 +701,6 @@ namespace System.Web {
 			// ReleaseRequestState, so the code below jumps to
 			// `release:' to guarantee it rather than yielding.
 			//
-			IHttpHandler handler = null;
-			try {
-				handler = GetHandler (context);
-			} catch (FileNotFoundException fnf){
-				if (context.Request.IsLocal)
-					ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf));
-				else
-					ProcessError (new HttpException (404, "File not found", fnf));
-			} catch (DirectoryNotFoundException dnf){
-				ProcessError (new HttpException (404, "Directory not found", dnf));
-			} catch (Exception e) {
-				ProcessError (e);
-			}
-
-			if (stop_processing)
-				goto release;
-			
 			if (PreRequestHandlerExecute != null)
 				foreach (bool stop in RunHooks (PreRequestHandlerExecute))
 					if (stop)

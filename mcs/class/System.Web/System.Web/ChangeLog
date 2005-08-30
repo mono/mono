@@ -1,3 +1,9 @@
+2005-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: clone the module collection so that
+	it's not shared between HttpApplications. Call GetHandler() in the
+	right place.
+
 2005-08-30  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpCookie.cs (HttpOnly): Add 2.x cookie header.
@@ -9,25 +15,31 @@
 	* HttpBrowserCapabilities.cs: Update to move the code elsewhere.
 
 2005-08-30 Eyal Alaluf <eyala@mainsoft.com>
-    * HttpResponseStream.cs: Fix a bug introduced by last fix (thanks to Ben)
+
+	* HttpResponseStream.cs: Fix a bug introduced by last fix (thanks to
+	Ben)
 
 2005-08-30 Eyal Alaluf <eyala@mainsoft.com>
-    * HttpResponseStream.cs: Compilation fixes for TARGET_JVM. TARGET_JVM does
-	  not support unsafe code. I localized all unsafe code within Chunk & Block
-	  and created a managed version of Chunk.
+
+	* HttpResponseStream.cs: Compilation fixes for TARGET_JVM. TARGET_JVM
+	does not support unsafe code. I localized all unsafe code within Chunk
+	& Block and created a managed version of Chunk.
 
 2005-08-30 Eyal Alaluf <eyala@mainsoft.com>
-    * HttpApplicationFactory.cs: Compilation fixes for TARGET_J2EE. Under
-	  TARGET_J2EE static fields are shared by all app domains. We handle this
-	  difference by explicitly getting/setting values from the app domain.
-	  Since HttpApplicationFactory has many static fields, I refactored it to
-	  have one static instance and moved the static fields into instance fields.
+	* HttpApplicationFactory.cs: Compilation fixes for TARGET_J2EE. Under
+	TARGET_J2EE static fields are shared by all app domains. We handle
+	this difference by explicitly getting/setting values from the app
+	domain.  Since HttpApplicationFactory has many static fields, I
+	refactored it to have one static instance and moved the static fields
+	into instance fields.
 
 2005-08-29 Eyal Alaluf <eyala@mainsoft.com>
-    * HttpRequest.cs: Disable use of IntPtrStream for TARGET_JVM
+
+	* HttpRequest.cs: Disable use of IntPtrStream for TARGET_JVM
 
 2005-08-29 Eyal Alaluf <eyala@mainsoft.com>
-    * HttpContext.cs: Compilation fixes for TARGET_J2EE/JVM
+
+	* HttpContext.cs: Compilation fixes for TARGET_J2EE/JVM
 
 2005-08-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 

@@ -41,6 +41,7 @@ namespace System.Web.SessionState
 	{
 		internal static readonly string CookieName = "ASPSESSION";
 		internal static readonly string HeaderName = "AspFilterSessionId";
+		static object locker = new object ();
 		
 #if !TARGET_J2EE		
 		static SessionConfig config;
@@ -82,10 +83,12 @@ namespace System.Web.SessionState
 			handler.Dispose();
 		}
 
-		public void Init (HttpApplication app)
+		SessionConfig GetConfig ()
 		{
-			sessionForStaticFiles = (Environment.GetEnvironmentVariable ("MONO_XSP_STATIC_SESSION") != null);
-			if (config == null) {
+			lock (locker) {
+				if (config != null)
+					return config;
+
 				config = (SessionConfig) HttpContext.GetAppConfig ("system.web/sessionState");
 				if (config ==  null)
 					config = new SessionConfig (null);
@@ -99,9 +102,16 @@ namespace System.Web.SessionState
 				if (config.Mode == SessionStateMode.InProc)
 					handlerType = typeof (SessionInProcHandler);
 
-                                if (config.Mode == SessionStateMode.Off)
-                                        return;
+				return config;
 			}
+		}
+
+		public void Init (HttpApplication app)
+		{
+			sessionForStaticFiles = (Environment.GetEnvironmentVariable ("MONO_XSP_STATIC_SESSION") != null);
+			SessionConfig cfg = GetConfig ();
+			if (handlerType == null)
+				return;
 
 			if (config.CookieLess)
 				app.BeginRequest += new EventHandler (OnBeginRequest);
