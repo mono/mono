@@ -109,13 +109,16 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public override string ToString() {
-			return "CreateParams; X=" + X.ToString() + 
-				", Y=" + Y.ToString() +
-				", Width=" + Width.ToString() +
-				", Height=" + Height.ToString() +
-				", Style=" + Style.ToString() +
-				", Parent=" + Parent.ToString();
-		}
+			return "CreateParams {'" + class_name + 
+				"', '" + caption + 
+				"', " + String.Format("0x{0:X}", class_style) +
+				", " + String.Format("0x{0:X}", ex_style) +
+				", {" + String.Format("{0}", x) +
+				", " + String.Format("{0}", y) +
+				", " + String.Format("{0}", width) +
+				", " + String.Format("{0}", height) +
+				"}}";
+ 		}
 		#endregion	// Public Instance Methods
 
 	}

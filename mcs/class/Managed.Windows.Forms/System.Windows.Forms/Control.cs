@@ -758,7 +758,9 @@ namespace System.Windows.Forms
 			if (container != null) {
 				container.ActiveControl = control;
 			}
-			XplatUI.SetFocus(control.window.Handle);
+			if (control.IsHandleCreated) {
+				XplatUI.SetFocus(control.window.Handle);
+			}
 			return true;
 		}
 
@@ -1885,8 +1887,12 @@ namespace System.Windows.Forms
 
 				if (text!=value) {
 					text=value;
-					XplatUI.Text(Handle, text);
-					// FIXME: Do we need a Refresh() here?
+					if (IsHandleCreated) {
+						XplatUI.Text(Handle, text);
+					} else {
+						// FIXME: Do we need a Refresh() here?
+						Refresh();
+					}
 					OnTextChanged (EventArgs.Empty);
 				}
 			}

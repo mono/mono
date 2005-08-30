@@ -735,7 +735,7 @@ namespace System.Windows.Forms {
 
 				cp = new CreateParams();
 
-				cp.Caption = "FormWindow";
+				cp.Caption = Text;
 				cp.ClassName = XplatUI.DefaultClassName;
 				cp.ClassStyle = 0;
 				cp.ExStyle = 0;

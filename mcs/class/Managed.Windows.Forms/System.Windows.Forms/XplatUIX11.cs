@@ -1715,6 +1715,9 @@ namespace System.Windows.Forms {
 			// for now make all windows dnd enabled
 			Dnd.SetAllowDrop (hwnd, true);
 
+			// Set caption/window title
+			Text(hwnd.Handle, cp.Caption);
+
 			return hwnd.Handle;
 		}
 

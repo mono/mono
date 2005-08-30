@@ -1,3 +1,12 @@
+2005-08-30  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* CreateParams.cs (ToString): Made output match MS
+	* Control.cs (Text): Don't set Text or Focus via XplatUI unless 
+	    handle is already created (to avoid forcing window creation)
+	* XplatUIX11.cs: Set window text to caption after creating window,
+	  in case Text was set before window was created
+	* Form.cs: Use this.Text instead of a static string as caption
+
 2005-08-30  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* NotifyIcon.cs: Don't set the window to visible; this screws
