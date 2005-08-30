@@ -100,6 +100,8 @@ public class BinaryVBFile : RandomVBFile
 
 		if (str[0] == '#' && str.Length != 1)
 			str = str.Substring(1, str.Length - 1);
+		if (str[str.Length-1] == '#' && str.Length != 1)
+                        str = str.Substring(0, str.Length - 1);
 		Object obj = str;
 		// Temporary
 		Value = BooleanType.FromObject(obj);
@@ -182,7 +184,7 @@ public class BinaryVBFile : RandomVBFile
 
 	public override string Input(string val)
 	{
-		return readString()/*.Trim()*/;
+		return readString().Trim();
 	}
 
 	public DateTime Input( DateTime Value)
@@ -190,6 +192,8 @@ public class BinaryVBFile : RandomVBFile
 		String str = readString().Trim();
 		if (str[0] == '#' && str.Length != 1)
 			str = str.Substring(1, str.Length - 1);
+		if (str[str.Length-1] == '#' && str.Length != 1)
+                        str = str.Substring(0, str.Length - 1);
 		return DateTime.Parse(str);
 	}
     

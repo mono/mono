@@ -253,7 +253,7 @@ public class OutPutVBFile : BaseVBFile
 		String outStr="";
 		UTF8Encoding UTF8 = new UTF8Encoding();
 
-		if (output != null)
+		if (output != null && output.Length != 0 )
 		{
 			for (int i = 0; i < output.Length; i++)
 			{
@@ -360,6 +360,7 @@ public class OutPutVBFile : BaseVBFile
 				}
 			}
 		}
+	 _streamWrite.Flush();
 	}
 
 	private static String AddSpaces(String s)

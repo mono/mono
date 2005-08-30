@@ -1,3 +1,7 @@
+2005-08-30 Manjula GHM <mmanjula@novell.com>
+	* BinaryVBFile.cs : Handle trailing '#" for bool and date 
+	* OutPutVBFile.cs : Minor fixes
+
 2005-08-22 Satya Sudha K <ksathyasudha@novell.com>
 	* Conversion.cs : Minor fix for the 'Val' function
 
