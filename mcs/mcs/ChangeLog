@@ -1,5 +1,10 @@
 2005-08-30  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #75934.
+	* anonymous.cs (ScopeInfo.MakeFieldName): New helper.
+	(ScopeInfo.EmitScopeType): Use it to construct field names from
+	names of captured locals.
+
 	Fix #75929.
 	* ecore.cs (BoxedCast.BoxedCast) [1-argument variant]: Remove.
 	* convert.cs (ImplicitReferenceConversion, TryImplicitIntConversion):
