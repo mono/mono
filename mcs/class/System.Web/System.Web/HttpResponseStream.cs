@@ -416,7 +416,7 @@ namespace System.Web {
 					Chunk.Copy(c, start, buf, 0, len);
 				}
 #else
-				wr.SendResponseFromMemory ((IntPtr) start, len);
+				wr.SendResponseFromMemory ((IntPtr) (c.data + start), len);
 #endif
 			}
 

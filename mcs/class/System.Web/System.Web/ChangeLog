@@ -1,4 +1,7 @@
 2005-08-30 Eyal Alaluf <eyala@mainsoft.com>
+    * HttpResponseStream.cs: Fix a bug introduced by last fix (thanks to Ben)
+
+2005-08-30 Eyal Alaluf <eyala@mainsoft.com>
     * HttpResponseStream.cs: Compilation fixes for TARGET_JVM. TARGET_JVM does
 	  not support unsafe code. I localized all unsafe code within Chunk & Block
 	  and created a managed version of Chunk.
