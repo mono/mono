@@ -1195,7 +1195,7 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected override Style CreateControlStyle ()
 		{
-			throw new NotImplementedException ();
+			return base.CreateControlStyle ();
 		}
 		
 		DataControlRowState GetRowState (int index)
@@ -1754,7 +1754,7 @@ namespace System.Web.UI.WebControls
 		[MonoTODO]
 		protected override void OnPagePreLoad (object sender, EventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnPagePreLoad (sender, e);
 		}
 		
 		protected internal override void OnPreRender (EventArgs e)

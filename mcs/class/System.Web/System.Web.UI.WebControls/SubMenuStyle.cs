@@ -38,8 +38,8 @@ namespace System.Web.UI.WebControls
 {
 	public class SubMenuStyle: Style
 	{
-		private static int HORZ_PADD = (0x01 << 16);
-		private static int VERT_PADD = (0x01 << 17);
+		private const string HORZ_PADD = "HorizontalPadding";
+		private const string VERT_PADD = "VerticalPadding";
 		
 		public SubMenuStyle ()
 		{
@@ -49,17 +49,21 @@ namespace System.Web.UI.WebControls
 		{
 		}
 		
+		bool IsSet (string v)
+		{
+			return ViewState [v] != null;
+		}
+		
 		[DefaultValue (typeof(Unit), "")]
 		[NotifyParentProperty (true)]
 		public Unit HorizontalPadding {
 			get {
 				if(IsSet(HORZ_PADD))
-					return (Unit)(ViewState["HorizontalPadding"]);
+					return (Unit)(ViewState[HORZ_PADD]);
 				return Unit.Empty;
 			}
 			set {
-				ViewState["HorizontalPadding"] = value;
-				Set(HORZ_PADD);
+				ViewState[HORZ_PADD] = value;
 			}
 		}
 
@@ -68,12 +72,11 @@ namespace System.Web.UI.WebControls
 		public Unit VerticalPadding {
 			get {
 				if(IsSet(VERT_PADD))
-					return (Unit)(ViewState["VerticalPadding"]);
+					return (Unit)(ViewState[VERT_PADD]);
 				return Unit.Empty;
 			}
 			set {
-				ViewState["VerticalPadding"] = value;
-				Set(VERT_PADD);
+				ViewState[VERT_PADD] = value;
 			}
 		}
 

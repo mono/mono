@@ -38,11 +38,16 @@ namespace System.Web.UI.WebControls
 {
 	public sealed class TreeNodeStyle: Style
 	{
-		private static int CHILD_PADD = (0x01 << 16);
-		private static int HORZ_PADD = (0x01 << 17);
-		private static int IMG_URL = (0x01 << 18);
-		private static int SPACING = (0x01 << 19);
-		private static int VERT_PADD = (0x01 << 20);
+		private const string CHILD_PADD = "ChildNodesPadding";
+		private const string HORZ_PADD = "HorizontalPadding";
+		private const string IMG_URL = "ImageUrl";
+		private const string SPACING = "NodeSpacing";
+		private const string VERT_PADD = "VerticalPadding";
+		
+		bool IsSet (string v)
+		{
+			return ViewState [v] != null;
+		}
 		
 		[DefaultValue ("")]
 		[UrlProperty]
@@ -50,15 +55,12 @@ namespace System.Web.UI.WebControls
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		public string ImageUrl {
 			get {
-				if(IsSet(IMG_URL))
-					return (string)(ViewState["ImageUrl"]);
-				return String.Empty;
+				return ViewState.GetString (IMG_URL, String.Empty);
 			}
 			set {
 				if(value == null)
 					throw new ArgumentNullException("value");
-				ViewState["ImageUrl"] = value;
-				Set(IMG_URL);
+				ViewState [IMG_URL] = value;
 			}
 		}
 
@@ -66,13 +68,10 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		public int ChildNodesPadding {
 			get {
-				if(IsSet(CHILD_PADD))
-					return (int)(ViewState["ChildNodesPadding"]);
-				return 0;
+				return ViewState.GetInt (CHILD_PADD, 0);
 			}
 			set {
-				ViewState["ChildNodesPadding"] = value;
-				Set(CHILD_PADD);
+				ViewState [CHILD_PADD] = value;
 			}
 		}
 
@@ -80,13 +79,10 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		public int HorizontalPadding {
 			get {
-				if(IsSet(HORZ_PADD))
-					return (int)(ViewState["HorizontalPadding"]);
-				return 0;
+				return ViewState.GetInt (HORZ_PADD, 0);
 			}
 			set {
-				ViewState["HorizontalPadding"] = value;
-				Set(HORZ_PADD);
+				ViewState[HORZ_PADD] = value;
 			}
 		}
 
@@ -94,13 +90,10 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		public int VerticalPadding {
 			get {
-				if(IsSet(VERT_PADD))
-					return (int)(ViewState["VerticalPadding"]);
-				return 0;
+				return ViewState.GetInt (VERT_PADD, 0);
 			}
 			set {
-				ViewState["VerticalPadding"] = value;
-				Set(VERT_PADD);
+				ViewState [VERT_PADD] = value;
 			}
 		}
 
@@ -108,18 +101,22 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		public int NodeSpacing {
 			get {
-				if(IsSet(SPACING))
-					return (int)(ViewState["NodeSpacing"]);
-				return 0;
+				return ViewState.GetInt (SPACING, 0);
 			}
 			set {
-				ViewState["NodeSpacing"] = value;
-				Set(SPACING);
+				ViewState [SPACING] = value;
 			}
 		}
 
 		protected internal override bool IsEmpty {
-			get { return base.IsEmpty; }
+			get {
+				return (base.IsEmpty &&
+				        !IsSet (CHILD_PADD) &&
+				        !IsSet (HORZ_PADD) &&
+				        !IsSet (IMG_URL) &&
+				        !IsSet (SPACING) &&
+				        !IsSet (VERT_PADD));
+			}
 		}
 		
 		public override void CopyFrom (Style s)

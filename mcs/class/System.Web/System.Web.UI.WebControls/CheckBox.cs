@@ -44,6 +44,13 @@ namespace System.Web.UI.WebControls {
 #endif
 	{
 		string render_type;
+
+#if NET_2_0
+		AttributeCollection inputAttributes;
+		StateBag inputAttributesState;
+		AttributeCollection labelAttributes;
+		StateBag labelAttributesState;
+#endif
 		
 		public CheckBox () : base (HtmlTextWriterTag.Input)
 		{
@@ -76,12 +83,8 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		public virtual bool CausesValidation 
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return ViewState.GetBool ("CausesValidation", false); }
+			set { ViewState ["CausesValidation"] = value; }
 		}
 #endif		
 		
@@ -106,27 +109,35 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
 		public AttributeCollection InputAttributes 
 		{
 			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
+				if (inputAttributes == null) {
+					if (inputAttributesState == null) {
+						inputAttributesState = new StateBag (true);
+						if (IsTrackingViewState)
+							inputAttributesState.TrackViewState();
+					}
+					inputAttributes = new AttributeCollection (inputAttributesState);
+				}
+				return inputAttributes;
 			}
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[MonoTODO]
 		public AttributeCollection LabelAttributes
 		{
 			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
+				if (labelAttributes == null) {
+					if (labelAttributesState == null) {
+						labelAttributesState = new StateBag (true);
+						if (IsTrackingViewState)
+							labelAttributesState.TrackViewState();
+					}
+					labelAttributes = new AttributeCollection (labelAttributesState);
+				}
+				return labelAttributes;
 			}
 		}
 #endif		
@@ -175,15 +186,10 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 		[DefaultValue ("")]
-		[MonoTODO]
 		public string ValidationGroup
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return ViewState.GetString ("ValidationGroup", String.Empty); }
+			set { ViewState["ValidationGroup"] = value; }
 		}
 #endif		
 
@@ -265,22 +271,58 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected override void LoadViewState (object savedState)
 		{
-			throw new NotImplementedException ();
+			if (savedState == null) {
+				base.LoadViewState (null);
+				return;
+			}
+
+			Triplet saved = (Triplet) savedState;
+			base.LoadViewState (saved.First);
+
+			if (saved.Second != null) {
+				if (inputAttributesState == null) {
+					inputAttributesState = new StateBag(true);
+					inputAttributesState.TrackViewState ();
+				}
+				inputAttributesState.LoadViewState (saved.Second);
+			}
+
+			if (saved.Third != null) {
+				if (labelAttributesState == null) {
+					labelAttributesState = new StateBag(true);
+					labelAttributesState.TrackViewState ();
+				}
+				labelAttributesState.LoadViewState (saved.Third);
+			}
 		}
 
-		[MonoTODO]
 		protected override object SaveViewState ()
 		{
-			throw new NotImplementedException ();
+			object baseView = base.SaveViewState ();
+			object inputAttrView = null;
+			object labelAttrView = null;
+
+			if (inputAttributesState != null)
+				inputAttrView = inputAttributesState.SaveViewState ();
+
+			if (labelAttributesState != null)
+				labelAttrView = labelAttributesState.SaveViewState ();
+
+			if (baseView == null && inputAttrView == null && labelAttrView == null)
+				return null;
+
+			return new Triplet (baseView, inputAttrView, labelAttrView);		
 		}
 
-		[MonoTODO]
 		protected override void TrackViewState ()
 		{
-			throw new NotImplementedException ();
+			base.TrackViewState();
+			if (inputAttributesState != null)
+				inputAttributesState.TrackViewState ();
+			if (labelAttributesState != null)
+				labelAttributesState.TrackViewState ();
 		}
 #endif		
 
@@ -301,6 +343,10 @@ namespace System.Web.UI.WebControls {
 		void RenderLabel (HtmlTextWriter w)
 		{
 			if (Text.Length > 0) {
+#if NET_2_0
+				if (labelAttributes != null)
+					labelAttributes.AddAttributes (w);
+#endif
 				w.AddAttribute (HtmlTextWriterAttribute.For, ClientID);
 				w.RenderBeginTag (HtmlTextWriterTag.Label);
 				w.Write (this.Text);
@@ -355,20 +401,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void RaisePostDataChangedEvent ()
-		{
-			throw new NotImplementedException ();
-		}
+		protected virtual
 #endif
-
-		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			string postedValue = postCollection[postDataKey];
 			bool postedBool = ((postedValue != null) &&
@@ -382,10 +417,30 @@ namespace System.Web.UI.WebControls {
 			return (false);
 		}
 
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+		
+#if NET_2_0
+		protected virtual void RaisePostDataChangedEvent ()
+		{
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+		
+			OnCheckedChanged (EventArgs.Empty);
+		}
+		
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEvent ();
+		}
+#else
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
 			OnCheckedChanged (EventArgs.Empty);
 		}
+#endif
 
 		internal virtual void InternalAddAttributesToRender (HtmlTextWriter w)
 		{

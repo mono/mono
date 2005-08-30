@@ -38,9 +38,14 @@ namespace System.Web.UI.WebControls
 {
 	public class MenuItemStyle: Style
 	{
-		private static int HORZ_PADD = (0x01 << 16);
-		private static int SPACING = (0x01 << 17);
-		private static int VERT_PADD = (0x01 << 18);
+		private const string HORZ_PADD = "HorizontalPadding";
+		private const string SPACING = "ItemSpacing";
+		private const string VERT_PADD = "VerticalPadding";
+		
+		bool IsSet (string v)
+		{
+			return ViewState [v] != null;
+		}
 		
 		[DefaultValue (0)]
 		[NotifyParentProperty (true)]
@@ -52,7 +57,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState["HorizontalPadding"] = value;
-				Set(HORZ_PADD);
 			}
 		}
 
@@ -66,7 +70,6 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState["VerticalPadding"] = value;
-				Set(VERT_PADD);
 			}
 		}
 
@@ -80,12 +83,16 @@ namespace System.Web.UI.WebControls
 			}
 			set {
 				ViewState["ItemSpacing"] = value;
-				Set(SPACING);
 			}
 		}
 
 		protected internal override bool IsEmpty {
-			get { return base.IsEmpty; }
+			get {
+				return base.IsEmpty && 
+				       !IsSet(HORZ_PADD) &&
+				       !IsSet(VERT_PADD) &&
+				       !IsSet(SPACING);
+			}
 		}
 		
 		public override void CopyFrom (Style s)

@@ -1,3 +1,11 @@
+2005-08-30  Lluis Sanchez Gual  <lluis@novell.com> 
+
+	* SubMenuStyle.cs, MenuItemStyle.cs, TreeNodeStyle.cs:
+	  Don't use the obsolete IsSet method.
+	* Menu.cs: Implement IPostBackEventHandler.RaisePostBackEvent.
+	* CheckBox.cs: Implement some 2.0 methods.
+	* GridView.cs: Removed some "throw new NotImplementedException"
+
 2005-08-29  Chris Toshok  <toshok@ximian.com>
 
 	* TreeView.cs: Use the StateBag accessors Ben added, and implement

@@ -766,10 +766,9 @@ namespace System.Web.UI.WebControls
 			OnMenuItemClick (new MenuEventArgs (item));
 		}
 
-		[MonoTODO]
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
-			throw new NotImplementedException ();
+			RaisePostBackEvent (eventArgument);
 		}
 		
 		MenuItem FindItemByPos (string path)
