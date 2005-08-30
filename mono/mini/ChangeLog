@@ -1,3 +1,7 @@
+2005-08-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_get_inst_for_method): Special case Object:.ctor as well.
+
 2005-08-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.h mini-ia64.c: Implement frame pointer elimination. Keep
