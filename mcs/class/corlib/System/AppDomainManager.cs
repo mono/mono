@@ -67,13 +67,7 @@ namespace System {
 		}
 
 		public virtual HostSecurityManager HostSecurityManager {
-			get {
-				if (_host_security == null) {
-					// use default
-					_host_security = new HostSecurityManager ();
-				}
-				return _host_security;
-			}
+			get { return _host_security; }
 		}
 
 		public AppDomainManagerInitializationOptions InitializationFlags {

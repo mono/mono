@@ -556,7 +556,7 @@ namespace System {
 			return assembly;
 		}
 
-		[SecurityPermission (SecurityAction.Demand, Flags=SecurityPermissionFlag.ControlPolicy)]
+		[SecurityPermission (SecurityAction.Demand, ControlPolicy = true)]
 		public void SetAppDomainPolicy (PolicyLevel domainPolicy)
 		{
 			if (domainPolicy == null)
