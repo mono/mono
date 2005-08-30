@@ -1,3 +1,9 @@
+2005-08-30  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* PolicyLevel.cs: Set SecurityManager.ResolvingPolicyLevel to the 
+	current policylevel instance if we want to use the FullTrustAssemblies
+	collection.
+
 2005-06-23  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* ApplicationSecurityManager.cs: Added basic calls to MonoTrustManager

@@ -82,7 +82,13 @@ namespace System.Security.Policy {
 				if (File.Exists (filename)) {
 					using (StreamReader sr = File.OpenText (filename)) {
 						xml = FromString (sr.ReadToEnd ());
+					}
+					try {
+						SecurityManager.ResolvingPolicyLevel = this;
 						FromXml (xml);
+					}
+					finally {
+						SecurityManager.ResolvingPolicyLevel = this;
 					}
 				} else {
 					CreateDefaultFullTrustAssemblies ();
@@ -548,13 +554,19 @@ namespace System.Security.Policy {
 		internal void CreateDefaultNamedPermissionSets () 
 		{
 			named_permission_sets.Clear ();
-			named_permission_sets.Add (DefaultPolicies.LocalIntranet);
-			named_permission_sets.Add (DefaultPolicies.Internet);
-			named_permission_sets.Add (DefaultPolicies.SkipVerification);
-			named_permission_sets.Add (DefaultPolicies.Execution);
-			named_permission_sets.Add (DefaultPolicies.Nothing);
-			named_permission_sets.Add (DefaultPolicies.Everything);
-			named_permission_sets.Add (DefaultPolicies.FullTrust);
+			try {
+				SecurityManager.ResolvingPolicyLevel = this;
+				named_permission_sets.Add (DefaultPolicies.LocalIntranet);
+				named_permission_sets.Add (DefaultPolicies.Internet);
+				named_permission_sets.Add (DefaultPolicies.SkipVerification);
+				named_permission_sets.Add (DefaultPolicies.Execution);
+				named_permission_sets.Add (DefaultPolicies.Nothing);
+				named_permission_sets.Add (DefaultPolicies.Everything);
+				named_permission_sets.Add (DefaultPolicies.FullTrust);
+			}
+			finally {
+				SecurityManager.ResolvingPolicyLevel = null;
+			}
 		}
 
 		internal string ResolveClassName (string className)
