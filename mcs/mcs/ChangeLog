@@ -1,3 +1,15 @@
+2005-08-30  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75929.
+	* ecore.cs (BoxedCast.BoxedCast) [1-argument variant]: Remove.
+	* convert.cs (ImplicitReferenceConversion, TryImplicitIntConversion):
+	Pass 'target_type' to BoxedCast.  Don't default to 'object'.
+	(ExplicitConversion): Remove enum cases already handled by
+	implicit conversion.  Move implicit conversion check to the beginning.
+	* delegate.cs (DelegateCreation.ResolveMethodGroupExpr): Update.
+	* expression.cs (ArrayCreation.EmitDynamicInitializers):
+	Don't treat System.Enum as a struct.
+
 2005-08-30  Jb Evain  <jbevain@gmail.com>
 
 	* attribute.cs: handles as expression in parameters.

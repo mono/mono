@@ -7,7 +7,6 @@
 gtest-179.cs IGNORE
 gtest-187.cs IGNORE
 test-308.cs
-test-377.cs
 test-425.cs
 test-426.cs
 test-427.cs
@@ -28,6 +27,8 @@ test-443.cs
 test-445.cs
 test-446.cs
 test-447.cs
+test-450.cs
+test-451.cs
 
 test-49.cs
 test-50.cs IGNORE	# Windows-only test

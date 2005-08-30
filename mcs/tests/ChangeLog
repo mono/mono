@@ -1,3 +1,7 @@
+2005-08-30  Raja R Harinath  <rharinath@novell.com>
+
+	* test-451.cs: New test based on #75929.
+
 2005-08-30  Jb Evain  <jbevain@gmail.com>
 
 	* test-450.cs: new test for as expression in

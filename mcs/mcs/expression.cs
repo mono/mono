@@ -6824,7 +6824,7 @@ namespace Mono.CSharp {
 					if (e is StringConstant || e is DecimalConstant || !(e is Constant) ||
 					    num_automatic_initializers <= max_automatic_initializers) {
 						Type etype = e.Type;
-						
+
 						ig.Emit (OpCodes.Dup);
 
 						for (int idx = 0; idx < dims; idx++) 
@@ -6835,7 +6835,7 @@ namespace Mono.CSharp {
 						// address of it, so we can store it.
 						//
 						if ((dims == 1) && 
-						    etype.IsSubclassOf (TypeManager.value_type) &&
+						    TypeManager.IsValueType (etype) &&
 						    (!TypeManager.IsBuiltinOrEnum (etype) ||
 						     etype == TypeManager.decimal_type)) {
 							if (e is New){
