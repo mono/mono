@@ -1,3 +1,8 @@
+2005-08-30  Jb Evain  <jbevain@gmail.com>
+
+	* test-450.cs: new test for as expression in
+	custom attribute constructors.
+
 2005-08-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* test-448.cs : test for #74927.
