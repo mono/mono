@@ -1,3 +1,7 @@
+2005-08-30  Eyal Alalouf  <eyala@mainsoft.com>
+	* BaseHttpServlet.cs, SessionListener.cs: Adaptations to global changes in
+	  System.Web.
+
 2005-07-24  Eyal Alalouf  <eyala@mainsoft.com>
     * BaseHttpServlet.cs: Set values of .hostingInstallDir & .hostingVirtualPath
 	  necessary for integration.

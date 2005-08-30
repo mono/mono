@@ -109,7 +109,7 @@ namespace System.Web.J2EE
 			}
 			finally 
 			{
-				HttpContext.Context = null;
+				HttpContext.Current = null;
 				Thread.SetData(_servletRequestSlot, null);
 				Thread.SetData(_servletResponseSlot, null);
 				Thread.SetData(_servletSlot, null);

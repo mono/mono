@@ -54,23 +54,12 @@ namespace System.Web.J2EE
 				if (o == null)
 					return;
 				object app  = ((HttpSessionState)o).App;
-				HttpApplicationFactory appFactory = null;
 				if (app == null)
 				{
-					try
-					{
-						appFactory = (HttpApplicationFactory)AppDomain.CurrentDomain.GetData("HttpApplicationFactory");
-					}
-					catch (Exception)
-					{
-						return;
-					}
-					if (appFactory != null)
-						app = appFactory.GetPublicInstance();
+					app = HttpApplicationFactory.GetApplication(null);
 					if (app == null)
 						return;
-					else
-						getHttpApplication = true; 
+					getHttpApplication = true;
 				}
 				if (method == null && firstTime)
 				{
@@ -84,7 +73,7 @@ namespace System.Web.J2EE
 					return;
 				method.Invoke(app, new object[]{app,EventArgs.Empty});
 				if (getHttpApplication)
-					appFactory.RecyclePublicInstance((HttpApplication)app);
+					HttpApplicationFactory.Recycle((HttpApplication)app);
 			}
 			catch (Exception e)
 			{
