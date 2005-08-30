@@ -192,11 +192,11 @@ namespace Mono.CSharp {
 			bool t1_is_attr = false;
 			Type t1 = ResolvePossibleAttributeType (ec, Identifier, true, ref t1_is_attr);
 
-			// FIXME: Shouldn't do this for quoted attributes: [@A]
 			bool t2_is_attr = false;
-			Type t2 = ResolvePossibleAttributeType (ec, Identifier + "Attribute", true, ref t2_is_attr);
+			Type t2 = nameEscaped ? null :
+				ResolvePossibleAttributeType (ec, Identifier + "Attribute", true, ref t2_is_attr);
 
-			if (t1_is_attr && t2_is_attr && !nameEscaped) {
+			if (t1_is_attr && t2_is_attr) {
 				Report.Error (1614, Location, "`{0}' is ambiguous between `{0}' and `{0}Attribute'. Use either `@{0}' or `{0}Attribute'", GetSignatureForError ());
 				resolve_error = true;
 				return;
