@@ -1,3 +1,7 @@
+2005-08-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-448.cs : test for #74927.
+
 2005-08-30  Raja R Harinath  <rharinath@novell.com>
 
 	* test-447.cs: New test from #75802.
