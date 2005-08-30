@@ -79,17 +79,15 @@ namespace System.Windows.Forms
 		static readonly Color pen_ticks_color = Color.Black;
 		static readonly Color progressbarblock_color = Color.FromArgb (255, 0, 0, 128);
 		
-//		internal Color NormalColor = Color.DarkGray;
 		static readonly Color NormalColor = Color.LightGray;
 		static readonly Color MouseOverColor = Color.DarkGray;
-		//internal Color PressedColor = Color.Black;
 		static readonly Color PressedColor = Color.Gray;
-		//static readonly Color FocusColor = Color.Blue;
 		static readonly Color FocusColor = Color.FromArgb( System.Convert.ToInt32( "0xff00c0ff", 16 ) );
-		static uint uifc = 0xff00c0ff;
-		static readonly Color xFocusColor = Color.FromArgb( (int)uifc );
+//		static uint uifc = 0xff00c0ff;
+//		static readonly Color xFocusColor = Color.FromArgb( (int)uifc );
 		static readonly Color LightColor = Color.LightGray;
 		static readonly Color BorderColor = MouseOverColor;
+		static readonly Color NiceBackColor  = Color.FromArgb( System.Convert.ToInt32( "0xffefebe7", 16 ) );
 		
 		static StringFormat string_format_menu_text;
 		static StringFormat string_format_menu_shortcut;
@@ -2175,14 +2173,15 @@ namespace System.Windows.Forms
 		public override void DrawMenuBar( Graphics dc, IntPtr hMenu, Rectangle rect )
 		{
 			MenuAPI.MENU menu = MenuAPI.GetMenuFromID( hMenu );
+			
 			Rectangle item_rect;
 			
 			if ( menu.Height == 0 )
 				ThemeEngine.Current.CalcMenuBarSize( dc, hMenu, rect.Width );
 			
 			rect.Height = menu.Height;
-			//dc.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( menu.Wnd.BackColor ), rect );
 			dc.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( menu.Wnd.BackColor ), rect );
+//			dc.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( NiceBackColor ), rect );
 			
 			for ( int i = 0; i < menu.items.Count; i++ )
 			{
@@ -2193,7 +2192,6 @@ namespace System.Windows.Forms
 				it.item.MenuHeight = menu.Height;
 				it.item.PerformDrawItem( new DrawItemEventArgs( dc, ThemeEngine.Current.MenuFont,
 									       item_rect, i, it.item.Status ) );
-				
 			}
 		}
 		
@@ -2216,9 +2214,11 @@ namespace System.Windows.Forms
 			
 			if ( item.Separator == true )
 			{
-				e.Graphics.DrawLine( ResPool.GetPen( ThemeEngine.Current.ColorButtonShadow ), e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y );
+				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( LightColor ),
+						    e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y );
 				
-				e.Graphics.DrawLine( ResPool.GetPen( ThemeEngine.Current.ColorButtonHilight ), e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1 );
+				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( ThemeEngine.Current.ColorButtonHilight ),
+						    e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1 );
 				
 				return;
 			}
@@ -2233,30 +2233,48 @@ namespace System.Windows.Forms
 	        		rect.Width = 3;
 	        		rect.Height = item.MenuHeight - 6;
 				
-				e.Graphics.DrawLine( ResPool.GetPen( ThemeEngine.Current.ColorButtonShadow ), rect.X, rect.Y , rect.X, rect.Y + rect.Height );
+				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( LightColor ),
+						    rect.X, rect.Y , rect.X, rect.Y + rect.Height );
 				
-				e.Graphics.DrawLine( ResPool.GetPen( ThemeEngine.Current.ColorButtonHilight ), rect.X + 1, rect.Y , rect.X + 1, rect.Y + rect.Height );
+				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( ThemeEngine.Current.ColorButtonHilight ),
+						    rect.X + 1, rect.Y , rect.X + 1, rect.Y + rect.Height );
 			}
 			
-			Color color_text;
+			Color color_text = ThemeEngine.Current.ColorMenuText;
 			Color color_back;
-			
-			if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
-			{
-				color_text = ThemeEngine.Current.ColorHilightText;
-				color_back = ThemeEngine.Current.ColorHilight;
-			}
-			else
-			{
-				color_text = ThemeEngine.Current.ColorMenuText;
-				color_back = ThemeEngine.Current.ColorMenu;
-			}
 			
 			/* Draw background */
 			Rectangle rect_back = e.Bounds;
 			rect_back.X++;
 			rect_back.Width -= 2;
-			e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( color_back ), rect_back );
+			
+			if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
+			{
+				color_text = ThemeEngine.Current.ColorMenuText;
+				color_back = NormalColor;
+				
+				using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( rect_back.X, rect_back.Y ), new Point( rect_back.Right, rect_back.Y ), Color.White, NormalColor ) )//NormalColor, Color.White ) )
+				{
+					e.Graphics.FillRectangle( lgbr, rect_back );
+				}
+				
+//				if ( item.MenuBar )
+//				{
+//					e.Graphics.DrawLine( ResPool.GetPen( BorderColor ), rect_back.Left, rect_back.Bottom, rect_back.Left, rect_back.Top );
+//					e.Graphics.DrawLine( ResPool.GetPen( BorderColor ), rect_back.Left, rect_back.Top, rect_back.Right, rect_back.Top );
+//					e.Graphics.DrawLine( ResPool.GetPen( BorderColor ), rect_back.Right, rect_back.Top, rect_back.Right, rect_back.Bottom );
+//				}
+//				else
+				rect_back.Height--;
+				e.Graphics.DrawRectangle( ResPool.GetPen( BorderColor ), rect_back );
+			}
+			else
+			{
+				color_text = ThemeEngine.Current.ColorMenuText;
+				color_back = NiceBackColor;
+				
+				e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( NiceBackColor ), rect_back );
+			}
 			
 			if ( item.Enabled )
 			{
@@ -3884,7 +3902,7 @@ namespace System.Windows.Forms
 			}
 			else
 			{
-				Pen light = ResPool.GetPen( BorderColor );
+				Pen border_pen = ResPool.GetPen( BorderColor );
 				
 				switch ( tab.Alignment )
 				{
@@ -3892,22 +3910,21 @@ namespace System.Windows.Forms
 						
 						dc.FillRectangle( GetControlBackBrush( tab.BackColor ), bounds );
 						
-						dc.DrawLine( light, bounds.Left, bounds.Bottom, bounds.Left, bounds.Top + 3 );
-						dc.DrawLine( light, bounds.Left, bounds.Top + 3, bounds.Left + 3, bounds.Top );
-						dc.DrawLine( light, bounds.Left + 3, bounds.Top, bounds.Right - 3, bounds.Top );
-						dc.DrawLine( light, bounds.Right - 3, bounds.Top, bounds.Right, bounds.Top + 3 );
-						dc.DrawLine( light, bounds.Right, bounds.Top + 3, bounds.Right, bounds.Bottom );
-						
 						if ( !is_selected )
 						{
 							interior = new Rectangle( bounds.Left + 2, bounds.Top + 2, bounds.Width - 2, bounds.Height - 2 );
 							
-							using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2  ), new Point( bounds.Left + 2, bounds.Bottom ), Color.White, Color.LightGray ) )
+							using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2  ), new Point( bounds.Left + 2, bounds.Bottom ), Color.White, LightColor ) )
 							{
 								dc.FillRectangle( lgbr, interior );
 							}
-							
 						}
+						
+						dc.DrawLine( border_pen, bounds.Left, bounds.Bottom, bounds.Left, bounds.Top + 3 );
+						dc.DrawLine( border_pen, bounds.Left, bounds.Top + 3, bounds.Left + 3, bounds.Top );
+						dc.DrawLine( border_pen, bounds.Left + 3, bounds.Top, bounds.Right - 3, bounds.Top );
+						dc.DrawLine( border_pen, bounds.Right - 3, bounds.Top, bounds.Right, bounds.Top + 3 );
+						dc.DrawLine( border_pen, bounds.Right, bounds.Top + 3, bounds.Right, bounds.Bottom );
 						
 						if ( page.Focused )
 						{
@@ -3935,15 +3952,28 @@ namespace System.Windows.Forms
 						
 						dc.FillRectangle( GetControlBackBrush( tab.BackColor ), bounds );
 						
-						dc.DrawLine( light, bounds.Left, bounds.Top, bounds.Left, bounds.Bottom - 3 );
-						dc.DrawLine( light, bounds.Left, bounds.Bottom - 3, bounds.Left + 2, bounds.Bottom - 1 );
+						if ( !is_selected )
+						{
+							interior = new Rectangle( bounds.Left + 3, bounds.Top, bounds.Width - 3, bounds.Height );
+							
+							using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 3, bounds.Top  ), new Point( bounds.Left + 3, bounds.Bottom  ), Color.White, LightColor ) )
+							{
+								dc.FillRectangle( lgbr, interior );
+							}
+						}
 						
-						dc.DrawLine( SystemPens.ControlDark, bounds.Left + 3, bounds.Bottom - 1, bounds.Right - 3, bounds.Bottom - 1 );
-						dc.DrawLine( SystemPens.ControlDark, bounds.Right - 1, bounds.Bottom - 3, bounds.Right - 1, bounds.Top );
+						dc.DrawLine( border_pen, bounds.Left, bounds.Top, bounds.Left, bounds.Bottom - 3 );
+						dc.DrawLine( border_pen, bounds.Left, bounds.Bottom - 3, bounds.Left + 3, bounds.Bottom );
+						dc.DrawLine( border_pen, bounds.Left + 3, bounds.Bottom, bounds.Right - 3, bounds.Bottom );
+						dc.DrawLine( border_pen, bounds.Right - 3, bounds.Bottom, bounds.Right, bounds.Bottom - 3 );
+						dc.DrawLine( border_pen, bounds.Right, bounds.Bottom - 3, bounds.Right, bounds.Top );
 						
-						dc.DrawLine( SystemPens.ControlDarkDark, bounds.Left + 3, bounds.Bottom, bounds.Right - 3, bounds.Bottom );
-						dc.DrawLine( SystemPens.ControlDarkDark, bounds.Right - 3, bounds.Bottom, bounds.Right, bounds.Bottom - 3 );
-						dc.DrawLine( SystemPens.ControlDarkDark, bounds.Right, bounds.Bottom - 3, bounds.Right, bounds.Top );
+						if ( page.Focused )
+						{
+							dc.DrawLine( ResPool.GetPen( Color.DarkOrange ), bounds.Left - 1 , bounds.Bottom, bounds.Right - 1, bounds.Bottom );
+							dc.DrawLine( ResPool.GetPen( Color.Orange ), bounds.Left , bounds.Bottom - 1, bounds.Right , bounds.Bottom - 1 );
+							dc.DrawLine( ResPool.GetPen( Color.Orange ), bounds.Left , bounds.Bottom - 2, bounds.Right , bounds.Bottom - 2 );
+						}
 						
 						interior = new Rectangle( bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8 );
 						
@@ -3964,14 +3994,28 @@ namespace System.Windows.Forms
 						
 						dc.FillRectangle( GetControlBackBrush( tab.BackColor ), bounds );
 						
-						dc.DrawLine( light, bounds.Left, bounds.Bottom - 3, bounds.Left, bounds.Top + 3 );
-						dc.DrawLine( light, bounds.Left, bounds.Top + 3, bounds.Left + 3, bounds.Top );
-						dc.DrawLine( light, bounds.Left + 3, bounds.Top, bounds.Right, bounds.Top );
+						if ( !is_selected )
+						{
+							interior = new Rectangle( bounds.Left + 2, bounds.Top + 2, bounds.Width - 2, bounds.Height - 2 );
+							
+							using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2  ), new Point( bounds.Right, bounds.Top + 2 ), LightColor, Color.White ) )
+							{
+								dc.FillRectangle( lgbr, interior );
+							}
+						}
 						
-						dc.DrawLine( SystemPens.ControlDark, bounds.Right, bounds.Bottom - 1, bounds.Left + 2, bounds.Bottom - 1 );
+						dc.DrawLine( border_pen, bounds.Right, bounds.Top, bounds.Left + 3, bounds.Top );
+						dc.DrawLine( border_pen, bounds.Left + 3, bounds.Top, bounds.Left, bounds.Top + 3 );
+						dc.DrawLine( border_pen, bounds.Left, bounds.Top + 3, bounds.Left, bounds.Bottom - 3 );
+						dc.DrawLine( border_pen, bounds.Left, bounds.Bottom - 3, bounds.Left + 3, bounds.Bottom );
+						dc.DrawLine( border_pen, bounds.Left + 3, bounds.Bottom, bounds.Right, bounds.Bottom );
 						
-						dc.DrawLine( SystemPens.ControlDarkDark, bounds.Right, bounds.Bottom, bounds.Left + 2, bounds.Bottom );
-						dc.DrawLine( SystemPens.ControlDarkDark, bounds.Left + 2, bounds.Bottom, bounds.Left, bounds.Bottom - 3 );
+						if ( page.Focused )
+						{
+							dc.DrawLine( ResPool.GetPen( Color.DarkOrange ), bounds.Left , bounds.Top + 1, bounds.Left , bounds.Bottom - 1 );
+							dc.DrawLine( ResPool.GetPen( Color.Orange ), bounds.Left + 1 , bounds.Top, bounds.Left + 1 , bounds.Bottom );
+							dc.DrawLine( ResPool.GetPen( Color.Orange ), bounds.Left + 2 , bounds.Top, bounds.Left + 2 , bounds.Bottom );
+						}
 						
 						interior = new Rectangle( bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8 );
 						
@@ -3998,14 +4042,28 @@ namespace System.Windows.Forms
 						
 						dc.FillRectangle( GetControlBackBrush( tab.BackColor ), bounds );
 						
-						dc.DrawLine( light, bounds.Left, bounds.Top, bounds.Right - 3, bounds.Top );
-						dc.DrawLine( light, bounds.Right - 3, bounds.Top, bounds.Right, bounds.Top + 3 );
+						if ( !is_selected )
+						{
+							interior = new Rectangle( bounds.Left + 2, bounds.Top + 2, bounds.Width - 2, bounds.Height - 2 );
+							
+							using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( bounds.Left + 2, bounds.Top + 2  ), new Point( bounds.Right, bounds.Top + 2 ), Color.White, LightColor ) )
+							{
+								dc.FillRectangle( lgbr, interior );
+							}
+						}
 						
-						dc.DrawLine( SystemPens.ControlDark, bounds.Right - 1, bounds.Top + 1, bounds.Right - 1, bounds.Bottom - 1 );
-						dc.DrawLine( SystemPens.ControlDark, bounds.Left, bounds.Bottom - 1, bounds.Right - 2, bounds.Bottom - 1 );
+						dc.DrawLine( border_pen, bounds.Left, bounds.Top, bounds.Right - 3, bounds.Top );
+						dc.DrawLine( border_pen, bounds.Right - 3, bounds.Top, bounds.Right, bounds.Top + 3 );
+						dc.DrawLine( border_pen, bounds.Right, bounds.Top + 3, bounds.Right, bounds.Bottom - 3 );
+						dc.DrawLine( border_pen, bounds.Right, bounds.Bottom - 3, bounds.Right - 3, bounds.Bottom );
+						dc.DrawLine( border_pen, bounds.Right - 3, bounds.Bottom, bounds.Left, bounds.Bottom );
 						
-						dc.DrawLine( SystemPens.ControlDarkDark, bounds.Right, bounds.Top + 3, bounds.Right, bounds.Bottom - 3 );
-						dc.DrawLine( SystemPens.ControlDarkDark, bounds.Left, bounds.Bottom, bounds.Right - 3, bounds.Bottom );
+						if ( page.Focused )
+						{
+							dc.DrawLine( ResPool.GetPen( Color.DarkOrange ), bounds.Right , bounds.Top + 1, bounds.Right , bounds.Bottom - 1 );
+							dc.DrawLine( ResPool.GetPen( Color.Orange ), bounds.Right - 1 , bounds.Top, bounds.Right - 1 , bounds.Bottom );
+							dc.DrawLine( ResPool.GetPen( Color.Orange ), bounds.Right - 2 , bounds.Top, bounds.Right - 2 , bounds.Bottom );
+						}
 						
 						interior = new Rectangle( bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8 );
 						
@@ -4716,7 +4774,7 @@ namespace System.Windows.Forms
 						dc.DrawLine( pen, thumb_pos.X, thumb_pos.Y + 4, thumb_pos.X + 4, thumb_pos.Y );
 						
 						pen = ResPool.GetPen( ColorButtonShadow );
-						dc.DrawLine( pen, thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 9, thumb_pos.Y + 4 + 16 );
+						dc.DrawLine( pen, thumb_pos.X  + 9, thumb_pos.Y + 4, thumb_pos.X + 9, thumb_pos.Y + 4 + 16 );
 						dc.DrawLine( pen, thumb_pos.X + 9, thumb_pos.Y + 4, thumb_pos.X + 5, thumb_pos.Y );
 						dc.DrawLine( pen, thumb_pos.X + 9, thumb_pos.Y + 19, thumb_pos.X + 1 , thumb_pos.Y + 19 );
 						
@@ -4947,23 +5005,23 @@ namespace System.Windows.Forms
 			Button	= 4
 		}
 		
-		public override void CPDrawBorder( Graphics graphics, Rectangle bounds, Color leftColor, int leftWidth,
+		public override void CPDrawBorder( Graphics dc, Rectangle bounds, Color leftColor, int leftWidth,
 						  ButtonBorderStyle leftStyle, Color topColor, int topWidth, ButtonBorderStyle topStyle,
 						  Color rightColor, int rightWidth, ButtonBorderStyle rightStyle, Color bottomColor,
 						  int bottomWidth, ButtonBorderStyle bottomStyle )
 		{
-			DrawBorderInternal( graphics, bounds.Left, bounds.Top, bounds.Left, bounds.Bottom - 1, leftWidth, leftColor, leftStyle, Border3DSide.Left );
-			DrawBorderInternal( graphics, bounds.Left, bounds.Top, bounds.Right - 1, bounds.Top, topWidth, topColor, topStyle, Border3DSide.Top );
-			DrawBorderInternal( graphics, bounds.Right - 1, bounds.Top, bounds.Right - 1, bounds.Bottom - 1, rightWidth, rightColor, rightStyle, Border3DSide.Right );
-			DrawBorderInternal( graphics, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1, bottomWidth, bottomColor, bottomStyle, Border3DSide.Bottom );
+			DrawBorderInternal( dc, bounds.Left, bounds.Top, bounds.Left, bounds.Bottom - 1, leftWidth, leftColor, leftStyle, Border3DSide.Left );
+			DrawBorderInternal( dc, bounds.Left, bounds.Top, bounds.Right - 1, bounds.Top, topWidth, topColor, topStyle, Border3DSide.Top );
+			DrawBorderInternal( dc, bounds.Right - 1, bounds.Top, bounds.Right - 1, bounds.Bottom - 1, rightWidth, rightColor, rightStyle, Border3DSide.Right );
+			DrawBorderInternal( dc, bounds.Left, bounds.Bottom - 1, bounds.Right - 1, bounds.Bottom - 1, bottomWidth, bottomColor, bottomStyle, Border3DSide.Bottom );
 		}
 		
-		public override void CPDrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides )
+		public override void CPDrawBorder3D( Graphics dc, Rectangle rectangle, Border3DStyle style, Border3DSide sides )
 		{
-			CPDrawBorder3D( graphics, rectangle, style, sides, ColorButtonFace );
+			CPDrawBorder3D( dc, rectangle, style, sides, ColorButtonFace );
 		}
 		
-		private void CPDrawBorder3D( Graphics graphics, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color )
+		private void CPDrawBorder3D( Graphics dc, Rectangle rectangle, Border3DStyle style, Border3DSide sides, Color control_color )
 		{
 			Pen		penTopLeft;
 			Pen		penTopLeftInner;
@@ -5034,48 +5092,48 @@ namespace System.Windows.Forms
 			
 			if ( ( sides & Border3DSide.Middle ) != 0 )
 			{
-				graphics.FillRectangle( ResPool.GetSolidBrush( control_color ), rect );
+				dc.FillRectangle( ResPool.GetSolidBrush( control_color ), rect );
 			}
 			
 			if ( ( sides & Border3DSide.Left ) != 0 )
 			{
-				graphics.DrawLine( penTopLeft, rect.Left, rect.Bottom - 2, rect.Left, rect.Top );
+				dc.DrawLine( penTopLeft, rect.Left, rect.Bottom - 2, rect.Left, rect.Top );
 				if ( doInner )
 				{
-					graphics.DrawLine( penTopLeftInner, rect.Left + 1, rect.Bottom - 2, rect.Left + 1, rect.Top );
+					dc.DrawLine( penTopLeftInner, rect.Left + 1, rect.Bottom - 2, rect.Left + 1, rect.Top );
 				}
 			}
 			
 			if ( ( sides & Border3DSide.Top ) != 0 )
 			{
-				graphics.DrawLine( penTopLeft, rect.Left, rect.Top, rect.Right - 2, rect.Top );
+				dc.DrawLine( penTopLeft, rect.Left, rect.Top, rect.Right - 2, rect.Top );
 				
 				if ( doInner )
 				{
 					if ( ( sides & Border3DSide.Left ) != 0 )
 					{
-						graphics.DrawLine( penTopLeftInner, rect.Left + 1, rect.Top + 1, rect.Right - 3, rect.Top + 1 );
+						dc.DrawLine( penTopLeftInner, rect.Left + 1, rect.Top + 1, rect.Right - 3, rect.Top + 1 );
 					}
 					else
 					{
-						graphics.DrawLine( penTopLeftInner, rect.Left, rect.Top + 1, rect.Right - 3, rect.Top + 1 );
+						dc.DrawLine( penTopLeftInner, rect.Left, rect.Top + 1, rect.Right - 3, rect.Top + 1 );
 					}
 				}
 			}
 			
 			if ( ( sides & Border3DSide.Right ) != 0 )
 			{
-				graphics.DrawLine( penBottomRight, rect.Right - 1, rect.Top, rect.Right - 1, rect.Bottom - 1 );
+				dc.DrawLine( penBottomRight, rect.Right - 1, rect.Top, rect.Right - 1, rect.Bottom - 1 );
 				
 				if ( doInner )
 				{
 					if ( ( sides & Border3DSide.Top ) != 0 )
 					{
-						graphics.DrawLine( penBottomRightInner, rect.Right - 2, rect.Top + 1, rect.Right - 2, rect.Bottom - 2 );
+						dc.DrawLine( penBottomRightInner, rect.Right - 2, rect.Top + 1, rect.Right - 2, rect.Bottom - 2 );
 					}
 					else
 					{
-						graphics.DrawLine( penBottomRightInner, rect.Right - 2, rect.Top, rect.Right - 2, rect.Bottom - 2 );
+						dc.DrawLine( penBottomRightInner, rect.Right - 2, rect.Top, rect.Right - 2, rect.Bottom - 2 );
 					}
 				}
 			}
@@ -5089,24 +5147,24 @@ namespace System.Windows.Forms
 					left += 1;
 				}
 				
-				graphics.DrawLine( penBottomRight, rect.Left, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1 );
+				dc.DrawLine( penBottomRight, rect.Left, rect.Bottom - 1, rect.Right - 1, rect.Bottom - 1 );
 				
 				if ( doInner )
 				{
 					if ( ( sides & Border3DSide.Right ) != 0 )
 					{
-						graphics.DrawLine( penBottomRightInner, left, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2 );
+						dc.DrawLine( penBottomRightInner, left, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2 );
 					}
 					else
 					{
-						graphics.DrawLine( penBottomRightInner, left, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2 );
+						dc.DrawLine( penBottomRightInner, left, rect.Bottom - 2, rect.Right - 2, rect.Bottom - 2 );
 					}
 				}
 			}
 		}
 		
 		
-		public override void CPDrawButton( Graphics graphics, Rectangle rectangle, ButtonState state )
+		public override void CPDrawButton( Graphics dc, Rectangle rectangle, ButtonState state )
 		{
 			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonPush;
 			
@@ -5129,16 +5187,16 @@ namespace System.Windows.Forms
 			{
 				dfcs |= DrawFrameControlStates.Inactive;
 			}
-			DrawFrameControl( graphics, rectangle, DrawFrameControlTypes.Button, dfcs );
+			DrawFrameControl( dc, rectangle, DrawFrameControlTypes.Button, dfcs );
 		}
 		
 		
-		public override void CPDrawCaptionButton( Graphics graphics, Rectangle rectangle, CaptionButton button, ButtonState state )
+		public override void CPDrawCaptionButton( Graphics dc, Rectangle rectangle, CaptionButton button, ButtonState state )
 		{
 			Rectangle	captionRect;
 			int			lineWidth;
 			
-			CPDrawButton( graphics, rectangle, state );
+			CPDrawButton( dc, rectangle, state );
 			
 			if ( rectangle.Width < rectangle.Height )
 			{
@@ -5164,12 +5222,12 @@ namespace System.Windows.Forms
 						{
 							using ( Pen pen = new Pen( ColorButtonHilight, lineWidth ) )
 							{
-								DrawCaptionHelper( graphics, ColorButtonHilight, pen, lineWidth, 1, captionRect, button );
+								DrawCaptionHelper( dc, ColorButtonHilight, pen, lineWidth, 1, captionRect, button );
 							}
 							
 							using ( Pen pen = new Pen( ColorButtonShadow, lineWidth ) )
 							{
-								DrawCaptionHelper( graphics, ColorButtonShadow, pen, lineWidth, 0, captionRect, button );
+								DrawCaptionHelper( dc, ColorButtonShadow, pen, lineWidth, 0, captionRect, button );
 							}
 							return;
 						}
@@ -5177,7 +5235,7 @@ namespace System.Windows.Forms
 						{
 							using ( Pen pen = new Pen( ColorButtonText, lineWidth ) )
 							{
-								DrawCaptionHelper( graphics, ColorButtonText, pen, lineWidth, 0, captionRect, button );
+								DrawCaptionHelper( dc, ColorButtonText, pen, lineWidth, 0, captionRect, button );
 							}
 							return;
 						}
@@ -5189,14 +5247,14 @@ namespace System.Windows.Forms
 				case CaptionButton.Restore: {
 						if ( ( state & ButtonState.Inactive ) != 0 )
 						{
-							DrawCaptionHelper( graphics, ColorButtonHilight, SystemPens.ControlLightLight, lineWidth, 1, captionRect, button );
+							DrawCaptionHelper( dc, ColorButtonHilight, SystemPens.ControlLightLight, lineWidth, 1, captionRect, button );
 							
-							DrawCaptionHelper( graphics, ColorButtonShadow, SystemPens.ControlDark, lineWidth, 0, captionRect, button );
+							DrawCaptionHelper( dc, ColorButtonShadow, SystemPens.ControlDark, lineWidth, 0, captionRect, button );
 							return;
 						}
 						else
 						{
-							DrawCaptionHelper( graphics, ColorButtonText, SystemPens.ControlText, lineWidth, 0, captionRect, button );
+							DrawCaptionHelper( dc, ColorButtonText, SystemPens.ControlText, lineWidth, 0, captionRect, button );
 							return;
 						}
 					}
@@ -5204,7 +5262,7 @@ namespace System.Windows.Forms
 		}
 		
 		
-		public override void CPDrawCheckBox( Graphics graphics, Rectangle rectangle, ButtonState state )
+		public override void CPDrawCheckBox( Graphics dc, Rectangle rectangle, ButtonState state )
 		{
 			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonCheck;
 			
@@ -5228,7 +5286,7 @@ namespace System.Windows.Forms
 				dfcs |= DrawFrameControlStates.Inactive;
 			}
 			
-			DrawFrameControl( graphics, rectangle, DrawFrameControlTypes.Button, dfcs );
+			DrawFrameControl( dc, rectangle, DrawFrameControlTypes.Button, dfcs );
 			
 		}
 		
@@ -5353,7 +5411,7 @@ namespace System.Windows.Forms
 		}
 		
 		
-		public override void CPDrawContainerGrabHandle( Graphics graphics, Rectangle bounds )
+		public override void CPDrawContainerGrabHandle( Graphics dc, Rectangle bounds )
 		{
 			
 			Pen			pen	= new Pen( Color.Black, 1 );
@@ -5361,23 +5419,23 @@ namespace System.Windows.Forms
 			int			X;
 			int			Y;
 			
-			graphics.FillRectangle( ResPool.GetSolidBrush( ColorButtonText ), rect );
-			graphics.DrawRectangle( pen, rect );
+			dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonText ), rect );
+			dc.DrawRectangle( pen, rect );
 			
 			X = rect.X + rect.Width / 2;
 			Y = rect.Y + rect.Height / 2;
 			
 			/* Draw the cross */
-			graphics.DrawLine( pen, X, rect.Y + 2, X, rect.Bottom - 2 );
-			graphics.DrawLine( pen, rect.X + 2, Y, rect.Right - 2, Y );
+			dc.DrawLine( pen, X, rect.Y + 2, X, rect.Bottom - 2 );
+			dc.DrawLine( pen, rect.X + 2, Y, rect.Right - 2, Y );
 			
 			/* Draw 'arrows' for vertical lines */
-			graphics.DrawLine( pen, X - 1, rect.Y + 3, X + 1, rect.Y + 3 );
-			graphics.DrawLine( pen, X - 1, rect.Bottom - 3, X + 1, rect.Bottom - 3 );
+			dc.DrawLine( pen, X - 1, rect.Y + 3, X + 1, rect.Y + 3 );
+			dc.DrawLine( pen, X - 1, rect.Bottom - 3, X + 1, rect.Bottom - 3 );
 			
 			/* Draw 'arrows' for horizontal lines */
-			graphics.DrawLine( pen, rect.X + 3, Y - 1, rect.X + 3, Y + 1 );
-			graphics.DrawLine( pen, rect.Right - 3, Y - 1, rect.Right - 3, Y + 1 );
+			dc.DrawLine( pen, rect.X + 3, Y - 1, rect.X + 3, Y + 1 );
+			dc.DrawLine( pen, rect.Right - 3, Y - 1, rect.Right - 3, Y + 1 );
 			
 			pen.Dispose( );
 		}
@@ -5423,7 +5481,7 @@ namespace System.Windows.Forms
 		}
 		
 		
-		public override void CPDrawFocusRectangle( Graphics graphics, Rectangle rectangle, Color foreColor, Color backColor )
+		public override void CPDrawFocusRectangle( Graphics dc, Rectangle rectangle, Color foreColor, Color backColor )
 		{
 			Rectangle rect = rectangle;
 			Pen pen;
@@ -5447,11 +5505,11 @@ namespace System.Windows.Forms
 			rect.Width--;
 			rect.Height--;
 			
-			graphics.DrawRectangle( pen, rect );
+			dc.DrawRectangle( pen, rect );
 			pen.Dispose( );
 		}
 		
-		public override void CPDrawGrabHandle( Graphics graphics, Rectangle rectangle, bool primary, bool enabled )
+		public override void CPDrawGrabHandle( Graphics dc, Rectangle rectangle, bool primary, bool enabled )
 		{
 			SolidBrush	sb;
 			Pen			pen;
@@ -5480,13 +5538,13 @@ namespace System.Windows.Forms
 					sb = ResPool.GetSolidBrush( ColorButtonFace );
 				}
 			}
-			graphics.FillRectangle( sb, rectangle );
-			graphics.DrawRectangle( pen, rectangle );
+			dc.FillRectangle( sb, rectangle );
+			dc.DrawRectangle( pen, rectangle );
 			pen.Dispose( );
 		}
 		
 		
-		public override void CPDrawGrid( Graphics graphics, Rectangle area, Size pixelsBetweenDots, Color backColor )
+		public override void CPDrawGrid( Graphics dc, Rectangle area, Size pixelsBetweenDots, Color backColor )
 		{
 			Color	foreColor;
 			int	h;
@@ -5531,7 +5589,7 @@ namespace System.Windows.Forms
 			#endif
 			/* Slow method */
 			
-			Bitmap bitmap = new Bitmap( area.Width, area.Height, graphics );
+			Bitmap bitmap = new Bitmap( area.Width, area.Height, dc );
 			
 			for ( int x=0; x < area.Width; x += pixelsBetweenDots.Width )
 			{
@@ -5540,11 +5598,11 @@ namespace System.Windows.Forms
 					bitmap.SetPixel( x, y, foreColor );
 				}
 			}
-			graphics.DrawImage( bitmap, area.X, area.Y, area.Width, area.Height );
+			dc.DrawImage( bitmap, area.X, area.Y, area.Width, area.Height );
 			bitmap.Dispose( );
 		}
 		
-		public override void CPDrawImageDisabled( Graphics graphics, Image image, int x, int y, Color background )
+		public override void CPDrawImageDisabled( Graphics dc, Image image, int x, int y, Color background )
 		{
 			/*
 			 Microsoft seems to ignore the background and simply make
@@ -5577,12 +5635,12 @@ namespace System.Windows.Forms
 				imagedisabled_attributes.SetColorMatrix( colorMatrix );
 			}
 			
-			graphics.DrawImage( image, new Rectangle( x, y, image.Width, image.Height ), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, imagedisabled_attributes );
+			dc.DrawImage( image, new Rectangle( x, y, image.Width, image.Height ), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, imagedisabled_attributes );
 			
 		}
 		
 		
-		public override void CPDrawLockedFrame( Graphics graphics, Rectangle rectangle, bool primary )
+		public override void CPDrawLockedFrame( Graphics dc, Rectangle rectangle, bool primary )
 		{
 			Pen	penBorder;
 			Pen	penInside;
@@ -5600,20 +5658,20 @@ namespace System.Windows.Forms
 			penBorder.Alignment = PenAlignment.Inset;
 			penInside.Alignment = PenAlignment.Inset;
 			
-			graphics.DrawRectangle( penBorder, rectangle );
-			graphics.DrawRectangle( penInside, rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 5, rectangle.Height - 5 );
+			dc.DrawRectangle( penBorder, rectangle );
+			dc.DrawRectangle( penInside, rectangle.X + 2, rectangle.Y + 2, rectangle.Width - 5, rectangle.Height - 5 );
 			penBorder.Dispose( );
 			penInside.Dispose( );
 		}
 		
 		
-		public override void CPDrawMenuGlyph( Graphics graphics, Rectangle rectangle, MenuGlyph glyph )
+		public override void CPDrawMenuGlyph( Graphics dc, Rectangle rectangle, MenuGlyph glyph )
 		{
 			Rectangle	rect;
 			int			lineWidth;
 			
 			// MS draws always the background white
-			graphics.FillRectangle( ResPool.GetSolidBrush( Color.White ), rectangle );
+			dc.FillRectangle( ResPool.GetSolidBrush( Color.White ), rectangle );
 			
 			switch ( glyph )
 			{
@@ -5642,7 +5700,7 @@ namespace System.Windows.Forms
 						arrow[ 1 ] = P2;
 						arrow[ 2 ] = P3;
 						
-						graphics.FillPolygon( SystemBrushes.ControlText, arrow, FillMode.Winding );
+						dc.FillPolygon( SystemBrushes.ControlText, arrow, FillMode.Winding );
 						
 						return;
 					}
@@ -5652,7 +5710,7 @@ namespace System.Windows.Forms
 						lineWidth = Math.Max( 2, rectangle.Width / 3 );
 						rect = new Rectangle( rectangle.X + lineWidth, rectangle.Y + lineWidth, rectangle.Width - lineWidth * 2, rectangle.Height - lineWidth * 2 );
 						
-						graphics.FillEllipse( ResPool.GetSolidBrush( ColorButtonText ), rect );
+						dc.FillEllipse( ResPool.GetSolidBrush( ColorButtonText ), rect );
 						
 						return;
 					}
@@ -5667,8 +5725,8 @@ namespace System.Windows.Forms
 						
 						for ( int i=0; i < lineWidth; i++ )
 						{
-							graphics.DrawLine( SystemPens.MenuText, rect.Left + lineWidth / 2, rect.Top + lineWidth + i, rect.Left + lineWidth / 2 + 2 * Scale, rect.Top + lineWidth + 2 * Scale + i );
-							graphics.DrawLine( SystemPens.MenuText, rect.Left + lineWidth / 2 + 2 * Scale, rect.Top + lineWidth + 2 * Scale + i, rect.Left + lineWidth / 2 + 6 * Scale, rect.Top + lineWidth - 2 * Scale + i );
+							dc.DrawLine( SystemPens.MenuText, rect.Left + lineWidth / 2, rect.Top + lineWidth + i, rect.Left + lineWidth / 2 + 2 * Scale, rect.Top + lineWidth + 2 * Scale + i );
+							dc.DrawLine( SystemPens.MenuText, rect.Left + lineWidth / 2 + 2 * Scale, rect.Top + lineWidth + 2 * Scale + i, rect.Left + lineWidth / 2 + 6 * Scale, rect.Top + lineWidth - 2 * Scale + i );
 						}
 						return;
 					}
@@ -5676,7 +5734,7 @@ namespace System.Windows.Forms
 			
 		}
 		
-		public override void CPDrawRadioButton( Graphics graphics, Rectangle rectangle, ButtonState state )
+		public override void CPDrawRadioButton( Graphics dc, Rectangle rectangle, ButtonState state )
 		{
 			DrawFrameControlStates	dfcs=DrawFrameControlStates.ButtonRadio;
 			
@@ -5699,7 +5757,7 @@ namespace System.Windows.Forms
 			{
 				dfcs |= DrawFrameControlStates.Inactive;
 			}
-			DrawFrameControl( graphics, rectangle, DrawFrameControlTypes.Button, dfcs );
+			DrawFrameControl( dc, rectangle, DrawFrameControlTypes.Button, dfcs );
 			
 		}
 		
@@ -5780,7 +5838,7 @@ namespace System.Windows.Forms
 			pen.Dispose( );
 		}
 		
-		public  override void CPDrawSelectionFrame( Graphics graphics, bool active, Rectangle outsideRect, Rectangle insideRect,
+		public  override void CPDrawSelectionFrame( Graphics dc, bool active, Rectangle outsideRect, Rectangle insideRect,
 							   Color backColor )
 		{
 			
@@ -5808,18 +5866,18 @@ namespace System.Windows.Forms
 		}
 		
 		
-		public  override void CPDrawStringDisabled( Graphics graphics, string s, Font font, Color color, RectangleF layoutRectangle,
+		public  override void CPDrawStringDisabled( Graphics dc, string s, Font font, Color color, RectangleF layoutRectangle,
 							   StringFormat format )
 		{
 			
 			layoutRectangle.Offset( 1.0f, 1.0f );
-			graphics.DrawString( s, font, ResPool.GetSolidBrush( ControlPaint.Light( color, 95 ) ), layoutRectangle, format );
+			dc.DrawString( s, font, ResPool.GetSolidBrush( ControlPaint.Light( color, 95 ) ), layoutRectangle, format );
 			layoutRectangle.Offset( -1.0f, -1.0f );
-			graphics.DrawString( s, font, ResPool.GetSolidBrush( ControlPaint.Light( color, 50 ) ), layoutRectangle, format );
+			dc.DrawString( s, font, ResPool.GetSolidBrush( ControlPaint.Light( color, 50 ) ), layoutRectangle, format );
 			
 		}
 		
-		private static void DrawBorderInternal( Graphics graphics, int startX, int startY, int endX, int endY,
+		private static void DrawBorderInternal( Graphics dc, int startX, int startY, int endX, int endY,
 						       int width, Color color, ButtonBorderStyle style, Border3DSide side )
 		{
 			
@@ -5888,7 +5946,7 @@ namespace System.Windows.Forms
 										pen.Dispose( );
 										colorGrade = ControlPaint.HBS2Color( hue, Math.Min( 255, brightness + brightnessSteps * ( width - i ) ), saturation );
 										pen = new Pen( colorGrade, 1 );
-										graphics.DrawLine( pen, startX + i, startY + i, endX + i, endY - i );
+										dc.DrawLine( pen, startX + i, startY + i, endX + i, endY - i );
 										break;
 									}
 									
@@ -5896,7 +5954,7 @@ namespace System.Windows.Forms
 										pen.Dispose( );
 										colorGrade = ControlPaint.HBS2Color( hue, Math.Max( 0, brightness - brightnessDownSteps * ( width - i ) ), saturation );
 										pen = new Pen( colorGrade, 1 );
-										graphics.DrawLine( pen, startX - i, startY + i, endX - i, endY - i );
+										dc.DrawLine( pen, startX - i, startY + i, endX - i, endY - i );
 										break;
 									}
 									
@@ -5904,7 +5962,7 @@ namespace System.Windows.Forms
 										pen.Dispose( );
 										colorGrade = ControlPaint.HBS2Color( hue, Math.Min( 255, brightness + brightnessSteps * ( width - i ) ), saturation );
 										pen = new Pen( colorGrade, 1 );
-										graphics.DrawLine( pen, startX + i, startY + i, endX - i, endY + i );
+										dc.DrawLine( pen, startX + i, startY + i, endX - i, endY + i );
 										break;
 									}
 									
@@ -5912,7 +5970,7 @@ namespace System.Windows.Forms
 										pen.Dispose( );
 										colorGrade = ControlPaint.HBS2Color( hue, Math.Max( 0, brightness - brightnessDownSteps * ( width - i ) ), saturation );
 										pen = new Pen( colorGrade, 1 );
-										graphics.DrawLine( pen, startX + i, startY - i, endX - i, endY - i );
+										dc.DrawLine( pen, startX + i, startY - i, endX - i, endY - i );
 										break;
 									}
 							}
@@ -5946,7 +6004,7 @@ namespace System.Windows.Forms
 										pen.Dispose( );
 										colorGrade = ControlPaint.HBS2Color( hue, Math.Max( 0, brightness - brightnessDownSteps * ( width - i ) ), saturation );
 										pen = new Pen( colorGrade, 1 );
-										graphics.DrawLine( pen, startX + i, startY + i, endX + i, endY - i );
+										dc.DrawLine( pen, startX + i, startY + i, endX + i, endY - i );
 										break;
 									}
 									
@@ -5954,7 +6012,7 @@ namespace System.Windows.Forms
 										pen.Dispose( );
 										colorGrade = ControlPaint.HBS2Color( hue, Math.Min( 255, brightness + brightnessSteps * ( width - i ) ), saturation );
 										pen = new Pen( colorGrade, 1 );
-										graphics.DrawLine( pen, startX - i, startY + i, endX - i, endY - i );
+										dc.DrawLine( pen, startX - i, startY + i, endX - i, endY - i );
 										break;
 									}
 									
@@ -5962,7 +6020,7 @@ namespace System.Windows.Forms
 										pen.Dispose( );
 										colorGrade = ControlPaint.HBS2Color( hue, Math.Max( 0, brightness - brightnessDownSteps * ( width - i ) ), saturation );
 										pen = new Pen( colorGrade, 1 );
-										graphics.DrawLine( pen, startX + i, startY + i, endX - i, endY + i );
+										dc.DrawLine( pen, startX + i, startY + i, endX - i, endY + i );
 										break;
 									}
 									
@@ -5970,7 +6028,7 @@ namespace System.Windows.Forms
 										pen.Dispose( );
 										colorGrade = ControlPaint.HBS2Color( hue, Math.Min( 255, brightness + brightnessSteps * ( width - i ) ), saturation );
 										pen = new Pen( colorGrade, 1 );
-										graphics.DrawLine( pen, startX + i, startY - i, endX - i, endY - i );
+										dc.DrawLine( pen, startX + i, startY - i, endX - i, endY - i );
 										break;
 									}
 							}
@@ -5989,7 +6047,7 @@ namespace System.Windows.Forms
 							case Border3DSide.Left:	{
 									for ( int i=0; i < width; i++ )
 									{
-										graphics.DrawLine( pen, startX + i, startY + i, endX + i, endY - i );
+										dc.DrawLine( pen, startX + i, startY + i, endX + i, endY - i );
 									}
 									break;
 								}
@@ -5997,7 +6055,7 @@ namespace System.Windows.Forms
 							case Border3DSide.Right: {
 									for ( int i=0; i < width; i++ )
 									{
-										graphics.DrawLine( pen, startX - i, startY + i, endX - i, endY - i );
+										dc.DrawLine( pen, startX - i, startY + i, endX - i, endY - i );
 									}
 									break;
 								}
@@ -6005,7 +6063,7 @@ namespace System.Windows.Forms
 							case Border3DSide.Top: {
 									for ( int i=0; i < width; i++ )
 									{
-										graphics.DrawLine( pen, startX + i, startY + i, endX - i, endY + i );
+										dc.DrawLine( pen, startX + i, startY + i, endX - i, endY + i );
 									}
 									break;
 								}
@@ -6013,7 +6071,7 @@ namespace System.Windows.Forms
 							case Border3DSide.Bottom: {
 									for ( int i=0; i < width; i++ )
 									{
-										graphics.DrawLine( pen, startX + i, startY - i, endX - i, endY - i );
+										dc.DrawLine( pen, startX + i, startY - i, endX - i, endY - i );
 									}
 									break;
 								}
