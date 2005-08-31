@@ -135,12 +135,12 @@ namespace Mono.CSharp {
 			return Root.GetNamespace (name, create);
 		}
 
-		TypeExpr LookupType (string name)
+		TypeExpr LookupType (string name, Location loc)
 		{
 			if (cached_types.Contains (name))
 				return cached_types [name] as TypeExpr;
 
-			Type t;
+			Type t = null;
 			DeclSpace tdecl = declspaces [name] as DeclSpace;
 			if (tdecl != null) {
 				//
@@ -154,22 +154,31 @@ namespace Mono.CSharp {
 				//
 				tdecl.DefineType ();
 				t = tdecl.TypeBuilder;
-			} else {
-				string lookup = this == Namespace.Root ? name : fullname + "." + name;
-				t = TypeManager.LookupTypeReflection (lookup);
 			}
+			string lookup = this == Namespace.Root ? name : fullname + "." + name;
+			Type rt = TypeManager.LookupTypeReflection (lookup);
+			if (t == null)
+				t = rt;
+			else if (rt != null && t != rt && RootContext.WarningLevel >= 2) {
+				Report.SymbolRelatedToPreviousError (t);
+				Report.SymbolRelatedToPreviousError (rt);
+				Report.Warning (436, loc,
+					"Ignoring imported type `{0}' since the current assembly already has a declaration with the same name", 
+					rt.FullName);
+			}
+
 			TypeExpr te = t == null ? null : new TypeExpression (t, Location.Null);
 			cached_types [name] = te;
 			return te;
 		}
 
-		public FullNamedExpression Lookup (DeclSpace ds, string name)
+		public FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
 		{
 			Namespace ns = GetNamespace (name, false);
 			if (ns != null)
 				return ns;
 
-			TypeExpr te = LookupType (name);
+			TypeExpr te = LookupType (name, loc);
 			if (te == null || !ds.CheckAccessLevel (te.Type))
 				return null;
 
@@ -467,7 +476,7 @@ namespace Mono.CSharp {
 			//
 			// Check whether it's in the namespace.
 			//
-			FullNamedExpression fne = NS.Lookup (ds, name);
+			FullNamedExpression fne = NS.Lookup (ds, name, loc);
 			if (fne != null)
 				return fne;
 
@@ -488,7 +497,7 @@ namespace Mono.CSharp {
 			//
 			FullNamedExpression match = null;
 			foreach (Namespace using_ns in GetUsingTable ()) {
-				match = using_ns.Lookup (ds, name);
+				match = using_ns.Lookup (ds, name, loc);
 				if (match == null || !(match is TypeExpr))
 					continue;
 				if (fne != null) {

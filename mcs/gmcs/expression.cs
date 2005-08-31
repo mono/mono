@@ -2271,6 +2271,13 @@ namespace Mono.CSharp {
 				t == TypeManager.delegate_type || t.IsSubclassOf (TypeManager.delegate_type);
 		}
 
+		static void Warning_UnintendedReferenceComparison (Location loc, string side, Type type)
+		{
+			Report.Warning ((side == "left" ? 252 : 253), 2, loc,
+				"Possible unintended reference comparison; to get a value comparison, " +
+				"cast the {0} hand side to type `{1}'.", side, TypeManager.CSharpName (type));
+		}
+
 		Expression ResolveOperator (EmitContext ec)
 		{
 			Type l = left.Type;
@@ -2321,22 +2328,21 @@ namespace Mono.CSharp {
 			// Do not perform operator overload resolution when both sides are
 			// built-in types
 			//
+			Expression left_operators = null, right_operators = null;
 			if (!(TypeManager.IsPrimitiveType (l) && TypeManager.IsPrimitiveType (r))){
 				//
 				// Step 1: Perform Operator Overload location
 				//
-				Expression left_expr, right_expr;
-				
 				string op = oper_names [(int) oper];
 				
 				MethodGroupExpr union;
-				left_expr = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
+				left_operators = MemberLookup (ec, l, op, MemberTypes.Method, AllBindingFlags, loc);
 				if (r != l){
-					right_expr = MemberLookup (
+					right_operators = MemberLookup (
 						ec, r, op, MemberTypes.Method, AllBindingFlags, loc);
-					union = Invocation.MakeUnionSet (left_expr, right_expr, loc);
+					union = Invocation.MakeUnionSet (left_operators, right_operators, loc);
 				} else
-					union = (MethodGroupExpr) left_expr;
+					union = (MethodGroupExpr) left_operators;
 				
 				if (union != null) {
 					ArrayList args = new ArrayList (2);
@@ -2459,26 +2465,47 @@ namespace Mono.CSharp {
 				// For this to be used, both arguments have to be reference-types.
 				// Read the rationale on the spec (14.9.6)
 				//
-				// Also, if at compile time we know that the classes do not inherit
-				// one from the other, then we catch the error there.
-				//
 				if (!(l.IsValueType || r.IsValueType)){
 					type = TypeManager.bool_type;
 
 					if (l == r)
 						return this;
 					
-					if (l.IsSubclassOf (r) || r.IsSubclassOf (l))
-						return this;
-
 					//
 					// Also, a standard conversion must exist from either one
 					//
-					if (!(Convert.ImplicitStandardConversionExists (ec, left, r) ||
-					      Convert.ImplicitStandardConversionExists (ec, right, l))){
+					bool left_to_right =
+						Convert.ImplicitStandardConversionExists (ec, left, r);
+					bool right_to_left = !left_to_right &&
+						Convert.ImplicitStandardConversionExists (ec, right, l);
+
+					if (!left_to_right && !right_to_left) {
 						Error_OperatorCannotBeApplied ();
 						return null;
 					}
+
+					if (left_to_right && left_operators != null &&
+					    RootContext.WarningLevel >= 2) {
+						ArrayList args = new ArrayList (2);
+						args.Add (new Argument (left, Argument.AType.Expression));
+						args.Add (new Argument (left, Argument.AType.Expression));
+						MethodBase method = Invocation.OverloadResolve (
+							ec, (MethodGroupExpr) left_operators, args, true, Location.Null);
+						if (method != null)
+							Warning_UnintendedReferenceComparison (loc, "right", l);
+					}
+
+					if (right_to_left && right_operators != null &&
+					    RootContext.WarningLevel >= 2) {
+						ArrayList args = new ArrayList (2);
+						args.Add (new Argument (right, Argument.AType.Expression));
+						args.Add (new Argument (right, Argument.AType.Expression));
+						MethodBase method = Invocation.OverloadResolve (
+							ec, (MethodGroupExpr) right_operators, args, true, Location.Null);
+						if (method != null)
+							Warning_UnintendedReferenceComparison (loc, "left", r);
+					}
+
 					//
 					// We are going to have to convert to an object to compare
 					//
@@ -7400,7 +7427,7 @@ namespace Mono.CSharp {
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
 				string lookup_id = MemberName.MakeName (Identifier, args);
-				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id);
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
 				if (retval == null)
@@ -7555,7 +7582,7 @@ namespace Mono.CSharp {
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
-				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id);
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
 				if (!silent && retval == null)

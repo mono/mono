@@ -2619,7 +2619,7 @@ namespace Mono.CSharp {
 				lookup_name = name.Substring (0, pos);
 			}
 
-			FullNamedExpression resolved = Namespace.Root.Lookup (ec.DeclSpace, lookup_name);
+			FullNamedExpression resolved = Namespace.Root.Lookup (ec.DeclSpace, lookup_name, Location.Null);
 
 			if (resolved != null && rest != null) {
 				// Now handle the rest of the the name.
@@ -2631,7 +2631,7 @@ namespace Mono.CSharp {
 					Namespace ns = resolved as Namespace;
 					element = elements [i++];
 					lookup_name += "." + element;
-					resolved = ns.Lookup (ec.DeclSpace, element);
+					resolved = ns.Lookup (ec.DeclSpace, element, Location.Null);
 				}
 
 				if (resolved != null && resolved is TypeExpr) {

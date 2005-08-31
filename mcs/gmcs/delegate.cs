@@ -89,7 +89,7 @@ namespace Mono.CSharp {
 			
 			if (TypeManager.multicast_delegate_type == null && !RootContext.StdLib) {
 				Namespace system = Namespace.LookupNamespace ("System", true);
-				TypeExpr expr = system.Lookup (this, "MulticastDelegate") as TypeExpr;
+				TypeExpr expr = system.Lookup (this, "MulticastDelegate", Location) as TypeExpr;
 				TypeManager.multicast_delegate_type = expr.ResolveType (ec);
 			}
 
@@ -281,7 +281,7 @@ namespace Mono.CSharp {
 			if (Parameters.ArrayParameter != null){
 				if (TypeManager.param_array_type == null && !RootContext.StdLib) {
 					Namespace system = Namespace.LookupNamespace ("System", true);
-					TypeExpr expr = system.Lookup (this, "ParamArrayAttribute") as TypeExpr;
+					TypeExpr expr = system.Lookup (this, "ParamArrayAttribute", Location) as TypeExpr;
 					TypeManager.param_array_type = expr.ResolveType (ec);
 				}
 
