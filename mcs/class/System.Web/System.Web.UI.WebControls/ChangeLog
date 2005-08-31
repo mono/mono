@@ -1,5 +1,34 @@
 2005-08-31  Chris Toshok  <toshok@ximian.com>
 
+	* Repeater.cs: lots of 2.0 work, much of it c&p'ed from
+	{Base}DataList, and also from debug spew garnered from some
+	Repeater subclass tests on MS.
+	(CreateControlHierarchy): in 2.0 if IsBonudUsingDataSourceID get
+	the IEnumerable by calling GetData().
+	(DataBind): reset RequiresDataBinding to false (2.0).
+	(DataMember): copy the set implementation from DataList, and add
+	2.0 code to call OnDataPropertyChanged if we're !Initialiezd.
+	(DataSource): more c&p.
+	(DataSourceID); implement (2.0)
+	(Initialized): implement (2.0)
+	(IsBoundUsingDataSource): implement (2.0)
+	(RequiresDataBinding): implement (2.0)
+	(SelectArguments): implement (2.0)
+	(CreateDataSourceSelectArguments): implement (2.0)
+	(EnsureDataBound): implement (2.0)
+	(GetData): implement.
+	(OnDataPropertyChanged): remove the NIE, but leave the MonoTODO
+	(2.0)
+	(OnDataSourceViewChanged): set RequiresDataBinding to true, but
+	leave the MonoTODO. (2.0)
+	(OnInit): call base.OnInit instead of throwing NIE, but leave the
+	MonoTODO (2.0)
+	(OnLoad): implement.
+	(OnPreRender): implement.
+	(ConnectToDataSource): new method - look for the right control.
+
+2005-08-31  Chris Toshok  <toshok@ximian.com>
+
 	* XmlDataSourceView.cs: fix the scope of our select.  Don't use
 	call SelectNodes on the XmlDocument, not on
 	XmlDocument.DocumentElement.

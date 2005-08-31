@@ -48,6 +48,15 @@ namespace System.Web.UI.WebControls {
 	[PersistChildren (false)]
 	public class Repeater : Control, INamingContainer {
 
+		object dataSource;
+		IDataSource boundDataSource;
+#if NET_2_0
+		private bool initialized;
+		private bool requiresDataBinding;
+		private DataSourceSelectArguments selectArguments;
+		private IEnumerable data;
+#endif
+
 		// See Kothari, listing 20-3
 #if NET_2_0
 		protected internal
@@ -108,11 +117,19 @@ namespace System.Web.UI.WebControls {
 			items = new ArrayList ();
 			itemscol = null;
 			
-			if (useDataSource)
-				ds = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
-			else
+			if (useDataSource) {
+#if NET_2_0
+				if (IsBoundUsingDataSourceID) {
+					ds = GetData ();
+				}
+				else
+#endif
+					ds = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+			}
+			else {
 				// Optimize (shouldn't need all this memory ;-)
 				ds = new object [(int) ViewState ["Items"]];
+			}
 
 			// If there is no datasource, then we don't show anything. the "Items"
 			// viewstate won't get set, so on postback, we won't get here
@@ -145,6 +162,9 @@ namespace System.Web.UI.WebControls {
 			// windows, this doesn't seem to be the case here.
 			OnDataBinding (EventArgs.Empty);
 
+#if NET_2_0
+			RequiresDataBinding = false;
+#endif
 		}
 		
 		protected virtual RepeaterItem CreateItem (int itemIndex, ListItemType itemType)
@@ -219,38 +239,63 @@ namespace System.Web.UI.WebControls {
 				return ViewState.GetString ("DataMember", "");
 			}
 			set {
-				ViewState ["DataMember"] = value;
+				if (value == null)
+					ViewState.Remove ("DataMember");
+				else
+					ViewState ["DataMember"] = value;
+
+#if NET_2_0
+				if (!Initialized)
+					OnDataPropertyChanged ();
+#endif
 			}
 		}
 
-		object datasource;
 		[Bindable(true)]
 		[DefaultValue(null)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public virtual object DataSource {
 			get {
-				return datasource;
+				return dataSource;
 			}
 			
 			set {
 				if (value == null || value is IListSource || value is IEnumerable)
-					datasource = value;
+#if NET_2_0
+// FIXME - can't duplicate in a test case ? LAMESPEC ?
+// can't duplicate in a test case
+//					if ((dataSourceId != null) && (dataSourceId.Length != 0))
+//						throw new HttpException (Locale.GetText ("DataSourceID is already set."));
+
+					dataSource = value;
+
+					if (!Initialized)
+						OnDataPropertyChanged ();
+#else
+					dataSource = value;
+#endif
 				else
-					throw new ArgumentException ();
+					throw new ArgumentException (String.Format (
+					    "An invalid data source is being used for {0}. A valid data source must implement either IListSource or IEnumerable",
+					    ID));
 			}
 		}
 
 #if NET_2_0
 		[DefaultValue ("")]
 		[IDReferenceProperty (typeof (DataSourceControl))]
-		[MonoTODO]
 		public virtual string DataSourceID
 		{
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetString ("DataSourceID", "");
 			}
 			set {
-				throw new NotImplementedException ();
+				if (dataSource != null)
+			  		throw new HttpException ("Only one of DataSource and DataSourceID can be specified.");
+				ViewState ["DataSourceID"] = value;
+
+				if (!Initialized)
+					OnDataPropertyChanged ();
 			}
 		}
 
@@ -379,87 +424,116 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		protected bool Initialized
-		{
-			get {
-				throw new NotImplementedException ();
-			}
+		protected bool Initialized {
+			get { return initialized; }
 		}
 
-		[MonoTODO]
 		protected bool IsBoundUsingDataSourceID
 		{
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return (DataSourceID.Length != 0); }
 		}
 
-		[MonoTODO]
 		protected bool RequiresDataBinding
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return requiresDataBinding; }
+			set { requiresDataBinding = value; }
 		}
 
-		[MonoTODO]
 		protected DataSourceSelectArguments SelectArguments
 		{
 			get {
-				throw new NotImplementedException ();
+				/* i know this seems weird - i mean, why
+				 * don't we call
+				 * CreateDataSourceSelectArguments here?  i
+				 * have no idea. ask MS */
+				if (selectArguments == null)
+					selectArguments = new DataSourceSelectArguments ();
+				return selectArguments;
 			}
 		}
 
-		[MonoTODO]
 		protected virtual DataSourceSelectArguments CreateDataSourceSelectArguments ()
 		{
-			throw new NotImplementedException ();
+			if (selectArguments == null)
+				selectArguments = new DataSourceSelectArguments ();
+			return selectArguments;
 		}
 
-		[MonoTODO]
 		protected void EnsureDataBound ()
 		{
-			throw new NotImplementedException ();
+			if (IsBoundUsingDataSourceID && RequiresDataBinding)
+				DataBind ();
 		}
 
-		[MonoTODO]
+		private void SelectCallback (IEnumerable data)
+		{
+			this.data = data;
+		}
+
 		protected virtual IEnumerable GetData ()
 		{
-			throw new NotImplementedException ();
+			if (DataSourceID.Length == 0)
+				return null;
+
+			DataSourceView dsv = boundDataSource.GetView (String.Empty);
+			dsv.Select (SelectArguments, new DataSourceViewSelectCallback (SelectCallback));
+			return data;
 		}
 
 		[MonoTODO]
 		protected virtual void OnDataPropertyChanged ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected virtual void OnDataSourceViewChanged (object sender, EventArgs e)
 		{
-			throw new NotImplementedException ();
+			RequiresDataBinding = true;
 		}
 
 		[MonoTODO]
 		protected internal override void OnInit (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			base.OnInit (e);
 		}
 
-		[MonoTODO]
 		protected internal override void OnLoad (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if ((Page != null) && !Page.IsPostBack)
+				RequiresDataBinding = true;
+
+			initialized = true;
+			base.OnLoad (e);
+
+			if (IsBoundUsingDataSourceID)
+				ConnectToDataSource ();
 		}
 
-		[MonoTODO]
 		protected internal override void OnPreRender (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			EnsureDataBound ();
+			base.OnPreRender (e);
+		}
+
+		void ConnectToDataSource ()
+		{
+			/* verify that the data source exists and is an IDataSource */
+			object ctrl = null;
+			if (Page != null)
+				ctrl = Page.FindControl (DataSourceID);
+
+			if (ctrl == null || !(ctrl is IDataSource)) {
+				string format;
+
+				if (ctrl == null)
+				  	format = "DataSourceID of '{0}' must be the ID of a control of type IDataSource.  A control with ID '{1}' could not be found.";
+				else
+				  	format = "DataSourceID of '{0}' must be the ID of a control of type IDataSource.  '{1}' is not an IDataSource.";
+
+				throw new HttpException (String.Format (format, ID, DataSourceID));
+			}
+
+			boundDataSource = (IDataSource)ctrl;
 		}
 #endif
 	}
