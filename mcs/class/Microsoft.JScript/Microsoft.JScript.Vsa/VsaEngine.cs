@@ -266,6 +266,11 @@ namespace Microsoft.JScript.Vsa {
 				throw new VsaException (VsaError.OptionNotSupported);
 			}
 		}
+
+		internal Parser GetParser ()
+		{
+			return new Parser ();
+		}
 	}
 
 	class DefaultVsaSite : BaseVsaSite {		
