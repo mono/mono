@@ -1,3 +1,10 @@
+2005-08-31  Chris Toshok  <toshok@ximian.com>
+
+	* DataSourceSelectArguments.cs (Empty): this is apparently,
+	according to corcompare, a property, not a field.  go figure.
+	(Equals): implement.
+	(IsEmpty): remove all mention of it.
+	
 2005-08-29  Chris Toshok  <toshok@ximian.com>
 
 	* StateBag.cs (GetChar): add.

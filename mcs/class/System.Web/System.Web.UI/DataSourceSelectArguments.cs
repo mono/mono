@@ -38,29 +38,30 @@ namespace System.Web.UI
 		string sortExpression = string.Empty;
 		int startingRowIndex = 0;
 		int maxRows = 0;
-		bool isEmpty;
 		bool getTotalRowCount = false;
 		int totalRowCount = -1;
 		DataSourceCapabilities dsc = DataSourceCapabilities.None;
 
-		public static readonly DataSourceSelectArguments Empty = new DataSourceSelectArguments ();
+		static DataSourceSelectArguments empty = new DataSourceSelectArguments();
+		public static DataSourceSelectArguments Empty {
+			get {
+				return empty;
+			}
+		}
 
 		public DataSourceSelectArguments ()
 		{
-			this.isEmpty = true;
 		}
 
 		public DataSourceSelectArguments (string sortExpression)
 		{
 			this.sortExpression = sortExpression;
-			this.isEmpty = false;
 		}
 
 		public DataSourceSelectArguments (int startingRowIndex, int maxRows)
 		{
 			this.startingRowIndex = startingRowIndex;
 			this.maxRows = maxRows;
-			this.isEmpty = false;
 		}
 
 		public DataSourceSelectArguments (string sortExpression, int startingRowIndex, int maxRows)
@@ -68,7 +69,6 @@ namespace System.Web.UI
 			this.sortExpression = sortExpression; 
 			this.startingRowIndex = startingRowIndex;
 			this.maxRows = maxRows;
-			this.isEmpty = false;
 		}
 
 		public void AddSupportedCapabilities (DataSourceCapabilities srcCapabilities)
@@ -76,12 +76,15 @@ namespace System.Web.UI
 			this.dsc = this.dsc | srcCapabilities;
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
 			if (!(obj is DataSourceSelectArguments))
 				return false;
-			return false;
+
+			DataSourceSelectArguments args = (DataSourceSelectArguments)obj;
+			return (this.sortExpression == args.sortExpression &&
+				this.startingRowIndex == args.startingRowIndex &&
+				this.maxRows == args.maxRows);
 		}
 
 		[MonoTODO]
@@ -95,15 +98,10 @@ namespace System.Web.UI
 			view.RaiseUnsupportedCapabilityError (this.dsc);
 		}
 
-		public bool IsEmpty {
-			get { return this.isEmpty; }
-		}
-
 		public int MaximumRows {
 			get { return this.maxRows; }
 			set {
 				this.maxRows = value;
-				this.isEmpty = false;
 			}
 		}
 
@@ -116,7 +114,6 @@ namespace System.Web.UI
 			get { return this.sortExpression; }
 			set {
 				this.sortExpression = value;
-				this.isEmpty = false;
 			}
 		}
 
@@ -124,7 +121,6 @@ namespace System.Web.UI
 			get { return this.startingRowIndex; }
 			set {
 				this.startingRowIndex = value;
-				this.isEmpty = false;
 			}
 		}
 
@@ -132,7 +128,6 @@ namespace System.Web.UI
 			get { return this.totalRowCount; }
 			set {
 				this.totalRowCount = value;
-				this.isEmpty = false;
 			}
 		}
 	}
