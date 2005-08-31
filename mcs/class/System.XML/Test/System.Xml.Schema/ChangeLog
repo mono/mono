@@ -1,3 +1,8 @@
+2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlSchemaExceptionCas.cs: New. CAS unit tests for exception 
+	serialization.
+
 2005-06-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaCollectionTests.cs : added test for #75126.
