@@ -2207,9 +2207,15 @@ namespace Mono.CSharp {
 						if (!f.IsUsed){
 							if ((f.caching_flags & Flags.IsAssigned) == 0)
 								Report.Warning (169, 3, f.Location, "The private field `{0}' is never used", f.GetSignatureForError ());
-							else
-								Report.Warning (414, 3, f.Location, "The private field `{0}' is assigned but its value is never used",
+							else {
+#if NET_2_0
+								const int error_code = 414;
+#else
+								const int error_code = 169;
+#endif
+								Report.Warning (error_code, 3, f.Location, "The private field `{0}' is assigned but its value is never used",
 									f.GetSignatureForError ());
+							}
 							continue;
 						}
 						
@@ -4713,8 +4719,10 @@ namespace Mono.CSharp {
 			    ((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 				Block.AddThisVariable (Parent, Location);
 
-			if (block != null)
-				block.ResolveMeta (ec, ParameterInfo);
+			if (block != null) {
+				if (!block.ResolveMeta (ec, ParameterInfo))
+					block = null;
+			}
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (Parent.Kind == Kind.Class && Initializer == null)
@@ -4987,7 +4995,7 @@ namespace Mono.CSharp {
 						}
 						return false;
 					}
-					if (implementing.IsSpecialName && !((member is PropertyBase || member is EventProperty))) {
+					if (implementing.IsSpecialName && !(method is AbstractPropertyEventMethod)) {
 						Report.SymbolRelatedToPreviousError (implementing);
 						Report.Error (683, method.Location, "`{0}' explicit method implementation cannot implement `{1}' because it is an accessor",
 							member.GetSignatureForError (), TypeManager.CSharpSignature (implementing));
@@ -4996,11 +5004,23 @@ namespace Mono.CSharp {
 
 					method_name = TypeManager.GetFullName (member.InterfaceType) + "." + method_name;
 				} else {
-					if (implementing != null && method is AbstractPropertyEventMethod && !implementing.IsSpecialName) {
-						Report.SymbolRelatedToPreviousError (implementing);
-						Report.Error (686, method.Location, "Accessor `{0}' cannot implement interface member `{1}' for type `{2}'. Use an explicit interface implementation",
-							method.GetSignatureForError (), TypeManager.CSharpSignature (implementing), container.GetSignatureForError ());
-						return false;
+					if (implementing != null) {
+						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;
+						if (prop_method != null) {
+							if (!implementing.IsSpecialName) {
+								Report.SymbolRelatedToPreviousError (implementing);
+								Report.Error (686, method.Location, "Accessor `{0}' cannot implement interface member `{1}' for type `{2}'. Use an explicit interface implementation",
+									method.GetSignatureForError (), TypeManager.CSharpSignature (implementing), container.GetSignatureForError ());
+								return false;
+							}
+							PropertyBase.PropertyMethod pm = prop_method as PropertyBase.PropertyMethod;
+							if (pm != null && pm.HasCustomAccessModifier && (pm.ModFlags & Modifiers.PUBLIC) == 0) {
+								Report.SymbolRelatedToPreviousError (implementing);
+								Report.Error (277, method.Location, "Accessor `{0}' must be declared public to implement interface member `{1}'",
+									method.GetSignatureForError (), TypeManager.CSharpSignature (implementing, true));
+								return false;
+							}
+						}
 					}
 				}
 			}
@@ -5045,7 +5065,6 @@ namespace Mono.CSharp {
 				//
 				if ((modifiers & Modifiers.STATIC) != 0){
 					implementing = null;
-					Modifiers.Error_InvalidModifier (method.Location, "static");
 				}
 			}
 			
