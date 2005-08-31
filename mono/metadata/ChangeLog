@@ -1,3 +1,9 @@
+
+Wed Aug 31 17:35:19 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* object.c: fix check for creating the bound data for arrays vs
+	szarrays.
+
 2005-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* object.c: configuration file name is now based on the executable name,
