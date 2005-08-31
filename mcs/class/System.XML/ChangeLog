@@ -1,3 +1,8 @@
+2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: /unsafe isn't required to build System.Xml.
+	* System.Xml_test.dll.sources: Added new CAS unit tests.
+
 2005-07-31  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Xml_test.dll.sources: Added tests for default values of
