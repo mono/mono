@@ -1,5 +1,10 @@
 2005-08-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* cs-tokenizer.cs, cs-parser.jay, driver.cs, support.cs :
+	  Reverting the change. gmcs is much complex than mcs on this matter.
+
+2005-08-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* cs-tokenizer.cs : To read another token ahead of the actual 
 	  consumption, use new SavedToken and cache token instead of moving
 	  back the stream with SeekableStreamReader (it seemed problematic).

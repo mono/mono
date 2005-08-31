@@ -31,7 +31,7 @@ namespace Mono.CSharp
 
 	public class Tokenizer : yyParser.yyInput
 	{
-		StreamReader reader;
+		SeekableStreamReader reader;
 		SourceFile ref_name;
 		SourceFile file_name;
 		int ref_line = 1;
@@ -45,8 +45,6 @@ namespace Mono.CSharp
 		Location current_location;
 		Location current_comment_location = Location.Null;
 		ArrayList escapedIdentifiers = new ArrayList ();
-		SavedToken saved_token = SavedToken.Null;
-		bool putback_ambiguous_close_parens = false;
 
 		//
 		// XML documentation buffer. The save point is used to divide
@@ -387,7 +385,7 @@ namespace Mono.CSharp
 			defines [def] = true;
 		}
 		
-		public Tokenizer (StreamReader input, SourceFile file, ArrayList defs)
+		public Tokenizer (SeekableStreamReader input, SourceFile file, ArrayList defs)
 		{
 			this.ref_name = file;
 			this.file_name = file;
@@ -469,11 +467,19 @@ namespace Mono.CSharp
 
 				--deambiguate_close_parens;
 
-				// Save next token.
-				Location cur_loc = current_location;
+				// Save current position and parse next token.
+				int old = reader.Position;
+				int old_ref_line = ref_line;
+				int old_col = col;
+
+				// disable preprocessing directives when peeking
+				process_directives = false;
 				int new_token = token ();
-				saved_token = new SavedToken (new_token, val, Location);
-				current_location = cur_loc;
+				process_directives = true;
+				reader.Position = old;
+				ref_line = old_ref_line;
+				col = old_col;
+				putback_char = -1;
 
 				if (new_token == Token.OPEN_PARENS)
 					return Token.CLOSE_PARENS_OPEN_PARENS;
@@ -652,7 +658,7 @@ namespace Mono.CSharp
 
 		public void Deambiguate_CloseParens ()
 		{
-			putback_ambiguous_close_parens = true;
+			putback (')');
 			deambiguate_close_parens++;
 		}
 
@@ -1081,10 +1087,6 @@ namespace Mono.CSharp
 		int getChar ()
 		{
 			int x;
-			if (putback_ambiguous_close_parens) {
-				putback_ambiguous_close_parens = false;
-				return ')';
-			}
 			if (putback_char != -1) {
 				x = putback_char;
 				putback_char = -1;
@@ -1104,8 +1106,6 @@ namespace Mono.CSharp
 
 		int peekChar ()
 		{
-			if (putback_ambiguous_close_parens)
-				return ')';
 			if (putback_char != -1)
 				return putback_char;
 			putback_char = reader.Read ();
@@ -1114,8 +1114,6 @@ namespace Mono.CSharp
 
 		int peekChar2 ()
 		{
-			if (putback_ambiguous_close_parens)
-				return ')';
 			if (putback_char != -1)
 				return putback_char;
 			return reader.Peek ();
@@ -1204,14 +1202,7 @@ namespace Mono.CSharp
 
 		public int token ()
                 {
-			if (!saved_token.Location.IsNull) {
-				current_token = saved_token.Token;
-				val = saved_token.Value;
-				current_location = saved_token.Location;
-				saved_token = SavedToken.Null;
-			}
-			else
-				current_token = xtoken ();
+			current_token = xtoken ();
                         return current_token;
                 }
 
@@ -1853,15 +1844,24 @@ namespace Mono.CSharp
 			}
 
 			if (res == Token.PARTIAL) {
-				// Save next token.
-				Location cur_loc = Location;
+				// Save current position and parse next token.
+				int old = reader.Position;
+				int old_putback = putback_char;
+				int old_ref_line = ref_line;
+				int old_col = col;
+
+				putback_char = -1;
+
 				int next_token = token ();
-				saved_token = new SavedToken (next_token, val, Location);
-				current_location = cur_loc;
 				bool ok = (next_token == Token.CLASS) ||
 					(next_token == Token.STRUCT) ||
 					(next_token == Token.INTERFACE) ||
 					(next_token == Token.ENUM); // "partial" is a keyword in 'partial enum', even though it's not valid
+
+				reader.Position = old;
+				ref_line = old_ref_line;
+				col = old_col;
+				putback_char = old_putback;
 
 				if (ok)
 					return res;
@@ -2308,23 +2308,6 @@ namespace Mono.CSharp
 					Report.Error (1027, "Expected `#endif' directive");
 			}
 				
-		}
-
-		public struct SavedToken
-		{
-			public static readonly SavedToken Null =
-				new SavedToken (0, null, Location.Null);
-
-			public readonly int Token;
-			public readonly object Value;
-			public readonly Location Location;
-
-			public SavedToken (int token, object value, Location loc)
-			{
-				Token = token;
-				Value = value;
-				Location = loc;
-			}
 		}
 	}
 
