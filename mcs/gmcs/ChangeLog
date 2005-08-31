@@ -1,3 +1,36 @@
+2005-08-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (AddToTypeContainer): Use inheritance insted of if(s).
+	(PartialContainer.Create): Moved logic AddToContainer.
+	(PartialContainer.MarkForDuplicationCheck): Shares name.
+	
+	* decl.cs (DeclSpace.AddToContainer): Check name collisions at one
+	place.
+	
+	* namespace.cs (Namespace.AddDeclSpace): Lazy declspaces
+	initialization.
+	(Namespace.GetSignatureForError): New method.
+	
+	* tree.cs (Tree.RecordDecl): Moved to AddToContainer.
+	(RootTypes.AddToTypeContainer): se inheritance insted of if(s).
+
+2005-08-01  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75669.
+	* ecore.cs (Expression.MemberLookupFailed): Use queried_type for
+	member lookup rather than qualifier_type, since qualifier_type can
+	be null.
+
+2005-08-01  Marek Safar  <marek.safar@seznam.cz>
+
+	* enum.cs (Enum.VerifyClsName): Fixed to allow not CLSCompliant
+	enum member.
+
+2005-07-31  Miguel de Icaza  <miguel@novell.com>
+
+	* statement.cs: Copy the local exception into the exception
+	captured local.  Fixes 75674
+
 2005-07-31  Raja R Harinath  <harinath@gmail.com>
 
 	Fix #75658.

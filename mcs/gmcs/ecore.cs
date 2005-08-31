@@ -727,7 +727,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			MemberList ml = TypeManager.FindMembers (qualifier_type, MemberTypes.Constructor,
+			MemberList ml = TypeManager.FindMembers (queried_type, MemberTypes.Constructor,
 								 BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly, null, null);
 			if (name == ".ctor" && ml.Count == 0)
 			{
