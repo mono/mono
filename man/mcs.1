@@ -171,6 +171,12 @@ This is typically used with third party components, like this:
 		$ mcs -pkg:gtk-sharp demo.cs
 .fi
 .TP
+.TP
+.I \-pkg:dotnet
+This will instruct the compiler to reference the System.* libraries
+available on a typical dotnet framework installation, notice that this
+does not include all of the Mono libraies, only the System.* ones.  This
+is a convenient shortcut for those porting code.
 .I -resource:RESOURCE[,ID]
 Embeds to the given resource file.  The optional ID can be used to
 give a different name to the resource.  If not specified, the resource
