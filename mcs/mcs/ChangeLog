@@ -1,3 +1,12 @@
+2005-08-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-tokenizer.cs : To read another token ahead of the actual 
+	  consumption, use new SavedToken and cache token instead of moving
+	  back the stream with SeekableStreamReader (it seemed problematic).
+	* cs-parser.jay,
+	  driver.cs : Thus use StreamReader directly.
+	* support.cs : Thus removed SeekableStreamReader.
+
 2005-08-30  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75934.
