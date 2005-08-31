@@ -1,5 +1,11 @@
 2005-08-31  Chris Toshok  <toshok@ximian.com>
 
+	* XmlDataSourceView.cs: fix the scope of our select.  Don't use
+	call SelectNodes on the XmlDocument, not on
+	XmlDocument.DocumentElement.
+
+2005-08-31  Chris Toshok  <toshok@ximian.com>
+
 	* XmlDataSourceView.cs (.ctor): remove the nodelist parameter.
 	(DoXPathSelect): put the xpath selection stuff here.
 	(ExecuteSelect): call DoXPathSelect if we need to (if nodes ==

@@ -54,7 +54,7 @@ namespace System.Web.UI.WebControls
 		
 		void DoXPathSelect ()
 		{
-			XmlNodeList selected_nodes = owner.GetXmlDocument ().DocumentElement.SelectNodes (owner.XPath != "" ? owner.XPath : "./*");
+			XmlNodeList selected_nodes = owner.GetXmlDocument ().SelectNodes (owner.XPath != "" ? owner.XPath : "./*");
 
 			nodes = new ArrayList (selected_nodes.Count);
 			
