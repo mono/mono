@@ -66,7 +66,7 @@ namespace TestRunner {
 
 		public bool Invoke(string[] args)
 		{
-			StringBuilder sb = new StringBuilder ();
+			StringBuilder sb = new StringBuilder ("/nologo ");
 			foreach (string s in args) {
 				sb.Append (s);
 				sb.Append (" ");
@@ -85,9 +85,11 @@ namespace TestRunner {
 	{
 		protected ITester tester;
 		protected int success;
-		int total;
+		protected int total;
+		protected int ignored;
 		string issue_file;
 		StreamWriter log_file;
+		protected string[] compiler_options;
 
 		protected ArrayList regression = new ArrayList ();
 		protected ArrayList know_issues = new ArrayList ();
@@ -102,24 +104,33 @@ namespace TestRunner {
 			this.log_file = new StreamWriter (log_file, false);
 		}
 
-		protected virtual string[] GetExtraOptions (string file)
+		protected virtual bool GetExtraOptions (string file)
 		{
-			const string options = "// Compiler options:";
-
 			int row = 0;
 			using (StreamReader sr = new StreamReader (file)) {
 				String line;
 				while (row++ < 3 && (line = sr.ReadLine()) != null) {
-					int index = line.IndexOf (options);
-					if (index != -1) {
-						string[] o = line.Substring (index + options.Length).Trim().Split (' ');
-						for (int i = 0; i < o.Length; i++)
-							o [i] = o[i].TrimStart ();
-						return o;
-					}				
+					if (!AnalyzeTestFile (row, line))
+						return false;
 				}
 			}
-			return null;
+			return true;
+		}
+
+		protected virtual bool AnalyzeTestFile (int row, string line)
+		{
+			const string options = "// Compiler options:";
+
+			if (row == 1)
+				compiler_options = null;
+
+			int index = line.IndexOf (options);
+			if (index != -1) {
+				compiler_options = line.Substring (index + options.Length).Trim().Split (' ');
+				for (int i = 0; i < compiler_options.Length; i++)
+					compiler_options[i] = compiler_options[i].TrimStart ();
+			}
+			return true;
 		}
 
 		public void Do (string filename)
@@ -128,7 +139,12 @@ namespace TestRunner {
 			Log ("...\t");
 
 			if (ignore_list.Contains (filename)) {
+				++ignored;
 				LogLine ("NOT TESTED");
+				return;
+			}
+
+			if (!GetExtraOptions (filename)) {
 				return;
 			}
 
@@ -138,12 +154,11 @@ namespace TestRunner {
 
 		protected virtual bool Check (string filename)
 		{
-			string[] extra = GetExtraOptions (filename);
 			string[] test_args;
 
-			if (extra != null) {
-				test_args = new string [1 + extra.Length];
-				extra.CopyTo (test_args, 0);
+			if (compiler_options != null) {
+				test_args = new string [1 + compiler_options.Length];
+				compiler_options.CopyTo (test_args, 0);
 			} else {
 				test_args = new string [1];
 			}
@@ -184,6 +199,9 @@ namespace TestRunner {
 		{
 			LogLine ("Done" + Environment.NewLine);
 			LogLine ("{0} test cases passed ({1:.##%})", success, (float) (success) / (float)total);
+
+			if (ignored > 0)
+				LogLine ("{0} test cases ignored", ignored);
 
 			know_issues.AddRange (no_error_list);
 			if (know_issues.Count > 0) {
@@ -272,33 +290,39 @@ namespace TestRunner {
 			}
 		}
 
-		protected override string[] GetExtraOptions(string file)
-		{
-			doc_output = null;
-			string[] opt = base.GetExtraOptions (file);
-			if (opt == null)
-				return null;
+		protected override bool GetExtraOptions(string file) {
+			if (!base.GetExtraOptions (file))
+				return false;
 
-			foreach (string one_opt in opt) {
+			doc_output = null;
+			if (compiler_options == null)
+				return true;
+
+			foreach (string one_opt in compiler_options) {
 				if (one_opt.StartsWith ("-doc:")) {
-					 doc_output = one_opt.Split (':')[1];
+					doc_output = one_opt.Split (':')[1];
 				}
 			}
-
-			return opt;
+			return true;
 		}
 
-		protected override bool Check(string filename)
-		{
+		protected override bool Check(string filename) {
 			try {
 				if (!base.Check (filename)) {
-					HandleFailure (filename, TestResult.CompileError, null);
+					HandleFailure (filename, TestResult.CompileError, tester.Output);
 					return false;
 				}
 			}
 			catch (Exception e) {
 				HandleFailure (filename, TestResult.CompileError, e.ToString ());
 				return false;
+			}
+
+			// Test setup
+			if (filename.EndsWith ("-lib.cs") || filename.EndsWith ("-mod.cs")) {
+				LogLine ("OK");
+				--total;
+				return true;
 			}
 
 			MethodInfo mi = null;
@@ -418,7 +442,7 @@ namespace TestRunner {
 						know_issues.Remove (file);
 						return;
 					}
-					LogLine ("REGRESSION (SUCCESS -> EXECUTE ERROR)");
+					LogLine ("REGRESSION (SUCCESS -> EXECUTION ERROR)");
 					break;
 
 				case TestResult.XmlError:
@@ -444,16 +468,40 @@ namespace TestRunner {
 
 	class NegativeChecker: Checker
 	{
+		string expected_message;
+		string error_message;
+
 		protected enum CompilerError {
 			Expected,
 			Wrong,
-			Missing
+			Missing,
+			WrongMessage
 		}
 
 		public NegativeChecker (ITester tester, string log_file, string issue_file):
 			base (tester, log_file, issue_file)
 		{
 		}
+
+		protected override bool AnalyzeTestFile(int row, string line)
+		{
+			if (row == 1) {
+				expected_message = null;
+
+				int index = line.IndexOf (':');
+				if (index == -1 || index > 15) {
+					LogLine ("IGNORING: Wrong test file syntax (missing error mesage text)");
+					++ignored;
+					base.AnalyzeTestFile (row, line);
+					return false;
+				}
+
+				expected_message = line.Substring (index + 1).Trim ();
+			}
+
+			return base.AnalyzeTestFile (row, line);
+		}
+
 
 		protected override bool Check (string filename)
 		{
@@ -482,7 +530,9 @@ namespace TestRunner {
 				return true;
 			}
 
-			LogLine (tester.Output);
+			if (result_code == CompilerError.Wrong)
+				LogLine (tester.Output);
+
 			return false;
 		}
 
@@ -496,8 +546,14 @@ namespace TestRunner {
 			bool any_error = false;
 			while (line != null) {
 
-				if (line.IndexOf (tested_text) != -1)
+				if (line.IndexOf (tested_text) != -1) {
+//					string msg = line.Substring (line.IndexOf (':', 22) + 1).TrimEnd ('.').Trim ();
+//					if (msg != expected_message && msg != expected_message.Replace ('`', '\'')) {
+//						error_message = msg;
+//						return CompilerError.WrongMessage;
+//					}
 					return CompilerError.Expected;
+				}
 
 				if (line.IndexOf (error_prefix) != -1 &&
 					line.IndexOf (ignored_error) == -1)
@@ -527,13 +583,29 @@ namespace TestRunner {
 						return false;
 					}
 					if (no_error_list.Contains (file)) {
-						LogLine ("REGRESSION (NO ERROR -> WRONG ERROR)");
+						LogLine ("REGRESSION (NO ERROR -> WRONG ERROR CODE)");
 						no_error_list.Remove (file);
 					}
 					else {
-						LogLine ("REGRESSION (CORRECT ERROR -> WRONG ERROR)");
+						LogLine ("REGRESSION (CORRECT ERROR -> WRONG ERROR CODE)");
 					}
+					break;
 
+				case CompilerError.WrongMessage:
+					if (know_issues.Contains (file)) {
+						LogLine ("KNOWN ISSUE (Wrong error message reported)");
+						know_issues.Remove (file);
+						return false;
+					}
+					if (no_error_list.Contains (file)) {
+						LogLine ("REGRESSION (NO ERROR -> WRONG ERROR MESSAGE)");
+						no_error_list.Remove (file);
+					}
+					else {
+						LogLine ("REGRESSION (CORRECT ERROR -> WRONG ERROR MESSAGE)");
+						Console.WriteLine ("E: {0}", expected_message);
+						Console.WriteLine ("W: {0}", error_message);
+					}
 					break;
 
 				case CompilerError.Missing:
@@ -608,7 +680,7 @@ namespace TestRunner {
 					continue;
 				}
 
-				if (filename.EndsWith ("-p2.cs") || filename.EndsWith ("-lib.cs") || filename.EndsWith ("-mod.cs"))
+				if (filename.EndsWith ("-p2.cs"))
 					continue;
 			    
 				checker.Do (filename);
