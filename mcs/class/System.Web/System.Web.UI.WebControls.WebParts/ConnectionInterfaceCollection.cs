@@ -1,7 +1,10 @@
 ﻿//
-// System.Web.UI.WebControls.WebParts.ProviderConnectionPoint.cs
+// System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection.cs
 //
-// Author: Sanjay Gupta (gsanjay@novell.com)
+// Author:
+//	Chris Toshok (toshok@ximian.com)
+//
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -22,34 +25,56 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 
 #if NET_2_0
-using System.Web;
+using System;
+using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 
 namespace System.Web.UI.WebControls.WebParts
 {
-	public class ProviderConnectionPoint : ConnectionPoint
+	public sealed class ConnectionInterfaceCollection : ReadOnlyCollectionBase
 	{
-		public ProviderConnectionPoint (MethodInfo callBack, Type interFace,
-			Type control, string name, string id,
-			bool allowsMultiConnections) : base (callBack, interFace,
-					control, name, id, allowsMultiConnections)
+		public static readonly ConnectionInterfaceCollection Empty = new ConnectionInterfaceCollection();
+
+		public ConnectionInterfaceCollection ()
 		{
 		}
 
-		[MonoTODO]
-		public virtual object GetObject (Control control)
+		public ConnectionInterfaceCollection (ICollection connectionInterfaces)
 		{
-			throw new NotImplementedException ();
+			InnerList.AddRange (connectionInterfaces);
 		}
 
-		[MonoTODO]
-		public virtual ConnectionInterfaceCollection GetSecondaryInterfaces (Control control)
+		public ConnectionInterfaceCollection (ConnectionInterfaceCollection existingConnectionInterfaces,
+						      ICollection connectionInterfaces)
+			: this()
 		{
-			throw new NotImplementedException ();
+			InnerList.AddRange (existingConnectionInterfaces);
+			InnerList.AddRange (connectionInterfaces);
+		}
+
+		public bool Contains (Type t)
+		{
+			return InnerList.Contains (t);
+		}
+
+		public void CopyTo (Type[] array, 
+				    int index)
+		{
+			InnerList.CopyTo (array, index);
+		}
+
+		public int IndexOf (Type t)
+		{
+			return InnerList.IndexOf (t);
+		}
+
+		public Type this [ int index ] {
+			get {
+				return (Type)InnerList [index];
+			}
 		}
 	}
 }
