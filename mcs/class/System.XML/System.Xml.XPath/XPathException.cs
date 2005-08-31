@@ -5,8 +5,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // (C) Copyright 2002 Tim Coleman
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,6 +28,7 @@
 //
 
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Xml.XPath
 {
@@ -72,6 +72,7 @@ namespace System.Xml.XPath
 
 #region Methods
 
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
