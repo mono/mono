@@ -1,3 +1,9 @@
+2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlSecureResolverTests.cs: Added more test cases for CreateEvidence.
+	* XmlSecureResolverCas.cs: New. CAS unit tests for XmlSecureResolver.
+	* XmlExceptionCas.cs: New. CAS unit tests for exception serialization.
+
 2005-08-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAttributeTests.cs : Test if set_Value() works in such cases that
