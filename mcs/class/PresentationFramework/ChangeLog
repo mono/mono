@@ -1,3 +1,13 @@
+2005-08-31  Iain McCoy  <iain@mccoy.id.au>
+
+	* System.Windows.Serialization/Parser.cs,
+	  System.Windows.Serialization/data-classes.txt,
+	  Mono.Windows.Serialization/ParserToCode.cs,
+	  Mono.Windows.Serialization/ParserConsumerBase.cs
+	  Mono.Windows.Serialization/XamlParser.cs: initial support for
+	x:Key and StaticResource - these exist mainly to support the styling
+	system that will eventually live in System.Windows
+
 2005-08-28  Iain McCoy  <iain@mccoy.id.au>
 
 	* Test/Parser.cs, Test/ParserToCode.cs: added tests for objects as

@@ -57,16 +57,21 @@ namespace System.Windows.Serialization {
 			public object instance;
 			ArrayList objects = new ArrayList();
 
+			Hashtable keys = new Hashtable();
+
 			public override void CreateTopLevel(Type parent, string className)
 			{
 				instance = Activator.CreateInstance(parent);
 				push(instance);
 			}
 
-			public override void CreateObject(Type type, string varName)
+			public override void CreateObject(Type type, string varName, string key)
 			{
 				Object o = Activator.CreateInstance(type);
 				((IAddChild)peek()).AddChild(o);
+
+				if (key != null)
+					keys[key] = o;
 				push(o);
 			}
 
@@ -125,11 +130,22 @@ namespace System.Windows.Serialization {
 				storeToProperty(value);
 			}
 			
-			public override void CreatePropertyObject(Type type, string name)
+			public override void CreatePropertyObject(Type type, string name, string key)
 			{
 				object value = Activator.CreateInstance(type);
 				Debug.WriteLine("ObjectWriter CREATING PROPERTY OBJECT of type" + type);
+				if (key != null)
+					keys[key] = value;
 				push(value);
+			}
+
+			public override void CreatePropertyReference(string key)
+			{
+				push(keys[key]);
+			}
+			public override void CreateDependencyPropertyReference(string key)
+			{
+				push(keys[key]);
 			}
 			public override void EndPropertyObject(Type destType)
 			{
@@ -161,9 +177,9 @@ namespace System.Windows.Serialization {
 				}
 			}
 
-			public override void CreateDependencyPropertyObject(Type type, string name)
+			public override void CreateDependencyPropertyObject(Type type, string name, string key)
 			{
-				CreatePropertyObject(type, name);
+				CreatePropertyObject(type, name, key);
 			}
 			public override void EndDependencyPropertyObject(Type finalType)
 			{

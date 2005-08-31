@@ -3,7 +3,7 @@ XamlClrEventNode(XamlAttributeNode): string eventName, MemberInfo eventMember, +
 XamlConstructorParametersEndNode
 XamlConstructorParametersStartNode
 XamlConstructorParameterTypeNode: string valueTypeFullName, string valueAssemblyName, Type valueElementType
-XamlDefAttributeKeyTypeNode(XamlAttributeNode): string assemblyName, string valueType
+XamlDefAttributeKeyTypeNode(XamlAttributeNode): string assemblyName, Type valueType
 XamlDefAttributeNode(XamlAttributeNode): string name, +string value
 XamlDefTagNode(XamlAttributeNode): bool isEmptyElement, System.Xml.XmlReader xmlReader, string defTagName
 XamlDocumentEndNode
@@ -12,7 +12,7 @@ XamlElementStartNode: string assemblyName, string typeFullName, Type elementType
 XamlElementEndNode; bool propertyObject, bool depPropertyObject, Type finalType
 XamlEndAttributesNode: bool compact
 XamlKeyElementEndNode(XamlElementEndNode)
-XamlKeyElementStartNode(XamlElementStartNode)
+XamlKeyElementStartNode(XamlElementStartNode); string key
 XamlLanguageNode: string language
 XamlLiteralContentNode: string content
 XamlNode(object): XamlNodeType tokenType, int lineNumber, int linePosition, int depth
@@ -28,7 +28,7 @@ XamlPropertyIListStartNode(XamlPropertyComplexStartNode)
 XamlPropertyNode(XamlPropertyComplexStartNode): string value, string xmlNamespace, BamlAttributeUsage attributeUsage, bool complexAsSimple
 XamlPropertyWithTypeNode(XamlPropertyComplexStartNode): String valueTypeFullName, string valueAssemblyFullName, Type valueElementType, string valueSerializerTypeFullName, string valueSerializerTypeAssemblyName, string xmlNamespace
 XamlRoutedEventNode(XamlAttributeNode): System.Windows.RoutedEvent routedEvent, string assemblyName, string typeFullName, string routedEventName, +string value
-XamlTextNode: string textContent; XamlParseMode mode, Type finalType
+XamlTextNode: string textContent; XamlParseMode mode, Type finalType, string keyText
 XamlUnknownAttributeNode(XamlAttributeNode): string xmlNamespace, string name, +string value
 XamlUnknownTagEndNode
 XamlUnknownTagStartNode(XamlAttributeNode): string xmlNamespace, +string value

@@ -64,6 +64,8 @@ namespace Mono.Windows.Serialization {
 			ArrayList objects = new ArrayList();
 			Hashtable nameClashes = new Hashtable();
 			int tempIndex = 0;
+			
+			Hashtable keys = new Hashtable();
 
 			CodeCompileUnit code;
 			CodeTypeDeclaration type;
@@ -115,7 +117,7 @@ namespace Mono.Windows.Serialization {
 
 			// bottom of stack holds CodeVariableReferenceExpression
 			// pushes a reference to the new current type
-			public override void CreateObject(Type type, string varName)
+			public override void CreateObject(Type type, string varName, string key)
 			{
 				debug();
 				bool isDefaultName;
@@ -138,6 +140,8 @@ namespace Mono.Windows.Serialization {
 					varName += (int)nameClashes[varName];
 				}
 
+				if (key != null)
+					keys[key] = varName;
 
 				if (isDefaultName) {
 					CodeVariableDeclarationStatement declaration = 
@@ -293,12 +297,26 @@ namespace Mono.Windows.Serialization {
 				constructor.Statements.Add(assignment);
 			}
 
-			public override void CreateDependencyPropertyObject(Type type, string varName)
+
+			public override void CreatePropertyReference(string key)
 			{
-				CreatePropertyObject(type, varName);
+				CodeAssignStatement assignment = new CodeAssignStatement(
+						(CodeExpression)peek(),
+						new CodeVariableReferenceExpression(key));
+				
+				constructor.Statements.Add(assignment);
+			}
+			public override void CreateDependencyPropertyReference(string key)
+			{
+				CreatePropertyReference(key);
+			}
+			
+			public override void CreateDependencyPropertyObject(Type type, string varName, string key)
+			{
+				CreatePropertyObject(type, varName, key);
 			}
 
-			public override void CreatePropertyObject(Type type, string varName)
+			public override void CreatePropertyObject(Type type, string varName, string key)
 			{
 				debug();
 				bool isDefaultName;
@@ -320,6 +338,8 @@ namespace Mono.Windows.Serialization {
 					varName += (int)nameClashes[varName];
 				}
 
+				if (key != null)
+					keys[key] = varName;
 
 				if (isDefaultName) {
 					CodeVariableDeclarationStatement declaration = 

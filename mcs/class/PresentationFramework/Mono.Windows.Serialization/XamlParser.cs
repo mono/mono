@@ -339,7 +339,7 @@ namespace Mono.Windows.Serialization {
 			} else {
 				parseChildObjectElement(parent);
 			}
-			
+
 			if (isEmpty)
 				tempStateCount ++;
 			processObjectAttributes();
@@ -353,6 +353,8 @@ namespace Mono.Windows.Serialization {
 			if (reader.GetAttribute("Name", XAML_NAMESPACE) != null)
 				throw new Exception("The XAML Name attribute can not be applied to top level elements\n"+
 						"Do you mean the Class attribute?");
+			if (reader.GetAttribute("Key", XAML_NAMESPACE) != null)
+				throw new Exception("The XAML Key attribute can not be applied to top level elements.");
 			begun = true;
 			createTopLevel(parent.AssemblyQualifiedName, reader.GetAttribute("Class", XAML_NAMESPACE));
 		}
@@ -366,16 +368,18 @@ namespace Mono.Windows.Serialization {
 			if (name == null)
 				name = reader.GetAttribute("Name", reader.NamespaceURI);
 
+			string key = reader.GetAttribute("Key", XAML_NAMESPACE);
+
 			Debug.WriteLine("XamlParser: parent is " + parent);
 			if (currentState().type == CurrentType.Object ||
 					currentState().type == CurrentType.PropertyObject ||
 					currentState().type == CurrentType.DependencyPropertyObject) {
 				abortIfNotAddChild("object");
-				addChild(parent, name);
+				addChild(parent, name, key);
 			} else if (currentState().type == CurrentType.Property) {
-				addPropertyChild(parent, name);
+				addPropertyChild(parent, name, key);
 			} else if (currentState().type == CurrentType.DependencyProperty) {
-				addDependencyPropertyChild(parent, name);
+				addDependencyPropertyChild(parent, name, key);
 			} else {
 				throw new NotImplementedException(currentState().type.ToString());
 			}
@@ -388,7 +392,7 @@ namespace Mono.Windows.Serialization {
 						continue;
 					if (reader.NamespaceURI == XAML_NAMESPACE)
 						continue;
-					if (reader.LocalName.IndexOf(".") < 0)
+					else if (reader.LocalName.IndexOf(".") < 0)
 						parseLocalPropertyAttribute();
 					else
 						parseDependencyPropertyAttribute();
@@ -455,33 +459,44 @@ namespace Mono.Windows.Serialization {
 			push(CurrentType.Object, t);
 		}
 
-		void addChild(Type type, string objectName)
+		XamlElementStartNode getChildStart(Type type, string key)
 		{
-			nodeQueue.Add(new XamlElementStartNode(
-					reader.LineNumber,
-					reader.LinePosition,
-					getDepth(),
-					type.Assembly.FullName,
-					type.AssemblyQualifiedName,
-					type,
-					null));
+			if (key == null) {
+				return new XamlElementStartNode(
+						reader.LineNumber,
+						reader.LinePosition,
+						getDepth(),
+						type.Assembly.FullName,
+						type.AssemblyQualifiedName,
+						type,
+						null);
+			} else {
+				XamlKeyElementStartNode n = new XamlKeyElementStartNode(
+						reader.LineNumber,
+						reader.LinePosition,
+						getDepth(),
+						type.Assembly.FullName,
+						type.AssemblyQualifiedName,
+						type,
+						null);
+				n.setkey(key);
+				return n;
+			}
+		}
+
+		void addChild(Type type, string objectName, string key)
+		{
+			nodeQueue.Add(getChildStart(type, key));
 			((XamlElementStartNode)topNode()).setname(objectName);
 
 //			writer.CreateObject(type, objectName);
 			push(CurrentType.Object, type);
 		}
 		
-		void addPropertyChild(Type type, string objectName)
+		void addPropertyChild(Type type, string objectName, string key)
 		{
 //			writer.CreatePropertyObject(type, objectName);
-			nodeQueue.Add(new XamlElementStartNode(
-					reader.LineNumber,
-					reader.LinePosition,
-					getDepth(),
-					type.Assembly.FullName,
-					type.AssemblyQualifiedName,
-					type,
-					null));
+			nodeQueue.Add(getChildStart(type, key));
 			((XamlElementStartNode)topNode()).setname(objectName);
 			((XamlElementStartNode)topNode()).setpropertyObject(true);
 
@@ -489,17 +504,10 @@ namespace Mono.Windows.Serialization {
 			push(CurrentType.PropertyObject, type);
 		}
 
-		void addDependencyPropertyChild(Type type, string objectName)
+		void addDependencyPropertyChild(Type type, string objectName, string key)
 		{
 //			writer.CreatePropertyObject(type, objectName);
-			nodeQueue.Add(new XamlElementStartNode(
-					reader.LineNumber,
-					reader.LinePosition,
-					getDepth(),
-					type.Assembly.FullName,
-					type.AssemblyQualifiedName,
-					type,
-					null));
+			nodeQueue.Add(getChildStart(type, key));
 			((XamlElementStartNode)topNode()).setname(objectName);
 			((XamlElementStartNode)topNode()).setdepPropertyObject(true);
 
@@ -534,12 +542,7 @@ namespace Mono.Windows.Serialization {
 			((XamlPropertyNode)nodeQueue[nodeQueue.Count - 1]).setPropInfo(prop);
 
 			if (!prop.PropertyType.IsSubclassOf(typeof(Delegate))) {
-
-				nodeQueue.Add(new XamlTextNode(
-						reader.LineNumber,
-						reader.LinePosition,
-						getDepth(),
-						reader.Value));
+				nodeQueue.Add(getPropertyValueNode());
 
 				((XamlTextNode)topNode()).setmode(XamlParseMode.Property);
 //				writer.CreatePropertyText(reader.Value, prop.PropertyType);
@@ -576,6 +579,21 @@ namespace Mono.Windows.Serialization {
 			return true;
 		}
 
+		XamlTextNode getPropertyValueNode()
+		{
+			XamlTextNode n = new XamlTextNode(
+						reader.LineNumber,
+						reader.LinePosition,
+						getDepth(),
+						reader.Value);
+			if (n.TextContent.StartsWith("{StaticResource ")) {
+				n.setkeyText(n.TextContent.Remove(0, "{StaticResource ".Length).TrimEnd('}'));
+			}
+			return n;
+		}
+
+	
+		
 		void ensureDependencyObject(Type currentType)
 		{
 			if (!currentType.IsSubclassOf(typeof(System.Windows.DependencyObject)))
@@ -632,7 +650,7 @@ namespace Mono.Windows.Serialization {
 					false));
 			((XamlPropertyNode)topNode()).setDP(dp);
 
-			nodeQueue.Add(new XamlTextNode(reader.LineNumber, reader.LinePosition, getDepth(), reader.Value));
+			nodeQueue.Add(getPropertyValueNode());
 			((XamlTextNode)topNode()).setmode(XamlParseMode.DependencyProperty);
 			((XamlTextNode)topNode()).setfinalType(dp.PropertyType);
 

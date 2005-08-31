@@ -24,14 +24,17 @@ namespace Mono.Windows.Serialization {
 					CreateTopLevel(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
 				} else if (n is XamlElementStartNode && ((XamlElementStartNode)n).propertyObject) {
 					Debug.WriteLine(this.GetType() + ": element begins as property value");
-					CreatePropertyObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
+					string key = getKeyFromNode(n);
+					CreatePropertyObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name, key);
 				} else if (n is XamlElementStartNode && ((XamlElementStartNode)n).depPropertyObject) {
 					Debug.WriteLine(this.GetType() + ": element begins as dependency property value");
-					CreateDependencyPropertyObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
+					string key = getKeyFromNode(n);
+					CreateDependencyPropertyObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name, key);
 
 				} else if (n is XamlElementStartNode) {
 					Debug.WriteLine(this.GetType() + ": element begins");
-					CreateObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name);
+					string key = getKeyFromNode(n);
+					CreateObject(((XamlElementStartNode)n).ElementType, ((XamlElementStartNode)n).name, key);
 				} else if (n is XamlPropertyNode && ((XamlPropertyNode)n).PropInfo != null) {
 					Debug.WriteLine(this.GetType() + ": normal property begins");
 					CreateProperty(((XamlPropertyNode)n).PropInfo);
@@ -59,11 +62,17 @@ namespace Mono.Windows.Serialization {
 					CreateObjectText(((XamlTextNode)n).TextContent);
 				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.Property){
 					Debug.WriteLine(this.GetType() + ": text for property");
-					CreatePropertyText(((XamlTextNode)n).TextContent, ((XamlTextNode)n).finalType);
+					if (((XamlTextNode)n).keyText != null)
+						CreatePropertyReference(((XamlTextNode)n).keyText);
+					else
+						CreatePropertyText(((XamlTextNode)n).TextContent, ((XamlTextNode)n).finalType);
 					EndProperty();
 				} else if (n is XamlTextNode && ((XamlTextNode)n).mode == XamlParseMode.DependencyProperty){
 					Debug.WriteLine(this.GetType() + ": text for dependency property");
-					CreateDependencyPropertyText(((XamlTextNode)n).TextContent, ((XamlTextNode)n).finalType);
+					if (((XamlTextNode)n).keyText != null)
+						CreateDependencyPropertyReference(((XamlTextNode)n).keyText);
+					else
+						CreateDependencyPropertyText(((XamlTextNode)n).TextContent, ((XamlTextNode)n).finalType);
 					EndDependencyProperty();
 				} else if (n is XamlPropertyComplexEndNode) {
 					Debug.WriteLine(this.GetType() + ": end complex property");
@@ -100,9 +109,18 @@ namespace Mono.Windows.Serialization {
 
 		}
 
+		private string getKeyFromNode(XamlNode n)
+		{
+			// we know that n is a XamlElementStartNode, but don't need that knowledge
+			if (n is XamlKeyElementStartNode)
+				return ((XamlKeyElementStartNode)n).key;
+			else
+				return null;
+		}
+
 		
 		public abstract void CreateTopLevel(Type parent, string className);
-		public abstract void CreateObject(Type type, string varName);
+		public abstract void CreateObject(Type type, string varName, string key);
 		public abstract void CreateProperty(PropertyInfo property);
 		public abstract void CreateEvent(EventInfo evt);
 		public abstract void CreateDependencyProperty(Type attachedTo, string propertyName, Type propertyType);
@@ -111,9 +129,11 @@ namespace Mono.Windows.Serialization {
 		public abstract void CreateEventDelegate(string functionName, Type eventDelegateType);
 		public abstract void CreatePropertyDelegate(string functionName, Type propertyType);
 		public abstract void CreatePropertyText(string text, Type propertyType);
+		public abstract void CreatePropertyReference(string key);
 		public abstract void CreateDependencyPropertyText(string text, Type propertyType);
-		public abstract void CreateDependencyPropertyObject(Type type, string varName);
-		public abstract void CreatePropertyObject(Type type, string varName);
+		public abstract void CreateDependencyPropertyObject(Type type, string varName, string key);
+		public abstract void CreateDependencyPropertyReference(string key);
+		public abstract void CreatePropertyObject(Type type, string varName, string key);
 		public abstract void EndDependencyPropertyObject(Type destType);
 		public abstract void EndPropertyObject(Type destType);
 		public abstract void EndObject();
