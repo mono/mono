@@ -7400,7 +7400,7 @@ namespace Mono.CSharp {
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
 				string lookup_id = MemberName.MakeName (Identifier, args);
-				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id);
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
 				if (retval == null)
@@ -7546,14 +7546,16 @@ namespace Mono.CSharp {
 		{
 			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec, silent);
 
-			if (new_expr == null)
+			if (new_expr == null) {
+				Report.Error (234, "No such name or typespace {0}", expr);
 				return null;
+			}
 
 			string lookup_id = MemberName.MakeName (Identifier, args);
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
-				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id, loc);
+				FullNamedExpression retval = ns.Lookup (ec.DeclSpace, lookup_id);
 				if ((retval != null) && (args != null))
 					retval = new ConstructedType (retval, args, loc).ResolveAsTypeStep (ec);
 				if (!silent && retval == null)

@@ -2583,15 +2583,11 @@ namespace Mono.CSharp {
 		}
 
 		public override string Name {
-			get {
-				return Type.ToString ();
-			}
+			get { return Type.ToString (); }
 		}
 
 		public override string FullName {
-			get {
-				return Type.FullName != null ? Type.FullName : Type.Name;
-			}
+			get { return Type.FullName; }
 		}
 	}
 
@@ -2608,34 +2604,73 @@ namespace Mono.CSharp {
 			this.name = name;
 		}
 
+		static readonly char [] dot_array = { '.' };
 		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
 		{
-			if (type == null) {
-				FullNamedExpression t = ec.DeclSpace.LookupType (name, Location.Null, /*ignore_cs0104=*/ false);
-				if (t == null) {
-					NamespaceEntry.Error_NamespaceNotFound (loc, name);
-					return null;
-				}
-				if (!(t is TypeExpr)) {
-					t.Error_UnexpectedKind (ec, "type", loc);
-					return null;
-				}
-				type = ((TypeExpr) t).ResolveType (ec);
+			if (type != null)
+				return this;
+
+			// If name is of the form `N.I', first lookup `N', then search a member `I' in it.
+			string rest = null;
+			string lookup_name = name;
+			int pos = name.IndexOf ('.');
+			if (pos >= 0) {
+				rest = name.Substring (pos + 1);
+				lookup_name = name.Substring (0, pos);
 			}
 
+			FullNamedExpression resolved = Namespace.Root.Lookup (ec.DeclSpace, lookup_name);
+
+			if (resolved != null && rest != null) {
+				// Now handle the rest of the the name.
+				string [] elements = rest.Split (dot_array);
+				string element;
+				int count = elements.Length;
+				int i = 0;
+				while (i < count && resolved != null && resolved is Namespace) {
+					Namespace ns = resolved as Namespace;
+					element = elements [i++];
+					lookup_name += "." + element;
+					resolved = ns.Lookup (ec.DeclSpace, element);
+				}
+
+				if (resolved != null && resolved is TypeExpr) {
+					Type t = ((TypeExpr) resolved).Type;
+					while (t != null) {
+						if (!ec.DeclSpace.CheckAccessLevel (t)) {
+							resolved = null;
+							lookup_name = t.FullName;
+							break;
+						}
+						if (i == count) {
+							type = t;
+							return this;
+						}
+						t = TypeManager.GetNestedType (t, elements [i++]);
+					}
+				}
+			}
+
+			if (resolved == null) {
+				NamespaceEntry.Error_NamespaceNotFound (loc, lookup_name);
+				return null;
+			}
+
+			if (!(resolved is TypeExpr)) {
+				resolved.Error_UnexpectedKind (ec, "type", loc);
+				return null;
+			}
+
+			type = ((TypeExpr) resolved).ResolveType (ec);
 			return this;
 		}
 
 		public override string Name {
-			get {
-				return name;
-			}
+			get { return name; }
 		}
 
 		public override string FullName {
-			get {
-				return name;
-			}
+			get { return name; }
 		}
 	}
 
@@ -2643,10 +2678,41 @@ namespace Mono.CSharp {
 	///   Represents an "unbound generic type", ie. typeof (Foo<>).
 	///   See 14.5.11.
 	/// </summary>
-	public class UnboundTypeExpression : TypeLookupExpression {
-		public UnboundTypeExpression (string name)
-			: base (name)
-		{ }
+	public class UnboundTypeExpression : TypeExpr
+	{
+		MemberName name;
+
+		public UnboundTypeExpression (MemberName name, Location l)
+		{
+			this.name = name;
+			loc = l;
+		}
+
+		protected override TypeExpr DoResolveAsTypeStep (EmitContext ec)
+		{
+			Expression expr;
+			if (name.Left != null) {
+				Expression lexpr = name.Left.GetTypeExpression (loc);
+				expr = new MemberAccess (lexpr, name.Basename, loc);
+			} else {
+				expr = new SimpleName (name.Basename, loc);
+			}
+
+			FullNamedExpression fne = expr.ResolveAsTypeStep (ec);
+			if (fne == null)
+				return null;
+
+			type = fne.Type;
+			return new TypeExpression (type, loc);
+		}
+
+		public override string Name {
+			get { return name.FullName; }
+		}
+
+		public override string FullName {
+			get { return name.FullName; }
+		}
 	}
 
 	public class TypeAliasExpression : TypeExpr {
