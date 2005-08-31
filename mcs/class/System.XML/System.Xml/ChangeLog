@@ -1,3 +1,21 @@
+2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlDocument.cs: Added an InheritanceDemand for Unrestricted on 
+	CreateDocumentType and ReadNode methods.
+	* XmlException.cs: Added a Demand for SerializationFormatter on 
+	GetObjectData method.
+	* XmlResolver.cs: Added an InheritanceDemand for Unrestricted on 
+	ResolveUri method.
+	* XmlSecureResolver.cs: Fixed exception when creating evidences with 
+	an empty URL in CreateEvidenceForUrl method. Only call ResolvePolicy 
+	and PermitOnly if the security manager is enabled.
+	* XmlTextReader.cs: Added an InheritanceDemand for Unrestricted on the
+	class.
+	* XmlTextReader2.cs: Added an InheritanceDemand for Unrestricted on 
+	the class.
+	* XmlValidatingReader.cs: Added an InheritanceDemand for Unrestricted 
+	on the class.
+
 2005-08-16  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDReader.cs : no need to skip text declaration for such entity

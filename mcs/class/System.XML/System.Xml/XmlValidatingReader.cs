@@ -7,8 +7,7 @@
 //
 // Copyright (C) Tim Coleman, 2002
 // (C)2003 Atsushi Enomoto
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,6 +33,7 @@
 using System.Collections.Generic;
 #endif
 using System.IO;
+using System.Security.Permissions;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
@@ -41,6 +41,7 @@ using Mono.Xml.Schema;
 
 namespace System.Xml
 {
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 #if NET_2_0
 	[Obsolete("Use XmlReader created by XmlReader.Create() method using"
 		+ " appropriate XmlReaderSettings instead.")]

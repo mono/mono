@@ -7,8 +7,7 @@
 //   Atsushi Enomoto  (ginga@kit.hi-ho.ne.jp)
 //
 // (C) 2001, 2002 Jason Diamond  http://injektilo.org/
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,6 +36,7 @@ using System.Collections.Generic;
 #endif
 using System.Globalization;
 using System.IO;
+using System.Security.Permissions;
 using System.Text;
 using System.Xml.Schema;
 using Mono.Xml;
@@ -54,6 +54,7 @@ namespace System.Xml
 	internal class XmlTextReader : XmlReader,
 		IXmlLineInfo, IXmlNamespaceResolver, IHasXmlParserContext
 #else
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class XmlTextReader : XmlReader, IXmlLineInfo, IHasXmlParserContext
 #endif
 	{

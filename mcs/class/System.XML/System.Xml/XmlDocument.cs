@@ -12,8 +12,7 @@
 // (C) 2001 Daniel Weber
 // (C) 2002 Kral Ferch, Jason Diamond, Miguel de Icaza, Duncan Mak,
 //   Atsushi Enomoto
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,9 +34,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using System.IO;
+using System.Security.Permissions;
 using System.Text;
 using System.Xml.XPath;
 using System.Diagnostics;
@@ -327,6 +326,7 @@ namespace System.Xml
 			return new XmlDocumentFragment (this);
 		}
 
+		[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 		public virtual XmlDocumentType CreateDocumentType (string name, string publicId,
 								   string systemId, string internalSubset)
 		{
@@ -773,6 +773,7 @@ namespace System.Xml
 			}
 		}
 
+		[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 		public virtual XmlNode ReadNode (XmlReader reader)
 		{
 			switch (reader.ReadState) {

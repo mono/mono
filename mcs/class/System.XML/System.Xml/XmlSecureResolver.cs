@@ -28,8 +28,9 @@
 // Author: Atsushi Enomoto (ginga@kit.hi-ho.ne.jp)
 //
 // (C) 2003 Atsushi Enomoto
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
-using System;
+
 using System.Net;
 using System.Security;
 using System.Security.Policy;
@@ -45,35 +46,26 @@ namespace System.Xml
 		public static Evidence CreateEvidenceForUrl (string securityUrl)
 		{
 			Evidence e = new Evidence ();
-			Url url = null;
-			Zone zone = null;
-			Site site = null;
 
-			if (securityUrl != null) {
+			if ((securityUrl != null) && (securityUrl.Length > 0)) {
 				try {
-					if (securityUrl.Length > 0)
-						url = new Url (securityUrl);
+					Url url = new Url (securityUrl);
+					e.AddHost (url);
 				} catch (ArgumentException) {
 				}
 
 				try {
-					zone = Zone.CreateFromUrl (securityUrl);
+					Zone zone = Zone.CreateFromUrl (securityUrl);
+					e.AddHost (zone);
 				} catch (ArgumentException) {
 				}
 
 				try {
-					if (securityUrl.Length > 0)
-						site = Site.CreateFromUrl (securityUrl);
+					Site site = Site.CreateFromUrl (securityUrl);
+					e.AddHost (site);
 				} catch (ArgumentException) {
 				}
 			}
-
-			if (url != null)
-				e.AddHost (url);
-			if (zone != null)
-				e.AddHost (zone);
-			if (site != null)
-				e.AddHost (site);
 
 			return e;
 		}
@@ -81,7 +73,6 @@ namespace System.Xml
 
 		XmlResolver resolver;
 		PermissionSet permissionSet;
-//		Evidence evidence;
 
 #region .ctor and Finalizer
 
@@ -89,8 +80,9 @@ namespace System.Xml
 			XmlResolver resolver, Evidence evidence)
 		{
 			this.resolver = resolver;
-//			this.evidence = evidence;
-			this.permissionSet = SecurityManager.ResolvePolicy (evidence);
+			if (SecurityManager.SecurityEnabled) {
+				this.permissionSet = SecurityManager.ResolvePolicy (evidence);
+			}
 		}
 
 		public XmlSecureResolver (
@@ -102,8 +94,11 @@ namespace System.Xml
 
 		public XmlSecureResolver (
 			XmlResolver resolver, string securityUrl)
-			: this (resolver, CreateEvidenceForUrl (securityUrl))
 		{
+			this.resolver = resolver;
+			if (SecurityManager.SecurityEnabled) {
+				this.permissionSet = SecurityManager.ResolvePolicy (CreateEvidenceForUrl (securityUrl));
+			}
 		}
 #endregion
 
@@ -117,10 +112,18 @@ namespace System.Xml
 
 #region Methods
 
+		[MonoTODO ("CAS: imperative PermitOnly isn't supported")]
 		public override object GetEntity (
 			Uri absoluteUri, string role, Type ofObjectToReturn)
 		{
-			permissionSet.PermitOnly ();
+			if (SecurityManager.SecurityEnabled) {
+				// in case the security manager was switched after the constructor was called
+				if (permissionSet == null) {
+					throw new SecurityException (Locale.GetText (
+						"Security Manager wasn't active when instance was created."));
+				}
+				permissionSet.PermitOnly ();
+			}
 			return resolver.GetEntity (absoluteUri, role, ofObjectToReturn);
 		}
 

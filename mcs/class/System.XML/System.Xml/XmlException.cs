@@ -6,9 +6,7 @@
 //   Atsushi Enomoto (atsushi@ximian.com)
 //
 // (C) 2002 Jason Diamond  http://injektilo.org/
-// (C) 2004 Novell Inc.
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -131,10 +128,7 @@ namespace System.Xml
 
 		#region Methods
 
-#if NET_2_0
-		[SecurityPermission (SecurityAction.LinkDemand,
-			Flags=SecurityPermissionFlag.SerializationFormatter)]
-#endif
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

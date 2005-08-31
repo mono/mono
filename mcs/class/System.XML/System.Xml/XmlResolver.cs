@@ -30,9 +30,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Net;
+using System.Security.Permissions;
 
 namespace System.Xml
 {
@@ -45,7 +45,7 @@ namespace System.Xml
 			string role,
 			Type type);
 
-
+		[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 		public virtual Uri ResolveUri (Uri baseUri, string relativeUri)
 		{
 			if (baseUri == null) {
