@@ -1,3 +1,9 @@
+
+Wed Aug 31 17:29:32 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* jit-icalls.c: for arrays, ensure we always provide
+	lower bounds.
+
 2005-08-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_allocate_stack_slots_full): Fix ia64 build.
