@@ -1618,13 +1618,16 @@ namespace Mono.CSharp {
 
 		static void InitGenericCoreTypes ()
 		{
-			activator_type = CoreLookupType ("System.Activator");
+			activator_type = CoreLookupType ("System", "Activator");
 			new_constraint_attr_type = CoreLookupType (
-				"System.Runtime.CompilerServices.NewConstraintAttribute");
+				"System.Runtime.CompilerServices", "NewConstraintAttribute");
 
-			generic_ienumerator_type = CoreLookupType ("System.Collections.Generic.IEnumerator", 1);
-			generic_ienumerable_type = CoreLookupType ("System.Collections.Generic.IEnumerable", 1);
-			generic_nullable_type = CoreLookupType ("System.Nullable", 1);
+			generic_ienumerator_type = CoreLookupType (
+				"System.Collections.Generic", "IEnumerator", 1);
+			generic_ienumerable_type = CoreLookupType (
+				"System.Collections.Generic", "IEnumerable", 1);
+			generic_nullable_type = CoreLookupType (
+				"System", "Nullable", 1);
 		}
 
 		static void InitGenericCodeHelpers ()
@@ -1635,9 +1638,9 @@ namespace Mono.CSharp {
 				activator_type, "CreateInstance", type_arg);
 		}
 
-		static Type CoreLookupType (string name, int arity)
+		static Type CoreLookupType (string ns, string name, int arity)
 		{
-			return CoreLookupType (MemberName.MakeName (name, arity));
+			return CoreLookupType (ns, MemberName.MakeName (name, arity));
 		}
 
 		public static void AddTypeParameter (Type t, TypeParameter tparam)

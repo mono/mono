@@ -1,3 +1,19 @@
+2005-07-20  Raja R Harinath  <rharinath@novell.com>
+
+	* typemanager.cs (types, typecontainers, user_types): Remove.
+	(UserTypes, TypeContainers): Likewise.
+	(HandleDuplicate, AddDelegateType, AddEnumType): Likewise.
+	(CleanUp, Reset): Update.
+	(AddUserType): Combine variants.  Now, only updates builder_to_declspace.
+	(GetNestedType): Use Type.GetNestedType.
+	(CoreLookupType): Take two arguments, the namespace and the
+	basename of the type.  Update to use the Namespace.Lookup
+	mechanism.
+	(InitEnumUnderlyingTypes, InitCoreTypes): Update.
+	(RealMemberLookup): Use IsNestedChildOf instead of playing with
+	string concatenation and substring matches.
+	* class.cs, enum.cs, delegate.cs: Update to changes.
+
 2005-07-20  Marek Safar  <marek.safar@seznam.cz>
 
 	* constant.cs (Constant.Error_ConstantValueCannotBeConverted): Moved from

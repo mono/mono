@@ -1235,7 +1235,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeManager.AddUserType (Name, TypeBuilder, this);
+			TypeManager.AddUserType (Name, this);
 
 			if (Parts != null) {
 				ec = null;

@@ -115,7 +115,7 @@ namespace Mono.CSharp {
 					name, TypeAttr, TypeManager.multicast_delegate_type);
 			}
 
-			TypeManager.AddDelegateType (Name, TypeBuilder, this);
+			TypeManager.AddUserType (Name, this);
 
 			if (IsGeneric) {
 				string[] param_names = new string [TypeParameters.Length];

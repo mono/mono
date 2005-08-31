@@ -231,7 +231,7 @@ namespace Mono.CSharp {
 						 FieldAttributes.Public | FieldAttributes.SpecialName
 						 | FieldAttributes.RTSpecialName);
 
-			TypeManager.AddEnumType (Name, TypeBuilder, this);
+			TypeManager.AddUserType (Name, this);
 
 			return TypeBuilder;
 		}
