@@ -47,7 +47,8 @@ namespace Microsoft.JScript {
 
 		public static Object JScriptWith (object withObj, VsaEngine engine)
 		{
-			throw new NotImplementedException ();
+			engine.PushScriptObject ((ScriptObject) withObj);
+			return withObj;
 		}
 
 		internal override bool Resolve (IdentificationTable context)

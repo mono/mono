@@ -55,7 +55,13 @@ namespace Microsoft.JScript {
 
 		public static Object JScriptExceptionValue (object e, VsaEngine engine)
 		{
-			throw new NotImplementedException ();
+			Exception exc = e as Exception;
+			string message = null;
+			if (exc != null)
+				message = exc.Message;
+			else
+				message = String.Format ("Unknown exception of type {0}", exc.GetType ());
+			return new ErrorObject (message);
 		}
 
 		public static void PushHandlerScope (VsaEngine engine, string id, int scopeId)

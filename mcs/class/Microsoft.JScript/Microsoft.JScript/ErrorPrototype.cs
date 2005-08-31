@@ -47,7 +47,7 @@ namespace Microsoft.JScript {
 		{
 			SemanticAnalyser.assert_type (thisObj, typeof (ErrorObject));
 			ErrorObject error = (ErrorObject) thisObj;
-			return error.ClassName + ": " + error.message;
+			return error.message.ToString ();
 		}
 	}
 }

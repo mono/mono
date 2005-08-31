@@ -387,7 +387,7 @@ namespace Microsoft.JScript {
 			switch (tc) {
 			case TypeCode.DBNull:
 			case TypeCode.Empty:
-				throw new JScriptException (JSError.TypeMismatch);
+				throw new JScriptException (JSError.TypeMismatch, "value is null or undefined");
 			case TypeCode.Boolean:
 				return new BooleanObject (ic.ToBoolean (null));
 			case TypeCode.String:

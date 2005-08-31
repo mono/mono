@@ -36,7 +36,7 @@ namespace Microsoft.JScript {
 	public class DatePrototype : DateObject
 	{
 		internal DatePrototype ()
-			: base (0)
+			: base (Double.NaN)
 		{
 		}
 

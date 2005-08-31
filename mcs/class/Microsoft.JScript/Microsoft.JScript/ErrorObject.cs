@@ -46,5 +46,10 @@ namespace Microsoft.JScript {
 		{
 			this.message = message;
 		}
+
+		internal override object GetDefaultValue (Type hint, bool avoid_toString)
+		{
+			return ErrorPrototype.toString (this);
+		}
 	}
 }

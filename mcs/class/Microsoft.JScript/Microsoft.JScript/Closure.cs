@@ -39,6 +39,7 @@ namespace Microsoft.JScript {
 
 		public Closure (FunctionObject func)
 		{
+			this._prototype = func._prototype;
 			this.method = func.method;
 			this.vsa_engine = func.vsa_engine;
 			this.func = func;

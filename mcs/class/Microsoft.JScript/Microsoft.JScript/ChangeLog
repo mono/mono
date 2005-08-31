@@ -1,3 +1,27 @@
+2005-08-28  Florian Gross  <flgr@ccan.de>
+
+	* Try.cs: Implemented JScriptExceptionValue
+	* DateConstructor.cs: Adjusted rounding of date values
+	* RegExpPrototype.cs: Truncates lastIndex before using it
+	* With.cs: Implemented JScriptWith -- can't test this yet because
+	of compiler bugs
+	* ErrorPrototype.cs: Adjusted toString (no ClassName)
+	* JScriptCodeGenerator.cs: Implemented CreateEscapedIdentifier,
+	CreateValidIdentifier, GenerateAssignStatement, GenerateComment,
+	GenerateConditionStatement, GenerateMethodReturnStatement,
+	GenerateThisReferenceExpression, GenerateThrowExceptionStatement,
+	GenerateVariableDeclarationStatement, IsValidIdentifier,
+	QuoteSnippetString. Added dont_write_semicolon, GetSafeName,
+	FillKeywordTable, keywords. Most of this is very similar to the
+	implementation of the C# CodeGenerator
+	* DatePrototype.cs: prototype's time value is NaN, not 0
+	* Closure.cs: Sets _prototype from func
+	* FunctionObject.cs: Changed prototype of user functions 
+	* ErrorObject.cs: Added GetDefaultValue
+	* GlobalObject.cs: parseFloat handles whitespace correctly.
+	Various bug fixes for parseInt
+	* RegExpObject.cs: lastindex changed to double (was int)
+
 2005-08-19  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* SemanticAnalyser.cs: Added ArrayLiteral, StringLiteral,

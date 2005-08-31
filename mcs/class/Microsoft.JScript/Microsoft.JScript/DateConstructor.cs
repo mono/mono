@@ -79,7 +79,7 @@ namespace Microsoft.JScript {
 					if (Double.IsNaN (result) || Double.IsInfinity (result))
 						result = Double.NaN;
 					else
-						result = Math.Floor (result);
+						result = Math.Round (result);
 				}
 				return new DateObject (result);
 			}

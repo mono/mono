@@ -40,7 +40,7 @@ namespace Microsoft.JScript {
 		private bool _ignoreCase;
 		private bool _global;
 		private bool _multiline;
-		private int _lastindex = 0;
+		private double _lastindex = 0;
 		internal Regex regex;
 			
 		public override string ToString ()
@@ -81,7 +81,7 @@ namespace Microsoft.JScript {
 
 		public Object lastIndex {
 			get { return _lastindex; }
-			set { _lastindex = Convert.ToInt32 (value); }
+			set { _lastindex = Convert.ToNumber (value); }
 		}
 
 		internal RegExpObject (string pattern, bool ignoreCase, bool global, bool multiLine)

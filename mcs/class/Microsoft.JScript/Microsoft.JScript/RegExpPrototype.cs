@@ -71,7 +71,7 @@ namespace Microsoft.JScript {
 			} else
 				str = Convert.ToString (input);
 			bool global = re.global;
-			int lastIndex = global ? (int) re.lastIndex : 0;
+			int lastIndex = global ? (int) ((double) re.lastIndex) : 0;
 			bool success = lastIndex >= 0 && lastIndex <= str.Length;
 
 			Match md = null;

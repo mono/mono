@@ -44,13 +44,13 @@ namespace Microsoft.JScript {
 
 		internal FunctionObject (string name)
 		{
-			this._prototype = ObjectPrototype.Proto;
+			this._prototype = ObjectConstructor.Ctr.ConstructObject ();
 			this.name = name;
 		}
 
 		internal FunctionObject (MethodInfo info)
 		{
-			this._prototype = ObjectPrototype.Proto;
+			this._prototype = ObjectConstructor.Ctr.ConstructObject ();
 			this.method = info;
 			this.name = info.Name;
 			this.attr = info.Attributes;
@@ -59,7 +59,7 @@ namespace Microsoft.JScript {
 
 		internal FunctionObject (string name, FormalParameterList p, string ret_type, Block body, Location location)
 		{
-			this._prototype = ObjectPrototype.Proto;
+			this._prototype = ObjectConstructor.Ctr.ConstructObject ();
 			//
 			// FIXME
 			// 1) Must collect the attributes given.

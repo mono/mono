@@ -28,11 +28,16 @@
 using System;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.IO;
+using System.Collections;
 
 namespace Microsoft.JScript {
 
 	[MonoTODO]
 	sealed class JScriptCodeGenerator : CodeCompiler {
+		// It is used for beautiful "for" syntax -- in the future
+		bool dont_write_semicolon = false;
+
 		[MonoTODO]
 		protected override string CompilerName {
 			get {
@@ -57,11 +62,17 @@ namespace Microsoft.JScript {
 		}
 
 		protected override string CreateEscapedIdentifier(string name) {
-			throw new NotImplementedException();
+			if (name == null)
+				throw new NullReferenceException ("Argument identifier is null.");
+
+			return GetSafeName (name);
 		}
 
 		protected override string CreateValidIdentifier(string name) {
-			throw new NotImplementedException();
+			if (name == null)
+				throw new NullReferenceException ();
+
+			return GetSafeName (name);
 		}
 
 		protected override CompilerResults FromFileBatch(CompilerParameters options, string[] fileNames) {
@@ -81,7 +92,13 @@ namespace Microsoft.JScript {
 		}
 
 		protected override void GenerateAssignStatement(CodeAssignStatement e) {
-			throw new NotImplementedException();
+			TextWriter output = Output;
+			GenerateExpression (e.Left);
+			output.Write (" = ");
+			GenerateExpression (e.Right);
+			if (dont_write_semicolon)
+				return;
+			output.WriteLine (';');
 		}
 
 		protected override void GenerateAttachEventStatement(CodeAttachEventStatement e) {
@@ -109,7 +126,20 @@ namespace Microsoft.JScript {
 		}
 
 		protected override void GenerateComment(CodeComment e) {
-			throw new NotImplementedException();
+			TextWriter output = Output;
+			string [] lines = e.Text.Split ('\n');
+			bool first = true;
+			foreach (string line in lines) {
+				if (e.DocComment)
+					output.Write ("///");
+				else
+					output.Write ("//");
+				if (first) {
+					output.Write (' ');
+					first = false;
+				}
+				output.WriteLine (line);
+			}
 		}
 
 		protected override void GenerateCompileUnitStart(CodeCompileUnit e) {
@@ -117,7 +147,29 @@ namespace Microsoft.JScript {
 		}
 
 		protected override void GenerateConditionStatement(CodeConditionStatement e) {
-			throw new NotImplementedException();
+			TextWriter output = Output;
+			output.Write ("if (");
+
+			GenerateExpression (e.Condition);
+
+			output.WriteLine (") {");
+			++Indent;
+			GenerateStatements (e.TrueStatements);
+			--Indent;
+
+			CodeStatementCollection falses = e.FalseStatements;
+			if (falses.Count > 0) {
+				output.Write ('}');
+				if (Options.ElseOnClosing)
+					output.Write (' ');
+				else
+					output.WriteLine ();
+				output.WriteLine ("else {");
+				++Indent;
+				GenerateStatements (falses);
+				--Indent;
+			}
+			output.WriteLine ('}');
 		}
 
 		protected override void GenerateConstructor(CodeConstructor e, CodeTypeDeclaration c) {
@@ -193,7 +245,14 @@ namespace Microsoft.JScript {
 		}
 
 		protected override void GenerateMethodReturnStatement(CodeMethodReturnStatement e) {
-			throw new NotImplementedException();
+			TextWriter output = Output;
+
+			if (e.Expression != null) {
+				output.Write ("return ");
+				GenerateExpression (e.Expression);
+				output.WriteLine (";");
+			} else
+				output.WriteLine ("return;");
 		}
 
 		protected override void GenerateNamespace(CodeNamespace e) {
@@ -259,11 +318,16 @@ namespace Microsoft.JScript {
 		}
 
 		protected override void GenerateThisReferenceExpression(CodeThisReferenceExpression e) {
-			throw new NotImplementedException();
+			Output.Write ("this");
 		}
 
 		protected override void GenerateThrowExceptionStatement(CodeThrowExceptionStatement e) {
-			throw new NotImplementedException();
+			Output.Write ("throw");
+			if (e.ToThrow != null) {
+				Output.Write (' ');
+				GenerateExpression (e.ToThrow);
+			}
+			Output.WriteLine (";");
 		}
 
 		protected override void GenerateTryCatchFinallyStatement(CodeTryCatchFinallyStatement e) {
@@ -287,7 +351,18 @@ namespace Microsoft.JScript {
 		}
 
 		protected override void GenerateVariableDeclarationStatement(CodeVariableDeclarationStatement e) {
-			throw new NotImplementedException();
+			TextWriter output = Output;
+
+			output.Write ("var ");
+			output.Write (GetSafeName (e.Name));
+
+			CodeExpression initExpression = e.InitExpression;
+			if (initExpression != null) {
+				output.Write (" = ");
+				GenerateExpression (initExpression);
+			}
+
+			output.WriteLine (';');
 		}
 
 		protected override void GenerateVariableReferenceExpression(CodeVariableReferenceExpression e) {
@@ -299,7 +374,10 @@ namespace Microsoft.JScript {
 		}
 
 		protected override bool IsValidIdentifier(string value) {
-			throw new NotImplementedException();
+			if (keywordsTable == null)
+				FillKeywordTable ();
+
+			return !keywordsTable.Contains (value);
 		}
 
 		protected override void OutputType(CodeTypeReference typeRef) {
@@ -310,12 +388,59 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException();
 		}
 
-		protected override string QuoteSnippetString(string value) {
-			throw new NotImplementedException();
+		[MonoTODO ("Implement missing special characters")]
+		protected override string QuoteSnippetString (string value)
+		{
+			// FIXME: this is weird, but works.
+			string output = value.Replace ("\\", "\\\\");
+			output = output.Replace ("\"", "\\\"");
+			output = output.Replace ("\t", "\\t");
+			output = output.Replace ("\r", "\\r");
+			output = output.Replace ("\n", "\\n");
+
+			return "\"" + output + "\"";
 		}
 
 		protected override bool Supports(GeneratorSupport support) {
 			throw new NotImplementedException();
 		}
+
+		string GetSafeName (string id)
+		{
+			if (keywordsTable == null)
+				FillKeywordTable ();
+
+			if (keywordsTable.Contains (id))
+				return "_" + id;
+			else
+				return id;
+		}
+
+		static void FillKeywordTable ()
+		{
+			keywordsTable = new Hashtable ();
+			foreach (string keyword in keywords)
+				keywordsTable.Add (keyword, keyword);
+		}
+
+		static Hashtable keywordsTable;
+		static string [] keywords = new string [] {
+			"break", "else", "new", "var",
+			"case", "finally", "return", "void",
+			"catch", "for", "switch", "while",
+			"continue", "function", "this", "with",
+			"default", "if", "throw",
+			"delete", "in", "try",
+			"do", "instanceof", "typeof",
+			// Future reserved keywords
+			"abstract", "enum", "int", "short",
+			"boolean", "export", "interface", "static",
+			"byte", "extends", "long", "super",
+			"char", "final", "native", "synchronized",
+			"class", "float", "package", "throws",
+			"const", "goto", "private", "transient",
+			"debugger", "implements", "protected", "volatile",
+			"double", "import", "public"
+		};
 	}
 }

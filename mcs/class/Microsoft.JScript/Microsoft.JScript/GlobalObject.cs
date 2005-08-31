@@ -453,6 +453,8 @@ namespace Microsoft.JScript {
 			else if (string_obj.StartsWith ("-Infinity"))
 				return Double.NegativeInfinity;
 
+			if (string_obj.Trim () == "")
+				return 0;
 			string_obj = float_re.Match (string_obj).Value;
 
 			double result;
@@ -468,7 +470,7 @@ namespace Microsoft.JScript {
 			String string_obj = Convert.ToString (@string).TrimStart (null).
 				ToLower (CultureInfo.InvariantCulture);
 
-			int result = 0;
+			double result = 0;
 			int _radix = 0;
 			short sign = +1;
 
@@ -497,12 +499,15 @@ namespace Microsoft.JScript {
 			if (_radix == 0 && string_obj.StartsWith ("0"))
 				_radix = 8;
 
+			if (_radix == 0)
+				_radix = 10;
+
 			bool has_result = false;
 			for (int i = 0; i < string_obj.Length; i++) {
 				char digit = string_obj [i];
 
 				int digit_value = System.Array.IndexOf (NumberPrototype.Digits, digit);
-				if (digit_value == -1 || digit_value > _radix)
+				if (digit_value == -1 || digit_value >= _radix)
 					break;
 
 				result = (result * _radix) + digit_value;
