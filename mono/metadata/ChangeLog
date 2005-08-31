@@ -1,4 +1,9 @@
 
+Wed Aug 31 17:39:54 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: fix creation of array classes with rank == 1
+	(patch by Ankit Jain <jankit@novell.com>).
+
 Wed Aug 31 17:35:19 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* object.c: fix check for creating the bound data for arrays vs
