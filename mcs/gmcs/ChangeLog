@@ -1,5 +1,11 @@
 2005-07-31  Raja R Harinath  <harinath@gmail.com>
 
+	Fix #75658.
+	* expression.cs (Invocation.OverloadResolve): Don't report error
+	CS1501 if error CS1502 has been reported.
+	(New.DoResolve): Delegate CS1501 reporting to
+	Invocation.OverloadResolve.
+
 	Fix #75656.
 	* statement.cs (Block.CheckInvariantMeaningInBlock): Verify
 	invariant-meaning-in-block property in an enclosing block if

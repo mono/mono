@@ -5027,6 +5027,7 @@ namespace Mono.CSharp {
 				// Okay so we have failed to find anything so we
 				// return by providing info about the closest match
 				//
+				int errors = Report.Errors;
 				for (int i = 0; i < methods.Length; ++i) {
 					MethodBase c = (MethodBase) methods [i];
 					ParameterData pd = TypeManager.GetParameterData (c);
@@ -5042,8 +5043,7 @@ namespace Mono.CSharp {
                                         break;
 				}
 
-				if (!may_fail) {
-
+				if (!may_fail && errors == Report.Errors) {
 					string report_name = me.Name;
 					if (report_name == ".ctor")
 						report_name = me.DeclaringType.ToString ();
@@ -5066,9 +5066,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					Error_WrongNumArguments (
-						loc, report_name, arg_count);
-					return null;
+					Error_WrongNumArguments (loc, report_name, arg_count);
 				}
                                 
 				return null;
@@ -6028,7 +6026,7 @@ namespace Mono.CSharp {
 					return RequestedType;
 				return this;
 			}
-			
+
 			TypeExpr texpr = RequestedType.ResolveAsTypeTerminal (ec);
 			if (texpr == null)
 				return null;
@@ -6038,16 +6036,14 @@ namespace Mono.CSharp {
 				if (c != null)
 					return c;
 			}
-			
+
 			type = texpr.Type;
 			if (type == null)
 				return null;
 			
 			CheckObsoleteAttribute (type);
 
-			bool IsDelegate = TypeManager.IsDelegateType (type);
-			
-			if (IsDelegate){
+		        if (TypeManager.IsDelegateType (type)) {
 				RequestedType = (new NewDelegate (type, Arguments, loc)).Resolve (ec);
 				if (RequestedType != null)
 					if (!(RequestedType is DelegateCreation))
@@ -6100,46 +6096,31 @@ namespace Mono.CSharp {
 			if (is_struct && Arguments == null)
 				return this;
 
-			Expression ml;
-			ml = MemberLookupFinal (ec, type, type, ".ctor",
-						// For member-lookup, treat 'new Foo (bar)' as call to 'foo.ctor (bar)', where 'foo' is of type 'Foo'.
-						MemberTypes.Constructor,
-						AllBindingFlags | BindingFlags.DeclaredOnly, loc);
+			Expression ml = MemberLookupFinal (ec, type, type, ".ctor",
+				MemberTypes.Constructor, AllBindingFlags | BindingFlags.DeclaredOnly, loc);
 
 			if (ml == null)
 				return null;
-			
-			if (! (ml is MethodGroupExpr)){
-				if (!is_struct){
-					ml.Error_UnexpectedKind (ec, "method group", loc);
-					return null;
+
+			MethodGroupExpr mg = ml as MethodGroupExpr;
+
+			if (mg == null) {
+				ml.Error_UnexpectedKind (ec, "method group", loc);
+				return null;
+			}
+
+			if (Arguments != null){
+				foreach (Argument a in Arguments){
+					if (!a.Resolve (ec, loc))
+						return null;
 				}
 			}
 
-			if (ml != null) {
-				if (Arguments != null){
-					foreach (Argument a in Arguments){
-						if (!a.Resolve (ec, loc))
-							return null;
-					}
-				}
-
-				method = Invocation.OverloadResolve (
-					ec, (MethodGroupExpr) ml, Arguments, true, loc);
-				
-			}
-
+			method = Invocation.OverloadResolve (ec, mg, Arguments, false, loc);
 			if (method == null) {
-				if (almostMatchedMembers.Count != 0) {
+				if (almostMatchedMembers.Count != 0)
 					MemberLookupFailed (ec, type, type, ".ctor", null, true, loc);
-					return null;
-				}
-
-				if (!is_struct || Arguments.Count > 0) {
-					Invocation.Error_WrongNumArguments (loc, TypeManager.CSharpName (type),
-						Arguments == null ? 0 : Arguments.Count);
-					return null;
-				}
+				return null;
 			}
 
 			return this;
