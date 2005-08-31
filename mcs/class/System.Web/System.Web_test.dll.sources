@@ -93,6 +93,7 @@ System.Web.UI.WebControls/RegularExpressionValidatorTest.cs
 System.Web.UI.WebControls/RepeatInfoTest.auto.cs
 System.Web.UI.WebControls/RepeatInfoTest.auto.2.0.cs
 System.Web.UI.WebControls/RepeatInfoTest.cs
+System.Web.UI.WebControls/RepeaterTest.cs
 System.Web.UI.WebControls/RoleGroupCollectionTest.cs
 System.Web.UI.WebControls/RoleGroupTest.cs
 System.Web.UI.WebControls/SelectedDatesCollectionTest.cs
@@ -109,6 +110,7 @@ System.Web.UI.WebControls/TableTest.cs
 System.Web.UI.WebControls/TargetConverterTest.cs
 System.Web.UI.WebControls/TestControlIDConverter.cs
 System.Web.UI.WebControls/TextBoxTest.cs
+System.Web.UI.WebControls/TreeViewTest.cs
 System.Web.UI.WebControls/UnitConverterTest.cs
 System.Web.UI.WebControls/UnitTest.cs
 System.Web.UI.WebControls/ValidatedControlConverterTest.cs
@@ -117,4 +119,5 @@ System.Web.UI.WebControls/ValidatorTest.cs
 System.Web.UI.WebControls/WebColorConverterTest.cs
 System.Web.UI.WebControls/WebControlTest.cs
 System.Web.UI.WebControls/XmlTest.cs
+System.Web.UI.WebControls/XmlDataSourceTest.cs
 System.Web.UI.WebControls.WebParts/WebPartTest.cs
