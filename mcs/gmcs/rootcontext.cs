@@ -407,7 +407,8 @@ namespace Mono.CSharp {
 				"System.MarshalByRefObject",
 				"System.Security.CodeAccessPermission",
 				"System.Runtime.CompilerServices.RequiredAttributeAttribute",
-				"System.Runtime.InteropServices.GuidAttribute"
+				"System.Runtime.InteropServices.GuidAttribute",
+				"System.Reflection.AssemblyCultureAttribute"
 			};
 
 			foreach (string cname in classes_second_stage)

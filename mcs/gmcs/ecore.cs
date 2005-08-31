@@ -886,12 +886,6 @@ namespace Mono.CSharp {
 				"Expression denotes a `{0}', where a `{1}' was expected", ExprClassName (), sb);
 		}
 		
-		static public void Error_ConstantValueCannotBeConverted (Location l, string val, Type t)
-		{
-			Report.Error (31, l, "Constant value `" + val + "' cannot be converted to " +
-				      TypeManager.CSharpName (t));
-		}
-
 		public static void UnsafeError (Location loc)
 		{
 			Report.Error (214, loc, "Pointers and fixed size buffers may only be used in an unsafe context");
@@ -919,8 +913,6 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			string s = "";
-
 			if (c.Type == target_type)
 				return ((Constant) c).GetValue ();
 
@@ -959,7 +951,6 @@ namespace Mono.CSharp {
 						return (ulong) v;
 				}
 
-				s = v.ToString ();
 			} else if (c is UIntConstant){
 				uint v = ((UIntConstant) c).Value;
 
@@ -985,7 +976,6 @@ namespace Mono.CSharp {
 					return (long) v;
 			        else if (target_type == TypeManager.uint64_type)
 					return (ulong) v;
-				s = v.ToString ();
 			} else if (c is LongConstant){ 
 				long v = ((LongConstant) c).Value;
 
@@ -1014,7 +1004,6 @@ namespace Mono.CSharp {
 					if (v > 0)
 						return (ulong) v;
 				}
-				s = v.ToString ();
 			} else if (c is ULongConstant){
 				ulong v = ((ULongConstant) c).Value;
 
@@ -1043,7 +1032,6 @@ namespace Mono.CSharp {
 					if (v <= Int64.MaxValue)
 						return (long) v;
 				}
-				s = v.ToString ();
 			} else if (c is ByteConstant){
 				byte v = ((ByteConstant) c).Value;
 				
@@ -1064,7 +1052,6 @@ namespace Mono.CSharp {
 					return (long) v;
 				else if (target_type == TypeManager.uint64_type)
 					return (ulong) v;
-				s = v.ToString ();
 			} else if (c is SByteConstant){
 				sbyte v = ((SByteConstant) c).Value;
 				
@@ -1090,7 +1077,6 @@ namespace Mono.CSharp {
 					if (v >= 0)
 						return (ulong) v;
 				}
-				s = v.ToString ();
 			} else if (c is ShortConstant){
 				short v = ((ShortConstant) c).Value;
 				
@@ -1115,8 +1101,6 @@ namespace Mono.CSharp {
 					return (long) v;
 				else if (target_type == TypeManager.uint64_type)
 					return (ulong) v;
-
-				s = v.ToString ();
 			} else if (c is UShortConstant){
 				ushort v = ((UShortConstant) c).Value;
 				
@@ -1141,7 +1125,6 @@ namespace Mono.CSharp {
 				else if (target_type == TypeManager.uint64_type)
 					return (ulong) v;
 
-				s = v.ToString ();
 			} else if (c is CharConstant){
 				char v = ((CharConstant) c).Value;
 				
@@ -1165,9 +1148,8 @@ namespace Mono.CSharp {
 				else if (target_type == TypeManager.uint64_type)
 					return (ulong) v;
 
-				s = v.ToString ();
 			}
-			Error_ConstantValueCannotBeConverted (loc, s, target_type);
+			c.Error_ConstantValueCannotBeConverted (loc, target_type);
 			return null;
 		}
 

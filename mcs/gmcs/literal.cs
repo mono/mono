@@ -101,6 +101,11 @@ namespace Mono.CSharp {
 			return "null";
 		}
 
+		public override void Error_ConstantValueCannotBeConverted (Location loc, Type t)
+		{
+			Report.Error (37, loc, "Cannot convert null to `{0}' because it is a value type",
+				TypeManager.CSharpName (t));
+		}
 	}
 
 	//

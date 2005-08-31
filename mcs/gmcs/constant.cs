@@ -46,6 +46,13 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public virtual void Error_ConstantValueCannotBeConverted (Location loc, Type t)
+		{
+			Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
+				AsString (), TypeManager.CSharpName (t));
+		}
+
+
 		//
 		// The various ToXXXX conversion functions are used by the constant
 		// folding evaluator.   A null value is returned if the conversion is
