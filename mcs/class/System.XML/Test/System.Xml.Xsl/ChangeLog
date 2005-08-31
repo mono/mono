@@ -1,3 +1,13 @@
+2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XsltArgumentListCas.cs: New. CAS unit tests for AddExtensionObject.
+	Note that this is a LinkDemand so it will succeed in 2.0 (as the test
+	is executed at fulltrust).
+	* XsltCompileExceptionCas.cs: New. CAS unit tests for exception 
+	serialization.
+	* XsltExceptionCas.cs: New. CAS unit tests for exception 
+	serialization.
+
 2005-07-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransformTests.cs : added testcase for bug #75663.
