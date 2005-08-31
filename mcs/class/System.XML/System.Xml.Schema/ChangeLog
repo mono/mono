@@ -1,3 +1,8 @@
+2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlSchemaException.cs: Added a Demand for SerializationFormatter
+	on GetObjectData method.
+
 2005-08-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaSimpleTypeRestriction.cs : normalize EOL.

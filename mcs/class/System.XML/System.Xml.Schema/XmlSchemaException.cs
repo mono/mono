@@ -5,7 +5,7 @@
 // 	Dwivedi, Ajay kumar Adwiv@Yahoo.com
 //	Enomoto, Atsushi atsushi@ximian.com
 //
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,7 +26,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
@@ -170,10 +170,8 @@ namespace System.Xml.Schema
 #endif
 
 		// Methods
-#if NET_2_0
-		[SecurityPermission (SecurityAction.LinkDemand,
-			Flags=SecurityPermissionFlag.SerializationFormatter)]
-#endif
+
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
