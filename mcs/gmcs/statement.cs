@@ -4493,9 +4493,20 @@ namespace Mono.CSharp {
 					// way I could do this without a goto
 					//
 
+					if (return_type.IsInterface && return_type.IsGenericType) {
+						enumerator_type = return_type;
+						if (!FetchGetCurrent (ec, return_type))
+							get_current = new PropertyExpr (
+								ec, TypeManager.ienumerator_getcurrent, loc);
+						if (!FetchMoveNext (ec, return_type))
+							move_next = TypeManager.bool_movenext_void;
+						return true;
+					}
+
 					if (return_type.IsInterface ||
 					    !FetchMoveNext (ec, return_type) ||
 					    !FetchGetCurrent (ec, return_type)) {
+						enumerator_type = return_type;
 						move_next = TypeManager.bool_movenext_void;
 						get_current = new PropertyExpr (
 							ec, TypeManager.ienumerator_getcurrent, loc);
@@ -4531,11 +4542,12 @@ namespace Mono.CSharp {
 
 				move_next_list = TypeContainer.FindMembers (
 					t, MemberTypes.Method,
-					BindingFlags.Public | BindingFlags.Instance,
+					Expression.AllBindingFlags,
 					Type.FilterName, "MoveNext");
 				if (move_next_list.Count == 0)
 					return false;
 
+				bool found = false;
 				foreach (MemberInfo m in move_next_list){
 					MethodInfo mi = (MethodInfo) m;
 					Type [] args;
@@ -4544,11 +4556,13 @@ namespace Mono.CSharp {
 					if ((args != null) && (args.Length == 0) &&
 					    TypeManager.TypeToCoreType (mi.ReturnType) == TypeManager.bool_type) {
 						move_next = mi;
-						return true;
+						if (mi.IsPublic)
+							return true;
+						found = true;
 					}
 				}
 
-				return false;
+				return found;
 			}
 		
 			//
@@ -4608,11 +4622,28 @@ namespace Mono.CSharp {
 				if (mg == null)
 					return false;
 
-				foreach (MethodBase mb in mg.Methods) {
-					if (!GetEnumeratorFilter (ec, (MethodInfo) mb))
+				MethodBase result = null;
+				MethodInfo tmp_move_next = null;
+				PropertyExpr tmp_get_cur = null;
+				Type tmp_enumerator_type = enumerator_type;
+				foreach (MethodInfo mi in mg.Methods) {
+					if (!GetEnumeratorFilter (ec, mi)) {
 						continue;
+					}
 
-					MethodInfo[] mi = new MethodInfo[] { (MethodInfo) mb };
+					result = mi;
+					tmp_move_next = move_next;
+					tmp_get_cur = get_current;
+					tmp_enumerator_type = enumerator_type;
+					if (mi.DeclaringType == t)
+						break;
+				}
+
+				if (result != null) {
+					move_next = tmp_move_next;
+					get_current = tmp_get_cur;
+					enumerator_type = tmp_enumerator_type;
+					MethodInfo[] mi = new MethodInfo[] { (MethodInfo) result };
 					get_enumerator = new MethodGroupExpr (mi, loc);
 
 					if (t != expr.Type) {

@@ -1,3 +1,10 @@
+2005-08-31  Martin Baulig  <martin@ximian.com>
+
+	Committing a patch from Atsushi Enomoto for #75850.
+
+	* statement.cs (Foreach.CollectionForeach.GetEnumeratorFilter):
+	Prefer a generic enumerator over a non-generic one.
+
 2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
 
 	* AssemblyInfo.cs: Using Consts.MonoVersion instead of MonoVersion.cs.
