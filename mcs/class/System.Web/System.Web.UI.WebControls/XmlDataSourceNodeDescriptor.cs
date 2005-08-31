@@ -33,11 +33,13 @@ using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Xml;
+using System.Xml.XPath;
+using System.Xml.Schema;
 using AC = System.ComponentModel.AttributeCollection;
 
 namespace System.Web.UI.WebControls
 {
-	internal class XmlDataSourceNodeDescriptor: ICustomTypeDescriptor
+	internal class XmlDataSourceNodeDescriptor: ICustomTypeDescriptor, IXPathNavigable
 	{
 		XmlNode node;
 		
@@ -116,6 +118,11 @@ namespace System.Web.UI.WebControls
 			if (pd is XmlDataSourcePropertyDescriptor)
 				return this;
 			return null;
+		}
+
+		public XPathNavigator CreateNavigator ()
+		{
+			return node.CreateNavigator();
 		}
 	}
 }

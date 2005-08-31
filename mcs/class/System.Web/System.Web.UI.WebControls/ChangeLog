@@ -1,5 +1,10 @@
 2005-08-31  Chris Toshok  <toshok@ximian.com>
 
+	* XmlDataSourceNodeDescriptor.cs: implement IXPathNavigable, and
+	create our Navigator by calling node.CreateNavigator().
+
+2005-08-31  Chris Toshok  <toshok@ximian.com>
+
 	* XmlDataSource.cs (GetXmlDataDocument): rename this to
 	GetXmlDocument, and change the return value from XmlDataDocument
 	to XmlDocument.
