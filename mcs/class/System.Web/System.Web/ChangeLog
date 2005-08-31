@@ -1,3 +1,7 @@
+2005-08-31  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplication.cs: Add support for async handlers. 
+
 2005-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BrowserCapabilities.cs: removed extra 'using'.
@@ -12,6 +16,11 @@
 	right place.
 
 2005-08-30  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplication.cs: Add the new 2.x method overloads that take a
+	data object.
+
+	(RunHooks): Pass the extra data instead of null.
 
 	* HttpCookie.cs (HttpOnly): Add 2.x cookie header.
 
