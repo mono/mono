@@ -14,10 +14,10 @@ using System.Text;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
+using System.Collections;
+using System.Collections.Specialized;
 
 namespace Mono.CSharp {
-
-	using System.Collections;
 	
 	public abstract class Statement {
 		public Location loc;
@@ -1459,29 +1459,57 @@ namespace Mono.CSharp {
 
 		public bool CheckInvariantMeaningInBlock (string name, Expression e, Location loc)
 		{
-			LocalInfo kvi = GetKnownVariableInfo (name);
-			if (kvi == null || kvi.Block == this)
+			Block b = this;
+			LocalInfo kvi = b.GetKnownVariableInfo (name);
+			while (kvi == null) {
+				while (b.Implicit)
+					b = b.Parent;
+				b = b.Parent;
+				if (b == null)
+					return true;
+				kvi = b.GetKnownVariableInfo (name);
+			}
+
+			if (kvi.Block == b)
 				return true;
 
-			if (known_variables != kvi.Block.known_variables) {
-				Report.SymbolRelatedToPreviousError (kvi.Location, name);
-				Report.Error (135, loc, "`{0}' conflicts with a declaration in a child block", name);
-				return false;
+			// Is kvi.Block nested inside 'b'
+			if (b.known_variables != kvi.Block.known_variables) {
+				//
+				// If a variable by the same name it defined in a nested block of this
+				// block, we violate the invariant meaning in a block.
+				//
+				if (b == this) {
+					Report.SymbolRelatedToPreviousError (kvi.Location, name);
+					Report.Error (135, loc, "`{0}' conflicts with a declaration in a child block", name);
+					return false;
+				}
+
+				//
+				// It's ok if the definition is in a nested subblock of b, but not
+				// nested inside this block -- a definition in a sibling block
+				// should not affect us.
+				//
+				return true;
 			}
 
 			//
-			// this block and kvi.Block are the same textual block.
+			// Block 'b' and kvi.Block are the same textual block.
 			// However, different variables are extant.
 			//
 			// Check if the variable is in scope in both blocks.  We use
 			// an indirect check that depends on AddVariable doing its
 			// part in maintaining the invariant-meaning-in-block property.
 			//
-			if (e is LocalVariableReference || (e is Constant && GetLocalInfo (name) != null))
+			if (e is LocalVariableReference || (e is Constant && b.GetLocalInfo (name) != null))
 				return true;
 
-			Report.SymbolRelatedToPreviousError (kvi.Location, name);
-			Error_AlreadyDeclared (loc, name, "parent or current");
+			//
+			// Even though we detected the error when the name is used, we
+			// treat it as if the variable declaration was in error.
+			//
+			Report.SymbolRelatedToPreviousError (loc, name);
+			Error_AlreadyDeclared (kvi.Location, name, "child");
 			return false;
 		}
 
@@ -2231,7 +2259,7 @@ namespace Mono.CSharp {
 	public class SwitchLabel {
 		Expression label;
 		object converted;
-		public Location loc;
+		Location loc;
 
 		Label il_label;
 		bool  il_label_set;
@@ -2282,32 +2310,45 @@ namespace Mono.CSharp {
 		// and then converts it to the requested type.
 		//
 		public bool ResolveAndReduce (EmitContext ec, Type required_type)
-		{
-			if (label == null)
-				return true;
-			
+		{	
 			Expression e = label.Resolve (ec);
 
 			if (e == null)
 				return false;
 
-			if (!(e is Constant)){
-				Report.Error (150, loc, "A constant value is expected, got: " + e);
+			Constant c = e as Constant;
+			if (c == null){
+				Report.Error (150, loc, "A constant value is expected");
 				return false;
 			}
 
-			if (e is StringConstant || e is NullLiteral){
-				if (required_type == TypeManager.string_type){
+			if (required_type == TypeManager.string_type) {
+				if (c.Type == TypeManager.string_type) {
+					converted = c.GetValue ();
+					return true;
+				}
+
+				if (e is NullLiteral) {
 					converted = e;
 					return true;
 				}
 			}
 
-			converted = Expression.ConvertIntLiteral ((Constant) e, required_type, loc);
-			if (converted == null)
-				return false;
+			converted = Expression.ConvertIntLiteral (c, required_type, loc);
+			return converted != null;
+		}
 
-			return true;
+		public void Erorr_AlreadyOccurs ()
+		{
+			string label;
+			if (converted == null)
+				label = "default";
+			else if (converted is NullLiteral)
+				label = "null";
+			else
+				label = converted.ToString ();
+
+			Report.Error (152, loc, "The label `case {0}:' already occurs in this switch statement", label);
 		}
 	}
 
@@ -2330,7 +2371,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Maps constants whose type type SwitchType to their  SwitchLabels.
 		/// </summary>
-		public Hashtable Elements;
+		public IDictionary Elements;
 
 		/// <summary>
 		///   The governing switch type
@@ -2443,12 +2484,6 @@ namespace Mono.CSharp {
 			return converted;
 		}
 
-		static string Error152 {
-			get {
-				return "The label `{0}:' already occurs in this switch statement";
-			}
-		}
-		
 		//
 		// Performs the basic sanity checks on the switch statement
 		// (looks for duplicate keys and non-constant expressions).
@@ -2458,141 +2493,38 @@ namespace Mono.CSharp {
 		//
 		bool CheckSwitch (EmitContext ec)
 		{
-			Type compare_type;
 			bool error = false;
-			Elements = new Hashtable ();
+			Elements = Sections.Count > 10 ? 
+				(IDictionary)new Hashtable () : 
+				(IDictionary)new ListDictionary ();
 				
-			if (TypeManager.IsEnumType (SwitchType)){
-				compare_type = TypeManager.EnumToUnderlying (SwitchType);
-			} else
-				compare_type = SwitchType;
-			
 			foreach (SwitchSection ss in Sections){
 				foreach (SwitchLabel sl in ss.Labels){
-					if (!sl.ResolveAndReduce (ec, SwitchType)){
-						error = true;
-						continue;
-					}
-
 					if (sl.Label == null){
 						if (default_section != null){
-							Report.Error (152, sl.loc, Error152, "default");
+							sl.Erorr_AlreadyOccurs ();
 							error = true;
 						}
 						default_section = ss;
 						continue;
 					}
+
+					if (!sl.ResolveAndReduce (ec, SwitchType)){
+						error = true;
+						continue;
+					}
 					
 					object key = sl.Converted;
-
-					if (key is Constant)
-						key = ((Constant) key).GetValue ();
-
-					if (key == null)
-						key = NullLiteral.Null;
-					
-					string lname = null;
-					if (compare_type == TypeManager.uint64_type){
-						ulong v = (ulong) key;
-
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.int64_type){
-						long v = (long) key;
-
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.uint32_type){
-						uint v = (uint) key;
-
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.char_type){
-						char v = (char) key;
-						
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.byte_type){
-						byte v = (byte) key;
-						
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.sbyte_type){
-						sbyte v = (sbyte) key;
-						
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.short_type){
-						short v = (short) key;
-						
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.ushort_type){
-						ushort v = (ushort) key;
-						
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.string_type){
-						if (key is NullLiteral){
-							if (Elements.Contains (NullLiteral.Null))
-								lname = "null";
-							else
-								Elements.Add (NullLiteral.Null, null);
-						} else {
-							string s = (string) key;
-
-							if (Elements.Contains (s))
-								lname = s;
-							else
-								Elements.Add (s, sl);
-						}
-					} else if (compare_type == TypeManager.int32_type) {
-						int v = (int) key;
-
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
-					} else if (compare_type == TypeManager.bool_type) {
-						bool v = (bool) key;
-
-						if (Elements.Contains (v))
-							lname = v.ToString ();
-						else
-							Elements.Add (v, sl);
+					try {
+						Elements.Add (key, sl);
 					}
-					else
-					{
-						throw new Exception ("Unknown switch type!" +
-								     SwitchType + " " + compare_type);
-					}
-
-					if (lname != null){
-						Report.Error (152, sl.loc, Error152, "case " + lname);
-						error = true;
-					}
+					catch (ArgumentException) {
+						 sl.Erorr_AlreadyOccurs ();
+						 error = true;
+					 }
 				}
 			}
-			if (error)
-				return false;
-			
-			return true;
+			return !error;
 		}
 
 		void EmitObjectInteger (ILGenerator ig, object k)
@@ -2936,12 +2868,10 @@ namespace Mono.CSharp {
 							if (label_count == 1)
 								ig.Emit (OpCodes.Br, next_test);
 							continue;
-									      
 						}
-						StringConstant str = (StringConstant) lit;
 						
 						ig.Emit (OpCodes.Ldloc, val);
-						ig.Emit (OpCodes.Ldstr, str.Value);
+						ig.Emit (OpCodes.Ldstr, (string)lit);
 						if (label_count == 1)
 							ig.Emit (OpCodes.Bne_Un, next_test);
 						else {
