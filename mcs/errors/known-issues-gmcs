@@ -87,3 +87,12 @@ cs2015.cs
 cs3005-13.cs IGNORE # This is a warning in .NET 2.0 and an error in 1.x.
 gcs0694.cs NO ERROR
 gcs1644-2.cs NO ERROR
+
+cs0139-2.cs NO ERROR
+cs0246-13.cs NO ERROR
+cs0619-42.cs
+cs0642-10.cs NO ERROR
+cs0642-7.cs NO ERROR
+cs0642-8.cs NO ERROR
+cs0642-9.cs NO ERROR
+cs1546.cs
