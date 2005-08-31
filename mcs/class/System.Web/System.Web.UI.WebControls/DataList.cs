@@ -549,22 +549,18 @@ namespace System.Web.UI.WebControls {
 			
 			switch (item.ItemType) {
 			case ListItemType.Header:
-			  Console.WriteLine ("InitializeItem - Header");
 				t = HeaderTemplate;
 				break;
 			case ListItemType.Footer:
-			  Console.WriteLine ("InitializeItem - Footer");
 				t = FooterTemplate;
 				break;	
 			case ListItemType.Separator:
-			  Console.WriteLine ("InitializeItem - Separator");
 				t = SeparatorTemplate;
 				break;
 			case ListItemType.Item:
 			case ListItemType.AlternatingItem:
 			case ListItemType.SelectedItem:
 			case ListItemType.EditItem:
-			  Console.WriteLine ("InitializeItem - Item");
 				int index = item.ItemIndex;
 				if (SelectedIndex == index)
 					t = SelectedItemTemplate;
@@ -577,11 +573,8 @@ namespace System.Web.UI.WebControls {
 				break;
 			}
 
-			if (t != null) {
-				Console.WriteLine ("+ Instantiating it");
-
+			if (t != null)
 				t.InstantiateIn (item);
-			}
 		}
 
 		protected override void LoadViewState (object savedState)
