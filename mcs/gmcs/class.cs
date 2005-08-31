@@ -3771,12 +3771,13 @@ namespace Mono.CSharp {
 
 		protected bool IsDuplicateImplementation (MethodCore method)
 		{
-			if ((method == this) ||
-			    (method.MemberName.GetTypeName () != MemberName.GetTypeName ()))
+			if (method == this || !(method.MemberName.Equals (MemberName)))
 				return false;
 
 			Type[] param_types = method.ParameterTypes;
-			if (param_types == null)
+			if (param_types == null && ParameterTypes == null)
+				return true;
+			if (param_types == null || ParameterTypes == null)
 				return false;
 
 			if (param_types.Length != ParameterTypes.Length)
@@ -3832,14 +3833,8 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public override bool IsUsed
-		{
-			get {
-				if (IsExplicitImpl)
-					return true;
-
-				return base.IsUsed;
-			}
+		public override bool IsUsed {
+			get { return IsExplicitImpl || base.IsUsed; }
 		}
 
 		//
@@ -6273,7 +6268,7 @@ namespace Mono.CSharp {
 
 		public bool IsDuplicateImplementation (MethodCore method)
 		{
-			if (Name != method.Name)
+			if (!MemberName.Equals (method.MemberName))
 				return false;
 
 			Type[] param_types = method.ParameterTypes;
