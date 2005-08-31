@@ -1,5 +1,8 @@
 2005-08-31  Raja R Harinath  <rharinath@novell.com>
 
+	* CustomAttributeBuilder.cs (get_umarshal): Fix typo.  The name of
+	the field is "SizeParamIndex", not "SizeSizeParamIndex".
+
 	* ParameterBuilder.cs (SetCustomAttribute) [MarshalAsAttribute]:
 	Set ParameterAttributes.HasFieldMarshal flag.
 

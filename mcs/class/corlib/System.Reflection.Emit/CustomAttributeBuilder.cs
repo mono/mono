@@ -255,7 +255,7 @@ namespace System.Reflection.Emit {
 					sizeConst = value;
 					hasSize = true;
 					break;
-				case "SizeSizeParamIndex":
+				case "SizeParamIndex":
 					value = (int)data [pos++];
 					value |= ((int)data [pos++]) << 8;
 					sizeParamIndex = value;
