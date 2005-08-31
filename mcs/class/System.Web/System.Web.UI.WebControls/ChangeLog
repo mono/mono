@@ -1,3 +1,22 @@
+2005-08-31  Chris Toshok  <toshok@ximian.com>
+
+	* XmlDataSource.cs (GetXmlDataDocument): rename this to
+	GetXmlDocument, and change the return value from XmlDataDocument
+	to XmlDocument.
+	(LoadXmlDataDocument): similar change.
+	(Save): xmlDataDocument -> xmlDocument.
+	(CanBeSaved): there's no ReadOnly attribute.
+	(LoadViewState, SaveViewState, TrackViewState): nuke.
+	(GetHierarchicalView): xmlDataDocument -> xmlDocument.
+	(CacheDuration): stub out with NIE.
+	(CacheExpirationPolocy): same.
+	(CacheKeyDependency): same.
+	(EnableCaching): same.
+	(ReadOnly): nuke.
+	(Data, DataFile): xmlDataDocument -> xmlDocument.
+	(Schema, SchemaFile): nuke.
+	(Transform, TransformFile): xmlDataDocument -> xmlDocument.
+	
 2005-08-30  Lluis Sanchez Gual  <lluis@novell.com> 
 
 	* SubMenuStyle.cs, MenuItemStyle.cs, TreeNodeStyle.cs:

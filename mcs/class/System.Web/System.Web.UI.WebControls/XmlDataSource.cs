@@ -3,8 +3,10 @@
 //
 // Authors:
 //	Ben Maurer (bmaurer@users.sourceforge.net)
+//      Chris Toshok (toshok@ximian.com)
 //
 // (C) 2003 Ben Maurer
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -67,18 +69,18 @@ namespace System.Web.UI.WebControls {
 				eh (this, e);
 		}
 		
-		XmlDataDocument xmlDataDocument;
-		public XmlDataDocument GetXmlDataDocument ()
+		XmlDocument xmlDocument;
+		public XmlDocument GetXmlDocument ()
 		{
-			if (xmlDataDocument == null) {
-				xmlDataDocument = new XmlDataDocument ();
-				LoadXmlDataDocument (xmlDataDocument);
+			if (xmlDocument == null) {
+				xmlDocument = new XmlDocument ();
+				LoadXmlDocument (xmlDocument);
 			}
-			return xmlDataDocument;
+			return xmlDocument;
 		}
 		
 		[MonoTODO ("XSLT, schema")]
-		void LoadXmlDataDocument (XmlDataDocument document)
+		void LoadXmlDocument (XmlDocument document)
 		{
 			if (Transform == "" && TransformFile == "") {
 				if (DataFile != "")
@@ -95,36 +97,18 @@ namespace System.Web.UI.WebControls {
 			if (!CanBeSaved)
 				throw new InvalidOperationException ();
 			
-			xmlDataDocument.Save (MapPathSecure (DataFile));
+			xmlDocument.Save (MapPathSecure (DataFile));
 		}
 		
 		bool CanBeSaved {
 			get {
-				return !ReadOnly && Transform == "" && TransformFile == "" && DataFile != "";
+				return Transform == "" && TransformFile == "" && DataFile != "";
 			}
-		}
-		
-		[MonoTODO]
-		protected override void LoadViewState (object savedState)
-		{
-			base.LoadViewState (savedState);
-		}
-		
-		[MonoTODO]
-		protected override object SaveViewState ()
-		{
-			return base.SaveViewState ();
-		}
-		
-		[MonoTODO]
-		protected override void TrackViewState ()
-		{
-			base.TrackViewState ();
 		}
 		
 		protected override HierarchicalDataSourceView GetHierarchicalView (string viewPath)
 		{
-			XmlNode doc = this.GetXmlDataDocument ();
+			XmlNode doc = this.GetXmlDocument ();
 			XmlNodeList ret = null;
 			
 			if (viewPath != "") {
@@ -154,7 +138,8 @@ namespace System.Web.UI.WebControls {
 			if (viewName == "")
 				viewName = "DefaultView";
 			
-			return new XmlDataSourceView (this, viewName, GetXmlDataDocument ().DocumentElement.SelectNodes (XPath != "" ? XPath : "./*"));
+			Console.WriteLine ("XPath = {0}", XPath);
+			return new XmlDataSourceView (this, viewName, GetXmlDocument ().DocumentElement.SelectNodes (XPath != "" ? XPath : "./*"));
 		}
 		
 		ICollection IDataSource.GetViewNames ()
@@ -162,28 +147,56 @@ namespace System.Web.UI.WebControls {
 			return new string [] { "DefaultView" };
 		}
 		
-		public virtual bool AutoSave {
+		[DefaultValue (0)]
+		//[TypeConverter (typeof(DataSourceCacheDurationConverter))]
+		[MonoTODO]
+		public virtual int CacheDuration {
 			get {
-				object ret = ViewState ["AutoSave"];
-				return ret != null ? (bool)ret : true;
+				throw new NotImplementedException ();
 			}
 			set {
-				ViewState ["AutoSave"] = value;
+				throw new NotImplementedException ();
 			}
 		}
-		
-		// TODO: stub these apis
-		//protected virtual FileDataSourceCache Cache { get; }
-		//public virtual int CacheDuration { get; set; }
-		//public virtual DataSourceCacheExpiry CacheExpirationPolicy { get; set; }
-		//public virtual string CacheKeyDependency { get; set; }
-		//public virtual bool EnableCaching { get; set; }
-		
+
+		[DefaultValue (DataSourceCacheExpiry.Absolute)]
+		[MonoTODO]
+		public virtual DataSourceCacheExpiry CacheExpirationPolicy {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[DefaultValue ("")]
+		[MonoTODO]
+		public virtual string CacheKeyDependency {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[DefaultValue (true)]
+		[MonoTODO]
+		public virtual bool EnableCaching {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
 		[DefaultValue ("")]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[WebSysDescription ("Inline XML data.")]
 		[WebCategory ("Data")]
-	    [EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 //		[TypeConverter (typeof(MultilineStringConverter))]
 		public virtual string Data {
 			get {
@@ -193,7 +206,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (Data != value) {
 					ViewState ["Data"] = value;
-					xmlDataDocument = null;
+					xmlDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -209,51 +222,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (DataFile != value) {
 					ViewState ["DataFile"] = value;
-					xmlDataDocument = null;
-					OnDataSourceChanged(EventArgs.Empty);
-				}
-			}
-		}
-		
-		public virtual bool ReadOnly {
-			get {
-				object ret = ViewState ["ReadOnly"];
-				return ret != null ? (bool)ret : true;
-			}
-			set {
-				ViewState ["ReadOnly"] = value;
-			}
-		}
-		
-//		[TypeConverterAttribute (typeof(System.ComponentModel.MultilineStringConverter)]
-		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[DefaultValueAttribute ("")]
-		public virtual string Schema {
-			get {
-				string ret = ViewState ["Schema"] as string;
-				return ret != null ? ret : "";
-			}
-			set {
-				if (Schema != value) {
-					ViewState ["Schema"] = value;
-					xmlDataDocument = null;
-					OnDataSourceChanged(EventArgs.Empty);
-				}
-			}
-		}
-		
-		[DefaultValueAttribute ("")]
-		[EditorAttribute ("System.Web.UI.Design.XsdSchemaFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public virtual string SchemaFile {
-			get {
-				string ret = ViewState ["SchemaFile"] as string;
-				return ret != null ? ret : "";
-			}
-			set {
-				if (SchemaFile != value) {
-					ViewState ["SchemaFile"] = value;
-					xmlDataDocument = null;
+					xmlDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -261,14 +230,14 @@ namespace System.Web.UI.WebControls {
 		
 		XsltArgumentList transformArgumentList;
 		
-	    [BrowsableAttribute (false)]
+		[BrowsableAttribute (false)]
 		public virtual XsltArgumentList TransformArgumentList {
 			get { return transformArgumentList; }
 			set { transformArgumentList = value; }
 		}
 		
 		[PersistenceModeAttribute (PersistenceMode.InnerProperty)]
-		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[EditorAttribute ("System.ComponentModel.Design.MultilineStringEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[DefaultValueAttribute ("")]
 //		[TypeConverterAttribute (typeof(System.ComponentModel.MultilineStringConverter))]
 		public virtual string Transform {
@@ -279,7 +248,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (Transform != value) {
 					ViewState ["Transform"] = value;
-					xmlDataDocument = null;
+					xmlDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -295,7 +264,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (TransformFile != value) {
 					ViewState ["TransformFile"] = value;
-					xmlDataDocument = null;
+					xmlDocument = null;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
