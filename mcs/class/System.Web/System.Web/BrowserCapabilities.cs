@@ -37,8 +37,7 @@ using System.Web.UI;
 namespace System.Web.Configuration {
 	public partial class HttpCapabilitiesBase
 #else
-using System.Web.Configuration;
-	
+
 namespace System.Web {
 	public partial class HttpBrowserCapabilities : HttpCapabilitiesBase
 #endif

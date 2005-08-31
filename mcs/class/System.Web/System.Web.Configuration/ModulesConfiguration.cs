@@ -37,7 +37,6 @@ namespace System.Web.Configuration
 	class ModuleItem {
 		public string Name;
 		public Type Type;
-		public IHttpModule Instance;
 		
 		public ModuleItem (string name, Type type)
 		{
@@ -48,7 +47,7 @@ namespace System.Web.Configuration
 		
 	class ModulesConfiguration
 	{
-		public ArrayList Modules;
+		ArrayList Modules;
 
 		private ModulesConfiguration ()
 		{
@@ -106,25 +105,16 @@ namespace System.Web.Configuration
 			Modules.Clear ();
 		}
 
-		public ModulesConfiguration Clone ()
+		public HttpModuleCollection LoadModules (HttpApplication app)
 		{
-			ModulesConfiguration modules = new ModulesConfiguration ();
-			modules.Modules = new ArrayList (Modules);
-			return modules;
-		}
-
-		public void LoadModules (HttpApplication app)
-		{
+			HttpModuleCollection coll = new HttpModuleCollection ();
 			foreach (ModuleItem item in Modules){
-				item.Instance = (IHttpModule) Activator.CreateInstance (item.Type, true);
-				item.Instance.Init (app);
+				IHttpModule module = (IHttpModule) Activator.CreateInstance (item.Type, true);
+				module.Init (app);
+				coll.AddModule (item.Name, module);
 			}
-		}
 
-		public void StopModules ()
-		{
-			foreach (ModuleItem item in Modules)
-				item.Instance.Dispose ();
+			return coll;
 		}
 	}
 }

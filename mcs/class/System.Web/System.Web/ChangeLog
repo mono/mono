@@ -1,3 +1,10 @@
+2005-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BrowserCapabilities.cs: removed extra 'using'.
+
+	* HttpApplication.cs: use just the 'modcoll' to hold the collection of
+	modules instead of having a separate 'modules' one.
+
 2005-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: clone the module collection so that

@@ -80,7 +80,6 @@ namespace System.Web {
 		ISite isite;
 
 		// The source, and the exposed API (cache).
-		ModulesConfiguration modules;
 		HttpModuleCollection modcoll;
 
 		internal string AssemblyLocation;
@@ -136,12 +135,13 @@ namespace System.Web {
 		void InitOnce ()
 		{
 			lock (this) {
-				if (modules != null)
+				if (modcoll != null)
 					return;
 
+				ModulesConfiguration modules;
 				modules = (ModulesConfiguration) HttpContext.GetAppConfig ("system.web/httpModules");
-				modules = modules.Clone ();
-				modules.LoadModules (this);
+
+				modcoll = modules.LoadModules (this);
 
 				HttpApplicationFactory.AttachEvents (this);
 
@@ -182,12 +182,8 @@ namespace System.Web {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpModuleCollection Modules {
 			get {
-				if (modcoll == null){
+				if (modcoll == null)
 					modcoll = new HttpModuleCollection ();
-					
-					foreach (ModuleItem mi in modules.Modules)
-						modcoll.AddModule (mi.Name, mi.Instance);
-				}
 				
 				return modcoll;
 			}
@@ -405,15 +401,16 @@ namespace System.Web {
 
 		public virtual void Dispose ()
 		{
-			if (modules == null)
-				return;
+			if (modcoll != null) {
+				for (int i = modcoll.Count; i >= 0; i--) {
+					modcoll.Get (i).Dispose ();
+				}
+				modcoll = null;
+			}
 
 			if (Disposed != null)
 				Disposed (this, EventArgs.Empty);
 			
-			modules.StopModules ();
-			modcoll = null;
-			modules = null;
 			done.Close ();
 			done = null;
 		}

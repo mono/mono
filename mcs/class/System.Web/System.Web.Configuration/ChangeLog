@@ -1,3 +1,8 @@
+2005-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ModulesConfiguration.cs: LoadModules creates a HttpModuleCollection,
+	initializes the module instances and fills in the collection.
+
 2005-08-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ModulesConfiguration.cs: add Clone (ugly).
