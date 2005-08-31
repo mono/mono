@@ -1,3 +1,12 @@
+2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XsltArgumentList.cs: Added a LinkDemand for Unrestricted on 
+	AddExtensionObject method.
+	* XsltCompileException.cs: Added a Demand for SerializationFormatter 
+	on GetObjectData method.
+	* XsltException.cs: Added a Demand for SerializationFormatter on
+	GetObjectData method.
+
 2005-08-01  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XsltArgumentList.cs: No longer sealed in .NET 2.0.

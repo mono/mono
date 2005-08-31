@@ -7,8 +7,7 @@
 //
 // (C) Copyright 2002 Tim Coleman
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Runtime.Serialization;
 using System.Xml.XPath;
 using System.Security.Permissions;
@@ -88,10 +86,7 @@ namespace System.Xml.Xsl
 
 		#region Methods
 
-#if NET_2_0
-		[SecurityPermission (SecurityAction.LinkDemand,
-			Flags=SecurityPermissionFlag.SerializationFormatter)]
-#endif
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);

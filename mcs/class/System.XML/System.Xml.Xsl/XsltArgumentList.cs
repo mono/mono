@@ -2,7 +2,7 @@
 //
 // Author: Tim Coleman <tim@timcoleman.com>
 // (C) Copyright 2002 Tim Coleman
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,9 +24,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
-using System.Xml;
+using System.Security.Permissions;
 using System.Xml.XPath;
 
 namespace System.Xml.Xsl
@@ -63,6 +62,7 @@ namespace System.Xml.Xsl
 
 		#region Methods
 
+		[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 		public void AddExtensionObject (string namespaceUri, object extension)
 		{
 			if (namespaceUri == null)
