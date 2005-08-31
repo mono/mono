@@ -135,39 +135,42 @@ namespace Mono.CSharp {
 			return Root.GetNamespace (name, create);
 		}
 
+		TypeExpr LookupType (string name)
+		{
+			if (cached_types.Contains (name))
+				return cached_types [name] as TypeExpr;
+
+			Type t;
+			DeclSpace tdecl = declspaces [name] as DeclSpace;
+			if (tdecl != null) {
+				//
+				// Note that this is not:
+				//
+				//   t = tdecl.DefineType ()
+				//
+				// This is to make it somewhat more useful when a DefineType
+				// fails due to problems in nested types (more useful in the sense
+				// of fewer misleading error messages)
+				//
+				tdecl.DefineType ();
+				t = tdecl.TypeBuilder;
+			} else {
+				string lookup = this == Namespace.Root ? name : fullname + "." + name;
+				t = TypeManager.LookupTypeReflection (lookup);
+			}
+			TypeExpr te = t == null ? null : new TypeExpression (t, Location.Null);
+			cached_types [name] = te;
+			return te;
+		}
+
 		public FullNamedExpression Lookup (DeclSpace ds, string name)
 		{
 			Namespace ns = GetNamespace (name, false);
 			if (ns != null)
 				return ns;
 
-			TypeExpr te;
-			if (cached_types.Contains (name)) {
-				te = (TypeExpr) cached_types [name];
-			} else {
-				Type t;
-				DeclSpace tdecl = declspaces [name] as DeclSpace;
-				if (tdecl != null) {
-					//
-					// Note that this is not:
-					//
-					//   t = tdecl.DefineType ()
-					//
-					// This is to make it somewhat more useful when a DefineType
-					// fails due to problems in nested types (more useful in the sense
-					// of fewer misleading error messages)
-					//
-					tdecl.DefineType ();
-					t = tdecl.TypeBuilder;
-				} else {
-					string lookup = this == Namespace.Root ? name : fullname + "." + name;
-					t = TypeManager.LookupTypeReflection (lookup);
-				}
-				te = t == null ? null : new TypeExpression (t, Location.Null);
-				cached_types [name] = te;
-			}
-
-			if (te != null && ds != null && !ds.CheckAccessLevel (te.Type))
+			TypeExpr te = LookupType (name);
+			if (te == null || !ds.CheckAccessLevel (te.Type))
 				return null;
 
 			return te;
@@ -431,7 +434,7 @@ namespace Mono.CSharp {
 			if (aliases == null)
 				aliases = new Hashtable ();
 
-			if (aliases.Contains (name)){
+			if (aliases.Contains (name)) {
 				AliasEntry ae = (AliasEntry)aliases [name];
 				Report.SymbolRelatedToPreviousError (ae.Location, ae.Name);
 				Report.Error (1537, loc, "The using alias `" + name +
@@ -500,14 +503,15 @@ namespace Mono.CSharp {
 		}
 
 		// Our cached computation.
+		readonly Namespace [] empty_namespaces = new Namespace [0];
 		Namespace [] namespace_using_table;
-		Namespace[] GetUsingTable ()
+		Namespace [] GetUsingTable ()
 		{
 			if (namespace_using_table != null)
 				return namespace_using_table;
 
 			if (using_clauses == null) {
-				namespace_using_table = new Namespace [0];
+				namespace_using_table = empty_namespaces;
 				return namespace_using_table;
 			}
 
@@ -558,7 +562,7 @@ namespace Mono.CSharp {
 		{
 			Console.WriteLine ("    Try using -r:" + s);
 		}
-		
+
 		static void MsgtryPkg (string s)
 		{
 			Console.WriteLine ("    Try using -pkg:" + s);
@@ -599,19 +603,15 @@ namespace Mono.CSharp {
 		public void VerifyUsing ()
 		{
 			if (using_clauses != null) {
-				foreach (UsingEntry ue in using_clauses){
+				foreach (UsingEntry ue in using_clauses)
 					ue.Resolve ();
-				}
 			}
 
-			if (aliases != null){
+			if (aliases != null) {
 				foreach (DictionaryEntry de in aliases) {
 					AliasEntry alias = (AliasEntry) de.Value;
-
-					if (alias.Resolve () != null)
-						continue;
-
-					Error_NamespaceNotFound (alias.Location, alias.Alias.ToString ());
+					if (alias.Resolve () == null)
+						Error_NamespaceNotFound (alias.Location, alias.Alias.ToString ());
 				}
 			}
 		}

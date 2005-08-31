@@ -721,39 +721,23 @@ public partial class TypeManager {
 		}
 		return (Type) ret;
 	}
-	
-	//
-	// Low-level lookup, cache-less
-	//
+
 	public static Type LookupTypeReflection (string name)
 	{
 		Type t;
 
-		foreach (Assembly a in assemblies){
+		foreach (Assembly a in assemblies) {
 			t = a.GetType (name);
-			if (t == null)
-				continue;
-
-			do {
+			if (t != null) {
+				if (t.IsPointer)
+					throw new InternalErrorException ("Use GetPointerType() to get a pointer");
 				TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
-				if (ta == TypeAttributes.NotPublic ||
-				    ta == TypeAttributes.NestedPrivate ||
-				    ta == TypeAttributes.NestedAssembly ||
-				    ta == TypeAttributes.NestedFamANDAssem){
-					
-					//
-					// In .NET pointers turn out to be private, even if their
-					// element type is not
-					//
-					if (t.IsPointer){
-						t = t.GetElementType ();
-						continue;
-					} else
-						t = null;
-				} else {
+				if (ta != TypeAttributes.NotPublic &&
+				    ta != TypeAttributes.NestedPrivate &&
+				    ta != TypeAttributes.NestedAssembly &&
+				    ta != TypeAttributes.NestedFamANDAssem)
 					return t;
-				}
-			} while (t != null);
+			}
 		}
 
 		foreach (Module mb in modules) {
@@ -761,7 +745,7 @@ public partial class TypeManager {
 			if (t != null) 
 				return t;
 		}
-                        
+
 		return null;
 	}
 
@@ -1162,7 +1146,7 @@ public partial class TypeManager {
 		string_type   = CoreLookupType ("System.String");
 		float_type    = CoreLookupType ("System.Single");
 		double_type   = CoreLookupType ("System.Double");
-		char_ptr_type = CoreLookupType ("System.Char*");
+		char_ptr_type = GetPointerType (char_type);
 		decimal_type  = CoreLookupType ("System.Decimal");
 		bool_type     = CoreLookupType ("System.Boolean");
 		enum_type     = CoreLookupType ("System.Enum");
@@ -1204,7 +1188,7 @@ public partial class TypeManager {
 
 		unverifiable_code_type= CoreLookupType ("System.Security.UnverifiableCodeAttribute");
 
-		void_ptr_type         = CoreLookupType ("System.Void*");
+		void_ptr_type         = GetPointerType (void_type);
 
 		indexer_name_type     = CoreLookupType ("System.Runtime.CompilerServices.IndexerNameAttribute");
 
