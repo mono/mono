@@ -1630,8 +1630,6 @@ namespace Mono.CSharp {
 
 		void ReportStructInitializedInstanceError ()
 		{
-			string n = TypeBuilder.FullName;
-			
 			foreach (Field f in initialized_fields){
 				Report.Error (573, Location,
 					"`{0}': Structs cannot have instance field initializers",
@@ -4720,8 +4718,7 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (Parent.Kind == Kind.Class && Initializer == null)
-					Initializer = new ConstructorBaseInitializer (
-						null, Location);
+					Initializer = new ConstructorBaseInitializer (null, Location);
 
 
 				//

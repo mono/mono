@@ -616,7 +616,6 @@ namespace Mono.CSharp {
 			return base.DefineNestedTypes ();
 		}
 
-
 		Field pc_field;
 		Field current_field;
 		Method dispose;
@@ -725,7 +724,7 @@ namespace Mono.CSharp {
 				new SetState (this, State.Running, Location),
 				Location));
 
-			ctor.Block.AddStatement (new InitScope (this, cc, Location));
+			ctor.Block.AddStatement (new InitScope (this, Location));
 		}
 
 		Statement Create_ThrowInvalidOperation ()
@@ -1143,7 +1142,7 @@ namespace Mono.CSharp {
 		{
 			Iterator iterator;
 
-			public InitScope (Iterator iterator, CaptureContext cc, Location loc)
+			public InitScope (Iterator iterator, Location loc)
 			{
 				this.iterator = iterator;
 				this.loc = loc;
