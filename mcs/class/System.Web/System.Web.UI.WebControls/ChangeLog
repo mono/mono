@@ -1,3 +1,13 @@
+2005-08-31  Chris Toshok  <toshok@ximian.com>
+
+	* XmlDataSourceView.cs (.ctor): remove the nodelist parameter.
+	(DoXPathSelect): put the xpath selection stuff here.
+	(ExecuteSelect): call DoXPathSelect if we need to (if nodes ==
+	null).
+
+	* XmlDataSource.cs (IDataSource.GetView): don't do the XPath
+	select here, the view does it.
+
 2005-08-31  Jackson Harper  <jackson@ximian.com>
 
 	* DataList.cs: Remove some debugging code that was starting to bug

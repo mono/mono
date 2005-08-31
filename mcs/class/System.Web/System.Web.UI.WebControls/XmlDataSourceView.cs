@@ -38,20 +38,13 @@ namespace System.Web.UI.WebControls
 {
 	public sealed class XmlDataSourceView : DataSourceView
 	{
-		string name;
 		ArrayList nodes;
-	
-		public XmlDataSourceView (XmlDataSource owner, string name, XmlNodeList nodes)
-		: base (owner, name)
+		XmlDataSource owner;
+
+		public XmlDataSourceView (XmlDataSource owner, string name)
+			: base (owner, name)
 		{
-			// Why do they pass owner?
-			this.name = name;
-			this.nodes = new ArrayList (nodes.Count);
-			
-			foreach (XmlNode node in nodes) {
-				if (node.NodeType == XmlNodeType.Element)
-					this.nodes.Add (node);
-			}
+			this.owner = owner;
 		}
 		
 		public IEnumerable Select (DataSourceSelectArguments arguments)
@@ -59,13 +52,23 @@ namespace System.Web.UI.WebControls
 			return ExecuteSelect (arguments);
 		}
 		
-		public override string Name { 
-			get { return name; }
+		void DoXPathSelect ()
+		{
+			XmlNodeList selected_nodes = owner.GetXmlDocument ().DocumentElement.SelectNodes (owner.XPath != "" ? owner.XPath : "./*");
+
+			nodes = new ArrayList (selected_nodes.Count);
+			
+			foreach (XmlNode node in selected_nodes) {
+				if (node.NodeType == XmlNodeType.Element)
+					nodes.Add (node);
+			}
 		}
-		
-		[MonoTODO]
+
 		protected internal override IEnumerable ExecuteSelect (DataSourceSelectArguments arguments)
 		{
+			if (nodes == null)
+				DoXPathSelect();
+
 			ArrayList list = new ArrayList ();
 			int max = arguments.StartRowIndex + (arguments.MaximumRows > 0 ? arguments.MaximumRows : nodes.Count);
 			if (max > nodes.Count) max = nodes.Count;
