@@ -1,4 +1,24 @@
+2005-07-21  Raja R Harinath  <rharinath@novell.com>
+
+	* const.cs (Error_ExpressionMustBeConst): 
+	Rename from Error_EpressionMustBeConst.
+	* const.cs, class.cs, statement.cd: Update.
+
+2005-07-21  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #65573
+
+	* const.cs (Const.LookupConstantValue): Report missing contant expression
+	everytime.
+	(Error_EpressionMustBeConstant): Only one error method.
+
+	* class.cs, statement.c: Updated.
+
 2005-07-20  Raja R Harinath  <rharinath@novell.com>
+
+	* statement.cs (Block.Flags): Add back HasVarargs.
+	(Block.flags): Make protected.
+	(ToplevelBlock.HasVarargs): Convert to a property that updates flags.
 
 	* typemanager.cs (types, typecontainers, user_types): Remove.
 	(UserTypes, TypeContainers): Likewise.
