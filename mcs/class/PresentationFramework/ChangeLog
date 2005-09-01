@@ -1,5 +1,9 @@
 2005-09-01  Iain McCoy  <iain@mccoy.id.au>
 
+	* Mono.Windows.Serialization/IXamlWriter.cs: deleted obsolete file
+
+2005-09-01  Iain McCoy  <iain@mccoy.id.au>
+
 	* Mono.Windows.Serialization/XamlParser.cs,
 	  Mono.Windows.Serialization/ParserConsumerBase.cs,
 	  Mono.Windows.Serialization/ParserToCode.cs: somewhat improved
