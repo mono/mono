@@ -1,3 +1,8 @@
+2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpContextCas.cs: New. CAS unit tests for SkipAuthorization and
+	User property setters.
+
 2005-08-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequestTest.cs: test for negative content length.
