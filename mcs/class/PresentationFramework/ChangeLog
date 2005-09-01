@@ -1,5 +1,11 @@
 2005-09-01  Iain McCoy  <iain@mccoy.id.au>
 
+	* System.Windows.Serialization/BamlAttributeUsage.cs,
+	  System.Windows.Serialization/XamlParseMode.cs,
+	  System.Windows.Serialization/Exceptions.cs: add forgotten files
+
+2005-09-01  Iain McCoy  <iain@mccoy.id.au>
+
 	* System.Windows.Serialization/Exceptions.cs: create exception
 	* Mono.Windows.Serialization/XamlParser.cs: throw the new
 	xaml-specific exception
