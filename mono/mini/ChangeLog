@@ -1,4 +1,10 @@
 
+Thu Sep 1 10:22:44 EDT 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: revert another 'optimization' which breaks when
+	items on the eval stack need to be saved at a basic block end
+	(bug #75940).
+
 Wed Aug 31 17:29:32 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* jit-icalls.c: for arrays, ensure we always provide
