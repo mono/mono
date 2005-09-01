@@ -1084,7 +1084,7 @@ namespace System.Collections {
 
 			IEnumerator IEnumerable.GetEnumerator ()
 			{
-				return new Enumerator (host, EnumeratorMode.KEY_MODE);
+				return new Enumerator (host, EnumeratorMode.ENTRY_MODE);
 			}
 
 

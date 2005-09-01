@@ -1,5 +1,10 @@
 2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Hashtable.cs : SyncHashtable.GetEnumerator() returned keys instead
+	  of entries (DictionaryEntry). Fixed bug #75790.
+
+2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SortedList.cs : Even though the key/value pair being set are
 	  identical to the existing one, it causes snapshot out of sync.
 	  Fixed bug #59694.

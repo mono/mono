@@ -791,6 +791,20 @@ public class HashtableTest : Assertion {
 		SetDefaultData ();
 		ht.GetObjectData (null, new StreamingContext ());
 	}
+
+	// bug #75790
+	[Test]
+	[Category ("NotDotNet")] // .NET raises InvalidOperationException.
+	public void SyncHashtable_ICollectionsGetEnumerator ()
+	{
+		Hashtable hashtable = Hashtable.Synchronized (new Hashtable ());
+		hashtable["a"] = 1;
+		//IEnumerator e = (hashtable.Clone() as
+		IEnumerator e = (hashtable as ICollection).GetEnumerator ();
+		//e.Reset();
+		e.MoveNext ();
+		DictionaryEntry de = (DictionaryEntry) e.Current;
+	}
 }
 
 [Serializable]
