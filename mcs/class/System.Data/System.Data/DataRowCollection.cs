@@ -95,7 +95,7 @@ namespace System.Data
 			
 			row.BeginEdit();
 
-			if ((table.DataSet == null || table.DataSet.EnforceConstraints) && !table._duringDataLoad)
+			if (!table._duringDataLoad)
 				// we have to check that the new row doesn't colide with existing row
 				ValidateDataRowInternal(row);
 
@@ -348,10 +348,6 @@ namespace System.Data
 		[MonoTODO]
 		internal void ValidateDataRowInternal(DataRow row)
 		{
-			//first check for null violations.
-			row._nullConstraintViolation = true;
-			row.CheckNullConstraints();
-
 			int newRecord = (row.Proposed >= 0) ? row.Proposed : row.Current;
 			if (newRecord < 0)
 				return;
@@ -359,6 +355,13 @@ namespace System.Data
 			foreach(Index index in table.Indexes) {
 				index.Update(row,newRecord);
 			}
+
+			if (!(table.DataSet == null || table.DataSet.EnforceConstraints))
+				return;
+
+			//first check for null violations.
+			row._nullConstraintViolation = true;
+			row.CheckNullConstraints();
 
 			foreach(Constraint constraint in table.Constraints) {
 				try {

@@ -1,4 +1,9 @@
 2005-09-01 Boris Kirzner <borisk@mainsoft.com>
+	* System.Data/DataRowCollection.cs: indexes should be updated even if 
+	EnforceConstraints is false. Check for EnforceConstraints in
+	ValidateDataRowInternal.
+
+2005-09-01 Boris Kirzner <borisk@mainsoft.com>
 	* System.Data.dll.sources: fixed build. Changed reference to Consts.cs.in.
 
 2005-08-31 Boris Kirzner <borisk@mainsoft.com>

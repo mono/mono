@@ -555,6 +555,37 @@ namespace MonoTests.System.Data
 		}
 		
 		[Test]
+		public void Find2 ()
+		{
+			DataSet ds = new DataSet ();
+			ds.EnforceConstraints = false;
+
+			DataTable dt = new DataTable ();
+			ds.Tables.Add (dt);
+
+			DataColumn dc = new DataColumn ("Column A");
+			dt.Columns.Add (dc);
+
+			dt.PrimaryKey = new DataColumn [] {dc};
+
+			DataRow dr = dt.NewRow ();
+			dr [0] = "a";
+			dt.Rows.Add (dr);
+
+			dr = dt.NewRow ();
+			dr [0] = "b";
+			dt.Rows.Add (dr);
+
+			dr = dt.NewRow ();
+			dr [0] = "c";
+			dt.Rows.Add (dr);
+
+			DataRow row = (DataRow) ds.Tables [0].Rows.Find (new object [] {"a"});
+			
+			AssertNotNull (row);
+		}
+		
+		[Test]
 		public void InsertAt ()
 		{
 			_tbl.Columns.Add ();

@@ -1,3 +1,6 @@
+2005-09-01 Boris Kirzner <borisk@mainsoft.com>
+	* System.Data/DataRowCollectionTest.cs: Added another test case for Find().
+
 2005-08-16  Martin Baulig  <martin@ximian.com>
 
 	* System.Data.Test.Utils/DataProvider.cs: Renamed namespace
