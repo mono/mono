@@ -1,3 +1,9 @@
+2005-09-01  Raja R Harinath  <rharinath@novell.com>
+
+	* NameValueCollection.cs (Add): Add a key from the other
+	collection even if its associated value list is empty.
+	Fix regression introduced by last change.
+
 2005-08-30  Jackson Harper  <jackson@ximian.com>
 
 	* NameValueCollection.cs: Don't crash when we have empty

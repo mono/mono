@@ -175,11 +175,13 @@ namespace System.Collections.Specialized{
 			int max = c.Count;
 			for (int i=0; i < max; i++){
 				string key = c.GetKey (i);
-				string [] values = c.GetValues (i);
-				if (values != null) {
-					foreach (string value in values)
-						Add (key, value);
-				}
+				ArrayList new_values = (ArrayList) c.BaseGet (i);
+				ArrayList values = (ArrayList) BaseGet (key);
+				if (values != null && new_values != null)
+					values.AddRange (new_values);
+				else if (new_values != null)
+					values = new ArrayList (new_values);
+				BaseSet (key, values);
 			}
 		}
 
