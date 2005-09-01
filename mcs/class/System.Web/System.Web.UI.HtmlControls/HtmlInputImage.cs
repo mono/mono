@@ -31,12 +31,17 @@
 // TODO: getting the .x and .y in LoadData doesn't work with mozilla
 //
 
-using System;
 using System.Globalization;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.HtmlControls {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DefaultEvent("ServerClick")]
 	public class HtmlInputImage : HtmlInputControl, IPostBackDataHandler,
 		      IPostBackEventHandler {

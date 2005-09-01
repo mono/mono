@@ -28,9 +28,14 @@
 
 using System.ComponentModel;
 using System.Globalization;
+using System.Security.Permissions;
 
 namespace System.Web.UI.HtmlControls {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 #if NET_2_0
 	[ParseChildren (true, "Rows", ChildControlType = typeof(Control))]
 #else

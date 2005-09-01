@@ -26,12 +26,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.ComponentModel;
-
 #if NET_2_0
+
+using System.ComponentModel;
+using System.Security.Permissions;
+
 namespace System.Web.UI.HtmlControls {
 
-	[DefaultEventAttribute ("")]
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
+	[DefaultEventAttribute ("ServerClick")]
 	public class HtmlInputSubmit : HtmlInputButton, IPostBackEventHandler
 	{
 		public HtmlInputSubmit ()

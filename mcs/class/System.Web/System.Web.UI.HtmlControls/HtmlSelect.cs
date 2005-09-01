@@ -26,16 +26,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.Util;
 using System.ComponentModel;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Security.Permissions;
 
 namespace System.Web.UI.HtmlControls 
 {
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DefaultEvent ("ServerChange")]
 	[ValidationProperty ("Value")]
 	[ControlBuilder (typeof (HtmlSelectBuilder))]

@@ -28,10 +28,14 @@
 
 using System.ComponentModel;
 using System.Collections.Specialized;
+using System.Security.Permissions;
 using System.Web.UI.WebControls;
 
 namespace System.Web.UI.HtmlControls 
 {
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HtmlForm : HtmlContainerControl 
 	{
 		public HtmlForm () : base ("form")
@@ -84,7 +88,6 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[WebSysDescription("")]
 		public string Enctype 
 		{
 			get {
@@ -107,8 +110,6 @@ namespace System.Web.UI.HtmlControls
 		
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[WebSysDescription("")]
-		[WebCategory("Behavior")]
 		public string Method 
 		{
 			get {
@@ -131,8 +132,6 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[WebSysDescription("")]
-		[WebCategory("Appearance")]
 #if NET_2_0
 		public virtual
 #else		
@@ -174,8 +173,6 @@ namespace System.Web.UI.HtmlControls
 			
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		[WebSysDescription("")]
-		[WebCategory("Behavior")]
 		public string Target 
 		{
 			get {

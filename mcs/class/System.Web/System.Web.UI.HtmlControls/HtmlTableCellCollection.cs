@@ -1,5 +1,5 @@
 //
-// System.Web.UI.HtmlControls.HtmlTableRowCollection.cs
+// System.Web.UI.HtmlControls.HtmlTableCellCollection.cs
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -27,9 +27,12 @@
 //
 
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Web.UI.HtmlControls {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HtmlTableCellCollection : ICollection, IEnumerable {
 
 		private ControlCollection cc;

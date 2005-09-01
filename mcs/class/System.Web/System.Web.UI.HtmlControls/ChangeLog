@@ -1,3 +1,17 @@
+2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlTableCell.cs, HtmlTableRowCollection.cs, HtmlInputFile.cs,
+	HtmlHead.cs, HtmlInputReset.cs, HtmlForm.cs, HtmlInputText.cs,
+	HtmlHeadBuilder.cs, HtmlInputRadioButton.cs, HtmlAnchor.cs,
+	HtmlButton.cs, HtmlTextArea.cs, HtmlGenericControl.cs, 
+	HtmlTableRow.cs, HtmlSelect.cs, HtmlControl.cs, HtmlImage.cs,
+	HtmlSelectBuilder.cs, HtmlTable.cs, HtmlInputButton.cs,
+	HtmlInputImage.cs, HtmlTableCellCollection.cs, HtmlInputCheckBox.cs,
+	HtmlInputHidden.cs, HtmlTitle.cs, HtmlInputPassword.cs, 
+	HtmlContainerControl.cs, HtmlInputSubmit.cs: Add missing security
+	attributes AspNetHostingPermission for Minimal level on all classes
+	(LinkDemand) and for non-sealed classes (InheritanceDemand).
+
 2005-08-29  Chris Toshok  <toshok@ximian.com>
 
 	* System.Web.UI.HtmlControls/HtmlTableCell.cs,

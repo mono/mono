@@ -28,9 +28,14 @@
 
 using System.ComponentModel;
 using System.Collections.Specialized;
+using System.Security.Permissions;
 
 namespace System.Web.UI.HtmlControls 
 {
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DefaultEvent ("ServerChange")]
 	public class HtmlInputCheckBox : HtmlInputControl, IPostBackDataHandler
 	{

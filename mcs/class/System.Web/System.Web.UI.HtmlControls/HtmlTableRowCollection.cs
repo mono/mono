@@ -27,9 +27,12 @@
 //
 
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Web.UI.HtmlControls {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HtmlTableRowCollection : ICollection, IEnumerable {
 
 		private ControlCollection cc;
