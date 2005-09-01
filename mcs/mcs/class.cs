@@ -2542,6 +2542,10 @@ namespace Mono.CSharp {
 		static PartialContainer Create (NamespaceEntry ns, TypeContainer parent,
 						MemberName member_name, int mod_flags, Kind kind)
 		{
+
+			if (!CheckModFlags (0, mod_flags, member_name))
+				return null;
+
 			PartialContainer pc = RootContext.Tree.GetDecl (member_name) as PartialContainer;
 			if (pc != null) {
 				if (pc.Kind != kind) {
@@ -2552,13 +2556,9 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (pc.OriginalModFlags != mod_flags) {
-					Report.Error (
-						262, member_name.Location, "Partial declarations of `{0}' " +
-						"have conflicting accessibility modifiers",
-						member_name.GetPartialName ());
+				if (!CheckModFlags (pc.OriginalModFlags, mod_flags, member_name))
 					return null;
-				}
+				pc.ModFlags |= (mod_flags & pc.AllowedModifiers);
 
 				return pc;
 			}
@@ -2579,6 +2579,36 @@ namespace Mono.CSharp {
 			}
 			RootContext.Tree.RecordDecl (ns.NS, member_name, pc);
 			return pc;
+		}
+
+		static bool CheckModFlags (int flags_org, int flags, MemberName member_name)
+		{
+			// Check (abstract|static|sealed) sanity.
+			int tmp = (flags_org | flags) & (Modifiers.ABSTRACT | Modifiers.SEALED | Modifiers.STATIC);
+			if ((tmp & Modifiers.ABSTRACT) != 0) {
+				if ((tmp & (Modifiers.STATIC | Modifiers.SEALED)) != 0) {
+					Report.Error (
+						418, member_name.Location, 
+						"`{0}': an abstract class cannot be sealed or static", member_name.ToString ());
+					return false;
+				}
+			} else if (tmp == (Modifiers.SEALED | Modifiers.STATIC)) {
+				Report.Error (441, member_name.Location, "`{0}': a class cannot be both static and sealed", member_name.ToString ());
+				return false;
+			}
+
+			if (flags_org == 0)
+				return true;
+
+			// Check conflicts.
+			if (0 != ((flags_org ^ flags) & (0xFFFFFFFF ^ (Modifiers.SEALED | Modifiers.ABSTRACT)))) {
+				Report.Error (
+					262, member_name.Location, "Partial declarations of `{0}' " +
+					"have conflicting accessibility modifiers",
+					member_name.GetPartialName ());
+				return false;
+			}
+			return true;
 		}
 
 		public static ClassPart CreatePart (NamespaceEntry ns, TypeContainer parent,

@@ -1,5 +1,11 @@
 2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* cs0418-3.cs, cs0418-4.cs, cs0418-5.cs,
+	  cs0441-2.cs : class modifier check on partial types.
+	* known-issues-gmcs : added above.
+
+2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* cs0665-2.cs : test for bug #75946.
 	* known-issues-gmcs : added this file.
 

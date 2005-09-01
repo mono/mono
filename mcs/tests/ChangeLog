@@ -1,3 +1,9 @@
+2005-08-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-partial-08.cs, test-partial-09.cs :
+	  More partial type tests (allowed modifier combinations).
+	* known-issues-gmcs : added above.
+
 2005-08-30  Ankit Jain  <jankit@novell.com>
 
 	* test-anon-31.cs: New test for #75934.
