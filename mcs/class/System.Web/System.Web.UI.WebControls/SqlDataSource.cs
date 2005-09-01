@@ -33,6 +33,7 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
+using System.Data.Common;
 using System.Text;
 using System.ComponentModel;
 
@@ -79,7 +80,12 @@ namespace System.Web.UI.WebControls {
 			return view;
 		}
 
-		
+		[MonoTODO]
+		protected virtual DbProviderFactory GetDbProviderFactory ()
+		{
+			throw new NotImplementedException ();
+		}
+
 		protected override ICollection GetViewNames ()
 		{
 			return new string [] { "DefaultView" };
@@ -133,7 +139,18 @@ namespace System.Web.UI.WebControls {
 		//public virtual int CacheDuration { get; set; }
 		//public virtual DataSourceCacheExpiry CacheExpirationPolicy { get; set; }
 		//public virtual string CacheKeyDependency { get; set; }
-		//public virtual string SqlCacheDependency { get; set; }
+
+		[DefaultValue ("")]
+		[MonoTODO]
+		public virtual string SqlCacheDependency {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
 		//public virtual bool EnableCaching { get; set; }
 		
 		[DefaultValueAttribute ("")]

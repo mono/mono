@@ -32,12 +32,12 @@
 
 using System.IO;
 using System.ComponentModel;
+using System.Data.Common;
 using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[DesignerAttribute ("System.Web.UI.Design.WebControls.AccessDataSourceDesigner, System.Design",
-		"System.ComponentModel.Design.IDesigner")]			
+	[DesignerAttribute ("System.Web.UI.Design.WebControls.AccessDataSourceDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class AccessDataSource : SqlDataSource 
 	{
 		string dataFile;
@@ -71,31 +71,22 @@ namespace System.Web.UI.WebControls {
 			OnDataSourceChanged (e);
 		}
 
-		/*[MonoTODO]
-		protected internal override void SaveDataToCache (int startingRowIndex,
-							int maxRows, object data)
-		{
-			throw new NotImplementedException ();
-		}
-
+		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[Browsable (false)]
 		[MonoTODO]
-		protected internal override void SaveTotalRowCountToCache(int totalRows)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public override string SqlCacheDependency {
 			get { throw new NotSupportedException ("AccessDataSource does not supports SQL Cache Dependencies."); }
 			set { throw new NotSupportedException ("AccessDataSource does not supports SQL Cache Dependencies."); }
-		}*/
+		}
 
-		//Above commented out portion will come into place after implementing 
-		// stuff in SqlDataSource class.
-		//Overrid implementation will depend on how .Net stores data in 
-		//Cache property of HttpContext object. 
+		[MonoTODO]
+		protected override DbProviderFactory GetDbProviderFactory ()
+		{
+			throw new NotImplementedException ();
+		}
 
 		[BrowsableAttribute (false), 
-		DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]			
+		DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public override string ConnectionString {
 			get { return this.ConnectionString; }
 			set { throw new InvalidOperationException 
@@ -103,11 +94,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[UrlPropertyAttribute (), DefaultValueAttribute (""),
-		WebCategoryAttribute ("Data"), 
-		WebSysDescriptionAttribute ("MS Office Access database file name"),
-		EditorAttribute ("System.Web.UI.Design.MdbDataFileEditor, System.Design", 
-			"System.Drawing.Design.UITypeEditor, System.Drawing")]
+		[UrlPropertyAttribute]
+		[DefaultValueAttribute ("")]
+		[WebCategoryAttribute ("Data")]
+		[WebSysDescriptionAttribute ("MS Office Access database file name")]
+		[EditorAttribute ("System.Web.UI.Design.MdbDataFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string DataFile {
 			get { return dataFile; }
 			set { dataFile = value; }
