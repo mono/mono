@@ -1,3 +1,13 @@
+2005-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: if the request method is HEAD, that's equivalent to
+	SuppressContent. Added an internal TransmitFile that allows setting the
+	final_flush flag.
+	* StaticFileHandler.cs: use the new internal TransmitFile and remove
+	generation of Content-Length header, as now it's computed correctly.
+	* HttpApplication.cs: remove debugging stuff.
+	* HttpResponseStream.cs: suppress_content is checked in HttpResponse.
+
 2005-08-31  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpApplication.cs: Add support for async handlers. 

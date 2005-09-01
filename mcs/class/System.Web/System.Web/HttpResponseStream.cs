@@ -481,16 +481,14 @@ namespace System.Web {
 
 		internal void Flush (HttpWorkerRequest wr, bool final_flush)
 		{
-			if (!response.suppress_content){
-				if (response.use_chunked != null)
-					response.SendSize (total);
-				
-				for (Bucket b = first_bucket; b != null; b = b.Next) 
-					b.Send (wr);
+			if (response.use_chunked != null)
+				response.SendSize (total);
+			
+			for (Bucket b = first_bucket; b != null; b = b.Next) 
+				b.Send (wr);
 
-				if (response.use_chunked != null)
-					wr.SendResponseFromMemory (HttpResponse.ChunkedNewline, 2);
-			}
+			if (response.use_chunked != null)
+				wr.SendResponseFromMemory (HttpResponse.ChunkedNewline, 2);
 
 			wr.FlushResponse (final_flush);
 

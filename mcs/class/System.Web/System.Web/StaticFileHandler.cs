@@ -67,8 +67,7 @@ namespace System.Web
 				response.AddHeader ("Last-Modified", lastWT.ToString ("r"));
 
 				response.ContentType = MimeTypes.GetMimeType (fileName);
-				response.AppendHeader ("Content-Length", fi.Length.ToString (CultureInfo.InvariantCulture));
-				response.TransmitFile (fileName);
+				response.TransmitFile (fileName, true);
 			} catch (Exception e) {
 				throw new HttpException (403, "Forbidden.");
 			}

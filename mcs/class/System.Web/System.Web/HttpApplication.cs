@@ -822,17 +822,14 @@ namespace System.Web {
 				context.BeginTimeoutPossible ();
 				if (handler != null){
 					IHttpAsyncHandler async_handler = handler as IHttpAsyncHandler;
-					Console.WriteLine ("Here");
 					
 					if (async_handler != null){
 						must_yield = true;
 						in_begin = true;
 						async_handler.BeginProcessRequest (context, async_handler_complete_cb, handler);
 					} else {
-						Console.WriteLine ("Start");
 						must_yield = false;
 						handler.ProcessRequest (context);
-						Console.WriteLine ("End");
 					}
 				}
 			} catch (ThreadAbortException taex){

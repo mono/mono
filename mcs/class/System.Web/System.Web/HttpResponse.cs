@@ -650,8 +650,11 @@ namespace System.Web {
 				WriteHeaders (final_flush);
 			}
 
-			if (suppress_content)
+			if (suppress_content || context.Request.HttpMethod == "HEAD") {
+				output_stream.Clear ();
+				output_stream.Flush (WorkerRequest, final_flush);
 				return;
+			}
 
 			HttpApplication app_instance = context.ApplicationInstance;
 			if (app_instance != null)
@@ -664,7 +667,7 @@ namespace System.Web {
 			}
 
 			output_stream.Flush (WorkerRequest, final_flush);
-			
+
 			if (final_flush && use_chunked != null)
 				Write ("0\r\n\r\n");
 		}
@@ -832,9 +835,14 @@ namespace System.Web {
 			if (filename == null)
 				throw new ArgumentNullException ("filename");
 
+			TransmitFile (filename, false);
+		}
+
+		internal void TransmitFile (string filename, bool final_flush)
+		{
 			FileInfo fi = new FileInfo (filename);
 			output_stream.WriteFile (filename, 0, fi.Length);
-			Flush ();
+			Flush (final_flush);
 		}
 		
 
