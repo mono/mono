@@ -1,3 +1,10 @@
+2005-09-01  Raja R Harinath  <rharinath@novell.com>
+
+	* CustomAttributeBuilder.cs (get_umarshal): Don't cause a nullref
+	exception when passed a custom marshaller type that belongs to the
+	assembly being built.  When user specifies MarshalType rather than
+	MarshalTypeRef, don't attempt to resolve the type.
+
 2005-08-31  Raja R Harinath  <rharinath@novell.com>
 
 	* CustomAttributeBuilder.cs (get_umarshal): Fix typo.  The name of

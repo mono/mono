@@ -219,6 +219,7 @@ namespace System.Reflection.Emit {
 			bool hasSize = false;
 			int value;
 			int utype; /* the (stupid) ctor takes a short or an enum ... */
+			string marshalTypeName = null;
 			Type marshalTypeRef = null;
 			string marshalCookie = String.Empty;
 			utype = (int)data [2];
@@ -261,10 +262,15 @@ namespace System.Reflection.Emit {
 					sizeParamIndex = value;
 					hasSize = true;
 					break;
-				case "MarshalTypeRef":
 				case "MarshalType":
 					len = decode_len (data, pos, out pos);
-					marshalTypeRef = Type.GetType (string_from_bytes (data, pos, len));
+					marshalTypeName = string_from_bytes (data, pos, len);
+					pos += len;
+					break;
+				case "MarshalTypeRef":
+					len = decode_len (data, pos, out pos);
+					marshalTypeName = string_from_bytes (data, pos, len);
+					marshalTypeRef = Type.GetType (marshalTypeName);
 					pos += len;
 					break;
 				case "MarshalCookie":
@@ -293,7 +299,7 @@ namespace System.Reflection.Emit {
 			case UnmanagedType.ByValTStr:
 				return UnmanagedMarshal.DefineByValTStr (sizeConst);
 			case UnmanagedType.CustomMarshaler:
-				return UnmanagedMarshal.DefineCustom ( marshalTypeRef, marshalCookie, marshalTypeRef.ToString (), Guid.Empty);
+				return UnmanagedMarshal.DefineCustom (marshalTypeRef, marshalCookie, marshalTypeName, Guid.Empty);
 			default:
 				return UnmanagedMarshal.DefineUnmanagedMarshal ((UnmanagedType)utype);
 			}
