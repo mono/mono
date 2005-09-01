@@ -1,4 +1,11 @@
 
+Thu Sep 1 21:05:26 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* exceptions-arm.c, mini.c, mini-arm.c, mini-arm.h:
+	exception handling support.
+	* mini-arm.c, mini-arm.h: bigendian fixes (partially from a
+	patch by Brian Koropoff <briank@marakicorp.com>).
+
 Thu Sep 1 10:22:44 EDT 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c: revert another 'optimization' which breaks when
