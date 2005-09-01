@@ -1,5 +1,12 @@
 2005-09-01  Iain McCoy  <iain@mccoy.id.au>
 
+	* System.Windows.Serialization/Exceptions.cs: create exception
+	* Mono.Windows.Serialization/XamlParser.cs: throw the new
+	xaml-specific exception
+	* Test/XamlParser.cs: expect the new xaml-specific exception
+
+2005-09-01  Iain McCoy  <iain@mccoy.id.au>
+
 	* Mono.Windows.Serialization/IXamlWriter.cs: deleted obsolete file
 
 2005-09-01  Iain McCoy  <iain@mccoy.id.au>

@@ -1,3 +1,4 @@
+System.Windows.Serialization/Exceptions.cs
 System.Windows.Serialization/IAddChild.cs
 System.Windows.Serialization/Mapper.cs
 System.Windows.Serialization/NamespaceMapEntry.cs
@@ -9,7 +10,6 @@ Mono.Windows.Serialization/ParserConsumerBase.cs
 Mono.Windows.Serialization/ParserToCode.cs
 Mono.Windows.Serialization/Exceptions.cs
 Mono.Windows.Serialization/XamlParser.cs
-Mono.Windows.Serialization/IXamlWriter.cs
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 System.Windows.Serialization/XamlUnknownTagStartNode.cs

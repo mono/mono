@@ -64,7 +64,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Unknown processing instruction.")]
+	[ExpectedException(typeof(XamlParseException), "Unknown processing instruction.")]
 	public void TestIncorrectPIName()
 	{
 		string s = "<?Mapppping ClrNamespace=\"Xaml.TestVocab.Console\" Assembly=\"./TestVocab.dll\" XmlNamespace=\"console\" ?>\n";
@@ -95,7 +95,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Class 'ConsoleApple' not found.")]
+	[ExpectedException(typeof(XamlParseException), "Class 'ConsoleApple' not found.")]
 	public void TestTopLevelWithIncorrectClassName()
 	{
 		string s = "<ConsoleApple xmlns=\"console\"></ConsoleApple>";
@@ -112,7 +112,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "No xml namespace specified.")]
+	[ExpectedException(typeof(XamlParseException), "No xml namespace specified.")]
 	public void TestTopLevelWithoutNamespace()
 	{
 		string s = "<ConsoleApp></ConsoleApp>";
@@ -146,7 +146,7 @@ public class XamlParserTest {
 	}
 	
 	[Test]
-	[ExpectedException(typeof(Exception), "The XAML Name attribute can not be applied to top level elements\nDo you mean the Class attribute?")]
+	[ExpectedException(typeof(XamlParseException), "The XAML Name attribute can not be applied to top level elements\nDo you mean the Class attribute?")]
 	public void TestTopLevelWithName()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\" x:Name=\"nnn\">\n"+
@@ -226,7 +226,7 @@ public class XamlParserTest {
 
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Class 'ConsoleWritttter' not found.")]
+	[ExpectedException(typeof(XamlParseException), "Class 'ConsoleWritttter' not found.")]
 	public void TestSimplestAddChildWithIncorrectName()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
@@ -236,7 +236,7 @@ public class XamlParserTest {
 	}
 	
 	[Test]
-	[ExpectedException(typeof(Exception), "The XAML Class attribute can not be applied to child elements\nDo you mean the Name attribute?")]
+	[ExpectedException(typeof(XamlParseException), "The XAML Class attribute can not be applied to child elements\nDo you mean the Name attribute?")]
 	public void TestSimplestAddChildWithWrongNamingAttribute()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
@@ -349,7 +349,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Property 'Texxxt' not found on 'ConsoleWriter'.")]
+	[ExpectedException(typeof(XamlParseException), "Property 'Texxxt' not found on 'ConsoleWriter'.")]
 	public void TestTextPropertyWithIncorrectName()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
@@ -359,7 +359,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Property node should not have attributes.")]
+	[ExpectedException(typeof(XamlParseException), "Property node should not have attributes.")]
 	public void TestTextPropertyAsElementWithAttribute()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
@@ -371,7 +371,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Property 'Texxxt' not found on 'ConsoleWriter'.")]
+	[ExpectedException(typeof(XamlParseException), "Property 'Texxxt' not found on 'ConsoleWriter'.")]
 	public void TestTextPropertyAsElementWithIncorrectName()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
@@ -425,7 +425,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Dependency properties can only be set on DependencyObjects (not ConsoleValueString)")]
+	[ExpectedException(typeof(XamlParseException), "Dependency properties can only be set on DependencyObjects (not ConsoleValueString)")]
 	public void TestDependencyPropertyOnNotDependencyObject()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
@@ -435,7 +435,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Property 'Reps' does not exist on 'ConsoleApp'.")]
+	[ExpectedException(typeof(XamlParseException), "Property 'Reps' does not exist on 'ConsoleApp'.")]
 	public void TestDependencyPropertyWithIncorrectName()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
@@ -491,7 +491,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Property 'Reps' does not exist on 'ConsoleApp'.")]
+	[ExpectedException(typeof(XamlParseException), "Property 'Reps' does not exist on 'ConsoleApp'.")]
 	public void TestDependencyPropertyAsChildElementWithIncorrectName()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
@@ -670,7 +670,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Cannot add object to instance of 'Xaml.TestVocab.Console.ConsoleValueString'.")]
+	[ExpectedException(typeof(XamlParseException), "Cannot add object to instance of 'Xaml.TestVocab.Console.ConsoleValueString'.")]
 	public void TestRestrictionOfAddingObjectsToIAddChilds()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
@@ -682,7 +682,7 @@ public class XamlParserTest {
 	}
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Cannot add text to instance of 'Xaml.TestVocab.Console.ConsoleValueString'.")]
+	[ExpectedException(typeof(XamlParseException), "Cannot add text to instance of 'Xaml.TestVocab.Console.ConsoleValueString'.")]
 	public void TestRestrictionOfAddingTextToIAddChilds()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
@@ -792,7 +792,7 @@ public class XamlParserTest {
 
 
 	[Test]
-	[ExpectedException(typeof(Exception), "Code element children must be either text or CDATA nodes.")]
+	[ExpectedException(typeof(XamlParseException), "Code element children must be either text or CDATA nodes.")]
 	public void TestCodeWithIncorrectChildren()
 	{
 		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+

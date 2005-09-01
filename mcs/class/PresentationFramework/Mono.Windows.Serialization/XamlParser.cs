@@ -106,7 +106,7 @@ namespace Mono.Windows.Serialization {
 			while (reader.Read()) {
 				Debug.WriteLine("XamlParser: NOW PARSING: " + reader.NodeType + "; " + reader.Name + "; " + reader.Value);
 				if (goneTooFar())
-					throw new Exception("Too far: " + reader.NodeType + ", " + reader.Name);
+					throw new XamlParseException("Too far: " + reader.NodeType + ", " + reader.Name);
 				if (currentState() != null && currentState().type == CurrentType.Code)
 				{
 					processElementInCodeState();
@@ -130,7 +130,7 @@ namespace Mono.Windows.Serialization {
 					// skip whitespace and comments
 					break;
 				default:
-					throw new Exception("Unknown element type " + reader.NodeType);
+					throw new XamlParseException("Unknown element type " + reader.NodeType);
 				}
 				if (nodeQueue.Count != 0) {
 					XamlNode x = (XamlNode)nodeQueue[0];
@@ -147,7 +147,7 @@ namespace Mono.Windows.Serialization {
 					reader.NamespaceURI == XAML_NAMESPACE) {
 				parseEndElement();
 			} else if (reader.NodeType != XmlNodeType.CDATA && reader.NodeType != XmlNodeType.Text) {
-				throw new Exception("Code element children must be either text or CDATA nodes.");
+				throw new XamlParseException("Code element children must be either text or CDATA nodes.");
 			} else {
 				currentState().obj = (string)currentState().obj + reader.Value;
 			}
@@ -167,14 +167,14 @@ namespace Mono.Windows.Serialization {
 		void parsePI()
 		{
 			if (reader.Name != "Mapping")
-				throw new Exception("Unknown processing instruction.");
+				throw new XamlParseException("Unknown processing instruction.");
 			mapper.AddMappingProcessingInstruction(reader.Value);
 		}
 
 		void parseElement()
 		{
 			if (reader.NamespaceURI == "")
-				throw new Exception("No xml namespace specified.");
+				throw new XamlParseException("No xml namespace specified.");
 			if (reader.LocalName == "Code" && reader.NamespaceURI == XAML_NAMESPACE) {
 				parseCodeElement();
 				return;
@@ -260,7 +260,7 @@ namespace Mono.Windows.Serialization {
 		void abortIfNotAddChild(string thing)
 		{
 			if (!isAddChild((Type)currentState().obj))
-				throw new Exception("Cannot add " + thing +
+				throw new XamlParseException("Cannot add " + thing +
 						" to instance of '" + 
 						((Type)currentState().obj) + 
 						"'.");
@@ -273,7 +273,7 @@ namespace Mono.Windows.Serialization {
 			PropertyInfo prop = currentType.GetProperty(propertyName);
 
 			if (prop == null) {
-				throw new Exception("Property '" + propertyName + "' not found on '" + currentType.Name + "'.");
+				throw new XamlParseException("Property '" + propertyName + "' not found on '" + currentType.Name + "'.");
 			}
 
 
@@ -294,7 +294,7 @@ namespace Mono.Windows.Serialization {
 			push(CurrentType.Property, prop);
 
 			if (reader.HasAttributes) {
-				throw new Exception("Property node should not have attributes.");
+				throw new XamlParseException("Property node should not have attributes.");
 			}
 		}
 
@@ -336,7 +336,7 @@ namespace Mono.Windows.Serialization {
 			
 			parent = mapper.GetType(reader.NamespaceURI, reader.Name);
 			if (parent == null)
-				throw new Exception("Class '" + reader.Name + "' not found.");
+				throw new XamlParseException("Class '" + reader.Name + "' not found.");
 		
 			// whichever of these functions runs will push something
 			if (currentState() == null) {
@@ -356,10 +356,10 @@ namespace Mono.Windows.Serialization {
 		void parseTopLevelObjectElement(Type parent)
 		{
 			if (reader.GetAttribute("Name", XAML_NAMESPACE) != null)
-				throw new Exception("The XAML Name attribute can not be applied to top level elements\n"+
+				throw new XamlParseException("The XAML Name attribute can not be applied to top level elements\n"+
 						"Do you mean the Class attribute?");
 			if (reader.GetAttribute("Key", XAML_NAMESPACE) != null)
-				throw new Exception("The XAML Key attribute can not be applied to top level elements.");
+				throw new XamlParseException("The XAML Key attribute can not be applied to top level elements.");
 			begun = true;
 			createTopLevel(parent.AssemblyQualifiedName, reader.GetAttribute("Class", XAML_NAMESPACE));
 		}
@@ -367,7 +367,7 @@ namespace Mono.Windows.Serialization {
 		void parseChildObjectElement(Type parent)
 		{
 			if (reader.GetAttribute("Class", XAML_NAMESPACE) != null)
-				throw new Exception("The XAML Class attribute can not be applied to child elements\n"+
+				throw new XamlParseException("The XAML Class attribute can not be applied to child elements\n"+
 						"Do you mean the Name attribute?");
 			string name = reader.GetAttribute("Name", XAML_NAMESPACE);
 			if (name == null)
@@ -531,7 +531,7 @@ namespace Mono.Windows.Serialization {
 			if (parsedAsEventProperty(currentType, propertyName))
 				return;
 			if (prop == null)
-				throw new Exception ("Property '" + propertyName + "' not found on '" + currentType.Name + "'.");
+				throw new XamlParseException ("Property '" + propertyName + "' not found on '" + currentType.Name + "'.");
 			nodeQueue.Add(new XamlPropertyNode(
 					reader.LineNumber,
 					reader.LinePosition,
@@ -602,7 +602,7 @@ namespace Mono.Windows.Serialization {
 		void ensureDependencyObject(Type currentType)
 		{
 			if (!currentType.IsSubclassOf(typeof(System.Windows.DependencyObject)))
-					throw new Exception("Dependency properties can only be set on "+
+					throw new XamlParseException("Dependency properties can only be set on "+
 							"DependencyObjects (not " + currentType.Name + ")");
 		}
 		Type findTypeToAttachTo(string attachedTo, string propertyName)
@@ -618,7 +618,7 @@ namespace Mono.Windows.Serialization {
 				}
 			}
 			if (typeAttachedTo == null)
-				throw new Exception("Nothing to attach to: " + attachedTo + "." + propertyName);
+				throw new XamlParseException("Nothing to attach to: " + attachedTo + "." + propertyName);
 			return typeAttachedTo;
 		}
 
@@ -626,7 +626,7 @@ namespace Mono.Windows.Serialization {
 		{
 			FieldInfo propField = typeAttachedTo.GetField(propertyName + "Property");
 			if (propField == null)
-				throw new Exception("Property '" + propertyName + "' does not exist on '" + typeAttachedTo.Name + "'.");
+				throw new XamlParseException("Property '" + propertyName + "' does not exist on '" + typeAttachedTo.Name + "'.");
 			return (DependencyProperty)propField.GetValue(null);
 		}
 
