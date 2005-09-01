@@ -302,7 +302,7 @@ namespace Mono.Windows.Serialization {
 			{
 				CodeAssignStatement assignment = new CodeAssignStatement(
 						(CodeExpression)peek(),
-						new CodeVariableReferenceExpression(key));
+						new CodeVariableReferenceExpression((string)keys[key]));
 				
 				constructor.Statements.Add(assignment);
 			}

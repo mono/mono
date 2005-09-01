@@ -162,15 +162,31 @@ public class ParserTest {
 	public void TestObjectAsPropertyValue()
 	{
 		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
-			"<ConsoleReader>\n" +
-			"<ConsoleReader.Prompt><ConsoleWriter /></ConsoleReader.Prompt>\n" +
-			"</ConsoleReader>\n" +
-			"</ConsoleApp>";
-
+		"<ConsoleReader>\n" +
+		"<ConsoleReader.Prompt><ConsoleWriter /></ConsoleReader.Prompt>\n" +
+		"</ConsoleReader>\n" +
+		"</ConsoleApp>";
 		ConsoleApp app = new ConsoleApp();
 		ConsoleReader reader = new ConsoleReader();
 		app.AddChild(reader);
 		ConsoleWriter writer = new ConsoleWriter();
+		reader.Prompt = writer;
+		compare(app);
+	}
+	[Test]
+	public void TestKeyAndStaticResource()
+	{
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter Text=\"xyz\" x:Key=\"foobar\" />\n" +
+			"<ConsoleReader Prompt=\"{StaticResource foobar}\" />\n" +
+			"</ConsoleApp>";
+
+		ConsoleApp app = new ConsoleApp();
+		ConsoleWriter writer = new ConsoleWriter();
+		writer.Text = new ConsoleValueString("xyz");
+		app.AddChild(writer);
+		ConsoleReader reader = new ConsoleReader();
+		app.AddChild(reader);
 		reader.Prompt = writer;
 		
 		compare(app);

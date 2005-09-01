@@ -316,6 +316,29 @@ public class ParserToCodeTest {
 		);							
 	}
 
+	[Test]
+	public void TestKeyAndStaticResource()
+	{
+		code = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter Text=\"xyz\" x:Key=\"foobar\" />\n" +
+			"<ConsoleReader Prompt=\"{StaticResource foobar}\" />\n" +
+			"</ConsoleApp>";
+
+		compare(
+				"namespace DefaultNamespace {\n" +
+				"	public class derivedConsoleApp : Xaml.TestVocab.Console.ConsoleApp {\n" +
+				"		private derivedConsoleApp() {\n" +
+				"			Xaml.TestVocab.Console.ConsoleWriter consoleWriter1 = new Xaml.TestVocab.Console.ConsoleWriter();\n" +
+				"			this.AddChild(consoleWriter1);\n" +
+				"			consoleWriter1.Text = ((Xaml.TestVocab.Console.ConsoleValue)(System.ComponentModel.TypeDescriptor.GetConverter(typeof(Xaml.TestVocab.Console.ConsoleValue)).ConvertFromString(\"xyz\")));\n" +
+				"			Xaml.TestVocab.Console.ConsoleReader consoleReader1 = new Xaml.TestVocab.Console.ConsoleReader();\n" +
+				"			this.AddChild(consoleReader1);\n" +
+				"			consoleReader1.Prompt = consoleWriter1;\n" +
+				"		}\n" +
+				"	}\n" +
+				"}");
+	}
+
 
 	[Test]
 	public void TestEvent()

@@ -1,3 +1,11 @@
+2005-09-01  Iain McCoy  <iain@mccoy.id.au>
+	
+	* Mono.Windows.Serialization/ParserToCode.cs
+	  Test/Parser.cs
+	  Test/XamlParser.cs
+	  Test/ParserToCode.cs: Added tests for x:Key and StaticResource,
+	fixed bug in handling of x:Key in the code generator
+
 2005-08-31  Iain McCoy  <iain@mccoy.id.au>
 
 	* System.Windows.Serialization/Parser.cs,

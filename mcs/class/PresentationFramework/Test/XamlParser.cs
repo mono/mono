@@ -607,6 +607,67 @@ public class XamlParserTest {
 
 	}
 
+	[Test]
+	public void TestKeyAndStaticResource()
+	{
+		string s = "<ConsoleApp xmlns=\"console\" xmlns:x=\"http://schemas.microsoft.com/winfx/xaml/2005\">\n"+
+			"<ConsoleWriter Text=\"xyz\" x:Key=\"foobar\" />\n" +
+			"<ConsoleReader Prompt=\"{StaticResource foobar}\" />\n" +
+			"</ConsoleApp>";
+		object p = buildParser(new StringReader(MAPPING + s));
+		XamlNode n;
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlDocumentStartNode, "A1");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementStartNode, "B1");
+		Assert.AreEqual(n.Depth, 0, "B2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleApp), "B3");
+		
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlKeyElementStartNode, "C1");
+		Assert.AreEqual(n.Depth, 1, "C2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleWriter), "C3");
+		string key = (string)n.GetType().GetProperty("key", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(n, null);
+		Assert.AreEqual(key, "foobar", "C4");
+		
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlPropertyNode, "D1");
+		Assert.AreEqual(1, n.Depth, "D2");
+		Assert.AreEqual(((XamlPropertyNode)n).PropInfo, typeof(ConsoleWriter).GetProperty("Text"), "D3");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlTextNode, "DD1");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementEndNode, "E1");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementStartNode, "F1" + n.GetType());
+		Assert.AreEqual(1, n.Depth, "F2");
+		Assert.AreEqual(((XamlElementStartNode)n).ElementType, typeof(ConsoleReader), "F3");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlPropertyNode, "G1");
+		Assert.AreEqual(1, n.Depth, "G2");
+		Assert.AreEqual(((XamlPropertyNode)n).PropInfo, typeof(ConsoleReader).GetProperty("Prompt"), "G3");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlTextNode, "H1");
+		Assert.AreEqual(1, n.Depth, "H2");
+		key = (string)n.GetType().GetProperty("keyText", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(n, null);
+		Assert.AreEqual("foobar", key, "H3");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementEndNode, "I1");
+
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlElementEndNode, "J1");
+		
+		n = getNextNode(p);
+		Assert.IsTrue(n is XamlDocumentEndNode, "K1");
+
+	}
 
 	[Test]
 	[ExpectedException(typeof(Exception), "Cannot add object to instance of 'Xaml.TestVocab.Console.ConsoleValueString'.")]
