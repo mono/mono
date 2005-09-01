@@ -70,6 +70,7 @@ System.Data.Common/DBDataPermissionTest.cs
 System.Data.Common/DbConnectionStringBuilderTest.cs
 System.Data.Odbc/OdbcPermissionAttributeTest.cs
 System.Data.Odbc/OdbcPermissionTest.cs
+System.Data.Odbc/OdbcParameterCollectionTest.cs
 System.Data.OleDb/OleDbPermissionAttributeTest.cs
 System.Data.OleDb/OleDbPermissionTest.cs
 System.Data.SqlClient/SqlConnectionTest.cs

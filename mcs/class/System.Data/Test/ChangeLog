@@ -1,3 +1,9 @@
+2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* ProviderTests: Added a new framework for testing Data
+	Providers. This framework is based on nunit category tests and
+	also the provider factory provided by Mono.Data.
+
 2005-09-01 Boris Kirzner <borisk@mainsoft.com>
 	* System.Data/DataRowCollectionTest.cs: Added another test case for Find().
 

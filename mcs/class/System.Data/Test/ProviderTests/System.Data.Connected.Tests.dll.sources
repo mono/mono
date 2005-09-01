@@ -1,0 +1,14 @@
+Common/ConnectionManager.cs
+Common/DBHelper.cs
+System.Data.Odbc/OdbcCommandBuilderTest.cs
+System.Data.Odbc/OdbcCommandTest.cs
+System.Data.Odbc/OdbcDataReaderTest.cs
+System.Data.Odbc/OdbcDataAdapterTest.cs
+System.Data.Odbc/OdbcParameterCollectionTest.cs
+ProviderIndependant/DataReaderTest.cs
+ProviderIndependant/IDbCommandTest.cs
+System.Data.SqlClient/SqlCommandBuilderTest.cs
+System.Data.SqlClient/SqlCommandTest.cs
+System.Data.SqlClient/SqlDataReaderTest.cs
+System.Data.SqlClient/SqlDataAdapterTest.cs
+System.Data.SqlClient/SqlTransactionTest.cs

@@ -1,0 +1,6 @@
+2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* IDbCommandTest.cs: Added. Provider independent Command tests.
+
+	* DataReaderTest.cs: Added. Provider independent DataReader tests.
+

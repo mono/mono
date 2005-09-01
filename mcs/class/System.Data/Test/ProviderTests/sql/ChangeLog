@@ -1,0 +1,10 @@
+2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SCHEMA: schema specification.
+
+	* sqlserver.sql: sql script file to create test schema for mssql
+	database. added.
+
+	* mysql.sql: sql script file to create test schema for mysql
+	database. added.
+

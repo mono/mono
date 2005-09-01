@@ -1,3 +1,12 @@
+2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcDataAdapterTest.cs: moved to ProviderTests and integrated
+	with connected more framework.
+	* OdbcCommandTest.cs: -- do --.
+
+	* OdbcParameterCollectionTest.cs: Removed ParameterLengthTrimTest
+	to ProviderTests.
+
 2005-02-15  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcParameterCollectionTest.cs: fix for namespace collision

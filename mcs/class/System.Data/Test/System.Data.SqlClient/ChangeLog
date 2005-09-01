@@ -1,3 +1,12 @@
+2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlDataReaderTest.cs: moved to ProviderTests and integrated with
+	connected mode tests
+	* SqlCommandTest.cs: -- do --
+	* SqlConnectionTest.cs: -- do --
+	* SqlTransactionTest.cs: -- do --
+	* SqlDataAdapterTest.cs: -- do --
+
 2005-06-23  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlConnectionStringBuilderTest.cs: Added few more tests.

@@ -1,0 +1,13 @@
+2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlCommandBuilderTest.cs: added tests for SqlCommandBuilder
+	* SqlCommandTest.cs: pulled from Test/System.Data.SqlClient
+	* SqlConnectionStringBuilderTest.cs: pulled from Test/System.Data.SqlClient
+	* SqlConnectionTest.cs: pulled from Test/System.Data.SqlClient
+	* SqlDataAdapterTest.cs: pulled from Test/System.Data.SqlClient
+	* SqlDataReaderTest.cs: pulled from Test/System.Data.SqlClient
+	* SqlTransactionTest.cs: pulled from Test/System.Data.SqlClient
+
+	Added attribute Category ("sqlserver") to all these test fixtures.
+
+

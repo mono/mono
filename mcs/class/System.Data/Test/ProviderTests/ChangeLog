@@ -1,0 +1,20 @@
+2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.Data.Connected.Tests.dll.sources: source files.
+
+	* app-default.config:
+	* app-net_2_0.config:
+	configuration files for profiles and lists the assembly
+	informations for the Provider factory.
+
+	* odbc.config:
+	* sqlserver.config:
+	connection string info for respective databases.
+
+	* README: initial.
+
+	pulled connected mode test-cases around Test/* directory into this
+	new framework. This framework is based on nunit category based
+	test-cases and uses Provider Factories provided in Mono.Data.dll
+	to write provider independent code.
+

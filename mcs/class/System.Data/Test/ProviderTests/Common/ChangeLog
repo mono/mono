@@ -1,0 +1,6 @@
+2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DBHelper.cs: Added. Class to provide helper methods for other tests.
+
+	* ConnectionManager.cs: Added. Class to manage connections
+

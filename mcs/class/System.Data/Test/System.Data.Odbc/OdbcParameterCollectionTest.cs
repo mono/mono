@@ -38,7 +38,7 @@ namespace MonoTests.System.Data.Odbc
 {
 
         [TestFixture]
-        public class OdbcParameterCollectionTest : MySqlOdbcBaseClient
+        public class OdbcParameterCollectionTest
         {
                 [Test]
                 public void OdbcParameterAddTest ()
@@ -75,30 +75,6 @@ namespace MonoTests.System.Data.Odbc
 
                         Assert.AreEqual (0, param.Size, "#8");
        
-                }
-
-                /// <remarks>
-                /// This tests whether the value is trimmed to the
-                /// given length while passing parameters
-                /// </remarks>
-                [Test]
-                public void ParameterLengthTrimTest ()
-                {
-                        OpenConnection ();
-                        try {
-                                OdbcCommand cmd = new OdbcCommand();
-                                cmd.Connection  = conn;
-                                cmd.CommandType = CommandType.Text;
-                                cmd.CommandText = "SELECT count(*) FROM test WHERE col_char=?";
-                                                                                                                             
-                                OdbcParameter param = cmd.Parameters.Add("@col_char", OdbcType.Text, 15);
-                                param.Value = DateTime.Now.ToString ();
-                                Assert.AreEqual (15, param.Size, "#1");
-                                Convert.ToInt32(cmd.ExecuteScalar());
-                        } finally {
-                                CloseConnection ();
-                                
-                        }
                 }
         }
 }
