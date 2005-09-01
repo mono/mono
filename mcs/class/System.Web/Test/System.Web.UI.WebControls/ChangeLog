@@ -1,3 +1,9 @@
+2005-09-01  Chris Toshok  <toshok@ximian.com>
+
+	* ListControlTest.cs (DefaultProperties): add tests for TagKey,
+	Text, and AppendDataBoundItems.
+	(ViewStateContents): add checks for Text and AppendDataBoundItems.
+
 2005-09-01  Raja R Harinath  <rharinath@novell.com>
 
 	* CalendarTest.cs: Remove duplicate using-declarations.

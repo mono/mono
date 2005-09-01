@@ -74,6 +74,13 @@ namespace MonoTests.System.Web.UI.WebControls {
 			base.Render (writer);
 			return writer.InnerWriter.ToString ();
 		}
+
+#if NET_2_0
+		public HtmlTextWriterTag GetTagKey ()
+		{
+			return TagKey;
+		}
+#endif
 	}
 
 	[TestFixture]
@@ -96,6 +103,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (p.SelectedIndex, -1,"A8");
 			Assert.AreEqual (p.SelectedItem, null, "A9");
 			Assert.AreEqual (p.SelectedValue, String.Empty, "A10");
+#if NET_2_0
+			Assert.IsFalse (p.AppendDataBoundItems, "A11");
+			Assert.AreEqual (p.Text, "", "A12");
+			Assert.AreEqual (p.GetTagKey(), HtmlTextWriterTag.Select, "A13");
+#endif
 		}
 
 		[Test]
@@ -236,6 +248,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			p.DataTextFormatString = "DataTextFormatString";
 			p.DataValueField = "DataValueField";
 			p.SelectedIndex = 1;
+#if NET_2_0
+			p.AppendDataBoundItems = true;
+			p.Text = "Text";
+#endif
 
 			Assert.AreEqual (p.ViewStateValue ("AutoPostBack"), false, "A1");
 			Assert.AreEqual (p.ViewStateValue ("DataMember"), "DataMember", "A2");
@@ -246,10 +262,18 @@ namespace MonoTests.System.Web.UI.WebControls {
 					"DataTextFormatString", "A5");
 			Assert.AreEqual (p.ViewStateValue ("DataValueField"), "DataValueField", "A6");
 
+#if NET_2_0
+			Assert.AreEqual (p.ViewStateValue ("AppendDataBoundItems"), true, "A7");
+#endif
+
 			// None of these are saved
-			Assert.AreEqual (p.ViewStateValue ("SelectedIndex"), null, "A7");
+			Assert.AreEqual (p.ViewStateValue ("SelectedIndex"), null, "A8");
 			Assert.AreEqual (p.ViewStateValue ("SelectedItem"), null, "A9");
-			Assert.AreEqual (p.ViewStateValue ("SelectedValue"), null, "A8");
+			Assert.AreEqual (p.ViewStateValue ("SelectedValue"), null, "A10");
+#if NET_2_0
+			Assert.AreEqual (p.ViewStateValue ("Text"), null, "A11");
+#endif
+
 		}
 
 		[Test]
