@@ -1,3 +1,8 @@
+2005-09-01 Boris Kirzner <borisk@mainsoft.com>
+	* System.Data/DataRowCollection.cs: indexes should be updated even if 
+	EnforceConstraints is false. Check for EnforceConstraints in
+	ValidateDataRowInternal.
+
 2005-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataView.cs: Changed accessibility of dataTable, rowState and
