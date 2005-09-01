@@ -1,3 +1,9 @@
+2005-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: only trigger the Application_Start event
+	once. It was being invoked more than once when several clients were
+	hitting the server at the same time on startup.
+
 2005-09-01 Eyal Alaluf <eyala@mainsoft.com>
 
 	* HttpContext.cs HttpResponse.cs HttpWorkerRequest.cs HttpRuntime.cs

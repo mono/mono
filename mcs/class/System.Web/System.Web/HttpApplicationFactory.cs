@@ -70,6 +70,7 @@ namespace System.Web {
 #endif
 
 		bool needs_init = true;
+		bool app_start_needed = true;
 		Type app_type;
 		HttpApplicationState app_state;
 #if !TARGET_JVM
@@ -357,7 +358,12 @@ namespace System.Web {
 					return null;
 
 				factory.InitType (context);
-				factory.FireOnAppStart (context);
+				lock (factory) {
+					if (factory.app_start_needed) {
+						factory.FireOnAppStart (context);
+						factory.app_start_needed = false;
+					}
+				}
 			}
 
 			lock (factory) {
