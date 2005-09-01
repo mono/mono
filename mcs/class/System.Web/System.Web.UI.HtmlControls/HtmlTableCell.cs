@@ -47,6 +47,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public string Align {
 			get {
 				string s = Attributes ["align"];
@@ -62,6 +64,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public string BgColor {
 			get {
 				string s = Attributes ["bgcolor"];
@@ -77,6 +81,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public string BorderColor {
 			get {
 				string s = Attributes ["bordercolor"];
@@ -92,6 +98,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public int ColSpan {
 			get {
 				string s = Attributes ["colspan"];
@@ -107,6 +115,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public string Height {
 			get {
 				string s = Attributes ["height"];
@@ -126,6 +136,8 @@ namespace System.Web.UI.HtmlControls {
 		[MonoTODO ("duplicate internal class for TypeConverter ?")]
 		[TypeConverter ("System.Web.UI.MinimizableAttributeTypeConverter, " + Consts.AssemblySystem_Web)]
 #endif
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public bool NoWrap {
 			get { return (Attributes ["nowrap"] == "nowrap"); }
 			set {
@@ -138,6 +150,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public int RowSpan {
 			get {
 				string s = Attributes ["rowspan"];
@@ -153,6 +167,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public string VAlign {
 			get {
 				string s = Attributes ["valign"];
@@ -168,6 +184,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public string Width {
 			get {
 				string s = Attributes ["width"];

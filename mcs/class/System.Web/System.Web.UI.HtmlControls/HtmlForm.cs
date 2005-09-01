@@ -84,6 +84,7 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
 		public string Enctype 
 		{
 			get {
@@ -106,6 +107,8 @@ namespace System.Web.UI.HtmlControls
 		
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public string Method 
 		{
 			get {
@@ -128,6 +131,8 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 #if NET_2_0
 		public virtual
 #else		
@@ -169,6 +174,8 @@ namespace System.Web.UI.HtmlControls
 			
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public string Target 
 		{
 			get {

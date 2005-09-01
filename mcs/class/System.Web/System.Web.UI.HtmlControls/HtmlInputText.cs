@@ -52,6 +52,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public int MaxLength {
 			get {
 				string s = Attributes ["maxlength"];
@@ -71,6 +73,8 @@ namespace System.Web.UI.HtmlControls {
 		[DefaultValue ("")]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public int Size {
 			get {
 				string s = Attributes ["size"];
@@ -165,6 +169,8 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event EventHandler ServerChange {
 			add { Events.AddHandler (serverChangeEvent, value); }
 			remove { Events.RemoveHandler (serverChangeEvent, value); }

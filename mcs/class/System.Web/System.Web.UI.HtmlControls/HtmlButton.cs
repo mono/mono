@@ -41,6 +41,8 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		[DefaultValue(true)]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 #if NET_2_0
 		public virtual
 #else		
@@ -134,6 +136,8 @@ namespace System.Web.UI.HtmlControls {
 			base.RenderAttributes (writer);
 		}
 
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event EventHandler ServerClick {
 			add { Events.AddHandler (ServerClickEvent, value); }
 			remove { Events.RemoveHandler (ServerClickEvent, value); }

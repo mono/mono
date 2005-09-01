@@ -40,6 +40,8 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Misc")]
 #if NET_2_0
 		//[TypeConverter (typeof(System.Web.UI.MinimizableAttributeTypeConverter))]
 #endif
@@ -64,7 +66,9 @@ namespace System.Web.UI.HtmlControls
 		}
 		
 		private static readonly object EventServerChange = new object ();
-		
+
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event EventHandler ServerChange
 		{
 			add {

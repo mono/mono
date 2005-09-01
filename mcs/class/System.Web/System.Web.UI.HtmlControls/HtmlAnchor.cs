@@ -41,6 +41,8 @@ namespace System.Web.UI.HtmlControls {
 
 
 		[DefaultValue ("")]
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string HRef {
 			get {
@@ -57,6 +59,8 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		[DefaultValue ("")]
+		[WebSysDescription("")]
+		[WebCategory("Navigation")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Name {
 			get {
@@ -72,6 +76,8 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		[DefaultValue ("")]
+		[WebSysDescription("")]
+		[WebCategory("Navigation")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Target {
 			get {
@@ -87,6 +93,8 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		[DefaultValue ("")]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #if NET_2_0
 		[Localizable (true)]
@@ -158,6 +166,8 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event EventHandler ServerClick {
 			add { Events.AddHandler (serverClickEvent, value); }
 			remove { Events.RemoveHandler (serverClickEvent, value); }

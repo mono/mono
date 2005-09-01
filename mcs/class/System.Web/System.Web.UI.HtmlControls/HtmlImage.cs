@@ -42,8 +42,11 @@ namespace System.Web.UI.HtmlControls
 		{
 		}
 
+		[MonoTODO ("need to validate input strings?")]
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public string Align 
 		{
 			get {
@@ -68,6 +71,8 @@ namespace System.Web.UI.HtmlControls
 		}
 
 		[DefaultValue ("")]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #if NET_2_0
 		[Localizable (true)]
@@ -93,6 +98,8 @@ namespace System.Web.UI.HtmlControls
 		}
 	
 		[DefaultValue (0)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Border 
 		{
@@ -115,6 +122,8 @@ namespace System.Web.UI.HtmlControls
 		}
 
 		[DefaultValue (100)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Height
 		{
@@ -137,6 +146,8 @@ namespace System.Web.UI.HtmlControls
 		}
 		
 		[DefaultValue ("")]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public string Src 
 		{
@@ -159,6 +170,8 @@ namespace System.Web.UI.HtmlControls
 		}
 
 		[DefaultValue (100)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int Width 
 		{

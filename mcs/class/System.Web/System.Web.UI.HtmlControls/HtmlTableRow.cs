@@ -48,6 +48,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public string Align {
 			get {
 				string s = Attributes ["align"];
@@ -63,6 +65,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public string BgColor {
 			get {
 				string s = Attributes ["bgcolor"];
@@ -78,6 +82,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public string BorderColor {
 			get {
 				string s = Attributes ["bordercolor"];
@@ -108,6 +114,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public string Height {
 			get {
 				string s = Attributes ["height"];
@@ -133,6 +141,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public string VAlign {
 			get {
 				string s = Attributes ["valign"];

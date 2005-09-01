@@ -49,6 +49,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public string Align {
 			get {
 				string s = Attributes ["align"];
@@ -64,6 +66,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public string BgColor {
 			get {
 				string s = Attributes ["bgcolor"];
@@ -79,6 +83,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue (-1)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public int Border {
 			get {
 				string s = Attributes ["border"];
@@ -94,6 +100,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public string BorderColor {
 			get {
 				string s = Attributes ["bordercolor"];
@@ -109,6 +117,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public int CellPadding {
 			get {
 				string s = Attributes ["cellpadding"];
@@ -124,6 +134,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public int CellSpacing {
 			get {
 				string s = Attributes ["cellspacing"];
@@ -139,6 +151,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public string Height {
 			get {
 				string s = Attributes ["height"];
@@ -174,6 +188,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public string Width {
 			get {
 				string s = Attributes ["width"];

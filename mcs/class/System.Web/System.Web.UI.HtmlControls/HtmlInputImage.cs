@@ -51,6 +51,8 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		[DefaultValue(true)]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 #if NET_2_0
 		public virtual
 #else
@@ -67,6 +69,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue("")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public string Align {
 			get { return GetAtt ("align"); }
 			set { SetAtt ("align", value); }
@@ -77,13 +81,17 @@ namespace System.Web.UI.HtmlControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif		
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public string Alt {
 			get { return GetAtt ("alt"); }
 			set { SetAtt ("alt", value); }
 		}
 
 		[DefaultValue("")]
+		[WebSysDescription("")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebCategory("Appearance")]
 		public string Src {
 			get { return GetAtt ("src"); }
 			set { SetAtt ("src", value); }
@@ -95,6 +103,8 @@ namespace System.Web.UI.HtmlControls {
 		[DefaultValue("")]
 #endif		
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public int Border {
 			get {
 				string border = Attributes ["border"];
@@ -221,6 +231,8 @@ namespace System.Web.UI.HtmlControls {
 			return res;
 		}
 
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event ImageClickEventHandler ServerClick {
 			add { Events.AddHandler (ServerClickEvent, value); }
 			remove { Events.AddHandler (ServerClickEvent, value); }

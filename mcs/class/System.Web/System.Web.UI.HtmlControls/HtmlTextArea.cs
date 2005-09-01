@@ -47,6 +47,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public int Cols {
 			get {
 				string s = Attributes ["cols"];
@@ -62,6 +64,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public virtual string Name {
 			get { return ID; }
 			set { ; }
@@ -69,6 +73,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public int Rows {
 			get {
 				string s = Attributes ["rows"];
@@ -84,6 +90,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public string Value {
 			get { return InnerHtml; }
 			set { InnerHtml = value; }
@@ -164,6 +172,8 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event EventHandler ServerChange {
 			add { Events.AddHandler (serverChangeEvent, value); }
 			remove { Events.RemoveHandler (serverChangeEvent, value); }

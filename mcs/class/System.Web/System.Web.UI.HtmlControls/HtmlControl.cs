@@ -133,6 +133,7 @@ namespace System.Web.UI.HtmlControls{
 
 		[DefaultValue(false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
 		[WebCategory("Behavior")]
 #if NET_2_0
 		/* Can't find this type in the docs */
@@ -161,6 +162,7 @@ namespace System.Web.UI.HtmlControls{
 
 		[DefaultValue("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
 		[WebCategory("Appearance")]
 		public virtual string TagName
 		{

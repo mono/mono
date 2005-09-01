@@ -40,6 +40,7 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
 		public string Accept 
 		{
 			get {
@@ -62,6 +63,7 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
 		public int MaxLength 
 		{
 			get {
@@ -86,6 +88,8 @@ namespace System.Web.UI.HtmlControls
 		
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Misc")]
 		public HttpPostedFile PostedFile 
 		{
 			get {
@@ -99,6 +103,8 @@ namespace System.Web.UI.HtmlControls
 		[DefaultValue ("")]
 #endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public int Size 
 		{
 			get {

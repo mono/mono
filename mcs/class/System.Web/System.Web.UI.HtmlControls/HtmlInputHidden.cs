@@ -89,6 +89,8 @@ namespace System.Web.UI.HtmlControls {
 				handler (this, e);
 		}
 			
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event EventHandler ServerChange {
 			add { Events.AddHandler (ServerChangeEvent, value); }
 			remove { Events.RemoveHandler (ServerChangeEvent, value); }

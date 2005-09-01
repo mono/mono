@@ -45,6 +45,8 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Misc")]
 		public bool Checked {
 			get { return (Attributes ["checked"] == "checked"); }
 			set {
@@ -150,6 +152,8 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event EventHandler ServerChange {
 			add { Events.AddHandler (serverChangeEvent, value); }
 			remove { Events.RemoveHandler (serverChangeEvent, value); }

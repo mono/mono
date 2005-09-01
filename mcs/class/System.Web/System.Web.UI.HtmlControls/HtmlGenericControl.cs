@@ -33,6 +33,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		[DefaultValue("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
 		[WebCategory("Appearance")]
 		public new string TagName
 		{

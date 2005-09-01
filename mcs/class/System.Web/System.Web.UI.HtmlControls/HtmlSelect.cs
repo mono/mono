@@ -50,6 +50,8 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Data")]
 		public virtual string DataMember 
 		{
 			get {
@@ -74,6 +76,8 @@ namespace System.Web.UI.HtmlControls
 		
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Data")]
 		public virtual object DataSource 
 		{
 			get {
@@ -104,6 +108,8 @@ namespace System.Web.UI.HtmlControls
 				
 
 		[DefaultValue ("")]
+		[WebSysDescription("")]
+		[WebCategory("Data")]
 		public virtual string DataTextField 
 		{
 			get {
@@ -125,6 +131,8 @@ namespace System.Web.UI.HtmlControls
 		}
 
 		[DefaultValue ("")]
+		[WebSysDescription("")]
+		[WebCategory("Data")]
 		public virtual string DataValueField 
 		{
 			get {
@@ -192,6 +200,8 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public bool Multiple 
 		{
 			get {
@@ -214,6 +224,8 @@ namespace System.Web.UI.HtmlControls
 		
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public string Name 
 		{
 			get {
@@ -351,6 +363,8 @@ namespace System.Web.UI.HtmlControls
 
 		private static readonly object EventServerChange = new object ();
 		
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event EventHandler ServerChange
 		{
 			add {
