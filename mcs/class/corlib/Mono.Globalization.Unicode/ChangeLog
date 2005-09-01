@@ -1,3 +1,8 @@
+2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* README, Collation-notes.txt, CollationDataStructures.txt :
+	  removing obsolete info and some added some notes.
+
 2005-08-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Normalization.cs : remove warned code.

@@ -1,19 +1,14 @@
 
 This directory contains support for Unicode normalization and collation.
 
-** build
+** enable collation
 
-	- run "make" in this directory. It requires internet access for the
-	  first time to download dependency files from the web.
+	To use culture-sensitive comparison, set environment 
+	MONO_USE_MANAGED_COLLATION=yes.
 
-	- apply "managed-collation.patch" in this directory.
-
-** use
-
-	Set environment MONO_USE_MANAGED_COLLATION=yes.
-
-	Note that it is still highly unstable and not ready to be used yet.
-	Currently it is lilely to lead a Catastrophe.
+	mscorlib.dll will be replaced to use this collation by default and
+	then it will become MONO_USE_UNMANAGED_COLLATION=yes after the next
+	release.
 
 ** generated files
 
@@ -32,14 +27,8 @@ This directory contains support for Unicode normalization and collation.
 	  ../collation.cjkKO.bin,
 	  ../collation.cjkKOlv2.bin : collation table binary resoueces.
 
-	Run "make" to generate those files. At least binary resources are
-	required when you applied the patch.
-
-** notes
-
-	Many of the files in this directory are subject to change (for
-	example, being rewritten to generate resource files and possibly
-	C header like char-conversions.h and culture-info-table.h in the
-	later stage).
+	To generate those files, run "make" in this directory. It requires 
+	internet access for the first time to download dependency files from
+	the web.
 
 Atsushi Eno <atsushi@ximian.com>

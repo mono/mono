@@ -1,4 +1,4 @@
-* String collation
+* String collation Notes
 
 ** Summary
 
@@ -239,6 +239,9 @@
 
 **** level 3
 
+	The actual value analysis is not complete in this document. See the
+	actual generator code.
+
 	The actual values are + 2 (e.g. for Hangul Normal Jamo, the value is 4)
 
 	For Korean letters:
@@ -439,6 +442,9 @@
 
 **** level 2 details
 
+	The value analysis is not complete in this document. See the
+	actual generator code.
+
 	Known value maps:
 		-0A: Korean parenthesized numbers (3200-321C)
 		-0C: Korean circled numbers (3260-327B)
@@ -590,6 +596,9 @@
 			- 7B <= x <= 7F in "0E" part
 
 **** sortkey details by category
+
+	The actual value analysis is not complete in this document. See the
+	actual generator code.
 
 	1 specially ignored ones (Japanese, Tamil, Thai)
 

@@ -1,24 +1,11 @@
 * Collation Data structure and code
 
+** This document is not up to date
 
-** General
-
-	I will create a code generator named "collation-builder" (currently
-	create-mscompat-collation-table.cs), which creates collation support
-	source files:
-
-	- collation-tables.h : C header that holds raw constant arrays
-	- CollationTable.cs : C# source that declares raw constant arrays
-
-	The latter one is totally optional. It is created just for ease of
-	debugging in pure managed world.
-
-	CollationSource class is used to represent a culture-specific collation
-	resource set.
-
-	Note that there are many characters whose sortkey cannot be acquired
-	only via those tables. For example, Korean Jamo ((U+1113 - U+115F) has
-	primary keys which is more than 2 bytes.
+	Currently the table generator generates all three kind of files
+	(C header, C# source and binary resources) but only binary resources
+	are used in fact. C# source is useful for debugging. C header is
+	historical.
 
 
 ** Manual tasks required to maintain the source.
@@ -27,8 +14,10 @@
 	that is likely not be in sync with the constant arrays.
 
 
-
 ** collation-tables.h
+
+	Note: the structures are similar in MSCompatUnicodeTable.cs but now
+	it is managed code.
 
 	typedef struct {
 		ushort lcid;
@@ -99,12 +88,5 @@
 		int tailoringIndex;
 		int tailoringCount;
 		bool frenchSort;
-
-/*
-		// This array is set according to CJK type, and CJK type
-		// will be hardcoded, being identified from LCID.
-		ushort [] cjk;
-		// For Korean, level2 table is specially treated.
-		byte [] cjkLevel2;
-*/
 	}
+
