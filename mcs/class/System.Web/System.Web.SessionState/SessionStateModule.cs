@@ -43,10 +43,7 @@ namespace System.Web.SessionState
 		internal static readonly string HeaderName = "AspFilterSessionId";
 		static object locker = new object ();
 		
-#if !TARGET_J2EE		
-		static SessionConfig config;
-		static Type handlerType;
-#else
+#if TARGET_J2EE		
 		static private SessionConfig config {
 			get {
 				return (SessionConfig)AppDomain.CurrentDomain.GetData("SessionStateModule.config");
@@ -63,6 +60,9 @@ namespace System.Web.SessionState
 				AppDomain.CurrentDomain.SetData("SessionStateModule.handlerType", value);
 			}
 		}
+#else
+		static SessionConfig config;
+		static Type handlerType;
 #endif		
 		ISessionHandler handler;
 		bool sessionForStaticFiles;
@@ -93,12 +93,16 @@ namespace System.Web.SessionState
 				if (config ==  null)
 					config = new SessionConfig (null);
 
+#if TARGET_J2EE
+				if (config.Mode == SessionStateMode.SQLServer || config.Mode == SessionStateMode.StateServer)
+					throw new NotImplementedException("You must use web.xml to specify session state handling");
+#else
 				if (config.Mode == SessionStateMode.StateServer)
 					handlerType = typeof (SessionStateServerHandler);
 
 				if (config.Mode == SessionStateMode.SQLServer)
 					handlerType = typeof (SessionSQLServerHandler);
-				
+#endif
 				if (config.Mode == SessionStateMode.InProc)
 					handlerType = typeof (SessionInProcHandler);
 

@@ -38,7 +38,9 @@ namespace System.Web.Caching
 		CacheDependency dependency;
 		DateTime start;
 		Cache cache;
+#if !TARGET_JVM
 		FileSystemWatcher[] watchers;
+#endif
 		bool hasChanged;
 		object locker = new object ();
 		
@@ -73,6 +75,7 @@ namespace System.Web.Caching
 		
 		public CacheDependency (string[] filenames, string[] cachekeys, CacheDependency dependency, DateTime start)
 		{
+#if !TARGET_JVM
 			if (filenames != null) {
 				watchers = new FileSystemWatcher [filenames.Length];
 				for (int n=0; n<filenames.Length; n++) {
@@ -95,6 +98,7 @@ namespace System.Web.Caching
 					watchers [n] = watcher;
 				}
 			}
+#endif
 			this.cachekeys = cachekeys;
 			this.dependency = dependency;
 			if (dependency != null)
@@ -113,6 +117,11 @@ namespace System.Web.Caching
 				cache.CheckExpiration ();
 		}
 		
+#if TARGET_JVM
+		void DisposeWatchers ()
+		{
+		}
+#else
 		void DisposeWatchers ()
 		{
 			lock (locker) {
@@ -124,7 +133,7 @@ namespace System.Web.Caching
 				watchers = null;
 			}
 		}
-		
+#endif
 		public void Dispose ()
 		{
 			DisposeWatchers ();
