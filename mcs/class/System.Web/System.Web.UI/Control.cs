@@ -665,6 +665,7 @@ namespace System.Web.UI
 			return false;
 		}
 
+		[WebSysDescription ("")]
                 public virtual Control FindControl (string id)
                 {
 			return FindControl (id, 0);
