@@ -47,7 +47,7 @@ namespace System.Web.UI.WebControls
 			return ViewState [v] != null;
 		}
 		
-		[DefaultValue (0)]
+		[DefaultValue (typeof (Unit), "")]
 		[NotifyParentProperty (true)]
 		public Unit HorizontalPadding {
 			get {
@@ -60,7 +60,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (0)]
+		[DefaultValue (typeof (Unit), "")]
 		[NotifyParentProperty (true)]
 		public Unit VerticalPadding {
 			get {
@@ -73,7 +73,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue (0)]
+		[DefaultValue (typeof (Unit), "")]
 		[NotifyParentProperty (true)]
 		public Unit ItemSpacing {
 			get {

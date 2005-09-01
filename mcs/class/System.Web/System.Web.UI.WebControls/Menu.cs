@@ -237,7 +237,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		[DefaultValue ("16px")]
+		[DefaultValue (typeof (Unit), "16px")]
 		[ThemeableAttribute (true)]
 		public Unit StaticSubMenuIndent {
 			get {

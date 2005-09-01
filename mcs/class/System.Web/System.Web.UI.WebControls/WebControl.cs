@@ -95,7 +95,7 @@ namespace System.Web.UI.WebControls {
 #if ONLY_1_1
 		[Bindable(true)]
 #endif		
-		[DefaultValue("Color [Empty]")]
+		[DefaultValue(typeof (Color), "")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
 		public virtual Color BackColor {
 			get {
@@ -112,7 +112,7 @@ namespace System.Web.UI.WebControls {
 #if ONLY_1_1
 		[Bindable(true)]
 #endif		
-		[DefaultValue("Color [Empty]")]
+		[DefaultValue(typeof (Color), "")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
 		public virtual Color BorderColor {
 			get {
@@ -149,7 +149,7 @@ namespace System.Web.UI.WebControls {
 #if ONLY_1_1
 		[Bindable(true)]
 #endif		
-		[DefaultValue("")]
+		[DefaultValue(typeof (Unit), "")]
 		public virtual Unit BorderWidth {
 			get {
 				if (style == null) 
@@ -249,7 +249,7 @@ namespace System.Web.UI.WebControls {
 #if ONLY_1_1
 		[Bindable(true)]
 #endif		
-		[DefaultValue("Color [Empty]")]
+		[DefaultValue(typeof (Color), "")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
 		public virtual Color ForeColor {
 			get {
@@ -278,7 +278,7 @@ namespace System.Web.UI.WebControls {
 #if ONLY_1_1
 		[Bindable(true)]
 #endif		
-		[DefaultValue("")]
+		[DefaultValue(typeof (Unit), "")]
 		public virtual Unit Height {
 			get {
 				if (style == null) 
@@ -313,7 +313,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[DefaultValue(0)]
+		[DefaultValue((short)0)]
 		public virtual short TabIndex {
 			get {
 				return ViewState.GetShort ("TabIndex", 0);
@@ -342,7 +342,7 @@ namespace System.Web.UI.WebControls {
 #if ONLY_1_1
 		[Bindable(true)]
 #endif		
-		[DefaultValue("")]
+		[DefaultValue(typeof (Unit), "")]
 		public virtual Unit Width {
 			get {
 				if (style == null) 

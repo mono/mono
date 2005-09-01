@@ -79,7 +79,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[DefaultValue("Color [Red]")]
+		[DefaultValue(typeof (Color), "Red")]
 		public override System.Drawing.Color ForeColor {
 			get {
 				return base.ForeColor;

@@ -97,7 +97,7 @@ namespace System.Web.UI.WebControls
 
 		#region Public Instance Properties
 		[Bindable(true)]
-		[DefaultValue("Color [Empty]")]
+		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
 		public Color BackColor 
@@ -120,7 +120,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Bindable(true)]
-		[DefaultValue("Color [Empty]")]
+		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
 		public Color BorderColor 
@@ -165,7 +165,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Bindable(true)]
-		[DefaultValue("")]
+		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
 		public Unit BorderWidth 
 		{
@@ -227,7 +227,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Bindable(true)]
-		[DefaultValue("Color [Empty]")]
+		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
 		public Color ForeColor 
@@ -250,7 +250,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Bindable(true)]
-		[DefaultValue("")]
+		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
 		public Unit Height 
 		{
@@ -277,7 +277,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Bindable(true)]
-		[DefaultValue("")]
+		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
 		public Unit Width 
 		{

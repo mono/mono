@@ -110,7 +110,7 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		
-	    [DefaultValueAttribute (0)]
+	    [DefaultValueAttribute ((short)0)]
 	    [WebCategoryAttribute ("Accessibility")]
 		public virtual short TabIndex {
 			get {

@@ -201,7 +201,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Bindable(true)]
-		[DefaultValue("")]
+		[DefaultValue(typeof (FontUnit), "")]
 		[NotifyParentProperty(true)]
 		public FontUnit Size 
 		{

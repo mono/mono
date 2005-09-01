@@ -1,3 +1,18 @@
+2005-09-01  Miguel de Icaza  <miguel@novell.com>
+
+	* Various places: make sure that the DefaultValue matches the
+	type.  Thanks to Michael for pointing this out.
+
+	In future audits, you might want to use the following awk command:
+
+	awk '/DefaultValue/ { v=$0; looking = 1; } /public/ && looking &&
+	!/string/ && !/ int / && !/ bool / { print FILENAME; print v;
+	print $0; looking = 0; } /public/ && looking { looking = 0; } '
+	*.cs
+
+	The above skips bools, strings and ints as those were fine as we
+	set them.  The bug was on the other ones.
+
 2005-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Repeater.cs: fix the build.

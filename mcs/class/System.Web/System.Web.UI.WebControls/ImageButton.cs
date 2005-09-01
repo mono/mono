@@ -107,7 +107,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[Browsable (true)]
-		[DefaultValue ("")]
+		[DefaultValue (true)]
 		[Bindable (true)]
 		[MonoTODO]
 		public virtual new bool Enabled
