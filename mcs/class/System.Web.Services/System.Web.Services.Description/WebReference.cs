@@ -42,13 +42,16 @@ namespace System.Web.Services.Description
 	sealed class WebReference
 	{
 		DiscoveryClientDocumentCollection _documents;
+#if !TARGET_J2EE
 		CodeNamespace _proxyCode;
+#endif
 		ServiceDescriptionImportWarnings _warnings;
 		string _protocolName;
 		string _appSettingUrlKey;
 		string _appSettingBaseUrl;
 		StringCollection _validationWarnings;
 		
+#if !TARGET_J2EE
 		public WebReference (DiscoveryClientDocumentCollection documents, CodeNamespace proxyCode)
 		{
 			if (documents == null) throw new ArgumentNullException ("documents");
@@ -69,7 +72,7 @@ namespace System.Web.Services.Description
 			_appSettingUrlKey = appSettingUrlKey;
 			_appSettingBaseUrl = appSettingBaseUrl;
 		}
-		
+#endif		
 		public string AppSettingBaseUrl {
 			get { return _appSettingBaseUrl; }
 		}
@@ -86,11 +89,11 @@ namespace System.Web.Services.Description
 			get { return _protocolName; }
 			set { _protocolName = value; }
 		}
-
+#if !TARGET_J2EE
 		public CodeNamespace ProxyCode {
 			get { return _proxyCode; }
 		}
-
+#endif
 		public StringCollection ValidationWarnings {
 			get { 
 				if (_validationWarnings == null) _validationWarnings = new StringCollection ();

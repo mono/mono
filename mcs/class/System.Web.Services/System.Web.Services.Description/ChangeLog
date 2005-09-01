@@ -1,3 +1,9 @@
+2005-09-01  Ilya Kharmatsky <ilyak at mainsoft.com >
+
+    * In WebReference.cs excluded by TARGET_J2EE directives 
+      constructors / methods which use CodeDom API (unsupported in
+      J2EE configuration.
+      
 2005-08-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DocumentableItem.cs: DocumentationElement is also available in .NET
