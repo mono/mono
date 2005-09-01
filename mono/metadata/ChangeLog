@@ -1,3 +1,8 @@
+2005-09-01  Raja R Harinath  <rharinath@novell.com>
+
+	* reflection.c (encode_marshal_blob): 'marshaltype' and
+	'marshaltyperef' are alternate sources for the custom marshaler
+	name.
 
 Wed Aug 31 17:39:54 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
