@@ -1,3 +1,8 @@
+2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs0665-2.cs : test for bug #75946.
+	* known-issues-gmcs : added this file.
+
 2005-08-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs0665.cs : new test (possibly incorrect assignment in if statement).
