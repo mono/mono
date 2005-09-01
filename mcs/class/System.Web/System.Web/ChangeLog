@@ -1,3 +1,9 @@
+2005-09-01 Eyal Alaluf <eyala@mainsoft.com>
+
+	* HttpContext.cs HttpResponse.cs HttpWorkerRequest.cs HttpRuntime.cs
+	  HttpApplicationFactory.cs HttpApplication.cs: TARGET_J2EE/JVM fixes.
+	  Mostly workaround limited AppModel in TARGET_J2EE.
+
 2005-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: if the request method is HEAD, that's equivalent to

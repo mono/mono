@@ -60,6 +60,9 @@ namespace System.Web {
 		object config_timeout;
 		int timeout_possible;
 		DateTime time_stamp = DateTime.UtcNow;
+#if TARGET_JVM // No remoting support (CallContext) yet in Grasshopper
+		static LocalDataStoreSlot _ContextSlot = Thread.GetNamedDataSlot ("Context");
+#endif
 		
 		public HttpContext (HttpWorkerRequest wr)
 		{
@@ -116,6 +119,14 @@ namespace System.Web {
 		// The "Current" property is set just after we have constructed it with 
 		// the 'HttpContext (HttpWorkerRequest)' constructor.
 		//
+#if TARGET_JVM // No remoting support (CallContext) yet in Grasshopper
+		[MonoTODO("Context - Use System.Remoting.Messaging.CallContext instead of Thread storage")]
+		public static HttpContext Current
+		{
+			get { return (HttpContext) Thread.GetData (_ContextSlot); }
+			set { Thread.SetData (_ContextSlot, value); }
+		}
+#else
 		public static HttpContext Current {
 			get {
 				return (HttpContext) CallContext.GetData ("c");
@@ -125,6 +136,7 @@ namespace System.Web {
 				CallContext.SetData ("c", value);
 			}
 		}
+#endif
 
 		public Exception Error {
 			get {

@@ -788,6 +788,7 @@ namespace System.Web {
 			Flush ();
 		}
 
+#if !TARGET_JVM
 		public void WriteFile (IntPtr fileHandle, long offset, long size)
 		{
 			if (offset < 0)
@@ -805,6 +806,7 @@ namespace System.Web {
 				return;
 			Flush ();
 		}
+#endif
 
 		public void WriteFile (string filename, long offset, long size)
 		{

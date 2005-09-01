@@ -891,7 +891,9 @@ namespace System.Web {
 
 		void PreStart ()
 		{
+#if !TARGET_J2EE
 			HttpRuntime.TimeoutManager.Add (context);
+#endif
 			Thread th = Thread.CurrentThread;
 			if (app_culture != null) {
 				prev_app_culture = th.CurrentCulture;
@@ -903,20 +905,26 @@ namespace System.Web {
 				th.CurrentCulture = appui_culture;
 			}
 
+#if !TARGET_JVM
 			prev_user = Thread.CurrentPrincipal;
+#endif
 		}
 
 		void PostDone ()
 		{
 			Thread th = Thread.CurrentThread;
+#if !TARGET_JVM
 			if (Thread.CurrentPrincipal != prev_user)
 				Thread.CurrentPrincipal = prev_user;
+#endif
 			if (prev_appui_culture != null && prev_appui_culture != th.CurrentUICulture)
 				th.CurrentUICulture = prev_appui_culture;
 			if (prev_app_culture != null && prev_app_culture != th.CurrentCulture)
 				th.CurrentCulture = prev_app_culture;
 
+#if !TARGET_J2EE
 			HttpRuntime.TimeoutManager.Remove (context);
+#endif
 			context = null;
 			HttpContext.Current = null;
 		}

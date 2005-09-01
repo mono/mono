@@ -72,8 +72,10 @@ namespace System.Web {
 		bool needs_init = true;
 		Type app_type;
 		HttpApplicationState app_state;
+#if !TARGET_JVM
 		FileSystemWatcher app_file_watcher;
 		FileSystemWatcher bin_watcher;
+#endif
 		Stack available = new Stack ();
 		
 		// Watch this thing out when getting an instance
@@ -179,7 +181,8 @@ namespace System.Web {
 		{
 			theFactory.FireOnAppEnd ();
 		}
-			
+
+#if !TARGET_JVM
 		FileSystemWatcher CreateWatcher (string file, FileSystemEventHandler hnd)
 		{
 			FileSystemWatcher watcher = new FileSystemWatcher ();
@@ -202,6 +205,7 @@ namespace System.Web {
 			app_file_watcher.EnableRaisingEvents = false;
 			HttpRuntime.UnloadAppDomain ();
 		}
+#endif
 
 		internal static void AttachEvents (HttpApplication app)
 		{

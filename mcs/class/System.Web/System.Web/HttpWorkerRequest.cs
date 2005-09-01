@@ -208,7 +208,7 @@ namespace System.Web {
 
 		public virtual IntPtr GetUserToken ()
 		{
-			return (IntPtr) 0;
+			return IntPtr.Zero;
 		}
 
 		public bool HasEntityBody ()
@@ -253,6 +253,12 @@ namespace System.Web {
 			throw new NotImplementedException ();
 		}
 
+#if TARGET_JVM
+		public virtual void SendResponseFromMemory (IntPtr data, int length)
+		{
+			throw new NotImplementedException("SendResponseFromMemory: unsafe buffers (IntPtr) are not supported");
+		}
+#else
 		public virtual void SendResponseFromMemory (IntPtr data, int length)
 		{
 			byte [] copy = new byte [length];
@@ -261,6 +267,7 @@ namespace System.Web {
 
 			SendResponseFromMemory (copy, length);
 		}
+#endif
 
 		public virtual void SetEndOfSendNotification (HttpWorkerRequest.EndOfSendNotification callback, object extraData)
 		{
@@ -559,7 +566,7 @@ namespace System.Web {
 
 		public virtual IntPtr GetVirtualPathToken ()
 		{
-			return (IntPtr) 0;
+			return IntPtr.Zero;
 		}
 #endregion
 		

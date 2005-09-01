@@ -42,12 +42,49 @@ using System.Threading;
 namespace System.Web {
 	
 	public sealed class HttpRuntime {
+#if TARGET_J2EE
+		static QueueManager queue_manager { get { return _runtime._queue_manager; } }
+		static TraceManager trace_manager { get { return _runtime._trace_manager; } }
+		static Cache cache { get { return _runtime._cache; } }
+		static WaitCallback do_RealProcessRequest;
+
+		QueueManager _queue_manager;
+		TraceManager _trace_manager;
+		Cache _cache;
+
+		static HttpRuntime ()
+		{
+			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
+		}
+
+		public HttpRuntime ()
+		{
+			_queue_manager = new QueueManager ();
+			_trace_manager = new TraceManager ();
+			_cache = new Cache ();
+		}
+
+		static private HttpRuntime _runtime {
+			get {
+				HttpRuntime runtime = (HttpRuntime)AppDomain.CurrentDomain.GetData("HttpRuntime");
+				if (runtime == null)
+					lock (typeof(HttpRuntime)) {
+						runtime = (HttpRuntime)AppDomain.CurrentDomain.GetData("HttpRuntime");
+						if (runtime == null) {
+							runtime = new HttpRuntime();
+							AppDomain.CurrentDomain.SetData("HttpRuntime", runtime);
+						}
+					}
+				return runtime;
+			}
+		}
+#else
 		static QueueManager queue_manager;
 		static TraceManager trace_manager;
 		static TimeoutManager timeout_manager;
 		static Cache cache;
 		static WaitCallback do_RealProcessRequest;
-		
+
 		static HttpRuntime ()
 		{
 			queue_manager = new QueueManager ();
@@ -56,10 +93,11 @@ namespace System.Web {
 			cache = new Cache ();
 			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
 		}
-		
+
 		public HttpRuntime ()
 		{
 		}
+#endif
 
 #region AppDomain handling
 		//
@@ -270,11 +308,13 @@ namespace System.Web {
 			}
 		}
 
+#if !TARGET_JVM
 		internal static TimeoutManager TimeoutManager {
 			get {
 				return timeout_manager;
 			}
 		}
+#endif
 
 #if NET_2_0
 		static ApplicationShutdownReason shutdown_reason = ApplicationShutdownReason.None;
