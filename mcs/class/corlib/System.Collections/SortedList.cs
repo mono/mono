@@ -522,6 +522,7 @@ namespace System.Collections {
 					throw new ArgumentException("element already exists");
 
 				table [freeIndx].value = value;
+				++modificationCount;
 				return;
 			}
 

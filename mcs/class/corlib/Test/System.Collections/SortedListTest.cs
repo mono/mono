@@ -797,6 +797,18 @@ public class SortedListTest : Assertion {
 		sl1.TrimToSize();
 		AssertEquals("sl.TrimToSize: incorrect capacity after trimming a list",73,sl1.Capacity);
 	}
+
+	[Test]
+	[ExpectedException (typeof (InvalidOperationException))]
+	public void SetIdenticalObjectException ()
+	{
+		// Even though the key/value pair being set are identical to
+		// the existing one, it causes snapshot out of sync.
+		SortedList sl = new SortedList ();
+		sl ["foo"] = "bar";
+		foreach (string s in sl.Keys)
+			sl ["foo"] = "bar";
+	}
 }
 
 }
