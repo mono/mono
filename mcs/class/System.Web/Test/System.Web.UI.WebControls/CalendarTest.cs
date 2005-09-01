@@ -36,7 +36,6 @@ using System.IO;
 using System.Web;
 using System.Web.UI;
 using System.Globalization;
-using System.Drawing;
 
 class PokerCalendar : System.Web.UI.WebControls.Calendar {
 	public PokerCalendar ()

@@ -57,6 +57,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				LoadViewState (o);
 			}
 
+#if NET_2_0
 			public DataSourceSelectArguments GetSelectArguments()
 			{
 				return SelectArguments;
@@ -66,8 +67,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				return base.CreateDataSourceSelectArguments();
 			}
+#endif
 		}
-	
+
+#if NET_2_0
 		[Test]
 		public void Repeater_DefaultsSelectArguments ()
 		{
@@ -92,5 +95,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			
 			Assert.AreEqual (args, args2, "multiple calls, same ref");
 		}
+#endif
 	}
 }

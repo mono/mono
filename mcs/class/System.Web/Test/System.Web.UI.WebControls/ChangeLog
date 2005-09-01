@@ -1,3 +1,11 @@
+2005-09-01  Raja R Harinath  <rharinath@novell.com>
+
+	* CalendarTest.cs: Remove duplicate using-declarations.
+	* XmlDataSourceTest.cs: Protect with NET_2_0 guard.
+	* RepeaterTest.cs (Poker.GetSelectArguments): Likewise.
+	(Poker.DoCreateDataSourceSelectArguments): Likewise.
+	(Repeater_DefaultsSelectArguments): Likewise.
+
 2005-08-31  Chris Toshok  <toshok@ximian.com>
 
 	* TreeViewTest.cs: beginnings of new tests.
