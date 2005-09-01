@@ -30,15 +30,13 @@
 //
 
 using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
-using Cairo;
 
 namespace Cairo {
    
                   
    [StructLayout(LayoutKind.Sequential)]
-   public struct Matrix_T
+   internal struct Matrix_T
    {
 	   public double xx; 
 	   public double yx;
@@ -136,7 +134,7 @@ namespace Cairo {
                         CairoAPI.cairo_matrix_transform_point (ref matrix, ref x, ref y);
 		}
 		
-                public Matrix_T Pointer {
+                internal Matrix_T Pointer {
                         get { return matrix; }
 			set { matrix = value; }
                 }

@@ -33,12 +33,11 @@
 //
 
 using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace Cairo {
 
-	public class CairoAPI
+	internal class CairoAPI
         {
                 internal const string CairoImp = "cairo";
 		
@@ -142,21 +141,17 @@ namespace Cairo {
 		[DllImport (CairoImp)]
 		public static extern void cairo_new_path (IntPtr cr);
 		
-		public  delegate void MoveToCallback (object closure, PointD p);
 		internal delegate void MoveToCallbackPriv (IntPtr closure, 
 							  double x, double y);
 
-		public  delegate void LineToCallback (object closure, PointD p);
 		internal delegate void LineToCallbackPriv (IntPtr closure, 
 							  double x, double y);
 		
-		public  delegate void CurveToCallback (object closure, PointD p1, PointD p2, PointD p3);
 		internal delegate void CurveToCallbaclPriv (IntPtr closure, 
 							   double x1, double y1,
 							   double x2, double y2,
 							   double x3, double y3);
 		
-		public  delegate void ClosePathCallback (object closure);
 		internal delegate void ClosePathCallbackPriv (IntPtr closure);		
 		
 		[DllImport (CairoImp)]
@@ -644,5 +639,12 @@ namespace Cairo {
                 public  double y;
         }
 
+		public  delegate void ClosePathCallback (object closure);
+
+		public  delegate void CurveToCallback (object closure, PointD p1, PointD p2, PointD p3);
+
+		public  delegate void MoveToCallback (object closure, PointD p);
+
+		public  delegate void LineToCallback (object closure, PointD p);
 
 }

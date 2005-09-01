@@ -3,6 +3,17 @@
         * Samples: Added png and x11 samples and cleaned up gtk
 
 2005-08-30  John Luke  <john.luke@gmail.com>
+ 
+ 	* Mono.Cairo/Cairo.cs: mark CairoAPI internal, and move
+ 	  some callback delegates outside the CairoAPI class
+ 	* Mono.Cairo.Matrix.cs: mark Matrix_T internal
+ 	* Mono.Cairo/*.cs: remove using System.Drawing;
+ 	* Mono.Cairo.Graphics.cs: fix IDisposable implementation
+  	  add overloads to MoveTo () and similar functions
+ 	  for passing the parameters individually
+ 	* Makefile: remove -r:System.Drawing
+
+2005-08-30  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Cairo.cs: add import for
 	cairo_surface_write_to_png

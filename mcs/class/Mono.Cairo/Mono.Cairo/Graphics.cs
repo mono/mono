@@ -34,7 +34,6 @@
 //
 
 using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 using Cairo;
 
@@ -110,7 +109,7 @@ namespace Cairo {
 		
 		~Graphics ()
 		{
-			Console.WriteLine ("Cairo not thread safe, you might want to call IDisposable.Dispose on Cairo.Surface");
+			Dispose (false);
 		}
 
 		void IDisposable.Dispose ()
@@ -122,7 +121,7 @@ namespace Cairo {
                 protected virtual void Dispose (bool disposing)
                 {
 			if (!disposing){
-				Console.WriteLine ("Cairo.Graphics: called from thread");
+				//Console.WriteLine ("Cairo.Graphics: called from thread");
 				return;
 			}
 			
@@ -302,10 +301,10 @@ namespace Cairo {
                         CairoAPI.cairo_new_path (state);
                 }
         
-		public void CurrentPath (CairoAPI.MoveToCallback move_to, 
-					 CairoAPI.LineToCallback line_to,
-					 CairoAPI.CurveToCallback curve_to,
-					 CairoAPI.ClosePathCallback close_path,
+		public void CurrentPath (MoveToCallback move_to, 
+					 LineToCallback line_to,
+					 CurveToCallback curve_to,
+					 ClosePathCallback close_path,
 					 object closure)
 		{
 			
@@ -313,28 +312,53 @@ namespace Cairo {
 		
                 public void MoveTo (PointD p)
                 {
-                        CairoAPI.cairo_move_to (state, p.X, p.Y);
+						MoveTo (p.X, p.Y);
                 }
+
+				public void MoveTo (double x, double y)
+				{
+                        CairoAPI.cairo_move_to (state, x, y);
+				}
                 
                 public void LineTo (PointD p)
+				{
+						LineTo (p.X, p.Y);
+				}
+
+				public void LineTo (double x, double y)
                 {
-                        CairoAPI.cairo_line_to (state, p.X, p.Y);
+                        CairoAPI.cairo_line_to (state, x, y);
                 }
 
                 public void CurveTo (PointD p1, PointD p2, PointD p3)
+				{
+						CurveTo (p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y);
+				}
+				
+                public void CurveTo (double x1, double y1, double x2, double y2, double x3, double y3)
                 {
-                        CairoAPI.cairo_curve_to (state, p1.X, p1.Y, p2.X, p2.Y, p3.X, p3.Y);
+                        CairoAPI.cairo_curve_to (state, x1, y1, x2, y2, x3, y3);
                 }
 
                 public void RelMoveTo (PointD p)
+				{
+						RelMoveTo (p.X, p.Y);
+				}
+				
+                public void RelMoveTo (double x, double y)
                 {
-                        CairoAPI.cairo_rel_move_to (state, p.X, p.Y);
+                        CairoAPI.cairo_rel_move_to (state, x, y);
                 }
 
                 public void RelLineTo (PointD p)
                 {
-                        CairoAPI.cairo_rel_line_to (state, p.X, p.Y);
+						RelLineTo (p.X, p.Y);
                 }
+
+                public void RelLineTo (double x, double y)
+				{
+                        CairoAPI.cairo_rel_line_to (state, x, y);
+				}
 
                 public void RelCurveTo (double dx1, double dy1, double dx2, double dy2, double dx3, double dy3)
                 {
@@ -353,12 +377,22 @@ namespace Cairo {
 		
 		public void ArcTo (PointD p1, PointD p2, double radius)
 		{
-			CairoAPI.cairo_arc_to (state, p1.X, p1.Y, p2.X, p2.Y, radius);
+				ArcTo (p1.X, p1.Y, p2.X, p2.Y, radius);
+		}
+		
+		public void ArcTo (double x1, double y1, double x2, double y2, double radius)
+		{
+			CairoAPI.cairo_arc_to (state, x1, y1, x2, y2, radius);
 		}
                 
                 public void Rectangle (PointD p, double width, double height)
+				{
+						Rectangle (p.X, p.Y, width, height);
+				}
+
+                public void Rectangle (double x, double y, double width, double height)
                 {
-                        CairoAPI.cairo_rectangle (state, p.X, p.Y, width, height);
+                        CairoAPI.cairo_rectangle (state, x, y, width, height);
                 }
                 
                 public void ClosePath ()
