@@ -65,7 +65,7 @@ cs0652-2.cs NO ERROR
 cs0652-3.cs NO ERROR
 cs0652-4.cs NO ERROR
 cs0652.cs NO ERROR
-cs0665-2.cs
+cs0665-2.cs NO ERROR
 cs0687.cs
 cs1010-2.cs
 cs1013.cs # new in GMCS; grammar issue
