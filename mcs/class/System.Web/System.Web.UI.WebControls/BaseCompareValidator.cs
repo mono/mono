@@ -141,9 +141,14 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO ("why override?")]
 		protected override bool DetermineRenderUplevel ()
 		{
+			/* presumably the CompareValidator client side
+			 * code makes use of newer dom/js stuff than
+			 * the rest of the validators.  but ours
+			 * doesn't for the moment, so let's just use
+			 * our present implementation
+			 */
 			return base.DetermineRenderUplevel();
 		}
 
@@ -204,6 +209,20 @@ namespace System.Web.UI.WebControls {
 #endif
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		[DefaultValue (false)]
+		[Themeable (false)]
+		public bool CultureInvariantValues {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
+
 		protected static int CutoffYear {
 			get {
 				return CultureInfo.CurrentCulture.Calendar.TwoDigitYearMax;
@@ -211,6 +230,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue(ValidationDataType.String)]
+#if NET_2_0
+		[Themeable (false)]
+#endif
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
 		public ValidationDataType Type {
@@ -221,6 +243,36 @@ namespace System.Web.UI.WebControls {
 				type = value;
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public static bool CanConvert (string text, 
+					       ValidationDataType type, 
+					       bool cultureInvariant)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected static bool Compare (string leftText, 
+					       bool cultureInvariantLeftText, 
+					       string rightText, 
+					       bool cultureInvariantRightText, 
+					       ValidationCompareOperator op, 
+					       ValidationDataType type)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected static bool Convert (string text,
+					       ValidationDataType type,
+					       bool cultureInvariant,
+					       out object value)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 
 }

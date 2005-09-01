@@ -33,7 +33,11 @@ namespace System.Web.UI.WebControls {
 	public class ButtonColumn : DataGridColumn {
 		       
 		[DefaultValue(ButtonColumnType.LinkButton)]
+#if NET_2_0
+		[WebSysDescription("The type of button contained within the column.")]
+#else
 		[Description("The type of button contained within the column.")]
+#endif
 		[WebCategory ("Misc")]
 		public virtual ButtonColumnType ButtonType
 		{
@@ -47,7 +51,11 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValue("")]
+#if NET_2_0
+		[WebSysDescription("The command associated with the button.")]
+#else
 		[Description("The command associated with the button.")]
+#endif
 		[WebCategory ("Misc")]
 		public virtual string CommandName
 		{
@@ -59,8 +67,27 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue (false)]
+		[WebSysDescription("")]
+		[WebCategory ("Behavior")]
+		public virtual bool CausesValidation
+		{
+			get {
+				return ViewState.GetBool ("CausesValidation", false);
+			}
+			set {
+				ViewState ["CausesValidation"] = value;
+			}
+		}
+#endif
+
 		[DefaultValue("")]
+#if NET_2_0
+		[WebSysDescription("The field bound to the text property of the button.")]
+#else
 		[Description("The field bound to the text property of the button.")]
+#endif
 		[WebCategory ("Misc")]
 		public virtual string DataTextField 
 		{
@@ -73,7 +100,11 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValue("")]
+#if NET_2_0
+		[WebSysDescription("The formatting applied to the value bound to the Text property.")]
+#else
 		[Description("The formatting applied to the value bound to the Text property.")]
+#endif
  		[WebCategory ("Misc")]
 		public virtual string DataTextFormatString 
 		{
@@ -87,7 +118,12 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue("")]
+#if NET_2_0
+		[Localizable (true)]
+		[WebSysDescription("The text used for the button.")]
+#else
 		[Description("The text used for the button.")]
+#endif
 		[WebCategory ("Misc")]
 		public virtual string Text 
 		{
@@ -98,6 +134,21 @@ namespace System.Web.UI.WebControls {
 				ViewState ["Text"] = value;
 			}
 		}
+
+#if NET_2_0
+		[DefaultValue ("")]
+		[WebSysDescription("")]
+		[WebCategory ("Behavior")]
+		public virtual string ValidationGroup
+		{
+			get {
+				return ViewState.GetString ("ValidationGroup", "");
+			}
+			set {
+				ViewState ["ValidationGroup"] = value;
+			}
+		}
+#endif
 		
 		public override void Initialize ()
 		{

@@ -31,8 +31,13 @@ using System.Web.UI.WebControls;
 using System.Globalization;
 using System.ComponentModel;
 
-namespace System.Web.UI.WebControls {
+namespace System.Web.UI.WebControls
+{
+#if NET_2_0
+	[ToolboxData("<{0}:CompareValidator runat=\"server\" ErrorMessage=\"CompareValidator\"></{0}:CompareValidator>")]
+#else
 	[ToolboxData("<{0}:CompareValidator runat=server ErrorMessage=\"CompareValidator\"></{0}:CompareValidator>")]
+#endif
 	public class CompareValidator : BaseCompareValidator
 	{
 		public CompareValidator ()
@@ -88,6 +93,9 @@ namespace System.Web.UI.WebControls {
 		[TypeConverter(typeof(System.Web.UI.WebControls.ValidatedControlConverter))]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
+#if NET_2_0
+		[Themeable (false)]
+#endif
 		public string ControlToCompare {
 			get {
 				return ViewState.GetString ("ControlToCompare", String.Empty);
@@ -100,6 +108,9 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(ValidationCompareOperator.Equal)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
+#if NET_2_0
+		[Themeable (false)]
+#endif
 		public ValidationCompareOperator Operator {
 			get {
 				return (ValidationCompareOperator)ViewState.GetInt ("Operator", (int)ValidationCompareOperator.Equal);
@@ -110,10 +121,15 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
+#if NET_2_0
+		[Themeable (false)]
+#endif
 		public string ValueToCompare {
 			get {
 				return ViewState.GetString ("ValueToCompare", String.Empty);

@@ -35,7 +35,12 @@ namespace System.Web.UI.WebControls {
 	[DataBindingHandler ("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[DefaultProperty ("Text")]
 	[Designer ("System.Web.UI.Design.WebControls.ButtonDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+
+#if NET_2_0
+	[ToolboxDataAttribute ("<{0}:Button runat=\"server\" Text=\"Button\"></{0}:Button>")]
+#else
 	[ToolboxDataAttribute ("<{0}:Button runat=server Text=\"Button\"></{0}:Button>")]
+#endif
 
 	public class Button : WebControl, IPostBackEventHandler
 #if NET_2_0
@@ -269,7 +274,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[Themeable (false)]
-		[UrlProperty]
+		[UrlProperty("*.aspx")]
 		[MonoTODO]
 		public string PostBackUrl {
 			get {

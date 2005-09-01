@@ -32,7 +32,11 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
 	[DefaultEvent("ServerValidate")]
+#if NET_2_0
+	[ToolboxData("<{0}:CustomValidator runat=\"server\" ErrorMessage=\"CustomValidator\"></{0}:CustomValidator>")]
+#else
 	[ToolboxData("<{0}:CustomValidator runat=server ErrorMessage=\"CustomValidator\"></{0}:CustomValidator>")]
+#endif
 	public class CustomValidator : BaseValidator {
 		#region Public Constructors
 		public CustomValidator() {
@@ -43,6 +47,9 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
+#if NET_2_0
+		[Themeable (false)]
+#endif
 		public string ClientValidationFunction {
 			get {
 				return ViewState.GetString("ClientValidationFunction", string.Empty);
@@ -52,6 +59,20 @@ namespace System.Web.UI.WebControls {
 				ViewState["ClientValidationFunction"] = value;
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		[Themeable (false)]
+		[DefaultValue (false)]
+		public bool ValidateEmptyText {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods

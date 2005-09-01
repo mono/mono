@@ -33,7 +33,11 @@ using System.Collections;
 
 namespace System.Web.UI.WebControls {
 
-	public sealed class AdCreatedEventArgs : EventArgs {
+	public
+#if !NET_2_0
+	sealed
+#endif
+	class AdCreatedEventArgs : EventArgs {
 
 		private IDictionary properties;
 

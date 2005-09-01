@@ -35,9 +35,13 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
-	[ToolboxDataAttribute ("<{0}:Content runat='server'></{0}:Content>")]
+	[ToolboxItem (false)]
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.ContentDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if notyet
+	[ControlBuilder(typeof(ContentControlBuilderInternal))]  /* XXX ew, this is in beta2 - an internal builder? */
+#else
 	[ControlBuilder(typeof(ContentControlBuilder))] 
+#endif
 	public class Content: Control, INamingContainer
 	{
 		string placeHolderId;

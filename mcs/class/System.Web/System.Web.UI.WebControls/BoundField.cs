@@ -45,6 +45,19 @@ namespace System.Web.UI.WebControls {
 		public static readonly string ThisExpression = "!";
 		
 		PropertyDescriptor boundProperty;
+
+		[MonoTODO]
+		[DefaultValueAttribute (false)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
+		public virtual bool ApplyFormatInEditMode {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
 		
 		[DefaultValueAttribute (true)]
 		[WebSysDescription ("")]
@@ -92,6 +105,18 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		[MonoTODO]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
+		public virtual string HeaderText {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
 		[DefaultValueAttribute ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string NullDisplayText {
@@ -133,7 +158,7 @@ namespace System.Web.UI.WebControls {
 				OnFieldChanged ();
 			}
 		}
-		
+
 		public override void ExtractValuesFromCell (IOrderedDictionary dictionary,
 			DataControlFieldCell cell, DataControlRowState rowState, bool includeReadOnly)
 		{
@@ -147,7 +172,14 @@ namespace System.Web.UI.WebControls {
 				dictionary [DataField] = cell.Text;
 			}
 		}
-		
+
+		[MonoTODO]
+		public override bool Initialize (bool enableSorting, 
+						 Control control)
+		{
+			return base.Initialize (enableSorting, control);
+		}
+
 		public override void InitializeCell (DataControlFieldCell cell,
 			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
@@ -242,6 +274,13 @@ namespace System.Web.UI.WebControls {
 			field.ReadOnly = ReadOnly;
 			field.HtmlEncode = HtmlEncode;
 		}
+
+		[MonoTODO]
+		public override void ValidateSupportsCallback ()
+		{
+			throw new NotImplementedException ();
+		}
+
 	}
 }
 #endif

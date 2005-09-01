@@ -197,6 +197,12 @@ namespace System.Web.UI.WebControls {
 			field.ImageUrl = ImageUrl;
 			field.Text = Text;
 		}
+
+		[MonoTODO]
+		public override void ValidateSupportsCallback ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 #endif

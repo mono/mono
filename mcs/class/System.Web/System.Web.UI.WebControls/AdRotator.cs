@@ -46,12 +46,6 @@ namespace System.Web.UI.WebControls {
 	WebControl
 #endif	
 	{
-	
-		protected override ControlCollection CreateControlCollection ()
-		{
-			return new EmptyControlCollection (this);
-		}
-
 #if NET_2_0
 		[MonoTODO]
 		protected internal override void OnInit (EventArgs e)

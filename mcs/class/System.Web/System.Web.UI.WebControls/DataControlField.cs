@@ -269,7 +269,7 @@ namespace System.Web.UI.WebControls {
 
 		[UrlPropertyAttribute]
 		[DefaultValueAttribute ("")]
-		[EditorAttribute ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string HeaderImageUrl {
 			get {
