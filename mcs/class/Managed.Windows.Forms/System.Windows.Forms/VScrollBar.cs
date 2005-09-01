@@ -57,7 +57,7 @@ namespace System.Windows.Forms
 				if (RightToLeft == value)
 					return;
 
-				RightToLeft = value;
+				base.RightToLeft = value;
 
 				if (RightToLeftChanged != null)
 					RightToLeftChanged (this, EventArgs.Empty);

@@ -1,3 +1,10 @@
+2005-09-01  Miguel de Icaza  <miguel@novell.com>
+
+	* VScrollBar.cs: Another buglet found by Aaron's tool. 
+
+	* ProgressBar.cs: Fix three recursive bugs found by Aaron Tomb's
+	bug finder.
+
 2005-08-30  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeNice.cs:

@@ -144,7 +144,7 @@ namespace System.Windows.Forms
 		public override Color BackColor
 		{
 			get { return base.BackColor; }
-			set { BackColor = value; }
+			set { base.BackColor = value; }
 		}
 
 		// Setting this property in MS .Net 1.1 does not have any visual effect and it
@@ -154,7 +154,7 @@ namespace System.Windows.Forms
 		public override Image BackgroundImage
 		{
 			get { return base.BackgroundImage; }
-			set {BackgroundImage = value; }
+			set { base.BackgroundImage = value; }
 		}
 
 		[Browsable (false)]
@@ -166,7 +166,7 @@ namespace System.Windows.Forms
 				if (base.CausesValidation == value)
 					return;
 
-				CausesValidation = value;
+				base.CausesValidation = value;
 				if (CausesValidationChanged != null)
 					CausesValidationChanged (this, new EventArgs ());
 			}
