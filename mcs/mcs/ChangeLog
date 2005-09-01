@@ -1,6 +1,6 @@
 2005-09-01  Kornél Pál  <kornelpal@hotmail.com>
 
-	Fix #75883.
+	Fix #75945.
 	* attribute.cs (Attribute.GetMarshal): If ArraySubType is not
 	specified, don't default to UnmanagedType.I4.
 
