@@ -399,7 +399,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (false)]
-		[Browsable (false)]
+		[Browsable (true)]
 		public bool Selected {
 			get {
 				if (menu != null)

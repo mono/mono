@@ -155,7 +155,11 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[Themeable (false)]
+#if NET_2_0
+		[UrlProperty ("*.aspx")]
+#else
 		[UrlProperty]
+#endif
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.UrlEditor, "  + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[MonoTODO]

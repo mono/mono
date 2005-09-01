@@ -37,6 +37,9 @@ using System.Xml;
 
 namespace System.Web.UI.WebControls
 {
+#if NET_2_0
+	public
+#endif
 	class XmlBuilder : ControlBuilder
 	{
 		public override void AppendLiteralString (string s)

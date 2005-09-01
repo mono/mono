@@ -36,7 +36,7 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
-	public class MenuItemStyle: Style
+	public sealed class MenuItemStyle: Style
 	{
 		private const string HORZ_PADD = "HorizontalPadding";
 		private const string SPACING = "ItemSpacing";

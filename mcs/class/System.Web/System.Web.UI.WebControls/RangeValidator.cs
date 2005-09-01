@@ -31,7 +31,11 @@ using System.Globalization;
 // Modeled after Nikhil Kothari's sample in "ASP Server Controls and Components", pp368
 
 namespace System.Web.UI.WebControls {
+#if NET_2_0
+	[ToolboxData("<{0}:RangeValidator runat=\"server\" ErrorMessage=\"RangeValidator\"></{0}:RangeValidator>")]
+#else
 	[ToolboxData("<{0}:RangeValidator runat=server ErrorMessage=\"RangeValidator\"></{0}:RangeValidator>")]
+#endif
 	public class RangeValidator : BaseCompareValidator {
 		#region Public Constructors
 		public RangeValidator() {

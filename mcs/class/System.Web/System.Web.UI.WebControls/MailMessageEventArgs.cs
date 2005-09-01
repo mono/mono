@@ -34,7 +34,7 @@ using System.Net.Mail;
 
 namespace System.Web.UI.WebControls
 {
-	public class MailMessageEventArgs : EventArgs
+	public class MailMessageEventArgs : LoginCancelEventArgs
 	{
 		private MailMessage message; 
 		

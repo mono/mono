@@ -30,7 +30,11 @@ using System;
 
 namespace System.Web.UI.WebControls {
 
-	public sealed class MonthChangedEventArgs {
+	public
+#if !NET_2_0
+	sealed
+#endif
+	class MonthChangedEventArgs {
 
 		private DateTime new_date;
 		private DateTime prev_date;

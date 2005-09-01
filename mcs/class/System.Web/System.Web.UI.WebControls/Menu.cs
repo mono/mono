@@ -312,10 +312,10 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-	    [DefaultValueAttribute (null)]
+		[DefaultValueAttribute (null)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		[Editor ("System.Web.UI.Design.MenuItemCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [MergablePropertyAttribute (false)]
+		[Editor ("System.Web.UI.Design.MenuItemCollectionEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[MergablePropertyAttribute (false)]
 		public MenuItemCollection Items {
 			get {
 				if (items == null) {

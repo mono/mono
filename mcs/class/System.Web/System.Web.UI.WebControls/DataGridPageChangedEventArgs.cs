@@ -27,7 +27,11 @@
 
 namespace System.Web.UI.WebControls {
 
-	public sealed class DataGridPageChangedEventArgs : EventArgs
+	public
+#if !NET_2_0
+	sealed
+#endif
+	class DataGridPageChangedEventArgs : EventArgs
 	{
 		object source;
 		int index;

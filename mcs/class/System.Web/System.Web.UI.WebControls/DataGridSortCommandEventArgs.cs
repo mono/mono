@@ -29,7 +29,11 @@ using System.Web.UI.WebControls;
 
 namespace System.Web.UI.WebControls {
 
-	public sealed class DataGridSortCommandEventArgs : EventArgs
+	public
+#if !NET_2_0
+	sealed
+#endif
+	class DataGridSortCommandEventArgs : EventArgs
 	{
 		object source;
 		string expr;

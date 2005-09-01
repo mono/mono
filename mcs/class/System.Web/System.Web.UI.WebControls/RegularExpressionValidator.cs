@@ -32,7 +32,11 @@ using System.Web.UI.WebControls;
 using System.Text.RegularExpressions;
 
 namespace System.Web.UI.WebControls {
+#if NET_2_0
+	[ToolboxData ("<{0}:RegularExpressionValidator runat=\"server\" ErrorMessage=\"RegularExpressionValidator\"></{0}:RegularExpressionValidator>")]
+#else
 	[ToolboxData ("<{0}:RegularExpressionValidator runat=server ErrorMessage=\"RegularExpressionValidator\"></{0}:RegularExpressionValidator>")]
+#endif
 	public class RegularExpressionValidator : BaseValidator
 	{
 		public RegularExpressionValidator ()

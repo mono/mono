@@ -27,7 +27,11 @@
 
 namespace System.Web.UI.WebControls {
 
-	public sealed class RepeaterItemEventArgs : EventArgs
+	public
+#if !NET_2_0
+	sealed
+#endif
+	class RepeaterItemEventArgs : EventArgs
 	{
 		RepeaterItem item;
 		

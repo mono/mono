@@ -27,7 +27,11 @@
 
 namespace System.Web.UI.WebControls {
 
-	public sealed class DataGridCommandEventArgs : CommandEventArgs
+	public
+#if !NET_2_0
+	sealed
+#endif
+	class DataGridCommandEventArgs : CommandEventArgs
 	{
 		DataGridItem item;
 		object source;

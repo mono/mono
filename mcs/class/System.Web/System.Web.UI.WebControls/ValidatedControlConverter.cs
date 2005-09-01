@@ -30,7 +30,13 @@ using System.ComponentModel;
 using System.Globalization;
 
 namespace System.Web.UI.WebControls {
-	public class ValidatedControlConverter : StringConverter {
+	public class ValidatedControlConverter
+#if NET_2_0
+		: ControlIDConverter
+#else
+		: StringConverter
+#endif
+	{
 		#region Public Constructors
 		public ValidatedControlConverter() {
 		}

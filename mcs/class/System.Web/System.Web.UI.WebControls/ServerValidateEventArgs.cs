@@ -27,7 +27,11 @@
 
 namespace System.Web.UI.WebControls {
 
-	public sealed class ServerValidateEventArgs : EventArgs
+	public
+#if !NET_2_0	
+	sealed
+#endif
+	class ServerValidateEventArgs : EventArgs
 	{
 		string value;
 		bool is_valid;

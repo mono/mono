@@ -43,7 +43,11 @@ namespace System.Web.UI.WebControls {
 
 	[DefaultProperty ("DocumentSource")]
 	[Designer ("System.Web.UI.Design.WebControls.XmlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[PersistChildren (true)]
+#else
 	[PersistChildren (false)]
+#endif
 	[ControlBuilder (typeof (XmlBuilder))] 
 	public class Xml : Control {
 		// Property set variables
