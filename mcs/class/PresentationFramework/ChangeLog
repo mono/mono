@@ -1,4 +1,12 @@
 2005-09-01  Iain McCoy  <iain@mccoy.id.au>
+
+	* Mono.Windows.Serialization/XamlParser.cs,
+	  Mono.Windows.Serialization/ParserConsumerBase.cs,
+	  Mono.Windows.Serialization/ParserToCode.cs: somewhat improved
+	  commentage
+
+
+2005-09-01  Iain McCoy  <iain@mccoy.id.au>
 	
 	* Mono.Windows.Serialization/ParserToCode.cs
 	  Test/Parser.cs

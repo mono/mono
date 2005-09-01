@@ -38,6 +38,8 @@ using System.Windows.Serialization;
 using System.Windows;
 
 namespace Mono.Windows.Serialization {
+	/* Generate code corresponding to a xaml file
+	 */
 	public class ParserToCode {
 		private string result;
 
@@ -77,8 +79,8 @@ namespace Mono.Windows.Serialization {
 				this.isPartial = isPartial;
 				this.writer = new StringWriter();
 			}
-			// pushes: a CodeVariableReferenceExpression to the present
-			// 	instance
+			// pushes: the top-level code-compile unit
+			// pushes: a CodeVariableReferenceExpression to the present instance
 			public override void CreateTopLevel(Type parent, string className)
 			{
 				debug();
@@ -116,7 +118,7 @@ namespace Mono.Windows.Serialization {
 			}
 
 			// bottom of stack holds CodeVariableReferenceExpression
-			// pushes a reference to the new current type
+			// pushes: a reference to the new current type
 			public override void CreateObject(Type type, string varName, string key)
 			{
 				debug();
@@ -164,7 +166,7 @@ namespace Mono.Windows.Serialization {
 			}
 
 			// top of stack is a reference to an object
-			// pushes a reference to the property
+			// pushes: a reference to the property
 			public override void CreateProperty(PropertyInfo property)
 			{
 				debug();
@@ -175,7 +177,7 @@ namespace Mono.Windows.Serialization {
 			}
 
 			// top of stack is a reference to an object
-			// pushes a reference to the event
+			// pushes: a reference to the event
 			public override void CreateEvent(EventInfo evt)
 			{
 				debug();
@@ -186,10 +188,8 @@ namespace Mono.Windows.Serialization {
 			}
 
 			// top of stack is a reference to an object
-			// pushes a reference to the expression that
-			// will set the property and a reference to
-			// the name of the temp variable to hold the
-			// property
+			// pushes: a reference to the expression that will set the property 
+			// pushes: a reference to the name of the temp variable to hold the property
 			public override void CreateDependencyProperty(Type attachedTo, string propertyName, Type propertyType)
 			{
 				debug();
@@ -210,7 +210,8 @@ namespace Mono.Windows.Serialization {
 				push(new CodeVariableReferenceExpression(varName));
 			}
 
-			// pops 2 items: the name of the property, and the object to attach to
+			// pops: the temp variable name
+			// pops: the statement that will set the property to the value of the temp variable
 			public override void EndDependencyProperty()
 			{
 				debug();
@@ -242,6 +243,7 @@ namespace Mono.Windows.Serialization {
 				constructor.Statements.Add(attach);
 
 			}
+
 			// top of stack is reference to a property
 			public override void CreatePropertyDelegate(string functionName, Type propertyType)
 			{
@@ -297,7 +299,7 @@ namespace Mono.Windows.Serialization {
 				constructor.Statements.Add(assignment);
 			}
 
-
+			// top of stack is a temporary variable name
 			public override void CreatePropertyReference(string key)
 			{
 				CodeAssignStatement assignment = new CodeAssignStatement(
@@ -316,6 +318,9 @@ namespace Mono.Windows.Serialization {
 				CreatePropertyObject(type, varName, key);
 			}
 
+			// top of stack is a temp variable name
+			// pushes: the type of the object being built
+			// pushes: a reference to the new object
 			public override void CreatePropertyObject(Type type, string varName, string key)
 			{
 				debug();
@@ -363,6 +368,11 @@ namespace Mono.Windows.Serialization {
 			{
 				EndPropertyObject(destType);
 			}
+
+			// pops: reference to the object being ended
+			// pops: the type of the object being ended
+			//
+			// destType is the type of the property to which the object will be stored
 			public override void EndPropertyObject(Type destType)
 			{
 				debug();
@@ -388,25 +398,29 @@ namespace Mono.Windows.Serialization {
 						expr);
 				constructor.Statements.Add(assignment);
 			}
-			
+		
+			// pops: a reference to an object	
 			public override void EndObject()
 			{
 				debug();
 				pop();
 			}
 
+			// pops: a reference to a property
 			public override void EndProperty()
 			{
 				debug();
 				pop();
 			}
-			
+		
+			// pops: the name of an event	
 			public override void EndEvent()
 			{
 				debug();
 				pop();
 			}
 
+			// top of stack is the top-level class
 			public override void Finish()
 			{
 				debug();
@@ -425,6 +439,7 @@ namespace Mono.Windows.Serialization {
 				Debug.WriteLine("ParserToCode: " + new System.Diagnostics.StackTrace());
 			}
 			
+
 			private object pop()
 			{
 				object v = objects[objects.Count - 1];

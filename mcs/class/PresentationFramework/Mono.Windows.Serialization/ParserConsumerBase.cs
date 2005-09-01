@@ -6,6 +6,12 @@ using System.Xml;
 using System.Diagnostics;
 
 namespace Mono.Windows.Serialization {
+	/* base class to help consume the event stream produced by the parser
+	 *
+	 * the crunch method will call the relevant methods according to what
+	 * the parser returns. The easiest way to implement a class that builds
+	 * something from a xaml file is probably to inherit from this class.
+	 */
 	internal abstract class ParserConsumerBase {
 		internal void crunch (XmlTextReader reader) {
 			int justClosed = 0;

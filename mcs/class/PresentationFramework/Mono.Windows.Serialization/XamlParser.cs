@@ -37,6 +37,11 @@ using System.Windows;
 using System.Windows.Serialization;
 
 namespace Mono.Windows.Serialization {
+	/* Produce a node stream describing a xaml file.
+	 *
+	 * This class handles the process of working out what means what in a
+	 * xaml file and encodes that information into a sequence of XamlNodes
+	 */
 	internal class XamlParser {
 		public const string XAML_NAMESPACE = "http://schemas.microsoft.com/winfx/xaml/2005";
 		private Mapper mapper = new Mapper(new string[] { });
