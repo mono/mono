@@ -1,5 +1,10 @@
 2005-09-01  Chris Toshok  <toshok@ximian.com>
 
+	* ListControl.cs (AppendDataBoundItems): implement (2.0)
+	(TagKey): same.
+
+2005-09-01  Chris Toshok  <toshok@ximian.com>
+
 	* System.Web.UI.WebControls/MonthChangedEventArgs.cs,
 	System.Web.UI.WebControls/ValidatedControlConverter.cs,
 	System.Web.UI.WebControls/Xml.cs,

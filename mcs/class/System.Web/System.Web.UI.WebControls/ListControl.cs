@@ -38,7 +38,9 @@ namespace System.Web.UI.WebControls {
 
 	[DataBindingHandler("System.Web.UI.Design.WebControls.ListControlDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[DefaultEventAttribute ("SelectedIndexChanged")]
+#if !NET_2_0
 	[DefaultPropertyAttribute ("DataSource")]
+#endif
 	[Designer("System.Web.UI.Design.WebControls.ListControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #if NET_2_0
 	[ControlValueProperty ("SelectedValue", null)]
@@ -75,10 +77,10 @@ namespace System.Web.UI.WebControls {
 		public virtual bool AppendDataBoundItems
 		{
 			get {
-				throw new NotImplementedException ();
+				return ViewState.GetBool ("AppendDataBoundItems", false);
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState ["AppendDataBoundItems"] = value;
 			}
 		}
 #endif		
@@ -253,11 +255,10 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[MonoTODO]
 		protected virtual new HtmlTextWriterTag TagKey
 		{
 			get {
-				throw new NotImplementedException ();
+				return HtmlTextWriterTag.Select;
 			}
 		}
 
