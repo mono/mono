@@ -1,3 +1,7 @@
+2005-09-01  Chris Toshok  <toshok@ximian.com>
+
+	* WebPart.cs: add some WebSysDescription/WebCategory attributes.
+
 2005-08-31  Chris Toshok  <toshok@ximian.com>
 
 	* ProviderConnectionPoint.cs: fix return types for GetObject and

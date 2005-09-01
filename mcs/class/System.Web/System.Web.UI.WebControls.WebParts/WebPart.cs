@@ -100,6 +100,8 @@ namespace System.Web.UI.WebControls.WebParts
 		protected internal virtual void OnEditModeChanged (EventArgs e)
 		{ /* no base class implementation */ }
 
+		[WebSysDescriptionAttribute ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual bool AllowClose 
 		{
 			get {
@@ -113,6 +115,8 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
+		[WebSysDescriptionAttribute ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual bool AllowConnect 
 		{
 			get {
@@ -126,6 +130,8 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
+		[WebSysDescriptionAttribute ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual bool AllowEdit 
 		{
 			get {
@@ -139,6 +145,8 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
+		[WebSysDescriptionAttribute ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual bool AllowHide 
 		{
 			get {
@@ -152,6 +160,8 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
+		[WebSysDescriptionAttribute ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual bool AllowMinimize 
 		{
 			get {
@@ -165,6 +175,8 @@ namespace System.Web.UI.WebControls.WebParts
 			}
 		}
 
+		[WebSysDescriptionAttribute ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual bool AllowZoneChange 
 		{
 			get {
