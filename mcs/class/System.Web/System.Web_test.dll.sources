@@ -122,3 +122,7 @@ System.Web.UI.WebControls/XmlTest.cs
 System.Web.UI.WebControls/XmlDataSourceTest.cs
 System.Web.UI.WebControls.WebParts/ConnectionInterfaceCollectionTest.cs
 System.Web.UI.WebControls.WebParts/WebPartTest.cs
+System.Web/HttpContextCas.cs
+System.Web.Security/FormsAuthenticationEventArgsCas.cs
+System.Web.Security/PassportAuthenticationEventArgsCas.cs
+System.Web.Security/WindowsAuthenticationEventArgsCas.cs
