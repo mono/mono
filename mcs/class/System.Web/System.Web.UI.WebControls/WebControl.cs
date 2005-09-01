@@ -65,6 +65,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual string AccessKey {
 			get {
 				return ViewState.GetString ("AccessKey", string.Empty);
@@ -79,6 +81,8 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public AttributeCollection Attributes {
 			get {
 				if (attributes == null) {
@@ -97,6 +101,8 @@ namespace System.Web.UI.WebControls {
 #endif		
 		[DefaultValue(typeof (Color), "")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual Color BackColor {
 			get {
 				if (style == null) 
@@ -114,6 +120,8 @@ namespace System.Web.UI.WebControls {
 #endif		
 		[DefaultValue(typeof (Color), "")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual Color BorderColor {
 			get {
 				if (style == null) 
@@ -131,6 +139,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(BorderStyle.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual BorderStyle BorderStyle {
 			get {
 				if (style == null) 
@@ -150,6 +160,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(typeof (Unit), "")]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual Unit BorderWidth {
 			get {
 				if (style == null) 
@@ -164,6 +176,8 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public Style ControlStyle {
 			get {
 				if (style == null) {
@@ -189,6 +203,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string CssClass {
 			get {
 				if (style == null) 
@@ -238,6 +254,8 @@ namespace System.Web.UI.WebControls {
 #endif		
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual FontInfo Font {
 			get {
 				// Oddly enough, it looks like we have to let it create the style
@@ -251,6 +269,8 @@ namespace System.Web.UI.WebControls {
 #endif		
 		[DefaultValue(typeof (Color), "")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual Color ForeColor {
 			get {
 				if (style == null) 
@@ -279,6 +299,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(typeof (Unit), "")]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual Unit Height {
 			get {
 				if (style == null) 
@@ -307,6 +329,8 @@ namespace System.Web.UI.WebControls {
 		
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public CssStyleCollection Style {
 			get {
 				return Attributes.CssStyle;
@@ -314,6 +338,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue((short)0)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual short TabIndex {
 			get {
 				return ViewState.GetShort ("TabIndex", 0);
@@ -330,6 +356,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual string ToolTip {
 			get {
 				return ViewState.GetString ("ToolTip", string.Empty);
@@ -343,6 +371,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(typeof (Unit), "")]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual Unit Width {
 			get {
 				if (style == null) 

@@ -52,9 +52,10 @@ namespace System.Web.UI.WebControls {
 			return base.Initialize (sortingEnabled, control);
 		}
 
-	    [DefaultValueAttribute ("")]
-	    [WebCategoryAttribute ("Appearance")]
-	    [LocalizableAttribute (true)]
+		[DefaultValueAttribute ("")]
+		[LocalizableAttribute (true)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string AlternateText {
 			get {
 				object ob = ViewState ["AlternateText"];
@@ -68,6 +69,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValueAttribute (true)]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ConvertEmptyStringToNull {
 			get {
@@ -82,8 +84,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
-		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Data")]
 		public virtual string DataAlternateTextField {
 			get {
 				object ob = ViewState ["DataAlternateTextField"];
@@ -96,8 +99,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Data")]
 		public virtual string DataAlternateTextFormatString {
 			get {
 				object ob = ViewState ["DataAlternateTextFormatString"];
@@ -111,8 +115,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
-		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Data")]
 		public virtual string DataImageUrlField {
 			get {
 				object ob = ViewState ["DataImageUrlField"];
@@ -125,8 +130,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Data")]
 		public virtual string DataImageUrlFormatString {
 			get {
 				object ob = ViewState ["DataImageUrlFormatString"];
@@ -140,8 +146,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValueAttribute ("")]
+		[LocalizableAttribute (true)]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
-	    [LocalizableAttribute (true)]
 		public virtual string NullDisplayText {
 			get {
 				object ob = ViewState ["NullDisplayText"];
@@ -154,10 +161,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-	    [DefaultValueAttribute ("")]
-	    [EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [UrlPropertyAttribute]
-	    [WebCategoryAttribute ("Behavior")]
+		[DefaultValueAttribute ("")]
+		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[UrlPropertyAttribute]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual string NullImageUrl {
 			get {
 				object ob = ViewState ["NullImageUrl"];
@@ -170,8 +178,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Behavior")]
 		[DefaultValueAttribute (false)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public bool ReadOnly {
 			get {
 				object val = ViewState ["ReadOnly"];

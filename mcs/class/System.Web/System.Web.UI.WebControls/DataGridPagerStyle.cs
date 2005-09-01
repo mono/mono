@@ -37,6 +37,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue(PagerMode.NextPrev)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public PagerMode Mode {
 			get {
 				if ((styles & Styles.Mode) == 0) {
@@ -55,6 +57,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue("&gt;")]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public string NextPageText {
 			get {
 				if ((styles & Styles.NextPageText) == 0) {
@@ -73,6 +77,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue(10)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public int PageButtonCount {
 			get {
 				if ((styles & Styles.PageButtonCount) == 0) {
@@ -95,6 +101,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue(PagerPosition.Bottom)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public PagerPosition Position {
 			get {
 				if ((styles & Styles.Position) == 0) {
@@ -113,6 +121,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue("&lt;")]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public string PrevPageText {
 			get {
 				if ((styles & Styles.NextPageText) == 0) {
@@ -131,6 +141,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue(true)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public bool Visible {
 			get {
 				if ((styles & Styles.Visible) == 0) {

@@ -122,6 +122,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[UrlProperty]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string ImageUrl {
 			get {
 				return ViewState.GetString ("ImageUrl", "");
@@ -137,6 +139,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[UrlProperty]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Navigation")]
 		public string NavigateUrl {
 			get {
 				return ViewState.GetString ("NavigateUrl", "");
@@ -151,6 +155,8 @@ namespace System.Web.UI.WebControls {
 #endif		
 		[DefaultValue("")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.TargetConverter))]
+		[WebSysDescription ("")]
+		[WebCategory ("Navigation")]
 		public string Target {
 			get {
 				return ViewState.GetString ("Target", "");
@@ -166,6 +172,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string Text {
 			get {
 				return ViewState.GetString ("Text", "");

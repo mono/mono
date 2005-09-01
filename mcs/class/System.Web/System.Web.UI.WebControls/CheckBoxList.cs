@@ -49,6 +49,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(-1)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual int CellPadding {
 			get { return TableStyle.CellPadding; }
 			set { TableStyle.CellPadding = value; }
@@ -58,6 +60,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(-1)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual int CellSpacing {
 			get { return TableStyle.CellSpacing; }
 			set { TableStyle.CellSpacing = value; }
@@ -67,6 +71,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(0)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual int RepeatColumns {
 			get { return ViewState.GetInt ("RepeatColumns", 0); }
 			set {
@@ -80,6 +86,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(RepeatDirection.Vertical)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual RepeatDirection RepeatDirection {
 			get {
 				return (RepeatDirection) ViewState.GetInt ("RepeatDirection",
@@ -97,6 +105,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(RepeatLayout.Table)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual RepeatLayout RepeatLayout {
 			get {
 				return (RepeatLayout) ViewState.GetInt ("RepeatLayout",
@@ -114,6 +124,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(TextAlign.Right)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual TextAlign TextAlign {
 			get {
 				return (TextAlign) ViewState.GetInt ("TextAlign",

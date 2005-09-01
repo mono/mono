@@ -52,6 +52,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string AlternateText {
 			get {
 				string s = (string) ViewState ["AlternateText"];
@@ -85,6 +87,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (ImageAlign.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual ImageAlign ImageAlign {
 			get {
 				object o = ViewState ["ImageAlign"];
@@ -108,6 +112,8 @@ namespace System.Web.UI.WebControls {
 #else
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string ImageUrl {
 			get {
 				string s = (string) ViewState ["ImageUrl"];
@@ -127,6 +133,8 @@ namespace System.Web.UI.WebControls {
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[UrlProperty]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Accessibility")]
 		public virtual string DescriptionUrl {
 			get {
 				string s = (string) ViewState ["DescriptionUrl"];
@@ -142,6 +150,8 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[DefaultValue (false)]
+		[WebSysDescription ("")]
+		[WebCategory ("Accessibility")]
 		public virtual bool GenerateEmptyAlternateText {
 			get {
 				object o = ViewState ["GenerateEmptyAlternateText"];

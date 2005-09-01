@@ -75,6 +75,8 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue(0)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public override int SelectedIndex {
 			get {
 				int selected;

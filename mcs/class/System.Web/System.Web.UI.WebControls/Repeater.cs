@@ -225,6 +225,7 @@ namespace System.Web.UI.WebControls {
 		ArrayList items;
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
 		public virtual RepeaterItemCollection Items {
 			get {
 				if (itemscol == null)
@@ -234,6 +235,8 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Data")]
 		public virtual string DataMember {
 			get {
 				return ViewState.GetString ("DataMember", "");
@@ -254,6 +257,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue(null)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Data")]
 		public virtual object DataSource {
 			get {
 				return dataSource;
@@ -317,6 +322,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(null)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (RepeaterItem))]
+		[WebSysDescription ("")]
 		public virtual ITemplate AlternatingItemTemplate {
 			get {
 				return alt_itm_tmpl;
@@ -331,6 +337,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(null)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (RepeaterItem))]
+		[WebSysDescription ("")]
 		public virtual ITemplate FooterTemplate {
 			get {
 				return footer_tmpl;
@@ -345,6 +352,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(null)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (RepeaterItem))]
+		[WebSysDescription ("")]
 		public virtual ITemplate HeaderTemplate {
 			get {
 				return header_tmpl;
@@ -359,6 +367,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(null)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (RepeaterItem))]
+		[WebSysDescription ("")]
 		public virtual ITemplate ItemTemplate {
 			get {
 				return item_tmpl;
@@ -373,6 +382,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(null)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (RepeaterItem))]
+		[WebSysDescription ("")]
 		public virtual ITemplate SeparatorTemplate {
 			get {
 				return separator_tmpl;
@@ -391,6 +401,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 		static readonly object ItemCommandEvent = new object ();
+
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event RepeaterCommandEventHandler ItemCommand {
 			add { Events.AddHandler (ItemCommandEvent, value); }
 			remove { Events.RemoveHandler (ItemCommandEvent, value); }
@@ -405,6 +418,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 		static readonly object ItemCreatedEvent = new object ();
+
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public event RepeaterItemEventHandler ItemCreated {
 			add { Events.AddHandler (ItemCreatedEvent, value); }
 			remove { Events.RemoveHandler (ItemCreatedEvent, value); }
@@ -418,6 +434,9 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		static readonly object ItemDataBoundEvent = new object ();
+
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public event RepeaterItemEventHandler ItemDataBound {
 			add { Events.AddHandler (ItemDataBoundEvent, value); }
 			remove { Events.RemoveHandler (ItemDataBoundEvent, value); }

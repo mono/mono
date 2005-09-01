@@ -70,6 +70,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (false)]
 		[Themeable (false)]
 		[MonoTODO]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual bool AppendDataBoundItems
 		{
 			get {
@@ -85,6 +87,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif
 		[DefaultValue(false)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual bool AutoPostBack {
 			get { return ViewState.GetBool ("AutoPostBack", false); }
 			set { ViewState ["AutoPostBack"] = value; }
@@ -92,6 +96,8 @@ namespace System.Web.UI.WebControls {
 
 #if ONLY_1_1
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Data")]
 		public virtual string DataMember {
 			get { return ViewState.GetString ("DataMember", String.Empty); }
 			set { ViewState ["DataMember"] = value; }
@@ -100,6 +106,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue(null)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Data")]
 		public virtual object DataSource {
 			get { return data_source; }
 			set { data_source = value; }
@@ -110,6 +118,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif		
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Data")]
 		public virtual string DataTextField {
 			get { return ViewState.GetString ("DataTextField", String.Empty); }
 			set { ViewState ["DataTextField"] = value; }
@@ -119,6 +129,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif		
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Data")]
 		public virtual string DataTextFormatString {
 			get { return ViewState.GetString ("DataTextFormatString", String.Empty); }
 			set { ViewState ["DataTextFormatString"] = value; }
@@ -128,6 +140,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif		
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Data")]
 		public virtual string DataValueField {
 			get { return ViewState.GetString ("DataValueField", String.Empty); }
 			set { ViewState ["DataValueField"] = value; }
@@ -139,6 +153,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(null)]
 		[MergableProperty(false)]
 		[PersistenceMode(PersistenceMode.InnerDefaultProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual ListItemCollection Items {
 			get {
 				if (items == null)
@@ -156,6 +172,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual int SelectedIndex {
 			get {
 				if (items == null)
@@ -179,6 +197,8 @@ namespace System.Web.UI.WebControls {
 		[Browsable(false)]
 		[DefaultValue(null)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual ListItem SelectedItem {
 			get {
 				int si = SelectedIndex;
@@ -197,6 +217,8 @@ namespace System.Web.UI.WebControls {
 		[Browsable(false)]
 		[DefaultValue("")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string SelectedValue {
 			get {
 				int si = SelectedIndex;
@@ -219,6 +241,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[MonoTODO]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual string Text 
 		{
 			get {
@@ -436,6 +460,8 @@ namespace System.Web.UI.WebControls {
 		}
 #endif		
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event EventHandler SelectedIndexChanged {
 			add { Events.AddHandler (SelectedIndexChangedEvent, value); }
 			remove { Events.RemoveHandler (SelectedIndexChangedEvent, value); }
@@ -456,6 +482,8 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		[Themeable (false)]
 		[DefaultValue (false)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 	        public virtual bool CausesValidation {
 			get {
 				throw new NotImplementedException ();
@@ -468,6 +496,8 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		[Themeable (false)]
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual string ValidationGroup {
 			get {
 				throw new NotImplementedException ();

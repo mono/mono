@@ -49,6 +49,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public string InitialValue {
 			get {
 				return ViewState.GetString ("InitialValue", "");

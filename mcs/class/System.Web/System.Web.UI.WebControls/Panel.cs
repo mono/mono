@@ -73,6 +73,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue("")]
 		[Editor("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string BackImageUrl {
 			get {
 				return ViewState.GetString ("BackImageUrl", "");
@@ -85,6 +87,8 @@ namespace System.Web.UI.WebControls {
 		
 		[Bindable(true)]
 		[DefaultValue(HorizontalAlign.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
 				return (HorizontalAlign) ViewState.GetInt ("HorizontalAlign", (int) HorizontalAlign.NotSet);
@@ -96,6 +100,8 @@ namespace System.Web.UI.WebControls {
 		
 		[Bindable(true)]
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual bool Wrap {
 			get {
 				return ViewState.GetBool ("Wrap", true);

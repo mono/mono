@@ -193,6 +193,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue("")]
 		[Editor("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public string AdvertisementFile {
 			get {
 				return ad_file;
@@ -205,6 +207,8 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[DefaultValue ("AlternateText")]
+		[WebSysDescriptionAttribute ("")]
+		[WebCategoryAttribute ("Behavior")]
 		[MonoTODO]
 		public string AlternateTextField 
 		{
@@ -229,6 +233,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DefaultValue ("ImageUrl")]
 		[MonoTODO]
+		[WebSysDescriptionAttribute ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public string ImageUrlField 
 		{
 			get {
@@ -243,6 +249,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue("")]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public string KeywordFilter {
 			get {
 				return ViewState.GetString ("KeywordFilter", "");
@@ -256,6 +264,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DefaultValue ("NavigateUrl")]
 		[MonoTODO]
+		[WebSysDescriptionAttribute ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public string NavigateUrlField 
 		{
 			get {
@@ -282,6 +292,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue("_top")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.TargetConverter))]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public string Target {
 			get {
 				return ViewState.GetString ("Target", "_top");
@@ -325,7 +337,11 @@ namespace System.Web.UI.WebControls {
 			if (h != null)
 				h (this, e);
 		}
+
 		static readonly object AdCreatedEvent = new object ();
+
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event AdCreatedEventHandler AdCreated {
 			add { Events.AddHandler (AdCreatedEvent, value); }
 			remove { Events.RemoveHandler (AdCreatedEvent, value); }

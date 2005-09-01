@@ -100,6 +100,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public Color BackColor 
 		{
 			get 
@@ -123,6 +125,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public Color BorderColor 
 		{
 			get 
@@ -145,6 +149,8 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue(BorderStyle.NotSet)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public BorderStyle BorderStyle 
 		{
 			get 
@@ -167,6 +173,8 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public Unit BorderWidth 
 		{
 			get 
@@ -193,6 +201,8 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue("")]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public string CssClass 
 		{
 			get 
@@ -214,6 +224,8 @@ namespace System.Web.UI.WebControls
 
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public FontInfo Font 
 		{
 			get 
@@ -230,6 +242,8 @@ namespace System.Web.UI.WebControls
 		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public Color ForeColor 
 		{
 			get 
@@ -252,6 +266,8 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public Unit Height 
 		{
 			get 
@@ -279,6 +295,8 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public Unit Width 
 		{
 			get 

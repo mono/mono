@@ -60,6 +60,8 @@ namespace System.Web.UI.WebControls {
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #endif
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string BackImageUrl {
 			get {
 				if (!ControlStyleCreated)
@@ -75,6 +77,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Accessibility")]
 		public virtual string Caption {
 			get {
 				object o = ViewState ["Caption"];
@@ -89,6 +93,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue (TableCaptionAlign.NotSet)]
+		[WebCategory ("Accessibility")]
 		public virtual TableCaptionAlign CaptionAlign {
 			get {
 				object o = ViewState ["CaptionAlign"];
@@ -106,6 +111,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (-1)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual int CellPadding {
 			get {
 				if (!ControlStyleCreated)
@@ -119,6 +126,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (-1)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual int CellSpacing {
 			get {
 				if (!ControlStyleCreated)
@@ -132,6 +141,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (GridLines.None)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual GridLines GridLines {
 			get {
 				if (!ControlStyleCreated)
@@ -145,6 +156,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (HorizontalAlign.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
 				if (!ControlStyleCreated)
@@ -156,6 +169,7 @@ namespace System.Web.UI.WebControls {
 
 		[MergableProperty (false)]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
+		[WebSysDescription ("")]
 		public virtual TableRowCollection Rows {
 			get {
 				if (rows == null)

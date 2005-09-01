@@ -41,6 +41,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual string GroupName
 		{
 			get {

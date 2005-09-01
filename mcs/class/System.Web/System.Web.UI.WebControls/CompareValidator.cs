@@ -86,6 +86,8 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue("")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.ValidatedControlConverter))]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public string ControlToCompare {
 			get {
 				return ViewState.GetString ("ControlToCompare", String.Empty);
@@ -96,6 +98,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue(ValidationCompareOperator.Equal)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public ValidationCompareOperator Operator {
 			get {
 				return (ValidationCompareOperator)ViewState.GetInt ("Operator", (int)ValidationCompareOperator.Equal);
@@ -108,6 +112,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public string ValueToCompare {
 			get {
 				return ViewState.GetString ("ValueToCompare", String.Empty);

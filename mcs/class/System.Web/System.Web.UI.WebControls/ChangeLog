@@ -1,5 +1,24 @@
 2005-09-01  Chris Toshok  <toshok@ximian.com>
 
+	* Button.cs, ButtonField.cs, FontInfo.cs, Style.cs, Xml.cs,
+	CommandField.cs, HyperLinkColumn.cs, Table.cs,
+	RegularExpressionValidator.cs, DataGridPagerStyle.cs, Label.cs,
+	CheckBox.cs, RadioButton.cs, TableStyle.cs, ListControl.cs,
+	Image.cs, BaseCompareValidator.cs, BaseDataList.cs, DataList.cs,
+	TemplateColumn.cs, RangeValidator.cs, ImageField.cs,
+	BaseValidator.cs, CustomValidator.cs, TextBox.cs,
+	ButtonFieldBase.cs, BoundField.cs, CheckBoxList.cs,
+	RadioButtonList.cs, RequiredFieldValidator.cs, AdRotator.cs,
+	Repeater.cs, DropDownList.cs, CheckBoxField.cs, HyperLink.cs,
+	XmlDataSource.cs, Panel.cs, DataGrid.cs, ButtonColumn.cs,
+	CompareValidator.cs, Calendar.cs, ListBox.cs, TableCell.cs,
+	WebControl.cs, Literal.cs, ValidationSummary.cs, ImageButton.cs,
+	TableRow.cs, LinkButton.cs, DataGridColumn.cs, BoundColumn.cs,
+	TableItemStyle.cs: Add some WebCategory and WebSysDescription
+	attributes.
+
+2005-09-01  Chris Toshok  <toshok@ximian.com>
+
 	* AccessDataSource.cs: corcompare work.
 
 	* SqlDataSource.cs: same.

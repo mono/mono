@@ -41,6 +41,8 @@ namespace System.Web.UI.WebControls {
 		public static readonly string thisExpr = "!";
 
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string DataField 
 		{
 			get {
@@ -52,6 +54,8 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string DataFormatString 
 		{
 			get {
@@ -63,6 +67,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue(false)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual bool ReadOnly 
 		{
 			get {

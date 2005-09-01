@@ -56,6 +56,8 @@ namespace System.Web.UI.WebControls {
 
 		[MergableProperty (false)]
 		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
+		[WebSysDescription ("")]
+		[WebCategory("Layout")]
 		public virtual TableCellCollection Cells {
 			get {
 				if (cells == null)
@@ -68,6 +70,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (HorizontalAlign.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
 				if (!ControlStyleCreated)
@@ -81,6 +85,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (VerticalAlign.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual VerticalAlign VerticalAlign {
 			get {
 				if (!ControlStyleCreated)

@@ -41,6 +41,8 @@ namespace System.Web.UI.WebControls {
 
 		#region Public Instance Properties
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public string ClientValidationFunction {
 			get {
 				return ViewState.GetString("ClientValidationFunction", string.Empty);
@@ -92,6 +94,8 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Instance Methods
 
 		#region Events
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public event ServerValidateEventHandler ServerValidate;
 		#endregion	// Events
 	}

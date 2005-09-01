@@ -121,6 +121,8 @@ namespace System.Web.UI.WebControls {
 #else		
 		[Editor ("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public string DocumentSource {
 			get {
 				if (xml_file == null)
@@ -169,6 +171,8 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public XslTransform Transform {
 			get {
 				return xsl_transform;
@@ -182,6 +186,8 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public XsltArgumentList TransformArgumentList {
 			get {
 				return transform_arguments;

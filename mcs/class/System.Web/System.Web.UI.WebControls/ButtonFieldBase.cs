@@ -41,8 +41,9 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class ButtonFieldBase : DataControlField
 	{
-		[WebCategoryAttribute ("Appearance")]
 		[DefaultValueAttribute (ButtonType.Link)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual ButtonType ButtonType {
 			get {
 				object ob = ViewState ["ButtonType"];
@@ -56,6 +57,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValueAttribute (false)]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool CausesValidation {
 			get {
@@ -69,8 +71,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Behavior")]
 		[DefaultValueAttribute (false)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public override bool ShowHeader {
 			get {
 				object val = ViewState ["showHeader"];
@@ -82,8 +85,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Behavior")]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual string ValidationGroup {
 			get {
 				object ob = ViewState ["ValidationGroup"];

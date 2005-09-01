@@ -159,6 +159,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(false)]
 #endif		
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
 		public virtual
@@ -177,6 +179,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
 		public virtual
@@ -193,6 +197,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
 		public virtual
@@ -214,6 +220,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue ("")]
 		[Themeable (false)]
 		[MonoTODO]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual string OnClientClick
 		{
 			get {
@@ -232,6 +240,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string Text {
 			get {
 				return ViewState.GetString ("Text", "");	
@@ -250,6 +260,9 @@ namespace System.Web.UI.WebControls {
 				h (this, e);
 		}
 		static readonly object ClickEvent = new object ();
+
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event EventHandler Click {
 			add { Events.AddHandler (ClickEvent, value); }
 			remove { Events.RemoveHandler (ClickEvent, value); }
@@ -264,6 +277,9 @@ namespace System.Web.UI.WebControls {
 			RaiseBubbleEvent (this, e);
 		}
 		static readonly object CommandEvent = new object ();
+
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event CommandEventHandler Command {
 			add { Events.AddHandler (CommandEvent, value); }
 			remove { Events.RemoveHandler (CommandEvent, value); }
@@ -285,6 +301,8 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue ("")]
 		[Themeable (false)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public string ValidationGroup {
 			get {
 				return ViewState.GetString ("ValidationGroup", "");	

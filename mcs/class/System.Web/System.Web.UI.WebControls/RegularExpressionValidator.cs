@@ -61,6 +61,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.WebControls.RegexTypeEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public string ValidationExpression {
 			get {
 				return ViewState.GetString ("ValidationExpression", "");

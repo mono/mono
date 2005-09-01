@@ -47,6 +47,7 @@ namespace System.Web.UI.WebControls {
 		PropertyDescriptor boundProperty;
 		
 		[DefaultValueAttribute (true)]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ConvertEmptyStringToNull {
 			get {
@@ -61,6 +62,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
 		public virtual string DataField {
@@ -76,6 +78,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Data")]
 		public virtual string DataFormatString {
 			get {
@@ -103,8 +106,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Behavior")]
 		[DefaultValueAttribute (false)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public bool ReadOnly {
 			get {
 				object val = ViewState ["ReadOnly"];
@@ -116,8 +120,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("HtmlEncode")]
 		[DefaultValueAttribute (true)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("HtmlEncode")]
 		public virtual bool HtmlEncode {
 			get {
 				object val = ViewState ["HtmlEncode"];

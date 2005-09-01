@@ -53,6 +53,8 @@ namespace System.Web.UI.WebControls {
 #if ONLY_1_1
 		[Bindable (false)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		[DefaultValue (true)]
 #if NET_2_0
 		[Themeable (false)]
@@ -72,6 +74,8 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue ("")]
 		[Bindable (true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
 		public virtual
@@ -88,6 +92,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
 		public virtual
@@ -107,6 +113,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 		[DefaultValue ("")]
 		[MonoTODO]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual string OnClientClick 
 		{
 			get {
@@ -121,6 +129,8 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue ("")]
 		[Bindable (true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 #if NET_2_0
 		[Localizable (true)]
 		public virtual
@@ -140,6 +150,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (true)]
 		[Themeable (false)]
 		[MonoTODO]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual bool UseSubmitBehavior 
 		{
 			get {
@@ -229,6 +241,8 @@ namespace System.Web.UI.WebControls {
 			base.RenderContents (writer);
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event EventHandler Click
 		{
 			add {
@@ -239,6 +253,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event CommandEventHandler Command
 		{
 			add {
@@ -266,6 +282,8 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue ("")]
 		[Themeable (false)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public string ValidationGroup {
 			get {
 				return ViewState.GetString ("ValidationGroup", "");

@@ -44,8 +44,9 @@ namespace System.Web.UI.WebControls {
 	{
 		PropertyDescriptor boundProperty;
 
-	    [WebCategoryAttribute ("Behavior")]
-	    [DefaultValueAttribute ("")]
+		[DefaultValueAttribute ("")]
+		[WebSysDescription ("Raised when a Button Command is executed.")]
+		[WebCategoryAttribute ("Behavior")]
 		public virtual string CommandName {
 			get {
 				object ob = ViewState ["CommandName"];
@@ -58,9 +59,10 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-	    [WebCategoryAttribute ("Data")]
-	    [DefaultValueAttribute ("")]
+		[DefaultValueAttribute ("")]
 		[TypeConverterAttribute ("System.Web.UI.Design.DataSourceViewSchemaConverter, " + Consts.AssemblySystem_Design)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Data")]
 		public virtual string DataTextField {
 			get {
 				object ob = ViewState ["DataTextField"];
@@ -73,8 +75,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-	    [WebCategoryAttribute ("Data")]
-	    [DefaultValueAttribute ("")]
+		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Data")]
 		public virtual string DataTextFormatString {
 			get {
 				object ob = ViewState ["DataTextFormatString"];
@@ -88,9 +91,10 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	    [WebCategoryAttribute ("Appearance")]
-	    [DefaultValueAttribute ("")]
-	    [UrlPropertyAttribute]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
+		[DefaultValueAttribute ("")]
+		[UrlPropertyAttribute]
 		public virtual string ImageUrl {
 			get {
 				object ob = ViewState ["ImageUrl"];
@@ -103,9 +107,10 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-	    [LocalizableAttribute (true)]
-	    [WebCategoryAttribute ("Appearance")]
-	    [DefaultValueAttribute ("")]
+		[LocalizableAttribute (true)]
+		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string Text {
 			get {
 				object ob = ViewState ["Text"];

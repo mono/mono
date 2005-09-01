@@ -83,6 +83,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (0)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual int ColumnSpan {
 			get {
 				object o = ViewState ["ColumnSpan"];
@@ -100,6 +102,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (HorizontalAlign.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
 				if (!ControlStyleCreated)
@@ -113,6 +117,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (0)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual int RowSpan {
 			get {
 				object o = ViewState ["RowSpan"];
@@ -133,6 +139,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string Text {
 			get {
 				object o = ViewState ["Text"];
@@ -153,6 +161,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (VerticalAlign.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual VerticalAlign VerticalAlign {
 			get {
 				if (!ControlStyleCreated)
@@ -166,6 +176,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual bool Wrap {
 			get {
 				if (!ControlStyleCreated)

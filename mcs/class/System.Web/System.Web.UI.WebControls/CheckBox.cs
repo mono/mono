@@ -66,6 +66,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual bool AutoPostBack 
 		{
 			get {
@@ -81,6 +83,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (false)]
 		[Themeable (false)]
 		[MonoTODO]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual bool CausesValidation 
 		{
 			get { return ViewState.GetBool ("CausesValidation", false); }
@@ -96,6 +100,8 @@ namespace System.Web.UI.WebControls {
 #else		
 		[Bindable (true)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual bool Checked 
 		{
 			get {
@@ -147,6 +153,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string Text 
 		{
 			get {
@@ -162,6 +170,8 @@ namespace System.Web.UI.WebControls {
 #if ONLY_1_1
 		[Bindable (true)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual TextAlign TextAlign
 		{
 			get {
@@ -186,6 +196,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Behavior")]
 		public string ValidationGroup
 		{
 			get { return ViewState.GetString ("ValidationGroup", String.Empty); }
@@ -194,6 +206,8 @@ namespace System.Web.UI.WebControls {
 #endif		
 
 		private static readonly object EventCheckedChanged = new object ();
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event EventHandler CheckedChanged 
 		{
 			add {

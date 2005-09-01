@@ -211,6 +211,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue(ValidationDataType.String)]
+		[WebSysDescription("")]
+		[WebCategory("Behavior")]
 		public ValidationDataType Type {
 			get {
 				return type;

@@ -77,9 +77,10 @@ namespace System.Web.UI.WebControls {
 			get { return false; }
 		}
 		
-	    [WebCategoryAttribute ("Appearance")]
-	    [LocalizableAttribute (true)]
-	    [DefaultValueAttribute ("")]
+		[LocalizableAttribute (true)]
+		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string Text {
 			get {
 				object ob = ViewState ["Text"];

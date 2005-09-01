@@ -77,6 +77,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(4)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 #if NET_2_0
 		public virtual
 #else		
@@ -94,6 +96,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue(ListSelectionMode.Single)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 #if NET_2_0
 		public virtual
 #else		

@@ -65,6 +65,8 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue(false)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Font")]
 		public bool Bold 
 		{
 			get 
@@ -87,6 +89,8 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue(false)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Font")]
 		public bool Italic 
 		{
 			get 
@@ -112,6 +116,8 @@ namespace System.Web.UI.WebControls
 		[Editor("System.Drawing.Design.FontNameEditor, " + Consts.AssemblySystem_Drawing_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[NotifyParentProperty(true)]
 		[TypeConverter (typeof(System.Drawing.FontConverter.FontNameConverter))]
+		[WebSysDescription ("")]
+		[WebCategory ("Font")]
 		public string Name 
 		{
 			get 
@@ -152,6 +158,8 @@ namespace System.Web.UI.WebControls
 		[Editor("System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.FontNamesConverter))]
+		[WebSysDescription ("")]
+		[WebCategory ("Font")]
 		public string[] Names 
 		{
 			get 
@@ -181,6 +189,8 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue(false)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Font")]
 		public bool Overline 
 		{
 			get 
@@ -203,6 +213,8 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue(typeof (FontUnit), "")]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Font")]
 		public FontUnit Size 
 		{
 			get 
@@ -229,6 +241,8 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue(false)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Font")]
 		public bool Strikeout 
 		{
 			get 
@@ -251,6 +265,8 @@ namespace System.Web.UI.WebControls
 		[Bindable(true)]
 		[DefaultValue(false)]
 		[NotifyParentProperty(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Font")]
 		public bool Underline 
 		{
 			get 

@@ -42,9 +42,10 @@ namespace System.Web.UI.WebControls {
 	public class CommandField : ButtonFieldBase
 	{
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[WebCategoryAttribute ("Appearance")]
 		[UrlPropertyAttribute]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string CancelImageUrl {
 			get {
 				object ob = ViewState ["CancelImageUrl"];
@@ -57,8 +58,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Appearance")]
 		[LocalizableAttribute (true)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string CancelText {
 			get {
 				object ob = ViewState ["CancelText"];
@@ -85,9 +87,10 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[WebCategoryAttribute ("Appearance")]
 		[UrlPropertyAttribute]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string DeleteImageUrl {
 			get {
 				object ob = ViewState ["DeleteImageUrl"];
@@ -100,8 +103,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Appearance")]
 		[LocalizableAttribute (true)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string DeleteText {
 			get {
 				object ob = ViewState ["DeleteText"];
@@ -115,9 +119,10 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[WebCategoryAttribute ("Appearance")]
 		[UrlPropertyAttribute]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string EditImageUrl {
 			get {
 				object ob = ViewState ["EditImageUrl"];
@@ -130,8 +135,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Appearance")]
 		[LocalizableAttribute (true)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string EditText {
 			get {
 				object ob = ViewState ["EditText"];
@@ -145,9 +151,10 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[WebCategoryAttribute ("Appearance")]
 		[UrlPropertyAttribute]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string InsertImageUrl {
 			get {
 				object ob = ViewState ["InsertImageUrl"];
@@ -160,8 +167,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Appearance")]
 		[LocalizableAttribute (true)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string InsertText {
 			get {
 				object ob = ViewState ["InsertText"];
@@ -175,9 +183,10 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[WebCategoryAttribute ("Appearance")]
 		[UrlPropertyAttribute]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string NewImageUrl {
 			get {
 				object ob = ViewState ["NewImageUrl"];
@@ -190,8 +199,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Appearance")]
 		[LocalizableAttribute (true)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string NewText {
 			get {
 				object ob = ViewState ["NewText"];
@@ -205,9 +215,10 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[WebCategoryAttribute ("Appearance")]
 		[UrlPropertyAttribute]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string SelectImageUrl {
 			get {
 				object ob = ViewState ["SelectImageUrl"];
@@ -220,8 +231,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Appearance")]
 		[LocalizableAttribute (true)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string SelectText {
 			get {
 				object ob = ViewState ["SelectText"];
@@ -235,6 +247,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValueAttribute (true)]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ShowCancelButton {
 			get {
@@ -249,6 +262,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValueAttribute (false)]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ShowDeleteButton {
 			get {
@@ -263,6 +277,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValueAttribute (false)]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ShowEditButton {
 			get {
@@ -277,6 +292,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValueAttribute (false)]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ShowSelectButton {
 			get {
@@ -291,6 +307,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValueAttribute (false)]
+		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ShowInsertButton {
 			get {
@@ -305,9 +322,10 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[WebCategoryAttribute ("Appearance")]
 		[UrlPropertyAttribute]
 		[DefaultValueAttribute ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string UpdateImageUrl {
 			get {
 				object ob = ViewState ["UpdateImageUrl"];
@@ -320,8 +338,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		[WebCategoryAttribute ("Appearance")]
 		[LocalizableAttribute (true)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string UpdateText {
 			get {
 				object ob = ViewState ["UpdateText"];

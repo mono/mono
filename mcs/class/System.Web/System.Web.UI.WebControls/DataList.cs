@@ -104,6 +104,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle AlternatingItemStyle {
 			get {
 				if (alternatingItemStyle == null) {
@@ -120,12 +122,16 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[TemplateContainer (typeof (DataListItem))]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual ITemplate AlternatingItemTemplate {
 			get { return alternatingItemTemplate; }
 			set { alternatingItemTemplate = value; }
 		}
 
 		[DefaultValue (-1)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual int EditItemIndex {
 #if NET_2_0
 			get { return editIndex; }
@@ -151,6 +157,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle EditItemStyle {
 			get {
 				if (editItemStyle == null) {
@@ -167,12 +175,16 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[TemplateContainer (typeof (DataListItem))]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual ITemplate EditItemTemplate {
 			get { return editItemTemplate; }
 			set { editItemTemplate = value; }
 		}
 
 		[DefaultValue (false)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual bool ExtractTemplateRows {
 			get {
 				object o = ViewState ["ExtractTemplateRows"];
@@ -185,6 +197,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle FooterStyle {
 			get {
 				if (footerStyle == null) {
@@ -201,6 +215,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[TemplateContainer (typeof (DataListItem))]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual ITemplate FooterTemplate {
 			get { return footerTemplate; }
 			set { footerTemplate = value; }
@@ -226,6 +242,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle HeaderStyle {
 			get {
 				if (headerStyle == null) {
@@ -242,6 +260,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[TemplateContainer (typeof (DataListItem))]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual ITemplate HeaderTemplate {
 			get { return headerTemplate; }
 			set { headerTemplate = value; }
@@ -249,6 +269,8 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual DataListItemCollection Items {
 			get {
 				if (items == null)
@@ -261,6 +283,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle ItemStyle {
 			get {
 				if (itemStyle == null) {
@@ -277,6 +301,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[TemplateContainer (typeof (DataListItem))]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual ITemplate ItemTemplate {
 			get { return itemTemplate; }
 			set { itemTemplate = value; }
@@ -286,6 +312,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (0)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual int RepeatColumns {
 			get {
 				object o = ViewState ["RepeatColumns"];
@@ -298,6 +326,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (RepeatDirection.Vertical)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual RepeatDirection RepeatDirection {
 			get {
 				object o = ViewState ["RepeatDirection"];
@@ -310,6 +340,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (RepeatLayout.Table)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual RepeatLayout RepeatLayout {
 			get {
 				object o = ViewState ["RepeatLayout"];
@@ -320,6 +352,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable (true)]
 		[DefaultValue (-1)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual int SelectedIndex {
 #if NET_2_0
 			get { return selectedIndex; }
@@ -343,6 +377,8 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual DataListItem SelectedItem {
 			get {
 				if (SelectedIndex < 0)
@@ -357,6 +393,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle SelectedItemStyle {
 			get {
 				if (selectedItemStyle == null) {
@@ -373,6 +411,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[TemplateContainer (typeof (DataListItem))]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual ITemplate SelectedItemTemplate {
 			get { return selectedItemTemplate; }
 			set { selectedItemTemplate = value; }
@@ -382,6 +422,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle SeparatorStyle {
 			get {
 				if (separatorStyle == null) {
@@ -398,6 +440,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[TemplateContainer (typeof (DataListItem))]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual ITemplate SeparatorTemplate {
 			get { return separatorTemplate; }
 			set { separatorTemplate = value; }
@@ -407,6 +451,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual bool ShowFooter {
 			get {
 				object o = ViewState ["ShowFooter"];
@@ -419,6 +465,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual bool ShowHeader {
 			get {
 				object o = ViewState ["ShowHeader"];
@@ -816,36 +864,50 @@ for (int i=0; i < Items.Count; i++) {
 		}
 
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataListCommandEventHandler CancelCommand {
 			add { Events.AddHandler (cancelCommandEvent, value); }
 			remove { Events.RemoveHandler (cancelCommandEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataListCommandEventHandler DeleteCommand {
 			add { Events.AddHandler (deleteCommandEvent, value); }
 			remove { Events.RemoveHandler (deleteCommandEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataListCommandEventHandler EditCommand {
 			add { Events.AddHandler (editCommandEvent, value); }
 			remove { Events.RemoveHandler (editCommandEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataListCommandEventHandler ItemCommand {
 			add { Events.AddHandler (itemCommandEvent, value); }
 			remove { Events.RemoveHandler (itemCommandEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataListItemEventHandler ItemCreated {
 			add { Events.AddHandler (itemCreatedEvent, value); }
 			remove { Events.RemoveHandler (itemCreatedEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataListItemEventHandler ItemDataBound {
 			add { Events.AddHandler (itemDataBoundEvent, value); }
 			remove { Events.RemoveHandler (itemDataBoundEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataListCommandEventHandler UpdateCommand {
 			add { Events.AddHandler (updateCommandEvent, value); }
 			remove { Events.RemoveHandler (updateCommandEvent, value); }

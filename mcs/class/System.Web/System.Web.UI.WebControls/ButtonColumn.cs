@@ -34,6 +34,7 @@ namespace System.Web.UI.WebControls {
 		       
 		[DefaultValue(ButtonColumnType.LinkButton)]
 		[Description("The type of button contained within the column.")]
+		[WebCategory ("Misc")]
 		public virtual ButtonColumnType ButtonType
 		{
 			get {
@@ -47,6 +48,7 @@ namespace System.Web.UI.WebControls {
 		
 		[DefaultValue("")]
 		[Description("The command associated with the button.")]
+		[WebCategory ("Misc")]
 		public virtual string CommandName
 		{
 			get {
@@ -59,6 +61,7 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue("")]
 		[Description("The field bound to the text property of the button.")]
+		[WebCategory ("Misc")]
 		public virtual string DataTextField 
 		{
 			get {
@@ -71,6 +74,7 @@ namespace System.Web.UI.WebControls {
 		
 		[DefaultValue("")]
 		[Description("The formatting applied to the value bound to the Text property.")]
+ 		[WebCategory ("Misc")]
 		public virtual string DataTextFormatString 
 		{
 			get {
@@ -84,6 +88,7 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue("")]
 		[Description("The text used for the button.")]
+		[WebCategory ("Misc")]
 		public virtual string Text 
 		{
 			get {

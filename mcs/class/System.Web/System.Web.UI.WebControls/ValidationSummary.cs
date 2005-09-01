@@ -49,6 +49,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(ValidationSummaryDisplayMode.BulletList)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public ValidationSummaryDisplayMode DisplayMode {
 			get {
 				object obj;
@@ -69,6 +71,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public bool EnableClientScript {
 			get {
 				return ViewState.GetBool("EnableClientScript", true);
@@ -97,6 +101,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public string HeaderText {
 			get {
 				return ViewState.GetString("HeaderText", string.Empty);
@@ -111,6 +117,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(false)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public bool ShowMessageBox {
 			get {
 				return ViewState.GetBool("ShowMessageBox", false);
@@ -125,6 +133,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public bool ShowSummary {
 			get {
 				return ViewState.GetBool("ShowSummary", true);

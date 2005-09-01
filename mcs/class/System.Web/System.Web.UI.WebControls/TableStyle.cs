@@ -54,6 +54,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string BackImageUrl {
 			get {
 				if ((styles & Styles.BackImageUrl) == 0)
@@ -74,6 +76,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (-1)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual int CellPadding {
 			get {
 				if ((styles & Styles.CellPadding) == 0)
@@ -94,6 +98,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (-1)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual int CellSpacing {
 			get {
 				if ((styles & Styles.CellSpacing) == 0)
@@ -115,6 +121,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (GridLines.None)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual GridLines GridLines {
 			get {
 				if ((styles & Styles.GridLines) == 0)
@@ -138,6 +146,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (HorizontalAlign.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
 				if ((styles & Styles.HorizontalAlign) == 0)

@@ -51,6 +51,8 @@ namespace System.Web.UI.WebControls {
 #endif
 		[DefaultValue (HorizontalAlign.NotSet)]
 		[NotifyParentProperty (true)]
+		[WebSysDescription ("")]
+		[WebCategory("Layout")]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
 				if ((styles & Styles.HorizontalAlign) == 0)
@@ -73,6 +75,8 @@ namespace System.Web.UI.WebControls {
 #endif
 		[DefaultValue (VerticalAlign.NotSet)]
 		[NotifyParentProperty (true)]
+		[WebSysDescription ("")]
+		[WebCategory("Layout")]
 		public virtual VerticalAlign VerticalAlign {
 			get {
 				if ((styles & Styles.VerticalAlign) == 0)
@@ -95,6 +99,8 @@ namespace System.Web.UI.WebControls {
 #endif
 		[DefaultValue (true)]
 		[NotifyParentProperty (true)]
+		[WebSysDescription ("")]
+		[WebCategory("Layout")]
 		public virtual bool Wrap {
 			get {
 				if ((styles & Styles.Wrap) == 0)

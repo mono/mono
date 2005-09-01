@@ -50,6 +50,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[DefaultValue (LiteralMode.Transform)]
 		[MonoTODO]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public LiteralMode Mode 
 		{
 			get {
@@ -63,6 +65,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 #if NET_2_0
 		[Localizable (true)]
 		public virtual

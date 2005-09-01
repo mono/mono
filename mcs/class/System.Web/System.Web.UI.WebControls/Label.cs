@@ -56,6 +56,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string Text {
 			get {
 				return ViewState.GetString ("Text", "");
@@ -74,6 +76,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif		
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Accessibility")]
 		public virtual string AssociatedControlID {
 			get {
 				return ViewState.GetString ("AssociatedControlID", "");

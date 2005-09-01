@@ -183,6 +183,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual bool AutoPostBack {
 			get {
 				return ViewState.GetBool ("AutoPostBack", false);
@@ -210,6 +212,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(0)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual int Columns {
 			get {
 				return ViewState.GetInt ("Columns", 0);
@@ -226,6 +230,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual int MaxLength {
 			get {
 				return ViewState.GetInt ("MaxLength", 0);
@@ -240,6 +246,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual bool ReadOnly {
 			get {
 				return ViewState.GetBool ("ReadOnly", false);
@@ -256,6 +264,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual int Rows {
 			get {
 				return ViewState.GetInt ("Rows", 0);
@@ -287,6 +297,8 @@ namespace System.Web.UI.WebControls {
 		[Localizable (true)]
 		[Editor ("System.ComponentModel.Design.MultilineStringEditor," + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string Text {
 			get {
 				return ViewState.GetString ("Text", "");
@@ -302,6 +314,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual TextBoxMode TextMode {
 			get {
 				return (TextBoxMode) ViewState.GetInt ("TextMode", (int) TextBoxMode.SingleLine);
@@ -326,6 +340,8 @@ namespace System.Web.UI.WebControls {
 #endif		
 	
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public virtual bool Wrap {
 			get {
 				return ViewState.GetBool ("Wrap", true);
@@ -343,6 +359,9 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		static readonly object TextChangedEvent = new object ();
+
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event EventHandler TextChanged {
 			add { Events.AddHandler (TextChangedEvent, value); }
 			remove { Events.RemoveHandler (TextChangedEvent, value); }

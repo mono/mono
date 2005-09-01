@@ -83,24 +83,32 @@ namespace System.Web.UI.WebControls {
 		private PagedDataSource paged_data_source;
 		
 		[DefaultValue(false)]
+		[WebSysDescription ("")]
+		[WebCategory ("Paging")]
 		public virtual bool AllowCustomPaging {
 			get { return ViewState.GetBool ("AllowCustomPaging", false); }
 			set { ViewState ["AllowCustomPaging"] = value; }
 		}
 
 		[DefaultValue(false)]
+ 		[WebSysDescription ("")]
+		[WebCategory ("Paging")]
 		public virtual bool AllowPaging {
 			get { return ViewState.GetBool ("AllowPaging", false); }
 			set { ViewState ["AllowPaging"] = value; }
 		}
 
 		[DefaultValue(false)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual bool AllowSorting {
 			get { return ViewState.GetBool ("AllowSorting", false); }
 			set { ViewState ["AllowSorting"] = value; }
 		}
 
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual bool AutoGenerateColumns {
 			get { return ViewState.GetBool ("AutoGenerateColumns", true); }
 			set { ViewState ["AutoGenerateColumns"] = value; }
@@ -109,6 +117,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[DefaultValue("")]
 		[Editor("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+ 		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string BackImageUrl {
 			get { return TableStyle.BackImageUrl; }
 			set { TableStyle.BackImageUrl = value; }
@@ -118,6 +128,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public int CurrentPageIndex {
 			get { return ViewState.GetInt ("CurrentPageIndex", 0); }
 			set {
@@ -128,6 +140,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue(-1)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual int EditItemIndex {
 			get { return ViewState.GetInt ("EditItemIndex", -1); }
 			set {
@@ -139,11 +153,15 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public int PageCount {
 			get { return page_count; }
 		}
 
 		[DefaultValue(10)]
+		[WebSysDescription ("")]
+		[WebCategory ("Paging")]
 		public virtual int PageSize {
 			get { return ViewState.GetInt ("PageSize", 10); }
 			set {
@@ -155,6 +173,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue(-1)]
+		[WebSysDescription ("")]
+		[WebCategory ("Paging")]
 		public virtual int SelectedIndex {
 			get { return ViewState.GetInt ("SelectedIndex", -1); }
 			set {
@@ -167,6 +187,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle AlternatingItemStyle {
 			get {
 				if (alt_item_style == null) {
@@ -181,6 +203,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle EditItemStyle {
 			get {
 				if (edit_item_style == null) {
@@ -196,6 +220,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle FooterStyle {
 			get {
 				if (footer_style == null) {
@@ -211,6 +237,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle HeaderStyle {
 			get {
 				if (header_style == null) {
@@ -225,6 +253,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle ItemStyle {
 			get {
 				if (item_style == null) {
@@ -239,6 +269,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual TableItemStyle SelectedItemStyle {
 			get {
 				if (selected_style == null) {
@@ -253,6 +285,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual DataGridPagerStyle PagerStyle {
 			get {
 				if (pager_style == null) {
@@ -266,6 +300,8 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public virtual DataGridItemCollection Items {
 			get {
 				if (items == null) {
@@ -280,6 +316,8 @@ namespace System.Web.UI.WebControls {
 		[Editor ("System.Web.UI.Design.WebControls.DataGridColumnCollectionEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[MergableProperty (false)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual DataGridColumnCollection Columns {
 			get {
 				if (columns == null) {
@@ -344,6 +382,8 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Paging")]
 		public virtual DataGridItem SelectedItem {
 			get {
 				if (SelectedIndex == -1)
@@ -354,6 +394,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue(false)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual bool ShowFooter {
 			get { return ViewState.GetBool ("ShowFooter", false); }
 			set { ViewState ["ShowFooter"] = value; }
@@ -361,6 +403,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual bool ShowHeader {
 			get { return ViewState.GetBool ("ShowHeader", true); }
 			set { ViewState ["ShowHeader"] = value; }
@@ -368,6 +412,8 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual int VirtualItemCount {
 			get { return ViewState.GetInt ("VirtualItemCount", 0); }
 			set {
@@ -915,47 +961,65 @@ namespace System.Web.UI.WebControls {
 				handler (this, e);
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataGridCommandEventHandler CancelCommand {
 			add { Events.AddHandler (CancelCommandEvent, value); }
 			remove { Events.RemoveHandler (CancelCommandEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataGridCommandEventHandler DeleteCommand {
 			add { Events.AddHandler (DeleteCommandEvent, value); }
 			remove { Events.RemoveHandler (DeleteCommandEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataGridCommandEventHandler EditCommand {
 			add { Events.AddHandler (EditCommandEvent, value); }
 			remove { Events.RemoveHandler (EditCommandEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataGridCommandEventHandler ItemCommand {
 			add { Events.AddHandler (ItemCommandEvent, value); }
 			remove { Events.RemoveHandler (ItemCommandEvent, value); }
 			
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataGridItemEventHandler ItemCreated {
 			add { Events.AddHandler (ItemCreatedEvent, value); }
 			remove { Events.RemoveHandler (ItemCreatedEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataGridItemEventHandler ItemDataBound {
 			add { Events.AddHandler (ItemDataBoundEvent, value); }
 			remove { Events.RemoveHandler (ItemDataBoundEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataGridPageChangedEventHandler PageIndexChanged {
 			add { Events.AddHandler (PageIndexChangedEvent, value); }
 			remove { Events.RemoveHandler (PageIndexChangedEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataGridSortCommandEventHandler SortCommand {
 			add { Events.AddHandler (SortCommandEvent, value); }
 			remove { Events.RemoveHandler (SortCommandEvent, value); }
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DataGridCommandEventHandler UpdateCommand {
 			add { Events.AddHandler (UpdateCommandEvent, value); }
 			remove { Events.AddHandler (UpdateCommandEvent, value); }

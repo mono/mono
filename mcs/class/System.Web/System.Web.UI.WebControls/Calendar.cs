@@ -78,6 +78,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Appearance")]
 		public virtual string Caption 
 		{
 			get {
@@ -89,6 +91,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue (TableCaptionAlign.NotSet)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Accessibility")]
 		public virtual TableCaptionAlign CaptionAlign 
 		{
 			get {
@@ -104,6 +108,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(2)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public int CellPadding {
 			get {
 				return ViewState.GetInt ("CellPadding", 2);
@@ -121,6 +127,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(0)]
+		[WebSysDescription ("")]
+		[WebCategory ("Layout")]
 		public int CellSpacing {
 			get {
 				return ViewState.GetInt ("CellSpacing", 0);
@@ -137,6 +145,8 @@ namespace System.Web.UI.WebControls {
 		[PersistenceMode(PersistenceMode.InnerProperty)]
 		[NotifyParentProperty(true)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public TableItemStyle DayHeaderStyle {
 			get {
 				if (dayHeaderStyle == null)
@@ -153,6 +163,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(DayNameFormat.Short)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public DayNameFormat DayNameFormat {
 			get {
 				return (DayNameFormat) ViewState.GetInt ("DayNameFormat", (int) DayNameFormat.Short);
@@ -171,6 +183,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public TableItemStyle DayStyle {
 			get {
 				if (dayStyle == null)
@@ -187,6 +201,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(FirstDayOfWeek.Default)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public FirstDayOfWeek FirstDayOfWeek {
 			get {
 				return (FirstDayOfWeek) ViewState.GetInt ("FirstDayOfWeek", (int) FirstDayOfWeek.Default);
@@ -208,6 +224,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public string NextMonthText {
 			get {
 				return ViewState.GetString ("NextMonthText", "&gt;");
@@ -222,6 +240,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(NextPrevFormat.CustomText)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public NextPrevFormat NextPrevFormat {
 			get {
 				return (NextPrevFormat) ViewState.GetInt ("NextPrevFormat", (int) NextPrevFormat.CustomText);
@@ -239,6 +259,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public TableItemStyle NextPrevStyle {
 			get {
 				if (nextPrevStyle == null)
@@ -255,6 +277,8 @@ namespace System.Web.UI.WebControls {
 		[NotifyParentProperty(true)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public TableItemStyle OtherMonthDayStyle {
 			get {
 				if (otherMonthDayStyle == null)
@@ -274,6 +298,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public string PrevMonthText {
 			get {
 				return ViewState.GetString ("PrevMonthText", "&lt;");
@@ -290,6 +316,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue("1/1/0001 12:00:00 AM")]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public DateTime SelectedDate {
 			get {
 				if (SelectedDates.Count > 0)
@@ -305,6 +333,8 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public SelectedDatesCollection SelectedDates {
 			get {
 				if (dateList == null)
@@ -321,6 +351,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public TableItemStyle SelectedDayStyle {
 			get {
 				if (selectedDayStyle == null)
@@ -337,6 +369,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(CalendarSelectionMode.Day)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public CalendarSelectionMode SelectionMode {
 			get {
 				return (CalendarSelectionMode) ViewState.GetInt ("SelectionMode", (int) CalendarSelectionMode.Day);
@@ -358,6 +392,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public string SelectMonthText {
 			get {
 				return ViewState.GetString ("SelectMonthText", "&gt;&gt;");
@@ -371,6 +407,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public TableItemStyle SelectorStyle {
 			get {
 				if (selectorStyle == null)
@@ -390,6 +428,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0		
 		[Localizable (true)]
 #endif		
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public string SelectWeekText {
 			get {
 				return ViewState.GetString ("SelectWeekText", "&gt;");
@@ -404,6 +444,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public bool ShowDayHeader {
 			get {
 				return ViewState.GetBool ("ShowDayHeader", true);
@@ -418,6 +460,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(false)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public bool ShowGridLines {
 			get {
 				return ViewState.GetBool ("ShowGridLines", false);
@@ -432,6 +476,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public bool ShowNextPrevMonth {
 			get {
 				return ViewState.GetBool ("ShowNextPrevMonth", true);
@@ -446,6 +492,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public bool ShowTitle {
 			get {
 				return ViewState.GetBool ("ShowTitle", true);
@@ -460,6 +508,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(TitleFormat.MonthYear)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public TitleFormat TitleFormat {
 			get {
 				return (TitleFormat) ViewState.GetInt ("TitleFormat", (int) TitleFormat.MonthYear);
@@ -477,6 +527,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public TableItemStyle TitleStyle {
 			get {
 				if (titleStyle == null)
@@ -493,6 +545,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public TableItemStyle TodayDayStyle {
 			get {
 				if (todayDayStyle == null)
@@ -510,6 +564,8 @@ namespace System.Web.UI.WebControls {
 #endif		
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public DateTime TodaysDate {
 			get {
 				object obj = ViewState ["TodaysDate"];
@@ -527,6 +583,8 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[DefaultValue (true)]
+		[WebSysDescription ("")]
+		[WebCategoryAttribute ("Accessibility")]
 		public virtual bool UseAccessibleHeader 
 		{
 			get {
@@ -540,6 +598,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue("1/1/0001 12:00:00 AM")]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public DateTime VisibleDate {
 			get {
 				object obj = ViewState ["VisibleDate"];
@@ -558,6 +618,8 @@ namespace System.Web.UI.WebControls {
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty(true)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Style")]
 		public TableItemStyle WeekendDayStyle {
 			get {
 				if (weekendDayStyle == null)
@@ -1184,6 +1246,8 @@ namespace System.Web.UI.WebControls {
 			return DateTimeFormatInfo.CurrentInfo.Calendar;
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event DayRenderEventHandler DayRender
 		{
 			add {
@@ -1194,6 +1258,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event EventHandler SelectionChanged
 		{
 			add {
@@ -1204,6 +1270,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event MonthChangedEventHandler VisibleMonthChanged
 		{
 			add {

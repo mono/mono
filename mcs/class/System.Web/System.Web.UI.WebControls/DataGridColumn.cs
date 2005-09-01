@@ -50,6 +50,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual TableItemStyle FooterStyle 
 		{
 			get {
@@ -66,6 +68,8 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string FooterText 
 		{
 			get {
@@ -78,6 +82,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string HeaderImageUrl
 		{
 			get {
@@ -92,6 +98,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual TableItemStyle HeaderStyle 
 		{
 			get {
@@ -108,6 +116,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string HeaderText 
 		{
 			get {
@@ -122,6 +132,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual TableItemStyle ItemStyle 
 		{
 			get {
@@ -138,6 +150,8 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string SortExpression 
 		{
 			get {
@@ -150,6 +164,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue (true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public bool Visible 
 		{
 			get {

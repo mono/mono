@@ -37,6 +37,8 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string DataNavigateUrlField {
 			get {
 				return ViewState.GetString ("DataNavigateUrlField", String.Empty);
@@ -46,6 +48,7 @@ namespace System.Web.UI.WebControls
 
 		[DefaultValue("")]
 		[Description("The formatting applied to the value bound to the NavigateUrl property.")]
+		[WebCategory ("Misc")]
 		public virtual string DataNavigateUrlFormatString {
 			get {
 				return ViewState.GetString ("DataNavigateUrlFormatString", String.Empty);
@@ -54,6 +57,8 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string DataTextField {
 			get {
 				return ViewState.GetString ("DataTextField", String.Empty);
@@ -63,6 +68,7 @@ namespace System.Web.UI.WebControls
 
 		[Description("The formatting applied to the value bound to the Text property.")]
 		[DefaultValue("")]
+		[WebCategory ("Misc")]
 		public virtual string DataTextFormatString {
 			get {
 				return ViewState.GetString ("DataTextFormatString", String.Empty);
@@ -71,6 +77,8 @@ namespace System.Web.UI.WebControls
 		}
 		
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string NavigateUrl {
 			get {
 				return ViewState.GetString ("NavigateUrl", String.Empty);
@@ -79,6 +87,8 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string Target {
 			get {
 				return ViewState.GetString ("Target", String.Empty);
@@ -87,6 +97,8 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual string Text {
 			get {
 				return ViewState.GetString ("Text", String.Empty);

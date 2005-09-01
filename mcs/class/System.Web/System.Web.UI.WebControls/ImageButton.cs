@@ -55,6 +55,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(false)]
 #endif		
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
 		public virtual
@@ -73,6 +75,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
 		public virtual
@@ -89,6 +93,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 #if NET_2_0
 		[Themeable (false)]
 		public virtual
@@ -165,6 +171,8 @@ namespace System.Web.UI.WebControls {
 
 		[Themeable (false)]
 		[DefaultValue ("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public virtual string ValidationGroup
 		{
 			get {
@@ -309,6 +317,8 @@ namespace System.Web.UI.WebControls {
 				Page.RegisterRequiresPostBack (this);
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event ImageClickEventHandler Click
 		{
 			add {
@@ -319,6 +329,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		[WebSysDescription ("")]
+		[WebCategory ("Action")]
 		public event CommandEventHandler Command
 		{
 			add {

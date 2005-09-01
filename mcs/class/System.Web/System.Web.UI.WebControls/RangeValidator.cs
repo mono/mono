@@ -41,6 +41,8 @@ namespace System.Web.UI.WebControls {
 		#region Public Instance Properties
 		[Bindable(true)]
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public string MaximumValue {
 			get {
 				return ViewState.GetString("MaximumValue", String.Empty);
@@ -53,6 +55,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable(true)]
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public string MinimumValue {
 			get {
 				return ViewState.GetString("MinimumValue", String.Empty);

@@ -63,6 +63,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Localizable (true)]
 #endif
+		[WebSysDescription ("")]
+		[WebCategory ("Accessibility")]
 		public virtual string Caption {
 			get {
 				object o = ViewState ["Caption"];
@@ -94,6 +96,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (-1)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public virtual int CellPadding {
 			get {
 				if (!ControlStyleCreated)
@@ -107,6 +111,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (0)]
+		[WebSysDescription("")]
+		[WebCategory("Layout")]
 		public virtual int CellSpacing {
 			get {
 				if (!ControlStyleCreated)
@@ -128,6 +134,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif
 		[MonoTODO ("incomplete")]
+		[WebSysDescription("")]
+		[WebCategory("Data")]
 		public virtual string DataKeyField {
 			get {
 				object o = ViewState ["DataKeyField"];
@@ -143,6 +151,8 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription("")]
+		[WebCategory("Data")]
 		public DataKeyCollection DataKeys {
 			get {
 				if (keycoll == null) {
@@ -165,6 +175,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif
+		[WebSysDescription("")]
+		[WebCategory("Data")]
 		public string DataMember {
 			get {
 				object o = ViewState ["DataMember"];
@@ -188,6 +200,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 		[Themeable (false)]
 #endif
+		[WebSysDescription("")]
+		[WebCategory("Data")]
 		public virtual object DataSource {
 			get { return source; }
 			set {
@@ -217,6 +231,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable (true)]
 #endif
 		[DefaultValue (GridLines.Both)]
+		[WebSysDescription("")]
+		[WebCategory("Appearance")]
 		public virtual GridLines GridLines {
 			get {
 				if (!ControlStyleCreated)
@@ -231,6 +247,7 @@ namespace System.Web.UI.WebControls {
 #endif
 		[Category ("Layout")]
 		[DefaultValue (HorizontalAlign.NotSet)]
+		[WebSysDescription("")]
 		public virtual HorizontalAlign HorizontalAlign {
 			get {
 				if (!ControlStyleCreated)
@@ -436,6 +453,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 
+		[WebSysDescription("")]
+		[WebCategory("Action")]
 		public event EventHandler SelectedIndexChanged {
 			add { Events.AddHandler (selectedIndexChangedEvent, value); }
 			remove { Events.RemoveHandler (selectedIndexChangedEvent, value); }

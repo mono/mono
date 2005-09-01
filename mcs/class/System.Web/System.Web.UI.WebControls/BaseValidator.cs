@@ -108,6 +108,8 @@ namespace System.Web.UI.WebControls {
 #endif
 		[TypeConverter(typeof(System.Web.UI.WebControls.ValidatedControlConverter))]
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public string ControlToValidate {
 			get {
 				return ViewState.GetString ("ControlToValidate", String.Empty);
@@ -124,6 +126,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue(ValidatorDisplay.Static)]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public ValidatorDisplay Display {
 			get {
 				return (ValidatorDisplay)ViewState.GetInt ("Display", (int)ValidatorDisplay.Static);
@@ -137,6 +141,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif
 		[DefaultValue(true)]
+		[WebSysDescription ("")]
+		[WebCategory ("Behavior")]
 		public bool EnableClientScript {
 			get {
 				return ViewState.GetBool ("EnableClientScript", true);
@@ -162,6 +168,8 @@ namespace System.Web.UI.WebControls {
 		[Bindable(true)]
 #endif		
 		[DefaultValue("")]
+		[WebSysDescription ("")]
+		[WebCategory ("Appearance")]
 		public virtual string ErrorMessage {
 			get {
 				return ViewState.GetString ("ErrorMessage", String.Empty);
@@ -188,6 +196,8 @@ namespace System.Web.UI.WebControls {
 		[Themeable (false)]
 #endif
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[WebSysDescription ("")]
+		[WebCategory ("Misc")]
 		public virtual bool IsValid {
 			get {
 				return valid;

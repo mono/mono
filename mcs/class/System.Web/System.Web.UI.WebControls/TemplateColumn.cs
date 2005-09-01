@@ -63,6 +63,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof(DataGridItem))]
+		[WebSysDescription ("")]
 		public virtual ITemplate EditItemTemplate {
 			get { return editItemTemplate; }
 			set { editItemTemplate = value; }
@@ -72,6 +73,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof(DataGridItem))]
+		[WebSysDescription ("")]
 		public virtual ITemplate FooterTemplate {
 			get { return footerTemplate; }
 			set { footerTemplate = value; }	
@@ -81,6 +83,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof(DataGridItem))]
+		[WebSysDescription ("")]
 		public virtual ITemplate HeaderTemplate {
 			get { return headerTemplate; }
 			set { headerTemplate = value; }
@@ -90,6 +93,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (null)]
 		[PersistenceMode(PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof(DataGridItem))]
+		[WebSysDescription ("")]
 		public virtual ITemplate ItemTemplate {
 			get { return itemTemplate; }
 			set { itemTemplate = value; }
