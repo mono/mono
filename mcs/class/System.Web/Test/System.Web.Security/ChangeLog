@@ -1,3 +1,9 @@
+2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FormsAuthenticationEventArgsCas.cs: New. CAS unit tests.
+	* PassportAuthenticationEventArgsCas.cs: New. CAS unit tests.
+	* WindowsAuthenticationEventArgsCas.cs: New. CAS unit tests.
+
 2005-08-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FormsAuthenticationTest.cs: Some results are different in 1.x.
