@@ -749,9 +749,10 @@ public class DateTimeTest : Assertion
 		AssertEquals (02, dt.Month);
 		AssertEquals (21, dt.Day);
 
-		// see also bug #53023
-		foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures))
-			DateTime.Parse ("8/16/2005", ci);
+		foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
+			DateTime.Parse ("8/16/2005", ci); // see also bug #53023
+			DateTime.Parse ("01-Sep-05", ci);
+		}
 
 		// don't allow 2 digit years where we require 4.
 		try {
@@ -768,6 +769,7 @@ public class DateTimeTest : Assertion
 		DateTime.Parse (String.Format (
 			"{0}\u5E74{1}\u6708{2}\u65E5 {3}\u6642{4}\u5206{5}\u79D2",
 			2006, 3, 1, 15, 32, 42), new CultureInfo (""));
+
 		try {
 			// incorrect year mark.
 			DateTime.Parse (String.Format (
@@ -782,7 +784,11 @@ public class DateTimeTest : Assertion
 	[ExpectedException(typeof (FormatException))]
 	public void ParseFormatException1 ()
 	{
-		// Following string is not a correct French date i.e. dd/mm/yyyy.
+		// Following string is not a correct French date i.e.
+		// MM/dd/yyyy HH:mm:ss since it expects d/M/yyyy HH:mm:ss
+		// instead (however fr-FR accepts both MM/dd/yyyy and
+		// dd/MM/yyyy, which means that we can't just throw exceptions 
+		// on overflow).
 		String frDateTime = "11/13/2003 11:28:15";
 	        IFormatProvider format = new CultureInfo("fr-FR", true);
 		DateTime t1 = DateTime.Parse(frDateTime, format);

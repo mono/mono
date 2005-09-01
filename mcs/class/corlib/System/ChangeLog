@@ -1,3 +1,7 @@
+2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : another idiotic COM dependent format.
+
 2005-09-01  Kornél Pál  <kornelpal@hotmail.com>
 
 	* __ComObject.cs: Fixed to be internal. Removed CLSCompliant attribute.
