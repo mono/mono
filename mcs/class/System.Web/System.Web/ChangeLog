@@ -10,7 +10,11 @@
 
 2005-08-31  Miguel de Icaza  <miguel@novell.com>
 
+	Removed debugging info.
+	
 	* HttpApplication.cs: Add support for async handlers. 
+
+	Add extra 2.x methods. 
 
 2005-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
