@@ -1,3 +1,12 @@
+2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FormsAuthenticationEventArgs.cs: Ensure the setter for User is 
+	protected by a demand for ControlPrincipal.
+	* PassportAuthenticationEventArgs.cs: Ensure the setter for User is
+	protected by a demand for ControlPrincipal.
+	* WindowsAuthenticationEventArgs.cs: Ensure the setter for User is 
+	protected by a demand for ControlPrincipal.
+
 2005-08-25  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* FormsAuthentication.cs: With 2.0 we can get the default properties 

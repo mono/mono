@@ -5,8 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,9 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Security.Permissions;
 using System.Security.Principal;
-using System.Web;
 
 namespace System.Web.Security
 {
@@ -57,6 +55,7 @@ namespace System.Web.Security
 				return user;
 			}
 
+			[SecurityPermission (SecurityAction.Demand, ControlPrincipal = true)]
 			set {
 				user = value;
 			}
