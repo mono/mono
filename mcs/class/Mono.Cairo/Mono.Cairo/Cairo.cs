@@ -396,6 +396,9 @@ namespace Cairo {
                 [DllImport (CairoImp)]                
                 public static extern void cairo_surface_destroy (IntPtr surface);
 
+                [DllImport (CairoImp)]                
+                public static extern void cairo_surface_write_to_png (IntPtr surface, string filename);
+
                 //
                 // Matrix
                 //

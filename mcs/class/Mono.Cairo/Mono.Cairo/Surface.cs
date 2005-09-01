@@ -193,6 +193,11 @@ namespace Cairo {
 		{
 			CairoAPI.cairo_surface_destroy (surface);
 		}
+
+		public void WriteToPng (string filename)
+		{
+			CairoAPI.cairo_surface_write_to_png (surface, filename);
+		}
 		
                 public IntPtr Pointer {
                         get { return surface; }

@@ -1,6 +1,6 @@
 //
 //
-//	X11 interface
+//	X11 Interface
 //	Authors: Hisham Mardam Bey <hisham.mardambey@gmail.com>
 //
 
@@ -31,64 +31,6 @@ using System;
 using Cairo;
 using System.Runtime.InteropServices;
 
-
-public class X11Test
-{
-        static readonly double  M_PI = 3.14159265358979323846;
-	
-	static void draw (Cairo.Graphics gr, int width, int height)
-	{
-		double xc = 0.5;
-		double yc = 0.5;
-		double radius = 0.4;
-		double angle1 = 45.0  * (M_PI/180.0);  /* angles are specified */
-		double angle2 = 180.0 * (M_PI/180.0);  /* in radians           */
-		
-		gr.Scale (width, height);
-		gr.LineWidth = 0.04;
-
-		
-		gr.Arc (xc, yc, radius, angle1, angle2);
-		gr.Stroke ();
-		
-		/* draw helping lines */
-		gr.Color = new Color(1, 0.2, 0.2, 0.6);
-		gr.Arc (xc, yc, 0.05, 0, 2*M_PI);
-		gr.Fill ();
-		gr.LineWidth = 0.03;
-		gr.Arc (xc, yc, radius, angle1, angle1);
-		gr.LineTo (new PointD(xc, yc));
-		gr.Arc (xc, yc, radius, angle2, angle2);
-		gr.LineTo (new PointD(xc, yc));
-		gr.Stroke ();
-		
-	}	
-	
-	static void Main (string [] args)
-	{
-		Window win = new Window (640, 480);
-		
-		win.Show ();
-		
-		Cairo.Surface s = Cairo.Surface.CreateForXlib (win.Display,
-			       win.XWindow,
-			       X11.XDefaultVisual (win.Display, win.Screen),
-			       (int)win.Width, (int)win.Height);
-
-		
-		Cairo.Graphics g = new Cairo.Graphics (s);
-		
-		draw (g, 640, 480);
-		
-		IntPtr xev = new IntPtr ();
-		
-		while (true) {
-			
-			X11.XNextEvent (win.Display, xev);
-			
-		}
-		
-	}
 						
 	public class Window {
 		
@@ -210,7 +152,4 @@ public class X11Test
 		  internal static extern int XNextEvent (IntPtr display,
 							 IntPtr event_return);
 	}
-
 		  
-
-}

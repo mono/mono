@@ -1,10 +1,11 @@
 //
 //
-//	GDK-X11 interface
+//	Mono.Cairo drawing samples using X11 as drawing surface
+//	Autor: Hisham Mardam Bey <hisham@hisham.cc>
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,38 +30,52 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Gtk;
 using Cairo;
 
-namespace Gdk 
-{		
-	class Graphics
-	{		
-		//Use [DllImport("libgdk-win32-2.0-0.dll")] for  Win32 
-		[DllImport("libgdk-x11-2.0.so")]
-		internal static extern IntPtr gdk_x11_drawable_get_xdisplay (IntPtr raw);
+public class X11Test
+{
+        static readonly double  M_PI = 3.14159265358979323846;
 	
-		[DllImport("libgdk-x11-2.0.so")]
-		internal static extern IntPtr gdk_x11_drawable_get_xid (IntPtr raw);
+	static void draw (Cairo.Graphics gr, int width, int height)
+	{
+		gr.Scale (width, height);
+		gr.LineWidth = 0.04;
+		
+		gr.Arc (0.5, 0.5, 0.3, 0, 2 * M_PI);
+		gr.Clip ();
+		
+		gr.NewPath ();
+		gr.Rectangle (new PointD (0, 0), 1, 1);
+		gr.Fill ();
+		gr.Color = new Color (0, 1, 0, 1);
+		gr.MoveTo ( new PointD (0, 0) );
+		gr.LineTo ( new PointD (1, 1) );
+		gr.MoveTo ( new PointD (1, 0) );
+		gr.LineTo ( new PointD (0, 1) );
+		gr.Stroke ();
+	}
 	
-		public static void CreateDrawable (Gdk.Drawable drawable, Cairo.Graphics g)
-		{
-			IntPtr x_drawable = IntPtr.Zero;
-			int x_off = 0, y_off = 0;			
-			
-			if (drawable is Gdk.Window)
-				((Gdk.Window) drawable).GetInternalPaintInfo(out drawable, out x_off, out y_off);
+	
+	static void Main (string [] args)
+	{
+		Window win = new Window (500, 500);
+		
+		win.Show ();
+		
+		Cairo.Surface s = Cairo.Surface.CreateForXlib (win.Display,
+			       win.XWindow,
+			       X11.XDefaultVisual (win.Display, win.Screen),
+			       (int)win.Width, (int)win.Height);
 
-			x_drawable = drawable.Handle;
-			
-			IntPtr display = gdk_x11_drawable_get_xdisplay (x_drawable);
-			IntPtr Xdrawable = gdk_x11_drawable_get_xid (x_drawable);
-   
-    			g.SetTargetDrawable (display, Xdrawable);			
-    
-			if (drawable is Gdk.Window)
-				g.Translate (-(double)x_off,-(double)y_off);
-			
-		}
+		
+		Cairo.Graphics g = new Cairo.Graphics (s);
+		
+		draw (g, 500, 500);
+		
+		IntPtr xev = new IntPtr ();
+		
+		while (true) {			
+			X11.XNextEvent (win.Display, xev);
+		}		
 	}
 }

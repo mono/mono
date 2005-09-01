@@ -1,3 +1,13 @@
+2005-09-01 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+
+        * Samples: Added png and x11 samples and cleaned up gtk
+
+2005-08-30  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Cairo.cs: add import for
+	cairo_surface_write_to_png
+	* Mono.Cairo/Surface.cs: add WriteToPng method
+
 2005-08-12 Hisham Mardam Bey <hisham.mardambey@gmail.com>
         * Added xlib surface size / font size functions
         * Added font matrix setting

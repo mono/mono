@@ -1,12 +1,11 @@
 //
 //
-//	Mono.Cairo drawing samples using GTK# as drawing surface
-//	Autor: Jordi Mas <jordi@ximian.com>. Based on work from Owen Taylor
-//	       Hisham Mardam Bey <hisham@hisham.cc>
+//	Mono.Cairo drawing samples using X11 as drawing surface
+//	Autor: Hisham Mardam Bey <hisham@hisham.cc>
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,35 +31,11 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using Cairo;
-using Gtk;
-	
-class GtkCairo
-{
-	static DrawingArea a;
-	
-	static void Main ()
-	{		
-		Application.Init ();
-		Gtk.Window w = new Gtk.Window ("Mono.Cairo Circles demo");
 
-		a = new CairoGraphic ();	
-		
-		Box box = new HBox (true, 0);
-		box.Add (a);
-		w.Add (box);
-		w.Resize (500,500);		
-		w.ShowAll ();		
-		
-		Application.Run ();
-	}
-
-
-}
-
-class CairoGraphic : DrawingArea 
+public class X11Test
 {
         static readonly double  M_PI = 3.14159265358979323846;
-   
+	
 	static void draw (Cairo.Graphics gr, int width, int height)
 	{
 		double xc = 0.5;
@@ -85,22 +60,30 @@ class CairoGraphic : DrawingArea
 		gr.LineTo (new PointD(xc, yc));
 		gr.Arc (xc, yc, radius, angle2, angle2);
 		gr.LineTo (new PointD(xc, yc));
-		gr.Stroke ();		
-	}
-
-	protected override bool OnExposeEvent (Gdk.EventExpose args)
+		gr.Stroke ();
+		
+	}	
+	
+	static void Main (string [] args)
 	{
-		Gdk.Window win = args.Window;
-		//Gdk.Rectangle area = args.Area;
+		Window win = new Window (500, 500);
 		
-		Cairo.Graphics g = new Cairo.Graphics ();
-		Gdk.Graphics.CreateDrawable (win,  g);
+		win.Show ();
 		
-		int x, y, w, h, d;
-		win.GetGeometry(out x, out y, out w, out h, out d);
+		Cairo.Surface s = Cairo.Surface.CreateForXlib (win.Display,
+			       win.XWindow,
+			       X11.XDefaultVisual (win.Display, win.Screen),
+			       (int)win.Width, (int)win.Height);
+
 		
-		draw (g, w, h);
-		return true;
+		Cairo.Graphics g = new Cairo.Graphics (s);
+		
+		draw (g, 500, 500);
+		
+		IntPtr xev = new IntPtr ();
+		
+		while (true) {			
+			X11.XNextEvent (win.Display, xev);
+		}		
 	}
 }
-
