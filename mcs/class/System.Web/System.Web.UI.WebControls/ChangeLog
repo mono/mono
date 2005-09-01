@@ -1,3 +1,7 @@
+2005-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Repeater.cs: fix the build.
+
 2005-08-31  Chris Toshok  <toshok@ximian.com>
 
 	* Repeater.cs: lots of 2.0 work, much of it c&p'ed from

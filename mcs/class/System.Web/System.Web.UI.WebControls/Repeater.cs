@@ -49,8 +49,8 @@ namespace System.Web.UI.WebControls {
 	public class Repeater : Control, INamingContainer {
 
 		object dataSource;
-		IDataSource boundDataSource;
 #if NET_2_0
+		IDataSource boundDataSource;
 		private bool initialized;
 		private bool requiresDataBinding;
 		private DataSourceSelectArguments selectArguments;
