@@ -941,6 +941,11 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		//
+		// Theoretically, we can get rid of this, since FieldBuilder.SetCustomAttribute()
+		// and ParameterBuilder.SetCustomAttribute() are supposed to handle this attribute.
+		// However, we can't, since it appears that the .NET 1.1 SRE hangs when given a MarshalAsAttribute.
+		//
 		public UnmanagedMarshal GetMarshal (Attributable attr)
 		{
 			UnmanagedType UnmanagedType;
@@ -956,7 +961,7 @@ namespace Mono.CSharp {
 			}
 
 			object o = GetFieldValue ("ArraySubType");
-			UnmanagedType array_sub_type = o == null ? UnmanagedType.I4 : (UnmanagedType) o;
+			UnmanagedType array_sub_type = o == null ? (UnmanagedType) 0x50 /* NATIVE_MAX */ : (UnmanagedType) o;
 			
 			switch (UnmanagedType) {
 			case UnmanagedType.CustomMarshaler: {
