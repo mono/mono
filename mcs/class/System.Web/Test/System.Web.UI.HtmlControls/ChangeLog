@@ -1,3 +1,16 @@
+2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlAnchorCas.cs, HtmlButtonCas.cs, HtmlEmptyTagControlBuilderCas.cs,
+	HtmlFormCas.cs, HtmlGenericControlCas.cs, HtmlHeadBuilderCas.cs,
+	HtmlHeadCas.cs, HtmlImageCas.cs, HtmlInputButtonCas.cs, 
+	HtmlInputCheckBoxCas.cs, HtmlInputFileCas.cs, HtmlInputHiddenCas.cs,
+	HtmlInputImageCas.cs, HtmlInputPasswordCas.cs, 
+	HtmlInputRadioButtonCas.cs, HtmlInputResetCas.cs, 
+	HtmlInputSubmitCas.cs, HtmlInputTextCas.cs, HtmlSelectBuilderCas.cs,
+	HtmlSelectCas.cs, HtmlTableCas.cs, HtmlTableCellCas.cs. 
+	HtmlTableRowCas.cs, HtmlTitleCas.cs: New. CAS unit tests to check for
+	AspNetHostingPermission Level.
+
 2005-08-29  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlInputSubmitTest.cs: new, base-level tests.
