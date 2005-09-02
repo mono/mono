@@ -1,3 +1,8 @@
+2005-09-02 Umadevi S <sumadevi@novell.com>
+	* System.Data.dll.sources: Changes for Microsoft.SqlServer.Server namespace and the
+	files to be compiled with it, removed files from System.Data.Sql namespace
+	Also removed SqlResultSet.cs from System.SqlClient namespace
+
 2005-09-01 Boris Kirzner <borisk@mainsoft.com>
 	* System.Data.dll.sources: fixed build. Changed reference to Consts.cs.in.
 
@@ -8,7 +13,6 @@
 	* System.Data.vmwcsproj: changed reference to Consts.cs.
 
 2005-08-20 Gert Driesen <drieseng@users.sourceforge.net>
-
 	* Makefile: Allow unsafe code. This fixes the build on Windows (using
 	csc).
 
