@@ -48,6 +48,7 @@ namespace System.Security {
 #endif
 	public abstract class CodeAccessPermission : IPermission, ISecurityEncodable, IStackWalk {
 
+
 		protected CodeAccessPermission ()
 		{
 		}
@@ -80,9 +81,17 @@ namespace System.Security {
 		{
 			if (denied == null)
 				return true;
-			if (denied.GetType () != this.GetType ())
+			Type t = denied.GetType ();
+			if (t != this.GetType ())
 				return true;
-			return (Intersect (denied) == null);
+			IPermission inter = Intersect (denied);
+			if (inter == null)
+				return true;
+			// sadly that's not enough :( at this stage we must also check
+			// if an empty (PermissionState.None) is a subset of the denied
+			// (which is like a empty intersection looks like for flag based
+			// permissions, e.g. AspNetHostingPermission).
+			return denied.IsSubsetOf (PermissionBuilder.Create (t));
 		}
 
 		internal bool CheckPermitOnly (CodeAccessPermission target)

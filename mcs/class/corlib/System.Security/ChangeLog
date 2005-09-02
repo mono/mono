@@ -1,3 +1,10 @@
+2005-09-02  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CodeAccessPermission.cs: Fix Deny for permissions that do not return
+	null for empty intersection (common on flags-based permissions).
+	* PermissionBuilder.cs: Add an helper call to create an empty 
+	(PermissionState.None) permission from a type.
+
 2005-06-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* SecurityManager.cs: Fixed inheritance demands for 1.x.

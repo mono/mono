@@ -75,6 +75,13 @@ namespace System.Security {
 			return CreatePermission (fullname, se);
 		}
 
+		static public IPermission Create (Type type)
+		{
+			// note: unification is handled in lower levels
+			// http://blogs.msdn.com/shawnfa/archive/2004/08/05/209320.aspx
+			return (IPermission) Activator.CreateInstance (type, psNone);
+		}
+
 		// internal stuff
 
 		internal static IPermission CreatePermission (string fullname, SecurityElement se)
@@ -88,10 +95,7 @@ namespace System.Security {
 				throw new ArgumentException (String.Format (msg, fullname));
 #endif
 			}
-
-			// note: unification is handled in lower levels
-			// http://blogs.msdn.com/shawnfa/archive/2004/08/05/209320.aspx
-			IPermission p = (IPermission) Activator.CreateInstance (classType, psNone);
+			IPermission p = Create (classType);
 			p.FromXml (se);
 			return p;
 		}
