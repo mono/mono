@@ -1,9 +1,8 @@
 //
-// Microsoft.SqlServer.Server.InvalidUdtException
+// Microsoft.SqlServer.Server.DataAccessKind
 //
-// Authors:
+// Author:
 //   Tim Coleman (tim@timcoleman.com)
-//   Umadevi S (sumadevi@novell.com)	
 //
 // Copyright (C) Tim Coleman, 2003
 //
@@ -33,39 +32,11 @@
 
 #if NET_2_0
 
-using System;
-using System.Runtime.Serialization;
-
-namespace Micrsoft.SqlServer.Server {
-	public sealed class InvalidUdtException : SystemException
+namespace Microsoft.SqlServer.Server {
+	public enum DataAccessKind
 	{
-		#region constructors 
-		
-		[MonoTODO]
-		public InvalidUdtException ()
-		{}
-		
-		[MonoTODO]
-		public InvalidUdtException (string message)	
-		{}
-
-		[MonoTODO]
-		public InvalidUdtException (string message, Exception innerException)
-		{}
-
-		[MonoTODO]
-		public InvalidUdtException (Type t, string reason)
-		{}
-
-		#endregion
-
-
-		#region methods
-
-		[MonoTODO]
-		public override void GetObjectData (SerializationInfo si, StreamingContext context)
-		{}
-		#endregion
+		None,
+		Read
 	}
 }
 

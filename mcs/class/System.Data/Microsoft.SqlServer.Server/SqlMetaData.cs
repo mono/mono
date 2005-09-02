@@ -33,6 +33,7 @@
 #if NET_2_0
 
 using System;
+using System.Data;
 using System.Data.SqlTypes;
 
 namespace Microsoft.SqlServer.Server {

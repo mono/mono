@@ -1,3 +1,6 @@
+2005-09-02 Umadevi S <sumadevi@novell.com>
+	* Corrected couple of files, added Format.cs and DataAccessKind.cs
+
 2005-09-02  Umadevi S <sumadevi@novell.com>
 
         * Added files IBinarySerialize.cs,InvalidUdtException.cs,SqlFacetAttribute.cs
