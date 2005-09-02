@@ -1,3 +1,12 @@
+2005-09-02  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Cache delegates passed to Stdlib.signal() so that they survive
+	  garbage collections.  Delegates can be removed by calling Stdlib.signal()
+	  again with one of the Stdlib.SIG_* values (or the original return value of
+	  Stdlib.signal()).
+	* UnixUser.cs, UnixGroup.cs, UnixEnvironment.cs: Clarify "Id" (int) vs. 
+	  "Name" (string) differences by always using a Id or Name suffix.
+
 2005-07-01  Daniel Drake  <dsd@gentoo.org>
 
 	* Syscall.cs: The entire extended attribute API now goes through MPH, to
