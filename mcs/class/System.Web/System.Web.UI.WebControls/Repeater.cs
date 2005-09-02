@@ -491,12 +491,16 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual IEnumerable GetData ()
 		{
+			IEnumerable result;
 			if (DataSourceID.Length == 0)
 				return null;
 
 			DataSourceView dsv = boundDataSource.GetView (String.Empty);
 			dsv.Select (SelectArguments, new DataSourceViewSelectCallback (SelectCallback));
-			return data;
+
+			result = data;
+			data = null;
+			return result;
 		}
 
 		[MonoTODO]

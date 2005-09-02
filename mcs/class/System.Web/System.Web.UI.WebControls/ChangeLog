@@ -1,3 +1,8 @@
+2005-09-02  Chris Toshok  <toshok@ximian.com>
+
+	* Repeater.cs (GetData): change this slightly so the Repeater
+	doesn't keep a ref to the return value of GetData.
+
 2005-09-01  Chris Toshok  <toshok@ximian.com>
 
 	* ListControl.cs (AppendDataBoundItems): implement (2.0)
