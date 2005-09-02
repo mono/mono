@@ -52,7 +52,7 @@ namespace MonoCasTests {
 
 		static Type[] VoidType = new Type[0];
 
-		public object CreateControl ()
+		public virtual object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
 		{
 			ConstructorInfo ci = this.Type.GetConstructor (VoidType);
 			Assert.IsNotNull (ci, "default .ctor");

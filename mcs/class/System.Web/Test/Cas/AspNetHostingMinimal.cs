@@ -40,35 +40,35 @@ namespace MonoCasTests {
 		[AspNetHostingPermission (SecurityAction.PermitOnly, Level = AspNetHostingPermissionLevel.Unrestricted)]
 		public void PermitOnly_Unrestricted ()
 		{
-			Assert.IsNotNull (CreateControl ());
+			Assert.IsNotNull (CreateControl (SecurityAction.PermitOnly, AspNetHostingPermissionLevel.Unrestricted));
 		}
 
 		[Test]
 		[AspNetHostingPermission (SecurityAction.PermitOnly, Level = AspNetHostingPermissionLevel.High)]
 		public void PermitOnly_High ()
 		{
-			Assert.IsNotNull (CreateControl ());
+			Assert.IsNotNull (CreateControl (SecurityAction.PermitOnly, AspNetHostingPermissionLevel.High));
 		}
 
 		[Test]
 		[AspNetHostingPermission (SecurityAction.PermitOnly, Level = AspNetHostingPermissionLevel.Medium)]
 		public void PermitOnly_Medium ()
 		{
-			Assert.IsNotNull (CreateControl ());
+			Assert.IsNotNull (CreateControl (SecurityAction.PermitOnly, AspNetHostingPermissionLevel.Medium));
 		}
 
 		[Test]
 		[AspNetHostingPermission (SecurityAction.PermitOnly, Level = AspNetHostingPermissionLevel.Low)]
 		public void PermitOnly_Low ()
 		{
-			Assert.IsNotNull (CreateControl ());
+			Assert.IsNotNull (CreateControl (SecurityAction.PermitOnly, AspNetHostingPermissionLevel.Low));
 		}
 
 		[Test]
 		[AspNetHostingPermission (SecurityAction.PermitOnly, Level = AspNetHostingPermissionLevel.Minimal)]
 		public void PermitOnly_Minimal ()
 		{
-			Assert.IsNotNull (CreateControl ());
+			Assert.IsNotNull (CreateControl (SecurityAction.PermitOnly, AspNetHostingPermissionLevel.Minimal));
 		}
 
 		[Test]
@@ -76,7 +76,7 @@ namespace MonoCasTests {
 		[ExpectedException (typeof (SecurityException))]
 		public void PermitOnly_None ()
 		{
-			CreateControl ();
+			CreateControl (SecurityAction.PermitOnly, AspNetHostingPermissionLevel.None);
 		}
 
 		[Test]
@@ -84,7 +84,7 @@ namespace MonoCasTests {
 		[ExpectedException (typeof (SecurityException))]
 		public void Deny_Unrestricted ()
 		{
-			CreateControl ();
+			CreateControl (SecurityAction.Deny, AspNetHostingPermissionLevel.Unrestricted);
 		}
 
 		[Test]
@@ -92,7 +92,7 @@ namespace MonoCasTests {
 		[ExpectedException (typeof (SecurityException))]
 		public void Deny_High ()
 		{
-			CreateControl ();
+			CreateControl (SecurityAction.Deny, AspNetHostingPermissionLevel.High);
 		}
 
 		[Test]
@@ -100,7 +100,7 @@ namespace MonoCasTests {
 		[ExpectedException (typeof (SecurityException))]
 		public void Deny_Medium ()
 		{
-			CreateControl ();
+			CreateControl (SecurityAction.Deny, AspNetHostingPermissionLevel.Medium);
 		}
 
 		[Test]
@@ -108,7 +108,7 @@ namespace MonoCasTests {
 		[ExpectedException (typeof (SecurityException))]
 		public void Deny_Low ()
 		{
-			CreateControl ();
+			CreateControl (SecurityAction.Deny, AspNetHostingPermissionLevel.Low);
 		}
 
 		[Test]
@@ -116,14 +116,14 @@ namespace MonoCasTests {
 		[ExpectedException (typeof (SecurityException))]
 		public void Deny_Minimal ()
 		{
-			CreateControl ();
+			CreateControl (SecurityAction.Deny, AspNetHostingPermissionLevel.Minimal);
 		}
 
 		[Test]
 		[AspNetHostingPermission (SecurityAction.Deny, Level = AspNetHostingPermissionLevel.None)]
 		public void Deny_None ()
 		{
-			Assert.IsNotNull (CreateControl ());
+			Assert.IsNotNull (CreateControl (SecurityAction.Deny, AspNetHostingPermissionLevel.None));
 		}
 	}
 }
