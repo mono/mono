@@ -1,3 +1,26 @@
+2005-09-02  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlInputReset.cs (ValidationGroup): remove the MonoTODO.
+
+	* htmlinputimage.cs: implement the 2.0 versions of loadpostdata,
+	raisepostdatachangedevent, and raisepostbackevent.
+	(validationgroup): implement.
+
+	* htmlinputcheckbox.cs: implement the 2.0 versions of loadpostdata
+	and raisepostdatachangedevent.
+
+	* HtmlInputHidden.cs: implement the 2.0 versions of LoadPostData
+	and RaisePostDataChangedEvent.
+
+	* HtmlInputButton.cs (RaisePostBackEventInternal): split out the
+	body of both RaisePostBackEvent impl's here, and fix it up so we
+	use the property Page.Validate call in 2.0.
+	(RaisePostBackEvent): call RaisePostBackEventInternal.
+	(IPostBackEventHandler.RaisePostBackEvent): same.
+
+	* HtmlImage.cs (Align): the test case shows that we don't need to
+	validate input.
+
 2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HtmlTableCell.cs, HtmlTableRowCollection.cs, HtmlInputFile.cs,

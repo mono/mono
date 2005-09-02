@@ -52,7 +52,6 @@ namespace System.Web.UI.HtmlControls {
 		{
 		}
 
-		[MonoTODO("Why override?")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public override bool CausesValidation {
@@ -64,7 +63,6 @@ namespace System.Web.UI.HtmlControls {
 			}
 		}
 
-		[MonoTODO("Why new?")]
 		[Browsable (false)]
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public new string ValidationGroup

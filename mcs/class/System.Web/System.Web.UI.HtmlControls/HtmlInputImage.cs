@@ -126,40 +126,7 @@ namespace System.Web.UI.HtmlControls {
 			}
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		[DefaultValue ("")]
-		public string ValidationGroup
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void RaisePostBackEvent (string eventArgument)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void RaisePostDataChangedEvent ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif		
-
-		bool IPostBackDataHandler.LoadPostData (string postDataKey,
-				NameValueCollection postCollection)
+		bool LoadPostDataInternal (string postDataKey, NameValueCollection postCollection)
 		{
 			string x = postCollection [UniqueID + ".x"];
 			string y = postCollection [UniqueID + ".y"];
@@ -176,11 +143,7 @@ namespace System.Web.UI.HtmlControls {
 		}
 
 		
-		void IPostBackDataHandler.RaisePostDataChangedEvent ()
-		{
-		}
-				
-		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		void RaisePostBackEventInternal (string eventArgument)
 		{
 			if (CausesValidation)
 #if NET_2_0
@@ -189,6 +152,56 @@ namespace System.Web.UI.HtmlControls {
 				Page.Validate ();
 #endif
 			OnServerClick (new ImageClickEventArgs (clicked_x, clicked_y));
+		}
+
+		void RaisePostDataChangedEventInternal ()
+		{
+			/* no events to raise */
+		}
+
+#if NET_2_0
+		[DefaultValue ("")]
+		public string ValidationGroup
+		{
+			get {
+				return ViewState.GetString ("ValidationGroup", "");
+			}
+			set {
+				ViewState ["ValidationGroup"] = value;
+			}
+		}
+
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostDataInternal (postDataKey, postCollection);
+		}
+
+		protected virtual void RaisePostBackEvent (string eventArgument)
+		{
+			RaisePostBackEventInternal (eventArgument);
+		}
+
+		protected virtual void RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEventInternal ();
+		}
+#endif		
+
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+				NameValueCollection postCollection)
+		{
+			return LoadPostDataInternal (postDataKey, postCollection);
+		}
+
+		
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEventInternal ();
+		}
+				
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			RaisePostBackEventInternal (eventArgument);
 		}
 
 #if NET_2_0

@@ -78,19 +78,27 @@ namespace System.Web.UI.HtmlControls {
 		}
 #endif
 
+		void RaisePostBackEventInternal (string eventArgument)
+		{
+			if (CausesValidation)
 #if NET_2_0
-		[MonoTODO]
+				Page.Validate (ValidationGroup);
+#else
+				Page.Validate ();
+#endif
+			OnServerClick (EventArgs.Empty);
+		}
+
+#if NET_2_0
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
-			throw new NotImplementedException ();
+			RaisePostBackEventInternal (eventArgument);
 		}
 #endif
 		
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
-			if (CausesValidation)
-				Page.Validate ();
-			OnServerClick (EventArgs.Empty);
+			RaisePostBackEventInternal (eventArgument);
 		}
 
 #if NET_2_0

@@ -107,21 +107,7 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void RaisePostDataChangedEvent ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-		
-		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		bool LoadPostDataInternal (string postDataKey, NameValueCollection postCollection)
 		{
 			string postedValue = postCollection[postDataKey];
 			bool postedBool = ((postedValue != null) &&
@@ -135,9 +121,31 @@ namespace System.Web.UI.HtmlControls
 			return (false);
 		}
 
-		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		void RaisePostDataChangedEventInternal ()
 		{
 			OnServerChange (EventArgs.Empty);
+		}
+
+#if NET_2_0
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostDataInternal (postDataKey, postCollection);
+		}
+
+		protected virtual void RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEventInternal ();
+		}
+#endif
+		
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostDataInternal (postDataKey, postCollection);
+		}
+
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEventInternal ();
 		}
 	}
 }

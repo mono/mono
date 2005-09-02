@@ -47,7 +47,6 @@ namespace System.Web.UI.HtmlControls
 		{
 		}
 
-		[MonoTODO ("need to validate input strings?")]
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
@@ -64,9 +63,6 @@ namespace System.Web.UI.HtmlControls
 				return (align);
 			}
 			set {
-				/* Validate: left, center, right, top,
-				 * middle, bottom?
-				 */
 				if (value == null) {
 					Attributes.Remove ("align");
 				} else {
