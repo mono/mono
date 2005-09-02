@@ -1,0 +1,8 @@
+2005-09-02  Umadevi S <sumadevi@novell.com>
+
+        * Added files IBinarySerialize.cs,InvalidUdtException.cs,SqlFacetAttribute.cs
+	SqlFunctionAttribute.cs,SqlMetaData.cs, SqlMethodAttribute.cs, SqlUserDefined
+	AggregateAttribute.cs, SqlUserDefinedTypeAttribute.cs, SystemDataAccessKind.cs,
+	TriggerAction.cs
+	(Note these files are moved from System.Data.Sql)
+
