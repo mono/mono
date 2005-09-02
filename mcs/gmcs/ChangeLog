@@ -1,3 +1,7 @@
+2005-09-02  Martin Baulig  <martin@ximian.com>
+
+	* class.cs: Make CS3005 a warning, not an error.
+
 2005-08-02  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (AttributeTester.GetImportedIgnoreCaseClsType):

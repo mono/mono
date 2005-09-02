@@ -2564,7 +2564,7 @@ namespace Mono.CSharp {
 				} else {
 					Report.SymbolRelatedToPreviousError ((MemberCore) found);
 				}
-				Report.Error (3005, mc.Location, "Identifier `{0}' differing only in case is not CLS-compliant", mc.GetSignatureForError ());
+				Report.Warning (3005, mc.Location, "Identifier `{0}' differing only in case is not CLS-compliant", mc.GetSignatureForError ());
 			}
 		}
 
