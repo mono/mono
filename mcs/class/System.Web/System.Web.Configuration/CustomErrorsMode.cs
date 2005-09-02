@@ -26,16 +26,14 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-using System.Resources;
-
 #if NET_2_0
 namespace System.Web.Configuration
 {
         public enum CustomErrorsMode
         {
-                On = 1,
-                Off = 2,
-                RemoteOnly = 3,
+                RemoteOnly,
+                On,
+                Off
         }
 }
 #endif

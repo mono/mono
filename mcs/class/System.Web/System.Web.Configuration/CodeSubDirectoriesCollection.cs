@@ -77,7 +77,7 @@ namespace System.Web.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new CodeSubDirectory ();
+			return new CodeSubDirectory (null);
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)

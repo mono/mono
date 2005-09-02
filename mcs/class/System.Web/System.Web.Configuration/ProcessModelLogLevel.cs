@@ -26,16 +26,14 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-using System.Resources;
-
 #if NET_2_0
 namespace System.Web.Configuration
 {
         public enum ProcessModelLogLevel
         {
-                All = 1,
-                Errors = 2,
-                None = 3
+                None,
+                All,
+                Errors
         }
 }
 #endif

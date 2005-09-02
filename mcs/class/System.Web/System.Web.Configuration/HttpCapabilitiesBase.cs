@@ -5,9 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-// (C) 2003,2004 Novell, Inc (http://www.novell.com)
-//
-
+// Copyright (C) 2003,2004,2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,12 +27,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
+using System.Security.Permissions;
+
 namespace System.Web.Configuration
 {
-	using System;
-	using System.Collections;
-	using System.Web;
-	
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public partial class HttpCapabilitiesBase
 	{
 		Hashtable capabilities;

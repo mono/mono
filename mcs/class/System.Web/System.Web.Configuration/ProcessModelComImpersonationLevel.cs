@@ -26,18 +26,16 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-using System.Resources;
-
 #if NET_2_0
 namespace System.Web.Configuration
 {
         public enum ProcessModelComImpersonationLevel
         {
-                Anonymous = 1,
-                Default = 2,
-                Delegate = 3,
-                Identify = 4,
-                Impersonate = 5
+                Default,
+                Anonymous,
+                Delegate,
+                Identify,
+                Impersonate
         }
 }
 #endif

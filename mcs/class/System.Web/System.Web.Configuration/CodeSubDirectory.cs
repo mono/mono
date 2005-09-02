@@ -47,6 +47,11 @@ namespace System.Web.Configuration
 			props.Add (prop);
 */		}
 
+		public CodeSubDirectory (string directoryName)
+		{
+			this.directoryName = directoryName;
+		}
+
 		public string DirectoryName {
 			get { return directoryName; }
 			set { directoryName = value; }

@@ -26,15 +26,13 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-using System.Resources;
-
 #if NET_2_0
 namespace System.Web.Configuration
 {
         public enum AuthorizationRuleAction
         {
-                Allow = 1,
-                Deny = 2,
+                Deny,
+                Allow
         }
 }
 #endif

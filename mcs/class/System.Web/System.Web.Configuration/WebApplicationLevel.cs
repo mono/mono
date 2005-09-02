@@ -1,12 +1,10 @@
 //
-// System.Web.Configuration.FormsAuthenticationConfiguration
+// System.Web.Configuration.WebApplicationLevel enum
 //
-// Authors:
-//	Lluis Sanchez Gual (lluis@novell.com)
+// Author:
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,12 +28,12 @@
 
 #if NET_2_0
 
-using System.Configuration;
+namespace System.Web.Configuration {
 
-namespace System.Web.Configuration
-{
-	public sealed class FormsAuthenticationConfiguration: ConfigurationElement
-	{
+	public enum WebApplicationLevel {
+		AboveApplication = 10,
+		AtApplication = 20,
+		BelowApplication = 30
 	}
 }
 

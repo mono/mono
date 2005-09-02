@@ -26,20 +26,18 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-using System.Resources;
-
 #if NET_2_0
 namespace System.Web.Configuration
 {
         public enum ProcessModelComAuthenticationLevel
         {
-                Call = 1,
-                Connect = 2,
-                Default = 3,
-                None = 4,
-                Pkt = 5,
-                PktIntegrity = 6,
-                PktPrivacy = 7
+                None,
+                Call,
+                Connect,
+                Default,
+                Pkt,
+                PktIntegrity,
+                PktPrivacy
         }
 }
 #endif

@@ -1,3 +1,21 @@
+2005-08-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AdapterDictionary.cs: Added missing IDeserializationCallback.
+	* AuthorizationRuleAction.cs: Fixed enum values.
+	* BuildProvider.cs: Class is sealed. Removed empty constructor.
+	* BuildProviderCollection.cs: Adapted to BuildProvider ctor changes.
+	* CodeSubDirectory.cs: Added missing constructor.
+	* CodeSubDirectoriesCollection.cs: Adapted to 
+	CodeSubDirectoriesCollection ctor changes.
+	* CustomErrorsMode.cs: Fixed enum values.
+	* FormsAuthenticationConfiguration.cs: Class is sealed.
+	* HttpCapabilitiesBase.cs: Added security permissions with Minimal 
+	level for AspNetHostingPermission (both Link and Inheritance demands).
+	* ProcessModelComAuthenticationLevel.cs: Fixed enum values.
+	* ProcessModelComImpersonationLevel.cs: Fixed enum values.
+	* ProcessModelLogLevel.cs: Fixed enum values.
+	* WebApplicationLevel.cs: New enum for 2.0.
+
 2005-08-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ModulesConfiguration.cs: LoadModules creates a HttpModuleCollection,

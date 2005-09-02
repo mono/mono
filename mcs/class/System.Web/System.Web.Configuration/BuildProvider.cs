@@ -33,14 +33,11 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	public class BuildProvider : ConfigurationElement {
+	public sealed class BuildProvider : ConfigurationElement {
 		string extension;
 		string type;
 		BuildProviderAppliesTo appliesTo;
 
-		public BuildProvider ()
-		{
-		}
 
 		public BuildProvider (string extension, string type, BuildProviderAppliesTo appliesTo)
 		{

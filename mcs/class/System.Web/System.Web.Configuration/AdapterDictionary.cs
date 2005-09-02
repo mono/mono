@@ -30,17 +30,23 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
 
 namespace System.Web.Configuration
 {
 	[Serializable]
-	public class AdapterDictionary: OrderedDictionary
+	public class AdapterDictionary: OrderedDictionary, IDeserializationCallback
 	{
 		public string this [string key] {
 			get { return (string) base [key]; }
 			set { base [key] = value; }
+		}
+
+		[MonoTODO]
+		void IDeserializationCallback.OnDeserialization (object sender)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
