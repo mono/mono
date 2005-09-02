@@ -1,5 +1,8 @@
 2005-09-02  Raja R Harinath  <rharinath@novell.com>
 
+	* attribute.cs (GetMarshal): Work even if "DefineCustom" is
+	internal.
+
 	Fix #75941.
 	* ecore.cs (SimpleNameResolve.DoSimpleNameResolve): Disable
 	flow-branching for LocalVariableReferences in case we were invoked
