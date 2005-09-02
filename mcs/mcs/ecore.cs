@@ -1805,14 +1805,7 @@ namespace Mono.CSharp {
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
 		{
 			int errors = Report.Errors;
-		FullNamedExpression fne=null;
-	try {
-			fne = ec.DeclSpace.LookupType (Name, loc, /*ignore_cs0104=*/ false);
-	} catch {
-
-			Console.WriteLine ("Looking up: " + Name);
-	}
-
+			FullNamedExpression fne = ec.DeclSpace.LookupType (Name, loc, /*ignore_cs0104=*/ false);
 			if (fne != null)
 				return fne;
 
@@ -1887,14 +1880,15 @@ namespace Mono.CSharp {
 			if (current_block != null){
 				LocalInfo vi = current_block.GetLocalInfo (Name);
 				if (vi != null){
-					Expression var;
-					
-					var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
-					
-					if (right_side != null)
+					LocalVariableReference var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
+					if (right_side != null) {
 						return var.ResolveLValue (ec, right_side, loc);
-					else
-						return var.Resolve (ec);
+					} else {
+						ResolveFlags rf = ResolveFlags.VariableOrValue;
+						if (intermediate)
+							rf |= ResolveFlags.DisableFlowAnalysis;
+						return var.Resolve (ec, rf);
+					}
 				}
 
 				ParameterReference pref = current_block.Toplevel.GetParameterReference (Name, loc);

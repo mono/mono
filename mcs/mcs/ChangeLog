@@ -1,3 +1,15 @@
+2005-09-02  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75941.
+	* ecore.cs (SimpleNameResolve.DoSimpleNameResolve): Disable
+	flow-branching for LocalVariableReferences in case we were invoked
+	from a MemberAccess.
+	* expression.cs (LocalVariableReference.VerifyAssigned): New.
+	Carved out of ...
+	(LocalVariableReference.DoResolveBase): ... this.
+	(MemberAccess.Resolve): Do the check that was disabled during
+	SimpleNameResolve.
+
 2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* class.cs :
