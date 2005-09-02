@@ -125,6 +125,8 @@ System.Web.UI.WebControls.WebParts/WebPartTest.cs
 Cas/AspNetHostingPermissionHelper.cs
 Cas/AspNetHostingMinimal.cs
 System.Web/HttpContextCas.cs
+System.Web.Caching/CacheCas.cs
+System.Web.Caching/CacheDependencyCas.cs
 System.Web.Security/FormsAuthenticationEventArgsCas.cs
 System.Web.Security/PassportAuthenticationEventArgsCas.cs
 System.Web.Security/WindowsAuthenticationEventArgsCas.cs
