@@ -1,3 +1,7 @@
+2005-09-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Cache.cs: ignore exceptions thrown by removed item callbacks.
+
 2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Cache.cs: Added security permissions with Minimal level for

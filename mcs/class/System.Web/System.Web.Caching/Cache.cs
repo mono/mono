@@ -173,8 +173,13 @@ namespace System.Web.Caching
 						it.Dependency.Dispose ();
 					}
 					cache.Remove (key);
-					if (it.OnRemoveCallback != null)
-						it.OnRemoveCallback (key, it.Value, reason);
+					if (it.OnRemoveCallback != null) {
+						try {
+							it.OnRemoveCallback (key, it.Value, reason);
+						} catch {
+							//TODO: anything to be done here?
+						}
+					}
 					return it.Value;
 				}
 				else
