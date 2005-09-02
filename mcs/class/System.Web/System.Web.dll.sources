@@ -98,6 +98,7 @@ System.Web.Configuration/TraceConfigurationHandler.cs
 System.Web.Configuration/TraceDisplayMode.cs
 System.Web.Configuration/VirtualDirectoryMappingCollection.cs
 System.Web.Configuration/VirtualDirectoryMapping.cs
+System.Web.Configuration/WebApplicationLevel.cs
 System.Web.Configuration/WebConfigurationFileMap.cs
 System.Web.Configuration/WebConfigurationHost.cs
 System.Web.Configuration/WebConfigurationManager.cs
