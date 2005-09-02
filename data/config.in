@@ -12,4 +12,5 @@
 	<dllmap dll="sqlite" target="@SQLITE@"/>
 	<dllmap dll="sqlite3" target="@SQLITE3@"/>
 	<dllmap dll="libX11" target="@X11@"/>
+	<dllmap dll="libcairo-2.dll" target="libcairo.so.2"/>
 </configuration>
