@@ -1,9 +1,13 @@
-2005-09-02  Sebastien Pouliot  <sebastien@ximian.com> 
-
+2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+ 
 	* CodeAccessPermission.cs: Fix Deny for permissions that do not return
 	null for empty intersection (common on flags-based permissions).
 	* PermissionBuilder.cs: Add an helper call to create an empty 
 	(PermissionState.None) permission from a type.
+	* SecurityManager.cs: Added AppDomain support in InheritanceDemand. 
+	Fixed some another small difference between 1.x and 2.0 (wrt 
+	unrestricted permissions). Fixed error reporting for InheritanceDemand
+	(was LinkDemand).
 
 2005-06-30  Sebastien Pouliot  <sebastien@ximian.com> 
 

@@ -216,8 +216,15 @@ namespace System.Security {
 			PermissionSet granted = ad.GrantedPermissionSet;
 			if (granted == null)
 				return null;
-			if ((ad.GrantedPermissionSet.Count == 0) && ad.GrantedPermissionSet.IsUnrestricted ())
+#if NET_2_0
+			if (granted.IsUnrestricted ())
 				return null;
+#else
+			if ((granted.Count == 0) && granted.IsUnrestricted ())
+				return null;
+#endif
+			if (ps.IsUnrestricted ())
+				return new SecurityPermission (SecurityPermissionFlag.NoFlags);
 
 			foreach (IPermission p in ps) {
 				if (p is CodeAccessPermission) {
@@ -807,7 +814,7 @@ namespace System.Security {
 				break;
 			}
 
-			throw new SecurityException (message, an, granted, refused, method, SecurityAction.LinkDemand, null, null, null);
+			throw new SecurityException (message, an, granted, refused, method, SecurityAction.InheritanceDemand, null, null, null);
 		}
 
 		// internal - get called by the class loader
@@ -815,7 +822,7 @@ namespace System.Security {
 		// Called when
 		// - class inheritance
 		// - method overrides
-		private unsafe static bool InheritanceDemand (Assembly a, RuntimeDeclSecurityActions *actions)
+		private unsafe static bool InheritanceDemand (AppDomain ad, Assembly a, RuntimeDeclSecurityActions *actions)
 		{
 			try {
 				PermissionSet ps = null;
@@ -823,10 +830,18 @@ namespace System.Security {
 				if (actions->cas.size > 0) {
 					ps = Decode (actions->cas.blob, actions->cas.size);
 					result = (SecurityManager.CheckPermissionSet (a, ps, false) == null);
+					if (result) {
+						// also check appdomain
+						result = (SecurityManager.CheckPermissionSet (ad, ps) == null);
+					}
 				}
 				if (actions->noncas.size > 0) {
 					ps = Decode (actions->noncas.blob, actions->noncas.size);
 					result = (SecurityManager.CheckPermissionSet (a, ps, true) == null);
+					if (result) {
+						// also check appdomain
+						result = (SecurityManager.CheckPermissionSet (ad, ps) == null);
+					}
 				}
 #if NET_2_0
 				// success if one of the permission is granted
@@ -836,7 +851,7 @@ namespace System.Security {
 						result = false;
 						foreach (PermissionSet pset in psc) {
 							if (SecurityManager.CheckPermissionSet (a, pset, false) == null) {
-								result = true;
+								result = (SecurityManager.CheckPermissionSet (ad, pset) == null);
 								break;
 							}
 						}
