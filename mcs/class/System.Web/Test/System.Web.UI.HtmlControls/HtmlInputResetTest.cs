@@ -65,6 +65,18 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 	public class HtmlInputResetTest {
 
 		[Test]
+		public void OverrideProperties ()
+		{
+			HtmlInputResetPoker p = new HtmlInputResetPoker ();
+
+			Assert.IsTrue (p.CausesValidation, "A1");
+			Assert.IsTrue (((HtmlInputButton)p).CausesValidation, "A2");
+
+			Assert.AreEqual ("", p.ValidationGroup, "A3");
+			Assert.AreEqual ("", ((HtmlInputButton)p).ValidationGroup, "A4");
+		}
+
+		[Test]
 		public void Defaults ()
 		{
 			HtmlInputResetPoker p = new HtmlInputResetPoker ();
