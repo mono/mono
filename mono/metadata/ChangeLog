@@ -1,3 +1,10 @@
+2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* class.c: Fixed error reporting (method/class were inversed) for 
+	inheritance demands.
+	* security-manager.c|h: Added the AppDomain when calling the managed
+	System.Security.SecurityManager.InheritanceDemand method.
+
 2005-09-01  Raja R Harinath  <rharinath@novell.com>
 
 	* reflection.c (encode_marshal_blob): 'marshaltype' and
