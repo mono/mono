@@ -1,5 +1,9 @@
 2005-09-02  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlSelect.cs: implement 2.0 DataSourceID data binding.
+
+2005-09-02  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlInputReset.cs (ValidationGroup): remove the MonoTODO.
 
 	* htmlinputimage.cs: implement the 2.0 versions of loadpostdata,

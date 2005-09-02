@@ -48,6 +48,12 @@ namespace System.Web.UI.HtmlControls
 	, IParserAccessor
 #endif
 	{
+#if NET_2_0
+		DataSourceView boundDataSourceView;
+		IDataSource boundDataSource;
+		private bool requiresDataBinding;
+		IEnumerable data;
+#endif
 		public HtmlSelect () : base ("select")
 		{
 		}
@@ -103,9 +109,14 @@ namespace System.Web.UI.HtmlControls
 		public virtual string DataSourceID
 		{
 			get {
-				return (String.Empty);
+				return ViewState.GetString ("DataSourceID", "");
 			}
 			set {
+				if (datasource != null)
+			  		throw new HttpException ("Only one of DataSource and DataSourceID can be specified.");
+				ViewState ["DataSourceID"] = value;
+
+				OnDataPropertyChanged ();
 			}
 		}
 #endif
@@ -178,11 +189,10 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected bool IsBoundUsingDataSourceID 
 		{
 			get {
-				throw new NotImplementedException ();
+				return (DataSourceID.Length != 0);
 			}
 		}
 #endif		
@@ -241,15 +251,10 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected bool RequiresDataBinding 
 		{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return requiresDataBinding; }
+			set { requiresDataBinding = value; }
 		}
 #endif
 
@@ -411,16 +416,32 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected void EnsureDataBound ()
 		{
-			throw new NotImplementedException ();
+			if (IsBoundUsingDataSourceID && RequiresDataBinding)
+				DataBind ();
 		}
 
-		[MonoTODO]
+		private void SelectCallback (IEnumerable data)
+		{
+			this.data = data;
+		}
+
 		protected virtual IEnumerable GetData ()
 		{
-			throw new NotImplementedException ();
+			IEnumerable result;
+
+			if (DataSourceID.Length == 0)
+				return null;
+
+			boundDataSourceView = boundDataSource.GetView (String.Empty);
+			boundDataSourceView.Select (new DataSourceSelectArguments (), SelectCallback);
+			boundDataSourceView.DataSourceViewChanged += OnDataSourceViewChanged;
+
+			result = data;
+			data = null;
+
+			return result;
 		}
 #endif		
 
@@ -458,7 +479,14 @@ namespace System.Web.UI.HtmlControls
 
 			listitems.Clear ();
 			
-			IEnumerable list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+			IEnumerable list;
+
+#if NET_2_0
+			if (IsBoundUsingDataSourceID)
+				list = GetData ();
+			else
+#endif
+				list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
 
 			if (list == null) {
 				return;
@@ -506,7 +534,6 @@ namespace System.Web.UI.HtmlControls
 		protected virtual void OnDataPropertyChanged ()
 		{
 			RequiresDataBinding = true;
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -514,27 +541,46 @@ namespace System.Web.UI.HtmlControls
 								EventArgs e)
 		{
 			RequiresDataBinding = true;
-			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
 		protected internal override void OnInit (EventArgs e)
 		{
-/*
-			if (IsViewStateEnabled == false &&
-			    Page.IsPostBack == true) {
-				RequiresDataBinding = true;
-			}
-*/
-			throw new NotImplementedException ();
+			base.OnInit (e);
 		}
 
-		[MonoTODO]
 		protected internal override void OnLoad (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			if ((Page != null) && !Page.IsPostBack)
+				RequiresDataBinding = true;
+
+			base.OnLoad (e);
+
+			if (IsBoundUsingDataSourceID)
+				ConnectToDataSource ();
 		}
-#endif		
+
+		void ConnectToDataSource ()
+		{
+			/* verify that the data source exists and is an IDataSource */
+			object ctrl = null;
+			if (Page != null)
+				ctrl = Page.FindControl (DataSourceID);
+
+			if (ctrl == null || !(ctrl is IDataSource)) {
+				string format;
+
+				if (ctrl == null)
+				  	format = "DataSourceID of '{0}' must be the ID of a control of type IDataSource.  A control with ID '{1}' could not be found.";
+				else
+				  	format = "DataSourceID of '{0}' must be the ID of a control of type IDataSource.  '{1}' is not an IDataSource.";
+
+				throw new HttpException (String.Format (format, ID, DataSourceID));
+			}
+
+			boundDataSource = (IDataSource)ctrl;
+		}
+#endif
 
 #if NET_2_0
 		protected internal
@@ -543,6 +589,8 @@ namespace System.Web.UI.HtmlControls
 #endif		
 		override void OnPreRender (EventArgs e)
 		{
+			EnsureDataBound ();
+
 			base.OnPreRender (e);
 
 			if (Page != null) {
