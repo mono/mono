@@ -1,3 +1,6 @@
+2005-09-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h: Add prototype for mono_allocate_stack_slots_full.
 
 Thu Sep 1 21:05:26 BST 2005 Paolo Molaro <lupus@ximian.com>
 
