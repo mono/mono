@@ -1,3 +1,7 @@
+2005-09-02 Umadevi S <sumadevi@novell.com>
+	
+	* Removed SqlResultSet.cs file
+
 2005-08-26  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlConnection.cs (Open): enable sp_reset_connection.
