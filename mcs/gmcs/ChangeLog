@@ -1,3 +1,21 @@
+2005-08-02  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (AttributeTester.GetImportedIgnoreCaseClsType):
+	New method, looking for lo-case imported cls type.
+
+	* decl.cs (DeclSpace.VerifyClsCompliance): Check CS3005 for types
+	here.
+
+	* driver.cs: Removed VerifyTopLevelNameClsCompliance usage.
+
+	* enum (Enum.VerifyClsCompliance): Hardcode non-compliant types.
+
+	* typemanager.cs (TypeManager.AllClsTopLevelTypes): Renamed from
+	all_imported_types.
+	(TypeManager.LoadAllImportedTypes): Lo-case imported types.
+
+	Optimized to save 3.5 MB for SWF compilation.
+
 2005-08-01  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (AddToTypeContainer): Use inheritance insted of if(s).

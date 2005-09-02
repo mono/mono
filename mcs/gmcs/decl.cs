@@ -1317,6 +1317,33 @@ namespace Mono.CSharp {
 		public override string[] ValidAttributeTargets {
 			get { return attribute_targets; }
 		}
+
+		protected override bool VerifyClsCompliance (DeclSpace ds)
+		{
+			if (!base.VerifyClsCompliance (ds)) {
+				return false;
+			}
+
+			IDictionary cache = TypeManager.AllClsTopLevelTypes;
+			string lcase = Name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
+			if (!cache.Contains (lcase)) {
+				cache.Add (lcase, this);
+				return true;
+			}
+
+			object val = cache [lcase];
+			if (val == null) {
+				Type t = AttributeTester.GetImportedIgnoreCaseClsType (lcase);
+				if (t == null)
+					return true;
+				Report.SymbolRelatedToPreviousError (t);
+			}
+			else {
+				Report.SymbolRelatedToPreviousError ((DeclSpace)val);
+			}
+			Report.Warning (3005, Location, "Identifier `{0}' differing only in case is not CLS-compliant", GetSignatureForError ());
+			return true;
+		}
 	}
 
 	/// <summary>

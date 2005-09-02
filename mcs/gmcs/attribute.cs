@@ -1600,43 +1600,17 @@ namespace Mono.CSharp {
 			}
 		}
 
-		/// <summary>
-		/// Tests container name for CLS-Compliant name (differing only in case)
-		/// </summary>
-		public static void VerifyTopLevelNameClsCompliance ()
+		public static Type GetImportedIgnoreCaseClsType (string name)
 		{
-			Hashtable locase_table = new Hashtable ();
-
-			// Convert imported type names to lower case and ignore not cls compliant
-			foreach (DictionaryEntry de in TypeManager.all_imported_types) {
-				Type t = (Type)de.Value;
-				if (!AttributeTester.IsClsCompliant (t))
+			foreach (Assembly a in TypeManager.GetAssemblies ()) {
+				Type t = a.GetType (name, false, true);
+				if (t == null)
 					continue;
 
-				locase_table.Add (((string)de.Key).ToLower (System.Globalization.CultureInfo.InvariantCulture), t);
+				if (IsClsCompliant (t))
+					return t;
 			}
-
-			foreach (DictionaryEntry de in RootContext.Tree.AllDecls) {
-				if (!(de.Key is MemberName))
-					throw new InternalErrorException ("");
-				DeclSpace decl = (DeclSpace) de.Value;
-				if (!decl.IsClsComplianceRequired (decl))
-					continue;
-
-				string lcase = decl.Name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
-				if (!locase_table.Contains (lcase)) {
-					locase_table.Add (lcase, decl);
-					continue;
-				}
-
-				object conflict = locase_table [lcase];
-				if (conflict is Type)
-					Report.SymbolRelatedToPreviousError ((Type)conflict);
-				else
-					Report.SymbolRelatedToPreviousError ((MemberCore)conflict);
-
-				Report.Error (3005, decl.Location, "Identifier `{0}' differing only in case is not CLS-compliant", decl.GetSignatureForError ());
-			}
+			return null;
 		}
 
 		static bool IsClsCompliant (ICustomAttributeProvider attribute_provider) 
@@ -1654,7 +1628,7 @@ namespace Mono.CSharp {
 				type = type.GetGenericTypeDefinition ();
 			DeclSpace ds = TypeManager.LookupDeclSpace (type);
 			if (ds != null)
-				return ds.IsClsComplianceRequired (ds.Parent);
+				return ds.IsClsComplianceRequired (ds);
 
 			if (type.IsGenericParameter)
 				return true;
