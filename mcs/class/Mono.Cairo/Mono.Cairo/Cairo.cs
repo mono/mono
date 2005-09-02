@@ -39,7 +39,7 @@ namespace Cairo {
 
 	internal class CairoAPI
         {
-                internal const string CairoImp = "cairo";
+                internal const string CairoImp = "libcairo-2.dll";
 		
                 //
                 // Manipulating state objects
@@ -506,11 +506,25 @@ namespace Cairo {
 		[DllImport (CairoImp)]
                 public static extern Status cairo_pattern_status (IntPtr pattern);
 
+				[DllImport (CairoImp)]
+				public static extern void cairo_set_antialias (IntPtr cr, Antialias antialias);
+
+				[DllImport (CairoImp)]
+				public static extern Antialias cairo_get_antialias (IntPtr cr);
+
         }
 
         //
         // Enumerations
         //
+		
+		public enum Antialias {
+				Default,
+				None,
+				Gray,
+				Subpixel,
+		}
+		
         public enum Format {
                 ARGB32 = 0,
                 RGB24 = 1,

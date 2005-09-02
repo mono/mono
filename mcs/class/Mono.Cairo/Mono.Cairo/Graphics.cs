@@ -148,6 +148,11 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_restore (state);
                 }
+
+		public Antialias Antialias {
+			get { return CairoAPI.cairo_get_antialias (state); }
+			set { CairoAPI.cairo_set_antialias (state, value); }
+		}
                 
                 public Cairo.Status Status {
                         get {

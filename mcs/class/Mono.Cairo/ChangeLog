@@ -1,3 +1,13 @@
+2005-09-01  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Cairo.cs: p/invoke the windows dll name
+	  (libcairo-2.dll) so that we can work on .net also 
+	* Mono.Cairo/Cairo.cs: add cairo_set_antialias and
+	  cairo_get_antialias and Cairo.Antialias enum
+	* Mono.Cairo/Graphics.cs: add Cairo.Graphics.Antialias
+	  property
+	 
+
 2005-09-01 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
         * Samples: Added png and x11 samples and cleaned up gtk
