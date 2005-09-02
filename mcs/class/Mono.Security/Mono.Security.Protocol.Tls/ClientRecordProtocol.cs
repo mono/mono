@@ -45,22 +45,11 @@ namespace Mono.Security.Protocol.Tls
 
 		#region Send Messages
 
-		public override void SendRecord(HandshakeType type)
+		public override HandshakeMessage GetMessage(HandshakeType type)
 		{
-			// Create and process the record message
 			HandshakeMessage msg = this.createClientHandshakeMessage(type);
-			msg.Process();
 
-			DebugHelper.WriteLine(">>>> Write handshake record ({0}|{1})", context.Protocol, msg.ContentType);
-
-			// Write record
-			this.SendRecord(msg.ContentType, msg.EncodeMessage());
-
-			// Update session
-			msg.Update();
-
-			// Reset message contents
-			msg.Reset();
+			return msg;
 		}
 
 		#endregion

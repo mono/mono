@@ -1,3 +1,11 @@
+2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslStreamBase.cs, ServerRecordProtocol.cs, SslClientStream.cs,
+	ClientRecordProtocol.cs, RecordProtocol.cs, SslServerStream.cs:
+	Re-written async support for Ssl[Client|Server]Stream from JD Conley
+	<jd.conley@coversant.net> with minor changes. Fix bug #75687 (and a 
+	lot of other known problems).
+
 2005-07-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ServerContext.cs: Build the list of trusted certificates from all
