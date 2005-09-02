@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Web;
 using System.Web.UI;
 using System.Reflection;
 using System.IO;
@@ -36,7 +35,7 @@ using System.IO;
 namespace System.Web.Handlers {
 	[MonoTODO ("Should we cache stuff?")]
 	#if NET_2_0
-	public
+	public sealed
 	#else
 	internal // since this is in the .config file, we need to support it, since we dont have versoned support.
 	#endif

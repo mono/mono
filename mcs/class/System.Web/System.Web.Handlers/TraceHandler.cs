@@ -32,7 +32,7 @@
 
 using System.Collections;
 using System.Data;
-using System.Web;
+using System.Security.Permissions;
 using System.Web.Util;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -62,9 +62,23 @@ namespace System.Web.Handlers
 		}
 	}
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class TraceHandler : IHttpHandler
 	{
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+		public TraceHandler ()
+		{
+			// LAMESPEC: the ctor is documented to have a Demand for a SecurityPermission
+			// but doesn't specify which one it is (tests shows it's UnmanagedCode)
+		}
+
+#if NET_2_0
+		public void ProcessRequest (HttpContext context)
+#else
 		void IHttpHandler.ProcessRequest (HttpContext context)
+#endif
 		{
 			TraceManager manager = HttpRuntime.TraceManager;
 
@@ -90,8 +104,11 @@ namespace System.Web.Handlers
 				
 		}
 
-		bool IHttpHandler.IsReusable
-		{
+#if NET_2_0
+		public bool IsReusable {
+#else
+		bool IHttpHandler.IsReusable {
+#endif
 			get {
 				return false;
 			}
@@ -176,11 +193,21 @@ namespace System.Web.Handlers
 		protected void ShowDetails (DataSet data)
 		{
 		}
+#if NET_2_0
+		[MonoTODO ("Appears in class status, but...")]
+		protected void ShowRequests (IList data)
+		{
+		}
 
+		[MonoTODO]
+		protected void ShowVersionDetails ()
+		{
+		}
+#else
 		[MonoTODO ("Appears in class status, but...")]
 		protected void ShowRequests (ArrayList list)
 		{
 		}
+#endif
 	}
 }
-
