@@ -120,7 +120,7 @@ namespace Mono.Unix {
 		[Obsolete ("Use GetSupplementaryGroupIds")]
 		public static uint[] GetSupplementaryGroups ()
 		{
-			return GetSupplementaryGroupIds ()
+			return GetSupplementaryGroupIds ();
 		}
 
 		public static uint[] GetSupplementaryGroupIds ()
