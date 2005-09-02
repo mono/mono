@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -263,6 +264,7 @@ namespace Mono.Unix {
 #endif
 	public delegate void SignalHandler (int signal);
 
+#if !NET_2_0
 	internal sealed class SignalWrapper {
 		private IntPtr handler;
 
@@ -276,6 +278,7 @@ namespace Mono.Unix {
 			Stdlib.InvokeSignalHandler (signum, handler);
 		}
 	}
+#endif
 
 	internal class XPrintfFunctions
 	{
@@ -390,6 +393,14 @@ namespace Mono.Unix {
 		public static readonly SignalHandler SIG_ERR = new SignalHandler (_ErrorHandler);
 		public static readonly SignalHandler SIG_IGN = new SignalHandler (_IgnoreHandler);
 
+		private static readonly SignalHandler[] registered_signals;
+
+		static Stdlib ()
+		{
+			Array signals = Enum.GetValues(typeof(Signum));
+			registered_signals = new SignalHandler [(int) signals.GetValue (signals.Length-1)];
+		}
+
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl,
 				SetLastError=true, EntryPoint="signal")]
 		private static extern IntPtr sys_signal (int signum, SignalHandler handler);
@@ -401,6 +412,11 @@ namespace Mono.Unix {
 		public static SignalHandler signal (Signum signum, SignalHandler handler)
 		{
 			int _sig = UnixConvert.FromSignum (signum);
+
+			lock (registered_signals) {
+				registered_signals [(int) signum] = handler;
+			}
+
 			IntPtr r;
 			if (handler == SIG_DFL)
 				r = sys_signal (_sig, _SIG_DFL);
@@ -421,7 +437,11 @@ namespace Mono.Unix {
 				return SIG_ERR;
 			if (handler == _SIG_IGN)
 				return SIG_IGN;
+#if NET_2_0
+			return (SignalHandler) Marshal.GetDelegateForFunctionPointer (handler, typeof(SignalHandler));
+#else
 			return new SignalHandler (new SignalWrapper (handler).InvokeSignalHandler);
+#endif
 		}
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, EntryPoint="raise")]

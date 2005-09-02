@@ -90,7 +90,7 @@ namespace Mono.Unix {
 		}
 
 		public static uint User {
-			get {return UnixUser.GetCurrentUser ();}
+			get {return UnixUser.GetCurrentUserId ();}
 		}
 
 		public static string UserName {
@@ -117,7 +117,13 @@ namespace Mono.Unix {
 			return Syscall.getpgrp ();
 		}
 
+		[Obsolete ("Use GetSupplementaryGroupIds")]
 		public static uint[] GetSupplementaryGroups ()
+		{
+			return GetSupplementaryGroupIds ()
+		}
+
+		public static uint[] GetSupplementaryGroupIds ()
 		{
 			int ngroups = Syscall.getgroups (0, new uint[]{});
 			if (ngroups == -1)
@@ -128,7 +134,13 @@ namespace Mono.Unix {
 			return groups;
 		}
 
+		[Obsolete ("Use SetSupplementaryGroupIds")]
 		public static void SetSupplementaryGroups (uint[] list)
+		{
+			SetSupplementaryGroupIds (list);
+		}
+
+		public static void SetSupplementaryGroupIds (uint[] list)
 		{
 			int r = Syscall.setgroups (list);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);

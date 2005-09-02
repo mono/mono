@@ -42,14 +42,19 @@ namespace Mono.Unix {
 			return new UnixUserInfo (user).UserId;
 		}
 
-		public static uint GetCurrentUser ()
+		public static uint GetCurrentUserId ()
 		{
 			return Syscall.getuid ();
 		}
 
 		public static string GetCurrentUserName ()
 		{
-			return GetName (GetCurrentUser());
+			return GetName (GetCurrentUserId ());
+		}
+
+		public static UnixUserInfo GetCurrentUser ()
+		{
+			return new UnixUserInfo (GetCurrentUserId ());
 		}
 
 		// I would hope that this is the same as GetCurrentUserName, but it is a
@@ -96,7 +101,13 @@ namespace Mono.Unix {
 			return new UnixUserInfo (user).HomeDirectory;
 		}
 
+		[Obsolete ("Use GetUserName")]
 		public static string GetName (uint user)
+		{
+			return new UnixUserInfo (user).UserName;
+		}
+
+		public static string GetUserName (uint user)
 		{
 			return new UnixUserInfo (user).UserName;
 		}

@@ -51,7 +51,13 @@ namespace Mono.Unix {
 			return new UnixGroupInfo (group).Members;
 		}
 
+		[Obsolete ("Use GetGroupName")]
 		public static string GetName (uint group)
+		{
+			return new UnixGroupInfo (group).GroupName;
+		}
+
+		public static string GetGroupName (uint group)
 		{
 			return new UnixGroupInfo (group).GroupName;
 		}
