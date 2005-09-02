@@ -1,3 +1,7 @@
+2005-09-02  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeNice.cs: Draw nice ProgressBars
+
 2005-09-01  Miguel de Icaza  <miguel@novell.com>
 
 	* VScrollBar.cs: Another buglet found by Aaron's tool. 

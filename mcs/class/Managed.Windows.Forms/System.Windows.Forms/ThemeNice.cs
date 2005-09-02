@@ -2980,62 +2980,32 @@ namespace System.Windows.Forms
 		#endregion	// PictureBox
 		
 		#region ProgressBar
-//		public override void DrawProgressBar (Graphics dc, Rectangle clip_rect, ProgressBar ctrl)
-//		{
-//			Rectangle	block_rect;
-//			Rectangle	client_area = ctrl.client_area;
-//			int		space_betweenblocks	= 2;
-//			int		block_width;
-//			int		increment;
-//			int		barpos_pixels;
-//
-//			block_width = ((client_area.Height) * 2 ) / 3;
-//			barpos_pixels = ((ctrl.Value - ctrl.Minimum) * client_area.Width) / (ctrl.Maximum - ctrl.Minimum);
-//			increment = block_width + space_betweenblocks;
-//
-//			/* Draw border */
-//			CPDrawBorder3D (dc, ctrl.ClientRectangle, Border3DStyle.SunkenInner, Border3DSide.All & ~Border3DSide.Middle, ColorButtonFace);
-//
-//			/* Draw Blocks */
-//			block_rect = new Rectangle (client_area.X, client_area.Y, block_width, client_area.Height);
-//			while ((block_rect.X - client_area.X) < barpos_pixels) {
-//
-//				if (clip_rect.IntersectsWith (block_rect) == true) {
-//					dc.FillRectangle (ResPool.GetSolidBrush (progressbarblock_color), block_rect);
-//				}
-//
-//				block_rect.X  += increment;
-//			}
-//		}
-		
 		public override void DrawProgressBar( Graphics dc, Rectangle clip_rect, ProgressBar ctrl )
 		{
-			Rectangle	block_rect;
 			Rectangle	client_area = ctrl.client_area;
-			int		space_betweenblocks	= 2;
-			int		block_width;
-			int		increment;
 			int		barpos_pixels;
+			Rectangle bar = ctrl.client_area;
 			
-			block_width = ( ( client_area.Height ) * 2 ) / 3;
 			barpos_pixels = ( ( ctrl.Value - ctrl.Minimum ) * client_area.Width ) / ( ctrl.Maximum - ctrl.Minimum );
-			increment = block_width + space_betweenblocks;
+			
+			bar.Width = barpos_pixels;
+			bar.Height += 1;
+		
+			// Draw bar background
+			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( client_area.Left, client_area.Top ), new Point( client_area.Left, client_area.Bottom ), LightColor, Color.White ) )
+			{
+				dc.FillRectangle( lgbr, client_area );
+			}
+			
+			// Draw bar
+			using ( LinearGradientBrush lgbr = new LinearGradientBrush( bar.Location, new Point( bar.X, bar.Bottom ), Color.White, FocusColor ) )
+			{
+				dc.FillRectangle( lgbr, bar );
+			}
 			
 			/* Draw border */
-			CPDrawBorder3D( dc, ctrl.ClientRectangle, Border3DStyle.SunkenInner, Border3DSide.All & ~Border3DSide.Middle, ColorButtonFace );
-			
-			/* Draw Blocks */
-			block_rect = new Rectangle( client_area.X, client_area.Y, block_width, client_area.Height );
-			while ( ( block_rect.X - client_area.X ) < barpos_pixels )
-			{
-				
-				if ( clip_rect.IntersectsWith( block_rect ) == true )
-				{
-					dc.FillRectangle( ResPool.GetSolidBrush( progressbarblock_color ), block_rect );
-				}
-				
-				block_rect.X  += increment;
-			}
+			dc.DrawRectangle( ResPool.GetPen( BorderColor ), ctrl.ClientRectangle.X, ctrl.ClientRectangle.Y, ctrl.ClientRectangle.Width - 1, ctrl.ClientRectangle.Height - 1 );
+			dc.DrawRectangle( ResPool.GetPen( LightColor ), ctrl.ClientRectangle.X + 1, ctrl.ClientRectangle.Y + 1, ctrl.ClientRectangle.Width - 2, ctrl.ClientRectangle.Height - 2 );
 		}
 		
 		public override Size ProgressBarDefaultSize
