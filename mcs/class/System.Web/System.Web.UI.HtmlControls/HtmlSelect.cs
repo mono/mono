@@ -589,7 +589,9 @@ namespace System.Web.UI.HtmlControls
 #endif		
 		override void OnPreRender (EventArgs e)
 		{
+#if NET_2_0
 			EnsureDataBound ();
+#endif
 
 			base.OnPreRender (e);
 
