@@ -240,6 +240,7 @@ System.Data.SqlTypes/SqlXmlReader.cs
 System.Data.SqlTypes/StorageState.cs
 System.Data.SqlTypes/SqlAlreadyFilledException.cs
 System.Data.SqlTypes/SqlNotFilledException.cs
+System.Data.SqlTypes/SqlXml.cs
 System.Data.Odbc/OdbcConnectionFactory.cs
 System.Data.Odbc/OdbcFactory.cs
 System.Data.Odbc/OdbcParameterConverter.cs
@@ -282,6 +283,9 @@ Microsoft.SqlServer.Server/SqlUserDefinedTypeAttribute.cs
 Microsoft.SqlServer.Server/SystemDataAccessKind.cs
 Microsoft.SqlServer.Server/SqlFacetAttribute.cs
 Microsoft.SqlServer.Server/TriggerAction.cs
+Microsoft.SqlServer.Server/SqlTriggerContext.cs
+Microsoft.SqlServer.Server/SqlProcedureAttribute.cs
+Microsoft.SqlServer.Server/SqlTriggerAttribute.cs
 System.Data.SqlClient/SqlNotificationType.cs
 System.Data.SqlClient/SqlNotificationInfo.cs
 System.Data.SqlClient/SqlNotificationSource.cs

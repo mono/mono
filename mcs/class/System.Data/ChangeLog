@@ -1,4 +1,8 @@
 2005-09-02 Umadevi S <sumadevi@novell.com>
+	* System.Data.dll.sources: Added SqlProcedureAttribute,SqlTriggerAttribute and 
+	 SqlTriggerContext.cs to Microsoft.SqlServer.Server namespace.Also added SqlXml to 		     SqlTypes namespace	
+
+2005-09-02 Umadevi S <sumadevi@novell.com>
 	* System.Data.dll.sources: Changes for Microsoft.SqlServer.Server namespace and the
 	files to be compiled with it, removed files from System.Data.Sql namespace
 	Also removed SqlResultSet.cs from System.SqlClient namespace
