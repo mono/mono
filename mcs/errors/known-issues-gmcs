@@ -14,13 +14,9 @@
 cs0029-3.cs
 cs0034-2.cs NO ERROR
 cs0034-3.cs NO ERROR
-cs0037-2.cs
 cs0037-3.cs
 cs0037-4.cs
 cs0121-3.cs NO ERROR
-cs0122-17.cs NO ERROR
-cs0133-4.cs
-cs0136-6.cs NO ERROR
 cs0159-3.cs
 cs0165-10.cs NO ERROR
 cs0165-11.cs NO ERROR
@@ -28,13 +24,9 @@ cs0201.cs
 cs0202.cs # new in GMCS
 cs0229-2.cs
 cs0229.cs NO ERROR
-cs0246-12.cs NO ERROR
-cs0252.cs NO ERROR
-cs0253.cs NO ERROR
 cs0266-2.cs NO ERROR
 cs0266-3.cs
 cs0266.cs
-cs0277.cs
 cs0418-3.cs NO ERROR
 cs0418-4.cs
 cs0418-5.cs
@@ -42,13 +34,10 @@ cs0428.cs
 cs0431.cs
 cs0432-2.cs
 cs0432.cs
-cs0433.cs NO ERROR
-cs0436.cs NO ERROR
 cs0440.cs
 cs0441-2.cs
 cs0525.cs
 cs0526.cs
-cs0536-2.cs
 cs0547-2.cs # new in GMCS; grammar issue
 cs0547.cs
 cs0548-4.cs
@@ -64,7 +53,6 @@ cs0642-5.cs NO ERROR
 cs0642-6.cs NO ERROR
 cs0642.cs NO ERROR
 cs0647-15.cs NO ERROR # corlib bug 73143
-cs0647-16.cs NO ERROR
 cs0652-2.cs NO ERROR
 cs0652-3.cs NO ERROR
 cs0652-4.cs NO ERROR
@@ -75,7 +63,6 @@ cs1010-2.cs
 cs1013.cs # new in GMCS; grammar issue
 cs1041.cs # new in GMCS; grammar issue
 cs1501-5.cs
-cs1502-4.cs
 cs1513.cs
 cs1518.cs
 cs1525.cs
@@ -88,13 +75,10 @@ cs1638.cs NO ERROR
 cs1641.cs
 cs1666.cs NO ERROR
 cs2007.cs
-cs2015.cs
-cs3005-13.cs IGNORE # This is a warning in .NET 2.0 and an error in 1.x.
 gcs0694.cs NO ERROR
 gcs1644-2.cs NO ERROR
 
 cs0139-2.cs NO ERROR
-cs0246-13.cs NO ERROR
 cs0619-42.cs
 cs0642-10.cs NO ERROR
 cs0642-7.cs NO ERROR
