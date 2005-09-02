@@ -1,3 +1,7 @@
+2005-09-02 Umadevi S <sumadevi@novell.com>
+
+	* SqlXml.cs : Added a dummy placeholder to compile MicrosoftServer namespace
+
 2005-03-11  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlDateTime.cs (Parse): Re-org. Resolve unreachable code.
