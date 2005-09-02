@@ -26,11 +26,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 namespace System.Web {
 
-	internal class WebSysDescriptionAttribute : Attribute {
+	internal class WebSysDescriptionAttribute : DescriptionAttribute {
 
-		public WebSysDescriptionAttribute (string description)
+		public WebSysDescriptionAttribute (string description) : base (description)
 		{
 		}
 	}

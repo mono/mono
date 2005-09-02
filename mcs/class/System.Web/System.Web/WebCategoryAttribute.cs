@@ -26,11 +26,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.ComponentModel;
 namespace System.Web {
 
-	internal class WebCategoryAttribute : Attribute {
+	internal class WebCategoryAttribute : CategoryAttribute {
 
-		public WebCategoryAttribute (string category)
+		public WebCategoryAttribute (string category) : base (category)
 		{
 		}
 	}
