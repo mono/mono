@@ -96,6 +96,7 @@
 ./Mono.Security.Protocol.Tls/SslCipherSuite.cs
 ./Mono.Security.Protocol.Tls/SslHandshakeHash.cs
 ./Mono.Security.Protocol.Tls/SslServerStream.cs
+./Mono.Security.Protocol.Tls/SslStreamBase.cs
 ./Mono.Security.Protocol.Tls/TlsCipherSuite.cs
 ./Mono.Security.Protocol.Tls/TlsClientSettings.cs
 ./Mono.Security.Protocol.Tls/TlsException.cs
