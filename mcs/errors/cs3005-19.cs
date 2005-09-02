@@ -1,6 +1,7 @@
 // cs3005-19.cs: Identifier `II.compareto()' differing only in case is not CLS-compliant
 // Line: 11
-// Compiler options: -t:library
+// Compiler options: -t:library -warnaserror
+
 
 [assembly:System.CLSCompliant(true)]
 

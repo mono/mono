@@ -1,4 +1,5 @@
 // cs3005-13.cs: Identifier `CLSEnum.Label' differing only in case is not CLS-compliant
+// Compiler options: -warnaserror
 // Line: 9
 
 //

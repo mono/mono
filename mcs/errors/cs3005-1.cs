@@ -1,4 +1,5 @@
 // cs3005-1.cs: Identifier `CLSClass.Method(int)' differing only in case is not CLS-compliant
+// Compiler options: -warnaserror
 // Line: 8
 
 [assembly:System.CLSCompliant (true)]
