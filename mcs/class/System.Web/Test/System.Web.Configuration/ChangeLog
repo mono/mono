@@ -1,0 +1,4 @@
+2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpCapabilitiesBaseCas.cs: New. CAS unit tests for 
+	HttpCapabilitiesBase class.
