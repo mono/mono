@@ -1,3 +1,16 @@
+2005-09-02 Umadevi S <sumadevi@novell.com>
+	* Removed Files
+	SerializationHelper.cs,DataAccessKind.cs,SerializationVersion.cs,Format.cs,
+	SqlContextBase.cs,IBinarySerialize.cs,InvalidUdtException.cs,SqlDefinition.cs,
+	ISqlCommand.cs,SqlFacetAttribute.cs,ISqlConnection.cs,SqlFunctionAttribute.cs,
+	ISqlExecutionContext.cs,SqlMetaData.cs,ISqlGetTypedData.cs, SqlMethodAttribute.cs,
+	ISqlParameterCollection.cs,ISqlParameter.cs,SqlPipeBase.cs,ISqlReader.cs, 
+	SqlServerFactoryBase.cs,ISqlRecord.cs,SqlTriggerContextBase.cs,ISqlResultSet.cs,
+	SqlUserDefinedAggregateAttribute.cs,ISqlSetTypedData.cs,SqlUserDefinedTypeAttribute.cs,
+	ISqlTransaction.cs,ISqlUpdatableRecord.cs,SystemDataAccessKind.cs,
+	IUdtSerializationContext.cs,TriggerAction.cs
+
+
 2004-07-13 Umadevi S <sumadevi@novell.com>
 	* TriggerAction.cs - Added enum values
 
