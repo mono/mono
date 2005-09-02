@@ -27,12 +27,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Threading;
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Web.Caching
 {
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class Cache: IEnumerable
 	{
 		Hashtable cache;

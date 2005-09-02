@@ -1,3 +1,10 @@
+2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Cache.cs: Added security permissions with Minimal level for
+	AspNetHostingPermissionLevel (only LinkDemand as the class is sealed).
+	* CacheDependency.cs: : Added security permissions with Minimal level 
+	for AspNetHostingPermissionLevel (note class is sealed only in 1.x).
+
 2005-09-01 Eyal Alaluf <eyala@mainsoft.com>
 	* CacheDependency.cs: TARGET_J2EE fixes.
 
@@ -34,7 +41,7 @@
 	* CacheDependency.cs - added TARGET_JVM directives in places,
 	  where file watching is using (Mainsoft's implementation currently
 	  doesn't support the feature).
-	  
+
 2005-05-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CacheEntry.cs: credits for this patch should go to mcs. it catched

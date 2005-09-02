@@ -29,11 +29,20 @@
 
 using System.Collections;
 using System.IO;
+using System.Security.Permissions;
 
 namespace System.Web.Caching
 {
-	public sealed class CacheDependency: IDisposable
-	{
+#if NET_2_0
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public class CacheDependency: IDisposable {
+#else
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public sealed class CacheDependency: IDisposable {
+#endif
 		string[] cachekeys;
 		CacheDependency dependency;
 		DateTime start;
