@@ -38,7 +38,7 @@ public class Dtd2Xsd
 	{
 		while (xtr.NodeType != XmlNodeType.DocumentType) {
 			if (!xtr.Read ())
-				throw new Exception ("DTD did not appeared.");
+				throw new Exception ("DTD did not appeare.");
 		}
 
 		// Hacky reflection part
