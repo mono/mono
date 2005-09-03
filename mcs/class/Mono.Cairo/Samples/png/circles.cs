@@ -117,7 +117,8 @@ public class CairoTest
 		
 		gr.Restore ();
 		
-		gr.Operator = Operator.OutReverse;
+		// FIXME: OutReverse is not in 1.0
+		//gr.Operator = Operator.OutReverse;
 		punch.Show (gr, width, height);
 		
 		

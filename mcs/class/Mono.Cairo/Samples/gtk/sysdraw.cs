@@ -71,7 +71,7 @@ namespace Gdk
 			IntPtr Xvisual = gdk_x11_visual_get_xvisual(visual);
 			IntPtr Xdrawable = gdk_x11_drawable_get_xid (x_drawable);
 			
-			Cairo.Surface s = Cairo.Surface.CreateForXlib(Xdisplay,
+			Cairo.XlibSurface s = new Cairo.XlibSurface (Xdisplay,
 								   Xdrawable,
 								   Xvisual,
 								   w, h);

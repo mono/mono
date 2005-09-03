@@ -1,12 +1,4 @@
 //
-//
-//	Mono.Cairo drawing samples using X11 as drawing surface
-//	Autor: Hisham Mardam Bey <hisham@hisham.cc>
-//
-
-//
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -28,21 +20,36 @@
 //
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using Cairo;
-
-public class X11Test
+using System.Windows.Forms;
+	
+public class SwfCairo : Form
 {
-        static readonly double  M_PI = 3.14159265358979323846;
+	const double M_PI = Math.PI;
+		
+	static void Main ()
+	{		
+		SwfCairo f = new SwfCairo ();
+		f.ShowDialog ();
+	}
+
+	protected override void OnPaint (PaintEventArgs a)
+	{
+		IntPtr hdc = a.Graphics.GetHdc ();
+		Win32Surface s = new Win32Surface (hdc);
+		Graphics g = new Graphics (s);
+		draw (g, this.Width, this.Height);
+		
+		a.Graphics.ReleaseHdc (hdc);
+	}
 	
 	static void draw (Cairo.Graphics gr, int width, int height)
 	{
 		double xc = 0.5;
 		double yc = 0.5;
 		double radius = 0.4;
-		double angle1 = 45.0  * (M_PI/180.0);  /* angles are specified */
-		double angle2 = 180.0 * (M_PI/180.0);  /* in radians           */
+		double angle1 = 45.0  * (M_PI/180.0);  // angles are specified
+		double angle2 = 180.0 * (M_PI/180.0);  // in radians
 		
 		gr.Scale (width, height);
 		gr.LineWidth = 0.04;
@@ -51,7 +58,7 @@ public class X11Test
 		gr.Arc (xc, yc, radius, angle1, angle2);
 		gr.Stroke ();
 		
-		/* draw helping lines */
+		// draw helping lines
 		gr.Color = new Color(1, 0.2, 0.2, 0.6);
 		gr.Arc (xc, yc, 0.05, 0, 2*M_PI);
 		gr.Fill ();
@@ -62,28 +69,6 @@ public class X11Test
 		gr.LineTo (new PointD(xc, yc));
 		gr.Stroke ();
 		
-	}	
-	
-	static void Main (string [] args)
-	{
-		Window win = new Window (500, 500);
-		
-		win.Show ();
-		
-		Cairo.XlibSurface s = new Cairo.XlibSurface (win.Display,
-			       win.XWindow,
-			       X11.XDefaultVisual (win.Display, win.Screen),
-			       (int)win.Width, (int)win.Height);
-
-		
-		Cairo.Graphics g = new Cairo.Graphics (s);
-		
-		draw (g, 500, 500);
-		
-		IntPtr xev = new IntPtr ();
-		
-		while (true) {			
-			X11.XNextEvent (win.Display, xev);
-		}		
 	}
 }
+

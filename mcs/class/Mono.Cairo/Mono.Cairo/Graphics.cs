@@ -618,6 +618,11 @@ namespace Cairo {
 		public double FontSize {
 			set { CairoAPI.cairo_set_font_size (state, value); }
 		}
+
+		public void ShowPage ()
+		{
+			CairoAPI.cairo_show_page (state);
+		}
 		
                 public void ShowText (string str)
                 {

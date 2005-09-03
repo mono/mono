@@ -356,6 +356,9 @@ namespace Cairo {
 		[DllImport (CairoImp)]
                 public static extern IntPtr cairo_xlib_surface_create (IntPtr dpi,
 			IntPtr win, IntPtr visual, int w, int h);
+
+		[DllImport (CairoImp)]
+                public static extern void cairo_xlib_surface_set_drawable (IntPtr surface, IntPtr drawable, int width, int height);
 		
 		[DllImport (CairoImp)]
                 public static extern void cairo_xlib_surface_set_size (IntPtr surface, int width, int height);
@@ -393,6 +396,21 @@ namespace Cairo {
 
                 [DllImport (CairoImp)]                
                 public static extern void cairo_surface_write_to_png (IntPtr surface, string filename);
+
+                [DllImport (CairoImp)]                
+                public static extern IntPtr cairo_pdf_surface_create (string filename, double width, double height);
+
+                [DllImport (CairoImp)]                
+                public static extern void cairo_pdf_surface_set_dpi (IntPtr surface, double x_dpi, double y_dpi);
+
+                [DllImport (CairoImp)]                
+                public static extern IntPtr cairo_ps_surface_create (string filename, double width, double height);
+
+                [DllImport (CairoImp)]                
+                public static extern void cairo_ps_surface_set_dpi (IntPtr surface, double x_dpi, double y_dpi);
+				
+                [DllImport (CairoImp)]                
+                public static extern IntPtr cairo_win32_surface_create (IntPtr hdc);
 
                 //
                 // Matrix
@@ -533,46 +551,23 @@ namespace Cairo {
         }
 
         public enum Operator {
-                Clear = 0,
-                Src = 1,
-                Dst = 2,
-                Over = 3,
-                OverReverse = 4,
-                In = 5,
-                InReverse = 6,
-                Out = 7,
-                OutReverse = 8,
-                Atop = 9,
-                AtopReverse = 10,
-                Xor = 11,
-                Add = 12,
-                Saturate = 13,
-                
-                DisjointClear = 16,
-                DisjointSrc = 17,
-                DisjointDst = 18,
-                DisjointOver = 19,
-                DisjointOverReverse = 20,
-                DisjointIn = 21,
-                DisjointInReverse = 22,
-                DisjointOut = 23,
-                DisjointOutReverse = 24,
-                DisjointAtop = 25,
-                DisjointAtopReverse = 26,
-                DisjointXor = 27,
+		Clear,
 
-                ConjointClear = 32,
-                ConjointSrc = 33,
-                ConjointDst = 34,
-                ConjointOver = 35,
-                ConjointOverReverse = 36,
-                ConjointIn = 37,
-                ConjointInReverse = 38,
-                ConjointOut = 39,
-                ConjointOutReverse = 40,
-                ConjointAtop = 41,
-                ConjointAtopReverse = 42,
-                ConjointXor = 43
+		Source,
+		Over,
+		In,
+		Out,
+		Atop,
+
+		Dest,
+		DestOver,
+		DestIn,
+		DestOut,
+		DestAtop,
+
+		Xor,
+		Add,
+		Saturate,
         }
 
         public enum FillRule {

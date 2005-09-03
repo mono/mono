@@ -1,3 +1,21 @@
+2005-09-02  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Cairo.cs: only use operators in cairo_operator_t
+	
+2005-09-01  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Cairo.cs: add some imports used by
+	the extra surface types
+	* Mono.Cairo/Surface.cs: add XlibSurface and Win32Surface
+	remove Surface.CreateForXlib () 
+	add PdfSurface and PsSurface for future use (#if'ed out)
+	* Mono.Cairo/Graphics.cs: add ShowPage() method
+	* Samples/win32/arc.cs: add win32 sample
+	* Samples/gtk/sysdraw.cs: use XlibSurface instead of
+	Surface.CreateForXlib ()
+	* Samples/x11/*.cs: use XlibSurface instead of
+	Surface.CreateForXlib ()
+
 2005-09-01  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Cairo.cs: p/invoke the windows dll name

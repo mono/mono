@@ -144,7 +144,8 @@ public class CairoGraphic : DrawingArea
 		
 		gr.Restore ();
 		
-		gr.Operator = Operator.OutReverse;
+		// FIXME: Operator.OutReverse is not in cairo 1.0
+		//gr.Operator = Operator.OutReverse;
 		punch.Show (gr, width, height);
 		
 		

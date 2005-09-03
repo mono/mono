@@ -67,7 +67,7 @@ public class X11Test
 		
 		win.Show ();
 		
-		Cairo.Surface s = Cairo.Surface.CreateForXlib (win.Display,
+		Cairo.XlibSurface s = new Cairo.XlibSurface (win.Display,
 			       win.XWindow,
 			       X11.XDefaultVisual (win.Display, win.Screen),
 			       (int)win.Width, (int)win.Height);

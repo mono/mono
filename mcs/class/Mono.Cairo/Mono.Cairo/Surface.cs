@@ -59,6 +59,77 @@ namespace Cairo {
 		}
 		
 	}
+
+	#if UNSTABLE
+	public class PdfSurface : Surface
+	{
+		public PdfSurface (string filename, double width, double height)
+		{
+			surface = CairoAPI.cairo_pdf_surface_create (filename, width, height);
+
+			CairoAPI.cairo_surface_reference (surface);
+		}
+
+		public void SetDPI (double x_dpi, double y_dpi)
+		{
+			CairoAPI.cairo_pdf_surface_set_dpi (surface, x_dpi, y_dpi);
+		}
+	}
+
+	public class PostscriptSurface : Surface
+	{
+		public PostscriptSurface (string filename, double width, double height)
+		{
+			surface = CairoAPI.cairo_ps_surface_create (filename, width, height);
+
+			CairoAPI.cairo_surface_reference (surface);
+		}
+
+		public void SetDPI (double x_dpi, double y_dpi)
+		{
+			CairoAPI.cairo_ps_surface_set_dpi (surface, x_dpi, y_dpi);
+		}
+	}
+	#endif
+
+	public class Win32Surface : Surface
+	{
+		public Win32Surface (IntPtr hdc)
+		{
+			surface = CairoAPI.cairo_win32_surface_create (hdc);
+
+			CairoAPI.cairo_surface_reference (surface);
+		}
+	}
+
+	public class XlibSurface : Surface
+	{
+		public XlibSurface (IntPtr display, IntPtr drawable, IntPtr visual, int width, int height)
+		{
+			surface = CairoAPI.cairo_xlib_surface_create (display, drawable, visual, width, height);
+
+			CairoAPI.cairo_surface_reference (surface);
+		}
+
+		/* FIXME: has the same parameters as above
+		public XlibSurface (IntPtr display, IntPtr bitmap, IntPtr screen, int width, int height)
+		{
+			surface = CairoAPI.cairo_xlib_surface_create_for_bitmap (display, bitmap, screen, width, height);
+
+			CairoAPI.cairo_surface_reference (surface);
+		}
+		*/
+
+		public void SetDrawable (IntPtr drawable, int width, int height)
+		{
+			CairoAPI.cairo_xlib_surface_set_drawable (surface, drawable, width, height);
+		}
+
+		public void SetSize (int width, int height)
+		{
+			CairoAPI.cairo_xlib_surface_set_size (surface, width, height);
+		}
+	}
    
 	public class Surface : IDisposable 
         {						
@@ -88,16 +159,6 @@ namespace Cairo {
 				return (Surface) o;
 			}
 		}		
-		
-		public static Cairo.Surface CreateForXlib (IntPtr display, IntPtr win,
-							   IntPtr visual, int w, 
-							   int h)
-		{
-			IntPtr p = CairoAPI.cairo_xlib_surface_create (display, win,
-								   visual, w, h);
-			if(p == IntPtr.Zero) System.Console.WriteLine("Failed creating surface");
-			return new Cairo.Surface (p, false);
-		}
 		
                 public static Cairo.Surface CreateForImage (
                         string data, Cairo.Format format, int width, int height, int stride)
@@ -179,11 +240,6 @@ namespace Cairo {
 								    value.X,
 								    value.Y);
 			}
-		}
-		
-		public void XlibSetSize (int w, int h)
-		{
-			CairoAPI.cairo_xlib_surface_set_size (surface, w, h);
 		}
 		
 		public void Destroy()
