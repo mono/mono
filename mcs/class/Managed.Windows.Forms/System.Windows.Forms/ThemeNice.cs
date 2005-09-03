@@ -352,8 +352,8 @@ namespace System.Windows.Forms
 				dc.DrawCurve( pen, new Point[] { new Point( width - 1, height - 5 ), new Point( width - 5, height - 1 ) } );
 			}
 			
-			// Text
-			if ( button.text != null && button.text != String.Empty )
+			// Text, draw only if type is Button
+			if ( button.text != null && button.text != String.Empty && button.GetType( ) == typeof( Button ) )
 			{
 				Rectangle text_rect = Rectangle.Inflate( buttonRectangle, -4, -4 );
 				
@@ -378,117 +378,6 @@ namespace System.Windows.Forms
 					{
 						CPDrawStringDisabled( dc, button.text, button.Font, ColorButtonText, text_rect, button.text_format );
 					}
-				}
-			}
-		}
-		
-		// draw the flat style part of the rectangle
-		public void DrawFlatStyleButton( Graphics dc, Rectangle rectangle, ButtonBase button )
-		{
-			Color rect_back_color = button.BackColor;
-			Color rect_fore_color = button.ForeColor;
-			Rectangle trace_rectangle = new Rectangle( rectangle.X, rectangle.Y, Math.Max( rectangle.Width - 1, 0 ), Math.Max( rectangle.Height - 1, 0 ) );
-			
-			if ( button.Enabled )
-			{
-				if ( button.Capture || button.is_entered )
-				{
-					if ( button.FlatStyle == FlatStyle.Flat )
-					{
-						// fill the rectangle
-						dc.FillRectangle( ResPool.GetSolidBrush( rect_back_color ), rectangle );
-						
-						// now draw the outer border
-						if ( button.Capture && button.is_entered )
-						{
-							rect_back_color = ControlPaint.LightLight( rect_back_color );
-						}
-						else
-						{
-							rect_back_color = ControlPaint.Light( rect_back_color );
-						}
-						
-						// draw rectangle and fill it
-						dc.FillRectangle( ResPool.GetSolidBrush( rect_back_color ), rectangle );
-						dc.DrawRectangle( ResPool.GetPen( rect_fore_color ), trace_rectangle );
-					}
-					else
-					{
-						// else it must be a popup button
-						
-						if ( button.Capture && button.is_entered )
-						{
-							dc.DrawRectangle( ResPool.GetPen( this.ColorButtonText ), trace_rectangle );
-						}
-						else
-						{
-							// draw a 3d border
-							CPDrawBorder3D( dc, rectangle, Border3DStyle.RaisedInner, Border3DSide.Left | Border3DSide.Top, button.BackColor );
-							
-							Pen pen = ResPool.GetPen( this.ColorButtonText );
-							dc.DrawLine( pen, trace_rectangle.X, trace_rectangle.Bottom, trace_rectangle.Right, trace_rectangle.Bottom );
-							dc.DrawLine( pen, trace_rectangle.Right, trace_rectangle.Y, trace_rectangle.Right, trace_rectangle.Bottom );
-						}
-					}
-					
-					// TODO: draw inner focus rectangle
-					
-				}
-				else
-				{
-					// popup has a ButtonColorText forecolor, not a button.ForeCOlor
-					if ( button.FlatStyle == FlatStyle.Popup )
-					{
-						rect_fore_color = this.ColorButtonText;
-					}
-					
-					// fill then draw outer rect
-					dc.FillRectangle( ResPool.GetSolidBrush( rect_back_color ), rectangle );
-					dc.DrawRectangle( ResPool.GetPen( rect_fore_color ), trace_rectangle );
-				}
-				
-				// finally some small tweaks to render radiobutton and checkbox
-				CheckBox checkbox = button as CheckBox;
-				RadioButton radiobutton = button as RadioButton;
-				if ( ( checkbox != null && checkbox.Checked ) ||
-				    ( radiobutton != null && radiobutton.Checked ) )
-				{
-					if ( button.FlatStyle == FlatStyle.Flat && button.is_entered && !button.Capture )
-					{
-						// render the hover for flat flatstyle and cheked
-						dc.DrawRectangle( ResPool.GetPen( this.ColorButtonText ), trace_rectangle );
-					}
-					else if ( !button.is_entered && !button.Capture )
-					{
-						// render the checked state for popup when unhovered
-						CPDrawBorder3D( dc, rectangle, Border3DStyle.SunkenInner, Border3DSide.Right | Border3DSide.Bottom, button.BackColor );
-					}
-				}
-			}
-			else
-			{
-				// rendering checkbox or radio button style buttons
-				CheckBox checkbox = button as CheckBox;
-				RadioButton radiobutton = button as RadioButton;
-				bool draw_popup_checked = false;
-				
-				if ( button.FlatStyle == FlatStyle.Popup )
-				{
-					rect_fore_color = this.ColorButtonText;
-					
-					// see if we should draw a disabled checked popup button
-					draw_popup_checked = ( ( checkbox != null && checkbox.Checked ) ||
-						( radiobutton != null && radiobutton.Checked ) );
-				}
-				
-				dc.FillRectangle( ResPool.GetSolidBrush( rect_back_color ), rectangle );
-				dc.DrawRectangle( ResPool.GetPen( rect_fore_color ), trace_rectangle );
-				
-				// finally draw the flatstyle checked effect if need
-				if ( draw_popup_checked )
-				{
-					// render the checked state for popup when unhovered
-					CPDrawBorder3D( dc, rectangle, Border3DStyle.SunkenInner, Border3DSide.Right | Border3DSide.Bottom, button.BackColor );
 				}
 			}
 		}
@@ -691,14 +580,7 @@ namespace System.Windows.Forms
 			// render as per normal button
 			if ( checkbox.appearance == Appearance.Button )
 			{
-				if ( checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup )
-				{
-					DrawFlatStyleButton( dc, checkbox.ClientRectangle, checkbox );
-				}
-				else
-				{
-					CPDrawButton( dc, checkbox.ClientRectangle, state );
-				}
+				DrawButtonBase( dc, checkbox.ClientRectangle, checkbox );
 			}
 			else
 			{
@@ -742,14 +624,15 @@ namespace System.Windows.Forms
 			
 			if ( checkbox.Focused )
 			{
-				if ( checkbox.FlatStyle != FlatStyle.Flat )
-				{
-					DrawInnerFocusRectangle( dc, Rectangle.Inflate( text_rectangle, -1, -1 ), checkbox.BackColor );
-				}
-				else
-				{
-					dc.DrawRectangle( ResPool.GetPen( checkbox.ForeColor ), Rectangle.Inflate( text_rectangle, -1, -1 ) );
-				}
+				if ( checkbox.appearance != Appearance.Button )
+					if ( checkbox.FlatStyle != FlatStyle.Flat )
+					{
+						DrawInnerFocusRectangle( dc, Rectangle.Inflate( text_rectangle, -1, -1 ), checkbox.BackColor );
+					}
+					else
+					{
+						dc.DrawRectangle( ResPool.GetPen( checkbox.ForeColor ), Rectangle.Inflate( text_rectangle, -1, -1 ) );
+					}
 			}
 		}
 		
@@ -2990,7 +2873,7 @@ namespace System.Windows.Forms
 			
 			bar.Width = barpos_pixels;
 			bar.Height += 1;
-		
+			
 			// Draw bar background
 			using ( LinearGradientBrush lgbr = new LinearGradientBrush( new Point( client_area.Left, client_area.Top ), new Point( client_area.Left, client_area.Bottom ), LightColor, Color.White ) )
 			{
@@ -3196,14 +3079,7 @@ namespace System.Windows.Forms
 			
 			if ( radio_button.appearance == Appearance.Button )
 			{
-				if ( radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup )
-				{
-					DrawFlatStyleButton( dc, radio_button.ClientRectangle, radio_button );
-				}
-				else
-				{
-					CPDrawButton( dc, radio_button.ClientRectangle, state );
-				}
+				DrawButtonBase( dc, radio_button.ClientRectangle, radio_button );
 			}
 			else
 			{
@@ -3249,14 +3125,15 @@ namespace System.Windows.Forms
 			
 			if ( radio_button.Focused )
 			{
-				if ( radio_button.FlatStyle != FlatStyle.Flat )
-				{
-					DrawInnerFocusRectangle( dc, text_rectangle, radio_button.BackColor );
-				}
-				else
-				{
-					dc.DrawRectangle( ResPool.GetPen( radio_button.ForeColor ), text_rectangle );
-				}
+				if ( radio_button.appearance != Appearance.Button )
+					if ( radio_button.FlatStyle != FlatStyle.Flat )
+					{
+						DrawInnerFocusRectangle( dc, text_rectangle, radio_button.BackColor );
+					}
+					else
+					{
+						dc.DrawRectangle( ResPool.GetPen( radio_button.ForeColor ), text_rectangle );
+					}
 			}
 		}
 		
@@ -5286,7 +5163,6 @@ namespace System.Windows.Forms
 			
 			if ( ( state & ButtonState.Flat ) != 0 )
 			{
-//				ControlPaint.DrawBorder( graphics, rectangle, ColorButtonShadow, ButtonBorderStyle.Solid );
 				first_color = NormalColor;
 				second_color = Color.White;
 			}
@@ -5294,10 +5170,6 @@ namespace System.Windows.Forms
 			{
 				if ( ( state & ( ButtonState.Pushed | ButtonState.Checked ) ) != 0 )
 				{
-					// this needs to render like a pushed button - jba
-					// CPDrawBorder3D(graphics, rectangle, Border3DStyle.Sunken, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace);
-//					Rectangle trace_rectangle = new Rectangle( rectangle.X, rectangle.Y, Math.Max( rectangle.Width - 1, 0 ), Math.Max( rectangle.Height - 1, 0 ) );
-//					graphics.DrawRectangle( ResPool.GetPen( ControlPaint.Dark( ColorButtonFace ) ), trace_rectangle );
 					first_color = Color.White;
 					second_color = PressedColor;
 				}
@@ -5408,33 +5280,6 @@ namespace System.Windows.Forms
 			dc.DrawLine( pen, rect.Right - 3, Y - 1, rect.Right - 3, Y + 1 );
 			
 			pen.Dispose( );
-		}
-		
-		public virtual void DrawFlatStyleFocusRectangle( Graphics dc, Rectangle rectangle, ButtonBase button, Color foreColor, Color backColor )
-		{
-			// make a rectange to trace around border of the button
-			Rectangle trace_rectangle = new Rectangle( rectangle.X, rectangle.Y, Math.Max( rectangle.Width - 1, 0 ), Math.Max( rectangle.Height - 1, 0 ) );
-			
-			Color outerColor = foreColor;
-			// adjust focus color according to the flatstyle
-			if ( button.FlatStyle == FlatStyle.Popup && !button.is_pressed )
-			{
-				outerColor = ( backColor == ColorButtonFace ) ? ControlPaint.Dark( ColorButtonFace ) : ColorButtonText;
-			}
-			
-			// draw the outer rectangle
-			dc.DrawRectangle( ResPool.GetPen( outerColor ), trace_rectangle );
-			
-			// draw the inner rectangle
-			if ( button.FlatStyle == FlatStyle.Popup )
-			{
-				DrawInnerFocusRectangle( dc, Rectangle.Inflate( rectangle, -4, -4 ), backColor );
-			}
-			else
-			{
-				// draw a flat inner rectangle
-				dc.DrawRectangle( ResPool.GetPen( ControlPaint.LightLight( backColor ) ), Rectangle.Inflate( trace_rectangle, -4, -4 ) );
-			}
 		}
 		
 		public virtual void DrawInnerFocusRectangle( Graphics dc, Rectangle rectangle, Color backColor )
@@ -6461,44 +6306,6 @@ namespace System.Windows.Forms
 			pen.Dispose( );
 		}
 		
-//		/* Generic scroll button */
-//		public void DrawScrollButtonPrimitive( Graphics dc, Rectangle area, ButtonState state )
-//		{
-//			if ( ( state & ButtonState.Pushed ) == ButtonState.Pushed )
-//			{
-//				dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonFace ), area.X + 1,
-//						 area.Y + 1, area.Width - 2 , area.Height - 2 );
-//
-//				dc.DrawRectangle( ResPool.GetPen( ColorButtonShadow ), area.X,
-//						 area.Y, area.Width, area.Height );
-//
-//				return;
-//			}
-//
-//			dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonFace ), area.X, area.Y, area.Width, 1 );
-//			dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonFace ), area.X, area.Y, 1, area.Height );
-//
-//			dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonHilight ), area.X + 1, area.Y + 1, area.Width - 1, 1 );
-//			dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonHilight ), area.X + 1, area.Y + 2, 1,
-//					 area.Height - 4 );
-//
-//			dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonShadow ), area.X + 1, area.Y + area.Height - 2,
-//					 area.Width - 2, 1 );
-//
-//			dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonDkShadow ), area.X, area.Y + area.Height - 1,
-//					 area.Width , 1 );
-//
-//			dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonShadow ), area.X + area.Width - 2,
-//					 area.Y + 1, 1, area.Height - 3 );
-//
-//			dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonDkShadow ), area.X + area.Width - 1,
-//					 area.Y, 1, area.Height - 1 );
-//
-//			dc.FillRectangle( ResPool.GetSolidBrush( ColorButtonFace ), area.X + 2,
-//					 area.Y + 2, area.Width - 4, area.Height - 4 );
-//
-//		}
-		
 		public override void CPDrawBorderStyle( Graphics dc, Rectangle area, BorderStyle border_style )
 		{
 			switch ( border_style )
@@ -6536,3 +6343,4 @@ namespace System.Windows.Forms
 		
 	} //class
 }
+
