@@ -1,3 +1,7 @@
+2005-09-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* ia64/ia64-codegen.h (ia64_no_stop): New macro.
+
 2005-08-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* ia64/ia64-codegen.h: Fix some bugs.
