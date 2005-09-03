@@ -37,7 +37,6 @@ using System.Text;
 //TODO: Check to see if Render really is overridden instead of a LiteralControl being added. It apears that this is the
 //case due to testing. Anything inside the block is overwritten by the content of this control, so it doesnt apear
 //to do anything with children.
-// a doc references this. add? protected override ControlCollection CreateControlCollection();
 
 //TODO: If Test.InnerText = Test.InnerHtml without ever assigning anything into InnerHtml, you get this:
 // Exception Details: System.Web.HttpException: Cannot get inner content of Message because the contents are not literal.
@@ -140,6 +139,9 @@ namespace System.Web.UI.HtmlControls
 			base.RenderAttributes (writer);
 		}
 
+		/* we need to override this because our base class
+		 * (HtmlControl) returns an instance of
+		 * EmptyControlCollection. */
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return new ControlCollection (this);
