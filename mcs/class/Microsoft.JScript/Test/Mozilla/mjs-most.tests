@@ -40,8 +40,7 @@ ecma/Array/15.4.2.1-1.js
 ecma/Array/15.4.2.2-1.js
 ecma/Array/15.4.2.2-2.js
 ecma/Array/15.4.2.3.js
-# Invalid IL
-#ecma/Array/15.4.3.1-2.js
+ecma/Array/15.4.3.1-2.js
 ecma/Array/15.4.3.2.js
 ecma/Array/15.4.3.js
 ecma/Array/15.4.4.1.js

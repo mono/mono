@@ -90,3 +90,6 @@ js1_2/statements/switch2.js
 # System.Text.RegularExpressions. It's available at http://flgr.dyndns.org/mono/RegEx2+3.patch
 js1_2/regexp/octal.js
 js1_2/regexp/special_characters.js
+
+# Throw NotImplementedException when invoking Convert:ToForInObject
+ecma/Array/15.4.3.1-2.js

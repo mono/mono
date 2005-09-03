@@ -1,3 +1,8 @@
+2005-09-02  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* mjs-most.fail: Added ecma/Array/15.4.3.1-2.js, Convert:ToForInObject throws NotImplementedException.
+	* mjs-most.test: Enable ecma/Array/15.4.3.1-2.js
+
 2005-08-30  Florian Gross  <flgr@ccan.de>
 
 	* Cleaned up mjs-most.fail, added failure reasons
