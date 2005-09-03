@@ -1,3 +1,14 @@
+2005-09-02  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* SemanticAnalyser.cs: Added IsDeletable, check if a property is
+	in an object's constructor.
+	* CodeGenerator.cs: Added JSToken.Delete to GetBoxType.
+	* expression.cs: (Unary) Added field deletable. Take care of the
+	case when the property that we are trying to delete is not
+	deletable, we use late binding's method Delete for that. (Binary)
+	Added property IsDeletable. (Args) Do not pop the values of
+	arguments which implement Exp.
+
 2005-08-28  Florian Gross  <flgr@ccan.de>
 
 	* Try.cs: Implemented JScriptExceptionValue

@@ -50,6 +50,8 @@ namespace Microsoft.JScript {
 	
 	internal class Unary : UnaryOp {
 
+		private bool deletable = false;
+
 		internal Unary (AST parent, JSToken oper, Location location)
 			: base (parent, location)
 		{		
@@ -73,7 +75,12 @@ namespace Microsoft.JScript {
 		{
 			bool r = false;		       
 
-			if (operand is Exp) {
+			if (operand is Binary) {
+				Binary bin = (Binary) operand;
+				if (oper == JSToken.Delete && bin.AccessField)
+					this.deletable = bin.IsDeletable;
+				bin.Resolve (context);
+			} else if (operand is Exp) {
 				if (oper != JSToken.Increment && oper != JSToken.Decrement)
 					r = ((Exp) operand).Resolve (context, no_effect);
 			} else 
@@ -111,9 +118,36 @@ namespace Microsoft.JScript {
 
 				Binary arg = operand as Binary;
 				if (arg != null) {
-					if (arg.op == JSToken.LeftBracket || arg.op == JSToken.AccessField) {
-						arg.left.Emit (ec);
-						arg.right.Emit (ec);
+					if (arg.op == JSToken.LeftBracket || arg.op == JSToken.AccessField ) {
+						if (deletable) {
+							arg.left.Emit (ec);
+							arg.right.Emit (ec);
+							ig.Emit (OpCodes.Ldc_I4_1);
+							ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToString",
+													   new Type [] { typeof (object), typeof (bool) }));
+							ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("DeleteMember",
+													       new Type [] { typeof (object), typeof (string) }));
+						} else {
+							Console.WriteLine ("{0}({1},0) : warning: JS1164: '{2}' is not deletable",
+								   location.SourceName, location.LineNumber, arg.ToString ());
+
+							if (arg.left is Identifier && arg.right is Identifier) {
+								string _base = ((Identifier) arg.left).name.Value;
+								string property = ((Identifier) arg.right).name.Value;
+
+								Type lb_type = typeof (LateBinding);
+								LocalBuilder lb = ig.DeclareLocal (lb_type);
+								
+								ig.Emit (OpCodes.Ldstr, property);
+								ig.Emit (OpCodes.Newobj, lb_type.GetConstructor (new Type [] { typeof (string) }));
+								ig.Emit (OpCodes.Stloc, lb);
+								ig.Emit (OpCodes.Ldloc, lb);
+								ig.Emit (OpCodes.Dup);
+								arg.left.Emit (ec);
+								ig.Emit (OpCodes.Stfld, lb_type.GetField ("obj"));
+								ig.Emit (OpCodes.Call, lb_type.GetMethod ("Delete"));
+							}
+						}
 					} else {
 						Console.WriteLine ("emit_unary_op: Delete: unknown operand type {0}", arg.op);
 						throw new NotImplementedException ();
@@ -123,12 +157,9 @@ namespace Microsoft.JScript {
 					throw new NotImplementedException ();
 				}
 
-				ig.Emit (OpCodes.Ldc_I4_1);
-				ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToString",
-					new Type [] { typeof (object), typeof (bool) }));
-				ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("DeleteMember",
-					new Type [] { typeof (object), typeof (string) }));
-				ig.Emit (OpCodes.Pop);
+
+				if (no_effect)
+					ig.Emit (OpCodes.Pop);
 				break;
 
 			case JSToken.Plus:
@@ -215,10 +246,11 @@ namespace Microsoft.JScript {
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			sb.Append (left.ToString () + " ");
+			sb.Append (left.ToString ());
 			
-			if (op != JSToken.None)
-				sb.Append (op + " ");
+			if (op == JSToken.AccessField)
+				sb.Append (".");
+			else sb.Append (op);
 			
 			if (right != null)
 				sb.Append (right.ToString ());
@@ -511,8 +543,8 @@ namespace Microsoft.JScript {
 			case JSToken.RightShift:
 			case JSToken.UnsignedRightShift:
 				ig.Emit (OpCodes.Call, typeof (BitwiseBinary).GetMethod ("EvaluateBitwiseBinary"));
-					 break;
-			}			
+				break;
+			}
 		}
 
 		internal void emit_jumping_code (EmitContext ec)
@@ -587,6 +619,14 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Newobj, t.GetConstructor (new Type [] {typeof (int)}));
 			ig.Emit (OpCodes.Stloc, local_builder);
 			ig.Emit (OpCodes.Ldloc, local_builder);
+		}
+
+		internal bool IsDeletable {
+			get {
+				if (left is Identifier && right is Identifier)
+					return SemanticAnalyser.IsDeletable ((Identifier) left, (Identifier) right);
+				return false;
+			}
 		}
 	}
 
@@ -1626,6 +1666,8 @@ namespace Microsoft.JScript {
 			for (int i = 0; i < n; i++) {
 				tmp = (AST) elems [i];
 				if (tmp != null)
+					if (tmp is Exp)
+						r &= ((Exp) tmp).Resolve (context, false);
 					r &= tmp.Resolve (context);
 			}
 			return r;

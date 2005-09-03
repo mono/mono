@@ -350,5 +350,18 @@ namespace Microsoft.JScript {
 					return true;
 			return false;
 		}
+
+		internal static bool IsDeletable (Identifier left, Identifier right)
+		{
+			Type ctr = SemanticAnalyser.map_to_ctr (left.name.Value);
+
+			if (ctr != null) {
+				if (right.name.Value == "prototype")
+					return false;
+			}
+			Console.WriteLine ("left = {0}...left.Type = {1} ... right = {2}...right.Type = {3}",
+				   left, left.GetType (), right, right.GetType ());
+			throw new NotImplementedException ();
+		}
 	}
 }

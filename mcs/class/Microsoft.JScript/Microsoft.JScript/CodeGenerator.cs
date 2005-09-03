@@ -607,7 +607,7 @@ namespace Microsoft.JScript {
 				    oper == JSToken.Increment || oper == JSToken.Decrement ||
 				    oper == JSToken.BitwiseNot)
 					return GetBoxType (operand);
-				else if (oper == JSToken.LogicalNot)
+				else if (oper == JSToken.LogicalNot || oper == JSToken.Delete)
 					return typeof (bool);
 			} else if (obj is Identifier) {
 				Identifier id = (Identifier) obj;
