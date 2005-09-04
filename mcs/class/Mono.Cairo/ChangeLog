@@ -1,3 +1,21 @@
+2005-09-04  John Luke  <john.luke@gmail.com>
+ 
+ 	* Mono.Cairo/Cairo.cs: remove symbols not in cairo 1.0:
+ 	  cairo_copy, cairo_current_path, cairo_arc_to, cairo_transform_font,
+ 	  cairo_font_set_transform, cairo_font_current_transform,
+ 	  cairo_font_reference, cairo_font_destroy, cairo_status_string,
+ 	  cairo_surface_create_similar_solid
+ 	  rename cairo_current_line_cap to cairo_get_line_cap,
+ 	  remove now unused delegates
+ 	* Mono.Cairo/Graphics.cs:
+ 	* Mono.Cairo/Surface.cs: update for above all found 
+	  with help of mono-shlib-cop
+ 
+
+2005-09-04  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Cairo.cs: add new values to Cairo.Status
+	
 2005-09-02  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Cairo.cs: only use operators in cairo_operator_t

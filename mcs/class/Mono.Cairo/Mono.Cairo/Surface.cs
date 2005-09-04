@@ -188,16 +188,6 @@ namespace Cairo {
                         return new Cairo.Surface (p, true);
                 }
 
-                public static Cairo.Surface CreateSimilarSolid (
-                        Cairo.Surface surface, Cairo.Format format,
-                        int width, int height, double red, double green, double blue, double alpha)
-                {
-                        IntPtr p = CairoAPI.cairo_surface_create_similar_solid (
-                                surface.Handle, format, width, height, red, green, blue, alpha);
-
-                        return new Cairo.Surface (p, true);
-                }
-
 		~Surface ()
 		{
 			Dispose (false);

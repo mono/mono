@@ -59,9 +59,6 @@ namespace Cairo {
 		[DllImport (CairoImp)]
 		public static extern void cairo_restore (IntPtr cr);
 
-                [DllImport (CairoImp)]
-		public static extern void cairo_copy (out IntPtr dest, IntPtr src);
-
                 //
                 // Modify state
                 //
@@ -141,27 +138,6 @@ namespace Cairo {
 		[DllImport (CairoImp)]
 		public static extern void cairo_new_path (IntPtr cr);
 		
-		internal delegate void MoveToCallbackPriv (IntPtr closure, 
-							  double x, double y);
-
-		internal delegate void LineToCallbackPriv (IntPtr closure, 
-							  double x, double y);
-		
-		internal delegate void CurveToCallbaclPriv (IntPtr closure, 
-							   double x1, double y1,
-							   double x2, double y2,
-							   double x3, double y3);
-		
-		internal delegate void ClosePathCallbackPriv (IntPtr closure);		
-		
-		[DllImport (CairoImp)]
-                internal static extern void cairo_current_path (IntPtr cr, 
-								MoveToCallbackPriv move_to,
-								LineToCallbackPriv line_to,
-								CurveToCallbaclPriv curve_to,
-								ClosePathCallbackPriv close_path,
-								IntPtr closure);
-		
 		[DllImport (CairoImp)]
 		public static extern void cairo_move_to (IntPtr cr, double x, double y);
 
@@ -180,10 +156,6 @@ namespace Cairo {
                 public static extern void cairo_arc_negative (
                         IntPtr cr, double xc, double yc, double radius, double angel1, double angel2);
 		
-                [DllImport (CairoImp)]
-                public static extern void cairo_arc_to (
-                        IntPtr cr, double x1, double y1, double x2, double y2, double radius);
-
 		[DllImport (CairoImp)]
 		public static extern void cairo_rel_move_to (IntPtr cr, double dx, double dy);
 
@@ -245,22 +217,7 @@ namespace Cairo {
 							     Matrix_T matrix);
 		
                 [DllImport (CairoImp)]
-                public static extern void cairo_transform_font (IntPtr cr, IntPtr matrix);
-
-                [DllImport (CairoImp)]
                 public static extern void cairo_show_text (IntPtr cr, string utf8);
-
-                [DllImport (CairoImp)]
-                public static extern void cairo_font_set_transform (IntPtr font, IntPtr matrix);
-
-                [DllImport (CairoImp)]
-                public static extern void cairo_font_current_transform (IntPtr font, IntPtr matrix);
-
-                [DllImport (CairoImp)]
-                public static extern void cairo_font_reference (IntPtr font);
-
-                [DllImport (CairoImp)]
-                public static extern void cairo_font_destroy (IntPtr font);
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_font_extents (IntPtr source, ref FontExtents extents);
@@ -321,7 +278,7 @@ namespace Cairo {
 		public static extern double cairo_get_line_width (IntPtr cr);
 
                 [DllImport (CairoImp)]
-		public static extern LineCap cairo_current_line_cap (IntPtr cr);
+		public static extern LineCap cairo_get_line_cap (IntPtr cr);
 
        		[DllImport (CairoImp)]
 		public static extern LineJoin cairo_get_line_join (IntPtr cr);
@@ -341,14 +298,6 @@ namespace Cairo {
                 [DllImport (CairoImp)]
                 public static extern Cairo.Status cairo_status (IntPtr cr);
 
-		[DllImport (CairoImp, EntryPoint="cairo_status_string")]
-		static extern IntPtr _cairo_status_string (IntPtr cr);
-
-		public static string cairo_status_string (IntPtr cr)
-		{
-			return Marshal.PtrToStringAnsi (_cairo_status_string (cr));
-		}
-		
                 //
                 // Surface Manipulation
                 //
@@ -382,11 +331,6 @@ namespace Cairo {
                 [DllImport (CairoImp)]
                 public static extern IntPtr cairo_surface_create_similar (
                         IntPtr surface, Cairo.Format format, int width, int height);
-
-                [DllImport (CairoImp)]                
-                public static extern IntPtr cairo_surface_create_similar_solid (
-                        IntPtr surface, Cairo.Format format,
-                        int width, int height, double red, double green, double blue, double alpha);
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_surface_reference (IntPtr surface);
@@ -589,7 +533,21 @@ namespace Cairo {
                 InvalidRestore,
                 InvalidPopGroup,
                 NoCurrentPoint,
-                InvalidMatrix
+                InvalidMatrix,
+				InvalidStatus,
+				NullPointer,
+				InvalidString,
+				InvalidPathData,
+				ReadError,
+				WriteError,
+				SurfaceFinished,
+				SurfaceTypeMismatch,
+				PatternTypeMismatch,
+				InvalidContent,
+				InvalidFormat,
+				InvalidVisual,
+				FileNotFound,
+				InvalidDash
         }
 
         public enum Filter {
@@ -647,13 +605,4 @@ namespace Cairo {
                 public  double x;
                 public  double y;
         }
-
-		public  delegate void ClosePathCallback (object closure);
-
-		public  delegate void CurveToCallback (object closure, PointD p1, PointD p2, PointD p3);
-
-		public  delegate void MoveToCallback (object closure, PointD p);
-
-		public  delegate void LineToCallback (object closure, PointD p);
-
 }

@@ -132,13 +132,6 @@ namespace Cairo {
 			state = IntPtr.Zero;
                 }
 
-                public Cairo.Graphics Copy ()
-                {
-                        IntPtr dest;
-                        CairoAPI.cairo_copy (out dest, state);
-                        return new Cairo.Graphics (dest);
-                }
-                
                 public void Save ()
                 {
                         CairoAPI.cairo_save (state);
@@ -230,7 +223,7 @@ namespace Cairo {
                         }
 
                         get {
-                                return CairoAPI.cairo_current_line_cap (state);
+                                return CairoAPI.cairo_get_line_cap (state);
                         }
                 }
 
@@ -306,15 +299,6 @@ namespace Cairo {
                         CairoAPI.cairo_new_path (state);
                 }
         
-		public void CurrentPath (MoveToCallback move_to, 
-					 LineToCallback line_to,
-					 CurveToCallback curve_to,
-					 ClosePathCallback close_path,
-					 object closure)
-		{
-			
-		}
-		
                 public void MoveTo (PointD p)
                 {
 						MoveTo (p.X, p.Y);
@@ -380,16 +364,6 @@ namespace Cairo {
                         CairoAPI.cairo_arc_negative (state, xc, yc, radius, angel1, angel2);
                 }
 		
-		public void ArcTo (PointD p1, PointD p2, double radius)
-		{
-				ArcTo (p1.X, p1.Y, p2.X, p2.Y, radius);
-		}
-		
-		public void ArcTo (double x1, double y1, double x2, double y2, double radius)
-		{
-			CairoAPI.cairo_arc_to (state, x1, y1, x2, y2, radius);
-		}
-                
                 public void Rectangle (PointD p, double width, double height)
 				{
 						Rectangle (p.X, p.Y, width, height);
