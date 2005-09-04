@@ -24,6 +24,7 @@ System.CodeDom.Compiler/CodeGeneratorTestBase.cs
 System.CodeDom.Compiler/IndentedTextWriterTest.cs
 System.Collections.Generic/QueueTest.cs
 System.Collections.Generic/StackTest.cs
+System.Collections.Generic/LinkedListTest.cs
 System.Collections.Specialized/BasicOperationsTest.cs
 System.Collections.Specialized/BitVector32Test.cs
 System.Collections.Specialized/HybridDictionaryTest.cs
