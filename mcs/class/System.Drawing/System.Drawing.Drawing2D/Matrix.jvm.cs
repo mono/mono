@@ -204,7 +204,7 @@ namespace System.Drawing.Drawing2D
         
 		public void Shear (float shearX, float shearY, MatrixOrder order)
 		{
-			Multiply(geom.AffineTransform.getScaleInstance(shearX, shearY), order);
+			Multiply(geom.AffineTransform.getShearInstance (shearX, shearY), order);
 		}
         
 		public void TransformPoints (Point[] pts)

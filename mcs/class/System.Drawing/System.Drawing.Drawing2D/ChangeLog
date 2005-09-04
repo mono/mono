@@ -1,3 +1,7 @@
+2005-08-30 Boris Kirzner <borisk@mainsoft.com>
+
+	* Matrix.jvm.cs: Bug fix
+
 2005-08-30 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* LinearGradientBrush.jvm.cs: Refactoring, bug fix
