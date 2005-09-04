@@ -1,3 +1,8 @@
+2005-09-04  David Waite  <mass@akuma.org>
+
+	* System.dll.sources, System_test.dll.sources: Added LinkedList.cs,
+	LinkedListNode.cs and LinkedListTest.cs
+
 2005-08-28 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added DateTimeConverterTests.cs.
