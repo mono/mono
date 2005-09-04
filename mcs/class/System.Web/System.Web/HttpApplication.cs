@@ -683,8 +683,11 @@ namespace System.Web {
 					}
 					if (!RedirectCustomError ())
 						response.Write (((HttpException) error).GetHtmlErrorMessage ());
-				} else
+				} else {
+					if (!(error is HttpException))
+						error = new HttpException ("", error);
 					response.Write (((HttpException) error).GetHtmlErrorMessage ());
+				}
 				response.Flush (true);
 			}
 			

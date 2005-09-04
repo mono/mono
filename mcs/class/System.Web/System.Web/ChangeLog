@@ -1,3 +1,7 @@
+2005-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: fix invalid cast exception (bug #75926).
+
 2005-09-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplicationFactory.cs: only trigger the Application_Start event
