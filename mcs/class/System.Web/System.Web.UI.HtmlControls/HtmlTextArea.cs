@@ -119,6 +119,10 @@ namespace System.Web.UI.HtmlControls {
 		override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
+
+			if (Page != null) {
+				Page.RegisterRequiresPostBack (this);
+			}
 		}
 
 		protected virtual void OnServerChange (EventArgs e)

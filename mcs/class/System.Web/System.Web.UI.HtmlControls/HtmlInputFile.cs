@@ -187,12 +187,20 @@ namespace System.Web.UI.HtmlControls
 		
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
+#if NET_2_0
+			return LoadPostData (postDataKey, postCollection);
+#else
 			return LoadPostDataInternal (postDataKey, postCollection);
+#endif
 		}
 
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
+#if NET_2_0
+			RaisePostDataChangedEvent ();
+#else
 			RaisePostDataChangedEventInternal ();
+#endif
 		}
 	}
 }

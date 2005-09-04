@@ -190,18 +190,30 @@ namespace System.Web.UI.HtmlControls {
 		bool IPostBackDataHandler.LoadPostData (string postDataKey,
 				NameValueCollection postCollection)
 		{
+#if NET_2_0
+			return LoadPostData (postDataKey, postCollection);
+#else
 			return LoadPostDataInternal (postDataKey, postCollection);
+#endif
 		}
 
 		
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
+#if NET_2_0
+			RaisePostDataChangedEvent();
+#else
 			RaisePostDataChangedEventInternal ();
+#endif
 		}
 				
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
+#if NET_2_0
+			RaisePostBackEvent (eventArgument);
+#else
 			RaisePostBackEventInternal (eventArgument);
+#endif
 		}
 
 #if NET_2_0
@@ -212,8 +224,10 @@ namespace System.Web.UI.HtmlControls {
 		override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-			if (Page != null)
+
+			if (Page != null) {
 				Page.RegisterRequiresPostBack (this);
+			}
 		}
 
 		protected virtual void OnServerClick (ImageClickEventArgs e)

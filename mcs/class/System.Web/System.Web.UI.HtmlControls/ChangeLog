@@ -1,3 +1,26 @@
+2005-09-04  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlInputButton: Fix the 2.0/1.0 postback stuff the right way.
+	
+	* HtmlInputCheckBox: Fix the 2.0/1.0 postback stuff the right way.
+	
+	* HtmlInputFile.cs: Fix the 2.0/1.0 postback stuff the right way.
+
+	* HtmlInputHidden.cs: Fix the 2.0/1.0 postback stuff the right
+	way, and in OnPreRender, call Page.RegisterRequiresPostback.
+
+	* HtmlInputImage.cs: Fix the 2.0/1.0 postback stuff the right way,
+	and in OnPreRender, call Page.RegisterRequiresPostback.
+
+	* HtmlInputRadioButton.cs (OnPreRender): call
+	Page.RegisterRequiresPostback.
+	
+	* HtmlInputText.cs: Fix the 2.0/1.0 postback stuff the right way.
+	Also, in OnPreRender, call Page.RegisterRequiresPostback.
+
+	* HtmlTextArea.cs (OnPreRender): call
+	Page.RegisterRequiresPostback.
+
 2005-09-02  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlSelect.cs: implement 2.0 DataSourceID data binding.

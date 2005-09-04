@@ -98,7 +98,11 @@ namespace System.Web.UI.HtmlControls {
 		
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
+#if NET_2_0
+			RaisePostBackEvent (eventArgument);
+#else
 			RaisePostBackEventInternal (eventArgument);
+#endif
 		}
 
 #if NET_2_0
