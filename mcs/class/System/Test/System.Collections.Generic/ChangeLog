@@ -1,3 +1,7 @@
+2005-09-04  David Waite  <mass@akuma.org>
+
+	* LinkedListTest.cs: Added tests for LinkedList<T>
+
 2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* QueueTest.cs, StackTest.cs: moved from mscorlib test.
