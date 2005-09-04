@@ -1,5 +1,7 @@
 2005-09-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_lowering_pass): Convert 'and_imm 255' to zext1.
+
 	* mini-ia64.h mini-ia64.c: Add some minor optimizations.
 
 2005-09-02  Zoltan Varga  <vargaz@gmail.com>
