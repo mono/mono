@@ -1,3 +1,7 @@
+2005-09-04  David Waite  <mass@akuma.org>
+
+	* LinkedList.cs, LinkedListNode.cs: added implementation of LinkedList<T>
+
 2005-08-08  Kamil Skalski  <nazgul@nemerle.org>
 
 	* Queue.cs, Stack.cs: remove implementation of ICollection<T>,
