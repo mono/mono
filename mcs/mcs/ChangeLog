@@ -1,3 +1,19 @@
+2005-09-05  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs (Cast.TryReduce): Only reduce to an EnumConstant
+	if the underlying types are the same, otherwise we need to produce
+	code that will do the proper cast.
+
+	This was exposed by Marek's constant rewrite which produced
+	invalid code for the call site:
+
+	enum X : long { a }
+	void Method (X v) {}
+
+	Method ((X) 5)
+
+	This fixes test-49.cs
+
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* attribute.cs : (Attribute.IsValidArgumentType): array of string/
