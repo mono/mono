@@ -1,5 +1,9 @@
 2005-09-05  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug-debugger.c: Moved the debugger icalls into icall.c.
+
+2005-09-05  Martin Baulig  <martin@ximian.com>
+
 	Applying a patch from Michal Moskal <malekith@nemerle.org>.
 
 	* icall.c (ves_icall_Type_get_IsGenericType): Return true also if
