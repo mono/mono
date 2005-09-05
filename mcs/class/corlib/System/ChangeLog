@@ -1,3 +1,8 @@
+2005-09-05  Miguel de Icaza  <miguel@novell.com>
+
+	* MonoType.cs: Patch from Jonathan Chambers to implement
+	Type.GUID. 
+
 2005-09-05  Martin Baulig  <martin@ximian.com>
 
 	Reflect latest API changes in the August CTP.
@@ -87,6 +92,9 @@
 	* String.cs: Implement Split(String[]) methods.
 
 2005-08-09  Miguel de Icaza  <miguel@novell.com>
+
+	* AppDomainSetup.cs: Full-pathization of the appBase should only
+	be done on Windows, the ":" condition never applied to Linux.
 
 	* ConsoleKey.cs: Include a few aliases for a few values that were
 	introduced recently.

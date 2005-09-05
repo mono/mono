@@ -1,3 +1,10 @@
+2005-09-05  Miguel de Icaza  <miguel@novell.com>
+
+	* MonoIOError.cs: expose the ERROR_DIR_NOT_EMPTY as we are
+	throwing it. 
+
+	* MonoIO.cs: Return a properly named error.
+
 2005-08-23  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75679.

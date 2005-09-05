@@ -486,7 +486,10 @@ namespace System
 
 		public override Guid GUID {
 			get {
-				return Guid.Empty;
+				object[] att = GetCustomAttributes(typeof(System.Runtime.InteropServices.GuidAttribute), true);
+				if (att.Length == 0)
+					return Guid.Empty;
+				return new Guid(((System.Runtime.InteropServices.GuidAttribute)att[0]).Value);
 			}
 		}
 

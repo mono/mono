@@ -111,8 +111,7 @@ namespace System
 				appBase = appBase.Substring (7);
 				if (Path.DirectorySeparatorChar != '/')
 					appBase = appBase.Replace ('/', Path.DirectorySeparatorChar);
-
-			} else if (appBase.IndexOf (':') == -1) {
+			} else if (appBase.IndexOf (':') == -1 && Path.DirectorySeparatorChar != '/') {
 				appBase = Path.GetFullPath (appBase);
 			}
 
