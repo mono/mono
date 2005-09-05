@@ -1,5 +1,5 @@
 /*
- *	Firebird ADO.NET Data provider for .NET	and	Mono 
+ *	Firebird ADO.NET Data provider for .NET and Mono 
  * 
  *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
@@ -354,7 +354,8 @@ namespace FirebirdSql.Data.Gds
 					// Updated number of records affected by the statement execution			
 					if (this.StatementType == DbStatementType.Insert ||
 						this.StatementType == DbStatementType.Delete ||
-						this.StatementType == DbStatementType.Update)
+						this.StatementType == DbStatementType.Update ||
+                        this.StatementType == DbStatementType.StoredProcedure)
 					{
 						this.recordsAffected = this.GetRecordsAffected();
 					}

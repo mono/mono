@@ -1,5 +1,5 @@
 /*
- *	Firebird ADO.NET Data provider for .NET	and	Mono 
+ *	Firebird ADO.NET Data provider for .NET and Mono 
  * 
  *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
@@ -98,6 +98,49 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 			sql.Append(" ORDER BY idx.rdb$relation_name, idx.rdb$index_name, seg.rdb$field_position");
 
 			return sql;
+		}
+
+		protected override DataTable ProcessResult(DataTable schema)
+		{
+			schema.BeginLoadData();
+
+			foreach (DataRow row in schema.Rows)
+			{
+				if (row["IS_UNIQUE"] == DBNull.Value ||
+					Convert.ToInt32(row["IS_UNIQUE"], CultureInfo.InvariantCulture) == 0)
+				{
+					row["IS_UNIQUE"] = true;
+				}
+				else
+				{
+					row["IS_UNIQUE"] = false;
+				}
+				
+				if (row["IS_INACTIVE"] == DBNull.Value ||
+					Convert.ToInt32(row["IS_INACTIVE"], CultureInfo.InvariantCulture) == 0)
+				{
+					row["IS_INACTIVE"] = true;
+				}
+				else
+				{
+					row["IS_INACTIVE"] = false;
+				}
+
+				if (row["IS_SYSTEM_INDEX"] == DBNull.Value ||
+					Convert.ToInt32(row["IS_SYSTEM_INDEX"], CultureInfo.InvariantCulture) == 0)
+				{
+					row["IS_SYSTEM_INDEX"] = true;
+				}
+				else
+				{
+					row["IS_SYSTEM_INDEX"] = false;
+				}
+			}
+
+			schema.EndLoadData();
+			schema.AcceptChanges();
+		
+			return schema;
 		}
 
 		#endregion

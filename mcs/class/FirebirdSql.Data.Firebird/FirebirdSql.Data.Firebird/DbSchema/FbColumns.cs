@@ -1,5 +1,5 @@
 /*
- *	Firebird ADO.NET Data provider for .NET	and	Mono 
+ *	Firebird ADO.NET Data provider for .NET and Mono 
  * 
  *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
@@ -53,13 +53,13 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 					"cast(fld.rdb$field_length AS integer) AS COLUMN_SIZE, " +
 					"cast(fld.rdb$field_precision AS integer) AS NUMERIC_PRECISION, " +
 					"cast(fld.rdb$field_scale AS integer) AS NUMERIC_SCALE, " +
-					"cast(fld.rdb$character_length AS integer) AS CHARACTER_LENGTH, " +
+					"cast(fld.rdb$character_length AS integer) AS \"CHARACTER_LENGTH\", " +
 					"cast(fld.rdb$field_length AS integer) AS CHARACTER_OCTET_LENGTH, " +
 					"rfr.rdb$field_position AS ORDINAL_POSITION, " +
 					"null AS DOMAIN_CATALOG, " +
 					"null AS DOMAIN_SCHEMA, " +
 					"rfr.rdb$field_source AS DOMAIN_NAME, " +
-					"fld.rdb$default_source AS COLUMN_DEFAULT, " +
+					"rfr.rdb$default_source AS COLUMN_DEFAULT, " +
 					"fld.rdb$computed_source AS COMPUTED_SOURCE, " +
 					"fld.rdb$dimensions AS IS_ARRAY, " +
 					"rfr.rdb$null_flag AS IS_NULLABLE, " +

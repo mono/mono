@@ -1,5 +1,5 @@
 /*
- *	Firebird ADO.NET Data provider for .NET	and	Mono 
+ *	Firebird ADO.NET Data provider for .NET and Mono 
  * 
  *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
@@ -538,6 +538,26 @@ namespace FirebirdSql.Data.Common
 		public const int isc_info_sql_get_plan = 22;
 		public const int isc_info_sql_records = 23;
 		public const int isc_info_sql_batch_fetch = 24;
+		public const int isc_info_sql_relation_alias = 25;
+
+		#endregion
+
+		#region SQL	Information	Return Values
+
+		public const int isc_info_sql_stmt_select = 1;
+		public const int isc_info_sql_stmt_insert = 2;
+		public const int isc_info_sql_stmt_update = 3;
+		public const int isc_info_sql_stmt_delete = 4;
+		public const int isc_info_sql_stmt_ddl = 5;
+		public const int isc_info_sql_stmt_get_segment = 6;
+		public const int isc_info_sql_stmt_put_segment = 7;
+		public const int isc_info_sql_stmt_exec_procedure = 8;
+		public const int isc_info_sql_stmt_start_trans = 9;
+		public const int isc_info_sql_stmt_commit = 10;
+		public const int isc_info_sql_stmt_rollback = 11;
+		public const int isc_info_sql_stmt_select_for_upd = 12;
+		public const int isc_info_sql_stmt_set_generator = 13;
+		public const int isc_info_sql_stmt_savepoint = 14;
 
 		#endregion
 
@@ -619,25 +639,6 @@ namespace FirebirdSql.Data.Common
 		public const int isc_info_next_transaction = 107;
 		public const int isc_info_db_provider = 108;
 		public const int isc_info_active_transactions = 109;
-
-		#endregion
-
-		#region SQL	Information	Return Values
-
-		public const int isc_info_sql_stmt_select = 1;
-		public const int isc_info_sql_stmt_insert = 2;
-		public const int isc_info_sql_stmt_update = 3;
-		public const int isc_info_sql_stmt_delete = 4;
-		public const int isc_info_sql_stmt_ddl = 5;
-		public const int isc_info_sql_stmt_get_segment = 6;
-		public const int isc_info_sql_stmt_put_segment = 7;
-		public const int isc_info_sql_stmt_exec_procedure = 8;
-		public const int isc_info_sql_stmt_start_trans = 9;
-		public const int isc_info_sql_stmt_commit = 10;
-		public const int isc_info_sql_stmt_rollback = 11;
-		public const int isc_info_sql_stmt_select_for_upd = 12;
-		public const int isc_info_sql_stmt_set_generator = 13;
-		public const int isc_info_sql_stmt_savepoint = 14;
 
 		#endregion
 

@@ -1,5 +1,5 @@
 /*
- *	Firebird ADO.NET Data provider for .NET	and	Mono 
+ *	Firebird ADO.NET Data provider for .NET and Mono 
  * 
  *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
@@ -674,13 +674,13 @@ namespace FirebirdSql.Data.Firebird
 				{
 					FbConnectionStringBuilder csb = new FbConnectionStringBuilder(this.connectionString);
 
-					/* Close current connection	*/
+					// Close current connection
 					this.Close();
 
-					/* Set up the new Database	*/
+					// Set up the new Database
 					csb.Database = db;
 
-					/* Open	new	connection	*/
+					// Open	new	connection
 					this.Open();
 				}
 				catch (IscException ex)

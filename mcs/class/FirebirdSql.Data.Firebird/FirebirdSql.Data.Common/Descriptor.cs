@@ -77,14 +77,14 @@ namespace FirebirdSql.Data.Common
 
 		#region Constructors
 
-		public Descriptor(short n)
+		public Descriptor(int count)
 		{
 			this.version		= IscCodes.SQLDA_VERSION1;
-			this.count			= n;
-			this.actualCount	= n;
-			this.fields			= new DbField[n];
+			this.count			= (short)count;
+			this.actualCount	= (short)count;
+			this.fields			= new DbField[count];
 
-			for (int i = 0; i < n; i++)
+			for (int i = 0; i < this.fields.Length; i++)
 			{
 				this.fields[i] = new DbField();
 			}

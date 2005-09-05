@@ -1,5 +1,5 @@
 /*
- *	Firebird ADO.NET Data provider for .NET	and	Mono 
+ *	Firebird ADO.NET Data provider for .NET and Mono 
  * 
  *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
@@ -75,6 +75,10 @@ namespace FirebirdSql.Data.Firebird
 		/// <include file='Doc/en_EN/FbRemoteEvent.xml'	path='doc/class[@name="FbRemoteEvent"]/constructor[@name="ctor(FbConnection, System.Array)"]/*'/>
 		public FbRemoteEvent(FbConnection connection, string[] events)
 		{
+			if (connection == null || connection.State != System.Data.ConnectionState.Open)
+			{
+				throw new InvalidOperationException("Connection must valid and open");
+			}
 			this.connection = connection;
 			this.revent		= connection.InnerConnection.Database.CreateEvent();
 			this.revent.EventCountsCallback = new EventCountsCallback(this.OnRemoteEventCounts);

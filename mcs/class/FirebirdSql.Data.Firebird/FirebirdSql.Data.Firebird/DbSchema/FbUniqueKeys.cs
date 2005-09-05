@@ -1,5 +1,5 @@
 /*
- *	Firebird ADO.NET Data provider for .NET	and	Mono 
+ *	Firebird ADO.NET Data provider for .NET and Mono 
  * 
  *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
@@ -27,7 +27,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 	{
 		#region Constructors
 
-		public FbUniqueKeys() : base("PrimaryKeys")
+		public FbUniqueKeys() : base("UniqueKeys")
 		{
 		}
 

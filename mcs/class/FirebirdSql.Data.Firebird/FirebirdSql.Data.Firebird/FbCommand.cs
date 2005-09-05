@@ -1,5 +1,5 @@
 /*
- *	Firebird ADO.NET Data provider for .NET	and	Mono 
+ *	Firebird ADO.NET Data provider for .NET and Mono 
  * 
  *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
@@ -38,14 +38,6 @@ namespace FirebirdSql.Data.Firebird
 #endif
 	public sealed class FbCommand : Component, IDbCommand, ICloneable
 	{
-		#region Private	static fields
-
-		private static Regex namedRegex = new Regex(
-			@"(('[^']*?\@[^']*')*[^'@]*?)*(?<param>@\w+)*([^'@]*?('[^']*?\@*[^']*'))*",
-			RegexOptions.Compiled | RegexOptions.ExplicitCapture);
-
-		#endregion
-
 		#region Fields
 
 		private CommandType				commandType;
@@ -310,35 +302,28 @@ namespace FirebirdSql.Data.Firebird
 
 		internal bool HasImplicitTransaction
 		{
-			get
-			{
-				if (this.implicitTransaction)
-				{
-					return true;
-				}
-				return false;
-			}
+			get { return this.implicitTransaction; }
 		}
 
         internal bool IsSelectCommand
         {
-            get 
+            get
             {
-                if (this.statement.StatementType == DbStatementType.Select ||
-                    this.statement.StatementType == DbStatementType.SelectForUpdate)
+                if (this.statement != null)
                 {
-                    return true;
+                    if (this.statement.StatementType == DbStatementType.Select ||
+                        this.statement.StatementType == DbStatementType.SelectForUpdate)
+                    {
+                        return true;
+                    }
                 }
-                return false; 
+                return false;
             }
         }
 
         internal bool IsDDLCommand
         {
-            get
-            {
-                return this.statement.StatementType == DbStatementType.DDL;
-            }
+            get { return (this.statement != null && this.statement.StatementType == DbStatementType.DDL); }
         }
 
 		#endregion
@@ -438,21 +423,24 @@ namespace FirebirdSql.Data.Firebird
 
 		object ICloneable.Clone()
 		{
-			FbCommand command = new FbCommand();
+            FbCommand command = new FbCommand();
 
-			command.CommandText	= this.commandText;
-			command.Connection	= this.connection;
-			command.Transaction = this.transaction;
-			command.CommandType = this.CommandType;
-			command.UpdatedRowSource = this.UpdatedRowSource;
+            command.CommandText                     = this.CommandText;
+            command.Connection                      = this.Connection;
+            command.Transaction                     = this.Transaction;
+            command.CommandType                     = this.CommandType;
+            command.UpdatedRowSource                = this.UpdatedRowSource;
+            ((IDbCommand)command).CommandTimeout    = this.commandTimeout;
+            command.FetchSize                       = this.FetchSize;
+            command.UpdatedRowSource                = this.UpdatedRowSource;
 
-			for (int i = 0; i < this.Parameters.Count; i++)
-			{
-				command.Parameters.Add(((ICloneable)this.Parameters[i]).Clone());
-			}
+            for (int i = 0; i < this.Parameters.Count; i++)
+            {
+                command.Parameters.Add(((ICloneable)this.Parameters[i]).Clone());
+            }
 
-			return command;
-		}
+            return command;
+        }
 
 		#endregion
 
@@ -488,19 +476,13 @@ namespace FirebirdSql.Data.Firebird
 				}
 				catch (IscException ex)
 				{
-					if (this.HasImplicitTransaction)
-					{
-						this.RollbackImplicitTransaction();
-					}
+					this.DiscardImplicitTransaction();
 
 					throw new FbException(ex.Message, ex);
 				}
 				catch (Exception)
 				{
-					if (this.HasImplicitTransaction)
-					{
-						this.RollbackImplicitTransaction();
-					}
+					this.DiscardImplicitTransaction();
 
 					throw;
 				}
@@ -518,31 +500,22 @@ namespace FirebirdSql.Data.Firebird
 				{
 					this.ExecuteCommand(CommandBehavior.Default);
 
-					if (this.CommandType == CommandType.StoredProcedure)
+					if (this.statement.StatementType == DbStatementType.StoredProcedure)
 					{
 						this.SetOutputParameters();
 					}
 
-					if (this.HasImplicitTransaction)
-					{
-						this.CommitImplicitTransaction();
-					}
+					this.CommitImplicitTransaction();
 				}
 				catch (IscException ex)
 				{
-					if (this.HasImplicitTransaction)
-					{
-						this.RollbackImplicitTransaction();
-					}
+					this.DiscardImplicitTransaction();
 
 					throw new FbException(ex.Message, ex);
 				}
 				catch (Exception)
 				{
-					if (this.HasImplicitTransaction)
-					{
-						this.RollbackImplicitTransaction();
-					}
+					this.DiscardImplicitTransaction();
 
 					throw;
 				}
@@ -580,19 +553,13 @@ namespace FirebirdSql.Data.Firebird
 				}
 				catch (IscException ex)
 				{
-					if (this.HasImplicitTransaction)
-					{
-						this.RollbackImplicitTransaction();
-					}
+					this.DiscardImplicitTransaction();
 
 					throw new FbException(ex.Message, ex);
 				}
 				catch
 				{
-					if (this.HasImplicitTransaction)
-					{
-						this.RollbackImplicitTransaction();
-					}
+					this.DiscardImplicitTransaction();
 
 					throw;
 				}
@@ -617,10 +584,7 @@ namespace FirebirdSql.Data.Firebird
 				{
 					this.ExecuteCommand(CommandBehavior.Default);
 
-					// Gets	only the values	of the first row or
-					// the output parameters values if the CommandType is
-					// StoredProcedure
-					if (this.CommandType == CommandType.StoredProcedure)
+                    if (this.statement.StatementType == DbStatementType.StoredProcedure)
 					{
 						values = this.statement.GetOuputParameters();
 						this.SetOutputParameters(values);
@@ -636,27 +600,17 @@ namespace FirebirdSql.Data.Firebird
 						val = values[0].Value;
 					}
 
-					if (this.HasImplicitTransaction)
-					{
-						this.CommitImplicitTransaction();
-					}
+					this.CommitImplicitTransaction();
 				}
 				catch (IscException ex)
 				{
-					if (this.HasImplicitTransaction)
-					{
-						this.RollbackImplicitTransaction();
-					}
+					this.DiscardImplicitTransaction();
 
 					throw new FbException(ex.Message, ex);
 				}
 				catch (Exception)
 				{
-					if (this.implicitTransaction &&
-						this.transaction != null)
-					{
-						this.RollbackImplicitTransaction();
-					}
+					this.DiscardImplicitTransaction();
 
 					throw;
 				}
@@ -746,9 +700,21 @@ namespace FirebirdSql.Data.Firebird
 			}
 		}
 
+		internal void DiscardImplicitTransaction()
+		{
+			if (this.IsSelectCommand)
+			{
+				this.CommitImplicitTransaction();
+			}
+			else
+			{
+				this.RollbackImplicitTransaction();
+			}
+		}
+
 		internal void CommitImplicitTransaction()
 		{
-			if (this.implicitTransaction && 
+			if (this.HasImplicitTransaction && 
 				this.transaction != null &&
 				this.transaction.Transaction != null)
 			{
@@ -756,7 +722,7 @@ namespace FirebirdSql.Data.Firebird
 				{
 					this.transaction.Commit();
 				}
-				catch (Exception)
+				catch
 				{
 					this.RollbackImplicitTransaction();
 
@@ -776,7 +742,7 @@ namespace FirebirdSql.Data.Firebird
 
 		internal void RollbackImplicitTransaction()
 		{
-			if (this.implicitTransaction &&
+			if (this.HasImplicitTransaction &&
 				this.transaction != null &&
 				this.transaction.Transaction != null)
 			{
@@ -784,7 +750,7 @@ namespace FirebirdSql.Data.Firebird
 				{
 					this.transaction.Rollback();
 				}
-				catch (Exception)
+				catch
 				{
 				}
 				finally
@@ -827,31 +793,46 @@ namespace FirebirdSql.Data.Firebird
 
 		#region Input parameter	descriptor generation methods
 
-		private Descriptor BuildParametersDescriptor()
+		private void DescribeInput()
 		{
-			short count = this.ValidateInputParameters();
-
-			if (count > 0)
+			if (this.parameters.Count > 0)
 			{
-				if (this.namedParameters.Count > 0)
+				if (this.statement.Parameters == null || this.CountInputParameters() != this.statement.Parameters.Count) 
 				{
-					count = (short)this.namedParameters.Count;
-					return this.BuildNamedParametersDescriptor(count);
+					// Build or Rebuild the parameter descriptor
+					if (this.CanInferInputParameters())
+					{
+						this.statement.Parameters = null;
+					}
+					else
+					{
+						this.statement.DescribeParameters();
+					}
 				}
-				else
-				{
-					return this.BuildPlaceHoldersDescriptor(count);
-				}
-			}
 
-			return null;
+				this.UpdateInputParameterDescriptor();
+			}
 		}
 
-		private Descriptor BuildNamedParametersDescriptor(short count)
+		private void UpdateInputParameterDescriptor()
 		{
-			Descriptor descriptor = new Descriptor(count);
-			int index = 0;
+			if (this.statement.Parameters == null)
+			{
+				this.statement.Parameters = new Descriptor(this.CountInputParameters());
+			}
 
+			if (this.namedParameters.Count > 0)
+			{
+				this.UpdateNamedParametersDescriptor();
+			}
+			else
+			{
+				this.UpdatePlaceHoldersDescriptor();
+			}
+		}
+
+		private void UpdateNamedParametersDescriptor()
+		{
 			for (int i = 0; i < this.namedParameters.Count; i++)
 			{
 				FbParameter parameter = this.parameters[this.namedParameters[i]];
@@ -859,19 +840,13 @@ namespace FirebirdSql.Data.Firebird
 				if (parameter.Direction == ParameterDirection.Input ||
 					parameter.Direction == ParameterDirection.InputOutput)
 				{
-					if (!this.BuildParameterDescriptor(descriptor, parameter, index++))
-					{
-						return null;
-					}
+					this.UpdateParameterDescriptor(parameter, this.statement.Parameters[i]);
 				}
 			}
-
-			return descriptor;
 		}
 
-		private Descriptor BuildPlaceHoldersDescriptor(short count)
+		private void UpdatePlaceHoldersDescriptor()
 		{
-			Descriptor descriptor = new Descriptor(count);
 			int index = 0;
 
 			for (int i = 0; i < this.parameters.Count; i++)
@@ -881,26 +856,20 @@ namespace FirebirdSql.Data.Firebird
 				if (parameter.Direction == ParameterDirection.Input ||
 					parameter.Direction == ParameterDirection.InputOutput)
 				{
-					if (!this.BuildParameterDescriptor(descriptor, parameter, index++))
-					{
-						return null;
-					}
+					this.UpdateParameterDescriptor(parameter, this.statement.Parameters[index++]);
 				}
 			}
-
-			return descriptor;
 		}
 
-		private bool BuildParameterDescriptor(
-			Descriptor descriptor, FbParameter parameter, int index)
+		private void UpdateParameterDescriptor(FbParameter source, DbField target)
 		{
-			Charset charset = this.connection.InnerConnection.Database.Charset;
-			FbDbType type = parameter.FbDbType;
+			Charset		charset	= this.connection.InnerConnection.Database.Charset;
+			FbDbType	type	= source.FbDbType;
 
 			// Check the parameter character set
-			if (parameter.Charset != FbCharset.Default)
+			if (source.Charset != FbCharset.Default)
 			{
-				int idx = Charset.SupportedCharsets.IndexOf((int)parameter.Charset);
+				int idx = Charset.SupportedCharsets.IndexOf((int)source.Charset);
 				charset = Charset.SupportedCharsets[idx];
 			}
 			else
@@ -912,54 +881,51 @@ namespace FirebirdSql.Data.Firebird
 			}
 
 			// Set parameter Data Type
-			descriptor[index].DataType = 
-				(short)TypeHelper.GetFbType((DbDataType)type, parameter.IsNullable);
+			if (type != FbDbType.Numeric && type != FbDbType.Decimal)
+			{
+				target.DataType = (short)TypeHelper.GetFbType((DbDataType)type, source.IsNullable);
+			}
 
 			// Set parameter Sub Type
 			switch (type)
 			{
 				case FbDbType.Binary:
-					descriptor[index].SubType = 0;
+					target.SubType = 0;
 					break;
 
 				case FbDbType.Text:
-					descriptor[index].SubType = 1;
+					target.SubType = 1;
 					break;
 
 				case FbDbType.Guid:
-					descriptor[index].SubType = (short)charset.ID;
+					target.SubType = (short)charset.ID;
 					break;
 
 				case FbDbType.Char:
 				case FbDbType.VarChar:
-					descriptor[index].SubType = (short)charset.ID;
-					if (parameter.Size > 0)
+					if (target.SubType == 0)
 					{
-						short len = (short)(parameter.Size * charset.BytesPerCharacter);
-						descriptor[index].Length = len;
+						target.SubType = (short)charset.ID;
+					}
+					if (source.Size > 0)
+					{
+						target.Length = (short)(source.Size * charset.BytesPerCharacter);
 					}
 					break;
 			}
 
 			// Set parameter length
-			if (descriptor[index].Length == 0)
+			if (target.Length == 0)
 			{
-				descriptor[index].Length = TypeHelper.GetSize((DbDataType)type);
+				target.Length = TypeHelper.GetSize((DbDataType)type);
 			}
 
-			// Verify parameter
-			if (descriptor[index].SqlType == 0 || descriptor[index].Length == 0)
-			{
-				return false;
-			}
-
-			return true;
+			// Update parameter value
+			this.UpdateInputParameterValue(source, target);
 		}
 
-		private short ValidateInputParameters()
+		private bool CanInferInputParameters()
 		{
-			short count = 0;
-
 			for (int i = 0; i < this.parameters.Count; i++)
 			{
 				if (this.parameters[i].Direction == ParameterDirection.Input ||
@@ -967,40 +933,110 @@ namespace FirebirdSql.Data.Firebird
 				{
 					FbDbType type = this.parameters[i].FbDbType;
 
-					if (type == FbDbType.Array || type == FbDbType.Decimal ||
-						type == FbDbType.Numeric)
+					if ((type == FbDbType.Char || type == FbDbType.VarChar) && this.Parameters[i].Size == 0)
 					{
-						return -1;
+						return false;
 					}
-					else
+					else if (type == FbDbType.Array || type == FbDbType.Decimal || type == FbDbType.Numeric)
+					{
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		private int CountInputParameters()
+		{
+			int count = 0;
+
+			if (this.namedParameters.Count == 0)
+			{
+				for (int i = 0; i < this.parameters.Count; i++)
+				{
+					if (this.parameters[i].Direction == ParameterDirection.Input ||
+						this.parameters[i].Direction == ParameterDirection.InputOutput)
 					{
 						count++;
 					}
 				}
 			}
+			else
+			{
+				count = this.namedParameters.Count;
+			}
 
 			return count;
+		}
+
+		private void UpdateInputParameterValue(FbParameter source, DbField target)
+		{
+			if (source.Value == DBNull.Value || source.Value == null)
+			{
+				target.NullFlag = -1;
+				target.Value	= DBNull.Value;
+
+//				if (!target.AllowDBNull())
+//				{
+//					target.DataType++;
+//				}
+			}
+			else
+			{
+				// Parameter value is not null
+				target.NullFlag = 0;
+
+				switch (target.DbDataType)
+				{
+					case DbDataType.Binary:
+						BlobBase blob = this.statement.CreateBlob();
+						blob.Write((byte[])source.Value);
+						target.Value = blob.Id;
+						break;
+
+					case DbDataType.Text:
+						BlobBase clob = this.statement.CreateBlob();
+						clob.Write((string)source.Value);
+						target.Value = clob.Id;
+						break;
+
+					case DbDataType.Array:
+					{
+						if (target.ArrayHandle == null)
+						{
+							target.ArrayHandle = this.statement.CreateArray(target.Relation, target.Name);
+						}
+						else
+						{
+							target.ArrayHandle.DB			= this.statement.DB;
+							target.ArrayHandle.Transaction	= this.statement.Transaction;
+						}
+
+						target.ArrayHandle.Handle = 0;
+						target.ArrayHandle.Write((System.Array)source.Value);
+						target.Value = target.ArrayHandle.Handle;
+					}
+					break;
+
+					case DbDataType.Guid:
+						if (!(source.Value is Guid) && !(source.Value is byte[]))
+						{
+							throw new InvalidOperationException("Incorrect Guid value.");
+						}
+						target.Value = source.Value;
+						break;
+
+					default:
+						target.Value = source.Value;
+						break;
+				}
+			}
 		}
 
 		#endregion
 
 		#region Private	Methods
-
-		private void DescribeInput()
-		{
-			if (this.parameters.Count > 0)
-			{
-				Descriptor descriptor = this.BuildParametersDescriptor();
-				if (descriptor == null)
-				{
-					this.statement.DescribeParameters();
-				}
-				else
-				{
-					this.statement.Parameters = descriptor;
-				}
-			}
-		}
 
 		private void Prepare(bool returnsSet)
 		{
@@ -1042,11 +1078,20 @@ namespace FirebirdSql.Data.Firebird
 					sql = this.BuildStoredProcedureSql(sql, returnsSet);
 				}
 
-                // Prepare the command
-				this.statement.Prepare(this.ParseNamedParameters(sql));
 
-                // Describe input parameters
-				this.DescribeInput();
+                try
+                {
+                    // Try to prepare the command
+                    this.statement.Prepare(this.ParseNamedParameters(sql));
+                }
+                catch
+                {
+                    // Release the statement and rethrow the exception
+                    this.statement.Release();
+                    this.statement = null;
+
+                    throw;
+                }
 
 				// Add this	command	to the active command list
 				innerConn.AddPreparedCommand(this);
@@ -1080,11 +1125,7 @@ namespace FirebirdSql.Data.Firebird
 				// Update input parameter values
 				if (this.parameters.Count > 0)
 				{
-					if (this.statement.Parameters == null)
-					{
-						this.DescribeInput();
-					}
-					this.UpdateParameterValues();
+					this.DescribeInput();
 				}
 
 				// Execute statement
@@ -1138,125 +1179,66 @@ namespace FirebirdSql.Data.Firebird
 			return sql;
 		}
 
-		private string ParseNamedParameters(string sql)
-		{
-			this.namedParameters.Clear();
+        private string ParseNamedParameters(string sql)
+        {
+            namedParameters.Clear();
 
-			if (sql.IndexOf("@") != -1)
-			{
-				MatchEvaluator me = new MatchEvaluator(NamedParametersEvaluator);
+            if (sql.IndexOf('@') == -1)
+            {
+                return sql;
+            }
 
-				sql = namedRegex.Replace(sql, me);
-			}
+            StringBuilder builder = new StringBuilder();
+            StringBuilder paramBuilder = new StringBuilder();
 
-			return sql;
-		}
+            bool inCommas = false;
+            bool inParam = false;
 
-		private string NamedParametersEvaluator(Match match)
-		{
-			string input = match.Value;
+            for (int i = 0; i < sql.Length; i++)
+            {
+                char sym = sql[i];
 
-			if (match.Groups["param"].Success)
-			{
-				Group g = match.Groups["param"];
+                if (inParam)
+                {
+                    if (Char.IsLetterOrDigit(sym) || sym == '_' ||
+                        sym == '$')
+                    {
+                        paramBuilder.Append(sym);
+                    }
+                    else
+                    {
+                        namedParameters.Add(paramBuilder.ToString());
+                        paramBuilder.Length = 0;
+                        builder.Append('?');
+                        builder.Append(sym);
+                        inParam = false;
+                    }
+                }
+                else
+                {
+                    if (sym == '\'')
+                    {
+                        inCommas = !inCommas;
+                    }
+                    else if (!inCommas && sym == '@')
+                    {
+                        inParam = true;
+                        paramBuilder.Append(sym);
+                        continue;
+                    }
 
-				this.namedParameters.Add(g.Value);
+                    builder.Append(sym);
+                }
+            }
 
-				return Regex.Replace(input, g.Value, "?");
-			}
-			else
-			{
-				return match.Value;
-			}
-		}
+            if (inParam)
+            {
+                namedParameters.Add(paramBuilder.ToString());
+                builder.Append('?');
+            }
 
-		private void UpdateParameterValues()
-		{
-			int index = -1;
-
-			for (int i = 0; i < this.statement.Parameters.Count; i++)
-			{
-				index = i;
-
-				if (this.namedParameters.Count > 0)
-				{
-					index = this.parameters.IndexOf(this.namedParameters[i]);
-				}
-
-				if (index != -1)
-				{
-					if (this.parameters[index].Value == DBNull.Value ||
-						this.parameters[index].Value == null)
-					{
-						this.statement.Parameters[i].NullFlag = -1;
-						this.statement.Parameters[i].Value = DBNull.Value;
-
-						if (!this.statement.Parameters[i].AllowDBNull())
-						{
-							this.statement.Parameters[i].DataType++;
-						}
-					}
-					else
-					{
-						// Parameter value is not null
-						this.statement.Parameters[i].NullFlag = 0;
-
-						switch (this.statement.Parameters[i].DbDataType)
-						{
-							case DbDataType.Binary:
-								{
-									BlobBase blob = this.statement.CreateBlob();
-									blob.Write((byte[])this.parameters[index].Value);
-									this.statement.Parameters[i].Value = blob.Id;
-								}
-								break;
-
-							case DbDataType.Text:
-								{
-									BlobBase blob = this.statement.CreateBlob();
-									blob.Write((string)this.parameters[index].Value);
-									this.statement.Parameters[i].Value = blob.Id;
-								}
-								break;
-
-							case DbDataType.Array:
-								{
-									if (this.statement.Parameters[i].ArrayHandle == null)
-									{
-										this.statement.Parameters[i].ArrayHandle =
-										this.statement.CreateArray(
-											this.statement.Parameters[i].Relation,
-											this.statement.Parameters[i].Name);
-									}
-									else
-									{
-										this.statement.Parameters[i].ArrayHandle.DB = this.statement.DB;
-										this.statement.Parameters[i].ArrayHandle.Transaction = this.statement.Transaction;
-									}
-
-									this.statement.Parameters[i].ArrayHandle.Handle = 0;
-									this.statement.Parameters[i].ArrayHandle.Write((System.Array)this.parameters[index].Value);
-									this.statement.Parameters[i].Value = this.statement.Parameters[i].ArrayHandle.Handle;
-								}
-								break;
-
-							case DbDataType.Guid:
-								if (!(this.parameters[index].Value is Guid) &&
-									!(this.parameters[index].Value is byte[]))
-								{
-									throw new InvalidOperationException("Incorrect Guid value.");
-								}
-								this.statement.Parameters[i].Value = this.parameters[index].Value;
-								break;
-
-							default:
-								this.statement.Parameters[i].Value = this.parameters[index].Value;
-								break;
-						}
-					}
-				}
-			}
-		}
+            return builder.ToString();
+        }
 
 		private void CheckCommand()
 		{

@@ -1,5 +1,5 @@
 /*
- *	Firebird ADO.NET Data provider for .NET	and	Mono 
+ *	Firebird ADO.NET Data provider for .NET and Mono 
  * 
  *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
@@ -55,7 +55,7 @@ namespace FirebirdSql.Data.Firebird.DbSchema
 					"cast(fld.rdb$field_length AS integer) AS PARAMETER_SIZE, " +
 					"cast(fld.rdb$field_precision AS integer) AS NUMERIC_PRECISION, " +
 					"cast(fld.rdb$field_scale AS integer) AS NUMERIC_SCALE, " +
-					"cast(fld.rdb$character_length AS integer) AS CHARACTER_LENGTH, " +
+                    "cast(fld.rdb$character_length AS integer) AS \"CHARACTER_LENGTH\", " +
 					"cast(fld.rdb$field_length AS integer) AS CHARACTER_OCTET_LENGTH, " +
 					"null AS CHARACTER_SET_CATALOG, " +
 					"null AS CHARACTER_SET_SCHEMA, " +

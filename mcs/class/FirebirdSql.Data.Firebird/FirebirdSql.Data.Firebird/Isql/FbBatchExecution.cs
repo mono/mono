@@ -1,5 +1,5 @@
 /*
- *	Firebird ADO.NET Data provider for .NET	and	Mono 
+ *	Firebird ADO.NET Data provider for .NET and Mono 
  * 
  *	   The contents of this file are subject to the Initial 
  *	   Developer's Public License Version 1.0 (the "License"); 
@@ -12,7 +12,7 @@
  *	   express or implied. See the License for the specific 
  *	   language governing rights and limitations under the License.
  * 
- *	Copyright (c) 2003,	2004 Abel Eduardo Pereira
+ *	Copyright (c) 2003, 2005 Abel Eduardo Pereira
  *	All Rights Reserved.
  */
 

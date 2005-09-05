@@ -2,11 +2,83 @@ Firebird ADO.NET Data provider for .NET and Mono
 ================================================
 
 
+------------------ 1.7.1 Release Candidate 1 ----------------------
+
+
+2005-08-27 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird\FbCommand.cs:
+	* FirebirdSql.Data.Gds\GdsStatement.cs:
+	* FirebirdSql.Data.Embedded\FesStatement.cs:
+
+		- Added support to INSERT INTO .... RETURNING statement of Firebird 2.0
+
+2005-08-22 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird\FbCommand.cs:
+
+		- Backported the new named parameters method from the v2.0
+
+2005-08-12 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird\DbSchema\FbColumns.cs:
+	* FirebirdSql.Data.Firebird\DbSchema\FbDomains.cs:
+	* FirebirdSql.Data.Firebird\DbSchema\FbProcedureParameters.cs:
+	* FirebirdSql.Data.Firebird\DbSchema\FbViewColumnUsage.cs:
+
+		- Renamed column CHARACTER_LENGTH to "CHARACTER_LENGTH" to allow the query to run in Firebird 2.0		
+
+2005-08-10 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.FirebirdClient.FbCommand.cs:
+
+		- Initial fix for bug #1242812
+
+2005-07-24 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbCommand.cs:
+
+		- Changes on implicit transaction handling, they will be discarded by doing 
+		Commit when the command is a SELECT statement.
+
+2005-07-22 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbCommand.cs:
+
+		- Changed the way to describe input parameters, not finished needs tetsing.
+
+2005-07-20 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbCommand.cs:
+
+		- Changed the way to describe input parameters, not finished and needs tetsing.
+
+2005-07-17 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/FbRemoteEvent.cs:
+
+		- Check connection state on constructor ( Thanks to Michele Lepri )
+
+2005-06-27 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/DbSchema/FbIndexes.cs:
+
+		- Added ProcessResult implementation (Thanks to Rolo Tomasi)
+
+	* FirebirdSql.Data.Firebird/DbSchema/FbUniqueKeys.cs:
+
+		- Fixed parameter value in constructor (Thanks to Rolo Tomasi)
+
+2005-06-24 Carlos Guzman Alvarez  <carlosga@telefonica.net>
+
+	* FirebirdSql.Data.Firebird/DbSchema/FbColumns.cs:
+
+		- Fixed default value retrieval. (Thanks to RoloTomasi.)
 
 2005-06-13 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
-	* FirebirdSql.Data.firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep4.cs:
-	* FirebirdSql.Data.firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep7.cs:
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep4.cs:
+	* FirebirdSql.Data.Firebird/Design/DataAdapter/Designer/FbDataAdapterConfigurationStep7.cs:
 
 		- Allow configuration of quoted identifiers usage. (Thanks to Ernesto Cullen for his help.)
 
@@ -35,12 +107,11 @@ Firebird ADO.NET Data provider for .NET and Mono
 	* FirebirdSql.Data.Gds/GdsArray.cs:
 	* FirebirdSql.Data.Embedded/FesArray.cs:
 
-		- Fixed bug on numeri and decimal array encoding.
-
+		- Fixed bug on numeric and decimal array encoding.
 
 2005-06-05 Carlos Guzman Alvarez  <carlosga@telefonica.net>
 
-	* FirebirdSql.Data.Gds/GdsConnection.cs:
+	* FirebirdSql.Data.Gds/GdsDatabase.cs:
 
 		- Fixed problem with mono on linux when reading port number for firebird events
 		connection (Gabriel Reid)
