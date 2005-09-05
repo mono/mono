@@ -1344,11 +1344,18 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		// TODO: move to constant
 		/// <summary>
 		///   Attempts to do a compile-time folding of a constant cast.
 		/// </summary>
 		Expression TryReduce (EmitContext ec, Type target_type)
 		{
+			if (expr.Type == target_type)
+				return expr;
+
+			if (TypeManager.IsEnumType (target_type))
+				return new EnumConstant ((Constant)expr, target_type);
+
 			Expression real_expr = expr;
 			if (real_expr is EnumConstant)
 				real_expr = ((EnumConstant) real_expr).Child;
@@ -2846,9 +2853,10 @@ namespace Mono.CSharp {
 			}
 
 			if (rc != null && lc != null){
+				int prev_e = Report.Errors;
 				Expression e = ConstantFold.BinaryFold (
 					ec, oper, lc, rc, loc);
-				if (e != null)
+				if (e != null || Report.Errors != prev_e)
 					return e;
 			}
 
@@ -4470,7 +4478,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Determines "better conversion" as specified in 7.4.2.3
+		///   Determines "better conversion" as specified in 14.4.2.3
 		///
 		///    Returns : p    if a->p is better,
 		///              q    if a->q is better,
@@ -5984,7 +5992,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Converts complex core type syntax like 'new int ()' to simple constant
 		/// </summary>
-		Expression Constantify (Type t)
+		public static Constant Constantify (Type t)
 		{
 			if (t == TypeManager.int32_type)
 				return new IntConstant (0);
@@ -7451,7 +7459,7 @@ namespace Mono.CSharp {
 	///   Implements the member access expression
 	/// </summary>
 	public class MemberAccess : Expression {
-		public string Identifier;
+		public readonly string Identifier;  // TODO: LocatedToken
 		Expression expr;
 		TypeArguments args;
 		
@@ -7473,6 +7481,8 @@ namespace Mono.CSharp {
 			get { return expr; }
 		}
 
+		// TODO: this method has very poor performace for Enum fields and
+		// probably for other constants as well
 		Expression DoResolve (EmitContext ec, Expression right_side)
 		{
 			if (type != null)
@@ -7505,54 +7515,7 @@ namespace Mono.CSharp {
 				return retval;
 			}
 
-			//
-			// TODO: I mailed Ravi about this, and apparently we can get rid
-			// of this and put it in the right place.
-			// 
-			// Handle enums here when they are in transit.
-			// Note that we cannot afford to hit MemberLookup in this case because
-			// it will fail to find any members at all
-			//
-
 			Type expr_type = new_expr.Type;
-			if (new_expr is TypeExpr){
-				if (!ec.DeclSpace.CheckAccessLevel (expr_type)){
-					ErrorIsInaccesible (loc, TypeManager.CSharpName (expr_type));
-					return null;
-				}
-
-				if (expr_type == TypeManager.enum_type || expr_type.IsSubclassOf (TypeManager.enum_type)){
-					Enum en = TypeManager.LookupEnum (expr_type);
-
-					if (en != null) {
-						object value = en.LookupEnumValue (Identifier, loc);
-						if (value != null){
-							MemberCore mc = en.GetDefinition (Identifier);
-							ObsoleteAttribute oa = mc.GetObsoleteAttribute (en);
-							if (oa != null) {
-								AttributeTester.Report_ObsoleteMessage (oa, mc.GetSignatureForError (), Location);
-							}
-							oa = en.GetObsoleteAttribute (en);
-							if (oa != null) {
-								AttributeTester.Report_ObsoleteMessage (oa, en.GetSignatureForError (), Location);
-							}
-
-							Constant c = Constantify (value, en.UnderlyingType);
-							return new EnumConstant (c, expr_type);
-						}
-					} else {
-						CheckObsoleteAttribute (expr_type);
-
-						FieldInfo fi = expr_type.GetField (Identifier);
-						if (fi != null) {
-							ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (fi);
-							if (oa != null)
-								AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (fi), Location);
-						}
-					}
-				}
-			}
-
 			if (expr_type.IsPointer){
 				Error (23, "The `.' operator can not be applied to pointer operands (" +
 				       TypeManager.CSharpName (expr_type) + ")");

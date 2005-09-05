@@ -800,21 +800,24 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (!(expr is Constant)){
+			Constant c = expr as Constant;
+			if (c == null) {
 				Error (150, "A constant value is expected");
 				return false;
 			}
 
-			object val = Expression.ConvertIntLiteral (
-				(Constant) expr, ec.Switch.SwitchType, loc);
-
-			if (val == null)
+			c = c.ToType (ec.Switch.SwitchType, loc);
+			if (c == null)
 				return false;
+
+			object val = c.GetValue ();
+			if (val == null)
+				val = c;
 					
 			sl = (SwitchLabel) ec.Switch.Elements [val];
 
 			if (sl == null){
-				Report.Error (159, loc, "No such label `case {0}:' within the scope of the goto statement", val);
+				Report.Error (159, loc, "No such label `case {0}:' within the scope of the goto statement", c.GetValue () == null ? "null" : val);
 				return false;
 			}
 
@@ -1758,11 +1761,9 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (e.Type != variable_type){
-						e = Const.ChangeType (vi.Location, ce, variable_type);
-						if (e == null)
-							continue;
-					}
+					e = ce.ToType (variable_type, vi.Location);
+					if (e == null)
+						continue;
 
 					constants.Remove (name);
 					constants.Add (name, e);
@@ -2322,20 +2323,17 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (required_type == TypeManager.string_type) {
-				if (c.Type == TypeManager.string_type) {
-					converted = c.GetValue ();
-					return true;
-				}
-
-				if (e is NullLiteral) {
-					converted = e;
-					return true;
-				}
+			if (required_type == TypeManager.string_type && e is NullLiteral) {
+				converted = e;
+				return true;
 			}
 
-			converted = Expression.ConvertIntLiteral (c, required_type, loc);
-			return converted != null;
+			c = c.ToType (required_type, loc);
+			if (c == null)
+				return false;
+
+			converted = c.GetValue ();
+			return true;
 		}
 
 		public void Erorr_AlreadyOccurs ()

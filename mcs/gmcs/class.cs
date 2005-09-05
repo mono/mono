@@ -5899,15 +5899,9 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			Expression e = size_expr.Resolve (Parent.EmitContext);
-			if (e == null)
+			Constant c = size_expr.ResolveAsConstant (Parent.EmitContext, this);
+			if (c == null)
 				return false;
-
-			Constant c = e as Constant;
-			if (c == null) {
-				Const.Error_ExpressionMustBeConstant (e.Location, GetSignatureForError ());
-				return false;
-			}
 
 			IntConstant buffer_size_const = c.ToInt (Location);
 			if (buffer_size_const == null)

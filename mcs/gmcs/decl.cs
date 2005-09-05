@@ -489,6 +489,19 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
+		/// Checks for ObsoleteAttribute presence. It's used for testing of all non-types elements
+		/// </summary>
+		public void CheckObsoleteness (Location loc)
+		{
+			ObsoleteAttribute oa = GetObsoleteAttribute (Parent);
+			if (oa == null) {
+				return;
+			}
+
+			AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
+		}
+
+		/// <summary>
 		/// Analyze whether CLS-Compliant verification must be execute for this MemberCore.
 		/// </summary>
 		public override bool IsClsComplianceRequired (DeclSpace container)
