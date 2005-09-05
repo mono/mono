@@ -77,7 +77,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		static GetMethodTokenFunc get_method_token;
 		static GetGuidFunc get_guid;
 
-		delegate int GetMethodTokenFunc (Assembly assembly, MethodBase method);
+		delegate int GetMethodTokenFunc (MethodBase method);
 		delegate Guid GetGuidFunc (Module module);
 
 		static Delegate create_delegate (Type type, Type delegate_type, string name)
@@ -102,7 +102,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		public static int GetMethodToken (MethodBase method)
 		{
-			return get_method_token (method.ReflectedType.Assembly, method);
+			return get_method_token (method);
 		}
 
 		public static Guid GetGuid (Module module)
