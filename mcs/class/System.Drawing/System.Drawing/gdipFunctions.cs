@@ -1093,6 +1093,12 @@ namespace System.Drawing
 		
 		[DllImport("gdiplus.dll")]		
 		internal static extern Status GdipCreateHBITMAPFromBitmap (IntPtr bmp, out IntPtr HandleBmp, int clrbackground);
+
+		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
+		internal static extern Status GdipCreateBitmapFromFile ([MarshalAs (UnmanagedType.LPWStr)] string filename, out IntPtr bitmap);
+
+		[DllImport("gdiplus.dll", CharSet=CharSet.Auto)]
+		internal static extern Status GdipCreateBitmapFromFileICM ([MarshalAs (UnmanagedType.LPWStr)] string filename, out IntPtr bitmap);
 		
 		[DllImport("gdiplus.dll")]
 		internal static extern Status GdipCreateHICONFromBitmap (IntPtr bmp, out IntPtr HandleIcon);

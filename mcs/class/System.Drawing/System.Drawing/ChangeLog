@@ -1,3 +1,11 @@
+2005-09-05 Jordi Mas i Hernandez <jordi@ximian.com> 
+
+	* gdipFunctions.cs: define new functions
+	* Bitmap.cs: fixes image loading and exceptions
+	* Image.cs: fixes image loading and exceptions
+	
+	Thanks Kornél Pál for its help
+
 2005-08-30 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Brush.jvm.cs: added brush transform field

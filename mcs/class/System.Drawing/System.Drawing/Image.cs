@@ -93,12 +93,24 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 	// static
 	public static Image FromFile(string filename)
 	{
-		return new Bitmap (filename);
+		return FromFile (filename, false);
 	}
 	
 	public static Image FromFile(string filename, bool useEmbeddedColorManagement)
 	{
-		return new Bitmap (filename, useEmbeddedColorManagement);
+		IntPtr imagePtr;
+		Status st;
+
+		if (!File.Exists (filename))
+			throw new FileNotFoundException (filename);
+
+		if (useEmbeddedColorManagement)
+			st = GDIPlus.GdipLoadImageFromFileICM (filename, out imagePtr);
+		else
+			st = GDIPlus.GdipLoadImageFromFile (filename, out imagePtr);
+
+		GDIPlus.CheckStatus (st);
+		return new Bitmap (imagePtr);
 	}
 
 	[MonoTODO]	

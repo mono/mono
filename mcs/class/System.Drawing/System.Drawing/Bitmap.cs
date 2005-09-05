@@ -97,14 +97,6 @@ namespace System.Drawing
 			
 		}
 
-		void InitFromFile (string filename)
-		{		
-			IntPtr imagePtr;
-			Status st = GDIPlus.GdipLoadImageFromFile (filename, out imagePtr);
-			GDIPlus.CheckStatus (st);
-			nativeObject = imagePtr;			
-		}
-
 		public Bitmap (Stream stream, bool useIcm)
 		{
 			if (stream == null)
@@ -115,7 +107,16 @@ namespace System.Drawing
 
 		public Bitmap (string filename, bool useIcm)
 		{
-			InitFromFile (filename);
+			IntPtr imagePtr;
+			Status st;
+
+			if (useIcm)
+				st = GDIPlus.GdipCreateBitmapFromFileICM (filename, out imagePtr);
+			else
+				st = GDIPlus.GdipCreateBitmapFromFile (filename, out imagePtr);
+
+			GDIPlus.CheckStatus (st);
+			nativeObject = imagePtr;
 		}
 
 		public Bitmap (Type type, string resource)
