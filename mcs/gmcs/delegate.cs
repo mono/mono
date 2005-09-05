@@ -50,14 +50,14 @@ namespace Mono.CSharp {
 
  		public Delegate (NamespaceEntry ns, TypeContainer parent, Expression type,
 				 int mod_flags, MemberName name, Parameters param_list,
-				 Attributes attrs, Location l)
-			: base (ns, parent, name, attrs, l)
+				 Attributes attrs)
+			: base (ns, parent, name, attrs)
 
 		{
 			this.ReturnType = type;
 			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags,
 							   IsTopLevel ? Modifiers.INTERNAL :
-							   Modifiers.PRIVATE, l);
+							   Modifiers.PRIVATE, name.Location);
 			Parameters      = param_list;
 		}
 

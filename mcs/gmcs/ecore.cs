@@ -123,7 +123,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Error (int error, string s)
 		{
-			if (!Location.IsNull (loc))
+			if (loc.IsNull)
 				Report.Error (error, loc, s);
 			else
 				Report.Error (error, s);
@@ -2674,7 +2674,7 @@ namespace Mono.CSharp {
 		{
 			Expression expr;
 			if (name.Left != null) {
-				Expression lexpr = name.Left.GetTypeExpression (loc);
+				Expression lexpr = name.Left.GetTypeExpression ();
 				expr = new MemberAccess (lexpr, name.Basename, loc);
 			} else {
 				expr = new SimpleName (name.Basename, loc);

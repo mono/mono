@@ -27,49 +27,57 @@ namespace Mono.CSharp {
 		public readonly TypeArguments TypeArguments;
 
 		public readonly MemberName Left;
+		public readonly Location Location;
 
-		public static readonly MemberName Null = new MemberName ("");
+		public static readonly MemberName Null = new MemberName ("", Location.Null);
 
-		public MemberName (string name)
-		{
-			this.Name = name;
-		}
-
-		public MemberName (string name, TypeArguments args)
-			: this (name)
+		public MemberName (string name, TypeArguments args, Location loc)
+			: this (name, loc)
 		{
 			this.TypeArguments = args;
 		}
 
-		public MemberName (MemberName left, string name)
-			: this (left, name, null)
+		public MemberName (string name, Location loc)
 		{
+			this.Name = name;
+			this.Location = loc;
 		}
 
-		public MemberName (MemberName left, string name, TypeArguments args)
-			: this (name, args)
+		public MemberName (MemberName left, string name, Location loc)
+			: this (name, loc)
+		{
+			this.Left = left;
+		}
+
+		public MemberName (MemberName left, string name, TypeArguments args, Location loc)
+			: this (name, args, loc)
 		{
 			this.Left = left;
 		}
 
 		public MemberName (MemberName left, MemberName right)
-			: this (left, right.Name, right.TypeArguments)
+			: this (left, right, left != null ? left.Location : right != null ? right.Location : Location.Null)
+		{
+		}
+
+		public MemberName (MemberName left, MemberName right, Location loc)
 		{
 			Name = right.Name;
 			Left = (right.Left == null) ? left : new MemberName (left, right.Left);
 			TypeArguments = right.TypeArguments;
+			Location = loc;
 		}
 
 		static readonly char [] dot_array = { '.' };
 
-		public static MemberName FromDotted (string name)
+		public static MemberName FromDotted (string name, Location loc)
 		{
 			string [] elements = name.Split (dot_array);
 			int count = elements.Length;
 			int i = 0;
-			MemberName n = new MemberName (elements [i++]);
+			MemberName n = new MemberName (elements [i++], loc);
 			while (i < count)
-				n = new MemberName (n, elements [i++]);
+				n = new MemberName (n, elements [i++], loc);
 			return n;
 		}
 
@@ -164,33 +172,33 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public Expression GetTypeExpression (Location loc)
+		public Expression GetTypeExpression ()
 		{
 			if (IsUnbound) {
-				if (!CheckUnbound (loc))
+				if (!CheckUnbound (Location))
 					return null;
 
-				return new UnboundTypeExpression (this, loc);
+				return new UnboundTypeExpression (this, Location);
 			}
 
 			if (Left != null) {
-				Expression lexpr = Left.GetTypeExpression (loc);
+				Expression lexpr = Left.GetTypeExpression ();
 
-				return new MemberAccess (lexpr, Name, TypeArguments, loc);
+				return new MemberAccess (lexpr, Name, TypeArguments, Location);
 			} else {
 				if (TypeArguments != null)
-					return new SimpleName (Basename, TypeArguments, loc);
+					return new SimpleName (Basename, TypeArguments, Location);
 				else
-					return new SimpleName (Name, loc);
+					return new SimpleName (Name, Location);
 			}
 		}
 
 		public MemberName Clone ()
 		{
 			if (Left != null)
-				return new MemberName (Left.Clone (), Name, TypeArguments);
+				return new MemberName (Left.Clone (), Name, TypeArguments, Location);
 			else
-				return new MemberName (Name, TypeArguments);
+				return new MemberName (Name, TypeArguments, Location);
 		}
 
 		public string Basename {
@@ -291,7 +299,9 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Location where this declaration happens
 		/// </summary>
-		public readonly Location Location;
+		public Location Location {
+			get { return member_name.Location; }
+		}
 
 		/// <summary>
 		///   XML documentation comment
@@ -326,8 +336,7 @@ namespace Mono.CSharp {
  		/// </summary>
 		internal Flags caching_flags;
 
-		public MemberCore (TypeContainer parent, MemberName name, Attributes attrs,
-				   Location loc)
+		public MemberCore (TypeContainer parent, MemberName name, Attributes attrs)
 			: base (attrs)
 		{
 			if (parent is PartialContainer && !(this is PartialContainer))
@@ -335,7 +344,6 @@ namespace Mono.CSharp {
 
 			Parent = parent;
 			member_name = name;
-			Location = loc;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
 		}
 
@@ -646,8 +654,8 @@ namespace Mono.CSharp {
 		static string[] attribute_targets = new string [] { "type" };
 
 		public DeclSpace (NamespaceEntry ns, TypeContainer parent, MemberName name,
-				  Attributes attrs, Location l)
-			: base (parent, name, attrs, l)
+				  Attributes attrs)
+			: base (parent, name, attrs)
 		{
 			NamespaceEntry = ns;
 			Basename = name.Basename;

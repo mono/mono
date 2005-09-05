@@ -32,17 +32,21 @@ namespace Mono.CSharp
 	public class Tokenizer : yyParser.yyInput
 	{
 		SeekableStreamReader reader;
-		public SourceFile ref_name;
-		public SourceFile file_name;
-		public int ref_line = 1;
-		public int line = 1;
-		public int col = 1;
-		public int current_token;
+		SourceFile ref_name;
+		SourceFile file_name;
+		int ref_line = 1;
+		int line = 1;
+		int col = 0;
+		int previous_col;
+		int current_token;
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
 		bool handle_assembly = false;
 		bool handle_constraints = false;
 		bool handle_typeof = false;
+		Location current_location;
+		Location current_comment_location = Location.Null;
+		ArrayList escapedIdentifiers = new ArrayList ();
 
 		//
 		// XML documentation buffer. The save point is used to divide
@@ -173,10 +177,18 @@ namespace Mono.CSharp
 			set {
 				if (value == XmlCommentState.Allowed) {
 					check_incorrect_doc_comment ();
-					consume_doc_comment ();
+					reset_doc_comment ();
 				}
 				xmlDocState = value;
 			}
+		}
+
+		public bool IsEscapedIdentifier (Location loc)
+		{
+			foreach (LocatedToken lt in escapedIdentifiers)
+				if (lt.Location.Equals (loc))
+					return true;
+			return false;
 		}
 
 		//
@@ -384,9 +396,7 @@ namespace Mono.CSharp
 		}
 
 		public Location Location {
-			get {
-				return new Location (ref_line);
-			}
+			get { return current_location; }
 		}
 
 		void define (string def)
@@ -419,7 +429,7 @@ namespace Mono.CSharp
 			// FIXME: This could be `Location.Push' but we have to
 			// find out why the MS compiler allows this
 			//
-			Mono.CSharp.Location.Push (file);
+			Mono.CSharp.Location.Push (file, 0);
 		}
 
 		static bool is_identifier_start_character (char c)
@@ -532,8 +542,10 @@ namespace Mono.CSharp
 
 			switch (c){
 			case '{':
+				val = Location;
 				return Token.OPEN_BRACE;
 			case '}':
+				val = Location;
 				return Token.CLOSE_BRACE;
 			case '[':
 				// To block doccomment inside attribute declaration.
@@ -552,8 +564,13 @@ namespace Mono.CSharp
 
 				// Save current position and parse next token.
 				int old = reader.Position;
+				int old_ref_line = ref_line;
+				int old_col = col;
+
 				int new_token = token ();
 				reader.Position = old;
+				ref_line = old_ref_line;
+				col = old_col;
 				putback_char = -1;
 
 				if (new_token == Token.OPEN_PARENS)
@@ -569,10 +586,13 @@ namespace Mono.CSharp
 			case ',':
 				return Token.COMMA;
 			case ':':
+				val = Location;
 				return Token.COLON;
 			case ';':
+				val = Location;
 				return Token.SEMICOLON;
 			case '~':
+				val = Location;
 				return Token.TILDE;
 			case '?':
 				return Token.INTERR;
@@ -646,24 +666,32 @@ namespace Mono.CSharp
 			d = peekChar ();
 			if (c == '+'){
 				
-				if (d == '+')
+				if (d == '+') {
+					val = Location;
 					t = Token.OP_INC;
+				}
 				else if (d == '=')
 					t = Token.OP_ADD_ASSIGN;
-				else
+				else {
+					val = Location;
 					return Token.PLUS;
+				}
 				doread = true;
 				return t;
 			}
 			if (c == '-'){
-				if (d == '-')
+				if (d == '-') {
+					val = Location;
 					t = Token.OP_DEC;
+				}
 				else if (d == '=')
 					t = Token.OP_SUB_ASSIGN;
 				else if (d == '>')
 					t = Token.OP_PTR;
-				else
+				else {
+					val = Location;
 					return Token.MINUS;
+				}
 				doread = true;
 				return t;
 			}
@@ -673,6 +701,7 @@ namespace Mono.CSharp
 					doread = true;
 					return Token.OP_NE;
 				}
+				val = Location;
 				return Token.BANG;
 			}
 
@@ -692,6 +721,7 @@ namespace Mono.CSharp
 					doread = true;
 					return Token.OP_AND_ASSIGN;
 				}
+				val = Location;
 				return Token.BITWISE_AND;
 			}
 
@@ -711,6 +741,7 @@ namespace Mono.CSharp
 					doread = true;
 					return Token.OP_MULT_ASSIGN;
 				}
+				val = Location;
 				return Token.STAR;
 			}
 
@@ -1200,13 +1231,22 @@ namespace Mono.CSharp
 
 		int getChar ()
 		{
-			if (putback_char != -1){
-				int x = putback_char;
+			int x;
+			if (putback_char != -1) {
+				x = putback_char;
 				putback_char = -1;
-
-				return x;
 			}
-			return reader.Read ();
+			else
+				x = reader.Read ();
+			if (x == '\n') {
+				line++;
+				ref_line++;
+				previous_col = col;
+				col = 0;
+			}
+			else
+				col++;
+			return x;
 		}
 
 		int peekChar ()
@@ -1233,6 +1273,14 @@ namespace Mono.CSharp
 				Console.WriteLine ("Current [{0}] putting back [{1}]  ", putback_char, c);
 				throw new Exception ("This should not happen putback on putback");
 			}
+			if (c == '\n' || col == 0) {
+				// It won't happen though.
+				line--;
+				ref_line--;
+				col = previous_col;
+			}
+			else
+				col--;
 			putback_char = c;
 		}
 
@@ -1342,22 +1390,16 @@ namespace Mono.CSharp
 			cmd = static_cmd_arg.ToString ();
 
 			if (c == '\n'){
-				line++;
-				ref_line++;
 				return;
-			} else if (c == '\r')
-				col = 0;
+			}
 
 			// skip over white space
 			while ((c = getChar ()) != -1 && (c != '\n') && ((c == '\r') || (c == ' ') || (c == '\t')))
 				;
 
 			if (c == '\n'){
-				line++;
-				ref_line++;
 				return;
 			} else if (c == '\r'){
-				col = 0;
 				return;
 			} else if (c == -1){
 				arg = "";
@@ -1371,11 +1413,6 @@ namespace Mono.CSharp
 				static_cmd_arg.Append ((char) c);
 			}
 
-			if (c == '\n'){
-				line++;
-				ref_line++;
-			} else if (c == '\r')
-				col = 0;
 			arg = static_cmd_arg.ToString ().Trim ();
 		}
 
@@ -1390,7 +1427,7 @@ namespace Mono.CSharp
 			if (arg == "default"){
 				ref_line = line;
 				ref_name = file_name;
-				Location.Push (ref_name);
+				Location.Push (ref_name, line);
 				return true;
 			} else if (arg == "hidden"){
 				//
@@ -1412,7 +1449,7 @@ namespace Mono.CSharp
 					ref_name = Location.LookupFile (name);
 					file_name.HasLineDirective = true;
 					ref_name.HasLineDirective = true;
-					Location.Push (ref_name);
+					Location.Push (ref_name, ref_line);
 				} else {
 					ref_line = System.Int32.Parse (arg);
 				}
@@ -1714,6 +1751,8 @@ namespace Mono.CSharp
 			string cmd, arg;
 			bool region_directive = false;
 
+			current_location = new Location (ref_line, Col);
+
 			get_cmd_arg (out cmd, out arg);
 
 			// Eat any trailing whitespaces and single-line comments
@@ -1932,11 +1971,7 @@ namespace Mono.CSharp
 				if (c == '\n'){
 					if (!quoted)
 						Report.Error (1010, Location, "Newline in constant");
-					line++;
-					ref_line++;
-					col = 0;
-				} else
-					col++;
+				}
 
 				if (!quoted){
 					c = escape (c);
@@ -1967,6 +2002,8 @@ namespace Mono.CSharp
 				// Save current position and parse next token.
 				int old = reader.Position;
 				int old_putback = putback_char;
+				int old_ref_line = ref_line;
+				int old_col = col;
 
 				putback_char = -1;
 
@@ -1977,12 +2014,14 @@ namespace Mono.CSharp
 					(next_token == Token.ENUM); // "partial" is a keyword in 'partial enum', even though it's not valid
 
 				reader.Position = old;
+				ref_line = old_ref_line;
+				col = old_col;
 				putback_char = old_putback;
 
 				if (ok)
 					return res;
 				else {
-					val = "partial";
+					val = new LocatedToken (Location, "partial");
 					return Token.IDENTIFIER;
 				}
 			}
@@ -1993,11 +2032,13 @@ namespace Mono.CSharp
 		private int consume_identifier (int s, bool quoted) 
 		{
 			int pos = 1;
-			int c;
+			int c = -1;
 			
 			id_builder [0] = (char) s;
 					
-			while ((c = reader.Read ()) != -1) {
+			current_location = new Location (ref_line, Col);
+
+			while ((c = getChar ()) != -1) {
 				if (is_identifier_part_character ((char) c)){
 					if (pos == max_id_size){
 						Report.Error (645, Location, "Identifier too long (limit is 512 chars)");
@@ -2005,10 +2046,10 @@ namespace Mono.CSharp
 					}
 					
 					id_builder [pos++] = (char) c;
-					putback_char = -1;
-					col++;
+//					putback_char = -1;
 				} else {
-					putback_char = c;
+//					putback_char = c;
+					putback (c);
 					break;
 				}
 			}
@@ -2019,8 +2060,10 @@ namespace Mono.CSharp
 			//
 			if (!quoted && (s >= 'a' || s == '_')){
 				int keyword = GetKeyword (id_builder, pos);
-				if (keyword != -1)
+				if (keyword != -1) {
+					val = Location;
 				return keyword;
+				}
 			}
 
 			//
@@ -2031,6 +2074,9 @@ namespace Mono.CSharp
 			if (identifiers [pos] != null) {
 				val = identifiers [pos][id_builder];
 				if (val != null) {
+					val = new LocatedToken (Location, (string) val);
+					if (quoted)
+						escapedIdentifiers.Add (val);
 					return Token.IDENTIFIER;
 				}
 			}
@@ -2048,6 +2094,9 @@ namespace Mono.CSharp
 
 			identifiers [pos] [chars] = val;
 
+			val = new LocatedToken (Location, (string) val);
+			if (quoted)
+				escapedIdentifiers.Add (val);
 			return Token.IDENTIFIER;
 		}
 
@@ -2060,12 +2109,11 @@ namespace Mono.CSharp
 			
 			val = null;
 			// optimization: eliminate col and implement #directive semantic correctly.
-			for (;(c = getChar ()) != -1; col++) {
+			for (;(c = getChar ()) != -1;) {
 				if (c == ' ')
 					continue;
 				
 				if (c == '\t') {
-					col = (((col + 8) / 8) * 8) - 1;
 					continue;
 				}
 				
@@ -2076,9 +2124,6 @@ namespace Mono.CSharp
 					if (peekChar () == '\n')
 						getChar ();
 
-					line++;
-					ref_line++;
-					col = 0;
 					any_token_seen |= tokens_seen;
 					tokens_seen = false;
 					comments_seen = false;
@@ -2095,6 +2140,7 @@ namespace Mono.CSharp
 							getChar ();
 							// Don't allow ////.
 							if ((d = peekChar ()) != '/') {
+								update_comment_location ();
 								if (doc_state == XmlCommentState.Allowed)
 									handle_one_line_xml_comment ();
 								else if (doc_state == XmlCommentState.NotAllowed)
@@ -2102,11 +2148,7 @@ namespace Mono.CSharp
 							}
 						}
 						while ((d = getChar ()) != -1 && (d != '\n') && d != '\r')
-							col++;
 						if (d == '\n'){
-							line++;
-							ref_line++;
-							col = 0;
 						}
 						any_token_seen |= tokens_seen;
 						tokens_seen = false;
@@ -2117,6 +2159,7 @@ namespace Mono.CSharp
 						bool docAppend = false;
 						if (RootContext.Documentation != null && peekChar () == '*') {
 							getChar ();
+							update_comment_location ();
 							// But when it is /**/, just do nothing.
 							if (peekChar () == '/') {
 								getChar ();
@@ -2139,7 +2182,6 @@ namespace Mono.CSharp
 						while ((d = getChar ()) != -1){
 							if (d == '*' && peekChar () == '/'){
 								getChar ();
-								col++;
 								comments_seen = true;
 								break;
 							}
@@ -2147,9 +2189,6 @@ namespace Mono.CSharp
 								xml_comment_buffer.Append ((char) d);
 							
 							if (d == '\n'){
-								line++;
-								ref_line++;
-								col = 0;
 								any_token_seen |= tokens_seen;
 								tokens_seen = false;
 								// 
@@ -2172,9 +2211,6 @@ namespace Mono.CSharp
 			is_punct_label:
 				// white space
 				if (c == '\n'){
-					line++;
-					ref_line++;
-					col = 0;
 					any_token_seen |= tokens_seen;
 					tokens_seen = false;
 					comments_seen = false;
@@ -2201,17 +2237,12 @@ namespace Mono.CSharp
 					cont = handle_preprocessing_directive (cont);
 
 					if (cont){
-						col = 0;
 						continue;
 					}
-					col = 1;
 
 					bool skipping = false;
-					for (;(c = getChar ()) != -1; col++){
+					for (;(c = getChar ()) != -1;){
 						if (c == '\n'){
-							col = 0;
-							line++;
-							ref_line++;
 							skipping = false;
 						} else if (c == ' ' || c == '\t' || c == '\v' || c == '\r' || c == 0xa0)
 							continue;
@@ -2251,6 +2282,7 @@ namespace Mono.CSharp
 					return consume_identifier (c);
 			}
 
+			current_location = new Location (ref_line, Col);
 			if ((t = is_punct ((char)c, ref doread)) != Token.ERROR){
 				tokens_seen = true;
 				if (doread){
@@ -2297,13 +2329,11 @@ namespace Mono.CSharp
 
 					// Try to recover, read until newline or next "'"
 					while ((c = getChar ()) != -1){
-						if (c == '\n' || c == '\''){
-							line++;
-							ref_line++;
-							col = 0;
+						if (c == '\n'){
 							break;
-						} else
-							col++;
+						}
+						else if (c == '\'')
+							break;
 					}
 					return Token.ERROR;
 				}
@@ -2345,7 +2375,6 @@ namespace Mono.CSharp
 			while ((c = peekChar ()) == ' ')
 				getChar (); // skip heading whitespaces.
 			while ((c = peekChar ()) != -1 && c != '\n' && c != '\r') {
-				col++;
 				xml_comment_buffer.Append ((char) getChar ());
 			}
 			if (c == '\r' || c == '\n')
@@ -2384,6 +2413,18 @@ namespace Mono.CSharp
 		}
 
 		//
+		// Updates current comment location.
+		//
+		private void update_comment_location ()
+		{
+			if (current_comment_location.IsNull) {
+				// "-2" is for heading "//" or "/*"
+				current_comment_location =
+					new Location (ref_line, col - 2);
+			}
+		}
+
+		//
 		// Checks if there was incorrect doc comments and raise
 		// warnings.
 		//
@@ -2399,10 +2440,13 @@ namespace Mono.CSharp
 		//
 		private void warn_incorrect_doc_comment ()
 		{
-			doc_state = XmlCommentState.Error;
-			// in csc, it is 'XML comment is not placed on a valid 
-			// language element'. But that does not make sense.
-			Report.Warning (1587, 2, Location, "XML comment is not placed on a valid language element");
+			if (doc_state != XmlCommentState.Error) {
+				doc_state = XmlCommentState.Error;
+				// in csc, it is 'XML comment is not placed on 
+				// a valid language element'. But that does not
+				// make sense.
+				Report.Warning (1587, 2, Location, "XML comment is placed on an invalid language element.");
+			}
 		}
 
 		//
@@ -2413,10 +2457,16 @@ namespace Mono.CSharp
 		{
 			if (xml_comment_buffer.Length > 0) {
 				string ret = xml_comment_buffer.ToString ();
-				xml_comment_buffer.Length = 0;
+				reset_doc_comment ();
 				return ret;
 			}
 			return null;
+		}
+
+		void reset_doc_comment ()
+		{
+			xml_comment_buffer.Length = 0;
+			current_comment_location = Location.Null;
 		}
 
 		public void cleanup ()

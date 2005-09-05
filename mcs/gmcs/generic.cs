@@ -539,7 +539,7 @@ namespace Mono.CSharp {
 
 		public TypeParameter (TypeContainer parent, string name,
 				      Constraints constraints, Location loc)
-			: base (parent, new MemberName (name), null, loc)
+			: base (parent, new MemberName (name, loc), null)
 		{
 			this.name = name;
 			this.constraints = constraints;
@@ -1427,9 +1427,8 @@ namespace Mono.CSharp {
 
 	public class GenericMethod : DeclSpace
 	{
-		public GenericMethod (NamespaceEntry ns, TypeContainer parent,
-				      MemberName name, Location l)
-			: base (ns, parent, name, null, l)
+		public GenericMethod (NamespaceEntry ns, TypeContainer parent, MemberName name)
+			: base (ns, parent, name, null)
 		{ }
 
 		public override TypeBuilder DefineType ()
@@ -2543,7 +2542,7 @@ namespace Mono.CSharp {
 
 			protected override Expression ResolveUnderlying (Expression unwrap, EmitContext ec)
 			{
-				return new Conditional (unwrap, true_expr, false_expr, loc);
+				return new Conditional (unwrap, true_expr, false_expr);
 			}
 		}
 
@@ -2591,7 +2590,7 @@ namespace Mono.CSharp {
 					is_boolean = true;
 				} else if ((Oper == Binary.Operator.Equality) || (Oper == Binary.Operator.Inequality)) {
 					if (!(left is NullLiteral) && !(right is NullLiteral)) {
-						underlying = new Binary (Oper, left, right, loc).Resolve (ec);
+						underlying = new Binary (Oper, left, right).Resolve (ec);
 						if (underlying == null)
 							return null;
 					}
@@ -2602,14 +2601,14 @@ namespace Mono.CSharp {
 					   (Oper == Binary.Operator.GreaterThan) ||
 					   (Oper == Binary.Operator.LessThanOrEqual) ||
 					   (Oper == Binary.Operator.GreaterThanOrEqual)) {
-					underlying = new Binary (Oper, left, right, loc).Resolve (ec);
+					underlying = new Binary (Oper, left, right).Resolve (ec);
 					if (underlying == null)
 						return null;
 
 					type = TypeManager.bool_type;
 					is_comparision = true;
 				} else {
-					underlying = new Binary (Oper, left, right, loc).Resolve (ec);
+					underlying = new Binary (Oper, left, right).Resolve (ec);
 					if (underlying == null)
 						return null;
 

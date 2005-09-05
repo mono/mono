@@ -258,6 +258,11 @@ namespace Mono.CSharp {
 		protected bool is_embedded = false;
 		protected bool must_free_temp = false;
 
+		public Assign (Expression target, Expression source)
+			: this (target, source, target.Location)
+		{
+		}
+
 		public Assign (Expression target, Expression source, Location l)
 		{
 			this.target = target;
@@ -591,15 +596,15 @@ namespace Mono.CSharp {
 		Binary.Operator op;
 		public Expression original_source;
 		
-		public CompoundAssign (Binary.Operator op, Expression target, Expression source, Location l)
-			: base (target, source, l)
+		public CompoundAssign (Binary.Operator op, Expression target, Expression source)
+			: base (target, source, target.Location)
 		{
 			original_source = source;
 			this.op = op;
 		}
 
 		protected CompoundAssign (CompoundAssign embedded, Location l)
-			: this (embedded.op, embedded.target, embedded.source, l)
+			: this (embedded.op, embedded.target, embedded.source)
 		{
 			this.is_embedded = true;
 		}
@@ -629,7 +634,7 @@ namespace Mono.CSharp {
 			// into a tree, to guarantee that we do not have side
 			// effects.
 			//
-			source = new Binary (op, target, original_source, loc);
+			source = new Binary (op, target, original_source);
 			return base.DoResolve (ec);
 		}
 	}

@@ -622,7 +622,7 @@ namespace Mono.CSharp {
 
 			capture_context = block.CaptureContext;
 
-			if (!Location.IsNull (loc))
+			if (!loc.IsNull)
 				CurrentFile = loc.File;
 
 #if PRODUCTION
@@ -736,13 +736,13 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Mark (Location loc, bool check_file)
 		{
-			if ((CodeGen.SymbolWriter == null) || Location.IsNull (loc))
+			if ((CodeGen.SymbolWriter == null) || loc.IsNull)
 				return;
 
 			if (check_file && (CurrentFile != loc.File))
 				return;
 
-			CodeGen.SymbolWriter.MarkSequencePoint (ig, loc.Row, 0);
+			CodeGen.SymbolWriter.MarkSequencePoint (ig, loc.Row, loc.Column);
 		}
 
 		public void DefineLocalVariable (string name, LocalBuilder builder)

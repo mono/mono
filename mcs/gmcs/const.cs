@@ -44,7 +44,7 @@ namespace Mono.CSharp {
 		public Const (TypeContainer parent, Expression constant_type, string name,
 			      Expression expr, int mod_flags, Attributes attrs, Location loc)
 			: base (parent, constant_type, mod_flags, AllowedModifiers,
-				new MemberName (name), expr, attrs, loc)
+				new MemberName (name, loc), expr, attrs)
 		{
 			Expr = expr;
 			ModFlags |= Modifiers.STATIC;

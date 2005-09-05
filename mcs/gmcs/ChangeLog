@@ -1,3 +1,46 @@
+2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* location.cs : it borked when no argument was specified.
+
+2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* location.cs : tiny ToString() format fix.
+
+2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* statement.cs : oops, it was missing.
+
+2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	A set of fixes for precise line/column location.
+
+	* location.cs :
+	  "token" field now holds a file/line "delta", a line number offset 
+	  from the segment, and a column number. See also:
+	  http://lists.ximian.com/pipermail/mono-devel-list/2004-
+	  December/009508.html
+	  Removed static IsNull. Use instance IsNull property instead.
+	* cs-tokenizer.cs :
+	  For some tokens it stores Location. For Identifier it stores
+	  LocatedToken which is a pair of string name and location.
+	  Column numbers are adjusted only at getChar().
+	* report.cs :
+	  Use Location.ToString() for reporting (it now contains column).
+	* cs-parser.jay :
+	  Largely modified to use LocatedToken instead of
+	  string (IDENTIFIER), and to acquire Location from some tokens.
+	* namespace.cs, decl.cs, ecore.cs, class.cs, delegate.cs,
+	  iterators.cs, const.cs, anonymous.cs, tree.cs, enum.cs,
+	  codegen.cs :
+	  Now MemberName holds Location. DeclSpace.ctor() receives Location
+	  as a parameter. Removed extra parameters to all derived classes.
+	  Replaced Location.IsNull() with instance property.
+	* assign.cs, expression.cs :
+	  Added .ctor() overload that omits Location.
+	* attribute.cs :
+	  Added "nameEscaped" flag that indicates the identifier was escaped
+	  in the source file. This fixes bug #57047.
+
 2005-09-02  Martin Baulig  <martin@ximian.com>
 
 	* class.cs: Make CS3005 a warning, not an error.

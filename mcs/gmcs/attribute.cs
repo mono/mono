@@ -85,6 +85,8 @@ namespace Mono.CSharp {
 		
 		bool resolve_error;
 
+		readonly bool nameEscaped;
+
 		static AttributeUsageAttribute DefaultUsageAttribute = new AttributeUsageAttribute (AttributeTargets.All);
 		static Assembly orig_sec_assembly;
 
@@ -97,7 +99,7 @@ namespace Mono.CSharp {
 
 		static PtrHashtable usage_attr_cache = new PtrHashtable ();
 		
-		public Attribute (string target, Expression left_expr, string identifier, ArrayList args, Location loc)
+		public Attribute (string target, Expression left_expr, string identifier, ArrayList args, Location loc, bool nameEscaped)
 		{
 			LeftExpr = left_expr;
 			Identifier = identifier;
@@ -105,6 +107,7 @@ namespace Mono.CSharp {
 			Arguments = args;
 			Location = loc;
 			ExplicitTarget = target;
+			this.nameEscaped = nameEscaped;
 		}
 
 		void Error_InvalidNamedArgument (string name)
@@ -197,7 +200,7 @@ namespace Mono.CSharp {
 			bool t2_is_attr = false;
 			Type t2 = ResolvePossibleAttributeType (ec, Identifier + "Attribute", true, ref t2_is_attr);
 
-			if (t1_is_attr && t2_is_attr) {
+			if (t1_is_attr && t2_is_attr && !nameEscaped) {
 				Report.Error (1614, Location, "`{0}' is ambiguous between `{0}' and `{0}Attribute'. Use either `@{0}' or `{0}Attribute'", GetSignatureForError ());
 				resolve_error = true;
 				return;
@@ -1272,8 +1275,8 @@ namespace Mono.CSharp {
 		public readonly NamespaceEntry ns;
 
 		public GlobalAttribute (TypeContainer container, string target, 
-					Expression left_expr, string identifier, ArrayList args, Location loc):
-			base (target, left_expr, identifier, args, loc)
+					Expression left_expr, string identifier, ArrayList args, Location loc, bool nameEscaped):
+			base (target, left_expr, identifier, args, loc, nameEscaped)
 		{
 			ns = container.NamespaceEntry;
 		}

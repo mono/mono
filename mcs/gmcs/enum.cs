@@ -27,9 +27,9 @@ namespace Mono.CSharp {
 		public FieldBuilder builder;
 		internal readonly Expression Type;
 
-		public EnumMember (Enum parent_enum, Expression expr, string name,
-				   Location loc, Attributes attrs):
-			base (null, new MemberName (name), attrs, loc)
+		public EnumMember (Enum parent_enum, Expression expr, string name, Location loc,
+				   Attributes attrs):
+			base (null, new MemberName (name, loc), attrs)
 		{
 			this.parent_enum = parent_enum;
 			this.ModFlags = parent_enum.ModFlags;
@@ -141,12 +141,12 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		public Enum (NamespaceEntry ns, TypeContainer parent, Expression type,
-			     int mod_flags, MemberName name, Attributes attrs, Location l)
-			: base (ns, parent, name, attrs, l)
+			     int mod_flags, MemberName name, Attributes attrs)
+			: base (ns, parent, name, attrs)
 		{
 			this.BaseType = type;
 			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags,
-						    IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE, l);
+						    IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE, name.Location);
 
 			ordered_enums = new ArrayList ();
 			member_to_location = new Hashtable ();

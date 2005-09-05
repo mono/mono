@@ -71,11 +71,12 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Namespace has a null fullname");
 
 			if (parent != null && parent.MemberName != MemberName.Null)
-				MemberName = new MemberName (parent.MemberName, name);
+				MemberName = new MemberName (
+					parent.MemberName, name, parent.MemberName.Location);
 			else if (name == "")
 				MemberName = MemberName.Null;
 			else
-				MemberName = new MemberName (name);
+				MemberName = new MemberName (name, Location.Null);
 
 			entries = new ArrayList ();
 			namespaces = new Hashtable ();
@@ -273,7 +274,7 @@ namespace Mono.CSharp {
 			public UsingEntry (NamespaceEntry entry, MemberName name, Location loc)
 			{
 				Name = name;
-				Expr = name.GetTypeExpression (loc);
+				Expr = name.GetTypeExpression ();
 				NamespaceEntry = entry;
 				Location = loc;
 			}
@@ -313,7 +314,7 @@ namespace Mono.CSharp {
 			public AliasEntry (NamespaceEntry entry, string name, MemberName alias, Location loc)
 			{
 				Name = name;
-				Alias = alias.GetTypeExpression (loc);
+				Alias = alias.GetTypeExpression ();
 				NamespaceEntry = entry;
 				Location = loc;
 			}

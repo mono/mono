@@ -348,9 +348,9 @@ namespace Mono.CSharp {
 				TypeArguments args = new TypeArguments (loc);
 				foreach (TypeParameter tparam in generic.CurrentTypeParameters)
 					args.Add (new SimpleName (tparam.Name, loc));
-				return new MemberName (proxy_name, args);
+				return new MemberName (proxy_name, args, loc);
 			} else
-				return new MemberName (proxy_name);
+				return new MemberName (proxy_name, loc);
 		}
 
 		//
@@ -360,7 +360,7 @@ namespace Mono.CSharp {
 				 InternalParameters parameters, int modifiers)
 			: base (container.NamespaceEntry, container,
 				MakeProxyName (m_container.MethodName.Name, generic, m_container.Location),
-				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null, m_container.Location)
+				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null)
 		{
 			this.orig_method = m_container;
 
@@ -750,14 +750,14 @@ namespace Mono.CSharp {
 			if (is_generic) {
 				left = new MemberName (
 					"System.Collections.Generic.IEnumerator",
-					generic_args);
+					generic_args, Location);
 				type = iterator_type_expr;
 			} else {
-				left = new MemberName ("System.Collections.IEnumerator");
+				left = new MemberName ("System.Collections.IEnumerator", Location);
 				type = TypeManager.system_object_expr;
 			}
 
-			MemberName name = new MemberName (left, "Current", null);
+			MemberName name = new MemberName (left, "Current", null, Location);
 
 			ToplevelBlock get_block = new ToplevelBlock (
 				block, parameters.Parameters, Location);
@@ -766,7 +766,7 @@ namespace Mono.CSharp {
 				new Binary (
 					Binary.Operator.LessThanOrEqual,
 					new FieldExpression (this, pc_field),
-					new IntLiteral ((int) State.Running), Location),
+					new IntLiteral ((int) State.Running)),
 				Create_ThrowInvalidOperation (),
 				new Return (
 					new FieldExpression (this, current_field), Location),
@@ -775,7 +775,7 @@ namespace Mono.CSharp {
 			Accessor getter = new Accessor (get_block, 0, null, Location);
 
 			Property current = new Property (
-				this, type, 0, false, name, null, getter, null, Location);
+				this, type, 0, false, name, null, getter, null);
 			AddProperty (current);
 		}
 
@@ -797,19 +797,18 @@ namespace Mono.CSharp {
 			if (is_generic) {
 				left = new MemberName (
 					"System.Collections.Generic.IEnumerable",
-					generic_args);
+					generic_args, Location);
 				type = generic_enumerator_type;
 			} else {
-				left = new MemberName ("System.Collections.IEnumerable");
+				left = new MemberName ("System.Collections.IEnumerable", Location);
 				type = enumerator_type;
 			}
 
-			MemberName name = new MemberName (left, "GetEnumerator", null);
+			MemberName name = new MemberName (left, "GetEnumerator", Location);
 
 			Method get_enumerator = new Method (
 				this, null, type, 0, false, name,
-				Parameters.EmptyReadOnlyParameters, null,
-				Location.Null);
+				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (get_enumerator);
 
 			get_enumerator.Block = new ToplevelBlock (
@@ -833,8 +832,8 @@ namespace Mono.CSharp {
 			get_enumerator.Block.AddStatement (new If (
 				new Binary (
 					Binary.Operator.Equality,
-					new Invocation (ce, args, Location),
-					uninitialized, Location),
+					new Invocation (ce, args),
+					uninitialized),
 				new Return (new ThisParameterReference (type.Type, Location),
 					    Location),
 				Location));
@@ -1003,8 +1002,8 @@ namespace Mono.CSharp {
 			{
 				method = new Method (
 					iterator, null, TypeManager.system_boolean_expr,
-					Modifiers.PUBLIC, false, new MemberName ("MoveNext"),
-					Parameters.EmptyReadOnlyParameters, null, loc);
+					Modifiers.PUBLIC, false, new MemberName ("MoveNext", loc),
+					Parameters.EmptyReadOnlyParameters, null);
 
 				method.Block = Block;
 
@@ -1163,8 +1162,8 @@ namespace Mono.CSharp {
 		{
 			Method reset = new Method (
 				this, null, TypeManager.system_void_expr, Modifiers.PUBLIC,
-				false, new MemberName ("Reset"),
-				Parameters.EmptyReadOnlyParameters, null, Location);
+				false, new MemberName ("Reset", Location),
+				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (reset);
 
 			reset.Block = new ToplevelBlock (Location);
@@ -1178,8 +1177,8 @@ namespace Mono.CSharp {
 		{
 			dispose = new Method (
 				this, null, TypeManager.system_void_expr, Modifiers.PUBLIC,
-				false, new MemberName ("Dispose"),
-				Parameters.EmptyReadOnlyParameters, null, Location);
+				false, new MemberName ("Dispose", Location),
+				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (dispose);
 
 			dispose.Block = new ToplevelBlock (block, parameters.Parameters, Location);

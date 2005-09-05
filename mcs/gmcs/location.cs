@@ -3,8 +3,10 @@
 //
 // Author:
 //   Miguel de Icaza
+//   Atsushi Enomoto  <atsushi@ximian.com>
 //
 // (C) 2001 Ximian, Inc.
+// (C) 2005 Novell, Inc.
 //
 
 using System;
@@ -51,20 +53,41 @@ namespace Mono.CSharp {
 	///
 	/// <remarks>
 	///   This uses a compact representation and a couple of auxiliary
-	///   structures to keep track of tokens to (file,line) mappings.
+	///   structures to keep track of tokens to (file,line and column) 
+	///   mappings. The usage of the bits is:
+	///   
+	///     - 16 bits for "checkpoint" which is a mixed concept of
+	///       file and "line segment"
+	///     - 8 bits for line delta (offset) from the line segment
+	///     - 8 bits for column number.
 	///
-	///   We could probably also keep track of columns by storing those
-	///   in 8 bits (and say, map anything after char 255 to be `255+').
+	///   http://lists.ximian.com/pipermail/mono-devel-list/2004-December/009508.html
 	/// </remarks>
 	public struct Location {
 		int token; 
 
+		struct Checkpoint {
+			public readonly int LineOffset;
+			public readonly int File;
+
+			public Checkpoint (int file, int line)
+			{
+				File = file;
+				LineOffset = line - (int) (line % (1 << line_delta_bits));
+			}
+		}
+
 		static ArrayList source_list;
 		static Hashtable source_files;
-		static int source_bits;
-		static int source_mask;
+		static int checkpoint_bits;
 		static int source_count;
 		static int current_source;
+		static int line_delta_bits;
+		static int line_delta_mask;
+		static int column_bits;
+		static int column_mask;
+		static Checkpoint [] checkpoints;
+		static int checkpoint_index;
 
 		public readonly static Location Null = new Location (-1);
 		
@@ -73,6 +96,7 @@ namespace Mono.CSharp {
 			source_files = new Hashtable ();
 			source_list = new ArrayList ();
 			current_source = 0;
+			checkpoints = new Checkpoint [10];
 		}
 
 		public static void Reset ()
@@ -112,17 +136,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static int log2 (int number)
-		{
-			int bits = 0;
-			while (number > 0) {
-				bits++;
-				number /= 2;
-			}
-
-			return bits;
-		}
-
 		// <summary>
 		//   After adding all source files we want to compile with AddFile(), this method
 		//   must be called to `reserve' an appropriate number of bits in the token for the
@@ -131,8 +144,16 @@ namespace Mono.CSharp {
 		// </summary>
 		static public void Initialize ()
 		{
-			source_bits = log2 (source_list.Count) + 2;
-			source_mask = (1 << source_bits) - 1;
+			checkpoints = new Checkpoint [source_list.Count * 2];
+			if (checkpoints.Length > 0)
+				checkpoints [0] = new Checkpoint (0, 0);
+
+			column_bits = 8;
+			column_mask = 0xFF;
+			line_delta_bits = 8;
+			line_delta_mask = 0xFF00;
+			checkpoint_index = 0;
+			checkpoint_bits = 16;
 		}
 
 		// <remarks>
@@ -143,7 +164,7 @@ namespace Mono.CSharp {
 			string path = name == "" ? "" : Path.GetFullPath (name);
 
 			if (!source_files.Contains (path)) {
-				if (source_count >= (1 << source_bits))
+				if (source_count >= (1 << checkpoint_bits))
 					return new SourceFile (name, path, 0);
 
 				source_files.Add (path, ++source_count);
@@ -156,9 +177,10 @@ namespace Mono.CSharp {
 			return (SourceFile) source_list [index - 1];
 		}
 
-		static public void Push (SourceFile file)
+		static public void Push (SourceFile file, int line)
 		{
 			current_source = file.Index;
+			// File is always pushed before being changed.
 		}
 
 		// <remarks>
@@ -174,30 +196,72 @@ namespace Mono.CSharp {
 		}
 		
 		public Location (int row)
+			: this (row, 0)
 		{
-			if (row < 0)
+		}
+
+		public Location (int row, int column)
+		{
+			if (row <= 0)
 				token = 0;
-			else
-				token = current_source + (row << source_bits);
+			else {
+				column &= column_mask;
+				int target = -1;
+				int delta = 0;
+				int max = checkpoint_index < 10 ?
+					checkpoint_index : 10;
+				for (int i = 0; i < max; i++) {
+					int offset = checkpoints [checkpoint_index - i].LineOffset;
+					delta = row - offset;
+					if (delta >= 0 &&
+						delta < (1 << line_delta_bits) &&
+						checkpoints [checkpoint_index - i].File == current_source) {
+						target = checkpoint_index - i;
+						break;
+					}
+				}
+				if (target == -1) {
+					AddCheckpoint (current_source, row);
+					target = checkpoint_index;
+					delta = row % (1 << line_delta_bits);
+				}
+				long l = column +
+					(long) (delta << column_bits) +
+					(long) (target << (line_delta_bits + column_bits));
+				token = l > 0xFFFFFFFF ? 0 : (int) l;
+			}
+		}
+
+		static void AddCheckpoint (int file, int row)
+		{
+			if (checkpoints.Length == ++checkpoint_index) {
+				Checkpoint [] tmp = new Checkpoint [checkpoint_index * 2];
+				Array.Copy (checkpoints, tmp, checkpoints.Length);
+				checkpoints = tmp;
+			}
+			checkpoints [checkpoint_index] = new Checkpoint (file, row);
 		}
 
 		public override string ToString ()
 		{
-			return Name + ": (" + Row + ")";
+			if (column_bits == 0)
+				return Name + "(" + Row + "):";
+			else
+				return Name + "(" + Row + "," + Column +
+					(Column == column_mask ? "+):" : "):");
 		}
 		
 		/// <summary>
 		///   Whether the Location is Null
 		/// </summary>
-		static public bool IsNull (Location l)
-		{
-			return l.token == 0;
+		public bool IsNull {
+			get { return token == 0; }
 		}
 
 		public string Name {
 			get {
-				int index = token & source_mask;
-				if ((token == 0) || (index == 0))
+				int index = File;
+				if (token == 0 || index == 0)
 					return "Internal";
 
 				SourceFile file = (SourceFile) source_list [index - 1];
@@ -205,18 +269,32 @@ namespace Mono.CSharp {
 			}
 		}
 
+		int CheckpointIndex {
+			get { return (int) ((token & 0xFFFF0000) >> (line_delta_bits + column_bits)); }
+		}
+
 		public int Row {
 			get {
 				if (token == 0)
 					return 1;
+				return checkpoints [CheckpointIndex].LineOffset + ((token & line_delta_mask) >> column_bits);
+			}
+		}
 
-				return token >> source_bits;
+		public int Column {
+			get {
+				if (token == 0)
+					return 1;
+				return (int) (token & column_mask);
 			}
 		}
 
 		public int File {
 			get {
-				return token & source_mask;
+				if (token == 0)
+					return 0;
+if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("Should not happen. Token is {0:X04}, checkpoints are {1}, index is {2}", token, checkpoints.Length, CheckpointIndex));
+				return checkpoints [CheckpointIndex].File;
 			}
 		}
 
@@ -234,11 +312,28 @@ namespace Mono.CSharp {
 		// If we don't have a symbol writer, this property is always null.
 		public SourceFile SourceFile {
 			get {
-				int index = token & source_mask;
+				int index = File;
 				if (index == 0)
 					return null;
 				return (SourceFile) source_list [index - 1];
 			}
+		}
+	}
+
+	public class LocatedToken
+	{
+		public readonly Location Location;
+		public readonly string Value;
+
+		public LocatedToken (Location loc, string value)
+		{
+			Location = loc;
+			Value = value;
+		}
+
+		public override string ToString ()
+		{
+			return Location.ToString () + Value;
 		}
 	}
 }

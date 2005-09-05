@@ -123,11 +123,11 @@ namespace Mono.CSharp {
 
 			public virtual void Print (int code, Location location, string text)
 			{
-				if (location.Equals (Location.Null)) {
+				if (location.IsNull) {
 					Print (code, "", text);
 					return;
 				}
-				Print (code, String.Format ("{0}({1})", location.Name, location.Row), text);
+				Print (code, location.ToString (), text);
 			}
 		}
 
@@ -287,7 +287,7 @@ namespace Mono.CSharp {
 		
 		static public void LocationOfPreviousError (Location loc)
 		{
-			Stderr.WriteLine (String.Format ("{0}({1}) (Location of symbol related to previous error)", loc.Name, loc.Row));
+			Stderr.WriteLine (String.Format ("{0} (Location of symbol related to previous error)", loc));
 		}    
         
 		static public void RuntimeMissingSupport (Location loc, string feature) 
@@ -301,7 +301,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public void SymbolRelatedToPreviousError (Location loc, string symbol)
 		{
-			SymbolRelatedToPreviousError (String.Format ("{0}({1})", loc.Name, loc.Row), symbol);
+			SymbolRelatedToPreviousError (loc.ToString (), symbol);
 		}
 
 		static public void SymbolRelatedToPreviousError (MemberInfo mi)
@@ -350,7 +350,7 @@ namespace Mono.CSharp {
 
 		public static void ExtraInformation (Location loc, string msg)
 		{
-			extra_information.Add (String.Format ("{0}({1}) {2}", loc.Name, loc.Row, msg));
+			extra_information.Add (String.Format ("{0} {1}", loc, msg));
 		}
 
 		public static WarningRegions RegisterWarningRegion (Location location)

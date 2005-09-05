@@ -185,22 +185,21 @@ namespace Mono.CSharp {
 				foreach (string t in TypeParameters)
 					args.Add (new SimpleName (t, loc));
 
-				member_name = new MemberName (name, args);
+				member_name = new MemberName (name, args, loc);
 
 				generic_method = new GenericMethod (
 					ec.DeclSpace.NamespaceEntry,
 					(TypeContainer) ec.TypeContainer,
-					member_name, loc);
+					member_name);
 
 				generic_method.SetParameterInfo (null);
 			} else
-				member_name = new MemberName (name);
+				member_name = new MemberName (name, loc);
 
 			method = new Method (
 				(TypeContainer) ec.TypeContainer, generic_method,
 				new TypeExpression (invoke_mb.ReturnType, loc),
-				method_modifiers, false, member_name,
-				Parameters, null, loc);
+				method_modifiers, false, member_name, Parameters, null);
 			method.Block = Block;
 
 			//
