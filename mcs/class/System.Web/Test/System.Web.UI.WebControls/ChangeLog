@@ -1,5 +1,9 @@
 2005-09-05  Chris Toshok  <toshok@ximian.com>
 
+	* FormViewTest.cs: new tests.
+
+2005-09-05  Chris Toshok  <toshok@ximian.com>
+
 	* DataBoundControlTest.cs: new tests.
 
 	* BaseDataBoundControlTest.cs: new tests.
