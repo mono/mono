@@ -2,6 +2,13 @@
 
 	Applying a patch from Michal Moskal <malekith@nemerle.org>.
 
+	* icall.c (ves_icall_Type_get_IsGenericType): Return true also if
+	generic_container is non-NULL.
+
+2005-09-05  Martin Baulig  <martin@ximian.com>
+
+	Applying a patch from Michal Moskal <malekith@nemerle.org>.
+
 	* object.c (set_value): In MONO_TYPE_VALUETYPE, add generics support.
 
 2005-08-29  Michal Moskal  <malekith@nemerle.org>
