@@ -1,3 +1,7 @@
+2005-08-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* location.cs : Fixed overflown (>255) column number.
+
 2005-08-03  Raja R Harinath  <rharinath@novell.com>
 
 	First cut of the qualified-alias-member feature.
