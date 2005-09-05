@@ -966,7 +966,7 @@ namespace Mono.CSharp {
 		{
 			UnmanagedType UnmanagedType;
 			if (!RootContext.StdLib || pos_values [0].GetType () != typeof (UnmanagedType))
-				UnmanagedType = (UnmanagedType)System.Enum.ToObject (typeof (UnmanagedType), pos_values [0]);
+				UnmanagedType = (UnmanagedType) System.Enum.ToObject (typeof (UnmanagedType), pos_values [0]);
 			else
 				UnmanagedType = (UnmanagedType) pos_values [0];
 
@@ -978,11 +978,11 @@ namespace Mono.CSharp {
 
 			object o = GetFieldValue ("ArraySubType");
 			UnmanagedType array_sub_type = o == null ? (UnmanagedType) 0x50 /* NATIVE_MAX */ : (UnmanagedType) o;
-			
+
 			switch (UnmanagedType) {
 			case UnmanagedType.CustomMarshaler: {
 				MethodInfo define_custom = typeof (UnmanagedMarshal).GetMethod ("DefineCustom",
-                                                                       BindingFlags.Static | BindingFlags.Public);
+					BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 				if (define_custom == null) {
 					Report.RuntimeMissingSupport (Location, "set marshal info");
 					return null;
@@ -1000,7 +1000,8 @@ namespace Mono.CSharp {
 				object size_param_index = GetFieldValue ("SizeParamIndex");
 
 				if ((size_const != null) || (size_param_index != null)) {
-					MethodInfo define_array = typeof (UnmanagedMarshal).GetMethod ("DefineLPArrayInternal", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+					MethodInfo define_array = typeof (UnmanagedMarshal).GetMethod ("DefineLPArrayInternal",
+						BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 					if (define_array == null) {
 						Report.RuntimeMissingSupport (Location, "set marshal info");
 						return null;
@@ -1017,7 +1018,7 @@ namespace Mono.CSharp {
 			}
 			case UnmanagedType.SafeArray:
 				return UnmanagedMarshal.DefineSafeArray (array_sub_type);
-			
+
 			case UnmanagedType.ByValArray:
 				FieldMember fm = attr as FieldMember;
 				if (fm == null) {
@@ -1025,10 +1026,10 @@ namespace Mono.CSharp {
 					return null;
 				}
 				return UnmanagedMarshal.DefineByValArray ((int) GetFieldValue ("SizeConst"));
-			
+
 			case UnmanagedType.ByValTStr:
 				return UnmanagedMarshal.DefineByValTStr ((int) GetFieldValue ("SizeConst"));
-			
+
 			default:
 				return UnmanagedMarshal.DefineUnmanagedMarshal (UnmanagedType);
 			}

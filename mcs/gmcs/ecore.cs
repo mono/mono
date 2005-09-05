@@ -2047,14 +2047,15 @@ namespace Mono.CSharp {
 			if (current_block != null){
 				LocalInfo vi = current_block.GetLocalInfo (Name);
 				if (vi != null){
-					Expression var;
-					
-					var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
-					
-					if (right_side != null)
+					LocalVariableReference var = new LocalVariableReference (ec.CurrentBlock, Name, loc);
+					if (right_side != null) {
 						return var.ResolveLValue (ec, right_side, loc);
-					else
-						return var.Resolve (ec);
+					} else {
+						ResolveFlags rf = ResolveFlags.VariableOrValue;
+						if (intermediate)
+							rf |= ResolveFlags.DisableFlowAnalysis;
+						return var.Resolve (ec, rf);
+					}
 				}
 
 				ParameterReference pref = current_block.Toplevel.GetParameterReference (Name, loc);

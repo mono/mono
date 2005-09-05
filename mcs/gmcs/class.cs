@@ -2776,7 +2776,7 @@ namespace Mono.CSharp {
 				Report.Error (
 					262, member_name.Location, "Partial declarations of `{0}' " +
 					"have conflicting accessibility modifiers",
-					member_name.GetPartialName ());
+					member_name.GetName ());
 				return false;
 			}
 			return true;

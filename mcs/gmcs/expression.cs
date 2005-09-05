@@ -3874,6 +3874,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool VerifyAssigned (EmitContext ec)
+		{
+			VariableInfo variable_info = local_info.VariableInfo;
+			return variable_info == null || variable_info.IsAssigned (ec, loc);
+		}
+
 		protected Expression DoResolveBase (EmitContext ec, Expression lvalue_right_side)
 		{
 			if (local_info == null) {
@@ -3911,7 +3917,7 @@ namespace Mono.CSharp {
 				return e.Resolve (ec);
 			}
 
-			if ((variable_info != null) && !variable_info.IsAssigned (ec, loc))
+			if (!VerifyAssigned (ec))
 				return null;
 
 			if (lvalue_right_side == null)
@@ -7712,15 +7718,22 @@ namespace Mono.CSharp {
 				return mg.ResolveGeneric (ec, args);
 			}
 
+			if (original != null && !TypeManager.IsValueType (expr_type)) {
+				me = member_lookup as MemberExpr;
+				if (me != null && me.IsInstance) {
+					LocalVariableReference var = new_expr as LocalVariableReference;
+					if (var != null && !var.VerifyAssigned (ec))
+						return null;
+				}
+			}
+
 			// The following DoResolve/DoResolveLValue will do the definite assignment
 			// check.
 
 			if (right_side != null)
-				member_lookup = member_lookup.DoResolveLValue (ec, right_side);
+				return member_lookup.DoResolveLValue (ec, right_side);
 			else
-				member_lookup = member_lookup.DoResolve (ec);
-
-			return member_lookup;
+				return member_lookup.DoResolve (ec);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
