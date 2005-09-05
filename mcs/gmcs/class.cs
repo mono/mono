@@ -2546,10 +2546,10 @@ namespace Mono.CSharp {
 
 			foreach (DictionaryEntry entry in defined_names) {
 				MemberCore mc = (MemberCore)entry.Value;
-				if (!mc.IsClsComplianceRequired (this))
+				if (!mc.IsClsCompliaceRequired (mc.Parent))
 					continue;
 
-				string name = (string)entry.Key;
+				string name = (string) entry.Key;
 				string basename = name.Substring (name.LastIndexOf ('.') + 1);
 
 				string lcase = basename.ToLower (System.Globalization.CultureInfo.InvariantCulture);
@@ -2566,9 +2566,9 @@ namespace Mono.CSharp {
 					continue;					
 
 				if (found is MemberInfo) {
-					if (basename == ((MemberInfo)found).Name)
+					if (basename == ((MemberInfo) found).Name)
 						continue;
-					Report.SymbolRelatedToPreviousError ((MemberInfo)found);
+					Report.SymbolRelatedToPreviousError ((MemberInfo) found);
 				} else {
 					Report.SymbolRelatedToPreviousError ((MemberCore) found);
 				}
@@ -6147,7 +6147,7 @@ namespace Mono.CSharp {
 		ReturnParameter return_attributes;
 
 		public AbstractPropertyEventMethod (MemberBase member, string prefix)
-			: base (null, SetupName (prefix, member, member.Location), null)
+			: base (member.Parent, SetupName (prefix, member, member.Location), null)
 		{
 			this.prefix = prefix;
 			IsDummy = true;
@@ -6155,7 +6155,7 @@ namespace Mono.CSharp {
 
 		public AbstractPropertyEventMethod (MemberBase member, Accessor accessor,
 						    string prefix)
-			: base (null, SetupName (prefix, member, accessor.Location),
+			: base (member.Parent, SetupName (prefix, member, accessor.Location),
 				accessor.Attributes)
 		{
 			this.prefix = prefix;
@@ -6460,14 +6460,12 @@ namespace Mono.CSharp {
 				: base (method, prefix)
 			{
 				this.method = method;
-				Parent = method.Parent;
 			}
 
 			public PropertyMethod (MethodCore method, Accessor accessor, string prefix)
 				: base (method, accessor, prefix)
 			{
 				this.method = method;
-				Parent = method.Parent;
 				this.ModFlags = accessor.ModFlags;
 				yields = accessor.Yields;
 
