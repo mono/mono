@@ -2546,7 +2546,7 @@ namespace Mono.CSharp {
 
 			foreach (DictionaryEntry entry in defined_names) {
 				MemberCore mc = (MemberCore)entry.Value;
-				if (!mc.IsClsCompliaceRequired (mc.Parent))
+				if (!mc.IsClsComplianceRequired (mc.Parent))
 					continue;
 
 				string name = (string) entry.Key;
