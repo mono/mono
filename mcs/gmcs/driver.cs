@@ -1314,7 +1314,7 @@ namespace Mono.CSharp
 				default:
 					try {
 						encoding = Encoding.GetEncoding (
-							Int32.Parse (value));
+						Int32.Parse (value));
 					} catch {
 						Report.Error (2016, "Code page `{0}' is invalid or not installed", value);
 					}

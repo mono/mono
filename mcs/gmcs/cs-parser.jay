@@ -4200,7 +4200,8 @@ if_statement
 
 		$$ = new If ((Expression) $3, (Statement) $5, l);
 
-		if (RootContext.WarningLevel >= 4){
+		if (RootContext.WarningLevel >= 3){
+			// FIXME: location for warning should be loc property of $5.
 			if ($5 == EmptyStatement.Value)
 				Report.Warning (642, l, "Possible mistaken empty statement");
 		}
@@ -4212,6 +4213,14 @@ if_statement
 		Location l = (Location) $1;
 
 		$$ = new If ((Expression) $3, (Statement) $5, (Statement) $7, l);
+
+		if (RootContext.WarningLevel >= 3){
+			// FIXME: location for warning should be loc property of $5 and $7.
+			if ($5 == EmptyStatement.Value)
+				Report.Warning (642, l, "Possible mistaken empty statement");
+			if ($7 == EmptyStatement.Value)
+				Report.Warning (642, l, "Possible mistaken empty statement");
+		}
 	  }
 	;
 
@@ -4316,11 +4325,6 @@ while_statement
 	  {
 		Location l = (Location) $1;
 		$$ = new While ((Expression) $3, (Statement) $5, l);
-	
-		if (RootContext.WarningLevel >= 4){
-			if ($5 == EmptyStatement.Value)
-				Report.Warning (642, l, "Possible mistaken empty statement");
-		}
 	  }
 	;
 
@@ -4390,11 +4394,6 @@ for_statement
 		Location l = (Location) $1;
 
 		For f = new For ((Statement) $5, (Expression) $6, (Statement) $8, (Statement) $10, l);
-
-		if (RootContext.WarningLevel >= 4){
-			if ($10 == EmptyStatement.Value)
-				Report.Warning (642, (Location) $4, "Possible mistaken empty statement");
-		}
 
 		current_block.AddStatement (f);
 		while (current_block.Implicit)
@@ -4780,11 +4779,6 @@ fixed_statement
 		Location l = (Location) $1;
 
 		Fixed f = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
-
-		if (RootContext.WarningLevel >= 4){
-			if ($7 == EmptyStatement.Value)
-				Report.Warning (642, l, "Possible mistaken empty statement");
-		}
 
 		current_block.AddStatement (f);
 		while (current_block.Implicit)

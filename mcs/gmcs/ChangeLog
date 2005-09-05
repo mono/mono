@@ -1,3 +1,36 @@
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* driver.cs : kinda reverting the default encoding changes (not exact 
+	  revert since I noticed that "codepage:reset" might not work fine).
+
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* class.cs : (AbstractPropertyEventMethod) SetupName() now takes
+	  Location. Now getter and setter store location correctly.
+	  (errors/cs0111-12.cs now reports the expected location.)
+
+2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* driver.cs : Use default encoding on the environment.
+	  Removed (now that) extra parameter for SeekableStreamReader.
+	* support.cs : (SeekableStreamReader) third .ctor() argument for
+	  StreamReader is not required (always true). preamble size could
+	  be acquired in simpler and safe way.
+
+2005-08-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-parser.jay: report CS0642 at warning level 3
+	  and report CS0642 for an if else statement also
+	  fixes bug #74745. Patch by John Luke (and a bit
+	  modified by me).
+	  Removed extra CS0642 warning check for "while",
+	  "for" and "fixed".
+	* statement.cs: In Block.Resolve(), CS0642 check
+	  is reimplemented to check a sequence of an empty
+	  statement and a block.
+
+	  Both fix bug #66777.
+
 2005-08-24  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (GetMethodObsoleteAttribute): Disabled obsolete properties
