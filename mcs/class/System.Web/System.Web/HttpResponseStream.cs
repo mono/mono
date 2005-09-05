@@ -522,9 +522,11 @@ namespace System.Web {
 
 			total += count;
 			while (count > 0) {
-				int n = ((ByteBucket) cur_bucket).Write (buffer, offset, count);
-				offset += n;
-				count -= n;
+				if (cur_bucket is ByteBucket) {
+					int n = ((ByteBucket) cur_bucket).Write (buffer, offset, count);
+					offset += n;
+					count -= n;
+				}
 	
 				if (split_after_file != null) {
 					AppendBucket (split_after_file);

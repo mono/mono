@@ -1,3 +1,8 @@
+2005-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseStream.cs: prevent invalid cast exception if the first
+	thing written is a file.
+
 2005-09-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: fix invalid cast exception (bug #75926).
