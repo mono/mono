@@ -1,3 +1,7 @@
+2005-09-05  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/win32/compile.sh: add this
+	
 2005-09-04  John Luke  <john.luke@gmail.com>
  
  	* Mono.Cairo/Cairo.cs: remove symbols not in cairo 1.0:
