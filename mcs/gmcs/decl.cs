@@ -1389,6 +1389,9 @@ namespace Mono.CSharp {
 				Report.SymbolRelatedToPreviousError (t);
 			}
 			else {
+				if (val is PartialContainer)
+					return true;
+
 				Report.SymbolRelatedToPreviousError ((DeclSpace)val);
 			}
 			Report.Warning (3005, Location, "Identifier `{0}' differing only in case is not CLS-compliant", GetSignatureForError ());
