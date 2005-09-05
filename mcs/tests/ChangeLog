@@ -1,5 +1,9 @@
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* gtest-198.cs : test for #75957.
+
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* known-issues-gmcs : tset-49 is not working, should be IGNORED.
 
 2005-09-02  Raja R Harinath  <rharinath@novell.com>

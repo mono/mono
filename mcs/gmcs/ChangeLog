@@ -1,3 +1,12 @@
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	Fixed bug #75957.
+	* generic.cs : (TypeManager.IsEqual(Type,Type)): it should work when
+	  both types are not defined by methods.
+	* expression.cs : (Invocation.IsApplicable): it should work when
+	  the argument type is equal to the parameter type, not only when
+	  ImplicitConversionExists() returns true.
+
 2005-09-02  Raja R Harinath  <rharinath@novell.com>
 
 	* attribute.cs (GetMarshal): Work even if "DefineCustom" is

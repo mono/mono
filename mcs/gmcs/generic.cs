@@ -1773,7 +1773,8 @@ namespace Mono.CSharp {
 				return IsEqual (b, a);
 
 			if (a.IsGenericParameter && b.IsGenericParameter) {
-				if ((a.DeclaringMethod == null) || (b.DeclaringMethod == null))
+				if (a.DeclaringMethod != b.DeclaringMethod &&
+				    (a.DeclaringMethod == null || b.DeclaringMethod == null))
 					return false;
 				return a.GenericParameterPosition == b.GenericParameterPosition;
 			}

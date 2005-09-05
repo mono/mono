@@ -5009,7 +5009,7 @@ namespace Mono.CSharp {
 				if (a_mod == p_mod ||
 				    (a_mod == Parameter.Modifier.NONE && p_mod == Parameter.Modifier.PARAMS)) {
 					if (a_mod == Parameter.Modifier.NONE) {
-                                                if (!Convert.ImplicitConversionExists (ec,
+                                                if (!TypeManager.IsEqual (a.Type, pd.ParameterType (i)) && !Convert.ImplicitConversionExists (ec,
                                                                                        a.Expr,
                                                                                        pd.ParameterType (i)))
 							return false;
