@@ -1,5 +1,14 @@
 2005-09-05  Martin Baulig  <martin@ximian.com>
 
+	Reflect latest API changes in the August CTP.
+
+	* GenericParameterAttributes.cs: Here.
+
+	* MethodBase.cs (MethodBase.BindGenericParameters): Renamed to
+	MakeGenericMethod().	
+
+2005-09-05  Martin Baulig  <martin@ximian.com>
+
 	* Assembly.cs (MonoDebugger_GetMethodToken): Don't take an
 	`Assembly' argument.
 

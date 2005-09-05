@@ -364,7 +364,7 @@ namespace Mono.CSharp {
 		{
 			MethodInfo builder = method.MethodData.MethodBuilder;
 			if (TypeArguments != null)
-				return builder.BindGenericParameters (TypeArguments);
+				return builder.MakeGenericMethod (TypeArguments);
 			else
 				return builder;
 		}

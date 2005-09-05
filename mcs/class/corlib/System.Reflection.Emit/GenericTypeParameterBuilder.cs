@@ -316,10 +316,6 @@ namespace System.Reflection.Emit
 			throw not_supported ();
 		}
 
-		public override bool HasGenericArguments {
-			get { return false; }
-		}
-
 		public override bool ContainsGenericParameters {
 			get { return true; }
 		}

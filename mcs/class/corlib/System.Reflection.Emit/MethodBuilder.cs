@@ -461,7 +461,7 @@ namespace System.Reflection.Emit {
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public override extern MethodInfo BindGenericParameters (Type [] types);
+		public override extern MethodInfo MakeGenericMethod (Type [] types);
 
 		public override bool Mono_IsInflatedMethod {
 			get {

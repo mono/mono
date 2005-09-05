@@ -1081,10 +1081,6 @@ namespace System {
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public abstract Type[] GetGenericArguments ();
 
-		public abstract bool HasGenericArguments {
-			get;
-		}
-
 		public abstract bool ContainsGenericParameters {
 			get;
 		}
@@ -1117,16 +1113,7 @@ namespace System {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern Type BindGenericParameters (Type gt, Type [] types);
-
-#if NET_2_0
-		[ComVisible (true)]
-		[ObsoleteAttribute("BindGenericParameters() has been deprecated. Please use MakeGenericType() instead - this will be removed before Whidbey ships.")]
-#endif		
-		public Type BindGenericParameters (Type [] types)
-		{
-			return MakeGenericType (types);
-		}
+		static extern Type MakeGenericType (Type gt, Type [] types);
 
 		public virtual Type MakeGenericType (params Type[] types)
 		{
@@ -1136,7 +1123,7 @@ namespace System {
 				if (t == null)
 					throw new ArgumentNullException ("types");
 			}
-			Type res = BindGenericParameters (this, types);
+			Type res = MakeGenericType (this, types);
 			if (res == null)
 				throw new TypeLoadException ();
 			return res;

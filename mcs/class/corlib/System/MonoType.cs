@@ -568,17 +568,12 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern override Type [] GetGenericArguments ();
 
-		public extern override bool HasGenericArguments {
-			[MethodImplAttribute(MethodImplOptions.InternalCall)]
-			get;
-		}
-
 		public override bool ContainsGenericParameters {
 			get {
 				if (IsGenericParameter)
 					return true;
 
-				if (HasGenericArguments) {
+				if (IsGenericType) {
 					foreach (Type arg in GetGenericArguments ())
 						if (arg.ContainsGenericParameters)
 							return true;

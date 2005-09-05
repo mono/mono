@@ -700,7 +700,7 @@ public class Outline {
 			GenericParameterAttributes attrs = t.GenericParameterAttributes & GenericParameterAttributes.SpecialConstraintMask;
 			GenericParameterAttributes [] interesting = {
 				GenericParameterAttributes.ReferenceTypeConstraint,
-				GenericParameterAttributes.ValueTypeConstraint,
+				GenericParameterAttributes.NotNullableValueTypeConstraint,
 				GenericParameterAttributes.DefaultConstructorConstraint
 			};
 			
@@ -735,7 +735,7 @@ public class Outline {
 				case GenericParameterAttributes.ReferenceTypeConstraint:
 					o.Write ("class");
 					break;
-				case GenericParameterAttributes.ValueTypeConstraint:
+				case GenericParameterAttributes.NotNullableValueTypeConstraint:
 					o.Write ("struct");
 					break;
 				case GenericParameterAttributes.DefaultConstructorConstraint:

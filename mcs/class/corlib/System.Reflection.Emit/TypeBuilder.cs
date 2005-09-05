@@ -1468,12 +1468,6 @@ namespace System.Reflection.Emit {
 			return base.GetGenericTypeDefinition ();
 		}
 
-		public override bool HasGenericArguments {
-			get {
-				return generic_params != null;
-			}
-		}
-
 		public override bool ContainsGenericParameters {
 			get {
 				return generic_params != null;

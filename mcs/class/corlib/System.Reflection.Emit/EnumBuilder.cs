@@ -361,13 +361,6 @@ namespace System.Reflection.Emit {
 		}
 
 		[MonoTODO]
-		public override bool HasGenericArguments {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
 		public override bool ContainsGenericParameters {
 			get {
 				throw new NotImplementedException ();

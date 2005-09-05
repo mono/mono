@@ -177,9 +177,9 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		public virtual MethodInfo BindGenericParameters (Type [] types)
+		public virtual MethodInfo MakeGenericMethod (Type [] types)
 		{
-			throw new NotSupportedException ();
+			throw new NotSupportedException (this.GetType().ToString ());
 		}
 
 		public virtual Type [] GetGenericArguments ()

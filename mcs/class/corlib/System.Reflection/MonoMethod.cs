@@ -253,7 +253,7 @@ namespace System.Reflection {
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public override extern MethodInfo BindGenericParameters (Type [] types);
+		public override extern MethodInfo MakeGenericMethod (Type [] types);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern Type [] GetGenericArguments ();

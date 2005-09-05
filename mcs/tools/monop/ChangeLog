@@ -1,3 +1,7 @@
+2005-09-05  Michal Moskal  <malekith@nemerle.org>
+	
+	* outline.cs: Use new names of the GenericParameterAttributes enum.
+
 2005-08-19  Ben Maurer  <bmaurer@novell.com>
 
 	* outline.cs:

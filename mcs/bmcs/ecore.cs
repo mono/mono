@@ -2992,7 +2992,7 @@ namespace Mono.CSharp {
 				if (gen_params.Length != atypes.Length)
 					continue;
 
-				list.Add (mi.BindGenericParameters (atypes));
+				list.Add (mi.MakeGenericMethod (atypes));
 			}
 
 			if (list.Count > 0) {

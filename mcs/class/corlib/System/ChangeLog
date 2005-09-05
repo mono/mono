@@ -1,3 +1,10 @@
+2005-09-05  Martin Baulig  <martin@ximian.com>
+
+	Reflect latest API changes in the August CTP.
+
+	* Type.cs (Type.HasGenericArguments): Removed.
+	(Type.BindGenericParameters): Renamed to MakeGenericType().
+
 2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : another idiotic COM dependent format.

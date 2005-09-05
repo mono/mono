@@ -260,11 +260,6 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-		public override bool HasGenericArguments {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
 
 		public override bool ContainsGenericParameters {
 			get {

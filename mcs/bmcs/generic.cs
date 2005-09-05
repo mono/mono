@@ -33,7 +33,7 @@ namespace Mono.CSharp {
 		}
 
 		public bool HasValueTypeConstraint {
-			get { return (Attributes & GenericParameterAttributes.ValueTypeConstraint) != 0; }
+			get { return (Attributes & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0; }
 		}
 
 		public virtual bool HasClassConstraint {
@@ -195,7 +195,7 @@ namespace Mono.CSharp {
 					if (sc == SpecialConstraint.ReferenceType)
 						attrs |= GenericParameterAttributes.ReferenceTypeConstraint;
 					else
-						attrs |= GenericParameterAttributes.ValueTypeConstraint;
+						attrs |= GenericParameterAttributes.NotNullableValueTypeConstraint;
 					continue;
 				}
 
@@ -1733,7 +1733,7 @@ namespace Mono.CSharp {
 			if (tc != null)
 				return tc.IsGeneric ? tc.CountTypeParameters : 0;
 			else
-				return t.HasGenericArguments ? t.GetGenericArguments ().Length : 0;
+				return t.IsGenericType ? t.GetGenericArguments ().Length : 0;
 		}
 
 		public static Type[] GetTypeArguments (Type t)
@@ -2171,7 +2171,7 @@ namespace Mono.CSharp {
 				if (infered_types [i] == null)
 					return false;
 
-			method = method.BindGenericParameters (infered_types);
+			method = method.MakeGenericMethod (infered_types);
 			return true;
 		}
 
@@ -2241,7 +2241,7 @@ namespace Mono.CSharp {
 			if (!InferTypeArguments (param_types, arg_types, infered_types))
 				return false;
 
-			method = method.BindGenericParameters (infered_types);
+			method = method.MakeGenericMethod (infered_types);
 			return true;
 		}
 
@@ -2269,7 +2269,7 @@ namespace Mono.CSharp {
 			if (!InferTypeArguments (param_types, arg_types, infered_types))
 				return false;
 
-			method = method.BindGenericParameters (infered_types);
+			method = method.MakeGenericMethod (infered_types);
 			return true;
 		}
 

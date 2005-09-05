@@ -161,7 +161,7 @@ namespace C5.HasherBuilder
         {
             Type t = typeof(T);
 
-            if (!t.HasGenericArguments)
+            if (!t.IsGenericType)
             {
                 if (t.Equals(typeof(int)))
                     return (IHasher<T>)(new IntHasher());

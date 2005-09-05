@@ -37,19 +37,18 @@ namespace System.Reflection
 	[Flags]
 	public enum GenericParameterAttributes
 	{
-		NonVariant			= 0,
 		Covariant			= 1,
 		Contravariant			= 2,
 
 		VarianceMask			= Covariant | Contravariant,
 
-		NoSpecialConstraint		= 0,
+		None				= 0,
 		ReferenceTypeConstraint		= 4,
-		ValueTypeConstraint		= 8,
+		NotNullableValueTypeConstraint	= 8,
 		DefaultConstructorConstraint	= 16,
 
 		SpecialConstraintMask		= 
-		ReferenceTypeConstraint | ValueTypeConstraint | DefaultConstructorConstraint
+		ReferenceTypeConstraint | NotNullableValueTypeConstraint | DefaultConstructorConstraint
 	}
 }
 #endif
