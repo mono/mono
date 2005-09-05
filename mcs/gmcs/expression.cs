@@ -5155,7 +5155,13 @@ namespace Mono.CSharp {
 
 					VerifyArgumentsCompat (ec, Arguments, arg_count,
 						c, false, null, may_fail, loc);
-                                        break;
+
+					if (!may_fail && errors == Report.Errors)
+						throw new InternalErrorException (
+							"VerifyArgumentsCompat and IsApplicable do not agree; " +
+							"likely reason: ImplicitConversion and ImplicitConversionExists have gone out of sync");
+
+					break;
 				}
 
 				if (!may_fail && errors == Report.Errors) {

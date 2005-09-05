@@ -1,3 +1,19 @@
+2005-08-29  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75927.
+	* convert.cs (ImplicitStandardConversionExists): Allow zero also
+	when converting a long constant to unsigned long.
+	* expression.cs (Invocation.OverloadResolve): Add sanity check to
+	detect where IsApplicable and VerifyArgumentsCompat disagree.
+
+2005-08-29  Raja R Harinath  <rharinath@novell.com>
+	and Carlos Alberto Cortez  <carlos@unixmexico.org>
+
+	Fix #75848.
+	* class.cs (TypeContainer.CanElideInitializer): New helper.
+	(TypeContainer.EmitFieldInitializers): Use it to determine if we
+	can safely emitting the initializer of a field.
+
 2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* statement.cs : (Continue.Resolve()) Unlike break, continue is not
