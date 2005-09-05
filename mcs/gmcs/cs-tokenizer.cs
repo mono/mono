@@ -585,9 +585,6 @@ namespace Mono.CSharp
 
 			case ',':
 				return Token.COMMA;
-			case ':':
-				val = Location;
-				return Token.COLON;
 			case ';':
 				val = Location;
 				return Token.SEMICOLON;
@@ -767,6 +764,15 @@ namespace Mono.CSharp
 					return Token.OP_XOR_ASSIGN;
 				}
 				return Token.CARRET;
+			}
+
+			if (c == ':'){
+				if (d == ':'){
+					doread = true;
+					return Token.DOUBLE_COLON;
+				}
+				val = Location;
+				return Token.COLON;
 			}
 
 			return Token.ERROR;

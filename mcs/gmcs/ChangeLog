@@ -1,3 +1,23 @@
+2005-08-03  Raja R Harinath  <rharinath@novell.com>
+
+	First cut of the qualified-alias-member feature.
+	* cs-tokenizer.cs (Tokenizer.is_punct): Recognize the double-colon
+	token.
+	* cs-parser.jay (DOUBLE_COLON): New token.
+	(namespace_or_type_name): Add rule for recognizing
+	qualified-alias-members.
+	(primary_expression): Likewise.
+	(element_access): Allow QualifiedAliasMember as a possible
+	type-bearing expression.
+	(local_variable_type, local_variable_pointer_type): Likewise.
+	* namespace.cs (NamespaceEntry.LookupAlias): New.  Looks up
+	aliases in the current and enclosing namespace declarations.
+	(NamespaceEntry.UsingAlias): Add CS0440 warning.
+	* decl.cs (MemberName.is_double_colon): New.
+	(MemberName.MemberName): Add new constructor for alias-member.
+	(MemberName.GetTypeExpression): Generate QualifiedAliasMember too.
+	* expression.cs (QualifiedAliasMember): New expression type.
+
 2005-08-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* location.cs : it borked when no argument was specified.

@@ -7365,6 +7365,89 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
+	///   Implements the qualified-alias-member (::) expression.
+	/// </summary>
+	public class QualifiedAliasMember : Expression
+	{
+		string alias, identifier;
+
+		public QualifiedAliasMember (string alias, string identifier, Location l)
+		{
+			this.alias = alias;
+			this.identifier = identifier;
+			loc = l;
+		}
+
+		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
+		{
+			if (alias == "global")
+				return new MemberAccess (Namespace.Root, identifier, loc).ResolveAsTypeStep (ec, silent);
+
+			int errors = Report.Errors;
+			FullNamedExpression fne = ec.DeclSpace.NamespaceEntry.LookupAlias (alias);
+			if (fne == null) {
+				if (errors == Report.Errors)
+					Report.Error (432, loc, "Alias `{0}' not found", alias);
+				return null;
+			}
+			if (fne.eclass != ExprClass.Namespace) {
+				if (!silent)
+					Report.Error (431, loc, "`{0}' cannot be used with '::' since it denotes a type", alias);
+				return null;
+			}
+			return new MemberAccess (fne, identifier, loc).ResolveAsTypeStep (ec, silent);
+		}
+
+		public override Expression DoResolve (EmitContext ec)
+		{
+			FullNamedExpression fne;
+			if (alias == "global") {
+				fne = Namespace.Root;
+			} else {
+				int errors = Report.Errors;
+				fne = ec.DeclSpace.NamespaceEntry.LookupAlias (alias);
+				if (fne == null) {
+					if (errors == Report.Errors)
+						Report.Error (432, loc, "Alias `{0}' not found", alias);
+					return null;
+				}
+			}
+
+			Expression retval = new MemberAccess (fne, identifier, loc).DoResolve (ec);
+			if (retval == null)
+				return null;
+
+			if (!(retval is FullNamedExpression)) {
+				Report.Error (687, loc, "The expression `{0}::{1}' did not resolve to a namespace or a type", alias, identifier);
+				return null;
+			}
+
+			// We defer this check till the end to match the behaviour of CSC
+			if (fne.eclass != ExprClass.Namespace) {
+				Report.Error (431, loc, "`{0}' cannot be used with '::' since it denotes a type", alias);
+				return null;
+			}
+			return retval;
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new InternalErrorException ("QualifiedAliasMember found in resolved tree");
+		}
+
+
+		public override string ToString ()
+		{
+			return alias + "::" + identifier;
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return ToString ();
+		}
+	}
+
+	/// <summary>
 	///   Implements the member access expression
 	/// </summary>
 	public class MemberAccess : Expression {

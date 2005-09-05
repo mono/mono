@@ -230,6 +230,7 @@ namespace Mono.CSharp
 %token INTERR         "?"
 
 /* C# multi-character operators. */
+%token DOUBLE_COLON	      "::"
 %token OP_INC                 "++"
 %token OP_DEC                 "--"
 %token OP_SHIFT_LEFT          "<<"
@@ -2398,8 +2399,8 @@ indexer_declaration
 
 		MemberName name;
 		if (decl.interface_type != null)
-			name = new MemberName (decl.interface_type,
-					       TypeContainer.DefaultIndexerName, decl.location);
+			name = new MemberName (
+				decl.interface_type, TypeContainer.DefaultIndexerName, decl.location);
 		else
 			name = new MemberName (TypeContainer.DefaultIndexerName, decl.location);
 
@@ -2627,6 +2628,11 @@ opt_nullable
 
 namespace_or_type_name
 	: member_name
+	| IDENTIFIER DOUBLE_COLON IDENTIFIER {
+		LocatedToken lt1 = (LocatedToken) $1;
+		LocatedToken lt2 = (LocatedToken) $3;
+		$$ = new MemberName (lt1.Value, lt2.Value, lt2.Location);
+	  }
 	| namespace_or_type_name DOT IDENTIFIER opt_type_argument_list {
 		LocatedToken lt = (LocatedToken) $3;
 		$$ = new MemberName ((MemberName) $1, lt.Value, (TypeArguments) $4, lt.Location);
@@ -2805,6 +2811,12 @@ primary_expression
 	  {
 		MemberName mn = (MemberName) $1;
 		$$ = mn.GetTypeExpression ();
+	  }
+	| IDENTIFIER DOUBLE_COLON IDENTIFIER
+	  {
+		LocatedToken lt1 = (LocatedToken) $1;
+		LocatedToken lt2 = (LocatedToken) $3;
+		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, lt2.Location);
 	  }
 	| parenthesized_expression
 	| default_value_expression
@@ -3025,7 +3037,7 @@ element_access
 		Expression expr = (Expression) $1;  
 		if (expr is ComposedCast){
 			$$ = new ComposedCast (expr, (string) $2);
-		} else if (!(expr is SimpleName || expr is MemberAccess || expr is ConstructedType)){
+		} else if (!(expr is SimpleName || expr is MemberAccess || expr is ConstructedType || expr is QualifiedAliasMember)){
 			Error_ExpectingTypeName (expr);
 			$$ = TypeManager.system_object_expr;
 		} else {
@@ -4056,7 +4068,7 @@ local_variable_type
 		// Blah i;
 		  
 		Expression expr = (Expression) $1;  
-		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast || expr is ConstructedType)) {
+		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast || expr is ConstructedType || expr is QualifiedAliasMember)) {
 			Error_ExpectingTypeName (expr);
 			$$ = null;
 		} else {
@@ -4085,7 +4097,7 @@ local_variable_pointer_type
 	  {
 		Expression expr = (Expression) $1;  
 
-		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast || expr is ConstructedType)) {
+		if (!(expr is SimpleName || expr is MemberAccess || expr is ComposedCast || expr is ConstructedType || expr is QualifiedAliasMember)) {
 			Error_ExpectingTypeName (expr);
 
 			$$ = null;
