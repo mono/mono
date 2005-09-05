@@ -1,6 +1,13 @@
 2005-09-05  John Luke  <john.luke@gmail.com>
 
-	* Mono.Cairo/win32/compile.sh: add this
+	* Mono.Cairo/Samples/gtk/Graphics.cs:
+	add gtk-cairo helper that will work on win32 and
+	x11 based on gtk-dotnet in gtk#, not yet tested on
+	windows
+
+2005-09-05  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Samples/win32/compile.sh: add this
 	
 2005-09-04  John Luke  <john.luke@gmail.com>
  
