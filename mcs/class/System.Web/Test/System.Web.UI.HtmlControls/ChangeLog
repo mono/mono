@@ -1,3 +1,8 @@
+2005-09-05  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlFormTest.cs: add some more tests to make figure out the
+	property spot to be storing some of these attributes.
+
 2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HtmlAnchorCas.cs, HtmlButtonCas.cs, HtmlEmptyTagControlBuilderCas.cs,
