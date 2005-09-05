@@ -700,7 +700,7 @@ namespace System.Reflection {
 		internal static extern MethodBase MonoDebugger_GetMethod (Assembly assembly, int token);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern int MonoDebugger_GetMethodToken (Assembly assembly, MethodBase method);
+		internal static extern int MonoDebugger_GetMethodToken (MethodBase method);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Type MonoDebugger_GetLocalTypeFromSignature (Assembly assembly, byte[] signature);
