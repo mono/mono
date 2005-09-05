@@ -84,12 +84,15 @@ namespace Mono.Tools.CertView {
 		{
 			Application.Init();
 
-			Glade.XML gxml = new Glade.XML ("certview.glade", "CertificateViewer", null);
+			Glade.XML gxml = new Glade.XML (null, "certview.glade", "CertificateViewer", null);
 			gxml.Autoconnect (this);
 
 			cf = new CertificateFormatter (filename);
 
 			// init UI
+			brokenSealImage.Pixbuf = new Pixbuf (null, "wax-seal-broken.png");
+			sealImage.Pixbuf = new Pixbuf (null, "wax-seal.png");
+
 			Tooltips tt = new Tooltips ();
 			issuedToEntry.Text = cf.Issuer (false);
 			tt.SetTip (issuedToEntry, issuedToEntry.Text, issuedToEntry.Text);
@@ -138,7 +141,7 @@ namespace Mono.Tools.CertView {
 					icon = 3;
 				string exts = xe.ToString ();
 				string details;
-				if (xe.Name == xe.OID) {
+				if (xe.Name == xe.Oid) {
 					exts = cf.Extension (i, false);
 					details = cf.Extension (i, true);
 				}
@@ -190,11 +193,11 @@ namespace Mono.Tools.CertView {
 				if (dataFunc == null) {
 					dataFunc = new TreeCellDataFunc (SetCellData);
 					version = new Pixbuf [5];
-					version [0] = new Pixbuf ("v1.bmp");
-					version [1] = new Pixbuf ("v2.bmp");
-					version [2] = new Pixbuf ("v3.bmp");
-					version [3] = new Pixbuf ("v3critical.bmp");
-					version [4] = new Pixbuf ("mono.bmp");
+					version [0] = new Pixbuf (null, "v1.bmp");
+					version [1] = new Pixbuf (null, "v2.bmp");
+					version [2] = new Pixbuf (null, "v3.bmp");
+					version [3] = new Pixbuf (null, "v3critical.bmp");
+					version [4] = new Pixbuf (null, "mono.bmp");
 				}
 
 				return dataFunc;

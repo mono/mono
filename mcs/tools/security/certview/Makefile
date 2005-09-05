@@ -2,7 +2,7 @@ thisdir = tools/security/certview
 SUBDIRS = 
 include ../../../build/rules.make
 
-RESGEN = monoresgen
+RESGEN = resgen
 LOCAL_MCS_FLAGS = /lib:$(topdir)/class/lib /r:Mono.Security.dll /r:System.Xml.dll /win32icon:mono.ico
 
 # SWF isn't quite good enough to build this yet.
@@ -20,30 +20,34 @@ test-local run-test-local:
 
 DISTFILES = \
 	CertificateViewer.cs 		\
-	CertificateFormatter.cs 	\
+	CertificateFormatter.cs 		\
 	X509ExtensionsHandler.cs	\
 	certview.exe.config		\
 	certview.glade 			\
 	certview.gladep 		\
 	gcertview.cs			\
 	gcertview.exe.config		\
-	mono.ico			\
-	$(wildcard *.bmp)		\
+	mono.ico				\
+	$(resources)
+
+resources = $(wildcard *.bmp)		\
 	$(wildcard *.png)
 
 dist-local: dist-default
 
-sources = CertificateViewer.cs CertificateFormatter.cs X509ExtensionsHandler.cs ../AssemblyInfo.cs
+sources = CertificateViewer.cs CertificateFormatter.cs X509ExtensionsHandler.cs ../AssemblyInfo.cs ../../../build/common/Consts.cs
 cv_libs = /r:System.Windows.Forms.dll /r:System.Drawing.dll
-gcv_libs = /r:gdk-sharp.dll /r:glib-sharp.dll /r:glade-sharp.dll /r:gtk-sharp.dll
+gcv_libs = -pkg:gtk-sharp -pkg:glade-sharp
 
 certview.exe: $(sources) Mono.Tools.CertView.CertificateViewer.resources
-	$(CSCOMPILE) $(cv_libs) /res:Mono.Tools.CertView.CertificateViewer.resources $(sources)
+	$(CSCOMPILE) $(cv_libs) -resource:Mono.Tools.CertView.CertificateViewer.resources $(sources)
 
 # We can't make this by default since it relies on GTK#
 
-gcertview.exe: gcertview.cs CertificateFormatter.cs X509ExtensionsHandler.cs ../AssemblyInfo.cs
-	$(CSCOMPILE) $(gcv_libs) /unsafe $^
+ress= $(foreach res,$(resources), $(addprefix -resource:,$(res)),$(notdir $(res)))
+
+gcertview.exe: gcertview.cs CertificateFormatter.cs X509ExtensionsHandler.cs ../AssemblyInfo.cs ../../../build/common/Consts.cs
+	$(CSCOMPILE) $(gcv_libs) $^ -resource:certview.glade $(ress)
 
 Mono.Tools.CertView.CertificateViewer.resources: CertificateViewer.resx
 	$(RESGEN) $^ $@

@@ -150,9 +150,9 @@ namespace Mono.Tools.CertView {
 			try {
 				// preprocess some informations
 				foreach (X509Extension xe in x509.Extensions) {
-					if ((!extensions.ContainsKey (xe.OID)) && (xe.Critical))
+					if ((!extensions.ContainsKey (xe.Oid)) && (xe.Critical))
 						status = unknownCriticalExtension;
-					if (xe.OID == "2.5.29.17") {
+					if (xe.Oid == "2.5.29.17") {
 						SubjectAltNameExtension san = new SubjectAltNameExtension (xe);
 						subjectAltName = san.RFC822;
 					}
@@ -179,7 +179,7 @@ namespace Mono.Tools.CertView {
 		{
 			X509Extension xe = x509.Extensions [i];
 			object[] extn = new object [1] { xe };
-			return CreateExtensionFromOid (xe.OID, extn); 
+			return CreateExtensionFromOid (xe.Oid, extn); 
 		}
 
 		public string Extension (int i, bool detailed) 
