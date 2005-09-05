@@ -46,6 +46,7 @@ System.Web.UI/TestUrlPropertyAttribute.cs
 System.Web.UI/ToolboxDataAttributeTest.cs
 System.Web.UI.WebControls/AdCreatedEventArgsTest.cs
 System.Web.UI.WebControls/BaseCompareValidatorTest.cs
+System.Web.UI.WebControls/BaseDataBoundControlTest.cs
 System.Web.UI.WebControls/BaseDataListTest.cs
 System.Web.UI.WebControls/BaseValidatorTest.cs
 System.Web.UI.WebControls/BoundColumnTest.cs
@@ -58,6 +59,7 @@ System.Web.UI.WebControls/CheckBoxTest.cs
 System.Web.UI.WebControls/CompareValidatorTest.cs
 System.Web.UI.WebControls/CompositeControlTest.cs
 System.Web.UI.WebControls/CustomValidatorTest.cs
+System.Web.UI.WebControls/DataBoundControlTest.cs
 System.Web.UI.WebControls/DataGridColumnTest.cs
 System.Web.UI.WebControls/DataGridItemCollectionTest.cs
 System.Web.UI.WebControls/DataGridItemTest.cs
@@ -71,6 +73,7 @@ System.Web.UI.WebControls/DropDownListTest.cs
 System.Web.UI.WebControls/EditCommandColumnTest.cs
 System.Web.UI.WebControls/FontNamesConverterTest.cs
 System.Web.UI.WebControls/FontUnitTest.cs
+System.Web.UI.WebControls/FormViewTest.cs
 System.Web.UI.WebControls/HyperLinkColumnTest.cs
 System.Web.UI.WebControls/HyperLinkTest.cs
 System.Web.UI.WebControls/ImageButtonTest.cs
