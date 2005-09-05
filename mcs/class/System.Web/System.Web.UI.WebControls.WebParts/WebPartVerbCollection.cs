@@ -34,7 +34,7 @@ using System.Reflection;
 
 namespace System.Web.UI.WebControls.WebParts
 {
-	public class WebPartVerbCollection : ReadOnlyCollectionBase
+	public sealed class WebPartVerbCollection : ReadOnlyCollectionBase
 	{
 		public WebPartVerbCollection ()
 		{			
