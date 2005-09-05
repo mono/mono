@@ -6875,16 +6875,15 @@ namespace Mono.CSharp {
 				prop_attr |= PropertyAttributes.RTSpecialName |
 			PropertyAttributes.SpecialName;
 
-				PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-					Name, prop_attr, MemberType, null);
-				
-				if (!Get.IsDummy)
-					PropertyBuilder.SetGetMethod (GetBuilder);
-				
-				if (!Set.IsDummy)
-					PropertyBuilder.SetSetMethod (SetBuilder);
+			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
+				Name, prop_attr, MemberType, null);
 
-				TypeManager.RegisterProperty (PropertyBuilder, GetBuilder, SetBuilder);
+			if (!Get.IsDummy)
+				PropertyBuilder.SetGetMethod (GetBuilder);
+
+			if (!Set.IsDummy)
+				PropertyBuilder.SetSetMethod (SetBuilder);
+
 			return true;
 		}
 	}

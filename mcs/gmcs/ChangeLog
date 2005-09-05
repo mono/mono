@@ -1,3 +1,26 @@
+2005-08-24  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (GetMethodObsoleteAttribute): Disabled obsolete properties
+	detection until I fix it.
+	
+	* cs-tokenizer.cs: Changed error message.
+	
+	* cs-parser.jay: Fixed 2 error locations.
+	
+	* ecore.cs (Error_TypeDoesNotContainDefinition): Share error message.
+	(PropertyExpr.Error_PropertyNotFound): First attempt to detect non C#
+	properties.
+	
+	* enum.cs (GetSignatureForError): Fixed.
+	
+	* expression.cs (Invocation.IsSpecialMethodInvocation): Improved special
+	method detection.
+	
+	* class.cs,
+	* typemanager.cs (RegisterProperty): Removed.
+	
+	* statement.cs (CheckInvariantMeaningInBlock): Changed error message.
+
 2005-08-24  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #75874.

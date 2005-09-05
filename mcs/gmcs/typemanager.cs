@@ -286,7 +286,6 @@ public partial class TypeManager {
 		fieldbuilders_to_fields = null;
 		events = null;
 		priv_fields_events = null;
-		properties = null;
 
 		type_hash = null;
 		
@@ -2027,27 +2026,9 @@ public partial class TypeManager {
 			return (MemberInfo) priv_fields_events [ei];
 	}
 		
-	static Hashtable properties;
-	
-	static public bool RegisterProperty (PropertyBuilder pb, MethodBase get, MethodBase set)
-	{
-		if (properties == null)
-			properties = new Hashtable ();
-
-		if (properties.Contains (pb))
-			return false;
-
-		properties.Add (pb, new Pair (get, set));
-
-		return true;
-	}
-
 	static public bool RegisterIndexer (PropertyBuilder pb, MethodBase get,
                                             MethodBase set, Type[] args)
 	{
-		if (!RegisterProperty (pb, get,set))
-			return false;
-
 		indexer_arguments.Add (pb, args);
 
 		return true;

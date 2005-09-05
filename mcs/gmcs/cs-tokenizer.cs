@@ -2455,7 +2455,7 @@ namespace Mono.CSharp
 				// in csc, it is 'XML comment is not placed on 
 				// a valid language element'. But that does not
 				// make sense.
-				Report.Warning (1587, 2, Location, "XML comment is placed on an invalid language element.");
+				Report.Warning (1587, 2, Location, "XML comment is not placed on a valid language element");
 			}
 		}
 
