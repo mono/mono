@@ -1,3 +1,9 @@
+2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* class.cs :
+	  (PartialContainer.Create): check abstract/sealed/static strictly
+	  but abstract/sealed can exist only at one side. Fixed bug #75883.
+
 2005-09-01  Kornél Pál  <kornelpal@hotmail.com>
 
 	Fix #75945.
