@@ -1,5 +1,9 @@
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* gtest-200.cs : test for bug #75668.
+
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* gtest-198.cs : fix. missing main.
 	* gtest-199.cs : test code similar to #75772.
 
