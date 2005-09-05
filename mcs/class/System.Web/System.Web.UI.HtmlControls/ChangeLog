@@ -1,3 +1,14 @@
+2005-09-05  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlForm.cs (DefaultButton): this isn't stored as an Attribute,
+	or in the ViewState.  where then?
+	(DefaultFocus): this one is stored in the ViewState, not as an
+	Attribute.
+	(SubmitDisabledControls): implement just as a boolean flag, not in
+	the viewstate or attributes.
+	(RenderAttributes): defaultfocus and defaultbutton are no longer
+	in Attributes.
+
 2005-09-04  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlInputButton: Fix the 2.0/1.0 postback stuff the right way.

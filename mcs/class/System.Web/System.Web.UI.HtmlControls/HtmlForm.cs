@@ -43,24 +43,15 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
+		string defaultbutton = "";
 		[DefaultValue ("")]
 		public string DefaultButton
 		{
 			get {
-				string defaultbutton = Attributes["defaultbutton"];
-
-				if (defaultbutton == null) {
-					return (String.Empty);
-				}
-
-				return (defaultbutton);
+				return defaultbutton;
 			}
 			set {
-				if (value == null) {
-					Attributes.Remove ("defaultbutton");
-				} else {
-					Attributes["defaultbutton"] = value;
-				}
+				defaultbutton = (value == null ? "" : value);
 			}
 		}
 
@@ -68,20 +59,10 @@ namespace System.Web.UI.HtmlControls
 		public string DefaultFocus
 		{
 			get {
-				string defaultfocus = Attributes["defaultfocus"];
-
-				if (defaultfocus == null) {
-					return (String.Empty);
-				}
-
-				return (defaultfocus);
+				return ViewState.GetString ("DefaultFocus", "");
 			}
 			set {
-				if (value == null) {
-					Attributes.Remove ("defaultfocus");
-				} else {
-					Attributes["defaultfocus"] = value;
-				}
+				ViewState["DefaultFocus"] = value;
 			}
 		}
 #endif		
@@ -158,15 +139,16 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0
+		bool submitdisabledcontrols = false;
 		[DefaultValue (false)]
 		[MonoTODO]
 		public virtual bool SubmitDisabledControls 
 		{
 			get {
-				throw new NotImplementedException ();
+				return submitdisabledcontrols;
 			}
 			set {
-				throw new NotImplementedException ();
+				submitdisabledcontrols = value;
 			}
 		}
 #endif
@@ -207,7 +189,7 @@ namespace System.Web.UI.HtmlControls
 		}
 
 #if NET_2_0		
-		[MonoTODO]
+		[MonoTODO ("why override?")]
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return base.CreateControlCollection ();
@@ -351,10 +333,6 @@ namespace System.Web.UI.HtmlControls
 			Attributes.Remove ("method");
 			Attributes.Remove ("enctype");
 			Attributes.Remove ("target");
-#if NET_2_0
-			Attributes.Remove ("defaultfocus");
-			Attributes.Remove ("defaultbutton");
-#endif
 
 			base.RenderAttributes (w);
 		}
@@ -373,7 +351,7 @@ namespace System.Web.UI.HtmlControls
 
 #if NET_2_0
 		/* According to corcompare */
-		[MonoTODO]
+		[MonoTODO ("why override?")]
 		public override void RenderControl (HtmlTextWriter w)
 		{
 			base.RenderControl (w);
