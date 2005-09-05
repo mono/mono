@@ -1349,7 +1349,7 @@ namespace Mono.CSharp {
 			if (expr.Type == target_type)
 				return expr;
 
-			if (TypeManager.IsEnumType (target_type))
+			if (TypeManager.IsEnumType (target_type) && TypeManager.EnumToUnderlying (target_type) == expr.Type)
 				return new EnumConstant ((Constant)expr, target_type);
 
 			Expression real_expr = expr;
