@@ -1,5 +1,11 @@
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* typemanager.cs: (IsUnmanagedType) : generic parameter is not allowed
+	  to be a pointer type due to the spec 25.2, so check if declaring
+	  type is generic type definition. Fixed bug #75772.
+
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	Fixed bug #75957.
 	* generic.cs : (TypeManager.IsEqual(Type,Type)): it should work when
 	  both types are not defined by methods.

@@ -1645,7 +1645,14 @@ public partial class TypeManager {
 
 		bool retval = true;
 
-		if (t is TypeBuilder){
+		for (Type p = t.DeclaringType; p != null; p = p.DeclaringType) {
+			if (p.IsGenericTypeDefinition) {
+				retval = false;
+				break;
+			}
+		}
+
+		if (t is TypeBuilder && retval) {
 			TypeContainer tc = LookupTypeContainer (t);
 			if (tc.Fields != null){
 				foreach (Field f in tc.Fields){
@@ -1660,7 +1667,7 @@ public partial class TypeManager {
 					}
 				}
 			}
-		} else {
+		} else if (retval) {
 			FieldInfo [] fields = t.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			
 			foreach (FieldInfo f in fields){
