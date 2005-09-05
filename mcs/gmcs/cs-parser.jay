@@ -2612,7 +2612,7 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		current_delegate.SetParameterInfo ((ArrayList) $10);
+		current_delegate.SetParameterInfo ((ArrayList) $11);
 		$$ = current_delegate;
 
 		current_delegate = null;

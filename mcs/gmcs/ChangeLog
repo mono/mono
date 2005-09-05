@@ -1,3 +1,10 @@
+2005-09-05  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (As.DoResolve): Use `probe_type.IsValueType'
+	instead of `TypeManager.IsValueType (probe_type)'; fixes #75668.
+
+	* cs-parser.jay (delegate_declaration): Small fix for #75852.
+
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* typemanager.cs: (IsUnmanagedType) : generic parameter is not allowed

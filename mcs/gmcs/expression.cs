@@ -1231,7 +1231,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 			Type etype = expr.Type;
 
-			if (TypeManager.IsValueType (probe_type)){
+			if (probe_type.IsValueType) {
 				Report.Error (77, loc, "The as operator must be used with a reference type (`" +
 					      TypeManager.CSharpName (probe_type) + "' is a value type)");
 				return null;
