@@ -6,20 +6,6 @@
 
 gtest-179.cs IGNORE
 gtest-187.cs IGNORE
-test-308.cs
-test-426.cs
-test-427.cs
-test-428.cs
-test-429.cs
-test-430.cs
-test-431.cs
-test-432.cs
-test-433.cs
-test-434.cs
-test-435.cs
-test-436.cs
-test-437.cs
-test-438.cs
 test-439.cs IGNORE		# Compiles to invalid IL
 test-442.cs IGNORE		# Compiles to invalid IL
 test-443.cs
