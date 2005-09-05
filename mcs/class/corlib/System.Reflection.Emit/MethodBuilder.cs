@@ -351,6 +351,12 @@ namespace System.Reflection.Emit {
 						ThrowOnUnmappableChar = (bool)value;
 #endif
 				}
+#if NET_2_0
+			if (attrname == "System.Runtime.CompilerServices.SpecialNameAttribute") {
+				attrs |= MethodAttributes.SpecialName;
+				return;
+			}
+#endif
 
 				attrs |= MethodAttributes.PinvokeImpl;
 				if (preserveSig)

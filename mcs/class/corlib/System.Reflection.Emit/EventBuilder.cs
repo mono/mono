@@ -108,6 +108,13 @@ namespace System.Reflection.Emit {
 			if (customBuilder == null)
 				throw new ArgumentNullException ("customBuilder");
 			RejectIfCreated ();
+#if NET_2_0
+			string attrname = customBuilder.Ctor.ReflectedType.FullName;
+			if (attrname == "System.Runtime.CompilerServices.SpecialNameAttribute") {
+				attrs |= EventAttributes.SpecialName;
+				return;
+			}
+#endif
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);

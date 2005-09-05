@@ -1275,6 +1275,11 @@ namespace System.Reflection.Emit {
 					}
 				}
 				return;
+#if NET_2_0
+			} else if (attrname == "System.Runtime.CompilerServices.SpecialNameAttribute") {
+				attrs |= TypeAttributes.SpecialName;
+				return;
+#endif
 			} else if (attrname == "System.SerializableAttribute") {
 				attrs |= TypeAttributes.Serializable;
 				return;

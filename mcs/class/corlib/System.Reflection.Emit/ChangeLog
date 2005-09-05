@@ -1,3 +1,9 @@
+
+Mon Sep 5 18:08:09 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* EventBuilder.cs, FieldBuilder.cs, MethodBuilder.cs, TypeBuilder.cs,
+	PropertyBuilder.cs: take care of the SpecialName attribute (bug #75768).
+
 2005-09-01  Raja R Harinath  <rharinath@novell.com>
 
 	* CustomAttributeBuilder.cs (get_umarshal): Don't cause a nullref

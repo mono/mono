@@ -133,6 +133,13 @@ namespace System.Reflection.Emit {
 			def_value = defaultValue;
 		}
 		public void SetCustomAttribute( CustomAttributeBuilder customBuilder) {
+#if NET_2_0
+			string attrname = customBuilder.Ctor.ReflectedType.FullName;
+			if (attrname == "System.Runtime.CompilerServices.SpecialNameAttribute") {
+				attrs |= PropertyAttributes.SpecialName;
+				return;
+			}
+#endif
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);

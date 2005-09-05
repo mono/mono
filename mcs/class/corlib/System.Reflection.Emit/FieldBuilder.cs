@@ -147,6 +147,11 @@ namespace System.Reflection.Emit {
 			} else if (attrname == "System.NonSerializedAttribute") {
 				attrs |= FieldAttributes.NotSerialized;
 				return;
+#if NET_2_0
+			} else if (attrname == "System.Runtime.CompilerServices.SpecialNameAttribute") {
+				attrs |= FieldAttributes.SpecialName;
+				return;
+#endif
 			} else if (attrname == "System.Runtime.InteropServices.MarshalAsAttribute") {
 				attrs |= FieldAttributes.HasFieldMarshal;
 				marshal_info = CustomAttributeBuilder.get_umarshal (customBuilder, true);
