@@ -35,6 +35,9 @@ namespace System.Collections
 {
 	[Serializable]
 	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+#if NET_2_0
+	[Obsolete ("Please use StringComparer instead.")]
+#endif
 	public class CaseInsensitiveHashCodeProvider : IHashCodeProvider
 	{
 		static readonly CaseInsensitiveHashCodeProvider singleton = new CaseInsensitiveHashCodeProvider ();

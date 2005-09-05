@@ -35,6 +35,9 @@ using System;
 
 namespace System.Collections {
 
+#if NET_2_0
+	[Obsolete ("Please use IEqualityComparer instead.")]
+#endif
 	public interface IHashCodeProvider {
 		int GetHashCode (object obj);
 	}

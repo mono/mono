@@ -81,6 +81,10 @@ namespace System.Collections {
 		private IComparer comparerRef;
 		private SerializationInfo serializationInfo;
 
+#if NET_2_0
+		private IEqualityComparer equalityComparer;
+#endif
+
 		private static readonly int [] primeTbl = {
 			11,
 			19,
@@ -124,7 +128,9 @@ namespace System.Collections {
 
 		public Hashtable () : this (0, 1.0f) {}
 
-
+#if NET_2_0
+		[Obsolete ("Please use Hashtable(int, float, IEqualityComparer) instead")]
+#endif
 		public Hashtable (int capacity, float loadFactor, IHashCodeProvider hcp, IComparer comparer) {
 			if (capacity<0)
 				throw new ArgumentOutOfRangeException ("capacity", "negative capacity");
@@ -148,7 +154,6 @@ namespace System.Collections {
 
 			this.inUse = 0;
 			this.modificationCount = 0;
-
 		}
 
 		public Hashtable (int capacity, float loadFactor) :
@@ -160,6 +165,9 @@ namespace System.Collections {
 		{
 		}
 
+#if NET_2_0
+		[Obsolete ("Please use Hashtable(int, IEqualityComparer) instead")]
+#endif
 		public Hashtable (int capacity,
 		                  IHashCodeProvider hcp,
 		                  IComparer comparer)
@@ -167,7 +175,9 @@ namespace System.Collections {
 		{
 		}
 
-
+#if NET_2_0
+		[Obsolete ("Please use Hashtable(IDictionary, float, IEqualityComparer) instead")]
+#endif
 		public Hashtable (IDictionary d, float loadFactor,
 		                  IHashCodeProvider hcp, IComparer comparer)
 			: this (d!=null ? d.Count : 0,
@@ -194,11 +204,17 @@ namespace System.Collections {
 		{
 		}
 
+#if NET_2_0
+		[Obsolete ("Please use Hashtable(IDictionary, IEqualityComparer) instead")]
+#endif
 		public Hashtable (IDictionary d, IHashCodeProvider hcp, IComparer comparer)
 		                 : this (d, 1.0f, hcp, comparer)
 		{
 		}
 
+#if NET_2_0
+		[Obsolete ("Please use Hashtable(IEqualityComparer) instead")]
+#endif
 		public Hashtable (IHashCodeProvider hcp, IComparer comparer)
 		                 : this (1, 1.0f, hcp, comparer)
 		{
@@ -209,10 +225,37 @@ namespace System.Collections {
 			serializationInfo = info;
 		}
 
+#if NET_2_0
+		public Hashtable (IDictionary d, IEqualityComparer equalityComparer) : this (d, 1.0f, equalityComparer)
+		{
+		}
+
+		public Hashtable (IDictionary d, float loadFactor, IEqualityComparer equalityComparer) : this (d, loadFactor)
+		{
+			this.equalityComparer = equalityComparer;
+		}
+
+		public Hashtable (IEqualityComparer equalityComparer) : this (1, 1.0f, equalityComparer)
+		{
+		}
+
+		public Hashtable (int capacity, IEqualityComparer equalityComparer) : this (capacity, 1.0f, equalityComparer)
+		{
+		}
+
+		public Hashtable (int capacity, float loadFactor, IEqualityComparer equalityComparer) : this (capacity, loadFactor)
+		{
+			this.equalityComparer = equalityComparer;
+		}
+#endif
+
 		//
 		// Properties
 		//
 
+#if NET_2_0
+		[Obsolete ("Please use EqualityComparer property.")]
+#endif
 		protected IComparer comparer {
 			set {
 				comparerRef = value;
@@ -222,6 +265,9 @@ namespace System.Collections {
 			}
 		}
 
+#if NET_2_0
+		[Obsolete ("Please use EqualityComparer property.")]
+#endif
 		protected IHashCodeProvider hcp {
 			set {
 				hcpRef = value;
@@ -230,6 +276,14 @@ namespace System.Collections {
 				return hcpRef;
 			}
 		}
+
+#if NET_2_0
+		protected IEqualityComparer EqualityComparer {
+			get {
+				return equalityComparer;
+			}
+		}
+#endif
 
 		// ICollection
 
@@ -453,7 +507,13 @@ namespace System.Collections {
 
 		public virtual object Clone ()
 		{
+#if NET_2_0
+			Hashtable ht = new Hashtable (Count, equalityComparer);
+			ht.hcp = this.hcp;
+			ht.comparer = this.comparer;
+#else
 			Hashtable ht = new Hashtable (Count, hcp, comparer);
+#endif
 			ht.inUse = 0;
 			ht.loadFactor = this.loadFactor;
 
@@ -468,6 +528,9 @@ namespace System.Collections {
 			return ht;
 		}
 
+#if NET_2_0
+		[MonoTODO ("Serialize equalityComparer")]
+#endif
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
@@ -491,6 +554,9 @@ namespace System.Collections {
 
 		}
 
+#if NET_2_0
+		[MonoTODO ("Serialize equalityComparer")]
+#endif
 		public virtual void OnDeserialization (object sender)
 		{
 			if (serializationInfo == null) return;
@@ -538,6 +604,10 @@ namespace System.Collections {
 		/// <summary>Returns the hash code for the specified key.</summary>
 		protected virtual int GetHash (Object key)
 		{
+#if NET_2_0
+			if (equalityComparer != null)
+				return equalityComparer.GetHashCode (key);
+#endif
 			if (hcpRef == null)
 				return key.GetHashCode ();
 			
@@ -550,6 +620,10 @@ namespace System.Collections {
 		/// </summary>
 		protected virtual bool KeyEquals (Object item, Object key)
 		{
+#if NET_2_0
+			if (equalityComparer != null)
+				return equalityComparer.Equals (item, key);
+#endif
 			if (comparerRef == null)
 				return item.Equals (key);
 			
