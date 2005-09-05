@@ -9,7 +9,7 @@ system = System.dll
 else
 system = $(topdir)/class/lib/$(PROFILE)/System.dll
 endif
-	
+
 ifeq (net_2_0, $(PROFILE))
 OTHER_LIB_MCS_FLAGS = -r:System.Configuration.dll
 endif
