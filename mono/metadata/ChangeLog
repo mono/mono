@@ -1,5 +1,17 @@
 2005-09-05  Martin Baulig  <martin@ximian.com>
 
+	Reflect latest API changes in the August CTP.
+
+	* icall.c
+	("Type.BindGenericParameters"): Renamed to "MakeGenericType".
+	("MonoType.HasGenericArguments"): Removed.
+	("MonoMethod.BindGenericParameters"): Renamed to
+	"MakeGenericMethod".
+	("MethodBuilder.BindGenericParameters"): Renamed to
+	"MakeGenericMethod".	
+
+2005-09-05  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.c: Moved the debugger icalls into icall.c.
 
 2005-09-05  Martin Baulig  <martin@ximian.com>
