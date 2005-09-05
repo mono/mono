@@ -1,5 +1,9 @@
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* test-453.cs : test for #75846.
+
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* gtest-198.cs : test for #75957.
 
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>

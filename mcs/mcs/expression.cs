@@ -2805,6 +2805,14 @@ namespace Mono.CSharp {
 						lc;
 				}
 			}
+			else if (oper == Operator.BitwiseOr) {
+				if (lc is EnumConstant &&
+				    rc != null && rc.IsZeroInteger)
+					return lc;
+				if (rc is EnumConstant &&
+				    lc != null && lc.IsZeroInteger)
+					return rc;
+			}
 
 			if (rc != null && lc != null){
 				int prev_e = Report.Errors;

@@ -1,3 +1,9 @@
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* expression.cs : (Binary.DoResolve): when one is enum constant and
+	  another is constant 0, then return enum one *as enum type*.
+	  Fixed bug 74846.
+
 2005-09-02  Raja R Harinath  <rharinath@novell.com>
 
 	* attribute.cs (GetMarshal): Work even if "DefineCustom" is
