@@ -1,3 +1,7 @@
+2005-09-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* mini.c: ignore SIGPIPE.
+
 2005-06-03  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (emit_call): Fix yet another bug in the near call
