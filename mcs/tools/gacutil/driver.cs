@@ -342,15 +342,23 @@ namespace Mono.Tools {
 					File.Delete (link);
 					if (Directory.GetFiles (link_dir).Length == 0) {
 						WriteLine ("Cleaning package directory, it is empty.");
-						Directory.Delete (link_dir);
+						try {
+							Directory.Delete (link_dir);
+						} catch {
+							// Workaround: GetFiles does not list Symlinks
+						}
 					}
 				}
 				WriteLine ("Assembly removed from the gac.");
 			}
 
 			if(Directory.GetDirectories (asmdir).Length == 0) {
-				WriteLine ("Cleaning assembly dir, its empty");
-				Directory.Delete (asmdir);
+				WriteLine ("Cleaning assembly dir, it is empty");
+				try {
+					Directory.Delete (asmdir);
+				} catch {
+					// Workaround: GetFiles does not list Symlinks
+				}
 			}
 
 			return true;
