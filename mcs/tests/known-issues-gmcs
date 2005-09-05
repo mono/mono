@@ -8,15 +8,9 @@ gtest-179.cs IGNORE
 gtest-187.cs IGNORE
 test-439.cs IGNORE		# Compiles to invalid IL
 test-442.cs IGNORE		# Compiles to invalid IL
-test-450.cs
-test-451.cs
-test-452.cs
 
 test-49.cs
 test-50.cs IGNORE	# Windows-only test
 test-67.cs IGNORE	# Windows-only test
 test-anon-27.cs
 test-xml-027.cs
-test-anon-31.cs
-test-partial-08.cs
-test-partial-09.cs
