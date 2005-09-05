@@ -1,3 +1,7 @@
+2005-09-05  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGrid.cs: fixes recursion bug
+
 2005-09-03  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeNice.cs: 
