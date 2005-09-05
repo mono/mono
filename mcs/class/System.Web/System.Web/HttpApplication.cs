@@ -657,6 +657,16 @@ namespace System.Web {
 			}
 		}
 
+		static void FinalErrorWrite (HttpResponse response, string error)
+		{
+			try {
+				response.Write (error);
+				response.Flush (true);
+			} catch {
+				response.Close ();
+			}
+		}
+
 		void OutputPage ()
 		{
 			if (context.Error == null){
@@ -682,13 +692,14 @@ namespace System.Web {
 						response.StatusCode = 500;
 					}
 					if (!RedirectCustomError ())
-						response.Write (((HttpException) error).GetHtmlErrorMessage ());
+						FinalErrorWrite (response, ((HttpException) error).GetHtmlErrorMessage ());
+					else
+						response.Flush (true);
 				} else {
 					if (!(error is HttpException))
 						error = new HttpException ("", error);
-					response.Write (((HttpException) error).GetHtmlErrorMessage ());
+					FinalErrorWrite (response, ((HttpException) error).GetHtmlErrorMessage ());
 				}
-				response.Flush (true);
 			}
 			
 		}
