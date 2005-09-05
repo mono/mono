@@ -125,7 +125,7 @@ namespace System.Data.SqlClient
 		public override DbType DbType
         {
             get { return SqlConvert.SqlDbTypeToDbType(_sqlDbType); }           
-			set { _sqlDbType = SqlConvert.DbTypeToSqlDbType(value); }
+			set { SqlDbType = SqlConvert.DbTypeToSqlDbType(value); }
         }                
         
         public SqlDbType SqlDbType
@@ -174,7 +174,7 @@ namespace System.Data.SqlClient
 		{
 			get { return base.Value; }
 			set { 
-				if (!_isDbTypeSet && (value != null)) {
+				if (!_isDbTypeSet && (value != null) && (value != DBNull.Value)) {
                     _sqlDbType = SqlConvert.ValueTypeToSqlDbType(value.GetType());
 				}
 				base.Value = value; 

@@ -114,7 +114,7 @@ namespace System.Data.OleDb
 		public override DbType DbType
         {
             get { return OleDbConvert.OleDbTypeToDbType(_oleDbType); }           
-			set { _oleDbType = OleDbConvert.DbTypeToOleDbType(value); }
+			set { OleDbType = OleDbConvert.DbTypeToOleDbType(value); }
         }                
         
         public OleDbType OleDbType
@@ -130,7 +130,7 @@ namespace System.Data.OleDb
         {
             get { return base.Value; }
             set {
-                if (!_isDbTypeSet && (value != null)) {
+                if (!_isDbTypeSet && (value != null) && (value != DBNull.Value)) {
                     _oleDbType = OleDbConvert.ValueTypeToOleDbType(value.GetType());
 				}
                 base.Value = value;

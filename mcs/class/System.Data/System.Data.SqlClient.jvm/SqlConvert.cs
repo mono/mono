@@ -82,43 +82,36 @@ namespace System.Data.SqlClient
 
 		internal static SqlDbType ValueTypeToSqlDbType(Type type)
 		{
-			if (type.Equals(typeof(byte[]))) return  SqlDbType.VarBinary;
-			if (type.Equals(typeof(bool))) return SqlDbType.Bit;
-//				if (type.Equals(typeof(string))) return OleDbType.BSTR;
-//				if (type.Equals(typeof(string))) return OleDbType.Char;
-//				if (type.Equals(typeof(decimal))) return OleDbType.Currency;
-			if (type.Equals(typeof(DateTime))) return SqlDbType.DateTime;
-//				if (type.Equals(typeof(DateTime))) return OleDbType.DBDate;
-//				if (type.Equals(typeof(TimeSpan))) return OleDbType.DBTime;
-//				if (type.Equals(typeof(DateTime))) return OleDbType.DBTimeStamp;
-			if (type.Equals(typeof(decimal))) return SqlDbType.Decimal;
-//				if (type.Equals(typeof(int))) return OleDbType.Error;
-//				if (type.Equals(typeof(DateTime))) return OleDbType.Filetime;
-			if (type.Equals(typeof(Guid))) return SqlDbType.UniqueIdentifier;
-//				if (type.Equals(typeof(short))) return OleDbType.TinyInt;
-			if (type.Equals(typeof(short))) return SqlDbType.SmallInt;
-			if (type.Equals(typeof(int))) return SqlDbType.Int;
-			if (type.Equals(typeof(long))) return SqlDbType.BigInt;
-//				if (type.Equals(typeof(object))) return OleDbType.IDispatch;
-//				if (type.Equals(typeof(object))) return OleDbType.IUnknown;
-//				if (type.Equals(typeof(byte[]))) return OleDbType.LongVarBinary;
-//				if (type.Equals(typeof(string))) return OleDbType.LongVarChar;
-//				if (type.Equals(typeof(decimal))) return OleDbType.Numeric;
-//				if (type.Equals(typeof(object))) return OleDbType.PropVariant;
-			if (type.Equals(typeof(float))) return SqlDbType.Float;
-			if (type.Equals(typeof(double))) return SqlDbType.Float;
-			if (type.Equals(typeof(byte))) return SqlDbType.TinyInt;
-//				if (type.Equals(typeof(int))) return OleDbType.UnsignedSmallInt;
-//				if (type.Equals(typeof(long))) return OleDbType.UnsignedInt;
-//				if (type.Equals(typeof(decimal))) return OleDbType.UnsignedBigInt;
-//				if (type.Equals(typeof(byte[]))) return OleDbType.VarBinary;
-			if (type.Equals(typeof(string))) return SqlDbType.VarChar;
-			if (type.Equals(typeof(object))) return SqlDbType.Variant;
-//				if (type.Equals(typeof(decimal))) return OleDbType.VarNumeric;
-//				if (type.Equals(typeof(string))) return OleDbType.WChar;
-//				if (type.Equals(typeof(string))) return OleDbType.VarWChar;
-//				if (type.Equals(typeof(string))) return OleDbType.LongVarWChar;
-			return SqlDbType.Variant;
+			switch (Type.GetTypeCode(type)) {
+				case TypeCode.Boolean: return SqlDbType.Bit;
+				case TypeCode.Byte: return SqlDbType.TinyInt;
+				case TypeCode.Char: return SqlDbType.Char;
+				case TypeCode.DateTime: return SqlDbType.DateTime;
+				case TypeCode.DBNull: return SqlDbType.Variant;
+				case TypeCode.Decimal: return SqlDbType.Decimal;
+				case TypeCode.Double: return SqlDbType.Float;
+				case TypeCode.Empty: return SqlDbType.Variant;
+				case TypeCode.Int16: return SqlDbType.SmallInt;
+				case TypeCode.Int32: return SqlDbType.Int;
+				case TypeCode.Int64: return SqlDbType.BigInt;
+				default:
+				case TypeCode.Object: {
+					if (type.Equals(DbTypes.TypeOfByteArray)) return  SqlDbType.VarBinary;
+					//if (type.Equals(DbTypes.TypeOfTimespan)) return OleDbType.DBTime;
+					if (type.Equals(DbTypes.TypeOfGuid)) return SqlDbType.UniqueIdentifier;
+
+					if (type.IsEnum)
+						return ValueTypeToSqlDbType (Enum.GetUnderlyingType (type));
+
+					return SqlDbType.Variant;
+				}
+				case TypeCode.SByte: return SqlDbType.TinyInt;
+				case TypeCode.Single: return SqlDbType.Float;
+				case TypeCode.String: return SqlDbType.VarChar;
+				case TypeCode.UInt16: return SqlDbType.SmallInt;
+				case TypeCode.UInt32: return SqlDbType.Int;
+				case TypeCode.UInt64: return SqlDbType.BigInt;
+			}
 		}
 
 		internal static Type SqlDbTypeToValueType(SqlDbType sqlDbType)

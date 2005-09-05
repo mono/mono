@@ -1,3 +1,9 @@
+2005-09-05 Boris Kirzner <borisk@mainsoft.com>
+	* OleDbConvert.cs: return underlined value type in case of enum value.
+	* OleDbParameter.cs:
+		- Update of DbType should also update OleDbType property. 
+		- Do not update parameter type is the value set is DbNull.
+
 2005-06-21  Konstantin  Triger <kostat@mainsoft.com>
 
 	* OleDbConvert.cs: mapping OleDbType.Guid to Types.CHAR

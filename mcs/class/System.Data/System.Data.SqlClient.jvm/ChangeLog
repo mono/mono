@@ -1,3 +1,9 @@
+2005-09-05 Boris Kirzner <borisk@mainsoft.com>
+	* SqlConvert.cs: reimplemented ValueTypeToSqlDbType().
+	* SqlParameter.cs:
+		- Update of DbType should also update SqlDbType property. 
+		- Do not update parameter type is the value set is DbNull.
+
 2005-08-18  Boris Kirzner <borisk@mainsoft.com>
 
 	* SqlCommand.cs: added GetReturnParameter method.

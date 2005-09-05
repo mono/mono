@@ -159,6 +159,9 @@ namespace System.Data.OleDb
 					if (type.Equals(DbTypes.TypeOfTimespan)) return OleDbType.DBTime;
 					if (type.Equals(DbTypes.TypeOfGuid)) return OleDbType.Guid;
 
+					if (type.IsEnum)
+						return ValueTypeToOleDbType (Enum.GetUnderlyingType (type));
+
 					return OleDbType.IUnknown;
 				}
 				case TypeCode.SByte: return OleDbType.TinyInt;
