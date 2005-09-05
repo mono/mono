@@ -1,5 +1,10 @@
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* gtest-198.cs : fix. missing main.
+	* gtest-199.cs : test code similar to #75772.
+
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* known-issues-gmcs: new tests are not passing with gmcs.
 
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>

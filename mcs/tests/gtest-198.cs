@@ -16,6 +16,11 @@ namespace ClassLibrary2
                         _List.Add(item);
                 }
         }
+
+	class Foo
+	{
+		public static void Main () {}
+	}
 }
  
 
