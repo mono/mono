@@ -1,5 +1,10 @@
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* attribute.cs : (Attribute.IsValidArgumentType): array of string/
+	  Type/Object should be allowed as well. Fixed bug #75968.
+
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* expression.cs : (Binary.DoResolve): when one is enum constant and
 	  another is constant 0, then return enum one *as enum type*.
 	  Fixed bug 74846.
