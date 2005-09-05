@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -244,3 +245,5 @@ namespace MonoTests.System.Collections.Generic
 		}
 	}
 }
+
+#endif
