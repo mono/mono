@@ -8141,6 +8141,8 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ldobj, type);
 			} else if (type.IsGenericParameter)
 				ig.Emit (OpCodes.Ldelem_Any, type);
+			else if (type.IsPointer)
+				ig.Emit (OpCodes.Ldelem_I);
 			else
 				ig.Emit (OpCodes.Ldelem_Ref);
 		}
@@ -8181,7 +8183,9 @@ namespace Mono.CSharp {
 			} else if (t.IsGenericParameter) {
 				has_type_arg = true;
 				return OpCodes.Stelem_Any;
-			} else
+			} else if (t.IsPointer)
+				return OpCodes.Stelem_I;
+			else
 				return OpCodes.Stelem_Ref;
 		}
 

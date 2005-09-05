@@ -1,3 +1,9 @@
+2005-08-24  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #75874.
+	* expression.cs (ArrayAccess.EmitLoadOpcode): Emit ldelem.i for pointers.
+	(ArrayAccess.GetStoreOpcode): Return stelem.i for pointers.
+
 2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* expression.cs : tiny fix is required for not warning positive ulong.
@@ -33,7 +39,7 @@
 2005-08-23  Raja R Harinath  <rharinath@novell.com>
 
 	* support.cs (SeekableStreamReader.Position): Avoid an expensive
-	loop that performs 'max (pos, char_count)'.
+	loop that performs 'min (pos, char_count)'.
 
 	Fix #75862.
 	* expression.cs (Unary.ResolveOperator): Don't discard implicit
