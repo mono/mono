@@ -1,3 +1,8 @@
+2005-09-05  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolFile.cs (MonoDebuggerSupport): Make this internal and
+	move everything we don't need here into the debugger.
+
 2005-06-20  Chris Toshok  <toshok@ximian.com>
 
 	* MonoSymbolFile.cs (MonoSymbolFile.Dispose): make public.

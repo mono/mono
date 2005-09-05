@@ -72,29 +72,13 @@ namespace Mono.CompilerServices.SymbolWriter
 		}
 	}
 
-	public class MonoDebuggerSupport
+	internal class MonoDebuggerSupport
 	{
-		static GetTypeFunc get_type;
 		static GetMethodTokenFunc get_method_token;
-		static GetMethodFunc get_method;
-		static GetLocalTypeFromSignatureFunc local_type_from_sig;
 		static GetGuidFunc get_guid;
-		static CheckRuntimeVersionFunc check_runtime_version;
-		static GetMethodIndexFunc get_method_index;
-		static MakeArrayTypeFunc make_array_type;
-		static ResolveTypeFunc resolve_type;
-		static GetTypeTokenFunc get_type_token;
 
-		delegate Type GetTypeFunc (Assembly assembly, int token);
 		delegate int GetMethodTokenFunc (Assembly assembly, MethodBase method);
-		delegate MethodBase GetMethodFunc (Assembly assembly, int token);
-		delegate Type GetLocalTypeFromSignatureFunc (Assembly assembly, byte[] sig);
 		delegate Guid GetGuidFunc (Module module);
-		delegate string CheckRuntimeVersionFunc (string filename);
-		delegate int GetMethodIndexFunc (MethodBase method);
-		delegate Type MakeArrayTypeFunc (Type type, int rank);
-		delegate Type ResolveTypeFunc (Module module, int token);
-		delegate int GetTypeTokenFunc (Type type);
 
 		static Delegate create_delegate (Type type, Type delegate_type, string name)
 		{
@@ -108,49 +92,12 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		static MonoDebuggerSupport ()
 		{
-			get_type = (GetTypeFunc) create_delegate (
-				typeof (Assembly), typeof (GetTypeFunc),
-				"MonoDebugger_GetType");
-
 			get_method_token = (GetMethodTokenFunc) create_delegate (
 				typeof (Assembly), typeof (GetMethodTokenFunc),
 				"MonoDebugger_GetMethodToken");
 
-			get_method = (GetMethodFunc) create_delegate (
-				typeof (Assembly), typeof (GetMethodFunc),
-				"MonoDebugger_GetMethod");
-
-			local_type_from_sig = (GetLocalTypeFromSignatureFunc) create_delegate (
-				typeof (Assembly), typeof (GetLocalTypeFromSignatureFunc),
-				"MonoDebugger_GetLocalTypeFromSignature");
-
 			get_guid = (GetGuidFunc) create_delegate (
 				typeof (Module), typeof (GetGuidFunc), "Mono_GetGuid");
-
-			check_runtime_version = (CheckRuntimeVersionFunc) create_delegate (
-				typeof (Assembly), typeof (CheckRuntimeVersionFunc),
-				"MonoDebugger_CheckRuntimeVersion");
-
-			get_method_index = (GetMethodIndexFunc) create_delegate (
-				typeof (Assembly), typeof (GetMethodIndexFunc),
-				"MonoDebugger_GetMethodIndex");
-
-			make_array_type = (MakeArrayTypeFunc) create_delegate (
-				typeof (Assembly), typeof (MakeArrayTypeFunc),
-				"MonoDebugger_MakeArrayType");
-
-			resolve_type = (ResolveTypeFunc) create_delegate (
-				typeof (Module), typeof (ResolveTypeFunc),
-				"MonoDebugger_ResolveType");
-
-			get_type_token = (GetTypeTokenFunc) create_delegate (
-				typeof (Assembly), typeof (GetTypeTokenFunc),
-				"MonoDebugger_GetTypeToken");
-		}
-
-		public static Type GetType (Assembly assembly, int token)
-		{
-			return get_type (assembly, token);
 		}
 
 		public static int GetMethodToken (MethodBase method)
@@ -158,44 +105,9 @@ namespace Mono.CompilerServices.SymbolWriter
 			return get_method_token (method.ReflectedType.Assembly, method);
 		}
 
-		public static MethodBase GetMethod (Assembly assembly, int token)
-		{
-			return get_method (assembly, token);
-		}
-
-		public static Type GetLocalTypeFromSignature (Assembly assembly, byte[] sig)
-		{
-			return local_type_from_sig (assembly, sig);
-		}
-
-		public static string CheckRuntimeVersion (string filename)
-		{
-			return check_runtime_version (filename);
-		}
-
-		public static int GetMethodIndex (MethodBase method)
-		{
-			return get_method_index (method);
-		}
-
 		public static Guid GetGuid (Module module)
 		{
 			return get_guid (module);
-		}
-
-		public static Type MakeArrayType (Type type, int rank)
-		{
-			return make_array_type (type, rank);
-		}
-
-		public static Type ResolveType (Module module, int token)
-		{
-			return resolve_type (module, token);
-		}
-
-		public static int GetTypeToken (Type type)
-		{
-			return get_type_token (type);
 		}
 	}
 
