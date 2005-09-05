@@ -1,3 +1,8 @@
+2005-09-05  Chris Toshok  <toshok@ximian.com>
+
+	* BaseDataBoundControl.cs (DataSourceID): testing reveals this is
+	stored in the ViewState.
+
 2005-09-02  Chris Toshok  <toshok@ximian.com>
 
 	* Repeater.cs (GetData): change this slightly so the Repeater

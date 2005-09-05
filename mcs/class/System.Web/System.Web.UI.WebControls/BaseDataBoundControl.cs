@@ -41,7 +41,6 @@ namespace System.Web.UI.WebControls
 		public event EventHandler DataBound;
 		
 		object dataSource;
-		string dataSourceId;
 		bool initialized;
 		bool requiresDataBinding;
 		
@@ -76,10 +75,10 @@ namespace System.Web.UI.WebControls
 		[ThemeableAttribute (false)]
 		public virtual string DataSourceID {
 			get {
-				return dataSourceId != null ? dataSourceId : string.Empty;
+				return ViewState.GetString ("DataSourceID", "");
 			}
 			set {
-				dataSourceId = value;
+				ViewState["DataSourceID"] = value;
 				if (initialized)
 					OnDataPropertyChanged ();
 			}
