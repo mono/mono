@@ -1,3 +1,8 @@
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* gcs0208-2.cs, gcs0208-3.cs, gcs0208-4.cs : added test with related
+	  to #75772.
+
 2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs0418-3.cs, cs0418-4.cs, cs0418-5.cs,
