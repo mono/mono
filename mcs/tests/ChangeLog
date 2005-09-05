@@ -1,3 +1,7 @@
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* known-issues-gmcs : tset-49 is not working, should be IGNORED.
+
 2005-09-02  Raja R Harinath  <rharinath@novell.com>
 
 	* test-452.cs: New test from #75941.
