@@ -394,28 +394,24 @@ namespace Mono.CSharp {
 					Expression e;
 
 					e = Convert.ImplicitConversion (ec, Expr, TypeManager.int32_type, loc);
-					if (e != null){
-						type = TypeManager.int32_type;
-						return this;
-					}
+					if (e != null)
+						goto ok;
 					e = Convert.ImplicitConversion (ec, Expr, TypeManager.uint32_type, loc);
-					if (e != null){
-						type = TypeManager.uint32_type;
-						return this;
-					}
+					if (e != null)
+						goto ok;
 					e = Convert.ImplicitConversion (ec, Expr, TypeManager.int64_type, loc);
-					if (e != null){
-						type = TypeManager.int64_type;
-						return this;
-					}
+					if (e != null)
+						goto ok;
 					e = Convert.ImplicitConversion (ec, Expr, TypeManager.uint64_type, loc);
-					if (e != null){
-						type = TypeManager.uint64_type;
-						return this;
-					}
+					if (e != null)
+						goto ok;
 					Error23 (expr_type);
 					return null;
+				ok:
+					Expr = e;
+					expr_type = e.Type;
 				}
+
 				type = expr_type;
 				return this;
 
