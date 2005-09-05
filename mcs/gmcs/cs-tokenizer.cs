@@ -2322,6 +2322,10 @@ namespace Mono.CSharp
 					Report.Error (1011, Location, error_details);
 					return Token.ERROR;
 				}
+				if (c == '\r' || c == '\n') {
+					Report.Error (1010, Location, "Newline in constant");
+					return Token.ERROR;
+				}
 				c = escape (c);
 				if (c == -1)
 					return Token.ERROR;

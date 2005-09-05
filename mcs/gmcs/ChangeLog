@@ -1,3 +1,35 @@
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* expression.cs : tiny fix is required for not warning positive ulong.
+	  See test-441.cs.
+
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* expression.cs : add CS0652 check for constant and integral
+	  expression. Fixed bug #53974.
+
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* expression.cs : in DoNumericPromotions(), check if there is implicit
+	  conversion overload for string (to check CS0034). Fixed bug #52492.
+
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs-tokenizer.cs : Check newline in char constant. Fixed bug #75245.
+
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ecore.cs : report location when it is *not* Null.
+
+2005-08-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* codegen.cs,
+	  ecore.cs,
+	  flowanalysis.cs,
+	  expression.cs:
+	  Added OmitStructFlowAnalysis to EmitContext to handle CS0165 check
+	  correctly. Fixed bug #75721.
+
 2005-08-23  Raja R Harinath  <rharinath@novell.com>
 
 	* support.cs (SeekableStreamReader.Position): Avoid an expensive

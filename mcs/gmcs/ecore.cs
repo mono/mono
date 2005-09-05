@@ -59,7 +59,12 @@ namespace Mono.CSharp {
 		DisableFlowAnalysis	= 8,
 
 		// Set if this is resolving the first part of a MemberAccess.
-		Intermediate		= 16
+		Intermediate		= 16,
+
+		// Disable control flow analysis _of struct_ while resolving the expression.
+		// This is used when resolving the instance expression of a field expression.
+		DisableStructFlowAnalysis	= 32,
+
 	}
 
 	//
@@ -124,9 +129,9 @@ namespace Mono.CSharp {
 		public void Error (int error, string s)
 		{
 			if (loc.IsNull)
-				Report.Error (error, loc, s);
-			else
 				Report.Error (error, s);
+			else
+				Report.Error (error, loc, s);
 		}
 
 		/// <summary>
@@ -330,8 +335,11 @@ namespace Mono.CSharp {
 				return ResolveAsTypeStep (ec, false);
 
 			bool old_do_flow_analysis = ec.DoFlowAnalysis;
+			bool old_omit_struct_analysis = ec.OmitStructFlowAnalysis;
 			if ((flags & ResolveFlags.DisableFlowAnalysis) != 0)
 				ec.DoFlowAnalysis = false;
+			if ((flags & ResolveFlags.DisableStructFlowAnalysis) != 0)
+				ec.OmitStructFlowAnalysis = true;
 
 			Expression e;
 			bool intermediate = (flags & ResolveFlags.Intermediate) == ResolveFlags.Intermediate;
@@ -342,6 +350,7 @@ namespace Mono.CSharp {
 				e = DoResolve (ec);
 
 			ec.DoFlowAnalysis = old_do_flow_analysis;
+			ec.OmitStructFlowAnalysis = old_omit_struct_analysis;
 
 			if (e == null)
 				return null;

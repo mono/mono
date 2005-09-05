@@ -2031,7 +2031,7 @@ namespace Mono.CSharp {
 		// type, otherwise ConvertImplict() already finds the user-defined conversion for us,
 		// so we don't explicitly check for performance reasons.
  		//
-		bool DoNumericPromotions (EmitContext ec, Type l, Type r, bool check_user_conv)
+		bool DoNumericPromotions (EmitContext ec, Type l, Type r, Expression lexpr, Expression rexpr, bool check_user_conv)
 		{
 			if (IsOfType (ec, l, r, TypeManager.double_type, check_user_conv)){
 				//
@@ -2182,6 +2182,12 @@ namespace Mono.CSharp {
 			} else {
 				left = ForceConversion (ec, left, TypeManager.int32_type);
 				right = ForceConversion (ec, right, TypeManager.int32_type);
+
+				bool strConv =
+					Convert.ImplicitConversionExists (ec, lexpr, TypeManager.string_type) &&
+					Convert.ImplicitConversionExists (ec, rexpr, TypeManager.string_type);
+				if (strConv && left != null && right != null)
+					Error_OperatorAmbiguous (loc, oper, l, r);
 
 				type = TypeManager.int32_type;
 			}
@@ -2753,7 +2759,7 @@ namespace Mono.CSharp {
 			// This will leave left or right set to null if there is an error
 			//
 			bool check_user_conv = is_user_defined (l) && is_user_defined (r);
-			DoNumericPromotions (ec, l, r, check_user_conv);
+			DoNumericPromotions (ec, l, r, left, right, check_user_conv);
 			if (left == null || right == null){
 				Error_OperatorCannotBeApplied (loc, OperName (oper), l, r);
 				return null;
@@ -2859,7 +2865,106 @@ namespace Mono.CSharp {
 			if (TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type))
 				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
+			// Check CS0652 warning here (before resolving operator).
+			if (oper == Operator.Equality ||
+			    oper == Operator.Inequality ||
+			    oper == Operator.LessThanOrEqual ||
+			    oper == Operator.LessThan ||
+			    oper == Operator.GreaterThanOrEqual ||
+			    oper == Operator.GreaterThan){
+				CheckUselessComparison (left as Constant, right.Type);
+				CheckUselessComparison (right as Constant, left.Type);
+			}
+
 			return ResolveOperator (ec);
+		}
+
+		private void CheckUselessComparison (Constant c, Type type)
+		{
+			if (c == null || !IsTypeIntegral (type)
+				|| c is StringConstant
+				|| c is BoolConstant
+				|| c is CharConstant
+				|| c is FloatConstant
+				|| c is DoubleConstant
+				|| c is DecimalConstant
+				)
+				return;
+
+			long value = 0;
+
+			if (c is ULongConstant) {
+				ulong uvalue = ((ULongConstant) c).Value;
+				if (uvalue > long.MaxValue) {
+					if (type == TypeManager.byte_type ||
+					    type == TypeManager.sbyte_type ||
+					    type == TypeManager.short_type ||
+					    type == TypeManager.ushort_type ||
+					    type == TypeManager.int32_type ||
+					    type == TypeManager.uint32_type ||
+					    type == TypeManager.int64_type)
+						WarnUselessComparison (type);
+					return;
+				}
+				value = (long) uvalue;
+			}
+			else if (c is ByteConstant)
+				value = ((ByteConstant) c).Value;
+			else if (c is SByteConstant)
+				value = ((SByteConstant) c).Value;
+			else if (c is ShortConstant)
+				value = ((ShortConstant) c).Value;
+			else if (c is UShortConstant)
+				value = ((UShortConstant) c).Value;
+			else if (c is IntConstant)
+				value = ((IntConstant) c).Value;
+			else if (c is UIntConstant)
+				value = ((UIntConstant) c).Value;
+			else if (c is LongConstant)
+				value = ((LongConstant) c).Value;
+
+			if (value != 0) {
+				if (IsValueOutOfRange (value, type))
+					WarnUselessComparison (type);
+				return;
+			}
+		}
+
+		private bool IsValueOutOfRange (long value, Type type)
+		{
+			if (IsTypeUnsigned (type) && value < 0)
+				return true;
+			return type == TypeManager.sbyte_type && (value >= 0x80 || value < -0x80) ||
+				type == TypeManager.byte_type && value >= 0x100 ||
+				type == TypeManager.short_type && (value >= 0x8000 || value < -0x8000) ||
+				type == TypeManager.ushort_type && value >= 0x10000 ||
+				type == TypeManager.int32_type && (value >= 0x80000000 || value < -0x80000000) ||
+				type == TypeManager.uint32_type && value >= 0x100000000;
+		}
+
+		private static bool IsTypeIntegral (Type type)
+		{
+			return type == TypeManager.uint64_type ||
+				type == TypeManager.int64_type ||
+				type == TypeManager.uint32_type ||
+				type == TypeManager.int32_type ||
+				type == TypeManager.ushort_type ||
+				type == TypeManager.short_type ||
+				type == TypeManager.sbyte_type ||
+				type == TypeManager.byte_type;
+		}
+
+		private static bool IsTypeUnsigned (Type type)
+		{
+			return type == TypeManager.uint64_type ||
+				type == TypeManager.uint32_type ||
+				type == TypeManager.ushort_type ||
+				type == TypeManager.byte_type;
+		}
+
+		private void WarnUselessComparison (Type type)
+		{
+			Report.Warning (652, 2, loc, "Comparison to integral constant is useless; the constant is outside the range of type '{0}'", type);
 		}
 
 		/// <remarks>
@@ -4092,7 +4197,7 @@ namespace Mono.CSharp {
 		{
 			DoResolveBase (ec);
 
-			if (is_out && ec.DoFlowAnalysis && !IsAssigned (ec, loc))
+			if (is_out && ec.DoFlowAnalysis && (!ec.OmitStructFlowAnalysis || !vi.TypeInfo.IsStruct) && !IsAssigned (ec, loc))
 				return null;
 
 			return this;
@@ -5153,7 +5258,6 @@ namespace Mono.CSharp {
 					method_params = cand_params;
 				}
 			}
-
 			//
 			// Now check that there are no ambiguities i.e the selected method
 			// should be better than all the others
@@ -7048,7 +7152,7 @@ namespace Mono.CSharp {
 			if (!ResolveBase (ec))
 				return null;
 
-			if ((variable_info != null) && !variable_info.IsAssigned (ec)) {
+			if ((variable_info != null) && !(type.IsValueType && ec.OmitStructFlowAnalysis) && !variable_info.IsAssigned (ec)) {
 				Error (188, "The `this' object cannot be used before all of its fields are assigned to");
 				variable_info.SetAssigned (ec);
 				return this;
@@ -7494,7 +7598,7 @@ namespace Mono.CSharp {
 			SimpleName original = expr as SimpleName;
 			Expression new_expr = expr.Resolve (ec,
 				ResolveFlags.VariableOrValue | ResolveFlags.Type |
-				ResolveFlags.Intermediate | ResolveFlags.DisableFlowAnalysis);
+				ResolveFlags.Intermediate | ResolveFlags.DisableStructFlowAnalysis);
 
 			if (new_expr == null)
 				return null;
