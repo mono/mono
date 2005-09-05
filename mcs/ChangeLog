@@ -1,3 +1,7 @@
+2005-09-05  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (bootstrap): Remove special handling on Win32.
+
 2005-07-11  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (centum_tests): Add System.Messaging and

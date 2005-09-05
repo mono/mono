@@ -1,3 +1,8 @@
+2005-09-05  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/net_1_1_bootstrap.make: Remove special-handling on Win32.
+	* profiles/default.make: Likewise.
+
 2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
 
 	* Makefile: Added Consts.cs.in. Removed MonoVersion.cs.
