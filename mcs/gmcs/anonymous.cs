@@ -600,7 +600,7 @@ namespace Mono.CSharp {
 			Console.WriteLine ("NeedThis=" + NeedThis);
 			foreach (LocalInfo li in locals){
 				Pad ();
-				Console.WriteLine ("var {0}", li.Name);
+				Console.WriteLine ("var {0}", MakeFieldName (li.Name));
 			}
 			
 			foreach (ScopeInfo si in children)
@@ -613,6 +613,11 @@ namespace Mono.CSharp {
 		public string MakeHelperName ()
 		{
 			return String.Format ("<>AnonHelp<{0}>", id);
+		}
+
+		private string MakeFieldName (string local_name)
+		{
+			return "<" + id + ":" + local_name + ">";
 		}
 
 		public void EmitScopeType (EmitContext ec)
@@ -644,7 +649,7 @@ namespace Mono.CSharp {
 
 			foreach (LocalInfo info in locals)
 				info.FieldBuilder = ScopeTypeBuilder.DefineField (
-					info.Name, info.VariableType, FieldAttributes.Assembly);
+					MakeFieldName (info.Name), info.VariableType, FieldAttributes.Assembly);
 
 			if (HostsParameters){
 				Hashtable captured_parameters = CaptureContext.captured_parameters;

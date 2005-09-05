@@ -447,7 +447,6 @@ namespace Mono.CSharp {
 			// Let the StreamWriter autodetect the encoder
 			reader.Peek ();
 			
-			Encoding enc = reader.CurrentEncoding;
 			preamble_size = (int) reader.BaseStream.Position;
 		}
 

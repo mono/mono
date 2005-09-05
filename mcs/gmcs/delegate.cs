@@ -859,7 +859,8 @@ namespace Mono.CSharp {
 				delegate_instance_expression = ec.GetThis (loc);
 
 			if (delegate_instance_expression != null && delegate_instance_expression.Type.IsValueType)
-				delegate_instance_expression = new BoxedCast (delegate_instance_expression);
+				delegate_instance_expression = new BoxedCast (
+					delegate_instance_expression, TypeManager.object_type);
 
 			method_group = mg;
 			eclass = ExprClass.Value;

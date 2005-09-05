@@ -1457,12 +1457,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class BoxedCast : EmptyCast {
 
-		public BoxedCast (Expression expr)
-			: base (expr, TypeManager.object_type) 
-		{
-			eclass = ExprClass.Value;
-		}
-
 		public BoxedCast (Expression expr, Type target_type)
 			: base (expr, target_type)
 		{

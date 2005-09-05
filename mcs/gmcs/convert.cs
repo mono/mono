@@ -88,7 +88,7 @@ namespace Mono.CSharp {
 
 			if (gc == null) {
 				if (target_type == TypeManager.object_type)
-					return new BoxedCast (expr);
+					return new BoxedCast (expr, target_type);
 
 				return null;
 			}
@@ -148,7 +148,7 @@ namespace Mono.CSharp {
 					return null;
 
 				if (TypeManager.IsValueType (expr_type))
-					return new BoxedCast (expr);
+					return new BoxedCast (expr, target_type);
 				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type){
 					if (expr_type == TypeManager.anonymous_method_type)
 						return null;
@@ -158,7 +158,7 @@ namespace Mono.CSharp {
 				return null;
 			} else if (target_type == TypeManager.value_type) {
 				if (TypeManager.IsValueType (expr_type))
-					return new BoxedCast (expr);
+					return new BoxedCast (expr, target_type);
 				if (expr_type == TypeManager.null_type)
 					return new NullCast (expr, target_type);
 
@@ -170,7 +170,7 @@ namespace Mono.CSharp {
 				// a boxing conversion
 				//
 				if (expr_type.IsEnum || expr_type.IsGenericParameter)
-					return new BoxedCast (expr);
+					return new BoxedCast (expr, target_type);
 
 				return new EmptyCast (expr, target_type);
 			}
@@ -1388,7 +1388,7 @@ namespace Mono.CSharp {
 			// e.g. target_type is IComparable, IConvertible, IFormattable
 			//
 			if (target_type.IsInterface && target_type.IsAssignableFrom (ic.Type))
-				return new BoxedCast (ic);
+				return new BoxedCast (ic, target_type);
 
 			return null;
 		}
@@ -1914,15 +1914,13 @@ namespace Mono.CSharp {
 			Type expr_type = expr.Type;
 			Type original_expr_type = expr_type;
 
+			Expression ne = ImplicitConversionStandard (ec, expr, target_type, loc);
+
+			if (ne != null)
+				return ne;
+
 			if (expr_type.IsSubclassOf (TypeManager.enum_type)){
-				if (target_type == TypeManager.enum_type ||
-				    target_type == TypeManager.object_type) {
-					if (expr is EnumConstant)
-						expr = ((EnumConstant) expr).Child;
-					// We really need all these casts here .... :-(
-					expr = new BoxedCast (new EmptyCast (expr, expr_type));
-					return new EmptyCast (expr, target_type);
-				} else if ((expr_type == TypeManager.enum_type) && target_type.IsValueType &&
+				if ((expr_type == TypeManager.enum_type) && target_type.IsValueType &&
 					   target_type.IsSubclassOf (TypeManager.enum_type))
 					return new UnboxCast (expr, target_type);
 
@@ -1935,14 +1933,6 @@ namespace Mono.CSharp {
 					expr = new EmptyCast (expr, TypeManager.EnumToUnderlying (expr_type));
 				expr_type = expr.Type;
 			}
-
-			int errors = Report.Errors;
-			Expression ne = ImplicitConversionStandard (ec, expr, target_type, loc);
-			if (Report.Errors > errors)
-				return null;
-
-			if (ne != null)
-				return ne;
 
 			if (TypeManager.IsNullableType (expr.Type) && TypeManager.IsNullableType (target_type))
 				return new Nullable.LiftedConversion (

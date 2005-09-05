@@ -2304,7 +2304,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					left = new BoxedCast (left);
+					left = new BoxedCast (left, TypeManager.object_type);
 					Type = TypeManager.bool_type;
 					return this;
 				}
@@ -2315,7 +2315,7 @@ namespace Mono.CSharp {
 						return null;
 					}
 
-					right = new BoxedCast (right);
+					right = new BoxedCast (right, TypeManager.object_type);
 					Type = TypeManager.bool_type;
 					return this;
 				}
@@ -6995,7 +6995,7 @@ namespace Mono.CSharp {
 					if (e is StringConstant || e is DecimalConstant || !(e is Constant) ||
 					    num_automatic_initializers <= max_automatic_initializers) {
 						Type etype = e.Type;
-						
+
 						ig.Emit (OpCodes.Dup);
 
 						for (int idx = 0; idx < dims; idx++) 
@@ -7005,7 +7005,8 @@ namespace Mono.CSharp {
 						// If we are dealing with a struct, get the
 						// address of it, so we can store it.
 						//
-						if ((dims == 1) && etype.IsValueType &&
+						if ((dims == 1) && 
+						    TypeManager.IsValueType (etype) &&
 						    (!TypeManager.IsBuiltinOrEnum (etype) ||
 						     etype == TypeManager.decimal_type)) {
 							if (e is New){
