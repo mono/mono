@@ -1069,7 +1069,7 @@ namespace System.Windows.Forms
 
 		protected virtual DataGridColumnStyle CreateGridColumn (PropertyDescriptor prop, bool isDefault)
 		{
-			
+			throw new NotImplementedException();
 		}
 
 		protected override void Dispose (bool disposing)
