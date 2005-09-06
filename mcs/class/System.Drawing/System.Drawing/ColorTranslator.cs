@@ -44,7 +44,7 @@ namespace System.Drawing
 
 		public static Color FromHtml (string HtmlFromColor)
 		{
-			switch (HtmlFromColor) {
+			switch (HtmlFromColor.ToLower()) {
 			case "buttonface":
 				return SystemColors.Control;
 			case "captiontext":

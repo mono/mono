@@ -1,3 +1,7 @@
+2005-09-06 Konstantin Triger <kostat@mainsoft.com>
+
+	* ColorTranslator.cs: perform case insensitive check
+
 2005-09-05 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* gdipFunctions.cs: define new functions
