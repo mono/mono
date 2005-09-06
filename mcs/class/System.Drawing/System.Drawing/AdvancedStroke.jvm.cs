@@ -10,6 +10,13 @@ using sun.dc.pr;
 namespace System.Drawing {
 	internal class AdvancedStroke : Stroke {
 
+		public const float PenUnits = 0.01f;
+		public const int MinPenUnits = 100;
+		public const int MinPenUnitsAA = 20;
+		public const float MinPenSizeAA = PenUnits * MinPenUnitsAA;
+		public const double MinPenSizeAASquared = (MinPenSizeAA * MinPenSizeAA);
+		public const double MinPenSizeSquared = 1.000000001;
+
 		/**
 		 * Joins path segments by extending their outside edges until
 		 * they meet.
@@ -58,6 +65,8 @@ namespace System.Drawing {
 		float dash_phase;
 
 		AffineTransform _penTransform;
+		AffineTransform _outputTransform;
+		bool _fitPen;
 
 		/**
 		 * Constructs a new <code>AdvancedStroke</code> with the specified
@@ -87,7 +96,8 @@ namespace System.Drawing {
 		 * @throws IllegalArgumentException if dash lengths are all zero.
 		 */
 		public AdvancedStroke(float width, int cap, int join, float miterlimit,
-			float[] dash, float dash_phase, AffineTransform penTransform) {
+			float[] dash, float dash_phase, AffineTransform penTransform,
+			AffineTransform outputTransform, bool fitPen) {
 			if (width < 0.0f) {
 				throw new IllegalArgumentException("negative width");
 			}
@@ -127,6 +137,8 @@ namespace System.Drawing {
 			}
 			this.dash_phase	= dash_phase;
 			this._penTransform = penTransform;
+			this._outputTransform = outputTransform;
+			this._fitPen = fitPen;
 		}
 
 		/**
@@ -145,7 +157,7 @@ namespace System.Drawing {
 		 *         either JOIN_ROUND, JOIN_BEVEL, or JOIN_MITER
 		 */
 		public AdvancedStroke(float width, int cap, int join, float miterlimit) :
-			this(width, cap, join, miterlimit, null, 0.0f, null) {
+			this(width, cap, join, miterlimit, null, 0.0f, null, null, false) {
 		}
 
 		/**
@@ -163,7 +175,7 @@ namespace System.Drawing {
 		 *         either JOIN_ROUND, JOIN_BEVEL, or JOIN_MITER
 		 */
 		public AdvancedStroke(float width, int cap, int join) :
-			this(width, cap, join, 10.0f, null, 0.0f, null) {
+			this(width, cap, join, 10.0f, null, 0.0f, null, null, false) {
 		}
 
 		/**
@@ -174,7 +186,7 @@ namespace System.Drawing {
 		 * @throws IllegalArgumentException if <code>width</code> is negative
 		 */
 		public AdvancedStroke(float width) :
-			this(width, CAP_SQUARE, JOIN_MITER, 10.0f, null, 0.0f, null) {
+			this(width, CAP_SQUARE, JOIN_MITER, 10.0f, null, 0.0f, null, null, false) {
 		}
 
 		/**
@@ -184,7 +196,7 @@ namespace System.Drawing {
 		 * JOIN_MITER, a miter limit of 10.0.
 		 */
 		public AdvancedStroke() :
-			this(1.0f, CAP_SQUARE, JOIN_MITER, 10.0f, null, 0.0f, null) {
+			this(1.0f, CAP_SQUARE, JOIN_MITER, 10.0f, null, 0.0f, null, null, false) {
 		}
 
 
@@ -200,16 +212,28 @@ namespace System.Drawing {
 			PathConsumer consumer;
 
 			stroker.setPenDiameter(width);
+			if (_fitPen)
+				stroker.setPenFitting(PenUnits, MinPenUnitsAA);
 
 			float[] t4 = null;
-			if (PenTransform != null) {
-				t4 = new float[4]{
+			if (PenTransform != null && !PenTransform.isIdentity()) {
+				t4 = new float[]{
 					(float)PenTransform.getScaleX(), (float)PenTransform.getShearX(), 
 					(float)PenTransform.getShearY(), (float)PenTransform.getScaleY()
 				};
 			}
 
+			float[] t6 = null;
+			if (OutputTransform != null && !OutputTransform.isIdentity()) {
+				t6 = new float[] {
+					(float)OutputTransform.getScaleX(), (float)OutputTransform.getShearX(), 
+					(float)OutputTransform.getShearY(), (float)OutputTransform.getScaleY(),
+					(float)OutputTransform.getTranslateX(), (float)OutputTransform.getTranslateY()
+				};
+			}
+
 			stroker.setPenT4(t4);
+			stroker.setOutputT6(t6);
 			stroker.setCaps(RasterizerCaps[cap]);
 			stroker.setCorners(RasterizerCorners[join], miterlimit);
 			if (dash != null) {
@@ -230,12 +254,6 @@ namespace System.Drawing {
 				float my = 0.0f;
 				float[] point  = new float[6];
 
-				// normalize
-				const float norm = 0.5f;
-				//const float rnd = (0.5f - norm);
-				float ax = 0.0f;
-				float ay = 0.0f;
-
 				while (!pi.isDone()) {
 					int type = pi.currentSegment(point);
 					if (pathClosed == true) {
@@ -244,51 +262,6 @@ namespace System.Drawing {
 							// Force current point back to last moveto point
 							consumer.beginSubpath(mx, my);
 						}
-					}
-					int index;
-					switch ((GraphicsPath.JPI)type) {
-						case GraphicsPath.JPI.SEG_CUBICTO:
-							index = 4;
-							break;
-						case GraphicsPath.JPI.SEG_QUADTO:
-							index = 2;
-							break;
-						case GraphicsPath.JPI.SEG_MOVETO:
-						case GraphicsPath.JPI.SEG_LINETO:
-							index = 0;
-							break;
-						case GraphicsPath.JPI.SEG_CLOSE:
-						default:
-							index = -1;
-							break;
-					}
-					if (index >= 0) {
-						float ox = point[index];
-						float oy = point[index+1];
-						float newax = (float) java.lang.Math.floor(ox/* + rnd*/) + norm;
-						float neway = (float) java.lang.Math.floor(oy/* + rnd*/) + norm;
-						point[index] = newax;
-						point[index+1] = neway;
-						newax -= ox;
-						neway -= oy;
-						switch ((GraphicsPath.JPI)type) {
-							case GraphicsPath.JPI.SEG_CUBICTO:
-								point[0] += ax;
-								point[1] += ay;
-								point[2] += newax;
-								point[3] += neway;
-								break;
-							case GraphicsPath.JPI.SEG_QUADTO:
-								point[0] += (newax + ax) / 2;
-								point[1] += (neway + ay) / 2;
-								break;
-//							case GraphicsPath.JPI.SEG_MOVETO:
-//							case GraphicsPath.JPI.SEG_LINETO:
-//							case GraphicsPath.JPI.SEG_CLOSE:
-//								break;
-						}
-						ax = newax;
-						ay = neway;
 					}
 					switch ((GraphicsPath.JPI)type) {
 						case GraphicsPath.JPI.SEG_MOVETO:
@@ -476,6 +449,15 @@ namespace System.Drawing {
 			}
 			set{
 				_penTransform = value;
+			}
+		}
+
+		public AffineTransform OutputTransform {
+			get {
+				return _outputTransform;
+			}
+			set {
+				_outputTransform = value;
 			}
 		}
 

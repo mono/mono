@@ -16,6 +16,7 @@ using System.Drawing.Drawing2D;
 using System.Runtime.InteropServices;
 
 using awt = java.awt;
+using geom = java.awt.geom;
 
 namespace System.Drawing 
 {
@@ -340,12 +341,6 @@ namespace System.Drawing
 				_transform = value;
 			}
 		}
-
-		internal bool RequiresWidening {
-			get {
-				return _transform != null && !_transform.IsIdentity;
-			}
-		}
 		#endregion
 
 		#region Width
@@ -446,86 +441,91 @@ namespace System.Drawing
 				throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 		}
 
-		internal awt.Stroke NativeObject {
-			get {
-				float[] dashPattern = null;
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="outputTransform">transform which will be applied on the final shape</param>
+		/// <param name="fitPen">ensure the shape will wide enough to be visible</param>
+		/// <returns></returns>
+		internal awt.Stroke GetNativeObject(geom.AffineTransform outputTransform, bool fitPen) {
+			float[] dashPattern = null;
 
-				switch (DashStyle) {
-					case DashStyle.Custom:
-						if (DashPattern != null) {
-							dashPattern = new float[DashPattern.Length];
-							for(int i = 0; i < DashPattern.Length; i++) {
+			switch (DashStyle) {
+				case DashStyle.Custom:
+					if (DashPattern != null) {
+						dashPattern = new float[DashPattern.Length];
+						for(int i = 0; i < DashPattern.Length; i++) {
 
-								if (EndCap == LineCap.Flat)
-									dashPattern[i] = DashPattern[i] * Width;
-								else {
-									if ((i & 1) == 0)
-										// remove the size of caps from the opaque parts
-										dashPattern[i] = (DashPattern[i] * Width) - Width;
-									else
-										// add the size of caps to the transparent parts
-										dashPattern[i] = (DashPattern[i] * Width) + Width;
-								}
+							if (EndCap == LineCap.Flat)
+								dashPattern[i] = DashPattern[i] * Width;
+							else {
+								if ((i & 1) == 0)
+									// remove the size of caps from the opaque parts
+									dashPattern[i] = (DashPattern[i] * Width) - Width;
+								else
+									// add the size of caps to the transparent parts
+									dashPattern[i] = (DashPattern[i] * Width) + Width;
 							}
 						}
-						break;
-					case DashStyle.Dash:
-						dashPattern = DASH_ARRAY;
-						break;
-					case DashStyle.DashDot:
-						dashPattern = DASHDOT_ARRAY;
-						break;
-					case DashStyle.DashDotDot:
-						dashPattern = DASHDOTDOT_ARRAY;
-						break;
+					}
+					break;
+				case DashStyle.Dash:
+					dashPattern = DASH_ARRAY;
+					break;
+				case DashStyle.DashDot:
+					dashPattern = DASHDOT_ARRAY;
+					break;
+				case DashStyle.DashDotDot:
+					dashPattern = DASHDOTDOT_ARRAY;
+					break;
 				
-						//				default:
-						//				case DashStyle.Solid:
-						//					break;
-				}
-
-				int join;
-				switch (LineJoin) {
-					case LineJoin.Bevel:
-						join = java.awt.BasicStroke.JOIN_BEVEL;
-						break;
-					default:
-					case LineJoin.Miter:
-					case LineJoin.MiterClipped:
-						join = java.awt.BasicStroke.JOIN_MITER;
-						break;
-					case LineJoin.Round:
-						join = java.awt.BasicStroke.JOIN_ROUND;
-						break;
-				}
-
-				// We go by End cap for now.
-				int cap;
-				switch (EndCap) {
-					default:
-					case LineCap.Square:
-					case LineCap.SquareAnchor:
-						cap = awt.BasicStroke.CAP_SQUARE;
-						break;
-					case LineCap.Round: 
-					case LineCap.RoundAnchor:
-						cap = awt.BasicStroke.CAP_ROUND;
-						break;
-					case LineCap.Flat:
-						cap = awt.BasicStroke.CAP_BUTT;
-						break;
-				}
-
-				return StrokeFactory.CreateStroke(Width, cap, 
-					join, MiterLimit, dashPattern, DashOffset,
-					_transform != null ? _transform.NativeObject : null);
+					//				default:
+					//				case DashStyle.Solid:
+					//					break;
 			}
+
+			int join;
+			switch (LineJoin) {
+				case LineJoin.Bevel:
+					join = java.awt.BasicStroke.JOIN_BEVEL;
+					break;
+				default:
+				case LineJoin.Miter:
+				case LineJoin.MiterClipped:
+					join = java.awt.BasicStroke.JOIN_MITER;
+					break;
+				case LineJoin.Round:
+					join = java.awt.BasicStroke.JOIN_ROUND;
+					break;
+			}
+
+			// We go by End cap for now.
+			int cap;
+			switch (EndCap) {
+				default:
+				case LineCap.Square:
+				case LineCap.SquareAnchor:
+					cap = awt.BasicStroke.CAP_SQUARE;
+					break;
+				case LineCap.Round: 
+				case LineCap.RoundAnchor:
+					cap = awt.BasicStroke.CAP_ROUND;
+					break;
+				case LineCap.Flat:
+					cap = awt.BasicStroke.CAP_BUTT;
+					break;
+			}
+
+			return StrokeFactory.CreateStroke(Width, cap, 
+				join, MiterLimit, dashPattern, DashOffset,
+				_transform != null ? _transform.NativeObject : null,
+				outputTransform, fitPen);
 		}
 
 		#region Stroke Members
 
 		awt.Shape awt.Stroke.createStrokedShape(awt.Shape arg_0) {
-			return NativeObject.createStrokedShape(arg_0);
+			return GetNativeObject(null, false).createStrokedShape(arg_0);
 		}
 
 		#endregion

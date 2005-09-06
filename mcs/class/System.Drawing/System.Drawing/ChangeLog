@@ -1,5 +1,11 @@
 2005-09-06 Konstantin Triger <kostat@mainsoft.com>
 
+	* StrokeFactory.jvm.cs, AdvancedStroke.jvm.cs, Pen.jvm.cs:
+		implementing fitting, output transform
+	* Graphics.jvm.cs: fixing DrawXXX, Fill, Clipping, Containers
+
+2005-09-06 Konstantin Triger <kostat@mainsoft.com>
+
 	* ColorTranslator.cs: perform case insensitive check
 
 2005-09-05 Jordi Mas i Hernandez <jordi@ximian.com> 

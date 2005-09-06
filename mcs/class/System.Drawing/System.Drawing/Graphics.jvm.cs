@@ -12,6 +12,156 @@ using geom = java.awt.geom;
 namespace System.Drawing {
 	[ComVisible(false)]
 	public sealed class Graphics : MarshalByRefObject, IDisposable {
+		sealed class DummyStroke : awt.Stroke {
+			#region Stroke Members
+
+			awt.Shape awt.Stroke.createStrokedShape(awt.Shape arg_0) {
+				throw new NotImplementedException("DummyStroke");
+			}
+
+			#endregion
+		}
+
+		sealed class NormalizingPathIterator : geom.PathIterator {
+
+			#region fields
+
+			readonly geom.PathIterator _iter;
+
+			const float norm = 0.5f;
+			const float rnd = (1.0f - norm);
+			float ax = 0.0f;
+			float ay = 0.0f;
+
+			#endregion
+
+			#region ctor
+
+			public NormalizingPathIterator(geom.PathIterator iter) {
+				_iter = iter;
+			}
+
+			#endregion
+
+			#region methods
+
+			static int GetIndex(int type) {
+				int index;
+				switch ((GraphicsPath.JPI)type) {
+					case GraphicsPath.JPI.SEG_CUBICTO:
+						index = 4;
+						break;
+					case GraphicsPath.JPI.SEG_QUADTO:
+						index = 2;
+						break;
+					case GraphicsPath.JPI.SEG_MOVETO:
+					case GraphicsPath.JPI.SEG_LINETO:
+						index = 0;
+						break;
+					case GraphicsPath.JPI.SEG_CLOSE:
+					default:
+						index = -1;
+						break;
+				}
+
+				return index;
+			}
+
+			#endregion
+
+			#region PathIterator Members
+
+			void geom.PathIterator.next() {
+				_iter.next();
+			}
+
+			bool geom.PathIterator.isDone() {
+				return _iter.isDone();
+			}
+
+			int geom.PathIterator.currentSegment(float[] point) {
+				int type = _iter.currentSegment(point);
+
+				int index = GetIndex(type);
+				
+				if (index >= 0) {
+					float ox = point[index];
+					float oy = point[index+1];
+					float newax = (float) java.lang.Math.floor(ox + rnd) + norm;
+					float neway = (float) java.lang.Math.floor(oy + rnd) + norm;
+					point[index] = newax;
+					point[index+1] = neway;
+					newax -= ox;
+					neway -= oy;
+					switch ((GraphicsPath.JPI)type) {
+						case GraphicsPath.JPI.SEG_CUBICTO:
+							point[0] += ax;
+							point[1] += ay;
+							point[2] += newax;
+							point[3] += neway;
+							break;
+						case GraphicsPath.JPI.SEG_QUADTO:
+							point[0] += (newax + ax) / 2;
+							point[1] += (neway + ay) / 2;
+							break;
+							//							case GraphicsPath.JPI.SEG_MOVETO:
+							//							case GraphicsPath.JPI.SEG_LINETO:
+							//							case GraphicsPath.JPI.SEG_CLOSE:
+							//								break;
+					}
+					ax = newax;
+					ay = neway;
+				}
+
+				return type;
+			}
+
+			int geom.PathIterator.currentSegment(double[] point) {
+				int type = _iter.currentSegment(point);
+
+				int index = GetIndex(type);
+
+				if (index >= 0) {
+					float ox = (float)point[index];
+					float oy = (float)point[index+1];
+					float newax = (float)java.lang.Math.floor(ox + rnd) + norm;
+					float neway = (float)java.lang.Math.floor(oy + rnd) + norm;
+					point[index] = newax;
+					point[index+1] = neway;
+					newax -= ox;
+					neway -= oy;
+					switch ((GraphicsPath.JPI)type) {
+						case GraphicsPath.JPI.SEG_CUBICTO:
+							point[0] += ax;
+							point[1] += ay;
+							point[2] += newax;
+							point[3] += neway;
+							break;
+						case GraphicsPath.JPI.SEG_QUADTO:
+							point[0] += (newax + ax) / 2;
+							point[1] += (neway + ay) / 2;
+							break;
+							//							case GraphicsPath.JPI.SEG_MOVETO:
+							//							case GraphicsPath.JPI.SEG_LINETO:
+							//							case GraphicsPath.JPI.SEG_CLOSE:
+							//								break;
+					}
+					ax = newax;
+					ay = neway;
+				}
+
+				return type;
+			}
+
+			int geom.PathIterator.getWindingRule() {
+				return _iter.getWindingRule();
+			}
+
+			#endregion
+
+		}
+
+
 		#region Variables
 
 		readonly awt.Graphics2D _nativeObject;
@@ -19,11 +169,11 @@ namespace System.Drawing {
 		int _textContrast = 4;
 		readonly Image _image;
 		
-		Matrix _transform;
+		readonly Matrix _transform;
 		GraphicsUnit _pageUnit = GraphicsUnit.Display;
 		float _pageScale = 1.0f;
 
-		Stack _stateContainerStack = new Stack(3);
+		GraphicsState _nextGraphicsState = null;
 
 		static readonly float [] _unitConversion = {
 													   1,								// World
@@ -55,9 +205,10 @@ namespace System.Drawing {
 			_nativeObject = (awt.Graphics2D)image.NativeObject.getGraphics();
 			_image = image;
 			_transform = new Matrix ();
-			_nativeObject.setTransform( _transform.NativeObject );
 
+			NativeObject.setStroke(new DummyStroke());
 			NativeObject.setRenderingHint(awt.RenderingHints.KEY_COLOR_RENDERING, awt.RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+
 			InterpolationMode = InterpolationMode.Bilinear;
 		}
 
@@ -129,21 +280,131 @@ namespace System.Drawing {
 			}
 		}
 
+		bool IsPenThin(Pen pen, geom.AffineTransform coordsTransform) {
+			bool antiAlias = (SmoothingMode == SmoothingMode.AntiAlias);
+			geom.AffineTransform transform = (geom.AffineTransform)pen.Transform.NativeObject.clone();
+			transform.scale(coordsTransform.getScaleX(), coordsTransform.getScaleY());
+			if (transform.getType() < geom.AffineTransform.TYPE_GENERAL_SCALE) {
+				float width = pen.Width * (float)coordsTransform.getScaleX();
+				return (antiAlias) ?
+					(width <= AdvancedStroke.MinPenSizeAA)
+					:
+					(width < (NeedsNormalization ? 1.5f : 1.0f));
+			} else {
+				double widthsquared;
+				if (transform.getType() == geom.AffineTransform.TYPE_GENERAL_SCALE) {
+					/* sqrt omitted, compare to squared limits below. */
+					widthsquared = Math.Abs(transform.getDeterminant());
+				} else {
+					/* First calculate the "maximum scale" of this transform. */
+					double A = transform.getScaleX();	// m00
+					double C = transform.getShearX();	// m01
+					double B = transform.getShearY();	// m10
+					double D = transform.getScaleY();	// m11
+
+					/*
+					 * Given a 2 x 2 affine matrix [ A B ] such that
+					 *                             [ C D ]
+					 * v' = [x' y'] = [Ax + Cy, Bx + Dy], we want to
+					 * find the maximum magnitude (norm) of the vector v'
+					 * with the constraint (x^2 + y^2 = 1).
+					 * The equation to maximize is
+					 *     |v'| = sqrt((Ax+Cy)^2+(Bx+Dy)^2)
+					 * or  |v'| = sqrt((AA+BB)x^2 + 2(AC+BD)xy + (CC+DD)y^2).
+					 * Since sqrt is monotonic we can maximize |v'|^2
+					 * instead and plug in the substitution y = sqrt(1 - x^2).
+					 * Trigonometric equalities can then be used to get
+					 * rid of most of the sqrt terms.
+					 */
+					double EA = A*A + B*B;		// x^2 coefficient
+					double EB = 2*(A*C + B*D);	// xy coefficient
+					double EC = C*C + D*D;		// y^2 coefficient
+
+					/*
+					 * There is a lot of calculus omitted here.
+					 *
+					 * Conceptually, in the interests of understanding the
+					 * terms that the calculus produced we can consider
+					 * that EA and EC end up providing the lengths along
+					 * the major axes and the hypot term ends up being an
+					 * adjustment for the additional length along the off-axis
+					 * angle of rotated or sheared ellipses as well as an
+					 * adjustment for the fact that the equation below
+					 * averages the two major axis lengths.  (Notice that
+					 * the hypot term contains a part which resolves to the
+					 * difference of these two axis lengths in the absence
+					 * of rotation.)
+					 *
+					 * In the calculus, the ratio of the EB and (EA-EC) terms
+					 * ends up being the tangent of 2*theta where theta is
+					 * the angle that the long axis of the ellipse makes
+					 * with the horizontal axis.  Thus, this equation is
+					 * calculating the length of the hypotenuse of a triangle
+					 * along that axis.
+					 */
+					double hypot = Math.Sqrt(EB*EB + (EA-EC)*(EA-EC));
+
+					/* sqrt omitted, compare to squared limits below. */
+					widthsquared = ((EA + EC + hypot)/2.0);
+				}
+
+				widthsquared *= pen.Width * pen.Width;
+
+				return (widthsquared <=
+					(antiAlias ? AdvancedStroke.MinPenSizeAASquared : AdvancedStroke.MinPenSizeSquared));
+			}
+		}
+
 		void DrawShape(Pen pen, awt.Shape shape) {
 			if (pen == null)
 				throw new ArgumentNullException("pen");
 
-			if (pen.RequiresWidening && StrokeFactory.CanCreateAdvancedStroke) {
-				FillShape(pen.Brush, ((awt.Stroke)pen).createStrokedShape(shape));
+			if (StrokeFactory.CanCreateAdvancedStroke) {
+				geom.AffineTransform t = (geom.AffineTransform)GetFinalTransform().clone();
+				geom.AffineTransform oldT = NativeObject.getTransform();
+
+				try {
+					t.concatenate(oldT);
+					bool thin = IsPenThin(pen, t);
+
+					if (NeedsNormalization) {
+
+						if (thin) {
+							shape = GetNormalizedShape(shape, t);
+							shape = pen.GetNativeObject(null, thin).createStrokedShape(shape);
+						}
+						else {
+							shape = pen.GetNativeObject(t, thin).createStrokedShape(shape);
+							shape = GetNormalizedShape(shape, null);
+						}
+
+						NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
+					}
+					else {
+						shape = pen.GetNativeObject(t, thin).createStrokedShape(shape);
+					}
+
+					FillScaledShape(pen.Brush, shape);
+				}
+				finally {
+					NativeObject.setTransform(oldT);
+				}
 			}
 			else {
 				awt.Stroke oldStroke = NativeObject.getStroke();
-				NativeObject.setStroke(pen.NativeObject);
+				NativeObject.setStroke(pen.GetNativeObject(null, false));
 				try {
 					awt.Paint oldPaint = NativeObject.getPaint();
+					NativeObject.setPaint(pen.Brush);
 					try {
-						NativeObject.setPaint(pen.Brush);
-						NativeObject.draw(shape);
+						geom.AffineTransform oldT = NativeObject.getTransform();
+						NativeObject.transform(GetFinalTransform());
+						try {
+							NativeObject.draw(shape);
+						}
+						finally {
+							NativeObject.setTransform(oldT);
+						}
 					}
 					finally {
 						NativeObject.setPaint(oldPaint);
@@ -154,18 +415,49 @@ namespace System.Drawing {
 				}
 			}
 		}
-
 		void FillShape(awt.Paint paint, awt.Shape shape) {
 			if (paint == null)
 				throw new ArgumentNullException("brush");
 
-			awt.Paint old = NativeObject.getPaint();
+			if (NeedsNormalization) {
+				geom.PathIterator iter = new NormalizingPathIterator(shape.getPathIterator(GetFinalTransform()));
+	
+				geom.GeneralPath path = new geom.GeneralPath(iter.getWindingRule());
+				path.append(iter, false);
+				shape = path;
+			}
+			else {
+				geom.GeneralPath path = new geom.GeneralPath(shape);
+				path.transform(GetFinalTransform());
+				shape = path;
+			}
+
+			FillScaledShape(paint, shape);
+		}
+
+		bool NeedsNormalization {
+			get {
+				return PixelOffsetMode != PixelOffsetMode.Half &&
+					PixelOffsetMode != PixelOffsetMode.HighQuality;
+			}
+		}
+
+		static awt.Shape GetNormalizedShape(awt.Shape shape, geom.AffineTransform t) {
+			geom.PathIterator iter = new NormalizingPathIterator(shape.getPathIterator(t));
+	
+			geom.GeneralPath path = new geom.GeneralPath(iter.getWindingRule());
+			path.append(iter, false);
+			return path;
+		}
+
+		void FillScaledShape(awt.Paint paint, awt.Shape shape) {
+			awt.Paint oldP = NativeObject.getPaint();
 			NativeObject.setPaint(paint);
 			try {
 				NativeObject.fill(shape);
 			}
 			finally {
-				NativeObject.setPaint(old);
+				NativeObject.setPaint(oldP);
 			}
 		}
 
@@ -330,14 +622,7 @@ namespace System.Drawing {
 		
 		#region Clear
 		public void Clear (Color color) {
-			geom.AffineTransform old = NativeObject.getTransform();
-			NativeObject.setTransform(new geom.AffineTransform());
-			try {
-				FillShape(color.NativeObject, new awt.Rectangle(0,0,_image.Width,_image.Height));
-			}
-			finally {
-				NativeObject.setTransform(old);
-			}
+			FillScaledShape(color.NativeObject, new awt.Rectangle(0,0,_image.Width,_image.Height));
 		}
 		#endregion
 
@@ -540,18 +825,13 @@ namespace System.Drawing {
 		
 		public void DrawImage (Image image, int x, int y) 
 		{
-			float current_scale = PageScale;
-			if (current_scale != 1)
-				PageScale = 1;
-
-			try
-			{
+			geom.AffineTransform oldT = NativeObject.getTransform();
+			NativeObject.transform(_transform.NativeObject);
+			try {
 				NativeObject.drawImage(image.NativeObject, x, y, null);
 			}
-			finally
-			{
-				if (current_scale != 1)
-					PageScale = current_scale;
+			finally {
+				NativeObject.setTransform(oldT);
 			}
 		}
 
@@ -566,12 +846,10 @@ namespace System.Drawing {
 				throw new NotImplementedException();
 				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
 
-			float current_scale = PageScale;
-			if (current_scale != 1)
-				PageScale = 1;
+			geom.AffineTransform oldT = NativeObject.getTransform();
+			NativeObject.transform(_transform.NativeObject);
+			try {
 
-			try
-			{
 				NativeObject.drawImage(image.NativeObject,
 					destRect.X,
 					destRect.Y,
@@ -583,10 +861,8 @@ namespace System.Drawing {
 					srcRect.Y + srcRect.Height,
 					null);
 			}
-			finally
-			{
-				if (current_scale != 1)
-					PageScale = current_scale;
+			finally {
+				NativeObject.setTransform(oldT);
 			}
 		}
 		
@@ -619,15 +895,13 @@ namespace System.Drawing {
 			Region region = new Region(srcRect);
 			region.Transform (mx);
 			
-			geom.Area current_clip = (geom.Area)GetNativeClip().clone();
+			awt.Shape oldClip = NativeObject.getClip();
 			IntersectClip(region);
-			try
-			{
+			try {
 				DrawImage(image, mx);
 			}
-			finally
-			{
-				SetNativeClip(current_clip);
+			finally {
+				NativeObject.setClip(oldClip);
 			}
 		}
 		
@@ -642,32 +916,25 @@ namespace System.Drawing {
 			Region region = new Region(srcRect);
 			region.Transform (mx);
 			
-			geom.Area current_clip = (geom.Area)GetNativeClip().clone();
+			awt.Shape oldClip = NativeObject.getClip();
 			IntersectClip(region);
-			try
-			{
+			try {
 				DrawImage(image, mx);
 			}
-			finally
-			{
-				SetNativeClip(current_clip);
+			finally {
+				NativeObject.setClip(oldClip);
 			}
 		}
 
 
 		public void DrawImage (Image image, int x, int y, int width, int height) {
-			float current_scale = PageScale;
-			if (current_scale != 1)
-				PageScale = 1;
-
-			try
-			{
+			geom.AffineTransform oldT = NativeObject.getTransform();
+			NativeObject.transform(_transform.NativeObject);
+			try {
 				NativeObject.drawImage(image.NativeObject, x, y, width, height, null);
 			}
-			finally
-			{
-				if (current_scale != 1)
-					PageScale = current_scale;
+			finally {
+				NativeObject.setTransform(oldT);
 			}
 		}
 
@@ -714,18 +981,13 @@ namespace System.Drawing {
 		
 
 		internal void DrawImage (Image image, Matrix m) {
-			float current_scale = PageScale;
-			if (current_scale != 1)
-				PageScale = 1;
-
-			try
-			{
+			geom.AffineTransform oldT = NativeObject.getTransform();
+			NativeObject.transform(_transform.NativeObject);
+			try {
 				NativeObject.drawImage(image.NativeObject, m.NativeObject, null);
 			}
-			finally
-			{
-				if (current_scale != 1)
-					PageScale = current_scale;
+			finally {
+				NativeObject.setTransform(oldT);
 			}
 		}
 		
@@ -977,78 +1239,86 @@ namespace System.Drawing {
 		}
 		#endregion
 
-		#region Container [TODO]
-		public void EndContainer (GraphicsContainer container) {
-			if (_stateContainerStack.Contains(container.StateObject))
-			{
-				GraphicsState gs = (GraphicsState)_stateContainerStack.Pop();
-				while ( !gs.Equals(container.StateObject) )
-					gs = (GraphicsState)_stateContainerStack.Pop();
+		#region Container
 
-				gs.RestoreState(this);
-				UpdateInternalTransform();
+		void PushGraphicsState(GraphicsState state) {
+			state.Next = _nextGraphicsState;
+			_nextGraphicsState = state;
+		}
+
+		GraphicsState PopGraphicsState() {
+			GraphicsState state = _nextGraphicsState;
+			_nextGraphicsState = _nextGraphicsState.Next;
+			return state;
+		}
+
+		bool ContainsGraphicsState(GraphicsState state) {
+			GraphicsState gs = _nextGraphicsState;
+
+			while(gs != null) {
+				if (gs == state)
+					return true;
+
+				gs = gs.Next;
 			}
+
+			return false;
+		}
+
+		public void EndContainer (GraphicsContainer container) {
+			Restore(container.StateObject);
 		}
 
 		public GraphicsContainer BeginContainer () {
-			GraphicsState graphicsState = new GraphicsState(this, true);
-			GraphicsContainer container = new GraphicsContainer(graphicsState);
-
-			_stateContainerStack.Push( graphicsState );
-			return container;
+			return new GraphicsContainer(Save(Matrix.IdentityTransform, true));
 		}
 		
 		public GraphicsContainer BeginContainer (Rectangle dstrect, Rectangle srcrect, GraphicsUnit unit) {
-			GraphicsState graphicsState = new GraphicsState(this, true);
-			GraphicsContainer container = new GraphicsContainer(graphicsState);
-
 			Matrix containerTransfrom =
 				new Matrix(	srcrect,
 				new Point [] {	 new Point (dstrect.X, dstrect.Y), 
 								 new Point (dstrect.X + dstrect.Width, dstrect.Y), 
 								 new Point (dstrect.X, dstrect.Y + dstrect.Height) });
 
-			if (_stateContainerStack.Count != 0) 
-			{
-				GraphicsState gs = (GraphicsState)_stateContainerStack.Peek();
-				if (gs.ContainerTransfrom != null)
-					Matrix.Multiply(
-						containerTransfrom.NativeObject, 
-						gs.ContainerTransfrom.NativeObject, MatrixOrder.Append);
-			}
+			float scale = 1/_unitConversion[ (int)unit ];
+			containerTransfrom.Scale(scale, scale);
 
-			graphicsState.ContainerTransfrom = containerTransfrom;
-			
-			_stateContainerStack.Push( graphicsState );
-			UpdateInternalTransform();
-			return container;
+			return new GraphicsContainer(Save(containerTransfrom, true));
 		}
 
 		
 		public GraphicsContainer BeginContainer (RectangleF dstrect, RectangleF srcrect, GraphicsUnit unit) {
-			GraphicsState graphicsState = new GraphicsState(this, true);
-			GraphicsContainer container = new GraphicsContainer(graphicsState);
-
 			Matrix containerTransfrom =
 				new Matrix(	srcrect,
 				new PointF [] {	 new PointF (dstrect.X, dstrect.Y), 
 								 new PointF (dstrect.X + dstrect.Width, dstrect.Y), 
 								 new PointF (dstrect.X, dstrect.Y + dstrect.Height) });
 
-			if (_stateContainerStack.Count != 0) 
-			{
-				GraphicsState gs = (GraphicsState)_stateContainerStack.Peek();
-				if (gs.ContainerTransfrom != null)
-					Matrix.Multiply(
-						containerTransfrom.NativeObject, 
-						gs.ContainerTransfrom.NativeObject, MatrixOrder.Append);
-			}
+			float scale = 1/_unitConversion[ (int)unit ];
+			containerTransfrom.Scale(scale, scale);
 
-			graphicsState.ContainerTransfrom = containerTransfrom;
-			
-			_stateContainerStack.Push( graphicsState );
-			UpdateInternalTransform();
-			return container;
+			return new GraphicsContainer(Save(containerTransfrom, true));
+		}
+
+		GraphicsState Save(Matrix matrix, bool resetState) {
+			GraphicsState graphicsState = new GraphicsState(this, matrix, resetState);
+
+			PushGraphicsState( graphicsState );
+			return graphicsState;
+		}
+
+		public GraphicsState Save () {
+			return Save(Matrix.IdentityTransform, false);
+		}
+
+		public void Restore (GraphicsState graphicsState) {
+			if (ContainsGraphicsState(graphicsState)) {
+				GraphicsState gs = PopGraphicsState();
+				while ( gs != graphicsState )
+					gs = PopGraphicsState();
+
+				graphicsState.RestoreState(this);
+			}
 		}
 
 		#endregion
@@ -1242,16 +1512,21 @@ namespace System.Drawing {
 		#endregion	
 
 		#region ExcludeClip
-		public void ExcludeClip (Rectangle rect) {
+		void ExcludeClip(geom.Area area) {
+			area.transform(GetFinalTransform());
 			geom.Area clip = GetNativeClip();
-			clip.subtract(new geom.Area(rect.NativeObject));
+			clip.subtract(area);
 			SetNativeClip(clip);
 		}
 
+		public void ExcludeClip (Rectangle rect) {
+			ExcludeClip(new geom.Area(rect.NativeObject));
+		}
+
 		public void ExcludeClip (Region region) {
-			geom.Area clip = GetNativeClip();
-			clip.subtract(region.NativeObject);
-			SetNativeClip(clip);
+			if (region == null)
+				throw new ArgumentNullException("region");
+			ExcludeClip((geom.Area)region.NativeObject.clone());
 		}
 		#endregion 
 
@@ -1307,6 +1582,9 @@ namespace System.Drawing {
 
 		#region FillPath
 		public void FillPath (Brush brush, GraphicsPath path) {
+			if (path == null)
+				throw new ArgumentNullException("path");
+
 			FillShape(brush,path);
 		}
 		#endregion
@@ -1464,6 +1742,7 @@ namespace System.Drawing {
 
 		#region IntersectClip
 		void IntersectClip (geom.Area area) {
+			area.transform(GetFinalTransform());
 			geom.Area clip = GetNativeClip();
 			clip.intersect(area);
 			SetNativeClip(clip);
@@ -1473,7 +1752,7 @@ namespace System.Drawing {
 			if (region == null)
 				throw new ArgumentNullException("region");
 
-			IntersectClip(region.NativeObject);
+			IntersectClip((geom.Area)region.NativeObject.clone());
 		}
 		
 		public void IntersectClip (RectangleF rect) {
@@ -1587,41 +1866,13 @@ namespace System.Drawing {
 
 		#region Reset (Clip and Transform)
 		public void ResetClip () {
-			java.awt.Graphics2D g = NativeObject;
-			g.setClip(null);
-
+			NativeObject.setClip(null);
 		}
 
 		public void ResetTransform () {
-			_transform = new Matrix(1,0,0,1,0,0);
-			UpdateInternalTransform();
+			_transform.Reset();
 		}
 		#endregion
-
-		public GraphicsState Save () {
-			GraphicsState graphicsState = new GraphicsState(this, false);
-
-			if (_stateContainerStack.Count != 0) 
-			{
-				GraphicsState gs = (GraphicsState)_stateContainerStack.Peek();
-				if (gs.ContainerTransfrom != null)
-					graphicsState.ContainerTransfrom = gs.ContainerTransfrom;
-			}
-			_stateContainerStack.Push( graphicsState );
-			return graphicsState;
-		}
-
-		public void Restore (GraphicsState graphicsState) {
-			if (_stateContainerStack.Contains(graphicsState))
-			{
-				GraphicsState gs = (GraphicsState)_stateContainerStack.Pop();
-				while ( !gs.Equals(graphicsState) )
-					gs = (GraphicsState)_stateContainerStack.Pop();
-
-				graphicsState.RestoreState(this);
-				UpdateInternalTransform();
-			}
-		}
 
 		#region RotateTransform
 		public void RotateTransform (float angle) {
@@ -1689,14 +1940,14 @@ namespace System.Drawing {
 				return;
 			}
 
-			SetNativeClip(CombineClipArea(region.NativeObject,combineMode));
+			SetNativeClip(CombineClipArea((geom.Area)region.NativeObject.clone(),combineMode));
 		}
 		
 		public void SetClip (GraphicsPath path, CombineMode combineMode) {
 			if(path == null)
 				throw new ArgumentNullException("path");
 
-			SetNativeClip(CombineClipArea(new java.awt.geom.Area(path.NativeObject),combineMode));
+			SetNativeClip(CombineClipArea(new geom.Area(path.NativeObject), combineMode));
 		}
 		#endregion
 
@@ -1706,7 +1957,8 @@ namespace System.Drawing {
 				new geom.Rectangle2D.Float(x,y,width,height)),combineMode));
 		}
 
-		geom.Area CombineClipArea(java.awt.geom.Area area, CombineMode combineMode) {
+		geom.Area CombineClipArea(geom.Area area, CombineMode combineMode) {
+			area.transform(GetFinalTransform());
 			if (combineMode == CombineMode.Replace)
 				return area;
 
@@ -1779,8 +2031,10 @@ namespace System.Drawing {
 
 		
 		public void TranslateClip (float dx, float dy) {
+			geom.AffineTransform t = geom.AffineTransform.getTranslateInstance(dx, dy);
+			t.concatenate(GetFinalTransform());
 			geom.Area clip = GetNativeClip();
-			clip.transform(geom.AffineTransform.getTranslateInstance(dx, dy));
+			clip.transform(t);
 			SetNativeClip(clip);
 		}
 		#endregion
@@ -1966,7 +2220,6 @@ namespace System.Drawing {
 			}
 			set {
 				_pageScale = value;
-				UpdateInternalTransform();
 			}
 		}
 
@@ -1976,28 +2229,23 @@ namespace System.Drawing {
 			}
 			set {
 				_pageUnit = value;
-				UpdateInternalTransform();
 			}
 		}
 
-		internal void UpdateInternalTransform()
-		{
-			float new_scale = _pageScale * _unitConversion[ (int)PageUnit ];
-			Matrix mx = _transform.Clone();
-
-			mx.Scale( new_scale, new_scale, MatrixOrder.Prepend );
-			mx.Translate(
-				mx.OffsetX * new_scale - mx.OffsetX,
-				mx.OffsetY * new_scale - mx.OffsetY, MatrixOrder.Append);
-
-			if (_stateContainerStack.Count != 0) {
-				GraphicsState gs = (GraphicsState)_stateContainerStack.Peek();
-				if (gs.ContainerTransfrom != null)
-					Matrix.Multiply(mx.NativeObject, gs.ContainerTransfrom.NativeObject, MatrixOrder.Append);
+		internal geom.AffineTransform GetFinalTransform() {
+			geom.AffineTransform t = null;
+			if (PageUnit != GraphicsUnit.Display) {
+				float scale = PageScale * _unitConversion[ (int)PageUnit ];
+				if (Math.Abs(scale-1f) > float.Epsilon)
+					t = geom.AffineTransform.getScaleInstance(scale, scale);
 			}
 
-			java.awt.Graphics2D g = NativeObject;
-			g.setTransform( mx.NativeObject );
+			if (t != null)
+				t.concatenate(_transform.NativeObject);
+			else
+				t = _transform.NativeObject;
+			
+			return t;
 		}
 
 		public PixelOffsetMode PixelOffsetMode {
@@ -2116,12 +2364,27 @@ namespace System.Drawing {
 
 		public Matrix Transform {
 			get {
-				return _transform;
+				return _transform.Clone();
 			}
 			set {
-				_transform = value.Clone();
-				UpdateInternalTransform();
+				if (value == null)
+					throw new ArgumentNullException("matrix");
+
+				_transform.NativeObject.setTransform(value.NativeObject);
 			}
+		}
+
+		internal Matrix BaseTransform {
+			get {
+				return new Matrix(NativeObject.getTransform());
+			}
+			set {
+				NativeObject.setTransform(value.NativeObject);
+			}
+		}
+
+		internal void PrependBaseTransform(Matrix matrix) {
+			NativeObject.transform(matrix.NativeObject);
 		}
 
 		public RectangleF VisibleClipBounds {
@@ -2135,8 +2398,6 @@ namespace System.Drawing {
 		void ConcatenateTransform(geom.AffineTransform transform, MatrixOrder order) {
 			geom.AffineTransform at = _transform.NativeObject;
 			Matrix.Multiply(at, transform, order);
-
-			UpdateInternalTransform();
 		}
 		#endregion
 	}
