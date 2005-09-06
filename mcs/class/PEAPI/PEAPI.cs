@@ -4990,7 +4990,7 @@ CalcHeapSizes ();
       long startTilde = output.Seek(0,SeekOrigin.Current);
                         output.Write((uint)0); // Reserved
                         output.Write((byte)1); // MajorVersion
-                        output.Write((byte)1); // MinorVersion
+                        output.Write((byte)0); // MinorVersion
                         output.Write(heapSizes);
                         output.Write((byte)1); // Reserved
                         output.Write(valid);
