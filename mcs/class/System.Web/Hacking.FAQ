@@ -238,44 +238,11 @@ A: a few things are required:
 
 	<add verb="*" path="WebResource.axd" type="System.Web.Handlers.AssemblyResourceLoader, System.Web, Version=1.0.5000.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
 
-   2. Apply the following patch to your browscap.ini (this patch only
+   2. Apply the patch file 'browscap.ini.diff' to your browscap.ini (this patch only
       works if you're using firefox, IE6, or Safari.  I didn't bother with any others.):
------
-Index: browscap.ini
-===================================================================
---- browscap.ini        (revision 48810)
-+++ browscap.ini        (working copy)
-@@ -4958,6 +4958,8 @@
- version=1.3
- majorver=1
- minorver=3
-+ecmascriptversion=1.3
-+w3cdomversion=1.0
-
- [Mozilla/5.0 (Macintosh; U; PPC Mac OS X; *) AppleWebKit/* (*) Safari/412*]
- parent=Safari
-@@ -12424,6 +12426,8 @@
- stripper=False
- wap=False
- netclr=False
-+ecmascriptversion=1.3
-+w3cdomversion=1.0
-
- [Mozilla/5.0 (Macintosh; *; PPC Mac OS X Mach-O; *rv:*) Gecko/* Firefox/1.0*]
- parent=Firefox 1.0
-@@ -13306,6 +13310,8 @@
- netclr=False
- AK=False
- SK=False
-+ecmascriptversion=1.3
-+w3cdomversion=1.0
-
- [Mozilla/?.0 (compatible; MSIE 6.0*;*Windows NT 5.2*)*]
- parent=IE 6.0
------
 
   Once these two steps are completed, just going to be a page with
-  validators that have EnableClientScript="true" should be enough.
+  validators that have EnableClientScript="true" (the default) should be enough.
 
 Q: My control can get a URL in one of its attributes. The value can be something
 like "~/blah" or "../bleh" or... How do I translate that into a URL that is
