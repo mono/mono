@@ -1,3 +1,7 @@
+2005-09-06 Satya Sudha K <ksathyasudha@novell.com>
+	* Strings.cs, FileSystem.cs : Minor fixes to the 'Join' and 'FileOpen'
+                methods respectively.
+
 2005-08-30 Manjula GHM <mmanjula@novell.com>
 	* BinaryVBFile.cs : Handle trailing '#" for bool and date 
 	* OutPutVBFile.cs : Minor fixes

@@ -154,7 +154,8 @@ namespace Microsoft.VisualBasic
 				VBFile vbFile = new BinaryVBFile(fileName,mode,access,recordLength);
 				_openFilesMap.Add(fileNumber, vbFile);
 			}
-			_fileNameIdMap.Add(Path.GetFullPath(string.Intern(fileName)),fileNumber);
+			if (share != OpenShare.Shared && !_fileNameIdMap.ContainsKey(Path.GetFullPath(string.Intern(fileName))))
+				_fileNameIdMap.Add(Path.GetFullPath(string.Intern(fileName)),fileNumber);
 		}
 
 		public static void FilePut(int fileNumber,

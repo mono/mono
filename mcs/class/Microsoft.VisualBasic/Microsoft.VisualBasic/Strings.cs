@@ -723,7 +723,8 @@ namespace Microsoft.VisualBasic
 				string[] dest;
 				dest = new string[SourceArray.Length];
 
-				SourceArray.CopyTo(dest, 0);
+				for (int i = 0; i < SourceArray.Length; i++)
+					dest [i] = StringType.FromObject (SourceArray [i]);
 				return string.Join(Delimiter, dest);
 			}
 			catch (System.InvalidCastException ie){
