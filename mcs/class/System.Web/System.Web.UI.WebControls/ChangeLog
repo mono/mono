@@ -1,5 +1,14 @@
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
+	* WebControl.cs (AddAttributesToRender): always render ClientID.
+
+	* ValidationSummary.cs (Render): same.
+
+	* BaseValidator.cs (RegisterValidatorDeclaration): use ClientID
+	here.
+
+2005-09-06  Chris Toshok  <toshok@ximian.com>
+
 	* ValidationSummary.cs (Render): only do the JS stuff when the
 	validators on the page are uplevel.
 

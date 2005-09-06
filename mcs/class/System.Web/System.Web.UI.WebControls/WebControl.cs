@@ -475,8 +475,7 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual void AddAttributesToRender (HtmlTextWriter writer) 
 		{
-			if (ID != null)
-				writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
+			writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
 
 			if (AccessKey != string.Empty)
 				writer.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
