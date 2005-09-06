@@ -1401,8 +1401,8 @@ namespace System.Windows.Forms
 						     new RectangleF( 10, 0, width,  box.Font.Height ), text_format );
 			}
 			
-			pen_dark.Dispose( );
-			pen_light.Dispose( );
+			//pen_dark.Dispose( );
+			//pen_light.Dispose( );
 		}
 		
 		public override Size GroupBoxDefaultSize

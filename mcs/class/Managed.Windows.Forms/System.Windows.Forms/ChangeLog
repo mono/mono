@@ -1,3 +1,7 @@
+2005-09-06  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* ThemeNice.cs: Do not dispose Pens retrieved from ResPool
+ 
 2005-09-06  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Force a flush after Ungrab; if case the app enters
