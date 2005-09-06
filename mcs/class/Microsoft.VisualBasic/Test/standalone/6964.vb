@@ -24,7 +24,6 @@ Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
         Dim c1 As Char
-        Dim cVBCr As Char
         Dim cVBLf As Char
         Dim strFileName As String
         Dim strPathName As String
@@ -60,10 +59,8 @@ Public Class TestClass
         FileGet(fn, c1)
         str1 = str1 & c1
         FileGet(fn, c1) 'read "
-        FileGet(fn, cVBCr) 'read the Carridge
         FileGet(fn, cVBLf) 'read the line feed
         'omit output
-        FileGet(fn, cVBCr) 'read the Carridge
         FileGet(fn, cVBLf) 'read the line feed
         FileGet(fn, c1) 'read "
         FileGet(fn, c1) 'read the second string
@@ -76,7 +73,6 @@ Public Class TestClass
         str2 = str2 & c1
         FileGet(fn, c1) 'read "
         FileClose(fn)
-        If Asc(cVBCr) <> 13 Then Return "failed to get Carrige Return"
         If Asc(cVBLf) <> 10 Then Return "failed to get Line Feed"
         If str1 <> "1234" Then Return "failed to get fisrt string"
         If str2 <> "abcd" Then Return "failed to get second string"

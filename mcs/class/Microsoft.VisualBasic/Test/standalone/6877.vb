@@ -24,8 +24,7 @@ Public Class TestClass
     Public Function Test() As String
         Dim fn As Integer
         Dim c1 As Char
-        Dim cVBCr As Char
-        Dim cVBLf As Char
+        Dim cVBCrLf As Char
         Dim strFileName As String
         Dim strPathName As String
         
@@ -49,11 +48,9 @@ Public Class TestClass
         FileGet(fn, c1)
         FileGet(fn, c1)
         FileGet(fn, c1)
-        FileGet(fn, cVBCr) 'read the Carridge
-        FileGet(fn, cVBLf) 'read the line feed
+        FileGet(fn, cVBCrLf) 'read the Carriage return
         FileClose(fn)
-        If Asc(cVBCr) <> 13 Then Return "failed"
-        If Asc(cVBLf) <> 10 Then Return "failed"
+        If Asc(cVBCrLf) <> 10 Then Return "failed"
         Return "success"
     End Function
 End Class
