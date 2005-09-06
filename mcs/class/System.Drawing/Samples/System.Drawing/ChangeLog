@@ -1,3 +1,7 @@
+2005-09-06  Jordi Mas <jordi@ximian.com>
+
+	* clipping: Sample to test clipping
+
 2004-06-17  Ravindra <rkumar@novell.com>
 
 	* BmpPaint.cs: Fixed, formatted and moved here from
