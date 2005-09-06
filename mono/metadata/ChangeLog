@@ -1,3 +1,6 @@
+2005-09-06  Martin Baulig  <martin@ximian.com>
+
+	* domain.c (supported_runtimes): Added v2.0.50727.
 
 Tue Sep 6 11:40:24 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
