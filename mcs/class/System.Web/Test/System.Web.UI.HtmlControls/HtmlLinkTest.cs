@@ -74,6 +74,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			link.Href = "http://www.ximian.com/";
 			Assert.AreEqual ("<link href=\"http://www.ximian.com/\" />", link.Render(), "A1");
 		}
+
+		[Test]
+		public void Render_EmptyHref ()
+		{
+			HtmlLinkPoker link = new HtmlLinkPoker ();
+			Assert.AreEqual ("<link />", link.Render(), "A1");
+		}
 	}
 }
 
