@@ -205,7 +205,9 @@ namespace System.Web.UI.HtmlControls
 		{
 			Page.RegisterViewStateHandler ();
 
+#if NET_2_0
 			Page.RegisterForm (this);
+#endif
 
 			base.OnInit (e);
 		}
