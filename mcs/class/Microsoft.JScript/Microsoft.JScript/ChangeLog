@@ -1,3 +1,8 @@
+2005-09-06  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* CodeGenerator.cs (GetBoxType): Take into account the case where
+	the type is relational whose operator is In.
+
 2005-09-02  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* SemanticAnalyser.cs: Added IsDeletable, check if a property is

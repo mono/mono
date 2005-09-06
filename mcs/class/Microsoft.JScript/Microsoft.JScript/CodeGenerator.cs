@@ -622,6 +622,10 @@ namespace Microsoft.JScript {
 					if (member_type == MemberTypes.Property)
 						return ((PropertyInfo) binding).PropertyType;
 				}
+			} else if (obj is Relational) {
+				Relational re = (Relational) obj;
+				if (re.op == JSToken.In)
+					return typeof (bool);
 			}
 			return null;
 		}
