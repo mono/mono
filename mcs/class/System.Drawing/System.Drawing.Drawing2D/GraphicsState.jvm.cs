@@ -37,122 +37,99 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class GraphicsState : MarshalByRefObject
 	{
-		// Constructor
-		internal GraphicsState()
-		{
-		}
-
-		internal GraphicsState(Graphics graphics, bool resetState) : base()
-		{
-			this.SaveState(graphics);
-			if (resetState)
-				this.ResetState(graphics);
-		}
-
-		private CompositingMode _compositingMode;
-		private CompositingQuality _compositingQuality;
-		private Region _clip;
-		private InterpolationMode _interpolationMode;
-		private float _pageScale = 0;
-		private GraphicsUnit _pageUnit;
-		private PixelOffsetMode _pixelOffsetMode;
-		private Point _renderingOrigin;
-		private SmoothingMode _smoothingMode;
-		private Matrix _transform = null;
-		private int _textContrast;
-		private TextRenderingHint _textRenderingHint;
+		readonly CompositingMode _compositingMode;
+		readonly CompositingQuality _compositingQuality;
+		readonly Region _clip;
+		readonly InterpolationMode _interpolationMode;
+		readonly float _pageScale;
+		readonly GraphicsUnit _pageUnit;
+		readonly PixelOffsetMode _pixelOffsetMode;
+		readonly Point _renderingOrigin;
+		readonly SmoothingMode _smoothingMode;
+		readonly int _textContrast;
+		readonly TextRenderingHint _textRenderingHint;
 
 		// additional transform in case that new container has one
-		private Matrix _containerTransform;
+		readonly Matrix _transform;
+		readonly Matrix _baseTransform;
 
-		internal Matrix ContainerTransfrom
-		{
-			get {return _containerTransform;}
-			set {_containerTransform = value;}
+		GraphicsState _next = null;
+
+		internal GraphicsState(Graphics graphics, bool resetState) 
+			: this(graphics, Matrix.IdentityTransform, resetState) {}
+
+		internal GraphicsState Next {
+			get {
+				return _next;
+			}
+			set {
+				_next = value;
+			}
 		}
 
-		private void SaveState(Graphics g)
+		internal GraphicsState(Graphics graphics, Matrix matrix, bool resetState)
 		{
-			if (g != null)
-			{
-				try
-				{
-					_compositingMode = g.CompositingMode;
-					_compositingQuality = g.CompositingQuality;
-					_clip = g.Clip.Clone();
-					_interpolationMode = g.InterpolationMode;
-					_pageScale = g.PageScale;
-					_pageUnit = g.PageUnit;
-					_pixelOffsetMode = g.PixelOffsetMode;
+			_compositingMode = graphics.CompositingMode;
+			_compositingQuality = graphics.CompositingQuality;
+			_clip = graphics.Clip;
+			_interpolationMode = graphics.InterpolationMode;
+			_pageScale = graphics.PageScale;
+			_pageUnit = graphics.PageUnit;
+			_pixelOffsetMode = graphics.PixelOffsetMode;
 			
-					// FIXME: render orign is not implemented yet
-					//_renderingOrigin = new Point( g.RenderingOrigin.X, g.RenderingOrigin.Y );
+			// FIXME: render orign is not implemented yet
+			//_renderingOrigin = new Point( g.RenderingOrigin.X, g.RenderingOrigin.Y );
 
-					_smoothingMode = g.SmoothingMode;
-					_transform = g.Transform.Clone();
-					_textContrast = g.TextContrast;
-					_textRenderingHint = g.TextRenderingHint;
-				}
-				finally
-				{
-				}
-			}
+			_smoothingMode = graphics.SmoothingMode;
+			_transform = graphics.Transform;
+			_baseTransform = graphics.BaseTransform;
+
+			_textContrast = graphics.TextContrast;
+			_textRenderingHint = graphics.TextRenderingHint;
+
+			if (resetState)
+				ResetState(graphics, matrix);
 		}
 
-		internal void RestoreState(Graphics g)
+		internal void RestoreState(Graphics graphics)
 		{
-			if (g != null)
-			{
-				try
-				{
-					g.CompositingMode = _compositingMode;
-					g.CompositingQuality = _compositingQuality;
-					g.Clip = _clip;
-					g.InterpolationMode = _interpolationMode;
-					g.PageScale = _pageScale;
-					g.PageUnit = _pageUnit;
-					g.PixelOffsetMode = _pixelOffsetMode;
+			graphics.CompositingMode = _compositingMode;
+			graphics.CompositingQuality = _compositingQuality;
+			graphics.Clip = _clip;
+			graphics.InterpolationMode = _interpolationMode;
+			graphics.PageScale = _pageScale;
+			graphics.PageUnit = _pageUnit;
+			graphics.PixelOffsetMode = _pixelOffsetMode;
+	
+			// FIXME: render orign is not implemented yet
+			//graphics.RenderingOrigin = new Point( _renderingOrigin.X, _renderingOrigin.Y );
+
+			graphics.SmoothingMode = _smoothingMode;
+			graphics.Transform = _transform;
+			graphics.BaseTransform = _baseTransform;
+			graphics.TextContrast = _textContrast;
+			graphics.TextRenderingHint = _textRenderingHint;
+		}
+
+		void ResetState(Graphics graphics, Matrix matrix)
+		{
+			graphics.CompositingMode = CompositingMode.SourceOver;
+			graphics.CompositingQuality = CompositingQuality.Default;
+			graphics.Clip = Region.InfiniteRegion;
+			graphics.InterpolationMode = InterpolationMode.Bilinear;
+			graphics.PageScale = 1.0f;
+			graphics.PageUnit = GraphicsUnit.Display;
+			graphics.PixelOffsetMode = PixelOffsetMode.Default;
 			
-					// FIXME: render orign is not implemented yet
-					//g.RenderingOrigin = new Point( _renderingOrigin.X, _renderingOrigin.Y );
+			// FIXME: render orign is not implemented yet
+			//graphics.RenderingOrigin = new Point(0, 0);
 
-					g.SmoothingMode = _smoothingMode;
-					g.Transform = _transform;
-					g.TextContrast = _textContrast;
-					g.TextRenderingHint = _textRenderingHint;
-				}
-				finally
-				{
-				}
-			}
-		}
-
-		private void ResetState(Graphics g)
-		{
-			if (g != null)
-			{
-				try
-				{
-					g.CompositingMode = CompositingMode.SourceOver;
-					g.CompositingQuality = CompositingQuality.Default;
-					g.Clip = Region.InfiniteRegion;
-					g.InterpolationMode = InterpolationMode.Bilinear;
-					g.PageScale = 1.0f;
-					g.PageUnit = GraphicsUnit.Display;
-					g.PixelOffsetMode = PixelOffsetMode.Default;
-					
-					// FIXME: render orign is not implemented yet
-					//g.RenderingOrigin = new Point(0, 0);
-
-					g.SmoothingMode = SmoothingMode.None;
-					g.ResetTransform();
-					g.TextContrast = 4;
-					g.TextRenderingHint = TextRenderingHint.SystemDefault;
-				}
-				finally
-				{
-				}
-			}
+			graphics.SmoothingMode = SmoothingMode.None;
+			graphics.ResetTransform();
+			graphics.PrependBaseTransform(_transform);
+			graphics.PrependBaseTransform(matrix);
+			graphics.TextContrast = 4;
+			graphics.TextRenderingHint = TextRenderingHint.SystemDefault;
 		}
 	}
 }

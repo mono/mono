@@ -10,13 +10,14 @@ namespace System.Drawing.Drawing2D
 	{
 		#region fields
 
+		static internal readonly Matrix IdentityTransform = new Matrix();
 		geom.AffineTransform _nativeMatrix;				
 
 		#endregion
                 
 		#region ctors
 
-		Matrix (geom.AffineTransform ptr)
+		internal Matrix (geom.AffineTransform ptr)
 		{
 			_nativeMatrix = ptr;
 		}
@@ -189,7 +190,7 @@ namespace System.Drawing.Drawing2D
         
 		public void Scale (float scaleX, float scaleY)
 		{
-			Scale (scaleX, scaleY, MatrixOrder.Append);
+			Scale (scaleX, scaleY, MatrixOrder.Prepend);
 		}
         
 		public void Scale (float scaleX, float scaleY, MatrixOrder order)

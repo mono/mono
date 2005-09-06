@@ -39,13 +39,9 @@ namespace System.Drawing.Drawing2D
 	/// </summary>
 	public sealed class GraphicsContainer : MarshalByRefObject
 	{
-		GraphicsState _stateObject;
+		readonly GraphicsState _stateObject;
 		
-		internal GraphicsContainer ()
-		{
-		}
-
-		internal GraphicsContainer (GraphicsState stateObject) : base()
+		internal GraphicsContainer (GraphicsState stateObject)
 		{
 			_stateObject = stateObject;
 		}
