@@ -1,3 +1,9 @@
+2005-09-06  Ankit Jain  <jankit@novell.com>
+
+	* ExternTable.cs (ExternRef.is_resolved): New.
+	  (ExternModule.Resolve, ExternAssembly.Resolve,
+	  ExternTable.Resolve): Return if is_resolved. Set to true at the end.
+
 2005-08-29  Ankit Jain  <jankit@novell.com>
 
 	* InstrTable.cs (inst_table): Comment out stelem and ldelem opcodes.

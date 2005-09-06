@@ -24,6 +24,7 @@ namespace Mono.ILASM {
                 protected Hashtable class_table;
                 protected Hashtable typeref_table;
                 protected ArrayList customattr_list;
+                protected bool is_resolved;
 
                 public abstract void Resolve (CodeGen codegen);
                 public abstract PEAPI.IExternRef GetExternRef ();
@@ -101,10 +102,15 @@ namespace Mono.ILASM {
 
                 public override void Resolve (CodeGen codegen)
                 {
+                        if (is_resolved)
+                                return;
+
                         ModuleRef = codegen.PEFile.AddExternModule (name);
                         if (customattr_list != null)
                                 foreach (CustomAttr customattr in customattr_list)
                                         customattr.AddTo (codegen, ModuleRef);
+
+                        is_resolved = true;
                 }
 
                 
@@ -133,6 +139,9 @@ namespace Mono.ILASM {
 
                 public override void Resolve (CodeGen code_gen)
                 {
+                        if (is_resolved)
+                                return;
+
                         AssemblyRef = code_gen.PEFile.AddExternAssembly (name);
                         if (major != -1)
                                 AssemblyRef.AddVersionInfo (major, minor, build, revision);
@@ -154,6 +163,8 @@ namespace Mono.ILASM {
                                         decl_sec.AddTo (code_gen, AssemblyRef);
 
                         class_table = new Hashtable ();
+
+                        is_resolved = true;
                 }
 
                 public override PEAPI.IExternRef GetExternRef ()
@@ -204,6 +215,7 @@ namespace Mono.ILASM {
 
                 Hashtable assembly_table;
                 Hashtable module_table;
+                bool is_resolved;
                 
                 public void AddCorlib ()
                 {
@@ -258,6 +270,9 @@ namespace Mono.ILASM {
 
                 public void Resolve (CodeGen code_gen)
                 {
+                        if (is_resolved)
+                                return;
+
                         if (assembly_table != null)
                                 foreach (ExternAssembly ext in assembly_table.Values)
                                         ext.Resolve (code_gen);
@@ -265,6 +280,8 @@ namespace Mono.ILASM {
                                 return;
                         foreach (ExternModule ext in module_table.Values)
                                 ext.Resolve (code_gen);
+
+			is_resolved = true;	
                 }
 
                 public ExternTypeRef GetTypeRef (string asmb_name, string full_name, bool is_valuetype)
