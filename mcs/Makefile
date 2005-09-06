@@ -74,9 +74,7 @@ _boot_ = all clean install
 $(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--net_2_0_bootstrap--%
 $(_boot_:%=profile-do--net_2_0_bootstrap--%): profile-do--net_2_0_bootstrap--%: profile-do--default--%
 $(_boot_:%=profile-do--default--%):           profile-do--default--%:           profile-do--net_1_1_bootstrap--%
-ifeq (linux, $(PLATFORM))
 $(_boot_:%=profile-do--net_1_1_bootstrap--%): profile-do--net_1_1_bootstrap--%: profile-do--basic--%
-endif
 
 testcorlib:
 	@cd class/corlib && $(MAKE) test run-test

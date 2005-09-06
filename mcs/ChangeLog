@@ -1,9 +1,4 @@
-2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* Makefile: reverted previous change. Sadly mono.exe has different
-	  way to load mscorlib.dll so it won't work.
-
-2005-09-05  Raja R Harinath  <rharinath@novell.com>
+2005-09-06  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (bootstrap): Remove special handling on Win32.
 

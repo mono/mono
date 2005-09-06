@@ -1,9 +1,4 @@
-2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
-
-	* profiles/net_1_1_bootstrap.make,
-	* profiles/default.make: Reverted previous changes for build fix.
-
-2005-09-05  Raja R Harinath  <rharinath@novell.com>
+2005-09-06  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/net_1_1_bootstrap.make: Remove special-handling on Win32.
 	* profiles/default.make: Likewise.
