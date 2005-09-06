@@ -712,10 +712,15 @@ namespace System.Web {
 			try {
 				if (EndRequest != null)
 					EndRequest (this, EventArgs.Empty);
+			} catch (Exception e){
+				ProcessError (e);
+			}
+
+			try {
 
 				OutputPage ();
 			} catch (Exception e) {
-				Console.WriteLine ("Internal error: we are missing one catch " + e);
+				Console.WriteLine ("Internal error: OutputPage threw an exception " + e);
 			} finally {
 				context.WorkerRequest.EndOfRequest();
 				if (begin_iar != null){

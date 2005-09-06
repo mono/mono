@@ -1,3 +1,7 @@
+2005-09-06  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpApplication.cs: Catch EndRequest errors as well.
+
 2005-09-05  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpApplication.cs: Invoke EndRequest handler before OutputPage
