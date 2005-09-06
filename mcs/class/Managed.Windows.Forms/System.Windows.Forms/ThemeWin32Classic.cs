@@ -946,10 +946,12 @@ namespace System.Windows.Forms
 			// Set column painting
 			Rectangle rect_columnhdr = new Rectangle ();
 			int col_pixel;
-			Region prev_clip = g.Clip, current_clip;
+			Region current_clip;
 			rect_columnhdr.Y = columns_area.Y;
 			rect_columnhdr.Height = columns_area.Height;
 			
+			current_clip = new Region (columns_area);
+			g.Clip = current_clip;
 			int column_cnt = grid.first_visiblecolumn + grid.visiblecolumn_count;
 			for (int column = grid.first_visiblecolumn; column < column_cnt; column++) {
 				
@@ -959,16 +961,14 @@ namespace System.Windows.Forms
 
 				if (clip.IntersectsWith (rect_columnhdr) == false)
 					continue;
-									
-				current_clip = new Region (columns_area);
-				g.Clip = current_clip;
 
 				grid.CurrentTableStyle.GridColumnStyles[column].PaintHeader (g, rect_columnhdr, column);
 
-				g.Clip = prev_clip;
-				current_clip.Dispose ();
+				
 			}
 
+			current_clip.Dispose ();
+			g.ResetClip ();
 			
 			// This fills with background colour the unused part in the row headers
 			if (rect_columnhdr.X + rect_columnhdr.Height < grid.grid_drawing.client_area.X + grid.grid_drawing.client_area.Width) {

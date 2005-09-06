@@ -1,3 +1,7 @@
+2005-09-06  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ThemeWin32Classic.cs: Optimise the use of clipping
+
 2005-09-05  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGrid.cs: fixes recursion bug
