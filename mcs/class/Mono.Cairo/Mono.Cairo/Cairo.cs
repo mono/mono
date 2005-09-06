@@ -606,30 +606,30 @@ namespace Cairo {
         [StructLayout(LayoutKind.Sequential)]
         public struct FontExtents
         {
-                public  double ascent;
-                public  double descent;
-                public  double height;
-                public  double max_x_advance;
-                public  double max_y_advance;
+                public  double Ascent;
+                public  double Descent;
+                public  double Height;
+                public  double MaxXAdvance;
+                public  double MaxYAdvance;
         }        
    
    
         [StructLayout(LayoutKind.Sequential)]
         public struct TextExtents
         {
-                public  double x_bearing;
-                public  double y_bearing;
-                public  double width;
-                public  double height;
-                public  double x_advance;
-                public  double y_advance;
+                public  double XBearing;
+                public  double YBearing;
+                public  double Width;
+                public  double Height;
+                public  double XAdvance;
+                public  double YAdvance;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         public struct Glyph
         {
-                public  long index;
-                public  double x;
-                public  double y;
+                public  long Index;
+                public  double X;
+                public  double Y;
         }
 }

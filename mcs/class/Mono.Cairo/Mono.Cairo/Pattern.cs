@@ -33,18 +33,18 @@ using Cairo;
 
 namespace Cairo {
    
-        public class PatternLinear : Pattern
+        public class LinearGradient : Gradient
         {		
-	        public PatternLinear (double x0, double y0, double x1, double y1) : base()
+	        public LinearGradient (double x0, double y0, double x1, double y1) : base()
                 {
                         pattern = CairoAPI.cairo_pattern_create_linear (x0, y0, x1, y1);
 			Reference ();
                 }		
 	}
    
-        public class PatternRadial : Pattern
-        {
-		public PatternRadial (double cx0, double cy0, double radius0,
+        public class RadialGradient : Gradient
+		{
+		public RadialGradient (double cx0, double cy0, double radius0,
 				      double cx1, double cy1, double radius1) : base()
                 {
                         pattern = CairoAPI.cairo_pattern_create_radial (cx0, cy0, radius0,
@@ -53,14 +53,52 @@ namespace Cairo {
                 }
 	}
 
-        public class PatternRgba : Pattern
-        {
-	        public PatternRgba (double r, double g, double b, double a) : base ()
+		public class Gradient : Pattern
 		{
-			pattern = CairoAPI.cairo_pattern_create_rgba (r, g, b, a);
-			Reference();
+                public Status AddColorStop (double offset, Cairo.Color c)
+                {
+                        return CairoAPI.cairo_pattern_add_color_stop_rgba (pattern, offset, 
+								  c.R, c.G, c.B, c.A);                
+                }
+
+                public Status AddColorStopRgb (double offset, Cairo.Color c)
+                {
+                        return CairoAPI.cairo_pattern_add_color_stop_rgb (pattern, offset, 
+								  c.R, c.G, c.B);
+                }		
 		}
-	}
+
+		// FIXME: probably will change to a better name at some point
+		public class SolidPattern : Pattern
+		{
+			public SolidPattern (Color color, bool solid)
+			{
+				if (solid)
+					pattern = CairoAPI.cairo_pattern_create_rgb (color.R, color.G, color.B);
+				else
+					pattern = CairoAPI.cairo_pattern_create_rgba (color.R, color.G, color.B, color.A);
+				Reference ();
+			}
+		}
+
+		public class SurfacePattern : Pattern
+		{
+			public SurfacePattern (Surface surface)
+			{
+				pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Pointer);
+				Reference ();
+			}
+
+			public Extend Extend {
+				set { CairoAPI.cairo_pattern_set_extend (pattern, value); }
+				get { return CairoAPI.cairo_pattern_get_extend (pattern); }
+			}
+
+			public Filter Filter {
+				set { CairoAPI.cairo_pattern_set_filter (pattern, value); }
+				get { return CairoAPI.cairo_pattern_get_filter (pattern); }
+			}
+		}
    
         public class Pattern
         {
@@ -89,18 +127,6 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_pattern_destroy (pattern);
                 }
-
-                public Status AddColorStop (double offset, Cairo.Color c)
-                {
-                        return CairoAPI.cairo_pattern_add_color_stop_rgba (pattern, offset, 
-								  c.R, c.G, c.B, c.A);                
-                }
-		
-                public Status AddColorStopRgb (double offset, Cairo.Color c)
-                {
-                        return CairoAPI.cairo_pattern_add_color_stop_rgb (pattern, offset, 
-								  c.R, c.G, c.B);
-                }		
 		
 		public Status Status
 		{
@@ -122,16 +148,6 @@ namespace Cairo {
 				Marshal.FreeCoTaskMem (p);
 				return new Cairo.Matrix (matrix);
                         }
-                }
-		
-                public Extend Extend {
-                        set { CairoAPI.cairo_pattern_set_extend (pattern, value); }
-                        get { return CairoAPI.cairo_pattern_get_extend (pattern); }
-                }
-
-                public Filter Filter {
-                        set { CairoAPI.cairo_pattern_set_filter (pattern, value); }
-                        get { return CairoAPI.cairo_pattern_get_filter (pattern); }
                 }
 
                 public IntPtr Pointer {

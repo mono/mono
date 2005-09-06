@@ -92,12 +92,12 @@ public class CairoTest
 		double xc = width / 2;
 		double yc = height / 2;
 		
-		overlay = Surface.CreateSimilar (gr.TargetSurface, Format.ARGB32, width, height);		
-		punch = Surface.CreateSimilar (gr.TargetSurface, Format.A8, width, height);		
-		circles = Surface.CreateSimilar (gr.TargetSurface, Format.ARGB32, width, height);
+		overlay = gr.Target.CreateSimilar (Content.ColorAlpha, width, height);
+		punch = gr.Target.CreateSimilar (Content.Color, width, height);
+		circles = gr.Target.CreateSimilar (Content.ColorAlpha, width, height);
 		
 		gr.Save ();
-		gr.TargetSurface = overlay;
+		gr.Target = overlay;
 		
 		/* Draw a black circle on the overlay
 		*/
@@ -107,7 +107,7 @@ public class CairoTest
 		oval_path (gr, xc, yc, radius, radius);
 		gr.Fill ();		
 		gr.Save ();
-		gr.TargetSurface =  punch;
+		gr.Target =  punch;
 		
 		
 		/* Draw 3 circles to the punch surface, then cut
@@ -127,7 +127,7 @@ public class CairoTest
 		* without seams.
 		*/
 		gr.Save ();
-		gr.TargetSurface =  circles;
+		gr.Target =  circles;
 		
 		//gr.Alpha = 0.5;
 		gr.Operator = Operator.Over;

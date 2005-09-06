@@ -37,10 +37,10 @@ using System.Collections;
 
 namespace Cairo {
 
-        public class SurfaceImage : Surface
+        public class ImageSurface : Surface
         {
 		
-		public SurfaceImage (string filename)
+		public ImageSurface (string filename)
 		{
 			surface = CairoAPI.cairo_image_surface_create_from_png (filename);
 			lock (surfaces.SyncRoot){
