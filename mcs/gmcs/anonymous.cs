@@ -51,7 +51,7 @@ namespace Mono.CSharp {
 		public string[] TypeParameters;
 		public Type[] TypeArguments;
 		protected bool unreachable;
-		
+
 		//
 		// The modifiers applied to the method, we aggregate them
 		//
@@ -1072,12 +1072,24 @@ namespace Mono.CSharp {
 			AdjustMethodScope (am, topmost);
 		}
 
-		public void CaptureThis ()
+		public void CaptureThis (AnonymousContainer am)
 		{
 			CaptureContext parent = ParentCaptureContext;
-			if (parent != null)
-				parent.CaptureThis ();
+			if (parent != null) {
+				parent.CaptureThis (am);
+				return;
+			}
 			referenced_this = true;
+
+			if (topmost == null){
+				//
+				// Create one ScopeInfo, if there are none.
+				//
+				topmost = new ScopeInfo (this, toplevel_owner);
+				scopes [toplevel_owner.ID] = topmost;
+			
+				AdjustMethodScope (am, topmost);
+			}
 		}
 
 		public bool HaveCapturedVariables {

@@ -634,7 +634,7 @@ namespace Mono.CSharp {
 				Type t = this_type;
 				args.Add (new Argument (
 					new ThisParameterReference (t, Location)));
-				cc.CaptureThis ();
+				cc.CaptureThis (move_next_method);
 			}
 
 			args.Add (new Argument (new BoolLiteral (false)));
