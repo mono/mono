@@ -73,24 +73,20 @@ namespace System.Web.UI.HtmlControls
 				styleSheet.Render (writer);
 		}
 		
-		protected override void AddParsedSubObject (object ob)
-		{
-			if (ob is HtmlTitle)
-				title = (HtmlTitle) ob;
-			
-			base.AddParsedSubObject (ob);
-		}
-		
 		protected internal override void AddedControl (Control control, int index)
 		{
+			if (control is HtmlTitle)
+				title = (HtmlTitle) control;
+
 			base.AddedControl (control, index);
 		}
 
-		/* Shows up in corcompare */
-		[MonoTODO]
 		protected internal override void RemovedControl (Control control)
 		{
-			throw new NotImplementedException ();
+			if (title == control)
+				title = null;
+
+			base.RemovedControl (control);
 		}
 		
 		IList IPageHeader.LinkedStyleSheets {

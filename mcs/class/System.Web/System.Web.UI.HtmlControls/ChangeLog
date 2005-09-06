@@ -1,5 +1,16 @@
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlHead.cs (AddParsedSubObject): nuke, not in corcompare.
+	(AddedControl): move the HtmlTitle logic here.
+	(RemovedControl): clear out the title if that was the control that
+	was removed.
+
+	* HtmlLink.cs: new implementation.
+
+	* HtmlMeta.cs: new implementation.
+
+2005-09-06  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlInputControl.cs (RenderAttributes): add ourselves to the
 	__enabledControlArray JS array if we're currently enabled and the
 	form is set to SubmitDisabledControls.
