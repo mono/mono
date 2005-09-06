@@ -1,3 +1,8 @@
+2005-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : Literal escape (\) was not checking format as
+	  expected. Fixed bug #75213.
+
 2005-09-05  Miguel de Icaza  <miguel@novell.com>
 
 	* MonoType.cs: Patch from Jonathan Chambers to implement

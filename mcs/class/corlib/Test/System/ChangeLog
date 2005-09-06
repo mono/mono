@@ -1,3 +1,7 @@
+2005-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : test for #75213.
+
 2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : another COM dependent idiotic parse.

@@ -593,6 +593,11 @@ public class DateTimeTest : Assertion
 			Fail ("z02");
 		} catch (FormatException) {
 		}
+
+		// Bug #75213 : literal escaping.
+		t1 = DateTime.ParseExact ("20050707132527Z",
+			"yyyyMMddHHmmss\\Z", CultureInfo.InvariantCulture);
+		AssertEquals ("Literal1.Ticks", 632563395270000000, t1.Ticks);
 	}
 
 	[Ignore ("need to fix tests that run on different timezones")]

@@ -906,15 +906,14 @@ namespace System
 					num = 0;
 					continue;
 				} else if (chars[pos] == '\\') {
-					if (pos+1 >= len)
+					pos += num + 1;
+					num = 0;
+					if (pos >= len)
 						return false;
 
-					if (s [valuePos] != chars [pos + num])
+					if (s [valuePos] != chars [pos])
 						return false;
 					valuePos++;
-					if (valuePos == s.Length)
-						return false;
-
 					pos++;
 					continue;
 				} else if (chars[pos] == '%') {
