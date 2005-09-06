@@ -3,6 +3,9 @@
 	* TimeZone.cs, DateTime.cs :
 	  - ToLocalTime() and ToUniversalTime() are moved to TimeZone.
 	  - Added more COM patterns. Patch by Ankit Jain. Fixed bug #72132.
+	  - use ToLocalTime() and don't depend on the own offset computation.
+	    Parse() with 'Z' pattern is closer to correct value on switching
+	    Daylight Saving Time. See bug #75985.
 
 2005-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
