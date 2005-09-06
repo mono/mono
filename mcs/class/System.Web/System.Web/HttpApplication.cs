@@ -710,11 +710,10 @@ namespace System.Web {
 		void PipelineDone ()
 		{
 			try {
-				OutputPage ();
-				
 				if (EndRequest != null)
 					EndRequest (this, EventArgs.Empty);
 
+				OutputPage ();
 			} catch (Exception e) {
 				Console.WriteLine ("Internal error: we are missing one catch " + e);
 			} finally {
