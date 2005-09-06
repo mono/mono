@@ -48,11 +48,11 @@ namespace Microsoft.JScript {
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_hasOwnProperty)]
 		public static bool hasOwnProperty (object thisObj, object name)
 		{
-			if (thisObj == null || name == null)
+			ScriptObject obj = thisObj as ScriptObject;
+			if (obj == null)
 				return false;
-			Type type = thisObj.GetType ();
-			FieldInfo res = type.GetField (Convert.ToString (name));
-			return res == null;
+			string key = Convert.ToString (name);
+			return LateBinding.DirectHasObjectProperty (obj, key);
 		}
 
 		[JSFunctionAttribute (JSFunctionAttributeEnum.HasThisObject, JSBuiltin.Object_isPrototypeOf)]

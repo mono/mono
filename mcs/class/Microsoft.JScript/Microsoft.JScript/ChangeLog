@@ -1,3 +1,10 @@
+2005-09-06  Florian Gross  <flgr@ccan.de>
+
+	* ObjectPrototype.cs: Implemented better working hasOwnProperty
+	* In.cs: Implemented JScriptIn
+	* LateBinding.cs: Added LateBinding.Delete, HasObjectProperty,
+	DirectHasObjectProperty
+
 2005-09-06  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* CodeGenerator.cs (GetBoxType): Take into account the case where

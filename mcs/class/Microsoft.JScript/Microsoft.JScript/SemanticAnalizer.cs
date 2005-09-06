@@ -359,8 +359,8 @@ namespace Microsoft.JScript {
 				if (right.name.Value == "prototype")
 					return false;
 			}
-			Console.WriteLine ("left = {0}...left.Type = {1} ... right = {2}...right.Type = {3}",
-				   left, left.GetType (), right, right.GetType ());
+			Console.WriteLine ("ctr = {0}, left = {1} ({2}); right = {3} ({4})",
+				   ctr, left, left.GetType (), right, right.GetType ());
 			throw new NotImplementedException ();
 		}
 	}

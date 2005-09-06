@@ -283,7 +283,9 @@ namespace Microsoft.JScript {
 
 		public bool Delete ()
 		{
-			throw new NotImplementedException ();
+			// We are currently only calling LateBinding.Delete where we know that the
+			// properties can't be deleted.
+			return false;
 		}
 
 
@@ -452,6 +454,42 @@ namespace Microsoft.JScript {
 			if (nesting > 0)
 				SetCacheEntry (obj, key, null);
 			return null;
+		}
+
+		internal static bool HasObjectProperty (ScriptObject obj, string key)
+		{
+			return HasObjectProperty (obj, key, 0);
+		}
+
+		private static bool HasObjectProperty (ScriptObject obj, string key, int nesting)
+		{
+			ScriptObject prop_obj;
+			if (nesting > 0 && GetCacheEntry (out prop_obj, obj, key))
+				return prop_obj != null;
+
+			if (DirectHasObjectProperty (obj, key)) {
+				if (nesting > 0)
+					SetCacheEntry (obj, key, obj);
+				return true;
+			}
+
+			ScriptObject cur_obj = obj.proto as ScriptObject;
+			if (cur_obj != null) {
+				bool success = HasObjectProperty (cur_obj, key, nesting + 1);
+				if (nesting > 0)
+					SetCacheEntry (obj, key, cur_obj);
+				return success;
+			}
+
+			if (nesting > 0)
+				SetCacheEntry (obj, key, null);
+			return false;
+		}
+
+		internal static bool DirectHasObjectProperty (ScriptObject obj, string key)
+		{
+			object result;
+			return TryDirectGetObjectProperty (out result, obj, key);
 		}
 
 		private static bool TryDirectGetObjectProperty (out object result, ScriptObject obj, string rhs)

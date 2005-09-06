@@ -41,7 +41,11 @@ namespace Microsoft.JScript {
 
 		public static bool JScriptIn (object v1, object v2)
 		{
-			return false;
+			ScriptObject obj = v2 as ScriptObject;
+			if (obj == null)
+				return false;
+			string key = Convert.ToString (v1);
+			return LateBinding.HasObjectProperty (obj, key);
 		}
 
 		internal override bool Resolve (IdentificationTable context)
