@@ -1,5 +1,13 @@
 2005-09-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpRuntime.cs: actually unload the domain when requested. Reformatted
+	FinishUnavailable() and removed the 'Location' header form the error.
+
+	* HttpApplicationFactory.cs: set up the watcher for the bin directory.
+	This also prevents a nullref when global.asax is changed.
+
+2005-09-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplication.cs: fixed bug introduced when moving GetHandler call
 	around. Now we get error pages again.
 

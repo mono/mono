@@ -87,6 +87,7 @@ namespace System.Web {
 
 		static HttpRuntime ()
 		{
+			Console.WriteLine ("Jelou");
 			queue_manager = new QueueManager ();
 			trace_manager = new TraceManager ();
 			timeout_manager = new TimeoutManager ();
@@ -268,6 +269,12 @@ namespace System.Web {
 		{
 			// Kill our application.
 			HttpApplicationFactory.Dispose ();
+			ThreadPool.QueueUserWorkItem (new WaitCallback (DoUnload), null);
+		}
+
+		static void DoUnload (object state)
+		{
+			AppDomain.Unload (AppDomain.CurrentDomain);
 		}
 
                 static string content503 = "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n" +
@@ -282,24 +289,16 @@ namespace System.Web {
 		//
 		static internal void FinishUnavailable (HttpWorkerRequest wr)
 		{
-			string host = "FIXME";
-			string location = "FIXME";
-				
-			//
-			// From Mono.WebServer
-			//
 			wr.SendStatus (503, "Service unavailable");
-                        wr.SendUnknownResponseHeader ("Connection", "close");
-                        wr.SendUnknownResponseHeader ("Date", DateTime.Now.ToUniversalTime ().ToString ("r"));
-                        wr.SendUnknownResponseHeader ("Location", String.Format ("http://{0}{1}", host, location));
-                        Encoding enc = Encoding.ASCII;
-                        wr.SendUnknownResponseHeader ("Content-Type", "text/html; charset=" + enc.WebName);
-                        byte [] contentBytes = enc.GetBytes (content503);
-                        wr.SendUnknownResponseHeader ("Content-Length", contentBytes.Length.ToString ());
-                        wr.SendResponseFromMemory (contentBytes, contentBytes.Length);
-                        wr.FlushResponse (true);
-                        wr.CloseConnection ();
-			
+			wr.SendUnknownResponseHeader ("Connection", "close");
+			wr.SendUnknownResponseHeader ("Date", DateTime.Now.ToUniversalTime ().ToString ("r"));
+			Encoding enc = Encoding.ASCII;
+			wr.SendUnknownResponseHeader ("Content-Type", "text/html; charset=" + enc.WebName);
+			byte [] contentBytes = enc.GetBytes (content503);
+			wr.SendUnknownResponseHeader ("Content-Length", contentBytes.Length.ToString ());
+			wr.SendResponseFromMemory (contentBytes, contentBytes.Length);
+			wr.FlushResponse (true);
+			wr.CloseConnection ();
 		}
 
 		internal static TraceManager TraceManager {

@@ -1,10 +1,6 @@
 //
 // System.Web.HttpApplicationFactory
 //
-// TODO:
-//   bin_watcher must work.
-//   
-//
 // Author:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
@@ -184,7 +180,7 @@ namespace System.Web {
 		}
 
 #if !TARGET_JVM
-		FileSystemWatcher CreateWatcher (string file, FileSystemEventHandler hnd)
+		static FileSystemWatcher CreateWatcher (string file, FileSystemEventHandler hnd)
 		{
 			FileSystemWatcher watcher = new FileSystemWatcher ();
 
@@ -360,6 +356,12 @@ namespace System.Web {
 				factory.InitType (context);
 				lock (factory) {
 					if (factory.app_start_needed) {
+						string bin = HttpRuntime.BinDirectory;
+						if (Directory.Exists (bin))
+							bin = Path.Combine (bin, "*.dll");
+
+						// We watch bin or bin/*.dll if the directory exists
+						factory.bin_watcher = CreateWatcher (bin, new FileSystemEventHandler (factory.OnAppFileChanged));
 						factory.FireOnAppStart (context);
 						factory.app_start_needed = false;
 					}
