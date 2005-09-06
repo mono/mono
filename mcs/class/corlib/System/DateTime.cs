@@ -118,8 +118,12 @@ namespace System
 			"dd-MMM-yy",
 
 			// DayOfTheWeek, dd full_month_name yyyy
-			// FIXME: 1054(th-TH) rejects it
+			// FIXME: 1054(th-TH) rejects them
 			"dddd, dd MMMM yyyy",
+			"dddd, dd MMMM yyyy HH:mm",
+			"dddd, dd MMMM yyyy HH:mm:ss",
+
+			"yyyy MMMM",
 			// DayOfTheWeek, dd yyyy. This works for every locales.
 			"MMMM dd, yyyy",
 #if NET_1_1
@@ -228,20 +232,8 @@ namespace System
 		/// </summary>
 		/// 
 		public DateTime (long newticks)
-			// `local' must default to false here to avoid
-			// a recursion loop.
-			: this (false, newticks) {}
-
-		internal DateTime (bool local, long newticks)
 		{
 			ticks = new TimeSpan (newticks);
-			if (local) {
-				TimeZone tz = TimeZone.CurrentTimeZone;
-
-				TimeSpan utcoffset = tz.GetUtcOffset (this);
-
-				ticks = ticks + utcoffset;
-			}
 			if (ticks.Ticks < MinValue.Ticks || ticks.Ticks > MaxValue.Ticks)
 			    throw new ArgumentOutOfRangeException ();
 		}
@@ -381,7 +373,7 @@ namespace System
 		{
 			get	
 			{
-				return new DateTime (true, GetNow ());
+				return new DateTime (GetNow ()).ToLocalTime ();
 			}
 		}
 
@@ -569,7 +561,7 @@ namespace System
 			if (fileTime < 0)
 				throw new ArgumentOutOfRangeException ("fileTime", "< 0");
 
-			return new DateTime (true, w32file_epoch + fileTime);
+			return new DateTime (w32file_epoch + fileTime).ToLocalTime ();
 		}
 
 #if NET_1_1
@@ -578,7 +570,7 @@ namespace System
 			if (fileTime < 0)
 				throw new ArgumentOutOfRangeException ("fileTime", "< 0");
 
-			return new DateTime (false, w32file_epoch + fileTime);
+			return new DateTime (w32file_epoch + fileTime);
 		}
 #endif
 
@@ -1315,7 +1307,9 @@ namespace System
 
 			long newticks = (result.ticks - utcoffset).Ticks;
 
-			result = new DateTime (use_localtime, newticks);
+			result = new DateTime (newticks);
+			if (use_localtime)
+				result = result.ToLocalTime ();
 
 			return true;
 		}
@@ -1799,47 +1793,14 @@ namespace System
 			return this._ToString (format, dfi);
 		}
 
-		public DateTime ToLocalTime()
+		public DateTime ToLocalTime ()
 		{
-			TimeZone tz = TimeZone.CurrentTimeZone;
-
-			TimeSpan offset = tz.GetUtcOffset (this);
-
-			if (offset.Ticks > 0) {
-				if (DateTime.MaxValue - offset < this)
-					return DateTime.MaxValue;
-			} else if (offset.Ticks < 0) {
-				// MS.NET fails to check validity here 
-				// - it may throw ArgumentOutOfRangeException
-				/*
-				if (DateTime.MinValue - offset > this)
-					return DateTime.MinValue;
-				*/
-			}
-			
-			DateTime lt = new DateTime(true, ticks+offset);
-			TimeSpan ltoffset = tz.GetUtcOffset(lt);
-			if(ltoffset != offset)
-				lt = lt.Add(ltoffset.Subtract(offset));
-
-			return lt;
+			return TimeZone.CurrentTimeZone.ToLocalTime (this);
 		}
 
 		public DateTime ToUniversalTime()
 		{
-			TimeZone tz = TimeZone.CurrentTimeZone;
-
-			TimeSpan offset = tz.GetUtcOffset (this);
-
-			if (offset.Ticks < 0) {
-				if (DateTime.MaxValue + offset < this)
-					return DateTime.MaxValue;
-			} else if (offset.Ticks > 0) {
-				if (DateTime.MinValue + offset > this)
-					return DateTime.MinValue;
-			}
-
-			return new DateTime (false, ticks - offset);
+			return TimeZone.CurrentTimeZone.ToUniversalTime (this);
 		}
 
 		/*  OPERATORS */

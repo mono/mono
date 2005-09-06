@@ -680,12 +680,22 @@ public class DateTimeTest : Assertion
 		AssertEquals ("H14", t2.Ticks, t1.Ticks);
 
 		t2 = new DateTime (2002, 2, 1);
-		t1 = DateTime.Parse ("2002 February");
+		t1 = DateTime.Parse ("2002 February", new CultureInfo ("ja-JP"));
 		AssertEquals ("H15", t2.Ticks, t1.Ticks);
 
 		t2 = new DateTime (DateTime.Today.Year, 2, 8);
 		t1 = DateTime.Parse ("February 8");
 		AssertEquals ("H16", t2.Ticks, t1.Ticks);
+
+		// bug #72132
+		t2 = new DateTime (2002, 2, 25, 5, 25, 22);
+		t1 = DateTime.Parse ("Monday, 25 February 2002 05:25:22",
+			new CultureInfo ("hi-IN"));
+		AssertEquals ("H17", t2.Ticks, t1.Ticks);
+		t2 = new DateTime (2002, 2, 25, 5, 25, 0);
+		t1 = DateTime.Parse ("Monday, 25 February 2002 05:25",
+			new CultureInfo ("hi-IN"));
+		AssertEquals ("H18", t2.Ticks, t1.Ticks);
 	}
 
 	public void TestParse3 ()

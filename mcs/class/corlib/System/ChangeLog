@@ -1,5 +1,11 @@
 2005-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TimeZone.cs, DateTime.cs :
+	  - ToLocalTime() and ToUniversalTime() are moved to TimeZone.
+	  - Added more COM patterns. Patch by Ankit Jain. Fixed bug #72132.
+
+2005-09-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTime.cs : (DoParse) DateTimeStyles.AdjustToUniversal was not
 	  handled as expected and it kept time value as local one.
 	  Patch by Brion Vibber. Fixed bug #75995.

@@ -59,6 +59,11 @@ namespace System
 			}
 		}
 
+		internal static void ClearCurrentTimeZone ()
+		{
+			currentTimeZone = null;
+		}
+
 		public abstract string DaylightName {
 			get;
 		}
@@ -103,12 +108,42 @@ namespace System
 
 		public virtual DateTime ToLocalTime (DateTime time)
 		{
-			return time + GetUtcOffset (time);
+//			return time + GetUtcOffset (time);
+			TimeSpan offset = GetUtcOffset (time);
+
+			if (offset.Ticks > 0) {
+				if (DateTime.MaxValue - offset < time)
+					return DateTime.MaxValue;
+			} else if (offset.Ticks < 0) {
+				// MS.NET fails to check validity here 
+				// - it may throw ArgumentOutOfRangeException
+				/*
+				if (DateTime.MinValue - offset > this)
+					return DateTime.MinValue;
+				*/
+			}
+			
+			DateTime lt = new DateTime (time.Ticks + offset.Ticks);
+			TimeSpan ltoffset = GetUtcOffset (lt);
+			if (ltoffset != offset)
+				lt = lt.Add (ltoffset.Subtract (offset));
+
+			return lt;
 		}
 
 		public virtual DateTime ToUniversalTime (DateTime time)
 		{
-			return time - GetUtcOffset (time);
+			TimeSpan offset = GetUtcOffset (time);
+
+			if (offset.Ticks < 0) {
+				if (DateTime.MaxValue + offset < time)
+					return DateTime.MaxValue;
+			} else if (offset.Ticks > 0) {
+				if (DateTime.MinValue + offset > time)
+					return DateTime.MinValue;
+			}
+
+			return new DateTime (time.Ticks - offset.Ticks);
 		}
 	}
 
