@@ -111,7 +111,7 @@ namespace System.Web.UI.HtmlControls {
 
 #if NET_2_0
 			if (Page.Form.SubmitDisabledControls && Page.Form.DetermineRenderUplevel() && !Disabled)
-				Page.ClientScript.RegisterArrayDeclaration ("__enabledControlArray", String.Format ("'{0}'", ID));
+				Page.ClientScript.RegisterArrayDeclaration ("__enabledControlArray", String.Format ("'{0}'", ClientID));
 #endif
 		}
 	}

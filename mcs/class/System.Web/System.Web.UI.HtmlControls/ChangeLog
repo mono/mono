@@ -1,5 +1,10 @@
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlInputControl.cs (RenderAttributes): use ClientID instead of
+	ID.
+
+2005-09-06  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlHead.cs (AddParsedSubObject): nuke, not in corcompare.
 	(AddedControl): move the HtmlTitle logic here.
 	(RemovedControl): clear out the title if that was the control that
