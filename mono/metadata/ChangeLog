@@ -1,3 +1,8 @@
+
+Tue Sep 6 11:40:24 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* culture-info.h: reduce the size of some structures.
+
 2005-09-05  Martin Baulig  <martin@ximian.com>
 
 	Reflect latest API changes in the August CTP.
