@@ -1,3 +1,8 @@
+2005-09-06 Boris Kirzner <borisk@mainsoft.com>
+	* GraphicsPathIterator.cs: added.
+	* GraphicsPath.cs: Changed tests. Added NotWorking for the tests that
+	should fail in TARGET_JVM.
+
 2005-08-25 Vladimir Krasnov <vladimirk@mainsoft.com>
 	
 	* Graphics.cs: Added tests for Graphics.Begin/EndContaioner, 

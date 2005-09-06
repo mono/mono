@@ -140,6 +140,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "DrawingTest\Test\GraphicsPathIterator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "DrawingTest\Test\Image.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

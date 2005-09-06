@@ -1,3 +1,31 @@
+//
+// System.Drawing.Drawing2D.GraphicsPath.cs
+//
+// Author:
+// Konstantin Triger <kostat@mainsoft.com>
+// Bors Kirzner <boris@mainsoft.com>	
+//
+// Copyright (C) 2005 Mainsoft Corporation, (http://www.mainsoft.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 using System;
 using System.Drawing;
 using System.Collections;
@@ -53,51 +81,13 @@ namespace System.Drawing.Drawing2D
 		public GraphicsPath (Point [] pts, byte [] types, FillMode fillMode) : this(new ExtendedGeneralPath ())
 		{
 			FillMode = fillMode;
-			for (int i=0; i < pts.Length; i++) {
-				switch ((PathPointType)types [i]) {
-					case PathPointType.Start :
-						NativeObject.moveTo (pts [i].X, pts [i].Y);
-						break;
-					case PathPointType.Bezier3 :
-						float x1 = pts [i].X;
-						float y1 = pts [i].Y;
-						i++;
-						float x2 = pts [i].X;
-						float y2 = pts [i].Y;
-						i++;
-						float x3 = pts [i].X;
-						float y3 = pts [i].Y;
-						NativeObject.curveTo (x1,y1, x2, y2, x3, y3);
-						break;						
-				}
-				if (((PathPointType)types [i] & PathPointType.CloseSubpath) != 0)
-					NativeObject.closePath();
-			}	
+			SetPath (pts, types);
 		}
 
 		public GraphicsPath (PointF [] pts, byte [] types, FillMode fillMode) : this(new ExtendedGeneralPath ())
 		{
 			FillMode = fillMode;
-			for (int i=0; i < pts.Length; i++) {
-				switch ((PathPointType)types [i]) {
-					case PathPointType.Start :
-						NativeObject.moveTo (pts [i].X, pts [i].Y);
-						break;
-					case PathPointType.Bezier3 :
-						float x1 = pts [i].X;
-						float y1 = pts [i].Y;
-						i++;
-						float x2 = pts [i].X;
-						float y2 = pts [i].Y;
-						i++;
-						float x3 = pts [i].X;
-						float y3 = pts [i].Y;
-						NativeObject.curveTo (x1,y1, x2, y2, x3, y3);
-						break;
-				}
-				if (((PathPointType)types [i] & PathPointType.CloseSubpath) != 0)
-					NativeObject.closePath();
-			}
+			SetPath (pts, types);
 		}
 
 		#endregion
@@ -130,51 +120,7 @@ namespace System.Drawing.Drawing2D
 
 		public PathData PathData 
 		{
-			get 
-			{
-				PathIterator iter = NativeObject.getPathIterator(null);
-				PathData pathData = new PathData();
-				pathData.Types = new byte [PointCount];
-				pathData.Points = new PointF [PointCount];
-				int tpos = 0;
-				int ppos = 0;
-				float [] jpoints = new float [6];
-				while (!iter.isDone ()) {
-					//if (tpos == 0)
-					//	pathData.Types [tpos++] = PathPointType.Start;
-
-					JPI segmentType = (JPI)iter.currentSegment (jpoints);
-					switch (segmentType) {
-						case JPI.SEG_CLOSE:
-							pathData.Types [tpos - 1] = (byte) (pathData.Types [tpos - 1] | (byte) PathPointType.CloseSubpath);
-							break;
-						case JPI.SEG_MOVETO:
-							pathData.Types [tpos++] = (byte) PathPointType.Start;
-							pathData.Points [ppos++] = new PointF (jpoints [0], jpoints [1]);
-							break;
-						case JPI.SEG_LINETO:
-							pathData.Types [tpos++] = (byte) PathPointType.Line;
-							pathData.Points [ppos++] = new PointF (jpoints [0], jpoints [1]);
-							break;
-						case JPI.SEG_QUADTO:
-							pathData.Types [tpos++] = (byte) PathPointType.Bezier;
-							pathData.Points [ppos++] = new PointF (jpoints [0], jpoints [1]);
-							pathData.Types [tpos++] = (byte) PathPointType.Bezier;
-							pathData.Points [ppos++] = new PointF (jpoints [2], jpoints [3]);
-							break;
-						case JPI.SEG_CUBICTO:
-							pathData.Types [tpos++] = (byte) PathPointType.Bezier3;
-							pathData.Points [ppos++] = new PointF (jpoints [0], jpoints [1]);
-							pathData.Types [tpos++] = (byte) PathPointType.Bezier3;
-							pathData.Points [ppos++] = new PointF (jpoints [2], jpoints [3]);
-							pathData.Types [tpos++] = (byte) PathPointType.Bezier3;
-							pathData.Points [ppos++] = new PointF (jpoints [4], jpoints [5]);
-							break;
-					}		
-					iter.next ();
-				}
-				return pathData;
-			}
+			get { return NativeObject.PathData; }
 		}
 
 		public PointF [] PathPoints 
@@ -194,13 +140,12 @@ namespace System.Drawing.Drawing2D
 		}
 		#endregion
 
-		#region PointCount [TODO]
+		#region PointCount
 		public int PointCount 
 		{
-
 			get 
 			{
-				return NativeObject.CoordsCount / 2;
+				return NativeObject.PointCount;
 			}
 		}
 		#endregion
@@ -258,18 +203,21 @@ namespace System.Drawing.Drawing2D
 			double cosx = 1/Math.Sqrt( sqrd1Tod2 * (tan*tan) + 1);
 			double xRad = Math.Acos(cosx);
 			double x = java.lang.Math.toDegrees(xRad);
-			int q = ((int)angle)/90;
+			int q = ((int)x)/90;
 
 			switch (q&3) {
-				default:
-					return x;
 				case 1:
-					return 180-x;
+					x = 180-x;
+					break;
 				case 2:
-					return 180+x;
+					x = 180+x;
+					break;
 				case 3:
-					return 360-x;
+					x = 360-x;
+					break;
 			}
+
+			return angle > 0 ? x : -x;
 		}
 
 		#endregion
@@ -333,7 +281,7 @@ namespace System.Drawing.Drawing2D
 		}
 		#endregion
 
-		#region AdEllipse
+		#region AddEllipse
 		public void AddEllipse (float x, float y, float width, float height)
 		{
 			Ellipse2D e = new Ellipse2D.Float(x,y,width,height);
@@ -481,9 +429,7 @@ namespace System.Drawing.Drawing2D
 		#region AddRectangle(s)
 		internal void AddRectangle(float x,float y, float w, float h)
 		{
-			if (NativeObject.LastFigureClosed)
-				NativeObject.moveTo(x, y);
-
+			NativeObject.moveTo(x, y);
 			NativeObject.lineTo (x + w, y);
 			NativeObject.lineTo (x + w, y + h);
 			NativeObject.lineTo (x, y + h);
@@ -522,11 +468,7 @@ namespace System.Drawing.Drawing2D
 		#region GetLastPoint
 		public PointF GetLastPoint ()
 		{
-			int length = NativeObject.CoordsCount;
-			if (length == 0)
-				throw new System.ArgumentException ("Invalid parameter used.");
-
-			return new PointF (NativeObject.Coords [length - 2], NativeObject.Coords [length - 1]);
+			return NativeObject.GetLastPoint ();
 		}
 		#endregion
 
@@ -540,21 +482,41 @@ namespace System.Drawing.Drawing2D
 		#region GetBounds
 		public RectangleF GetBounds ()
 		{
-			Rectangle2D rect = NativeObject.getBounds2D();
-			return new RectangleF((float)rect.getX(),(float)rect.getY(),(float)rect.getWidth(),(float)rect.getHeight());
+			return GetBounds (null, null);
 		}  		
 
 		public RectangleF GetBounds (Matrix matrix)
 		{
-			Shape shape = matrix != null ? 
-				NativeObject.createTransformedShape(matrix.NativeObject) : NativeObject;
-			Rectangle2D rect = shape.getBounds2D();
-			return new RectangleF((float)rect.getX(),(float)rect.getY(),(float)rect.getWidth(),(float)rect.getHeight());
+			return GetBounds (matrix, null);
 		}
 
 		public RectangleF GetBounds (Matrix matrix, Pen pen)
 		{
-			throw new NotImplementedException();
+			// FIXME : we do not know exacly how the bounding rectangle 
+			// is calculated so this implementation obtains different bounds
+			// that still contains the path widened by oen and transformed by matrix
+			// the order of operations is similar to widening, as .Net does.
+
+			// first get original shape bounds
+			//Shape shape = NativeObject.getBounds2D();
+			Shape shape = NativeObject;
+
+			// stroke bounds
+			if (pen != null)
+				shape = ((Stroke)pen).createStrokedShape (shape);
+
+			shape = shape.getBounds2D ();
+
+			// transform bounds			
+			if (matrix != null) {
+				GeneralPath jpath = new GeneralPath (shape);
+				jpath.transform (matrix.NativeObject);				
+				shape = jpath;
+			}
+			
+			// get bounds bounds
+			Rectangle2D rect = shape.getBounds2D();
+			return new RectangleF (rect);
 		}
 		#endregion
         
@@ -606,17 +568,18 @@ namespace System.Drawing.Drawing2D
                 
 		public bool IsVisible (float x, float y, Graphics graphics)
 		{
-			if (graphics != null && !graphics.IsVisible(x,y))
-				return false;
+			// LAMESPEC : .Net is currently ignorig Graphics object
+			//if (graphics != null && !graphics.IsVisible(x,y))
+			//	return false;
 
 			return NativeObject.contains(x,y);
 		}
 		#endregion
         
-		#region Reverse [TODO]
+		#region Reverse
 		public void Reverse ()
 		{
-			throw new NotImplementedException();
+			NativeObject.Reverse ();
 		}
 		#endregion
              
@@ -656,6 +619,7 @@ namespace System.Drawing.Drawing2D
 			pts[--length] = points[points.Length-1].X;
 
 			AddCurve(pts, !NativeObject.LastFigureClosed, tension);
+			CloseFigure ();
 		}
 
 		public void AddClosedCurve (PointF [] points, float tension)
@@ -683,6 +647,7 @@ namespace System.Drawing.Drawing2D
 			pts[--length] = points[points.Length-1].X;
 
 			AddCurve(pts, !NativeObject.LastFigureClosed, tension);
+			CloseFigure ();
 		}
 		#endregion
 
@@ -806,38 +771,40 @@ namespace System.Drawing.Drawing2D
 		}
 		#endregion
 
-		#region AddString [TODO]
+		#region AddString
+		[MonoTODO]
 		public void AddString (string s, FontFamily family, int style,  float emSize,  Point origin,   StringFormat format)
 		{
 			throw new NotImplementedException ();
 		}  	
                 
+		[MonoTODO]
 		public void AddString (string s,  FontFamily family,  int style,  float emSize,  PointF origin,   StringFormat format)
 		{
 			throw new NotImplementedException ();
 		}  	
   		
+		[MonoTODO]
 		public void AddString (string s, FontFamily family, int style, float emSize,  Rectangle layoutRect, StringFormat format)
 		{
 			throw new NotImplementedException ();
 		}  	
   		
+		[MonoTODO]
 		public void AddString (string s, FontFamily family, int style, float emSize,  RectangleF layoutRect,   StringFormat format)
 		{
 			throw new NotImplementedException ();
 		}
 		#endregion
                 
-		#region ClearMarkers [TODO]
+		#region ClearMarkers
 		public void ClearMarkers()               
 		{
-			throw new NotImplementedException ();
+			NativeObject.ClearMarkers ();
 		}
 		#endregion
         
-		#region Close(All) [REVIEW-EXTEND]
-		
-
+		#region Close
 		public void CloseAllFigures()
 		{
 			ExtendedGeneralPath p = new ExtendedGeneralPath();
@@ -877,7 +844,6 @@ namespace System.Drawing.Drawing2D
 
 			p.closePath();
 			Shape = p;
-			//_isNewFigure = (lastSeg == PathIterator.SEG_CLOSE);
 		}  	
                 
 		public void CloseFigure()
@@ -886,7 +852,7 @@ namespace System.Drawing.Drawing2D
 		} 
 		#endregion
 
-		#region Flatten [REVIEW]
+		#region Flatten
 		public void Flatten ()
 		{
 			// 1/4 is the FlatnessDefault as defined in GdiPlusEnums.h
@@ -904,7 +870,7 @@ namespace System.Drawing.Drawing2D
 			if(matrix != null)			
 				tr = matrix.NativeObject;
 
-			//REVIEW. Perfomance reasons.
+			//FIXME : Review (perfomance reasons).
 			PathIterator pi = NativeObject.getPathIterator(tr,flatness);
 			ExtendedGeneralPath newPath = new ExtendedGeneralPath();
 			newPath.append(pi,false);
@@ -912,78 +878,88 @@ namespace System.Drawing.Drawing2D
 		}
 		#endregion
         
-		#region GetOutlineVisible [TODO]
+		#region GetOutlineVisible
 		public bool IsOutlineVisible (Point point, Pen pen)
 		{
-			throw new NotImplementedException();
+			return IsOutlineVisible (point.X, point.Y, pen, null);
 		}  		
 		
 		public bool IsOutlineVisible (PointF point, Pen pen)
 		{
-			throw new NotImplementedException();
+			return IsOutlineVisible (point.X, point.Y, pen, null);
 		} 
 		
 		public bool IsOutlineVisible (int x, int y, Pen pen)
 		{
-			throw new NotImplementedException();
+			return IsOutlineVisible (x, y, pen, null);
 		}
 
 		public bool IsOutlineVisible (float x, float y, Pen pen)
 		{
-			throw new NotImplementedException();
+			return IsOutlineVisible (x, y, pen, null);
 		}  		
 		
 		public bool IsOutlineVisible (Point pt, Pen pen, Graphics graphics)
 		{
-			throw new NotImplementedException();
+			return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
 		}  		
 		
 		public bool IsOutlineVisible (PointF pt, Pen pen, Graphics graphics)
 		{
-			throw new NotImplementedException();
+			return IsOutlineVisible (pt.X, pt.Y, pen, graphics);
 		}  		
 				
 		public bool IsOutlineVisible (int x, int y, Pen pen, Graphics graphics)
 		{
-			throw new NotImplementedException();
+			// LAMESPEC : .Net is currently ignorig Graphics object
+			//if (graphics != null) {
+			//	if (!graphics.IsVisible (x, y))
+			//		return false;				
+			//}
+
+			return ((Stroke)pen).createStrokedShape (NativeObject).contains (x, y);
 		}  		
 				
 		public bool IsOutlineVisible (float x, float y, Pen pen, Graphics graphics)
 		{
-			throw new NotImplementedException();
+			return ((Stroke)pen).createStrokedShape (NativeObject).contains (x, y);
 		}  		
 		#endregion
         
-		#region SetMarkers [TODO]
+		#region SetMarkers 
 		public void SetMarkers ()
 		{
-			throw new NotImplementedException();
+			NativeObject.SetMarkers ();
 		}
 		#endregion
                 
 		#region StartFigure
 		public void StartFigure()
 		{
-			NativeObject.Types [NativeObject.TypesCount - 1] |= ExtendedGeneralPath.SEG_START;
+			NativeObject.StartFigure ();
 		}
 		#endregion
   		        
-		#region Warp [TODO]
+		#region Warp
+		[MonoTODO]
 		public void Warp (PointF[] destPoints, RectangleF srcRect)
 		{
 			Warp (destPoints, srcRect, null, WarpMode.Perspective, 1.0f / 4.0f);
 		}  		
 
+		[MonoTODO]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix)
 		{
 			Warp (destPoints, srcRect, matrix, WarpMode.Perspective, 1.0f / 4.0f);
 		}  		
 
+		[MonoTODO]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix, WarpMode warpMode)
 		{
 			Warp (destPoints, srcRect, matrix, warpMode, 1.0f / 4.0f);
 		}  		
 
+		[MonoTODO]
 		public void Warp (PointF[] destPoints, RectangleF srcRect, Matrix matrix,  WarpMode warpMode, float flatness)
 		{
 			throw new NotImplementedException();
@@ -1010,5 +986,72 @@ namespace System.Drawing.Drawing2D
 			Flatten(matrix, flatness);
 		} 
 		#endregion
+
+		private void SetPath (Point [] pts, byte [] types)
+		{
+			NativeObject.Clear ();
+			if (((PathPointType)types [0] & PathPointType.PathTypeMask) != PathPointType.Start)
+				NativeObject.moveTo (pts [0].X, pts [0].Y);
+
+			for (int i=0; i < pts.Length; i++) {
+				switch (((PathPointType)types [i] & PathPointType.PathTypeMask)) {
+					case PathPointType.Start :
+						NativeObject.moveTo (pts [i].X, pts [i].Y);
+						break;
+					case PathPointType.Line :
+						NativeObject.lineTo (pts [i].X, pts [i].Y);
+						break;
+					case PathPointType.Bezier3 :
+						float x1 = pts [i].X;
+						float y1 = pts [i].Y;
+						i++;
+						float x2 = pts [i].X;
+						float y2 = pts [i].Y;
+						i++;
+						float x3 = pts [i].X;
+						float y3 = pts [i].Y;
+						NativeObject.curveTo (x1,y1, x2, y2, x3, y3);
+						break;						
+				}
+				if (((PathPointType)types [i] & PathPointType.CloseSubpath) != 0)
+					NativeObject.closePath();
+
+				if (((PathPointType)types [i] & PathPointType.PathMarker) != 0)
+					NativeObject.SetMarkers ();
+			}
+		}
+
+		internal void SetPath (PointF [] pts, byte [] types)
+		{
+			NativeObject.Clear ();
+			if (((PathPointType)types [0] & PathPointType.PathTypeMask) != PathPointType.Start)
+				NativeObject.moveTo (pts [0].X, pts [0].Y);
+			for (int i=0; i < pts.Length; i++) {
+				switch (((PathPointType)types [i] & PathPointType.PathTypeMask)) {
+					case PathPointType.Start :
+						NativeObject.moveTo (pts [i].X, pts [i].Y);
+						break;
+					case PathPointType.Line :
+						NativeObject.lineTo (pts [i].X, pts [i].Y);
+						break;
+					case PathPointType.Bezier3 :
+						float x1 = pts [i].X;
+						float y1 = pts [i].Y;
+						i++;
+						float x2 = pts [i].X;
+						float y2 = pts [i].Y;
+						i++;
+						float x3 = pts [i].X;
+						float y3 = pts [i].Y;
+						NativeObject.curveTo (x1,y1, x2, y2, x3, y3);
+						break;						
+				}
+				if (((PathPointType)types [i] & PathPointType.CloseSubpath) != 0)
+					NativeObject.closePath();
+
+				if (((PathPointType)types [i] & PathPointType.PathMarker) != 0)
+					NativeObject.SetMarkers ();
+			}
+		}
 	}
 }

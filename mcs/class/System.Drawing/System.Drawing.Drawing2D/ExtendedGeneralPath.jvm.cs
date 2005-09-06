@@ -1,3 +1,31 @@
+//
+// System.Drawing.Drawing2D.ExtendedGeneralPath.cs
+//
+// Author:
+// Bors Kirzner <boris@mainsoft.com>	
+//
+// Copyright (C) 2005 Mainsoft Corporation, (http://www.mainsoft.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+
 using System;
 
 using java.awt;
@@ -61,8 +89,7 @@ namespace System.Drawing.Drawing2D
 		private ExtendedGeneralPath(int rule, int initialTypes, int initialCoords) 
 		{
 			setWindingRule(rule);
-			_types = new sbyte [initialTypes];
-			_coords = new float [initialCoords * 2];
+			Reset (initialTypes, initialCoords);
 		}
 
 		#endregion // Constructors
@@ -72,6 +99,7 @@ namespace System.Drawing.Drawing2D
 		private GeneralPath GeneralPath
 		{
 			get {
+				// FIXME : cache general path
 				PathIterator iter = getPathIterator (null);
 				GeneralPath path = new GeneralPath ();
 				path.append (iter, false);
@@ -108,7 +136,83 @@ namespace System.Drawing.Drawing2D
 			}
 		}
 
+		public int PointCount
+		{
+			get {
+				int count = 0;
+				for (int i=0; i < TypesCount; i++)
+					switch (Types [i] & SEG_MASK) {
+						case SEG_CLOSE:
+							break;
+						case SEG_MOVETO:
+							count++;
+							break;
+						case SEG_LINETO:
+							count++;
+							break;
+						case SEG_QUADTO:
+							count+=2;
+							break;
+						case SEG_CUBICTO:
+							count+=3;
+							break;
+					}
+				return count;
+			}
+		}
 
+		public PathData PathData 
+		{
+			get 
+			{
+				// FIXME : cache path data
+				PathData pathData = new PathData();
+				pathData.Types = new byte [PointCount];
+				pathData.Points = new PointF [PointCount];
+				int tpos = 0;
+				int ppos = 0;
+				int cpos = 0;
+				byte marker;
+				bool start;
+				for (int i = 0; i < TypesCount; i++) {
+					sbyte segmentType = (sbyte)(Types [i] & SEG_MASK);
+
+					// set the masks and the markers
+					marker = ((Types [i] & SEG_MARKER) != 0) ? (byte)PathPointType.PathMarker : (byte)0;
+					start = ((Types [i] & SEG_START) != 0);
+					
+					switch (segmentType) {
+						case SEG_CLOSE:
+							pathData.Types [tpos - 1] = (byte) (pathData.Types [tpos - 1] | (byte) PathPointType.CloseSubpath | marker);
+							break;
+						case SEG_MOVETO:
+							pathData.Types [tpos++] = (byte)((byte) PathPointType.Start | marker);
+							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+							break;
+						case SEG_LINETO:
+							pathData.Types [tpos++] = (byte) ((byte) PathPointType.Line | marker);
+							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+							break;
+						case SEG_QUADTO:
+							// FIXME : use 4 cp , two of which 
+							pathData.Types [tpos++] = (byte)(byte) PathPointType.Bezier;
+							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+							pathData.Types [tpos++] = (byte) ((byte)PathPointType.Bezier | marker);
+							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+							break;
+						case SEG_CUBICTO:
+							pathData.Types [tpos++] = (byte)(byte) PathPointType.Bezier3;
+							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+							pathData.Types [tpos++] = (byte) PathPointType.Bezier3;
+							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+							pathData.Types [tpos++] = (byte) ((byte)PathPointType.Bezier3 | marker);
+							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+							break;
+					}
+				}
+				return pathData;
+			}
+		}
 
 		#endregion // Properties
 
@@ -162,7 +266,7 @@ namespace System.Drawing.Drawing2D
 
 		public object Clone() 
 		{
-			ExtendedGeneralPath copy = new ExtendedGeneralPath ();
+			ExtendedGeneralPath copy = (ExtendedGeneralPath)MemberwiseClone ();
 			copy._types = (sbyte []) _types.Clone ();
 			copy._coords = (float []) _coords.Clone ();
 			return copy;
@@ -385,7 +489,8 @@ namespace System.Drawing.Drawing2D
 
 		public void SetMarkers()
 		{
-			Types [ TypesCount - 1] |= SEG_MARKER;
+			if (TypesCount > 0)
+				Types [ TypesCount - 1] |= SEG_MARKER;
 		}
 
 		public void ClearMarkers()
@@ -394,8 +499,144 @@ namespace System.Drawing.Drawing2D
 				Types [i] &= ~SEG_MARKER;
 		}
 
+		public void StartFigure ()
+		{
+			if (TypesCount > 0)
+				Types [TypesCount - 1] |= ExtendedGeneralPath.SEG_START;
+		}
+
+		private void Reset (int initialTypes, int initialCoords)
+		{
+			_types = new sbyte [initialTypes];
+			_coords = new float [initialCoords * 2];
+			_typesCount = 0;
+			_coordsCount = 0;
+		}
+
+		internal void Clear ()
+		{
+			Reset (INIT_SIZE, INIT_SIZE);
+		}
+
+		internal void Reverse ()
+		{
+			// revert coordinates
+			for (int i=0, max = CoordsCount / 2; i < max;) {
+				int ix = i++;
+				int iy = i++;
+				int rix = CoordsCount - i;
+				int riy = rix + 1;
+				float tmpx = Coords [ix];
+				float tmpy = Coords [iy];
+				Coords [ix] = Coords [rix];
+				Coords [iy] = Coords [riy];
+				Coords [rix] = tmpx;
+				Coords [riy] = tmpy;
+			}
+
+			// revert types
+			sbyte [] newTypes = new sbyte [TypesCount];
+			int oldIdx = 0;
+			int newIdx = TypesCount - 1;
+			int copyStart;
+			int copyEnd;
+			sbyte mask1 = 0;
+			sbyte mask2 = 0;
+			sbyte closeMask = 0;
+			bool closedFigure = false;
+			
+			while (oldIdx < TypesCount) {
+				// start copying after moveto
+				copyStart = ++oldIdx;
+				// continue to the next figure start
+				while ((Types [oldIdx] != SEG_MOVETO) && (oldIdx < TypesCount))
+					oldIdx++;
+
+				copyEnd = oldIdx - 1;
+				// check whenever current figure is closed
+				if ((Types [oldIdx - 1] & SEG_CLOSE) != 0) {
+					closedFigure = true;
+					// close figure
+					newTypes [newIdx--] = (sbyte)(SEG_CLOSE | mask1);
+					mask1 = 0;
+					mask2 = 0;
+					// end copy one cell earlier
+					copyEnd--;
+					closeMask = (sbyte)(Types [oldIdx - 1] & (sbyte)SEG_MARKER);
+				}
+				else {
+					mask2 = mask1;
+					mask1 = 0;
+				}
+
+				// copy reverted "inner" types
+				for(int i = copyStart; i <= copyEnd; i++) {
+					newTypes [newIdx--] = (sbyte)((Types [i] & SEG_MASK) | mask2);
+					mask2 = mask1;
+					mask1 = (sbyte)(Types [i] & (sbyte)SEG_MARKER);
+				}
+
+				// copy moveto
+				newTypes [newIdx--] = SEG_MOVETO;
+
+				// pass close mask to the nex figure
+				if (closedFigure) {
+					mask1 = closeMask;
+					closedFigure = false;
+				}
+			}
+
+			_types = newTypes;
+		}
+
+		public PointF GetLastPoint ()
+		{
+			if (CoordsCount == 0)
+				throw new System.ArgumentException ("Invalid parameter used.");
+
+			return new PointF (Coords [CoordsCount - 2], Coords [CoordsCount - 1]);
+		}
+
 		#endregion //Methods
 
+		#region Private helpers
+
+#if DEBUG
+		private void Print()
+		{
+			Console.WriteLine ("\n\n");
+			float [] fpoints = _coords;
+			int cpos = 0;
+			for (int i=0; i < _typesCount; i++) {
+				sbyte type = _types [i];
+				string marker = String.Empty;
+				if ((type & SEG_MARKER) != 0)
+					marker = " | MARKER";
+
+				switch (type & SEG_MASK) {
+					case SEG_CLOSE:
+						Console.WriteLine ("CLOSE {0}",marker);
+						break;
+					case SEG_MOVETO:
+						Console.WriteLine("{0}{3} ({1},{2})","MOVETO", fpoints[cpos++], fpoints[cpos++], marker);
+						break;
+					case SEG_LINETO:
+						Console.WriteLine("{0}{3} ({1},{2})","LINETO", fpoints[cpos++], fpoints[cpos++], marker);
+						break;
+					case SEG_QUADTO:
+						Console.WriteLine("{0}{3} ({1},{2})","QUADTO", fpoints[cpos++], fpoints[cpos++], marker);
+						Console.WriteLine("       ({1},{2})","QUADTO", fpoints[cpos++], fpoints[cpos++]);
+						break;
+					case SEG_CUBICTO:
+						Console.WriteLine("{0}{3} ({1},{2})","CUBICTO", fpoints[cpos++], fpoints[cpos++], marker);
+						Console.WriteLine("        ({1},{2})","CUBICTO", fpoints[cpos++], fpoints[cpos++]);
+						Console.WriteLine("        ({1},{2})","CUBICTO", fpoints[cpos++], fpoints[cpos++]);
+						break;
+				}
+			}
+		}
+#endif
+		#endregion // Private helpers
  		
 	}
 }

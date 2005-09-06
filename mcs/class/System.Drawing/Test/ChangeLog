@@ -1,3 +1,7 @@
+2005-09-06 Boris Kirzner <borisk@mainsoft.com>
+
+	* Test.dotnet.csproj, Test.vmwcsproj: Added GraphicsPathIterator.cs.
+
 2005-08-16 Andrew Skiba <andrews@mainsoft.com>
 
 	* Test.dotnet.csproj, Test.vmwcsproj: Embed Bitmap1.png, add Bitmap1.bmp

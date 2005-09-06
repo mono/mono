@@ -2,13 +2,9 @@
 // System.Drawing.Drawing2D.GraphicsPathIterator.cs
 //
 // Author:
-//   Dennis Hayes (dennish@Raytek.com)
-//   Duncan Mak (duncan@ximian.com)
-//   Ravindra (rkumar@novell.com)
+// Bors Kirzner <boris@mainsoft.com>	
 //
-// Copyright (C) 2002/3 Ximian, Inc (http://www.ximian.com)
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Mainsoft Corporation, (http://www.mainsoft.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,86 +32,189 @@ namespace System.Drawing.Drawing2D
 {
 	public sealed class GraphicsPathIterator : MarshalByRefObject, IDisposable
 	{
+		#region Fields
+
+		private readonly GraphicsPath _path;
+		private int _marker = -1;
+		private int _subpath = -1;
+
+		#endregion // Fields
+
+		#region Constructors
 
 		public GraphicsPathIterator (GraphicsPath path)
 		{
-			throw new NotImplementedException();
+			_path = path;
 		}
 
-		// Public Properites
+		#endregion // Constructors
 
-		public int Count {
-			get {
-				throw new NotImplementedException();
-			}
+		#region Properites
+
+		public int Count 
+		{
+			get { return _path.NativeObject.PointCount; }
 		}
 
 		public int SubpathCount {
 			get {
-				throw new NotImplementedException();
+				int count = 0;
+				int start, end;
+				bool isClosed;
+				while (NextSubpath (out start, out end, out isClosed) != 0)
+					count++;
+				return count;
 			}
 		}
 
-		internal void Dispose (bool disposing)
-		{
-			throw new NotImplementedException();
-		}
+		#endregion // Properties
 
-		// Public Methods.
+		#region Methods
 
 		public int CopyData (ref PointF [] points, ref byte [] types, int startIndex, int endIndex)
 		{
-			throw new NotImplementedException();
+			int j = 0;
+			for (int i = startIndex; i <= endIndex && i < _path.PointCount; i++) {
+				points [j] = _path.PathPoints [i];
+				types [j++] = _path.PathTypes [i];
+			}
+			return j;
 		}
 
 		public void Dispose ()
 		{
-			throw new NotImplementedException();
-		}
-
-		~GraphicsPathIterator ()
-		{
-			Dispose (false);
 		}
 
 		public int Enumerate (ref PointF [] points, ref byte [] types)
 		{
-			throw new NotImplementedException();
+			return CopyData (ref points, ref types, 0, _path.PointCount);
 		}
 
 		public bool HasCurve ()
 		{
-			throw new NotImplementedException();
+			byte [] types = _path.PathTypes;
+			for (int i=0; i < types.Length; i++)
+				if ((types [i] & (byte)PathPointType.PathTypeMask) == (byte)PathPointType.Bezier3)
+					return true;
+			return false;
 		}
 
 		public int NextMarker (GraphicsPath path)
 		{
-			throw new NotImplementedException();
+			if (path == null)
+				return 0;
+
+			int startIndex;
+			int endIndex;
+			int count = NextMarker (out startIndex, out endIndex);
+
+			if (count != 0)
+				SetPath (_path, startIndex, count, path);
+
+			return count;
 		}
 
 		public int NextMarker (out int startIndex, out int endIndex)
 		{
-			throw new NotImplementedException();
+			if (_marker >= _path.PointCount) {
+				startIndex = 0;
+				endIndex = 0;
+				return 0;
+			}
+
+			startIndex = ++_marker;
+			while ((_marker < _path.PointCount) && ((_path.PathTypes [_marker] & (byte)PathPointType.PathMarker) == 0))
+				_marker++;
+
+			endIndex = (_marker < _path.PointCount) ? _marker : _path.PointCount - 1;
+			return endIndex - startIndex + 1;
 		}
 
 		public int NextPathType (out byte pathType, out int startIndex, out int endIndex)
 		{
-			throw new NotImplementedException();
+			if ((_subpath >= _path.PointCount - 1) | (_subpath < 0)) {
+				startIndex = 0;
+				endIndex = 0;
+				pathType = (_subpath < 0) ? (byte)PathPointType.Start : _path.PathTypes [_path.PointCount - 1];
+				return 0;
+			}
+
+			// .net acts different, but it seems to be a bug
+			if ((_path.PathTypes [_subpath + 1] & (byte)PathPointType.PathMarker) != 0) {
+				startIndex = 0;
+				endIndex = 0;
+				pathType = _path.PathTypes [_subpath];
+				return 0;
+			}
+
+			startIndex = _subpath++;
+			endIndex = startIndex;
+			pathType = (byte)(_path.PathTypes [startIndex + 1] & (byte)PathPointType.PathTypeMask);
+
+			while (((_subpath) < _path.PointCount) && ((_path.PathTypes [_subpath] & (byte)PathPointType.PathTypeMask) == pathType))
+				_subpath++;
+			
+			endIndex = (_subpath < _path.PointCount) ? --_subpath : _path.PointCount - 1;
+			return endIndex - startIndex + 1;
 		}
 
 		public int NextSubpath (GraphicsPath path, out bool isClosed)
 		{
-			throw new NotImplementedException();
+			int startIndex;
+			int endIndex;
+			int count = NextSubpath (out startIndex, out endIndex, out isClosed);
+
+			if ((count != 0) && (path != null))
+				SetPath (_path, startIndex, count, path);
+
+			return count;
+		}
+
+		private void SetPath (GraphicsPath source, int start, int count, GraphicsPath target)
+		{
+			PointF [] points = new PointF [count];
+			byte [] types = new byte [count];
+			PointF [] pathPoints = _path.PathPoints;
+			byte [] pathTypes = _path.PathTypes;
+
+			for (int i = 0; i < count; i++) {
+				points [i] = pathPoints [start + i];
+				types [i] = pathTypes [start + i];
+			}
+			
+			target.SetPath (points, types);
 		}
 
 		public int NextSubpath (out int startIndex, out int endIndex, out bool isClosed)
 		{
-			throw new NotImplementedException();
+			_subpath++;
+			while (((_subpath) < _path.PointCount) && (_path.PathTypes [_subpath] != (byte)PathPointType.Start))
+				_subpath++;
+
+				
+			if (_subpath >= _path.PointCount - 1) {
+				startIndex = 0;
+				endIndex = 0;
+				isClosed = true;
+				return 0;
+			}			
+
+			startIndex = _subpath;
+			int offset = 1;
+			while (((_subpath + offset) < _path.PointCount) && (_path.PathTypes [_subpath + offset] != (byte)PathPointType.Start))
+				offset++;
+
+			endIndex = ((_subpath + offset) < _path.PointCount) ? _subpath + offset - 1 : _path.PointCount - 1;
+			isClosed = (_path.PathTypes [endIndex] & (byte)PathPointType.CloseSubpath) != 0;
+			return endIndex - startIndex + 1;
 		}
 
 		public void Rewind ()
 		{
-			throw new NotImplementedException();
+			_marker = -1;
+			_subpath = -1;
 		}
+
+		#endregion // Methods
 	}
 }

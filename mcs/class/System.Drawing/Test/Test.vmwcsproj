@@ -26,6 +26,7 @@
 				<File RelPath="DrawingTest\Test\Brush.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="DrawingTest\Test\Graphics.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="DrawingTest\Test\GraphicsPath.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="DrawingTest\Test\GraphicsPathIterator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="DrawingTest\Test\Image.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="DrawingTest\Test\Pen.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="DrawingTest\Test\Region.cs" SubType="Code" BuildAction="Compile"/>
