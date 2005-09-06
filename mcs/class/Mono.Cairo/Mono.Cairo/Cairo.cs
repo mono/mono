@@ -182,7 +182,13 @@ namespace Cairo {
                 public static extern void cairo_stroke_preserve (IntPtr cr);
 
                 [DllImport (CairoImp)]
+                public static extern void cairo_stroke_extents (IntPtr cr, double x1, double y1, double x2, double y2);
+
+                [DllImport (CairoImp)]
                 public static extern void cairo_fill (IntPtr cr);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_fill_extents (IntPtr cr, double x1, double y1, double x2, double y2);
 
 		[DllImport (CairoImp)]
                 public static extern void cairo_fill_preserve (IntPtr cr);
@@ -195,6 +201,9 @@ namespace Cairo {
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_clip (IntPtr cr);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_clip_preserve (IntPtr cr);
 		
                 [DllImport (CairoImp)]
                 public static extern void cairo_reset_clip (IntPtr cr);
@@ -241,7 +250,16 @@ namespace Cairo {
                 public static extern void cairo_set_source_surface (IntPtr cr, IntPtr surface, int width, int height);
 		
                 [DllImport (CairoImp)]
+                internal static extern void cairo_mask (IntPtr cr, IntPtr pattern);
+                
+				[DllImport (CairoImp)]
+                internal static extern void cairo_mask_surface (IntPtr cr, IntPtr surface, double x, double y);
+				
+                [DllImport (CairoImp)]
                 public static extern void cairo_paint (IntPtr cr);
+
+                [DllImport (CairoImp)]
+                public static extern void cairo_paint_with_alpha (IntPtr cr, double alpha);
 		
 		[DllImport (CairoImp)]
                 public static extern IntPtr cairo_image_surface_create_from_png  (string filename);
@@ -316,6 +334,9 @@ namespace Cairo {
                 public static extern Cairo.Status cairo_surface_finish (IntPtr surface);
 		
 		[DllImport (CairoImp)]                
+                internal static extern Cairo.Status cairo_surface_status (IntPtr surface);
+		
+		[DllImport (CairoImp)]                
                 public static extern void cairo_surface_set_device_offset (IntPtr surface,
 								       double x, double y);
 
@@ -330,7 +351,7 @@ namespace Cairo {
 
                 [DllImport (CairoImp)]
                 public static extern IntPtr cairo_surface_create_similar (
-                        IntPtr surface, Cairo.Format format, int width, int height);
+                        IntPtr surface, Cairo.Content content, int width, int height);
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_surface_reference (IntPtr surface);
@@ -485,6 +506,12 @@ namespace Cairo {
 				None,
 				Gray,
 				Subpixel,
+		}
+
+		public enum Content {
+			Color,
+			Alpha,
+			ColorAlpha,
 		}
 		
         public enum Format {

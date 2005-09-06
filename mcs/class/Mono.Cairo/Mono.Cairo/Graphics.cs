@@ -83,6 +83,10 @@ namespace Cairo {
 		public double B;
 		public double A;
 		
+		public Color(double r, double g, double b) : this (r, g, b, 1.0)
+		{
+		}
+
 		public Color(double r, double g, double b, double a)
 		{
 			R = r;
@@ -153,13 +157,6 @@ namespace Cairo {
                         }
                 }
 		
-		/*
-                public string StatusString {
-		 get {
-                                return CairoAPI.cairo_status_to_string (state);
-                        }
-		 }
-		 */ 
                 public IntPtr Handle {
                         get {
                                 return state;
@@ -192,6 +189,7 @@ namespace Cairo {
                 }		
 
                 public double Tolerance {
+						get { return CairoAPI.cairo_get_tolerance (state); }
                         set {
                                 CairoAPI.cairo_set_tolerance (state, value);
                         }
@@ -237,9 +235,9 @@ namespace Cairo {
                         }
                 }
 
-                public void SetDash (double [] dashes, int ndash, double offset)
+                public void SetDash (double [] dashes, double offset)
                 {
-                        CairoAPI.cairo_set_dash (state, dashes, ndash, offset);
+                        CairoAPI.cairo_set_dash (state, dashes, dashes.Length, offset);
                 }
 		
                 public Pattern Pattern {
@@ -280,7 +278,7 @@ namespace Cairo {
                         }
                 }
 
-                public Cairo.Surface TargetSurface {
+                public Cairo.Surface Target {
                         set {
 				state = CairoAPI.cairo_create (value.Pointer);				
                                 //CairoAPI.cairo_set_target_surface (state, value.Handle);
@@ -291,6 +289,21 @@ namespace Cairo {
                                         CairoAPI.cairo_get_target (state));
                         }
                 }
+
+				public void SetSourceRGB (double r, double g, double b)
+				{
+					CairoAPI.cairo_set_source_rgb (state, r, g, b);
+				}
+
+				public void SetSourceRGBA (double r, double g, double b, double a)
+				{
+					CairoAPI.cairo_set_source_rgba (state, r, g, b, a);
+				}
+
+				public void SetSourceSurface (Surface source, int x, int y)
+				{
+					CairoAPI.cairo_set_source_surface (state, source.Handle, x, y);
+				}
 
 #region Path methods
                 
@@ -381,6 +394,25 @@ namespace Cairo {
 #endregion
 
 #region Painting Methods
+				public void Paint ()
+				{
+					CairoAPI.cairo_paint (state);
+				}
+
+				public void PaintWithAlpha (double alpha)
+				{
+					CairoAPI.cairo_paint_with_alpha (state, alpha);
+				}
+
+				public void Mask (Pattern pattern)
+				{
+					CairoAPI.cairo_mask (state, pattern.Pointer);
+				}
+
+				public void MaskSurface (Surface surface, double x, double y)
+				{
+					CairoAPI.cairo_mask_surface (state, surface.Handle, x, y);
+				}
 
                 public void Stroke ()
                 {
@@ -392,11 +424,21 @@ namespace Cairo {
                         CairoAPI.cairo_stroke_preserve (state);
                 }		
 
+				public void StrokeExtents (double x1, double y1, double x2, double y2)
+				{
+                        CairoAPI.cairo_stroke_extents (state, x1, y1, x2, y2);
+				}
+
                 public void Fill ()
                 {
                         CairoAPI.cairo_fill (state);
                 }
-		
+
+                public void FillExtents (double x1, double y1, double x2, double y2)
+				{
+					CairoAPI.cairo_fill_extents (state, x1, y1, x2, y2);
+				}
+
 		public void FillPreserve ()
 		{
 			CairoAPI.cairo_fill_preserve (state);
@@ -409,7 +451,12 @@ namespace Cairo {
                         CairoAPI.cairo_clip (state);
                 }
 
-		public void ClipReset ()
+				public void ClipPreserve ()
+				{
+					CairoAPI.cairo_clip_preserve (state);
+				}
+
+		public void ResetClip ()
 		{
 			CairoAPI.cairo_reset_clip (state);
 		}
@@ -591,6 +638,11 @@ namespace Cairo {
 		
 		public double FontSize {
 			set { CairoAPI.cairo_set_font_size (state, value); }
+		}
+
+		public void CopyPage ()
+		{
+			CairoAPI.cairo_copy_page (state);
 		}
 
 		public void ShowPage ()

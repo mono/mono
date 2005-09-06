@@ -1,3 +1,21 @@
+2005-09-06  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Surface.cs: make CreateSimilar non-static
+	and use Content instead of Format, add Surface.Status
+	* Mono.Cairo/Graphics.cs: add convenience
+	ctor to Color with an alpha of 1.0
+	add Tolerance getter, Change SetDash to compute
+	the length automatically, rename TargetSurface to Target,
+	add SetSourceRGB, SetSourceRGBA, and SetSourceSurface (),
+	add Paint, PaintWithAlpha, Mask, and MaskSurface (),
+	add StrokeExtents, FillExtents, ClipPreserve (), and CopyPage ()
+	* Mono.Cairo/Cairo.cs: add new imports:
+	cairo_stroke_extents, cairo_fill_extents,
+	cairo_clip_preserve, cairo_mask, cairo_mask_surface,
+	cairo_paint_with_alpha, cairo_surface_status
+	add Content enum and fix cairo_surface_create_similar to use
+	Content not Format
+	
 2005-09-05  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Samples/gtk/Graphics.cs:

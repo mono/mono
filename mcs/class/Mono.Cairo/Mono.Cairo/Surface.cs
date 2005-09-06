@@ -179,11 +179,11 @@ namespace Cairo {
                 }
 
 
-                public static Cairo.Surface CreateSimilar (
-                        Cairo.Surface surface, Cairo.Format format, int width, int height)
+                public Cairo.Surface CreateSimilar (
+                        Cairo.Content content, int width, int height)
                 {
                         IntPtr p = CairoAPI.cairo_surface_create_similar (
-                                surface.Handle, format, width, height);
+                                this.Handle, content, width, height);
 
                         return new Cairo.Surface (p, true);
                 }
@@ -245,6 +245,10 @@ namespace Cairo {
                 public IntPtr Pointer {
                         get { return surface; }
                 }
+
+				public Status Status {
+					get { return CairoAPI.cairo_surface_status (surface); }
+				}
 
         }
 }
