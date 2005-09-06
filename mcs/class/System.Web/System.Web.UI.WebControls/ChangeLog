@@ -1,3 +1,10 @@
+2005-09-06  Chris Toshok  <toshok@ximian.com>
+
+	* ValidationSummary.cs (Render): only do the JS stuff when the
+	validators on the page are uplevel.
+
+	* BaseValidator.cs (Render): remove unnecessary comment.
+
 2005-09-05  Chris Toshok  <toshok@ximian.com>
 
 	* BaseDataBoundControl.cs (DataSourceID): testing reveals this is

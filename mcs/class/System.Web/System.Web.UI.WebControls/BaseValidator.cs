@@ -459,10 +459,6 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter writer)
 		{
-			/* we have to be in a server form */
-			/* XXX it appears MS doesn't do this */
-			//Page.VerifyRenderingInServerForm (this);
-
 			if (RenderUplevel) {
 				/* according to an msdn article, this is done here */
 				RegisterValidatorDeclaration ();
