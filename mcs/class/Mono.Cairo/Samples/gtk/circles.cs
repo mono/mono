@@ -29,8 +29,6 @@
 //
 
 using System;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using Cairo;
 using Gtk;
 	
@@ -63,16 +61,11 @@ public class CairoGraphic : DrawingArea
    
 	static void oval_path (Cairo.Graphics gr, double xc, double yc, double xr, double yr)
 	{
-		Matrix matrix  = gr.Matrix;
-		
 		gr.Translate (xc, yc);
 		gr.Scale (1.0, yr / xr);
 		gr.MoveTo (new PointD (xr, 0.0) );
 		gr.Arc (0, 0, xr, 0, 2 * M_PI);
 		gr.ClosePath ();
-		
-		gr.Matrix = matrix;
-		//matrix.Destroy();
 	}
 	
 	/* 
@@ -119,12 +112,13 @@ public class CairoGraphic : DrawingArea
 		double xc = width / 2;
 		double yc = height / 2;
 		
-		overlay = Surface.CreateSimilar (gr.TargetSurface, Format.ARGB32, width, height);		
-		punch = Surface.CreateSimilar (gr.TargetSurface, Format.A8, width, height);		
-		circles = Surface.CreateSimilar (gr.TargetSurface, Format.ARGB32, width, height);
+		Surface target = gr.Target;
+		overlay = target.CreateSimilar (Content.ColorAlpha, width, height);		
+		punch = target.CreateSimilar (Content.Alpha, width, height);		
+		circles = target.CreateSimilar (Content.ColorAlpha, width, height);
 		
 		gr.Save ();
-		gr.TargetSurface = overlay;
+		gr.Target = overlay;
 		
 		/* Draw a black circle on the overlay
 		*/
@@ -134,7 +128,7 @@ public class CairoGraphic : DrawingArea
 		oval_path (gr, xc, yc, radius, radius);
 		gr.Fill ();		
 		gr.Save ();
-		gr.TargetSurface =  punch;
+		gr.Target =  punch;
 		
 		
 		/* Draw 3 circles to the punch surface, then cut
@@ -144,8 +138,7 @@ public class CairoGraphic : DrawingArea
 		
 		gr.Restore ();
 		
-		// FIXME: Operator.OutReverse is not in cairo 1.0
-		//gr.Operator = Operator.OutReverse;
+		gr.Operator = Operator.DestOut;
 		punch.Show (gr, width, height);
 		
 		
@@ -154,7 +147,7 @@ public class CairoGraphic : DrawingArea
 		* without seams.
 		*/
 		gr.Save ();
-		gr.TargetSurface =  circles;
+		gr.Target =  circles;
 		
 		//gr.Alpha = 0.5;
 		gr.Operator = Operator.Over;

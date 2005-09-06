@@ -1,5 +1,9 @@
 2005-09-06  John Luke  <john.luke@gmail.com>
 
+	* Samples/gtk/circles.cs: fix partially broken sample
+
+2005-09-06  John Luke  <john.luke@gmail.com>
+
 	* Mono.Cairo/Surface.cs: make CreateSimilar non-static
 	and use Content instead of Format, add Surface.Status
 	* Mono.Cairo/Graphics.cs: add convenience
