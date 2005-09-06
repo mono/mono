@@ -1,3 +1,7 @@
+2005-09-06  Chris Toshok  <toshok@ximian.com>
+
+	* System.Web_test.dll.sources: add HtmlLinkTest and HtmlMetaTest.
+
 2005-08-31  Chris Toshok  <toshok@ximian.com>
 
 	* System.Web.dll.sources: add

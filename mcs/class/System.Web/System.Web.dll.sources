@@ -364,6 +364,8 @@ System.Web.UI.HtmlControls/HtmlInputRadioButton.cs
 System.Web.UI.HtmlControls/HtmlInputReset.cs
 System.Web.UI.HtmlControls/HtmlInputSubmit.cs
 System.Web.UI.HtmlControls/HtmlInputText.cs
+System.Web.UI.HtmlControls/HtmlLink.cs
+System.Web.UI.HtmlControls/HtmlMeta.cs
 System.Web.UI.HtmlControls/HtmlSelectBuilder.cs
 System.Web.UI.HtmlControls/HtmlSelect.cs
 System.Web.UI.HtmlControls/HtmlTableCellCollection.cs
