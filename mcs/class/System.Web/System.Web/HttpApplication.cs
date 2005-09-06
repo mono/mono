@@ -802,7 +802,7 @@ namespace System.Web {
 			}
 
 			if (stop_processing)
-				yield return false;
+				yield return true;
 
 #if NET_2_0
 			if (PostResolveRequestCache != null)
