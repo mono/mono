@@ -205,22 +205,18 @@ namespace System.Web.UI.HtmlControls
 		{
 			Page.RegisterViewStateHandler ();
 
+			Page.RegisterForm (this);
+
 			base.OnInit (e);
 		}
 
 #if NET_2_0
-		protected internal override void OnPreRender (EventArgs e)
+		internal bool DetermineRenderUplevel ()
 		{
-			string focus_id = null;
-			bool render_uplevel = false;
-			bool need_script_block = false;
-
-			base.OnPreRender(e);
-
 			/* this bit is c&p'ed from BaseValidator.DetermineRenderUplevel */
 			try {
 				if (Page != null && Page.Request != null)
-					render_uplevel = (
+					return (
 						/* From someplace on the web: "JavaScript 1.2
 						 * and later (also known as ECMAScript) has
 						 * built-in support for regular
@@ -240,6 +236,18 @@ namespace System.Web.UI.HtmlControls
 				;
 			}
 
+			return false;
+		}
+
+		protected internal override void OnPreRender (EventArgs e)
+		{
+			string focus_id = null;
+			bool need_script_block = false;
+			bool render_uplevel;
+
+			base.OnPreRender(e);
+
+			render_uplevel = DetermineRenderUplevel ();
 
 			/* figure out if we have some control we're going to focus */
 			if (DefaultFocus != null && DefaultFocus != "")
@@ -247,10 +255,8 @@ namespace System.Web.UI.HtmlControls
 			else if (DefaultButton != null && DefaultButton != "")
 				focus_id = DefaultButton;
 
-			/* presumably there are other conditions to
-			 * this test, not just whether or not we have
-			 * a default focus/button */
-			need_script_block = (focus_id != null);
+			/* decide if we need to include the script block */
+			need_script_block = (focus_id != null || submitdisabledcontrols);
 
 			if (render_uplevel) {
 				Page.RequiresPostBackScript();
@@ -269,6 +275,19 @@ namespace System.Web.UI.HtmlControls
 												"<!--\n" + 
 												"WebForm_AutoFocus('{0}');// -->\n" + 
 												"</script>\n", focus_id));
+				}
+
+				if (submitdisabledcontrols) {
+					Page.ClientScript.RegisterOnSubmitStatement ("HtmlForm-SubmitDisabledControls-SubmitStatement",
+										     "javascript: return WebForm_OnSubmit();");
+					Page.ClientScript.RegisterStartupScript ("HtmlForm-SubmitDisabledControls-StartupScript",
+@"<script language=""JavaScript"">
+<!--
+function WebForm_OnSubmit() {
+WebForm_ReEnableControls();
+return true;
+} // -->
+</script>");
 				}
 			}
 		}

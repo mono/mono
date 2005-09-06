@@ -1,3 +1,14 @@
+2005-09-06  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlInputControl.cs (RenderAttributes): add ourselves to the
+	__enabledControlArray JS array if we're currently enabled and the
+	form is set to SubmitDisabledControls.
+
+	* HtmlForm.cs (OnInit): call Page.RegisterForm here.
+	(DetermineRenderUplevel): split this out of OnPreRender and make
+	it internal so HtmlInputControl can call it.
+	(OnPreRender): add handling for SubmitDisabledControls.
+
 2005-09-05  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlForm.cs (DefaultButton): this isn't stored as an Attribute,

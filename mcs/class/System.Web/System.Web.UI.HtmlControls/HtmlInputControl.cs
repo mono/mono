@@ -108,6 +108,11 @@ namespace System.Web.UI.HtmlControls {
 #endif
 			base.RenderAttributes (writer);
 			writer.Write (" /");
+
+#if NET_2_0
+			if (Page.Form.SubmitDisabledControls && Page.Form.DetermineRenderUplevel() && !Disabled)
+				Page.ClientScript.RegisterArrayDeclaration ("__enabledControlArray", String.Format ("'{0}'", ID));
+#endif
 		}
 	}
 }
