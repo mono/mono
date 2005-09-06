@@ -1,3 +1,9 @@
+2005-09-04  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added System.Windows.Forms.RTF
+	  subdirectory to build
+	* SWF.csproj: Updated
+
 2005-08-29  Alexander Olk  <xenomorph2@onlinehome.de>
 
 	* System.Windows.Forms.dll.sources: Added ThemeNice.cs
