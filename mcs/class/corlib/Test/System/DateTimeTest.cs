@@ -905,6 +905,16 @@ public class DateTimeTest : Assertion
 	}
 
 	[Test]
+	public void DateTimeStylesAdjustToUniversal ()
+	{
+		// bug #75995 : AdjustToUniversal
+		DateTime t1 = DateTime.Parse ("2005-09-05T22:29:00Z",
+			CultureInfo.InvariantCulture,
+			DateTimeStyles.AdjustToUniversal);
+		AssertEquals ("2005-09-05 22:29:00Z", t1.ToString ("u"));
+	}
+
+	[Test]
 	[ExpectedException (typeof (ArgumentException))]
 	public void FromOADate_Min () 
 	{

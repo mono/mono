@@ -1292,9 +1292,11 @@ namespace System
 			// If no timezone was specified, default to the local timezone.
 			TimeSpan utcoffset;
 
-			if (useutc)
+			if (useutc) {
+				if ((style & DateTimeStyles.AdjustToUniversal) != 0)
+					use_localtime = false;
 				utcoffset = new TimeSpan (0, 0, 0);
-			else if (tzsign == -1) {
+			} else if (tzsign == -1) {
 				TimeZone tz = TimeZone.CurrentTimeZone;
 				utcoffset = tz.GetUtcOffset (result);
 			} else {
