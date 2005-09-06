@@ -38,6 +38,31 @@ function WebForm_AutoFocus (id)
 	}
 }
 
+function wasControlEnabled (id)
+{
+	if (typeof (__enabledControlArray) == 'undefined')
+		return false;
+
+	for (var i = 0; i < __enabledControlArray.length; i ++) {
+		if (id == __enabledControlArray[i])
+			return true;
+	}
+
+	return false;
+}
+
+function WebForm_ReEnableControls()
+{
+	if (typeof (theForm) == 'undefined')
+		return;
+
+	for (var i = 0; i < theForm.childNodes.length; i ++) {
+		var node = theForm.childNodes[i];
+		if (node.disabled && wasControlEnabled (node.id))
+			node.disabled = false;
+	}
+}
+
 function WebForm_DoPostback (ctrl, par, url, apb, pval, tf, csubm, vg)
 {
 	if (pval && typeof(Page_ClientValidate) == "function" && !Page_ClientValidate())
