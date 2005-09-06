@@ -67,28 +67,6 @@ function ValidatorCommonOnSubmit ()
 			if (header == null)
 				header = "";
 
-			attr = vs.getAttribute ("showmessagebox");
-			if (attr != null && attr.toLowerCase() == "true") {
-				var v_contents = "";
-
-				for (var v in Page_Validators) {
-					var vo = Page_Validators [v];
-
-					if (vo.getAttribute ("isvalid").toLowerCase() == "false") {
-						var text = ValidatorGetErrorMessage (vo);
-						if (text != null && text != "") {
-							v_contents += "-" + text + "\n";
-						}
-					}
-				}
-
-				var alert_header = header;
-				if (alert_header != "")
-					alert_header += "\n";
-				summary_contents = alert_header + v_contents;
-				alert (summary_contents);
-			}
-
 			attr = vs.getAttribute ("showsummary");
 			if (attr == null || attr.toLowerCase() == "true") {
 				var displaymode = vs.getAttribute ("displaymode");
@@ -131,6 +109,28 @@ function ValidatorCommonOnSubmit ()
 
 				vs.innerHTML = html;
 				vs.style.display = "block";
+			}
+
+			attr = vs.getAttribute ("showmessagebox");
+			if (attr != null && attr.toLowerCase() == "true") {
+				var v_contents = "";
+
+				for (var v in Page_Validators) {
+					var vo = Page_Validators [v];
+
+					if (vo.getAttribute ("isvalid").toLowerCase() == "false") {
+						var text = ValidatorGetErrorMessage (vo);
+						if (text != null && text != "") {
+							v_contents += "-" + text + "\n";
+						}
+					}
+				}
+
+				var alert_header = header;
+				if (alert_header != "")
+					alert_header += "\n";
+				summary_contents = alert_header + v_contents;
+				alert (summary_contents);
 			}
 		}
 	}
@@ -357,7 +357,17 @@ function ValidatorUpdateDisplay (v, valid)
 
 function ValidatorGetErrorMessage (v)
 {
-	var text = v.getAttribute ("text");
+	var text = v.getAttribute ("errormessage");
+	if (text == null || text == "")
+		text = v.getAttribute ("text");	
+	if (text == null)
+		text = "";
+	return text;
+}
+
+function ValidatorGetText (v)
+{
+	var text = v.getAttribute ("text");	
 	if (text == null || text == "")
 		text = v.getAttribute ("errormessage");
 	if (text == null)
@@ -367,10 +377,8 @@ function ValidatorGetErrorMessage (v)
 
 function ValidatorFailed (v)
 {
-	var text = ValidatorGetErrorMessage (v);
-	if (text != "" && !have_validation_summaries) {
-		v.innerHTML = text;
-	}
+	var text = ValidatorGetText (v);
+	v.innerHTML = text;
 
 	ValidatorUpdateDisplay (v, false);
 }
