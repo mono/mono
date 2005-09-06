@@ -2729,6 +2729,7 @@ namespace System.Windows.Forms {
 		internal override void UngrabWindow(IntPtr hwnd) {
 			lock (XlibLock) {
 				XUngrabPointer(DisplayHandle, 0);
+				XFlush(DisplayHandle);
 			}
 			Grab.Hwnd = IntPtr.Zero;
 			Grab.Confined = false;

@@ -1,3 +1,9 @@
+2005-09-06  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Force a flush after Ungrab; if case the app enters
+	  a busy loop right after the Ungrab the X11 display is otherwise 
+	  blocked
+
 2005-09-06  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ThemeWin32Classic.cs: Optimise the use of clipping
