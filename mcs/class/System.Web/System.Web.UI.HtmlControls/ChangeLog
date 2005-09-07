@@ -1,5 +1,10 @@
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlInputControl.cs (RenderAttributes): Check Page.Form for
+	null.
+
+2005-09-06  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlInputControl.cs (RenderAttributes): use ClientID instead of
 	ID.
 
