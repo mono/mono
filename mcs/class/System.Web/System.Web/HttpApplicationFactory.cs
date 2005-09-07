@@ -65,21 +65,28 @@ namespace System.Web {
 		static HttpApplicationFactory theFactory = new HttpApplicationFactory();
 #endif
 
+		static MethodInfo session_end;
 		bool needs_init = true;
 		bool app_start_needed = true;
 		Type app_type;
 		HttpApplicationState app_state;
+		Hashtable app_event_handlers;
 #if !TARGET_JVM
 		FileSystemWatcher app_file_watcher;
 		FileSystemWatcher bin_watcher;
 #endif
 		Stack available = new Stack ();
+		Stack available_for_end = new Stack ();
 		
 		// Watch this thing out when getting an instance
 		IHttpHandler custom_application;
 
 		bool IsEventHandler (MethodInfo m)
 		{
+			int pos = m.Name.IndexOf ('_');
+			if (pos == -1 || (m.Name.Length - 1) <= pos)
+				return false;
+
 			if (m.ReturnType != typeof (void))
 				return false;
 
@@ -118,22 +125,34 @@ namespace System.Web {
 			list.Add (method);
 		}
 		
-		Hashtable GetApplicationTypeEvents (HttpApplication app)
+		Hashtable GetApplicationTypeEvents (Type type)
 		{
-			Type appType = app.GetType ();
-			Hashtable appTypeEventHandlers = new Hashtable ();
-			BindingFlags flags = BindingFlags.Public    |
-					     BindingFlags.NonPublic | 
-					     BindingFlags.Instance |
-					     BindingFlags.Static;
+			lock (this) {
+				if (app_event_handlers != null)
+					return app_event_handlers;
 
-			MethodInfo [] methods = appType.GetMethods (flags);
-			foreach (MethodInfo m in methods) {
-				if (IsEventHandler (m))
-					AddEvent (m, appTypeEventHandlers);
+				app_event_handlers = new Hashtable ();
+				BindingFlags flags = BindingFlags.Public    | BindingFlags.NonPublic | 
+						     BindingFlags.Instance  | BindingFlags.Static;
+
+				MethodInfo [] methods = type.GetMethods (flags);
+				foreach (MethodInfo m in methods) {
+					if (m.DeclaringType != typeof (HttpApplication) && IsEventHandler (m))
+						AddEvent (m, app_event_handlers);
+				}
 			}
 
-			return appTypeEventHandlers;
+			return app_event_handlers;
+		}
+
+		Hashtable GetApplicationTypeEvents (HttpApplication app)
+		{
+			lock (this) {
+				if (app_event_handlers != null)
+					return app_event_handlers;
+
+				return GetApplicationTypeEvents (app.GetType ());
+			}
 		}
 
 		bool FireEvent (string method_name, object target, object [] args)
@@ -210,9 +229,6 @@ namespace System.Web {
 			Hashtable possibleEvents = factory.GetApplicationTypeEvents (app);
 			foreach (string key in possibleEvents.Keys) {
 				int pos = key.IndexOf ('_');
-				if (pos == -1 || key.Length <= pos + 1)
-					continue;
-
 				string moduleName = key.Substring (0, pos);
 				object target;
 				if (moduleName == "Application") {
@@ -227,9 +243,17 @@ namespace System.Web {
 				EventInfo evt = target.GetType ().GetEvent (eventName);
 				if (evt == null)
 					continue;
-			
+
 				string usualName = moduleName + "_" + eventName;
 				object methodData = possibleEvents [usualName];
+				if (methodData != null && eventName == "End" && moduleName == "Session") {
+					lock (factory) {
+						if (session_end == null)
+							session_end = (MethodInfo) methodData;
+					}
+					continue;
+				}
+
 				if (methodData == null)
 					continue;
 
@@ -254,6 +278,27 @@ namespace System.Web {
 			} else {
 				evt.AddEventHandler (target, Delegate.CreateDelegate (
 							typeof (EventHandler), app, method.Name));
+			}
+		}
+
+		internal static void InvokeSessionEnd (object state)
+		{
+			HttpApplicationFactory factory = theFactory;
+			MethodInfo method = null;
+			HttpApplication app = null;
+			lock (factory.available_for_end) {
+				method = session_end;
+				if (method == null)
+					return;
+
+				app = GetApplicationForSessionEnd ();
+			}
+
+			app.SetSession ((HttpSessionState) state);
+			try {
+				method.Invoke (app, new object [] {app, EventArgs.Empty});
+			} catch (Exception e) {
+				// Ignore
 			}
 		}
 
@@ -368,7 +413,7 @@ namespace System.Web {
 				}
 			}
 
-			lock (factory) {
+			lock (factory.available) {
 				if (factory.available.Count > 0)
 					return (HttpApplication) factory.available.Pop ();
 			}
@@ -378,10 +423,34 @@ namespace System.Web {
 			return app;
 		}
 
+		// The lock is in InvokeSessionEnd
+		static HttpApplication GetApplicationForSessionEnd ()
+		{
+			HttpApplicationFactory factory = theFactory;
+			if (factory.available_for_end.Count > 0)
+				return (HttpApplication) factory.available_for_end.Pop ();
+
+			HttpApplication app = (HttpApplication) Activator.CreateInstance (factory.app_type, true);
+			app.InitOnce (false);
+
+			return app;
+		}
+
+		internal static void RecycleForSessionEnd (HttpApplication app)
+		{
+			HttpApplicationFactory factory = theFactory;
+			lock (factory.available_for_end) {
+				if (factory.available_for_end.Count < 32)
+					factory.available_for_end.Push (app);
+				else
+					app.Dispose ();
+			}
+		}
+
 		internal static void Recycle (HttpApplication app)
 		{
 			HttpApplicationFactory factory = theFactory;
-			lock (factory) {
+			lock (factory.available) {
 				if (factory.available.Count < 32)
 					factory.available.Push (app);
 				else
@@ -390,3 +459,4 @@ namespace System.Web {
 		}
 	}
 }
+

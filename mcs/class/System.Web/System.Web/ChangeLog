@@ -1,5 +1,19 @@
 2005-09-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpRuntime.cs: remove Console.
+
+	* HttpApplicationFactory.cs: don't hook Session_End, but keep
+	the MethodInfo around for later invocation if needed. Don't call
+	GetMethods() for every HttpApplication (or derived class) instances.
+	Added a method, used by SessionStateModule, that will create use an
+	application without context to invoke Session_End. Keep a pool of
+	applications that are meant to be used by this method only.
+
+	* HttpApplication.cs: add a SetSession method and do not
+	attach all the events if the application is for Session_End only.
+
+2005-09-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpRuntime.cs: actually unload the domain when requested. Reformatted
 	FinishUnavailable() and removed the 'Location' header form the error.
 

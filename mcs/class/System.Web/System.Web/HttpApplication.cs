@@ -77,6 +77,7 @@ namespace System.Web {
 	[ToolboxItem(false)]
 	public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable {
 		HttpContext context;
+		HttpSessionState session;
 		ISite isite;
 
 		// The source, and the exposed API (cache).
@@ -132,7 +133,7 @@ namespace System.Web {
 			done = new ManualResetEvent (false);
 		}
 
-		void InitOnce ()
+		internal void InitOnce (bool full_init)
 		{
 			lock (this) {
 				if (modcoll != null)
@@ -143,7 +144,8 @@ namespace System.Web {
 
 				modcoll = modules.LoadModules (this);
 
-				HttpApplicationFactory.AttachEvents (this);
+				if (full_init)
+					HttpApplicationFactory.AttachEvents (this);
 
 				GlobalizationConfiguration cfg = GlobalizationConfiguration.GetInstance (null);
 				if (cfg != null) {
@@ -224,6 +226,10 @@ namespace System.Web {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpSessionState Session {
 			get {
+				// Only used for Session_End
+				if (session != null)
+					return session;
+
 				return context.Session;
 			}
 		}
@@ -944,12 +950,13 @@ namespace System.Web {
 			HttpRuntime.TimeoutManager.Remove (context);
 #endif
 			context = null;
+			session = null;
 			HttpContext.Current = null;
 		}
 
 		void Start (object x)
 		{
-			InitOnce ();
+			InitOnce (true);
 			PreStart ();
 			stop_processing = false;
 			pipeline = Pipeline ();
@@ -997,7 +1004,12 @@ namespace System.Web {
 		{
 			this.context = context;
 		}
-		
+
+		internal void SetSession (HttpSessionState session)
+		{
+			this.session = session;
+		}
+
 		IAsyncResult IHttpAsyncHandler.BeginProcessRequest (HttpContext context, AsyncCallback cb, object extraData)
 		{
 			this.context = context;

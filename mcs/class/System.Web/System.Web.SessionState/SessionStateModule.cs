@@ -209,18 +209,14 @@ namespace System.Web.SessionState
 
 		internal void OnSessionRemoved (string key, object value, CacheItemRemovedReason reason)
 		{
-			OnEnd ();
-		}
-
-		internal void OnEnd ()
-		{
-#if !TARGET_J2EE			
-			if (End != null)
-				End (this, EventArgs.Empty);
-#endif				
+			// Only invoked for InProc (see msdn2 docs on SessionStateModule.End)
+			if (GetConfig ().Mode == SessionStateMode.InProc)
+				HttpApplicationFactory.InvokeSessionEnd (value);
 		}
 		
 		public event EventHandler Start;
+
+		// This event is public, but only Session_[On]End in global.asax will be invoked if present.
 		public event EventHandler End;
 	}
 }

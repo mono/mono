@@ -87,7 +87,6 @@ namespace System.Web {
 
 		static HttpRuntime ()
 		{
-			Console.WriteLine ("Jelou");
 			queue_manager = new QueueManager ();
 			trace_manager = new TraceManager ();
 			timeout_manager = new TimeoutManager ();
