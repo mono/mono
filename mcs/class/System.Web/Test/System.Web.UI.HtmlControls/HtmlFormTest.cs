@@ -59,6 +59,10 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 #endif
 	}
 
+	class FUControl : UserControl {
+	}
+
+
 	[TestFixture]
 	public class HtmlFormTest {
 
@@ -128,15 +132,20 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 			/* not stored in Attributes */
 			form.Name = "name";
-			Assert.IsNull (a.GetAttribute ("name"), "A5");
+			Assert.AreEqual (form.UniqueID, form.Name, "A5");
+			Assert.IsNull (form.Name, "A6");
+			Assert.IsNull (form.UniqueID, "A7");
+			Assert.IsNull (a.GetAttribute ("name"), "A8");
+			form.ID = "hithere";
+			Assert.AreEqual ("hithere", form.Name, "A9");
 
 #if NET_2_0
 			form.SubmitDisabledControls = true;
-			Assert.IsNull (a.GetAttribute ("submitdisabledcontrols"), "A6");
+			Assert.IsNull (a.GetAttribute ("submitdisabledcontrols"), "A10");
 #endif
 
 			form.Target = "target";
-			Assert.AreEqual ("target", a.GetAttribute ("target"), "A7");
+			Assert.AreEqual ("target", a.GetAttribute ("target"), "A11");
 		}
 
 		[Test]
@@ -158,6 +167,30 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.AreEqual ("defaultfocus", form.DefaultFocus, "A2");
 #endif
 
+		}
+
+		[Test]
+		public void Name_InsideNaming ()
+		{
+			Control ctrl = new FUControl ();
+			ctrl.ID = "parent";
+			FormPoker form = new FormPoker ();
+			ctrl.Controls.Add (form);
+			Assert.IsNull (form.ID, "ID");
+			form.Name = "name";
+			Assert.AreEqual (form.Name, form.UniqueID, "name and unique id");
+
+			form.ID = "id";
+			Assert.AreEqual ("id", form.ID, "ID-2");
+			Assert.AreEqual (form.UniqueID, form.Name, "Name-ID");
+
+			form.Name = "name";
+			Assert.AreEqual (form.Name, form.UniqueID, "UniqueID-2");
+
+			form.ID = null;
+			Assert.IsNull (form.ID, "ID-3");
+			Assert.IsNotNull (form.UniqueID, "UniqueID-3");
+			Assert.IsNotNull (form.Name, "Name-2");
 		}
 
 #if NET_2_0
