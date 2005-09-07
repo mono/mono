@@ -1,5 +1,9 @@
 2005-09-06  Jonathan Chambers  <jonathan.chambers@ansys.com>
                                                                                 
+        * PropertiesTab.cs : Added
+
+2005-09-06  Jonathan Chambers  <jonathan.chambers@ansys.com>
+                                                                                
         * PropertyGrid.cs : Update
         * PropertyGridView.cs : Update
         * System.Windows.Forms.resx : Added images and strings

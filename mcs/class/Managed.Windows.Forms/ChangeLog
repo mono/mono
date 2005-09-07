@@ -1,3 +1,7 @@
+2005-09-06 Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* System.Windows.Forms.dll.sources: Added System.Windows.Forms.PropertiesTab.cs
+
 2005-09-04  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added System.Windows.Forms.RTF
