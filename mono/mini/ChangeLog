@@ -1,4 +1,9 @@
 
+Wed Sep 7 17:14:26 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: align structures to at least 4 bytes to be able
+	to keep our current optimized memcpy.
+
 Tue Sep 6 22:51:08 BST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.c, cpu-arm.md, inssel-arm.brg: bugfixes.
