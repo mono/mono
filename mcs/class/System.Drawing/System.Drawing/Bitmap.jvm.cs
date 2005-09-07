@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Runtime.Serialization;
+using Mainsoft.Drawing.Services;
 
 using io = java.io;
 using imageio = javax.imageio;
@@ -24,8 +25,10 @@ namespace System.Drawing
 			throw new NotImplementedException ();
 		}
 
-		public Bitmap (int width, int height, Graphics g) {
-			throw new NotImplementedException();			
+		public Bitmap (int width, int height, Graphics g) 
+			:this (width, height, PixelFormat.Format32bppArgb) {
+			this._horizontalResolution = g.DpiX;
+			this._verticalResolution = g.DpiY;
 		}
 
 		public Bitmap (Image orig, Size newSize)
@@ -84,16 +87,15 @@ namespace System.Drawing
 			//FIXME: useIcm param
 			java.io.File file = vmw.common.IOUtils.getJavaFile (filename);
 			if (!file.exists ())
-				//TBD: check what exception throws NET
-				throw new System.IO.IOException ("File not found: "+filename);
+				 throw new System.IO.FileNotFoundException (filename);
 			Initialize (new stream.FileImageInputStream (file), format);
 		}
 
 		public Bitmap (Type type, string resource) {
 			using (Stream s = type.Assembly.GetManifestResourceStream (resource)) {
 				if (s == null)
-					//TBD: check what type is thrown in MS
-					throw new Exception("Resource name was not found: `" + resource + "'");
+					throw new ArgumentException("Resource '" + resource + "' could not be found in class '" + type.ToString() + "'");
+
 				io.InputStream jis = vmw.common.IOUtils.ToInputStream (s);
 				try {
 					Initialize (new stream.MemoryCacheImageInputStream (jis), null);
@@ -104,61 +106,6 @@ namespace System.Drawing
 				}
 			}
 		}
-
-		//FIXME: should go to imageio helpers class
-		static ImageFormat MimeTypesToImageFormat (string [] mimeTypes)
-		{
-			foreach (ImageCodecInfo codec in ImageCodecInfo.Decoders.Values)
-				for (int i=0; i<mimeTypes.Length; i++)
-					if (codec.MimeType == mimeTypes [i])
-						return new ImageFormat (codec.FormatID);
-			return null;
-		}
-
-		private void Initialize (stream.ImageInputStream input, ImageFormat format) {
-			java.util.Iterator iter = null;
-			if (format != null)
-				iter = imageio.ImageIO.getImageReadersByMIMEType (
-					ImageCodecInfo.ImageFormatToMimeType (format));
-			else 
-				iter = imageio.ImageIO.getImageReaders (input);
-
-			if (!iter.hasNext ())
-				throw new ArgumentException ("Format not found"); //TBD: make same text as MS
-
-			imageio.ImageReader r = (imageio.ImageReader) iter.next ();
-
-			r.setInput (input);
-
-			if (format == null)
-				format = MimeTypesToImageFormat (r.getOriginatingProvider ().getMIMETypes ());
-
-			Initialize (r, format);
-		}
-
-		private void Initialize (imageio.ImageReader r, ImageFormat format) {
-			java.awt.Image [] nativeObjects;
-			java.awt.Image [] thumbnails = null;
-			try {
-				nativeObjects = new BufferedImage [r.getNumImages (false)];
-				for (int i = 0; i < nativeObjects.Length; i++) {
-					if (r.hasThumbnails(i)) {
-						if (thumbnails == null)
-							thumbnails = new BufferedImage[nativeObjects.Length];
-
-						thumbnails[i] = r.readThumbnail(i, 0);
-					}
-					nativeObjects [i] = r.read (i);
-				}
-
-			}
-			catch (Exception e) {
-				//TDB: make exception same as in MS
-				throw new ArgumentException ("Error reading", e);
-			}
-			base.Initialize (nativeObjects, thumbnails, format, FrameDimension.Page.Guid);
-		}
-
 #if INTPTR_SUPPORT
 		public Bitmap (int width, int height, int stride, PixelFormat format, IntPtr scan0)
 		{						
@@ -167,36 +114,48 @@ namespace System.Drawing
 #endif
 		#endregion
 
-		#region InternalSave
-		protected override void InternalSave (stream.ImageOutputStream output, Guid clsid) {
-			string mime=ImageCodecInfo.FindEncoder (clsid).MimeType;
-			imageio.ImageWriter writer = null;;
+		#region Internal Initialization
+
+		private void Initialize (stream.ImageInputStream input, ImageFormat format) {
+			ImageCodec ic = null;
+
+			if (format == null)
+				ic = ImageCodec.CreateReader(input);
+			else
+				ic = ImageCodec.CreateReader(format);
+
+			java.awt.Image [] nativeObjects;
+			java.awt.Image [] thumbnails = null;
 			try {
-				writer = (imageio.ImageWriter) imageio.ImageIO.getImageWritersByMIMEType (mime).next ();
-				writer.setOutput (output);
-				if (NativeObjectsCount == 1)
-					writer.write (NativeObject);
-				else if (writer.canWriteSequence ())
-					SaveSequence (writer);
-				else
-					throw new NotImplementedException ();
+				ic.NativeStream = input;
+				nativeObjects = ic.ReadImage();
+				thumbnails = ic.ReadThumbnails(0);
+				ic.ParseMetadata();
 			}
 			catch (Exception e) {
-				//FIXME: check dotnet exceptions in save, and throw same types
-				throw new Exception ("java threw an exception", e);
+				string h = e.Message;
+				throw new OutOfMemoryException ("Out of memory");
 			}
+
+			base.Initialize (
+				nativeObjects, thumbnails, format, FrameDimension.Page.Guid, 
+				ic.ImageHorizontalResolution, ic.ImageVerticalResolution );
 		}
 
-		void SaveSequence (imageio.ImageWriter writer) {
-			//FIXME: does not supports metadata and thumbnails for now
-			writer.prepareWriteSequence (null);
+		#endregion
 
-			for (int i = 0; i < NativeObjectsCount; i++) {
-				imageio.IIOImage iio = new imageio.IIOImage ((BufferedImage)this[i], null, null);
-				writer.writeToSequence (iio, null);
+		#region InternalSave
+		protected override void InternalSave (stream.ImageOutputStream output, Guid clsid) {
+
+			ImageCodec ic = ImageCodec.CreateWriter( clsid );
+			if (ic != null) {
+				ic.NativeStream = output;
+				ic.WriteImage( NativeObject );
 			}
-
-			writer.endWriteSequence ();
+			else {
+				// FIXME: correct this exception
+				throw new Exception("Format not supported");
+			}
 		}
 
 		#endregion
@@ -313,7 +272,8 @@ namespace System.Drawing
 		#region SetResolution [TODO]
 		public void SetResolution (float xDpi, float yDpi)
 		{
-			throw new NotImplementedException();
+			_horizontalResolution = xDpi;
+			_verticalResolution = yDpi;
 		}
 		#endregion 
 

@@ -9,6 +9,7 @@
 				<Reference Name="System" AssemblyName="System" HintPath="..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.dll"/>
 				<Reference Name="rt" AssemblyName="rt" HintPath="..\lib\j2sdk1.4.1\rt.dll" Private="False"/>
 				<Reference Name="J2SE.Helpers" AssemblyName="J2SE.Helpers" HintPath="..\lib\J2SE.Helpers.dll" Private="False"/>
+				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\..\..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Xml.dll" Private="False"/>
 			</References>
 		</Build>
 		<Files>
@@ -17,6 +18,9 @@
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\Consts.cs.in" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Drawing.Configuration.jvm\ResolutionConfiguration.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Drawing.Configuration.jvm\ResolutionConfigurationCollection.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mainsoft.Drawing.Configuration.jvm\ResolutionConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\AdvancedStroke.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\BasicShape.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Bitmap.jvm.cs" SubType="Code" BuildAction="Compile"/>
@@ -125,6 +129,7 @@
 				<File RelPath="System.Drawing.Imaging\EncoderValue.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Imaging\FrameDimension.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Imaging\ImageAttributes.jvm.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing.Imaging\ImageCodec.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Imaging\ImageCodecFlags.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Imaging\ImageCodecInfo.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Imaging\ImageFlags.cs" SubType="Code" BuildAction="Compile"/>

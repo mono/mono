@@ -13,8 +13,11 @@ using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using Mainsoft.Drawing.Services;
+
 using BufferedImage = java.awt.image.BufferedImage;
 using java.io;
 using javax.imageio;
@@ -33,6 +36,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 	int _currentObject;
 	Guid _dimension;
 	ImageFormat _format;
+	protected float _verticalResolution = 0;
+	protected float _horizontalResolution = 0;
 	#endregion
 
 	#region Constructor
@@ -71,11 +76,16 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 	}
 
 	protected void Initialize (java.awt.Image [] nativeObjects, java.awt.Image [] thumbnails, ImageFormat format, Guid dimension) {
+		Initialize(nativeObjects, thumbnails, format, dimension, 0, 0);
+	}
+	protected void Initialize (java.awt.Image [] nativeObjects, java.awt.Image [] thumbnails, ImageFormat format, Guid dimension, float xRes, float yRes) {
 		_format = format;
 		_nativeObjects = nativeObjects;
 		_thumbnails = thumbnails;
 		_currentObject = 0;
 		_dimension = dimension;
+		_horizontalResolution = xRes;
+		_verticalResolution = yRes;
 	}
 
 	#endregion
@@ -85,6 +95,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 	internal java.awt.Image NativeObject {
 		get {
 		  return _nativeObjects [_currentObject];
+		}
+		set {
+			_nativeObjects [_currentObject] = value;
 		}
 	}
 
@@ -247,8 +260,55 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 	
 	#region RotateFlip [TODO]
 	public void RotateFlip (RotateFlipType rotateFlipType)
-	{		
-		throw new NotImplementedException ();
+	{
+		awt.geom.AffineTransform tx;
+
+		//FIXME: check if it's not a metafile
+		switch (rotateFlipType) {
+			case RotateFlipType.RotateNoneFlipNone :
+				return;
+				
+			case RotateFlipType.Rotate90FlipNone :
+				tx = awt.geom.AffineTransform.getRotateInstance(Math.PI / 2);
+				tx.translate( 0, -NativeObject.getHeight(null) );
+				break;
+
+			case RotateFlipType.Rotate180FlipNone :
+				tx = awt.geom.AffineTransform.getScaleInstance(-1, -1);
+				tx.translate( -NativeObject.getWidth(null), -NativeObject.getHeight(null) );
+				break;
+
+			case RotateFlipType.Rotate270FlipNone :
+				tx = awt.geom.AffineTransform.getRotateInstance(-Math.PI / 2);
+				tx.translate( -NativeObject.getWidth(null), 0 );
+				break;
+
+			case RotateFlipType.RotateNoneFlipX :
+				tx = awt.geom.AffineTransform.getScaleInstance(-1, 1);
+				tx.translate( -NativeObject.getWidth(null), 0 );
+				break;
+
+			case RotateFlipType.Rotate90FlipX :
+				tx = awt.geom.AffineTransform.getRotateInstance(Math.PI / 2);
+				tx.scale(1, -1);
+				break;
+
+			case RotateFlipType.Rotate180FlipX :
+				tx = awt.geom.AffineTransform.getScaleInstance(1, -1);
+				tx.translate( 0, -NativeObject.getHeight(null) );
+				break;
+
+			case RotateFlipType.Rotate270FlipX :
+				tx = awt.geom.AffineTransform.getRotateInstance(Math.PI / 2);
+				tx.scale(-1, 1);
+				tx.translate( -NativeObject.getWidth(null), -NativeObject.getHeight(null) );
+				break;
+
+			default:
+				throw new ArgumentOutOfRangeException();
+		}
+		image.AffineTransformOp op = new image.AffineTransformOp(tx, image.AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+		NativeObject = op.filter((BufferedImage)NativeObject, null);
 	}
 	#endregion
 
@@ -279,14 +339,14 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 
 	public void Save (Stream stream, ImageFormat format)
 	{
-		Save (stream, ImageCodecInfo.FindEncoder (
-			ImageCodecInfo.ImageFormatToClsid (format)), null);
+		Save (stream, ImageCodec.FindEncoder (
+			ImageCodec.ImageFormatToClsid (format)), null);
 	}
 
 	public void Save(string filename, ImageFormat format) 
 	{
-		Save (filename, ImageCodecInfo.FindEncoder (
-			ImageCodecInfo.ImageFormatToClsid (format)), null);
+		Save (filename, ImageCodec.FindEncoder (
+			ImageCodec.ImageFormatToClsid (format)), null);
 	}
 	#endregion
 
@@ -347,11 +407,13 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 	}
 	#endregion
 	
-	#region HorisontalDimention [TODO]
+	#region HorizontalResolution [TODO]
 	public float HorizontalResolution 
 	{
 		get {
-			throw new NotImplementedException ();
+			if (_horizontalResolution == 0)
+				return Graphics.DefaultScreenResolution;
+			return _horizontalResolution;
 		}
 	}
 	#endregion
@@ -359,21 +421,33 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 	#region ColorPalette [TODO]
 	public ColorPalette Palette 
 	{
-		get {							
-			
-			throw new NotImplementedException ();
+		get {
+			//FIXME: check if it's not a metafile
+
+			image.ColorModel colorModel = ((BufferedImage)NativeObject).getColorModel();
+			if (colorModel is image.IndexColorModel) {
+
+				Color [] colors = new Color[ ((image.IndexColorModel)colorModel).getMapSize() ];
+				for (int i=0; i<colors.Length; i++) {
+					colors[i] = Color.FromArgb( ((image.IndexColorModel)colorModel).getRGB(i) );
+				}
+				ColorPalette palette = new ColorPalette(0, colors);
+				return palette;
+			}
+			return new ColorPalette();
 		}
 		set {
+			// FIXME: add set
 			throw new NotImplementedException ();
 		}
 	}
 	#endregion
 		
-	#region PhysicalDimension [TODO]
+	#region PhysicalDimension
 	public SizeF PhysicalDimension 
 	{
 		get {
-			throw new NotImplementedException ();
+			return new Size(Width, Height);
 		}
 	}
 	#endregion
@@ -428,7 +502,9 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable
 	public float VerticalResolution 
 	{
 		get {
-			throw new NotImplementedException();
+			if (_verticalResolution == 0)
+				return Graphics.DefaultScreenResolution;
+			return _verticalResolution;
 		}
 	}
 	#endregion

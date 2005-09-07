@@ -1,3 +1,10 @@
+2005-09-07 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* System.Drawing.vmwcsproj: ImageCodec.jvm.cs
+	Added Mainsoft.Drawing.Configuration.jvm folder with
+	ResolutionConfiguration.cs, ResolutionConfigurationCollection.cs, 
+	ResolutionConfigurationHandler.cs
+
 2005-08-28 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* System.Drawing.vmwcsproj: Added GraphicsContainer.jvm.cs, GraphicsState.jvm.cs

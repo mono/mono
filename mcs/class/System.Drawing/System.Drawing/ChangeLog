@@ -1,3 +1,8 @@
+2005-09-07 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Bitmap.jvm.cs: fixed bitamp accessors
+	* Image.jvm.cs: fixed image accessors
+
 2005-09-07 Konstantin Triger <kostat@mainsoft.com>
 	* AdvancedStroke.jvm.cs: fix matrix translate
 	* Graphics.jvm.cs: fix matrix concatenation order
