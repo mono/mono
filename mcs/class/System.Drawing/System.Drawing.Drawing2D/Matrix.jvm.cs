@@ -128,7 +128,7 @@ namespace System.Drawing.Drawing2D
 		}                       
         
 		internal void CopyTo(Matrix matrix) {
-			NativeObject.setTransform( matrix.NativeObject );
+			matrix.NativeObject.setTransform(NativeObject);
 		}
 
 		public override bool Equals (object obj)
