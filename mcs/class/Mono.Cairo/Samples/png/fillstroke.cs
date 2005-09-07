@@ -40,7 +40,7 @@ public class CairoTest
 		
 		gr.MoveTo ( new PointD (0.5, 0.1) );
 		gr.LineTo ( new PointD (0.9, 0.9) );
-		gr.RelLineTo ( new PointD (-0.4, 0.0) );
+		gr.RelLineTo ( new Distance (-0.4, 0.0) );
 		gr.CurveTo ( new PointD (0.2, 0.9),
 			     new PointD ( 0.2, 0.5),
 			     new PointD (0.5, 0.5)
@@ -48,9 +48,9 @@ public class CairoTest
 		gr.ClosePath ();
 		
 		gr.MoveTo ( new PointD (0.25, 0.1) );
-		gr.RelLineTo ( new PointD (0.2, 0.2) );
-		gr.RelLineTo ( new PointD ( -0.2, 0.2) );
-		gr.RelLineTo ( new PointD (-0.2, -0.2) );
+		gr.RelLineTo ( new Distance (0.2, 0.2) );
+		gr.RelLineTo ( new Distance ( -0.2, 0.2) );
+		gr.RelLineTo ( new Distance (-0.2, -0.2) );
 		gr.ClosePath ();	       
 		
 		gr.Color = new Color (0, 0, 1, 1);

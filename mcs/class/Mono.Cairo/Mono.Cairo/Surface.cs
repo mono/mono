@@ -46,8 +46,6 @@ namespace Cairo {
 			lock (surfaces.SyncRoot){
 				surfaces [surface] = this;
 			}
-			
-			CairoAPI.cairo_surface_reference (surface);
 		}
 		
 		public int Width {
@@ -66,8 +64,9 @@ namespace Cairo {
 		public PdfSurface (string filename, double width, double height)
 		{
 			surface = CairoAPI.cairo_pdf_surface_create (filename, width, height);
-
-			CairoAPI.cairo_surface_reference (surface);
+			lock (surfaces.SyncRoot){
+				surfaces [surface] = this;
+			}
 		}
 
 		public void SetDPI (double x_dpi, double y_dpi)
@@ -81,8 +80,9 @@ namespace Cairo {
 		public PostscriptSurface (string filename, double width, double height)
 		{
 			surface = CairoAPI.cairo_ps_surface_create (filename, width, height);
-
-			CairoAPI.cairo_surface_reference (surface);
+			lock (surfaces.SyncRoot){
+				surfaces [surface] = this;
+			}
 		}
 
 		public void SetDPI (double x_dpi, double y_dpi)
@@ -97,8 +97,9 @@ namespace Cairo {
 		public Win32Surface (IntPtr hdc)
 		{
 			surface = CairoAPI.cairo_win32_surface_create (hdc);
-
-			CairoAPI.cairo_surface_reference (surface);
+			lock (surfaces.SyncRoot){
+				surfaces [surface] = this;
+			}
 		}
 	}
 
@@ -107,16 +108,18 @@ namespace Cairo {
 		public XlibSurface (IntPtr display, IntPtr drawable, IntPtr visual, int width, int height)
 		{
 			surface = CairoAPI.cairo_xlib_surface_create (display, drawable, visual, width, height);
-
-			CairoAPI.cairo_surface_reference (surface);
+			lock (surfaces.SyncRoot){
+				surfaces [surface] = this;
+			}
 		}
 
 		/* FIXME: has the same parameters as above
 		public XlibSurface (IntPtr display, IntPtr bitmap, IntPtr screen, int width, int height)
 		{
 			surface = CairoAPI.cairo_xlib_surface_create_for_bitmap (display, bitmap, screen, width, height);
-
-			CairoAPI.cairo_surface_reference (surface);
+			lock (surfaces.SyncRoot){
+				surfaces [surface] = this;
+			}
 		}
 		*/
 

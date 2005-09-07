@@ -1,3 +1,16 @@
+2005-09-07  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Graphics.cs: the Relative path methods
+	should use a Distance not a PointD, and update some
+	parameter names for better documentation purposes
+	remove SetTargetImage (), and SetTargetDrawable ()
+	use Graphics.Target = Surface instead
+	* Mono.Cairo/Surface.cs: don't reference the surface after
+	we create it as it is not necessary
+	add the new surfaces to the surfaces hashtable on instantiation 
+	* Mono.Cairo/Pattern.cs: don't reference the pattern after
+	we create it as it is not necessary
+	
 2005-09-07 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
 	* Samples/png: Fixed samples with new changes.

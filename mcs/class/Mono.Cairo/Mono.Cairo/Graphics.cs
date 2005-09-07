@@ -99,7 +99,6 @@ namespace Cairo {
         public class Graphics : IDisposable 
         {
                 internal IntPtr state = IntPtr.Zero;
-		//private Surface surface;
 		
                 public Graphics (Surface surface)
                 {
@@ -281,7 +280,6 @@ namespace Cairo {
                 public Cairo.Surface Target {
                         set {
 				state = CairoAPI.cairo_create (value.Pointer);				
-                                //CairoAPI.cairo_set_target_surface (state, value.Handle);
                         }
 
                         get {
@@ -342,39 +340,44 @@ namespace Cairo {
                         CairoAPI.cairo_curve_to (state, x1, y1, x2, y2, x3, y3);
                 }
 
-                public void RelMoveTo (PointD p)
+                public void RelMoveTo (Distance d)
 				{
-						RelMoveTo (p.X, p.Y);
+						RelMoveTo (d.Dx, d.Dy);
 				}
 				
-                public void RelMoveTo (double x, double y)
+                public void RelMoveTo (double dx, double dy)
                 {
-                        CairoAPI.cairo_rel_move_to (state, x, y);
+                        CairoAPI.cairo_rel_move_to (state, dx, dy);
                 }
 
-                public void RelLineTo (PointD p)
+                public void RelLineTo (Distance d)
                 {
-						RelLineTo (p.X, p.Y);
+						RelLineTo (d.Dx, d.Dy);
                 }
 
-                public void RelLineTo (double x, double y)
+                public void RelLineTo (double dx, double dy)
 				{
-                        CairoAPI.cairo_rel_line_to (state, x, y);
+                        CairoAPI.cairo_rel_line_to (state, dx, dy);
 				}
+
+                public void RelCurveTo (Distance d1, Distance d2, Distance d3)
+		{
+			RelCurveTo (d1.Dx, d1.Dy, d2.Dx, d2.Dy, d3.Dx, d3.Dy);
+		}
 
                 public void RelCurveTo (double dx1, double dy1, double dx2, double dy2, double dx3, double dy3)
                 {
                         CairoAPI.cairo_rel_curve_to (state, dx1, dy1, dx2, dy2, dx3, dy3); 
                 }
 
-                public void Arc (double xc, double yc, double radius, double angel1, double angel2)
+                public void Arc (double xc, double yc, double radius, double angle1, double angle2)
                 {
-                        CairoAPI.cairo_arc (state, xc, yc, radius, angel1, angel2);
+                        CairoAPI.cairo_arc (state, xc, yc, radius, angle1, angle2);
                 }
 
-                public void ArcNegative (double xc, double yc, double radius, double angel1, double angel2)
+                public void ArcNegative (double xc, double yc, double radius, double angle1, double angle2)
                 {
-                        CairoAPI.cairo_arc_negative (state, xc, yc, radius, angel1, angel2);
+                        CairoAPI.cairo_arc_negative (state, xc, yc, radius, angle1, angle2);
                 }
 		
                 public void Rectangle (PointD p, double width, double height)
@@ -470,21 +473,6 @@ namespace Cairo {
 		{
 			return CairoAPI.cairo_in_fill (state, x, y);
 		}
-
-
-#region Modified state
-
-                public void SetTargetImage (
-                        string data, Cairo.Format format, int width, int height, int stride)
-                {
-                        CairoAPI.cairo_image_surface_create_for_data (data, format, width, height, stride);
-                }
-
-		public void SetTargetDrawable (IntPtr dpy, IntPtr drawable, IntPtr visual, int width, int height)
-		{
-			CairoAPI.cairo_xlib_surface_create (dpy, drawable, visual, width, height);
-		}		
-#endregion
 
                 public void Rotate (double angle)
                 {

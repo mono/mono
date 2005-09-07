@@ -38,7 +38,6 @@ namespace Cairo {
 	        public LinearGradient (double x0, double y0, double x1, double y1) : base()
                 {
                         pattern = CairoAPI.cairo_pattern_create_linear (x0, y0, x1, y1);
-			Reference ();
                 }		
 	}
    
@@ -49,7 +48,6 @@ namespace Cairo {
                 {
                         pattern = CairoAPI.cairo_pattern_create_radial (cx0, cy0, radius0,
 								    cx1, cy1, radius1);
-			Reference ();
                 }
 	}
 
@@ -77,7 +75,6 @@ namespace Cairo {
 					pattern = CairoAPI.cairo_pattern_create_rgb (color.R, color.G, color.B);
 				else
 					pattern = CairoAPI.cairo_pattern_create_rgba (color.R, color.G, color.B, color.A);
-				Reference ();
 			}
 		}
 
@@ -86,7 +83,6 @@ namespace Cairo {
 			public SurfacePattern (Surface surface)
 			{
 				pattern = CairoAPI.cairo_pattern_create_for_surface (surface.Pointer);
-				Reference ();
 			}
 
 			public Extend Extend {
