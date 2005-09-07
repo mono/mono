@@ -1,3 +1,7 @@
+2005-09-07 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Brush.jvm.cs: added transform methods
+
 2005-09-06 Konstantin Triger <kostat@mainsoft.com>
 
 	* StrokeFactory.jvm.cs, AdvancedStroke.jvm.cs, Pen.jvm.cs:

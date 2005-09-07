@@ -1,3 +1,8 @@
+2005-09-07 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* LinearGradientBrush.jvm.cs: FIxed transform methods
+	* Matrix.jvm.cs: Added CopyTo(), fixed Invert()
+
 2005-09-06 Boris Kirzner <borisk@mainsoft.com>
 
 	* ExtendedGeneralPath.jvm.cs: Imported functionality from GraphicsPAth. 

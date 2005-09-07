@@ -197,15 +197,8 @@ namespace System.Drawing.Drawing2D {
 		}
 
 		public Matrix Transform {
-			get {
-				return _brushTransform;
-			}
-			set {
-				if (value == null)
-					throw new ArgumentNullException("matrix");
-
-				_brushTransform = value;
-			}
+			get { return BrushTransform; }
+			set { BrushTransform = value; }
 		}
 
 		// FALLBACK: not functionality implemented for this property
@@ -222,34 +215,31 @@ namespace System.Drawing.Drawing2D {
 		#region Public Methods
 
 		public void MultiplyTransform (Matrix matrix) {
-			MultiplyTransform (matrix, MatrixOrder.Prepend);
+			BrushMultiplyTransform(matrix, MatrixOrder.Prepend);
 		}
 
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order) {
-			if (matrix == null)
-				throw new ArgumentNullException("matrix");
-
-			_brushTransform.Multiply(matrix,order);			
+			BrushMultiplyTransform(matrix, order);			
 		}
 
 		public void ResetTransform () {
-			_brushTransform = new Matrix();
+			BrushResetTransform();
 		}
 
 		public void RotateTransform (float angle) {
-			RotateTransform (angle, MatrixOrder.Prepend);
+			BrushRotateTransform(angle, MatrixOrder.Prepend);
 		}
 
 		public void RotateTransform (float angle, MatrixOrder order) {
-			_brushTransform.Rotate(angle,order);
+			BrushRotateTransform(angle, order);
 		}
 
 		public void ScaleTransform (float sx, float sy) {
-			ScaleTransform (sx, sy, MatrixOrder.Prepend);
+			BrushScaleTransform(sx, sy, MatrixOrder.Prepend);
 		}
 
 		public void ScaleTransform (float sx, float sy, MatrixOrder order) {
-			_brushTransform.Scale(sx,sy,order);
+			BrushScaleTransform(sx, sy, order);
 		}
 
 		public void SetBlendTriangularShape (float focus) {
@@ -278,11 +268,11 @@ namespace System.Drawing.Drawing2D {
 		}
 
 		public void TranslateTransform (float dx, float dy) {
-			TranslateTransform (dx, dy, MatrixOrder.Prepend);
+			BrushTranslateTransform (dx, dy);
 		}
 
 		public void TranslateTransform (float dx, float dy, MatrixOrder order) {
-			_brushTransform.Translate(dx,dy,order);
+			BrushTranslateTransform(dx, dy, order);
 		}
 
 		public override object Clone () {

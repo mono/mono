@@ -11,7 +11,7 @@ namespace System.Drawing.Drawing2D
 		#region fields
 
 		static internal readonly Matrix IdentityTransform = new Matrix();
-		geom.AffineTransform _nativeMatrix;				
+		readonly geom.AffineTransform _nativeMatrix;				
 
 		#endregion
                 
@@ -127,6 +127,10 @@ namespace System.Drawing.Drawing2D
 		{
 		}                       
         
+		internal void CopyTo(Matrix matrix) {
+			NativeObject.setTransform( matrix.NativeObject );
+		}
+
 		public override bool Equals (object obj)
 		{
 			Matrix m = obj as Matrix;
@@ -146,7 +150,7 @@ namespace System.Drawing.Drawing2D
 		public void Invert ()
 		{
 			try {
-				_nativeMatrix = _nativeMatrix.createInverse();
+				_nativeMatrix.setTransform( _nativeMatrix.createInverse() );
 			}
 			catch(geom.NoninvertibleTransformException e) {
 				throw new ArgumentException(e.Message, e);
