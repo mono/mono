@@ -311,8 +311,11 @@ namespace System.Web {
 			get {
 				if (files == null) {
 					files = new HttpFileCollection ();
-					if (IsContentType ("multipart/form-data"))
+					if (IsContentType ("multipart/form-data", true)) {
+						form = new WebROCollection ();
 						LoadMultiPart ();
+						form.Protect ();
+					}
 				}
 				return files;
 			}
@@ -418,8 +421,11 @@ namespace System.Web {
 				AddRawKeyValue (key, value);
 		}
 		
-		bool IsContentType (string ct)
+		bool IsContentType (string ct, bool starts_with)
 		{
+			if (starts_with)
+				return StrUtils.StartsWith (ContentType, ct, true);
+
 			return String.Compare (ContentType, ct, true, CultureInfo.InvariantCulture) == 0;
 		}
 		
@@ -429,9 +435,9 @@ namespace System.Web {
 					form = new WebROCollection ();
 					files = new HttpFileCollection ();
 
-					if (IsContentType ("application/x-www-form-urlencoded"))
+					if (IsContentType ("application/x-www-form-urlencoded", false))
 						LoadWwwForm ();
-					else if (IsContentType ("multipart/form-data"))
+					else if (IsContentType ("multipart/form-data", true))
 						LoadMultiPart ();
 
 					form.Protect ();
