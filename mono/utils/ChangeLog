@@ -1,3 +1,9 @@
+
+Wed Sep 7 21:23:18 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mono-codeman.c: ensure we have enough room for thunks
+	with large allocations.
+
 2005-08-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-compiler.h (MONO_THREAD_VAR_OFFSET): Disable this when using
