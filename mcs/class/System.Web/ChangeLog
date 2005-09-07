@@ -1,3 +1,10 @@
+2005-09-07  Chris Toshok  <toshok@ximian.com>
+
+	* System.Web.dll.sources: add MinimizableAttributeTypeConverter.
+
+	* System.Web_test.dll.sources: add
+	MinimizableAttributeTypeConverter test.
+
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
 	* System.Web.dll.sources: add HtmlLink.cs and HtmlMeta.cs

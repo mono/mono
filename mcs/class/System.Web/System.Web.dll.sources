@@ -434,6 +434,7 @@ System.Web.UI/LiteralControl.cs
 System.Web.UI/LosFormatter.cs
 System.Web.UI/MasterPage.cs
 System.Web.UI/MasterPageParser.cs
+System.Web.UI/MinimizableAttributeTypeConverter.cs
 System.Web.UI/NonVisualControlAttribute.cs
 System.Web.UI/ObjectConverter.cs
 System.Web.UI/ObjectStateFormatter.cs

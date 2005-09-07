@@ -41,6 +41,7 @@ System.Web.UI.HtmlControls/HtmlTableRowTest.cs
 System.Web.UI.HtmlControls/HtmlTableTest.cs
 System.Web.UI.HtmlControls/HtmlTextAreaTest.cs
 System.Web.UI/HtmlTextWriterTest.cs
+System.Web.UI/MinimizableAttributeTypeConverterTest.cs
 System.Web.UI/PageTest.cs
 System.Web.UI/PropertyConverterTest.cs
 System.Web.UI/StateBagTest.cs
