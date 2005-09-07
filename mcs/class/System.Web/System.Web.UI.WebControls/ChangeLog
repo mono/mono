@@ -1,5 +1,9 @@
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
+	* WebControl.cs: revert the last change.
+
+2005-09-06  Chris Toshok  <toshok@ximian.com>
+
 	* WebControl.cs (AddAttributesToRender): always render ClientID.
 
 	* ValidationSummary.cs (Render): same.
