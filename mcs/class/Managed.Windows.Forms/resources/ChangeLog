@@ -1,3 +1,9 @@
+2005-09-07 Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* System.Windows.Forms.resources.prebuilt: Update
+	* System.Windows.Forms.resx: Added images and strings for PropertyGrid
+	  toolbar buttons.
+
 2005-05-05  Peter Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.resx, System.Windows.Forms.en.resx,
