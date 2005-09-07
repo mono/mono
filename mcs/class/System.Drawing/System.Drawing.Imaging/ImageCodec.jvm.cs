@@ -470,6 +470,9 @@ namespace Mainsoft.Drawing.Services {
 			else
 				resUnitsType = GetValueFromMetadata(resUnitsPath);
 
+			if (resUnitsType == null)
+				resUnitsType = rc.UnitsTypeDefault;
+
 			// Unit scale
 			string unitScale = rc.UnitsScale[resUnitsType].ToString();
 
@@ -480,7 +483,11 @@ namespace Mainsoft.Drawing.Services {
 
 
 		protected string GetValueFromMetadata(string path) {
-			return MetadataDocument.SelectSingleNode(path).InnerText;
+			XmlNode n = MetadataDocument.SelectSingleNode(path);
+			if (n == null)
+				return null;
+
+			return n.InnerText;
 		}
 
 		private void XmlConvert(dom.Node jNode, XmlNode nNode) {

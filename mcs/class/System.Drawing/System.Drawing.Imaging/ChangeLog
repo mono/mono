@@ -1,5 +1,9 @@
 2005-09-07 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* ImageCodecInfo.jvm.cs: fixed GetValueFromMetadata, SetResolution
+
+2005-09-07 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* ImageCodecInfo.jvm.cs: Refactoring
 	* Added ImageCodec.jvm.cs
 
