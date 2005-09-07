@@ -1,3 +1,9 @@
+2005-09-07  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* mono-shlib-cop.cs: Patch from John Luke to fix use of Path.Combine (don't
+	  want to use an `/'-prefixed path as the 2nd parameter) and improve XML
+	  node selection.
+
 2005-07-18  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* mono-shlib-cop.exe.config: .config file to help with testing.

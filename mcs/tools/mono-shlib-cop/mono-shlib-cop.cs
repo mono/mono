@@ -187,25 +187,24 @@ namespace Mono.Unmanaged.Check {
 			mono_configs = new XmlDocument [prefixes.Length];
 			for (int i = 0; i < mono_configs.Length; ++i) {
 				mono_configs [i] = new XmlDocument ();
-				mono_configs [i].Load (Path.Combine (prefixes [i], "/etc/mono/config"));
+				mono_configs [i].Load (Path.Combine (prefixes [i], "etc/mono/config"));
 			}
 		}
 
 		public string GetDllmapEntry (string assemblyPath, string library)
 		{
-			string xpath = "//dllmap[@dll=\"" + library + "\"]";
+			string xpath = "/configuration/dllmap[@dll=\"" + library + "\"]";
 
 			XmlDocument d = GetAssemblyConfig (assemblyPath);
 			if (d != null) {
-				XmlNodeList maps = d.SelectNodes (xpath);
-				if (maps.Count > 0)
-					return maps [0].Attributes ["target"].Value;
+				XmlNode map = d.SelectSingleNode (xpath);
+				if (map != null)
+					return map.Attributes ["target"].Value;
 			}
 			foreach (XmlDocument config in mono_configs) {
-				XmlNodeList maps = config.SelectNodes (xpath);
-				Trace.WriteLine (string.Format ("{0} <dllmap/> entries found!", maps.Count));
-				if (maps.Count > 0)
-					return maps [0].Attributes ["target"].Value;
+				XmlNode map = config.SelectSingleNode (xpath);
+				if (map != null)
+					return map.Attributes ["target"].Value;
 			}
 			return null;
 		}
