@@ -248,6 +248,7 @@ System.Windows.Forms/Panel.cs
 System.Windows.Forms/PictureBox.cs
 System.Windows.Forms/PictureBoxSizeMode.cs
 System.Windows.Forms/ProgressBar.cs
+System.Windows.Forms/PropertiesTab.cs
 System.Windows.Forms/PropertyGrid.cs
 System.Windows.Forms/PropertyGridEntry.cs
 System.Windows.Forms/PropertyGridTextBox.cs
