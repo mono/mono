@@ -300,6 +300,7 @@ namespace System.Web {
 			} catch (Exception e) {
 				// Ignore
 			}
+			RecycleForSessionEnd (app);
 		}
 
 		static HttpStaticObjectsCollection MakeStaticCollection (ArrayList list)

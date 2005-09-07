@@ -1,3 +1,7 @@
+2005-09-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplicationFactory.cs: recycle after invoking session_end.
+
 2005-09-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRuntime.cs: remove Console.
