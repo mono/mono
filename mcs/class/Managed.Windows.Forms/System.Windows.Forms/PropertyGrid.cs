@@ -87,6 +87,7 @@ namespace System.Windows.Forms
 		public PropertyGrid() {
 			selected_objects = new object[1];
 			grid_items = new GridItemCollection();
+			property_tabs = new PropertyTabCollection();
 
 			line_color = SystemColors.ScrollBar;
 			line_color = SystemColors.ScrollBar;
@@ -102,21 +103,33 @@ namespace System.Windows.Forms
 
 			help_panel = new Panel();
 			help_panel.Dock = DockStyle.Bottom;
-			help_panel.DockPadding.All = 3;
+			//help_panel.DockPadding.All = 3;
 			help_panel.Height = 50;
+			help_panel.BackColor = SystemColors.Control;
 
-			help_description_label = new Label();
-			help_description_label.Dock = DockStyle.Fill;
-			help_description_label.Name = "help_description_label";
-			help_description_label.Font = this.Font;
 
 			help_title_label = new Label();
-			help_title_label.Dock = DockStyle.Top;
+			help_title_label.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
 			help_title_label.Name = "help_title_label";
-			help_description_label.Font = new Font(this.Font,FontStyle.Bold);
+			help_title_label.Font = new Font(this.Font,FontStyle.Bold);
+			help_title_label.Text = "Title";
+			help_title_label.Location = new Point(2,2);
+			help_title_label.Height = 17;
+			help_title_label.Width = help_panel.Width - 4;
+
+			
+			help_description_label = new Label();
+			help_description_label.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+			help_description_label.Name = "help_description_label";
+			help_description_label.Font = this.Font;
+			help_description_label.Text = "The long important Description";
+			help_description_label.Location = new Point(2,help_title_label.Top+help_title_label.Height);
+			help_description_label.Width = help_panel.Width - 4;
+			help_description_label.Height = 17;
 
 			help_panel.Controls.Add(help_description_label);
 			help_panel.Controls.Add(help_title_label);
+			help_panel.Paint+=new PaintEventHandler(help_panel_Paint);
 
 			toolbar = new ToolBar();
 			toolbar.Dock = DockStyle.Top;
@@ -126,15 +139,13 @@ namespace System.Windows.Forms
 			propertypages_toolbarbutton = new ToolBarButton();
 			context_menu = new ContextMenu();
 
-			//help_title_label.Dock = DockStyle.Top;
-			help_title_label.Name = "help_title_label";
-			help_title_label.Location = new Point(2,20);
-			help_title_label.Size = new Size(20,20);
-
 			toolbar_imagelist = new ImageList();
 			toolbar_imagelist.ColorDepth = ColorDepth.Depth32Bit;
 			toolbar_imagelist.ImageSize = new System.Drawing.Size(16, 16);
 			toolbar_imagelist.TransparentColor = System.Drawing.Color.Transparent;
+			toolbar_imagelist.Images.Add( (Image)Locale.GetResource( "propertygrid_sort_category") );
+			toolbar_imagelist.Images.Add( (Image)Locale.GetResource( "propertygrid_sort_alphabetical") );
+			toolbar_imagelist.Images.Add( (Image)Locale.GetResource( "propertygrid_tab_properties") );
 
 			toolbar.Appearance = ToolBarAppearance.Flat;
 			toolbar.AutoSize = false;
@@ -153,21 +164,20 @@ namespace System.Windows.Forms
 			toolbar.TabIndex = 0;
 			toolbar.ButtonClick += new ToolBarButtonClickEventHandler(toolbar_ButtonClick);
 
+			categorized_toolbarbutton.ImageIndex = 0;
 			categorized_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
-			categorized_toolbarbutton.ToolTipText = "Categorized";
-			categorized_toolbarbutton.Text = "C";
+			categorized_toolbarbutton.ToolTipText = (string)Locale.GetResource( "Categorized");
 
+			alphabetic_toolbarbutton.ImageIndex = 1;
 			alphabetic_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
-			alphabetic_toolbarbutton.ToolTipText = "Alphabetic";
-			alphabetic_toolbarbutton.Text = "A";
-			alphabetic_toolbarbutton.ImageIndex = 0;
+			alphabetic_toolbarbutton.ToolTipText = (string)Locale.GetResource( "Alphabetic");
 
 			separator_toolbarbutton.Style = ToolBarButtonStyle.Separator;
 
 			propertypages_toolbarbutton.Enabled = false;
+			propertypages_toolbarbutton.ImageIndex = 2;
 			propertypages_toolbarbutton.Style = ToolBarButtonStyle.ToggleButton;
 			propertypages_toolbarbutton.ToolTipText = "Property Pages";
-			propertypages_toolbarbutton.Text = "P";
 
 			
 			reset_menuitem = context_menu.MenuItems.Add("Reset");
@@ -217,7 +227,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		[MonoTODO]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override bool AutoScroll {
@@ -242,7 +251,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		[MonoTODO()]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Image BackgroundImage {
@@ -320,7 +328,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		[MonoTODO()]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -330,7 +337,6 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		[MonoTODO()]
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override Color ForeColor 
@@ -496,8 +502,18 @@ namespace System.Windows.Forms
 
 			set {
 				selected_objects = new object[] {value};
-				ReflectObjects();
+				if (this.SelectedObject == null)
+					return;
+				PropertyTabAttribute[] propTabs = (PropertyTabAttribute[])this.SelectedObject.GetType().GetCustomAttributes(typeof(PropertyTabAttribute),true);
+				if (propTabs.Length == 0)
+					return;
+				foreach (Type tabType in propTabs[0].TabClasses)
+				{
+					this.PropertyTabs.AddTabType(tabType);
+				}
+				RefreshTabs(PropertyTabScope.Component);
 				Console.WriteLine("SelectedObject");
+				ReflectObjects();
 				property_grid_view.Refresh();
 			}
 		}
@@ -594,7 +610,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		protected virtual Type DefaultTabType {
 			get {
-				return typeof(PropertyTab);
+				return typeof(PropertiesTab);
 			}
 		}
 		
@@ -622,7 +638,7 @@ namespace System.Windows.Forms
 		
 		protected override void Dispose(bool val)
 		{
-			base.Dispose();
+			base.Dispose(val);
 		}
 		
 		public void CollapseAllGridItems () 
@@ -646,28 +662,42 @@ namespace System.Windows.Forms
 			base.Refresh ();
 		}
 
-
-		[MonoTODO]
 		public void RefreshTabs (PropertyTabScope tabScope) 
 		{
-			throw new NotImplementedException();
+			
+			/*button = new ToolBarButton("C");
+			button.ImageIndex = 0;
+			this.toolbar.Buttons.Add(button);
+			button = new ToolBarButton();
+			button.ImageIndex = 0;
+			button.Style = ToolBarButtonStyle.Separator;
+			this.toolbar.Buttons.Add(button);
+			foreach (PropertyTab tab in this.PropertyTabs)
+			{
+
+				int index = toolbar.ImageList.Images.Count;
+				this.toolbar.ImageList.Images.Add(tab.Bitmap);
+				button = new ToolBarButton();
+				button.ImageIndex = index;
+				this.toolbar.Buttons.Add(button);
+			}*/
+			
 		}
 
 		public void ResetSelectedProperty() 
 		{
 			if (selected_grid_item == null || selected_grid_item.PropertyDescriptor == null)
 				return;
-			object[] attr = selected_grid_item.PropertyDescriptor.PropertyType.GetCustomAttributes(typeof(DefaultValueAttribute),true);
-			if (attr.Length > 0)
-				selected_grid_item.PropertyDescriptor.SetValue(SelectedObject,attr[0]);
+			
+			selected_grid_item.PropertyDescriptor.ResetValue(SelectedObject);
 		}
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
-		[MonoTODO]
+
 		protected virtual PropertyTab CreatePropertyTab(Type tabType) 
 		{
-			throw new NotImplementedException();
+			return (PropertyTab)Activator.CreateInstance(tabType);
 		}
 		
 		[MonoTODO]
@@ -850,77 +880,68 @@ namespace System.Windows.Forms
 		#region PropertyTabCollection Class
 		public class PropertyTabCollection : ICollection, IEnumerable
 		{
+			System.Collections.ArrayList list;
 			#region Private Constructors
-			private PropertyTabCollection() {
+			internal PropertyTabCollection() {
+				list = new ArrayList();
 			}
 
 			#endregion	// Private Constructors
 
-			[MonoTODO]
 			public PropertyTab this[int index] {
 				get {
-					throw new NotImplementedException();
+					return (PropertyTab)list[index];
 				}
 			}
 		
 			#region ICollection Members
-			[MonoTODO]
 			bool ICollection.IsSynchronized
 			{
 				get {
-					// TODO:  Add PropertyTabCollection.IsSynchronized getter implementation
-					return false;
+					return list.IsSynchronized;
 				}
 			}
 
-			[MonoTODO]
 			void ICollection.CopyTo(Array array, int index)
 			{
-				// TODO:  Add PropertyTabCollection.CopyTo implementation
+				list.CopyTo(array, index);
 			}
 
-			[MonoTODO]
 			object ICollection.SyncRoot
 			{
 				get {
-					// TODO:  Add PropertyTabCollection.SyncRoot getter implementation
-					return null;
+					return list.SyncRoot;
 				}
 			}
 
 			#endregion
 
 			#region IEnumerable Members
-			[MonoTODO]
 			public IEnumerator GetEnumerator() {
-				// TODO:  Add PropertyTabCollection.GetEnumerator implementation
-				return null;
+				return list.GetEnumerator();
 			}
 
 			#endregion
 		
 			#region ICollection Members
-			[MonoTODO]
 			public int Count {
 				get {
-					// TODO:  Add PropertyTabCollection.Count getter implementation
-					return 0;
+					return list.Count;
 				}
 			}
 
 			#endregion
 			
 			#region Public Instance Methods
-			[MonoTODO]
 			public void AddTabType(System.Type propertyTabType)
 			{
-				throw new NotImplementedException();
+				list.Add(Activator.CreateInstance(propertyTabType));
 			}
 			[MonoTODO]
 			public void AddTabType(System.Type propertyTabType,
 				System.ComponentModel.PropertyTabScope tabScope)
 			{
-				throw new NotImplementedException();
+				AddTabType(propertyTabType);
 			}
 			[MonoTODO]
 			public void Clear(System.ComponentModel.PropertyTabScope tabScope)
@@ -1000,26 +1021,30 @@ namespace System.Windows.Forms
 
 		private void PopulateGridItemCollection (object obj, GridItemCollection grid_item_coll, GridItemCollection category_grid_item_coll) 
 		{
-//			TypeConverter converter = TypeDescriptor.GetConverter(obj);
+			//TypeConverter converter = TypeDescriptor.GetConverter(obj);
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(obj);
-			for (int i = 0; i < properties.Count;i++) {
-				bool not_browseable = properties[i].Attributes.Contains(new BrowsableAttribute(false));
-				if (!not_browseable/*properties[i].IsBrowsable*/) {
-					GridEntry grid_entry = new GridEntry(obj, properties[i]);
-					grid_item_coll.Add(properties[i].Name,grid_entry);
+			foreach (PropertyDescriptor property in properties) {
+				if (property.IsBrowsable) {
+					GridEntry grid_entry = new GridEntry(obj, property);
+					grid_item_coll.Add(property.Name,grid_entry);
 
-					string category = properties[i].Category;
+					string category = property.Category;
 					GridItem cat_item = category_grid_item_coll[category];
 					if (cat_item == null) {
 						cat_item = new CategoryGridEntry(category);
 						category_grid_item_coll.Add(category,cat_item);
 					}
-					cat_item.GridItems.Add(properties[i].Name,grid_entry);
+					cat_item.GridItems.Add(property.Name,grid_entry);
 				}
 			}
 		}
 
 		#endregion	// Private Helper Methods
 
+		private void help_panel_Paint(object sender, PaintEventArgs e)
+		{
+			e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(help_panel.BackColor), help_panel.ClientRectangle );
+			e.Graphics.DrawRectangle(SystemPens.ControlDark, 0,0,help_panel.Width-1,help_panel.Height-1 );
+		}
 	}
 }

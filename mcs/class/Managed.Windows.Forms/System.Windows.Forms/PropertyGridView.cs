@@ -111,6 +111,17 @@ namespace System.Windows.Forms.PropertyGridInternal
 		
 		protected override void OnPaint(PaintEventArgs e)
 		{
+			if (property_grid.SelectedGridItem != null && property_grid.SelectedGridItem.GridItemType == GridItemType.Property) 
+			{
+				this.Controls.Add(grid_textbox);
+				if (!grid_textbox.Focused)
+					grid_textbox.Focus();
+			}
+			else 
+			{
+				this.Controls.Remove(grid_textbox);
+			}
+
 			// Decide if we need a scrollbar
 			open_grid_item_count = 0;
 
@@ -126,20 +137,11 @@ namespace System.Windows.Forms.PropertyGridInternal
 			DrawGridItems(property_grid.grid_items, e, 1, ref yLoc);
 
 			DrawGrid(e, yLoc);
+			e.Graphics.DrawRectangle(SystemPens.ControlDark, 0,0,Width-1,Height-1 );
 			
 			
 
 
-			if (property_grid.SelectedGridItem != null && property_grid.SelectedGridItem.GridItemType == GridItemType.Property) 
-			{
-				this.Controls.Add(grid_textbox);
-				if (!grid_textbox.Focused)
-					grid_textbox.Focus();
-			}
-			else 
-			{
-				this.Controls.Remove(grid_textbox);
-			}
 			UpdateScrollBar();
 			
 			base.OnPaint(e);
@@ -555,12 +557,14 @@ namespace System.Windows.Forms.PropertyGridInternal
 				case ScrollEventType.SmallDecrement:
 					XplatUI.ScrollWindow(Handle, 0, ROW_HEIGHT, false);
 					grid_textbox.Top += ROW_HEIGHT;
-					Invalidate(new Rectangle(0,0,ClientRectangle.Width,ROW_HEIGHT));
+					Invalidate(ClientRectangle);
+					//Invalidate(new Rectangle(0,0,ClientRectangle.Width,ROW_HEIGHT));
 					break;
 				case ScrollEventType.SmallIncrement:
 					XplatUI.ScrollWindow(Handle, 0, -ROW_HEIGHT, false);
 					grid_textbox.Top -= ROW_HEIGHT;
-					Invalidate(new Rectangle(0,ClientRectangle.Bottom-ROW_HEIGHT,ClientRectangle.Width,ROW_HEIGHT));
+					Invalidate(ClientRectangle);
+					//Invalidate(new Rectangle(0,ClientRectangle.Bottom-ROW_HEIGHT,ClientRectangle.Width,ROW_HEIGHT));
 					break;
 				case ScrollEventType.LargeDecrement:
 					XplatUI.ScrollWindow(Handle, 0, ROW_HEIGHT, false);
@@ -570,13 +574,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 					XplatUI.ScrollWindow(Handle, 0, -ROW_HEIGHT, false);
 					Invalidate(ClientRectangle);
 					break;
-					/*case ScrollEventType.ThumbTrack:
-						XplatUI.ScrollWindow(Handle, 0, -(vbar.Value-e.NewValue), false);
-						Invalidate(ClientRectangle);
-						break;
-					case ScrollEventType.ThumbPosition:
-						Invalidate(ClientRectangle);
-						break;*/
+				case ScrollEventType.ThumbTrack:
+					XplatUI.ScrollWindow(Handle, 0, -(vbar.Value-e.NewValue), false);
+					Invalidate(ClientRectangle);
+					break;
+				case ScrollEventType.ThumbPosition:
+					Invalidate(ClientRectangle);
+					break;
 			}
 		}
 
@@ -645,8 +649,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		public System.Windows.Forms.DialogResult ShowDialog(Form dialog)
 		{
-			// TODO:  Add PropertyGrid.ShowDialog implementation
-			return DialogResult.OK;
+			return dialog.ShowDialog(this);
 		}
 
 		#endregion
