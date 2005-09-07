@@ -1,3 +1,9 @@
+2005-09-07  Chris Toshok  <toshok@ximian.com>
+
+	* MinimizableAttributeTypeConverter.cs: new class, whose existence
+	we know about because of corcompare, and for whose implementation
+	we have exclusively nunit to thank.
+
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
 	* RootBuilder.cs (.cctor): doh, add all the new html controls
