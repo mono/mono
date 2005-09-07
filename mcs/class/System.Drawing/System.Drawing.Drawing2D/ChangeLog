@@ -1,5 +1,9 @@
 2005-09-07 Konstantin Triger <kostat@mainsoft.com>
 
+	* GraphicsPath.jvm.cs: correct angle to compute the quarter
+
+2005-09-07 Konstantin Triger <kostat@mainsoft.com>
+
 	* Matrix.jvm.cs: Fix copy order in CopyTo
 
 2005-09-07 Boris Kirzner <borisk@mainsoft.com>

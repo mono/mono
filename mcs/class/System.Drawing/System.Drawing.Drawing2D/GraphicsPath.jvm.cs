@@ -203,7 +203,7 @@ namespace System.Drawing.Drawing2D
 			double cosx = 1/Math.Sqrt( sqrd1Tod2 * (tan*tan) + 1);
 			double xRad = Math.Acos(cosx);
 			double x = java.lang.Math.toDegrees(xRad);
-			int q = ((int)x)/90;
+			int q = ((int)angle)/90;
 
 			switch (q&3) {
 				case 1:
