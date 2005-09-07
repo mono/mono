@@ -46,13 +46,21 @@ namespace System.Drawing.Drawing2D
 		public PathData () { }
 
 		public PointF[] Points {
-			get { return points; } 
+			get { return (PointF[]) points.Clone (); } 
 			set { points = value; }
 		}
 
 		public byte[] Types {
-			get { return types; }
+			get { return (byte[]) types.Clone (); }
 			set { types = value; }
+		}
+
+		public PointF[] InternalPoints {
+			get { return points; } 
+		}
+
+		public byte[] InternalTypes {
+			get { return types; }
 		}
 	}
 }

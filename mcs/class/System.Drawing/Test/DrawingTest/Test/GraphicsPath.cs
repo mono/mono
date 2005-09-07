@@ -4242,6 +4242,26 @@ namespace Test.Sys.Drawing
 		}
 
 		[Test]
+		public void PathData2 ()
+		{
+			path = new GraphicsPath ();
+			path.AddLine (new Point (100, 100), new Point (400, 100));
+			path.AddLine (new Point (400, 200), new Point (10, 100));
+
+			byte [] types = path.PathTypes;
+			PointF [] points = path.PathPoints;
+
+			types [1] = 88;
+			points [1] = new PointF (-88, -88);
+
+			Assert.AreEqual ( 88, types [1]);
+			DrawingTest.AssertAlmostEqual ( new PointF (-88,-88), points [1]);
+
+			Assert.AreEqual ( 1, path.PathData.Types [1]);
+			DrawingTest.AssertAlmostEqual ( new PointF (400,100), path.PathData.Points [1]);
+		}
+
+		[Test]
 		public void Reset()
 		{
 			path = new GraphicsPath ();

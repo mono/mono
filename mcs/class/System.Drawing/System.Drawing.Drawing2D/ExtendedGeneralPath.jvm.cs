@@ -60,6 +60,9 @@ namespace System.Drawing.Drawing2D
 		private int _coordsCount;
 		private int _windingRule;
 
+		private PathData _pathData;
+		private GeneralPath _generalPath;
+
 		const int INIT_SIZE = 20;
 		const int EXPAND_MAX = 500;
 
@@ -99,11 +102,10 @@ namespace System.Drawing.Drawing2D
 		private GeneralPath GeneralPath
 		{
 			get {
-				// FIXME : cache general path
-				PathIterator iter = getPathIterator (null);
-				GeneralPath path = new GeneralPath ();
-				path.append (iter, false);
-				return path;
+				if (_generalPath == null) {				
+					_generalPath = GetGeneralPath ();
+				}
+				return _generalPath;
 			}
 		}
 
@@ -139,25 +141,7 @@ namespace System.Drawing.Drawing2D
 		public int PointCount
 		{
 			get {
-				int count = 0;
-				for (int i=0; i < TypesCount; i++)
-					switch (Types [i] & SEG_MASK) {
-						case SEG_CLOSE:
-							break;
-						case SEG_MOVETO:
-							count++;
-							break;
-						case SEG_LINETO:
-							count++;
-							break;
-						case SEG_QUADTO:
-							count+=2;
-							break;
-						case SEG_CUBICTO:
-							count+=3;
-							break;
-					}
-				return count;
+				return CoordsCount / 2;
 			}
 		}
 
@@ -165,58 +149,83 @@ namespace System.Drawing.Drawing2D
 		{
 			get 
 			{
-				// FIXME : cache path data
-				PathData pathData = new PathData();
-				pathData.Types = new byte [PointCount];
-				pathData.Points = new PointF [PointCount];
-				int tpos = 0;
-				int ppos = 0;
-				int cpos = 0;
-				byte marker;
-				bool start;
-				for (int i = 0; i < TypesCount; i++) {
-					sbyte segmentType = (sbyte)(Types [i] & SEG_MASK);
-
-					// set the masks and the markers
-					marker = ((Types [i] & SEG_MARKER) != 0) ? (byte)PathPointType.PathMarker : (byte)0;
-					start = ((Types [i] & SEG_START) != 0);
-					
-					switch (segmentType) {
-						case SEG_CLOSE:
-							pathData.Types [tpos - 1] = (byte) (pathData.Types [tpos - 1] | (byte) PathPointType.CloseSubpath | marker);
-							break;
-						case SEG_MOVETO:
-							pathData.Types [tpos++] = (byte)((byte) PathPointType.Start | marker);
-							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
-							break;
-						case SEG_LINETO:
-							pathData.Types [tpos++] = (byte) ((byte) PathPointType.Line | marker);
-							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
-							break;
-						case SEG_QUADTO:
-							// FIXME : use 4 cp , two of which 
-							pathData.Types [tpos++] = (byte)(byte) PathPointType.Bezier;
-							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
-							pathData.Types [tpos++] = (byte) ((byte)PathPointType.Bezier | marker);
-							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
-							break;
-						case SEG_CUBICTO:
-							pathData.Types [tpos++] = (byte)(byte) PathPointType.Bezier3;
-							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
-							pathData.Types [tpos++] = (byte) PathPointType.Bezier3;
-							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
-							pathData.Types [tpos++] = (byte) ((byte)PathPointType.Bezier3 | marker);
-							pathData.Points [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
-							break;
-					}
-				}
-				return pathData;
+				if (_pathData == null)
+					_pathData = GetPathData ();
+				
+				return _pathData;
 			}
 		}
 
 		#endregion // Properties
 
 		#region Methods
+
+		#region CachedData
+
+		private void ClearCache ()
+		{
+			_pathData = null;
+			_generalPath = null;
+		}
+
+		private GeneralPath GetGeneralPath ()
+		{
+			PathIterator iter = getPathIterator (null);
+			GeneralPath path = new GeneralPath ();
+			path.append (iter, false);
+			return path;
+		}
+
+		private PathData GetPathData ()
+		{
+			PathData pathData = new PathData();
+			pathData.Types = new byte [PointCount];
+			pathData.Points = new PointF [PointCount];
+			int tpos = 0;
+			int ppos = 0;
+			int cpos = 0;
+			byte marker;
+			bool start;
+			for (int i = 0; i < TypesCount; i++) {
+				sbyte segmentType = (sbyte)(Types [i] & SEG_MASK);
+
+				// set the masks and the markers
+				marker = ((Types [i] & SEG_MARKER) != 0) ? (byte)PathPointType.PathMarker : (byte)0;
+				start = ((Types [i] & SEG_START) != 0);
+				
+				switch (segmentType) {
+					case SEG_CLOSE:
+						pathData.InternalTypes [tpos - 1] = (byte) (pathData.InternalTypes [tpos - 1] | (byte) PathPointType.CloseSubpath | marker);
+						break;
+					case SEG_MOVETO:
+						pathData.InternalTypes [tpos++] = (byte)((byte) PathPointType.Start | marker);
+						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						break;
+					case SEG_LINETO:
+						pathData.InternalTypes [tpos++] = (byte) ((byte) PathPointType.Line | marker);
+						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						break;
+					case SEG_QUADTO:
+						// FIXME : use 4 cp , two of which 
+						pathData.InternalTypes [tpos++] = (byte)(byte) PathPointType.Bezier;
+						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						pathData.InternalTypes [tpos++] = (byte) ((byte)PathPointType.Bezier | marker);
+						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						break;
+					case SEG_CUBICTO:
+						pathData.InternalTypes [tpos++] = (byte)(byte) PathPointType.Bezier3;
+						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						pathData.InternalTypes [tpos++] = (byte) PathPointType.Bezier3;
+						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						pathData.InternalTypes [tpos++] = (byte) ((byte)PathPointType.Bezier3 | marker);
+						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						break;
+				}
+			}
+			return pathData;
+		}
+
+		#endregion // CachedData
 
 		public void append(Shape s)
 		{
@@ -227,6 +236,7 @@ namespace System.Drawing.Drawing2D
 
 		public void append(PathIterator pi, bool connect) 
 		{
+			ClearCache ();
 			float [] coords = new float [6];
 			while (!pi.isDone ()) {
 				switch (pi.currentSegment (coords)) {
@@ -274,6 +284,7 @@ namespace System.Drawing.Drawing2D
 
 		public void closePath() 
 		{
+			ClearCache ();
 			if (_typesCount == 0 || _types[_typesCount - 1] != SEG_CLOSE) {
 				needRoom (1, 0, true);
 				_types [_typesCount++] = SEG_CLOSE;
@@ -311,6 +322,7 @@ namespace System.Drawing.Drawing2D
 
 		public void curveTo(float x1, float y1, float x2, float y2, float x3, float y3) 
 		{
+			ClearCache ();
 			needRoom (1, 6, true);
 			_types [_typesCount++] = SEG_CUBICTO;
 			_coords [_coordsCount++] = x1;
@@ -403,6 +415,7 @@ namespace System.Drawing.Drawing2D
 
 		public void lineTo(float x, float y) 
 		{
+			ClearCache ();
 			needRoom (1, 2, true);
 			_types [_typesCount++] = SEG_LINETO;
 			_coords [_coordsCount++] = x;
@@ -411,6 +424,7 @@ namespace System.Drawing.Drawing2D
 
 		public void moveTo(float x, float y) 
 		{
+			ClearCache ();
 			if (_typesCount > 0 && _types [_typesCount - 1] == SEG_MOVETO) {
 				_coords [_coordsCount - 2] = x;
 				_coords [_coordsCount - 1] = y;
@@ -425,6 +439,7 @@ namespace System.Drawing.Drawing2D
 
 		public void quadTo(float x1, float y1, float x2, float y2) 
 		{
+			ClearCache ();
 			needRoom (1, 4, true);
 			_types [_typesCount++] = SEG_QUADTO;
 			_coords [_coordsCount++] = x1;
@@ -435,6 +450,7 @@ namespace System.Drawing.Drawing2D
 
 		public void reset() 
 		{
+			ClearCache ();
 			_typesCount = 0;
 			_coordsCount = 0;
 		}
@@ -449,6 +465,7 @@ namespace System.Drawing.Drawing2D
 
 		public void transform(AffineTransform at) 
 		{
+			ClearCache ();
 			at.transform (_coords, 0, _coords, 0, _coordsCount/2);
 		}
 
@@ -489,24 +506,28 @@ namespace System.Drawing.Drawing2D
 
 		public void SetMarkers()
 		{
+			ClearCache ();
 			if (TypesCount > 0)
 				Types [ TypesCount - 1] |= SEG_MARKER;
 		}
 
 		public void ClearMarkers()
 		{
+			ClearCache ();
 			for (int i = 0; i < TypesCount; i++)
 				Types [i] &= ~SEG_MARKER;
 		}
 
 		public void StartFigure ()
 		{
+			ClearCache ();
 			if (TypesCount > 0)
 				Types [TypesCount - 1] |= ExtendedGeneralPath.SEG_START;
 		}
 
 		private void Reset (int initialTypes, int initialCoords)
 		{
+			ClearCache ();
 			_types = new sbyte [initialTypes];
 			_coords = new float [initialCoords * 2];
 			_typesCount = 0;
@@ -520,6 +541,7 @@ namespace System.Drawing.Drawing2D
 
 		internal void Reverse ()
 		{
+			ClearCache ();
 			// revert coordinates
 			for (int i=0, max = CoordsCount / 2; i < max;) {
 				int ix = i++;
