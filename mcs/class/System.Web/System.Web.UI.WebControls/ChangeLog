@@ -1,5 +1,12 @@
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
+	* BaseValidator.cs (AddAttributesToRender): render our ClientID if
+	we weren't assigned an ID.
+
+	* ValidationSummary.cs (AddAttributesToRender): same.
+
+2005-09-06  Chris Toshok  <toshok@ximian.com>
+
 	* WebControl.cs: revert the last change.
 
 2005-09-06  Chris Toshok  <toshok@ximian.com>

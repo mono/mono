@@ -165,7 +165,11 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender(HtmlTextWriter writer) {
 			base.AddAttributesToRender (writer);
 
-			if (EnableClientScript && pre_render_called) {
+			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel ()) {
+				/* force an ID here if we weren't assigned one */
+				if (ID == null)
+					writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
+
 				if (HeaderText != "")
 					writer.AddAttribute ("headertext", HeaderText);
 
@@ -214,17 +218,17 @@ namespace System.Web.UI.WebControls {
 				return;
 			}
 
-			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel ()) {
-				Page.ClientScript.RegisterArrayDeclaration ("Page_ValidationSummaries",
-									    String.Format ("document.getElementById ('{0}')", ClientID));
-			}
-
 			// We have validators
 			errors = new ArrayList(validators.Count);
 			for (int i = 0; i < validators.Count; i++) {
 				if (!validators[i].IsValid) {
 					errors.Add(validators[i].ErrorMessage);
 				}
+			}
+
+			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel ()) {
+				Page.ClientScript.RegisterArrayDeclaration ("Page_ValidationSummaries",
+									    String.Format ("document.getElementById ('{0}')", ClientID));
 			}
 
 			if ((ShowSummary && errors.Count > 0) || (EnableClientScript && pre_render_called))

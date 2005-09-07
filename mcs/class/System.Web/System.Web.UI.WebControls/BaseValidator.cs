@@ -232,6 +232,10 @@ namespace System.Web.UI.WebControls {
 		{
 			/* if we're rendering uplevel, add our attributes */
 			if (RenderUplevel) {
+				/* force an ID here if we weren't assigned one */
+				if (ID == null)
+					writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
+
 				if (ControlToValidate != String.Empty)
 					writer.AddAttribute ("controltovalidate", ControlToValidate);
 
