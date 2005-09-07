@@ -48,31 +48,44 @@ namespace System.Web.UI
 			htmlControls.Add ("A", typeof (HtmlAnchor));
 			htmlControls.Add ("BUTTON", typeof (HtmlButton));
 			htmlControls.Add ("FORM", typeof (HtmlForm));
+#if NET_2_0
+			htmlControls.Add ("HEAD", typeof (HtmlHead));
+#endif
 			htmlControls.Add ("IMG", typeof (HtmlImage));
 			htmlControls.Add ("INPUT", "INPUT");
+#if NET_2_0
+			htmlControls.Add ("LINK", typeof (HtmlLink));
+			htmlControls.Add ("META", typeof (HtmlLink));
+#endif
 			htmlControls.Add ("SELECT", typeof (HtmlSelect));
 			htmlControls.Add ("TABLE", typeof (HtmlTable));
 			htmlControls.Add ("TD", typeof (HtmlTableCell));
 			htmlControls.Add ("TH", typeof (HtmlTableCell));
 			htmlControls.Add ("TR", typeof (HtmlTableRow));
 			htmlControls.Add ("TEXTAREA", typeof (HtmlTextArea));
-#if NET_2_0
-			htmlControls.Add ("HEAD", typeof (HtmlHead));
-#endif
 
 			htmlInputControls = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
 						      CaseInsensitiveComparer.DefaultInvariant); 
 
 			htmlInputControls.Add ("BUTTON", typeof (HtmlInputButton));
+#if NET_2_0
+			htmlInputControls.Add ("SUBMIT", typeof (HtmlInputSubmit));
+			htmlInputControls.Add ("RESET", typeof (HtmlInputReset));
+#else
 			htmlInputControls.Add ("SUBMIT", typeof (HtmlInputButton));
 			htmlInputControls.Add ("RESET", typeof (HtmlInputButton));
+#endif
 			htmlInputControls.Add ("CHECKBOX", typeof (HtmlInputCheckBox));
 			htmlInputControls.Add ("FILE", typeof (HtmlInputFile));
 			htmlInputControls.Add ("HIDDEN", typeof (HtmlInputHidden));
 			htmlInputControls.Add ("IMAGE", typeof (HtmlInputImage));
 			htmlInputControls.Add ("RADIO", typeof (HtmlInputRadioButton));
 			htmlInputControls.Add ("TEXT", typeof (HtmlInputText));
+#if NET_2_0
+			htmlInputControls.Add ("PASSWORD", typeof (HtmlInputPassword));
+#else
 			htmlInputControls.Add ("PASSWORD", typeof (HtmlInputText));
+#endif
 		}
 
 		public RootBuilder (TemplateParser parser)
