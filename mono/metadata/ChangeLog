@@ -1,3 +1,9 @@
+
+Wed Sep 7 22:17:58 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* icall.c: on ARM use the libc strtod(), since bsd_strtod() seems
+	broken.
+
 2005-09-06  Martin Baulig  <martin@ximian.com>
 
 	* domain.c (supported_runtimes): Added v2.0.50727.
