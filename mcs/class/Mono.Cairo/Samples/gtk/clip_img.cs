@@ -62,7 +62,7 @@ public class CairoGraphic : DrawingArea
 	static void draw (Cairo.Graphics gr, int width, int height)
 	{
 		int w, h;
-		SurfaceImage image;
+		ImageSurface image;
 
 		gr.Scale (width, height);
 		gr.LineWidth = 0.04;
@@ -71,7 +71,7 @@ public class CairoGraphic : DrawingArea
 		gr.Clip ();
 		gr.NewPath ();
 
-		image = new SurfaceImage("data/e.png");
+		image = new ImageSurface("data/e.png");
 		w = image.Width;
 		h = image.Height;
 

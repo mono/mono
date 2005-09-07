@@ -1,6 +1,8 @@
 2005-09-07 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
 	* Samples/png: Fixed samples with new changes.
+	* Samples/x11: Fixed samples with new changes.
+	* Samples/gtk: Fixed samples with new changes.	
 
 2005-09-06  John Luke  <john.luke@gmail.com>
 

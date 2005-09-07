@@ -65,9 +65,9 @@ public class CairoGraphic : DrawingArea
 	{
 		gr.Scale (width, height);
 		gr.LineWidth = 0.04;
-		Pattern pat;		
+		LinearGradient pat;		
 		
-		pat = new PatternLinear (0.0, 0.0,  0.0, 1.0);
+		pat = new LinearGradient (0.0, 0.0,  0.0, 1.0);
 		pat.AddColorStop (1, new Color (0, 0, 0, 1) );
 		pat.AddColorStop (0, new Color (1, 1, 1, 1) );
 		gr.Rectangle ( new PointD (0, 0),
@@ -78,15 +78,15 @@ public class CairoGraphic : DrawingArea
 		gr.Fill ();
 		pat.Destroy ();
 
-		pat = new PatternRadial (0.45, 0.4, 0.1,
+		RadialGradient pat2 = new RadialGradient (0.45, 0.4, 0.1,
 				     0.4,  0.4, 0.5);
 		
-		pat.AddColorStop (0, new Color (1, 1, 1, 1) );
-		pat.AddColorStop (1, new Color (0, 0, 0, 1) );
-		gr.Pattern =  pat;		
+		pat2.AddColorStop (0, new Color (1, 1, 1, 1) );
+		pat2.AddColorStop (1, new Color (0, 0, 0, 1) );
+		gr.Pattern =  pat2;
 		gr.Arc (0.5, 0.5, 0.3, 0, 2 * M_PI);
 		gr.Fill ();
-		pat.Destroy ();
+		pat2.Destroy ();
 	}
 	
 	
