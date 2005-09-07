@@ -54,7 +54,6 @@
 				<File RelPath="System.Web\HttpHelper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpMethodNotAllowedHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpModuleCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web\HttpMultipartContentParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpParseException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpPostedFile.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpRequest.cs" SubType="Code" BuildAction="Compile"/>
