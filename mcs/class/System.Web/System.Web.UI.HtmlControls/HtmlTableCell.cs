@@ -138,8 +138,7 @@ namespace System.Web.UI.HtmlControls {
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 #if NET_2_0
-		[MonoTODO ("duplicate internal class for TypeConverter ?")]
-		[TypeConverter ("System.Web.UI.MinimizableAttributeTypeConverter, " + Consts.AssemblySystem_Web)]
+		[TypeConverter (typeof (MinimizableAttributeTypeConverter))]
 #endif
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]

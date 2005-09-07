@@ -1,3 +1,23 @@
+2005-09-07  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlInputCheckBox.cs (Checked): uncomment the
+	MinimizableAttributeTypeConverter attribute.
+
+	* HtmlControl.cs (Disabled): uncomment the
+	MinimizableAttributeTypeConverter attribute.
+
+	* HtmlForm.cs (SubmitDisabledControls): remove the MonoTODO.
+
+	* HtmlTableCell.cs (NoWrap): uncomment the
+	MinimizableAttributeTypeConverter attribute.
+
+	* HtmlLink.cs (Href): remove the MonoTODO.
+
+	* HtmlMeta.cs (Name): remove the MonoTODO.
+	(Scheme): same.
+	(Render): add (pretty bogus, really..) implementation.  not sure
+	why we need this one.
+
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlInputControl.cs (RenderAttributes): Check Page.Form for

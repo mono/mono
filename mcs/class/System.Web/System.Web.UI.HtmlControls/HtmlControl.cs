@@ -158,8 +158,7 @@ namespace System.Web.UI.HtmlControls{
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
 #if NET_2_0
-		/* Can't find this type in the docs */
-		//[TypeConverter (typeof(System.Web.UI.MinimizableAttributeTypeConverter))]
+		[TypeConverter (typeof(MinimizableAttributeTypeConverter))]
 #endif
 		public bool Disabled
 		{

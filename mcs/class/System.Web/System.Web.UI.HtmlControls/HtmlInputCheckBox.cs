@@ -48,7 +48,7 @@ namespace System.Web.UI.HtmlControls
 		[WebSysDescription("")]
 		[WebCategory("Misc")]
 #if NET_2_0
-		//[TypeConverter (typeof(System.Web.UI.MinimizableAttributeTypeConverter))]
+		[TypeConverter (typeof(MinimizableAttributeTypeConverter))]
 #endif
 		public bool Checked
 		{

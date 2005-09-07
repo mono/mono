@@ -141,7 +141,6 @@ namespace System.Web.UI.HtmlControls
 #if NET_2_0
 		bool submitdisabledcontrols = false;
 		[DefaultValue (false)]
-		[MonoTODO]
 		public virtual bool SubmitDisabledControls 
 		{
 			get {

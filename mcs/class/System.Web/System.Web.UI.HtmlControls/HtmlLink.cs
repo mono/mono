@@ -42,7 +42,6 @@ namespace System.Web.UI.HtmlControls
 		{
 		}
 
-		[MonoTODO]
 		[DefaultValue ("")]
 		[UrlPropertyAttribute ("*.*")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
