@@ -402,7 +402,7 @@ namespace System.Web.UI.WebControls {
 				RegisterValidatorCommonScript ();
 
 				Page.ClientScript.RegisterOnSubmitStatement ("Mono-System.Web-ValidationOnSubmitStatement",
-									     "if (!ValidatorCommonOnSubmit()) return false;");
+									     "if (!ValidatorOnSubmit()) return false;");
 				Page.ClientScript.RegisterStartupScript ("Mono-System.Web-ValidationStartupScript",
 									 "<script language=\"JavaScript\">\n" + 
 									 "<!--\n" + 

@@ -1,5 +1,13 @@
 2005-09-07  Chris Toshok  <toshok@ximian.com>
 
+	* ValidationSummary.cs (AddAttributesToRender): we only set
+	display=none if there are no errors.
+
+	* BaseValidator.cs (OnPreRender): fix a JS error - on submit we
+	call ValidatorOnSubmit, not ValidatorCommonOnSubmit.
+
+2005-09-07  Chris Toshok  <toshok@ximian.com>
+
 	* ListControl.cs (SelectedIndex): add comment about how you'd
 	think OnSelectedIndexChanged would be called.. and you'd be wrong.
 	(Text): implement in terms of SelectedValue.

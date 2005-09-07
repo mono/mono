@@ -182,11 +182,10 @@ namespace System.Web.UI.WebControls {
 				if (DisplayMode != ValidationSummaryDisplayMode.BulletList)
 					writer.AddAttribute ("displaymode", DisplayMode.ToString());
 
-				writer.AddStyleAttribute ("display", "none");
+				if (!has_errors)
+					writer.AddStyleAttribute ("display", "none");
 			}
 		}
-
-		bool pre_render_called = false;
 
 #if NET_2_0
 		protected internal
@@ -226,15 +225,17 @@ namespace System.Web.UI.WebControls {
 				}
 			}
 
+			has_errors = errors.Count > 0;
+
 			if (EnableClientScript && pre_render_called && Page.AreValidatorsUplevel ()) {
 				Page.ClientScript.RegisterArrayDeclaration ("Page_ValidationSummaries",
 									    String.Format ("document.getElementById ('{0}')", ClientID));
 			}
 
-			if ((ShowSummary && errors.Count > 0) || (EnableClientScript && pre_render_called))
+			if ((ShowSummary && has_errors) || (EnableClientScript && pre_render_called))
 				base.RenderBeginTag(writer);
 
-			if (ShowSummary && errors.Count > 0) {
+			if (ShowSummary && has_errors) {
 				switch(DisplayMode) {
 					case ValidationSummaryDisplayMode.BulletList: {
 						if (HeaderText.Length > 0) {
@@ -293,9 +294,12 @@ namespace System.Web.UI.WebControls {
 				}
 			}
 
-			if ((ShowSummary && errors.Count > 0) || (EnableClientScript && pre_render_called))
+			if ((ShowSummary && has_errors) || (EnableClientScript && pre_render_called))
 				base.RenderEndTag(writer);
 		}
 		#endregion	// Public Instance Methods
+
+		bool pre_render_called;
+		bool has_errors;
 	}
 }
