@@ -55,14 +55,15 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
+		string defaultfocus = "";
 		[DefaultValue ("")]
 		public string DefaultFocus
 		{
 			get {
-				return ViewState.GetString ("DefaultFocus", "");
+				return defaultfocus;
 			}
 			set {
-				ViewState["DefaultFocus"] = value;
+				defaultfocus = (value == null ? "" : value);
 			}
 		}
 #endif		
@@ -121,20 +122,10 @@ namespace System.Web.UI.HtmlControls
 		string Name 
 		{
 			get {
-				string name = Attributes["name"];
-
-				if (name == null) {
-					return (UniqueID);
-				}
-				
-				return (name);
+				return UniqueID;
 			}
 			set {
-				if (value == null) {
-					Attributes.Remove ("name");
-				} else {
-					Attributes["name"] = value;
-				}
+				/* why am i here? I do nothing. */
 			}
 		}
 
@@ -305,8 +296,9 @@ return true;
 			if (query != null && query.Length > 0) {
 				action += "?" + query;
 			}
-			
+
 			w.WriteAttribute ("name", Name);
+
 			w.WriteAttribute ("method", Method);
 			w.WriteAttribute ("action", action);
 
@@ -349,7 +341,6 @@ return true;
 			/* Now remove them from the hash so the base
 			 * RenderAttributes can do all the rest
 			 */
-			Attributes.Remove ("name");
 			Attributes.Remove ("method");
 			Attributes.Remove ("enctype");
 			Attributes.Remove ("target");

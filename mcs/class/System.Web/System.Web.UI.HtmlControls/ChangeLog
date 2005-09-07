@@ -1,3 +1,12 @@
+2005-09-07  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlForm.cs (DefaultFocus): not stored in Attributes either.
+	(Name): not sure about this property.. the getter apparently just
+	returns UniqueID, and the setter does nothing that I can figure
+	out.
+	(RenderAttributes): don't bother to remove "name", since it's not
+	in the attributes anyway.
+
 2005-09-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlInputControl.cs: use the Name property instead of the ClientID.
