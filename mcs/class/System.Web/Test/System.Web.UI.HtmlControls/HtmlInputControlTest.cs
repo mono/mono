@@ -37,6 +37,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Web.UI.HtmlControls {
 
 	public class TestHtmlInputControl : HtmlInputControl {
+		bool name_called;
 
 		public TestHtmlInputControl ()
 			: base ("mono")
@@ -54,6 +55,21 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			base.RenderAttributes (writer);
 			return writer.InnerWriter.ToString ();
 		}
+
+		public override string Name {
+			get {
+				name_called = true;
+				return base.Name;
+			}
+		}
+
+		public bool NameCalled {
+			get { return name_called; }
+			set { name_called = value; }
+		}
+	}
+
+	public class UControl : UserControl {
 	}
 
 	[TestFixture]
@@ -132,6 +148,32 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsNull (ic.ID, "ID-3");
 			Assert.IsNull (ic.UniqueID, "UniqueID-3");
 			Assert.IsNull (ic.Name, "Name-2");
+		}
+
+		[Test]
+		public void Name_InsideNaming ()
+		{
+			Control ctrl = new UControl ();
+			ctrl.ID = "parent";
+			TestHtmlInputControl ic = new TestHtmlInputControl ();
+			ctrl.Controls.Add (ic);
+			Assert.IsNull (ic.ID, "ID");
+			Assert.AreEqual (false, ic.NameCalled);
+			ic.Name = "name";
+			Assert.AreEqual (ic.Name, ic.UniqueID, "name and unique id");
+			Assert.AreEqual (true, ic.NameCalled, "name called");
+
+			ic.ID = "id";
+			Assert.AreEqual ("id", ic.ID, "ID-2");
+			Assert.AreEqual (ic.UniqueID, ic.Name, "Name-ID");
+
+			ic.Name = "name";
+			Assert.AreEqual (ic.Name, ic.UniqueID, "UniqueID-2");
+
+			ic.ID = null;
+			Assert.IsNull (ic.ID, "ID-3");
+			Assert.IsNotNull (ic.UniqueID, "UniqueID-3");
+			Assert.IsNotNull (ic.Name, "Name-2");
 		}
 
 		[Test]
