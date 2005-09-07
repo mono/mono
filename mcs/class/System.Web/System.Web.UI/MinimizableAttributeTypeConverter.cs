@@ -30,6 +30,7 @@ using System;
 using System.Globalization;
 using System.ComponentModel;
 
+#if NET_2_0
 namespace System.Web.UI {
 	internal class MinimizableAttributeTypeConverter : TypeConverter {
 
@@ -75,3 +76,4 @@ namespace System.Web.UI {
 
 	}
 }
+#endif
