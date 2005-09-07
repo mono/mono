@@ -1,3 +1,9 @@
+2005-09-06  Jonathan Chambers  <jonathan.chambers@ansys.com>
+                                                                                
+        * PropertyGrid.cs : Update
+        * PropertyGridView.cs : Update
+        * System.Windows.Forms.resx : Added images and strings
+
 2005-09-06  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* ThemeNice.cs: Do not dispose Pens retrieved from ResPool
