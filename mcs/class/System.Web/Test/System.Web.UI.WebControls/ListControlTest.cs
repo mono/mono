@@ -66,6 +66,17 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return ViewState [name];
 		}
 
+#if NET_2_0
+		public void LoadControl (object state)
+		{
+			LoadControlState (state);
+		}
+
+		public object SaveControl ()
+		{
+			return SaveControlState ();
+		}
+#endif
 		public string Render ()
 		{
 			StringWriter sw = new StringWriter ();
@@ -194,6 +205,32 @@ namespace MonoTests.System.Web.UI.WebControls {
 			// make sure we are still sane
 			Assert.AreEqual (p.Items.Count, 2, "A9");
 		}
+
+#if NET_2_0
+		[Test]
+		// Tests Save/Load ControlState
+		public void ControlState ()
+		{
+			ListControlPoker a = new ListControlPoker ();
+			ListControlPoker b = new ListControlPoker ();
+
+			a.TrackState ();
+
+			a.Items.Add ("a");
+			a.Items.Add ("b");
+			a.Items.Add ("c");
+			a.SelectedIndex = 2;
+
+			b.Items.Add ("a");
+			b.Items.Add ("b");
+			b.Items.Add ("c");
+
+			object state = a.SaveControl();
+			b.LoadControl (state);
+
+			Assert.AreEqual (b.SelectedIndex, 2, "A1");
+		}
+#endif
 
 		[Test]
 		// Tests Save/Load/Track ViewState
