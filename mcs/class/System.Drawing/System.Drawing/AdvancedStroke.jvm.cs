@@ -218,16 +218,16 @@ namespace System.Drawing {
 			float[] t4 = null;
 			if (PenTransform != null && !PenTransform.isIdentity()) {
 				t4 = new float[]{
-					(float)PenTransform.getScaleX(), (float)PenTransform.getShearX(), 
-					(float)PenTransform.getShearY(), (float)PenTransform.getScaleY()
+					(float)PenTransform.getScaleX(), (float)PenTransform.getShearY(), 
+					(float)PenTransform.getShearX(), (float)PenTransform.getScaleY()
 				};
 			}
 
 			float[] t6 = null;
 			if (OutputTransform != null && !OutputTransform.isIdentity()) {
 				t6 = new float[] {
-					(float)OutputTransform.getScaleX(), (float)OutputTransform.getShearX(), 
-					(float)OutputTransform.getShearY(), (float)OutputTransform.getScaleY(),
+					(float)OutputTransform.getScaleX(), (float)OutputTransform.getShearY(), 
+					(float)OutputTransform.getShearX(), (float)OutputTransform.getScaleY(),
 					(float)OutputTransform.getTranslateX(), (float)OutputTransform.getTranslateY()
 				};
 			}

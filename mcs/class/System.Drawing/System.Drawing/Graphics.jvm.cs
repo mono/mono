@@ -362,9 +362,10 @@ namespace System.Drawing {
 			if (StrokeFactory.CanCreateAdvancedStroke) {
 				geom.AffineTransform t = (geom.AffineTransform)GetFinalTransform().clone();
 				geom.AffineTransform oldT = NativeObject.getTransform();
+				NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
 
 				try {
-					t.concatenate(oldT);
+					t.preConcatenate(oldT);
 					bool thin = IsPenThin(pen, t);
 
 					if (NeedsNormalization) {
@@ -377,8 +378,6 @@ namespace System.Drawing {
 							shape = pen.GetNativeObject(t, thin).createStrokedShape(shape);
 							shape = GetNormalizedShape(shape, null);
 						}
-
-						NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
 					}
 					else {
 						shape = pen.GetNativeObject(t, thin).createStrokedShape(shape);
@@ -2370,7 +2369,7 @@ namespace System.Drawing {
 				if (value == null)
 					throw new ArgumentNullException("matrix");
 
-				_transform.NativeObject.setTransform(value.NativeObject);
+				value.CopyTo(_transform);
 			}
 		}
 

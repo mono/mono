@@ -1,3 +1,7 @@
+2005-09-07 Konstantin Triger <kostat@mainsoft.com>
+	* AdvancedStroke.jvm.cs: fix matrix translate
+	* Graphics.jvm.cs: fix matrix concatenation order
+
 2005-09-07 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Brush.jvm.cs: added transform methods
