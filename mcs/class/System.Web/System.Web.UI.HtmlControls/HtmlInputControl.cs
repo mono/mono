@@ -100,7 +100,7 @@ namespace System.Web.UI.HtmlControls {
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 			if (Attributes ["name"] == null) {
-				writer.WriteAttribute ("name", ClientID);
+				writer.WriteAttribute ("name", Name);
 			}
 #if NET_2_0
 			Attributes.Remove ("type");
@@ -116,3 +116,4 @@ namespace System.Web.UI.HtmlControls {
 		}
 	}
 }
+

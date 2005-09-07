@@ -1,3 +1,9 @@
+2005-09-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlInputControl.cs: use the Name property instead of the ClientID.
+	The 'name' attribute rendered contains colons if inside a
+	NamingContainer.
+
 2005-09-07  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlInputCheckBox.cs (Checked): uncomment the
