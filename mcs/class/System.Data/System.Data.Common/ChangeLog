@@ -1,3 +1,7 @@
+2005-09-07 Boris Kirzner <borisk@mainsoft.com>
+	* DataContainer.cs: Do not convert value if container type 
+	is System.Object.
+
 2005-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DbTypes.cs: Marked internal to fix public API.

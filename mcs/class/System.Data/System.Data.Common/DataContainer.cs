@@ -1090,7 +1090,7 @@ namespace System.Data.Common
 
 			protected override void SetValue(int index, object value)
 			{
-				if(value != null && value != DBNull.Value && !Type.IsAssignableFrom(value.GetType()))
+				if(value != null && value != DBNull.Value && !(Type == DbTypes.TypeOfObject) && !Type.IsAssignableFrom(value.GetType()))
 					value = Convert.ChangeType(value, Type);
 
 				base.SetValue(index, value);
