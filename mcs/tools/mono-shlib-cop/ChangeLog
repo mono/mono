@@ -1,5 +1,14 @@
 2005-09-07  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* mono-shlib-cop.cs: Use Assembly.LoadWithPartialName instead of
+	  Assembly.Load(AssemblyName) for loading -r: assemblies, since this
+	  actually works (though it's also deprecated in .NET 2.0, with no
+	  replacement).  If the first LoadWithPartialName fails, try again after
+	  removing any .dll extension (since the .dll isn't part of the assembly
+	  name, but I often specify it anyway).
+
+2005-09-07  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* mono-shlib-cop.cs: Patch from John Luke to fix use of Path.Combine (don't
 	  want to use an `/'-prefixed path as the 2nd parameter) and improve XML
 	  node selection.

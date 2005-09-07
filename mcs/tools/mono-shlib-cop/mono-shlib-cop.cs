@@ -242,16 +242,25 @@ namespace Mono.Unmanaged.Check {
 
 		public void CheckWithPartialName (string partial, AssemblyCheckInfo report)
 		{
-			AssemblyName an = new AssemblyName ();
-			an.Name = partial;
-			try {
-				Assembly a = Assembly.Load (an);
-				Check (a, report);
-			}
-			catch (FileNotFoundException e) {
+			string p = partial;
+			Assembly a;
+			bool retry;
+
+			do {
+				a = Assembly.LoadWithPartialName (p);
+				retry = p.EndsWith (".dll");
+				if (retry) {
+					p = p.Substring (0, p.Length-4);
+				}
+			} while (a == null && retry);
+
+			if (a == null) {
 				report.Errors.Add (new MessageInfo (null, null, 
-					"Could not load assembly reference `" + partial + "': " + e.Message));
+					"Could not load assembly reference `" + partial + "'."));
+				return;
 			}
+
+			Check (a, report);
 		}
 
 		private void Check (Assembly a, AssemblyCheckInfo report)
