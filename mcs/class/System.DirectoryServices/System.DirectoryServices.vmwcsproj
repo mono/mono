@@ -13,7 +13,7 @@
 		</Build>
 		<Files>
 			<Include>
-				<File RelPath="Consts.cs" Link="..\..\build\common\Consts.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Consts.cs.in" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
