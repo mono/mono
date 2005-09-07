@@ -193,6 +193,9 @@ namespace System.Web.UI.WebControls {
 				if (value < 0 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("value");
 				items [value].Selected = true;
+
+				/* you'd think this would be called, but noooo */
+				//OnSelectedIndexChanged (EventArgs.Empty);
 			}
 		}
 
@@ -245,17 +248,23 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
-		public virtual string Text 
-		{
+		public virtual string Text {
 			get {
-				throw new NotImplementedException ();
+				return SelectedValue;
 			}
 			set {
-				throw new NotImplementedException ();
+				SelectedValue = value;
+				/* you'd think this would be called, but noooo */
+				//OnTextChanged (EventArgs.Empty);
 			}
 		}
 
-		protected virtual new HtmlTextWriterTag TagKey
+#if HAVE_CONTROL_ADAPTERS
+		protected virtual new
+#else		
+		protected override
+#endif
+		HtmlTextWriterTag TagKey
 		{
 			get {
 				return HtmlTextWriterTag.Select;
@@ -280,10 +289,23 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected internal override void LoadControlState (object savedState)
 		{
-			throw new NotImplementedException ();
+			object first = null;
+			ArrayList indices = null;
+			Pair pair = savedState as Pair;
+
+			if (pair != null) {
+				first = pair.First;
+				indices = pair.Second as ArrayList;
+			}
+
+			base.LoadControlState (first);
+
+			if (indices != null) {
+				foreach (int index in indices)
+					Items [index].Selected = true;
+			}
 		}
 #endif		
 
@@ -330,10 +352,10 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected internal override void OnInit (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			Page.RegisterRequiresControlState (this);
+			base.OnInit (e);
 		}
 #endif		
 
@@ -348,10 +370,11 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected virtual void OnTextChanged (EventArgs e)
 		{
-			throw new NotImplementedException ();
+			EventHandler handler = (EventHandler) Events [TextChangedEvent];
+			if (handler != null)
+				handler (this, e);
 		}
 
 		[MonoTODO]
@@ -369,28 +392,26 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO]
 		protected internal override void RenderContents (HtmlTextWriter w)
 		{
-			throw new NotImplementedException ();
+			base.RenderContents (w);
 		}
 
-		[MonoTODO]
 		protected internal override object SaveControlState ()
 		{
-			throw new NotImplementedException ();
+			object first;
+			ArrayList second;
+
+			first = base.SaveControlState ();
+			second = GetSelectedIndices();
+			if (second == null)
+				second = new ArrayList();
+
+			return new Pair (first, second);
 		}
 #endif		
 
-		protected override object SaveViewState ()
+		ArrayList GetSelectedIndices ()
 		{
-			object first = null;
-			object second = null;
 			ArrayList selected = null;
-
-			first = base.SaveViewState ();
-
-			IStateManager manager = items as IStateManager;
-			if (manager != null)
-				second = manager.SaveViewState ();
-
 			if (items != null) {
 				selected = new ArrayList ();
 				int count = Items.Count;
@@ -399,25 +420,60 @@ namespace System.Web.UI.WebControls {
 						selected.Add (i);
 				}
 			}
+			return selected;
+		}
 
-			if (first == null && second == null && selected == null)
+		protected override object SaveViewState ()
+		{
+			object first = null;
+			object second = null;
+
+			first = base.SaveViewState ();
+
+			IStateManager manager = items as IStateManager;
+			if (manager != null)
+				second = manager.SaveViewState ();
+
+#if !NET_2_0
+			ArrayList selected = GetSelectedIndices ();
+#endif
+
+			if (first == null && second == null
+#if !NET_2_0
+			    && selected == null
+#endif
+			    )
 				return null;
 
+#if NET_2_0
+			return new Pair (first, second);
+#else
 			return new Triplet (first, second, selected);
+#endif
 		}
 
 		protected override void LoadViewState (object savedState)
 		{
 			object first = null;
 			object second = null;
+#if !NET_2_0
 			ArrayList indices = null;
+#endif
 
+#if NET_2_0
+			Pair pair = savedState as Pair;
+			if (pair != null) {
+				first = pair.First;
+				second = pair.Second;
+			}
+#else
 			Triplet triplet = savedState as Triplet;
 			if (triplet != null) {
 				first = triplet.First;
 				second = triplet.Second;
 				indices = triplet.Third as ArrayList;
 			}
+#endif
 
 			base.LoadViewState (first);
 
@@ -426,10 +482,12 @@ namespace System.Web.UI.WebControls {
 				manager.LoadViewState (second);
 			}
 
+#if !NET_2_0
 			if (indices != null) {
 				foreach (int index in indices)
 					Items [index].Selected = true;
 			}
+#endif
 		}
 
 #if NET_2_0

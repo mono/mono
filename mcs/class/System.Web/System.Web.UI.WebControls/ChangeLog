@@ -1,3 +1,21 @@
+2005-09-07  Chris Toshok  <toshok@ximian.com>
+
+	* ListControl.cs (SelectedIndex): add comment about how you'd
+	think OnSelectedIndexChanged would be called.. and you'd be wrong.
+	(Text): implement in terms of SelectedValue.
+	(TagKey): do the HAVE_CONTROL_ADAPTERS two-step.
+	(LoadControlState): implement - this is where the selected index
+	ArrayList gets stuffed in 2.0.
+	(OnInit): call Page.RegisterRequiresControlState.
+	(OnTextChanged): implement.
+	(RenderContents): for now just chain up to base.RenderContents.
+	(SaveControlState): save our control state properly.
+	(GetSelectedIndices): split this out from SaveViewState to it can
+	be used by both that and SaveControlState.
+	(SaveViewState): mangle this function so it works in both 2.0 and
+	1.0.
+	(LoadViewState): same.
+
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
 	* BaseValidator.cs (AddAttributesToRender): render our ClientID if
