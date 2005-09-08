@@ -357,7 +357,7 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (selectedDayStyle == null)
 					selectedDayStyle = new TableItemStyle ();
-
+				
 				if (IsTrackingViewState)
 					selectedDayStyle.TrackViewState ();
 
@@ -1020,8 +1020,12 @@ namespace System.Web.UI.WebControls {
 				style.CopyFrom (otherMonthDayStyle);
 			}
 
-			if (day.IsSelected && selectedDayStyle != null && !selectedDayStyle.IsEmpty) {
-				style.CopyFrom (selectedDayStyle);
+			if (day.IsSelected) {
+				style.BackColor = Color.Silver;
+				style.ForeColor = Color.White;
+				if (selectedDayStyle != null && !selectedDayStyle.IsEmpty) {
+					style.CopyFrom (selectedDayStyle);
+				}
 			}
 
 			cell.ApplyStyle (style);
@@ -1037,14 +1041,18 @@ namespace System.Web.UI.WebControls {
 			DateTime date = new DateTime (DisplayDate.Year, DisplayDate.Month, 1); // first date
 			DateTime lastDate;
 			TableCell selectorCell = null;
+			int n;
 
 			// Goes backwards until we find the date of that is begining of the week
-			for (int n = 0; n < daysInAWeek; n++) {
+			for (n = 0; n < daysInAWeek; n++) {
 				if (date.DayOfWeek == DisplayFirstDayOfWeek)
 					break;
 
 				date = GetGlobalCalendar().AddDays (date, -1);
 			}
+			/* if the start date is the first day of the week, we need to shift backward one more week */
+			if (n == 0)
+				date = GetGlobalCalendar().AddDays (date, -1 * daysInAWeek);
 
 			lastDate = GetGlobalCalendar().AddDays (date, 6 * daysInAWeek); // Always six weeks per months
 
@@ -1145,7 +1153,6 @@ namespace System.Web.UI.WebControls {
 
 			// Table
 			tableTitle.Width =  Unit.Percentage (100);
-			tableTitle.ControlStyle.CopyFrom (ControlStyle);
 			if (titleStyle != null && !titleStyle.IsEmpty) {
 				tableTitle.ApplyStyle (titleStyle);
 			}

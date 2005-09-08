@@ -1,5 +1,17 @@
 2005-09-07  Chris Toshok  <toshok@ximian.com>
 
+	* Calendar.cs (WriteDay): always add BackColor=Silver,
+	ForeColor=White to selected day cells, before copying over the
+	selectedDayStyle, if it exists.
+	(WriteDays): fix nunit test - if the first day of the month falls
+	on the first day of the week, go back one week (effectively adding
+	a row of dates from the previous month.)
+	(WriteTitle): don't copy the control style to the tableTitle,
+	since it might have height specifications, which would make the
+	title look rather off.
+
+2005-09-07  Chris Toshok  <toshok@ximian.com>
+
 	* ValidationSummary.cs (AddAttributesToRender): we only set
 	display=none if there are no errors.
 
