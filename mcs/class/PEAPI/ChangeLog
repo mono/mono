@@ -1,3 +1,9 @@
+2005-09-08  Ankit Jain  <jankit@novell.com>
+
+	* PEAPI.cs (FileImage.stackReserve): New. Set to default value of 0x100000 (1Mb).
+	  (FileImage.WritePEHeader): Write stackReserve instead of the default value.
+	  (PEFile.SetStackReserve): Set stack reserve for fileImage.
+
 2005-09-06  Ankit Jain  <jankit@novell.com>
 
 	* PEAPI.cs (MetaData.WriteTildeStream): Change minor version back to 0.

@@ -3408,6 +3408,7 @@ namespace PEAPI
     DateTime origin = new DateTime(1970,1,1);
     uint numSections = 2; // always have .text  and .reloc sections
     internal SubSystem subSys = SubSystem.Windows_CUI;  // default is Windows Console mode
+    internal long stackReserve = 0x100000; // default is 1Mb 
     internal uint fileAlign = minFileAlign;
     uint entryPointOffset, entryPointPadding, imageSize, headerSize, headerPadding, entryPointToken = 0;
     uint relocOffset, relocRVA, relocSize, relocPadding, relocTide, hintNameTableOffset;
@@ -3734,7 +3735,7 @@ if (rsrc != null)
       Write((int)0);           // File Checksum
       Write((ushort)subSys);
       Write((short)0);         // DLL Flags
-      Write((uint)0x100000);   // Stack Reserve Size
+      Write((uint)stackReserve);   // Stack Reserve Size
       Write((uint)0x1000);     // Stack Commit Size
       Write((uint)0x100000);   // Heap Reserve Size
       Write((uint)0x1000);     // Heap Commit Size
@@ -6564,6 +6565,11 @@ CalcHeapSizes ();
     /// <param name="flags">the flags value</param>
     public void SetCorFlags(int flags) {
       corFlags = flags;
+    }
+
+    public void SetStackReserve (long stackReserve)
+    {
+      fileImage.stackReserve = stackReserve;
     }
 
     private string MakeFileName(string dirName, string name, bool isDLL) {
