@@ -164,7 +164,7 @@ namespace System.Web.UI.WebControls
 			case ListItemType.Item:
 			case ListItemType.EditItem:
 			case ListItemType.AlternatingItem:
-				cell.DataBinding += ItemDataBinding;
+				cell.DataBinding += new EventHandler(ItemDataBinding);
 				cell.Controls.Add (new HyperLink ());
 				break;
 			}
