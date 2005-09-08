@@ -547,7 +547,7 @@ namespace System.Web {
 			if (total < content_length)
 				throw new HttpException (411, "The uploaded file is incomplete");
 							 
-			input_stream = new MemoryStream (content);
+			input_stream = new MemoryStream (content, 0, content.Length, false, true);
 		}
 #else
 		const int INPUT_BUFFER_SIZE = 32*1024;

@@ -1,4 +1,7 @@
-2005-09-01 Eyal Alaluf <eyala@mainsoft.com>
+2005-09-08 Eyal Alaluf <eyala@mainsoft.com>
+	* HttpRequest.cs: Under TARGET_JVM the input stream must allow GetBuffer.
+
+2005-09-08 Eyal Alaluf <eyala@mainsoft.com>
 	* HttpApplicationFactory.cs: TARGET_J2EE/JVM fix.
 
 2005-09-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
