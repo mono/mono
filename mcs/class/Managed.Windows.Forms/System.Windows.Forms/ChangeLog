@@ -1,3 +1,9 @@
+2005-09-08  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* RichTextBox.cs: Added initial implementation
+	* lang.cs: Removed. Was accidentally checked in long time ago
+	* TODO: Removed. Contents were obsolete
+
 2005-09-06  Jonathan Chambers  <jonathan.chambers@ansys.com>
                                                                                 
         * PropertiesTab.cs : Added
