@@ -204,7 +204,16 @@ namespace System.Web.SessionState
 					cookie.Path = UrlUtils.GetDirectory (context.Request.ApplicationPath);
 					context.Response.AppendCookie (cookie);
 				}
+
+				if (isNew)
+					OnSessionStart ();
 			}
+		}
+
+		void OnSessionStart ()
+		{
+			if (Start != null)
+				Start (this, EventArgs.Empty);
 		}
 
 		internal void OnSessionRemoved (string key, object value, CacheItemRemovedReason reason)

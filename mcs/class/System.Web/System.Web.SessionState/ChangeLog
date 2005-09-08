@@ -1,3 +1,7 @@
+2005-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionStateModule.cs: raise the Start event for new sessions.
+
 2005-09-08 Eyal Alaluf <eyala@mainsoft.com>
 	* HttpSessionState.jvm.cs - fixed serialization when we want to serialize
 	  an empty session.
