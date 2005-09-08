@@ -2,12 +2,13 @@
 	<CSHARP ProjectType="Local" ProductVersion="7.10.3077" SchemaVersion="2.0" ProjectGuid="{FBDAB5E6-450A-4149-AC1C-5AC3E4908FCE}">
 		<Build>
 			<Settings ApplicationIcon="" AssemblyKeyContainerName="" AssemblyName="System.Web" AssemblyOriginatorKeyFile="" DefaultClientScript="JScript" DefaultHTMLPageLayout="Grid" DefaultTargetSchema="IE50" DelaySign="false" OutputType="Library" PreBuildEvent="" PostBuildEvent="" RootNamespace="System.Web" RunPostBuildEvent="OnBuildSuccess" StartupObject="">
-				<Config Name="Debug" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="true" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="false" OutputPath="bin\Debug\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
-				<Config Name="Release" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY" DocumentationFile="" DebugSymbols="false" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="true" OutputPath="bin\Release\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
-				<Config Name="Debug_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="false" OutputPath="bin\Debug_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
-				<Config Name="Release_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="true" OutputPath="bin\Release_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
+				<Config Name="Debug" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY;ONLY_1_1" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="true" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="false" OutputPath="bin\Debug\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
+				<Config Name="Release" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY;ONLY_1_1" DocumentationFile="" DebugSymbols="false" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="true" OutputPath="bin\Release\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
+				<Config Name="Debug_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY;ONLY_1_1" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="false" OutputPath="bin\Debug_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
+				<Config Name="Release_Java" AllowUnsafeBlocks="false" BaseAddress="285212672" CheckForOverflowUnderflow="false" ConfigurationOverrideFile="" DefineConstants="NET_1_1;TARGET_J2EE;TARGET_JVM;GH_ONLY;ONLY_1_1" DocumentationFile="" DebugSymbols="true" FileAlignment="4096" IncrementalBuild="false" NoStdLib="false" NoWarn="1595,169,649,67,168,219" Optimize="true" OutputPath="bin\Release_Java\" RegisterForComInterop="false" RemoveIntegerChecks="false" TreatWarningsAsErrors="false" WarningLevel="4"/>
 			</Settings>
 			<References>
+				<Reference Name="System.EnterpriseServices" AssemblyName="System.EnterpriseServices" Private="False"/>
 				<Reference Name="System.Xml" AssemblyName="System.Xml" HintPath="..\lib\System.Xml.dll" Private="False"/>
 				<Reference Name="SystemDll" AssemblyName="System" HintPath="..\lib\System.dll" Private="True"/>
 				<Reference Name="System.Drawing" AssemblyName="System.Drawing" HintPath="..\lib\System.Drawing.dll" Private="True"/>
@@ -22,25 +23,26 @@
 			<Include>
 				<File RelPath="jar.resources" BuildAction="None"/>
 				<File RelPath="Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Consts.cs" Link="..\..\build\common\Consts.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Mail\ChangeLog" BuildAction="None"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Assembly\Consts.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\ApplicationShutdownReason.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\BeginEventHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web\BrowserCapabilities.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\CapabilitiesLoader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\EndEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HtmlizedException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpApplication.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpApplicationFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpApplicationState.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web\HttpAsyncResult.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpBrowserCapabilities.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web\HttpCacheability.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpCachePolicy.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpCacheRevalidation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpCacheValidateHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpCacheVaryByHeaders.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpCacheVaryByParams.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web\HttpCacheability.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpClientCertificate.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpCompileException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpContext.cs" SubType="Code" BuildAction="Compile"/>
@@ -51,26 +53,22 @@
 				<File RelPath="System.Web\HttpException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpFileCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpForbiddenHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web\HttpHelper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpMethodNotAllowedHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpModuleCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpParseException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpPostedFile.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpRequest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpRequestPriority.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web\HttpRequestStream.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpRequestValidationException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpResponse.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpResponseHeader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpResponseStream.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web\HttpResponseStreamProxy.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpRuntime.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpServerUtility.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpStaticObjectsCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpUnhandledException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpUtility.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpValidationStatus.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web\HttpValueCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpWorkerRequest.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpWriter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\IHttpAsyncHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -87,7 +85,6 @@
 				<File RelPath="System.Web\ProcessShutdownReason.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\ProcessStatus.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\QueueManager.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web\ReusableMemoryStream.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\ServerVariablesCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\SiteMap.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\SiteMapNode.cs" SubType="Code" BuildAction="Compile"/>
@@ -97,22 +94,23 @@
 				<File RelPath="System.Web\SiteMapResolveEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\StaticFileHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\StaticSiteMapProvider.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web\TimeoutManager.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\TraceContext.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\TraceData.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\TraceManager.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\TraceMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\WebCategoryAttribute.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web\WebROCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\WebSysDescriptionAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\XmlSiteMapProvider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Administration\WebAdminUserControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Caching\Cache.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Caching\CacheDefinitions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Caching\CacheDependency.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Caching\CacheItemPriority.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Caching\CacheItemRemovedCallback.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Caching\CacheItemRemovedReason.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Caching\CachedRawResponse.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Caching\CachedVaryBy.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Caching\CacheEntry.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Caching\CacheExpires.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Caching\ExpiresBuckets.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Caching\OutputCacheModule.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Compilation\ILocation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Compilation\Location.cs" SubType="Code" BuildAction="Compile"/>
@@ -131,7 +129,6 @@
 				<File RelPath="System.Web.Configuration\BuildProvider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\BuildProviderAppliesTo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\BuildProviderCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\ClientTargetSectionHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\CodeSubDirectoriesCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\CodeSubDirectory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\CompilationSection.cs" SubType="Code" BuildAction="Compile"/>
@@ -140,33 +137,29 @@
 				<File RelPath="System.Web.Configuration\CustomErrorsMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\ExpressionBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\ExpressionBuilderCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\FormsAuthenticationConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\FormsAuthPasswordFormat.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Configuration\FormsAuthenticationConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\FormsProtectionEnum.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\GlobalizationConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\GlobalizationConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\HandlerFactoryConfiguration.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\HandlerFactoryProxy.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\HandlerItem.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\HttpCapabilitiesBase.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\HttpConfigurationContext.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\HttpHandlersSectionHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\HttpModulesConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\HttpRuntimeConfig.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\HttpRuntimeConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\InternalSection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\IRemoteWebConfigurationHostServer.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Configuration\InternalSection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\MachineKeyConfig.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\MachineKeyConfigHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\MachineKeyValidation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\MembershipSection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\ModuleItem.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\ModulesConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\PagesConfiguration.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\PagesConfigurationHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\PagesEnableSessionState.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\PagesToCountAction.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Configuration\PassportAuthentication.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\ProcessModelComAuthenticationLevel.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\ProcessModelComImpersonationLevel.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Configuration\ProcessModelLogLevel.cs" SubType="Code" BuildAction="Compile"/>
@@ -185,8 +178,8 @@
 				<File RelPath="System.Web.Handlers\AssemblyResourceLoader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Handlers\TraceHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IAppDomainFactory.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Hosting\IApplicationHost.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IAppManagerAppDomainFactory.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Hosting\IApplicationHost.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IHttpWorkerRequestHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IProcessHost.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Hosting\IProcessHostFactoryHelper.cs" SubType="Code" BuildAction="Compile"/>
@@ -203,7 +196,6 @@
 				<File RelPath="System.Web.J2EE\PageMapper.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.J2EE\SessionListener.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Mail\Base64AttachmentEncoder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Mail\ChangeLog" BuildAction="None"/>
 				<File RelPath="System.Web.Mail\IAttachmentEncoder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Mail\MailAddress.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Mail\MailAddressCollection.cs" SubType="Code" BuildAction="Compile"/>
@@ -234,6 +226,7 @@
 				<File RelPath="System.Web.Management\WebBaseEvent.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Management\WebEventFormatter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Profile\ProfileAuthenticationOption.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Profile\ProfileInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\ActiveDirectoryMembershipProvider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\AnonymousIdentificationEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\AnonymousIdentificationEventHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -252,19 +245,13 @@
 				<File RelPath="System.Web.Security\Membership.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\MembershipCreateStatus.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\MembershipCreateUserException.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Security\MembershipOnlineStatus.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\MembershipPasswordException.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\MembershipPasswordFormat.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\MembershipProvider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\MembershipProviderCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Security\MembershipSortOptions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\MembershipUser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\MembershipUserCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\MembershipValidatePasswordEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Security\PassportAuthenticationEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Security\PassportAuthenticationEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Security\PassportAuthenticationModule.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Security\PassportIdentity.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\RoleManagerEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\RoleManagerEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Security\RoleManagerModule.cs" SubType="Code" BuildAction="Compile"/>
@@ -287,7 +274,6 @@
 				<File RelPath="System.Web.SessionState\ISessionIDModule.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\ISessionStateItemCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\IStateRuntime.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.SessionState\RemoteStateServer.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionConfig.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionDictionary.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.SessionState\SessionId.cs" SubType="Code" BuildAction="Compile"/>
@@ -315,6 +301,7 @@
 				<File RelPath="System.Web.UI\Control.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ControlBuilder.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ControlBuilderAttribute.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\ControlCachePolicy.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ControlCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ControlSkinProc.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ControlValuePropertyAttribute.cs" SubType="Code" BuildAction="Compile"/>
@@ -332,8 +319,8 @@
 				<File RelPath="System.Web.UI\DataSourceView.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\DataSourceViewOperationCallback.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\DataSourceViewSelectCallback.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\DesignerDataBoundLiteralControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\DesignTimeParseData.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\DesignerDataBoundLiteralControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\EmptyControlCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ExpressionBinding.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ExpressionBindingCollection.cs" SubType="Code" BuildAction="Compile"/>
@@ -347,6 +334,7 @@
 				<File RelPath="System.Web.UI\HtmlTextWriterAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\HtmlTextWriterStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\HtmlTextWriterTag.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\IAdaptableTextWriter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IAttributeAccessor.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IBindableTemplate.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ICallbackEventHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -354,21 +342,18 @@
 				<File RelPath="System.Web.UI\IControlBuilderAccessor.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IControlDesignerAccessor.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IControlTypeFilter.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\IDReferencePropertyAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IDataBindingsAccessor.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IDataItemContainer.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IDataSource.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IDataSourceViewSchemaAccessor.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\IDReferencePropertyAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IEditableTextControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IExpressionsAccessor.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IFilterResolutionService.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\IgnoreUnknownContentAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IHierarchicalDataSource.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IHierarchicalEnumerable.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IHierarchyData.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IItemPaginationInfo.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\ImageClickEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\ImageClickEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IMobileTextWriter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\INamingContainer.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\INavigateUIData.cs" SubType="Code" BuildAction="Compile"/>
@@ -391,6 +376,9 @@
 				<File RelPath="System.Web.UI\IUserControlDesignerAccessor.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IUserControlTypeResolutionService.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\IValidator.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\IgnoreUnknownContentAttribute.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\ImageClickEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\ImageClickEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\KeyedList.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\KeyedListEnumerator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ListSourceHelper.cs" SubType="Code" BuildAction="Compile"/>
@@ -406,6 +394,7 @@
 				<File RelPath="System.Web.UI\OutputCacheLocation.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\Page.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\PageHandlerFactory.jvm.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\PageStatePersister.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\Pair.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ParseChildrenAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\PartialCachingAttribute.cs" SubType="Code" BuildAction="Compile"/>
@@ -435,21 +424,23 @@
 				<File RelPath="System.Web.UI\UrlTypes.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\UserControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\UserControlControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\Utils.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ValidationPropertyAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\ValidatorCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\VerificationConditionalOperator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\VerificationReportLevel.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\VerificationRule.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\WebResourceAttribute.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI\XhtmlMobileDocType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI\XPathBinder.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI\XhtmlMobileDocType.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.Adapters\ControlAdapter.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.Adapters\PageAdapter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.Adapters\WmlPostFieldType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlAnchor.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlButton.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlContainerControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.HtmlControls\HtmlEmptyTagControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlForm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlGenericControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlHead.cs" SubType="Code" BuildAction="Compile"/>
@@ -461,7 +452,9 @@
 				<File RelPath="System.Web.UI.HtmlControls\HtmlInputFile.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlInputHidden.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlInputImage.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.HtmlControls\HtmlInputPassword.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlInputRadioButton.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.HtmlControls\HtmlInputReset.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlInputText.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlSelect.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.HtmlControls\HtmlSelectBuilder.cs" SubType="Code" BuildAction="Compile"/>
@@ -493,11 +486,11 @@
 				<File RelPath="System.Web.UI.WebControls\BorderStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\BoundColumn.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\BoundField.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\BulletStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\BulletedList.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\BulletedListDisplayMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\BulletedListEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\BulletedListEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\BulletStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\Button.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ButtonColumn.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ButtonColumnType.cs" SubType="Code" BuildAction="Compile"/>
@@ -549,13 +542,11 @@
 				<File RelPath="System.Web.UI.WebControls\DataGridItemCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridItemEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridItemEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DataGridLinkButton.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridPageChangedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridPageChangedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DataGridPagerStyle.cs" SubType="Component" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\DataGridPagerStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridSortCommandEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataGridSortCommandEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DataGridTableInternal.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataKey.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataKeyArray.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataKeyCollection.cs" SubType="Code" BuildAction="Compile"/>
@@ -566,21 +557,20 @@
 				<File RelPath="System.Web.UI.WebControls\DataListItemCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataListItemEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DataListItemEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DataSourceInternal.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DayNameFormat.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DayRenderEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DayRenderEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsView.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewCommandEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewCommandEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DetailsViewDeletedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DetailsViewDeletedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewDeleteEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewDeleteEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DetailsViewInsertedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DetailsViewInsertedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\DetailsViewDeletedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\DetailsViewDeletedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewInsertEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewInsertEventHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\DetailsViewInsertedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\DetailsViewInsertedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewModeEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewModeEventHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -588,10 +578,10 @@
 				<File RelPath="System.Web.UI.WebControls\DetailsViewPageEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewRow.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewRowCollection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DetailsViewUpdatedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\DetailsViewUpdatedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewUpdateEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DetailsViewUpdateEventHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\DetailsViewUpdatedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\DetailsViewUpdatedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\DropDownList.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\EditCommandColumn.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FirstDayOfWeek.cs" SubType="Code" BuildAction="Compile"/>
@@ -604,34 +594,34 @@
 				<File RelPath="System.Web.UI.WebControls\FormView.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewCommandEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewCommandEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\FormViewDeletedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\FormViewDeletedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewDeleteEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewDeleteEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\FormViewInsertedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\FormViewInsertedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\FormViewDeletedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\FormViewDeletedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewInsertEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewInsertEventHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\FormViewInsertedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\FormViewInsertedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewModeEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewModeEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewPageEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewPageEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewRow.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\FormViewUpdatedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\FormViewUpdatedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewUpdateEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\FormViewUpdateEventHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\FormViewUpdatedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\FormViewUpdatedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridLines.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridView.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewCancelEditEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewCancelEditEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewCommandEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewCommandEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\GridViewDeletedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\GridViewDeletedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewDeleteEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewDeleteEventHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\GridViewDeletedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\GridViewDeletedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewEditEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewEditEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewPageEventArgs.cs" SubType="Code" BuildAction="Compile"/>
@@ -644,10 +634,10 @@
 				<File RelPath="System.Web.UI.WebControls\GridViewSelectEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewSortEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewSortEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\GridViewUpdatedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\GridViewUpdatedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewUpdateEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\GridViewUpdateEventHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\GridViewUpdatedEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\GridViewUpdatedEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\HiddenField.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\HierarchicalDataBoundControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\HorizontalAlign.cs" SubType="Code" BuildAction="Compile"/>
@@ -662,6 +652,8 @@
 				<File RelPath="System.Web.UI.WebControls\IButtonControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ICallbackContainer.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ICompositeControlDesignerAccessor.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\IPostBackContainer.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\IRepeatInfoUser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\Image.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ImageAlign.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ImageButton.cs" SubType="Code" BuildAction="Compile"/>
@@ -669,13 +661,10 @@
 				<File RelPath="System.Web.UI.WebControls\ImageMap.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ImageMapEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ImageMapEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\IPostBackContainer.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\IRepeatInfoUser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\Label.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\LabelControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\LinkButton.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\LinkButtonControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\LinkButtonInternal.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ListBox.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ListControl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ListItem.cs" SubType="Code" BuildAction="Compile"/>
@@ -687,8 +676,14 @@
 				<File RelPath="System.Web.UI.WebControls\LiteralControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\LiteralMode.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\Localize.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\Login.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\LoginCancelEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\LoginCancelEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\LoginFailureAction.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\LoginName.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\LoginStatus.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\LoginTextLayout.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\LoginView.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\LogoutAction.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\MailMessageEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\MailMessageEventHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -740,6 +735,8 @@
 				<File RelPath="System.Web.UI.WebControls\RectangleHotSpot.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\RegularExpressionValidator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\RepeatDirection.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\RepeatInfo.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\RepeatLayout.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\Repeater.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\RepeaterCommandEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\RepeaterCommandEventHandler.cs" SubType="Code" BuildAction="Compile"/>
@@ -747,9 +744,9 @@
 				<File RelPath="System.Web.UI.WebControls\RepeaterItemCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\RepeaterItemEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\RepeaterItemEventHandler.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\RepeatInfo.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\RepeatLayout.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\RequiredFieldValidator.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\RoleGroup.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\RoleGroupCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\ScrollBars.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SelectedDatesCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SendMailErrorEventArgs.cs" SubType="Code" BuildAction="Compile"/>
@@ -770,12 +767,17 @@
 				<File RelPath="System.Web.UI.WebControls\SqlDataSource.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SqlDataSourceCommandEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SqlDataSourceCommandEventHandler.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\SqlDataSourceCommandType.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\SqlDataSourceFilteringEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\SqlDataSourceFilteringEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SqlDataSourceMode.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\SqlDataSourceSelectingEventArgs.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\SqlDataSourceSelectingEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SqlDataSourceStatusEventArgs.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SqlDataSourceStatusEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SqlDataSourceView.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\StringArrayConverter.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\Style.cs" SubType="Component" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\Style.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SubMenuStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\SubMenuStyleCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\Table.cs" SubType="Code" BuildAction="Compile"/>
@@ -783,13 +785,16 @@
 				<File RelPath="System.Web.UI.WebControls\TableCell.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableCellCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableCellControlBuilder.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\TableFooterRow.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableHeaderCell.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\TableHeaderRow.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableHeaderScope.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\TableItemStyle.cs" SubType="Component" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\TableItemStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableRow.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableRowCollection.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TableRowSection.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.UI.WebControls\TableStyle.cs" SubType="Component" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\TableSectionStyle.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls\TableStyle.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TargetConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TemplateColumn.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\TemplateField.cs" SubType="Code" BuildAction="Compile"/>
@@ -842,6 +847,11 @@
 				<File RelPath="System.Web.UI.WebControls\XmlHierarchicalDataSourceView.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\XmlHierarchicalEnumerable.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls\XmlHierarchyData.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls.Adapters\DataBoundControlAdapter.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls.Adapters\HideDisabledControlAdapter.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls.Adapters\HierarchicalDataBoundControlAdapter.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls.Adapters\MenuAdapter.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.UI.WebControls.Adapters\WebControlAdapter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls.WebParts\ConnectionConsumerCallback.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls.WebParts\ConnectionPoint.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.UI.WebControls.WebParts\ConnectionPointType.cs" SubType="Code" BuildAction="Compile"/>
@@ -881,15 +891,14 @@
 				<File RelPath="System.Web.UI.WebControls.WebParts\WebPartVerbsEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\AltSerialization.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\DataSourceHelper.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Util\DataSourceResolver.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\ICalls.jvm.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Util\NativeFileChangeEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\StrUtils.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\TimeUtil.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\TransactedCallback.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web.Util\Transactions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\UrlUtils.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\WebEncoding.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Util\WebEqualComparer.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web.Util\WebHashCodeProvider.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\WebTrace.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\WorkItem.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Util\WorkItemCallback.cs" SubType="Code" BuildAction="Compile"/>

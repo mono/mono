@@ -1,3 +1,6 @@
+2005-09-08  Eyal Alaluf <eyala@mainsoft.com>
+	* System.Web.vmwcsproj - updated to match new code base
+
 2005-09-07  Chris Toshok  <toshok@ximian.com>
 
 	* System.Web.dll.sources: add MinimizableAttributeTypeConverter.
