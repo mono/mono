@@ -600,7 +600,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			PokerCalendar p = new PokerCalendar ();
 			p.TodaysDate = new DateTime (2005, 8, 4);
 			p.SelectedDate = p.TodaysDate;
-			Assert.IsTrue (p.Render ().IndexOf ("color:White;background-color:Silver;")  != -1);
+			string s = p.Render();
+			Assert.IsTrue (s.IndexOf ("color:White") != 1 && s.IndexOf ("background-color:Silver") != -1, "A1");
 		}
 	}
 }

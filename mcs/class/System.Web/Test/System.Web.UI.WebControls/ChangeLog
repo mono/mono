@@ -1,5 +1,11 @@
 2005-09-07  Chris Toshok  <toshok@ximian.com>
 
+	* CalendarTest.cs (TestSelectedColorDefault): we need to split up
+	the color tests since they're rendered in different orders by
+	ms/us.
+
+2005-09-07  Chris Toshok  <toshok@ximian.com>
+
 	* ListControlTest.cs: add tests for the ControlState.
 
 2005-09-05  Chris Toshok  <toshok@ximian.com>
