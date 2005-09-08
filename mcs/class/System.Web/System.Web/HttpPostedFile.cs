@@ -122,10 +122,10 @@ namespace System.Web
 				}
 
 				long virt = real - offset;
-				if (virt < 0 || virt >= Length)
+				if (virt < 0 || virt > Length)
 					throw new ArgumentException ();
 
-				position = s.Seek (real, SeekOrigin.Begin) - offset;
+				position = s.Seek (real, SeekOrigin.Begin);
 				return position;
 			}
 	
@@ -155,13 +155,13 @@ namespace System.Web
 	
 			public override long Position {
 				get {
-					return position;
+					return position - offset;
 				}
 				set {
 					if (value > Length)
 						throw new ArgumentOutOfRangeException ();
 
-					position = Seek (offset + value, SeekOrigin.Begin);
+					position = Seek (value, SeekOrigin.Begin);
 				}
 			}
 		}
