@@ -896,7 +896,11 @@ namespace Microsoft.JScript {
 			for (int i = 0; i <= n; i++) {
 				ast = args.get_element (i);
 				ast.Emit (ec);
-				CodeGenerator.EmitBox (ig, ast);
+
+				if (ast is Relational) 
+					CodeGenerator.EmitRelationalComp (ig, (Relational) ast);
+				else
+					CodeGenerator.EmitBox (ig, ast);
 
 				if (ast is StringLiteral)
 					;
@@ -1757,7 +1761,12 @@ namespace Microsoft.JScript {
 						ig.Emit (OpCodes.Dup);
 						ig.Emit (OpCodes.Ldc_I4, k);
 						ast.Emit (ec);
-						CodeGenerator.EmitBox (ig, ast);
+
+						if (ast is Relational)
+							CodeGenerator.EmitRelationalComp (ig, (Relational) ast);
+						else
+							CodeGenerator.EmitBox (ig, ast);
+
 						ig.Emit (OpCodes.Stelem_Ref);
 					}
 				}
@@ -1786,7 +1795,10 @@ namespace Microsoft.JScript {
 				ast = get_element (i);
 				if (ast != null) {
 					ast.Emit (ec);
-					if (strong_type)
+
+					if (ast is Relational)
+						CodeGenerator.EmitRelationalComp (ig, (Relational) ast);
+					else if (strong_type)
 						force_strong_type (ig, ast, parameters [j]);
 					else
 						CodeGenerator.EmitBox (ig, ast);

@@ -641,5 +641,50 @@ namespace Microsoft.JScript {
 			else
 				throw new NotImplementedException ();
 		}
+
+		internal static void EmitRelationalComp (ILGenerator ig, Relational re)
+		{
+			JSToken op = re.op;
+
+			if (op == JSToken.Instanceof)
+				return;
+
+			Label true_case = ig.DefineLabel ();
+			Label box_to_bool = ig.DefineLabel ();
+
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Conv_R8);
+
+			OpCode opcode;
+
+			switch (op) {
+			case JSToken.LessThan:
+				opcode = OpCodes.Blt;
+				break;
+
+			case JSToken.LessThanEqual:
+				opcode = OpCodes.Ble;
+				break;
+
+			case JSToken.GreaterThan:
+				opcode = OpCodes.Bgt;
+				break;
+
+			case JSToken.GreaterThanEqual:
+				opcode = OpCodes.Bge;
+				break;
+
+			default:
+				Console.WriteLine (re.Location.LineNumber);
+				throw new NotImplementedException ();
+			}
+			ig.Emit (opcode, true_case);
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Br, box_to_bool);
+			ig.MarkLabel (true_case);
+			ig.Emit (OpCodes.Ldc_I4_1);
+			ig.MarkLabel (box_to_bool);
+			ig.Emit (OpCodes.Box, typeof (bool));
+		}
 	}
 }
