@@ -18,7 +18,7 @@ using System.Text;
 namespace MonoTests.System.IO
 {
 	[TestFixture]
-	public class MemoryStreamTest : Assertion
+	public class MemoryStreamTest
 	{
 		MemoryStream testStream;
 		byte [] testStreamData;
@@ -41,7 +41,7 @@ namespace MonoTests.System.IO
 		void VerifyTestData (string id, byte [] testBytes, int start, int count)
 		{
 			if (testBytes == null)
-				Fail (id + "+1 testBytes is null");
+				Assert.Fail (id + "+1 testBytes is null");
 
 			if (start < 0 ||
 			    count < 0  ||
@@ -59,8 +59,23 @@ namespace MonoTests.System.IO
 							start + test,
 							testBytes [test],
 							testStreamData [start + test]);
-				Fail (id + "-3" + failStr);
+				Assert.Fail (id + "-3" + failStr);
 			}
+		}
+
+		public void AssertEquals (string message, int expected, int actual)
+		{
+			Assert.AreEqual (expected, actual, message);
+		}
+
+		public void AssertEquals (string message, long expected, long actual)
+		{
+			Assert.AreEqual (expected, actual, message);
+		}
+
+		public void AssertEquals (string message, bool expected, bool actual)
+		{
+			Assert.AreEqual (expected, actual, message);
 		}
 
 		[Test]
@@ -84,7 +99,7 @@ namespace MonoTests.System.IO
 			byte [] buffer = ms.GetBuffer ();
 			// Begin: wow!!!
 			AssertEquals ("#03", -1, ms.ReadByte ());
-			AssertEquals ("#04", null, buffer); // <--
+			Assert.IsNull (buffer, "#04"); // <--
 			ms.Read (new byte [5], 0, 5);
 			AssertEquals ("#05", 0, ms.Position);
 			AssertEquals ("#06", 0, ms.Length);
@@ -119,7 +134,7 @@ namespace MonoTests.System.IO
 			} catch (Exception) {
 				return;
 			}
-			Fail ("#04");
+			Assert.Fail ("#04");
 		}
 
 		[Test]
@@ -146,17 +161,7 @@ namespace MonoTests.System.IO
 			}
 
 			if (!gotException)
-				Fail ("#05");
-
-			gotException = false;
-			try {
-				ms.GetBuffer ();
-			} catch (UnauthorizedAccessException) {
-				gotException = true;
-			}
-
-			if (!gotException)
-				Fail ("#06");
+				Assert.Fail ("#05");
 
 			ms.Capacity = 100; // Allowed. It's the same as the one in the ms.
 					   // This is lame, as the length is 50!!!
@@ -169,7 +174,7 @@ namespace MonoTests.System.IO
 			}
 
 			if (!gotException)
-				Fail ("#07");
+				Assert.Fail ("#07");
 
 			AssertEquals ("#08", 50, ms.ToArray ().Length);
 		}
@@ -204,7 +209,7 @@ namespace MonoTests.System.IO
 			VerifyTestData ("R3", readBytes, 80, 20);
 
 			int readByte = testStream.ReadByte();
-			AssertEquals (-1, readByte);
+			Assert.AreEqual (-1, readByte, "R4");
 		}
 
 		[Test]
@@ -297,7 +302,7 @@ namespace MonoTests.System.IO
 			}
 
 			if (!thrown)
-				Fail ("#01");
+				Assert.Fail ("#01");
 
 			thrown = false;
 			try {
@@ -307,7 +312,7 @@ namespace MonoTests.System.IO
 			}
 
 			if (!thrown)
-				Fail ("#02");
+				Assert.Fail ("#02");
 
 			// The first exception thrown is ObjectDisposed, not ArgumentNull
 			thrown = false;
@@ -318,7 +323,7 @@ namespace MonoTests.System.IO
 			}
 
 			if (!thrown)
-				Fail ("#03");
+				Assert.Fail ("#03");
 
 			thrown = false;
 			try {
@@ -328,7 +333,7 @@ namespace MonoTests.System.IO
 			}
 
 			if (!thrown)
-				Fail ("#03");
+				Assert.Fail ("#03");
 		}
 
 		[Test]
@@ -376,7 +381,7 @@ namespace MonoTests.System.IO
 				thrown = true;
 			}
 			if (!thrown)
-				Fail ("#01");
+				Assert.Fail ("#01");
 			
 			thrown = false;
 			try {
@@ -386,7 +391,7 @@ namespace MonoTests.System.IO
 			}
 
 			if (!thrown)
-				Fail ("#02");
+				Assert.Fail ("#02");
 
 			thrown=false;
 			try {
@@ -397,7 +402,7 @@ namespace MonoTests.System.IO
 			}
 
 			if (!thrown)
-				Fail ("#03");
+				Assert.Fail ("#03");
 
 			ms=new MemoryStream (256);
 
@@ -540,7 +545,60 @@ namespace MonoTests.System.IO
 			ms.SetLength (4);
 			ms.Seek (4, SeekOrigin.End);
 			ms.WriteByte (0xFF);
-			AssertEquals ("Result", "01-01-01-01-00-00-00-00-FF", BitConverter.ToString (ms.ToArray ()));
+			Assert.AreEqual ("01-01-01-01-00-00-00-00-FF", BitConverter.ToString (ms.ToArray ()), "Result");
+		}
+
+		[Test]
+		public void PubliclyVisible ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			Assert.IsNotNull (ms.GetBuffer (), "ctor()");
+
+			ms = new MemoryStream (1);
+			Assert.IsNotNull (ms.GetBuffer (), "ctor(1)");
+
+			ms = new MemoryStream (new byte[1], 0, 1, true, true);
+			Assert.IsNotNull (ms.GetBuffer (), "ctor(byte[],int,int,bool,bool");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UnauthorizedAccessException))]
+		public void PubliclyVisible_Ctor_ByteArray ()
+		{
+			MemoryStream ms = new MemoryStream (new byte[0]);
+			Assert.IsNotNull (ms.GetBuffer ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (UnauthorizedAccessException))]
+		public void PubliclyVisible_Ctor_ByteArray_Boolean ()
+		{
+			MemoryStream ms = new MemoryStream (new byte[0], true);
+			Assert.IsNotNull (ms.GetBuffer ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (UnauthorizedAccessException))]
+		public void PubliclyVisible_Ctor_ByteArray_Int_Int ()
+		{
+			MemoryStream ms = new MemoryStream (new byte[1], 0, 1);
+			Assert.IsNotNull (ms.GetBuffer ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (UnauthorizedAccessException))]
+		public void PubliclyVisible_Ctor_ByteArray_Int_Int_Boolean ()
+		{
+			MemoryStream ms = new MemoryStream (new byte[1], 0, 1, true);
+			Assert.IsNotNull (ms.GetBuffer ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (UnauthorizedAccessException))]
+		public void PubliclyVisible_Ctor_ByteArray_Int_Int_Boolean_Boolean ()
+		{
+			MemoryStream ms = new MemoryStream (new byte[1], 0, 1, true, false);
+			Assert.IsNotNull (ms.GetBuffer ());
 		}
 	}
 }

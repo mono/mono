@@ -1,3 +1,8 @@
+2005-09-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MemoryStreamTest.cs: Add more tests for publicly visible (or not)
+	contents. Started converting tests to NUnit 2.2 API.
+
 2005-07-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryInfoTest.cs: Added tests for getting parent of root 
