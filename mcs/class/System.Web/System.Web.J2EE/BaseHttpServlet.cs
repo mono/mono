@@ -219,3 +219,11 @@ namespace System.Web.J2EE
 	}
 
 }
+
+namespace System.Web.GH
+{
+	public class BaseHttpServlet : System.Web.J2EE.BaseHttpServlet
+	{
+	}
+
+}

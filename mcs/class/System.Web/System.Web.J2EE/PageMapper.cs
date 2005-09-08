@@ -37,7 +37,7 @@ namespace System.Web.J2EE
 	/// <summary>
 	/// Class that allows reading assemblies.xml file for getting information about different types.
 	/// </summary>
-	internal class PageMapper
+	public class PageMapper
 	{
 		private static readonly string _fileListName = "/filelist.xml";
 
@@ -363,10 +363,15 @@ namespace System.Web.J2EE
 
 			if (file != null)
 			{
-				Location loc = new Location(null);
-				loc.Filename = file;
-				loc.BeginLine = int.Parse(lineInFile);
-				return new ParseException(loc,message);
+				try {
+					Location loc = new Location(null);
+					loc.Filename = file;
+					loc.BeginLine = int.Parse(lineInFile);
+					return new ParseException(loc,message);
+				}
+				// If file doesn't exist, or is unreadable just go on and send
+				// the original error message.
+				catch(Exception e) {}
 			}
 
 			if (message.IndexOf(typeof(FileNotFoundException).Name) != -1 &&
@@ -374,5 +379,12 @@ namespace System.Web.J2EE
 				message = "The requested resource (" + _url + ") is not available.";
 			return new HttpException(404,(message !=  null ? message : string.Empty));
 		}
+	}
+}
+
+namespace System.Web.GH
+{
+	public class PageMapper : System.Web.J2EE.PageMapper
+	{
 	}
 }

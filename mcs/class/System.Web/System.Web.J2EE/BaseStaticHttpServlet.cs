@@ -111,3 +111,11 @@ namespace System.Web.J2EE
 		private string AppDir;
 	}
 }
+
+namespace System.Web.GH
+{
+	public class BaseStaticHttpServlet : System.Web.J2EE.BaseStaticHttpServlet
+	{
+	}
+
+}

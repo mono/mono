@@ -1,3 +1,8 @@
+2005-09-08  Eyal Alalouf  <eyala@mainsoft.com>
+	* BaseHttpServlet.cs, PageMapper.cs, BaseStaticHttpServlet.cs,
+	  SessionListener.cs - backward compatibility fixes.
+	  PageMapper.cs - bug fix when compiler produces an unclear error.
+
 2005-08-30  Eyal Alalouf  <eyala@mainsoft.com>
 	* BaseHttpServlet.cs, SessionListener.cs: Adaptations to global changes in
 	  System.Web.

@@ -83,3 +83,13 @@ namespace System.Web.J2EE
 		}
 	}
 }
+
+namespace System.Web.GH
+{
+	/// <summary>
+	/// Summary description for Class1.
+	/// </summary>
+	public class SessionListener : System.Web.J2EE.SessionListener
+	{
+	}
+}
