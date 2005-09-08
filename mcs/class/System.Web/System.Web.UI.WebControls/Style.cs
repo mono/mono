@@ -693,28 +693,6 @@ namespace System.Web.UI.WebControls
 		}
 		#endregion	// IStateManager Properties & Methods
 
-		#region REMOVE ME
-		internal static int BORDERWIDTH	= 0xeadbeef;
-		internal static int FORECOLOR	= 0xeadbeef;
-
-		[Obsolete ("This method will be removed in Fresh")]
-		internal bool IsSet(int blah) 
-		{
-			if (blah == BORDERWIDTH)
-				return ((styles & Styles.BorderWidth) != 0);
-
-			if (blah == FORECOLOR)
-				return ((styles & Styles.ForeColor) != 0);
-
-			return false;
-		}
-
-		[Obsolete ("This method will be removed in Fresh")]
-		internal void Set(int blah) 
-		{
-		}
-		#endregion	// REMOVE ME
-
 #if NET_2_0
 		protected virtual void FillStyleAttributes (CssStyleCollection attributes, IUrlResolutionService urlResolver)
 		{
