@@ -49,8 +49,8 @@ namespace System.Web.Caching {
 
 		public void Init (HttpApplication app)
 		{
-			app.ResolveRequestCache += OnResolveRequestCache;
-			app.UpdateRequestCache += OnUpdateRequestCache;
+			app.ResolveRequestCache += new EventHandler(OnResolveRequestCache);
+			app.UpdateRequestCache += new EventHandler(OnUpdateRequestCache);
  
 			response_removed = new CacheItemRemovedCallback (OnRawResponseRemoved);
 		}
