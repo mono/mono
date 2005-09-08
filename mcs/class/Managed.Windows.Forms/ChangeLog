@@ -1,3 +1,8 @@
+2005-09-08  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added RichTextBox.cs to build
+	* SWF.csproj: Updated
+
 2005-09-06 Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* System.Windows.Forms.dll.sources: Added System.Windows.Forms.PropertiesTab.cs
