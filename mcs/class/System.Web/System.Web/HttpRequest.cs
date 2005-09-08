@@ -835,7 +835,10 @@ namespace System.Web {
 
 		public Uri UrlReferrer {
 			get {
-				return new Uri (worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderReferer));
+				string hr = worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderReferer);
+				if (hr == null)
+					return null;
+				return new Uri (hr);
 			}
 		}
 

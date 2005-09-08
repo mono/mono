@@ -1,3 +1,8 @@
+2005-09-08  Miguel de Icaza  <miguel@novell.com>
+
+	* HttpRequest.cs: Patch from Juraj Skripsky <js@hotfeet.ch> that
+	fixes UrlReferrer. 
+
 2005-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpPostedFile.cs: Make this class actually work. Every time we read,

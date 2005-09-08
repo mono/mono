@@ -328,6 +328,8 @@ namespace MonoTests.System.Web {
 					break;
 				case HttpWorkerRequest.HeaderReferer:
 					switch (return_kind){
+					case 1: return null;
+					case 2: return "http://www.mono-project.com/test.aspx";
 					case 15: return "http://www.mono-project.com";
 					}
 					break;
@@ -347,7 +349,6 @@ namespace MonoTests.System.Web {
 					}
 					break;
 				}
-
 				return "";
 			}
 
@@ -625,6 +626,18 @@ namespace MonoTests.System.Web {
 			coords = c.Request.MapImageCoordinates ("mapa");
 			Assert.AreEqual (null, coords, "coords2");
 		}
+
+		[Test]
+		public void TestReferer ()
+		{
+			HttpContext c = Cook (1);
+
+			Assert.AreEqual (null, c.Request.UrlReferrer, "REF1");
+
+			c = Cook (2);
+			Assert.AreEqual ("http://www.mono-project.com/test.aspx", c.Request.UrlReferrer.ToString (), "REF1");			
+		}
+		
 
 		[Test]
 		public void NegativeContentLength ()
