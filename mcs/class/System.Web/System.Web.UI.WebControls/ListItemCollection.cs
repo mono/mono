@@ -263,20 +263,5 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		#endregion	// Interface methods
-
-		#region REMOVE ME
-		[MonoTODO]
-		internal void LoadViewState(object state) {
-			throw new NotImplementedException("Use the IStateManager interface instead of this method. It has been obsoleted due to Project Fresh.");
-		}
-		[MonoTODO]
-		internal object SaveViewState() {
-			throw new NotImplementedException("Use the IStateManager interface instead of this method. It has been obsoleted due to Project Fresh");
-		}
-		[MonoTODO]
-		internal void TrackViewState() {
-			throw new NotImplementedException("Use the IStateManager interface instead of this method. It has been obsoleted due to Project Fresh");
-		}
-		#endregion	// REMOVE ME
 	}
 }

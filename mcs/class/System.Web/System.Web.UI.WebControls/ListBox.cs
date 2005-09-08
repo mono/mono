@@ -215,7 +215,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			// So we can tell when they have been changed
-			Items.TrackViewState ();
+			((IStateManager) Items).TrackViewState ();
 			return res;
 		}
 
