@@ -109,6 +109,7 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 	{
 		lock (this)
 		{
+			output.writeBoolean(_needSessionPersistence);
 			if (!_needSessionPersistence)
 			{
 				return;
@@ -130,7 +131,6 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 			else 
 				bw.Write(3);
 			bw.Write(_isReadonly);
-			bw.Write(_needSessionPersistence);
 			output.writeObject(vmw.common.TypeUtils.ToSByteArray(ms.GetBuffer()));
 		}
 	}
@@ -139,6 +139,11 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 	{
 		lock(this)
 		{
+			_needSessionPersistence = input.readBoolean();
+			if (!_needSessionPersistence)
+			{
+				return;
+			}
 			sbyte[] array = (sbyte[])input.readObject();
 			if (!_readFirstTime || array == null || array.Length == 0)
 			{
@@ -163,7 +168,6 @@ public sealed class HttpSessionState : ICollection, IEnumerable, java.io.Externa
 			else 
 				_mode = SessionStateMode.SQLServer;
 			_isReadonly = br.ReadBoolean();
-			_needSessionPersistence = br.ReadBoolean();
 			//	_app = HttpContext.Current.ApplicationInstance;
 		}
 	}
