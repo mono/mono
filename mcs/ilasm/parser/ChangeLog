@@ -1,3 +1,7 @@
+2005-09-08  Ankit Jain  <jankit@novell.com>
+
+	* ILParser.jay (decl | D_STACKRESERVE int64): New. Set stack reserve.
+
 2005-08-29  Ankit Jain  <jankit@novell.com>
 
 	* ILParser.jay : Comment out K_LCID token.

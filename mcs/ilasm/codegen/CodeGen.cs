@@ -59,6 +59,7 @@ namespace Mono.ILASM {
                 private int sub_system;
                 private int cor_flags;
                 private long image_base;
+                private long stack_reserve;
 
                 private string output_file;
 		private string debug_file;
@@ -93,6 +94,7 @@ namespace Mono.ILASM {
                         sub_system = -1;
                         cor_flags = -1;
                         image_base = -1;
+                        stack_reserve = -1;
                         entry_point = false;
                 }
 
@@ -181,6 +183,11 @@ namespace Mono.ILASM {
                 public void SetImageBase (long image_base)
                 {
                         this.image_base = image_base;
+                }
+
+                public void SetStackReserve (long stack_reserve)
+                {
+                        this.stack_reserve = stack_reserve;
                 }
 
                 public void SetAssemblyName (string name)
@@ -441,6 +448,8 @@ namespace Mono.ILASM {
                                         pefile.SetSubSystem ((PEAPI.SubSystem) sub_system);
                                 if (cor_flags != -1)
                                         pefile.SetCorFlags (cor_flags);
+                                if (stack_reserve != -1)
+                                        pefile.SetStackReserve (stack_reserve);
 
                                 asmb.AddAssemblyInfo(assembly_major_version,
                                                 assembly_minor_version, assembly_build_version,

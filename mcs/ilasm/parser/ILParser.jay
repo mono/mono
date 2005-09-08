@@ -429,6 +429,10 @@ decl			: class_all
                           {
                                 codegen.SetImageBase ((long) $2);
                           }
+			| D_STACKRESERVE int64
+                          {
+				codegen.SetStackReserve ((long)	$2);
+                          }
 			| extsource_spec
 			| language_decl
 			;

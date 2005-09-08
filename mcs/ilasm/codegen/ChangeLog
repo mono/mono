@@ -1,3 +1,9 @@
+2005-09-08  Ankit Jain  <jankit@novell.com>
+
+	* CodeGen.cs (CodeGen.stack_reserve): New.
+	  (CodeGen.SetStackReserve): New.
+	  (CodeGen.Write): SetStackReserve on the pefile.
+
 2005-09-06  Ankit Jain  <jankit@novell.com>
 
 	* ExternTable.cs (ExternRef.is_resolved): New.
