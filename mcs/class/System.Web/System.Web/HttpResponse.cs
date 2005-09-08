@@ -668,6 +668,7 @@ namespace System.Web {
 
 			output_stream.Flush (WorkerRequest, final_flush);
 
+			// FIXME
 			if (final_flush && use_chunked != null)
 				Write ("0\r\n\r\n");
 		}

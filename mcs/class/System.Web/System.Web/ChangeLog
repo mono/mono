@@ -1,3 +1,7 @@
+2005-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: reading multipart/form-data works again.
+
 2005-09-08 Eyal Alaluf <eyala@mainsoft.com>
 	* HttpRequest.cs: Under TARGET_JVM the input stream must allow GetBuffer.
 

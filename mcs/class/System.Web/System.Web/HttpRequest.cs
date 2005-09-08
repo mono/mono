@@ -352,11 +352,14 @@ namespace System.Web {
 		void LoadMultiPart ()
 		{
 			string boundary = GetParameter (ContentType, "; boundary=");
+			if (boundary == null)
+				return;
+
 			Stream input = StreamCopy (InputStream);
 			HttpMultipart multi_part = new HttpMultipart (input, boundary, ContentEncoding);
 
 			HttpMultipart.Element e;
-			while (multi_part.ReadNextElement (out e)) {
+			while ((e = multi_part.ReadNextElement ()) != null) {
 				if (e.Filename == null){
 					byte [] copy = new byte [e.Length];
 				
@@ -1155,9 +1158,9 @@ namespace System.Web {
 	// limit-less HttpInputFiles). 
 	//
 	
-	struct HttpMultipart {
+	class HttpMultipart {
 
-		public struct Element {
+		public class Element {
 			public string ContentType;
 			public string Name;
 			public string Filename;
@@ -1172,9 +1175,12 @@ namespace System.Web {
 		}
 		
 		Stream data;
-		byte [] boundary;
+		string boundary;
+		byte [] boundary_bytes;
+		byte [] buffer;
 		bool at_eof;
 		Encoding encoding;
+		StringBuilder sb;
 		
 		const byte HYPHEN = (byte) '-', LF = (byte) '\n', CR = (byte) '\r';
 		
@@ -1190,61 +1196,40 @@ namespace System.Web {
 		
 		public HttpMultipart (Stream data, string b, Encoding encoding)
 		{
-			this = new HttpMultipart ();
 			this.data = data;
-
-			boundary = new byte [b.Length];
-			for (int i = 0; i < b.Length; i++)
-				boundary [i] = (byte) b [i];
-			     
+			boundary = b;
+			boundary_bytes = encoding.GetBytes (b);
+			buffer = new byte [boundary_bytes.Length + 2]; // CRLF or '--'
 			this.encoding = encoding;
-			
-			while (!ReadLineForBoundary ())
-				;
+			sb = new StringBuilder ();
 		}
 
-		void ReadToEndOfLine ()
+		string ReadLine ()
 		{
-			while (Read () != CR || Read () != LF)
-				;
-		}
-		
-		byte Read ()
-		{
-			int b = data.ReadByte ();
-			if (b == -1)
-				throw new Exception ("Unexpected end of multipart data");
-			return (byte) b;
-		}
-        
-        
-		bool ReadLineForBoundary ()
-		{
-			for (int i = 0; i < boundary.Length; i ++) {
-				if (Read () == boundary [i])
-					continue;
-				
-				ReadToEndOfLine ();
-				return false;
+			// CRLF or LF are ok as line endings.
+			bool got_cr = false;
+			int b = 0;
+			sb.Length = 0;
+			while (true) {
+				b = data.ReadByte ();
+				if (b == -1) {
+					return null;
+				}
+
+				if (b == LF) {
+					break;
+				}
+				got_cr = (b == CR);
+				sb.Append ((char) b);
 			}
-			
-			long pos = data.Position;
-			
-			byte b = Read ();
-			if (b == CR && Read () == LF)
-				return true;
-			
-			if (b == HYPHEN && Read () == HYPHEN && Read () == CR && Read () == LF){
-				at_eof = true;
-				return true;
-			}
-			
-			data.Position = pos;
-			
-			ReadToEndOfLine ();
-			return false;           
+
+			if (got_cr)
+				sb.Length--;
+
+			return sb.ToString ();
+
 		}
-		
+
 		static string GetContentDispositionAttribute (string l, string name)
 		{
 			int idx = l.IndexOf (name + "=\"");
@@ -1258,49 +1243,162 @@ namespace System.Web {
 				return "";
 			return l.Substring (begin, end - begin);
 		}
-		
-		public bool ReadNextElement (out Element elem)
+
+		bool ReadBoundary ()
 		{
-			// When this gets called, we are at the end of the \r\n from the boundary line.
-			
-			elem = new Element ();
-			if (at_eof)
-				return false;
-			
-			while (true) {
-				long start = data.Position;
-				ReadToEndOfLine ();
-				long end = data.Position;
-				int length = (int) (end - start - 2);
-				// Blank line means end of headers
-				if (length == 0)
-					break;
-				
-				byte [] buf = new byte [length];
-				data.Position = start;
-				data.Read (buf, 0, length);
-				data.Position = end;
-				
-				string line = encoding.GetString (buf, 0, buf.Length);
-				if (StrUtils.StartsWith (line, "Content-Disposition:", true)) {
-					elem.Name = GetContentDispositionAttribute (line, "name");
-					elem.Filename = GetContentDispositionAttribute (line, "filename");      
-				} else if (StrUtils.StartsWith (line, "Content-Type:", true)) {
-					elem.ContentType = line.Substring ("Content-Type:".Length).Trim ();
-				}               
+			try {
+				string line = ReadLine ();
+				while (line == "")
+					line = ReadLine ();
+				int ll = line.Length;
+				int bl = boundary.Length;
+				if (line [0] != '-' || line [1] != '-')
+					return false;
+
+				if (!StrUtils.EndsWith (line, boundary, false))
+					return true;
+			} catch {
 			}
-			
-			long d_start = data.Position;
-			long d_length = 0;
-			while (! ReadLineForBoundary ())
-				d_length = data.Position - d_start - 2;
-			
-			elem.Start = d_start;
-			elem.Length = d_length;
-			
+
+			return false;
+		}
+
+		bool IsBoundary (string line)
+		{
+			if (line.Length < 2)
+				return false;
+
+			int ll = line.Length;
+			int bl = boundary.Length;
+			if (line [0] != '-' || line [1] != '-')
+				return false;
+
+			if (line.IndexOf (boundary) != 2)
+				return false;
+
+			if (ll == bl + 4 && line [ll -1] == '-' && line [ll - 2] == '-')
+				at_eof = true;
+
+			return  (at_eof || ll == bl + 2);
+		}
+
+		string ReadHeaders ()
+		{
+			string s = ReadLine ();
+			if (s == "")
+				return null;
+
+			return s;
+		}
+
+		bool CompareBytes (byte [] orig, byte [] other)
+		{
+			for (int i = orig.Length - 1; i >= 0; i--)
+				if (orig [i] != other [i])
+					return false;
+
 			return true;
+		}
+
+		long MoveToNextBoundary ()
+		{
+			long retval = 0;
+			bool got_cr = false;
+
+			int state = 0;
+			int c = data.ReadByte ();
+			while (true) {
+				if (c == -1)
+					return -1;
+
+				if (state == 0 && c == LF) {
+					retval = data.Position - 1;
+					if (got_cr)
+						retval--;
+					state = 1;
+					c = data.ReadByte ();
+				} else if (state == 0) {
+					got_cr = (c == CR);
+					c = data.ReadByte ();
+				} else if (state == 1 && c == '-') {
+					c = data.ReadByte ();
+					if (c == -1)
+						return -1;
+
+					if (c != '-') {
+						state = 0;
+						got_cr = false;
+						continue; // no ReadByte() here
+					}
+
+					int nread = data.Read (buffer, 0, buffer.Length);
+					int bl = buffer.Length;
+					if (nread != bl)
+						return -1;
+
+					if (!CompareBytes (boundary_bytes, buffer)) {
+						state = 0;
+						data.Position = retval + 2;
+						if (got_cr) {
+							data.Position++;
+							got_cr = false;
+						}
+						c = data.ReadByte ();
+						continue;
+					}
+
+					if (buffer [bl - 2] == '-' && buffer [bl - 1] == '-') {
+						at_eof = true;
+					} else if (buffer [bl - 2] != CR || buffer [bl - 1] != LF) {
+						state = 0;
+						data.Position = retval + 2;
+						if (got_cr) {
+							data.Position++;
+							got_cr = false;
+						}
+						c = data.ReadByte ();
+						continue;
+					}
+					data.Position = retval + 2;
+					if (got_cr)
+						data.Position++;
+					break;
+				} else {
+					// state == 1
+					state = 0; // no ReadByte() here
+				}
+			}
+
+			return retval;
+		}
+
+		public Element ReadNextElement ()
+		{
+			if (at_eof || ReadBoundary ())
+				return null;
+
+			Element elem = new Element ();
+			string header;
+			while ((header = ReadHeaders ()) != null) {
+				if (StrUtils.StartsWith (header, "Content-Disposition:", true)) {
+					elem.Name = GetContentDispositionAttribute (header, "name");
+					elem.Filename = GetContentDispositionAttribute (header, "filename");      
+				} else if (StrUtils.StartsWith (header, "Content-Type:", true)) {
+					elem.ContentType = header.Substring ("Content-Type:".Length).Trim ();
+				}
+			}
+
+			long start = data.Position;
+			elem.Start = start;
+			long pos = MoveToNextBoundary ();
+			if (pos == -1)
+				return null;
+
+			elem.Length = pos - start;
+			return elem;
 		}
 		
 	}
 #endregion
 }
+
