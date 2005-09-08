@@ -1,3 +1,7 @@
+2005-09-08  Ritvik Mayank  <mritvik@novell.com>
+
+	* MonthCalendarTest.cs : Test case for MonthCalendar
+
 2005-08-29  Ritvik Mayank  <mritvik@novell.com>
 	
 	* ProgressBarTest.cs : Test case for ProgressBar

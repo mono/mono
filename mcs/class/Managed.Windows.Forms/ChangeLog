@@ -1,3 +1,7 @@
+2005-09-08  Ritvik Mayank  <mritvik@novell.com>
+	
+	* System.Windows.Forms_test.dll.sources : added MonthCalendarTest.cs
+
 2005-09-08  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added RichTextBox.cs to build
