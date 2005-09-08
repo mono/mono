@@ -340,7 +340,7 @@ namespace System.Web {
 
 			if (stream is MemoryStream) {
 				MemoryStream other = (MemoryStream) stream;
-				return new MemoryStream (other.GetBuffer (), 0, (int) other.Length, false);
+				return new MemoryStream (other.GetBuffer (), 0, (int) other.Length, false, true);
 			}
 
 			throw new NotSupportedException ("The stream is " + stream.GetType ());
@@ -576,9 +576,9 @@ namespace System.Web {
 			// we check the instance field 'content_length' here, not the local var.
 			if (this.content_length == 0 || worker_request.IsEntireEntityBodyIsPreloaded ()) {
 				if (buffer == null || content_length == 0) {
-					input_stream = new MemoryStream (new byte [0], false);
+					input_stream = new MemoryStream (new byte [0], 0, 0, false, true);
 				} else {
-					input_stream = new MemoryStream (buffer, 0, buffer.Length, false);
+					input_stream = new MemoryStream (buffer, 0, buffer.Length, false, true);
 				}
 				return;
 			}
@@ -622,7 +622,7 @@ namespace System.Web {
 						throw new HttpException (400, "Upload size exceeds httpRuntime limit.");
 					ms.Write (buffer, 0, n);
 				}
-				input_stream = new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length, false);
+				input_stream = new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length, false, true);
 			}
 
 			if (total < content_length)

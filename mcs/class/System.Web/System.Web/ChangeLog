@@ -1,3 +1,8 @@
+2005-09-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpRequest.cs: Make sure the MemoryStream created have their 
+	contents marked as public - or else you can't call GetBuffer on them!
+
 2005-09-08  Miguel de Icaza  <miguel@novell.com>
 
 	* HttpRequest.cs: Patch from Juraj Skripsky <js@hotfeet.ch> that
