@@ -77,7 +77,7 @@ class Runner
 			
 			if (inputAssembly != null)
 			{
-				assembly = Assembly.Load (inputAssembly);
+				assembly = Assembly.LoadFile (inputAssembly);
 				foreach (Type t in assembly.GetTypes ())
 					types.Add (new ServiceType (t, serviceEndpoint));
 			}
