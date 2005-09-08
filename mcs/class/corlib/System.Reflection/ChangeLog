@@ -1,3 +1,8 @@
+2005-09-07  Miguel de Icaza  <miguel@novell.com>
+
+	* AssemblyName.cs: Apply patch from Chris Micacchi to serialize
+	the keyToken as "_PublicKeyToken".
+
 2005-09-05  Martin Baulig  <martin@ximian.com>
 
 	Reflect latest API changes in the August CTP.

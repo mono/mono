@@ -103,7 +103,7 @@ namespace System.Reflection {
 			codebase = si.GetString ("_CodeBase");
 			version = (Version)si.GetValue ("_Version", typeof (Version));
 			publicKey = (byte[])si.GetValue ("_PublicKey", typeof (byte[]));
-			keyToken = (byte[])si.GetValue ("_PublicToken", typeof (byte[]));
+			keyToken = (byte[])si.GetValue ("_PublicKeyToken", typeof (byte[]));
 			hashalg = (AssemblyHashAlgorithm)si.GetValue ("_HashAlgorithm", typeof (AssemblyHashAlgorithm));
 			keypair = (StrongNameKeyPair)si.GetValue ("_StrongNameKeyPair", typeof (StrongNameKeyPair));
 			versioncompat = (AssemblyVersionCompatibility)si.GetValue ("_VersionCompatibility", typeof (AssemblyVersionCompatibility));
