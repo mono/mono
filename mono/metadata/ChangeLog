@@ -1,4 +1,8 @@
 
+Thu Sep 8 18:54:07 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* decimal.c: fixed to handle the broken ARM fp format.
+
 Wed Sep 7 22:17:58 BST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* icall.c: on ARM use the libc strtod(), since bsd_strtod() seems
