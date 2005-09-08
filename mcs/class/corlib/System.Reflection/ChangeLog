@@ -1,3 +1,7 @@
+2005-09-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyName.cs: Apply second half of Chris Micacchi's patch
+
 2005-09-07  Miguel de Icaza  <miguel@novell.com>
 
 	* AssemblyName.cs: Apply patch from Chris Micacchi to serialize

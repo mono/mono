@@ -262,7 +262,7 @@ namespace System.Reflection {
 
 			info.AddValue ("_Name", name);
 			info.AddValue ("_PublicKey", publicKey);
-			info.AddValue ("_PublicToken", keyToken);
+			info.AddValue ("_PublicKeyToken", keyToken);
 			info.AddValue ("_CultureInfo", cultureinfo != null ? cultureinfo.LCID : -1);
 			info.AddValue ("_CodeBase", codebase);
 			info.AddValue ("_Version", Version);
