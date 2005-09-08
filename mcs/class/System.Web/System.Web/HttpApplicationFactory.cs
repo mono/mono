@@ -402,12 +402,14 @@ namespace System.Web {
 				factory.InitType (context);
 				lock (factory) {
 					if (factory.app_start_needed) {
+#if !TARGET_JVM
 						string bin = HttpRuntime.BinDirectory;
 						if (Directory.Exists (bin))
 							bin = Path.Combine (bin, "*.dll");
 
 						// We watch bin or bin/*.dll if the directory exists
 						factory.bin_watcher = CreateWatcher (bin, new FileSystemEventHandler (factory.OnAppFileChanged));
+#endif
 						factory.FireOnAppStart (context);
 						factory.app_start_needed = false;
 					}
