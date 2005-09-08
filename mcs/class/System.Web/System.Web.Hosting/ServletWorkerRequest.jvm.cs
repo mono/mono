@@ -388,6 +388,19 @@ namespace System.Web.Hosting
 
 		public override void SendResponseFromFile (string filename, long offset, long length)
 		{
+			using (FileStream fs = File.OpenRead (filename)) {
+				byte [] buffer = new byte [4 * 1024];
+
+				if (offset != 0)
+					fs.Position = offset;
+
+				long remain = length;
+				int n;
+				while (remain > 0 && (n = fs.Read (buffer, 0, (int) Math.Min (remain, buffer.Length))) != 0){
+					remain -= n;
+					SendResponseFromMemory(buffer, n);
+				}
+			}
 		}
 
 		public override void SendResponseFromMemory (byte [] data, int length)

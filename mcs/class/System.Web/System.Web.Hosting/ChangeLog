@@ -1,4 +1,7 @@
 2005-07-24  Eyal Alalouf  <eyala@mainsoft.com>
+	* ServletWorkerRequest.jvm.cs: Implement SendResponseFromFile
+
+2005-07-24  Eyal Alalouf  <eyala@mainsoft.com>
 	* ServletWorkerRequest.jvm.cs: Put Console.WriteLine in #if DEBUG
 
 2005-07-18  Eyal Alalouf  <eyala@mainsoft.com>
