@@ -44,18 +44,17 @@ ecma/Array/15.4.3.1-2.js
 ecma/Array/15.4.3.2.js
 ecma/Array/15.4.3.js
 ecma/Array/15.4.4.1.js
-# Invalid IL
-#ecma/Array/15.4.4.2.js
+ecma/Array/15.4.4.2.js
+# Invalid IL, possible guilty: Array.prototype.join.length
 #ecma/Array/15.4.4.3-1.js
 #ecma/Array/15.4.4.4-1.js
 #ecma/Array/15.4.4.4-2.js
 # Need eval
 #ecma/Array/15.4.4.5-1.js
 #ecma/Array/15.4.4.5-2.js
-# Invalid IL
-#ecma/Array/15.4.4.5-3.js
+ecma/Array/15.4.4.5-3.js
 ecma/Array/15.4.4.js
-# Invalid IL
+# Invalid IL, TryDirectGetObjectProperty throws NullReferenceException
 #ecma/Array/15.4.5.1-1.js
 ecma/Array/15.4.5.1-2.js
 # Needs ToForInObject
