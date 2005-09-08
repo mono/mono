@@ -1,5 +1,10 @@
 2005-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpPostedFile.cs: Make this class actually work. Every time we read,
+	we have to position the underlying stream.
+
+2005-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpRequest.cs: reading multipart/form-data works again.
 
 2005-09-08 Eyal Alaluf <eyala@mainsoft.com>

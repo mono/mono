@@ -36,18 +36,19 @@ namespace System.Web
 		string name;
 		string content_type;
 		Stream stream;
-
 		
 		class ReadSubStream : Stream {
 			Stream s;
 			long offset;
-			long length;
+			long end;
+			long position;
 	
 			public ReadSubStream (Stream s, long offset, long length)
 			{
 				this.s = s;
 				this.offset = offset;
-				this.length = length;
+				this.end = offset + length;
+				position = offset;
 			}
 	
 			public override void Flush ()
@@ -56,24 +57,51 @@ namespace System.Web
 	
 			public override int Read (byte [] buffer, int dest_offset, int count)
 			{
+				if (buffer == null)
+					throw new ArgumentNullException ("buffer");
+
 				if (dest_offset < 0)
 					throw new ArgumentOutOfRangeException ("dest_offset", "< 0");
+
 				if (count < 0)
 					throw new ArgumentOutOfRangeException ("count", "< 0");
-				if (dest_offset > length)
+
+				int len = buffer.Length;
+				if (dest_offset > len)
 					throw new ArgumentException ("destination offset is beyond array size");
 				// reordered to avoid possible integer overflow
-				if (dest_offset > length - count)
+				if (dest_offset > len - count)
 					throw new ArgumentException ("Reading would overrun buffer");
 
-				return s.Read (buffer, dest_offset, count);
+				if (count > end - position)
+					count = (int) (end - position);
+
+				if (count <= 0)
+					return 0;
+
+				s.Position = position;
+				int result = s.Read (buffer, dest_offset, count);
+				if (result > 0)
+					position += result;
+				else
+					position = end;
+
+				return result;
 			}
 	
 			public override int ReadByte ()
 			{
-				if (Position == Length - 1)
+				if (position >= end)
 					return -1;
-				return s.ReadByte ();
+
+				s.Position = position;
+				int result = s.ReadByte ();
+				if (result < 0)
+					position = end;
+				else
+					position++;
+
+				return result;
 			}
 	
 			public override long Seek (long d, SeekOrigin origin)
@@ -84,20 +112,21 @@ namespace System.Web
 					real = offset + d;
 					break;
 				case SeekOrigin.End:
-					real = offset + length - d;
+					real = end + d;
 					break;
 				case SeekOrigin.Current:
-					real = s.Position + d;
+					real = position + d;
 					break;
 				default:
 					throw new ArgumentException ();
 				}
 
 				long virt = real - offset;
-				if (virt < 0 || virt >= length)
+				if (virt < 0 || virt >= Length)
 					throw new ArgumentException ();
 
-				return s.Seek (real, SeekOrigin.Begin) - offset;
+				position = s.Seek (real, SeekOrigin.Begin) - offset;
+				return position;
 			}
 	
 			public override void SetLength (long value)
@@ -121,15 +150,18 @@ namespace System.Web
 			}
 	
 			public override long Length {
-				get { return length; }
+				get { return end - offset; }
 			}
 	
 			public override long Position {
 				get {
-					return s.Position - offset;
+					return position;
 				}
 				set {
-					Seek (Position, SeekOrigin.Begin);
+					if (value > Length)
+						throw new ArgumentOutOfRangeException ();
+
+					position = Seek (offset + value, SeekOrigin.Begin);
 				}
 			}
 		}
