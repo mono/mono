@@ -29,6 +29,8 @@
 
 using System;
 using System.IO;
+using System.Text;
+using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 
@@ -51,6 +53,16 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			LoadViewState (state);
 		}
 
+		public string RenderChildren ()
+		{
+			StringWriter sw = new StringWriter();
+			HtmlTextWriter w = new HtmlTextWriter (sw);
+			
+			RenderChildren (w);
+
+			return sw.ToString();
+		}
+
 #if NET_2_0
 		public ControlCollection GetControlCollection ()
 		{
@@ -65,7 +77,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	public class HtmlFormTest {
-
 		[Test]
 		public void DefaultProperties ()
 		{
@@ -191,6 +202,16 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.IsNull (form.ID, "ID-3");
 			Assert.IsNotNull (form.UniqueID, "UniqueID-3");
 			Assert.IsNotNull (form.Name, "Name-2");
+		}
+
+		[Test]
+		public void RenderChildren ()
+		{
+			Page p = new Page();
+			FormPoker form = new FormPoker ();
+			form.Page = p;
+
+			Assert.AreEqual ("\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" value=\"\" />", form.RenderChildren (), "A1");
 		}
 
 #if NET_2_0

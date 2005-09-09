@@ -1,5 +1,9 @@
 2005-09-09  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlFormTest.cs: Add test for RenderChildren.
+
+2005-09-09  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlInputButtonTest.cs (RenderAttributes): add in
 	CausesValidation and ValidationGroup here.
 
