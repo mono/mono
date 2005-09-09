@@ -1,3 +1,7 @@
+2005-09-09  Martin Baulig  <martin@ximian.com>
+
+	* mini.c (mono_method_to_ir): Comment out the G_BREAKPOINT()'s for
+	the release.
 
 Thu Sep 8 14:53:45 BST 2005 Paolo Molaro <lupus@ximian.com>
 
