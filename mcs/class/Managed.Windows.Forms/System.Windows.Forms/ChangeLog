@@ -1,3 +1,6 @@
+2005-09-09  Alexander Olk  <alex.olk@googlemail.com>
+	* ThemeNice.cs: Merged r49535 from ThemeWin32Classic
+
 2005-09-08  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* RichTextBox.cs: Added initial implementation
