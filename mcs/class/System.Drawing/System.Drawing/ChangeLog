@@ -1,3 +1,7 @@
+2005-09-10 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: fixing clipping stuff
+
 2005-09-07 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Bitmap.jvm.cs: fixed bitamp accessors

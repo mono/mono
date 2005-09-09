@@ -419,11 +419,7 @@ namespace System.Drawing {
 				throw new ArgumentNullException("brush");
 
 			if (NeedsNormalization) {
-				geom.PathIterator iter = new NormalizingPathIterator(shape.getPathIterator(GetFinalTransform()));
-	
-				geom.GeneralPath path = new geom.GeneralPath(iter.getWindingRule());
-				path.append(iter, false);
-				shape = path;
+				shape = GetNormalizedShape(shape, GetFinalTransform());
 			}
 			else {
 				geom.GeneralPath path = new geom.GeneralPath(shape);
@@ -1512,7 +1508,10 @@ namespace System.Drawing {
 
 		#region ExcludeClip
 		void ExcludeClip(geom.Area area) {
-			area.transform(GetFinalTransform());
+			//Here final transfrom is used!
+			geom.AffineTransform t = GetFinalTransform();
+			if (!t.isIdentity())
+				area.transform(t);
 			geom.Area clip = GetNativeClip();
 			clip.subtract(area);
 			SetNativeClip(clip);
@@ -1741,7 +1740,8 @@ namespace System.Drawing {
 
 		#region IntersectClip
 		void IntersectClip (geom.Area area) {
-			area.transform(GetFinalTransform());
+			if (!_transform.IsIdentity)
+				area.transform(_transform.NativeObject);
 			geom.Area clip = GetNativeClip();
 			clip.intersect(area);
 			SetNativeClip(clip);
@@ -1957,7 +1957,8 @@ namespace System.Drawing {
 		}
 
 		geom.Area CombineClipArea(geom.Area area, CombineMode combineMode) {
-			area.transform(GetFinalTransform());
+			if (!_transform.IsIdentity)
+				area.transform(_transform.NativeObject);
 			if (combineMode == CombineMode.Replace)
 				return area;
 
@@ -2030,8 +2031,24 @@ namespace System.Drawing {
 
 		
 		public void TranslateClip (float dx, float dy) {
-			geom.AffineTransform t = geom.AffineTransform.getTranslateInstance(dx, dy);
-			t.concatenate(GetFinalTransform());
+			double x = dx;
+			double y = dy;
+			geom.AffineTransform f = _transform.NativeObject;
+
+			if (!f.isIdentity()) {
+				double[] p = new double[] {x, y};
+				f.deltaTransform(p, 0, p, 0, 1);
+
+				x = p[0];
+				y = p[1];
+			}
+
+			// It seems .Net does exactly this...
+			x = Math.Floor(x+0.96875);
+			y = Math.Floor(y+0.96875);
+
+			geom.AffineTransform t = geom.AffineTransform.getTranslateInstance(x, y);
+
 			geom.Area clip = GetNativeClip();
 			clip.transform(t);
 			SetNativeClip(clip);
@@ -2068,12 +2085,28 @@ namespace System.Drawing {
 			}
 		}
 
+		awt.Shape InverseUserTransform(awt.Shape shape) {
+			geom.AffineTransform t = _transform.NativeObject;
+			if (t.isIdentity())
+				return shape;
+
+			geom.Rectangle2D r2d = shape.getBounds2D();
+
+			geom.PathIterator iter = shape.getPathIterator(t.createInverse());
+			geom.GeneralPath path = new geom.GeneralPath(iter.getWindingRule());
+			path.append(iter, false);
+
+			return path;
+		}
+
 		public RectangleF ClipBounds {
 			get {
-				java.awt.Graphics2D g = NativeObject;
-				java.awt.Rectangle r = g.getClipBounds();
-				RectangleF rect = new RectangleF ((float)r.getX(),(float)r.getY(),(float)r.getWidth(),(float)r.getHeight());
-				return rect;
+				awt.Shape shape = NativeObject.getClip();
+				if (shape == null)
+					shape = Region.InfiniteRegion.NativeObject.getBounds2D();
+				shape = InverseUserTransform(shape);
+
+				return new RectangleF (shape is geom.RectangularShape ? (geom.RectangularShape)shape : shape.getBounds2D());
 			}
 		}
 
@@ -2369,6 +2402,9 @@ namespace System.Drawing {
 				if (value == null)
 					throw new ArgumentNullException("matrix");
 
+				if (!value.IsInvertible)
+					throw new ArgumentException("Invalid parameter used.");
+
 				value.CopyTo(_transform);
 			}
 		}
@@ -2388,9 +2424,16 @@ namespace System.Drawing {
 
 		public RectangleF VisibleClipBounds {
 			get {
-				RectangleF bounds = ClipBounds;
-				bounds.Intersect(new RectangleF(0, 0, _image.Width, _image.Height));
-				return bounds;
+				geom.Area area = GetNativeClip();
+				area.intersect(Surface);
+				awt.Shape shape = InverseUserTransform(area);
+				return new RectangleF(shape is geom.RectangularShape ? (geom.RectangularShape)shape : shape.getBounds2D());
+			}
+		}
+
+		geom.Area Surface {
+			get {
+				return new geom.Area(new awt.Rectangle(_image.Width, _image.Height));
 			}
 		}
 
