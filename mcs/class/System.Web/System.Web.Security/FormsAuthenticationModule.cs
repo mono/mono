@@ -5,8 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +27,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
-using System.Web;
 using System.Web.Configuration;
 using System.Web.Util;
 
 namespace System.Web.Security
 {
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class FormsAuthenticationModule : IHttpModule
 	{
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+		public FormsAuthenticationModule ()
+		{
+		}
+
 		public void Dispose ()
 		{
 		}

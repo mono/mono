@@ -32,6 +32,7 @@
 using System.Collections;
 using System.IO;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 using System.Text;
 using System.Web;
 using System.Web.Configuration;
@@ -39,6 +40,8 @@ using System.Web.Util;
 
 namespace System.Web.Security
 {
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class FormsAuthentication
 	{
 		const int MD5_hash_size = 16;

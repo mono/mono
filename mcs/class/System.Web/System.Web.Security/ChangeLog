@@ -1,3 +1,27 @@
+2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DefaultAuthenticationEventArgs.cs: Added LinkDemand for Minimal.
+	* DefaultAuthenticationModule.cs: Added LinkDemand for Minimal. Added
+	Demand for UnmanagedCode on constructor.
+	* FileAuthorizationModule.cs: Added LinkDemand for Minimal. Added 
+	Demand for UnmanagedCode on constructor.
+	* FormsAuthentication.cs: Added LinkDemand for Minimal.
+	* FormsAuthenticationEventArgs.cs: Added LinkDemand for Minimal.
+	* FormsAuthenticationModule.cs: Added LinkDemand for Minimal. Added 
+	Demand for UnmanagedCode on constructor.
+	* FormsAuthenticationTicket.cs: Added LinkDemand for Minimal.
+	* FormsIdentity.cs: Added LinkDemand for Minimal.
+	* PassportAuthenticationEventArgs.cs: Added LinkDemand for Minimal.
+	* PassportAuthenticationModule.cs: Added LinkDemand for Minimal. Added
+	Demand for UnmanagedCode on constructor.
+	* PassportIdentity.cs: Added LinkDemand for Minimal. Added Demand for
+	UnmanagedCode on constructor.
+	* UrlAuthorizationModule.cs: Added LinkDemand for Minimal. Added 
+	Demand for UnmanagedCode on constructor.
+	* WindowsAuthenticationEventArgs.cs: Added LinkDemand for Minimal.
+	* WindowsAuthenticationModule.cs: Added LinkDemand for Minimal. Added
+	Demand for UnmanagedCode on constructor.
+
 2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FormsAuthenticationEventArgs.cs: Ensure the setter for User is 

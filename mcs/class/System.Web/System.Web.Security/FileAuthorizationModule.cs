@@ -27,11 +27,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Permissions;
+
 namespace System.Web.Security
 {
 	[MonoTODO ("that's only a stub")]
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class FileAuthorizationModule : IHttpModule
 	{
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+		public FileAuthorizationModule ()
+		{
+		}
+
 		public void Dispose ()
 		{
 		}

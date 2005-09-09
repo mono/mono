@@ -5,8 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,26 +27,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Permissions;
+
 namespace System.Web.Security {
-	using System;
-	using System.Web;
-	
-public sealed class DefaultAuthenticationEventArgs : EventArgs
-{
-	private HttpContext _context;
 
-	public DefaultAuthenticationEventArgs (HttpContext context)
-	{
-		if (context == null)
-			throw new ArgumentNullException ("context");
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public sealed class DefaultAuthenticationEventArgs : EventArgs {
 
-		_context = context;
-	}
+		private HttpContext _context;
 
-	public HttpContext Context
-	{
-		get { return _context; }
+		public DefaultAuthenticationEventArgs (HttpContext context)
+		{
+			if (context == null)
+				throw new ArgumentNullException ("context");
+
+			_context = context;
+		}
+
+		public HttpContext Context {
+			get { return _context; }
+		}
 	}
 }
-}
-

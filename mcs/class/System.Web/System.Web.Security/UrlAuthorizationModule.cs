@@ -28,12 +28,16 @@
 //
 
 using System.Web.Configuration;
+using System.Security.Permissions;
 using System.Security.Principal;
 
 namespace System.Web.Security
 {
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class UrlAuthorizationModule : IHttpModule
 	{
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public UrlAuthorizationModule ()
 		{
 		}

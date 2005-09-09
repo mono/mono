@@ -32,6 +32,8 @@ using System.Security.Principal;
 
 namespace System.Web.Security
 {
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class FormsAuthenticationEventArgs : EventArgs
 	{
 		IPrincipal user;

@@ -28,19 +28,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Permissions;
 using System.Security.Principal;
 
 namespace System.Web.Security {
 
+	[MonoTODO]
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #if NET_2_0
 	public sealed class PassportIdentity : IIdentity, IDisposable {
 #else
 	public sealed class PassportIdentity : IIdentity {
 #endif
-		[MonoTODO]
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public PassportIdentity ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		~PassportIdentity ()
