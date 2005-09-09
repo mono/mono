@@ -1,5 +1,5 @@
-2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
-
+2005-09-09  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
 	* DefaultAuthenticationEventArgsCas.cs: New. CAS unit tests.
 	* DefaultAuthenticationModuleCas.cs: New. CAS unit tests.
 	* FileAuthorizationModuleCas.cs: New. CAS unit tests.
@@ -13,6 +13,7 @@
 	* PassportAuthenticationModuleCas.cs: New. CAS unit tests.
 	* PassportIdentityCas.cs: New. CAS unit tests.
 	* WindowsAuthenticationEventArgsCas.cs: Added LinkDemand tests.
+	* WindowsAuthenticationModuleCas.cs: New. CAS unit tests.
 	* UrlAuthorizationModuleCas.cs: New. CAS unit tests.
 
 2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
