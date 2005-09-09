@@ -1,3 +1,9 @@
+
+Fri Sep 9 09:49:14 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* ldscript.mono, Makefile.am: use anonymous versions in the ldscript
+	for the mono binary.
+
 2005-09-09  Martin Baulig  <martin@ximian.com>
 
 	* mini.c (mono_method_to_ir): Comment out the G_BREAKPOINT()'s for
