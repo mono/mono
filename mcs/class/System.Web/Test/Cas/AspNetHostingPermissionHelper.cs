@@ -50,7 +50,7 @@ namespace MonoCasTests {
 		// a LinkDemand (which will be converted into full demand, i.e. a stack walk) 
 		// when reflection is used (i.e. it gets testable).
 
-		static Type[] VoidType = new Type[0];
+		public static Type[] VoidType = new Type[0];
 
 		public virtual object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
 		{
