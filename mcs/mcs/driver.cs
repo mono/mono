@@ -279,7 +279,7 @@ namespace Mono.CSharp
 
 		public static int counter1, counter2;
 		
-	public static int Main (string[] args)
+		public static int Main (string[] args)
 		{
 			bool ok = MainDriver (args);
 			
