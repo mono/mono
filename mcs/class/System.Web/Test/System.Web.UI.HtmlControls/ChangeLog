@@ -1,3 +1,8 @@
+2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlTableRowTest.cs: Added tests for InnerHtml and InnerText setters
+	* HtmlTableTest.cs: Added tests for InnerHtml and InnerText setters
+
 2005-09-07  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlFormTest.cs: more tests to get at the root of the confusion

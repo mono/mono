@@ -106,7 +106,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
-		public void InnerHtml ()
+		public void InnerHtml_Get ()
 		{
 			HtmlTableRow r = new HtmlTableRow ();
 			Assert.IsNotNull (r.InnerHtml);
@@ -114,10 +114,26 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 		[Test]
 		[ExpectedException (typeof (NotSupportedException))]
-		public void InnerText ()
+		public void InnerHtml_Set ()
+		{
+			HtmlTableRow r = new HtmlTableRow ();
+			r.InnerHtml = String.Empty;
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void InnerText_Get ()
 		{
 			HtmlTableRow r = new HtmlTableRow ();
 			Assert.IsNotNull (r.InnerText);
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void InnerText_Set ()
+		{
+			HtmlTableRow r = new HtmlTableRow ();
+			r.InnerText = String.Empty;
 		}
 
 		private string AdjustLineEndings (string s)
