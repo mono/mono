@@ -964,7 +964,7 @@ ecma_2/instanceof/instanceof-002.js
 ecma_2/instanceof/instanceof-003.js
 # Invalid IL
 #ecma_2/instanceof/regress-7635.js
-js1_1/regress/function-001.js
+#js1_1/regress/function-001.js
 js1_2/Array/array_split_1.js
 js1_2/Array/general1.js
 js1_2/Array/general2.js
