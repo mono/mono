@@ -154,6 +154,7 @@ System.Web.Security/PassportAuthenticationModuleCas.cs
 System.Web.Security/PassportIdentityCas.cs
 System.Web.Security/UrlAuthorizationModuleCas.cs
 System.Web.Security/WindowsAuthenticationEventArgsCas.cs
+System.Web.Security/WindowsAuthenticationModuleCas.cs
 System.Web.UI.HtmlControls/HtmlAnchorCas.cs
 System.Web.UI.HtmlControls/HtmlButtonCas.cs
 System.Web.UI.HtmlControls/HtmlEmptyTagControlBuilderCas.cs
