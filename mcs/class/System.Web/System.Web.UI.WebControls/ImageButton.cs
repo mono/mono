@@ -236,26 +236,9 @@ namespace System.Web.UI.WebControls {
 
 
 #if NET_2_0
-		[MonoTODO]
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection psotCollection) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void RaisePostDataChangedEvent ()
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		protected virtual void RaisePostBackEvent (string eventArgument)
-		{
-			throw new NotImplementedException ();
-		}
+		protected virtual
 #endif
-
-		bool IPostBackDataHandler.LoadPostData (string postDataKey,  NameValueCollection postCollection)
+		bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
 		{
 			string x, y;
 
@@ -270,14 +253,10 @@ namespace System.Web.UI.WebControls {
 
 			return true;
 		}
-
-
-		void IPostBackDataHandler.RaisePostDataChangedEvent ()
-		{
-
-		}
-
-		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+#if NET_2_0
+		protected virtual
+#endif
+		void RaisePostDataChangedEvent ()
 		{
 			if (CausesValidation)
 #if NET_2_0
@@ -288,6 +267,30 @@ namespace System.Web.UI.WebControls {
 
 			OnClick (new ImageClickEventArgs (pos_x, pos_y));
 			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
+		}
+		
+		[MonoTODO]
+#if NET_2_0
+		protected virtual
+#endif
+		void RaisePostBackEvent (string eventArgument)
+		{
+		}
+
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+
+
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEvent ();
+		}
+
+		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
+		{
+			RaisePostBackEvent (eventArgument);
 		}
 
 		protected virtual void OnClick (ImageClickEventArgs e)

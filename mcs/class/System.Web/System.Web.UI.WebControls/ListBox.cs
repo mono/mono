@@ -184,21 +184,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void RaisePostDataChangedEvent ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif		
-			
-		bool IPostBackDataHandler.LoadPostData (string postDataKey,
-				NameValueCollection postCollection)
+		protected virtual
+#endif
+		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			string [] items = postCollection.GetValues (postDataKey) as string [];
 			bool res = false;
@@ -219,9 +207,23 @@ namespace System.Web.UI.WebControls {
 			return res;
 		}
 
-		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+#if NET_2_0
+		protected virtual
+#endif
+		void RaisePostDataChangedEvent ()
 		{
 			OnSelectedIndexChanged (EventArgs.Empty);
+		}
+			
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+							NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEvent ();
 		}
 	}
 }

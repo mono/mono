@@ -1,5 +1,11 @@
 2005-09-09  Chris Toshok  <toshok@ximian.com>
 
+	* CheckBox.cs, CheckBoxList.cs, DropDownList.cs, ImageButton.cs,
+	ListBox.cs, RadioButton.cs, RadioButtonList.cs, TextBox.cs: fix up
+	LoadPostData/RaisePostDataChangedEvent.
+
+2005-09-09  Chris Toshok  <toshok@ximian.com>
+
 	* FontInfo.cs (IsEmpty): new internal property, used by
 	Style.IsEmpty.
 

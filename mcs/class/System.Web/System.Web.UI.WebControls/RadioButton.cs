@@ -78,20 +78,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
-		protected override bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override void RaisePostDataChangedEvent ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif		
-
-		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		protected override
+#endif
+		bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
 		{
 			bool old_checked = Checked;
 			
@@ -106,6 +95,18 @@ namespace System.Web.UI.WebControls {
 			} else {
 				return (false);
 			}
+		}
+
+#if NET_2_0
+		protected override
+#endif
+		void RaisePostDataChangedEvent ()
+		{
+		}
+
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
 		}
 	}
 }

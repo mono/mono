@@ -431,30 +431,27 @@ namespace System.Web.UI.WebControls {
 			return (false);
 		}
 
+#if NET_2_0
+		protected virtual
+#endif
+		void RaisePostDataChangedEvent ()
+		{
+#if NET_2_0
+			if (CausesValidation)
+				Page.Validate (ValidationGroup);
+#endif
+			OnCheckedChanged (EventArgs.Empty);
+		}
+
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			return LoadPostData (postDataKey, postCollection);
-		}
-		
-#if NET_2_0
-		protected virtual void RaisePostDataChangedEvent ()
-		{
-			if (CausesValidation)
-				Page.Validate (ValidationGroup);
-		
-			OnCheckedChanged (EventArgs.Empty);
 		}
 		
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
 			RaisePostDataChangedEvent ();
 		}
-#else
-		void IPostBackDataHandler.RaisePostDataChangedEvent ()
-		{
-			OnCheckedChanged (EventArgs.Empty);
-		}
-#endif
 
 		internal virtual void InternalAddAttributesToRender (HtmlTextWriter w)
 		{
