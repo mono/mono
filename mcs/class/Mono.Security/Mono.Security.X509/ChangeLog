@@ -1,3 +1,8 @@
+2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate.cs: Fixed version property (bug #76012). Added
+	ISerializable (for 2.0 so we're not breaking current compatibility).
+
 2005-08-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X501Name.cs: Fixed quoted (bug #75780) and escaped values. Added

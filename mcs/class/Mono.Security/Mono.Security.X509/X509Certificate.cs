@@ -28,8 +28,10 @@
 //
 
 using System;
+using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using SSCX = System.Security.Cryptography.X509Certificates;
+using System.Security.Permissions;
 using System.Text;
 
 namespace Mono.Security.X509 {
@@ -41,11 +43,12 @@ namespace Mono.Security.X509 {
 	//	http://www.itu.int/ITU-T/studygroups/com17/languages/
 
 #if INSIDE_CORLIB
-	internal
+	internal class X509Certificate : ISerializable {
+#elif NET_2_0
+	public class X509Certificate : ISerializable {
 #else
-	public 
+	public class X509Certificate {
 #endif
-	class X509Certificate {
 
 		private ASN1 decoder;
 
@@ -111,9 +114,9 @@ namespace Mono.Security.X509 {
 				// Certificate / TBSCertificate / Version
 				ASN1 v = decoder [0][tbs];
 				version = 1;			// DEFAULT v1
-				if (v.Tag == 0xA0) {
+				if ((v.Tag == 0xA0) && (v.Count > 0)) {
 					// version (optional) is present only in v2+ certs
-					version += v.Value [0];	// zero based
+					version += v [0].Value [0];	// zero based
 					tbs++;
 				}
 
@@ -498,5 +501,19 @@ namespace Mono.Security.X509 {
 					return false;
 			}
 		}
+
+#if INSIDE_CORLIB || NET_2_0
+		protected X509Certificate (SerializationInfo info, StreamingContext context)
+		{
+			Parse ((byte[]) info.GetValue ("raw", typeof (byte[])));
+		}
+
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
+		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue ("raw", m_encodedcert);
+			// note: we NEVER serialize the private key
+		}
+#endif
 	}
 }
