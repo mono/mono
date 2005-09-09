@@ -1,3 +1,10 @@
+2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListItem.cs: throw in AddParsedSubObject if the object is not a
+	LiteralControl.
+	* RadioButtonList.cs: implemented LoadPostData and
+	RaisePostDataChangedEvent.
+
 2005-09-09  Chris Toshok  <toshok@ximian.com>
 
 	* CheckBox.cs, CheckBoxList.cs, DropDownList.cs, ImageButton.cs,

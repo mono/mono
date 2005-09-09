@@ -84,8 +84,11 @@ namespace System.Web.UI.WebControls {
 		void IParserAccessor.AddParsedSubObject (object obj)
 		{
 			LiteralControl lc = obj as LiteralControl;
-			if (lc != null)
-				Text = lc.Text;
+			if (lc == null) {
+				// obj.GetType() will throw a NullRef if obj is null. That's fine according to the test.
+				throw new HttpException ("'ListItem' cannot have children of type " + obj.GetType ());
+			}
+			Text = lc.Text;
 		}
 	
 		void IStateManager.LoadViewState (object state)
@@ -184,7 +187,7 @@ namespace System.Web.UI.WebControls {
 		
 			set {
 				text = value;
-				text_dirty |= tracking;
+				text_dirty = tracking;
 			}
 		}
 
@@ -201,7 +204,7 @@ namespace System.Web.UI.WebControls {
 		
 			set {
 				this.value = value;
-				value_dirty |= tracking;
+				value_dirty = tracking;
 			}
 		}
 

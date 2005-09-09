@@ -38,6 +38,7 @@ namespace System.Web.UI.WebControls {
 	[ValidationProperty ("SelectedItem")]
 	public class RadioButtonList : ListControl, IRepeatInfoUser,
 		INamingContainer, IPostBackDataHandler {
+		bool need_raise;
 
 		public RadioButtonList ()
 		{
@@ -246,24 +247,38 @@ namespace System.Web.UI.WebControls {
 			radio.Attributes["Value"] = Items [repeatIndex].Value;
 			radio.RenderControl (writer);
 		}
-
-		[MonoTODO]
 #if NET_2_0
 		protected virtual
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-			return true;
+			string val = postCollection [postDataKey];
+			ListItemCollection items = Items;
+			int end = items.Count;
+			int selected = SelectedIndex;
+			for (int i = 0; i < end; i++) {
+				ListItem item = items [i];
+				if (item == null || val != item.Value)
+					continue;
+
+				if (i != selected) {
+					SelectedIndex = i;
+					need_raise = true;
+				}
+				return true;
+			}
+
+			return false;
 		}
 
-		[MonoTODO]
 #if NET_2_0
 		protected virtual
 #endif
 		void RaisePostDataChangedEvent ()
 		{
+			if (need_raise)
+				OnSelectedIndexChanged (EventArgs.Empty);
 		}
-
 
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
