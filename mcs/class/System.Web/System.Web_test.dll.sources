@@ -86,6 +86,7 @@ System.Web.UI.WebControls/LabelTest.cs
 System.Web.UI.WebControls/LinkButtonTest.cs
 System.Web.UI.WebControls/ListBoxTest.cs
 System.Web.UI.WebControls/ListControlTest.cs
+System.Web.UI.WebControls/ListItemTest.cs
 System.Web.UI.WebControls/ListItemCollectionTest.cs
 System.Web.UI.WebControls/LiteralTest.cs
 System.Web.UI.WebControls/LoginNameTest.cs
