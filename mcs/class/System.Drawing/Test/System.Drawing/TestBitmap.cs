@@ -165,6 +165,13 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual (1, cnt);								
 			Assert.AreEqual (0, active);											
 		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void FileDoesNotExists ()
+		{			
+			Bitmap	bmp = new Bitmap ("FileDoesNotExists.jpg");			
+		}
 
 		static string ByteArrayToString(byte[] arrInput)
 		{

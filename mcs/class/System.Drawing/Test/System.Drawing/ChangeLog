@@ -1,5 +1,10 @@
 2005-09-06 Jordi Mas i Hernandez <jordi@ximan.com>
 
+	* TestImagge.cs: File not found exception, related to fix r49744
+	* TestBimap.cs: File not found exception, related to fix r49744
+
+2005-09-06 Jordi Mas i Hernandez <jordi@ximan.com>
+
 	* TestGraphics.cs: New test case, only clipping for now
 
 2005-08-26 Gert Driesen <drieseng@users.sourceforge.net>
