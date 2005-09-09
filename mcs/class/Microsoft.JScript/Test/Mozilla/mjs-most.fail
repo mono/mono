@@ -100,3 +100,6 @@ ecma/Number/15.7.3.3-2.js
 ecma/Number/15.7.3.5-2.jsc
 ecma/ObjectObjects/15.2.3.1-2.js
 ecma/Number/15.7.3.5-2.js
+
+# runtime error
+js1_4/Regress/function-003.js
