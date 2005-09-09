@@ -6,9 +6,8 @@
 //	Stefan Görling (stefan@gorling.se)
 //	Jackson Harper (jackson@ximian.com)
 //
-// (C) 2002,2003,2004,2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2002,2003,2004,2005 Novell, Inc (http://www.novell.com)
 // (C) 2003 Stefan Görling (http://www.gorling.se)
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,13 +29,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Web;
 using System.Web.Caching;
 using System.Web.Util;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 
 namespace System.Web.SessionState
 {
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class SessionStateModule : IHttpModule
 	{
 		internal static readonly string CookieName = "ASPSESSION";
@@ -67,8 +68,9 @@ namespace System.Web.SessionState
 		ISessionHandler handler;
 		bool sessionForStaticFiles;
 		
-		static RandomNumberGenerator rng = new RNGCryptoServiceProvider ();
+		static RandomNumberGenerator rng = RandomNumberGenerator.Create ();
 		
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public SessionStateModule ()
 		{
 		}
@@ -110,6 +112,7 @@ namespace System.Web.SessionState
 			}
 		}
 
+		[EnvironmentPermission (SecurityAction.Assert, Read = "MONO_XSP_STATIC_SESSION")]
 		public void Init (HttpApplication app)
 		{
 			sessionForStaticFiles = (Environment.GetEnvironmentVariable ("MONO_XSP_STATIC_SESSION") != null);

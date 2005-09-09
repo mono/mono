@@ -1,3 +1,15 @@
+2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpSessionState.cs: Added LinkDemand for Minimal.
+	* IHttpSessionState.cs: Renamed IsCookieLess to IsCookieless.
+	* ISessionStateItemCollection.cs: Added ICollection and IEnumerable.
+	* SessionStateMode.cs: Added Custom (2.0).
+	* SessionStateModule.cs: Use RandomNumberGenerator.Create to create 
+	the RNG. Assert EnvironmentPermission to read MONO_XSP_STATIC_SESSION.
+	Added LinkDemand for Minimal.
+	* StateRuntime.cs: Added LinkDemand for Minimal, new ProcessRequest
+	override (2.0) and security attributes on methods.
+
 2005-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionStateModule.cs: raise the Start event for new sessions.

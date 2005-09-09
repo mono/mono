@@ -30,10 +30,8 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 using System.Collections.Specialized;
-using System.Web;
 
 namespace System.Web.SessionState {
 	public interface IHttpSessionState
@@ -52,7 +50,7 @@ namespace System.Web.SessionState {
 		int CodePage { get; set; }
 		HttpCookieMode CookieMode { get; }
 		int Count { get; }		
-		bool IsCookieLess { get; }
+		bool IsCookieless { get; }
 		bool IsNewSession { get; }
 		bool IsReadOnly { get; }
 		bool IsSynchronized { get; }

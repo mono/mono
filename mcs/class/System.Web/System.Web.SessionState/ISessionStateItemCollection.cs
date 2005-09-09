@@ -4,9 +4,7 @@
 // Authors:
 //	Sanjay Gupta (gsanjay@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
-//
-
+// Copyright (c) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,12 +28,12 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 
 namespace System.Web.SessionState {
-	public interface ISessionStateItemCollection
+
+	public interface ISessionStateItemCollection : ICollection, IEnumerable
 	{
 		///methods
 		void Clear ();

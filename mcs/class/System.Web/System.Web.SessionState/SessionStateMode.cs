@@ -5,8 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,9 +33,12 @@ public enum SessionStateMode
 	Off = 0,
 	InProc = 1,
 	StateServer = 2,
-	SQLServer = 3
+	SQLServer = 3,
+#if NET_2_0
+	Custom = 4,
+#endif
 #if TARGET_J2EE
-	,J2ee = 1024
+	J2ee = 1024
 #endif
 }
 
