@@ -65,8 +65,8 @@ ecma/Array/15.4.5.1-2.js
 ecma/Boolean/15.6.2.js
 # Need to implement for in loops first
 #ecma/Boolean/15.6.3.1-1.js
-# Needs delete
-#ecma/Boolean/15.6.3.1-2.js
+ecma/Boolean/15.6.3.1-2.js
+# invalid IL
 #ecma/Boolean/15.6.3.1-3.js
 # Invalid IL
 #ecma/Boolean/15.6.3.1-4.js
@@ -111,12 +111,11 @@ ecma/Date/15.9.3.2-2.js
 ecma/Date/15.9.3.2-3.js
 ecma/Date/15.9.3.2-4.js
 ecma/Date/15.9.3.2-5.js
-# These cause freezes
-#ecma/Date/15.9.3.8-1.js
-#ecma/Date/15.9.3.8-2.js
-#ecma/Date/15.9.3.8-3.js
-#ecma/Date/15.9.3.8-4.js
-#ecma/Date/15.9.3.8-5.js
+ecma/Date/15.9.3.8-1.js
+ecma/Date/15.9.3.8-2.js
+ecma/Date/15.9.3.8-3.js
+ecma/Date/15.9.3.8-4.js
+ecma/Date/15.9.3.8-5.js
 ecma/Date/15.9.4.2-1.js
 ecma/Date/15.9.4.2.js
 # for blocks seem to be disconnected from their parent scopes and this file needs that
@@ -150,7 +149,7 @@ ecma/Date/15.9.5.1.js
 #ecma/Date/15.9.5.12-5.js
 #ecma/Date/15.9.5.12-6.js
 #ecma/Date/15.9.5.12-7.js
-#ecma/Date/15.9.5.12-8.js
+ecma/Date/15.9.5.12-8.js
 #ecma/Date/15.9.5.13-1.js
 #ecma/Date/15.9.5.13-2.js
 #ecma/Date/15.9.5.13-3.js
@@ -158,27 +157,28 @@ ecma/Date/15.9.5.1.js
 #ecma/Date/15.9.5.13-5.js
 #ecma/Date/15.9.5.13-6.js
 #ecma/Date/15.9.5.13-7.js
-#ecma/Date/15.9.5.13-8.js
+ecma/Date/15.9.5.13-8.js
 #ecma/Date/15.9.5.14.js
-#ecma/Date/15.9.5.15.js
+ecma/Date/15.9.5.15.js
 #ecma/Date/15.9.5.16.js
-#ecma/Date/15.9.5.17.js
+ecma/Date/15.9.5.17.js
 #ecma/Date/15.9.5.18.js
-#ecma/Date/15.9.5.19.js
+ecma/Date/15.9.5.19.js
 ecma/Date/15.9.5.2-1.js
 # Needs new Function
 #ecma/Date/15.9.5.2-2-n.js
 ecma/Date/15.9.5.2.js
 # Invalid IL
 #ecma/Date/15.9.5.20.js
-#ecma/Date/15.9.5.21-1.js
-#ecma/Date/15.9.5.21-2.js
-#ecma/Date/15.9.5.21-3.js
-#ecma/Date/15.9.5.21-4.js
-#ecma/Date/15.9.5.21-5.js
-#ecma/Date/15.9.5.21-6.js
-#ecma/Date/15.9.5.21-7.js
-#ecma/Date/15.9.5.21-8.js
+ecma/Date/15.9.5.21-1.js
+ecma/Date/15.9.5.21-2.js
+ecma/Date/15.9.5.21-3.js
+ecma/Date/15.9.5.21-4.js
+ecma/Date/15.9.5.21-5.js
+ecma/Date/15.9.5.21-6.js
+ecma/Date/15.9.5.21-7.js
+ecma/Date/15.9.5.21-8.js
+# invalid IL
 #ecma/Date/15.9.5.22-1.js
 #ecma/Date/15.9.5.22-2.js
 #ecma/Date/15.9.5.22-3.js
@@ -186,7 +186,7 @@ ecma/Date/15.9.5.2.js
 #ecma/Date/15.9.5.22-5.js
 #ecma/Date/15.9.5.22-6.js
 #ecma/Date/15.9.5.22-7.js
-#ecma/Date/15.9.5.22-8.js
+ecma/Date/15.9.5.22-8.js
 #ecma/Date/15.9.5.23-1.js
 #ecma/Date/15.9.5.23-10.js
 #ecma/Date/15.9.5.23-11.js
@@ -287,8 +287,7 @@ ecma/ExecutionContexts/10.1.4-10.js
 #ecma/ExecutionContexts/10.2.2-1.js
 # Needs eval
 #ecma/ExecutionContexts/10.2.2-2.js
-# Endless loop
-#ecma/ExecutionContexts/10.2.3-1.js
+ecma/ExecutionContexts/10.2.3-1.js
 #ecma/ExecutionContexts/10.2.3-2.js
 # Needs eval
 #ecma/Expressions/11.1.1.js
@@ -350,7 +349,7 @@ ecma/Expressions/11.4.6.js
 #ecma/Expressions/11.4.9.js
 ecma/Expressions/11.5.1.js
 ecma/Expressions/11.5.2.js
-#ecma/Expressions/11.5.3.js
+ecma/Expressions/11.5.3.js
 # Needs new Function
 #ecma/Expressions/11.6.1-1.js
 #ecma/Expressions/11.6.1-2.js
@@ -613,6 +612,7 @@ ecma/ObjectObjects/15.2.3-1.js
 # Needs eval
 #ecma/ObjectObjects/15.2.3.1-1.js
 ecma/ObjectObjects/15.2.3.1-2.js
+# invalid IL
 #ecma/ObjectObjects/15.2.3.1-3.js
 #ecma/ObjectObjects/15.2.3.1-4.js
 ecma/ObjectObjects/15.2.3.js
@@ -964,7 +964,7 @@ ecma_2/instanceof/instanceof-002.js
 ecma_2/instanceof/instanceof-003.js
 # Invalid IL
 #ecma_2/instanceof/regress-7635.js
-#js1_1/regress/function-001.js
+js1_1/regress/function-001.js
 js1_2/Array/array_split_1.js
 js1_2/Array/general1.js
 js1_2/Array/general2.js
@@ -998,9 +998,8 @@ js1_2/function/regexparg-2-n.js
 # Needs new Function
 #js1_2/function/tostring-1.js
 #js1_2/function/tostring-2.js
-# Endless loop
-#js1_2/operator/equality.js
-#js1_2/operator/strictEquality.js
+js1_2/operator/equality.js
+js1_2/operator/strictEquality.js
 js1_2/regexp/RegExp_dollar_number.js
 # Invalid IL
 #js1_2/regexp/RegExp_input.js
