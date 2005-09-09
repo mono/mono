@@ -1,5 +1,8 @@
 2005-09-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c icall.c: Fix after mono_get_exception_type_load
+	signature change.
+
 	* assembly.c (mono_assembly_get_assemblyref): New helper function.
 	(mono_assembly_load_reference): Use the new helper.
 
