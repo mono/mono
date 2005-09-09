@@ -105,13 +105,7 @@ namespace System.Web.Mail {
 	    smtp.WriteData();
 		
 	    if( msg.Attachments.Count == 0 ) {
-#if NET_2_0
-		//The message might be multipart, if RelatedBodyParts are present
-		if (msg.RelatedBodyParts.Count != 0)
-			SendMultipartMail (msg);
-		else
-#endif		
-			SendSinglepartMail( msg );	    
+		SendSinglepartMail( msg );	    
 	    } else {
 		
 		SendMultipartMail( msg );
@@ -143,11 +137,6 @@ namespace System.Web.Mail {
 	    // set the Content-Type header to multipart/mixed
 	    string bodyContentType = msg.Header.ContentType;
 
-#if NET_2_0
-		if (msg.RelatedBodyParts.Count != 0)
-			msg.Header.ContentType = String.Format( "multipart/related;\r\n   boundary={0}" , boundary );
-		else
-#endif
 	    msg.Header.ContentType = 
 		String.Format( "multipart/mixed;\r\n   boundary={0}" , boundary );
 		
@@ -188,43 +177,6 @@ namespace System.Web.Mail {
 
 	    smtp.WriteBoundary( boundary );
 
-#if NET_2_0
-		for (int i = 0; i < msg.RelatedBodyParts.Count; i++) {
-			RelatedBodyPart rbp = (RelatedBodyPart) msg.RelatedBodyParts [i];
-			FileInfo file = new FileInfo (rbp.Path);
-			MailHeader header = new MailHeader ();
-			header.ContentLocation = rbp.Path;
-			header.ContentType = String.Format (MimeTypes.GetMimeType (file.Name) + "; name=\"{0}\"",file.Name);
-			//If content id and ContentLocation both are present
-			//in mime header of a mail, than RelatedBodyPart of mail
-			//doesnt show up in a machine other than from which mail
-			//was sent, and hence only one of them is inserted in 
-			//header. Need to check how the things go when another 
-			//body part refers the content with the content id specified
-			/*if (rbp.Name != null)
-				header.Data.Add ("Content-ID", "<"+rbp.Name+">");*/
-				
-			header.ContentTransferEncoding = "Base64";
-			header.ContentDisposition = String.Format( "inline; filename=\"{0}\"" , file.Name );
-			
-			smtp.WriteHeader (header);
-			FileStream rbpStream = new FileStream (file.FullName, FileMode.Open);
-			IAttachmentEncoder rbpEncoder = new Base64AttachmentEncoder ();
-			rbpEncoder.EncodeStream (rbpStream, smtp.Stream);
-			rbpStream.Close();
-			smtp.WriteLine( "" );
-			
-			if (i < (msg.RelatedBodyParts.Count - 1)) {
-				smtp.WriteBoundary (boundary);
-			} else {
-				if (msg.Attachments.Count == 0)
-			   		 smtp.WriteFinalBoundary (boundary);
-				else
-			    		smtp.WriteBoundary (boundary);
-					
-			}						
-		}
-#endif	    
 	    // now start to write the attachments
 	    
 	    for( int i=0; i< msg.Attachments.Count ; i++ ) {

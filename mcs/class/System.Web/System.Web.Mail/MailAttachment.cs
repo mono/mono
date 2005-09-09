@@ -4,8 +4,9 @@
 // Author:
 //    Lawrence Pit (loz@cable.a2000.nl)
 //    Per Arneng (pt99par@student.bth.se)
+//    Sebastien Pouliot  <sebastien@ximian.com>
 //
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,8 +28,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.IO;
+using System.Security;
+using System.Security.Permissions;
+
 namespace System.Web.Mail
 {
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_2_0
+	[Obsolete]
+#endif
 	public class MailAttachment
 	{
 		private string filename;
@@ -41,14 +52,17 @@ namespace System.Web.Mail
 		
 		public MailAttachment (string filename, MailEncoding encoding) 
 		{
+			if (SecurityManager.SecurityEnabled) {
+				new FileIOPermission (FileIOPermissionAccess.Read, filename).Demand ();
+			}
+
+			if (!File.Exists (filename)) {
+				string msg = Locale.GetText ("Cannot find file: '{0}'.");
+				throw new HttpException (String.Format (msg, filename));
+			}
+
 			this.filename = filename;
 			this.encoding = encoding;
-			try {
-				System.IO.File.OpenRead (filename).Close ();
-			} catch (Exception) {
-			    throw new System.Web.HttpException ("Cannot find file: '" + 
-								filename + "'." );
-			}			
 		}
 	    
 	        // Properties
@@ -61,7 +75,5 @@ namespace System.Web.Mail
 		{
 			get { return encoding; } 
 		}		
-	
 	}
-	
-} //namespace System.Web.Mail
+}

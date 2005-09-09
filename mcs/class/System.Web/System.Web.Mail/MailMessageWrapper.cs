@@ -247,11 +247,5 @@ namespace System.Web.Mail {
 			
 		}
 #endif
-
-#if NET_2_0
-		public IList RelatedBodyParts {
-			get { return message.RelatedBodyParts; }
-		}
-#endif
     }	 
 }

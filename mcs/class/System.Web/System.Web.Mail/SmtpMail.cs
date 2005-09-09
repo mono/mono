@@ -5,7 +5,7 @@
 //    Lawrence Pit (loz@cable.a2000.nl)
 //    Per Arneng (pt99par@student.bth.se) (SmtpMail.Send)
 //
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,17 +27,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.IO;
 using System.Reflection;
+using System.Security.Permissions;
 
 namespace System.Web.Mail
 {
-	/// <remarks>
-	/// </remarks>
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_2_0
+	[Obsolete]
+#endif
 	public class SmtpMail
 	{
 		private static string smtpServer = "localhost";
@@ -54,7 +58,9 @@ namespace System.Web.Mail
 			set { smtpServer = value; }
 		}
 		
-		
+		// Medium (not Minimal) here
+		// http://msdn.microsoft.com/library/en-us/dnpag2/html/paght000017.asp
+		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
 		public static void Send (MailMessage message) 
 		{
 		   		   		    
@@ -112,7 +118,5 @@ namespace System.Web.Mail
 			message.Body = messageText;
 			Send (message);
 		}
-	
 	}
-	
-} //namespace System.Web.Mail
+}

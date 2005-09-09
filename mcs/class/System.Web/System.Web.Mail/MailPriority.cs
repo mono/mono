@@ -4,7 +4,7 @@
 // Author:
 //    Lawrence Pit (loz@cable.a2000.nl)
 //
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,29 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Web.Mail 
-{
+namespace System.Web.Mail {
 
-	/// <summary>
-	/// </summary>
-#if NET_2_0
-        [Serializable]
-#endif
-	public enum MailPriority 
-	{
-
-		/// <summary>
-		/// </summary>
-		Normal = 0,
-		
-		/// <summary>
-		/// </summary>
-		Low = 1,
-
-		/// <summary>
-		/// </summary>
-		High = 2
-
+	public enum MailPriority {
+		Normal,
+		Low,
+		High
 	} 
-	
-} //namespace System.Web.Mail
+}

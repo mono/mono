@@ -1,3 +1,17 @@
+2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MailAttachment.cs: Added [Link|Inheritance]Demand for Minimal. Added
+	FileIOPermission for Read in the constructor. Added [Obsolete] in 2.0.
+	* MailEncoding.cs: Removed [Serializable] and added [Obsolete] in 2.0.
+	* MailFormat.cs: Removed [Serializable] and added [Obsolete] in 2.0.
+	* MailMessage.cs: Removed references to RelatedBodyParts (2.0). Added 
+	[Link|Inheritance]Demand for Minimal. Added [Obsolete] in 2.0.
+	* MailMessageWrapper.cs: Removed references to RelatedBodyParts (2.0).
+	* MailPriority.cs: Removed [Serializable] in 2.0. No [Obsolete] ?
+	* SmtpClient.cs: Removed references to RelatedBodyParts (2.0).
+	* SmtpMail.cs: Added [Link|Inheritance]Demand for Minimal. Added 
+	Demand for Medium on Send method.Added [Obsolete] in 2.0.
+
 2005-06-08 Ilya Kharmatsky <ilyak-at-mainsoft.com>
 
     * SmtpMail.cs: Added TARGET_JVM directive in Send method,
