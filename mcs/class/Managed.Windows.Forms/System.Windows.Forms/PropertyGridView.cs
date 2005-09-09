@@ -35,7 +35,7 @@ using System.Windows.Forms.Design;
 
 namespace System.Windows.Forms.PropertyGridInternal 
 {
-	public class PropertyGridView : System.Windows.Forms.ScrollableControl, IWindowsFormsEditorService
+	internal class PropertyGridView : System.Windows.Forms.ScrollableControl, IWindowsFormsEditorService
 	{
 
 		#region Private Members

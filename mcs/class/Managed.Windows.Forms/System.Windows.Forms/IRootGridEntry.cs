@@ -24,54 +24,17 @@
 //
 
 
-// NOT COMPLETE
+// COMPLETE
 
 using System;
-
-namespace System.Windows.Forms.PropertyGridInternal
+namespace System.Windows.Forms
 {
-	/// <summary>
-	/// Summary description for PropertiesTab.
-	/// </summary>
-	public class PropertiesTab : System.Windows.Forms.Design.PropertyTab
+	public interface IRootGridEntry
 	{
-		public PropertiesTab()
-		{
-		}
+		System.ComponentModel.AttributeCollection BrowsableAttributes { get; set; }
 
-		public override System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, Attribute[] attributes)
-		{
-			return base.GetProperties(null, component, attributes);
-		}
+		void ShowCategories ( bool showCategories );
 
-		public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object component, Attribute[] attributes)
-		{
-			return base.GetProperties (context, component, attributes);
-		}
-
-		public override System.ComponentModel.PropertyDescriptor GetDefaultProperty (object component)
-		{
-			return base.GetDefaultProperty(component);
-		}
-
-		public override string HelpKeyword
-		{
-			get
-			{
-				return base.HelpKeyword;
-			}
-		}
-
-
-		public override string TabName
-		{
-			get
-			{
-				return string.Empty;
-			}
-		}
-
-
-
+		void ResetBrowsableAttributes ();
 	}
 }

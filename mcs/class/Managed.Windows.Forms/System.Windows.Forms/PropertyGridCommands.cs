@@ -24,54 +24,24 @@
 //
 
 
-// NOT COMPLETE
+// COMPLETE
 
 using System;
+using System.ComponentModel.Design;
 
 namespace System.Windows.Forms.PropertyGridInternal
 {
-	/// <summary>
-	/// Summary description for PropertiesTab.
-	/// </summary>
-	public class PropertiesTab : System.Windows.Forms.Design.PropertyTab
+	public class PropertyGridCommands
 	{
-		public PropertiesTab()
+		public PropertyGridCommands()
 		{
 		}
 
-		public override System.ComponentModel.PropertyDescriptorCollection GetProperties(object component, Attribute[] attributes)
-		{
-			return base.GetProperties(null, component, attributes);
-		}
-
-		public override System.ComponentModel.PropertyDescriptorCollection GetProperties(System.ComponentModel.ITypeDescriptorContext context, object component, Attribute[] attributes)
-		{
-			return base.GetProperties (context, component, attributes);
-		}
-
-		public override System.ComponentModel.PropertyDescriptor GetDefaultProperty (object component)
-		{
-			return base.GetDefaultProperty(component);
-		}
-
-		public override string HelpKeyword
-		{
-			get
-			{
-				return base.HelpKeyword;
-			}
-		}
-
-
-		public override string TabName
-		{
-			get
-			{
-				return string.Empty;
-			}
-		}
-
-
-
+		public static readonly CommandID Commands;
+		public static readonly CommandID Description;
+		public static readonly CommandID Hide;
+		public static readonly CommandID Reset;
+		protected static readonly Guid wfcMenuCommand;
+		protected static readonly Guid wfcMenuGroup;
 	}
 }

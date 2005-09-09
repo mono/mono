@@ -1,7 +1,7 @@
 using System;
 
 namespace System.Windows.Forms.PropertyGridInternal {
-	public class PropertyGridTextBox : System.Windows.Forms.UserControl {
+	internal class PropertyGridTextBox : System.Windows.Forms.UserControl {
 		private TextBox textbox;
 		private Button dialog_button;
 		private Button dropdown_button;

@@ -1,3 +1,11 @@
+2005-09-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
+	* IRootGridEntry.cs: Added
+	* PropertyGridCommands.cs: Added
+	* PropertiesTab.cs: Added missing methods and property
+	* PropertyGridView.cs: Made class internal
+	* PropertyGridTextBox.cs: Made class internal
+
 2005-09-09  Alexander Olk  <alex.olk@googlemail.com>
 
 	* MimeIcon.cs: Try to check some other environment variables
