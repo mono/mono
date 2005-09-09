@@ -128,10 +128,18 @@ namespace System.Threading
 						if (aborted)
 							break;
 
-						wait.Reset ();
+						try {
+							wait.Reset ();
+						} catch (ObjectDisposedException) {
+							// FIXME: There is some race condition
+							//        here when the thread is being
+							//        aborted on exit.
+							return;
+						}
+
 						signaled = wait.WaitOne (period, false);
 
-						if (aborted)
+						if (aborted || disposed)
 							break;
 
 						if (!signaled) {

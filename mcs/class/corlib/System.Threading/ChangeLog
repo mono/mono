@@ -1,3 +1,9 @@
+2005-09-09  Martin Baulig  <martin@ximian.com>
+
+	* Timer.cs (Timer.Runner.Start): Silently catch
+	ObjectDisposedException and return; works around some race
+	condition on thread abort.	
+
 2005-08-19  Dick Porter  <dick@ximian.com>
 
 	* Thread.cs: Reserve 64 bits for the thread ID.
