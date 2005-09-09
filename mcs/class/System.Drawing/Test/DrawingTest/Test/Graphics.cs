@@ -94,6 +94,57 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
+		[Category("aaa")]
+		public void ClipTest_3() {
+			t.Graphics.TranslateTransform(3, 3);
+			t.Graphics.SetClip(new Rectangle(23, 24, 30, 40));
+
+			RectangleF cb = t.Graphics.VisibleClipBounds;
+			DrawingTest.AssertAlmostEqual(23, cb.X);
+			DrawingTest.AssertAlmostEqual(24, cb.Y);
+			DrawingTest.AssertAlmostEqual(30, cb.Width);
+			DrawingTest.AssertAlmostEqual(40, cb.Height);
+
+			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
+
+			cb = t.Graphics.VisibleClipBounds;
+			DrawingTest.AssertAlmostEqual(23, cb.X);
+			DrawingTest.AssertAlmostEqual(24, cb.Y);
+			DrawingTest.AssertAlmostEqual(30, cb.Width);
+			DrawingTest.AssertAlmostEqual(40, cb.Height);
+
+			t.Graphics.RotateTransform(128);
+
+			t.Graphics.TranslateTransform(14, 14);
+			t.Graphics.ExcludeClip(new Rectangle(0, 0, 4, 60));
+
+			
+			t.Graphics.RotateTransform(128);
+			
+			t.Graphics.PageUnit = GraphicsUnit.Pixel;
+			
+			t.Graphics.TranslateClip(5.2f, 3.1f);
+
+			t.Graphics.ResetTransform();
+			t.Graphics.PageUnit = GraphicsUnit.Pixel;
+
+			cb = t.Graphics.VisibleClipBounds;
+			DrawingTest.AssertAlmostEqual(28, cb.X);
+			DrawingTest.AssertAlmostEqual(22, cb.Y);
+			DrawingTest.AssertAlmostEqual(30, cb.Width);
+			DrawingTest.AssertAlmostEqual(40, cb.Height);
+			
+			t.Graphics.ScaleTransform(5, 7);
+			t.Graphics.IntersectClip(new Rectangle(7, 4, 20, 20));
+
+			cb = t.Graphics.VisibleClipBounds;
+			DrawingTest.AssertAlmostEqual(7, cb.X);
+			DrawingTest.AssertAlmostEqual(4f, cb.Y);
+			DrawingTest.AssertAlmostEqual(4.6f, cb.Width);
+			DrawingTest.AssertAlmostEqual(4.85714245f, cb.Height);
+		}
+
+		[Test]
 #if TARGET_JVM
 		[Category ("NotWorking")] // FIXME: Newly created region area is not the same.
 #endif
