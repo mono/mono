@@ -1,3 +1,8 @@
+2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListItemTest.cs: tests for ListItem.
+	* RadioButtonListTest.cs: more test for load/raise.
+
 2005-09-09  Chris Toshok  <toshok@ximian.com>
 
 	* StyleTest.cs (FontInfo_Empty): test to see if changes to

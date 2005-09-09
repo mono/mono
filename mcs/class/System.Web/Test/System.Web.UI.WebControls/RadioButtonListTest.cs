@@ -1,12 +1,13 @@
 //
 // Tests for System.Web.UI.WebControls.RadioButtonListTest.cs
 //
-// Author:
+// Authors:
 //	Jordi Mas i Hernandez (jordi@ximian.com)
-//
-
+//	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +32,7 @@
 using System.Web.UI.WebControls;
 using NUnit.Framework;
 using System;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Web;
@@ -134,7 +136,67 @@ namespace MonoTests.System.Web.UI.WebControls {
 			r.RepeatLayout = (RepeatLayout) 3;
 		}
 
+		bool event_called;
+		void OnSelected (object sender, EventArgs args)
+		{
+			event_called = true;
+		}
 
+		[Test]
+		public void LoadAndRaise1 ()
+		{
+			RadioButtonList rbl = new RadioButtonList ();
+			rbl.Items.Add (new ListItem ("Uno", "1"));
+			rbl.Items.Add (new ListItem ("Dos", "2"));
+			rbl.Items.Add (new ListItem ("Tres", "3"));
+			rbl.SelectedIndex = 2;
+			NameValueCollection nvc = new NameValueCollection ();
+			nvc ["XXX"] = "3";
+
+			IPostBackDataHandler handler = (IPostBackDataHandler) rbl;
+			Assert.AreEqual (true, handler.LoadPostData ("XXX", nvc), "#01");
+			rbl.SelectedIndexChanged += new EventHandler (OnSelected);
+			event_called = false;
+			handler.RaisePostDataChangedEvent ();
+			// Not called. Value is the same as the selected previously
+			Assert.AreEqual (false, event_called, "#02");
+			Assert.AreEqual ("3", rbl.SelectedValue, "#03");
+		}
+
+		[Test]
+		public void LoadAndRaise2 ()
+		{
+			RadioButtonList rbl = new RadioButtonList ();
+			rbl.Items.Add (new ListItem ("Uno", "1"));
+			rbl.Items.Add (new ListItem ("Dos", "2"));
+			rbl.Items.Add (new ListItem ("Tres", "3"));
+			rbl.SelectedIndex = 2;
+			NameValueCollection nvc = new NameValueCollection ();
+			nvc ["XXX"] = "2";
+
+			IPostBackDataHandler handler = (IPostBackDataHandler) rbl;
+			Assert.AreEqual (true, handler.LoadPostData ("XXX", nvc), "#01");
+			rbl.SelectedIndexChanged += new EventHandler (OnSelected);
+			event_called = false;
+			handler.RaisePostDataChangedEvent ();
+			Assert.AreEqual (true, event_called, "#02");
+			Assert.AreEqual ("2", rbl.SelectedValue, "#03");
+		}
+
+		[Test]
+		public void LoadAndRaise3 ()
+		{
+			RadioButtonList rbl = new RadioButtonList ();
+			rbl.Items.Add (new ListItem ("Uno", "1"));
+			rbl.Items.Add (new ListItem ("Dos", "2"));
+			rbl.Items.Add (new ListItem ("Tres", "3"));
+			rbl.SelectedIndex = 2;
+			NameValueCollection nvc = new NameValueCollection ();
+			nvc ["XXX"] = "blah";
+
+			IPostBackDataHandler handler = (IPostBackDataHandler) rbl;
+			Assert.AreEqual (false, handler.LoadPostData ("XXX", nvc), "#01");
+		}
 	}
-
 }
+
