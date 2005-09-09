@@ -400,7 +400,6 @@ namespace System.Windows.Forms
 				baseColorControl.Size = new Size( 212, 231 );
 				baseColorControl.TabIndex = 13;
 				// colorMatrixControl
-				//colorMatrixControl.BackColor = SystemColors.Control;
 				colorMatrixControl.Location = new Point( 227, 7 );
 				colorMatrixControl.Size = new Size( 179, 190 );
 				colorMatrixControl.TabIndex = 14;
@@ -1068,7 +1067,7 @@ namespace System.Windows.Forms
 				{
 					base.OnPaint( pe );
 					
-					pe.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( SystemColors.Control ), 0, 0, 26, 23 );
+					pe.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( BackColor ), 0, 0, 26, 23 );
 					
 					ControlPaint.DrawBorder3D( pe.Graphics, new Rectangle( 3, 3, 20, 18 ) );
 					
@@ -2044,7 +2043,7 @@ namespace System.Windows.Forms
 			
 			private void Draw( PaintEventArgs e )
 			{
-				e.Graphics.FillRectangle( new SolidBrush( SystemColors.Control ), new Rectangle( 0, 0, 16, 203 ) );
+				e.Graphics.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( BackColor ), new Rectangle( 0, 0, 16, 203 ) );
 				
 				Point[] trianglePoints = new Point[ 3 ]
 				{

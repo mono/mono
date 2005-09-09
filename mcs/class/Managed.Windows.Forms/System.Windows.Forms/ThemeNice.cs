@@ -47,10 +47,10 @@ namespace System.Windows.Forms
 		/* Default colors for Win32 classic theme */
 		uint [] theme_colors = {							/* AARRGGBB */
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_SCROLLBAR,			0xffc0c0c0,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BACKGROUND,			0xff008080,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BACKGROUND,			0xffefebe7,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_ACTIVECAPTION,		0xff000080,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTION,		0xff808080,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_MENU,			0xffc0c0c0,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_MENU,			0xffefebe7,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_WINDOW,			0xffffffff,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_WINDOWFRAME,			0xff000000,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_MENUTEXT,			0xff000000,
@@ -61,7 +61,7 @@ namespace System.Windows.Forms
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_APPWORKSPACE,		0xff808080,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHT,			0xff000080,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHTTEXT,		0xffffffff,
-			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNFACE,			0xffefebe7, //0xffe7e8ec, //0xffc0c0c0,
+			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNFACE,			0xffefebe7,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNSHADOW,			0xff808080,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_GRAYTEXT,			0xff808080,
 			(uint) XplatUIWin32.GetSysColorIndex.COLOR_BTNTEXT,			0xff000000,
@@ -153,6 +153,14 @@ namespace System.Windows.Forms
 			if ( c == DefaultControlForeColor )
 				return ResPool.GetSolidBrush( ColorButtonText );
 			return new SolidBrush( c );
+		}
+		
+		public override Color DefaultControlBackColor {
+			get { return NiceBackColor; }
+		}
+		
+		public virtual Color DefaultWindowBackColor {
+			get { return NiceBackColor; }			
 		}
 		#endregion	// Internal Methods
 		

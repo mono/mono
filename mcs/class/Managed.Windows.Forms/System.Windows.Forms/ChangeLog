@@ -1,4 +1,10 @@
 2005-09-09  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeNice.cs: Corrected background colors (e.g. menus)
+	* ColorDialog.cs: Use correct background colors for controls
+
+2005-09-09  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeNice.cs: Merged r49535 from ThemeWin32Classic
 
 2005-09-08  Peter Dennis Bartok  <pbartok@novell.com>
