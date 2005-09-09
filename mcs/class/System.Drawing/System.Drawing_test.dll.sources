@@ -5,6 +5,7 @@ System.Drawing/TestBrushes.cs
 System.Drawing/TestColor.cs
 System.Drawing/TestFont.cs
 System.Drawing/TestGraphics.cs
+System.Drawing/TestImage.cs
 System.Drawing/TestPens.cs
 System.Drawing/TestPoint.cs
 System.Drawing/TestPointConverter.cs
