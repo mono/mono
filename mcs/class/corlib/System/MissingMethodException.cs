@@ -71,7 +71,7 @@ namespace System
 				if (ClassName == null)
 					return base.Message;
 
-				String msg = Locale.GetText ("Method {0}.{1} not found.");
+				String msg = Locale.GetText ("Method not found: '{0}.{1}'.");
 				return String.Format (msg, ClassName, MemberName);
 			}
 		}

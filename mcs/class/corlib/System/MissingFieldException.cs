@@ -75,7 +75,7 @@ namespace System
 				if (ClassName == null)
 					return base.Message;
 
-				String msg = Locale.GetText ("Field {0}.{1} not found.");
+				String msg = Locale.GetText ("Field '{0}.{1}' not found.");
 				return String.Format (msg, ClassName, MemberName);
 			}
 		}

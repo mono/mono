@@ -41,8 +41,7 @@ namespace System
 		const int Result = unchecked ((int)0x80131522);
 		
 		// Fields
-		private string msg;
-		private string type;
+		private string className, assemblyName;
 
 		// Constructors
 		public TypeLoadException ()
@@ -63,34 +62,42 @@ namespace System
 			HResult = Result;
 		}
 
+		internal TypeLoadException (string className, string assemblyName) : this ()
+		{
+			this.className = className;
+			this.assemblyName = assemblyName;
+		}
+
 		protected TypeLoadException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
 			if (info == null)
 				throw new ArgumentNullException ("info");
 
-			type = info.GetString ("TypeLoadClassName");
+			className = info.GetString ("TypeLoadClassName");
+			assemblyName = info.GetString ("TypeLoadAssemblyName");
 		}
 
 		// Properties
 		public override string Message {
 			get {
-				if (type == null)
+				if (className != null) {
+					if ((assemblyName != null) && (assemblyName != String.Empty))
+						return String.Format ("Could not load type '{0}' from assembly '{1}'.", className, assemblyName);
+					else
+						return String.Format ("Could not load type '{0}'.", className);
+				}
+				else
 					return base.Message;
-
-				if (msg == null)
-					msg = "Cannot load type '" + type + "'";
-
-				return msg;
 			}
 		}
 
 		public string TypeName {
 			get { 
-				if (type == null)
-					return "";
-
-				return type;
+				if (className == null)
+					return String.Empty;
+				else
+					return className;
 			}
 		}
 
@@ -101,8 +108,8 @@ namespace System
 				throw new ArgumentNullException ("info");
 
 			base.GetObjectData (info, context);
-			info.AddValue ("TypeLoadClassName", type, typeof (string)); 
-			info.AddValue ("TypeLoadAssemblyName", "", typeof (string)); 
+			info.AddValue ("TypeLoadClassName", className, typeof (string)); 
+			info.AddValue ("TypeLoadAssemblyName", assemblyName, typeof (string)); 
 			info.AddValue ("TypeLoadMessageArg", "", typeof (string)); 
 			info.AddValue ("TypeLoadResourceID", 0, typeof (int)); 
 		}
