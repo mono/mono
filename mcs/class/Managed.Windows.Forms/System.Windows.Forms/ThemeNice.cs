@@ -159,7 +159,7 @@ namespace System.Windows.Forms
 			get { return NiceBackColor; }
 		}
 		
-		public virtual Color DefaultWindowBackColor {
+		public override Color DefaultWindowBackColor {
 			get { return NiceBackColor; }			
 		}
 		#endregion	// Internal Methods
