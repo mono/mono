@@ -2128,7 +2128,7 @@ namespace Mono.CSharp {
 				if (infered_types [i] == null)
 					return false;
 
-			method = method.MakeGenericMethod (infered_types);
+			method = ((MethodInfo)method).MakeGenericMethod (infered_types);
 			return true;
 		}
 
@@ -2199,7 +2199,7 @@ namespace Mono.CSharp {
 			if (!InferTypeArguments (param_types, arg_types, infered_types))
 				return false;
 
-			method = method.MakeGenericMethod (infered_types);
+			method = ((MethodInfo)method).MakeGenericMethod (infered_types);
 			return true;
 		}
 
@@ -2227,7 +2227,7 @@ namespace Mono.CSharp {
 			if (!InferTypeArguments (param_types, arg_types, infered_types))
 				return false;
 
-			method = method.MakeGenericMethod (infered_types);
+			method = ((MethodInfo)method).MakeGenericMethod (infered_types);
 			return true;
 		}
 
