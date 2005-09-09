@@ -1,3 +1,20 @@
+2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DefaultAuthenticationEventArgsCas.cs: New. CAS unit tests.
+	* DefaultAuthenticationModuleCas.cs: New. CAS unit tests.
+	* FileAuthorizationModuleCas.cs: New. CAS unit tests.
+	* FormsAuthenticationCas.cs: New. CAS unit tests.
+	* FormsAuthenticationEventArgsCas.cs: Added LinkDemand tests.
+	* FormsAuthenticationModuleCas.cs: New. CAS unit tests.
+	* FormsAuthenticationTicketCas.cs: New. CAS unit tests.
+	* FormsIdentityCas.cs: New. CAS unit tests.
+	* FormsIdentityTest.cs: New. Unit tests for FormsIdentity.
+	* PassportAuthenticationEventArgsCas.cs: Added LinkDemand tests.
+	* PassportAuthenticationModuleCas.cs: New. CAS unit tests.
+	* PassportIdentityCas.cs: New. CAS unit tests.
+	* WindowsAuthenticationEventArgsCas.cs: Added LinkDemand tests.
+	* UrlAuthorizationModuleCas.cs: New. CAS unit tests.
+
 2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FormsAuthenticationEventArgsCas.cs: New. CAS unit tests.

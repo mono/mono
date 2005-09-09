@@ -1,6 +1,5 @@
 //
-// PassportAuthenticationEventArgsCas.cs 
-//	- CAS unit tests for System.Web.Security.PassportAuthenticationEventArgs
+// FormsIdentityCas.cs - CAS unit tests for System.Web.Security.FormsIdentity
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -33,7 +32,6 @@ using System;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
-using System.Security.Principal;
 using System.Web;
 using System.Web.Security;
 
@@ -41,59 +39,39 @@ namespace MonoCasTests.System.Web.Security {
 
 	[TestFixture]
 	[Category ("CAS")]
-	public class PassportAuthenticationEventArgsCas : AspNetHostingMinimal {
+	public class FormsIdentityCas : AspNetHostingMinimal {
 
-		private HttpContext context;
-		private PassportAuthenticationEventArgs paea;
+		private FormsAuthenticationTicket ticket;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
-			context = new HttpContext (null);
-			paea = new PassportAuthenticationEventArgs (null, context);
+			// other (simpler) ctors fails with NRE under 1.x
+			ticket = new FormsAuthenticationTicket (3, "mine", DateTime.MinValue, DateTime.Now.AddSeconds (-1), false, "data", "path");
 		}
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void All_Get_Deny_Unrestricted ()
+		public void Identity ()
 		{
-			Assert.IsNotNull (paea.Context, "Context");
-			Assert.IsNull (paea.Identity, "Identity");
-			Assert.IsNull (paea.User, "User");
-		}
-
-		[Test]
-		[SecurityPermission (SecurityAction.Deny, ControlPrincipal = true)]
-		[ExpectedException (typeof (SecurityException))]
-		public void User_Set_Deny_ControlPrincipal ()
-		{
-			paea.User = new GenericPrincipal (new GenericIdentity ("me"), null);
-		}
-
-		[Test]
-		[SecurityPermission (SecurityAction.PermitOnly, ControlPrincipal = true)]
-		public void User_Set_PermitOnly_ControlPrincipal ()
-		{
-			Assert.IsNull (paea.Context.User, "Context.User-before");
-			Assert.IsNull (paea.Identity, "Identity-before");
-			Assert.IsNull (paea.User, "User-before");
-			paea.User = new GenericPrincipal (new GenericIdentity ("me"), null);
-			Assert.IsNull (paea.Context.User, "Context.User-after");
-			Assert.IsNull (paea.Identity, "Identity-after");
-			Assert.IsNotNull (paea.User, "User-after");
+			FormsIdentity identity = new FormsIdentity (ticket);
+			Assert.AreEqual ("Forms", identity.AuthenticationType, "AuthenticationType");
+			Assert.IsTrue (identity.IsAuthenticated, "IsAuthenticated");
+			Assert.AreEqual ("mine", identity.Name, "Name");
+			Assert.IsTrue (Object.ReferenceEquals (ticket, identity.Ticket), "Ticket");
 		}
 
 		// LinkDemand
 
 		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
 		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[2] { typeof (PassportIdentity), typeof (HttpContext) });
-			Assert.IsNotNull (ci, ".ctor(PassportIdentity,HttpContext)");
-			return ci.Invoke (new object[2] { null, context });
+			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (FormsAuthenticationTicket) });
+			Assert.IsNotNull (ci, ".ctor(FormsAuthenticationTicket)");
+			return ci.Invoke (new object[1] { ticket });
 		}
 
 		public override Type Type {
-			get { return typeof (PassportAuthenticationEventArgs); }
+			get { return typeof (FormsIdentity); }
 		}
 	}
 }

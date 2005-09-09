@@ -1,6 +1,6 @@
 //
-// FormsAuthenticationEventArgsCas.cs 
-//	- CAS unit tests for System.Web.Security.FormsAuthenticationEventArgs
+// PassportIdentityCas.cs 
+//	- CAS unit tests for System.Web.Security.PassportIdentity
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -33,7 +33,6 @@ using System;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
-using System.Security.Principal;
 using System.Web;
 using System.Web.Security;
 
@@ -41,56 +40,48 @@ namespace MonoCasTests.System.Web.Security {
 
 	[TestFixture]
 	[Category ("CAS")]
-	public class FormsAuthenticationEventArgsCas : AspNetHostingMinimal {
-
-		private HttpContext context;
-		private FormsAuthenticationEventArgs faea;
-
-		[TestFixtureSetUp]
-		public void FixtureSetUp ()
-		{
-			context = new HttpContext (null);
-			faea = new FormsAuthenticationEventArgs (context);
-		}
+	public class PassportIdentityCas : AspNetHostingMinimal {
 
 		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void All_Get_Deny_Unrestricted ()
-		{
-			Assert.IsNotNull (faea.Context, "Context");
-			Assert.IsNull (faea.User, "User");
-		}
-
-		[Test]
-		[SecurityPermission (SecurityAction.Deny, ControlPrincipal = true)]
+		[SecurityPermission (SecurityAction.Deny, Unrestricted = true)]
 		[ExpectedException (typeof (SecurityException))]
-		public void User_Set_Deny_ControlPrincipal ()
+		public void Constructor_Deny_Unmanaged ()
 		{
-			faea.User = new GenericPrincipal (new GenericIdentity ("me"), null);
+			new PassportIdentity ();
 		}
 
 		[Test]
-		[SecurityPermission (SecurityAction.PermitOnly, ControlPrincipal = true)]
-		public void User_Set_PermitOnly_ControlPrincipal ()
+		[SecurityPermission (SecurityAction.PermitOnly, Unrestricted = true)]
+		public void Constructor_PermitOnly_Unmanaged ()
 		{
-			Assert.IsNull (faea.Context.User, "Context.User-before");
-			Assert.IsNull (faea.User, "User-before");
-			faea.User = new GenericPrincipal (new GenericIdentity ("me"), null);
-			Assert.IsNull (faea.Context.User, "Context.User-after");
-			Assert.IsNotNull (faea.User, "User-after");
+			try {
+				new PassportIdentity ();
+			}
+			catch (NullReferenceException) {
+				Assert.Ignore ("fails with NullReferenceException on MS");
+			}
 		}
 
 		// LinkDemand
 
+		[SecurityPermission (SecurityAction.Assert, Unrestricted = true)]
 		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
 		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (HttpContext) });
-			Assert.IsNotNull (ci, ".ctor(HttpContext)");
-			return ci.Invoke (new object[1] { context });
+			// the ctor NRE makes it more complex
+			try {
+				return base.CreateControl (action, level);
+			}
+			catch (TargetInvocationException tie) {
+				// we really checking for security exceptions that occurs before a NRE can occurs
+				if (tie.InnerException is NullReferenceException)
+					return String.Empty;
+				else
+					return null;
+			}
 		}
 
 		public override Type Type {
-			get { return typeof (DefaultAuthenticationEventArgs); }
+			get { return typeof (PassportIdentity); }
 		}
 	}
 }

@@ -1,6 +1,6 @@
 //
-// PassportAuthenticationEventArgsCas.cs 
-//	- CAS unit tests for System.Web.Security.PassportAuthenticationEventArgs
+// FileAuthorizationModuleCas.cs 
+//	- CAS unit tests for System.Web.Security.FileAuthorizationModule
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -33,7 +33,6 @@ using System;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
-using System.Security.Principal;
 using System.Web;
 using System.Web.Security;
 
@@ -41,59 +40,57 @@ namespace MonoCasTests.System.Web.Security {
 
 	[TestFixture]
 	[Category ("CAS")]
-	public class PassportAuthenticationEventArgsCas : AspNetHostingMinimal {
+	public class FileAuthorizationModuleCas : AspNetHostingMinimal {
 
-		private HttpContext context;
-		private PassportAuthenticationEventArgs paea;
+		private HttpApplication app;
+		private FileAuthorizationModule module;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
-			context = new HttpContext (null);
-			paea = new PassportAuthenticationEventArgs (null, context);
+			app = new HttpApplication ();
+			module = new FileAuthorizationModule ();
+		}
+
+		[Test]
+		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
+		[ExpectedException (typeof (SecurityException))]
+		public void Constructor_Deny_UnmanagedCode ()
+		{
+			new FileAuthorizationModule ();
+		}
+
+		[Test]
+		[SecurityPermission (SecurityAction.PermitOnly, UnmanagedCode = true)]
+		public void Constructor_PermitOnly_UnmanagedCode ()
+		{
+			new FileAuthorizationModule ();
 		}
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void All_Get_Deny_Unrestricted ()
+		public void Module ()
 		{
-			Assert.IsNotNull (paea.Context, "Context");
-			Assert.IsNull (paea.Identity, "Identity");
-			Assert.IsNull (paea.User, "User");
-		}
-
-		[Test]
-		[SecurityPermission (SecurityAction.Deny, ControlPrincipal = true)]
-		[ExpectedException (typeof (SecurityException))]
-		public void User_Set_Deny_ControlPrincipal ()
-		{
-			paea.User = new GenericPrincipal (new GenericIdentity ("me"), null);
-		}
-
-		[Test]
-		[SecurityPermission (SecurityAction.PermitOnly, ControlPrincipal = true)]
-		public void User_Set_PermitOnly_ControlPrincipal ()
-		{
-			Assert.IsNull (paea.Context.User, "Context.User-before");
-			Assert.IsNull (paea.Identity, "Identity-before");
-			Assert.IsNull (paea.User, "User-before");
-			paea.User = new GenericPrincipal (new GenericIdentity ("me"), null);
-			Assert.IsNull (paea.Context.User, "Context.User-after");
-			Assert.IsNull (paea.Identity, "Identity-after");
-			Assert.IsNotNull (paea.User, "User-after");
+			// only the ctor requires UnmanagedCode
+			try {
+				module.Init (app);
+			}
+			catch (NotImplementedException) {
+				// mono
+			}
+			module.Dispose (); // but doesn't implement IDisposable
 		}
 
 		// LinkDemand
 
+		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
 		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
 		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[2] { typeof (PassportIdentity), typeof (HttpContext) });
-			Assert.IsNotNull (ci, ".ctor(PassportIdentity,HttpContext)");
-			return ci.Invoke (new object[2] { null, context });
+			return base.CreateControl (action, level);
 		}
 
 		public override Type Type {
-			get { return typeof (PassportAuthenticationEventArgs); }
+			get { return typeof (FileAuthorizationModule); }
 		}
 	}
 }

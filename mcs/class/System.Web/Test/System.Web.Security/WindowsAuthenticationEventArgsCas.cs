@@ -37,25 +37,20 @@ using System.Security.Principal;
 using System.Web;
 using System.Web.Security;
 
-namespace MonoCasTests.System.Web {
+namespace MonoCasTests.System.Web.Security {
 
 	[TestFixture]
 	[Category ("CAS")]
-	public class WindowsAuthenticationEventArgsCas {
+	public class WindowsAuthenticationEventArgsCas : AspNetHostingMinimal {
 
+		private HttpContext context;
 		private WindowsAuthenticationEventArgs waea;
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp ()
 		{
-			waea = new WindowsAuthenticationEventArgs (null, new HttpContext (null));
-		}
-
-		[SetUp]
-		public void SetUp ()
-		{
-			if (!SecurityManager.SecurityEnabled)
-				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+			context = new HttpContext (null);
+			waea = new WindowsAuthenticationEventArgs (null, context);
 		}
 
 		[Test]
@@ -86,6 +81,19 @@ namespace MonoCasTests.System.Web {
 			Assert.IsNull (waea.Context.User, "Context.User-after");
 			Assert.IsNull (waea.Identity, "Identity-after");
 			Assert.IsNotNull (waea.User, "User-after");
+		}
+
+		// LinkDemand
+
+		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
+		{
+			ConstructorInfo ci = this.Type.GetConstructor (new Type[2] { typeof (WindowsIdentity), typeof (HttpContext) });
+			Assert.IsNotNull (ci, ".ctor(WindowsIdentity,HttpContext)");
+			return ci.Invoke (new object[2] { null, context });
+		}
+
+		public override Type Type {
+			get { return typeof (WindowsAuthenticationEventArgs); }
 		}
 	}
 }
