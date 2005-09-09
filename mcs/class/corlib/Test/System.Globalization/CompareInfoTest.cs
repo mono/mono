@@ -874,6 +874,10 @@ public class CompareInfoTest : Assertion
 		// extender in source
 		AssertIsSuffix ("#14", false, "\u30D1\u30FC", "\u30D1\u30A2");
 		AssertIsSuffix ("#15", true, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
+		// optimization sanity check
+		AssertIsSuffix ("#16", true,
+			"/configuration/system.runtime.remoting",
+			"system.runtime.remoting");
 	}
 
 	[Test]

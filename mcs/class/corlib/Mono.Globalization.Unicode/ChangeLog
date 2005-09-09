@@ -1,3 +1,9 @@
+2005-09-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : IsSuffix() optimization logic was buggy, so just
+	  use pretty simple way with LastIndexOf() (no significant perf.
+	  problem).
+
 2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* README, Collation-notes.txt, CollationDataStructures.txt :

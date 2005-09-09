@@ -1136,6 +1136,9 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
 		{
+			int last = LastIndexOf (s, target, start, length, opt);
+			return last >= 0 && Compare (s, last, s.Length - last, target, 0, target.Length, opt) == 0;
+/*
 			// quick check : simple codepoint comparison
 			if (s.Length >= target.Length) {
 				int si = start;
@@ -1151,6 +1154,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			byte [] sk1 = new byte [4];
 			byte [] sk2 = new byte [4];
 			return IsSuffix (opt, s, target, start, length, ref prev, sk1, sk2);
+*/
 		}
 
 		bool IsSuffix (COpt opt, string s, string t, int start, int length, ref PreviousInfo prev, byte [] sk1, byte [] sk2)
