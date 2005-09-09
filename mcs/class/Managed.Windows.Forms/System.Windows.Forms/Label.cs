@@ -96,6 +96,7 @@ namespace System.Windows.Forms
 			image_list = null;
 			image_align = ContentAlignment.MiddleCenter;
 			SetUseMnemonic (UseMnemonic);
+			flat_style = FlatStyle.Standard;
 
 			BackColor = ThemeEngine.Current.ColorButtonFace;
 			ForeColor = ThemeEngine.Current.ColorWindowText;
