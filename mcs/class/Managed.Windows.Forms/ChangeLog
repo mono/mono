@@ -1,5 +1,9 @@
 2005-09-09  Hisham Mardam Bey  <hisham.mardambey@gmail.com>
 
+        * Test/System.Windows.Forms/LabelTest.cs : More tests.	
+
+2005-09-09  Hisham Mardam Bey  <hisham.mardambey@gmail.com>
+
         * Test/System.Windows.Forms/LabelTest.cs : new Label tests (incomplete)
         * System.Windows.Forms_test.dll.sources : add new tests
         * System.Windows.Forms/Label.cs : give FlatStyle a default value

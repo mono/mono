@@ -54,7 +54,7 @@ namespace MonoTests.System.Windows.Forms
 			
 			
 			// F
-			// Assert.AreEqual (FlatStyle.Standard, l.FlatStyle, "F1");
+			Assert.AreEqual (FlatStyle.Standard, l.FlatStyle, "F1");
 			l.FlatStyle = FlatStyle.Flat;
 			Assert.AreEqual (FlatStyle.Flat, l.FlatStyle, "F1");
 			l.FlatStyle = FlatStyle.Popup;
@@ -84,15 +84,24 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (ContentAlignment.BottomCenter, l.ImageAlign, "I9");
 			l.ImageAlign = ContentAlignment.BottomRight;
 			Assert.AreEqual (ContentAlignment.BottomRight, l.ImageAlign, "I10");
-			
 			Assert.AreEqual (-1, l.ImageIndex, "I11");
 			Assert.AreEqual (null, l.ImageList, "I12");
-			
 			Assert.AreEqual (null, l.Image, "I13");
 			l.Image = Image.FromFile ("a.png");
 			Assert.IsNotNull (l.Image, "I14");
 			bmp = (Bitmap)l.Image;
 			Assert.IsNotNull (bmp.GetPixel (0, 0), "I15");
+			
+			
+			ImageList il = new ImageList ();
+			il.ColorDepth = ColorDepth.Depth32Bit;
+			il.ImageSize = new Size (15, 15);
+			il.Images.Add (Image.FromFile ("a.png"));
+			l.ImageList = il;
+			l.ImageIndex = 0;
+			
+			Assert.AreEqual (0, l.ImageIndex, "I16");
+			Assert.IsNotNull (l.ImageList, "I17");
 			
 			// PreferredHeight
 			// PregerredWidth
@@ -103,11 +112,21 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (ContentAlignment.TopLeft, l.TextAlign, "T2");
 			
 			// U
-			Assert.AreEqual (true, l.UseMnemonic);
-			
-			
+			Assert.AreEqual (true, l.UseMnemonic, "U1");
+			l.UseMnemonic = false;
+			Assert.AreEqual (false, l.UseMnemonic, "U2");
 		}
 		
+		[Test]
+		public void PubMethodTest ()
+		{
+			Label l = new Label ();
+			
+			l.Text = "My Label";
+			
+			Assert.AreEqual ("System.Windows.Forms.LabelText: My Label", l.ToString (), "T1");
+			  
+		}
 	}
 }
 	   
