@@ -58,10 +58,15 @@ namespace System.Web.UI.HtmlControls {
 #endif		
 		bool CausesValidation {
 			get {
-				return ViewState.GetBool ("CausesValidation", true);
+				string flag = Attributes["CausesValidation"];
+
+				if (flag == null)
+					return true;
+
+				return Boolean.Parse (flag);
 			}
 			set {
-				ViewState ["CausesValidation"] = value;
+				Attributes ["CausesValidation"] = value.ToString();
 			}
 		}
 
@@ -70,10 +75,18 @@ namespace System.Web.UI.HtmlControls {
 		public string ValidationGroup
 		{
 			get {
-				return ViewState.GetString ("ValidationGroup", "");
+				string group = Attributes["ValidationGroup"];
+
+				if (group == null)
+					return "";
+
+				return group;
 			}
 			set {
-				ViewState ["ValidationGroup"] = value;
+				if (value == null)
+					Attributes.Remove ("ValidationGroup");
+				else
+					Attributes["ValidationGroup"] = value;
 			}
 		}
 #endif
@@ -132,6 +145,14 @@ namespace System.Web.UI.HtmlControls {
 				writer.WriteAttribute ("language", "javascript");
 			}
 
+			Attributes.Remove ("CausesValidation");
+#if NET_2_0
+			// LAMESPEC: MS doesn't actually remove this
+			//attribute.  it shows up in the rendered
+			//output.
+
+			// Attributes.Remove("ValidationGroup");
+#endif
 			base.RenderAttributes (writer);
 		}
 
