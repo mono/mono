@@ -1,3 +1,7 @@
+2005-09-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Handle type loading errors gracefully during compilation and
+	throw the appropriate exception.
 
 Fri Sep 9 09:49:14 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
