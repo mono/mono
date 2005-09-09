@@ -1,5 +1,20 @@
 2005-09-08  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* mjs-most.tests: Add ecma/String/15.5.3.1-3.js,
+	ecma/String/15.5.4.4-1.js, ecma/String/15.5.4.5-1.js,
+	ecma/String/15.5.4.5-4.js, ecma/String/15.5.4.5-5.js,
+	ecma/String/15.5.4.5-5.js, ecma/String/15.5.4.8-2.js,
+	ecma/Types/8.4.js, ecma_2/RegExp/hex-001.js,
+	ecma_2/RegExp/multiline-001.js, ecma_2/RegExp/regress-001.js,
+	ecma_2/Statements/dowhile-001.js,
+	ecma_2/Statements/dowhile-005.js, ecma_2/Statements/label-001.js,
+	ecma_2/String/match-001.js, ecma_2/String/match-002.js,
+	ecma_2/String/match-003.js, ecma_2/String/match-004.js,
+	ecma_2/String/split-001.js, ecma_2/String/split-003.js,
+	js1_2/Array/general2.js, js1_2/regexp/control_characters.js,
+	js1_2/statements/break.js, js1_3/inherit/proto_2.js,
+	js1_3/inherit/proto_5.js, js1_4/Regress/function-003.js.
+
 	* mjs-most.tests: Bug fixes let us run ecma/Array/15.4.4.2.js and
 	ecma/Array/15.4.4.5-3.js now.
 

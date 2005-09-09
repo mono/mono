@@ -536,7 +536,7 @@ ecma/Math/15.8-2-n.js
 #ecma/Math/15.8.2.11.js
 #ecma/Math/15.8.2.12.js
 #ecma/Math/15.8.2.13.js
-# Invalid IL
+# SemanticAnalyser:NeedsToBoolean throw NotImplementedException
 #ecma/Math/15.8.2.14.js
 # NotImplementedException from Binary:emit_access
 #ecma/Math/15.8.2.15.js
@@ -641,7 +641,7 @@ ecma/Statements/12.5-2.js
 #ecma/Statements/12.6.2-4.js
 #ecma/Statements/12.6.2-5.js
 #ecma/Statements/12.6.2-6.js
-# Invalid IL
+# endless runtime loop
 #ecma/Statements/12.6.2-7.js
 #ecma/Statements/12.6.2-8.js
 # Needs eval
@@ -676,7 +676,8 @@ ecma/String/15.5.2.js
 #ecma/String/15.5.3.1-1.js
 # Invalid IL
 #ecma/String/15.5.3.1-2.js
-#ecma/String/15.5.3.1-3.js
+ecma/String/15.5.3.1-3.js
+# invalid IL
 #ecma/String/15.5.3.1-4.js
 # NotImplementedException from Binary:emit_access
 #ecma/String/15.5.3.2-1.js
@@ -711,30 +712,30 @@ ecma/String/15.5.4.3-1.js
 ecma/String/15.5.4.3-2.js
 # Needs eval
 #ecma/String/15.5.4.3-3-n.js
-# Invalid IL
-#ecma/String/15.5.4.4-1.js
+ecma/String/15.5.4.4-1.js
 # Needs new Function
 #ecma/String/15.5.4.4-2.js
 #ecma/String/15.5.4.4-3.js
 #ecma/String/15.5.4.4-4.js
-# Invalid IL
-#ecma/String/15.5.4.5-1.js
+ecma/String/15.5.4.5-1.js
 # Needs new Function
 #ecma/String/15.5.4.5-2.js
 #ecma/String/15.5.4.5-3.js
-# Invalid IL
-#ecma/String/15.5.4.5-4.js
-#ecma/String/15.5.4.5-5.js
+ecma/String/15.5.4.5-4.js
+ecma/String/15.5.4.5-5.js
+# Convert:ToNumber throws InvalidCastException
 #ecma/String/15.5.4.5-6.js
-#ecma/String/15.5.4.6-1.js
+ecma/String/15.5.4.6-1.js
+# error JS5040: 'f' it's read only
 #ecma/String/15.5.4.6-2.js
+# invalid IL
 #ecma/String/15.5.4.7-1.js
 # Needs eval
 #ecma/String/15.5.4.7-2.js
 ecma/String/15.5.4.7-3.js
 # Invalid IL
 #ecma/String/15.5.4.8-1.js
-#ecma/String/15.5.4.8-2.js
+ecma/String/15.5.4.8-2.js
 # Needs for in
 #ecma/String/15.5.4.8-3.js
 # Invalid IL
@@ -763,8 +764,7 @@ ecma/TypeConversion/9.8.1.js
 # Needs new Function
 #ecma/TypeConversion/9.9-1.js
 ecma/Types/8.1.js
-# Invalid IL
-#ecma/Types/8.4.js
+ecma/Types/8.4.js
 # Needs new Function
 #ecma/Types/8.6.2.1-1.js
 ecma_2/Exceptions/boolean-001.js
@@ -897,29 +897,27 @@ ecma_2/RegExp/constructor-001.js
 ecma_2/RegExp/exec-001.js
 ecma_2/RegExp/exec-002.js
 ecma_2/RegExp/function-001.js
-# Invalid IL
-#ecma_2/RegExp/hex-001.js
-#ecma_2/RegExp/multiline-001.js
+ecma_2/RegExp/hex-001.js
+ecma_2/RegExp/multiline-001.js
 ecma_2/RegExp/octal-001.js
 ecma_2/RegExp/octal-002.js
-# Invalid IL
+# Convert:ToObject throws JScriptException
 #ecma_2/RegExp/octal-003.js
 ecma_2/RegExp/properties-001.js
 ecma_2/RegExp/properties-002.js
 # Needs for in
 #ecma_2/RegExp/regexp-enumerate-001.js
-# Invalid IL
-#ecma_2/RegExp/regress-001.js
+ecma_2/RegExp/regress-001.js
+# RegExpObject:Initialize throws JScriptException
 #ecma_2/RegExp/unicode-001.js
-#ecma_2/Statements/dowhile-001.js
+ecma_2/Statements/dowhile-001.js
 # Endless loop
 #ecma_2/Statements/dowhile-002.js
 # Invalid IL
 #ecma_2/Statements/dowhile-003.js
 # Endless loop
 #ecma_2/Statements/dowhile-004.js
-# Invalid IL
-#ecma_2/Statements/dowhile-005.js
+ecma_2/Statements/dowhile-005.js
 ecma_2/Statements/dowhile-006.js
 ecma_2/Statements/dowhile-007.js
 # Needs for in
@@ -927,7 +925,7 @@ ecma_2/Statements/dowhile-007.js
 #ecma_2/Statements/forin-002.js
 # Invalid IL
 #ecma_2/Statements/if-001.js
-#ecma_2/Statements/label-001.js
+ecma_2/Statements/label-001.js
 ecma_2/Statements/label-002.js
 ecma_2/Statements/switch-001.js
 ecma_2/Statements/switch-002.js
@@ -951,15 +949,15 @@ ecma_2/Statements/while-002.js
 ecma_2/Statements/while-003.js
 # Invalid IL
 #ecma_2/Statements/while-004.js
-#ecma_2/String/match-001.js
-#ecma_2/String/match-002.js
-#ecma_2/String/match-003.js
-#ecma_2/String/match-004.js
+ecma_2/String/match-001.js
+ecma_2/String/match-002.js
+ecma_2/String/match-003.js
+ecma_2/String/match-004.js
 ecma_2/String/replace-001.js
+ecma_2/String/split-001.js
 # Invalid IL
-#ecma_2/String/split-001.js
 #ecma_2/String/split-002.js
-#ecma_2/String/split-003.js
+ecma_2/String/split-003.js
 # Invalid IL
 #ecma_2/instanceof/instanceof-001.js
 ecma_2/instanceof/instanceof-002.js
@@ -969,13 +967,13 @@ ecma_2/instanceof/instanceof-003.js
 #js1_1/regress/function-001.js
 js1_2/Array/array_split_1.js
 js1_2/Array/general1.js
+js1_2/Array/general2.js
 # Invalid IL
-#js1_2/Array/general2.js
 #js1_2/Array/slice.js
 # NullReferenceException from Binary:emit_access
 #js1_2/Array/splice1.js
 #js1_2/Array/splice2.js
-# Invalid IL
+# LateBinding:CallValue throws NullReferenceException
 #js1_2/Array/tostring_1.js
 js1_2/Array/tostring_2.js
 # Invalid IL
@@ -1020,7 +1018,7 @@ js1_2/regexp/RegExp_multiline_as_array.js
 js1_2/regexp/RegExp_object.js
 js1_2/regexp/RegExp_rightContext.js
 js1_2/regexp/RegExp_rightContext_as_array.js
-# Invalid IL
+# LateBinding:CallValue throws InvalidCastException
 #js1_2/regexp/alphanumeric.js
 js1_2/regexp/asterisk.js
 js1_2/regexp/backslash.js
@@ -1029,8 +1027,8 @@ js1_2/regexp/backspace.js
 #js1_2/regexp/beginLine.js
 js1_2/regexp/character_class.js
 js1_2/regexp/compile.js
-# Invalid IL
-#js1_2/regexp/control_characters.js
+js1_2/regexp/control_characters.js
+# LateBinding:CallValue throws InvalidCastException
 #js1_2/regexp/digit.js
 js1_2/regexp/dot.js
 # Invalid IL
@@ -1058,13 +1056,13 @@ js1_2/regexp/string_split.js
 js1_2/regexp/test.js
 js1_2/regexp/toString.js
 js1_2/regexp/vertical_bar.js
-# Invalid IL
+# LateBinding:CallValue  throws InvalidCastException
 #js1_2/regexp/whitespace.js
 #js1_2/regexp/word_boundary.js
 # Need for in
 #js1_2/regress/regress-7703.js
-# Invalid IL
-#js1_2/statements/break.js
+js1_2/statements/break.js
+# infinite loop caused by bad generated IL.
 #js1_2/statements/continue.js
 js1_2/statements/do_while.js
 js1_2/statements/switch.js
@@ -1087,12 +1085,10 @@ js1_3/inherit/proto_1.js
 # Invalid IL
 #js1_3/inherit/proto_11.js
 #js1_3/inherit/proto_12.js
-# Endless loop
-#js1_3/inherit/proto_2.js
+js1_3/inherit/proto_2.js
 js1_3/inherit/proto_3.js
 js1_3/inherit/proto_4.js
-# Endless loop
-#js1_3/inherit/proto_5.js
+js1_3/inherit/proto_5.js
 js1_3/inherit/proto_6.js
 js1_3/inherit/proto_7.js
 js1_3/inherit/proto_8.js
@@ -1116,8 +1112,7 @@ js1_4/Regress/date-001-n.js
 js1_4/Regress/function-001.js
 # Needs JScriptEvaluate
 #js1_4/Regress/function-002.js
-# Invalid IL
-#js1_4/Regress/function-003.js
+js1_4/Regress/function-003.js
 # Needs eval
 #js1_4/Regress/function-004-n.js
 # Needs new Function
