@@ -1,3 +1,11 @@
+2005-09-09  Chris Toshok  <toshok@ximian.com>
+
+	* FontInfo.cs (IsEmpty): new internal property, used by
+	Style.IsEmpty.
+
+	* Style.cs (IsEmpty): make sure the fontinfo is null or empty as
+	well.
+
 2005-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListItemCollection.cs: remove obsoleted methods.

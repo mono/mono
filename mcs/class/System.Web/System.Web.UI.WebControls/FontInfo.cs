@@ -431,5 +431,12 @@ namespace System.Web.UI.WebControls
 			}
 		}
 		#endregion	// Private Methods
+
+
+		internal bool IsEmpty {
+			get {
+				return fontstyles == FontStyles.None;
+			}
+		}
 	}
 }
