@@ -51,6 +51,7 @@ namespace Microsoft.JScript {
 	internal class Unary : UnaryOp {
 
 		private bool deletable = false;
+		private bool isCtr = false;
 
 		internal Unary (AST parent, JSToken oper, Location location)
 			: base (parent, location)
@@ -78,7 +79,7 @@ namespace Microsoft.JScript {
 			if (operand is Binary) {
 				Binary bin = (Binary) operand;
 				if (oper == JSToken.Delete && bin.AccessField)
-					this.deletable = bin.IsDeletable;
+					this.deletable = bin.IsDeletable (out isCtr);
 				bin.Resolve (context);
 			} else if (operand is Exp) {
 				if (oper != JSToken.Increment && oper != JSToken.Decrement)
@@ -128,8 +129,10 @@ namespace Microsoft.JScript {
 							ig.Emit (OpCodes.Call, typeof (LateBinding).GetMethod ("DeleteMember",
 													       new Type [] { typeof (object), typeof (string) }));
 						} else {
-							Console.WriteLine ("{0}({1},0) : warning: JS1164: '{2}' is not deletable",
-								   location.SourceName, location.LineNumber, arg.ToString ());
+							if (isCtr)
+								Console.WriteLine ("{0}({1},0) : warning: " +
+									   "JS1164: '{2}' is not deletable", 
+									   location.SourceName, location.LineNumber, arg.ToString ());
 
 							if (arg.left is Identifier && arg.right is Identifier) {
 								string _base = ((Identifier) arg.left).name.Value;
@@ -621,12 +624,12 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldloc, local_builder);
 		}
 
-		internal bool IsDeletable {
-			get {
-				if (left is Identifier && right is Identifier)
-					return SemanticAnalyser.IsDeletable ((Identifier) left, (Identifier) right);
-				return false;
-			}
+		internal bool IsDeletable (out bool isCtr)
+		{
+			if (left is Identifier && right is Identifier)
+				return SemanticAnalyser.IsDeletable ((Identifier) left, (Identifier) right, out isCtr);
+			isCtr = false;
+			return false;
 		}
 	}
 

@@ -351,17 +351,17 @@ namespace Microsoft.JScript {
 			return false;
 		}
 
-		internal static bool IsDeletable (Identifier left, Identifier right)
+		internal static bool IsDeletable (Identifier left, Identifier right, out bool isCtr)
 		{
 			Type ctr = SemanticAnalyser.map_to_ctr (left.name.Value);
+			isCtr = ctr != null ? true : false;
 
-			if (ctr != null) {
-				if (right.name.Value == "prototype")
-					return false;
-			}
+			if (isCtr)
+				return SemanticAnalyser.get_member (left, right) == null;
+
 			Console.WriteLine ("ctr = {0}, left = {1} ({2}); right = {3} ({4})",
 				   ctr, left, left.GetType (), right, right.GetType ());
-			throw new NotImplementedException ();
+			return false;
 		}
 	}
 }
