@@ -430,6 +430,17 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (1, s.StateBag.Count, "Count");
 		}
 
+		[Test]
+		public void FontInfo_Empty ()
+		{
+			FontInfo f;
+			StyleTestClass s = new StyleTestClass ();
+			f = s.Font;
+			Assert.IsTrue (s.Empty, "Empty after getter");
+			s.Font.Name = "Arial";
+			Assert.IsFalse (s.Empty, "No longer empty");
+		}
+
 		public void Render ()
 		{
 			HtmlTextWriter	writer;

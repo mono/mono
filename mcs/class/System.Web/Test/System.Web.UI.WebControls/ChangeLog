@@ -1,3 +1,8 @@
+2005-09-09  Chris Toshok  <toshok@ximian.com>
+
+	* StyleTest.cs (FontInfo_Empty): test to see if changes to
+	Style.Font cause changes in the style's empty status.
+
 2005-09-07  Chris Toshok  <toshok@ximian.com>
 
 	* CalendarTest.cs (TestSelectedColorDefault): we need to split up
