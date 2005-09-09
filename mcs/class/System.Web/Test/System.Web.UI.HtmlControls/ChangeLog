@@ -1,3 +1,8 @@
+2005-09-09  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlInputButtonTest.cs (RenderAttributes): add in
+	CausesValidation and ValidationGroup here.
+
 2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HtmlTableRowTest.cs: Added tests for InnerHtml and InnerText setters

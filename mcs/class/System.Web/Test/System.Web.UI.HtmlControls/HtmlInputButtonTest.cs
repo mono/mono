@@ -110,15 +110,24 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
 
 			HtmlInputButtonPoker p = new HtmlInputButtonPoker ();
+			
+			p.Page = new Page ();
 
+			p.CausesValidation = false;
 #if NET_2_0
-			Assert.AreEqual (p.Attributes.Count, 0, "A1");
+			p.ValidationGroup = "VG";
+
+			Assert.AreEqual (2, p.Attributes.Count, "A1");
 #else
-			Assert.AreEqual (p.Attributes.Count, 1, "A1");
+			Assert.AreEqual (2, p.Attributes.Count, "A1");
 #endif
 
 			p.DoRenderAttributes (tw);
-			Assert.AreEqual (sw.ToString (), " name type=\"button\" /", "A2");
+#if NET_2_0
+			Assert.AreEqual (" name type=\"button\" ValidationGroup=\"VG\" /", sw.ToString (), "A2");
+#else
+			Assert.AreEqual (" name type=\"button\" /", sw.ToString (), "A2");
+#endif
 		}
 
 		private static void EmptyHandler (object sender, EventArgs e)
