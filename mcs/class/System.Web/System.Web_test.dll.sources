@@ -134,6 +134,9 @@ System.Web/HttpContextCas.cs
 System.Web.Caching/CacheCas.cs
 System.Web.Caching/CacheDependencyCas.cs
 System.Web.Configuration/HttpCapabilitiesBaseCas.cs
+System.Web.Mail/MailAttachmentCas.cs
+System.Web.Mail/MailMessageCas.cs
+System.Web.Mail/SmtpMailCas.cs
 System.Web.Security/FormsAuthenticationEventArgsCas.cs
 System.Web.Security/PassportAuthenticationEventArgsCas.cs
 System.Web.Security/WindowsAuthenticationEventArgsCas.cs
