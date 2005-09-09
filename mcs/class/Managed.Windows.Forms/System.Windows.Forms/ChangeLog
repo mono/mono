@@ -1,5 +1,10 @@
 2005-09-09  Alexander Olk  <alex.olk@googlemail.com>
 
+	* MimeIcon.cs: Try to check some other environment variables
+	  if "DESKTOP_SESSION" returns "default"
+
+2005-09-09  Alexander Olk  <alex.olk@googlemail.com>
+
 	* ThemeNice.cs: Corrected background colors (e.g. menus)
 	* ColorDialog.cs: Use correct background colors for controls
 

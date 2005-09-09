@@ -103,6 +103,21 @@ namespace System.Windows.Forms
 			if ( session != null )
 			{
 				session = session.ToUpper( );
+				
+				if ( session == "DEFAULT" )
+				{
+					string helper = Environment.GetEnvironmentVariable( "KDE_FULL_SESSION" );
+					
+					if ( helper != null )
+						session = "KDE";
+					else
+					{
+						helper = Environment.GetEnvironmentVariable( "GNOME_DESKTOP_SESSION_ID" );
+						
+						if ( helper != null )
+							session = "GNOME";
+					}
+				}
 			}
 			else
 				session = "";
