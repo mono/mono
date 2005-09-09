@@ -179,7 +179,6 @@ System.Web.Mail/MailMessage.cs
 System.Web.Mail/MailMessageWrapper.cs
 System.Web.Mail/MailPriority.cs
 System.Web.Mail/MailUtil.cs
-System.Web.Mail/RelatedBodyPart.cs
 System.Web.Mail/SmtpClient.cs
 System.Web.Mail/SmtpException.cs
 System.Web.Mail/SmtpMail.cs
