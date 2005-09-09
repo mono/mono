@@ -1,3 +1,7 @@
+2005-09-05  Geoff Norton  <gnorton@customerdna.com>
+
+	* driver.cs: Ensure file handles are closed after parsing
+
 2005-09-05  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs (Cast.TryReduce): Only reduce to an EnumConstant

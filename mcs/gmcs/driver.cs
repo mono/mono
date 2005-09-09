@@ -202,7 +202,11 @@ namespace Mono.CSharp
 				input.Close ();
 			}
 #else
-			parser.parse ();
+			try {
+				parser.parse ();
+			} finally {
+				input.Close ();
+			}
 #endif
 		}
 		
