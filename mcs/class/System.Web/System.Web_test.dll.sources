@@ -139,6 +139,8 @@ System.Web.Handlers/TraceHandlerCas.cs
 System.Web.Mail/MailAttachmentCas.cs
 System.Web.Mail/MailMessageCas.cs
 System.Web.Mail/SmtpMailCas.cs
+System.Web.SessionState/StateRuntimeCas.cs
+System.Web.SessionState/SessionStateModuleCas.cs
 System.Web.Security/DefaultAuthenticationEventArgsCas.cs
 System.Web.Security/DefaultAuthenticationModuleCas.cs
 System.Web.Security/FileAuthorizationModuleCas.cs
