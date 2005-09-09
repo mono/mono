@@ -1,3 +1,17 @@
+2005-09-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* assembly.c (mono_assembly_get_assemblyref): New helper function.
+	(mono_assembly_load_reference): Use the new helper.
+
+	* class-internals.h (MonoLoaderError): New structure containing 
+	information about type loading errors.
+
+	* class-internals.h loader.c: Add APIs to store per-thread loader
+	error information.
+
+	* loader.c class.c: Set the loader error if needed.
+
+	* exception.h exception.c: Add functions to throw MissingMethod/MissingFieldExceptions.
 
 Thu Sep 8 18:54:07 BST 2005 Paolo Molaro <lupus@ximian.com>
 
