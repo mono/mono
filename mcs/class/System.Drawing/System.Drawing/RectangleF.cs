@@ -258,7 +258,7 @@ namespace System.Drawing
 
 
 #if TARGET_JVM
-		internal RectangleF (java.awt.geom.Rectangle2D r2d) {
+		internal RectangleF (java.awt.geom.RectangularShape r2d) {
 			this.x = (float) r2d.getX ();
 			this.y = (float) r2d.getY ();
 			this.width = (float) r2d.getWidth ();
