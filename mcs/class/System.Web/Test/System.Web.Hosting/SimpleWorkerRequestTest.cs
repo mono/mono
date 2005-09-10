@@ -71,8 +71,6 @@ namespace MonoTests.System.Web.Hosting {
 			
 			SimpleWorkerRequest swr;
 
-			sw = new StringWriter ();
-
 			string ppath;
 			swr = new SimpleWorkerRequest ("/appVirtualDir", cwd, "pageVirtualPath", "querystring", sw);
 			Assert.AreEqual ("/appVirtualDir", swr.GetAppPath (), "S1");
@@ -127,6 +125,20 @@ namespace MonoTests.System.Web.Hosting {
 			
 		}
 
+		[Test]
+		public void GetPathInfo ()
+		{
+			StringWriter sw = new StringWriter ();
+			SimpleWorkerRequest swr = new SimpleWorkerRequest ("appVirtualDir", cwd, "/pageVirtualPath", "querystring", sw);
+			Assert.AreEqual ("/pageVirtualPath", swr.GetPathInfo (), "GetPathInfo-1");
+
+			swr = new SimpleWorkerRequest ("appVirtualDir", cwd, "/", "querystring", sw);
+			Assert.AreEqual ("/", swr.GetPathInfo (), "GetPathInfo-2");
+
+			swr = new SimpleWorkerRequest ("appVirtualDir", cwd, "pageVirtualPath", "querystring", sw);
+			Assert.AreEqual (String.Empty, swr.GetPathInfo (), "GetPathInfo-3");
+		}
+
 		public class Host : MarshalByRefObject {
 			string cwd = Environment.CurrentDirectory;
 
@@ -174,7 +186,6 @@ namespace MonoTests.System.Web.Hosting {
 				//
 				Assert.AreEqual (Path.Combine (cwd, "file.aspx"), swr.MapPath ("/appVirtualDir/file.aspx"), "TP2");
 				Assert.AreEqual (Path.Combine (cwd, "file.aspx"), swr.MapPath ("/appVirtualDir/file.aspx"), "TP4");
-				Console.WriteLine ("5. HOLA");
 				Assert.AreEqual (Path.Combine (cwd, Path.Combine ("Subdir", "file.aspx")), swr.MapPath ("/appVirtualDir/Subdir/file.aspx"), "TP5");
 
 			}

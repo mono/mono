@@ -1,3 +1,13 @@
+2005-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainFactoryCas.cs: New. CAS unit tests for AppDomainFactory.
+	* ApplicationHostCas.cs: New. CAS unit tests for ApplicationHost.
+	* ISAPIRuntimeCas.cs: New. CAS unit tests for ISAPIRuntime.
+	* SimpleWorkerRequestCas.cs: New. CAS unit tests for 
+	SimpleWorkerRequest.
+	* SimpleWorkerRequestTest.cs: Added a few (unworking) test cases for
+	GetPathInfo method.
+
 2005-08-22  Chris Toshok  <toshok@ximian.com>
 
 	* SimpleWorkerRequestTest.cs (Host): make cwd =
