@@ -38,6 +38,7 @@ namespace System.Web.UI.WebControls {
 	[ValidationProperty ("SelectedItem")]
 	public class RadioButtonList : ListControl, IRepeatInfoUser,
 		INamingContainer, IPostBackDataHandler {
+		bool need_raise;
 
 		public RadioButtonList ()
 		{
@@ -221,50 +222,20 @@ namespace System.Web.UI.WebControls {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
-		[MonoTODO]
-		protected virtual Style GetItemStyle (ListItemType itemType, int repeatIndex)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void RaisePostDataChangedEvent ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void RenderItem (ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
-		{
-			throw new NotImplementedException ();
-		}
-#endif		
-
-		[MonoTODO]
-		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
-			return true;
-		}
-		
-		[MonoTODO]
-		void IPostBackDataHandler.RaisePostDataChangedEvent ()
-		{
-
-		}
-
-		Style IRepeatInfoUser.GetItemStyle (ListItemType itemType,  int repeatIndex)
+#if NET_2_0
+		protected virtual
+#endif
+		Style GetItemStyle (ListItemType itemType, int repeatIndex)
 		{
 			return null;
 		}
 
-		void IRepeatInfoUser.RenderItem (ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+#if NET_2_0
+		protected virtual
+#endif
+		void RenderItem (ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
 		{
 			RadioButton radio = new RadioButton ();
 			radio.Text = Items [repeatIndex].Text;
@@ -275,6 +246,58 @@ namespace System.Web.UI.WebControls {
 			radio.Checked = Items [repeatIndex].Selected;
 			radio.Attributes["Value"] = Items [repeatIndex].Value;
 			radio.RenderControl (writer);
+		}
+#if NET_2_0
+		protected virtual
+#endif
+		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			string val = postCollection [postDataKey];
+			ListItemCollection items = Items;
+			int end = items.Count;
+			int selected = SelectedIndex;
+			for (int i = 0; i < end; i++) {
+				ListItem item = items [i];
+				if (item == null || val != item.Value)
+					continue;
+
+				if (i != selected) {
+					SelectedIndex = i;
+					need_raise = true;
+				}
+				return true;
+			}
+
+			return false;
+		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		void RaisePostDataChangedEvent ()
+		{
+			if (need_raise)
+				OnSelectedIndexChanged (EventArgs.Empty);
+		}
+
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+		
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEvent ();
+		}
+
+		Style IRepeatInfoUser.GetItemStyle (ListItemType itemType,  int repeatIndex)
+		{
+			return GetItemStyle (itemType, repeatIndex);
+		}
+
+		void IRepeatInfoUser.RenderItem (ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
+		{
+			RenderItem (itemType, repeatIndex, repeatInfo, writer);
 		}
 
 #if NET_2_0

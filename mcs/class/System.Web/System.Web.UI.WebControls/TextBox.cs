@@ -128,32 +128,34 @@ namespace System.Web.UI.WebControls {
 		}
 		
 #if NET_2_0
-		[MonoTODO]
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected virtual void RaisePostDataChangedEvent ()
-		{
-			throw new NotImplementedException ();
-		}
+		protected virtual
 #endif
-
-		bool IPostBackDataHandler.LoadPostData (string key, NameValueCollection col)
+		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-			if (Text != col [key]) {	
-				Text = col [key];
+			if (Text != postCollection [postDataKey]) {
+				Text = postCollection [postDataKey];
 				return true;
 			}
 			
 			return false;
 		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		void RaisePostDataChangedEvent ()
+		{
+			OnTextChanged (EventArgs.Empty);
+		}
+
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
 	
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
-			OnTextChanged (EventArgs.Empty);
+			RaisePostDataChangedEvent ();
 		}
 
 #if NET_2_0

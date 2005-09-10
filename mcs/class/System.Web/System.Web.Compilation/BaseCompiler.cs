@@ -42,7 +42,6 @@ namespace System.Web.Compilation
 {
 	abstract class BaseCompiler
 	{
-		string dynamic_dir;
 		TemplateParser parser;
 		CodeDomProvider provider;
 		ICodeCompiler compiler;
@@ -288,30 +287,7 @@ namespace System.Web.Compilation
 
 		protected string DynamicDir ()
 		{
-			if (dynamic_dir != null)
-				return dynamic_dir;
-
-			dynamic_dir = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
-			if (dynamic_dir != null && dynamic_dir != "")
-				return dynamic_dir;
-			
-			for (int i = 0; ; i++){
-				string d = Path.Combine (
-					Path.GetTempPath (),
-					String.Format ("{0}-temp-aspnet-{1:x}", Environment.UserName, i));
-			
-				try {
-					Directory.CreateDirectory (d);
-					string stamp = Path.Combine (d, "stamp");
-					Directory.CreateDirectory (stamp);
-					dynamic_dir = d;
-					Directory.Delete (stamp);
-					break;
-				} catch (UnauthorizedAccessException){
-					continue;
-				}
-			}
-			return dynamic_dir;
+			return AppDomain.CurrentDomain.SetupInformation.DynamicBase;
 		}
 		
 		public virtual Type GetCompiledType () 

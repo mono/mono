@@ -1,3 +1,7 @@
+2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: fix the indexer.
+
 2005-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpPostedFile.cs: fixes in Seek and Position.

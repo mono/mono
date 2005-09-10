@@ -327,7 +327,7 @@ namespace System.Web.UI.WebControls
 		{
 			get 
 			{
-				return (styles == 0);
+				return (styles == 0 && (fontinfo == null || fontinfo.IsEmpty));
 			}
 		}
 

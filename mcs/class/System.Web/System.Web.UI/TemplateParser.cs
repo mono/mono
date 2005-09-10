@@ -409,29 +409,35 @@ namespace System.Web.UI
 		internal virtual void ProcessMainAttributes (Hashtable atts)
 		{
 			atts.Remove ("Description"); // ignored
+#if NET_1_1
 			atts.Remove ("CodeBehind");  // ignored
-			atts.Remove ("AspCompat"); // ignored
-
-#if NET_2_0
-			atts.Remove ("CodeFile"); // ignored
 #endif
+			atts.Remove ("AspCompat"); // ignored
 
 			debug = GetBool (atts, "Debug", true);
 			compilerOptions = GetString (atts, "CompilerOptions", "");
 			language = GetString (atts, "Language", CompilationConfig.DefaultLanguage);
 			strictOn = GetBool (atts, "Strict", CompilationConfig.Strict);
 			explicitOn = GetBool (atts, "Explicit", CompilationConfig.Explicit);
+#if NET_2_0
+			string src = GetString (atts, "CodeFile", null);
+#else
 			string src = GetString (atts, "Src", null);
+#endif
 			if (src != null)
 				srcAssembly = GetAssemblyFromSource (src);
 
 			string inherits = GetString (atts, "Inherits", null);
+#if NET_2_0
+			className = inherits;
+#else
 			if (inherits != null)
 				SetBaseType (inherits);
 
 			className = GetString (atts, "ClassName", null);
 			if (className != null && !CodeGenerator.IsValidLanguageIndependentIdentifier (className))
 				ThrowParseException (String.Format ("'{0}' is not valid for 'className'", className));
+#endif
 
 			if (atts.Count > 0)
 				ThrowParseException ("Unknown attribute: " + GetOneKey (atts));

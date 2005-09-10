@@ -1,3 +1,12 @@
+2005-09-09  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlInputButton.cs (CausesValidation): this is stored in
+	Attributes, not ViewState.
+	(ValidationGroup): same.
+	(RenderAttributes): remove CausesValidation from the list of
+	Attributes before calling base.RenderAttributes.  Don't, however,
+	remove ValidationGroup, to replicate an MS bug.
+
 2005-09-07  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlForm.cs (DefaultFocus): not stored in Attributes either.

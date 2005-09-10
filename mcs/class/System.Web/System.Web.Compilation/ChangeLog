@@ -1,3 +1,8 @@
+2005-09-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseCompiler.cs: set the domain's DynamicBase property instead of
+	guessing it in BaseCompiler.
+
 2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebServiceCompiler.cs: apply the same fix as in r45440 that fixed bug

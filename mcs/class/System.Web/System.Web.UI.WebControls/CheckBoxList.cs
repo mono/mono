@@ -253,22 +253,13 @@ namespace System.Web.UI.WebControls {
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
-		[MonoTODO]
-		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
-		{
-			throw new NotImplementedException ();
-		}
 
-		[MonoTODO]
-		protected virtual void RaisePostDataChangedEvent ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif		
-
-		bool IPostBackDataHandler.LoadPostData (string postDataKey,
-				NameValueCollection postCollection)
+#if NET_2_0
+		protected virtual
+#endif
+		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			int checkbox = -1;
 
@@ -295,9 +286,23 @@ namespace System.Web.UI.WebControls {
 			return false;
 		}
 
-		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+#if NET_2_0
+		protected virtual
+#endif
+		void RaisePostDataChangedEvent ()
 		{
 			OnSelectedIndexChanged (EventArgs.Empty);
+		}
+
+		bool IPostBackDataHandler.LoadPostData (string postDataKey,
+							NameValueCollection postCollection)
+		{
+			return LoadPostData (postDataKey, postCollection);
+		}
+
+		void IPostBackDataHandler.RaisePostDataChangedEvent ()
+		{
+			RaisePostDataChangedEvent ();
 		}
 
 		bool IRepeatInfoUser.HasFooter {

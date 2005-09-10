@@ -1,3 +1,28 @@
+2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ImageButton.cs: fix invalid cast exception.
+
+2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListItem.cs: throw in AddParsedSubObject if the object is not a
+	LiteralControl.
+	* RadioButtonList.cs: implemented LoadPostData and
+	RaisePostDataChangedEvent.
+
+2005-09-09  Chris Toshok  <toshok@ximian.com>
+
+	* CheckBox.cs, CheckBoxList.cs, DropDownList.cs, ImageButton.cs,
+	ListBox.cs, RadioButton.cs, RadioButtonList.cs, TextBox.cs: fix up
+	LoadPostData/RaisePostDataChangedEvent.
+
+2005-09-09  Chris Toshok  <toshok@ximian.com>
+
+	* FontInfo.cs (IsEmpty): new internal property, used by
+	Style.IsEmpty.
+
+	* Style.cs (IsEmpty): make sure the fontinfo is null or empty as
+	well.
+
 2005-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListItemCollection.cs: remove obsoleted methods.
