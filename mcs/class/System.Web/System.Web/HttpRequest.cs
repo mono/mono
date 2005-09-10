@@ -661,7 +661,20 @@ namespace System.Web {
 
 		public string this [string key] {
 			get {
-				return Params [key];
+				// "The QueryString, Form, Cookies, or ServerVariables collection member
+				// specified in the key parameter."
+				string val = QueryString [key];
+				if (val == null)
+					val = Form [key];
+				if (val == null) {
+					HttpCookie cookie = Cookies [key];
+					if (cookie != null)
+						val = cookie.Value;
+				}
+				if (val == null)
+					val = ServerVariables [key];
+
+				return val;
 			}
 		}
 
