@@ -1,3 +1,8 @@
+2005-09-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ApplicationHost.cs: set the domain's DynamicBase property instead of
+	guessing it in BaseCompiler.
+
 2005-09-08  Eyal Alalouf  <eyala@mainsoft.com>
 	* ServletWorkerRequest.jvm.cs: Implement SendResponseFromFile
 

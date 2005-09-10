@@ -96,6 +96,7 @@ namespace System.Web.Hosting {
 			setup.ApplicationBase = physicalDir;
 
 			setup.CachePath = null;
+			setup.ApplicationName = domain_id;
 			setup.ConfigurationFile = FindWebConfig (physicalDir);
 			setup.DisallowCodeDownload = true;
 			setup.PrivateBinPath = "bin";
@@ -103,6 +104,25 @@ namespace System.Web.Hosting {
 			setup.ShadowCopyFiles = "true";
 			UriBuilder b = new UriBuilder ("file://", null, 0, Path.Combine (physicalDir, "bin"));
 			setup.ShadowCopyDirectories = b.Uri.ToString ();
+
+			string dynamic_dir = null;
+			string user = Environment.UserName;
+			for (int i = 0; ; i++){
+				string d = Path.Combine (Path.GetTempPath (),
+					String.Format ("{0}-temp-aspnet-{1:x}", user, i));
+			
+				try {
+					Directory.CreateDirectory (d);
+					string stamp = Path.Combine (d, "stamp");
+					Directory.CreateDirectory (stamp);
+					dynamic_dir = d;
+					Directory.Delete (stamp);
+					break;
+				} catch (UnauthorizedAccessException){
+					continue;
+				}
+			}
+			setup.DynamicBase = dynamic_dir;
 
 			//
 			// Create app domain
