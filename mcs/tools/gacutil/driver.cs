@@ -295,7 +295,15 @@ namespace Mono.Tools {
 					foreach (string ext in siblings) {
 						string sibling = String.Concat (pkg_path, ext);
 						string sref = String.Concat (ref_path, ext);
-						symlink (sibling, sref);
+						if (File.Exists (sibling))
+							symlink (sibling, sref);
+						else {
+							try {
+								File.Delete (sref);
+							} catch {
+								// Ignore error, just delete files that should not be there.
+							}
+						}
 					}
 					WriteLine ("Package exported to: {0} -> {1}", ref_path, pkg_path);
  				} else {

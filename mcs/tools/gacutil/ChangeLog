@@ -1,3 +1,9 @@
+2005-09-10  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Only symlink if the file that we are symlking to
+	exists.   This fixes all the stale symlinks on $prefix/mono/1.0/
+	to config files that do not exist.
+
 2005-09-05  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.cs (Uninstall): Add workaround, Directory.GetFiles does
