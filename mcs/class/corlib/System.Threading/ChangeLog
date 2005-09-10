@@ -1,3 +1,7 @@
+2005-09-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* Thread.cs (Interrupt): Make this throw a NotImplementedException.
+
 2005-09-09  Martin Baulig  <martin@ximian.com>
 
 	* Timer.cs (Timer.Runner.Start): Silently catch

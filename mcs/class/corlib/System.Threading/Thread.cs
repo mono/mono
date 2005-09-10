@@ -576,6 +576,7 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Interrupt ()
 		{
+			throw new NotImplementedException ();
 		}
 
 		// The current thread joins with 'this'. Set ms to 0 to block
