@@ -1,5 +1,9 @@
 2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ImageButton.cs: fix invalid cast exception.
+
+2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ListItem.cs: throw in AddParsedSubObject if the object is not a
 	LiteralControl.
 	* RadioButtonList.cs: implemented LoadPostData and

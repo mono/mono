@@ -296,7 +296,7 @@ namespace System.Web.UI.WebControls {
 		protected virtual void OnClick (ImageClickEventArgs e)
 		{
 			if (Events != null) {
-				EventHandler eh = (EventHandler) (Events [ClickEvent]);
+				ImageClickEventHandler eh = (ImageClickEventHandler) (Events [ClickEvent]);
 				if (eh != null)
 					eh (this, e);
 			}
