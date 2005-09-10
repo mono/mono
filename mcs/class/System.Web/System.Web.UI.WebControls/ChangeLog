@@ -1,5 +1,9 @@
 2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* GridView.cs: don't duplicate class attribute. Fixes bug #75936.
+
+2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ImageButton.cs: fix invalid cast exception.
 
 2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
