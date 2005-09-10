@@ -123,6 +123,7 @@ namespace System.Web.Hosting {
 				}
 			}
 			setup.DynamicBase = dynamic_dir;
+			Directory.CreateDirectory (setup.DynamicBase);
 
 			//
 			// Create app domain
