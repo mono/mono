@@ -1,3 +1,7 @@
+2005-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_init_exceptions): Fix build breakage.
+
 2005-09-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c exceptions-ia64.c tramp-ia64.c: Remove 'manual' emitting
