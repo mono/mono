@@ -272,5 +272,16 @@ namespace MonoTests.System.Xml.Xsl
 			XPathDocument xmlDocument = new XPathDocument (new StringReader (xmlText));
 			transform.Transform (xmlDocument, null, TextWriter.Null);
 		}
+
+		// bug #76046
+		[Test]
+		public void LoadStyleFromNonRoot ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			XslTransform xslt = new XslTransform ();
+			doc.LoadXml ("<root><dummy /><xsl:transform xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0' /></root>");
+			XmlNode node = doc.ChildNodes [0].ChildNodes [1];
+			xslt.Load (node, null, null);
+		}
 	}
 }

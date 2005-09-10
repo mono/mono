@@ -137,7 +137,8 @@ namespace Mono.Xml.Xsl
 				this.res = new XmlUrlResolver ();
 			this.evidence = evidence;
 
-			if (!nav.MoveToFirstChild ())
+			// reject empty document.
+			if (nav.NodeType == XPathNodeType.Root && !nav.MoveToFirstChild ())
 				throw new XsltCompileException ("Stylesheet root element must be either \"stylesheet\" or \"transform\" or any literal element.", null, nav);
 				
 			outputs [""] = new XslOutput ("");
