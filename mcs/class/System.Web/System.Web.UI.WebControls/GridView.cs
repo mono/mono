@@ -1832,10 +1832,11 @@ namespace System.Web.UI.WebControls
 						if (emptyDataRowStyle != null) emptyDataRowStyle.AddAttributesToRender (writer, row);
 						break;
 					default:
-						if (rowStyle != null) rowStyle.AddAttributesToRender (writer, row);
 						break;
 				}
 
+				if ((row.RowState & DataControlRowState.Normal) != 0 && rowStyle != null)
+					rowStyle.AddAttributesToRender (writer, row);
 				if ((row.RowState & DataControlRowState.Alternate) != 0 && alternatingRowStyle != null)
 					alternatingRowStyle.AddAttributesToRender (writer, row);
 				if ((row.RowState & DataControlRowState.Edit) != 0 && editRowStyle != null)
