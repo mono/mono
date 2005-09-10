@@ -1,3 +1,16 @@
+2005-09-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainFactory.cs: Added LinkDemand for Minimal. Added Demand for
+	UnmanagedCode on ctor. Added TODO on unimplemented method.
+	* ApplicationHost.cs: Added LinkDemand for Minimal. Added Demand for 
+	UnmanagedCode on ctor. Removed duplicate null checks.
+	* ISAPIRuntime.cs: Fixed inheritance (added MarshalByRefObject and 
+	IRegisteredObject) for 2.0. Added LinkDemand for Minimal. Added Demand 
+	for UnmanagedCode on ctor.
+	* SimpleWorkerRequest.cs: Added LinkDemand and InheritanceDemand (not
+	sealed) for Minimal. Added Demands for UnmanagedCode on ctors. Added
+	FileIOPermission for PathDiscovery before returning processed paths.
+
 2005-09-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ApplicationHost.cs: set the domain's DynamicBase property instead of

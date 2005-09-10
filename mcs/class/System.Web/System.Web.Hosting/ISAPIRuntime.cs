@@ -7,8 +7,7 @@
 //
 // (C) Bob Smith
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,16 +29,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Security.Permissions;
 
-namespace System.Web.Hosting
-{
-        public sealed class ISAPIRuntime : IISAPIRuntime
-        {
-		[MonoTODO]
+namespace System.Web.Hosting {
+
+#if NET_2_0
+        public sealed class ISAPIRuntime : MarshalByRefObject, IISAPIRuntime, IRegisteredObject {
+#else
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+        public sealed class ISAPIRuntime : IISAPIRuntime {
+#endif
+
+#if NET_2_0
+		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal)]
+#endif
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
                 public ISAPIRuntime ()
 		{
-			throw new NotImplementedException ();
 		}
 		
 		[MonoTODO]
@@ -61,9 +68,26 @@ namespace System.Web.Hosting
 		}
 		
 		[MonoTODO]
+#if NET_2_0
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
                 public void StopProcessing ()
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public override object InitializeLifetimeService ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		void IRegisteredObject.Stop (bool immediate)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
         }
 }

@@ -27,10 +27,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Permissions;
+
 namespace System.Web.Hosting {
 
-	public sealed class AppDomainFactory {
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public sealed class AppDomainFactory : IAppDomainFactory {
 
+#if NET_2_0
+		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal)]
+#endif
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+		public AppDomainFactory ()
+		{
+		}
+
+		[MonoTODO]
 		public object Create (string module, string typeName, string appId, string appPath, string strUrlOfAppOrigin, int iZone)
 		{
 			throw new NotImplementedException ();

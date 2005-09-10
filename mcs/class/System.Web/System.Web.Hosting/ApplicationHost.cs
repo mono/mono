@@ -27,12 +27,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
+using System.Security.Permissions;
 using System.Security.Policy;
 
 namespace System.Web.Hosting {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class ApplicationHost {
 
 		static string [] types = { "Web.config", "web.config" };
@@ -60,6 +62,7 @@ namespace System.Web.Hosting {
 		//
 		//    http://www.west-wind.com/presentations/aspnetruntime/aspnetruntime.asp
 		// 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static object CreateApplicationHost (Type hostType, string virtualDir, string physicalDir)
 		{
 			if (physicalDir == null)
@@ -76,9 +79,6 @@ namespace System.Web.Hosting {
 				throw new NullReferenceException ();
 
 			if (virtualDir == null)
-				throw new NullReferenceException ();
-
-			if (hostType == null || virtualDir == null || physicalDir == null)
 				throw new NullReferenceException ();
 
 			Evidence evidence = new Evidence (AppDomain.CurrentDomain.Evidence);
