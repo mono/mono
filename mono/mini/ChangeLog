@@ -1,3 +1,11 @@
+2005-09-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c exceptions-ia64.c tramp-ia64.c: Remove 'manual' emitting
+	of instructions. Use the new ia64_unw_op macros for emitting unwind
+	info.
+
+	* mini.c (mono_init_exceptions): Initialize exception handling
+	related trampolines at startup.
 
 Fri Sep 9 19:30:37 BST 2005 Paolo Molaro <lupus@ximian.com>
 
