@@ -110,7 +110,7 @@ namespace System.Web.UI.HtmlControls {
 			writer.Write (" /");
 
 #if NET_2_0
-			if (Page.Form != null && Page.Form.SubmitDisabledControls && Page.Form.DetermineRenderUplevel() && !Disabled)
+			if (Page != null && Page.Form != null && Page.Form.SubmitDisabledControls && Page.Form.DetermineRenderUplevel() && !Disabled)
 				Page.ClientScript.RegisterArrayDeclaration ("__enabledControlArray", String.Format ("'{0}'", ClientID));
 #endif
 		}

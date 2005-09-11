@@ -143,7 +143,7 @@ namespace System.Web.UI.HtmlControls
 				return (value);
 			}
 			set {
-				throw new NotSupportedException ();
+				throw new NotSupportedException ("The value property on HtmlInputFile is not settable.");
 			}
 		}
 
