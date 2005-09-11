@@ -1,3 +1,9 @@
+2005-09-11  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs (Identifier::emit_undeclared_assignment): Fix
+	small regression related to the value/refs patch. All works again
+	for undeclared variables.
+
 2005-09-09  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* SemanticAnalyser.cs, expression.cs (Unary): Fixes for delete

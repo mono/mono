@@ -1415,7 +1415,7 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldloc, lb_local);
 
 			right_side.Emit (ec);
-			ig.Emit (OpCodes.Box, typeof (object));
+			CodeGenerator.EmitBox (ec.ig, right_side);
 
 			ig.Emit (OpCodes.Ldloc, field_builder);		
 			ig.Emit (OpCodes.Ldnull);
