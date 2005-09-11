@@ -163,6 +163,7 @@ System.Windows.Forms/InputLanguageCollection.cs
 System.Windows.Forms/InputLanguage.cs
 System.Windows.Forms/InvalidateEventArgs.cs
 System.Windows.Forms/InvalidateEventHandler.cs
+System.Windows.Forms/IRootGridEntry.cs
 System.Windows.Forms/ItemActivation.cs
 System.Windows.Forms/ItemBoundsPortion.cs
 System.Windows.Forms/ItemChangedEventArgs.cs
@@ -250,6 +251,7 @@ System.Windows.Forms/PictureBoxSizeMode.cs
 System.Windows.Forms/ProgressBar.cs
 System.Windows.Forms/PropertiesTab.cs
 System.Windows.Forms/PropertyGrid.cs
+System.Windows.Forms/PropertyGridCommands.cs
 System.Windows.Forms/PropertyGridEntry.cs
 System.Windows.Forms/PropertyGridTextBox.cs
 System.Windows.Forms/PropertyGridView.cs
