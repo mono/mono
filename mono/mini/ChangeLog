@@ -1,5 +1,8 @@
 2005-09-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h cpu-ia64.md inssel-ia64.brg mini-ia64.c: Implement
+	some Interlocked methods as intrinsics.
+
 	* mini.c (mini_get_inst_for_method): Call arch_get_inst_for_method
 	for Thread methods as well.
 
