@@ -28,7 +28,7 @@ namespace System.Drawing
 		#region Ctors. and Dtor
 
 
-		public Region() : this(new geom.Area())
+		public Region() : this((geom.Area)InfiniteRegion.NativeObject.clone())
 		{                  
 		}
 

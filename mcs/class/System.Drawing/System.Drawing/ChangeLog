@@ -1,3 +1,7 @@
+2005-09-11 Konstantin Triger <kostat@mainsoft.com>
+
+	* Region.jvm.cs: default region is infinite
+
 2005-09-10 Konstantin Triger <kostat@mainsoft.com>
 
 	* Graphics.jvm.cs: fixing clipping stuff
