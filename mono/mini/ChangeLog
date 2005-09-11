@@ -1,5 +1,7 @@
 2005-09-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c inssel-ia64.brg: Add InterlockedExchange instrinsics.
+
 	* mini-ops.h cpu-ia64.md inssel-ia64.brg mini-ia64.c: Implement
 	some Interlocked methods as intrinsics.
 
