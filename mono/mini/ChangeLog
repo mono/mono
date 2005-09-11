@@ -1,3 +1,7 @@
+2005-09-11  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-x86.c mini-amd64.c: Fix build.
+
 2005-09-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.c inssel-ia64.brg: Add InterlockedExchange instrinsics.
