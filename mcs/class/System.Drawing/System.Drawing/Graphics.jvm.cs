@@ -170,6 +170,7 @@ namespace System.Drawing {
 		readonly Image _image;
 		
 		readonly Matrix _transform;
+		readonly geom.Rectangle2D _visibleRect;
 		GraphicsUnit _pageUnit = GraphicsUnit.Display;
 		float _pageScale = 1.0f;
 
@@ -210,6 +211,8 @@ namespace System.Drawing {
 			NativeObject.setRenderingHint(awt.RenderingHints.KEY_COLOR_RENDERING, awt.RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 
 			InterpolationMode = InterpolationMode.Bilinear;
+
+			 _visibleRect = new geom.Rectangle2D.Float(0, 0, _image.Width, _image.Height);
 		}
 
 		#endregion
@@ -2085,28 +2088,19 @@ namespace System.Drawing {
 			}
 		}
 
-		awt.Shape InverseUserTransform(awt.Shape shape) {
-			geom.AffineTransform t = _transform.NativeObject;
-			if (t.isIdentity())
-				return shape;
-
-			geom.Rectangle2D r2d = shape.getBounds2D();
-
-			geom.PathIterator iter = shape.getPathIterator(t.createInverse());
-			geom.GeneralPath path = new geom.GeneralPath(iter.getWindingRule());
-			path.append(iter, false);
-
-			return path;
-		}
-
 		public RectangleF ClipBounds {
 			get {
 				awt.Shape shape = NativeObject.getClip();
 				if (shape == null)
-					shape = Region.InfiniteRegion.NativeObject.getBounds2D();
-				shape = InverseUserTransform(shape);
+					shape = Region.InfiniteRegion.NativeObject;
 
-				return new RectangleF (shape is geom.RectangularShape ? (geom.RectangularShape)shape : shape.getBounds2D());
+				geom.RectangularShape r = shape.getBounds2D();
+				if (!_transform.IsIdentity) {
+					geom.AffineTransform it = _transform.NativeObject.createInverse();
+					r = it.createTransformedShape(r).getBounds2D();
+				}
+
+				return new RectangleF (r);
 			}
 		}
 
@@ -2261,6 +2255,13 @@ namespace System.Drawing {
 			}
 			set {
 				_pageUnit = value;
+			}
+		}
+
+		internal float FinalPageScale {
+			get {
+				return (PageUnit != GraphicsUnit.Display) ?
+					PageScale * _unitConversion[ (int)PageUnit ] : 1f;
 			}
 		}
 
@@ -2424,16 +2425,27 @@ namespace System.Drawing {
 
 		public RectangleF VisibleClipBounds {
 			get {
-				geom.Area area = GetNativeClip();
-				area.intersect(Surface);
-				awt.Shape shape = InverseUserTransform(area);
-				return new RectangleF(shape is geom.RectangularShape ? (geom.RectangularShape)shape : shape.getBounds2D());
+				geom.RectangularShape r = ClippedVisibleRectangle;
+				if (!_transform.IsIdentity) {
+					geom.AffineTransform it = _transform.NativeObject.createInverse();
+					r = it.createTransformedShape(r).getBounds2D();
+				}
+
+				return new RectangleF (r);
 			}
 		}
 
-		geom.Area Surface {
+		internal geom.Rectangle2D ClippedVisibleRectangle {
 			get {
-				return new geom.Area(new awt.Rectangle(_image.Width, _image.Height));
+				geom.Rectangle2D r = GetNativeClip().getBounds2D();
+				geom.Rectangle2D.intersect(r, VisibleRectangle, r);
+				return r;
+			}
+		}
+
+		internal geom.Rectangle2D VisibleRectangle {
+			get {
+				return _visibleRect;
 			}
 		}
 
