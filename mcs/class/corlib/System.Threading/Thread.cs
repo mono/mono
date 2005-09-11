@@ -609,11 +609,8 @@ namespace System.Threading {
 		}
 
 #if NET_1_1
-		[MonoTODO ("seems required for multi-processors systems like Itanium")]
-		public static void MemoryBarrier ()
-		{
-			// Will be implemented when we support Itanium
-		}
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static void MemoryBarrier ();
 #endif
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Resume_internal();
