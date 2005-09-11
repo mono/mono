@@ -153,6 +153,7 @@ namespace System.Data.SqlClient
 				case DbType.Byte : return SqlDbType.TinyInt;
 				case DbType.Boolean : return SqlDbType.Bit;
 				case DbType.Currency : return SqlDbType.Money;
+				case DbType.Date : return SqlDbType.DateTime;
 				case DbType.DateTime : return SqlDbType.DateTime;
 				case DbType.Decimal : return SqlDbType.Decimal;
 				case DbType.Double : return SqlDbType.Float;
