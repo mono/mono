@@ -184,3 +184,5 @@ System.Web.UI.HtmlControls/HtmlTableCas.cs
 System.Web.UI.HtmlControls/HtmlTableCellCas.cs
 System.Web.UI.HtmlControls/HtmlTableRowCas.cs
 System.Web.UI.HtmlControls/HtmlTitleCas.cs
+System.Web.Util/TransactionsCas.cs
+System.Web.Util/WorkItemCas.cs
