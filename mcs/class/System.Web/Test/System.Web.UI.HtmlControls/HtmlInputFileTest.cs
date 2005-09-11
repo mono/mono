@@ -98,7 +98,11 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			p.MaxLength = 50;
 			p.Size = 20;
 
+#if NET_2_0
+			Assert.AreEqual (3, p.Attributes.Count, "A1");
+#else
 			Assert.AreEqual (4, p.Attributes.Count, "A1");
+#endif
 		}
 
 #if false
@@ -128,7 +132,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			HtmlTextWriter tw = new HtmlTextWriter (sw);
 
 			HtmlInputFilePoker p = new HtmlInputFilePoker ();
-			
+
 			p.DoRenderAttributes (tw);
 			Assert.AreEqual (" name type=\"file\" /", sw.ToString (), "A1");
 		}

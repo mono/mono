@@ -1,5 +1,9 @@
 2005-09-11  Chris Toshok  <toshok@ximian.com>
 
+	* HtmlInputFileTest.cs (Attribute_Count): fix for 2.0.
+
+2005-09-11  Chris Toshok  <toshok@ximian.com>
+
 	* HtmlInputFileTest.cs: new tests.
 
 2005-09-09  Chris Toshok  <toshok@ximian.com>
