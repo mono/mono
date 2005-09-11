@@ -6,7 +6,7 @@ using Commons.Xml;
 
 namespace Commons.Xml.Nvdl
 {
-	public class NvdlCompileContext
+	internal class NvdlCompileContext
 	{
 		NvdlRules rules;
 		NvdlConfig config;

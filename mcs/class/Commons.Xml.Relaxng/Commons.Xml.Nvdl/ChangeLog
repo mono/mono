@@ -1,3 +1,9 @@
+2005-09-11  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlCompileContext.cs : make this internal.
+	* NvdlStructures.cs : surpress default constructor.
+	  Make debug stuff internal.
+
 2005-04-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlRelaxngSupport.cs : added PlanAtt validation support.

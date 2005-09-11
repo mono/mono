@@ -12,6 +12,8 @@ namespace Commons.Xml.Nvdl
 {
 	public class Nvdl
 	{
+		private Nvdl () {}
+
 		public const string Namespace = "http://purl.oclc.org/dsdl/nvdl/ns/structure/1.0";
 		public const string BuiltInValidationNamespace = "http://purl.oclc.org/dsdl/nvdl/ns/predefinedSchema/1.0";
 
@@ -25,7 +27,7 @@ namespace Commons.Xml.Nvdl
 			Console.WriteLine (e.Message);
 		}
 
-		public static NvdlMessageEventHandler HandlePrintMessage =
+		internal static NvdlMessageEventHandler HandlePrintMessage =
 			new NvdlMessageEventHandler (OnDefaultEvent);
 
 		readonly static NvdlConfig defaultConfig;
@@ -45,7 +47,7 @@ namespace Commons.Xml.Nvdl
 			new char [] {' ', '\r', '\n', '\t'};
 
 		// See 6.4.12.
-		public static bool NSMatches (string n1, int i1, string w1,
+		internal static bool NSMatches (string n1, int i1, string w1,
 			string n2, int i2, string w2)
 		{
 			// quick check
