@@ -1,3 +1,8 @@
+2005-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (ves_icall_System_Threading_Thread_MemoryBarrier): New
+	icall.
+
 2005-09-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c icall.c: Fix after mono_get_exception_type_load
