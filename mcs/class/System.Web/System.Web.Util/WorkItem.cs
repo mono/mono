@@ -4,7 +4,7 @@
 // Author:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,18 +26,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Security.Permissions;
 
 namespace System.Web.Util
 {
+	[MonoTODO]
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class WorkItem
 	{
 		public WorkItem ()
 		{
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static void Post (WorkItemCallback callback)
 		{
+			// note: this is the documented exception for (Windows) OS prior to NT
+			// so in this case we won't throw a NotImplementedException
 			throw new PlatformNotSupportedException ("Not supported on mono");
 		}
 	}

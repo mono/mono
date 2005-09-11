@@ -1,8 +1,8 @@
 //
-// System.Web.Util.Transactions.cs
+// System.Web.Util.IWebPropertyAccessor interface
 //
 // Author:
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -26,34 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.EnterpriseServices;
-using System.Security.Permissions;
+#if NET_2_0
 
-namespace System.Web.Util
-{
-	[MonoTODO]
-	// CAS
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class Transactions
-	{
-		public Transactions ()
-		{
-		}
+namespace System.Web.Util {
 
-		public static void InvokeTransacted (TransactedCallback callback, TransactionOption mode)
-		{
-			bool abortedTransaction = false;
-			InvokeTransacted (callback, mode, ref abortedTransaction);
-		}
+	public interface IWebPropertyAccessor {
 
-		public static void InvokeTransacted (TransactedCallback callback, 
-							TransactionOption mode, 
-							ref bool transactionAborted)
-		{
-			// note: this is the documented exception for (Windows) OS prior to NT
-			// so in this case we won't throw a NotImplementedException
-			throw new PlatformNotSupportedException ("Not supported on mono");
-		}
+		object GetProperty (object target);
+		void SetProperty (object target, object value);
 	}
 }
+
+#endif
