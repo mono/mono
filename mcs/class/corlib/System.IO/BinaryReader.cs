@@ -41,6 +41,15 @@ namespace System.IO {
 		int m_encoding_max_byte;
 
 		byte[] m_buffer;
+
+		Decoder decoder;
+		char [] charBuffer;
+		
+		//
+		// 128 chars should cover most strings in one grab.
+		//
+		const int MaxBufferSize = 128;
+
 		
 		private bool m_disposed = false;
 
@@ -55,7 +64,7 @@ namespace System.IO {
 
 			m_stream = input;
 			m_encoding = encoding;
-			m_encoding_max_byte = m_encoding.GetMaxByteCount(1);
+			decoder = encoding.GetDecoder ();
 			m_buffer = new byte [32];
 		}
 
@@ -79,6 +88,7 @@ namespace System.IO {
 			m_buffer = null;
 			m_encoding = null;
 			m_stream = null;
+			charBuffer = null;
 		}
 
 		void IDisposable.Dispose() 
@@ -441,12 +451,44 @@ namespace System.IO {
 			 * not chars
 			 */
 			int len = Read7BitEncodedInt();
-
-			FillBuffer(len);
 			
-			char[] str = m_encoding.GetChars(m_buffer, 0, len);
+			if (len < 0)
+				throw new IOException ("Invalid binary file (string len < 0)");
 
-			return(new String(str));
+			if (len == 0)
+				return String.Empty;
+			
+			
+			if (charBuffer == null)
+				charBuffer = new char [MaxBufferSize];
+
+			//
+			// We read the string here in small chunks. Also, we
+			// Attempt to optimize the common case of short strings.
+			//
+			StringBuilder sb = null;
+			do {
+				int readLen = (len > MaxBufferSize)
+						? MaxBufferSize
+						: len;
+				
+				FillBuffer (readLen);
+				
+				int cch = decoder.GetChars (m_buffer, 0, readLen, charBuffer, 0);
+
+				if (sb == null && readLen == len) // ok, we got out the easy way, dont bother with the sb
+					return new String (charBuffer, 0, cch);
+
+				if (sb == null)
+					// Len is a fairly good estimate of the number of chars in a string
+					// Most of the time 1 byte == 1 char
+					sb = new StringBuilder (len);
+				
+				sb.Append (charBuffer, 0, cch);
+				len -= cch;
+			} while (len > 0);
+
+			return sb.ToString();
 		}
 
 		public virtual float ReadSingle() {

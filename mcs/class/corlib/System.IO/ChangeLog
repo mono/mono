@@ -1,3 +1,8 @@
+2005-09-11  Ben Maurer  <bmaurer@ximian.com>
+
+	* BinaryReader.cs: An optimization for ReadString that had been
+	approved/well tested for a while but never gotten in. Bug #52754.
+
 2005-09-05  Miguel de Icaza  <miguel@novell.com>
 
 	* MonoIOError.cs: expose the ERROR_DIR_NOT_EMPTY as we are
