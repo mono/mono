@@ -1,5 +1,9 @@
 2005-09-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c: Add proper unwind info for method epilogs.
+
+	* exceptions-ia64.c: Add some code to help debugging.
+	
 	* mini-ia64.c mini-ia64.h: Add sigaltstack support.
 
 	* mini-exceptions.c: Fix warning.
