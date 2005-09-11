@@ -27,7 +27,7 @@
 // COMPLETE
 
 using System;
-namespace System.Windows.Forms
+namespace System.Windows.Forms.PropertyGridInternal
 {
 	public interface IRootGridEntry
 	{

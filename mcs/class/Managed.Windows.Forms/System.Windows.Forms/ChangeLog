@@ -1,5 +1,9 @@
 2005-09-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
+	* IRootGridEntry.cs: Changed namespace to PropertyGridInternal 
+
+2005-09-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
+
 	* IRootGridEntry.cs: Added
 	* PropertyGridCommands.cs: Added
 	* PropertiesTab.cs: Added missing methods and property
