@@ -505,17 +505,12 @@ namespace System.Drawing.Drawing2D
 			if (pen != null)
 				shape = ((Stroke)pen).createStrokedShape (shape);
 
-			shape = shape.getBounds2D ();
+			Rectangle2D rect = shape.getBounds2D ();
 
 			// transform bounds			
-			if (matrix != null) {
-				GeneralPath jpath = new GeneralPath (shape);
-				jpath.transform (matrix.NativeObject);				
-				shape = jpath;
-			}
-			
-			// get bounds bounds
-			Rectangle2D rect = shape.getBounds2D();
+			if (matrix != null)
+				rect = matrix.NativeObject.createTransformedShape(rect).getBounds2D();
+
 			return new RectangleF (rect);
 		}
 		#endregion
