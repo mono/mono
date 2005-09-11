@@ -1,3 +1,7 @@
+2005-09-11 Konstantin Triger <kostat@mainsoft.com>
+
+	* GraphicsState.jvm.cs: fixing visible window for containers
+
 2005-09-07 Konstantin Triger <kostat@mainsoft.com>
 
 	* GraphicsPath.jvm.cs: correct angle to compute the quarter

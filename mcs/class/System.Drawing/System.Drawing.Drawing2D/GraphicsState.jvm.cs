@@ -113,6 +113,21 @@ namespace System.Drawing.Drawing2D
 
 		void ResetState(Graphics graphics, Matrix matrix)
 		{
+			java.awt.geom.AffineTransform t = _transform.NativeObject;
+			
+			java.awt.geom.Rectangle2D r = graphics.ClippedVisibleRectangle;
+			if (!t.isIdentity()) {
+				float scale = graphics.FinalPageScale;
+				t = new java.awt.geom.AffineTransform(
+					t.getScaleX(), t.getShearY(),
+					t.getShearX(), t.getScaleY(),
+					t.getTranslateX()*scale, t.getTranslateY()*scale);
+
+				r = t.createInverse().createTransformedShape(r).getBounds2D();
+			}
+
+			graphics.VisibleRectangle.setRect(r);
+
 			graphics.CompositingMode = CompositingMode.SourceOver;
 			graphics.CompositingQuality = CompositingQuality.Default;
 			graphics.Clip = Region.InfiniteRegion;
