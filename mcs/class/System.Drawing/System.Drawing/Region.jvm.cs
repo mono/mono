@@ -337,7 +337,7 @@ namespace System.Drawing
 		#region MakeInfinite
 		public void MakeInfinite()
 		{
-			Shape = new geom.Area(InfiniteRegion.NativeObject);
+			Shape = (geom.Area)InfiniteRegion.NativeObject.clone();
 		}
 		#endregion 
 
