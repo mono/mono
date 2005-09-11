@@ -1,0 +1,4 @@
+2005-09-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TransactionsCas.cs: New. CAS unit for Transactions.
+	* WorkItemCas.cs: New. CAS unit for Transactions.
