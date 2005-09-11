@@ -1,3 +1,9 @@
+2005-09-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.c mini-ia64.h: Add sigaltstack support.
+
+	* mini-exceptions.c: Fix warning.
+
 2005-09-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c: Really fix build.
