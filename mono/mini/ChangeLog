@@ -1,5 +1,10 @@
-2005-09-11  Zoltan Varga  <vargaz@gmail.com>
+2005-09-11  Zoltan Varga  <vargaz@freemail.hu>
 
+	* tramp-amd64.c (mono_arch_create_trampoline_code): Fix saving of
+	method info into the LMF.
+
+2005-09-11  Zoltan Varga  <vargaz@gmail.com>
+	
 	* mini-ia64.c: Add proper unwind info for method epilogs.
 
 	* exceptions-ia64.c: Add some code to help debugging.
