@@ -1,3 +1,7 @@
+2005-09-11  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlInputFileTest.cs: new tests.
+
 2005-09-09  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlFormTest.cs: Add test for RenderChildren.
