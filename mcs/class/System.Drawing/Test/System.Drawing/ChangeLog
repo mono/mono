@@ -1,3 +1,10 @@
+2005-09-12 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TestImageConverter.cs: Re-enabled GetProperties test.
+	* TestPointConverter.cs: same.
+	* TestRectangleConverter.cs: same.
+	* TestSizeConverter.cs: same.
+
 2005-09-06 Jordi Mas i Hernandez <jordi@ximan.com>
 
 	* TestImagge.cs: File not found exception, related to fix r49744
