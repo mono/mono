@@ -1,3 +1,7 @@
+2005-09-12  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TypeConverter.cs: Only return browsable properties in GetProperties.
+
 2005-08-28  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DateTimeConverter.cs: ConvertTo must return zero-length string

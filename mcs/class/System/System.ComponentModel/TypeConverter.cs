@@ -190,7 +190,7 @@ namespace System.ComponentModel
 
 		public PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object value)
 		{
-			return GetProperties (context, value, null);
+			return GetProperties (context, value, new Attribute[1] { BrowsableAttribute.Yes });
 		}
 
 		public virtual PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context,
