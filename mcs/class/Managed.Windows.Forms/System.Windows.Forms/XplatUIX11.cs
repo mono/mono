@@ -2880,10 +2880,16 @@ namespace System.Windows.Forms {
 
 		internal static void PostMessage (IntPtr handle, Msg message, IntPtr wparam, IntPtr lparam) {
 			XEvent xevent = new XEvent ();
+			Hwnd hwnd = Hwnd.ObjectFromHandle(handle);
 
 			xevent.type = XEventName.ClientMessage;
 			xevent.ClientMessageEvent.display = DisplayHandle;
-			xevent.ClientMessageEvent.window = Hwnd.ObjectFromHandle(handle).whole_window;
+
+			if (hwnd != null)
+				xevent.ClientMessageEvent.window = hwnd.whole_window;
+			else
+				xevent.ClientMessageEvent.window = IntPtr.Zero;
+
 			xevent.ClientMessageEvent.message_type = (IntPtr) PostAtom;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = handle;

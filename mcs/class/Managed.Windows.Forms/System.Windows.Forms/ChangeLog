@@ -1,3 +1,7 @@
+2005-09-12  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* XplatUIX11.cs: fixes System.NullReferenceException in some situations
+
 2005-09-09  Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* IRootGridEntry.cs: Changed namespace to PropertyGridInternal 
