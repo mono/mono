@@ -29,6 +29,7 @@
 using System.ComponentModel;
 namespace System.Web {
 
+	[AttributeUsage(AttributeTargets.All)]
 	internal class WebSysDescriptionAttribute : DescriptionAttribute {
 
 		public WebSysDescriptionAttribute (string description) : base (description)
