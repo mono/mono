@@ -85,34 +85,12 @@ namespace System.Drawing
 				((Image)val).Save (ms, ((Image)val).RawFormat);
 				return ms.GetBuffer ();
 			}else
-				return new NotSupportedException ("ImageConverter can not convert from " + val.GetType ());				
+				return new NotSupportedException ("ImageConverter can not convert from " + val.GetType ());
 		}
 
-		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object val, Attribute[] attribs )
+		public override PropertyDescriptorCollection GetProperties (ITypeDescriptorContext context, object val, Attribute[] attribs)
 		{
-			Type type = typeof (System.Drawing.Image);
-			PropertyDescriptorCollection pdc = TypeDescriptor.GetProperties (type); 
-			PropertyDescriptorCollection returnPDC = pdc;
-			if (attribs !=null) {
-				int length = attribs.Length;
-				foreach (PropertyDescriptor pd in pdc) {
-					bool found = false;
-					AttributeCollection attributes = pd.Attributes;
-					//Apply the filter on the PropertyDescriptor
-					//If any attribute is found from attribs, in 
-					//PropertyDescriptor then retain that particular
-					//PropertyDescriptor else discard it.
-					for (int i=0; i<length; i++) {
-						if (attributes.Contains (attribs [i])) {
-							found = true;
-							break;
-						}
-					}
-					if (!found)
-						returnPDC.Remove (pd);
-				}
-			}
-			return returnPDC;	
+			return TypeDescriptor.GetProperties (typeof (Image), attribs);
 		}
 
 		public override bool GetPropertiesSupported (ITypeDescriptorContext context )

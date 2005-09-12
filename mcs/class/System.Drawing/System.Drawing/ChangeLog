@@ -1,3 +1,8 @@
+2005-09-12 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ImageConverter.cs: Use default TypeDescriptor implementation of 
+	GetProperties.
+
 2005-09-11 Konstantin Triger <kostat@mainsoft.com>
 
 	* Graphics.jvm.cs: fixing clipping with rotate transform
