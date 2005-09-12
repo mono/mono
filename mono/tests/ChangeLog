@@ -1,3 +1,14 @@
+2005-09-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke3.cs libtest.c: Add tests for bug #76063.
+
+2005-09-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* load-exceptions.cs t-missing.cs load-missing.il: New files. Tests
+	for handling type load exceptions.
+
+	* Makefile.am: Add type loading tests.
+
 2005-08-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c (mono_test_empty_struct): Work around bug in intel icc.
