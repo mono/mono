@@ -1,3 +1,8 @@
+2005-09-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot.c (emit_section_change): Applied patch from "The Software Team" 
+	(<software@solmersa.com>). Fix as errors on windows.
+
 2005-09-11  Zoltan Varga  <vargaz@freemail.hu>
 
 	* tramp-amd64.c (mono_arch_create_trampoline_code): Fix saving of
