@@ -1,5 +1,7 @@
 2005-09-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* pinvoke3.cs libtest.c: Add test for returning null arrays from delegates.
+
 	* pinvoke3.cs libtest.c: Add tests for bug #76063.
 
 2005-09-09  Zoltan Varga  <vargaz@gmail.com>
