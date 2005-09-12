@@ -116,8 +116,6 @@ namespace MonoTests.Microsoft.VisualBasic
 #if NET_2_0
 		// there's not yet an mbas for the 2.0 profile
 		[Category ("NotWorking")]
-#else
-		[Ignore ("Bug #75223")]
 #endif
 		public void CreateCompiler ()
 		{

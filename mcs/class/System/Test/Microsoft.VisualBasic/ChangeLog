@@ -1,3 +1,8 @@
+2005-09-12  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeProviderTest.cs: Re-enabled CreateCompiler test as bug #75223
+	is fixed.
+
 2005-07-30  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Added NewSlot tests.
