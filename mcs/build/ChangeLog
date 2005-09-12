@@ -1,3 +1,7 @@
+2005-09-12  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/basic.make (do-profile-check): Quote sed expression.
+
 2005-09-06  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/net_1_1_bootstrap.make: Remove special-handling on Win32.

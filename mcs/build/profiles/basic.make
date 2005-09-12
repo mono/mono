@@ -39,7 +39,7 @@ do-profile-check:
 		monolite_corlib_version=`$(with_mono_path_monolite) $(ILDISASM) $(topdir)/class/lib/monolite/mscorlib.dll | sed -n 's,.*mono_corlib_version.*int32.*(\([^)]*\)),\1,p'`; \
 		source_corlib_version=`sed -n 's,.*mono_corlib_version.*=[^0-9]*\([0-9]*\)[^0-9]*$$,\1,p' $(topdir)/class/corlib/System/Environment.cs`; \
 		case $$monolite_corlib_version in \
-		0x* | 0X*) monolite_corlib_version=`echo $$monolite_corlib_version | sed s,^0[xX],,`; \
+		0x* | 0X*) monolite_corlib_version=`echo $$monolite_corlib_version | sed 's,^0[xX],,'`; \
 		  monolite_corlib_version=`(echo 16; echo i; echo $$monolite_corlib_version; echo p) | dc` ;; esac ; \
 		if test x$$monolite_corlib_version = x$$source_corlib_version; then \
 	            echo "*** Falling back to using pre-compiled binaries.  Be warned, this may not work." 1>&2 ; \
