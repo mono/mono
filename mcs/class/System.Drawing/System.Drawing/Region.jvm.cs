@@ -297,14 +297,14 @@ namespace System.Drawing
 
 		public bool IsVisible (float x, float y, float width, float height)
 		{
-			return NativeObject.contains(x,y,width,height);
+			return NativeObject.intersects(x,y,width,height);
 		}
 
 		public bool IsVisible (float x, float y, float width, float height, Graphics g) 
 		{
 			if (g == null)
 				throw new ArgumentNullException("graphics");
-			return NativeObject.contains(x,y,width,height);
+			return NativeObject.intersects(x,y,width,height);
 		}
 		#endregion
 
