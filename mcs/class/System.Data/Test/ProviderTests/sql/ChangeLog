@@ -1,3 +1,8 @@
+2005-09-13  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* sybase.sql: added. script file to create test database on
+	sybase.
+
 2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SCHEMA: schema specification.

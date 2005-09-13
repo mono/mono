@@ -1,3 +1,7 @@
+2005-09-13  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Makefile: Added reference to Sybase db.
+
 2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data.Connected.Tests.dll.sources: source files.

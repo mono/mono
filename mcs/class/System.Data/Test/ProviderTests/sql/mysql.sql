@@ -3,7 +3,7 @@ use monotest
 //
 
 -- =================================== OBJECT NUMERIC_FAMILY =========================
--- TABLE : INT_FAMILY
+-- TABLE : NUMERIC_FAMILY
 -- data with id > 6000 is not gaurenteed to be read-only.
 drop table if exists numeric_family;
 //
@@ -24,14 +24,12 @@ create table numeric_family (
 
 insert into numeric_family values (1,1,255,32767,2147483647,9223372036854775807,1000,1000,922337203685477.5807,214748.3647);
 insert into numeric_family values (2,0,0,-32768,-2147483648,-9223372036854775808,-1000,-1000,-922337203685477.5808,-214748.3648);
-insert into numeric_family values (3,0,0,0,0,0,0,0,0,0);
-insert into numeric_family values (4,null,null,null,null,null,null,null,null,null);
-//
+insert into numeric_family values (3,0,0,0,0,0,0,0,0,0); insert into numeric_family values (4,null,null,null,null,null,null,null,null,null); //
 
 -- =================================== END OBJECT NUMERIC_FAMILY ========================
 
 -- =================================== OBJECT BINARY_FAMILY =========================
--- TABLE : INT_FAMILY
+-- TABLE : BINARY_FAMILY
 -- data with id > 6000 is not gaurenteed to be read-only.
 drop table if exists binary_family;
 //

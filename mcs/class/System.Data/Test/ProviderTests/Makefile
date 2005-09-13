@@ -3,7 +3,7 @@ thisdir=class/System.Data/Test/ProviderTests
 
 include ../../../../build/rules.make
 
-LIB_MCS_FLAGS = /r:System.Data,System.Data.OracleClient,ByteFX.Data,Npgsql,System,System.Xml,nunit.framework,Mono.Data
+LIB_MCS_FLAGS = /r:System.Data,System.Data.OracleClient,ByteFX.Data,Npgsql,System,System.Xml,nunit.framework,Mono.Data,Mono.Data.SybaseClient
 
 DATABASE=sql92
 
