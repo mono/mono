@@ -1,3 +1,9 @@
+2005-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TableCell.cs: do the same as HyperLink and others in
+	AddParsedSubobject so that adding a literal control does not remove the
+	existing controls if any. Fixes bug #76078.
+
 2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GridView.cs: don't duplicate class attribute. Fixes bug #75936.

@@ -224,6 +224,11 @@ namespace System.Web.UI.WebControls {
 
 		protected override void AddParsedSubObject (object obj)
 		{
+			if (HasControls ()) {
+				base.AddParsedSubObject (obj);
+				return;
+			}
+			
 			LiteralControl lc = (obj as LiteralControl);
 			if (lc == null) {
 				string s = Text;
