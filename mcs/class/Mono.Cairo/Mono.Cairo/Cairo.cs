@@ -238,7 +238,7 @@ namespace Cairo {
                 public static extern void cairo_text_path  (IntPtr ct, string utf8);
 
 		[DllImport (CairoImp)]
-                public static extern void cairo_text_path  (IntPtr ct, string utf8, ref TextExtents extents);
+                public static extern void cairo_text_extents  (IntPtr cr, string utf8, ref TextExtents extents);
 
                 [DllImport (CairoImp)]
                 public static extern void cairo_glyph_path (IntPtr ct, IntPtr glyphs, int num_glyphs);

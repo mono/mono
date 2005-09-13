@@ -647,5 +647,12 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_text_path  (state, str);
                 }		
+
+		public TextExtents TextExtents (string utf8)
+		{
+			TextExtents extents = new TextExtents ();
+			CairoAPI.cairo_text_extents (state, utf8, ref extents);
+			return extents;
+		}
         }
 }

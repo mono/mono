@@ -1,3 +1,12 @@
+2005-09-12  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Surface.cs: add two ImageSurface ctors
+	Obsolete Surface CreateForImage methods in favor of
+	the new ImageSurface ctors
+ 	* Mono.Cairo/Cairo.cs: add cairo_text_extents
+ 	* Mono.Cairo/Graphics.cs: add TextExtents ()
+	
+	
 2005-09-07  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Graphics.cs: the Relative path methods

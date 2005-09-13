@@ -39,6 +39,21 @@ namespace Cairo {
 
         public class ImageSurface : Surface
         {
+		public ImageSurface (Format format, int width, int height)
+		{
+			surface = CairoAPI.cairo_image_surface_create (format, width, height);
+			lock (surfaces.SyncRoot){
+				surfaces [surface] = this;
+			}
+		}
+
+		public ImageSurface (string data, Cairo.Format format, int width, int height, int stride)
+		{
+			surface = CairoAPI.cairo_image_surface_create_for_data (data, format, width, height, stride);
+			lock (surfaces.SyncRoot){
+				surfaces [surface] = this;
+			}
+		}
 		
 		public ImageSurface (string filename)
 		{
@@ -163,6 +178,7 @@ namespace Cairo {
 			}
 		}		
 		
+		[Obsolete ("Use an ImageSurface constructor instead.")]
                 public static Cairo.Surface CreateForImage (
                         string data, Cairo.Format format, int width, int height, int stride)
                 {
@@ -172,6 +188,7 @@ namespace Cairo {
                         return new Cairo.Surface (p, true);
                 }
 
+		[Obsolete ("Use an ImageSurface constructor instead.")]
                 public static Cairo.Surface CreateForImage (
                         Cairo.Format format, int width, int height)
                 {
