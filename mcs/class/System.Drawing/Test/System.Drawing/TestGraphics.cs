@@ -149,6 +149,7 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("SetClip5", 220, rects[0].Height);
 
 			// RectangleF
+			g = Graphics.FromImage (bmp);
 			g.SetClip (new RectangleF (50, 40, 210, 220));
 			rects = g.Clip.GetRegionScans (new Matrix ());
 			AssertEquals ("SetClip6", 1, rects.Length);
@@ -158,6 +159,7 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("SetClip10", 220, rects[0].Height);
 
 			// Rectangle
+			g = Graphics.FromImage (bmp);
 			g.SetClip (new Rectangle (50, 40, 210, 220));
 			rects = g.Clip.GetRegionScans (new Matrix ());
 			AssertEquals ("SetClip10", 1, rects.Length);

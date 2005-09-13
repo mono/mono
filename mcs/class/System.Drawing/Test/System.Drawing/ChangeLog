@@ -1,3 +1,7 @@
+2005-09-13 Jordi Mas i Hernandez <jordi@ximan.com>
+
+	* TestGraphics.cs: resets graphics object status before every SetClip test
+
 2005-09-12 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* TestImageConverter.cs: Re-enabled GetProperties test.
