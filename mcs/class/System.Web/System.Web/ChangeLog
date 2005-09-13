@@ -1,3 +1,9 @@
+2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpResponseSubstitutionCallback.cs: New. 2.0 delegate.
+	* TraceContextEventArgs.cs: New. 2.0 class.
+	* TraceContextEventHandler.cs: New. 2.0 delegate.
+
 2005-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: use GetServerName instead of GetLocalAddress when
