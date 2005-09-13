@@ -1,5 +1,10 @@
 2005-09-13  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* CheckedListBox.cs: Fixes bug 76028
+	* ListBox.cs: Fixes bug 76028
+
+2005-09-13  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* ThemeWin32Classic.cs: Sets clipping on DataGridPaintRowsHeaders
 	* DataGridDrawingLogic.cs: fixes issues with Datagrid drawing
 

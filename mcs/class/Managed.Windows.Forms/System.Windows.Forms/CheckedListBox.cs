@@ -205,12 +205,6 @@ namespace System.Windows.Forms
 		{
 			base.OnClick (e);
 			
-			if (check_onclick) {
-				if (focused_item != -1) {
-					SetItemChecked (focused_item, !GetItemChecked (focused_item));
-				}
-			}
-			
 			if (Click != null)			
 				Click (this, EventArgs.Empty);
 		}
@@ -315,13 +309,17 @@ namespace System.Windows.Forms
 		#region Private Methods
 
 		internal override void OnMouseDownLB (object sender, MouseEventArgs e)
-		{
-			base.OnMouseDownLB (sender, e);
-			
+		{			
 			Rectangle hit_rect, item_rect;
 			CheckState value =  CheckState.Checked;
 			bool set_value = false;
 			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
+
+			if (Click != null) {
+				if (e.Button == MouseButtons.Left) {
+					Click (this, e);
+				}
+			}	
 
 			if (index == -1)
 				return;
@@ -333,24 +331,24 @@ namespace System.Windows.Forms
 			hit_rect.Width = ThemeEngine.Current.CheckedListBoxCheckRectangle().Width;
 			hit_rect.Height = ThemeEngine.Current.CheckedListBoxCheckRectangle().Height;
 			
-			if ((Items.GetListBoxItem (index)).State == CheckState.Checked)
-					value = CheckState.Unchecked;
-
-			if (hit_rect.Contains (e.X, e.Y) == true)  {				
+			if ((Items.GetListBoxItem (index)).State == CheckState.Checked) { //From checked to unchecked
+				value = CheckState.Unchecked;
 				set_value = true;
-
 			} else {
-				if (item_rect.Contains (e.X, e.Y) == true) {
-					if (!check_onclick) {
-						if ((Items.GetListBoxItem (index)).Selected == true)
-							set_value = true;
-					}
+				
+				if (check_onclick) {
+					set_value = true;
+				} else {
+					if ((Items.GetListBoxItem (index)).Selected == true)
+						set_value = true;
 				}
 			}
 
 			if (set_value)
 				SetItemCheckState (index, value);
 			
+			SelectedItemFromNavigation (index);
+			SetFocusedItem (index);
 		}
 
 		internal override void UpdateItemInfo (UpdateOperation operation, int first, int last)

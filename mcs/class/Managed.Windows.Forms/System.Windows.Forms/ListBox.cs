@@ -1507,7 +1507,7 @@ namespace System.Windows.Forms
 		}		
 		
 		// An item navigation operation (mouse or keyboard) has caused to select a new item
-		private void SelectedItemFromNavigation (int index)
+		internal void SelectedItemFromNavigation (int index)
 		{
 			switch (SelectionMode) {
     				case SelectionMode.None: // Do nothing
@@ -1594,7 +1594,7 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		void SetFocusedItem (int index)
+		internal void SetFocusedItem (int index)
 		{			
 			Rectangle invalidate;
 			int prev = focused_item;			
