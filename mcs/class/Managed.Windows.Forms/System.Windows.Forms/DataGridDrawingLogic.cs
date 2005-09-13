@@ -173,8 +173,8 @@ namespace System.Windows.Forms
 				cells_area.Height -= grid.horiz_scrollbar.Height;
 
 				if (rowshdrs_area.Y + rowshdrs_area.Height > client_area.Y + client_area.Height) {
-					rowshdrs_area.Height -= grid.horiz_scrollbar.Width;
-					rowshdrs_maxheight -= grid.horiz_scrollbar.Width;
+					rowshdrs_area.Height -= grid.horiz_scrollbar.Height;
+					rowshdrs_maxheight -= grid.horiz_scrollbar.Height;
 				}
 			}
 
@@ -365,7 +365,9 @@ namespace System.Windows.Forms
 				grid.visiblerow_count = max_rows;
 			} else {
 				grid.visiblerow_count = total_rows;
-			}			
+			}	
+
+			CalcRowsHeaders (); // Height depends on num of visible rows		
 			
 			if (grid.visiblerow_count + grid.first_visiblerow > total_rows)
 				grid.visiblerow_count = total_rows - grid.first_visiblerow;

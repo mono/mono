@@ -995,6 +995,7 @@ namespace System.Windows.Forms
 				rowcnt++;
 			}
 
+			g.SetClip (grid.grid_drawing.rowshdrs_area);
 			for (int row = grid.FirstVisibleRow; row < rowcnt; row++) {
 
 				rect_row.Width = grid.grid_drawing.rowshdrs_area.Width;
@@ -1017,6 +1018,8 @@ namespace System.Windows.Forms
 				g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor),
 					not_usedarea);
 			}			
+
+			g.ResetClip ();
 		}
 		
 		public override void DataGridPaintRowHeaderArrow (Graphics g, Rectangle bounds, DataGrid grid) 

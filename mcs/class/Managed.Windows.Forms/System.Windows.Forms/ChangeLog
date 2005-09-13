@@ -1,3 +1,8 @@
+2005-09-13  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ThemeWin32Classic.cs: Sets clipping on DataGridPaintRowsHeaders
+	* DataGridDrawingLogic.cs: fixes issues with Datagrid drawing
+
 2005-09-12  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* XplatUIX11.cs: fixes System.NullReferenceException in some situations
