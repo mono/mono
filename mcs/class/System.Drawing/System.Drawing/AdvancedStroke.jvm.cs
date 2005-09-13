@@ -16,6 +16,8 @@ namespace System.Drawing {
 		public const float MinPenSizeAA = PenUnits * MinPenUnitsAA;
 		public const double MinPenSizeAASquared = (MinPenSizeAA * MinPenSizeAA);
 		public const double MinPenSizeSquared = 1.000000001;
+		public const double MinPenSizeNorm = 1.5;
+		public const double MinPenSizeSquaredNorm = (MinPenSizeNorm * MinPenSizeNorm);
 
 		/**
 		 * Joins path segments by extending their outside edges until

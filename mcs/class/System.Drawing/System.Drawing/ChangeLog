@@ -1,5 +1,10 @@
 2005-09-12 Konstantin Triger <kostat@mainsoft.com>
 
+	* AdvancedStroke.jvm.cs: constants for pen fitting calculations
+	* Pen.jvm.cs: fixing transform, pen fitting
+
+2005-09-12 Konstantin Triger <kostat@mainsoft.com>
+
 	 * Region.jvm.cs: IsVisible is about intersection 
 
 2005-09-12 Gert Driesen <drieseng@users.sourceforge.net>

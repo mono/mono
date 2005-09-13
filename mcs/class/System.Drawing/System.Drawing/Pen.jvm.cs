@@ -73,6 +73,7 @@ namespace System.Drawing
 			_alignment = PenAlignment.Center;
 			_lineJoin = LineJoin.Miter;
 			_miterLimit = 10f;
+			_transform = new Matrix();
 		}
 		#endregion
 		//
@@ -329,16 +330,14 @@ namespace System.Drawing
 		{
 			get 
 			{
-				if (_transform == null)
-					_transform = new Matrix ();
-				return _transform;
+				return _transform.Clone();
 			}
 					
 			set 
 			{
 				EnsureModifiable();
 
-				_transform = value;
+				value.CopyTo(_transform);
 			}
 		}
 		#endregion
@@ -387,45 +386,45 @@ namespace System.Drawing
 		#region Transform Funcs
 		public void MultiplyTransform (Matrix matrix)
 		{
-			Transform.Multiply (matrix);
+			_transform.Multiply (matrix);
 		}
 
 		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
 		{
-			Transform.Multiply (matrix, order);
+			_transform.Multiply (matrix, order);
 		}
 
 		public void ResetTransform ()
 		{
-			Transform.Reset ();
+			_transform.Reset ();
 		}
 
 		public void RotateTransform (float angle)
 		{
-			Transform.Rotate (angle);
+			_transform.Rotate (angle);
 		}
 
 		public void RotateTransform (float angle, MatrixOrder order)
 		{
-			Transform.Rotate (angle, order);
+			_transform.Rotate (angle, order);
 		}
 
 		public void ScaleTransform (float sx, float sy)
 		{
-			Transform.Scale (sx, sy);
+			_transform.Scale (sx, sy);
 		}
 
 		public void ScaleTransform (float sx, float sy, MatrixOrder order)
 		{
-			Transform.Scale (sx, sy, order);
+			_transform.Scale (sx, sy, order);
 		}
 
 		public void TranslateTransform (float dx, float dy) {
-			Transform.Translate (dx, dy);
+			_transform.Translate (dx, dy);
 		}
 
 		public void TranslateTransform (float dx, float dy, MatrixOrder order) {
-			Transform.Translate (dx, dy, order);
+			_transform.Translate (dx, dy, order);
 		}
 		#endregion
 
@@ -441,13 +440,33 @@ namespace System.Drawing
 				throw new ArgumentException ("You may not change this Pen because it does not belong to you.");
 		}
 
+		internal double GetSquaredTransformedWidth(geom.AffineTransform coordsTransform) {
+			geom.AffineTransform transform = _transform.NativeObject;
+			double A = transform.getScaleX();	// m00
+			double B = transform.getShearY();	// m10
+			double C = transform.getShearX();	// m01
+			double D = transform.getScaleY();	// m11
+
+			double K = coordsTransform.getScaleX();	// m00
+			double L = coordsTransform.getShearY();	// m10
+			double M = coordsTransform.getShearX();	// m01
+			double N = coordsTransform.getScaleY();	// m11
+
+			double AD = A*D, BC = B*C, KN = K*N, LM = L*M;
+			double KN_LM = KN-LM;
+			return Math.Abs(Width*Width * (AD*KN_LM - BC*KN_LM));
+		}
+
+		internal awt.Stroke GetNativeObject(geom.AffineTransform outputTransform, bool fitPen) {
+			return GetNativeObject(null, outputTransform, fitPen);
+		}
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="outputTransform">transform which will be applied on the final shape</param>
 		/// <param name="fitPen">ensure the shape will wide enough to be visible</param>
 		/// <returns></returns>
-		internal awt.Stroke GetNativeObject(geom.AffineTransform outputTransform, bool fitPen) {
+		internal awt.Stroke GetNativeObject(geom.AffineTransform penTransform, geom.AffineTransform outputTransform, bool fitPen) {
 			float[] dashPattern = null;
 
 			switch (DashStyle) {
@@ -516,10 +535,15 @@ namespace System.Drawing
 					break;
 			}
 
+			geom.AffineTransform penT = _transform.NativeObject;
+			if (penTransform != null && !penTransform.isIdentity()) {
+				penT = (geom.AffineTransform)penT.clone();
+				penT.concatenate(penTransform);
+			}
+
 			return StrokeFactory.CreateStroke(Width, cap, 
 				join, MiterLimit, dashPattern, DashOffset,
-				_transform != null ? _transform.NativeObject : null,
-				outputTransform, fitPen);
+				penT, outputTransform, fitPen);
 		}
 
 		#region Stroke Members
