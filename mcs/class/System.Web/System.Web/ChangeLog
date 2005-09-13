@@ -1,3 +1,8 @@
+2005-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: use GetServerName instead of GetLocalAddress when
+	building the Url.
+
 2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: fix the indexer.

@@ -97,7 +97,7 @@ namespace System.Web {
 		{
 			uri_builder = new UriBuilder ();
 			uri_builder.Scheme = worker_request.GetProtocol ();
-			uri_builder.Host = worker_request.GetLocalAddress ();
+			uri_builder.Host = worker_request.GetServerName ();
 			int port = worker_request.GetLocalPort ();
 			uri_builder.Port = port;
 			uri_builder.Path = worker_request.GetUriPath ();
