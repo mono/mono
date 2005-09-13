@@ -441,8 +441,7 @@ namespace System.Data.ProviderBase
 			if (trimedProcedureName.Length > 0 && trimedProcedureName[trimedProcedureName.Length-1] == ')')
 				addParas = false;
 			
-				AbstractDbParameter derivedParam = (AbstractDbParameter)derivedParams[curDerivedPos++];
-
+				AbstractDbParameter derivedParam = (derivedParams.Count > 0) ? (AbstractDbParameter)derivedParams[curDerivedPos++] : null;
 				AbstractDbParameter returnValueParameter = GetReturnParameter (userParams);
 				if (returnValueParameter != null) {
 
