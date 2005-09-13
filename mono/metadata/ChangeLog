@@ -1,3 +1,10 @@
+2005-09-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (mono_class_get_overrides_full): Modify signature to explicitly
+	return a success/failure indication.
+	(mono_metadata_interfaces_from_typedef_full): Ditto.
+	(get_constraints): Ditto.
+
 2005-09-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_array): Fix handling of null arrays.
