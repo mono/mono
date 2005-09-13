@@ -1,3 +1,34 @@
+2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpApplicationCas.cs: New. CAS unit tests.
+	* HttpApplicationStateCas.cs: New. CAS unit tests.
+	* HttpBrowserCapabilitiesCas.cs: New. CAS unit tests.
+	* HttpCachePolicyCas.cs: New. CAS unit tests.
+	* HttpCacheVaryByHeadersCas.cs: New. CAS unit tests.
+	* HttpCacheVaryByParamsCas.cs: New. CAS unit tests.
+	* HttpClientCertificateCas.cs: New. CAS unit tests.
+	* HttpCompileExceptionCas.cs: New. CAS unit tests.
+	* HttpContextCas.cs: Add method/propertie CAS tests cases.
+	* HttpCookieCas.cs: New. CAS unit tests.
+	* HttpCookieCollectionCas.cs: New. CAS unit tests.
+	* HttpExceptionCas.cs: New. CAS unit tests.
+	* HttpFileCollectionCas.cs: New. CAS unit tests.
+	* HttpModuleCollectionCas.cs: New. CAS unit tests.
+	* HttpParseExceptionCas.cs: New. CAS unit tests.
+	* HttpRequestCas.cs: New. CAS unit tests.
+	* HttpRequestValidationExceptionCas.cs: New. CAS unit tests.
+	* HttpResponseCas.cs: New. CAS unit tests.
+	* HttpRuntimeCas.cs: New. CAS unit tests.
+	* HttpServerUtilityCas.cs: New. CAS unit tests.
+	* HttpStaticObjectsCollectionCas.cs: New. CAS unit tests.
+	* HttpUnhandledExceptionCas.cs: New. CAS unit tests.
+	* HttpUtilityCas.cs: New. CAS unit tests.
+	* HttpWorkerRequestCas.cs: New. CAS unit tests.
+	* HttpWriterCas.cs: New. CAS unit tests.
+	* ProcessInfoCas.cs: New. CAS unit tests.
+	* ProcessModelInfoCas.cs: New. CAS unit tests.
+	* TraceContextCas.cs: New. CAS unit tests.
+
 2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpContextCas.cs: New. CAS unit tests for SkipAuthorization and
