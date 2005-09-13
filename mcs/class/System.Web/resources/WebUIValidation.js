@@ -310,7 +310,7 @@ function CustomValidatorEvaluateIsValid (validator)
 
 	var ctrl_value = ValidatorTrim (ValidatorGetValue (ControlToValidate));
 
-	var result = false;
+	var result = true;
 
 	if (evaluationfunc && evaluationfunc != "") {
 		args = {Value:ctrl_value, IsValid:false};

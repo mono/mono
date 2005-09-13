@@ -1,3 +1,9 @@
+2005-09-13  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js (CustomValidatorEvaluateIsValid): the default
+	if an evaluationfunc wasn't provided is "valid".  Fixes
+	#76078.
+
 2005-09-06  Chris Toshok  <toshok@ximian.com>
 
 	* webform.js (wasControlEnabled): use __enabledControlArray,
