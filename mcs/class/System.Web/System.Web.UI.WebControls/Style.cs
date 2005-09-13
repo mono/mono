@@ -30,7 +30,12 @@ using System.Drawing;
 
 namespace System.Web.UI.WebControls 
 {
+#if NET_2_0
+// Not until we actually have StyleConverter
+//	[TypeConverter(typeof(System.Web.UI.WebControls.StyleConverter))]
+#else
 	[TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
+#endif
 	[ToolboxItem("")]
 	public class Style : System.ComponentModel.Component, System.Web.UI.IStateManager 
 	{
@@ -96,7 +101,9 @@ namespace System.Web.UI.WebControls
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
@@ -121,7 +128,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
@@ -146,7 +155,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(BorderStyle.NotSet)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -170,7 +181,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -238,7 +251,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(typeof (Color), "")]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.WebColorConverter))]
@@ -263,7 +278,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -292,7 +309,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if !NET_2_0
 		[Bindable(true)]
+#endif
 		[DefaultValue(typeof (Unit), "")]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -712,6 +731,9 @@ namespace System.Web.UI.WebControls
 		}
 
 		[MonoTODO]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[Browsable(false)]
 		public string RegisteredCssClass {
 			get {
 				return registered_class;

@@ -36,7 +36,7 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
-	public class SubMenuStyle: Style
+	public class SubMenuStyle: Style, ICustomTypeDescriptor
 	{
 		private const string HORZ_PADD = "HorizontalPadding";
 		private const string VERT_PADD = "VerticalPadding";
@@ -139,6 +139,78 @@ namespace System.Web.UI.WebControls
 				attributes.Add (HtmlTextWriterStyle.PaddingTop, VerticalPadding.ToString () + "px");
 				attributes.Add (HtmlTextWriterStyle.PaddingBottom, VerticalPadding.ToString () + "px");
 			}
+		}
+
+		[MonoTODO]
+		System.ComponentModel.AttributeCollection ICustomTypeDescriptor.GetAttributes ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		string ICustomTypeDescriptor.GetClassName ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		string ICustomTypeDescriptor.GetComponentName ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		TypeConverter ICustomTypeDescriptor.GetConverter ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		EventDescriptor ICustomTypeDescriptor.GetDefaultEvent ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		PropertyDescriptor ICustomTypeDescriptor.GetDefaultProperty ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		object ICustomTypeDescriptor.GetEditor (Type editorBaseType)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		EventDescriptorCollection ICustomTypeDescriptor.GetEvents (Attribute [] arr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		PropertyDescriptorCollection ICustomTypeDescriptor.GetProperties (Attribute [] arr)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		object ICustomTypeDescriptor.GetPropertyOwner (PropertyDescriptor pd)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

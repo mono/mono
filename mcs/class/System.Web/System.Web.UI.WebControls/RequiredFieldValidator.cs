@@ -29,7 +29,11 @@
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
+#if NET_2_0
+	[ToolboxData ("<{0}:RequiredFieldValidator runat=\"server\" ErrorMessage=\"RequiredFieldValidator\"></{0}:RequiredFieldValidator>")]
+#else
 	[ToolboxData ("<{0}:RequiredFieldValidator runat=server ErrorMessage=\"RequiredFieldValidator\"></{0}:RequiredFieldValidator>")]
+#endif
 	public class RequiredFieldValidator : BaseValidator {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
@@ -47,7 +51,11 @@ namespace System.Web.UI.WebControls {
 		}
 		
 
+#if NET_2_0
+		[Themeable(false)]
+#else
 		[Bindable(true)]
+#endif
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]

@@ -138,40 +138,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		protected virtual bool HasFooter 
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		protected virtual bool HasHeader
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		protected virtual bool HasSeparators
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		protected virtual int RepeatedItemCount
-		{
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-#endif		
-
 		private TableStyle TableStyle {
 			get { return (TableStyle) ControlStyle; }
 		}
@@ -187,15 +153,6 @@ namespace System.Web.UI.WebControls {
 			return this;
 		}
 
-#if NET_2_0
-		[MonoTODO]
-		protected virtual Style GetItemStyle (ListItemType itemType,
-						      int repeatIndex)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-		
 #if NET_2_0
 		protected internal
 #else		
@@ -243,18 +200,6 @@ namespace System.Web.UI.WebControls {
 			if (ti != 0)
 				TabIndex = ti;
 		}
-
-#if NET_2_0
-		[MonoTODO]
-		protected virtual void RenderItem (ListItemType itemType,
-						   int repeatIndex,
-						   RepeatInfo repeatInfo,
-						   HtmlTextWriter w)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
-
 
 #if NET_2_0
 		protected virtual
@@ -305,31 +250,85 @@ namespace System.Web.UI.WebControls {
 			RaisePostDataChangedEvent ();
 		}
 
+#if NET_2_0
+		protected virtual
+#endif
+		bool HasFooter 
+		{
+			get {
+				return false;
+			}
+		}
+
 		bool IRepeatInfoUser.HasFooter {
-			get { return false; }
+			get { return HasFooter; }
+		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		bool HasHeader
+		{
+			get {
+				return false;
+			}
 		}
 
 		bool IRepeatInfoUser.HasHeader {
-			get { return false; }
+			get { return HasHeader; }
+		}
+
+
+#if NET_2_0
+		protected virtual
+#endif
+		bool HasSeparators
+		{
+			get {
+				return false;
+			}
 		}
 
 		bool IRepeatInfoUser.HasSeparators {
-			get { return false; }
+			get { return HasSeparators; }
+		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		int RepeatedItemCount
+		{
+			get {
+				return Items.Count;
+			}
 		}
 
 		int IRepeatInfoUser.RepeatedItemCount {
-			get { return Items.Count; }
+			get { return RepeatedItemCount; }
 		}
 
-		Style IRepeatInfoUser.GetItemStyle (ListItemType itemType,
-				int repeatIndex)
+#if NET_2_0
+		protected virtual
+#endif
+		Style GetItemStyle (ListItemType itemType,
+				    int repeatIndex)
 		{
 			return null;
 		}
 
-		void IRepeatInfoUser.RenderItem (ListItemType itemType,
-				int repeatIndex, RepeatInfo repeatInfo,
-				HtmlTextWriter writer)
+		Style IRepeatInfoUser.GetItemStyle (ListItemType itemType,
+						    int repeatIndex)
+		{
+			return GetItemStyle (itemType, repeatIndex);
+		}
+
+#if NET_2_0
+		protected virtual
+#endif
+		void RenderItem (ListItemType itemType,
+				 int repeatIndex,
+				 RepeatInfo repeatInfo,
+				 HtmlTextWriter writer)
 		{
 			ListItem item = Items [repeatIndex];
 
@@ -338,6 +337,13 @@ namespace System.Web.UI.WebControls {
 			check_box.AutoPostBack = AutoPostBack;
 			check_box.Checked = item.Selected;
 			check_box.RenderControl (writer);
+		}
+
+		void IRepeatInfoUser.RenderItem (ListItemType itemType,
+						 int repeatIndex, RepeatInfo repeatInfo,
+						 HtmlTextWriter writer)
+		{
+			RenderItem (itemType, repeatIndex, repeatInfo, writer);
 		}
 	}
 }

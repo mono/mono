@@ -1,3 +1,15 @@
+2005-09-13  Chris Toshok  <toshok@ximian.com>
+
+	* Style.cs: corcompare stuff.
+
+	* RequiredFieldValidator.cs: more corcompare stuff.
+
+	* CheckBoxList.cs: clean up some of the interface methods vs
+	protected virtual 2.0 calls.
+
+	* SubMenuStyle.cs: corcompare says this should implement
+	ICustomTypeDescriptor... sooo, make it.
+
 2005-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TableCell.cs: do the same as HyperLink and others in
