@@ -170,9 +170,11 @@ namespace System.Drawing {
 		readonly Image _image;
 		
 		readonly Matrix _transform;
-		readonly geom.Rectangle2D _visibleRect;
 		GraphicsUnit _pageUnit = GraphicsUnit.Display;
 		float _pageScale = 1.0f;
+
+		readonly Region _clip;
+		readonly awt.Rectangle _windowRect;
 
 		GraphicsState _nextGraphicsState = null;
 
@@ -212,7 +214,8 @@ namespace System.Drawing {
 
 			InterpolationMode = InterpolationMode.Bilinear;
 
-			 _visibleRect = new geom.Rectangle2D.Float(0, 0, _image.Width, _image.Height);
+			_windowRect = new awt.Rectangle(_image.Width, _image.Height);
+			_clip = new Region();
 		}
 
 		#endregion
@@ -283,99 +286,42 @@ namespace System.Drawing {
 			}
 		}
 
-		bool IsPenThin(Pen pen, geom.AffineTransform coordsTransform) {
-			bool antiAlias = (SmoothingMode == SmoothingMode.AntiAlias);
-			geom.AffineTransform transform = (geom.AffineTransform)pen.Transform.NativeObject.clone();
-			transform.scale(coordsTransform.getScaleX(), coordsTransform.getScaleY());
-			if (transform.getType() < geom.AffineTransform.TYPE_GENERAL_SCALE) {
-				float width = pen.Width * (float)coordsTransform.getScaleX();
-				return (antiAlias) ?
-					(width <= AdvancedStroke.MinPenSizeAA)
-					:
-					(width < (NeedsNormalization ? 1.5f : 1.0f));
-			} else {
-				double widthsquared;
-				if (transform.getType() == geom.AffineTransform.TYPE_GENERAL_SCALE) {
-					/* sqrt omitted, compare to squared limits below. */
-					widthsquared = Math.Abs(transform.getDeterminant());
-				} else {
-					/* First calculate the "maximum scale" of this transform. */
-					double A = transform.getScaleX();	// m00
-					double C = transform.getShearX();	// m01
-					double B = transform.getShearY();	// m10
-					double D = transform.getScaleY();	// m11
-
-					/*
-					 * Given a 2 x 2 affine matrix [ A B ] such that
-					 *                             [ C D ]
-					 * v' = [x' y'] = [Ax + Cy, Bx + Dy], we want to
-					 * find the maximum magnitude (norm) of the vector v'
-					 * with the constraint (x^2 + y^2 = 1).
-					 * The equation to maximize is
-					 *     |v'| = sqrt((Ax+Cy)^2+(Bx+Dy)^2)
-					 * or  |v'| = sqrt((AA+BB)x^2 + 2(AC+BD)xy + (CC+DD)y^2).
-					 * Since sqrt is monotonic we can maximize |v'|^2
-					 * instead and plug in the substitution y = sqrt(1 - x^2).
-					 * Trigonometric equalities can then be used to get
-					 * rid of most of the sqrt terms.
-					 */
-					double EA = A*A + B*B;		// x^2 coefficient
-					double EB = 2*(A*C + B*D);	// xy coefficient
-					double EC = C*C + D*D;		// y^2 coefficient
-
-					/*
-					 * There is a lot of calculus omitted here.
-					 *
-					 * Conceptually, in the interests of understanding the
-					 * terms that the calculus produced we can consider
-					 * that EA and EC end up providing the lengths along
-					 * the major axes and the hypot term ends up being an
-					 * adjustment for the additional length along the off-axis
-					 * angle of rotated or sheared ellipses as well as an
-					 * adjustment for the fact that the equation below
-					 * averages the two major axis lengths.  (Notice that
-					 * the hypot term contains a part which resolves to the
-					 * difference of these two axis lengths in the absence
-					 * of rotation.)
-					 *
-					 * In the calculus, the ratio of the EB and (EA-EC) terms
-					 * ends up being the tangent of 2*theta where theta is
-					 * the angle that the long axis of the ellipse makes
-					 * with the horizontal axis.  Thus, this equation is
-					 * calculating the length of the hypotenuse of a triangle
-					 * along that axis.
-					 */
-					double hypot = Math.Sqrt(EB*EB + (EA-EC)*(EA-EC));
-
-					/* sqrt omitted, compare to squared limits below. */
-					widthsquared = ((EA + EC + hypot)/2.0);
-				}
-
-				widthsquared *= pen.Width * pen.Width;
-
-				return (widthsquared <=
-					(antiAlias ? AdvancedStroke.MinPenSizeAASquared : AdvancedStroke.MinPenSizeSquared));
-			}
-		}
-
 		void DrawShape(Pen pen, awt.Shape shape) {
 			if (pen == null)
 				throw new ArgumentNullException("pen");
 
 			if (StrokeFactory.CanCreateAdvancedStroke) {
-				geom.AffineTransform t = (geom.AffineTransform)GetFinalTransform().clone();
 				geom.AffineTransform oldT = NativeObject.getTransform();
 				NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
 
 				try {
-					t.preConcatenate(oldT);
-					bool thin = IsPenThin(pen, t);
+					geom.Area clip = _clip.NativeObject;
+					geom.AffineTransform t = GetFinalTransform();
+					if (!oldT.isIdentity()) {
+						clip = (geom.Area)clip.clone();
+						clip.transform(oldT);
+
+						t = (geom.AffineTransform)t.clone();
+						t.preConcatenate(oldT);
+					}
+					
+					double widthsquared = pen.GetSquaredTransformedWidth(t);
+
+					bool antiAlias = (SmoothingMode == SmoothingMode.AntiAlias);
+
+					bool thin = (widthsquared <= (antiAlias ? 
+						AdvancedStroke.MinPenSizeAASquared :
+						AdvancedStroke.MinPenSizeSquared));
 
 					if (NeedsNormalization) {
 
-						if (thin) {
+						bool normThin = 
+							widthsquared <= AdvancedStroke.MinPenSizeSquaredNorm;
+
+						if (normThin) {
 							shape = GetNormalizedShape(shape, t);
-							shape = pen.GetNativeObject(null, thin).createStrokedShape(shape);
+							shape = pen.GetNativeObject(
+								t, null, thin).createStrokedShape(shape);
 						}
 						else {
 							shape = pen.GetNativeObject(t, thin).createStrokedShape(shape);
@@ -386,7 +332,7 @@ namespace System.Drawing {
 						shape = pen.GetNativeObject(t, thin).createStrokedShape(shape);
 					}
 
-					FillScaledShape(pen.Brush, shape);
+					FillScaledShape(pen.Brush, shape, clip);
 				}
 				finally {
 					NativeObject.setTransform(oldT);
@@ -402,6 +348,7 @@ namespace System.Drawing {
 						geom.AffineTransform oldT = NativeObject.getTransform();
 						NativeObject.transform(GetFinalTransform());
 						try {
+							shape = IntersectUserClip(shape);
 							NativeObject.draw(shape);
 						}
 						finally {
@@ -421,16 +368,35 @@ namespace System.Drawing {
 			if (paint == null)
 				throw new ArgumentNullException("brush");
 
+			geom.AffineTransform oldT = null;
+			geom.Area clip = _clip.NativeObject;
 			if (NeedsNormalization) {
-				shape = GetNormalizedShape(shape, GetFinalTransform());
+				oldT = NativeObject.getTransform();
+				geom.AffineTransform t = GetFinalTransform();
+				if (!oldT.isIdentity()) {
+					t = (geom.AffineTransform)t.clone();
+					t.preConcatenate(oldT);
+					clip = (geom.Area)clip.clone();
+					clip.transform(oldT);
+				}
+				shape = GetNormalizedShape(shape, t);
 			}
 			else {
-				geom.GeneralPath path = new geom.GeneralPath(shape);
-				path.transform(GetFinalTransform());
-				shape = path;
+				geom.AffineTransform t = GetFinalTransform();
+				if (!t.isIdentity())
+					shape = t.createTransformedShape(shape);
 			}
 
-			FillScaledShape(paint, shape);
+			if (oldT != null)
+				NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
+
+			try {
+				FillScaledShape(paint, shape, clip);
+			}
+			finally {
+				if (oldT != null)
+					NativeObject.setTransform(oldT);
+			}
 		}
 
 		bool NeedsNormalization {
@@ -448,10 +414,12 @@ namespace System.Drawing {
 			return path;
 		}
 
-		void FillScaledShape(awt.Paint paint, awt.Shape shape) {
+		void FillScaledShape(awt.Paint paint, awt.Shape shape, geom.Area clip) {
+			geom.Rectangle2D r = shape.getBounds2D();
 			awt.Paint oldP = NativeObject.getPaint();
 			NativeObject.setPaint(paint);
 			try {
+				shape = IntersectUserClip(shape, clip);
 				NativeObject.fill(shape);
 			}
 			finally {
@@ -595,16 +563,29 @@ namespace System.Drawing {
 							at1.rotate(Math.PI/2);
 							awt.Shape sha = textlayout.getOutline(at1);
 							//g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+							sha = IntersectUserClip(sha);
 							g.fill(sha);
 							continue;
 						}
 						if((format.FormatFlags & StringFormatFlags.DirectionRightToLeft)  != 0) {
 							drawPosX = ((drawPosX + formatWidth) - advance) + (float)9;
-							layout.draw(g, drawPosX, drawPosY);
+							IntersectScaledClipWithBase(_clip);
+							try {
+								layout.draw(g, drawPosX, drawPosY);
+							}
+							finally {
+								RestoreBaseClip();
+							}
 						} 
 					}					
 					//Draw current line
-					layout.draw(g, drawPosX, drawPosY);					
+					IntersectScaledClipWithBase(_clip);
+					try {
+						layout.draw(g, drawPosX, drawPosY);					
+					}
+					finally {
+						RestoreBaseClip();
+					}
 				}
 			} //not nulls
 
@@ -620,7 +601,7 @@ namespace System.Drawing {
 		
 		#region Clear
 		public void Clear (Color color) {
-			FillScaledShape(color.NativeObject, new awt.Rectangle(0,0,_image.Width,_image.Height));
+			FillScaledShape(color.NativeObject, _clip.NativeObject, null);
 		}
 		#endregion
 
@@ -826,7 +807,13 @@ namespace System.Drawing {
 			geom.AffineTransform oldT = NativeObject.getTransform();
 			NativeObject.transform(_transform.NativeObject);
 			try {
-				NativeObject.drawImage(image.NativeObject, x, y, null);
+				IntersectScaledClipWithBase(_clip);
+				try {
+					NativeObject.drawImage(image.NativeObject, x, y, null);
+				}
+				finally {
+					RestoreBaseClip();
+				}
 			}
 			finally {
 				NativeObject.setTransform(oldT);
@@ -848,16 +835,22 @@ namespace System.Drawing {
 			NativeObject.transform(_transform.NativeObject);
 			try {
 
-				NativeObject.drawImage(image.NativeObject,
-					destRect.X,
-					destRect.Y,
-					destRect.X + destRect.Width,
-					destRect.Y + destRect.Height,
-					srcRect.X,
-					srcRect.Y,
-					srcRect.X + srcRect.Width,
-					srcRect.Y + srcRect.Height,
-					null);
+				IntersectScaledClipWithBase(_clip);
+				try {
+					NativeObject.drawImage(image.NativeObject,
+						destRect.X,
+						destRect.Y,
+						destRect.X + destRect.Width,
+						destRect.Y + destRect.Height,
+						srcRect.X,
+						srcRect.Y,
+						srcRect.X + srcRect.Width,
+						srcRect.Y + srcRect.Height,
+						null);
+				}
+				finally {
+					RestoreBaseClip();
+				}
 			}
 			finally {
 				NativeObject.setTransform(oldT);
@@ -893,13 +886,16 @@ namespace System.Drawing {
 			Region region = new Region(srcRect);
 			region.Transform (mx);
 			
-			awt.Shape oldClip = NativeObject.getClip();
-			IntersectClip(region);
+			geom.AffineTransform t = GetFinalTransform();
+			if (!t.isIdentity())
+				region.NativeObject.transform(t);
+			region.Intersect(_clip);
+			IntersectScaledClipWithBase(region);
 			try {
 				DrawImage(image, mx);
 			}
 			finally {
-				NativeObject.setClip(oldClip);
+				RestoreBaseClip();
 			}
 		}
 		
@@ -914,13 +910,16 @@ namespace System.Drawing {
 			Region region = new Region(srcRect);
 			region.Transform (mx);
 			
-			awt.Shape oldClip = NativeObject.getClip();
-			IntersectClip(region);
+			geom.AffineTransform t = GetFinalTransform();
+			if (!t.isIdentity())
+				region.NativeObject.transform(t);
+			region.Intersect(_clip);
+			IntersectScaledClipWithBase(region);
 			try {
 				DrawImage(image, mx);
 			}
 			finally {
-				NativeObject.setClip(oldClip);
+				RestoreBaseClip();
 			}
 		}
 
@@ -929,7 +928,13 @@ namespace System.Drawing {
 			geom.AffineTransform oldT = NativeObject.getTransform();
 			NativeObject.transform(_transform.NativeObject);
 			try {
-				NativeObject.drawImage(image.NativeObject, x, y, width, height, null);
+				IntersectScaledClipWithBase(_clip);
+				try {
+					NativeObject.drawImage(image.NativeObject, x, y, width, height, null);
+				}
+				finally {
+					RestoreBaseClip();
+				}
 			}
 			finally {
 				NativeObject.setTransform(oldT);
@@ -982,7 +987,13 @@ namespace System.Drawing {
 			geom.AffineTransform oldT = NativeObject.getTransform();
 			NativeObject.transform(_transform.NativeObject);
 			try {
-				NativeObject.drawImage(image.NativeObject, m.NativeObject, null);
+				IntersectScaledClipWithBase(_clip);
+				try {
+					NativeObject.drawImage(image.NativeObject, m.NativeObject, null);
+				}
+				finally {
+					RestoreBaseClip();
+				}
 			}
 			finally {
 				NativeObject.setTransform(oldT);
@@ -1511,13 +1522,14 @@ namespace System.Drawing {
 
 		#region ExcludeClip
 		void ExcludeClip(geom.Area area) {
-			//Here final transfrom is used!
+
 			geom.AffineTransform t = GetFinalTransform();
-			if (!t.isIdentity())
+			if (!t.isIdentity()) {
+				area = (geom.Area)area.clone();
 				area.transform(t);
-			geom.Area clip = GetNativeClip();
-			clip.subtract(area);
-			SetNativeClip(clip);
+			}
+
+			_clip.NativeObject.subtract(area);
 		}
 
 		public void ExcludeClip (Rectangle rect) {
@@ -1527,7 +1539,7 @@ namespace System.Drawing {
 		public void ExcludeClip (Region region) {
 			if (region == null)
 				throw new ArgumentNullException("region");
-			ExcludeClip((geom.Area)region.NativeObject.clone());
+			ExcludeClip(region.NativeObject);
 		}
 		#endregion 
 
@@ -1743,18 +1755,21 @@ namespace System.Drawing {
 
 		#region IntersectClip
 		void IntersectClip (geom.Area area) {
-			if (!_transform.IsIdentity)
-				area.transform(_transform.NativeObject);
-			geom.Area clip = GetNativeClip();
-			clip.intersect(area);
-			SetNativeClip(clip);
+			
+			geom.AffineTransform t = GetFinalTransform();
+			if (!t.isIdentity()) {
+				area = (geom.Area)area.clone();
+				area.transform(t);
+			}
+
+			_clip.NativeObject.intersect(area);
 		}
 
 		public void IntersectClip (Region region) {
 			if (region == null)
 				throw new ArgumentNullException("region");
 
-			IntersectClip((geom.Area)region.NativeObject.clone());
+			IntersectClip(region.NativeObject);
 		}
 		
 		public void IntersectClip (RectangleF rect) {
@@ -1785,12 +1800,24 @@ namespace System.Drawing {
 		}
 		
 		public bool IsVisible (float x, float y) {
-			java.awt.Graphics2D g = NativeObject;
-			java.awt.Shape s = g.getClip();
-			if (s == null)
+			double dx = x;
+			double dy = y;
+			geom.AffineTransform t = GetFinalTransform();
+			if (!t.isIdentity()) {
+				double[] p = new double[] {dx, dy};
+				t.transform(p, 0, p, 0, 1);
+
+				dx = p[0];
+				dy = p[1];
+			}
+			if (!_clip.NativeObject.contains(dx, dy))
+				return false;
+
+			awt.Shape clip = NativeObject.getClip();
+			if (clip == null)
 				return true;
-			else				
-				return s.contains(x,y);
+
+			return clip.contains(dx, dy);
 		}
 		
 		public bool IsVisible (int x, int y) {
@@ -1798,12 +1825,17 @@ namespace System.Drawing {
 		}
 		
 		public bool IsVisible (float x, float y, float width, float height) {
-			java.awt.Graphics2D g = NativeObject;
-			java.awt.Shape s = g.getClip();
-			if (s == null)
-				return true;
-			else				
-				return s.contains(x,y,width,height);
+
+			geom.AffineTransform t = GetFinalTransform();
+			geom.Rectangle2D r = new geom.Rectangle2D.Float(x, y, width, height);
+			
+			if (!t.isIdentity())
+				r = t.createTransformedShape(r).getBounds2D();
+		
+			return NativeObject.hitClip(
+					(int)(r.getX()+0.5), (int)(r.getY()+0.5),
+					(int)(r.getWidth()+0.5), (int)(r.getHeight()+0.5))
+				&& _clip.NativeObject.intersects(r);
 		}
 
 		
@@ -1868,7 +1900,7 @@ namespace System.Drawing {
 
 		#region Reset (Clip and Transform)
 		public void ResetClip () {
-			NativeObject.setClip(null);
+			_clip.MakeInfinite();
 		}
 
 		public void ResetTransform () {
@@ -1921,9 +1953,7 @@ namespace System.Drawing {
 			if(g == null)
 				throw new NullReferenceException();
 			
-			SetNativeClip(
-				CombineClipArea(g.GetNativeClip(),
-				combineMode));
+			CombineClipArea(g._clip.NativeObject, combineMode);
 		}
 
 		public void SetClip (Rectangle rect, CombineMode combineMode) {
@@ -1937,35 +1967,43 @@ namespace System.Drawing {
 			if(region == null)
 				throw new ArgumentNullException("region");
 
-			if(region == Region.InfiniteRegion) {
-				SetNativeClip(null);
-				return;
-			}
-
-			SetNativeClip(CombineClipArea((geom.Area)region.NativeObject.clone(),combineMode));
+			CombineClipArea((geom.Area)region.NativeObject.clone(),combineMode);
 		}
 		
 		public void SetClip (GraphicsPath path, CombineMode combineMode) {
 			if(path == null)
 				throw new ArgumentNullException("path");
 
-			SetNativeClip(CombineClipArea(new geom.Area(path.NativeObject), combineMode));
+			CombineClipArea(new geom.Area(path.NativeObject), combineMode);
 		}
 		#endregion
 
 		#region Clipping Staff [INTERNAL]
+		internal Region ScaledClip {
+			get {
+				return _clip.Clone();
+			}
+			set {
+				_clip.NativeObject.reset();
+				_clip.NativeObject.add(value.NativeObject);
+			}
+		}
 		internal void SetClip(float x,float y,float width,float height,CombineMode combineMode) {					
-			SetNativeClip(CombineClipArea(new geom.Area(
-				new geom.Rectangle2D.Float(x,y,width,height)),combineMode));
+			CombineClipArea(new geom.Area(
+				new geom.Rectangle2D.Float(x,y,width,height)),combineMode);
 		}
 
-		geom.Area CombineClipArea(geom.Area area, CombineMode combineMode) {
-			if (!_transform.IsIdentity)
-				area.transform(_transform.NativeObject);
-			if (combineMode == CombineMode.Replace)
-				return area;
+		void CombineClipArea(geom.Area area, CombineMode combineMode) {
+			geom.AffineTransform t = GetFinalTransform();
+			if (!t.isIdentity())
+				area.transform(t);
+			if (combineMode == CombineMode.Replace) {
+				_clip.NativeObject.reset();
+				_clip.NativeObject.add(area);
+				return;
+			}
 
-			geom.Area curClip = GetNativeClip();
+			geom.Area curClip = _clip.NativeObject;
 			switch(combineMode) {
 				case CombineMode.Complement:
 					curClip.add(area);
@@ -1985,18 +2023,34 @@ namespace System.Drawing {
 				default:
 					throw new ArgumentOutOfRangeException();					
 			}
-			
-			return curClip;
-		}
-		
-		void SetNativeClip(awt.Shape s) {
-			NativeObject.setClip(s);
 		}
 
-		geom.Area GetNativeClip() {
-			awt.Shape clip = NativeObject.getClip();
-			return clip != null ? new geom.Area(clip) : (geom.Area)Region.InfiniteRegion.NativeObject.clone();
+		internal void IntersectScaledClipWithBase(awt.Shape clip) {
+			NativeObject.clip(clip);
 		}
+
+		awt.Shape IntersectUserClip(awt.Shape shape, geom.Area clip) {
+			if (clip == null)
+				return shape;
+
+			geom.Area area = new geom.Area(shape);
+			area.intersect(clip);
+			return area;
+		}
+
+		awt.Shape IntersectUserClip(awt.Shape shape) {
+			return IntersectUserClip(shape, _clip.NativeObject);
+		}
+
+		void RestoreBaseClip() {
+			if (_nextGraphicsState == null) {
+				NativeObject.setClip(null);
+				return;
+			}
+
+			_nextGraphicsState.RestoreBaseClip(this);
+		}
+		
 		#endregion
 		
 		#region TransformPoints
@@ -2036,7 +2090,7 @@ namespace System.Drawing {
 		public void TranslateClip (float dx, float dy) {
 			double x = dx;
 			double y = dy;
-			geom.AffineTransform f = _transform.NativeObject;
+			geom.AffineTransform f = GetFinalTransform();
 
 			if (!f.isIdentity()) {
 				double[] p = new double[] {x, y};
@@ -2052,9 +2106,7 @@ namespace System.Drawing {
 
 			geom.AffineTransform t = geom.AffineTransform.getTranslateInstance(x, y);
 
-			geom.Area clip = GetNativeClip();
-			clip.transform(t);
-			SetNativeClip(clip);
+			_clip.NativeObject.transform(t);
 		}
 		#endregion
 
@@ -2074,14 +2126,12 @@ namespace System.Drawing {
 		#region Properties [Partial TODO]
 		public Region Clip {
 			get {
-				java.awt.Graphics2D g = NativeObject;
-				java.awt.Shape s = g.getClip();				
-				if(s != null) {
-					return new Region(new java.awt.geom.Area(s));
-				}
-				else {
-					return Region.InfiniteRegion.Clone();
-				}
+				Region r = _clip.Clone();
+				geom.AffineTransform t = GetFinalTransform();
+				if (!t.isIdentity())
+					r.NativeObject.transform(t.createInverse());
+
+				return r;
 			}
 			set {
 				SetClip (value, CombineMode.Replace);
@@ -2090,13 +2140,14 @@ namespace System.Drawing {
 
 		public RectangleF ClipBounds {
 			get {
-				awt.Shape shape = NativeObject.getClip();
+				awt.Shape shape = _clip.NativeObject;
 				if (shape == null)
 					shape = Region.InfiniteRegion.NativeObject;
 
 				geom.RectangularShape r = shape.getBounds2D();
-				if (!_transform.IsIdentity) {
-					geom.AffineTransform it = _transform.NativeObject.createInverse();
+				geom.AffineTransform t = GetFinalTransform();
+				if (!t.isIdentity()) {
+					geom.AffineTransform it = t.createInverse();
 					r = it.createTransformedShape(r).getBounds2D();
 				}
 
@@ -2223,20 +2274,16 @@ namespace System.Drawing {
 
 		public bool IsClipEmpty {
 			get {
-				java.awt.Graphics2D g = NativeObject;
-				awt.Shape clip = g.getClip();
-				if (clip == null)
-					return false;
-				return new geom.Area(clip).isEmpty();
+				return _clip.IsEmpty(this);
 			}
 		}
 
 		public bool IsVisibleClipEmpty {
 			get {
-				awt.Shape clip = NativeObject.getClip();
-				if (clip == null)
-					return false;
-				return !clip.intersects(0, 0, _image.Width, _image.Height);
+				if (_clip.IsEmpty(this))
+					return true;
+
+				return VisibleClipBounds.IsEmpty;
 			}
 		}
 
@@ -2258,27 +2305,25 @@ namespace System.Drawing {
 			}
 		}
 
-		internal float FinalPageScale {
-			get {
-				return (PageUnit != GraphicsUnit.Display) ?
-					PageScale * _unitConversion[ (int)PageUnit ] : 1f;
-			}
-		}
-
-		internal geom.AffineTransform GetFinalTransform() {
+		static internal geom.AffineTransform GetFinalTransform(
+			geom.AffineTransform transform, GraphicsUnit pageUnit, float pageScale) {
 			geom.AffineTransform t = null;
-			if (PageUnit != GraphicsUnit.Display) {
-				float scale = PageScale * _unitConversion[ (int)PageUnit ];
+			if (pageUnit != GraphicsUnit.Display) {
+				float scale = pageScale * _unitConversion[ (int)pageUnit ];
 				if (Math.Abs(scale-1f) > float.Epsilon)
 					t = geom.AffineTransform.getScaleInstance(scale, scale);
 			}
 
 			if (t != null)
-				t.concatenate(_transform.NativeObject);
+				t.concatenate(transform);
 			else
-				t = _transform.NativeObject;
+				t = transform;
 			
 			return t;
+		}
+
+		geom.AffineTransform GetFinalTransform() {
+			return GetFinalTransform(_transform.NativeObject, PageUnit, PageScale);
 		}
 
 		public PixelOffsetMode PixelOffsetMode {
@@ -2419,33 +2464,32 @@ namespace System.Drawing {
 			}
 		}
 
-		internal void PrependBaseTransform(Matrix matrix) {
-			NativeObject.transform(matrix.NativeObject);
+		internal void PrependBaseTransform(geom.AffineTransform t) {
+			NativeObject.transform(t);
+		}
+
+		internal awt.Shape VisibleShape {
+			get {
+				return _windowRect;
+			}
 		}
 
 		public RectangleF VisibleClipBounds {
 			get {
-				geom.RectangularShape r = ClippedVisibleRectangle;
-				if (!_transform.IsIdentity) {
-					geom.AffineTransform it = _transform.NativeObject.createInverse();
+				if (_clip.IsEmpty(this))
+					return RectangleF.Empty;
+
+				geom.Rectangle2D r = _clip.NativeObject.getBounds2D();
+				awt.Shape clip = NativeObject.getClip();
+				geom.Rectangle2D clipBounds = (clip != null) ? clip.getBounds2D() : _windowRect;
+				geom.Rectangle2D.intersect(r, clipBounds, r);
+				geom.AffineTransform t = GetFinalTransform();
+				if (!t.isIdentity()) {
+					geom.AffineTransform it = t.createInverse();
 					r = it.createTransformedShape(r).getBounds2D();
 				}
 
 				return new RectangleF (r);
-			}
-		}
-
-		internal geom.Rectangle2D ClippedVisibleRectangle {
-			get {
-				geom.Rectangle2D r = GetNativeClip().getBounds2D();
-				geom.Rectangle2D.intersect(r, VisibleRectangle, r);
-				return r;
-			}
-		}
-
-		internal geom.Rectangle2D VisibleRectangle {
-			get {
-				return _visibleRect;
 			}
 		}
 

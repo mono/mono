@@ -29,6 +29,8 @@
 //
 using System;
 using System.Drawing.Text;
+using geom = java.awt.geom;
+using awt = java.awt;
 
 namespace System.Drawing.Drawing2D 
 {
@@ -40,6 +42,7 @@ namespace System.Drawing.Drawing2D
 		readonly CompositingMode _compositingMode;
 		readonly CompositingQuality _compositingQuality;
 		readonly Region _clip;
+		readonly awt.Shape _baseClip;
 		readonly InterpolationMode _interpolationMode;
 		readonly float _pageScale;
 		readonly GraphicsUnit _pageUnit;
@@ -54,6 +57,8 @@ namespace System.Drawing.Drawing2D
 		readonly Matrix _baseTransform;
 
 		GraphicsState _next = null;
+
+		awt.Shape _finalBaseClip = null;
 
 		internal GraphicsState(Graphics graphics, bool resetState) 
 			: this(graphics, Matrix.IdentityTransform, resetState) {}
@@ -71,7 +76,8 @@ namespace System.Drawing.Drawing2D
 		{
 			_compositingMode = graphics.CompositingMode;
 			_compositingQuality = graphics.CompositingQuality;
-			_clip = graphics.Clip;
+			_clip = graphics.ScaledClip;
+			_baseClip = graphics.NativeObject.getClip();
 			_interpolationMode = graphics.InterpolationMode;
 			_pageScale = graphics.PageScale;
 			_pageUnit = graphics.PageUnit;
@@ -95,7 +101,7 @@ namespace System.Drawing.Drawing2D
 		{
 			graphics.CompositingMode = _compositingMode;
 			graphics.CompositingQuality = _compositingQuality;
-			graphics.Clip = _clip;
+			graphics.ScaledClip = _clip;
 			graphics.InterpolationMode = _interpolationMode;
 			graphics.PageScale = _pageScale;
 			graphics.PageUnit = _pageUnit;
@@ -109,24 +115,17 @@ namespace System.Drawing.Drawing2D
 			graphics.BaseTransform = _baseTransform;
 			graphics.TextContrast = _textContrast;
 			graphics.TextRenderingHint = _textRenderingHint;
+
+			// must be set after the base transform is restored
+			graphics.NativeObject.setClip(_baseClip);
 		}
 
 		void ResetState(Graphics graphics, Matrix matrix)
 		{
-			java.awt.geom.AffineTransform t = _transform.NativeObject;
-			
-			java.awt.geom.Rectangle2D r = graphics.ClippedVisibleRectangle;
-			if (!t.isIdentity()) {
-				float scale = graphics.FinalPageScale;
-				t = new java.awt.geom.AffineTransform(
-					t.getScaleX(), t.getShearY(),
-					t.getShearX(), t.getScaleY(),
-					t.getTranslateX()*scale, t.getTranslateY()*scale);
-
-				r = t.createInverse().createTransformedShape(r).getBounds2D();
-			}
-
-			graphics.VisibleRectangle.setRect(r);
+			//should be set before the base transform is changed
+			if (_baseClip == null)
+				graphics.IntersectScaledClipWithBase(graphics.VisibleShape);
+			graphics.IntersectScaledClipWithBase(_clip);
 
 			graphics.CompositingMode = CompositingMode.SourceOver;
 			graphics.CompositingQuality = CompositingQuality.Default;
@@ -141,10 +140,27 @@ namespace System.Drawing.Drawing2D
 
 			graphics.SmoothingMode = SmoothingMode.None;
 			graphics.ResetTransform();
-			graphics.PrependBaseTransform(_transform);
-			graphics.PrependBaseTransform(matrix);
+			graphics.PrependBaseTransform(Graphics.GetFinalTransform(_transform.NativeObject, _pageUnit, _pageScale));
+			graphics.PrependBaseTransform(matrix.NativeObject);
 			graphics.TextContrast = 4;
 			graphics.TextRenderingHint = TextRenderingHint.SystemDefault;
+
+			geom.AffineTransform finalBaseTransform = graphics.NativeObject.getTransform();
+			graphics.NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
+			_finalBaseClip = graphics.NativeObject.getClip();
+			graphics.NativeObject.setTransform(finalBaseTransform);
+		}
+
+		internal void RestoreBaseClip(Graphics graphics) {
+			if (_finalBaseClip == null) {
+				graphics.NativeObject.setClip(null);
+				return;
+			}
+
+			geom.AffineTransform finalBaseTransform = graphics.NativeObject.getTransform();
+			graphics.NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
+			graphics.NativeObject.setClip(_finalBaseClip);
+			graphics.NativeObject.setTransform(finalBaseTransform);
 		}
 	}
 }

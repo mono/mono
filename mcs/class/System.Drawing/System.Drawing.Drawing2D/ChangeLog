@@ -1,3 +1,7 @@
+2005-09-14 Konstantin Triger <kostat@mainsoft.com>
+
+	* GraphicsState.jvm.cs: container
+
 2005-09-11 Konstantin Triger <kostat@mainsoft.com>
 
 	* GraphicsState.jvm.cs: fixing visible window for containers

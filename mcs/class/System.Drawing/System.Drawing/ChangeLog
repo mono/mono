@@ -1,3 +1,7 @@
+2005-09-14 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: transform, container, thin pen
+
 2005-09-12 Konstantin Triger <kostat@mainsoft.com>
 
 	* AdvancedStroke.jvm.cs: constants for pen fitting calculations
