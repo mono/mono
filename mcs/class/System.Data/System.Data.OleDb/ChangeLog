@@ -1,3 +1,7 @@
+2005-09-13  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* Moved TestGda.cs & TestOleDb.cs to ..\Test.
+	
 2005-08-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OleDbDataAdapter.cs: Fixed custom attributes to match MS.NET.
