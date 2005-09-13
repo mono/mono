@@ -272,6 +272,46 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+		public void Add_LiteralControl_Literal_And_Literal ()
+		{
+			TestTableCell td = new TestTableCell ();
+			// this is moved into the (empty) Text property
+			td.Add (new LiteralControl ("Mono"));
+			Assert.IsFalse (td.HasControls (), "!HasControls");
+			Assert.AreEqual ("Mono", td.Text, "Text");
+			td.Add (new LiteralControl ("Mono2"));
+			Assert.IsFalse (td.HasControls (), "HasControls-2");
+			Assert.AreEqual ("Mono2", td.Text, "Text");
+			Assert.AreEqual (0, td.Controls.Count, "NControls");
+		}
+
+		[Test]
+		public void Add_LiteralControl_Control_And_Literal ()
+		{
+			TestTableCell td = new TestTableCell ();
+			// this is moved into the (empty) Text property
+			td.Add (new TableCell ());
+			Assert.IsTrue (td.HasControls (), "HasControls");
+			td.Add (new LiteralControl ("Mono2"));
+			Assert.AreEqual (2, td.Controls.Count, "NControls");
+			Assert.AreEqual (typeof (TableCell), td.Controls [0].GetType (), "type 1");
+			Assert.AreEqual (typeof (LiteralControl), td.Controls [1].GetType (), "type 2");
+		}
+
+		[Test]
+		public void Add_LiteralControl_Literal_And_Control ()
+		{
+			TestTableCell td = new TestTableCell ();
+			// this is moved into the (empty) Text property
+			td.Add (new LiteralControl ("Mono2"));
+			Assert.IsFalse (td.HasControls (), "HasControls");
+			td.Add (new TableCell ());
+			Assert.AreEqual (2, td.Controls.Count, "NControls");
+			Assert.AreEqual (typeof (LiteralControl), td.Controls [0].GetType (), "type 1");
+			Assert.AreEqual (typeof (TableCell), td.Controls [1].GetType (), "type 2");
+		}
+
+		[Test]
 		public void HasControls_Text ()
 		{
 			TestTableCell td = new TestTableCell ();

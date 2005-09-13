@@ -1,3 +1,7 @@
+2005-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TableCellTest.cs: added new test cases for bug #76078.
+
 2005-09-09 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListItemTest.cs: tests for ListItem.
