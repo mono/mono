@@ -1,6 +1,6 @@
 // cs3005-17.cs: Identifier `CLSClass.op_implicit()' differing only in case is not CLS-compliant
-// Compiler options: -warnaserror
 // Line: 12
+// Compiler options: -warnaserror
 
 using System;
 [assembly:CLSCompliant(true)]

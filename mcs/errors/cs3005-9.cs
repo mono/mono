@@ -1,6 +1,6 @@
 // cs3005-9.cs: Identifier `c1' differing only in case is not CLS-compliant
-// Compiler options: -warnaserror
 // Line: 9
+// Compiler options: -warnaserror
 
 [assembly:System.CLSCompliant(true)]
 

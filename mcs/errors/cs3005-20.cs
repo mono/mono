@@ -1,6 +1,6 @@
 // cs3005-20.cs: Identifier `I.BLAH.get' differing only in case is not CLS-compliant
-// Compiler options: -warnaserror
 // Line: 15
+// Compiler options: -warnaserror
 
 using System.Runtime.CompilerServices;
 using System;

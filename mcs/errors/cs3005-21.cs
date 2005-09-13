@@ -1,6 +1,6 @@
 // cs3005-21.cs: Identifier `CLSClass.NameAbC' differing only in case is not CLS-compliant
-// Compiler options: -warnaserror
 // Line: 12
+// Compiler options: -warnaserror
 
 using System;
 [assembly:CLSCompliant (true)]

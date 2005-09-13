@@ -1,6 +1,6 @@
 // cs3005.cs: Identifier `ErrorCS3005.FOO' differing only in case is not CLS-compliant
-// Compiler options: -warnaserror
 // Line: 9
+// Compiler options: -warnaserror
 
 using System;
 [assembly: CLSCompliant (true)]

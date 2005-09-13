@@ -1,6 +1,6 @@
 // cs3005-3.cs: Identifier `CLSClass.value' differing only in case is not CLS-compliant
-// Compiler options: -warnaserror
 // Line: 15
+// Compiler options: -warnaserror
 
 [assembly:System.CLSCompliant(true)]
 
