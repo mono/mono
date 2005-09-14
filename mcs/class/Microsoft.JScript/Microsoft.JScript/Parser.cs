@@ -91,9 +91,25 @@ namespace Microsoft.JScript {
 		int nesting_of_with;
 		bool allow_member_expr_as_function_name;
 		Decompiler decompiler; 
+		ArrayList code_items;
 
 		internal Parser ()
 		{
+		}
+
+		internal Parser (ArrayList code_items)
+		{
+			this.code_items = code_items;
+		}
+
+		internal AST ParseAll ()
+		{
+			ScriptBlock block = new ScriptBlock ();
+
+			foreach (VsaCodeItem item in code_items)
+				block.Add (Parse (item.SourceText, item.Name, 0));
+
+			return block;
 		}
 
 		internal Decompiler CreateDecompiler ()
@@ -397,6 +413,21 @@ namespace Microsoft.JScript {
 			MustMatchToken (Token.RP, "msg.no.paren.after.cond");
 			decompiler.AddToken (Token.RP);
 			return pn;
+		}
+
+		AST Import (AST parent)
+		{
+			System.Text.StringBuilder @namespace = new System.Text.StringBuilder ();
+
+			while (true) {
+				MustMatchToken (Token.NAME, "msg.bad.namespace.name");
+				@namespace.Append (ts.GetString);
+				if (ts.MatchToken (Token.DOT))
+					@namespace.Append (".");
+				else
+					break;
+			}
+			return new Import (parent, @namespace.ToString (), new Location (ts.SourceName, ts.LineNumber));
 		}
 
 		void CheckWellTerminated ()
@@ -742,6 +773,9 @@ namespace Microsoft.JScript {
 				skip_semi = true;
 			} else if (tt == Token.FUNCTION) {
 				pn = Function (parent, FunctionType.ExpressionStatement);
+			} else if (tt == Token.IMPORT) {
+				decompiler.AddToken (Token.IMPORT);
+				pn = Import (parent);
 			} else {
 				int last_expr_type = tt;
 				int token_number = ts.TokenNumber;

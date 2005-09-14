@@ -4,6 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// (C) 2005 Copyright , Novell Inc (http://novell.com)
 //
 
 //
@@ -27,8 +28,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using Microsoft.JScript.Vsa;
 using System;
+using Microsoft.JScript.Vsa;
+using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
@@ -36,22 +38,32 @@ namespace Microsoft.JScript {
 
 		string name;
 
-		internal Import (AST parent, Location location)
+		internal Import (AST parent, string name, Location location)
 			: base (parent, location)
 		{
+			this.name = name;
 		}
 
 		public static void JScriptImport (string name, VsaEngine engine)
-		{}
+		{
+		}
 
 		internal override bool Resolve (IdentificationTable context)
 		{
-			throw new NotImplementedException ();
+			if (InFunction) {
+				string err = location.SourceName + "(" + location.LineNumber + ",0) : " +
+				"error JS1229: The import statement is not valid in this context";
+				throw new Exception (err);
+			}
+			return Mono.CSharp.Namespace.IsNamespace (name);
 		}
 
 		internal override void Emit (EmitContext ec)
 		{
-			throw new NotImplementedException ();
+			ILGenerator ig = ec.ig;
+			ig.Emit (OpCodes.Ldstr, name);
+			CodeGenerator.load_engine (false, ig);
+			ig.Emit (OpCodes.Call, GetType ().GetMethod ("JScriptImport"));
 		}
 	}
 }

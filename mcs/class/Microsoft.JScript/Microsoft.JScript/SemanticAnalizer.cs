@@ -54,6 +54,7 @@ namespace Microsoft.JScript {
 		private static Type global_obj = typeof (GlobalObject);
 
 		internal static bool NoFast = true;
+		private static Assembly [] assemblies;
 
 		static SemanticAnalyser ()
 		{
@@ -132,8 +133,11 @@ namespace Microsoft.JScript {
 			return name.Substring (i + 1);
 		}
 
-		internal static bool Run (ScriptBlock prog)
+		internal static bool Run (ScriptBlock prog, Assembly [] ref_items)
 		{
+			assemblies = ref_items;			
+			ComputeNamespaces ();
+
 			context = new IdentificationTable ();
 			context.BuildGlobalEnv ();
 			return prog.Resolve (context);
@@ -362,6 +366,46 @@ namespace Microsoft.JScript {
 			Console.WriteLine ("ctr = {0}, left = {1} ({2}); right = {3} ({4})",
 				   ctr, left, left.GetType (), right, right.GetType ());
 			return false;
+		}
+
+		/// <summary>
+		///   Computes the namespaces that we import from the assemblies we reference.
+		/// </summary>
+		public static void ComputeNamespaces ()
+		{
+			MethodInfo assembly_get_namespaces = typeof (Assembly).GetMethod ("GetNamespaces", BindingFlags.Instance|BindingFlags.NonPublic);
+
+			Hashtable cache = null;
+
+			//
+			// First add the assembly namespaces
+			//
+			if (assembly_get_namespaces != null){
+				int count = assemblies.Length;
+
+				for (int i = 0; i < count; i++){
+					Assembly a = assemblies [i];
+					string [] namespaces = (string []) assembly_get_namespaces.Invoke (a, null);
+					foreach (string ns in namespaces){
+						if (ns == "")
+							continue;
+						Mono.CSharp.Namespace.LookupNamespace (ns, true);
+					}
+				}
+			} else {
+				cache = new Hashtable ();
+				cache.Add ("", null);
+				foreach (Assembly a in assemblies) {
+					foreach (Type t in a.GetExportedTypes ()) {
+						string ns = t.Namespace;
+						if (ns == null || cache.Contains (ns))
+							continue;
+
+						Mono.CSharp.Namespace.LookupNamespace (ns, true);
+						cache.Add (ns, null);
+					}
+				}
+			}
 		}
 	}
 }
