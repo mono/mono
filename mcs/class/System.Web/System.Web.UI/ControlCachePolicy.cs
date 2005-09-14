@@ -27,13 +27,18 @@
 //
 
 #if NET_2_0
-using System.Web;
+
 using System.Web.Caching;
 
 namespace System.Web.UI
 {
+	[MonoTODO ("only stubbed")]
 	public sealed class ControlCachePolicy
 	{
+		internal ControlCachePolicy ()
+		{
+		}
+
 		public bool Cached 
 		{
 			get {
@@ -67,9 +72,6 @@ namespace System.Web.UI
 		public bool SupportsCaching 
 		{
 			get {
-				throw new NotImplementedException ();
-			}
-			set {
 				throw new NotImplementedException ();
 			}
 		}

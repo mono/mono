@@ -1,3 +1,31 @@
+2005-09-14  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* AttributeCollection.cs: Added LinkDemand for AspNetHostingPermission
+	with Minimal level.
+	* BaseParser.cs: Added LinkDemand and InheritanceDemand for 
+	AspNetHostingPermission with Minimal level.
+	* BasePartialCachingControl.cs: Added LinkDemand and InheritanceDemand
+	for AspNetHostingPermission with Minimal level.
+	* CompiledTemplateBuilder.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level.
+	* ConstructorNeedsTagAttribute.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level.
+	* ControlBuilderAttribute.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level. Simplified Equals and 
+	IsDefaultAttribute.
+	* ControlBuilder.cs: Added LinkDemand and InheritanceDemand for 
+	AspNetHostingPermission with Minimal level.
+	* ControlCachePolicy.cs: Hided ctor and removed SupportsCaching setter
+	* ControlCollection.cs: Added LinkDemand and InheritanceDemand for 
+	AspNetHostingPermission with Minimal level. Fixed possible stack 
+	overflow in Add* methods. Fixed CopyTo as we're not allocating the 
+	array based on the number of items.
+	* Control.cs: Added LinkDemand and InheritanceDemand for 
+	AspNetHostingPermission with Minimal level. Fixed 2.0 signatures.
+	* CssStyleCollection.cs: Added LinkDemand for AspNetHostingPermission 
+	with Minimal level.
+	* IStyleSheet.cs: Fixed parameter orders (2.0).
+
 2005-09-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: default VS 2005 pages are compiled fine now.

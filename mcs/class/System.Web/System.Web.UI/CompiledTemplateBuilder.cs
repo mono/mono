@@ -5,6 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // This is used in the generated C# code from MS and xsp does the same.
 // It just seems to be a container implementing an ITemplate interface.
@@ -30,8 +31,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Permissions;
+
 namespace System.Web.UI {
 
+// CAS - no InheritanceDemand here as the class is sealed
+[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 public sealed class CompiledTemplateBuilder : ITemplate
 {
 	private BuildTemplateMethod templateMethod;

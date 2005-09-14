@@ -36,11 +36,11 @@
 // This will provide extra information when trace is enabled. Might be too verbose.
 #define MONO_TRACE
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
+using System.Security.Permissions;
 using System.Web;
 using System.Web.Util;
 #if NET_2_0
@@ -50,6 +50,10 @@ using System.IO;
 
 namespace System.Web.UI
 {
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DefaultProperty ("ID"), DesignerCategory ("Code"), ToolboxItemFilter ("System.Web.UI", ToolboxItemFilterType.Require)]
 	[ToolboxItem ("System.Web.UI.Design.WebControlToolboxItem, " + Consts.AssemblySystem_Design)]
 	[Designer ("System.Web.UI.Design.ControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -1406,15 +1410,7 @@ namespace System.Web.UI
 			set { skinId = value; }
 		}
 		
-		/* This shouldnt be in 2.0, and I can't find it in 1.1
-		 * either, so leaving alone for now.
-		 */
-		protected string GetWebResourceUrl (string resourceName)
-		{
-			return Page.ClientScript.GetWebResourceUrl (GetType(), resourceName); 
-		} 
-
-		string IUrlResolutionService.ResolveClientUrl (string url)
+		string ResolveClientUrl (string url)
 		{
 			throw new NotImplementedException ();               
 		}

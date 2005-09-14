@@ -4,8 +4,7 @@
 // Authors:
 //      Sanjay Gupta (gsanjay@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
-//
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,14 +28,14 @@
 
 
 #if NET_2_0
-using System;
+
 using System.Web.UI.WebControls;
 
 namespace System.Web.UI
 {
 	public interface IStyleSheet
 	{
-		void CreateStyleRule (Style style, string selection, IUrlResolutionService urlResolver);
+		void CreateStyleRule (Style style, IUrlResolutionService urlResolver, string selection);
 		void RegisterStyle (Style style, IUrlResolutionService urlResolver);
 	}
 }

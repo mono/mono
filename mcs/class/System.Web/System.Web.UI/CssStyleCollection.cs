@@ -30,10 +30,13 @@
 
 using System.IO;
 using System.Collections;
+using System.Security.Permissions;
 using System.Text;
 
 namespace System.Web.UI {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class CssStyleCollection
 	{
 		private StateBag bag;

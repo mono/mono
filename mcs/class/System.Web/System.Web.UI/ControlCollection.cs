@@ -5,9 +5,7 @@
 //	Duncan Mak  (duncan@ximian.com)
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
-// Copyright (c) 2002-2004 Novell, Inc. (http://www.novell.com)
-//
-
+// Copyright (c) 2002-2005 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,11 +27,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Web.UI {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class ControlCollection : ICollection, IEnumerable
 	{
 		Control owner;
@@ -97,7 +98,10 @@ namespace System.Web.UI {
 				throw new ArgumentNullException ();
 
 			if (readOnly)
-				throw new HttpException ();
+				throw new HttpException (Locale.GetText ("Collection is read-only."));
+
+			if (Object.ReferenceEquals (owner, child))
+				throw new HttpException (Locale.GetText ("Cannot add collection's owner."));
 
 			EnsureControls ();
 			version++;
@@ -114,7 +118,10 @@ namespace System.Web.UI {
 				throw new ArgumentOutOfRangeException ();
 
 			if (readOnly)
-				throw new HttpException ();
+				throw new HttpException (Locale.GetText ("Collection is read-only."));
+
+			if (Object.ReferenceEquals (owner, child))
+				throw new HttpException (Locale.GetText ("Cannot add collection's owner."));
 
 			if (index == -1) {
 				Add (child);
@@ -153,7 +160,22 @@ namespace System.Web.UI {
 			if (controls == null)
 				return;
 
-			controls.CopyTo (array, index);
+			// can't use controls.CopyTo (array, index);
+			// as we do not allocate it based on the true 
+			// numbers of items we have in the collection
+			// so we must re-implement Array.CopyTo :(
+
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index + count > array.GetLowerBound (0) + array.GetLength (0))
+				throw new ArgumentException ();
+			if (array.Rank > 1)
+				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index", Locale.GetText ("Value has to be >= 0."));
+
+			for (int i=0; i < count; i++)
+				array.SetValue (controls [i], i);
 		}
 
 		public IEnumerator GetEnumerator ()

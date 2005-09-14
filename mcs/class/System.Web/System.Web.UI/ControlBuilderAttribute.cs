@@ -4,9 +4,10 @@
 // Authors:
 // 	Duncan Mak  (duncan@ximian.com)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,10 +29,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Security.Permissions;
 
 namespace System.Web.UI {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[AttributeUsage (AttributeTargets.Class)]
 	public sealed class ControlBuilderAttribute : Attribute
 	{
@@ -49,9 +53,10 @@ namespace System.Web.UI {
 
 		public override bool Equals (object obj)
 		{
-			if (!(obj is ControlBuilderAttribute))
+			ControlBuilderAttribute cba = (obj as ControlBuilderAttribute);
+			if (cba == null)
 				return false;
-			return ((ControlBuilderAttribute) obj).builderType == builderType;
+			return (cba.builderType == builderType);
 		}
 
 		public override int GetHashCode ()
@@ -61,7 +66,7 @@ namespace System.Web.UI {
 
 		public override bool IsDefaultAttribute ()
 		{
-			return Equals (Default);
+			return (builderType == null);
 		}
 	}
 }
