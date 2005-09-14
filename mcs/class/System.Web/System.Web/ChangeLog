@@ -1,3 +1,8 @@
+2005-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWorkerRequest.cs: Removed TODO for 2.0 APIs and return the 
+	default values for them.
+
 2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpApplication.cs: : Added LinkDemand and InheritanceDemand (class)

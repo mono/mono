@@ -118,14 +118,12 @@ namespace System.Web {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual Guid RequestTraceIdentifier {
-			get { throw new NotImplementedException (); }
+			get { return Guid.Empty; }
 		}
 
-		[MonoTODO]
 		public virtual string RootWebConfigPath {
-			get { throw new NotImplementedException (); }
+			get { return null; }
 		}
 #endif
 
@@ -178,16 +176,14 @@ namespace System.Web {
 			return null;
 		}
 #if NET_2_0
-		[MonoTODO]
-		public virtual byte [] GetPreloadedEntityBody (byte[] buffer, int offset)
+		public virtual int GetPreloadedEntityBody (byte[] buffer, int offset)
 		{
-			throw new NotImplementedException ();
+			return 0;
 		}
 
-		[MonoTODO]
 		public virtual int GetPreloadedEntityBodyLength ()
 		{
-			throw new NotImplementedException ();
+			return 0;
 		}
 #endif
 		public virtual string GetProtocol ()
@@ -223,10 +219,9 @@ namespace System.Web {
 			return null;
 		}
 #if NET_2_0
-		[MonoTODO]
 		public virtual int GetTotalEntityBodyLength ()
 		{
-			throw new NotImplementedException ();
+			return 0;
 		}
 #endif
 		public virtual string GetUnknownRequestHeader (string name)
@@ -277,16 +272,14 @@ namespace System.Web {
 			return null;
 		}
 
-		[MonoTODO]
 		public virtual int ReadEntityBody (byte [] buffer, int size)
 		{
-			throw new NotImplementedException ("");
+			return 0;
 		}
 #if NET_2_0
-		[MonoTODO]
 		public virtual int ReadEntityBody (byte [] buffer, int offset, int size)
 		{
-			throw new NotImplementedException ();
+			return 0;
 		}
 #endif
 		public virtual void SendCalculatedContentLength (int contentLength)
