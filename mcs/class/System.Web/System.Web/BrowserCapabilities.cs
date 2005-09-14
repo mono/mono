@@ -28,8 +28,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Collections;
+using System.Globalization;
 using System.Web.Configuration;
 using System.Web.UI;
 
@@ -151,7 +152,12 @@ namespace System.Web {
 				return browser;
 			}
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		public ArrayList Browsers {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 		public bool CDF {
 			get {
 				if (!Get (HaveCDF)) {
@@ -372,7 +378,7 @@ namespace System.Web {
 #if NET_1_1
 		public Version [] GetClrVersions ()
 		{
-			if (clrVersions == null)
+			if ((clrVersions == null) && (clrVersion == null))
 				InternalGetClrVersions ();
 
 			return clrVersions;
@@ -385,7 +391,7 @@ namespace System.Web {
 			string s = useragent;
 			ArrayList list = null;
 			int idx;
-			while ((idx = s.IndexOf (".NET CLR ")) != -1) {
+			while ((s != null) && (idx = s.IndexOf (".NET CLR ")) != -1) {
 				int end = s.IndexOfAny (anychars, idx + 9);
 				if (end == -1)
 					break;
@@ -407,7 +413,11 @@ namespace System.Web {
 			
 			if (list == null || list.Count == 0) {
 				clrVersion = new Version ();
-				clrVersions = new Version [] { clrVersion };
+#if NET_2_0
+				clrVersions = null;
+#else
+				clrVersions = new Version [1] { clrVersion };
+#endif
 			} else {
 				list.Sort ();
 				clrVersions = (Version []) list.ToArray (typeof (Version));
@@ -420,7 +430,7 @@ namespace System.Web {
 			if (v == null)
 				return dflt;
 
-			return (v == "True");
+			return (String.Compare (v, "True", true, CultureInfo.InvariantCulture) == 0);
 		}
 
 		int ReadInt32 (string key, int dflt)

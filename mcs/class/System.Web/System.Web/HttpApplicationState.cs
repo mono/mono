@@ -25,14 +25,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Threading;
-using System.Web;
 using System.Collections.Specialized;
+using System.Security.Permissions;
 
-namespace System.Web 
-{
+namespace System.Web {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpApplicationState : NameObjectCollectionBase 
 	{
 		private HttpStaticObjectsCollection _AppObjects;
@@ -42,8 +43,9 @@ namespace System.Web
 
 		internal HttpApplicationState ()
 		{
-			_AppObjects = new HttpStaticObjectsCollection ();
-			_SessionObjects = new HttpStaticObjectsCollection ();
+			// do not use the public (empty) ctor as it required UnmanagedCode permission
+			_AppObjects = new HttpStaticObjectsCollection (this);
+			_SessionObjects = new HttpStaticObjectsCollection (this);
 			_Lock = new ReaderWriterLock ();
 		}
 
@@ -56,7 +58,8 @@ namespace System.Web
 			} 
 			else 
 			{
-				_AppObjects = new HttpStaticObjectsCollection ();
+				// do not use the public (empty) ctor as it required UnmanagedCode permission
+				_AppObjects = new HttpStaticObjectsCollection (this);
 			}
 
 			if (null != SessionObj) 
@@ -65,7 +68,8 @@ namespace System.Web
 			} 
 			else 
 			{
-				_SessionObjects = new HttpStaticObjectsCollection ();
+				// do not use the public (empty) ctor as it required UnmanagedCode permission
+				_SessionObjects = new HttpStaticObjectsCollection (this);
 			}
 			_Lock = new ReaderWriterLock ();
 		}

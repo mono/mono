@@ -34,6 +34,8 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Security.Permissions;
 using System.Web.Configuration;
 using System.Web.UI;
 using System.Web.Util;
@@ -41,6 +43,8 @@ using System.Globalization;
 
 namespace System.Web {
 	
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpRequest {
 		HttpWorkerRequest worker_request;
 		HttpContext context;
@@ -219,7 +223,7 @@ namespace System.Web {
 			get {
 				if (content_length == -1){
 					if (worker_request == null)
-						throw new HttpException ("No HttpWorkerRequest");
+						return 0;
 
 					string cl = worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderContentLength);
 
@@ -241,12 +245,11 @@ namespace System.Web {
 		public string ContentType {
 			get {
 				if (content_type == null){
-					if (worker_request == null)
-						throw new HttpException ("No HttpWorkerRequest");
+					if (worker_request != null)
+						content_type = worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderContentType);
 
-					content_type = worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderContentType);
 					if (content_type == null)
-						content_type = "";
+						content_type = String.Empty;
 				}
 				
 				return content_type;
@@ -259,9 +262,13 @@ namespace System.Web {
 
 		public HttpCookieCollection Cookies {
 			get {
-				if (cookies == null){
-					string cookie_hv = worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderCookie);
-					cookies = new HttpCookieCollection (cookie_hv);
+				if (cookies == null) {
+					if (worker_request == null) {
+						cookies = new HttpCookieCollection ();
+					} else {
+						string cookie_hv = worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderCookie);
+						cookies = new HttpCookieCollection (cookie_hv);
+					}
 				}
 
 				if (validate_cookies && !checked_cookies){
@@ -286,7 +293,7 @@ namespace System.Web {
 		public string FilePath {
 			get {
 				if (worker_request == null)
-					return null;
+					return "/"; // required for 2.0
 
 				if (file_path == null)
 					file_path = UrlUtils.Canonic (worker_request.GetFilePath ());
@@ -311,7 +318,7 @@ namespace System.Web {
 			get {
 				if (files == null) {
 					files = new HttpFileCollection ();
-					if (IsContentType ("multipart/form-data", true)) {
+					if ((worker_request != null) && IsContentType ("multipart/form-data", true)) {
 						form = new WebROCollection ();
 						LoadMultiPart ();
 						form.Protect ();
@@ -321,6 +328,7 @@ namespace System.Web {
 			}
 		}
 
+		[MonoTODO]
 		public Stream Filter {
 			get {
 				throw new NotImplementedException ();
@@ -458,11 +466,12 @@ namespace System.Web {
 		public NameValueCollection Headers {
 			get {
 				if (headers == null){
-					if (worker_request == null)
-						throw new HttpException ("No HttpWorkerRequest");
-						
 					headers = new WebROCollection ();
-					
+					if (worker_request == null) {
+						headers.Protect ();
+						return headers;
+					}
+
 					for (int i = 0; i < HttpWorkerRequest.RequestHeaderMaximum; i++){
 						string hval = worker_request.GetKnownRequestHeader (i);
 
@@ -493,6 +502,8 @@ namespace System.Web {
 				if (http_method == null){
 					if (worker_request != null)
 						http_method = worker_request.GetHttpVerbName ();
+					else
+						http_method = "GET";
 				}
 				return http_method;
 			}
@@ -557,8 +568,10 @@ namespace System.Web {
 
 		void MakeInputStream ()
 		{
-			if (worker_request == null)
-				throw new HttpException ("No HttpWorkerRequest");
+			if (worker_request == null) {
+				input_stream = new MemoryStream (new byte [0], 0, 0, false, true);
+				return;
+			}
 
 			//
 			// Use an unmanaged memory block as this might be a large
@@ -655,11 +668,14 @@ namespace System.Web {
 
 		public bool IsSecureConnection {
 			get {
+				if (worker_request == null)
+					return false;
 				return worker_request.IsSecure ();
 			}
 		}
 
 		public string this [string key] {
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
 			get {
 				// "The QueryString, Form, Cookies, or ServerVariables collection member
 				// specified in the key parameter."
@@ -679,6 +695,7 @@ namespace System.Web {
 		}
 
 		public NameValueCollection Params {
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
 			get {
 				if (all_params == null) {
 					all_params = new WebROCollection ();
@@ -713,7 +730,7 @@ namespace System.Web {
 			get {
 				if (path_info == null) {
 					if (worker_request == null)
-						return null;
+						return String.Empty;
 					path_info = worker_request.GetPathInfo ();
 				}
 
@@ -724,16 +741,27 @@ namespace System.Web {
 		public string PhysicalApplicationPath {
 			get {
 				if (worker_request == null)
-					throw new NullReferenceException ();
-				
-				return HttpRuntime.AppDomainAppPath;
+					throw new ArgumentNullException (); // like 2.0, 1.x throws TypeInitializationException
+
+				string path = HttpRuntime.AppDomainAppPath;
+				if (SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand ();
+				}
+				return path;
 			}
 		}
 
 		public string PhysicalPath {
 			get {
+				if (worker_request == null)
+					return String.Empty; // don't check security with an empty string!
+
 				if (physical_path == null)
 					physical_path = MapPath (CurrentExecutionFilePath);
+
+				if (SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, physical_path).Demand ();
+				}
 				return physical_path;
 			}
 		}
@@ -811,6 +839,8 @@ namespace System.Web {
 					if (worker_request != null) {
 						request_type = worker_request.GetHttpVerbName ();
 						http_method = request_type;
+					} else {
+						request_type = "GET";
 					}
 				}
 				return request_type;
@@ -822,6 +852,7 @@ namespace System.Web {
 		}
 
 		public NameValueCollection ServerVariables {
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
 			get {
 				if (server_variables == null)
 					server_variables = new ServerVariablesCollection (this);
@@ -848,27 +879,40 @@ namespace System.Web {
 
 		public Uri UrlReferrer {
 			get {
+				if (worker_request == null)
+					return null;
+
 				string hr = worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderReferer);
 				if (hr == null)
 					return null;
+
 				return new Uri (hr);
 			}
 		}
 
 		public string UserAgent {
 			get {
+				if (worker_request == null)
+					return null;
+
 				return worker_request.GetKnownRequestHeader (HttpWorkerRequest.HeaderUserAgent);
 			}
 		}
 
 		public string UserHostAddress {
 			get {
+				if (worker_request == null)
+					return null;
+
 				return worker_request.GetRemoteAddress ();
 			}
 		}
 
 		public string UserHostName {
 			get {
+				if (worker_request == null)
+					return null;
+
 				return worker_request.GetRemoteName ();
 			}
 		}
@@ -887,8 +931,8 @@ namespace System.Web {
 
 		public byte [] BinaryRead (int count)
 		{
-			if (count <= 0)
-				throw new ArgumentException ("count is <= 0");
+			if (count < 0)
+				throw new ArgumentException ("count is < 0");
 
 			Stream s = InputStream;
 			byte [] ret = new byte [count];
@@ -932,6 +976,9 @@ namespace System.Web {
 
 		public string MapPath (string virtualPath)
 		{
+			if (worker_request == null)
+				return null;
+
 			return MapPath (virtualPath, BaseVirtualDir, true);
 		}
 
@@ -974,9 +1021,13 @@ namespace System.Web {
 			Stream output = new FileStream (filename, FileMode.Create);
 			if (includeHeaders) {
 				StringBuilder sb = new StringBuilder ();
-				string version = worker_request.GetHttpVersion ();
-				InitUriBuilder ();
-				string path = uri_builder.Path;
+				string version = String.Empty;
+				string path = "/";
+				if (worker_request != null) {
+					version = worker_request.GetHttpVersion ();
+					InitUriBuilder ();
+					path = uri_builder.Path;
+				}
 				string qs = null;
 				if (query_string != null && query_string != "")
 					qs = "?" + query_string;

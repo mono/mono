@@ -34,6 +34,8 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Collections;
+using System.Security;
+using System.Security.Permissions;
 using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.UI;
@@ -41,6 +43,8 @@ using System.Threading;
 
 namespace System.Web {
 	
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpRuntime {
 #if TARGET_J2EE
 		static QueueManager queue_manager { get { return _runtime._queue_manager; } }
@@ -94,6 +98,9 @@ namespace System.Web {
 			do_RealProcessRequest = new WaitCallback (RealProcessRequest);
 		}
 
+#if ONLY_1_1
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public HttpRuntime ()
 		{
 		}
@@ -104,19 +111,27 @@ namespace System.Web {
 		// http://radio.weblogs.com/0105476/stories/2002/07/12/executingAspxPagesWithoutAWebServer.html
 		//
 		public static string AppDomainAppId {
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
 			get {
 				//
 				// This value should not change across invocations
 				//
-			       
-				return (string) AppDomain.CurrentDomain.GetData (".appId");
+				string dirname = (string) AppDomain.CurrentDomain.GetData (".appId");
+				if ((dirname != null) && (dirname.Length > 0) && SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
+				}
+				return dirname;
 			}
 		}
 
 		// Physical directory for the application
 		public static string AppDomainAppPath {
 			get {
-				return (string) AppDomain.CurrentDomain.GetData (".appPath");
+				string dirname = (string) AppDomain.CurrentDomain.GetData (".appPath");
+				if (SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
+				}
+				return dirname;
 			}
 		}
 
@@ -127,6 +142,7 @@ namespace System.Web {
 		}
 
 		public static string AppDomainId {
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
 			get {
 				return (string) AppDomain.CurrentDomain.GetData (".domainId");
 			}
@@ -134,14 +150,22 @@ namespace System.Web {
 
 		public static string AspInstallDirectory {
 			get {
-				return (string) AppDomain.CurrentDomain.GetData (".hostingInstallDir");
+				string dirname = (string) AppDomain.CurrentDomain.GetData (".hostingInstallDir");
+				if ((dirname != null) && (dirname.Length > 0) && SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
+				}
+				return dirname;
 			}
 		}
 #endregion
 		
 		public static string BinDirectory {
 			get {
-				return Path.Combine (AppDomainAppPath, "bin");
+				string dirname = Path.Combine (AppDomainAppPath, "bin");
+				if (SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
+				}
+				return dirname;
 			}
 		}
 
@@ -153,17 +177,27 @@ namespace System.Web {
 
 		public static string ClrInstallDirectory {
 			get {
-				return Path.GetDirectoryName (typeof (Object).Assembly.CodeBase);
+				string dirname = Path.GetDirectoryName (typeof (Object).Assembly.Location);
+				if ((dirname != null) && (dirname.Length > 0) && SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
+				}
+				return dirname;
 			}
 		}
 
 		public static string CodegenDir {
 			get {
-				return AppDomain.CurrentDomain.SetupInformation.DynamicBase;
+				string dirname = AppDomain.CurrentDomain.SetupInformation.DynamicBase;
+				if (SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
+				}
+				return dirname;
 			}
 		}
 
+		[MonoTODO]
 		public static bool IsOnUNCShare {
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
 			get {
 				throw new NotImplementedException ();
 			}
@@ -171,10 +205,15 @@ namespace System.Web {
 
 		public static string MachineConfigurationDirectory {
 			get {
-				return Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);
+				string dirname = Path.GetDirectoryName (WebConfigurationSettings.MachineConfigPath);
+				if ((dirname != null) && (dirname.Length > 0) && SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, dirname).Demand ();
+				}
+				return dirname;
 			}
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static void Close ()
 		{
 			// Remove all items from cache.
@@ -224,14 +263,15 @@ namespace System.Web {
 		//    ProcessRequest does not guarantee that `wr' will be processed synchronously,
 		//    the request can be queued and processed later.
 		//
+		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
 		public static void ProcessRequest (HttpWorkerRequest wr)
 		{
-			HttpWorkerRequest request;
-
+			if (wr == null)
+				throw new ArgumentNullException ("wr");
 			//
 			// Queue our request, fetch the next available one from the queue
 			//
-			request = queue_manager.GetNextRequest (wr);
+			HttpWorkerRequest request = queue_manager.GetNextRequest (wr);
 			if (request == null)
 				return;
 
@@ -253,6 +293,7 @@ namespace System.Web {
 		// Called when we are shutting down or we need to reload an application
 		// that has been modified (touch global.asax) 
 		//
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static void UnloadAppDomain ()
 		{
 			//

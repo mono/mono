@@ -31,6 +31,7 @@
 
 using System.Collections;
 using System.Configuration;
+using System.Globalization;
 using System.Runtime.Remoting.Messaging;
 using System.Security.Permissions;
 using System.Security.Principal;
@@ -40,9 +41,14 @@ using System.Web.Configuration;
 using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.Util;
+#if NET_2_0
+using System.Web.Profile;
+#endif
 
 namespace System.Web {
 	
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpContext : IServiceProvider {
 		internal HttpWorkerRequest WorkerRequest;
 		HttpApplication app_instance;
@@ -178,7 +184,11 @@ namespace System.Web {
 #else
 		public bool IsDebuggingEnabled {
 			get {
-				return CompilationConfiguration.GetInstance (this).Debug;
+				try {
+					return CompilationConfiguration.GetInstance (this).Debug;
+				} catch {
+					return false;
+				}
 			}
 		}
 #endif
@@ -252,6 +262,25 @@ namespace System.Web {
 			}
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public IHttpHandler CurrentHandler {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public IHttpHandler PreviousHandler {
+			get { throw new NotImplementedException (); }
+		}
+
+	#if false
+		[MonoTODO]
+		public ProfileBase Profile {
+			get { throw new NotImplementedException (); }
+		}
+	#endif
+#endif
+
 		public void AddError (Exception errorInfo)
 		{
 			if (errors == null){
@@ -273,6 +302,9 @@ namespace System.Web {
 			errors = null;
 		}
 
+#if NET_2_0
+		[Obsolete ("see WebConfigurationManager")]
+#endif
 		public static object GetAppConfig (string name)
 		{
 			object o = ConfigurationSettings.GetConfig (name);
@@ -280,11 +312,45 @@ namespace System.Web {
 			return o;
 		}
 
+#if NET_2_0
+		[Obsolete ("see GetSection")]
+#endif
 		public object GetConfig (string name)
 		{
 			return WebConfigurationSettings.GetConfig (name, this);
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public static object GetGlobalResourceObject (string classKey, string resourceKey)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static object GetGlobalResourceObject (string classKey, string resourceKey, CultureInfo culture)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static object GetLocalResourceObject (string virtualPath, string resourceKey)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static object GetLocalResourceObject (string virtualPath, string resourceKey, CultureInfo culture)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public object GetSection (string name)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		object IServiceProvider.GetService (Type service)
 		{
 			if (service == typeof (HttpWorkerRequest))
@@ -354,6 +420,14 @@ namespace System.Web {
 			if (queryString != null)
 				Request.QueryStringRaw = queryString;
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public void RewritePath (string path, bool rebaseClientPath)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 #region internals
 		

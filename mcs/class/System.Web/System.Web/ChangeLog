@@ -1,3 +1,27 @@
+2005-09-14  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* BrowserCapabilities.cs: Fixed changes (in 2.0) with versions. Fixed
+	compare with "True" (culture and case sensitivity).
+	* HttpApplicationState.cs: Added LinkDemand for Minimal. Use the 
+	internal HttpStaticObjectsCollection ctor to avoid the UnmanagedCode
+	demand.
+	* HttpContext.cs: Added LinkDemand for Minimal. Added 2.0 properties
+	and methods to test CAS on them.
+	* HttpRequest.cs: Added LinkDemand for Minimal. Ensure we return 
+	proper values when worker_request is null.
+	* HttpResponse.cs: Added LinkDemand for Minimal. Ensure we return 
+	proper values when context or WorkerRequest is null. Added 2.0 
+	properties and methods to test CAS on them.
+	* HttpRuntime.cs: Added LinkDemand for Minimal. Added PathDiscovery 
+	demands for properties returning directories. Added demand for High 
+	level on AppDomainAppId and AppDomainId properties, Low level on 
+	IsOnUNCShare, Medium level on ProcessRequest and a demand for 
+	UnmanagedCode on UnloadAppDomain method. Constructor also has a 
+	UnmanagedCode demand for 1.x.
+	* HttpStaticObjectsCollection.cs: Added LinkDemand for Minimal. Added
+	a UnmanagedCode demand to public ctor. Added internal ctor without the
+	demand. Changed Serialize and Deserialize methods to public for 2.0.
+
 2005-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpWorkerRequest.cs: Removed TODO for 2.0 APIs and return the 

@@ -19,12 +19,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Collections;
 using System.IO;
+using System.Security.Permissions;
 using System.Web.UI;
 
 namespace System.Web {
+
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpStaticObjectsCollection : ICollection, IEnumerable {
 		private Hashtable _Objects;
 
@@ -55,9 +59,18 @@ namespace System.Web {
 		}
 
 		// Needs to hold object items that can be latebound and can be serialized
+#if ONLY_1_1
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
+#endif
 		public HttpStaticObjectsCollection ()
 		{
-			_Objects = new Hashtable();
+			_Objects = new Hashtable ();
+		}
+
+		// this ctor has no security requirements and is used when creating HttpApplicationState
+		internal HttpStaticObjectsCollection (HttpApplicationState appstate)
+		{
+			_Objects = new Hashtable ();
 		}
 
 		public object GetObject (string name)
@@ -102,6 +115,13 @@ namespace System.Web {
 			get { return false; }
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public bool NeverAccessed {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 		public object SyncRoot {
 			get { return this; }
 		}
@@ -128,33 +148,41 @@ namespace System.Web {
 			_Objects [name] = obj;
 		}
 
-		internal void Serialize (BinaryWriter w)
+#if NET_2_0
+		public void Serialize (BinaryWriter writer)
+#else
+		internal void Serialize (BinaryWriter writer)
+#endif
 		{
 			lock (_Objects) {
-				w.Write (Count);
+				writer.Write (Count);
 				foreach (string key in _Objects.Keys) {
-					w.Write (key);
+					writer.Write (key);
 					object value = _Objects [key];
 					if (value == null) {
-						w.Write (System.Web.Util.AltSerialization.NullIndex);
+						writer.Write (System.Web.Util.AltSerialization.NullIndex);
 						continue;
 					}
 
-					System.Web.Util.AltSerialization.SerializeByType (w, value);
+					System.Web.Util.AltSerialization.SerializeByType (writer, value);
 				}
 			}
 		}
 
-		internal static HttpStaticObjectsCollection Deserialize (BinaryReader r)
+#if NET_2_0
+		public static HttpStaticObjectsCollection Deserialize (BinaryReader reader)
+#else
+		internal static HttpStaticObjectsCollection Deserialize (BinaryReader reader)
+#endif
 		{
 			HttpStaticObjectsCollection result = new HttpStaticObjectsCollection ();
-			for (int i = r.ReadInt32 (); i > 0; i--) {
-				string key = r.ReadString ();
-				int index = r.ReadInt32 ();
+			for (int i = reader.ReadInt32 (); i > 0; i--) {
+				string key = reader.ReadString ();
+				int index = reader.ReadInt32 ();
 				if (index == System.Web.Util.AltSerialization.NullIndex)
 					result.Set (key, null);
 				else
-					result.Set (key, System.Web.Util.AltSerialization.DeserializeFromIndex (index, r));
+					result.Set (key, System.Web.Util.AltSerialization.DeserializeFromIndex (index, reader));
 			}
 
 			return result;

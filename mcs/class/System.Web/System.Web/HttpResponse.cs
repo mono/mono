@@ -29,6 +29,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System.Text;
 using System.Web.UI;
 using System.Collections;
@@ -38,9 +39,12 @@ using System.Web.Caching;
 using System.Threading;
 using System.Web.Util;
 using System.Globalization;
+using System.Security.Permissions;
 
 namespace System.Web {
 	
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpResponse {
 		internal HttpWorkerRequest WorkerRequest;
 		internal HttpResponseStream output_stream;
@@ -150,17 +154,19 @@ namespace System.Web {
 		//
 		public Encoding ContentEncoding {
 			get {
-				if (encoding == null){
-					string client_content_type = context.Request.ContentType;
-					string parameter = HttpRequest.GetParameter (client_content_type, "; charset=");
-					if (parameter != null){
-						try {
-							// Do what the #1 web server does
-							encoding = Encoding.GetEncoding (parameter);
-						} catch {
-							encoding = WebEncoding.ResponseEncoding;
+				if (encoding == null) {
+					if (context != null) {
+						string client_content_type = context.Request.ContentType;
+						string parameter = HttpRequest.GetParameter (client_content_type, "; charset=");
+						if (parameter != null) {
+							try {
+								// Do what the #1 web server does
+								encoding = Encoding.GetEncoding (parameter);
+							} catch {
+							}
 						}
-					} else
+					}
+					if (encoding == null)
 						encoding = WebEncoding.ResponseEncoding;
 				}
 				return encoding;
@@ -231,7 +237,8 @@ namespace System.Web {
 				Cache.SetExpires (value);
 			}
 		}
-		
+
+		[MonoTODO]
 		public Stream Filter {
 			get {
 				throw new NotImplementedException ();
@@ -241,13 +248,31 @@ namespace System.Web {
 				throw new NotImplementedException ();
 			}
 		}
-		
+#if NET_2_0
+		[MonoTODO]
+		public Encoding HeaderEncoding {
+			get { throw new NotImplementedException (); }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("HeaderEncoding");
+				throw new NotImplementedException ();
+			}
+		}
+#endif
 		public bool IsClientConnected {
 			get {
+				if (WorkerRequest == null)
+					return true; // yep that's true
+
 				return WorkerRequest.IsClientConnected ();
 			}
 		}
-		
+#if NET_2_0
+		[MonoTODO]
+		public bool IsRequestBeingRedirected {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 		public TextWriter Output {
 			get {
 				if (writer == null)
@@ -340,22 +365,44 @@ namespace System.Web {
 				suppress_content = value;
 			}
 		}
+#if NET_2_0
+		[MonoTODO]
+		public void AddCacheDependency (CacheDependency[] dependencies)
+		{
+			throw new NotImplementedException ();
+		}
 
+		[MonoTODO]
+		public void AddCacheItemDependencies (string[] cacheKeys)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		[MonoTODO]
 		public void AddCacheItemDependencies (ArrayList cacheKeys)
 		{
 			// TODO: talk to jackson about the cache
 		}
 
+		[MonoTODO]
 		public void AddCacheItemDependency (string cacheKey)
 		{
 			// TODO: talk to jackson about the cache
 		}
 
+		[MonoTODO]
 		public void AddFileDependencies (ArrayList filenames)
 		{
 			// TODO: talk to jackson about the cache
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		public void AddFileDependencies (string[] filenames)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+		[MonoTODO]
 		public void AddFileDependency (string filename)
 		{
 			// TODO: talk to jackson about the cache
@@ -406,6 +453,7 @@ namespace System.Web {
 			headers.Add (new UnknownResponseHeader (name, value));
 		}
 
+		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
 		public void AppendToLog (string param)
 		{
 			Console.Write ("System.Web: ");
@@ -510,7 +558,8 @@ namespace System.Web {
 		{
 			if (closed)
 				return;
-			WorkerRequest.CloseConnection ();
+			if (WorkerRequest != null)
+				WorkerRequest.CloseConnection ();
 			closed = true;
 		}
 
@@ -532,7 +581,8 @@ namespace System.Web {
 		//   Cache-Control
 		void WriteHeaders (bool final_flush)
 		{
-			WorkerRequest.SendStatus (status_code, StatusDescription);
+			if (WorkerRequest != null)
+				WorkerRequest.SendStatus (status_code, StatusDescription);
 
 			if (cached_response != null)
 				cached_response.SetHeaders (headers);
@@ -631,12 +681,15 @@ namespace System.Web {
 			//
 			// Flush
 			//
-			HttpApplication app_instance = context.ApplicationInstance;
-			if (app_instance != null)
-				app_instance.TriggerPreSendRequestHeaders ();
-				
-			foreach (BaseResponseHeader header in write_headers){
-				header.SendContent (WorkerRequest);
+			if (context != null) {
+				HttpApplication app_instance = context.ApplicationInstance;
+				if (app_instance != null)
+					app_instance.TriggerPreSendRequestHeaders ();
+			}
+			if (WorkerRequest != null) {
+				foreach (BaseResponseHeader header in write_headers){
+					header.SendContent (WorkerRequest);
+				}
 			}
 			headers_sent = true;
 		}
@@ -650,15 +703,19 @@ namespace System.Web {
 				WriteHeaders (final_flush);
 			}
 
-			if (suppress_content || context.Request.HttpMethod == "HEAD") {
+			bool head = ((context != null) && (context.Request.HttpMethod == "HEAD"));
+			if (suppress_content || head) {
 				output_stream.Clear ();
-				output_stream.Flush (WorkerRequest, final_flush);
+				if (WorkerRequest != null)
+					output_stream.Flush (WorkerRequest, final_flush);
 				return;
 			}
 
-			HttpApplication app_instance = context.ApplicationInstance;
-			if (app_instance != null)
-				app_instance.TriggerPreSendRequestContent ();
+			if (context != null) {
+				HttpApplication app_instance = context.ApplicationInstance;
+				if (app_instance != null)
+					app_instance.TriggerPreSendRequestContent ();
+			}
 
 			if (IsCached) {
 				byte [] data = output_stream.GetData ();
@@ -666,7 +723,8 @@ namespace System.Web {
 				cached_response.SetData (data);
 			}
 
-			output_stream.Flush (WorkerRequest, final_flush);
+			if (WorkerRequest != null)
+				output_stream.Flush (WorkerRequest, final_flush);
 
 			// FIXME
 			if (final_flush && use_chunked != null)
@@ -800,6 +858,8 @@ namespace System.Web {
 			if (size == 0)
 				return;
 
+			// Note: this .ctor will throw a SecurityException if the caller 
+			// doesn't have the UnmanagedCode permission
 			using (FileStream fs = new FileStream (fileHandle, FileAccess.Read))
 				WriteFile (fs, offset, size);
 
@@ -829,7 +889,13 @@ namespace System.Web {
 
 			Flush ();
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		public void WriteSubstitution (HttpResponseSubstitutionCallback callback)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		//
 		// Like WriteFile, but never buffers, so we manually Flush here
 		//
@@ -900,29 +966,36 @@ namespace System.Web {
 		//
 		public string CacheControl {
 			set {
-				if (String.Compare (value, "public", true, CultureInfo.InvariantCulture) == 0 || 
-				    String.Compare (value, "private", true, CultureInfo.InvariantCulture) == 0 ||
-				    String.Compare (value, "no-cache", true, CultureInfo.InvariantCulture) == 0)
-					cache_control = value;
+				if (String.Compare (value, "public", true, CultureInfo.InvariantCulture) == 0)
+					Cache.SetCacheability (HttpCacheability.Public);
+				else if (String.Compare (value, "private", true, CultureInfo.InvariantCulture) == 0)
+					Cache.SetCacheability (HttpCacheability.Private);
+				else if (String.Compare (value, "no-cache", true, CultureInfo.InvariantCulture) == 0)
+					Cache.SetCacheability (HttpCacheability.NoCache);
 				else
 					throw new ArgumentException ("CacheControl property only allows `public', " +
 								     "`private' or no-cache, for different uses, use " +
 								     "Response.AppendHeader");
-
+				cache_control = value;
 			}
 
 			get {
-				if (cache_policy != null){
-					switch (Cache.Cacheability){
-					case HttpCacheability.NoCache: return "private";
-					case HttpCacheability.Private: return "private";
-					case HttpCacheability.Server: return "private";
-					case HttpCacheability.Public: return "public";
-					case HttpCacheability.ServerAndPrivate: return "private";
+				if ((cache_control == null) && (cache_policy != null)) {
+					switch (Cache.Cacheability) {
+					case (HttpCacheability)0:
+					case HttpCacheability.NoCache:
+						return "no-cache";
+					case HttpCacheability.Private: 
+					case HttpCacheability.Server:
+					case HttpCacheability.ServerAndPrivate:
+						return "private";
+					case HttpCacheability.Public:
+						return "public";
+					default:
+						throw new Exception ("Unknown internal state: " + Cache.Cacheability);
 					}
-					throw new Exception ("Unknown internal state: " + Cache.Cacheability);
-				} else
-					return cache_control;
+				}
+				return cache_control;
 			}
 		}
 #endregion
