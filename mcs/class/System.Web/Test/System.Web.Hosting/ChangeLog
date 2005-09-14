@@ -1,3 +1,11 @@
+2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SimpleWorkerRequestTest.cs: Added a test case (GetUriPath) that was 
+	failing in the CAS tests (but wasn't CAS related).
+	* SimpleWorkerRequestCas.cs: Ignore the ctor(string,string,TextWriter)
+	test as I don't have a working test case. Simplify GetUriPath check
+	so it doesn't fail.
+
 2005-09-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainFactoryCas.cs: New. CAS unit tests for AppDomainFactory.

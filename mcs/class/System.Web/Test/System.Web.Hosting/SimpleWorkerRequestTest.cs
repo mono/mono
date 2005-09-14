@@ -139,6 +139,14 @@ namespace MonoTests.System.Web.Hosting {
 			Assert.AreEqual (String.Empty, swr.GetPathInfo (), "GetPathInfo-3");
 		}
 
+		[Test]
+		public void GetUriPath ()
+		{
+			StringWriter sw = new StringWriter ();
+			SimpleWorkerRequest swr = new SimpleWorkerRequest ("/", cwd, String.Empty, String.Empty, sw);
+			Assert.AreEqual ("/", swr.GetUriPath (), "GetUriPath");
+		}
+
 		public class Host : MarshalByRefObject {
 			string cwd = Environment.CurrentDirectory;
 
