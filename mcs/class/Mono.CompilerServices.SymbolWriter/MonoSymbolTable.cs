@@ -71,7 +71,7 @@ namespace Mono.CompilerServices.SymbolWriter
 {
 	public struct OffsetTable
 	{
-		public const int  Version = 38;
+		public const int  Version = 39;
 		public const long Magic   = 0x45e82623fd7fa614;
 
 		#region This is actually written to the symbol file
@@ -234,13 +234,15 @@ namespace Mono.CompilerServices.SymbolWriter
 	public struct LocalVariableEntry
 	{
 		#region This is actually written to the symbol file
+		public readonly int Index;
 		public readonly string Name;
 		public readonly byte[] Signature;
 		public readonly int BlockIndex;
 		#endregion
 
-		public LocalVariableEntry (string Name, byte[] Signature, int BlockIndex)
+		public LocalVariableEntry (int Index, string Name, byte[] Signature, int BlockIndex)
 		{
+			this.Index = Index;
 			this.Name = Name;
 			this.Signature = Signature;
 			this.BlockIndex = BlockIndex;
@@ -248,6 +250,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		internal LocalVariableEntry (MyBinaryReader reader)
 		{
+			Index = reader.ReadLeb128 ();
 			Name = reader.ReadString ();
 			int sig_length = reader.ReadLeb128 ();
 			Signature = reader.ReadBytes (sig_length);
@@ -256,6 +259,7 @@ namespace Mono.CompilerServices.SymbolWriter
 
 		internal void Write (MonoSymbolFile file, MyBinaryWriter bw)
 		{
+			bw.WriteLeb128 (Index);
 			bw.Write (Name);
 			bw.WriteLeb128 ((int) Signature.Length);
 			bw.Write (Signature);

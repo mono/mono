@@ -46,6 +46,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		delegate Guid GetGuidFunc (ModuleBuilder mb);
 		GetGuidFunc get_guid_func;
 		
+		int nextLocalIndex;
 		int currentToken;
 		string methodName;
 		Stack namespaceStack = new Stack ();
@@ -76,6 +77,7 @@ namespace Mono.CompilerServices.SymbolWriter
 		{
 			if (methodOpened) {
 				methodOpened = false;
+				nextLocalIndex = 0;
 				msw.CloseMethod ();
 			}
 		}
@@ -139,7 +141,7 @@ namespace Mono.CompilerServices.SymbolWriter
 			int startOffset,
 			int endOffset)
 		{
-			msw.DefineLocalVariable (name, signature);
+			msw.DefineLocalVariable (nextLocalIndex++, name, signature);
 		}
 		
 		public void DefineParameter (

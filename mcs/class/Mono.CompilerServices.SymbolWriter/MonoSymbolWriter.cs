@@ -96,12 +96,12 @@ namespace Mono.CompilerServices.SymbolWriter
 		public void CloseNamespace ()
 		{ }
 
-		public void DefineLocalVariable (string name, byte[] signature)
+		public void DefineLocalVariable (int index, string name, byte[] signature)
 		{
 			if (current_method == null)
 				return;
 
-			current_method.AddLocal (name, signature);
+			current_method.AddLocal (index, name, signature);
 		}
 
 		public void MarkSequencePoint (int offset, int line, int column)
@@ -273,12 +273,12 @@ namespace Mono.CompilerServices.SymbolWriter
 				}
 			}
 
-			public void AddLocal (string name, byte[] signature)
+			public void AddLocal (int index, string name, byte[] signature)
 			{
 				if (_locals == null)
 					_locals = new ArrayList ();
 				_locals.Add (new LocalVariableEntry (
-						     name, signature, CurrentBlock.Index));
+						     index, name, signature, CurrentBlock.Index));
 			}
 
 			public ISourceFile SourceFile {

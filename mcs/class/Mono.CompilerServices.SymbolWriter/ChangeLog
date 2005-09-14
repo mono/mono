@@ -1,3 +1,14 @@
+2005-09-14  Martin Baulig  <martin@ximian.com>
+
+	* MonoSymbolTable.cs (OffsetTable): Bump version to 39.
+	(LocalVariableEntry.Index): New field.
+
+	* MonoSymbolWriter.cs
+	(MonoSymbolWriter.DefineLocalVariable): Added `int index' argument.
+
+	* MonoSymbolFile.cs
+	(MonoDebuggerSupport.GetLocalIndex): New method.
+
 2005-09-05  Martin Baulig  <martin@ximian.com>
 
 	* MonoSymbolFile.cs (MonoDebuggerSupport): Make this internal and
