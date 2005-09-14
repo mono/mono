@@ -1,3 +1,6 @@
+2005-09-14 Boris Kirzner <borisk@mainsoft.com>
+	* SqlConvert.cs: Fix SqlDbType to JDBC type convertion.
+
 2005-09-11 Boris Kirzner <borisk@mainsoft.com>
 	* SqlConvert.cs: Fix DbType to SqlDbType convertion.
 

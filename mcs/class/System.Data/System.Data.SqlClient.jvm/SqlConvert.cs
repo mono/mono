@@ -213,7 +213,7 @@ namespace System.Data.SqlClient
 				case SqlDbType.Binary : return Types.BINARY;
 				case SqlDbType.Bit : return Types.BIT;
 				case SqlDbType.Char : return Types.CHAR;
-				case SqlDbType.DateTime : return Types.DATE;
+				case SqlDbType.DateTime : return Types.TIMESTAMP;
 				case SqlDbType.Decimal : return Types.DECIMAL;
 				case SqlDbType.Float : return Types.FLOAT;
 				case SqlDbType.Image : return Types.LONGVARBINARY;
