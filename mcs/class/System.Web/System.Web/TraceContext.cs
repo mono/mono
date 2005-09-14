@@ -6,9 +6,7 @@
 //   Jackson Harper (jackson@ximian.com)
 //
 // (C) 2002 2003, Patrik Torstensson
-// (C) 2003 Novell, Inc (http://www.novell.com) 
-//
-
+// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,13 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
-using System.Data;
+using System.Security.Permissions;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 
 namespace System.Web {
+
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class TraceContext {
 		HttpContext _Context;
 		bool _Enabled;
@@ -49,6 +48,7 @@ namespace System.Web {
 		public TraceContext (HttpContext Context)
 		{
 			_Context = Context;
+			_Mode = TraceMode.SortByTime;
 		}
 
 		internal bool HaveTrace {
@@ -119,7 +119,10 @@ namespace System.Web {
 				data = new TraceData ();
 			data.Write (category, msg, error, Warning);
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		public event TraceContextEventHandler TraceFinished;
+#endif
 		internal void SaveData ()
 		{
 			if (data == null)

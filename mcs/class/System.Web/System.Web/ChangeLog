@@ -1,3 +1,29 @@
+2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpApplication.cs: : Added LinkDemand and InheritanceDemand (class)
+	for Minimal. Changed AssemblyLocation to a property (so it doesn't 
+	require special permission, PathDiscovery) to create an instance. 
+	Protected Modules property with a Demand for High level. Added some 
+	missing HttpException for null context.
+	* HttpServerUtility.cs: Added LinkDemand for Minimal. Added demands 
+	for UnmanagedCode on all CreateObject* methods. Added demand for 
+	Medium level on MachineName and ScriptTimeout properties. Added new
+	overloaded Transfer method (2.0) to test CAS on it.
+	* HttpUtility.cs: Added LinkDemand for Minimal. Added [Obsolete] to 
+	ctor (2.0). Changed some return values when 'count' is 0. Added 
+	ParseQueryString (overload) methods for 2.0 (to enabled CAS testing on
+	them).
+	* HttpWorkerRequest.cs: Added LinkDemand and InheritanceDemand (class)
+	for Minimal. Added RequestTraceIdentifier and RootWebConfigPath (2.0) 
+	properties, GetPreloadedEntityBody, GetPreloadedEntityBodyLength, 
+	GetTotalEntityBodyLength and ReadEntityBody (2.0) methods to test CAS 
+	on them. Fixed SendResponseFromMemory to ignore IntPtr.Zero (used in 
+	tests without failures).
+	* ServerVariablesCollection.cs: Fixed loadServerVariablesCollection 
+	when HttpWorkerRequest is null.
+	* TraceContext.cs: Added LinkDemand for Minimal. Fixed default Mode 
+	(SortByTime). Added new (2.0) TraceFinished event to test CAS on it.
+
 2005-09-13  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* HttpBrowserCapabilities.cs: Added LinkDemand and InheritanceDemand 

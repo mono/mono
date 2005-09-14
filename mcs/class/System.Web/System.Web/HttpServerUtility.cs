@@ -30,11 +30,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Web.UI;
 using System.Web.Util;
 using System.Collections.Specialized;
+using System.Security.Permissions;
 
 namespace System.Web {
 
@@ -42,6 +42,8 @@ namespace System.Web {
 	// Methods exposed through HttpContext.Server property
 	//
 	
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpServerUtility {
 		HttpContext context;
 		
@@ -55,16 +57,19 @@ namespace System.Web {
 			context.ClearError ();
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public object CreateObject (string progID)
 		{
 			throw new HttpException (500, "COM is not supported");
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public object CreateObject (Type type)
 		{
 			throw new HttpException (500, "COM is not supported");
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public object CreateObjectFromClsid (string clsid)
 		{
 			throw new HttpException (500, "COM is not supported");
@@ -189,7 +194,13 @@ namespace System.Web {
 			Execute (path, null, preserveForm);
 			context.Response.End ();
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		public void Transfer (IHttpHandler handler, bool preserveForm)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		public string UrlDecode (string s)
 		{
 			return HttpUtility.UrlDecode (s);
@@ -230,13 +241,17 @@ namespace System.Web {
 		}
 
 		public string MachineName {
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
+			// Medium doesn't look heavy enough to replace this... reported as
+			[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
+			[EnvironmentPermission (SecurityAction.Assert, Read = "COMPUTERNAME")]
 			get { return Environment.MachineName; }
 		}
 
 		public int ScriptTimeout {
 			get { return (int) context.ConfigTimeout.TotalSeconds; }
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Medium)]
 			set { context.ConfigTimeout = new TimeSpan (0, 0, value); }
 		}
 	}
 }
-

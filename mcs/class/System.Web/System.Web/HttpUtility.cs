@@ -7,7 +7,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,14 +28,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Collections;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.IO;
+using System.Security.Permissions;
 using System.Text;
 using System.Web.Util;
 
 namespace System.Web {
+
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpUtility {
 
 		#region Fields
@@ -316,7 +321,10 @@ namespace System.Web {
 			entities.Add ("rsaquo", '\u203A');
 			entities.Add ("euro", '\u20AC');
 		}
-	
+
+#if NET_2_0
+		[Obsolete]
+#endif
 		public HttpUtility () 
 		{
 		}
@@ -449,8 +457,10 @@ namespace System.Web {
 		
 		public static string UrlDecode (byte [] bytes, int offset, int count, Encoding e)
 		{
-			if (bytes == null || count == 0)
+			if (bytes == null)
 				return null;
+			if (count == 0)
+				return String.Empty;
 
 			if (bytes == null)
 				throw new ArgumentNullException ("bytes");
@@ -529,6 +539,8 @@ namespace System.Web {
 		{
 			if (bytes == null)
 				return null;
+			if (count == 0)
+				return new byte [0];
 
 			int len = bytes.Length;
 			if (offset < 0 || offset >= len)
@@ -899,6 +911,21 @@ namespace System.Web {
 			}
 
 			return s2;
+		}
+#endif
+
+#if NET_2_0
+		[MonoTODO]
+		public static NameValueCollection ParseQueryString (string query)
+		{
+			// LAMESPEC: default encoding not specified
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static NameValueCollection ParseQueryString (string query, Encoding encoding)
+		{
+			throw new NotImplementedException ();
 		}
 #endif
 		#endregion // Methods

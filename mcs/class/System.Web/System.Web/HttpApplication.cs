@@ -61,11 +61,12 @@
 // TODO:
 //    Events Disposed
 //
-using System;
+
 using System.IO;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.Security.Permissions;
 using System.Security.Principal;
 using System.Threading;
 using System.Web.Configuration;
@@ -74,6 +75,10 @@ using System.Web.UI;
 	
 namespace System.Web {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ToolboxItem(false)]
 	public class HttpApplication : IHttpAsyncHandler, IHttpHandler, IComponent, IDisposable {
 		HttpContext context;
@@ -83,7 +88,7 @@ namespace System.Web {
 		// The source, and the exposed API (cache).
 		HttpModuleCollection modcoll;
 
-		internal string AssemblyLocation;
+		string assemblyLocation;
 
 		//
 		// The factory for the handler currently running.
@@ -129,7 +134,6 @@ namespace System.Web {
 
 		public HttpApplication ()
 		{
-			AssemblyLocation = GetType ().Assembly.Location;
 			done = new ManualResetEvent (false);
 		}
 
@@ -152,6 +156,14 @@ namespace System.Web {
 					app_culture = cfg.Culture;
 					appui_culture = cfg.UICulture;
 				}
+			}
+		}
+
+		internal string AssemblyLocation {
+			get {
+				if (assemblyLocation == null)
+					assemblyLocation = GetType ().Assembly.Location;
+				return assemblyLocation;
 			}
 		}
 
@@ -183,6 +195,7 @@ namespace System.Web {
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpModuleCollection Modules {
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
 			get {
 				if (modcoll == null)
 					modcoll = new HttpModuleCollection ();
@@ -195,6 +208,8 @@ namespace System.Web {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpRequest Request {
 			get {
+				if (context == null)
+					throw new HttpException (Locale.GetText ("No context is available."));
 				return context.Request;
 			}
 		}
@@ -203,6 +218,8 @@ namespace System.Web {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpResponse Response {
 			get {
+				if (context == null)
+					throw new HttpException (Locale.GetText ("No context is available."));
 				return context.Response;
 			}
 		}
@@ -230,6 +247,8 @@ namespace System.Web {
 				if (session != null)
 					return session;
 
+				if (context == null)
+					throw new HttpException (Locale.GetText ("No context is available."));
 				return context.Session;
 			}
 		}
@@ -250,8 +269,10 @@ namespace System.Web {
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public IPrincipal User {
 			get {
+				if (context == null)
+					throw new HttpException (Locale.GetText ("No context is available."));
 				if (context.User == null)
-					throw new HttpException ("Currently authenticated user");
+					throw new HttpException (Locale.GetText ("No currently authenticated user."));
 				
 				return context.User;
 			}

@@ -28,13 +28,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-using System.Web.UI;
 using System.Collections;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
+using System.Web.UI;
 
 namespace System.Web {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ComVisible (false)]
 	public abstract class HttpWorkerRequest {
 
@@ -113,6 +117,18 @@ namespace System.Web {
 			}
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public virtual Guid RequestTraceIdentifier {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public virtual string RootWebConfigPath {
+			get { throw new NotImplementedException (); }
+		}
+#endif
+
 		public virtual void CloseConnection ()
 		{
 		}
@@ -161,7 +177,19 @@ namespace System.Web {
 		{
 			return null;
 		}
+#if NET_2_0
+		[MonoTODO]
+		public virtual byte [] GetPreloadedEntityBody (byte[] buffer, int offset)
+		{
+			throw new NotImplementedException ();
+		}
 
+		[MonoTODO]
+		public virtual int GetPreloadedEntityBodyLength ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		public virtual string GetProtocol ()
 		{
 			if (IsSecure ())
@@ -194,7 +222,13 @@ namespace System.Web {
 		{
 			return null;
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		public virtual int GetTotalEntityBodyLength ()
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		public virtual string GetUnknownRequestHeader (string name)
 		{
 			return null;
@@ -243,11 +277,18 @@ namespace System.Web {
 			return null;
 		}
 
+		[MonoTODO]
 		public virtual int ReadEntityBody (byte [] buffer, int size)
 		{
 			throw new NotImplementedException ("");
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		public virtual int ReadEntityBody (byte [] buffer, int offset, int size)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		public virtual void SendCalculatedContentLength (int contentLength)
 		{
 			throw new NotImplementedException ();
@@ -261,11 +302,11 @@ namespace System.Web {
 #else
 		public virtual void SendResponseFromMemory (IntPtr data, int length)
 		{
-			byte [] copy = new byte [length];
-
-			Marshal.Copy (data, copy, 0, length);
-
-			SendResponseFromMemory (copy, length);
+			if (data != IntPtr.Zero) {
+				byte [] copy = new byte [length];
+				Marshal.Copy (data, copy, 0, length);
+				SendResponseFromMemory (copy, length);
+			}
 		}
 #endif
 

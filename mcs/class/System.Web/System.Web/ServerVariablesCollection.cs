@@ -122,13 +122,12 @@ namespace System.Web
 
 		private void loadServerVariablesCollection()
 		{
-			if (loaded)
+			HttpWorkerRequest wr = request.WorkerRequest;
+			if (loaded || (wr == null))
 				return;
 
 			IsReadOnly = false;
-
-			HttpWorkerRequest wr = request.WorkerRequest;
-			
+		
 			Add("ALL_HTTP", Fill (wr, true));
 			Add("ALL_RAW",  Fill (wr, false));
 			    
