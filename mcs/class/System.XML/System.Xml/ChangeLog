@@ -1,3 +1,9 @@
+2005-09-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextWriter.cs : for surrogate pair, output character reference
+	  as a single character instead of two reference pairs. Fixed bug #76095.
+	  Patch by Brion Vibber.
+
 2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDocument.cs: Added an InheritanceDemand for Unrestricted on 

@@ -1011,11 +1011,18 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					pos = 6; break;
 				default:
 					if (XmlChar.IsInvalid (source [i])) {
-						if (checkCharacters)
-							throw new ArgumentException (String.Format ("Character hexadecimal value {0:4x} is invalid.", (int) source [i]));
-						invalid = source [i];
-						pos = -1;
-						break;
+						if (Char.IsSurrogate (source [i]) && source [i] < 0xDC00 &&
+						    i + 1 < count && Char.IsSurrogate (source [i + 1]) && source [i + 1] >= 0xDC00) {
+							// A legitimate UTF-16 surrogate pair; let it through.
+							i++;
+							continue;
+						} else {
+							if (checkCharacters)
+								throw new ArgumentException (String.Format ("Character hexadecimal value {0:4x} is invalid.", (int) source [i]));
+							invalid = source [i];
+							pos = -1;
+							break;
+						}
 					}
 					else
 						continue;

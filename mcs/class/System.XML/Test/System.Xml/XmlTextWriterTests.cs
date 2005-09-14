@@ -1400,5 +1400,17 @@ namespace MonoTests.System.Xml
 			xtw.WriteQualifiedName ("n2", "");
 			xtw.WriteEndAttribute ();
 		}
+
+		[Test] // bug #76095
+		public void SurrogatePairsInWriteString ()
+		{
+			MemoryStream ms = new MemoryStream ();
+			XmlWriter writer = new XmlTextWriter(ms, null);
+			writer.WriteElementString("a", "\ud800\udf39");
+			writer.Close();
+			byte [] referent = new byte [] {0x3c, 0x61, 0x3e, 0xf0,
+				0x90, 0x8c, 0xb9, 0x3c, 0x2f, 0x61, 0x3e};
+			NUnit.Framework.Assert.AreEqual (referent, ms.ToArray ());
+		}
 	}
 }
