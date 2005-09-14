@@ -9,3 +9,4 @@ Microsoft.Web/ScriptPropertyDescriptorTest.cs
 Microsoft.Web/ScriptTypeDescriptorTest.cs
 Microsoft.Web.UI/ClickBehaviorTest.cs
 Microsoft.Web.UI/FloatingBehaviorTest.cs
+Microsoft.Web.UI/HoverBehaviorTest.cs

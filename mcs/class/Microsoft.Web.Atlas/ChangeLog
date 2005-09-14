@@ -1,5 +1,15 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web.Atlas_test.dll.sources: add HoverBehaviorTest.cs
+
+	* Microsoft.Web.Atlas.dll.sources: add HoverBehavior.cs
+
+	* Microsoft.Web.UI/HoverBehavior.cs: new implementation.
+
+	* Test/Microsoft.Web.UI/HoverBehaviorTest.cs: new tests.
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.UI/ClickBehavior.cs: fix a nullref in kind of a
 	stupid way.. leave an XXX.
 
