@@ -1410,7 +1410,7 @@ namespace System.Web.UI
 			set { skinId = value; }
 		}
 		
-		string ResolveClientUrl (string url)
+		public string ResolveClientUrl (string url)
 		{
 			throw new NotImplementedException ();               
 		}
