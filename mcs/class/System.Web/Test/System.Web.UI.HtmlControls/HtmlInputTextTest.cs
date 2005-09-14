@@ -251,7 +251,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			IPostBackDataHandler pbdh = (it as IPostBackDataHandler);
 			NameValueCollection nvc = new NameValueCollection ();
 			nvc.Add ("id1", "mono");
-			Assert.IsFalse (pbdh.LoadPostData (null, nvc), "LoadPostData");
+			Assert.IsTrue (pbdh.LoadPostData (null, nvc), "LoadPostData");
 			Assert.AreEqual (String.Empty, it.Value, "Value");
 		}
 
@@ -264,7 +264,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			IPostBackDataHandler pbdh = (it as IPostBackDataHandler);
 			NameValueCollection nvc = new NameValueCollection ();
 			nvc.Add ("id1", "mono");
-			Assert.IsFalse (pbdh.LoadPostData ("id2", nvc), "LoadPostData");
+			Assert.IsTrue (pbdh.LoadPostData ("id2", nvc), "LoadPostData");
 			Assert.AreEqual (String.Empty, it.Value, "Value");
 		}
 
@@ -306,7 +306,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			it.ID = "id1";
 			NameValueCollection nvc = new NameValueCollection ();
 			nvc.Add ("id1", "mono");
-			Assert.IsFalse (it.LoadPost (null, nvc), "LoadPostData");
+			Assert.IsTrue (it.LoadPost (null, nvc), "LoadPostData");
 			Assert.AreEqual (String.Empty, it.Value, "Value");
 		}
 
@@ -318,7 +318,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			it.ID = "id1";
 			NameValueCollection nvc = new NameValueCollection ();
 			nvc.Add ("id1", "mono");
-			Assert.IsFalse (it.LoadPost ("id2", nvc), "LoadPostData");
+			Assert.IsTrue (it.LoadPost ("id2", nvc), "LoadPostData");
 			Assert.AreEqual (String.Empty, it.Value, "Value");
 		}
 

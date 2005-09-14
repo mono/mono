@@ -1,3 +1,8 @@
+2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlInputTextTest.cs: Fix expected value for LoadPostData (in the 
+	cases where MS returns a NullReferenceException).
+
 2005-09-11  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlInputFileTest.cs (Attribute_Count): fix for 2.0.
