@@ -32,6 +32,7 @@
 using NUnit.Framework;
 using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Drawing.Drawing2D;
 
 namespace MonoTests.System.Drawing
@@ -48,6 +49,55 @@ namespace MonoTests.System.Drawing
 		public void SetUp ()
 		{
 
+		}
+
+		[Test]
+		public void DefaultProperties ()
+		{
+			Bitmap bmp = new Bitmap (200, 200);
+			Graphics g = Graphics.FromImage (bmp);
+			Region r = new Region ();
+
+			AssertEquals ("DefaultProperties1", r.GetBounds (g) , g.ClipBounds);
+			AssertEquals ("DefaultProperties2", CompositingMode.SourceOver, g.CompositingMode);
+			AssertEquals ("DefaultProperties3", CompositingQuality.Default, g.CompositingQuality);
+			AssertEquals ("DefaultProperties4", InterpolationMode.Bilinear, g.InterpolationMode);
+			AssertEquals ("DefaultProperties5", 1, g.PageScale);
+			AssertEquals ("DefaultProperties6", GraphicsUnit.Display, g.PageUnit);
+			AssertEquals ("DefaultProperties7", PixelOffsetMode.Default, g.PixelOffsetMode);
+			AssertEquals ("DefaultProperties8", new Point (0, 0) , g.RenderingOrigin);
+			AssertEquals ("DefaultProperties9", SmoothingMode.None, g.SmoothingMode);
+			AssertEquals ("DefaultProperties10", TextRenderingHint.SystemDefault, g.TextRenderingHint);
+
+			r.Dispose ();
+		}
+		
+		[Test]
+		public void SetGetProperties ()
+		{
+			Bitmap bmp = new Bitmap (200, 200);
+			Graphics g = Graphics.FromImage (bmp);						
+			
+			g.CompositingMode = CompositingMode.SourceCopy;
+			g.CompositingQuality = CompositingQuality.GammaCorrected;
+			g.InterpolationMode = InterpolationMode.HighQualityBilinear;
+			g.PageScale = 2;
+			g.PageUnit = GraphicsUnit.Inch;			
+			g.PixelOffsetMode = PixelOffsetMode.Half;
+			g.RenderingOrigin = new Point (10, 20);
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			g.TextRenderingHint = TextRenderingHint.SystemDefault;
+
+			//Clipping set/get tested in clipping functions			
+			AssertEquals ("SetGetProperties2", CompositingMode.SourceCopy, g.CompositingMode);
+			AssertEquals ("SetGetProperties3", CompositingQuality.GammaCorrected, g.CompositingQuality);
+			AssertEquals ("SetGetProperties4", InterpolationMode.HighQualityBilinear, g.InterpolationMode);
+			AssertEquals ("SetGetProperties5", 2, g.PageScale);
+			AssertEquals ("SetGetProperties6", GraphicsUnit.Inch, g.PageUnit);
+			AssertEquals ("SetGetProperties7", PixelOffsetMode.Half, g.PixelOffsetMode);
+			AssertEquals ("SetGetProperties8", new Point (10, 20), g.RenderingOrigin);
+			AssertEquals ("SetGetProperties9", SmoothingMode.AntiAlias, g.SmoothingMode);
+			AssertEquals ("SetGetProperties10", TextRenderingHint.SystemDefault, g.TextRenderingHint);			
 		}
 
 		// Properties
@@ -168,8 +218,74 @@ namespace MonoTests.System.Drawing
 			AssertEquals ("SetClip13", 210, rects[0].Width);
 			AssertEquals ("SetClip14", 220, rects[0].Height);
 		}
+		
+		[Test]
+		public void SetSaveReset ()
+		{
+			Bitmap bmp = new Bitmap (200, 200);
+			Graphics g = Graphics.FromImage (bmp);
+			GraphicsState state_default, state_modified;
+			
+			state_default = g.Save (); // Default
+			
+			g.CompositingMode = CompositingMode.SourceCopy;
+			g.CompositingQuality = CompositingQuality.GammaCorrected;
+			g.InterpolationMode = InterpolationMode.HighQualityBilinear;
+			g.PageScale = 2;
+			g.PageUnit = GraphicsUnit.Inch;			
+			g.PixelOffsetMode = PixelOffsetMode.Half;
+			g.Clip = new Region (new Rectangle (0, 0, 100, 100));
+			g.RenderingOrigin = new Point (10, 20);
+			g.SmoothingMode = SmoothingMode.AntiAlias;
+			g.TextRenderingHint = TextRenderingHint.ClearTypeGridFit;
+			
+			
+			state_modified = g.Save (); // Modified
+			
+			g.CompositingMode = CompositingMode.SourceOver;
+			g.CompositingQuality = CompositingQuality.Default;
+			g.InterpolationMode = InterpolationMode.Bilinear;
+			g.PageScale = 5;
+			g.PageUnit = GraphicsUnit.Display;			
+			g.PixelOffsetMode = PixelOffsetMode.Default;
+			g.Clip = new Region (new Rectangle (1, 2, 20, 25));
+			g.RenderingOrigin = new Point (5, 6);
+			g.SmoothingMode = SmoothingMode.None;
+			g.TextRenderingHint = TextRenderingHint.SystemDefault;			
+						
+			g.Restore (state_modified);
+			
+			AssertEquals ("SetSaveReset1", CompositingMode.SourceCopy, g.CompositingMode);
+			AssertEquals ("SetSaveReset2", CompositingQuality.GammaCorrected, g.CompositingQuality);
+			AssertEquals ("SetSaveReset3", InterpolationMode.HighQualityBilinear, g.InterpolationMode);
+			AssertEquals ("SetSaveReset4", 2, g.PageScale);
+			AssertEquals ("SetSaveReset5", GraphicsUnit.Inch, g.PageUnit);
+			AssertEquals ("SetSaveReset6", PixelOffsetMode.Half, g.PixelOffsetMode);
+			AssertEquals ("SetSaveReset7", new Point (10, 20), g.RenderingOrigin);
+			AssertEquals ("SetSaveReset8", SmoothingMode.AntiAlias, g.SmoothingMode);
+			AssertEquals ("SetSaveReset9", TextRenderingHint.ClearTypeGridFit, g.TextRenderingHint);			
+			AssertEquals ("SetSaveReset10", 0, (int) g.ClipBounds.X);
+			AssertEquals ("SetSaveReset10", 0, (int) g.ClipBounds.Y);
+			
+			g.Restore (state_default);			
+			
+			AssertEquals ("SetSaveReset11", CompositingMode.SourceOver, g.CompositingMode);
+			AssertEquals ("SetSaveReset12", CompositingQuality.Default, g.CompositingQuality);
+			AssertEquals ("SetSaveReset13", InterpolationMode.Bilinear, g.InterpolationMode);
+			AssertEquals ("SetSaveReset14", 1, g.PageScale);
+			AssertEquals ("SetSaveReset15", GraphicsUnit.Display, g.PageUnit);
+			AssertEquals ("SetSaveReset16", PixelOffsetMode.Default, g.PixelOffsetMode);
+			AssertEquals ("SetSaveReset17", new Point (0, 0) , g.RenderingOrigin);
+			AssertEquals ("SetSaveReset18", SmoothingMode.None, g.SmoothingMode);
+			AssertEquals ("SetSaveReset19", TextRenderingHint.SystemDefault, g.TextRenderingHint);		
 
+			Region r = new Region ();
+			AssertEquals ("SetSaveReset20", r.GetBounds (g) , g.ClipBounds);
+			
+			g.Dispose ();			
+		}
 
+		
 	}
 }
 
