@@ -4,6 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// Copyright (C) 2005 Novell, Inc (http://novell.com)
 //
 
 //
@@ -60,6 +61,28 @@ namespace Microsoft.JScript.Vsa {
 		public virtual bool CompileEmpty ()
 		{
 			throw new NotImplementedException ();
+		}
+
+		public override bool Compile ()
+		{
+			ArrayList code_items = new ArrayList ();
+			
+			foreach (IVsaItem item in Items) {
+				if (item is IVsaCodeItem)
+					code_items.Add (item);
+				else if (item is IVsaReferenceItem)
+					continue;
+				else
+					throw new Exception ("FIXME: VsaItemType.AppGlobal");
+			}
+			Parser parser = new Parser (code_items);
+			ScriptBlock block = (ScriptBlock) parser.ParseAll ();
+			if (block != null) {
+				SemanticAnalyser.Run (block, (Assembly []) GetOption ("assemblies"));
+				CodeGenerator.Run ((string) GetOption ("first_source"), block);
+				Console.WriteLine ("Compilation succeeded");
+			}
+			return false;
 		}
 
 		public virtual void ConectEvents ()
@@ -256,6 +279,11 @@ namespace Microsoft.JScript.Vsa {
 				throw new VsaException (VsaError.OptionNotSupported);
 			}
 			return opt;
+		}
+
+		public override void SetOption (string name, object value)
+		{
+			SetSpecificOption (name, value);
 		}
 
 		protected override void SetSpecificOption (string name, object val)
