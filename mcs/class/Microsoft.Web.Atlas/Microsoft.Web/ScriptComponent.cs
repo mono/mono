@@ -40,27 +40,30 @@ namespace Microsoft.Web
 	{
 		protected ScriptComponent ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		protected virtual void AddAttributesToElement (ScriptTextWriter writer)
 		{
-			throw new NotImplementedException ();
+		}
+
+		ScriptTypeDescriptor IScriptObject.GetTypeDescriptor ()
+		{
+			ScriptTypeDescriptor td = new ScriptTypeDescriptor(this);
+			InitializeTypeDescriptor (td);
+			td.Close();
+			return td;
 		}
 
 		protected virtual void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
 		{
-			throw new NotImplementedException ();
-		}
-
-		public void RenderScript (ScriptTextWriter writer)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public ScriptTypeDescriptor GetTypeDescriptor ()
 		{
-			throw new NotImplementedException ();
+			ScriptTypeDescriptor td = new ScriptTypeDescriptor(this);
+			InitializeTypeDescriptor (td);
+			td.Close();
+			return td;
 		}
 
 		protected override void OnInit (EventArgs e)
@@ -68,19 +71,26 @@ namespace Microsoft.Web
 			base.OnInit (e);
 		}
 
+		void IScriptComponent.RenderScript (ScriptTextWriter writer)
+		{
+			RenderScriptBeginTag (writer);
+			AddAttributesToElement (writer);
+			RenderScriptTagContents (writer);
+			RenderScriptEndTag (writer);
+		}
+
 		protected virtual void RenderScriptBeginTag (ScriptTextWriter writer)
 		{
-			throw new NotImplementedException ();
+			writer.WriteStartElement (TagName);
 		}
 
 		protected virtual void RenderScriptEndTag (ScriptTextWriter writer)
 		{
-			throw new NotImplementedException ();
+			writer.WriteEndElement ();
 		}
 
 		protected virtual void RenderScriptTagContents (ScriptTextWriter writer)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public BindingCollection Bindings {

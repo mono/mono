@@ -112,12 +112,9 @@ namespace Microsoft.Web
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("bindings", ScriptType.Array, true, "Bindings"));
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("dataContext", ScriptType.Object));
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("id", ScriptType.String, "ID"));
-			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("eventArgs", ScriptType.Object));
-			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("result", ScriptType.Object));
-			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("sender", ScriptType.Object));
 		}
 
-		public void RenderScript (ScriptTextWriter writer)
+		void IScriptComponent.RenderScript (ScriptTextWriter writer)
 		{
 			RenderScriptBeginTag (writer);
 			AddAttributesToElement (writer);

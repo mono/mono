@@ -33,53 +33,10 @@ using System;
 
 namespace Microsoft.Web
 {
-	class Behavior : IScriptComponent
+	public abstract class Behavior : ScriptComponentBase, IScriptObject
 	{
 		protected Behavior ()
 		{
-		}
-
-		public BindingCollection Bindings {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public string ID {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public ScriptEvent PropertyChanged {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public string TagName {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		public void RenderScript (ScriptTextWriter writer)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public IScriptObject Owner {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		ScriptTypeDescriptor IScriptObject.GetTypeDescriptor ()
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

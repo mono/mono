@@ -30,6 +30,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace Microsoft.Web
@@ -38,7 +39,6 @@ namespace Microsoft.Web
 	{
 		string id;
 		IScriptObject owner;
-		bool readOnly;
 
 		public ActionCollection (IScriptObject owner)
 			: this (owner, false)
@@ -46,9 +46,9 @@ namespace Microsoft.Web
 		}
 
 		public ActionCollection (IScriptObject owner, bool readOnly)
+			: base (readOnly ? ((IList<Action>)new List<Action>().AsReadOnly()) : new List<Action>())
 		{
 			this.owner = owner;
-			this.readOnly = readOnly;
 			this.id = "";
 		}
 

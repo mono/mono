@@ -40,7 +40,7 @@ namespace Microsoft.Web
 		public ScriptMemberDescriptor (string memberName)
 		{
 			if (memberName == null)
-				throw new ArgumentNullException ("memberName", "Value cannot be null");
+				throw new ArgumentNullException ("memberName");
 			this.memberName = memberName;
 		}
 

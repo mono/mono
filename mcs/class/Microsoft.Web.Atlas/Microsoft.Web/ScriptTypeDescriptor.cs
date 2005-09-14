@@ -45,7 +45,7 @@ namespace Microsoft.Web
 		public ScriptTypeDescriptor (IScriptObject scriptObject)
 		{
 			if (scriptObject == null)
-				throw new ArgumentNullException ("scriptObject", "value cannot be null");
+				throw new ArgumentNullException ("scriptObject");
 
 			this.scriptObject = scriptObject;
 			this.events = new List<ScriptEventDescriptor>();

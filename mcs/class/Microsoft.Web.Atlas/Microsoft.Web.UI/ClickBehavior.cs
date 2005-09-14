@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.BehaviorCollection
+// Microsoft.Web.UI.ClickBehavior
 //
 // Author:
 //   Chris Toshok (toshok@ximian.com)
@@ -30,60 +30,36 @@
 #if NET_2_0
 
 using System;
-using System.Collections.ObjectModel;
 
-namespace Microsoft.Web
+namespace Microsoft.Web.UI
 {
-	public class BehaviorCollection : Collection<Behavior>, IScriptObject
+	public class ClickBehavior : Behavior
 	{
-		public BehaviorCollection (IScriptObject owner)
+		public ClickBehavior ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		public BehaviorCollection (IScriptObject owner, bool readOnly)
+		protected override void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
 		{
-			throw new NotImplementedException ();
+			base.InitializeTypeDescriptor (typeDescriptor);
+
+			typeDescriptor.AddEvent (new ScriptEventDescriptor (Click.Name, Click.SupportsActions));
 		}
 
-		protected void ClearItems ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected void InsertItem (int index, Behavior item)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected void RemoveItem (int index)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected void SetItem (int index, Behavior item)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public string ID {
+		ScriptEvent click;
+		public ScriptEvent Click {
 			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
+				if (click == null)
+					click = new ScriptEvent (Owner, "click", true);
+
+				return click;
 			}
 		}
 
-		public IScriptObject Owner {
+		public override string TagName {
 			get {
-				throw new NotImplementedException ();
+				return "clickBehavior";
 			}
-		}
-
-		ScriptTypeDescriptor IScriptObject.GetTypeDescriptor ()
-		{
-			throw new NotImplementedException ();
 		}
 	}
 }

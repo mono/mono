@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.ScriptEvent
+// Microsoft.Web.ScriptControl
 //
 // Author:
 //   Chris Toshok (toshok@ximian.com)
@@ -30,72 +30,71 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
+using System.Web.UI;
 
 namespace Microsoft.Web
 {
-	public class ScriptEvent
+	public abstract class ScriptControl : ScriptComponent
 	{
-		IScriptObject owner;
-		string name;
-		bool supportsActions;
-		string handler;
-		ActionCollection actions;
-
-		public ScriptEvent (IScriptObject owner, string name, bool supportsActions)
+		protected ScriptControl ()
 		{
-			if (owner == null)
-				throw new ArgumentNullException ("owner");
-			if (name == null)
-				throw new ArgumentNullException ("name");
-
-			this.owner = owner;
-			this.name = name;
-			this.supportsActions = supportsActions;
-			this.handler = "";
 		}
 
-		public ActionCollection Actions {
+		protected override void AddAttributesToElement (ScriptTextWriter writer)
+		{
+			base.AddAttributesToElement (writer);
+		}
+
+		protected override void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
+		{
+			base.InitializeTypeDescriptor (typeDescriptor);
+		}
+
+		protected override void RenderScriptTagContents (ScriptTextWriter writer)
+		{
+		}
+
+		public BehaviorCollection Behaviors {
 			get {
-				if (actions == null)
-					actions = new ActionCollection(owner, !supportsActions);
-
-				return actions;
+				throw new NotImplementedException ();
 			}
 		}
 
-		public string Handler {
-			get { return handler; }
-			set { handler = (value == null ? "" : value); }
-		}
-
-		public string Name {
-			get { return name; }
-		}
-
-		public bool SupportsActions {
-			get { return supportsActions; }
-		}
-
-		public void RenderActions (ScriptTextWriter writer)
-		{
-			if (Actions.Count == 0)
-				return;
-
-			writer.WriteStartElement (Name);
-			writer.WriteWhitespace ("\r\n");
-
-			foreach (Action a in Actions) {
-				writer.WriteWhitespace ("  ");
-				a.RenderAction (writer);
-				writer.WriteWhitespace ("\r\n");
+		public string CssClass {
+			get {
+				throw new NotImplementedException ();
 			}
-
-			writer.WriteEndElement ();
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 
-		public void RenderHandlers (ScriptTextWriter writer)
-		{
-			writer.WriteAttributeString (Name, Handler);
+		public bool Enabled {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public VisibilityMode VisibilityMode {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public new bool Visible {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
 		}
 	}
 }

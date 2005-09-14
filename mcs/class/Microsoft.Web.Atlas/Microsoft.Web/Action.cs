@@ -71,13 +71,16 @@ namespace Microsoft.Web
 		{
 			base.InitializeTypeDescriptor (typeDescriptor);
 
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("eventArgs", ScriptType.Object));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("result", ScriptType.Object));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("sender", ScriptType.Object));
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("sequence", ScriptType.Enum, "Sequence"));
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("target", ScriptType.Object, "Target"));
 		}
 
 		public void RenderAction (ScriptTextWriter writer)
 		{
-			base.RenderScript (writer);
+			((IScriptComponent)this).RenderScript (writer);
 		}
 	}
 }

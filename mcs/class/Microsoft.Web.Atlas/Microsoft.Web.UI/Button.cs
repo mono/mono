@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.BehaviorCollection
+// Microsoft.Web.UI.Button
 //
 // Author:
 //   Chris Toshok (toshok@ximian.com)
@@ -30,43 +30,47 @@
 #if NET_2_0
 
 using System;
-using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Web.UI;
+using Microsoft.Web;
 
-namespace Microsoft.Web
+namespace Microsoft.Web.UI
 {
-	public class BehaviorCollection : Collection<Behavior>, IScriptObject
+	public class Button : ScriptControl
 	{
-		public BehaviorCollection (IScriptObject owner)
+		public Button ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		public BehaviorCollection (IScriptObject owner, bool readOnly)
+		protected override void AddAttributesToElement (ScriptTextWriter writer)
 		{
-			throw new NotImplementedException ();
 		}
 
-		protected void ClearItems ()
+		protected override void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
 		{
-			throw new NotImplementedException ();
 		}
 
-		protected void InsertItem (int index, Behavior item)
+		protected override void OnPreRender (EventArgs e)
 		{
-			throw new NotImplementedException ();
 		}
 
-		protected void RemoveItem (int index)
+		protected override void Render (HtmlTextWriter writer)
 		{
-			throw new NotImplementedException ();
 		}
 
-		protected void SetItem (int index, Behavior item)
-		{
-			throw new NotImplementedException ();
+		public ScriptEvent Click {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
-		public string ID {
+		public override string TagName {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public string Text {
 			get {
 				throw new NotImplementedException ();
 			}
@@ -74,18 +78,8 @@ namespace Microsoft.Web
 				throw new NotImplementedException ();
 			}
 		}
-
-		public IScriptObject Owner {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		ScriptTypeDescriptor IScriptObject.GetTypeDescriptor ()
-		{
-			throw new NotImplementedException ();
-		}
 	}
+
 }
 
 #endif

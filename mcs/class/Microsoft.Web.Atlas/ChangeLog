@@ -1,5 +1,45 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web.Atlas.dll_sources: add implementations.
+
+	* Microsoft.Web.Atlas_test.dll_sources: add tests.
+
+	* Microsoft.Web/Behavior.cs: this class is pretty much empty.
+
+	* Microsoft.Web/ActionCollection.cs: make the readonly stuff work.
+	someone with more experience with this crap should tell me whether
+	i did it right..
+
+	* Microsoft.Web/ScriptMemberDescriptor.cs: cleanup.
+
+	* Microsoft.Web/ScriptComponent.cs: cleanup.
+
+	* Microsoft.Web/ScriptTypeDescriptor.cs (.ctor): cleanup.
+
+	* Microsoft.Web/ScriptComponentBase.cs (RenderScript): make this
+	an explicit interface implementation.
+
+	* Microsoft.Web/Action.cs (InitializeTypeDescriptor): move some of
+	the propertydescriptors from ScriptComponentBase to here, as they
+	don't show up when we get type descriptors for Behaviors.
+
+	* Microsoft.Web/BehaviorCollection.cs: this class should be
+	public.
+
+	* Microsoft.Web/ScriptControl.cs: stubs.
+
+	* Microsoft.Web.UI/Button.cs: stubs.
+
+	* Test/Microsoft.Web.UI/ClickBehavior.cs: new tests.
+
+	* Microsoft.Web.UI/ClickBehavior: new implementation.
+	
+	* Test/Microsoft.Web/ScriptEventTest.cs: new tests.
+
+	* Microsoft.Web/ScriptEvent.cs: round out implementation.
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Test/Microsoft.Web/ActionTest.cs,
 	Microsoft.Web/BehaviorCollection.cs,
 	Microsoft.Web/ScriptComponentBase.cs,

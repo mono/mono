@@ -1,6 +1,5 @@
-#if false
 //
-// Tests for Microsoft.Web.SetPropertyAction
+// Tests for Microsoft.Web.UI.ClickBehavior
 //
 // Author:
 //	Chris Toshok (toshok@ximian.com)
@@ -36,80 +35,35 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Web;
+using Microsoft.Web.UI;
 
-namespace MonoTests.Microsoft.Web
+namespace MonoTests.Microsoft.Web.UI
 {
 	[TestFixture]
-	public class SetPropertyActionTest
+	public class ClickBehaviorTest
 	{
 		[Test]
 		public void Properties ()
 		{
-			SetPropertyAction a = new SetPropertyAction ();
+			ClickBehavior b = new ClickBehavior ();
 
 			// default
-			Assert.AreEqual ("", a.Property, "A1");
-			Assert.AreEqual ("", a.PropertyKey, "A2");
-			Assert.AreEqual ("", a.Value, "A3");
-			Assert.AreEqual ("setProperty", a.TagName, "A4");
-
-			// getter/setter
-			a.Property = "property";
-			Assert.AreEqual ("property", a.Property, "A5");
-
-			a.PropertyKey = "propertykey";
-			Assert.AreEqual ("propertykey", a.PropertyKey, "A6");
-
-			a.Value = "value";
-			Assert.AreEqual ("value", a.Value, "A7");
-
-			// setting to null
-			a.Property = null;
-			Assert.AreEqual ("", a.Property, "A8");
-			a.PropertyKey = null;
-			Assert.AreEqual ("", a.PropertyKey, "A9");
-			a.Value = null;
-			Assert.AreEqual ("", a.Value, "A10");
+			Assert.AreEqual ("clickBehavior", b.TagName, "A1");
 		}
 
 		[Test]
 		public void Render ()
 		{
-			SetPropertyAction a = new SetPropertyAction ();
+			ClickBehavior c = new ClickBehavior ();
 			StringWriter sw;
 			ScriptTextWriter w;
 
 			// test an empty action
 			sw = new StringWriter();
 			w = new ScriptTextWriter (sw);
-			a.RenderAction (w);
+			((IScriptComponent)c).RenderScript (w);
 
-			Assert.AreEqual ("<setProperty />", sw.ToString(), "A1");
-
-			// test with a property
-			a.Target = "target";
-			a.Property = "property";
-			a.PropertyKey = "propertyKey";
-			a.Value = "value";
-
-			sw = new StringWriter();
-			w = new ScriptTextWriter (sw);
-			a.RenderAction (w);
-
-			Assert.AreEqual ("<setProperty target=\"target\" property=\"property\" propertyKey=\"propertyKey\" value=\"value\" />", sw.ToString(), "A2");
-
-			// test with a target and id
-			a.ID = "set_id";
-			a.Target = "target";
-			a.Property = "property";
-			a.PropertyKey = "propertyKey";
-			a.Value = "value";
-
-			sw = new StringWriter();
-			w = new ScriptTextWriter (sw);
-			a.RenderAction (w);
-
-			Assert.AreEqual ("<setProperty id=\"set_id\" target=\"target\" property=\"property\" propertyKey=\"propertyKey\" value=\"value\" />", sw.ToString(), "A3");
+			Assert.AreEqual ("", sw.ToString(), "A1");
 		}
 
 		void DoEvent (ScriptEventDescriptor e, string eventName, bool supportsActions)
@@ -130,7 +84,7 @@ namespace MonoTests.Microsoft.Web
 		[Test]
 		public void TypeDescriptor ()
 		{
-			SetPropertyAction a = new SetPropertyAction();
+			ClickBehavior a = new ClickBehavior();
 			ScriptTypeDescriptor desc = ((IScriptObject)a).GetTypeDescriptor ();
 
 			Assert.AreEqual (a, desc.ScriptObject, "A1");
@@ -140,57 +94,42 @@ namespace MonoTests.Microsoft.Web
 			Assert.IsNotNull (events, "A2");
 
 			IEnumerator<ScriptEventDescriptor> ee = events.GetEnumerator();
-			Assert.IsTrue (ee.MoveNext());
+			Assert.IsTrue (ee.MoveNext(), "A3");
 			DoEvent (ee.Current, "propertyChanged", true);
-			Assert.IsFalse (ee.MoveNext());
+			Assert.IsTrue (ee.MoveNext(), "A4");
+			DoEvent (ee.Current, "click", true);
+			Assert.IsFalse (ee.MoveNext(), "A5");
 
 			// methods
 			IEnumerable<ScriptMethodDescriptor> methods = desc.GetMethods();
-			Assert.IsNotNull (methods, "A3");
+			Assert.IsNotNull (methods, "A6");
 
 			IEnumerator<ScriptMethodDescriptor> me = methods.GetEnumerator();
 			Assert.IsFalse (me.MoveNext ());
 
 			// properties
 			IEnumerable<ScriptPropertyDescriptor> props = desc.GetProperties();
-			Assert.IsNotNull (props, "A4");
+			Assert.IsNotNull (props, "A7");
 
 			IEnumerator<ScriptPropertyDescriptor> pe = props.GetEnumerator();
-			Assert.IsTrue (pe.MoveNext(), "A5");
-			DoProperty (pe.Current, "bindings", ScriptType.Array, true, "Bindings");
-			Assert.IsTrue (pe.MoveNext(), "A6");
-			DoProperty (pe.Current, "dataContext", ScriptType.Object, false, "");
-			Assert.IsTrue (pe.MoveNext(), "A7");
-			DoProperty (pe.Current, "id", ScriptType.String, false, "ID");
 			Assert.IsTrue (pe.MoveNext(), "A8");
-			DoProperty (pe.Current, "eventArgs", ScriptType.Object, false, "");
+			DoProperty (pe.Current, "bindings", ScriptType.Array, true, "Bindings");
 			Assert.IsTrue (pe.MoveNext(), "A9");
-			DoProperty (pe.Current, "result", ScriptType.Object, false, "");
+			DoProperty (pe.Current, "dataContext", ScriptType.Object, false, "");
 			Assert.IsTrue (pe.MoveNext(), "A10");
-			DoProperty (pe.Current, "sender", ScriptType.Object, false, "");
-			Assert.IsTrue (pe.MoveNext(), "A11");
-			DoProperty (pe.Current, "sequence", ScriptType.Enum, false, "Sequence");
-			Assert.IsTrue (pe.MoveNext(), "A12");
-			DoProperty (pe.Current, "target", ScriptType.Object, false, "Target");
-			Assert.IsTrue (pe.MoveNext(), "A13");
-			DoProperty (pe.Current, "property", ScriptType.String, false, "Property");
-			Assert.IsTrue (pe.MoveNext(), "A14");
-			DoProperty (pe.Current, "propertyKey", ScriptType.String, false, "PropertyKey");
-			Assert.IsTrue (pe.MoveNext(), "A15");
-			DoProperty (pe.Current, "value", ScriptType.String, false, "Value");
-			Assert.IsFalse (pe.MoveNext(), "A16");
+			DoProperty (pe.Current, "id", ScriptType.String, false, "ID");
+			Assert.IsFalse (pe.MoveNext(), "A11");
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void IsTypeDescriptorClosed ()
 		{
-			SetPropertyAction a = new SetPropertyAction();
+			ClickBehavior a = new ClickBehavior();
 			ScriptTypeDescriptor desc = ((IScriptObject)a).GetTypeDescriptor ();
 
 			desc.AddEvent (new ScriptEventDescriptor ("testEvent", true));
 		}
 	}
 }
-#endif
 #endif
