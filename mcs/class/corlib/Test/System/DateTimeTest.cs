@@ -912,6 +912,12 @@ public class DateTimeTest : Assertion
 		} finally {
 			Thread.CurrentThread.CurrentCulture = ci;
 		}
+
+		// bug #76082
+		AssertEquals ("bug #76082", DateTime.MinValue,
+			DateTime.ParseExact ("00010101T00:00:00",
+				"yyyyMMdd'T'HH':'mm':'ss",
+				DateTimeFormatInfo.InvariantInfo));
 	}
 
 	[Test]

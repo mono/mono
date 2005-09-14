@@ -1,5 +1,10 @@
 2005-09-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTime.cs : (_DoParse) don't check ticks range before computing
+	  the actual value. Fixed bug #76082.
+
+2005-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TimeZone.cs : When the target DateTime is in the range of
 	  DST end to DST + delta, don't adjust UtcOffset gap between that of
 	  DST and that of STD. This should fix bug #75985.

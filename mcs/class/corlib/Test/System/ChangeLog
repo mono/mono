@@ -1,3 +1,7 @@
+2005-09-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : test for #76082.
+
 2005-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : test for #72132.

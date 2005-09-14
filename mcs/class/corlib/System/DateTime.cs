@@ -1307,7 +1307,7 @@ namespace System
 
 			long newticks = (result.ticks - utcoffset).Ticks;
 
-			result = new DateTime (newticks);
+			result = new DateTime (false, new TimeSpan (newticks));
 			if (use_localtime)
 				result = result.ToLocalTime ();
 
