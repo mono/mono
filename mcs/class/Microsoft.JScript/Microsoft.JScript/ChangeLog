@@ -1,3 +1,12 @@
+2005-09-13  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* SemanticAnalyser.cs: Add field assemblies. Run now receives the
+	assembly's array, add method ComputeNamespaces,
+	* Parser.cs: Add support for the 'import' statement. Add field
+	code_items, new constructor, methods ParseAll and Import.
+	* Import.cs: Implement Resolve and Emit methods.
+	* ScriptBlock.cs: Add default ctr.
+
 2005-09-11  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* expression.cs (Identifier::emit_undeclared_assignment): Fix
