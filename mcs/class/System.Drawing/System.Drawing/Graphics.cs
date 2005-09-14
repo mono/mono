@@ -1217,7 +1217,7 @@ namespace System.Drawing
 		{
 			Status status = GDIPlus.GdipFlush (nativeObject, intention);
                         GDIPlus.CheckStatus (status);                    
-			if (GDIPlus.UseQuartzDrawable)
+			if (GDIPlus.UseQuartzDrawable || GDIPlus.UseCocoaDrawable)
 				Carbon.CGContextSynchronize (GDIPlus.Display);
 		}
 
@@ -1249,6 +1249,13 @@ namespace System.Drawing
 		{
 			IntPtr graphics;
 
+			if (GDIPlus.UseCocoaDrawable) {
+				CarbonContext cgContext = Carbon.GetCGContextForNSView (hwnd);
+				GDIPlus.GdipCreateFromQuartz_macosx (cgContext.ctx, cgContext.width, cgContext.height, out graphics);
+				
+				GDIPlus.Display = cgContext.ctx;
+				return new Graphics (graphics);
+			}
 			if (GDIPlus.UseQuartzDrawable) {
 				CarbonContext cgContext = Carbon.GetCGContextForView (hwnd);
 				GDIPlus.GdipCreateFromQuartz_macosx (cgContext.ctx, cgContext.width, cgContext.height, out graphics);

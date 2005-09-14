@@ -54,6 +54,7 @@ namespace System.Drawing
 		public static IntPtr Display = IntPtr.Zero;
 		public static bool UseX11Drawable;
 		public static bool UseQuartzDrawable = (Environment.GetEnvironmentVariable ("MONO_MWF_USE_QUARTZ_BACKEND") != null);
+		public static bool UseCocoaDrawable = (Environment.GetEnvironmentVariable ("MONO_GDIP_USE_COCOA_BACKEND") != null);
 
 		#region gdiplus.dll functions
 

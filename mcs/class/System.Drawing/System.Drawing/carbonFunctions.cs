@@ -31,6 +31,14 @@ using System.Runtime.InteropServices;
 namespace System.Drawing {
 	internal class Carbon {
 
+		internal static CarbonContext GetCGContextForNSView (IntPtr hwnd) {
+			IntPtr cgContext = IntPtr.Zero;
+
+			cgContext = objc_msgSend (objc_msgSend (objc_getClass ("NSGraphicsContext"), sel_registerName ("currentContext")), sel_registerName ("graphicsPort"));
+			HIRect rect = new HIRect ();
+			objc_msgSend_stret (ref rect, hwnd, sel_registerName ("bounds"));
+			return new CarbonContext (cgContext, (int)rect.size.width, (int)rect.size.height);
+		}
 		internal static CarbonContext GetCGContextForView (IntPtr hwnd) {
 			IntPtr cgContext = IntPtr.Zero;
 			// Grab the window we're in
@@ -60,6 +68,19 @@ namespace System.Drawing {
 			Carbon.CGContextClipToRect (cgContext, rcClip);
 			return new CarbonContext (cgContext, (int)vBounds.size.width, (int)vBounds.size.height);
 		}
+		#region Cocoa Methods
+		[DllImport("libobjc.dylib")]
+		public static extern IntPtr objc_getClass(string className); 
+		[DllImport("libobjc.dylib")]
+		public static extern IntPtr objc_msgSend(IntPtr basePtr, IntPtr selector, string argument);  
+		[DllImport("libobjc.dylib")]
+		public static extern IntPtr objc_msgSend(IntPtr basePtr, IntPtr selector);        
+		[DllImport("libobjc.dylib")]
+		public static extern void objc_msgSend_stret(ref HIRect arect, IntPtr basePtr, IntPtr selector);        
+		[DllImport("libobjc.dylib")]
+		public static extern IntPtr sel_registerName(string selectorName);         
+		#endregion
+
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
                 internal static extern int HIViewGetBounds (IntPtr vHnd, ref HIRect r);
                 [DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
