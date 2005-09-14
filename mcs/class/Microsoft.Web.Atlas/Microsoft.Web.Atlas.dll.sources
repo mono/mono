@@ -38,6 +38,7 @@ Microsoft.Web.UI/Filter.cs
 Microsoft.Web.UI/FloatingBehavior.cs
 Microsoft.Web.UI/HoverBehavior.cs
 Microsoft.Web.UI/MapStyle.cs
+Microsoft.Web.UI/Option.cs
 Microsoft.Web.UI/PositioningMode.cs
 Microsoft.Web.UI/PropertyFilter.cs
 Microsoft.Web.UI/Script.cs
