@@ -1035,7 +1035,7 @@ namespace System.Web.UI.WebControls
 			Page.Header.StyleSheet.RegisterStyle (baseStyle, this);
 			Style ts = new Style ();
 			ts.CopyTextStylesFrom (baseStyle);
-			Page.Header.StyleSheet.CreateStyleRule (ts, "." + baseStyle.RegisteredCssClass + " A", this);
+			Page.Header.StyleSheet.CreateStyleRule (ts, this, "." + baseStyle.RegisteredCssClass + " A");
 		}
 		
 		protected internal override void Render (HtmlTextWriter writer)
