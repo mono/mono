@@ -115,6 +115,11 @@ namespace System.Reflection.Emit {
 		}
 #endif
 
+		internal static int Mono_GetLocalIndex (LocalBuilder builder)
+		{
+			return builder.position;
+		}
+
 		internal string Name {
 			get { return name; }
 		}

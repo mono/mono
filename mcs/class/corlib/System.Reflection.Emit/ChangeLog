@@ -1,3 +1,8 @@
+2005-09-14  Martin Baulig  <martin@ximian.com>
+
+	* LocalBuilder.cs
+	(LocalBuilder.Mono_GetLocalIndex): New static internal method;
+	same as the .NET 2.0 property `LocalIndex'.
 
 Mon Sep 5 18:08:09 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
