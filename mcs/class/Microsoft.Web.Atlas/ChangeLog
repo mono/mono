@@ -1,5 +1,15 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web.Atlas_test.dll.sources: add DragDropListTest.cs
+
+	* Microsoft.Web.Atlas.dll.sources: add DragDropList.cs
+
+	* Microsoft.Web.UI/DragDropList.cs: new implementation.
+
+	* Test/Microsoft.Web.UI/DragDropListTest.cs: new tests.
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Test/Microsoft.Web.UI/DataSourceDropTargetTest.cs: expand the
 	property tests.
 
