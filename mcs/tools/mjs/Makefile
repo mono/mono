@@ -3,6 +3,6 @@ SUBDIRS =
 include ../../build/rules.make
 
 PROGRAM = mjs.exe
-LOCAL_MCS_FLAGS = -r:Microsoft.JScript.dll -r:Microsoft.Vsa.dll
+LOCAL_MCS_FLAGS = /r:Microsoft.JScript.dll /r:Microsoft.Vsa.dll /r:mcs.exe /debug+
 
 include ../../build/executable.make
