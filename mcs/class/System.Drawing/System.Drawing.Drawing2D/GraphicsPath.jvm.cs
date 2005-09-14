@@ -217,7 +217,12 @@ namespace System.Drawing.Drawing2D
 					break;
 			}
 
-			return angle > 0 ? x : -x;
+			if (angle < 0)
+				x = -x;
+
+			x += (((int)angle)/360)*360;
+
+			return x;
 		}
 
 		#endregion

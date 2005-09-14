@@ -1,5 +1,9 @@
 2005-09-14 Konstantin Triger <kostat@mainsoft.com>
 
+	* GraphicsPath.jvm.cs: fix drawing arcs for angles >= 360
+
+2005-09-14 Konstantin Triger <kostat@mainsoft.com>
+
 	* GraphicsState.jvm.cs: container
 
 2005-09-11 Konstantin Triger <kostat@mainsoft.com>
