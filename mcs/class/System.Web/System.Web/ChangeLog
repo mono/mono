@@ -1,3 +1,11 @@
+2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ProcessInfo.cs: Added LinkDemand and InheritanceDemand (class) for
+	Minimal.
+	* ProcessModelInfo.cs: Added LinkDemand and InheritanceDemand (class)
+	for Minimal. Methods GetCurrentProcessInfo and GetHistory are also
+	protected by Demand for High level.
+
 2005-09-13  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* HttpCompileException.cs: Added new public ctors and [Serializable]

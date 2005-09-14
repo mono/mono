@@ -5,7 +5,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2002
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,9 +27,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Security.Permissions;
 
 namespace System.Web {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class ProcessModelInfo {
 
 		#region Fields
@@ -47,6 +51,7 @@ namespace System.Web {
 		#region Properties
 
 		[MonoTODO ("Retrieve appropriate variables from worker")]
+		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
 		public static ProcessInfo GetCurrentProcessInfo ()
 		{
 			DateTime startTime = DateTime.Now;
@@ -61,6 +66,7 @@ namespace System.Web {
 		}
 
 		[MonoTODO ("Retrieve process information.")]
+		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
 		public static ProcessInfo[] GetHistory (int numRecords)
 		{
 			throw new NotImplementedException ();
