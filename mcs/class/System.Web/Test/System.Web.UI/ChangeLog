@@ -1,3 +1,15 @@
+2005-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AttributeCollectionCas.cs: New. CAS unit tests.
+	* BaseParserCas.cs: New. CAS unit tests.
+	* CompiledTemplateBuilderCas.cs: New. CAS unit tests.
+	* ConstructorNeedsTagAttributeCas.cs: New. CAS unit tests.
+	* ControlBuilderAttributeCas.cs: New. CAS unit tests.
+	* ControlBuilderCas.cs: New. CAS unit tests.
+	* ControlCas.cs: New. CAS unit tests.
+	* ControlCollectionCas.cs: New. CAS unit tests.
+	* CssStyleCollectionCas.cs: New. CAS unit tests.
+
 2005-09-07  Chris Toshok  <toshok@ximian.com>
 
 	* MinimizableAttributeTypeConverterTest.cs: new test.
