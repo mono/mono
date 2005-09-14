@@ -1,4 +1,6 @@
 Microsoft.Web/ActionTest.cs
+Microsoft.Web/InvokeMethodActionTest.cs
+Microsoft.Web/SetPropertyActionTest.cs
 Microsoft.Web/ScriptComponentBaseTest.cs
 Microsoft.Web/ScriptEventDescriptorTest.cs
 Microsoft.Web/ScriptMethodDescriptorTest.cs

@@ -1,9 +1,11 @@
 Microsoft.Web/ActionCollection.cs
 Microsoft.Web/ScriptComponent.cs
 Microsoft.Web/Action.cs
-Microsoft.Web/IDConverter.cs
-Microsoft.Web/ScriptEventCollection.cs
 Microsoft.Web/ActionMemberConverter.cs
+Microsoft.Web/IDConverter.cs
+Microsoft.Web/InvokeMethodAction.cs
+Microsoft.Web/SetPropertyAction.cs
+Microsoft.Web/ScriptEventCollection.cs
 Microsoft.Web/ScriptEvent.cs
 Microsoft.Web/ScriptEventDescriptor.cs
 Microsoft.Web/ScriptMemberDescriptor.cs

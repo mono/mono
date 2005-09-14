@@ -1,5 +1,17 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Test/Microsoft.Web/SetPropertyActionTest.cs,
+	Test/Microsoft.Web/InvokeMethodActionTest.cs: new tests.
+
+	* Microsoft.Web/SetPropertyAction.cs,
+	Microsoft.Web/InvokeMethodAction.cs: new implementations.
+
+	* Microsoft.Web.Atlas.dll_sources: add implementations.
+
+	* Microsoft.Web.Atlas_test.dll_sources: add tests.
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.Atlas_test.dll.sources: add
 	ScriptComponentBaseTest.
 
