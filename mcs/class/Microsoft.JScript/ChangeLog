@@ -1,3 +1,7 @@
+2005-09-14  Ritvik Mayank  <mritvik@novell.com>
+	
+	* Makefile : Added mcs.exe path
+
 2005-08-08  Florian Gross  <flgr@ccan.de>
 
 	* Imported Test/Mozilla
