@@ -123,6 +123,7 @@ namespace MonoTests.Microsoft.Web
 		{
 			Assert.AreEqual (propertyName, p.PropertyName, propertyName + " PropertyName");
 			Assert.AreEqual (propertyName, p.MemberName, propertyName + " MemberName");
+			Assert.AreEqual (serverPropertyName, p.ServerPropertyName, propertyName + " ServerPropertyName");
 			Assert.AreEqual (readOnly, p.ReadOnly, propertyName + " ReadOnly");
 			Assert.AreEqual (type, p.Type, propertyName + " Type");
 		}

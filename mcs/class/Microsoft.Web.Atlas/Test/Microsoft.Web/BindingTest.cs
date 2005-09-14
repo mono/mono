@@ -1,5 +1,5 @@
 //
-// Tests for Microsoft.Web.Action
+// Tests for Microsoft.Web.Binding
 //
 // Author:
 //	Chris Toshok (toshok@ximian.com)
@@ -39,7 +39,7 @@ using Microsoft.Web;
 namespace MonoTests.Microsoft.Web
 {
 	[TestFixture]
-	public class ActionTest
+	public class BindingTest
 	{
 		class ScriptTextWriterPoker : ScriptTextWriter {
 			public ScriptTextWriterPoker (TextWriter w) : base (w) {}
@@ -79,98 +79,83 @@ namespace MonoTests.Microsoft.Web
 #endif
 		}
 
-		class ActionPoker : Action {
-			public StringWriter Writer;
-
-#if SPEW
-			protected override void AddAttributesToElement (ScriptTextWriter writer) {
-				Console.WriteLine ("'" + Writer.ToString() + "'");
-				Console.WriteLine (Environment.StackTrace);
-				base.AddAttributesToElement (writer);
-			}
-
-			protected override void RenderScriptBeginTag (ScriptTextWriter writer) {
-				Console.WriteLine ("'" + Writer.ToString() + "'");
-				Console.WriteLine (Environment.StackTrace);
-				base.RenderScriptBeginTag (writer);
-			}
-
-			protected override void RenderScriptEndTag (ScriptTextWriter writer) {
-				Console.WriteLine ("'" + Writer.ToString() + "'");
-				Console.WriteLine (Environment.StackTrace);
-				base.RenderScriptEndTag (writer);
-			}
-
-			protected override void RenderScriptTagContents (ScriptTextWriter writer) {
-				Console.WriteLine ("'" + Writer.ToString() + "'");
-				Console.WriteLine (Environment.StackTrace);
-				base.RenderScriptTagContents (writer);
-			}
-#endif
-
-			public override string TagName {
-				get {
-					return "poker";
-				}
-			}
-		}
-
 		[Test]
 		public void Properties ()
 		{
-			ActionPoker a = new ActionPoker ();
+			Binding b = new Binding ();
 
 			// default
-			Assert.AreEqual ("", a.Target, "A1");
-			Assert.AreEqual (ActionSequence.AfterEventHandler, a.Sequence, "A2");
+			Assert.AreEqual (true, b.Automatic, "A1");
+			Assert.AreEqual ("", b.DataContext, "A2");
+			Assert.AreEqual ("", b.DataPath, "A3");
+			Assert.AreEqual (BindingDirection.In, b.Direction, "A4");
+			Assert.AreEqual ("", b.ID, "A5");
+			Assert.AreEqual ("", b.Property, "A6");
+			Assert.AreEqual ("", b.PropertyKey, "A7");
+			Assert.IsNotNull (b.Transform, "A8");
+			Assert.AreEqual ("", b.TransformerArgument, "A9");
 
 			// getter/setter
-			a.Target = "foo";
-			Assert.AreEqual ("foo", a.Target, "A3");
-
-			a.Sequence = ActionSequence.BeforeEventHandler;
-			Assert.AreEqual (ActionSequence.BeforeEventHandler, a.Sequence, "A4");
+			b.Automatic = false;
+			Assert.AreEqual (false, b.Automatic, "A10");
+			b.DataContext = "DataContext";
+			Assert.AreEqual ("DataContext", b.DataContext, "A11");
+			b.DataPath = "DataPath";
+			Assert.AreEqual ("DataPath", b.DataPath, "A12");
+			b.Direction = BindingDirection.InOut;
+			Assert.AreEqual (BindingDirection.InOut, b.Direction, "A13");
+			b.ID = "ID";
+			Assert.AreEqual ("ID", b.ID, "A14");
+			b.Property = "Property";
+			Assert.AreEqual ("Property", b.Property, "A15");
+			b.PropertyKey = "PropertyKey";
+			Assert.AreEqual ("PropertyKey", b.PropertyKey, "A16");
+			b.TransformerArgument = "TransformerArgument";
+			Assert.AreEqual ("TransformerArgument", b.TransformerArgument, "A17");
 
 			// setting to null
-			a.Target = null;
-			Assert.AreEqual ("", a.Target, "A5");
+			b.DataContext = null;
+			Assert.AreEqual ("", b.DataContext, "A18");
+			b.DataPath = null;
+			Assert.AreEqual ("", b.DataPath, "A19");
+			b.ID = null;
+			Assert.AreEqual ("", b.ID, "A20");
+			b.Property = null;
+			Assert.AreEqual ("", b.Property, "A21");
+			b.PropertyKey = null;
+			Assert.AreEqual ("", b.PropertyKey, "A22");
+			b.TransformerArgument = null;
+			Assert.AreEqual ("", b.TransformerArgument, "A23");
+		}
+
+		[Test]
+		public void TransformEvent ()
+		{
+			Binding b = new Binding ();
+
+			Assert.AreEqual ("", b.Transform.Handler, "A1");
+			Assert.AreEqual (0, b.Transform.Actions.Count, "A2");
 		}
 
 		[Test]
 		public void Render ()
 		{
-			ActionPoker a = new ActionPoker ();
-			StringWriter sw;
-			ScriptTextWriter w;
+			Binding b = new Binding();
+			StringWriter sw = new StringWriter();
+			ScriptTextWriterPoker w = new ScriptTextWriterPoker (sw);
 
-			// test an empty action
-			sw = new StringWriter();
-			w = new ScriptTextWriterPoker (sw);
-			a.Writer = sw;
-			a.RenderAction (w);
+			b.Automatic = false;
+			b.DataContext = "DataContext";
+			b.DataPath = "DataPath";
+			b.Direction = BindingDirection.InOut;
+			b.ID = "ID";
+			b.Property = "Property";
+			b.PropertyKey = "PropertyKey";
+			b.TransformerArgument = "TransformerArgument";
 
-			Assert.AreEqual ("<poker />", sw.ToString(), "A1");
+			b.RenderScript (w);
 
-			// test with a target
-			a.Target = "foo";
-
-			sw = new StringWriter();
-			w = new ScriptTextWriterPoker (sw);
-			a.Writer = sw;
-			a.RenderAction (w);
-
-			Assert.AreEqual ("<poker target=\"foo\" />", sw.ToString(), "A2");
-
-			// test with a target and id
-			a.ID = "poker_action";
-			a.Target = "foo";
-
-			sw = new StringWriter();
-			w = new ScriptTextWriterPoker (sw);
-			a.Writer = sw;
-			a.RenderAction (w);
-
-			Assert.AreEqual ("<poker id=\"poker_action\" target=\"foo\" />", sw.ToString(), "A3");
+			Assert.AreEqual ("<binding automatic=\"False\" dataContext=\"DataContext\" dataPath=\"DataPath\" direction=\"InOut\" id=\"ID\" property=\"Property\" propertyKey=\"PropertyKey\" transformerArgument=\"TransformerArgument\" />", sw.ToString(), "A1");
 		}
 
 		void DoEvent (ScriptEventDescriptor e, string eventName, bool supportsActions)
@@ -178,6 +163,13 @@ namespace MonoTests.Microsoft.Web
 			Assert.AreEqual (eventName, e.EventName, eventName + " EventName");
 			Assert.AreEqual (eventName, e.MemberName, eventName + " MemberName");
 			Assert.AreEqual (supportsActions, e.SupportsActions, eventName + " SupportsActions");
+		}
+
+		void DoMethod (ScriptMethodDescriptor m, string methodName, string[] args)
+		{
+			Assert.AreEqual (methodName, m.MethodName, methodName + " MethodName");
+			Assert.AreEqual (methodName, m.MemberName, methodName + " MemberName");
+			Assert.AreEqual (args.Length, m.Parameters.Length, methodName + " Parameter count");
 		}
 
 		void DoProperty (ScriptPropertyDescriptor p, string propertyName, ScriptType type, bool readOnly, string serverPropertyName)
@@ -192,48 +184,52 @@ namespace MonoTests.Microsoft.Web
 		[Test]
 		public void TypeDescriptor ()
 		{
-			ActionPoker a = new ActionPoker ();
-			ScriptTypeDescriptor desc = ((IScriptObject)a).GetTypeDescriptor ();
+			Binding b = new Binding ();
+			ScriptTypeDescriptor desc = ((IScriptObject)b).GetTypeDescriptor ();
 
-			Assert.AreEqual (a, desc.ScriptObject, "A1");
+			Assert.AreEqual (b, desc.ScriptObject, "A1");
 
 			// events
 			IEnumerable<ScriptEventDescriptor> events = desc.GetEvents();
 			Assert.IsNotNull (events, "A2");
 
 			IEnumerator<ScriptEventDescriptor> ee = events.GetEnumerator();
-			Assert.IsTrue (ee.MoveNext());
-			DoEvent (ee.Current, "propertyChanged", true);
-			Assert.IsFalse (ee.MoveNext());
+			Assert.IsTrue (ee.MoveNext(), "A3");
+			DoEvent (ee.Current, "transform", false);
+			Assert.IsFalse (ee.MoveNext(), "A4");
 
 			// methods
 			IEnumerable<ScriptMethodDescriptor> methods = desc.GetMethods();
-			Assert.IsNotNull (methods, "A3");
+			Assert.IsNotNull (methods, "A5");
 
 			IEnumerator<ScriptMethodDescriptor> me = methods.GetEnumerator();
-			Assert.IsFalse (me.MoveNext ());
+			Assert.IsTrue (me.MoveNext (), "A6");
+			DoMethod (me.Current, "evaluateIn", new string[0]);
+			Assert.IsTrue (me.MoveNext (), "A6");
+			DoMethod (me.Current, "evaluateOut", new string[0]);
+			Assert.IsFalse (me.MoveNext (), "A7");
 
 			// properties
 			IEnumerable<ScriptPropertyDescriptor> props = desc.GetProperties();
-			Assert.IsNotNull (props, "A4");
+			Assert.IsNotNull (props, "A8");
 
 			IEnumerator<ScriptPropertyDescriptor> pe = props.GetEnumerator();
-			Assert.IsTrue (pe.MoveNext(), "A5");
-			DoProperty (pe.Current, "bindings", ScriptType.Array, true, "Bindings");
-			Assert.IsTrue (pe.MoveNext(), "A6");
-			DoProperty (pe.Current, "dataContext", ScriptType.Object, false, "");
-			Assert.IsTrue (pe.MoveNext(), "A7");
-			DoProperty (pe.Current, "id", ScriptType.String, false, "ID");
 			Assert.IsTrue (pe.MoveNext(), "A8");
-			DoProperty (pe.Current, "eventArgs", ScriptType.Object, false, "");
+			DoProperty (pe.Current, "automatic", ScriptType.Boolean, false, "Automatic");
 			Assert.IsTrue (pe.MoveNext(), "A9");
-			DoProperty (pe.Current, "result", ScriptType.Object, false, "");
+			DoProperty (pe.Current, "dataContext", ScriptType.Object, false, "DataContext");
+			Assert.IsTrue (pe.MoveNext(), "A7");
+			DoProperty (pe.Current, "dataPath", ScriptType.String, false, "DataPath");
+			Assert.IsTrue (pe.MoveNext(), "A8");
+			DoProperty (pe.Current, "direction", ScriptType.Enum, false, "Direction");
+			Assert.IsTrue (pe.MoveNext(), "A9");
+			DoProperty (pe.Current, "id", ScriptType.String, false, "ID");
 			Assert.IsTrue (pe.MoveNext(), "A10");
-			DoProperty (pe.Current, "sender", ScriptType.Object, false, "");
+			DoProperty (pe.Current, "property", ScriptType.String, false, "Property");
 			Assert.IsTrue (pe.MoveNext(), "A11");
-			DoProperty (pe.Current, "sequence", ScriptType.Enum, false, "Sequence");
+			DoProperty (pe.Current, "propertyKey", ScriptType.String, false, "PropertyKey");
 			Assert.IsTrue (pe.MoveNext(), "A12");
-			DoProperty (pe.Current, "target", ScriptType.Object, false, "Target");
+			DoProperty (pe.Current, "transformerArgument", ScriptType.String, false, "TransformerArgument");
 			Assert.IsFalse (pe.MoveNext(), "A13");
 		}
 
@@ -241,8 +237,8 @@ namespace MonoTests.Microsoft.Web
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void IsTypeDescriptorClosed ()
 		{
-			ActionPoker a = new ActionPoker ();
-			ScriptTypeDescriptor desc = ((IScriptObject)a).GetTypeDescriptor ();
+			Binding b = new Binding ();
+			ScriptTypeDescriptor desc = ((IScriptObject)b).GetTypeDescriptor ();
 
 			desc.AddEvent (new ScriptEventDescriptor ("testEvent", true));
 		}

@@ -42,6 +42,13 @@ namespace MonoTests.Microsoft.Web.UI
 	[TestFixture]
 	public class FloatingBehaviorTest
 	{
+		class Poker : FloatingBehavior {
+			public void AddAttributes (ScriptTextWriter w)
+			{
+				AddAttributesToElement (w);
+			}
+		}
+
 		[Test]
 		public void Properties ()
 		{
@@ -128,6 +135,22 @@ namespace MonoTests.Microsoft.Web.UI
 			ScriptTypeDescriptor desc = ((IScriptObject)a).GetTypeDescriptor ();
 
 			desc.AddEvent (new ScriptEventDescriptor ("testEvent", true));
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))] // this happens with MS anyway.
+		public void Attributes ()
+		{
+			Poker c = new Poker ();
+			StringWriter sw;
+			ScriptTextWriter w;
+
+			sw = new StringWriter();
+			w = new ScriptTextWriter (sw);
+
+			c.AddAttributes (w);
+
+			Assert.AreEqual ("", sw.ToString(), "A1");
 		}
 	}
 }

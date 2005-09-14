@@ -1,5 +1,5 @@
 //
-// Tests for Microsoft.Web.UI.DataSourceDropTarget
+// Tests for Microsoft.Web.UI.DraggableListItem
 //
 // Author:
 //	Chris Toshok (toshok@ximian.com)
@@ -36,13 +36,15 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.Web;
 using Microsoft.Web.UI;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace MonoTests.Microsoft.Web.UI
 {
 	[TestFixture]
-	public class DataSourceDropTargetTest
+	public class DraggableListItemTest
 	{
-		class TargetPoker : DataSourceDropTarget {
+		class Poker : DraggableListItem {
 			public void AddAttributes (ScriptTextWriter w)
 			{
 				AddAttributesToElement (w);
@@ -52,44 +54,31 @@ namespace MonoTests.Microsoft.Web.UI
 		[Test]
 		public void Properties ()
 		{
-			DataSourceDropTarget b = new DataSourceDropTarget ();
+			DraggableListItem b = new DraggableListItem ();
 
 			// default
-			Assert.AreEqual ("dataSourceDropTarget", b.TagName, "A1");
-			Assert.AreEqual (null, b.AcceptedDataTypes, "A2");
-			Assert.AreEqual (true, b.Append, "A3");
-			Assert.AreEqual ("data", b.Property, "A4");
-			Assert.AreEqual (null, b.Target, "A5");
+			Assert.AreEqual ("draggableListItem", b.TagName, "A1");
+			Assert.AreEqual (null, b.Handle, "A2");
 
 			// getter/setter
-			b.AcceptedDataTypes = "foo";
-			Assert.AreEqual ("foo", b.AcceptedDataTypes, "A6");
-			b.Append = false;
-			Assert.AreEqual (false, b.Append, "A7");
-			b.Property = "Property";
-			Assert.AreEqual ("Property", b.Property, "A8");
-			b.Target = "Target";
-			Assert.AreEqual ("Target", b.Target, "A9");
+			b.Handle = "foo";
+			Assert.AreEqual ("foo", b.Handle, "A3");
 
 			// null setter
-			b.AcceptedDataTypes = null;
-			Assert.AreEqual (null, b.AcceptedDataTypes, "A10");
-			b.Property = null;
-			Assert.AreEqual (null, b.Property, "A11");
-			b.Target = null;
-			Assert.AreEqual (null, b.Target, "A12");
+			b.Handle = null;
+			Assert.AreEqual (null, b.Handle, "A4");
 		}
 
 		[Test]
 		public void Render ()
 		{
-			DataSourceDropTarget c = new DataSourceDropTarget ();
+			DraggableListItem b = new DraggableListItem ();
 			StringWriter sw;
 			ScriptTextWriter w;
 
 			sw = new StringWriter();
 			w = new ScriptTextWriter (sw);
-			((IScriptComponent)c).RenderScript (w);
+			((IScriptComponent)b).RenderScript (w);
 
 			Assert.AreEqual ("", sw.ToString(), "A1");
 		}
@@ -113,7 +102,7 @@ namespace MonoTests.Microsoft.Web.UI
 		[Test]
 		public void TypeDescriptor ()
 		{
-			DataSourceDropTarget a = new DataSourceDropTarget();
+			DraggableListItem a = new DraggableListItem ();
 			ScriptTypeDescriptor desc = ((IScriptObject)a).GetTypeDescriptor ();
 
 			Assert.AreEqual (a, desc.ScriptObject, "A1");
@@ -146,21 +135,19 @@ namespace MonoTests.Microsoft.Web.UI
 			Assert.IsTrue (pe.MoveNext(), "A9");
 			DoProperty (pe.Current, "id", ScriptType.String, false, "ID");
 			Assert.IsTrue (pe.MoveNext(), "A9");
-			DoProperty (pe.Current, "acceptedDataTypes", ScriptType.Array, false, "AcceptedDataTypes");
+			DoProperty (pe.Current, "data", ScriptType.Object, false, "");
 			Assert.IsTrue (pe.MoveNext(), "A10");
-			DoProperty (pe.Current, "append", ScriptType.Boolean, false, "Append");
+			DoProperty (pe.Current, "handle", ScriptType.Object, false, "Handle");
 			Assert.IsTrue (pe.MoveNext(), "A11");
-			DoProperty (pe.Current, "target", ScriptType.String, false, "Target");
-			Assert.IsTrue (pe.MoveNext(), "A12");
-			DoProperty (pe.Current, "property", ScriptType.String, false, "Property");
-			Assert.IsFalse (pe.MoveNext(), "A13");
+			DoProperty (pe.Current, "dragVisualTemplate", ScriptType.Object, false, "");
+			Assert.IsFalse (pe.MoveNext(), "A12");
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void IsTypeDescriptorClosed ()
 		{
-			DataSourceDropTarget a = new DataSourceDropTarget();
+			DraggableListItem a = new DraggableListItem ();
 			ScriptTypeDescriptor desc = ((IScriptObject)a).GetTypeDescriptor ();
 
 			desc.AddEvent (new ScriptEventDescriptor ("testEvent", true));
@@ -170,7 +157,7 @@ namespace MonoTests.Microsoft.Web.UI
 		[ExpectedException (typeof (NullReferenceException))] // this happens with MS anyway.
 		public void Attributes ()
 		{
-			TargetPoker c = new TargetPoker ();
+			Poker c = new Poker ();
 			StringWriter sw;
 			ScriptTextWriter w;
 

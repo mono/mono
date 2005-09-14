@@ -1,5 +1,14 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web.Atlas_test.dll.sources: add BindingTest and
+	DraggableListItemTest.
+
+	* Test/Microsoft.Web/*: lots of new test work.
+
+	* Test/Microsoft.Web.UI/*: lots of new test work.
+	
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.Atlas_test.dll.sources: add DragDropListTest.cs
 
 	* Microsoft.Web.Atlas.dll.sources: add DragDropList.cs

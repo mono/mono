@@ -44,6 +44,13 @@ namespace MonoTests.Microsoft.Web.UI
 	[TestFixture]
 	public class DragDropListTest
 	{
+		class Poker : DataSourceDropTarget {
+			public void AddAttributes (ScriptTextWriter w)
+			{
+				AddAttributesToElement (w);
+			}
+		}
+
 		[Test]
 		public void Properties ()
 		{
@@ -104,6 +111,7 @@ namespace MonoTests.Microsoft.Web.UI
 		{
 			Assert.AreEqual (propertyName, p.PropertyName, propertyName + " PropertyName");
 			Assert.AreEqual (propertyName, p.MemberName, propertyName + " MemberName");
+			Assert.AreEqual (serverPropertyName, p.ServerPropertyName, propertyName + " ServerPropertyName");
 			Assert.AreEqual (readOnly, p.ReadOnly, propertyName + " ReadOnly");
 			Assert.AreEqual (type, p.Type, propertyName + " Type");
 		}
@@ -144,11 +152,11 @@ namespace MonoTests.Microsoft.Web.UI
 			Assert.IsTrue (pe.MoveNext(), "A9");
 			DoProperty (pe.Current, "id", ScriptType.String, false, "ID");
 			Assert.IsTrue (pe.MoveNext(), "A9");
-			DoProperty (pe.Current, "acceptedDataTypes", ScriptType.Array, false, "AcceptDataTypes");
+			DoProperty (pe.Current, "acceptedDataTypes", ScriptType.Array, false, "AcceptedDataTypes");
 			Assert.IsTrue (pe.MoveNext(), "A10");
 			DoProperty (pe.Current, "dataType", ScriptType.String, false, "DataType");
 			Assert.IsTrue (pe.MoveNext(), "A11");
-			DoProperty (pe.Current, "dragMode", ScriptType.Enum, false, "dragMode");
+			DoProperty (pe.Current, "dragMode", ScriptType.Enum, false, "DragMode");
 			Assert.IsTrue (pe.MoveNext(), "A12");
 			DoProperty (pe.Current, "direction", ScriptType.Enum, false, "Direction");
 			Assert.IsTrue (pe.MoveNext(), "A12");
@@ -168,6 +176,22 @@ namespace MonoTests.Microsoft.Web.UI
 			ScriptTypeDescriptor desc = ((IScriptObject)a).GetTypeDescriptor ();
 
 			desc.AddEvent (new ScriptEventDescriptor ("testEvent", true));
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))] // this happens with MS anyway.
+		public void Attributes ()
+		{
+			Poker c = new Poker ();
+			StringWriter sw;
+			ScriptTextWriter w;
+
+			sw = new StringWriter();
+			w = new ScriptTextWriter (sw);
+
+			c.AddAttributes (w);
+
+			Assert.AreEqual ("", sw.ToString(), "A1");
 		}
 	}
 }
