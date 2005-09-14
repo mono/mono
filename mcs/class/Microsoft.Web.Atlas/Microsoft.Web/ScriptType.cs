@@ -32,13 +32,13 @@
 namespace Microsoft.Web
 {
 	public enum ScriptType {
+		Object,
+		Number,
+		String,
+		Date,
 		Array,
 		Boolean,
-		Date,
 		Enum,
-		Number,
-		Object,
-		String
 	}
 }
 

@@ -1,5 +1,16 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web/ScriptComponentBase.cs (InitializeTypeDescriptor):
+	implement.
+
+	* Microsoft.Web/ScriptType.cs: fix enum.
+
+	* Microsoft.Web/Action.cs: round out implementation.
+
+	* Test/Microsoft.Web/ActionTest.cs: more tests.
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web/ScriptMemberDescriptor.cs: new implementation.
 
 	* Microsoft.Web/ScriptTypeDescriptor.cs: new implementation.

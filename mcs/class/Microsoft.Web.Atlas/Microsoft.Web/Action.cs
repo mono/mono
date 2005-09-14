@@ -39,12 +39,13 @@ namespace Microsoft.Web
 		{
 		}
 
+		ActionSequence sequence = ActionSequence.AfterEventHandler;
 		public ActionSequence Sequence {
 			get {
-				throw new NotImplementedException ();
+				return sequence;
 			}
 			set {
-				throw new NotImplementedException ();
+				sequence = value;
 			}
 		}
 
@@ -68,7 +69,10 @@ namespace Microsoft.Web
 
 		protected override void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
 		{
-			throw new NotImplementedException ();
+			base.InitializeTypeDescriptor (typeDescriptor);
+
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("sequence", ScriptType.Enum, "Sequence"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("target", ScriptType.Object, "Target"));
 		}
 
 		public void RenderAction (ScriptTextWriter writer)
