@@ -1,12 +1,12 @@
 // 
 // System.Web.HttpUnhandledException.cs
 //
-// Author:
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Tim Coleman, 2002
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,21 +28,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Permissions;
+
 namespace System.Web {
+
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_2_0
+	[Serializable]
+#endif
 	public sealed class HttpUnhandledException : HttpException {
 
-		#region Constructors
+#if NET_2_0
+		public HttpUnhandledException ()
+		{
+		}
 
+		public HttpUnhandledException (string message)
+			: base (message)
+		{
+		}
+
+		public HttpUnhandledException (string message, Exception innerException)
+			: base (message, innerException)
+		{
+		}
+#else
 		internal HttpUnhandledException (string message, Exception innerException)
 			: base (message, innerException)
 		{
 		}
-
-		internal HttpUnhandledException (string message, string x, Exception innerException)
-			: base (message, innerException)
-		{
-		}
-
-		#endregion
+#endif
 	}
 }

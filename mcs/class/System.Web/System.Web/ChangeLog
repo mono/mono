@@ -1,3 +1,19 @@
+2005-09-13  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HttpCompileException.cs: Added new public ctors and [Serializable]
+	to 2.0. Added new Message property and GetObjectData (protected by a
+	demand for SerializationFormatter) for 2.0. Fixed line-ending.
+	* HttpException.cs: Added LinkDemand and InheritanceDemand (class) for
+	Minimal. Renamed parameters to match documentation.
+	* HttpParseException.cs: Added LinkDemand (class) for Minimal. Added
+	demand for SerializationFormatter on GetObjectData method. Fixed 
+	line-ending.
+	* HttpRequestValidationException.cs: Added new public ctors and 
+	[Serializable] to 2.0. Added LinkDemand for Minimal.
+	* HttpUnhandledException.cs: Added new public ctors and [Serializable]
+	to 2.0. Removed unused internal ctor. Added LinkDemand for Minimal.
+	Fixed line-ending.
+
 2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpResponseSubstitutionCallback.cs: New. 2.0 delegate.

@@ -5,8 +5,7 @@
 //   Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2002
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,9 +28,12 @@
 //
 
 using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Web {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #if NET_2_0
 	[Serializable]
 #endif
@@ -77,6 +79,7 @@ namespace System.Web {
 			errors.Add (new ParserError (message, virtualPath, line));
 		}
 
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info, StreamingContext ctx)
 		{
 			base.GetObjectData (info, ctx);

@@ -1,12 +1,12 @@
 // 
 // System.Web.HttpCompileException.cs
 //
-// Author:
-//   Tim Coleman (tim@timcoleman.com)
+// Authors:
+//	Tim Coleman (tim@timcoleman.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) Tim Coleman, 2002
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,38 +29,67 @@
 //
 
 using System.CodeDom.Compiler;
+using System.Runtime.Serialization;
+using System.Security.Permissions;
 
 namespace System.Web {
-	public sealed class HttpCompileException : HttpException {
 
-		#region Fields
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_2_0
+	[Serializable]
+#endif
+	public sealed class HttpCompileException : HttpException {
 
 		CompilerResults results;
 		string sourceCode;
 
-		#endregion // Fields
+#if NET_2_0
+		public HttpCompileException ()
+		{
+		}
 
-		#region Constructors
+		public HttpCompileException (string message)
+			: base (message)
+		{
+		}
 
+		public HttpCompileException (string message, Exception innerException)
+			: base (message, innerException)
+		{
+		}
+
+		public HttpCompileException (CompilerResults results, string sourceCode)
+#else
 		internal HttpCompileException (CompilerResults results, string sourceCode)
-			: base ()
+#endif
 		{
 			this.results = results;
 			this.sourceCode = sourceCode;
 		}
 
-		#endregion // Constructors
-
-		#region Properties
 
 		public CompilerResults Results {
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
 			get { return results; }
 		}
 
 		public string SourceCode {
+			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
 			get { return sourceCode; }
 		}
+#if NET_2_0
+		public override string Message {
+			get { return base.Message; }
+		}
 
-		#endregion // Properties
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			base.GetObjectData (info, context);
+			sourceCode = info.GetString ("sourcecode");
+			results = (CompilerResults) info.GetValue ("results", typeof (CompilerResults));
+		}
+#endif
 	}
 }

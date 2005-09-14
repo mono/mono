@@ -7,8 +7,7 @@
 //
 // (c) 2002 Patrik Torstensson
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,10 +28,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Text;
 using System.Web.Util;
 #if !TARGET_J2EE
@@ -41,6 +41,9 @@ using System.Web.Compilation;
 
 namespace System.Web
 {
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #if NET_2_0
 	[Serializable]
 #endif
@@ -48,30 +51,33 @@ namespace System.Web
 	{
 		int http_code = 500;
 
-		public HttpException () : base ()
+		public HttpException ()
 		{
 		}
 
-		public HttpException (string sMessage) : base (sMessage)
+		public HttpException (string message)
+			: base (message)
 		{
 		}
 
-		public HttpException (string sMessage, Exception InnerException)
-			: base (sMessage, InnerException)
+		public HttpException (string message, Exception innerException)
+			: base (message, innerException)
 		{
 		}
 
-		public HttpException (int iHttpCode, string sMessage) : base (sMessage)
+		public HttpException (int httpCode, string message) : base (message)
 		{
-			http_code = iHttpCode;
+			http_code = httpCode;
 		}
 
 #if NET_2_0
-		protected HttpException (SerializationInfo info, StreamingContext sc) : base (info, sc)
+		protected HttpException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
 		{
 			http_code = info.GetInt32 ("_httpCode");
 		}
 
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
@@ -79,21 +85,21 @@ namespace System.Web
 		}
 #endif
 
-		public HttpException (int iHttpCode, string sMessage, int iHR) : base (sMessage, iHR)
+		public HttpException (int httpCode, string message, int hr) 
+			: base (message, hr)
 		{
-			http_code = iHttpCode;
+			http_code = httpCode;
 		}
 
-		public HttpException (string sMessage, int iHR) : base (sMessage, iHR)
+		public HttpException (string message, int hr)
+			: base (message, hr)
 		{
 		}
 	
-		public HttpException (int iHttpCode,
-				      string sMessage,
-				      Exception InnerException)
-			: base (sMessage, InnerException)
+		public HttpException (int httpCode, string message, Exception innerException)
+			: base (message, innerException)
 		{
-			http_code = iHttpCode;
+			http_code = httpCode;
 		}
 
 		public string GetHtmlErrorMessage ()
@@ -193,9 +199,7 @@ namespace System.Web
 			builder.AppendFormat ("<!--\r\n{0}\r\n-->\r\n", HtmlEncode (exc.StackTrace));
 			return builder.ToString ();
 		}
-#endif
-
-#if !TARGET_J2EE
+#else
 		string GetHtmlizedErrorMessage ()
 		{
 			StringBuilder builder = new StringBuilder ("<html>\r\n<title>");
@@ -258,9 +262,7 @@ namespace System.Web
 			builder.Append ("</pre></code>\r\n");
 		}
 
-#endif
-
-#if !TARGET_J2EE
+#else
 		static void WriteSource (StringBuilder builder, HtmlizedException e)
 		{
 			builder.Append ("<code><pre>");
