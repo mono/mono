@@ -1,5 +1,23 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web.Atlas_test.dll.sources: add
+	ScriptComponentBaseTest.
+
+	* Test/Microsoft.Web/ScriptComponentBaseTest.cs: new tests.
+
+	* Microsoft.Web/ScriptEventCollection.cs: naive, untested,
+	implementation to get the other tests running.
+
+	* Microsoft.Web/ScriptEvent.cs: same.
+
+	* Microsoft.Web/BindingCollection.cs: same.
+
+	* Microsoft.Web/ActionCollection.cs: same.
+
+	* Microsoft.Web/ScriptComponentBase.cs: round out implementation.
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web/ScriptComponentBase.cs (InitializeTypeDescriptor):
 	implement.
 

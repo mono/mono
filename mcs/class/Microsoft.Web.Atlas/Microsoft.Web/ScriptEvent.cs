@@ -35,48 +35,51 @@ namespace Microsoft.Web
 {
 	public class ScriptEvent
 	{
+		IScriptObject owner;
+		string name;
+		bool supportsActions;
+		string handler;
+		ActionCollection actions;
+
 		public ScriptEvent (IScriptObject owner, string name, bool supportsActions)
 		{
+			this.owner = owner;
+			this.name = name;
+			this.supportsActions = supportsActions;
+			this.handler = "";
 		}
 
 		public ActionCollection Actions {
 			get {
-				throw new NotImplementedException ();
+				if (actions == null)
+					actions = new ActionCollection(owner);
+
+				return actions;
 			}
 		}
 
 		public string Handler {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return handler; }
+			set { handler = (value == null ? "" : value); }
 		}
 
-		public string Name{
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		public string Name {
+			get { return name; }
+			set { name = (value == null ? "" : value); }
 		}
 
 		public bool SupportsActions {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return supportsActions; }
 		}
 
 		public void RenderActions (ScriptTextWriter writer)
 		{
-				throw new NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 
 		public void RenderHandlers (ScriptTextWriter writer)
 		{
-				throw new NotImplementedException ();
+			throw new NotImplementedException ();
 		}
 	}
 }

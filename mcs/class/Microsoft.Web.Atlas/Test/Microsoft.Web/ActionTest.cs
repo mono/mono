@@ -107,15 +107,19 @@ namespace MonoTests.Microsoft.Web
 				base.RenderScriptTagContents (writer);
 			}
 #endif
+
+			/* XXX the class browser on visual studio says this method is there, but it doesn't seem to be */
+			public ScriptTypeDescriptor DoGetTypeDescriptor ()
+			{
+				ScriptTypeDescriptor td = new ScriptTypeDescriptor(this);
+				InitializeTypeDescriptor (td);
+				return td;
+			}
+
 			public override string TagName {
 				get {
 					return "poker";
 				}
-			}
-
-			public void InitTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
-			{
-				base.InitializeTypeDescriptor (typeDescriptor);
 			}
 		}
 
@@ -198,7 +202,7 @@ namespace MonoTests.Microsoft.Web
 			ActionPoker a = new ActionPoker ();
 			ScriptTypeDescriptor desc = new ScriptTypeDescriptor(a);
 
-			a.InitTypeDescriptor (desc);
+			desc = a.DoGetTypeDescriptor ();
 
 			Assert.AreEqual (a, desc.ScriptObject, "A1");
 
@@ -243,14 +247,14 @@ namespace MonoTests.Microsoft.Web
 		}
 
 		[Test]
-		//		[ExpectedException (typeof (InvalidOperationException))]
-		public void TypeDescriptorClosed ()
+		public void IsTypeDescriptorClosed ()
 		{
-			/* looks like the TypeDescriptor isn't closed after the call to InitializeTypeDescriptor... go figure */
+			/* looks like the TypeDescriptor isn't closed
+			 after the call to
+			 InitializeTypeDescriptor... makes sense for
+			 actions, since they are subclassed. */
 			ActionPoker a = new ActionPoker ();
-			ScriptTypeDescriptor desc = new ScriptTypeDescriptor(a);
-
-			a.InitTypeDescriptor (desc);
+			ScriptTypeDescriptor desc = a.DoGetTypeDescriptor ();
 
 			desc.AddEvent (new ScriptEventDescriptor ("testEvent", true));
 		}

@@ -35,17 +35,59 @@ using System.Collections.Generic;
 
 namespace Microsoft.Web
 {
-	public class ScriptEventCollection /* : IEnumerable<ScriptEvent>, IEnumerable, ICollection*/
+	public class ScriptEventCollection : IEnumerable<ScriptEvent>, IEnumerable, ICollection
 	{
+		IScriptObject owner;
+		List<ScriptEvent> events;
+
 		public ScriptEventCollection (IScriptObject owner)
 		{
-				throw new NotImplementedException ();
+			this.owner = owner;
+			events = new List<ScriptEvent>();
 		}
 
 		public ScriptEvent this [string eventName, bool supportsActions] {
 			get {
 				throw new NotImplementedException ();
 			}
+		}
+
+		internal void Add (ScriptEvent ev)
+		{
+			events.Add (ev);
+		}
+
+		void ICollection.CopyTo (Array array, int index)
+		{
+			events.CopyTo ((ScriptEvent[])array, index);
+		}
+
+		int ICollection.Count {
+			get {
+				return events.Count;
+			}
+		}
+
+		bool ICollection.IsSynchronized {
+			get {
+				return false;
+			}
+		}
+
+		object ICollection.SyncRoot {
+			get {
+				return null;
+			}
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return events.GetEnumerator();
+		}
+
+		IEnumerator<ScriptEvent> IEnumerable<ScriptEvent>.GetEnumerator ()
+		{
+			return events.GetEnumerator();
 		}
 	}
 }

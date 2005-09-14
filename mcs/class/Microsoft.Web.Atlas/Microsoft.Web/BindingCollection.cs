@@ -36,14 +36,20 @@ namespace Microsoft.Web
 {
 	public class BindingCollection : Collection<Binding>, IScriptObject
 	{
+		IScriptObject owner;
+		string id;
+		bool readOnly;
+
 		public BindingCollection (IScriptObject owner)
+			: this (owner, false)
 		{
-			throw new NotImplementedException ();
 		}
 
 		public BindingCollection (IScriptObject owner, bool readOnly)
 		{
-			throw new NotImplementedException ();
+			this.id = "";
+			this.owner = owner;
+			this.readOnly = readOnly;
 		}
 
 		protected void ClearItems ()
@@ -66,19 +72,13 @@ namespace Microsoft.Web
 			throw new NotImplementedException ();
 		}
 
-		public string ID {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+		string IScriptObject.ID {
+			get { return id; }
+			set { id = (value == null ? "" : value); }
 		}
 
-		public IScriptObject Owner {
-			get {
-				throw new NotImplementedException ();
-			}
+		IScriptObject IScriptObject.Owner {
+			get { return owner; }
 		}
 	}
 }

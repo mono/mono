@@ -30,19 +30,26 @@
 #if NET_2_0
 
 using System;
+using System.Collections.Generic;
 
 namespace Microsoft.Web
 {
 
 	public abstract class ScriptComponentBase: IScriptComponent, IScriptObject
 	{
+		IScriptObject owner;
+		BindingCollection bindings;
+		ScriptEventCollection scriptEvents;
+
 		protected ScriptComponentBase ()
 		{
 		}
 
 		public BindingCollection Bindings {
 			get {
-				throw new NotImplementedException ();
+				if (bindings == null)
+					bindings = new BindingCollection (this);
+				return bindings;
 			}
 		}
 
@@ -58,19 +65,27 @@ namespace Microsoft.Web
 
 		protected IScriptObject Owner {
 			get {
-				throw new NotImplementedException ();
+				return owner;
 			}
 		}
 
+		ScriptEvent propertyChanged = null;
 		public ScriptEvent PropertyChanged {
 			get {
-				throw new NotImplementedException ();
+				if (propertyChanged == null)
+					propertyChanged = new ScriptEvent (this, "propertyChanged", true);
+				return propertyChanged;
 			}
 		}
 
 		protected ScriptEventCollection ScriptEvents {
 			get {
-				throw new NotImplementedException ();
+				if (scriptEvents == null) {
+					scriptEvents = new ScriptEventCollection (this);
+					scriptEvents.Add (PropertyChanged);
+				}
+
+				return scriptEvents;
 			}
 		}
 
@@ -82,14 +97,18 @@ namespace Microsoft.Web
 				writer.WriteAttributeString ("id", id);
 		}
 
+		/* XXX the class browser on visual studio says this method is there, but it doesn't seem to be */
 		public ScriptTypeDescriptor GetTypeDescriptor ()
 		{
-			throw new NotImplementedException ();
+			ScriptTypeDescriptor td = new ScriptTypeDescriptor(this);
+			InitializeTypeDescriptor (td);
+			return td;
 		}
 
 		protected virtual void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
 		{
-			typeDescriptor.AddEvent (new ScriptEventDescriptor ("propertyChanged", true));
+			foreach (ScriptEvent ev in ((IEnumerable<ScriptEvent>)ScriptEvents))
+				typeDescriptor.AddEvent (new ScriptEventDescriptor (ev.Name, ev.SupportsActions));
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("bindings", ScriptType.Array, true, "Bindings"));
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("dataContext", ScriptType.Object));
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("id", ScriptType.String, "ID"));
@@ -122,12 +141,12 @@ namespace Microsoft.Web
 
 		public void SetOwner (IScriptObject owner)
 		{
-			throw new NotImplementedException ();
+			this.owner = owner;
 		}
 
 		IScriptObject IScriptObject.Owner {
 			get {
-				throw new NotImplementedException ();
+				return Owner;
 			}
 		}
 	}
