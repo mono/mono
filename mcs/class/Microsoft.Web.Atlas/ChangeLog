@@ -1,5 +1,15 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Test/Microsoft.Web/ActionTest.cs,
+	Microsoft.Web/BehaviorCollection.cs,
+	Microsoft.Web/ScriptComponentBase.cs,
+	Microsoft.Web/BindingCollection.cs,
+	Microsoft.Web/ActionCollection.cs, Microsoft.Web/Behavior.cs,
+	Microsoft.Web/IScriptObject.cs, Microsoft.Web/Binding.cs: fix a
+	missing method in IScriptObject.
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Test/Microsoft.Web/SetPropertyActionTest.cs,
 	Test/Microsoft.Web/InvokeMethodActionTest.cs: new tests.
 

@@ -34,6 +34,7 @@ namespace Microsoft.Web
 
 	public interface IScriptObject
 	{
+		ScriptTypeDescriptor GetTypeDescriptor ();
 		string ID { get; set; }
 		IScriptObject Owner { get; }
 	}

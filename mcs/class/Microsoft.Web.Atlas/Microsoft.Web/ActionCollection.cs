@@ -86,6 +86,11 @@ namespace Microsoft.Web
 				return owner;
 			}
 		}
+
+		ScriptTypeDescriptor IScriptObject.GetTypeDescriptor ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

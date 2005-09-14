@@ -97,11 +97,11 @@ namespace Microsoft.Web
 				writer.WriteAttributeString ("id", id);
 		}
 
-		/* XXX the class browser on visual studio says this method is there, but it doesn't seem to be */
-		public ScriptTypeDescriptor GetTypeDescriptor ()
+		ScriptTypeDescriptor IScriptObject.GetTypeDescriptor ()
 		{
 			ScriptTypeDescriptor td = new ScriptTypeDescriptor(this);
 			InitializeTypeDescriptor (td);
+			td.Close();
 			return td;
 		}
 

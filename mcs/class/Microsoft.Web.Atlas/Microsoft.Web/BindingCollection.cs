@@ -80,6 +80,11 @@ namespace Microsoft.Web
 		IScriptObject IScriptObject.Owner {
 			get { return owner; }
 		}
+
+		ScriptTypeDescriptor IScriptObject.GetTypeDescriptor ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

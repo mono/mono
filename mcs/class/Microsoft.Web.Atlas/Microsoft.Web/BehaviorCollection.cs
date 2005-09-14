@@ -80,6 +80,11 @@ namespace Microsoft.Web
 				throw new NotImplementedException ();
 			}
 		}
+
+		ScriptTypeDescriptor IScriptObject.GetTypeDescriptor ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 
