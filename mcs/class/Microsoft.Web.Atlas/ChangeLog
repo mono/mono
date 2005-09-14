@@ -1,5 +1,17 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web.UI/PropertyFilter.cs: new implementation.
+
+	* Microsoft.Web.UI/Filter.cs: new implementation.
+
+	* Test/Microsoft.Web.UI/PropertyFilterTest.cs: new test.
+
+	* Microsoft.Web.Atlas_test.dll.sources: add PropertyFilterTest.cs
+
+	* Microsoft.Web.Atlas.dll.sources: add PropertyFilter.cs
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.Atlas.dll.sources: add DraggableListItem.cs
 
 	* Microsoft.Web.UI/HoverBehavior.cs (AddAttributesToElement): add

@@ -34,9 +34,11 @@ Microsoft.Web.UI/DataSourceDropTarget.cs
 Microsoft.Web.UI/DragDropList.cs
 Microsoft.Web.UI/DraggableListItem.cs
 Microsoft.Web.UI/DragMode.cs
+Microsoft.Web.UI/Filter.cs
 Microsoft.Web.UI/FloatingBehavior.cs
 Microsoft.Web.UI/HoverBehavior.cs
 Microsoft.Web.UI/MapStyle.cs
 Microsoft.Web.UI/PositioningMode.cs
+Microsoft.Web.UI/PropertyFilter.cs
 Microsoft.Web.UI/Script.cs
 Microsoft.Web.UI/ScriptManager.cs
