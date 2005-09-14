@@ -27,12 +27,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Net;
 using System.IO;
 using System.Text;
 using System.Collections;
 using System.Net.Sockets;
+using System.Security.Permissions;
 
 namespace System.Web.Mail {
 
@@ -127,7 +128,9 @@ namespace System.Web.Mail {
 	    smtp.WriteBytes( msg.BodyEncoding.GetBytes( msg.Body ) );
 
 	}
-	
+
+	// SECURITY-FIXME: lower assertion with imperative asserts	
+	[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
 	// sends a multipart mail to the server
 	private void SendMultipartMail( MailMessageWrapper msg ) {
 	    	    
@@ -198,7 +201,7 @@ namespace System.Web.Mail {
 		   
 		// perform the actual writing of the file.
 		// read from the file stream and write to the tcp stream
-		FileStream ins = new FileStream( fileInfo.FullName  , FileMode.Open );
+		FileStream ins = fileInfo.OpenRead ();
 		
 		// create an apropriate encoder
 		IAttachmentEncoder encoder;

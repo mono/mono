@@ -1,3 +1,9 @@
+2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SmtpMail.cs: Added an Assert for FileIOPermission so it's possible
+	to send attachments (in this case MailAttachment is already protected
+	but doesn't open|read the file itself).
+
 2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MailAttachment.cs: Added [Link|Inheritance]Demand for Minimal. Added
