@@ -35,27 +35,30 @@ namespace Microsoft.Web
 {
 	public class ScriptMethodDescriptor : ScriptMemberDescriptor
 	{
+		string methodName;
+		string[] parameters;
+
 		public ScriptMethodDescriptor (string methodName)
-			: base (methodName)
+			: this (methodName, null)
 		{
-				throw new NotImplementedException ();
 		}
 
-		public ScriptMethodDescriptor (string methodName, string parameters)
+		public ScriptMethodDescriptor (string methodName, string[] parameters)
 			: base (methodName)
 		{
-				throw new NotImplementedException ();
+			this.methodName = methodName;
+			this.parameters = (parameters == null ? new string [0] : parameters);
 		}
 
 		public string MethodName {
 			get {
-				throw new NotImplementedException ();
+				return methodName;
 			}
 		}
 
-		public string Parameters {
+		public string[] Parameters {
 			get {
-				throw new NotImplementedException ();
+				return parameters;
 			}
 		}
 	}

@@ -33,35 +33,40 @@ using System;
 
 namespace Microsoft.Web
 {
-	public class ScriptEventDescriptor : ScriptMemberDescriptor
+	public sealed class ScriptEventDescriptor : ScriptMemberDescriptor
 	{
+		string eventName;
+		string serverPropertyName;
+		bool supportsActions;
+
 		public ScriptEventDescriptor (string eventName, bool supportsActions)
-			: base (eventName)
+			: this (eventName, supportsActions, null)
 		{
-				throw new NotImplementedException ();
 		}
 
 		public ScriptEventDescriptor (string eventName, bool supportsActions, string serverPropertyName)
 			: base (eventName)
 		{
-				throw new NotImplementedException ();
+			this.eventName = eventName;
+			this.supportsActions = supportsActions;
+			this.serverPropertyName = (serverPropertyName == null ? "" : serverPropertyName);
 		}
 
 		public string EventName {
 			get {
-				throw new NotImplementedException ();
+				return eventName;
 			}
 		}
 
 		public string ServerPropertyName {
 			get {
-				throw new NotImplementedException ();
+				return serverPropertyName;
 			}
 		}
 
 		public bool SupportsActions {
 			get {
-				throw new NotImplementedException ();
+				return supportsActions;
 			}
 		}
 	}

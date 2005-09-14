@@ -1,5 +1,17 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web/ScriptMemberDescriptor.cs: new implementation.
+
+	* Microsoft.Web/ScriptTypeDescriptor.cs: new implementation.
+
+	* Microsoft.Web/ScriptMethodDescriptor.cs: new implementation.
+
+	* Microsoft.Web/ScriptEventDescriptor.cs: new implementation.
+
+	* Microsoft.Web/ScriptPropertyDescriptor.cs: new implementation.
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Test/Microsoft.Web/ScriptEventDescriptorTest.cs,
 	Test/Microsoft.Web/ScriptMethodDescriptorTest.cs,
 	Test/Microsoft.Web/ScriptPropertyDescriptorTest.cs: new tests.

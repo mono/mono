@@ -35,13 +35,18 @@ namespace Microsoft.Web
 {
 	public class ScriptMemberDescriptor
 	{
+		string memberName;
+
 		public ScriptMemberDescriptor (string memberName)
 		{
+			if (memberName == null)
+				throw new ArgumentNullException ("memberName", "Value cannot be null");
+			this.memberName = memberName;
 		}
 
 		public string MemberName {
 			get {
-				throw new NotImplementedException ();
+				return memberName;
 			}
 		}
 	}

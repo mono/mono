@@ -34,53 +34,70 @@ using System.Collections.Generic;
 
 namespace Microsoft.Web
 {
-	public class ScriptTypeDescriptor
+	public sealed class ScriptTypeDescriptor
 	{
+		IScriptObject scriptObject;
+		bool closed;
+		List<ScriptEventDescriptor> events;
+		List<ScriptMethodDescriptor> methods;
+		List<ScriptPropertyDescriptor> props;
 
 		public ScriptTypeDescriptor (IScriptObject scriptObject)
 		{
-			throw new NotImplementedException ();
+			if (scriptObject == null)
+				throw new ArgumentNullException ("scriptObject", "value cannot be null");
+
+			this.scriptObject = scriptObject;
+			this.events = new List<ScriptEventDescriptor>();
+			this.methods = new List<ScriptMethodDescriptor>();
+			this.props = new List<ScriptPropertyDescriptor>();
 		}
 
 		public IScriptObject ScriptObject {
 			get {
-				throw new NotImplementedException ();
+				return scriptObject;
 			}
 		}
 
 		public void AddEvent (ScriptEventDescriptor eventDescriptor)
 		{
-			throw new NotImplementedException ();
+			if (closed)
+				throw new InvalidOperationException ("Items cannot be added to a type descriptor that has been closed.");
+			events.Add (eventDescriptor);
 		}
 
 		public void AddMethod (ScriptMethodDescriptor methodDescriptor)
 		{
-			throw new NotImplementedException ();
+			if (closed)
+				throw new InvalidOperationException ("Items cannot be added to a type descriptor that has been closed.");
+			methods.Add (methodDescriptor);
 		}
 
 		public void AddProperty (ScriptPropertyDescriptor propertyDescriptor)
 		{
-			throw new NotImplementedException ();
+			if (closed)
+				throw new InvalidOperationException ("Items cannot be added to a type descriptor that has been closed.");
+			props.Add (propertyDescriptor);
 		}
 
 		public void Close ()
 		{
-			throw new NotImplementedException ();
+			closed = true;
 		}
 
 		public IEnumerable<ScriptEventDescriptor> GetEvents ()
 		{
-			throw new NotImplementedException ();
+			return events;
 		}
 
 		public IEnumerable<ScriptMethodDescriptor> GetMethods()
 		{
-			throw new NotImplementedException ();
+			return methods;
 		}
 
 		public IEnumerable<ScriptPropertyDescriptor> GetProperties ()
 		{
-			throw new NotImplementedException ();
+			return props;
 		}
 	}
 }

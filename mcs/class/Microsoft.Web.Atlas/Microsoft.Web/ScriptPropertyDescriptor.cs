@@ -35,51 +35,56 @@ namespace Microsoft.Web
 {
 	public class ScriptPropertyDescriptor : ScriptMemberDescriptor
 	{
+		string propertyName;
+		ScriptType type;
+		bool readOnly;
+		string serverPropertyName;
+
 		public ScriptPropertyDescriptor (string propertyName, ScriptType type)
-			: base (propertyName)
+			: this (propertyName, type, false, null)
 		{
-				throw new NotImplementedException ();
 		}
 
 		public ScriptPropertyDescriptor (string propertyName, ScriptType type, string serverPropertyName)
-			: base (propertyName)
+			: this (propertyName, type, false, serverPropertyName)
 		{
-				throw new NotImplementedException ();
 		}
 
 		public ScriptPropertyDescriptor (string propertyName, ScriptType type, bool readOnly)
-			: base (propertyName)
+			: this (propertyName, type, readOnly, null)
 		{
-				throw new NotImplementedException ();
 		}
 
 		public ScriptPropertyDescriptor (string propertyName, ScriptType type, bool readOnly, string serverPropertyName)
 			: base (propertyName)
 		{
-				throw new NotImplementedException ();
+			this.propertyName = propertyName;
+			this.type = type;
+			this.readOnly = readOnly;
+			this.serverPropertyName = (serverPropertyName == null ? "" : serverPropertyName);
 		}
 
 		public string PropertyName {
 			get {
-				throw new NotImplementedException ();
+				return propertyName;
 			}
 		}
 
 		public bool ReadOnly {
 			get {
-				throw new NotImplementedException ();
+				return readOnly;
 			}
 		}
 
 		public string ServerPropertyName {
 			get {
-				throw new NotImplementedException ();
+				return serverPropertyName;
 			}
 		}
 
 		public ScriptType Type {
 			get {
-				throw new NotImplementedException ();
+				return type;
 			}
 		}
 	}
