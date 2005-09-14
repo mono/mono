@@ -54,17 +54,17 @@ namespace Microsoft.Web.UI
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("property", ScriptType.String, false, "Property"));
 		}
 
-		string acceptedDataTypes = "";
+		string acceptedDataTypes = null;
 		public string AcceptedDataTypes {
 			get {
 				return acceptedDataTypes;
 			}
 			set {
-				acceptedDataTypes = (value == null ? "" : value);
+				acceptedDataTypes = value;
 			}
 		}
 
-		bool append = false;
+		bool append = true;
 		public bool Append {
 			get {
 				return append;
@@ -74,23 +74,23 @@ namespace Microsoft.Web.UI
 			}
 		}
 
-		string property = "";
+		string property = "data";
 		public string Property {
 			get {
 				return property;
 			}
 			set {
-				property = (value == null ? "" : value);
+				property = value;
 			}
 		}
 
-		string target = "";
+		string target = null;
 		public string Target {
 			get {
 				return target;
 			}
 			set {
-				target = (value == null ? "" : value);
+				target = value;
 			}
 		}
 

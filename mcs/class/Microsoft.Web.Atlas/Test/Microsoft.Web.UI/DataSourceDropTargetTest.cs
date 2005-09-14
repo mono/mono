@@ -49,6 +49,28 @@ namespace MonoTests.Microsoft.Web.UI
 
 			// default
 			Assert.AreEqual ("dataSourceDropTarget", b.TagName, "A1");
+			Assert.AreEqual (null, b.AcceptedDataTypes, "A2");
+			Assert.AreEqual (true, b.Append, "A3");
+			Assert.AreEqual ("data", b.Property, "A4");
+			Assert.AreEqual (null, b.Target, "A5");
+
+			// getter/setter
+			b.AcceptedDataTypes = "foo";
+			Assert.AreEqual ("foo", b.AcceptedDataTypes, "A6");
+			b.Append = false;
+			Assert.AreEqual (false, b.Append, "A7");
+			b.Property = "Property";
+			Assert.AreEqual ("Property", b.Property, "A8");
+			b.Target = "Target";
+			Assert.AreEqual ("Target", b.Target, "A9");
+
+			// null setter
+			b.AcceptedDataTypes = null;
+			Assert.AreEqual (null, b.AcceptedDataTypes, "A10");
+			b.Property = null;
+			Assert.AreEqual (null, b.Property, "A11");
+			b.Target = null;
+			Assert.AreEqual (null, b.Target, "A12");
 		}
 
 		[Test]

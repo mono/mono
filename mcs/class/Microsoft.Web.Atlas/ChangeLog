@@ -1,5 +1,13 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Test/Microsoft.Web.UI/DataSourceDropTargetTest.cs: expand the
+	property tests.
+
+	* Microsoft.Web.UI/DataSourceDropTarget.cs: fix up the default
+	values and behavior of properties.
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.Atlas_test.dll.sources: add DataSourceDropTargetTest.cs
 
 	* Microsoft.Web.Atlas.dll.sources: add DataSourceDropTarget.cs
