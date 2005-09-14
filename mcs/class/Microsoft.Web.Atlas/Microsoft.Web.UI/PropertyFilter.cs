@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.UI.Filter
+// Microsoft.Web.UI.PropertyFilter
 //
 // Author:
 //   Chris Toshok (toshok@ximian.com)
