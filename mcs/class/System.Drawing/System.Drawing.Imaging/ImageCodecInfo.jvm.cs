@@ -41,7 +41,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
-using Mainsoft.Drawing.Services;
+using Mainsoft.Drawing.Imaging;
 
 using imageio = javax.imageio;
 using spi = javax.imageio.spi;

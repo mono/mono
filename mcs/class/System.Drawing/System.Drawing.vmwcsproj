@@ -46,6 +46,8 @@
 				<File RelPath="System.Drawing\KnownColor.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Pen.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Pens.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing\PlainImage.jvm.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing\PlainImageCollection.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\Point.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\PointConverter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing\PointF.cs" SubType="Code" BuildAction="Compile"/>

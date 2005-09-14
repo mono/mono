@@ -73,15 +73,17 @@ namespace System.Drawing
 
 		public TextureBrush (Image image, RectangleF dstRect)
 		{
-			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject,
+			// FIXME: check if not metafile
+			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject.CurrentImage.NativeImage,
 				new geom.Rectangle2D.Float((float)dstRect.X,(float)dstRect.Y,(float)dstRect.Width,
 				(float)dstRect.Height));
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode)
 		{
-			//	TODO: WRAP MODE
-			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject,
+			// FIXME: check if not metafile
+			// TBD: WRAP MODE
+			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject.CurrentImage.NativeImage,
 				new geom.Rectangle2D.Float(0,0,1,1));
 		}
 
@@ -97,15 +99,17 @@ namespace System.Drawing
 
 		public TextureBrush (Image image, WrapMode wrapMode, Rectangle dstRect)
 		{
-			//TODO:WRAP MODE
-			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject,
+			// FIXME: check if not metafile
+			// TBD:WRAP MODE
+			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject.CurrentImage.NativeImage,
 				new geom.Rectangle2D.Float ((float)dstRect.X,(float)dstRect.Y,(float)dstRect.Width,(float)dstRect.Height));
 		}
 
 		public TextureBrush (Image image, WrapMode wrapMode, RectangleF dstRect)
 		{
-			//TODO:WRAP MODE
-			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject,
+			// FIXME: check if not metafile
+			//TBD:WRAP MODE
+			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject.CurrentImage.NativeImage,
 				new geom.Rectangle2D.Float((float)dstRect.X,(float)dstRect.Y,(float)dstRect.Width,
 				(float)dstRect.Height));
 		}

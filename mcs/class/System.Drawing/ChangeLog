@@ -1,3 +1,7 @@
+2005-09-14 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* System.Drawing.vmwcsproj: Added PlainImage.jvm.cs, PlainImageCollection.jvm.cs
+
 2005-09-07 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* System.Drawing.vmwcsproj: ImageCodec.jvm.cs

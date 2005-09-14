@@ -205,7 +205,7 @@ namespace System.Drawing {
 
 		#region Constr. and Destr.
 		private Graphics (Image image) {
-			_nativeObject = (awt.Graphics2D)image.NativeObject.getGraphics();
+			_nativeObject = (awt.Graphics2D)image.NativeObject.CurrentImage.NativeImage.getGraphics();
 			_image = image;
 			_transform = new Matrix ();
 
@@ -809,7 +809,7 @@ namespace System.Drawing {
 			try {
 				IntersectScaledClipWithBase(_clip);
 				try {
-					NativeObject.drawImage(image.NativeObject, x, y, null);
+					NativeObject.drawImage(image.NativeObject.CurrentImage.NativeImage, x, y, null);
 				}
 				finally {
 					RestoreBaseClip();
@@ -837,7 +837,7 @@ namespace System.Drawing {
 
 				IntersectScaledClipWithBase(_clip);
 				try {
-					NativeObject.drawImage(image.NativeObject,
+					NativeObject.drawImage(image.NativeObject.CurrentImage.NativeImage,
 						destRect.X,
 						destRect.Y,
 						destRect.X + destRect.Width,
@@ -930,7 +930,7 @@ namespace System.Drawing {
 			try {
 				IntersectScaledClipWithBase(_clip);
 				try {
-					NativeObject.drawImage(image.NativeObject, x, y, width, height, null);
+					NativeObject.drawImage(image.NativeObject.CurrentImage.NativeImage, x, y, width, height, null);
 				}
 				finally {
 					RestoreBaseClip();
@@ -989,7 +989,7 @@ namespace System.Drawing {
 			try {
 				IntersectScaledClipWithBase(_clip);
 				try {
-					NativeObject.drawImage(image.NativeObject, m.NativeObject, null);
+					NativeObject.drawImage(image.NativeObject.CurrentImage.NativeImage, m.NativeObject, null);
 				}
 				finally {
 					RestoreBaseClip();
@@ -1684,7 +1684,7 @@ namespace System.Drawing {
 		
 		public void Flush (FlushIntention intention) {
 			if (_image != null)
-				_image.NativeObject.flush();
+				_image.NativeObject.CurrentImage.NativeImage.flush();
 		}
 
 #if INTPTR_SUPPORTED

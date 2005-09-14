@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Runtime.Serialization;
-using Mainsoft.Drawing.Services;
+using Mainsoft.Drawing.Imaging;
 
 using io = java.io;
 using imageio = javax.imageio;
@@ -19,7 +19,7 @@ namespace System.Drawing
 
 		#region constructors
 
-		Bitmap (Bitmap orig):base (orig) {}
+		Bitmap (Bitmap orig):base ( orig.NativeObject ) {}
 
 		private Bitmap (SerializationInfo info, StreamingContext context) {
 			throw new NotImplementedException ();
@@ -27,27 +27,18 @@ namespace System.Drawing
 
 		public Bitmap (int width, int height, Graphics g) 
 			:this (width, height, PixelFormat.Format32bppArgb) {
-			this._horizontalResolution = g.DpiX;
-			this._verticalResolution = g.DpiY;
+			CurrentImage.HorizontalResolution = g.DpiX;
+			CurrentImage.VerticalResolution = g.DpiY;
 		}
+
+		public Bitmap (Image original) 
+			:this (original, original.Size) {}
 
 		public Bitmap (Image orig, Size newSize)
 			:this (orig, newSize.Width, newSize.Height) {}
 
 		public Bitmap (Image orig, int width, int height)
-			:base (CreateScaledImage (orig, width, height), ImageFormat.Bmp) {}
-
-		public Bitmap (int width, int height) 
-			:this (width, height, PixelFormat.Format32bppArgb) {}
-
-		public Bitmap (Image original) 
-			:this (original, original.Size) {}
-
-		public Bitmap (Stream stream)
-			:this (stream, false) {}
-
-		public Bitmap (string filename) 
-			:this (filename, false) {}
+			:base (CreateScaledImage (orig, width, height), ImageFormat.MemoryBmp) {}
 
 		internal Bitmap (java.awt.Image nativeObject, ImageFormat format)
 			:base (nativeObject, format) {}
@@ -58,17 +49,21 @@ namespace System.Drawing
 				throw new NotImplementedException ("Converting PixelFormat is not implemented yet.");
 		}
 
+		public Bitmap (int width, int height) 
+			:this (width, height, PixelFormat.Format32bppArgb) {}
+
 		public Bitmap (int width, int height, PixelFormat format)
 			:base (
-				new java.awt.image.BufferedImage (width, height,
-					ToBufferedImageFormat (format)),
-				ImageFormat.Bmp)
-		{
-			//TBD: why the following 3 lines are necessary?
-//			java.awt.Graphics2D graphics2d = NativeObject.createGraphics();
-//			graphics2d.drawImage(NativeObject, 0, 0, null);
-//			graphics2d.dispose();
+			new java.awt.image.BufferedImage (width, height,
+			ToBufferedImageFormat (format)),
+			ImageFormat.Bmp) {
 		}
+
+		public Bitmap (Stream stream)
+			:this (stream, false) {}
+
+		public Bitmap (string filename) 
+			:this (filename, false) {}
 
 		public Bitmap (Stream stream, bool useIcm)
 			:this (stream, useIcm, null) {}
@@ -124,22 +119,22 @@ namespace System.Drawing
 			else
 				ic = ImageCodec.CreateReader(format);
 
-			java.awt.Image [] nativeObjects;
-			java.awt.Image [] thumbnails = null;
 			try {
 				ic.NativeStream = input;
-				nativeObjects = ic.ReadImage();
-				thumbnails = ic.ReadThumbnails(0);
-				ic.ParseMetadata();
+				PlainImage pi = ic.ReadPlainImage();
+				base.Initialize( pi, false );
+
+				pi = ic.ReadNextPlainImage();
+				while ( pi != null) {
+					base.Initialize( pi, true );
+					pi = ic.ReadNextPlainImage();
+				}
+
+				_flags |= (int)(ImageFlags.ImageFlagsReadOnly | ImageFlags.ImageFlagsHasRealPixelSize);
 			}
-			catch (Exception e) {
-				string h = e.Message;
+			catch (Exception) {
 				throw new OutOfMemoryException ("Out of memory");
 			}
-
-			base.Initialize (
-				nativeObjects, thumbnails, format, FrameDimension.Page.Guid, 
-				ic.ImageHorizontalResolution, ic.ImageVerticalResolution );
 		}
 
 		#endregion
@@ -186,7 +181,7 @@ namespace System.Drawing
 		}
 
 		private static java.awt.Image CreateScaledImage(Image original, int width, int height) {
-			JavaImage oldscaled = original.NativeObject.getScaledInstance(width, height,
+			JavaImage oldscaled = original.CurrentImage.NativeImage.getScaledInstance(width, height,
 				JavaImage.SCALE_DEFAULT);
 			BufferedImage newimage = new BufferedImage(oldscaled.getWidth(null), 
 				oldscaled.getHeight(null),
@@ -269,11 +264,11 @@ namespace System.Drawing
 		}
 		#endregion
 
-		#region SetResolution [TODO]
+		#region SetResolution
 		public void SetResolution (float xDpi, float yDpi)
 		{
-			_horizontalResolution = xDpi;
-			_verticalResolution = yDpi;
+			CurrentImage.HorizontalResolution = xDpi;
+			CurrentImage.VerticalResolution = yDpi;
 		}
 		#endregion 
 
@@ -287,7 +282,7 @@ namespace System.Drawing
 		#region NativeObject
 		internal new BufferedImage NativeObject {
 			get {
-				return (BufferedImage)base.NativeObject;
+				return (BufferedImage)base.NativeObject.CurrentImage.NativeImage;
 			}
 		}
 

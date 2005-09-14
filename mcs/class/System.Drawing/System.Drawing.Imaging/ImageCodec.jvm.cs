@@ -8,26 +8,26 @@ using Mainsoft.Drawing.Configuration;
 
 using imageio = javax.imageio;
 using stream = javax.imageio.stream;
+using awt = java.awt;
 using image = java.awt.image;
 using spi = javax.imageio.spi;
 using dom = org.w3c.dom;
 
-namespace Mainsoft.Drawing.Services {
+namespace Mainsoft.Drawing.Imaging {
 	/// <summary>
 	/// Summary description for ImageCodec.
 	/// </summary>
 	public class ImageCodec {
+
 		#region Members
 
 		imageio.ImageReader _nativeReader = null;
 		imageio.ImageWriter _nativeWriter = null;
 		stream.ImageInputStream _nativeStream = null;
 
-		float _imageHorizontalResolution = 0;
-		float _imageVerticalResolution = 0;
-
-		XmlDocument _metadataDocument = null;
 		ImageFormat _imageFormat = null;
+
+		int _currentFrame = 0;
 
 		#endregion
 
@@ -305,89 +305,159 @@ namespace Mainsoft.Drawing.Services {
 			else
 				return Guid.Empty;
 		}
+
+		internal FrameDimension FormatFrameDimesion {
+			get {
+				if (ImageFormat == null)
+					return FrameDimension.Page;
+
+				if (ImageFormat.Guid.Equals (ImageFormat.Bmp.Guid))
+					return FrameDimension.Page;
+				else if (ImageFormat.Guid.Equals (ImageFormat.Jpeg.Guid))
+					return FrameDimension.Page;
+				else if (ImageFormat.Guid.Equals (ImageFormat.Gif))
+					return FrameDimension.Time;
+				else if (ImageFormat.Guid.Equals (ImageFormat.Emf.Guid))
+					return FrameDimension.Page;
+				else if (ImageFormat.Guid.Equals (ImageFormat.Wmf.Guid))
+					return FrameDimension.Page;
+				else if (ImageFormat.Guid.Equals (ImageFormat.Tiff.Guid))
+					return FrameDimension.Page;
+				else if (ImageFormat.Guid.Equals (ImageFormat.Png.Guid))
+					return FrameDimension.Page;
+				else if (ImageFormat.Guid.Equals (ImageFormat.Icon.Guid))
+					return FrameDimension.Resolution;
+				else
+					return FrameDimension.Page;
+			}
+		}
+
 		#endregion
 		
 		#region Image read/write methods
 
-		public image.BufferedImage [] ReadImage() {
-			int imgNumber = 0;
-			ArrayList nativeObjects = new ArrayList();
+		public PlainImage ReadPlainImage() {
+			awt.Image img = ReadImage( _currentFrame );
+			if (img == null)
+				return null;
 
-			while (true) {
-				try {
-					nativeObjects.Add( ReadImage(imgNumber++) );
-				}
-				catch (java.lang.IndexOutOfBoundsException) {
-					break;
-				}
-				catch (java.io.IOException ex) {
-					throw new System.IO.IOException(ex.Message, ex);
-				}
-			}
-			return (image.BufferedImage[]) nativeObjects.ToArray(typeof(image.BufferedImage));
+			awt.Image [] th = ReadThumbnails( _currentFrame );
+			XmlDocument _md = ReadImageMetadata( _currentFrame );
+			float [] resolution = GetResolution( _md );
+
+			PlainImage pi = new PlainImage( img, th, ImageFormat, resolution[0], resolution[1], FormatFrameDimesion, _md );
+			return pi;
 		}
 
-		public image.BufferedImage ReadImage(int frame) {
+		public PlainImage ReadNextPlainImage() {
+			_currentFrame++;
+			return ReadPlainImage();
+		}
+
+		public awt.Image ReadImage(int frame) {
 			if (NativeStream == null)
 				throw new Exception("Input stream not specified");
 
-			return NativeReader.read (frame);
+			try {
+				return NativeReader.read (frame);
+			}
+			catch (java.lang.IndexOutOfBoundsException) {
+				return null;
+			}
+			catch (java.io.IOException ex) {
+				throw new System.IO.IOException(ex.Message, ex);
+			}
 		}
 
-		public image.BufferedImage [] ReadThumbnails(int frame) {
-			// FIXME: seems to be incorrect on multiframe with multi thumbnail
-			if (NativeReader.hasThumbnails(frame)) {
-				
-				int tmbNumber = NativeReader.getNumThumbnails(frame);
-				if (tmbNumber > 0) {
-					image.BufferedImage [] thumbnails = new image.BufferedImage[ tmbNumber ];
+		public awt.Image [] ReadThumbnails(int frameIndex) {
+			awt.Image [] thArray = null;
 
-					for (int i = 0; i < tmbNumber; i++) {
-						thumbnails[i] = NativeReader.readThumbnail(frame, i);
+			try {
+				if (NativeReader.hasThumbnails(frameIndex)) {
+					int tmbNumber = NativeReader.getNumThumbnails(frameIndex);
+
+					if (tmbNumber > 0) {
+						thArray = new awt.Image[ tmbNumber ];
+
+						for (int i = 0; i < tmbNumber; i++) {
+							thArray[i] = NativeReader.readThumbnail(frameIndex, i);
+						}
 					}
-					return thumbnails;
 				}
+				return thArray;
 			}
-			return null;
+			catch (java.io.IOException ex) {
+				throw new System.IO.IOException(ex.Message, ex);
+			}
 		}
 
-		public void ReadImageMetadata(int index) {
+		public XmlDocument ReadImageMetadata(int frameIndex) {
 			if (NativeStream == null)
 				throw new Exception("Input stream not specified");
 
-			imageio.metadata.IIOMetadata md = NativeReader.getImageMetadata( index );
+			try {
+				imageio.metadata.IIOMetadata md = NativeReader.getImageMetadata( frameIndex );
 
-			string [] formatNames = md.getMetadataFormatNames();
-			dom.Element rootNode = (dom.Element) md.getAsTree(formatNames[0]);
+				string [] formatNames = md.getMetadataFormatNames();
+				dom.Element rootNode = (dom.Element) md.getAsTree(formatNames[0]);
 
-			MetadataDocument = new XmlDocument();
-			XmlConvert(rootNode, MetadataDocument);
+				XmlDocument _metadataDocument = new XmlDocument();
+				XmlConvert(rootNode, _metadataDocument);
+
+				return _metadataDocument;
+			}
+			catch (java.io.IOException ex) {
+				throw new System.IO.IOException(ex.Message, ex);
+			}
 		}
 
-		public void WriteImage(image.BufferedImage bitmap) {
+		public void WritePlainImage(PlainImage pi) {
+			WriteImage( pi.NativeImage );
+		}
+
+		public void WriteImage(awt.Image bitmap) {
 			if (NativeStream == null)
 				throw new Exception("Output stream not specified");
 
-			NativeWriter.write(bitmap);
+			try {
+				if (bitmap is image.BufferedImage)
+					NativeWriter.write((image.BufferedImage)bitmap);
+				else
+					// TBD: This codec is for raster formats only
+					throw new NotSupportedException("Only raster formats are supported");
+			}
+			catch (java.io.IOException ex) {
+				throw new System.IO.IOException(ex.Message, ex);
+			}
 		}
 
-		public void WriteImage(image.BufferedImage [] bitmap) {
+		public void WriteImage(awt.Image [] bitmap) {
 			//FIXME: does not supports metadata and thumbnails for now
-			if (bitmap.Length == 1) {
-				WriteImage(bitmap[0]);
-			}
-			else {
-				if (NativeWriter.canWriteSequence ()) {
-					NativeWriter.prepareWriteSequence (null);
-
-					for (int i = 0; i < bitmap.Length; i++) {
-						imageio.IIOImage iio = new imageio.IIOImage ((image.BufferedImage)bitmap[i], null, null);
-						NativeWriter.writeToSequence (iio, null);
-					}
-					NativeWriter.endWriteSequence ();
+			try {
+				if (bitmap.Length == 1) {
+					WriteImage(bitmap[0]);
 				}
-				else
-					throw new ArgumentException();
+				else {
+					if (NativeWriter.canWriteSequence ()) {
+						NativeWriter.prepareWriteSequence (null);
+
+						for (int i = 0; i < bitmap.Length; i++) {
+							if (bitmap[i] is image.BufferedImage){
+								imageio.IIOImage iio = new imageio.IIOImage ((image.BufferedImage)bitmap[i], null, null);
+								NativeWriter.writeToSequence (iio, null);
+							}
+							else
+								// TBD: This codec is for raster formats only
+								throw new NotSupportedException("Only raster formats are supported");
+						}
+						NativeWriter.endWriteSequence ();
+					}
+					else
+						throw new ArgumentException();
+				}
+			}
+			catch (java.io.IOException ex) {
+				throw new System.IO.IOException(ex.Message, ex);
 			}
 		}
 
@@ -395,39 +465,15 @@ namespace Mainsoft.Drawing.Services {
 
 		#region Extra properties
 
-		public float ImageHorizontalResolution {
-			get {return _imageHorizontalResolution;}
-		}
-		public float ImageVerticalResolution {
-			get {return _imageVerticalResolution;}
-		}
-
 		public ImageFormat ImageFormat {
 			get { return _imageFormat; }
-		}
-
-		public XmlDocument MetadataDocument {
-			get { return _metadataDocument; }
-			set { 
-				if (value == null)
-					throw new ArgumentNullException();
-
-				_metadataDocument = value; 
-			}
 		}
 
 		#endregion
 
 		#region Metadata parse
 
-		public void ParseMetadata() {
-			if (MetadataDocument == null)
-				ReadImageMetadata(0);
-
-			SetResolution();
-		}
-
-		protected void SetResolution() {
+		protected float [] GetResolution(XmlDocument metaData) {
 			ResolutionConfigurationCollection rcc = 
 				(ResolutionConfigurationCollection)
 				ConfigurationSettings.GetConfig("system.drawing/codecsmetadata");
@@ -437,6 +483,9 @@ namespace Mainsoft.Drawing.Services {
 
 			ResolutionConfiguration rc = rcc[ ImageFormat.ToString() ];
 
+			if (rc == null)
+				return new float[]{0, 0};
+
 			// Horizontal resolution
 			string xResPath = rc.XResPath;
 			string xRes;
@@ -444,7 +493,7 @@ namespace Mainsoft.Drawing.Services {
 			if (xResPath == string.Empty)
 				xRes = rc.XResDefault;
 			else
-				xRes = GetValueFromMetadata(xResPath);
+				xRes = GetValueFromMetadata(metaData, xResPath);
 
 			if ((xRes == null) || (xRes == string.Empty))
 				xRes = rc.XResDefault;
@@ -456,7 +505,7 @@ namespace Mainsoft.Drawing.Services {
 			if (yResPath == string.Empty)
 				yRes = rc.YResDefault;
 			else
-				yRes = GetValueFromMetadata(yResPath);
+				yRes = GetValueFromMetadata(metaData, yResPath);
 
 			if ((yRes == null) || (yRes == string.Empty))
 				yRes = rc.YResDefault;
@@ -468,7 +517,7 @@ namespace Mainsoft.Drawing.Services {
 			if (resUnitsPath == string.Empty)
 				resUnitsType = rc.UnitsTypeDefault;
 			else
-				resUnitsType = GetValueFromMetadata(resUnitsPath);
+				resUnitsType = GetValueFromMetadata(metaData, resUnitsPath);
 
 			if (resUnitsType == null)
 				resUnitsType = rc.UnitsTypeDefault;
@@ -477,13 +526,16 @@ namespace Mainsoft.Drawing.Services {
 			string unitScale = rc.UnitsScale[resUnitsType].ToString();
 
 			// Adjust resolution to its units
-			_imageHorizontalResolution = ParseFloatValue(xRes) * ParseFloatValue(unitScale);
-			_imageVerticalResolution = ParseFloatValue(yRes) * ParseFloatValue(unitScale);
+			float [] res = new float[2];
+			res[0] = ParseFloatValue(xRes) * ParseFloatValue(unitScale);
+			res[1] = ParseFloatValue(yRes) * ParseFloatValue(unitScale);
+
+			return res;
 		}
 
 
-		protected string GetValueFromMetadata(string path) {
-			XmlNode n = MetadataDocument.SelectSingleNode(path);
+		protected string GetValueFromMetadata(XmlDocument metaData, string path) {
+			XmlNode n = metaData.SelectSingleNode(path);
 			if (n == null)
 				return null;
 
