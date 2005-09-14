@@ -1,5 +1,11 @@
 2005-09-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReader.cs : when there is a heading half of surrogate at the
+	  end of read buffer, it didn't treat it as a surrogate.
+	  Fixed bug #76102.
+
+2005-09-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriter.cs : for surrogate pair, output character reference
 	  as a single character instead of two reference pairs. Fixed bug #76095.
 	  Patch by Brion Vibber.

@@ -3,7 +3,7 @@
 RUNTIME=mono
 XMLCONF_OPTIONS=
 CSCOMPILE=mcs
-REFERENCES=-d:NUNIT_SUPPORT -r:NUnit.Core -r:NUnit.Framework
+REFERENCES=-d:NUNIT_SUPPORT -r:nunit.core -r:nunit.framework
 TEST_ARCHIVE=xmlts20031210.zip
 TEST_CATALOG=xmlconf/xmlconf.xml
 TEST_PROG=xmlconf.dll
@@ -45,5 +45,5 @@ $(TEST_CATALOG): $(TEST_ARCHIVE)
 	touch $(TEST_CATALOG)
 
 .cs.dll:
-	$(CSCOMPILE) /t:library $< $(REFERENCES)
+	$(CSCOMPILE) /t:library /lib:$(nunit_MONO_PATH) $< $(REFERENCES)
 

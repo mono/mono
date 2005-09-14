@@ -1,5 +1,9 @@
 2005-09-14  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextReaderTests.cs : added #76102 testcase.
+
+2005-09-14  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriterTests.cs : added #76095 testcase.
 
 2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>

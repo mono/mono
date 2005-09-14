@@ -1,3 +1,7 @@
+2005-09-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* 76102.xml : added test for bug #76102.
+
 2004-09-06  Atsushi Enomoto <atsushi@ximian.com>
 
 	* added simple.xml (to be used for some tests).

@@ -1084,9 +1084,9 @@ namespace System.Xml
 		private int PeekChar ()
 		{
 			if (peekCharsLength == peekCharsIndex) {
-				if (!ReadTextReader ())
+				if (!ReadTextReader (-1))
 					return -1;
-					return PeekChar ();
+				return PeekChar ();
 			}
 
 			char c = peekChars [peekCharsIndex];
@@ -1094,13 +1094,12 @@ namespace System.Xml
 				return -1;
 			if (!char.IsSurrogate (c))
 				return c;
-			if (peekCharsLength == peekCharsIndex+1) {
-				if (!ReadTextReader ())
+			if (peekCharsLength == peekCharsIndex + 1) {
+				if (!ReadTextReader (c))
 					//FIXME: copy MS.NET behaviour when unpaired surrogate found
-			return peekChars [peekCharsIndex];
-				return PeekChar ();
+					return c;
 			}
-            
+
 			char highhalfChar = peekChars [peekCharsIndex];
 			char lowhalfChar = peekChars [peekCharsIndex+1];
 
@@ -1132,10 +1131,14 @@ namespace System.Xml
 			return ch;
 		}
 
-		private bool ReadTextReader ()
+		private bool ReadTextReader (int remained)
 		{
 			peekCharsIndex = 0;
-			peekCharsLength = reader.Read (peekChars, 0, peekCharCapacity);
+			if (remained >= 0)
+				peekChars [0] = (char) remained;
+			int offset = remained >= 0 ? 1 : 0;
+			peekCharsLength = reader.Read (peekChars, offset,
+				peekCharCapacity - offset) + offset;
 			return (peekCharsLength != 0);
 		}
 

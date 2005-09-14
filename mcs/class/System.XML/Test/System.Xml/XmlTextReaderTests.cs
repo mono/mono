@@ -1115,5 +1115,19 @@ namespace MonoTests.System.Xml
 				XmlNodeType.Document, null);
 			xtr.Read ();
 		}
+
+		[Test] // bug #76102
+		public void SurrogateAtReaderByteCache ()
+		{
+			XmlTextReader xtr = null;
+			try {
+				xtr = new XmlTextReader (File.OpenText ("Test/XmlFiles/76102.xml"));
+				while (!xtr.EOF)
+					xtr.Read ();
+			} finally {
+				if (xtr != null)
+					xtr.Close ();
+			}
+		}
 	}
 }
