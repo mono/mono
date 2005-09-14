@@ -26,9 +26,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Collections;
 using System.Globalization;
+using System.Security.Permissions;
 using System.Text;
 using System.Web.UI;
 using System.Web.Util;
@@ -47,6 +48,8 @@ namespace System.Web {
 	
 	internal delegate void CacheabilityUpdatedCallback (object sender, CacheabilityUpdatedEventArgs args);
 	
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpCachePolicy {
 
 		internal HttpCachePolicy ()
@@ -346,6 +349,19 @@ namespace System.Web {
 			}
 
 		}
+#if NET_2_0
+		[MonoTODO]
+		public void SetDiskCacheable (bool diskCacheable)
+		{
+			throw new NotImplementedException (); 
+		}
+
+		[MonoTODO]
+		public void SetOmitVaryStar (bool omit)
+		{
+			throw new NotImplementedException (); 
+		}
+#endif
 		
 #endregion // Methods
 	}

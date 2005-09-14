@@ -28,9 +28,13 @@
 
 using System.Collections.Specialized;
 using System.Globalization;
+using System.Security.Permissions;
 
 namespace System.Web {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HttpClientCertificate : NameValueCollection {
 
 		private HttpWorkerRequest hwr;

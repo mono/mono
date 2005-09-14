@@ -5,9 +5,7 @@
 //   Patrik Torstensson (Patrik.Torstensson@labs2.com)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (c) 2003 Novell, Inc. (http://www.novell.com)
-//
-
+// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,16 +26,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Collections;
+
+using System.Security.Permissions;
 using System.Web.Configuration;
-using System.Web.UI;
 
 namespace System.Web
 {
 	//
 	// The real implementation lives in System.Web/BrowserCapabilities.cs
 	//
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public partial class HttpBrowserCapabilities : HttpCapabilitiesBase
 	{
 		public HttpBrowserCapabilities ()

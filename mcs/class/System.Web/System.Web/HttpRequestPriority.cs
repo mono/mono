@@ -23,18 +23,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
 namespace System.Web
 {
-        [Serializable]
         public enum HttpRequestPriority
         {
-                Normal = 10,
-                High = 20,
-                Critical = 30,                
+                Normal,
+                High,
+                Critical
         }
 }
 #endif

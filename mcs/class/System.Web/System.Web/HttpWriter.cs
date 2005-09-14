@@ -28,14 +28,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 	
 namespace System.Web {
 	
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpWriter : TextWriter {
 		HttpResponseStream output_stream;
 		HttpResponse response;

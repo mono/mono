@@ -29,9 +29,12 @@
 //
 
 using System.Collections.Specialized;
+using System.Security.Permissions;
 
 namespace System.Web {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpCookieCollection : NameObjectCollectionBase {
 
 		private bool auto_fill = false;

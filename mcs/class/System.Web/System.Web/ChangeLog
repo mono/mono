@@ -1,3 +1,22 @@
+2005-09-13  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HttpBrowserCapabilities.cs: Added LinkDemand and InheritanceDemand 
+	(class) for Minimal. Note that current MCS has problem compiling 
+	security attributes on partial class (bug #75969).
+	* HttpCachePolicy.cs: Added LinkDemand for Minimal. Added 2.0 methods
+	(stub) to enable CAS tests on them.
+	* HttpCacheVaryByHeaders.cs: Added LinkDemand for Minimal.
+	* HttpCacheVaryByParams.cs: Added LinkDemand for Minimal.
+	* HttpClientCertificate.cs: Added LinkDemand and InheritanceDemand 
+	(class) for Minimal.
+	* HttpCookie.cs: Added LinkDemand for Minimal.
+	* HttpCookieCollection.cs: Added LinkDemand for Minimal.
+	* HttpFileCollection.cs: Added LinkDemand for Minimal.
+	* HttpModuleCollection.cs: Added LinkDemand for Minimal.
+	* HttpPostedFile.cs: Added LinkDemand for Minimal.
+	* HttpRequestPriority.cs: Fix enum values.
+	* HttpWriter.cs: Added LinkDemand for Minimal.
+
 2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ProcessInfo.cs: Added LinkDemand and InheritanceDemand (class) for

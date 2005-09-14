@@ -29,10 +29,13 @@
 //
 
 using System.Collections;
+using System.Security.Permissions;
 using System.Text;
 
 namespace System.Web {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpCacheVaryByParams {
 
 		bool ignore_parms;

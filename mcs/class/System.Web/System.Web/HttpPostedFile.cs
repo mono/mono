@@ -29,9 +29,12 @@
 //
 
 using System.IO;
+using System.Security.Permissions;
 
 namespace System.Web
 {
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpPostedFile {
 		string name;
 		string content_type;
