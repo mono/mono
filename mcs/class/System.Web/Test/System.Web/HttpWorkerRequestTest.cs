@@ -305,7 +305,16 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (true, f.IsClientConnected (), "F32");
 			Assert.AreEqual (false, f.IsEntireEntityBodyIsPreloaded (), "F33");
 			Assert.AreEqual (false, f.IsSecure (), "F34");
-			
+
+			Assert.AreEqual (0, f.ReadEntityBody (null, Int32.MaxValue), "ReadEntityBody(byte[],int)");
+#if NET_2_0
+			Assert.AreEqual (Guid.Empty.ToString (), f.RequestTraceIdentifier.ToString (), "RequestTraceIdentifier");
+			Assert.IsNull (f.RootWebConfigPath, "RootWebConfigPath");
+			Assert.AreEqual (0, f.GetPreloadedEntityBody (null, Int32.MinValue), "GetPreloadedEntityBody(byte[],int)");
+			Assert.AreEqual (0, f.GetPreloadedEntityBodyLength (), "GetPreloadedEntityBodyLength");
+			Assert.AreEqual (0, f.GetTotalEntityBodyLength (), "GetTotalEntityBodyLength");
+			Assert.AreEqual (0, f.ReadEntityBody (null, 0, 0), "ReadEntityBody(byte[],int,int)");
+#endif
 		}
 
 		[Test] public void Test_GetKnownHeaderName ()
