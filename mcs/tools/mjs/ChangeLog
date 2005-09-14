@@ -1,8 +1,6 @@
 2005-09-13  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs.cs: Add support for flags parsing.
-	* Makefile: Reference mcs.exe we use the Namespace semantic logic
-	from it.
 
 2005-02-14  Cesar Lopez Nataren  <cnataren@novell.com>
 
