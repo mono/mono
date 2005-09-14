@@ -42,6 +42,11 @@ namespace Microsoft.Web.UI
 		protected override void AddAttributesToElement (ScriptTextWriter writer)
 		{
 			base.AddAttributesToElement (writer);
+
+			// MS raises a NRE when this is called from
+			// our tests.  speculation: they're accessing
+			// Browser or Page to figure out if they
+			// should be rendering attributes.
 		}
 
 		protected override void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
@@ -52,7 +57,7 @@ namespace Microsoft.Web.UI
 			typeDescriptor.AddEvent (new ScriptEventDescriptor ("hover", true));
 			typeDescriptor.AddEvent (new ScriptEventDescriptor ("unhover", true));
 
-			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("hoverElement", ScriptType.Object, false, "HoverElementID"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("hoverElement", ScriptType.Object, false, ""));
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("unhoverDelay", ScriptType.Number, false, "UnhoverDelay"));
 		}
 

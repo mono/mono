@@ -1,5 +1,28 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web.Atlas.dll.sources: add DraggableListItem.cs
+
+	* Microsoft.Web.UI/HoverBehavior.cs (AddAttributesToElement): add
+	comment about how MS NRE's here in our tests.
+	(InitializeTypeDescriptor): fix the ServerPropertyName for
+	"hoverElement".
+
+	* Microsoft.Web.UI/DraggableListItem.cs (AddAttributesToElement):
+	add comment about how MS NRE's here in our tests.
+
+	* Microsoft.Web.UI/DataSourceDropTarget.cs
+	(AddAttributesToElement): add comment about how MS NRE's here in
+	our tests.
+
+	* Microsoft.Web.UI/FloatingBehavior.cs (AddAttributesToElement):
+	add comment about how MS NRE's here in our tests.
+	
+	* Microsoft.Web/Binding.cs: new implementation.
+
+	* Microsoft.Web/BindingDirection.cs: fix ordering on enum.
+
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.Atlas_test.dll.sources: add BindingTest and
 	DraggableListItemTest.
 

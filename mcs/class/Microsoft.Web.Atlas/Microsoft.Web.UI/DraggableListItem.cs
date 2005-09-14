@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.BindingDirection
+// Microsoft.Web.UI.DraggableListItem
 //
 // Author:
 //   Chris Toshok (toshok@ximian.com)
@@ -29,13 +29,52 @@
 
 #if NET_2_0
 
-namespace Microsoft.Web
+using System;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace Microsoft.Web.UI
 {
-	public enum BindingDirection
+	public class DraggableListItem : Behavior
 	{
-		In,
-		Out,
-		InOut
+		public DraggableListItem ()
+		{
+		}
+
+		protected override void AddAttributesToElement (ScriptTextWriter writer)
+		{
+			base.AddAttributesToElement (writer);
+
+			// MS raises a NRE when this is called from
+			// our tests.  speculation: they're accessing
+			// Browser or Page to figure out if they
+			// should be rendering attributes.
+		}
+
+		protected override void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
+		{
+			base.InitializeTypeDescriptor (typeDescriptor);
+
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("data", ScriptType.Object, false, ""));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("handle", ScriptType.Object, false, "Handle"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("dragVisualTemplate", ScriptType.Object, false, ""));
+		}
+
+		string handle = null;
+		public string Handle {
+			get {
+				return handle;
+			}
+			set {
+				handle = value;
+			}
+		}
+
+		public override string TagName {
+			get {
+				return "draggableListItem";
+			}
+		}
 	}
 }
 

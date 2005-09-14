@@ -37,101 +37,156 @@ namespace Microsoft.Web
 	{
 		public Binding ()
 		{
-			throw new NotImplementedException ();
 		}
 
+		bool automatic = true;
 		public bool Automatic {
 			get {
-				throw new NotImplementedException ();
+				return automatic;
 			}
 			set {
-				throw new NotImplementedException ();
+				automatic = value;
 			}
 		}
 
+		string dataContext = "";
 		public string DataContext {
 			get {
-				throw new NotImplementedException ();
+				return dataContext;
 			}
 			set {
-				throw new NotImplementedException ();
+				dataContext = (value == null ? "" : value);
 			}
 		}
 
+		string dataPath = "";
 		public string DataPath {
 			get {
-				throw new NotImplementedException ();
+				return dataPath;
 			}
 			set {
-				throw new NotImplementedException ();
+				dataPath = (value == null ? "" : value);
 			}
 		}
 
+		BindingDirection direction = BindingDirection.In;
 		public BindingDirection Direction {
 			get {
-				throw new NotImplementedException ();
+				return direction;
 			}
 			set {
-				throw new NotImplementedException ();
+				direction = value;
 			}
 		}
 
+		string id = "";
 		public string ID {
 			get {
-				throw new NotImplementedException ();
+				return id;
 			}
 			set {
-				throw new NotImplementedException ();
+				id = (value == null ? "" : value);
 			}
 		}
 
+		string property = "";
 		public string Property {
 			get {
-				throw new NotImplementedException ();
+				return property;
 			}
 			set {
-				throw new NotImplementedException ();
+				property = (value == null ? "" : value);
 			}
 		}
 
+		string propertyKey = "";
 		public string PropertyKey {
 			get {
-				throw new NotImplementedException ();
+				return propertyKey;
 			}
 			set {
-				throw new NotImplementedException ();
+				propertyKey = (value == null ? "" : value);
 			}
 		}
 
+		TransformScriptEvent transform;
 		public TransformScriptEvent Transform {
 			get {
-				throw new NotImplementedException ();
+				if (transform == null)
+					transform = new TransformScriptEvent (this);
+
+				return transform;
 			}
 		}
 
+		string transformerArgument = "";
 		public string TransformerArgument {
 			get {
-				throw new NotImplementedException ();
+				return transformerArgument;
 			}
 			set {
-				throw new NotImplementedException ();
+				transformerArgument = (value == null ? "" : value);
 			}
 		}
 
 		public void RenderScript (ScriptTextWriter writer)
 		{
-			throw new NotImplementedException ();
+			writer.WriteStartElement ("binding");
+
+			if (Automatic == false)
+				writer.WriteAttributeString ("automatic", Automatic.ToString());
+
+			if (DataContext != "")
+				writer.WriteAttributeString ("dataContext", DataContext);
+
+			if (DataPath != "")
+				writer.WriteAttributeString ("dataPath", DataPath);
+
+			if (Direction != BindingDirection.In)
+				writer.WriteAttributeString ("direction", Direction.ToString());
+
+			if (ID != "")
+				writer.WriteAttributeString ("id", ID);
+
+			if (Property != "")
+				writer.WriteAttributeString ("property", Property);
+
+			if (PropertyKey != "")
+				writer.WriteAttributeString ("propertyKey", PropertyKey);
+
+			if (TransformerArgument != "")
+				writer.WriteAttributeString ("transformerArgument", TransformerArgument);
+
+			writer.WriteEndElement ();
 		}
 
 		public IScriptObject Owner {
 			get {
-				throw new NotImplementedException ();
+				return null;
 			}
 		}
 
 		ScriptTypeDescriptor IScriptObject.GetTypeDescriptor ()
 		{
-			throw new NotImplementedException ();
+			ScriptTypeDescriptor d = new ScriptTypeDescriptor (this);
+
+			d.AddEvent (new ScriptEventDescriptor ("transform", false));
+
+			d.AddMethod (new ScriptMethodDescriptor ("evaluateIn", new string[0]));
+			d.AddMethod (new ScriptMethodDescriptor ("evaluateOut", new string[0]));
+
+			d.AddProperty (new ScriptPropertyDescriptor ("automatic", ScriptType.Boolean, false, "Automatic"));
+			d.AddProperty (new ScriptPropertyDescriptor ("dataContext", ScriptType.Object, false, "DataContext"));
+			d.AddProperty (new ScriptPropertyDescriptor ("dataPath", ScriptType.String, false, "DataPath"));
+			d.AddProperty (new ScriptPropertyDescriptor ("direction", ScriptType.Enum, false, "Direction"));
+			d.AddProperty (new ScriptPropertyDescriptor ("id", ScriptType.String, false, "ID"));
+			d.AddProperty (new ScriptPropertyDescriptor ("property", ScriptType.String, false, "Property"));
+			d.AddProperty (new ScriptPropertyDescriptor ("propertyKey", ScriptType.String, false, "PropertyKey"));
+			d.AddProperty (new ScriptPropertyDescriptor ("transformerArgument", ScriptType.String, false, "TransformerArgument"));
+
+			d.Close ();
+
+			return d;
 		}
 	}
 }
