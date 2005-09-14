@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.UI.ClickBehavior
+// Microsoft.Web.UI.FloatingBehavior
 //
 // Author:
 //   Chris Toshok (toshok@ximian.com)
@@ -33,9 +33,9 @@ using System;
 
 namespace Microsoft.Web.UI
 {
-	public class ClickBehavior : Behavior
+	public class FloatingBehavior : Behavior
 	{
-		public ClickBehavior ()
+		public FloatingBehavior ()
 		{
 		}
 
@@ -43,23 +43,22 @@ namespace Microsoft.Web.UI
 		{
 			base.InitializeTypeDescriptor (typeDescriptor);
 
-			/* XXX should make this use Click, but Owner == null is causing exceptions */
-			typeDescriptor.AddEvent (new ScriptEventDescriptor ("click", true));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("handle", ScriptType.Object, false, "Handle"));
 		}
 
-		ScriptEvent click;
-		public ScriptEvent Click {
+		string handle = "";
+		public string Handle {
 			get {
-				if (click == null)
-					click = new ScriptEvent (Owner, "click", true);
-
-				return click;
+				return handle;
+			}
+			set {
+				handle = (value == null ? "" : value);
 			}
 		}
 
 		public override string TagName {
 			get {
-				return "clickBehavior";
+				return "floatingBehavior";
 			}
 		}
 	}

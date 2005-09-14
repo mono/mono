@@ -1,5 +1,5 @@
 //
-// Tests for Microsoft.Web.UI.ClickBehavior
+// Tests for Microsoft.Web.UI.FloatingBehavior
 //
 // Author:
 //	Chris Toshok (toshok@ximian.com)
@@ -40,21 +40,21 @@ using Microsoft.Web.UI;
 namespace MonoTests.Microsoft.Web.UI
 {
 	[TestFixture]
-	public class ClickBehaviorTest
+	public class FloatingBehaviorTest
 	{
 		[Test]
 		public void Properties ()
 		{
-			ClickBehavior b = new ClickBehavior ();
+			FloatingBehavior b = new FloatingBehavior ();
 
 			// default
-			Assert.AreEqual ("clickBehavior", b.TagName, "A1");
+			Assert.AreEqual ("floatingBehavior", b.TagName, "A1");
 		}
 
 		[Test]
 		public void Render ()
 		{
-			ClickBehavior c = new ClickBehavior ();
+			FloatingBehavior c = new FloatingBehavior ();
 			StringWriter sw;
 			ScriptTextWriter w;
 
@@ -83,7 +83,7 @@ namespace MonoTests.Microsoft.Web.UI
 		[Test]
 		public void TypeDescriptor ()
 		{
-			ClickBehavior a = new ClickBehavior();
+			FloatingBehavior a = new FloatingBehavior();
 			ScriptTypeDescriptor desc = ((IScriptObject)a).GetTypeDescriptor ();
 
 			Assert.AreEqual (a, desc.ScriptObject, "A1");
@@ -95,28 +95,28 @@ namespace MonoTests.Microsoft.Web.UI
 			IEnumerator<ScriptEventDescriptor> ee = events.GetEnumerator();
 			Assert.IsTrue (ee.MoveNext(), "A3");
 			DoEvent (ee.Current, "propertyChanged", true);
-			Assert.IsTrue (ee.MoveNext(), "A4");
-			DoEvent (ee.Current, "click", true);
-			Assert.IsFalse (ee.MoveNext(), "A5");
+			Assert.IsFalse (ee.MoveNext(), "A4");
 
 			// methods
 			IEnumerable<ScriptMethodDescriptor> methods = desc.GetMethods();
-			Assert.IsNotNull (methods, "A6");
+			Assert.IsNotNull (methods, "A5");
 
 			IEnumerator<ScriptMethodDescriptor> me = methods.GetEnumerator();
 			Assert.IsFalse (me.MoveNext ());
 
 			// properties
 			IEnumerable<ScriptPropertyDescriptor> props = desc.GetProperties();
-			Assert.IsNotNull (props, "A7");
+			Assert.IsNotNull (props, "A6");
 
 			IEnumerator<ScriptPropertyDescriptor> pe = props.GetEnumerator();
-			Assert.IsTrue (pe.MoveNext(), "A8");
+			Assert.IsTrue (pe.MoveNext(), "A7");
 			DoProperty (pe.Current, "bindings", ScriptType.Array, true, "Bindings");
-			Assert.IsTrue (pe.MoveNext(), "A9");
+			Assert.IsTrue (pe.MoveNext(), "A8");
 			DoProperty (pe.Current, "dataContext", ScriptType.Object, false, "");
-			Assert.IsTrue (pe.MoveNext(), "A10");
+			Assert.IsTrue (pe.MoveNext(), "A9");
 			DoProperty (pe.Current, "id", ScriptType.String, false, "ID");
+			Assert.IsTrue (pe.MoveNext(), "A10");
+			DoProperty (pe.Current, "handle", ScriptType.Object, false, "Handle");
 			Assert.IsFalse (pe.MoveNext(), "A11");
 		}
 
@@ -124,7 +124,7 @@ namespace MonoTests.Microsoft.Web.UI
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void IsTypeDescriptorClosed ()
 		{
-			ClickBehavior a = new ClickBehavior();
+			FloatingBehavior a = new FloatingBehavior();
 			ScriptTypeDescriptor desc = ((IScriptObject)a).GetTypeDescriptor ();
 
 			desc.AddEvent (new ScriptEventDescriptor ("testEvent", true));
