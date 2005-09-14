@@ -131,7 +131,7 @@ namespace System.Web.UI.HtmlControls
 		{
 		}
 		
-		public void CreateStyleRule (Style style, string selection, IUrlResolutionService urlResolver)
+		public void CreateStyleRule (Style style, IUrlResolutionService urlResolver, string selection)
 		{
 			StyleEntry entry = new StyleEntry ();
 			entry.Style = style;
@@ -149,7 +149,7 @@ namespace System.Web.UI.HtmlControls
 			
 			string name = "aspnet_" + entries.Count;
 			style.SetRegisteredCssClass (name);
-			CreateStyleRule (style, "." + name, urlResolver);
+			CreateStyleRule (style, urlResolver, "." + name);
 		}
 		
 		public void Render (HtmlTextWriter writer)
