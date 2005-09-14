@@ -56,7 +56,7 @@ endif
 LIBRARY = System.Web.dll
 LIB_MCS_FLAGS = \
 	-unsafe \
-	-nowarn:649  	\
+	-nowarn:612,649	\
 	-r:$(corlib)	 		\
 	-r:System.dll 			\
 	-r:System.Drawing.dll 		\
