@@ -242,7 +242,9 @@ namespace Microsoft.Vsa {
 				else if (!initNewCalled)
 					throw new VsaException (VsaError.EngineNotInitialized);
 
-				items = new VsaItems ((VsaEngine) this);
+				if (items == null)
+					items = new VsaItems ((VsaEngine) this);
+
 				return items;
 			}
 		}
@@ -477,32 +479,6 @@ namespace Microsoft.Vsa {
 		//
 		public virtual bool Compile ()
 		{
-			if (closed)
-				throw new VsaException (VsaError.EngineClosed);
-			else if (busy)
-				throw new VsaException (VsaError.EngineBusy);
-			else if (empty)
-				throw new VsaException (VsaError.EngineEmpty);
-			else if (running)
-				throw new VsaException (VsaError.EngineRunning);
-			else if (!initNewCalled)
-				throw new VsaException (VsaError.EngineNotInitialized);
-			else if (namespaceNotSet)
-				throw new VsaException (VsaError.RootNamespaceNotSet);
-
-			foreach (IVsaItem item in items) {
-				if (item is VsaCodeItem) {
-					VsaCodeItem code_item = (VsaCodeItem) item;
-					Parser parser = new Parser ();
-					ScriptBlock block = (ScriptBlock) parser.Parse (code_item.SourceText, code_item.Name, 0);
-					if (block != null) {
-						SemanticAnalyser.Run (block);
-						CodeGenerator.Run (code_item.Name, block);
-						Console.WriteLine ("Compilation succeeded");
-					}						
-				} else // FIXME: implement compilation process when VsaItem is AppGlobal and Reference.
-					throw new Exception ();
-			}
 			return false;
 		}
 
