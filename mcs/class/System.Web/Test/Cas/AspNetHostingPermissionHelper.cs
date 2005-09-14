@@ -40,7 +40,7 @@ namespace MonoCasTests {
 	public abstract class AspNetHostingPermissionHelper {
 
 		[SetUp]
-		public void SetUp ()
+		public virtual void SetUp ()
 		{
 			if (!SecurityManager.SecurityEnabled)
 				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
