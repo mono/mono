@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.UI.FloatingBehavior
+// Microsoft.Web.UI.DataSourceDropTarget
 //
 // Author:
 //   Chris Toshok (toshok@ximian.com)
@@ -33,9 +33,9 @@ using System;
 
 namespace Microsoft.Web.UI
 {
-	public class FloatingBehavior : Behavior
+	public class DataSourceDropTarget : Behavior
 	{
-		public FloatingBehavior ()
+		public DataSourceDropTarget ()
 		{
 		}
 
@@ -48,22 +48,55 @@ namespace Microsoft.Web.UI
 		{
 			base.InitializeTypeDescriptor (typeDescriptor);
 
-			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("handle", ScriptType.Object, false, "Handle"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("acceptedDataTypes", ScriptType.Array, false, "AcceptedDataTypes"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("append", ScriptType.Boolean, false, "Append"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("target", ScriptType.String, false, "Target"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("property", ScriptType.String, false, "Property"));
 		}
 
-		string handle = "";
-		public string Handle {
+		string acceptedDataTypes = "";
+		public string AcceptedDataTypes {
 			get {
-				return handle;
+				return acceptedDataTypes;
 			}
 			set {
-				handle = (value == null ? "" : value);
+				acceptedDataTypes = (value == null ? "" : value);
+			}
+		}
+
+		bool append = false;
+		public bool Append {
+			get {
+				return append;
+			}
+			set {
+				append = value;
+			}
+		}
+
+		string property = "";
+		public string Property {
+			get {
+				return property;
+			}
+			set {
+				property = (value == null ? "" : value);
+			}
+		}
+
+		string target = "";
+		public string Target {
+			get {
+				return target;
+			}
+			set {
+				target = (value == null ? "" : value);
 			}
 		}
 
 		public override string TagName {
 			get {
-				return "floatingBehavior";
+				return "dataSourceDropTarget";
 			}
 		}
 	}

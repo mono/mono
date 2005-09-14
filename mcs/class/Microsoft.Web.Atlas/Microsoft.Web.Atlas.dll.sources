@@ -30,6 +30,7 @@ Microsoft.Web/VisibilityMode.cs
 Microsoft.Web.UI/ActivationType.cs
 Microsoft.Web.UI/Button.cs
 Microsoft.Web.UI/ClickBehavior.cs
+Microsoft.Web.UI/DataSourceDropTarget.cs
 Microsoft.Web.UI/DragMode.cs
 Microsoft.Web.UI/FloatingBehavior.cs
 Microsoft.Web.UI/HoverBehavior.cs

@@ -39,6 +39,11 @@ namespace Microsoft.Web.UI
 		{
 		}
 
+		protected override void AddAttributesToElement (ScriptTextWriter writer)
+		{
+			base.AddAttributesToElement (writer);
+		}
+
 		protected override void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
 		{
 			base.InitializeTypeDescriptor (typeDescriptor);
