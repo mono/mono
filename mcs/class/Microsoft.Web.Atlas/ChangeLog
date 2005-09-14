@@ -1,5 +1,13 @@
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
+	* Test/Microsoft.Web/ScriptEventDescriptorTest.cs,
+	Test/Microsoft.Web/ScriptMethodDescriptorTest.cs,
+	Test/Microsoft.Web/ScriptPropertyDescriptorTest.cs: new tests.
+
+	* Microsoft.Web.Atlas_test.dll.sources: add the descriptor tests.
+	
+2005-09-14  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.Atlas_test.dll.sources: add
 	ScriptTypeDescriptorTest
 

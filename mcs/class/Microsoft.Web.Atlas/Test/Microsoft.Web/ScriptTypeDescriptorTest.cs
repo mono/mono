@@ -95,6 +95,15 @@ namespace MonoTests.Microsoft.Web
 
 			td.AddEvent (new ScriptEventDescriptor ("testEvent", true));
 		}
+
+		[Test]
+		public void CloseAfterClose () {
+			ActionPoker a = new ActionPoker();
+			ScriptTypeDescriptor td = new ScriptTypeDescriptor (a);
+
+			td.Close ();
+			td.Close ();
+		}
 	}
 }
 #endif
