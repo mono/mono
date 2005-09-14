@@ -54,6 +54,9 @@ namespace MonoCasTests.System.Web.Caching {
 
 		// note: CacheDependency still requires some file access
 		[FileIOPermission (SecurityAction.Assert, Unrestricted = true)]
+#if ONLY_1_1
+		[SecurityPermission (SecurityAction.Assert, UnmanagedCode = true)]
+#endif
 		private object FileIOPermissionCreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
 		{
 			return CreateControlStringCtor (action, level);
@@ -61,8 +64,21 @@ namespace MonoCasTests.System.Web.Caching {
 
 		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
 		{
-			if ((level != AspNetHostingPermissionLevel.None) && (action == SecurityAction.PermitOnly))
-				return FileIOPermissionCreateControl (action, level);
+			if ((level != AspNetHostingPermissionLevel.None) && (action == SecurityAction.PermitOnly)) {
+				try {
+					return FileIOPermissionCreateControl (action, level);
+				}
+				catch (TargetInvocationException tie) {
+#if ONLY_1_1
+					// hide this error (occurs with ms 1.x)
+					if ((tie.InnerException is NullReferenceException) &&
+						(level == AspNetHostingPermissionLevel.Unrestricted)) {
+						return String.Empty;
+					}
+#endif
+					throw tie;
+				}
+			} 
 			else
 				return CreateControlStringCtor (action, level);
 		}
