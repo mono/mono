@@ -1,3 +1,9 @@
+2005-09-15  Chris Toshok  <toshok@ximian.com>
+
+	* resources/AtlasControls.js: new file.
+
+	* resources/AtlasCore.js: new file.
+
 2005-09-14  Chris Toshok  <toshok@ximian.com>
 
 	* Microsoft.Web.UI/Option.cs: new implementation.
