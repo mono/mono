@@ -64,7 +64,6 @@ namespace System.Data.SqlTypes
 		public static readonly int IgnoreWidth = 0x10;
 		public static readonly SqlString Null;
 
-		internal static readonly NumberFormatInfo MoneyFormat;
 		internal static NumberFormatInfo DecimalFormat;
 		#endregion // Fields
 
@@ -72,10 +71,6 @@ namespace System.Data.SqlTypes
 
 		static SqlString ()
 		{
-			MoneyFormat = (NumberFormatInfo) NumberFormatInfo.InvariantInfo.Clone ();
-			MoneyFormat.NumberDecimalDigits = 4;
-			MoneyFormat.NumberGroupSeparator = String.Empty;
-
 			DecimalFormat = (NumberFormatInfo) NumberFormatInfo.InvariantInfo.Clone ();
 			DecimalFormat.NumberDecimalDigits = 13;
 			DecimalFormat.NumberGroupSeparator = String.Empty;
@@ -602,8 +597,7 @@ namespace System.Data.SqlTypes
 			if (x.IsNull)
 				return Null;
 			else
-				return new SqlString (x.Value.ToString ());
-				// return new SqlString (x.Value.ToString ("N", MoneyFormat));
+				return new SqlString (x.ToString ());
 		}
 
 		public static explicit operator SqlString (SqlSingle x) 

@@ -49,9 +49,18 @@ namespace System.Data.SqlTypes
 		public static readonly SqlMoney Null;
 		public static readonly SqlMoney Zero = new SqlMoney (0);
 
+		private static readonly NumberFormatInfo MoneyFormat;
+
 		#endregion
 
 		#region Constructors
+
+		static SqlMoney ()
+		{
+			MoneyFormat = (NumberFormatInfo) NumberFormatInfo.InvariantInfo.Clone ();
+			MoneyFormat.NumberDecimalDigits = 4;
+			MoneyFormat.NumberGroupSeparator = String.Empty;
+		}
 
 		public SqlMoney (decimal value) 
 		{
@@ -265,7 +274,7 @@ namespace System.Data.SqlTypes
 			if (!notNull)
 				return "Null";
 			else
-				return value.ToString ();
+				return value.ToString ("N", MoneyFormat);
 		}
 
 		public static SqlMoney operator + (SqlMoney x, SqlMoney y)

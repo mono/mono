@@ -1,3 +1,12 @@
+2005-09-15  Raja R Harinath  <rharinath@novell.com>
+
+	* SqlString.cs (MoneyFormat): Move to SqlMoney.cs.
+	(operator SqlString) [SqlMoney variant]: Delegate to
+	SqlMoney.ToString ().
+	* SqlMoney.cs (MoneyFormat): Move from SqlString.cs.
+	(SqlString): New static constructor.
+	(ToString): Use it.
+
 2005-09-02 Umadevi S <sumadevi@novell.com>
 
 	* SqlXml.cs : Added a dummy placeholder to compile MicrosoftServer namespace
