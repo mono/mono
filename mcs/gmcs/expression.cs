@@ -5837,51 +5837,46 @@ namespace Mono.CSharp {
 				//
 				if (!omit_args) {
 					Type t = null;
-					if (this_call) {
-						ec.EmitThis ();
-						t = decl_type;
-					} else {
-						Type iexpr_type = instance_expr.Type;
+					Type iexpr_type = instance_expr.Type;
 
+					//
+					// Push the instance expression
+					//
+					if (TypeManager.IsValueType (iexpr_type)) {
 						//
-						// Push the instance expression
-						//
-						if (TypeManager.IsValueType (iexpr_type)) {
+						// Special case: calls to a function declared in a 
+						// reference-type with a value-type argument need
+						// to have their value boxed.
+						if (decl_type.IsValueType ||
+						    iexpr_type.IsGenericParameter) {
 							//
-							// Special case: calls to a function declared in a 
-							// reference-type with a value-type argument need
-							// to have their value boxed.
-							if (decl_type.IsValueType ||
-							    iexpr_type.IsGenericParameter) {
-								//
-								// If the expression implements IMemoryLocation, then
-								// we can optimize and use AddressOf on the
-								// return.
-								//
-								// If not we have to use some temporary storage for
-								// it.
-								if (instance_expr is IMemoryLocation) {
-									((IMemoryLocation)instance_expr).
-										AddressOf (ec, AddressOp.LoadStore);
-								} else {
-									LocalTemporary temp = new LocalTemporary (ec, iexpr_type);
-									instance_expr.Emit (ec);
-									temp.Store (ec);
-									temp.AddressOf (ec, AddressOp.Load);
-								}
-
-								// avoid the overhead of doing this all the time.
-								if (dup_args)
-									t = TypeManager.GetReferenceType (iexpr_type);
+							// If the expression implements IMemoryLocation, then
+							// we can optimize and use AddressOf on the
+							// return.
+							//
+							// If not we have to use some temporary storage for
+							// it.
+							if (instance_expr is IMemoryLocation) {
+								((IMemoryLocation)instance_expr).
+									AddressOf (ec, AddressOp.LoadStore);
 							} else {
+								LocalTemporary temp = new LocalTemporary (ec, iexpr_type);
 								instance_expr.Emit (ec);
-								ig.Emit (OpCodes.Box, instance_expr.Type);
-								t = TypeManager.object_type;
+								temp.Store (ec);
+								temp.AddressOf (ec, AddressOp.Load);
 							}
+
+							// avoid the overhead of doing this all the time.
+							if (dup_args)
+								t = TypeManager.GetReferenceType (iexpr_type);
 						} else {
 							instance_expr.Emit (ec);
-							t = instance_expr.Type;
+							ig.Emit (OpCodes.Box, instance_expr.Type);
+							t = TypeManager.object_type;
 						}
+					} else {
+						instance_expr.Emit (ec);
+						t = instance_expr.Type;
 					}
 
 					if (dup_args) {

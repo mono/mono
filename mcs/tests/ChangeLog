@@ -1,3 +1,8 @@
+2005-09-15  Raja R Harinath  <rharinath@novell.com>
+
+	* test-455.cs: New test.  Distilled from a failing unit test of
+	System.Runtime.Serialization.Formatters.Soap.dll.
+
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* gtest-200.cs : test for bug #75668.

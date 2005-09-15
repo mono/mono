@@ -1,3 +1,9 @@
+2005-09-15  Raja R Harinath  <rharinath@novell.com>
+
+	Fix test-455.cs.
+	* expression.cs (Invocation.EmitCall): Remove optimization on
+	this_call since it doesn't handle 'this' being a value type.
+
 2005-09-05  Geoff Norton  <gnorton@customerdna.com>
 
 	* driver.cs: Ensure file handles are closed after parsing
