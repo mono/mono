@@ -1,3 +1,35 @@
+2005-09-15  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* ParseChildrenAttribute.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level. Simplified Equals to avoid
+	casting. Added new ctor and public fields (2.0). Changed 
+	ChildControlType setter visibility to internal.
+	* PartialCachingAttribute.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level. Added new ctor and 
+	SqlDependency property (2.0).
+	* PartialCachingControl.cs: Added LinkDemand and InheritanceDemand for
+	AspNetHostingPermission with Minimal level.
+	* PersistenceModeAttribute.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level. Simplified Equals to avoid
+	casting.
+	* PersistChildrenAttribute.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level. Simplified Equals to avoid 
+	casting.
+	* PropertyConverter.cs: Added LinkDemand for AspNetHostingPermission 
+	with Minimal level. Class is static in 2.0.
+	* RootBuilder.cs: Added LinkDemand and, for 2.0, InheritanceDemand for 
+	AspNetHostingPermission with Minimal level. Class is no more sealed in
+	2.0. Added new (2.0) BuiltObjects property.
+	* SimpleWebHandlerParser.cs: Added LinkDemand and InheritanceDemand 
+	for AspNetHostingPermission with Minimal level.
+	* StateItem.cs: Added LinkDemand for AspNetHostingPermission with 
+	Minimal level.
+	* StateBag.cs: Added LinkDemand for AspNetHostingPermission with 
+	Minimal level. Removed SetDirty() which was called (2.0) but did 
+	nothing.
+	* StaticPartialCachingControl.cs: Added LinkDemand and 
+	InheritanceDemand for AspNetHostingPermission with Minimal level.
+
 2005-09-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Html32TextWriter.cs: Added LinkDemand and InheritanceDemand for 

@@ -5,8 +5,7 @@
 //   Bob Smith <bob@thestuff.net>
 //
 // (C) Bob Smith
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,11 +27,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Web;
+using System.Security.Permissions;
 
-namespace System.Web.UI
-{
+namespace System.Web.UI {
+
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
         public sealed class StateItem
         {
                 private bool _isDirty = false;

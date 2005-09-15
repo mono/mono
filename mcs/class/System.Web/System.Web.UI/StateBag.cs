@@ -4,7 +4,7 @@
 // Author:
 //        Ben Maurer <bmaurer@novell.com>
 //
-// (c) 2005 Novell
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,11 +28,12 @@
 
 using System.Collections;
 using System.Collections.Specialized;
+using System.Security.Permissions;
 
-namespace System.Web.UI 
-{
-	
+namespace System.Web.UI {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class StateBag : IDictionary, IStateManager {
 
 		HybridDictionary ht;
@@ -276,11 +277,6 @@ namespace System.Web.UI
 				StateItem si = (StateItem) de.Value;
 				si.IsDirty = dirty;
 			}
-		}
-
-		internal void SetDirty ()
-		{
-			// Just lets me compile
 		}
 #endif
 	}

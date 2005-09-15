@@ -5,7 +5,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc. (http://www.ximian.com)
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,15 +27,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
+using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.UI.HtmlControls;
 
-namespace System.Web.UI
-{
-	public sealed class RootBuilder : TemplateBuilder
-	{
+namespace System.Web.UI {
+
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_2_0
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public class RootBuilder : TemplateBuilder {
+
+		private Hashtable built_objects;
+
+		public RootBuilder ()
+		{
+		}
+#else
+	public sealed class RootBuilder : TemplateBuilder {
+#endif
 		static Hashtable htmlControls;
 		static Hashtable htmlInputControls;
 		AspComponentFoundry foundry;
@@ -92,12 +103,16 @@ namespace System.Web.UI
 		{
 			foundry = new AspComponentFoundry ();
 			line = 1;
-			fileName = parser.InputFile;
+			if (parser != null)
+				fileName = parser.InputFile;
 			Init (parser, null, null, null, null, null);
 		}
 
 		public override Type GetChildControlType (string tagName, IDictionary attribs) 
 		{
+			if (tagName == null)
+				throw new ArgumentNullException ("tagName");
+
 			string prefix;
 			string cname;
 			int colon = tagName.IndexOf (':');
@@ -151,6 +166,16 @@ namespace System.Web.UI
 		internal AspComponentFoundry Foundry {
 			get { return foundry; }
 		}
+#if NET_2_0
+		// FIXME: it's empty (but not null) when using the new default ctor
+		// but I'm not sure when something should gets in...
+		public IDictionary BuiltObjects {
+			get {
+				if (built_objects == null)
+					built_objects = new Hashtable ();
+				return built_objects;
+			}
+		}
+#endif
 	}
 }
-

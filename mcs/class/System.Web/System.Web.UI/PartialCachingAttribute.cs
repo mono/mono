@@ -4,8 +4,7 @@
 // Duncan Mak  (duncan@ximian.com)
 //
 // (C) Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,10 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Security.Permissions;
 
 namespace System.Web.UI {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[AttributeUsage (AttributeTargets.Class)]
 	public sealed class PartialCachingAttribute : Attribute
 	{
@@ -41,6 +43,10 @@ namespace System.Web.UI {
 #if NET_1_1
 		bool shared;
 #endif
+#if NET_2_0
+		string sqlDependency;
+#endif
+
 		
 		public PartialCachingAttribute (int duration)
 		{
@@ -67,6 +73,18 @@ namespace System.Web.UI {
 			this.shared = shared;
 		}
 #endif
+#if NET_2_0
+		public PartialCachingAttribute (int duration, string varyByParams, string varyByControls,
+						string varyByCustom, string sqlDependency, bool shared)
+		{
+			this.duration = duration;
+			this.varyByParams = varyByParams;
+			this.varyByControls = varyByControls;
+			this.varyByCustom = varyByCustom;
+			this.sqlDependency = sqlDependency;
+			this.shared = shared;
+		}
+#endif
 
 		public int Duration {
 			get { return duration; }
@@ -87,6 +105,11 @@ namespace System.Web.UI {
 #if NET_1_1
 		public bool Shared {
 			get { return shared; }
+		}
+#endif
+#if NET_2_0
+		public string SqlDependency {
+			get { return sqlDependency; }
 		}
 #endif
 	}
