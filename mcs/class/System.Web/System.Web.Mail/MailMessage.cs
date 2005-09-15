@@ -39,7 +39,7 @@ namespace System.Web.Mail
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #if NET_2_0
-	[Obsolete]
+	[Obsolete ("The recommended alternative is System.Net.Mail.MailMessage.")]
 #endif
 	public class MailMessage
 	{

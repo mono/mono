@@ -29,10 +29,10 @@
 namespace System.Web.Mail {
 
 #if NET_2_0
-	[Obsolete]
+	[Obsolete ("The recommended alternative is System.Net.Mime.TransferEncoding.")]
 #endif
 	public enum MailEncoding {
 		UUEncode,
 		Base64
-	} 
+	}
 }

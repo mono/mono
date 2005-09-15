@@ -27,7 +27,9 @@
 //
 
 namespace System.Web.Mail {
-
+#if NET_2_0
+	[Obsolete ("The recommended alternative is System.Net.Mail.MailPriority.")]
+#endif
 	public enum MailPriority {
 		Normal,
 		Low,

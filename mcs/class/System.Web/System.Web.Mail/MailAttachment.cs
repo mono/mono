@@ -38,7 +38,7 @@ namespace System.Web.Mail
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #if NET_2_0
-	[Obsolete]
+	[Obsolete ("The recommended alternative is System.Net.Mail.Attachment.")]
 #endif
 	public class MailAttachment
 	{
@@ -64,16 +64,16 @@ namespace System.Web.Mail
 			this.filename = filename;
 			this.encoding = encoding;
 		}
-	    
-	        // Properties
+
+		// Properties
 		public string Filename 
-	        {
+		{
 			get { return filename; } 
 		}
 		
 		public MailEncoding Encoding 
 		{
 			get { return encoding; } 
-		}		
+		}
 	}
 }

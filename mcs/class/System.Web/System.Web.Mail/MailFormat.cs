@@ -29,7 +29,7 @@
 namespace System.Web.Mail {
 
 #if NET_2_0
-	[Obsolete]
+	[Obsolete ("The recommended alternative is System.Net.Mail.MailMessage.IsBodyHtml.")]
 #endif
 	public enum MailFormat {
 		Text,
