@@ -128,6 +128,7 @@ namespace System.Windows.Forms
 		private bool allow_navigation;
 		private bool allow_sorting;
 		private Color alternating_backcolor;
+		private Color backColor;
 		private Color background_color;
 		internal BorderStyle border_style;
 		private Color caption_backcolor;
@@ -190,6 +191,7 @@ namespace System.Windows.Forms
 			allow_navigation = true;
 			allow_sorting = true;
 			begininit = false;
+			backColor = ThemeEngine.Current.DataGridBackColor;
 			alternating_backcolor = def_alternating_backcolor;
 			background_color = def_background_color;
 			border_style = BorderStyle.Fixed3D;
@@ -299,10 +301,10 @@ namespace System.Windows.Forms
 
 		public Color BackColor {
 			get {
-				return base.BackColor;
+				return backColor;
 			}
 			set {
-				base.BackColor = value;
+				backColor = value;
 			}
 		}
 

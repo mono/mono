@@ -40,6 +40,8 @@ namespace System.Windows.Forms
 		private IFormatProvider format_provider = null;
 		private StringFormat string_format =  new StringFormat ();
 		private DataGridTextBox textbox = null;
+		private static readonly int offset_x = 2;
+		private static readonly int offset_y = 2;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -182,16 +184,14 @@ namespace System.Windows.Forms
 			} else {
 				textbox.ReadOnly = false;
 			}			
-
-			textbox.Location = new Point (bounds.X, bounds.Y);
-			bounds.X += 2; bounds.Y += 2;
-			bounds.Width -= 2; bounds.Height -= 2;
-			textbox.Size = new Size (bounds.Width, bounds.Height);
+			
+			textbox.Location = new Point (bounds.X + offset_x, bounds.Y + offset_y);
+			textbox.Size = new Size (bounds.Width - offset_x, bounds.Height - offset_y);
 
 			obj = GetColumnValueAtRow (source, rowNum);
 			textbox.Text = GetFormattedString (obj);
 			textbox.Focus ();
-			textbox.SelectAll ();
+			textbox.SelectAll ();			
 		}
 
 		protected void EndEdit ()
@@ -275,11 +275,15 @@ namespace System.Windows.Forms
 				break;
 			}			
 					
-			g.FillRectangle (backBrush, textBounds);			
+			g.FillRectangle (backBrush, textBounds);
+			PaintGridLine (g, textBounds);
+			
+			textBounds.Y += offset_y;
+			textBounds.Height -= offset_y;
 			
 			string_format.FormatFlags |= StringFormatFlags.NoWrap;
 			g.DrawString (text, DataGridTableStyle.DataGrid.Font, foreBrush, textBounds, string_format);
-			PaintGridLine (g, textBounds);
+			
 		}
 		
 		protected internal override void ReleaseHostedControl ()

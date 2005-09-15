@@ -1,4 +1,11 @@
 2005-09-13  Jordi Mas i Hernandez <jordi@ximian.com>
+	
+	* ThemeNice.cs, DataGridTextBoxColumn.cs, ThemeWin32Classic.cs, 
+	DataGrid.cs, Theme.cs
+		- Fixes bugs 76039, 76041
+		- Fixes issues with unused space	 
+
+2005-09-13  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* CheckedListBox.cs: Fixes bug 76028
 	* ListBox.cs: Fixes bug 76028

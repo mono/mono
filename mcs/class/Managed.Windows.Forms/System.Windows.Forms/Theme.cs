@@ -437,6 +437,7 @@ namespace System.Windows.Forms
 		
 		// Default colours
 		public abstract Color DataGridAlternatingBackColor { get; }		
+		public abstract Color DataGridBackColor { get; }		
 		public abstract Color DataGridBackgroundColor { get; }
 		public abstract Color DataGridCaptionBackColor { get; }
 		public abstract Color DataGridCaptionForeColor { get; }		

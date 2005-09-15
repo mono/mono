@@ -861,6 +861,7 @@ namespace System.Windows.Forms
 		public override int DataGridMinimumColumnCheckBoxHeight { get { return 16;} }
 		public override int DataGridMinimumColumnCheckBoxWidth { get { return 16;} }
 		public override Color DataGridAlternatingBackColor { get { return ColorWindow;} }
+		public override Color DataGridBackColor { get  { return  ColorWindow;} }		
 		public override Color DataGridBackgroundColor { get  { return  ColorAppWorkSpace;} }
 		public override Color DataGridCaptionBackColor { get  { return ColorActiveTitle;} }
 		public override Color DataGridCaptionForeColor { get  { return SystemColors.ActiveCaptionText;} }
@@ -1007,6 +1008,8 @@ namespace System.Windows.Forms
 					last_y = rect_row.Y;
 				}
 			}
+			
+			g.ResetClip ();
 
 			// This fills with background colour the unused part in the row headers
 			if (last_y > 0 && rect_row.Y + rect_row.Height < grid.grid_drawing.cells_area.Y + grid.grid_drawing.cells_area.Height) {
@@ -1019,7 +1022,7 @@ namespace System.Windows.Forms
 					not_usedarea);
 			}			
 
-			g.ResetClip ();
+			
 		}
 		
 		public override void DataGridPaintRowHeaderArrow (Graphics g, Rectangle bounds, DataGrid grid) 
