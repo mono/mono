@@ -1,5 +1,11 @@
 2005-09-15  Chris Toshok  <toshok@ximian.com>
 
+	* Assembly/AssemblyInfo.cs: new file.
+
+	* Microsoft.Web.Atlas.dll.sources: add the assemblyinfo stuff.
+
+2005-09-15  Chris Toshok  <toshok@ximian.com>
+
 	* resources/AtlasControls.js: new file.
 
 	* resources/AtlasCore.js: new file.

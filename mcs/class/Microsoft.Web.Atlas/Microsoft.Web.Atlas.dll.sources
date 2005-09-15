@@ -1,3 +1,7 @@
+Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
 Microsoft.Web/ActionCollection.cs
 Microsoft.Web/Action.cs
 Microsoft.Web/ActionMemberConverter.cs
@@ -27,6 +31,8 @@ Microsoft.Web/ScriptTypeDescriptor.cs
 Microsoft.Web/SetPropertyAction.cs
 Microsoft.Web/TransformScriptEvent.cs
 Microsoft.Web/VisibilityMode.cs
+Microsoft.Web.Services/ScriptHandlerFactory.cs
+Microsoft.Web.Services/ScriptModule.cs
 Microsoft.Web.UI/ActivationType.cs
 Microsoft.Web.UI/Button.cs
 Microsoft.Web.UI/ClickBehavior.cs
