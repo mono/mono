@@ -1,5 +1,8 @@
 2005-09-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-x86.c: Applied patch from Patrik Torstensson 
+	<patrik.torstensson@gmail.com>. Add stack overflow handling support for win32.
+
 	* mini-exceptions.c mini-x86.c mini.c: Move the altstack setup/teardown
 	code into mini-exceptions.c. Add some assertions to it.
 
