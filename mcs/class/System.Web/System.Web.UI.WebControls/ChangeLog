@@ -1,3 +1,9 @@
+2005-09-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGrid.cs: merge column styles too. Fixes bug #76106.
+	* DataGridColumn.cs: new internal method to retrieve the styles without
+	creating an instance for them.
+
 2005-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TableCell.cs: do the same as HyperLink and others in
