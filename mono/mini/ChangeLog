@@ -1,3 +1,8 @@
+2005-09-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ia64.h mini-ia64.c: Remove the altstack support code which is
+	now in mini-exceptions.c.
+
 2005-09-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.h mini-am64.c: Remove the altstack support code which is
