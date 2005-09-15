@@ -14,6 +14,7 @@
 		</Build>
 		<Files>
 			<Include>
+				<File RelPath="Consts.cs.in" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap\AuthenticationTypes.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap\Connection.cs" SubType="Code" BuildAction="Compile"/>

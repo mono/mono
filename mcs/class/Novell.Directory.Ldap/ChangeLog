@@ -1,3 +1,6 @@
+2005-15-09  Boris Kirzner <borisk@mainsoft.com>
+	* Novell.Directory.Ldap.vmwcsproj: added reference to Consts.cs.in
+
 2005-14-08  Boris Kirzner <borisk@mainsoft.com>
 	* LdapConnection.cs: 
 		- Values from app settings are not stored anymore in app domain.
