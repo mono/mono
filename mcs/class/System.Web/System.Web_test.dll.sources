@@ -205,6 +205,15 @@ System.Web.UI/DesignerDataBoundLiteralControlCas.cs
 System.Web.UI/DesignTimeParseDataCas.cs
 System.Web.UI/DesignTimeTemplateParserCas.cs
 System.Web.UI/EmptyCollectionCas.cs
+System.Web.UI/Html32TextWriterCas.cs
+System.Web.UI/HtmlTextWriterCas.cs
+System.Web.UI/ImageClickEventArgsCas.cs
+System.Web.UI/LiteralControlCas.cs
+System.Web.UI/LosFormatterCas.cs
+System.Web.UI/ObjectConverterCas.cs
+System.Web.UI/ObjectTagBuilderCas.cs
+System.Web.UI/PageCas.cs
+System.Web.UI/PairCas.cs
 System.Web.UI.HtmlControls/HtmlAnchorCas.cs
 System.Web.UI.HtmlControls/HtmlButtonCas.cs
 System.Web.UI.HtmlControls/HtmlEmptyTagControlBuilderCas.cs
