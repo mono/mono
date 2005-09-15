@@ -1,5 +1,9 @@
 2005-09-15  Raja R Harinath  <rharinath@novell.com>
 
+	* Makefile (PROGRAM): Make profile specific.
+	(gmcs.exe) [PROFILE=net_2_0]: Add utility rule to copy gmcs.exe to
+	the current directory.
+
 	Fix test-455.cs.
 	* expression.cs (Invocation.EmitCall): Remove optimization on
 	this_call since it doesn't handle 'this' being a value type.

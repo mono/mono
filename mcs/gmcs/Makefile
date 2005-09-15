@@ -11,15 +11,23 @@ BUILT_SOURCES = cs-parser.cs
 
 EXTRA_DISTFILES = cs-parser.jay
 
-PROGRAM = gmcs.exe
+PROGRAM = $(topdir)/class/lib/$(PROFILE)/gmcs.exe
 PROGRAM_COMPILE = $(BOOT_COMPILE)
 
-CLEAN_FILES = y.output
+CLEAN_FILES = y.output *.exe *.mdb
 
 cs-parser.cs: cs-parser.jay $(topdir)/jay/skeleton.cs
 	$(topdir)/jay/jay -ctv < $(topdir)/jay/skeleton.cs $< > jay-tmp.out && mv jay-tmp.out $@
 
 include ../build/executable.make
+
+ifeq (net_2_0, $(PROFILE))
+# Utility rule to make debugging somewhat easier.
+all-local: gmcs.exe
+gmcs.exe: $(PROGRAM)
+	cp -p $< $@
+	test ! -f $<.mdb || cp -p $<.mdb $@.mdb
+endif
 
 clean-local: clean-net_2_0_bootstrap
 clean-net_2_0_bootstrap:
