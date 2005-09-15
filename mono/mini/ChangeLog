@@ -1,5 +1,10 @@
 2005-09-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_method_to_ir): Add OP_LMUL imm -> OP_LMUL_IMM conversion
+	on ia64.
+
+	* inssel-long.brg mini-ia64.c: Add OP_LMUL_IMM rules.
+
 	* mini-ia64.h mini-ia64.c: Remove the altstack support code which is
 	now in mini-exceptions.c.
 
