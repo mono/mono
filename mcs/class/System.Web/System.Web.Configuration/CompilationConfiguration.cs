@@ -77,10 +77,14 @@ namespace System.Web.Configuration
 			if (context == null)
 				context = HttpContext.Current;
 
-			config = context.GetConfig ("system.web/compilation") as CompilationConfiguration;
-
-			if (config == null)
-				throw new Exception ("Configuration error.");
+			if (context != null) {
+				config = context.GetConfig ("system.web/compilation") as CompilationConfiguration;
+				if (config == null)
+					throw new Exception ("Configuration error.");
+			} else {
+				// empty config (as used in unit tests)
+				config = new CompilationConfiguration (null);
+			}
 
 			return config;
 		}
