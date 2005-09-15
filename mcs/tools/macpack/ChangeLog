@@ -1,3 +1,9 @@
+2005-09-31  Geoff Norton  <gnorton@customerdna.com>
+
+	* LOADER: Launch a runtime generated symlink to mono instead of
+	/usr/bin/mono.  This makes the Application Title in the menu appear
+	correctly and not as "mono".
+
 2005-03-30  Geoff Norton  <gnorton@customerdna.com>
 	
 	* LOADER: Handle names with " " in them.  Thanks to 
