@@ -188,7 +188,26 @@ namespace System.Drawing {
 													   DefaultScreenResolution / 25.4f	// Millimeter
 												   };
 
-		static internal readonly bool IsHeadless;
+		static int _isHeadless;
+		static internal bool IsHeadless {
+			get {
+				if (_isHeadless == 0) {
+					bool isHeadless = awt.GraphicsEnvironment.isHeadless();
+					if (!isHeadless) {
+						try {
+							awt.Toolkit.getDefaultToolkit();
+						}
+						catch{
+							isHeadless = true;
+						}
+					}
+
+					_isHeadless = isHeadless ? 2 : 1;
+				}
+
+				return _isHeadless > 1;
+			}
+		}
 	
 		#endregion
 
@@ -221,20 +240,6 @@ namespace System.Drawing {
 		#endregion
 		
 		#region Internal Accessors
-
-		static Graphics() {
-			bool isHeadless = awt.GraphicsEnvironment.isHeadless();
-			if (!isHeadless) {
-				try {
-					awt.Toolkit.getDefaultToolkit();
-				}
-				catch{
-					isHeadless = true;
-				}
-			}
-
-			IsHeadless = isHeadless;
-		}
 
 		static internal int DefaultScreenResolution {
 			get {
@@ -517,6 +522,7 @@ namespace System.Drawing {
 					return retVal;
 
 				InternalSetBrush(brush);
+				g.setRenderingHint(awt.RenderingHints.KEY_TEXT_ANTIALIASING, awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 				//end measurment
 
@@ -562,6 +568,9 @@ namespace System.Drawing {
 
 							at1.rotate(Math.PI/2);
 							awt.Shape sha = textlayout.getOutline(at1);
+							geom.AffineTransform t = GetFinalTransform();
+							if (!t.isIdentity())
+								sha = t.createTransformedShape(sha);
 							//g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 							sha = IntersectUserClip(sha);
 							g.fill(sha);
@@ -578,12 +587,22 @@ namespace System.Drawing {
 							}
 						} 
 					}					
+
+					geom.AffineTransform oldT = null;
+					geom.AffineTransform ft = GetFinalTransform();
+
 					//Draw current line
 					IntersectScaledClipWithBase(_clip);
 					try {
+						if (!ft.isIdentity()) {
+							oldT = NativeObject.getTransform();
+							NativeObject.transform(ft);
+						}
 						layout.draw(g, drawPosX, drawPosY);					
 					}
 					finally {
+						if (oldT != null)
+							NativeObject.setTransform(oldT);
 						RestoreBaseClip();
 					}
 				}
