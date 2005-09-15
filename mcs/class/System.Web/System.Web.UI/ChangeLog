@@ -1,3 +1,28 @@
+2005-09-14  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* DataBinder.cs: Added LinkDemand for AspNetHostingPermission with 
+	Minimal level. Fixed some exceptions.
+	* DataBindingCollection.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level. Added 2.0 method and 
+	event.
+	* DataBindingHandlerAttribute.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level.
+	* DataBinding.cs: Added LinkDemand for AspNetHostingPermission with
+	Minimal level. Simplified Equals (reduced casts).
+	* DataBoundLiteralControl.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level. Implemented ITextControl
+	for 2.0.
+	* DesignerDataBoundLiteralControl.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level.
+	* DesignTimeParseData.cs: Added LinkDemand for AspNetHostingPermission
+	with Minimal level. Added new 2.0 properties.
+	* DesignTimeTemplateParser.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level. Made class static and 
+	stubbed missing methods (2.0).
+	* EmptyControlCollection.cs: Added LinkDemand and InheritanceDemand 
+	for AspNetHostingPermission with Minimal level. Changed Add* methods
+	exceptions to HttpException.
+
 2005-09-14  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* AttributeCollection.cs: Added LinkDemand for AspNetHostingPermission

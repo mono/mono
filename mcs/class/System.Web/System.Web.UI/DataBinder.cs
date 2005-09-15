@@ -6,8 +6,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,15 +28,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
+using System.Security.Permissions;
 
 namespace System.Web.UI {
 
-	public sealed class DataBinder
-	{
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public sealed class DataBinder {
 #if NET_2_0
 		[Obsolete]
 #endif
@@ -58,7 +58,7 @@ namespace System.Web.UI {
 		
 		public static object Eval (object container, string expression)
 		{
-			if (expression == null)
+			if ((expression == null) || (expression.Length == 0))
 				throw new ArgumentNullException ("expression");
 
 			object current = container;
@@ -89,7 +89,9 @@ namespace System.Web.UI {
 
 		public static object GetIndexedPropertyValue (object container, string expr)
 		{
-			if (expr == null)
+			if (container == null)
+				throw new ArgumentNullException ("container");
+			if ((expr == null) || (expr.Length == 0))
 				throw new ArgumentNullException ("expr");
 
 			int openIdx = expr.IndexOf ('[');
@@ -171,6 +173,8 @@ namespace System.Web.UI {
 
 		public static object GetPropertyValue (object container, string propName)
 		{
+			if (container == null)
+				throw new ArgumentNullException ("container");
 			if (propName == null)
 				throw new ArgumentNullException ("propName");
 

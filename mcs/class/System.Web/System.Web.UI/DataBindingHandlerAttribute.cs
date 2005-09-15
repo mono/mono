@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.CommandEventArgs.cs
+// System.Web.UI.WebControls.DataBindingHandlerAttribute class
 //
 // Author: Duncan Mak (duncan@novell.com)
 //
@@ -25,8 +25,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Permissions;
+
 namespace System.Web.UI {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[AttributeUsage (AttributeTargets.Class)]
 	public sealed class DataBindingHandlerAttribute : Attribute
 	{

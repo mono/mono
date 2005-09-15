@@ -1,13 +1,12 @@
 //
-// System.Web.UI.DataBoundLiteralCOntrol.cs
+// System.Web.UI.DataBoundLiteralControl.cs
 //
 // Authors:
 // 	Duncan Mak  (duncan@ximian.com)
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,12 +28,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
+using System.Security.Permissions;
 using System.Text;
 
 namespace System.Web.UI {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ToolboxItem(false)]
 	public sealed class DataBoundLiteralControl : Control
 #if NET_2_0
@@ -111,13 +113,12 @@ namespace System.Web.UI {
 		}
 
 #if NET_2_0
-		string ITextControl.Text 
-		{
+		string ITextControl.Text {
 			get {
-				throw new NotImplementedException ();
+				return Text;
 			}
 			set {
-				throw new NotImplementedException ();
+				throw new NotSupportedException ();
 			}
 		}
 #endif		

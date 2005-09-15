@@ -1,5 +1,5 @@
 //
-// System.Web.HttpRequest.cs 
+// System.Web.DesignTimeParseData class
 //
 // 
 // Author:
@@ -29,23 +29,37 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.Web.UI;
+using System.Collections;
 using System.ComponentModel.Design;
+using System.Security.Permissions;
 
 namespace System.Web.UI {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class DesignTimeParseData {
 		EventHandler db_handler;
 		string text;
 	        IDesignerHost host;
 		string durl;
+#if NET_2_0
+		string filter;
+		bool theme;
+		ICollection collection;
+#endif
 		
 		public DesignTimeParseData (IDesignerHost designerHost, string parseText)
 		{
 			host = designerHost;
 			text = parseText;
 		}
+#if NET_2_0
+		public DesignTimeParseData (IDesignerHost designerHost, string parseText, string filter)
+			: this (designerHost, parseText)
+		{
+			this.filter = filter;
+		}
+#endif
 
 		public EventHandler DataBindingHandler {
 			get {
@@ -78,7 +92,20 @@ namespace System.Web.UI {
 				return text;
 			}
 		}
-		
+#if NET_2_0
+		public string Filter {
+			get { return filter; }
+		}
+
+		public bool ShouldApplyTheme {
+			get { return theme; }
+			set { theme = value; }
+		}
+
+		// FIXME: there's probably a way to set this somewhere...
+		public ICollection UserControlRegisterEntries {
+			get { return collection; }
+		}
+#endif
 	}
 }
-
