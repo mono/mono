@@ -5719,7 +5719,7 @@ namespace Mono.CSharp {
 			}
 
 			if (IsMethodExcluded (method, ec))
-                return; 
+				return; 
 			
 			if (!is_static){
 				if (instance_expr == EmptyExpression.Null) {
