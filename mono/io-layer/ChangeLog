@@ -1,3 +1,9 @@
+2005-09-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* io.c:
+	(CreateFile): if the file is a named pipe, treat the handle as a pipe,
+	not as a file. Fixes bug #76075.
+
 2005-08-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* atomic.h: Add support for intel icc.
