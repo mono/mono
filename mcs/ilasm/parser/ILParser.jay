@@ -11,6 +11,9 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Globalization;
+using System.Reflection;
+using System.Security;
+using System.Security.Permissions;
 
 namespace Mono.ILASM {
 
@@ -26,7 +29,75 @@ namespace Mono.ILASM {
                 private PEAPI.PInvokeAttr pinvoke_attr;
                 private ILTokenizer tokenizer;
 		static int yacc_verbose_flag;
+
+                class NameValuePair {
+                        public string Name;
+                        public object Value;
+
+                        public NameValuePair (string name, object value)
+                        {
+                                this.Name = name;
+                                this.Value = value;
+                        }
+                }
+
+                class PermPair {
+                        public PEAPI.SecurityAction sec_action;
+                        public object perm;
+
+                        public PermPair (PEAPI.SecurityAction sec_action, object perm)
+                        {
+                                this.sec_action = sec_action;
+                                this.perm = perm;
+                        }
+                }
+
+                public bool CheckSecurityActionValidity (System.Security.Permissions.SecurityAction action, bool for_assembly)
+                {
+                        if ((action == System.Security.Permissions.SecurityAction.RequestMinimum || 
+                                action == System.Security.Permissions.SecurityAction.RequestOptional || 
+                                action == System.Security.Permissions.SecurityAction.RequestRefuse) && !for_assembly) {
+                                Console.Error.WriteLine (String.Format ("System.Security.Permissions.SecurityAction '{0}' is not valid for this declaration", action));
+                                return false;
+                        }
+
+                        return true;
+                }
+
+                public object ClassRefToObject (object class_ref, object val)
+                {
+                        ExternTypeRef etr = class_ref as ExternTypeRef;
+                        if (etr == null)
+                                /* FIXME: report error? can be PrimitiveTypeRef or TypeRef */
+                                return null;
                                 
+                        System.Type t = etr.GetReflectedType ();
+                        return (t.IsEnum ? Enum.Parse (t, String.Format ("{0}", val)) : val);
+                }
+
+		/* Converts a type_spec to a corresponding PermPair */
+                PermPair TypeSpecToPermPair (object action, object type_spec, ArrayList pairs)
+                {
+                        ExternTypeRef etr = type_spec as ExternTypeRef;
+                        if (etr == null)
+                                /* FIXME: could be PrimitiveTypeRef or TypeRef 
+                                          Report what error? */
+                                return null;
+
+                        System.Type t = etr.GetReflectedType ();
+                        object obj = Activator.CreateInstance (t, 
+                                                new object [] {(System.Security.Permissions.SecurityAction) (short) action});
+
+                        if (pairs != null)
+                                foreach (NameValuePair pair in pairs) {
+                                        PropertyInfo pi = t.GetProperty (pair.Name);
+                                        pi.SetValue (obj, pair.Value, null);
+                                }
+
+                        IPermission iper = (IPermission) t.GetMethod ("CreatePermission").Invoke (obj, null);
+                        return new PermPair ((PEAPI.SecurityAction) action, iper);
+                }
+
 		public ILParser (CodeGen codegen, ILTokenizer tokenizer)
                 {
 			this.codegen = codegen;
@@ -662,7 +733,11 @@ class_decl		: method_all
 			| data_decl
 			| sec_decl
 			  {
-				codegen.CurrentDeclSecurityTarget.AddDeclSecurity ((DeclSecurity) $1);
+				PermPair pp = (PermPair) $1;
+				if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) (short) pp.sec_action, false))
+					throw new Exception (String.Format ("Invalid security action : {0}", pp.sec_action));
+
+				codegen.AddPermission (pp.sec_action, pp.perm);
 			  }
 			| extsource_spec
 			| customattr_decl
@@ -1850,7 +1925,11 @@ method_decl		: D_EMITBYTE int32
 			| instr
 			| sec_decl
 			  {
-				codegen.CurrentDeclSecurityTarget.AddDeclSecurity ((DeclSecurity) $1);
+				PermPair pp = (PermPair) $1;
+				if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) (short) pp.sec_action, false))
+					throw new Exception (String.Format ("Invalid security action : {0}", pp.sec_action));
+
+				codegen.AddPermission (pp.sec_action, pp.perm);
 			  }
 			| extsource_spec
 			| language_decl
@@ -2497,28 +2576,65 @@ custom_type		: call_conv type type_spec DOUBLE_COLON D_CTOR OPEN_PARENS type_lis
 			;
 
 sec_decl		: D_PERMISSION sec_action type_spec OPEN_PARENS nameval_pairs CLOSE_PARENS
+			  {
+                                $$ = TypeSpecToPermPair ($2, $3, (ArrayList) $5);
+			  }
 			| D_PERMISSION sec_action type_spec
+			  {
+                                $$ = TypeSpecToPermPair ($2, $3, null);
+			  }
 			| D_PERMISSIONSET sec_action ASSIGN bytes_list
 			  {
-				$$ = new DeclSecurity ((PEAPI.SecurityAction) $2, (byte []) $4);
+				System.Text.UnicodeEncoding ue = new System.Text.UnicodeEncoding ();
+				PermissionSetAttribute psa = new PermissionSetAttribute ((System.Security.Permissions.SecurityAction) (short) $2);
+				psa.XML = ue.GetString ((byte []) $4);
+				$$ = new PermPair ((PEAPI.SecurityAction) $2, psa.CreatePermissionSet ());
 			  }
 			;
 
 nameval_pairs		: nameval_pair 
+			  {
+				ArrayList pairs = new ArrayList ();
+				pairs.Add ($1);
+				$$ = pairs;
+			  }
 			| nameval_pairs COMMA nameval_pair
+			  {
+			  	ArrayList pairs = (ArrayList) $1;
+				pairs.Add ($3);
+				$$ = pairs;
+			  }
 			;
 
 nameval_pair 		: comp_qstring ASSIGN cavalue
+			  {
+				$$ = new NameValuePair ((string) $1, $3);
+			  }
 			;
 
 cavalue 		: truefalse
 			| int32
 			| int32 OPEN_PARENS int32 CLOSE_PARENS
+			  {
+				$$ = $3;
+			  }
 			| comp_qstring 
 			| class_ref OPEN_PARENS K_INT8 COLON int32 CLOSE_PARENS
+			  {
+				$$ = ClassRefToObject ($1, (byte) (int) $5);
+			  }
 			| class_ref OPEN_PARENS K_INT16 COLON int32 CLOSE_PARENS
+			  {
+				$$ = ClassRefToObject ($1, (short) (int) $5);
+			  }
 			| class_ref OPEN_PARENS K_INT32 COLON int32 CLOSE_PARENS
+			  {
+				$$ = ClassRefToObject ($1, (int) $5);
+			  }
 			| class_ref OPEN_PARENS int32 CLOSE_PARENS
+			  {
+				$$ = ClassRefToObject ($1, (int) $3);
+			  }
 			;
 
 sec_action		: K_REQUEST
@@ -2671,7 +2787,11 @@ assembly_decl		: D_PUBLICKEY ASSIGN bytes_list
 			  }
 			| sec_decl
 			  {
-				codegen.AddAssemblyDeclSecurity ((DeclSecurity) $1);
+				PermPair pp = (PermPair) $1;
+				if (!CheckSecurityActionValidity ((System.Security.Permissions.SecurityAction) (short) pp.sec_action, true))
+					throw new Exception (String.Format ("Invalid security action : {0}", pp.sec_action));
+
+				codegen.AddAssemblyPermission (pp.sec_action, pp.perm);
 			  }
 			;
 

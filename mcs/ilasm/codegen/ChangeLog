@@ -1,3 +1,32 @@
+2005-09-15  Ankit Jain  <jankit@novell.com>
+
+	* DeclSecurity.cs (IDeclSecurityTarget.AddDeclSecurity): Remove.
+	  (IDeclSecurityTarget.AddPermission),
+	  (IDeclSecurityTarget.AddPermissionSet): New.
+	  (DeclSecurity.IDeclSecurityTarget): Implement new interface methods.
+	  (DeclSecurity.sec_action),
+	  (DeclSecurity.data): Remove.
+	  (DeclSecurity.permissionset_table): New.
+	  (DeclSecurity.ctor): Replace parameterized constructor with a default one.
+	  (DeclSecurity.AddTo): AddDeclSecurity for all Security Actions in the permissionset_table.
+	* TypeDef.cs (TypeDef.declsecurity_list): Remove.
+	  (TypeDef.decl_sec): New.
+	  (TypeDef.IDeclSecurityTarget): Implement new interface methods.
+	  (TypeDef.DefineContents): Use new decl_sec instead of declsecurity_list.
+	* CodeGen.cs (CodeGen.assembly_declsec): Change type from ArrayList to DeclSecurity.
+	  (CodeGen.EndAssemblyRef): Set current_customattrtarget and current_declsectarget to null.
+	  (CodeGen.IDeclSecurityTarget): Implement new interface methods.
+	  (CodeGen.Write): Add assembly_declsec to the assembly (using DeclSecurity.AddTo).
+	* ExternTable.cs (ExternAssembly.declsec_list): Remove.
+	  (ExternAssembly.decl_sec): New.
+	  (ExternAssembly.Resolve): Use new decl_sec instead of declsec_list.
+	  (ExternAssembly.IDeclSecurityTarget): Implement new interface methods.
+	* MethodDef.cs (MethodDef.declsecurity_list): Remove.
+	  (MethodDef.decl_sec): New.
+	  (MethodDef.IDeclSecurityTarget): Implement new interface methods.
+	  (MethodDef.WriteCode): Use new decl_sec instead of declsecurity_list.
+	* ExternTypeRef.cs (ExternTypeRef.GetReflectedType): New.  
+
 2005-09-08  Ankit Jain  <jankit@novell.com>
 
 	* CodeGen.cs (CodeGen.stack_reserve): New.

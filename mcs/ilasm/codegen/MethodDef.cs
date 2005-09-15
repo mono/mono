@@ -11,6 +11,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Security;
 
 
 namespace Mono.ILASM {
@@ -33,7 +34,7 @@ namespace Mono.ILASM {
                 private ArrayList param_list;
                 private ArrayList inst_list;
                 private ArrayList customattr_list;
-                private ArrayList declsecurity_list;
+                private DeclSecurity decl_sec;
                 private Hashtable label_table;
                 private Hashtable labelref_table;
                 private ArrayList label_list;
@@ -185,12 +186,20 @@ namespace Mono.ILASM {
                         customattr_list.Add (customattr);
                 }
 
-                public void AddDeclSecurity (DeclSecurity declsecurity)
+                public void AddPermissionSet (PEAPI.SecurityAction sec_action, PermissionSet ps)
                 {
-                        if (declsecurity_list == null)
-                                declsecurity_list = new ArrayList ();
-
-                        declsecurity_list.Add (declsecurity);
+                        if (decl_sec == null)
+                                decl_sec = new DeclSecurity ();
+                        
+                        decl_sec.AddPermissionSet (sec_action, ps);
+                }
+                
+                public void AddPermission (PEAPI.SecurityAction sec_action, IPermission iper)
+                {
+                        if (decl_sec == null)
+                                decl_sec = new DeclSecurity ();
+                        
+                        decl_sec.AddPermission (sec_action, iper);
                 }
 
                 public void AddRetTypeMarshalInfo (PEAPI.NativeType native_type)
@@ -402,10 +411,8 @@ namespace Mono.ILASM {
 				}
 
                         /// Add declarative security to this method
-                        if (declsecurity_list != null) {
-                                foreach (DeclSecurity declsecurity in declsecurity_list)
-                                        declsecurity.AddTo (code_gen, methoddef);
-
+			if (decl_sec != null) {
+				decl_sec.AddTo (code_gen, methoddef);
                                 methoddef.AddMethAttribute (PEAPI.MethAttr.HasSecurity);
                         }        
 

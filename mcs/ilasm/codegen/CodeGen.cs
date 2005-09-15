@@ -16,6 +16,8 @@ using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Security;
+
 
 namespace Mono.ILASM {
 
@@ -44,7 +46,7 @@ namespace Mono.ILASM {
                 private string assembly_locale;
                 private int assembly_hash_algorithm;
                 private ArrayList assembly_custom_attributes;
-                private ArrayList assembly_declsec;
+                private DeclSecurity assembly_declsec;
                         
                 private TypeManager type_manager;
                 private ExternTable extern_table;
@@ -355,6 +357,8 @@ namespace Mono.ILASM {
                 public void EndAssemblyRef ()
                 {
                         current_assemblyref = null;
+                        current_customattrtarget = null;
+                        current_declsectarget = null;
                 }
 
                 public void AddToDefineContentsList (TypeDef typedef)
@@ -392,11 +396,28 @@ namespace Mono.ILASM {
                         assembly_custom_attributes.Add (attribute);
                 }
 
-                public void AddAssemblyDeclSecurity (DeclSecurity decl_sec)
+                public void AddAssemblyPermission (PEAPI.SecurityAction sec_action, object perm)
                 {
                         if (assembly_declsec == null)
-                                assembly_declsec = new ArrayList ();
-                        assembly_declsec.Add (decl_sec);
+                                assembly_declsec = new DeclSecurity ();
+
+                        PermissionSet ps = perm as PermissionSet;
+                        if (ps == null)
+                                assembly_declsec.AddPermission (sec_action, (IPermission) perm);
+                        else
+                                assembly_declsec.AddPermissionSet (sec_action, ps);
+                }
+
+                public void AddPermission (PEAPI.SecurityAction sec_action, object perm)
+                {
+                        if (CurrentDeclSecurityTarget == null)
+                                return;
+
+                        PermissionSet ps = perm as PermissionSet;
+                        if (ps == null)
+                                CurrentDeclSecurityTarget.AddPermission (sec_action, (IPermission) perm);
+                        else
+                                CurrentDeclSecurityTarget.AddPermissionSet (sec_action, ps);
                 }
 
                 public void Write ()
@@ -439,10 +460,8 @@ namespace Mono.ILASM {
                                                 cattr.AddTo (this, asmb);
                                 }
                                 
-                                if (assembly_declsec != null) {
-                                        foreach (DeclSecurity decl_sec in assembly_declsec)
-                                                decl_sec.AddTo (this, asmb);
-                                }
+                                if (assembly_declsec != null)
+                                        assembly_declsec.AddTo (this, asmb);        
 
                                 if (sub_system != -1)
                                         pefile.SetSubSystem ((PEAPI.SubSystem) sub_system);

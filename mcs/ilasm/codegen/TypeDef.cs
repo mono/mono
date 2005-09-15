@@ -10,6 +10,7 @@
 
 using System;
 using System.Collections;
+using System.Security;
 
 namespace Mono.ILASM {
 
@@ -32,7 +33,7 @@ namespace Mono.ILASM {
                 private ArrayList field_list;
                 private Hashtable method_table;
                 private ArrayList customattr_list;
-                private ArrayList declsecurity_list;
+                private DeclSecurity decl_sec;
                 private ArrayList event_list;
                 private ArrayList property_list;
                 private ArrayList typar_list;
@@ -213,12 +214,20 @@ namespace Mono.ILASM {
                         customattr_list.Add (customattr);
                 }
 
-                public void AddDeclSecurity (DeclSecurity declsecurity)
+                public void AddPermissionSet (PEAPI.SecurityAction sec_action, PermissionSet ps)
                 {
-                        if (declsecurity_list == null)
-                                declsecurity_list = new ArrayList ();
+                        if (decl_sec == null)
+                                decl_sec = new DeclSecurity ();
 
-                        declsecurity_list.Add (declsecurity);
+                        decl_sec.AddPermissionSet (sec_action, ps);
+                }
+
+                public void AddPermission (PEAPI.SecurityAction sec_action, IPermission iper)
+                {
+                        if (decl_sec == null)
+                                decl_sec = new DeclSecurity ();
+
+                        decl_sec.AddPermission (sec_action, iper);
                 }
 
                 public void AddGenericParam (string id)
@@ -368,11 +377,9 @@ namespace Mono.ILASM {
 				}
                         }
                         
-                        /// Add declarative security to this method
-                        if (declsecurity_list != null) {
-                                foreach (DeclSecurity declsecurity in declsecurity_list)
-                                        declsecurity.AddTo (code_gen, classdef);
-
+                        /// Add declarative security to this class
+                        if (decl_sec != null) {
+                                decl_sec.AddTo (code_gen, classdef);
                                 classdef.AddAttribute (PEAPI.TypeAttr.HasSecurity);
 			}	
 

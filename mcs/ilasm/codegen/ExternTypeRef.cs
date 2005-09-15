@@ -183,6 +183,21 @@ namespace Mono.ILASM {
 
                         return klass;
                 }        
+
+                public System.Type GetReflectedType ()
+                {
+                        ExternRef er = extern_ref as ExternRef;
+                        if (er != null) {
+                                ExternAssembly ea = er as ExternAssembly;
+                                if (ea != null) {
+                                        System.Reflection.Assembly asm = System.Reflection.Assembly.Load (er.Name);
+
+                                        return asm.GetType (FullName);
+                                }/* else ExternModule */
+
+                        } /*else - nested type? */
+                        return null;
+                }
         }
 
 }
