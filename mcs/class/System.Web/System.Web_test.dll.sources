@@ -214,6 +214,15 @@ System.Web.UI/ObjectConverterCas.cs
 System.Web.UI/ObjectTagBuilderCas.cs
 System.Web.UI/PageCas.cs
 System.Web.UI/PairCas.cs
+System.Web.UI/ParseChildrenAttributeCas.cs
+System.Web.UI/PartialCachingAttributeCas.cs
+System.Web.UI/PersistChildrenAttributeCas.cs
+System.Web.UI/PersistenceModeAttributeCas.cs
+System.Web.UI/PropertyConverterCas.cs
+System.Web.UI/RootBuilderCas.cs
+System.Web.UI/StateBagCas.cs
+System.Web.UI/StateItemCas.cs
+System.Web.UI/StaticPartialCachingControlCas.cs
 System.Web.UI.HtmlControls/HtmlAnchorCas.cs
 System.Web.UI.HtmlControls/HtmlButtonCas.cs
 System.Web.UI.HtmlControls/HtmlEmptyTagControlBuilderCas.cs
