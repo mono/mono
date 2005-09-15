@@ -1,3 +1,15 @@
+2005-09-15  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* ParseChildrenAttributeCas.cs: New. CAS unit tests.
+	* PartialCachingAttributeCas.cs: New. CAS unit tests.
+	* PersistChildrenAttributeCas.cs: New. CAS unit tests.
+	* PersistenceModeAttributeCas.cs: New. CAS unit tests.
+	* PropertyConverterCas.cs: New. CAS unit tests.
+	* RootBuilderCas.cs: New. CAS unit tests.
+	* StateBagCas.cs: New. CAS unit tests.
+	* StateItemCas.cs: New. CAS unit tests.
+	* StaticPartialCachingControlCas.cs: New. CAS unit tests.
+
 2005-09-15  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Html32TextWriterCas.cs: New. CAS unit tests.
