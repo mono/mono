@@ -62,13 +62,13 @@ namespace System.Web.UI
 		}
 
 		[MonoTODO ("no effect on html generation")]
-		public bool SupportBold {
+		public bool SupportsBold {
 			get { return bold; }
 			set { bold = value; }
 		}
 
 		[MonoTODO ("no effect on html generation")]
-		public bool SupportItalic {
+		public bool SupportsItalic {
 			get { return italic; }
 			set { italic = value; }
 		}
