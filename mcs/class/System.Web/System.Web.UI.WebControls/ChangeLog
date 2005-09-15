@@ -26,7 +26,6 @@
 	* SubMenuStyle.cs: corcompare says this should implement
 	ICustomTypeDescriptor... sooo, make it.
 
->>>>>>> .r50108
 2005-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TableCell.cs: do the same as HyperLink and others in
