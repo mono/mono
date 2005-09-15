@@ -4,9 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2003 Novell, Inc (http://www.novell.com)
-//
-
+// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,15 +26,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Web.UI
-{
+using System.Security.Permissions;
+
+namespace System.Web.UI {
+
 	[Obsolete ("Use the System.Convert class and String.Format instead", false)]
-	public sealed class ObjectConverter
-	{
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public sealed class ObjectConverter {
+
+#if NET_2_0
+		[Obsolete]
+#endif
+		public ObjectConverter ()
+		{
+		}
+
 		public static object ConvertValue (object value, Type toType, string formatString)
 		{
 			throw new NotImplementedException ("Not implemented and [Obsolete]");
 		}
 	}
 }
-

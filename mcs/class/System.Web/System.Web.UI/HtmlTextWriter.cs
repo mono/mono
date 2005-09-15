@@ -29,10 +29,14 @@
 using System.IO;
 using System.Globalization;
 using System.Collections;
+using System.Security.Permissions;
 using System.Text;
 
 namespace System.Web.UI {
 	
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HtmlTextWriter : TextWriter {
 
 

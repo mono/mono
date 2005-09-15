@@ -6,9 +6,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // Copyright (C) Matthijs ter Woord, 2004
-// (C) 2004 Novell, Inc (http://www.novell.com)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,12 +31,21 @@
 using System.Collections;
 using System.Globalization;
 using System.IO;
+using System.Security.Permissions;
 
 namespace System.Web.UI
 {
 	[MonoTODO ("Needs work and verification.")]
-	public class Html32TextWriter : HtmlTextWriter
-	{
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public class Html32TextWriter : HtmlTextWriter {
+#if NET_2_0
+		private bool div_table_substitution;
+		private bool bold;
+		private bool italic;
+#endif
+
 		public Html32TextWriter (TextWriter writer) : base (writer)
 		{
 		}
@@ -47,6 +54,25 @@ namespace System.Web.UI
 		{
 		}
 
+#if NET_2_0
+		[MonoTODO ("no effect on html generation")]
+		public bool ShouldPerformDivTableSubstitution {
+			get { return div_table_substitution; }
+			set { div_table_substitution = value; }
+		}
+
+		[MonoTODO ("no effect on html generation")]
+		public bool SupportBold {
+			get { return bold; }
+			set { bold = value; }
+		}
+
+		[MonoTODO ("no effect on html generation")]
+		public bool SupportItalic {
+			get { return italic; }
+			set { italic = value; }
+		}
+#endif
 
 		public override void RenderBeginTag (HtmlTextWriterTag tagKey)
 		{

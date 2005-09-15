@@ -6,9 +6,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) Bob Smith
-// Copyright (c) 2002-2004 Novell, Inc. (http://www.novell.com)
-//
-
+// Copyright (C) 2002-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,12 +28,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
-using System.Web;
+using System.Security.Permissions;
 
-namespace System.Web.UI
-{
+namespace System.Web.UI {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ToolboxItem(false)]
         public class LiteralControl : Control
 #if NET_2_0
@@ -50,7 +51,7 @@ namespace System.Web.UI
                 {
 			EnableViewState = false;
 			PreventAutoID ();
-			_text = (text == null) ? "" : text; // Text property is not called for this.
+			_text = text; // can be null in this case (see CAS unit tests)
                 }
 
                 public virtual string Text {

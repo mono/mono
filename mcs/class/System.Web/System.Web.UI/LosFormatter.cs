@@ -5,8 +5,7 @@
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,9 +28,12 @@
 //
 
 using System.IO;
-
+using System.Security.Permissions;
 
 namespace System.Web.UI {
+
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class LosFormatter {
 
 		ObjectStateFormatter osf = new ObjectStateFormatter ();
@@ -44,8 +46,17 @@ namespace System.Web.UI {
 		[MonoTODO]
 		public LosFormatter (bool enableMac, string macKeyModifier)
 		{
+			// FIXME - is this used ???
 		}
-#endif	
+#endif
+#if NET_2_0
+		[MonoTODO]
+		public LosFormatter (bool enableMac, byte[] macKeyModifier)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public object Deserialize (Stream stream)
 		{
 			return osf.Deserialize (stream);

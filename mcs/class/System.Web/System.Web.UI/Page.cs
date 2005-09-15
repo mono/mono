@@ -7,9 +7,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002,2003 Ximian, Inc. (http://www.ximian.com)
-// (c) 2003 Novell, Inc. (http://www.novell.com)
-//
-
+// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,6 +37,7 @@ using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.IO;
+using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
@@ -54,7 +53,9 @@ using System.Web.UI.Adapters;
 
 namespace System.Web.UI
 {
-
+// CAS
+[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #if NET_2_0
 [RootDesignerSerializer ("Microsoft.VisualStudio.Web.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VisualStudio_Web, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 #else
@@ -130,7 +131,11 @@ public class Page : TemplateControl, IHttpHandler
 	[Browsable (false)]
 	public HttpApplicationState Application
 	{
-		get { return _context.Application; }
+		get {
+			if (_context == null)
+				return null;
+			return _context.Application;
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -167,7 +172,11 @@ public class Page : TemplateControl, IHttpHandler
 	[Browsable (false)]
 	public Cache Cache
 	{
-		get { return _context.Cache; }
+		get {
+			if (_context == null)
+				throw new HttpException ("No cache available without a context.");
+			return _context.Cache;
+		}
 	}
 
 #if NET_2_0
@@ -353,7 +362,12 @@ public class Page : TemplateControl, IHttpHandler
 	[Browsable (false)]
 	public HttpResponse Response
 	{
-		get { return _context.Response; }
+		get {
+			if (_context != null)
+				return _context.Response;
+
+			throw new HttpException ("Response is not available without context");
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -386,6 +400,9 @@ public class Page : TemplateControl, IHttpHandler
 	public virtual HttpSessionState Session
 	{
 		get {
+			if (_context == null)
+				throw new HttpException ("Session is not available without context");
+
 			if (_context.Session == null)
 				throw new HttpException ("Session state can only be used " +
 						"when enableSessionState is set to true, either " +
