@@ -1,3 +1,15 @@
+2005-09-14  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* DataBinderCas.cs: New. CAS unit tests.
+	* DataBindingCas.cs: New. CAS unit tests.
+	* DataBindingCollectionCas.cs: New. CAS unit tests.
+	* DataBindingHandlerAttributeCas.cs: New. CAS unit tests.
+	* DataBoundLiteralControlCas.cs: New. CAS unit tests.
+	* DesignerDataBoundLiteralControlCas.cs: New. CAS unit tests.
+	* DesignTimeParseDataCas.cs: New. CAS unit tests.
+	* DesignTimeTemplateParserCas.cs: New. CAS unit tests.
+	* EmptyCollectionCas.cs: New. CAS unit tests.
+
 2005-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AttributeCollectionCas.cs: New. CAS unit tests.
