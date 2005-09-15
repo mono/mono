@@ -1,3 +1,8 @@
+2005-09-15  Ankit Jain  <jankit@novell.com>
+
+	* test-perm_fail-[1234].il: New. Negative Tests for .permission directive.
+	* test-perm_pass-1.il: New. Test for .permission directive.
+
 2005-08-23  Ankit Jain  <jankit@novell.com>
 
 	* test-byref.il: New. Test for a call with byref return type.
