@@ -271,7 +271,7 @@ namespace System.Web.UI.WebControls {
 		
 		protected internal virtual void SetDirty()
 		{
-			ViewState.SetDirty ();
+			ViewState.SetDirty (true);
 		}
 
 

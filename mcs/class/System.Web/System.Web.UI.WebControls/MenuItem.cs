@@ -511,7 +511,7 @@ namespace System.Web.UI.WebControls
 		
 		internal void SetDirty ()
 		{
-			ViewState.SetDirty ();
+			ViewState.SetDirty (true);
 		}
 		
 		object ICloneable.Clone ()

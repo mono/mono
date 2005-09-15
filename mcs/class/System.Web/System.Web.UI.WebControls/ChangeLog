@@ -1,3 +1,9 @@
+2005-09-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataControlField.cs, HotSpot.cs, MenuItem.cs, Parameter.cs, 
+	Style.cs, TreeNode.cs: Replace _empty_ StateBag.SetDirty () with 
+	StateBag.SetDirty (true).
+
 2005-09-14  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Menu.cs: Fixed parameter orders for CreateStyleRule.

@@ -754,7 +754,7 @@ namespace System.Web.UI.WebControls
 		public void SetDirty ()
 		{
 			if (viewstate != null)
-				viewstate.SetDirty ();
+				viewstate.SetDirty (true);
 		}
 
 		public static bool IsStyleEmpty (Style s)

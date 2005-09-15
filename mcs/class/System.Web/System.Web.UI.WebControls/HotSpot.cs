@@ -189,7 +189,7 @@ namespace System.Web.UI.WebControls
 		
 		internal void SetDirty ()
 		{
-			viewState.SetDirty ();
+			viewState.SetDirty (true);
 		}
 	
 		public abstract string GetCoordinates ();
