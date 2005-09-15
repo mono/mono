@@ -292,6 +292,18 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+
+		internal TableItemStyle GetStyle (ListItemType type)
+		{
+			if (type == ListItemType.Header)
+				return header_style;
+
+			if (type == ListItemType.Footer)
+				return footer_style;
+
+			return item_style;
+		}
+
 		internal void Set_Owner (DataGrid value) 
 		{
 			owner = value;

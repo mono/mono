@@ -792,6 +792,27 @@ namespace System.Web.UI.WebControls {
 			pager_cell = null;
 		}
 
+		void ApplyColumnStyle (TableCellCollection cells, ListItemType type)
+		{
+			int ncells = Math.Min (cells.Count, render_columns.Length);
+			if (ncells <= 0)
+				return;
+
+			for (int i = 0; i < ncells; i++) {
+				Style style = null;
+				TableCell cell = cells [i];
+				DataGridColumn column = render_columns [i];
+				if (!column.Visible) {
+					cell.Visible = false;
+					continue;
+				}
+
+				style = column.GetStyle (type);
+				if (style != null)
+					cell.MergeStyle (style);
+			}
+		}
+
 		protected override void PrepareControlHierarchy ()
 		{
 			if (render_table == null)
@@ -803,28 +824,33 @@ namespace System.Web.UI.WebControls {
 				switch (item.ItemType) {
 				case ListItemType.Item:
 					item.ApplyStyle (ItemStyle);
+					ApplyColumnStyle (item.Cells, ListItemType.Item);
 					break;
 				case ListItemType.AlternatingItem:
 					item.ApplyStyle (AlternatingItemStyle);
+					ApplyColumnStyle (item.Cells, ListItemType.AlternatingItem);
 					break;
 				case ListItemType.EditItem:
 					item.ApplyStyle (EditItemStyle);
+					ApplyColumnStyle (item.Cells, ListItemType.EditItem);
 					break;
 				case ListItemType.Footer:
 					if (!ShowFooter)
 						item.Visible = false;
 					item.ApplyStyle (FooterStyle);
+					ApplyColumnStyle (item.Cells, ListItemType.Footer);
 					break;
 				case ListItemType.Header:
 					if (!ShowHeader)
 						item.Visible = false;
 					item.ApplyStyle (HeaderStyle);
+					ApplyColumnStyle (item.Cells, ListItemType.Header);
 					break;
 				case ListItemType.SelectedItem:
 					item.ApplyStyle (SelectedItemStyle);
+					ApplyColumnStyle (item.Cells, ListItemType.SelectedItem);
 					break;
 				case ListItemType.Pager:
-
 					if (!paged_data_source.IsPagingEnabled) {
 						item.Visible = false;
 					} else {
@@ -1023,16 +1049,6 @@ namespace System.Web.UI.WebControls {
 		public event DataGridCommandEventHandler UpdateCommand {
 			add { Events.AddHandler (UpdateCommandEvent, value); }
 			remove { Events.AddHandler (UpdateCommandEvent, value); }
-		}
-
-		[Obsolete]
-		internal void OnColumnsChanged ()
-		{
-		}
-
-		[Obsolete]
-		internal void OnPagerChanged ()
-		{
 		}
 	}
 }
