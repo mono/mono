@@ -1,3 +1,15 @@
+2005-09-15  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Html32TextWriterCas.cs: New. CAS unit tests.
+	* HtmlTextWriterCas.cs: New. CAS unit tests.
+	* ImageClickEventArgsCas.cs: New. CAS unit tests.
+	* LiteralControlCas.cs: New. CAS unit tests.
+	* LosFormatterCas.cs: New. CAS unit tests.
+	* ObjectConverterCas.cs: New. CAS unit tests.
+	* ObjectTagBuilderCas.cs: New. CAS unit tests.
+	* PageCas.cs: New. CAS unit tests.
+	* PairCas.cs: New. CAS unit tests.
+
 2005-09-14  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* DataBinderCas.cs: New. CAS unit tests.
