@@ -30,13 +30,49 @@
 #if NET_2_0
 
 using System.Web.UI;
+using System.Web.Util;
 
 namespace Microsoft.Web.UI
 {
 	public class Script : Control
 	{
+		public Script ()
+		{
+		}
+
 		protected override void Render (HtmlTextWriter writer)
 		{
+			/* check to see if Browser matches the browser
+			 * that's looking at the page, and only render
+			 * ourselves if there's a match */
+
+			if (Path != "") {
+				writer.AddAttribute ("language", "text/javascript");
+				/* XXX there should be a way to get this done using Control's methods */
+				writer.AddAttribute ("href", Page.MapPath (Path));
+				writer.RenderBeginTag (HtmlTextWriterTag.Script);
+				writer.RenderEndTag ();
+			}
+		}
+
+		string browser = "";
+		public string Browser {
+			get {
+				return browser;
+			}
+			set {
+				browser = (value == null ? "" : value);
+			}
+		}
+
+		string path = "";
+		public string Path {
+			get {
+				return path;
+			}
+			set {
+				path = (value == null ? "" : value);
+			}
 		}
 	}
 }

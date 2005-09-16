@@ -30,26 +30,81 @@
 #if NET_2_0
 
 using System;
+using System.IO;
 using System.Web;
+using System.Web.UI;
+using System.Reflection;
+using System.Web.Services;
+using System.Web.Services.Protocols;
 
 namespace Microsoft.Web.Services
 {
+	class JSProxyGenerator : IHttpHandler
+	{
+		Type type;
+		string virtualPath;
+
+		public JSProxyGenerator (Type type, string virtualPath)
+		{
+			this.type = type;
+			this.virtualPath = virtualPath;
+		}
+
+		public bool IsReusable {
+			get {
+				return false;
+			}
+		}
+
+		public void ProcessRequest (HttpContext context)
+		{
+			TextWriter output = context.Response.Output;
+
+			output.Write (String.Format ("Type.registerNamespace('{0}'); ", type.Namespace));
+			output.Write (String.Format (@"{0} = {{ path: ""{1}""", type.FullName, virtualPath));
+
+			foreach (MethodInfo m in type.GetMethods()) {
+				object[] attrs = m.GetCustomAttributes (typeof (WebMethodAttribute), false);
+				if (m.IsPublic && attrs != null && attrs.Length > 0) {
+					/* it's a webmethod, output it */
+					output.Write (", {0}:function (", m.Name);
+					foreach (ParameterInfo p in m.GetParameters()) {
+						output.Write (p.Name + ",");
+					}
+					output.Write (String.Format (" onMethodComplete, onMethodTimeout) {{ return Web.Net.ServiceMethodRequest.callMethod(this.path, \"{0}\", {{", m.Name));
+					foreach (ParameterInfo p in m.GetParameters()) {
+						output.Write ("{0}:{0}", p.Name);
+					}
+					output.Write ("}, onMethodComplete,onMethodTimeout); } }");
+				}
+			}
+		}
+	}
+
 	public class ScriptHandlerFactory : IHttpHandlerFactory
 	{
+		WebServiceHandlerFactory fallback;
+
 		public ScriptHandlerFactory ()
 		{
-			Console.WriteLine ("new ScriptHandlerFactory");
+			fallback = new WebServiceHandlerFactory();
 		}
 
 		public virtual IHttpHandler GetHandler (HttpContext context, string requestType, string virtualPath, string path)
 		{
-			Console.WriteLine ("GetHandler ({0}, {1}, {2})", requestType, virtualPath, path);
-			return null;
+			if (context.Request.PathInfo == "/js") {
+				Type type = WebServiceParser.GetCompiledType (path, context);
+
+				return new JSProxyGenerator (type, virtualPath);
+			}
+			else {
+				return fallback.GetHandler (context, requestType, virtualPath, path);
+			}
+
 		}
 
 		public virtual void ReleaseHandler (IHttpHandler handler)
 		{
-			Console.WriteLine ("ReleaseHandler");
 		}
 	}
 }

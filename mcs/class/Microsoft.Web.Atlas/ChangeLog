@@ -1,5 +1,26 @@
 2005-09-15  Chris Toshok  <toshok@ximian.com>
 
+	* Makefile (LIB_MCS_FLAGS): fix this up.
+
+	* Microsoft.Web.Services/ScriptHandlerFactory.cs
+	(ScriptHandlerFactory.GetHandler): implement by returning a
+	JSProxyGenerator if PathInfo == "/js", otherwise we fallback to
+	using WebServiceHandlerFactory.
+	(JSProxyGenerator): brain dead and simple proxy generator that
+	uses S.R. to emit the JS.
+
+	* Microsoft.Web.UI/Script.cs: always render the <script> tags for
+	the time being - eventually we'll compare Page.Browser and
+	Script.Browser.
+
+	* resources/AtlasCore.js: include portions of prototype.js to get
+	the Ajax stuff working.  Their stuff is MIT, and why reinvent the
+	wheel?
+	(Web.Net.ServiceMethodRequest): implement this in terms of
+	Ajax.Request from prototype.js.
+
+2005-09-15  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.Services/ScriptHandlerFactory.cs: new (stub) file.
 
 	* Microsoft.Web.Services/ScriptModule.cs: same.
