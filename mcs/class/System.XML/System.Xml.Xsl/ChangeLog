@@ -1,3 +1,8 @@
+2005-09-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransform.cs : When Transform() returns XmlReader, allow empty
+	  results. Fixed bug #76115.
+
 2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XsltArgumentList.cs: Added a LinkDemand for Unrestricted on 

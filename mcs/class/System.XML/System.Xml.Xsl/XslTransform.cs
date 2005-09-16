@@ -90,7 +90,7 @@ namespace System.Xml.Xsl {
 			MemoryStream stream = new MemoryStream ();
 			Transform (input, args, new XmlTextWriter (stream, null), resolver);
 			stream.Position = 0;
-			return new XmlTextReader (stream);
+			return new XmlTextReader (stream, XmlNodeType.Element, null);
 		}
 
 #if NET_1_1

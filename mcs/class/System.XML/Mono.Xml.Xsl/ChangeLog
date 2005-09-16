@@ -1,3 +1,8 @@
+2005-09-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ScriptCompilerInfo.cs : Compile correct replacement result.
+	  Fixed bug #76116.
+
 2005-09-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Compiler.cs : (Compile) check children only when it is the document

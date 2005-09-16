@@ -188,5 +188,30 @@ namespace MonoTests.System.Xml.Xsl
 			xslt.Load (new XmlTextReader (script, XmlNodeType.Document, null));
 			xslt.Transform (doc.CreateNavigator (), null, new XmlTextWriter (TextWriter.Null));
 		}
+
+		[Test]
+		[Category ("NotWorking")] // it depends on "mcs" existence
+		public void CompileNoLineInfoSource ()
+		{
+			// bug #76116
+			string xslt = @"<xslt:stylesheet xmlns:xslt='http://www.w3.org/1999/XSL/Transform' version='1.0' xmlns:msxsl='urn:schemas-microsoft-com:xslt' xmlns:stringutils='urn:schemas-sourceforge.net-blah' xmlns:nant='unknown-at-this-time'>
+    <xslt:output method='text' />
+    <msxsl:script language='C#' implements-prefix='stringutils'>
+    <![CDATA[
+        string PadRight( string str, int padding) {
+            return str.PadRight(padding);
+        }
+    ]]>
+    </msxsl:script>
+    <xslt:template match='/'>
+        <foo/>
+    </xslt:template>
+</xslt:stylesheet>";
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (xslt);
+
+			XslTransform t = new XslTransform ();
+			t.Load (doc);
+		}
 	}
 }
