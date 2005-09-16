@@ -1,6 +1,6 @@
 /* Portions of the code in this file is from: Prototype JavaScript
    framework, version 1.3.1, and is (c) 2005 Sam Stephenson
-   <sam@conio.net>
+   <sam@conio.net> */
 
 // stuff from prototype.js
 
