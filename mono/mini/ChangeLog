@@ -1,3 +1,9 @@
+2005-09-16  Martin Baulig  <martin@ximian.com>
+
+	* exceptions-amd64.c
+	(throw_exception): Don't call mono_debugger_throw_exception() if
+	we're a rethrow - see the FIXME in the code.
+
 2005-09-15  Geoff Norton  <gnorton@customerdna.com>
 
 	* mini.c (mono_init_exceptions): This only works on some architectures.
