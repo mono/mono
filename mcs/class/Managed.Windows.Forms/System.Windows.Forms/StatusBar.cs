@@ -324,7 +324,7 @@ namespace System.Windows.Forms {
 				}
 				if (p.AutoSize == StatusBarPanelAutoSize.Contents) {
 					int len = (int) (DeviceContext.MeasureString (p.Text, Font).Width + 0.5F);
-					p.Width = (int) (len * 1.5F);
+					p.Width = (int) (len + 8);
 					taken += p.Width;
 					taken += gap;
 					continue;
@@ -342,10 +342,11 @@ namespace System.Windows.Forms {
 				return;
 
 			int spring_total = springs.Count;
-			int total_width = Width - taken - ThemeEngine.Current.StatusBarSizeGripWidth;
+			int total_width = Width - taken - (SizingGrip ? ThemeEngine.Current.StatusBarSizeGripWidth : 0);
 			for (int i = 0; i < spring_total; i++) {
 				StatusBarPanel p = (StatusBarPanel) springs [i];
-				p.Width = total_width / spring_total;
+				int width = total_width / spring_total;
+				p.Width = (width >= p.MinWidth ? width : p.MinWidth);
 			}
 		}
 

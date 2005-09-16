@@ -1440,7 +1440,7 @@ namespace System.Windows.Forms
 
 			e.Graphics.DrawString (ctrl.GetItemText (ctrl.Items[e.Index]), e.Font,
 				ThemeEngine.Current.ResPool.GetSolidBrush (fore_color),
-				e.Bounds, string_format);
+				e.Bounds.X, e.Bounds.Y, string_format);
 					
 			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
 				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds,

@@ -1024,7 +1024,7 @@ namespace System.Windows.Forms
 							selected_index, state, ForeColor, BackColor));
 			}						
 			
-			if (clip.IntersectsWith (combobox_info.listbox_area) == true) {
+			if (DropDownStyle == ComboBoxStyle.Simple && clip.IntersectsWith (combobox_info.listbox_area) == true) {
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Parent.BackColor), 
 						combobox_info.listbox_area);
 			}
@@ -1535,7 +1535,7 @@ namespace System.Windows.Forms
 					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle), 
 							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));
 						
-					vscrollbar_ctrl.Maximum = owner.Items.Count - owner.MaxDropDownItems;
+					vscrollbar_ctrl.Maximum = owner.Items.Count - (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items);
 					show_scrollbar = vscrollbar_ctrl.Visible = true;
 					
 				}
@@ -1793,9 +1793,10 @@ namespace System.Windows.Forms
 
 			public void SetTopItem (int item)
 			{
-				top_item = item;
-				UpdateLastVisibleItem ();
-				Refresh ();
+				if (vscrollbar_ctrl.Maximum < item)
+					vscrollbar_ctrl.Value = vscrollbar_ctrl.Maximum;
+				else
+					vscrollbar_ctrl.Value = item;
 			}			
 			
 			private void OnMouseDownPUW (object sender, MouseEventArgs e)
@@ -1906,8 +1907,14 @@ namespace System.Windows.Forms
 				if (owner.DropDownStyle != ComboBoxStyle.Simple && owner.Items.Count == 0)
 					return false;
 					
-				SetTopItem (0);
-				SetHighLightedItem (owner.SelectedItem);
+				if (owner.SelectedIndex >= 0) {
+					if (owner.SelectedIndex <= owner.Items.Count - owner.MaxDropDownItems) {
+						SetTopItem (owner.SelectedIndex);
+					} else {
+						SetTopItem (owner.Items.Count - owner.MaxDropDownItems);
+					}
+					SetHighLightedItem (owner.SelectedItem);
+				}
 				
 				CalcListBoxArea ();				
 				Show ();

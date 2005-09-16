@@ -132,6 +132,7 @@ namespace System.Windows.Forms
 		private bool ctrl_pressed;
 		private bool shift_pressed;
 		private bool has_focus;
+		private bool use_item_height;
 		
 		internal int focused_item;		
 		internal ListBoxInfo listbox_info;
@@ -158,6 +159,7 @@ namespace System.Windows.Forms
 			ctrl_pressed = false;
 			shift_pressed = false;
 			has_focus = false;
+			use_item_height = false;
 
 			items = new ObjectCollection (this);
 			selected_indices = new SelectedIndexCollection (this);
@@ -379,6 +381,7 @@ namespace System.Windows.Forms
 					return;
 
 				listbox_info.item_height = value;
+				use_item_height = true;
 				CalcClientArea ();
 			}
 		}
@@ -747,18 +750,24 @@ namespace System.Windows.Forms
 				
 				if (DrawMode == DrawMode.OwnerDrawVariable) {
 					rect.Y = 0;
-					for (int i = 0; i < index; i++) {
-						rect.Y += GetItemHeight (i);
-					}					
+					if (index >= listbox_info.top_item) {
+						for (int i = listbox_info.top_item; i < index; i++) {
+							rect.Y += GetItemHeight (i);
+						}
+					} else {
+						for (int i = index; i < listbox_info.top_item; i++) {
+							rect.Y -= GetItemHeight (i);
+						}
+					}
 				} else {
-					rect.Y = ItemHeight * index;	
+					rect.Y = ItemHeight * (index - listbox_info.top_item);	
 				}				
 			}
 			else {
 				int which_page;
 
 				which_page = index / listbox_info.page_size;
-				rect.Y = (index % listbox_info.page_size) * ItemHeight;
+				rect.Y = ((index - listbox_info.top_item) % listbox_info.page_size) * ItemHeight;
 				rect.X = which_page * ColumnWidthInternal;
 				rect.Height = ItemHeight;
 				rect.Width = ColumnWidthInternal;
@@ -834,11 +843,14 @@ namespace System.Windows.Forms
 		protected override void OnFontChanged (EventArgs e)
 		{
 			base.OnFontChanged (e);
-			listbox_info.item_height = FontHeight;
-
-			RellocateScrollBars ();
-			CalcClientArea ();
-			UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
+			if (!use_item_height) {
+				listbox_info.item_height = FontHeight;
+				RellocateScrollBars ();
+				CalcClientArea ();
+				UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
+			} else {
+				base.Refresh ();
+			}
 		}
 
 		protected override void OnHandleCreated (EventArgs e)
@@ -1000,8 +1012,8 @@ namespace System.Windows.Forms
 			listbox_info.textdrawing_rect.Y += ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
 			listbox_info.textdrawing_rect.X += ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
 			//BUG: Top and Left decorations
-			listbox_info.textdrawing_rect.Height -= ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle);
-			listbox_info.textdrawing_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle);
+			listbox_info.textdrawing_rect.Height -= ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
+			listbox_info.textdrawing_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
 
 			if (listbox_info.show_verticalsb)
 				listbox_info.textdrawing_rect.Width -= vscrollbar_ctrl.Width;
@@ -1022,7 +1034,7 @@ namespace System.Windows.Forms
 				}
 								
 			} else {			
-				listbox_info.page_size = listbox_info.textdrawing_rect.Height / listbox_info.item_height;
+				listbox_info.page_size = listbox_info.textdrawing_rect.Height / ItemHeight;
 			}
 
 			if (listbox_info.page_size == 0) {
@@ -1037,7 +1049,7 @@ namespace System.Windows.Forms
 				// items can still be partially shown if scroll bars are displayed.
 
 				int remaining =  (listbox_info.client_rect.Height -
-					ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle) -
+					ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle) -
 					ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle)) %
 					listbox_info.item_height;
 
@@ -1109,7 +1121,7 @@ namespace System.Windows.Forms
 
 			item_rect.Y += ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
 			item_rect.X += ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
-			item_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle);
+			item_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle);// + ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
 
 			return item_rect;
 		}
@@ -1165,7 +1177,7 @@ namespace System.Windows.Forms
 					}
 					else {
 						if (item_rect.Y + item_rect.Height > top_y)
-							return i - 1;
+							return i;
 					}
 				}
 			}
@@ -1254,9 +1266,19 @@ namespace System.Windows.Forms
 
 			case ItemNavigation.Next: {
 				if (focused_item + 1 < Items.Count) {	
-					if (focused_item + 1 > LBoxInfo.last_item) {
-						LBoxInfo.top_item++;
-						UpdatedTopItem ();						
+					int actualHeight = 0;
+					if (draw_mode == DrawMode.OwnerDrawVariable) {
+						for (int i = LBoxInfo.top_item; i <= focused_item + 1; i++)
+							actualHeight += GetItemHeight (i);
+					} else {
+						actualHeight = ((focused_item + 1) - LBoxInfo.top_item + 1) * ItemHeight;
+					}
+					if (actualHeight >= LBoxInfo.textdrawing_rect.Height) {
+						int bal = IntegralHeight ? 0 : (listbox_info.textdrawing_rect.Height == actualHeight ? 0 : 1);
+						if (focused_item + bal >= LBoxInfo.last_item) {
+							LBoxInfo.top_item++;
+							UpdatedTopItem ();						
+						}
 					}
 					selected_index = focused_item + 1;
 				}
@@ -1798,6 +1820,8 @@ namespace System.Windows.Forms
 					vscrollbar_ctrl.Maximum = Items.Count - listbox_info.page_size;
 
 				RellocateScrollBars ();
+			} else if (vscrollbar_ctrl.Maximum > 0) {
+				vscrollbar_ctrl.Maximum = 0;
 			}
 
 			CalcClientArea ();

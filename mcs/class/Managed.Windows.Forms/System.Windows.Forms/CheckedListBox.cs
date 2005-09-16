@@ -387,6 +387,7 @@ namespace System.Windows.Forms
 				listbox_items.Add (box_item);
 				if (check == CheckState.Checked)
 					owner.OnItemCheck (new ItemCheckEventArgs (cnt, check, CheckState.Unchecked));
+				owner.UpdateItemInfo (UpdateOperation.AddItems, cnt, cnt);
 				return cnt;
 			}
 		}

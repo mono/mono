@@ -270,7 +270,10 @@ namespace System.Windows.Forms {
 		[Localizable (true)]
 		[DefaultValue ("")]
 		public string GetToolTip(Control control) {
-			return (string)tooltip_strings[control];
+			string tooltip = (string)tooltip_strings[control];
+			if (tooltip == null)
+				return "";
+			return tooltip;
 		}
 
 		public void RemoveAll() {

@@ -1,9 +1,30 @@
-2005-09-13  Jordi Mas i Hernandez <jordi@ximian.com>
+2005-09-16  Kazuki Oikawa <kazuki@panicode.com>
 	
-	* ThemeNice.cs, DataGridTextBoxColumn.cs, ThemeWin32Classic.cs, 
-	DataGrid.cs, Theme.cs
-		- Fixes bugs 76039, 76041
-		- Fixes issues with unused space	 
+	* ToolTip.cs:
+		- Fixed #Mtd2 of ToolTipTest.RemoveToolTipTest.
+	* ComboBox.cs:
+		- When DropDownStyle is Simple, it does not show scrollbar 
+		to the last item of the list.
+		- When DropDownStyle is Simple, it crashed when the list was 
+		scrolled down with the down cursor key.
+		- Fixed a bug that when DropDownStyle is DropDownList, the 
+		selected item was not shown.
+		- The position of the selected item was not preserved when 
+		the next dropdown happened.
+	* ThemeWin32Classic.cs:
+		- Items were wrapped at the right end.
+	* CheckedListBox.cs:
+		- Fixed Add method
+	* ListBox.cs:
+		- Items should be fully shown.
+		- When resizing and vertical scrollbar disappeared, the item 
+		of index 0 should be on the top of the list.
+		- GetItemRectangle should consider the size of ver. scrollbar
+	* StatusBar.cs:
+		- SizingGrip area should not be allocated when it is not 
+		displayed.
+		- Now it reflects MinWidth of the containing panel and 
+		fixed a crash that happens when its width becomes so small.
 
 2005-09-13  Jordi Mas i Hernandez <jordi@ximian.com>
 
