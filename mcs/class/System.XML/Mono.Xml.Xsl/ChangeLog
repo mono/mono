@@ -1,3 +1,8 @@
+2005-09-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ScriptCompilerInfo.cs : Fixed important regression on msxsl:script
+	  replacement in the previous patch.
+
 2005-08-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ScriptCompilerInfo.cs : It should not be "#line" when the source is

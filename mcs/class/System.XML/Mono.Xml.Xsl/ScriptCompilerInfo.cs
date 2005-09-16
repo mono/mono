@@ -102,7 +102,7 @@ namespace Mono.Xml.Xsl
 				DateTime.Now.ToString (CultureInfo.InvariantCulture))
 				.Replace ("{1}", classSuffix)
 				.Replace ("{2}", code);
-			source = FormatSource (li, filename, code);
+			source = FormatSource (li, filename, source);
 
 			CompilerResults res = compiler.CompileAssemblyFromSource (parameters, source);
 			foreach (CompilerError err in res.Errors)
