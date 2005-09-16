@@ -1,4 +1,8 @@
-2005-09-31  Geoff Norotn  <gnorton@customerdna.com>
+2005-09-31  Geoff Norton  <gnorton@customerdna.com>
+
+	* LOADER: Whoops; forgot to rm the new file.
+
+2005-09-31  Geoff Norton  <gnorton@customerdna.com>
 
 	* LOADER: We exposed an apple bug.  This caused duplicates of the
 	main window to open by having AppName in Resources.  Modified from
