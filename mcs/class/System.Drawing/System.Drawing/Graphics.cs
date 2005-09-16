@@ -8,7 +8,7 @@
 //
 // Copyright (C) 2003 Ximian, Inc. (http://www.ximian.com)
 //
-// Copyright (C) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,12 +29,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
 using System.ComponentModel;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 using System.Text;
 
 namespace System.Drawing
@@ -1238,6 +1239,7 @@ namespace System.Drawing
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public static Graphics FromHdcInternal (IntPtr hdc)
 		{
 			GDIPlus.Display = hdc;
@@ -1279,6 +1281,7 @@ namespace System.Drawing
 		}
 		
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public static Graphics FromHwndInternal (IntPtr hwnd)
 		{
 			return FromHwnd (hwnd);
@@ -1595,6 +1598,7 @@ namespace System.Drawing
 
 		[MonoTODO]
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public void ReleaseHdcInternal (IntPtr hdc)
 		{
 			throw new NotImplementedException ();

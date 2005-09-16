@@ -36,6 +36,7 @@ using System.Text;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
+using System.Security;
 #if NET_2_0
 using System.Runtime.InteropServices.ComTypes;
 #else
@@ -47,6 +48,7 @@ namespace System.Drawing
 	/// <summary>
 	/// GDI+ API Functions
 	/// </summary>
+	[SuppressUnmanagedCodeSecurity]
 	internal class GDIPlus
 	{
 		public const int FACESIZE = 32;

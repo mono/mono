@@ -13,7 +13,7 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,12 +35,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Drawing.Imaging;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Drawing
 {
@@ -227,12 +227,14 @@ namespace System.Drawing
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public IntPtr GetHbitmap ()
 		{
 			return GetHbitmap(Color.Gray);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public IntPtr GetHbitmap (Color background)
 		{
 			IntPtr HandleBmp;
@@ -244,6 +246,7 @@ namespace System.Drawing
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
+		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		public IntPtr GetHicon ()
 		{
 			IntPtr HandleIcon;

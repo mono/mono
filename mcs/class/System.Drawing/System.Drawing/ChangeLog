@@ -1,3 +1,15 @@
+2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Add [SuppressUnmanagedCodeSecurity] attributes so 
+	the JIT won't add demands for UnmanagedCode.
+	* carbonFunctions.cs: Add [SuppressUnmanagedCodeSecurity] attributes 
+	so the JIT won't add demands for UnmanagedCode on Mac OSX.
+	* Bitmap.cs: Added LinkDemand for UnmanagedCode on GetHbitmap 
+	(+ overloads) and GetHicon methods.
+	* Graphics.cs: Added LinkDemand for UnmanagedCode on FromHdcInternal, 
+	FromHwndInternal and ReleaseHdcInternal methods (which are all public 
+	despite their names).
+
 2005-09-15 Konstantin Triger <kostat@mainsoft.com>
 
 	* Graphics.jvm.cs: text transform, headless session

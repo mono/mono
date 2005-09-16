@@ -27,8 +27,11 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace System.Drawing {
+
+	[SuppressUnmanagedCodeSecurity]
 	internal class Carbon {
 
 		internal static CarbonContext GetCGContextForNSView (IntPtr hwnd) {
