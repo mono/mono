@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 using System.Globalization;
+using System.Security.Permissions;
 using System.Threading;
 
 using NUnit.Framework;
@@ -40,6 +41,7 @@ using NUnit.Framework;
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]	
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class PointConverterTest
 	{
 		Point pt;

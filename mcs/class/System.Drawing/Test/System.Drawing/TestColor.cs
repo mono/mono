@@ -31,11 +31,13 @@
 
 using System;
 using System.Drawing;
+using System.Security.Permissions;
 using NUnit.Framework;
 
 namespace MonoTests.System.Drawing
 {
 	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class ColorTest : Assertion
 	{
 		[SetUp]

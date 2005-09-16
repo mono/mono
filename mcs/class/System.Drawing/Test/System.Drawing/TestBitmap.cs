@@ -38,10 +38,12 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace MonoTests.System.Drawing{
 
-	[TestFixture]	
+	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class TestBitmap {
 		
 		[TearDown]

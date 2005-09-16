@@ -32,10 +32,12 @@ using NUnit.Framework;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Security.Permissions;
 
 namespace MonoTests.System.Drawing
 {
-	[TestFixture]	
+	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class SystemPensTest : Assertion
 	{
 		[TearDown]

@@ -33,11 +33,13 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Security.Permissions;
 using NUnit.Framework;
 
 namespace MonoTests.System.Drawing{
 
-	[TestFixture]	
+	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class FontTest : Assertion {
 		
 		[TearDown]

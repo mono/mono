@@ -27,11 +27,13 @@
 using NUnit.Framework;
 using System;
 using System.Drawing;
+using System.Security.Permissions;
 
 namespace MonoTests.System.Drawing
 {
 
 	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class TestRectangleF : Assertion
 	{
 		RectangleF rect_0;

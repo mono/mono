@@ -30,10 +30,12 @@
 using NUnit.Framework;
 using System;
 using System.Drawing;
+using System.Security.Permissions;
 
 namespace MonoTests.System.Drawing 
 {
-	[TestFixture]	
+	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class SizeTest : Assertion 
 	{
 		Size sz1_1;

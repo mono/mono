@@ -30,13 +30,15 @@
 using System;
 using System.Drawing;
 using System.Globalization;
+using System.Security.Permissions;
 using System.Threading;
 
 using NUnit.Framework;
 
 namespace MonoTests.System.Drawing
 {
-	[TestFixture]
+	[TestFixture]	
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class PointFTest
 	{
 		PointF pt11_99;

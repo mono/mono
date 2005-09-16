@@ -36,10 +36,12 @@ using System.Drawing.Imaging;
 using NUnit.Framework;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
 namespace MonoTests.System.Drawing{
 
 	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class TestImage {
 
 

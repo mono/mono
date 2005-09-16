@@ -37,10 +37,12 @@ using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Security.Permissions;
 
 namespace MonoTests.System.Drawing
 {
-	[TestFixture]	
+	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class ImageConverterTest 
 	{
 		Image image;		
