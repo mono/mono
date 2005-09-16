@@ -1535,7 +1535,7 @@ namespace System.Windows.Forms
 					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle), 
 							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));
 						
-					vscrollbar_ctrl.Maximum = owner.Items.Count - (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items);
+					vscrollbar_ctrl.Maximum = owner.Items.Count - owner.MaxDropDownItems;
 					show_scrollbar = vscrollbar_ctrl.Visible = true;
 					
 				}
@@ -1793,10 +1793,9 @@ namespace System.Windows.Forms
 
 			public void SetTopItem (int item)
 			{
-				if (vscrollbar_ctrl.Maximum < item)
-					vscrollbar_ctrl.Value = vscrollbar_ctrl.Maximum;
-				else
-					vscrollbar_ctrl.Value = item;
+				top_item = item;
+				UpdateLastVisibleItem ();
+				Refresh ();
 			}			
 			
 			private void OnMouseDownPUW (object sender, MouseEventArgs e)
@@ -1907,14 +1906,8 @@ namespace System.Windows.Forms
 				if (owner.DropDownStyle != ComboBoxStyle.Simple && owner.Items.Count == 0)
 					return false;
 					
-				if (owner.SelectedIndex >= 0) {
-					if (owner.SelectedIndex <= owner.Items.Count - owner.MaxDropDownItems) {
-						SetTopItem (owner.SelectedIndex);
-					} else {
-						SetTopItem (owner.Items.Count - owner.MaxDropDownItems);
-					}
-					SetHighLightedItem (owner.SelectedItem);
-				}
+				SetTopItem (0);
+				SetHighLightedItem (owner.SelectedItem);
 				
 				CalcListBoxArea ();				
 				Show ();

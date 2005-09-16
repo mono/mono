@@ -1,3 +1,8 @@
+2005-09-16  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ComboBox.cs: Reverted almost everything from the latest patch which
+	  broke ComboBox
+
 2005-09-16  Kazuki Oikawa <kazuki@panicode.com>
 	
 	* ToolTip.cs:
