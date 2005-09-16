@@ -33,8 +33,6 @@ using System.Drawing.Printing;
 using System.Security;
 using System.Security.Permissions;
 
-using System.Diagnostics;
-
 namespace MonoTests.System.Drawing.Printing {
 
 	[TestFixture]
@@ -376,6 +374,9 @@ namespace MonoTests.System.Drawing.Printing {
 		}
 
 		[Test]
+#if !NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void FromXml_WrongClass ()
 		{
 			PrintingPermission pp = new PrintingPermission (PermissionState.None);
@@ -415,6 +416,9 @@ namespace MonoTests.System.Drawing.Printing {
 		}
 
 		[Test]
+#if !NET_2_0
+		[ExpectedException (typeof (ArgumentException))]
+#endif
 		public void FromXml_NoVersion ()
 		{
 			PrintingPermission pp = new PrintingPermission (PermissionState.None);
