@@ -1,0 +1,101 @@
+<!-- adapted from the inheritance example at: http://atlas.asp.net/quickstart/atlas/doc/javascript/default.aspx -->
+<html>
+<head>
+<script type="text/javascript" src="../ScriptLibrary/AtlasCore.js"></script>
+<script type="text/javascript">
+
+Type.registerNamespace("Demo.Animals");
+
+Demo.Animals.IPet = function() {
+    this.getFriendlyName = Function.abstractMethod;
+}
+Type.registerInterface('Demo.Animals.IPet');
+
+
+Demo.Animals.Animal = function(name) {
+    var _name = name;
+    
+    this.getName = function() {
+        return _name;
+    }
+}
+Type.registerAbstractClass('Demo.Animals.Animal');
+
+Demo.Animals.Animal.prototype.toStringCustom = function() {
+    return this.getName();
+}
+Demo.Animals.Animal.prototype.speak = Function.abstractMethod;
+
+
+Demo.Animals.Pet = function(name, friendlyName) {
+    Demo.Animals.Pet.initializeBase(this, [name]);
+    
+    var _friendlyName = friendlyName;
+    this.getFriendlyName = function() {
+        return _friendlyName;
+    }
+}
+Type.registerAbstractClass('Demo.Animals.Pet', Demo.Animals.Animal, Demo.Animals.IPet);
+
+
+Demo.Animals.Cat = function(friendlyName) {
+    Demo.Animals.Cat.initializeBase(this, ['Cat', friendlyName]);
+}
+Type.registerClass('Demo.Animals.Cat', Demo.Animals.Pet);
+
+Demo.Animals.Cat.prototype.speak = function() {
+    alert('meow');
+}
+
+Demo.Animals.Cat.prototype.toStringCustom = function() {
+    return 'Pet ' + Demo.Animals.Cat.callBaseMethod(this, 'toStringCustom');
+}
+
+Demo.Animals.Felix = function() {
+    Demo.Animals.Felix.initializeBase(this, ['Felix']);
+}
+Type.registerClass('Demo.Animals.Felix', Demo.Animals.Cat);
+
+Demo.Animals.Felix.prototype.toStringCustom = function() {
+    return Demo.Animals.Felix.callBaseMethod(this, 'toStringCustom') + ' ... its Felix!';
+}
+
+
+Demo.Animals.Dog = function(friendlyName) {
+    Demo.Animals.Dog.initializeBase(this, ['Dog', friendlyName]);
+}
+Type.registerClass('Demo.Animals.Dog', Demo.Animals.Pet);
+
+Demo.Animals.Dog.prototype.speak = function() {
+    alert('woof');
+}
+
+
+Demo.Animals.Tiger = function() {
+    Demo.Animals.Tiger.initializeBase(this, ['Tiger']);
+}
+Type.registerClass('Demo.Animals.Tiger', Demo.Animals.Animal);
+
+Demo.Animals.Tiger.prototype.speak = function() {
+    alert('grrr');
+}
+
+
+alert ("about to do stuff");
+
+try {
+var Tony = new Demo.Animals.Tiger();
+Tony.speak();
+
+var IPet = new Demo.Animals.IPet();
+IPet.getFriendlyName();
+
+var Pet = new Demo.Animals.Pet("Pet");
+alert (Pet.getName());
+
+alert ("hi");
+} catch (e) { alert (e.toString()); }
+
+</script>
+</head>
+</html>

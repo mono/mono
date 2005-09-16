@@ -1,0 +1,69 @@
+<!-- adapted from the inheritance example at: http://atlas.asp.net/quickstart/atlas/doc/javascript/default.aspx -->
+<html>
+<head>
+<script type="text/javascript" src="../../ScriptLibrary/AtlasCore.js"></script>
+<script type="text/javascript">
+Type.registerNamespace("Demo");
+
+Demo.Person = function(firstName, lastName, emailAddress) {
+    var _firstName = firstName;
+    var _lastName = lastName;
+    var _emailAddress = emailAddress;
+    
+    this.getFirstName = function() {
+        return _firstName;
+    }
+
+    this.getLastName = function() {
+        return _LastName;
+    }
+
+    this.getName = function() {
+        return _firstName + " " + _lastName;
+    }
+
+    this.getEmailAddress = function() {
+        return _emailAddress;
+    }
+
+    this.dispose = function() {
+        alert('bye ' + this.getName());
+    }
+}
+Type.registerClass('Demo.Person', null, Web.IDisposable);
+
+Demo.Person.prototype.toString = function() {
+    return this.getName() + ' (' + this.getEmailAddress() + ')';
+}
+
+Demo.Employee = function(firstName, lastName, emailAddress, team, title) {
+    Demo.Employee.initializeBase(this, [firstName, lastName, emailAddress]);
+    
+    var _team = team;
+    var _title = title;
+    
+    this.getTeam = function() {
+        return _team;
+    }
+    this.setTeam = function(team) {
+        _team = team;
+    }
+    this.getTitle = function() {
+        return _title;
+    }
+}
+Type.registerClass('Demo.Employee', Demo.Person);
+
+Demo.Employee.prototype.toString = function() {
+    return Demo.Employee.callBaseMethod(this, 'toString') + '\r\n' + this.getTitle() + '\r\n' + this.getTeam();
+}
+
+var Frank = new Demo.Person ("Frank", "Smith", "franksmith@yoyodyne.com");
+alert (Frank.toString());
+
+var Molly = new Demo.Employee ("Molly", "Hatchett", "molly@whoknew.com", "Marketing", "Vice President");
+alert (Molly.toString());
+
+</script>
+</head>
+</html>
