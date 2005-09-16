@@ -11,6 +11,7 @@ AssignmentStatements4.vb
 ConditionalStatements1.vb
 DecimalLiteral1.vb
 DoubleLiteral1.vb
+Error.vb
 ExceptionHandling1.vb
 ExpConversionDoubletoByte1.vb
 ExpConversionDoubletoDecimal2.vb
@@ -88,3 +89,4 @@ ShiftOperators1.vb
 StringLiterals1.vb
 Variables1.vb
 Variables2.vb
+

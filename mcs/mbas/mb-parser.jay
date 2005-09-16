@@ -2786,6 +2786,7 @@ embedded_statement
 	| synclock_statement
 	| jump_statement
 	| array_handling_statement 
+	| error_statement
 	;
 /*        
 empty_statement
@@ -2795,6 +2796,20 @@ empty_statement
 	  }
 	;        
 */
+
+error_statement
+	: ERROR _mark_ expression {
+	
+		Expression primary_expression = DecomposeQI ("Microsoft.VisualBasic.CompilerServices.ProjectData.CreateProjectError", (Location) $2 );
+		
+		Argument error_number = new Argument ((Expression) $3, Argument.AType.Expression);
+		ArrayList args = new ArrayList();
+		args.Add(error_number);
+		
+		Invocation CreateProjectErrorInvoke =  new Invocation (primary_expression, args, (Location)$2);
+		$$ = new Throw (CreateProjectErrorInvoke ,(Location)$2);
+	}
+;
 
 with_statement
 	 // : WITH _mark_ expression end_of_stmt /* was : WITH qualified_identifier end_of_stmt */
@@ -6070,3 +6085,6 @@ void HandleConditionalDirective(IfElseStateMachine.Token tok, BoolLiteral expr)
 }
 /* end end end */
 }
+
+
+
