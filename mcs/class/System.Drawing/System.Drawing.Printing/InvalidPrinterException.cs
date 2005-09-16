@@ -8,7 +8,7 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,25 +29,36 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Runtime.Serialization;
 
-namespace System.Drawing.Printing
-{
-	/// <summary>
-	/// Summary description for InvalidPrinterExecption.
-	/// </summary>
+using System.Runtime.Serialization;
+using System.Security.Permissions;
+
+namespace System.Drawing.Printing {
+
+#if NET_2_0
+	[Serializable]
+#endif
 	public class InvalidPrinterException : SystemException {
+
 		private PrinterSettings settings;
 
-		public InvalidPrinterException(PrinterSettings settings) {
+		public InvalidPrinterException (PrinterSettings settings)
+		{
 			this.settings = settings;
 		}
-		protected InvalidPrinterException(SerializationInfo info, StreamingContext context) {
-			throw new NotImplementedException ();
+
+		protected InvalidPrinterException (SerializationInfo info, StreamingContext context)
+			: base (info, context)
+		{
 		}
-		public override void GetObjectData(SerializationInfo info, StreamingContext context) {
-			throw new NotImplementedException ();
+
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException ("info");
+
+			base.GetObjectData (info, context);
 		}
 	}
 }
