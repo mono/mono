@@ -1,3 +1,11 @@
+2005-09-16  Chris Toshok  <toshok@ximian.com>
+
+	* Test/Microsoft.Web.UI/LabelTest.cs: new test.
+
+	* Test/Microsoft.Web.UI/ListViewTest.cs: new test.
+
+	* Test/Microsoft.Web.UI/TextBoxTest.cs: new test.
+
 2005-09-15  Chris Toshok  <toshok@ximian.com>
 
 	* Makefile (LIB_MCS_FLAGS): fix this up.

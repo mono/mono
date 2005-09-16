@@ -14,5 +14,8 @@ Microsoft.Web.UI/DraggableListItemTest.cs
 Microsoft.Web.UI/DataSourceDropTargetTest.cs
 Microsoft.Web.UI/FloatingBehaviorTest.cs
 Microsoft.Web.UI/HoverBehaviorTest.cs
+Microsoft.Web.UI/LabelTest.cs
+Microsoft.Web.UI/ListViewTest.cs
 Microsoft.Web.UI/OptionTest.cs
 Microsoft.Web.UI/PropertyFilterTest.cs
+Microsoft.Web.UI/TextBoxTest.cs
