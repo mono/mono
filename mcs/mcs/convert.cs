@@ -298,7 +298,7 @@ namespace Mono.CSharp {
 					//
 					long v = ((LongConstant) expr).Value;
 					if (v >= 0)
-						return new ULongConstant ((ulong) v);
+						return new ULongConstant ((ulong) v, expr.Location);
 				} 
 			}
 			
@@ -1212,19 +1212,19 @@ namespace Mono.CSharp {
 
 			if (target_type == TypeManager.sbyte_type){
 				if (value >= SByte.MinValue && value <= SByte.MaxValue)
-					return new SByteConstant ((sbyte) value);
+					return new SByteConstant ((sbyte) value, ic.Location);
 			} else if (target_type == TypeManager.byte_type){
 				if (value >= Byte.MinValue && value <= Byte.MaxValue)
-					return new ByteConstant ((byte) value);
+					return new ByteConstant ((byte) value, ic.Location);
 			} else if (target_type == TypeManager.short_type){
 				if (value >= Int16.MinValue && value <= Int16.MaxValue)
-					return new ShortConstant ((short) value);
+					return new ShortConstant ((short) value, ic.Location);
 			} else if (target_type == TypeManager.ushort_type){
 				if (value >= UInt16.MinValue && value <= UInt16.MaxValue)
-					return new UShortConstant ((ushort) value);
+					return new UShortConstant ((ushort) value, ic.Location);
 			} else if (target_type == TypeManager.uint32_type){
 				if (value >= 0)
-					return new UIntConstant ((uint) value);
+					return new UIntConstant ((uint) value, ic.Location);
 			} else if (target_type == TypeManager.uint64_type){
 				//
 				// we can optimize this case: a positive int32
@@ -1232,11 +1232,11 @@ namespace Mono.CSharp {
 				// to do it.
 				//
 				if (value >= 0)
-					return new ULongConstant ((ulong) value);
+					return new ULongConstant ((ulong) value, ic.Location);
 			} else if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) value);
+				return new DoubleConstant ((double) value, ic.Location);
 			else if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) value);
+				return new FloatConstant ((float) value, ic.Location);
 			
 			if (value == 0 && ic is IntLiteral && TypeManager.IsEnumType (target_type)){
 				Type underlying = TypeManager.EnumToUnderlying (target_type);
@@ -1247,9 +1247,9 @@ namespace Mono.CSharp {
 				// to EnumConstant
 				//
 				if (underlying == TypeManager.int64_type)
-					e = new LongLiteral (0);
+					e = new LongLiteral (0, ic.Location);
 				else if (underlying == TypeManager.uint64_type)
-					e = new ULongLiteral (0);
+					e = new ULongLiteral (0, ic.Location);
 
 				return new EnumConstant (e, target_type);
 			}

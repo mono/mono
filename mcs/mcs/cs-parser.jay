@@ -2515,7 +2515,7 @@ pointer_type
 		// can't perform checks during this phase - we do it during
 		// semantic analysis.
 		//
-		$$ = new ComposedCast ((Expression) $1, "*");
+		$$ = new ComposedCast ((Expression) $1, "*", Lexer.Location);
 	  }
 	| VOID STAR
 	  {
@@ -2644,15 +2644,15 @@ literal
 	: boolean_literal
 	| integer_literal
 	| real_literal
-	| LITERAL_CHARACTER     { $$ = new CharLiteral ((char) lexer.Value); }
-	| LITERAL_STRING        { $$ = new StringLiteral ((string) lexer.Value); }
+	| LITERAL_CHARACTER     { $$ = new CharLiteral ((char) lexer.Value, lexer.Location); }
+	| LITERAL_STRING        { $$ = new StringLiteral ((string) lexer.Value, lexer.Location); } 
 	| NULL			{ $$ = NullLiteral.Null; }
 	;
 
 real_literal
-	: LITERAL_FLOAT         { $$ = new FloatLiteral ((float) lexer.Value); }
-	| LITERAL_DOUBLE        { $$ = new DoubleLiteral ((double) lexer.Value); }
-	| LITERAL_DECIMAL       { $$ = new DecimalLiteral ((decimal) lexer.Value); }
+	: LITERAL_FLOAT         { $$ = new FloatLiteral ((float) lexer.Value, lexer.Location); }
+	| LITERAL_DOUBLE        { $$ = new DoubleLiteral ((double) lexer.Value, lexer.Location); }
+	| LITERAL_DECIMAL       { $$ = new DecimalLiteral ((decimal) lexer.Value, lexer.Location); }
 	;
 
 integer_literal
@@ -2660,28 +2660,21 @@ integer_literal
 		object v = lexer.Value;
 
 		if (v is int){
-			int i = (int) v;
-
-			if (i == 0)
-				$$ = IntLiteral.Zero;
-			else if (i == 1)
-				$$ = IntLiteral.One;
-			else
-				$$ = new IntLiteral (i);
+			$$ = new IntLiteral ((int) v, lexer.Location);
 		} else if (v is uint)
-			$$ = new UIntLiteral ((UInt32) v);
+			$$ = new UIntLiteral ((UInt32) v, lexer.Location);
 		else if (v is long)
-			$$ = new LongLiteral ((Int64) v);
+			$$ = new LongLiteral ((Int64) v, lexer.Location);
 		else if (v is ulong)
-			$$ = new ULongLiteral ((UInt64) v);
+			$$ = new ULongLiteral ((UInt64) v, lexer.Location);
 		else
 			Console.WriteLine ("OOPS.  Unexpected result from scanner");
 	  }
 	;
 
 boolean_literal
-	: TRUE			{ $$ = new BoolLiteral (true); }
-	| FALSE			{ $$ = new BoolLiteral (false); }
+	: TRUE			{ $$ = new BoolLiteral (true, lexer.Location); }
+	| FALSE			{ $$ = new BoolLiteral (false, lexer.Location); }
 	;
 
 parenthesized_expression_0
@@ -3176,7 +3169,8 @@ cast_expression
 	: cast_list
 	| OPEN_PARENS non_expression_type CLOSE_PARENS prefixed_unary_expression
 	  {
-		$$ = new Cast ((Expression) $2, (Expression) $4);
+		// TODO: wrong location
+		$$ = new Cast ((Expression) $2, (Expression) $4, lexer.Location);
 	  }
 	;
 
@@ -3737,7 +3731,7 @@ local_variable_type
 		if ((string) $2 == "")
 			$$ = $1;
 		else
-			$$ = new ComposedCast ((Expression) $1, (string) $2);
+			$$ = new ComposedCast ((Expression) $1, (string) $2, lexer.Location);
 	  }
         ;
 

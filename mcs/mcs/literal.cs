@@ -54,7 +54,8 @@ namespace Mono.CSharp {
 			Null = new NullLiteral ();
 		}
 			
-		public NullLiteral ()
+		public NullLiteral ():
+			base (Location.Null) // TODO: use real location
 		{
 			eclass = ExprClass.Value;
 		}
@@ -148,7 +149,7 @@ namespace Mono.CSharp {
 	}
 
 	public class BoolLiteral : BoolConstant {
-		public BoolLiteral (bool val) : base (val)
+		public BoolLiteral (bool val, Location loc) : base (val, loc)
 		{
 		}
 
@@ -160,7 +161,7 @@ namespace Mono.CSharp {
 	}
 
 	public class CharLiteral : CharConstant {
-		public CharLiteral (char c) : base (c)
+		public CharLiteral (char c, Location loc) : base (c, loc)
 		{
 		}
 
@@ -172,15 +173,7 @@ namespace Mono.CSharp {
 	}
 
 	public class IntLiteral : IntConstant {
-		public static IntLiteral One, Zero;
-		
-		static IntLiteral ()
-		{
-			Zero = new IntLiteral (0);
-			One = new IntLiteral (1);
-		}
-		
-		public IntLiteral (int l) : base (l)
+		public IntLiteral (int l, Location loc) : base (l, loc)
 		{
 		}
 
@@ -192,7 +185,7 @@ namespace Mono.CSharp {
 	}
 
 	public class UIntLiteral : UIntConstant {
-		public UIntLiteral (uint l) : base (l)
+		public UIntLiteral (uint l, Location loc) : base (l, loc)
 		{
 		}
 
@@ -204,7 +197,7 @@ namespace Mono.CSharp {
 	}
 	
 	public class LongLiteral : LongConstant {
-		public LongLiteral (long l) : base (l)
+		public LongLiteral (long l, Location loc) : base (l, loc)
 		{
 		}
 
@@ -217,7 +210,7 @@ namespace Mono.CSharp {
 	}
 
 	public class ULongLiteral : ULongConstant {
-		public ULongLiteral (ulong l) : base (l)
+		public ULongLiteral (ulong l, Location loc) : base (l, loc)
 		{
 		}
 
@@ -230,7 +223,7 @@ namespace Mono.CSharp {
 	
 	public class FloatLiteral : FloatConstant {
 		
-		public FloatLiteral (float f) : base (f)
+		public FloatLiteral (float f, Location loc) : base (f, loc)
 		{
 		}
 
@@ -242,7 +235,7 @@ namespace Mono.CSharp {
 	}
 
 	public class DoubleLiteral : DoubleConstant {
-		public DoubleLiteral (double d) : base (d)
+		public DoubleLiteral (double d, Location loc) : base (d, loc)
 		{
 		}
 
@@ -255,7 +248,7 @@ namespace Mono.CSharp {
 	}
 
 	public class DecimalLiteral : DecimalConstant {
-		public DecimalLiteral (decimal d) : base (d)
+		public DecimalLiteral (decimal d, Location loc) : base (d, loc)
 		{
 		}
 
@@ -267,7 +260,7 @@ namespace Mono.CSharp {
 	}
 
 	public class StringLiteral : StringConstant {
-		public StringLiteral (string s) : base (s)
+		public StringLiteral (string s, Location loc) : base (s, loc)
 		{
 		}
 

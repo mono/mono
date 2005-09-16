@@ -4925,7 +4925,7 @@ namespace Mono.CSharp {
 		public string ShortName {
 			get { return MemberName.Name; }
 			set {
-				SetMemberName (new MemberName (MemberName.Left, value));
+				SetMemberName (new MemberName (MemberName.Left, value, Location));
 			}
 		}
 

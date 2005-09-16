@@ -17,6 +17,12 @@ namespace Mono.CSharp {
 	///   Base class for constants and literals.
 	/// </summary>
 	public abstract class Constant : Expression {
+
+		protected Constant (Location loc)
+		{
+			this.loc = loc;
+		}
+
 		/// <remarks>
 		///   This is different from ToString in that ToString
 		///   is supposed to be there for debugging purposes,
@@ -177,33 +183,33 @@ namespace Mono.CSharp {
 
 			Constant retval;
 			if (type == TypeManager.int32_type)
-				retval = new IntConstant ((int) constant_value);
+				retval = new IntConstant ((int) constant_value, loc);
 			else if (type == TypeManager.uint32_type)
-				retval = new UIntConstant ((uint) constant_value);
+				retval = new UIntConstant ((uint) constant_value, loc);
 			else if (type == TypeManager.int64_type)
-				retval = new LongConstant ((long) constant_value);
+				retval = new LongConstant ((long) constant_value, loc);
 			else if (type == TypeManager.uint64_type)
-				retval = new ULongConstant ((ulong) constant_value);
+				retval = new ULongConstant ((ulong) constant_value, loc);
 			else if (type == TypeManager.float_type)
-				retval = new FloatConstant ((float) constant_value);
+				retval = new FloatConstant ((float) constant_value, loc);
 			else if (type == TypeManager.double_type)
-				retval = new DoubleConstant ((double) constant_value);
+				retval = new DoubleConstant ((double) constant_value, loc);
 			else if (type == TypeManager.string_type)
-				retval = new StringConstant ((string) constant_value);
+				retval = new StringConstant ((string) constant_value, loc);
 			else if (type == TypeManager.short_type)
-				retval = new ShortConstant ((short) constant_value);
+				retval = new ShortConstant ((short) constant_value, loc);
 			else if (type == TypeManager.ushort_type)
-				retval = new UShortConstant ((ushort) constant_value);
+				retval = new UShortConstant ((ushort) constant_value, loc);
 			else if (type == TypeManager.sbyte_type)
-				retval = new SByteConstant ((sbyte) constant_value);
+				retval = new SByteConstant ((sbyte) constant_value, loc);
 			else if (type == TypeManager.byte_type)
-				retval = new ByteConstant ((byte) constant_value);
+				retval = new ByteConstant ((byte) constant_value, loc);
 			else if (type == TypeManager.char_type)
-				retval = new CharConstant ((char) constant_value);
+				retval = new CharConstant ((char) constant_value, loc);
 			else if (type == TypeManager.bool_type)
-				retval = new BoolConstant ((bool) constant_value);
+				retval = new BoolConstant ((bool) constant_value, loc);
 			else if (type == TypeManager.decimal_type)
-				retval = new DecimalConstant ((decimal) constant_value);
+				retval = new DecimalConstant ((decimal) constant_value, loc);
 			else
 				throw new Exception ("LookupConstantValue: Unhandled constant type: " + type);
 			
@@ -267,7 +273,8 @@ namespace Mono.CSharp {
 	public class BoolConstant : Constant {
 		public readonly bool Value;
 		
-		public BoolConstant (bool val)
+		public BoolConstant (bool val, Location loc):
+			base (loc)
 		{
 			type = TypeManager.bool_type;
 			eclass = ExprClass.Value;
@@ -319,7 +326,8 @@ namespace Mono.CSharp {
 	public class ByteConstant : Constant {
 		public readonly byte Value;
 
-		public ByteConstant (byte v)
+		public ByteConstant (byte v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.byte_type;
 			eclass = ExprClass.Value;
@@ -343,37 +351,37 @@ namespace Mono.CSharp {
 
 		public override DoubleConstant ConvertToDouble ()
 		{
-			return new DoubleConstant (Value);
+			return new DoubleConstant (Value, loc);
 		}
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return new FloatConstant (Value);
+			return new FloatConstant (Value, loc);
 		}
 
 		public override ULongConstant ConvertToULong ()
 		{
-			return new ULongConstant (Value);
+			return new ULongConstant (Value, loc);
 		}
 
 		public override LongConstant ConvertToLong ()
 		{
-			return new LongConstant (Value);
+			return new LongConstant (Value, loc);
 		}
 
 		public override UIntConstant ConvertToUInt ()
 		{
-			return new UIntConstant (Value);
+			return new UIntConstant (Value, loc);
 		}
 
 		public override IntConstant ConvertToInt ()
 		{
-			return new IntConstant (Value);
+			return new IntConstant (Value, loc);
 		}
 
 		public override Constant Increment ()
 		{
-			return new ByteConstant (checked ((byte)(Value + 1)));
+			return new ByteConstant (checked ((byte)(Value + 1)), loc);
 		}
 
 		public override bool IsDefaultValue {
@@ -396,7 +404,8 @@ namespace Mono.CSharp {
 	public class CharConstant : Constant {
 		public readonly char Value;
 
-		public CharConstant (char v)
+		public CharConstant (char v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.char_type;
 			eclass = ExprClass.Value;
@@ -449,37 +458,37 @@ namespace Mono.CSharp {
 
 		public override DoubleConstant ConvertToDouble ()
 		{
-			return new DoubleConstant (Value);
+			return new DoubleConstant (Value, loc);
 		}
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return new FloatConstant (Value);
+			return new FloatConstant (Value, loc);
 		}
 
 		public override ULongConstant ConvertToULong ()
 		{
-			return new ULongConstant (Value);
+			return new ULongConstant (Value, loc);
 		}
 
 		public override LongConstant ConvertToLong ()
 		{
-			return new LongConstant (Value);
+			return new LongConstant (Value, loc);
 		}
 
 		public override UIntConstant ConvertToUInt ()
 		{
-			return new UIntConstant (Value);
+			return new UIntConstant (Value, loc);
 		}
 
 		public override IntConstant ConvertToInt ()
 		{
-			return new IntConstant (Value);
+			return new IntConstant (Value, loc);
 		}
 
 		public override Constant Increment ()
 		{
-			return new CharConstant (checked ((char)(Value + 1)));
+			return new CharConstant (checked ((char)(Value + 1)), loc);
 		}
 		
 		public override bool IsDefaultValue {
@@ -502,7 +511,8 @@ namespace Mono.CSharp {
 	public class SByteConstant : Constant {
 		public readonly sbyte Value;
 
-		public SByteConstant (sbyte v)
+		public SByteConstant (sbyte v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.sbyte_type;
 			eclass = ExprClass.Value;
@@ -526,25 +536,25 @@ namespace Mono.CSharp {
 
 		public override DoubleConstant ConvertToDouble ()
 		{
-			return new DoubleConstant (Value);
+			return new DoubleConstant (Value, loc);
 		}
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return new FloatConstant (Value);
+			return new FloatConstant (Value, loc);
 		}
 
 		public override ULongConstant ConvertToULong ()
 		{
 			if (Value >= 0)
-				return new ULongConstant ((ulong) Value);
+				return new ULongConstant ((ulong) Value, loc);
 			
 			return null;
 		}
 
 		public override LongConstant ConvertToLong ()
 		{
-			return new LongConstant (Value);
+			return new LongConstant (Value, loc);
 		}
 
 		public override UIntConstant ConvertToUInt ()
@@ -554,12 +564,12 @@ namespace Mono.CSharp {
 
 		public override IntConstant ConvertToInt ()
 		{
-			return new IntConstant (Value);
+			return new IntConstant (Value, loc);
 		}
 
 		public override Constant Increment ()
 		{
-		    return new SByteConstant (checked((sbyte)(Value + 1)));
+		    return new SByteConstant (checked((sbyte)(Value + 1)), loc);
 		}
 
 		public override bool IsDefaultValue {
@@ -582,7 +592,8 @@ namespace Mono.CSharp {
 	public class ShortConstant : Constant {
 		public readonly short Value;
 
-		public ShortConstant (short v)
+		public ShortConstant (short v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.short_type;
 			eclass = ExprClass.Value;
@@ -606,12 +617,12 @@ namespace Mono.CSharp {
 
 		public override DoubleConstant ConvertToDouble ()
 		{
-			return new DoubleConstant (Value);
+			return new DoubleConstant (Value, loc);
 		}
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return new FloatConstant (Value);
+			return new FloatConstant (Value, loc);
 		}
 
 		public override ULongConstant ConvertToULong ()
@@ -621,7 +632,7 @@ namespace Mono.CSharp {
 
 		public override LongConstant ConvertToLong ()
 		{
-			return new LongConstant (Value);
+			return new LongConstant (Value, loc);
 		}
 
 		public override UIntConstant ConvertToUInt ()
@@ -631,12 +642,12 @@ namespace Mono.CSharp {
 
 		public override IntConstant ConvertToInt ()
 		{
-			return new IntConstant (Value);
+			return new IntConstant (Value, loc);
 		}
 
 		public override Constant Increment ()
 		{
-			return new ShortConstant (checked((short)(Value + 1)));
+			return new ShortConstant (checked((short)(Value + 1)), loc);
 		}
 
 		public override bool IsDefaultValue {
@@ -659,7 +670,8 @@ namespace Mono.CSharp {
 	public class UShortConstant : Constant {
 		public readonly ushort Value;
 
-		public UShortConstant (ushort v)
+		public UShortConstant (ushort v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.ushort_type;
 			eclass = ExprClass.Value;
@@ -683,37 +695,37 @@ namespace Mono.CSharp {
 
 		public override DoubleConstant ConvertToDouble ()
 		{
-			return new DoubleConstant (Value);
+			return new DoubleConstant (Value, loc);
 		}
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return new FloatConstant (Value);
+			return new FloatConstant (Value, loc);
 		}
 
 		public override ULongConstant ConvertToULong ()
 		{
-			return new ULongConstant (Value);
+			return new ULongConstant (Value, loc);
 		}
 
 		public override LongConstant ConvertToLong ()
 		{
-			return new LongConstant (Value);
+			return new LongConstant (Value, loc);
 		}
 
 		public override UIntConstant ConvertToUInt ()
 		{
-			return new UIntConstant (Value);
+			return new UIntConstant (Value, loc);
 		}
 
 		public override IntConstant ConvertToInt ()
 		{
-			return new IntConstant (Value);
+			return new IntConstant (Value, loc);
 		}
 	
 		public override Constant Increment ()
 		{
-			return new UShortConstant (checked((ushort)(Value + 1)));
+			return new UShortConstant (checked((ushort)(Value + 1)), loc);
 		}
 
 		public override bool IsDefaultValue {
@@ -736,7 +748,8 @@ namespace Mono.CSharp {
 	public class IntConstant : Constant {
 		public readonly int Value;
 
-		public IntConstant (int v)
+		public IntConstant (int v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.int32_type;
 			eclass = ExprClass.Value;
@@ -812,17 +825,17 @@ namespace Mono.CSharp {
 
 		public override DecimalConstant ConvertToDecimal()
 		{
-			return new DecimalConstant (Value);
+			return new DecimalConstant (Value, loc);
 		}
 
 		public override DoubleConstant ConvertToDouble ()
 		{
-			return new DoubleConstant (Value);
+			return new DoubleConstant (Value, loc);
 		}
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return new FloatConstant (Value);
+			return new FloatConstant (Value, loc);
 		}
 
 		public override ULongConstant ConvertToULong ()
@@ -830,12 +843,12 @@ namespace Mono.CSharp {
 			if (Value < 0)
 				return null;
 
-			return new ULongConstant ((ulong) Value);
+			return new ULongConstant ((ulong) Value, loc);
 		}
 
 		public override LongConstant ConvertToLong ()
 		{
-			return new LongConstant (Value);
+			return new LongConstant (Value, loc);
 		}
 
 		public override UIntConstant ConvertToUInt ()
@@ -843,7 +856,7 @@ namespace Mono.CSharp {
 			if (Value < 0)
 				return null;
 
-			return new UIntConstant ((uint) Value);
+			return new UIntConstant ((uint) Value, loc);
 		}
 
 		public override IntConstant ConvertToInt ()
@@ -853,7 +866,7 @@ namespace Mono.CSharp {
 
 		public override Constant Increment ()
 		{
-			return new IntConstant (checked(Value + 1));
+			return new IntConstant (checked(Value + 1), loc);
 		}
 
 		public override bool IsDefaultValue {
@@ -876,7 +889,8 @@ namespace Mono.CSharp {
 	public class UIntConstant : Constant {
 		public readonly uint Value;
 
-		public UIntConstant (uint v)
+		public UIntConstant (uint v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.uint32_type;
 			eclass = ExprClass.Value;
@@ -900,22 +914,22 @@ namespace Mono.CSharp {
 
 		public override DoubleConstant ConvertToDouble ()
 		{
-			return new DoubleConstant (Value);
+			return new DoubleConstant (Value, loc);
 		}
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return new FloatConstant (Value);
+			return new FloatConstant (Value, loc);
 		}
 
 		public override ULongConstant ConvertToULong ()
 		{
-			return new ULongConstant (Value);
+			return new ULongConstant (Value, loc);
 		}
 
 		public override LongConstant ConvertToLong ()
 		{
-			return new LongConstant (Value);
+			return new LongConstant (Value, loc);
 		}
 
 		public override UIntConstant ConvertToUInt ()
@@ -930,7 +944,7 @@ namespace Mono.CSharp {
 	
 		public override Constant Increment ()
 		{
-			return new UIntConstant (checked(Value + 1));
+			return new UIntConstant (checked(Value + 1), loc);
 		}
 	
 		public override bool IsDefaultValue {
@@ -953,7 +967,8 @@ namespace Mono.CSharp {
 	public class LongConstant : Constant {
 		public readonly long Value;
 
-		public LongConstant (long v)
+		public LongConstant (long v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.int64_type;
 			eclass = ExprClass.Value;
@@ -989,12 +1004,12 @@ namespace Mono.CSharp {
 
 		public override DoubleConstant ConvertToDouble ()
 		{
-			return new DoubleConstant (Value);
+			return new DoubleConstant (Value, loc);
 		}
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return new FloatConstant (Value);
+			return new FloatConstant (Value, loc);
 		}
 
 		public override ULongConstant ConvertToULong ()
@@ -1002,7 +1017,7 @@ namespace Mono.CSharp {
 			if (Value < 0)
 				return null;
 			
-			return new ULongConstant ((ulong) Value);
+			return new ULongConstant ((ulong) Value, loc);
 		}
 
 		public override LongConstant ConvertToLong ()
@@ -1022,7 +1037,7 @@ namespace Mono.CSharp {
 
 		public override Constant Increment ()
 		{
-			return new LongConstant (checked(Value + 1));
+			return new LongConstant (checked(Value + 1), loc);
 		}
 		
 		public override bool IsDefaultValue {
@@ -1045,7 +1060,8 @@ namespace Mono.CSharp {
 	public class ULongConstant : Constant {
 		public readonly ulong Value;
 
-		public ULongConstant (ulong v)
+		public ULongConstant (ulong v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.uint64_type;
 			eclass = ExprClass.Value;
@@ -1071,12 +1087,12 @@ namespace Mono.CSharp {
 
 		public override DoubleConstant ConvertToDouble ()
 		{
-			return new DoubleConstant (Value);
+			return new DoubleConstant (Value, loc);
 		}
 
 		public override FloatConstant ConvertToFloat ()
 		{
-			return new FloatConstant (Value);
+			return new FloatConstant (Value, loc);
 		}
 
 		public override ULongConstant ConvertToULong ()
@@ -1101,7 +1117,7 @@ namespace Mono.CSharp {
 
 		public override Constant Increment ()
 		{
-			return new ULongConstant (checked(Value + 1));
+			return new ULongConstant (checked(Value + 1), loc);
 		}
 
 		public override bool IsDefaultValue {
@@ -1124,7 +1140,8 @@ namespace Mono.CSharp {
 	public class FloatConstant : Constant {
 		public readonly float Value;
 
-		public FloatConstant (float v)
+		public FloatConstant (float v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.float_type;
 			eclass = ExprClass.Value;
@@ -1148,7 +1165,7 @@ namespace Mono.CSharp {
 
 		public override DoubleConstant ConvertToDouble ()
 		{
-			return new DoubleConstant (Value);
+			return new DoubleConstant (Value, loc);
 		}
 
 		public override FloatConstant ConvertToFloat ()
@@ -1173,7 +1190,7 @@ namespace Mono.CSharp {
 
 		public override Constant Increment ()
 		{
-			return new FloatConstant (checked(Value + 1));
+			return new FloatConstant (checked(Value + 1), loc);
 		}
 
 		public override bool IsDefaultValue {
@@ -1192,7 +1209,8 @@ namespace Mono.CSharp {
 	public class DoubleConstant : Constant {
 		public readonly double Value;
 
-		public DoubleConstant (double v)
+		public DoubleConstant (double v, Location loc):
+			base (loc)
 		{
 			type = TypeManager.double_type;
 			eclass = ExprClass.Value;
@@ -1246,7 +1264,7 @@ namespace Mono.CSharp {
 
 		public override Constant Increment ()
 		{
-			return new DoubleConstant (checked(Value + 1));
+			return new DoubleConstant (checked(Value + 1), loc);
 		}
 
 		public override bool IsDefaultValue {
@@ -1265,7 +1283,8 @@ namespace Mono.CSharp {
 	public class DecimalConstant : Constant {
 		public readonly decimal Value;
 
-		public DecimalConstant (decimal d)
+		public DecimalConstant (decimal d, Location loc):
+			base (loc)
 		{
 			type = TypeManager.decimal_type;
 			eclass = ExprClass.Value;
@@ -1317,7 +1336,7 @@ namespace Mono.CSharp {
 
 		public override Constant Increment ()
 		{
-			return new DecimalConstant (checked (Value + 1));
+			return new DecimalConstant (checked (Value + 1), loc);
 		}
 
 		public override bool IsDefaultValue {
@@ -1336,7 +1355,8 @@ namespace Mono.CSharp {
 	public class StringConstant : Constant {
 		public readonly string Value;
 
-		public StringConstant (string s)
+		public StringConstant (string s, Location loc):
+			base (loc)
 		{
 			type = TypeManager.string_type;
 			eclass = ExprClass.Value;

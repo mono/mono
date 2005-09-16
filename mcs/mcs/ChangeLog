@@ -1,3 +1,15 @@
+2005-09-16  Marek Safar  <marek.safar@seznam.cz>
+
+	* cfold.cs, constant.cs, convert.cs, ecore.cs,
+	expression.cs, iterators.cs, literal.cs: Store constants and
+	literals location.
+	
+	* class.cs (MemberBase.ShortName): Pass location.
+	
+	* cs-parser.jay: Some location fixes.
+	
+	* ecore.cs (Expression.Location): Made virtual.
+
 2005-09-05  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs (Cast.TryReduce): Only reduce to an EnumConstant

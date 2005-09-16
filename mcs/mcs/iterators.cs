@@ -498,7 +498,7 @@ namespace Mono.CSharp {
 				cc.CaptureThis ();
 			}
 
-			args.Add (new Argument (new BoolLiteral (false)));
+			args.Add (new Argument (new BoolLiteral (false, Location)));
 
 			for (int i = 0; i < parameters.Count; i++) {
 				Type t = parameters.ParameterType (i);
@@ -603,7 +603,7 @@ namespace Mono.CSharp {
 				new Binary (
 					Binary.Operator.LessThanOrEqual,
 					new FieldExpression (this, pc_field),
-					new IntLiteral ((int) State.Running)),
+					new IntLiteral ((int) State.Running, pc_field.Location)),
 				Create_ThrowInvalidOperation (),
 				new Return (
 					new FieldExpression (this, current_field), Location),
@@ -651,8 +651,8 @@ namespace Mono.CSharp {
 				"CompareExchange", Location);
 
 			Expression pc = new FieldExpression (this, pc_field);
-			Expression before = new IntLiteral ((int) State.Running);
-			Expression uninitialized = new IntLiteral ((int) State.Uninitialized);
+			Expression before = new IntLiteral ((int) State.Running, Location);
+			Expression uninitialized = new IntLiteral ((int) State.Uninitialized, Location);
 
 			ArrayList args = new ArrayList ();
 			args.Add (new Argument (pc, Argument.AType.Ref));
@@ -674,7 +674,7 @@ namespace Mono.CSharp {
 				args.Add (new Argument (new CapturedThisReference (this, Location)));
 			}
 
-			args.Add (new Argument (new BoolLiteral (true)));
+			args.Add (new Argument (new BoolLiteral (true, Location)));
 
 			for (int i = 0; i < parameters.Count; i++) {
 				Expression cp = new CapturedParameterReference (
