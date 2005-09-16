@@ -1,3 +1,11 @@
+2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestBlend.cs, TestColorBlend.cs, TestHatchBrush.cs, TestMatrix.cs:
+	Deny UnmanagedCode permission to all tests. This shows (when executed 
+	under MS runtime) that S.D API is safe and doesn't requires high 
+	privileges to run - even if we know that, deep down, this calls into 
+	GDI+.
+
 2005-08-25 Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* TestMatrix.cs: New test cases

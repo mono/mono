@@ -33,11 +33,13 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using System.Security.Permissions;
 using NUnit.Framework;
 
 namespace MonoTests.System.Drawing.Drawing2D
 {
-	[TestFixture]	
+	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class HatchBrushTest : Assertion
 	{
 		Graphics gr;
