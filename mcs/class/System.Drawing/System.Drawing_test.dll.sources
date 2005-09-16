@@ -35,3 +35,13 @@ System.Drawing.Imaging/TestColorMatrix.cs
 System.Drawing.Imaging/TestImageAttributes.cs
 System.Drawing.Printing/PrintingPermissionAttributeTest.cs
 System.Drawing.Printing/PrintingPermissionTest.cs
+System.Drawing/BitmapCas.cs
+System.Drawing/GraphicsCas.cs
+System.Drawing.Design/CategoryNameCollectionCas.cs
+System.Drawing.Design/PaintValueEventArgsCas.cs
+System.Drawing.Design/PropertyValueUIItemCas.cs
+System.Drawing.Design/ToolboxComponentsCreatedEventArgsCas.cs
+System.Drawing.Design/ToolboxComponentsCreatingEventArgsCas.cs
+System.Drawing.Design/ToolboxItemCas.cs
+System.Drawing.Design/ToolboxItemCollectionCas.cs
+System.Drawing.Design/UITypeEditorCas.cs
