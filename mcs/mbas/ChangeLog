@@ -1,4 +1,13 @@
+2005-09-16  Renato Suga <renato@psl-pr.softwarelivre.org>
+	* mb-parser.jay:rules goto_statement and for_statement changed in order to recognize error BC30757
+	
+	* statement.cs: class added property LabelName and uncomented string label_name. These changes allow one to get the LabelName when reporting an error
+
+	* block.cs: added property bool HasGotoStatement and property String LAbelName. The first one combined with HasLabeledStatement allows one to identify the aforementioned error.
+
 2005-09-15  Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	    Alexandre Rocha Lima e Marcondes
+	    <alexandre@psl-pr.softwarelivre.org>
 	*  mb-parser.jay : Error statement statemet support.
 
 2005-08-23 Satya Sudha K <ksathyasudha@novell.com>

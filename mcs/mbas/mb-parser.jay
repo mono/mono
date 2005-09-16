@@ -2935,6 +2935,7 @@ goto_statement
 		$$ = new Goto (current_block, (string) $2, lexer.Location);
 
 		current_block = block;
+		current_block.SetEndLocation(lexer.Location);
 	  }
 	;
 	
@@ -3389,6 +3390,8 @@ for_statement
 		}
 
 		Block inner_statement = end_block();
+		if (!inner_statement.HasGotoStatement && inner_statement.HasLabeledStatement)
+			Report.Error(30757, inner_statement.Parent.EndLocation, "'Goto "+inner_statement.LabelName+"' is not valid because '"+inner_statement.LabelName+"' is inside a 'For' or 'ForEach' statement that does not contain this statement.");
 		Location l = (Location)$2;
 		Expression for_var = (Expression) DecomposeQI ((string)$3, l);
 			

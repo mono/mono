@@ -935,7 +935,7 @@ namespace Mono.MonoBASIC {
 
 	public class LabeledStatement : Statement {
 		public readonly Location Location;
-		//string label_name;
+		string label_name;
 		bool defined;
 		bool referenced;
 		Label label;
@@ -944,8 +944,14 @@ namespace Mono.MonoBASIC {
 		
 		public LabeledStatement (string label_name, Location l)
 		{
-			//this.label_name = label_name;
+			this.label_name = label_name;
 			this.Location = l;
+		}
+		
+		public string LabelName {
+			get {
+				return label_name;
+			}
 		}
 
 		public Label LabelTarget (EmitContext ec)

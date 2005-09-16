@@ -188,6 +188,30 @@ namespace Mono.MonoBASIC {
 				return false;
 			}
 		}
+		
+		public bool HasGotoStatement {
+			get {
+				foreach( Statement s in statements ) {
+					if( s is Goto )
+						return true;
+					else if (s is Block )
+						return ( ((Block) s).HasLabeledStatement);
+				}
+				return false;
+			}
+		}
+		
+		public string LabelName {
+			get {
+				foreach( Statement s in statements ) {
+					if( s is LabeledStatement )
+						return ((LabeledStatement)s).LabelName;
+					else if (s is Block )
+						return ( ((Block) s).LabelName);
+				}
+				return "";
+			}
+		}
 				
 		/// <summary>
 		///   Adds a label to the current block. 
