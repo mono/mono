@@ -1,3 +1,7 @@
+2005-09-16  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (check-local): Don't invoke semdel-wrapper.
+
 2005-09-16  Martin Baulig  <martin@ximian.com>
 
 	* exceptions-amd64.c
