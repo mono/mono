@@ -73,7 +73,7 @@ public class CairoTest
 		
 	static void Main ()
 	{		
-		Surface s = Surface.CreateForImage (Format.ARGB32, 500, 500);
+		Surface s = new ImageSurface (Format.ARGB32, 500, 500);
 		Cairo.Graphics g = new Cairo.Graphics (s);
 
 		draw (g, 500, 500);
