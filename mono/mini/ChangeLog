@@ -1,3 +1,13 @@
+2005-09-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* cpu-amd64.md: Remove unused opcodes.
+
+	* inssel-amd64.brg: Remove OP_OUTARG_REG () rules which are no longer
+	needed with the new register allocator.
+
+	* inssel-amd64.brg mini-amd64.c: Use OP_MOVE instead of OP_SETREG for
+	reg-reg moves.
+
 2005-09-16  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (check-local): Don't invoke semdel-wrapper.
