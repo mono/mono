@@ -1,3 +1,14 @@
+2005-09-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* inssel-ia64.brg (stmt): Remove OP_OUTARG_REG () rules which are no 
+	longer needed with the new register allocator.
+
+	* mini-ia64.c: Use OP_MOVE instead of OP_SETREG for reg-reg moves.
+
+	* cpu-ia64.md: Remove unused opcodes.
+	
+	* regalloc.c mini-codegen.c: Make register masks 64 bit on ia64.
+	
 2005-09-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* cpu-amd64.md: Remove unused opcodes.
