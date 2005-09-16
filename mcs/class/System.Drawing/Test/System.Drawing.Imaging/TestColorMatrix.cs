@@ -31,12 +31,14 @@ using System.Drawing.Imaging;
 using NUnit.Framework;
 using System.IO;
 using System.Security.Cryptography;
+using System.Security.Permissions;
 using System.Text;
 
 namespace MonoTests.System.Drawing
 {
 
 	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class TestColorMatrix
 	{
 

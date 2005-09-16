@@ -35,11 +35,13 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using NUnit.Framework;
 using System.IO;
+using System.Security.Permissions;
 
 namespace MonoTests.System.Drawing
 {
 
-	[TestFixture]	
+	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class TestJpegCodec 
 	{
 		

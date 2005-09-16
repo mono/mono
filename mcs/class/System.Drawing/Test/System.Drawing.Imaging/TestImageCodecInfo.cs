@@ -35,12 +35,14 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using NUnit.Framework;
 using System.Collections;
+using System.Security.Permissions;
 using System.Text.RegularExpressions;
 
 namespace MonoTests.System.Drawing
 {
 
-	[TestFixture]	
+	[TestFixture]
+	[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 	public class TestImageCodecInfo 
 	{
 		Hashtable decoders;
