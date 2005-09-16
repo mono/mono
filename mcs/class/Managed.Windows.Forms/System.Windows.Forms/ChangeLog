@@ -1,3 +1,10 @@
+2005-09-16  Jordi Mas i Hernandez <jordi@ximian.com>
+	 
+	* ListBox.cs: 
+		- Fixes Multicolumn listboxes item wrong calculations
+		- Allows to click when only one item is in the listbox
+		- Fixes crash when no items using keyboard navigation
+
 2005-09-16  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ComboBox.cs: Reverted almost everything from the latest patch which

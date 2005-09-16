@@ -1097,7 +1097,7 @@ namespace System.Windows.Forms
 					if (has_focus == true && focused_item == i)
 						state |= DrawItemState.Focus;
 						
-					if (hscrollbar_ctrl != null && hscrollbar_ctrl.Visible) {
+					if (MultiColumn == false && hscrollbar_ctrl != null && hscrollbar_ctrl.Visible) {
 						item_rect.X -= hscrollbar_ctrl.Value;
 						item_rect.Width += hscrollbar_ctrl.Value;
 					}
@@ -1140,11 +1140,11 @@ namespace System.Windows.Forms
 		// Only returns visible points. The diference of with IndexFromPoint is that the rectangle
 		// has screen coordinates
 		internal int IndexFromPointDisplayRectangle (int x, int y)
-		{				
-			if (LBoxInfo.top_item == LBoxInfo.last_item)
+		{	
+			if (Items.Count == 0)
 				return -1;
 			
-    			for (int i = LBoxInfo.top_item; i <= LBoxInfo.last_item; i++) {
+			for (int i = LBoxInfo.top_item; i <= LBoxInfo.last_item; i++) {
 				if (GetItemDisplayRectangle (i, LBoxInfo.top_item).Contains (x, y) == true)
 					return i;
 			}
@@ -1369,6 +1369,9 @@ namespace System.Windows.Forms
 		private void OnKeyDownLB (object sender, KeyEventArgs e)
 		{					
 			int new_item = -1;
+			
+			if (Items.Count == 0)
+				return;
 
 			switch (e.KeyCode) {
 				
