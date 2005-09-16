@@ -1,5 +1,8 @@
 2005-09-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.h: Make register masks 64 bit. Don't treat argument
+	registers as global registers.
+
 	* inssel-ia64.brg (stmt): Remove OP_OUTARG_REG () rules which are no 
 	longer needed with the new register allocator.
 
