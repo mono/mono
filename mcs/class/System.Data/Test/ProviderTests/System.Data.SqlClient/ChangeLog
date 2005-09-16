@@ -1,3 +1,10 @@
+2005-09-16 Senganal T  <tsenganal@novell.com>
+
+	* SqlCommandTest.cs: added more testcases for connected mode
+	* SqlConnectionTest.cs: added more testcases for connected mode
+	* SqlDataAdapterTest.cs: added more testcases for connected mode
+	* SqlDataReaderTest.cs: added more testcases for connected mode
+
 2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlCommandBuilderTest.cs: added tests for SqlCommandBuilder
@@ -9,5 +16,4 @@
 	* SqlTransactionTest.cs: pulled from Test/System.Data.SqlClient
 
 	Added attribute Category ("sqlserver") to all these test fixtures.
-
 
