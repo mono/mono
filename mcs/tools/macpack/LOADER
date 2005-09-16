@@ -36,7 +36,8 @@ cd "$APP_PATH/Contents/Resources"
 if [ "$X11_MODE" -eq "1" ]; then
 	open-x11 "$APP_NAME"
 else
+	if [ ! -d "./bin" ]; then mkdir bin ; fi
 	if [ -f "$APP_NAME" ]; then rm -f $APP_NAME ; fi
-	ln -s `which mono` "$APP_NAME" 
-	"./$APP_NAME" "$ASSEMBLY"
+	ln -s `which mono` "./bin/$APP_NAME" 
+	"./bin/$APP_NAME" "$ASSEMBLY"
 fi

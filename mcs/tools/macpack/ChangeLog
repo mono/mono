@@ -1,3 +1,9 @@
+2005-09-31  Geoff Norotn  <gnorton@customerdna.com>
+
+	* LOADER: We exposed an apple bug.  This caused duplicates of the
+	main window to open by having AppName in Resources.  Modified from
+	a patch provided by Aaron Flynt (aaron@aaronflynt.com)
+
 2005-09-31  Geoff Norton  <gnorton@customerdna.com>
 
 	* LOADER: Launch a runtime generated symlink to mono instead of
