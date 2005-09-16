@@ -10,7 +10,7 @@
 // 
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,17 +33,25 @@
 //
 
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Drawing.Design
 {
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class CategoryNameCollection : ReadOnlyCollectionBase
 	{
 		
-		public CategoryNameCollection (CategoryNameCollection value) {
+		public CategoryNameCollection (CategoryNameCollection value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
 			InnerList.AddRange (value);
 		}
 
-		public CategoryNameCollection(string[] value) {
+		public CategoryNameCollection (string[] value)
+		{
+			if (value == null)
+				throw new ArgumentNullException ("value");
 			InnerList.AddRange (value);
 		}
 

@@ -1,3 +1,22 @@
+2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CategoryNameCollection.cs: Added LinkDemand for Unrestricted 
+	permissions. Added null checks in constructors.
+	* PaintValueEventArgs.cs: Added LinkDemand and InheritanceDemand for 
+	Unrestricted permissions. Added null checks in constructor.
+	* PropertyValueItem.cs: Added LinkDemand and InheritanceDemand for 
+	Unrestricted permissions. Added null checks in constructor.
+	* ToolboxComponentsCreatedEventArgs.cs: Added LinkDemand and 
+	InheritanceDemand for Unrestricted permissions.
+	* ToolboxComponentsCreatingEventArgs.cs: Added LinkDemand and 
+	InheritanceDemand for Unrestricted permissions.
+	* ToolboxItem.cs: Added LinkDemand and InheritanceDemand for 
+	Unrestricted permissions.
+	* ToolboxItemCollection.cs: Added LinkDemand for Unrestricted 
+	permissions.
+	* UITypeEditor.cs: Added LinkDemand and InheritanceDemand for 
+	Unrestricted permissions.
+
 2005-08-24 Michael Hutchinson <m.j.hutchinson@gmail.com>
 
 	* ToolboxItem.cs: Implemented retrieving item's bitmap

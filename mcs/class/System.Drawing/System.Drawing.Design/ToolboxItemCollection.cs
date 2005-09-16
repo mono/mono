@@ -10,7 +10,7 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,9 +33,11 @@
 //
 
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Drawing.Design
 {
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class ToolboxItemCollection : ReadOnlyCollectionBase
 	{
 

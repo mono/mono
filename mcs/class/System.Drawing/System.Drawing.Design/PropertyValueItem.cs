@@ -10,7 +10,7 @@
 // 
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,10 +32,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Drawing;
+using System.Security.Permissions;
 
 namespace System.Drawing.Design
 {
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class PropertyValueUIItem
 	{
 
@@ -46,6 +48,10 @@ namespace System.Drawing.Design
 		public PropertyValueUIItem (Image uiItemImage,
 			PropertyValueUIItemInvokeHandler handler, string tooltip)
 		{
+			if (uiItemImage == null)
+				throw new ArgumentNullException ("uiItemImage");
+			if (handler == null)
+				throw new ArgumentNullException ("handler");
 			this.uiItemImage = uiItemImage;
 			this.handler = handler;
 			this.tooltip = tooltip;

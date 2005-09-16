@@ -7,7 +7,7 @@
 // 
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,9 +30,12 @@
 //
 
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Drawing.Design
 {
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
 	public class PaintValueEventArgs : EventArgs
 	{
 		private ITypeDescriptorContext context;
@@ -40,7 +43,10 @@ namespace System.Drawing.Design
 		private Graphics graphics;
 		private Rectangle bounds;
 		
-		public PaintValueEventArgs(ITypeDescriptorContext context, object value, Graphics graphics, Rectangle bounds) {
+		public PaintValueEventArgs(ITypeDescriptorContext context, object value, Graphics graphics, Rectangle bounds) 
+		{
+			if (graphics == null)
+				throw new ArgumentNullException ("graphics");
 			this.context = context;
 			this.value = value;
 			this.graphics = graphics;
