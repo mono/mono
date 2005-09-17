@@ -1,3 +1,8 @@
+2005-09-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* marshal.c (ves_icall_System_Runtime_InteropServices_Marshal_StringToHGlobalUni): Null
+	terminate the resulting string. Fixes #76123.
+
 2005-09-16  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c
