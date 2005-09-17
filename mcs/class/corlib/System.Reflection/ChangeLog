@@ -1,3 +1,7 @@
+2005-09-17  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Module.cs: Remove obsolete Mvid property.
+
 2005-09-09  Martin Baulig  <martin@ximian.com>
 
 	Reflect latest API changes in the August CTP.

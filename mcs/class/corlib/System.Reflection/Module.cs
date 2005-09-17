@@ -277,13 +277,7 @@ namespace System.Reflection {
 			return name;
 		}
 
-#if NET_2_0
-		[Obsolete ("Please use ModuleVersionId instead - this will be removed before Whidbey ships.")]
-		public
-#else
-		internal 
-#endif
-		Guid MvId {
+		internal Guid MvId {
 			get {
 				return Mono_GetGuid (this);
 			}
