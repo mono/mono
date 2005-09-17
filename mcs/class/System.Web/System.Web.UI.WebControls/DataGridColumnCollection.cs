@@ -42,12 +42,16 @@ namespace System.Web.UI.WebControls {
 		{
 			columns.Add (column);
 			column.Set_Owner (owner);
+			if (track)
+				((IStateManager) column).TrackViewState ();
 		}
 	
 		public void AddAt (int index, DataGridColumn column)
 		{
 			columns.Insert (index, column);
 			column.Set_Owner (owner);
+			if (track)
+				((IStateManager) column).TrackViewState ();
 		}
 	
 		public void Clear ()
