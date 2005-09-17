@@ -1,3 +1,7 @@
+2005-09-17  Kornél Pál  <kornelpal@hotmail.com>
+
+	* Image.cs: Implemented FromHbitmap.
+
 2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gdipFunctions.cs: Add [SuppressUnmanagedCodeSecurity] attributes so 

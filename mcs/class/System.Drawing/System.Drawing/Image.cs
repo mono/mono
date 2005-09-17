@@ -113,16 +113,20 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		return new Bitmap (imagePtr);
 	}
 
-	[MonoTODO]	
 	public static Bitmap FromHbitmap(IntPtr hbitmap)
-	{		
-		throw new NotImplementedException ();
+	{
+		return FromHbitmap (hbitmap, IntPtr.Zero);
 	}
 
-	[MonoTODO]	
 	public static Bitmap FromHbitmap(IntPtr hbitmap, IntPtr hpalette)
 	{		
-		throw new NotImplementedException ();
+		IntPtr imagePtr;
+		Status st;
+
+		st = GDIPlus.GdipCreateBitmapFromHBITMAP (hbitmap, hpalette, out imagePtr);
+
+		GDIPlus.CheckStatus (st);
+		return new Bitmap (imagePtr);
 	}
 
 	public static Image FromStream (Stream stream)
