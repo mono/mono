@@ -154,6 +154,9 @@ namespace System.Collections.Generic {
 		{
 			if (capacity < 0)
 				throw new ArgumentOutOfRangeException ("capacity");
+			if (capacity == 0)
+				capacity = INITIAL_SIZE;
+
 			this._hcp = (hcp != null) ? hcp : EqualityComparer<TKey>.Default;
 			_table = new Slot [capacity];
 			SetThreshold ();
