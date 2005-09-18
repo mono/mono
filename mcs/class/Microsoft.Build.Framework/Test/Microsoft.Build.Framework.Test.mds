@@ -1,0 +1,16 @@
+<Combine name="Microsoft.Build.Framework.Test" fileversion="2.0">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="CombineConfiguration">
+      <Entry configuration="Debug" build="True" name="Microsoft.Build.Framework.Test" />
+    </Configuration>
+    <Configuration name="Release" ctype="CombineConfiguration">
+      <Entry configuration="Debug" build="True" name="Microsoft.Build.Framework.Test" />
+    </Configuration>
+  </Configurations>
+  <StartMode startupentry="Microsoft.Build.Framework.Test" single="True">
+    <Execute type="None" entry="Microsoft.Build.Framework.Test" />
+  </StartMode>
+  <Entries>
+    <Entry filename="./Microsoft.Build.Framework.Test.mdp" />
+  </Entries>
+</Combine>

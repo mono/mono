@@ -1,0 +1,9 @@
+2005-08-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskFinishedEventArgsTest.cs, TargetStartedEventArgsTest.cs,
+	ProjectStartedEventArgsTest.cs, LoggerExceptionTest.cs,
+	TargetFinishedEventArgsTest.cs, ProjectFinishedEventArgsTest.cs,
+	BuildMessageEventArgsTest.cs, BuildWarningEventArgsTest.cs,
+	BuildStartedEventArgsTest.cs, TaskStartedEventArgsTest.cs,
+	BuildErrorEventArgsTest.cs, BuildFinishedEvenetArgsTest.cs,
+	CustomBuildEventArgsTest.cs: Added.

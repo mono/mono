@@ -1,0 +1,73 @@
+2005-09-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TargetFinishedEventArgs.cs, BuildStatusEventArgs.cs,
+	BuildMessageEventArgs.cs, BuildErrorEventArgs.cs,
+	BuildFinishedEventArgs.cs, BuildWarningEventArgs.cs,
+	BuildStartedEventArgs.cs, TaskStartedEventArgs.cs,
+	CustomBuildEventArgs.cs, ProjectStartedEventArgs.cs,
+	BuildEventArgs.cs, TaskFinishedEventArgs.cs,
+	TargetStartedEventArgs.cs, ProjectFinishedEventArgs.cs: Changed
+	protected field to private.
+	* LoggerException.cs: Formatting.
+
+2005-08-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TargetFinishedEventArgs.cs: Added 'succeeded' setting.
+	* BuildFinishedEventArgs.cs: Formatting.
+	* ProjectFinishedEventArgs.cs: Formatting.
+
+2005-08-27  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildErrorEventArgs.cs: Formatting.
+	* BuildWarningEventArgs.cs: Fixed ctor.
+	* BuildEventArgs.cs: Formatting.
+
+2005-08-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TargetFinishedEventArgs.cs: Added Succeeded property.
+
+2005-08-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ProjectStartedEventArgs.cs: Added TargetNames property.
+
+2005-08-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildFinishedEventArgs.cs, BuildFinishedEventArgs.cs,
+	BuildMessageEventArgs.cs, BuildStartedEventArgs.cs,
+	BuildStatusEventArgs.cs, BuildWarningEventArgs.cs,
+	CustomBuildEventArgs.cs, CustomBuildEventHandler.cs,
+	LoadInSeparateDomainAttribute.cs, LoggerException.cs,
+	OutputAttribute.cs, ProjectFinishedEventArgs.cs,
+	ProjectStartedEventArgs.cs, RequiredAttribute.cs,
+	TargetFinishedEventArgs.cs, TargetStartedEventArgs.cs,
+	TaskFinishedEventArgs.cs, TaskStartedEventArgs.cs: Various fixes.
+
+2005-07-13  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildEventArgs.cs: Fixed threadId
+
+2005-07-04  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* *.cs: Updated copyright, license notices and line endings info
+	* LoggerException.cs, BuildEventArgs.cs: Fixed
+
+2005-06-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* AnyEventHandler.cs, BuildErrorEventArgs.cs, BuildErrorEventHandler.cs,
+	BuildEventArgs.cs, BuildFinishedEventArgs.cs, BuildFinishedEventHandler.cs,
+	BuildMessageEventArgs.cs, BuildMessageEventHandler.cs,
+	BuildStartedEventArgs.cs, BuildStartedEventHandler.cs,
+	BuildStatusEventArgs.cs, BuildStatusEventHandler.cs,
+	BuildWarningEventArgs.cs, BuildWarningEventHandler.cs,
+	CustomBuildEventArgs.cs, CustomBuildEventHandler.cs, IBuildEngine.cs,
+	IEventSource.cs, ILogger.cs, ITask.cs, ITaskItem.cs,
+	LoadInSeparateAppDomainAttribute.cs, LoggerException.cs,
+	LoggerVerbosity.cs, MessageImportance.cs, MonoTODOAttribute.cs,
+	OutputAttribute.cs, ProjectFinishedEventArgs.cs,
+	ProjectFinishedEventHandler.cs, ProjectStartedEventArgs.cs,
+	ProjectStartedEventHandler.cs, RequiredAttribute.cs,
+	TargetFinishedEventArgs.cs, TargetFinishedEventHandler.cs,
+	TargetStartedEventArgs.cs, TargetStartedEventHandler.cs,
+	TaskFinishedEventArgs.cs, TaskFinishedEventHandler.cs
+	TaskStartedEventArgs.cs, TaskStartedEventHandler.cs: Added
+
