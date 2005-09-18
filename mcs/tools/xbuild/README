@@ -1,0 +1,11 @@
+This is Microsoft.Build(XBuild) implementation. It will consist of:
+
+Microsoft.Build.Engine
+Microsoft.Build.Framework
+Microsoft.Build.Tasks
+Microsoft.Build.Utilities
+
+There are .targets files that can be used to build XBuild. To do it you must have finished build in xbuild/bin/Debug.
+Microsoft.Build.csproj is not a regular VS2005 project.
+
+It is licensed on MIT X11 license.
