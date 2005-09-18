@@ -1,3 +1,8 @@
+2005-09-18  Chris Toshok  <toshok@ximian.com>
+
+	* HtmlButton.cs (RenderAttribute): make sure to use WriteAttribute
+	instead of AddAttribute when dealing with "onclick."
+
 2005-09-09  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlInputButton.cs (CausesValidation): this is stored in
