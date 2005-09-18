@@ -1,0 +1,16 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+	<Import Project="$(MSBuildBinPath)/Microsoft.Common.tasks" />
+	<ItemGroup>
+		<DirectoriesToRemove Include="a;b;c" />
+	</ItemGroup>
+	<Target Name="Main" >
+		<MakeDir Directories="@(DirectoriesToRemove)" >
+			<Output TaskParameter="DirectoriesCreated" ItemName="DirectoriesCreated" />
+		</MakeDir>
+		<Message Text="Created directories: @(DirectoriesCreated)" />
+		<RemoveDir Directories="@(DirectoriesToRemove)">
+			<Output TaskParameter="RemovedDirectories" ItemName="RemovedDirectories" />
+		</RemoveDir>
+		<Message Text="Removed directories: @(RemovedDirectories)" />
+	</Target>
+</Project>

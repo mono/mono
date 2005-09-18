@@ -1,0 +1,13 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+	<Import Project="$(MSBuildBinPath)/Microsoft.Common.tasks" />
+	<ItemGroup>
+		<Files Include="Sample.resx" />
+	</ItemGroup>
+	<Target Name="Main" >
+		<GenerateResource Sources="@(Files)" OutputResources="@(Files->'%(Filename).resources')"/>
+	</Target>
+	
+	<Target Name="Clean" >
+		<Delete Files="@(Files->'%(Filename).resources')" />
+	</Target>
+</Project>

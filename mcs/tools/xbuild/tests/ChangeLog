@@ -1,0 +1,15 @@
+2005-09-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Touch.csproj, Message.csproj, Exec.csproj, WriteLinesToFile.csproj,
+	Error.csproj, ReadLinesFromFile.csproj, FindUnderPath.csproj,
+	RemoveDir.csproj, AL.csproj, MSBuild.csproj, SignFile.csproj,
+	GenerateResource.csproj, Delete.csproj, Warning.csproj, Copy.csproj,
+	MakeDir.csproj: Changed path to Microsoft.Common.tasks to use
+	MSBuildBinPath.
+
+2005-09-03  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* AL, Copy, CreateItem, CreateProperty, Error, Exec, FindUnderPath,
+	GenerateResource, MakeDir, Message, MSBuild, ReadLinesFromFile,
+	RemoveDir, SignFile, Touch, Warning, WriteLinesToFile: Created
+	separate directories for each task test.

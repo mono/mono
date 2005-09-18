@@ -1,0 +1,10 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+	<Import Project="$(MSBuildBinPath)/Microsoft.Common.tasks" />
+	<ItemGroup>
+		<File Include="file" />
+	</ItemGroup>
+	<Target Name="Main" >
+		<Touch Files="@(File)" AlwaysCreate="true"/>
+		<WriteLinesToFile File="@(File)" Lines="a;b;c;d" />
+	</Target>
+</Project>
