@@ -1,0 +1,16 @@
+<Combine name="Microsoft.Build.Engine.Test" fileversion="2.0">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="CombineConfiguration">
+      <Entry configuration="Debug" build="True" name="Microsoft.Build.Engine.Test" />
+    </Configuration>
+    <Configuration name="Release" ctype="CombineConfiguration">
+      <Entry configuration="Debug" build="True" name="Microsoft.Build.Engine.Test" />
+    </Configuration>
+  </Configurations>
+  <StartMode startupentry="Microsoft.Build.Engine.Test" single="True">
+    <Execute type="None" entry="Microsoft.Build.Engine.Test" />
+  </StartMode>
+  <Entries>
+    <Entry filename="./Microsoft.Build.Engine.Test.mdp" />
+  </Entries>
+</Combine>

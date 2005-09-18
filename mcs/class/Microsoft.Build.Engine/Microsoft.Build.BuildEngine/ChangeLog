@@ -1,0 +1,166 @@
+2005-09-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskDatabase.cs: Added handling of LoadInfoType.AssemblyName.
+	* Engine.cs, Project.cs: Added handling of MSBuildBinPath reserved
+	property.
+
+2005-09-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* InternalLoggerException.cs: Changed protected fields to private.
+
+2005-09-03  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Engine.cs: Added check for globalProperties.
+	* Project.cs: Added using path from importedProject.FullFileName when
+	adding UsingTask elements.
+
+2005-09-01  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskElement.cs: Changed ReflectedType to PropertyType.
+	* ChangeType.cs (TransformToString): Changed to pass proper Type to
+	TemporaryTransform. 
+
+2005-09-01  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildPropertyGroup.cs: Added check for PropertyType when adding a
+	new property.
+	* BuildProperty.cs: Organized PropertyType enum.
+	* Engine.cs: Added setting CommandLine PropertyType of global
+	properties.
+
+2005-08-31  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* InvalidProjectFileException.cs: Changed Message property.
+	* ChangeType.cs (TransformToString): Added separator between items.
+	* TaskEngineAssemblyResolver.cs: Formatting.
+
+2005-08-31  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* DirectoryScanner.cs: Added.
+	* BuildItem.cs: Moved file scanning code to DirectoryScanner.
+	* BuildPropertyGroup.cs: Changed Project.Evaluate to Expression.
+	* Project.cs: Removed Evalute* ().
+
+2005-08-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Target.cs: Formatting.
+	* Expression.cs: Added check if array == null.
+	* BuildItem.cs: Removed 'break' to remove warnings.
+	* ConsoleLogger.cs: Formatting.
+	* Engine.cs: Added handling of default target(s).
+	* Project.cs: Added handling of default target(s).
+
+2005-08-29  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskElement.cs: Added check for parameters.
+	* Target.cs: Added logging of target skipping.
+	* Expression.cs: Changed returning object[] to string[], bool[]... in
+	ToArray ().
+	* ItemReference.cs: Fixed for item references without custom
+	separators.
+	* BatchingImpl.cs: Added real inputs/outputs checking.
+	* Engine.cs: Moved global properties setting.
+	* Project.cs: Moved global properties setting.
+
+2005-08-27  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Target.cs: Added checks for target existence.
+	* BuildItemGroup.cs: Changed to use transforms.
+	* MetadataReference.cs: Wrote real implementation.
+	* ItemReference.cs: Rewritten to use transforms.
+	* BuildItem.cs: Changes for transforms and metadata.
+	* ConsoleLogger.cs: Added verbosity checking and fixed error/warning
+	formatting.
+	* Project.cs: Fixed project importing.
+	* ImportedProject.cs: Changed to throw exceptions instead of returning
+	bool.
+
+2005-08-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Engine.cs: Removed FIXME.
+	* Project.cs: Splitted ProcessElements and added project importing.
+	* ImportedProject.cs: Rewritten.
+
+2005-08-20  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskElement.cs: Added getting of objects of every type.
+	* BuildItemGroup.cs: Added ToITaskItemArray ().
+	* Expression.cs: Implemented part that is not using metadata.
+	* ItemReference.cs: Implemented parsing item references. Need to fix
+	validity checking.
+	* BuildItem.cs: Fixed ToITaskItem ().
+	* PropertyReference.cs: Implemented parsing property references. This
+	also needs validity checking.
+
+2005-08-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskElement.cs: Added Output element handling.
+	* Target.cs: Cleaned up.
+	* BuildItemGroup.cs: Added creating BuildItem from TaskItem.
+	* Expression.cs, MetadataReference.cs, PropertyReference.cs,
+	ItemReference.cs, ChangeType.cs: Added.
+	* BuildItem.cs: Added creating BuildItem from TaskItem.
+	* BuildPropertyGroup.cs: Small changes.
+	* BatchingImpl.cs: Fixed to return real task execution result.
+	* BuildProperty.cs: Fixed FinalValue property.
+	* Engine.cs: Reformatted logging.
+	* Project.cs: Added check to EvaluateProperty.
+
+2005-08-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskElement.cs: Added part of execution engine.
+	* BuildEngine.cs: Added handling of TaskStarted and TaskFinished.
+	* BuildItemGroup.cs: Iterating by XmlNode casted to XmlElement.
+	* EventSource.cs: Added FireTaskStarted and FireTaskFinished.
+	* BuildItem.cs: Added handling of built-in metadata and referencing
+	Items by name not FullName.
+	* BatchingImpl.cs: Added temporary task "batching".
+	* ConsoleLogger.cs: Added temporary workaround to not show sender.
+	* Project.cs: Added Evaluate. It will be moved to separate class.
+
+2005-08-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* EventSource.cs, Engine.cs: Added CriticalEvents.
+	* BuildItem.cs, BuildItemGroup.cs, BuildItemGroupCollection.cs,
+	Project.cs: Added some support for items.
+	* BuildProperty.cs, BuildPropertyGroup.cs: Cleaned up.
+
+2005-08-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildProperty.cs, BuildPropertyGroup.cs, Project.cs: Added loading
+	of properties.
+
+2005-08-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BatchingImpl.cs: Added.
+	* BuildWhen.cs, BuildEngine.cs, Target.cs,
+	BuildPropertyGroupCollection.cs, BuildChoose.cs, EventSource.cs,
+	BuildItem.cs, BuildPropertyGroup.cs, ConsoleLogger.cs,
+	TargetCollection.cs, BuildProperty.cs, Engine.cs, Project.cs,
+	GroupingCollection.cs: Updated.
+
+2005-08-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* BuildChoose.cs, BuildEngine.cs, BuildItem.cs,
+	BuildItemGroupCollection.cs, BuildItemGroup.cs, BuildProperty.cs,
+	BuildPropertyGroupCollection.cs, BuildPropertyGroup.cs,
+	BuildSettings.cs, BuildWhen.cs, ConsoleLogger.cs, Engine.cs,
+	EventSource.cs, FileLogger.cs, GlobalEngineAccessor.cs,
+	GroupingCollection.cs, HostLogger.cs, ImportedProject.cs,
+	InternalLoggerException.cs, InvalidProjectFileException.cs,
+	ItemPropertyGroupingBase.cs, ProcessingPass.cs, Project.cs,
+	ProjectFileEncoding.cs, PropertyPosition.cs, SolutionParser.cs,
+	TargetCollection.cs, Target.cs, TaskDatabase.cs, TaskElement.cs,
+	TaskEngineAssemblyResolver.cs, Utilities.cs, WriteHandler.cs, Xml.cs:
+	Initial check-in of implementations.
+
+2005-07-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* conditions.jay, IBuildItem.cs, IBuildItemGroup.cs,
+	IBuildItemGroupCollection.cs, IBuildProperty.cs,
+	IBuildPropertyGroup.cs, IBuildPropertyGroupCollection.cs,
+	ICultureStringUtilities.cs, IEngine.cs, IGlobalEngineAccessor.cs,
+	IHostFeedback.cs, IHostLogger.cs, ILangSecurityLevelChecker.cs,
+	IProject.cs, ITargetCollection.cs, ITarget.cs, ITaskElement.cs:
+	Initial check-in of interfaces and a syntax file, real classes are
+	changing a lot so I'll wait a moment with checking them in.

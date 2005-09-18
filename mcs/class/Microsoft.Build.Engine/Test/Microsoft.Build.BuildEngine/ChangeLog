@@ -1,0 +1,8 @@
+2005-09-03  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ProjectTest.cs, EngineTest.cs: Added next simple tests.
+
+2005-08-31  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* InternalLoggerExceptionTest.cs, InvalidProjectFileExceptionTest.cs:
+	Added simple tests.
