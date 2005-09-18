@@ -1,0 +1,77 @@
+2005-09-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* AppDomainIsolatedTaskExtension.cs: Changed Log property to base.Log
+	instead of previous protected log field.
+
+2005-09-03  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Touch.cs: Changed to use full paths and fixed stream closing.
+	* ReadLinesFromFile.cs: Formatting.
+	* WriteLineToFile.cs: Changed to use full paths.
+	* AL.cs: Changed ToolName.
+
+2005-08-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Touch.cs: Changed Console.WriteLine to Log.LogErrorFromException.
+
+2005-08-27  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Exec.cs: Removed "exited".
+	* AL.cs: Removed Regex.
+	* Csc.cs: Changed default GenerateFullPaths to false.
+
+2005-08-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Exec.cs: Reformatted and added try/catch.
+	* Error.cs, RemoveDir.cs, Warning.cs, Message.cs, FindUnderPath.cs,
+	GenerateResource.cs, Copy.cs: Changed to use properties.
+	* ToolTaskExtension.cs: Rewritten.
+	* TaskExtension.cs: Changed to use base property.
+	* GetFrameworkSdkPath.cs: Formatting.
+	* ManagedCompiler.cs: Changed to use Bag instead of fields.
+	* AL.cs: Moved command line arguments generation to proper method.
+	* Csc.cs: Changed to use Bag instead of fields and added support for
+	compilation.
+
+2005-08-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Exec.cs: Fixed arguments.
+
+2005-08-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Exec.cs: Added redirection of output and removed timeout handling.
+	* Copy.cs: Formatting.
+	* CommandLineBuilderExtension.cs: Formatting.
+
+2005-08-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CommandLineBuilderExtension.cs: Added.
+	* ToolTaskExtension.cs, GenerateTrustInfo.cs, GetFrameworkSdkPath.cs,
+	CreateItem.cs, ManagedCompiler.cs, AL.cs, MSBuild.cs,
+	GenerateResource.cs, Csc.cs, CreateProperty.cs, GetFrameworkPath.cs:
+	Updated.
+
+2005-08-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Exec.cs: First implementation.
+	* MakeDir.cs, GetFrameworkSdkPath.cs, RegisterAssembly.cs, Message.cs,
+	ManagedCompiler.cs, Error.cs, FindUnderPath.cs, RemoveDir.cs, AL.cs,
+	ToolTaskExtension.cs, SignFile.cs, Delete.cs, GenerateResource.cs,
+	Warnings.cs, Csc.cs, GetFrameworkPath.cs: Various fixes.
+
+2005-08-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CreateItem.cs, CreateProperty.cs, MSBuild.cs,: Initial check-in.
+	* Copy.cs, ReadLinesFromFile.cs, TaskExtension.cs, Touch.cs,
+	Warning.cs, WriteLinesToFile.cs: First implementation.
+
+2005-07-13  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* AL.cs, AppDomainIsolatedTaskExtension.cs, Copy.cs, Csc.cs,
+	Delete.cs, Error.cs, Exec.cs, FindUnderPath.cs, GenerateResource.cs,
+	GenerateTrustInfo.cs, GetFrameworkPath.cs, GetFrameworkSdkPath.cs,
+	MSBuild.cs, MakeDir.cs, ManagedCompiler.cs, Message.cs,
+	MonoTODOAttribute.cs, ReadLinesFromFile.cs, RegisterAssembly.cs,
+	RemoveDir.cs, SignFile.cs, TaskExtension.cs, ToolTaskExtension.cs,
+	Touch.cs, UnregisterAssembly.cs, Warning.cs, WriteLinesToFile.cs:
+	initial check-in

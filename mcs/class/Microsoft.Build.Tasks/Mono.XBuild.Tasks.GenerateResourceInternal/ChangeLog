@@ -1,0 +1,5 @@
+2005-08-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* PoResourceReader.cs, PoResourceWriter.cs, TxtResourceReader.cs,
+	TxtResourceWriter.cs: First implementation
+
