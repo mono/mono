@@ -1,3 +1,8 @@
+2005-09-18  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* FormsIdentityTest.cs: Changed constructor used to create the ticket
+	to one that doesn't throw a NRE under MS runtime.
+
 2005-09-09  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* DefaultAuthenticationEventArgsCas.cs: New. CAS unit tests.

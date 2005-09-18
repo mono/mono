@@ -57,7 +57,8 @@ namespace MonoTests.System.Web.Security {
 		[Test]
 		public void Ticket ()
 		{
-			FormsIdentity identity = new FormsIdentity (new FormsAuthenticationTicket ("mine", false, Int32.MaxValue));
+			FormsAuthenticationTicket ticket = new FormsAuthenticationTicket (3, "mine", DateTime.MinValue, DateTime.Now.AddSeconds (-1), false, "data", "path");
+			FormsIdentity identity = new FormsIdentity (ticket);
 			Assert.AreEqual ("Forms", identity.AuthenticationType, "AuthenticationType");
 			Assert.IsTrue (identity.IsAuthenticated, "IsAuthenticated");
 			Assert.AreEqual ("mine", identity.Name, "Name");
