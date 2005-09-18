@@ -1,3 +1,75 @@
+2005-09-18  Miguel de Icaza  <miguel@novell.com>
+
+	* Image.cs: introduce a workaround that catches errors on systems
+	that lack GDI+ as this is being triggered too easily when we
+	enumerate attributes on loaded classes.
+
+	The real bug to fix is #76062.
+
+2005-09-17  Kornél Pál  <kornelpal@hotmail.com>
+
+	* Image.cs: Implemented FromHbitmap.
+
+2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* gdipFunctions.cs: Add [SuppressUnmanagedCodeSecurity] attributes so 
+	the JIT won't add demands for UnmanagedCode.
+	* carbonFunctions.cs: Add [SuppressUnmanagedCodeSecurity] attributes 
+	so the JIT won't add demands for UnmanagedCode on Mac OSX.
+	* Bitmap.cs: Added LinkDemand for UnmanagedCode on GetHbitmap 
+	(+ overloads) and GetHicon methods.
+	* Graphics.cs: Added LinkDemand for UnmanagedCode on FromHdcInternal, 
+	FromHwndInternal and ReleaseHdcInternal methods (which are all public 
+	despite their names).
+
+2005-09-15 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: text transform, headless session
+
+2005-09-14 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Bitmap.jvm.cs: native object refactoring
+	* Image.jvm.cs: native object refactoring
+	* Graphics.jvm.cs: fixed access to image native object
+	* TextureBrush.jvm.cs: fixed access to image native object
+	* Added PlainImage.jvm.cs, PlainImageCollection.jvm.cs
+
+2005-09-14  Geoff Norton  <gnorton@customerdna.com>
+
+	* carbonFunctions.cs: Add GetCGContextForNSView for Cocoa# integration
+	* Graphics.cs: Check GDIPlus.UseCocoaDrawable for Cocoa# integration
+	* gdipFunctions.cs: Set UseCocoaDrawable depending on the environment variable MONO_GDIP_USE_COCOA_BACKEND
+                                                                                         
+2005-09-14 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: transform, container, thin pen
+
+2005-09-12 Konstantin Triger <kostat@mainsoft.com>
+
+	* AdvancedStroke.jvm.cs: constants for pen fitting calculations
+	* Pen.jvm.cs: fixing transform, pen fitting
+
+2005-09-12 Konstantin Triger <kostat@mainsoft.com>
+
+	 * Region.jvm.cs: IsVisible is about intersection 
+
+2005-09-12 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* ImageConverter.cs: Use default TypeDescriptor implementation of 
+	GetProperties.
+
+2005-09-11 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: fixing clipping with rotate transform
+
+2005-09-11 Konstantin Triger <kostat@mainsoft.com>
+
+	* Region.jvm.cs: default region is infinite
+
+2005-09-10 Konstantin Triger <kostat@mainsoft.com>
+
+	* Graphics.jvm.cs: fixing clipping stuff
+
 2005-09-07 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Bitmap.jvm.cs: fixed bitamp accessors
