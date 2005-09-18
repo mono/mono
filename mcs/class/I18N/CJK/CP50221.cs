@@ -3,16 +3,12 @@ using System.Text;
 
 namespace I18N.CJK
 {
-	public class CP50221Encoding : Encoding
+	public class CP50221 : Encoding
 	{
 		static JISConvert convert = JISConvert.Convert;
 
 		public override string BodyName {
 			get { return "iso-2022-jp"; }
-		}
-
-		public override int CodePage {
-			get { return 50221; }
 		}
 
 		public override string HeaderName {
@@ -288,7 +284,7 @@ namespace I18N.CJK
 		}
 	}
 
-	public class ENCiso_2022_jp : CP50221Encoding
+	public class ENCiso_2022_jp : CP50221
 	{
 		public ENCiso_2022_jp () : base() {}
 

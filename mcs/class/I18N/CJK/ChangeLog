@@ -1,3 +1,8 @@
+2005-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP50221.cs, GB18030Encoding.cs : because of silly design
+	  Common/Manager expects fixed class names CPxxxxx. Fixed bug #76139.
+
 2005-08-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Add README.gb18030 and gb18030.table.

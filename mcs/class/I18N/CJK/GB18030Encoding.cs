@@ -15,6 +15,8 @@ namespace I18N.CJK
 		public ENCgb18030 (): base () {}
 	}
 
+	public class CP54936 : GB18030Encoding { }
+
 	public class GB18030Encoding : Encoding
 	{
 		// Constructor.

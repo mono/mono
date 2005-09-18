@@ -1,3 +1,7 @@
+2005-09-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Handler.cs : Required changes wrt some class renames.
+
 2005-08-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	why didn't we have it? ;-)
