@@ -157,7 +157,7 @@ namespace MonoTests.System.Web.Hosting {
 				SimpleWorkerRequest swr = new SimpleWorkerRequest("file.aspx", "querystring", sw);
 
 				Assert.AreEqual ("/appVirtualDir", swr.GetAppPath (), "T1");
-				Assert.AreEqual (cwd, swr.GetAppPathTranslated (), "TRANS1");
+				Assert.AreEqual (cwd + Path.DirectorySeparatorChar, swr.GetAppPathTranslated (), "TRANS1");
 				Assert.AreEqual ("/appVirtualDir/file.aspx", swr.GetFilePath (), "T2");
 				Assert.AreEqual ("GET", swr.GetHttpVerbName (), "T3");
 				Assert.AreEqual ("HTTP/1.0", swr.GetHttpVersion (), "T4");

@@ -1,3 +1,9 @@
+2005-09-18  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* SimpleWorkerRequestTest.cs: Ensure a trailing / in the expected path
+	as GetAppPathTranslated must have one (while most directory methods
+	don't append one).
+
 2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SimpleWorkerRequestTest.cs: Added a test case (GetUriPath) that was 
