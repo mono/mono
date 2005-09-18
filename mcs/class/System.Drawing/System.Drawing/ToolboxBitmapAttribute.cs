@@ -114,22 +114,26 @@ namespace System.Drawing
 			Bitmap bitmap;
 			if (imageName == null)
 				imageName = t.Name + ".bmp";
-			
-			using (System.IO.Stream s = t.Assembly.GetManifestResourceStream (t.Namespace + "." + imageName)){
-				if (s == null) {
-					return null;
+
+			try {
+				using (System.IO.Stream s = t.Assembly.GetManifestResourceStream (t.Namespace + "." + imageName)){
+					if (s == null) {
+						return null;
+					} else {
+						bitmap = new Bitmap (s, false);
+					}
 				}
-				else {
-					bitmap = new Bitmap (s, false);
-				}
+				
+				//FIXME: thrown too easily
+				//if (bitmap.Width != 16 || bitmap.Height != 16)
+				//	throw new Exception ("ToolboxBitmap must be 16x16 pixels");
+				
+				if (large)
+					return new Bitmap (bitmap, 32, 32);
+				return bitmap;
+			} catch {
+				return null;
 			}
-			
-			//FIXME: thrown too easily
-			//if (bitmap.Width != 16 || bitmap.Height != 16)
-			//	throw new Exception ("ToolboxBitmap must be 16x16 pixels");
-			
-			if (large) return new Bitmap (bitmap, 32, 32);
-			return bitmap;
 		}
 	}
 }

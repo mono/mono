@@ -1,3 +1,11 @@
+2005-09-18  Miguel de Icaza  <miguel@novell.com>
+
+	* Image.cs: introduce a workaround that catches errors on systems
+	that lack GDI+ as this is being triggered too easily when we
+	enumerate attributes on loaded classes.
+
+	The real bug to fix is #76062.
+
 2005-09-17  Kornél Pál  <kornelpal@hotmail.com>
 
 	* Image.cs: Implemented FromHbitmap.
