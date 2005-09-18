@@ -1,3 +1,10 @@
+2005-09-18  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Set InEmacs based on the environment variable EMACS. 
+
+	* location.cs (InEmacs): in this mode, do not report column
+	location as it confuses Emacs.
+
 2005-09-16  Marek Safar  <marek.safar@seznam.cz>
 
 	* cfold.cs, constant.cs, convert.cs, ecore.cs,

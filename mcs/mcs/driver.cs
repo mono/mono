@@ -281,6 +281,8 @@ namespace Mono.CSharp
 		
 		public static int Main (string[] args)
 		{
+			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
+
 			bool ok = MainDriver (args);
 			
 			if (ok && Report.Errors == 0) {
