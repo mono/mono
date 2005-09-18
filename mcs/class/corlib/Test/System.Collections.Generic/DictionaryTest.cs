@@ -578,6 +578,43 @@ namespace MonoTests.System.Collections.Generic {
 				Assert.AreEqual(i, d3[i]);
 			}
 		}
+
+		[Test]
+		public void ZeroCapacity ()
+		{
+			Dictionary<int, int> x = new Dictionary <int, int> (0);
+			x.Add (1, 2);
+			
+			x = new Dictionary <int, int> (0);
+			x.Clear ();
+
+			x = new Dictionary <int, int> (0);
+			int aa = x.Count;
+			
+			x = new Dictionary <int, int> (0);
+			try {
+				int j = x [1];
+			} catch (KeyNotFoundException){
+			}
+
+			bool b;
+			b = x.ContainsKey (10);
+			b = x.ContainsValue (10);
+
+			x = new Dictionary <int, int> (0);
+			x.Remove (10);
+			
+			x = new Dictionary <int, int> (0);
+			int intv;
+			x.TryGetValue (1, out intv);
+
+			object oa = x.Keys;
+			object ob = x.Values;
+			foreach (KeyValuePair<int,int> a in x){
+			}
+
+			
+		}
 	}
 }
 
