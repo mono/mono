@@ -1,0 +1,41 @@
+2005-09-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* xbuild.exe.sources: Added Consts.cs from common build files.
+	* LoggerInfo.cs: Public key token update.
+	* Parameters.cs, Main.cs: Changed to use BinPath instead of hard-coded path.
+	* Makefile: Added installing of xbuild's files.
+	* Microsoft.Common.tasks: Moved from main directory and changed to use
+	assemblies from GAC.
+
+2005-09-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Main.cs: FxVersion.
+	* Makefile: Fixed Microsoft.Build.Utilities.dll name.
+
+2005-09-05  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Microsoft.Build.xsd, MSBuild/Microsoft.Build.Core.xsd,
+	Microsoft.Build.Commontypes.xsd: Added schema files.
+
+2005-08-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Main.cs, Parameters.cs: Added default target(s) handling.
+
+2005-08-29  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* LoggerInfo.cs: Removed AssemblyLoadInfo property, changed to inherit
+	AssemblyLoadInfo.
+	* XBuild.targets: Updated.
+	* Parameters.cs: Removed debugging info and removed line producing
+	errors.
+	* Main.cs: Added check if engine is null.
+
+2005-08-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Parameters.cs, Main.cs: Changed paths to absolute paths. They should be
+	separated to .in file probably when moving to autotools.
+
+2005-08-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CommandLineException.cs, LoggerInfo.cs, Main.cs, Parameters.cs:
+	Added.

@@ -1,0 +1,6 @@
+../../build/common/Consts.cs
+AssemblyInfo.cs
+CommandLineException.cs
+LoggerInfo.cs
+Main.cs
+Parameters.cs
