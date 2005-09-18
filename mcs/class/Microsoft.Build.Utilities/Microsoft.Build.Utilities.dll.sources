@@ -1,0 +1,13 @@
+../../build/common/Consts.cs
+Assembly/AssemblyInfo.cs
+Microsoft.Build.Utilities/AppDomainIsolatedTask.cs
+Microsoft.Build.Utilities/CommandLineBuilder.cs
+Microsoft.Build.Utilities/ConcurrentLoggingHelper.cs
+Microsoft.Build.Utilities/Logger.cs
+Microsoft.Build.Utilities/MonoTODOAttribute.cs
+Microsoft.Build.Utilities/TargetDotNetFrameworkVersion.cs
+Microsoft.Build.Utilities/Task.cs
+Microsoft.Build.Utilities/TaskItem.cs
+Microsoft.Build.Utilities/TaskLoggingHelper.cs
+Microsoft.Build.Utilities/ToolLocationHelper.cs
+Microsoft.Build.Utilities/ToolTask.cs

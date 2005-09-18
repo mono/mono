@@ -1,0 +1,6 @@
+2005-09-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Microsoft.Build.Utilities.dll.sources: Renamed from
+	Microsoft.Build.Utilities.sources.
+	* Microsoft.Build.Utilities_test.dll.sources: Added.
+	* Makefile: Added Microsoft.Build.Framework.dll to test references.

@@ -1,0 +1,60 @@
+2005-09-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CommandLineBuilder.cs, Logger.cs, AppDomainIsolatedTask.cs,
+	ConcurrentLoggingHelper.cs, TaskLoggingHelper.cs: Changed protected
+	fields to private.
+
+2005-08-30  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskItem.cs, TaskLoggingHelper.cs: Formatting.
+
+2005-08-27  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Logger.cs: Formatting.
+	* ToolTask.cs: Added error/warning handling.
+	* TaskLoggingHelper.cs: Fixed LogErrorFromException ().
+
+2005-08-24  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CommandLineBuilder.cs: Added checking for null values.
+	* ToolTask.cs: Added real execution.
+	* Task.cs: Changed all fields to private.
+	* TaskLoggingHelper.cs: Formatting.
+
+2005-08-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskItem.cs: MetadataCount fixed.
+
+2005-08-16  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Task.cs: Added creation of TaskLoggingHelper.cs.
+	* TaskLoggingHelper.cs: Ctor uses Task's BuildEngine.
+
+2005-08-14  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskItem.cs: Added GetMetadata and fixed other functions.
+
+2005-08-12  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CommandLineBuilder.cs: Add appending spaces (currently commented)
+	* ToolTask.cs: Add process.
+
+2005-08-06  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* AppDomainIsolatedTask.cs, CommandLineBuilder.cs,
+	ConcurrentLoggingHelper.cs, Logger.cs, Task.cs, TaskItem.cs,
+	TaskLoggingHelper.cs, ToolTask.cs: Various fixes.
+
+2005-07-13  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Logger.cs, AppDomainIsolatedTask.cs, ToolTask.cs, TaskItem.cs,
+	ConcurrentLoggingHelper.cs, TaskLoggingHelper.cs: Small fixes, still
+	unusable
+
+2005-07-05  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* AppDomainIsolatedTask.cs, CommandLineBuilder.cs,
+	ConcurrentLoggingHelper.cs, Logger.cs, MonoTODOAttribute.cs,
+	TargetDotNetFrameworkVersion.cs, Task.cs, TaskItem.cs,
+	TaskLoggingHelper.cs, ToolLocationHelper.cs, ToolTask.cs: Initial
+	check-in, very buggy

@@ -1,0 +1,16 @@
+<Combine name="Microsoft.Build.Utilities" fileversion="2.0">
+  <Configurations active="Debug">
+    <Configuration name="Debug" ctype="CombineConfiguration">
+      <Entry configuration="Debug" build="True" name="Microsoft.Build.Utilities" />
+    </Configuration>
+    <Configuration name="Release" ctype="CombineConfiguration">
+      <Entry configuration="Debug" build="True" name="Microsoft.Build.Utilities" />
+    </Configuration>
+  </Configurations>
+  <StartMode startupentry="Microsoft.Build.Utilities" single="True">
+    <Execute type="None" entry="Microsoft.Build.Utilities" />
+  </StartMode>
+  <Entries>
+    <Entry filename="./Microsoft.Build.Utilities.mdp" />
+  </Entries>
+</Combine>
