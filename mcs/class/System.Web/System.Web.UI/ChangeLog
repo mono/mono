@@ -1,3 +1,7 @@
+2005-09-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SupportsEventValidationAttribute.cs: New attribute added in 2.0 RC.
+
 2005-09-19  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ControlBuilder.cs: Added BuildObject override for 2.0 profile.
