@@ -410,7 +410,6 @@ System.Web.UI.Imaging/StorageType.cs
 System.Web.UI/IMobileTextWriter.cs
 System.Web.UI/INamingContainer.cs
 System.Web.UI/INavigateUIData.cs
-System.Web.UI/IPageHeader.cs
 System.Web.UI/IPaginationContainer.cs
 System.Web.UI/IPaginationInfo.cs
 System.Web.UI/IParserAccessor.cs
@@ -480,7 +479,6 @@ System.Web.UI/ToolboxDataAttribute.cs
 System.Web.UI/Triplet.cs
 System.Web.UI/TwoWayBoundPropertyEntry.cs
 System.Web.UI/UrlPropertyAttribute.cs
-System.Web.UI/UrlTypes.cs
 System.Web.UI/UserControlControlBuilder.cs
 System.Web.UI/UserControl.cs
 System.Web.UI/UserControlParser.cs
