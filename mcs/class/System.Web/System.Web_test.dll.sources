@@ -223,6 +223,16 @@ System.Web.UI/RootBuilderCas.cs
 System.Web.UI/StateBagCas.cs
 System.Web.UI/StateItemCas.cs
 System.Web.UI/StaticPartialCachingControlCas.cs
+System.Web.UI/TagPrefixAttributeCas.cs
+System.Web.UI/TemplateBuilderCas.cs
+System.Web.UI/TemplateContainerAttributeCas.cs
+System.Web.UI/TemplateControlCas.cs
+System.Web.UI/ToolboxDataAttributeCas.cs
+System.Web.UI/TripletCas.cs
+System.Web.UI/UserControlCas.cs
+System.Web.UI/UserControlControlBuilderCas.cs
+System.Web.UI/ValidationPropertyAttributeCas.cs
+System.Web.UI/ValidatorCollectionCas.cs
 System.Web.UI.HtmlControls/HtmlAnchorCas.cs
 System.Web.UI.HtmlControls/HtmlButtonCas.cs
 System.Web.UI.HtmlControls/HtmlEmptyTagControlBuilderCas.cs
