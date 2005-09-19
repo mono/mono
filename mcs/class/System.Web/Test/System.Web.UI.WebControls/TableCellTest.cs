@@ -340,5 +340,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 			// and removed from property
 			Assert.AreEqual (String.Empty, td.Text, "Test-2");
 		}
+
+		[Test]
+		public void NoDefaultID ()
+		{
+			Page page = new Page ();
+			TableCell tc = new TableCell ();
+			Assert.AreEqual (null, tc.ID, "#01");
+			page.Controls.Add (tc);
+			Assert.AreEqual (null, tc.ID, "#02");
+		}
 	}
 }

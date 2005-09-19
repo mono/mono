@@ -1,5 +1,9 @@
 2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TableCellTest.cs: TableCell does not get an automatic ID.
+
+2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TableStyleTest.cs: added test to check that GridLines is correctly
 	restored in LoadViewState.
 
