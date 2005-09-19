@@ -1,5 +1,5 @@
-// cs0698.cs: Generic type can not derive from Attribute class
-// Line: 5
+// cs0698.cs: A generic type cannot derive from `System.Attribute' because it is an attribute class
+// Line: 6
 
 using System;
 

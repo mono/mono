@@ -1,4 +1,4 @@
-// gcs0246.cs: Cannot find type 'List`2'
+// gcs0246.cs: The type or namespace name `List`2' could not be found. Are you missing a using directive or an assembly reference?
 // Line: 8
 
 using System.Collections.Generic;

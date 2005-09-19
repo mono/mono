@@ -1,4 +1,4 @@
-// cs0149.cs: Method 'MainClass.Delegate()' does not match delegate 'void TestDelegate()'
+// cs0149.cs: Method name expected
 // Line: 8
 
 delegate void TestDelegate();

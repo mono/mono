@@ -9,7 +9,7 @@ public class Driver {
     floats[0] = 1.0f;
     unsafe {
       fixed (float *fp = &floats[0]) {
-	Console.WriteLine ("foo" + fp);
+      Console.WriteLine ("foo" + fp);
       }
     }
   }

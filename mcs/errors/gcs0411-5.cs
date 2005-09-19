@@ -1,4 +1,4 @@
-// CS0411: The type arguments for method `World' cannot be infered from the usage. Try specifying the type arguments explicitly.
+// CS0411: The type arguments for method `World' cannot be infered from the usage. Try specifying the type arguments explicitly
 // Line: 16
 public interface IFoo<T>
 { }

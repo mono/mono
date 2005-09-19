@@ -1,6 +1,6 @@
-// cs8200.cs: Do not allow type-parameter-constraint-clauses when
-// there is no type-parameter list
-//
+// cs0080.cs: Constraints are not allowed on non-generic declarations
+// Line: 5
+
 using System.Collections;
 class Dingus where T : IEnumerable {
 }

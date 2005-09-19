@@ -23,13 +23,16 @@ cs0428.cs
 cs0525.cs
 cs0526.cs
 cs0547.cs
-cs0548-4.cs
 cs0548.cs
+cs0548-4.cs
 cs0560.cs
 cs0567.cs
 cs0612-2.cs NO ERROR
 cs0619-42.cs
 cs0619-31.cs NO ERROR
+cs0619-43.cs NO ERROR
+cs0619-45.cs NO ERROR
+cs0619-46.cs NO ERROR
 cs0647-15.cs NO ERROR # corlib bug 73143
 cs1501-5.cs
 cs1513.cs
@@ -40,4 +43,5 @@ cs1586.cs
 cs1638.cs NO ERROR
 cs1641.cs
 cs1666.cs NO ERROR
+cs1674-2.cs
 cs2007.cs
