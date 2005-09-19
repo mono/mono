@@ -1,5 +1,10 @@
 2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataGridTest.cs: fix expected/actual order. Added test for HeaderText
+	and empty ArrayList.
+
+2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* TableCellTest.cs: TableCell does not get an automatic ID.
 
 2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>

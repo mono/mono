@@ -1093,26 +1093,31 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			source.DataSource = list;
 			columns = p.CreateColumns (source, true);
-			Assert.AreEqual (columns.Count, 1, "A1");
-			Assert.AreEqual (((DataGridColumn) columns [0]).HeaderText, "Item", "A2");
+			Assert.AreEqual (1, columns.Count, "A1");
+			Assert.AreEqual ("Item", ((DataGridColumn) columns [0]).HeaderText, "A2");
 
 			AmazingEnumerable amazing = new AmazingEnumerable (list);
 
 			source.DataSource = amazing;
 			columns = p.CreateColumns (source, true);
-			Assert.AreEqual (columns.Count, 1, "A3");
+			Assert.AreEqual (1, columns.Count, "A3");
 
 			BoundColumn one = (BoundColumn) columns [0];
 
-			Assert.AreEqual (one.HeaderText, "Item", "A4");
+			Assert.AreEqual ("Item", one.HeaderText, "A4");
 
 			// I guess this makes it bind to itself ?
-			Assert.AreEqual (one.DataField, BoundColumn.thisExpr, "A5"); 
+			Assert.AreEqual (BoundColumn.thisExpr, one.DataField, "A5"); 
 
-			Assert.AreEqual (one.DataFormatString, String.Empty, "A6");
-			Assert.AreEqual (one.SortExpression, "Item", "A7");
-			Assert.AreEqual (one.HeaderImageUrl, String.Empty, "A8");
-			Assert.AreEqual (one.FooterText, String.Empty, "A9");
+			Assert.AreEqual (String.Empty, one.DataFormatString, "A6");
+			Assert.AreEqual ("Item", one.SortExpression, "A7");
+			Assert.AreEqual (String.Empty, one.HeaderImageUrl, "A8");
+			Assert.AreEqual (String.Empty, one.FooterText, "A9");
+			Assert.AreEqual ("Item", one.HeaderText, "A10");
+
+			source.DataSource = new ArrayList ();
+			columns = p.CreateColumns (source, true);
+			Assert.AreEqual (0, columns.Count, "A11");
 		}
 
 		[Test]
