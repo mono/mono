@@ -1,3 +1,8 @@
+2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRuntime.cs: catch errors when compiling global.asax and
+	initializing the application. Fixes bug #76090.
+
 2005-09-14  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* BrowserCapabilities.cs: Fixed changes (in 2.0) with versions. Fixed
