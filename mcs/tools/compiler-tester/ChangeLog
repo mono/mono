@@ -1,3 +1,8 @@
+2005-09-19  Marek Safar  <marek.safar@seznam.cz>
+
+	* compiler-tester: Reverted Martin's revert and ignore gmcs error
+	tests for new checks as most of them are not "valid".
+
 2005-08-31  Martin Baulig  <martin@ximian.com>
 
 	* compiler-tester: Reverted Marek's latest changes - they were
