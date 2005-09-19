@@ -1,5 +1,7 @@
 2005-09-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* custom-attr.cs: Add tests for bug #76062.
+
 	* test-driver Makefile.am: Fix detection of disabled tests.
 
 2005-09-16  Raja R Harinath  <rharinath@novell.com>
