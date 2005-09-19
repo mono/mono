@@ -1,3 +1,26 @@
+2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TableStyle.cs: fixed typo that prevented restoring GridLines from
+	a saved viewstate.
+
+	* DataGrid.cs: the table does not get an auto ID. When restoring from
+	viewstate, use all the saved columns, not just that data bound ones. Set
+	the owner of the BoundColumns created. Save/restore columns.
+	OnItemCreated happens after the item is initialized and the data item is
+	set before the event and nullified after OnItemDataBound.
+	Add the render_table to the Controls immediately, otherwise we might get
+	errors from child controls such as "must be rendered inside a form".
+	Keep the items created in the list waiting for them.
+	The table uses the attributes from the DataGrid and ControlStyle.
+	Raise OnItemCommand on all bubble events and don't propagate bubble
+	event up in the hierarchy
+
+	* TableCell.cs: it does not get an automatic ID.
+	* BoundColumn.cs: FormatDataValue returns an empty string on null input
+	(there was already a test for this).
+
+	Fixes bug #76117.
+
 2005-09-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: merge column styles too. Fixes bug #76106.

@@ -324,7 +324,7 @@ namespace System.Web.UI.WebControls {
 			if (viewstate["CellSpacing"] != null) {
 				styles |= Styles.CellSpacing;
 			}
-			if (viewstate["BackGridLines"] != null) {
+			if (viewstate["GridLines"] != null) {
 				styles |= Styles.GridLines;
 			}
 			if (viewstate["HorizontalAlign"] != null) {

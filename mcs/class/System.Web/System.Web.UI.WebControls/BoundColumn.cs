@@ -100,6 +100,9 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual string FormatDataValue (object dataValue)
 		{
+			if (dataValue == null)
+				return "";
+
 			if (data_format_string == String.Empty)
 				return dataValue.ToString ();
 
@@ -111,19 +114,14 @@ namespace System.Web.UI.WebControls {
 			TableCell cell = (TableCell) sender;
 			DataGridItem item  = (DataGridItem) cell.NamingContainer;
 			object value = null;
-			string text = null;
 
 			if (DataField != thisExpr) {
-				try {
-					value = DataBinder.Eval (item.DataItem, DataField);
-				} catch {
-					value = String.Empty;
-				}
+				value = DataBinder.Eval (item.DataItem, DataField);
 			} else {
 				value = item.DataItem;
 			}
 
-			text = FormatDataValue (value);
+			string text = FormatDataValue (value);
 			if (text == String.Empty)
 				text = "&nbsp;";
 			cell.Text = text;
