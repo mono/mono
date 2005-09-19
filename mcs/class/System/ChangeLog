@@ -1,3 +1,14 @@
+2005-09-19  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration/ProviderBase.cs: nuke this - it's in
+	System.Configuration.Provider.
+
+	* System/InvalidDataException.cs: move this to System.IO, where it
+	belongs.
+	
+	* System.dll.sources: track movement of InvalidDataException.cs
+	and removal of ProviderBase.cs
+
 2005-09-19  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added TypeConverterTest.cs and
