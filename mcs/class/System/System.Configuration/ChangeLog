@@ -1,3 +1,16 @@
+2005-09-19  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration/SettingsProvider.cs,
+	System.Configuration/SettingsPropertyValueCollection.cs,
+	System.Configuration/SettingsPropertyCollection.cs,
+	System.Configuration/SettingsProviderCollection.cs,
+	System.Configuration/SettingsBase.cs,
+	System.Configuration/SettingsSerializeAs.cs,
+	System.Configuration/SettingsPropertyValue.cs,
+	System.Configuration/SettingsProperty.cs,
+	System.Configuration/SettingsContext.cs,
+	System.Configuration/SettingsAttributeDictionary.cs: new files.
+
 2005-07-05  Raja R Harinath  <rharinath@novell.com>
 
 	* ConfigurationSettings.cs (ConnectionStrings): Change XML_DEP
