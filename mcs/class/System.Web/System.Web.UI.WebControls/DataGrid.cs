@@ -351,11 +351,7 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (render_table == null) {
 					render_table = new Table ();
-					if (ControlStyleCreated)
-						render_table.ControlStyle.MergeWith (TableStyle);
-					else
-						render_table.ControlStyle.MergeWith (CreateControlStyle ());
-//					Controls.Add (render_table);
+					render_table.PreventAutoID ();
 				}
 				return render_table;
 			}
@@ -366,7 +362,7 @@ namespace System.Web.UI.WebControls {
 			if (useDataSource) {
 				ArrayList columns_list = CreateColumnSet (paged, useDataSource);
 				render_columns = new DataGridColumn [columns_list.Count];
-				
+
 				for (int c = 0; c < render_columns.Length; c++) {
 					DataGridColumn col = (DataGridColumn) columns_list [c];
 					col.Set_Owner (this);
@@ -374,8 +370,8 @@ namespace System.Web.UI.WebControls {
 					render_columns [c] = col;
 				}
 			} else {
-				render_columns = new DataGridColumn [DataSourceColumns.Count];
-				DataSourceColumns.CopyTo (render_columns, 0);
+				render_columns = new DataGridColumn [Columns.Count];
+				Columns.CopyTo (render_columns, 0);
 			}
 		}
 
@@ -427,11 +423,9 @@ namespace System.Web.UI.WebControls {
 			get { return (TableStyle) ControlStyle; }
 		}
 		
-		protected virtual ArrayList CreateColumnSet (PagedDataSource dataSource,
-				bool useDataSource)
+		protected virtual ArrayList CreateColumnSet (PagedDataSource dataSource, bool useDataSource)
 		{
 			ArrayList res = new ArrayList ();
-
 			if (columns_list != null)
 				res.AddRange (columns_list);
 
@@ -440,7 +434,6 @@ namespace System.Web.UI.WebControls {
 					PropertyDescriptorCollection props = dataSource.GetItemProperties (null);
 					DataSourceColumns.Clear ();
 					if (props != null) {
-
 						foreach (PropertyDescriptor d in props)
 							AddPropertyToColumns (d, false);
 					} else {
@@ -455,22 +448,42 @@ namespace System.Web.UI.WebControls {
 
 						props = TypeDescriptor.GetProperties (dataSource.DataSource);
 						PropertyDescriptor item = props.Find ("Item", false);
-
-						if (item != null)
-							AddPropertyToColumns (item, true);
+						IEnumerator items = dataSource.GetEnumerator ();
+						// Don't add if there are no elements
+						if (items.MoveNext ()) {
+							if (item != null)
+								AddPropertyToColumns (item, true);
+							else
+								AddPropertyToColumns ();
+						}
 					}
 				}
 
-				if (data_source_columns != null)
+				if (data_source_columns != null && data_source_columns.Count > 0)
 					res.AddRange (data_source_columns);
 			}
 
 			return res;
 		}
 
+		private void AddPropertyToColumns ()
+		{
+			BoundColumn b = new BoundColumn ();
+			if (IsTrackingViewState) {
+				IStateManager m = (IStateManager) b;
+				m.TrackViewState ();
+			}
+			b.Set_Owner (this);
+			b.HeaderText = "Item";
+			b.SortExpression = "Item";
+			b.DataField  = BoundColumn.thisExpr;
+			DataSourceColumns.Add (b);
+		}
+
 		private void AddPropertyToColumns (PropertyDescriptor prop, bool tothis)
 		{
 			BoundColumn b = new BoundColumn ();
+			b.Set_Owner (this);
 			if (IsTrackingViewState) {
 				IStateManager m = (IStateManager) b;
 				m.TrackViewState ();
@@ -500,7 +513,7 @@ namespace System.Web.UI.WebControls {
 			if (edit_item_style != null)
 				edit_item_style.TrackViewState ();
 
-			IStateManager manager = (IStateManager) data_source_columns;
+			IStateManager manager = (IStateManager) columns;
 			if (manager != null)
 				manager.TrackViewState ();
 		}
@@ -510,7 +523,10 @@ namespace System.Web.UI.WebControls {
 			object [] res = new object [10];
 
 			res [0] = base.SaveViewState ();
-
+			if (columns != null) {
+				IStateManager cm = (IStateManager) columns;
+				res [1] = cm.SaveViewState ();
+			}
 			if (pager_style != null)
 				res [2] = pager_style.SaveViewState ();
 			if (header_style != null)
@@ -542,7 +558,10 @@ namespace System.Web.UI.WebControls {
 				return;
 
 			base.LoadViewState (pieces [0]);
-
+			if (columns != null) {
+				IStateManager cm = (IStateManager) columns;
+				cm.LoadViewState (pieces [1]);
+			}
 			if (pieces [2] != null)
 				PagerStyle.LoadViewState (pieces [2]);
 			if (pieces [3] != null)
@@ -564,6 +583,7 @@ namespace System.Web.UI.WebControls {
 				object [] cols = (object []) pieces [9];
 				foreach (object o in cols) {
 					BoundColumn c = new BoundColumn ();
+					c.Set_Owner (this);
 					((IStateManager) c).LoadViewState (o);
 					DataSourceColumns.Add (c);
 				}
@@ -714,27 +734,29 @@ namespace System.Web.UI.WebControls {
 		{
 			DataGridItem res = CreateItem (item_index, data_source_index, type);
 			DataGridItemEventArgs args = new DataGridItemEventArgs (res);
+			bool no_pager = (type != ListItemType.Pager);
 
-			if (type != ListItemType.Pager) {
-				OnItemCreated (args);
+			if (no_pager) {
 				InitializeItem (res, render_columns);
+				if (data_bind)
+					res.DataItem = data_item;
+				OnItemCreated (args);
 			} else {
 				InitializePager (res, render_columns.Length, paged);
 				if (pager_style != null)
 					res.ApplyStyle (pager_style);
+				OnItemCreated (args);
 			}
 
 			// Add before the column is bound, so that the
 			// value is saved in the viewstate
 			RenderTable.Controls.Add (res);
 
-			if (data_bind) {
-				res.DataItem = data_item;
-				if (data_item != null)
-					res.DataBind ();
+			if (no_pager && data_bind) {
+				res.DataBind ();
 				OnItemDataBound (args);
+				res.DataItem = null;
 			}
-
 			return res;
 		}
 
@@ -743,35 +765,39 @@ namespace System.Web.UI.WebControls {
 			DataGridItem item;
 
 			RenderTable.Controls.Clear ();
+			Controls.Add (RenderTable);
 
 			IEnumerable data_source;
 			if (useDataSource) {
-				data_source = DataSourceResolver.ResolveDataSource (DataSource,
-						DataMember);
+				data_source = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
 			} else {
 				// This is a massive waste
 				data_source = new object [ViewState.GetInt ("Items", 0)];
 			}
 
 			paged_data_source = new PagedDataSource ();
-			paged_data_source.AllowPaging = AllowPaging;
-			paged_data_source.AllowCustomPaging = AllowCustomPaging;
-			paged_data_source.DataSource = data_source;
-			paged_data_source.CurrentPageIndex = CurrentPageIndex;
-			paged_data_source.PageSize = PageSize;
-			paged_data_source.VirtualCount = VirtualItemCount;
+			PagedDataSource pds = paged_data_source;
+			pds.AllowPaging = AllowPaging;
+			pds.AllowCustomPaging = AllowCustomPaging;
+			pds.DataSource = data_source;
+			pds.CurrentPageIndex = CurrentPageIndex;
+			pds.PageSize = PageSize;
+			pds.VirtualCount = VirtualItemCount;
 
 			CreateRenderColumns (paged_data_source, useDataSource);
 
-			item = CreateItem (-1, -1, ListItemType.Pager, false, null,
-					paged_data_source);
-			item = CreateItem (-1, -1, ListItemType.Header, useDataSource, null,
-					paged_data_source);
+			if (pds.IsPagingEnabled)
+				CreateItem (-1, -1, ListItemType.Pager, false, null, pds);
+
+			CreateItem (-1, -1, ListItemType.Header, useDataSource, null, pds);
 
 			// No indexer on PagedDataSource so we have to do
 			// this silly foreach and index++
 			int index = 0;
-			foreach (object ds in paged_data_source) {
+			if (items_list == null)
+				items_list = new ArrayList ();
+
+			foreach (object ds in pds) {
 				ListItemType type = ListItemType.Item;
 
 				if (this.EditItemIndex == index) 
@@ -779,16 +805,16 @@ namespace System.Web.UI.WebControls {
 				else if (index % 2 != 0) 
 					type = ListItemType.AlternatingItem;
 
-				item = CreateItem (index, index, type, useDataSource, ds, paged_data_source);
+				items_list.Add (CreateItem (index, index, type, useDataSource, ds, pds));
 				index++;
 			}
 
-			item = CreateItem (-1, -1, ListItemType.Footer, useDataSource, null, paged_data_source);
-			item = CreateItem (-1, -1, ListItemType.Pager, false, null, paged_data_source);
+			CreateItem (-1, -1, ListItemType.Footer, useDataSource, null, paged_data_source);
+			if (pds.IsPagingEnabled)
+				CreateItem (-1, -1, ListItemType.Pager, false, null, paged_data_source);
 
-			Controls.Add (RenderTable);
-			ViewState ["Items"] = paged_data_source.DataSourceCount;
-
+			if (useDataSource)
+				ViewState ["Items"] = index;
 			pager_cell = null;
 		}
 
@@ -818,36 +844,53 @@ namespace System.Web.UI.WebControls {
 			if (render_table == null)
 				return;
 
+			render_table.CopyBaseAttributes (this);
+			render_table.ApplyStyle (ControlStyle);
+
 			bool top_pager = true;
+			Style alt = null;
+			if (alt_item_style != null) {
+				alt = new Style ();
+				alt.CopyFrom (item_style);
+				alt.CopyFrom (alt_item_style);
+			} else {
+				alt = item_style;
+			}
+
 			foreach (DataGridItem item in render_table.Rows) {
 				
 				switch (item.ItemType) {
 				case ListItemType.Item:
-					item.ApplyStyle (ItemStyle);
+					item.MergeStyle (item_style);
 					ApplyColumnStyle (item.Cells, ListItemType.Item);
 					break;
 				case ListItemType.AlternatingItem:
-					item.ApplyStyle (AlternatingItemStyle);
+					item.MergeStyle (alt);
 					ApplyColumnStyle (item.Cells, ListItemType.AlternatingItem);
 					break;
 				case ListItemType.EditItem:
-					item.ApplyStyle (EditItemStyle);
+					item.MergeStyle (edit_item_style);
 					ApplyColumnStyle (item.Cells, ListItemType.EditItem);
 					break;
 				case ListItemType.Footer:
 					if (!ShowFooter)
 						item.Visible = false;
-					item.ApplyStyle (FooterStyle);
+					if (footer_style != null)
+						item.MergeStyle (footer_style);
 					ApplyColumnStyle (item.Cells, ListItemType.Footer);
 					break;
 				case ListItemType.Header:
 					if (!ShowHeader)
 						item.Visible = false;
-					item.ApplyStyle (HeaderStyle);
+					if (header_style != null)
+						item.MergeStyle (header_style);
 					ApplyColumnStyle (item.Cells, ListItemType.Header);
 					break;
 				case ListItemType.SelectedItem:
-					item.ApplyStyle (SelectedItemStyle);
+					if (selected_style != null)
+						item.MergeStyle (selected_style);
+					else
+						item.MergeStyle (item_style);
 					ApplyColumnStyle (item.Cells, ListItemType.SelectedItem);
 					break;
 				case ListItemType.Pager:
@@ -879,25 +922,18 @@ namespace System.Web.UI.WebControls {
 			string cn = de.CommandName;
 			CultureInfo inv = CultureInfo.InvariantCulture;
 
+			OnItemCommand (de);
 			if (String.Compare (cn, CancelCommandName, true, inv) == 0) {
 				OnCancelCommand (de);
-				return true;
 			} else if (String.Compare (cn, DeleteCommandName, true, inv) == 0) {
 				OnDeleteCommand (de);
-				return true;
 			} else if (String.Compare (cn, EditCommandName, true, inv) == 0) {
 				OnEditCommand (de);
-				return true;
-			} else if (String.Compare (cn, "Item", true, inv) == 0) {
-				OnItemCommand (de);
-				return true;
 			} else if (String.Compare (cn, SelectCommandName, true, inv) == 0) {
 				OnSelectedIndexChanged (de);
-				return true;
 			} else if (String.Compare (cn, SortCommandName, true, inv) == 0) {
 				DataGridSortCommandEventArgs se = new DataGridSortCommandEventArgs (de.CommandSource, de);
 				OnSortCommand (se);
-				return true;
 			} else if (String.Compare (cn, UpdateCommandName, true, inv) == 0) {
 				OnUpdateCommand (de);
 			} else if (String.Compare (cn, PageCommandName, true, inv) == 0) {
@@ -918,10 +954,9 @@ namespace System.Web.UI.WebControls {
 				DataGridPageChangedEventArgs pc = new DataGridPageChangedEventArgs (
 					de.CommandSource, new_index);
 				OnPageIndexChanged (pc);
-				return true;
 			}
 
-			return false;
+			return true;
 		}
 
 		protected virtual void OnCancelCommand (DataGridCommandEventArgs e)
