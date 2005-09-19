@@ -517,7 +517,7 @@ namespace Mono.CSharp {
 
 				return new EnumConstant (e, t);
 			} else if (v == null && !TypeManager.IsValueType (t))
-				return NullLiteral.Null;
+				return new NullLiteral (Location.Null);
 			else
 				throw new Exception ("Unknown type for constant (" + t +
 						     "), details: " + v);

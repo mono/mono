@@ -1,3 +1,20 @@
+2005-09-19  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: interface_accessors replaced by
+	accessor_declarations.
+
+	* ecore.cs, literal.cs, statement.cs: NullLiteral holds null
+	location.
+	
+	* statement.cs (GotoCase.Resolve): Convert null constant to
+	null case.
+	(SwitchLabel.ResolveAndReduce): Ditto.
+	(SwitchLabel.NullStringCase): Custom null stamp.
+	(Switch.SimpleSwitchEmit): Fix from NullLiteral to NullStringCase.
+	
+	typemanager.cs (CSharpSignature): Don't skip first argument
+	for full names.
+
 2005-09-18  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.cs: Set InEmacs based on the environment variable EMACS. 

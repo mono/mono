@@ -1622,8 +1622,11 @@ interface_property_declaration
 	  type IDENTIFIER 
 	  OPEN_BRACE 
 	  { lexer.PropertyParsing = true; }
-	  interface_accessors 
-	  { lexer.PropertyParsing = false; }
+	  accessor_declarations 
+	  {
+		has_get = has_set = false; 
+		lexer.PropertyParsing = false;
+	  }
 	  CLOSE_BRACE
 	  {
 		LocatedToken lt = (LocatedToken) $4;
@@ -1634,22 +1637,37 @@ interface_property_declaration
 			break;
 		}
 
+		Property p = null;
 		if ($7 == null) {
-			Property p = new Property (current_class, (Expression) $3, (int) $2, true,
+			p = new Property (current_class, (Expression) $3, (int) $2, true,
 				   name, (Attributes) $1,
 				   null, null);
 
-			Report.Error (548, lexer.Location, "`{0}': property or indexer must have at least one accessor", p.GetSignatureForError ());
+			Report.Error (548, p.Location, "`{0}': property or indexer must have at least one accessor", p.GetSignatureForError ());
 			break;
 		}
 
-                InterfaceAccessorInfo pinfo = (InterfaceAccessorInfo) $7;
-
-		$$ = new Property (current_class, (Expression) $3, (int) $2, true,
+		Pair pair = (Pair) $7;
+		p = new Property (current_class, (Expression) $3, (int) $2, true,
 				   name, (Attributes) $1,
-				   pinfo.Get, pinfo.Set);
+				   (Accessor)pair.First, (Accessor)pair.Second);
+
+		if (pair.First != null && ((Accessor)(pair.First)).Block != null) {
+			Report.Error (531, p.Location, "`{0}.get': interface members cannot have a definition", p.GetSignatureForError ());
+			$$ = null;
+			break;
+		}
+
+		if (pair.Second != null && ((Accessor)(pair.Second)).Block != null) {
+			Report.Error (531, p.Location, "`{0}.set': interface members cannot have a definition", p.GetSignatureForError ());
+			$$ = null;
+			break;
+		}
+
 		if (RootContext.Documentation != null)
-			((Property) $$).DocComment = Lexer.consume_doc_comment ();
+			p.DocComment = Lexer.consume_doc_comment ();
+
+		$$ = p;
 	  }
 	| opt_attributes
 	  opt_new
@@ -1659,33 +1677,6 @@ interface_property_declaration
 	  }
 	;
 
-interface_accessors
-	: opt_attributes opt_modifiers GET SEMICOLON	
-	  { 
-		$$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, (int) $2, 0, (Location) $3, (Location) $3); 
- 	  }
-	| opt_attributes opt_modifiers GET OPEN_BRACE
-	  {  
-		Report.Error (531, (Location) $3, "`{0}': interface members cannot have a definition", ".get");
-		$$ = new InterfaceAccessorInfo (true, false, (Attributes) $1, null, (int) $2, 0, (Location) $3, (Location) $3);
-	  }
-	| opt_attributes opt_modifiers SET SEMICOLON		
-	  { 
-		$$ = new InterfaceAccessorInfo (false, true, null, (Attributes) $1, 0, (int) $2, (Location) $3, (Location) $3); 
-	  }
-	| opt_attributes opt_modifiers GET SEMICOLON opt_attributes opt_modifiers SET SEMICOLON 
-	  { 
-		$$ = new InterfaceAccessorInfo (true, true, (Attributes) $1, (Attributes) $5, (int) $2, (int) $6, (Location) $3, (Location) $7); 
-	  }
-	| opt_attributes opt_modifiers SET SEMICOLON opt_attributes opt_modifiers GET SEMICOLON
-	  { 
-		$$ = new InterfaceAccessorInfo (true, true, (Attributes) $5, (Attributes) $1, (int) $6, (int) $2, (Location) $3, (Location) $3); 
-	  }
-	|
-	  {
-		$$ = null;
-	  }
-	;
 
 interface_event_declaration
 	: opt_attributes opt_new EVENT type IDENTIFIER SEMICOLON
@@ -1725,28 +1716,46 @@ interface_indexer_declaration
 	  OPEN_BRACKET formal_parameter_list CLOSE_BRACKET
 	  OPEN_BRACE 
 	  { lexer.PropertyParsing = true; }
-	  interface_accessors 
-	  { lexer.PropertyParsing = false; }
+	  accessor_declarations 
+	  { 
+		has_get = has_set = false;
+ 		lexer.PropertyParsing = false;
+	  }
 	  CLOSE_BRACE
 	  {
+		Indexer i = null;
 		if ($10 == null) {
-			Indexer i = new Indexer (current_class, (Expression) $3,
-				  new MemberName (TypeContainer.DefaultIndexerName),
+			i = new Indexer (current_class, (Expression) $3,
+				  new MemberName (TypeContainer.DefaultIndexerName, (Location) $4),
 				  (int) $2, true, (Parameters) $6, (Attributes) $1,
 				  null, null);
 
-			Report.Error (548, lexer.Location, "`{0}': property or indexer must have at least one accessor", i.GetSignatureForError ());
+			Report.Error (548, i.Location, "`{0}': property or indexer must have at least one accessor", i.GetSignatureForError ());
 			break;
 		}
 
-		InterfaceAccessorInfo info = (InterfaceAccessorInfo) $10;
-
-		$$ = new Indexer (current_class, (Expression) $3,
+		Pair pair = (Pair) $10;
+		i = new Indexer (current_class, (Expression) $3,
 				  new MemberName (TypeContainer.DefaultIndexerName, (Location) $4),
 				  (int) $2, true, (Parameters) $6, (Attributes) $1,
-				  info.Get, info.Set);
+				   (Accessor)pair.First, (Accessor)pair.Second);
+
+		if (pair.First != null && ((Accessor)(pair.First)).Block != null) {
+			Report.Error (531, i.Location, "`{0}.get': interface members cannot have a definition", i.GetSignatureForError ());
+			$$ = null;
+			break;
+		}
+
+		if (pair.Second != null && ((Accessor)(pair.Second)).Block != null) {
+			Report.Error (531, i.Location, "`{0}.set': interface members cannot have a definition", i.GetSignatureForError ());
+			$$ = null;
+			break;
+		}
+
 		if (RootContext.Documentation != null)
-			((Indexer) $$).DocComment = ConsumeStoredComment ();
+			i.DocComment = ConsumeStoredComment ();
+
+		$$ = i;
 	  }
 	;
 
@@ -2646,7 +2655,7 @@ literal
 	| real_literal
 	| LITERAL_CHARACTER     { $$ = new CharLiteral ((char) lexer.Value, lexer.Location); }
 	| LITERAL_STRING        { $$ = new StringLiteral ((string) lexer.Value, lexer.Location); } 
-	| NULL			{ $$ = NullLiteral.Null; }
+	| NULL			{ $$ = new NullLiteral (lexer.Location); }
 	;
 
 real_literal
@@ -4561,25 +4570,6 @@ public class VariableDeclaration {
 	{
 	}
 }
-
-/// <summary>
-///  Used to pass around interface property information
-/// </summary>
-public class InterfaceAccessorInfo {
-
-        public readonly Accessor Get, Set;
-
-        public InterfaceAccessorInfo (bool has_get, bool has_set,
-                                      Attributes get_attrs, Attributes set_attrs, int get_mod, int set_mod, Location get_loc, Location set_loc)
-        {
-		if (has_get)
-			Get = new Accessor (null, get_mod, get_attrs, get_loc);
-		if (has_set)
-			Set = new Accessor (null, set_mod, set_attrs, set_loc);
-        }
-
-}
-
 
 // <summary>
 //   A class used to hold info about an indexer declarator

@@ -796,8 +796,13 @@ public class TypeManager {
 		if (mb.IsSpecialName && !mb.IsConstructor) {
 			if (iparams.Count > 1) {
 				sig.Append ("this[");
-				int before_ret_val = parameters.LastIndexOf (',');
-				sig.Append (parameters.Substring (1, before_ret_val - 1));
+				if (show_accessor) {
+					sig.Append (parameters.Substring (1, parameters.Length - 2));
+				}
+				else {
+					int before_ret_val = parameters.LastIndexOf (',');
+					sig.Append (parameters.Substring (1, before_ret_val - 1));
+				}
 				sig.Append (']');
 			} else {
 				sig.Append (mb.Name.Substring (4));

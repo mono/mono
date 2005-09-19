@@ -47,15 +47,8 @@ namespace Mono.CSharp {
 	// The null Literal constant
 	//
 	public class NullLiteral : Constant {
-		public static readonly NullLiteral Null;
-
-		static NullLiteral ()
-		{
-			Null = new NullLiteral ();
-		}
-			
-		public NullLiteral ():
-			base (Location.Null) // TODO: use real location
+		public NullLiteral (Location loc):
+			base (loc)
 		{
 			eclass = ExprClass.Value;
 		}
@@ -116,7 +109,7 @@ namespace Mono.CSharp {
 		public override Constant ToType (Type type, Location loc)
 		{
 			if (!type.IsValueType && !TypeManager.IsEnumType (type))
-				return NullLiteral.Null;
+				return this;
 
 			return base.ToType (type, loc);
 		}
@@ -127,14 +120,15 @@ namespace Mono.CSharp {
 	// A null literal in a pointer context
 	//
 	public class NullPointer : NullLiteral {
-		public new static readonly NullLiteral Null;
+		public static readonly NullLiteral Null;
 
 		static NullPointer ()
 		{
 			Null = new NullPointer ();
 		}
 
-		private NullPointer ()
+		private NullPointer ():
+			base (Location.Null)
 		{
 			type = TypeManager.object_type;
 		}
