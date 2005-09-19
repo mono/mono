@@ -56,6 +56,21 @@ namespace MonoTests.System.Web.UI.WebControls {
 		public StateBag StateBag {
 			get { return base.ViewState; }
 		}
+
+		public void LoadVS (object o)
+		{
+			LoadViewState (o);
+		}
+
+		public void TrackVS ()
+		{
+			TrackViewState ();
+		}
+
+		public object SaveVS ()
+		{
+			return SaveViewState ();
+		}
 #if NET_2_0
 		public void Fill (CssStyleCollection attributes, IUrlResolutionService urlResolver)
 		{
@@ -326,6 +341,18 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (3, ts.CellSpacing, "CellSpacing");
 			Assert.AreEqual (GridLines.Horizontal, ts.GridLines, "GridLines");
 			Assert.AreEqual (HorizontalAlign.Left, ts.HorizontalAlign, "HorizontalAlign");
+		}
+
+		[Test]
+		public void GridLines_VS ()
+		{
+			TestTableStyle ts = new TestTableStyle ();
+			ts.TrackVS ();
+			ts.GridLines = GridLines.Both;
+			object o = ts.SaveVS ();
+			ts = new TestTableStyle ();
+			ts.LoadVS (o);
+			Assert.AreEqual (GridLines.Both, ts.GridLines, "GL");
 		}
 #if NET_2_0
 		private CssStyleCollection GetCssCollection ()

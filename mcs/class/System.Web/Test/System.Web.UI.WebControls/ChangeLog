@@ -1,3 +1,8 @@
+2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TableStyleTest.cs: added test to check that GridLines is correctly
+	restored in LoadViewState.
+
 2005-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TableCellTest.cs: added new test cases for bug #76078.
