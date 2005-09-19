@@ -1,3 +1,7 @@
+2005-09-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* test-driver Makefile.am: Fix detection of disabled tests.
+
 2005-09-16  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (check-local): Don't invoke semdel-wrapper.
