@@ -28,6 +28,7 @@ System.Web.UI.HtmlControls/HtmlImageTest.cs
 System.Web.UI.HtmlControls/HtmlInputButtonTest.cs
 System.Web.UI.HtmlControls/HtmlInputCheckBoxTest.cs
 System.Web.UI.HtmlControls/HtmlInputControlTest.cs
+System.Web.UI.HtmlControls/HtmlInputFileTest.cs
 System.Web.UI.HtmlControls/HtmlInputHiddenTest.cs
 System.Web.UI.HtmlControls/HtmlInputPasswordTest.cs
 System.Web.UI.HtmlControls/HtmlInputRadioButtonTest.cs
@@ -235,6 +236,7 @@ System.Web.UI/ValidationPropertyAttributeCas.cs
 System.Web.UI/ValidatorCollectionCas.cs
 System.Web.UI.HtmlControls/HtmlAnchorCas.cs
 System.Web.UI.HtmlControls/HtmlButtonCas.cs
+System.Web.UI.HtmlControls/HtmlContainerControlCas.cs
 System.Web.UI.HtmlControls/HtmlEmptyTagControlBuilderCas.cs
 System.Web.UI.HtmlControls/HtmlFormCas.cs
 System.Web.UI.HtmlControls/HtmlGenericControlCas.cs
@@ -243,6 +245,7 @@ System.Web.UI.HtmlControls/HtmlHeadCas.cs
 System.Web.UI.HtmlControls/HtmlImageCas.cs
 System.Web.UI.HtmlControls/HtmlInputButtonCas.cs
 System.Web.UI.HtmlControls/HtmlInputCheckBoxCas.cs
+System.Web.UI.HtmlControls/HtmlInputControlCas.cs
 System.Web.UI.HtmlControls/HtmlInputFileCas.cs
 System.Web.UI.HtmlControls/HtmlInputHiddenCas.cs
 System.Web.UI.HtmlControls/HtmlInputImageCas.cs
@@ -251,11 +254,14 @@ System.Web.UI.HtmlControls/HtmlInputRadioButtonCas.cs
 System.Web.UI.HtmlControls/HtmlInputResetCas.cs
 System.Web.UI.HtmlControls/HtmlInputSubmitCas.cs
 System.Web.UI.HtmlControls/HtmlInputTextCas.cs
+System.Web.UI.HtmlControls/HtmlLinkCas.cs
+System.Web.UI.HtmlControls/HtmlMetaCas.cs
 System.Web.UI.HtmlControls/HtmlSelectBuilderCas.cs
 System.Web.UI.HtmlControls/HtmlSelectCas.cs
 System.Web.UI.HtmlControls/HtmlTableCas.cs
 System.Web.UI.HtmlControls/HtmlTableCellCas.cs
 System.Web.UI.HtmlControls/HtmlTableRowCas.cs
+System.Web.UI.HtmlControls/HtmlTextAreaCas.cs
 System.Web.UI.HtmlControls/HtmlTitleCas.cs
 System.Web.Util/TransactionsCas.cs
 System.Web.Util/WorkItemCas.cs
