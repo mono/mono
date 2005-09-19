@@ -130,6 +130,27 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 #endif
 		}
 
+		[Test]
+		public void OnClickAttribute ()
+		{
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter tw = new HtmlTextWriter (sw);
+
+			HtmlInputButtonPoker p = new HtmlInputButtonPoker ();
+			p.Page = new Page ();
+			p.DoRenderAttributes (tw);
+			string str = sw.ToString ();
+			int found = str.IndexOf ("onclick");
+			Assert.AreEqual (-1, found, "#01");
+			p.ServerClick += new EventHandler (EmptyHandler);
+			sw = new StringWriter ();
+			tw = new HtmlTextWriter (sw);
+			p.DoRenderAttributes (tw);
+			str = sw.ToString ();
+			found = str.IndexOf ("onclick");
+			Assert.IsTrue (found >= 0, "#02");
+		}
+
 		private static void EmptyHandler (object sender, EventArgs e)
 		{
 		}

@@ -1,3 +1,8 @@
+2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlInputButtonTest.cs: make sure the onclick attribute is rendered
+	when we have a ServerClick event registered.
+
 2005-09-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HtmlAnchorCas.cs: Added "normal" unit tests execution under Deny 
