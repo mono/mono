@@ -1,3 +1,8 @@
+2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlInputButton.cs: render the onclick for doing a postback even when
+	there are no validators.
+
 2005-09-18  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlButton.cs (RenderAttribute): make sure to use WriteAttribute
