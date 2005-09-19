@@ -37,6 +37,9 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent("ServerClick")]
+#if NET_2_0
+	[SupportsEventValidation]
+#endif
 	public class HtmlButton : HtmlContainerControl, IPostBackEventHandler {
 
 		private static readonly object ServerClickEvent = new object();

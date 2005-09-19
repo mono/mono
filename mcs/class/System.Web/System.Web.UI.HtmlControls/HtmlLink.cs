@@ -43,7 +43,7 @@ namespace System.Web.UI.HtmlControls
 		}
 
 		[DefaultValue ("")]
-		[UrlPropertyAttribute ("*.*")]
+		[UrlProperty]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual string Href {
 			get {

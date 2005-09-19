@@ -39,8 +39,8 @@ namespace System.Web.UI.HtmlControls
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ControlBuilder (typeof(HtmlHeadBuilder))]
-	public sealed class HtmlHead: HtmlGenericControl, IPageHeader, IParserAccessor
-	{
+	public sealed class HtmlHead: HtmlGenericControl, IParserAccessor {
+
 		HtmlTitle title;
 		Hashtable metadata;
 		ArrayList styleSheets;
@@ -89,28 +89,28 @@ namespace System.Web.UI.HtmlControls
 			base.RemovedControl (control);
 		}
 		
-		IList IPageHeader.LinkedStyleSheets {
+		IList LinkedStyleSheets {
 			get {
 				if (styleSheets == null) styleSheets = new ArrayList ();
 				return styleSheets;
 			}
 		} 
 		
-		IDictionary IPageHeader.Metadata {
+		IDictionary Metadata {
 			get {
 				if (metadata == null) metadata = new Hashtable ();
 				return metadata;
 			}
 		}
 		
-		IStyleSheet IPageHeader.StyleSheet {
+		public IStyleSheet StyleSheet {
 			get {
 				if (styleSheet == null) styleSheet = new StyleSheetBag ();
 				return styleSheet;
 			}
 		}
 		
-		string IPageHeader.Title {
+		public string Title {
 			get { return title.Text; }
 			set { title.Text = value; }
 		}

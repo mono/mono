@@ -39,6 +39,9 @@ namespace System.Web.UI.HtmlControls {
 	// attributes
 	[DefaultEvent ("ServerChange")]
 	[ValidationProperty ("Value")]
+#if NET_2_0
+	[SupportsEventValidation]
+#endif
 	public class HtmlTextArea : HtmlContainerControl, IPostBackDataHandler {
 
 		private static readonly object serverChangeEvent = new object ();

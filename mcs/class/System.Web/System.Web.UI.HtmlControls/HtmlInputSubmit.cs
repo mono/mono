@@ -38,6 +38,7 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEventAttribute ("ServerClick")]
+	[SupportsEventValidation]
 	public class HtmlInputSubmit : HtmlInputButton, IPostBackEventHandler
 	{
 		public HtmlInputSubmit ()

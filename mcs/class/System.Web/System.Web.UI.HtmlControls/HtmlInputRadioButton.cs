@@ -37,6 +37,9 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent ("ServerChange")]
+#if NET_2_0
+	[SupportsEventValidation]
+#endif
 	public class HtmlInputRadioButton : HtmlInputControl, IPostBackDataHandler {
 
 		private static readonly object serverChangeEvent = new object ();

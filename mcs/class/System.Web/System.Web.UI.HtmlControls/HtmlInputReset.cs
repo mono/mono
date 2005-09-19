@@ -38,6 +38,7 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEventAttribute ("")]
+	[SupportsEventValidation]
 	public class HtmlInputReset : HtmlInputButton
 	{
 		private static readonly object ServerClickEvent = new object();

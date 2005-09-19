@@ -150,6 +150,9 @@ namespace System.Web.UI.HtmlControls
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if NET_2_0
+		[UrlProperty]
+#endif
 		public string Src 
 		{
 			get {

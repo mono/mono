@@ -43,16 +43,16 @@ namespace System.Web.UI.HtmlControls
 	[DefaultEvent ("ServerChange")]
 	[ValidationProperty ("Value")]
 	[ControlBuilder (typeof (HtmlSelectBuilder))]
-	public class HtmlSelect : HtmlContainerControl , IPostBackDataHandler
 #if NET_2_0
-	, IParserAccessor
-#endif
-	{
-#if NET_2_0
+	[SupportsEventValidation]
+	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler, IParserAccessor {
+
 		DataSourceView boundDataSourceView;
 		IDataSource boundDataSource;
 		private bool requiresDataBinding;
 		IEnumerable data;
+#else
+	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler {
 #endif
 		public HtmlSelect () : base ("select")
 		{

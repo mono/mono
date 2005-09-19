@@ -1,3 +1,25 @@
+2005-09-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlAnchor.cs: Added [SupportsEventValidation] on class and 
+	[UrlProperty] on HRef property for 2.0.
+	* HtmlButton.cs: Added [SupportsEventValidation] for 2.0.
+	* HtmlHead.cs: Remove IPageHeader interface.
+	* HtmlImage.cs: Added [UrlProperty] on Src property for 2.0.
+	* HtmlInputButton.cs: Added [SupportsEventValidation] for 2.0.
+	* HtmlInputCheckBox.cs: Added [SupportsEventValidation] for 2.0.
+	* HtmlInputHidden.cs: Added [SupportsEventValidation] for 2.0.
+	* HtmlInputImage.cs: Added [SupportsEventValidation] on class and 
+	[UrlProperty] on Src property for 2.0.
+	* HtmlInputPassword.cs: Added [SupportsEventValidation].
+	* HtmlInputRadioButton.cs: Added [SupportsEventValidation] for 2.0.
+	* HtmlInputReset.cs: Added [SupportsEventValidation].
+	* HtmlInputSubmit.cs: Added [SupportsEventValidation].
+	* HtmlInputText.cs: Added [SupportsEventValidation] on class and 
+	re-enabled RenderAttribute for 2.0.
+	* HtmlLink.cs: Added [UrlProperty] on HRef property for 2.0.
+	* HtmlSelect.cs: Added [SupportsEventValidation] for 2.0.
+	* HtmlTextArea.cs: Added [SupportsEventValidation] for 2.0.
+
 2005-09-18  Chris Toshok  <toshok@ximian.com>
 
 	* HtmlButton.cs (RenderAttribute): make sure to use WriteAttribute

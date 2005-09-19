@@ -36,6 +36,9 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent ("ServerClick")]
+#if NET_2_0
+	[SupportsEventValidation]
+#endif
 	public class HtmlAnchor : HtmlContainerControl, IPostBackEventHandler {
 
 		private static readonly object serverClickEvent = new object ();
@@ -50,6 +53,9 @@ namespace System.Web.UI.HtmlControls {
 		[WebSysDescription("")]
 		[WebCategory("Action")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+#if NET_2_0
+		[UrlProperty]
+#endif
 		public string HRef {
 			get {
 				string s = Attributes ["href"];

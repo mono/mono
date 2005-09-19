@@ -39,6 +39,9 @@ namespace System.Web.UI.HtmlControls {
 	// attributes
 	[DefaultEvent ("ServerChange")]
 	[ValidationProperty ("Value")]
+#if NET_2_0
+	[SupportsEventValidation]
+#endif
 	public class HtmlInputText : HtmlInputControl, IPostBackDataHandler {
 
 		private static readonly object serverChangeEvent = new object ();
@@ -127,7 +130,6 @@ namespace System.Web.UI.HtmlControls {
 				serverChange (this, e);
 		}
 
-#if !NET_2_0
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 			// the Type property can be, indirectly, changed by using the Attributes property
@@ -137,7 +139,6 @@ namespace System.Web.UI.HtmlControls {
 
 			base.RenderAttributes (writer);
 		}
-#endif
 
 		bool LoadPostDataInternal (string postDataKey, NameValueCollection postCollection)
 		{

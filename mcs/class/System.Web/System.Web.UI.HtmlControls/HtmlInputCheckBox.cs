@@ -37,6 +37,9 @@ namespace System.Web.UI.HtmlControls
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent ("ServerChange")]
+#if NET_2_0
+	[SupportsEventValidation]
+#endif
 	public class HtmlInputCheckBox : HtmlInputControl, IPostBackDataHandler
 	{
 		public HtmlInputCheckBox () : base ("checkbox")
@@ -157,5 +160,3 @@ namespace System.Web.UI.HtmlControls
 		}
 	}
 }
-
-	

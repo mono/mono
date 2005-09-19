@@ -40,6 +40,7 @@ namespace System.Web.UI.HtmlControls {
 	// attributes
 	[DefaultEvent ("ServerChange")]
 	[ValidationProperty ("Value")]
+	[SupportsEventValidation]
 	public class HtmlInputPassword : HtmlInputText, IPostBackDataHandler
 	{
 		public HtmlInputPassword ()

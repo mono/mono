@@ -43,6 +43,9 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent("ServerClick")]
+#if NET_2_0
+	[SupportsEventValidation]
+#endif
 	public class HtmlInputImage : HtmlInputControl, IPostBackDataHandler,
 		      IPostBackEventHandler {
 
@@ -97,6 +100,9 @@ namespace System.Web.UI.HtmlControls {
 		[WebSysDescription("")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[WebCategory("Appearance")]
+#if NET_2_0
+		[UrlProperty]
+#endif
 		public string Src {
 			get { return GetAtt ("src"); }
 			set { SetAtt ("src", value); }
