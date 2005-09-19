@@ -1,3 +1,10 @@
+2005-09-19  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* Page.cs: Remove references to IPageParser (removed from 2.0 RC). We
+	now use HtmlHeader directly.
+	* UrlPropertyAttribute.cs: Removed AllowedTypes property (2.0 RC) and
+	rewrote Equals to avoid dual type cast.
+
 2005-09-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SupportsEventValidationAttribute.cs: New attribute added in 2.0 RC.

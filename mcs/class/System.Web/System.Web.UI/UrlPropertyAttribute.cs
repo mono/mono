@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Sanjay Gupta (gsanjay@novell.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
@@ -35,13 +36,10 @@ namespace System.Web.UI {
 	[AttributeUsage (AttributeTargets.Property, AllowMultiple = false, Inherited = true)]		
 	public sealed class UrlPropertyAttribute : Attribute 
 	{
-		private string filter = "*.*";
-		private UrlTypes urlTypes = UrlTypes.Absolute |
-					 UrlTypes.AppRelative |
-					 UrlTypes.DocRelative |
-					 UrlTypes.RootRelative;
+		private string filter;
 
 		public UrlPropertyAttribute () 
+			: this ("*.*")
 		{			
 		}
 
@@ -55,19 +53,13 @@ namespace System.Web.UI {
 			get { return filter; } 
 		}
 
-		public UrlTypes AllowedTypes {
-			get { return urlTypes; }
-			set { urlTypes = value; }
-		}
-		
 		public override bool Equals (object obj)
 		{
-			if (obj != null && obj is UrlPropertyAttribute) {
-				UrlPropertyAttribute upa = (UrlPropertyAttribute)obj;
-				return (filter.Equals (upa.Filter) 
-					&& urlTypes.Equals (upa.AllowedTypes));
-			}
-			return false;
+			UrlPropertyAttribute upa = (obj as UrlPropertyAttribute);
+			if (upa == null)
+				return false;
+
+			return (filter.Equals (upa.Filter));
 		}
 
 		public override int GetHashCode ()

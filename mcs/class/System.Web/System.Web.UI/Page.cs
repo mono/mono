@@ -103,7 +103,7 @@ public class Page : TemplateControl, IHttpHandler
 	internal const string CallbackSourceID = "__CALLBACKTARGET";
 	internal const string PreviousPageID = "__PREVIOUSPAGE";
 	
-	IPageHeader htmlHeader;
+	HtmlHead htmlHeader;
 	
 	MasterPage masterPage;
 	string masterPageFile;
@@ -1429,11 +1429,11 @@ public class Page : TemplateControl, IHttpHandler
 
     [BrowsableAttribute (false)]
     [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-	public IPageHeader Header {
+	public HtmlHead Header {
 		get { return htmlHeader; }
 	}
 	
-	internal void SetHeader (IPageHeader header)
+	internal void SetHeader (HtmlHead header)
 	{
 		htmlHeader = header;
 	}
