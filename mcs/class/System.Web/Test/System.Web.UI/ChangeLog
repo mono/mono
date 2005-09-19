@@ -1,3 +1,16 @@
+2005-09-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TagPrefixAttributeCas.cs: New. CAS unit tests.
+	* TemplateBuilderCas.cs: New. CAS unit tests.
+	* TemplateContainerAttributeCas.cs: New. CAS unit tests.
+	* TemplateControlCas.cs: New. CAS unit tests.
+	* ToolboxDataAttributeCas.cs: New. CAS unit tests.
+	* TripletCas.cs: New. CAS unit tests.
+	* UserControlCas.cs: New. CAS unit tests.
+	* UserControlControlBuilderCas.cs: New. CAS unit tests.
+	* ValidationPropertyAttributeCas.cs: New. CAS unit tests.
+	* ValidatorCollectionCas.cs: New. CAS unit tests.
+
 2005-09-15  Sebastien Pouliot  <sebastien@ximian.com>
  
 	* ParseChildrenAttributeCas.cs: New. CAS unit tests.
