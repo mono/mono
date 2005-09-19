@@ -849,9 +849,29 @@ namespace System.Windows.Forms
 				if ( !multiSelect )
 				{
 					string fileFromComboBox = fileNameComboBox.Text.Trim( );
-					
-					if ( fileFromComboBox.Length > 0 )
-						fileFromComboBox = Path.Combine( currentDirectoryName, fileFromComboBox );
+															
+					if ( fileFromComboBox.Length > 0 ) {
+						if (!Path.IsPathRooted (fileFromComboBox))
+						  fileFromComboBox = Path.Combine( currentDirectoryName, fileFromComboBox );
+						
+						FileInfo fileInfo = new FileInfo (fileFromComboBox);
+						if (fileInfo.Exists)
+						  currentFileName = fileFromComboBox;
+						else {
+							DirectoryInfo dirInfo = new DirectoryInfo (fileFromComboBox);
+							if (dirInfo.Exists) {
+																
+								PushDirectory( dirInfo );								
+								directoryInfo = dirInfo.Parent;
+								currentDirectoryName = dirInfo.FullName;
+								dirComboBox.CurrentPath = currentDirectoryName;
+								mwfFileView.UpdateFileView( dirInfo );
+								
+								currentFileName = "";								
+								return;
+							}								
+						}
+					}
 					
 					if ( currentFileName != fileFromComboBox )
 						currentFileName = fileFromComboBox;
@@ -859,7 +879,7 @@ namespace System.Windows.Forms
 					if ( currentFileName.Length == 0 )
 						return;
 					
-					
+
 					if ( fileDialog.fileDialogType == FileDialogType.OpenFileDialog )
 					{
 						if ( fileDialog.CheckFileExists )

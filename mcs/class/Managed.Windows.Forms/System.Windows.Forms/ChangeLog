@@ -1,3 +1,11 @@
+2005-09-19 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+
+        * FileDialog.cs :
+	        - Allow files to be selected properly using file name
+		combo box.
+		- Add ability to change diretory (absolute / relative)
+		using file name combo box.
+
 2005-09-16  Jordi Mas i Hernandez <jordi@ximian.com>
 	 
 	* ListBox.cs: 
