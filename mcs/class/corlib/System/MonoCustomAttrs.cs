@@ -45,12 +45,9 @@ namespace System
 	internal class MonoCustomAttrs
 	{
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object[] GetCustomAttributesInternal (ICustomAttributeProvider obj, bool pseudoAttrs);
+		internal static extern object[] GetCustomAttributesInternal (ICustomAttributeProvider obj, Type attributeType, bool pseudoAttrs);
 
-		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj)
-		{
-			object[] attrs = GetCustomAttributesInternal (obj, false);
-
+		internal static object[] GetPseudoCustomAttributes (ICustomAttributeProvider obj, Type attributeType) {
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 			object[] pseudoAttrs = null;
 
@@ -64,6 +61,27 @@ namespace System
 			else if (obj is Type)
 				pseudoAttrs = ((Type)obj).GetPseudoCustomAttributes ();
 
+			if ((attributeType != null) && (pseudoAttrs != null)) {
+				for (int i = 0; i < pseudoAttrs.Length; ++i)
+					if (attributeType.IsAssignableFrom (pseudoAttrs [i].GetType ()))
+						if (pseudoAttrs.Length == 1)
+							return pseudoAttrs;
+						else
+							return new object [] { pseudoAttrs [i] };
+				return new object [0];
+			}
+			else
+				return pseudoAttrs;
+#else
+			return null;
+#endif
+		}
+
+		internal static object[] GetCustomAttributesBase (ICustomAttributeProvider obj, Type attributeType)
+		{
+			object[] attrs = GetCustomAttributesInternal (obj, attributeType, false);
+
+			object[] pseudoAttrs = GetPseudoCustomAttributes (obj, attributeType);
 			if (pseudoAttrs != null) {
 				object[] res = new object [attrs.Length + pseudoAttrs.Length];
 				System.Array.Copy (attrs, res, attrs.Length);
@@ -72,9 +90,6 @@ namespace System
 			}
 			else
 				return attrs;
-#else
-			return attrs;
-#endif
 		}
 
 		internal static Attribute GetCustomAttribute (ICustomAttributeProvider obj,
@@ -102,7 +117,7 @@ namespace System
 				throw new ArgumentNullException ("obj");
 
 			object[] r;
-			object[] res = GetCustomAttributesBase (obj);
+			object[] res = GetCustomAttributesBase (obj, attributeType);
 			// shortcut
 			if (!inherit && res.Length == 1)
 			{
@@ -196,7 +211,7 @@ namespace System
 				if ((btype = GetBase (btype)) != null)
 				{
 					inheritanceLevel++;
-					res = GetCustomAttributesBase (btype);
+					res = GetCustomAttributesBase (btype, attributeType);
 				}
 			} while (inherit && btype != null);
 
@@ -222,7 +237,7 @@ namespace System
 				throw new ArgumentNullException ("obj");
 
 			if (!inherit)
-				return (object[]) GetCustomAttributesBase (obj).Clone ();
+				return (object[]) GetCustomAttributesBase (obj, null).Clone ();
 
 			return GetCustomAttributes (obj, null, inherit);
 		}
@@ -243,10 +258,15 @@ namespace System
 
 		internal static bool IsDefined (ICustomAttributeProvider obj, Type attributeType, bool inherit)
 		{
-			object [] res = GetCustomAttributesBase (obj);
-			foreach (object attr in res)
-				if (attributeType.Equals (attr.GetType ()))
-					return true;
+			if (IsDefinedInternal (obj, attributeType))
+				return true;
+
+			object[] pseudoAttrs = GetPseudoCustomAttributes (obj, attributeType);
+			if (pseudoAttrs != null) {
+				for (int i = 0; i < pseudoAttrs.Length; ++i)
+					if (attributeType.IsAssignableFrom (pseudoAttrs [i].GetType ()))
+						return true;
+			}
 
 			ICustomAttributeProvider btype;
 			if (inherit && ((btype = GetBase (obj)) != null))
@@ -254,6 +274,9 @@ namespace System
 
 			return false;
 		}
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern bool IsDefinedInternal (ICustomAttributeProvider obj, Type AttributeType);
 
 		// Handles Type, MonoProperty and MonoMethod.
 		// The runtime has also cases for MonoEvent, MonoField, Assembly and ParameterInfo,
