@@ -21,6 +21,11 @@
 
 	Fixes bug #76117.
 
+2005-09-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGridColumnCollection.cs: track the view state in the newly added
+	items.
+
 2005-09-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: merge column styles too. Fixes bug #76106.
