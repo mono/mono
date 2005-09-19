@@ -1,3 +1,12 @@
+2005-09-19  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TypeDescriptor.cs: Remove usage of removed internal
+	PropertyDescriptorCollection ctor. Return read-only collection.
+	* PropertyDescriptorCollection.cs: Removed internal ctor taking
+	ArrayList. Add ctor for making read-only collection. Added
+	read-only checks. Implemented IsReadOnly and IsFixedSize. Empty now
+	returns read-only collection to match MS.NET.
+
 2005-09-12  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* TypeConverter.cs: Only return browsable properties in GetProperties.

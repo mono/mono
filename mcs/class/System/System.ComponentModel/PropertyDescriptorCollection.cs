@@ -37,17 +37,12 @@ namespace System.ComponentModel
 	/// <summary>
 	/// Represents a collection of PropertyDescriptor objects.
 	/// </summary>
-	//[DefaultMember ("Item")]
 	public class PropertyDescriptorCollection : IList, ICollection, IEnumerable, IDictionary
 	{
-		public static readonly PropertyDescriptorCollection Empty = new PropertyDescriptorCollection ((ArrayList)null);
-		ArrayList properties;
+		public static readonly PropertyDescriptorCollection Empty = new PropertyDescriptorCollection (null, true);
+		private ArrayList properties;
+		private bool readOnly;
 
-		internal PropertyDescriptorCollection (ArrayList list)
-		{
-			properties = list;
-		}
-		
 		public PropertyDescriptorCollection (PropertyDescriptor[] properties)
 		{
 			this.properties = new ArrayList ();
@@ -56,6 +51,16 @@ namespace System.ComponentModel
 
 			this.properties.AddRange (properties);
 		}
+
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		PropertyDescriptorCollection (PropertyDescriptor[] properties, bool readOnly) : this (properties)
+		{
+			this.readOnly = readOnly;
+		}
 		
 		private PropertyDescriptorCollection ()
 		{
@@ -63,6 +68,9 @@ namespace System.ComponentModel
 
 		public int Add (PropertyDescriptor value)
 		{
+			if (readOnly) {
+				throw new NotSupportedException ();
+			}
 			properties.Add (value);
 			return properties.Count - 1;
 		}
@@ -74,11 +82,18 @@ namespace System.ComponentModel
 
 		void IDictionary.Add (object key, object value)
 		{
+			if ((value as PropertyDescriptor) == null) {
+				throw new ArgumentException ("value");
+			}
+
 			Add ((PropertyDescriptor) value);
 		}
 
 		public void Clear ()
 		{
+			if (readOnly) {
+				throw new NotSupportedException ();
+			}
 			properties.Clear ();
 		}
 
@@ -114,6 +129,10 @@ namespace System.ComponentModel
 
 		public virtual PropertyDescriptor Find (string name, bool ignoreCase)
 		{
+			if (name == null) {
+				throw new ArgumentNullException ("name");
+			}
+
 			foreach (PropertyDescriptor p in properties) {
 				if (0 == String.Compare (name, p.Name, ignoreCase))
 					return p;
@@ -144,6 +163,9 @@ namespace System.ComponentModel
 
 		public void Insert (int index, PropertyDescriptor value)
 		{
+			if (readOnly) {
+				throw new NotSupportedException ();
+			}
 			properties.Insert (index, value);
 		}
 
@@ -154,6 +176,9 @@ namespace System.ComponentModel
 
 		public void Remove (PropertyDescriptor value)
 		{
+			if (readOnly) {
+				throw new NotSupportedException ();
+			}
 			properties.Remove (value);
 		}
 
@@ -169,6 +194,9 @@ namespace System.ComponentModel
 
 		public void RemoveAt (int index)
 		{
+			if (readOnly) {
+				throw new NotSupportedException ();
+			}
 			properties.RemoveAt (index);
 		}
 
@@ -252,31 +280,42 @@ namespace System.ComponentModel
 		internal PropertyDescriptorCollection Filter (Attribute[] attributes)
 		{
 			ArrayList list = new ArrayList ();
-			foreach (PropertyDescriptor pd in properties)
-				if (pd.Attributes.Contains (attributes))
+			foreach (PropertyDescriptor pd in properties) {
+				if (pd.Attributes.Contains (attributes)) {
 					list.Add (pd);
-					
-			return new PropertyDescriptorCollection (list);
+				}
+			}
+			PropertyDescriptor[] descriptors = new PropertyDescriptor[list.Count];
+			list.CopyTo (descriptors);
+			return new PropertyDescriptorCollection (descriptors, true);
 		}
 		
 		bool IDictionary.IsFixedSize
 		{
 			get {
-				return true;
+#if NET_2_0
+				return readOnly;
+#else
+				return !readOnly;
+#endif
 			}
 		}
 
 		bool IList.IsFixedSize
 		{
 			get {
-				return true;
+#if NET_2_0
+				return readOnly;
+#else
+				return !readOnly;
+#endif
 			}
 		}
 
 		bool IList.IsReadOnly
 		{
 			get {
-				return false;
+				return readOnly;
 			}
 		}
 
@@ -284,7 +323,7 @@ namespace System.ComponentModel
 		{
 			get 
 			{
-				return false;
+				return readOnly;
 			}
 		}
 
@@ -335,6 +374,10 @@ namespace System.ComponentModel
 				return this [(string) key];
 			}
 			set {
+				if (readOnly) {
+					throw new NotSupportedException ();
+				}
+
 				if (!(key is string) || (value as PropertyDescriptor) == null)
 					throw new ArgumentException ();
 				int idx = properties.IndexOf (value);
@@ -358,6 +401,9 @@ namespace System.ComponentModel
 				return properties [index];
 			}
 			set {
+				if (readOnly) {
+					throw new NotSupportedException ();
+				}
 				properties [index] = value;
 			}
 		}

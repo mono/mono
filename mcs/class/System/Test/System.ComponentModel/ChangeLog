@@ -1,3 +1,9 @@
+2005-09-19 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* TypeConverterTests.cs: Added tests for TypeConverter.
+	* PropertyDescriptorCollection.cs: Added tests for PropertyDescriptor
+	Collection.
+
 2005-08-28 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DateTimeConverterTests.cs: Added tests for DateTimeConverter.

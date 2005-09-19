@@ -1,3 +1,8 @@
+2005-09-19  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added TypeConverterTest.cs and
+	PropertyDescriptorCollection.cs.
+
 2005-09-04  David Waite  <mass@akuma.org>
 
 	* System.dll.sources, System_test.dll.sources: Added LinkedList.cs,

@@ -40,9 +40,11 @@ System.ComponentModel/Int16ConverterTests.cs
 System.ComponentModel/Int32ConverterTests.cs
 System.ComponentModel/Int64ConverterTests.cs
 System.ComponentModel/LicenseManagerTests.cs
+System.ComponentModel/PropertyDescriptorCollectionTests.cs
 System.ComponentModel/SByteConverterTests.cs
 System.ComponentModel/SingleConverterTests.cs
 System.ComponentModel/ToolboxItemAttributeTests.cs
+System.ComponentModel/TypeConverterTests.cs
 System.ComponentModel/TypeDescriptorTests.cs
 System.ComponentModel/UInt16ConverterTests.cs
 System.ComponentModel/UInt32ConverterTests.cs

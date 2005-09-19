@@ -737,10 +737,10 @@ public sealed class TypeDescriptor
 				ITypeDescriptorFilterService filter = (ITypeDescriptorFilterService) _component.Site.GetService (typeof(ITypeDescriptorFilterService));
 				cache = filter.FilterProperties (_component, t);
 			}
-			
-			ArrayList atts = new ArrayList ();
-			atts.AddRange (t.Values);
-			PropertyDescriptorCollection attCol = new PropertyDescriptorCollection (atts);
+
+			PropertyDescriptor[] descriptors = new PropertyDescriptor[t.Values.Count];
+			t.Values.CopyTo (descriptors, 0);
+			PropertyDescriptorCollection attCol = new PropertyDescriptorCollection (descriptors, true);
 			if (cache) _properties = attCol;
 			return attCol;
 		}
@@ -782,7 +782,7 @@ public sealed class TypeDescriptor
 			for (int n=0; n<props.Length; n++)
 				descs [n] = new ReflectionPropertyDescriptor (props[n]);
 
-			_properties = new PropertyDescriptorCollection (descs);
+			_properties = new PropertyDescriptorCollection (descs, true);
 			return _properties;
 		}
 	}
