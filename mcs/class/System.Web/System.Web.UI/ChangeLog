@@ -1,3 +1,40 @@
+2005-09-19  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ControlBuilder.cs: Added BuildObject override for 2.0 profile.
+	* TagPrefixAttribute.cs: Added LinkDemand for AspNetHostingPermission
+	with Minimal level. Fixed checks on ctor.
+	* TemplateBuilder.cs: Added LinkDemand and InheritanceDemand for 
+	AspNetHostingPermission with Minimal level.
+	* TemplateContainerAttribute.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level.
+	* TemplateControl.cs: Added LinkDemand and InheritanceDemand for 
+	AspNetHostingPermission with Minimal level. Fixed checks/exceptions. 
+	Stubbed IFilterResolutionService for CAS testing.
+	* TemplateControlParser.cs: Added LinkDemand and InheritanceDemand for
+	AspNetHostingPermission with Minimal level.
+	* TemplateParser.cs: Added LinkDemand and InheritanceDemand for 
+	AspNetHostingPermission with Minimal level.
+	* ThemeableAttribute.cs: Added LinkDemand for AspNetHostingPermission
+	with Minimal level. Removed IDispose interface.
+	* ToolboxDataAttribute.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level. Fixed IsDefaultAttribute 
+	to work on both 1.x and 2.0 profiles.
+	* Triplet.cs: Added LinkDemand and (only for 1.x) InheritanceDemand 
+	for AspNetHostingPermission with Minimal level.
+	* UserControl.cs: Added LinkDemand and InheritanceDemand for 
+	AspNetHostingPermission with Minimal level. Stubbed 
+	IFilterResolutionService for CAS testing.
+	* UserControlControlBuilder.cs: Added LinkDemand and InheritanceDemand
+	for AspNetHostingPermission with Minimal level.
+	* ValidationPropertyAttribute.cs: Added LinkDemand for 
+	AspNetHostingPermission with Minimal level.
+	* ValidatorCollection.cs: Added LinkDemand for AspNetHostingPermission 
+	with Minimal level.
+	* WebResourceAttribute.cs: Removed extra ctor and added setter to 
+	PerformSubstitution.
+	* WebServiceParser.cs: Added LinkDemand and InheritanceDemand for 
+	AspNetHostingPermission with Minimal level.
+
 2005-09-15  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* ParseChildrenAttribute.cs: Added LinkDemand for 

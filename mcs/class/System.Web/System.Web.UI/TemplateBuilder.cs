@@ -5,8 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc. (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +27,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Reflection;
+using System.Security.Permissions;
 #if NET_2_0
 using System.ComponentModel;
 #endif
 
-namespace System.Web.UI
-{
-	public class TemplateBuilder : ControlBuilder, ITemplate
-	{
+namespace System.Web.UI {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public class TemplateBuilder : ControlBuilder, ITemplate {
+
 		string text;
 		TemplateContainerAttribute containerAttribute;
 #if NET_2_0
@@ -79,6 +81,12 @@ namespace System.Web.UI
 		
 		internal ICollection Bindings {
 			get { return bindings; }
+		}
+
+		[MonoTODO ("why override?")]
+		public override object BuildObject ()
+		{
+			return base.BuildObject ();
 		}
 #endif
 

@@ -24,12 +24,15 @@
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 //
-// (C) 2005 Novell, Inc.
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 
-using System;
+using System.Security.Permissions;
 
 namespace System.Web.UI {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[AttributeUsage(AttributeTargets.Class)]
 	public sealed class ToolboxDataAttribute : Attribute {
 
@@ -57,13 +60,17 @@ namespace System.Web.UI {
 		public override int GetHashCode ()
 		{
 			if (data == null)
-				return 0;
+				return -1;
 			return data.GetHashCode ();
 		}
 
 		public override bool IsDefaultAttribute ()
 		{
-			return Equals (Default);
+#if NET_2_0
+			return ((data == null) || (data.Length == 0));
+#else
+			return ((data != null) && (data.Length == 0));
+#endif
 		}
 	}
 }

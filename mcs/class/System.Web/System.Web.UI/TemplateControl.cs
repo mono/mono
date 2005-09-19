@@ -7,8 +7,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,18 +29,23 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Reflection;
-using System.Web;
+using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.Util;
 
 namespace System.Web.UI {
 
-	public abstract class TemplateControl : Control, INamingContainer
-	{
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_2_0
+	public abstract class TemplateControl : Control, INamingContainer, IFilterResolutionService {
+#else
+	public abstract class TemplateControl : Control, INamingContainer {
+#endif
 		static object abortTransaction = new object ();
 		static object commitTransaction = new object ();
 		static object error = new object ();
@@ -158,6 +162,13 @@ namespace System.Web.UI {
 
 		public Control LoadControl (string virtualPath)
 		{
+#if NET_2_0
+			if (virtualPath == null)
+				throw new ArgumentNullException ("virtualPath");
+#else
+			if (virtualPath == null)
+				throw new HttpException ("virtualPath is null");
+#endif
 			object control = Activator.CreateInstance (GetTypeFromControlPath (virtualPath));
 			if (control is UserControl)
 				((UserControl) control).InitializeAsUserControl (Page);
@@ -167,6 +178,13 @@ namespace System.Web.UI {
 
 		public ITemplate LoadTemplate (string virtualPath)
 		{
+#if NET_2_0
+			if (virtualPath == null)
+				throw new ArgumentNullException ("virtualPath");
+#else
+			if (virtualPath == null)
+				throw new HttpException ("virtualPath is null");
+#endif
 			Type t = GetTypeFromControlPath (virtualPath);
 			return new SimpleTemplate (t);
 		}
@@ -195,6 +213,9 @@ namespace System.Web.UI {
 		[MonoTODO]
 		public Control ParseControl (string content)
 		{
+			if (content == null)
+				throw new ArgumentNullException ("content");
+
 			return null;
 		}
 
@@ -202,6 +223,9 @@ namespace System.Web.UI {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public static object ReadStringResource (Type t)
 		{
+			if (t == null)
+				throw new ArgumentNullException ("t");
+
 			return null;
 		}
 
@@ -313,7 +337,20 @@ namespace System.Web.UI {
 	{
 		return XPathBinder.Select (CurrentDataItem, xpathexpression);
 	}
-#endif
 
+		// IFilterResolutionService
+
+		[MonoTODO]
+		int IFilterResolutionService.CompareFilters (string filter1, string filter2)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		bool IFilterResolutionService.EvaluateFilter (string filterName)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }

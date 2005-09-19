@@ -5,8 +5,7 @@
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Ben Maurer
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,7 +26,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 namespace System.Web.UI {
+
 	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple = true)]
 #if NET_2_0
 	public
@@ -35,18 +36,28 @@ namespace System.Web.UI {
 	internal
 #endif
 	sealed class WebResourceAttribute : Attribute {
-		public WebResourceAttribute (string webResource, string contentType) : this (webResource, contentType, false) {}
-		public WebResourceAttribute (string webResource, string contentType, bool performSubstitution)
+
+		public WebResourceAttribute (string webResource, string contentType)
 		{
 			this.webResource = webResource;
 			this.contentType = contentType;
-			this.performSubstitution = performSubstitution;
 		}
+
 		
-		public string ContentType { get { return contentType; } }
-		public bool PerformSubstitution { get { return performSubstitution; } }
-		public string WebResource { get { return webResource; } }
-		
+		public string ContentType {
+			get { return contentType; }
+		}
+
+		public bool PerformSubstitution {
+			get { return performSubstitution; }
+			set { performSubstitution = value; }
+		}
+
+		public string WebResource {
+			get { return webResource; }
+		}
+
+
 		bool performSubstitution;
 		string webResource, contentType;
 	}

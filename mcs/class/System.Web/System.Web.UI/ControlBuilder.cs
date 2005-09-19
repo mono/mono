@@ -491,6 +491,12 @@ namespace System.Web.UI {
 				}
 			}
 		}
+#if NET_2_0
+		[MonoTODO ("unsure, lack documentation")]
+		public virtual object BuildObject ()
+		{
+			return CreateInstance ();
+		}
+#endif
 	}
 }
-

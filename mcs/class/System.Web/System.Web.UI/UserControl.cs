@@ -6,8 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,29 +27,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
+using System.Security.Permissions;
 using System.Web.Caching;
 using System.Web.SessionState;
 
-namespace System.Web.UI
-{
+namespace System.Web.UI {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ControlBuilder (typeof (UserControlControlBuilder))]
 	[DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 	[ToolboxItem (false)]
 	[Designer ("System.Web.UI.Design.UserControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
-	[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 #if NET_2_0
 	[Designer ("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (IRootDesigner))]
 	[ParseChildren (true, "", ChildControlType = typeof (Control))]
 #else
+	[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 	[ParseChildren (true)]
 #endif
 	public class UserControl : TemplateControl, IAttributeAccessor, IUserControlDesignerAccessor
 #if NET_2_0
-	, INamingContainer
+	, INamingContainer, IFilterResolutionService
 #endif
 	{
 		private bool initialized;
@@ -59,7 +63,6 @@ namespace System.Web.UI
 
 		public UserControl ()
 		{
-			//??
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -89,6 +92,7 @@ namespace System.Web.UI
 		public AttributeCollection Attributes
 		{
 			get {
+				EnsureAttributes ();
 				return attributes;
 			}
 		}
@@ -280,6 +284,18 @@ namespace System.Web.UI
 			}
 			set { ViewState["!DesignTimeTagName"] = value; }
 		}
+#if NET_2_0
+		[MonoTODO]
+		int IFilterResolutionService.CompareFilters (string filter1, string filter2)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		bool IFilterResolutionService.EvaluateFilter (string filterName)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
-
