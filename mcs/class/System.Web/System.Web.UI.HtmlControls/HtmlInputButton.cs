@@ -142,10 +142,19 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-			if (CausesValidation && Page != null && Page.AreValidatorsUplevel ()) {
+			if (CausesValidation && Page != null) {
+				string oc = null;
 				ClientScriptManager csm = new ClientScriptManager (Page);
-				writer.WriteAttribute ("onclick", csm.GetClientValidationEvent ());
-				writer.WriteAttribute ("language", "javascript");
+				if (Page.AreValidatorsUplevel ()) {
+					oc = csm.GetClientValidationEvent ();
+				} else if (Events [ServerClickEvent] != null) {
+					oc = Attributes ["onclick"] + " " + csm.GetPostBackClientEvent (this, "");
+				}
+				
+				if (oc != null) {
+					writer.WriteAttribute ("language", "javascript");
+					writer.WriteAttribute ("onclick", oc);
+				}
 			}
 
 			Attributes.Remove ("CausesValidation");
