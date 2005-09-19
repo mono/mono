@@ -48,10 +48,6 @@ namespace System.Web.UI.HtmlControls {
 		{
 		}
 
-		public HtmlInputPassword (string type)
-			: base (type)
-		{
-		}
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{

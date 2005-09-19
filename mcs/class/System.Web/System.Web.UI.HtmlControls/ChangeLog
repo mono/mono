@@ -1,3 +1,7 @@
+2005-09-19  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HtmlInputPassword.cs: Removed ctor(string) as it's not in 2.0 RC.
+	
 2005-09-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HtmlAnchor.cs: Added [SupportsEventValidation] on class and 
