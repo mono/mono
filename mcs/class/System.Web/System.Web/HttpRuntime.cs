@@ -196,23 +196,32 @@ namespace System.Web {
 			//
 			// Get application instance (create or reuse an instance of the correct class)
 			//
-			HttpApplication app = HttpApplicationFactory.GetApplication (context);
+			HttpApplication app = null;
+			bool error = false;
+			try {
+				app = HttpApplicationFactory.GetApplication (context);
+			} catch (Exception e) {
+				FinishWithException ((HttpWorkerRequest) o, new HttpException ("", e));
+				error = true;
+			}
 
-			context.ApplicationInstance = app;
+			if (error) {
+				context.Request.ReleaseResources ();
+				context.Response.ReleaseResources ();
+				HttpContext.Current = null;
+			} else {
+				context.ApplicationInstance = app;
 			
-			//
-			// Initialize, load modules specific on the config file.
-			//
+				//
+				// Ask application to service the request
+				//
+				IHttpAsyncHandler ihah = app;
 
-			//
-			// Ask application to service the request
-			//
-			IHttpAsyncHandler ihah = app;
+				IAsyncResult appiar = ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
+				ihah.EndProcessRequest (appiar);
 
-			IAsyncResult appiar = ihah.BeginProcessRequest (context, new AsyncCallback (request_processed), context);
-			ihah.EndProcessRequest (appiar);
-
-			HttpApplicationFactory.Recycle (app);
+				HttpApplicationFactory.Recycle (app);
+			}
 			
 			QueuePendingRequests ();
 		}
@@ -280,6 +289,22 @@ namespace System.Web {
 			"<html><head>\n<title>503 Server Unavailable</title>\n</head><body>\n" +
 			"<h1>Server Unavailable</h1>\n" +
 			"</body></html>\n";
+
+		static void FinishWithException (HttpWorkerRequest wr, HttpException e)
+		{
+			int code = e.GetHttpCode ();
+			wr.SendStatus (code, HttpWorkerRequest.GetStatusDescription (code));
+			wr.SendUnknownResponseHeader ("Connection", "close");
+			wr.SendUnknownResponseHeader ("Date", DateTime.Now.ToUniversalTime ().ToString ("r"));
+			Encoding enc = Encoding.ASCII;
+			wr.SendUnknownResponseHeader ("Content-Type", "text/html; charset=" + enc.WebName);
+			string msg = e.GetHtmlErrorMessage ();
+			byte [] contentBytes = enc.GetBytes (msg);
+			wr.SendUnknownResponseHeader ("Content-Length", contentBytes.Length.ToString ());
+			wr.SendResponseFromMemory (contentBytes, contentBytes.Length);
+			wr.FlushResponse (true);
+			wr.CloseConnection ();
+		}
 
 		//
 		// This is called from the QueueManager if a request

@@ -1,3 +1,8 @@
+2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRuntime.cs: catch errors when compiling global.asax and
+	initializing the application. Fixes bug #76090.
+
 2005-09-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequest.cs: use GetServerName instead of GetLocalAddress when
