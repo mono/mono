@@ -1,3 +1,58 @@
+2005-09-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HtmlAnchorCas.cs: Added "normal" unit tests execution under Deny 
+	Unrestricted.
+	* HtmlAnchorTest.cs: RaisePostBackEvent now throws a NRE under 2.0 RC.
+	* HtmlButtonCas.cs: Added "normal" unit tests execution under Deny 
+	Unrestricted.
+	* HtmlContainerControlCas.cs: New. CAS unit tests.
+	* HtmlFormCas.cs: Added "normal" unit tests execution under Deny 
+	Unrestricted.
+	* HtmlFormTest.cs: Fixed rendering output under 2.0 RC.
+	* HtmlImageCas.cs: Added "normal" unit tests execution under Deny 
+	Unrestricted.
+	* HtmlInputButtonCas.cs: Added "normal" unit tests execution under 
+	Deny Unrestricted.
+	* HtmlInputButtonTest.cs: Fixed attribute count for 2.0 RC.
+	* HtmlInputControlCas.cs: New. CAS unit tests.
+	* HtmlInputControlTest.cs: Fixed attribute count for 2.0 RC.
+	* HtmlInputCheckBoxCas.cs: Added "normal" unit tests execution under
+	Deny Unrestricted.
+	* HtmlInputCheckBoxTest.cs: Fixed attribute count for 2.0 RC (which is
+	now identical to 1.x results).
+	* HtmlInputFileCas.cs: Added "normal" unit tests execution under Deny 
+	Unrestricted.
+	* HtmlInputFileTest.cs: Fixed attribute count for 2.0 RC.
+	* HtmlInputHiddenCas.cs: Fixed attribute count for 2.0 RC.
+	* HtmlInputPasswordCas.cs: Added "normal" unit tests execution under 
+	Deny Unrestricted.
+	* HtmlInputPasswordTest.cs: Adjusted tests as 2.0 RC removed the 
+	ctor(string).
+	* HtmlInputRadioButtonCas.cs: Fixed attribute count for 2.0 RC.
+	* HtmlInputRadioButtonTest.cs: Added "normal" unit tests execution 
+	under Deny Unrestricted.
+	* HtmlInputResetCas.cs: Added "normal" unit tests execution under Deny
+	Unrestricted.
+	* HtmlInputResetTest.cs: Fixed attribute count for 2.0 RC.
+	* HtmlInputSubmitCas.cs: Added "normal" unit tests execution under 
+	Deny Unrestricted.
+	* HtmlInputSubmitTest.cs: Fixed attribute count for 2.0 RC.
+	* HtmlInputTextCas.cs: Added "normal" unit tests execution under Deny 
+	Unrestricted.
+	* HtmlInputTextTest.cs: Fixed attribute count for 2.0 RC.
+	* HtmlLinkCas.cs: New. CAS unit tests.
+	* HtmlMetaCas.cs: New. CAS unit tests.
+	* HtmlMetaTest.cs: Fixed rendering for 2.0 RC (tag ending).
+	* HtmlSelectCas.cs: Added "normal" unit tests execution under Deny 
+	Unrestricted.
+	* HtmlTableCas.cs: Added "normal" unit tests execution under Deny 
+	Unrestricted.
+	* HtmlTableCellCas.cs: Added "normal" unit tests execution under Deny 
+	Unrestricted.
+	* HtmlTableRowCas.cs: Added "normal" unit tests execution under Deny 
+	Unrestricted.
+	* HtmlTextAreaCas.cs: New. CAS unit tests.
+
 2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HtmlInputTextTest.cs: Fix expected value for LoadPostData (in the 

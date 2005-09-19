@@ -1,6 +1,6 @@
 //
-// HtmlInputRadioButtonCas.cs 
-//	- CAS unit tests for System.Web.UI.HtmlControls.HtmlInputRadioButton
+// HtmlMetaCas.cs 
+//	- CAS unit tests for System.Web.UI.HtmlControls.HtmlMeta
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using NUnit.Framework;
 
 using System;
@@ -39,32 +41,23 @@ namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-	public class HtmlInputRadioButtonCas : AspNetHostingMinimal {
+	public class HtmlMetaCas : AspNetHostingMinimal {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			HtmlInputRadioButtonTest unit = new HtmlInputRadioButtonTest ();
-			unit.DefaultProperties ();
-			unit.NullProperties ();
-			unit.CleanProperties ();
-			unit.Value_Existing ();
-			unit.Value_Resetting ();
-			unit.Value_ResetNull ();
-			unit.IDversusValue ();
-			unit.IPostBackDataHandler_RaisePostBackEvent ();
-			unit.IPostBackDataHandler_LoadPostData_WrongId ();
-			unit.IPostBackDataHandler_LoadPostData ();
-#if NET_2_0
-			unit.RaisePostBackEvent ();
-			unit.LoadPostData_WrongId ();
-			unit.LoadPostData ();
-#endif
+			HtmlMetaTest unit = new HtmlMetaTest ();
+			unit.Defaults ();
+			unit.Setters ();
+			unit.Render ();
+			unit.Render_Empty ();
 		}
 
 		public override Type Type {
-			get { return typeof (HtmlInputRadioButton); }
+			get { return typeof (HtmlMeta); }
 		}
 	}
 }
+
+#endif

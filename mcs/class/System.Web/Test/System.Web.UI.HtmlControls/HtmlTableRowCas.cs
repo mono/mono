@@ -30,13 +30,29 @@
 using NUnit.Framework;
 
 using System;
+using System.Security.Permissions;
 using System.Web.UI.HtmlControls;
+
+using MonoTests.System.Web.UI.HtmlControls;
 
 namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	[Category ("CAS")]
 	public class HtmlTableRowCas : AspNetHostingMinimal {
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void Deny_Unrestricted ()
+		{
+			HtmlTableRowTest unit = new HtmlTableRowTest ();
+			unit.DefaultProperties ();
+			unit.NullProperties ();
+			unit.CleanProperties ();
+			unit.Render ();
+			unit.HtmlTableCellControlCollectionAdd ();
+			unit.HtmlTableCellControlCollectionAddAt ();
+		}
 
 		public override Type Type {
 			get { return typeof (HtmlTableRow); }

@@ -29,13 +29,33 @@
 using NUnit.Framework;
 
 using System;
+using System.Security.Permissions;
 using System.Web.UI.HtmlControls;
+
+using MonoTests.System.Web.UI.HtmlControls;
 
 namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	[Category ("CAS")]
 	public class HtmlAnchorCas : AspNetHostingMinimal {
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void Deny_Unrestricted ()
+		{
+			HtmlAnchorTest unit = new HtmlAnchorTest ();
+			unit.DefaultProperties ();
+			unit.NullProperties ();
+			unit.Target ();
+			unit.HRef ();
+			unit.AbsoluteHRef ();
+			unit.RenderAttributes ();
+#if ONLY_1_1
+			// sadly this started to throw NRE in 2.0 RC
+			unit.IPostBackEventHandler_RaisePostBackEvent ();
+#endif
+		}
 
 		public override Type Type {
 			get { return typeof (HtmlAnchor); }

@@ -30,13 +30,36 @@
 using NUnit.Framework;
 
 using System;
+using System.Security.Permissions;
 using System.Web.UI.HtmlControls;
+
+using MonoTests.System.Web.UI.HtmlControls;
 
 namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	[Category ("CAS")]
 	public class HtmlSelectCas : AspNetHostingMinimal {
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void Deny_Unrestricted ()
+		{
+			HtmlSelectTest unit = new HtmlSelectTest ();
+			unit.DefaultProperties ();
+			unit.NullProperties ();
+			unit.SourceType ();
+			unit.ViewStateCount ();
+			unit.InternalDetails ();
+			unit.Multiple ();
+			unit.Big ();
+			unit.OneRowIndividual ();
+			unit.RenderAttributes ();
+			unit.DataBind1 ();
+			unit.DataBind2 ();
+			unit.DataBind3 ();
+			unit.DataBindDoubleCall ();
+		}
 
 		public override Type Type {
 			get { return typeof (HtmlSelect); }

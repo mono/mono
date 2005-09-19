@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System;
 using System.Collections.Specialized;
 using System.IO;
@@ -35,7 +37,6 @@ using System.Web.UI.HtmlControls;
 
 using NUnit.Framework;
 
-#if NET_2_0
 namespace MonoTests.System.Web.UI.HtmlControls {
 
 	public class TestHtmlInputPassword : HtmlInputPassword {
@@ -48,11 +49,6 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 		public TestHtmlInputPassword ()
 			: base ()
-		{
-		}
-
-		public TestHtmlInputPassword (string type)
-			: base (type)
 		{
 		}
 
@@ -88,7 +84,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public string AttributeNewValue {
 			get { return attr_new_value; }
 		}
-#if NET_2_0
+
 		public bool LoadPost (string key, NameValueCollection nvc)
 		{
 			return base.LoadPostData (key, nvc);
@@ -98,20 +94,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		{
 			base.RaisePostDataChangedEvent ();
 		}
-#endif
 	}
 
 
 	[TestFixture]
 	public class HtmlInputPasswordTest {
-		private const int defaultAttributesCount = 0;
 
-		[Test]
-		public void ConstructorType ()
-		{
-			HtmlInputPassword it = new HtmlInputPassword ("mono");
-			Assert.AreEqual ("mono", it.Type, "Type");
-		}
+		private const int defaultAttributesCount = 1;
 
 		[Test]
 		public void DefaultProperties ()

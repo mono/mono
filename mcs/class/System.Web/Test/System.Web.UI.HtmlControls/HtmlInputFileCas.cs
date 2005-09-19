@@ -30,13 +30,26 @@
 using NUnit.Framework;
 
 using System;
+using System.Security.Permissions;
 using System.Web.UI.HtmlControls;
+
+using MonoTests.System.Web.UI.HtmlControls;
 
 namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	[Category ("CAS")]
 	public class HtmlInputFileCas : AspNetHostingMinimal {
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void Deny_Unrestricted ()
+		{
+			HtmlInputFileTest unit = new HtmlInputFileTest ();
+			unit.Defaults ();
+			unit.Attribute_Count ();
+			unit.RenderAttributes ();
+		}
 
 		public override Type Type {
 			get { return typeof (HtmlInputFile); }

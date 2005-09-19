@@ -87,14 +87,14 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			meta.Content = "Content";
 			meta.HttpEquiv = "Equiv";
 			meta.Scheme = "Scheme";
-			Assert.AreEqual ("<meta name=\"Name\" content=\"Content\" http-equiv=\"Equiv\" scheme=\"Scheme\">", meta.Render(), "A1");
+			Assert.AreEqual ("<meta name=\"Name\" content=\"Content\" http-equiv=\"Equiv\" scheme=\"Scheme\" />", meta.Render(), "A1");
 		}
 
 		[Test]
 		public void Render_Empty ()
 		{
 			HtmlMetaPoker meta = new HtmlMetaPoker ();
-			Assert.AreEqual ("<meta>", meta.Render(), "A1");
+			Assert.AreEqual ("<meta />", meta.Render(), "A1");
 		}
 	}
 }

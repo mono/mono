@@ -29,13 +29,32 @@
 using NUnit.Framework;
 
 using System;
+using System.Security.Permissions;
 using System.Web.UI.HtmlControls;
+
+using MonoTests.System.Web.UI.HtmlControls;
 
 namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	[Category ("CAS")]
 	public class HtmlFormCas : AspNetHostingMinimal {
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void Deny_Unrestricted ()
+		{
+			HtmlFormTest unit = new HtmlFormTest ();
+			unit.DefaultProperties ();
+			unit.NullProperties ();
+			unit.Attributes ();
+			unit.ViewState ();
+			unit.Name_InsideNaming ();
+			unit.RenderChildren ();
+#if NET_2_0
+			unit.ControlCollection ();
+#endif
+		}
 
 		public override Type Type {
 			get { return typeof (HtmlForm); }

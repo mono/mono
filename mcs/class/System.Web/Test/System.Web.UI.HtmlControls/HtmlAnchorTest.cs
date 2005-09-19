@@ -161,6 +161,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 
 		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (NullReferenceException))] // since 2.0 RC :-(
+#endif
 		public void IPostBackEventHandler_RaisePostBackEvent ()
 		{
 			TestHtmlAnchor a = new TestHtmlAnchor ();
@@ -181,6 +184,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		}
 #if NET_2_0
 		[Test]
+		[ExpectedException (typeof (NullReferenceException))] // since 2.0 RC :-(
 		public void RaisePostBackEvent ()
 		{
 			TestHtmlAnchor a = new TestHtmlAnchor ();

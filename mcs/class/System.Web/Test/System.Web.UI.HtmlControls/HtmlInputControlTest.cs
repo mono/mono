@@ -75,12 +75,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 	[TestFixture]
 	public class HtmlInputControlTest {
 
-#if NET_2_0
-		private const int defaultAttributesCount = 0;
-#else
-		// type is kept in Attributes under 1.x
 		private const int defaultAttributesCount = 1;
-#endif
 
 		[Test]
 		public void DefaultProperties ()

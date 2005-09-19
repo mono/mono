@@ -114,7 +114,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 			HtmlInputResetPoker p = new HtmlInputResetPoker ();
 
-			Assert.AreEqual (p.Attributes.Count, 0, "A1");
+			Assert.AreEqual (p.Attributes.Count, 1, "A1");
 
 			p.DoRenderAttributes (tw);
 			Assert.AreEqual (sw.ToString (), " name type=\"reset\" /", "A2");

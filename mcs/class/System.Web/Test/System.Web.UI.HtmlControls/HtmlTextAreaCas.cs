@@ -1,6 +1,6 @@
 //
-// HtmlInputRadioButtonCas.cs 
-//	- CAS unit tests for System.Web.UI.HtmlControls.HtmlInputRadioButton
+// HtmlTextAreaCas.cs 
+//	- CAS unit tests for System.Web.UI.HtmlControls.HtmlTextArea
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -39,32 +39,32 @@ namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-	public class HtmlInputRadioButtonCas : AspNetHostingMinimal {
+	public class HtmlTextAreaCas : AspNetHostingMinimal {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			HtmlInputRadioButtonTest unit = new HtmlInputRadioButtonTest ();
+			HtmlTextAreaTest unit = new HtmlTextAreaTest ();
 			unit.DefaultProperties ();
 			unit.NullProperties ();
 			unit.CleanProperties ();
-			unit.Value_Existing ();
-			unit.Value_Resetting ();
-			unit.Value_ResetNull ();
-			unit.IDversusValue ();
+			unit.Name ();
+			unit.Value ();
+			unit.RenderAttributes ();
+			unit.Render ();
+			unit.AddParsedSubObject_LiteralControl ();
+			unit.AddParsedSubObject_DataBoundLiteralControl ();
 			unit.IPostBackDataHandler_RaisePostBackEvent ();
-			unit.IPostBackDataHandler_LoadPostData_WrongId ();
 			unit.IPostBackDataHandler_LoadPostData ();
 #if NET_2_0
 			unit.RaisePostBackEvent ();
-			unit.LoadPostData_WrongId ();
 			unit.LoadPostData ();
 #endif
 		}
 
 		public override Type Type {
-			get { return typeof (HtmlInputRadioButton); }
+			get { return typeof (HtmlTextArea); }
 		}
 	}
 }

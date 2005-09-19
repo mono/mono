@@ -32,13 +32,29 @@
 using NUnit.Framework;
 
 using System;
+using System.Security.Permissions;
 using System.Web.UI.HtmlControls;
+
+using MonoTests.System.Web.UI.HtmlControls;
 
 namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	[Category ("CAS")]
 	public class HtmlInputPasswordCas : AspNetHostingMinimal {
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void Deny_Unrestricted ()
+		{
+			HtmlInputPasswordTest unit = new HtmlInputPasswordTest ();
+			unit.DefaultProperties ();
+			unit.RenderAttributes ();
+			unit.IPostBackDataHandler_RaisePostBackEvent ();
+			unit.IPostBackDataHandler_LoadPostData ();
+			unit.RaisePostBackEvent ();
+			unit.LoadPostData ();
+		}
 
 		public override Type Type {
 			get { return typeof (HtmlInputPassword); }

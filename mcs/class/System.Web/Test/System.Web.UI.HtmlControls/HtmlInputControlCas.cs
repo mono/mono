@@ -1,6 +1,6 @@
 //
-// HtmlInputRadioButtonCas.cs 
-//	- CAS unit tests for System.Web.UI.HtmlControls.HtmlInputRadioButton
+// HtmlInputControlCas.cs 
+//	- CAS unit tests for System.Web.UI.HtmlControls.HtmlInputControl
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -39,32 +39,25 @@ namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-	public class HtmlInputRadioButtonCas : AspNetHostingMinimal {
+	public class HtmlInputControlCas {
+
+		// note: we do not inherit from AspNetHostingMinimal because
+		// HtmlInputControl is an abstract class
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			HtmlInputRadioButtonTest unit = new HtmlInputRadioButtonTest ();
+			HtmlInputControlTest unit = new HtmlInputControlTest ();
 			unit.DefaultProperties ();
 			unit.NullProperties ();
 			unit.CleanProperties ();
-			unit.Value_Existing ();
-			unit.Value_Resetting ();
-			unit.Value_ResetNull ();
+			unit.Name ();
+			unit.Name_InsideNaming ();
 			unit.IDversusValue ();
-			unit.IPostBackDataHandler_RaisePostBackEvent ();
-			unit.IPostBackDataHandler_LoadPostData_WrongId ();
-			unit.IPostBackDataHandler_LoadPostData ();
-#if NET_2_0
-			unit.RaisePostBackEvent ();
-			unit.LoadPostData_WrongId ();
-			unit.LoadPostData ();
-#endif
-		}
-
-		public override Type Type {
-			get { return typeof (HtmlInputRadioButton); }
+			unit.RenderAttributes ();
+			unit.Constructor_Null ();
+			unit.Password ();
 		}
 	}
 }

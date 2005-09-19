@@ -29,13 +29,27 @@
 using NUnit.Framework;
 
 using System;
+using System.Security.Permissions;
 using System.Web.UI.HtmlControls;
+
+using MonoTests.System.Web.UI.HtmlControls;
 
 namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 	[TestFixture]
 	[Category ("CAS")]
 	public class HtmlImageCas : AspNetHostingMinimal {
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void Deny_Unrestricted ()
+		{
+			HtmlImageTest unit = new HtmlImageTest ();
+			unit.DefaultProperties ();
+			unit.NullProperties ();
+			unit.Negative ();
+			unit.RenderAttributes ();
+		}
 
 		public override Type Type {
 			get { return typeof (HtmlImage); }

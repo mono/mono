@@ -117,7 +117,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 #if NET_2_0
 			p.ValidationGroup = "VG";
 
-			Assert.AreEqual (2, p.Attributes.Count, "A1");
+			Assert.AreEqual (3, p.Attributes.Count, "A1");
 #else
 			Assert.AreEqual (2, p.Attributes.Count, "A1");
 #endif

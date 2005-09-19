@@ -51,20 +51,12 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void DefaultProperties ()
 		{
 			HtmlInputCheckBox c = new HtmlInputCheckBox ();
-			
-#if NET_2_0
-			Assert.AreEqual (0, c.Attributes.Count, "Attributes.Count");
-#else
+		
 			Assert.AreEqual (1, c.Attributes.Count, "Attributes.Count");
-#endif
 
 			Assert.IsFalse (c.Checked, "Checked");
 			
-#if NET_2_0
-			Assert.AreEqual (0, c.Attributes.Count, "Attributes.Count after");
-#else
 			Assert.AreEqual (1, c.Attributes.Count, "Attributes.Count after");
-#endif
 		}
 
 		[Test]
@@ -72,20 +64,12 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		{
 			HtmlInputCheckBox c = new HtmlInputCheckBox ();
 			
-#if NET_2_0
-			Assert.AreEqual (0, c.Attributes.Count, "Attributes.Count");
-#else
 			Assert.AreEqual (1, c.Attributes.Count, "Attributes.Count");
-#endif
 
 			c.Checked = true;
 			Assert.IsTrue (c.Checked, "Checked");
 			
-#if NET_2_0
-			Assert.AreEqual (1, c.Attributes.Count, "Attributes.Count after");
-#else
 			Assert.AreEqual (2, c.Attributes.Count, "Attributes.Count after");
-#endif
 		}
 
 		[Test]
@@ -94,20 +78,10 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			HtmlInputCheckBox c = new HtmlInputCheckBox ();
 
 			c.Checked = true;
-
-#if NET_2_0
-			Assert.AreEqual (1, c.Attributes.Count, "Attributes.Count");
-#else
 			Assert.AreEqual (2, c.Attributes.Count, "Attributes.Count");
-#endif
 
 			c.Checked = false;
-
-#if NET_2_0
-			Assert.AreEqual (0, c.Attributes.Count, "Attributes.Count after");
-#else
 			Assert.AreEqual (1, c.Attributes.Count, "Attributes.Count after");
-#endif
 		}
 
 		[Test]
