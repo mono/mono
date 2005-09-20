@@ -24,13 +24,18 @@
 //
 //
 
-using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Security.Permissions;
 
 // Modeled after Nikhil Kothari's sample in "ASP Server Controls and Components", pp368
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 #if NET_2_0
 	[ToolboxData("<{0}:RangeValidator runat=\"server\" ErrorMessage=\"RangeValidator\"></{0}:RangeValidator>")]
 #else
@@ -43,7 +48,11 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Constructors
 
 		#region Public Instance Properties
+#if NET_2_0
+		[Themeable (false)]
+#else
 		[Bindable(true)]
+#endif
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
@@ -57,7 +66,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if NET_2_0
+		[Themeable (false)]
+#else
 		[Bindable(true)]
+#endif
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]

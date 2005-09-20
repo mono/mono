@@ -25,14 +25,19 @@
 //
 
 using System.ComponentModel;
+using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls 
-{
+namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
 	public sealed class FontInfo 
 	{
 		[Flags]
-			internal enum FontStyles 
+		internal enum FontStyles 
 		{
 			None		= 0,
 			Bold		= 0x0001,
@@ -62,7 +67,9 @@ namespace System.Web.UI.WebControls
 		#endregion	// Constructors
 
 		#region Public Instance Properties
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(false)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -86,7 +93,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(false)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -110,7 +119,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#else
 		[Bindable(true)]
+#endif
 		[DefaultValue("")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[Editor("System.Drawing.Design.FontNameEditor, " + Consts.AssemblySystem_Drawing_Design, typeof(System.Drawing.Design.UITypeEditor))]
@@ -155,6 +168,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#endif
 		[Editor("System.Windows.Forms.Design.StringArrayEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 		[NotifyParentProperty(true)]
 		[TypeConverter(typeof(System.Web.UI.WebControls.FontNamesConverter))]
@@ -186,7 +202,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(false)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -210,7 +228,11 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if NET_2_0
+		[RefreshProperties (RefreshProperties.Repaint)]
+#else
 		[Bindable(true)]
+#endif
 		[DefaultValue(typeof (FontUnit), "")]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -238,7 +260,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(false)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -262,7 +286,9 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(false)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]

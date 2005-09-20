@@ -4,7 +4,7 @@
 // Author:
 //        Ben Maurer <bmaurer@novell.com>
 //
-// (c) 2005 Novell
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,8 +29,14 @@
 using System.Xml;
 using System.Collections;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DefaultEvent("AdCreated")]
 	[DefaultProperty("AdvertisementFile")]
 	[Designer("System.Web.UI.Design.WebControls.AdRotatorDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -269,18 +275,6 @@ namespace System.Web.UI.WebControls {
 				throw new NotImplementedException ();
 			}
 		}
-
-		/* listed in corcompare */
-		[MonoTODO]
-		public override Page Page 
-		{
-			get {
-				return base.Page;
-			}
-			set {
-				base.Page = value;
-			}
-		}
 #endif		
 		
 		[Bindable(true)]
@@ -313,14 +307,6 @@ namespace System.Web.UI.WebControls {
 		{
 			get {
 				return base.TagKey;
-			}
-		}
-
-		[MonoTODO]
-		protected override StateBag ViewState 
-		{
-			get {
-				return base.ViewState;
 			}
 		}
 #endif		

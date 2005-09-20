@@ -28,9 +28,14 @@
 
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DefaultEvent ("Click")]
 	[DataBindingHandler ("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[DefaultProperty ("Text")]
@@ -38,6 +43,7 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 	[ToolboxDataAttribute ("<{0}:Button runat=\"server\" Text=\"Button\"></{0}:Button>")]
+	[SupportsEventValidation]
 #else
 	[ToolboxDataAttribute ("<{0}:Button runat=server Text=\"Button\"></{0}:Button>")]
 #endif

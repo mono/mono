@@ -1,3 +1,78 @@
+2005-09-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AccessDataSource.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added [ToolboxBitmap] on class.
+	* AdRotator.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Removed extra Page and ViewState properties.
+	* BulletedList.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* Button.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* Calendar.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* CheckBox.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* CompositeControl.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added new protected RecreateChildControls method.
+	* DataControlCommands.cs: Added declarative security (LinkDemands) for 
+	Minimal. Added private ctor.
+	* DataGrid.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Fixed properties for 2.0 (mostly removing 
+	[Bindable]). Added override for TagKey property.
+	* DataGridColumn.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added [UrlProperty] on HeaderImageUrl (2.0).
+	* DataGridItem.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added IDataItemContainer interface for 2.0.
+	* DataGridPagerStyle.cs: Added declarative security (LinkDemands) for 
+	Minimal. Remove [Bindable] from 2.0 and add [Localizable].
+	* DataList.cs: Removed [Load|Save]ControlState methods.
+	* DropDownList.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* EditCommandColumn.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal. Added missing attributes, 
+	[DefaultValue] and [Localize] for 2.0.
+	* FontInfo.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Remove [Bindable] and added [RefreshProperties] 
+	for 2.0.
+	* Login.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal. Fixed IsStyleEmpty. Removed extra [Themeable] attributes.
+	* ImageButton.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* LinkButton.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* ListBox.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* Literal.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal. Removed [EditorBrowsable] on CreateControlCollection method.
+	* LoginStatus.cs: Added missing [Themeable] attributes on properties.
+	* MenuItemStyle.cs: Changed IsEmpty to public (required to compile - 
+	but will be shown as extra).
+	* RadioButton.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* RadioButtonList.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* RangeValidator.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Added missing [Themeable] attributes.
+	* RegularExpressionValidator.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal. Remove [Bindable] from 2.0 and add 
+	[Localizable].
+	* RoleGroupCollection.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal. Fixed base class (changed in RC). 
+	Re-implemented CopyTo. Removed some methods.
+	* Style.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal. Remove static IsStyleEmpty and ToString (from 2.0). IsEmpty
+	is now public in 2.0.
+	* Table.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* TableCell.cs: Fixed PersistenceMode for 2.0.
+	* TextBox.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal. Added [SupportsEventValidation] on class (2.0).
+	* TreeNodeStyle.cs: Changed IsEmpty to public (required to compile - 
+	but will be shown as extra).
+	* WebControl.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal. Removed [EditorBrowsable] on ControlStyleCreated 
+	property.
+
 2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TableStyle.cs: fixed typo that prevented restoring GridLines from

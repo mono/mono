@@ -24,15 +24,21 @@
 //
 //
 
-using System;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Drawing;
-using System.Web;
-using System.Web.UI;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ValidationProperty("SelectedItem")]
+#if NET_2_0
+	[SupportsEventValidation]
+#endif
 	public class DropDownList : ListControl, IPostBackDataHandler {
 		#region Public Constructors
 		public DropDownList() {

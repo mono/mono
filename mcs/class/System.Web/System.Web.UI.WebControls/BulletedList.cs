@@ -35,12 +35,18 @@ using System.Text;
 using System.Drawing;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.BulletedListDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultEventAttribute ("Click")]
 	[DefaultPropertyAttribute ("BulletStyle")]
+	[SupportsEventValidation]
 	public class BulletedList : ListControl, IPostBackEventHandler {
 		
 		[MonoTODO ("we are missing a new style enum, we should be using it")]

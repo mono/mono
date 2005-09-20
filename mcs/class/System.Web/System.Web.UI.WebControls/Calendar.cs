@@ -33,14 +33,20 @@ using System.Globalization;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DataBindingHandler("System.Web.UI.Design.WebControls.CalendarDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[DefaultEvent("SelectionChanged")]
 	[DefaultProperty("SelectedDate")]
 	[Designer("System.Web.UI.Design.WebControls.CalendarDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #if NET_2_0
 	[ControlValueProperty ("SelectedDate", "1/1/0001 12:00:00 AM")]
+	[SupportsEventValidation]
 #endif		
 	public class Calendar : WebControl, IPostBackEventHandler {
 

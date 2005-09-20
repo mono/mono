@@ -29,10 +29,12 @@
 //
 
 #if NET_2_0
-using System.Web.UI;
+using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls
-{
+namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class DataControlCommands
 	{
 		public const string CancelCommandName = "Cancel";
@@ -48,6 +50,10 @@ namespace System.Web.UI.WebControls
 		public const string SelectCommandName = "Select";
 		public const string SortCommandName = "Sort";
 		public const string UpdateCommandName = "Update";
+
+		private DataControlCommands ()
+		{
+		}
 	}
 }
 #endif

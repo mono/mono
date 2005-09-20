@@ -30,18 +30,22 @@
 
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DefaultEvent("Click")]
 #if NET_2_0
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#endif		
-	public class ImageButton : Image, IPostBackDataHandler, IPostBackEventHandler
-#if NET_2_0
-	, IButtonControl
-#endif	
-	{
-
+	[SupportsEventValidation]
+	public class ImageButton : Image, IPostBackDataHandler, IPostBackEventHandler, IButtonControl {
+#else
+	public class ImageButton : Image, IPostBackDataHandler, IPostBackEventHandler {
+#endif
 		private static readonly object ClickEvent = new object ();
 		private static readonly object CommandEvent = new object ();
 		private int pos_x, pos_y;

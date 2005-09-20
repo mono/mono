@@ -39,7 +39,7 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[Editor ("System.Web.UI.Design.WebControls.RoleGroupCollectionEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-	public sealed class RoleGroupCollection : StateManagedCollection {
+	public sealed class RoleGroupCollection : CollectionBase {
 
 		public RoleGroupCollection ()
 		{
@@ -63,12 +63,15 @@ namespace System.Web.UI.WebControls {
 
 		public void CopyTo (RoleGroup[] array, int index)
 		{
-			base.CopyTo (array, index);
-		}
+			if (array == null)
+				throw new ArgumentNullException ("array");
+			if (index < 0)
+				throw new ArgumentException (Locale.GetText ("Negative index."), "index");
+			if (this.Count <= array.Length - index)
+				throw new ArgumentException (Locale.GetText ("Destination isn't large enough to copy collection."), "array");
 
-		protected override object CreateKnownType (int index)
-		{
-			return new RoleGroup ();
+			for (int i=0; i < Count; i++)
+				array [i + index] = this [i];
 		}
 
 		public RoleGroup GetMatchingRoleGroup (IPrincipal user)
@@ -102,11 +105,6 @@ namespace System.Web.UI.WebControls {
 
 		[MonoTODO]
 		public void OnValidate (object sender)
-		{
-		}
-
-		[MonoTODO]
-		protected override void SetDirtyObject (object o)
 		{
 		}
 	}

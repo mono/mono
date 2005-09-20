@@ -24,10 +24,14 @@
 //
 //
 
-using System;
-using System.Web.UI;
+using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class EditCommandColumn : DataGridColumn {
 		#region Public Constructors
 		public EditCommandColumn() {
@@ -51,6 +55,10 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue ("")]
+		[Localizable (true)]
+#endif
 		public virtual string CancelText {
 			get {
 				return ViewState.GetString("CancelText", string.Empty);
@@ -61,6 +69,10 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue ("")]
+		[Localizable (true)]
+#endif
 		public virtual string EditText {
 			get {
 				return ViewState.GetString("EditText", string.Empty);
@@ -71,6 +83,10 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if NET_2_0
+		[DefaultValue ("")]
+		[Localizable (true)]
+#endif
 		public virtual string UpdateText {
 			get {
 				return ViewState.GetString("UpdateText", string.Empty);

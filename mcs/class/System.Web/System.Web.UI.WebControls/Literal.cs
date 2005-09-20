@@ -26,11 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
-using System.Web.UI;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ControlBuilder(typeof(LiteralControlBuilder))]
 	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[DefaultProperty("Text")]
@@ -91,9 +95,6 @@ namespace System.Web.UI.WebControls {
 		}
 #endif		
 
-#if NET_2_0
-		[EditorBrowsable (EditorBrowsableState.Never)]
-#endif		
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return new EmptyControlCollection (this);

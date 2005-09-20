@@ -30,8 +30,14 @@ using System.ComponentModel;
 using System.Web;
 using System.Web.UI.WebControls;
 using System.Text.RegularExpressions;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 #if NET_2_0
 	[ToolboxData ("<{0}:RegularExpressionValidator runat=\"server\" ErrorMessage=\"RegularExpressionValidator\"></{0}:RegularExpressionValidator>")]
 #else
@@ -62,7 +68,11 @@ namespace System.Web.UI.WebControls {
 			return Regex.IsMatch (GetControlValidationValue(ControlToValidate), ValidationExpression);
 		}
 
+#if NET_2_0
+		[Themeable (false)]
+#else
 		[Bindable(true)]
+#endif
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.WebControls.RegexTypeEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
 		[WebSysDescription ("")]

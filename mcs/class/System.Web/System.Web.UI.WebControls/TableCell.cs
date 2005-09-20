@@ -136,7 +136,7 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[Localizable (true)]
-		[PersistenceMode (PersistenceMode.EncodedInnerDefaultProperty)]
+		[PersistenceMode (PersistenceMode.InnerDefaultProperty)]
 #else
 		[Bindable (true)]
 #endif

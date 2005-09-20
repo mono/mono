@@ -26,8 +26,14 @@
 
 using System.ComponentModel;
 using System.Drawing;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 #if NET_2_0
 	[PersistChildrenAttribute (false, false)]
 	[ParseChildrenAttribute (true, ChildControlType = typeof(Control))]
@@ -193,6 +199,9 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+#if NET_2_0
+		[EditorBrowsable (EditorBrowsableState.Never)]
+#endif
 		public bool ControlStyleCreated {
 			get {
 				return style != null;

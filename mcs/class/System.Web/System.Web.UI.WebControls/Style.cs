@@ -24,12 +24,16 @@
 //
 //
 
-using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls 
-{
+namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 #if NET_2_0
 // Not until we actually have StyleConverter
 //	[TypeConverter(typeof(System.Web.UI.WebControls.StyleConverter))]
@@ -342,7 +346,13 @@ namespace System.Web.UI.WebControls
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
+#if NET_2_0
+		[Browsable (false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public virtual bool IsEmpty 
+#else
 		protected internal virtual bool IsEmpty 
+#endif
 		{
 			get 
 			{
@@ -606,11 +616,12 @@ namespace System.Web.UI.WebControls
 			}
 			styles = Styles.None;
 		}
-
+#if ONLY_1_1
 		public override string ToString() 
 		{
 			return string.Empty;
 		}
+#endif
 		#endregion	// Public Instance Methods
 
 		#region Protected Instance Methods
@@ -756,14 +767,6 @@ namespace System.Web.UI.WebControls
 			if (viewstate != null)
 				viewstate.SetDirty (true);
 		}
-
-		public static bool IsStyleEmpty (Style s)
-		{
-			if (s == null)
-				return true;
-			return s.IsEmpty;
-		}
-
 #endif
 	}
 }

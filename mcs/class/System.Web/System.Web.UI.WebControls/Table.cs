@@ -39,6 +39,7 @@ namespace System.Web.UI.WebControls {
 	[Designer ("System.Web.UI.Design.WebControls.TableDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ParseChildren (true, "Rows")]
 #if NET_2_0
+	[SupportsEventValidation]
 	public class Table : WebControl, IPostBackEventHandler {
 #else
 	public class Table : WebControl {

@@ -25,10 +25,18 @@
 //
 
 using System.ComponentModel;
-using System.Web.UI;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_2_0
+	public class DataGridItem : TableRow, INamingContainer, IDataItemContainer {
+#else
 	public class DataGridItem : TableRow, INamingContainer {
+#endif
 		#region Fields
 		private object		item;
 		private int		dataset_index;
@@ -73,6 +81,22 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		#endregion	// Public Instance Properties
+
+#if NET_2_0
+		#region IDataItemContainer Properties
+		object IDataItemContainer.DataItem {
+			get { return item; }
+		}
+
+		int IDataItemContainer.DataItemIndex{
+			get { return item_index; }
+		}
+
+		int IDataItemContainer.DisplayIndex{
+			get { return item_index; }
+		}
+		#endregion	// IDataItemContainer Properties
+#endif
 
 		#region Public Instance Methods
 		protected override bool OnBubbleEvent(object source, EventArgs args) {

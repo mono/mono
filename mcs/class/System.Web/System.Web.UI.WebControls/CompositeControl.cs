@@ -26,11 +26,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
-#if NET_2_0
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[Designer ("System.Web.UI.Design.WebControls.CompositeControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public abstract class CompositeControl : WebControl, INamingContainer, ICompositeControlDesignerAccessor {
 
@@ -61,6 +67,14 @@ namespace System.Web.UI.WebControls {
 			 * the recreation of our children. */
 			CreateChildControls ();
 		}
+
+		[MonoTODO("not sure exactly what this one does..")]
+		protected virtual void RecreateChildControls ()
+		{
+			/* for now just call CreateChildControls to force
+			 * the recreation of our children. */
+			CreateChildControls ();
+		}
 	
 		public override ControlCollection Controls {
 			get {
@@ -71,6 +85,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 	}
-#endif
-
 }
+
+#endif

@@ -89,6 +89,7 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue (LogoutAction.Refresh)]
+		[Themeable (false)]
 		public virtual LogoutAction LogoutAction {
 			get {
 				object o = ViewState ["LogoutAction"];
@@ -120,6 +121,7 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
+		[Themeable (false)]
 		[UrlProperty]
 		public virtual string LogoutPageUrl {
 			get {

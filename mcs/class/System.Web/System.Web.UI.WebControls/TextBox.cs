@@ -28,9 +28,14 @@
 
 using System.Collections.Specialized;
 using System.ComponentModel;
-
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DataBindingHandler ("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[DefaultEvent ("TextChanged")]
 	[DefaultProperty ("Text")]
@@ -40,6 +45,7 @@ namespace System.Web.UI.WebControls {
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ParseChildren (true, "Text")]
 	[ControlValueProperty ("Text", null)]
+	[SupportsEventValidation]
 #else
 	[ParseChildren (false)]
 #endif		

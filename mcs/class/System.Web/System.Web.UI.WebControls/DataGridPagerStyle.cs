@@ -25,8 +25,12 @@
 //
 
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS - no inheritance demand required because the class is sealed
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class DataGridPagerStyle : TableItemStyle {
 		#region Constructors
 		internal DataGridPagerStyle () {
@@ -34,7 +38,9 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Constructors
 
 		#region Public Instance Properties
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(PagerMode.NextPrev)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -54,7 +60,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+#else
 		[Bindable(true)]
+#endif
 		[DefaultValue("&gt;")]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -74,7 +84,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(10)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -98,7 +110,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(PagerPosition.Bottom)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -118,7 +132,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if NET_2_0
+		[Localizable (true)]
+#else
 		[Bindable(true)]
+#endif
 		[DefaultValue("&lt;")]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]
@@ -138,7 +156,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(true)]
 		[NotifyParentProperty(true)]
 		[WebSysDescription ("")]

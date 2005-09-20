@@ -26,10 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Web.UI;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[TypeConverter (typeof (System.ComponentModel.ExpandableObjectConverter))]
 	public abstract class DataGridColumn : IStateManager
 	{
@@ -84,6 +89,9 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue ("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Misc")]
+#if NET_2_0
+		[UrlProperty]
+#endif
 		public virtual string HeaderImageUrl
 		{
 			get {

@@ -26,13 +26,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Web.Util;
 using System.Collections;
 using System.Globalization;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[Editor("System.Web.UI.Design.WebControls.DataGridComponentEditor, " + Consts.AssemblySystem_Design, typeof(System.ComponentModel.ComponentEditor))]
 	[Designer("System.Web.UI.Design.WebControls.DataGridDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public class DataGrid : BaseDataList, INamingContainer {
@@ -114,7 +119,11 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["AutoGenerateColumns"] = value; }
 		}
 
+#if NET_2_0
+		[UrlProperty]
+#else
 		[Bindable(true)]
+#endif
 		[DefaultValue("")]
 		[Editor("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
  		[WebSysDescription ("")]
@@ -124,8 +133,9 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.BackImageUrl = value; }
 		}
 
-		
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("")]
@@ -388,7 +398,9 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(false)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -397,7 +409,9 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["ShowFooter"] = value; }
 		}
 
+#if ONLY_1_1
 		[Bindable(true)]
+#endif
 		[DefaultValue(true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -418,6 +432,13 @@ namespace System.Web.UI.WebControls {
 				ViewState ["VirtualItemCount"] = value;
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO ("why override ?")]
+		protected override HtmlTextWriterTag TagKey {
+			get { return base.TagKey; }
+		}
+#endif
 
 		private TableStyle TableStyle {
 			get { return (TableStyle) ControlStyle; }

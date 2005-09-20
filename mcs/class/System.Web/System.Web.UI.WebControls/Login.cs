@@ -140,7 +140,6 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		[Themeable (false)]
 		[UrlProperty]
 		public virtual string CreateUserUrl {
 			get {
@@ -1221,7 +1220,9 @@ namespace System.Web.UI.WebControls {
 
 		private bool IsEmpty (Style style)
 		{
-			return System.Web.UI.WebControls.Style.IsStyleEmpty (style);
+			if (style == null)
+				return true;
+			return style.IsEmpty;
 		}
 
 		private bool IsDefaultLoginPage ()

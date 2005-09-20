@@ -644,46 +644,7 @@ namespace System.Web.UI.WebControls {
 			if (state [7] != null)
 				FooterStyle.LoadViewState (state [7]);
 		}
-#if NET_2_0
-		protected internal override void LoadControlState (object savedState)
-		{
-			// FIXME: what's in Triplet.First ?
-			// ??? maybe a some space for base.LoadControlState ???
-			if (savedState == null) {
-				// reset to default values
-				editIndex = -1;
-				selectedIndex = -1;
-			} else {
-				Triplet t = (Triplet) savedState;
-				if (t.Second == null) {
-					editIndex = -1;
-				} else {
-					editIndex = (int) t.Second;
-				}
-				if (t.Third == null) {
-					selectedIndex = -1;
-				} else {
-					selectedIndex = (int) t.Third;
-				}
-			}
-		}
 
-		protected internal override object SaveControlState ()
-		{
-			bool e = (editIndex == -1);
-			bool s = (selectedIndex == -1);
-			if (e && s)
-				return null;
-
-			Triplet t = new Triplet ();
-			if (!e)
-				t.Second = editIndex;
-			if (!s)
-				t.Third = selectedIndex;
-			
-			return (object) t;
-		}
-#endif
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
 			DataListCommandEventArgs dlca = (e as DataListCommandEventArgs);

@@ -108,7 +108,8 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		protected internal override bool IsEmpty {
+		// FIXME: shouldn't be part of the public API
+		public override bool IsEmpty {
 			get {
 				return (base.IsEmpty &&
 				        !IsSet (CHILD_PADD) &&

@@ -32,10 +32,18 @@
 using System.Collections;
 using System.ComponentModel;
 using System.Collections.Specialized;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ValidationProperty ("SelectedItem")]
+#if NET_2_0
+	[SupportsEventValidation]
+#endif
 	public class RadioButtonList : ListControl, IRepeatInfoUser,
 		INamingContainer, IPostBackDataHandler {
 		bool need_raise;
