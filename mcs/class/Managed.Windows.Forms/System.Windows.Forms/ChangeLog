@@ -1,3 +1,7 @@
+2005-09-20  Miguel de Icaza  <miguel@novell.com>
+
+	* Cursor.cs: Allow null to be passed to Cursor.Current.
+
 2005-09-20  Alexander Olk  <alex.olk@googlemail.com>
 
 	* ThemeWin32Classic.cs:

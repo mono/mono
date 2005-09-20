@@ -178,7 +178,13 @@ namespace System.Windows.Forms {
 			set {
 				if (current != value) {
 					current = value;
-					XplatUI.OverrideCursor(current.handle);
+					if (value == null){
+						//
+						// The docs state: null value if the cursor is not visible (???)
+						//
+						Console.WriteLine ("FIXME: Should do something when Cursor.Current is set to null");
+					} else
+						XplatUI.OverrideCursor(current.handle);
 				}
 			}
 		}
