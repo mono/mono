@@ -1,3 +1,13 @@
+2005-09-20  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration/SettingsPropertyValueCollectionTest.cs: new
+	test.
+
+	* System.Configuration/SettingsPropertyCollectionTest.cs: new
+	test.
+
+	* System.Configuration/SettingsPropertyValueTest.cs: new test.
+
 2005-09-19  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration/SettingsPropertyTest.cs: new tests.
