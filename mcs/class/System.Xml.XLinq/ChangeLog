@@ -1,0 +1,5 @@
+2005-09-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile,
+	  System.Xml.XLinq.dll.sources : new files.
+

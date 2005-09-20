@@ -1,0 +1,6 @@
+2005-09-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XAttribute.cs, XIterators.cs, XName.cs, XElementSequence.cs,
+	  System.Xml.XLinq.cs :
+	  Minimum implementation to run ms XLinqIntro.
+
