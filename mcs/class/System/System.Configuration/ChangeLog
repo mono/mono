@@ -1,3 +1,25 @@
+2005-09-20  Chris Toshok  <toshok@ximian.com>
+
+	* SettingChangingEventArgs.cs: new implementation.
+
+	* SettingsPropertyIsReadOnlyException.cs: new exception.
+
+	* SettingsPropertyNotFoundException.cs: new exception.
+
+	* ISettingsProviderService.cs: new interface.
+
+	* IApplicationSettingsProvider.cs: new interface.
+
+	* SettingsPropertyValueCollection.cs: new implementation.
+
+	* SettingsPropertyCollection.cs: new implementation.
+
+	* SettingsBase.cs: implement the obvious bits (getters,
+	basically).
+
+	* SettingsPropertyValue.cs: make this work for the tests.
+	Disgusting class here.  dis-gus-ting.
+
 2005-09-19  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration/SettingsProvider.cs,

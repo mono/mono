@@ -28,6 +28,9 @@
 
 #if NET_2_0
 using System;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 
 namespace System.Configuration
 {
@@ -36,62 +39,121 @@ namespace System.Configuration
 	{
 		public SettingsPropertyValue (SettingsProperty property)
 		{
-				throw new NotImplementedException ();
+			this.property = property;
+			needPropertyValue = true;
 		}
 
 		public bool Deserialized {
 			get {
-				throw new NotImplementedException ();
+				return deserialized;
 			}
 			set {
-				throw new NotImplementedException ();
+				deserialized = true;
 			}
 		}
 
 		public bool IsDirty {
 			get {
-				throw new NotImplementedException ();
+				return dirty;
 			}
 			set {
-				throw new NotImplementedException ();
+				dirty = value;
 			}
 		}
 
 		public string Name {
 			get {
-				throw new NotImplementedException ();
+				return property.Name;
 			}
 		}
 
 		public SettingsProperty Property {
 			get {
-				throw new NotImplementedException ();
+				return property;
 			}
 		}
 
 		public object PropertyValue {
 			get {
-				throw new NotImplementedException ();
+				if (needPropertyValue) {
+					needPropertyValue = false;
+					propertyValue = property.DefaultValue;
+					defaulted = true;
+				}
+
+#if notyet
+				/* LAMESPEC: the msdn2 docs say that
+				 * for object types this
+				 * pessimistically sets Dirty == true.
+				 * tests, however, point out that that
+				 * is not the case. */
+				if (!property.PropertyType.IsValueType)
+					dirty = true;
+#endif
+
+				return propertyValue;
 			}
 			set {
-				throw new NotImplementedException ();
+				propertyValue = value;
+				dirty = true;
+				needSerializedValue = true;
+				defaulted = false;
 			}
 		}
 
+		[MonoTODO ("string type converter?")]
 		public object SerializedValue {
 			get {
-				throw new NotImplementedException ();
+				if (needSerializedValue) {
+					needSerializedValue = false;
+
+					switch (property.SerializeAs)
+					{
+					case SettingsSerializeAs.String:
+						/* the docs say use a string type converter.. this means what? */
+						serializedValue = propertyValue.ToString();
+						break;
+					case SettingsSerializeAs.Xml:
+						XmlSerializer serializer = new XmlSerializer (propertyValue.GetType());
+						StringWriter w = new StringWriter();
+
+						serializer.Serialize (w, propertyValue);
+						serializedValue = w.ToString();
+						break;
+					case SettingsSerializeAs.Binary:
+						BinaryFormatter bf = new BinaryFormatter ();
+						MemoryStream ms = new MemoryStream ();
+						bf.Serialize (ms, propertyValue);
+						serializedValue = ms.ToArray();
+						break;
+					default:
+						serializedValue = null;
+						break;
+					}
+
+				}
+
+				return serializedValue;
 			}
 			set {
-				throw new NotImplementedException ();
+				serializedValue = value;
 			}
 		}
 
 		public bool UsingDefaultValue {
 			get {
-				throw new NotImplementedException ();
+				return defaulted;
 			}
 		}
+
+		SettingsProperty property;
+		object propertyValue;
+		object serializedValue;
+		bool needSerializedValue;
+		bool needPropertyValue;
+		bool dirty;
+		bool defaulted;
+		bool deserialized;
 	}
 
 }

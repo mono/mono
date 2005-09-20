@@ -36,49 +36,64 @@ namespace System.Configuration
 
 	public class SettingsPropertyValueCollection : ICloneable, ICollection, IEnumerable
 	{
+		Hashtable items;
+		bool isReadOnly;
+
 		public SettingsPropertyValueCollection ()
 		{
-				throw new NotImplementedException ();
 		}
 
 		public void Add (SettingsPropertyValue property)
 		{
-				throw new NotImplementedException ();
+			if (isReadOnly)
+				throw new NotSupportedException ();
+
+			/* actually do the add */
+			items.Add (property.Name, property);
 		}
 
 		public void Clear ()
 		{
-				throw new NotImplementedException ();
+			if (isReadOnly)
+				throw new NotSupportedException ();
+
+			items.Clear ();
 		}
 
 		public object Clone ()
 		{
-				throw new NotImplementedException ();
+			SettingsPropertyValueCollection col = new SettingsPropertyValueCollection ();
+			col.items = (Hashtable)items.Clone ();
+
+			return col;
 		}
 
 		public void CopyTo (Array array, int index)
 		{
-				throw new NotImplementedException ();
+			items.Values.CopyTo (array, index);
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-				throw new NotImplementedException ();
+			return items.Values.GetEnumerator();
 		}
 
 		public void Remove (string name)
 		{
-				throw new NotImplementedException ();
+			if (isReadOnly)
+				throw new NotSupportedException ();
+
+			items.Remove (name);
 		}
 
 		public void SetReadOnly ()
 		{
-				throw new NotImplementedException ();
+			isReadOnly = true;
 		}
 
 		public int Count {
 			get {
-				throw new NotImplementedException ();
+				return items.Count;
 			}
 		}
 
@@ -90,7 +105,7 @@ namespace System.Configuration
 
 		public SettingsPropertyValue this [ string name ] {
 			get {
-				throw new NotImplementedException ();
+				return (SettingsPropertyValue) items [ name ];
 			}
 		}
 

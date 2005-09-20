@@ -36,44 +36,76 @@ namespace System.Configuration
 
 	public class SettingsPropertyCollection : ICloneable, ICollection, IEnumerable
 	{
+		Hashtable items;
+		bool isReadOnly;
+
 		public SettingsPropertyCollection ()
 		{
-				throw new NotImplementedException ();
+			items = new Hashtable();
 		}
 
 		public void Add (SettingsProperty property)
 		{
-				throw new NotImplementedException ();
+			if (isReadOnly)
+				throw new NotSupportedException ();
+
+			OnAdd (property);
+
+			/* actually do the add */
+			items.Add (property.Name, property);
+
+			OnAddComplete (property);
 		}
 
 		public void Clear ()
 		{
-				throw new NotImplementedException ();
+			if (isReadOnly)
+				throw new NotSupportedException ();
+
+			OnClear ();
+
+			/* actually do the clear */
+			items.Clear ();
+
+			OnClearComplete();
 		}
 
 		public object Clone ()
 		{
-				throw new NotImplementedException ();
+			SettingsPropertyCollection col = new SettingsPropertyCollection ();
+			col.items = (Hashtable)items.Clone ();
+
+			return col;
 		}
 
 		public void CopyTo (Array array, int index)
 		{
-				throw new NotImplementedException ();
+			items.Values.CopyTo (array, index);
 		}
 
 		public IEnumerator GetEnumerator ()
 		{
-				throw new NotImplementedException ();
+			return items.Values.GetEnumerator();
 		}
 
 		public void Remove (string name)
 		{
-				throw new NotImplementedException ();
+			if (isReadOnly)
+				throw new NotSupportedException ();
+
+			SettingsProperty property = (SettingsProperty)items[name];
+
+			OnRemove (property);
+
+			/* actually do the remove */
+			items.Remove (name);
+
+			OnRemoveComplete (property);
 		}
 
 		public void SetReadOnly ()
 		{
-				throw new NotImplementedException ();
+			isReadOnly = true;
 		}
 
 		protected void OnAdd (SettingsProperty property)
@@ -102,7 +134,7 @@ namespace System.Configuration
 
 		public int Count {
 			get {
-				throw new NotImplementedException ();
+				return items.Count;
 			}
 		}
 
@@ -114,7 +146,7 @@ namespace System.Configuration
 
 		public SettingsProperty this [ string name ] {
 			get {
-				throw new NotImplementedException ();
+				return (SettingsProperty)items [name];
 			}
 		}
 

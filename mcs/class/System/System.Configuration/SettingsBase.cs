@@ -37,14 +37,15 @@ namespace System.Configuration
 	{
 		protected SettingsBase ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		public void Initialize (SettingsContext context,    
+		public void Initialize (SettingsContext context,
 					SettingsPropertyCollection properties,
 					SettingsProviderCollection providers)
 		{
-			throw new NotImplementedException ();
+			this.context = context;
+			this.properties = properties;
+			this.providers = providers;
 		}
 
 		public virtual void Save ()
@@ -59,7 +60,7 @@ namespace System.Configuration
 
 		public virtual SettingsContext Context {
 			get {
-				throw new NotImplementedException ();
+				return context;
 			}
 		}
 
@@ -81,21 +82,32 @@ namespace System.Configuration
 
 		public virtual SettingsPropertyCollection Properties {
 			get {
-				throw new NotImplementedException ();
+				return properties;
 			}
 		}
 
 		public virtual SettingsPropertyValueCollection PropertyValues {
 			get {
-				throw new NotImplementedException ();
+				SettingsPropertyValueCollection col = new SettingsPropertyValueCollection ();
+
+				foreach (SettingsProperty prop in properties)
+				{
+					col.Add (new SettingsPropertyValue (prop));
+				}
+
+				return col;
 			}
 		}
 
 		public virtual SettingsProviderCollection Providers {
 			get {
-				throw new NotImplementedException ();
+				return providers;
 			}
 		}
+
+		SettingsContext context;
+		SettingsPropertyCollection properties;
+		SettingsProviderCollection providers;
 	}
 
 }
