@@ -1,3 +1,8 @@
+2005-09-21  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_emit_this_vret_args): Use the information
+	in cinfo to determine the registers which need to be used.
+
 2005-09-20  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.c (mono_main): Add --server and --desktop flags. 
