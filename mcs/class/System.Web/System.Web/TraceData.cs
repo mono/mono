@@ -177,7 +177,7 @@ namespace System.Web {
 			r ["ControlId"] = c.UniqueID;
 			r ["Type"] = c.GetType ();
 			r ["Depth"] = control_pos;
-			r ["RenderSize"] = GetRenderSize (c);
+			r ["RenderSize"] = 0;
 			r ["ViewstateSize"] = GetViewStateSize (c, (ctrl_vs != null) ? ctrl_vs [c] : null);
 
 			control_data.Rows.Add (r);
@@ -186,15 +186,6 @@ namespace System.Web {
 				foreach (Control child in c.Controls)
 					AddControl (child, control_pos + 1, ctrl_vs);
 			}
-		}
-
-		static int GetRenderSize (Control c)
-		{
-			StringWriter sr = new StringWriter ();
-			HtmlTextWriter output = new HtmlTextWriter (sr);
-			c.RenderControl (output);
-			output.Flush ();
-			return sr.GetStringBuilder ().Length;
 		}
 
 		static int GetViewStateSize (Control ctrl, object vs)
