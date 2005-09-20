@@ -75,12 +75,12 @@ namespace System.Windows.Forms
 		};		
 				
 		/* Hardcoded colour values not exposed in the API constants in all configurations */
-		static readonly Color arrow_color = Color.Black;
-		static readonly Color pen_ticks_color = Color.Black;
-		static readonly Color progressbarblock_color = Color.FromArgb (255, 0, 0, 128);
-		static StringFormat string_format_menu_text;
-		static StringFormat string_format_menu_shortcut;
-		static StringFormat string_format_menu_menubar_text;
+		protected static readonly Color arrow_color = Color.Black;
+		protected static readonly Color pen_ticks_color = Color.Black;
+		protected static readonly Color progressbarblock_color = Color.FromArgb (255, 0, 0, 128);
+		protected static StringFormat string_format_menu_text;
+		protected static StringFormat string_format_menu_shortcut;
+		protected static StringFormat string_format_menu_menubar_text;
 		static readonly Rectangle checkbox_rect = new Rectangle (2, 2, 11,11); // Position of the checkbox relative to the item
 		static ImageAttributes imagedisabled_attributes = null;
 		const int SEPARATOR_HEIGHT = 5;
@@ -161,15 +161,28 @@ namespace System.Windows.Forms
 
 		#region ButtonBase
 		public override void DrawButtonBase(Graphics dc, Rectangle clip_area, ButtonBase button) {
-			int		width;
-			int		height;
+			// Draw the button: fill rectangle, draw border, etc.
+			ButtonBase_DrawButton(button, dc);
+			
+			// First, draw the image
+			if ((button.image != null) || (button.image_list != null))
+				ButtonBase_DrawImage(button, dc);
+			
+			// Draw the focus rectangle
+			if (button.has_focus)
+				ButtonBase_DrawFocus(button, dc);
+			
+			// Now the text
+			if (button.text != null && button.text != String.Empty)
+				ButtonBase_DrawText(button, dc);
+		}
+
+		protected virtual void ButtonBase_DrawButton(ButtonBase button, Graphics dc)
+		{
 			Rectangle buttonRectangle;
 			Rectangle borderRectangle;
-
-			width = button.ClientSize.Width;
-			height = button.ClientSize.Height;
 			
-			dc.FillRectangle(ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);			
+			dc.FillRectangle(ResPool.GetSolidBrush (button.BackColor), button.ClientRectangle);
 			
 			// set up the button rectangle
 			buttonRectangle = button.ClientRectangle;
@@ -179,132 +192,136 @@ namespace System.Windows.Forms
 			} else {
 				borderRectangle = buttonRectangle;
 			}
-
+			
 			if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
 				DrawFlatStyleButton (dc, borderRectangle, button);
 			} else {
-				CPDrawButton(dc, borderRectangle, button.ButtonState);				
+				CPDrawButton(dc, borderRectangle, button.ButtonState);
+			}
+		}
+
+		protected virtual void ButtonBase_DrawImage(ButtonBase button, Graphics dc)
+		{
+			// Need to draw a picture
+			Image	i;
+			int	image_x;
+			int	image_y;
+			int	image_width;
+			int	image_height;
+			
+			int width = button.ClientSize.Width;
+			int height = button.ClientSize.Height;
+			
+			if (button.ImageIndex != -1) {	 // We use ImageIndex instead of image_index since it will return -1 if image_list is null
+				i = button.image_list.Images[button.image_index];
+			} else {
+				i = button.image;
 			}
 			
-			// First, draw the image
-			if ((button.image != null) || (button.image_list != null)) {
-				// Need to draw a picture
-				Image	i;
-				int	image_x;
-				int	image_y;
-				int	image_width;
-				int	image_height;
-
-				if (button.ImageIndex!=-1) {	// We use ImageIndex instead of image_index since it will return -1 if image_list is null
-					i = button.image_list.Images[button.image_index];
-				} else {
-					i = button.image;
-				}
-
-				image_width = button.image.Width;
-				image_height = button.image.Height;
-
-				switch(button.image_alignment) {
+			image_width = button.image.Width;
+			image_height = button.image.Height;
+			
+			switch (button.image_alignment) {
 				case ContentAlignment.TopLeft: {
 					image_x=0;
 					image_y=0;
 					break;
 				}
-
+					
 				case ContentAlignment.TopCenter: {
 					image_x=(width-image_width)/2;
 					image_y=0;
 					break;
 				}
-
+					
 				case ContentAlignment.TopRight: {
 					image_x=width-image_width;
 					image_y=0;
 					break;
 				}
-
+					
 				case ContentAlignment.MiddleLeft: {
 					image_x=0;
 					image_y=(height-image_height)/2;
 					break;
 				}
-
+					
 				case ContentAlignment.MiddleCenter: {
 					image_x=(width-image_width)/2;
 					image_y=(height-image_height)/2;
 					break;
 				}
-
+					
 				case ContentAlignment.MiddleRight: {
 					image_x=width-image_width;
 					image_y=(height-image_height)/2;
 					break;
 				}
-
+					
 				case ContentAlignment.BottomLeft: {
 					image_x=0;
 					image_y=height-image_height;
 					break;
 				}
-
+					
 				case ContentAlignment.BottomCenter: {
 					image_x=(width-image_width)/2;
 					image_y=height-image_height;
 					break;
 				}
-
+					
 				case ContentAlignment.BottomRight: {
 					image_x=width-image_width;
 					image_y=height-image_height;
 					break;
 				}
-
+					
 				default: {
 					image_x=0;
 					image_y=0;
 					break;
 				}
-				}
-
-				if (button.is_pressed) {
-					image_x+=1;
-					image_y+=1;
-				}
-
-				if (button.is_enabled) {
-					dc.DrawImage(i, image_x, image_y); 
-				} else {
-					CPDrawImageDisabled(dc, i, image_x, image_y, ColorButtonFace);
-				}
 			}
 			
-			// Draw the focus rectangle
-			if (button.has_focus) {
+			if (button.is_pressed) {
+				image_x+=1;
+				image_y+=1;
+			}
+			
+			if (button.is_enabled) {
+				dc.DrawImage(i, image_x, image_y); 
+			}
+			else {
+				CPDrawImageDisabled(dc, i, image_x, image_y, ColorButtonFace);
+			}
+		}
+		
+		protected virtual void ButtonBase_DrawFocus(ButtonBase button, Graphics dc)
+		{
+			if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
+				DrawFlatStyleFocusRectangle (dc, button.ClientRectangle, button, button.ForeColor, button.BackColor);
+			} else { 
+				CPDrawFocusRectangle(dc, button.ClientRectangle, button.ForeColor, button.BackColor);
+			}
+		}
+		
+		protected virtual void ButtonBase_DrawText(ButtonBase button, Graphics dc)
+		{
+			Rectangle buttonRectangle = button.ClientRectangle;
+			Rectangle text_rect = Rectangle.Inflate(buttonRectangle, -4, -4);
+			
+			if (button.is_pressed) {
+				text_rect.X++;
+				text_rect.Y++;
+			}
+			
+			if (button.is_enabled) {					
+				dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (button.ForeColor), text_rect, button.text_format);
+			} else {
 				if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
-					DrawFlatStyleFocusRectangle (dc, button.ClientRectangle, button, button.ForeColor, button.BackColor);
-				} else { 
-					CPDrawFocusRectangle(dc, button.ClientRectangle, button.ForeColor, button.BackColor);
-				}
-			}
-			
-			// Now the text
-			if (button.text != null && button.text != String.Empty) {
-				Rectangle text_rect = Rectangle.Inflate(buttonRectangle, -4, -4);
-
-				if (button.is_pressed) {
-					text_rect.X++;
-					text_rect.Y++;
-				}
-
-				if (button.is_enabled) {					
-					dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (button.ForeColor), text_rect, button.text_format);
-					
+					dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), text_rect, button.text_format);
 				} else {
-					if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
-						dc.DrawString(button.text, button.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), text_rect, button.text_format);
-					} else {
-						CPDrawStringDisabled(dc, button.text, button.Font, ColorButtonText, text_rect, button.text_format);
-					}
+					CPDrawStringDisabled(dc, button.text, button.Font, ColorButtonText, text_rect, button.text_format);
 				}
 			}
 		}
@@ -408,7 +425,6 @@ namespace System.Windows.Forms
 			Rectangle		client_rectangle;
 			Rectangle		text_rectangle;
 			Rectangle		checkbox_rectangle;
-			SolidBrush		sb;
 			int			checkmark_size=13;
 			int			checkmark_space = 4;
 
@@ -576,6 +592,15 @@ namespace System.Windows.Forms
 			
 			// Start drawing
 			
+			CheckBox_DrawCheckBox(dc, checkbox, state, checkbox_rectangle);
+			
+			CheckBox_DrawText(checkbox, text_rectangle, dc, text_format);
+
+			CheckBox_DrawFocus(checkbox, dc, text_rectangle);
+		}
+
+		protected virtual void CheckBox_DrawCheckBox( Graphics dc, CheckBox checkbox, ButtonState state, Rectangle checkbox_rectangle )
+		{
 			dc.FillRectangle (ResPool.GetSolidBrush (checkbox.BackColor), checkbox.ClientRectangle);			
 			// render as per normal button
 			if (checkbox.appearance==Appearance.Button) {
@@ -592,6 +617,11 @@ namespace System.Windows.Forms
 					ControlPaint.DrawCheckBox(dc, checkbox_rectangle, state);
 				}
 			}
+		}
+		
+		protected virtual void CheckBox_DrawText( CheckBox checkbox, Rectangle text_rectangle, Graphics dc, StringFormat text_format )
+		{
+			SolidBrush sb;
 			
 			// offset the text if it's pressed and a button
 			if (checkbox.Appearance == Appearance.Button) {
@@ -606,13 +636,16 @@ namespace System.Windows.Forms
 			/* Place the text; to be compatible with Windows place it after the checkbox has been drawn */
 			if (checkbox.Enabled) {
 				sb = ResPool.GetSolidBrush(checkbox.ForeColor);
-				dc.DrawString(checkbox.Text, checkbox.Font, sb, text_rectangle, text_format);				
+				dc.DrawString(checkbox.Text, checkbox.Font, sb, text_rectangle, text_format);			
 			} else if (checkbox.FlatStyle == FlatStyle.Flat || checkbox.FlatStyle == FlatStyle.Popup) {
 				dc.DrawString(checkbox.Text, checkbox.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), text_rectangle, text_format);
 			} else {
 				CPDrawStringDisabled(dc, checkbox.Text, checkbox.Font, ColorButtonText, text_rectangle, text_format);
 			}
-
+		}
+		
+		protected virtual void CheckBox_DrawFocus( CheckBox checkbox, Graphics dc, Rectangle text_rectangle )
+		{
 			if (checkbox.Focused) {
 				if (checkbox.FlatStyle != FlatStyle.Flat) {
 					DrawInnerFocusRectangle (dc, Rectangle.Inflate (text_rectangle, -1, -1), checkbox.BackColor);
@@ -623,7 +656,7 @@ namespace System.Windows.Forms
 		}
 
 		// renders a checkBox with the Flat and Popup FlatStyle
-		private void DrawFlatStyleCheckBox (Graphics graphics, Rectangle rectangle, CheckBox checkbox)
+		protected virtual void DrawFlatStyleCheckBox (Graphics graphics, Rectangle rectangle, CheckBox checkbox)
 		{
 			Pen			pen;			
 			Rectangle	rect;
@@ -1295,7 +1328,7 @@ namespace System.Windows.Forms
 			
 			/* Text */
 			if (box.Enabled) {
-				dc.DrawString (box.Text, box.Font, new SolidBrush (box.ForeColor), 10, 0, text_format);
+				dc.DrawString (box.Text, box.Font, ResPool.GetSolidBrush (box.ForeColor), 10, 0, text_format);
 			} else {
 				CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
 					new RectangleF (10, 0, width,  box.Font.Height), text_format);
@@ -1460,7 +1493,7 @@ namespace System.Windows.Forms
 
 			// border is drawn directly in the Paint method
 			if (details && control.HeaderStyle != ColumnHeaderStyle.None) {
-				dc.FillRectangle (ResPool.GetSolidBrush (SystemColors.Control),
+				dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor),
 						  0, 0, control.TotalWidth, control.Font.Height + 5);
 				if (control.Columns.Count > 0) {
 					if (control.HeaderStyle == ColumnHeaderStyle.Clickable) {
@@ -2629,7 +2662,6 @@ namespace System.Windows.Forms
 			Rectangle 	client_rectangle;
 			Rectangle	text_rectangle;
 			Rectangle 	radiobutton_rectangle;
-			SolidBrush	sb;
 			int		radiobutton_size = 12;
 			int 	radiobutton_space = 4;
 
@@ -2784,12 +2816,18 @@ namespace System.Windows.Forms
 			}
 
 			// Start drawing
+			RadioButton_DrawButton(radio_button, dc, state, radiobutton_rectangle);
+			
+			RadioButton_DrawText(radio_button, text_rectangle, dc, text_format);
 
-			sb=new SolidBrush(radio_button.BackColor);
+			RadioButton_DrawFocus(radio_button, dc, text_rectangle);			
+		}
+
+		protected virtual void RadioButton_DrawButton(RadioButton radio_button, Graphics dc, ButtonState state, Rectangle radiobutton_rectangle)
+		{
+			SolidBrush sb = new SolidBrush(radio_button.BackColor);
 			dc.FillRectangle(sb, radio_button.ClientRectangle);
 			sb.Dispose();
-			
-		
 			
 			if (radio_button.appearance==Appearance.Button) {
 				if (radio_button.FlatStyle == FlatStyle.Flat || radio_button.FlatStyle == FlatStyle.Popup) {
@@ -2805,6 +2843,11 @@ namespace System.Windows.Forms
 					ControlPaint.DrawRadioButton (dc, radiobutton_rectangle, state);
 				}
 			}
+		}
+		
+		protected virtual void RadioButton_DrawText(RadioButton radio_button, Rectangle text_rectangle, Graphics dc, StringFormat text_format)
+		{
+			SolidBrush sb;
 			
 			// offset the text if it's pressed and a button
 			if (radio_button.Appearance == Appearance.Button) {
@@ -2821,20 +2864,23 @@ namespace System.Windows.Forms
 			
 			if (radio_button.Enabled) {
 				sb = ResPool.GetSolidBrush(radio_button.ForeColor);
-				dc.DrawString(radio_button.Text, radio_button.Font, sb, text_rectangle, text_format);				
+				dc.DrawString(radio_button.Text, radio_button.Font, sb, text_rectangle, text_format);
 			} else if (radio_button.FlatStyle == FlatStyle.Flat) {
 				dc.DrawString(radio_button.Text, radio_button.Font, ResPool.GetSolidBrush (ControlPaint.DarkDark (this.ColorButtonFace)), text_rectangle, text_format);
 			} else {
 				CPDrawStringDisabled(dc, radio_button.Text, radio_button.Font, this.ColorButtonText, text_rectangle, text_format);
 			}
-
+		}
+		
+		protected virtual void RadioButton_DrawFocus(RadioButton radio_button, Graphics dc, Rectangle text_rectangle)
+		{
 			if (radio_button.Focused) {
 				if (radio_button.FlatStyle != FlatStyle.Flat) {
 					DrawInnerFocusRectangle (dc, text_rectangle, radio_button.BackColor);
 				} else {
 					dc.DrawRectangle (ResPool.GetPen (radio_button.ForeColor), text_rectangle);
 				}
-			}			
+			}
 		}
 
 		// renders a radio button with the Flat and Popup FlatStyle
@@ -2931,51 +2977,16 @@ namespace System.Windows.Forms
 				/* Background */
 				switch (bar.thumb_moving) {
 				case ScrollBar.ThumbMoving.None: {
-					Rectangle r = new Rectangle (0,	 
-							scrollbutton_height, bar.ClientRectangle.Width, bar.ClientRectangle.Height - (scrollbutton_height * 2));
-					Rectangle intersect = Rectangle.Intersect (clip, r);
-
-					if (intersect != Rectangle.Empty) {
-                                                Brush h = ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace);
-						dc.FillRectangle (h, intersect);
-                                        }
+					ScrollBar_Vertical_Draw_ThumbMoving_None(scrollbutton_height, bar, clip, dc);
 					break;
 				}
 				case ScrollBar.ThumbMoving.Forward: {
-					Rectangle r = new Rectangle (0,	 scrollbutton_height,
-							bar.ClientRectangle.Width, thumb_pos.Y - scrollbutton_height);
-					Rectangle intersect = Rectangle.Intersect (clip, r);
-
-					if (intersect != Rectangle.Empty)
-						dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), intersect);
-
-					r.X = 0;
-					r.Y = thumb_pos.Y + thumb_pos.Height;
-					r.Width = bar.ClientRectangle.Width;
-					r.Height = bar.ClientRectangle.Height -	 (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height;
-
-					intersect = Rectangle.Intersect (clip, r);
-					if (intersect != Rectangle.Empty)
-						dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black), intersect);
+					ScrollBar_Vertical_Draw_ThumbMoving_Forward(scrollbutton_height, bar, thumb_pos, clip, dc);
 					break;
 				}
 				
 				case ScrollBar.ThumbMoving.Backwards: {
-					Rectangle r = new Rectangle (0,	 scrollbutton_height,
-							bar.ClientRectangle.Width, thumb_pos.Y - scrollbutton_height);
-					Rectangle intersect = Rectangle.Intersect (clip, r);
-
-					if (intersect != Rectangle.Empty)
-						dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black), intersect);
-
-					r.X = 0;
-					r.Y = thumb_pos.Y + thumb_pos.Height;
-					r.Width = bar.ClientRectangle.Width; 
-					r.Height = bar.ClientRectangle.Height -	 (thumb_pos.Y + thumb_pos.Height) - scrollbutton_height;
-
-					intersect = Rectangle.Intersect (clip, r);
-					if (intersect != Rectangle.Empty)
-						dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), intersect);
+					ScrollBar_Vertical_Draw_ThumbMoving_Backwards(scrollbutton_height, bar, thumb_pos, clip, dc);
 					break;
 				}
 				
@@ -3001,58 +3012,129 @@ namespace System.Windows.Forms
 				/* Background */					
 				switch (bar.thumb_moving) {
 				case ScrollBar.ThumbMoving.None: {
-					Rectangle r = new Rectangle (scrollbutton_width,
-							0, bar.ClientRectangle.Width - (scrollbutton_width * 2), bar.ClientRectangle.Height);
-					Rectangle intersect = Rectangle.Intersect (clip, r);
-
-					if (intersect != Rectangle.Empty)
-						dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), intersect);
+					ScrollBar_Horizontal_Draw_ThumbMoving_None(scrollbutton_width, bar, clip, dc);
 					break;
 				}
 				
 				case ScrollBar.ThumbMoving.Forward: {
-					Rectangle r = new Rectangle (scrollbutton_width,  0,
-							thumb_pos.X - scrollbutton_width, bar.ClientRectangle.Height);
-					Rectangle intersect = Rectangle.Intersect (clip, r);
-
-					if (intersect != Rectangle.Empty)
-						dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), intersect);
-
-					r.X = thumb_pos.X + thumb_pos.Width;
-					r.Y = 0;
-					r.Width = bar.ClientRectangle.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width;
-					r.Height = bar.ClientRectangle.Height;
-
-					intersect = Rectangle.Intersect (clip, r);
-					if (intersect != Rectangle.Empty)
-						dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black), intersect);
+					ScrollBar_Horizontal_Draw_ThumbMoving_Forward(scrollbutton_width, thumb_pos, bar, clip, dc);
 					break;
 				}
 				
 				case ScrollBar.ThumbMoving.Backwards: {
-					Rectangle r = new Rectangle (scrollbutton_width,  0,
-							thumb_pos.X - scrollbutton_width, bar.ClientRectangle.Height);
-					Rectangle intersect = Rectangle.Intersect (clip, r);
-
-					if (intersect != Rectangle.Empty)
-						dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, Color.FromArgb (255, 63,63,63), Color.Black), intersect);
-
-					r.X = thumb_pos.X + thumb_pos.Width;
-					r.Y = 0;
-					r.Width = bar.ClientRectangle.Width -  (thumb_pos.X + thumb_pos.Width) - scrollbutton_width;
-					r.Height = bar.ClientRectangle.Height;
-
-					intersect = Rectangle.Intersect (clip, r);
-					if (intersect != Rectangle.Empty)
-						dc.FillRectangle (ResPool.GetHatchBrush (HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace), intersect);
+					ScrollBar_Horizontal_Draw_ThumbMoving_Backwards(scrollbutton_width, thumb_pos, bar, clip, dc);
 					break;
 				}
 				}
 			}
 
 			/* Thumb */
-			if (bar.Enabled && thumb_pos.Width > 0 && thumb_pos.Height > 0 && clip.IntersectsWith (thumb_pos))
-				DrawScrollButtonPrimitive (dc, thumb_pos, ButtonState.Normal);				
+			ScrollBar_DrawThumb(bar, thumb_pos, clip, dc);				
+		}
+
+		protected virtual void ScrollBar_DrawThumb(ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc)
+		{
+			if (bar.Enabled && thumb_pos.Width > 0 && thumb_pos.Height > 0 && clip.IntersectsWith(thumb_pos))
+				DrawScrollButtonPrimitive(dc, thumb_pos, ButtonState.Normal);
+		}
+
+		protected virtual void ScrollBar_Vertical_Draw_ThumbMoving_None( int scrollbutton_height, ScrollBar bar, Rectangle clip, Graphics dc )
+		{
+			Rectangle r = new Rectangle( 0,	 
+						    scrollbutton_height, bar.ClientRectangle.Width, bar.ClientRectangle.Height - ( scrollbutton_height * 2 ) );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty )
+			{
+				Brush h = ResPool.GetHatchBrush( HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace );
+				dc.FillRectangle( h, intersect );
+			}
+		}
+		
+		protected virtual void ScrollBar_Vertical_Draw_ThumbMoving_Forward( int scrollbutton_height, ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc )
+		{
+			Rectangle r = new Rectangle( 0,	 scrollbutton_height,
+						    bar.ClientRectangle.Width, thumb_pos.Y - scrollbutton_height );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty )
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace ), intersect );
+			
+			r.X = 0;
+			r.Y = thumb_pos.Y + thumb_pos.Height;
+			r.Width = bar.ClientRectangle.Width;
+			r.Height = bar.ClientRectangle.Height -	 ( thumb_pos.Y + thumb_pos.Height ) - scrollbutton_height;
+			
+			intersect = Rectangle.Intersect( clip, r );
+			if ( intersect != Rectangle.Empty )
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, Color.FromArgb( 255, 63, 63, 63 ), Color.Black ), intersect );
+		}
+		
+		protected virtual void ScrollBar_Vertical_Draw_ThumbMoving_Backwards( int scrollbutton_height, ScrollBar bar, Rectangle thumb_pos, Rectangle clip, Graphics dc )
+		{
+			Rectangle r = new Rectangle( 0,	 scrollbutton_height,
+						    bar.ClientRectangle.Width, thumb_pos.Y - scrollbutton_height );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty )
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, Color.FromArgb( 255, 63, 63, 63 ), Color.Black ), intersect );
+			
+			r.X = 0;
+			r.Y = thumb_pos.Y + thumb_pos.Height;
+			r.Width = bar.ClientRectangle.Width; 
+			r.Height = bar.ClientRectangle.Height -	 ( thumb_pos.Y + thumb_pos.Height ) - scrollbutton_height;
+			
+			intersect = Rectangle.Intersect( clip, r );
+			if ( intersect != Rectangle.Empty )
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace ), intersect );
+		}
+		
+		protected virtual void ScrollBar_Horizontal_Draw_ThumbMoving_None( int scrollbutton_width, ScrollBar bar, Rectangle clip, Graphics dc )
+		{
+			Rectangle r = new Rectangle( scrollbutton_width,
+						    0, bar.ClientRectangle.Width - ( scrollbutton_width * 2 ), bar.ClientRectangle.Height );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty )
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace ), intersect );
+		}
+		
+		protected virtual void ScrollBar_Horizontal_Draw_ThumbMoving_Forward( int scrollbutton_width, Rectangle thumb_pos, ScrollBar bar, Rectangle clip, Graphics dc )
+		{
+			Rectangle r = new Rectangle( scrollbutton_width,  0,
+						    thumb_pos.X - scrollbutton_width, bar.ClientRectangle.Height );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty )
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace ), intersect );
+			
+			r.X = thumb_pos.X + thumb_pos.Width;
+			r.Y = 0;
+			r.Width = bar.ClientRectangle.Width -  ( thumb_pos.X + thumb_pos.Width ) - scrollbutton_width;
+			r.Height = bar.ClientRectangle.Height;
+			
+			intersect = Rectangle.Intersect( clip, r );
+			if ( intersect != Rectangle.Empty )
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, Color.FromArgb( 255, 63, 63, 63 ), Color.Black ), intersect );
+		}
+		
+		protected virtual void ScrollBar_Horizontal_Draw_ThumbMoving_Backwards( int scrollbutton_width, Rectangle thumb_pos, ScrollBar bar, Rectangle clip, Graphics dc )
+		{
+			Rectangle r = new Rectangle( scrollbutton_width,  0,
+						    thumb_pos.X - scrollbutton_width, bar.ClientRectangle.Height );
+			Rectangle intersect = Rectangle.Intersect( clip, r );
+			
+			if ( intersect != Rectangle.Empty )
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, Color.FromArgb( 255, 63, 63, 63 ), Color.Black ), intersect );
+			
+			r.X = thumb_pos.X + thumb_pos.Width;
+			r.Y = 0;
+			r.Width = bar.ClientRectangle.Width -  ( thumb_pos.X + thumb_pos.Width ) - scrollbutton_width;
+			r.Height = bar.ClientRectangle.Height;
+			
+			intersect = Rectangle.Intersect( clip, r );
+			if ( intersect != Rectangle.Empty )
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorButtonHilight, ColorButtonFace ), intersect );
 		}
 
 		public override int ScrollBarButtonSize {
@@ -3104,7 +3186,7 @@ namespace System.Windows.Forms
 		}
 
 
-		private void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
+		protected virtual void DrawStatusBarPanel (Graphics dc, Rectangle area, int index,
 			SolidBrush br_forecolor, StatusBarPanel panel) {
 			int border_size = 3; // this is actually const, even if the border style is none
 
@@ -3279,7 +3361,7 @@ namespace System.Windows.Forms
 				}
 		}
 
-		private Rectangle GetTabPanelRectExt (TabControl tab)
+		protected virtual Rectangle GetTabPanelRectExt (TabControl tab)
 		{
 			// Offset the tab from the top corner
 			Rectangle res = new Rectangle (tab.ClientRectangle.X + 2,
@@ -3313,7 +3395,7 @@ namespace System.Windows.Forms
 			return res;
 		}
 
-		private int DrawTab (Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected)
+		protected virtual int DrawTab (Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected)
 		{
 			int FlatButtonSpacing = 8;			
 			Rectangle interior;
@@ -3497,7 +3579,7 @@ namespace System.Windows.Forms
 			Rectangle paint_area = new Rectangle (0, ToolBarGripWidth / 2, 
 				control.Width, control.Height - ToolBarGripWidth / 2);
 			bool flat = (control.Appearance == ToolBarAppearance.Flat);
-			dc.FillRectangle (SystemBrushes.Control, paint_area);
+			dc.FillRectangle (ResPool.GetSolidBrush( DefaultControlBackColor ), paint_area);
 			CPDrawBorderStyle (dc, paint_area, control.BorderStyle);
 
 			if (control.Divider)

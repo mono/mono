@@ -1,3 +1,15 @@
+2005-09-20  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ThemeWin32Classic.cs:
+	  - Change some private methods/fields to protected virtual so that 
+	    they can be accessed and overriden in derived classes
+	  - First refactoring of some methods. Derived themes now don't 
+	    need to duplicate the complete code from ThemeWin32Classic
+	* ThemeNice.cs:
+	  - Added nice StatusBar
+	  - Derive from ThemeWin32Classic and not Theme
+	  - Removed duplicate ThemeWin32Classic code
+
 2005-09-20  Miguel de Icaza  <miguel@novell.com>
 
 	* Control.cs (ControlCollection.Add): If the value null is passed
