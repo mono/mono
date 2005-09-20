@@ -451,7 +451,16 @@ namespace System.Web {
 
 			public override void Send (Stream stream)
 			{
-				throw new NotImplementedException ();
+				using (FileStream fs = File.OpenRead (file)) {
+					byte [] buffer = new byte [Math.Min (fs.Length, 32*1024)];
+
+					long remain = fs.Length;
+					int n;
+					while (remain > 0 && (n = fs.Read (buffer, 0, (int) Math.Min (remain, 32*1024))) != 0){
+						remain -= n;
+						stream.Write (buffer, 0, n);
+					}
+				}
 			}
 
 			public override string ToString ()

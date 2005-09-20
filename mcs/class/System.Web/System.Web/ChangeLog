@@ -1,3 +1,8 @@
+2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseStream.cs: implemented Send(stream) for files. Fixes bug
+	#76145.
+
 2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRuntime.cs: catch errors when compiling global.asax and
