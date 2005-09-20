@@ -87,5 +87,5 @@ libMonoSupportW_la_LIBADD =					\
 # Use this target to refresh the values in map.[ch]
 #
 refresh:
-	$(top_builddir)/runtime/mono-wrapper $(mcs_topdir)/class/Mono.Posix/Mono.Unix/make-map.exe $(mcs_topdir)/class/lib/default/Mono.Posix.dll map
+	$(top_builddir)/runtime/mono-wrapper $(mcs_topdir)/class/Mono.Posix/Mono.Unix.Native/make-map.exe $(mcs_topdir)/class/lib/default/Mono.Posix.dll map
 

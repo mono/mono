@@ -1,3 +1,11 @@
+2005-09-20  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am (refresh): Use the make-map.exe in Mono.Unix.Native.
+	* map-icalls.h, map.c, map.h: Update to catch new enums AccessModes, Errno,  
+	  and MmapProts.  Huge re-ordering because of namespace change in managed
+	  code (not relevant to C API), and make-map.exe now outputs types/members
+	  in alphabetical order (to avoid major code churn in the future).
+
 2005-07-12  Daniel Drake  <dsd@gentoo.org>
 
 	* sys-xattr.c: Use <attr/attr.h> if <sys/xattr.h> does not exist (e.g. for

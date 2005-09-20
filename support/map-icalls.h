@@ -30,8 +30,10 @@ struct Mono_Posix_Utimbuf;
  * Function Declarations
  */
 int Mono_Posix_FromAccessMode (int value, int* rval);
+int Mono_Posix_FromAccessModes (int value, int* rval);
 int Mono_Posix_FromConfStr (int value, int* rval);
 int Mono_Posix_FromDirectoryNotifyFlags (int value, int* rval);
+int Mono_Posix_FromErrno (int value, int* rval);
 int Mono_Posix_FromError (int value, int* rval);
 int Mono_Posix_FromFcntlCommand (int value, int* rval);
 int Mono_Posix_FromFilePermissions (unsigned int value, unsigned int* rval);
@@ -40,6 +42,7 @@ int Mono_Posix_FromLockfCommand (int value, int* rval);
 int Mono_Posix_FromMlockallFlags (int value, int* rval);
 int Mono_Posix_FromMmapFlags (int value, int* rval);
 int Mono_Posix_FromMmapProt (int value, int* rval);
+int Mono_Posix_FromMmapProts (int value, int* rval);
 int Mono_Posix_FromMountFlags (guint64 value, guint64* rval);
 int Mono_Posix_FromMremapFlags (guint64 value, guint64* rval);
 int Mono_Posix_FromMsyncFlags (int value, int* rval);
@@ -188,8 +191,10 @@ int Mono_Posix_Syscall_utime (const char* filename, struct Mono_Posix_Utimbuf* b
 int Mono_Posix_Syscall_utimes (const char* filename, struct Mono_Posix_Timeval* tvp);
 gint64 Mono_Posix_Syscall_write (int fd, void* buf, guint64 count);
 int Mono_Posix_ToAccessMode (int value, int* rval);
+int Mono_Posix_ToAccessModes (int value, int* rval);
 int Mono_Posix_ToConfStr (int value, int* rval);
 int Mono_Posix_ToDirectoryNotifyFlags (int value, int* rval);
+int Mono_Posix_ToErrno (int value, int* rval);
 int Mono_Posix_ToError (int value, int* rval);
 int Mono_Posix_ToFcntlCommand (int value, int* rval);
 int Mono_Posix_ToFilePermissions (unsigned int value, unsigned int* rval);
@@ -198,6 +203,7 @@ int Mono_Posix_ToLockfCommand (int value, int* rval);
 int Mono_Posix_ToMlockallFlags (int value, int* rval);
 int Mono_Posix_ToMmapFlags (int value, int* rval);
 int Mono_Posix_ToMmapProt (int value, int* rval);
+int Mono_Posix_ToMmapProts (int value, int* rval);
 int Mono_Posix_ToMountFlags (guint64 value, guint64* rval);
 int Mono_Posix_ToMremapFlags (guint64 value, guint64* rval);
 int Mono_Posix_ToMsyncFlags (int value, int* rval);
