@@ -1,3 +1,7 @@
+2005-09-20  Ritvik Mayank  <mritvik@novell.com>
+
+	* PictureBoxTest.cs : Test case for PictureBox
+
 2005-09-08  Ritvik Mayank  <mritvik@novell.com>
 
 	* MonthCalendarTest.cs : Test case for MonthCalendar

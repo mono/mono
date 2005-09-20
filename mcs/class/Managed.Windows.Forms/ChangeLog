@@ -1,3 +1,7 @@
+2005-09-20  Ritvik Mayank  <mritvik@novell.com>
+
+        * System.Windows.Forms_test.dll.sources : Added pictureBoxTest.cs
+
 2005-09-09 Jonathan Chambers  <jonathan.chambers@ansys.com>
 
 	* System.Windows.Forms.dll.sources: Added IRootGridEntry.cs and PropertyGridCommands.cs
