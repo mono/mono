@@ -1,3 +1,14 @@
+2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BaseDataList.cs: it's the DataKeysArray what is stored in "DataKeys",
+	not the DataKeys.
+	* DataGrid.cs: add the keys to BaseDataList.DataKeysArray. When using
+	a data source, first try reflection, then componentmodel. If we get
+	an enumerator, keep it around, as MS only calls GetEnumerator once.
+	Throw an exception if no columns can be created from the given data
+	source. Tested with DbDataRecord, DataTable, ArrayList and
+	ICustomTypeDescriptor.
+
 2005-09-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AccessDataSource.cs: Added declarative security (Link and Inheritance 
@@ -73,6 +84,7 @@
 	demands) for Minimal. Removed [EditorBrowsable] on ControlStyleCreated 
 	property.
 
+>>>>>>> .r50334
 2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TableStyle.cs: fixed typo that prevented restoring GridLines from

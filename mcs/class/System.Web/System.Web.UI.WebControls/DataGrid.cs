@@ -30,6 +30,7 @@ using System.Web.Util;
 using System.Collections;
 using System.Globalization;
 using System.ComponentModel;
+using System.Reflection;
 using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
@@ -86,6 +87,7 @@ namespace System.Web.UI.WebControls {
 		private DataGridColumn [] render_columns;
 		private TableCell pager_cell;
 		private PagedDataSource paged_data_source;
+		private IEnumerator data_enumerator;
 		
 		[DefaultValue(false)]
 		[WebSysDescription ("")]
@@ -443,7 +445,49 @@ namespace System.Web.UI.WebControls {
 		private TableStyle TableStyle {
 			get { return (TableStyle) ControlStyle; }
 		}
-		
+
+		static Type [] item_args = new Type [] {typeof (int) };
+		void AddColumnsFromSource (PagedDataSource data_source)
+		{
+			PropertyDescriptorCollection props = null;
+			Type ptype = null;
+			bool no_items = false;
+
+			// Use plain reflection for the Item property.
+			// If we use TypeDescriptor, props will hold
+			// all of the Type properties, which will be listed as columns
+			Type ds_type = data_source.GetType ();
+			PropertyInfo pinfo = ds_type.GetProperty ("Item", item_args);
+			if (pinfo == null) {
+				IEnumerator items = data_source.GetEnumerator ();
+				if (items.MoveNext ()) {
+					object data = items.Current;
+					if (data is ICustomTypeDescriptor)
+						props = TypeDescriptor.GetProperties (data);
+					else if (data != null)
+						ptype = data.GetType ();
+					data_enumerator = items;
+				} else {
+					no_items = true;
+				}
+			} else {
+				ptype = pinfo.PropertyType;
+			}
+
+			if (ptype != null) {
+				// Found the "Item" property
+				AddPropertyToColumns ();
+			} else if (props != null) {
+				foreach (PropertyDescriptor pd in props)
+					AddPropertyToColumns (pd, false);
+			} else if (!no_items) {
+				// This is not thrown for an empty ArrayList.
+				string msg = String.Format ("DataGrid '{0}' cannot autogenerate " +
+							"columns from the given datasource. {1}", ID, ptype);
+				throw new HttpException (msg);
+			}
+		}
+
 		protected virtual ArrayList CreateColumnSet (PagedDataSource dataSource, bool useDataSource)
 		{
 			ArrayList res = new ArrayList ();
@@ -452,31 +496,14 @@ namespace System.Web.UI.WebControls {
 
 			if (AutoGenerateColumns) {
 				if (useDataSource) {
+					data_enumerator = null;
 					PropertyDescriptorCollection props = dataSource.GetItemProperties (null);
 					DataSourceColumns.Clear ();
 					if (props != null) {
 						foreach (PropertyDescriptor d in props)
 							AddPropertyToColumns (d, false);
 					} else {
-
-						//
-						// The docs say that if the enumerator wasn't an ITypedList
-						// that we should check for a strongly typed Item property.
-						// however you can use ArrayList as your DataSource so I
-						// don't think it has to be strongly typed. I think it
-						// just needs to exist
-						//
-
-						props = TypeDescriptor.GetProperties (dataSource.DataSource);
-						PropertyDescriptor item = props.Find ("Item", false);
-						IEnumerator items = dataSource.GetEnumerator ();
-						// Don't add if there are no elements
-						if (items.MoveNext ()) {
-							if (item != null)
-								AddPropertyToColumns (item, true);
-							else
-								AddPropertyToColumns ();
-						}
+						AddColumnsFromSource (dataSource);
 					}
 				}
 
@@ -783,14 +810,14 @@ namespace System.Web.UI.WebControls {
 
 		protected override void CreateControlHierarchy (bool useDataSource)
 		{
-			DataGridItem item;
-
 			RenderTable.Controls.Clear ();
-			Controls.Add (RenderTable);
 
 			IEnumerable data_source;
+			ArrayList keys = null;
 			if (useDataSource) {
 				data_source = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+				keys = DataKeysArray;
+				keys.Clear ();
 			} else {
 				// This is a massive waste
 				data_source = new object [ViewState.GetInt ("Items", 0)];
@@ -814,11 +841,40 @@ namespace System.Web.UI.WebControls {
 
 			// No indexer on PagedDataSource so we have to do
 			// this silly foreach and index++
-			int index = 0;
 			if (items_list == null)
 				items_list = new ArrayList ();
 
-			foreach (object ds in pds) {
+			bool skip_first = false;
+			IEnumerator enumerator = null;
+			if (data_enumerator != null) {
+				// replaced when creating bound columns
+				enumerator = data_enumerator;
+				skip_first = true;
+			} else {
+				enumerator = pds.GetEnumerator ();
+			}
+
+			int index = 0;
+			bool first = true;
+			string key = null;
+			while (skip_first || enumerator.MoveNext ()) {
+				// MS does not render <table blah></table> on empty datasource.
+				if (first) {
+					Controls.Add (RenderTable);
+					first = false;
+					key = DataKeyField;
+				}
+				object data = enumerator.Current;
+				skip_first = false;
+				// This will throw if the DataKeyField is not there. As on MS, this
+				// will not be hit on an empty datasource.
+				// The values stored here can be used in events so that you can
+				// get, for example, the row that was clicked
+				// (data.Rows.Find (ItemsGrid.DataKeys [e.Item.ItemIndex]))
+				// BaseDataList will keep the array across postbacks.
+				if (useDataSource && key != "")
+					keys.Add (DataBinder.GetPropertyValue (data, key));
+
 				ListItemType type = ListItemType.Item;
 
 				if (this.EditItemIndex == index) 
@@ -826,7 +882,7 @@ namespace System.Web.UI.WebControls {
 				else if (index % 2 != 0) 
 					type = ListItemType.AlternatingItem;
 
-				items_list.Add (CreateItem (index, index, type, useDataSource, ds, pds));
+				items_list.Add (CreateItem (index, index, type, useDataSource, data, pds));
 				index++;
 			}
 
