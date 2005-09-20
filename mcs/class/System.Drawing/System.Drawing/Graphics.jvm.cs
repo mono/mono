@@ -821,7 +821,12 @@ namespace System.Drawing {
 		}
 
 		public void DrawImage (Image image, float x, float y) {
-			DrawImage( image, x, y, image.Width, image.Height );
+			if ((image.HorizontalResolution != DpiX) || (image.VerticalResolution != DpiY))
+				DrawImage( image, x, y, 
+					(float)image.Width * (DpiX / image.HorizontalResolution), 
+					(float)image.Height * (DpiY / image.VerticalResolution));
+			else
+				DrawImage( image, x, y, (float)image.Width, (float)image.Height );
 		}
 
 		
