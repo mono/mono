@@ -35,15 +35,15 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
 
-/* TODO COMPLETE INFORMATION
-
-[assembly: AssemblyTitle ("")]
-[assembly: AssemblyDescription ("")]
+[assembly: AssemblyTitle("Mono.Posix.dll")]
+[assembly: AssemblyDescription("Unix Integration Classes")]
 
 [assembly: CLSCompliant (true)]
-[assembly: AssemblyFileVersion ("0.0.0.1")]
-
 [assembly: ComVisible (false)]
+
+/* TODO COMPLETE INFORMATION
+
+[assembly: AssemblyFileVersion ("0.0.0.1")]
 
 */
 
