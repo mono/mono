@@ -697,28 +697,7 @@ namespace System.Reflection {
 		//
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern MethodBase MonoDebugger_GetMethod (Assembly assembly, int token);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int MonoDebugger_GetMethodToken (MethodBase method);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern Type MonoDebugger_GetLocalTypeFromSignature (Assembly assembly, byte[] signature);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern Type MonoDebugger_GetType (Assembly assembly, int token);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern string MonoDebugger_CheckRuntimeVersion (string filename);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern string MonoDebugger_GetMethodIndex (MethodBase method);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern Type MonoDebugger_MakeArrayType (Type type, int rank);
-
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern int MonoDebugger_GetTypeToken (Type type);
 
 #if NET_2_0
 		[MonoTODO]

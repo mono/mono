@@ -1,3 +1,7 @@
+2005-09-20  Martin Baulig  <martin@ximian.com>
+
+	* Assembly.cs: Removed some unused debugger icalls.
+
 2005-09-17  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Module.cs: Remove obsolete Mvid property.
