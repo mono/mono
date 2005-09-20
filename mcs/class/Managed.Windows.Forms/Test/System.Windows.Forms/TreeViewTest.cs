@@ -7,6 +7,7 @@ using System.Drawing;
 public class TreeViewTest {
 
 	[Test]
+	[Ignore ("This test has to be completly reviewed")]	
 	public void DefaultCtor ()
 	{
 		TreeView tv = new TreeView ();

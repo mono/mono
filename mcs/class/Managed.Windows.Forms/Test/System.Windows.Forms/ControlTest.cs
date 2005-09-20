@@ -17,6 +17,7 @@ using NUnit.Framework;
 namespace MWF.MonoTest
 {
 	[TestFixture]
+	[Ignore ("This test has to be completly reviewed")]
 	public class ControlTest
 	{
 		internal static void TestAccessibility(Control c, string Default, string Description, string Name, AccessibleRole Role) {

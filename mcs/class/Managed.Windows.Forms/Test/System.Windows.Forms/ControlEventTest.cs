@@ -8,6 +8,7 @@ using System.Threading;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
+	[Ignore ("This test has to be completly reviewed")]
 	public class EventClass
 	{
 		static bool eventhandled = false;

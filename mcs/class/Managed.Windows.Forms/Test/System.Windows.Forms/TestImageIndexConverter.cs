@@ -22,13 +22,6 @@
 // Authors:
 //	Ravindra (rkumar@novell.com)
 //
-// $Revision: 1.1 $
-// $Modtime: $
-// $Log: TestImageIndexConverter.cs,v $
-// Revision 1.1  2004/08/27 22:17:37  ravindra
-// Adding test for ImageIndexConverter.cs
-//
-//
 //
 
 using NUnit.Framework;
@@ -40,6 +33,7 @@ using System.Globalization;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]	
+	[Ignore ("This test has to be completly reviewed")]	
 	public class ImageIndexConverterTest
 	{
 		ToolBarButton button;

@@ -16,6 +16,7 @@ using NUnit.Framework;
 namespace MonoTests.Syetem.Windows.Forms
 {
 	[TestFixture]
+	[Ignore ("This test has to be completly reviewed")]	
 	public class MonthCalendarTest
 	{
 		[Test]

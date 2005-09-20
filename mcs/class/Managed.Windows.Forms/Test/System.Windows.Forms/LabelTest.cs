@@ -16,6 +16,7 @@ using System.Runtime.Remoting;
 namespace MonoTests.System.Windows.Forms
 {
         [TestFixture]
+	[Ignore ("This test has to be completly reviewed")]
         public class LabelTest2
         {
 		

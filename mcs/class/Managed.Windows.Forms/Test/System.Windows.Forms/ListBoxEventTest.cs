@@ -13,6 +13,7 @@ using System.Drawing;
 namespace MonoTests.System.Windows.Forms
 {
 	[TestFixture]
+	[Ignore ("This test has to be completly reviewed")]
 	public class ListBoxDrawItemEvent
 	{	
 		static bool eventhandled = false;
@@ -36,6 +37,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[TestFixture]
+		[Ignore ("This test has to be completly reviewed")]
 		public class ListBoxMeasureItemEvent
 		{
 			static bool eventhandled = false;

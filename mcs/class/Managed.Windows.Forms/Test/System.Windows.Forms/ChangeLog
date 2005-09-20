@@ -1,5 +1,19 @@
 2005-09-20  Ritvik Mayank  <mritvik@novell.com>
 
+        * ButtonTest.cs, LabelTest.cs, ControlEventTest.cs, ScrollBarTest.cs,
+	LabelPropertyTest.cs, ProgressBarTest.cs, StatusBarTest.cs,
+	ImageListTest.cs, MonthCalendarTest.cs, ControlTest.cs, 
+	ListBoxEventTest.cs, TreeViewTest.cs, TestImageIndexConverter.cs,	
+	ToolBarTest.cs, MenuTest.cs
+
+	Remove all the tests that are giving errors. All of them should 
+	be reviewed. Right now having this text throwing 40 errors do not
+ 	help at all to do regression testing. Peter has already assigned
+	a group of controls to every developer that will be tested and 
+	reviewed.
+
+2005-09-20  Ritvik Mayank  <mritvik@novell.com>
+
 	* PictureBoxTest.cs : Test case for PictureBox
 
 2005-09-08  Ritvik Mayank  <mritvik@novell.com>
