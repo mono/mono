@@ -1,3 +1,8 @@
+2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* socket-io.c: the field names were changed 3 months ago and no one
+	realized until bug #76077 got filed!
+
 2005-09-20  Martin Baulig  <martin@ximian.com>
 
 	* icall.c (assembly_icalls): Removed some unused debugger icalls.
