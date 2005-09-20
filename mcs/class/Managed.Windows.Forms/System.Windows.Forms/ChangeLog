@@ -1,3 +1,10 @@
+2005-09-20  Miguel de Icaza  <miguel@novell.com>
+
+	* Control.cs (ControlCollection.Add): If the value null is passed
+	the control is ignored. 
+
+	Optimize this loop.
+
 2005-09-19  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* MenuAPI.cs: Replaced Application.Run() with a loop that tracks

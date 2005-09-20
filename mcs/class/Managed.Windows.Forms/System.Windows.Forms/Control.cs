@@ -290,8 +290,12 @@ namespace System.Windows.Forms
 			#region	ControlCollection Private Instance Methods
 			public virtual void Add (Control value)
 			{
+				if (value == null)
+					return;
 				
-				for (int i = 0; i < list.Count; i++) {
+				for (int i = list.Count; i > 0; ) {
+					i--;
+					
 					if (list [i] == value) {
 						// Do we need to do anything here?
 						return;
