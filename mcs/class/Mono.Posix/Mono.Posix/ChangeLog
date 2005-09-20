@@ -1,3 +1,7 @@
+2005-09-20  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Syscall.cs: Mark types as [CLSCompliant(false)].
+
 2005-05-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* Syscall.cs (UnixEpoch): The DateTime for the start of the epoch

@@ -69,6 +69,7 @@ using System.Runtime.InteropServices;
 namespace Mono.Posix {
 
 	[Flags]
+	[CLSCompliant (false)]
 	public enum OpenFlags {
 		//
 		// One of these
@@ -101,6 +102,7 @@ namespace Mono.Posix {
 	}
 	
 	[Flags]
+	[CLSCompliant (false)]
 	public enum FileMode {
 		S_ISUID   = 2048,
 		S_ISGID   = 1024,
@@ -117,12 +119,14 @@ namespace Mono.Posix {
 	}
 
 	[Flags]
+	[CLSCompliant (false)]
 	public enum WaitOptions {
 		WNOHANG,
 		WUNTRACED
 	}
 
 	[Flags]
+	[CLSCompliant (false)]
 	public enum AccessMode {
 		R_OK = 1,
 		W_OK = 2,
@@ -131,6 +135,7 @@ namespace Mono.Posix {
 	}
 
 	
+	[CLSCompliant (false)]
 	public enum Signals {
 		SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT, SIGBUS,
 		SIGFPE, SIGKILL, SIGUSR1, SIGSEGV, SIGUSR2, SIGPIPE,
@@ -143,6 +148,7 @@ namespace Mono.Posix {
 		// SIGRTMIN
 	}
 	
+	[CLSCompliant (false)]
 	[Obsolete ("Syscall is unmaintained.  Please use Mono.Unix.Syscall.")]
 	public class Syscall {
 		[DllImport ("libc", SetLastError=true)]
@@ -415,6 +421,7 @@ namespace Mono.Posix {
 			return Encoding.UTF8.GetString (buf, 0, res);
 		}
 
+		[CLSCompliant (false)]
 		public static string gethostname ()
 		{
 			return GetHostName ();
