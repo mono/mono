@@ -1,3 +1,7 @@
+2005-09-20  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* MenuAPI.cs: Remove filtering of events to allow menu usage
+
 2005-09-20  Miguel de Icaza  <miguel@novell.com>
 
 	* Cursor.cs: Allow null to be passed to Cursor.Current.

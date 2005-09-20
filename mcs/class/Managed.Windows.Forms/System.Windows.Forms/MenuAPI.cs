@@ -218,7 +218,7 @@ namespace System.Windows.Forms
 			if (hMenu == IntPtr.Zero)	// No submenus to track
 				return true;				
 
-			menu = GetMenuFromID (hMenu);			
+			menu = GetMenuFromID (hMenu);
 			
 			menu.Wnd = new PopUpWindow (hMenu, tracker);
 			tracker.hCurrentMenu = hMenu;
@@ -239,13 +239,11 @@ namespace System.Windows.Forms
 				menu.menu.IsDirty = false;
 			}
 			((PopUpWindow)menu.Wnd).ShowWindow ();
-			
+
 			while ((menu.Wnd != null) && menu.Wnd.Visible && no_quit) {
 				no_quit = XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0);
-				if ((msg.hwnd == menu.Wnd.Handle) || (msg.message == Msg.WM_PAINT)) {
-					XplatUI.TranslateMessage(ref msg);
-					XplatUI.DispatchMessage(ref msg);
-				}
+				XplatUI.TranslateMessage(ref msg);
+				XplatUI.DispatchMessage(ref msg);				
 			}
 
 			if (!no_quit) {
@@ -411,8 +409,7 @@ namespace System.Windows.Forms
 		static public void ExecFocusedItem (IntPtr hMenu, MENUITEM item, TRACKER tracker)
 		{
 			if (item.item.Enabled == false)
-			 	return;
-			 
+			 	return;			 
 			 	
 			if (item.item.IsPopup) {				
 				ShowSubPopup (hMenu, item.hSubMenu, item, tracker);				
