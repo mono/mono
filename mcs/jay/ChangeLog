@@ -1,3 +1,7 @@
+2005-09-20 Konstantin Triger <kostat@mainsift.com>
+
+	* Added jay.vcproj to build jay on pure Win32
+
 2005-03-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (install-local, uninstall-local): Disable when
