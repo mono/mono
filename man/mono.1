@@ -77,6 +77,12 @@ The default files are /etc/mono/config and ~/.mono/config or the file
 specified in the MONO_CONFIG environment variable, if set.  See the
 mono-config(5) man page for details on the format of this file.
 .TP
+.I "--desktop"
+Configures the virtual machine to be better suited for desktop
+applications.  Currently this sets the GC system to avoid expanding
+the heap as much as possible at the expense of slowing down garbage
+collection a bit.
+.TP
 .I "--help", "-h"
 Displays usage instructions.
 .TP
@@ -121,6 +127,10 @@ Activate the security manager (experimental feature in 1.1). This allows
 mono to support declarative security attributes (e.g. execution of, CAS 
 or non-CAS, security demands). The security manager is OFF by default 
 (experimental).
+.TP
+.I "--server"
+Configures the virtual machine to be better suited for server
+operations.  
 .TP
 .I "-V", "--version"
 Prints JIT version information.

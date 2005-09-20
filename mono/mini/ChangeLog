@@ -1,3 +1,7 @@
+2005-09-20  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.c (mono_main): Add --server and --desktop flags. 
+
 2005-09-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ia64.h: Make register masks 64 bit. Don't treat argument
