@@ -1882,12 +1882,42 @@ namespace System.Data {
 				string[] columnExpression = sort.Trim ().Split (new char[1] {','});
 			
 				for (int c = 0; c < columnExpression.Length; c++) {
-					string[] columnSortInfo = columnExpression[c].Trim ().Split (new char[1] {' '});
+					string rawColumnName = columnExpression[c].Trim ();
+					string[] columnSortInfo;
+					
+					if (rawColumnName.StartsWith ("[") && (rawColumnName.IndexOf ("]") > 0)) {
+						// Column name is "escaped" a la "[Name with spaces]", so we can't
+						// split at spaces. We just split it manually. 
+						int i = rawColumnName.LastIndexOf ("]"); 
+
+						if (i + 1 < rawColumnName.Length) {
+							// The "]" is not the last character which means we also have
+							// an optional sort order... we extract that one and trim it.
+							columnSortInfo = new String[2];
+							columnSortInfo[1] = rawColumnName.Substring (i + 1,
+								rawColumnName.Length - i - 1).Trim ();
+						} else {
+							// The "]" is the last character, we don't have a sort order
+							columnSortInfo = new String[1];
+						}
+
+						// Get everything between leading "[" and the LAST "]", no trimming !
+						columnSortInfo[0] = rawColumnName.Substring (1, i - 1);
+					} else {
+						// No column name "escaping", just split at spaces and trim just to
+						// be sure. 
+						columnSortInfo = rawColumnName.Split (new char[1] {' '});
+
+						// Fix entries (trim strings)
+						for (int i = 0; i < columnSortInfo.Length; i++) {
+							columnSortInfo[i] = columnSortInfo[i].Trim ();
+						}
+					}
 				
-					string columnName = columnSortInfo[0].Trim ();
+					string columnName = columnSortInfo[0];
 					string sortOrder = "ASC";
 					if (columnSortInfo.Length > 1) 
-						sortOrder = columnSortInfo[1].Trim ().ToUpper (table.Locale);
+						sortOrder = columnSortInfo[1].ToUpper (table.Locale);
 					
 					ListSortDirection sortDirection = ListSortDirection.Ascending;
 					switch (sortOrder) {
@@ -1898,29 +1928,22 @@ namespace System.Data {
 						sortDirection = ListSortDirection.Descending;
 						break;
 					default:
-						throw new IndexOutOfRangeException ("Could not find column: " + columnExpression[c]);
-					}
-
-					if (columnName.StartsWith("[") || columnName.EndsWith("]")) {
-						if (columnName.StartsWith("[") && columnName.EndsWith("]"))
-							columnName = columnName.Substring(1, columnName.Length - 2);
-						else
-							throw new ArgumentException(String.Format("{0} isn't a valid Sort string entry.", columnName));
+						throw new IndexOutOfRangeException ("Could not find column: " + rawColumnName);
 					}
 
 					DataColumn dc = table.Columns[columnName];
 					if (dc == null){
 						try {
 							dc = table.Columns[Int32.Parse (columnName)];
-					}
-					catch (FormatException) {
+						} catch (FormatException) {
 							throw new IndexOutOfRangeException("Cannot find column " + columnName);
-					}
+						}
 					}
 
 					columns.Add (dc);
 					sorts.Add(sortDirection);
-				}	
+				}
+
 				sortColumns = (DataColumn[]) columns.ToArray (typeof (DataColumn));
 				sortDirections = new ListSortDirection[sorts.Count];
 				for (int i = 0; i < sortDirections.Length; i++)

@@ -5,6 +5,7 @@
 // 	Patrick Kalkman  kalkman@cistron.nl
 //      Umadevi S (sumadevi@novell.com)
 //	Atsushi Enomoto (atsushi@ximian.com)
+//      Sureshkumar T <tsureshkumar@novell.com>
 //
 // (C) 2003 Patrick Kalkman
 //
@@ -224,14 +225,36 @@ namespace MonoTests.System.Data
 			AssertEquals ("Deleted.Value", "1", v);
 		}
 
+
+		#region Sort Tests
 		[Test]
-		public void Sort ()
+		public void SortTest ()
 		{
 			dataView.Sort = "itemName DESC";
 			AssertEquals ("test#01",ListChangedType.Reset,listChangedArgs.ListChangedType);
 			// UnComment the line below to see if dataView is sorted
 			// PrintTableOrView (dataView);
 		}
+
+
+		[Test]
+		public void SortTestWeirdColumnName ()
+		{
+			DataTable dt = new DataTable ();
+			dt.Columns.Add ("id]", typeof (int));
+			dt.Columns.Add ("[id", typeof (int));
+
+			DataView dv = dt.DefaultView;
+			dv.Sort = "id]";
+			//dv.Sort = "[id"; // this is not allowed
+			dv.Sort = "[id]]";
+			dv.Sort = "[[id]";
+			dv.Sort = "id] ASC";
+			dv.Sort = "[id]] DESC";
+			dv.Sort = "[[id] ASC";
+		}
+
+		#endregion // Sort Tests
 
 		[Test]
 		[ExpectedException(typeof(DataException))]
