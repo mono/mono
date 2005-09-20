@@ -1,3 +1,12 @@
+2005-09-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): Bump corlib version.
+
+	* icall.c (custom_attrs_defined_internal): New icall.
+
+	* reflection.c (mono_reflection_get_custom_attrs_by_type): New helper
+	function.
+	(mono_custom_attrs_construct_by_type): New helper function.
 
 Thu Sep 8 18:54:07 BST 2005 Paolo Molaro <lupus@ximian.com>
 
