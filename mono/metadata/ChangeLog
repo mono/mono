@@ -1,5 +1,10 @@
 2005-09-20  Martin Baulig  <martin@ximian.com>
 
+	* mono-debug.c (mono_debug_add_type): Ignore array types and don't
+	write the rank into the class entry.
+
+2005-09-20  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug-debugger.c (MonoDebuggerMetadataInfo): Added some stuff.
 
 2005-09-19  Zoltan Varga  <vargaz@gmail.com>
