@@ -1,3 +1,8 @@
+2005-09-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TestUrlPropertyAttribute.cs: Remove references to UrlTypes (removed 
+	in 2.0 RC). Fix compilation for tests under NET_2_0.
+
 2005-09-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TagPrefixAttributeCas.cs: New. CAS unit tests.

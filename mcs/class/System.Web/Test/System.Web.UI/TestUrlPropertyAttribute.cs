@@ -45,7 +45,6 @@ namespace MonoTests.System.Web.UI
 		UrlPropertyAttribute upa1;
 		UrlPropertyAttribute upa2;
 		string filter;
-		UrlTypes urlTypes;
 
 		[TearDown]
 		public void TearDown () {}
@@ -54,11 +53,9 @@ namespace MonoTests.System.Web.UI
 		public void SetUp ()		
 		{
 			filter = "filter";
-			urlTypes = UrlTypes.DocRelative;
 			upa = new UrlPropertyAttribute ();
 			upa1 = new UrlPropertyAttribute (filter);
 			upa2 = new UrlPropertyAttribute (filter);
-			upa2.AllowedTypes = urlTypes;
 		}
 
 		[Test]
@@ -67,19 +64,6 @@ namespace MonoTests.System.Web.UI
 			Assert.AreEqual (upa.Filter, "*.*", "Filter#1");
 			Assert.AreEqual (upa1.Filter, filter, "Filter#2");
 			Assert.AreEqual (upa2.Filter, filter, "Filter#3");
-		}
-
-		[Test]
-		public void TestAllowedTypes ()
-		{
-			UrlTypes types = UrlTypes.Absolute |
-					UrlTypes.AppRelative |
-					UrlTypes.DocRelative |
-					UrlTypes.RootRelative;
-
-			Assert.AreEqual (upa.AllowedTypes, types, "Types#1");
-			Assert.AreEqual (upa1.AllowedTypes, types, "Types#2");
-			Assert.AreEqual (upa2.AllowedTypes, urlTypes, "Types#3");
 		}
 
 		[Test]
@@ -99,14 +83,6 @@ namespace MonoTests.System.Web.UI
 			//Assert.IsTrue (upa.Equals (upa1), "Equals#2");
 
 			Assert.IsFalse (upa1.Equals (upa2), "Equals#3");
-			
-			upa1 = new UrlPropertyAttribute ("sanjay");
-			upa1.AllowedTypes = UrlTypes.Absolute;
-			Assert.IsFalse (upa2.Equals (upa1), "Equals#4");
-			upa1 = new UrlPropertyAttribute ("sanjay");
-			upa1.AllowedTypes = UrlTypes.DocRelative;
-			//Assert.IsTrue (upa2.Equals (upa1), "Equals#5");
-
 		}
 			
 	}
