@@ -1,5 +1,9 @@
 2005-09-20  Martin Baulig  <martin@ximian.com>
 
+	* icall.c (assembly_icalls): Removed some unused debugger icalls.
+
+2005-09-20  Martin Baulig  <martin@ximian.com>
+
 	* mono-debug.c (mono_debug_add_type): Ignore array types and don't
 	write the rank into the class entry.
 
