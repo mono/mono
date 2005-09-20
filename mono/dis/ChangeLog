@@ -1,5 +1,9 @@
 2005-09-20  Ankit Jain  <jankit@novell.com>
 
+	* monodis.1: Update documentation for --output.
+
+2005-09-20  Ankit Jain  <jankit@novell.com>
+
 	* main.c (table_list): Add --mresources to the table.
 	  (usage): Don't add "--mresources" explicitly for usage output.
 	  (main): Remove explicit handling for --mresources.
