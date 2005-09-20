@@ -162,7 +162,7 @@ namespace DrawingTestHelper
 	public abstract class DrawingTest {
 
 		public const float DEFAULT_FLOAT_TOLERANCE = 1e-5f; 
-		public const int DEFAULT_IMAGE_TOLERANCE = 3; 
+		public const int DEFAULT_IMAGE_TOLERANCE = 2; 
 
 		Graphics _graphics;
 		protected Bitmap _bitmap;
@@ -343,14 +343,53 @@ namespace DrawingTestHelper
 			AssertAlmostEqual (expected.Y, actual.Y, DEFAULT_FLOAT_TOLERANCE, msg);
 		}
 
+		/// <summary>
+		/// Checks that the given bitmap norm is similar to expected
+		/// </summary>
+		/// <param name="tolerance">tolerance in percents (0..100)</param>
+		/// <returns></returns>
+		/// 
+		public bool Compare (double tolerance) {
+			CheckCounter ();
+
+			double error = CompareToExpectedInternal()*100;
+
+			if (SpecialTolerance != null)
+				return error <= GetSpecialTolerance(TestName);
+
+			return error <= tolerance;
+		}
+
+		public bool PDCompare (double tolerance) {
+			Bitmap ri = GetReferenceImage(TestName);
+			if (ri == null)
+				return true;
+
+			double error = PDComparer.Compare(ri, _bitmap);
+			return error <= tolerance;
+		}
+		
 		public bool Compare () {
 			CheckCounter ();
+
 			double error = CompareToExpectedInternal()*100;
+			
 			if (SpecialTolerance != null)
 				return error <= GetSpecialTolerance(TestName);
 
 			return error <= DEFAULT_IMAGE_TOLERANCE;
 		}
+
+		public bool PDCompare () {
+			Bitmap ri = GetReferenceImage(TestName);
+			if (ri == null)
+				return true;
+
+			double error = PDComparer.Compare(ri, _bitmap);
+			return error <= DEFAULT_IMAGE_TOLERANCE;
+		}
+
+		protected abstract Bitmap GetReferenceImage(string testName);
 
 		protected double GetSpecialTolerance(string testName) {
 			try	{
@@ -364,18 +403,6 @@ namespace DrawingTestHelper
 			catch (System.Exception) {
 				return DEFAULT_IMAGE_TOLERANCE;
 			}
-		}
-
-		/// <summary>
-		/// Checks that the given bitmap norm is similar to expected
-		/// </summary>
-		/// <param name="tolerance">tolerance in percents (0..100)</param>
-		/// <returns></returns>
-		/// 
-		public bool Compare (double tolerance) {
-			CheckCounter ();
-			double error = CompareToExpectedInternal()*100;
-			return error <= tolerance;
 		}
 
 		public void AssertCompare () {
@@ -425,9 +452,17 @@ namespace DrawingTestHelper
 			get {
 				if (_image != null)
 					return _image;
-				Type imageType = typeof (Image);
-				PropertyInfo prop = imageType.GetProperty ("NativeObject",
-					BindingFlags.NonPublic | BindingFlags.Instance);
+				Type imageType = typeof (Bitmap);
+				PropertyInfo [] props = imageType.GetProperties (
+					BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+				PropertyInfo prop = null;
+				foreach (PropertyInfo p in props) {
+					if (p.Name == "NativeObject")
+						if (p.PropertyType == typeof(java.awt.image.BufferedImage))
+							prop = p;
+				}
+
 				MethodInfo method = prop.GetGetMethod (true);
 				_image = (java.awt.image.BufferedImage) method.Invoke (_bitmap, new object [0]);
 				return _image;
@@ -438,6 +473,17 @@ namespace DrawingTestHelper
 
 		protected override double GetExpectedNorm (double myNorm) {
 			return ExpectedResults.GetNorm(TestName);
+		}
+
+		protected override Bitmap GetReferenceImage(string testName) {
+			try{
+				string dotNetResultsFolder = @"..\Debug\";
+				string fileName = dotNetResultsFolder + testName.Replace(":", "_") + ".png";
+				return new Bitmap(fileName);
+			}
+			catch(System.Exception e) {
+				throw new System.Exception("Error creating .Net reference image");
+			}
 		}
 
 		private class JavaForm:java.awt.Dialog,IMyForm {
@@ -547,6 +593,17 @@ namespace DrawingTestHelper
 			return myNorm;
 		}
 
+		protected override Bitmap GetReferenceImage(string testName) {
+			try{
+				string fileName = testName.Replace(":", "_") + ".png";
+				_bitmap.Save( fileName );
+				return null;
+			}
+			catch(System.Exception e) {
+				throw new System.Exception("Error creating .Net reference image");
+			}
+		}
+
 		private class NetForm:Form,IMyForm {
 			Image image;
 			public NetForm(string title, Image anImage):base() {
@@ -591,4 +648,5 @@ namespace DrawingTestHelper
 
 	}
 #endif
+
 }

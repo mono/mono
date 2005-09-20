@@ -90,11 +90,10 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw lines between original points to screen.
 			t.Graphics.DrawLines(redPen, curvePoints);
 			t.Show ();
-			Assert.IsTrue(t.Compare(TOLERANCE));
+			Assert.IsTrue(t.PDCompare(TOLERANCE));
 		}
 
 		[Test]
-		[Category("aaa")]
 		public void ClipTest_3() {
 			t.Graphics.TranslateTransform(3, 3);
 			t.Graphics.SetClip(new Rectangle(23, 24, 30, 40));
@@ -180,7 +179,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Graphics.DrawImage(b, 300, 300);
 
 			t.Show ();
-			Assert.IsTrue(t.Compare(TOLERANCE));
+			Assert.IsTrue(t.PDCompare(TOLERANCE));
 		}
 
 		[Test] //TBD
@@ -284,6 +283,108 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 
 	#endregion
 
+	#region DrawImage
+	[TestFixture]
+	public class DrawImage {
+		protected DrawingTest t;
+		protected int TOLERANCE = 10; //in %;
+		protected Hashtable st = new Hashtable();
+
+		Rectangle src = new Rectangle(0, 0, 50, 50);
+		RectangleF srcF = new Rectangle(0, 0, 50, 50);
+		Rectangle dst = new Rectangle(170, 170, 100, 100);
+		RectangleF dstF = new Rectangle(270, 270, 100, 100);
+
+		Image bmp;
+
+		[SetUp]
+		public virtual void SetUp() {
+			SetUp("DrawImage");
+			DrawingTest.ShowForms = false;
+			try {
+				bmp = Bitmap.FromFile(@"..\..\bitmap50.png");
+			}
+			catch(Exception e) {
+				Console.WriteLine(e.Message);
+			}
+		}
+		public virtual void SetUp(string ownerClass) {
+			t = DrawingTest.Create(512, 512, ownerClass);
+			t.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
+
+			// hashtable of differents tolerance values for specified tests.
+		}
+		[TearDown]
+		public void TearDown() {
+		}
+
+		[Test]
+		public void DrawImage1() {
+			t.Graphics.DrawImage(bmp, new Point[]{new Point(170,10), new Point(250,0), new Point(100,100)}, src, GraphicsUnit.Pixel );
+			t.Graphics.DrawImage(bmp, new PointF[]{new PointF(70,10), new PointF(150,0), new PointF(10,100)}, srcF, GraphicsUnit.Pixel );
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImage2() {
+			t.Graphics.DrawImage(bmp, dst, src, GraphicsUnit.Pixel);
+			t.Graphics.DrawImage(bmp, dstF, srcF, GraphicsUnit.Pixel);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImage3() {
+			t.Graphics.DrawImage(bmp, 10.0F, 10.0F, srcF, GraphicsUnit.Pixel);
+			t.Graphics.DrawImage(bmp, 70.0F, 150.0F, 250.0F, 150.0F);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImage4() {
+			t.Graphics.DrawImage(bmp, dst);
+			t.Graphics.DrawImage(bmp, dstF);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImage5() {
+			t.Graphics.SetClip( new Rectangle(70, 0, 20, 200));
+			t.Graphics.DrawImage(bmp, new Point[]{new Point(50,50), new Point(250,30), new Point(100,150)}, src, GraphicsUnit.Pixel );
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImage6() {
+			t.Graphics.ScaleTransform(2, 2);
+			t.Graphics.SetClip( new Rectangle(70, 0, 20, 200));
+			t.Graphics.DrawImage(bmp, new Point[]{new Point(50,50), new Point(250,30), new Point(100,150)}, src, GraphicsUnit.Pixel );
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImage7() {
+			t.Graphics.DrawImage(bmp, 170, 70, src, GraphicsUnit.Pixel);
+			t.Graphics.DrawImage(bmp, 70, 350, 350, 150);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImage8() {
+			t.Graphics.DrawImage(bmp, new Point[]{new Point(170,10), new Point(250,10), new Point(100,100)} );
+			t.Graphics.DrawImage(bmp, new PointF[]{new PointF(170,100), new PointF(250,100), new PointF(100,190)} );
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImage9() {
+			t.Graphics.DrawImage(bmp, 0, 0);
+			t.Graphics.DrawImage(bmp, 200, 200);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+	}
+	#endregion
+
 	#region GraphicsFixture
 	/// <summary>
 	/// Summary description for Graphics.
@@ -336,17 +437,17 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill untransformed rectangle with green.
 			t.Graphics.FillRectangle(new SolidBrush(Color.Green), 0.0F, 0.0F, 200.0F, 200.0F);
 			t.Show ();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
 		public void ClearTest() {
 			// Clear screen with teal background.
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			t.Graphics.Clear(Color.Teal);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -364,25 +465,25 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw arc to screen.
 			t.Graphics.DrawArc(blackPen, (int)x, (int)y, (int)width, (int)height, (int)startAngle, (int)sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 			startAngle =  10.0F;
 			sweepAngle = 120.0F;
 			t.Graphics.DrawArc(blackPen, new Rectangle((int)x, (int)y, (int)width, (int)height), startAngle, sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 			startAngle =  10.0F;
 			sweepAngle = 190.0F;
 			t.Graphics.DrawArc(blackPen, x, y, width, height, startAngle, sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 			startAngle =  10.0F;
 			sweepAngle = 300.0F;
 			t.Graphics.DrawArc(blackPen, new RectangleF(x, y, width, height), startAngle, sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -404,21 +505,21 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 				controlX2, controlY2,
 				endX, endY);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 			t.Graphics.DrawBezier(blackPen, new PointF( startX, startY),
 				new PointF(controlX1, controlY1),
 				new PointF(controlX2, controlY2),
 				new PointF(endX, endY));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 			t.Graphics.DrawBezier(blackPen, new Point((int)startX, (int)startY),
 				new Point((int)controlX1, (int)controlY1),
 				new Point((int)controlX2, (int)controlY2),
 				new Point((int)endX, (int)endY));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -440,7 +541,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw arc to screen.
 			t.Graphics.DrawBeziers(blackPen, bezierPoints);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			PointF startF = new PointF(100.0F, 100.0F);
@@ -457,7 +558,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw arc to screen.
 			t.Graphics.DrawBeziers(blackPen, bezierPointsF);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -490,14 +591,14 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw closed curve to screen.
 			t.Graphics.DrawClosedCurve(greenPen, curvePoints, tension, aFillMode);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			aFillMode = FillMode.Winding;
 			// Draw closed curve to screen.
 			t.Graphics.DrawClosedCurve(greenPen, curvePoints, tension, aFillMode);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -531,17 +632,17 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw curve to screen.
 			t.Graphics.DrawCurve(greenPen, curvePoints, offset, numSegments, tension);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawCurve(greenPen, curvePoints, tension);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawCurve(greenPen, curvePoints);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -575,22 +676,22 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw curve to screen.
 			t.Graphics.DrawCurve(greenPen, curvePoints, offset, numSegments, tension);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawCurve(greenPen, curvePoints, offset, numSegments);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawCurve(greenPen, curvePoints, tension);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawCurve(greenPen, curvePoints);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -605,12 +706,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw ellipse to screen.
 			t.Graphics.DrawEllipse(blackPen, x, y, width, height);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawEllipse(blackPen, new Rectangle(x, y, width, height));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -625,12 +726,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw ellipse to screen.
 			t.Graphics.DrawEllipse(blackPen, x, y, width, height);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawEllipse(blackPen, new RectangleF(x, y, width, height));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		static string getInFile (string file) {
@@ -660,11 +761,11 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw icon to screen.
 			t.Graphics.DrawIcon(newIcon, x, y);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 
 			t.Graphics.DrawIcon(newIcon, new Rectangle(200, 300, 125, 345));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -680,7 +781,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw icon to screen.
 			t.Graphics.DrawIconUnstretched(newIcon, rect);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 #if INTPTR_SUPPORTED
 		// Define DrawImageAbort callback method.
@@ -748,22 +849,22 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw image to screen.
 			t.Graphics.DrawImageUnscaled(newImage, x, y, 100, 125);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawImageUnscaled(newImage, new Rectangle(x, y, 34, 235));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawImageUnscaled(newImage, x, y);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawImageUnscaled(newImage, new Point(x, y));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -778,12 +879,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw line to screen.
 			t.Graphics.DrawLine(blackPen, x1, y1, x2, y2);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawLine(blackPen, new Point( x1, y1), new Point( x2, y2));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -798,12 +899,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw line to screen.
 			t.Graphics.DrawLine(blackPen, x1, y1, x2, y2);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawLine(blackPen, new PointF( x1, y1), new PointF( x2, y2));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -820,7 +921,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			//Draw lines to screen.
 			t.Graphics.DrawLines(pen, points);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -837,7 +938,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			//Draw lines to screen.
 			t.Graphics.DrawLines(pen, points);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -850,7 +951,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw graphics path to screen.
 			t.Graphics.DrawPath(blackPen, graphPath);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -868,12 +969,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw pie to screen.
 			t.Graphics.DrawPie(blackPen, x, y, width, height, startAngle, sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawPie(blackPen, new RectangleF( x, y, width, height), startAngle, sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -891,12 +992,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw pie to screen.
 			t.Graphics.DrawPie(blackPen, x, y, width, height, startAngle, sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawPie(blackPen, new Rectangle( x, y, width, height), startAngle, sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -923,7 +1024,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw polygon to screen.
 			t.Graphics.DrawPolygon(blackPen, curvePoints);
 			t.Show();
-			Assert.IsTrue(t.Compare()); // .NET's lines of polygon is more wide
+			Assert.IsTrue(t.PDCompare()); // .NET's lines of polygon is more wide
 		}
 
 		[Test]
@@ -950,7 +1051,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw polygon to screen.
 			t.Graphics.DrawPolygon(blackPen, curvePoints);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -965,17 +1066,17 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw rectangle to screen.
 			t.Graphics.DrawRectangle(blackPen, x, y, width, height);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawRectangle(blackPen, (int)x, (int)y, (int)width, (int)height);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.DrawRectangle(blackPen, new Rectangle( (int)x, (int)y, (int)width, (int)height));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -991,7 +1092,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw rectangles to screen.
 			t.Graphics.DrawRectangles(blackPen, rects);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1007,7 +1108,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw rectangles to screen.
 			t.Graphics.DrawRectangles(blackPen, rects);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test] //TBD: add more combinations
@@ -1026,21 +1127,21 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw string to screen.
 			t.Graphics.DrawString(drawString, drawFont, drawBrush, x, y, drawFormat);
 			t.Show();
-			Assert.IsTrue(t.Compare()); // in .net the font is shmoothed
+			Assert.IsTrue(t.PDCompare()); // in .net the font is shmoothed
 			SetUp();
 
 			drawFormat.FormatFlags = StringFormatFlags.NoClip;
 			// Draw string to screen.
 			t.Graphics.DrawString(drawString, drawFont, drawBrush, x, y, drawFormat);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			drawFormat.FormatFlags = StringFormatFlags.FitBlackBox;
 			// Draw string to screen.
 			t.Graphics.DrawString(drawString, drawFont, drawBrush, x, y, drawFormat);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1057,7 +1158,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill untransformed rectangle with green.
 			t.Graphics.FillRectangle(new SolidBrush(Color.Green), 0, 0, 200, 200);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test] //TBD
@@ -1073,7 +1174,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill large rectangle to show clipping region.
 			t.Graphics.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 300, 300);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1093,17 +1194,17 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill curve on screen.
 			t.Graphics.FillClosedCurve(redBrush, points);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillClosedCurve(redBrush, points, newFillMode);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			newFillMode = FillMode.Alternate;
 			t.Graphics.FillClosedCurve(redBrush, points, newFillMode, tension);
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			t.Show();
 		}
 
@@ -1124,18 +1225,18 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill curve on screen.
 			t.Graphics.FillClosedCurve(redBrush, points);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillClosedCurve(redBrush, points, newFillMode);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			newFillMode = FillMode.Alternate;
 			t.Graphics.FillClosedCurve(redBrush, points, newFillMode, tension);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1150,12 +1251,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill ellipse on screen.
 			t.Graphics.FillEllipse(redBrush, x, y, width, height);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillEllipse(redBrush, new Rectangle( x, y, width, height));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1170,12 +1271,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill ellipse on screen.
 			t.Graphics.FillEllipse(redBrush, x, y, width, height);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillEllipse(redBrush, new RectangleF( x, y, width, height));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1188,7 +1289,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill graphics path to screen.
 			t.Graphics.FillPath(redBrush, graphPath);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1206,17 +1307,17 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill pie to screen.
 			t.Graphics.FillPie(redBrush, new Rectangle(x, y, width, height), startAngle, sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillPie(redBrush, x, y, width, height, (int)startAngle, (int)sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillPie(redBrush, (float)x, (float)y, (float)width, (float)height, startAngle, sweepAngle);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1244,17 +1345,17 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill polygon to screen.
 			t.Graphics.FillPolygon(blueBrush, curvePoints, FillMode.Winding);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillPolygon(blueBrush, curvePoints, FillMode.Alternate);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillPolygon(blueBrush, curvePoints);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1282,17 +1383,17 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill polygon to screen.
 			t.Graphics.FillPolygon(blueBrush, curvePoints, FillMode.Winding);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillPolygon(blueBrush, curvePoints, FillMode.Alternate);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillPolygon(blueBrush, curvePoints);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1307,12 +1408,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill rectangle to screen.
 			t.Graphics.FillRectangle(blueBrush, x, y, width, height);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillRectangle(blueBrush, new Rectangle( x, y, width, height));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1327,12 +1428,12 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill rectangle to screen.
 			t.Graphics.FillRectangle(blueBrush, x, y, width, height);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 			SetUp();
 
 			t.Graphics.FillRectangle(blueBrush, new RectangleF( x, y, width, height));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1348,7 +1449,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill rectangles to screen.
 			t.Graphics.FillRectangles(blueBrush, rects);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1364,7 +1465,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill rectangles to screen.
 			t.Graphics.FillRectangles(blueBrush, rects);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1378,7 +1479,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill region to screen.
 			t.Graphics.FillRegion(blueBrush, fillRegion);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1408,7 +1509,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Show();
 			t.Graphics.DrawRectangle(new Pen(Color.Red), intersectRect);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1435,7 +1536,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 				t.Show();
 			}
 
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1487,7 +1588,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 				new Pen(Color.Blue, 1),
 				Rectangle.Round(measureRect2));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test] //TBD: add more overloads
@@ -1536,7 +1637,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 				Brushes.Black,
 				new PointF(100, 0));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1554,7 +1655,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw rotated, translated ellipse.
 			t.Graphics.DrawEllipse(new Pen(Color.Blue, 3), -80, -40, 160, 80);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1572,7 +1673,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw rotated, translated ellipse.
 			t.Graphics.DrawEllipse(new Pen(Color.Blue, 3), -80, -40, 160, 80);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1590,7 +1691,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw rotated, translated ellipse.
 			t.Graphics.DrawEllipse(new Pen(Color.Blue, 3), -80, -40, 160, 80);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1609,7 +1710,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Graphics.DrawRectangle(new Pen(Color.Black), clipRect);
 			t.Graphics.DrawRectangle(new Pen(Color.Red), Rectangle.Round(intersectRectF));
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1626,7 +1727,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Graphics.Restore(transState);
 			t.Graphics.FillRectangle(new SolidBrush(Color.Blue), 0, 0, 100, 100);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1638,7 +1739,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw translated, rotated ellipse to screen.
 			t.Graphics.DrawEllipse(new Pen(Color.Blue, 3), 0, 0, 200, 80);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1650,7 +1751,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw translated, rotated ellipse to screen.
 			t.Graphics.DrawEllipse(new Pen(Color.Blue, 3), 0, 0, 200, 80);
 			t.Show();
-			Assert.IsTrue(t.Compare());  // Line width problem
+			Assert.IsTrue(t.PDCompare());  // Line width problem
 		}
 
 		[Test]
@@ -1662,7 +1763,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw rotated, scaled rectangle to screen.
 			t.Graphics.DrawRectangle(new Pen(Color.Blue, 3), 50, 0, 100, 40);
 			t.Show();
-			Assert.IsTrue(t.Compare()); // Line width problem
+			Assert.IsTrue(t.PDCompare()); // Line width problem
 		}
 
 		[Test]
@@ -1674,7 +1775,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw rotated, scaled rectangle to screen.
 			t.Graphics.DrawRectangle(new Pen(Color.Blue, 3), 50, 0, 100, 40);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test] //TBD: add more combination
@@ -1686,7 +1787,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill rectangle to demonstrate clip region.
 			t.Graphics.FillRectangle(new SolidBrush(Color.Black), 0, 0, 500, 300);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1711,7 +1812,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 				points[0],
 				points[1]);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1727,7 +1828,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Fill rectangle to demonstrate translated clip region.
 			t.Graphics.FillRectangle(new SolidBrush(Color.Black), 0, 0, 500, 300);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1739,7 +1840,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw rotated, translated ellipse to screen.
 			t.Graphics.DrawEllipse(new Pen(Color.Blue, 3), 0, 0, 200, 80);
 			t.Show();
-			Assert.IsTrue(t.Compare()); // Line width problem
+			Assert.IsTrue(t.PDCompare()); // Line width problem
 		}
 
 		[Test]
@@ -1751,7 +1852,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			// Draw rotated, translated ellipse to screen.
 			t.Graphics.DrawEllipse(new Pen(Color.Blue, 3), 0, 0, 200, 80);
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1779,7 +1880,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Graphics.DrawLine(Pens.Yellow, 10, 70, 70, 10);
 
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
@@ -1798,7 +1899,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Graphics.DrawLine(Pens.Green, 10, 70, 70, 10);
 
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 		[Test]
 		public void TransfromPageScaleUnits_3() {
@@ -1828,7 +1929,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Graphics.DrawLine(Pens.Red, 10, 70, 70, 10);
 
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 	}
 
@@ -2177,7 +2278,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Graphics.FillRectangle( Brushes.SeaGreen, 0, 0, 100, 100 );
 
 			t.Show();
-			Assert.IsTrue(t.Compare());
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
