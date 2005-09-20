@@ -1,0 +1,20 @@
+2005-09-20  Jonathan Pryor <jonpryor@vt.edu>
+
+	* ChangeLog: Started.
+	* CdeclFunction.cs: Copied from ../Mono.Unix; change namespace.
+	* HeaderAttribute.cs: Added
+	* make-map.cs: Copied from ../Mono.Unix; sort type and member names in
+	  output (makes for a more stable svn history, as types/members won't change
+	  position anymore within generated code); look for HeaderAttribute not
+	  IncludeAttribute for getting headers & #defines; generate NativeConvert
+	  partial class.
+	* NativeConvert.cs: Copied from ../Mono.Unix; change namespace; turn into a
+	  partial class; Remove generated code (generated code is in
+	  NativeConvert.generated.cs).
+	* NativeConvert.generated.cs: Added
+	* Stdlib.cs: Copied from ../Mono.Unix; change namespace; rename Error to
+	  Errno (as Error is a "reserved word" in FxCop); [CLSCompliant(false)]
+	  support.
+	* Syscall.cs: Use HeaderAttribute, not IncludeAttribute, for CLS compliance; 
+	  add [CLSCompliant(false)] as needed; use NativeConvert, not UnixConvert.
+

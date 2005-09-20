@@ -1,3 +1,25 @@
+2005-09-20  Jonathan Pryor <jonpryor@vt.edu>
+
+	* CdeclFunction.cs: [Obsolete]d by Mono.Unix.Native.CdeclFunction.
+	* make-map.cs: Remove.
+	* Stdlib.cs: [Obsolete] the types; use the Mono.Unix.Native.* types instead.
+	* StdioFileStream.cs: Add GC.KeepAlive statements to prevent premature GC's
+	  (FxCop suggestion).
+	* Syscall.cs: Remove [Map] attribute from all types; [CLSCompliant(false)]
+	  work; [Obsolete] all types and suggest using the Mono.Unix.Native.*
+	  replacements; remove [IncludeAttribute] -- superseded by
+		Mono.Unix.Native/Syscall.cs's [HeaderAttribte] for CLS compliance.
+	* UnixConvert.cs: [Obsolete]d by Mono.Unix.Native.NativeConvert.
+	* UnixDirectory.cs, UnixDriveInfo.cs, UnixEnvironment.cs, 
+	  UnixGroup.cs, UnixGroupInfo.cs, 
+	  UnixSymbolicLinkInfo.cs, UnixUser.cs, UnixUserInfo.cs:
+	  Add [CLSCompliant(false)] as necessary.
+	* UnixFile.cs, UnixDirectory.cs, UnixFileInfo.cs, UnixFileSystemInfo.cs: 
+	  [CLSCompliant(false)], addition of method overloads for [Obsolete]d types, 
+	  warn about changing return types.
+	* UnixProcess.cs, UnixStream.cs: Add [CLSCompliant(false)] as necessary, 
+	  and warn about changing property types.
+
 2005-09-02  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Cache delegates passed to Stdlib.signal() so that they survive

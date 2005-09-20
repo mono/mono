@@ -45,6 +45,7 @@ namespace Mono.Unix {
 				throw new ArgumentException (Locale.GetText ("invalid group name"), "group");
 		}
 
+		[CLSCompliant (false)]
 		public UnixGroupInfo (uint group)
 		{
 			this.group = new Group ();
@@ -67,12 +68,19 @@ namespace Mono.Unix {
 			get {return group.gr_passwd;}
 		}
 
+		[CLSCompliant (false)]
 		public uint GroupId {
 			get {return group.gr_gid;}
 		}
 
+		[Obsolete ("Use GetMembers()")]
 		public string[] Members {
 			get {return group.gr_mem;}
+		}
+
+		public string[] GetMembers ()
+		{
+			return group.gr_mem;
 		}
 
 		public override int GetHashCode ()

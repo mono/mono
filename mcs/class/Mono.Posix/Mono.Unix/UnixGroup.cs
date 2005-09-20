@@ -36,6 +36,7 @@ namespace Mono.Unix {
 	{
 		private UnixGroup () {}
 
+		[CLSCompliant (false)]
 		public static uint GetGroupId (string group)
 		{
 			return new UnixGroupInfo (group).GroupId;
@@ -46,17 +47,20 @@ namespace Mono.Unix {
 			return new UnixGroupInfo (group).Members;
 		}
 
+		[CLSCompliant (false)]
 		public static string[] GetMembers (uint group)
 		{
 			return new UnixGroupInfo (group).Members;
 		}
 
+		[CLSCompliant (false)]
 		[Obsolete ("Use GetGroupName")]
 		public static string GetName (uint group)
 		{
 			return new UnixGroupInfo (group).GroupName;
 		}
 
+		[CLSCompliant (false)]
 		public static string GetGroupName (uint group)
 		{
 			return new UnixGroupInfo (group).GroupName;
@@ -67,6 +71,7 @@ namespace Mono.Unix {
 			return new UnixGroupInfo (group).Password;
 		}
 
+		[CLSCompliant (false)]
 		public static string GetPassword (uint group)
 		{
 			return new UnixGroupInfo (group).Password;

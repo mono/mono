@@ -49,9 +49,18 @@ namespace Mono.Unix {
 	{
 		private UnixFile () {}
 
+		[CLSCompliant (false)]
+		[Obsolete ("Use CanAccess(string, Mono.Unix.Native.AccessModes)")]
 		public static bool CanAccess (string path, AccessMode mode)
 		{
 			int r = Syscall.access (path, mode);
+			return r == 0;
+		}
+
+		[CLSCompliant (false)]
+		public static bool CanAccess (string path, Native.AccessModes mode)
+		{
+			int r = Native.Syscall.access (path, mode);
 			return r == 0;
 		}
 
@@ -69,11 +78,23 @@ namespace Mono.Unix {
 			return false;
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("Use GetConfigurationValue(string, Mono.Unix.Native.PathConf)")]
 		public static long GetConfigurationValue (string path, PathConf name)
 		{
 			Syscall.SetLastError ((Error) 0);
 			long r = Syscall.pathconf (path, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return r;
+		}
+
+		[CLSCompliant (false)]
+		public static long GetConfigurationValue (string path, Native.PathConf name)
+		{
+			Native.Stdlib.SetLastError ((Native.Errno) 0);
+			long r = Native.Syscall.pathconf (path, name);
+			if (r == -1 && Native.Stdlib.GetLastError() != (Native.Errno) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}
@@ -101,6 +122,8 @@ namespace Mono.Unix {
 			return new UnixFileInfo (path).LastStatusChangeTime;
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("Return Type will change in next release")]
 		public static FilePermissions GetPermissions (string path)
 		{
 			return new UnixFileInfo (path).Permissions;
@@ -125,9 +148,18 @@ namespace Mono.Unix {
 			return sb.ToString (0, r);
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete("Use SetPermissions(string, Mono.Unix.Native.FilePermissions)")]
 		public static void SetPermissions (string path, FilePermissions perms)
 		{
 			int r = Syscall.chmod (path, perms);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		[CLSCompliant (false)]
+		public static void SetPermissions (string path, Native.FilePermissions perms)
+		{
+			int r = Native.Syscall.chmod (path, perms);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
@@ -139,9 +171,20 @@ namespace Mono.Unix {
 			return Create (path, mode);
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("Use Create(string, Mono.Unix.Native.FilePermissions)")]
 		public static UnixStream Create (string path, FilePermissions mode)
 		{
 			int fd = Syscall.creat (path, mode);
+			if (fd < 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
+		}
+
+		[CLSCompliant (false)]
+		public static UnixStream Create (string path, Native.FilePermissions mode)
+		{
+			int fd = Native.Syscall.creat (path, mode);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -155,6 +198,8 @@ namespace Mono.Unix {
 			return new UnixPipes (new UnixStream (reading), new UnixStream (writing));
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("Use Open(string, Mono.Unix.Native.OpenFlags)")]
 		public static UnixStream Open (string path, OpenFlags flags)
 		{
 			int fd = Syscall.open (path, flags);
@@ -163,9 +208,29 @@ namespace Mono.Unix {
 			return new UnixStream (fd);
 		}
 
+		[CLSCompliant (false)]
+		public static UnixStream Open (string path, Native.OpenFlags flags)
+		{
+			int fd = Native.Syscall.open (path, flags);
+			if (fd < 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
+		}
+
+		[CLSCompliant (false)]
+		[Obsolete ("Use Open(string, Mono.Unix.Native.OpenFlags, Mono.Unix.Native.FilePermissions)")]
 		public static UnixStream Open (string path, OpenFlags flags, FilePermissions mode)
 		{
 			int fd = Syscall.open (path, flags, mode);
+			if (fd < 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
+		}
+
+		[CLSCompliant (false)]
+		public static UnixStream Open (string path, Native.OpenFlags flags, Native.FilePermissions mode)
+		{
+			int fd = Native.Syscall.open (path, flags, mode);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -189,10 +254,22 @@ namespace Mono.Unix {
 			return new UnixStream (fd);
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("Use Open(string, FileMode, FileAccess, Mono.Unix.Native.FilePermissions)")]
 		public static UnixStream Open (string path, FileMode mode, FileAccess access, FilePermissions perms)
 		{
 			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
 			int fd = Syscall.open (path, flags, perms);
+			if (fd < 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
+		}
+
+		[CLSCompliant (false)]
+		public static UnixStream Open (string path, FileMode mode, FileAccess access, Native.FilePermissions perms)
+		{
+			Native.OpenFlags flags = Native.NativeConvert.ToOpenFlags (mode, access);
+			int fd = Native.Syscall.open (path, flags, perms);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -208,6 +285,7 @@ namespace Mono.Unix {
 			return Open (path, FileMode.OpenOrCreate, FileAccess.Write);
 		}
 
+		[CLSCompliant (false)]
 		public static void SetOwner (string path, uint owner, uint group)
 		{
 			int r = Syscall.chown (path, owner, group);
@@ -232,6 +310,7 @@ namespace Mono.Unix {
 			SetOwner (path, uid, gid);
 		}
 
+		[CLSCompliant (false)]
 		public static void SetLinkOwner (string path, uint owner, uint group)
 		{
 			int r = Syscall.lchown (path, owner, group);

@@ -123,6 +123,7 @@ namespace Mono.Unix {
 			catch (Exception e) {
 				throw new ArgumentException (Locale.GetText ("Invalid file stream"), "fileStream");
 			}
+			GC.KeepAlive (this);
 		}
 
 		private void InitCanReadWrite (FileAccess access)
@@ -184,7 +185,11 @@ namespace Mono.Unix {
 		}
 
 		public IntPtr Handle {
-			get {AssertNotDisposed (); return file;}
+			get {
+				AssertNotDisposed (); 
+				GC.KeepAlive (this);
+				return file;
+			}
 		}
 
 		public override bool CanRead {
@@ -217,6 +222,7 @@ namespace Mono.Unix {
 				r = Stdlib.fseek (file, curPos, SeekFlags.SEEK_SET);
 				UnixMarshal.ThrowExceptionForLastErrorIf (r);
 
+				GC.KeepAlive (this);
 				return endPos;
 			}
 		}
@@ -229,6 +235,7 @@ namespace Mono.Unix {
 				long pos = Stdlib.ftell (file);
 				if (pos == -1)
 					UnixMarshal.ThrowExceptionForLastError ();
+				GC.KeepAlive (this);
 				return (long) pos;
 			}
 			set {
@@ -242,6 +249,7 @@ namespace Mono.Unix {
 			AssertNotDisposed ();
 			int r = Stdlib.fgetpos (file, pos);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			GC.KeepAlive (this);
 		}
 
 		public void RestoreFilePosition (FilePosition pos)
@@ -251,6 +259,7 @@ namespace Mono.Unix {
 				throw new ArgumentNullException ("value");
 			int r = Stdlib.fsetpos (file, pos);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			GC.KeepAlive (this);
 		}
 
 		public override void Flush ()
@@ -259,6 +268,7 @@ namespace Mono.Unix {
 			int r = Stdlib.fflush (file);
 			if (r != 0)
 				UnixMarshal.ThrowExceptionForLastError ();
+			GC.KeepAlive (this);
 		}
 
 		public override unsafe int Read ([In, Out] byte[] buffer, int offset, int count)
@@ -276,6 +286,7 @@ namespace Mono.Unix {
 				if (Stdlib.ferror (file) != 0)
 					throw new IOException ();
 			}
+			GC.KeepAlive (this);
 			return (int) r;
 		}
 
@@ -297,6 +308,7 @@ namespace Mono.Unix {
 		{
 			AssertNotDisposed ();
 			Stdlib.rewind (file);
+			GC.KeepAlive (this);
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)
@@ -323,6 +335,7 @@ namespace Mono.Unix {
 				throw new IOException ("Unable to get current file position",
 						UnixMarshal.CreateExceptionForLastError ());
 
+			GC.KeepAlive (this);
 			return pos;
 		}
 
@@ -344,6 +357,7 @@ namespace Mono.Unix {
 			}
 			if (r != (ulong) count)
 				UnixMarshal.ThrowExceptionForLastError ();
+			GC.KeepAlive (this);
 		}
 		
 		~StdioFileStream ()
@@ -369,6 +383,7 @@ namespace Mono.Unix {
 			canWrite = false;
 
 			GC.SuppressFinalize (this);
+			GC.KeepAlive (this);
 		}
 		
 		private bool canSeek  = false;

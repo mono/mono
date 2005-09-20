@@ -112,6 +112,8 @@ namespace Mono.Unix {
 			}
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release.")]
 		public FilePermissions Permissions {
 			get {
 				Stat stat;
@@ -318,11 +320,13 @@ namespace Mono.Unix {
 			SendTo (output, (ulong) output.Length);
 		}
 
+		[CLSCompliant (false)]
 		public void SendTo (UnixStream output, ulong count)
 		{
 			SendTo (output.Handle, count);
 		}
 
+		[CLSCompliant (false)]
 		public void SendTo (int out_fd, ulong count)
 		{
 			if (!CanWrite)
@@ -333,6 +337,7 @@ namespace Mono.Unix {
 				UnixMarshal.ThrowExceptionForLastError ();
 		}
 		
+		[CLSCompliant (false)]
 		public void SetOwner (uint user, uint group)
 		{
 			AssertNotDisposed ();
@@ -362,6 +367,7 @@ namespace Mono.Unix {
 			SetOwner (uid, gid);
 		}
 
+		[CLSCompliant (false)]
 		public long GetConfigurationValue (PathConf name)
 		{
 			AssertNotDisposed ();

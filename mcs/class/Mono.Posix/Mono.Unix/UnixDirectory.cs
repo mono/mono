@@ -39,6 +39,7 @@ namespace Mono.Unix {
 	{
 		private UnixDirectory () {}
 
+		[CLSCompliant (false)]
 		public static UnixDirectoryInfo CreateDirectory (string path, FilePermissions mode)
 		{
 			int r = Syscall.mkdir (path, mode);

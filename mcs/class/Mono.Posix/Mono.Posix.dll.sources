@@ -30,6 +30,12 @@
 ./Mono.Unix/UnixSymbolicLinkInfo.cs
 ./Mono.Unix/UnixUser.cs
 ./Mono.Unix/UnixUserInfo.cs
+./Mono.Unix.Native/CdeclFunction.cs
+./Mono.Unix.Native/HeaderAttribute.cs
+./Mono.Unix.Native/NativeConvert.cs
+./Mono.Unix.Native/NativeConvert.generated.cs
+./Mono.Unix.Native/Stdlib.cs
+./Mono.Unix.Native/Syscall.cs
 ./Mono.Posix/Catalog.cs
 ./Mono.Posix/PeerCred.cs
 ./Mono.Posix/Syscall.cs

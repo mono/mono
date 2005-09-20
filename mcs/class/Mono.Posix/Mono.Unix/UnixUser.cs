@@ -37,11 +37,13 @@ namespace Mono.Unix {
 	{
 		private UnixUser () {}
 
+		[CLSCompliant (false)]
 		public static uint GetUserId (string user)
 		{
 			return new UnixUserInfo (user).UserId;
 		}
 
+		[CLSCompliant (false)]
 		public static uint GetCurrentUserId ()
 		{
 			return Syscall.getuid ();
@@ -71,11 +73,13 @@ namespace Mono.Unix {
 			return buf.ToString ();
 		}
 
+		[CLSCompliant (false)]
 		public static uint GetGroupId (string user)
 		{
 			return new UnixUserInfo (user).GroupId;
 		}
 
+		[CLSCompliant (false)]
 		public static uint GetGroupId (uint user)
 		{
 			return new UnixUserInfo (user).GroupId;
@@ -86,6 +90,7 @@ namespace Mono.Unix {
 			return new UnixUserInfo (user).RealName;
 		}
 
+		[CLSCompliant (false)]
 		public static string GetRealName (uint user)
 		{
 			return new UnixUserInfo (user).RealName;
@@ -96,17 +101,20 @@ namespace Mono.Unix {
 			return new UnixUserInfo (user).HomeDirectory;
 		}
 
+		[CLSCompliant (false)]
 		public static string GetHomeDirectory (uint user)
 		{
 			return new UnixUserInfo (user).HomeDirectory;
 		}
 
+		[CLSCompliant (false)]
 		[Obsolete ("Use GetUserName")]
 		public static string GetName (uint user)
 		{
 			return new UnixUserInfo (user).UserName;
 		}
 
+		[CLSCompliant (false)]
 		public static string GetUserName (uint user)
 		{
 			return new UnixUserInfo (user).UserName;
@@ -117,6 +125,7 @@ namespace Mono.Unix {
 			return new UnixUserInfo (user).Password;
 		}
 
+		[CLSCompliant (false)]
 		public static string GetPassword (uint user)
 		{
 			return new UnixUserInfo (user).Password;
@@ -127,6 +136,7 @@ namespace Mono.Unix {
 			return new UnixUserInfo (user).ShellProgram;
 		}
 
+		[CLSCompliant (false)]
 		public static string GetShellProgram (uint user)
 		{
 			return new UnixUserInfo (user).ShellProgram;

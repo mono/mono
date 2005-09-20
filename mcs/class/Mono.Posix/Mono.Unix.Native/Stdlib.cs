@@ -6,20 +6,6 @@
 //
 // (C) 2004-2005 Jonathan Pryor
 //
-
-// Deprecated Warning:
-//
-//    This class is deprecated, and exists only for backward compatibility
-//    with development versions of Mono 1.1.x.  It will be removed with 
-//    Mono 1.2.  Migrate to the Mono.Unix.Native types, or use the Unix*
-//    wrapper classes instead.
-//
-//    The [Map] attributes have been removed.  However, since the type names
-//    are identical to those in Mono.Unix.Native, the MonoPosixHelper methods
-//    will continue to exist and function correctly.
-//
-
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -45,15 +31,15 @@ using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using Mono.Unix;
+using Mono.Unix.Native;
 
-namespace Mono.Unix {
+namespace Mono.Unix.Native {
 
 	#region Enumerations
 
-	[Obsolete ("Use Mono.Unix.Native.Errno")]
 	[Map]
-	public enum Error : int {
+	[CLSCompliant (false)]
+	public enum Errno : int {
 		// errors & their values liberally copied from
 		// FC2 /usr/include/asm/errno.h
 		
@@ -190,7 +176,6 @@ namespace Mono.Unix {
 
 	#region Classes
 
-	[Obsolete ("Use Mono.Unix.Native.FilePosition")]
 	public sealed class FilePosition : IDisposable {
 
 		private static readonly int FilePositionDumpSize = 
@@ -278,7 +263,6 @@ namespace Mono.Unix {
 #if NET_2_0 && UNMANAGED_FN_PTR_SUPPORT_FIXED
 	[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 #endif
-	[Obsolete ("Use Mono.Unix.Native.SignalHandler")]
 	public delegate void SignalHandler (int signal);
 
 #if !NET_2_0
@@ -336,8 +320,6 @@ namespace Mono.Unix {
 	// anything from Syscall is non-portable, but restricting yourself to just
 	// Stdlib is intended to be portable.
 	//
-	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Stdlib")]
 	public class Stdlib
 	{
 		internal const string LIBC = "msvcrt";
@@ -350,19 +332,21 @@ namespace Mono.Unix {
 		// <errno.h>  -- COMPLETE
 		//
 
-		public static Error GetLastError ()
+		[CLSCompliant (false)]
+		public static Errno GetLastError ()
 		{
 			int errno = Marshal.GetLastWin32Error ();
-			return UnixConvert.ToError (errno);
+			return NativeConvert.ToErrno (errno);
 		}
 
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
 				EntryPoint="Mono_Posix_Stdlib_SetLastError")]
 		private static extern void SetLastError (int error);
 
-		public static void SetLastError (Error error)
+		[CLSCompliant (false)]
+		public static void SetLastError (Errno error)
 		{
-			int _error = UnixConvert.FromError (error);
+			int _error = NativeConvert.FromErrno (error);
 			SetLastError (_error);
 		}
 		#endregion
@@ -408,8 +392,11 @@ namespace Mono.Unix {
 					signum + ".  Don't do that.");
 		}
 
+		[CLSCompliant (false)]
 		public static readonly SignalHandler SIG_DFL = new SignalHandler (_DefaultHandler);
+		[CLSCompliant (false)]
 		public static readonly SignalHandler SIG_ERR = new SignalHandler (_ErrorHandler);
+		[CLSCompliant (false)]
 		public static readonly SignalHandler SIG_IGN = new SignalHandler (_IgnoreHandler);
 
 		private static readonly SignalHandler[] registered_signals;
@@ -428,9 +415,10 @@ namespace Mono.Unix {
 				SetLastError=true, EntryPoint="signal")]
 		private static extern IntPtr sys_signal (int signum, IntPtr handler);
 
+		[CLSCompliant (false)]
 		public static SignalHandler signal (Signum signum, SignalHandler handler)
 		{
-			int _sig = UnixConvert.FromSignum (signum);
+			int _sig = NativeConvert.FromSignum (signum);
 
 			lock (registered_signals) {
 				registered_signals [(int) signum] = handler;
@@ -466,9 +454,10 @@ namespace Mono.Unix {
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, EntryPoint="raise")]
 		private static extern int sys_raise (int sig);
 
+		[CLSCompliant (false)]
 		public static int raise (Signum sig)
 		{
-			int _sig = UnixConvert.FromSignum (sig);
+			int _sig = NativeConvert.FromSignum (sig);
 			return sys_raise (_sig);
 		}
 
@@ -534,17 +523,26 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Stdlib_TMP_MAX")]
 		private static extern int GetTmpMax ();
 
+		[CLSCompliant (false)]
 		public static readonly int    _IOFBF       = GetFullyBuffered ();
+		[CLSCompliant (false)]
 		public static readonly int    _IOLBF       = GetLineBuffered ();
+		[CLSCompliant (false)]
 		public static readonly int    _IONBF       = GetNonBuffered ();
+		[CLSCompliant (false)]
 		public static readonly int    BUFSIZ       = GetBufferSize ();
+		[CLSCompliant (false)]
 		public static readonly int    EOF          = GetEOF ();
+		[CLSCompliant (false)]
 		public static readonly int    FOPEN_MAX    = GetFopenMax ();
+		[CLSCompliant (false)]
 		public static readonly int    FILENAME_MAX = GetFilenameMax ();
+		[CLSCompliant (false)]
 		public static readonly int    L_tmpnam     = GetTmpnamLength ();
 		public static readonly IntPtr stderr       = GetStandardError ();
 		public static readonly IntPtr stdin        = GetStandardInput ();
 		public static readonly IntPtr stdout       = GetStandardOutput ();
+		[CLSCompliant (false)]
 		public static readonly int    TMP_MAX      = GetTmpMax ();
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
@@ -597,15 +595,18 @@ namespace Mono.Unix {
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		public static extern void setbuf (IntPtr stream, IntPtr buf);
 
+		[CLSCompliant (false)]
 		public static unsafe void setbuf (IntPtr stream, byte* buf)
 		{
 			setbuf (stream, (IntPtr) buf);
 		}
 
+		[CLSCompliant (false)]
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_setvbuf")]
 		public static extern int setvbuf (IntPtr stream, IntPtr buf, int mode, ulong size);
 
+		[CLSCompliant (false)]
 		public static unsafe int setvbuf (IntPtr stream, byte* buf, int mode, ulong size)
 		{
 			return setvbuf (stream, (IntPtr) buf, mode, size);
@@ -659,6 +660,7 @@ namespace Mono.Unix {
 		private static extern int sys_snprintf (StringBuilder s, ulong n, 
 				string format, string message);
 
+		[CLSCompliant (false)]
 		public static int snprintf (StringBuilder s, ulong n, string message)
 		{
 			if (n > (ulong) s.Capacity)
@@ -671,6 +673,7 @@ namespace Mono.Unix {
 			return sys_snprintf (s, (ulong) s.Capacity, "%s", message);
 		}
 
+		[CLSCompliant (false)]
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
 				"Use snprintf (StringBuilder, string) instead.")]
 		public static int snprintf (StringBuilder s, ulong n, 
@@ -687,6 +690,7 @@ namespace Mono.Unix {
 			return (int) XPrintfFunctions.snprintf (_parameters);
 		}
 
+		[CLSCompliant (false)]
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
 				"Use snprintf (StringBuilder, string) instead.")]
 		public static int snprintf (StringBuilder s,
@@ -759,10 +763,12 @@ namespace Mono.Unix {
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		public static extern int ungetc (int c, IntPtr stream);
 
+		[CLSCompliant (false)]
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fread")]
 		public static extern ulong fread (IntPtr ptr, ulong size, ulong nmemb, IntPtr stream);
 
+		[CLSCompliant (false)]
 		public static unsafe ulong fread (void* ptr, ulong size, ulong nmemb, IntPtr stream)
 		{
 			return fread ((IntPtr) ptr, size, nmemb, stream);
@@ -773,6 +779,7 @@ namespace Mono.Unix {
 		private static extern ulong sys_fread ([Out] byte[] ptr, 
 				ulong size, ulong nmemb, IntPtr stream);
 
+		[CLSCompliant (false)]
 		public static ulong fread (byte[] ptr, ulong size, ulong nmemb, IntPtr stream)
 		{
 			if ((size * nmemb) > (ulong) ptr.Length)
@@ -780,15 +787,18 @@ namespace Mono.Unix {
 			return sys_fread (ptr, size, nmemb, stream);
 		}
 
+		[CLSCompliant (false)]
 		public static ulong fread (byte[] ptr, IntPtr stream)
 		{
 			return fread (ptr, 1, (ulong) ptr.Length, stream);
 		}
 
+		[CLSCompliant (false)]
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fwrite")]
 		public static extern ulong fwrite (IntPtr ptr, ulong size, ulong nmemb, IntPtr stream);
 
+		[CLSCompliant (false)]
 		public static unsafe ulong fwrite (void* ptr, ulong size, ulong nmemb, IntPtr stream)
 		{
 			return fwrite ((IntPtr) ptr, size, nmemb, stream);
@@ -799,6 +809,7 @@ namespace Mono.Unix {
 		private static extern ulong sys_fwrite (byte[] ptr, 
 				ulong size, ulong nmemb, IntPtr stream);
 
+		[CLSCompliant (false)]
 		public static ulong fwrite (byte[] ptr, ulong size, ulong nmemb, IntPtr stream)
 		{
 			if ((size * nmemb) > (ulong) ptr.Length)
@@ -806,6 +817,7 @@ namespace Mono.Unix {
 			return sys_fwrite (ptr, size, nmemb, stream);
 		}
 
+		[CLSCompliant (false)]
 		public static ulong fwrite (byte[] ptr, IntPtr stream)
 		{
 			return fwrite (ptr, 1, (ulong) ptr.Length, stream);
@@ -824,9 +836,10 @@ namespace Mono.Unix {
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_fseek")]
 		private static extern int sys_fseek (IntPtr stream, long offset, int origin);
 
+		[CLSCompliant (false)]
 		public static int fseek (IntPtr stream, long offset, SeekFlags origin)
 		{
-			int _origin = UnixConvert.FromSeekFlags (origin);
+			int _origin = NativeConvert.FromSeekFlags (origin);
 			return sys_fseek (stream, offset, _origin);
 		}
 
@@ -877,19 +890,25 @@ namespace Mono.Unix {
 				EntryPoint="Mono_Posix_Stdlib_RAND_MAX")]
 		private static extern int GetRandMax ();
 
+		[CLSCompliant (false)]
 		public static readonly int  EXIT_FAILURE = GetExitFailure ();
+		[CLSCompliant (false)]
 		public static readonly int  EXIT_SUCCESS = GetExitSuccess ();
+		[CLSCompliant (false)]
 		public static readonly int  MB_CUR_MAX   = GetMbCurMax ();
+		[CLSCompliant (false)]
 		public static readonly int  RAND_MAX     = GetRandMax ();
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl)]
 		public static extern int rand ();
 
+		[CLSCompliant (false)]
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl)]
 		public static extern void srand (uint seed);
 
 		// calloc(3):
 		//    void *calloc (size_t nmemb, size_t size);
+		[CLSCompliant (false)]
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_calloc")]
 		public static extern IntPtr calloc (ulong nmemb, ulong size);
@@ -899,12 +918,14 @@ namespace Mono.Unix {
 
 		// malloc(3):
 		//    void *malloc(size_t size);
+		[CLSCompliant (false)]
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_malloc")]
 		public static extern IntPtr malloc (ulong size);
 
 		// realloc(3):
 		//    void *realloc(void *ptr, size_t size);
+		[CLSCompliant (false)]
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl,
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_realloc")]
 		public static extern IntPtr realloc (IntPtr ptr, ulong size);
@@ -918,6 +939,7 @@ namespace Mono.Unix {
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl)]
 		public static extern void exit (int status);
 
+		[CLSCompliant (false)]
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl)]
 		public static extern void _Exit (int status);
 
@@ -930,6 +952,7 @@ namespace Mono.Unix {
 			return UnixMarshal.PtrToString (r);
 		}
 
+		[CLSCompliant (false)]
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		public static extern int system (string @string);
 
@@ -943,9 +966,10 @@ namespace Mono.Unix {
 				SetLastError=true, EntryPoint="strerror")]
 		private static extern IntPtr sys_strerror (int errnum);
 
-		public static string strerror (Error errnum)
+		[CLSCompliant (false)]
+		public static string strerror (Errno errnum)
 		{
-			int e = UnixConvert.FromError (errnum);
+			int e = NativeConvert.FromErrno (errnum);
 			lock (strerror_lock) {
 				IntPtr r = sys_strerror (e);
 				return UnixMarshal.PtrToString (r);

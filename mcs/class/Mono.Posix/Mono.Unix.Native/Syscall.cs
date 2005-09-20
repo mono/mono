@@ -26,21 +26,10 @@
 //    Bitfields are flagged with the [Map] attribute, and a helper program
 //    generates a set of routines that we can call to convert from our value 
 //    definitions to the value definitions expected by the OS; see
-//    UnixConvert for the conversion routines.
+//    NativeConvert for the conversion routines.
 //
 //    Methods that require tuning are bound as `private sys_NAME' methods
 //    and then a `NAME' method is exposed.
-//
-// Deprecated Warning:
-//
-//    This class is deprecated, and exists only for backward compatibility
-//    with development versions of Mono 1.1.x.  It will be removed with 
-//    Mono 1.2.  Migrate to the Mono.Unix.Native types, or use the Unix*
-//    wrapper classes instead.
-//
-//    The [Map] attributes have been removed.  However, since the type names
-//    are identical to those in Mono.Unix.Native, the MonoPosixHelper methods
-//    will continue to exist and function correctly.
 //
 
 //
@@ -68,15 +57,34 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Text;
-using Mono.Unix;
+using Mono.Unix.Native;
 
-namespace Mono.Unix {
+[assembly:Mono.Unix.Native.HeaderAttribute (
+	Includes=
+		"sys/types.h," + 
+		"sys/stat.h," + 
+		"ah:sys/poll.h," + 
+		"ah:sys/wait.h," +
+		"ah:sys/statvfs.h," +
+		"ah:sys/xattr.h," +
+		"unistd.h," + 
+		"fcntl.h," + 
+		"signal.h," + 
+		"ah:poll.h," + 
+		"ah:grp.h," + 
+		"errno.h," + 
+		"ah:syslog.h",
+	Defines=
+		"_GNU_SOURCE," +
+		"_XOPEN_SOURCE"
+)]
+
+namespace Mono.Unix.Native {
 
 	#region Enumerations
 
-	[Flags]
+	[Flags][Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SyslogOptions")]
 	public enum SyslogOptions {
 		LOG_PID    = 0x01,  // log the pid with each message
 		LOG_CONS   = 0x02,  // log on the console if errors in sending
@@ -86,8 +94,8 @@ namespace Mono.Unix {
 		LOG_PERROR = 0x20   // log to stderr as well
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SyslogFacility")]
 	public enum SyslogFacility {
 		LOG_KERN      = 0 << 3,
 		LOG_USER      = 1 << 3,
@@ -113,8 +121,8 @@ namespace Mono.Unix {
 		LOG_LOCAL7    = 23 << 3,
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SyslogLevel")]
 	public enum SyslogLevel {
 		LOG_EMERG   = 0,  // system is unusable
 		LOG_ALERT   = 1,  // action must be taken immediately
@@ -126,9 +134,8 @@ namespace Mono.Unix {
 		LOG_DEBUG   = 7   // debug-level messages
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.OpenFlags")]
 	public enum OpenFlags : int {
 		//
 		// One of these
@@ -154,7 +161,7 @@ namespace Mono.Unix {
 		//
 		// (For example, "C-wrapped" system calls -- calls with implementation in
 		// MonoPosixHelper -- will return -1 with errno=EINVAL.  C#-wrapped system
-		// calls will generate an exception in UnixConvert, as the value can't be
+		// calls will generate an exception in NativeConvert, as the value can't be
 		// converted on the target platform.)
 		//
 		
@@ -166,9 +173,8 @@ namespace Mono.Unix {
 	}
 	
 	// mode_t
-	[Flags]
+	[Flags][Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.FilePermissions")]
 	public enum FilePermissions : uint {
 		S_ISUID     = 0x0800, // Set user ID on execution
 		S_ISGID     = 0x0400, // Set gorup ID on execution
@@ -202,8 +208,8 @@ namespace Mono.Unix {
 		S_IFSOCK    = 0xC000, // Socket
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.FcntlCommand")]
 	public enum FcntlCommand : int {
 		// Form /usr/include/bits/fcntl.h
 		F_DUPFD    =    0, // Duplicate file descriptor.
@@ -223,16 +229,16 @@ namespace Mono.Unix {
 		F_NOTIFY   = 1026, // Required notifications on a directory
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.LockType")]
 	public enum LockType : short {
 		F_RDLCK = 0, // Read lock.
 		F_WRLCK = 1, // Write lock.
 		F_UNLCK = 2, // Remove lock.
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SeekFlags")]
 	public enum SeekFlags : short {
 		// values liberally copied from /usr/include/unistd.h
 		SEEK_SET = 0, // Seek from beginning of file.
@@ -244,9 +250,8 @@ namespace Mono.Unix {
 		L_XTND   = SEEK_END, // BSD alias for SEEK_END
 	}
 	
-	[Flags]
+	[Map, Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.DirectoryNotifyFlags")]
 	public enum DirectoryNotifyFlags : int {
 		// from /usr/include/bits/fcntl.h
 		DN_ACCESS    = 0x00000001, // File accessed.
@@ -258,8 +263,8 @@ namespace Mono.Unix {
 		DN_MULTISHOT = unchecked ((int)0x80000000), // Don't remove notifier
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.PosixFadviseAdvice")]
 	public enum PosixFadviseAdvice : int {
 		POSIX_FADV_NORMAL     = 0,  // No further special treatment.
 		POSIX_FADV_RANDOM     = 1,  // Expect random page references.
@@ -269,8 +274,8 @@ namespace Mono.Unix {
 		POSIX_FADV_NOREUSE    = 5,  // Data will be accessed once.
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.PosixMadviseAdvice")]
 	public enum PosixMadviseAdvice : int {
 		POSIX_MADV_NORMAL     = 0,  // No further special treatment.
 		POSIX_MADV_RANDOM     = 1,  // Expect random page references.
@@ -279,8 +284,8 @@ namespace Mono.Unix {
 		POSIX_MADV_DONTNEED   = 4,  // Don't need these pages.
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Signum")]
 	public enum Signum : int {
 		SIGHUP    =  1, // Hangup (POSIX).
 		SIGINT    =  2, // Interrupt (ANSI).
@@ -319,26 +324,24 @@ namespace Mono.Unix {
 		SIGUNUSED = 31
 	}
 
-	[Flags]
+	[Flags][Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.WaitOptions")]
 	public enum WaitOptions : int {
 		WNOHANG   = 1,  // Don't block waiting
 		WUNTRACED = 2,  // Report status of stopped children
 	}
 
-	[Flags]
+  [Flags][Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.AccessModes")]
-	public enum AccessMode : int {
+	public enum AccessModes : int {
 		R_OK = 1,
 		W_OK = 2,
 		X_OK = 4,
 		F_OK = 8,
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.PathConf")]
 	public enum PathConf : int {
 		_PC_LINK_MAX,
 		_PC_MAX_CANON,
@@ -363,8 +366,8 @@ namespace Mono.Unix {
 		_PC_2_SYMLINKS
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SysConf")]
 	public enum SysConf : int {
 		_SC_ARG_MAX,
 		_SC_CHILD_MAX,
@@ -572,8 +575,8 @@ namespace Mono.Unix {
 		_SC_LEVEL4_CACHE_LINESIZE
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.ConfStr")]
 	public enum ConfStr : int {
 		_CS_PATH,			/* The default search path.  */
 		_CS_V6_WIDTH_RESTRICTED_ENVS,
@@ -621,8 +624,8 @@ namespace Mono.Unix {
 		_CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.LockfCommand")]
 	public enum LockfCommand : int {
 		F_ULOCK = 0, // Unlock a previously locked region.
 		F_LOCK  = 1, // Lock a region for exclusive use.
@@ -630,9 +633,8 @@ namespace Mono.Unix {
 		F_TEST  = 3, // Test a region for other process locks.
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.PollEvents")]
 	public enum PollEvents : short {
 		POLLIN      = 0x0001, // There is data to read
 		POLLPRI     = 0x0002, // There is urgent data to read
@@ -647,18 +649,16 @@ namespace Mono.Unix {
 		POLLWRBAND  = 0x0200, // Priority data may be written
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.XattrFlags")]
 	public enum XattrFlags : int {
 		XATTR_AUTO = 0,
 		XATTR_CREATE = 1,
 		XATTR_REPLACE = 2,
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MountFlags")]
 	public enum MountFlags : ulong {
 		ST_RDONLY      =    1,  // Mount read-only
 		ST_NOSUID      =    2,  // Ignore suid and sgid bits
@@ -672,9 +672,8 @@ namespace Mono.Unix {
 		ST_NODIRATIME  = 2048,  // Do not update directory access times
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MmapFlags")]
 	public enum MmapFlags : int {
 		MAP_SHARED      = 0x01,     // Share changes.
 		MAP_PRIVATE     = 0x02,     // Changes are private.
@@ -694,10 +693,9 @@ namespace Mono.Unix {
 		MAP_NONBLOCK    = 0x10000,  // Do not block on IO.
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MmapProts")]
-	public enum MmapProt : int {
+	public enum MmapProts : int {
 		PROT_READ       = 0x1,  // Page can be read.
 		PROT_WRITE      = 0x2,  // Page can be written.
 		PROT_EXEC       = 0x4,  // Page can be executed.
@@ -708,26 +706,23 @@ namespace Mono.Unix {
 		                              //   growsup vma (mprotect only).
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MsyncFlags")]
 	public enum MsyncFlags : int {
 		MS_ASYNC      = 0x1,  // Sync memory asynchronously.
 		MS_SYNC       = 0x4,  // Synchronous memory sync.
 		MS_INVALIDATE = 0x2,  // Invalidate the caches.
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MlockallFlags")]
 	public enum MlockallFlags : int {
 		MCL_CURRENT	= 0x1,	// Lock all currently mapped pages.
 		MCL_FUTURE  = 0x2,	// Lock all additions to address
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.MremapFlags")]
 	public enum MremapFlags : ulong {
 		MREMAP_MAYMOVE = 0x1,
 	}
@@ -736,26 +731,25 @@ namespace Mono.Unix {
 
 	#region Structures
 
-	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Flock")]
 	public struct Flock {
+		[CLSCompliant (false)]
 		public LockType         l_type;    // Type of lock: F_RDLCK, F_WRLCK, F_UNLCK
+		[CLSCompliant (false)]
 		public SeekFlags        l_whence;  // How to interpret l_start
 		public /* off_t */ long l_start;   // Starting offset for lock
 		public /* off_t */ long l_len;     // Number of bytes to lock
 		public /* pid_t */ int  l_pid;     // PID of process blocking our lock (F_GETLK only)
 	}
 
-	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Pollfd")]
 	[StructLayout(LayoutKind.Sequential)]
 	public struct Pollfd {
 		public int fd;
+		[CLSCompliant (false)]
 		public PollEvents events;
+		[CLSCompliant (false)]
 		public PollEvents revents;
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Stat")]
 	public struct Stat {
 		[CLSCompliant (false)]
 		public  /* dev_t */     ulong   st_dev;     // device
@@ -763,6 +757,7 @@ namespace Mono.Unix {
 		public  /* ino_t */     ulong   st_ino;     // inode
 		[CLSCompliant (false)]
 		public  FilePermissions         st_mode;    // protection
+		[CLSCompliant (false)]
 		private uint                    _padding_;  // padding for structure alignment
 		[CLSCompliant (false)]
 		public  /* nlink_t */   ulong   st_nlink;   // number of hard links
@@ -781,7 +776,6 @@ namespace Mono.Unix {
 	}
 
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Statvfs")]
 	public struct Statvfs {
 		public                  ulong f_bsize;	  // file system block size
 		public                  ulong f_frsize;   // fragment size
@@ -796,19 +790,16 @@ namespace Mono.Unix {
 		public                  ulong f_namemax;  // maximum filename length
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Timeval")]
 	public struct Timeval {
 		public  /* time_t */      long    tv_sec;   // seconds
 		public  /* suseconds_t */ long    tv_usec;  // microseconds
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Timezone")]
 	public struct Timezone {
 		public  int tz_minuteswest; // minutes W of Greenwich
 		private int tz_dsttime;     // type of dst correction (OBSOLETE)
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Utimbuf")]
 	public struct Utimbuf {
 		public  /* time_t */      long    actime;   // access time
 		public  /* time_t */      long    modtime;  // modification time
@@ -818,7 +809,7 @@ namespace Mono.Unix {
 
 	#region Classes
 
-	[Obsolete ("Use Mono.Unix.Native.Dirent")]
+	[CLSCompliant (false)]
 	public sealed class Dirent
 	{
 		[CLSCompliant (false)]
@@ -862,7 +853,6 @@ namespace Mono.Unix {
 		}
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Fstab")]
 	public sealed class Fstab
 	{
 		public string fs_spec;
@@ -907,7 +897,6 @@ namespace Mono.Unix {
 		}
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Group")]
 	public sealed class Group
 	{
 		public string           gr_name;
@@ -979,7 +968,6 @@ namespace Mono.Unix {
 		}
 	}
 
-	[Obsolete ("Use Mono.Unix.Native.Passwd")]
 	public sealed class Passwd
 	{
 		public string           pw_name;
@@ -1055,13 +1043,13 @@ namespace Mono.Unix {
 	//      function are related (e.g. getgroups(2))
 	//  (3) The return type SHOULD NOT be changed.  If you want to provide a
 	//      convenience function with a nicer return type, place it into one of
-	//      the Unix* wrapper classes, and give it a .NET-styled name.
+	//      the Mono.Unix.Unix* wrapper classes, and give it a .NET-styled name.
 	//  (4) Exceptions SHOULD NOT be thrown.  EXCEPTIONS: 
 	//      - If you're wrapping *broken* methods which make assumptions about 
 	//        input data, such as that an argument refers to N bytes of data.  
 	//        This is currently limited to cuserid(3) and encrypt(3).
 	//      - If you call functions which themselves generate exceptions.  
-	//        This is the case for using UnixConvert, which will throw an
+	//        This is the case for using NativeConvert, which will throw an
 	//        exception if an invalid/unsupported value is used.
 	//
 	// Naming Conventions:
@@ -1079,14 +1067,18 @@ namespace Mono.Unix {
 	//    FcntlCommand argument.  This naming convention is to provide an
 	//    assocation between an enumeration and where it should be used, and
 	//    allows a single method to accept multiple different enumerations 
-	//    (see mmap(2), which takes MmapProt and MmapFlags).
+	//    (see mmap(2), which takes MmapProts and MmapFlags).
 	//    - EXCEPTION: if an enumeration is shared between multiple different
 	//      methods, AND/OR the "obvious" enumeration name conflicts with an
 	//      existing .NET type, a more appropriate name should be used.
 	//      Example: FilePermissions
-	//  - Enumerations should have the [Map] and (optional) [Flgas] attributes.
+	//    - EXCEPTION: [Flags] enumerations should get plural names to follow
+	//      .NET name guidelines.  Usually this doesn't result in a change
+	//      (OpenFlags is the `flags' parameter for open(2)), but it can
+	//      (mmap(2) prot ==> MmapProts, access(2) mode ==> AccessModes).
+	//  - Enumerations should have the [Map] and (optional) [Flags] attributes.
 	//    [Map] is required for make-map to find the type and generate the
-	//    appropriate UnixConvert conversion functions.
+	//    appropriate NativeConvert conversion functions.
 	//  - Enumeration contents should match the original Unix names.  This helps
 	//    with documentation (the existing man pages are still useful), and is
 	//    required for use with the make-map generation program.
@@ -1124,7 +1116,6 @@ namespace Mono.Unix {
 	//      P/Invoke into libc.so.
 	//
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.Syscall")]
 	public sealed class Syscall : Stdlib
 	{
 		new internal const string LIBC  = "libc";
@@ -1483,10 +1474,10 @@ namespace Mono.Unix {
 		public static int fcntl (int fd, FcntlCommand cmd, DirectoryNotifyFlags arg)
 		{
 			if (cmd != FcntlCommand.F_NOTIFY) {
-				SetLastError (Error.EINVAL);
+				SetLastError (Errno.EINVAL);
 				return -1;
 			}
-			long _arg = UnixConvert.FromDirectoryNotifyFlags (arg);
+			long _arg = NativeConvert.FromDirectoryNotifyFlags (arg);
 			return fcntl (fd, FcntlCommand.F_NOTIFY, _arg);
 		}
 
@@ -1993,7 +1984,7 @@ namespace Mono.Unix {
 
 		public static void psignal (Signum sig, string s)
 		{
-			int signum = UnixConvert.FromSignum (sig);
+			int signum = NativeConvert.FromSignum (sig);
 			psignal (signum, s);
 		}
 
@@ -2004,7 +1995,7 @@ namespace Mono.Unix {
 
 		public static int kill (int pid, Signum sig)
 		{
-			int _sig = UnixConvert.FromSignum (sig);
+			int _sig = NativeConvert.FromSignum (sig);
 			return sys_kill (pid, _sig);
 		}
 
@@ -2015,7 +2006,7 @@ namespace Mono.Unix {
 
 		public static string strsignal (Signum sig)
 		{
-			int s = UnixConvert.FromSignum (sig);
+			int s = NativeConvert.FromSignum (sig);
 			lock (signal_lock) {
 				IntPtr r = sys_strsignal (s);
 				return UnixMarshal.PtrToString (r);
@@ -2090,13 +2081,13 @@ namespace Mono.Unix {
 		private static extern int sys_strerror_r (int errnum, 
 				[Out] StringBuilder buf, ulong n);
 
-		public static int strerror_r (Error errnum, StringBuilder buf, ulong n)
+		public static int strerror_r (Errno errnum, StringBuilder buf, ulong n)
 		{
-			int e = UnixConvert.FromError (errnum);
+			int e = NativeConvert.FromErrno (errnum);
 			return sys_strerror_r (e, buf, n);
 		}
 
-		public static int strerror_r (Error errnum, StringBuilder buf)
+		public static int strerror_r (Errno errnum, StringBuilder buf)
 		{
 			return strerror_r (errnum, buf, (ulong) buf.Capacity);
 		}
@@ -2120,7 +2111,7 @@ namespace Mono.Unix {
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_mmap")]
 		public static extern IntPtr mmap (IntPtr start, ulong length, 
-				MmapProt prot, MmapFlags flags, int fd, long offset);
+				MmapProts prot, MmapFlags flags, int fd, long offset);
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_munmap")]
@@ -2128,7 +2119,7 @@ namespace Mono.Unix {
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_mprotect")]
-		public static extern int mprotect (IntPtr start, ulong len, MmapProt prot);
+		public static extern int mprotect (IntPtr start, ulong len, MmapProts prot);
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_msync")]
@@ -2147,7 +2138,7 @@ namespace Mono.Unix {
 
 		public static int mlockall (MlockallFlags flags)
 		{
-			int _flags = UnixConvert.FromMlockallFlags (flags);
+			int _flags = NativeConvert.FromMlockallFlags (flags);
 			return sys_mlockall (_flags);
 		}
 
@@ -2166,7 +2157,7 @@ namespace Mono.Unix {
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_remap_file_pages")]
 		public static extern int remap_file_pages (IntPtr start, ulong size,
-				MmapProt prot, long pgoff, MmapFlags flags);
+				MmapProts prot, long pgoff, MmapFlags flags);
 
 		#endregion
 
@@ -2193,13 +2184,13 @@ namespace Mono.Unix {
 
 			for (int i = 0; i < send.Length; i++) {
 				send [i].fd     = fds [i].fd;
-				send [i].events = UnixConvert.FromPollEvents (fds [i].events);
+				send [i].events = NativeConvert.FromPollEvents (fds [i].events);
 			}
 
 			int r = sys_poll (send, nfds, timeout);
 
 			for (int i = 0; i < send.Length; i++) {
-				fds [i].revents = UnixConvert.ToPollEvents (send [i].revents);
+				fds [i].revents = NativeConvert.ToPollEvents (send [i].revents);
 			}
 
 			return r;
@@ -2265,7 +2256,7 @@ namespace Mono.Unix {
 
 		public static int chmod (string path, FilePermissions mode)
 		{
-			uint _mode = UnixConvert.FromFilePermissions (mode);
+			uint _mode = NativeConvert.FromFilePermissions (mode);
 			return sys_chmod (path, _mode);
 		}
 
@@ -2276,7 +2267,7 @@ namespace Mono.Unix {
 
 		public static int fchmod (int filedes, FilePermissions mode)
 		{
-			uint _mode = UnixConvert.FromFilePermissions (mode);
+			uint _mode = NativeConvert.FromFilePermissions (mode);
 			return sys_fchmod (filedes, _mode);
 		}
 
@@ -2287,9 +2278,9 @@ namespace Mono.Unix {
 
 		public static FilePermissions umask (FilePermissions mask)
 		{
-			uint _mask = UnixConvert.FromFilePermissions (mask);
+			uint _mask = NativeConvert.FromFilePermissions (mask);
 			uint r = sys_umask (_mask);
-			return UnixConvert.ToFilePermissions (r);
+			return NativeConvert.ToFilePermissions (r);
 		}
 
 		// mkdir(2)
@@ -2299,7 +2290,7 @@ namespace Mono.Unix {
 
 		public static int mkdir (string oldpath, FilePermissions mode)
 		{
-			uint _mode = UnixConvert.FromFilePermissions (mode);
+			uint _mode = NativeConvert.FromFilePermissions (mode);
 			return sys_mkdir (oldpath, _mode);
 		}
 
@@ -2316,7 +2307,7 @@ namespace Mono.Unix {
 
 		public static int mkfifo (string pathname, FilePermissions mode)
 		{
-			uint _mode = UnixConvert.FromFilePermissions (mode);
+			uint _mode = NativeConvert.FromFilePermissions (mode);
 			return sys_mkfifo (pathname, _mode);
 		}
 
@@ -2419,7 +2410,7 @@ namespace Mono.Unix {
 
 		public static int waitpid (int pid, out int status, WaitOptions options)
 		{
-			int _options = UnixConvert.FromWaitOptions (options);
+			int _options = NativeConvert.FromWaitOptions (options);
 			return waitpid (pid, out status, _options);
 		}
 
@@ -2448,7 +2439,7 @@ namespace Mono.Unix {
 		public static Signum WTERMSIG (int status)
 		{
 			int r = _WTERMSIG (status);
-			return UnixConvert.ToSignum (r);
+			return NativeConvert.ToSignum (r);
 		}
 
 		[DllImport (MPH, EntryPoint="Mono_Posix_Syscall_WIFSTOPPED")]
@@ -2465,7 +2456,7 @@ namespace Mono.Unix {
 		public static Signum WSTOPSIG (int status)
 		{
 			int r = _WSTOPSIG (status);
-			return UnixConvert.ToSignum (r);
+			return NativeConvert.ToSignum (r);
 		}
 
 		//
@@ -2485,8 +2476,8 @@ namespace Mono.Unix {
 		public static void openlog (IntPtr ident, SyslogOptions option, 
 				SyslogFacility defaultFacility)
 		{
-			int _option   = UnixConvert.FromSyslogOptions (option);
-			int _facility = UnixConvert.FromSyslogFacility (defaultFacility);
+			int _option   = NativeConvert.FromSyslogOptions (option);
+			int _facility = NativeConvert.FromSyslogFacility (defaultFacility);
 
 			sys_openlog (ident, _option, _facility);
 		}
@@ -2496,14 +2487,14 @@ namespace Mono.Unix {
 
 		public static void syslog (SyslogFacility facility, SyslogLevel level, string message)
 		{
-			int _facility = UnixConvert.FromSyslogFacility (facility);
-			int _level = UnixConvert.FromSyslogLevel (level);
+			int _facility = NativeConvert.FromSyslogFacility (facility);
+			int _level = NativeConvert.FromSyslogLevel (level);
 			sys_syslog (_facility | _level, GetSyslogMessage (message));
 		}
 
 		public static void syslog (SyslogLevel level, string message)
 		{
-			int _level = UnixConvert.FromSyslogLevel (level);
+			int _level = NativeConvert.FromSyslogLevel (level);
 			sys_syslog (_level, GetSyslogMessage (message));
 		}
 
@@ -2517,8 +2508,8 @@ namespace Mono.Unix {
 		public static void syslog (SyslogFacility facility, SyslogLevel level, 
 				string format, params object[] parameters)
 		{
-			int _facility = UnixConvert.FromSyslogFacility (facility);
-			int _level = UnixConvert.FromSyslogLevel (level);
+			int _facility = NativeConvert.FromSyslogFacility (facility);
+			int _level = NativeConvert.FromSyslogLevel (level);
 
 			object[] _parameters = new object[checked(parameters.Length+2)];
 			_parameters [0] = _facility | _level;
@@ -2532,7 +2523,7 @@ namespace Mono.Unix {
 		public static void syslog (SyslogLevel level, string format, 
 				params object[] parameters)
 		{
-			int _level = UnixConvert.FromSyslogLevel (level);
+			int _level = NativeConvert.FromSyslogLevel (level);
 
 			object[] _parameters = new object[checked(parameters.Length+2)];
 			_parameters [0] = _level;
@@ -2549,7 +2540,7 @@ namespace Mono.Unix {
 
 		public static int setlogmask (SyslogLevel mask)
 		{
-			int _mask = UnixConvert.FromSyslogLevel (mask);
+			int _mask = NativeConvert.FromSyslogLevel (mask);
 			return sys_setlogmask (_mask);
 		}
 
@@ -2591,9 +2582,9 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true, EntryPoint="access")]
 		private static extern int sys_access (string pathname, int mode);
 
-		public static int access (string pathname, AccessMode mode)
+		public static int access (string pathname, AccessModes mode)
 		{
-			int _mode = UnixConvert.FromAccessMode (mode);
+			int _mode = NativeConvert.FromAccessModes (mode);
 			return sys_access (pathname, _mode);
 		}
 
@@ -2605,7 +2596,7 @@ namespace Mono.Unix {
 
 		public static long lseek (int fd, long offset, SeekFlags whence)
 		{
-			short _whence = UnixConvert.FromSeekFlags (whence);
+			short _whence = NativeConvert.FromSeekFlags (whence);
 			return sys_lseek (fd, offset, _whence);
 		}
 
@@ -2744,6 +2735,7 @@ namespace Mono.Unix {
 		public static extern int nice (int inc);
 
 		[DllImport (LIBC, SetLastError=true)]
+		[CLSCompliant (false)]
 		public static extern int _exit (int status);
 
 		[DllImport (MPH, SetLastError=true,

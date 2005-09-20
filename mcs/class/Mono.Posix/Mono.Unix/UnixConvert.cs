@@ -11,6 +11,8 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
+	[CLSCompliant (false)]
+	[Obsolete ("Use Mono.Unix.Native.NativeConvert")]
 	public sealed /* static */ class UnixConvert
 	{
 		private UnixConvert () {}

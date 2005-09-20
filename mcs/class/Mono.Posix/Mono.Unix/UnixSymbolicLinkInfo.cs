@@ -86,6 +86,7 @@ namespace Mono.Unix {
 			base.Refresh ();
 		}
 
+		[CLSCompliant (false)]
 		public override void SetOwner (uint owner, uint group)
 		{
 			int r = Syscall.lchown (FullPath, owner, group);

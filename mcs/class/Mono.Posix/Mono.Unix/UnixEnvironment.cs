@@ -65,6 +65,7 @@ namespace Mono.Unix {
 			}
 		}
 
+		[CLSCompliant (false)]
 		public static long GetConfigurationValue (SysConf name)
 		{
 			long r = Syscall.sysconf (name);
@@ -73,6 +74,7 @@ namespace Mono.Unix {
 			return r;
 		}
 
+		[CLSCompliant (false)]
 		public static string GetConfigurationString (ConfStr name)
 		{
 			ulong len = Syscall.confstr (name, null, 0);
@@ -89,7 +91,14 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("Use UserId")]
 		public static uint User {
+			get {return UnixUser.GetCurrentUserId ();}
+		}
+
+		[CLSCompliant (false)]
+		public static uint UserId {
 			get {return UnixUser.GetCurrentUserId ();}
 		}
 
@@ -117,12 +126,14 @@ namespace Mono.Unix {
 			return Syscall.getpgrp ();
 		}
 
+		[CLSCompliant (false)]
 		[Obsolete ("Use GetSupplementaryGroupIds")]
 		public static uint[] GetSupplementaryGroups ()
 		{
 			return GetSupplementaryGroupIds ();
 		}
 
+		[CLSCompliant (false)]
 		public static uint[] GetSupplementaryGroupIds ()
 		{
 			int ngroups = Syscall.getgroups (0, new uint[]{});
@@ -134,12 +145,14 @@ namespace Mono.Unix {
 			return groups;
 		}
 
+		[CLSCompliant (false)]
 		[Obsolete ("Use SetSupplementaryGroupIds")]
 		public static void SetSupplementaryGroups (uint[] list)
 		{
 			SetSupplementaryGroupIds (list);
 		}
 
+		[CLSCompliant (false)]
 		public static void SetSupplementaryGroupIds (uint[] list)
 		{
 			int r = Syscall.setgroups (list);

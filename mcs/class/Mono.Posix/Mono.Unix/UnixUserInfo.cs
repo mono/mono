@@ -46,6 +46,7 @@ namespace Mono.Unix {
 				throw new ArgumentException (Locale.GetText ("invalid username"), "user");
 		}
 
+		[CLSCompliant (false)]
 		public UnixUserInfo (uint user)
 		{
 			passwd = new Passwd ();
@@ -68,10 +69,12 @@ namespace Mono.Unix {
 			get {return passwd.pw_passwd;}
 		}
 
+		[CLSCompliant (false)]
 		public uint UserId {
 			get {return passwd.pw_uid;}
 		}
 
+		[CLSCompliant (false)]
 		public uint GroupId {
 			get {return passwd.pw_gid;}
 		}

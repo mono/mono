@@ -77,7 +77,7 @@ namespace Mono.Unix {
 		}
 
 		public long AvailableFreeSpace {
-			get {Refresh (); return (long) (stat.f_bavail * stat.f_bsize);}
+			get {Refresh (); return Convert.ToInt64 (stat.f_bavail * stat.f_bsize);}
 		}
 
 		public string DriveFormat {
@@ -115,6 +115,8 @@ namespace Mono.Unix {
 			// set {}
 		}
 
+		[CLSCompliant(false)]
+		[Obsolete ("The return type of this property will change in the next release.")]
 		public ulong MaximumFilenameLength {
 			get {Refresh (); return stat.f_namemax;}
 		}

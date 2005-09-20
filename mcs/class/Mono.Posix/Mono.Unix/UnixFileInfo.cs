@@ -72,6 +72,8 @@ namespace Mono.Unix {
 			return Create (mode);
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("Use Create(Mono.Unix.Native.FilePermissions)")]
 		public UnixStream Create (FilePermissions mode)
 		{
 			int fd = Syscall.creat (FullPath, mode);
@@ -81,6 +83,18 @@ namespace Mono.Unix {
 			return new UnixStream (fd);
 		}
 
+		[CLSCompliant (false)]
+		public UnixStream Create (Native.FilePermissions mode)
+		{
+			int fd = Native.Syscall.creat (FullPath, mode);
+			if (fd < 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			base.Refresh ();
+			return new UnixStream (fd);
+		}
+
+		[CLSCompliant (false)]
+		[Obsolete ("Use Open(Mono.Unix.Native.OpenFlags)")]
 		public UnixStream Open (OpenFlags flags)
 		{
 			int fd = Syscall.open (FullPath, flags);
@@ -89,9 +103,29 @@ namespace Mono.Unix {
 			return new UnixStream (fd);
 		}
 
+		[CLSCompliant (false)]
+		public UnixStream Open (Native.OpenFlags flags)
+		{
+			int fd = Native.Syscall.open (FullPath, flags);
+			if (fd < 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
+		}
+
+		[CLSCompliant (false)]
+		[Obsolete ("Use Open(Mono.Unix.Native.OpenFlags,Mono.Unix.Native.FilePermissions)")]
 		public UnixStream Open (OpenFlags flags, FilePermissions mode)
 		{
 			int fd = Syscall.open (FullPath, flags, mode);
+			if (fd < 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
+		}
+
+		[CLSCompliant (false)]
+		public UnixStream Open (Native.OpenFlags flags, Native.FilePermissions mode)
+		{
+			int fd = Native.Syscall.open (FullPath, flags, mode);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);
@@ -115,10 +149,22 @@ namespace Mono.Unix {
 			return new UnixStream (fd);
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("Use Open (System.IO.FileMode,System.IO.FileAccess,Mono.Unix.Native.FilePermissions)")]
 		public UnixStream Open (FileMode mode, FileAccess access, FilePermissions perms)
 		{
 			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
 			int fd = Syscall.open (FullPath, flags, perms);
+			if (fd < 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return new UnixStream (fd);
+		}
+
+		[CLSCompliant (false)]
+		public UnixStream Open (FileMode mode, FileAccess access, Native.FilePermissions perms)
+		{
+			Native.OpenFlags flags = Native.NativeConvert.ToOpenFlags (mode, access);
+			int fd = Native.Syscall.open (FullPath, flags, perms);
 			if (fd < 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return new UnixStream (fd);

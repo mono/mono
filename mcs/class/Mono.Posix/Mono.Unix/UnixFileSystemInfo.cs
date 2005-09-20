@@ -88,38 +88,48 @@ namespace Mono.Unix {
 			}
 		}
 
+		[CLSCompliant (false)]
 		public ulong Device {
 			get {AssertValid (); return stat.st_dev;}
 		}
 
+		[CLSCompliant (false)]
 		public ulong Inode {
 			get {AssertValid (); return stat.st_ino;}
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release.")]
 		public FilePermissions Mode {
 			get {AssertValid (); return stat.st_mode;}
 		}
 
+		[CLSCompliant (false)]
 		public FilePermissions Permissions {
 			get {AssertValid (); return stat.st_mode & ~FilePermissions.S_IFMT;}
 		}
 
+		[CLSCompliant (false)]
 		public FilePermissions FileType {
 			get {AssertValid (); return stat.st_mode & FilePermissions.S_IFMT;}
 		}
 
+		[CLSCompliant (false)]
 		public ulong LinkCount {
 			get {AssertValid (); return (ulong) stat.st_nlink;}
 		}
 
+		[CLSCompliant (false)]
 		public uint OwnerUser {
 			get {AssertValid (); return stat.st_uid;}
 		}
 
+		[CLSCompliant (false)]
 		public uint OwnerGroup {
 			get {AssertValid (); return stat.st_gid;}
 		}
 
+		[CLSCompliant (false)]
 		public ulong DeviceType {
 			get {AssertValid (); return stat.st_rdev;}
 		}
@@ -205,6 +215,12 @@ namespace Mono.Unix {
 			return (mode & type) == type;
 		}
 
+		internal static bool IsType (Native.FilePermissions mode, Native.FilePermissions type)
+		{
+			return (mode & type) == type;
+		}
+
+		[CLSCompliant (false)]
 		public bool CanAccess (AccessMode mode)
 		{
 			int r = Syscall.access (FullPath, mode);
@@ -227,6 +243,7 @@ namespace Mono.Unix {
 
 		public abstract void Delete ();
 
+		[CLSCompliant (false)]
 		public long GetConfigurationValue (PathConf name)
 		{
 			Syscall.SetLastError ((Error) 0);
@@ -263,12 +280,14 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
+		[CLSCompliant (false)]
 		public void SetPermissions (FilePermissions perms)
 		{
 			int r = Syscall.chmod (FullPath, perms);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
+		[CLSCompliant (false)]
 		public virtual void SetOwner (uint owner, uint group)
 		{
 			int r = Syscall.chown (FullPath, owner, group);

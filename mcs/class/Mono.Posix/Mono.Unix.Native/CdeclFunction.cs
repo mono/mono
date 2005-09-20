@@ -33,7 +33,7 @@ using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Mono.Unix {
+namespace Mono.Unix.Native {
 
 	// This class represents a single unmanaged function with "cdecl" calling
 	// convention -- that is, it can accept a variable number of arguments which
@@ -69,7 +69,6 @@ namespace Mono.Unix {
 	// on most platforms.
 	//
 	// This class is intended to be thread-safe.
-	[Obsolete ("Use Mono.Unix.Native.CdeclFunction")]
 	public sealed class CdeclFunction
 	{
 		// The readonly fields (1) shouldn't be modified, and (2) should only be

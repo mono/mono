@@ -50,7 +50,7 @@ namespace Mono.Unix {
 		public override string Name {
 			get {
 				string r = UnixPath.GetFileName (FullPath);
-				if (r == null || r == "")
+				if (r == null || r.Length == 0)
 					return FullPath;
 				return r;
 			}
@@ -74,16 +74,27 @@ namespace Mono.Unix {
 			}
 		}
 
+		[CLSCompliant (false)]
+		[Obsolete ("Use Create(Mono.Unix.Native.FilePermissions)")]
 		public void Create (FilePermissions mode)
 		{
-			int r = Syscall.mkdir (FullPath, mode);
+			Mono.Unix.Native.FilePermissions _mode = 
+				(Mono.Unix.Native.FilePermissions) mode;
+			Create (_mode);
+		}
+
+		[CLSCompliant (false)]
+		public void Create (Mono.Unix.Native.FilePermissions mode)
+		{
+			int r = Mono.Unix.Native.Syscall.mkdir (FullPath, mode);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			base.Refresh ();
 		}
 
 		public void Create ()
 		{
-			FilePermissions mode = FilePermissions.ACCESSPERMS;
+			Mono.Unix.Native.FilePermissions mode = 
+				Mono.Unix.Native.FilePermissions.ACCESSPERMS;
 			Create (mode);
 		}
 
