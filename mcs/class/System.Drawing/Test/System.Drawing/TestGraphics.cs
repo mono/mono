@@ -34,6 +34,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Text;
 using System.Drawing.Drawing2D;
+using System.IO;
+using System.Reflection;
 
 namespace MonoTests.System.Drawing
 {
@@ -285,7 +287,18 @@ namespace MonoTests.System.Drawing
 			g.Dispose ();			
 		}
 
-		
+
+		[Test]
+		public void LoadIndexed ()
+		{
+			//
+			// Tests that we can load an indexed file
+			//
+
+			Stream str = Assembly.GetExecutingAssembly ().GetManifestResourceStream ("indexed.png");
+			Image x = Image.FromStream (str);
+			Graphics g = Graphics.FromImage (x);
+		}
 	}
 }
 

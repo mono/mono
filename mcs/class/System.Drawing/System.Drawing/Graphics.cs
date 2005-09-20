@@ -1293,11 +1293,6 @@ namespace System.Drawing
 
 			if (image == null) throw new ArgumentException ();
 
-			if ((image.PixelFormat & PixelFormat.Indexed) != PixelFormat.Undefined) {
-				// And MS ignores its own rules again
-				throw new Exception ("A Graphics object cannot be created from an image that has an indexed pixel format");
-			}
-
 			Status status = GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
 			GDIPlus.CheckStatus (status);
 			Graphics result = new Graphics (graphics);

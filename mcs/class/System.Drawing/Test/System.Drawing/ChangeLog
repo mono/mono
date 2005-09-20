@@ -1,3 +1,7 @@
+2005-09-19  Miguel de Icaza  <miguel@novell.com>
+
+	* TestGraphics.cs (LoadIndexed): Add test for the indexed bug.
+
 2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BitmapCas.cs: New. CAS unit tests for Bitmap.
