@@ -35,6 +35,8 @@ using System;
 using System.Collections;
 using System.Xml;
 
+using QName = System.Xml.XmlQualifiedName;
+
 namespace Commons.Xml.Relaxng.Derivative
 {
 	public class RdpUtil
@@ -246,6 +248,68 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return p.EndTagDeriv ();
 		}
+
+		// Name class analysis
+		internal static bool NameClassOverlap (RdpNameClass n1, RdpNameClass n2)
+		{
+			Hashtable names = new Hashtable ();
+			GetNameClassRepresentatives (n1, names);
+			GetNameClassRepresentatives (n2, names);
+			foreach (QName qn in names.Keys)
+				if (NameClassBothContains (n1, n2, qn))
+					return true;
+			return false;
+		}
+
+		static QName illegalQName = new QName ("", "\x1");
+
+		static void GetNameClassRepresentatives (
+			RdpNameClass n, Hashtable names)
+		{
+			if (n is RdpAnyName) {
+				names [illegalQName] = illegalQName;
+				return;
+			}
+			RdpAnyNameExcept exc = n as RdpAnyNameExcept;
+			if (exc != null) {
+				GetNameClassRepresentatives (exc.ExceptNameClass, names);
+				names [illegalQName] = illegalQName;
+				return;
+			}
+			RdpNsName ns = n as RdpNsName;
+			if (ns != null) {
+				QName nn = new QName (String.Empty, ns.NamespaceURI);
+				names [nn] = nn;
+				return;
+			}
+			RdpNsNameExcept nse = n as RdpNsNameExcept;
+			if (nse != null) {
+				GetNameClassRepresentatives (nse.ExceptNameClass, names);
+				QName nn = new QName (String.Empty, nse.NamespaceURI);
+				names [nn] = nn;
+				return;
+			}
+			RdpName name = n as RdpName;
+			if (name != null) {
+				QName qname = new QName (name.LocalName, name.NamespaceURI);
+				names [qname] = qname;
+				return;
+			}
+			else {
+				RdpNameClassChoice c = (RdpNameClassChoice) n;
+				GetNameClassRepresentatives (c.LValue, names);
+				GetNameClassRepresentatives (c.RValue, names);
+				return;
+			}
+		}
+
+		static bool NameClassBothContains (
+			RdpNameClass n1, RdpNameClass n2, QName qn)
+		{
+			return Contains (n1, qn.Name, qn.Namespace) &&
+				Contains (n2, qn.Name, qn.Namespace);
+		}
+
 		#endregion
 	}
 

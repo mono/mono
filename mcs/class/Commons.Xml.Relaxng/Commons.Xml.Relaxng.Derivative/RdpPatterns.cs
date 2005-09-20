@@ -203,10 +203,6 @@ namespace Commons.Xml.Relaxng.Derivative
 
 		internal abstract void CheckConstraints (bool attribute, bool oneOrMore, bool oneOrMoreGroup, bool oneOrMoreInterleave, bool list, bool dataExcept);
 
-		internal virtual void CheckAttributeDuplicates ()
-		{
-		}
-
 		internal abstract bool ContainsText ();
 
 		internal virtual RdpPattern ExpandRef (Hashtable defs)
@@ -222,12 +218,15 @@ namespace Commons.Xml.Relaxng.Derivative
 		public abstract bool Nullable { get; }
 
 		// fills QName collection
-		public abstract void GetLabels (LabelList elements, LabelList attributes);
+		public void GetLabels (LabelList elements, LabelList attributes)
+		{
+			GetLabels (elements, attributes, false);
+		}
+
+		public abstract void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass);
 
 		internal void AddNameLabel (LabelList names, RdpNameClass nc)
 		{
-			if (names == null)
-				return;
 			RdpName name = nc as RdpName;
 			if (name != null) {
 				XmlQualifiedName qname = new XmlQualifiedName (
@@ -442,7 +441,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return RdpContentType.Empty; }
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			// do nothing
 		}
@@ -510,7 +509,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			return false;
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			// FIXME: Supposed to clear something here?
 		}
@@ -565,7 +564,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			return true;
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			// do nothing
 		}
@@ -649,30 +648,38 @@ namespace Commons.Xml.Relaxng.Derivative
 			return l.ContainsText () || r.ContainsText ();
 		}
 
-		internal override void CheckAttributeDuplicates ()
+		// 7.3 (group/interleave attribute names) and
+		// part of 7.4 (interleave element names)
+		// FIXME: Actually it should be done against the correct
+		// simplified grammar, expanding all refs.
+		internal void CheckNameOverlap (bool checkElements)
 		{
-			LValue.CheckAttributeDuplicates ();
-			RValue.CheckAttributeDuplicates ();
-		}
-
-		// 7.3
-		internal void CheckAttributeDuplicatesCore ()
-		{
-			// expecting all items are interned
+			// expecting that all items are interned.
 			bool checkAttributes = false;
-			Hashtable lc = new Hashtable ();
-			LValue.GetLabels (null, lc);
-			if (lc.Count == 0)
+			Hashtable lca = new Hashtable ();
+			Hashtable lce = checkElements ? new Hashtable () : null;
+			LValue.GetLabels (lce, lca, true);
+			if ((lce == null || lce.Count == 0) && lca.Count == 0)
 				return;
 
-			Hashtable rc = new Hashtable ();
-			RValue.GetLabels (null, rc);
-			if (rc.Count == 0)
+			Hashtable rca = new Hashtable ();
+			Hashtable rce = checkElements ? new Hashtable () : null;
+			RValue.GetLabels (rce, rca, true);
+			if ((rce == null || rce.Count == 0) && rca.Count == 0)
 				return;
 
-			foreach (XmlQualifiedName name in lc.Values)
-				if (rc.Contains (name))
-					throw new RelaxngException ("Duplicate attributes inside a group or an interleave is not allowed.");
+			foreach (RdpNameClass ncl in lca.Values)
+				foreach (RdpNameClass ncr in rca.Values)
+					if (RdpUtil.NameClassOverlap (ncl, ncr))
+						throw new RelaxngException ("Duplicate attributes inside a group or an interleave is not allowed.");
+
+			if (!checkElements)
+				return;
+
+			foreach (RdpNameClass ncl in lce.Values)
+				foreach (RdpNameClass ncr in rce.Values)
+					if (RdpUtil.NameClassOverlap (ncl, ncr))
+						throw new RelaxngException ("Duplicate attributes inside a group or an interleave is not allowed.");
 		}
 	}
 
@@ -707,10 +714,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
-			LValue.GetLabels (elements, attributes);
-			RValue.GetLabels (elements, attributes);
+			LValue.GetLabels (elements, attributes, collectNameClass);
+			RValue.GetLabels (elements, attributes, collectNameClass);
 		}
 
 
@@ -815,10 +822,10 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
-			LValue.GetLabels (elements, attributes);
-			RValue.GetLabels (elements, attributes);
+			LValue.GetLabels (elements, attributes, collectNameClass);
+			RValue.GetLabels (elements, attributes, collectNameClass);
 		}
 
 		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
@@ -902,18 +909,14 @@ namespace Commons.Xml.Relaxng.Derivative
 			LValue.CheckConstraints (attribute, oneOrMore, oneOrMoreGroup, oneOrMore, list, dataExcept);
 			RValue.CheckConstraints (attribute, oneOrMore, oneOrMoreGroup, oneOrMore, list, dataExcept);
 
+			// 7.3
+			CheckNameOverlap (true);
+
 			// 7.4
 			// TODO: (1) unique name analysis
 			// (2) text/text prohibited
 			if (LValue.PatternType == RelaxngPatternType.Text && RValue.PatternType == RelaxngPatternType.Text)
 				throw new RelaxngException ("Both branches of the interleave contains a text pattern.");
-		}
-
-		// 7.3
-		internal override void CheckAttributeDuplicates ()
-		{
-			base.CheckAttributeDuplicates ();
-			CheckAttributeDuplicatesCore ();
 		}
 	}
 
@@ -935,13 +938,13 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
-			LValue.GetLabels (elements, attributes);
+			LValue.GetLabels (elements, attributes, collectNameClass);
 			if (LValue.Nullable)
-				RValue.GetLabels (elements, attributes);
+				RValue.GetLabels (elements, attributes, collectNameClass);
 			else
-				RValue.GetLabels (null, attributes);
+				RValue.GetLabels (null, attributes, collectNameClass);
 		}
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
@@ -997,13 +1000,9 @@ namespace Commons.Xml.Relaxng.Derivative
 
 			LValue.CheckConstraints (attribute, oneOrMore, oneOrMore, oneOrMoreInterleave, list, dataExcept);
 			RValue.CheckConstraints (attribute, oneOrMore, oneOrMore, oneOrMoreInterleave, list, dataExcept);
-		}
 
-		// 7.3
-		internal override void CheckAttributeDuplicates ()
-		{
-			base.CheckAttributeDuplicates ();
-			CheckAttributeDuplicatesCore ();
+			// 7.3
+			CheckNameOverlap (false);
 		}
 	}
 
@@ -1038,11 +1037,6 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return child.ContainsText ();
 		}
-
-		internal override void CheckAttributeDuplicates ()
-		{
-			child.CheckAttributeDuplicates ();
-		}
 	}
 
 	// OneOrMore
@@ -1068,9 +1062,9 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return Child.Nullable; }
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
-			Child.GetLabels (elements, attributes);
+			Child.GetLabels (elements, attributes, collectNameClass);
 		}
 
 		internal override RdpPattern ReduceEmptyAndNotAllowed (ref bool result, Hashtable visited)
@@ -1185,9 +1179,9 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return RdpContentType.Simple; }
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
-			Child.GetLabels (elements, attributes);
+			Child.GetLabels (elements, attributes, collectNameClass);
 		}
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)
@@ -1241,7 +1235,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return RdpContentType.Simple; }
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			// do nothing.
 		}
@@ -1368,7 +1362,7 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return RdpContentType.Simple; }
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
 			// do nothing
 		}
@@ -1429,9 +1423,14 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return RdpContentType.Empty; }
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
-			AddNameLabel (attributes, NameClass);
+			if (attributes != null) {
+				if (collectNameClass)
+					attributes [NameClass] = NameClass;
+				else
+					AddNameLabel (attributes, NameClass);
+			}
 		}
 
 		bool isExpanded;
@@ -1542,9 +1541,14 @@ namespace Commons.Xml.Relaxng.Derivative
 			}
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
-			AddNameLabel (elements, NameClass);
+			if (elements != null) {
+				if (collectNameClass)
+					elements [NameClass] = NameClass;
+				else
+					AddNameLabel (elements, NameClass);
+			}
 		}
 
 
@@ -1608,11 +1612,6 @@ namespace Commons.Xml.Relaxng.Derivative
 		{
 			return children.ContainsText ();
 		}
-
-		internal override void CheckAttributeDuplicates ()
-		{
-			children.CheckAttributeDuplicates ();
-		}
 	}
 
 	// After
@@ -1626,9 +1625,9 @@ namespace Commons.Xml.Relaxng.Derivative
 			get { return false; }
 		}
 
-		public override void GetLabels (LabelList elements, LabelList attributes)
+		public override void GetLabels (LabelList elements, LabelList attributes, bool collectNameClass)
 		{
-			LValue.GetLabels (elements, attributes);
+			LValue.GetLabels (elements, attributes, collectNameClass);
 		}
 
 		public override RdpPattern TextDeriv (string s, XmlReader reader)

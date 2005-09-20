@@ -1059,9 +1059,10 @@ namespace Commons.Xml.Relaxng
 			}
 		}
 
-		public override void GetLabels (Hashtable elements, Hashtable attributes)
+		public override void GetLabels (Hashtable elements, Hashtable attributes, bool collectNameClass)
 		{
-			throw new InvalidOperationException ("Internal error: should not reach.");
+			// Now it could reach (CheckNameOverlap) so comment out here.
+//			throw new InvalidOperationException ("Internal error: should not reach.");
 		}
 
 		internal override RdpPattern ExpandRef (Hashtable defs)

@@ -58,6 +58,8 @@ namespace Commons.Xml.Relaxng
 		public RelaxngValidatingReader (XmlReader reader, RelaxngPattern pattern)
 			: base (reader)
 		{
+			if (reader.NodeType == XmlNodeType.Attribute)
+				throw new RelaxngException ("RELAX NG does not support standalone attribute validation (it is prohibited due to the specification section 7.1.5");
 			this.reader = reader;
 			this.pattern = pattern;
 		}

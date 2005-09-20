@@ -1,3 +1,13 @@
+2005-09-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngValidatingReader.cs : added explicit error message for
+	  attribute XmlReader validation (spec section 7.1.5 explicitly
+	  prohibits start//attribute so such validation never happens).
+	* RelaxngGrammar.cs : name class analysis is now done inside
+	  CheckConstraints(), so nothing to add here.
+	* RelaxngPattern.cs : (RdpUnresolvedRef) now GetLabels() could be
+	  invoked here, so just ignore.
+
 2005-07-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngGrammar.cs : spec 7.3 check is kinda implemented but cannot

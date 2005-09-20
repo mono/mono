@@ -1,3 +1,15 @@
+2005-09-20  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Util.cs : Added name class analysis support. The algorithm is at
+	  http://www.thaiopensource.com/relaxng/nameclass.html .
+	* RdpPattern.cs :
+	  - added CheckNameOverlap() for group and interleave to do name class
+	    analysis (spec 7.3 and 7.4).
+	  - Removed CheckAttributeDuplicates(). Now name class analysis is
+	    implemented in CheckNameOverlap().
+	  - Added additional bool parameter to GetLabels() to collect
+	    RdpNameClass instances instead of XmlQualifiedName instances.
+
 2005-07-31  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RdpPattern.cs : GetLabels() for RdpGroup should check attributes

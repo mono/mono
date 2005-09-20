@@ -245,7 +245,7 @@ namespace Commons.Xml.Relaxng
 			RdpText.Instance.setInternTable (ht);
 
 			// Check Constraints: RELAX NG spec 7
-			// 7.1.1-4 & 7.4
+			// 7.1.1-4, 7.3, 7.4
 			startPattern.CheckConstraints (false, false, false, false, false, false);
 			// 7.1.5
 			CheckStartPatternContent (startPattern);
@@ -255,10 +255,6 @@ namespace Commons.Xml.Relaxng
 
 			// 4.19 (c) expandRef - actual replacement
 			startPattern = compiledStart.ExpandRef (assembledDefs);
-
-			// FIXME: support 7.3 (implemented but cannot verify it 
-			// because of weird exception handling in the runtime)
-//			startPattern.CheckAttributeDuplicates ();
 
 			// return its start pattern.
 			IsCompiled = true;
