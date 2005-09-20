@@ -1,3 +1,7 @@
+2005-09-20  Ankit Jain  <jankit@novell.com>
+
+	* main.c (main): Dump managed resources when --output is specified.
+
 2005-09-08  Ankit Jain  <jankit@novell.com>
 
 	* monodis.1: Document --customattr, --declsec, --forward-decls, --implmap,
