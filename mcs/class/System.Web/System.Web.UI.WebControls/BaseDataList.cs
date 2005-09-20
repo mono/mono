@@ -43,7 +43,6 @@ namespace System.Web.UI.WebControls {
 
 		private static readonly object selectedIndexChangedEvent = new object ();
 
-		private ArrayList keys;
 		private DataKeyCollection keycoll;
 		private object source;
 #if NET_2_0
@@ -155,18 +154,19 @@ namespace System.Web.UI.WebControls {
 		[WebCategory("Data")]
 		public DataKeyCollection DataKeys {
 			get {
-				if (keycoll == null) {
+				if (keycoll == null)
 					keycoll = new DataKeyCollection (DataKeysArray);
-					ViewState ["DataKeys"] = keycoll;
-				}
 				return keycoll;
 			}
 		}
 
 		protected ArrayList DataKeysArray {
 			get {
-				if (keys == null)
+				ArrayList keys = (ArrayList) ViewState ["DataKeys"];
+				if (keys == null) {
 					keys = new ArrayList ();
+					ViewState ["DataKeys"] = keys;
+				}
 				return keys;
 			}
 		}
