@@ -1,5 +1,12 @@
 2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TraceData.cs: we have to change the method of getting a control render
+	size. MS does not do this or otherwise would run into the same bug
+	(#76051) that this patch fixes. This is temporarily setting the size
+	to 0.
+
+2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponseStream.cs: implemented Send(stream) for files. Fixes bug
 	#76145.
 
