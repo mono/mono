@@ -1,5 +1,11 @@
 2005-09-20  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Syscall.cs: Add [Map] to AccessMode and MmapProt, as the Mono.Unix.Native
+	  replacements go by different names (AccessModes, MmapProts), but we need
+	  to continue generating the mapping code for these types (backward compat).
+
+2005-09-20  Jonathan Pryor <jonpryor@vt.edu>
+
 	* CdeclFunction.cs: [Obsolete]d by Mono.Unix.Native.CdeclFunction.
 	* make-map.cs: Remove.
 	* Stdlib.cs: [Obsolete] the types; use the Mono.Unix.Native.* types instead.

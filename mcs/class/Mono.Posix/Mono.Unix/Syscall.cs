@@ -327,7 +327,7 @@ namespace Mono.Unix {
 		WUNTRACED = 2,  // Report status of stopped children
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
 	[Obsolete ("Use Mono.Unix.Native.AccessModes")]
 	public enum AccessMode : int {
@@ -694,7 +694,7 @@ namespace Mono.Unix {
 		MAP_NONBLOCK    = 0x10000,  // Do not block on IO.
 	}
 
-	[Flags]
+	[Map][Flags]
 	[CLSCompliant (false)]
 	[Obsolete ("Use Mono.Unix.Native.MmapProts")]
 	public enum MmapProt : int {
