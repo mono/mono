@@ -2086,9 +2086,6 @@ Console.WriteLine("Hit Clear background");
 		[DllImport ("user32.dll", EntryPoint="SetActiveWindow", CallingConvention=CallingConvention.StdCall)]
 		private extern static IntPtr Win32SetActiveWindow(IntPtr hWnd);
 
-		[DllImport ("user32.dll", EntryPoint="PostQuitMessage", CallingConvention=CallingConvention.StdCall)]
-		private extern static IntPtr Win32PostQuitMessage(IntPtr hWnd);
-
 		[DllImport ("user32.dll", EntryPoint="AdjustWindowRectEx", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32AdjustWindowRectEx(ref RECT lpRect, int dwStyle, bool bMenu, int dwExStyle);
 

@@ -212,6 +212,8 @@ namespace System.Windows.Forms
 		{
 			TRACKER	tracker = new TRACKER ();						
 			MENU menu = null;
+			MSG msg = new MSG();
+			bool no_quit = true;
 
 			if (hMenu == IntPtr.Zero)	// No submenus to track
 				return true;				
@@ -236,10 +238,19 @@ namespace System.Windows.Forms
 				((PopUpWindow)menu.Wnd).RefreshItems ();
 				menu.menu.IsDirty = false;
 			}
-			
 			((PopUpWindow)menu.Wnd).ShowWindow ();
+			
+			while ((menu.Wnd != null) && menu.Wnd.Visible && no_quit) {
+				no_quit = XplatUI.GetMessage(ref msg, IntPtr.Zero, 0, 0);
+				if ((msg.hwnd == menu.Wnd.Handle) || (msg.message == Msg.WM_PAINT)) {
+					XplatUI.TranslateMessage(ref msg);
+					XplatUI.DispatchMessage(ref msg);
+				}
+			}
 
-			Application.Run ();
+			if (!no_quit) {
+				XplatUI.Exit();
+			}
 
 			if (menu.Wnd == null) {
 				menu.Wnd.Dispose ();
