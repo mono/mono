@@ -1,3 +1,8 @@
+2005-09-20 Konstantin Triger <kostat@mainsoft.com>
+
+	* Added jay.bat to run jay in java prebuild step
+	* System.Data.vmwcsproj: added prebuild step
+
 2005-09-02 Umadevi S <sumadevi@novell.com>
 	* System.Data.dll.sources: Added SqlProcedureAttribute,SqlTriggerAttribute and 
 	 SqlTriggerContext.cs to Microsoft.SqlServer.Server namespace.Also added SqlXml to 		     SqlTypes namespace	
