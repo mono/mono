@@ -293,6 +293,47 @@ and allocation profiling.
 .fi
 Will do  sample statistical profiling and allocation profiling on
 program.exe.
+.SH PROFILERS
+There are a number of external profilers that have been developed for
+Mono, we will update this section to contain the profilers.
+.PP
+The Live Type profiler shows at every GC iteration all of the live
+objects of a given type.   To install you must download the profiler
+from Mono's SVN:
+.nf
+	svn co svn://svn.myrealbox.com/source/trunk/heap-prof
+	cd heap-prof
+	./autogen
+	make
+	make install
+.fi
+.PP
+To use the profiler, execute:
+.nf
+	mono --profile=desc-heap program.exe
+.fi
+.PP
+The output of this profiler looks like this:
+.nf
+	Checkpoint at 102 for heap-resize
+	   System.MonoType : 708
+	   System.Threading.Thread : 352
+	   System.String : 3230
+	   System.String[] : 104
+	   Gnome.ModuleInfo : 112
+	   System.Object[] : 160
+	   System.Collections.Hashtable : 96
+	   System.Int32[] : 212
+	   System.Collections.Hashtable+Slot[] : 296
+	   System.Globalization.CultureInfo : 108
+	   System.Globalization.NumberFormatInfo : 144
+.fi
+.PP
+The first line describes the iteration number for the GC, in this case
+checkpoint 102.
+.PP
+Then on each line the type is displayed as well as the number of bytes
+that are being consumed by live instances of this object.
 .SH CUSTOM PROFILERS
 Mono provides a mechanism for loading other profiling modules which in
 the form of shared libraries.  These profiling modules can hook up to
