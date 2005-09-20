@@ -1111,6 +1111,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
 		{
+			if (target.Length == 0)
+				return true;
 			PreviousInfo prev = new PreviousInfo (false);
 			byte [] sk1 = new byte [4];
 			byte [] sk2 = new byte [4];
@@ -1136,6 +1138,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
 		{
+			if (target.Length == 0)
+				return true;
 			int last = LastIndexOf (s, target, start, length, opt);
 			return last >= 0 && Compare (s, last, s.Length - last, target, 0, target.Length, opt) == 0;
 /*

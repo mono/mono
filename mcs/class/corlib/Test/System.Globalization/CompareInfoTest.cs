@@ -848,6 +848,10 @@ public class CompareInfoTest : Assertion
 		// extender in source
 		AssertIsPrefix ("#9", false, "\u30D1\u30FC", "\u30D1\u30A2");
 		AssertIsPrefix ("#10", true, "\u30D1\u30FC", "\u30D1\u30A2", CompareOptions.IgnoreNonSpace);
+
+		// empty suffix always matches the source.
+		AssertIsPrefix ("#11", true, "", "");
+		AssertIsPrefix ("#12", true, "/test.css", "");
 	}
 
 	[Test]
@@ -878,6 +882,10 @@ public class CompareInfoTest : Assertion
 		AssertIsSuffix ("#16", true,
 			"/configuration/system.runtime.remoting",
 			"system.runtime.remoting");
+
+		// empty suffix always matches the source.
+		AssertIsSuffix ("#17", true, "", "");
+		AssertIsSuffix ("#18", true, "/test.css", "");
 	}
 
 	[Test]

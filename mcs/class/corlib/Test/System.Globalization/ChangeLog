@@ -1,3 +1,7 @@
+2005-09-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoTest.cs : added empty string cases for IsPrefix/IsSuffix.
+
 2005-09-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfoTest.cs : added another test for IsSuffix() that I found.
