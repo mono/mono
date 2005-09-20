@@ -261,7 +261,9 @@ namespace System.Data.OleDb
 			gdaConnection = libgda.gda_client_open_connection (libgda.GdaClient,
                                                                           connectionString,
                                                                           "", "", 0);
-			
+
+			if (gdaConnection==IntPtr.Zero)
+				throw new OleDbException (this);	
 			/* convert the connection string to its GDA equivalent */
 			//args = connectionString.Split (';');
 			//len = args.Length;

@@ -1,3 +1,8 @@
+2005-09-20  Alexandre Miguel Pedro Gomes  <alexmipego@gmail.com>
+	
+	* OleDbConnection.cs: Verify and throw an exception if the
+	connection isn't valid.
+
 2005-09-13  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Moved TestGda.cs & TestOleDb.cs to ..\Test.
