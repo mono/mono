@@ -1,3 +1,9 @@
+2005-09-20  Dick Porter  <dick@ximian.com>
+
+	* collection.c: 
+	* processes.c: Periodically waitpid for known process IDs.  Fixes
+	bug 74870.
+
 2005-09-15 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c:
