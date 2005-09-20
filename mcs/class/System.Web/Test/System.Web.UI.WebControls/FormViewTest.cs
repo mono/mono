@@ -75,33 +75,33 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (0, p.DataKey.Values.Count, "A11.1");
 			Assert.IsNull (p.EditItemTemplate, "A12");
 			Assert.IsNotNull (p.EditRowStyle, "A13");
-			Assert.IsTrue (Style.IsStyleEmpty (p.EditRowStyle), "A13.1");
+
 			Assert.IsNotNull (p.EmptyDataRowStyle, "A14");
-			Assert.IsTrue (Style.IsStyleEmpty (p.EmptyDataRowStyle), "A14.1");
+
 			Assert.IsNull (p.EmptyDataTemplate, "A15");
 			Assert.AreEqual ("", p.EmptyDataText, "A16");
 			Assert.IsNull (p.FooterRow, "A17");
 			Assert.IsNull (p.FooterTemplate, "A18");
 			Assert.AreEqual ("", p.FooterText, "A19");
 			Assert.IsNotNull (p.FooterStyle, "A20");
-			Assert.IsTrue (Style.IsStyleEmpty (p.FooterStyle), "A20.1");
+
 			Assert.AreEqual (GridLines.None, p.GridLines, "A21");
 			Assert.IsNull (p.HeaderRow, "A22");
 			Assert.IsNotNull (p.HeaderStyle, "A23");
-			Assert.IsTrue (Style.IsStyleEmpty (p.HeaderStyle), "A23.1");
+
 			Assert.IsNull (p.HeaderTemplate, "A24");
 			Assert.AreEqual ("", p.HeaderText, "A25");
 			Assert.AreEqual (HorizontalAlign.NotSet, p.HorizontalAlign, "A26");
 			Assert.IsNull (p.InsertItemTemplate, "A27");
 			Assert.IsNotNull (p.InsertRowStyle, "A28");
-			Assert.IsTrue (Style.IsStyleEmpty (p.InsertRowStyle), "A28.1");
+
 			Assert.IsNull (p.ItemTemplate, "A29");
 			Assert.AreEqual (0, p.PageCount, "A30");
 			Assert.AreEqual (0, p.PageIndex, "A31");
 			Assert.IsNull (p.PagerTemplate, "A32");
 			Assert.IsNull (p.Row, "A33");
 			Assert.IsNotNull (p.RowStyle, "A34");
-			Assert.IsTrue (Style.IsStyleEmpty (p.RowStyle), "A34.1");
+
 			Assert.IsNull (p.SelectedValue, "A35");
 			Assert.IsNull (p.TopPagerRow, "A36");
 			Assert.IsNull (p.DataItem, "A37");

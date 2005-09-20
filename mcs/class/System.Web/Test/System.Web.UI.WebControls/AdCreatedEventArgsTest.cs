@@ -33,7 +33,7 @@ using System.Web.UI.WebControls;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Web.UI {
+namespace MonoTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	public class AdCreatedEventArgsTest {

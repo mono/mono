@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System;
 using NUnit.Framework;
 using System.Web.UI;
@@ -35,7 +37,6 @@ using System.Web.UI.WebControls;
 
 namespace MonoTests.System.Web.UI.WebControls {
 
-#if NET_2_0
   [TestFixture]
   public class CompositeControlTest {
   	class Poker : CompositeControl {
@@ -60,7 +61,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		Assert.AreEqual (col.Count, 1, "Controls accessor causes child control creation.");
 	}
   }
+}
 
 #endif
-
-}

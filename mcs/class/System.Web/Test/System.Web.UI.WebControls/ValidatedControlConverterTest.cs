@@ -32,7 +32,6 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Globalization;
 using System.Web;
@@ -129,6 +128,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			conv = new ValidatedControlConverter();
 
 			values = conv.GetStandardValues(context);
+#if NET_2_0
+			Assert.IsNull (values, "B1");
+#else
 			Assert.AreEqual(3, values.Count, "B1");
 
 			result = new string[values.Count];
@@ -141,6 +143,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual(false, conv.GetStandardValuesExclusive(null), "B3");
 			Assert.AreEqual(true, conv.GetStandardValuesSupported(null), "B4");
 			Assert.AreEqual(null, conv.GetStandardValues(null), "B5");
+#endif
 		}
 	}
 }

@@ -81,7 +81,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.TextMode = TextBoxMode.MultiLine;
 			t.Text = "</textarea>";
 #if NET_2_0
-			string exp = "<textarea rows=\"0\" cols=\"0\">&lt;/textarea&gt;</textarea>";
+			string exp = "<textarea rows=\"2\" cols=\"20\">&lt;/textarea&gt;</textarea>";
 #else
 			string exp = "<textarea name>&lt;/textarea&gt;</textarea>";
 #endif
@@ -141,7 +141,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.CausesValidation = true;
 			t.TextMode = TextBoxMode.MultiLine;
 
-			string exp = "<textarea rows=\"0\" cols=\"0\"></textarea>";
+			string exp = "<textarea rows=\"2\" cols=\"20\"></textarea>";
 			Assert.AreEqual (exp, t.Render ());
 		}
 #endif

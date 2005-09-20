@@ -84,20 +84,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("", p.Target, "A30");
 			Assert.IsTrue (p.Visible, "A31");
 		}
-
-		[Test]
-		public void DefaultStyles()
-		{
-			TreeViewPoker p = new TreeViewPoker ();
-
-			Assert.IsTrue (Style.IsStyleEmpty (p.HoverNodeStyle), "A1");
-			Assert.IsTrue (Style.IsStyleEmpty (p.LeafNodeStyle), "A2");
-			Assert.IsTrue (Style.IsStyleEmpty (p.NodeStyle), "A3");
-			Assert.IsTrue (Style.IsStyleEmpty (p.ParentNodeStyle), "A4");
-			Assert.IsTrue (Style.IsStyleEmpty (p.RootNodeStyle), "A5");
-			Assert.IsTrue (Style.IsStyleEmpty (p.SelectedNodeStyle), "A6");
-		}
-
 	}
 
 }

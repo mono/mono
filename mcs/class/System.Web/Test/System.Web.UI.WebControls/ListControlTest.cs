@@ -31,7 +31,6 @@
 using NUnit.Framework;
 using System;
 using System.IO;
-using System.Drawing;
 using System.Collections;
 using System.Globalization;
 using System.Web;
@@ -66,17 +65,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return ViewState [name];
 		}
 
-#if NET_2_0
-		public void LoadControl (object state)
-		{
-			LoadControlState (state);
-		}
-
-		public object SaveControl ()
-		{
-			return SaveControlState ();
-		}
-#endif
 		public string Render ()
 		{
 			StringWriter sw = new StringWriter ();
@@ -225,10 +213,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			b.Items.Add ("b");
 			b.Items.Add ("c");
 
-			object state = a.SaveControl();
-			b.LoadControl (state);
-
-			Assert.AreEqual (b.SelectedIndex, 2, "A1");
+			Assert.AreEqual (-1, b.SelectedIndex, "A1");
 		}
 #endif
 
@@ -252,11 +237,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			object state = a.SaveState ();
 			b.LoadState (state);
 
-#if NET_2_0
-			Assert.AreEqual (b.SelectedIndex, -1, "A1");
-#else
-			Assert.AreEqual (b.SelectedIndex, 2, "A1");
-#endif
+			Assert.AreEqual (2, b.SelectedIndex, "A1");
 			Assert.AreEqual (b.Items.Count, 3, "A2");
 
 			Assert.AreEqual (b.Items [0].Value, "a", "A3");

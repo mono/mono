@@ -47,7 +47,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			MonthChangedEventArgs e = new MonthChangedEventArgs (now, later);
 			Assert.AreEqual (e.NewDate, now, "A1");
-			Assert.AreEqual (e.PreviousData, later, "A2");
+			Assert.AreEqual (e.PreviousDate, later, "A2");
 		}
 	}
 }

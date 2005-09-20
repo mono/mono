@@ -1,3 +1,13 @@
+2005-09-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AdCreatedEventArgsTest.cs, BaseCompareValidatorTest.cs, 
+	CompositeControlTest.cs, DataListTest.cs, DropDownListTest.cs,
+	EditCommandColumnTest.cs, FontNamesConverterTest.cs, FormViewTest.cs,
+	ListControlTest.cs, MonthChangedEventArgsTest.cs, 
+	RadioButtonListTest.cs, StyleTest.cs, TableCellTest.cs, 
+	TextBoxTest.cs, TreeViewTest.cs, ValidatedControlConverterTest.cs:
+	Fixed tests results under 2.0 Release Candidate (for NET_2_0).
+
 2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGridTest.cs: fix expected/actual order. Added test for HeaderText

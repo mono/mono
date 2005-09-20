@@ -183,9 +183,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void DropDownListBasic () {
 			DropDownListTestClass d = new DropDownListTestClass ();
-
+#if NET_2_0
+			Assert.AreEqual ("<select>\n\n</select>", d.Render (), "B1");
+#else
 			Assert.AreEqual("<select name>\n\n</select>", d.Render(), "B1");
-
+#endif
 			d.ID = "blah";
 			Assert.AreEqual("<select name=\"blah\" id=\"blah\">\n\n</select>", d.Render(), "B2");
 
@@ -269,7 +271,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+#if ONLY_1_1
 		[ExpectedException(typeof(NullReferenceException))]
+#endif
 		public void DropDownNullWriterTest () {
 			DropDownListTestClass	d;
 
@@ -307,17 +311,26 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void DropDownNamingTest () {
 			NamingContainer container = new NamingContainer ();
 			DropDownListTestClass child = new DropDownListTestClass ();
-
+#if NET_2_0
+			Assert.AreEqual ("<select>\n\n</select>", child.Render (), "N1");
+#else
 			Assert.AreEqual ("<select name>\n\n</select>", child.Render (), "N1");
-
+#endif
 			container.Controls.Add (child);
-			Assert.AreEqual ("<select name=\"_ctl0\">\n\n</select>", child.Render (), "N2");
+			// don't assume the generated id
+			string s = child.Render ();
+			Assert.IsTrue (s.StartsWith ("<select name=\""), "N2a");
+			Assert.IsTrue (s.EndsWith ("\">\n\n</select>"),  "N2b");
 
 			container.ID = "naming";
-			Assert.AreEqual ("<select name=\"naming:_ctl0\">\n\n</select>", child.Render (), "N3");
+			s = child.Render ();
+			Assert.IsTrue (s.StartsWith ("<select name=\"naming"), "N3a");
+			Assert.IsTrue (s.EndsWith ("\">\n\n</select>"), "N3b");
 
 			child.ID = "fooid";
-			Assert.AreEqual ("<select name=\"naming:fooid\" id=\"naming_fooid\">\n\n</select>", child.Render (), "N4");
+			s = child.Render ();
+			Assert.IsTrue (s.StartsWith ("<select name=\"naming"), "N4a");
+			Assert.IsTrue (s.EndsWith ("fooid\" id=\"naming_fooid\">\n\n</select>"), "N4b");
 		}
 
 		[Test]
@@ -353,12 +366,21 @@ namespace MonoTests.System.Web.UI.WebControls
 			ddl.DataValueField = "Company";
 			ddl.DataTextFormatString = "This shouldn't show up = {0}";
 			ddl.DataBind ();
+#if NET_2_0
+			string exp = @"<select>
+	<option value=""Novell Inc."">Novell Inc.</option>
+	<option value=""Microsoft Corp."">Microsoft Corp.</option>
+	<option value=""Google"">Google</option>
+
+</select>";
+#else
 			string exp = @"<select name>
 	<option value=""Novell Inc."">Novell Inc.</option>
 	<option value=""Microsoft Corp."">Microsoft Corp.</option>
 	<option value=""Google"">Google</option>
 
 </select>";
+#endif
 			Assert.AreEqual (exp, ddl.Render ());
 		}
 	}

@@ -241,7 +241,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			// this replace the current Text property
 			td.Add (new LiteralControl ("Go Mono"));
 			Assert.IsFalse (td.HasControls (), "!HasControls-2");
+#if NET_2_0
+			Assert.AreEqual ("MonoGo Mono", td.Text, "Text-2");
+#else
 			Assert.AreEqual ("Go Mono", td.Text, "Text-2");
+#endif
 		}
 
 		[Test]
@@ -281,7 +285,11 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual ("Mono", td.Text, "Text");
 			td.Add (new LiteralControl ("Mono2"));
 			Assert.IsFalse (td.HasControls (), "HasControls-2");
+#if NET_2_0
+			Assert.AreEqual ("MonoMono2", td.Text, "Text");
+#else
 			Assert.AreEqual ("Mono2", td.Text, "Text");
+#endif
 			Assert.AreEqual (0, td.Controls.Count, "NControls");
 		}
 

@@ -86,17 +86,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			return SaveViewState ();
 		}
-#if NET_2_0
-		public void LoadControl (object state)
-		{
-			LoadControlState (state);
-		}
 
-		public object SaveControl ()
-		{
-			return SaveControlState ();
-		}
-#endif
 		public void DoCancelCommand (DataListCommandEventArgs e)
 		{
 			OnCancelCommand (e);
@@ -252,9 +242,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			Assert.AreEqual (0, dl.Attributes.Count, "Attributes.Count-2");
 			Assert.AreEqual (0, dl.StateBag.Count, "ViewState.Count-2");
-#if NET_2_0
-			Assert.IsNull (dl.SaveControl (), "SaveControl");
-#endif
 		}
 
 		[Test]
@@ -307,14 +294,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsNull (dl.SeparatorTemplate, "SeparatorTemplate");
 			dl.EditItemIndex = -1;
 			Assert.AreEqual (-1, dl.EditItemIndex, "EditItemIndex");
-#if ONLY_1_1
 			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-2b");
-#endif
 			dl.SelectedIndex = -1;
 			Assert.AreEqual (-1, dl.SelectedIndex, "SelectedIndex");
-#if ONLY_1_1
 			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-2c");
-#endif
 			dl.ExtractTemplateRows = false;
 			Assert.IsFalse (dl.ExtractTemplateRows, "ExtractTemplateRows");
 			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-3");
@@ -338,9 +321,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			CheckIRepeatInfoUser (dl);
 
 			Assert.AreEqual (0, dl.Attributes.Count, "Attributes.Count-2");
-#if NET_2_0
-			Assert.IsNull (dl.SaveControl (), "SaveControl");
-#endif
 		}
 
 		[Test]
@@ -403,19 +383,15 @@ namespace MonoTests.System.Web.UI.WebControls {
 			dl.EditItemIndex = 0;
 			Assert.AreEqual (0, dl.EditItemIndex, "EditItemIndex");
 #if NET_2_0
-			Assert.IsNotNull (dl.SaveControl (), "SaveControl-EditItemIndex");
 			dl.EditItemIndex = -1;
-#else
-			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-2b");
 #endif
+			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-2b");
 			dl.SelectedIndex = 0;
 			Assert.AreEqual (0, dl.SelectedIndex, "SelectedIndex");
 #if NET_2_0
-			Assert.IsNotNull (dl.SaveControl (), "SaveControl-SelectedIndex");
 			dl.SelectedIndex = -1;
-#else
-			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-2c");
 #endif
+			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-2c");
 			dl.ExtractTemplateRows = true;
 			Assert.IsTrue (dl.ExtractTemplateRows, "ExtractTemplateRows");
 			Assert.AreEqual (sc++, dl.StateBag.Count, "ViewState.Count-3");
@@ -498,9 +474,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			CheckIRepeatInfoUser (dl);
 
 			Assert.AreEqual (0, dl.Attributes.Count, "Attributes.Count-2");
-#if NET_2_0
-			Assert.IsNull (dl.SaveControl (), "SaveControl");
-#endif
 		}
 
 		[Test]
@@ -684,86 +657,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TestDataList dl = new TestDataList ();
 			dl.DataKeyField = "mono";
 			Assert.IsNull (dl.SelectedValue, "SelectedValue");
-		}
-
-		[Test]
-		public void LoadControlState ()
-		{
-			TestDataList dl = new TestDataList ();
-			dl.LoadControl (null);
-			Assert.AreEqual (-1, dl.EditItemIndex, "null-EditItemIndex");
-			Assert.AreEqual (-1, dl.SelectedIndex, "null-SelectedIndex");
-			dl.LoadControl (new Triplet (1, 2, 3));
-			Assert.AreEqual (2, dl.EditItemIndex, "Triplet-EditItemIndex");
-			Assert.AreEqual (3, dl.SelectedIndex, "Triplet-SelectedIndex");
-			dl.LoadControl (null);
-			Assert.AreEqual (-1, dl.EditItemIndex, "null-EditItemIndex-2");
-			Assert.AreEqual (-1, dl.SelectedIndex, "null-SelectedIndex-2");
-		}
-
-		[Test]
-		public void LoadControlState_FirstTripletObject ()
-		{
-			TestDataList dl = new TestDataList ();
-			// first item seems ignored
-			dl.LoadControl (new Triplet (this, 2, 3));
-			Assert.AreEqual (2, dl.EditItemIndex, "Triplet-EditItemIndex");
-			Assert.AreEqual (3, dl.SelectedIndex, "Triplet-SelectedIndex");
-
-			dl.LoadControl (new Triplet (dl, null, 3));
-			Assert.AreEqual (-1, dl.EditItemIndex, "Triplet-EditItemIndex-2");
-			Assert.AreEqual (3, dl.SelectedIndex, "Triplet-SelectedIndex-2");
-
-			dl.LoadControl (new Triplet (null, 2, null));
-			Assert.AreEqual (2, dl.EditItemIndex, "Triplet-EditItemIndex-3");
-			Assert.AreEqual (-1, dl.SelectedIndex, "Triplet-SelectedIndex-3");
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidCastException))]
-		public void LoadControlState_SecondTripletObject ()
-		{
-			TestDataList dl = new TestDataList ();
-			dl.LoadControl (new Triplet (1, this, 3));
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidCastException))]
-		public void LoadControlState_ThirdTripletObject ()
-		{
-			TestDataList dl = new TestDataList ();
-			dl.LoadControl (new Triplet (1, 2, this));
-		}
-
-		[Test]
-		[ExpectedException (typeof (InvalidCastException))]
-		public void LoadControlState_BadType ()
-		{
-			TestDataList dl = new TestDataList ();
-			dl.LoadControl (this);
-		}
-
-		[Test]
-		public void SaveControlState ()
-		{
-			TestDataList dl = new TestDataList ();
-			Assert.IsNull (dl.SaveControl (), "Empty");
-			dl.EditItemIndex = 0;
-			Triplet state = (Triplet) dl.SaveControl ();
-			Assert.IsNull (state.First, "EditItemIndex-First");
-			Assert.AreEqual (0, (int)state.Second, "EditItemIndex-Second");
-			Assert.IsNull (state.Third, "EditItemIndex-Third");
-
-			dl.SelectedIndex = 1;
-			state = (Triplet) dl.SaveControl ();
-			Assert.IsNull (state.First, "SelectedIndex-First");
-			Assert.AreEqual (0, (int)state.Second, "SelectedIndex-Second");
-			Assert.AreEqual (1, (int)state.Third, "SelectedIndex-Third");
-
-			dl.EditItemIndex = -1;
-			state = (Triplet) dl.SaveControl ();
-			dl.SelectedIndex = -1;
-			Assert.IsNull (dl.SaveControl (), "Cleaned");
 		}
 #endif
 		private bool cancelCommandEvent;

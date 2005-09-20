@@ -32,7 +32,6 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Globalization;
 using System.Web;
@@ -149,12 +148,19 @@ namespace MonoTests.System.Web.UI.WebControls
 			markup = markup.Replace ("\r", "");
 			markup = markup.Replace ("\n", "");
 
+#if NET_2_0
+			Assert.AreEqual (
+				"<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
+				"</tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" +
+				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
+				"</tr></table>", markup, "I2");
+#else
 			Assert.AreEqual (
 				"<table border=\"0\" id=\"sucker\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
 				"</tr><tr><td><a>Edit</a></td><td><input name type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" + 
 				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
 				"</tr></table>", markup, "I2");
-
+#endif
 			//ShowControlsRecursive (p.Controls [0], 1);
 		}
 
@@ -201,6 +207,17 @@ namespace MonoTests.System.Web.UI.WebControls
 //Console.WriteLine("Markup:>{0}<", markup);
 			Assert.AreEqual (2, p.Columns.Count, "I1");
 
+#if NET_2_0
+			Assert.AreEqual (
+				"<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" + 
+				"</tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Refresh\" />&nbsp;" + 
+				"<input name=\"sucker$ctl02$ctl01\" type=\"submit\" value=\"Abbrechen\" /></td>" + 
+				"<td><input name=\"sucker$ctl02$ctl02\" type=\"text\" value=\"1\" /></td>" + 
+				"<td><input name=\"sucker$ctl02$ctl03\" type=\"text\" value=\"2\" /></td>" + 
+				"<td><input name=\"sucker$ctl02$ctl04\" type=\"text\" value=\"3\" /></td>" + 
+				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
+				"</tr></table>", markup, "I2");
+#else
 			Assert.AreEqual (
 				"<table border=\"0\" id=\"sucker\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
 				"</tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name type=\"submit\" value=\"Refresh\" />&nbsp;" +
@@ -210,6 +227,7 @@ namespace MonoTests.System.Web.UI.WebControls
 				"<td><input name=\"sucker:_ctl2:_ctl2\" type=\"text\" value=\"3\" /></td>" + 
 				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
 				"</tr></table>", markup, "I2");
+#endif
 		}
 
 		[Test]

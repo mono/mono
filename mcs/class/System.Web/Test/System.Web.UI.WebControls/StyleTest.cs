@@ -312,10 +312,13 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			StyleTestClass s = new StyleTestClass ();
 
-			Assert.AreEqual (null, s.RegisteredCssClass, "Css1");
+			Assert.AreEqual (String.Empty, s.RegisteredCssClass, "Css1");
 
-			s.SetCssClass("blah");
-			Assert.AreEqual ("blah", s.RegisteredCssClass, "Css2");
+			s.SetCssClass ("blah");
+			Assert.AreEqual (String.Empty, s.RegisteredCssClass, "Css2");
+
+			s.BackColor = Color.AliceBlue;
+			Assert.AreEqual (String.Empty, s.RegisteredCssClass, "Css3");
 		}
 #endif
 
@@ -453,13 +456,5 @@ namespace MonoTests.System.Web.UI.WebControls
 			s.AddAttributesToRender(writer);
 			// Figure out an order-independent way to verify rendered results
 		}
-#if NET_2_0
-		[Test]
-		public void IsStyleEmpty ()
-		{
-			Assert.IsTrue (Style.IsStyleEmpty (null), "null");
-			Assert.IsTrue (Style.IsStyleEmpty (new Style ()), "new");
-		}
-#endif
 	}
 }
