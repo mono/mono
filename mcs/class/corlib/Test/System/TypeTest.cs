@@ -407,6 +407,14 @@ PublicKeyToken=b77a5c561934e089"));
 			Activator.CreateInstance (typeof (TakesObject), new object [] { null });
 		}
 
+		// bug #76150
+		[Test]
+		public void IsDefined ()
+		{
+			Assert.IsTrue (typeof (A).IsDefined (typeof (NemerleAttribute), false), "#1");
+			Assert.IsTrue (typeof (A).IsDefined (typeof (VolatileModifier), false), "#2");
+		}
+
 #if NET_2_0
 		[Test]
 		public void FullNameGenerics ()
@@ -436,5 +444,14 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNotNull (parameters[0].ParameterType.ToString ());
 		}
 #endif
+
+		public class NemerleAttribute : Attribute
+		{ }
+
+		public class VolatileModifier : NemerleAttribute
+		{ }
+
+		[VolatileModifier]
+		class A { }
 	}
 }
