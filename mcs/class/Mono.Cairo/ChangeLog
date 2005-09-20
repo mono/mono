@@ -1,3 +1,7 @@
+2005-09-19  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Graphics.cs: add SelectFontFace and SetFontSize
+
 2005-09-12  Hisham Mardam Bey  <hisham.mardambey@gmail.com>
 
         * Samples/: Fix all samples to work with new API changes.

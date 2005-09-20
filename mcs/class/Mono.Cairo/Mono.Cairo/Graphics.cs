@@ -633,6 +633,16 @@ namespace Cairo {
 			CairoAPI.cairo_copy_page (state);
 		}
 
+		public void SelectFontFace (string family, FontSlant slant, FontWeight weight)
+		{
+			CairoAPI.cairo_select_font_face (state, family, slant, weight);
+		}
+
+		public void SetFontSize (double scale)
+		{
+			CairoAPI.cairo_set_font_size (state, scale);
+		}
+
 		public void ShowPage ()
 		{
 			CairoAPI.cairo_show_page (state);
