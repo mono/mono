@@ -1,3 +1,7 @@
+2005-09-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* MarshalTest.cs: Added test for bug #76123.
+
 2005-06-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RuntimeEnvironmentTest.cs: Commented an assert than wasn't true when

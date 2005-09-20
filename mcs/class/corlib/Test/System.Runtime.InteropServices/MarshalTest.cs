@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 namespace MonoTests.System.Runtime.InteropServices
 {
 	[TestFixture]
-	public class MarshalTest : Assertion
+	public class MarshalTest
 	{
 		[StructLayout (LayoutKind.Sequential)]
 		class ClsSequential {
@@ -91,22 +91,22 @@ namespace MonoTests.System.Runtime.InteropServices
 		[Test]
 		public void PtrToStringWithNull ()
 		{
-			AssertNull ("A", Marshal.PtrToStringAnsi (IntPtr.Zero));
-			AssertNull ("C", Marshal.PtrToStringUni (IntPtr.Zero));
+			Assert.IsNull (Marshal.PtrToStringAnsi (IntPtr.Zero), "A");
+			Assert.IsNull (Marshal.PtrToStringUni (IntPtr.Zero), "C");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void PtrToStringWithNullThrow ()
 		{
-			AssertNull ("B", Marshal.PtrToStringAnsi (IntPtr.Zero, 0));
+			Assert.IsNull (Marshal.PtrToStringAnsi (IntPtr.Zero, 0), "B");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void PtrToStringWithNullThrow2 ()
 		{
-			AssertNull ("D", Marshal.PtrToStringUni (IntPtr.Zero, 0));
+			Assert.IsNull (Marshal.PtrToStringUni (IntPtr.Zero, 0), "D");
 		}
 
 		[Test]
@@ -115,13 +115,13 @@ namespace MonoTests.System.Runtime.InteropServices
 			sarr [2] = 3;
 
 			IntPtr ptr = Marshal.UnsafeAddrOfPinnedArrayElement (sarr, 2);
-			AssertEquals (3, *(short*)ptr.ToPointer ());
+			Assert.AreEqual (3, *(short*)ptr.ToPointer ());
 		}
 
 		[Test]
 		public void AllocHGlobalZeroSize () {
 			IntPtr ptr = Marshal.AllocHGlobal (0);
-			Assert (ptr != IntPtr.Zero);
+			Assert.IsTrue (ptr != IntPtr.Zero);
 			Marshal.FreeHGlobal (ptr);
 		}
 
@@ -137,6 +137,18 @@ namespace MonoTests.System.Runtime.InteropServices
 		[ExpectedException (typeof (ArgumentException))]
 		public void OffsetOfStatic () {
 			Marshal.OffsetOf (typeof (Foo), "b");
+		}
+
+		// bug #76123
+		[Test]
+		public void StringToHGlobalUni () {
+			IntPtr handle = Marshal.StringToHGlobalUni ("unicode data");
+			string s = Marshal.PtrToStringUni (handle);
+			Assert.AreEqual (12, s.Length, "#1");
+
+			handle = Marshal.StringToHGlobalUni ("unicode data string");
+			s = Marshal.PtrToStringUni (handle);
+			Assert.AreEqual (19, s.Length, "#2");
 		}
 	}
 }
