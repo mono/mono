@@ -9,6 +9,17 @@
 # munge in the library name to keep the files from clashing.
 
 sourcefile = $(LIBRARY).sources
+
+# If the directory contains the per profile include file, generate list file.
+PROFILE_sources = $(PROFILE)_$(LIBRARY).sources
+ifeq ($(wildcard $(PROFILE_sources)), $(PROFILE_sources))
+PROFILE_excludes = $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources)
+sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes)
+	@echo Creating the per profile list $@ ...
+	$(topdir)/tools/gensources.sh $(PROFILE_sources) $(PROFILE_excludes) > $@
+endif
+
 PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)
 
 ifndef PLATFORM_excludes
