@@ -1,3 +1,9 @@
+2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGridTest.cs: added data binding tests.
+	* BaseDataListTest.cs: it's DataKeys (arraylist) what gets to the
+	viewstate, not the DataKeyCollection.
+
 2005-09-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AdCreatedEventArgsTest.cs, BaseCompareValidatorTest.cs, 

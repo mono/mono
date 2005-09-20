@@ -28,6 +28,7 @@
 //
 
 using NUnit.Framework;
+using AttributeCollection = System.ComponentModel.AttributeCollection;
 using System;
 using System.IO;
 using System.Globalization;
@@ -152,6 +153,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 	public class AmazingEnumerable : IEnumerable {
 
 		private IList list;
+		public int CallCount;
 
 		public AmazingEnumerable (IList list)
 		{
@@ -160,6 +162,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 	        public IEnumerator GetEnumerator ()
 		{
+			CallCount++;
 			return list.GetEnumerator ();
 		}
 		
@@ -1121,6 +1124,162 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
+		public void DataBindingEnumerator ()
+		{
+			DataGridPoker p = new DataGridPoker ();
+			PagedDataSource source = new PagedDataSource ();
+			ArrayList list = new ArrayList ();
+			ArrayList columns;
+			
+			list.Add ("One");
+			list.Add ("Two");
+			list.Add ("Three");
+
+			AmazingEnumerable amazing = new AmazingEnumerable (list);
+			source.DataSource = amazing;
+			columns = p.CreateColumns (source, true);
+			Assert.AreEqual (1, columns.Count, "A1");
+			Assert.AreEqual ("Item", ((DataGridColumn) columns [0]).HeaderText, "A2");
+			Assert.AreEqual (1, amazing.CallCount, "A3");
+		}
+
+		class Custom : ICustomTypeDescriptor {
+			public AttributeCollection GetAttributes ()
+			{
+				throw new Exception ();
+			}
+
+			public string GetClassName()
+			{
+				throw new Exception ();
+			}
+
+			public string GetComponentName()
+			{
+				throw new Exception ();
+			}
+
+			public TypeConverter GetConverter()
+			{
+				throw new Exception ();
+			}
+
+			public EventDescriptor GetDefaultEvent()
+			{
+				throw new Exception ();
+			}
+
+			public PropertyDescriptor GetDefaultProperty()
+			{
+				throw new Exception ();
+			}
+
+			public object GetEditor (Type editorBaseType)
+			{
+				throw new Exception ();
+			}
+
+			public EventDescriptorCollection GetEvents ()
+			{
+				throw new Exception ();
+			}
+
+			public EventDescriptorCollection GetEvents (Attribute[] arr)
+			{
+				throw new Exception ();
+			}
+
+			public int CallCount;
+			public PropertyDescriptorCollection GetProperties()
+			{
+				// MS calls this one
+				if (CallCount++ > 0)
+					throw new Exception ("This should not happen");
+				PropertyDescriptorCollection coll = new PropertyDescriptorCollection (null);
+				coll.Add (new MyPropertyDescriptor ());
+				return coll;
+			}
+
+			public PropertyDescriptorCollection GetProperties (Attribute[] arr)
+			{
+				// We call this one
+				return GetProperties ();
+			}
+
+			public object GetPropertyOwner (PropertyDescriptor pd)
+			{
+				throw new Exception ();
+			}
+		}
+
+		class MyPropertyDescriptor : PropertyDescriptor {
+			int val;
+
+			public MyPropertyDescriptor () : base ("CustomName", null)
+			{
+			}
+
+			public override Type ComponentType {
+				get { return typeof (MyPropertyDescriptor); }
+			}
+
+			public override bool IsReadOnly {
+				get { return true; }
+			}
+
+			public override Type PropertyType {
+				get { return typeof (int); }
+			}
+
+			public override object GetValue (object component)
+			{
+				return val++;
+			}
+
+			public override void SetValue (object component, object value)
+			{
+			}
+
+			public override void ResetValue (object component)
+			{
+			}
+
+			public override bool CanResetValue (object component)
+			{
+				return false;
+			}
+
+			public override bool ShouldSerializeValue (object component)
+			{
+				return false;
+			}
+		}
+
+		class MyEnumerable : IEnumerable {
+			public object Item;
+			public IEnumerator GetEnumerator ()
+			{
+				ArrayList list = new ArrayList ();
+				list.Add (Item);
+				return list.GetEnumerator ();
+			}
+		}
+
+		[Test]
+		public void DataBindingCustomElement ()
+		{
+			DataGridPoker p = new DataGridPoker ();
+			p.DataKeyField = "CustomName";
+			PagedDataSource source = new PagedDataSource ();
+			MyEnumerable myenum = new MyEnumerable ();
+			myenum.Item = new Custom ();
+			source.DataSource = myenum;
+			ArrayList columns = p.CreateColumns (source, true);
+			Assert.AreEqual (1, columns.Count, "A1");
+			Assert.AreEqual ("CustomName", ((DataGridColumn) columns [0]).HeaderText, "A2");
+		}
+
+		[Test]
 		public void CreateControls ()
 		{
 			DataGridPoker p = new DataGridPoker ();
@@ -1257,6 +1416,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (((LiteralControl) item.Controls [0].Controls [1]).Text,
 					"&nbsp;", "A24");
 
+			// This is failing with an invalidcast right now. It's something related to
+			// the pager thinking that it's on the last page and rendering a label instead
 			next = (LinkButton) item.Controls [0].Controls [2];
 			Assert.AreEqual (next.Text, "&gt;", "A25");
 			Assert.AreEqual (next.CommandName, "Page", "A26");

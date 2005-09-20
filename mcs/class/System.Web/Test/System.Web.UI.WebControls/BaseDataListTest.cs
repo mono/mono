@@ -323,8 +323,9 @@ namespace MonoTests.System.Web.UI.WebControls {
 
 			Assert.AreEqual (0, bdl.DataKeys.Count, "DataKeys.Count");
 			Assert.AreEqual (0, bdl.Attributes.Count, "Attributes.Count-3");
-			// triggered by DataKeys
+			// triggered by DataKeys, which makes DataKeysArray store its value.
 			Assert.AreEqual (1, bdl.StateBag.Count, "ViewState.Count-3");
+			Assert.AreEqual (typeof (ArrayList), bdl.StateBag ["DataKeys"].GetType (), "ViewState.Value-1");
 		}
 
 		[Test]
