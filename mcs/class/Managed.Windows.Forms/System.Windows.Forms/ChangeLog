@@ -1,6 +1,11 @@
+2005-09-19  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Application.cs: Our constructor will never get called, move 
+	  initialization to fields; fixes bug #75933
+
 2005-09-19 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
-        * FileDialog.cs :
+	* FileDialog.cs :
 	        - Allow files to be selected properly using file name
 		combo box.
 		- Add ability to change diretory (absolute / relative)

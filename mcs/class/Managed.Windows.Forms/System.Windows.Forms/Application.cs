@@ -40,22 +40,15 @@ using System.Threading;
 
 namespace System.Windows.Forms {
 	public sealed class Application {
-		private static bool			browser_embedded;
-		private static bool			exiting;
-		private static InputLanguage		input_language;
-		private static bool			messageloop_started;
-		private static string			safe_caption_format;
-		private static ArrayList		message_filters;
-		private static ApplicationContext	app_context;
+		private static bool			browser_embedded	= false;
+		private static bool			exiting			= false;
+		private static InputLanguage		input_language		= InputLanguage.CurrentInputLanguage;
+		private static bool			messageloop_started	= false;
+		private static string			safe_caption_format	= "{1} - {0} - {2}";
+		private static ArrayList		message_filters		= new ArrayList();
+		private static ApplicationContext	app_context		= null;
 
 		private Application () {
-			input_language	= InputLanguage.CurrentInputLanguage;
-			message_filters	= new ArrayList();
-			app_context	= null;
-			browser_embedded= false;
-			exiting		= false;
-			messageloop_started = false;
-			safe_caption_format = "{1} - {0} - {2}";
 		}
 
 		#region Private and Internal Methods
