@@ -1,3 +1,8 @@
+2005-09-20 Konstantin Triger <kostat@mainsoft.com>
+
+        * Added jay.bat to run jay in java prebuild step
+        * System.XML.vmwcsproj: added prebuild step
+
 2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: /unsafe isn't required to build System.Xml.
