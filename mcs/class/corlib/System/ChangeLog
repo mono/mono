@@ -1,3 +1,14 @@
+2005-09-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* MonoCustomAttrs.cs (GetCustomAttributesInternal): Add
+	attributeType parameter.
+	(IsDefined): New icall.
+
+	* MonoCustomAttrs.cs: Avoid instantiating all custom attrs of an
+	object when only a specific attribute type is requested. Fixes #76062.
+
+	* Environment.cs: Bump corlib version.
+
 2005-09-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TimeZone.cs, DateTime.cs :
