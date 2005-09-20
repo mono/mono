@@ -787,14 +787,12 @@ namespace System.Drawing {
 
 		#region DrawImage
 
-		public void DrawImage (Image image, Point point) 
-		{
-			DrawImage(image, (int)point.X, (int)point.Y);
+		public void DrawImage (Image image, Point point) {
+			DrawImage(image, point.X, point.Y);
 		}
 
-		public void DrawImage (Image image, PointF point) 
-		{
-			DrawImage(image, (int)point.X, (int)point.Y);
+		public void DrawImage (Image image, PointF point) {
+			DrawImage(image, point.X, point.Y);
 		}
 
 		
@@ -803,84 +801,49 @@ namespace System.Drawing {
 			DrawImage(image, m);
 		}
 
-		public void DrawImage (Image image, PointF [] destPoints) 
-		{
+		public void DrawImage (Image image, PointF [] destPoints) {
 			Matrix m = new Matrix(new RectangleF(0, 0, image.Width, image.Height), destPoints);
 			DrawImage(image, m);
 		}
 
 		
-		public void DrawImage (Image image, Rectangle rect) 
-		{
+		public void DrawImage (Image image, Rectangle rect) {
 			DrawImage(image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
-		public void DrawImage (Image image, RectangleF rect) 
-		{
-			DrawImage(image, (int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height);
+		public void DrawImage (Image image, RectangleF rect) {
+			DrawImage(image, rect.X, rect.Y, rect.Width, rect.Height);
 		}
 
 		
-		public void DrawImage (Image image, int x, int y) 
-		{
-			geom.AffineTransform oldT = NativeObject.getTransform();
-			NativeObject.transform(_transform.NativeObject);
-			try {
-				IntersectScaledClipWithBase(_clip);
-				try {
-					NativeObject.drawImage(image.NativeObject.CurrentImage.NativeImage, x, y, null);
-				}
-				finally {
-					RestoreBaseClip();
-				}
-			}
-			finally {
-				NativeObject.setTransform(oldT);
-			}
+		public void DrawImage (Image image, int x, int y) {
+			DrawImage(image, (float)x, (float)y);
 		}
 
-		public void DrawImage (Image image, float x, float y) 
-		{
-			DrawImage(image, (int)x, (int)y);
+		public void DrawImage (Image image, float x, float y) {
+			DrawImage( image, x, y, image.Width, image.Height );
 		}
 
 		
 		public void DrawImage (Image image, Rectangle destRect, Rectangle srcRect, GraphicsUnit srcUnit) {
-			if (srcUnit != GraphicsUnit.Pixel)
-				throw new NotImplementedException();
-				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
-
-			geom.AffineTransform oldT = NativeObject.getTransform();
-			NativeObject.transform(_transform.NativeObject);
-			try {
-
-				IntersectScaledClipWithBase(_clip);
-				try {
-					NativeObject.drawImage(image.NativeObject.CurrentImage.NativeImage,
-						destRect.X,
-						destRect.Y,
-						destRect.X + destRect.Width,
-						destRect.Y + destRect.Height,
-						srcRect.X,
-						srcRect.Y,
-						srcRect.X + srcRect.Width,
-						srcRect.Y + srcRect.Height,
-						null);
-				}
-				finally {
-					RestoreBaseClip();
-				}
-			}
-			finally {
-				NativeObject.setTransform(oldT);
-			}
+			DrawImage(
+				image,
+				new Point [] {
+								 new Point( destRect.X, destRect.Y),
+								 new Point( destRect.X + destRect.Width, destRect.Y),
+								 new Point( destRect.X, destRect.Y + destRect.Height)},
+				srcRect, 
+				srcUnit);
 		}
-		
+	
 		public void DrawImage (Image image, RectangleF destRect, RectangleF srcRect, GraphicsUnit srcUnit) {
 			DrawImage(
-				image, 
-				new Rectangle((int)destRect.X, (int)destRect.Y, (int)destRect.Width, (int)destRect.Height),
-				new Rectangle((int)srcRect.X, (int)srcRect.Y, (int)srcRect.Width, (int)srcRect.Height),
+				image,
+				new PointF [] {
+								 new PointF( destRect.X, destRect.Y),
+								 new PointF( destRect.X + destRect.Width, destRect.Y),
+								 new PointF( destRect.X, destRect.Y + destRect.Height)},
+				srcRect, 
 				srcUnit);
 		}
 
@@ -898,31 +861,26 @@ namespace System.Drawing {
 			//TBD: ImageAttributes
 			if (srcUnit != GraphicsUnit.Pixel)
 				throw new NotImplementedException();
-				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
 
 			Matrix mx = new Matrix(srcRect, destPoints);
 
 			Region region = new Region(srcRect);
 			region.Transform (mx);
 			
-			geom.AffineTransform t = GetFinalTransform();
+			geom.AffineTransform t = _transform.NativeObject;
 			if (!t.isIdentity())
 				region.NativeObject.transform(t);
 			region.Intersect(_clip);
-			IntersectScaledClipWithBase(region);
-			try {
-				DrawImage(image, mx);
-			}
-			finally {
-				RestoreBaseClip();
-			}
+
+			DrawImage(image, mx, region);
 		}
 		
 		public void DrawImage (Image image, PointF [] destPoints, RectangleF srcRect, GraphicsUnit srcUnit, ImageAttributes imageAttr) {
 			//TBD: ImageAttributes
 			if (srcUnit != GraphicsUnit.Pixel)
 				throw new NotImplementedException();
-				// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
+			// Like in .NET http://dotnet247.com/247reference/msgs/45/227979.aspx
 
 			Matrix mx = new Matrix(srcRect, destPoints);
 
@@ -933,35 +891,24 @@ namespace System.Drawing {
 			if (!t.isIdentity())
 				region.NativeObject.transform(t);
 			region.Intersect(_clip);
-			IntersectScaledClipWithBase(region);
-			try {
-				DrawImage(image, mx);
-			}
-			finally {
-				RestoreBaseClip();
-			}
+
+			DrawImage(image, mx, region);
 		}
 
 
 		public void DrawImage (Image image, int x, int y, int width, int height) {
-			geom.AffineTransform oldT = NativeObject.getTransform();
-			NativeObject.transform(_transform.NativeObject);
-			try {
-				IntersectScaledClipWithBase(_clip);
-				try {
-					NativeObject.drawImage(image.NativeObject.CurrentImage.NativeImage, x, y, width, height, null);
-				}
-				finally {
-					RestoreBaseClip();
-				}
-			}
-			finally {
-				NativeObject.setTransform(oldT);
-			}
+			DrawImage(image, (float)x, (float)y, (float)width, (float)height);
 		}
 
 		public void DrawImage (Image image, float x, float y, float width, float height) {
-			DrawImage(image, (int)x, (int)y, (int)width, (int)height);
+			geom.Point2D.Float pt = new geom.Point2D.Float(x, y);
+			GetFinalTransform().transform(pt, pt);
+
+			Matrix mx = new Matrix();
+			mx.Translate((float)pt.getX(), (float)pt.getY());
+			mx.Scale(width / (float)image.Width, height / (float)image.Height);
+
+			DrawImage( image, mx );
 		}
 
 		
@@ -997,26 +944,77 @@ namespace System.Drawing {
 			DrawImage(
 				image, 
 				destRect,
-				new Rectangle((int)srcX, (int)srcY, (int)srcWidth, (int)srcHeight),
+				new RectangleF(srcX, srcY, srcWidth, srcHeight),
 				srcUnit);
 		}
 		
 
 		internal void DrawImage (Image image, Matrix m) {
+			DrawImage(image, m, null);
+		}
+
+		internal void DrawImage (Image image, Matrix m, Region clip) {
+			if (clip == null) {
+				clip = new Region( new RectangleF( 0, 0, image.Width, image.Height ) );
+				clip.Transform( m );
+			}
+			clip.Intersect(_clip);
+			
 			geom.AffineTransform oldT = NativeObject.getTransform();
-			NativeObject.transform(_transform.NativeObject);
+			// must set clip before the base transform is altered
+			if (NeedsNormalization) {
+				Matrix normMatrix = ComputeClipNormalization(clip.GetBounds(this));
+				clip.Transform(normMatrix);
+			}
+
+			IntersectScaledClipWithBase(clip);
+			
 			try {
-				IntersectScaledClipWithBase(_clip);
-				try {
-					NativeObject.drawImage(image.NativeObject.CurrentImage.NativeImage, m.NativeObject, null);
-				}
-				finally {
-					RestoreBaseClip();
-				}
+				NativeObject.transform(_transform.NativeObject);
+				
+				Matrix mm = ComputeImageNormalization(image, m);
+				NativeObject.drawImage(image.NativeObject.CurrentImage.NativeImage, mm.NativeObject, null);
 			}
 			finally {
 				NativeObject.setTransform(oldT);
+				RestoreBaseClip();
 			}
+		}
+
+		private static Matrix ComputeImageNormalization(Image img, Matrix m) {
+			if ( m.IsIdentity )
+				return m;
+
+			//m.Translate( -(m.Elements[0] + m.Elements[2]) / 2.0f,  -(m.Elements[3] + m.Elements[1]) / 2.0f, MatrixOrder.Append);
+			m.Translate( 
+				-(float)(m.NativeObject.getScaleX() + m.NativeObject.getShearX()) / 2.0f,  
+				-(float)(m.NativeObject.getScaleY() + m.NativeObject.getShearY()) / 2.0f, MatrixOrder.Append);
+			
+			PointF [] p = new PointF[] { 
+										   new PointF( 0, 0 ),
+										   new PointF( img.Width, 0 ),
+										   new PointF( 0, img.Height )};
+
+			m.TransformPoints(p);
+			for (int i=0; i < p.Length; i++) {
+				p[i].X = (float)( p[i].X + 0.5f );
+				p[i].Y = (float)( p[i].Y + 0.5f );
+			}
+
+			return new Matrix( new Rectangle(0, 0, img.Width, img.Height), p );
+		}
+		private static Matrix ComputeClipNormalization(RectangleF rect) {
+			PointF [] p = new PointF[] { 
+										   new PointF( rect.X, rect.Y ),
+										   new PointF( rect.X + rect.Width, rect.Y ),
+										   new PointF( rect.X, rect.Y + rect.Height )};
+
+			for (int i=0; i < p.Length; i++) {
+				p[i].X = (float)Math.Round( p[i].X + 0.5f ) + 0.5f;
+				p[i].Y = (float)Math.Round( p[i].Y + 0.5f ) + 0.5f;
+			}
+
+			return new Matrix( rect, p );
 		}
 		
 

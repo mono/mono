@@ -1,3 +1,7 @@
+2005-09-20 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Graphics.jvm.cs: fixed DrawImage
+
 2005-09-19  Miguel de Icaza  <miguel@novell.com>
 
 	* Graphics.cs: Removed restriction on the images that can be
