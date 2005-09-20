@@ -2,6 +2,7 @@
 
 	* DataViewTest.cs: Added a case for Sort to accept columns with
 	'[' & ']'.
+	(SortTests): Added cases for sorting order. TestCase from Marc
 
 2005-08-02  Sureshkumar T  <tsureshkumar@novell.com>
 

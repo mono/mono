@@ -1,5 +1,8 @@
 2005-09-20  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* DataView.cs (Sort): Apply default Sorting Order if Sort property
+	is reset to null. Sort property handles this. Patch from Marc.
+
 	* DataTable.cs (ParseSortString): Patch from  Marc Haisenko for
 	allowing [ & ] in DataView.Sort string.
 

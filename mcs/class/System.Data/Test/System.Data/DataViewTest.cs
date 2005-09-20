@@ -228,7 +228,7 @@ namespace MonoTests.System.Data
 
 		#region Sort Tests
 		[Test]
-		public void SortTest ()
+		public void SortListChangedTest ()
 		{
 			dataView.Sort = "itemName DESC";
 			AssertEquals ("test#01",ListChangedType.Reset,listChangedArgs.ListChangedType);
@@ -252,6 +252,53 @@ namespace MonoTests.System.Data
 			dv.Sort = "id] ASC";
 			dv.Sort = "[id]] DESC";
 			dv.Sort = "[[id] ASC";
+		}
+
+
+		[Test]
+		public void SortTests ()
+		{
+			DataTable dataTable = new DataTable ("itemTable");
+			DataColumn dc1 = new DataColumn ("itemId", typeof(int));
+			DataColumn dc2 = new DataColumn ("itemName", typeof(string));
+			
+			dataTable.Columns.Add (dc1);
+			dataTable.Columns.Add (dc2);
+
+			dataTable.Rows.Add (new object[2] { 1, "First entry" });
+			dataTable.Rows.Add (new object[2] { 0, "Second entry" });
+			dataTable.Rows.Add (new object[2] { 3, "Third entry" });
+			dataTable.Rows.Add (new object[2] { 2, "Fourth entry" });
+			
+			DataView dataView = dataTable.DefaultView;
+
+			string s = "Default sorting: ";
+			AssertEquals (s + "First entry has wrong item", 1, dataView[0][0]);
+			AssertEquals (s + "Second entry has wrong item", 0, dataView[1][0]);
+			AssertEquals (s + "Third entry has wrong item", 3, dataView[2][0]);
+			AssertEquals (s + "Fourth entry has wrong item", 2, dataView[3][0]);
+
+			s = "Ascending sorting: ";
+			dataView.Sort = "itemId ASC";
+			AssertEquals (s + "First entry has wrong item", 0, dataView[0][0]);
+			AssertEquals (s + "Second entry has wrong item", 1, dataView[1][0]);
+			AssertEquals (s + "Third entry has wrong item", 2, dataView[2][0]);
+			AssertEquals (s + "Fourth entry has wrong item", 3, dataView[3][0]);
+
+			s = "Descending sorting: ";
+			dataView.Sort = "itemId DESC";
+			AssertEquals (s + "First entry has wrong item", 3, dataView[0][0]);
+			AssertEquals (s + "Second entry has wrong item", 2, dataView[1][0]);
+			AssertEquals (s + "Third entry has wrong item", 1, dataView[2][0]);
+			AssertEquals (s + "Fourth entry has wrong item", 0, dataView[3][0]);
+
+			s = "Reverted to default sorting: ";
+			dataView.Sort = null;
+			AssertEquals (s + "First entry has wrong item", 1, dataView[0][0]);
+			AssertEquals (s + "Second entry has wrong item", 0, dataView[1][0]);
+			AssertEquals (s + "Third entry has wrong item", 3, dataView[2][0]);
+			AssertEquals (s + "Fourth entry has wrong item", 2, dataView[3][0]);
+
 		}
 
 		#endregion // Sort Tests

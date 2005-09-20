@@ -259,7 +259,13 @@ namespace System.Data
 		[DataSysDescription ("Indicates the order in which data is returned by this DataView.")]
 		[DefaultValue ("")]
 		public string Sort {
-			get { return sort; }
+			get { 
+				if (useDefaultSort)
+					return String.Empty;
+				else
+					return sort;
+			}
+
 			set {
 				if (isInitPhase) {
 					initSort = value;
@@ -268,7 +274,7 @@ namespace System.Data
 				if (value == sort)
 					return;
 
-				if (value == null) {	
+				if ((value == null) || (value.Equals (String.Empty))) {	
 				/* if given value is null useDefaultSort */
 					useDefaultSort = true;
 					/* if ApplyDefault sort is true try appling it */
