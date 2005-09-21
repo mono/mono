@@ -1,3 +1,8 @@
+2005-09-21  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* SoapReflectionImporter.cs: Check the correct defaults
+	for attributes.
+
 2005-09-21  Lluis Sanchez Gual  <lluis@novell.com>  
 
 	* SerializationSource.cs: Fix nullref.
