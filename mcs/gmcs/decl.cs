@@ -715,7 +715,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected bool AddToContainer (MemberCore symbol, string name)
 		{
-			if (name == Basename && !(this is Interface) && !(this is Enum)) {
+			if (name == MemberName.Name && !(this is Interface) && !(this is Enum)) {
 				if (symbol is TypeParameter)
 					Report.Error (694, symbol.Location,
 						      "Type parameter `{0}' has same name as " +

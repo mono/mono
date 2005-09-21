@@ -2657,10 +2657,14 @@ opt_type_argument_list
 	| OP_GENERICS_LT type_arguments OP_GENERICS_GT
 	  {
 		$$ = $2;
+		if (RootContext.Version == LanguageVersion.ISO_1)
+			Report.FeatureIsNotStandardized (lexer.Location, "generics");
 	  }
 	| GENERIC_DIMENSION
 	  {
 		$$ = new TypeArguments ((int) $1, lexer.Location);
+		if (RootContext.Version == LanguageVersion.ISO_1)
+			Report.FeatureIsNotStandardized (lexer.Location, "generics");
 	  }
 	;
 
