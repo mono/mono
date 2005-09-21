@@ -28,9 +28,14 @@
 
 using System.Collections;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ToolboxItem ("")]
 #if NET_2_0
 	public class DataListItem : WebControl, INamingContainer, IDataItemContainer {

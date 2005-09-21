@@ -27,9 +27,13 @@
 
 using System.ComponentModel;
 using System.Data;
+using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls
-{
+namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
         public class HyperLinkColumn : DataGridColumn
         {
 		public HyperLinkColumn ()

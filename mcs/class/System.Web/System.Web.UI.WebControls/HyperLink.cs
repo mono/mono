@@ -29,9 +29,14 @@
 //
 
 using System.ComponentModel;
-using System.Web.UI;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ControlBuilder(typeof(HyperLinkControlBuilder))]
 	[DataBindingHandler("System.Web.UI.Design.HyperLinkDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[ParseChildren (false)]

@@ -27,9 +27,12 @@
 //
 
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS - no InheritanceDemand here as the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class DataKeyCollection : ICollection, IEnumerable {
 
 		private ArrayList list;

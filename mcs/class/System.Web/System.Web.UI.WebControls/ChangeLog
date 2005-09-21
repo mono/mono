@@ -1,3 +1,44 @@
+2005-09-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AdCreatedEventArgs.cs: Added declarative security (Link and, for 
+	2.0, Inheritance demands) for Minimal.
+	* BaseCompareValidator.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal.
+	* BaseDataBoundControl.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal.
+	* BaseValidator.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal.
+	* BoundColumn.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal.
+	* ButtonColumn.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal.
+	* CalendarDay.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal.
+	* CheckBoxList.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal.
+	* CompareValidator.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal.
+	* CustomValidator.cs: Added declarative security (Link and Inheritance
+	demands) for Minimal.
+	* DataBoundControl.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal.
+	* DataGridItemCollection.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal.
+	* DataKeyCollection.cs: Added declarative security (LinkDemands) for 
+	Minimal.
+ 	* DataListItemCollection.cs: Added declarative security (LinkDemands) 
+	for Minimal.
+	* DataListItem.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal.
+	* FontNamesConverter.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal.
+	* HyperLink.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal.
+	* HyperLinkColumn.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal.
+	* Image.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal.
+
 2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseDataList.cs: it's the DataKeysArray what is stored in "DataKeys",

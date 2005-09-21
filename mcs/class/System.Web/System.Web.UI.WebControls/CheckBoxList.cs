@@ -26,14 +26,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using System.Collections.Specialized;
 using System.ComponentModel;
-
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class CheckBoxList : ListControl, IRepeatInfoUser,
 				    INamingContainer, IPostBackDataHandler {
 

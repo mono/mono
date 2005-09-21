@@ -26,13 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Web;
-using System.Web.UI.WebControls;
 using System.Globalization;
 using System.ComponentModel;
+using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls
-{
+namespace System.Web.UI.WebControls {
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 #if NET_2_0
 	[ToolboxData("<{0}:CompareValidator runat=\"server\" ErrorMessage=\"CompareValidator\"></{0}:CompareValidator>")]
 #else

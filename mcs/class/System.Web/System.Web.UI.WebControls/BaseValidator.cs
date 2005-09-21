@@ -26,15 +26,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Web;
-using System.Web.UI.WebControls;
 using System.Web.Configuration;
 using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DefaultProperty("ErrorMessage")]
 	[Designer("System.Web.UI.Design.WebControls.BaseValidatorDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	public abstract class BaseValidator : Label, IValidator

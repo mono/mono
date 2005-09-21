@@ -27,18 +27,19 @@
 //	Jackson Harper (jackson@ximian.com)
 //
 
-using System;
 using System.Collections;
-
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
-	public
-#if !NET_2_0
-	sealed
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_2_0
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public class AdCreatedEventArgs : EventArgs {
+#else
+	public sealed class AdCreatedEventArgs : EventArgs {
 #endif
-	class AdCreatedEventArgs : EventArgs {
-
 		private IDictionary properties;
 
 		private string alt_text;

@@ -24,12 +24,15 @@
 //
 //
 
-using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls 
-{
+namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class FontNamesConverter : System.ComponentModel.TypeConverter 
 	{
 		#region Public Constructors

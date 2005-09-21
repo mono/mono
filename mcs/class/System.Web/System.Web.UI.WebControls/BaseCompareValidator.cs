@@ -28,13 +28,15 @@
 
 using System.Text;
 using System.Threading;
-using System.Web;
-using System.Web.UI.WebControls;
 using System.Globalization;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class BaseCompareValidator : BaseValidator {
 
 		ValidationDataType type;

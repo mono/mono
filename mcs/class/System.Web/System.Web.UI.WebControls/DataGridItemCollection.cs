@@ -25,8 +25,13 @@
 //
 
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DataGridItemCollection : ICollection, IEnumerable {
 		#region Fields
 		private ArrayList	array;
