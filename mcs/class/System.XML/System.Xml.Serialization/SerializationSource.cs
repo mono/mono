@@ -54,7 +54,7 @@ namespace System.Xml.Serialization
 			if (includedTypes == null)
 				return other.includedTypes == null;
 			
-			if (includedTypes.Length != other.includedTypes.Length) return false;
+			if (other.includedTypes == null || includedTypes.Length != other.includedTypes.Length) return false;
 			for (int n=0; n<includedTypes.Length; n++)
 				if (!includedTypes[n].Equals (other.includedTypes[n])) return false;
 

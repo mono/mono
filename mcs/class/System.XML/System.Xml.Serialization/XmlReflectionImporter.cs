@@ -949,11 +949,19 @@ namespace System.Xml.Serialization {
 			if (includedTypes == null) includedTypes = new ArrayList ();
 			if (!includedTypes.Contains (type))
 				includedTypes.Add (type);
+			
+			if (relatedMaps.Count > 0) {
+				foreach (XmlTypeMapping map in (ArrayList) relatedMaps.Clone ()) {
+					if (map.TypeData.Type == typeof(object))
+						map.DerivedTypes.Add (ImportTypeMapping (type));
+				}
+			}
 		}
 
 		public void IncludeTypes (ICustomAttributeProvider provider)
 		{ 
 			object[] ats = provider.GetCustomAttributes (typeof(XmlIncludeAttribute), true);
+			
 			foreach (XmlIncludeAttribute at in ats)
 				IncludeType (at.Type);
 		}

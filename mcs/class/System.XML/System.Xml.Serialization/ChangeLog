@@ -1,3 +1,11 @@
+2005-09-21  Lluis Sanchez Gual  <lluis@novell.com>  
+
+	* SerializationSource.cs: Fix nullref.
+	* XmlReflectionImporter.cs: When registering a type using
+	IncludeType(), make sure it is added as a subtype and the
+	map for typeof(object) if it has already been imported.
+	Fixes bug #76049.
+
 2005-09-21  Lluis Sanchez Gual  <lluis@novell.com> 
 
 	* XmlSerializationWriter.cs: Also internally serialize
