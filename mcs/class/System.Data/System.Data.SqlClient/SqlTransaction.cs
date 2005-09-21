@@ -144,6 +144,8 @@ namespace System.Data.SqlClient {
 				connection.Tds.Execute (String.Format ("ROLLBACK TRANSACTION {0}", transactionName));
 				isRolledBack = true;
 				isOpen = false;
+				connection.Transaction = null;
+				connection = null;
 			}
 				
 		}
