@@ -2696,7 +2696,9 @@ namespace System.Windows.Forms
 
 		public void Update() {
 			needs_redraw = true;
-			XplatUI.UpdateWindow(window.Handle);
+			if (IsHandleCreated) {
+				XplatUI.UpdateWindow(window.Handle);
+			}
 		}
 		#endregion	// Public Instance Methods
 

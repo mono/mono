@@ -1,3 +1,8 @@
+2005-09-21  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs (Update): Don't call XplatUI if we don't have a
+	  window handle yet
+
 2005-09-21  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* ContainerControl.cs: Instead of throwing an exception, print
