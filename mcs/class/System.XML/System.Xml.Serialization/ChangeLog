@@ -1,3 +1,10 @@
+2005-09-21  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSerializationWriter.cs: Properly serialize arrays
+	of primitive types when not explicitely specified in
+	a container class. Based on a patch by Konstantin Triger.
+	Fixes bug #75986. 
+
 2005-08-24  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* TypeData.cs: Reset the hasPublicConstructor flag when the

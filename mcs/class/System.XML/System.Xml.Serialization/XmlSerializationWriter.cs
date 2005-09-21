@@ -112,7 +112,7 @@ namespace System.Xml.Serialization
 			if (callbacks == null) callbacks = new Hashtable ();
 			callbacks.Add (type, info);
 		}
-
+		
 		protected Exception CreateChoiceIdentifierValueException (string value, string identifier, string name, string ns)
 		{
 			string message = string.Format ("Value '{0}' of the choice"
@@ -627,12 +627,16 @@ namespace System.Xml.Serialization
 			}
 			else
 			{
-				// Must be a primitive type
+				// Must be a primitive type or array of primitives
 				TypeData td = TypeTranslator.GetTypeData (o.GetType ());
-				if (td.SchemaType != SchemaTypes.Primitive)
+				if (td.SchemaType == SchemaTypes.Primitive) {
+					WriteXsiType (td.XmlType, XmlSchema.Namespace);
+					Writer.WriteString (XmlCustomFormatter.ToXmlString (td, o));
+				} else if (IsPrimitiveArray (td)) {
+					if (!AlreadyQueued (o)) referencedElements.Enqueue (o);
+					Writer.WriteAttributeString ("href", "#" + GetId (o, true));
+				} else
 					throw new InvalidOperationException ("Invalid type: " + o.GetType().FullName);
-				WriteXsiType(td.XmlType, XmlSchema.Namespace);
-				Writer.WriteString (XmlCustomFormatter.ToXmlString (td, o));
 			}
 
 			WriteEndElement ();
@@ -648,16 +652,61 @@ namespace System.Xml.Serialization
 				object o = referencedElements.Dequeue ();
 				TypeData td = TypeTranslator.GetTypeData (o.GetType ());
 				WriteCallbackInfo info = (WriteCallbackInfo) callbacks[o.GetType()];
-				WriteStartElement (info.TypeName, info.TypeNs, true);
-				Writer.WriteAttributeString ("id", GetId (o, false));
+				
+				if (info != null) {
+					WriteStartElement (info.TypeName, info.TypeNs, true);
+					Writer.WriteAttributeString ("id", GetId (o, false));
 
-				if (td.SchemaType != SchemaTypes.Array)	// Array use its own "arrayType" attribute
-					WriteXsiType(info.TypeName, info.TypeNs);
+					if (td.SchemaType != SchemaTypes.Array)	// Array use its own "arrayType" attribute
+						WriteXsiType(info.TypeName, info.TypeNs);
 
-				info.Callback (o);
-				WriteEndElement ();
+					info.Callback (o);
+					WriteEndElement ();
+				} else if (IsPrimitiveArray (td)) {
+					WriteArray (o, td);
+				}
 			}
 		}
+		
+		bool IsPrimitiveArray (TypeData td)
+		{
+			if (td.SchemaType == SchemaTypes.Array) {
+				if (td.ListItemTypeData.SchemaType == SchemaTypes.Primitive)
+					return true;
+				return IsPrimitiveArray (td.ListItemTypeData);
+			} else
+				return false;
+		}
+
+		void WriteArray (object o, TypeData td)
+		{
+			TypeData itemTypeData = td;
+			string xmlType;
+			int nDims = -1;
+
+			do {
+				itemTypeData = itemTypeData.ListItemTypeData;
+				xmlType = itemTypeData.XmlType;
+				nDims++;
+			}
+			while (itemTypeData.SchemaType == SchemaTypes.Array );
+
+			while (nDims-- > 0)
+				xmlType += "[]";
+
+			WriteStartElement("Array", XmlSerializer.EncodingNamespace, true);
+			Writer.WriteAttributeString("id", GetId(o, false));
+			if (td.SchemaType == SchemaTypes.Array) {
+				Array a = (Array)o;
+				int len = a.Length;
+				Writer.WriteAttributeString("arrayType", XmlSerializer.EncodingNamespace, GetQualifiedName(xmlType, XmlSchema.Namespace) + "[" + len.ToString() + "]");
+				for (int i = 0; i < len; i++) {
+					WritePotentiallyReferencingElement("Item", "", a.GetValue(i), td.ListItemType, false, true);
+				}
+			}
+			WriteEndElement();
+		}
+
 
 		protected void WriteReferencingElement (string n, string ns, object o)
 		{
