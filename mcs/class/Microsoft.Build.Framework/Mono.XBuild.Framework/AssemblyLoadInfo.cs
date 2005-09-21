@@ -30,7 +30,7 @@ using System.Globalization;
 using System.Reflection;
 
 namespace Mono.XBuild.Framework {
-	public class AssemblyLoadInfo {
+	internal class AssemblyLoadInfo {
 	
 		AssemblyName	assemblyName;
 		string		assemblyNameString;
@@ -139,7 +139,7 @@ namespace Mono.XBuild.Framework {
 		}
 	}
 
-	public enum LoadInfoType {
+	internal enum LoadInfoType {
 		AssemblyName,
 		AssemblyFilename,
 		AssemblyNameFromString

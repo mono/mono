@@ -40,4 +40,3 @@ Microsoft.Build.Framework/TaskFinishedEventArgs.cs
 Microsoft.Build.Framework/TaskFinishedEventHandler.cs
 Microsoft.Build.Framework/TaskStartedEventArgs.cs
 Microsoft.Build.Framework/TaskStartedEventHandler.cs
-Mono.XBuild.Framework/AssemblyLoadInfo.cs
