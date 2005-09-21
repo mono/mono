@@ -1,5 +1,5 @@
 //
-// Tests for System.Web.UI.WebControls.Style.cs 
+// Tests for System.Web.UI.WebControls.DropDownList.cs 
 //
 // Author:
 //	Peter Dennis Bartok (pbartok@novell.com)

@@ -1,5 +1,5 @@
 //
-// PagedDataSourceTest.cs
+// HyperLinkColumnTest.cs
 //
 // Author: Duncan Mak (duncan@novell.com)
 //
