@@ -1,3 +1,8 @@
+2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Microsoft.Build.Engine.dll.sources: Added reference to
+	AssemblyLoadInfo.
+
 2005-09-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Microsoft.Build.Engine_test.dll.sources: Added.
