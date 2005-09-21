@@ -36,31 +36,47 @@ public class DerivedTest : Test
         ObsoleteClass member;
     
         [Obsolete]
-	public DerivedTest(string a) : base(a, false)
+		public DerivedTest(string a) : base(a, false)
         {
-		Name = a;
-	}
+			Name = a;
+		}
         
         public string Method ()
         {
             return base.Name;
         }
+		
+	[Obsolete]
+	public void T2 () {}
         
         public static void Main () {}
 }
 
-[Obsolete]
-class ObsoleteClass2: ObsoleteClass
-{
-}
+//TODO: reanable after fix
+//[Obsolete]
+//class ObsoleteClass2: ObsoleteClass
+//{
+//}
+
 
 class ObsoleteClass3
 {
-    	public static readonly double XSmall = 0.6444444444444;
+	public static readonly double XSmall = 0.6444444444444;
 
 	[Obsolete ("E1")]
 	public readonly double X_Small = XSmall;
 
 	[Obsolete ("E2")]
 	public static readonly double X_Small2 = XSmall;
+}
+
+
+class ObsoleteClass4
+{
+	[Obsolete]
+	public void T ()
+	{
+		lock (typeof (ObsoleteClass4)) {}
+//		lock (typeof (ObsoleteClass2)) {}
+	}
 }
