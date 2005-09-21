@@ -62,7 +62,11 @@ namespace System.Xml.XPath
 		}
 	}
 
+#if NET_2_0
+	internal class XPathNavigatorComparer : IComparer, IEqualityComparer
+#else
 	internal class XPathNavigatorComparer : IComparer
+#endif
 	{
 		public static XPathNavigatorComparer Instance = new XPathNavigatorComparer ();
 		private XPathNavigatorComparer ()
@@ -86,5 +90,22 @@ namespace System.Xml.XPath
 				return -1;
 			}
 		}
+
+#if NET_2_0
+		public bool Equals (object o1, object o2)
+		{
+			XPathNavigator nav1 = o1 as XPathNavigator;
+			XPathNavigator nav2 = o2 as XPathNavigator;
+			if (nav1 != null && nav2 != null)
+				return nav1.IsSamePosition (nav2);
+			else
+				return false;
+		}
+
+		public int GetHashCode (object obj)
+		{
+			return obj.GetHashCode ();
+		}
+#endif
 	}
 }

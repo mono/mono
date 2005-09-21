@@ -1,3 +1,9 @@
+2004-09-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathNavigator.cs : added NavigatorComparer.
+	* XPathComparer.cs : XPathNavigatorComparer implements
+	  IEqualityComparer under NET_2_0 profile.
+
 2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XPathException.cs: Added a Demand for SerializationFormatter on

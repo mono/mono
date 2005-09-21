@@ -32,6 +32,7 @@
 
 using System;
 #if NET_2_0
+using System.Collections;
 using System.Collections.Generic;
 #endif
 using System.IO;
@@ -54,6 +55,14 @@ namespace System.Xml.XPath
 	public abstract class XPathNavigator : ICloneable
 #endif
 	{
+		#region Static members
+#if NET_2_0
+		public static IEqualityComparer NavigatorComparer {
+			get { return XPathNavigatorComparer.Instance; }
+		}
+#endif
+		#endregion
+
 		#region Constructor
 
 		protected XPathNavigator ()
