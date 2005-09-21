@@ -1,3 +1,20 @@
+2005-09-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AdCreatedEventArgsCas.cs, BaseCompareValidatorCas.cs,
+	BaseDataBoundControlCas.cs, BaseDataListCas.cs, BaseValidatorCas.cs,
+	BoundColumnCas.cs, ButtonColumnCas.cs, CalandarCas.cs, 
+	CalendarDayCas.cs, CheckBoxCas.cs, CheckBoxListCas.cs, 
+	CompareValidatorCas.cs, CompositeControlCas.cs, CustomValidatorCas.cs,
+	DataBoundControlCas.cs, DataGridCas.cs, DataGridColumnCas.cs,
+	DataGridItemCas.cs, DataGridItemCollectionCas.cs, 
+	DataGridPagerStyleCas.cs, DataKeyCollectionCas.cs, DataListItemCas.cs,
+	DataListItemCollectionCas.cs, EditCommandColumnCas.cs, FontInfoCas.cs,
+	FontNamesConverterCas.cs, FontUnitCas.cs, FormViewCas.cs, 
+	HyperLinkCas.cs, HyperLinkColumnCas.cs, ImageButtonCas.cs, 
+	ImageCas.cs: New CAS unit tests - checks for LinkDemands and 
+	re-execute the "classic" unit tests under the most retricted security
+	permissions possible.
+
 2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGridTest.cs: added data binding tests.
