@@ -35,6 +35,7 @@ scripts_1_0 = \
 
 scripts_2_0 = \
 	monop2 			\
+	xbuild			\
 	wsdl2
 
 scripts_rpmhelpers = mono-find-provides mono-find-requires
