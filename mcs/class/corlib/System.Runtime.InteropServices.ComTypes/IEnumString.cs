@@ -39,7 +39,7 @@ namespace System.Runtime.InteropServices.ComTypes
 	public interface IEnumString
 	{
 		[PreserveSigAttribute]
-		int Next (int celt, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex = 0)] string[] rgelt, IntPtr pceltFetched);
+		int Next (int celt, [Out, MarshalAs (UnmanagedType.LPArray, SizeParamIndex = 0)] string[] rgelt, IntPtr pceltFetched);
 		[PreserveSigAttribute]
 		int Skip (int celt);
 		void Reset ();

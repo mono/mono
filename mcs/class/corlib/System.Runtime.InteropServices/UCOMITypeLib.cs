@@ -52,7 +52,7 @@ namespace System.Runtime.InteropServices
 		void GetDocumentation (int index, out string strName, out string strDocString, out int dwHelpContext, out string strHelpFile);
 		[return: MarshalAs (UnmanagedType.Bool)]
 		bool IsName ([MarshalAs(UnmanagedType.LPWStr)] string szNameBuf, int lHashVal);
-		void FindName ([MarshalAs(UnmanagedType.LPWStr)] string szNameBuf, int lHashVal, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80)] UCOMITypeInfo[] ppTInfo, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80)] int[] rgMemId, ref short pcFound);
+		void FindName ([MarshalAs(UnmanagedType.LPWStr)] string szNameBuf, int lHashVal, [Out, MarshalAs (UnmanagedType.LPArray)] UCOMITypeInfo[] ppTInfo, [Out, MarshalAs (UnmanagedType.LPArray)] int[] rgMemId, ref short pcFound);
 #if NET_2_0
 		[PreserveSig]
 #endif

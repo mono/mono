@@ -1,3 +1,10 @@
+2005-09-21  Kornél Pál  <kornelpal@hotmail.com>
+
+	* IEnumConnections.cs, IEnumMoniker.cs, IEnumString.cs, IStream.cs,
+	  ITypeInfo.cs, ITypeLib.cs:
+	  Removed UnmanagedType_80 that was required because mcs bug #75945
+	  was not discovered.
+
 2005-03-04  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* IBindCtx.cs

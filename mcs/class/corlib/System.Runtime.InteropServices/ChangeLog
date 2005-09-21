@@ -1,3 +1,10 @@
+2005-09-21  Kornél Pál  <kornelpal@hotmail.com>
+
+	* UCOMIEnumConnections.cs, UCOMIEnumMoniker.cs, UCOMIEnumString.cs,
+	  UCOMIStream.cs, UCOMITypeInfo.cs, UCOMITypeLib.cs, UnmanagedType.cs:
+	  Removed UnmanagedType_80 that was required because mcs bug #75945
+	  was not discovered.
+
 2005-08-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* SetWin32ContextInIDispatchAttribute.cs: Make this attribute also

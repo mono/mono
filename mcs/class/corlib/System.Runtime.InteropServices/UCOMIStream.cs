@@ -41,8 +41,8 @@ namespace System.Runtime.InteropServices
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIStream
 	{
-		void Read ([Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex = 1)] byte[] pv, int cb, IntPtr pcbRead);
-		void Write ([MarshalAs(UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex = 1)] byte[] pv, int cb, IntPtr pcbWritten);
+		void Read ([Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] byte[] pv, int cb, IntPtr pcbRead);
+		void Write ([MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 1)] byte[] pv, int cb, IntPtr pcbWritten);
 		void Seek (long dlibMove, int dwOrigin, IntPtr plibNewPosition);
 		void SetSize (long libNewSize);
 		void CopyTo (UCOMIStream pstm, long cb, IntPtr pcbRead, IntPtr pcbWritten);

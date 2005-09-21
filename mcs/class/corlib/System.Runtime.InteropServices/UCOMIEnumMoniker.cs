@@ -43,7 +43,7 @@ namespace System.Runtime.InteropServices
 #if NET_2_0
 		[PreserveSig]
 #endif
-		int Next (int celt, [Out, MarshalAs(UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex = 0)] UCOMIMoniker[] rgelt, out int pceltFetched);
+		int Next (int celt, [Out, MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 0)] UCOMIMoniker[] rgelt, out int pceltFetched);
 #if NET_2_0
 		[PreserveSig]
 #endif

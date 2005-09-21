@@ -43,10 +43,10 @@ namespace System.Runtime.InteropServices
 		void GetTypeComp (out UCOMITypeComp ppTComp);
 		void GetFuncDesc (int index, out IntPtr ppFuncDesc);
 		void GetVarDesc (int index, out IntPtr ppVarDesc);
-		void GetNames (int memid, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex=2)] string[] rgBstrNames, int cMaxNames, out int pcNames);
+		void GetNames (int memid, [Out, MarshalAs (UnmanagedType.LPArray, SizeParamIndex=2)] string[] rgBstrNames, int cMaxNames, out int pcNames);
 		void GetRefTypeOfImplType (int index, out int href);
 		void GetImplTypeFlags (int index, out int pImplTypeFlags);
-		void GetIDsOfNames ([In, MarshalAs(UnmanagedType.LPArray, ArraySubType = (UnmanagedType.LPWStr), SizeParamIndex=1)] string[] rgszNames, int cNames, [Out, MarshalAs (UnmanagedType.LPArray, ArraySubType = Consts.UnmanagedType_80, SizeParamIndex=1)] int[] pMemId);
+		void GetIDsOfNames ([In, MarshalAs(UnmanagedType.LPArray, ArraySubType = (UnmanagedType.LPWStr), SizeParamIndex=1)] string[] rgszNames, int cNames, [Out, MarshalAs (UnmanagedType.LPArray, SizeParamIndex=1)] int[] pMemId);
 		void Invoke ([MarshalAs (UnmanagedType.IUnknown)] object pvInstance, int memid, short wFlags, ref DISPPARAMS pDispParams, out object pVarResult, out EXCEPINFO pExcepInfo, out int puArgErr);
 		void GetDocumentation (int index, out string strName, out string strDocString, out int dwHelpContext, out string strHelpFile);
 		void GetDllEntry (int memid, INVOKEKIND invKind, out string pBstrDllName, out string pBstrName, out short pwOrdinal);
