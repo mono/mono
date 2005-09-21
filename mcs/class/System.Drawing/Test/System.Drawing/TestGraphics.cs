@@ -287,7 +287,6 @@ namespace MonoTests.System.Drawing
 			g.Dispose ();			
 		}
 
-
 		[Test]
 		public void LoadIndexed ()
 		{
@@ -299,6 +298,13 @@ namespace MonoTests.System.Drawing
 			Image x = Image.FromStream (str);
 			Graphics g = Graphics.FromImage (x);
 		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void FromImage ()
+		{
+			Graphics g = Graphics.FromImage (null);
+		}		
 	}
 }
 

@@ -1291,7 +1291,8 @@ namespace System.Drawing
 		{
 			IntPtr graphics;
 
-			if (image == null) throw new ArgumentException ();
+			if (image == null) 
+				throw new ArgumentNullException ();
 
 			Status status = GDIPlus.GdipGetImageGraphicsContext (image.nativeObject, out graphics);
 			GDIPlus.CheckStatus (status);
