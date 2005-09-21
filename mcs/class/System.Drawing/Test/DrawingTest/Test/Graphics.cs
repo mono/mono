@@ -296,6 +296,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		RectangleF dstF = new Rectangle(270, 270, 100, 100);
 
 		Image bmp;
+		Image bmp2;
 
 		[SetUp]
 		public virtual void SetUp() {
@@ -303,6 +304,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			DrawingTest.ShowForms = false;
 			try {
 				bmp = Bitmap.FromFile(@"..\..\bitmap50.png");
+				bmp2 = Bitmap.FromFile(@"..\..\bitmap25.png");
 			}
 			catch(Exception e) {
 				Console.WriteLine(e.Message);
@@ -379,6 +381,35 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		public void DrawImage9() {
 			t.Graphics.DrawImage(bmp, 0, 0);
 			t.Graphics.DrawImage(bmp, 200, 200);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImageWithResolution() {
+			t.Graphics.DrawImage(bmp2, 0, 0);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImageInContainer1() {
+			t.Graphics.BeginContainer(new Rectangle(10, 10, 50, 50), new Rectangle(70, 70, 100, 100), GraphicsUnit.Pixel);
+			t.Graphics.DrawImage(bmp, 0, 0);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImageInContainer2() {
+			t.Graphics.BeginContainer(new Rectangle(10, 10, 50, 50), new Rectangle(70, 70, 100, 100), GraphicsUnit.Pixel);
+			t.Graphics.DrawImage(bmp2, 0, 0);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImageInContainer3() {
+			t.Graphics.BeginContainer(new Rectangle(10, 10, 50, 50), new Rectangle(70, 70, 100, 100), GraphicsUnit.Pixel);
+			t.Graphics.SetClip( new Rectangle(0, 0, 15, 15) );
+			t.Graphics.ScaleTransform(0.5f, 0.5f);
+			t.Graphics.DrawImage(bmp2, 0, 0);
 			t.Show();
 			Assert.IsTrue(t.Compare());
 		}

@@ -27,6 +27,13 @@ namespace Test.Sys.Drawing {
 				DrawingTest.CalculateNorm (t.Bitmap));
 		}
 		[Test]
+		public void Clone2 () {
+			Image im1 = (Image) t.Bitmap.Clone (new Rectangle(0, 0, t.Bitmap.Width, t.Bitmap.Height), t.Bitmap.PixelFormat);
+			t.Graphics.FillRectangle (Brushes.Beige, 0, 0, 100, 100);
+			Assert.IsFalse (DrawingTest.CalculateNorm ((Bitmap)im1) ==
+				DrawingTest.CalculateNorm (t.Bitmap));
+		}
+		[Test]
 		public void GetHashCodeTest () {
 			Assert.IsFalse (t.Bitmap.GetHashCode () == 0);
 			Bitmap im1 = new Bitmap (10, 20);
@@ -49,8 +56,24 @@ namespace Test.Sys.Drawing {
 		[Test]
 		public void GetFrameCount () {
 			Assert.AreEqual (1, t.Bitmap.GetFrameCount (FrameDimension.Page));
-			Assert.AreEqual (1, t.Bitmap.GetFrameCount (FrameDimension.Time));
-			Assert.AreEqual (1, t.Bitmap.GetFrameCount (new FrameDimension (Guid.NewGuid ())));
+		}
+		[Test]
+		public void GetFrameCount2 () {
+			try {
+				t.Bitmap.GetFrameCount (FrameDimension.Time);
+			}
+			catch (ArgumentException) {
+				Assert.IsTrue( true );
+			}
+		}
+		[Test]
+		public void GetFrameCount3 () {
+			try {
+				t.Bitmap.GetFrameCount (new FrameDimension (Guid.NewGuid ()));
+			}
+			catch (ArgumentException) {
+				Assert.IsTrue( true );
+			}
 		}
 		[Test]
 #if TARGET_JVM
