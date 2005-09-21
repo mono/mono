@@ -54,7 +54,7 @@ namespace MonoTests.System.Web.Hosting {
 			if ((p == 4) || (p == 128)) 
 				x = 7;
 				
-			assembly = typeof (SimpleWorkerTests).Assembly.CodeBase.Substring (x);
+			assembly = typeof (SimpleWorkerRequestTest).Assembly.CodeBase.Substring (x);
 
 			if (!Directory.Exists (bindir))
 				Directory.CreateDirectory (bindir);
@@ -71,7 +71,6 @@ namespace MonoTests.System.Web.Hosting {
 			
 			SimpleWorkerRequest swr;
 
-			string ppath;
 			swr = new SimpleWorkerRequest ("/appVirtualDir", cwd, "pageVirtualPath", "querystring", sw);
 			Assert.AreEqual ("/appVirtualDir", swr.GetAppPath (), "S1");
 			Assert.AreEqual ("/appVirtualDir/pageVirtualPath", swr.GetFilePath (), "S2");
