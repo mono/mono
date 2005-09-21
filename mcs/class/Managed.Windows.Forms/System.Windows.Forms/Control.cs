@@ -628,7 +628,9 @@ namespace System.Windows.Forms
 				if (border_style != value) {
 					border_style = value;
 
-					XplatUI.SetBorderStyle(window.Handle, border_style);
+					if (IsHandleCreated)
+						XplatUI.SetBorderStyle(window.Handle,
+								border_style);
 				}
 			}
 		}

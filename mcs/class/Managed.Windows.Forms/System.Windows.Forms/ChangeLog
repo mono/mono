@@ -1,3 +1,9 @@
+2005-09-21  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Don't try to set the border style on the window if
+	it hasn't been created. When the window is created the border
+	style will be used.
+
 2005-09-21  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs (Update): Don't call XplatUI if we don't have a
