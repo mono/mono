@@ -47,8 +47,9 @@ namespace System.Xml
 		private string indentChars;
 		private string newLineChars;
 		private bool newLineOnAttributes;
-		private bool normalizeNewLines;
+		private NewLineHandling newLineHandling;
 		private bool omitXmlDeclaration;
+		private XmlOutputMethod outputMethod;
 
 		public XmlWriterSettings ()
 		{
@@ -65,7 +66,8 @@ namespace System.Xml
 			indentChars = org.indentChars;
 			newLineChars = org.newLineChars;
 			newLineOnAttributes = org.newLineOnAttributes;
-			normalizeNewLines = org.normalizeNewLines;
+			newLineHandling = org.newLineHandling;
+			outputMethod = org.outputMethod;
 			omitXmlDeclaration = org.omitXmlDeclaration;
 		}
 
@@ -85,8 +87,9 @@ namespace System.Xml
 			// LAMESPEC: MS.NET says it is "\r\n", but it is silly decision.
 			newLineChars = Environment.NewLine;
 			newLineOnAttributes = false;
-			normalizeNewLines = true;
+			newLineHandling = NewLineHandling.None;
 			omitXmlDeclaration = false;
+			outputMethod = XmlOutputMethod.AutoDetect;
 		}
 
 		// It affects only on XmlTextWriter
@@ -137,15 +140,21 @@ namespace System.Xml
 		}
 
 		// It affects only on XmlTextWriter
-		public bool NormalizeNewLines {
-			get { return normalizeNewLines; }
-			set { normalizeNewLines = value; }
+		public NewLineHandling NewLineHandling {
+			get { return newLineHandling; }
+			set { newLineHandling = value; }
 		}
 
 		// It affects only on XmlTextWriter
 		public bool OmitXmlDeclaration {
 			get { return omitXmlDeclaration; }
 			set { omitXmlDeclaration = value; }
+		}
+
+		// does it affect only on XmlTextWriter?
+		public XmlOutputMethod OutputMethod {
+			get { return outputMethod; }
+			set { outputMethod = value; }
 		}
 	}
 }

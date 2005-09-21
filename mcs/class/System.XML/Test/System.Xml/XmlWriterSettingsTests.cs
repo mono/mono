@@ -39,7 +39,6 @@ namespace MonoTests.System.Xml
 			AssertEquals ("  ", s.IndentChars);
 			AssertEquals (Environment.NewLine, s.NewLineChars);
 			AssertEquals (false, s.NewLineOnAttributes);
-			AssertEquals (true, s.NormalizeNewLines);
 			AssertEquals (false, s.OmitXmlDeclaration);
 		}
 

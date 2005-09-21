@@ -1,5 +1,9 @@
 2005-09-21  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlWriterSettingsTests.cs : removed NormalizeNewLines.
+
+2005-09-21  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderSettingsTests.cs : updated NET_2_0 related tests.
 	* NameTableTests.cs : numbered testcases. fixed argument order.
 
