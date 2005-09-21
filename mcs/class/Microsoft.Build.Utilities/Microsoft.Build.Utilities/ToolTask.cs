@@ -28,16 +28,18 @@
 using System;
 using System.Diagnostics;
 using System.Collections.Specialized;
+using System.IO;
 using System.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.Utilities
 {
 	public abstract class ToolTask : Task
 	{
-		StringDictionary		environmentOverride;
+		StringDictionary	environmentOverride;
 		int			timeout;
 		string			toolPath;
 		Process			process;
@@ -59,6 +61,7 @@ namespace Microsoft.Build.Utilities
 		{
 			this.TaskResources = taskResources;
 			this.HelpKeywordPrefix = helpKeywordPrefix;
+			this.toolPath = MonoLocationHelper.GetBinDir ();
 		}
 
 		static ToolTask ()

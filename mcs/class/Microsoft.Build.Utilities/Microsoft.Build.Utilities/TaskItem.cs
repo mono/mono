@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.IO;
 using Microsoft.Build.Framework;
 
@@ -42,7 +43,7 @@ namespace Microsoft.Build.Utilities
 		{
 			this.itemSpec = String.Empty;
 			this.recursiveDir = String.Empty;
-			this.metadata = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
+			this.metadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
 
 		public TaskItem (ITaskItem sourceItem)
@@ -56,7 +57,7 @@ namespace Microsoft.Build.Utilities
 		{
 			this.ItemSpec = itemSpec;
 			this.recursiveDir = String.Empty;
-			metadata = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
+			this.metadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
 
 		public TaskItem (string itemSpec, IDictionary itemMetadata)
@@ -68,7 +69,7 @@ namespace Microsoft.Build.Utilities
 
 		public IDictionary CloneCustomMetadata ()
 		{
-			IDictionary clonedMetadata = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
+			IDictionary clonedMetadata = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			foreach (DictionaryEntry de in metadata)
 				clonedMetadata.Add (de.Key, de.Value);
 			return clonedMetadata;

@@ -1,3 +1,9 @@
+2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ToolTask.cs: Formatting.
+	* TaskItem.cs: Removed obsoleted code.
+	* ToolLocationHelper.cs: Formatting.
+
 2005-09-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* CommandLineBuilder.cs, Logger.cs, AppDomainIsolatedTask.cs,

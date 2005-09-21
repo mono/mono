@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
 
 namespace Microsoft.Build.Utilities
 {
@@ -76,7 +77,8 @@ namespace Microsoft.Build.Utilities
 		}
 
 		[MonoTODO]
-		public static string GetPathToSystemFile (string fileName) {
+		public static string GetPathToSystemFile (string fileName)
+		{
 			throw new NotImplementedException ();
 		}
 
