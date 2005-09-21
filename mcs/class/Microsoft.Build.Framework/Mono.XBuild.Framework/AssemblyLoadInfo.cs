@@ -29,7 +29,7 @@ using System;
 using System.Globalization;
 using System.Reflection;
 
-namespace Mono.XBuild.Shared {
+namespace Mono.XBuild.Framework {
 	public class AssemblyLoadInfo {
 	
 		AssemblyName	assemblyName;

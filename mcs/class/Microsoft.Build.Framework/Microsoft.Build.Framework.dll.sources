@@ -1,4 +1,5 @@
 ../../build/common/Consts.cs
+../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 Microsoft.Build.Framework/AnyEventHandler.cs
 Microsoft.Build.Framework/BuildErrorEventArgs.cs
@@ -25,7 +26,6 @@ Microsoft.Build.Framework/LoadInSeparateAppDomainAttribute.cs
 Microsoft.Build.Framework/LoggerException.cs
 Microsoft.Build.Framework/LoggerVerbosity.cs
 Microsoft.Build.Framework/MessageImportance.cs
-Microsoft.Build.Framework/MonoTODOAttribute.cs
 Microsoft.Build.Framework/OutputAttribute.cs
 Microsoft.Build.Framework/ProjectFinishedEventArgs.cs
 Microsoft.Build.Framework/ProjectFinishedEventHandler.cs
@@ -40,4 +40,4 @@ Microsoft.Build.Framework/TaskFinishedEventArgs.cs
 Microsoft.Build.Framework/TaskFinishedEventHandler.cs
 Microsoft.Build.Framework/TaskStartedEventArgs.cs
 Microsoft.Build.Framework/TaskStartedEventHandler.cs
-Mono.XBuild.Shared/AssemblyLoadInfo.cs
+Mono.XBuild.Framework/AssemblyLoadInfo.cs

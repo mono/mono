@@ -1,3 +1,9 @@
+2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Mono.XBuild.Shared: Moved to Mono.XBuild.Framework to be consistent.
+	* Microsoft.Build.Framework.dll.sources: Added MonoTODOAttribute from
+	build/common.
+
 2005-09-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Microsoft.Build.Framework_test.dll.sources: Added.
