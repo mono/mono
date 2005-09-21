@@ -753,7 +753,18 @@ namespace MonoTests.System.XmlSerialization
 			tw.WriteStartElement ("aa");
 			ser.Serialize (tw, new ArrayClass ());
 			tw.WriteEndElement ();
-		}		
+		}
+		
+		[Test]
+		public void TestIncludeType()
+		{
+			// Test for bug #76049
+			XmlReflectionImporter imp = new XmlReflectionImporter ();
+			XmlTypeMapping map = imp.ImportTypeMapping (typeof(object));
+			imp.IncludeType (typeof(TestSpace));
+			XmlSerializer ser = new XmlSerializer (map);
+			ser.Serialize (new StringWriter (), new TestSpace ());
+		}
 		
 		public static string Infoset (string sx)
 		{

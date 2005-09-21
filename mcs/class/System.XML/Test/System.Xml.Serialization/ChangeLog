@@ -1,3 +1,7 @@
+2005-09-21  Lluis Sanchez Gual  <lluis@novell.com> 
+
+	* XmlSerializerTests.cs, Added test for bug #76049.
+
 2005-09-21  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSerializerTests.cs, XmlSerializerTestClasses.cs: Added test
