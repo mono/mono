@@ -1,3 +1,9 @@
+2005-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionStateModule.cs: fix compilation warnings and use the
+	application path for the cookie path. This is a temporary fix for 76172.
+	* SessionId.cs: don't access the cookie collection twice.
+
 2005-09-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionStateModule.cs: raise the Start event for new sessions.

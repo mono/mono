@@ -67,7 +67,7 @@ namespace System.Web.SessionState
 		ISessionHandler handler;
 		bool sessionForStaticFiles;
 		
-		static RandomNumberGenerator rng = new RNGCryptoServiceProvider ();
+		static RandomNumberGenerator rng = RandomNumberGenerator.Create ();
 		
 		public SessionStateModule ()
 		{
@@ -117,7 +117,7 @@ namespace System.Web.SessionState
 			if (handlerType == null)
 				return;
 
-			if (config.CookieLess)
+			if (cfg.CookieLess)
 				app.BeginRequest += new EventHandler (OnBeginRequest);
 
 			app.AcquireRequestState += new EventHandler (OnAcquireState);
@@ -126,7 +126,7 @@ namespace System.Web.SessionState
 			
 			if (handlerType != null && handler == null) {
 				handler = (ISessionHandler) Activator.CreateInstance (handlerType);
-				handler.Init (this, app, config); //initialize
+				handler.Init (this, app, cfg); //initialize
 			}
 		}
 
@@ -193,15 +193,15 @@ namespace System.Web.SessionState
 					
 				context.SetSession (session);
 
+				HttpRequest request = context.Request;
+				HttpResponse response = context.Response;
+				string id = context.Session.SessionID;
 				if (isNew && config.CookieLess) {
-					string id = context.Session.SessionID;
-					context.Request.SetHeader (HeaderName, id);
-					context.Response.Redirect (UrlUtils.InsertSessionId (id,
-								   context.Request.FilePath));
+					request.SetHeader (HeaderName, id);
+					response.Redirect (UrlUtils.InsertSessionId (id, request.FilePath));
 				} else if (isNew) {
-					string id = context.Session.SessionID;
 					HttpCookie cookie = new HttpCookie (CookieName, id);
-					cookie.Path = UrlUtils.GetDirectory (context.Request.ApplicationPath);
+					cookie.Path = request.ApplicationPath;
 					context.Response.AppendCookie (cookie);
 				}
 
