@@ -37,7 +37,7 @@ using System.Xml.Schema;
 
 namespace System.Xml
 {
-	public class XmlWriterSettings
+	public sealed class XmlWriterSettings
 	{
 		private bool checkCharacters;
 		private bool closeOutput;

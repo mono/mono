@@ -537,7 +537,6 @@ namespace System.Xml
 #endif
 
 #if NET_2_0
-		[Obsolete]
 		public override object ReadTypedValue ()
 #else
 		public object ReadTypedValue ()

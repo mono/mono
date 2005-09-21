@@ -72,6 +72,13 @@ namespace System.Xml
 
 		}
 
+#if NET_2_0
+		public override Uri ResolveUri (Uri baseUri, string relativeUri)
+		{
+			return base.ResolveUri (baseUri, relativeUri);
+		}
+#endif
+
 		// see also XmlResolver.EscapeRelativeUriBody().
 		private string UnescapeRelativeUriBody (string src)
 		{

@@ -116,6 +116,7 @@ namespace System.Xml
 			return Create (builder, null);
 		}
 
+		[MonoTODO ("NewLineHandling/OutputMethod")]
 		public static XmlWriter Create (Stream stream, XmlWriterSettings settings)
 		{
 			// FIXME: this might result in encoding null reference
@@ -123,6 +124,7 @@ namespace System.Xml
 			return Create (new StreamWriter (stream, enc), settings);
 		}
 
+		[MonoTODO ("NewLineHandling/OutputMethod")]
 		public static XmlWriter Create (string file, XmlWriterSettings settings)
 		{
 			// FIXME: this might result in encoding null reference
@@ -130,16 +132,19 @@ namespace System.Xml
 			return Create (new StreamWriter (file, false, enc), settings);
 		}
 
+		[MonoTODO ("NewLineHandling/OutputMethod")]
 		public static XmlWriter Create (StringBuilder builder, XmlWriterSettings settings)
 		{
 			return Create (new StringWriter (builder), null);
 		}
 
+		[MonoTODO ("NewLineHandling/OutputMethod")]
 		public static XmlWriter Create (TextWriter writer, XmlWriterSettings settings)
 		{
 			return CreateTextWriter (writer, settings);
 		}
 
+		[MonoTODO ("NewLineHandling/OutputMethod")]
 		public static XmlWriter Create (XmlWriter writer, XmlWriterSettings settings)
 		{
 			if (settings == null)
@@ -173,9 +178,14 @@ namespace System.Xml
 			return Create (xtw, settings);
 		}
 
-		public virtual void Dispose ()
+		public virtual void Dispose (bool disposing)
 		{
 			Close ();
+		}
+
+		void IDisposable.Dispose ()
+		{
+			Dispose (false);
 		}
 #endif
 
@@ -553,6 +563,12 @@ namespace System.Xml
 		public virtual void WriteValue (DateTime value)
 		{
 			WriteString (XmlConvert.ToString (value));
+		}
+
+		[MonoTODO]
+		public virtual void WriteValue (decimal value)
+		{
+			WriteString (XQueryConvert.DecimalToString (value));
 		}
 
 		[MonoTODO]

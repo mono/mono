@@ -131,6 +131,7 @@ System.Xml/XmlNodeOrder.cs
 System.Xml/XmlNodeReader2.cs
 System.Xml/XmlNodeReaderImpl.cs
 System.Xml/XmlNodeType.cs
+System.Xml/XmlOutputMethod.cs
 System.Xml/XmlParserContext.cs
 System.Xml/XmlProcessingInstruction.cs
 System.Xml/XmlQualifiedName.cs

@@ -1,5 +1,12 @@
 2005-09-21  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlOutputMethod.cs : new file.
+	* XmlWriter.cs, XmlValidatingReader.cs, XmlReaderSettings.cs,
+	  XmlUrlResolver.cs, XmlWriterSettings.cs :
+	  more NET_2_0 updates.
+
+2005-09-21  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNodeReader2.cs, XmlReader.cs,
 	  XmlTextReader.cs, XmlTextReader2.cs,
 	  XmlNodeChangedEventArgs.cs, XmlElement.cs,
