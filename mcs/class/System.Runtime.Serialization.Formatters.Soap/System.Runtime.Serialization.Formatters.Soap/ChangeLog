@@ -1,3 +1,9 @@
+2005-09-21  Lluis Sanchez Gual <lluis@novell.com>
+
+	* SoapWriter.cs, SoapReader.cs: Encode/Decode field names when
+	serializing/deserializing an object using custom serialization.
+	Fixes bug #75970.
+
 2005-07-29  Lluis Sanchez Gual <lluis@novell.com>
 
 	* SoapWriter.cs: Wrap method signature headers in a MethodSignature

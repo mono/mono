@@ -591,7 +591,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			while(xmlReader.Depth > initialDepth) 
 			{
 				Type fieldType = GetComponentType();
-				string fieldName = xmlReader.LocalName;
+				string fieldName = XmlConvert.DecodeName (xmlReader.LocalName);
 				object objField = DeserializeComponent(
 					fieldType,
 					out fieldId,

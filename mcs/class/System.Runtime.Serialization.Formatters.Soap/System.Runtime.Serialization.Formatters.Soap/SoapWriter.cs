@@ -445,7 +445,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 
 			foreach(SerializationEntry entry in info)
 			{
-				_xmlWriter.WriteStartElement(entry.Name);
+				_xmlWriter.WriteStartElement(XmlConvert.EncodeLocalName (entry.Name));
 				SerializeComponent(entry.Value, IsEncodingNeeded(entry.Value, null));
 				_xmlWriter.WriteEndElement();
 			}
