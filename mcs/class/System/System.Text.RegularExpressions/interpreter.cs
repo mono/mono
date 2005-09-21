@@ -436,16 +436,37 @@ namespace System.Text.RegularExpressions {
 
 				case OpCode.Until: {
 					RepeatContext current = this.repeat;
-					int start = current.Start;
 
+					//
+					// Can we avoid recursion?
+					//
+					// Backtracking can be forced in nested quantifiers from the tail of this quantifier.
+					// Thus, we cannot, in general, use a simple loop on repeat.Expression to handle
+					// quantifiers.
+					//
+					// If 'deep' was unmolested, that implies that there was no nested quantifiers.
+					// Thus, we can safely avoid recursion.
+					//
+					if (deep == current)
+						goto Pass;
+
+					int start = current.Start;
+					int start_count = current.Count;
+
+					RecurseMinimum:
 					if (!current.IsMinimum) {
 						++ current.Count;
 						current.Start = ptr;
-						if (Eval (Mode.Match, ref ptr, repeat.Expression))
-							goto Pass;
+						deep = current;
+						if (Eval (Mode.Match, ref ptr, repeat.Expression)) {
+							if (deep == current)
+								goto RecurseMinimum;
+							else
+								goto Pass;
+						}
 
 						current.Start = start;
-						-- current.Count;
+						current.Count = start_count;
 						goto Fail;
 					}
 
@@ -462,7 +483,7 @@ namespace System.Text.RegularExpressions {
 
 					if (current.IsLazy) {
 						// match tail first ...
-
+					RecurseLazy:
 						this.repeat = current.Previous;
 						int cp = Checkpoint ();
 						if (Eval (Mode.Match, ref ptr, pc + 1))
@@ -476,11 +497,16 @@ namespace System.Text.RegularExpressions {
 						if (!current.IsMaximum) {
 							++ current.Count;
 							current.Start = ptr;
-							if (Eval (Mode.Match, ref ptr, current.Expression))
-								goto Pass;
+							deep = current;
+							if (Eval (Mode.Match, ref ptr, current.Expression)) {
+								if (deep == current)
+									goto RecurseLazy;
+								else
+									goto Pass;
+							}
 
 							current.Start = start;
-							-- current.Count;
+							current.Count = start_count;
 							goto Fail;
 						}
 
@@ -493,6 +519,8 @@ namespace System.Text.RegularExpressions {
 							int cp = Checkpoint ();
 							++ current.Count;
 							current.Start = ptr;
+							deep = null;		// We have more state to maintain than just
+										// the position.  Let's defer the work for now.
 							if (Eval (Mode.Match, ref ptr, current.Expression))
 								goto Pass;
 
@@ -520,6 +548,9 @@ namespace System.Text.RegularExpressions {
 						(flags & OpFlags.Lazy) != 0,	// lazy
 						pc + 4				// subexpression
 					);
+
+					deep = fast;
+
 					fast.Start = ptr;
 
 					int cp = Checkpoint ();
@@ -992,6 +1023,8 @@ namespace System.Text.RegularExpressions {
 
 		private RepeatContext repeat;		// current repeat context
 		private RepeatContext fast;		// fast repeat context
+
+		private RepeatContext deep;		// points to the most-nested repeat context
 
 		private Mark[] marks = null;		// mark stack
 		private int mark_start;			// start of current checkpoint

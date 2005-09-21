@@ -1,3 +1,9 @@
+2005-09-21  Raja R Harinath  <rharinath@novell.com>
+
+	* interpreter.cs (Interpreter.Eval) [OpCode.Until]: Avoid some
+	cases of recursion when dealing with the minimum count and lazy
+	quantifiers.
+
 2005-08-23  Raja R Harinath  <rharinath@novell.com>
 
 	* regex.cs: Remove.  Split into ...
