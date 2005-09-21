@@ -33,7 +33,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using Microsoft.Build.Framework;
-using Mono.XBuild.Shared;
+using Mono.XBuild.Framework;
 
 namespace Microsoft.Build.BuildEngine {
 	public class Project : IProject {
@@ -80,8 +80,8 @@ namespace Microsoft.Build.BuildEngine {
 			parentEngine  = engine;
 			xmlDocument = new XmlDocument ();
 			evaluatedItems = new BuildItemGroup (this);
-			evaluatedItemsByName = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
-			evaluatedItemsByNameIgnoringCondition = new Hashtable (new CaseInsensitiveHashCodeProvider (), new CaseInsensitiveComparer ());
+			evaluatedItemsByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
+			evaluatedItemsByNameIgnoringCondition = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 			evaluatedItemsIgnoringCondition = new BuildItemGroup (this);
 			evaluatedProperties = new BuildPropertyGroup (false, null);
 			groups = new GroupingCollection ();

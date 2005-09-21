@@ -27,6 +27,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Text;
 using System.Xml;
@@ -59,7 +60,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (forXml == true)
 				this.properties = new ArrayList ();
 			else
-				this.propertiesByName = new Hashtable (new CaseInsensitiveHashCodeProvider(), new CaseInsensitiveComparer ());
+				this.propertiesByName = CollectionsUtil.CreateCaseInsensitiveHashtable ();
 		}
 
 		public BuildProperty AddNewProperty (string propertyName,

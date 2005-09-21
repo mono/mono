@@ -43,7 +43,6 @@ Microsoft.Build.BuildEngine/ITaskElement.cs
 Microsoft.Build.BuildEngine/ItemPropertyGroupingBase.cs
 Microsoft.Build.BuildEngine/ItemReference.cs
 Microsoft.Build.BuildEngine/MetadataReference.cs
-Microsoft.Build.BuildEngine/MonoTODOAttribute.cs
 Microsoft.Build.BuildEngine/ProcessingPass.cs
 Microsoft.Build.BuildEngine/Project.cs
 Microsoft.Build.BuildEngine/ProjectFileEncoding.cs

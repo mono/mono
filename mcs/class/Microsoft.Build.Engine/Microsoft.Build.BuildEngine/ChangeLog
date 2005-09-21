@@ -1,3 +1,9 @@
+2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TaskDatabase.cs: Change Shared to Framework.
+	* BuildPropertyGroup.cs, Project.cs: Remove obsoleted
+	CaseInsensitiveHashCodeProvider
+
 2005-09-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* TaskDatabase.cs: Added handling of LoadInfoType.AssemblyName.

@@ -29,7 +29,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using Microsoft.Build.Framework;
-using Mono.XBuild.Shared;
+using Mono.XBuild.Framework;
 
 namespace Microsoft.Build.BuildEngine {
 	internal class TaskDatabase {
