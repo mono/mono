@@ -22,7 +22,6 @@ centum_tests := \
 	class/System.Runtime.Serialization.Formatters.Soap \
 	class/System.Security \
 	class/System.ServiceProcess \
-	class/System.Web \
 	class/System.Web.Services \
 	tests \
 	errors
