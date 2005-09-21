@@ -1,5 +1,8 @@
 2005-09-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-x86.c (mono_arch_create_trampoline_code): Restore caller
+	saved registers too.
+
 	* mini-x86.c (mono_arch_allocate_vars): Rewrite this so it works based 
 	upon the information returned by get_call_info ().
 	
