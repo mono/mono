@@ -1,3 +1,10 @@
+2005-09-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (add_float): Fix stack size calculation.
+	(mono_arch_call_opcode): Rewrite this so it works based up the
+	information returned by get_call_info ().
+	(mono_arch_get_this_vret_args): Ditto.
+
 2005-09-21  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_emit_this_vret_args): Use the information
