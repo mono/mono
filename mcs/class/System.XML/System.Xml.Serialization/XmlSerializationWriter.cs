@@ -671,7 +671,7 @@ namespace System.Xml.Serialization
 		bool IsPrimitiveArray (TypeData td)
 		{
 			if (td.SchemaType == SchemaTypes.Array) {
-				if (td.ListItemTypeData.SchemaType == SchemaTypes.Primitive)
+				if (td.ListItemTypeData.SchemaType == SchemaTypes.Primitive || td.ListItemType == typeof(object))
 					return true;
 				return IsPrimitiveArray (td.ListItemTypeData);
 			} else
