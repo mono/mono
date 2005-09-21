@@ -1,5 +1,10 @@
 2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
+	* LoggerInfo.cs: Changed public to internal.
+	* xbuild.exe.sources: Added reference to AssemblyLoadInfo.
+
+2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
 	* Microsoft.Common.tasks, xbuild.rsp, Microsoft.Build.xsd, MSBuild:
 	Moved to xbuild/.
 	* Main.cs, Pararameters.cs: Changed to use Mono.XBuild.Framework and

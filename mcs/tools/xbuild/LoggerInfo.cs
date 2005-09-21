@@ -33,7 +33,7 @@ using System.Reflection;
 using Mono.XBuild.Framework;
 
 namespace Mono.XBuild.CommandLine {
-	public class LoggerInfo : AssemblyLoadInfo {
+	internal class LoggerInfo : AssemblyLoadInfo {
 	
 		string	parameters;
 	
