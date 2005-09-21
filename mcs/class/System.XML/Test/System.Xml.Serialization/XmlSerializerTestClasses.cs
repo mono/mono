@@ -235,4 +235,10 @@ namespace MonoTests.System.Xml.TestClasses
 	{
 		public IList EmailAccounts;
 	}
+	
+	public class ArrayClass
+	{
+		public object names = new object[] { "un","dos" };
+	}
+
 }

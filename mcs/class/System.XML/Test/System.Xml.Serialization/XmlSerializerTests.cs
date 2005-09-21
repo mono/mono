@@ -742,6 +742,19 @@ namespace MonoTests.System.XmlSerialization
 			AssertEquals (Infoset("<clsPerson xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><EmailAccounts><anyType xsi:type=\"xsd:string\">a</anyType><anyType xsi:type=\"xsd:string\">b</anyType></EmailAccounts></clsPerson>"), WriterText);
 		}
 		
+		[Test]
+		public void TestSerializeArrayEnc ()
+		{
+			SoapReflectionImporter imp = new SoapReflectionImporter ();
+			XmlTypeMapping map = imp.ImportTypeMapping (typeof(ArrayClass));
+			XmlSerializer ser = new XmlSerializer (map);
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter tw = new XmlTextWriter (sw);
+			tw.WriteStartElement ("aa");
+			ser.Serialize (tw, new ArrayClass ());
+			tw.WriteEndElement ();
+		}		
+		
 		public static string Infoset (string sx)
 		{
 			XmlDocument doc = new XmlDocument ();
