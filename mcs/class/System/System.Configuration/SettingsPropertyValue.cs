@@ -96,6 +96,7 @@ namespace System.Configuration
 			set {
 				propertyValue = value;
 				dirty = true;
+				needPropertyValue = false;
 				needSerializedValue = true;
 				defaulted = false;
 			}

@@ -41,6 +41,7 @@ namespace System.Configuration
 
 		public SettingsPropertyValueCollection ()
 		{
+			items = new Hashtable();
 		}
 
 		public void Add (SettingsPropertyValue property)
@@ -50,6 +51,13 @@ namespace System.Configuration
 
 			/* actually do the add */
 			items.Add (property.Name, property);
+		}
+
+		internal void Add (SettingsPropertyValueCollection vals)
+		{
+			foreach (SettingsPropertyValue val in vals) {
+				Add (val);
+			}
 		}
 
 		public void Clear ()

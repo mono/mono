@@ -28,25 +28,28 @@
 
 #if NET_2_0
 using System;
+using System.Collections;
 using System.Configuration.Provider;
 
 namespace System.Configuration
 {
 	public class SettingsProviderCollection : System.Configuration.Provider.ProviderCollection
 	{
+		Hashtable providers;
+
 		public SettingsProviderCollection ()
 		{
-				throw new NotImplementedException ();
+			providers = new Hashtable ();
 		}
 
 		public override void Add (ProviderBase provider)
 		{
-				throw new NotImplementedException ();
+			providers.Add (provider.Name, provider);
 		}
 
 		public new SettingsProvider this [ string name ] { 
 			get {
-				throw new NotImplementedException ();
+				return (SettingsProvider)providers [ name ];
 			}
 		}
 	}

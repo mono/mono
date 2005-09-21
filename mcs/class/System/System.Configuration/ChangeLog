@@ -1,5 +1,18 @@
 2005-09-20  Chris Toshok  <toshok@ximian.com>
 
+	* SettingsPropertyValue.cs
+	(SettingsPropertyValue.set_PropertyValue): set needPropertyValue =
+	false here so we don't pull in the default value in the getter.
+
+	* SettingsProviderCollection.cs: new implementation.
+
+	* SettingsPropertyValueCollection.cs
+	(SettingsPropertyValueCollection..ctor): init items.
+	(Add): add an internal method that takes a
+	SettingsPropertyValueCollection.
+
+2005-09-20  Chris Toshok  <toshok@ximian.com>
+
 	* SettingsSavingEventHandler.cs: new delegate.
 	
 	* SettingChangingEvent{Handler,Args}.cs: new delegate and args
