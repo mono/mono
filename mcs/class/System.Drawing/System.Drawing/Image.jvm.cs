@@ -73,7 +73,7 @@ namespace System.Drawing {
 		}
 
 		protected Image (java.awt.Image nativeObject, ImageFormat format) {
-			PlainImage pi = new PlainImage( nativeObject, null, format, 0, 0, FrameDimension.Page, null );
+			PlainImage pi = new PlainImage( nativeObject, null, format, 0, 0, FrameDimension.Page );
 			Initialize( pi, false );
 		}
 
@@ -184,13 +184,15 @@ namespace System.Drawing {
 		}
 		#endregion
 	
-		#region GetCanonicalPixelFormat [TODO]
+		#region IsCanonicalPixelFormat
+		// TBD: implement this
 		public static bool IsCanonicalPixelFormat (PixelFormat pixfmt) {
 			return (pixfmt & PixelFormat.Canonical) != PixelFormat.Undefined;
 		}
 		#endregion
 	
-		#region IsextendedPixelFormat [TODO]
+		#region IsExtendedPixelFormat
+		// TBD: implement this
 		public static bool IsExtendedPixelFormat (PixelFormat pixfmt) {
 			return (pixfmt & PixelFormat.Extended) != PixelFormat.Undefined;
 		}
@@ -204,7 +206,8 @@ namespace System.Drawing {
 		}
 		#endregion
 	
-		#region GetEncoderParameterList [TODO]
+		#region GetEncoderParameterList
+		// TBD: implement this
 		public EncoderParameters GetEncoderParameterList(Guid encoder) {
 			throw new NotImplementedException ();
 		}
@@ -212,17 +215,23 @@ namespace System.Drawing {
 	
 		#region GetFrameCount
 		public int GetFrameCount(FrameDimension dimension) {
+			// FALLBACK: now, only one dimension assigned for all frames
+			if (dimension.Guid != CurrentImage.Dimension.Guid) 
+				throw new ArgumentException ("dimension");
+
 			return NativeObject.Count;
 		}
 		#endregion
 	
-		#region GetPropertyItem [TODO]
+		#region GetPropertyItem
+		// TBD: implement this
 		public PropertyItem GetPropertyItem(int propid) {
 			throw new NotImplementedException ();
 		}
 		#endregion
 
-		#region RemovePropertyItem [TODO]
+		#region RemovePropertyItem
+		// TBD: implement this
 		public void RemovePropertyItem (int propid) {		
 			throw new NotImplementedException ();
 		}
@@ -288,7 +297,7 @@ namespace System.Drawing {
 		protected abstract void InternalSave (ImageOutputStream output, Guid clsid);
 
 		public void Save (Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams) {
-			//FIXME: ignoring encoderParams
+			//TBD: implement encoderParams
 			java.io.OutputStream jos = vmw.common.IOUtils.ToOutputStream (stream);
 			MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(jos);
 		
@@ -296,7 +305,7 @@ namespace System.Drawing {
 		}
 	
 		public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams) {
-			//FIXME: ignoring encoderParams
+			//TBD: implement encoderParams
 			java.io.File jf = vmw.common.IOUtils.getJavaFile (filename);
 			FileImageOutputStream output = new FileImageOutputStream (jf);
 			InternalSave (output, encoder.Clsid);
@@ -317,7 +326,8 @@ namespace System.Drawing {
 		}
 		#endregion
 
-		#region SaveAdd [TODO]
+		#region SaveAdd
+		// TBD: implement this
 		public void SaveAdd(EncoderParameters encoderParams) {
 			throw new NotImplementedException ();
 		}
@@ -331,9 +341,9 @@ namespace System.Drawing {
 
 		// TBD: .Net does not load all frames at the initialization. New frames loaded by request.
 		public int SelectActiveFrame(FrameDimension dimension, int frameIndex) {
-			// FIXME: dimension
-			//if (dimension != CurrentImage.Dimension) //TBD check if this is the correct exception and message
-			//	throw new ArgumentException (dimension + " dimension is not supported");
+			// FALLBACK: now, only one dimension assigned for all frames
+			if (dimension.Guid != CurrentImage.Dimension.Guid) 
+				throw new ArgumentException ("dimension");
 
 			if (frameIndex < NativeObject.Count)
 				NativeObject.CurrentImageIndex = frameIndex;
@@ -342,7 +352,8 @@ namespace System.Drawing {
 		}
 		#endregion
 	
-		#region SetPropertyItem [TODO]
+		#region SetPropertyItem
+		// TBD: implement this
 		public void SetPropertyItem(PropertyItem propitem) {
 			throw new NotImplementedException ();
 		}
@@ -351,7 +362,7 @@ namespace System.Drawing {
 		// properties
 		#region Flags
 		public int Flags {
-			// FIXME: ImageFlagsScalable, ImageFlagsHasTranslucent, ImageFlagsPartiallyScalable, ImageFlagsCaching
+			// TDB: ImageFlagsScalable, ImageFlagsHasTranslucent, ImageFlagsPartiallyScalable, ImageFlagsCaching
 			get {
 				image.ColorModel colorModel = ((BufferedImage)CurrentImage.NativeImage).getColorModel();
 				int t = colorModel.getColorSpace().getType();
@@ -378,7 +389,8 @@ namespace System.Drawing {
 
 		#region FrameDimensionsList
 		public Guid[] FrameDimensionsList {
-			// FIXME: Add support for various dimensions
+			// TBD: look over all frames and build array of dimensions
+			// FALLBACK: now, only one dimension assigned for all frames
 			get {
 				Guid [] dimList = new Guid[]{CurrentImage.Dimension.Guid};
 				return dimList;
@@ -449,7 +461,8 @@ namespace System.Drawing {
 		}
 		#endregion
 		
-		#region PropertiIdList [TODO]
+		#region PropertiIdList
+		// TBD: implement this
 		public int[] PropertyIdList {
 			get {
 				throw new NotImplementedException ();
@@ -457,7 +470,8 @@ namespace System.Drawing {
 		}
 		#endregion
 		
-		#region PropertItems [TODO]
+		#region PropertItems
+		// TBD: implement this
 		public PropertyItem[] PropertyItems {
 			get {
 				throw new NotImplementedException ();
@@ -503,6 +517,7 @@ namespace System.Drawing {
 		public Image GetThumbnailImage(int thumbWidth, int thumbHeight, Image.GetThumbnailImageAbort callback, IntPtr callbackData) {
 			awt.Image img;
 
+#if THUMBNAIL_SUPPORTED
 			if (CurrentImage.Thumbnails != null) {
 				for (int i=0; i < CurrentImage.Thumbnails.Length; i++)
 					if (CurrentImage.Thumbnails[i] != null) {
@@ -511,6 +526,7 @@ namespace System.Drawing {
 							return ImageFromNativeImage(img, RawFormat);
 					}
 			}
+#endif
 			img = CurrentImage.NativeImage.getScaledInstance(thumbWidth, thumbHeight, awt.Image.SCALE_DEFAULT);
 
 			return ImageFromNativeImage(img, RawFormat);

@@ -166,7 +166,7 @@ namespace Mainsoft.Drawing.Imaging {
 			protected abstract spi.ImageReaderWriterSpi GetNext (java.util.Iterator iter);
 
 			#region ProcessOneCodec
-			ImageCodecInfo ProcessOneCodec (Guid clsid, Guid formatID, string mimeType) {
+			private ImageCodecInfo ProcessOneCodec (Guid clsid, Guid formatID, string mimeType) {
 				ImageCodecInfo ici = new ImageCodecInfo ();
 				ici.Clsid = clsid;
 				ici.FormatID = formatID;
@@ -205,7 +205,7 @@ namespace Mainsoft.Drawing.Imaging {
 			}
 			#endregion
 
-			public Hashtable Iterate () {
+			internal Hashtable Iterate () {
 				// TBD: Insert Exception handling here
 				NameValueCollection nvc = (NameValueCollection) System.Configuration.ConfigurationSettings
 					.GetConfig ("system.drawing/codecs");
@@ -253,7 +253,7 @@ namespace Mainsoft.Drawing.Imaging {
 		static Guid PngClsid = new Guid ("557cf406-1a04-11d3-9a73-0000f81ef32e");
 		static Guid IconClsid = new Guid ("557cf407-1a04-11d3-9a73-0000f81ef32e");
 
-		internal static ImageFormat MimeTypesToImageFormat (string [] mimeTypes) {
+		private static ImageFormat MimeTypesToImageFormat (string [] mimeTypes) {
 			foreach (ImageCodecInfo codec in Decoders.Values)
 				for (int i=0; i<mimeTypes.Length; i++)
 					if (codec.MimeType == mimeTypes [i])
@@ -306,7 +306,7 @@ namespace Mainsoft.Drawing.Imaging {
 				return Guid.Empty;
 		}
 
-		internal FrameDimension FormatFrameDimesion {
+		private FrameDimension FormatFrameDimesion {
 			get {
 				if (ImageFormat == null)
 					return FrameDimension.Page;
@@ -341,11 +341,27 @@ namespace Mainsoft.Drawing.Imaging {
 			if (img == null)
 				return null;
 
-			awt.Image [] th = ReadThumbnails( _currentFrame );
-			XmlDocument _md = ReadImageMetadata( _currentFrame );
-			float [] resolution = GetResolution( _md );
+			// its possible to fail to load thumbnails and metadata, but image is ok.
+			awt.Image [] th = null;
+#if THUMBNAIL_SUPPORTED
+			try {
+				th = ReadThumbnails( _currentFrame );
+			}
+			catch (Exception) {}
+#endif
+			
+			XmlDocument md = null;
+			imageio.metadata.IIOMetadata nativeMd = null;
+			try {
+				nativeMd = ReadImageMetadata( _currentFrame );
+				md = ConvertImageMetadata( nativeMd );
+			}
+			catch (Exception) {}
 
-			PlainImage pi = new PlainImage( img, th, ImageFormat, resolution[0], resolution[1], FormatFrameDimesion, _md );
+			float [] resolution = GetResolution( md );
+
+			PlainImage pi = new PlainImage( img, th, ImageFormat, resolution[0], resolution[1], FormatFrameDimesion );
+			pi.NativeMetadata = nativeMd;
 			return pi;
 		}
 
@@ -354,7 +370,7 @@ namespace Mainsoft.Drawing.Imaging {
 			return ReadPlainImage();
 		}
 
-		public awt.Image ReadImage(int frame) {
+		private awt.Image ReadImage(int frame) {
 			if (NativeStream == null)
 				throw new Exception("Input stream not specified");
 
@@ -369,11 +385,12 @@ namespace Mainsoft.Drawing.Imaging {
 			}
 		}
 
-		public awt.Image [] ReadThumbnails(int frameIndex) {
+#if THUMBNAIL_SUPPORTED
+		private awt.Image [] ReadThumbnails(int frameIndex) {
 			awt.Image [] thArray = null;
 
 			try {
-				if (NativeReader.hasThumbnails(frameIndex)) {
+				if (NativeReader.readerSupportsThumbnails()) {
 					int tmbNumber = NativeReader.getNumThumbnails(frameIndex);
 
 					if (tmbNumber > 0) {
@@ -390,21 +407,27 @@ namespace Mainsoft.Drawing.Imaging {
 				throw new System.IO.IOException(ex.Message, ex);
 			}
 		}
+#endif
+		public void WritePlainImage(PlainImageCollection pic) {
+			if ((pic == null) || (pic.Count == 0))
+				return;
 
-		public XmlDocument ReadImageMetadata(int frameIndex) {
-			if (NativeStream == null)
-				throw new Exception("Input stream not specified");
+			if (pic.Count == 1) {
+				WritePlainImage( pic[0] );
+				return;
+			}
 
 			try {
-				imageio.metadata.IIOMetadata md = NativeReader.getImageMetadata( frameIndex );
-
-				string [] formatNames = md.getMetadataFormatNames();
-				dom.Element rootNode = (dom.Element) md.getAsTree(formatNames[0]);
-
-				XmlDocument _metadataDocument = new XmlDocument();
-				XmlConvert(rootNode, _metadataDocument);
-
-				return _metadataDocument;
+				if (NativeWriter.canWriteSequence ()) {
+					NativeWriter.prepareWriteSequence (null);
+					for (int i=0; i < pic.Count; i++) {
+						imageio.IIOImage iio = GetIIOImageContainer( pic[i] );
+						NativeWriter.writeToSequence (iio, null);
+					}
+					NativeWriter.endWriteSequence ();
+				}
+				else
+					WritePlainImage( pic[0] );
 			}
 			catch (java.io.IOException ex) {
 				throw new System.IO.IOException(ex.Message, ex);
@@ -412,49 +435,51 @@ namespace Mainsoft.Drawing.Imaging {
 		}
 
 		public void WritePlainImage(PlainImage pi) {
-			WriteImage( pi.NativeImage );
-		}
-
-		public void WriteImage(awt.Image bitmap) {
-			if (NativeStream == null)
-				throw new Exception("Output stream not specified");
-
 			try {
-				if (bitmap is image.BufferedImage)
-					NativeWriter.write((image.BufferedImage)bitmap);
-				else
-					// TBD: This codec is for raster formats only
-					throw new NotSupportedException("Only raster formats are supported");
+				imageio.IIOImage iio = GetIIOImageContainer( pi );
+				WriteImage( iio );
 			}
 			catch (java.io.IOException ex) {
 				throw new System.IO.IOException(ex.Message, ex);
 			}
 		}
 
-		public void WriteImage(awt.Image [] bitmap) {
-			//FIXME: does not supports metadata and thumbnails for now
-			try {
-				if (bitmap.Length == 1) {
-					WriteImage(bitmap[0]);
-				}
-				else {
-					if (NativeWriter.canWriteSequence ()) {
-						NativeWriter.prepareWriteSequence (null);
+		private void WriteImage(imageio.IIOImage iio) {
+			if (NativeStream == null)
+				throw new Exception("Output stream not specified");
 
-						for (int i = 0; i < bitmap.Length; i++) {
-							if (bitmap[i] is image.BufferedImage){
-								imageio.IIOImage iio = new imageio.IIOImage ((image.BufferedImage)bitmap[i], null, null);
-								NativeWriter.writeToSequence (iio, null);
-							}
-							else
-								// TBD: This codec is for raster formats only
-								throw new NotSupportedException("Only raster formats are supported");
-						}
-						NativeWriter.endWriteSequence ();
-					}
-					else
-						throw new ArgumentException();
-				}
+			NativeWriter.write( iio );
+		}
+		
+		private imageio.IIOImage GetIIOImageContainer(PlainImage pi) {
+			java.util.ArrayList al = null;
+			
+			// prepare thumbnails list
+			if (pi.Thumbnails != null) {
+				al = new java.util.ArrayList( pi.Thumbnails.Length );
+				for (int i=0; i < pi.Thumbnails.Length; i++)
+					al.add(pi.Thumbnails[i]);
+			}
+
+			// prepare IIOImage container
+			if (pi.NativeImage is image.BufferedImage) {
+				imageio.IIOImage iio = new javax.imageio.IIOImage(
+					(image.BufferedImage)pi.NativeImage, al, pi.NativeMetadata);
+				return iio;
+			}
+			else
+				// TBD: This codec is for raster formats only
+				throw new NotSupportedException("Only raster formats are supported");
+		}
+
+
+		private imageio.metadata.IIOMetadata ReadImageMetadata(int frameIndex) {
+			if (NativeStream == null)
+				throw new Exception("Input stream not specified");
+
+			try {
+				imageio.metadata.IIOMetadata md = NativeReader.getImageMetadata( frameIndex );
+				return md;
 			}
 			catch (java.io.IOException ex) {
 				throw new System.IO.IOException(ex.Message, ex);
@@ -473,7 +498,10 @@ namespace Mainsoft.Drawing.Imaging {
 
 		#region Metadata parse
 
-		protected float [] GetResolution(XmlDocument metaData) {
+		private float [] GetResolution(XmlDocument metaData) {
+			if (metaData == null)
+				return new float[]{0, 0};
+
 			ResolutionConfigurationCollection rcc = 
 				(ResolutionConfigurationCollection)
 				ConfigurationSettings.GetConfig("system.drawing/codecsmetadata");
@@ -533,13 +561,22 @@ namespace Mainsoft.Drawing.Imaging {
 			return res;
 		}
 
-
-		protected string GetValueFromMetadata(XmlDocument metaData, string path) {
+		private string GetValueFromMetadata(XmlDocument metaData, string path) {
 			XmlNode n = metaData.SelectSingleNode(path);
 			if (n == null)
 				return null;
 
 			return n.InnerText;
+		}
+
+		private XmlDocument ConvertImageMetadata(imageio.metadata.IIOMetadata metaData) {
+			string [] formatNames = metaData.getMetadataFormatNames();
+			dom.Element rootNode = (dom.Element) metaData.getAsTree(formatNames[0]);
+
+			XmlDocument _metadataDocument = new XmlDocument();
+			XmlConvert(rootNode, _metadataDocument);
+
+			return _metadataDocument;
 		}
 
 		private void XmlConvert(dom.Node jNode, XmlNode nNode) {

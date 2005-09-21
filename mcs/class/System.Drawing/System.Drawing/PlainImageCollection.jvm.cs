@@ -6,7 +6,7 @@ namespace Mainsoft.Drawing.Imaging
 	/// <summary>
 	/// Summary description for PlainImageCollection.
 	/// </summary>
-	internal class PlainImageCollection : ICollection, IEnumerable
+	public class PlainImageCollection : ICollection, IEnumerable
 	{
 		ArrayList collection = new ArrayList();
 		int _position = 0;

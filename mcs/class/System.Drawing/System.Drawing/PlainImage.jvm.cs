@@ -6,6 +6,7 @@ using Mainsoft.Drawing.Imaging;
 
 using awt = java.awt;
 using java.awt.image;
+using imageio = javax.imageio;
 
 namespace Mainsoft.Drawing.Imaging
 {
@@ -20,6 +21,7 @@ namespace Mainsoft.Drawing.Imaging
 		awt.Image [] _thumbnails;
 		FrameDimension _dimension;
 		XmlDocument _metadata;
+		imageio.metadata.IIOMetadata _nativeMetadata;
 		ImageFormat _imageFormat;
 
 		float _xResolution;
@@ -33,7 +35,7 @@ namespace Mainsoft.Drawing.Imaging
 		public PlainImage() {
 		}
 
-		public PlainImage(awt.Image image, awt.Image [] thumbnails, ImageFormat format, float xRes, float yRes, FrameDimension dimension, XmlDocument metadata) {
+		public PlainImage(awt.Image image, awt.Image [] thumbnails, ImageFormat format, float xRes, float yRes, FrameDimension dimension) {
 			_nativeObject = image;
 			_thumbnails = thumbnails;
 			_imageFormat = format;
@@ -42,7 +44,6 @@ namespace Mainsoft.Drawing.Imaging
 			_yResolution = yRes;
 
 			_dimension = dimension;
-			_metadata = metadata;
 		}
 
 		#endregion
@@ -58,6 +59,16 @@ namespace Mainsoft.Drawing.Imaging
 		public awt.Image NativeImage {
 			get { return NativeObject; }
 			set { NativeObject = value; }
+		}
+
+		internal imageio.metadata.IIOMetadata NativeMetadata {
+			get { return _nativeMetadata; }
+			set { _nativeMetadata = value; }
+		}
+
+		public XmlDocument Metadata {
+			get { return _metadata; }
+			set { _metadata = value; }
 		}
 
 		public ImageFormat ImageFormat {
@@ -111,8 +122,7 @@ namespace Mainsoft.Drawing.Imaging
 				ImageFormat, 
 				HorizontalResolution, 
 				VerticalResolution, 
-				Dimension, 
-				_metadata );
+				Dimension );
 		}
 
 		#endregion

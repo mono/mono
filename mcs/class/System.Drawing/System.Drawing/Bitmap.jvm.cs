@@ -19,7 +19,9 @@ namespace System.Drawing
 
 		#region constructors
 
-		Bitmap (Bitmap orig):base ( orig.NativeObject ) {}
+		Bitmap (PlainImage orig) {
+			base.Initialize( orig, false );
+		}
 
 		private Bitmap (SerializationInfo info, StreamingContext context) {
 			throw new NotImplementedException ();
@@ -72,14 +74,13 @@ namespace System.Drawing
 			:this (filename, useIcm, null) {}
 
 		internal Bitmap (Stream stream, bool useIcm, ImageFormat format) {
-			//FIXME: useIcm param
-			//FIXME: use direct ImageInputStream wrapper for NET Stream
+			// TBD: useIcm param
 			io.InputStream jis = vmw.common.IOUtils.ToInputStream (stream);
             Initialize (new stream.MemoryCacheImageInputStream (jis), format);
 		}
 
 		internal Bitmap (string filename, bool useIcm, ImageFormat format) {
-			//FIXME: useIcm param
+			// TBD: useIcm param
 			java.io.File file = vmw.common.IOUtils.getJavaFile (filename);
 			if (!file.exists ())
 				 throw new System.IO.FileNotFoundException (filename);
@@ -92,13 +93,7 @@ namespace System.Drawing
 					throw new ArgumentException("Resource '" + resource + "' could not be found in class '" + type.ToString() + "'");
 
 				io.InputStream jis = vmw.common.IOUtils.ToInputStream (s);
-				try {
-					Initialize (new stream.MemoryCacheImageInputStream (jis), null);
-				}
-				catch (Exception e) {
-					//FIXME: catch and throw right exception
-					throw new Exception ("java exception", e);
-				}
+				Initialize (new stream.MemoryCacheImageInputStream (jis), null);
 			}
 		}
 #if INTPTR_SUPPORT
@@ -132,6 +127,9 @@ namespace System.Drawing
 
 				_flags |= (int)(ImageFlags.ImageFlagsReadOnly | ImageFlags.ImageFlagsHasRealPixelSize);
 			}
+			catch (IOException ex) {
+				throw ex;
+			}
 			catch (Exception) {
 				throw new OutOfMemoryException ("Out of memory");
 			}
@@ -143,13 +141,17 @@ namespace System.Drawing
 		protected override void InternalSave (stream.ImageOutputStream output, Guid clsid) {
 
 			ImageCodec ic = ImageCodec.CreateWriter( clsid );
+
+			// .net saves in png if cannot find requested encoder. act id 316563
+			if (ic == null)
+				ic = ImageCodec.CreateWriter( ImageFormat.Png );
+
 			if (ic != null) {
 				ic.NativeStream = output;
-				ic.WriteImage( NativeObject );
+				ic.WritePlainImage( CurrentImage );
 			}
 			else {
-				// FIXME: correct this exception
-				throw new Exception("Format not supported");
+				throw new NotSupportedException("The requested format encoder is not supported");
 			}
 		}
 
@@ -210,24 +212,28 @@ namespace System.Drawing
 
 		#region Clone
 		public override object Clone () {
-			return new Bitmap (this);
+			return new Bitmap ( (PlainImage)CurrentImage.Clone() );
 		}
 
-		public Bitmap Clone (Rectangle rect, PixelFormat format)
+		public Bitmap Clone (Rectangle rect, PixelFormat pixFormat)
 		{
-			BufferedImage sub = NativeObject.getSubimage(rect.X,rect.Y,rect.Width,rect.Height);
-			return new Bitmap(sub, RawFormat, format);
+			return Clone(new RectangleF( rect.X, rect.Y, rect.Width, rect.Height ), pixFormat);
        	}
 		
-		public Bitmap Clone (RectangleF rect, PixelFormat format)
+		public Bitmap Clone (RectangleF rect, PixelFormat pixFormat)
 		{
-			//TODO: check if there is more precise API
-			BufferedImage sub = NativeObject.getSubimage((int)rect.X,(int)rect.Y,(int)rect.Width,(int)rect.Height);
-			return new Bitmap(sub, RawFormat, format);
+			PlainImage plainImage = (PlainImage)CurrentImage.Clone();
+			plainImage.NativeImage = ((BufferedImage)plainImage.NativeImage).getSubimage((int)rect.X,(int)rect.Y,(int)rect.Width,(int)rect.Height);
+			
+			if (pixFormat != this.PixelFormat)
+				throw new NotImplementedException ("Converting PixelFormat is not implemented yet.");
+	
+			return new Bitmap(plainImage);
 		}
 		#endregion
 
-		#region LockBits [TODO]
+		#region LockBits
+		// TBD: implement this
 		public BitmapData LockBits (Rectangle rect, ImageLockMode flags, PixelFormat format) {
 			throw new NotImplementedException();
 		}
@@ -272,7 +278,8 @@ namespace System.Drawing
 		}
 		#endregion 
 
-		#region UnlockBits [TODO]
+		#region UnlockBits
+		// TBD: implement this
 		public void UnlockBits (BitmapData bitmap_data)
 		{
 			throw new NotImplementedException();
@@ -325,7 +332,7 @@ namespace System.Drawing
 						return PixelFormat.Format16bppRgb565;
 					case 13://JavaImage.TYPE_BYTE_INDEXED:
 						return PixelFormat.Indexed;
-						//TODO: support this
+						//TBD: support this
 					case 12://JavaImage.TYPE_BYTE_BINARY:
 					case 0://JavaImage.TYPE_CUSTOM:
 					case 4://JavaImage.TYPE_INT_BGR:
@@ -345,7 +352,7 @@ namespace System.Drawing
 			throw new NotImplementedException();
 		}
 
-		public static Bitmap FromResource (IntPtr hinstance, string bitmapName)	//TODO: Untested
+		public static Bitmap FromResource (IntPtr hinstance, string bitmapName)	//TBD: Untested
 		{
 			throw new NotImplementedException();
 		}

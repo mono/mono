@@ -1,3 +1,10 @@
+2005-09-21 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Bitmap.jvm.cs: fixed Clone, InternalSave, Initialize, ctor refactoring, remarks refactoring
+	* Image.jvm.cs: fixed GetFrameCount, GetThumbnailImage, SelectActiveFrame, remarks refactoring
+	* PlainImage.jvm.cs: added metadata props, fixed ctor
+	* PlainImageCollection.jvm.cs: fixed class access
+
 2005-09-21 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* Graphics.cs: Fixes exception type at FromImage method

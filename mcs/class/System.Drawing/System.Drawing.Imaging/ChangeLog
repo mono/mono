@@ -1,3 +1,7 @@
+2005-09-21 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* ImageCodec.jvm.cs: refactoring of read/write methods, members access levels
+
 2005-09-14 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* ImageCodecInfo.jvm.cs: fixed ImageCodec namespace
