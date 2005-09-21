@@ -1,3 +1,9 @@
+2005-09-21  John Luke  <john.luke@gmail.com>
+
+	* monop.cs: catch exception on Process.Start
+	when gacutil cannot be found to avoid annoying
+	windows message boxes
+
 2005-09-05  Michal Moskal  <malekith@nemerle.org>
 	
 	* outline.cs: Use new names of the GenericParameterAttributes enum.

@@ -121,7 +121,13 @@ class MonoP {
 		p.StartInfo.RedirectStandardOutput = true;
 		p.StartInfo.FileName = "gacutil";
 		p.StartInfo.Arguments = "-l";
-		p.Start ();
+		try {
+			p.Start ();
+		}
+		catch {
+			Console.WriteLine ("WARNING: gacutil could not be found.");
+			return new string[0];
+		}
 
 		string s;
 		ArrayList names = new ArrayList ();
