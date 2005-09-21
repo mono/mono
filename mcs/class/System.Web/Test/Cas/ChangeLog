@@ -1,3 +1,9 @@
+2005-09-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AspNetHostingNone.cs: New. CAS test helper class to test for None 
+	level - which includes class that don't use AspNetHostingPermission
+	at all.
+
 2005-09-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AspNetHostingPermissionHelper.cs: SetUp method is now virtual.
