@@ -1073,11 +1073,11 @@ namespace System.Web.UI
 				HttpContext ctx = Context;
 				TraceContext trace = (ctx != null) ? ctx.Trace : null;
 				int pos = 0;
-				if (trace.IsEnabled)
+				if ((trace != null) && trace.IsEnabled)
 					pos = ctx.Response.GetOutputByteCount ();
 
 				Render(writer);
-				if (trace.IsEnabled) {
+				if ((trace != null) && trace.IsEnabled) {
 					int size = ctx.Response.GetOutputByteCount () - pos;
 					trace.SaveSize (this, size >= 0 ? size : 0);
 				}

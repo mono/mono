@@ -1,3 +1,8 @@
+2005-09-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Control.cs: Added null checks for Trace as it can be null when 
+	rendering (like it was for 39 unit tests).
+
 2005-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: reverted hacks used with the wrong method of getting a
