@@ -1852,7 +1852,7 @@ namespace System.Windows.Forms {
 				}
 
 				case StdCursor.Hand: {
-					shape = CursorFontShape.XC_hand2;
+					shape = CursorFontShape.XC_hand1;
 					break;
 				}
 
