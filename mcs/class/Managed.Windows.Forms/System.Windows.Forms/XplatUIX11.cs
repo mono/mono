@@ -77,6 +77,8 @@ namespace System.Windows.Forms {
 		private static IntPtr		DisplayHandle;		// X11 handle to display
 		private static int		ScreenNo;		// Screen number used
 		private static IntPtr		DefaultColormap;	// Colormap for screen
+		private static IntPtr		CustomVisual;		// Visual for window creation
+		private static IntPtr		CustomColormap;		// Colormap for window creation
 		private static IntPtr		RootWindow;		// Handle of the root window for the screen/display
 		private static IntPtr		FosterParent;		// Container to hold child windows until their parent exists
 		private static XErrorHandler	ErrorHandler;		// Error handler delegate
@@ -202,6 +204,58 @@ namespace System.Windows.Forms {
 		public int Reference {
 			get {
 				return RefCount;
+			}
+		}
+		#endregion
+
+		#region Internal Properties
+		internal static IntPtr Display {
+			get {
+				return DisplayHandle;
+			}
+
+			set {
+				XplatUIX11.GetInstance().SetDisplay(value);
+			}
+		}
+
+		internal static int Screen {
+			get {
+				return ScreenNo;
+			}
+
+			set {
+				ScreenNo = value;
+			}
+		}
+
+		internal static IntPtr RootWindowHandle {
+			get {
+				return RootWindow;
+			}
+
+			set {
+				RootWindow = value;
+			}
+		}
+
+		internal static IntPtr Visual {
+			get {
+				return CustomVisual;
+			}
+
+			set {
+				CustomVisual = value;
+			}
+		}
+
+		internal static IntPtr ColorMap {
+			get {
+				return CustomColormap;
+			}
+
+			set {
+				CustomColormap = value;
 			}
 		}
 		#endregion
@@ -1625,6 +1679,7 @@ namespace System.Windows.Forms {
 			IntPtr			WholeWindow;
 			IntPtr			ClientWindow;
 			Rectangle		ClientRect;
+			SetWindowValuemask	ValueMask;
 
 
 			hwnd = new Hwnd();
@@ -1684,7 +1739,14 @@ namespace System.Windows.Forms {
 			lock (XlibLock) {
 				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, SetWindowValuemask.BitGravity | SetWindowValuemask.WinGravity | SetWindowValuemask.SaveUnder | SetWindowValuemask.OverrideRedirect, ref Attributes);
 				if (WholeWindow != IntPtr.Zero) {
-					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, ClientRect.X, ClientRect.Y, ClientRect.Width, ClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, SetWindowValuemask.Nothing, ref Attributes);
+					if (CustomVisual == IntPtr.Zero || CustomColormap == IntPtr.Zero) {
+						ValueMask = SetWindowValuemask.Nothing;
+					} else {
+						ValueMask = SetWindowValuemask.ColorMap;
+						Attributes.colormap = CustomColormap;
+					}
+
+					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, ClientRect.X, ClientRect.Y, ClientRect.Width, ClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, ValueMask, ref Attributes);
 				}
 			}
 

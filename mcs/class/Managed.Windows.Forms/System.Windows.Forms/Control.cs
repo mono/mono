@@ -728,7 +728,9 @@ namespace System.Windows.Forms
 			for (int i=0; i < parent.child_controls.Count; i++) {
 				child=parent.child_controls[i];
 				if (child.IsHandleCreated) {
-					XplatUI.SetWindowBackground(child.window.Handle, child.BackColor);
+					if (!child.GetStyle (ControlStyles.UserPaint)) {
+						XplatUI.SetWindowBackground(child.window.Handle, child.BackColor);
+					}
 				}
 				if (child.child_controls.Count>0) {
 					SetChildColor(child);
@@ -1145,7 +1147,7 @@ namespace System.Windows.Forms
 
 			set {
 				background_color=value;
-				if (this.IsHandleCreated) {
+				if (this.IsHandleCreated && !GetStyle (ControlStyles.UserPaint)) {
 					XplatUI.SetWindowBackground(this.window.Handle, value);
 				}
 				SetChildColor(this);
@@ -2738,7 +2740,9 @@ namespace System.Windows.Forms
 
 				creator_thread = Thread.CurrentThread;
 
-				XplatUI.SetWindowBackground(window.Handle, this.BackColor);
+				if (!GetStyle (ControlStyles.UserPaint)) {
+					XplatUI.SetWindowBackground(window.Handle, this.BackColor);
+				}
 
 				OnHandleCreated(EventArgs.Empty);
 			}

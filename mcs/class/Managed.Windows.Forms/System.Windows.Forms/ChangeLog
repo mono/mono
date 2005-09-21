@@ -1,3 +1,13 @@
+2005-09-21  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs: Only set XplatUI background if we expect the windowing
+	  system to handle the background. This stops controls that draw their
+	  own background from flickering
+
+	* XplatUIX11.cs: Support custom visuals and colormaps for window 
+	  creation. This allows, amongst other things, using MWF X11 windows 
+	  with OpenGL.
+
 2005-09-21  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* OpenFileDialog.cs, ContentsResizedEventArgs.cs, LibSupport.cs, GridItem.cs,
