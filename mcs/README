@@ -9,7 +9,8 @@ This contains code written in C# of Mono, it contains:
 To install this source code, look at the INSTALL file in the `mono'
 package module which drives the compilation of this directory.
 
-Layout:
+* Layout
+========
 
 	bmcs/
 		New experimental Basic compiler.
@@ -52,11 +53,30 @@ Layout:
 		command line;  MonoStyle helps you keep your code indendented
 		with the Mono programming style.
 
+* Building Individual Directories
+=================================
+
+You can build individual components in the hierarchy by running the command
+"make", and to install it use "make install".
+
+If you need to build a given component on the 2.x profile, you must use 
+the following command:
+
+	make PROFILE=net_2_0
+
+And to install:
+
+	make PROFILE=net_2_0 install
+
+
+* Acknowledgements
+==================
 
 Thanks a lot to Sergey Chaban for his help during the development of
 the C# compiler.
 
-LICENSE
+* LICENSE
+=========
 
 The mcs C# compiler and monoresgen are licensed to you under the GPL, version 2.
 The complete text of the GPL is in the 'COPYING' file.
