@@ -470,6 +470,7 @@ namespace System.Text.RegularExpressions {
 						goto Fail;
 					}
 
+					Recurse:
 					if (ptr == current.Start) {
 						// degenerate match ... match tail or fail
 
@@ -483,7 +484,6 @@ namespace System.Text.RegularExpressions {
 
 					if (current.IsLazy) {
 						// match tail first ...
-					RecurseLazy:
 						this.repeat = current.Previous;
 						int cp = Checkpoint ();
 						if (Eval (Mode.Match, ref ptr, pc + 1))
@@ -500,7 +500,7 @@ namespace System.Text.RegularExpressions {
 							deep = current;
 							if (Eval (Mode.Match, ref ptr, current.Expression)) {
 								if (deep == current)
-									goto RecurseLazy;
+									goto Recurse;
 								else
 									goto Pass;
 							}
