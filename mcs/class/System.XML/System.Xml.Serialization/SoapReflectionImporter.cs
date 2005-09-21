@@ -405,7 +405,7 @@ namespace System.Xml.Serialization {
 					throw new Exception ("SoapAttributeAttribute and SoapElementAttribute cannot be applied to the same member");
 
 				XmlTypeMapMemberAttribute mapAttribute = new XmlTypeMapMemberAttribute ();
-				if (atts.SoapAttribute.AttributeName == null) 
+				if (atts.SoapAttribute.AttributeName.Length == 0) 
 					mapAttribute.AttributeName = XmlConvert.EncodeLocalName (rmember.MemberName);
 				else 
 					mapAttribute.AttributeName = XmlConvert.EncodeLocalName (atts.SoapAttribute.AttributeName);
@@ -422,14 +422,14 @@ namespace System.Xml.Serialization {
 				if (typeData.SchemaType == SchemaTypes.Array) mapMember = new XmlTypeMapMemberList ();
 				else mapMember = new XmlTypeMapMemberElement ();
 
-				if (atts.SoapElement != null && atts.SoapElement.DataType != null)
+				if (atts.SoapElement != null && atts.SoapElement.DataType.Length != 0)
 					typeData = TypeTranslator.GetTypeData (rmember.MemberType, atts.SoapElement.DataType);
 
 				// Creates an ElementInfo that identifies the element
 				XmlTypeMapElementInfoList infoList = new XmlTypeMapElementInfoList();
 				XmlTypeMapElementInfo elem = new XmlTypeMapElementInfo (mapMember, typeData);
 
-				elem.ElementName = XmlConvert.EncodeLocalName ((atts.SoapElement != null && atts.SoapElement.ElementName != null) ? atts.SoapElement.ElementName : rmember.MemberName);
+				elem.ElementName = XmlConvert.EncodeLocalName ((atts.SoapElement != null && atts.SoapElement.ElementName.Length != 0) ? atts.SoapElement.ElementName : rmember.MemberName);
 				elem.Namespace = string.Empty;
 				elem.IsNullable = (atts.SoapElement != null) ? atts.SoapElement.IsNullable : false;
 				if (typeData.IsComplexType)
