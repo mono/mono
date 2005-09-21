@@ -168,32 +168,6 @@ namespace Mono.CSharp {
 			this.fi = fi;
 		}
 
-		private ExternalConstant (FieldInfo fi, Constant value):
-			this (fi)
-		{
-			this.value = value;
-		}
-
-		//
-		// Decimal constants cannot be encoded in the constant blob, and thus are marked
-		// as IsInitOnly ('readonly' in C# parlance).  We get its value from the 
-		// DecimalConstantAttribute metadata.
-		//
-		public static IConstant CreateDecimal (FieldInfo fi)
-		{
-			if (fi is FieldBuilder)
-				return null;
-			
-			object[] attrs = fi.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
-			if (attrs.Length != 1)
-				return null;
-
-			IConstant ic = new ExternalConstant (fi,
-				new DecimalConstant (((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value, Location.Null));
-
-			return ic;
-		}
-
 		#region IConstant Members
 
 		public void CheckObsoleteness (Location loc)

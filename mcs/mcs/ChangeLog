@@ -1,34 +1,3 @@
-2005-09-21  Marek Safar  <marek.safar@seznam.cz>
-
-	* attribute.cs (Attribute.Resolve): Check Obsolete attribute for
-	attributes.
-	
-	* class.cs (GeneratedBaseInitializer): New class for customization
-	compiler generated initializers.
-	(MemberBase.DoDefine): Check Obsolete attribute here.
-	(FieldMember.DoDefine): Ditto.
-	
-	* const.cs (ExternalConstant.CreateDecimal): Builder for decimal
-	constants.
-	
-	* decl.cs (MemberCore.EmitContext): Returns valid current ec.
-	(MemberCore.GetObsoleteAttribute): Removed argument.
-	(MemberCore.CheckObsoleteness): Obsolete attributes are hierarchic.
-	(MemberCore.CheckObsoleteType): New helper.
-	
-	* delegate.cs,
-	* enum.cs,
-	* statement.cs: Updates after MemberCore changes.
-	
-	* ecore.cs (TypeExpr.ResolveType): Check type obsoleteness here.
-	(FieldExpr.ResolveMemberAccess): Fixed decimal constants checks.
-	
-	* expression.cs (ComposedCast.DoResolveAsTypeStep): Don't check
-	obsolete attribute for compiler construct.
-	(As.DoResolve): Cache result.
-	
-	* iterators.cs (Define_Constructor): Use GeneratedBaseInitializer.
-
 2005-09-19  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: interface_accessors replaced by

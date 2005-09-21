@@ -294,6 +294,21 @@ namespace Mono.CSharp {
 			cached_name = null;
 		}
 
+		/// <summary>
+		/// Tests presence of ObsoleteAttribute and report proper error
+		/// </summary>
+		protected void CheckUsageOfObsoleteAttribute (Type type)
+		{
+			if (type == null)
+				return;
+
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type);
+			if (obsolete_attr == null)
+				return;
+
+			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, Location);
+		}
+
 		public abstract bool Define ();
 
 		// 
@@ -312,17 +327,14 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual void Emit ()
 		{
+			// Hack with Parent == null is for EnumMember
+			if (Parent == null || (GetObsoleteAttribute (Parent) == null && Parent.GetObsoleteAttribute (Parent) == null))
+				VerifyObsoleteAttribute ();
+
 			if (!RootContext.VerifyClsCompliance)
 				return;
 
 			VerifyClsCompliance (Parent);
-		}
-
-		public virtual EmitContext EmitContext
-		{
-			get {
-				return Parent.EmitContext;
-			}
 		}
 
 		public bool InUnsafe {
@@ -363,7 +375,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Returns instance of ObsoleteAttribute for this MemberCore
 		/// </summary>
-		public virtual ObsoleteAttribute GetObsoleteAttribute ()
+		public ObsoleteAttribute GetObsoleteAttribute (DeclSpace ds)
 		{
 			// ((flags & (Flags.Obsolete_Undetected | Flags.Obsolete)) == 0) is slower, but why ?
 			if ((caching_flags & Flags.Obsolete_Undetected) == 0 && (caching_flags & Flags.Obsolete) == 0) {
@@ -376,11 +388,11 @@ namespace Mono.CSharp {
 				return null;
 
 			Attribute obsolete_attr = OptAttributes.Search (
-				TypeManager.obsolete_attribute_type, EmitContext);
+				TypeManager.obsolete_attribute_type, ds.EmitContext);
 			if (obsolete_attr == null)
 				return null;
 
-			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (EmitContext);
+			ObsoleteAttribute obsolete = obsolete_attr.GetObsoleteAttribute (ds.EmitContext);
 			if (obsolete == null)
 				return null;
 
@@ -391,29 +403,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// Checks for ObsoleteAttribute presence. It's used for testing of all non-types elements
 		/// </summary>
-		public virtual void CheckObsoleteness (Location loc)
+		public void CheckObsoleteness (Location loc)
 		{
-			if (Parent != null)
-				Parent.CheckObsoleteness (loc);
-
-			ObsoleteAttribute oa = GetObsoleteAttribute ();
+			ObsoleteAttribute oa = GetObsoleteAttribute (Parent);
 			if (oa == null) {
 				return;
 			}
 
 			AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
-		}
-
-		protected void CheckObsoleteType (Expression type)
-		{
-			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type.Type);
-			if (obsolete_attr == null)
-				return;
-
-			if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute () != null)
-				return;
-
-			AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (type.Type), type.Location);
 		}
 
 		/// <summary>
@@ -517,6 +514,8 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		protected abstract void VerifyObsoleteAttribute ();
+
 		//
 		// Raised (and passed an XmlElement that contains the comment)
 		// when GenerateDocComment is writing documentation expectedly.
@@ -577,10 +576,8 @@ namespace Mono.CSharp {
 		// The emit context for toplevel objects.
 		protected EmitContext ec;
 		
-		public override EmitContext EmitContext {
-			get {
-				return ec;
-			}
+		public EmitContext EmitContext {
+			get { return ec; }
 		}
 
 		static string[] attribute_targets = new string [] { "type" };

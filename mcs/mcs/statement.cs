@@ -55,7 +55,16 @@ namespace Mono.CSharp {
 
 			return ok;
 		}
-				
+		
+		protected void CheckObsolete (Type type)
+		{
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type);
+			if (obsolete_attr == null)
+				return;
+
+			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, loc);
+		}
+		
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
@@ -3367,6 +3376,8 @@ namespace Mono.CSharp {
 
 			expr_type = texpr.ResolveType (ec);
 
+			CheckObsolete (expr_type);
+
 			data = new Emitter [declarators.Count];
 
 			if (!expr_type.IsPointer){
@@ -3584,6 +3595,8 @@ namespace Mono.CSharp {
 						return false;
 
 					type = te.ResolveType (ec);
+
+					CheckObsolete (type);
 
 					if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
 						Error (155, "The type caught or thrown must be derived from System.Exception");
