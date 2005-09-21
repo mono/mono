@@ -38,7 +38,7 @@ using System.Web.Hosting;
 namespace MonoTests.System.Web.Hosting {
 
 	[TestFixture]
-	public class SimpleWorkerTests {
+	public class SimpleWorkerRequestTest {
 
 		string cwd, bindir;
 		string assembly;
@@ -145,6 +145,33 @@ namespace MonoTests.System.Web.Hosting {
 			StringWriter sw = new StringWriter ();
 			SimpleWorkerRequest swr = new SimpleWorkerRequest ("/", cwd, String.Empty, String.Empty, sw);
 			Assert.AreEqual ("/", swr.GetUriPath (), "GetUriPath");
+
+			swr = new SimpleWorkerRequest (String.Empty, cwd, String.Empty, String.Empty, sw);
+			Assert.AreEqual ("/", swr.GetUriPath (), "GetUriPath-2");
+
+			swr = new SimpleWorkerRequest (String.Empty, cwd, "/", String.Empty, sw);
+			Assert.AreEqual ("//", swr.GetUriPath (), "GetUriPath-3");
+
+			swr = new SimpleWorkerRequest ("/", cwd, "/", String.Empty, sw);
+			Assert.AreEqual ("//", swr.GetUriPath (), "GetUriPath-4");
+
+			swr = new SimpleWorkerRequest ("virtual", cwd, "/", String.Empty, sw);
+			Assert.AreEqual ("virtual//", swr.GetUriPath (), "GetUriPath-5");
+
+			swr = new SimpleWorkerRequest ("/virtual", cwd, "/", String.Empty, sw);
+			Assert.AreEqual ("/virtual//", swr.GetUriPath (), "GetUriPath-6");
+
+			swr = new SimpleWorkerRequest ("/virtual/", cwd, "/", String.Empty, sw);
+			Assert.AreEqual ("/virtual///", swr.GetUriPath (), "GetUriPath-7");
+
+			swr = new SimpleWorkerRequest ("virtual", cwd, "page", String.Empty, sw);
+			Assert.AreEqual ("virtual/page", swr.GetUriPath (), "GetUriPath-8");
+
+			swr = new SimpleWorkerRequest ("/virtual", cwd, "page", String.Empty, sw);
+			Assert.AreEqual ("/virtual/page", swr.GetUriPath (), "GetUriPath-9");
+
+			swr = new SimpleWorkerRequest ("/virtual/", cwd, "page", String.Empty, sw);
+			Assert.AreEqual ("/virtual//page", swr.GetUriPath (), "GetUriPath-a");
 		}
 
 		public class Host : MarshalByRefObject {
