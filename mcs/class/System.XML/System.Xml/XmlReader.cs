@@ -218,6 +218,16 @@ namespace System.Xml
 			return nameTable;
 		}
 
+		private static XmlParserContext PopulateParserContext (
+			XmlReaderSettings settings, string baseUri)
+		{
+			XmlNameTable nt = PopulateNameTable (settings);
+			return new XmlParserContext (nt,
+				new XmlNamespaceManager (nt),
+				baseUri,
+				XmlSpace.None);
+		}
+
 		private static XmlNodeType GetNodeType (
 			XmlReaderSettings settings)
 		{
@@ -230,7 +240,7 @@ namespace System.Xml
 
 		public static XmlReader Create (Stream stream)
 		{
-			return Create (stream, null, null, new XmlUrlResolver (), null);
+			return Create (stream, null);
 		}
 
 		public static XmlReader Create (string url)
@@ -240,39 +250,58 @@ namespace System.Xml
 
 		public static XmlReader Create (TextReader reader)
 		{
-			return Create (reader, null, new XmlUrlResolver (), null);
+			return Create (reader, null);
 		}
 
 		public static XmlReader Create (string url, XmlReaderSettings settings)
 		{
-			return Create (url, null, new XmlUrlResolver (), settings);
+			return Create (url, settings, null);
 		}
 
-		public static XmlReader Create (XmlReader reader, XmlReaderSettings settings)
+		public static XmlReader Create (Stream stream, XmlReaderSettings settings)
 		{
-			return Create (reader, new XmlUrlResolver (), settings);
+			return Create (stream, settings, String.Empty);
+		}
+
+		public static XmlReader Create (TextReader reader, XmlReaderSettings settings)
+		{
+			return Create (reader, settings, String.Empty);
+		}
+
+		public static XmlReader Create (Stream stream, XmlReaderSettings settings, string baseUri)
+		{
+			if (settings == null)
+				settings = new XmlReaderSettings ();
+			return Create (stream, settings,
+				PopulateParserContext (settings, baseUri));
+		}
+
+		public static XmlReader Create (TextReader reader, XmlReaderSettings settings, string baseUri)
+		{
+			if (settings == null)
+				settings = new XmlReaderSettings ();
+			return Create (reader, settings,
+				PopulateParserContext (settings, baseUri));
 		}
 
 		[MonoTODO ("ConformanceLevel")]
-		public static XmlReader Create (XmlReader reader, XmlResolver resolver, XmlReaderSettings settings)
+		public static XmlReader Create (XmlReader reader, XmlReaderSettings settings)
 		{
-			if (settings == null) {
+			if (settings == null)
 				settings = new XmlReaderSettings ();
-				settings.XmlResolver = resolver;
-			}
-			XmlReader r = CreateFilteredXmlReader (reader, resolver, settings);
+			XmlReader r = CreateFilteredXmlReader (reader, settings);
 			r.settings = settings;
 			return r;
 		}
 
-		[MonoTODO ("ConformanceLevel; Encoding")]
-		public static XmlReader Create (string url, Encoding encoding, XmlResolver resolver, XmlReaderSettings settings)
+		[MonoTODO ("ConformanceLevel")]
+		public static XmlReader Create (string url, XmlReaderSettings settings, XmlParserContext context)
 		{
-			if (settings == null) {
+			if (settings == null)
 				settings = new XmlReaderSettings ();
-				settings.XmlResolver = resolver;
-			}
-			return CreateCustomizedTextReader (new XmlTextReader (url, PopulateNameTable (settings)), resolver, settings);
+			if (context == null)
+				context = PopulateParserContext (settings, url);
+			return CreateCustomizedTextReader (new XmlTextReader (url, GetNodeType (settings), context), settings);
 		}
 
 		[MonoTODO ("ConformanceLevel")]
@@ -280,39 +309,24 @@ namespace System.Xml
 		{
 			if (settings == null)
 				settings = new XmlReaderSettings ();
-			return CreateCustomizedTextReader (new XmlTextReader (stream, GetNodeType (settings), context), settings.XmlResolver, settings);
+			if (context == null)
+				context = PopulateParserContext (settings, String.Empty);
+			return CreateCustomizedTextReader (new XmlTextReader (stream, GetNodeType (settings), context), settings);
 		}
 
 		[MonoTODO ("ConformanceLevel")]
-		public static XmlReader Create (TextReader reader, string baseUri, XmlResolver resolver, XmlReaderSettings settings)
+		public static XmlReader Create (TextReader reader, XmlReaderSettings settings, XmlParserContext context)
 		{
-			if (settings == null) {
+			if (settings == null)
 				settings = new XmlReaderSettings ();
-				settings.XmlResolver = resolver;
-			}
-			return CreateCustomizedTextReader (new XmlTextReader (baseUri, reader, PopulateNameTable (settings)), resolver, settings);
+			if (context == null)
+				context = PopulateParserContext (settings, String.Empty);
+			return CreateCustomizedTextReader (new XmlTextReader (context.BaseURI, reader, GetNodeType (settings), context), settings);
 		}
 
-		[MonoTODO ("ConformanceLevel")]
-		public static XmlReader Create (Stream stream, string baseUri, Encoding encoding, XmlResolver resolver, XmlReaderSettings settings)
+		private static XmlReader CreateCustomizedTextReader (XmlTextReader reader, XmlReaderSettings settings)
 		{
-			if (settings == null) {
-				settings = new XmlReaderSettings ();
-				settings.XmlResolver = resolver;
-			}
-			XmlNameTable nameTable = PopulateNameTable (settings);
-
-			return CreateCustomizedTextReader (
-				encoding == null ?
-					new XmlTextReader (baseUri, stream, nameTable) :
-					new XmlTextReader (baseUri, new StreamReader (stream, encoding), nameTable),
-				resolver,
-				settings);
-		}
-
-		private static XmlReader CreateCustomizedTextReader (XmlTextReader reader, XmlResolver resolver, XmlReaderSettings settings)
-		{
-			reader.XmlResolver = resolver;
+			reader.XmlResolver = settings.XmlResolver;
 			// Normalization is set true by default.
 			reader.Normalization = true;
 
@@ -343,14 +357,14 @@ namespace System.Xml
 			if (settings.NameTable != null)
 				reader.SetNameTable (settings.NameTable);
 
-			XmlReader r = CreateFilteredXmlReader (reader, resolver, settings);
+			XmlReader r = CreateFilteredXmlReader (reader, settings);
 			r.settings = settings;
 			return r;
 		}
 
-		private static XmlReader CreateFilteredXmlReader (XmlReader reader, XmlResolver resolver, XmlReaderSettings settings)
+		private static XmlReader CreateFilteredXmlReader (XmlReader reader, XmlReaderSettings settings)
 		{
-			reader = CreateValidatingXmlReader (reader, resolver, settings);
+			reader = CreateValidatingXmlReader (reader, settings);
 
 			if (reader.Settings != null ||
 				settings.IgnoreComments ||
@@ -363,7 +377,7 @@ namespace System.Xml
 			}
 		}
 
-		private static XmlReader CreateValidatingXmlReader (XmlReader reader, XmlResolver resolver, XmlReaderSettings settings)
+		private static XmlReader CreateValidatingXmlReader (XmlReader reader, XmlReaderSettings settings)
 		{
 			XmlValidatingReader xvr = null;
 			switch (settings.ValidationType) {
@@ -371,7 +385,7 @@ namespace System.Xml
 				return reader;
 			case ValidationType.DTD:
 				xvr = new XmlValidatingReader (reader);
-				xvr.XmlResolver = resolver;
+				xvr.XmlResolver = settings.XmlResolver;
 				xvr.ValidationType = ValidationType.DTD;
 				break;
 			case ValidationType.Schema:
@@ -403,7 +417,12 @@ namespace System.Xml
 #endif
 
 #if NET_2_0
-		public virtual void Dispose ()
+		void IDisposable.Dispose ()
+		{
+			Dispose (false);
+		}
+
+		protected virtual void Dispose (bool disposing)
 		{
 			if (ReadState != ReadState.Closed)
 				Close ();
@@ -897,10 +916,16 @@ namespace System.Xml
 					return ReadContentAsBoolean ();
 				case TypeCode.DateTime:
 					return ReadContentAsDateTime ();
+				case TypeCode.Decimal:
+					return ReadContentAsDecimal ();
 				case TypeCode.Double:
 					return ReadContentAsDouble ();
 				case TypeCode.Int32:
 					return ReadContentAsInt ();
+				case TypeCode.Int64:
+					return ReadContentAsLong ();
+				case TypeCode.Single:
+					return ReadContentAsFloat ();
 				case TypeCode.String:
 					return ReadContentAsString ();
 				}
@@ -923,9 +948,21 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
+		public virtual decimal ReadElementContentAsDecimal ()
+		{
+			return XQueryConvert.StringToDecimal (ReadElementString ());
+		}
+
+		[MonoTODO]
 		public virtual double ReadElementContentAsDouble ()
 		{
 			return XQueryConvert.StringToDouble (ReadElementString ());
+		}
+
+		[MonoTODO]
+		public virtual float ReadElementContentAsFloat ()
+		{
+			return XQueryConvert.StringToFloat (ReadElementString ());
 		}
 
 		[MonoTODO]
@@ -959,15 +996,33 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
+		public virtual decimal ReadElementContentAsDecimal (string localName, string namespaceURI)
+		{
+			return XQueryConvert.StringToDecimal (ReadElementString (localName, namespaceURI));
+		}
+
+		[MonoTODO]
 		public virtual double ReadElementContentAsDouble (string localName, string namespaceURI)
 		{
 			return XQueryConvert.StringToDouble (ReadElementString (localName, namespaceURI));
 		}
 
 		[MonoTODO]
+		public virtual float ReadElementContentAsFloat (string localName, string namespaceURI)
+		{
+			return XQueryConvert.StringToFloat (ReadElementString (localName, namespaceURI));
+		}
+
+		[MonoTODO]
 		public virtual int ReadElementContentAsInt (string localName, string namespaceURI)
 		{
 			return XQueryConvert.StringToInt (ReadElementString (localName, namespaceURI));
+		}
+
+		[MonoTODO]
+		public virtual long ReadElementContentAsLong (string localName, string namespaceURI)
+		{
+			return XQueryConvert.StringToInteger (ReadElementString (localName, namespaceURI));
 		}
 
 		[MonoTODO]
@@ -989,15 +1044,33 @@ namespace System.Xml
 		}
 
 		[MonoTODO]
+		public virtual decimal ReadContentAsDecimal ()
+		{
+			return XQueryConvert.StringToDecimal (ReadContentString ());
+		}
+
+		[MonoTODO]
 		public virtual double ReadContentAsDouble ()
 		{
 			return XQueryConvert.StringToDouble (ReadContentString ());
 		}
 
 		[MonoTODO]
+		public virtual float ReadContentAsFloat ()
+		{
+			return XQueryConvert.StringToFloat (ReadContentString ());
+		}
+
+		[MonoTODO]
 		public virtual int ReadContentAsInt ()
 		{
 			return XQueryConvert.StringToInt (ReadContentString ());
+		}
+
+		[MonoTODO]
+		public virtual long ReadContentAsLong ()
+		{
+			return XQueryConvert.StringToInteger (ReadContentString ());
 		}
 
 		[MonoTODO]

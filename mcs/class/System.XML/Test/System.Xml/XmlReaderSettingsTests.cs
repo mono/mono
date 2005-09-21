@@ -24,7 +24,7 @@ namespace MonoTests.System.Xml
 	{
 		public Stream CreateStream (string xml)
 		{
-			return new MemoryStream (Encoding.Unicode.GetBytes (xml));
+			return new MemoryStream (Encoding.UTF8.GetBytes (xml));
 		}
 
 		[Test]
@@ -80,7 +80,7 @@ namespace MonoTests.System.Xml
 			XmlReaderSettings settings = new XmlReaderSettings ();
 			settings.CheckCharacters = false;
 			XmlReader xtr = XmlReader.Create (
-				sr, null, null, settings);
+				sr, settings);
 			xtr.Read ();
 			xtr.MoveToFirstAttribute ();
 			AssertEquals ("   value   ", xtr.Value);
@@ -99,7 +99,7 @@ namespace MonoTests.System.Xml
 			XmlReaderSettings settings = new XmlReaderSettings ();
 			settings.CheckCharacters = false;
 			XmlReader xtr = XmlReader.Create (
-				sr, null, null, settings);
+				sr, settings);
 			// After creation, changes on source XmlReaderSettings
 			// does not matter.
 			settings.CheckCharacters = false;
@@ -121,7 +121,7 @@ namespace MonoTests.System.Xml
 			XmlReaderSettings settings = new XmlReaderSettings ();
 			settings.CheckCharacters = false;
 			XmlReader xr = XmlReader.Create (
-				sr, null, null, settings);
+				sr, settings);
 
 			// Enable character checking for XmlNodeReader.
 			settings.CheckCharacters = true;
@@ -151,9 +151,13 @@ namespace MonoTests.System.Xml
 			// XmlReader.Create() should not result in null
 			// reference exceptions.
 			XmlReaderSettings s = new XmlReaderSettings ();
-			XmlReader.Create (new StringReader ("<root/>"), null, null, s)
+			XmlReader.Create (new StringReader ("<root/>"), s, String.Empty)
 				.Read ();
-			XmlReader.Create (CreateStream ("<root/>"), null, Encoding.Unicode, null, s)
+			XmlReader.Create (new StringReader ("<root/>"), s, (XmlParserContext) null)
+				.Read ();
+			XmlReader.Create (CreateStream ("<root/>"), s, String.Empty)
+				.Read ();
+			XmlReader.Create (CreateStream ("<root/>"), s, (XmlParserContext) null)
 				.Read ();
 		}
 	}

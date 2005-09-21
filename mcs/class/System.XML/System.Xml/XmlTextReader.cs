@@ -147,7 +147,7 @@ namespace System.Xml
 		{
 		}
 
-		XmlTextReader (string url, TextReader fragment, XmlNodeType fragType, XmlParserContext context)
+		internal XmlTextReader (string url, TextReader fragment, XmlNodeType fragType, XmlParserContext context)
 		{
 			InitializeContext (url, context, fragment, fragType);
 		}

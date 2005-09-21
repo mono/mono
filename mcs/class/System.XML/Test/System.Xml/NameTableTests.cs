@@ -58,10 +58,11 @@ namespace MonoTests.System.Xml
 		public void Get1 ()
 		{
 			string get1 = "get1";
-			string testGet = table.Add (get1);			
+			string testGet = table.Add (get1);
+			AssertEquals ("#1", "get1", testGet);
 
-			AssertEquals (table.Get (get1), testGet);
-			AssertSame (get1, testGet );
+			AssertEquals ("#2", testGet, table.Get (get1));
+			AssertSame ("#3", get1, testGet );
 		}
 
 		//
@@ -74,9 +75,11 @@ namespace MonoTests.System.Xml
 			int index = 0; 
 			int length = 3; // "get"
 			
-			string testGet = table.Add (test, index, length);			
+			string testGet = table.Add (test, index, length);
+			AssertEquals ("#1", "get", testGet);
 
-			AssertEquals (table.Get (test, index, length), testGet);
+			AssertEquals ("#2", testGet, table.Get ("get"));
+			AssertEquals ("#3", testGet, table.Get (test, index, length));
 		}
 
 		//
@@ -89,7 +92,7 @@ namespace MonoTests.System.Xml
 			int index = 0;
 			int length = 0;
 
-			AssertEquals (table.Get (test, index, length), String.Empty);
+			AssertEquals (String.Empty, table.Get (test, index, length));
 		}
 	}
 }

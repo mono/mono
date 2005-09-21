@@ -1,3 +1,11 @@
+2005-09-21  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNodeReader2.cs, XmlReader.cs,
+	  XmlTextReader.cs, XmlTextReader2.cs,
+	  XmlNodeChangedEventArgs.cs, XmlElement.cs,
+	  XmlNode.cs, XmlDocument.cs :
+	  updated NET_2_0 API.
+
 2005-09-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : when there is a heading half of surrogate at the

@@ -678,8 +678,7 @@ namespace System.Xml
 		{
 			if (NodeChanged != null)
 				NodeChanged (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Change,
-					node, parent, oldValue, newValue));
+					(node, parent, parent, oldValue, newValue, XmlNodeChangedAction.Change));
 		}
 
 		internal void onNodeChanging(XmlNode node, XmlNode parent, string oldValue, string newValue)
@@ -688,40 +687,35 @@ namespace System.Xml
 				throw new ArgumentException ("Node is read-only.");
 			if (NodeChanging != null)
 				NodeChanging (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Change,
-					node, parent, oldValue, newValue));
+					(node, parent, parent, oldValue, newValue, XmlNodeChangedAction.Change));
 		}
 
 		internal void onNodeInserted (XmlNode node, XmlNode newParent)
 		{
 			if (NodeInserted != null)
 				NodeInserted (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Insert,
-					node, null, newParent));
+					(node, null, newParent, null, null, XmlNodeChangedAction.Insert));
 		}
 
 		internal void onNodeInserting (XmlNode node, XmlNode newParent)
 		{
 			if (NodeInserting != null)
 				NodeInserting (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Insert,
-					node, null, newParent));
+					(node, null, newParent, null, null, XmlNodeChangedAction.Insert));
 		}
 
 		internal void onNodeRemoved (XmlNode node, XmlNode oldParent)
 		{
 			if (NodeRemoved != null)
 				NodeRemoved (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Remove,
-					node, oldParent, null));
+					(node, oldParent, null, null, null, XmlNodeChangedAction.Remove));
 		}
 
 		internal void onNodeRemoving (XmlNode node, XmlNode oldParent)
 		{
 			if (NodeRemoving != null)
 				NodeRemoving (node, new XmlNodeChangedEventArgs
-					(XmlNodeChangedAction.Remove,
-					node, oldParent, null));
+					(node, oldParent, null, null, null, XmlNodeChangedAction.Remove));
 		}
 
 		private void ParseName (string name, out string prefix, out string localName)

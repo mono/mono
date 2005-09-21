@@ -86,17 +86,21 @@ namespace System.Xml
 			get { return true; }
 		}
 
+/*
 		public override bool CanReadValueChunk {
 			get { return true; }
 		}
+*/
 #else
 		internal override bool CanReadBinaryContent {
 			get { return true; }
 		}
 
+/*
 		internal override bool CanReadValueChunk {
 			get { return true; }
 		}
+*/
 #endif
 
 		public override bool CanResolveEntity {
@@ -256,7 +260,7 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		public string LookupPrefix (string ns)
+		string IXmlNamespaceResolver.LookupPrefix (string ns)
 		{
 			return ((IXmlNamespaceResolver) Current).LookupPrefix (ns);
 		}

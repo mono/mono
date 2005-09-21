@@ -125,6 +125,11 @@ namespace System.Xml
 			source = new XmlTextReaderImpl (baseURI, xmlFragment, fragType);
 		}
 
+		internal XmlTextReader (string baseURI, TextReader xmlFragment, XmlNodeType fragType, XmlParserContext context)
+		{
+			source = new XmlTextReaderImpl (baseURI, xmlFragment, fragType, context);
+		}
+
 		private XmlTextReader (XmlTextReaderImpl entityContainer, bool insideAttribute)
 		{
 			source = entityContainer;

@@ -95,6 +95,23 @@ namespace System.Xml
 		}
 #endif
 
+		public XmlNodeChangedEventArgs (
+			XmlNode node, 
+			XmlNode oldParent,
+			XmlNode newParent,
+			string oldValue,
+			string newValue,
+			XmlNodeChangedAction action)
+		{
+			_node = node;
+			_oldParent = oldParent;
+			_newParent = newParent;
+			_oldValue = oldValue;
+			_newValue = newValue;
+			_action = action;
+		}
+
+		/*
 		internal XmlNodeChangedEventArgs (
 			XmlNodeChangedAction action,
 			XmlNode node,
@@ -108,10 +125,9 @@ namespace System.Xml
 			_newValue = newValue;
 			_action = action;
 		}
+		*/
 
-
-		// Public Methods
-		// Internal Methods
+		/*
 		internal XmlNodeChangedEventArgs (
 			XmlNodeChangedAction action, 
 			XmlNode node, 
@@ -123,6 +139,6 @@ namespace System.Xml
 			_newParent = newParent;
 			_action = action;
 		}
-
+		*/
 	}
 }
