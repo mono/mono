@@ -1,3 +1,12 @@
+2005-09-21  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNode.cs: Call Before/After Expand not Collapse when
+	expanding.
+
+2005-09-20  Jackson Harper  <jackson@ximian.com>
+	
+	* XplatUIX11.cs: Use the more hand looking hand (in most themes).
+
 2005-09-16  Jordi Mas i Hernandez <jordi@ximian.com>
 	 
 	* ListViewItem.cs:

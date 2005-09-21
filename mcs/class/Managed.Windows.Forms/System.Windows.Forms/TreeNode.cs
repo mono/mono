@@ -468,14 +468,14 @@ namespace System.Windows.Forms {
 			bool cancel = false;
 			if (TreeView != null) {
 				TreeViewCancelEventArgs e = new TreeViewCancelEventArgs (this, false, TreeViewAction.Expand);
-				TreeView.OnBeforeCollapse (e);
+				TreeView.OnBeforeExpand (e);
 				cancel = e.Cancel;
 			}
 
 			if (!cancel) {
 				is_expanded = true;
 				if (TreeView != null)
-					TreeView.OnAfterCollapse (new TreeViewEventArgs (this));
+					TreeView.OnAfterExpand (new TreeViewEventArgs (this));
 				if (IsVisible && TreeView != null)
 					TreeView.UpdateBelow (this);
 			}
