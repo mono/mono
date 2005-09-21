@@ -1,3 +1,9 @@
+2005-09-20  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs, TextBoxBase.cs, TextControl.cs: Don't do certain
+	  things if our window handle isn't created yet. Also disabled 
+	  debug for TextBoxBase
+
 2005-09-20  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* MenuAPI.cs: Remove filtering of events to allow menu usage

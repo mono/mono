@@ -3174,12 +3174,16 @@ namespace System.Windows.Forms
 		protected virtual void SetVisibleCore(bool value) {
 			if (value!=is_visible) {
 				is_visible=value;
-				XplatUI.SetVisible(Handle, value);
-				// Explicitly move Toplevel windows to where we want them;
-				// apparently moving unmapped toplevel windows doesn't work
-				if (is_visible && (this is Form)) {
-					XplatUI.SetWindowPos(window.Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+
+				if (IsHandleCreated) {
+					XplatUI.SetVisible(Handle, value);
+					// Explicitly move Toplevel windows to where we want them;
+					// apparently moving unmapped toplevel windows doesn't work
+					if (is_visible && (this is Form)) {
+						XplatUI.SetWindowPos(window.Handle, bounds.X, bounds.Y, bounds.Width, bounds.Height);
+					}
 				}
+
 				OnVisibleChanged(EventArgs.Empty);
 
 				if (!is_visible) {
@@ -3194,7 +3198,6 @@ namespace System.Windows.Forms
 					}
 				} else {
 					this.CreateBuffers(bounds.Width, bounds.Height);
-
 					CreateControl();
 				}
 
@@ -3309,6 +3312,10 @@ namespace System.Windows.Forms
 				XplatUI.SetZOrder(ctl.child_controls[i].window.Handle, ctl.child_controls[i-1].window.Handle, false, false); 
 			}
 #else
+			if (!IsHandleCreated) {
+				return;
+			}
+
 			children = child_controls.Count;
 			for (int i = 1; i < children; i++ ) {
 				XplatUI.SetZOrder(child_controls[i].Handle, child_controls[i-1].Handle, false, false); 

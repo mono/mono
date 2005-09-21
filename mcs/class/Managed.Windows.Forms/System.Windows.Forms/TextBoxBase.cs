@@ -25,7 +25,7 @@
 //
 
 // NOT COMPLETE
-#define Debug
+#undef Debug
 
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -84,7 +84,7 @@ namespace System.Windows.Forms {
 			modified = false;
 			multiline = false;
 			read_only = false;
-			word_wrap = false;
+			word_wrap = true;
 			richtext = false;
 			document = new Document(this);
 			document.WidthChanged += new EventHandler(document_WidthChanged);
@@ -340,9 +340,9 @@ namespace System.Windows.Forms {
 				document.multiline = multiline;
 
 				if (multiline) {
-					document.wrap = word_wrap;
+					document.Wrap = word_wrap;
 				} else {
-					document.wrap = false;
+					document.Wrap = false;
 				}
 			}
 		}
@@ -1172,6 +1172,9 @@ static int current;
 		}
 
 		protected void CalculateDocument() {
+			if (!IsHandleCreated) {
+				return;
+			}
 			document.RecalculateDocument(CreateGraphics());
 			CalculateScrollBars();
 //blah Console.WriteLine("TextBox.cs(1175) Invalidate called in CalculateDocument");

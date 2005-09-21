@@ -573,9 +573,8 @@ namespace System.Windows.Forms {
 			last_found = sentinel;
 
 			// We always have a blank line
+			owner.HandleCreated += new EventHandler(owner_HandleCreated);
 			Add(1, "", owner.Font, new SolidBrush(owner.ForeColor));
-			this.RecalculateDocument(owner.CreateGraphics());
-			PositionCaret(0, 0);
 			lines=1;
 
 			selection_visible = false;
@@ -706,7 +705,6 @@ namespace System.Windows.Forms {
 
 			set {
 				wrap = value;
-				// FIXME - force recalc/redisplay
 			}
 		}
 
@@ -957,6 +955,10 @@ namespace System.Windows.Forms {
 
 
 		internal void UpdateView(Line line, int pos) {
+			if (!owner.IsHandleCreated) {
+				return;
+			}
+
 			if (RecalculateDocument(owner.CreateGraphics(), line.line_no, line.line_no, true)) {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
@@ -1066,6 +1068,10 @@ namespace System.Windows.Forms {
 		}
 
 		internal void AlignCaret() {
+			if (!owner.IsHandleCreated) {
+				return;
+			}
+
 			caret.tag = LineTag.FindTag(caret.line, caret.pos);
 			caret.height = caret.tag.height;
 
@@ -1828,6 +1834,7 @@ namespace System.Windows.Forms {
 			if (soft && (caret.line == line) && (caret.pos >= pos)) {
 				move_caret = true;
 			}
+			// FIXME - what about selection?
 
 			// cover the easy case first
 			if (pos == line.text.Length) {
@@ -2846,6 +2853,11 @@ namespace System.Windows.Forms {
 
 		internal int Size() {
 			return lines;
+		}
+
+		private void owner_HandleCreated(object sender, EventArgs e) {
+			this.RecalculateDocument(owner.CreateGraphics());
+			PositionCaret(0, 0);
 		}
 		#endregion	// Internal Methods
 
