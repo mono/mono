@@ -1,5 +1,8 @@
 2005-09-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_allocate_vars): Rewrite this so it works based 
+	upon the information returned by get_call_info ().
+	
 	* mini-x86.c (add_float): Fix stack size calculation.
 	(mono_arch_call_opcode): Rewrite this so it works based up the
 	information returned by get_call_info ().
