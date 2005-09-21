@@ -556,7 +556,7 @@ namespace Mono.CSharp {
 
 			ctor = new Constructor (
 				this, Name, Modifiers.PUBLIC, ctor_params,
-				new ConstructorBaseInitializer (null, Location),
+				new GeneratedBaseInitializer (Location),
 				Location);
 			AddConstructor (ctor);
 

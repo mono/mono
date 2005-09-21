@@ -1050,8 +1050,6 @@ namespace Mono.CSharp {
 				return null;
 			probe_type = texpr.ResolveType (ec);
 
-			CheckObsoleteAttribute (probe_type);
-
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return null;
@@ -1200,6 +1198,7 @@ namespace Mono.CSharp {
 		}
 
 		bool do_isinst = false;
+		Expression resolved_type;
 		
 		public override void Emit (EmitContext ec)
 		{
@@ -1220,10 +1219,12 @@ namespace Mono.CSharp {
 		
 		public override Expression DoResolve (EmitContext ec)
 		{
-			Expression e = base.DoResolve (ec);
+			if (resolved_type == null) {
+				resolved_type = base.DoResolve (ec);
 
-			if (e == null)
-				return null;
+				if (resolved_type == null)
+					return null;
+			}
 
 			type = probe_type;
 			eclass = ExprClass.Value;
@@ -1236,7 +1237,7 @@ namespace Mono.CSharp {
 			
 			}
 			
-			e = Convert.ImplicitConversion (ec, expr, probe_type, loc);
+			Expression e = Convert.ImplicitConversion (ec, expr, probe_type, loc);
 			if (e != null){
 				expr = e;
 				do_isinst = false;
@@ -1812,8 +1813,6 @@ namespace Mono.CSharp {
 				return null;
 
 			type = target.ResolveType (ec);
-
-			CheckObsoleteAttribute (type);
 
 			if (type.IsAbstract && type.IsSealed) {
 				Report.Error (716, loc, "Cannot convert to static type `{0}'", TypeManager.CSharpName (type));
@@ -3915,11 +3914,7 @@ namespace Mono.CSharp {
 
 		override public Expression DoResolveLValue (EmitContext ec, Expression right_side)
 		{
-			Expression ret = DoResolveBase (ec, right_side);
-			if (ret != null)
-				CheckObsoleteAttribute (ret.Type);
-			
-			return ret;
+			return DoResolveBase (ec, right_side);
 		}
 
 		public bool VerifyFixed ()
@@ -6088,9 +6083,7 @@ namespace Mono.CSharp {
 					return c;
 			}
 
-			CheckObsoleteAttribute (type);
-
-		        if (TypeManager.IsDelegateType (type)) {
+	        if (TypeManager.IsDelegateType (type)) {
 				RequestedType = (new NewDelegate (type, Arguments, loc)).Resolve (ec);
 				if (RequestedType != null)
 					if (!(RequestedType is DelegateCreation))
@@ -6518,7 +6511,7 @@ namespace Mono.CSharp {
 			// Lookup the type
 			//
 			TypeExpr array_type_expr;
-			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
+			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString ());
 			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec, false);
 			if (array_type_expr == null)
 				return false;
@@ -7259,7 +7252,6 @@ namespace Mono.CSharp {
 				UnsafeError (loc);
 				return null;
 			}
-			CheckObsoleteAttribute (typearg);
 
 			type = TypeManager.type_type;
 			// Even though what is returned is a type object, it's treated as a value by the compiler.
@@ -7329,8 +7321,6 @@ namespace Mono.CSharp {
 					 TypeManager.CSharpName (type_queried));
 				return null;
 			}
-
-			CheckObsoleteAttribute (type_queried);
 
 			if (!TypeManager.VerifyUnManaged (type_queried, loc)){
 				return null;
@@ -7439,14 +7429,15 @@ namespace Mono.CSharp {
 	///   Implements the member access expression
 	/// </summary>
 	public class MemberAccess : Expression {
-		public readonly string Identifier;  // TODO: LocatedToken
+		public readonly string Identifier;
 		Expression expr;
 		
+		// TODO: Location can be removed
 		public MemberAccess (Expression expr, string id, Location l)
 		{
 			this.expr = expr;
 			Identifier = id;
-			loc = l;
+			loc = expr.Location;
 		}
 
 		public Expression Expr {
@@ -8769,7 +8760,10 @@ namespace Mono.CSharp {
 			if (lexpr == null)
 				return null;
 
+			bool old = ec.TestObsoleteMethodUsage;
+			ec.TestObsoleteMethodUsage = false;
 			Type ltype = lexpr.ResolveType (ec);
+			ec.TestObsoleteMethodUsage = old;
 
 			if ((ltype == TypeManager.void_type) && (dim != "*")) {
 				Report.Error (1547, Location,

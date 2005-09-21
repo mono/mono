@@ -302,6 +302,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (Type);
+			if (obsolete_attr != null) {
+				AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (Type), Location);
+			}
+
 			if (Arguments == null) {
 				object o = att_cache [Type];
 				if (o != null) {
@@ -1661,7 +1666,7 @@ namespace Mono.CSharp {
 					if (attribute.Length == 1)
 						result = (ObsoleteAttribute)attribute [0];
 				} else {
-					result = type_ds.GetObsoleteAttribute (type_ds);
+					result = type_ds.GetObsoleteAttribute ();
 				}
 			}
 
