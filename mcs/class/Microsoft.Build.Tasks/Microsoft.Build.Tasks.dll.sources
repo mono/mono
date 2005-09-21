@@ -1,4 +1,5 @@
 ../../build/common/Consts.cs
+../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
 Microsoft.Build.Tasks/AL.cs
 Microsoft.Build.Tasks/AppDomainIsolatedTaskExtension.cs
@@ -20,7 +21,6 @@ Microsoft.Build.Tasks.Hosting/IVbcHostObject.cs
 Microsoft.Build.Tasks/MakeDir.cs
 Microsoft.Build.Tasks/ManagedCompiler.cs
 Microsoft.Build.Tasks/Message.cs
-Microsoft.Build.Tasks/MonoTODOAttribute.cs
 Microsoft.Build.Tasks/MSBuild.cs
 Microsoft.Build.Tasks/ReadLinesFromFile.cs
 Microsoft.Build.Tasks/RegisterAssembly.cs

@@ -34,38 +34,6 @@ using Microsoft.Build.Utilities;
 namespace Microsoft.Build.Tasks {
 	public class AL : ToolTaskExtension {
 	
-		// FIXME: replace all variables with Bag
-		string		algorithmId;
-		string		baseAddress;
-		string		companyName;
-		string		configuration;
-		string		copyright;
-		string		culture;
-		bool		delaySign;
-		string		description;
-		ITaskItem[]	embedResources;
-		string		evidenceFile;
-		string		fileVersion;
-		string		flags;
-		bool		generateFullPaths;
-		string		keyContainer;
-		string		keyFile;
-		ITaskItem[]	linkResources;
-		string		mainEntryPoint;
-		ITaskItem	outputAssembly;
-		string		platform;
-		string		productName;
-		string		productVersion;
-		string[]	responseFiles;
-		ITaskItem[]	sourceModules;
-		string		targetType;
-		string		templateFile;
-		string		title;
-		string		trademark;
-		string		version;
-		string		win32Icon;
-		string		win32Resource;
-
 		Process	alProcess;
 	
 		public AL ()
@@ -75,41 +43,46 @@ namespace Microsoft.Build.Tasks {
 		protected internal override void AddResponseFileCommands (
 						 CommandLineBuilderExtension commandLine)
 		{
-			commandLine.AppendSwitchIfNotNull ("/algid:", algorithmId);
-			commandLine.AppendSwitchIfNotNull ("/baseaddress:", baseAddress);
-			commandLine.AppendSwitchIfNotNull ("/company:", companyName);
-			commandLine.AppendSwitchIfNotNull ("/configuration:", configuration);
-			commandLine.AppendSwitchIfNotNull ("/copyright:", copyright);
-			commandLine.AppendSwitchIfNotNull ("/culture:", culture);
-			if (delaySign == true)
+			commandLine.AppendSwitchIfNotNull ("/algid:", AlgorithmId);
+			commandLine.AppendSwitchIfNotNull ("/baseaddress:", BaseAddress);
+			commandLine.AppendSwitchIfNotNull ("/company:", CompanyName);
+			commandLine.AppendSwitchIfNotNull ("/configuration:", Configuration);
+			commandLine.AppendSwitchIfNotNull ("/copyright:", Copyright);
+			commandLine.AppendSwitchIfNotNull ("/culture:", Culture);
+			if (DelaySign == true)
 				commandLine.AppendSwitch ("/delaysign");
-			foreach (ITaskItem item in embedResources)
-				commandLine.AppendSwitchIfNotNull ("/embedresource:", item.ItemSpec);
-			commandLine.AppendSwitchIfNotNull ("/evidence:", evidenceFile);
-			commandLine.AppendSwitchIfNotNull ("/fileversion:", fileVersion);
-			commandLine.AppendSwitchIfNotNull ("/flags:", flags);
-			if (generateFullPaths == true)
+			if (EmbedResources != null)
+				foreach (ITaskItem item in EmbedResources)
+					commandLine.AppendSwitchIfNotNull ("/embedresource:", item.ItemSpec);
+			commandLine.AppendSwitchIfNotNull ("/evidence:", EvidenceFile);
+			commandLine.AppendSwitchIfNotNull ("/fileversion:", FileVersion);
+			commandLine.AppendSwitchIfNotNull ("/flags:", Flags);
+			if (GenerateFullPaths == true)
 				commandLine.AppendSwitch ("/fullpaths");
-			commandLine.AppendSwitchIfNotNull ("/keyname:", keyContainer);
-			commandLine.AppendSwitchIfNotNull ("/keyfile:", keyFile);
-			foreach (ITaskItem item in linkResources)
-				commandLine.AppendSwitchIfNotNull ("/linkresource:", item.ItemSpec);
-			commandLine.AppendSwitchIfNotNull ("/main:", mainEntryPoint);
-			commandLine.AppendSwitchIfNotNull ("/out:", outputAssembly.ItemSpec);
+			commandLine.AppendSwitchIfNotNull ("/keyname:", KeyContainer);
+			commandLine.AppendSwitchIfNotNull ("/keyfile:", KeyFile);
+			if (LinkResources != null)
+				foreach (ITaskItem item in LinkResources)
+					commandLine.AppendSwitchIfNotNull ("/linkresource:", item.ItemSpec);
+			commandLine.AppendSwitchIfNotNull ("/main:", MainEntryPoint);
+			if (OutputAssembly != null)
+				commandLine.AppendSwitchIfNotNull ("/out:", OutputAssembly.ItemSpec);
 			//platform
-			commandLine.AppendSwitchIfNotNull ("/product:", productName);
-			commandLine.AppendSwitchIfNotNull ("/productversion:", productVersion);
-			foreach (string s in responseFiles)
-				commandLine.AppendFileNameIfNotNull (String.Format ("@{0}", s));
-			foreach (ITaskItem item in sourceModules)
-				commandLine.AppendFileNameIfNotNull (item.ItemSpec);
-			commandLine.AppendSwitchIfNotNull ("/target:", targetType);
-			commandLine.AppendSwitchIfNotNull ("/template:", templateFile);
-			commandLine.AppendSwitchIfNotNull ("/title:", title);
-			commandLine.AppendSwitchIfNotNull ("/trademark:", trademark);
-			commandLine.AppendSwitchIfNotNull ("/version:", version);
-			commandLine.AppendSwitchIfNotNull ("/win32icon:", win32Icon);
-			commandLine.AppendSwitchIfNotNull ("/win32res:", win32Resource);
+			commandLine.AppendSwitchIfNotNull ("/product:", ProductName);
+			commandLine.AppendSwitchIfNotNull ("/productversion:", ProductVersion);
+			if (ResponseFiles != null)
+				foreach (string s in ResponseFiles)
+					commandLine.AppendFileNameIfNotNull (String.Format ("@{0}", s));
+			if (SourceModules != null)
+				foreach (ITaskItem item in SourceModules)
+					commandLine.AppendFileNameIfNotNull (item.ItemSpec);
+			commandLine.AppendSwitchIfNotNull ("/target:", TargetType);
+			commandLine.AppendSwitchIfNotNull ("/template:", TemplateFile);
+			commandLine.AppendSwitchIfNotNull ("/title:", Title);
+			commandLine.AppendSwitchIfNotNull ("/trademark:", Trademark);
+			commandLine.AppendSwitchIfNotNull ("/version:", Version);
+			commandLine.AppendSwitchIfNotNull ("/win32icon:", Win32Icon);
+			commandLine.AppendSwitchIfNotNull ("/win32res:", Win32Resource);
 		}
 		
 		public override bool Execute ()
@@ -127,138 +100,139 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string GenerateFullPathToTool ()
 		{
-			return Path.Combine (ToolPath, ToolName);
+			string binDir = ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version11);
+			return Path.Combine (binDir, ToolName);
 		}
 
 		public string AlgorithmId {
-			get { return algorithmId; }
-			set { algorithmId = value; }
+			get { return (string) Bag ["AlgorithmId"]; }
+			set { Bag ["AlgorithmId"] = value; }
 		}
 
 		public string BaseAddress {
-			get { return baseAddress; }
-			set { baseAddress = value; }
+			get { return (string) Bag ["BaseAddress"]; }
+			set { Bag ["BaseAddress"] = value; }
 		}
 
 		public string CompanyName {
-			get { return companyName; }
-			set { companyName = value; }
+			get { return (string) Bag ["CompanyName"]; }
+			set { Bag ["CompanyName"] = value; }
 		}
 
 		public string Configuration {
-			get { return configuration; }
-			set { configuration = value; }
+			get { return (string) Bag ["Configuration"]; }
+			set { Bag ["Configuration"] = value; }
 		}
 
 		public string Copyright {
-			get { return copyright; }
-			set { copyright = value; }
+			get { return (string) Bag ["Copyright"]; }
+			set { Bag ["Copyright"] = value; }
 		}
 
 		public string Culture {
-			get { return culture; }
-			set { culture = value; }
+			get { return (string) Bag ["Culture"]; }
+			set { Bag ["Culture"] = value; }
 		}
 
 		public bool DelaySign {
-			get { return delaySign; }
-			set { delaySign = value; }
+			get { return GetBoolParameterWithDefault ("DelaySign", false); }
+			set { Bag ["DelaySign"] = value; }
 		}
 
 		public string Description {
-			get { return description; }
-			set { description = value; }
+			get { return (string) Bag ["Description"]; }
+			set { Bag ["Description"] = value; }
 		}
 
 		public ITaskItem[] EmbedResources {
-			get { return embedResources; }
-			set { embedResources = value; }
+			get { return (ITaskItem[]) Bag ["EmbedResources"]; }
+			set { Bag ["EmbedResources"] = value; }
 		}
 
 		public string EvidenceFile {
-			get { return evidenceFile; }
-			set { evidenceFile = value; }
+			get { return (string) Bag ["EvidenceFile"]; }
+			set { Bag ["EvidenceFile"] = value; }
 		}
 
 		public string FileVersion {
-			get { return fileVersion; }
-			set { fileVersion = value; }
+			get { return (string) Bag ["FileVersion"]; }
+			set { Bag ["FileVersion"] = value; }
 		}
 
 		public string Flags {
-			get { return flags; }
-			set { flags = value; }
+			get { return (string) Bag ["Flags"]; }
+			set { Bag ["Flags"] = value; }
 		}
 
 		public bool GenerateFullPaths {
-			get { return generateFullPaths; }
-			set { generateFullPaths = value; }
+			get { return GetBoolParameterWithDefault ("GenerateFullPaths", false); }
+			set { Bag ["GenerateFullPaths"] = value; }
 		}
 
 		public string KeyContainer {
-			get { return keyContainer; }
-			set { keyContainer = value; }
+			get { return (string) Bag ["KeyContainer"]; }
+			set { Bag ["KeyContainer"] = value; }
 		}
 
 		public string KeyFile {
-			get { return keyFile; }
-			set { keyFile = value; }
+			get { return (string) Bag ["KeyFile"]; }
+			set { Bag ["KeyFile"] = value; }
 		}
 
 		public ITaskItem[] LinkResources {
-			get { return linkResources; }
-			set { linkResources = value; }
+			get { return (ITaskItem[]) Bag ["LinkResources"]; }
+			set { Bag ["LinkResources"] = value; }
 		}
 
 		public string MainEntryPoint {
-			get { return mainEntryPoint; }
-			set { mainEntryPoint = value; }
+			get { return (string) Bag ["MainEntryPoint"]; }
+			set { Bag ["MainEntryPoint"] = value; }
 		}
 
 		[Required]
 		public ITaskItem OutputAssembly {
-			get { return outputAssembly; }
-			set { outputAssembly = value; }
+			get { return (ITaskItem) Bag ["OutputAssembly"]; }
+			set { Bag ["OutputAssembly"] = value; }
 		}
 
 		public string Platform {
-			get { return platform; }
-			set { platform = value; }
+			get { return (string) Bag ["Platform"]; }
+			set { Bag ["Platform"] = value; }
 		}
 
 		public string ProductName {
-			get { return productName; }
-			set { productName = value; }
+			get { return (string) Bag ["ProductName"]; }
+			set { Bag ["ProductName"] = value; }
 		}
 
 		public string ProductVersion {
-			get { return productVersion; }
-			set { productVersion = value; }
+			get { return (string) Bag ["ProductVersion"]; }
+			set { Bag ["ProductVersion"] = value; }
 		}
 
 		public string[] ResponseFiles {
-			get { return responseFiles; }
-			set { responseFiles = value; }
+			get { return (string[]) Bag ["ResponseFiles"]; }
+			set { Bag ["ResponseFiles"] = value; }
 		}
 
 		public ITaskItem[] SourceModules {
-			get { return sourceModules; }
-			set { sourceModules = value; }
+			get { return (ITaskItem[]) Bag ["SourceModules"]; }
+			set { Bag ["SourceModules"] = value; }
 		}
 
 		public string TargetType {
-			get { return targetType; }
-			set { targetType = value; }
+			get { return (string) Bag ["TargetType"]; }
+			set { Bag ["TargetType"] = value; }
 		}
 
 		public string TemplateFile {
-			get { return templateFile; }
-			set { templateFile = value; }
+			get { return (string) Bag ["TemplateFile"]; }
+			set { Bag ["TemplateFile"] = value; }
 		}
 
 		public string Title {
-			get { return title; }
-			set { title = value; }
+			get { return (string) Bag ["Title"]; }
+			set { Bag ["Title"] = value; }
 		}
 
 		protected override string ToolName {
@@ -268,23 +242,23 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		public string Trademark {
-			get { return trademark; }
-			set { trademark = value; }
+			get { return (string) Bag ["Trademark"]; }
+			set { Bag ["Trademark"] = value; }
 		}
 
 		public string Version {
-			get { return version; }
-			set { version = value; }
+			get { return (string) Bag ["Version"]; }
+			set { Bag ["Version"] = value; }
 		}
 
 		public string Win32Icon {
-			get { return win32Icon; }
-			set { win32Icon = value; }
+			get { return (string) Bag ["Win32Icon"]; }
+			set { Bag ["Win32Icon"] = value; }
 		}
 
 		public string Win32Resource {
-			get { return win32Resource; }
-			set { win32Resource = value; }
+			get { return (string) Bag ["Win32Resource"]; }
+			set { Bag ["Win32Resource"] = value; }
 		}
 	}
 }

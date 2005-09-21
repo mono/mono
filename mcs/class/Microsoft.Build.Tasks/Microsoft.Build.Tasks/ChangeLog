@@ -1,3 +1,9 @@
+2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* ManagedCompiler.cs, Csc.cs: Moved code to ManagedCompiler.
+	* MSBuild.cs: Added really simple temporary code.
+	* AL.cs: Replaced variables with Bag property.
+
 2005-09-09  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* AppDomainIsolatedTaskExtension.cs: Changed Log property to base.Log

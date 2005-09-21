@@ -45,6 +45,55 @@ namespace Microsoft.Build.Tasks {
 		protected internal override void AddResponseFileCommands (
 						 CommandLineBuilderExtension commandLine)
 		{
+			commandLine.AppendSwitchIfNotNull ("/lib:", AdditionalLibPaths, ",");
+			commandLine.AppendSwitchIfNotNull ("/addmodule:", AddModules, ",");
+			//commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
+			//debugType
+			commandLine.AppendSwitchIfNotNull ("/define:", DefineConstants);
+			//delaySign
+			if (EmitDebugInformation)
+				commandLine.AppendSwitch ("/debug");
+			//fileAlignment
+			commandLine.AppendSwitchIfNotNull ("/keycontainer:", KeyContainer);
+			commandLine.AppendSwitchIfNotNull ("/keyfile:", KeyFile);
+			// FIXME: add ids from metadata
+			if (LinkResources != null) {
+				foreach (ITaskItem item in LinkResources) {
+						commandLine.AppendSwitchIfNotNull ("/linkresource:", item.ItemSpec);
+				}
+			}
+			commandLine.AppendSwitchIfNotNull ("/main:", MainEntryPoint);
+			if (NoConfig)
+				commandLine.AppendSwitch ("/noconfig");
+			if (Optimize)
+				commandLine.AppendSwitch ("/optimize");
+			if (OutputAssembly != null)
+				commandLine.AppendSwitchIfNotNull ("/out:", OutputAssembly.ItemSpec);
+			if (References != null) {
+				foreach (ITaskItem item in References) {
+					commandLine.AppendSwitchIfNotNull ("/reference:", item.ItemSpec);
+				}
+			}
+			if (Resources != null) {
+				foreach (ITaskItem item in Resources) {
+						commandLine.AppendSwitchIfNotNull ("/resource:", item.ItemSpec);
+				}
+			}
+			if (ResponseFiles != null) {
+				foreach (ITaskItem item in ResponseFiles) {
+						commandLine.AppendFileNameIfNotNull (String.Format ("@{0}",item.ItemSpec));
+				}
+			}
+			if (Sources != null) {
+				foreach (ITaskItem item in Sources) {
+						commandLine.AppendFileNameIfNotNull (item.ItemSpec);
+				}
+			}
+			commandLine.AppendSwitchIfNotNull ("/target:", TargetType);
+			if (TreatWarningsAsErrors)
+				commandLine.AppendSwitch ("/warnaserror");
+			commandLine.AppendSwitchIfNotNull ("/win32icon:", Win32Icon);
+			commandLine.AppendSwitchIfNotNull ("/win32res:", Win32Resource);
 		}
 
 		protected bool CheckAllReferencesExistOnDisk ()

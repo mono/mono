@@ -38,86 +38,25 @@ namespace Microsoft.Build.Tasks {
 		{
 		}
 
-		// FIXME: move some commands to managedcompiler
 		protected internal override void AddResponseFileCommands (CommandLineBuilderExtension commandLine)
 		{
 			base.AddResponseFileCommands (commandLine);
 			
-			commandLine.AppendSwitchIfNotNull ("/lib:", AdditionalLibPaths, ",");
-			commandLine.AppendSwitchIfNotNull ("/addmodule:", AddModules, ",");
 			if (AllowUnsafeBlocks == true)
 				commandLine.AppendSwitch ("/unsafe");
 			//baseAddress
 			//checkForOverflowUnderflow
-			//commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
-			//debugType
-			commandLine.AppendSwitchIfNotNull ("/define:", DefineConstants);
-			//delaySign
 			commandLine.AppendSwitchIfNotNull ("/nowarn:", DisabledWarnings);
 			commandLine.AppendSwitchIfNotNull ("/doc:", DocumentationFile);
-			if (EmitDebugInformation)
-				commandLine.AppendSwitch ("/debug");
 			//errorReport
-			//fileAlignment
-			commandLine.AppendSwitchIfNotNull ("/keycontainer:", KeyContainer);
-			commandLine.AppendSwitchIfNotNull ("/keyfile:", KeyFile);
 			commandLine.AppendSwitchIfNotNull ("/langversion:", LangVersion);
-			// FIXME: add ids from metadata
-			if (LinkResources != null) {
-				foreach (ITaskItem item in LinkResources) {
-					if (GenerateFullPaths)
-						commandLine.AppendSwitchIfNotNull ("/linkresource:", item.GetMetadata ("FullPath"));
-					else
-						commandLine.AppendSwitchIfNotNull ("/linkresource:", item.ItemSpec);
-				}
-			}
-			commandLine.AppendSwitchIfNotNull ("/main:", MainEntryPoint);
 			//moduleAssemblyName
-			if (NoConfig)
-				commandLine.AppendSwitch ("/noconfig");
 			if (NoStandardLib)
 				commandLine.AppendSwitch ("/nostdlib");
-			if (Optimize)
-				commandLine.AppendSwitch ("/optimize");
-			commandLine.AppendSwitchIfNotNull ("/out:", OutputAssembly.ItemSpec);
 			//platform
-			if (References != null) {
-				foreach (ITaskItem item in References) {
-					commandLine.AppendSwitchIfNotNull ("/reference:", item.ItemSpec);
-				}
-			}
-			if (Resources != null) {
-				foreach (ITaskItem item in Resources) {
-					if (GenerateFullPaths)
-						commandLine.AppendSwitchIfNotNull ("/resource:", item.GetMetadata ("FullPath"));
-					else
-						commandLine.AppendSwitchIfNotNull ("/resource:", item.ItemSpec);
-				}
-			}
-			if (ResponseFiles != null) {
-				foreach (ITaskItem item in ResponseFiles) {
-					if (GenerateFullPaths)
-						commandLine.AppendFileNameIfNotNull (String.Format ("@{0}",item.GetMetadata ("FullPath")));
-					else
-						commandLine.AppendFileNameIfNotNull (String.Format ("@{0}",item.ItemSpec));
-				}
-			}
-			if (Sources != null) {
-				foreach (ITaskItem item in Sources) {
-					if (GenerateFullPaths)
-						commandLine.AppendFileNameIfNotNull (item.GetMetadata ("FullPath"));
-					else
-						commandLine.AppendFileNameIfNotNull (item.ItemSpec);
-				}
-			}
-			commandLine.AppendSwitchIfNotNull ("/target:", TargetType);
-			if (TreatWarningsAsErrors)
-				commandLine.AppendSwitch ("/warnaserror");
 			commandLine.AppendSwitchIfNotNull ("/warn:", WarningLevel.ToString ());
 			//warningsAsErrors
 			//warningNotAsErrors
-			commandLine.AppendSwitchIfNotNull ("/win32icon:", Win32Icon);
-			commandLine.AppendSwitchIfNotNull ("/win32res:", Win32Resource);
 		}
 
 		protected override bool CallHostObjectToExecute ()
@@ -127,7 +66,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string GenerateFullPathToTool ()
 		{
-			return "/usr/local/bin/mcs";
+			return Path.Combine (ToolPath, ToolName);
 		}
 
 		protected override bool InitializeHostObject (out bool appropriateHostObjectExists,

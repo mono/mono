@@ -25,7 +25,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Collections;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public class MSBuild : TaskExtension {
@@ -44,7 +47,17 @@ namespace Microsoft.Build.Tasks {
 
 		public override bool Execute ()
 		{
-			return true;
+			string filename;
+			bool result = true;
+		
+			foreach (ITaskItem project in projects) {
+				filename = project.GetMetadata ("FullPath");
+				
+				result = BuildEngine.BuildProjectFile (filename, targets, new Hashtable (), new Hashtable ());
+				if (result == false)
+					break;
+			}
+			return result;
 		}
 
 		[Required]
