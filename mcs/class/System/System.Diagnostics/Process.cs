@@ -66,7 +66,9 @@ namespace System.Diagnostics {
 		IntPtr process_handle;
 		int pid;
 		bool enableRaisingEvents;
+		bool already_waiting;
 		ISynchronizeInvoke synchronizingObject;
+		EventHandler exited_event;
 		
 		/* Private constructor called from other methods */
 		private Process(IntPtr handle, int id) {
@@ -74,8 +76,8 @@ namespace System.Diagnostics {
 			pid=id;
 		}
 		
-		[MonoTODO]
-		public Process() {
+		public Process ()
+		{
 		}
 
 		[MonoTODO]
@@ -87,6 +89,17 @@ namespace System.Diagnostics {
 			}
 		}
 
+		void StartExitCallbackIfNeeded ()
+		{
+			bool start = (!already_waiting && enableRaisingEvents && exited_event != null);
+			if (start && process_handle != IntPtr.Zero && !HasExited) {
+				WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
+				ProcessWaitHandle h = new ProcessWaitHandle (process_handle);
+				ThreadPool.RegisterWaitForSingleObject (h, cb, this, -1, true);
+				already_waiting = true;
+			}
+		}
+
 		[DefaultValue (false), Browsable (false)]
 		[MonitoringDescription ("Check for exiting of the process to raise the apropriate event.")]
 		public bool EnableRaisingEvents {
@@ -94,9 +107,8 @@ namespace System.Diagnostics {
 				return enableRaisingEvents;
 			}
 			set { 
-				if (process_handle != IntPtr.Zero)
-					throw new InvalidOperationException ("The process is already started.");
-
+				if (value && !enableRaisingEvents)
+					StartExitCallbackIfNeeded ();
 				enableRaisingEvents = value;
 			}
 
@@ -820,12 +832,6 @@ namespace System.Diagnostics {
 				throw new Win32Exception (-proc_info.pid);
 			}
 
-			if (process.enableRaisingEvents && process.Exited != null) {
-				WaitOrTimerCallback cb = new WaitOrTimerCallback (CBOnExit);
-				ProcessWaitHandle h = new ProcessWaitHandle (proc_info.process_handle);
-				ThreadPool.RegisterWaitForSingleObject (h, cb, process, -1, true);
-			}
-			
 			process.process_handle=proc_info.process_handle;
 			process.pid=proc_info.pid;
 			
@@ -844,6 +850,8 @@ namespace System.Diagnostics {
 				MonoIO.Close(stderr_wr, out error);
 				process.error_stream=new StreamReader(new FileStream(stderr_rd, FileAccess.Read, true));
 			}
+
+			process.StartExitCallbackIfNeeded ();
 
 			return(ret);
 		}
@@ -913,7 +921,20 @@ namespace System.Diagnostics {
 
 		[Category ("Behavior")]
 		[MonitoringDescription ("Raised when this process exits.")]
-		public event EventHandler Exited;
+		public event EventHandler Exited {
+			add {
+				if (process_handle != IntPtr.Zero && HasExited) {
+					value.BeginInvoke (null, null, null, null);
+				} else {
+					exited_event = (EventHandler) Delegate.Combine (exited_event, value);
+					if (exited_event != null)
+						StartExitCallbackIfNeeded ();
+				}
+			}
+			remove {
+				exited_event = (EventHandler) Delegate.Remove (exited_event, value);
+			}
+		}
 
 		// Closes the system process handle
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -967,16 +988,20 @@ namespace System.Diagnostics {
 
 		protected void OnExited() 
 		{
-			if (Exited == null)
+			if (exited_event == null)
 				return;
 
 			if (synchronizingObject == null) {
-				Exited (this, EventArgs.Empty);
+				foreach (EventHandler d in exited_event.GetInvocationList ()) {
+					try {
+						d (this, EventArgs.Empty);
+					} catch {}
+				}
 				return;
 			}
 			
 			object [] args = new object [] {this, EventArgs.Empty};
-			synchronizingObject.BeginInvoke (Exited, args);
+			synchronizingObject.BeginInvoke (exited_event, args);
 		}
 
 		class ProcessWaitHandle : WaitHandle

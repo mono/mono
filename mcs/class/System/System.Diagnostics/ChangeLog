@@ -1,3 +1,10 @@
+2005-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Process.cs: deal with the fact that someone can enable raising events
+	and/or registed a Exited delegate before and *after* Start is called for
+	the process. Only queue the exit callback in the threadpool when it's
+	possible and requested. Fixes bug #76129.
+
 2005-08-09  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* EventLog.cs: Fixed Designer attribute to match MS.NET.
