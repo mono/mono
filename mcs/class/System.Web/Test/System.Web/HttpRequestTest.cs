@@ -37,8 +37,6 @@ using System.Diagnostics;
 namespace MonoTests.System.Web {
 
 	[TestFixture]
-	// Tons of failures on msft here.
-	[Category ("NotDotNet")]
 	public class HttpRequestTest {
 
 #if NET_1_1
@@ -91,7 +89,7 @@ namespace MonoTests.System.Web {
 			// the next statement throws
 			Assert.AreEqual ("<SCRIPT>alert(document.cookie)</SCRIPT>", request.QueryString ["test"], "QueryString");
 		}
-
+#endif
 		//
 		// Tests the properties from the simple constructor.
 		[Test]
@@ -121,7 +119,8 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (null, r.ApplicationPath, "U7");
 		}
 
-		[Test][ExpectedException(typeof(NullReferenceException))]
+		[Test]
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void Test_AccessToVars ()
 		{
 			string url = "http://www.gnome.org/";
@@ -133,7 +132,6 @@ namespace MonoTests.System.Web {
 	}
 
 	[TestFixture]
-	[Category ("NotDotNet")]
 	public class Test_HttpFakeRequest {
 		class FakeHttpWorkerRequest : HttpWorkerRequest {
 			public int return_kind;
@@ -420,7 +418,11 @@ namespace MonoTests.System.Web {
 		{
 			HttpContext c = Cook (1);
 
+#if NET_2_0
+			Assert.IsNull (c.Request.ApplicationPath, "A1");
+#else
 			Assert.AreEqual ("AppPath", c.Request.ApplicationPath, "A1");
+#endif
 			Assert.AreEqual ("text/plain", c.Request.ContentType, "A2");
 
 			c = Cook (0);
@@ -469,7 +471,8 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("Value", c.Request.Cookies ["Key"].Value, "cookie1");
 		}
 
-		[Test][ExpectedException(typeof (HttpRequestValidationException))]
+		[Test]
+		[ExpectedException(typeof (HttpRequestValidationException))]
 		public void Test_DangerousCookie ()
 		{
 			HttpContext c;
@@ -479,7 +482,9 @@ namespace MonoTests.System.Web {
 			object a = c.Request.Cookies;
 		}
 		
-		[Test][ExpectedException(typeof(HttpRequestValidationException))]
+		[Test]
+		[ExpectedException(typeof (HttpRequestValidationException))]
+		[Category ("NotDotNet")] // doesn't work on 1.1 SP1 and 2.0 RC
 		public void Test_DangerousCookie2 ()
 		{
 			HttpContext c;
@@ -489,7 +494,9 @@ namespace MonoTests.System.Web {
 			object a = c.Request.Cookies;
 		}
 		
-		[Test][ExpectedException(typeof(HttpRequestValidationException))]
+		[Test]
+		[ExpectedException(typeof (HttpRequestValidationException))]
+		[Category ("NotDotNet")] // doesn't work on 1.1 SP1 and 2.0 RC
 		public void Test_DangerousCookie3 ()
 		{
 			HttpContext c;
@@ -499,7 +506,9 @@ namespace MonoTests.System.Web {
 			object a = c.Request.Cookies;
 		}
 		
-		[Test][ExpectedException(typeof(HttpRequestValidationException))]
+		[Test]
+		[ExpectedException(typeof (HttpRequestValidationException))]
+		[Category ("NotDotNet")] // doesn't work on 1.1 SP1 and 2.0 RC
 		public void Test_DangerousCookie4 ()
 		{
 			HttpContext c;
@@ -647,6 +656,5 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (0, req.ContentLength, "#01");
 		}
 	}
-#endif
 }
 
