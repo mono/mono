@@ -5,7 +5,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,8 +32,6 @@ using System;
 using System.Security;
 using System.Security.Permissions;
 using System.Web;
-
-//using System.Diagnostics;
 
 namespace MonoTests.System.Web {
 
@@ -93,7 +91,12 @@ namespace MonoTests.System.Web {
 			Assert.IsTrue (anhp.IsUnrestricted (), "IsUnrestricted");
 
 			SecurityElement se = anhp.ToXml ();
+#if NET_2_0
+			// fixed in 2.0 RC
+			Assert.IsNotNull (se.Attribute ("Unrestricted"), "Xml-Unrestricted");
+#else
 			Assert.IsNull (se.Attribute ("Unrestricted"), "Xml-Unrestricted");
+#endif
 			Assert.AreEqual ("Unrestricted", se.Attribute ("Level"), "Xml-Level");
 			Assert.IsNull (se.Children, "Xml-Children");
 
