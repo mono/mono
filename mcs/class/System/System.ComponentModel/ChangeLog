@@ -1,3 +1,7 @@
+2005-09-20  Chris Toshok  <toshok@ximian.com>
+
+	* INotifyPropertyChanged.cs: new interface.
+
 2005-09-19  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* TypeDescriptor.cs: Remove usage of removed internal
