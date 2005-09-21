@@ -45,9 +45,6 @@ namespace System.Windows.Forms
 	public class ListViewItem : ICloneable, ISerializable
 	{
 		#region Instance Variables
-		private Color back_color = Color.Empty;
-		private Font font = null;
-		private Color fore_color = Color.Empty;
 		private int image_index = -1;
 		private bool is_checked = false;
 		private bool is_focused = false;
@@ -72,7 +69,7 @@ namespace System.Windows.Forms
 		public ListViewItem ()
 		{
 			this.sub_items = new ListViewSubItemCollection (this);
-			this.sub_items.Add ("");
+			this.sub_items.Add ("");			
 		}
 
 		public ListViewItem (string text) : this (text, -1)
@@ -110,9 +107,9 @@ namespace System.Windows.Forms
 			this.sub_items = new ListViewSubItemCollection (this);
 			this.sub_items.AddRange (items);
 			this.image_index = imageIndex;
-			this.fore_color = foreColor;
-			this.back_color = backColor;
-			this.font = font;
+			ForeColor = foreColor;
+			BackColor = backColor;
+			Font = font;
 		}
 		#endregion	// Public Constructors
 
@@ -120,14 +117,16 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color BackColor {
 			get {
-				if (! back_color.IsEmpty)
-					return back_color;
-				else if (owner != null)
+				if (sub_items.Count > 0)
+					return sub_items[0].BackColor;
+
+				if (owner != null)
 					return owner.BackColor;
-				else
-					return ThemeEngine.Current.ColorWindow;
+				
+				return ThemeEngine.Current.ColorWindow;
 			}
-			set { this.back_color = value; }
+
+			set { sub_items[0].BackColor = value; }
 		}
 
 		[Browsable (false)]
@@ -141,41 +140,66 @@ namespace System.Windows.Forms
 		[RefreshProperties (RefreshProperties.Repaint)]
 		public bool Checked {
 			get { return is_checked; }
-			set { is_checked = value; }
+			set { 
+				if (is_checked == value)
+					return;
+
+				is_checked = value;
+				if (owner != null)
+					owner.Invalidate (Bounds);
+			}
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public bool Focused {
 			get { return is_focused; }
-			set { is_focused = value; }
+			set { 	
+				if (is_focused == value)
+					return;
+
+				is_focused = value; 
+
+				if (owner != null)
+					owner.Invalidate (Bounds);
+			}
 		}
 
 		[Localizable (true)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Font Font {
 			get {
-				if (font != null)
-					return font;
-				else if (owner != null)
+				if (sub_items.Count > 0)
+					return sub_items[0].Font;
+
+				if (owner != null)
 					return owner.Font;
-				else
-					return ThemeEngine.Current.DefaultFont;
+
+				return ThemeEngine.Current.DefaultFont;
 			}
-			set { font = value; }
+			set { 	
+				if (sub_items[0].Font == value)
+					return;
+
+				sub_items[0].Font = value; 
+
+				if (owner != null)
+					owner.Invalidate (Bounds);
+			}
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public Color ForeColor {
 			get {
-				if (! fore_color.IsEmpty)
-					return fore_color;
-				else if (owner != null)
+				if (sub_items.Count > 0)
+					return sub_items[0].ForeColor;
+
+				if (owner != null)
 					return owner.ForeColor;
-				else
-					return ThemeEngine.Current.ColorWindowText;
+
+				return ThemeEngine.Current.ColorWindowText;
 			}
-			set { fore_color = value; }
+			set { sub_items[0].ForeColor = value; }
 		}
 
 		[DefaultValue (-1)]
@@ -189,7 +213,11 @@ namespace System.Windows.Forms
 			set {
 				if (value < -1)
 					throw new ArgumentException ("Invalid ImageIndex. It must be greater than or equal to -1.");
+				
 				image_index = value;
+
+				if (owner != null)
+					owner.Invalidate (Bounds);	
 			}
 		}
 
@@ -308,15 +336,13 @@ namespace System.Windows.Forms
 		public virtual object Clone ()
 		{
 			ListViewItem clone = new ListViewItem ();
-			clone.back_color = this.BackColor;
-			clone.font = this.Font;
-			clone.fore_color = this.ForeColor;
 			clone.image_index = this.image_index;
 			clone.is_checked = this.is_checked;
 			clone.is_focused = this.is_focused;
 			clone.selected = this.selected;
 			clone.state_image_index = this.state_image_index;
 			clone.sub_items = new ListViewSubItemCollection (this);
+			
 			foreach (ListViewSubItem subItem in this.sub_items)
 				clone.sub_items.Add (subItem.Text, subItem.ForeColor,
 						     subItem.BackColor, subItem.Font);
@@ -375,7 +401,7 @@ namespace System.Windows.Forms
 
 		public override string ToString ()
 		{
-			return string.Format ("ListViewItem: {{0}}", this.Text);
+			return string.Format ("ListViewItem: {0}", this.Text);
 		}
 		#endregion	// Public Instance Methods
 
@@ -573,7 +599,10 @@ namespace System.Windows.Forms
 			#region Public Instance Properties
 			public Color BackColor {
 				get { return back_color; }
-				set { back_color = value; }
+				set { 
+					back_color = value; 
+					Invalidate ();
+				    }
 			}
 
 			[Localizable (true)]
@@ -585,18 +614,27 @@ namespace System.Windows.Forms
 						return owner.Font;
 					return font;
 				}
-				set { font = value; }
+				set { 
+					font = value; 
+					Invalidate ();
+				    }
 			}
 
 			public Color ForeColor {
 				get { return fore_color; }
-				set { fore_color = value; }
+				set { 
+					fore_color = value; 
+					Invalidate ();
+				    }
 			}
 
 			[Localizable (true)]
 			public string Text {
 				get { return text; }
-				set { text = value; }
+				set { 
+				      	text = value; 
+					Invalidate ();
+				    }
 			}
 			#endregion // Public Instance Properties
 
@@ -606,6 +644,7 @@ namespace System.Windows.Forms
 				font = ThemeEngine.Current.DefaultFont;
 				back_color = ThemeEngine.Current.DefaultControlBackColor;
 				fore_color = ThemeEngine.Current.DefaultControlForeColor;
+				Invalidate ();
 			}
 
 			public override string ToString ()
@@ -613,6 +652,17 @@ namespace System.Windows.Forms
 				return string.Format ("ListViewSubItem {{0}}", text);
 			}
 			#endregion // Public Methods
+
+			
+			#region Private Methods
+			private void Invalidate ()
+			{
+				if (owner == null || owner.owner == null)
+					return;
+
+				owner.owner.Invalidate ();
+			}
+			#endregion // Private Methods
 		}
 
 		public class ListViewSubItemCollection : IList, ICollection, IEnumerable

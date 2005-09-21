@@ -1,3 +1,10 @@
+2005-09-16  Jordi Mas i Hernandez <jordi@ximian.com>
+	 
+	* ListViewItem.cs:
+		- Fixes bug 76120
+		- Fixes proper storing of subitems
+		- Fixes not updated items
+
 2005-09-20  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs, TextBoxBase.cs, TextControl.cs: Don't do certain

@@ -19,6 +19,7 @@ System.Windows.Forms/ListBoxEventTest.cs
 System.Windows.Forms/ListBoxTest.cs
 System.Windows.Forms/ListViewEventTest.cs
 System.Windows.Forms/ListViewTest.cs
+System.Windows.Forms/ListViewItemTest.cs
 System.Windows.Forms/MenuTest.cs
 System.Windows.Forms/MonthCalendarTest.cs
 System.Windows.Forms/PictureBoxTest.cs

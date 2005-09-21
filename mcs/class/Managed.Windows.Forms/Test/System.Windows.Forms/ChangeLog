@@ -1,4 +1,8 @@
-2005-09-20  Ritvik Mayank  <mritvik@novell.com>
+2005-09-21  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ListViewItemTest.cs: New unit test 
+
+2005-09-20  Jordi Mas i Hernandez <jordi@ximian.com>
 
         * ButtonTest.cs, LabelTest.cs, ControlEventTest.cs, ScrollBarTest.cs,
 	LabelPropertyTest.cs, ProgressBarTest.cs, StatusBarTest.cs,
