@@ -1062,7 +1062,6 @@ namespace System.Windows.Forms {
 //				clip_rect = new Rectangle(rect.left, rect.top, rect.right-rect.left, rect.bottom-rect.top);
 
 				if (ps.fErase != 0) {
-Console.WriteLine("Hit Clear background");
 					EraseWindowBackground(handle, hdc);
 				}
 			} else {

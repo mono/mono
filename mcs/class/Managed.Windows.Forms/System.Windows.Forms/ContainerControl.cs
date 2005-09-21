@@ -115,8 +115,14 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		[MonoTODO]
+		static bool ValidateWarned;
 		public bool Validate() {
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
+			if (!ValidateWarned) {
+				Console.WriteLine("ContainerControl.Validate is not yet implemented");
+				ValidateWarned = true;
+			}
+			return true;
 		}
 
 		bool IContainerControl.ActivateControl(Control control) {

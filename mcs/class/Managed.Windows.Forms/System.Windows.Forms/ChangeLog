@@ -1,5 +1,11 @@
 2005-09-21  Peter Dennis Bartok  <pbartok@novell.com> 
 
+	* ContainerControl.cs: Instead of throwing an exception, print
+	  a one-time warning about Validate not being implemented
+	* XplatUIWin32.cs: Removed debug output
+
+2005-09-21  Peter Dennis Bartok  <pbartok@novell.com> 
+
 	* Control.cs: Only set XplatUI background if we expect the windowing
 	  system to handle the background. This stops controls that draw their
 	  own background from flickering
