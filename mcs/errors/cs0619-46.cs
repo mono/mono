@@ -1,4 +1,4 @@
-// cs0619-46.cs: `Obsolete' is obsolete: `!!!'
+// cs0619-46.cs: `C' is obsolete: `Is obsolete'
 // Line: 16
 
 using System;
