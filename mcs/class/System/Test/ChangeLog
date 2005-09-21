@@ -1,5 +1,9 @@
 2005-09-20  Chris Toshok  <toshok@ximian.com>
 
+	* System.Configuration/ProviderCollectionTest.cs: new test.
+
+2005-09-20  Chris Toshok  <toshok@ximian.com>
+
 	* System.Configuration/SettingsPropertyValueCollectionTest.cs: new
 	test.
 
