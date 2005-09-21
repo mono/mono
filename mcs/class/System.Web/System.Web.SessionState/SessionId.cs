@@ -77,9 +77,12 @@ namespace System.Web.SessionState {
 		{
 			if (cookieless)
 				return (string) request.Headers [SessionStateModule.HeaderName];
-			else if (request.Cookies [SessionStateModule.CookieName] != null)
-				return request.Cookies [SessionStateModule.CookieName].Value;
-			return null;
+
+			HttpCookie cookie = request.Cookies [SessionStateModule.CookieName];
+			if (cookie == null)
+				return null;
+
+			return cookie.Value;
 		}
 	}
 
