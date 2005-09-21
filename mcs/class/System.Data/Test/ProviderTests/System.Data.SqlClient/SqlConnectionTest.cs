@@ -123,7 +123,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual (300, conn.ConnectionTimeout,
 				"## The last set value shud be taken");
 			conn = new SqlConnection (
-					"Connection Timeout=1000;Timeout=200$0;Connect Timeout=3000");
+					"Connection Timeout=1000;Timeout=2000;Connect Timeout=3000");
 			Assert.AreEqual (3000, conn.ConnectionTimeout,
 				"## The last set value shud be taken");
 
@@ -485,6 +485,7 @@ namespace MonoTests.System.Data
 		public void DatabasePropertyTest ()
 		{
 			conn = new SqlConnection (connectionString);
+			string database = conn.Database ;
 
 			// Test if database property is updated when a query changes database
 			conn.Open ();
@@ -493,13 +494,13 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("mono-test", conn.Database,
 				"#1 DATABASE name shud change if query changes the db");
 			conn.Close ();
-			Assert.AreEqual ("monotest", conn.Database,
+			Assert.AreEqual (database, conn.Database,
 				"#2 Shud be back to default value");
 
 			// Test if the database property is reset on re-opening the connection
 			conn.ConnectionString = connectionString;
 			conn.Open ();	
-			Assert.AreEqual ("monotest", conn.Database,
+			Assert.AreEqual (database, conn.Database,
 				"#3 Shud be back to original value");
 			conn.Close ();
 		}

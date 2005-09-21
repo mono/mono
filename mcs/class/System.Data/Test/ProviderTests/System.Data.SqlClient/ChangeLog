@@ -1,3 +1,8 @@
+2005-09-21 Senganal T  <tsenganal@novell.com>
+
+	* SqlConnectionTest.cs: removed some hardcoded database names
+	in DatabasePropertyTest ().
+
 2005-09-16 Senganal T  <tsenganal@novell.com>
 
 	* SqlCommandTest.cs: added more testcases for connected mode

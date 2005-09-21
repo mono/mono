@@ -1,5 +1,19 @@
 2005-09-21 Senganal T <tsenganal@novell.com>
 
+	* SqlConnection.cs : 
+		- Set the correct Default Values for Parameters.
+		- Added Argument Checks (where missing) for the Properties and 
+		throw the correct exception on error.
+		- Modified SetDefaultParameters() to make sure that the parameters
+		are all reset to default values everytime it is called.
+		- Modified SetProperties() to take into account the order of the 
+		keywords in the ConnectionString.
+
+	SqlConnection Fixes for the failing sqlserver connected-mode testcases 
+	in ProviderTest/System.Data.SqlClient/SqlConnectionTest.cs
+
+2005-09-21 Senganal T <tsenganal@novell.com>
+
 	* SqlTransaction.cs : Modifed the Rollback() method, so that
 	connection can be used for another transaction after the previous
 	transaction is rolled back. fixes bug 75904

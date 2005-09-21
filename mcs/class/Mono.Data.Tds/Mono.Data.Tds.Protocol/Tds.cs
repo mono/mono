@@ -54,6 +54,7 @@ namespace Mono.Data.Tds.Protocol {
 		int packetSize;
 		string dataSource;
 		string database;
+		string originalDatabase = string.Empty;
 		string databaseProductName;
 		string databaseProductVersion;
 		int databaseMajorVersion;
@@ -228,6 +229,7 @@ namespace Mono.Data.Tds.Protocol {
 		
 		public virtual bool Reset ()
 		{
+			database = originalDatabase;
 			return true;
 		}
 
@@ -1129,7 +1131,9 @@ namespace Mono.Data.Tds.Protocol {
 				cLen = comm.GetByte () & 0xff;
 				string newDB = comm.GetString (cLen);
 				cLen = comm.GetByte () & 0xff;
-				/*string oldDB = */ comm.GetString (cLen);
+				comm.GetString (cLen);
+				if (originalDatabase == string.Empty)
+					originalDatabase = newDB;
 				database = newDB;
 				break;
 			default:
@@ -1147,7 +1151,9 @@ namespace Mono.Data.Tds.Protocol {
 				int nameLength = comm.GetByte ();
 				databaseProductName = comm.GetString (nameLength);
 				databaseMajorVersion = comm.GetByte ();
-				databaseProductVersion = String.Format ("0{0}.0{1}.0{2}", databaseMajorVersion, comm.GetByte (), ((256 * (comm.GetByte () + 1)) + comm.GetByte ()));
+				databaseProductVersion = String.Format ("{0}.{1}.{2}", databaseMajorVersion.ToString("00"),
+								comm.GetByte ().ToString("00"), 
+								(256 * comm.GetByte () + comm.GetByte ()).ToString("0000"));
 			}
 			else {
 				comm.Skip (5);

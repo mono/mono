@@ -1,3 +1,14 @@
+2005-09-21 Senganal T  <tsenganal@novell.com>
+
+	* Mono.Data.Tds.Protocol/Tds.cs: 
+		- Modified the way Server Version number is calculated
+		- Added a new varaible to remember the original database
+		connected to and to reset the Database property when the
+		connection to database is closed.
+	* Mono.Data.Tds.Protocol/Tds70.cs: 
+		modified Reset() to Call the Reset() of base class which 
+		in turn resets the database name. 
+
 2005-04-07  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Mono.Data.Tds.dll.sources: In Mono.Data.Tds.Protocol

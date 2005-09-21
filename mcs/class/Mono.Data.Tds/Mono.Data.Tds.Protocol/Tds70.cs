@@ -355,6 +355,7 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			try {
 				ExecProc ("sp_reset_connection");
+				base.Reset (); 
 			} catch (Exception e) {
 				System.Reflection.PropertyInfo pinfo = e.GetType ().GetProperty ("Class");
 				if (pinfo != null && pinfo.PropertyType == typeof (byte)) {

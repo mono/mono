@@ -81,8 +81,9 @@ namespace System.Data.SqlClient {
 		SqlTransaction transaction = null;
 
 		// Connection parameters
+		
 		TdsConnectionParameters parms = new TdsConnectionParameters ();
-                NameValueCollection connStringParameters = null;
+		NameValueCollection connStringParameters = null;
 		bool connectionReset;
 		bool pooling;
 		string dataSource;
@@ -132,7 +133,6 @@ namespace System.Data.SqlClient {
                 }
                 
 
-
 		#endregion // Constructors
 
 		#region Properties
@@ -150,7 +150,11 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 string ConnectionString	{
 			get { return connectionString; }
-			set { SetConnectionString (value); }
+			set {
+				if (state == ConnectionState.Open)
+					throw new InvalidOperationException ("Not Allowed to change ConnectionString property while Connection state is OPEN");
+				SetConnectionString (value); 
+			}
 		}
 	
 		[DataSysDescription ("Current connection timeout value, 'Connect Timeout=X' in the ConnectionString.")]	
@@ -159,7 +163,8 @@ namespace System.Data.SqlClient {
 #if NET_2_0
 		override
 #endif // NET_2_0
-                int ConnectionTimeout {
+                
+		int ConnectionTimeout {
 			get { return connectionTimeout; }
 		}
 
@@ -173,7 +178,7 @@ namespace System.Data.SqlClient {
 			get { 
                                 if (State == ConnectionState.Open)
                                         return tds.Database; 
-                                return GetConnStringKeyValue ("DATABASE", "INITIAL CATALOG");
+                                return parms.Database ;
                         }
 		}
 		
@@ -206,7 +211,12 @@ namespace System.Data.SqlClient {
 		override
 #endif // NET_2_0
                 string ServerVersion {
-			get { return tds.ServerVersion; }
+			get { 
+				if (state == ConnectionState.Closed)
+					throw new InvalidOperationException ("Invalid Operation.The Connection is Closed");
+				else
+					return tds.ServerVersion; 
+			}
 		}
 
 		[Browsable (false)]
@@ -330,7 +340,7 @@ namespace System.Data.SqlClient {
 			}
 
 			tds.Execute (String.Format ("SET TRANSACTION ISOLATION LEVEL {0};BEGIN TRANSACTION {1}", isolevel, transactionName));
-
+			
 			transaction = new SqlTransaction (this, iso);
 			return transaction;
 		}
@@ -342,10 +352,10 @@ namespace System.Data.SqlClient {
 	 void ChangeDatabase (string database) 
 		{
 			if (!IsValidDatabaseName (database))
-				throw new ArgumentException (String.Format ("The database name {0} is not valid."));
+				throw new ArgumentException (String.Format ("The database name {0} is not valid.", database));
 			if (state != ConnectionState.Open)
 				throw new InvalidOperationException ("The connection is not open.");
-			tds.Execute (String.Format ("use {0}", database));
+			tds.Execute (String.Format ("use [{0}]", database));
 		}
 
 		private void ChangeState (ConnectionState currentState)
@@ -408,8 +418,8 @@ namespace System.Data.SqlClient {
                                                 if (State == ConnectionState.Open) 
                                                         Close ();
                                                 parms.Reset ();
-                                                dataSource = ""; // default dataSource
-                                                ConnectionString = null;
+                                                ConnectionString = "";
+						SetDefaultConnectionParameters (this.connStringParameters); 
                                         }
                                 } finally {
                                         disposed = true;
@@ -466,6 +476,9 @@ namespace System.Data.SqlClient {
                 void Open () 
 		{
 			string serverName = "";
+			if (state == ConnectionState.Open)
+				throw new InvalidOperationException ("The Connection is already Open (State=Open)");
+
 			if (connectionString == null)
 				throw new InvalidOperationException ("Connection string has not been initialized.");
 
@@ -513,10 +526,10 @@ namespace System.Data.SqlClient {
 		{
 			theServerName = "";
 			string theInstanceName = "";
-			if ((theDataSource == null) || (theServerName == null) 
-                            || theDataSource == "")
+	
+			if (theDataSource == null)
 				throw new ArgumentException("Format of initialization string doesnot conform to specifications");
-				
+
 			thePort = 1433; // default TCP port for SQL Server
 			bool success = true;
 
@@ -534,12 +547,10 @@ namespace System.Data.SqlClient {
 				if (port == -1)
 					success = false;
 			}
-			else {
-				theServerName = theDataSource;
-			}
-
-			if(theServerName.Equals("(local)"))
+			else if (theDataSource == "" || theDataSource == "(local)")
 				theServerName = "localhost";
+			else
+				theServerName = theDataSource;
 
 			return success;
 		}
@@ -592,18 +603,18 @@ namespace System.Data.SqlClient {
 			msock = null;
 			return SqlServerPort;
 		}
-
+	
 		void SetConnectionString (string connectionString)
 		{
-			if (( connectionString == null)||( connectionString.Length == 0)) {
-                                this.connectionString = null;
+                        NameValueCollection parameters = new NameValueCollection ();
+                        SetDefaultConnectionParameters (parameters);
+
+			if ((connectionString == null) || (connectionString.Length == 0)) {
+                                this.connectionString = connectionString;
 				return;
                         }
-                        
-                        NameValueCollection parameters = new NameValueCollection ();
-                        connectionString += ";";
 
-                        SetDefaultConnectionParameters (parameters);
+			connectionString += ";";
 
 			bool inQuote = false;
 			bool inDQuote = false;
@@ -648,8 +659,11 @@ namespace System.Data.SqlClient {
 					else {
 						if (name != String.Empty && name != null) {
 							value = sb.ToString ();
+							SetProperties (name.ToUpper ().Trim() , value);
 							parameters [name.ToUpper ().Trim ()] = value.Trim ();
 						}
+						else if (sb.Length != 0)
+							throw new ArgumentException ("Format of initialization string doesnot conform to specifications");
 						inName = true;
 						name = String.Empty;
 						value = String.Empty;
@@ -662,6 +676,7 @@ namespace System.Data.SqlClient {
 					else if (peek.Equals (c)) {
 						sb.Append (c);
 						i += 1;
+
 					}
 					else {
 						name = sb.ToString ();
@@ -680,161 +695,171 @@ namespace System.Data.SqlClient {
 					break;
 				}
 			}
-                        
-			SetProperties (parameters);
 
+			connectionString = connectionString.Substring (0 , connectionString.Length-1);
 			this.connectionString = connectionString;
-                        this.connStringParameters = parameters;
+			this.connStringParameters = parameters;
 		}
 
 		void SetDefaultConnectionParameters (NameValueCollection parameters)
 		{
-			if (null == parameters.Get ("APPLICATION NAME") && null == parameters.Get ("APP"))
-				parameters["APPLICATION NAME"] = "Mono SqlClient Data Provider";
-			if (null == parameters.Get ("TIMEOUT") && null == parameters.Get ("CONNECT TIMEOUT") && null == parameters.Get ("CONNECTION TIMEOUT"))
-				parameters["CONNECT TIMEOUT"] = "15";
-			if (null == parameters.Get ("CONNECTION LIFETIME"))
-				parameters["CONNECTION LIFETIME"] = "0";
-			if (null == parameters.Get ("CONNECTION RESET"))
-				parameters["CONNECTION RESET"] = "true";
-			if (null == parameters.Get ("ENLIST"))
-				parameters["ENLIST"] = "true";
-			if (null == parameters.Get ("INTEGRATED SECURITY") && null == parameters.Get ("TRUSTED_CONNECTION"))
-				parameters["INTEGRATED SECURITY"] = "false";
-			if (null == parameters.Get ("MAX POOL SIZE"))
-				parameters["MAX POOL SIZE"] = "100";
-			if (null == parameters.Get ("MIN POOL SIZE"))
-				parameters["MIN POOL SIZE"] = "0";
-			if (null == parameters.Get ("NETWORK LIBRARY") && null == parameters.Get ("NET") && null == parameters.Get ("NETWORK"))
-				parameters["NETWORK LIBRARY"] = "dbmssocn";
-			if (null == parameters.Get ("PACKET SIZE"))
-				parameters["PACKET SIZE"] = "512";
-			if (null == parameters.Get ("PERSIST SECURITY INFO") && null == parameters.Get ("PERSISTSECURITYINFO"))
-				parameters["PERSIST SECURITY INFO"] = "false";
-			if (null == parameters.Get ("POOLING"))
-				parameters["POOLING"] = "true";
-			if (null == parameters.Get ("WORKSTATION ID") && null == parameters.Get ("WSID"))
-				parameters["WORKSTATION ID"] = Dns.GetHostName();
-#if NET_2_0
-			if (null == parameters.Get ("ASYNC") &&
-                            null == parameters.Get ("ASYNCHRONOUS PROCESSING"))
-				parameters ["ASYNCHRONOUS PROCESSING"] = "false";
-#endif
+			parms.Reset ();
+			dataSource = "";
+			connectionTimeout= 15;
+			connectionReset = true;
+			pooling = true;
+			maxPoolSize = 100; 
+			minPoolSize = 0;
+			packetSize = 8192; 
+			
+			parameters["APPLICATION NAME"] = "Mono SqlClient Data Provider";
+			parameters["CONNECT TIMEOUT"] = "15";
+			parameters["CONNECTION LIFETIME"] = "0";
+			parameters["CONNECTION RESET"] = "true";
+			parameters["ENLIST"] = "true";
+			parameters["INTEGRATED SECURITY"] = "false";
+			parameters["INITIAL CATALOG"] = "";
+			parameters["MAX POOL SIZE"] = "100";
+			parameters["MIN POOL SIZE"] = "0";
+			parameters["NETWORK LIBRARY"] = "dbmssocn";
+			parameters["PACKET SIZE"] = "8192";
+			parameters["PERSIST SECURITY INFO"] = "false";
+			parameters["POOLING"] = "true";
+			parameters["WORKSTATION ID"] = Dns.GetHostName();
+ #if NET_2_0
+			async = false;
+                	parameters ["ASYNCHRONOUS PROCESSING"] = "false";
+ #endif
 		}
-
-		private void SetProperties (NameValueCollection parameters)
+		
+		private void SetProperties (string name , string value)
 		{
-			foreach (string name in parameters) {
-				string value = parameters[name];
 
-				switch (name) {
-					case "APP" :
-					case "APPLICATION NAME" :
-						parms.ApplicationName = value;
-						break;
-					case "ATTACHDBFILENAME" :
-					case "EXTENDED PROPERTIES" :
-					case "INITIAL FILE NAME" :
-						throw new NotImplementedException("Attachable database support is not implemented.");
-					case "TIMEOUT" :
-					case "CONNECT TIMEOUT" :
-					case "CONNECTION TIMEOUT" :
-						connectionTimeout = ConvertToInt32 ("connection timeout", value);
-						break;
-					case "CONNECTION LIFETIME" :
-						break;
-					case "CONNECTION RESET" :
-						connectionReset = ConvertToBoolean ("connection reset", value);
-						break;
-					case "LANGUAGE" :
-					case "CURRENT LANGUAGE" :
-						parms.Language = value;
-						break;
-					case "DATA SOURCE" :
-					case "SERVER" :
-					case "ADDRESS" :
-					case "ADDR" :
-					case "NETWORK ADDRESS" :
-						dataSource = value;
-						break;
-					case "ENCRYPT":
-						if (ConvertToBoolean("encrypt", value))
-						{
-							throw new NotImplementedException("SSL encryption for"
-								+ " data sent between client and server is not"
-								+ " implemented.");
-						}
-						break;
-					case "ENLIST" :
-						if (!ConvertToBoolean("enlist", value))
-						{
-							throw new NotImplementedException("Disabling the automatic"
-								+ " enlistment of connections in the thread's current"
-								+ " transaction context is not implemented.");
-						}
-						break;
-					case "INITIAL CATALOG" :
-					case "DATABASE" :
-						parms.Database = value;
-						break;
-					case "INTEGRATED SECURITY" :
-					case "TRUSTED_CONNECTION" :
-						parms.DomainLogin = ConvertIntegratedSecurity(value);
-						break;
-					case "MAX POOL SIZE" :
-						maxPoolSize = ConvertToInt32 ("max pool size", value);
-						break;
-					case "MIN POOL SIZE" :
-						minPoolSize = ConvertToInt32 ("min pool size", value);
-						break;
-#if NET_2_0
-				case "MULTIPLEACTIVERESULTSETS":
-					break;
-                                case "ASYNCHRONOUS PROCESSING" :
-                                case "ASYNC" :
-                                        async = ConvertToBoolean (name, value);
-                                        break;
-#endif
-					case "NET" :
-					case "NETWORK" :
-					case "NETWORK LIBRARY" :
-						if (!value.ToUpper ().Equals ("DBMSSOCN"))
-							throw new ArgumentException ("Unsupported network library.");
-						break;
-					case "PACKET SIZE" :
-						packetSize = ConvertToInt32 ("packet size", value);
-						break;
-					case "PASSWORD" :
-					case "PWD" :
-						parms.Password = value;
-						break;
-					case "PERSISTSECURITYINFO" :
-					case "PERSIST SECURITY INFO" :
-						// FIXME : not implemented
-						break;
-					case "POOLING" :
-						pooling = ConvertToBoolean("pooling", value);
-						break;
-					case "UID" :
-					case "USER" :
-					case "USER ID" :
-						parms.User = value;
-						break;
-					case "WSID" :
-					case "WORKSTATION ID" :
-						parms.Hostname = value;
-						break;
-					default :
-						throw new ArgumentException("Keyword not supported :"+name);
+			switch (name) 
+			{
+			case "APP" :
+			case "APPLICATION NAME" :
+				parms.ApplicationName = value;
+				break;
+			case "ATTACHDBFILENAME" :
+			case "EXTENDED PROPERTIES" :
+			case "INITIAL FILE NAME" :
+				throw new NotImplementedException("Attachable database support is not implemented.");
+			case "TIMEOUT" :
+			case "CONNECT TIMEOUT" :
+			case "CONNECTION TIMEOUT" :
+				int tmpTimeout = ConvertToInt32 ("connection timeout", value);
+				if (tmpTimeout < 0)
+					throw new ArgumentException ("Invalid CONNECTION TIMEOUT .. Must be an integer >=0 ");
+				else 
+					connectionTimeout = tmpTimeout;
+				break;
+			case "CONNECTION LIFETIME" :
+				break;
+			case "CONNECTION RESET" :
+				connectionReset = ConvertToBoolean ("connection reset", value);
+				break;
+			case "LANGUAGE" :
+			case "CURRENT LANGUAGE" :
+				parms.Language = value;
+				break;
+			case "DATA SOURCE" :
+			case "SERVER" :
+			case "ADDRESS" :
+			case "ADDR" :
+			case "NETWORK ADDRESS" :
+				dataSource = value;
+				break;
+			case "ENCRYPT":
+				if (ConvertToBoolean("encrypt", value))
+				{
+					throw new NotImplementedException("SSL encryption for"
+						+ " data sent between client and server is not"
+						+ " implemented.");
 				}
+				break;
+			case "ENLIST" :
+				if (!ConvertToBoolean("enlist", value))
+				{
+					throw new NotImplementedException("Disabling the automatic"
+						+ " enlistment of connections in the thread's current"
+						+ " transaction context is not implemented.");
+				}
+				break;
+			case "INITIAL CATALOG" :
+			case "DATABASE" :
+				parms.Database = value;
+				break;
+			case "INTEGRATED SECURITY" :
+			case "TRUSTED_CONNECTION" :
+				parms.DomainLogin = ConvertIntegratedSecurity(value);
+				break;
+			case "MAX POOL SIZE" :
+				int tmpMaxPoolSize = ConvertToInt32 ("max pool size" , value);
+				if (tmpMaxPoolSize < 0)
+					throw new ArgumentException ("Invalid MAX POOL SIZE. Must be a intger >= 0");
+				else
+					maxPoolSize = tmpMaxPoolSize; 
+				break;
+			case "MIN POOL SIZE" :
+				int tmpMinPoolSize = ConvertToInt32 ("min pool size" , value);
+				if (tmpMinPoolSize < 0)
+					throw new ArgumentException ("Invalid MIN POOL SIZE. Must be a intger >= 0");
+				else
+					minPoolSize = tmpMinPoolSize;
+				break;
+#if NET_2_0	
+			case "MULTIPLEACTIVERESULTSETS":
+				break;
+			case "ASYNCHRONOUS PROCESSING" :
+			case "ASYNC" :
+				async = ConvertToBoolean (name, value);
+				break;
+#endif	
+			case "NET" :
+			case "NETWORK" :
+			case "NETWORK LIBRARY" :
+				if (!value.ToUpper ().Equals ("DBMSSOCN"))
+					throw new ArgumentException ("Unsupported network library.");
+				break;
+			case "PACKET SIZE" :
+				int tmpPacketSize = ConvertToInt32 ("packet size", value);
+				if (tmpPacketSize < 512 || tmpPacketSize > 32767)
+					throw new ArgumentException ("Invalid PACKET SIZE. The integer must be between 512 and 32767");
+				else
+					packetSize = tmpPacketSize;
+				break;
+			case "PASSWORD" :
+			case "PWD" :
+				parms.Password = value;
+				break;
+			case "PERSISTSECURITYINFO" :
+			case "PERSIST SECURITY INFO" :
+			// FIXME : not implemented
+				throw new NotImplementedException ();
+				break;
+			case "POOLING" :
+				pooling = ConvertToBoolean("pooling", value);
+				break;
+			case "UID" :
+			case "USER" :
+			case "USER ID" :
+				parms.User = value;
+				break;
+			case "WSID" :
+			case "WORKSTATION ID" :
+				parms.Hostname = value;
+				break;
+			default :
+				throw new ArgumentException("Keyword not supported :"+name);
 			}
 		}
 
 		static bool IsValidDatabaseName (string database)
 		{
-			if (database.Length > 32 || database.Length < 1)
-				return false;
-
+			if ( database == null || database.Trim() == String.Empty || database.Length > 128)
+				return false ;
+			
 			if (database[0] == '"' && database[database.Length] == '"')
 				database = database.Substring (1, database.Length - 2);
 			else if (Char.IsDigit (database[0]))
@@ -843,8 +868,8 @@ namespace System.Data.SqlClient {
 			if (database[0] == '_')
 				return false;
 
-			foreach (char c in database.Substring (1, database.Length - 1))
-				if (!Char.IsLetterOrDigit (c) && c != '_')
+			foreach (char c  in database.Substring (1, database.Length - 1))
+				if (!Char.IsLetterOrDigit (c) && c != '_' && c != '-')
 					return false;
 			return true;
 		}
@@ -925,11 +950,11 @@ namespace System.Data.SqlClient {
 		#endregion // Methods
 
 #if NET_2_0
-                #region Fields Net 2
+		#region Fields Net 2
 
-                bool async = false;
+		bool async = false;
 
-                #endregion // Fields  Net 2
+		#endregion // Fields  Net 2
 
                 #region Properties Net 2
 
