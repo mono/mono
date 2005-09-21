@@ -1,3 +1,7 @@
+2005-09-21  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* CheckBoxList.cs: Fix unit test failure (which matched bug #48802).
+
 2005-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AdCreatedEventArgs.cs: Added declarative security (Link and, for 
