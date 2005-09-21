@@ -107,9 +107,10 @@ namespace System.Diagnostics {
 				return enableRaisingEvents;
 			}
 			set { 
-				if (value && !enableRaisingEvents)
-					StartExitCallbackIfNeeded ();
+				bool prev = enableRaisingEvents;
 				enableRaisingEvents = value;
+				if (enableRaisingEvents && !prev)
+					StartExitCallbackIfNeeded ();
 			}
 
 		}
