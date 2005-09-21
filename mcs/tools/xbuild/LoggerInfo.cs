@@ -25,10 +25,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_2_0
+
 using System;
 using System.Globalization;
 using System.Reflection;
-using Mono.XBuild.Shared;
+using Mono.XBuild.Framework;
 
 namespace Mono.XBuild.CommandLine {
 	public class LoggerInfo : AssemblyLoadInfo {
@@ -86,3 +88,5 @@ namespace Mono.XBuild.CommandLine {
 		}
 	}
 }
+
+#endif

@@ -1,0 +1,34 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
+	<Import Project="$(MSBuildBinPath)/Microsoft.Common.tasks" />
+	
+	<ItemGroup>
+		<Input Include="test.cs" />
+		<Output Include="test.exe" />
+	</ItemGroup>
+	
+	<Target Name="Compile1" >
+		<Csc
+			Sources="@(Input)"
+		/>
+	</Target>
+
+	<Target Name="Compile2" >
+		<Csc
+			Sources="@(Input)"
+			AllowUnsafeBlocks="true"
+			DisabledWarnings="0169"
+		/>
+		<!-- Add these
+			BaseAddress
+			CheckForUnderflowOverFlow
+		-->
+	</Target>
+	
+	<Target Name="Clean" >
+		<Delete Files="@(Output)" />
+	</Target>
+	
+	<Target Name="Execute" >
+		<Exec Command="@(Output)" />
+	</Target>
+</Project>

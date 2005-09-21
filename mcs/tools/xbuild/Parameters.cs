@@ -25,6 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_2_0
+
 using System;
 using System.IO;
 using System.Collections;
@@ -54,7 +56,7 @@ namespace Mono.XBuild.CommandLine {
 		
 		string			responseFile;
 	
-		public Parameters (MainClass mc)
+		public Parameters (string binPath)
 		{
 			consoleLoggerParameters = "";
 			displayHelp = false;
@@ -66,7 +68,7 @@ namespace Mono.XBuild.CommandLine {
 			properties = new BuildPropertyGroup ();
 			targets = new string [0];
 			
-			responseFile = Path.Combine (mc.BinPath, "xbuild.rsp");
+			responseFile = Path.Combine (binPath, "xbuild.rsp");
 		}
 		
 		public void ParseArguments (string[] args)
@@ -313,3 +315,5 @@ namespace Mono.XBuild.CommandLine {
 		
 	}
 }
+
+#endif

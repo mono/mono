@@ -1,5 +1,15 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" >
 	<Import Project="$(MSBuildBinPath)/Microsoft.Common.tasks" />
-	<Target Name="Main" >
+	
+	<ItemGroup>
+		<Input Include="../Csc/test.cs" />
+		<Output Include="test.exe" />
+	</ItemGroup>
+
+	<Target Name="Compile" >
+		<Csc Sources="@(Input)" OutputAssembly="@(Output)" />
+	</Target>
+
+	<Target Name="Assemble" DependsOnTargets="Compile" >
 	</Target>
 </Project>

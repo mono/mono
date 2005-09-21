@@ -1,3 +1,12 @@
+2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Microsoft.Common.tasks, xbuild.rsp, Microsoft.Build.xsd, MSBuild:
+	Moved to xbuild/.
+	* Main.cs, Pararameters.cs: Changed to use Mono.XBuild.Framework and
+	Mono.XBuild.Utilities.
+	* CommandLineException.cs, LoggerInfo.cs: Added #if NET_2_0
+	
+
 2005-09-11  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* xbuild.exe.sources: Added Consts.cs from common build files.

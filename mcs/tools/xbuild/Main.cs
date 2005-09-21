@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_2_0
 
 using System;
 using System.Collections;
@@ -33,7 +34,8 @@ using System.Reflection;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using Mono.XBuild.Shared;
+using Mono.XBuild.Framework;
+using Mono.XBuild.Utilities;
 
 namespace Mono.XBuild.CommandLine {
 	public class MainClass {
@@ -55,9 +57,9 @@ namespace Mono.XBuild.CommandLine {
 		
 		public MainClass ()
 		{
-			binPath = Path.GetDirectoryName (typeof (object).Assembly.Location);
+			binPath = MonoLocationHelper.GetAssembliesDir ();
 			defaultSchema = Path.Combine (binPath, "Microsoft.Build.xsd");
-			parameters = new Parameters (this);
+			parameters = new Parameters (binPath);
 		}
 		
 		public void Execute ()
@@ -288,9 +290,7 @@ namespace Mono.XBuild.CommandLine {
 			String.Format ("Mono, Version {0}", Consts.MonoVersion),
 			"Copyright (C) Marek Sieradzki 2005. All rights reserved.",
 		};
-		
-		internal string BinPath {
-			get { return binPath; }
-		}
 	}
 }
+
+#endif
