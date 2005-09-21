@@ -1,3 +1,9 @@
+2005-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: reverted hacks used with the wrong method of getting a
+	control rendered size.
+	* Control.cs: if the trace is enabled, save control rendered size.
+
 2005-09-19  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* Page.cs: Remove references to IPageParser (removed from 2.0 RC). We

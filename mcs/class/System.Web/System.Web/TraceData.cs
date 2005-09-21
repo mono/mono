@@ -163,28 +163,31 @@ namespace System.Web {
 			return res.Replace (" ", "&nbsp;");
 		}
 		
-		public void AddControlTree (Page page, Hashtable ctrl_vs)
+		public void AddControlTree (Page page, Hashtable ctrl_vs, Hashtable sizes)
 		{
 			this.page = page;
-			page.SetRenderingTrace (true);
-			AddControl (page, 0, ctrl_vs);
-			page.SetRenderingTrace (false);
+			this.ctrl_vs = ctrl_vs;
+			this.sizes = sizes;
+			AddControl (page, 0);
 		}
 
-		private void AddControl (Control c, int control_pos, Hashtable ctrl_vs)
+		Hashtable sizes;
+		Hashtable ctrl_vs;
+		void AddControl (Control c, int control_pos)
 		{
 			DataRow r = control_data.NewRow ();
 			r ["ControlId"] = c.UniqueID;
 			r ["Type"] = c.GetType ();
 			r ["Depth"] = control_pos;
-			r ["RenderSize"] = 0;
+			object s = sizes [c];
+			r ["RenderSize"] = (s == null) ? 0 : (int) s;
 			r ["ViewstateSize"] = GetViewStateSize (c, (ctrl_vs != null) ? ctrl_vs [c] : null);
 
 			control_data.Rows.Add (r);
 
 			if (c.HasControls ()) {
 				foreach (Control child in c.Controls)
-					AddControl (child, control_pos + 1, ctrl_vs);
+					AddControl (child, control_pos + 1);
 			}
 		}
 

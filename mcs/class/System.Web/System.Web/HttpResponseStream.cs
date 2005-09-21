@@ -344,6 +344,7 @@ namespace System.Web {
 
 			public abstract void Send (HttpWorkerRequest wr);
 			public abstract void Send (Stream stream);
+			public abstract int Length { get; }
 		}
 
 #if !TARGET_JVM
@@ -364,7 +365,11 @@ namespace System.Web {
 				start = pos = 0;
 				rem = c.size;
 			}
-			
+
+			public override int Length {
+				get { return pos - start; }
+			}
+
 			public int Write (byte [] buf, int offset, int count)
 			{
 				int copy = Math.Min (rem, count);
@@ -443,7 +448,11 @@ namespace System.Web {
 				offset = off;
 				length = len;
 			}
-	
+
+			public override int Length {
+				get { return (int) length; }
+			}
+
 			public override void Send (HttpWorkerRequest wr)
 			{
 				wr.SendResponseFromFile (file, offset, length);
@@ -502,6 +511,15 @@ namespace System.Web {
 			wr.FlushResponse (final_flush);
 
 			Clear ();
+		}
+
+		internal int GetTotalLength ()
+		{
+			int size = 0;
+			for (Bucket b = first_bucket; b != null; b = b.Next)
+				size += b.Length;
+
+			return size;
 		}
 
 		internal byte [] GetData ()

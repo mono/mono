@@ -1,3 +1,12 @@
+2005-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TraceContext.cs: add new method to store size of controls.
+	* TraceData.cs: render control size.
+	* HttpResponse.cs: new internal method to get the number of bytes of
+	buffered output.
+	* HttpResponseStream.cs: added Length property to the Buckets and new
+	GetTotalLength.
+
 2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TraceData.cs: we have to change the method of getting a control render

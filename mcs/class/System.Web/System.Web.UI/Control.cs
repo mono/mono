@@ -1069,8 +1069,19 @@ namespace System.Web.UI
 #endif
 		void RenderControl (HtmlTextWriter writer)
 		{
-		    if ((stateMask & VISIBLE) != 0)
-		            Render(writer);
+			if ((stateMask & VISIBLE) != 0) {
+				HttpContext ctx = Context;
+				TraceContext trace = (ctx != null) ? ctx.Trace : null;
+				int pos = 0;
+				if (trace.IsEnabled)
+					pos = ctx.Response.GetOutputByteCount ();
+
+				Render(writer);
+				if (trace.IsEnabled) {
+					int size = ctx.Response.GetOutputByteCount () - pos;
+					trace.SaveSize (this, size >= 0 ? size : 0);
+				}
+			}
 		}
 
 #if NET_2_0

@@ -1241,19 +1241,9 @@ public class Page : TemplateControl, IHttpHandler
 			_isValid = true;
 	}
 
-	bool rendering_trace;
-	internal void SetRenderingTrace (bool val)
-	{
-		rendering_trace = true;
-	}
-
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void VerifyRenderingInServerForm (Control control)
 	{
-		// When calling RenderControl in Trace to figure out the size this won't throw.
-		if (rendering_trace)
-			return;
-
 		if (!renderingForm)
 			throw new HttpException ("Control '" +
 						 control.ClientID +
