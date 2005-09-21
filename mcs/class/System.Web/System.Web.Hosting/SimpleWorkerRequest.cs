@@ -212,6 +212,9 @@ namespace System.Web.Hosting {
 
 		public override string GetUriPath ()
 		{
+			int length = app_virtual_dir.Length;
+			if (length > 0 && app_virtual_dir [length - 1] == '/')
+				return app_virtual_dir + page;
 			return app_virtual_dir + "/" + page;
 		}
 
