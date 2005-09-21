@@ -53,6 +53,7 @@ namespace System.Windows.Forms {
 		#region Private & Internal Methods
 		private void TextBox_LostFocus(object sender, EventArgs e) {
 			has_focus = false;
+//blah Console.WriteLine("TextBox.cs(56) Invalidate called in TextBox_LostFocus");
 			Invalidate();
 		}
 		#endregion	// Private & Internal Methods
@@ -186,6 +187,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnGotFocus(EventArgs e) {
 			has_focus=true;
+//blah Console.WriteLine("TextBox.cs(190) Invalidate called in OnGotFocus");
 			Invalidate();
 			base.OnGotFocus (e);
 		}

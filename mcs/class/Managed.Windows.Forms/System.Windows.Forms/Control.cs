@@ -3529,6 +3529,7 @@ namespace System.Windows.Forms
 				case Msg.WM_KEYUP:
 				case Msg.WM_SYSCHAR:
 				case Msg.WM_CHAR: {
+Console.WriteLine("Got {0}", (Msg)m.Msg);
 					if (ProcessKeyEventArgs(ref m)) {
 						return;
 					}
