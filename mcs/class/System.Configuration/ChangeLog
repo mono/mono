@@ -1,5 +1,10 @@
 2005-09-22  Chris Toshok  <toshok@ximian.com>
 
+	* System.Configuration.dll.sources: remove
+	PositiveTimeSpanValidator.cs
+
+2005-09-22  Chris Toshok  <toshok@ximian.com>
+
 	* System.Configuration_test.dll.sources: new file.
 
 2005-07-26  Raja R Harinath  <rharinath@novell.com>

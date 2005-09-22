@@ -57,7 +57,6 @@ System.Configuration/InternalConfigurationHost.cs
 System.Configuration/InternalConfigurationRoot.cs
 System.Configuration/KeyValueConfigurationCollection.cs
 System.Configuration/KeyValueConfigurationElement.cs
-System.Configuration/PositiveTimeSpanValidator.cs
 System.Configuration/PropertyInformation.cs
 System.Configuration/PropertyInformationCollection.cs
 System.Configuration/PropertyValueOrigin.cs
