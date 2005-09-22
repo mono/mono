@@ -140,8 +140,6 @@ namespace MonoTests.System.Data.SqlClient
 			cn.ConnectionString = "Min Pool Size=10";
 			cn.ConnectionString = "Password=scrambled";
 			cn.ConnectionString = "Pwd=scrambled";
-			cn.ConnectionString = "Persist Security Info=true";
-			cn.ConnectionString = "PersistSecurityInfo=true";
 			cn.ConnectionString = "Pooling=true";
 			cn.ConnectionString = "User Id=test";
 			cn.ConnectionString = "User=test";
@@ -150,6 +148,8 @@ namespace MonoTests.System.Data.SqlClient
 			 * NOT IMPLEMENTED YET
 			 */
 			/*
+			cn.ConnectionString = "Persist Security Info=true";
+			cn.ConnectionString = "PersistSecurityInfo=true";
 			cn.ConnectionString = "Encrypt=true";
 			cn.ConnectionString = "Enlist=false";
 			cn.ConnectionString = "attachdbfilename=dunno";
