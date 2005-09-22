@@ -1,3 +1,7 @@
+2005-09-22  Kazuki Oikawa  <kazuki@panicode.com>
+
+	* AsyncMethodResult.cs: Fixes Control.Invoke is blocked infinitely.
+
 2005-09-21  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: Don't try to set the border style on the window if
