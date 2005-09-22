@@ -1,4 +1,16 @@
-2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* MakeDir.cs, AppDomainIsolatedTaskExtension.cs, Touch.cs, Exec.cs,
+	RegisterAssembly.cs, Error.cs, ReadLinesFromFile.cs,
+	CommandLineBuilderExtension.cs, RemoveDir.cs, ToolTaskExtension.cs,
+	TaskExtension.cs, SignFile.cs, Delete.cs, Warning.cs,
+	GenerateTrustInfo.cs, GetFrameworkSdkPath.cs, CreateItem.cs,
+	Message.cs, ManagedCompiler.cs, UnregisterAssembly.cs,
+	WriteLinesToFile.cs, FindUnderPath.cs, AL.cs, MSBuild.cs,
+	GenerateResource.cs, CreateProperty.cs, Csc.cs, Copy.cs,
+	GetFrameworkPath.cs: Added #if NET_2_0.
+
+2005-09-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ManagedCompiler.cs, Csc.cs: Moved code to ManagedCompiler.
 	* MSBuild.cs: Added really simple temporary code.

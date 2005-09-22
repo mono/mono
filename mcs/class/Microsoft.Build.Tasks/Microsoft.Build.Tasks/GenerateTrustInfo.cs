@@ -25,17 +25,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-// DO WE NEED IT?
+#if NET_2_0
 
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.Tasks {
 	public sealed class GenerateTrustInfo : TaskExtension {
 	
-		private ITaskItem baseManifest;
-		private string excludedPermissions;
-		private string targetZone;
-		private ITaskItem trustInfoFile;
+		ITaskItem	baseManifest;
+		string		excludedPermissions;
+		string		targetZone;
+		ITaskItem	trustInfoFile;
 		
 		public GenerateTrustInfo ()
 		{
@@ -85,3 +85,5 @@ namespace Microsoft.Build.Tasks {
 		}
 	}
 }
+
+#endif

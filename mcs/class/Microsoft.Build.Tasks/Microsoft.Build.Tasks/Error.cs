@@ -25,6 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_2_0
 
 namespace Microsoft.Build.Tasks {
 	public sealed class Error : TaskExtension {
@@ -53,3 +54,5 @@ namespace Microsoft.Build.Tasks {
 		}
 	}
 }
+
+#endif

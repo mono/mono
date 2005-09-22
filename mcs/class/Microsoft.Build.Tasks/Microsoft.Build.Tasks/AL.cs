@@ -25,11 +25,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_2_0
+
 using System;
 using System.Diagnostics;
 using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
+using Mono.XBuild.Utilities;
 
 namespace Microsoft.Build.Tasks {
 	public class AL : ToolTaskExtension {
@@ -100,8 +103,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string GenerateFullPathToTool ()
 		{
-			string binDir = ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version11);
-			return Path.Combine (binDir, ToolName);
+			return Path.Combine (ToolPath, ToolName);
 		}
 
 		public string AlgorithmId {
@@ -262,3 +264,5 @@ namespace Microsoft.Build.Tasks {
 		}
 	}
 }
+
+#endif
