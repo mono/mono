@@ -25,6 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_2_0
+
 using System;
 using System.IO;
 
@@ -34,6 +36,7 @@ namespace Mono.XBuild.Utilities {
 		static string binDir;
 		static string libDir;
 		static string assembliesDir;
+		static string xbuildDir;
 	
 		static MonoLocationHelper ()
 		{
@@ -46,6 +49,8 @@ namespace Mono.XBuild.Utilities {
 			t1 = new DirectoryInfo (assemblyLocation);
 			// /usr/local/lib/mono
 			t2 = t1.Parent;
+			// /usr/local/lib/mono/xbuild
+			xbuildDir = Path.Combine (t2.FullName, "xbuild");
 			// /usr/local/lib
 			t3 = t2.Parent;
 			// /usr/local
@@ -68,5 +73,12 @@ namespace Mono.XBuild.Utilities {
 		{
 			return assembliesDir;
 		}
+		
+		public static string GetXBuildDir ()
+		{
+			return xbuildDir;
+		}
 	}
 }
+
+#endif

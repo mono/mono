@@ -1,3 +1,7 @@
-2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* MonoLocationHelper.cs: Added GetXBuildDir ().
+
+2005-09-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* MonoLocationHelper.cs: Added.

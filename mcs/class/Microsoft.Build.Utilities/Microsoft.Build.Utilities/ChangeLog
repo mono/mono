@@ -1,4 +1,11 @@
-2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* CommandLineBuilder.cs, Logger.cs, AppDomainIsolatedTask.cs,
+	ToolTask.cs, TaskItem.cs, Task.cs, ToolLocationHelper.cs,
+	TargetDotNetFrameworkVersion.cs, ConcurrentLoggingHelper.cs,
+	TaskLoggingHelper.cs: Added #if NET_2_0.
+
+2005-09-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* ToolTask.cs: Formatting.
 	* TaskItem.cs: Removed obsoleted code.
