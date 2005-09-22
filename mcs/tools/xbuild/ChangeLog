@@ -1,9 +1,14 @@
-2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Main.cs: Changed binPath to directory where all files are stored.
+	* Makefile: Added installing of additional files.
+
+2005-09-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* LoggerInfo.cs: Changed public to internal.
 	* xbuild.exe.sources: Added reference to AssemblyLoadInfo.
 
-2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+2005-09-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Microsoft.Common.tasks, xbuild.rsp, Microsoft.Build.xsd, MSBuild:
 	Moved to xbuild/.
