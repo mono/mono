@@ -38,6 +38,9 @@ namespace System.Configuration
 		
 		public ExeConfigurationFileMap ()
 		{
+			exeConfigFilename = "";
+			localUserConfigFilename = "";
+			roamingUserConfigFilename = "";
 		}
 		
 		public string ExeConfigFilename {
