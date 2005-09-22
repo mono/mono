@@ -88,6 +88,7 @@ System.Web.Configuration/PagesConfigurationHandler.cs
 System.Web.Configuration/PagesEnableSessionState.cs
 System.Web.Configuration/PagesToCountAction.cs
 System.Web.Configuration/PassportAuthentication.cs
+System.Web.Configuration/PositiveTimeSpanValidator.cs
 System.Web.Configuration/ProcessModelComAuthenticationLevel.cs
 System.Web.Configuration/ProcessModelComImpersonationLevel.cs
 System.Web.Configuration/ProcessModelLogLevel.cs

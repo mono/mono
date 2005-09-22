@@ -1,3 +1,8 @@
+2005-09-22  Chris Toshok  <toshok@ximian.com>
+
+	* System.Web.dll.sources: add
+	System.Web.Configuration/PositiveTimeSpanValidator.cs
+
 2005-09-08  Eyal Alaluf <eyala@mainsoft.com>
 	* System.Web.vmwcsproj - updated to match new code base
 
