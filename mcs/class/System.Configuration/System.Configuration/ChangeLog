@@ -1,5 +1,10 @@
 2005-09-22  Chris Toshok  <toshok@ximian.com>
 
+	* TimeSpanValidator.cs: change to ArgumentException and alter the
+	messages slightly.
+
+2005-09-22  Chris Toshok  <toshok@ximian.com>
+
 	* ExeConfigurationFileMap.cs (ctor): init all the strings to "".
 
 2005-07-01  Lluis Sanchez Gual  <lluis@novell.com>

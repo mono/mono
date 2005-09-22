@@ -27,6 +27,7 @@
 //
 
 #if NET_2_0
+using System;
 
 namespace System.Configuration
 {
@@ -63,13 +64,13 @@ namespace System.Configuration
 			TimeSpan s = (TimeSpan) value;
 			if (!rangeIsExclusive) {
 				if (s < minValue || s > maxValue)
-					throw new ConfigurationErrorsException ("The TimeSpan value must be in the range " + minValue + " - " + maxValue);
+					throw new ArgumentException ("The value must be in the range " + minValue + " - " + maxValue);
 			} else {
 				if (s >= minValue && s <= maxValue)
-					throw new ConfigurationErrorsException ("The TimeSpan value can't be in the range " + minValue + " - " + maxValue);
+					throw new ArgumentException ("The value must not be in the range " + minValue + " - " + maxValue);
 			}
-			if (s.Ticks % (TimeSpan.TicksPerSecond * resolutionInSeconds) != 0)
-				throw new ConfigurationErrorsException ("The TimeSpan value must have a resolution of " + resolutionInSeconds + " seconds.");
+			if (resolutionInSeconds != 0 && s.Ticks % (TimeSpan.TicksPerSecond * resolutionInSeconds) != 0)
+				throw new ArgumentException ("The value must have a resolution of " + TimeSpan.FromTicks (TimeSpan.TicksPerSecond * resolutionInSeconds));
 		}
 	}
 }
