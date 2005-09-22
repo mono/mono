@@ -36,8 +36,6 @@ namespace System.Configuration.Provider
 {
 	public abstract class ProviderBase
 	{
-		string _name;
-		
 		protected ProviderBase ()
 		{
 		}
@@ -45,11 +43,20 @@ namespace System.Configuration.Provider
 		public virtual void Initialize (string name, NameValueCollection config)
 		{
 			_name = name;
+
+			_description = config["description"];
 		}
 		
 		public virtual string Name { 
 			get { return _name; }
 		}
+
+		public virtual string Description {
+			get { return _description; }
+		}
+
+		string _description;
+		string _name;
 	}
 }
 
