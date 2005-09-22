@@ -1,3 +1,7 @@
+2005-09-21  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Close the file handles.
+
 2005-09-05  Miguel de Icaza  <miguel@novell.com>
 
 	* expression.cs (Cast.TryReduce): Only reduce to an EnumConstant
