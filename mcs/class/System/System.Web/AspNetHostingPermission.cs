@@ -5,7 +5,7 @@
 //	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -58,7 +58,7 @@ namespace System.Web {
 		public AspNetHostingPermissionLevel Level {
 			get { return _level; }
 			set {
-				if (!Enum.IsDefined (typeof (AspNetHostingPermissionLevel), value)) {
+				if ((value < AspNetHostingPermissionLevel.None) || (value > AspNetHostingPermissionLevel.Unrestricted)) {
 					string msg = Locale.GetText ("Invalid enum {0}.");
 					throw new ArgumentException (String.Format (msg, value), "Level");
 				}
@@ -107,7 +107,10 @@ namespace System.Web {
 		public override SecurityElement ToXml ()
 		{
 			SecurityElement se = PermissionHelper.Element (typeof (AspNetHostingPermission), version);
-			// FIXME: attribute "unrestricted" isn't used by this class - reported as FDBK15156
+#if NET_2_0
+			if (IsUnrestricted ())
+				se.AddAttribute ("Unrestricted", "true"); // FDBK15156 fixed in 2.0 RC
+#endif
 			se.AddAttribute ("Level", _level.ToString ());
 			return se;
 		}

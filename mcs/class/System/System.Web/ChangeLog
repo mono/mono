@@ -1,3 +1,10 @@
+2005-09-22  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* AspNetHostingPermission.cs: Add "Unrestricted=true" in 2.0 (it was 
+	fixed in 2.0 RC). Don't use Enum.IsDefined to check enum validity.
+	* AspNetHostingPermissionAttribute.cs: Don't use Enum.IsDefined to 
+	check enum validity.
+
 2005-01-19  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* AspNetHostingPermission.cs: Reverted last patch as this was fixed in
