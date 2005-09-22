@@ -1,3 +1,9 @@
+2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DnsPermissionAttributeTest.cs: Removed *Choice security actions.
+	* SocketPermissionAttributeTest.cs: Removed *Choice security actions.
+	* WebPermissionAttributeTest.cs: Removed *Choice security actions.
+
 2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpWebRequestTest.cs: added test for a HTTP/1.1 server returning a
