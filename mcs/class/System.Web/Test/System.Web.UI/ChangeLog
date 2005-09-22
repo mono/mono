@@ -1,3 +1,12 @@
+2005-09-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataBindingHandlerAttributeTest.cs: Fixed test results in 2.0 RC 
+	(string interning rules differ in 2.0 so it's better to use Assert.
+	AreEquals than Assert.AreSame).
+	* PageTest.cs: Fixed test results in 2.0 RC (NRE in Page.User).
+	* TestUrlPropertyAttribute.cs: Fixed test results in 2.0 RC (removed
+	property changed results).
+
 2005-09-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestUrlPropertyAttribute.cs: Remove references to UrlTypes (removed 

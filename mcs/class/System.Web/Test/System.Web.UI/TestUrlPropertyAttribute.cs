@@ -43,11 +43,7 @@ namespace MonoTests.System.Web.UI
 	{
 		UrlPropertyAttribute upa;
 		UrlPropertyAttribute upa1;
-		UrlPropertyAttribute upa2;
 		string filter;
-
-		[TearDown]
-		public void TearDown () {}
 
 		[SetUp]
 		public void SetUp ()		
@@ -55,7 +51,6 @@ namespace MonoTests.System.Web.UI
 			filter = "filter";
 			upa = new UrlPropertyAttribute ();
 			upa1 = new UrlPropertyAttribute (filter);
-			upa2 = new UrlPropertyAttribute (filter);
 		}
 
 		[Test]
@@ -63,7 +58,6 @@ namespace MonoTests.System.Web.UI
 		{
 			Assert.AreEqual (upa.Filter, "*.*", "Filter#1");
 			Assert.AreEqual (upa1.Filter, filter, "Filter#2");
-			Assert.AreEqual (upa2.Filter, filter, "Filter#3");
 		}
 
 		[Test]
@@ -78,11 +72,7 @@ namespace MonoTests.System.Web.UI
 		public void TestEquals ()
 		{
 			upa = new UrlPropertyAttribute ("sanjay");
-			
-			Assert.IsFalse (upa.Equals (upa2), "Equals#1");
-			//Assert.IsTrue (upa.Equals (upa1), "Equals#2");
-
-			Assert.IsFalse (upa1.Equals (upa2), "Equals#3");
+			Assert.IsFalse (upa.Equals (upa1), "Equals#1");
 		}
 			
 	}

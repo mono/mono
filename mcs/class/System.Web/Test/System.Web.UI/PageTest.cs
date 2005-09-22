@@ -89,6 +89,9 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotDotNet")] // page.User throw NRE in 2.0 RC
+#endif
 		public void User_OverridenContext ()
 		{
 			TestPage page = new TestPage ();

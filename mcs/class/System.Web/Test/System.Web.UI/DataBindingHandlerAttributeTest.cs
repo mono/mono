@@ -54,14 +54,14 @@ namespace MonoTests.System.Web.UI {
 		[Test]
 		public void TestDefaultHandlerTypeName ()
 		{
-			Assert.AreSame ("", empty.HandlerTypeName, "#01");
+			Assert.AreEqual (String.Empty, empty.HandlerTypeName, "#01");
 		}
 
 		[Test]
 		public void TestDefaultConstructor ()
 		{
 			DataBindingHandlerAttribute at = new DataBindingHandlerAttribute ();
-			Assert.AreSame ("", at.HandlerTypeName, "#01");
+			Assert.AreEqual (String.Empty, at.HandlerTypeName, "#01");
 		}
 	}
 }
