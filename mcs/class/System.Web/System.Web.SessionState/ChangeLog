@@ -1,3 +1,8 @@
+2005-09-22  Jackson Harper  <jackson@ximian.com>
+
+	* SessionStateModule.cs: Use a concat instead of a format (mucho
+	faster).
+
 2005-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SessionStateModule.cs: fix compilation warnings and use the
