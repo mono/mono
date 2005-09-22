@@ -1,3 +1,8 @@
+2004-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Expression.cs : Now that managed collation is default, we don't need
+	  reversive case-order anymore.
+
 2004-09-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XPathNavigator.cs : added NavigatorComparer.
