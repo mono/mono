@@ -1,4 +1,8 @@
 
+Fri Sep 9 19:30:37 BST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* cpu-arm.md, mini-arm.c: fix for dynamic code (Gtk# apps).
+
 Thu Sep 8 14:53:45 BST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.h: use emulation for conv.r.un for the release.
