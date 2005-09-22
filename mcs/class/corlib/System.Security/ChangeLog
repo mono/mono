@@ -1,3 +1,10 @@
+2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManager.cs: Added [Obsolete] on SecurityEnabled for 2.0 (as 
+	it cannot be turned off on MS runtime anymore). Removed dependecies
+	on PermissionSetCollection as this class (related to *Choice actions)
+	didn't make it to 2.0 RC.
+
 2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
  
 	* CodeAccessPermission.cs: Fix Deny for permissions that do not return
