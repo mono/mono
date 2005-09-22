@@ -1,3 +1,9 @@
+2005-09-21  Hisham Mardam Bey <hisham.mardambey@gmail.com>
+
+       * LabelTest.cs : Several new tests.
+       * ScrollBarTest.cs : Several new tests.
+       * bitmaps : added dir containing images for tests.
+
 2005-09-21  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListViewItemTest.cs: New unit test 

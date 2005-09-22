@@ -1097,7 +1097,7 @@ namespace System.Windows.Forms
 			void OnKeyUpFileNameComboBox( object sender, KeyEventArgs e )
 			{
 				if ( e.KeyCode == Keys.Enter )
-				{
+				{		
 					currentFileName = currentDirectoryName + fileNameComboBox.Text;
 					ForceDialogEnd( );
 				}

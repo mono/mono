@@ -553,7 +553,7 @@ namespace System.Windows.Forms
     			return base.ToString () + "Text: " + Text;
     		}
 
-    		protected override void WndProc(ref Message m)
+    		protected override void WndProc (ref Message m)
     		{
 			switch ((Msg) m.Msg) {
 				case Msg.WM_DRAWITEM: {
@@ -623,5 +623,5 @@ namespace System.Windows.Forms
 
 		#endregion Private Methods
 
-    	}
-    }
+	}
+}
