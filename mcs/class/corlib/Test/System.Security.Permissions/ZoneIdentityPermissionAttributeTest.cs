@@ -71,14 +71,6 @@ namespace MonoTests.System.Security.Permissions {
 			Assert.AreEqual (SecurityAction.RequestOptional, a.Action, "Action=RequestOptional");
 			a.Action = SecurityAction.RequestRefuse;
 			Assert.AreEqual (SecurityAction.RequestRefuse, a.Action, "Action=RequestRefuse");
-#if NET_2_0
-			a.Action = SecurityAction.DemandChoice;
-			Assert.AreEqual (SecurityAction.DemandChoice, a.Action, "Action=DemandChoice");
-			a.Action = SecurityAction.InheritanceDemandChoice;
-			Assert.AreEqual (SecurityAction.InheritanceDemandChoice, a.Action, "Action=InheritanceDemandChoice");
-			a.Action = SecurityAction.LinkDemandChoice;
-			Assert.AreEqual (SecurityAction.LinkDemandChoice, a.Action, "Action=LinkDemandChoice");
-#endif
 		}
 
 		[Test]

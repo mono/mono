@@ -1,3 +1,25 @@
+2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAccessSecurityAttributeTest.cs, 
+	EnvironmentPermissionAttributeTest.cs, 
+	FileDialogPermissionAttributeTest.cs, 
+	FileIOPermissionAttributeTest.cs, 
+	GacIdentityPermissionAttributeTest.cs,
+	HostProtectionAttributeTest.cs, 
+	IsolatedStorageFilePermissionAttributeTest.cs,
+	IsolatedStoragePermissionAttributeTest.cs,
+	KeyContainerPermissionAttributeTest.cs,
+	PermissionSetAttributeTest.cs, PrincipalPermissionAttributeTest.cs,
+	PublisherIdentityPermissionAttributeTest.cs,
+	ReflectionPermissionAttributeTest.cs,
+	RegistryPermissionAttributeTest.cs, SecurityAttributeTest.cs,
+	SecurityPermissionAttributeTest.cs,
+	SiteIdentityPermissionAttributeTest.cs,
+	StrongNameIdentityPermissionAttributeTest.cs,
+	UIPermissionAttributeTest.cs, UrlIdentityPermissionAttributeTest.cs,
+	ZoneIdentityPermissionAttributeTest.cs: Removed *Choice security 
+	actions.
+
 2005-06-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrincipalPermissionTest.cs: Added more tests for IsSubsetOf method.

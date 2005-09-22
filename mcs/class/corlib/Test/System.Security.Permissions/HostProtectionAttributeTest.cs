@@ -81,13 +81,6 @@ namespace MonoTests.System.Security.Permissions {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
-		public void HostProtectionAttribute_DemandChoice ()
-		{
-			new HostProtectionAttribute (SecurityAction.DemandChoice);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
 		public void HostProtectionAttribute_Deny ()
 		{
 			new HostProtectionAttribute (SecurityAction.Deny);
@@ -101,24 +94,10 @@ namespace MonoTests.System.Security.Permissions {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void HostProtectionAttribute_InheritanceDemandChoice ()
-		{
-			new HostProtectionAttribute (SecurityAction.InheritanceDemandChoice);
-		}
-
-		[Test]
 		public void HostProtectionAttribute_LinkDemand ()
 		{
 			HostProtectionAttribute hpa = new HostProtectionAttribute (SecurityAction.LinkDemand);
 			DefaultTests (hpa);
-		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void HostProtectionAttribute_LinkDemandChoice ()
-		{
-			new HostProtectionAttribute (SecurityAction.LinkDemandChoice);
 		}
 
 		[Test]
