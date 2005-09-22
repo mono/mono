@@ -1001,7 +1001,6 @@ System.Security/IStackWalk.cs
 System.Security/NamedPermissionSet.cs
 System.Security/PermissionBuilder.cs
 System.Security/PermissionSet.cs
-System.Security/PermissionSetCollection.cs
 System.Security/PolicyLevelType.cs
 System.Security/SecureString.cs
 System.Security/SecurityContext.cs
@@ -1192,7 +1191,6 @@ System.Security.Policy/PolicyException.cs
 System.Security.Policy/PolicyLevel.cs
 System.Security.Policy/PolicyStatement.cs
 System.Security.Policy/PolicyStatementAttribute.cs
-System.Security.Policy/ProvideAssemblyEvidenceEventArgs.cs
 System.Security.Policy/Publisher.cs
 System.Security.Policy/PublisherMembershipCondition.cs
 System.Security.Policy/Site.cs

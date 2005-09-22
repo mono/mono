@@ -188,7 +188,6 @@ System.Security/NamedPermissionSetTest.cs
 System.Security.Permissions/CodeAccessSecurityAttributeTest.cs
 System.Security.Permissions/EnvironmentPermissionAttributeTest.cs
 System.Security.Permissions/EnvironmentPermissionTest.cs
-System.Security/PermissionSetCollectionTest.cs
 System.Security/PermissionSetTest.cs
 System.Security.Permissions/FileDialogPermissionAttributeTest.cs
 System.Security.Permissions/FileDialogPermissionTest.cs
