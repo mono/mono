@@ -1,3 +1,9 @@
+2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EventLogPermissionAttributeTest.cs: Removed *Choice security actions
+	* PerformanceCounterPermissionAttributeTest.cs: Removed *Choice 
+	security actions.
+
 2005-06-10  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* TraceTest.cs: Fixed test failure.
