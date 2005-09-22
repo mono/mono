@@ -544,7 +544,7 @@ namespace MonoTests.System.Windows.Forms
 			myform.Visible = true;
 			MyScrollBar s = new MyScrollBar ();
 			myform.Controls.Add (s);
-			s.BackgroundImage = Image.FromFile ("logo.gif");
+			s.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
 			
 			Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
 		}
