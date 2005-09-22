@@ -15,8 +15,7 @@ LIB_MCS_FLAGS = \
 	$(LIB_DEFINE_FLAGS) \
 	/r:$(corlib) /r:System.dll \
 	/r:System.Xml.dll /r:System.Data.dll \
-	/r:System.Drawing \
-	@FirebirdSql.Data.Firebird.dll.resources
+	/r:System.Drawing
 
 TEST_MCS_FLAGS = /r:$(corlib) /r:System.dll \
 	/r:System.Xml.dll /r:System.Data.dll \
@@ -27,7 +26,7 @@ EXTRA_DISTFILES = \
 	readme.txt \
 	changelog.txt \
 	FirebirdSql.Data.Firebird.snk \
-	FirebirdSql.Data.Firebird/FirebirdSql.Data.Common/Resources/isc_error_msg.resources \
+	FirebirdSql.Data.Common/Resources/isc_error_msg.resources \
 	Test/App.config \
 	Test/AssemblyInfo.cs \
 	Test/BaseTest.cs \
