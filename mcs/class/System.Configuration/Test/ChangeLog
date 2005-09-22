@@ -1,0 +1,4 @@
+2005-09-22  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration/ExeConfigurationFileMapTest.cs: new test.
+
