@@ -60,6 +60,17 @@ namespace MonoTests.System.Configuration.Provider {
 
 			Assert.AreEqual ("FooProvider", test.Name, "A1");
 			Assert.AreEqual ("Provider for foos", test.Description, "A2");
+
+			/* simulate what should happen with the following <provider> line:
+			   <provider name="FooProvider" /> */
+
+			extra_attrs = new NameValueCollection();
+			test = new TestProviderBase ();
+
+			test.Initialize ("FooProvider", extra_attrs);
+
+			Assert.AreEqual ("FooProvider", test.Name, "A3");
+			Assert.AreEqual ("FooProvider", test.Description, "A4");
 		}
 	}
 
