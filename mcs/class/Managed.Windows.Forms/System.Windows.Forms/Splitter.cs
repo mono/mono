@@ -72,6 +72,9 @@ namespace System.Windows.Forms
 
 			min_extra = 25;
 			min_size = 25;
+
+                        MouseEnter += new EventHandler (MouseEnterHandler);
+                        MouseLeave += new EventHandler (MouseLeaveHandler);
 		}
 
 		#endregion	// Public Constructors
@@ -385,6 +388,17 @@ namespace System.Windows.Forms
 
 			return null;
 		}
+
+		private void MouseEnterHandler (object sender, EventArgs e)
+		{
+                        Cursor = (horz ? Cursors.SizeNS : Cursors.SizeWE);
+		}
+
+		private void MouseLeaveHandler (object sender, EventArgs e)
+		{
+			Cursor = Cursors.Default;
+		}
+
 		#endregion	// Internal & Private Methods
 
 

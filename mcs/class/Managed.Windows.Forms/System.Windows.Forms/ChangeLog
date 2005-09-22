@@ -1,3 +1,9 @@
+2005-09-22  Jackson Harper  <jackson@ximian.com>
+
+	* Splitter.cs: Change the cursor appropriately when the splitter
+	is moused over, so the user actually knows there is a splitter
+	there.
+
 2005-09-22 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
        * Label.cs : Fix ToString method to give same output as MS.NET
