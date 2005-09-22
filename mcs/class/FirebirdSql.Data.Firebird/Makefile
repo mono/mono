@@ -27,6 +27,7 @@ EXTRA_DISTFILES = \
 	readme.txt \
 	changelog.txt \
 	FirebirdSql.Data.Firebird.snk \
+	FirebirdSql.Data.Firebird.dll.resources \
 	FirebirdSql.Data.Common/Resources/isc_error_msg.resources \
 	Test/App.config \
 	Test/AssemblyInfo.cs \
