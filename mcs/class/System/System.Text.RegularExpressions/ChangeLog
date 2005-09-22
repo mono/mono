@@ -2,7 +2,10 @@
 
 	Fix #72152, #72989.
 	* interpreter.cs (Interpreter.Eval) [OpCode.Until]: Avoid some
-	cases of recursion when dealing with eager quantifiers too.
+	cases of recursion when dealing with eager quantifiers too.  We
+	now avoid recursion when handling the innermost quantifier.
+	(Interpreter.IntStack, Interpreter.stack): New.  Stack to help
+	implement backtracking in eager quantifiers.
 
 2005-09-21  Raja R Harinath  <rharinath@novell.com>
 
