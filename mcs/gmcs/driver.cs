@@ -193,7 +193,6 @@ namespace Mono.CSharp
 			reader.Position = 0;
 			parser = new CSharpParser (reader, file, defines);
 			parser.ErrorOutput = Report.Stderr;
-#if FIXME
 			try {
 				parser.parse ();
 			} catch (Exception ex) {
@@ -201,13 +200,6 @@ namespace Mono.CSharp
 			} finally {
 				input.Close ();
 			}
-#else
-			try {
-				parser.parse ();
-			} finally {
-				input.Close ();
-			}
-#endif
 		}
 		
 		static void OtherFlags ()
