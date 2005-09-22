@@ -25,6 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_2_0
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -92,26 +94,30 @@ namespace Microsoft.Build.BuildEngine {
 			taskDatabase = new TaskDatabase ();
 		}
 
+		[MonoTODO]
 		public void AddNewImport (string importLocation,
 					  string importCondition)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public BuildItem AddNewItem (string itemName,
 					     string itemInclude)
 		{
-			// add it to rawitemgroups, maybe to evaluated items then?
-			return null;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public BuildItemGroup AddNewItemGroup ()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public BuildPropertyGroup AddNewPropertyGroup (bool insertAtEndOfProject)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public bool Build (string[] targetNamesToBuild,
@@ -186,14 +192,16 @@ namespace Microsoft.Build.BuildEngine {
 			return evaluatedProperties [propertyName];
 		}
 
+		[MonoTODO]
 		public string[] GetNonImportedItemNames ()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public string[] GetNonImportedPropertyNames ()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public string[] GetNonImportedTargetNames ()
@@ -209,14 +217,16 @@ namespace Microsoft.Build.BuildEngine {
 			return nonImportedTargetNames;
 		}
 
+		[MonoTODO]
 		public string[] GetNonImportedUsingTasks ()
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public string GetProjectExtensions (string id)
 		{
-			return null;
+			throw new NotImplementedException ();
 		}
 
 		public void LoadFromFile (string projectFileName)
@@ -281,41 +291,58 @@ namespace Microsoft.Build.BuildEngine {
 			isDirty = true;
 		}
 
+		[MonoTODO]
 		public void RemoveAllItemGroups ()
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void RemoveAllItemsGroupsByCondition (string condition)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void RemoveAllPropertyGroups ()
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void RemoveAllPropertyGroupsByCondition (string condition)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void RemoveItem (BuildItem itemToRemove)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void RemoveItemGroup (BuildItemGroup itemGroupToRemove)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void RemoveItemsByName (string itemName)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void RemovePropertyGroup (BuildPropertyGroup propertyGroupToRemove)
 		{
-			
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void ResetBuildStatus ()
 		{
+			throw new NotImplementedException ();
 		}
 
 		public void SaveToFile (string projectFileName)
@@ -334,40 +361,52 @@ namespace Microsoft.Build.BuildEngine {
 			xmlDocument.Save (outTextWriter);
 		}
 
+		[MonoTODO]
 		public void SetImportedProperty (string propertyName,
 						 string propertyValue,
 						 string condition,
 						 Project importProject)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void SetImportedPropertyAt (string propertyName,
 						   string propertyValue,
 						   string condition,
 						   Project importedProject,
 						   PropertyPosition position)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void SetProjectExtensions (string id, string xmlText)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void SetProperty (string propertyName,
 					 string propertyValue,
 					 string condition)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void SetPropertyAt (string propertyName,
 					   string propertyValue,
 					   string condition,
 					   PropertyPosition position)
 		{
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		public void Unload ()
 		{
+			throw new NotImplementedException ();
 		}
 		
 		private void ProcessElements (XmlElement rootElement, ImportedProject ip)
@@ -651,3 +690,5 @@ namespace Microsoft.Build.BuildEngine {
 		}
 	}
 }
+
+#endif

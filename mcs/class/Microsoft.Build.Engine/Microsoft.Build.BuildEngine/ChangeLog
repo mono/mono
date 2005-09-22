@@ -1,4 +1,26 @@
-2005-09-25  Marek Sieradzki  <marek.sieradzki@gmail.com>
+2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* Project.cs: Added MonoTODO attributes.
+	* Utilities.cs, TaskElement.cs, IBuildProperty.cs, HostLogger.cs,
+	ProjectFileEncoding.cs, ICultureStringUtilities.cs, FileLogger.cs,
+	IProject.cs, BuildSettings.cs, BuildWhen.cs, IGlobalEngineAccessor.cs,
+	BuildEngine.cs, ITaskElement.cs, Target.cs, TaskDatabase.cs,
+	SolutionParser.cs, IBuildPropertyGroup.cs, InternalLoggerException.cs,
+	BuildItemGroup.cs, InvalidProjectFileException.cs,
+	BuildPropertyGroupCollection.cs, MetadataReference.cs, Expression.cs,
+	Xml.cs, BuildChoose.cs, EventSource.cs, ProcessingPass.cs,
+	PropertyPosition.cs, GlobalEngineAccessor.cs, ITargetCollection.cs,
+	ItemReference.cs, IEngine.cs, BuildItem.cs, DirectoryScanner.cs,
+	IBuildItemGroupCollection.cs, BuildPropertyGroup.cs, IHostLogger.cs,
+	IBuildItem.cs, ChangeType.cs, WriteHandler.cs, IHostFeedback.cs,
+	ILangSecurityLevelChecker.cs, ITarget.cs, BatchingImpl.cs,
+	ConsoleLogger.cs, TargetCollection.cs, PropertyReference.cs,
+	IBuildItemGroup.cs, BuildProperty.cs, Engine.cs,
+	IBuildPropertyGroupCollection.cs, GroupingCollection.cs,Project.cs,
+	BuildItemGroupCollection.cs, ItemPropertyGroupingBase.cs,
+	ImportedProject.cs, TaskEngineAssemblyResolver.cs: Added #if NET_2_0.
+
+2005-09-21  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* TaskDatabase.cs: Change Shared to Framework.
 	* BuildPropertyGroup.cs, Project.cs: Remove obsoleted

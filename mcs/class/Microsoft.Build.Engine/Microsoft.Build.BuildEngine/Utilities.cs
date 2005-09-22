@@ -25,6 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_2_0
+
 namespace Microsoft.Build.BuildEngine {
 	public class Utilities : ILangSecurityLevelChecker, ICultureStringUtilities {
 		public Utilities ()
@@ -47,3 +49,5 @@ namespace Microsoft.Build.BuildEngine {
 		}
 	}
 }
+
+#endif

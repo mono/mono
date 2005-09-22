@@ -25,8 +25,12 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_2_0
+
 namespace Microsoft.Build.BuildEngine {
 	internal class Xml {
 		public static string Namespace = "http://schemas.microsoft.com/developer/msbuild/2003"; 
 	}
 }
+
+#endif
