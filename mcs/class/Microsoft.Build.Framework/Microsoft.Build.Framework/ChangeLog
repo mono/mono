@@ -1,3 +1,23 @@
+2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
+
+	* TargetStartedEventHandler.cs, TargetFinishedEventArgs.cs,
+	BuildStatusEventArgs.cs, BuildMessageEventArgs.cs,
+	BuildStartedEventHandler.cs, AnyEventHandler.cs,
+	BuildErrorEventArgs.cs, BuildFinishedEventArgs.cs,
+	ITaskItem.cs, CustomBuildEventHandler.cs,LoggerException.cs,
+	IBuildEngine.cs, BuildStatusEventHandler.cs, BuildWarningEventArgs.cs,
+	BuildStartedEventArgs.cs, MessageImportance.cs,
+	LoadInSeparateAppDomainAttribute.cs, TaskStartedEventArgs.cs,
+	BuildErrorEventHandler.cs, BuildFinishedEventHandler.cs,
+	CustomBuildEventArgs.cs, ITask.cs, IEventSource.cs,
+	ProjectStartedEventArgs.cs, TaskFinishedEventHandler.cs,
+	BuildEventArgs.cs, ProjectFinishedEventHandler.cs, OutputAttribute.cs,
+	BuildWarningEventHandler.cs, LoggerVerbosity.cs, ILogger.cs,
+	TaskStartedEventHandler.cs, TaskFinishedEventArgs.cs,
+	TargetStartedEventArgs.cs, ProjectStartedEventHandler.cs,
+	ProjectFinishedEventArgs.cs, TargetFinishedEventHandler.cs,
+	BuildMessageEventHandler.cs, RequiredAttribute.cs: Added #if NET_2_0.
+
 2005-09-08  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* TargetFinishedEventArgs.cs, BuildStatusEventArgs.cs,
