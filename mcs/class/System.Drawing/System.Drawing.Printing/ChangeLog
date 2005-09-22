@@ -1,0 +1,14 @@
+2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* InvalidPrinterException.cs: Removed NotImplementedException (not
+	required) and added a demand for SerializationFormatter on the 
+	GetObjectData method.
+	* PrintingPermission.cs: Throw ArgumentException if the class or 
+	version attributes are missing in the supplied XML (only in 1.x).
+
+2005-03-23 Jordi Mas i Hernandez <jordi@ximian.com>
+	* PaperKind.cs: fixes wrong enum values
+
+2005-01-27  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* MarginsConverter.cs: Implemented support for InstanceDescriptor.  
