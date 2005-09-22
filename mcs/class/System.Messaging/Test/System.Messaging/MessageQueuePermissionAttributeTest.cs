@@ -5,7 +5,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -76,14 +76,6 @@ namespace MonoTests.System.Messaging {
 			Assert.AreEqual (SecurityAction.RequestOptional, a.Action, "Action=RequestOptional");
 			a.Action = SecurityAction.RequestRefuse;
 			Assert.AreEqual (SecurityAction.RequestRefuse, a.Action, "Action=RequestRefuse");
-#if NET_2_0
-			a.Action = SecurityAction.DemandChoice;
-			Assert.AreEqual (SecurityAction.DemandChoice, a.Action, "Action=DemandChoice");
-			a.Action = SecurityAction.InheritanceDemandChoice;
-			Assert.AreEqual (SecurityAction.InheritanceDemandChoice, a.Action, "Action=InheritanceDemandChoice");
-			a.Action = SecurityAction.LinkDemandChoice;
-			Assert.AreEqual (SecurityAction.LinkDemandChoice, a.Action, "Action=LinkDemandChoice");
-#endif
 		}
 
 		[Test]
@@ -180,6 +172,9 @@ namespace MonoTests.System.Messaging {
 						case 13:
 						case 32:
 						case 92:
+#if NET_2_0
+						case 133:
+#endif
 						case 160:
 							// known invalid chars
 							break;
