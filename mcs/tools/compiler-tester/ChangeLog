@@ -1,3 +1,12 @@
+2005-09-22  Raja R Harinath  <rharinath@novell.com>
+
+	* compiler-tester.cs (TestRunner.ExecFile): New helper carved out
+	of ...
+	(TestRunner.ExecuteFile) [process version]: ... this.
+	(TestRunner.ExecuteFile) [MethodInfo version]: Add new parameter.
+	Fall back to executing the process if the method invocation fails.
+	(TestRunner.Check): Update to changes.
+
 2005-09-19  Marek Safar  <marek.safar@seznam.cz>
 
 	* compiler-tester: Reverted Martin's revert and ignore gmcs error

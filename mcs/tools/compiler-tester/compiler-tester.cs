@@ -349,7 +349,7 @@ namespace TestRunner {
 				if (!ExecuteFile (file, filename))
 					return false;
 			} else {
-				if (!ExecuteFile (mi, filename))
+				if (!ExecuteFile (mi, file, filename))
 					return false;
 			}
 
@@ -368,7 +368,7 @@ namespace TestRunner {
 			return true;
 		}
 
-		bool ExecuteFile (string exe_name, string filename)
+		int ExecFile (string exe_name, string filename)
 		{
 			if (mono == null)
 				pi.FileName = exe_name;
@@ -377,19 +377,23 @@ namespace TestRunner {
 
 			Process p = Process.Start (pi);
 			p.WaitForExit ();
+			return p.ExitCode;
+		}
 
-			// TODO: How can I recognize return type void ?
-			if (p.ExitCode == 0)
+		bool ExecuteFile (string exe_name, string filename)
+		{
+			int exit_code = ExecFile (exe_name, filename);
+			if (exit_code == 0)
 				return true;
 
-			HandleFailure (filename, TestResult.ExecError, "Wrong return code: " + p.ExitCode.ToString ());
+			HandleFailure (filename, TestResult.ExecError, "Wrong return code: " + exit_code);
 			return false;
 		}
 
-		bool ExecuteFile (MethodInfo entry_point, string filename)
+		bool ExecuteFile (MethodInfo entry_point, string exe_name, string filename)
 		{
-			TextWriter standart_ouput = Console.Out;
-			TextWriter standart_error = Console.Error;
+			TextWriter stdout = Console.Out;
+			TextWriter stderr = Console.Error;
 			Console.SetOut (TextWriter.Null);
 			Console.SetError (TextWriter.Null);
 			ParameterInfo[] pi = entry_point.GetParameters ();
@@ -397,13 +401,20 @@ namespace TestRunner {
 
 			object result = null;
 			try {
-				result = entry_point.Invoke (null, args);
-				Console.SetOut (standart_ouput);
-				Console.SetError (standart_error);
+				try {
+					result = entry_point.Invoke (null, args);
+				} finally {
+					Console.SetOut (stdout);
+					Console.SetError (stderr);
+				}
 			}
 			catch (Exception e) {
-				Console.SetOut (standart_ouput);
-				Console.SetError (standart_error);
+				int exit_code = ExecFile (exe_name, filename);
+				if (exit_code == 0) {
+					LogLine ("(appdomain method failed, external executable succeeded)");
+					LogLine (e.ToString ());
+					return true;
+				}
 				HandleFailure (filename, TestResult.ExecError, e.ToString ());
 				return false;
 			}
