@@ -1,3 +1,8 @@
+2005-09-22 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+
+        * LabelTest.cs : Implement event firing order tests.
+	* ScrollBarTest.cs : Implement event firing order tests.
+
 2005-09-22  Jordi Mas i Hernandez <jordi@ximian.com>
 	 
 	* MenuTest.cs: Fixes some tests

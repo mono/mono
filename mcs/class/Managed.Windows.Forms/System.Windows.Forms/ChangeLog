@@ -1,3 +1,7 @@
+2005-09-22 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+
+       * Label.cs : Fix ToString method to give same output as MS.NET
+
 2005-09-22  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Create the scrollbars when the handle is created

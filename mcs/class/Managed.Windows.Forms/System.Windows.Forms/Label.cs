@@ -550,7 +550,7 @@ namespace System.Windows.Forms
 
     		public override string ToString()
     		{
-    			return base.ToString () + "Text: " + Text;
+    			return base.ToString () + ", Text: " + Text;
     		}
 
     		protected override void WndProc (ref Message m)

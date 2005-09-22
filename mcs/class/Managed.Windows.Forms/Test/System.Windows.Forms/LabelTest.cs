@@ -5,13 +5,12 @@
 //      Hisham Mardam Bey (hisham.mardambey@gmail.com)
 //
 //
-                                                
 
 using System;
 using NUnit.Framework;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Runtime.Remoting;
+using System.Collections;
 
 namespace MonoTests.System.Windows.Forms
 {
@@ -148,7 +147,7 @@ namespace MonoTests.System.Windows.Forms
 			
 			l.Text = "My Label";
 			
-			Assert.AreEqual ("System.Windows.Forms.LabelText: My Label", l.ToString (), "T1");
+			Assert.AreEqual ("System.Windows.Forms.Label, Text: My Label", l.ToString (), "T1");
 			  
 		}
 	}
@@ -247,5 +246,302 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 		}
 	}
+   
+        public class MyLabel : Label
+        {
+	        private ArrayList results = new ArrayList ();
+	        public MyLabel () : base ()
+	        {
+			// TODO: we need to add those later.
+			//this.HandleCreated += new EventHandler (HandleCreatedHandler);
+			//this.BindingContextChanged += new EventHandler (BindingContextChangedHandler);
+			//this.Invalidated += new InvalidateEventHandler (InvalidatedHandler);
+			//this.Resize += new EventHandler (ResizeHandler);
+			//this.SizeChanged += new EventHandler (SizeChangedHandler);
+			//this.Layout += new LayoutEventHandler (LayoutHandler);
+			//this.VisibleChanged += new EventHandler (VisibleChangedHandler);
+			//this.Paint += new PaintEventHandler (PaintHandler);
+		}
+		
+		protected override void OnAutoSizeChanged (EventArgs e)
+		{
+			results.Add ("OnAutoSizeChanged");
+			base.OnAutoSizeChanged (e);
+		}
+		
+		protected override void OnBackgroundImageChanged (EventArgs e)
+		{
+			results.Add ("OnBackgroundImageChanged");
+			base.OnBackgroundImageChanged (e);
+		}
+		
+		protected override void OnImeModeChanged (EventArgs e)
+		{
+			results.Add ("OnImeModeChanged");
+			base.OnImeModeChanged (e);
+		}
+		
+		protected override void OnKeyDown (KeyEventArgs e)
+		{
+			results.Add ("OnKeyDown");
+			base.OnKeyDown (e);
+		}
+		
+		protected override void OnKeyPress (KeyPressEventArgs e)
+		{
+			results.Add ("OnKeyPress");
+			base.OnKeyPress (e);
+		}
+		
+		protected override void OnKeyUp (KeyEventArgs e)
+		{
+			results.Add ("OnKeyUp");
+			base.OnKeyUp (e);
+		}
+		
+		protected override void OnHandleCreated (EventArgs e)
+		{
+			results.Add ("OnHandleCreated");
+			base.OnHandleCreated (e);
+		}
+		
+		protected override void OnBindingContextChanged (EventArgs e)
+		{
+			results.Add ("OnBindingContextChanged");
+			base.OnBindingContextChanged (e);
+		}
+		
+		protected override void OnInvalidated (InvalidateEventArgs e)
+		{
+			results.Add("OnInvalidated");
+			base.OnInvalidated (e);
+		}
+		
+		protected override void OnResize (EventArgs e)
+		{
+			results.Add("OnResize");
+			base.OnResize (e);
+		}
+		
+		protected override void OnSizeChanged (EventArgs e)
+		{
+			results.Add("OnSizeChanged");
+			base.OnSizeChanged (e);
+		}
+		
+		protected override void OnLayout (LayoutEventArgs e)
+		{
+			results.Add("OnLayout");
+			base.OnLayout (e);
+		}
+		
+		protected override void OnVisibleChanged (EventArgs e)
+		{
+			results.Add("OnVisibleChanged");
+			base.OnVisibleChanged (e);
+		}
+		
+		protected override void OnPaint (PaintEventArgs e)
+		{
+			results.Add("OnPaint");
+			base.OnPaint (e);
+		}
+		
+		public ArrayList Results {
+			get {	return results; }
+		}		
+	}	
+   
+        [TestFixture]
+        public class LabelTestEventsOrder
+        {  	  			
+		public string [] ArrayListToString (ArrayList arrlist)
+		{
+			string [] retval = new string [arrlist.Count];
+			for (int i = 0; i < arrlist.Count; i++)
+			  retval[i] = (string)arrlist[i];
+			return retval;
+		}
+		
+		[Test]
+		public void CreateEventsOrder ()
+		{
+			string[] EventsWanted = {
+				"OnHandleCreated",
+				  "OnBindingContextChanged",
+				  "OnBindingContextChanged"
+			};  		
+			Form myform = new Form ();
+			myform.Visible = true;
+			MyLabel l = new MyLabel ();			
+			myform.Controls.Add (l);			
+			
+			Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		}
+		
+		[Test]
+		public void SizeChangedEventsOrder ()
+		{
+			string[] EventsWanted = {
+				"OnHandleCreated",
+				  "OnBindingContextChanged",
+				  "OnBindingContextChanged",
+				  "OnSizeChanged",
+				  "OnResize",
+				  "OnInvalidated",
+				  "OnLayout"
+			};  		
+			Form myform = new Form ();
+			myform.Visible = true;
+			MyLabel l = new MyLabel ();			
+			myform.Controls.Add (l);
+			l.Size = new Size (150, 20);
+			
+			Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		}
+		
+		[Test]
+		public void AutoSizeChangedEventsOrder ()
+		{
+			string[] EventsWanted = {
+				"OnHandleCreated",
+				  "OnBindingContextChanged",
+				  "OnBindingContextChanged",
+				  "OnSizeChanged",
+				  "OnResize",
+				  "OnInvalidated",
+				  "OnLayout",
+				  "OnAutoSizeChanged"
+			};  		
+			Form myform = new Form ();
+			myform.Visible = true;
+			MyLabel l = new MyLabel ();			
+			myform.Controls.Add (l);
+			l.AutoSize = true;
+			
+			Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		}		
+		
+		[Test]
+		public void BackgroundImageChangedEventsOrder ()
+		{
+			string[] EventsWanted = {
+				"OnHandleCreated",
+				  "OnBindingContextChanged",
+				  "OnBindingContextChanged",
+				  "OnBackgroundImageChanged",
+				  "OnInvalidated"
+			};  		
+			Form myform = new Form ();
+			myform.Visible = true;
+			MyLabel l = new MyLabel ();			
+			myform.Controls.Add (l);
+			l.BackgroundImage = Image.FromFile ("Test/System.Windows.Forms/bitmaps/a.png");
+			
+			Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		}
+		
+		[Test]
+		public void ImeModeChangedChangedEventsOrder ()
+		{
+			string[] EventsWanted = {
+				"OnHandleCreated",
+				  "OnBindingContextChanged",
+				  "OnBindingContextChanged",		
+				  "OnImeModeChanged"		
+			};  		
+			Form myform = new Form ();
+			myform.Visible = true;
+			MyLabel l = new MyLabel ();			
+			myform.Controls.Add (l);
+			l.ImeMode = ImeMode.Katakana;
+			
+			Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		}
+		
+		[Test, Ignore ("Not implemented yet.")]
+		public void KeyDownEventsOrder ()
+		{
+			string[] EventsWanted = {
+				"OnHandleCreated",
+				  "OnBindingContextChanged",
+				  "OnBindingContextChanged"
+			};  		
+			Form myform = new Form ();
+			myform.Visible = true;
+			MyLabel l = new MyLabel ();			
+			myform.Controls.Add (l);
+			
+			Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		}
+		
+		[Test, Ignore ("Not implemented yet.")]
+		public void KeyPressEventsOrder ()
+		{
+			string[] EventsWanted = {
+				"OnHandleCreated",
+				  "OnBindingContextChanged",
+				  "OnBindingContextChanged"
+			};  		
+			Form myform = new Form ();
+			myform.Visible = true;
+			MyLabel l = new MyLabel ();			
+			myform.Controls.Add (l);
+			
+			Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		}
+		
+		[Test, Ignore ("Not implemented yet.")]
+		public void KeyUpEventsOrder ()
+		{
+			string[] EventsWanted = {
+				"OnHandleCreated",
+				  "OnBindingContextChanged",
+				  "OnBindingContextChanged",		
+				  "OnImeModeChanged"		
+			};  		
+			Form myform = new Form ();
+			myform.Visible = true;
+			MyLabel l = new MyLabel ();			
+			myform.Controls.Add (l);
+			
+			Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		}
+		
+		[Test]
+		public void TabStopChangedEventsOrder ()
+		{
+			string[] EventsWanted = {
+				"OnHandleCreated",
+				  "OnBindingContextChanged",
+				  "OnBindingContextChanged"				
+			};  		
+			Form myform = new Form ();
+			myform.Visible = true;
+			MyLabel l = new MyLabel ();			
+			myform.Controls.Add (l);
+			l.TabStop = true;
+			
+			Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		}
+		
+		[Test]
+		public void TextAlignChangedEventsOrder ()
+		{
+			string[] EventsWanted = {
+				"OnHandleCreated",
+				  "OnBindingContextChanged",
+				  "OnBindingContextChanged",
+				  "OnInvalidated"
+			};  		
+			Form myform = new Form ();
+			myform.Visible = true;
+			MyLabel l = new MyLabel ();			
+			myform.Controls.Add (l);
+			l.TextAlign = ContentAlignment.TopRight;
+			
+			Assert.AreEqual (EventsWanted, ArrayListToString (l.Results));
+		}		
+	}      
 }
 	   
