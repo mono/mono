@@ -72,11 +72,10 @@ namespace System.Windows.Forms {
 		private bool add_vscroll;
 		private int max_node_width;
 		private VScrollBar vbar;
-		private bool vbar_added;
 		private int skipped_nodes;
 		private HScrollBar hbar;
-		private bool hbar_added;
 		private int hbar_offset;
+		private int used_height;
 		
 		private int update_stack;
 
@@ -663,6 +662,17 @@ namespace System.Windows.Forms {
 
 		protected override void OnHandleCreated (EventArgs e) {
 			base.OnHandleCreated (e);
+
+			vbar = new VScrollBar ();
+			hbar = new HScrollBar ();
+
+			vbar.Visible = false;
+			hbar.Visible = false;
+			vbar.ValueChanged += new EventHandler (VScrollBarValueChanged);
+			hbar.ValueChanged += new EventHandler (HScrollBarValueChanged);
+
+			Controls.Add (vbar);
+			Controls.Add (hbar);
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e) {
@@ -852,6 +862,7 @@ namespace System.Windows.Forms {
 			int height = ClientRectangle.Height;
 
 			open_node_count = 0;
+			used_height = 0;
 			foreach (TreeNode node in nodes) {
 				DrawNode (node, dc, clip, ref depth, item_height, height);
 				depth = 0;
@@ -902,7 +913,7 @@ namespace System.Windows.Forms {
 
 		private void DrawNodeCheckBox (TreeNode node, Graphics dc, int x, int middle)
 		{
-			dc.DrawRectangle (new Pen (Color.Black, 2), x + 0.5F + 3, middle - 4.5F, 11, 11);
+			dc.DrawRectangle (new Pen (Color.Black, 2), x+ 3, middle - 4, 11, 11);
 
 			if (node.Checked) {
 				Pen check_pen = new Pen (Color.Black, 1);
@@ -1006,7 +1017,7 @@ namespace System.Windows.Forms {
 		private void UpdateNodeBounds (TreeNode node, int x, int y, int item_height, Graphics dc)
 		{
 //			SizeF size = dc.MeasureString (Text, Font, ClientSize.Width, new StringFormat ());
-//    		int width = (int) size.Width + 3;
+//		int width = (int) size.Width + 3;
 			int width = (int)(node.Text.Length * node.NodeFont.Size * 0.85);
 			node.UpdateBounds (x, y, width, item_height);
 		}
@@ -1033,6 +1044,7 @@ namespace System.Windows.Forms {
 			r.X += 4;
 			r.Width -= 8;
 			Color text_color = (Focused && SelectedNode == node ? ThemeEngine.Current.ColorHilightText : node.ForeColor);
+			format.FormatFlags |= StringFormatFlags.NoWrap;
 			dc.DrawString (node.Text, node.NodeFont, ThemeEngine.Current.ResPool.GetSolidBrush (text_color), r, format);
 		}
 
@@ -1099,6 +1111,9 @@ namespace System.Windows.Forms {
 				}
 			}
 
+                        if (node.Bounds.Bottom > used_height)
+                                used_height = node.Bounds.Bottom;
+
 			depth++;
 			if (node.IsExpanded) {
 				for (int i = 0; i < _n_count; i++) {
@@ -1111,11 +1126,6 @@ namespace System.Windows.Forms {
 
 		private void AddVerticalScrollBar (int total_nodes, bool count_changed)
 		{
-			if (vbar == null) {
-				vbar = new VScrollBar ();
-				count_changed = true;
-			}
-
 			vbar.Bounds = new Rectangle (ClientRectangle.Width - vbar.Width,
 				0, vbar.Width, (add_hscroll ? Height - ThemeEngine.Current.HScrollBarDefaultSize.Height : Height));
 
@@ -1123,12 +1133,6 @@ namespace System.Windows.Forms {
 				vbar.Maximum = total_nodes;
 				int height = ClientRectangle.Height;
 				vbar.LargeChange = height / ItemHeight;
-			}
-
-			if (!vbar_added) {
-				Controls.Add (vbar);
-				vbar.ValueChanged += new EventHandler (VScrollBarValueChanged);
-				vbar_added = true;
 			}
 
 			vbar.Visible = true;
@@ -1142,12 +1146,6 @@ namespace System.Windows.Forms {
 			hbar.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hbar.Height,
 					(add_vscroll ? Width - ThemeEngine.Current.VScrollBarDefaultSize.Width : Width), hbar.Height);
 
-			if (!hbar_added) {
-				Controls.Add (hbar);
-				hbar.ValueChanged += new EventHandler (HScrollBarValueChanged);
-				hbar_added = true;
-			}
-
 			hbar.Visible = true;
 		}
 
@@ -1158,7 +1156,14 @@ namespace System.Windows.Forms {
 			if (max_node_width > ClientRectangle.Width) {
 				add_hscroll = true;
 				AddHorizontalScrollBar ();
+				return;
 			}
+
+                        if (used_height > ClientRectangle.Height) {
+                                add_vscroll = true;
+                                AddVerticalScrollBar (open_node_count, true);
+                                return;
+                        }
 
 			if (vbar != null) {
 				int height = (hbar != null && hbar.Visible ? Height - hbar.Height : Height);

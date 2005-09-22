@@ -1,3 +1,11 @@
+2005-09-22  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Create the scrollbars when the handle is created
+	and add them right away, just make them invisble. Also account for
+	the window being shrunk vertically to the point that the vert
+	scrollbar needs to be added.
+	- Remove some 0.5 adjustments to get around anti aliasing issues.
+	
 2005-09-22  Jordi Mas i Hernandez <jordi@ximian.com>
 	 
 	* MainMenu.cs: Fixes default value
