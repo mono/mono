@@ -2,11 +2,17 @@ thisdir = build
 SUBDIRS = 
 include ../build/rules.make
 
-all-local install-local test-local run-test-local run-test-ondotnet-local uninstall-local:
+BUILT_FILES = common/Consts.cs
+
+all-local install-local test-local run-test-local run-test-ondotnet-local uninstall-local: $(BUILT_FILES)
 	@:
 
 clean-local:
-	-rm -f deps/*
+	-rm -f $(BUILT_FILES) deps/*
+
+common/Consts.cs: common/Consts.cs.in $(wildcard config.make)
+	test -n '$(MONO_VERSION)'
+	sed -e 's,@''MONO_VERSION@,$(MONO_VERSION),' $< > $@
 
 PLATFORMS = linux win32
 PROFILES = \
@@ -14,7 +20,6 @@ PROFILES = \
 	atomic net_1_0
 
 COMMON_SRCS = \
-	Consts.cs			\
 	Consts.cs.in			\
 	Locale.cs			\
 	MonoTODOAttribute.cs		\

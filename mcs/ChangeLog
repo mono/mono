@@ -1,3 +1,9 @@
+2005-09-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (basic_SUBDIRS, net_1_1_bootstrap_SUBDIRS)
+	(net_2_0_bootstrap_SUBDIRS, net_2_0_SUBDIRS):
+	Build the 'build' directory too.
+
 2005-09-21  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (centum_tests): Remove System.Web.

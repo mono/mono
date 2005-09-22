@@ -1,3 +1,11 @@
+2005-09-22  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (BUILT_FILES): New.
+	(all-local ...): Depend on them.
+	(clean-local): Relete them.
+	(common/Consts.cs): New rule.
+	(COMMON_SRCS): Don't distribute common/Consts.cs.
+
 2005-09-12  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make (do-profile-check): Quote sed expression.
