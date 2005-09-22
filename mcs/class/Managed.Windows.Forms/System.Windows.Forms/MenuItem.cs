@@ -111,6 +111,7 @@ namespace System.Windows.Forms
 
 		private void CommonConstructor (string text)
 		{
+			defaut_item = false;
 			separator = false;
 			break_ = false;
 			bar_break = false;

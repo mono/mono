@@ -33,7 +33,7 @@ namespace System.Windows.Forms
 	[ToolboxItemFilter("System.Windows.Forms.MainMenu", ToolboxItemFilterType.Allow)]
 	public class MainMenu : Menu
 	{
-		private RightToLeft right_to_left;
+		private RightToLeft right_to_left = RightToLeft.Inherit;
 		private Form form = null;
 		private MenuAPI.TRACKER tracker = null;
 

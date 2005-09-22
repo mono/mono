@@ -1,3 +1,8 @@
+2005-09-22  Jordi Mas i Hernandez <jordi@ximian.com>
+	 
+	* MainMenu.cs: Fixes default value
+	* MenuItem.cs: Fixes default value
+
 2005-09-22  Kazuki Oikawa  <kazuki@panicode.com>
 
 	* AsyncMethodResult.cs: Fixes Control.Invoke is blocked infinitely.

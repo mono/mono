@@ -1,3 +1,8 @@
+2005-09-22  Jordi Mas i Hernandez <jordi@ximian.com>
+	 
+	* MenuTest.cs: Fixes some tests
+	* MenuItemTest.cs: New unit test
+
 2005-09-21  Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
        * LabelTest.cs : Several new tests.
