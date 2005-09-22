@@ -453,27 +453,22 @@ namespace System.Text.RegularExpressions {
 					int start = current.Start;
 					int start_count = current.Count;
 
-					RecurseMinimum:
-					if (!current.IsMinimum) {
+					while (!current.IsMinimum) {
 						++ current.Count;
 						current.Start = ptr;
 						deep = current;
-						if (Eval (Mode.Match, ref ptr, repeat.Expression)) {
-							if (deep == current)
-								goto RecurseMinimum;
-							else
-								goto Pass;
+						if (!Eval (Mode.Match, ref ptr, repeat.Expression)) {
+							current.Start = start;
+							current.Count = start_count;
+							goto Fail;
 						}
-
-						current.Start = start;
-						current.Count = start_count;
-						goto Fail;
+						if (deep != current)	// recursive mode
+							goto Pass;
 					}
 
-					Recurse:
+					DegenerateMatch:
 					if (ptr == current.Start) {
 						// degenerate match ... match tail or fail
-
 						this.repeat = current.Previous;
 						if (Eval (Mode.Match, ref ptr, pc + 1))
 							goto Pass;
@@ -483,60 +478,80 @@ namespace System.Text.RegularExpressions {
 					}
 
 					if (current.IsLazy) {
-						// match tail first ...
-						this.repeat = current.Previous;
-						int cp = Checkpoint ();
-						if (Eval (Mode.Match, ref ptr, pc + 1))
-							goto Pass;
+						for (;;) {
+							// match tail first ...
+							this.repeat = current.Previous;
+							int cp = Checkpoint ();
+							if (Eval (Mode.Match, ref ptr, pc + 1))
+								goto Pass;
 
-						Backtrack (cp);
+							Backtrack (cp);
 
-						// ... then match more
-
-						this.repeat = current;
-						if (!current.IsMaximum) {
+							// ... then match more
+							this.repeat = current;
+							if (!current.IsMaximum)
+								return false;
 							++ current.Count;
 							current.Start = ptr;
 							deep = current;
-							if (Eval (Mode.Match, ref ptr, current.Expression)) {
-								if (deep == current)
-									goto Recurse;
-								else
-									goto Pass;
+							if (!Eval (Mode.Match, ref ptr, current.Expression)) {
+								current.Start = start;
+								current.Count = start_count;
+								goto Fail;
 							}
-
-							current.Start = start;
-							current.Count = start_count;
-							goto Fail;
+							if (deep != current)	// recursive mode
+								goto Pass;
+							// Degenerate match: no point retrying current.Expression if tail match fails
+							if (ptr == current.Start)
+								goto DegenerateMatch;
 						}
+					} else {
+						int stack_size = stack.Count;
 
-						return false;
-					}
-					else {
-						// match more first ...
-
-						if (!current.IsMaximum) {
+						// match greedily as much as possible
+						while (!current.IsMaximum) {
 							int cp = Checkpoint ();
+							int old_ptr = ptr;
+							int old_start = current.Start;
+
 							++ current.Count;
 							current.Start = ptr;
-							deep = null;		// We have more state to maintain than just
-										// the position.  Let's defer the work for now.
-							if (Eval (Mode.Match, ref ptr, current.Expression))
+							deep = current;
+							if (!Eval (Mode.Match, ref ptr, current.Expression)) {
+								-- current.Count;
+								current.Start = old_start;
+								Backtrack (cp);
+								break;
+							}
+							if (deep != current) {
+								// recursive mode: no more backtracking, truncate the stack
+								stack.Count = stack_size;
 								goto Pass;
+							}
+							stack.Push (cp);
+							stack.Push (old_ptr);
 
-							current.Start = start;
-							-- current.Count;
-							Backtrack (cp);
+							// Degenerate match: no point going on
+							if (ptr == current.Start)
+								break;
 						}
 
-						// ... then match tail
-
+						// then, match the tail, backtracking as necessary.
 						this.repeat = current.Previous;
-						if (Eval (Mode.Match, ref ptr, pc + 1))
-							goto Pass;
+						for (;;) {
+							if (Eval (Mode.Match, ref ptr, pc + 1)) {
+								stack.Count = stack_size;
+								goto Pass;
+							}
+							if (stack.Count == stack_size) {
+								this.repeat = current;
+								goto Fail;
+							}
 
-						this.repeat = current;
-						goto Fail;
+							--current.Count;
+							ptr = stack.Pop ();
+							Backtrack (stack.Pop ());
+						}
 					}
 				}
 
@@ -960,16 +975,13 @@ namespace System.Text.RegularExpressions {
 		private void GetGroupInfo (int gid, out int first_mark_index, out int n_caps)
 		{
 			first_mark_index = -1;
-			bool first = true;
 			n_caps = 0;
 			for (int m = groups [gid]; m >= 0; m = marks [m].Previous) {
 				if (!marks [m].IsDefined)
 					continue;
-				++n_caps;
-				if (first) {
-					first = false;
+				if (first_mark_index < 0)
 					first_mark_index = m;
-				}
+				++n_caps;
 			}
 		}
 
@@ -1024,6 +1036,8 @@ namespace System.Text.RegularExpressions {
 		private RepeatContext repeat;		// current repeat context
 		private RepeatContext fast;		// fast repeat context
 
+		// Repeat/Until handling
+		private IntStack stack = new IntStack (); // utility stack
 		private RepeatContext deep;		// points to the most-nested repeat context
 
 		private Mark[] marks = null;		// mark stack
@@ -1033,24 +1047,41 @@ namespace System.Text.RegularExpressions {
 		private int[] groups;			// current group definitions
 
 		// private classes
-/*
-		private struct Mark {
-			public int Start, End;
-			public int Previous;
 
-			public bool IsDefined {
-				get { return Start >= 0 && End >= 0; }
+		private struct IntStack {
+			int [] values;
+			int count;
+			public int Pop ()
+			{
+				return values [--count];
 			}
-
-			public int Index {
-				get { return Start < End ? Start : End; }
+			public void Push (int value)
+			{
+				if (values == null) {
+					values = new int [8];
+				} else if (count == values.Length) {
+					int new_size = values.Length;
+					new_size += new_size >> 1;
+					int [] new_values = new int [new_size];
+					for (int i = 0; i < count; ++i)
+						new_values [i] = values [i];
+					values = new_values;
+				}
+				values [count++] = value;
 			}
-
-			public int Length {
-				get { return Start < End ? End - Start : Start - End; }
+			public int Top {
+				get { return values [count - 1]; }
+			}
+			public int Count {
+				get { return count; }
+				set {
+					if (value > count)
+						throw new SystemException ("can only truncate the stack");
+					count = value;
+				}
 			}
 		}
-*/
+
 		private class RepeatContext {
 			public RepeatContext (RepeatContext previous, int min, int max, bool lazy, int expr_pc) {
 				this.previous = previous;

@@ -1,3 +1,9 @@
+2005-09-22  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #72152, #72989.
+	* interpreter.cs (Interpreter.Eval) [OpCode.Until]: Avoid some
+	cases of recursion when dealing with eager quantifiers too.
+
 2005-09-21  Raja R Harinath  <rharinath@novell.com>
 
 	* interpreter.cs (Interpreter.Eval) [OpCode.Until]: Avoid some
