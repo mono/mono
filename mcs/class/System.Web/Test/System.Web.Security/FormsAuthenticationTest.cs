@@ -33,7 +33,7 @@ namespace MonoTests.System.Web.Security {
 			Assert.IsFalse (FormsAuthentication.RequireSSL, "RequireSSL");
 			Assert.IsTrue (FormsAuthentication.SlidingExpiration, "SlidingExpiration");
 #if NET_2_0
-			Assert.AreEqual (String.Empty, FormsAuthentication.CookieDomain, "CookieDomain");
+			Assert.IsNull (FormsAuthentication.CookieDomain, "CookieDomain");
 			Assert.AreEqual (HttpCookieMode.UseDeviceProfile, FormsAuthentication.CookieMode, "CookieMode");
 			Assert.IsTrue (FormsAuthentication.CookiesSupported, "CookiesSupported");
 			Assert.AreEqual ("/default.aspx", FormsAuthentication.DefaultUrl);
