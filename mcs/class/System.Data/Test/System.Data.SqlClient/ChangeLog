@@ -1,3 +1,8 @@
+2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SqlClientPermissionAttributeTest.cs: Removed *Choice security 
+	actions.
+
 2005-09-22  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlConnectionTest.cs (OtherConnectionStringKeywords): marked
