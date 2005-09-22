@@ -640,6 +640,10 @@ namespace System.Data {
 			if (HasVersion (DataRowVersion.Proposed)) {
 				Table.RecordCache.DisposeRecord(Proposed);
 				Proposed = -1;
+
+				int newVersion = (HasVersion (DataRowVersion.Current)) ? Current : Original;					
+				foreach(Index index in Table.Indexes)
+					index.Update(this,newVersion);					
 			}
 		}
 
@@ -1299,7 +1303,13 @@ namespace System.Data {
 				}
 				CheckChildRows(DataRowAction.Rollback);
 
-				Current = Original;
+				if (Current != Original) {
+					foreach(Index index in Table.Indexes) {
+						index.Delete (this);
+						index.Update(this,Original);
+					}
+					Current = Original;
+				}
 			       
 				_table.ChangedDataRow (this, DataRowAction.Rollback);
 				CancelEdit ();

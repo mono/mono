@@ -1487,9 +1487,7 @@ namespace System.Data {
 				filter = parser.Compile (filterExpression);
 			}
 
-			Index index = FindIndex(columns, sorts, recordStates, filter);
-			if (index == null)
-				index = new Index(new Key(this,columns,sorts,recordStates,filter));
+			Index index = GetIndex(columns, sorts, recordStates, filter, false);
 
 			int[] records = index.GetAll();
 			DataRow[] dataRows = NewRowArray(index.Size);
@@ -1569,6 +1567,13 @@ namespace System.Data {
 						break;
 					}
 				}
+
+				if (!containsStringcolumns && index.Key.HasFilter)
+					foreach (DataColumn column in Columns)
+						if ((column.DataType == DbTypes.TypeOfString) && (index.Key.DependsOn (column))) {
+						containsStringcolumns = true;
+						break;
+					}
 
 				if (containsStringcolumns) {
 					index.Reset();

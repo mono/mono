@@ -114,6 +114,11 @@ namespace System.Data.Common
 			}
 		}
 
+		internal bool HasFilter
+		{
+			get { return _filter != null; }
+		}
+
 		#endregion // Properties
 
 		#region Methods
@@ -146,8 +151,16 @@ namespace System.Data.Common
 			if (index < 0)
 				return index;
 
+			return CanContain (index) ? index : -1;
+		}
+
+		internal bool CanContain (int index)
+		{
+			if (_filter == null)
+				return true;
+
 			_tmpRow._current = index;
-			return _filter.EvalBoolean(_tmpRow) ? index : -1;
+			return _filter.EvalBoolean(_tmpRow);
 		}
 
 		internal static int GetRecord(DataRow row, DataViewRowState rowStateFilter)
@@ -193,8 +206,12 @@ namespace System.Data.Common
 				return false;
 			}
 
-			if (_filter != filter)
-				return false;
+			if (_filter != null) {
+				if (!_filter.Equals (filter))
+					return false;
+			}
+			else if (filter != null)
+					return false;
 
 			if (Columns.Length != columns.Length) {
 				return false;
@@ -219,6 +236,14 @@ namespace System.Data.Common
 				}
 			}
 			return true;
+		}
+
+		internal bool DependsOn (DataColumn column)
+		{
+			if (_filter == null)
+				return false;
+
+			return _filter.DependsOn (column);
 		}
 
 		#endregion // Methods

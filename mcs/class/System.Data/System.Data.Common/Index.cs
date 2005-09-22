@@ -57,6 +57,7 @@ namespace System.Data.Common
 		{
 			_key = key;
 			Reset();
+			RebuildIndex ();
 		}
 
 		#endregion // Constructors
@@ -355,6 +356,9 @@ namespace System.Data.Common
 
 		internal void Delete(int oldRecord)
 		{
+			if (oldRecord == -1)
+				return;
+
 			int index = FindIndex(oldRecord);
 			if (index != -1) {
 				if ((_hasDuplicates == IndexDuplicatesState.True)) {
@@ -476,6 +480,10 @@ namespace System.Data.Common
 		private void Add(DataRow row,int newRecord)
 		{
 			int newIdx;
+
+			if (!Key.CanContain (newRecord))
+				return;
+
 			if (Size == 0) {
 				newIdx = 0;
 			}

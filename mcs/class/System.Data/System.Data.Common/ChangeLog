@@ -1,3 +1,12 @@
+2005-09-21 Boris Kirzner <borisk@mainsoft.com>
+	* Index.cs: 
+		- Rebuild index immediately after construction.
+		- Do not add records if they do not padd key filtration.
+		- Do not attempt to remove records if the are not in the index.
+	* Key.cs:
+		- Added HasFilter property, CanContain and DependsOn methods.
+		- Equals() uses filter expression comparison.		
+
 2005-09-07 Boris Kirzner <borisk@mainsoft.com>
 	* DataContainer.cs: Do not convert value if container type 
 	is System.Object.

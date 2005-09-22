@@ -48,6 +48,43 @@ namespace System.Data
 
 		#endregion // Methods
 
+		public override bool Equals(object obj)
+		{
+			if (!(obj is RelatedDataView)) {
+				if (base.FilterExpression == null)
+					return false;
+				return base.FilterExpression.Equals (obj);
+			}
+
+			RelatedDataView other = (RelatedDataView) obj;
+			if (_columns.Length != other._columns.Length)
+				return false;
+            
+			for (int i = 0; i < _columns.Length; i++)
+				if (!_columns[i].Equals(other._columns [i]) ||
+                    !_keyValues[i].Equals(other._keyValues [i]))
+					return false;
+			
+			if (!other.FilterExpression.Equals (base.FilterExpression))
+				return false;
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = 0;
+			for (int i = 0; i < _columns.Length; i++) {
+				hashCode ^= _columns [i].GetHashCode ();
+				hashCode ^= _keyValues [i].GetHashCode ();
+			}
+
+			if (base.FilterExpression != null)
+				hashCode ^= base.FilterExpression.GetHashCode ();
+
+			return hashCode;
+		}
+
 		#region IExpression Members
 
 		public object Eval(DataRow row) {
