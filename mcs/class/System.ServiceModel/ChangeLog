@@ -1,0 +1,5 @@
+2005-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile,
+	  System.Runtime.Serialization.dll.sources : new files.
+
