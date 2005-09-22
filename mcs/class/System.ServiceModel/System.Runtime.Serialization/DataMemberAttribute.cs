@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 
 namespace System.Runtime.Serialization
@@ -6,7 +7,7 @@ namespace System.Runtime.Serialization
 		Inherited = false, AllowMultiple = false)]
 	public sealed class DataMemberAttribute : Attribute
 	{
-		bool isRequired;
+		bool is_required;
 		string name;
 		int order;
 
@@ -15,8 +16,8 @@ namespace System.Runtime.Serialization
 		}
 
 		public bool IsRequired {
-			get { return isRequired; }
-			set { isRequired = value; }
+			get { return is_required; }
+			set { is_required = value; }
 		}
 
 		public string Name {
@@ -30,3 +31,4 @@ namespace System.Runtime.Serialization
 		}
 	}
 }
+#endif

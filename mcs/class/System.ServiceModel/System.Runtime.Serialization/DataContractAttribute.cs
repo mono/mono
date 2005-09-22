@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 
 namespace System.Runtime.Serialization
@@ -23,3 +24,4 @@ namespace System.Runtime.Serialization
 		}
 	}
 }
+#endif

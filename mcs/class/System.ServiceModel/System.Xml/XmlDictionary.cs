@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace System.Xml
 			get { return empty; }
 		}
 
-		readonly bool isReadOnly;
+		readonly bool is_readonly;
 		Dictionary<string, XmlDictionaryString> dict;
 
 		public XmlDictionary ()
@@ -29,12 +30,12 @@ namespace System.Xml
 		private XmlDictionary (bool isReadOnly)
 			: this ()
 		{
-			this.isReadOnly = isReadOnly;
+			is_readonly = isReadOnly;
 		}
 
 		public virtual XmlDictionaryString Add (string value)
 		{
-			if (isReadOnly)
+			if (is_readonly)
 				throw new InvalidOperationException ();
 			throw new NotImplementedException ();
 		}
@@ -56,3 +57,4 @@ namespace System.Xml
 		}
 	}
 }
+#endif

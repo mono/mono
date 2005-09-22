@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,3 +33,4 @@ namespace System.Runtime.Serialization
 		}
 	}
 }
+#endif

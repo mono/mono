@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.Collections.ObjectModel;
 
@@ -13,3 +14,4 @@ namespace System.Runtime.Serialization
 		}
 	}
 }
+#endif

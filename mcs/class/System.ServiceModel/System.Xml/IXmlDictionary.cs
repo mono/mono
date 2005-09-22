@@ -1,3 +1,4 @@
+#if NET_2_0
 namespace System.Xml
 {
 	public interface IXmlDictionary
@@ -8,3 +9,4 @@ namespace System.Xml
 			out XmlDictionaryString result);
 	}
 }
+#endif

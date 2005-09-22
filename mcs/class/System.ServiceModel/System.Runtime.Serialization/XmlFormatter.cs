@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.IO;
 using System.Xml;
@@ -8,9 +9,9 @@ namespace System.Runtime.Serialization
 	{
 		StreamingContext context;
 		SerializationMode mode;
-		KnownTypeCollection knownTypes;
+		KnownTypeCollection known_types;
 		IDataContractSurrogate surrogate;
-		int maxItems;
+		int max_items;
 
 		public XmlFormatter ()
 		{
@@ -55,12 +56,12 @@ namespace System.Runtime.Serialization
 		}
 
 		public KnownTypeCollection KnownTypes {
-			get { return knownTypes; }
+			get { return known_types; }
 		}
 
 		public int MaxItemsInObjectGraph {
-			get { return maxItems; }
-			set { maxItems= value; }
+			get { return max_items; }
+			set { max_items= value; }
 		}
 
 		public SerializationMode Mode {
@@ -121,3 +122,4 @@ namespace System.Runtime.Serialization
 		}
 	}
 }
+#endif

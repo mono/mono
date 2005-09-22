@@ -1,3 +1,4 @@
+#if NET_2_0
 namespace System.Xml
 {
 	public class XmlBinaryReaderSession : IXmlDictionary
@@ -38,3 +39,4 @@ namespace System.Xml
 		}
 	}
 }
+#endif

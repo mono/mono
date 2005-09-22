@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.CodeDom;
 using System.Reflection;
@@ -29,3 +30,4 @@ namespace System.Runtime.Serialization
 
 	}
 }
+#endif

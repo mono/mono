@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.Xml;
 
@@ -109,3 +110,4 @@ namespace System.Xml
 		}
 	}
 }
+#endif

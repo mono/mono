@@ -1,8 +1,9 @@
+#if NET_2_0
 namespace System.Xml
 {
 	public class XmlBinaryWriterSession
 	{
-		bool emitStrings;
+		bool emit_strings;
 
 		public XmlBinaryWriterSession ()
 		{
@@ -10,11 +11,11 @@ namespace System.Xml
 
 		public XmlBinaryWriterSession (bool emitStrings)
 		{
-			this.emitStrings = emitStrings;
+			emit_strings = emitStrings;
 		}
 
 		public bool EmitStrings {
-			get { return emitStrings; }
+			get { return emit_strings; }
 		}
 
 		[MonoTODO]
@@ -31,3 +32,4 @@ namespace System.Xml
 		}
 	}
 }
+#endif

@@ -1,3 +1,4 @@
+#if NET_2_0
 namespace System.Xml
 {
 	public class XmlDictionaryReaderQuotas
@@ -60,3 +61,4 @@ namespace System.Xml
 		}
 	}
 }
+#endif

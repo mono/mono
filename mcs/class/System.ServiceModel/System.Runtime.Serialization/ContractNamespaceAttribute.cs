@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 
 namespace System.Runtime.Serialization
@@ -6,20 +7,21 @@ namespace System.Runtime.Serialization
 		Inherited = false, AllowMultiple = true)]
 	public sealed class ContractNamespaceAttribute : Attribute
 	{
-		string clrNS, contractNS;
+		string clr_ns, contract_ns;
 
 		public ContractNamespaceAttribute ()
 		{
 		}
 
 		public string ClrNamespace {
-			get { return clrNS; }
-			set { clrNS = value; }
+			get { return clr_ns; }
+			set { clr_ns = value; }
 		}
 
 		public string ContractNamespace {
-			get { return contractNS; }
-			set { contractNS = value; }
+			get { return contract_ns; }
+			set { contract_ns = value; }
 		}
 	}
 }
+#endif

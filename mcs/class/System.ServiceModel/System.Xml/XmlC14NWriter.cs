@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.IO;
 
@@ -6,7 +7,7 @@ namespace System.Xml
 	[MonoTODO]
 	public class XmlC14NWriter : XmlCanonicalWriter
 	{
-		bool includeComments;
+		bool include_comments;
 
 		public XmlC14NWriter (Stream stream)
 		{
@@ -14,7 +15,7 @@ namespace System.Xml
 		}
 
 		public bool IncludeComments {
-			get { return includeComments; }
+			get { return include_comments; }
 			set {
 				throw new NotImplementedException ();
 			}
@@ -142,3 +143,4 @@ namespace System.Xml
 		}
 	}
 }
+#endif

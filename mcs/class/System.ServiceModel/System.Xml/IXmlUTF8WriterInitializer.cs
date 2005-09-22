@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.IO;
 
@@ -8,3 +9,4 @@ namespace System.Xml
 		void SetOutput (Stream stream, bool ownsStream);
 	}
 }
+#endif

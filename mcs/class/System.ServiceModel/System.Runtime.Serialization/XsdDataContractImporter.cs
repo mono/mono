@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
@@ -90,3 +91,4 @@ namespace System.Runtime.Serialization
 		}
 	}
 }
+#endif

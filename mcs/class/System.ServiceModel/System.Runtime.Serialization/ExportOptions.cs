@@ -1,9 +1,10 @@
+#if NET_2_0
 namespace System.Runtime.Serialization
 {
 	public class ExportOptions
 	{
 		IDataContractSurrogate surrogate;
-		KnownTypeCollection knownTypes;
+		KnownTypeCollection known_types;
 
 		public ExportOptions ()
 		{
@@ -15,7 +16,8 @@ namespace System.Runtime.Serialization
 		}
 
 		public KnownTypeCollection KnownTypes {
-			get { return knownTypes; }
+			get { return known_types; }
 		}
 	}
 }
+#endif

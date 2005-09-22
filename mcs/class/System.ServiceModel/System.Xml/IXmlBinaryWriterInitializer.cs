@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 using System.IO;
 
@@ -11,3 +12,4 @@ namespace System.Xml
 			bool ownsStream);
 	}
 }
+#endif

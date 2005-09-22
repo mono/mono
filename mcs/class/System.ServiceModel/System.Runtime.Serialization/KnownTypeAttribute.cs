@@ -1,3 +1,4 @@
+#if NET_2_0
 using System;
 
 namespace System.Runtime.Serialization
@@ -6,19 +7,21 @@ namespace System.Runtime.Serialization
 		Inherited = false, AllowMultiple = true)]
 	public sealed class KnownTypeAttribute : Attribute
 	{
-		string methodName;
+		string method_name;
 		Type type;
 
 		public KnownTypeAttribute (string methodName)
 		{
+			method_name = methodName;
 		}
 
 		public KnownTypeAttribute (Type type)
 		{
+			this.type = type;
 		}
 
 		public string MethodName {
-			get { return methodName; }
+			get { return method_name; }
 		}
 
 		public Type Type {
@@ -26,3 +29,4 @@ namespace System.Runtime.Serialization
 		}
 	}
 }
+#endif
