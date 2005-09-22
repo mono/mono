@@ -1,3 +1,7 @@
+2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PrintingPermissionAttributeTest.cs: Removed *Choice security actions
+
 2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PrintingPermissionTest.cs: Before 2.0 some test cases throws 
