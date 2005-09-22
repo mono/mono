@@ -49,13 +49,5 @@ namespace System.Security.Permissions {
 		RequestMinimum = 8,
 		RequestOptional = 9,
 		RequestRefuse = 10,
-#if NET_2_0 || BOOTSTRAP_NET_2_0
-		[Obsolete ("to be removed before 2.0 RTM")]
-		LinkDemandChoice = 16,
-		[Obsolete ("to be removed before 2.0 RTM")]
-		InheritanceDemandChoice = 17,
-		[Obsolete ("to be removed before 2.0 RTM")]
-		DemandChoice = 18
-#endif
 	}
 }

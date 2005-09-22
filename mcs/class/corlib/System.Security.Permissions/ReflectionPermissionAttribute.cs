@@ -87,6 +87,9 @@ namespace System.Security.Permissions {
 			}
 		}  
 
+#if NET_2_0
+		[Obsolete ("not enforced in 2.0+")]
+#endif
 		public bool TypeInformation
 		{
 			get { return typeInfo; }

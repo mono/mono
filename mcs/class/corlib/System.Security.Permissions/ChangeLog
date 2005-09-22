@@ -1,3 +1,8 @@
+2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ReflectionPermissionAttribute.cs: TypeInformation is obsolete.
+	* SecurityAction.cs: *Choice security actions are removed in 2.0 RC.
+
 2005-06-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileIOPermission.cs, IsolatedStorageFilePermission.cs, 
