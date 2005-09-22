@@ -1,3 +1,8 @@
+2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DirectoryServicesPermissionAttributeTest.cs: Removed *Choice 
+	security actions.
+
 2005-06-19 Boris Kirzner <borisk@mainsoft.coim>
 	* DirectoryServicesSearchResultTest.cs: since MS works only with "LDAP" 
 	while RFC2255 states "ldap", use lowercase comparing on ldap urls.
