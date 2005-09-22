@@ -1,0 +1,19 @@
+2005-09-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommittableTransaction.cs, Delegates.cs, DependentCloneOption.cs,
+	  DependentTransaction.cs, Enlistment.cs, EnlistmentOptions.cs,
+	  EnterpriseServicesInteropOption.cs, IDtcTransaction.cs,
+	  IEnlistmentNotification.cs, IPromotableSinglePhaseNotification.cs,
+	  ISimpleTransactionSuperior.cs, ISinglePhaseNotification.cs,
+	  ITransactionPromoter.cs, IsolationLevel.cs, PreparingEnlistment.cs,
+	  SinglePhaseEnlistment.cs, SubordinateTransaction.cs,
+	  Transaction.cs, TransactionAbortedException.cs,
+	  TransactionEventArgs.cs, TransactionException.cs,
+	  TransactionInDoubtException.cs, TransactionInformation.cs,
+	  TransactionInterop.cs, TransactionManager.cs,
+	  TransactionManagerCommunicationException.cs,
+	  TransactionOptions.cs, TransactionPromotionException.cs,
+	  TransactionScope.cs, TransactionScopeOption.cs,
+	  TransactionStatus.cs :
+	  new files (almost all files are stub).
+
