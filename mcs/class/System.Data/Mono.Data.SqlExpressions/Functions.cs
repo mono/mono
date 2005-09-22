@@ -42,6 +42,32 @@ namespace Mono.Data.SqlExpressions {
 			this.trueExpr = trueExpr;
 			this.falseExpr = falseExpr;
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is IifFunction))
+				return false;
+
+			IifFunction other = (IifFunction) obj;
+			if (!other.falseExpr.Equals (falseExpr))
+				return false;
+
+			if (!other.trueExpr.Equals (trueExpr))
+				return false;		
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = base.GetHashCode ();
+			hashCode ^= falseExpr.GetHashCode ();
+			hashCode ^= trueExpr.GetHashCode ();
+			return hashCode;
+		}
 		
 		override public object Eval (DataRow row)
 		{
@@ -58,6 +84,26 @@ namespace Mono.Data.SqlExpressions {
 		public IsNullFunction (IExpression e, IExpression defaultExpr) : base (e)
 		{
 			this.defaultExpr = defaultExpr;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is UnaryExpression))
+				return false;
+
+			IsNullFunction other = (IsNullFunction) obj;
+			if (!other.defaultExpr.Equals (defaultExpr))
+				return false;		
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return defaultExpr.GetHashCode () ^ base.GetHashCode ();
 		}
 		
 		override public object Eval (DataRow row)
@@ -76,6 +122,26 @@ namespace Mono.Data.SqlExpressions {
 			} catch (TypeLoadException) {
 				throw new EvaluateException (String.Format ("Invalid type name '{0}'.", targetType));
 			}
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is ConvertFunction))
+				return false;
+
+			ConvertFunction other = (ConvertFunction) obj;
+			if (other.targetType != targetType)
+				return false;		
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return targetType.GetHashCode () ^ base.GetHashCode ();
 		}
 		
 		override public object Eval (DataRow row)

@@ -42,6 +42,42 @@ namespace Mono.Data.SqlExpressions {
 		{
 			this.set = set;
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is In))
+				return false;
+
+			In other = (In) obj;
+			if (other.set.Count != set.Count)
+				return false;	
+	
+			IEnumerator enumerator = set.GetEnumerator ();
+			IEnumerator oenumerator = other.set.GetEnumerator ();
+
+			do {
+				if (!oenumerator.Current.Equals (enumerator.Current))
+					return false;
+			}
+			while (enumerator.MoveNext () || oenumerator.MoveNext ());
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = base.GetHashCode ();
+			IEnumerator enumerator = set.GetEnumerator ();
+
+			do {
+				hashCode ^= enumerator.Current.GetHashCode ();
+			}
+			while (enumerator.MoveNext ());
+			return hashCode;
+		}
 	
 		override public object Eval (DataRow row)
 		{

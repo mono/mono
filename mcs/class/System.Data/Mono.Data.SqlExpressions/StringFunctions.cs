@@ -62,6 +62,32 @@ namespace Mono.Data.SqlExpressions {
 			this.start = start;
 			this.len = len;
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is SubstringFunction))
+				return false;
+
+			SubstringFunction other = (SubstringFunction) obj;
+			if (other.start != start)
+				return false;
+
+			if (other.len != len)
+				return false;		
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = base.GetHashCode ();
+			hashCode ^= start.GetHashCode ();
+			hashCode ^= len.GetHashCode ();
+			return hashCode;
+		}
 		
 		override public object Eval (DataRow row)
 		{

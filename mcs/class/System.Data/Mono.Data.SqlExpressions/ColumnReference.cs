@@ -54,6 +54,36 @@ namespace Mono.Data.SqlExpressions {
 			this.columnName = columnName;
 		}
 
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is ColumnReference))
+				return false;
+
+			ColumnReference other = (ColumnReference) obj;
+			if (other.refTable != refTable)
+				return false;
+
+			if (other.columnName != columnName)
+				return false;		
+
+			if (other.relationName != relationName)
+				return false;
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = base.GetHashCode ();
+			hashCode ^= refTable.GetHashCode ();
+			hashCode ^= columnName.GetHashCode ();
+			hashCode ^= relationName.GetHashCode ();
+			return hashCode;
+		}
+
 		public ReferencedTable ReferencedTable {
 			get { return refTable; }
 		}

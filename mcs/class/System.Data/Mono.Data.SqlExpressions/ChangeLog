@@ -1,3 +1,9 @@
+2005-09-19 Boris Kirzner <borisk@mainsoft.com>
+	* ColumnReference.cs, Expressions.cs, Like.cs, Aggregation.cs, Literal.cs,
+	StringFunctions.cs, In.cs, Functions.cs : implemented Equals() 
+	and GetHashCode() methods for all Mono.Data.SqlExpressions classes,enabling
+	comparison of the filter expressions.
+
 2005-08-02  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Tokenizer.cs: ReadString (): added an overload where the

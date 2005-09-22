@@ -55,6 +55,42 @@ namespace Mono.Data.SqlExpressions {
 			this.function = function;
 			this.result = null;
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is Aggregation))
+				return false;
+
+			Aggregation other = (Aggregation) obj;
+			if (!other.function.Equals( function))
+				return false;
+
+			if (!other.column.Equals (column))
+				return false;		
+
+			if (other.rows.Length != rows.Length)
+				return false;
+
+			for (int i=0; i < rows.Length; i++)
+				if (other.rows [i] != rows [i])
+					return false;
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = base.GetHashCode ();
+			hashCode ^= function.GetHashCode ();
+			hashCode ^= column.GetHashCode ();
+			for (int i=0; i < rows.Length; i++)
+				hashCode ^= rows [i].GetHashCode ();
+			
+			return hashCode;
+		}
 	
 		public override object Eval (DataRow row)
 		{

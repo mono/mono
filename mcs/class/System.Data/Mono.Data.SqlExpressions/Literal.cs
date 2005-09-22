@@ -41,6 +41,30 @@ namespace Mono.Data.SqlExpressions {
 		{
 			this.val = val;
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is Literal))
+				return false;
+
+			Literal other = (Literal) obj;
+			if (other.val != null) {
+				if (!other.val.Equals (val))
+					return false;
+			}
+			else if (val != null)
+				return false;
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return val.GetHashCode () ^ base.GetHashCode ();
+		}
 	
 		public override object Eval (DataRow row)
 		{

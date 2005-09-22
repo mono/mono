@@ -50,11 +50,44 @@ namespace Mono.Data.SqlExpressions {
 		{
 			return (bool) Eval (row);
 		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null || !(obj is BaseExpression))
+				return false;
+			
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return 0;
+		}
 	}
 
 	// abstract base classes
 	internal abstract class UnaryExpression : BaseExpression {
 		protected IExpression expr;
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is UnaryExpression))
+				return false;
+
+			UnaryExpression other = (UnaryExpression) obj;
+			if (!other.expr.Equals (expr))
+				return false;
+			
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode () ^ expr.GetHashCode ();
+		}
 	
 		public UnaryExpression (IExpression e)
 		{
@@ -68,6 +101,29 @@ namespace Mono.Data.SqlExpressions {
 	
 	internal abstract class BinaryExpression : BaseExpression {
 		protected IExpression expr1, expr2;
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is BinaryExpression))
+				return false;
+
+			BinaryExpression other = (BinaryExpression) obj;
+			if (!other.expr1.Equals (expr1) || !other.expr2.Equals (expr2))
+				return false;
+			
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			int hashCode = base.GetHashCode ();
+			hashCode ^= expr1.GetHashCode ();
+			hashCode ^= expr2.GetHashCode ();
+			return hashCode;
+		}
 	
 		protected BinaryExpression (IExpression e1, IExpression e2)
 		{
@@ -88,6 +144,26 @@ namespace Mono.Data.SqlExpressions {
 	
 	internal abstract class BinaryOpExpression : BinaryExpression {
 		protected Operation op;
+
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is BinaryOpExpression))
+				return false;
+
+			BinaryOpExpression other = (BinaryOpExpression) obj;
+			if (other.op != op)
+				return false;
+			
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return base.GetHashCode () ^ op.GetHashCode ();
+		}
 	
 		protected BinaryOpExpression (Operation op, IExpression e1, IExpression e2) : base (e1, e2)
 		{

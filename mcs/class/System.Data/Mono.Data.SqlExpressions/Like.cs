@@ -58,6 +58,26 @@ namespace Mono.Data.SqlExpressions {
 			this.pattern = pattern;
 		}
 
+		public override bool Equals(object obj)
+		{
+			if (!base.Equals (obj))
+				return false;
+
+			if (!(obj is Like))
+				return false;
+
+			Like other = (Like) obj;
+			if (other.pattern != pattern)
+				return false;
+
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return pattern.GetHashCode () ^ base.GetHashCode ();
+		}
+
 		override public object Eval (DataRow row)
 		{
 			object o = expr.Eval (row);
