@@ -1,3 +1,7 @@
+2005-09-23  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* UnitConverter.cs: Remove conversion from Unit (see unit tests).
+
 2005-09-22  Ben Maurer  <bmaurer@ximian.com>
 
 	* BulletedList.cs: Remove the cacheEnabled thing. I was thinking

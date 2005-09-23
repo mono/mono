@@ -29,12 +29,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Globalization;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class UnitConverter : TypeConverter {
 
 		public UnitConverter ()
@@ -43,7 +46,7 @@ namespace System.Web.UI.WebControls {
 
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			if (sourceType == typeof (string) || sourceType == typeof (Unit))
+			if (sourceType == typeof (string))
 				return true;
 
 			return base.CanConvertFrom (context, sourceType);
@@ -51,8 +54,6 @@ namespace System.Web.UI.WebControls {
 		
 		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			if (value is string && destinationType == typeof (Unit))
-				return new Unit ((string) value, culture);
 			if (value is Unit && destinationType == typeof (string))
 				return ((Unit) value).ToString (culture);
 
@@ -67,9 +68,6 @@ namespace System.Web.UI.WebControls {
 			Type t = value.GetType ();
 			if (t == typeof (string))
 				return new Unit ((string) value, culture);
-
-			if (t == typeof (Unit))
-				return value;
 
 			return base.ConvertFrom (context, culture, value);
 		}
