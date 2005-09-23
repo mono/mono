@@ -49,7 +49,7 @@ namespace System.Web.UI {
 
 #if NET_1_1
 		public LosFormatter (bool enableMac, string macKeyModifier)
-			: this (enableMac, Encoding.UTF8.GetBytes (macKeyModifier))
+			: this (enableMac, Convert.FromBase64String (macKeyModifier))
 		{
 		}
 #endif
@@ -70,14 +70,14 @@ namespace System.Web.UI {
 		{
 			int hash_size = algo.HashSize / 8;
 			if (size != 0 && size < hash_size)
-				throw new HttpException (400, "Unable to validate data.");
+				throw new HttpException ("Unable to validate data.");
 
 			int data_length = size - hash_size;
 			MemoryStream data_stream = new MemoryStream (data, offset, data_length, false, false);
 			byte [] hash = algo.ComputeHash (data_stream);
 			for (int i = 0; i < hash_size; i++) {
 				if (hash [i] != data [data_length + i])
-					throw new HttpException (400, "Unable to validate data.");
+					throw new HttpException ("Unable to validate data.");
 			}
 		}
 
@@ -87,10 +87,16 @@ namespace System.Web.UI {
 				return osf.Deserialize (stream);
 
 			byte [] bytes = new byte [stream.Length >= 0 ? stream.Length : 2048];
-			MemoryStream ms = new MemoryStream ();
-			int n;
-			while ((n = stream.Read (bytes, 0, bytes.Length)) > 0)
-				ms.Write (bytes, 0, n);
+			MemoryStream ms = null;
+			if ((stream is MemoryStream) && stream.Position == 0) {
+				// We save allocating a new stream and reading in this case.
+				ms = (MemoryStream) stream;
+			} else {
+				ms = new MemoryStream ();
+				int n;
+				while ((n = stream.Read (bytes, 0, bytes.Length)) > 0)
+					ms.Write (bytes, 0, n);
+			}
 
 			byte [] buffer = ms.GetBuffer ();
 			int length = (int) ms.Length;
@@ -133,8 +139,9 @@ namespace System.Web.UI {
 				return;
 			}
 
-			MemoryStream ms = new MemoryStream ();
+			MemoryStream ms = null;
 			if ((stream is MemoryStream) && stream.Position == 0) {
+				// We save allocating a new stream and reading in this case.
 				ms = (MemoryStream) stream;
 			} else {
 				ms = new MemoryStream ();
