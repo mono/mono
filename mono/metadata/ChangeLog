@@ -1,3 +1,9 @@
+
+Fri Sep 23 17:56:21 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, metadata.h, loader.h: documentation updates, code and
+	API cleanups.
+
 2005-09-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* rawbuffer.h rawbuffer.c: Add code and APIs to help determine the number of
