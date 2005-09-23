@@ -1,3 +1,7 @@
+2005-09-12  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mono-compiler.h (MONO_THREAD_VAR_OFFSET): Fix compilation on amd64
+	with recent binutils.
 
 Wed Sep 7 21:23:18 BST 2005 Paolo Molaro <lupus@ximian.com>
 
