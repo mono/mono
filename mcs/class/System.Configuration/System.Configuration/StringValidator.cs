@@ -65,13 +65,13 @@ namespace System.Configuration
 		{
 			string s = (string) value;
 			if (s.Length < minLength)
-				throw new ConfigurationErrorsException ("Invalid string length. The minimun length is " + minLength + ".");
+				throw new ArgumentException ("The string must be at least " + minLength + " characters long.");
 			if (s.Length > maxLength)
-				throw new ConfigurationErrorsException ("Invalid string length. The maximim length is " + maxLength + ".");
+				throw new ArgumentException ("The string must be no more than " + maxLength + " characters long.");
 			if (invalidCharacters != null) {
 				int i = s.IndexOfAny (invalidCharacters);
 				if (i != -1)
-					throw new ConfigurationErrorsException ("The character '" + s[i] + "' is not allowed in this attribute.");
+					throw new ArgumentException (String.Format ("The string cannot contain any of the following characters: '{0}'.", invalidCharacters));
 			}
 		}
 	}

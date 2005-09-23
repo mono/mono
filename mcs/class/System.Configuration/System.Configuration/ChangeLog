@@ -1,5 +1,10 @@
 2005-09-23  Chris Toshok  <toshok@ximian.com>
 
+	* StringValidator.cs: throw ArgumentException instead of
+	ConfigurationErrorsException.
+
+2005-09-23  Chris Toshok  <toshok@ximian.com>
+
 	* ConnectionStringsSection.cs: track change to
 	ConfigurationPropertyOptions.
 
