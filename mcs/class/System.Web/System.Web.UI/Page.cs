@@ -37,12 +37,14 @@ using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.IO;
+using System.Security.Cryptography;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Configuration;
 using System.Web.SessionState;
 using System.Web.Util;
 using System.Web.UI.HtmlControls;
@@ -97,6 +99,7 @@ public class Page : TemplateControl, IHttpHandler
 	protected const string postEventArgumentID = "__EVENTARGUMENT";
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventSourceID = "__EVENTTARGET";
+	const int HASH_SIZE = 16;
 
 #if NET_2_0
 	internal const string CallbackArgumentID = "__CALLBACKARGUMENT";
@@ -765,10 +768,19 @@ public class Page : TemplateControl, IHttpHandler
 	{
 		if (_savedViewState == null)
 			return null;
-		StringWriter sr = new StringWriter ();
+
 		LosFormatter fmt = new LosFormatter ();
-		fmt.Serialize (sr, _savedViewState);
-		return sr.GetStringBuilder ().ToString ();
+		PagesConfiguration config = PagesConfiguration.GetInstance (_context);
+		if (false == config.EnableViewStateMac) {
+			StringWriter sr = new StringWriter ();
+			fmt.Serialize (sr, _savedViewState);
+			return sr.GetStringBuilder ().ToString ();
+		}
+
+		ViewStateOutputHashStream stream;
+		stream = new ViewStateOutputHashStream (new MemoryStream (HASH_SIZE), GetTypeHashCode ());
+		fmt.Serialize (stream, _savedViewState);
+		return stream.GetBase64String ();
 	}
 
 	internal object GetSavedViewState ()
@@ -1139,12 +1151,43 @@ public class Page : TemplateControl, IHttpHandler
 			return null;
 
 		_savedViewState = null;
-		LosFormatter fmt = new LosFormatter ();
+		if (view_state == "")
+			return null;
 
-		try { 
-			_savedViewState = fmt.Deserialize (view_state);
-		} catch (Exception e) {
-			throw new HttpException ("Error restoring page viewstate.\n", e);
+		LosFormatter fmt = new LosFormatter ();
+		PagesConfiguration config = PagesConfiguration.GetInstance (_context);
+		if (false == config.EnableViewStateMac) {
+			try {
+				_savedViewState = fmt.Deserialize (view_state);
+			} catch (Exception e) {
+				throw new HttpException ("Error restoring page viewstate.", e);
+			}
+		} else {
+			byte [] bytes = Convert.FromBase64String (view_state);
+			int length = bytes.Length;
+			if (length < HASH_SIZE)
+				throw new HttpException ("Error restoring page viewstate.");
+
+			int data_end = length - HASH_SIZE;
+			MemoryStream input = new MemoryStream ();
+			input.Write (BitConverter.GetBytes (GetTypeHashCode ()), 0, 4);
+			input.Write (bytes, 0, data_end);
+			input.Position = 0;
+			CryptoStream cs = new CryptoStream (input, SHA1.Create (), CryptoStreamMode.Read);
+			byte [] computed_hash = new byte [HASH_SIZE];
+			cs.Read (computed_hash, 0, HASH_SIZE);
+			for (int i = 0; i < HASH_SIZE; i++) {
+				if (computed_hash [i] != bytes [data_end + i])
+					throw new HttpException ("Error restoring page viewstate.");
+			}
+
+
+			try {
+				input = new MemoryStream (bytes, 0, data_end, false, false);
+				_savedViewState = fmt.Deserialize (input);
+			} catch (Exception e) {
+				throw new HttpException ("Error restoring page viewstate.", e);
+			}
 		}
 
 		return _savedViewState;

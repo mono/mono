@@ -1,3 +1,11 @@
+2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs:
+	* ViewStateOutputHashStream.cs: added support for viewstate MAC. It
+	prevents the viewstate being altered on the client and it's disabled
+	by default as per the documentation, but MS machine.config has it
+	enabled in machine.config.
+
 2005-09-22  Miguel de Icaza  <miguel@novell.com>
 
 	* DataBindingCollection.cs: Raise the event, remove MonoTODO.
