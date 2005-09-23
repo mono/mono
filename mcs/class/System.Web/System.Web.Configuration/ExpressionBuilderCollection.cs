@@ -41,7 +41,7 @@ namespace System.Web.Configuration
 		static ExpressionBuilderCollection ()
 		{
 			props = new ConfigurationPropertyCollection ();
-			ConfigurationPropertyOptions flags = ConfigurationPropertyOptions.DefaultCollection;
+			ConfigurationPropertyOptions flags = ConfigurationPropertyOptions.IsDefaultCollection;
 			ConfigurationProperty prop = new ConfigurationProperty (null, typeof (ExpressionBuilderCollection), null, flags);
 			props.Add (prop);
 		}

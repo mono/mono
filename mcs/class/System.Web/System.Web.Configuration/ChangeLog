@@ -1,3 +1,8 @@
+2005-09-23  Chris Toshok  <toshok@ximian.com>
+
+	* ExpressionBuilderCollection.cs: track change to
+	System.Configuration.ConfigurationPropertyOptions.
+
 2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PagesConfiguration.cs: on error return a default instance instead
