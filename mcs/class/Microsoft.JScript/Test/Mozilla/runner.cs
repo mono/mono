@@ -69,20 +69,20 @@ namespace JSTestRunner {
 			config.full_run = false;
 			config.test_dir = env ["MJS_TEST_DIR"] as string;
 			if (config.test_dir == null)
-				config.test_dir = config.is_win32 ? "D:/cygwin/opt/mono/bin" : "/tmp";
+				config.test_dir = config.is_win32 ? env ["TEMP"] as string : "/tmp";
 
 			config.compile_cmd = env ["MJS_COMPILE_CMD"] as string;
 			if (config.compile_cmd == null)
-				config.compile_cmd = config.is_win32 ? "mono.exe" : "mjs";
+				config.compile_cmd = config.is_win32 ? "bash" : "mjs";
 
 			string compile_str = env ["MJS_COMPILE_ARGS"] as string;
 			if (compile_str == null)
-				compile_str = config.is_win32 ? "mjs.exe {0}" : "{0}";
+				compile_str = config.is_win32 ? "mjs {0}" : "{0}";
 			config.compile_args = String.Format (compile_str, "jstest.js");
 
 			config.run_cmd = env ["MJS_RUN_CMD"] as string;
 			if (config.run_cmd == null)
-				config.run_cmd = config.is_win32 ? "mono.exe" : "mono";
+				config.run_cmd = "mono";
 
 			string run_str = env ["MJS_RUN_ARGS"] as string;
 			if (run_str == null)
@@ -186,6 +186,9 @@ namespace JSTestRunner {
 			{
 				Console.WriteLine ();
 				Console.WriteLine ("Running {0}...", test);
+
+				Console.WriteLine (config.compile_cmd);
+				Console.WriteLine (config.compile_args);
 
 				ProcessStartInfo compiler_info = new ProcessStartInfo (config.compile_cmd, config.compile_args);
 				compiler_info.CreateNoWindow = true;

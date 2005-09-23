@@ -1,3 +1,7 @@
+2005-09-24  Florian Gross  <flgr@ccan.de>
+
+	* Changed Win32 options in runner.cs to match the reality again
+
 2005-09-08  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* mjs-most.tests: enable more tests.
