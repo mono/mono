@@ -204,6 +204,15 @@ Finally, namespaces can be specified using the N: prefix:
 The maintainer options are only used by those developing the runtime
 itself, and not typically of interest to runtime users or developers.
 .TP
+.I "--break method"
+Inserts a breakpoint before the method whose name is `method'
+(namespace.class:methodname).  Use `Main' as method name to insert a
+breakpoint on the application's main method.
+.TP
+.I "--breakonex"
+Inserts a breakpoint on exceptions.  This allows you to debug your
+application with a native debugger when an exception is thrown.
+.TP
 .I "--compile name"
 This compiles a method (namespace.name:methodname), this is used for
 testing the compiler performance or to examine the output of the code
@@ -235,20 +244,15 @@ on.
 Instruct the runtime on the number of times that the method specified
 by --compile (or all the methods if --compileall is used) to be
 compiled.  This is used for testing the code generator performance. 
+.TP 
+.I "--stats"
+Displays information about the work done by the runtime during the
+execution of an application. 
 .TP
 .I "-v", "--verbose"
 Increases the verbosity level, each time it is listed, increases the
 verbosity level to include more information (including, for example, 
 a disassembly of the native code produced, code selector info etc.).
-.TP
-.I "--break method"
-Inserts a breakpoint before the method whose name is `method'
-(namespace.class:methodname).  Use `Main' as method name to insert a
-breakpoint on the application's main method.
-.TP
-.I "--breakonex"
-Inserts a breakpoint on exceptions.  This allows you to debug your
-application with a native debugger when an exception is thrown.
 .SH PROFILING
 The mono runtime includes a profiler that can be used to explore
 various performance related problems in your application.  The
@@ -491,6 +495,19 @@ Currently, the following options are supported:
 .RS
 .ne 8
 .TP
+.I "abort-on-sigsegv"
+This option will make the runtime abort when it receives a SIGSEGV signal
+while executing unmanaged (native) code. This is useful for debugging
+problems when interfacing with native code.
+.TP "collect-pagefault-stats"
+Collects information about pagefaults.   This is used internally to
+track the number of page faults produced to load metadata.  To display
+this information you must use this option with "--stats" command line option.
+.TP "handle-sigint"
+Captures the interrupt signal (Control-C) and displays a stack trace
+when pressed.  Useful to find out where the program is executing at a
+given point.  This only displays the stack trace of a single thread. 
+.TP
 .I "keep-delegates"
 This option will leak delegate trampolines that are no longer
 referenced as to present the user with more information about a
@@ -498,11 +515,6 @@ delegate missuse.  Basically a delegate instance might be created,
 passed to unmanaged code, and no references kept in managed code,
 which will garbage collect the code.  With this option it is possible
 to track down the source of the problems. 
-.TP
-.I "abort-on-sigsegv"
-This option will make the runtime abort when it receives a SIGSEGV signal
-while executing unmanaged (native) code. This is useful for debugging
-problems when interfacing with native code.
 .ne
 .RE
 .TP
@@ -621,7 +633,11 @@ See the System.Diagnostics.DefaultTraceListener documentation for more
 information.
 .TP
 .I "MONO_DISABLE_MANAGED_COLLATION"
-If this environment variable is `yes', the runtime uses unmanaged collation (which actually means no culture-sensitive collation). It internally disables managed collation functionality invoked via the members of System.Globalization.CompareInfo class. Collation is enabled by default.
+If this environment variable is `yes', the runtime uses unmanaged
+collation (which actually means no culture-sensitive collation). It
+internally disables managed collation functionality invoked via the
+members of System.Globalization.CompareInfo class. Collation is
+enabled by default.
 .TP
 .I "MONO_XMLSERIALIZER_THS"
 Controls the threshold for the XmlSerializer to produce a custom
