@@ -1,3 +1,7 @@
+2005-09-23  Ritvik Mayank  <mritvik@novell.com>
+
+	* ErrorProviderTest.cs : Added test case for ErrorProvider
+
 2005-09-23 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
         * LabelTest.cs : Added messages to simulate Key* events.
