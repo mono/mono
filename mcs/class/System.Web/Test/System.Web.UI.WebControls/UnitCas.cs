@@ -1,6 +1,5 @@
 //
-// FontUnitCas.cs 
-//	- CAS unit tests for System.Web.UI.WebControls.FontUnit
+// UnitCas.cs - CAS unit tests for System.Web.UI.WebControls.Unit
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -42,21 +41,21 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 	[TestFixture]
 	[Category ("CAS")]
 #if NET_2_0
-	public class FontUnitCas : AspNetHostingNone {
+	public class UnitCas : AspNetHostingNone {
 #else
-	public class FontUnitCas: AspNetHostingMinimal {
+	public class UnitCas: AspNetHostingMinimal {
 #endif
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			FontUnitTest unit = new FontUnitTest ();
-			unit.FontUnitConstructors ();
-			unit.FontUnitConstructors_Pixel ();
-			unit.FontUnitConstructors_Point ();
+			UnitTest unit = new UnitTest ();
+			unit.UnitConstructors ();
+			unit.ParseCultures ();
 			unit.UnitEquality ();
+			unit.UnitImplicit ();
 #if NET_2_0
-			unit.FontUnit_IFormatProviderToString ();
+			unit.Unit_IFormatProviderToString ();
 #endif
 		}
 
@@ -66,11 +65,11 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 		{
 			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (int) });
 			Assert.IsNotNull (ci, ".ctor(int)");
-			return ci.Invoke (new object[1] { 1 });
+			return ci.Invoke (new object[1] { 0 });
 		}
 
 		public override Type Type {
-			get { return typeof (FontUnit); }
+			get { return typeof (Unit); }
 		}
 	}
 }

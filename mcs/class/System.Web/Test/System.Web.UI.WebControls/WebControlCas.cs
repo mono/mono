@@ -1,6 +1,6 @@
 //
-// FontUnitCas.cs 
-//	- CAS unit tests for System.Web.UI.WebControls.FontUnit
+// WebControlCas.cs 
+//	- CAS unit tests for System.Web.UI.WebControls.WebControl
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -33,6 +33,7 @@ using System;
 using System.Reflection;
 using System.Security.Permissions;
 using System.Web;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 
 using MonoTests.System.Web.UI.WebControls;
@@ -41,36 +42,41 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if NET_2_0
-	public class FontUnitCas : AspNetHostingNone {
-#else
-	public class FontUnitCas: AspNetHostingMinimal {
-#endif
+	public class WebControlCas: AspNetHostingMinimal {
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			FontUnitTest unit = new FontUnitTest ();
-			unit.FontUnitConstructors ();
-			unit.FontUnitConstructors_Pixel ();
-			unit.FontUnitConstructors_Point ();
-			unit.UnitEquality ();
-#if NET_2_0
-			unit.FontUnit_IFormatProviderToString ();
-#endif
+			WebControlTest unit = new WebControlTest ();
+			unit.Constructors ();
+			unit.StyleCreation ();
+			unit.Defaults ();
+			unit.Assignment ();
+			unit.Methods ();
+			unit.CopyEnabled ();
+			unit.RenderClientId ();
+			unit.ViewState ();
+			unit.RenderBeginTag_TagOnly ();
+			unit.RenderBeginTag_Attributes ();
+			unit.RenderBeginTag_Style ();
+			unit.EmptyStringTag ();
+			unit.NullStringTag ();
+			unit.UnknownTag ();
+			unit.EnabledViewState ();
 		}
 
-		// LinkDemand
+		// LinkDemand 
 
 		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
 		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (int) });
-			Assert.IsNotNull (ci, ".ctor(int)");
-			return ci.Invoke (new object[1] { 1 });
+			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (HtmlTextWriterTag) });
+			Assert.IsNotNull (ci, ".ctor(HtmlTextWriterTag)");
+			return ci.Invoke (new object[1] { HtmlTextWriterTag.A });
 		}
 
 		public override Type Type {
-			get { return typeof (FontUnit); }
+			get { return typeof (WebControl); }
 		}
 	}
 }

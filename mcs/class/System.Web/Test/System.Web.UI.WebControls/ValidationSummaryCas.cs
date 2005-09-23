@@ -1,6 +1,6 @@
 //
-// FontUnitCas.cs 
-//	- CAS unit tests for System.Web.UI.WebControls.FontUnit
+// ValidationSummaryCas.cs 
+//	- CAS unit tests for System.Web.UI.WebControls.ValidationSummary
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -41,36 +41,43 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if NET_2_0
-	public class FontUnitCas : AspNetHostingNone {
-#else
-	public class FontUnitCas: AspNetHostingMinimal {
-#endif
+	public class ValidationSummaryCas : AspNetHostingMinimal {
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			FontUnitTest unit = new FontUnitTest ();
-			unit.FontUnitConstructors ();
-			unit.FontUnitConstructors_Pixel ();
-			unit.FontUnitConstructors_Point ();
-			unit.UnitEquality ();
+			ValidationSummaryTest unit = new ValidationSummaryTest ();
+			unit.ValidationSummary_Defaults ();
 #if NET_2_0
-			unit.FontUnit_IFormatProviderToString ();
+			unit.ValidationSummary_ValidationGroup ();
 #endif
+		}
+
+		[Test]
+		[AspNetHostingPermission (SecurityAction.Deny, Level = AspNetHostingPermissionLevel.Minimal)]
+		[ExpectedException (typeof (TargetInvocationException))]
+		public void ValidationSummaryRenderTest_Deny_Minimal ()
+		{
+			ValidationSummaryTest unit = new ValidationSummaryTest ();
+			unit.ValidationSummaryRenderTest ();
+			// note: this is a failing security check on reflection,
+			// the SecurityException is the InnerException of the 
+			// TargetInvocationException
+		}
+
+		[Test]
+		[AspNetHostingPermission (SecurityAction.PermitOnly, Level = AspNetHostingPermissionLevel.Minimal)]
+		public void ValidationSummaryRenderTest_PermitOnly_Minimal ()
+		{
+			ValidationSummaryTest unit = new ValidationSummaryTest ();
+			unit.ValidationSummaryRenderTest ();
 		}
 
 		// LinkDemand
 
-		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
-		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (int) });
-			Assert.IsNotNull (ci, ".ctor(int)");
-			return ci.Invoke (new object[1] { 1 });
-		}
-
 		public override Type Type {
-			get { return typeof (FontUnit); }
+			get { return typeof (ValidationSummary); }
 		}
 	}
 }

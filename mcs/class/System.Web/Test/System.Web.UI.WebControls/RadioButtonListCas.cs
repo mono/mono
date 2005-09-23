@@ -1,6 +1,6 @@
 //
-// FontUnitCas.cs 
-//	- CAS unit tests for System.Web.UI.WebControls.FontUnit
+// RadioButtonListCas.cs 
+//	- CAS unit tests for System.Web.UI.WebControls.RadioButtonList
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -41,36 +41,25 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if NET_2_0
-	public class FontUnitCas : AspNetHostingNone {
-#else
-	public class FontUnitCas: AspNetHostingMinimal {
-#endif
+	public class RadioButtonListCas : AspNetHostingMinimal {
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			FontUnitTest unit = new FontUnitTest ();
-			unit.FontUnitConstructors ();
-			unit.FontUnitConstructors_Pixel ();
-			unit.FontUnitConstructors_Point ();
-			unit.UnitEquality ();
-#if NET_2_0
-			unit.FontUnit_IFormatProviderToString ();
-#endif
+			RadioButtonListTest unit = new RadioButtonListTest ();
+			unit.RadioButtonList_Constructor ();
+			unit.CellPaddingProperties ();
+			unit.CellSpacingProperties ();
+			unit.LoadAndRaise1 ();
+			unit.LoadAndRaise2 ();
+			unit.LoadAndRaise3 ();
 		}
 
 		// LinkDemand
 
-		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
-		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (int) });
-			Assert.IsNotNull (ci, ".ctor(int)");
-			return ci.Invoke (new object[1] { 1 });
-		}
-
 		public override Type Type {
-			get { return typeof (FontUnit); }
+			get { return typeof (RadioButtonList); }
 		}
 	}
 }

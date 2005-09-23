@@ -1,3 +1,23 @@
+2005-09-23  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* LabelCas.cs, LinkButtonCas.cs, ListBoxCas.cs, ListControlCas.cs,
+	ListItemCas.cs, ListItemCollectionCas.cs, LiteralCas.cs, LoginCas.cs,
+	LoginNameCas.cs, LoginStatusCas.cs, MonthChangedEventArgsCas.cs,
+	PagedDataSourceCas.cs, PanelCas.cs, RadioButtonCas.cs, 
+	RadioButtonListCas.cs, RangeValidatorCas.cs, 
+	RegularExpressionValidatorCas.cs, RepeaterCas.cs, RepeatInfoCas.cs,
+	RoleGroupCas.cs, RoleGroupCollectionCas.cs, 
+	SelectedDatesCollectionCas.cs, StyleCas.cs, TableCas.cs, 
+	TableCellCas.cs, TableFooterRowCas.cs, TableHeaderCellCas.cs,
+	TableHeaderRowCas.cs, TableItemStyleCas.cs, TableRowCas.cs,
+	TableSectionStyleCas.cs, TableStyleCas.cs, TargetConverterCas.cs,
+	TextBoxCas.cs, TreeViewCas.cs, UnitCas.cs, UnitConverterCas.cs,
+	ValidatedControlConverterCas.cs, ValidationSummaryCas.cs, 
+	WebColorConverterCas.cs, WebControlCas.cs, XmlCas.cs, 
+	XmlDataSourceCas.cs: New CAS unit tests - checks for LinkDemands and 
+	re-execute the "classic" unit tests under the most retricted security
+	permissions possible.
+
 2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* LinkButtonTest.cs: Fixed fixture name (Text -> Test).

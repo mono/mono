@@ -1,6 +1,6 @@
 //
-// FontUnitCas.cs 
-//	- CAS unit tests for System.Web.UI.WebControls.FontUnit
+// RoleGroupCollectionCas.cs 
+//	- CAS unit tests for System.Web.UI.WebControls.RoleGroupCollection
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -27,6 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using NUnit.Framework;
 
 using System;
@@ -41,36 +43,28 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if NET_2_0
-	public class FontUnitCas : AspNetHostingNone {
-#else
-	public class FontUnitCas: AspNetHostingMinimal {
-#endif
+	public class RoleGroupCollectionCas : AspNetHostingMinimal {
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			FontUnitTest unit = new FontUnitTest ();
-			unit.FontUnitConstructors ();
-			unit.FontUnitConstructors_Pixel ();
-			unit.FontUnitConstructors_Point ();
-			unit.UnitEquality ();
-#if NET_2_0
-			unit.FontUnit_IFormatProviderToString ();
-#endif
+			RoleGroupCollectionTest unit = new RoleGroupCollectionTest ();
+			unit.Add ();
+			unit.Contains ();
+			unit.GetMatchingRoleGroup_NoRoles ();
+			unit.GetMatchingRoleGroup_In ();
+			unit.ContainsUser_Out ();
+			unit.IndexOf ();
+			unit.Remove ();
 		}
 
 		// LinkDemand
 
-		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
-		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (int) });
-			Assert.IsNotNull (ci, ".ctor(int)");
-			return ci.Invoke (new object[1] { 1 });
-		}
-
 		public override Type Type {
-			get { return typeof (FontUnit); }
+			get { return typeof (RoleGroupCollection); }
 		}
 	}
 }
+
+#endif

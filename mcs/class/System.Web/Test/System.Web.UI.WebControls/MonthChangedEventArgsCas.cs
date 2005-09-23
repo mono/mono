@@ -1,6 +1,6 @@
 //
-// FontUnitCas.cs 
-//	- CAS unit tests for System.Web.UI.WebControls.FontUnit
+// MonthChangedEventArgsCas.cs 
+//	- CAS unit tests for System.Web.UI.WebControls.MonthChangedEventArgs
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -41,36 +41,27 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if NET_2_0
-	public class FontUnitCas : AspNetHostingNone {
-#else
-	public class FontUnitCas: AspNetHostingMinimal {
-#endif
+	public class MonthChangedEventArgsCas : AspNetHostingMinimal {
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			FontUnitTest unit = new FontUnitTest ();
-			unit.FontUnitConstructors ();
-			unit.FontUnitConstructors_Pixel ();
-			unit.FontUnitConstructors_Point ();
-			unit.UnitEquality ();
-#if NET_2_0
-			unit.FontUnit_IFormatProviderToString ();
-#endif
+			MonthChangedEventArgsTest unit = new MonthChangedEventArgsTest ();
+			unit.Ctor ();
 		}
 
 		// LinkDemand
 
 		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
 		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (int) });
-			Assert.IsNotNull (ci, ".ctor(int)");
-			return ci.Invoke (new object[1] { 1 });
+			ConstructorInfo ci = this.Type.GetConstructor (new Type[2] { typeof (DateTime), typeof (DateTime) });
+			Assert.IsNotNull (ci, ".ctor(DateTime,DateTime)");
+			return ci.Invoke (new object[2] { DateTime.MinValue, DateTime.MaxValue });
 		}
 
 		public override Type Type {
-			get { return typeof (FontUnit); }
+			get { return typeof (MonthChangedEventArgs); }
 		}
 	}
 }

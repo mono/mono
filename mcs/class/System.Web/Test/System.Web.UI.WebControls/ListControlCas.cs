@@ -1,6 +1,6 @@
 //
-// FontUnitCas.cs 
-//	- CAS unit tests for System.Web.UI.WebControls.FontUnit
+// ListControlCas.cs 
+//	- CAS unit tests for System.Web.UI.WebControls.ListControl
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -30,7 +30,6 @@
 using NUnit.Framework;
 
 using System;
-using System.Reflection;
 using System.Security.Permissions;
 using System.Web;
 using System.Web.UI.WebControls;
@@ -41,36 +40,29 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if NET_2_0
-	public class FontUnitCas : AspNetHostingNone {
-#else
-	public class FontUnitCas: AspNetHostingMinimal {
-#endif
+	public class ListControlCas {
+
+		// note: we do not inherit from AspNetHostingMinimal because
+		// ListControl is an abstract class
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			FontUnitTest unit = new FontUnitTest ();
-			unit.FontUnitConstructors ();
-			unit.FontUnitConstructors_Pixel ();
-			unit.FontUnitConstructors_Point ();
-			unit.UnitEquality ();
+			ListControlTest unit = new ListControlTest ();
+			unit.DefaultProperties ();
+			unit.CleanProperties ();
+			unit.NullProperties ();
+			unit.ClearSelection ();
+			unit.ViewState ();
+			unit.ViewStateContents ();
+			unit.SelectedIndex ();
+			unit.Render ();
+			unit.ItemsOk ();
 #if NET_2_0
-			unit.FontUnit_IFormatProviderToString ();
+			unit.ControlState ();
+			unit.ItemsTooHigh ();
 #endif
-		}
-
-		// LinkDemand
-
-		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
-		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (int) });
-			Assert.IsNotNull (ci, ".ctor(int)");
-			return ci.Invoke (new object[1] { 1 });
-		}
-
-		public override Type Type {
-			get { return typeof (FontUnit); }
 		}
 	}
 }

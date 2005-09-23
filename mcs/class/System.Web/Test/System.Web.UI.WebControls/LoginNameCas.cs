@@ -1,6 +1,6 @@
 //
-// FontUnitCas.cs 
-//	- CAS unit tests for System.Web.UI.WebControls.FontUnit
+// LoginNameCas.cs 
+//	- CAS unit tests for System.Web.UI.WebControls.LoginName
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -27,10 +27,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using NUnit.Framework;
 
 using System;
-using System.Reflection;
+using System.Security;
 using System.Security.Permissions;
 using System.Web;
 using System.Web.UI.WebControls;
@@ -41,36 +43,51 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if NET_2_0
-	public class FontUnitCas : AspNetHostingNone {
-#else
-	public class FontUnitCas: AspNetHostingMinimal {
-#endif
+	public class LoginNameCas : AspNetHostingMinimal {
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			FontUnitTest unit = new FontUnitTest ();
-			unit.FontUnitConstructors ();
-			unit.FontUnitConstructors_Pixel ();
-			unit.FontUnitConstructors_Point ();
-			unit.UnitEquality ();
-#if NET_2_0
-			unit.FontUnit_IFormatProviderToString ();
-#endif
+			LoginNameTest unit = new LoginNameTest ();
+			unit.DefaultProperties ();
+			unit.SetOriginalProperties ();
+			unit.CleanProperties ();
+		}
+
+		[Test]
+		[SecurityPermission (SecurityAction.Deny, ControlPrincipal = true)]
+		[ExpectedException (typeof (SecurityException))]
+		public void Deny_ControlPrincipal ()
+		{
+			LoginNameTest unit = new LoginNameTest ();
+			unit.CacheIdentity ();
+			// other unit tests fails for the same reason, i.e.
+			// setting the Page.Context.User property
+		}
+
+		[Test]
+		[SecurityPermission (SecurityAction.PermitOnly, ControlPrincipal = true)]
+		public void PermitOnly_ControlPrincipal ()
+		{
+			LoginNameTest unit = new LoginNameTest ();
+			unit.CacheIdentity ();
+			unit.Render_Anonymous_NoPrincipal ();
+			unit.Render_Anonymous_IPrincipal ();
+			unit.Render_User ();
+			unit.Render_UnauthenticatedUser ();
+			unit.Render_NoPage ();
+			unit.Render_StringFormat ();
+			unit.Render_StringFormat_Empty ();
+			unit.Render_StringFormat_NoVar ();
 		}
 
 		// LinkDemand
 
-		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
-		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (int) });
-			Assert.IsNotNull (ci, ".ctor(int)");
-			return ci.Invoke (new object[1] { 1 });
-		}
-
 		public override Type Type {
-			get { return typeof (FontUnit); }
+			get { return typeof (LoginName); }
 		}
 	}
 }
+
+#endif

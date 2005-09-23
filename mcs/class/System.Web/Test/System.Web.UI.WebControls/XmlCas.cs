@@ -1,6 +1,5 @@
 //
-// FontUnitCas.cs 
-//	- CAS unit tests for System.Web.UI.WebControls.FontUnit
+// XmlCas.cs - CAS unit tests for System.Web.UI.WebControls.Xml
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -30,7 +29,7 @@
 using NUnit.Framework;
 
 using System;
-using System.Reflection;
+using System.Security;
 using System.Security.Permissions;
 using System.Web;
 using System.Web.UI.WebControls;
@@ -41,36 +40,63 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 	[TestFixture]
 	[Category ("CAS")]
-#if NET_2_0
-	public class FontUnitCas : AspNetHostingNone {
-#else
-	public class FontUnitCas: AspNetHostingMinimal {
-#endif
+	public class XmlCas: AspNetHostingMinimal {
+
+		private XmlTest unit;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			unit = new XmlTest ();
+		}
+
+		[SetUp]
+		public override void SetUp ()
+		{
+			base.SetUp ();
+			// fulltrust
+			unit.Xml_Setup ();
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			// fulltrust
+			unit.Xml_TearDown ();
+		}
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()
 		{
-			FontUnitTest unit = new FontUnitTest ();
-			unit.FontUnitConstructors ();
-			unit.FontUnitConstructors_Pixel ();
-			unit.FontUnitConstructors_Point ();
-			unit.UnitEquality ();
+			unit.Xml_Values ();
+			unit.Xml_InvalidDocument ();
+			unit.Xml_RenderEmpty ();
+			unit.Xml_DefaultTrasnform ();
+			unit.Xml_InsertValid ();
+		}
+
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void SourcePrecedence_Deny_Unrestricted ()
+		{
+			// needs setup re-init (2.0) to avoid TypeInitializationException from HttpRuntime
+			try {
+				unit.Xml_SourcePrecedence ();
+			}
+			catch (TypeInitializationException) {
 #if NET_2_0
-			unit.FontUnit_IFormatProviderToString ();
+				throw;
+#else
+				Assert.Ignore ("exception when initializing HttpRuntime");
 #endif
+			}
 		}
 
 		// LinkDemand
 
-		public override object CreateControl (SecurityAction action, AspNetHostingPermissionLevel level)
-		{
-			ConstructorInfo ci = this.Type.GetConstructor (new Type[1] { typeof (int) });
-			Assert.IsNotNull (ci, ".ctor(int)");
-			return ci.Invoke (new object[1] { 1 });
-		}
-
 		public override Type Type {
-			get { return typeof (FontUnit); }
+			get { return typeof (Xml); }
 		}
 	}
 }
