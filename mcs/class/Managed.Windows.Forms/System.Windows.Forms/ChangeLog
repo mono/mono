@@ -1,5 +1,9 @@
 2005-09-22  Jackson Harper  <jackson@ximian.com>
 
+	* Splitter.cs: Set the cursor an easier way. (Thanks peter).
+
+2005-09-22  Jackson Harper  <jackson@ximian.com>
+
 	* Splitter.cs: There are special cursors used for splitting.
 	* XplatUIX11.cs: The VSplit and HSplit cursors were backwards.
 
