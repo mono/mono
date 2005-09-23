@@ -1,3 +1,10 @@
+2005-09-23  Chris Toshok  <toshok@ximian.com>
+
+	* System.dll.sources: remove the System.Configuration.Property/*
+
+	* System.Configuration.Property/*: move to ../System.Configuration
+	where it belongs.
+
 2005-09-19  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration/ProviderBase.cs: nuke this - it's in
