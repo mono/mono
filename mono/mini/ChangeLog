@@ -1,5 +1,8 @@
 2005-09-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h mini.c: Add a new MONO_DEBUG option to collect metadata pagefault
+	statistics.
+
 	* mini-x86.c (mono_arch_call_opcode): Fix vararg calling convention 
 	introduced by previous patch.
 
