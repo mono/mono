@@ -137,22 +137,21 @@ namespace System.Web.UI {
 			b.Close ();	
 		}
 
-		[MonoTODO]
 		protected virtual string EncodeAttributeValue (HtmlTextWriterAttribute attrKey, string value)
 		{
-			return value;
+			return HttpUtility.HtmlEncode (value);
 		}
 		
-		[MonoTODO]
 		protected string EncodeAttributeValue (string value, bool fEncode)
 		{
+			if (fEncode)
+				return HttpUtility.HtmlEncode (value);
 			return value;
 		}
 		
-		[MonoTODO]
 		protected string EncodeUrl (string url)
 		{
-			return url;
+			return HttpUtility.UrlPathEncode (url);
 		}
 		
 

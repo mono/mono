@@ -1,3 +1,7 @@
+2005-09-23  Ben Maurer  <bmaurer@ximian.com>
+
+	* HtmlTextWriterTest.cs: Reenable some stuff
+
 2005-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DataBindingHandlerAttributeTest.cs: Fixed test results in 2.0 RC 

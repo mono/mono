@@ -151,7 +151,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void EscapeJScript ()
 		{
 			w.AddAttribute (HtwAttribute.Onclick, "this.style.color = \"red\"");
@@ -161,7 +160,6 @@ namespace MonoTests.System.Web.UI {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void EscapeUrl ()
 		{
 			w.AddAttribute (HtwAttribute.Href, "http://www.google.com/search?hl=en&q=i+love+nunit&btnG=Google+Search");
@@ -170,8 +168,9 @@ namespace MonoTests.System.Web.UI {
 			Assert.AreEqual ("<a href=\"http://www.google.com/search?hl=en&amp;q=i+love+nunit&amp;btnG=Google+Search\"></a>", sw.ToString ());
 		}
 
-		[Test]
+		// Which attrs fall here
 		[Category ("NotWorking")]
+		[Test]
 		public void NoEscapeAttrName ()
 		{
 			w.AddAttribute (HtwAttribute.Name, "cookies&cream");
