@@ -380,6 +380,9 @@ namespace System.Web.Compilation
 				token = tokenizer.get_token ();
 			} 
 
+			if (token == Token.EOF)
+				OnError ("Expecting " + end + " and got EOF.");
+
 			return RemoveComments (vb_text.ToString ());
 		}
 
