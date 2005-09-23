@@ -33,8 +33,8 @@ namespace System.Configuration
         public enum ConfigurationPropertyOptions
         {
                 None = 0,
-                DefaultCollection = 1,
-                Required = 2,
+                IsDefaultCollection = 1,
+                IsRequired = 2,
                 IsKey = 4
         }
 }
