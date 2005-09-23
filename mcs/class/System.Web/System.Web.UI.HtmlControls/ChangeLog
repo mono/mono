@@ -1,10 +1,17 @@
+2005-09-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlForm.cs: when transfering from one page to another and using
+	cookieless session, we were doing pretty bad. Now, if the current path
+	and the original are the same, we just use the filename. Otherwise
+	we make the action location be relative to the original URL.
+
 2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlInputButton.cs: render the onclick for doing a postback even when
 	there are no validators.
 
 2005-09-19  Sebastien Pouliot  <sebastien@ximian.com> 
- 
+
 	* HtmlInputPassword.cs: Removed ctor(string) as it's not in 2.0 RC.
 	
 2005-09-19  Sebastien Pouliot  <sebastien@ximian.com>
