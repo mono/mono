@@ -1,3 +1,7 @@
+2005-09-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SessionStateModule.cs: use the new funciton in HttpRequest.
+
 2005-09-22  Jackson Harper  <jackson@ximian.com>
 
 	* SessionStateModule.cs: Use a concat instead of a format (mucho

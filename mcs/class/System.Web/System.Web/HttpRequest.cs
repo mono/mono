@@ -1095,14 +1095,18 @@ namespace System.Web {
 			}
 		}
 
+		internal void SetFilePath (string path)
+		{
+			file_path = path;
+		}
+
                 internal void SetCurrentExePath (string path)
                 {
 			current_exe_path = path;
-			if (uri_builder == null)
-				InitUriBuilder ();
+			//if (uri_builder == null)
+			//	InitUriBuilder ();
 
-			uri_builder.Path = path;
-			file_path = path;
+			//uri_builder.Path = path;
 			 // recreated on demand
 			root_virtual_dir = null;
 			base_virtual_dir = null;

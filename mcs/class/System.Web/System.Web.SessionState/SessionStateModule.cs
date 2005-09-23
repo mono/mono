@@ -143,8 +143,8 @@ namespace System.Web.SessionState
 			if (id == null)
 				return;
 			
-			context.Request.SetCurrentExePath (UrlUtils.RemoveSessionId (base_path,
-								     context.Request.FilePath));
+			string new_path = UrlUtils.RemoveSessionId (base_path, context.Request.FilePath);
+			context.Request.SetFilePath (new_path);
 			context.Request.SetHeader (HeaderName, id);
 			context.Response.SetAppPathModifier (String.Concat ("(", id, ")"));
 		}

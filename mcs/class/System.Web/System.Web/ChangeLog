@@ -1,3 +1,9 @@
+2005-09-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: new SetFilePath() that does not conflict with
+	SetCurrentExePath. Now when transfering from a page to another,
+	CurrentExecutionFilePath and FilePath are correct.
+
 2005-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TraceContext.cs: add new method to store size of controls.
