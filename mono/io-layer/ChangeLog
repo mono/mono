@@ -1,3 +1,11 @@
+2005-09-23  Dick Porter  <dick@ximian.com>
+
+	* processes.c: Don't wait for processes that have already been
+	signalled; also fix typo.
+
+	* handles.c: Improve locking inside new handle and handle
+	searching functions.
+
 2005-09-20  Dick Porter  <dick@ximian.com>
 
 	* collection.c: 
