@@ -43,7 +43,7 @@ namespace System.Configuration
 			this.name = name;
 		}
 		
-		public bool IsCollectionKey {
+		public bool IsKey {
 			get { return (flags & ConfigurationPropertyOptions.IsKey) != 0; }
 			set {
 				if (value) flags |= ConfigurationPropertyOptions.IsKey; 
@@ -51,11 +51,11 @@ namespace System.Configuration
 			}
 		}
 		
-		public bool IsDefaultCollectionProperty {
-			get { return (flags & ConfigurationPropertyOptions.DefaultCollection) != 0; }
+		public bool IsDefaultCollection {
+			get { return (flags & ConfigurationPropertyOptions.IsDefaultCollection) != 0; }
 			set {
-				if (value) flags |= ConfigurationPropertyOptions.DefaultCollection; 
-				else flags &= ~ConfigurationPropertyOptions.DefaultCollection; 
+				if (value) flags |= ConfigurationPropertyOptions.IsDefaultCollection; 
+				else flags &= ~ConfigurationPropertyOptions.IsDefaultCollection; 
 			}
 		}
 		
@@ -73,11 +73,11 @@ namespace System.Configuration
 			get { return name; }
 		}
 		
-		public bool RequiredValue {
-			get { return (flags & ConfigurationPropertyOptions.Required) != 0; }
+		public bool IsRequired {
+			get { return (flags & ConfigurationPropertyOptions.IsRequired) != 0; }
 			set {
-				if (value) flags |= ConfigurationPropertyOptions.Required; 
-				else flags &= ~ConfigurationPropertyOptions.Required; 
+				if (value) flags |= ConfigurationPropertyOptions.IsRequired; 
+				else flags &= ~ConfigurationPropertyOptions.IsRequired; 
 			}
 		}
 	}

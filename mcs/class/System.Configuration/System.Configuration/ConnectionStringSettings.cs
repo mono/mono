@@ -56,20 +56,20 @@ namespace System.Configuration
                         _propName = new ConfigurationProperty ("name", 
                                                                typeof(string), 
                                                                "", 
-                                                               ConfigurationPropertyOptions.Required | 
+                                                               ConfigurationPropertyOptions.IsRequired | 
                                                                ConfigurationPropertyOptions.IsKey
                                                                );
 
                         _propProviderName = new ConfigurationProperty ("providerName",
                                                                        typeof (string),
                                                                        "",
-                                                                       ConfigurationPropertyOptions.Required
+                                                                       ConfigurationPropertyOptions.IsRequired
                                                                        );
 
                         _propConnectionString = new ConfigurationProperty ("connectionString",
                                                                            typeof (string),
                                                                            "",
-                                                                           ConfigurationPropertyOptions.Required
+                                                                           ConfigurationPropertyOptions.IsRequired
                                                                            );
 
                         _properties.Add (_propName);
@@ -104,18 +104,22 @@ namespace System.Configuration
                                 return _properties;
                         }
                 }
+
+		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
                 public string Name
                 {
                         get { return (string) base [_propName];}
                         set { base [_propName] = value; }
                 }
 
+		[ConfigurationProperty ("providerName", DefaultValue = "System.Data.SqlClient")]
                 public string ProviderName
                 {
                         get { return (string) base [_propProviderName]; }
                         set { base [_propProviderName] = value; }
                 }
 
+		[ConfigurationProperty ("connectionString", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
                 public string ConnectionString
                 {
                         get { return (string) base [_propConnectionString]; }

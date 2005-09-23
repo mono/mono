@@ -82,13 +82,13 @@ namespace System.Configuration
 			base.Unmerge (source, parent, serializeCollectionKey, updateMode);
 		}
 		
-		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.Required | ConfigurationPropertyOptions.IsKey)]
+		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Name {
 			get { return (string) this ["name"]; }
 			set { this ["name"] = value; }
 		}
 		
-		[ConfigurationProperty ("type", Options = ConfigurationPropertyOptions.Required)]
+		[ConfigurationProperty ("type", Options = ConfigurationPropertyOptions.IsRequired)]
 		public string Type {
 			get { return (string) this ["type"]; }
 			set { this ["type"] = value; }
