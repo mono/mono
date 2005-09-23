@@ -123,6 +123,8 @@ namespace System.Web.UI {
 
 		public
 #else
+		internal event EventHandler Changed;
+
 		internal
 #endif
 		void RaiseChanged ()
