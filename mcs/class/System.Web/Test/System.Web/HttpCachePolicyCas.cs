@@ -121,12 +121,6 @@ namespace MonoCasTests.System.Web {
 			catch (NotImplementedException) {
 				// mono
 			}
-			try {
-				cache.SetDiskCacheable (false);
-			}
-			catch (NotImplementedException) {
-				// mono
-			}
 #endif
 		}
 

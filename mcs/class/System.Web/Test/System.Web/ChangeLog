@@ -1,3 +1,7 @@
+2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpCachePolicyCas.cs: SetDiskCacheable method was removed in 2.0 RC
+
 2005-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpRequestTest.cs: Fixed test cases so they now execute without 
