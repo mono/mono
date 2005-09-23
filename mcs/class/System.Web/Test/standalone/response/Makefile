@@ -1,5 +1,5 @@
-TESTS = t1 t2 t3 t4 t5 t6 t7
-TESTS2 = c1 c2 c3
+TESTS = t1.aspx t2.aspx t3.aspx t4.aspx t5.aspx t6.aspx t7.aspx
+TESTS2 = c1.aspx c2.aspx c3.aspx
 #SERVER=quack
 SERVER=lalo-office.boston.ximian.com
 
@@ -12,7 +12,7 @@ ctest.exe: ctest.cs
 	mcs ctest.cs
 
 copy:
-	for i in $(TESTS) $(TESTS2); do cp $$i.aspx /q/web; done
+	for i in $(TESTS) $(TESTS2); do cp $$i /q/web; done
 
 test: local compare
 
@@ -26,21 +26,22 @@ compare:
 local:
 	@for i in $(TESTS); do \
 		echo running test $$i; \
-		mono rtest.exe localhost 8080 /$$i.aspx > $$i.result; \
-		mono ctest.exe localhost 8080 /$$i.aspx > $$i.oresult; \
+		mono rtest.exe localhost 8080 /$$i > $$i.result; \
+		mono ctest.exe localhost 8080 /$$i > $$i.oresult; \
 	done
 	@for i in $(TESTS2); do \
 		echo running test $$i; \
-		mono rtest.exe -header Cache-Control: localhost 8080 /$$i.aspx > $$i.result; \
+		mono rtest.exe -header Cache-Control: localhost 8080 /$$i > $$i.result; \
 	done
 
 tw:
 	@for i in $(TESTS); do \
 		echo running test $$i; \
-		mono rtest.exe $(SERVER) 80 /test/$$i.aspx > $$i.expected; \
-		mono ctest.exe $(SERVER) 80 /test/$$i.aspx > $$i.oexpected; \
+		mono rtest.exe $(SERVER) 80 /test/$$i > $$i.expected; \
+		mono ctest.exe $(SERVER) 80 /test/$$i > $$i.oexpected; \
 	done
 	@for i in $(TESTS2); do \
 		echo running test $$i; \
-		mono rtest.exe -header Cache-Control: $(SERVER) 80 /test/$$i.aspx > $$i.expected; \
+		mono rtest.exe -header Cache-Control: $(SERVER) 80 /test/$$i > $$i.expected; \
 	done
+
