@@ -1,3 +1,36 @@
+2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FontUnit.cs: Added, but only for 1.x, declarative security (Link and
+	Inheritance demands) for Minimal.
+	* Label.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal.
+	* ListItem.cs: Added declarative security (LinkDemands) for Minimal.
+	* ListItemCollection.cs: Added declarative security (LinkDemands) for 
+	Minimal.
+	* MonthChangedEventArgs.cs: Added declarative security (Link and, for 
+	2.0, Inheritance demands) for Minimal.
+	* PagedDataSource.cs: Added declarative security (LinkDemands) for 
+	Minimal.
+	* Panel.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal.
+	* Repeater.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal.
+	* RepeatInfo.cs: Added declarative security (LinkDemands) for Minimal.
+	* SelectedDatesCollection.cs: Added declarative security (LinkDemands)
+	for Minimal.
+	* TargetConverter.cs: Added declarative security (Link and Inheritance
+	demands) for Minimal.
+	* Unit.cs: Added, but only for 1.x, declarative security (Link and 
+	Inheritance demands) for Minimal.
+	* ValidatedControlConverter.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal.
+	* WebColorConverter.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal.
+	* Xml.cs: Added declarative security (Link and Inheritance demands) 
+	for Minimal.
+	* ValidationSummary.cs: Added declarative security (Link and 
+	Inheritance demands) for Minimal.
+
 2005-09-23  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* UnitConverter.cs: Remove conversion from Unit (see unit tests).

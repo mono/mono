@@ -29,9 +29,12 @@
 //#define DEBUG_REPEAT_INFO
 
 using System.Diagnostics;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS - no inheritance demand required because the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class RepeatInfo {
 
 		// What is baseControl for ?

@@ -27,12 +27,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.ComponentModel;
+using System.Security.Permissions;
 using System.Xml;
 using System.Xml.Xsl;
-using System.Web;
-using System.Web.UI;
-using System.ComponentModel;
 
 #if NET_2_0
 using System.Xml.XPath;
@@ -41,6 +39,10 @@ using System.Collections;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DefaultProperty ("DocumentSource")]
 	[Designer ("System.Web.UI.Design.WebControls.XmlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #if NET_2_0

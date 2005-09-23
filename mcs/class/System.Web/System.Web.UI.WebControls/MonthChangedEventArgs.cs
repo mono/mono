@@ -26,15 +26,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
-	public
-#if !NET_2_0
-	sealed
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_2_0
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	public class MonthChangedEventArgs {
+#else
+	public sealed class MonthChangedEventArgs {
 #endif
-	class MonthChangedEventArgs {
 
 		private DateTime new_date;
 		private DateTime prev_date;

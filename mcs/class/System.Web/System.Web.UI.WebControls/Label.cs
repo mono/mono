@@ -30,9 +30,14 @@
 //
 
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ControlBuilder(typeof(LabelControlBuilder))]
 	[DataBindingHandler("System.Web.UI.Design.TextDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[DefaultProperty("Text")]

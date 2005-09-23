@@ -27,8 +27,12 @@
 //
 
 using System.Collections;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS - no inheritance demand required because the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class SelectedDatesCollection : ICollection {
 
 		ArrayList l;

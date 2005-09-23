@@ -24,12 +24,16 @@
 //
 //
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class ValidatedControlConverter
 #if NET_2_0
 		: ControlIDConverter

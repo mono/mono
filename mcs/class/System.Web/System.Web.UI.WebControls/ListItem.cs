@@ -28,9 +28,13 @@
 
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Web.UI;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS - no inheritance demand required because the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ControlBuilder(typeof(ListItemControlBuilder))]
 	[TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
 	public sealed class ListItem : IAttributeAccessor, IParserAccessor, IStateManager {

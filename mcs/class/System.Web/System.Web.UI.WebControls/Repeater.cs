@@ -38,9 +38,15 @@
 
 using System.Collections;
 using System.ComponentModel;
+using System.Security.Permissions;
 using System.Web.Util;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DefaultEvent ("ItemCommand")]
 	[DefaultProperty ("DataSource")]
 	[Designer ("System.Web.UI.Design.WebControls.RepeaterDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]

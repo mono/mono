@@ -24,16 +24,17 @@
 //
 //
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #if NET_2_0
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 #endif

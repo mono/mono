@@ -25,8 +25,13 @@
 //
 
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class TargetConverter : System.ComponentModel.StringConverter {
 		#region Public Constructors
 		public TargetConverter() {

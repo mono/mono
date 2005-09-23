@@ -25,11 +25,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.ComponentModel;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS - no inheritance demand required because the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class PagedDataSource : ICollection, IEnumerable, ITypedList
 	{
 		int page_size, current_page_index, virtual_count;

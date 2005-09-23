@@ -24,13 +24,17 @@
 //
 //
 
-using System;
 using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 using System.Reflection;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
+
+	// CAS - no inheritance demand required because the class is sealed
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[Editor("System.Web.UI.Design.WebControls.ListItemsCollectionEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
 	public sealed class ListItemCollection : IList, ICollection, IEnumerable, IStateManager {
 		#region Fields
