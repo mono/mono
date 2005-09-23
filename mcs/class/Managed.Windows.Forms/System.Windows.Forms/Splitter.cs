@@ -391,7 +391,7 @@ namespace System.Windows.Forms
 
 		private void MouseEnterHandler (object sender, EventArgs e)
 		{
-                        Cursor = (horz ? Cursors.SizeNS : Cursors.SizeWE);
+                        Cursor = (horz ? Cursors.HSplit : Cursors.VSplit);
 		}
 
 		private void MouseLeaveHandler (object sender, EventArgs e)

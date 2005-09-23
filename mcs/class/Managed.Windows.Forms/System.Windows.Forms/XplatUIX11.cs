@@ -1924,7 +1924,7 @@ namespace System.Windows.Forms {
 				}
 
 				case StdCursor.HSplit: {
-					shape = CursorFontShape.XC_sb_h_double_arrow;
+                                        shape = CursorFontShape.XC_sb_v_double_arrow; 
 					break;
 				}
 
@@ -2024,7 +2024,7 @@ namespace System.Windows.Forms {
 				}
 
 				case StdCursor.VSplit: {
-					shape = CursorFontShape.XC_sb_v_double_arrow; 
+                                        shape = CursorFontShape.XC_sb_h_double_arrow;
 					break;
 				}
 
@@ -3083,8 +3083,9 @@ namespace System.Windows.Forms {
 		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
 			Hwnd	hwnd;
 
+                        Console.WriteLine ("Setting Border Style  {0:X}", handle);
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			hwnd.border_style = border_style;
+			// hwnd.border_style = border_style;
 
 			// FIXME - do we need to trigger some resize?
 		}
