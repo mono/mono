@@ -30,6 +30,7 @@
 #if NET_2_0
 using System.Collections;
 using System.Xml;
+using System.IO;
 
 namespace System.Configuration
 {
@@ -65,6 +66,38 @@ namespace System.Configuration
 		protected internal override void ResetModified ()
 		{
 			throw new NotImplementedException ();
+		}
+
+		ConfigurationElement CreateElement (Type t)
+		{
+			ConfigurationElement elem = (ConfigurationElement) Activator.CreateInstance (t);
+			elem.Init ();
+			if (IsReadOnly ())
+				elem.SetReadOnly ();
+			return elem;
+		}
+
+		protected internal virtual void DeserializeSection (XmlReader reader)
+		{
+			DeserializeElement (reader, false);
+		}
+
+		protected internal virtual string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
+		{
+			ConfigurationElement elem;
+			if (parentElement != null) {
+				elem = (ConfigurationElement) CreateElement (GetType());
+				elem.Unmerge (this, parentElement, saveMode);
+			}
+			else
+				elem = this;
+
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter tw = new XmlTextWriter (sw);
+			tw.Formatting = Formatting.Indented;
+			elem.SerializeToXmlElement (tw, name);
+			tw.Close ();
+			return sw.ToString ();
 		}
 	}
 }

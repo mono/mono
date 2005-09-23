@@ -77,9 +77,9 @@ namespace System.Configuration
 		[MonoTODO]
 		protected internal override void Unmerge (
 				ConfigurationElement source, ConfigurationElement parent,
-				bool serializeCollectionKey, ConfigurationSaveMode updateMode)
+				ConfigurationSaveMode updateMode)
 		{
-			base.Unmerge (source, parent, serializeCollectionKey, updateMode);
+			base.Unmerge (source, parent, updateMode);
 		}
 		
 		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]

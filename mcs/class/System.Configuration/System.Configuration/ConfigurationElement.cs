@@ -62,14 +62,14 @@ namespace System.Configuration
 				return elementInfo;
 			}
 		}
-		
-		protected internal virtual void Init ()
-		{
-		}
-		
+
 		internal string RawXml {
 			get { return rawXml; }
 			set { rawXml = value; }
+		}
+
+		protected internal virtual void Init ()
+		{
 		}
 
 		internal ConfigurationPropertyCollection GetKeyProperties ()
@@ -260,11 +260,6 @@ namespace System.Configuration
 			return readOnly;
 		}
 
-		protected internal virtual void DeserializeSection (XmlReader reader)
- 		{
-			DeserializeElement (reader, false);
-		}
-
 		protected internal virtual void Reset (ConfigurationElement parentElement)
 		{
 			if (parentElement != null)
@@ -328,7 +323,6 @@ namespace System.Configuration
 
 		protected internal virtual void Unmerge (
 				ConfigurationElement source, ConfigurationElement parent,
-				bool serializeCollectionKey,
 				ConfigurationSaveMode updateMode)
 		{
 			if (parent != null && source.GetType() != parent.GetType())
@@ -351,7 +345,7 @@ namespace System.Configuration
 					if (prop.IsElement) {
 						if (parentValue != null) {
 							ConfigurationElement copy = (ConfigurationElement) unmergedProp.Value;
-							copy.Unmerge ((ConfigurationElement) sourceValue, (ConfigurationElement) parentValue, serializeCollectionKey, updateMode);
+							copy.Unmerge ((ConfigurationElement) sourceValue, (ConfigurationElement) parentValue, updateMode);
 						}
 						else
 							unmergedProp.Value = sourceValue;
@@ -376,33 +370,6 @@ namespace System.Configuration
 		{
 			PropertyInformation info = ElementInformation.Properties [propName];
 			return info != null && info.ValueOrigin == PropertyValueOrigin.SetHere;
-		}
-
-		protected internal virtual string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
-		{
-			ConfigurationElement elem;
-			if (parentElement != null) {
-				elem = (ConfigurationElement) CreateElement (GetType());
-				elem.Unmerge (this, parentElement, false, saveMode);
-			}
-			else
-				elem = this;
-			
-			StringWriter sw = new StringWriter ();
-			XmlTextWriter tw = new XmlTextWriter (sw);
-			tw.Formatting = Formatting.Indented;
-			elem.SerializeToXmlElement (tw, name);
-			tw.Close ();
-			return sw.ToString ();
-		}
-		
-		ConfigurationElement CreateElement (Type t)
-		{
-			ConfigurationElement elem = (ConfigurationElement) Activator.CreateInstance (t);
-			elem.Init ();
-			if (IsReadOnly ())
-				elem.SetReadOnly ();
-			return elem;
 		}
 	}
 	

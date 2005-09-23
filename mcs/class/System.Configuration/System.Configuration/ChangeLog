@@ -1,5 +1,23 @@
 2005-09-23  Chris Toshok  <toshok@ximian.com>
 
+	* ProviderSettings.cs (Unmerge): track change to
+	ConfigurationElement.Unmerge.
+
+	* ConfigurationSection.cs: add functions nuked from
+	ConfigurationElement here.
+
+	* ConfigurationElementCollection.cs: add DebuggerDisplay attribute
+	to the class.
+	(BaseGetAllKeys): returns object[], not string[].
+	(BaseGetKey): returns object, not string.
+	(Unmerge): track change to ConfigurationElement.Unmerge signature.
+
+	* ConfigurationElement.cs (ConfigurationElement.Unmerge): fix
+	signature (drop the serializeCollectionKey parameter).
+	
+
+2005-09-23  Chris Toshok  <toshok@ximian.com>
+
 	* StringValidator.cs: throw ArgumentException instead of
 	ConfigurationErrorsException.
 

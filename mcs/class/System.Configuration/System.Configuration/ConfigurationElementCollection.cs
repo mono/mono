@@ -32,10 +32,12 @@
 #if NET_2_0
 
 using System.Collections;
+using System.Diagnostics;
 using System.Xml;
 
 namespace System.Configuration 
 {
+	[DebuggerDisplayAttribute ("Count = {Count}")]
 	public abstract class ConfigurationElementCollection : ConfigurationElement, ICollection, IEnumerable
 	{
 		ArrayList list = new ArrayList ();
@@ -198,15 +200,15 @@ namespace System.Configuration
 			else return null;
 		}
 
-		protected internal string[] BaseGetAllKeys ()
+		protected internal object[] BaseGetAllKeys ()
 		{
-			string[] keys = new string [list.Count];
+			object[] keys = new object [list.Count];
 			for (int n=0; n<list.Count; n++)
 				keys [n] = BaseGetKey (n);
 			return keys;
 		}
 
-		protected internal string BaseGetKey (int index)
+		protected internal object BaseGetKey (int index)
 		{
 			return GetElementKey ((ConfigurationElement) list[index]).ToString ();
 		}
@@ -467,7 +469,7 @@ namespace System.Configuration
 			return false;
 		}
 		
-		protected internal override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, bool serializeCollectionKey, ConfigurationSaveMode updateMode)
+		protected internal override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode updateMode)
 		{
 			ConfigurationElementCollection source = (ConfigurationElementCollection) sourceElement;
 			ConfigurationElementCollection parent = (ConfigurationElementCollection) parentElement;
@@ -478,13 +480,13 @@ namespace System.Configuration
 				ConfigurationElement pitem = parent != null ? parent.BaseGet (key) as ConfigurationElement : null;
 				if (pitem != null && updateMode != ConfigurationSaveMode.Full) {
 					ConfigurationElement nitem = CreateNewElementInternal (pitem.GetType().FullName);
-					nitem.Unmerge (sitem, pitem, serializeCollectionKey, ConfigurationSaveMode.Minimal);
+					nitem.Unmerge (sitem, pitem, ConfigurationSaveMode.Minimal);
 					if (nitem.HasValues ())
 						BaseAdd (nitem);
 				}
 				else {
 					ConfigurationElement nitem = CreateNewElementInternal (sitem.GetType().FullName);
-					nitem.Unmerge (sitem, null, serializeCollectionKey, ConfigurationSaveMode.Full);
+					nitem.Unmerge (sitem, null, ConfigurationSaveMode.Full);
 					BaseAdd (nitem);
 				}
 			}
