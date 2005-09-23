@@ -60,28 +60,40 @@ namespace System.Configuration {
 				Settings.Reset (psec.Settings);
 		}
 
-		protected internal override string SerializeSection (
+		[MonoTODO]
+		protected internal string SerializeSection (
 			ConfigurationElement parent, string name, ConfigurationSaveMode mode)
 		{
-			AppSettingsSection psec = parent as AppSettingsSection;
-			if (psec != null)
-				return Settings.SerializeSection (psec.Settings, name, mode);
-			else
-				return Settings.SerializeSection (null, name, mode);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[ConfigurationProperty ("file", DefaultValue = "")]
 		public string File {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
 
+		[ConfigurationProperty ("", DefaultValue = "System.Object", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public KeyValueConfigurationCollection Settings {
 			get {
 				if (values == null)
 					values = new KeyValueConfigurationCollection();
 				return values;
 			}
+		}
+
+		[MonoTODO]
+		public new ConfigurationPropertyCollection Properties {
+			get {
+				return base.Properties;
+			}
+		}
+
+		[MonoTODO]
+		protected internal override object GetRuntimeObject ()
+		{
+			return this;
 		}
 	}
 }

@@ -1,5 +1,10 @@
 2005-09-23  Chris Toshok  <toshok@ximian.com>
 
+	* AppSettingsSection.cs: fix build and add a couple of TODO'ed
+	properties.
+
+2005-09-23  Chris Toshok  <toshok@ximian.com>
+
 	* ProviderSettings.cs (Unmerge): track change to
 	ConfigurationElement.Unmerge.
 
