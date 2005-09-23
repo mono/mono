@@ -1,3 +1,13 @@
+2005-09-22  Miguel de Icaza  <miguel@novell.com>
+
+	* statement.cs (Lock): Use the TemporaryVariable class instead of
+	manually using local variables as those do not work when variables
+	are captured.
+
+	* ecore.cs: Moved the TemporaryVariable class from being a nested
+	class inside Foreach to be a public class that can be employed in
+	other places. 
+
 2005-09-19  Marek Safar  <marek.safar@seznam.cz>
 
 	* cs-parser.jay: interface_accessors replaced by
