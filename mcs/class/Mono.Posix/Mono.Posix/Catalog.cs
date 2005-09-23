@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 
 namespace Mono.Posix {
 
+	[Obsolete ("Use Mono.Unix.Catalog")]
 	public class Catalog {
 		[DllImport("libintl")]
 		static extern IntPtr bindtextdomain (IntPtr domainname, IntPtr dirname);

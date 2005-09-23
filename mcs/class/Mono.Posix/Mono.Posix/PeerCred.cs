@@ -33,6 +33,7 @@ using System.Net.Sockets;
 
 namespace Mono.Posix
 {
+	[Obsolete ("Use Mono.Unix.PeerCred")]
 	public class PeerCred
 	{
 		private struct PeerCredData {

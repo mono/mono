@@ -1,3 +1,9 @@
+2005-09-23  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Catalog.cs, PeerCred.cs, Syscall.cs, UnixEndPoint.cs: [Obsolete] public
+	  types and list appropriate replacement members for Syscall.cs
+	  enumerations/structs.
+
 2005-09-20  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Syscall.cs: Mark types as [CLSCompliant(false)].

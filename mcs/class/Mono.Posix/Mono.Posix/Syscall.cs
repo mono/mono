@@ -32,7 +32,7 @@
 // Deprecated Warning:
 //
 //    This class is deprecated, and exists only for backward compatibility.
-//    Please use and maintain Mono.Unix.Syscall.
+//    Please use and maintain Mono.Unix.Native.Syscall.
 //
 //    The [Map] attributes have been removed.  The naming and methodology of
 //    the mapping routines has changed.  The old map functions still exist in
@@ -70,6 +70,7 @@ namespace Mono.Posix {
 
 	[Flags]
 	[CLSCompliant (false)]
+	[Obsolete ("Use Mono.Unix.Native.OpenFlags")]
 	public enum OpenFlags {
 		//
 		// One of these
@@ -103,6 +104,7 @@ namespace Mono.Posix {
 	
 	[Flags]
 	[CLSCompliant (false)]
+	[Obsolete ("Use Mono.Unix.Native.FilePermissions")]
 	public enum FileMode {
 		S_ISUID   = 2048,
 		S_ISGID   = 1024,
@@ -120,6 +122,7 @@ namespace Mono.Posix {
 
 	[Flags]
 	[CLSCompliant (false)]
+	[Obsolete ("Use Mono.Unix.Native.WaitOptions")]
 	public enum WaitOptions {
 		WNOHANG,
 		WUNTRACED
@@ -127,6 +130,7 @@ namespace Mono.Posix {
 
 	[Flags]
 	[CLSCompliant (false)]
+	[Obsolete ("Use Mono.Unix.Native.AccessModes")]
 	public enum AccessMode {
 		R_OK = 1,
 		W_OK = 2,
@@ -136,6 +140,7 @@ namespace Mono.Posix {
 
 	
 	[CLSCompliant (false)]
+	[Obsolete ("Use Mono.Unix.Native.Signum")]
 	public enum Signals {
 		SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT, SIGBUS,
 		SIGFPE, SIGKILL, SIGUSR1, SIGSEGV, SIGUSR2, SIGPIPE,
@@ -149,7 +154,7 @@ namespace Mono.Posix {
 	}
 	
 	[CLSCompliant (false)]
-	[Obsolete ("Syscall is unmaintained.  Please use Mono.Unix.Syscall.")]
+	[Obsolete ("Use Mono.Unix.Native.Syscall.")]
 	public class Syscall {
 		[DllImport ("libc", SetLastError=true)]
 		public static extern int exit (int status);
@@ -510,53 +515,94 @@ namespace Mono.Posix {
 		
 	}
 	
+	[Obsolete ("Use Mono.Unix.Native.FilePermissions")]
 	public enum StatModeMasks {
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IFMT")]
 		TypeMask = 0xF000, // bitmask for the file type bitfields
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_RWXU")]
 		OwnerMask = 0x1C0, // mask for file owner permissions
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_RWXG")]
 		GroupMask = 0x38, // mask for group permissions
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_RWXO")]
 		OthersMask = 0x7, // mask for permissions for others (not in group)
 	}
 	
 	[Flags]
+	[Obsolete ("Use Mono.Unix.Native.FilePermissions")]
 	public enum StatMode {
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IFSOCK")]
 		Socket = 0xC000, // socket
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IFLNK")]
 		SymLink = 0xA000, // symbolic link
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IFREG")]
 		Regular = 0x8000, // regular file
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IFBLK")]
 		BlockDevice = 0x6000, // block device
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IFDIR")]
 		Directory = 0x4000, // directory
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IFCHR")]
 		CharDevice = 0x2000, // character device
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IFIFO")]
 		FIFO = 0x1000, // fifo
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_ISUID")]
 		SUid = 0x800, // set UID bit
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_ISGID")]
 		SGid = 0x400, // set GID bit
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_ISVTX")]
 		Sticky = 0x200, // sticky bit
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IRUSR")]
 		OwnerRead = 0x100, // owner has read permission
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IWUSR")]
 		OwnerWrite = 0x80, // owner has write permission
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IXUSR")]
 		OwnerExecute = 0x40, // owner has execute permission
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IRGRP")]
 		GroupRead = 0x20, // group has read permission
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IWGRP")]
 		GroupWrite = 0x10, // group has write permission
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IXGRP")]
 		GroupExecute = 0x8, // group has execute permission
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IROTH")]
 		OthersRead = 0x4, // others have read permission
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IWOTH")]
 		OthersWrite = 0x2, // others have write permisson
+		[Obsolete ("Use Mono.Unix.Native.FilePermissions.S_IXOTH")]
 		OthersExecute = 0x1, // others have execute permission	
 	}
 	
+	[Obsolete ("Use Mono.Unix.Native.Stat")]
 	public struct Stat {
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_dev")]
 		public readonly int Device;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_ino")]
 		public readonly int INode;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_mode")]
 		public readonly StatMode Mode;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_nlink")]
 		public readonly int NLinks;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_uid")]
 		public readonly int Uid;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_gid")]
 		public readonly int Gid;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_rdev")]
 		public readonly long DeviceType;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_size")]
 		public readonly long Size;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_blksize")]
 		public readonly long BlockSize;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_blocks")]
 		public readonly long Blocks;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_atime")]
 		public readonly DateTime ATime;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_mtime")]
 		public readonly DateTime MTime;
+		[Obsolete ("Use Mono.Unix.Native.Stat.st_ctime")]
 		public readonly DateTime CTime;
 		
+		[Obsolete ("Use Mono.Unix.Native.NativeConvert.LocalUnixEpoch")]
 		public static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1);
 		
+		[Obsolete ("Use Mono.Unix.Native.NativeConvert.ToDateTime")]
 		public static DateTime UnixToDateTime(long unix) {
 			return UnixEpoch.Add(TimeSpan.FromSeconds(unix)).ToLocalTime();
 		}

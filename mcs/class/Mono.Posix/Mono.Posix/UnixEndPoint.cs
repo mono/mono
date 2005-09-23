@@ -35,6 +35,7 @@ using System.Text;
 namespace Mono.Posix
 {
 	[Serializable]
+	[Obsolete ("Use Mono.Unix.UnixEndPoint")]
 	public class UnixEndPoint : EndPoint
 	{
 		string filename;
