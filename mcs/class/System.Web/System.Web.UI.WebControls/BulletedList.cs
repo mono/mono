@@ -112,7 +112,6 @@ namespace System.Web.UI.WebControls {
 		[MonoTODO ("new bool prop on ListItem: Enabled")]
 		protected virtual void RenderBulletText (ListItem item, int index, HtmlTextWriter writer)
 		{
-			boo
 			switch (DisplayMode) {
 				case BulletedListDisplayMode.Text:
 					//if (!item.Enabled) {
