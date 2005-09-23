@@ -49,7 +49,7 @@ namespace System.Configuration
                 static ConnectionStringsSection ()
                 {
                         _propConnectionStrings = new ConfigurationProperty (null, typeof (ConnectionStringSettingsCollection), 
-                                                                            null, ConfigurationPropertyOptions.DefaultCollection);
+                                                                            null, ConfigurationPropertyOptions.IsDefaultCollection);
                         _properties = new ConfigurationPropertyCollection ();
                         _properties.Add (_propConnectionStrings);
                 }
