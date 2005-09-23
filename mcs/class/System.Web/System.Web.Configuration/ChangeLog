@@ -1,3 +1,8 @@
+2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PagesConfiguration.cs: on error return a default instance instead
+	of null.
+
 2005-09-22  Chris Toshok  <toshok@ximian.com>
 
 	* PositiveTimeSpanValidator.cs: move this from

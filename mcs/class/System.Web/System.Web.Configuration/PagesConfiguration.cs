@@ -71,7 +71,7 @@ namespace System.Web.Configuration
 			try {
 				config = context.GetConfig ("system.web/pages") as PagesConfiguration;
 			} catch {
-				return null;
+				return new PagesConfiguration (null);
 			}
 			return config;
 		}
