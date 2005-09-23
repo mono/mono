@@ -1,3 +1,9 @@
+2005-09-23  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Display the selection box under the correct
+	circumstances. We were rendering white text with no selection box
+	before.
+
 2005-09-23  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs(Split): Now updates selection start/end if it points 

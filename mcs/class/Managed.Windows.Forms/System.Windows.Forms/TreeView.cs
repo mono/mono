@@ -1024,8 +1024,8 @@ namespace System.Windows.Forms {
 		
 		private void DrawSelectionAndFocus(TreeNode node, Graphics dc, Rectangle r)
 		{
-			if (!HideSelection && SelectedNode == node)
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), r);
+			if ((!HideSelection || Focused) && SelectedNode == node)
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilight), r);
 			else
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (node.BackColor), r);
 			if (Focused && focused_node == node)
@@ -1043,8 +1043,8 @@ namespace System.Windows.Forms {
 				DrawSelectionAndFocus(node, dc, r);
 			r.X += 4;
 			r.Width -= 8;
-			Color text_color = (Focused && SelectedNode == node ? ThemeEngine.Current.ColorHilightText : node.ForeColor);
-			format.FormatFlags |= StringFormatFlags.NoWrap;
+			Color text_color = ((Focused || !HideSelection) && SelectedNode == node ?
+					ThemeEngine.Current.ColorHilightText : node.ForeColor);
 			dc.DrawString (node.Text, node.NodeFont, ThemeEngine.Current.ResPool.GetSolidBrush (text_color), r, format);
 		}
 
@@ -1111,8 +1111,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
-                        if (node.Bounds.Bottom > used_height)
-                                used_height = node.Bounds.Bottom;
+			if (node.Bounds.Bottom > used_height)
+				used_height = node.Bounds.Bottom;
 
 			depth++;
 			if (node.IsExpanded) {
@@ -1159,11 +1159,11 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-                        if (used_height > ClientRectangle.Height) {
-                                add_vscroll = true;
-                                AddVerticalScrollBar (open_node_count, true);
-                                return;
-                        }
+			if (used_height > ClientRectangle.Height) {
+				add_vscroll = true;
+				AddVerticalScrollBar (open_node_count, true);
+				return;
+			}
 
 			if (vbar != null) {
 				int height = (hbar != null && hbar.Visible ? Height - hbar.Height : Height);
@@ -1264,10 +1264,16 @@ namespace System.Windows.Forms {
 					UpdateNode (edit_node);
 				} else if (selected_node != focused_node) {
 					select_mmove = true;
-					Rectangle invalid = (old_selected == null ? Rectangle.Empty : old_selected.Bounds);
-					invalid = Rectangle.Union (invalid, selected_node.Bounds);
-					invalid.Y += 2;
-					Invalidate (invalid);
+					
+					if (old_selected != null) {
+						Rectangle invalid = old_selected.Bounds;
+						invalid.Y -= 4;
+						invalid.Height = 8;
+						invalid = Rectangle.Union (invalid, selected_node.Bounds);
+						Invalidate (invalid);
+					} else {
+						Invalidate (selected_node.Bounds);
+					}
 				}
 			} 
 		}
