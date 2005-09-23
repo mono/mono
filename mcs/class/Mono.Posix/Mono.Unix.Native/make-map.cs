@@ -48,6 +48,7 @@ class MakeMap {
 			new HeaderFileGenerator (),
 			new SourceFileGenerator (),
 			new ConvertFileGenerator (),
+			new ConvertDocFileGenerator (),
 			new MphPrototypeFileGenerator (),
 		};
 
@@ -499,6 +500,193 @@ class ConvertFileGenerator : FileGenerator {
 	{
 		scs.WriteLine ("\t}");
 		scs.WriteLine ("}\n");
+		scs.Close ();
+	}
+}
+
+class ConvertDocFileGenerator : FileGenerator {
+	StreamWriter scs;
+
+	public override void CreateFile (string assembly_name, string file_prefix)
+	{
+		scs = File.CreateText (file_prefix + ".xml");
+		scs.WriteLine ("    <!-- BEGIN GENERATED CONTENT");
+		WriteHeader (scs, assembly_name, true);
+		scs.WriteLine ("      -->");
+	}
+
+	public override void WriteType (Type t, string ns, string fn)
+	{
+		bool bits;
+		if (!CanMapType (t, out bits))
+			return;
+
+		string type = GetCSharpType (t);
+		string mtype = Enum.GetUnderlyingType(t).FullName;
+		string member = t.Name;
+		string ftype = t.FullName;
+
+		string to_returns = "";
+		string to_remarks = "";
+		string to_exception = "";
+
+		if (bits) {
+			to_returns = "<returns>An approximation of the equivalent managed value.</returns>";
+			to_remarks = @"<para>The current conversion functions are unable to determine
+        if a value in a <c>[Flags]</c>-marked enumeration <i>does not</i> 
+        exist on the current platform.  As such, if <paramref name=""value"" /> 
+        contains a flag value which the current platform doesn't support, it 
+        will not be present in the managed value returned.</para>
+        <para>This should only be a problem if <paramref name=""value"" /> 
+        <i>was not</i> previously returned by 
+        <see cref=""M:Mono.Unix.Native.NativeConvert.From" + member + "\" />.</para>\n";
+		}
+		else {
+			to_returns = "<returns>The equivalent managed value.</returns>";
+			to_exception = @"
+        <exception cref=""T:System.ArgumentOutOfRangeException"">
+          <paramref name=""value"" /> has no equivalent managed value.
+        </exception>
+";
+		}
+		scs.WriteLine (@"
+    <Member MemberName=""TryFrom{1}"">
+      <MemberSignature Language=""C#"" Value=""public static bool TryFrom{1} ({0} value, out {2} rval);"" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name=""value"" Type=""{0}"" />
+        <Parameter Name=""rval"" Type=""{3}&amp;"" RefType=""out"" />
+      </Parameters>
+      <Docs>
+        <param name=""value"">The managed value to convert.</param>
+        <param name=""rval"">The OS-specific equivalent value.</param>
+        <summary>Converts a <see cref=""T:{0}"" /> 
+          to an OS-specific value.</summary>
+        <returns><see langword=""true"" /> if the conversion was successful; 
+        otherwise, <see langword=""false"" />.</returns>
+        <remarks><para>This is an exception-safe alternative to 
+        <see cref=""M:Mono.Unix.Native.NativeConvert.From{1}"" />.</para>
+        <para>If successful, this method stores the OS-specific equivalent
+        value of <paramref name=""value"" /> into <paramref name=""rval"" />.
+        Otherwise, <paramref name=""rval"" /> will contain <c>0</c>.</para>
+        </remarks>
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.From{1}"" />
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.To{1}"" />
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.TryTo{1}"" />
+      </Docs>
+    </Member>
+    <Member MemberName=""From{1}"">
+      <MemberSignature Language=""C#"" Value=""public static {2} From{1} ({0} value);"" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>{3}</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name=""value"" Type=""{0}"" />
+      </Parameters>
+      <Docs>
+        <param name=""value"">The managed value to convert.</param>
+        <summary>Converts a <see cref=""T:{0}"" /> 
+          to an OS-specific value.</summary>
+        <returns>The equivalent OS-specific value.</returns>
+        <exception cref=""T:System.ArgumentOutOfRangeException"">
+          <paramref name=""value"" /> has no equivalent OS-specific value.
+        </exception>
+        <remarks></remarks>
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.To{1}"" />
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.TryFrom{1}"" />
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.TryTo{1}"" />
+      </Docs>
+    </Member>
+    <Member MemberName=""TryTo{1}"">
+      <MemberSignature Language=""C#"" Value=""public static bool TryTo{1} ({2} value, out {0} rval);"" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name=""value"" Type=""{3}"" />
+        <Parameter Name=""rval"" Type=""{0}&amp;"" RefType=""out"" />
+      </Parameters>
+      <Docs>
+        <param name=""value"">The OS-specific value to convert.</param>
+        <param name=""rval"">The managed equivalent value</param>
+        <summary>Converts an OS-specific value to a 
+          <see cref=""T:{0}"" />.</summary>
+        <returns><see langword=""true"" /> if the conversion was successful; 
+        otherwise, <see langword=""false"" />.</returns>
+        <remarks><para>This is an exception-safe alternative to 
+        <see cref=""M:Mono.Unix.Native.NativeConvert.To{1}"" />.</para>
+        <para>If successful, this method stores the managed equivalent
+        value of <paramref name=""value"" /> into <paramref name=""rval"" />.
+        Otherwise, <paramref name=""rval"" /> will contain a <c>0</c>
+        cast to a <see cref=""T:{0}"" />.</para>
+        " + to_remarks + 
+@"        </remarks>
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.From{1}"" />
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.To{1}"" />
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.TryFrom{1}"" />
+      </Docs>
+    </Member>
+    <Member MemberName=""To{1}"">
+      <MemberSignature Language=""C#"" Value=""public static {0} To{1} ({2} value);"" />
+      <MemberType>Method</MemberType>
+      <ReturnValue>
+        <ReturnType>{0}</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name=""value"" Type=""{3}"" />
+      </Parameters>
+      <Docs>
+        <param name=""value"">The OS-specific value to convert.</param>
+        <summary>Converts an OS-specific value to a 
+          <see cref=""T:{0}"" />.</summary>
+					" + to_returns + "\n" + 
+			to_exception + 
+@"        <remarks>
+        " + to_remarks + @"
+        </remarks>
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.From{1}"" />
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.TryFrom{1}"" />
+        <altmember cref=""M:Mono.Unix.Native.NativeConvert.TryTo{1}"" />
+      </Docs>
+    </Member>
+", ftype, member, type, mtype
+		);
+	}
+
+	private string GetCSharpType (Type t)
+	{
+		string ut = t.Name;
+		if (t.IsEnum)
+			ut = Enum.GetUnderlyingType (t).Name;
+		Type et = t.GetElementType ();
+		if (et != null && et.IsEnum)
+			ut = Enum.GetUnderlyingType (et).Name;
+
+		string type = null;
+
+		switch (ut) {
+			case "Boolean":       type = "bool";    break;
+			case "Byte":          type = "byte";    break;
+			case "SByte":         type = "sbyte";   break;
+			case "Int16":         type = "short";   break;
+			case "UInt16":        type = "ushort";  break;
+			case "Int32":         type = "int";     break;
+			case "UInt32":        type = "uint";    break;
+			case "Int64":         type = "long";    break;
+			case "UInt64":        type = "ulong";   break;
+		}
+
+		return type;
+	}
+
+	public override void CloseFile (string file_prefix)
+	{
+		scs.WriteLine ("    <!-- END GENERATED CONTENT -->");
 		scs.Close ();
 	}
 }
