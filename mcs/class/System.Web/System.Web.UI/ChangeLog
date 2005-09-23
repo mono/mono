@@ -1,3 +1,11 @@
+2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataBindingCollection.cs: Using an hashtable is a nice trick but
+	we need to copy values (not the DictionaryEntry) in CopyTo.
+	* Page.cs: IsValid throws an exception if the page hasn't be 
+	validated. VerifyRenderingInServerForm doesn't throw an exception
+	during unit testing (without a context?) but does in normal ops.
+
 2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LosFormatter.cs: the exceptions thrown have a 500 httpCode. Really

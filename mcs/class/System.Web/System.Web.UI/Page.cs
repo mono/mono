@@ -76,6 +76,7 @@ public class Page : TemplateControl, IHttpHandler
 	private bool _viewStateMac;
 	private string _errorPage;
 	private bool _isValid;
+	private bool is_validated;
 	private bool _smartNavigation;
 	private int _transactionMode;
 	private HttpContext _context;
@@ -321,9 +322,12 @@ public class Page : TemplateControl, IHttpHandler
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public bool IsValid
-	{
-		get { return _isValid; }
+	public bool IsValid {
+		get {
+			if (!is_validated)
+				throw new HttpException (Locale.GetText ("Page hasn't been validated."));
+			return _isValid;
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -1220,6 +1224,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	public virtual void Validate ()
 	{
+		is_validated = true;
 		ValidateCollection (_validators);
 	}
 
@@ -1261,6 +1266,9 @@ public class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void VerifyRenderingInServerForm (Control control)
 	{
+		if (_context == null)
+			return;
+
 		if (!renderingForm)
 			throw new HttpException ("Control '" +
 						 control.ClientID +
@@ -1497,6 +1505,7 @@ public class Page : TemplateControl, IHttpHandler
 	
 	public virtual void Validate (string validationGroup)
 	{
+		is_validated = true;
 		if (validationGroup == null || validationGroup == "")
 			ValidateCollection (_validators);
 		else {

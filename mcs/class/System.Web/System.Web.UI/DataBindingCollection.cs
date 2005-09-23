@@ -81,7 +81,7 @@ namespace System.Web.UI {
 
 		public void CopyTo (Array array, int index)
 		{
-			list.CopyTo (array, index);
+			list.Values.CopyTo (array, index);
 		}
 
 		public IEnumerator GetEnumerator ()
