@@ -168,12 +168,20 @@ namespace MonoCasTests.System.Web {
 				context.RewritePath (String.Empty);
 			}
 			catch (NullReferenceException) {
+				// ms
+			}
+			catch (ArgumentNullException) {
+				// mono
 			}
 
 			try {
 				context.RewritePath (String.Empty, String.Empty, String.Empty);
 			}
 			catch (NullReferenceException) {
+				// ms
+			}
+			catch (ArgumentNullException) {
+				// mono
 			}
 #if NET_2_0
 			context.GetSection (String.Empty);
@@ -182,6 +190,10 @@ namespace MonoCasTests.System.Web {
 				context.RewritePath (String.Empty, true);
 			}
 			catch (NullReferenceException) {
+				// ms
+			}
+			catch (NotImplementedException) {
+				// mono
 			}
 #endif
 		}

@@ -1,3 +1,8 @@
+2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpContextCas.cs: Mono throws ArgumentNullException for RewritePath
+	methods while MS throws NullReferenceException.
+
 2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpCachePolicyCas.cs: SetDiskCacheable method was removed in 2.0 RC
