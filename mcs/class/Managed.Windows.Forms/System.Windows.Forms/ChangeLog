@@ -1,5 +1,12 @@
 2005-09-23  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: We don't need to expand the invalid area when the
+	selection changes, as this is all drawn in the node's bounding
+	box. The area needs to be expanded (previous typo was contracting
+	it) when the focus rect moves.
+
+2005-09-23  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Display the selection box under the correct
 	circumstances. We were rendering white text with no selection box
 	before.

@@ -1266,11 +1266,8 @@ namespace System.Windows.Forms {
 					select_mmove = true;
 					
 					if (old_selected != null) {
-						Rectangle invalid = old_selected.Bounds;
-						invalid.Y -= 4;
-						invalid.Height = 8;
-						invalid = Rectangle.Union (invalid, selected_node.Bounds);
-						Invalidate (invalid);
+						Invalidate (Rectangle.Union (old_selected.Bounds,
+									    selected_node.Bounds));
 					} else {
 						Invalidate (selected_node.Bounds);
 					}
@@ -1295,7 +1292,10 @@ namespace System.Windows.Forms {
 					invalid = selected_node.Bounds;
 				focused_node = selected_node;
 				OnAfterSelect (new TreeViewEventArgs (selected_node, TreeViewAction.ByMouse));
-				invalid.Y += 2;
+				invalid.Y -= 2;
+				invalid.X -= 2;
+				invalid.Height += 4;
+				invalid.Width += 4;
 				Invalidate (invalid);
 			} else {
 				selected_node = focused_node;
