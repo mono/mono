@@ -299,8 +299,8 @@ namespace System.Windows.Forms
 				return;
 			}
 			
-			data_manager = (CurrencyManager) BindingContext [data_source, ValueMember];
-			data_manager.PositionChanged += new EventHandler (OnPositionChanged);			
+			data_manager = (CurrencyManager) BindingContext [data_source];
+			data_manager.PositionChanged += new EventHandler (OnPositionChanged);
 		}		
 		
 		private void OnPositionChanged (object sender, EventArgs e)

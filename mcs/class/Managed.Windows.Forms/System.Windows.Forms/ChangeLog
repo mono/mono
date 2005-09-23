@@ -1,3 +1,10 @@
+2005-09-23  Jackson Harper  <jackson@ximian.com>
+
+	* Binding.cs:
+	* ListControl.cs: Don't use the path when retrieving binding
+	managers from the binding context. My bat sense tells me that the
+	path is only used on insertion.
+
 2005-09-22  Jackson Harper  <jackson@ximian.com>
 
 	* Splitter.cs: Set the cursor an easier way. (Thanks peter).

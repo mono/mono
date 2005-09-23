@@ -141,7 +141,7 @@ namespace System.Windows.Forms {
 			if (control == null)
 				return;
 
-			manager = control.BindingContext [data_source, property_name];
+			manager = control.BindingContext [data_source];
 			manager.AddBinding (this);
 
 			WirePropertyValueChangedEvent ();
