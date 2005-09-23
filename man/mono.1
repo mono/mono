@@ -499,11 +499,13 @@ Currently, the following options are supported:
 This option will make the runtime abort when it receives a SIGSEGV signal
 while executing unmanaged (native) code. This is useful for debugging
 problems when interfacing with native code.
-.TP "collect-pagefault-stats"
+.TP
+.I "collect-pagefault-stats"
 Collects information about pagefaults.   This is used internally to
 track the number of page faults produced to load metadata.  To display
 this information you must use this option with "--stats" command line option.
-.TP "handle-sigint"
+.TP
+.I "handle-sigint"
 Captures the interrupt signal (Control-C) and displays a stack trace
 when pressed.  Useful to find out where the program is executing at a
 given point.  This only displays the stack trace of a single thread. 
