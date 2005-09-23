@@ -186,7 +186,7 @@ namespace System.Web.Util {
 		{
 			url = url.Replace('\\','/');
 			int last = url.LastIndexOf ('/');
-			if (last > 0)
+			if (last >= 0)
 				return url.Substring (last+1);
 
 			throw new Exception (String.Format ("GetFile: `{0}' does not contain a /", url));

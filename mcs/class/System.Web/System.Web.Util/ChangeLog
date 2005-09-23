@@ -1,3 +1,7 @@
+2005-09-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* UrlUtils.cs: fix GetFile to work with '/blah'.
+
 2005-09-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IWebObjectFactory.cs: New. 2.0 interface.
