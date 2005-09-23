@@ -1827,27 +1827,52 @@ namespace System.Windows.Forms {
 			LineTag	new_tag;
 			Line	new_line;
 			bool	move_caret;
+			bool	move_sel_start;
+			bool	move_sel_end;
 
 			move_caret = false;
+			move_sel_start = false;
+			move_sel_end = false;
 
 			// Adjust selection and cursors
 			if (soft && (caret.line == line) && (caret.pos >= pos)) {
 				move_caret = true;
 			}
-			// FIXME - what about selection?
+			if (selection_start.line == line && selection_start.pos >= pos) {
+				move_sel_start = true;
+			}
+
+			if (selection_end.line == line && selection_end.pos >= pos) {
+				move_sel_end = true;
+			}
 
 			// cover the easy case first
 			if (pos == line.text.Length) {
 				Add(line.line_no + 1, "", line.alignment, tag.font, tag.color);
+
+				new_line = GetLine(line.line_no + 1);
+
 				if (soft) {
 					if (move_caret) {
-						caret.line = GetLine(line.line_no + 1);
+						caret.line = new_line;
 						caret.line.soft_break = true;
-						caret.tag = selection_start.line.tags;
+						caret.tag = new_line.tags;
 						caret.pos = 0;
 					} else {
-						GetLine(line.line_no + 1).soft_break = true;
+						new_line.soft_break = true;
 					}
+				}
+
+				if (move_sel_start) {
+					selection_start.line = new_line;
+					selection_start.pos = 0;
+					selection_start.tag = new_line.tags;
+				}
+
+				if (move_sel_end) {
+					selection_end.line = new_line;
+					selection_end.pos = 0;
+					selection_end.tag = new_line.tags;
 				}
 				return;
 			}
@@ -1917,6 +1942,18 @@ namespace System.Windows.Forms {
 					caret.tag = caret.line.FindTag(caret.pos);
 				}
 				new_line.soft_break = true;
+			}
+
+			if (move_sel_start) {
+				selection_start.line = new_line;
+				selection_start.pos = selection_start.pos - pos;
+				selection_start.tag = new_line.FindTag(selection_start.pos);
+			}
+
+			if (move_sel_end) {
+				selection_end.line = new_line;
+				selection_end.pos = selection_end.pos - pos;
+				selection_end.tag = new_line.FindTag(selection_end.pos);
 			}
 
 			line.text.Remove(pos, line.text.Length - pos);

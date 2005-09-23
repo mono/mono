@@ -1,3 +1,8 @@
+2005-09-23  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs(Split): Now updates selection start/end if it points 
+	  into a line that's being split. Fixes a FIXME and bug #75258
+
 2005-09-23  Jackson Harper  <jackson@ximian.com>
 
 	* Binding.cs:
