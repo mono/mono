@@ -1,11 +1,10 @@
-// 
-// System.Web.HttpBrowserCapabilities
 //
-// Authors:
-//   Patrik Torstensson (Patrik.Torstensson@labs2.com)
-//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
+// System.Web.UI.DataBindingCollectionTest.cs
 //
-// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
+// Miguel de Icaza  (miguel@novell.com)
+//
+// (C) Ximian, Inc.
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,39 +26,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using NUnit.Framework;
+
+using System;
+using System.Collections;
 using System.Security.Permissions;
-using System.Web.Configuration;
+using System.Web;
 using System.Web.UI;
 
-namespace System.Web
-{
-	//
-	// The real implementation lives in System.Web/BrowserCapabilities.cs
-	//
-
-	// CAS
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public partial class HttpBrowserCapabilities : HttpCapabilitiesBase
 #if NET_2_0
-		, IFilterResolutionService
-#endif
+
+namespace MonoCasTests.System.Web.UI {
+
+	[TestFixture]
+	public class DataBindingCollectionTest
 	{
-		public HttpBrowserCapabilities ()
+		bool changed = false;
+		
+		[Test] public void ChangeTest ()
 		{
-		}
+			DataBindingCollection a = new DataBindingCollection ();
+			a.Changed += delegate {
+				changed = true;
+			};
 
-#if NET_2_0
-		bool IFilterResolutionService.EvaluateFilter (string filterName)
-		{
-			throw new NotImplementedException ();
-		}
+			DataBinding b = new DataBinding ("a", typeof (DataBindingCollectionTest), "b");
+			a.Add (b);
+			Assert.AreEqual (true, changed, "DB1");
+			changed = false;
 
-		int IFilterResolutionService.CompareFilters (string filter1, string filter2)
-		{
-			throw new NotImplementedException ();
+			a.Clear ();
+			Assert.AreEqual (false, changed, "DB2");
+			
+			a.Remove (b);
+			Assert.AreEqual (true, changed, "DB3");
 		}
-#endif
 	}
 }
-
+	
+#endif

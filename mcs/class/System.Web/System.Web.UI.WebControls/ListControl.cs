@@ -61,7 +61,6 @@ namespace System.Web.UI.WebControls {
 		private static readonly object TextChangedEvent = new object ();
 #endif
 
-		private object data_source;
 		private ListItemCollection items;
 		
 		public ListControl () : base (HtmlTextWriterTag.Select)
@@ -104,6 +103,8 @@ namespace System.Web.UI.WebControls {
 			get { return ViewState.GetString ("DataMember", String.Empty); }
 			set { ViewState ["DataMember"] = value; }
 		}
+
+		private object data_source;
 
 		[Bindable(true)]
 		[DefaultValue(null)]

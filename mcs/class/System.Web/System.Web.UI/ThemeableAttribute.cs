@@ -41,8 +41,6 @@ namespace System.Web.UI {
 	public sealed class ThemeableAttribute : Attribute {
 
 		private bool themeable;
-		private bool dispose;
-
 		public ThemeableAttribute (bool themeable) 
 		{
 			this.themeable = themeable;

@@ -1,3 +1,10 @@
+2005-09-22  Miguel de Icaza  <miguel@novell.com>
+
+	* DataBindingCollection.cs: Raise the event, remove MonoTODO.
+
+	* MinimizableAttributeTypeConverter.cs: Fix warning, compare to a
+	string. 
+
 2005-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Control.cs: Added null checks for Trace as it can be null when 

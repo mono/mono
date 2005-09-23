@@ -66,7 +66,7 @@ namespace System.Web.UI {
 					
 			Type t = value.GetType ();
 			if (t == typeof (string))
-				return value != String.Empty;
+				return ((string)value) != String.Empty;
 
 			if (t == typeof (bool))
 				return value;

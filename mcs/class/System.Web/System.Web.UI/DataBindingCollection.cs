@@ -71,6 +71,7 @@ namespace System.Web.UI {
 		public void Add (DataBinding binding)
 		{
 			list.Add (binding.PropertyName, binding);
+			RaiseChanged ();
 		}
 
 		public void Clear ()
@@ -98,6 +99,7 @@ namespace System.Web.UI {
 		{
 			removed.Add (propertyName);
 			list.Remove (propertyName);
+			RaiseChanged ();
 		}
 
 		public void Remove (string propertyName,
@@ -110,14 +112,23 @@ namespace System.Web.UI {
 
 			list.Remove (propertyName);
 		}
+
 #if NET_2_0
 		public bool Contains (string propertyName)
 		{
 			return list.Contains (propertyName);
 		}
 
-		[MonoTODO]
 		public event EventHandler Changed;
+
+		public
+#else
+		internal
 #endif
+		void RaiseChanged ()
+		{
+			if (Changed != null)
+				Changed (this, EventArgs.Empty);
+		}
 	}
 }

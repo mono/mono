@@ -46,7 +46,7 @@ namespace System.Web.UI.WebControls {
 		private DataKeyCollection keycoll;
 		private object source;
 #if NET_2_0
-		private string dataSourceId;
+		//private string dataSourceId;
 		private bool initialized;
 		private bool requiresDataBinding;
 		private DataSourceSelectArguments selectArguments;
