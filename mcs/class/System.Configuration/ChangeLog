@@ -1,5 +1,10 @@
 2005-09-22  Chris Toshok  <toshok@ximian.com>
 
+	* System.Configuration.Provider/*: move here from
+	../System/System.Configuration.Provider.
+	
+2005-09-22  Chris Toshok  <toshok@ximian.com>
+
 	* System.Configuration.dll.sources: remove
 	PositiveTimeSpanValidator.cs
 
