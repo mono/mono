@@ -1,3 +1,7 @@
+2005-09-23  Miguel de Icaza  <miguel@novell.com>
+
+	* Decimal.cs: Fix typo, patch from Tomas Kukol <tomas.kukol@gmail.com>
+
 2005-09-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoCustomAttrs.cs (GetCustomAttributesInternal): Add

@@ -602,7 +602,7 @@ namespace System
         {
 		if (d2.IsZero ())
 			throw new DivideByZeroException ();
-		if (d2.IsZero ())
+		if (d1.IsZero ())
 			return Decimal.Zero;
 		if (d1 == d2)
 			return Decimal.One;
