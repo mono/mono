@@ -1,3 +1,8 @@
+2005-09-22  Ben Maurer  <bmaurer@ximian.com>
+
+	* BulletedList.cs: Remove the cacheEnabled thing. I was thinking
+	it took O(height) time, not O(1).
+
 2005-09-21  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* CheckBoxList.cs: Fix unit test failure (which matched bug #48802).

@@ -108,11 +108,11 @@ namespace System.Web.UI.WebControls {
 			
 			base.AddAttributesToRender (writer);
 		}
-		
-		bool cacheIsEnabled;
+
 		[MonoTODO ("new bool prop on ListItem: Enabled")]
 		protected virtual void RenderBulletText (ListItem item, int index, HtmlTextWriter writer)
 		{
+			boo
 			switch (DisplayMode) {
 				case BulletedListDisplayMode.Text:
 					//if (!item.Enabled) {
@@ -125,7 +125,7 @@ namespace System.Web.UI.WebControls {
 					break;
 
 				case BulletedListDisplayMode.HyperLink:
-					//if (cacheIsEnabled && item.Enabled) {
+					//if (Enabled && item.Enabled) {
 					//	writer.AddAttribute (HtmlTextWriterAttribute.Href, item.Value);
 					//	if (Target != "")
 					//		writer.AddAttribute(HtmlTextWriterAttribute.Target, this.Target);
@@ -140,7 +140,7 @@ namespace System.Web.UI.WebControls {
 					break;
 
 				case BulletedListDisplayMode.LinkButton:
-					//if (cacheIsEnabled && item.Enabled)
+					//if (Enabled && item.Enabled)
 						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, (index.ToString (CultureInfo.InvariantCulture))));
 					//else
 					//	writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
@@ -153,7 +153,6 @@ namespace System.Web.UI.WebControls {
 		
 		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
-			cacheIsEnabled = this.Enabled;
 			int idx = 0;
 			foreach (ListItem i in Items) {
 				writer.RenderBeginTag (HtmlTextWriterTag.Li);
