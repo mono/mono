@@ -1,3 +1,12 @@
+2005-09-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CachingCompiler.cs: 
+	* WebServiceCompiler.cs: when caching a type loaded from an assembly
+	that we didn't compile, make it depend on the file itself, not on a
+	non-existing cache key. This problem affected performance of web
+	services and .ashx, making unnecessary extra calls to LoadFrom every
+	time the cache was cleared.
+
 2005-09-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseCompiler.cs: set the domain's DynamicBase property instead of

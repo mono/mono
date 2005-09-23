@@ -47,9 +47,15 @@ namespace System.Web.Compilation
 		const string cachePrefix = "@@Assembly";
 		const string cacheTypePrefix = "@@@Type";
 
-		public static void InsertType (Type type, string filename)
+		public static void InsertTypeFileDep (Type type, string filename)
 		{
-			string [] cacheKeys = new string [] { cachePrefix + filename };
+			CacheDependency dep = new CacheDependency (filename);
+			HttpRuntime.Cache.InsertPrivate (cacheTypePrefix + filename, type, dep);
+		}
+
+ 		public static void InsertType (Type type, string filename)
+ 		{
+ 			string [] cacheKeys = new string [] { cachePrefix + filename };
 			CacheDependency dep = new CacheDependency (null, cacheKeys);
 			HttpRuntime.Cache.InsertPrivate (cacheTypePrefix + filename, type, dep);
 		}

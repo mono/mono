@@ -65,7 +65,7 @@ namespace System.Web.Compilation
 
 			if (parser.Program.Trim () == "") {
 				type = parser.GetTypeFromBin (parser.ClassName);
-				CachingCompiler.InsertType (type, parser.PhysicalPath);
+				CachingCompiler.InsertTypeFileDep (type, parser.PhysicalPath);
 				return type;
 			}
 
