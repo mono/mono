@@ -747,7 +747,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		[Test]
-		[Ignore ("NullReferenceException")]
+		[Category ("NotDotNet")] // NullReferenceException
 		public void OnBubbleEvent_Authenticated_OnAuthenticate ()
 		{
 			TestLogin l = new TestLogin ();

@@ -108,6 +108,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return htw.InnerWriter.ToString ();
 		}
 
+		[Test]
 		public void DefaultValues ()
 		{
 			RepeatInfo ri = new RepeatInfo ();
@@ -161,8 +162,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			RenderRepeater_BaseControl ("shouldn't get here", "null", null);
 		}
-
-
 		
 		[Test]
 		public void RenderRepeater_BaseControl ()

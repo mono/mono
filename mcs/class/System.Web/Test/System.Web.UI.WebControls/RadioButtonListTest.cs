@@ -1,5 +1,5 @@
 //
-// Tests for System.Web.UI.WebControls.RadioButtonListTest.cs
+// Tests for System.Web.UI.WebControls.RadioButtonList.cs
 //
 // Authors:
 //	Jordi Mas i Hernandez (jordi@ximian.com)

@@ -1,5 +1,5 @@
 //
-// Tests for System.Web.UI.WebControls.ValidatorTest 
+// Tests for System.Web.UI.WebControls.Validator
 //
 // Author:
 //	Chris Toshok (toshok@novell.com)

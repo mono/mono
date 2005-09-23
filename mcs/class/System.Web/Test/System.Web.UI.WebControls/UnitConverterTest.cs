@@ -1,5 +1,5 @@
 //
-// Tests for System.Web.UI.WebControls.Unit.cs 
+// Tests for System.Web.UI.WebControls.UnitConverter.cs 
 //
 // Author:
 //	Ben Maurer <bmaurer@novell.com>
@@ -33,25 +33,40 @@ using System.Web;
 using System.Web.UI.WebControls;
 
 namespace MonoTests.System.Web.UI.WebControls {
-	class UnitConverterTest {
-		UnitConverter c = new UnitConverter ();
+
+	[TestFixture]
+	public class UnitConverterTest {
 		
 		[Test]
-		public void TestConvertTo ()
+		public void ConvertTo ()
 		{
-			Assert.Equals (c.ConvertTo (new Unit (1), typeof (string)), new Unit (1).ToString ());
-			Assert.Equals (c.ConvertTo ("1 px", typeof (Unit)), new Unit (1));
-			Assert.IsTrue (c.CanConvertTo (typeof (string)));
-			Assert.IsTrue (c.CanConvertTo (typeof (Unit)));	
+			UnitConverter c = new UnitConverter ();
+			Assert.IsTrue (c.CanConvertTo (typeof (string)), "string");
+			Assert.AreEqual (c.ConvertTo (new Unit (1), typeof (string)), new Unit (1).ToString (), "ConvertTo(string)");
+			Assert.IsFalse (c.CanConvertTo (typeof (Unit)), "Unit");
 		}
 
 		[Test]
-		public void TestConvertFrom ()
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertToUnit ()
 		{
-			Assert.Equals (c.ConvertFrom (new Unit (1)), new Unit (1).ToString ());
-			Assert.Equals (c.ConvertFrom ("1 px"), new Unit (1));
-			Assert.IsTrue (c.CanConvertFrom (typeof (string)));
-			Assert.IsTrue (c.CanConvertFrom (typeof (Unit)));	
+			new UnitConverter ().ConvertTo ("1 px", typeof (Unit));
+		}
+
+		[Test]
+		public void ConvertFrom ()
+		{
+			UnitConverter c = new UnitConverter ();
+			Assert.IsTrue (c.CanConvertFrom (typeof (string)), "string");
+			Assert.AreEqual (c.ConvertFrom ("1 px"), new Unit (1), "ConvertFrom(string)");
+			Assert.IsFalse (c.CanConvertFrom (typeof (Unit)), "Unit");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void ConvertFromUnit ()
+		{
+			new UnitConverter ().ConvertFrom (new Unit (1));
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// Tests for System.Web.UI.WebControls.TargetConverter.cs 
+// Tests for System.Web.UI.WebControls.WebColorConverter.cs 
 //
 // Author:
 //	Peter Dennis Bartok (pbartok@novell.com)

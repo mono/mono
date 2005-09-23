@@ -1,5 +1,5 @@
 //
-// Tests for System.Web.UI.WebControls.ListItemTest.cs 
+// Tests for System.Web.UI.WebControls.ListItem.cs 
 //
 // Author:
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)

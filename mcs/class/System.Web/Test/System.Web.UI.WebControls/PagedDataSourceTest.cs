@@ -285,6 +285,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			EnumeratorTester (ds.GetEnumerator (), "list");
 		}
 
+		[Test]
 		public void TestEnumerators_NoPaging ()
 		{
 			PagedDataSource ds = new PagedDataSource ();

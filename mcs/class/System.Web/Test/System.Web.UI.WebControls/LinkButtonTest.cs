@@ -39,8 +39,8 @@ using System.Web.UI.WebControls;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
-	[TestFixture]	
-	public class LinkButtonText {	
+	[TestFixture]
+	public class LinkButtonTest {	
 		class Poker : LinkButton {
 			
 			public new void AddParsedSubObject (object o)
