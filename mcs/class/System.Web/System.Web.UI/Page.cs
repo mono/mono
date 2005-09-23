@@ -99,7 +99,6 @@ public class Page : TemplateControl, IHttpHandler
 	protected const string postEventArgumentID = "__EVENTARGUMENT";
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventSourceID = "__EVENTTARGET";
-	const int HASH_SIZE = 16;
 
 #if NET_2_0
 	internal const string CallbackArgumentID = "__CALLBACKARGUMENT";
@@ -764,23 +763,28 @@ public class Page : TemplateControl, IHttpHandler
 		scriptManager.WriteClientScriptBlocks (writer);
 	}
 
+	LosFormatter GetFormatter ()
+	{
+		PagesConfiguration config = PagesConfiguration.GetInstance (_context);
+		byte [] vkey = null;
+		if (config.EnableViewStateMac) {
+			MachineKeyConfig mconfig;
+			mconfig = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
+			vkey = mconfig.ValidationKey;
+		}
+
+		return new LosFormatter (config.EnableViewStateMac, vkey);
+	}
+
 	internal string GetViewStateString ()
 	{
 		if (_savedViewState == null)
 			return null;
 
-		LosFormatter fmt = new LosFormatter ();
-		PagesConfiguration config = PagesConfiguration.GetInstance (_context);
-		if (false == config.EnableViewStateMac) {
-			StringWriter sr = new StringWriter ();
-			fmt.Serialize (sr, _savedViewState);
-			return sr.GetStringBuilder ().ToString ();
-		}
-
-		ViewStateOutputHashStream stream;
-		stream = new ViewStateOutputHashStream (new MemoryStream (HASH_SIZE), GetTypeHashCode ());
-		fmt.Serialize (stream, _savedViewState);
-		return stream.GetBase64String ();
+		LosFormatter fmt = GetFormatter ();
+		MemoryStream ms = new MemoryStream ();
+		fmt.Serialize (ms, _savedViewState);
+		return Convert.ToBase64String (ms.GetBuffer (), 0, (int) ms.Length);
 	}
 
 	internal object GetSavedViewState ()
@@ -1154,42 +1158,12 @@ public class Page : TemplateControl, IHttpHandler
 		if (view_state == "")
 			return null;
 
-		LosFormatter fmt = new LosFormatter ();
-		PagesConfiguration config = PagesConfiguration.GetInstance (_context);
-		if (false == config.EnableViewStateMac) {
-			try {
-				_savedViewState = fmt.Deserialize (view_state);
-			} catch (Exception e) {
-				throw new HttpException ("Error restoring page viewstate.", e);
-			}
-		} else {
-			byte [] bytes = Convert.FromBase64String (view_state);
-			int length = bytes.Length;
-			if (length < HASH_SIZE)
-				throw new HttpException ("Error restoring page viewstate.");
-
-			int data_end = length - HASH_SIZE;
-			MemoryStream input = new MemoryStream ();
-			input.Write (BitConverter.GetBytes (GetTypeHashCode ()), 0, 4);
-			input.Write (bytes, 0, data_end);
-			input.Position = 0;
-			CryptoStream cs = new CryptoStream (input, SHA1.Create (), CryptoStreamMode.Read);
-			byte [] computed_hash = new byte [HASH_SIZE];
-			cs.Read (computed_hash, 0, HASH_SIZE);
-			for (int i = 0; i < HASH_SIZE; i++) {
-				if (computed_hash [i] != bytes [data_end + i])
-					throw new HttpException ("Error restoring page viewstate.");
-			}
-
-
-			try {
-				input = new MemoryStream (bytes, 0, data_end, false, false);
-				_savedViewState = fmt.Deserialize (input);
-			} catch (Exception e) {
-				throw new HttpException ("Error restoring page viewstate.", e);
-			}
+		LosFormatter fmt = GetFormatter ();
+		try {
+			_savedViewState = fmt.Deserialize (view_state);
+		} catch (Exception e) {
+			throw new HttpException ("Error restoring page viewstate.", e);
 		}
-
 		return _savedViewState;
 	}
 
