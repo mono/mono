@@ -1,4 +1,8 @@
+2005-09-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* rawbuffer.c: Remove unneccessary set_n_pagefaults () routine and update
+	the example code.
+	
 Fri Sep 23 18:27:02 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* class-internals.h, class.c, reflection.c: reduce memory taken by
@@ -10,6 +14,9 @@ Fri Sep 23 17:56:21 CEST 2005 Paolo Molaro <lupus@ximian.com>
 	API cleanups.
 
 2005-09-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* rawbuffer.c: Remove unneccessary set_n_pagefaults () routine and update
+	the example code.
 
 	* rawbuffer.h rawbuffer.c: Add code and APIs to help determine the number of
 	page faults caused by the runtime while reading metadata.
