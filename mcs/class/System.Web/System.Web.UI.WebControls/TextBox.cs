@@ -95,8 +95,12 @@ namespace System.Web.UI.WebControls {
 			
 			if (ReadOnly)
 				w.AddAttribute (HtmlTextWriterAttribute.ReadOnly, "ReadOnly");
-
+#if NET_2_0
+			if (ID != null)
+				w.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+#else
 			w.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+#endif
 		}
 
 		protected override void AddParsedSubObject (object obj)

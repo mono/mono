@@ -30,17 +30,20 @@
 
 #if NET_2_0
 
-using System;
 using System.Collections;
 using System.Text;
 using System.ComponentModel;
-using System.Web.UI;
 using System.Web.Handlers;
 using System.Collections.Specialized;
 using System.IO;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls
 {
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ControlValueProperty ("SelectedValue")]
 	[DefaultEvent ("SelectedNodeChanged")]
 	[Designer ("System.Web.UI.Design.WebControls.TreeViewDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]

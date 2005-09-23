@@ -133,14 +133,6 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategory ("Misc")]
 		public virtual int EditItemIndex {
-#if NET_2_0
-			get { return editIndex; }
-			set {
-				if (value < -1)
-					throw new ArgumentOutOfRangeException ("EditItemIndex", "< -1");
-				editIndex = value;
-			}
-#else
 			get {
 				object o = ViewState ["EditItemIndex"];
 				return (o == null) ? -1 : (int) o;
@@ -150,7 +142,6 @@ namespace System.Web.UI.WebControls {
 					throw new ArgumentOutOfRangeException ("EditItemIndex", "< -1");
 				ViewState ["EditItemIndex"] = value;
 			}
-#endif
 		}
 
 		[DefaultValue (null)]
@@ -355,14 +346,6 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
 		public virtual int SelectedIndex {
-#if NET_2_0
-			get { return selectedIndex; }
-			set {
-				if (value < -1)
-					throw new ArgumentOutOfRangeException ("SelectedIndex", "< -1");
-				selectedIndex = value;
-			}
-#else
 			get {
 				object o = ViewState ["SelectedIndex"];
 				return (o == null) ? -1 : (int) o;
@@ -372,7 +355,6 @@ namespace System.Web.UI.WebControls {
 					throw new ArgumentOutOfRangeException ("SelectedIndex", "< -1");
 				ViewState ["SelectedIndex"] = value;
 			}
-#endif
 		}
 
 		[Browsable (false)]

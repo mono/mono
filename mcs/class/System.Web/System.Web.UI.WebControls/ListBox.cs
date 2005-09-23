@@ -147,7 +147,12 @@ namespace System.Web.UI.WebControls {
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
 
+#if NET_2_0
+			if (ID != null)
+				writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID);
+#else
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID);
+#endif
 
 			if (SelectionMode == ListSelectionMode.Multiple)
 				writer.AddAttribute (HtmlTextWriterAttribute.Multiple,

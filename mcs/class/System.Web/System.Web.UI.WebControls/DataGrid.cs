@@ -436,9 +436,8 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO ("why override ?")]
 		protected override HtmlTextWriterTag TagKey {
-			get { return base.TagKey; }
+			get { return HtmlTextWriterTag.Table; }
 		}
 #endif
 

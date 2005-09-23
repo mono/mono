@@ -118,12 +118,18 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods
-		protected override void AddAttributesToRender(HtmlTextWriter writer) {
+		protected override void AddAttributesToRender(HtmlTextWriter writer)
+		{
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
-
+#if NET_2_0
+			if (writer == null)
+				return;
+			if (ID != null)
+				writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID, true);
+#else
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID, true);
-
+#endif
 			if (AutoPostBack) {
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
 			}

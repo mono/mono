@@ -100,7 +100,11 @@ namespace System.Web.UI.WebControls {
 
 		public void Remove (RoleGroup group)
 		{
-			((IList) this).Remove (group);
+			// note: checks required or we'll throw more exceptions :(
+			if (group != null) {
+				if (Contains (group))
+					((IList) this).Remove (group);
+			}
 		}
 
 		[MonoTODO]

@@ -747,6 +747,8 @@ namespace System.Web.UI.WebControls {
 		[Browsable(false)]
 		public string RegisteredCssClass {
 			get {
+				if (registered_class == null)
+					registered_class = String.Empty;
 				return registered_class;
 			}
 		}

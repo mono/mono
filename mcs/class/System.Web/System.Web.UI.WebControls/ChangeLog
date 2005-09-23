@@ -1,3 +1,23 @@
+2005-09-23  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* Button.cs: For 2.0 don't add the "name" attribute unless there's an 
+	id.
+	* DataGrid.cs: Fix TagKey (table) for 2.0.
+	* DataList.cs: Revert 2.0 specific stuff that was changed in RC.
+	* DropDownList.cs: For 2.0 don't add the "name" attribute unless 
+	there's an id.
+	* ListBox.cs: For 2.0 don't add the "name" attribute unless there's an
+	id.
+	* RoleGroupCollection.cs: Fix "extra" exception in Remove method.
+	* Style.cs: Fixed (2.0) RegisteredCssClass to returns String.Empty 
+	(i.e. not null).
+	* TextBox.cs: For 2.0 don't add the "name" attribute unless there's an
+	id.
+	* TreeView.cs: Added declarative security (Link and Inheritance 
+	demands) for Minimal.
+	* XmlDataSource.cs: Added declarative security (Link and Inheritance
+	demands) for Minimal.
+
 2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FontUnit.cs: Added, but only for 1.x, declarative security (Link and

@@ -38,9 +38,14 @@ using System.Xml;
 using System.Xml.Xsl;
 using System.ComponentModel;
 using System.IO;
+using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.XmlDataSourceDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[DefaultProperty ("DataFile")]
 	[DefaultEvent ("Transforming")]
