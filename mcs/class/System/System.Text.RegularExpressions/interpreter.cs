@@ -489,7 +489,7 @@ namespace System.Text.RegularExpressions {
 
 							// ... then match more
 							this.repeat = current;
-							if (!current.IsMaximum)
+							if (current.IsMaximum)
 								return false;
 							++ current.Count;
 							current.Start = ptr;

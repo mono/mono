@@ -1,3 +1,8 @@
+2005-09-23  Raja R Harinath  <rharinath@novell.com>
+
+	* interpreter.cs (Interpreter.Eval) [OpCode.Until]: Invert the
+	sense of a test to reflect the code re-organization.
+
 2005-09-22  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #72152, #72989.
