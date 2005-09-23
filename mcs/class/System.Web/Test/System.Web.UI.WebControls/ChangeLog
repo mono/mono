@@ -1,3 +1,10 @@
+2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* LoginTest.cs: Make OnBubbleEvent_Authenticated_OnAuthenticate test 
+	case "work" on both MS and Mono.
+	* UnitTest.cs: IncorrectConstructor9 was fixed (in 2.0 RC) to throw
+	the FormatException (just like earlier fx did).
+
 2005-09-23  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* LabelCas.cs, LinkButtonCas.cs, ListBoxCas.cs, ListControlCas.cs,

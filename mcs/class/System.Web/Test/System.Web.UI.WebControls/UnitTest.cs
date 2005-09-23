@@ -268,9 +268,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-#if !NET_2_0
 		[ExpectedException (typeof (FormatException))]
-#endif
 		public void IncorrectConstructor9 ()
 		{
 			// throws because floating point values are not valid for Pixel.
