@@ -1,5 +1,11 @@
 2005-09-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_create_from_typedef): Don't call 
+	interfaces_from_typedef_full for enums.
+	(mono_class_create_from_typedef): Compute the base types of enums directly
+	without calling mono_class_setup_fields ().
+	(mono_class_find_enum_basetype): New helper function.
+
 	* reflection.c (mono_image_build_metadata): Emit type names+namespaces at
 	one place inside the string heap.
 	
