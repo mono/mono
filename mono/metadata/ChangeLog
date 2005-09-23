@@ -1,3 +1,8 @@
+2005-09-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* rawbuffer.h rawbuffer.c: Add code and APIs to help determine the number of
+	page faults caused by the runtime while reading metadata.
+
 2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* socket-io.c: the field names were changed 3 months ago and no one
