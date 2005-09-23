@@ -1,3 +1,8 @@
+2005-09-23 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+
+        * LabelTest.cs : Added messages to simulate Key* events.
+	                 Key* events have tests now.
+
 2005-09-22 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
         * LabelTest.cs : Implement event firing order tests.
