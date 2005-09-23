@@ -134,7 +134,6 @@
 	demands) for Minimal. Removed [EditorBrowsable] on ControlStyleCreated 
 	property.
 
->>>>>>> .r50334
 2005-09-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TableStyle.cs: fixed typo that prevented restoring GridLines from
