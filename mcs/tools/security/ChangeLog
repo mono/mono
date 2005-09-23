@@ -1,3 +1,8 @@
+2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* makecert.cs: For PKCS#12, added localKeyID attribute support, for 
+	certificates and keys, so Windows can import both as a single entity.
+
 2005-08-26  Kornél Pál  <kornelpal@hotmail.com>
 
 	* AssemblyInfo.cs: Using Consts.MonoVersion instead of MonoVersion.cs.

@@ -9,6 +9,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -401,10 +402,18 @@ namespace Mono.Tools {
 				} else {
 					PKCS12 p12 = new PKCS12 ();
 					p12.Password = p12pwd;
-					p12.AddCertificate (new X509Certificate (rawcert));
+
+					ArrayList list = new ArrayList ();
+					// we use a fixed array to avoid endianess issues 
+					// (in case some tools requires the ID to be 1).
+					list.Add (new byte [4] { 1, 0, 0, 0 });
+					Hashtable attributes = new Hashtable (1);
+					attributes.Add (PKCS9.localKeyId, list);
+
+					p12.AddCertificate (new X509Certificate (rawcert), attributes);
 					if (issuerCertificate != null)
 						p12.AddCertificate (issuerCertificate);
-					p12.AddPkcs8ShroudedKeyBag (subjectKey);
+					p12.AddPkcs8ShroudedKeyBag (subjectKey, attributes);
 					p12.SaveToFile (p12file);
 				}
 				Console.WriteLine ("Success");
