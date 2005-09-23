@@ -351,12 +351,6 @@ namespace System.Web {
 		}
 #if NET_2_0
 		[MonoTODO]
-		public void SetDiskCacheable (bool diskCacheable)
-		{
-			throw new NotImplementedException (); 
-		}
-
-		[MonoTODO]
 		public void SetOmitVaryStar (bool omit)
 		{
 			throw new NotImplementedException (); 

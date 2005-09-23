@@ -322,9 +322,6 @@ namespace System.Web {
 			entities.Add ("euro", '\u20AC');
 		}
 
-#if NET_2_0
-		[Obsolete]
-#endif
 		public HttpUtility () 
 		{
 		}
