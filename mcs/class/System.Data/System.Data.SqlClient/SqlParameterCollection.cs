@@ -242,6 +242,14 @@ namespace System.Data.SqlClient {
 		{
 			return Add (new SqlParameter (parameterName, value));
 		}
+
+#if NET_2_0
+                public SqlParameter AddWithValue (string parameterName, object value)
+                {
+                        return Add (parameterName, value);
+		}
+#endif // NET_2_0
+
 		
 		public SqlParameter Add (string parameterName, SqlDbType sqlDbType)
 		{
