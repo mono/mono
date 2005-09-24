@@ -636,6 +636,7 @@ namespace System.Web.UI.WebControls {
 			string cn = dlca.CommandName;
 			CultureInfo inv = CultureInfo.InvariantCulture;
 
+			OnItemCommand (dlca);
 			if (String.Compare (cn, CancelCommandName, true, inv) == 0) {
 				OnCancelCommand (dlca);
 				return true;
@@ -651,11 +652,7 @@ namespace System.Web.UI.WebControls {
 			} else if (String.Compare (cn, UpdateCommandName, true, inv) == 0) {
 				OnUpdateCommand (dlca);
 				return true;
-			} else if (String.Compare (cn, "ITEM", true, inv) == 0) {
-				OnItemCommand (dlca);
-				return true;
 			}
-						
 			return false;
 		}
 

@@ -1,3 +1,8 @@
+2005-09-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataList.cs: OnItemCommand() is raised any time OnBubbleEvent is
+	called.
+
 2005-09-23  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* Button.cs: For 2.0 don't add the "name" attribute unless there's an 
