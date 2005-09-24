@@ -1,3 +1,10 @@
+2005-09-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* sybase.sql: grant permissions on objects
+
+	* sqlserver.sql: change id as int. tiny int won't allow 6000 (the
+	tempory updatable limit).
+
 2005-09-16  Senganal T  <tsenganal@novell.com>
 
 	* sqlserver.sql: modified. added string_family, datetime_family,

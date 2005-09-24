@@ -1,3 +1,14 @@
+2005-09-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* SqlDataAdapterTest.cs (Fill_Test_Exceptions): passing null
+	dataset name throws ArgumentNullException in ms.net
+
+	* SqlConnectionTest.cs: HostName compare: convert to uppercase.
+
+	* SqlDataReaderTest.cs: remove Opening connection in few test
+	cases as it was done in SetUp.
+	- id type change changes
+
 2005-09-21 Senganal T  <tsenganal@novell.com>
 
 	* SqlConnectionTest.cs: removed some hardcoded database names

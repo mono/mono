@@ -87,7 +87,7 @@ namespace MonoTests.System.Data
 			Assert.AreEqual ("", conn.DataSource,
 					"#4 Default DataSource should be empty");
 			Assert.AreEqual (8192, conn.PacketSize,"#5 Default Packet Size is 8192");
-			Assert.AreEqual (Dns.GetHostName(), conn.WorkstationId, 
+			Assert.AreEqual (Dns.GetHostName().ToUpper (), conn.WorkstationId.ToUpper (), 
 					"#6 Default Workstationid shud be hostname");
 			Assert.AreEqual (ConnectionState.Closed, conn.State, 
 					"#7 Connection State shud be closed by default");
@@ -253,7 +253,7 @@ namespace MonoTests.System.Data
 				"#4 Default DataSource : empty");
 			Assert.AreEqual (8192, conn.PacketSize, 
 				"#5 Default Packet Size : 8192");
-			Assert.AreEqual (Dns.GetHostName(), conn.WorkstationId, 
+			Assert.AreEqual (Dns.GetHostName().ToUpper (), conn.WorkstationId.ToUpper (), 
 				"#6 Default Workstationid : hostname");
 			Assert.AreEqual (ConnectionState.Closed, conn.State, 
 				"#7 Default State : CLOSED ");
@@ -418,7 +418,7 @@ namespace MonoTests.System.Data
 					"#11 Packetsize shud be reset to Default : 8192");
 			Assert.AreEqual (15, conn.ConnectionTimeout, 
 					"#12 ConnectionTimeour shud be reset to Default : 15");
-			Assert.AreEqual (Dns.GetHostName (), conn.WorkstationId,
+			Assert.AreEqual (Dns.GetHostName ().ToUpper (), conn.WorkstationId.ToUpper (),
 					"#13 WorkstationId shud be reset to Default : Hostname");
 			
 			// Test Argument Exception is thrown for Invalid Connection Strings

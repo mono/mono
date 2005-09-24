@@ -568,7 +568,7 @@ namespace MonoTests.System.Data.SqlClient
 				Object TestPar = "test";
 				cmd.Parameters.Add("@fname", SqlDbType.VarChar);
 				cmd.Parameters ["@fname"].Value = TestPar;
-				Assert.AreEqual(-1,cmd.ExecuteNonQuery());
+				Assert.AreEqual(1,cmd.ExecuteNonQuery());
 			} finally {
 				DBHelper.ExecuteNonQuery (conn, DROP_TMP_SP_TEMP_INSERT_PERSON);
 				DBHelper.ExecuteSimpleSP (conn, "sp_clean_person_table");

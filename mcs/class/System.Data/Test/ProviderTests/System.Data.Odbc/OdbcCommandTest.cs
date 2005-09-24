@@ -150,7 +150,7 @@ namespace MonoTests.System.Data
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
 			}
-                                         }
+		}
 
 	}
 }

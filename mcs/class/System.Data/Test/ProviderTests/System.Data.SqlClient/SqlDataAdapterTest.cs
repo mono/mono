@@ -369,6 +369,8 @@ namespace MonoTests.System.Data.SqlClient
 				Assert.Fail ( "#7 Exception shud be thrown : Invalid Dataset");
 			}catch (AssertionException e){
 				throw e ;
+			}catch (ArgumentNullException) {
+		       
 			}catch (Exception e) {
 				Assert.AreEqual (typeof(SystemException), e.GetType(),
 					"#8 Incorrect Exception : " + e);

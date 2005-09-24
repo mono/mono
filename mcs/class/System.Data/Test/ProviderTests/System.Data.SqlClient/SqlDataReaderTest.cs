@@ -61,49 +61,6 @@ namespace MonoTests.System.Data.SqlClient
 		DataRow stringRow = null; 
 		DataRow binaryRow = null; 
 		DataRow datetimeRow = null; 
-		
-		[Test]
-		public void ReadEmptyNTextFieldTest () {
-			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				DBHelper.ExecuteNonQuery (conn, "create table #tmp_monotest (name ntext)");
-				DBHelper.ExecuteNonQuery (conn, "insert into #tmp_monotest values ('')");
-				
-				SqlCommand cmd = (SqlCommand) conn.CreateCommand ();
-				cmd.CommandText = "select * from #tmp_monotest";
-				SqlDataReader dr = cmd.ExecuteReader ();
-				if (dr.Read()) {
-					Assert.AreEqual("System.String",dr["NAME"].GetType().FullName);
-				}
-				Assert.AreEqual (false, dr.Read (), "#2");
-			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
-			}
-		}		
-
-		[Test]
-		public void ReadBingIntTest() 
-		{
-			conn = (SqlConnection) ConnectionManager.Singleton.Connection;
-			try {
-				ConnectionManager.Singleton.OpenConnection ();
-				string query = "SELECT CAST(548967465189498 AS bigint) AS Value";
-				SqlCommand cmd = new SqlCommand();
-				cmd.Connection = conn;
-				cmd.CommandText = query;
-				SqlDataReader r = cmd.ExecuteReader();
-				using (r) {
-					Assert.AreEqual (true, r.Read(), "#1");
-					long id = r.GetInt64(0);
-					Assert.AreEqual(548967465189498, id, "#2");
-					id = r.GetSqlInt64(0).Value;
-					Assert.AreEqual(548967465189498, id, "#3");
-				}
-			} finally {
-				ConnectionManager.Singleton.CloseConnection ();
-			}
-		}
 
 		[TestFixtureSetUp]
 		public void init ()
@@ -137,6 +94,47 @@ namespace MonoTests.System.Data.SqlClient
 
 			conn.Close ();
 		}
+		
+		[Test]
+		public void ReadEmptyNTextFieldTest () {
+			try {
+				DBHelper.ExecuteNonQuery (conn, "create table #tmp_monotest (name ntext)");
+				DBHelper.ExecuteNonQuery (conn, "insert into #tmp_monotest values ('')");
+				
+				SqlCommand cmd = (SqlCommand) conn.CreateCommand ();
+				cmd.CommandText = "select * from #tmp_monotest";
+				SqlDataReader dr = cmd.ExecuteReader ();
+				if (dr.Read()) {
+					Assert.AreEqual("System.String",dr["NAME"].GetType().FullName);
+				}
+				Assert.AreEqual (false, dr.Read (), "#2");
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}		
+
+		[Test]
+		public void ReadBingIntTest() 
+		{
+			try {
+				string query = "SELECT CAST(548967465189498 AS bigint) AS Value";
+				SqlCommand cmd = new SqlCommand();
+				cmd.Connection = conn;
+				cmd.CommandText = query;
+				SqlDataReader r = cmd.ExecuteReader();
+				using (r) {
+					Assert.AreEqual (true, r.Read(), "#1");
+					long id = r.GetInt64(0);
+					Assert.AreEqual(548967465189498, id, "#2");
+					id = r.GetSqlInt64(0).Value;
+					Assert.AreEqual(548967465189498, id, "#3");
+				}
+			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+			}
+		}
+
+
 
 		// This method just helps in Calling common tests among all the Get* Methods 
 		// without replicating code 
@@ -574,12 +572,12 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void GetSqlValueTest ()
 		{
-			cmd.CommandText = "Select id,null from numeric_family where id=1";
+			cmd.CommandText = "Select id, type_tinyint, null from numeric_family where id=1";
 			reader = cmd.ExecuteReader ();
 			reader.Read ();
 
-			Assert.AreEqual ((byte)1, ((SqlByte)reader.GetSqlValue(0)).Value, "#1");
-			//Assert.AreEqual (DBNull.Value, reader.GetSqlValue(1), "#2");
+			Assert.AreEqual ((byte)255, ((SqlByte) reader.GetSqlValue(1)).Value, "#1");
+			//Assert.AreEqual (DBNull.Value, reader.GetSqlValue(2), "#2");
 
 			reader.Close ();
 		}
@@ -810,13 +808,13 @@ namespace MonoTests.System.Data.SqlClient
 		[Test]
 		public void GetDataTypeNameTest ()
 		{
-			cmd.CommandText = "Select id,10,null from numeric_family where id=1";
+			cmd.CommandText = "Select id, type_tinyint, 10,null from numeric_family where id=1";
 			reader = cmd.ExecuteReader ();
 
-			Assert.AreEqual ("tinyint", reader.GetDataTypeName(0), "#1");
-			Assert.AreEqual ("int", reader.GetDataTypeName(1), "#2");
+			Assert.AreEqual ("tinyint", reader.GetDataTypeName(1), "#1");
+			Assert.AreEqual ("int", reader.GetDataTypeName(2), "#2");
 			//need check on windows 
-			Assert.AreEqual ("int", reader.GetDataTypeName(2), "#3");
+			Assert.AreEqual ("int", reader.GetDataTypeName(3), "#3");
 			try {
 				reader.GetDataTypeName (10);
 				Assert.Fail ("#4 Exception shud be thrown");
@@ -829,14 +827,14 @@ namespace MonoTests.System.Data.SqlClient
 		}
 
 		[Test]
-		public void GetFieldType ()
+		public void GetFieldTypeTest ()
 		{
-			cmd.CommandText = "Select id ,10 , null from numeric_family where id=1";
+			cmd.CommandText = "Select id , type_tinyint, 10 , null from numeric_family where id=1";
 			reader = cmd.ExecuteReader ();
 
-			Assert.AreEqual ("tinyint", reader.GetDataTypeName(0), "#1");
-			Assert.AreEqual ("int", reader.GetDataTypeName(1) , "#2");
-			Assert.AreEqual ("int", reader.GetDataTypeName(2), "#3");
+			Assert.AreEqual ("tinyint", reader.GetDataTypeName(1), "#1");
+			Assert.AreEqual ("int", reader.GetDataTypeName(2) , "#2");
+			Assert.AreEqual ("int", reader.GetDataTypeName(3), "#3");
 			try {
 				reader.GetDataTypeName (10);
 				Assert.Fail ("#4 Exception shud be thrown");

@@ -56,7 +56,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				SqlCommand cmd = cb.GetInsertCommand ();
-				Assert.AreEqual ("INSERT INTO employee (id, fname) VALUES (?, ?)",
+				Assert.AreEqual ("INSERT INTO employee (id, fname) VALUES (@p1, @p2)",
 						cmd.CommandText, "#2");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
@@ -77,7 +77,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				SqlCommand cmd = cb.GetInsertCommand ();
-				Assert.AreEqual ("INSERT INTO employee (id, fname) VALUES (?, ?)",
+				Assert.AreEqual ("INSERT INTO employee (id, fname) VALUES (@p1, @p2)",
 						cmd.CommandText, "#2");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();
@@ -97,7 +97,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				SqlCommand cmd = cb.GetUpdateCommand ();
-				Assert.AreEqual ("UPDATE employee SET id = ?, fname = ? WHERE ((id = ?) AND ((? = 1 AND age IS NULL) OR (fname = ?)))",
+				Assert.AreEqual ("UPDATE employee SET id = @p1, fname = @p2 WHERE ((id = @p3) AND ((@p4 = 1 AND age IS NULL) OR (fname = @p5)))",
 						cmd.CommandText, "#2");
 				Assert.AreEqual (5, cmd.Parameters.Count, "#3");
 			}
@@ -141,7 +141,7 @@ namespace MonoTests.System.Data
 
 				SqlCommandBuilder cb = new SqlCommandBuilder (da);
 				SqlCommand cmd = cb.GetDeleteCommand ();
-				Assert.AreEqual ("DELETE FROM employee WHERE ((id = ?) AND ((? = 1 AND fname IS NULL) OR (fname = ?)))",
+				Assert.AreEqual ("DELETE FROM employee WHERE ((id = @p1) AND ((@p2 = 1 AND fname IS NULL) OR (fname = @p3)))",
 						cmd.CommandText, "#2");
 			} finally {
 				ConnectionManager.Singleton.CloseConnection ();

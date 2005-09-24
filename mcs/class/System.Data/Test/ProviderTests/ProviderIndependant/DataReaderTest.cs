@@ -114,7 +114,7 @@ namespace MonoTests.System.Data
 					if (reader.Read()) {
 						object value = reader.GetValue (0);
 						Assert.AreEqual (typeof (byte), value.GetType(), "#1 wrong type");
-						Assert.AreEqual (127, value, "#2 value is wrong");   
+						Assert.AreEqual (255, value, "#2 value is wrong");   
 					} else
 						Assert.Fail ("#3 does not have test data");
 				}

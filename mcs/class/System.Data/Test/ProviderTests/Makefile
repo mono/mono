@@ -31,7 +31,7 @@ endif
 
 test-local: run-test-db
 
-CLEAN_FILES = *.exe *.dll *.log ${LIBRARY}.config *.mdb TestResult*.xml
+CLEAN_FILES = *.exe *.dll *.log ${LIBRARY}.config *.mdb TestResult*.xml conn_string
 
 clean-local:
 	rm $(CLEAN_FILES) || :

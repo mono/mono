@@ -3,6 +3,7 @@ if exists (select name from sysdatabases where
         drop database [mono-test];
 create database [mono-test];
 grant all privileges on [mono-test] to monotester;
+go
 
 use monotest;
 
@@ -14,7 +15,8 @@ if exists (select name from sysobjects where
 	drop table numeric_family;
 go
 
-create table numeric_family(id tinyint PRIMARY KEY NOT NULL,
+create table numeric_family(
+	id int PRIMARY KEY NOT NULL,
         type_bit bit NULL,
         type_tinyint tinyint NULL,
         type_smallint smallint NULL,
@@ -47,7 +49,7 @@ if exists (select name from sysobjects where
 go
 
 create table binary_family (
-        id tinyint PRIMARY KEY NOT NULL,
+        id int PRIMARY KEY NOT NULL,
         type_binary binary NULL,
         type_varbinary varbinary (255) NULL,
         type_blob image NULL,
@@ -78,7 +80,8 @@ if exists (select name from sysobjects where
 	drop table string_family;
 go
 
-create table string_family(id tinyint PRIMARY KEY NOT NULL,
+create table string_family(
+	id int PRIMARY KEY NOT NULL,
         type_guid uniqueidentifier NULL,
         type_char char(10) NULL,
         type_varchar varchar(10) NULL,
@@ -105,7 +108,7 @@ if exists (select name from sysobjects where
 go
 
 create table datetime_family (
-        id tinyint PRIMARY KEY NOT NULL,
+        id int PRIMARY KEY NOT NULL,
         type_smalldatetime smalldatetime NULL,
         type_datetime datetime NULL);
 

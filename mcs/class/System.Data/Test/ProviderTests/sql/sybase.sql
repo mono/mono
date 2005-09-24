@@ -20,6 +20,8 @@ create table numeric_family (
 	type_numeric numeric (38, 0) NULL,
 	type_money money NULL,
 	type_smallmoney smallmoney NULL)
+
+grant all on numeric_family to monotester
 go
 
 insert into numeric_family values (1,1,255,32767,2147483647,9223372036854775807,1000,1000,922337203685477.5807,214748.3647)
@@ -46,6 +48,8 @@ create table binary_family (
 	type_tinyblob image NULL,
 	type_mediumblob image NULL,
 	type_longblob_image image NULL)
+
+grant all on binary_family to monotester
 go
 
 insert into binary_family values (1, convert (binary, '555555'), convert (varbinary, '0123456789012345678901234567890123456789012345678901234567890123456789'), 
@@ -98,6 +102,8 @@ begin
 end
 go
 
+grant all on sp_clean_employee_table to monotester
+go
 
 -- SP : sp_get_age
 if exists (select name from sysobjects where 
@@ -115,6 +121,8 @@ begin
 end
 go
 
+grant all on sp_get_age to monotester
+go
 
 
 -- =================================== END OBJECT EMPLOYEE ============================
