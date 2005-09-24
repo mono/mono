@@ -187,9 +187,6 @@ namespace JSTestRunner {
 				Console.WriteLine ();
 				Console.WriteLine ("Running {0}...", test);
 
-				Console.WriteLine (config.compile_cmd);
-				Console.WriteLine (config.compile_args);
-
 				ProcessStartInfo compiler_info = new ProcessStartInfo (config.compile_cmd, config.compile_args);
 				compiler_info.CreateNoWindow = true;
 				compiler_info.UseShellExecute = false;
