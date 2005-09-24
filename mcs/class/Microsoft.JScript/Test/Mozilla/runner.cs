@@ -197,7 +197,7 @@ namespace JSTestRunner {
 				Console.Write (compiler.StandardOutput.ReadToEnd ());
 				Console.Write (compiler.StandardError.ReadToEnd ());
 				if (compiler.ExitCode != 0 || !File.Exists ("jstest.exe")) {
-					Failed (test, "compiler aborted");
+					Failed (test, String.Format ("compiler aborted with exit code {0}", compiler.ExitCode));
 					goto done;
 				}
 
@@ -213,7 +213,7 @@ namespace JSTestRunner {
 				Console.Write (runtime.StandardOutput.ReadToEnd ());
 				Console.Write (runtime.StandardError.ReadToEnd ());
 				if (runtime.ExitCode != 0)
-					Failed (test, "runtime aborted");
+					Failed (test, String.Format ("runtime aborted with exit code {0}", runtime.ExitCode));
 				File.Delete ("jstest.exe");
 			}
 
