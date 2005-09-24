@@ -1,3 +1,7 @@
+2005-09-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c: Revert r50342 to see if this fixed buildbot.
+
 2005-09-23  Miguel de Icaza  <miguel@novell.com>
 
 	* mini.c (SIG_HANDLER_SIGNATURE): Only dereference info if it is
