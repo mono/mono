@@ -494,7 +494,8 @@ namespace System.Web.UI.WebControls {
 		void DoItem (int i, ListItemType t, object d, bool databind)
 		{
 			DataListItem itm = CreateItem (i, t);
-			itm.DataItem = d;
+			if (databind)
+				itm.DataItem = d;
 			DataListItemEventArgs e = new DataListItemEventArgs (itm);
 			InitializeItem (itm);
 			
@@ -505,11 +506,13 @@ namespace System.Web.UI.WebControls {
 			Controls.Add (itm);
 			if (i != -1)
 				ItemList.Add (itm);
+
 			OnItemCreated (e);
 
 			if (databind) {
 				itm.DataBind ();
 				OnItemDataBound (e);
+				itm.DataItem = null;
 			}
 		}
 
@@ -526,10 +529,13 @@ namespace System.Web.UI.WebControls {
 			Controls.Clear();
 
 			IEnumerable ds = null;
+			ArrayList keys = null;
 
 			if (useDataSource) {
 				idx = 0;
 				ds = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+				keys = DataKeysArray;
+				keys.Clear ();
 			} else {
 				idx = (int) ViewState ["Items"];
 			}
@@ -542,7 +548,10 @@ namespace System.Web.UI.WebControls {
 
 			// items
 			if (ds != null) {
+				string key = DataKeyField;
 				foreach (object o in ds) {
+					if (useDataSource && key != "")
+						keys.Add (DataBinder.GetPropertyValue (o, key));
 					DoItemInLoop (idx, o, useDataSource);
 					idx++;
 				}

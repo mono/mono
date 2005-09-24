@@ -1,5 +1,11 @@
 2005-09-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataList.cs: fill in the data keys from BaseDataList so that the
+	events can see them. Only assign DataItem when using data binding and
+	nullify it after all events are raised.
+
+2005-09-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataList.cs: OnItemCommand() is raised any time OnBubbleEvent is
 	called.
 
