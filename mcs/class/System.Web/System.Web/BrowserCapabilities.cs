@@ -366,11 +366,13 @@ namespace System.Web {
 
 		public bool Win32 {
 			get {
+				// This is the list of different windows platforms that browscap.ini has.
+				// Win16 Win2000 Win2003 Win32 Win95 Win98 WinME WinNT WinVI WinXP
 				if (!Get (HaveWin32)) {
 					Set (HaveWin32);
-					win32 = ReadBoolean ("win32", false);
+					string platform = Platform;
+					win32 = (platform != "Win16" && platform.StartsWith ("Win"));
 				}
-
 				return win32;
 			}
 		}

@@ -1,5 +1,11 @@
 2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BrowserCapabilities.cs: don't rely on the win32 attribute to be there.
+	Just use the platform to determine whether Win32 is true or not. Fixes
+	bug #74777.
+
+2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpApplication.cs: fixed typo when setting UI culture. Closes bug
 	#76189.
 
