@@ -1,3 +1,7 @@
+2005-09-24  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcParameterTest.cs: Tests for OdbcCommand class.
+
 2005-09-01  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcCommandBuilderTest.cs: Added tests for OdbcCommandBuilder.cs
