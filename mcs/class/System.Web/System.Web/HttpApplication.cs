@@ -947,7 +947,7 @@ namespace System.Web {
 
 			if (appui_culture != null) {
 				prev_appui_culture = th.CurrentUICulture;
-				th.CurrentCulture = appui_culture;
+				th.CurrentUICulture = appui_culture;
 			}
 
 #if !TARGET_JVM
