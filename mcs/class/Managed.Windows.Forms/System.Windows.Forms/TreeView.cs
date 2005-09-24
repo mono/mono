@@ -1140,12 +1140,18 @@ namespace System.Windows.Forms {
 
 		private void AddHorizontalScrollBar ()
 		{
-			if (hbar == null)
-				hbar = new HScrollBar ();
-
-			hbar.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hbar.Height,
+			hbar.Bounds = new Rectangle (ClientRectangle.Left,
+					ClientRectangle.Bottom - hbar.Height,
 					(add_vscroll ? Width - ThemeEngine.Current.VScrollBarDefaultSize.Width : Width), hbar.Height);
 
+			int width = ClientRectangle.Width;
+			if (vbar.Visible)
+				width -= vbar.Width;
+
+			hbar.SmallChange = 15;
+			hbar.LargeChange = 50;
+			int num_pixels = max_node_width - width;
+			hbar.Maximum = num_pixels + 50;
 			hbar.Visible = true;
 		}
 
@@ -1165,12 +1171,12 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			if (vbar != null) {
+			if (vbar != null && vbar.Visible) {
 				int height = (hbar != null && hbar.Visible ? Height - hbar.Height : Height);
 				vbar.SetBounds (Right - vbar.Width, 0, 0, height, BoundsSpecified.X | BoundsSpecified.Height);
 			}
 
-			if (hbar != null) {
+			if (hbar != null && hbar.Visible) {
 				int width = (vbar != null && vbar.Visible ? Width - vbar.Width : Width);
 				hbar.SetBounds (0, Bottom - hbar.Height, width, 0, BoundsSpecified.Y | BoundsSpecified.Width);
 			}
