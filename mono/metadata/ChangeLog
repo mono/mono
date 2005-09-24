@@ -1,3 +1,13 @@
+2005-09-24  Zoltan Varga  <vargaz@freemail.hu>
+
+	* object.c (mono_class_create_runtime_vtable): Avoid calling 
+	field_is_special_static if the klass has no special static fields.
+
+	* class-internals.h (MonoClass): Add 'no_special_static_fields' flag.
+	(MonoCachedClassInfo): Likewise.
+
+	* object.c (mono_class_has_special_static_fields): New helper function.
+
 2005-09-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_create_from_typedef): Don't call 
