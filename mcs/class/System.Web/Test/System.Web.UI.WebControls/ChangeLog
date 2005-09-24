@@ -1,3 +1,8 @@
+2005-09-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGridTest.cs:
+	* DataListTest.cs: OnItemCommand is raised always in OnBubbleEvent.
+
 2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* LoginTest.cs: Make OnBubbleEvent_Authenticated_OnAuthenticate test 

@@ -603,23 +603,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("Cancel", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.CancelCommand += new DataGridCommandEventHandler (CancelCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (cancel_command, "A1");
+			Assert.IsTrue (item_command, "#01");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("cancel", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.CancelCommand += new DataGridCommandEventHandler (CancelCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (cancel_command, "A2");
+			Assert.IsTrue (item_command, "#02");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("CANCEL", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.CancelCommand += new DataGridCommandEventHandler (CancelCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (cancel_command, "A3");
+			Assert.IsTrue (item_command, "#03");
 
 			//
 			// Delete
@@ -627,23 +633,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("Delete", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.DeleteCommand += new DataGridCommandEventHandler (DeleteCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (delete_command, "A4");
+			Assert.IsTrue (item_command, "#04");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("delete", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.DeleteCommand += new DataGridCommandEventHandler (DeleteCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (delete_command, "A5");
+			Assert.IsTrue (item_command, "#05");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("DELETE", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.DeleteCommand += new DataGridCommandEventHandler (DeleteCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (delete_command, "A6");
+			Assert.IsTrue (item_command, "#06");
 
 			//
 			// Edit
@@ -651,23 +663,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("Edit", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.EditCommand += new DataGridCommandEventHandler (EditCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (edit_command, "A7");
+			Assert.IsTrue (item_command, "#07");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("edit", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.EditCommand += new DataGridCommandEventHandler (EditCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (edit_command, "A8");
+			Assert.IsTrue (item_command, "#08");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("EDIT", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.EditCommand += new DataGridCommandEventHandler (EditCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (edit_command, "A9");
+			Assert.IsTrue (item_command, "#09");
 
 			//
 			// Item
@@ -699,23 +717,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("Sort", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.SortCommand += new DataGridSortCommandEventHandler (SortCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (sort_command, "A13");
+			Assert.IsTrue (item_command, "#10");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("sort", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.SortCommand += new DataGridSortCommandEventHandler (SortCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (sort_command, "A14");
+			Assert.IsTrue (item_command, "#11");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("SORT", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.SortCommand += new DataGridSortCommandEventHandler (SortCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (sort_command, "A15");
+			Assert.IsTrue (item_command, "#12");
 
 			//
 			// Update
@@ -723,23 +747,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("Update", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.UpdateCommand += new DataGridCommandEventHandler (UpdateCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (update_command, "A16");
+			Assert.IsTrue (item_command, "#13");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("update", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.UpdateCommand += new DataGridCommandEventHandler (UpdateCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (update_command, "A17");
+			Assert.IsTrue (item_command, "#14");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (null,
 					null, new CommandEventArgs ("UPDATE", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.UpdateCommand += new DataGridCommandEventHandler (UpdateCommandHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (update_command, "A18");
+			Assert.IsTrue (item_command, "#15");
 
 			//
 			// Select
@@ -749,23 +779,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (item, null,
 					new CommandEventArgs ("Select", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.SelectedIndexChanged += new EventHandler (SelectedIndexChangedHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (selected_changed, "A19");
+			Assert.IsTrue (item_command, "#16");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (item, null,
 					new CommandEventArgs ("select", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.SelectedIndexChanged += new EventHandler (SelectedIndexChangedHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (selected_changed, "A20");
+			Assert.IsTrue (item_command, "#17");
 
 			ResetEvents ();
 			command_args = new DataGridCommandEventArgs (item, null,
 					new CommandEventArgs ("SELECT", String.Empty));
+			p.ItemCommand += new DataGridCommandEventHandler (ItemCommandHandler);
 			p.SelectedIndexChanged += new EventHandler (SelectedIndexChangedHandler);
 			p.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (selected_changed, "A21");
+			Assert.IsTrue (item_command, "#18");
 		}
 
 		[Test]

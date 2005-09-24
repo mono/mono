@@ -781,23 +781,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("Cancel", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.CancelCommand += new DataListCommandEventHandler (CancelCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (cancelCommandEvent, "cancelCommandEvent-1");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("cancel", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.CancelCommand += new DataListCommandEventHandler (CancelCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (cancelCommandEvent, "cancelCommandEvent-2");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("CANCEL", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.CancelCommand += new DataListCommandEventHandler (CancelCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (cancelCommandEvent, "cancelCommandEvent-3");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			//
 			// Delete
@@ -805,23 +811,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("Delete", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.DeleteCommand += new DataListCommandEventHandler (DeleteCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (deleteCommandEvent, "deleteCommandEvent-1");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("delete", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.DeleteCommand += new DataListCommandEventHandler (DeleteCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (deleteCommandEvent, "deleteCommandEvent-2");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("DELETE", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.DeleteCommand += new DataListCommandEventHandler (DeleteCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (deleteCommandEvent, "deleteCommandEvent-3");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			//
 			// Edit
@@ -829,23 +841,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("Edit", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.EditCommand += new DataListCommandEventHandler (EditCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (editCommandEvent, "editCommandEvent-1");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("edit", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.EditCommand += new DataListCommandEventHandler (EditCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (editCommandEvent, "editCommandEvent-2");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("EDIT", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.EditCommand += new DataListCommandEventHandler (EditCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (editCommandEvent, "editCommandEvent-3");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			//
 			// Item
@@ -877,16 +895,20 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("Update", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.UpdateCommand += new DataListCommandEventHandler (UpdateCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (updateCommandEvent, "updateCommandEvent-1");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
 					null, new CommandEventArgs ("update", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.UpdateCommand += new DataListCommandEventHandler (UpdateCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (updateCommandEvent, "updateCommandEvent-2");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (null,
@@ -894,6 +916,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			dl.UpdateCommand += new DataListCommandEventHandler (UpdateCommandHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (updateCommandEvent, "updateCommandEvent-3");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			//
 			// Select
@@ -903,23 +926,29 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (item, null,
 					new CommandEventArgs ("Select", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.SelectedIndexChanged += new EventHandler (SelectedIndexChangedHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (selectedIndexChangedEvent, "selectedIndexChangedEvent-1");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (item, null,
 					new CommandEventArgs ("select", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.SelectedIndexChanged += new EventHandler (SelectedIndexChangedHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (selectedIndexChangedEvent, "selectedIndexChangedEvent-2");
+			Assert.IsTrue (itemCommandEvent, "#00");
 
 			ResetEvents ();
 			command_args = new DataListCommandEventArgs (item, null,
 					new CommandEventArgs ("SELECT", String.Empty));
+			dl.ItemCommand += new DataListCommandEventHandler (ItemCommandHandler);
 			dl.SelectedIndexChanged += new EventHandler (SelectedIndexChangedHandler);
 			dl.DoBubbleEvent (this, command_args);
 			Assert.IsTrue (selectedIndexChangedEvent, "selectedIndexChangedEvent-3");
+			Assert.IsTrue (itemCommandEvent, "#00");
 		}
 	}
 }
