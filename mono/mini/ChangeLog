@@ -1,5 +1,7 @@
 2005-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Reapply reverted patches.
+
 	* *: Revert r50174 as well.
 
 	* mini-amd64.c cpu-amd64.md inssel-amd64.brg: Revert r50170 as well.
