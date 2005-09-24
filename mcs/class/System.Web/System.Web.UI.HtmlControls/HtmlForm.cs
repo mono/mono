@@ -29,6 +29,7 @@
 using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Security.Permissions;
+using System.Web.Util;
 using System.Web.UI.WebControls;
 
 namespace System.Web.UI.HtmlControls 
@@ -291,7 +292,20 @@ return true;
 			 * and id
 			 */
 
-			string action = Page.Request.FilePath;
+			string action;
+			string file_path = Page.Request.FilePath;
+			string current_path = Page.Request.CurrentExecutionFilePath;
+			if (file_path == current_path) {
+				// Just the filename will do
+				action = UrlUtils.GetFile (file_path);
+			} else {
+				// Fun. We need to make cookieless sessions work, so no
+				// absolute paths here.
+				Uri current_uri = new Uri ("http://host" + current_path);
+				Uri fp_uri = new Uri ("http://host" + file_path);
+				action = fp_uri.MakeRelative (current_uri);
+			}
+
 			string query = Page.Request.QueryStringRaw;
 			if (query != null && query.Length > 0) {
 				action += "?" + query;

@@ -1,3 +1,8 @@
+2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspParser.cs: when processing verbatim input, throw if we reach EOF
+	before the expected end of the data.
+
 2005-09-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CachingCompiler.cs: 

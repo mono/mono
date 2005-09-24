@@ -1,3 +1,20 @@
+2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BrowserCapabilities.cs: don't rely on the win32 attribute to be there.
+	Just use the platform to determine whether Win32 is true or not. Fixes
+	bug #74777.
+
+2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: fixed typo when setting UI culture. Closes bug
+	#76189.
+
+2005-09-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: new SetFilePath() that does not conflict with
+	SetCurrentExePath. Now when transfering from a page to another,
+	CurrentExecutionFilePath and FilePath are correct.
+
 2005-09-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TraceData.cs: we have to change the method of getting a control render

@@ -1,3 +1,11 @@
+2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataBindingCollection.cs: Using an hashtable is a nice trick but
+	we need to copy values (not the DictionaryEntry) in CopyTo.
+	* Page.cs: IsValid throws an exception if the page hasn't be 
+	validated. VerifyRenderingInServerForm doesn't throw an exception
+	during unit testing (without a context?) but does in normal ops.
+
 2005-09-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: default VS 2005 pages are compiled fine now.
@@ -337,6 +345,17 @@
 	* StateBag.cs: New impl
 
 2005-06-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ViewStateOutputHashStream.cs: Removed. It didn't last long.
+
+	* Page.cs: almost restored to its previous state, but now that we found
+	that LosFormatter ctor that takes 'enableMac', moved the logic to
+	add the hash and validate there. Thanks to Sebastien for his input.
+	
+	* LosFormatter.cs: implemented the missing ctors and support for
+	"MAC" validation of the data.
+
+2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs:
 	* Control.cs: avoid the creation of the EventHandlerList and accessing 

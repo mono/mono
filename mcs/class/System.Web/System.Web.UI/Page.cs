@@ -7,9 +7,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002,2003 Ximian, Inc. (http://www.ximian.com)
-// (c) 2003 Novell, Inc. (http://www.novell.com)
-//
-
+// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,11 +37,14 @@ using System.ComponentModel.Design;
 using System.ComponentModel.Design.Serialization;
 using System.Globalization;
 using System.IO;
+using System.Security.Cryptography;
+using System.Security.Permissions;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Configuration;
 using System.Web.SessionState;
 using System.Web.Util;
 using System.Web.UI.HtmlControls;
@@ -54,7 +55,6 @@ using System.Web.UI.Adapters;
 
 namespace System.Web.UI
 {
-
 #if NET_2_0
 [RootDesignerSerializer ("Microsoft.VisualStudio.Web.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VisualStudio_Web, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
 #else
@@ -73,6 +73,7 @@ public class Page : TemplateControl, IHttpHandler
 	private bool _viewStateMac;
 	private string _errorPage;
 	private bool _isValid;
+	private bool is_validated;
 	private bool _smartNavigation;
 	private int _transactionMode;
 	private HttpContext _context;
@@ -102,7 +103,7 @@ public class Page : TemplateControl, IHttpHandler
 	internal const string CallbackSourceID = "__CALLBACKTARGET";
 	internal const string PreviousPageID = "__PREVIOUSPAGE";
 	
-	IPageHeader htmlHeader;
+	HtmlHead htmlHeader;
 	
 	MasterPage masterPage;
 	string masterPageFile;
@@ -130,7 +131,11 @@ public class Page : TemplateControl, IHttpHandler
 	[Browsable (false)]
 	public HttpApplicationState Application
 	{
-		get { return _context.Application; }
+		get {
+			if (_context == null)
+				return null;
+			return _context.Application;
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -167,7 +172,11 @@ public class Page : TemplateControl, IHttpHandler
 	[Browsable (false)]
 	public Cache Cache
 	{
-		get { return _context.Cache; }
+		get {
+			if (_context == null)
+				throw new HttpException ("No cache available without a context.");
+			return _context.Cache;
+		}
 	}
 
 #if NET_2_0
@@ -310,9 +319,12 @@ public class Page : TemplateControl, IHttpHandler
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
-	public bool IsValid
-	{
-		get { return _isValid; }
+	public bool IsValid {
+		get {
+			if (!is_validated)
+				throw new HttpException (Locale.GetText ("Page hasn't been validated."));
+			return _isValid;
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -353,7 +365,12 @@ public class Page : TemplateControl, IHttpHandler
 	[Browsable (false)]
 	public HttpResponse Response
 	{
-		get { return _context.Response; }
+		get {
+			if (_context != null)
+				return _context.Response;
+
+			throw new HttpException ("Response is not available without context");
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -386,6 +403,9 @@ public class Page : TemplateControl, IHttpHandler
 	public virtual HttpSessionState Session
 	{
 		get {
+			if (_context == null)
+				throw new HttpException ("Session is not available without context");
+
 			if (_context.Session == null)
 				throw new HttpException ("Session state can only be used " +
 						"when enableSessionState is set to true, either " +
@@ -744,14 +764,28 @@ public class Page : TemplateControl, IHttpHandler
 		scriptManager.WriteClientScriptBlocks (writer);
 	}
 
+	LosFormatter GetFormatter ()
+	{
+		PagesConfiguration config = PagesConfiguration.GetInstance (_context);
+		byte [] vkey = null;
+		if (config.EnableViewStateMac) {
+			MachineKeyConfig mconfig;
+			mconfig = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
+			vkey = mconfig.ValidationKey;
+		}
+
+		return new LosFormatter (config.EnableViewStateMac, vkey);
+	}
+
 	internal string GetViewStateString ()
 	{
 		if (_savedViewState == null)
 			return null;
-		StringWriter sr = new StringWriter ();
-		LosFormatter fmt = new LosFormatter ();
-		fmt.Serialize (sr, _savedViewState);
-		return sr.GetStringBuilder ().ToString ();
+
+		LosFormatter fmt = GetFormatter ();
+		MemoryStream ms = new MemoryStream ();
+		fmt.Serialize (ms, _savedViewState);
+		return Convert.ToBase64String (ms.GetBuffer (), 0, (int) ms.Length);
 	}
 
 	internal object GetSavedViewState ()
@@ -1122,14 +1156,15 @@ public class Page : TemplateControl, IHttpHandler
 			return null;
 
 		_savedViewState = null;
-		LosFormatter fmt = new LosFormatter ();
+		if (view_state == "")
+			return null;
 
-		try { 
+		LosFormatter fmt = GetFormatter ();
+		try {
 			_savedViewState = fmt.Deserialize (view_state);
 		} catch (Exception e) {
-			throw new HttpException ("Error restoring page viewstate.\n", e);
+			throw new HttpException ("Error restoring page viewstate.", e);
 		}
-
 		return _savedViewState;
 	}
 
@@ -1186,6 +1221,7 @@ public class Page : TemplateControl, IHttpHandler
 
 	public virtual void Validate ()
 	{
+		is_validated = true;
 		ValidateCollection (_validators);
 	}
 
@@ -1224,17 +1260,10 @@ public class Page : TemplateControl, IHttpHandler
 			_isValid = true;
 	}
 
-	bool rendering_trace;
-	internal void SetRenderingTrace (bool val)
-	{
-		rendering_trace = true;
-	}
-
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void VerifyRenderingInServerForm (Control control)
 	{
-		// When calling RenderControl in Trace to figure out the size this won't throw.
-		if (rendering_trace)
+		if (_context == null)
 			return;
 
 		if (!renderingForm)
@@ -1412,11 +1441,11 @@ public class Page : TemplateControl, IHttpHandler
 
     [BrowsableAttribute (false)]
     [DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-	public IPageHeader Header {
+	public HtmlHead Header {
 		get { return htmlHeader; }
 	}
 	
-	internal void SetHeader (IPageHeader header)
+	internal void SetHeader (HtmlHead header)
 	{
 		htmlHeader = header;
 	}
@@ -1473,6 +1502,7 @@ public class Page : TemplateControl, IHttpHandler
 	
 	public virtual void Validate (string validationGroup)
 	{
+		is_validated = true;
 		if (validationGroup == null || validationGroup == "")
 			ValidateCollection (_validators);
 		else {
