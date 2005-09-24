@@ -1,5 +1,11 @@
 2005-09-23  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIX11.cs: Update to use Mono.Posix.Native instead of plain
+	old Mono.Posix. Also remove some stray code that shouldn't have
+	been committed.
+
+2005-09-23  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Attempt at proper sizing of the horizontal
 	scrollbar. Also don't resize the scrollbars unless they are
 	visible.

@@ -60,7 +60,7 @@ using System.Threading;
 
 // Only do the poll when building with mono for now
 #if __MonoCS__
-using Mono.Unix;
+using Mono.Unix.Native;
 #endif
 
 /// X11 Version
@@ -3085,7 +3085,7 @@ namespace System.Windows.Forms {
 
                         Console.WriteLine ("Setting Border Style  {0:X}", handle);
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			// hwnd.border_style = border_style;
+			hwnd.border_style = border_style;
 
 			// FIXME - do we need to trigger some resize?
 		}
