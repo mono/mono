@@ -1177,6 +1177,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (1, columns.Count, "A1");
 			Assert.AreEqual ("Item", ((DataGridColumn) columns [0]).HeaderText, "A2");
 			Assert.AreEqual (1, amazing.CallCount, "A3");
+			Assert.AreEqual (0, p.DataKeys.Count, "A4");
 		}
 
 		class Custom : ICustomTypeDescriptor {
@@ -1313,6 +1314,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ArrayList columns = p.CreateColumns (source, true);
 			Assert.AreEqual (1, columns.Count, "A1");
 			Assert.AreEqual ("CustomName", ((DataGridColumn) columns [0]).HeaderText, "A2");
+			Assert.AreEqual (0, p.DataKeys.Count, "A3");
 		}
 
 		[Test]
