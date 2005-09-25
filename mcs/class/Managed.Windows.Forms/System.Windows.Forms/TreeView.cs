@@ -1018,7 +1018,10 @@ namespace System.Windows.Forms {
 		{
 //			SizeF size = dc.MeasureString (Text, Font, ClientSize.Width, new StringFormat ());
 //		int width = (int) size.Width + 3;
-			int width = (int)(node.Text.Length * node.NodeFont.Size * 0.85);
+			Font font = node.NodeFont;
+			if (node.NodeFont == null)
+				font = Font;
+			int width = (int)(node.Text.Length * font.Size * 0.85);
 			node.UpdateBounds (x, y, width, item_height);
 		}
 		
@@ -1043,9 +1046,14 @@ namespace System.Windows.Forms {
 				DrawSelectionAndFocus(node, dc, r);
 			r.X += 4;
 			r.Width -= 8;
+			Font font = node.NodeFont;
+			if (node.NodeFont == null)
+				font = Font;
 			Color text_color = ((Focused || !HideSelection) && SelectedNode == node ?
 					ThemeEngine.Current.ColorHilightText : node.ForeColor);
-			dc.DrawString (node.Text, node.NodeFont, ThemeEngine.Current.ResPool.GetSolidBrush (text_color), r, format);
+			dc.DrawString (node.Text, font,
+					ThemeEngine.Current.ResPool.GetSolidBrush (text_color),
+					r, format);
 		}
 
 		private void DrawNode (TreeNode node, Graphics dc, Rectangle clip, ref int depth, int item_height, int max_height)

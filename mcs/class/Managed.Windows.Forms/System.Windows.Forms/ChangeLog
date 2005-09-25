@@ -1,5 +1,10 @@
 2005-09-25  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: We can't just assume the node has a font. Use the
+	treeviews font if no node font is available.
+
+2005-09-25  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Allow the scrollbars to be reset with negative
 	values.
 	- Don't add scrollbars to negative sized windows.
