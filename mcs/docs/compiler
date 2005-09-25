@@ -345,12 +345,59 @@
 	return either an ArrayAccess expression or an IndexerAccess
 	expression from DoResolve.
 
+	All errors must be reported during the resolution phase
+	(DoResolve) and if an error is detected the DoResolve method
+	will return null which is used to flag that an error condition
+	has ocurred, this will be used to stop compilation later on.
+	This means that anyone that calls Expression.Resolve must
+	check the return value for null which would indicate an error
+	condition.
+
+	The second stage that Expressions participate in is code
+	generation, this is done by overwriting the "Emit" method of
+	the Expression class.  No error checking must be performed
+	during this stage.
+
+** Simple Names, MemberAccess
+
+	One of the most important classes in the compiler is
+	"SimpleName" which represents a simple name (from the C#
+	specification).  The names during the resolution time are
+	bound to field names, parameter names or local variable names.
+
+	More complicated expressions like:
+
+		Math.Sin
+
+	Are composed using the MemberAccess class which contains a
+	name (Math) and a SimpleName (Sin), this helps driving the
+	resolution process.
+
+** Types
+
+	The parser creates expressions to represent types during
+	compilation.  For example:
+
+	   class Sample {
+
+		Version vers;
+
+	   }
 
 
-*** The Expression Class
+	That will produce a "SimpleName" expression for the "Version"
+	word.  And in this particular case, the parser will introduce
+	"Version vers" as a field declaration.
 
-	The utility functions that can be called by all children of
-	Expression. 
+	During the resolution process for the fields, the compiler
+	will have to resolve the word "Version" to a type.  This is
+	done by using the "ResolveAsType" method in Expression instead
+	of using "Resolve".
+
+	ResolveAsType just turns on a different set of code paths for
+	things like SimpleNames and does a different kind of error
+	checking than the one used by regular expressions. 
+
 
 ** Constants
 
