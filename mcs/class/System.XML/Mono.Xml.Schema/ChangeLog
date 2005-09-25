@@ -1,3 +1,7 @@
+2005-09-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidatingReader.cs: XmlSchemaValidationFlags updates.
+
 2005-08-03  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* XsdValidationReader.cs: GetNamespacesInScope returns generic

@@ -33,10 +33,15 @@ namespace System.Xml.Schema
 	[Flags]
 	public enum XmlSchemaValidationFlags
 	{
-		IgnoreInlineSchema = 1,
-		IgnoreSchemaLocation = 2,
-		IgnoreValidationWarnings = 4,
-		IgnoreIdentityConstraints = 8
+		None = 0,
+		ProcessInlineSchema = 1,
+		ProcessSchemaLocation = 2,
+		ProcessValidationWarnings = 4,
+		ProcessIdentityConstraints = 8,
+		// LAMESPEC: It is really idiotic idea to include such
+		// validation option that breaks W3C XML Schema specification
+		// compliance and interoperability.
+		AllowXmlAttributes = 16,
 	}
 }
 #endif

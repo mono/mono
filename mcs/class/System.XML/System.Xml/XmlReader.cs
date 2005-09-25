@@ -403,13 +403,14 @@ namespace System.Xml
 			if (xvr != null)
 				xvr.SetSchemas (settings.Schemas);
 
-			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreIdentityConstraints) != 0)
+			// Actually I don't think they are treated in DTD validation though...
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessIdentityConstraints) == 0)
 				throw new NotImplementedException ();
-			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreInlineSchema) != 0)
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessInlineSchema) != 0)
 				throw new NotImplementedException ();
-			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreSchemaLocation) != 0)
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessSchemaLocation) != 0)
 				throw new NotImplementedException ();
-			if ((settings.ValidationFlags & XmlSchemaValidationFlags.IgnoreValidationWarnings) == 0)
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessValidationWarnings) == 0)
 				throw new NotImplementedException ();
 
 			return xvr != null ? xvr : reader;

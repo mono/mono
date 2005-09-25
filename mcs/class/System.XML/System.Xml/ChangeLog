@@ -1,3 +1,8 @@
+2005-09-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs, XmlReaderSettings.cs, XmlDocument.cs:
+	  XmlSchemaValidationFlags updates.
+
 2005-09-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriterSettings.cs : true NET_2_0 updates.

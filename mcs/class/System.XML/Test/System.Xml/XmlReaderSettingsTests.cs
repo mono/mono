@@ -36,15 +36,17 @@ namespace MonoTests.System.Xml
 				s.ConformanceLevel);
 			Assert (s.ValidationType != ValidationType.DTD);
 			AssertEquals (false, s.IgnoreComments);
-			Assert (0 != (s.ValidationFlags &
-				ValidationFlags.IgnoreInlineSchema));
-			AssertEquals (false, s.IgnoreProcessingInstructions);
-			Assert (0 != (s.ValidationFlags &
-				ValidationFlags.IgnoreSchemaLocation));
-			Assert (0 != (s.ValidationFlags &
-				ValidationFlags.IgnoreValidationWarnings));
 			Assert (0 == (s.ValidationFlags &
-				ValidationFlags.IgnoreIdentityConstraints));
+				ValidationFlags.ProcessInlineSchema));
+			AssertEquals (false, s.IgnoreProcessingInstructions);
+			Assert (0 == (s.ValidationFlags &
+				ValidationFlags.ProcessSchemaLocation));
+			Assert (0 == (s.ValidationFlags &
+				ValidationFlags.ProcessValidationWarnings));
+			Assert (0 != (s.ValidationFlags &
+				ValidationFlags.ProcessIdentityConstraints));
+			Assert (0 == (s.ValidationFlags &
+				ValidationFlags.AllowXmlAttributes));
 			AssertEquals (false, s.IgnoreWhitespace);
 			AssertEquals (0, s.LineNumberOffset);
 			AssertEquals (0, s.LinePositionOffset);

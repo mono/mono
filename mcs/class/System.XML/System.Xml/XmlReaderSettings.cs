@@ -100,9 +100,7 @@ namespace System.Xml
 			prohibitDtd = false; // ? not documented
 			schemas = new XmlSchemaSet ();
 			validationFlags =
-				XsValidationFlags.IgnoreValidationWarnings
-				| XsValidationFlags.IgnoreSchemaLocation
-				| XsValidationFlags.IgnoreInlineSchema;
+				XsValidationFlags.ProcessIdentityConstraints;
 			validationType = ValidationType.None;
 			xmlResolver = new XmlUrlResolver ();
 		}

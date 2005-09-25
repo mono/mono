@@ -1,3 +1,7 @@
+2005-09-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReaderSettingsTests.cs : XmlSchemaValidationFlags NET_2_0 update.
+
 2005-09-21  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriterSettingsTests.cs : removed NormalizeNewLines.

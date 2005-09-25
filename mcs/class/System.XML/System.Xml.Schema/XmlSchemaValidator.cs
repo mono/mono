@@ -202,12 +202,12 @@ namespace System.Xml.Schema
 
 		private bool IgnoreWarnings {
 			get { return (options & ValidationFlags
-				.IgnoreValidationWarnings) != 0; }
+				.ProcessValidationWarnings) == 0; }
 		}
 
 		private bool IgnoreIdentity {
 			get { return (options & ValidationFlags
-				.IgnoreIdentityConstraints) != 0; }
+				.ProcessIdentityConstraints) == 0; }
 		}
 
 		#endregion

@@ -990,15 +990,14 @@ namespace System.Xml
 		public void Validate (ValidationEventHandler handler)
 		{
 			Validate (handler, this,
-				XmlSchemaValidationFlags.IgnoreValidationWarnings);
+				XmlSchemaValidationFlags.ProcessIdentityConstraints);
 		}
 
 		public void Validate (ValidationEventHandler handler,
 			XmlNode node)
 		{
 			Validate (handler, node,
-				XmlSchemaValidationFlags.IgnoreValidationWarnings |
-				XmlSchemaValidationFlags.IgnoreIdentityConstraints);
+				XmlSchemaValidationFlags.ProcessIdentityConstraints);
 		}
 
 		private void Validate (ValidationEventHandler handler,

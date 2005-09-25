@@ -114,9 +114,9 @@ namespace Mono.Xml.Schema
 			nsResolver = reader as IXmlNamespaceResolver;
 			if (nsResolver == null)
 				throw new ArgumentException ("Argument XmlReader must implement IXmlNamespaceResolver.");
-			options = ValidationFlags.IgnoreValidationWarnings
-				| ValidationFlags.IgnoreSchemaLocation
-				| ValidationFlags.IgnoreInlineSchema;
+			options = ValidationFlags.ProcessValidationWarnings
+				| ValidationFlags.ProcessSchemaLocation
+				| ValidationFlags.ProcessInlineSchema;
 
 			this.reader = reader;
 			if (schemas == null)
@@ -198,8 +198,7 @@ namespace Mono.Xml.Schema
 				navigator.NameTable,
 				schemas,
 				navigator,
-				ValidationFlags.IgnoreSchemaLocation |
-					ValidationFlags.IgnoreInlineSchema);
+				ValidationFlags.ProcessIdentityConstraints);
 
 			readerLineInfo = navigator as IXmlLineInfo;
 			getter = delegate () { return Value; };
