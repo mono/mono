@@ -1,3 +1,12 @@
+2005-09-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : removed XmlSchemaBuiltInType.cs.
+
+2005-09-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : shut down CS0642 noise.
+	* System.Xml.dll.sources : added XmlOutputMethod.
+
 2005-09-20 Konstantin Triger <kostat@mainsoft.com>
 
         * Added jay.bat to run jay in java prebuild step

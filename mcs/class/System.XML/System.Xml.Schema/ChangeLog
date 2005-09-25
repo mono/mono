@@ -1,5 +1,9 @@
 2005-09-25  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaBuiltInType.cs : removed obsolete beta file.
+
+2005-09-25  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaValidationFlags.cs, XmlSchemaValidator.cs :
 	  NET_2_0 API updates.
 
