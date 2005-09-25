@@ -64,7 +64,8 @@ namespace Commons.Xml.Nvdl
 			XmlResolver r = config.XmlResolverInternal;
 			if (r == null)
 				return null;
-			Uri uri = r.ResolveUri (null, validate.SchemaUri);
+			Uri baseUri = r.ResolveUri (null, validate.SourceUri);
+			Uri uri = r.ResolveUri (baseUri, validate.SchemaUri);
 			Stream stream = (Stream) r.GetEntity (
 				uri, null, typeof (Stream));
 			if (stream == null)

@@ -1,3 +1,9 @@
+2005-09-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlValidationProvider.cs : GetSchemaXmlStream() should take NVDL
+	  script's base URI into account to compute the actual schema URI.
+	* NvdlRelaxngSupport.cs : ditto.
+
 2005-09-11  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlCompileContext.cs : make this internal.
