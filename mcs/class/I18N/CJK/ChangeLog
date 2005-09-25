@@ -1,5 +1,11 @@
 2005-09-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CP50221.cs,
+	  ISO2022JP.cs :
+	  So, now "CP50221.cs" is improper, since it contains all 50220-50222.
+
+2005-09-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CP50221.cs : actually 50220 and 50222 are also iso-2022-jp encodings.
 	  Fixed bug #76139. This file is likely to be renamed.
 
