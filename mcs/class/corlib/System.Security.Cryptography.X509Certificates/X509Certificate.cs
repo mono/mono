@@ -98,7 +98,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		public static X509Certificate CreateFromCertFile (string filename) 
 		{
 			byte[] data = null;
-			using (FileStream fs = new FileStream (filename, FileMode.Open)) {
+			using (FileStream fs = File.OpenRead (filename)) {
 				data = new byte [fs.Length];
 				fs.Read (data, 0, data.Length);
 				fs.Close ();
@@ -286,25 +286,31 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 	
 		// strangly there are no DateTime returning function
-		// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
-		// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
 		public virtual string GetEffectiveDateString ()
 		{
 			if (hideDates)
 				return null;
-			DateTime dt = x509.ValidFrom.ToUniversalTime().AddHours (-8);
-			return dt.ToString (); //"yyyy-MM-dd HH:mm:ss");
+#if NET_2_0
+			return x509.ValidFrom.ToString ();
+#else
+			// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
+			// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
+			return x509.ValidFrom.ToUniversalTime ().AddHours (-8).ToString ();
+#endif
 		}
 	
 		// strangly there are no DateTime returning function
-		// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
-		// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
 		public virtual string GetExpirationDateString () 
 		{
 			if (hideDates)
 				return null;
-			DateTime dt = x509.ValidUntil.ToUniversalTime().AddHours (-8);
-			return dt.ToString (); //"yyyy-MM-dd HH:mm:ss");
+#if NET_2_0
+			return x509.ValidUntil.ToString ();
+#else
+			// LAMESPEC: Microsoft returns the local time from Pacific Time (GMT-8)
+			// BUG: This will not be corrected in Framework 1.1 and also affect WSE 1.0
+			return x509.ValidUntil.ToUniversalTime ().AddHours (-8).ToString ();
+#endif
 		}
 	
 		// well maybe someday there'll be support for PGP or SPKI ?
