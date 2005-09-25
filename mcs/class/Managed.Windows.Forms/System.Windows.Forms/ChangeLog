@@ -1,3 +1,9 @@
+2005-09-25  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Allow the scrollbars to be reset with negative
+	values.
+	- Don't add scrollbars to negative sized windows.
+
 2005-09-23  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Update to use Mono.Posix.Native instead of plain

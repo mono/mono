@@ -1159,13 +1159,13 @@ namespace System.Windows.Forms {
 		{
 			SuspendLayout ();
 
-			if (max_node_width > ClientRectangle.Width) {
+			if (max_node_width > ClientRectangle.Width && ClientRectangle.Width >= 0) {
 				add_hscroll = true;
 				AddHorizontalScrollBar ();
 				return;
 			}
 
-			if (used_height > ClientRectangle.Height) {
+			if (used_height > ClientRectangle.Height && ClientRectangle.Height >= 0) {
 				add_vscroll = true;
 				AddVerticalScrollBar (open_node_count, true);
 				return;
@@ -1191,6 +1191,9 @@ namespace System.Windows.Forms {
 
 		private void SetVScrollPos (int pos, TreeNode new_top)
 		{
+			if (pos < 0)
+				pos = 0;
+
 			if (skipped_nodes == pos)
 				return;
 
@@ -1224,6 +1227,9 @@ namespace System.Windows.Forms {
 		{
 			int old_offset = hbar_offset;
 			hbar_offset = hbar.Value;
+
+			if (hbar_offset < 0)
+				hbar_offset = 0;
 
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, old_offset - hbar_offset, 0, false);
 		}
