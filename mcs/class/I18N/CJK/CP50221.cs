@@ -3,16 +3,71 @@ using System.Text;
 
 namespace I18N.CJK
 {
-	public class CP50221Encoding : Encoding
-	{
-		static JISConvert convert = JISConvert.Convert;
+	// FIXME:
+	// find out what is the difference between 50220, 50221 and 50222.
 
-		public override string BodyName {
-			get { return "iso-2022-jp"; }
+	public class CP50220 : ISO2022JPEncoding
+	{
+		public CP50220 ()
+			: base (true, true)
+		{
+		}
+
+		public override int CodePage {
+			get { return 50220; }
+		}
+
+		public override string EncodingName {
+			get { return "Japanese (JIS)"; }
+		}
+	}
+
+	public class CP50221 : ISO2022JPEncoding
+	{
+		public CP50221 ()
+			: base (false, true)
+		{
 		}
 
 		public override int CodePage {
 			get { return 50221; }
+		}
+
+		public override string EncodingName {
+			get { return "Japanese (JIS-Allow 1 byte Kana)"; }
+		}
+	}
+
+	public class CP50222 : ISO2022JPEncoding
+	{
+		public CP50222 ()
+			: base (true, true)
+		{
+		}
+
+		public override int CodePage {
+			get { return 50222; }
+		}
+
+		public override string EncodingName {
+			get { return "Japanese (JIS-Allow 1 byte Kana - SO/SI)"; }
+		}
+	}
+
+	public class ISO2022JPEncoding : Encoding
+	{
+		static JISConvert convert = JISConvert.Convert;
+
+		public ISO2022JPEncoding (bool allow1ByteKana, bool allowShiftIO)
+		{
+			this.allow_1byte_kana = allow1ByteKana;
+			this.allow_shift_io = allowShiftIO;
+		}
+
+		readonly bool allow_1byte_kana, allow_shift_io;
+
+		public override string BodyName {
+			get { return "iso-2022-jp"; }
 		}
 
 		public override string HeaderName {
@@ -21,10 +76,6 @@ namespace I18N.CJK
 
 		public override string WebName {
 			get { return "csISO2022JP"; }
-		}
-
-		public override string EncodingName {
-			get { return "Japanese (JIS-Allow 1 byte Kana)"; }
 		}
 
 		public override int GetMaxByteCount (int charCount)
@@ -41,36 +92,44 @@ namespace I18N.CJK
 
 		public override int GetByteCount (char [] chars, int charIndex, int charCount)
 		{
-			return new CP50221Encoder ().GetByteCount (chars, charIndex, charCount, true);
+			return new ISO2022JPEncoder (allow_1byte_kana, allow_shift_io).GetByteCount (chars, charIndex, charCount, true);
 		}
 
 		public override int GetBytes (char [] chars, int charIndex, int charCount, byte [] bytes, int byteIndex)
 		{
-			return new CP50221Encoder ().GetBytes (chars, charIndex, charCount, bytes, byteIndex, true);
+			return new ISO2022JPEncoder (allow_1byte_kana, allow_shift_io).GetBytes (chars, charIndex, charCount, bytes, byteIndex, true);
 		}
 
 		public override int GetCharCount (byte [] bytes, int index, int count)
 		{
-			return new CP50221Decoder ().GetCharCount (bytes, index, count);
+			return new ISO2022JPDecoder (allow_1byte_kana, allow_shift_io).GetCharCount (bytes, index, count);
 		}
 
 		public override int GetChars (byte [] bytes, int byteIndex, int byteCount, char [] chars, int charIndex)
 		{
-			return new CP50221Decoder ().GetChars (bytes, byteIndex, byteCount, chars, charIndex);
+			return new ISO2022JPDecoder (allow_1byte_kana, allow_shift_io).GetChars (bytes, byteIndex, byteCount, chars, charIndex);
 		}
 	}
 
-	internal enum CP50221Mode {
+	internal enum ISO2022JPMode {
 		ASCII,
 		JISX0208,
 		JISX0201
 	}
 
-	internal class CP50221Encoder : Encoder
+	internal class ISO2022JPEncoder : Encoder
 	{
 		static JISConvert convert = JISConvert.Convert;
 
-		CP50221Mode m = CP50221Mode.ASCII;
+		readonly bool allow_1byte_kana, allow_shift_io;
+
+		ISO2022JPMode m = ISO2022JPMode.ASCII;
+
+		public ISO2022JPEncoder (bool allow1ByteKana, bool allowShiftIO)
+		{
+			this.allow_1byte_kana = allow1ByteKana;
+			this.allow_shift_io = allowShiftIO;
+		}
 
 		public override int GetByteCount (char [] chars, int charIndex, int charCount, bool flush)
 		{
@@ -82,31 +141,31 @@ namespace I18N.CJK
 				char ch = chars [i];
 				if (ch >= 0x2010 && ch <= 0x9FA5)
 				{
-					if (m != CP50221Mode.JISX0208)
+					if (m != ISO2022JPMode.JISX0208)
 						byteCount += 3;
-					m = CP50221Mode.JISX0208;
+					m = ISO2022JPMode.JISX0208;
 					// This range contains the bulk of the CJK set.
 					value = (ch - 0x2010) * 2;
 					value = ((int)(convert.cjkToJis[value])) |
 							(((int)(convert.cjkToJis[value + 1])) << 8);
 				} else if (ch >= 0xFF01 && ch <= 0xFF60) {
-					if (m != CP50221Mode.JISX0208)
+					if (m != ISO2022JPMode.JISX0208)
 						byteCount += 3;
-					m = CP50221Mode.JISX0208;
+					m = ISO2022JPMode.JISX0208;
 
 					// This range contains extra characters,
 					value = (ch - 0xFF01) * 2;
 					value = ((int)(convert.extraToJis[value])) |
 							(((int)(convert.extraToJis[value + 1])) << 8);
 				} else if(ch >= 0xFF60 && ch <= 0xFFA0) {
-					if (m != CP50221Mode.JISX0201)
+					if (m != ISO2022JPMode.JISX0201)
 						byteCount += 3;
-					m = CP50221Mode.JISX0201;
+					m = ISO2022JPMode.JISX0201;
 					value = ch - 0xFF60 + 0xA0;
 				} else if (ch < 128) {
-					if (m != CP50221Mode.ASCII)
+					if (m != ISO2022JPMode.ASCII)
 						byteCount += 3;
-					m = CP50221Mode.ASCII;
+					m = ISO2022JPMode.ASCII;
 					value = (int) ch;
 				} else
 					// skip non-convertible character
@@ -118,24 +177,24 @@ namespace I18N.CJK
 					byteCount++;
 			}
 			// must end in ASCII mode
-			if (flush && m != CP50221Mode.ASCII) {
+			if (flush && m != ISO2022JPMode.ASCII) {
 				byteCount += 3;
-				m = CP50221Mode.ASCII;
+				m = ISO2022JPMode.ASCII;
 			}
 			return byteCount;
 		}
 
 		// returns false if it failed to add required ESC.
 		private bool SwitchMode (byte [] bytes, ref int byteIndex,
-			CP50221Mode cur, CP50221Mode next)
+			ISO2022JPMode cur, ISO2022JPMode next)
 		{
 			if (cur == next)
 				return true;
 			if (bytes.Length <= byteIndex + 3)
 				return false;
 			bytes [byteIndex++] = 0x1B;
-			bytes [byteIndex++] = (byte) (next == CP50221Mode.JISX0208 ? 0x24 : 0x28);
-			bytes [byteIndex++] = (byte) (next == CP50221Mode.JISX0201 ? 0x49 : 0x42);
+			bytes [byteIndex++] = (byte) (next == ISO2022JPMode.JISX0208 ? 0x24 : 0x28);
+			bytes [byteIndex++] = (byte) (next == ISO2022JPMode.JISX0201 ? 0x49 : 0x42);
 			return true;
 		}
 
@@ -152,31 +211,31 @@ namespace I18N.CJK
 				char ch = chars [i];
 				if (ch >= 0x2010 && ch <= 0x9FA5)
 				{
-					if (!SwitchMode (bytes, ref byteIndex, m, CP50221Mode.JISX0208))
+					if (!SwitchMode (bytes, ref byteIndex, m, ISO2022JPMode.JISX0208))
 						break;
-					m = CP50221Mode.JISX0208;
+					m = ISO2022JPMode.JISX0208;
 					// This range contains the bulk of the CJK set.
 					value = (ch - 0x2010) * 2;
 					value = ((int)(convert.cjkToJis[value])) |
 							(((int)(convert.cjkToJis[value + 1])) << 8);
 				} else if (ch >= 0xFF01 && ch <= 0xFF60) {
-					if (!SwitchMode (bytes, ref byteIndex, m, CP50221Mode.JISX0208))
+					if (!SwitchMode (bytes, ref byteIndex, m, ISO2022JPMode.JISX0208))
 						break;
-					m = CP50221Mode.JISX0208;
+					m = ISO2022JPMode.JISX0208;
 
 					// This range contains extra characters,
 					value = (ch - 0xFF01) * 2;
 					value = ((int)(convert.extraToJis[value])) |
 							(((int)(convert.extraToJis[value + 1])) << 8);
 				} else if(ch >= 0xFF60 && ch <= 0xFFA0) {
-					if (!SwitchMode (bytes, ref byteIndex, m, CP50221Mode.JISX0201))
+					if (!SwitchMode (bytes, ref byteIndex, m, ISO2022JPMode.JISX0201))
 						break;
-					m = CP50221Mode.JISX0201;
+					m = ISO2022JPMode.JISX0201;
 					value = ch - 0xFF60 + 0xA0;
 				} else if (ch < 128) {
-					if (!SwitchMode (bytes, ref byteIndex, m, CP50221Mode.ASCII))
+					if (!SwitchMode (bytes, ref byteIndex, m, ISO2022JPMode.ASCII))
 						break;
-					m = CP50221Mode.ASCII;
+					m = ISO2022JPMode.ASCII;
 					value = (int) ch;
 				} else
 					// skip non-convertible character
@@ -193,16 +252,24 @@ namespace I18N.CJK
 			}
 			if (flush) {
 				// must end in ASCII mode
-				SwitchMode (bytes, ref byteIndex, m, CP50221Mode.ASCII);
-				m = CP50221Mode.ASCII;
+				SwitchMode (bytes, ref byteIndex, m, ISO2022JPMode.ASCII);
+				m = ISO2022JPMode.ASCII;
 			}
 			return byteIndex - start;
 		}
 	}
 
-	internal class CP50221Decoder : Decoder
+	internal class ISO2022JPDecoder : Decoder
 	{
 		static JISConvert convert = JISConvert.Convert;
+
+		readonly bool allow_1byte_kana, allow_shift_io;
+
+		public ISO2022JPDecoder (bool allow1ByteKana, bool allowShiftIO)
+		{
+			this.allow_1byte_kana = allow1ByteKana;
+			this.allow_shift_io = allowShiftIO;
+		}
 
 		// GetCharCount
 		public override int GetCharCount (byte [] bytes, int index, int count)
@@ -240,12 +307,12 @@ namespace I18N.CJK
 
 		public override int GetChars (byte [] bytes, int byteIndex, int byteCount, char [] chars, int charIndex)
 		{
-			CP50221Mode m = CP50221Mode.ASCII;
+			ISO2022JPMode m = ISO2022JPMode.ASCII;
 			int start = charIndex;
 			int end = byteIndex + byteCount;
 			for (int i = byteIndex; i < end && charIndex < chars.Length; i++) {
 				if (bytes [i] != 0x1B) {
-					if (m == CP50221Mode.JISX0208) {
+					if (m == ISO2022JPMode.JISX0208) {
 						if (i + 1 == end)
 							break; // incomplete head of wide char
 
@@ -258,8 +325,14 @@ namespace I18N.CJK
 						chars [charIndex++] = ToChar (v);
 						i++;
 					}
-					else if (m == CP50221Mode.JISX0201)
+					else if (m == ISO2022JPMode.JISX0201)
 						chars [charIndex++] = (char) (bytes [i] + 0xFF40);
+					// LAMESPEC: actually this should not
+					// be allowed when 1byte-kana is not
+					// allowed, but MS.NET seems to allow
+					// it in any mode.
+					else if (bytes [i] > 0xA0 && bytes [i] < 0xE0) // half-width Katakana
+						chars [charIndex++] = (char) (bytes [i] - 0xA0 + 0xFF60);
 					else
 						chars [charIndex++] = (char) bytes [i];
 					continue;
@@ -276,9 +349,9 @@ namespace I18N.CJK
 						throw new ArgumentException ("Unexpected ISO-2022-JP escape sequence.");
 					i++;
 					if (bytes [i] == 0x42)
-						m = wide ? CP50221Mode.JISX0208 : CP50221Mode.ASCII;
+						m = wide ? ISO2022JPMode.JISX0208 : ISO2022JPMode.ASCII;
 					else if (bytes [i] == 0x49)
-						m = CP50221Mode.JISX0201;
+						m = ISO2022JPMode.JISX0201;
 					else
 						throw new ArgumentException (String.Format ("Unexpected ISO-2022-JP escape sequence. Ended with 0x{0:X04}", bytes [i]));
 				}
@@ -288,7 +361,7 @@ namespace I18N.CJK
 		}
 	}
 
-	public class ENCiso_2022_jp : CP50221Encoding
+	public class ENCiso_2022_jp : CP50220
 	{
 		public ENCiso_2022_jp () : base() {}
 
