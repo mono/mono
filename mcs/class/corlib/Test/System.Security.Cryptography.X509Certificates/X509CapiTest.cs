@@ -127,8 +127,17 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			byte[] hash = { 0xD6,0x2F,0x48,0xD0,0x13,0xEE,0x7F,0xB5,0x8B,0x79,0x07,0x45,0x12,0x67,0x0D,0x9C,0x5B,0x3A,0x5D,0xA9 };
 			AssertEquals ("GetCertHash", hash, x509.GetCertHash ());
 			Assertion.AssertEquals ("GetCertHashString", "D62F48D013EE7FB58B79074512670D9C5B3A5DA9", x509.GetCertHashString ());
+#if NET_2_0
+			DateTime from = DateTime.ParseExact (x509.GetEffectiveDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
+			Assert.AreEqual ("03/12/1996 18:38:47", from.ToString (), "GetEffectiveDateString");
+			DateTime until = DateTime.ParseExact (x509.GetExpirationDateString (), "MM/dd/yyyy HH:mm:ss", null).ToUniversalTime ();
+			Assert.AreEqual ("03/12/1997 18:38:46", until.ToString (), "GetExpirationDateString");
+#else
+			// fx 1.x has a bug where the returned dates were always in the Seattle time zone
 			Assertion.AssertEquals ("GetEffectiveDateString", "03/12/1996 10:38:47", x509.GetEffectiveDateString ());
 			Assertion.AssertEquals ("GetExpirationDateString", "03/12/1997 10:38:46", x509.GetExpirationDateString ());
+			// which was making it easier to test the dates ;-)
+#endif
 			Assertion.AssertEquals ("GetFormat", "X509", x509.GetFormat ());
 			Assertion.AssertEquals ("GetHashCode", -701544240, x509.GetHashCode ());
 			Assertion.AssertEquals ("GetIssuerName", "C=US, O=\"RSA Data Security, Inc.\", OU=Secure Server Certification Authority", x509.GetIssuerName ());

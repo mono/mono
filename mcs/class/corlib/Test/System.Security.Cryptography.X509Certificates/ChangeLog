@@ -1,3 +1,10 @@
+2005-09-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CapiTest.cs: Update the test cases as the 1.x date/time bug 
+	(Seattle time) has been fixed in 2.0.
+	* X509CertificateTest.cs: Update the test cases as the 1.x date/time 
+	bug (Seattle time) has been fixed in 2.0.
+
 2005-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509CapiTest.cs: Enabled IntPtr test under Linux. Add IntPtr.Zero 
