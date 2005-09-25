@@ -1,3 +1,9 @@
+2005-09-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MonoProperty.cs: Invoke throws a SecurityException but GetValue must
+	throw TargetInvocationException with the SecurityException as an inner
+	exception. See CAS unit tests for System.Web.dll.
+
 2005-09-20  Martin Baulig  <martin@ximian.com>
 
 	* Assembly.cs: Removed some unused debugger icalls.
