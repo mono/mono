@@ -1,3 +1,9 @@
+2005-09-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDictionaryString.cs, XmlDictionary.cs,
+	  XmlDictionaryReaderQuotas.cs, XmlDictionaryReader.cs:
+	  added some implementations.
+
 2005-09-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDictionaryString.cs, XmlShimWriter.cs,

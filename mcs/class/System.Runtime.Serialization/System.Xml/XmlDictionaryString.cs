@@ -6,9 +6,17 @@ namespace System.Xml
 {
 	public class XmlDictionaryString
 	{
-		IXmlDictionary dict;
-		string value;
-		int key;
+		static XmlDictionaryString empty = new XmlDictionaryString (
+			XmlDictionary.EmptyDictionary.Instance,
+			String.Empty, 0);
+
+		public static XmlDictionaryString Empty {
+			get { return empty; }
+		}
+
+		readonly IXmlDictionary dict;
+		readonly string value;
+		readonly int key;
 
 		public XmlDictionaryString (IXmlDictionary dictionary,
 			string value, int key)
@@ -30,10 +38,9 @@ namespace System.Xml
 			get { return value; }
 		}
 
-		[MonoTODO]
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return value;
 		}
 	}
 }
