@@ -1,3 +1,8 @@
+2005-09-26  Chris Toshok  <toshok@ximian.com>
+
+	* HttpApplicationFactory.cs (OnAppFileChanged): add null checks
+	for bin_watcher and app_file_watcher so we don't get NRE's here.
+
 2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BrowserCapabilities.cs: don't rely on the win32 attribute to be there.

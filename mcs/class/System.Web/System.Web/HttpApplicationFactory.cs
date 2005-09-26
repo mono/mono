@@ -217,8 +217,10 @@ namespace System.Web {
 
 		void OnAppFileChanged (object sender, FileSystemEventArgs args)
 		{
-			bin_watcher.EnableRaisingEvents = false;
-			app_file_watcher.EnableRaisingEvents = false;
+			if (bin_watcher != null)
+				bin_watcher.EnableRaisingEvents = false;
+			if (app_file_watcher != null)
+				app_file_watcher.EnableRaisingEvents = false;
 			HttpRuntime.UnloadAppDomain ();
 		}
 #endif
