@@ -1,3 +1,8 @@
+2005-09-26  Marek Safar <marek.safar@seznam.cz>
+
+	* test-294.cs: Added new tests.
+	* test-457.cs: New test.
+	
 2005-09-26  Raja R Harinath  <rharinath@novell.com>
 
 	* test-456.cs: New test from #76133.
