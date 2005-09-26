@@ -58,7 +58,12 @@ namespace System.Security.Principal {
 			if ((offset < 0) || (offset > binaryForm.Length - 1))
 				throw new ArgumentException ("offset");
 
-			// TODO
+			throw new NotImplementedException ();
+		}
+
+		public SecurityIdentifier (IntPtr binaryForm)
+		{
+			throw new NotImplementedException ();
 		}
 
 		public SecurityIdentifier (WellKnownSidType sidType, SecurityIdentifier domainSid)

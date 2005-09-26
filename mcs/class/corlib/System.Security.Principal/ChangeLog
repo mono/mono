@@ -1,3 +1,7 @@
+2005-09-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityIdentifier.cs: Stubbed ctor(IntPtr) introduced in 2.0 RC.
+
 2005-08-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* GenericPrincipal.cs: Roles are case-insensitive.
