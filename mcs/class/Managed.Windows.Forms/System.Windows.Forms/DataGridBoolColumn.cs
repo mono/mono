@@ -37,7 +37,7 @@ namespace System.Windows.Forms
 	public class DataGridBoolColumn : DataGridColumnStyle
 	{
 		[Flags]
-		public enum CheckState {
+		private enum CheckState {
 			Checked		= 0x00000000,
 			UnChecked	= 0x00000002,
 			Null		= 0x00000004,

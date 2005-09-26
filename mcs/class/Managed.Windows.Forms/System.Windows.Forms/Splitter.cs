@@ -30,6 +30,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 
@@ -78,6 +79,8 @@ namespace System.Windows.Forms
 
 		#region Public Instance Properties
 
+		[DispId (-504)]
+		[DefaultValue (BorderStyle.None)]
 		public BorderStyle BorderStyle {
 			get { return drag_form.InternalBorderStyle; }
 			set { drag_form.InternalBorderStyle = value; }

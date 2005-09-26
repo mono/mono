@@ -1171,7 +1171,7 @@ static int current;
 			
 		}
 
-		protected void CalculateDocument() {
+		internal void CalculateDocument() {
 			if (!IsHandleCreated) {
 				return;
 			}
@@ -1181,7 +1181,7 @@ static int current;
 			Invalidate();	// FIXME - do we need this?
 		}
 
-		protected void CalculateScrollBars() {
+		internal void CalculateScrollBars() {
 			// FIXME - need separate calculations for center and right alignment
 			// No scrollbars for a single line
 			if (document.Width >= this.Width) {

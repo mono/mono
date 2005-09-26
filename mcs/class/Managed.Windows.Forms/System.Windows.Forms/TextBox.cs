@@ -86,7 +86,7 @@ namespace System.Windows.Forms {
 		}
 
 		[Localizable(true)]
-		[DefaultValue("")]
+		[DefaultValue('\0')]
 		public char PasswordChar {
 			get {
 				return password_char;

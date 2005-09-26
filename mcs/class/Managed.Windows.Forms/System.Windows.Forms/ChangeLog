@@ -1,3 +1,11 @@
+2005-09-26  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* DataGridBoolColumn.cs: Marked CheckState private to fix public API.
+	* Splitter.cs: Added missing attributes for BorderStyle property.
+	* TextBoxBase.cs: Marked Calculate* methods internal.
+	* TextBox.cs: Fixed DefaultValue for PasswordChar property to match
+	MS.NET.
+
 2005-09-26  Jordi Mas i Hernandez <jordi@ximian.com>
 	 
 	* ListBox.cs: Fixes navigation to the last item in multicolumn lists
