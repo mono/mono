@@ -1,3 +1,7 @@
+2005-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot.c: Add support for the no_special_static flag for classes.
+
 2005-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Reapply reverted patches.
