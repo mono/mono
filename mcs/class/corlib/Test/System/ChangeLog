@@ -1,3 +1,7 @@
+2005-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* StringTest.cs: Add test for #76204.
+
 2005-09-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* TypeTest.cs: test for #76150.

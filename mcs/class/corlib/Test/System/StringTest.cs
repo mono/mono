@@ -410,6 +410,7 @@ public class StringTest : Assertion
 		AssertEquals ("Single argument.", "100", String.Format ("{0}", 100));
 		AssertEquals ("Single argument, right justified.", "X   37X", String.Format ("X{0,5}X", 37));
 		AssertEquals ("Single argument, left justified.", "X37   X", String.Format ("X{0,-5}X", 37));
+		AssertEquals ("Whitespace in specifier", "  7d", String.Format ("{0, 4:x}", 125));
 		AssertEquals ("Two arguments.", "The 3 wise men.", String.Format ("The {0} wise {1}.", 3, "men"));
 		AssertEquals ("Three arguments.", "do re me fa so.", String.Format ("{0} re {1} fa {2}.", "do", "me", "so"));
 		AssertEquals ("Formatted argument.", "###00c0ffee#", String.Format ("###{0:x8}#", 0xc0ffee));
