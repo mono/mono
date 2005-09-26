@@ -1547,9 +1547,10 @@ namespace System
 
 				if (str[ptr] == ',') {
 					// White space between ',' and number or sign.
-					int start = ++ptr;
+					++ptr;
 					while (Char.IsWhiteSpace (str [ptr]))
 						++ptr;
+					int start = ptr;
 
 					format = str.Substring (start, ptr - start);
 

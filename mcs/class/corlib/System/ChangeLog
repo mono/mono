@@ -1,3 +1,8 @@
+2005-09-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* String.cs (ParseFormatSpecifier): Fix skipping of whitespace. Fixes
+	#76204.
+
 2005-09-23  Miguel de Icaza  <miguel@novell.com>
 
 	* Decimal.cs: Fix typo, patch from Tomas Kukol <tomas.kukol@gmail.com>
