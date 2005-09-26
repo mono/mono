@@ -1186,10 +1186,14 @@ namespace System.Windows.Forms
 
 		private void UpdatedTopItem ()
 		{
-			if (multicolumn) {
-				int col = (LBoxInfo.top_item / LBoxInfo.page_size);
-				hscrollbar_ctrl.Value = col;
-			}				
+			if (multicolumn) {				
+				int col = LBoxInfo.top_item / LBoxInfo.page_size;
+				
+				if (col > hscrollbar_ctrl.Maximum)
+					hscrollbar_ctrl.Value = hscrollbar_ctrl.Maximum;
+				else
+					hscrollbar_ctrl.Value = col;
+			}
 			else {
 				if (LBoxInfo.top_item > vscrollbar_ctrl.Maximum)
 					vscrollbar_ctrl.Value = vscrollbar_ctrl.Maximum;

@@ -1,3 +1,7 @@
+2005-09-26  Jordi Mas i Hernandez <jordi@ximian.com>
+	 
+	* ListBox.cs: Fixes navigation to the last item in multicolumn lists
+
 2005-09-25  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Update the node bounds correctly regardless of
