@@ -531,6 +531,165 @@ public class AssemblyNameTest {
 		}
 		return tokenString;
 	}
+
+#if NET_2_0
+	[Test]
+	[Category ("NotWorking")]
+	public void Ctor1 ()
+	{
+		const string assemblyName = "TestAssembly";
+		AssemblyName an = new AssemblyName (assemblyName);
+		Assert.IsNotNull (an.Name, "Ctor1#1");
+		Assert.AreEqual (an.Name, assemblyName, "Ctor1#2");
+		Assert.IsNull (an.Version, "Ctor1#3");
+		Assert.IsNull (an.CultureInfo, "Ctor1#4");
+		Assert.IsNull (an.GetPublicKeyToken (), "Ctor1#5");
+	}
+
+	[Test]
+	public void Ctor2 ()
+	{
+		const string assemblyName = "TestAssembly";
+		const string assemblyVersion = "1.2.3.4";
+		AssemblyName an = new AssemblyName (assemblyName + ", Version=" + assemblyVersion);
+		Assert.IsNotNull (an.Name, "Ctor2#1");
+		Assert.AreEqual (an.Name, assemblyName, "Ctor2#2");
+		Assert.IsNotNull (an.Version, "Ctor2#3");
+		Assert.AreEqual (an.Version, new Version (assemblyVersion), "Ctor2#4");
+		Assert.IsNull (an.CultureInfo, "Ctor2#5");
+		Assert.IsNull (an.GetPublicKeyToken (), "Ctor2#6");
+	}
+
+	[Test]
+	[Category ("NotWorking")]
+	public void Ctor3 ()
+	{
+		const string assemblyName = "TestAssembly";
+		const string assemblyCulture = "en-US";
+		AssemblyName an = new AssemblyName (assemblyName + ", Culture=" + assemblyCulture);
+		Assert.IsNotNull (an.Name, "Ctor3#1");
+		Assert.AreEqual (an.Name, assemblyName, "Ctor3#2");
+		Assert.IsNotNull (an.CultureInfo, "Ctor3#3");
+		Assert.AreEqual (an.CultureInfo, new CultureInfo (assemblyCulture), "Ctor3#4");
+		Assert.IsNull (an.Version, "Ctor3#5");
+		Assert.IsNull (an.GetPublicKeyToken (), "Ctor3#6");
+	}
+
+	[Test]
+	[Category ("NotWorking")]
+	public void Ctor4 ()
+	{
+		const string assemblyName = "TestAssembly";
+		byte [] assemblyKeyToken;
+		AssemblyName an = new AssemblyName (assemblyName + ", PublicKeyToken=" + GetTokenString (token));
+		Assert.IsNotNull (an.Name, "Ctor4#1");
+		Assert.AreEqual (an.Name, assemblyName, "Ctor4#2");
+		Assert.IsNotNull (assemblyKeyToken = an.GetPublicKeyToken (), "Ctor4#3");
+		Assert.AreEqual (assemblyKeyToken, token, "Ctor4#4");
+		Assert.IsNull (an.Version, "Ctor4#5");
+		Assert.IsNull (an.CultureInfo, "Ctor4#6");
+	}
+
+	[Test]
+	public void Ctor5 ()
+	{
+		const string assemblyName = "TestAssembly";
+		const string assemblyCulture = "neutral";
+		const string assemblyVersion = "1.2.3.4";
+		byte [] assemblyKeyToken;
+
+		AssemblyName an = new AssemblyName (assemblyName + ", Version=" + assemblyVersion + 
+				", Culture=" + assemblyCulture + ", PublicKeyToken=" + GetTokenString (token));
+		Assert.IsNotNull (an.Name, "Ctor5#1");
+		Assert.AreEqual (an.Name, assemblyName, "Ctor5#2");
+		Assert.IsNotNull (an.CultureInfo, "Ctor5#3");
+		Assert.AreEqual (an.CultureInfo, new CultureInfo (""), "Ctor5#4");
+		Assert.IsNotNull (an.Version, "Ctor5#5");
+		Assert.AreEqual (an.Version, new Version (assemblyVersion), "Ctor5#6");
+		Assert.IsNotNull (assemblyKeyToken = an.GetPublicKeyToken (), "Ctor5#7");
+		Assert.AreEqual (assemblyKeyToken, token, "Ctor5#8");
+	}
+
+	[Test]
+	[Category ("NotWorking")]
+	public void Ctor6 ()
+	{
+		const string assemblyName = "TestAssembly";
+		AssemblyName an = null;
+		
+		// null argument
+		try {
+			an = new AssemblyName (null);
+		} catch (ArgumentNullException) {
+		}
+		Assert.IsNull (an, "Ctor6#1");
+
+		// empty string
+		an = null;
+		try {
+			an = new AssemblyName ("");
+		} catch (ArgumentException) {
+		}
+		Assert.IsNull (an, "Ctor6#2");
+
+		// incomplete entry
+		an = null;
+		try {
+			an = new AssemblyName (assemblyName + ", Version=,Culture=neutral");
+		} catch (FileLoadException) {
+		}
+		Assert.IsNull (an, "Ctor6#3");
+
+		// bad format for version
+		an = null;
+		try {
+			an = new AssemblyName (assemblyName + ", Version=a.b");
+		} catch (FileLoadException) {
+		}
+		Assert.IsNull (an, "Ctor6#4");
+
+		// bad culture info
+		an = null;
+		try {
+			an = new AssemblyName (assemblyName + ", Culture=aa-AA");
+		} catch (ArgumentException) {
+		}
+		Assert.IsNull (an, "Ctor6#5");
+
+		// incorrect length for key token
+		an = null;
+		try {
+			an = new AssemblyName (assemblyName + ", PublicKeyToken=27576a8182a188");
+		} catch (FileLoadException) {
+		}
+		Assert.IsNull (an, "Ctor6#6");
+
+		// Incorrect length for key
+		an = null;
+		try {
+			an = new AssemblyName (assemblyName + ", PublicKey=0024000004800000940000000602000000240000525341310004000011000000e39d99616f48cf7d6d59f345e485e713e89b8b1265a31b1a393e9894ee3fbddaf382dcaf4083dc31ee7a40a2a25c69c6d019fba9f37ec17fd680e4f6fe3b5305f71ae9e494e3501d92508c2e98ca1e22991a217aa8ce259c9882ffdfff4fbc6fa5e6660a8ff951cd94ed011e5633651b64e8f4522519b6ec84921ee22e4840e");
+		} catch (FileLoadException) {
+		}
+		Assert.IsNull (an, "Ctor6#7");
+
+		// missing spec
+		an = null;
+		try {
+			an = new AssemblyName (assemblyName + ", =1.2.4.5");
+		} catch (FileLoadException) {
+		}
+		Assert.IsNull (an, "Ctor6#8");
+
+		// No '=' found
+		an = null;
+		try {
+			an = new AssemblyName (assemblyName + ", OtherAttribute");
+		} catch (FileLoadException) {
+		}
+		Assert.IsNull (an, "Ctor6#9");
+	}
+
+#endif
 }
 
 }

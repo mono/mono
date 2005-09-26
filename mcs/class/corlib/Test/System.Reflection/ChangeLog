@@ -1,3 +1,9 @@
+2005-09-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* AssemblyNameTest.cs: Added some tests for the 2.0 new
+	ctor. Keep some of them as NotWorking, since we need to figure out
+	an elegant way to avoiding creating Version when not passing it.
+	
 2005-06-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* AssemblyTest.cs: Relied on the 1.1 test suite being built when
