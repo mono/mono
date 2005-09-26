@@ -26,13 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
+#if NET_2_0
 namespace System.Xml
 {
 	public enum XmlOutputMethod {
-		AutoDetect = 0,
-		Xml,
-		Html,
-		Text
+		Xml = 0,
+		Html = 1,
+		Text = 2,
+		AutoDetect
 	}
 }
+#endif

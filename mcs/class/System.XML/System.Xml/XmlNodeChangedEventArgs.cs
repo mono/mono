@@ -95,7 +95,12 @@ namespace System.Xml
 		}
 #endif
 
-		public XmlNodeChangedEventArgs (
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		XmlNodeChangedEventArgs (
 			XmlNode node, 
 			XmlNode oldParent,
 			XmlNode newParent,
@@ -110,35 +115,5 @@ namespace System.Xml
 			_newValue = newValue;
 			_action = action;
 		}
-
-		/*
-		internal XmlNodeChangedEventArgs (
-			XmlNodeChangedAction action,
-			XmlNode node,
-			XmlNode parent,
-			string oldValue,
-			string newValue)
-		{
-			_node = node;
-			_oldParent = _newParent = parent;
-			_oldValue = oldValue;
-			_newValue = newValue;
-			_action = action;
-		}
-		*/
-
-		/*
-		internal XmlNodeChangedEventArgs (
-			XmlNodeChangedAction action, 
-			XmlNode node, 
-			XmlNode oldParent,
-			XmlNode newParent)
-		{
-			_node = node;
-			_oldParent = oldParent;
-			_newParent = newParent;
-			_action = action;
-		}
-		*/
 	}
 }
