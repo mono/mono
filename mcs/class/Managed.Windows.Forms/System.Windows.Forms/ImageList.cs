@@ -116,29 +116,21 @@ namespace System.Windows.Forms {
 			private int AddInternal(Image image) {
 				int		width;
 				int		height;
-				PixelFormat	format;
 
 				width=owner.ImageSize.Width;
 				height=owner.ImageSize.Height;
 
-				switch(owner.color_depth) {
-					case ColorDepth.Depth4Bit:	format=PixelFormat.Format4bppIndexed; break;
-					case ColorDepth.Depth8Bit:	format=PixelFormat.Format8bppIndexed; break;
-					case ColorDepth.Depth16Bit:	format=PixelFormat.Format16bppRgb555; break;
-					case ColorDepth.Depth24Bit:	format=PixelFormat.Format24bppRgb; break;
-					case ColorDepth.Depth32Bit:	format=PixelFormat.Format32bppArgb; break;
-					default:			format=PixelFormat.Format32bppArgb; break;
-				}
-
 				// Check if we can add straight or if we have to resize
-				if (image.Width!=width || image.Height!=height || image.PixelFormat!=format) {
+				if (image.Width!=width || image.Height!=height) {
 					Graphics	g;
 					Bitmap		reformatted_image;
 
 					reformatted_image = new Bitmap(width, height);
 					g=Graphics.FromImage(reformatted_image);
 
-					g.DrawImage(image, new Rectangle(0, 0, width, height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);
+					g.DrawImage (image, new Rectangle (0, 0, width, height),
+							0, 0, image.Width, image.Height,
+							GraphicsUnit.Pixel);
 					g.Dispose();
 
 					return list.Add(reformatted_image);
@@ -210,14 +202,13 @@ namespace System.Windows.Forms {
 				height=owner.ImageSize.Height;
 				image_count=value.Width/width;
 				for (int i=0; i<image_count; i++) {
-					image = new Bitmap(value, width, height);
+					image = new Bitmap(width, height);
 					g = Graphics.FromImage(image);
 
 					g.DrawImage(value, new Rectangle(0, 0, width, height), i*width, 0, width, height, GraphicsUnit.Pixel);
 					AddInternal(image);
 
 					g.Dispose();
-					image.Dispose();
 				}
 
 				// FIXME - is this right? MSDN says to return the index, but we might have multiple...

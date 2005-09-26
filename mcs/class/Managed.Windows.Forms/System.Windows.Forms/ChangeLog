@@ -1,5 +1,10 @@
 2005-09-25  Jackson Harper  <jackson@ximian.com>
 
+	* ImageList.cs: Don't dispose the image after it is added to the
+	image list. Only reformat images that need to be resized.
+
+2005-09-25  Jackson Harper  <jackson@ximian.com>
+
 	* ImageList.cs: Don't set the format when changing the image.
 
 2005-09-25  Jackson Harper  <jackson@ximian.com>
