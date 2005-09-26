@@ -1,3 +1,7 @@
+2005-09-26  Martin Baulig  <martin@ximian.com>
+
+	* gtest-202.cs: New test from #75681.
+
 2005-09-26  Marek Safar <marek.safar@seznam.cz>
 
 	* test-294.cs: Added new tests.
