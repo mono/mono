@@ -1,3 +1,17 @@
+2005-09-26  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlTypeMapping.cs: Added ChoiceMember to ListMap.
+	In ListMap.FindElement, take into account the ChoiceMember
+	if set.
+	* SerializationCodeGenerator.cs:
+	* XmlSerializationReaderInterpreter.cs: For lists with a choice
+	member, fill the member with the corresponding enum values.
+	* XmlReflectionImporter.cs: Properly reflect the choice member
+	when applied to a list.
+	* XmlSerializationWriterInterpreter.cs: Track class changes.
+	* XmlTypeMapMemberElement.cs: Added ChoiceTypeData property.
+	All this fixes bug #76203.
+
 2005-09-21  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SoapReflectionImporter.cs: Check the correct defaults

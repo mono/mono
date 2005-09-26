@@ -234,7 +234,7 @@ namespace System.Xml.Serialization
 				if (_attributeMembers == null) _attributeMembers = new Hashtable();
 				string key = BuildKey (atm.AttributeName, atm.Namespace);
 				if (_attributeMembers.ContainsKey (key))
-					throw new InvalidOperationException ("The XML attribute named '" + atm.AttributeName + "' from namespace '" + atm.Namespace + "' already present in the current scope. Use XML attributes to specify another XML name or namespace for the attribute.");
+					throw new InvalidOperationException ("The XML attribute named '" + atm.AttributeName + "' from namespace '" + atm.Namespace + "' is already present in the current scope. Use XML attributes to specify another XML name or namespace for the attribute.");
 				member.Index = _attributeMembers.Count;
 				_attributeMembers.Add (key, member);
 				return;
@@ -279,7 +279,7 @@ namespace System.Xml.Serialization
 			{
 				string key = BuildKey (elem.ElementName, elem.Namespace);
 				if (_elements.ContainsKey (key)) 
-					throw new InvalidOperationException ("The XML element named '" + elem.ElementName + "' from namespace '" + elem.Namespace + "' already present in the current scope. Use XML attributes to specify another XML name or namespace for the element.");
+					throw new InvalidOperationException ("The XML element named '" + elem.ElementName + "' from namespace '" + elem.Namespace + "' is already present in the current scope. Use XML attributes to specify another XML name or namespace for the element.");
 				_elements.Add (key, elem);
 			}
 			
@@ -453,6 +453,7 @@ namespace System.Xml.Serialization
 		XmlTypeMapElementInfoList _itemInfo;
 		bool _gotNestedMapping;
 		XmlTypeMapping _nestedArrayMapping;
+		string _choiceMember;
 
 		public bool IsMultiArray
 		{
@@ -460,6 +461,12 @@ namespace System.Xml.Serialization
 			{
 				return (NestedArrayMapping != null);
 			}
+		}
+
+		public string ChoiceMember
+		{
+			get { return _choiceMember; }
+			set { _choiceMember = value; }
 		}
 
 		public XmlTypeMapping NestedArrayMapping
@@ -494,10 +501,20 @@ namespace System.Xml.Serialization
 			set { _itemInfo = value; }
 		}
 
-		public XmlTypeMapElementInfo FindElement (object memberValue)
+		public XmlTypeMapElementInfo FindElement (object ob, int index, object memberValue)
 		{
 			if (_itemInfo.Count == 1) 
 				return (XmlTypeMapElementInfo) _itemInfo[0];
+			else if (_choiceMember != null && index != -1)
+			{
+				Array values = (Array) XmlTypeMapMember.GetValue (ob, _choiceMember);
+				if (values == null || index >= values.Length)
+					throw new InvalidOperationException ("Invalid or missing choice enum value in member '" + _choiceMember + "'.");
+				object val = values.GetValue (index);
+				foreach (XmlTypeMapElementInfo elem in _itemInfo)
+					if (elem.ChoiceValue != null && elem.ChoiceValue.Equals (val))
+						return elem;
+			}
 			else
 			{
 				if (memberValue == null) return null;

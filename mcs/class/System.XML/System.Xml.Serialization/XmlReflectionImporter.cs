@@ -770,6 +770,7 @@ namespace System.Xml.Serialization {
 					member.ListMap = new ListMap ();
 					member.ListMap.ItemInfo = ImportElementInfo (declaringType, XmlConvert.EncodeLocalName (rmember.MemberName), defaultNamespace, typeData.ListItemType, member, atts);
 					member.ElementInfo = member.ListMap.ItemInfo;
+					member.ListMap.ChoiceMember = member.ChoiceMember;
 					mapMember = member;
 				}
 				else
@@ -825,10 +826,22 @@ namespace System.Xml.Serialization {
 				if (mems.Length == 0)
 					throw new InvalidOperationException ("Choice member '" + member.ChoiceMember + "' not found in class '" + cls);
 					
-				if (mems[0] is PropertyInfo) choiceEnumType = ((PropertyInfo)mems[0]).PropertyType;
+				if (mems[0] is PropertyInfo) {
+					PropertyInfo pi = (PropertyInfo)mems[0];
+					if (!pi.CanWrite || !pi.CanRead)
+						throw new InvalidOperationException ("Choice property '" + member.ChoiceMember + "' must be read/write.");
+					choiceEnumType = pi.PropertyType;
+				}
 				else choiceEnumType = ((FieldInfo)mems[0]).FieldType;
 				
-				choiceEnumMap = (EnumMap) ImportTypeMapping (choiceEnumType).ObjectMap;
+				member.ChoiceTypeData = TypeTranslator.GetTypeData (choiceEnumType);
+				
+				if (choiceEnumType.IsArray)
+					choiceEnumType = choiceEnumType.GetElementType ();
+				
+				choiceEnumMap = ImportTypeMapping (choiceEnumType).ObjectMap as EnumMap;
+				if (choiceEnumMap == null)
+					throw new InvalidOperationException ("The member '" + mems[0].Name + "' is not a valid target for XmlChoiceIdentifierAttribute.");
 			}
 			
 			if (atts.XmlElements.Count == 0 && list.Count == 0)

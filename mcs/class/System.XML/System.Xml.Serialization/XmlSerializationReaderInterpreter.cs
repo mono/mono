@@ -302,6 +302,7 @@ namespace System.Xml.Serialization
 
 			int[] indexes = null;
 			object[] flatLists = null;
+			object[] flatListsChoices = null;
 			Fixup fixup = null;
 			int ind = 0;
 			int maxInd;
@@ -317,11 +318,18 @@ namespace System.Xml.Serialization
 			{
 				indexes = new int[map.FlatLists.Count];
 				flatLists = new object[map.FlatLists.Count];
-				foreach (XmlTypeMapMemberExpandable mem in map.FlatLists)
+				foreach (XmlTypeMapMemberExpandable mem in map.FlatLists) {
 					if (IsReadOnly (mem, mem.TypeData, ob, isValueList))
 						flatLists [mem.FlatArrayIndex] = mem.GetValue (ob);
 					else
 						flatLists [mem.FlatArrayIndex] = InitializeList (mem.TypeData);
+						
+					if (mem.ChoiceMember != null) {
+						if (flatListsChoices == null)
+							flatListsChoices = new object [map.FlatLists.Count];
+						flatListsChoices [mem.FlatArrayIndex] = InitializeList (mem.ChoiceTypeData);
+					}
+				}
 			}
 			
 			if (_format == SerializationFormat.Encoded && map.ElementMembers != null)
@@ -382,6 +390,9 @@ namespace System.Xml.Serialization
 						{
 							XmlTypeMapMemberFlatList mem = (XmlTypeMapMemberFlatList)info.Member;
 							AddListValue (mem.TypeData, ref flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]++, ReadObjectElement (info), !IsReadOnly (info.Member, info.TypeData, ob, isValueList));
+							if (mem.ChoiceMember != null) {
+								AddListValue (mem.ChoiceTypeData, ref flatListsChoices [mem.FlatArrayIndex], indexes[mem.FlatArrayIndex]-1, info.ChoiceValue, true);
+							}
 						}
 						else if (info.Member.GetType() == typeof (XmlTypeMapMemberAnyElement))
 						{
@@ -463,6 +474,17 @@ namespace System.Xml.Serialization
 						list = ShrinkArray ((Array)list, indexes[mem.FlatArrayIndex], mem.TypeData.Type.GetElementType(), true);
 					if (!IsReadOnly (mem, mem.TypeData, ob, isValueList))
 						SetMemberValue (mem, ob, list, isValueList);
+				}
+			}
+
+			if (flatListsChoices != null)
+			{
+				foreach (XmlTypeMapMemberExpandable mem in map.FlatLists)
+				{
+					Object list = flatListsChoices[mem.FlatArrayIndex];
+					if (list == null) continue;
+					list = ShrinkArray ((Array)list, indexes[mem.FlatArrayIndex], mem.ChoiceTypeData.Type.GetElementType(), true);
+					XmlTypeMapMember.SetValue (ob, mem.ChoiceMember, list);
 				}
 			}
 			SetListMembersDefaults (map, ob, isValueList);

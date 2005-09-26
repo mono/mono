@@ -42,6 +42,7 @@ namespace System.Xml.Serialization
 		XmlTypeMapElementInfoList _elementInfo;
 		string _choiceMember;
   		bool _isTextCollector;
+  		TypeData _choiceTypeData;
 
 		public XmlTypeMapMemberElement()
 		{
@@ -61,6 +62,12 @@ namespace System.Xml.Serialization
 		{
 			get { return _choiceMember; }
 			set { _choiceMember = value; }
+		}
+
+		public TypeData ChoiceTypeData
+		{
+			get { return _choiceTypeData; }
+			set { _choiceTypeData = value; }
 		}
 
 		public XmlTypeMapElementInfo FindElement (object ob, object memberValue)

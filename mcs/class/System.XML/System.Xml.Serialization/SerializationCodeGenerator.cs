@@ -743,7 +743,7 @@ namespace System.Xml.Serialization
 						else if (memType == typeof(XmlTypeMapMemberFlatList))
 						{
 							WriteLineInd ("if (" + memberValue + " != null) {"); 
-							GenerateWriteListContent (member.TypeData, ((XmlTypeMapMemberFlatList)member).ListMap, memberValue, false);
+							GenerateWriteListContent (ob, member.TypeData, ((XmlTypeMapMemberFlatList)member).ListMap, memberValue, false);
 							WriteLineUni ("}");
 						}
 						else if (memType == typeof(XmlTypeMapMemberAnyElement))
@@ -834,7 +834,7 @@ namespace System.Xml.Serialization
 					}
 					else {
 						WriteMetCall ("WriteStartElement", GetLiteral(elem.ElementName), GetLiteral(elem.Namespace), memberValue);
-						GenerateWriteListContent (elem.TypeData, (ListMap) elem.MappedType.ObjectMap, memberValue, false);
+						GenerateWriteListContent (null, elem.TypeData, (ListMap) elem.MappedType.ObjectMap, memberValue, false);
 						WriteMetCall ("WriteEndElement", memberValue);
 					}
 					WriteLineUni ("}");
@@ -887,7 +887,7 @@ namespace System.Xml.Serialization
 				
 				WriteMetCall ("WriteAttribute", GetLiteral("arrayType"), GetLiteral(XmlSerializer.EncodingNamespace), arrayType);
 			}
-			GenerateWriteListContent (typeMap.TypeData, (ListMap) typeMap.ObjectMap, ob, false);
+			GenerateWriteListContent (null, typeMap.TypeData, (ListMap) typeMap.ObjectMap, ob, false);
 		}
 		
 		void GenerateWriteAnyElementContent (XmlTypeMapMemberAnyElement member, string memberValue)
@@ -950,7 +950,7 @@ namespace System.Xml.Serialization
 				string str = GetStrTempVar ();
 				WriteLine ("string " + str + " = null;");
 				WriteLineInd ("if (" + value + " != null) {");
-				string res = GenerateWriteListContent (typeMap.TypeData, (ListMap)typeMap.ObjectMap, value, true);
+				string res = GenerateWriteListContent (null, typeMap.TypeData, (ListMap)typeMap.ObjectMap, value, true);
 				WriteLine (str + " = " + res + ".ToString ().Trim ();");
 				WriteLineUni ("}");
 				return str;
@@ -1011,7 +1011,7 @@ namespace System.Xml.Serialization
 			}
 		}
 
-		string GenerateWriteListContent (TypeData listType, ListMap map, string ob, bool writeToString)
+		string GenerateWriteListContent (string container, TypeData listType, ListMap map, string ob, bool writeToString)
 		{
 			string targetString = null;
 			
@@ -1025,21 +1025,21 @@ namespace System.Xml.Serialization
 			{
 				string itemVar = GetNumTempVar ();
 				WriteLineInd ("for (int "+itemVar+" = 0; "+itemVar+" < " + ob + ".Length; "+itemVar+"++) {");
-				GenerateListLoop (map, ob + "["+itemVar+"]", listType.ListItemTypeData, targetString);
+				GenerateListLoop (container, map, ob + "["+itemVar+"]", itemVar, listType.ListItemTypeData, targetString);
 				WriteLineUni ("}");
 			}
 			else if (typeof(ICollection).IsAssignableFrom (listType.Type))
 			{
 				string itemVar = GetNumTempVar ();
 				WriteLineInd ("for (int "+itemVar+" = 0; "+itemVar+" < " + ob + ".Count; "+itemVar+"++) {");
-				GenerateListLoop (map, ob + "["+itemVar+"]", listType.ListItemTypeData, targetString);
+				GenerateListLoop (container, map, ob + "["+itemVar+"]", itemVar, listType.ListItemTypeData, targetString);
 				WriteLineUni ("}");
 			}
 			else if (typeof(IEnumerable).IsAssignableFrom (listType.Type))
 			{
 				string itemVar = GetObTempVar ();
 				WriteLineInd ("foreach (" + listType.ListItemTypeData.FullTypeName + " " + itemVar + " in " + ob + ") {");
-				GenerateListLoop (map, itemVar, listType.ListItemTypeData, targetString);
+				GenerateListLoop (container, map, itemVar, null, listType.ListItemTypeData, targetString);
 				WriteLineUni ("}");
 			}
 			else
@@ -1048,18 +1048,26 @@ namespace System.Xml.Serialization
 			return targetString;
 		}
 		
-		void GenerateListLoop (ListMap map, string item, TypeData itemTypeData, string targetString)
+		void GenerateListLoop (string container, ListMap map, string item, string index, TypeData itemTypeData, string targetString)
 		{
 			bool multichoice = (map.ItemInfo.Count > 1);
 
+			if (map.ChoiceMember != null && container != null && index != null) {
+				WriteLineInd ("if ((" + container + ".@" + map.ChoiceMember + " == null) || (" + index + " >= " + container + ".@" + map.ChoiceMember + ".Length))");
+				WriteLine ("throw CreateInvalidChoiceIdentifierValueException (" + container + ".GetType().ToString(), \"" + map.ChoiceMember + "\");");
+				Unindent ();
+			}
+			
 			if (multichoice)
 				WriteLine ("if (((object)" + item + ") == null) { }");
-			
+				
 			foreach (XmlTypeMapElementInfo info in map.ItemInfo)
 			{
-				if (multichoice)
+				if (map.ChoiceMember != null && multichoice)
+					WriteLineInd ("else if (" + container + ".@" + map.ChoiceMember + "[" + index + "] == " + GetLiteral (info.ChoiceValue) + ") {");
+				else if (multichoice)
 					WriteLineInd ("else if (" + item + ".GetType() == typeof(" + info.TypeData.FullTypeName + ")) {");
-
+				
 				if (targetString == null) 
 					GenerateWriteMemberElement (info, GetCast (info.TypeData, itemTypeData, item));
 				else
@@ -1615,6 +1623,7 @@ namespace System.Xml.Serialization
 				
 				string[] indexes = null;
 				string[] flatLists = null;
+				string[] flatListsChoices = null;
 	
 				if (map.FlatLists != null) 
 				{
@@ -1624,7 +1633,7 @@ namespace System.Xml.Serialization
 					string code = "int ";
 					for (int n=0; n<map.FlatLists.Count; n++) 
 					{
-						XmlTypeMapMember mem = (XmlTypeMapMember)map.FlatLists[n];
+						XmlTypeMapMemberElement mem = (XmlTypeMapMemberElement)map.FlatLists[n];
 						indexes[n] = GetNumTempVar ();
 						if (n > 0) code += ", ";
 						code += indexes[n] + "=0";
@@ -1636,6 +1645,14 @@ namespace System.Xml.Serialization
 							else
 								rval = GenerateInitializeList (mem.TypeData);
 							WriteLine (mem.TypeData.FullTypeName + " " + flatLists[n] + " = " + rval + ";");
+						}
+						
+						if (mem.ChoiceMember != null) {
+							if (flatListsChoices == null)
+								flatListsChoices = new string [map.FlatLists.Count];
+							flatListsChoices[n] = GetObTempVar ();
+							string rval = GenerateInitializeList (mem.ChoiceTypeData);
+							WriteLine (mem.ChoiceTypeData.FullTypeName + " " + flatListsChoices[n] + " = " + rval + ";");
 						}
 					}
 					WriteLine (code + ";");
@@ -1733,6 +1750,9 @@ namespace System.Xml.Serialization
 						XmlTypeMapMemberFlatList mem = (XmlTypeMapMemberFlatList)info.Member;
 						if (!GenerateReadArrayMemberHook (xmlMapType, info.Member, indexes[mem.FlatArrayIndex])) {
 							GenerateAddListValue (mem.TypeData, flatLists[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex], GenerateReadObjectElement (info), !IsReadOnly (typeMap, info.Member, info.TypeData, isValueList));
+							if (mem.ChoiceMember != null) {
+								GenerateAddListValue (mem.ChoiceTypeData, flatListsChoices[mem.FlatArrayIndex], indexes[mem.FlatArrayIndex], GetLiteral (info.ChoiceValue), true);
+							}
 							GenerateEndHook ();
 						}
 						WriteLine (indexes[mem.FlatArrayIndex] + "++;");
@@ -1877,6 +1897,20 @@ namespace System.Xml.Serialization
 							WriteLine (list + " = (" + mem.TypeData.FullTypeName + ") ShrinkArray (" + list + ", " + indexes[mem.FlatArrayIndex] + ", " + GetTypeOf(mem.TypeData.Type.GetElementType()) + ", true);");
 						if (!IsReadOnly (typeMap, mem, mem.TypeData, isValueList))
 							GenerateSetMemberValue (mem, ob, list, isValueList);
+					}
+				}
+				
+				if (flatListsChoices != null)
+				{
+					WriteLine ("");
+					foreach (XmlTypeMapMemberExpandable mem in map.FlatLists)
+					{
+						if (MemberHasReadReplaceHook (xmlMapType, mem)) continue;
+						if (mem.ChoiceMember == null) continue;
+						
+						string list = flatListsChoices[mem.FlatArrayIndex];
+						WriteLine (list + " = (" + mem.ChoiceTypeData.FullTypeName + ") ShrinkArray (" + list + ", " + indexes[mem.FlatArrayIndex] + ", " + GetTypeOf(mem.ChoiceTypeData.Type.GetElementType()) + ", true);");
+						WriteLine (ob + ".@" + mem.ChoiceMember + " = " + list + ";");
 					}
 				}
 				
