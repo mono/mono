@@ -1094,8 +1094,9 @@ namespace System.Windows.Forms {
 			if (show_lines)
 				DrawNodeLines (node, dc, visible, dash, x, y, middle, item_height, _n_count);
 
-			if (visible && ImageList != null) {
-				DrawNodeImage (node, dc, clip, ox, y);
+			if (ImageList != null) {
+                                if (visible)
+                                        DrawNodeImage (node, dc, clip, ox, y);
 				// MS leaves the space for the image if the ImageList is
 				// non null regardless of whether or not an image is drawn
 				ox += ImageList.ImageSize.Width + 3; // leave a little space so the text isn't against the image

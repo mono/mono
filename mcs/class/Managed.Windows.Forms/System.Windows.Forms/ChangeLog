@@ -1,5 +1,10 @@
 2005-09-25  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Update the node bounds correctly regardless of
+	whether the node is visible.
+
+2005-09-25  Jackson Harper  <jackson@ximian.com>
+
 	* ImageList.cs: Don't dispose the image after it is added to the
 	image list. Only reformat images that need to be resized.
 
