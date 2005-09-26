@@ -1,0 +1,4 @@
+IsMachineLevel: False
+hithere: `'
+settings[hithere] = Goodbye World!
+AppSettings[hithere] = Goodbye World!

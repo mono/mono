@@ -1,20 +1,21 @@
-TESTS = t1.exe
+TESTS = t1.exe t2.exe
 
 check:	local compare
 
 local: $(TESTS)
 	@for i in $(TESTS); do \
 		echo running test $$i; \
-		mono $$i > $$i.result; \
+		mono --debug $$i > $$i.result; \
 	done
 
 compare:
 	@for i in $(TESTS); do \
-		if cmp $$i.expected $$i.result; then echo OK; else echo FAILED; exit 1; fi; \
+		echo -n "$$i: "; \
+		if cmp $$i.expected $$i.result; then echo "  OK"; else echo "  FAILED"; fi; \
 	done
 
 clean:
-	rm -f *.exe *.result
+	rm -f *.exe *.mdb *.result
 
 %.exe: %.cs
-	gmcs $< -r:System.Configuration.dll
+	gmcs /debug $< -r:System.Configuration.dll

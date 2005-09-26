@@ -16,17 +16,8 @@ class T1
 
 			AppSettingsSection appsettings = config.AppSettings;
 
-			Console.WriteLine("IsMachineLevel: {0}", config.EvaluationContext.IsMachineLevel);
-
-			Console.WriteLine ("hithere: `{0}'", appsettings.ElementInformation.Properties["hithere"]);
-
-			foreach (string key in appsettings.Settings.AllKeys) {
-				Console.WriteLine ("setting[{0}] = {1}", appsettings.Settings[key].Key, appsettings.Settings[key].Value);
-			}
-
-			foreach (string key in AppSettings.AllKeys) {
-				Console.WriteLine ("AppSettings[{0}] = {1}", key, AppSettings[key]);
-			}
+			Console.WriteLine ("Count: {0}", appsettings.Settings.AllKeys.Length);
+			Console.WriteLine ("AppSettings.Count: {0}", AppSettings.Count);
 		}
 		catch (Exception e)
 		{
