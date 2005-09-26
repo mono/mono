@@ -223,5 +223,19 @@ namespace MonoTests.System.XmlSerialization
 	        Assertion.AssertNotNull ("2 ed", d2.ed);
 	        Assertion.AssertNotNull ("2 str", d2.str);
 		}
+		
+		[Test]
+		public void TestDeserializeChoiceArray ()
+		{
+			CompositeValueType v = (CompositeValueType) Deserialize (typeof(CompositeValueType), "<?xml version=\"1.0\" encoding=\"utf-16\"?><CompositeValueType xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><In>1</In><Es>2</Es></CompositeValueType>");
+	        Assertion.AssertNotNull ("v.Items", v.Items);
+	        Assertion.AssertNotNull ("v.ItemsElementName", v.ItemsElementName);
+			Assertion.AssertEquals ("v.Items.Length", 2, v.Items.Length);
+			Assertion.AssertEquals ("v.ItemsElementName.Length", 2, v.ItemsElementName.Length);
+			Assertion.AssertEquals ("v.Items[0]", 1, v.Items[0]);
+			Assertion.AssertEquals ("v.Items[1]", 2, v.Items[1]);
+			Assertion.AssertEquals ("v.ItemsElementName[0]", ItemsChoiceType.In, v.ItemsElementName[0]);
+			Assertion.AssertEquals ("v.ItemsElementName[1]", ItemsChoiceType.Es, v.ItemsElementName[1]);
+		}
 	}
 }

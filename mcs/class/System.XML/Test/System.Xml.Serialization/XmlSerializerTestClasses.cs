@@ -240,5 +240,27 @@ namespace MonoTests.System.Xml.TestClasses
 	{
 		public object names = new object[] { "un","dos" };
 	}
+	
+	public class CompositeValueType
+	{
+		public void Init ()
+		{
+	   		Items = new object[] { 1, 2 };
+	   		ItemsElementName = new ItemsChoiceType[] { ItemsChoiceType.In, ItemsChoiceType.Es };
+		}
+	   
+		[XmlElementAttribute("Es", typeof(int))]
+		[XmlElementAttribute("In", typeof(int))]
+		[XmlChoiceIdentifierAttribute("ItemsElementName")]
+		public object[] Items;
+	   
+		[XmlElementAttribute("ItemsElementName")]
+		[XmlIgnoreAttribute()]
+		public ItemsChoiceType[] ItemsElementName;
+	}
 
+	public enum ItemsChoiceType {
+	   In, Es
+	}
 }
+

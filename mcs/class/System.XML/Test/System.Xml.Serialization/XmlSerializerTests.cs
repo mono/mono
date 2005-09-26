@@ -766,6 +766,18 @@ namespace MonoTests.System.XmlSerialization
 			ser.Serialize (new StringWriter (), new TestSpace ());
 		}
 		
+		[Test]
+		public void TestSerializeChoiceArray()
+		{
+	   		CompositeValueType v = new CompositeValueType ();
+	   		v.Init ();
+	   		Serialize (v);
+			AssertEquals (Infoset("<?xml version=\"1.0\" encoding=\"utf-16\"?><CompositeValueType xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><In>1</In><Es>2</Es></CompositeValueType>"), WriterText);
+		}
+
+		
+		// Helper methods
+				
 		public static string Infoset (string sx)
 		{
 			XmlDocument doc = new XmlDocument ();
