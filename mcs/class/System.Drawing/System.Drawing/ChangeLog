@@ -1,3 +1,8 @@
+2005-09-26  Kornél Pál  <kornelpal@hotmail.com>
+
+	* Graphics.cs: DrawImage: imageAttr can be null. Fixed to pass IntPtr.Zero
+	  when imageAttr is null.
+
 2005-09-26 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Brush.jvm.cs: fixed transform methods, createContext
