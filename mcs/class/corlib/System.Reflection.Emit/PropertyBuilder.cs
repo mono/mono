@@ -106,16 +106,16 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 		public override object[] GetCustomAttributes(bool inherit) {
-			return null;
+			throw not_supported ();
 		}
 		public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
-			return null;
+			throw not_supported ();
 		}
 		public override MethodInfo GetGetMethod( bool nonPublic) {
 			return get_method;
 		}
 		public override ParameterInfo[] GetIndexParameters() {
-			return null;
+			throw not_supported ();
 		}
 		public override MethodInfo GetSetMethod( bool nonPublic) {
 			return set_method;
@@ -124,10 +124,10 @@ namespace System.Reflection.Emit {
 			return null;
 		}
 		public override object GetValue( object obj, BindingFlags invokeAttr, Binder binder, object[] index, CultureInfo culture) {
-			return null;
+			throw not_supported ();
 		}
 		public override bool IsDefined( Type attributeType, bool inherit) {
-			return false;
+			throw not_supported ();
 		}
 		public void SetConstant( object defaultValue) {
 			def_value = defaultValue;
@@ -195,6 +195,11 @@ namespace System.Reflection.Emit {
                 {
                         throw new NotImplementedException ();
                 }
+
+		private Exception not_supported ()
+		{
+			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
+		}
 	}
 }
 
