@@ -120,6 +120,7 @@ namespace System.Windows.Forms {
 
 				width=owner.ImageSize.Width;
 				height=owner.ImageSize.Height;
+
 				switch(owner.color_depth) {
 					case ColorDepth.Depth4Bit:	format=PixelFormat.Format4bppIndexed; break;
 					case ColorDepth.Depth8Bit:	format=PixelFormat.Format8bppIndexed; break;
@@ -134,7 +135,7 @@ namespace System.Windows.Forms {
 					Graphics	g;
 					Bitmap		reformatted_image;
 
-					reformatted_image = new Bitmap(width, height, format);
+					reformatted_image = new Bitmap(width, height);
 					g=Graphics.FromImage(reformatted_image);
 
 					g.DrawImage(image, new Rectangle(0, 0, width, height), 0, 0, image.Width, image.Height, GraphicsUnit.Pixel);

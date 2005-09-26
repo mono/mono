@@ -1,5 +1,9 @@
 2005-09-25  Jackson Harper  <jackson@ximian.com>
 
+	* ImageList.cs: Don't set the format when changing the image.
+
+2005-09-25  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: We can't just assume the node has a font. Use the
 	treeviews font if no node font is available.
 
