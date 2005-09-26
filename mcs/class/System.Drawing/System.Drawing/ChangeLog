@@ -1,3 +1,8 @@
+2005-09-26 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Brush.jvm.cs: fixed transform methods, createContext
+	* TextureBrush.jvm.cs: implemetated transform, WrapMode, ctors
+
 2005-09-21 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Bitmap.jvm.cs: fixed Clone, InternalSave, Initialize, ctor refactoring, remarks refactoring

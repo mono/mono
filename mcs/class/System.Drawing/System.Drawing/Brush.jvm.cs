@@ -18,6 +18,14 @@ namespace System.Drawing
 		awt.PaintContext awt.Paint.createContext (image.ColorModel cm,
 			awt.Rectangle deviceBounds, geom.Rectangle2D userBounds, geom.AffineTransform xform,
 			awt.RenderingHints hints) {
+
+			return createContextInternal(cm, deviceBounds, userBounds, xform, hints);
+		}
+
+		protected virtual awt.PaintContext createContextInternal (image.ColorModel cm,
+			awt.Rectangle deviceBounds, geom.Rectangle2D userBounds, geom.AffineTransform xform,
+			awt.RenderingHints hints) {
+
 			Matrix.Multiply(xform, _brushTransform.NativeObject, MatrixOrder.Append);
 			return NativeObject.createContext (cm, deviceBounds, userBounds, xform, hints);
 		}
@@ -53,22 +61,22 @@ namespace System.Drawing
 			BrushTranslateTransform(dx, dy, MatrixOrder.Prepend);
 		}
 		protected void BrushTranslateTransform (float dx, float dy, MatrixOrder order) {
-			BrushTransform.Translate(dx,dy,order);
+			_brushTransform.Translate(dx,dy,order);
 		}
 		protected void BrushResetTransform () {
-			BrushTransform.Reset();
+			_brushTransform.Reset();
 		}
 		protected void BrushRotateTransform (float angle) {
 			BrushRotateTransform(angle, MatrixOrder.Prepend);
 		}
 		protected void BrushRotateTransform (float angle, MatrixOrder order) {
-			BrushTransform.Rotate(angle, order);
+			_brushTransform.Rotate(angle, order);
 		}
 		protected void BrushScaleTransform (float sx, float sy) {
 			BrushScaleTransform(sx, sy, MatrixOrder.Prepend);
 		}
 		protected void BrushScaleTransform (float sx, float sy, MatrixOrder order) {
-			BrushTransform.Scale(sx, sy, order);
+			_brushTransform.Scale(sx, sy, order);
 		}
 		protected void BrushMultiplyTransform (Matrix matrix) {
 			BrushMultiplyTransform(matrix, MatrixOrder.Prepend);
@@ -76,7 +84,7 @@ namespace System.Drawing
 		protected void BrushMultiplyTransform (Matrix matrix, MatrixOrder order) {
 			if (matrix == null)
 				throw new ArgumentNullException("matrix");
-			BrushTransform.Multiply(matrix, order);			
+			_brushTransform.Multiply(matrix, order);			
 		}
 
 		#endregion

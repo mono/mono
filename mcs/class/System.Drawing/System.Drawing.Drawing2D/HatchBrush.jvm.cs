@@ -49,7 +49,8 @@ namespace System.Drawing.Drawing2D
 
 		protected override Paint NativeObject {
 			get {
-				throw new NotImplementedException ();
+				// FALLBACK: Solid color brush will be used
+				return _foreColor.NativeObject;
 			}
 		}
 

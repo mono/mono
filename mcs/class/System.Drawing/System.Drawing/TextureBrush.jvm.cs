@@ -40,14 +40,15 @@ using awt = java.awt;
 using geom = java.awt.geom;
 using image = java.awt.image;
 
-namespace System.Drawing
-{
+namespace System.Drawing {
 	/// <summary>
 	/// Summary description for TextureBrush.
 	/// </summary>
-	public sealed class TextureBrush : Brush
-	{
-		awt.TexturePaint _nativeObject;
+	public sealed class TextureBrush : Brush {
+		readonly awt.TexturePaint _nativeObject;
+		RectangleF _sourceRectangle;
+		readonly Image _texture = null;
+		WrapMode _wrapMode;
 
 		protected override java.awt.Paint NativeObject {
 			get {
@@ -55,79 +56,115 @@ namespace System.Drawing
 			}
 		}
 
+		#region ctors
 
-		WrapMode _wrapMode;
-
-		TextureBrush (awt.TexturePaint ptr)
-		{
-			_nativeObject = ptr;
+		public TextureBrush (Image image) : this (image, WrapMode.Tile) {
 		}
 
-		public TextureBrush (Image image) : this (image, WrapMode.Tile)
-		{
+		public TextureBrush (Image image, WrapMode wrapMode) : 
+			this( image, wrapMode, new RectangleF(0, 0, image.Width, image.Height )){
 		}
 
-		public TextureBrush (Image image, Rectangle dstRect)
-		{
+		public TextureBrush (Image image, Rectangle dstRect) : 
+			this( image, WrapMode.Tile, dstRect ) {
 		}
 
-		public TextureBrush (Image image, RectangleF dstRect)
-		{
-			// FIXME: check if not metafile
+		public TextureBrush (Image image, RectangleF dstRect) : 
+			this( image, WrapMode.Tile, dstRect ) {
+		}
+
+		public TextureBrush (Image image, Rectangle dstRect, ImageAttributes imageAttr) : this( image, dstRect ) {
+			// TBD: Implement ImageAttributes
+		}
+
+		public TextureBrush (Image image, RectangleF dstRect, ImageAttributes imageAttr) : this( image, dstRect ) {
+			// TBD: Implement ImageAttributes
+		}
+
+		public TextureBrush (Image image, WrapMode wrapMode, Rectangle dstRect) :
+			this( image, wrapMode, new RectangleF(dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height )){
+		}
+
+		public TextureBrush (Image image, WrapMode wrapMode, RectangleF dstRect) {
+			// TBD: check if not metafile
+			_sourceRectangle = dstRect;
+			_texture = (Image)((Bitmap)image).Clone();
+			_wrapMode = wrapMode;
+
+			if (wrapMode != Drawing2D.WrapMode.Tile)
+				image = CreateWrappedImage(image, wrapMode, ref dstRect);
+
 			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject.CurrentImage.NativeImage,
-				new geom.Rectangle2D.Float((float)dstRect.X,(float)dstRect.Y,(float)dstRect.Width,
-				(float)dstRect.Height));
+				new geom.Rectangle2D.Float(dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height));
 		}
 
-		public TextureBrush (Image image, WrapMode wrapMode)
-		{
-			// FIXME: check if not metafile
-			// TBD: WRAP MODE
-			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject.CurrentImage.NativeImage,
-				new geom.Rectangle2D.Float(0,0,1,1));
+		#endregion
+
+		#region CreateWrappedImage
+
+		private Image CreateWrappedImage(Image image, WrapMode wrapMode, ref RectangleF srcRect) {
+			Image b = null;
+			Graphics g = null;
+			Image croppedImage = ((Bitmap)image).Clone( srcRect, image.PixelFormat );
+
+			switch (wrapMode) {
+				case Drawing2D.WrapMode.TileFlipX :
+					b = new Bitmap(croppedImage.Width * 2, croppedImage.Height);
+					g = Graphics.FromImage( b );
+					g.DrawImage(croppedImage, new Matrix());
+					g.DrawImage(croppedImage, new Matrix(-1, 0, 0, 1, croppedImage.Width * 2 - 1, 0));
+					srcRect.Width = croppedImage.Width * 2;
+					srcRect.X = 0;
+					srcRect.Y = 0;
+					break;
+				case Drawing2D.WrapMode.TileFlipY :
+					b = new Bitmap(croppedImage.Width, croppedImage.Height * 2);
+					g = Graphics.FromImage( b );
+					g.DrawImage(croppedImage, new Matrix());
+					g.DrawImage(croppedImage, new Matrix(1, 0, 0, -1, 0, croppedImage.Height * 2 - 1));
+					srcRect.Height = croppedImage.Height * 2;
+					srcRect.X = 0;
+					srcRect.Y = 0;
+					break;
+				case Drawing2D.WrapMode.TileFlipXY :
+					b = new Bitmap(croppedImage.Width * 2, croppedImage.Height * 2);
+					g = Graphics.FromImage( b );
+					g.DrawImage(croppedImage, new Matrix());
+					g.DrawImage(croppedImage, new Matrix(-1, 0, 0, 1, croppedImage.Width * 2 - 1, 0));
+					g.DrawImage(croppedImage, new Matrix(1, 0, 0, -1, 0, croppedImage.Height * 2 - 1));
+					g.DrawImage(croppedImage, new Matrix(-1, 0, 0, -1, croppedImage.Width * 2 - 1, croppedImage.Height * 2 - 1));
+					srcRect.Width = croppedImage.Width * 2;
+					srcRect.Height = croppedImage.Height * 2;
+					srcRect.X = 0;
+					srcRect.Y = 0;
+					break;
+				case Drawing2D.WrapMode.Clamp :
+					// TBD: Implement WrapMode.Clamp
+					return image;
+				default : 
+					b = image;
+					break;
+			}
+
+			return b;
 		}
 
-		public TextureBrush (Image image, Rectangle dstRect, ImageAttributes imageAttr)
-		{
-			throw new NotImplementedException();
-		}
+		#endregion
 
-		public TextureBrush (Image image, RectangleF dstRect, ImageAttributes imageAttr)
-		{
-			throw new NotImplementedException();
-		}
+		#region properties
 
-		public TextureBrush (Image image, WrapMode wrapMode, Rectangle dstRect)
-		{
-			// FIXME: check if not metafile
-			// TBD:WRAP MODE
-			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject.CurrentImage.NativeImage,
-				new geom.Rectangle2D.Float ((float)dstRect.X,(float)dstRect.Y,(float)dstRect.Width,(float)dstRect.Height));
-		}
-
-		public TextureBrush (Image image, WrapMode wrapMode, RectangleF dstRect)
-		{
-			// FIXME: check if not metafile
-			//TBD:WRAP MODE
-			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject.CurrentImage.NativeImage,
-				new geom.Rectangle2D.Float((float)dstRect.X,(float)dstRect.Y,(float)dstRect.Width,
-				(float)dstRect.Height));
-		}
-
-		// properties
 		public Image Image {
 			get {
-				return Image.ImageFromNativeImage(((awt.TexturePaint)NativeObject).getImage(),
-					ImageFormat.Bmp);
+				return (Image)_texture.Clone();
 			}
 		}
 
 		public Matrix Transform {
 			get {					
-				throw new NotImplementedException();
+				return BrushTransform;
 			}
 			set {
-				throw new NotImplementedException();
+				BrushTransform = value;
 			}
 		}
 
@@ -140,56 +177,50 @@ namespace System.Drawing
 			}
 		}
 
-		// public methods
+		#endregion
 
-		public override object Clone ()
-		{
-			throw new NotImplementedException();
+		#region public methods
+
+		public override object Clone () {
+			return (TextureBrush)MemberwiseClone();
 		}
 
-		public void MultiplyTransform (Matrix matrix)
-		{
-			MultiplyTransform (matrix, MatrixOrder.Prepend);
+		public void MultiplyTransform (Matrix matrix) {
+			base.BrushMultiplyTransform( matrix );
 		}
 
-		public void MultiplyTransform (Matrix matrix, MatrixOrder order)
-		{
-			throw new NotImplementedException();
+		public void MultiplyTransform (Matrix matrix, MatrixOrder order) {
+			base.BrushMultiplyTransform( matrix, order );
 		}
 
-		public void ResetTransform ()
-		{
-			throw new NotImplementedException();
+		public void ResetTransform () {
+			base.BrushResetTransform();
 		}
 
-		public void RotateTransform (float angle)
-		{
-			RotateTransform (angle, MatrixOrder.Prepend);
+		public void RotateTransform (float angle) {
+			base.BrushRotateTransform( angle );
 		}
 
-		public void RotateTransform (float angle, MatrixOrder order)
-		{
-			throw new NotImplementedException();
+		public void RotateTransform (float angle, MatrixOrder order) {
+			base.BrushRotateTransform( angle, order );
 		}
 
-		public void ScaleTransform (float sx, float sy)
-		{
-			ScaleTransform (sx, sy, MatrixOrder.Prepend);
+		public void ScaleTransform (float sx, float sy) {
+			base.BrushScaleTransform( sx, sy );
 		}
 
-		public void ScaleTransform (float sx, float sy, MatrixOrder order)
-		{
-			throw new NotImplementedException();
+		public void ScaleTransform (float sx, float sy, MatrixOrder order) {
+			base.BrushScaleTransform( sx, sy, order );
 		}
 
-		public void TranslateTransform (float dx, float dy)
-		{
-			TranslateTransform (dx, dy, MatrixOrder.Prepend);
+		public void TranslateTransform (float dx, float dy) {
+			base.BrushTranslateTransform( dx, dy );
 		}
 
-		public void TranslateTransform (float dx, float dy, MatrixOrder order)
-		{
-			throw new NotImplementedException();
+		public void TranslateTransform (float dx, float dy, MatrixOrder order) {
+			base.BrushTranslateTransform( dx, dy, order );
 		}
+
+		#endregion
 	}
 }
