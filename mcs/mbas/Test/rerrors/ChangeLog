@@ -1,3 +1,9 @@
+2005-09-22 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* Added PropertyC23.vb : Mustoverride Property with Option Strict On
+	and without an 'As' clause or a type character.
+	* Added PropertyC24.vb : Interface Property with Option Strict On
+	and without an 'As' clause or a type character.
+
 2005-05-03  Ritvik Myank  <mritvik@novell.com>
 	* rerrors_btest.dll.sources: Added new test cases 
 	

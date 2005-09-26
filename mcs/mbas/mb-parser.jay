@@ -1893,7 +1893,8 @@ interface_declaration
 		Interface new_interface;
 		string full_interface_name = MakeName ((string) $3);
 
-		new_interface = new Interface (current_container, full_interface_name, (int) current_modifiers,
+		int modifiers = (implicit_modifiers) ?  (current_modifiers & ~ (Modifiers.STATIC) ) : current_modifiers;
+		new_interface = new Interface (current_container, full_interface_name, modifiers,
 					       (Attributes) current_attributes, (Location)$2);
 		if (current_interface != null) {
 			Report.Error (-2, (Location)$2, "Internal compiler error: interface inside interface");
@@ -1958,7 +1959,7 @@ interface_member_declarations
 interface_member_declaration
 	: opt_attributes
 	  opt_modifiers
-	  { 
+	  {
 	   	current_attributes = (Attributes) $1;
 	   	current_modifiers = ((int)$2) | Modifiers.ABSTRACT; 
 	  }
@@ -2005,6 +2006,13 @@ interface_property_declaration
 		Expression ftype = ($6 == null) ? (($4 == null) ? 
 				TypeManager.system_object_expr : (Expression) TypeManager.TypeToCoreTypeExpr ((Type) $4) ) : (Expression) $6;
 
+		if ( OptionStrict && ($4 == null) && ($6 == null) ) {
+				Report.Error (30210,
+                                                (Location) $3,
+                                                "Option Strict On requires all function and property "+
+                                                "declarations to have an 'As' clause or a type character.");
+		}			
+
 		current_local_parameters = (Parameters) $5;
 		if (current_local_parameters != Parameters.EmptyReadOnlyParameters) { 
 			get_parameters = current_local_parameters.Copy ((Location)$3);
@@ -2029,8 +2037,9 @@ interface_property_declaration
 		
 		Accessor get_block = new Accessor (null, null);	
 		Accessor set_block = new Accessor (null, null);	
-				
-		Property prop = new Property ((Expression) ftype, (string) $2, current_modifiers,
+		
+		int modifiers = (implicit_modifiers) ? (current_modifiers & ~ (Modifiers.STATIC) ): current_modifiers;
+		Property prop = new Property ((Expression) ftype, (string) $2, modifiers,
 					 get_block, set_block, current_attributes, (Location)$3,
 					 null, get_parameters, set_parameters, null);
     
@@ -2095,6 +2104,13 @@ abstract_propery_declaration
 	  	if (current_container is Struct)
 	  		Report.Error (435, (Location) $6 ,"Methods in a Structure cannot be declared 'MustOverride'.");
 	  			
+		if ( OptionStrict && ($4 == null) && ($7 == null) ) {
+				Report.Error (30210,
+                                                (Location) $6,
+                                                "Option Strict On requires all function and property "+
+                                                "declarations to have an 'As' clause or a type character.");
+		}			
+
 		current_modifiers |= Modifiers.ABSTRACT;
 		
 		current_local_parameters = (Parameters) $5;
@@ -2159,6 +2175,14 @@ abstract_propery_declaration
 						
 			current_container.DefaultPropName = (string) $2;
 		}		
+		
+		if ( OptionStrict && ($3 == null) && ($6 == null) ) {
+				Report.Error (30210,
+                                                (Location) $5,
+                                                "Option Strict On requires all function and property "+
+                                                "declarations to have an 'As' clause or a type character.");
+		}			
+
 	  
 		get_implicit_value_parameter_type  = 
 			($6 == null) ? (($3 == null) ? 

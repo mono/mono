@@ -1,3 +1,8 @@
+2005-09-22 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* mb-parser.jay: Throws error for Option Strict on with Propeties
+	whitout an 'As' clause or a type character. Fix Interfaces errors with
+	Shared modifiers.
+
 2005-09-16  Renato Suga <renato@psl-pr.softwarelivre.org>
 	* mb-parser.jay:rules goto_statement and for_statement changed in order to recognize error BC30757
 	
