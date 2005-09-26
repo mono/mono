@@ -1,3 +1,6 @@
+2005-26-09  Boris Kirzner <borisk@mainsoft.com>
+	* Novell.Directory.Ldap.dll.sources: added reference to Consts.cs.in
+
 2005-15-09  Boris Kirzner <borisk@mainsoft.com>
 	* Novell.Directory.Ldap.vmwcsproj: added reference to Consts.cs.in
 
