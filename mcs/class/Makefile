@@ -29,9 +29,9 @@ SUBDIRS = \
 	System				\
 	System.XML			\
 	Mono.Security			\
-	System.Security			\
 	System.Configuration	\
 	System				\
+	System.Security			\
 	I18N				\
 	System.Drawing			\
 	System.EnterpriseServices	\
