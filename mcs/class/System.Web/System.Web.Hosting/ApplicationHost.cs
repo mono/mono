@@ -136,6 +136,9 @@ namespace System.Web.Hosting {
 			// few, but third party apps might use others:
 			//
 			appdomain.SetData (".appDomain", "*");
+			int l = physicalDir.Length;
+			if (physicalDir [l - 1] != Path.DirectorySeparatorChar)
+				physicalDir += Path.DirectorySeparatorChar;
 			appdomain.SetData (".appPath", physicalDir);
 			appdomain.SetData (".appVPath", virtualDir);
 			appdomain.SetData (".domainId", domain_id);

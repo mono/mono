@@ -1,3 +1,8 @@
+2005-09-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ApplicationHost.cs: append a directory separator char to the physical
+	path. Fixes bug #76187.
+
 2005-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SimpleWorkerRequest.cs: fix GetUriPath() for paths ending in '/'.
