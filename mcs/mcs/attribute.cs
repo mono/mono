@@ -302,6 +302,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (Type);
+			if (obsolete_attr != null) {
+				AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (Type), Location);
+			}
+
 			if (Arguments == null) {
 				object o = att_cache [Type];
 				if (o != null) {
@@ -1661,11 +1666,12 @@ namespace Mono.CSharp {
 					if (attribute.Length == 1)
 						result = (ObsoleteAttribute)attribute [0];
 				} else {
-					result = type_ds.GetObsoleteAttribute (type_ds);
+					result = type_ds.GetObsoleteAttribute ();
 				}
 			}
 
-			analyzed_types_obsolete.Add (type, result == null ? FALSE : result);
+			// Cannot use .Add because of corlib bootstrap
+			analyzed_types_obsolete [type] = result == null ? FALSE : result;
 			return result;
 		}
 

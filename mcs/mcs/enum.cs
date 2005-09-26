@@ -83,6 +83,19 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		// Because parent is TypeContainer and we have DeclSpace only
+		public override void CheckObsoleteness (Location loc)
+		{
+			parent_enum.CheckObsoleteness (loc);
+
+			ObsoleteAttribute oa = GetObsoleteAttribute ();
+			if (oa == null) {
+				return;
+			}
+
+			AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc);
+		}
+
 		public bool ResolveValue ()
 		{
 			if (value != null)
@@ -169,11 +182,6 @@ namespace Mono.CSharp {
 			// Because parent is TypeContainer and we have only DeclSpace parent.
 			// Parameter replacing is required
 			return base.VerifyClsCompliance (parent_enum);
-		}
-
-		// There is no base type
-		protected override void VerifyObsoleteAttribute()
-		{
 		}
 
 		public override string DocCommentHeader {
@@ -378,11 +386,6 @@ namespace Mono.CSharp {
 				TypeAttributes.Class | TypeAttributes.Sealed |
 				base.TypeAttr;
 			}
-		}
-
-		protected override void VerifyObsoleteAttribute()
-		{
-			// UnderlyingType is never obsolete
 		}
 
 		//

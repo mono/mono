@@ -946,7 +946,7 @@ namespace Mono.CSharp {
 
 			c = new Constructor (constructor_parent, Basename, mods,
 					     Parameters.EmptyReadOnlyParameters,
-					     new ConstructorBaseInitializer (null, Location),
+					     new GeneratedBaseInitializer (Location),
 					     Location);
 			
 			AddConstructor (c);
@@ -1257,6 +1257,9 @@ namespace Mono.CSharp {
 			if ((Kind == Kind.Struct) && TypeManager.value_type == null)
 				throw new Exception ();
 
+			// Avoid attributes check when parent is not set
+			TypeResolveEmitContext.TestObsoleteMethodUsage = false;
+
 			if (base_type != null) {
 				// FIXME: I think this should be ...ResolveType (Parent.EmitContext).
 				//        However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
@@ -1272,8 +1275,17 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (ptype != null)
+			if (ptype != null) {
 				TypeBuilder.SetParent (ptype);
+			}
+
+			// Attribute is undefined at the begining of corlib compilation
+			if (TypeManager.obsolete_attribute_type != null) {
+				TypeResolveEmitContext.TestObsoleteMethodUsage = GetObsoleteAttribute () == null;
+				if (ptype != null && TypeResolveEmitContext.TestObsoleteMethodUsage) {
+					CheckObsoleteType (base_type);
+				}
+			}
 
 			// add interfaces that were not added at type creation
 			if (iface_exprs != null) {
@@ -2460,18 +2472,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected override void VerifyObsoleteAttribute()
-		{
-			CheckUsageOfObsoleteAttribute (ptype);
-
-			if (ifaces == null)
-				return;
-
-			foreach (Type iface in ifaces) {
-				CheckUsageOfObsoleteAttribute (iface);
-			}
-		}
-
 
 		//
 		// IMemberContainer
@@ -3571,17 +3571,6 @@ namespace Mono.CSharp {
 			get { return "M:"; }
 		}
 
-		protected override void VerifyObsoleteAttribute()
-		{
-			base.VerifyObsoleteAttribute ();
-
-			if (parameter_types == null)
-				return;
-
-			foreach (Type type in parameter_types) {
-				CheckUsageOfObsoleteAttribute (type);
-			}
-		}
 	}
 
 	public class SourceMethod : ISourceMethod
@@ -4040,11 +4029,6 @@ namespace Mono.CSharp {
 			return ec;
 		}
 
-		public ObsoleteAttribute GetObsoleteAttribute ()
-		{
-			return GetObsoleteAttribute (Parent);
-		}
-
 		/// <summary>
 		/// Returns true if method has conditional attribute and the conditions is not defined (method is excluded).
 		/// </summary>
@@ -4179,7 +4163,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void Emit (EmitContext ec)
+		public virtual void Emit (EmitContext ec)
 		{
 			if (base_constructor != null){
 				ec.Mark (loc, false);
@@ -4195,6 +4179,21 @@ namespace Mono.CSharp {
 		public ConstructorBaseInitializer (ArrayList argument_list, Location l) :
 			base (argument_list, l)
 		{
+		}
+	}
+
+	class GeneratedBaseInitializer: ConstructorBaseInitializer {
+		public GeneratedBaseInitializer (Location loc):
+			base (null, loc)
+		{
+		}
+
+		public override void Emit(EmitContext ec)
+		{
+			bool old = ec.TestObsoleteMethodUsage;
+			ec.TestObsoleteMethodUsage = false;
+			base.Emit (ec);
+			ec.TestObsoleteMethodUsage = old;
 		}
 	}
 
@@ -4400,7 +4399,7 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.STATIC) == 0){
 				if (Parent.Kind == Kind.Class && Initializer == null)
-					Initializer = new ConstructorBaseInitializer (null, Location);
+					Initializer = new GeneratedBaseInitializer (Location);
 
 
 				//
@@ -4434,7 +4433,7 @@ namespace Mono.CSharp {
 				}
 			}
 			if (Initializer != null) {
-				if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute (Parent) != null)
+				if (GetObsoleteAttribute () != null || Parent.GetObsoleteAttribute () != null)
 					ec.TestObsoleteMethodUsage = false;
 
 				Initializer.Emit (ec);
@@ -4534,11 +4533,6 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig_ = ConstructorBuilder.GetILGenerator ();
 			return new EmitContext (Parent, Location, ig_, null, ModFlags, true);
-		}
-
-		public ObsoleteAttribute GetObsoleteAttribute ()
-		{
-			return GetObsoleteAttribute (Parent);
 		}
 
 		public bool IsExcluded(EmitContext ec)
@@ -4818,7 +4812,7 @@ namespace Mono.CSharp {
 			else
 				ec = method.CreateEmitContext (container, null);
 
-			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute (container) != null)
+			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute () != null)
 				ec.TestObsoleteMethodUsage = false;
 
 			Attributes OptAttributes = method.OptAttributes;
@@ -4941,8 +4935,9 @@ namespace Mono.CSharp {
 					ec.InUnsafe = InUnsafe;
 					Type = Type.ResolveAsTypeTerminal (ec, false);
 					ec.InUnsafe = old_unsafe;
-
-					member_type = Type == null ? null : Type.Type;
+					if (Type != null) {
+						member_type = Type.Type;
+					}
 				}
 				return member_type;
 			}
@@ -5065,6 +5060,8 @@ namespace Mono.CSharp {
 			if (MemberType == null)
 				return false;
 
+			CheckObsoleteType (Type);
+
 			if ((Parent.ModFlags & Modifiers.SEALED) != 0 && 
 				(ModFlags & (Modifiers.VIRTUAL|Modifiers.ABSTRACT)) != 0) {
 					Report.Error (549, Location, "New virtual member `{0}' is declared in a sealed class `{1}'",
@@ -5151,10 +5148,6 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected override void VerifyObsoleteAttribute()
-		{
-			CheckUsageOfObsoleteAttribute (MemberType);
-		}
 	}
 
 	//
@@ -5364,8 +5357,10 @@ namespace Mono.CSharp {
 			if (ec == null)
 				throw new InternalErrorException ("FieldMember.Define called too early");
 
-			if (MemberType == null)
+			if (MemberType == null || Type == null)
 				return false;
+
+			CheckObsoleteType (Type);
 
 			if (MemberType == TypeManager.void_type) {
 				Report.Error (1547, Location, "Keyword 'void' cannot be used in this context");
@@ -5796,7 +5791,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public abstract ObsoleteAttribute GetObsoleteAttribute ();
 		public abstract Type[] ParameterTypes { get; }
 		public abstract Type ReturnType { get; }
 		public abstract EmitContext CreateEmitContext(TypeContainer tc, ILGenerator ig);
@@ -5909,10 +5903,6 @@ namespace Mono.CSharp {
 		//
 		public override string DocCommentHeader {
 			get { throw new InvalidOperationException ("Unexpected attempt to get doc comment from " + this.GetType () + "."); }
-		}
-
-		protected override void VerifyObsoleteAttribute()
-		{
 		}
 
 	}
@@ -6147,7 +6137,7 @@ namespace Mono.CSharp {
 
 			public override ObsoleteAttribute GetObsoleteAttribute ()
 			{
-				return method.GetObsoleteAttribute (method.Parent);
+				return method.GetObsoleteAttribute ();
 			}
 
 			public override string GetSignatureForError()
@@ -6851,7 +6841,7 @@ namespace Mono.CSharp {
 
 			public override ObsoleteAttribute GetObsoleteAttribute ()
 			{
-				return method.GetObsoleteAttribute (method.Parent);
+				return method.GetObsoleteAttribute ();
 			}
 
 			public override string[] ValidAttributeTargets {
