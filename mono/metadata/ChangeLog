@@ -1,3 +1,17 @@
+2005-09-26  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(mono_class_from_generic_parameter): Set `klass->generic_container'
+	(mono_class_from_generic_parameter): Likewise.
+	(mono_bounded_array_class_get): We inherit the generic container
+	from the element class.
+
+	* loader.c
+	(find_method, find_method_in_class): Take a `MonoGenericContext *'
+	argument rather than computing it here.
+	(method_from_memberref): Correctly set the generic context before
+	parsing the signature.  Fixes #75681.
+
 2005-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_class_has_special_static_fields): Fix warnings.
