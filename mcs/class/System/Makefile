@@ -6,9 +6,9 @@ export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/lib/$(PROFILE)
 LIBRARY = System.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
-# Because System.dll, System.Security.dll System.Xml.dll have a cyclic dependency, we need a two-pass build.
-# 1st pass - build System.dll without System.Xml.dll or System.Security.dll references
-# 2nd pass - build System.dll with System.Xml.dll and System.Security.dll references
+# Because System.dll, Mono.Security.dll System.Xml.dll have a cyclic dependency, we need a two-pass build.
+# 1st pass - build System.dll without System.Xml.dll or Mono.Security.dll references
+# 2nd pass - build System.dll with System.Xml.dll and Mono.Security.dll references
 
 TEST_RESOURCES = \
 	Test/System/test-uri-props.txt \
@@ -25,7 +25,7 @@ CYCLIC_DEP_FILES := $(XML_DEP_FILE)
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
 # Happens on net_2_0_bootstrap and net_2_0 profiles
-SECURITY_DEP := System.Security.dll
+SECURITY_DEP := Mono.Security.dll
 SECURITY_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(SECURITY_DEP))
 CONFIGURATION_DEP := System.Configuration.dll
 CONFIGURATION_DEP_FILE := $(wildcard ../lib/$(PROFILE)/$(CONFIGURATION_DEP))
@@ -64,12 +64,12 @@ echo-warning:
 else     # defined CYCLIC_DEP_FILES
 ifdef      SECURITY_DEP_FILE
 echo-warning:
-	@echo "** Warning: built System.dll with 'System.Security.dll'-dependent parts"
+	@echo "** Warning: built System.dll with 'Mono.Security.dll'-dependent parts"
 	@echo "** Warning: ... without 'System.Xml.dll' present: it may not be usable"
 
 else
 echo-warning:
-	@echo "** Warning: System.dll built without parts that depend on System.Security.dll"
+	@echo "** Warning: System.dll built without parts that depend on Mono.Security.dll"
 endif
 endif
 endif
@@ -82,7 +82,7 @@ $(the_lib): $(XML_DEP_FILE)
 endif
 
 ifdef SECURITY_DEP_FILE
-LIB_MCS_FLAGS += /define:SECURITY_DEP /r:$(SECURITY_DEP)
+LIB_MCS_FLAGS += /define:SECURITY_DEP -r:Mono.Security.dll
 $(the_lib): $(SECURITY_DEP_FILE)
 endif
 
