@@ -1,3 +1,8 @@
+2005-09-26  Lluis Sanchez Gual <lluis@novell.com>
+
+	* DataSet.cs: In IXmlSerializable.GetSchema, return null again for
+	untyped datasets. Fixes bug #76101.
+
 2005-09-21 Boris Kirzner <borisk@mainsoft.com>
 	* DataRow.cs: Fixes for index updating.
 	* DataTable.cs: 

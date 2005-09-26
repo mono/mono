@@ -1155,11 +1155,8 @@ namespace System.Data {
 
 		XmlSchema IXmlSerializable.GetSchema ()
 		{
-			// FIXME:
-			// actually MS return null if it's not a typed dataset
-			// we are not there yet
-			//if (GetType() == typeof(DataSet))
-			//	return null;
+			if (GetType() == typeof(DataSet))
+				return null;
 			MemoryStream stream = new MemoryStream();
 			XmlTextWriter writer = new XmlTextWriter(stream, null);
 			WriteXmlSchema(writer);
