@@ -1,3 +1,9 @@
+2005-09-26  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Fixed SetChildIndex; it no longer causes a child to
+	  loose it's parent. (Fixed bug introduced in r49103 when we added
+	  setting the child parent to null on Remove)
+
 2005-09-26  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* DataGridBoolColumn.cs: Marked CheckState private to fix public API.

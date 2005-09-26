@@ -427,6 +427,7 @@ namespace System.Windows.Forms
 				} else {
 					list.Insert(newIndex, child);
 				}
+				child.parent = owner;
 				owner.UpdateZOrder();
 			}
 			#endregion // ControlCollection Private Instance Methods
