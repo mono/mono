@@ -1,3 +1,13 @@
+2005-09-25  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ApplicationTrustCollection.cs: RC changed the constructor to non
+	public.
+	* PolicyLevel.cs: All stuff related to FullyTrustedAssemblies is 
+	obsoleted in 2.0 because (a) all permission must be installed into the
+	GAC, (b) everything in the GAC gets fulltrust and (c) full trust now
+	means even identity permissions (like StrongNameIdentityPermission)
+	succeed for unrestricted (even if it doesn't match).
+
 2005-08-30  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* PolicyLevel.cs: Set SecurityManager.ResolvingPolicyLevel to the 

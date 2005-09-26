@@ -138,6 +138,9 @@ namespace System.Security.Policy {
 
 		// properties
 
+#if NET_2_0
+		[Obsolete ("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")]
+#endif
 		public IList FullTrustAssemblies {
 			get { return full_trust_assemblies; }
 		}
@@ -172,6 +175,9 @@ namespace System.Security.Policy {
 
 		// methods
 
+#if NET_2_0
+		[Obsolete ("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")]
+#endif
                 public void AddFullTrustAssembly (StrongName sn)
                 {
 			if (sn == null)
@@ -183,6 +189,9 @@ namespace System.Security.Policy {
                         AddFullTrustAssembly (snMC);
                 }
 
+#if NET_2_0
+		[Obsolete ("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")]
+#endif
                 public void AddFullTrustAssembly (StrongNameMembershipCondition snMC)
                 {
                         if (snMC == null)
@@ -323,6 +332,9 @@ namespace System.Security.Policy {
 			}
                 }
 
+#if NET_2_0
+		[Obsolete ("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")]
+#endif
                 public void RemoveFullTrustAssembly (StrongName sn)
                 {
 			if (sn == null)
@@ -332,6 +344,9 @@ namespace System.Security.Policy {
                         RemoveFullTrustAssembly (s);
                 }
 
+#if NET_2_0
+		[Obsolete ("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")]
+#endif
                 public void RemoveFullTrustAssembly (StrongNameMembershipCondition snMC)
                 {
                         if (snMC == null)

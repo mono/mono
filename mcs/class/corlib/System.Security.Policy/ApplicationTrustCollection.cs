@@ -39,7 +39,7 @@ namespace System.Security.Policy {
 
 		private ArrayList _list;
 
-		public ApplicationTrustCollection ()
+		internal ApplicationTrustCollection ()
 		{
 			_list = new ArrayList ();
 		}
