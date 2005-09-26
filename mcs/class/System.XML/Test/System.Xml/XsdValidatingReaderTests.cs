@@ -208,5 +208,24 @@ namespace MonoTests.System.Xml
 			while (!xvr.EOF)
 				xvr.Read ();
 		}
+
+		[Test] // bug #76234
+		public void DTDValidatorNamespaceHandling ()
+		{
+			string xml = "<xml xmlns='urn:a'> <foo> <a:bar xmlns='urn:b' xmlns:a='urn:a' /> <bug /> </foo> </xml>";
+			XmlValidatingReader vr = new XmlValidatingReader (
+				xml, XmlNodeType.Document, null);
+			vr.Read ();
+			vr.Read (); // whitespace
+			AssertEquals ("#1", String.Empty, vr.NamespaceURI);
+			vr.Read (); // foo
+			AssertEquals ("#2", "urn:a", vr.NamespaceURI);
+			vr.Read (); // whitespace
+			vr.Read (); // a:bar
+			AssertEquals ("#3", "urn:a", vr.NamespaceURI);
+			vr.Read (); // whitespace
+			vr.Read (); // bug
+			AssertEquals ("#4", "urn:a", vr.NamespaceURI);
+		}
 	}
 }

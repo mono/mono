@@ -118,6 +118,7 @@ namespace Mono.Xml
 		bool isWhitespace;
 		bool isText;
 		bool dontResetTextType;
+		bool popScope;
 
 		// This field is used to get properties and to raise events.
 		XmlValidatingReader validatingReader;
@@ -387,6 +388,10 @@ namespace Mono.Xml
 
 		private bool ReadContent ()
 		{
+			if (popScope) {
+				nsmgr.PopScope ();
+				popScope = false;
+			}
 			if (nextEntityReader != null) {
 				if (DTD == null || DTD.EntityDecls [reader.Name] == null)
 					throw NotWFError (String.Format ("Entity '{0}' was not declared.", reader.Name));
@@ -477,6 +482,8 @@ namespace Mono.Xml
 				break;
 
 			case XmlNodeType.Element:
+				nsmgr.PushScope ();
+				popScope = reader.IsEmptyElement;
 				if (constructingTextValue != null) {
 					currentTextValue = constructingTextValue;
 					constructingTextValue = null;
@@ -538,7 +545,7 @@ namespace Mono.Xml
 					constructingTextValue = null;
 					return true;
 				}
-				nsmgr.PopScope ();
+				popScope = true;
 				elementStack.Pop ();
 				// endElementDeriv
 				// If no schema specification, then skip validation.
@@ -692,7 +699,6 @@ namespace Mono.Xml
 					nsmgr.AddNamespace (
 						attr == "xmlns" ? String.Empty : (string) attributeLocalNames [attr],
 						(string) attributeValues [attr]);
-			nsmgr.PushScope ();
 
 			foreach (string attr in attributes) {
 				string prefix = attr == "xmlns" ? "xmlns" : attributePrefixes [attr] as string;
@@ -1115,9 +1121,15 @@ namespace Mono.Xml
 			get {
 				if (currentTextValue != null || consumedAttribute)
 					return String.Empty;
-				else if (NodeType == XmlNodeType.Attribute)
+				switch (NodeType) {
+				case XmlNodeType.Attribute:
 					return (string) attributeNamespaces [currentAttribute];
-				return nsmgr.LookupNamespace (Prefix);
+				case XmlNodeType.Element:
+				case XmlNodeType.EndElement:
+					return nsmgr.LookupNamespace (Prefix);
+				default:
+					return String.Empty;
+				}
 			}
 		}
 
