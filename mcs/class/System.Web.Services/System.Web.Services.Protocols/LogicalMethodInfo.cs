@@ -368,12 +368,12 @@ namespace System.Web.Services.Protocols {
 
 		public object GetCustomAttribute (Type type)
 		{
-			return Attribute.GetCustomAttribute (method_info, type, true);
+			return Attribute.GetCustomAttribute (method_info, type, false);
 		}
 
 		public object[] GetCustomAttributes (Type type)
 		{
-			return method_info.GetCustomAttributes (type, true);
+			return method_info.GetCustomAttributes (type, false);
 		}
 
 		public object[] Invoke (object target, object[] values)
