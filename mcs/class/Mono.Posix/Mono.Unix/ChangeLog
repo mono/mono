@@ -1,3 +1,12 @@
+2005-09-26  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixFileSystemInfo.cs: Exists shouldn't use access(2), as (1) Exists isn't
+	  virtual, and (2) access(2) errors if you try to access(2) a symlink which
+	  points nowhere.  Use (l)stat(2) instead, via GetFileStatus(), as this lets
+	  UnixSymbolicLinkInfo behave properly.
+	* UnixSymbolicLinkInfo.cs: The Contents property should return null if the
+	  symlink target doesn't exist.
+
 2005-09-20  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Syscall.cs: Add [Map] to AccessMode and MmapProt, as the Mono.Unix.Native

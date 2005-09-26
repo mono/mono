@@ -81,10 +81,8 @@ namespace Mono.Unix {
 
 		public bool Exists {
 			get {
-				int r = Syscall.access (FullPath, AccessMode.F_OK);
-				if (r == 0)
-					return true;
-				return false;
+				Refresh (true);
+				return valid;
 			}
 		}
 

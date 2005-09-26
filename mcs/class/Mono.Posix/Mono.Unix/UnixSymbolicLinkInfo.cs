@@ -51,7 +51,10 @@ namespace Mono.Unix {
 
 		public UnixFileSystemInfo Contents {
 			get {
-				return UnixFileSystemInfo.Create (ContentsPath);
+				string path = TryReadLink ();
+				if (path != null)
+					return UnixFileSystemInfo.Create (ContentsPath);
+				return null;
 			}
 		}
 
@@ -98,7 +101,6 @@ namespace Mono.Unix {
 			return Syscall.lstat (path, out stat);
 		}
 
-		// TODO: Should ReadLink be in UnixSymbolicLinkInfo?
 		private string ReadLink ()
 		{
 			string r = TryReadLink ();
