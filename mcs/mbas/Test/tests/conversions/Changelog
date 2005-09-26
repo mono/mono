@@ -1,3 +1,23 @@
+2005-05-09 Aldo Monteiro <aldo@psl-pr.softwarelivre.org>
+	Added CultureInfo("en-US") to the following tests
+	
+	* ExpConversionDatetoStringA.vb
+	* ExpConversionDoubletoStringA.vb
+        * ExpConversionSingletoStringA.vb
+        * ExpConversionStringtoDoubleA.vb
+        * ExpConversionStringtoSingleA.vb
+        * ImpConversionBooltoDoubleC.vb
+        * ImpConversionDatetoStringA.vb
+        * ImpConversionDatetoStringB.vb
+        * ImpConversionDecimaltoStringA.vb
+        * ImpConversionDoubletoStringA.vb
+        * ImpConversionDoubletoStringB.vb
+        * ImpConversionSingletoStringA.vb
+        * ImpConversionSingletoStringB.vb
+        * ImpConversionStringtoDoubleA.vb
+        * ImpConversionStringtoDoubleC.vb
+        * ImpConversionStringtoSingleA.vb
+        * ImpOverloadConversionDecimaltoString.vb
 
 2005-05-02  Ritvik Mayank  <mritvik@novell.com>
 	    Patch submitted by Sudharsan V <vsudharsan@novell.com>

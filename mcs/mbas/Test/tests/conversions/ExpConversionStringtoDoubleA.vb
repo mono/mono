@@ -3,8 +3,13 @@
 '
 ' (C) 2005 Novell, Inc.
 
+Imports System.Threading
+Imports System.Globalization
+
 Module ExpConversionStringtoDoubleA
 	Sub Main()
+			Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+
 			Dim a as Double
 			Dim b as String= "123.5"
 			a = CDbl(b)

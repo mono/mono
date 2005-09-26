@@ -2,9 +2,13 @@
 '   V. Sudharsan (vsudharsan@novell.com)
 '
 ' (C) 2005 Novell, Inc.
+Imports System.Threading
+Imports System.Globalization
 
 Module ImpConversionDatetoStringB
-	Sub Main()
+	Sub Main()			
+			Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+
 			Dim a as Date = "1/1/0001 12:00:00 AM"
 			Dim b as String = "hello" + a
 			if b <> "hello12:00:00 AM"

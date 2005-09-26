@@ -3,8 +3,13 @@
 '
 ' (C) 2005 Novell, Inc.
 
+Imports System.Threading
+Imports System.Globalization
+
 Module ImpConversionSingletoStringA
 	Sub Main()
+			Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US")
+		
 			Dim a as Single= 123.052
 			Dim b as String= a
 			if b <> "123.052"
