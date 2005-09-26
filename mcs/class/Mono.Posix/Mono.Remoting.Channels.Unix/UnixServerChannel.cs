@@ -157,7 +157,7 @@ namespace Mono.Remoting.Channels.Unix
             string [] result = new String [chnl_uris.Length];
 
             for (int i = 0; i < chnl_uris.Length; i++) 
-                result [i] = chnl_uris [i] + uri;
+                result [i] = chnl_uris [i] + "?" + uri;
             
             return result;
         }

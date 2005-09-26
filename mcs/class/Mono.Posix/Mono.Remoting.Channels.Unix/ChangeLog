@@ -1,3 +1,9 @@
+2005-09-11  Robert Jordan  <robertj@gmx.net>
+
+	* UnixChannel.cs: fixed default ctor.
+	* UnixServerChannel.cs: fixed GetUrlsForUri to return properly
+	 formatted unix URIs (the "?" was missing).
+
 2005-08-24  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* UnixServerChannel.cs:

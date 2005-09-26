@@ -43,7 +43,7 @@ namespace Mono.Remoting.Channels.Unix
         private string _name = "unix";
         private int _priority = 1;
     
-        public UnixChannel (): this ("")
+        public UnixChannel (): this (null)
         {
         }
 
