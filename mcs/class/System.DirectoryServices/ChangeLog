@@ -1,3 +1,6 @@
+2005-09-26 Boris Kirzner <borisk@mainsoft.com>
+	* System.DirectoryServices.dll.sources: changed reference to Consts.cs.in.
+
 2005-09-07 Boris Kirzner <borisk@mainsoft.com>
 	* System.DirectoryServices.vmwcsproj: changed reference to Consts.cs.in.
 
