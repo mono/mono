@@ -2,8 +2,8 @@
 // Copyright (c) 2005 Novell, Inc.
 //
 // Authors:
+//      Hisham Mardam Bey (hisham.mardambey@gmail.com) 
 //      Ritvik Mayank (mritvik@novell.com)
-//      Hisham Mardam Bey (hisham.mardambey@gmail.com)
 //
 //
                                                 
@@ -16,13 +16,246 @@ using System.Collections;
 
 namespace MonoTests.System.Windows.Forms
 {
+public class MyScrollBar : HScrollBar
+        {
+		private ArrayList results = new ArrayList ();
+	        public MyScrollBar () : base ()
+		{
+			// TODO: add event handlers (+=)
+		}
+		
+		protected override void OnBackColorChanged (EventArgs e)
+		{
+			results.Add ("OnBackColorChanged");
+			base.OnBackColorChanged (e);
+		}
+		
+		protected override void OnBackgroundImageChanged (EventArgs e)
+		{
+			results.Add ("OnBackgroundImageChanged");
+			base.OnBackgroundImageChanged (e);
+		}
+		
+		protected override void OnClick (EventArgs e)
+		{
+			results.Add ("OnClick");
+			base.OnClick (e);
+		}
+		
+		protected override void OnDoubleClick (EventArgs e)
+		{
+			results.Add ("OnDoubleClick");
+			base.OnDoubleClick (e);
+		}
+		
+		protected override void OnFontChanged (EventArgs e)
+		{
+			results.Add ("OnFontChanged");
+			base.OnFontChanged (e);
+		}
+		
+		protected override void OnForeColorChanged (EventArgs e)
+		{
+			results.Add ("OnForeColorChanged");
+			base.OnForeColorChanged (e);
+		}
+		
+		protected override void OnImeModeChanged (EventArgs e)
+		{
+			results.Add ("OnImeModeChanged");
+			base.OnImeModeChanged (e);
+		}
+		
+		protected override void OnMouseDown (MouseEventArgs e)
+		{
+			results.Add ("OnMouseDown");
+			base.OnMouseDown (e);
+		}
+		
+		protected override void OnMouseMove (MouseEventArgs e)
+		{
+			results.Add ("OnMouseMove");
+			base.OnMouseMove (e);
+		}
+	   
+	        protected override void OnMouseEnter (EventArgs e)
+	        {
+		   results.Add ("OnMouseEnter");
+		   base.OnMouseEnter (e);
+		}
+			
+	        protected override void OnMouseLeave (EventArgs e)
+	        {
+		   results.Add ("OnMouseLeave");
+		   base.OnMouseLeave (e);
+		}
+			
+	        protected override void OnMouseHover (EventArgs e)
+	        {
+		   results.Add ("OnMouseHover");
+		   base.OnMouseHover (e);
+		}			   
+		
+		protected override void OnMouseUp (MouseEventArgs e)
+		{
+			results.Add ("OnMouseUp");
+			base.OnMouseUp (e);
+		}
+		
+		protected override void OnHandleCreated (EventArgs e)
+		{
+			results.Add ("OnHandleCreated");
+			base.OnHandleCreated (e);
+		}
+		
+		protected override void OnBindingContextChanged (EventArgs e)
+		{
+			results.Add ("OnBindingContextChanged");
+			base.OnBindingContextChanged (e);
+		}
+		
+		protected override void OnInvalidated (InvalidateEventArgs e)
+		{
+			results.Add("OnInvalidated");
+			base.OnInvalidated (e);
+		}
+		
+		protected override void OnResize (EventArgs e)
+		{
+			results.Add("OnResize");
+			base.OnResize (e);
+		}
+		
+		protected override void OnSizeChanged (EventArgs e)
+		{
+			results.Add("OnSizeChanged");
+			base.OnSizeChanged (e);
+		}
+		
+		protected override void OnLayout (LayoutEventArgs e)
+		{
+			results.Add("OnLayout");
+			base.OnLayout (e);
+		}
+		
+		protected override void OnVisibleChanged (EventArgs e)
+		{
+			results.Add("OnVisibleChanged");
+			base.OnVisibleChanged (e);
+		}
+		
+		protected override void OnScroll (ScrollEventArgs e)
+		{
+			results.Add("OnScroll");
+			base.OnScroll (e);
+		}
+		
+		protected override void OnTextChanged (EventArgs e)
+		{
+			results.Add("OnTextChanged");
+			base.OnTextChanged (e);
+		}
+		
+		protected override void OnValueChanged (EventArgs e)
+		{
+			results.Add("OnValueChanged");
+			base.OnValueChanged (e);
+		}
+		
+		protected override void OnPaint (PaintEventArgs e)
+		{
+			results.Add("OnPaint");
+			base.OnPaint (e);
+		}
+		
+		public ArrayList Results {
+			get {	return results; }
+		}
+	   
+	        public void MoveMouse ()
+	        {
+		   Message m;
+		   
+		   m = new Message ();
+		   
+		   m.Msg = (int)WndMsg.WM_NCHITTEST;
+		   m.HWnd = this.Handle;
+		   m.WParam = (IntPtr)0x0;
+		   m.LParam = (IntPtr)0x1c604ea;
+		   this.WndProc(ref m);
+		   
+		   m.Msg = (int)WndMsg.WM_SETCURSOR;
+		   m.HWnd = this.Handle;
+		   m.WParam = (IntPtr)0x100448;
+		   m.LParam = (IntPtr)0x2000001;
+		   this.WndProc(ref m);
+		   
+		   m.Msg = (int)WndMsg.WM_MOUSEFIRST;
+		   m.HWnd = this.Handle;
+		   m.WParam = (IntPtr)0x0;
+		   m.LParam = (IntPtr)0x14000b;
+		   this.WndProc(ref m);
+		   
+		   m.Msg = (int)WndMsg.WM_MOUSEHOVER;
+		   m.HWnd = this.Handle;
+		   m.WParam = (IntPtr)0x0;
+		   m.LParam = (IntPtr)0x14000b;
+		   this.WndProc(ref m);
+		}		
+	   
+	        public void MouseRightDown() 
+	        {
+		   Message m;
+		   
+		   m = new Message();
+		   
+		   m.Msg = (int)WndMsg.WM_RBUTTONDOWN;
+		   m.HWnd = this.Handle;
+		   m.WParam = (IntPtr)0x01;
+		   m.LParam = (IntPtr)0x9004f;
+		   this.WndProc(ref m);
+		}
+	   
+	        public void MouseRightUp() 
+	        {
+		   Message m;
+		   
+		   m = new Message();
+		   
+		   m.Msg = (int)WndMsg.WM_RBUTTONUP;
+		   m.HWnd = this.Handle;
+		   m.WParam = (IntPtr)0x01;
+		   m.LParam = (IntPtr)0x9004f;
+		   this.WndProc(ref m);
+		}
+	   
+	        public void ScrollNow ()
+	        {
+		   Message m;
+		   
+		   m = new Message ();
+		   
+		   m.Msg = 8468;
+		   m.HWnd = this.Handle;
+		   m.WParam = (IntPtr)0x1;
+		   m.LParam = (IntPtr)0x1a051a;
+		   this.WndProc(ref m);
+		   
+		   m.Msg = 233;
+		   m.HWnd = this.Handle;
+		   m.WParam = (IntPtr)0x1;
+		   m.LParam = (IntPtr)0x12eb34;
+		   this.WndProc(ref m);
+		}
+	}
+   
         [TestFixture]	
         public class ScrollbarTest
         {		
 		[Test]
 		public void PubPropTest ()
 		{
-			ScrollBar myscrlbar = new HScrollBar ();
+			MyScrollBar myscrlbar = new MyScrollBar ();
 			
 			// B
 			myscrlbar.BackColor = Color.Red;
@@ -71,7 +304,7 @@ namespace MonoTests.System.Windows.Forms
 		[ExpectedException (typeof (ArgumentException))]
 		public void ExceptionValueTest ()
 		{
-			ScrollBar myscrlbar = new HScrollBar ();
+			MyScrollBar myscrlbar = new MyScrollBar ();
 			myscrlbar.Minimum = 10;
 			myscrlbar.Maximum = 20;			
 			myscrlbar.Value = 9;
@@ -81,7 +314,7 @@ namespace MonoTests.System.Windows.Forms
 		[Test]
 		public void PubMethodTest ()
 		{
-			ScrollBar myscrlbar = new HScrollBar ();
+			MyScrollBar myscrlbar = new MyScrollBar ();
 			myscrlbar.Text = "New HScrollBar";
 			Assert.AreEqual ("System.Windows.Forms.HScrollBar, Minimum: 0, Maximum: 100, Value: 0",
 					 myscrlbar.ToString (), "T5");
@@ -187,41 +420,44 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 		}
 		
-		[Test, Ignore ("Incomplete.")]
+		[Test]
 	        public void MouseDownTest ()
 	        {
 			Form myform = new Form ();
 			myform.Visible = true;			
-			ScrollBar myHscrlbar = new HScrollBar ();
+			MyScrollBar myHscrlbar = new MyScrollBar ();
 			myform.Controls.Add (myHscrlbar);
 			myHscrlbar.MouseDown += new MouseEventHandler (ScrollBar_EventHandler);
-
+		        myHscrlbar.MouseRightDown ();
+		   
 			Assert.AreEqual (true, eventhandled, "M5");
 			eventhandled = false;
 		}
 		
-		[Test, Ignore ("Incomplete.")]
+		[Test]
 	        public void MouseMoveTest ()
 	        {
 			Form myform = new Form ();
 			myform.Visible = true;			
-			ScrollBar myHscrlbar = new HScrollBar ();
+			MyScrollBar myHscrlbar = new MyScrollBar ();
 			myform.Controls.Add (myHscrlbar);
 			myHscrlbar.MouseMove += new MouseEventHandler (ScrollBar_EventHandler);
-
+		        myHscrlbar.MoveMouse ();
+		   
 			Assert.AreEqual (true, eventhandled, "M6");
 			eventhandled = false;
 		}
 		
-		[Test, Ignore ("Incomplete.")]
+		[Test]
 	        public void MouseUpTest ()
 	        {
 			Form myform = new Form ();
 			myform.Visible = true;			
-			ScrollBar myHscrlbar = new HScrollBar ();
+			MyScrollBar myHscrlbar = new MyScrollBar ();
 			myform.Controls.Add (myHscrlbar);
 			myHscrlbar.MouseUp += new MouseEventHandler (ScrollBar_EventHandler);
-
+		        myHscrlbar.MouseRightUp ();
+		   
 			Assert.AreEqual (true, eventhandled, "M7");
 			eventhandled = false;
 		}
@@ -231,7 +467,7 @@ namespace MonoTests.System.Windows.Forms
 	        {
 			Form myform = new Form ();
 			myform.Visible = true;			
-			ScrollBar myHscrlbar = new HScrollBar ();
+			MyScrollBar myHscrlbar = new MyScrollBar ();
 			myform.Controls.Add (myHscrlbar);
 			myHscrlbar.Paint += new PaintEventHandler (ScrollBar_EventHandler);
 
@@ -239,15 +475,16 @@ namespace MonoTests.System.Windows.Forms
 			eventhandled = false;
 		}
 		
-		[Test, Ignore ("Incomplete.")]
+		[Test]
 	        public void ScrollTest ()
 	        {
 			Form myform = new Form ();
 			myform.Visible = true;			
-			ScrollBar myHscrlbar = new HScrollBar ();
+			MyScrollBar myHscrlbar = new MyScrollBar ();
 			myform.Controls.Add (myHscrlbar);
 			myHscrlbar.Scroll += new ScrollEventHandler (ScrollBar_EventHandler);
-			
+		        myHscrlbar.ScrollNow ();
+		   
 			Assert.AreEqual (true, eventhandled, "S4");
 			eventhandled = false;
 		}	
@@ -257,7 +494,7 @@ namespace MonoTests.System.Windows.Forms
 	        {
 			Form myform = new Form ();
 			myform.Visible = true;			
-			ScrollBar myHscrlbar = new HScrollBar ();
+			MyScrollBar myHscrlbar = new MyScrollBar ();
 			myform.Controls.Add (myHscrlbar);
 			myHscrlbar.TextChanged += new EventHandler (ScrollBar_EventHandler);
 
@@ -270,7 +507,7 @@ namespace MonoTests.System.Windows.Forms
 	        {
 			Form myform = new Form ();
 			myform.Visible = true;			
-			ScrollBar myHscrlbar = new HScrollBar ();
+			MyScrollBar myHscrlbar = new MyScrollBar ();
 			myform.Controls.Add (myHscrlbar);
 			myHscrlbar.Value = 40 ;
 			myHscrlbar.ValueChanged += new EventHandler (ScrollBar_EventHandler);
@@ -344,146 +581,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (80, msbar.MyDefaultSize.Height, "D4");
 		}		
 	}
-   
-        public class MyScrollBar : HScrollBar
-        {
-		private ArrayList results = new ArrayList ();
-	        public MyScrollBar () : base ()
-		{
-			// TODO: add event handlers (+=)
-		}
-		
-		protected override void OnBackColorChanged (EventArgs e)
-		{
-			results.Add ("OnBackColorChanged");
-			base.OnBackColorChanged (e);
-		}
-		
-		protected override void OnBackgroundImageChanged (EventArgs e)
-		{
-			results.Add ("OnBackgroundImageChanged");
-			base.OnBackgroundImageChanged (e);
-		}
-		
-		protected override void OnClick (EventArgs e)
-		{
-			results.Add ("OnClick");
-			base.OnClick (e);
-		}
-		
-		protected override void OnDoubleClick (EventArgs e)
-		{
-			results.Add ("OnDoubleClick");
-			base.OnDoubleClick (e);
-		}
-		
-		protected override void OnFontChanged (EventArgs e)
-		{
-			results.Add ("OnFontChanged");
-			base.OnFontChanged (e);
-		}
-		
-		protected override void OnForeColorChanged (EventArgs e)
-		{
-			results.Add ("OnForeColorChanged");
-			base.OnForeColorChanged (e);
-		}
-		
-		protected override void OnImeModeChanged (EventArgs e)
-		{
-			results.Add ("OnImeModeChanged");
-			base.OnImeModeChanged (e);
-		}
-		
-		protected override void OnMouseDown (MouseEventArgs e)
-		{
-			results.Add ("OnMouseDown");
-			base.OnMouseDown (e);
-		}
-		
-		protected override void OnMouseMove (MouseEventArgs e)
-		{
-			results.Add ("OnMouseMove");
-			base.OnMouseMove (e);
-		}
-		
-		protected override void OnMouseUp (MouseEventArgs e)
-		{
-			results.Add ("OnMouseUp");
-			base.OnMouseUp (e);
-		}
-		
-		protected override void OnHandleCreated (EventArgs e)
-		{
-			results.Add ("OnHandleCreated");
-			base.OnHandleCreated (e);
-		}
-		
-		protected override void OnBindingContextChanged (EventArgs e)
-		{
-			results.Add ("OnBindingContextChanged");
-			base.OnBindingContextChanged (e);
-		}
-		
-		protected override void OnInvalidated (InvalidateEventArgs e)
-		{
-			results.Add("OnInvalidated");
-			base.OnInvalidated (e);
-		}
-		
-		protected override void OnResize (EventArgs e)
-		{
-			results.Add("OnResize");
-			base.OnResize (e);
-		}
-		
-		protected override void OnSizeChanged (EventArgs e)
-		{
-			results.Add("OnSizeChanged");
-			base.OnSizeChanged (e);
-		}
-		
-		protected override void OnLayout (LayoutEventArgs e)
-		{
-			results.Add("OnLayout");
-			base.OnLayout (e);
-		}
-		
-		protected override void OnVisibleChanged (EventArgs e)
-		{
-			results.Add("OnVisibleChanged");
-			base.OnVisibleChanged (e);
-		}
-		
-		protected override void OnScroll (ScrollEventArgs e)
-		{
-			results.Add("OnScroll");
-			base.OnScroll (e);
-		}
-		
-		protected override void OnTextChanged (EventArgs e)
-		{
-			results.Add("OnTextChanged");
-			base.OnTextChanged (e);
-		}
-		
-		protected override void OnValueChanged (EventArgs e)
-		{
-			results.Add("OnValueChanged");
-			base.OnValueChanged (e);
-		}
-		
-		protected override void OnPaint (PaintEventArgs e)
-		{
-			results.Add("OnPaint");
-			base.OnPaint (e);
-		}
-		
-		public ArrayList Results {
-			get {	return results; }
-		}		
-	}	
-	
+                  
         [TestFixture]
         public class HScrollBarTestEventsOrder
         {  	  			
@@ -638,7 +736,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
 		}
 		
-		[Test, Ignore ("Not implemented yet, needs msg.")]
+		[Test]
 		public void MouseDownEventsOrder ()
 		{
 			string[] EventsWanted = {
@@ -650,11 +748,12 @@ namespace MonoTests.System.Windows.Forms
 			myform.Visible = true;
 			MyScrollBar s = new MyScrollBar ();
 			myform.Controls.Add (s);
-			
+			s.MouseRightDown ();
+		   
 			Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
 		}
 		
-		[Test, Ignore ("Not implemented yet, needs msg.")]
+		[Test]
 		public void MouseMoveEventsOrder ()
 		{
 			string[] EventsWanted = {
@@ -666,11 +765,12 @@ namespace MonoTests.System.Windows.Forms
 			myform.Visible = true;
 			MyScrollBar s = new MyScrollBar ();
 			myform.Controls.Add (s);
-			
+		        s.MoveMouse ();
+		   
 			Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
 		}
 		
-		[Test, Ignore ("Not implemented yet, needs msg.")]
+		[Test]
 		public void MouseUpEventsOrder ()
 		{
 			string[] EventsWanted = {
@@ -682,7 +782,8 @@ namespace MonoTests.System.Windows.Forms
 			myform.Visible = true;
 			MyScrollBar s = new MyScrollBar ();
 			myform.Controls.Add (s);
-			
+		        s.MouseRightUp ();
+		   
 			Assert.AreEqual (EventsWanted, ArrayListToString (s.Results));
 		}
 		
@@ -756,4 +857,3 @@ namespace MonoTests.System.Windows.Forms
 		}
 	}         
 }
-	   
