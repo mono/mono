@@ -1,3 +1,7 @@
+2005-09-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* locales.c : removed HAVE_ICU part.
+
 2005-09-24  Zoltan Varga  <vargaz@freemail.hu>
 
 	* object.c (mono_class_create_runtime_vtable): Avoid calling 
