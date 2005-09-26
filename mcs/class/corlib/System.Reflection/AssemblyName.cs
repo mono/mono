@@ -37,6 +37,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.IO;
 
 using Mono.Security;
 
@@ -80,12 +81,23 @@ namespace System.Reflection {
 			versioncompat = AssemblyVersionCompatibility.SameMachine;
 		}
 
-#if NET_2_0
+#if NET_2_0 || BOOTSTRAP_NET_2_0
+		[MethodImpl (MethodImplOptions.InternalCall)]
+		static extern bool ParseName (AssemblyName aname, string assemblyName);
+		
 		public AssemblyName (string assemblyName)
 		{
-			name = assemblyName;
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+			if (assemblyName.Length < 1)
+				throw new ArgumentException ("assemblyName cannot have zero length.");
+			
+			if (!ParseName (this, assemblyName))
+				throw new FileLoadException ("The assembly name is invalid.");
 		}
-
+#endif
+		
+#if NET_2_0
 		[MonoTODO]
 		public ProcessorArchitecture ProcessorArchitecture {
 			get {
