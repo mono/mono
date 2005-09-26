@@ -28,14 +28,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
-#endif
 	[ComImport]
+#endif
 	[Guid ("00020404-0000-0000-c000-000000000046")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIEnumVARIANT

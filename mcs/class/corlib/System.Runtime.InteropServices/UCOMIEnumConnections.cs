@@ -4,9 +4,7 @@
 // Author:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,14 +26,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
-#endif
 	[ComImport]
+#endif
 	[Guid ("b196b287-bab4-101a-b69c-00aa00341d07")]
 	[InterfaceType (ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMIEnumConnections

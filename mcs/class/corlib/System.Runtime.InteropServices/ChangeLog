@@ -1,3 +1,13 @@
+2005-09-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UCOMIBindCtx.cs, UCOMIConnectionPoint.cs, 
+	UCOMIConnectionPointContainer.cs, UCOMIEnumConnectionPoints.cs,
+	UCOMIEnumConnections.cs, UCOMIEnumMoniker.cs, UCOMIEnumString.cs,
+	UCOMIEnumVARIANT.cs, UCOMIMoniker.cs, UCOMIPersistFile.cs, 
+	UCOMIRunningObjectTable.cs, UCOMIStream.cs, UCOMITypeComp.cs,
+	UCOMITypeInfo.cs, UCOMITypeLib.cs: Remove [ComImport] from the default
+	profile (this is new in 2.0) and reduce corcompare extras by 15.
+
 2005-09-21  Kornél Pál  <kornelpal@hotmail.com>
 
 	* UCOMIEnumConnections.cs, UCOMIEnumMoniker.cs, UCOMIEnumString.cs,

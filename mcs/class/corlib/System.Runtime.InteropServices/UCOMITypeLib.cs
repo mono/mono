@@ -1,6 +1,6 @@
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,15 +28,12 @@
 //
 // (C) 2002 Ximian, Inc.
 
-using System;
-using System.Runtime.InteropServices;
-
 namespace System.Runtime.InteropServices
 {
 #if NET_2_0
 	[Obsolete]
-#endif
 	[ComImport]
+#endif
 	[Guid("00020402-0000-0000-c000-000000000046")]
 	[InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	public interface UCOMITypeLib { 
