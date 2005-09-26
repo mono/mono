@@ -5,8 +5,7 @@
 //	Sebastien Pouliot (spouliot@motus.com)
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-//
-
+// Copyright (C) 2005 Novell Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,9 +27,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 && SECURITY_DEP
 
-using System;
 using System.Collections;
 
 namespace System.Security.Cryptography {
