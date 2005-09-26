@@ -16,7 +16,8 @@ class T1
 
 			AppSettingsSection appsettings = config.AppSettings;
 
-			Console.WriteLine("IsMachineLevel: {0}", config.EvaluationContext.IsMachineLevel);
+			Console.WriteLine ("IsMachineLevel: {0}", config.EvaluationContext.IsMachineLevel);
+			Console.WriteLine ("File: `{0}'", appsettings.File);
 
 			foreach (string key in appsettings.Settings.AllKeys) {
 				Console.WriteLine ("setting[{0}] = {1}", appsettings.Settings[key].Key, appsettings.Settings[key].Value);

@@ -18,8 +18,6 @@ class T1
 
 			Console.WriteLine("IsMachineLevel: {0}", config.EvaluationContext.IsMachineLevel);
 
-			Console.WriteLine ("hithere: `{0}'", appsettings.ElementInformation.Properties["hithere"]);
-
 			foreach (string key in appsettings.Settings.AllKeys) {
 				Console.WriteLine ("setting[{0}] = {1}", appsettings.Settings[key].Key, appsettings.Settings[key].Value);
 			}
