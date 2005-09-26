@@ -1,8 +1,4 @@
-System.Security.Cryptography/AsnEncodedDataTest.cs
 System.Security.Cryptography/CryptographicAttributeTest.cs
-System.Security.Cryptography/OidCollectionTest.cs
-System.Security.Cryptography/OidEnumeratorTest.cs
-System.Security.Cryptography/OidTest.cs
 System.Security.Cryptography/ProtectedDataTest.cs
 System.Security.Cryptography/ProtectedMemoryTest.cs
 System.Security.Cryptography.Pkcs/AlgorithmIdentifierTest.cs
@@ -21,14 +17,6 @@ System.Security.Cryptography.Pkcs/SignedCmsTest.cs
 System.Security.Cryptography.Pkcs/SignerInfoCollectionTest.cs
 System.Security.Cryptography.Pkcs/SignerInfoTest.cs
 System.Security.Cryptography.Pkcs/SubjectIdentifierTest.cs
-System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionTest.cs
-System.Security.Cryptography.X509Certificates/X509ChainPolicyTest.cs
-System.Security.Cryptography.X509Certificates/X509ChainTest.cs
-System.Security.Cryptography.X509Certificates/X509EnhancedKeyUsageExtensionTest.cs
-System.Security.Cryptography.X509Certificates/X509ExtensionTest.cs
-System.Security.Cryptography.X509Certificates/X509KeyUsageExtensionTest.cs
-System.Security.Cryptography.X509Certificates/X509StoreTest.cs
-System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierExtensionTest.cs
 System.Security.Cryptography.Xml/AssertCrypto.cs
 System.Security.Cryptography.Xml/DataObjectTest.cs
 System.Security.Cryptography.Xml/DSAKeyValueTest.cs
@@ -50,4 +38,3 @@ System.Security.Cryptography.Xml/XmlDsigC14NWithCommentsTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigXPathTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigXsltTransformTest.cs
 System.Security.Permissions/DataProtectionPermissionAttributeTest.cs
-System.Security.Permissions/StorePermissionAttributeTest.cs

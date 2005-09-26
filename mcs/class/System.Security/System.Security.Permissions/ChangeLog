@@ -1,14 +1,11 @@
+2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Store*.cs: Moved in System.dll
+
 2005-05-18  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataProtectionPermissionAttribute.cs: fixes flag cleaning logical operation
-	* StorePermissionAttribute.cs: fixes flag cleaning logical operation
 	
-2005-04-23  Sebastien Pouliot  <sebastien@ximian.com> 
-
-	* StorePermission.cs: New. CAS permission to access certificate stores.
-	* StorePermissionAttribute.cs: New. CAS permission attribute for
-	StorePermission.
-
 2005-01-05  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* DataProtectionPermission.cs: Removed IBuiltInPermission (it's not in
@@ -20,13 +17,3 @@
 	* DataProtectionPermission.cs: Moved from corlib.
 	* DataProtectionPermissionAttribute.cs: Moved from corlib.
 	* DataProtectionPermissionFlags.cs: Moved from corlib.
-
-2004-07-08  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* StorePermissionFlags.cs: Fixed flags values. Added [Serializable]
-	attribute.
-
-2004-07-07  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* StorePermissionFlags.cs: New. CAS-related enum for StorePermission.
-	Adding it "creates" the namespace for corcompare.

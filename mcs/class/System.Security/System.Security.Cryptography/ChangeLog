@@ -1,10 +1,6 @@
-2005-05-03  Sebastien Pouliot  <sebastien@ximian.com>
+2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* AsnEncodedData.cs: Allow CopyFrom to work even without an OID.
-
-2005-04-25  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* AsnEncodedData.cs: Fix compiler warning (unused variable).
+	* Asn*.cs, Oid*.cs: Moved to System.dll
 
 2005-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
@@ -15,42 +11,15 @@
 	* CryptographicAttributeEnumerator.cs: Renamed class to Cryptographic
 	AttributeObjectEnumerator to match beta2.
 
-2005-01-20  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* AsnEncodedData.cs: Added "internal" support for SubjectAltName 
-	extension as it is required for SSL support.
-	* Oid.cs: Added Oid / FriendlyName definitions for SubjectAltName.
-
-2005-01-17  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* AsnEncodedData.cs: Added more decoding/formatting code as this class
-	is far more intelligent (or bloated) than anticipated.
-	* Oid.cs: Added more Oid / FriendlyName definitions required for the
-	X.509 extensions and some more for some failing unit tests.
-	* OidCollection.cs: Added support to make the collection read-only.
-
 2005-01-13  Sebastien Pouliot  <sebastien@ximian.com>
 
-	* AsnEncodedData.cs: Completed/fixed implementation.
 	* CryptographicAttribute.cs: Fixed implementation with updated unit
 	tests.
-	* Oid.cs: Fixed implementation with updated unit tests.
 
 2004-07-08  Sebastien Pouliot  <spouliot@videotron.ca>
 
-	* AsnEncodedData.cs: Fixes for Fx 2.0 beta 1 compatibility. Added
-	MonoTODO to missing functionalities.
-	* AsnEncodedDataCollection.cs: New. 
-	* AsnEncodedDataEnumerator.cs: New.
 	* CryptographicAttribute.cs: New. Moved from S.S.C.Pkcs.
 	* CryptographicAttributeCollection.cs: New. Replace S.S.C.Pkcs.
 	Pkcs9AttributeCollection.
 	* CryptographicAttributeEnumerator.cs: New. Replace S.S.C.Pkcs.
 	Pkcs9AttributeEnumerator.
-
-2003-11-06  Sebastien Pouliot  <spouliot@videotron.ca>
-
-	* AsnEncodedData.cs: New. Class to encapsulate ASN.1 data (.NET 1.2).
-	* Oid.cs: New. Class to encapsulate OIDs (.NET 1.2).
-	* OidCollection.cs: New. ICollection based class for OIDs (.NET 1.2).
-	* OidEnumerator.cs: New. IEnumerator based class for OIDs (.NET 1.2).
