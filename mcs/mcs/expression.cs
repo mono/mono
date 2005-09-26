@@ -7009,8 +7009,7 @@ namespace Mono.CSharp {
 
 		public bool VerifyFixed ()
 		{
-			// Treat 'this' as a value parameter for the purpose of fixed variable determination.
-			return true;
+			return !TypeManager.IsValueType (Type);
 		}
 
 		public bool ResolveBase (EmitContext ec)

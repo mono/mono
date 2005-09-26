@@ -1,3 +1,10 @@
+2005-09-26  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76133.
+	* expression.cs (This.VerifyFixed): In a value type T, the type of
+	'this' is T&, iow, 'this' is either an out or ref parameter.  In a
+	value type R, 'this' is treated as a value parameter.
+
 2005-09-22  Miguel de Icaza  <miguel@novell.com>
 
 	* statement.cs (Lock): Use the TemporaryVariable class instead of

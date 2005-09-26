@@ -1,3 +1,7 @@
+2005-09-26  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0212-3.cs: New test based on #76133.
+
 2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* gcs0208-2.cs, gcs0208-3.cs, gcs0208-4.cs : added test with related

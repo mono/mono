@@ -1,3 +1,7 @@
+2005-09-26  Raja R Harinath  <rharinath@novell.com>
+
+	* test-456.cs: New test from #76133.
+
 2005-09-15  Raja R Harinath  <rharinath@novell.com>
 
 	* test-455.cs: New test.  Distilled from a failing unit test of
