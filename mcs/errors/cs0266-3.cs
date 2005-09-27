@@ -1,5 +1,5 @@
-// cs0266.cs: Cannot implicitly convert type 'object' to 'System.Collections.ArrayList'. An explicit conversion exists (are you missing a cast?)
-// Line: 10
+// cs0266.cs: Cannot implicitly convert type `object' to `System.Collections.ArrayList'. An explicit conversion exists (are you missing a cast?)
+// Line: 12
 
 using System.Collections;
 
