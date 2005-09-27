@@ -1,5 +1,9 @@
 2005-09-27  Martin Baulig  <martin@ximian.com>
 
+	* gtest-204.cs: New test for #75773.
+
+2005-09-27  Martin Baulig  <martin@ximian.com>
+
 	* gtest-203.cs: New test for #75584.
 
 2005-09-26  Martin Baulig  <martin@ximian.com>
