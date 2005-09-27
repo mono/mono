@@ -1,3 +1,8 @@
+2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* io.c: Apply patch from #76192 (Can't write files past 2gb on AMD64 
+	(x86_64)) for Brion on IRC (Dick approved it).
+
 2005-09-23  Dick Porter  <dick@ximian.com>
 
 	* processes.c: Don't wait for processes that have already been
