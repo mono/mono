@@ -223,6 +223,7 @@
 				<File RelPath="Novell.Directory.Ldap.Utilclass\DN.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\EnumeratedIterator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\ExceptionMessages.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Novell.Directory.Ldap.Utilclass\ExceptionMessages.resx" DependentUpon="ExceptionMessages.cs" BuildAction="EmbeddedResource"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\ExtResponseFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\IntermediateResponseFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\RDN.cs" SubType="Code" BuildAction="Compile"/>
@@ -231,6 +232,7 @@
 				<File RelPath="Novell.Directory.Ldap.Utilclass\RespControlVector.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\RespExtensionSet.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\ResultCodeMessages.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Novell.Directory.Ldap.Utilclass\ResultCodeMessages.resx" DependentUpon="ResultCodeMessages.cs" BuildAction="EmbeddedResource"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\SchemaParser.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\SchemaTokenCreator.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Novell.Directory.Ldap.Utilclass\TokenTypes.cs" SubType="Code" BuildAction="Compile"/>

@@ -1,0 +1,4 @@
+2005-27-09  Boris Kirzner <borisk@mainsoft.com>
+	* ChangeLog: added changelog file.
+	* ExceptionMessages.resx, ResultCodeMessages.resx: added generated resx files (for TARGET_JVM).
+	* ResourcesHandler.cs: fixed refencing res files.
