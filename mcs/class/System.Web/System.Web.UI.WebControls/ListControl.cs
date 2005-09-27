@@ -254,7 +254,6 @@ namespace System.Web.UI.WebControls {
 				int count = Items.Count;
 				ListItemCollection coll = Items;
 				for (int i = 0; i < count; i++) {
-					Console.WriteLine ("Target: {0} value: {1}", value, coll [i].Value);
 					if (coll [i].Value == value)
 						coll [i].Selected = true;
 				}
