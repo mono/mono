@@ -359,10 +359,26 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		class TableID : Table {
+			Control parent;
+
+			public TableID (Control parent)
+			{
+				this.parent = parent;
+			}
+
+			protected override void AddAttributesToRender (HtmlTextWriter writer)
+			{
+				base.AddAttributesToRender (writer);
+				if (ID == null)
+					writer.AddAttribute ("id", parent.ClientID);
+			}
+		}
+
 		private Table RenderTable {
 			get {
 				if (render_table == null) {
-					render_table = new Table ();
+					render_table = new TableID (this);
 					render_table.PreventAutoID ();
 				}
 				return render_table;
