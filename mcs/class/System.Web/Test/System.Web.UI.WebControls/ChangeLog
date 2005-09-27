@@ -1,5 +1,11 @@
 2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* EditCommandColumnTest.cs: added a test here for datagrid, as this was
+	the file whose test failed because the id of the datagrid generated
+	table.
+
+2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FontUnitCas.cs: method name change in FontUnitTest.
 	* FontUnitTest.cs: splitted tests, enabled the "NotWorking" ones and
 	added tests for FontSize names beginning with x and containing a dash.

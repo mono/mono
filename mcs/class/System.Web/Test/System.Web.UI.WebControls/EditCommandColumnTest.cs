@@ -110,7 +110,6 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		//[Ignore("Need a DataGrid ID rendering and DataGridColumn checked in")]
 		public void InitializeCell () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -162,6 +161,62 @@ namespace MonoTests.System.Web.UI.WebControls
 				"</tr></table>", markup, "I2");
 #endif
 			//ShowControlsRecursive (p.Controls [0], 1);
+		}
+
+		[Test]
+		public void ThisIsADGTest () {
+			DataGridTest	p = new DataGridTest ();
+			DataTable	table = new DataTable ();
+			EditCommandColumn	e;
+			string			markup;
+
+			e = new EditCommandColumn();
+			e.ButtonType = ButtonColumnType.LinkButton;
+			e.CancelText = "Cancel";
+			e.EditText = "Edit";
+			e.UpdateText = "Update";			
+
+			table.Columns.Add (new DataColumn ("one", typeof (string)));
+			table.Columns.Add (new DataColumn ("two", typeof (string)));
+			table.Columns.Add (new DataColumn ("three", typeof (string)));
+			table.Rows.Add (new object [] { "1", "2", "3" });
+
+			p.DataSource = new DataView (table);
+			p.Columns.Add(e);
+
+			e = new EditCommandColumn();
+			e.ButtonType = ButtonColumnType.PushButton;
+			e.CancelText = "Abbrechen";
+			e.EditText = "Bearbeiten";
+			e.UpdateText = "Refresh";			
+			p.Columns.Add(e);
+
+			p.CreateControls (true);
+			// This is the test we want to run: setting the ID of the table created by
+			// the datagrid overrides the using the ID of the datagrid itself and uses
+			// the table ClientID instead.
+			p.ID = "sucker";
+			p.Controls [0].ID = "tbl";
+
+			Assert.AreEqual (2, p.Columns.Count, "I1");
+			markup = ControlMarkup(p.Controls[0]);
+			markup = markup.Replace("\t", "");
+			markup = markup.Replace ("\r", "");
+			markup = markup.Replace ("\n", "");
+
+#if NET_2_0
+			Assert.AreEqual (
+				"<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
+				"</tr><tr><td><a>Edit</a></td><td><input name=\"sucker_tbl$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" +
+				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
+				"</tr></table>", markup, "I2");
+#else
+			Assert.AreEqual (
+				"<table border=\"0\" id=\"sucker_tbl\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
+				"</tr><tr><td><a>Edit</a></td><td><input name type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" + 
+				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
+				"</tr></table>", markup, "I2");
+#endif
 		}
 
 		[Test]
