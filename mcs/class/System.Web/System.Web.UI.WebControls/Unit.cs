@@ -85,6 +85,8 @@ namespace System.Web.UI.WebControls {
 				i++;
 				if (!Char.IsDigit (value [i]))
 					throw new ArgumentOutOfRangeException ("value");
+			} else if (!Char.IsDigit (value [i])) {
+				throw new FormatException ();
 			}
 
 			double dv = 0;
