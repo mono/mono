@@ -579,7 +579,7 @@ namespace TestRunner {
 					if (check_msg) {
 						int first = line.IndexOf (':');
 						int second = line.IndexOf (':', first + 1);
-						if (second == -1)
+						if (second == -1 || !check_error_line)
 							second = first;
 
 						string msg = line.Substring (second + 1).TrimEnd ('.').Trim ();

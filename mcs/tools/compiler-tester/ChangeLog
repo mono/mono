@@ -1,3 +1,8 @@
+2005-09-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* compiler-tester.cs (GetCompilerError): Small fix when no error
+	location and text contains ':'.
+
 2005-09-22  Raja R Harinath  <rharinath@novell.com>
 
 	* compiler-tester.cs (TestRunner.ExecFile): New helper carved out
