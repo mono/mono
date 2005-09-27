@@ -53,6 +53,9 @@ namespace System.Web.UI.WebControls {
 		public static readonly FontUnit Large = new FontUnit (FontSize.Large);
 		public static readonly FontUnit XLarge = new FontUnit (FontSize.XLarge);
 		public static readonly FontUnit XXLarge = new FontUnit (FontSize.XXLarge);
+
+		static string [] font_size_names = new string [] {null, null, "Smaller", "Larger", "XX-Small", "X-Small", "Small",
+								"Medium", "Large", "X-Large", "XX-Large" };
 		
 		public FontUnit (FontSize type)
 		{
@@ -103,12 +106,16 @@ namespace System.Web.UI.WebControls {
 			case "smaller": type = FontSize.Smaller; break;
 			case "larger": type = FontSize.Larger; break;
 			case "xxsmall": type = FontSize.XXSmall; break;
+			case "xx-small": type = FontSize.XXSmall; break;
 			case "xsmall": type = FontSize.XSmall; break;
+			case "x-small": type = FontSize.XSmall; break;
 			case "small": type = FontSize.Small; break;
 			case "medium": type = FontSize.Medium; break;
 			case "large": type = FontSize.Large; break;
 			case "xlarge": type = FontSize.XLarge; break;
+			case "x-large": type = FontSize.XLarge; break;
 			case "xxlarge": type = FontSize.XXLarge; break;
+			case "xx-large": type = FontSize.XXLarge; break;
 			default:
 				type = FontSize.AsUnit;
 				unit = new Unit (value, culture);
@@ -186,7 +193,7 @@ namespace System.Web.UI.WebControls {
 			else if (type == FontSize.AsUnit)
 				return unit.ToString (fmt);
 			else
-				return type.ToString();
+				return font_size_names [(int) type];
 		}
 #endif
 
@@ -198,7 +205,7 @@ namespace System.Web.UI.WebControls {
 			if (type == FontSize.AsUnit)
 				return unit.ToString (culture);
 
-			return type.ToString ();
+			return font_size_names [(int) type];
 		}
 			
 		public override string ToString ()
@@ -207,5 +214,5 @@ namespace System.Web.UI.WebControls {
 		}
 		
 	}
-
 }
+

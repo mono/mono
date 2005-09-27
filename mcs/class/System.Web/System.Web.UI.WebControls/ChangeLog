@@ -1,5 +1,12 @@
 2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FontUnit.cs: use a table for FontSize names, as the X{1,2}.* ones are
+	converted to string as X{1,2}-.*. All FontUnitTests pass now.
+	* Unit.cs: throw a format exception when there's not number or minus
+	sign in the first non-whitespace character.
+
+2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ListControl.cs: SelectedIndex/SelectedValue can be set before
 	DataBinding () is called on the control, so we have to keep this values
 	around and use them after the data is read. If both properties are
