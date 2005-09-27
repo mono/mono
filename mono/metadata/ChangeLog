@@ -1,3 +1,20 @@
+2005-09-27  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(inflate_generic_class): Correctly set the new context's
+	container.
+
+	* loader.c
+	(find_method, find_method_in_class): Take a `MonoGenericContainer *'
+	instead of a `MonoGenericContext *'.
+	(mono_method_signature_full): Take a `MonoGenericContainer *'
+	instead of a `MonoGenericContext *'.
+
+	* metadata.c
+	(mono_metadata_parse_signature_full): Take a `MonoGenericContainer *'
+	instead of a `MonoGenericContext *'.
+	(mono_metadata_parse_method_signature_full): Likewise.
+
 2005-09-26  Martin Baulig  <martin@ximian.com>
 
 	* class.c
