@@ -99,8 +99,8 @@ namespace System.Security.Cryptography.Xml
 		public override object GetOutput () 
 		{
 #if NET_2_0
-			if (xpath == null)
-				throw new XPathException (Locale.GetText ("No XPath expression provided."));
+			if ((xpath == null) || (doc == null))
+				return new XmlDsigNodeList (new ArrayList ());
 #else
 			if (xpath == null)
 				return new XmlDsigNodeList (new ArrayList ());

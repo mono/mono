@@ -51,10 +51,6 @@ namespace System.Security.Cryptography.Xml {
 
 		public KeyInfoX509Data (byte[] rgbCert)
 		{
-#if NET_2_0
-			if (rgbCert == null)
-				throw new ArgumentException ("rgbCert");
-#endif
 			AddCertificate (new X509Certificate (rgbCert));
 		}
 

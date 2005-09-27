@@ -1,3 +1,10 @@
+2005-09-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyInfoX509Data.cs: Remove old 2.0 specific check.
+	* XmlDsigXPathTransform.cs: Remove old 2.0 specific check. Return 
+	empty node list of the XmlDocument is null (fixed tests case for 2.0
+	RC).
+
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EncryptionProperties.cs: Added [IndexerName] attribute to rename 
