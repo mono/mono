@@ -62,6 +62,8 @@ namespace System.Web.UI.WebControls {
 #endif
 
 		private ListItemCollection items;
+		int saved_selected_index = -2;
+		string saved_selected_value;
 		
 		public ListControl () : base (HtmlTextWriterTag.Select)
 		{
@@ -189,8 +191,16 @@ namespace System.Web.UI.WebControls {
 			}
 			set {
 				ClearSelection ();
-				if (value == -1 || items == null)
+				if (value == -1)
 					return;
+
+				if (items == null || items.Count == 0) {
+					// This will happen when assigning this property
+					// before DataBind () is called on the control.
+					saved_selected_index = value;
+					return;
+				}
+
 				if (value < 0 || value >= Items.Count)
 					throw new ArgumentOutOfRangeException ("value");
 				items [value].Selected = true;
@@ -234,9 +244,19 @@ namespace System.Web.UI.WebControls {
 			}
 			set {
 				ClearSelection ();
-				for (int i = 0; i < Items.Count; i++) {
-					if (Items [i].Value == value)
-						Items [i].Selected = true;
+				if (items == null || items.Count == 0) {
+					// This will happen when assigning this property
+					// before DataBind () is called on the control.
+					saved_selected_value = value;
+					return;
+				}
+
+				int count = Items.Count;
+				ListItemCollection coll = Items;
+				for (int i = 0; i < count; i++) {
+					Console.WriteLine ("Target: {0} value: {1}", value, coll [i].Value);
+					if (coll [i].Value == value)
+						coll [i].Selected = true;
 				}
 			}
 		}
@@ -320,35 +340,42 @@ namespace System.Web.UI.WebControls {
 
 			Items.Clear ();
 
+			string format = DataTextFormatString;
+			if (format == "")
+				format = null;
+
+			string text_field = DataTextField;
+			string value_field = DataValueField;
+			ListItemCollection coll = Items;
 			foreach (object container in list) {
 				string text;
-				string value;
+				string val;
 
-				if (DataTextField != String.Empty) {
-					text = DataBinder.Eval (container,
-							DataTextField).ToString ();
+				if (text_field != "") {
+					text = DataBinder.GetPropertyValue (container, text_field, format);
 				} else {
-					text = String.Empty;
+					text = "";
 				}
 
-				if (DataValueField != String.Empty) {
-					value = DataBinder.Eval (container,
-							DataValueField).ToString ();
+				if (value_field != "") {
+					val = DataBinder.GetPropertyValue (container, value_field).ToString ();
+				} else if (text_field == "") {
+					text = val = container.ToString ();
+					if (format != null)
+						text = String.Format (format, container);
 				} else {
-					value = text;
+					val = text;
 				}
+				coll.Add (new ListItem (text, val));
+			}
 
-				if (text == String.Empty) {
-					if (value != String.Empty)
-						text = value;
-				} else if (DataTextFormatString != String.Empty) {
-					// Dont apply the format string if we don't actually 
-					// have a textfield
-					text = String.Format (DataTextFormatString, text);
-				}
-
-				ListItem item = new ListItem (text, value);
-				Items.Add (item);
+			if (saved_selected_value != null) {
+				SelectedValue = saved_selected_value;
+				if (saved_selected_index != -2 && saved_selected_index != SelectedIndex)
+					throw new ArgumentException ("SelectedIndex and SelectedValue are mutually exclusive.");
+			} else if (saved_selected_index != -2) {
+				SelectedIndex = saved_selected_index;
+				// No need to check saved_selected_value here, as it's done before.
 			}
 		}
 

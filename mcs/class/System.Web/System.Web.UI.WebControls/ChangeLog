@@ -1,3 +1,10 @@
+2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListControl.cs: SelectedIndex/SelectedValue can be set before
+	DataBinding () is called on the control, so we have to keep this values
+	around and use them after the data is read. If both properties are
+	used, they must refer to the same item.
+
 2005-09-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataList.cs: fill in the data keys from BaseDataList so that the
