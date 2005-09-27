@@ -97,12 +97,17 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
+#if ONLY_1_1
 		[ExpectedException (typeof (NullReferenceException))]
+#endif
 		public void OnlyInner () 
 		{
 			XmlNodeList inner = InnerXml (""); // empty
 			transform.LoadInnerXml (inner);
 			XmlNodeList xnl = (XmlNodeList) transform.GetOutput ();
+#if NET_2_0
+			AssertEquals ("Count", 0, xnl.Count);
+#endif
 		}
 
 		private XmlDocument GetDoc () 
@@ -145,9 +150,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (XPathException))]
-#endif
 		public void LoadInputAsXmlDocument_EmptyXPath () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -170,9 +172,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (XPathException))]
-#endif
 		public void LoadInputAsXmlNodeList_EmptyXPath () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -205,9 +204,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-#if NET_2_0
-		[ExpectedException (typeof (XPathException))]
-#endif
 		public void LoadInputAsStream_EmptyXPath () 
 		{
 			XmlDocument doc = GetDoc ();
@@ -275,9 +271,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		[Test]
 		[Category ("NotWorking")]
 		// MS.NET looks incorrect, or something incorrect in this test code; It turned out nothing to do with function here()
-#if NET_2_0
-		[ExpectedException (typeof (XPathException))]
-#endif
 		public void FunctionHereObsolete ()
 		{
 			XmlDsigXPathTransform t = new XmlDsigXPathTransform ();
@@ -291,30 +284,46 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 
 			doc.LoadXml ("<element a='b'><foo><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
-			// FX 2.0 throws at next line!
+
 			XmlNodeList nl = (XmlNodeList) t.GetOutput ();
-			AssertEquals (0, nl.Count);
+			AssertEquals ("0", 0, nl.Count);
 
 			doc.LoadXml ("<element xmlns='urn:foo'><foo><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
-			AssertEquals (1, nl.Count);
+#if NET_2_0
+			AssertEquals ("1", 0, nl.Count);
+#else
+			AssertEquals ("1", 1, nl.Count);
+#endif
 
 			doc.LoadXml ("<element xmlns='urn:foo'><foo xmlns='urn:bar'><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
-			AssertEquals (2, nl.Count);
+#if NET_2_0
+			AssertEquals ("2", 0, nl.Count);
+#else
+			AssertEquals ("2", 2, nl.Count);
+#endif
 
 			doc.LoadXml ("<element xmlns='urn:foo' xmlns:x='urn:x'><foo xmlns='urn:bar'><bar>test</bar></foo></element>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
-			AssertEquals (3, nl.Count);
+#if NET_2_0
+			AssertEquals ("3", 0, nl.Count);
+#else
+			AssertEquals ("3", 3, nl.Count);
+#endif
 
 			doc.LoadXml ("<envelope><Signature xmlns='http://www.w3.org/2000/09/xmldsig#'><XPath>blah</XPath></Signature></envelope>");
 			t.LoadInput (doc);
 			nl = (XmlNodeList) t.GetOutput ();
-			AssertEquals (1, nl.Count);
-			AssertEquals (XmlNodeType.Attribute, nl [0].NodeType);
+#if NET_2_0
+			AssertEquals ("4", 0, nl.Count);
+#else
+			AssertEquals ("4", 1, nl.Count);
+			AssertEquals ("NodeType", XmlNodeType.Attribute, nl [0].NodeType);
+#endif
 		}
 	}
 }

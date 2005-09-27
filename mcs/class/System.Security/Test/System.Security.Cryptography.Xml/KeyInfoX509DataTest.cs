@@ -85,13 +85,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		{
 			KeyInfoX509Data data = new KeyInfoX509Data ((X509Certificate)null);
 		}
-
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void Constructor_X509CertificateByteArray_Null () 
-		{
-			KeyInfoX509Data data = new KeyInfoX509Data ((byte[])null);
-		}
 #else
 		[Test]
 		[ExpectedException (typeof (CryptographicException))]
@@ -119,12 +112,6 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 		}
 
 		[Test]
-		public void Constructor_X509CertificateByteArray_Null () 
-		{
-			KeyInfoX509Data data = new KeyInfoX509Data ((byte[])null);
-		}
-
-		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor_X509CertificateByteArray_Null_GetXml () 
 		{
@@ -132,6 +119,12 @@ namespace MonoTests.System.Security.Cryptography.Xml {
 			XmlElement invalid = data.GetXml ();
 		}
 #endif
+		[Test]
+		public void Constructor_X509CertificateByteArray_Null ()
+		{
+			KeyInfoX509Data data = new KeyInfoX509Data ((byte[]) null);
+		}
+
 		[Test]
 		public void Constructor_X509Certificate () 
 		{
