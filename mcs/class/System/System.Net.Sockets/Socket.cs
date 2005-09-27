@@ -572,6 +572,9 @@ namespace System.Net.Sockets
 				return(blocking);
 			}
 			set {
+				if (disposed && closed)
+					throw new ObjectDisposedException (GetType ().ToString ());
+
 				int error;
 				
 				Blocking_internal(socket, value, out error);
@@ -1171,8 +1174,11 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void GetSocketOption_arr_internal(IntPtr socket, SocketOptionLevel level, SocketOptionName name, ref byte[] byte_val, out int error);
 
-		public object GetSocketOption(SocketOptionLevel level,
-					      SocketOptionName name) {
+		public object GetSocketOption (SocketOptionLevel level, SocketOptionName name)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			object obj_val;
 			int error;
 			
@@ -1195,9 +1201,11 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public void GetSocketOption(SocketOptionLevel level,
-					    SocketOptionName name,
-					    byte[] opt_value) {
+		public void GetSocketOption (SocketOptionLevel level, SocketOptionName name, byte [] opt_value)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			int error;
 			
 			GetSocketOption_arr_internal(socket, level, name,
@@ -1208,9 +1216,11 @@ namespace System.Net.Sockets
 			}
 		}
 
-		public byte[] GetSocketOption(SocketOptionLevel level,
-					      SocketOptionName name,
-					      int length) {
+		public byte [] GetSocketOption (SocketOptionLevel level, SocketOptionName name, int length)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			byte[] byte_val=new byte[length];
 			int error;
 			
@@ -1257,7 +1267,11 @@ namespace System.Net.Sockets
 							   int backlog,
 							   out int error);
 
-		public void Listen(int backlog) {
+		public void Listen (int backlog)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			int error;
 			
 			Listen_internal(socket, backlog, out error);
@@ -1272,6 +1286,9 @@ namespace System.Net.Sockets
 
 		public bool Poll (int time_us, SelectMode mode)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (mode != SelectMode.SelectRead &&
 			    mode != SelectMode.SelectWrite &&
 			    mode != SelectMode.SelectError)
@@ -1296,6 +1313,9 @@ namespace System.Net.Sockets
 		
 		public int Receive (byte [] buf)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1304,6 +1324,9 @@ namespace System.Net.Sockets
 
 		public int Receive (byte [] buf, SocketFlags flags)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1312,6 +1335,9 @@ namespace System.Net.Sockets
 
 		public int Receive (byte [] buf, int size, SocketFlags flags)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1331,6 +1357,9 @@ namespace System.Net.Sockets
 
 		public int Receive (byte [] buf, int offset, int size, SocketFlags flags)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1363,6 +1392,9 @@ namespace System.Net.Sockets
 		
 		public int ReceiveFrom (byte [] buf, ref EndPoint remote_end)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1374,6 +1406,9 @@ namespace System.Net.Sockets
 
 		public int ReceiveFrom (byte [] buf, SocketFlags flags, ref EndPoint remote_end)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1387,6 +1422,9 @@ namespace System.Net.Sockets
 		public int ReceiveFrom (byte [] buf, int size, SocketFlags flags,
 					ref EndPoint remote_end)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1412,6 +1450,9 @@ namespace System.Net.Sockets
 		public int ReceiveFrom (byte [] buf, int offset, int size, SocketFlags flags,
 					ref EndPoint remote_end)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1460,6 +1501,9 @@ namespace System.Net.Sockets
 
 		public int Send (byte [] buf)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1468,6 +1512,9 @@ namespace System.Net.Sockets
 
 		public int Send (byte [] buf, SocketFlags flags)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1476,6 +1523,9 @@ namespace System.Net.Sockets
 
 		public int Send (byte [] buf, int size, SocketFlags flags)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buf");
 
@@ -1494,6 +1544,9 @@ namespace System.Net.Sockets
 
 		public int Send (byte [] buf, int offset, int size, SocketFlags flags)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buf == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -1529,6 +1582,9 @@ namespace System.Net.Sockets
 
 		public int SendTo (byte [] buffer, EndPoint remote_end)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -1540,6 +1596,9 @@ namespace System.Net.Sockets
 
 		public int SendTo (byte [] buffer, SocketFlags flags, EndPoint remote_end)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -1551,6 +1610,9 @@ namespace System.Net.Sockets
 
 		public int SendTo (byte [] buffer, int size, SocketFlags flags, EndPoint remote_end)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -1576,6 +1638,9 @@ namespace System.Net.Sockets
 		public int SendTo (byte [] buffer, int offset, int size, SocketFlags flags,
 				   EndPoint remote_end)
 		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			if (buffer == null)
 				throw new ArgumentNullException ("buffer");
 
@@ -1622,6 +1687,7 @@ namespace System.Net.Sockets
 		{
 			if (disposed && closed)
 				throw new ObjectDisposedException (GetType ().ToString ());
+
 			int error;
 			
 			SetSocketOption_internal(socket, level, name, null,
@@ -1685,7 +1751,11 @@ namespace System.Net.Sockets
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Shutdown_internal(IntPtr socket, SocketShutdown how, out int error);
 		
-		public void Shutdown(SocketShutdown how) {
+		public void Shutdown (SocketShutdown how)
+		{
+			if (disposed && closed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
 			int error;
 			
 			Shutdown_internal(socket, how, out error);
