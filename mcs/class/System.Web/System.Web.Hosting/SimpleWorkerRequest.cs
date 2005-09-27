@@ -48,6 +48,7 @@ namespace System.Web.Hosting {
 		string query;
 		string app_virtual_dir;
 		string app_physical_dir;
+		string path_info;
 		TextWriter output;
 
 		bool hosted;
@@ -177,7 +178,15 @@ namespace System.Web.Hosting {
 
 		public override string GetPathInfo ()
 		{
-			return "";
+			if (path_info == null) {
+				int idx = page.IndexOf ('/');
+				if (idx >= 0) {
+					path_info = page.Substring (idx);
+				} else {
+					path_info = "";
+				}
+			}
+			return path_info;
 		}
 
 		public override string GetQueryString ()
@@ -212,9 +221,8 @@ namespace System.Web.Hosting {
 
 		public override string GetUriPath ()
 		{
-			int length = app_virtual_dir.Length;
-			if (length > 0 && app_virtual_dir [length - 1] == '/')
-				return app_virtual_dir + page;
+			if (app_virtual_dir == "/")
+				return app_virtual_dir +  page;
 			return app_virtual_dir + "/" + page;
 		}
 
