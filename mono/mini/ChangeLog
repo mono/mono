@@ -1,3 +1,8 @@
+2005-09-27  Ben Maurer  <bmaurer@ximian.com>
+
+	* *.c: Replace the use of {Enter,Leave}CriticalSection with
+        macros. This will allow a deadlock debugger to easily be plugged
+        in.
 
 Tue Sep 27 09:32:11 EDT 2005 Paolo Molaro <lupus@ximian.com>
 
