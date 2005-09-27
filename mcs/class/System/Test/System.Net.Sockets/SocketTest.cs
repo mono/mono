@@ -219,6 +219,249 @@ namespace MonoTests.System.Net.Sockets
 				sock.Send (b);
 			}
 		}
+
+		byte[] buf = new byte[100];
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed1 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.ReceiveFrom (buf, ref ep);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed2 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.Blocking = true;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed3 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.GetSocketOption (0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed4 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.GetSocketOption (0, 0, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed5 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.GetSocketOption (0, 0, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed6 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.Listen (5);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed7 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.Poll (100, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed8 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.Receive (buf);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed9 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.Receive (buf, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed10 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.Receive (buf, 10, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed11 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.Receive (buf, 0, 10, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed12 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.ReceiveFrom (buf, 0, ref ep);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed13 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.ReceiveFrom (buf, 10, 0, ref ep);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed14 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.ReceiveFrom (buf, 0, 10, 0, ref ep);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed15 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.Send (buf);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed16 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.Send (buf, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed17 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			s.Close();
+
+			s.Send (buf, 10, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed18 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.Send (buf, 0, 10, 0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed19 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.SendTo (buf, 0, ep);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed20 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.SendTo (buf, 10, 0, ep);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed21 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.SendTo (buf, 0, 10, 0, ep);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed22 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.SendTo (buf, ep);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ObjectDisposedException))]
+		public void Disposed23 ()
+		{
+			Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+			EndPoint ep = new IPEndPoint (IPAddress.Any, 31337);
+			s.Close();
+
+			s.Shutdown (0);
+		}
 	}
 }
 
