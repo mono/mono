@@ -1,3 +1,8 @@
+
+Tue Sep 27 09:32:11 EDT 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-ppc.c, cpu-g4.md: added memory barrier instruction.
+
 2005-09-27  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (AM_CFLAGS): Rename from INCLUDES.
