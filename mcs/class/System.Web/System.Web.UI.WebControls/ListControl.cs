@@ -350,10 +350,9 @@ namespace System.Web.UI.WebControls {
 				string text;
 				string val;
 
+				text = val = null;
 				if (text_field != "") {
 					text = DataBinder.GetPropertyValue (container, text_field, format);
-				} else {
-					text = "";
 				}
 
 				if (value_field != "") {
@@ -362,9 +361,13 @@ namespace System.Web.UI.WebControls {
 					text = val = container.ToString ();
 					if (format != null)
 						text = String.Format (format, container);
-				} else {
+				} else if (text != null) {
 					val = text;
 				}
+
+				if (text == null)
+					text = val;
+
 				coll.Add (new ListItem (text, val));
 			}
 

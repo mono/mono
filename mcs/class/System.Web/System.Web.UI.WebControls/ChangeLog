@@ -1,5 +1,10 @@
 2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ListControl.cs: this fixes TestValueFieldAndTextFormat from
+	DropDownListTest.
+
+2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FontUnit.cs: use a table for FontSize names, as the X{1,2}.* ones are
 	converted to string as X{1,2}-.*. All FontUnitTests pass now.
 	* Unit.cs: throw a format exception when there's not number or minus
