@@ -1,3 +1,11 @@
+2005-09-27  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_call_opcode): Use mono_class_value_size ()
+	to determine the amount of memory to copy when passing valuetypes.
+
+	* inssel-amd64.brg: Remove PUSH(LDIND4) rules since they convert an
+	4 byte load into a 8 byte load. Fix aligning of size in OP_OUTARG_VT.
+
 2005-09-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h mini.c aot.c: Add infrastructure to collect pagefault 
