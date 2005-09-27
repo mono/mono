@@ -1,3 +1,10 @@
+2005-09-27  Martin Baulig  <martin@ximian.com>
+
+	* reflection.c (encode_type): For `MONO_TYPE_CLASS/VALUETYPE', use
+	`k->byval_arg.type' to determine the actual type.
+
+	* loader.c (method_from_methodspec): Removed some hacks.
+
 2005-09-27  Ben Maurer  <bmaurer@ximian.com>
 
 	* class-internals.h (mono_field_is_deleted): Do the test for
