@@ -2,8 +2,8 @@
 
 	* Makefile.am (AM_CFLAGS): Rename from INCLUDES.
 	(AM_CFLAGS) [PLATFORM_WIN32): Append to it, don't set it.
-	(AM_CFLAGS) [ARM]: Add arch/arm directory from the
-	build tree.
+	(AM_CFLAGS) [ARM]: Add arch/arm directory from the build tree.
+	($(arch_built)) [CROSS_COMPILING]: Error out.
 
 2005-09-26  Zoltan Varga  <vargaz@gmail.com>
 
