@@ -28,22 +28,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Web;
+using System.Security;
+using System.Security.Permissions;
 using System.Web.UI;
 using System.Web.Util;
 
 namespace System.Web.Hosting {
 
+	// CAS
+	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+	// attributes
 	[ComVisible (false)]
 	public class SimpleWorkerRequest : HttpWorkerRequest {
 		string page;
 		string query;
 		string app_virtual_dir;
 		string app_physical_dir;
+		string path_info;
 		TextWriter output;
 
 		bool hosted;
@@ -55,6 +60,7 @@ namespace System.Web.Hosting {
 		// Constructor used when the target application domain
 		// was created with ApplicationHost.CreateApplicationHost
 		//
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public SimpleWorkerRequest (string page, string query, TextWriter output)
 		{
 			this.page = page;
@@ -71,6 +77,7 @@ namespace System.Web.Hosting {
 		//
 		// This is used for user instantiates HttpContext (my_SimpleWorkerRequest)
 		//
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public SimpleWorkerRequest (string appVirtualDir, string appPhysicalDir, string page, string query, TextWriter output)
 		{
 			this.page = page;
@@ -83,16 +90,26 @@ namespace System.Web.Hosting {
 		
 		public override string MachineConfigPath {
 			get {
-				if (hosted)
-					return ICalls.GetMachineConfigPath ();
+				if (hosted) {
+					string path = ICalls.GetMachineConfigPath ();
+					if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
+						new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand (); 
+					}
+					return path;
+				}
 				return null;
 			}
 		}
 
 		public override string MachineInstallDirectory {
 			get {
-				if (hosted)
-					return ICalls.GetMachineInstallDirectory ();
+				if (hosted) {
+					string path = ICalls.GetMachineInstallDirectory ();
+					if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
+						new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand (); 
+					}
+					return path;
+				}
 				return null;
 			}
 		}
@@ -112,6 +129,9 @@ namespace System.Web.Hosting {
 
 		public override string GetAppPathTranslated ()
 		{
+			if (SecurityManager.SecurityEnabled && (app_physical_dir != null) && (app_physical_dir.Length > 0)) {
+				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, app_physical_dir).Demand (); 
+			}
 			return app_physical_dir;
 		}
 
@@ -129,7 +149,11 @@ namespace System.Web.Hosting {
 			else
 				local_page = page;
 			
-			return Path.Combine (app_physical_dir, local_page);
+			string path = Path.Combine (app_physical_dir, local_page);
+			if (SecurityManager.SecurityEnabled && (path != null) && (path.Length > 0)) {
+				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, path).Demand (); 
+			}
+			return path;
 		}
 
 		public override string GetHttpVerbName ()
@@ -154,7 +178,15 @@ namespace System.Web.Hosting {
 
 		public override string GetPathInfo ()
 		{
-			return "";
+			if (path_info == null) {
+				int idx = page.IndexOf ('/');
+				if (idx >= 0) {
+					path_info = page.Substring (idx);
+				} else {
+					path_info = "";
+				}
+			}
+			return path_info;
 		}
 
 		public override string GetQueryString ()
@@ -189,6 +221,8 @@ namespace System.Web.Hosting {
 
 		public override string GetUriPath ()
 		{
+			if (app_virtual_dir == "/")
+				return app_virtual_dir +  page;
 			return app_virtual_dir + "/" + page;
 		}
 
