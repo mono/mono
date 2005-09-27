@@ -16,16 +16,18 @@ $(symlinks):
 
 SUPPORT_FILES = $(symlinks) mono-wrapper wrapper-config
 
-# The write check is to foil 'make distcheck'
-all-local: $(SUPPORT_FILES)
-	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
-	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' all-profiles
-
 if INSTALL_2_0
 build_profiles = default net_2_0
 else
 build_profiles = default
 endif
+
+if BUILD_MCS
+
+# The write check is to foil 'make distcheck'
+all-local: $(SUPPORT_FILES)
+	if test -w $(mcs_topdir); then :; else chmod -R +w $(mcs_topdir); fi
+	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' all-profiles
 
 # override automake
 install: install-exec install-data
@@ -47,6 +49,8 @@ clean-local:
 	cd $(mcs_topdir) && $(MAKE) PROFILES='$(build_profiles)' clean-profiles
 	-./semdel-wrapper
 	-rm -fr $(etctmp) $(tmpinst) .wapi
+
+endif BUILD_MCS
 
 if INSTALL_2_0
 TEST_SUPPORT_FILES = $(tmpinst)/bin/mono $(tmpinst)/bin/mcs $(tmpinst)/bin/mbas $(tmpinst)/bin/ilasm $(tmpinst)/bin/gmcs
