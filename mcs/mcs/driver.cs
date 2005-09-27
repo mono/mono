@@ -1320,8 +1320,7 @@ namespace Mono.CSharp
 				return true;
 			}
 
-			//Report.Error (2007, String.Format ("Unrecognized command-line option: `{0}'", option));
-			//Environment.Exit (1);
+			Report.Error (2007, "Unrecognized command-line option: `{0}'", option);
 			return false;
 		}
 
@@ -1435,10 +1434,12 @@ namespace Mono.CSharp
 						string csc_opt = "/" + arg.Substring (1);
 						if (CSCParseOption (csc_opt, ref args, ref i))
 							continue;
+						return false;
 					} else {
-						if (arg.StartsWith ("/")){
+						if (arg [0] == '/'){
 							if (CSCParseOption (arg, ref args, ref i))
 								continue;
+							return false;
 						}
 					}
 				}

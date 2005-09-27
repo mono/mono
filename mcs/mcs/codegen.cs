@@ -7,7 +7,11 @@
 // (C) 2001, 2002, 2003 Ximian, Inc.
 // (C) 2004 Novell, Inc.
 //
-#define PRODUCTION
+
+#if !DEBUG
+	#define PRODUCTION
+#endif
+
 using System;
 using System.IO;
 using System.Collections;

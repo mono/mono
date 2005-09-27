@@ -1,3 +1,36 @@
+2005-09-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* anonymous.cs: Implemented ExprClassName.
+	
+	* assign.cs (Assign.DoResolve): Don't chrash when type is not
+	delegate.
+	
+	* attribute.cs (ResolveArguments): Enabled MethodImplOptions
+	check.
+	
+	* class.cs (StaticClass.DefineContainerMembers): Report protected
+	members as error.
+	
+	* codegen.cs: if(ed) PRODUCTION.
+	
+	* convert.cs (Error_CannotImplicitConversion): Better error
+	distinction.
+	
+	* cs-parser.jay: More error checks.
+	
+	* cs-tokenizer.cs (consume_identifier): Fixed Miguel's revert.
+	
+	* driver.cs (CSCParseOption): Enabled wrong option check.
+	
+	* ecore.cs (Expression.ExprClassName): Turned to property.
+	(MemberExpr.CheckIntermediateModification): For checking boxed
+	value types	modification.
+	
+	* statement.cs (Fixed.Resolve): Expression type must be
+	convertible to fixed type.
+	(CollectionForeach.GetEnumeratorFilter,TryType):
+	Small refactoring for easier error checking.
+
 2005-09-26  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute.Resolve): Check Obsolete attribute for

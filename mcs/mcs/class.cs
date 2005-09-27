@@ -2403,7 +2403,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!Parent.IsClsCompliaceRequired (ds)) {
-				Report.Error (3018, Location, "`{0}' cannot be marked as CLS-Compliant because it is a member of non CLS-Compliant type `{1}'", 
+				Report.Error (3018, Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'", 
 					GetSignatureForError (), Parent.GetSignatureForError ());
 			}
 			return true;
@@ -2827,12 +2827,19 @@ namespace Mono.CSharp {
 
 			foreach (MemberCore m in list) {
 				if (m is Operator) {
-					Report.Error (715, m.Location, "`{0}': static classes cannot contain user-defined operators", m.GetSignatureForError ());
+					Report.Error (715, m.Location, "`{0}': Static classes cannot contain user-defined operators", m.GetSignatureForError ());
 					continue;
 				}
 
-				if ((m.ModFlags & Modifiers.PROTECTED) != 0)
-					Report.Warning (-628, 4, m.Location, "`{0}': new protected member declared in static class", m.GetSignatureForError ());
+				if (m is Destructor) {
+					Report.Error (711, m.Location, "`{0}': Static classes cannot contain destructor", GetSignatureForError ());
+					continue;
+				}
+
+				if ((m.ModFlags & Modifiers.PROTECTED) != 0) {
+					Report.Error (1057, m.Location, "`{0}': Static classes cannot contain protected members", m.GetSignatureForError ());
+					continue;
+				}
 
 				if (m is Indexer) {
 					Report.Error (720, m.Location, "`{0}': cannot declare indexers in a static class", m.GetSignatureForError ());
@@ -2844,11 +2851,6 @@ namespace Mono.CSharp {
 
 				if (m is Constructor) {
 					Report.Error (710, m.Location, "`{0}': Static classes cannot have instance constructors", GetSignatureForError ());
-					continue;
-				}
-
-				if (m is Destructor) {
-					Report.Error (711, m.Location, "`{0}': Static classes cannot contain destructor", GetSignatureForError ());
 					continue;
 				}
 

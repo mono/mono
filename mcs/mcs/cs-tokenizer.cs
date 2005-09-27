@@ -1929,9 +1929,14 @@ namespace Mono.CSharp
 				identifiers [pos] = new CharArrayHashtable (pos);
 
 			val = new String (id_builder, 0, pos);
-			if (RootContext.Version == LanguageVersion.ISO_1 && id_builder [0] == '_' && id_builder [1] == '_') {
-				Report.Error (1638, Location, 
-					"`{0}': Any identifier with double underscores cannot be used when ISO language version mode is specified", val);
+			if (RootContext.Version == LanguageVersion.ISO_1) {
+				for (int i = 1; i < id_builder.Length; i += 3) {
+					if (id_builder [i] == '_' && (id_builder [i - 1] == '_' || id_builder [i + 1] == '_')) {
+						Report.Error (1638, Location, 
+							"`{0}': Any identifier with double underscores cannot be used when ISO language version mode is specified", val);
+						break;
+					}
+				}
 			}
 
 			char [] chars = new char [pos];

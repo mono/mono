@@ -319,6 +319,12 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		public override string ExprClassName {
+			get {
+				return "anonymous method";
+			}
+		}
+
 		public MethodBuilder GetMethodBuilder ()
 		{
 			return method.MethodData.MethodBuilder;

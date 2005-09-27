@@ -3422,6 +3422,11 @@ namespace Mono.CSharp {
 					if (!TypeManager.VerifyUnManaged (child.Type, loc))
 						return false;
 
+					if (!Convert.ImplicitConversionExists (ec, e, expr_type)) {
+						Convert.Error_CannotImplicitConversion (e.Location, e.Type, expr_type);
+						return false;
+					}
+
 					data [i] = new ExpressionEmitter (e, vi);
 					i++;
 
@@ -3784,7 +3789,6 @@ namespace Mono.CSharp {
 		ArrayList var_list;
 		Expression expr;
 		Type expr_type;
-		Expression conv;
 		Expression [] resolved_vars;
 		Expression [] converted_vars;
 		ExpressionStatement [] assign;
@@ -3835,11 +3839,13 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				converted_vars [i] = Convert.ImplicitConversionRequired (
+				converted_vars [i] = Convert.ImplicitConversion (
 					ec, var, TypeManager.idisposable_type, loc);
 
-				if (converted_vars [i] == null)
+				if (converted_vars [i] == null) {
+					Error_IsNotConvertibleToIDisposable ();
 					return false;
+				}
 
 				i++;
 			}
@@ -3864,12 +3870,17 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		void Error_IsNotConvertibleToIDisposable ()
+		{
+			Report.Error (1674, loc, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
+				TypeManager.CSharpName (expr_type));
+		}
+
 		bool ResolveExpression (EmitContext ec)
 		{
 			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
 				if (Convert.ImplicitConversion (ec, expr, TypeManager.idisposable_type, loc) == null) {
-					Report.Error (1674, loc, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
-						TypeManager.CSharpName (expr_type));
+					Error_IsNotConvertibleToIDisposable ();
 					return false;
 				}
 			}
@@ -3957,10 +3968,8 @@ namespace Mono.CSharp {
 			//
 			ILGenerator ig = ec.ig;
 			local_copy = ig.DeclareLocal (expr_type);
-			if (conv != null)
-				conv.Emit (ec);
-			else
-				expr.Emit (ec);
+
+			expr.Emit (ec);
 			ig.Emit (OpCodes.Stloc, local_copy);
 
 			if (emit_finally)
@@ -4115,6 +4124,12 @@ namespace Mono.CSharp {
 
 			Type var_type = texpr.Type;
 
+			if (expr.eclass == ExprClass.MethodGroup || expr is AnonymousMethod) {
+				Report.Error (446, expr.Location, "Foreach statement cannot operate on a `{0}'",
+					expr.ExprClassName);
+				return false;
+			}
+
 			//
 			// We need an instance variable.  Not sure this is the best
 			// way of doing this.
@@ -4124,7 +4139,7 @@ namespace Mono.CSharp {
 			//
 			if (!(expr.eclass == ExprClass.Variable || expr.eclass == ExprClass.Value ||
 			      expr.eclass == ExprClass.PropertyAccess || expr.eclass == ExprClass.IndexerAccess)){
-				collection.error1579 ();
+				collection.Error_Enumerator ();
 				return false;
 			}
 
@@ -4306,6 +4321,7 @@ namespace Mono.CSharp {
 			MethodInfo move_next;
 			Type var_type, enumerator_type;
 			bool is_disposable;
+			bool enumerator_found;
 
 			public CollectionForeach (Type var_type, Expression var,
 						  Expression expr, Statement stmt, Location l)
@@ -4319,20 +4335,9 @@ namespace Mono.CSharp {
 
 			bool GetEnumeratorFilter (EmitContext ec, MethodInfo mi)
 			{
-				Type [] args = TypeManager.GetArgumentTypes (mi);
-				if (args != null){
-					if (args.Length != 0)
-						return false;
-				}
+				Type return_type = mi.ReturnType;
 
-				if (TypeManager.IsOverride (mi))
-					return false;
-			
-				// Check whether GetEnumerator is public
-				if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
-					return false;
-
-				if ((mi.ReturnType == TypeManager.ienumerator_type) && (mi.DeclaringType == TypeManager.string_type))
+				if ((return_type == TypeManager.ienumerator_type) && (mi.DeclaringType == TypeManager.string_type))
 					//
 					// Apply the same optimization as MS: skip the GetEnumerator
 					// returning an IEnumerator, and use the one returning a 
@@ -4346,8 +4351,7 @@ namespace Mono.CSharp {
 				// with this `GetEnumerator'
 				//
 
-				Type return_type = mi.ReturnType;
-				if (mi.ReturnType == TypeManager.ienumerator_type ||
+				if (return_type == TypeManager.ienumerator_type ||
 				    TypeManager.ienumerator_type.IsAssignableFrom (return_type) ||
 				    (!RootContext.StdLib && TypeManager.ImplementsInterface (return_type, TypeManager.ienumerator_type))) {
 					//
@@ -4378,11 +4382,11 @@ namespace Mono.CSharp {
 					// find if they support the GetEnumerator pattern.
 					//
 
-					if (!FetchMoveNext (ec, return_type))
+					if (TypeManager.HasElementType (return_type) || !FetchMoveNext (ec, return_type) || !FetchGetCurrent (ec, return_type)) {
+						Report.Error (202, loc, "foreach statement requires that the return type `{0}' of `{1}' must have a suitable public MoveNext method and public Current property",
+							TypeManager.CSharpName (return_type), TypeManager.CSharpSignature (mi));
 						return false;
-
-					if (!FetchGetCurrent (ec, return_type))
-						return false;
+					}
 				}
 
 				enumerator_type = return_type;
@@ -4464,11 +4468,15 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			public void error1579 ()
+			public void Error_Enumerator ()
 			{
+				if (enumerator_found) {
+					return;
+				}
+
 			    Report.Error (1579, loc,
-				"foreach statement cannot operate on variables of type `{0}' because it does not contain a definition for `GetEnumerator' or is not accessible",
-				TypeManager.CSharpName (expr.Type));
+					"foreach statement cannot operate on variables of type `{0}' because it does not contain a definition for `GetEnumerator' or is not accessible",
+					TypeManager.CSharpName (expr.Type));
 			}
 
 			bool TryType (EmitContext ec, Type t)
@@ -4480,6 +4488,19 @@ namespace Mono.CSharp {
 					return false;
 
 				foreach (MethodBase mb in mg.Methods) {
+					Type [] args = TypeManager.GetArgumentTypes (mb);
+					if (args != null && args.Length != 0)
+						continue;
+			
+					// Check whether GetEnumerator is public
+					if ((mb.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
+						continue;
+
+					if (TypeManager.IsOverride (mb))
+						continue;
+
+					enumerator_found = true;
+
 					if (!GetEnumeratorFilter (ec, (MethodInfo) mb))
 						continue;
 
@@ -4542,7 +4563,7 @@ namespace Mono.CSharp {
 				is_disposable = true;
 
 				if (!ProbeCollectionType (ec, expr.Type)) {
-					error1579 ();
+					Error_Enumerator ();
 					return false;
 				}
 

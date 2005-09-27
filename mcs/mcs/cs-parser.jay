@@ -947,6 +947,11 @@ fixed_variable_declarator
 	  {
 		$$ = new VariableDeclaration ((LocatedToken) $1, $3);
 	  }
+	| IDENTIFIER OPEN_BRACKET CLOSE_BRACKET
+	  {
+		Report.Error (443, lexer.Location, "Value or constant expected");
+		$$ = new VariableDeclaration ((LocatedToken) $1, null);
+	  }
 	;
 
 variable_declarators
@@ -4638,7 +4643,7 @@ void Error_ExpectingTypeName (Expression expr)
 	if (expr is Invocation){
 		Report.Error (1002, expr.Location, "Expecting `;'");
 	} else {
-		Report.Error (-1, expr.Location, "Invalid Type definition");
+		Report.Error (201, expr.Location, "Only assignment, call, increment, decrement, and new object expressions can be used as a statement");
 	}
 }
 

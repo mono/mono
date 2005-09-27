@@ -523,14 +523,16 @@ namespace Mono.CSharp {
 				}
 				catch (Exception e) {
 					Error_AttributeEmitError (e.Message);
+					return null;
 				}
 			}
-// TODO: reenable
-//			if (Type == TypeManager.methodimpl_attr_type &&
-//				pos_values.Length == 1 && ((Argument)pos_args [0]).Type == TypeManager.short_type &&
-//				!System.Enum.IsDefined (TypeManager.method_impl_options, pos_values [0])) {
-//					Error_AttributeEmitError ("Incorrect argument value.");
-//			}
+
+			if (Type == TypeManager.methodimpl_attr_type &&
+				pos_values.Length == 1 && ((Argument)pos_args [0]).Type == TypeManager.short_type &&
+				!System.Enum.IsDefined (typeof (MethodImplOptions), pos_values [0])) {
+					Error_AttributeEmitError ("Incorrect argument value.");
+				return null;
+			}
 
 			//
 			// Now we perform some checks on the positional args as they
