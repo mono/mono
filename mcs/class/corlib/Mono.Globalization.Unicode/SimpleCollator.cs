@@ -1073,12 +1073,18 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				}
 			}
 			if (currentLevel == 1 && finalResult != 0) {
-				while (idx1 < end1)
+				while (idx1 < end1) {
 					if (Uni.IsIgnorableNonSpacing (s1 [idx1]))
 						idx1++;
-				while (idx2 < end2)
+					else
+						break;
+				}
+				while (idx2 < end2) {
 					if (Uni.IsIgnorableNonSpacing (s2 [idx2]))
 						idx2++;
+					else
+						break;
+				}
 			}
 			// we still have to handle level 5
 			if (finalResult == 0) {

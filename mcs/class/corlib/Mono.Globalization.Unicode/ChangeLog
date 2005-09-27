@@ -1,3 +1,8 @@
+2005-09-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : in CompareInternal(), there was a possibility of
+	  infinite loop. Fixed bug #76243.
+
 2005-09-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : In IsPrefix/IsSuffix, if target is an empty string,

@@ -17,7 +17,7 @@ namespace MonoTests.System.Globalization
 [TestFixture]
 public class CompareInfoTest : Assertion
 {
-	static bool doTest = Environment.GetEnvironmentVariable ("MONO_USE_MANAGED_COLLATION") == "yes";
+	static bool doTest = Environment.GetEnvironmentVariable ("MONO_DISABLE_MANAGED_COLLATION") != "yes";
 
 	public CompareInfoTest() {}
 
@@ -852,6 +852,9 @@ public class CompareInfoTest : Assertion
 		// empty suffix always matches the source.
 		AssertIsPrefix ("#11", true, "", "");
 		AssertIsPrefix ("#12", true, "/test.css", "");
+
+		// bug #76243
+		AssertIsPrefix ("#13", false, "\u00e4_", "a");
 	}
 
 	[Test]
