@@ -361,6 +361,146 @@ namespace MonoTests.System.Web.UI.WebControls {
 			l.SelectedIndex = -1;
 		}
 
+		[Test]
+		public void DataBinding1 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.SelectedIndex = 2;
+			p.DataBind ();
+			Assert.AreEqual (3.ToString (), p.SelectedValue, "#01");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))] // The SelectedIndex and SelectedValue are mutually exclusive 
+		public void DataBinding2 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.SelectedIndex = 0;
+			p.SelectedValue = "3";
+			p.DataBind ();
+		}
+
+		[Test]
+		public void DataBinding3 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			// If Index and Value are used, everything's ok if they are selecting
+			// the same thing.
+			p.SelectedIndex = 2;
+			p.SelectedValue = "3";
+			p.DataBind ();
+			Assert.AreEqual ("3", p.SelectedValue, "#01");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void DataBinding4 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (null);
+			list.Add (3);
+			p.DataSource = list;
+			p.DataBind ();
+		}
+
+		class Data {
+			string name;
+			object val;
+
+			public Data (string name, object val)
+			{
+				this.name = name;
+				this.val = val;
+			}
+
+			public string Name {
+				get { return name; }
+			}
+
+			public object Value {
+				get { return val; }
+			}
+		}
+
+		[Test]
+		public void DataBinding5 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			p.DataTextField = "Name";
+			p.DataValueField = "Value";
+			ArrayList list = new ArrayList ();
+			list.Add (new Data ("uno", 1));
+			list.Add (new Data ("dos", 2));
+			list.Add (new Data ("tres", 3));
+			p.DataSource = list;
+			p.SelectedIndex = 2;
+			p.DataBind ();
+			Assert.AreEqual (3.ToString (), p.SelectedValue, "#01");
+			Assert.AreEqual ("tres", p.SelectedItem.Text, "#01");
+		}
+
+		[Test]
+		public void DataBindingFormat1 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.DataTextFormatString = "{0:00}";
+			p.SelectedIndex = 2;
+			p.DataBind ();
+			Assert.AreEqual ("3", p.SelectedValue, "#01");
+		}
+
+		[Test]
+		public void DataBindingFormat2 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (2);
+			list.Add (3);
+			p.DataSource = list;
+			p.DataTextFormatString = "{0:00}";
+			p.SelectedIndex = 2;
+			p.DataBind ();
+			Assert.AreEqual ("03", p.SelectedItem.Text, "#01");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void DataBindingFormat3 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			ArrayList list = new ArrayList ();
+			list.Add (1);
+			list.Add (null);
+			list.Add (3);
+			p.DataSource = list;
+			p.DataTextFormatString = "{0:00}";
+			p.SelectedIndex = 2;
+			p.DataBind ();
+		}
+
 		private void BeginIndexChanged (ListControl l)
 		{
 			l.SelectedIndexChanged += new EventHandler (IndexChangedHandler);
