@@ -62,6 +62,7 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
 		public void CopyFrom ()
 		{
 			/* byte[] data = ASN1Convert.FromOid ("1.2.840.113549.1.7.1").GetBytes (); */
@@ -69,13 +70,10 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			AsnEncodedData aed = new AsnEncodedData (data);
 			Pkcs9ContentType ct = new Pkcs9ContentType ();
 			ct.CopyFrom (aed);
-			Assert.AreEqual ("1.2.840.113549.1.7.1", ct.ContentType.Value, "ContentType");
-			Assert.IsNull (ct.Oid, "Oid");
-			Assert.AreEqual (data, ct.RawData, "RawData");
 		}
 
 		[Test]
-		[ExpectedException (typeof (CryptographicException))]
+		[ExpectedException (typeof (ArgumentException))]
 		public void CopyFrom_BadData ()
 		{
 			/* Note: this is the full structure (but only the OID part is required)
@@ -89,8 +87,6 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 			AsnEncodedData aed = new AsnEncodedData (data);
 			Pkcs9ContentType ct = new Pkcs9ContentType ();
 			ct.CopyFrom (aed);
-			// CopyFrom works, but the exception comes when accessing the ContentType property
-			Assert.IsNull (ct.ContentType);
 		}
 	}
 }

@@ -1,3 +1,10 @@
+2005-09-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Pkcs9AttributeTest.cs: Added new tests case for new overriden 
+	CopyFrom (added in 2.0 RC).
+	* Pkcs9ContentTypeTest.cs: Fixed tests case for 2.0 RC.
+	* Pkcs9MessageDigestTest.cs: Fixed tests case for 2.0 RC.
+
 2005-05-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ContentInfoTest.cs: Addd test cases for data, envelopedData and 

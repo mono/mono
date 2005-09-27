@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -107,6 +107,39 @@ namespace MonoTests.System.Security.Cryptography.Pkcs {
 		public void ConstructorStringArrayNull ()
 		{
 			Pkcs9AttributeObject a = new Pkcs9AttributeObject (defaultOid, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CopyFrom_Null ()
+		{
+			new Pkcs9AttributeObject ().CopyFrom (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CopyFrom_SigningTime_Raw ()
+		{
+			Pkcs9SigningTime st = new Pkcs9SigningTime (DateTime.UtcNow);
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject ();
+			a.CopyFrom (new AsnEncodedData (st.RawData));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CopyFrom_SigningTime_OidRaw ()
+		{
+			Pkcs9SigningTime st = new Pkcs9SigningTime (DateTime.UtcNow);
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject ();
+			a.CopyFrom (new AsnEncodedData (st.Oid, st.RawData));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void CopyFrom_Self ()
+		{
+			Pkcs9AttributeObject a = new Pkcs9AttributeObject ("1.2.3.4", new byte[2] { 0x05, 0x00 } );
+			a.CopyFrom (new AsnEncodedData (a.Oid, a.RawData));
 		}
 	}
 }
