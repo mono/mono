@@ -34,6 +34,11 @@ namespace System.Security.Cryptography.X509Certificates {
 
 	public sealed class X509Certificate2UI {
 
+		// sadly this isn't a static class
+		private X509Certificate2UI ()
+		{
+		}
+
 		[MonoTODO]
 		public static void DisplayCertificate (X509Certificate2 certificate)
 		{
@@ -48,7 +53,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 		[MonoTODO]
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
-		public static void Display (X509Certificate2 certificate, IntPtr hwndParent) 
+		public static void DisplayCertificate (X509Certificate2 certificate, IntPtr hwndParent) 
 		{
 			if (certificate == null)
 				throw new ArgumentNullException ("certificate");
