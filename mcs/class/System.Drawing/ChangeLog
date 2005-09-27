@@ -1,3 +1,7 @@
+2005-09-27  Kornél Pál  <kornelpal@hotmail.com>
+
+	* Makefile: Removed /codepage:28591 as it is the default.
+
 2005-09-19  Miguel de Icaza  <miguel@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Distribute indexed.png, add resource
@@ -256,7 +260,7 @@
 2003-02-07 Alexandre Pigolkine <pigolkine@gmx.de>
 	* list.unix		changed
 
-2002-12-1  Alejandro S�nchez Acosta  <raciel@es.gnu.org>
+2002-12-1  Alejandro Sánchez Acosta  <raciel@es.gnu.org>
 
 	* list.unix: Changed
 

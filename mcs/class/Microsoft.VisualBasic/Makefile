@@ -7,8 +7,11 @@ include ../../build/rules.make
 LIBRARY = Microsoft.VisualBasic.dll
 LIBRARY_NEEDS_POSTPROCESSING = yes
 
-LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Windows.Forms.dll @Microsoft.VisualBasic.dll.resources -codepage:65001
-TEST_MCS_FLAGS = -codepage:65001 -nowarn:0618 -nowarn:219 -nowarn:169
+# UTF-8
+CODEPAGE = 65001
+
+LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Windows.Forms.dll @Microsoft.VisualBasic.dll.resources
+TEST_MCS_FLAGS = -nowarn:0618 -nowarn:219 -nowarn:169
 
 LIB_MCS_FLAGS_RESOURCES = $(LIB_MCS_FLAGS) 
 

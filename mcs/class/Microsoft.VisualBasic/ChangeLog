@@ -1,3 +1,7 @@
+2005-09-27  Kornél Pál  <kornelpal@hotmail.com>
+
+	* Makefile: Replaced /codepage with CODEPAGE.
+
 2005-08-06  Ankit Jain  <jankit@novell.com>
 
 	* Makefile ($(the_il)): Add /dll switch.

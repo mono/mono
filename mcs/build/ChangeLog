@@ -1,3 +1,9 @@
+2005-09-27  Kornél Pál  <kornelpal@hotmail.com>
+
+	* config-default.make: Added CODEPAGE that is the default encoding used by
+	  compilers.
+	* rules.make (USE_MCS_FLAGS, USE_MBAS_FLAGS): Added /codepage.
+
 2005-09-22  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (BUILT_FILES): New.

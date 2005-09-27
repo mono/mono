@@ -12,7 +12,6 @@ LIB_MCS_FLAGS = /r:$(corlib) /r:System.dll /r:System.Xml.dll \
 	/r:System.Data.dll /r:ICSharpCode.SharpZipLib.dll \
 	/r:System.Design.dll /r:System.Drawing.dll /r:System.Windows.Forms.dll \
 	/r:Mono.Posix.dll \
-	/codepage:28591 \
 	$(OTHER_RES:%=/res:%)
 
 NO_TEST = yes
