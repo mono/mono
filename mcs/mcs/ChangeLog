@@ -1,5 +1,11 @@
 2005-09-27  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix #72930.
+	* const.cs (Const.ResolveValue): Check for assigning non-null
+	value to reference type.
+
+2005-09-27  Marek Safar  <marek.safar@seznam.cz>
+
 	* anonymous.cs: Implemented ExprClassName.
 	
 	* assign.cs (Assign.DoResolve): Don't chrash when type is not
