@@ -253,7 +253,9 @@ namespace System.Windows.Forms
 		[ListBindable(false)]
 		public class ControlCollection : IList, ICollection, ICloneable, IEnumerable {
 			#region	ControlCollection Local Variables
-			internal ArrayList	list;
+			private ArrayList	list;
+			private ArrayList	impl_list;
+			private Control []	all_controls;
 			internal Control	owner;
 			#endregion	// ControlCollection Local Variables
 
@@ -293,14 +295,8 @@ namespace System.Windows.Forms
 				if (value == null)
 					return;
 				
-				for (int i = list.Count; i > 0; ) {
-					i--;
-					
-					if (list [i] == value) {
-						// Do we need to do anything here?
-						return;
-					}
-				}
+                                if (Contains (value))
+                                        return;
 
 				if (value.tab_index == -1) {
 					int	end;
@@ -318,12 +314,29 @@ namespace System.Windows.Forms
 					value.tab_index = use;
 				}
 
+				all_controls = null;
 				list.Add (value);
 				value.Parent = owner;
 				owner.UpdateZOrder();
 				owner.OnControlAdded(new ControlEventArgs(value));
 			}
 			
+			internal void AddToList (Control c)
+			{
+				all_controls = null;
+				list.Add (c);
+			}
+
+			internal virtual void AddImplicit (Control control)
+			{
+				if (impl_list == null)
+					impl_list = new ArrayList ();
+				all_controls = null;
+				impl_list.Add (control);
+				control.Parent = owner;
+				owner.UpdateZOrder ();
+			}
+
 			public virtual void AddRange (Control[] controls)
 			{
 				if (controls == null)
@@ -339,9 +352,25 @@ namespace System.Windows.Forms
 				}
 			}
 
+			internal virtual void AddRangeImplicit (Control [] controls)
+			{
+				if (controls == null)
+					throw new ArgumentNullException ("controls");
+
+				owner.SuspendLayout ();
+
+				try {
+					for (int i = 0; i < controls.Length; i++)
+						AddImplicit (controls [i]);
+				} finally {
+					owner.ResumeLayout ();
+				}
+			}
+
 			public virtual void Clear ()
 			{
 				owner.SuspendLayout();
+				all_controls = null;
 				for (int i = 0; i < list.Count; i++) {
 					owner.OnControlRemoved(new ControlEventArgs((Control)list[i]));
 				}
@@ -349,9 +378,46 @@ namespace System.Windows.Forms
 				owner.ResumeLayout();
 			}
 
+			internal virtual void ClearImplicit ()
+			{
+				if (impl_list == null)
+					return;
+				all_controls = null;
+				impl_list.Clear ();
+			}
+
 			public bool Contains (Control value)
 			{
-				return list.Contains (value);
+				for (int i = list.Count; i > 0; ) {
+					i--;
+					
+					if (list [i] == value) {
+						// Do we need to do anything here?
+						return true;
+					}
+				}
+				return false;
+			}
+
+			internal bool ImplicitContains (Control value)
+			{
+				if (impl_list == null)
+					return false;
+
+				for (int i = impl_list.Count; i > 0; ) {
+					i--;
+					
+					if (impl_list [i] == value) {
+						// Do we need to do anything here?
+						return true;
+					}
+				}
+				return false;
+			}
+
+			internal bool AllContains (Control value)
+			{
+				return Contains (value) || ImplicitContains (value);
 			}
 
 			public void CopyTo (Array array, int index)
@@ -386,6 +452,25 @@ namespace System.Windows.Forms
 				return list.GetEnumerator();
 			}
 
+			internal IEnumerator GetAllEnumerator ()
+			{
+				Control [] res = GetAllControls ();
+				return res.GetEnumerator ();
+			}
+
+			internal Control [] GetAllControls ()
+			{
+				if (all_controls != null)
+					return all_controls;
+
+				if (impl_list == null)
+					return (Control []) list.ToArray (typeof (Control));
+				Control [] res = new Control [list.Count + impl_list.Count];
+				list.CopyTo (res);
+				impl_list.CopyTo (res, list.Count);
+				return res;
+			}
+
 			public override int GetHashCode() {
 				return base.GetHashCode();
 			}
@@ -395,10 +480,22 @@ namespace System.Windows.Forms
 			}
 
 			public virtual void Remove(Control value) {
+				all_controls = null;
+
 				owner.OnControlRemoved(new ControlEventArgs(value));
 				list.Remove(value);
 				value.parent = null;
 				owner.UpdateZOrder();
+			}
+
+			internal virtual void RemoveImplicit (Control control)
+			{
+				if (impl_list != null) {
+					all_controls = null;
+					impl_list.Remove (control);
+				}
+				control.Parent = null;
+				owner.UpdateZOrder ();
 			}
 
 			public void RemoveAt(int index) {
@@ -508,6 +605,7 @@ namespace System.Windows.Forms
 				if (!(value is Control)) {
 					throw new ArgumentException("Object of type Control required", "value");
 				}
+				all_controls = null;
 				list.Insert(index, value);
 			}
 
@@ -515,6 +613,7 @@ namespace System.Windows.Forms
 				if (!(value is Control)) {
 					throw new ArgumentException("Object of type Control required", "value");
 				}
+				all_controls = null;
 				list.Remove(value);
 			}
 
@@ -1707,7 +1806,8 @@ namespace System.Windows.Forms
 
 					parent=value;
 
-					if (!parent.Controls.Contains(this)) {
+					if (!parent.Controls.AllContains (this)) {
+                                                Console.WriteLine ("Adding child:  " + this);
 						parent.Controls.Add(this);
 					}
 
@@ -2208,8 +2308,9 @@ namespace System.Windows.Forms
 				OnCreateControl();
 			}
 
-			for (int i=0; i<child_controls.Count; i++) {
-				child_controls[i].CreateControl();
+			Control [] controls = child_controls.GetAllControls ();
+			for (int i=0; i<controls.Length; i++) {
+				controls [i].CreateControl ();
 			}
 		}
 
@@ -2321,7 +2422,9 @@ namespace System.Windows.Forms
 			XplatUI.Invalidate(Handle, rc, false);
 
 			if (invalidateChildren) {
-				for (int i=0; i<child_controls.Count; i++) child_controls[i].Invalidate();
+				Control [] controls = child_controls.GetAllControls ();
+				for (int i=0; i<controls.Length; i++)
+					controls [i].Invalidate ();
 			}
 			OnInvalidated(new InvalidateEventArgs(rc));
 		}
@@ -2390,8 +2493,9 @@ namespace System.Windows.Forms
 				}
 
 				// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
-				for (int i = child_controls.Count - 1; i >= 0; i--) {
-					child=child_controls[i];
+				Control [] controls = child_controls.GetAllControls ();
+				for (int i = controls.Length - 1; i >= 0; i--) {
+					child = controls [i];
 					switch (child.Dock) {
 						case DockStyle.None: {
 							// Do nothing
@@ -2426,8 +2530,8 @@ namespace System.Windows.Forms
 					}
 				}
 
-				for (int i = child_controls.Count - 1; i >= 0; i--) {
-					child=child_controls[i];
+				for (int i = controls.Length - 1; i >= 0; i--) {
+					child=controls[i];
 
 					if (child.Dock == DockStyle.Fill) {
 						child.SetBounds(space.Left, space.Top, space.Width, space.Height);
@@ -2439,13 +2543,13 @@ namespace System.Windows.Forms
 				space=this.DisplayRectangle;
 
 				// Deal with anchoring
-				for (int i=0; i < child_controls.Count; i++) {
+				for (int i=0; i < controls.Length; i++) {
 					int left;
 					int top;
 					int width;
 					int height;
 
-					child=child_controls[i];
+					child=controls[i];
 					anchor=child.Anchor;
 
 					left=child.Left;
@@ -2560,14 +2664,13 @@ namespace System.Windows.Forms
 
 		public virtual void Refresh() {			
 			if (IsHandleCreated == true) {
-				int	end;
 
 				Invalidate();
 				XplatUI.UpdateWindow(window.Handle);
 
-				end = child_controls.Count;
-				for (int i=0; i < end; i++) {
-					child_controls[i].Refresh();
+				Control [] controls = child_controls.GetAllControls ();
+				for (int i=0; i < controls.Length; i++) {
+					controls[i].Refresh();
 				}
 				
 			}
@@ -2763,8 +2866,9 @@ namespace System.Windows.Forms
 			if (IsHandleCreated) {
 				// Destroy our children before we destroy ourselves, to prevent them from
 				// being implictly (without us knowing) destroyed
-				for (int i=0; i < child_controls.Count; i++) {
-					child_controls[i].DestroyHandle();
+				Control [] controls = child_controls.GetAllControls ();
+				for (int i=0; i < controls.Length; i++) {
+					controls[i].DestroyHandle();
 				}
 
 
@@ -2936,7 +3040,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void RecreateHandle() {
-			IEnumerator child = child_controls.GetEnumerator();
+			IEnumerator child = child_controls.GetAllEnumerator();
 
 			is_recreating=true;
 
@@ -3065,8 +3169,9 @@ namespace System.Windows.Forms
 			ClientSize = size;
 
 			/* Now scale our children */
-			for (int i=0; i < child_controls.Count; i++) {
-				child_controls[i].Scale(dx, dy);
+			Control [] controls = child_controls.GetAllControls ();
+			for (int i=0; i < controls.Length; i++) {
+				controls[i].Scale(dx, dy);
 			}
 
 			ResumeLayout();
@@ -3306,7 +3411,7 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected void UpdateZOrder() {
-			int	children;
+			Control [] controls;
 #if not
 			Control	ctl;
 
@@ -3316,18 +3421,18 @@ namespace System.Windows.Forms
 
 			ctl = parent;
 
-			children = ctl.child_controls.Count;
-			for (int i = 1; i < children; i++ ) {
-				XplatUI.SetZOrder(ctl.child_controls[i].window.Handle, ctl.child_controls[i-1].window.Handle, false, false); 
+			controls = ctl.child_controls.GetAllControls ();
+			for (int i = 1; i < controls.Length; i++ ) {
+				XplatUI.SetZOrder(controls[i].window.Handle, controls[i-1].window.Handle, false, false); 
 			}
 #else
 			if (!IsHandleCreated) {
 				return;
 			}
 
-			children = child_controls.Count;
-			for (int i = 1; i < children; i++ ) {
-				XplatUI.SetZOrder(child_controls[i].Handle, child_controls[i-1].Handle, false, false); 
+			controls = child_controls.GetAllControls ();
+			for (int i = 1; i < controls.Length; i++ ) {
+				XplatUI.SetZOrder(controls[i].Handle, controls[i-1].Handle, false, false); 
 			}
 #endif
 		}

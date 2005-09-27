@@ -1,3 +1,13 @@
+2005-09-27  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Add functionality to the controls collection to add
+	'implicit controls' these are controls that are created by the
+	containing control but should not be exposed to the user. Such as
+	scrollbars in the treeview.
+	* Form.cs: The list var of the ControlsCollection is no longer
+	available because of the potential of implicit controls getting
+	ignored by someone accessing the list directly.
+
 2005-09-26  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: Fixed SetChildIndex; it no longer causes a child to

@@ -89,13 +89,9 @@ namespace System.Windows.Forms {
 			}
 
 			public override void Add(Control value) {
-				for (int i=0; i<list.Count; i++) {
-					if (list[i]==value) {
-						// Do we need to do anything here?
-						return;
-					}
-				}
-				list.Add(value);
+				if (Contains (value))
+					return;
+				AddToList (value);
 				((Form)value).owner=(Form)owner;
 			}
 
