@@ -618,7 +618,6 @@ System.Security.Cryptography.X509Certificates/X509KeyUsageExtension.cs
 System.Security.Cryptography.X509Certificates/X509NameType.cs
 System.Security.Cryptography.X509Certificates/X509RevocationFlag.cs
 System.Security.Cryptography.X509Certificates/X509RevocationMode.cs
-System.Security.Cryptography.X509Certificates/X509SelectionFlag.cs
 System.Security.Cryptography.X509Certificates/X509Store.cs
 System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierExtension.cs
 System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierHashAlgorithm.cs
