@@ -1,3 +1,8 @@
+2005-09-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h mini.c aot.c: Add infrastructure to collect pagefault 
+	information about aot.
+
 2005-09-27  Ben Maurer  <bmaurer@ximian.com>
 
 	* *.c: Replace the use of {Enter,Leave}CriticalSection with
