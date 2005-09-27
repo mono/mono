@@ -235,7 +235,7 @@ namespace System.Windows.Forms
 									
 				if (dropdown_style == ComboBoxStyle.Simple) {
 					if (listbox_ctrl != null) {						
-						Controls.Remove (listbox_ctrl);
+						Controls.RemoveImplicit (listbox_ctrl);
 						listbox_ctrl.Dispose ();						
 						listbox_ctrl = null;
 					}
@@ -243,7 +243,7 @@ namespace System.Windows.Forms
 
 				if (dropdown_style != ComboBoxStyle.DropDownList && value == ComboBoxStyle.DropDownList) {
 					if (textbox_ctrl != null) {						
-						Controls.Remove (textbox_ctrl);
+						Controls.RemoveImplicit (textbox_ctrl);
 						textbox_ctrl.Dispose ();						
 						textbox_ctrl = null;						
 					}
@@ -258,7 +258,7 @@ namespace System.Windows.Forms
 					CreateComboListBox ();
 
 					if (IsHandleCreated == true) {
-						Controls.Add (listbox_ctrl);
+						Controls.AddImplicit (listbox_ctrl);
 					}
 				}
 				else {
@@ -272,7 +272,7 @@ namespace System.Windows.Forms
 					textbox_ctrl.KeyPress += new KeyPressEventHandler(textbox_ctrl_KeyPress);
 
 					if (IsHandleCreated == true) {
-						Controls.Add (textbox_ctrl);
+						Controls.AddImplicit (textbox_ctrl);
 					}
 				}
 				
@@ -599,12 +599,12 @@ namespace System.Windows.Forms
 			if (disposing == true) {
 				if (listbox_ctrl != null) {
 					listbox_ctrl.Dispose ();
-					Controls.Remove (listbox_ctrl);
+					Controls.RemoveImplicit (listbox_ctrl);
 					listbox_ctrl = null;
 				}			
 			
 				if (textbox_ctrl != null) {
-					Controls.Remove (textbox_ctrl);
+					Controls.RemoveImplicit (textbox_ctrl);
 					textbox_ctrl.Dispose ();
 					textbox_ctrl = null;
 				}			
@@ -782,12 +782,12 @@ namespace System.Windows.Forms
 			base.OnHandleCreated (e);
 
 			if (listbox_ctrl != null) {
-				Controls.Add (listbox_ctrl);
+				Controls.AddImplicit (listbox_ctrl);
 				Height = combobox_info.combosimple_height;
 			}
 			
 			if (textbox_ctrl != null) {
-				Controls.Add (textbox_ctrl);
+				Controls.AddImplicit (textbox_ctrl);
 			}
 
 			CalcTextArea ();
@@ -1526,7 +1526,7 @@ namespace System.Windows.Forms
 						vscrollbar_ctrl.Maximum = 0;
 						vscrollbar_ctrl.ValueChanged += new EventHandler (VerticalScrollEvent);
 						
-						Controls.Add (vscrollbar_ctrl);
+						Controls.AddImplicit (vscrollbar_ctrl);
 					}
 					
 					vscrollbar_ctrl.Height = height - ThemeEngine.Current.DrawComboListBoxDecorationBottom (owner.DropDownStyle) -

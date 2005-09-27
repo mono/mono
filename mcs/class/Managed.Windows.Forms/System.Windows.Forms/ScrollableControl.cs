@@ -237,33 +237,41 @@ namespace System.Windows.Forms {
 
 				auto_scroll = value;
 				if (!auto_scroll) {
-					Controls.Remove(hscrollbar);
+					SuspendLayout ();
+
+					Controls.RemoveImplicit (hscrollbar);
 					hscrollbar.Dispose();
 					hscrollbar = null;
 
-					Controls.Remove(vscrollbar);
+					Controls.RemoveImplicit (vscrollbar);
 					vscrollbar.Dispose();
 					vscrollbar = null;
 
-					Controls.Remove(sizegrip);
+					Controls.RemoveImplicit (sizegrip);
 					sizegrip.Dispose();
 					sizegrip = null;
+
+					ResumeLayout ();
 				} else {
+					SuspendLayout ();
+
 					hscrollbar = new HScrollBar();
 					hscrollbar.Visible = false;
 					hscrollbar.ValueChanged += new EventHandler(HandleScrollBar);
 					hscrollbar.Height = SystemInformation.HorizontalScrollBarHeight;
-					this.Controls.Add(hscrollbar);
+					this.Controls.AddImplicit (hscrollbar);
 
 					vscrollbar = new VScrollBar();
 					vscrollbar.Visible = false;
 					vscrollbar.ValueChanged += new EventHandler(HandleScrollBar);
 					vscrollbar.Width = SystemInformation.VerticalScrollBarWidth;
-					this.Controls.Add(vscrollbar);
+					this.Controls.AddImplicit (vscrollbar);
 
 					sizegrip = new SizeGrip();
 					sizegrip.Visible = false;
-					this.Controls.Add(sizegrip);
+					this.Controls.AddImplicit (sizegrip);
+
+					ResumeLayout ();
 				}
 			}
 		}

@@ -1341,8 +1341,10 @@ namespace System.Windows.Forms
 		protected override void OnHandleCreated (EventArgs e)
 		{
 			base.OnHandleCreated (e);
-			this.Controls.Add (this.v_scroll);
-			this.Controls.Add (this.h_scroll);			
+			SuspendLayout ();
+			Controls.AddImplicit (this.v_scroll);
+			Controls.AddImplicit (this.h_scroll);
+			ResumeLayout ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e)

@@ -1,5 +1,16 @@
 2005-09-27  Jackson Harper  <jackson@ximian.com>
 
+	* ListBox.cs:
+	* ListView.cs:
+	* TextBoxBase.cs:
+	* TreeView.cs:
+	* ScrollableControl.cs:
+	* ComboBox.cs: Add implicit controls using the new implict control
+	functionality in ControlCollection. Also try to block multiple
+	control add in a suspend/resume layout to save some cycles.
+	
+2005-09-27  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Add functionality to the controls collection to add
 	'implicit controls' these are controls that are created by the
 	containing control but should not be exposed to the user. Such as

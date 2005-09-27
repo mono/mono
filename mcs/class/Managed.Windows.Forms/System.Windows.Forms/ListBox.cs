@@ -858,8 +858,10 @@ namespace System.Windows.Forms
 			base.OnHandleCreated (e);
 
 			UpdateInternalClientRect (ClientRectangle);
-			Controls.Add (vscrollbar_ctrl);
-			Controls.Add (hscrollbar_ctrl);
+			SuspendLayout ();
+			Controls.AddImplicit (vscrollbar_ctrl);
+			Controls.AddImplicit (hscrollbar_ctrl);
+			ResumeLayout ();
 			UpdateItemInfo (UpdateOperation.AllItems, 0, 0);
 		}
 

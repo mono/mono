@@ -113,9 +113,11 @@ namespace System.Windows.Forms {
 			vscroll.Enabled = false;
 			vscroll.Visible = false;
 
-			this.Controls.Add(hscroll);
-			this.Controls.Add(vscroll);
-
+			SuspendLayout ();
+			this.Controls.AddImplicit (hscroll);
+			this.Controls.AddImplicit (vscroll);
+			ResumeLayout ();
+			
 			//SetStyle(ControlStyles.ResizeRedraw, true);
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle(ControlStyles.UserPaint, true);

@@ -671,8 +671,10 @@ namespace System.Windows.Forms {
 			vbar.ValueChanged += new EventHandler (VScrollBarValueChanged);
 			hbar.ValueChanged += new EventHandler (HScrollBarValueChanged);
 
-			Controls.Add (vbar);
-			Controls.Add (hbar);
+			SuspendLayout ();
+			Controls.AddImplicit (vbar);
+			Controls.AddImplicit (hbar);
+			ResumeLayout ();
 		}
 
 		protected override void OnHandleDestroyed (EventArgs e) {
@@ -981,7 +983,7 @@ namespace System.Windows.Forms {
 				edit_text_box.BorderStyle = BorderStyle.FixedSingle;
 				edit_text_box.KeyUp += new KeyEventHandler (EditTextBoxKeyDown);
 				edit_text_box.Leave += new EventHandler (EditTextBoxLeave);
-				Controls.Add (edit_text_box);
+				Controls.AddImplicit (edit_text_box);
 			}
 
 			edit_text_box.Bounds = node.Bounds;
