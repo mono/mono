@@ -1,5 +1,11 @@
 2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FontUnitCas.cs: method name change in FontUnitTest.
+	* FontUnitTest.cs: splitted tests, enabled the "NotWorking" ones and
+	added tests for FontSize names beginning with x and containing a dash.
+
+2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ListControlTest.cs: new tests for SelectedValue, SelectedIndex and
 	DataBinding.
 

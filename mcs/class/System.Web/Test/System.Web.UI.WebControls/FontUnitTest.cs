@@ -40,45 +40,69 @@ namespace MonoTests.System.Web.UI.WebControls
 	public class FontUnitTest {
 
 		[Test]
-		public void FontUnitConstructors ()
+		public void FontUnitConstructors1 ()
 		{
 			FontUnit f1 = new FontUnit (FontSize.Large);
 			
 			Assert.AreEqual (f1.Type, FontSize.Large, "A1");
 			Assert.AreEqual (f1.Unit, Unit.Empty, "A1.1");
-			
+		}
+
+		[Test]
+		public void FontUnitConstructors2 ()
+		{
 			// Test the AsUnit values
-			f1 = new FontUnit (FontSize.AsUnit);
+			FontUnit f1 = new FontUnit (FontSize.AsUnit);
 			Assert.AreEqual (f1.Type, FontSize.AsUnit, "A2");
 			Assert.AreEqual (f1.Unit.Type, UnitType.Point, "A3");
 			Assert.AreEqual (f1.Unit.Value, 10, "A4");
+		}
 
-			f1 = new FontUnit (15);
+		[Test]
+		public void FontUnitConstructors3 ()
+		{
+			FontUnit f1 = new FontUnit (15);
 			Assert.AreEqual (f1.Type, FontSize.AsUnit, "A5");
 			Assert.AreEqual (f1.Unit.Type, UnitType.Point, "A6");
 			Assert.AreEqual (f1.Unit.Value, 15, "A7");
+		}
 
+		[Test]
+		public void FontUnitConstructors4 ()
+		{
 			// Test the string constructor: null and empty
-			f1 = new FontUnit (null);
+			FontUnit f1 = new FontUnit (null);
 			Assert.AreEqual (f1.Type, FontSize.NotSet, "A8");
 			Assert.AreEqual (f1.Unit.IsEmpty, true, "A9");
+		}
 
-			f1 = new FontUnit ("");
+		[Test]
+		public void FontUnitConstructors5 ()
+		{
+			FontUnit f1 = new FontUnit ("");
 			Assert.AreEqual (f1.Type, FontSize.NotSet, "A10");
 			Assert.AreEqual (f1.Unit.IsEmpty, true, "A11");
+		}
 
 #if NET_2_0
-			f1 = new FontUnit (2.5);
+		[Test]
+		public void FontUnitConstructors6 ()
+		{
+			FontUnit f1 = new FontUnit (2.5);
 			Assert.AreEqual (f1.Type, FontSize.AsUnit, "A12");
 			Assert.AreEqual (f1.Unit.Type, UnitType.Point, "A13");
 			Assert.AreEqual (f1.Unit.Value, 2.5, "A14");
+		}
 
-			f1 = new FontUnit (5.0, UnitType.Percentage);
+		[Test]
+		public void FontUnitConstructors7 ()
+		{
+			FontUnit f1 = new FontUnit (5.0, UnitType.Percentage);
 			Assert.AreEqual (f1.Type, FontSize.AsUnit, "A15");
 			Assert.AreEqual (f1.Unit.Type, UnitType.Percentage, "A17");
 			Assert.AreEqual (f1.Unit.Value, 5.0, "A18");
-#endif
 		}
+#endif
 
 		[Test]
 		public void FontUnitConstructors_Pixel ()
@@ -101,54 +125,120 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")] // X* ToString
-		public void FontUnitConstructors_Enum ()
+		public void FontUnitConstructors_Enum1 ()
 		{
-			// All the enumeration values
 			FontUnit fu = new FontUnit ("Large");
 			Assert.AreEqual (FontSize.Large, fu.Type, "Large");
 			Assert.IsTrue (fu.Unit.IsEmpty, "Large.IsEmpty");
 			Assert.AreEqual ("Large", fu.ToString (), "Large.ToString");
+		}
 
-			fu = new FontUnit ("Larger");
+		[Test]
+		public void FontUnitConstructors_Enum2 ()
+		{
+			FontUnit fu = new FontUnit ("Larger");
 			Assert.AreEqual (FontSize.Larger, fu.Type, "Larger");
 			Assert.IsTrue (fu.Unit.IsEmpty, "Larger.IsEmpty");
 			Assert.AreEqual ("Larger", fu.ToString (), "Larger.ToString");
+		}
 
-			fu = new FontUnit ("Medium");
+		[Test]
+		public void FontUnitConstructors_Enum3 ()
+		{
+			FontUnit fu = new FontUnit ("Medium");
 			Assert.AreEqual (FontSize.Medium, fu.Type, "Medium");
 			Assert.IsTrue (fu.Unit.IsEmpty, "Medium.IsEmpty");
 			Assert.AreEqual ("Medium", fu.ToString (), "Medium.ToString");
+		}
 
-			fu = new FontUnit ("Small");
+		[Test]
+		public void FontUnitConstructors_Enum4 ()
+		{
+			FontUnit fu = new FontUnit ("Small");
 			Assert.AreEqual (FontSize.Small, fu.Type, "Small");
 			Assert.IsTrue (fu.Unit.IsEmpty, "Small.IsEmpty");
 			Assert.AreEqual ("Small", fu.ToString (), "Small.ToString");
+		}
 
-			fu = new FontUnit ("Smaller");
+		[Test]
+		public void FontUnitConstructors_Enum5 ()
+		{
+			FontUnit fu = new FontUnit ("Smaller");
 			Assert.AreEqual (FontSize.Smaller, fu.Type, "Smaller");
 			Assert.IsTrue (fu.Unit.IsEmpty, "Smaller.IsEmpty");
 			Assert.AreEqual ("Smaller", fu.ToString (), "Smaller.ToString");
+		}
 
-			fu = new FontUnit ("XLarge");
+		[Test]
+		public void FontUnitConstructors_Enum6 ()
+		{
+			FontUnit fu = new FontUnit ("XLarge");
 			Assert.AreEqual (FontSize.XLarge, fu.Type, "XLarge");
 			Assert.IsTrue (fu.Unit.IsEmpty, "XLarge.IsEmpty");
 			Assert.AreEqual ("X-Large", fu.ToString (), "XLarge.ToString");
+		}
 
-			fu = new FontUnit ("XSmall");
+		[Test]
+		public void FontUnitConstructors_Enum7 ()
+		{
+			FontUnit fu = new FontUnit ("X-Large");
+			Assert.AreEqual (FontSize.XLarge, fu.Type, "X-Large");
+			Assert.IsTrue (fu.Unit.IsEmpty, "X-Large.IsEmpty");
+			Assert.AreEqual ("X-Large", fu.ToString (), "X-Large.ToString");
+		}
+
+		[Test]
+		public void FontUnitConstructors_Enum9 ()
+		{
+			FontUnit fu = new FontUnit ("XSmall");
 			Assert.AreEqual (FontSize.XSmall, fu.Type, "XSmall");
 			Assert.IsTrue (fu.Unit.IsEmpty, "XSmall.IsEmpty");
 			Assert.AreEqual ("X-Small", fu.ToString (), "XSmall.ToString");
+		}
 
-			fu = new FontUnit ("XXLarge");
+		[Test]
+		public void FontUnitConstructors_Enum10 ()
+		{
+			FontUnit fu = new FontUnit ("X-Small");
+			Assert.AreEqual (FontSize.XSmall, fu.Type, "X-Small");
+			Assert.IsTrue (fu.Unit.IsEmpty, "X-Small.IsEmpty");
+			Assert.AreEqual ("X-Small", fu.ToString (), "X-Small.ToString");
+		}
+
+		[Test]
+		public void FontUnitConstructors_Enum11 ()
+		{
+			FontUnit fu = new FontUnit ("XXLarge");
 			Assert.AreEqual (FontSize.XXLarge, fu.Type, "XXLarge");
 			Assert.IsTrue (fu.Unit.IsEmpty, "XXLarge.IsEmpty");
 			Assert.AreEqual ("XX-Large", fu.ToString (), "XXLarge.ToString");
+		}
 
-			fu = new FontUnit ("XXSmall");
+		[Test]
+		public void FontUnitConstructors_Enum12 ()
+		{
+			FontUnit fu = new FontUnit ("XX-Large");
+			Assert.AreEqual (FontSize.XXLarge, fu.Type, "XX-Large");
+			Assert.IsTrue (fu.Unit.IsEmpty, "XX-Large.IsEmpty");
+			Assert.AreEqual ("XX-Large", fu.ToString (), "XX-Large.ToString");
+		}
+
+		[Test]
+		public void FontUnitConstructors_Enum13 ()
+		{
+			FontUnit fu = new FontUnit ("XXSmall");
 			Assert.AreEqual (FontSize.XXSmall, fu.Type, "XXSmall");
 			Assert.IsTrue (fu.Unit.IsEmpty, "XXSmall.IsEmpty");
 			Assert.AreEqual ("XX-Small", fu.ToString (), "XXSmall.ToString");
+		}
+
+		[Test]
+		public void FontUnitConstructors_Enum14 ()
+		{
+			FontUnit fu = new FontUnit ("XX-Small");
+			Assert.AreEqual (FontSize.XXSmall, fu.Type, "XX-Small");
+			Assert.IsTrue (fu.Unit.IsEmpty, "XX-Small.IsEmpty");
+			Assert.AreEqual ("XX-Small", fu.ToString (), "XX-Small.ToString");
 		}
 
 		[Test]
@@ -184,7 +274,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
-		[Category ("NotWorking")] // wrong exception
 		public void FontUnitConstructors_Enum_AsUnit ()
 		{
 			new FontUnit ("AsUnit");
@@ -192,7 +281,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[ExpectedException (typeof (FormatException))]
-		[Category ("NotWorking")] // wrong exception
 		public void FontUnitConstructors_Enum_NotSet ()
 		{
 			new FontUnit ("NotSet");

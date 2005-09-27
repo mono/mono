@@ -51,7 +51,7 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 		public void Deny_Unrestricted ()
 		{
 			FontUnitTest unit = new FontUnitTest ();
-			unit.FontUnitConstructors ();
+			unit.FontUnitConstructors1 ();
 			unit.FontUnitConstructors_Pixel ();
 			unit.FontUnitConstructors_Point ();
 			unit.UnitEquality ();
