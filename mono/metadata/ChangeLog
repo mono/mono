@@ -1,5 +1,10 @@
 2005-09-27  Ben Maurer  <bmaurer@ximian.com>
 
+	* class-internals.h (mono_field_is_deleted): Do the test for
+	rtspecialname before we check the actual name of the field. This
+	prevents us from dereferencing a pointer into the string table,
+	saving us from accessing a few pages
+
 	* *.c: Replace the use of {Enter,Leave}CriticalSection with
 	macros. This will allow a deadlock debugger to easily be plugged
 	in.
