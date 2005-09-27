@@ -1,3 +1,7 @@
+2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ObjectTagBuilder.cs: only fail when no id and no attributes.
+
 2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DataBindingCollection.cs: Using an hashtable is a nice trick but
