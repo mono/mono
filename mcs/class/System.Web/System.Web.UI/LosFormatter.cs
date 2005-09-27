@@ -40,7 +40,7 @@ namespace System.Web.UI {
 	public sealed class LosFormatter {
 
 		ObjectStateFormatter osf = new ObjectStateFormatter ();
-		bool disable_mac;
+		bool disable_mac = true;
 		HashAlgorithm algo;
 		
 		public LosFormatter ()
