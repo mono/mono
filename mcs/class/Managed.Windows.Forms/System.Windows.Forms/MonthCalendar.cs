@@ -173,7 +173,7 @@ namespace System.Windows.Forms {
 			year_updown.Maximum = MaxDate.Year;
 			year_updown.ReadOnly = true;
 			year_updown.Visible = false;
-			this.Controls.Add(year_updown);
+			this.Controls.AddImplicit (year_updown);
 			
 			// event handlers
 //			LostFocus += new EventHandler (LostFocusHandler);

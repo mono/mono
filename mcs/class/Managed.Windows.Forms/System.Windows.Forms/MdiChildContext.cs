@@ -81,10 +81,11 @@ namespace System.Windows.Forms {
 			close_button.Paint += new PaintEventHandler (PaintButtonHandler);
 			close_button.Click += new EventHandler (CloseButtonClicked);
 
-			
-			form.Controls.Add (close_button);
-			form.Controls.Add (maximize_button);
-			form.Controls.Add (minimize_button);
+			SuspendLayout ();
+			form.Controls.AddImplicit (close_button);
+			form.Controls.AddImplicit (maximize_button);
+			form.Controls.AddImplicit (minimize_button);
+			ResumeLayout ();
 		}
 
 		public bool HandleMessage (ref Message m)

@@ -258,8 +258,10 @@ namespace System.Windows.Forms
 			txtView.Location = new System.Drawing.Point(17, 17);
 			txtView.TabIndex = 0;
 
-			Controls.Add(txtView);
-			Controls.Add(spnSpinner);
+			SuspendLayout ();
+			Controls.AddImplicit (txtView);
+			Controls.AddImplicit (spnSpinner);
+			ResumeLayout ();
 
 			this.ActiveControl = txtView;
 
