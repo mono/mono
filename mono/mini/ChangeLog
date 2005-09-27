@@ -1,3 +1,10 @@
+2005-09-27  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (AM_CFLAGS): Rename from INCLUDES.
+	(AM_CFLAGS) [PLATFORM_WIN32): Append to it, don't set it.
+	(AM_CFLAGS) [ARM]: Add arch/arm directory from the
+	build tree.
+
 2005-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot.c: Add support for the no_special_static flag for classes.
