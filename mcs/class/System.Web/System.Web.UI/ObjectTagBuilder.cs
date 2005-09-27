@@ -63,7 +63,7 @@ namespace System.Web.UI
 					   string id,
 					   IDictionary attribs) 
 		{
-			if (id == null)
+			if (id == null && attribs == null)
 				throw new HttpException ("Missing 'id'.");
 			if (attribs == null)
 				throw new ParseException (parser.Location, "Error in ObjectTag.");
