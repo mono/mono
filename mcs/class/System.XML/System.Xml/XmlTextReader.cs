@@ -1423,10 +1423,10 @@ namespace System.Xml
 
 		private void AppendSurrogatePairNameChar (int ch)
 		{
-			nameBuffer [nameLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
+			nameBuffer [nameLength++] = (char) ((ch - 0x10000) / 0x400 + 0xD800);
 			if (nameLength == nameCapacity)
 				ExpandNameCapacity ();
-			nameBuffer [nameLength++] = (char) (ch % 0x10000 + 0xDC00);
+			nameBuffer [nameLength++] = (char) ((ch - 0x10000) % 0x400 + 0xDC00);
 		}
 
 		private void ExpandNameCapacity ()
@@ -1447,8 +1447,8 @@ namespace System.Xml
 
 		private void AppendSurrogatePairValueChar (int ch)
 		{
-			valueBuffer.Append ((char) (ch / 0x10000 + 0xD800 - 1));
-			valueBuffer.Append ((char) (ch % 0x10000 + 0xDC00));
+			valueBuffer.Append ((char) ((ch - 0x10000) / 0x400 + 0xD800));
+			valueBuffer.Append ((char) ((ch - 0x10000) % 0x400 + 0xDC00));
 		}
 
 		private string CreateValueString ()
@@ -1470,10 +1470,10 @@ namespace System.Xml
 			if (ch < Char.MaxValue)
 				currentTagBuffer [currentTagLength++] = (char) ch;
 			else {
-				currentTagBuffer [currentTagLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
+				currentTagBuffer [currentTagLength++] = (char) ((ch - 0x10000) / 0x400 + 0xD800);
 				if (currentTagLength == currentTagCapacity)
 					ExpandCurrentTagCapacity ();
-				currentTagBuffer [currentTagLength++] = (char) (ch % 0x10000 + 0xDC00);
+				currentTagBuffer [currentTagLength++] = (char) ((ch - 0x10000) % 0x400 + 0xDC00);
 			}
 		}
 
@@ -2672,8 +2672,8 @@ namespace System.Xml
 					if (c < Char.MaxValue)
 						buffer [bufIndex++] = (char) c;
 					else {
-						buffer [bufIndex++] = (char) (c / 0x10000 + 0xD800 - 1);
-						buffer [bufIndex++] = (char) (c % 0x10000 + 0xDC00);
+						buffer [bufIndex++] = (char) ((c - 0x10000) / 0x400 + 0xD800);
+						buffer [bufIndex++] = (char) ((c - 0x10000) % 0x400 + 0xDC00);
 					}
 					break;
 				}

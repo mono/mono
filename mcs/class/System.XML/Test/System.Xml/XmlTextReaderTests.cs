@@ -1129,5 +1129,20 @@ namespace MonoTests.System.Xml
 					xtr.Close ();
 			}
 		}
+
+		[Test] // bug #76247
+		public void SurrogateRoundtrip ()
+		{
+			byte [] data = new byte [] {0x3c, 0x61, 0x3e, 0xf0,
+				0xa8, 0xa7, 0x80, 0x3c, 0x2f, 0x61, 0x3e};
+			XmlTextReader xtr = new XmlTextReader (
+				new MemoryStream (data));
+			xtr.Read ();
+			string line = xtr.ReadString ();
+			int [] arr = new int [line.Length];
+			for (int i = 0; i < line.Length; i++)
+				arr [i] = (int) line [i];
+			AssertEquals (new int [] {0xd862, 0xddc0}, arr);
+		}
 	}
 }

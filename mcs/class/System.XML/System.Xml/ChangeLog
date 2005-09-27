@@ -1,3 +1,8 @@
+2005-09-27  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs : surrogate computation is incorrect. Fixed bug
+	  #76247. Patch by Brion Vibber.
+
 2005-09-26  Atsushi Enomoto <atsushi@ximian.com>
 
 	* DTDValidatingReader.cs : Namespace manager was not handled correctly.
