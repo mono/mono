@@ -110,6 +110,7 @@ namespace Novell.Directory.Ldap.Utilclass
 		public const System.String NO_SCHEMA = "NO_SCHEMA";
 		public const System.String READ_MULTIPLE = "READ_MULTIPLE";
 		public const System.String CANNOT_BIND = "CANNOT_BIND";
+		public const System.String SSL_PROVIDER_MISSING = "SSL_PROVIDER_MISSING";
 		
 		//End constants
 		

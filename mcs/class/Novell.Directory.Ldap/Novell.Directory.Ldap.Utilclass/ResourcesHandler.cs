@@ -30,6 +30,10 @@
 //
 
 using System;
+using System.Resources;
+using System.Threading;
+using System.Reflection;
+using System.Text;
 
 namespace Novell.Directory.Ldap.Utilclass
 {
@@ -102,33 +106,26 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// </returns>
 		public static System.String getMessage(System.String messageOrKey, System.Object[] arguments, System.Globalization.CultureInfo locale)
 		{
-			System.String pattern;
-			System.Resources.ResourceManager messages = null;
+			if (defaultMessages == null)
+			{
+				defaultMessages = new ResourceManager("ExceptionMessages", Assembly.GetExecutingAssembly());
+			}
 			
-			if ((System.Object) messageOrKey == null)
+			if (defaultLocale == null)
+				defaultLocale = Thread.CurrentThread.CurrentUICulture;
+
+			if (locale == null)
+				locale = defaultLocale;
+
+			if (messageOrKey == null)
 			{
 				messageOrKey = "";
 			}
 			
+			string pattern;
 			try
 			{
-				if ((locale == null) || defaultLocale.Equals(locale))
-				{
-					locale = defaultLocale;
-					// Default Locale
-					if (defaultMessages == null)
-					{
-						System.Threading.Thread.CurrentThread.CurrentUICulture = defaultLocale;
-						defaultMessages = System.Resources.ResourceManager.CreateFileBasedResourceManager(pkg + "ExceptionMessages", "", null);
-					}
-					messages = defaultMessages;
-				}
-				else
-				{
-					System.Threading.Thread.CurrentThread.CurrentUICulture = locale;
-					messages = System.Resources.ResourceManager.CreateFileBasedResourceManager(pkg + "ExceptionMessages", "", null);
-				}
-				pattern = messages.GetString(messageOrKey);
+				pattern = defaultMessages.GetString(messageOrKey, locale);
 			}
 			catch (System.Resources.MissingManifestResourceException mre)
 			{
@@ -138,8 +135,11 @@ namespace Novell.Directory.Ldap.Utilclass
 			// Format the message if arguments were passed
 			if (arguments != null)
 			{
-//				MessageFormat mf = new MessageFormat(pattern);
-				pattern=System.String.Format(locale,pattern,arguments);
+				StringBuilder strB = new StringBuilder();
+				strB.AppendFormat(pattern, arguments);
+				pattern = strB.ToString();
+				//				MessageFormat mf = new MessageFormat(pattern);
+				//				pattern=System.String.Format(locale,pattern,arguments);
 //				mf.setLocale(locale);
 				//this needs to be reset with the new local - i18n defect in java
 //				mf.applyPattern(pattern);
@@ -177,38 +177,34 @@ namespace Novell.Directory.Ldap.Utilclass
 		/// </returns>
 		public static System.String getResultString(int code, System.Globalization.CultureInfo locale)
 		{
-			System.Resources.ResourceManager messages;
-			System.String result;
+			if (defaultResultCodes == null)
+			{
+/*
+				defaultResultCodes = ResourceManager.CreateFileBasedResourceManager("ResultCodeMessages", "Resources", null);*/
+				defaultResultCodes = new ResourceManager("ResultCodeMessages", Assembly.GetExecutingAssembly());
+			}
+
+			if (defaultLocale == null)
+				defaultLocale = Thread.CurrentThread.CurrentUICulture;
+
+			if (locale == null)
+				locale = defaultLocale;
+
+			string result;
 			try
 			{
-				if ((locale == null) || defaultLocale.Equals(locale))
-				{
-					locale = defaultLocale;
-					// Default Locale
-					if (defaultResultCodes == null)
-					{
-//						System.Threading.Thread.CurrentThread.CurrentUICulture = defaultLocale;
-						defaultResultCodes = System.Resources.ResourceManager.CreateFileBasedResourceManager(pkg + "ResultCodeMessages", "", null);
-					}
-					messages = defaultResultCodes;
-				}
-				else
-				{
-					System.Threading.Thread.CurrentThread.CurrentUICulture = locale;
-					messages = System.Resources.ResourceManager.CreateFileBasedResourceManager(pkg + "ResultCodeMessages", "", null);
-				}
-//				result = messages.GetString(System.Convert.ToString(code));
-				result = Convert.ToString(code);
+				result = defaultResultCodes.GetString(Convert.ToString(code), defaultLocale);
 			}
-			catch (System.Resources.MissingManifestResourceException mre)
+			catch (ArgumentNullException mre)
 			{
-				result = getMessage(ExceptionMessages.UNKNOWN_RESULT, new System.Object[]{code}, locale);
+				result = getMessage(ExceptionMessages.UNKNOWN_RESULT, new Object[]{code}, locale);
 			}
 			return result;
 		}
+
 		static ResourcesHandler()
 		{
-//			defaultLocale = System.Globalization.CultureInfo.CurrentCulture;
+			defaultLocale = Thread.CurrentThread.CurrentUICulture;
 		}
 	} //end class ResourcesHandler
 }

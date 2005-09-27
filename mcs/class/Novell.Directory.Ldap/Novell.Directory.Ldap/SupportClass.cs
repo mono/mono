@@ -1631,6 +1631,15 @@ using System;
 		/// <summary>
 		/// This class manages different operation with collections.
 		/// </summary>
+		public class AbstractSetSupport : SetSupport
+		{
+			/// <summary>
+			/// The constructor with no parameters to create an abstract set.
+			/// </summary>
+			public AbstractSetSupport()
+			{
+			}
+		}
 
 
 		/*******************************/
@@ -2154,14 +2163,4 @@ using System;
 				return collection.GetEnumerator();
 		}
 
-	}
-
-	public class AbstractSetSupport : SupportClass.SetSupport
-	{
-		/// <summary>
-		/// The constructor with no parameters to create an abstract set.
-		/// </summary>
-		public AbstractSetSupport()
-		{
-		}
 	}

@@ -50,9 +50,13 @@ using Mono.Security.X509;
 #endif
 using System.Text.RegularExpressions;
 using System.Globalization;
+using System.Reflection;
 
 namespace Novell.Directory.Ldap
 {
+	public delegate bool CertificateValidationCallback(
+		Syscert.X509Certificate certificate,
+		int[] certificateErrors);
 	
 	/// <summary> The class that creates a connection to the Ldap server. After the
 	/// connection is made, a thread is created that reads data from the
@@ -78,6 +82,38 @@ namespace Novell.Directory.Ldap
 	/*package*/
 	sealed class Connection
 	{
+		public event CertificateValidationCallback OnCertificateValidation;
+		public  enum    CertificateProblem  : long
+		{
+			CertEXPIRED                   = 0x800B0101,
+			CertVALIDITYPERIODNESTING     = 0x800B0102,
+			CertROLE                      = 0x800B0103,
+			CertPATHLENCONST              = 0x800B0104,
+			CertCRITICAL                  = 0x800B0105,
+			CertPURPOSE                   = 0x800B0106,
+			CertISSUERCHAINING            = 0x800B0107,
+			CertMALFORMED                 = 0x800B0108,
+			CertUNTRUSTEDROOT             = 0x800B0109,
+			CertCHAINING                  = 0x800B010A,
+			CertREVOKED                   = 0x800B010C,
+			CertUNTRUSTEDTESTROOT         = 0x800B010D,
+			CertREVOCATION_FAILURE        = 0x800B010E,
+			CertCN_NO_MATCH               = 0x800B010F,
+			CertWRONG_USAGE               = 0x800B0110,
+			CertUNTRUSTEDCA               = 0x800B0112
+		}
+		private static String GetProblemMessage(CertificateProblem Problem)
+		{
+			String ProblemMessage = "";
+			String ProblemCodeName = CertificateProblem.GetName(typeof(CertificateProblem), Problem);
+			if(ProblemCodeName != null)
+				ProblemMessage = ProblemMessage + ProblemCodeName;
+			else
+				ProblemMessage = "Unknown Certificate Problem";
+			return ProblemMessage;
+		}
+ 
+		private ArrayList handshakeProblemsEncountered = new ArrayList();
 		private void  InitBlock()
 		{
 			writeSemaphore = new System.Object();
@@ -292,8 +328,8 @@ namespace Novell.Directory.Ldap
 		private BindProperties bindProperties = null;
 		private int bindSemaphoreId = 0; // 0 is never used by to lock a semaphore
 		
-		private SupportClass.ThreadClass reader = null; // New thread that reads data from the server.
-		private SupportClass.ThreadClass deadReader = null; // Identity of last reader thread
+		private Thread reader = null; // New thread that reads data from the server.
+		private Thread deadReader = null; // Identity of last reader thread
 		private System.IO.IOException deadReaderException = null; // Last exception of reader
 		
 		private LBEREncoder encoder;
@@ -515,14 +551,14 @@ namespace Novell.Directory.Ldap
 		*
 		* @param the thread id to match
 		*/
-		private void  waitForReader(SupportClass.ThreadClass thread)
+		private void  waitForReader(Thread thread)
 		{
 			// wait for previous reader thread to terminate
 			System.Threading.Thread rInst;
 			System.Threading.Thread tInst;
 			if(reader!=null)
 			{
-				rInst=reader.Instance;
+				rInst=reader;
 			}
 			else
 			{
@@ -531,7 +567,7 @@ namespace Novell.Directory.Ldap
 
 			if(thread!=null)
 			{
-				tInst=thread.Instance;
+				tInst=thread;
 			}
 			else
 			{
@@ -572,7 +608,7 @@ namespace Novell.Directory.Ldap
 				}
 				if(reader!=null)
 				{
-					rInst=reader.Instance;
+					rInst=reader;
 				}
 				else
 				{
@@ -581,7 +617,7 @@ namespace Novell.Directory.Ldap
 
 				if(thread!=null)
 				{
-					tInst=thread.Instance;
+					tInst=thread;
 				}
 				else
 				{
@@ -615,7 +651,18 @@ namespace Novell.Directory.Ldap
                         Syscert.X509Certificate certificate,
                         int[]                   certificateErrors)
                 {
-			
+			if (null != OnCertificateValidation)
+			{
+				return OnCertificateValidation(certificate, certificateErrors);
+			}
+
+			return DefaultCertificateValidationHandler(certificate, certificateErrors);
+		}
+	
+		public bool DefaultCertificateValidationHandler(
+			Syscert.X509Certificate certificate,
+			int[]                   certificateErrors)
+		{
 			bool retFlag=false;
 
                         if (certificateErrors != null &&
@@ -631,6 +678,7 @@ namespace Novell.Directory.Ldap
                                                                                                 
        		                         for (int i = 0; i < certificateErrors.Length; i++)
                		                 {
+						handshakeProblemsEncountered.Add((CertificateProblem)((uint)certificateErrors[i]));
                        		                 Console.WriteLine(certificateErrors[i]);
                                 	 }
 					retFlag = false;
@@ -696,17 +744,55 @@ namespace Novell.Directory.Ldap
 						IPEndPoint ephost = new IPEndPoint(hostadd,port);
 						sock.Connect(ephost);
 						NetworkStream nstream = new NetworkStream(sock,true);
+						// Load Mono.Security.dll
+						Assembly a;
+						try
+						{
+							a = Assembly.LoadFrom("Mono.Security.dll");
+						}
+						catch(System.IO.FileNotFoundException)
+						{
+							throw new LdapException(ExceptionMessages.SSL_PROVIDER_MISSING, LdapException.SSL_PROVIDER_NOT_FOUND, null);
+						}
+						Type tSslClientStream = a.GetType("Mono.Security.Protocol.Tls.SslClientStream");
+						BindingFlags flags = (BindingFlags.NonPublic  | BindingFlags.Public |
+							BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+						object[] consArgs = new object[4];
+						consArgs[0] = nstream;
+						consArgs[1] = host;
+						consArgs[2] = false;
+						Type tSecurityProtocolType = a.GetType("Mono.Security.Protocol.Tls.SecurityProtocolType");
+						Enum objSPType = (Enum)(Activator.CreateInstance(tSecurityProtocolType));
+						int nSsl3Val = (int) Enum.Parse(tSecurityProtocolType, "Ssl3");
+						int nTlsVal = (int) Enum.Parse(tSecurityProtocolType, "Tls");
+						consArgs[3] = Enum.ToObject(tSecurityProtocolType, nSsl3Val | nTlsVal);
+
+						object objSslClientStream = 
+							Activator.CreateInstance(tSslClientStream, consArgs);
+
+						// Register ServerCertValidationDelegate handler
+						PropertyInfo pi = tSslClientStream.GetProperty("ServerCertValidationDelegate");
+						pi.SetValue(objSslClientStream, 
+							Delegate.CreateDelegate(pi.PropertyType, this, "ServerCertificateValidation"),
+							null);
+						
+						// Get the in and out streams
+						in_Renamed = (System.IO.Stream) objSslClientStream;
+						out_Renamed = (System.IO.Stream) objSslClientStream;
+						/*
 						SslClientStream sslstream = new SslClientStream(
 											nstream,
 											host,
 											false,
 											Mono.Security.Protocol.Tls.SecurityProtocolType.Ssl3|Mono.Security.Protocol.Tls.SecurityProtocolType.Tls);
-						sslstream.ServerCertValidationDelegate += new CertificateValidationCallback(ServerCertificateValidation);
-//						byte[] buffer = new byte[0];
-//						sslstream.Read(buffer, 0, buffer.Length);
-//						sslstream.doHandshake();												
- 						in_Renamed = (System.IO.Stream) sslstream;
-						out_Renamed = (System.IO.Stream) sslstream;
+						sslstream.ServerCertValidationDelegate += new CertificateValidationCallback(ServerCertificateValidation);*/
+						//						byte[] buffer = new byte[0];
+						//						sslstream.Read(buffer, 0, buffer.Length);
+						//						sslstream.doHandshake();												
+						/*
+						in_Renamed = (System.IO.Stream) sslstream;
+						out_Renamed = (System.IO.Stream) sslstream;*/
 					}
 					else{
 #endif
@@ -892,13 +978,34 @@ namespace Novell.Directory.Ldap
 				{
 					throw new System.IO.IOException("Output stream not initialized");
 				}
+				if (!(myOut.CanWrite))
+				{
+					return;
+				}
 				sbyte[] ber = msg.Asn1Object.getEncoding(encoder);
 				myOut.Write(SupportClass.ToByteArray(ber), 0, ber.Length);
 				myOut.Flush();
 			}
 			catch (System.IO.IOException ioe)
 			{
-				
+				if ((msg.Type == LdapMessage.BIND_REQUEST) &&
+					(ssl))
+				{
+					string strMsg = "Following problem(s) occurred while establishing SSL based Connection : ";
+					if (handshakeProblemsEncountered.Count > 0)
+					{
+						strMsg += GetProblemMessage((CertificateProblem)handshakeProblemsEncountered[0]); 
+						for (int nProbIndex = 1; nProbIndex < handshakeProblemsEncountered.Count; nProbIndex++)
+						{
+							strMsg += ", " + GetProblemMessage((CertificateProblem)handshakeProblemsEncountered[nProbIndex]);
+						} 
+					}
+					else
+					{
+						strMsg += "Unknown Certificate Problem";
+					}
+					throw new LdapException(strMsg, new System.Object[]{host, port}, LdapException.SSL_HANDSHAKE_FAILED, null, ioe);
+				}				
 				/*
 				* IOException could be due to a server shutdown notification which
 				* caused our Connection to quit.  If so we send back a slightly
@@ -924,6 +1031,7 @@ namespace Novell.Directory.Ldap
 			finally
 			{
 				freeWriteSemaphore(id);
+				handshakeProblemsEncountered.Clear();
 			}
 			return ;
 		}
@@ -988,7 +1096,7 @@ namespace Novell.Directory.Ldap
 			
 			int semId = acquireWriteSemaphore(semaphoreId);
 			// Now send unbind if socket not closed
-			if ((bindProperties != null) && (out_Renamed != null) && (!bindProperties.Anonymous))
+			if ((bindProperties != null) && (out_Renamed != null) && (out_Renamed.CanWrite) && (!bindProperties.Anonymous))
 			{
 				try
 				{
@@ -1005,10 +1113,10 @@ namespace Novell.Directory.Ldap
 			}
 			bindProperties = null;
 			
-			in_Renamed = null;
-			out_Renamed = null;
 			if (socket != null)
 			{
+				// Just before closing the sockets, abort the reader thread
+				reader.Abort();
 				// Close the socket
 				try
 				{
@@ -1018,7 +1126,11 @@ namespace Novell.Directory.Ldap
 						sock.Close();
 					}
 					else
+					{
+						if(in_Renamed != null)
+							in_Renamed.Close();						
 						socket.Close();
+					}
 				}
 				catch (System.IO.IOException ie)
 				{
@@ -1026,6 +1138,8 @@ namespace Novell.Directory.Ldap
 				}
 				socket = null;
 				sock = null;
+				in_Renamed=null;
+				out_Renamed=null;
 			}
 			freeWriteSemaphore(semId);
 			return ;
@@ -1086,8 +1200,7 @@ namespace Novell.Directory.Ldap
 		internal void  startReader()
 		{
 			// Start Reader Thread
-			SupportClass.ThreadClass r =new SupportClass.ThreadClass(new System.Threading.ThreadStart(new ReaderThread(this).Run));
-//			Thread r = new Thread(new ThreadStart(new ReaderThread(this).Run));
+			Thread r = new Thread(new ThreadStart(new ReaderThread(this).Run));
 			r.IsBackground = true; // If the last thread running, allow exit.
 			r.Start();
 			waitForReader(r);
@@ -1132,15 +1245,44 @@ namespace Novell.Directory.Ldap
 				sock.Connect(ephost);
 */
 //				NetworkStream nstream = new NetworkStream(this.socket,true);
+				// Load Mono.Security.dll
+				Assembly a = Assembly.LoadFrom("Mono.Security.dll");
+				Type tSslClientStream = a.GetType("Mono.Security.Protocol.Tls.SslClientStream");
+				BindingFlags flags = (BindingFlags.NonPublic  | BindingFlags.Public |
+					BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+
+				object[] consArgs = new object[4];
+				consArgs[0] = socket.GetStream();
+				consArgs[1] = host;
+				consArgs[2] = false;
+				Type tSecurityProtocolType = a.GetType("Mono.Security.Protocol.Tls.SecurityProtocolType");
+				Enum objSPType = (Enum)(Activator.CreateInstance(tSecurityProtocolType));
+				int nSsl3Val = (int) Enum.Parse(tSecurityProtocolType, "Ssl3");
+				int nTlsVal = (int) Enum.Parse(tSecurityProtocolType, "Tls");
+				consArgs[3] = Enum.ToObject(tSecurityProtocolType, nSsl3Val | nTlsVal);
+
+				object objSslClientStream = 
+					Activator.CreateInstance(tSslClientStream, consArgs);
+
+				// Register ServerCertValidationDelegate handler
+				EventInfo ei = tSslClientStream.GetEvent("ServerCertValidationDelegate");
+				ei.AddEventHandler(objSslClientStream, 
+					Delegate.CreateDelegate(ei.EventHandlerType, this, "ServerCertificateValidation"));
+						
+				// Get the in and out streams
+				in_Renamed = (System.IO.Stream) objSslClientStream;
+				out_Renamed = (System.IO.Stream) objSslClientStream;
+
+				/*
 				SslClientStream sslstream = new SslClientStream(
 									socket.GetStream(),
-//									nstream,
+									nstream,
 									host,
 									false,
 									Mono.Security.Protocol.Tls.SecurityProtocolType.Ssl3| Mono.Security.Protocol.Tls.SecurityProtocolType.Tls);
 				sslstream.ServerCertValidationDelegate = new CertificateValidationCallback(ServerCertificateValidation);
 				this.in_Renamed = (System.IO.Stream) sslstream;
-				this.out_Renamed = (System.IO.Stream) sslstream;
+				this.out_Renamed = (System.IO.Stream) sslstream;*/
 			}
 			catch (System.IO.IOException ioe)
 			{
@@ -1258,7 +1400,7 @@ namespace Novell.Directory.Ldap
 				InterThreadException notify = null;
 				Message info = null;
 				System.IO.IOException ioex = null;
-				this.enclosingInstance.reader = SupportClass.ThreadClass.Current();				
+				this.enclosingInstance.reader = System.Threading.Thread.CurrentThread;				
 //				Enclosing_Instance.reader = SupportClass.ThreadClass.Current();
 //				Console.WriteLine("Inside run:" + this.enclosingInstance.reader.Name);
 				try
@@ -1357,6 +1499,12 @@ namespace Novell.Directory.Ldap
 							return ;
 						}
 					}
+				}
+				catch(ThreadAbortException tae)
+				{
+					// Abort has been called on reader
+					// before closing sockets, from shutdown
+					return;
 				}
 				catch (System.IO.IOException ioe)
 				{
@@ -1516,7 +1664,7 @@ namespace Novell.Directory.Ldap
 		static Connection()
 		{
 			nameLock = new System.Object();
-			sdk = new System.Text.StringBuilder("2.1.1").ToString();
+			sdk = new System.Text.StringBuilder("2.1.4").ToString();
 			protocol = 3;
 		}
 	}

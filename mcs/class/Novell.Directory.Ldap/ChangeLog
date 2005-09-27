@@ -1,6 +1,23 @@
+2005-27-09 Palaniappan N <npalaniappan@novell.com>
+	* The folder is made in synch. with the Novell Forge's C# LDAP SDK with the following updates:
+		- Changes in Connection.cs regarding appropriate handling
+	          in method ServerCertificateValidation.
+		- Added support for error code 113 SSL_HANDSHAKE_FAILED.
+		- Added two files ResultCodeMessages.txt and ExceptionMessages.txt in              
+                  Novell.Directory.Ldap.Utilclass
+		- Added support for subordinate subtree scope.
+		- Removed hard coded dependency on Mono Security
+		- Fix for a race condition in Connection.cs
+		- Updated with support for Interactiveness of SSL Handshake, 
+		  Ldap Events, Edir Events, Intermediate Response
+		- Connection.cs class is modified by synchronizing the stream 
+                  threads so as to avoid the memory consumption and handle consumption.
+		- Changed version from 2.1.1 to 2.1.4 in Connection.cs.
+		- Updated ChangeLog so that latest changes are on the top.
+
 2005-26-09  Boris Kirzner <borisk@mainsoft.com>
 	* Novell.Directory.Ldap.dll.sources: added reference to Consts.cs.in
-
+	
 2005-15-09  Boris Kirzner <borisk@mainsoft.com>
 	* Novell.Directory.Ldap.vmwcsproj: added reference to Consts.cs.in
 

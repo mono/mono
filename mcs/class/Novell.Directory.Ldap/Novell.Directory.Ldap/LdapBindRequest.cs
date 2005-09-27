@@ -112,11 +112,12 @@ namespace Novell.Directory.Ldap
 		/// or null if none.
 		/// </param>
 		[CLSCompliantAttribute(false)]
-		public LdapBindRequest(int version, System.String dn, String mechanism, sbyte[] credentials, LdapControl[] cont):base(LdapMessage.BIND_REQUEST, new RfcBindRequest(version, dn, mechanism, credentials), cont)
+		public LdapBindRequest(int version, System.String dn, String mechanism, sbyte[] credentials, LdapControl[] 		
+		cont):base(LdapMessage.BIND_REQUEST, new RfcBindRequest(version, dn, mechanism, credentials), cont)
 		{
 			return ;
 		}
-		
+ 		
 		/// <summary> Return an Asn1 representation of this add request.
 		/// 
 		/// #return an Asn1 representation of this object.

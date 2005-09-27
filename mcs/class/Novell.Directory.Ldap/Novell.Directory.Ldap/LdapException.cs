@@ -758,6 +758,17 @@ namespace Novell.Directory.Ldap
 		/// </summary>
 		public const int TLS_NOT_SUPPORTED = 112;
 		
+                /// <summary> Indicates that SSL Handshake could not succeed.
+                ///
+                /// SSL_HANDSHAKE_FAILED = 113
+                /// </summary>
+                public const int SSL_HANDSHAKE_FAILED = 113;
+ 
+		/// <summary> Indicates that SSL Provider could not be found.
+		///
+		/// SSL_PROVIDER_NOT_FOUND = 114
+		/// </summary>
+		public const int SSL_PROVIDER_NOT_FOUND = 114;
 		/*
 		* Note: Error strings have been pulled out into
 		* ResultCodeMessages.properties

@@ -37,7 +37,7 @@ namespace Novell.Directory.Ldap.Utilclass
 	/// so that it can be used to maintain a list of currently
 	/// registered extended responses.
 	/// </summary>
-	public class RespExtensionSet:AbstractSetSupport
+	public class RespExtensionSet:SupportClass.AbstractSetSupport
 	{
 		/// <summary> Returns the number of extensions in this set.
 		/// 
