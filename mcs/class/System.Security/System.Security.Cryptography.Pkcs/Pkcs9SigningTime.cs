@@ -74,8 +74,12 @@ namespace System.Security.Cryptography.Pkcs {
 
 		public override void CopyFrom (AsnEncodedData asnEncodedData)
 		{
-			base.CopyFrom (asnEncodedData);
-			Decode (this.RawData);
+			if (asnEncodedData == null)
+				throw new ArgumentNullException ("asnEncodedData");
+
+			Decode (asnEncodedData.RawData);
+			Oid = asnEncodedData.Oid;
+			RawData = asnEncodedData.RawData;
 		}
 
 		// internal stuff

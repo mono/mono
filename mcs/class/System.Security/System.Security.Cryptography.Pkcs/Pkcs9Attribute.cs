@@ -63,6 +63,15 @@ namespace System.Security.Cryptography.Pkcs {
 		// this (sadly) removes the "set" accessor
 		public new Oid Oid {
 			get { return base.Oid; }
+			internal set { base.Oid = value; }
+		}
+
+		public override void CopyFrom (AsnEncodedData asnEncodedData)
+		{
+			if (asnEncodedData == null)
+				throw new ArgumentNullException ("asnEncodedData");
+
+			throw new ArgumentException ("Cannot convert the PKCS#9 attribute.");
 		}
 	}
 }
