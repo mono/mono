@@ -35,7 +35,7 @@ using System.Collections;
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	public sealed class X509Certificate2Collection : X509CertificateCollection {
+	public class X509Certificate2Collection : X509CertificateCollection {
 
 		// constructors
 
@@ -187,18 +187,6 @@ namespace System.Security.Cryptography.X509Certificates {
 		{
 			if (certificates == null)
 				throw new ArgumentNullException ("certificate");
-		}
-
-		// note: UI
-		public X509Certificate2Collection Select (string title, string message, X509SelectionFlag selectionFlag)
-		{
-			return null;
-		}
-
-		// note: UI
-		public X509Certificate2Collection Select (string title, string message, X509SelectionFlag selectionFlag, IntPtr hwndParent) 
-		{
-			return null;
 		}
 	}
 }

@@ -1,3 +1,12 @@
+2005-09-27  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509Certificate2Collection.cs: Class is not sealed. Removed Select 
+	methods (moved to a new class in System.Security.dll).
+	* X509Certificate2.cs: Removed Display methods (moved to a new class 
+	in System.Security.dll).
+	* X509SelectionFlag.cs: Removed. This enum is still in System.Security
+	* X509NameType.cs: Added new DnsFromAlternativeName value.
+
 2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* All classes, except X509CertificateCollection, moved from 

@@ -36,6 +36,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		EmailName,
 		UpnName,
 		DnsName,
+		DnsFromAlternativeName,
 		UrlName
 	}
 }

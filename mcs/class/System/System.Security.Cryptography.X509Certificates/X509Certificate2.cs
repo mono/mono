@@ -220,16 +220,6 @@ namespace System.Security.Cryptography.X509Certificates {
 		// methods
 
 		[MonoTODO]
-		public void Display ()
-		{
-		}
-
-		[MonoTODO]
-		public void Display (IntPtr hwndParent) 
-		{
-		}
-
-		[MonoTODO]
 		public string GetNameInfo (X509NameType nameType, bool forIssuer) 
 		{
 			return null;
