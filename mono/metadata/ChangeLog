@@ -11,6 +11,11 @@
 
 2005-09-27  Martin Baulig  <martin@ximian.com>
 
+	* loader.c (method_from_methodspec): Create a "signature"
+	MonoGenericContainer and use mono_get_method_full().  Fixes #75584.
+
+2005-09-27  Martin Baulig  <martin@ximian.com>
+
 	* class.c
 	(inflate_generic_class): Correctly set the new context's
 	container.
