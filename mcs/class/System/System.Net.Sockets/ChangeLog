@@ -1,6 +1,6 @@
 2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
-	* Socket.cs: add checks for 'disposed' all over. Fixes bug #76429.
+	* Socket.cs: add checks for 'disposed' all over. Fixes bug #76249.
 
 2005-06-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
