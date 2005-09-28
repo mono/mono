@@ -1,3 +1,9 @@
+2005-09-28  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNodeReaderImpl.cs : when the source node was not a document and
+	  it is an empty element, Read() was incorrectly moving to the parent
+	  of the source node. Patch by Csaba Halasz. Fixed bug #76260.
+
 2005-09-27  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTextReader.cs : surrogate computation is incorrect. Fixed bug

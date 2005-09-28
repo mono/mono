@@ -167,6 +167,23 @@ namespace MonoTests.System.Xml
 			// ent does not exists in this dtd.
 			nr.ResolveEntity ();
 		}
+
+		[Test] // bug #76260
+		public void FromEmptyNonDocumentElement ()
+		{
+			document.LoadXml ("<root><child/></root>");
+			XmlNodeReader nr = new XmlNodeReader (
+				document.DocumentElement.FirstChild);
+			nr.Read ();
+			Assert ("#1", !nr.Read ());
+
+			document.LoadXml ("<root><child></child></root>");
+			nr = new XmlNodeReader (
+				document.DocumentElement.FirstChild);
+			nr.Read ();
+			Assert ("#2", nr.Read ());
+			Assert ("#3", !nr.Read ());
+		}
 	}
 
 }

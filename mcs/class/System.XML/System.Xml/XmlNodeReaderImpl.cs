@@ -767,7 +767,8 @@ namespace System.Xml
 				isEndElement = false;
 				if (current.ParentNode == null
 					|| current.ParentNode.NodeType == XmlNodeType.Document
-					|| current.ParentNode.NodeType == XmlNodeType.DocumentFragment) {
+					|| current.ParentNode.NodeType == XmlNodeType.DocumentFragment
+					|| current == startNode) {
 					isEnd = true;
 				} else if (current.NextSibling == null) {
 					depth--;
