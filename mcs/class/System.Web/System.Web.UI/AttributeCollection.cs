@@ -62,14 +62,7 @@ namespace System.Web.UI {
 			get { return bag [key] as string; }
 
 			set {
-				if (0 == String.Compare (key, "style", true, CultureInfo.InvariantCulture)) {
-					CssStyle.Clear();
-					if (value != null) {
-						CssStyle.FillStyle (value);
-					}
-					key = "style";	// Needs to be always lowercase
-				}
-				bag.Add (key, value);
+				Add (key, value);
 			}
 		}
 
@@ -80,11 +73,8 @@ namespace System.Web.UI {
 		public void Add (string key, string value)
 		{
 			if (0 == String.Compare (key, "style", true, CultureInfo.InvariantCulture)) {
-				CssStyle.Clear();
-				if (value != null) {
-					CssStyle.FillStyle (value);
-				}
-				key = "style";	// Needs to be always lowercase
+				CssStyle.Value = value;
+				return;
 			}
 			bag.Add (key, value);
 		}

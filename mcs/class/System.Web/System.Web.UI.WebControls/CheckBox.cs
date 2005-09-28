@@ -400,7 +400,7 @@ namespace System.Web.UI.WebControls {
 				CssStyleCollection style = Attributes.CssStyle;
 				
 				w.AddAttribute (HtmlTextWriterAttribute.Style,
-						style.BagToString ());
+						style.Value);
 				w.RenderBeginTag (HtmlTextWriterTag.Span);
 
 				control_style = true;

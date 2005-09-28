@@ -788,7 +788,10 @@ namespace System.Web.UI.WebControls {
 			Table table = new Table ();
 			table.CellSpacing = CellSpacing;
 			table.CellPadding = CellPadding;
-			table.ControlStyle.CopyFrom (ControlStyle);
+			if (ControlStyleCreated)
+				table.ControlStyle.CopyFrom (ControlStyle);
+			table.CopyBaseAttributes (this);
+			table.ID = ID;
 
 			if (ShowGridLines)
 				table.GridLines = GridLines.Both;

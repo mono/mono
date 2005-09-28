@@ -39,24 +39,22 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class CssStyleCollection
 	{
-		private StateBag bag;
-		private StateBag style;
+		StateBag bag;
+		StateBag style;
+		string last_string;
 
-		internal CssStyleCollection ()
-		{
-			style = new StateBag ();
-		}
-		
 		internal CssStyleCollection (StateBag bag)
 		{
 			this.bag = bag;
-			style = new StateBag ();
-			string st_string = bag ["style"] as string;
-			if (st_string != null)
-				FillStyle (st_string);
+			if (bag != null) {
+				last_string = (string) bag ["style"];
+				style = new StateBag ();
+				if (last_string != null)
+					FillStyle (last_string);
+			}
 		}
 
-		internal void FillStyle (string s)
+		void FillStyle (string s)
 		{
 			int mark = s.IndexOf (':');
 			if (mark == -1)
@@ -82,21 +80,29 @@ namespace System.Web.UI {
 			FillStyle (fullValue.Substring (mark + 1));
 		}
 
-		internal string BagToString ()
+		string BagToString ()
 		{
-			HtmlTextWriter writer = new HtmlTextWriter (new StringWriter ());
-			foreach (string k in style.Keys)
-				writer.WriteStyleAttribute ((k as string), (style [k] as string));
-			return writer.InnerWriter.ToString ();
-		}
-		
-		public int Count
-		{
-			get { return style.Count; }
+			if (last_string != null)
+				return last_string;
+
+			StringBuilder sb = new StringBuilder ();
+			foreach (string key in Keys)
+				sb.AppendFormat ("{0}: {1};", key, style [key]);
+
+			last_string = sb.ToString ();
+			return last_string;
 		}
 
-		public string this [string key]
+		public int Count
 		{
+			get {
+				if (bag == null)
+					throw new NullReferenceException ();
+				return style.Count;
+			}
+		}
+
+		public string this [string key] {
 			get {
 				return style [key] as string;
 			}
@@ -112,11 +118,13 @@ namespace System.Web.UI {
 
 		public void Add (string key, string value)
 		{
+			if (style == null)
+				style = new StateBag ();
 			style [key] = value;
-			if (bag != null)
-				bag ["style"] = BagToString ();
+			last_string = null;
+			bag ["style"] = BagToString ();
 		}
-		
+
 #if NET_2_0
 		public
 #else
@@ -129,18 +137,18 @@ namespace System.Web.UI {
 
 		public void Clear ()
 		{
-			if (bag != null)
-				bag.Remove ("style");
-			style.Clear ();
+			if (style != null)
+				style.Clear ();
+			last_string = null;
+			bag.Remove ("style");
 		}
 
 		public void Remove (string key)
 		{
-			if (style [key] != null) {
+			if (style != null)
 				style.Remove (key);
-				if (bag != null)
-					bag ["style"] = BagToString ();
-			}
+			last_string = null;
+			bag ["style"] = BagToString ();
 		}
 #if NET_2_0
 		public string this [HtmlTextWriterStyle key] {
@@ -152,19 +160,27 @@ namespace System.Web.UI {
 			}
 		}
 
-		public string Value {
-			get { return BagToString (); }
-			set {
-				Clear ();
-				FillStyle (value);
-			}
-		}
-
 		public void Remove (HtmlTextWriterStyle key)
 		{
 			Remove (HtmlTextWriter.StaticGetStyleName (key));
 		}
+
+		public
+#else
+		internal
 #endif
+		string Value {
+			get { return BagToString (); }
+			set {
+				if (style != null)
+					style = new StateBag ();
+				style.Clear ();
+				last_string = value;
+				bag ["style"] = value;
+				if (value != null)
+					FillStyle (value);
+			}
+		}
 	}
 }
 
