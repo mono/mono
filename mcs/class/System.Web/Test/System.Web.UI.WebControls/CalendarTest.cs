@@ -61,6 +61,19 @@ class PokerCalendar : System.Web.UI.WebControls.Calendar {
 		base.Render (writer);
 		return writer.InnerWriter.ToString ();
 	}
+
+	bool cs_called;
+	public bool CS_Called {
+		get { return cs_called; }
+		set { cs_called = value; }
+	}
+
+	protected override Style CreateControlStyle ()
+	{
+		// Console.WriteLine (Environment.StackTrace);
+		cs_called = true;
+		return base.CreateControlStyle ();
+	}
 }
 
 
@@ -603,5 +616,44 @@ namespace MonoTests.System.Web.UI.WebControls
 			string s = p.Render();
 			Assert.IsTrue (s.IndexOf ("color:White") != 1 && s.IndexOf ("background-color:Silver") != -1, "A1");
 		}
+
+		[Test]
+		public void HaveID ()
+		{
+			PokerCalendar p = new PokerCalendar ();
+			p.ID = "hola";
+			p.TodaysDate = new DateTime (2005, 8, 4);
+			p.SelectedDate = p.TodaysDate;
+			string s = p.Render();
+			Assert.IsTrue (s.IndexOf ("id=\"hola\"") != -1, "#01");
+		}
+
+		/*
+		* Not meant to be run. Just to get a stack trace.
+		[Test]
+		public void NoCreateStyleCollection ()
+		{
+			PokerCalendar p = new PokerCalendar ();
+			p.ID = "hola";
+			p.TodaysDate = new DateTime (2005, 8, 4);
+			p.SelectedDate = p.TodaysDate;
+			string s = p.Render();
+			Assert.IsTrue (p.CS_Called == false, "#01");
+		}
+		*/
+
+		[Test]
+		public void HaveBaseAttributes ()
+		{
+			PokerCalendar p = new PokerCalendar ();
+			p.ID = "hola";
+			p.ToolTip = "adios";
+			p.TodaysDate = new DateTime (2005, 8, 4);
+			p.SelectedDate = p.TodaysDate;
+			string s = p.Render();
+			Assert.IsTrue (s.IndexOf ("adios") != -11, "#01");
+			Assert.IsTrue (p.CS_Called == false, "#01");
+		}
 	}
 }
+
