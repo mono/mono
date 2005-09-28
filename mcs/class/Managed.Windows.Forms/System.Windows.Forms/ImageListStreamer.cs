@@ -40,11 +40,16 @@ namespace System.Windows.Forms {
 	public sealed class ImageListStreamer : ISerializable {
 
 		private static byte [] signature = new byte [] {77 , 83 , 70 , 116};
-		
+
+		private readonly ImageList.ImageCollection imageCollection;
 		private Image [] images;
 		private Size image_size;
 		private Color back_color;
 
+		internal ImageListStreamer (ImageList.ImageCollection imageCollection) {
+			this.imageCollection = imageCollection;
+		}
+		
 		private ImageListStreamer (SerializationInfo info, StreamingContext context) {
 
 			byte [] data = (byte [])info.GetValue ("Data", typeof (byte []));
@@ -144,10 +149,12 @@ namespace System.Windows.Forms {
 			info.AddValue ("Data", stream.ToArray (), typeof (byte []));
 		}
 
+		[MonoTODO ("Images should be written to the stream")]
 		private byte [] GetStreamData ()
 		{
 			MemoryStream stream = new MemoryStream ();
 			BinaryWriter writer = new BinaryWriter (stream);
+			Image [] images = (imageCollection != null) ? imageCollection.ToArray () : this.images;
 
 			int cols = 4;
 			int rows = images.Length / cols;
@@ -207,7 +214,7 @@ namespace System.Windows.Forms {
 			get { return image_size; }
 		}
 
-		internal ColorDepth ImageColorDepth {
+		internal ColorDepth ColorDepth {
 			get { return ColorDepth.Depth32Bit; }
 		}
 

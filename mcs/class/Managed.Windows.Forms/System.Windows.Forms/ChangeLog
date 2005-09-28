@@ -1,3 +1,21 @@
+2005-09-28  Kornél Pál  <kornelpal@hotmail.com>
+
+	* ImageList.cs: Added comments about the current implementation. Added
+	  ReduceColorDepth, IndexedColorDepths and GetNearestColor to can use
+	  Format32bppArgb to preserve transparency and can use Graphics.FromImage
+	  while using the specified ColorDepth. ReduceColorDepth uses unsafe code
+	  with Bitmap.LockBits for better performance. Revised the whole file to
+	  match MS.NET behaviour and provide better performance. Non-public
+	  interface members are calling public members even when they throw
+	  NotSupportedException for better maintainability. Moved ColorDepth,
+	  ImageSize, ImageStream and TransparentColor implementations to
+	  ImageCollection for better performance as these properties are not used
+	  by ImageList.
+	* ImageListStreamer.cs: Added a new internal constructor that takes an
+	  ImageList.ImageCollection and serializes Images based on
+	  ImageCollection.ToArray(). Renamed ImageColorDepth to ColorDepth to
+	  match ImageList property name.
+
 2005-09-28  Kazuki Oikawa <kazuki@panicode.com>
 
 	* ListBox.cs: Fixes IndexFromPoint for last item
