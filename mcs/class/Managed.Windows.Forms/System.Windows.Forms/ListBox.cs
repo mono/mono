@@ -792,7 +792,7 @@ namespace System.Windows.Forms
 		// Only returns visible points
 		public int IndexFromPoint (int x, int y)
 		{
-			for (int i = LBoxInfo.top_item; i < LBoxInfo.last_item; i++) {
+			for (int i = LBoxInfo.top_item; i <= LBoxInfo.last_item; i++) {
 				if (GetItemRectangle (i).Contains (x,y) == true)
 					return i;
 			}
