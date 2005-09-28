@@ -1,3 +1,9 @@
+
+Wed Sep 28 17:12:48 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.h: work around what looks like a gcc bug when optimizations
+	are enabled.
+
 2005-09-28  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (AM_CFLAGS): Don't use += to append inside
