@@ -231,6 +231,7 @@ namespace Mfconsulting.General.Prj2Make
 						if (this.m_bIsMcs == false)
 						{
 							MakefileBuilder.Append("MCS=csc\n");
+							MakefileBuilder.Append("RESGEN=resgen\n");
 							MakefileBuilder.Append("MCSFLAGS=-nologo\n\n");
 							MakefileBuilder.Append("ifdef (RELEASE)\n");
 							MakefileBuilder.Append("\tMCSFLAGS=$(MCSFLAGS) -optimize+ -d:TRACE\n");
@@ -241,6 +242,7 @@ namespace Mfconsulting.General.Prj2Make
 						else
 						{
 							MakefileBuilder.Append("MCS=mcs\n");
+							MakefileBuilder.Append("RESGEN=resgen\n");
 							MakefileBuilder.Append("ifndef (RELEASE)\n");
 							MakefileBuilder.Append("\tMCSFLAGS=-debug \n");
 							MakefileBuilder.Append("endif\n");
@@ -273,6 +275,7 @@ namespace Mfconsulting.General.Prj2Make
 						if (m_bIsMcs == false)
 						{
 							MakefileBuilder.Append("MCS=csc\n");
+							MakefileBuilder.Append("RESGEN=resgen\n");
 							MakefileBuilder.Append("MCSFLAGS=-nologo\n\n");
 							MakefileBuilder.Append("!if !defined(RELEASE)\n");
 							MakefileBuilder.Append("MCSFLAGS=$(MCSFLAGS) -optimize+ -d:TRACE\n");
@@ -283,6 +286,7 @@ namespace Mfconsulting.General.Prj2Make
 						else
 						{
 							MakefileBuilder.Append("MCS=mcs\n");
+							MakefileBuilder.Append("RESGEN=resgen\n");
 							MakefileBuilder.Append("!if !defined(RELEASE)\n");
 							MakefileBuilder.Append("MCSFLAGS=-debug \n");
 							MakefileBuilder.Append("!endif\n");
@@ -303,6 +307,7 @@ namespace Mfconsulting.General.Prj2Make
 					MakefileBuilder.AppendFormat("{0}=$(TARGET){1}{2}\n", pi.makename_ext, slash, pi.assembly_name);
 					MakefileBuilder.AppendFormat("{0}_PDB=$(TARGET){1}{2}\n", pi.makename, slash, pi.assembly_name.Replace(".dll",".pdb"));
 					MakefileBuilder.AppendFormat("{0}_SRC={1}\n", pi.makename, pi.src);
+					MakefileBuilder.AppendFormat("{0}_RESX={1}\n", pi.makename, pi.resgen);
 					MakefileBuilder.AppendFormat("{0}_RES={1}\n\n", pi.makename, pi.res);
 				}
 				
@@ -405,6 +410,9 @@ namespace Mfconsulting.General.Prj2Make
 					{
 						MakefileBuilder.Append("\t-md $(TARGET)\n");
 					}
+
+					if (pi.resgen != null && pi.resgen != String.Empty)
+						MakefileBuilder.AppendFormat ("\t$(RESGEN) /compile {0}\n", pi.resgen);
 
 					MakefileBuilder.Append("\t$(MCS) $(MCSFLAGS)");
 

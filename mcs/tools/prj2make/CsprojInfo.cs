@@ -35,6 +35,7 @@ namespace Mfconsulting.General.Prj2Make
 		public string makename_ext;
 		public string assembly_name;
 		public string res;
+		public string resgen;
 		public string src;
 		private bool m_bAllowUnsafeCode;
 		private Mfconsulting.General.Prj2Make.Schema.Csproj.VisualStudioProject m_projObject;
@@ -171,6 +172,7 @@ namespace Mfconsulting.General.Prj2Make
 			}
     		
 			res = "";
+			resgen = "";
 			string rootNS = m_projObject.CSHARP.Build.Settings.RootNamespace;
 			string relPath;
 			foreach (Mfconsulting.General.Prj2Make.Schema.Csproj.File fl in m_projObject.CSHARP.Files.Include)
@@ -183,6 +185,15 @@ namespace Mfconsulting.General.Prj2Make
     			
 					relPath = fl.RelPath.Replace("\\", "/");
 					s = System.IO.Path.Combine(basePath, relPath);
+					if (Path.GetExtension (s) == ".resx") {
+						string path = s;
+						path = path.Replace (@"\", "/");
+						if (SlnMaker.slash != "/")
+							path = path.Replace("/", SlnMaker.slash);
+						resgen += String.Format ("{0} ", path);
+						s = Path.ChangeExtension (s, ".resources");
+						relPath = Path.ChangeExtension (relPath, ".resources");
+					}
 					s = String.Format("-resource:{0},{1}", s, rootNS + "." + relPath.Replace("/", "."));
 					s = s.Replace("\\", "/");
 					if (SlnMaker.slash != "/")
