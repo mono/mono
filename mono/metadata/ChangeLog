@@ -1,3 +1,9 @@
+
+Wed Sep 28 17:06:01 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* decimal.c: fix warning (and let gcc generate correct
+	code on ARM with optimizations).
+
 2005-09-28  Martin Baulig  <martin@ximian.com>
 
 	* object.c (mono_runtime_invoke_array): Added support for
