@@ -1320,8 +1320,12 @@ namespace Mono.CSharp
 				return true;
 			}
 
-			Report.Error (2007, "Unrecognized command-line option: `{0}'", option);
 			return false;
+		}
+
+		static void Error_WrongOption (string option)
+		{
+			Report.Error (2007, "Unrecognized command-line option: `{0}'", option);
 		}
 
 		static string [] AddArgs (string [] args, string [] extra_args)
@@ -1434,13 +1438,19 @@ namespace Mono.CSharp
 						string csc_opt = "/" + arg.Substring (1);
 						if (CSCParseOption (csc_opt, ref args, ref i))
 							continue;
+
+						Error_WrongOption (arg);
 						return false;
 					} else {
-						// Need to skip `/home/test.cs' however /test.cs is considered as error
-						if (arg [0] == '/' && (arg.Length < 2 ||  arg.IndexOf ('/', 2) == -1)){
+						if (arg [0] == '/'){
 							if (CSCParseOption (arg, ref args, ref i))
 								continue;
-							return false;
+
+							// Need to skip `/home/test.cs' however /test.cs is considered as error
+							if (arg.Length < 2 || arg.IndexOf ('/', 2) == -1) {
+								Error_WrongOption (arg);
+								return false;
+							}
 						}
 					}
 				}
