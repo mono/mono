@@ -724,12 +724,10 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Properties
-		[MonoTODO("Need to add MDI support")]
+		[MonoTODO("Need to set start position properly")]
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams cp;
-
-				cp = new CreateParams();
+				CreateParams cp = new CreateParams ();
 
 				cp.Caption = Text;
 				cp.ClassName = XplatUI.DefaultClassName;
@@ -737,6 +735,7 @@ namespace System.Windows.Forms {
 				cp.ExStyle = 0;
 				cp.Param = 0;
 				cp.Parent = IntPtr.Zero;
+
 //				if (start_position == FormStartPosition.WindowsDefaultLocation) {
 					cp.X = unchecked((int)0x80000000);
 					cp.Y = unchecked((int)0x80000000);
@@ -747,9 +746,19 @@ namespace System.Windows.Forms {
 				cp.Width = Width;
 				cp.Height = Height;
 
-				cp.Style = (int)(WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_CLIPCHILDREN);
+				if (IsMdiChild) {
+					cp.Style |= (int)WindowStyles.WS_CHILD;
+					cp.Style |= (int)WindowStyles.WS_CLIPCHILDREN;
+					cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
+					cp.Parent = Parent.Handle;
+				} else {
+					cp.Style |= (int)WindowStyles.WS_CAPTION;
+					cp.ExStyle |= (int)WindowStyles.WS_EX_OVERLAPPEDWINDOW;
+				}
 
-				switch (FormBorderStyle) {
+				if (!IsMdiChild) {
+					switch (FormBorderStyle) {
+
 					case FormBorderStyle.Fixed3D: {
 						cp.Style |= (int)WindowStyles.WS_CAPTION;
 						cp.ExStyle |= (int)WindowStyles.WS_EX_OVERLAPPEDWINDOW;
@@ -785,6 +794,7 @@ namespace System.Windows.Forms {
 						cp.ExStyle |= (int)(WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_TOOLWINDOW);
 						break;
 					}
+					}
 				}
 
 				if (ShowInTaskbar) {
@@ -806,6 +816,7 @@ namespace System.Windows.Forms {
 				if (HelpButton) {
 					cp.ExStyle |= (int)WindowStyles.WS_EX_CONTEXTHELP;
 				}
+
 				return cp;
 			}
 		}
