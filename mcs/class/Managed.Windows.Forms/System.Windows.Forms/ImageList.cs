@@ -447,13 +447,15 @@ namespace System.Windows.Forms
 				if (value == null)
 					throw new ArgumentNullException("value");
 
-				if (value.Width == 0 || (value.Width % (width = this.imageSize.Width)) != 0)
+				if ((imageWidth = value.Width) == 0 || (imageWidth % (width = this.imageSize.Width)) != 0)
 					throw new ArgumentException("Width of image strip must be a positive multiple of ImageSize.Width.", "value");
 
 				if (value.Height != (height = this.imageSize.Height))
 					throw new ArgumentException("Height of image strip must be equal to ImageSize.Height.", "value");
 
-				imageWidth = value.Width;
+				if (!(value is Bitmap))
+					throw new ArgumentException("Image must be a Bitmap.");
+
 				imageRect = new Rectangle(0, 0, width, height);
 				if (this.transparentColor.A == 0)
 					imageAttributes = null;

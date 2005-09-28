@@ -1,3 +1,7 @@
+2005-09-28  Kornél Pál  <kornelpal@hotmail.com>
+
+	* ImageList.cs: AddStrip: Throw ArgumentException when Image is not a Bitmap.
+
 2005-09-28  Jordi Mas i Hernandez <jordi@ximian.com>
 	 
 	* ListBox.cs: Fixes bug 76253
