@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -454,8 +455,8 @@ namespace System.Web.UI.WebControls {
 			Type ds_type = data_source.GetType ();
 			PropertyInfo pinfo = ds_type.GetProperty ("Item", item_args);
 			if (pinfo == null) {
-				IEnumerator items = data_source.GetEnumerator ();
-				if (items.MoveNext ()) {
+				IEnumerator items = (data_source.DataSource != null) ? data_source.GetEnumerator () : null;
+				if (items != null && items.MoveNext ()) {
 					object data = items.Current;
 					if (data is ICustomTypeDescriptor)
 						props = TypeDescriptor.GetProperties (data);
@@ -828,6 +829,12 @@ namespace System.Web.UI.WebControls {
 			pds.VirtualCount = VirtualItemCount;
 
 			CreateRenderColumns (paged_data_source, useDataSource);
+			if (useDataSource) {
+				if (DataSource != null)
+					Controls.Add (RenderTable);
+			} else {
+				Controls.Add (RenderTable);
+			}
 
 			if (pds.IsPagingEnabled)
 				CreateItem (-1, -1, ListItemType.Pager, false, null, pds);
@@ -845,22 +852,23 @@ namespace System.Web.UI.WebControls {
 				// replaced when creating bound columns
 				enumerator = data_enumerator;
 				skip_first = true;
-			} else {
+			} else if (pds.DataSource != null) {
 				enumerator = pds.GetEnumerator ();
+			} else {
+				enumerator = null;
 			}
 
 			int index = 0;
 			bool first = true;
 			string key = null;
-			while (skip_first || enumerator.MoveNext ()) {
+			while (enumerator != null && (skip_first || enumerator.MoveNext ())) {
 				// MS does not render <table blah></table> on empty datasource.
 				if (first) {
-					Controls.Add (RenderTable);
 					first = false;
 					key = DataKeyField;
+					skip_first = false;
 				}
 				object data = enumerator.Current;
-				skip_first = false;
 				// This will throw if the DataKeyField is not there. As on MS, this
 				// will not be hit on an empty datasource.
 				// The values stored here can be used in events so that you can
@@ -913,11 +921,12 @@ namespace System.Web.UI.WebControls {
 
 		protected override void PrepareControlHierarchy ()
 		{
-			if (render_table == null)
-				return;
+			if (!HasControls () || Controls.Count == 0)
+				return; // No one called CreateControlHierarchy() with DataSource != null
 
-			render_table.CopyBaseAttributes (this);
-			render_table.ApplyStyle (ControlStyle);
+			Table rt = render_table;
+			rt.CopyBaseAttributes (this);
+			rt.ApplyStyle (ControlStyle);
 
 			bool top_pager = true;
 			Style alt = null;
@@ -929,7 +938,7 @@ namespace System.Web.UI.WebControls {
 				alt = item_style;
 			}
 
-			foreach (DataGridItem item in render_table.Rows) {
+			foreach (DataGridItem item in rt.Rows) {
 				
 				switch (item.ItemType) {
 				case ListItemType.Item:

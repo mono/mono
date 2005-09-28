@@ -64,15 +64,7 @@ namespace System.Web.UI.WebControls {
 
 		public Calendar ()
 		{
-			dayHeaderStyle = null;
-			dayStyle = null;
-			nextPrevStyle = null;
-			selectedDayStyle = null;
-			titleStyle = null;
-			todayDayStyle = null;
 			dateInfo = new DateTimeFormatInfo ();
-			selectedDatesCollection = null;
-			dateList = null;
 		}
 
 #if NET_2_0
@@ -149,11 +141,11 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Style")]
 		public TableItemStyle DayHeaderStyle {
 			get {
-				if (dayHeaderStyle == null)
+				if (dayHeaderStyle == null) {
 					dayHeaderStyle = new TableItemStyle ();
-
-				if (IsTrackingViewState)
-					dayHeaderStyle.TrackViewState ();
+					if (IsTrackingViewState)
+						dayHeaderStyle.TrackViewState ();
+				}
 
 				return dayHeaderStyle;
 			}
@@ -173,7 +165,8 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (value != DayNameFormat.FirstLetter && value != DayNameFormat.FirstTwoLetters &&
 					value != DayNameFormat.Full && value != DayNameFormat.Short) {
-						throw new ArgumentOutOfRangeException ("The specified day name format is not one of the DayNameFormat values.");					}
+					throw new ArgumentOutOfRangeException ("The specified day name format is not one of the DayNameFormat values.");
+				}
 
 				ViewState ["DayNameFormat"] = value;
 			}
@@ -187,11 +180,11 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Style")]
 		public TableItemStyle DayStyle {
 			get {
-				if (dayStyle == null)
+				if (dayStyle == null) {
 					dayStyle = new TableItemStyle ();
-
-				if (IsTrackingViewState)
-					dayStyle.TrackViewState ();
+					if (IsTrackingViewState)
+						dayStyle.TrackViewState ();
+				}
 
 				return dayStyle;
 			}
@@ -263,11 +256,11 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Style")]
 		public TableItemStyle NextPrevStyle {
 			get {
-				if (nextPrevStyle == null)
+				if (nextPrevStyle == null) {
 					nextPrevStyle = new TableItemStyle ();
-
-				if (IsTrackingViewState)
-					nextPrevStyle.TrackViewState ();
+					if (IsTrackingViewState)
+						nextPrevStyle.TrackViewState ();
+				}
 
 				return nextPrevStyle;
 			}
@@ -281,11 +274,11 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Style")]
 		public TableItemStyle OtherMonthDayStyle {
 			get {
-				if (otherMonthDayStyle == null)
+				if (otherMonthDayStyle == null) {
 					otherMonthDayStyle = new TableItemStyle ();
-
-				if (IsTrackingViewState)
-					otherMonthDayStyle.TrackViewState ();
+					if (IsTrackingViewState)
+						otherMonthDayStyle.TrackViewState ();
+				}
 
 				return otherMonthDayStyle;
 			}
@@ -355,11 +348,11 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Style")]
 		public TableItemStyle SelectedDayStyle {
 			get {
-				if (selectedDayStyle == null)
+				if (selectedDayStyle == null) {
 					selectedDayStyle = new TableItemStyle ();
-				
-				if (IsTrackingViewState)
-					selectedDayStyle.TrackViewState ();
+					if (IsTrackingViewState)
+						selectedDayStyle.TrackViewState ();
+				}
 
 				return selectedDayStyle;
 			}
@@ -411,11 +404,11 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Style")]
 		public TableItemStyle SelectorStyle {
 			get {
-				if (selectorStyle == null)
+				if (selectorStyle == null) {
 					 selectorStyle = new TableItemStyle ();
-
-				if (IsTrackingViewState)
-					selectorStyle.TrackViewState ();
+					if (IsTrackingViewState)
+						selectorStyle.TrackViewState ();
+				}
 
 				return selectorStyle;
 			}
@@ -531,11 +524,11 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Style")]
 		public TableItemStyle TitleStyle {
 			get {
-				if (titleStyle == null)
+				if (titleStyle == null) {
 					titleStyle = new TableItemStyle ();
-
-				if (IsTrackingViewState)
-					titleStyle.TrackViewState ();
+					if (IsTrackingViewState)
+						titleStyle.TrackViewState ();
+				}
 
 				return titleStyle;
 			}
@@ -549,11 +542,11 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Style")]
 		public TableItemStyle TodayDayStyle {
 			get {
-				if (todayDayStyle == null)
+				if (todayDayStyle == null) {
 					todayDayStyle = new TableItemStyle ();
-
-				if (IsTrackingViewState)
-					todayDayStyle.TrackViewState ();
+					if (IsTrackingViewState)
+						todayDayStyle.TrackViewState ();
+				}
 
 				return todayDayStyle;
 			}
@@ -622,11 +615,11 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Style")]
 		public TableItemStyle WeekendDayStyle {
 			get {
-				if (weekendDayStyle == null)
+				if (weekendDayStyle == null) {
 					weekendDayStyle = new TableItemStyle ();
-
-				if (IsTrackingViewState)
-					weekendDayStyle.TrackViewState ();
+					if (IsTrackingViewState)
+						weekendDayStyle.TrackViewState ();
+				}
 
 				return weekendDayStyle;
 			}
@@ -636,11 +629,9 @@ namespace System.Web.UI.WebControls {
 		// Private properties
 		private DateTime DisplayDate {
 			get {
-				DateTime dateTime;
-				if (VisibleDate == DateTime.MinValue) // If visibledate is still the default value
+				DateTime dateTime = VisibleDate;
+				if (dateTime == DateTime.MinValue) // If visibledate is still the default value
 					dateTime = TodaysDate;
-				else
-					dateTime = VisibleDate;
 
 				return dateTime;
 			}
@@ -682,12 +673,10 @@ namespace System.Web.UI.WebControls {
 			if (arg.Length < 1)
 				return;
 
-			DateTime dt = dateZenith;
-
 			if (arg[0] == 'V') { // Goes to Next or Previous month
 				DateTime prev = VisibleDate;
 				int days = Int32.Parse (arg.Substring (1));
-				dt = GetGlobalCalendar().AddDays (dt, days);
+				DateTime dt = GetGlobalCalendar().AddDays (dateZenith, days);
 				VisibleDate = dt;
 				OnVisibleMonthChanged (VisibleDate, prev);
 				return;
@@ -698,15 +687,17 @@ namespace System.Web.UI.WebControls {
 				num = arg.Substring (1);
 				days = num.Substring (num.Length - 2, 2);
 				date = num.Substring (0, num.Length - 2);
-				dt = GetGlobalCalendar().AddDays (dt, Int32.Parse (date));
-				SelectDates (dt, Int32.Parse (days));
+				DateTime d = GetGlobalCalendar().AddDays (dateZenith, Int32.Parse (date));
+				SelectedDates.SelectRange (d, d.AddDays (Int32.Parse (days)));
+				OnSelectionChanged ();
 				return;
 			}
 
 			// Selects a single day
 			int daysFromZenith = Int32.Parse (arg);
-			dt = GetGlobalCalendar().AddDays (dt, daysFromZenith);
-			SelectDates (dt, 1);
+			DateTime day = GetGlobalCalendar().AddDays (dateZenith, daysFromZenith);
+			SelectedDates.SelectRange (day, day);
+			OnSelectionChanged ();
 		}
 
 		protected override void LoadViewState (object savedState)
@@ -752,11 +743,9 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual void OnDayRender (TableCell cell, CalendarDay day)
 		{
-			if (Events != null) {
-				DayRenderEventHandler eh = (DayRenderEventHandler) (Events [DayRenderEvent]);
-				if (eh != null)
-					eh (this, new DayRenderEventArgs (cell, day));
-			}
+			DayRenderEventHandler eh = (DayRenderEventHandler) (Events [DayRenderEvent]);
+			if (eh != null)
+				eh (this, new DayRenderEventArgs (cell, day));
 		}
 
 #if NET_2_0
@@ -771,20 +760,16 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual void OnSelectionChanged ()
 		{
-			if (Events != null) {
-				EventHandler eh = (EventHandler) (Events [SelectionChangedEvent]);
-				if (eh != null)
-					eh (this, EventArgs.Empty);
-			}
+			EventHandler eh = (EventHandler) (Events [SelectionChangedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
 		}
 
 		protected virtual void OnVisibleMonthChanged (DateTime newDate,  DateTime previousDate)
 		{
-			if (Events != null) {
-				MonthChangedEventHandler eh = (MonthChangedEventHandler) (Events [VisibleMonthChangedEvent]);
-				if (eh != null)
-					eh (this, new MonthChangedEventArgs (newDate, previousDate));
-			}
+			MonthChangedEventHandler eh = (MonthChangedEventHandler) (Events [VisibleMonthChangedEvent]);
+			if (eh != null)
+				eh (this, new MonthChangedEventArgs (newDate, previousDate));
 		}
 
 #if NET_2_0
@@ -1220,12 +1205,7 @@ namespace System.Web.UI.WebControls {
 					break;
 				case NextPrevFormat.CustomText:
 				default:
-					if (next) {
-						text = NextMonthText;
-					}
-					else {
-						text = PrevMonthText;
-					}
+					text = ((next) ? NextMonthText : PrevMonthText);
 					break;
 			}
 
@@ -1235,12 +1215,6 @@ namespace System.Web.UI.WebControls {
 		private bool IsWeekEnd (DayOfWeek day)
 		{
 			return (day == DayOfWeek.Saturday || day == DayOfWeek.Sunday);
-		}
-
-		private void SelectDates (DateTime startDate, int days)
-		{
-			SelectedDates.SelectRange (startDate, GetGlobalCalendar().AddDays (startDate, days - 1));
-			OnSelectionChanged ();
 		}
 
 		private double GetCellWidth ()
@@ -1255,8 +1229,7 @@ namespace System.Web.UI.WebControls {
 
 		[WebSysDescription ("")]
 		[WebCategory ("Action")]
-		public event DayRenderEventHandler DayRender
-		{
+		public event DayRenderEventHandler DayRender {
 			add {
 				Events.AddHandler (DayRenderEvent, value);
 			}
@@ -1267,9 +1240,9 @@ namespace System.Web.UI.WebControls {
 
 		[WebSysDescription ("")]
 		[WebCategory ("Action")]
-		public event EventHandler SelectionChanged
-		{
+		public event EventHandler SelectionChanged {
 			add {
+				Console.WriteLine ("Adding one");
 				Events.AddHandler (SelectionChangedEvent, value);
 			}
 			remove {
@@ -1279,8 +1252,7 @@ namespace System.Web.UI.WebControls {
 
 		[WebSysDescription ("")]
 		[WebCategory ("Action")]
-		public event MonthChangedEventHandler VisibleMonthChanged
-		{
+		public event MonthChangedEventHandler VisibleMonthChanged {
 			add {
 				Events.AddHandler (VisibleMonthChangedEvent, value);
 			}
@@ -1288,8 +1260,6 @@ namespace System.Web.UI.WebControls {
 				Events.RemoveHandler (VisibleMonthChangedEvent, value);
 			}
 		}
-
 	}
-
 }
 
