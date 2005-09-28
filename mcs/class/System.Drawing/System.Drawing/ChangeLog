@@ -1,3 +1,8 @@
+2005-09-28  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Color.cs(UpdateKnownColor): Ensure knownColors exists before trying
+	  to update it.
+
 2005-09-27  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* SystemColor.cs: 
