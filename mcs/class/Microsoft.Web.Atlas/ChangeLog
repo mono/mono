@@ -1,5 +1,46 @@
 2005-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web.Atlas_test.dll.sources: add the new classes.
+
+	* Test/Microsoft.Web.UI/TextBoxTest.cs: subclass from
+	ScriptControlTest, and nuke the local copies of
+	DoEvent/Method/Property.
+
+	* Test/Microsoft.Web.UI/PropertyFilterTest.cs: same.
+
+	* Test/Microsoft.Web.UI/ListViewTest.cs: same.
+
+	* Test/Microsoft.Web.UI/DataSourceDropTargetTest.cs: same.
+
+	* Test/Microsoft.Web.UI/ClickBehaviorTest.cs: same.
+
+	* Test/Microsoft.Web.UI/DraggableListItemTest.cs: same.
+
+	* Test/Microsoft.Web.UI/HoverBehaviorTest.cs: same.
+
+	* Test/Microsoft.Web.UI/FloatingBehaviorTest.cs: same.
+
+	* Test/Microsoft.Web.UI/LabelTest.cs: same.
+
+	* Test/Microsoft.Web.UI/DragDropListTest.cs: same.
+
+	* Test/Microsoft.Web.Services.Converters/DateTimeConverterTest.cs:
+	new tests.
+
+	* Test/Microsoft.Web.Services/JavaScriptConverterTest.cs: new
+	tests.
+
+	* Test/Microsoft.Web/GenericScriptComponentTest.cs: new tests.
+
+	* Test/Microsoft.Web/ScriptEventTest.cs (RenderActions): replace
+	\r\n with \n so we pass both on windows and mono.
+
+	* Test/Microsoft.Web/ScriptControlTest.cs: new utility class that
+	contains definitions for DoEvent, DoMethod, and DoProperty for
+	use testing GetTypeDescriptor.
+
+2005-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* Makefile (LIB_MCS_FLAGS): add -define:API_SUGGESTIONS.
 
 	* Microsoft.Web.Atlas.dll.sources: add in all the new files.

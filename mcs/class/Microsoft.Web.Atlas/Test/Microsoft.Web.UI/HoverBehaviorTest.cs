@@ -40,7 +40,7 @@ using Microsoft.Web.UI;
 namespace MonoTests.Microsoft.Web.UI
 {
 	[TestFixture]
-	public class HoverBehaviorTest
+	public class HoverBehaviorTest : ScriptControlTest
 	{
 		class Poker : FloatingBehavior {
 			public void AddAttributes (ScriptTextWriter w)
@@ -83,22 +83,6 @@ namespace MonoTests.Microsoft.Web.UI
 			((IScriptComponent)b).RenderScript (w);
 
 			Assert.AreEqual ("", sw.ToString(), "A1");
-		}
-
-		void DoEvent (ScriptEventDescriptor e, string eventName, bool supportsActions)
-		{
-			Assert.AreEqual (eventName, e.EventName, eventName + " EventName");
-			Assert.AreEqual (eventName, e.MemberName, eventName + " MemberName");
-			Assert.AreEqual (supportsActions, e.SupportsActions, eventName + " SupportsActions");
-		}
-
-		void DoProperty (ScriptPropertyDescriptor p, string propertyName, ScriptType type, bool readOnly, string serverPropertyName)
-		{
-			Assert.AreEqual (propertyName, p.PropertyName, propertyName + " PropertyName");
-			Assert.AreEqual (propertyName, p.MemberName, propertyName + " MemberName");
-			Assert.AreEqual (serverPropertyName, p.ServerPropertyName, propertyName + " ServerPropertyName");
-			Assert.AreEqual (readOnly, p.ReadOnly, propertyName + " ReadOnly");
-			Assert.AreEqual (type, p.Type, propertyName + " Type");
 		}
 
 		[Test]

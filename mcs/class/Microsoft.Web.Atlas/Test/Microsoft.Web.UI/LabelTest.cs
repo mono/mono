@@ -40,7 +40,7 @@ using Microsoft.Web.UI;
 namespace MonoTests.Microsoft.Web.UI
 {
 	[TestFixture]
-	public class LabelTest
+	public class LabelTest : ScriptControlTest
 	{
 		[Test]
 		public void Properties ()
@@ -58,31 +58,6 @@ namespace MonoTests.Microsoft.Web.UI
 			// null set
 			l.Text = null;
 			Assert.AreEqual ("", l.Text, "A4");
-		}
-
-		void DoEvent (ScriptEventDescriptor e, string eventName, bool supportsActions)
-		{
-			Assert.AreEqual (eventName, e.EventName, eventName + " EventName");
-			Assert.AreEqual (eventName, e.MemberName, eventName + " MemberName");
-			Assert.AreEqual (supportsActions, e.SupportsActions, eventName + " SupportsActions");
-		}
-
-		void DoMethod (ScriptMethodDescriptor m, string methodName, string[] args)
-		{
-			Assert.AreEqual (methodName, m.MethodName, methodName + " MethodName");
-			Assert.AreEqual (methodName, m.MemberName, methodName + " MemberName");
-			Assert.AreEqual (args.Length, m.Parameters.Length, methodName + " Parameter count");
-			for (int i = 0; i < args.Length; i ++)
-				Assert.AreEqual (args[i], m.Parameters[i], methodName + " Parameter " + i.ToString());
-		}
-
-		void DoProperty (ScriptPropertyDescriptor p, string propertyName, ScriptType type, bool readOnly, string serverPropertyName)
-		{
-			Assert.AreEqual (propertyName, p.PropertyName, propertyName + " PropertyName");
-			Assert.AreEqual (propertyName, p.MemberName, propertyName + " MemberName");
-			Assert.AreEqual (serverPropertyName, p.ServerPropertyName, propertyName + " ServerPropertyName");
-			Assert.AreEqual (readOnly, p.ReadOnly, propertyName + " ReadOnly");
-			Assert.AreEqual (type, p.Type, propertyName + " Type");
 		}
 
 		[Test]

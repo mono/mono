@@ -1,13 +1,17 @@
 Microsoft.Web/ActionTest.cs
 Microsoft.Web/BindingTest.cs
+Microsoft.Web/GenericScriptComponentTest.cs
 Microsoft.Web/InvokeMethodActionTest.cs
 Microsoft.Web/SetPropertyActionTest.cs
 Microsoft.Web/ScriptComponentBaseTest.cs
+Microsoft.Web/ScriptControlTest.cs
 Microsoft.Web/ScriptEventDescriptorTest.cs
 Microsoft.Web/ScriptEventTest.cs
 Microsoft.Web/ScriptMethodDescriptorTest.cs
 Microsoft.Web/ScriptPropertyDescriptorTest.cs
 Microsoft.Web/ScriptTypeDescriptorTest.cs
+Microsoft.Web.Services/JavaScriptConverterTest.cs
+Microsoft.Web.Services.Converters/DateTimeConverterTest.cs
 Microsoft.Web.UI/ClickBehaviorTest.cs
 Microsoft.Web.UI/DragDropListTest.cs
 Microsoft.Web.UI/DraggableListItemTest.cs

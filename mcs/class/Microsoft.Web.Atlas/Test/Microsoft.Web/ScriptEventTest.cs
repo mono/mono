@@ -138,7 +138,7 @@ namespace MonoTests.Microsoft.Web
 			e.Actions.Add (action);
 
 			e.RenderActions (w);
-			Assert.AreEqual ("<HelloEvent>\r\n  <poker id=\"action_id\" target=\"action_target\" />\r\n</HelloEvent>", sw.ToString(), "A2");
+			Assert.AreEqual ("<HelloEvent>\n  <poker id=\"action_id\" target=\"action_target\" />\n</HelloEvent>", sw.ToString().Replace ("\r\n", "\n"), "A2");
 		}
 
 		[Test]
