@@ -1,3 +1,15 @@
+2005-09-27  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* SystemColor.cs: 
+	  - Changed properties to return colors from fields. This allows 
+	    updating the colors via reflection, for example from MWF themes.
+	  - Added code to retrieve system colors via Win32 GetSysColors if 
+	    running on Win32, this makes us compatible with Microsoft instead
+	    of returning static colors on Win32. Unix platforms still will
+	    use the static colors
+	* Color.cs: Added UpdateKnownColor() method to allow updating of
+	  the KnownColors array
+
 2005-09-26  Kornél Pál  <kornelpal@hotmail.com>
 
 	* Graphics.cs: DrawImage: imageAttr can be null. Fixed to pass IntPtr.Zero

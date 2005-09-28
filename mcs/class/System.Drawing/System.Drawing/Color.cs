@@ -224,6 +224,10 @@ namespace System.Drawing
 				systemColors = colorHash;
 			}
 		}
+
+		internal static void UpdateKnownColor (int alpha, int red, int green, int blue, string name, KnownColor known_color) {
+			knownColors[(int)known_color] = Color.FromArgbSystem(alpha, red, green, blue, name, known_color);
+		}
 		
 		public static Color FromName (string colorName)
 		{
