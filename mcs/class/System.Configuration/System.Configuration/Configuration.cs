@@ -98,6 +98,7 @@ namespace System.Configuration {
 		internal void Init (IConfigSystem system, string configPath, Configuration parent)
 		{
 			this.system = system;
+			this.configPath = configPath;
 			streamName = system.Host.GetStreamName (configPath);
 			this.parent = parent;
 			if (parent != null)
@@ -141,7 +142,7 @@ namespace System.Configuration {
 		}
 
 		public AppSettingsSection AppSettings {
-			get { return Sections ["appSettings"] as AppSettingsSection; }
+			get { return (AppSettingsSection) GetSection ("appSettings"); }
 		}
 
 		public ConnectionStringsSection ConnectionStrings {
@@ -155,6 +156,16 @@ namespace System.Configuration {
 		public bool HasFile {
 			get {
 				return hasFile;
+			}
+		}
+
+		[MonoTODO ("HostingContext")]
+		ContextInformation evaluationContext;
+		public ContextInformation EvaluationContext {
+			get {
+				if (evaluationContext == null)
+					evaluationContext = new ContextInformation (this, null /* XXX */);
+				return evaluationContext;
 			}
 		}
 		
@@ -216,7 +227,7 @@ namespace System.Configuration {
 			
 			object secObj = config.CreateInstance () as ConfigurationSection;
 			if (!(secObj is ConfigurationSection))
-				sec = new RuntimeOnlySection ();
+				sec = new IgnoreSection ();
 			else {
 				sec = (ConfigurationSection) secObj;
 			}
@@ -383,18 +394,15 @@ namespace System.Configuration {
 		{
 			if (streamName == null)
 				return true;
-			
-			Stream stream = system.Host.OpenStreamForRead (streamName);
-			XmlTextReader reader = null;
 
+			XmlTextReader reader = null;
 			try {
+				Stream stream = system.Host.OpenStreamForRead (streamName);
 				reader = new XmlTextReader (stream);
 				ReadConfigFile (reader, streamName);
-/*			} catch (ConfigurationException) {
-				throw;
 			} catch (Exception e) {
-				throw new ConfigurationException ("Error reading " + fileName, e);
-*/			} finally {
+				return false;
+			} finally {
 				if (reader != null)
 					reader.Close();
 			}

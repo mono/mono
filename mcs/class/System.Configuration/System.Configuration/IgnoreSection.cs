@@ -1,8 +1,9 @@
 //
-// System.Configuration.RuntimeOnlySection.cs
+// System.Configuration.IgnoreSection.cs
 //
 // Authors:
 //	Lluis Sanchez (lluis@novell.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,48 +26,45 @@
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
+
 #if NET_2_0
 using System;
+using System.Collections.Specialized;
 using System.Xml;
 using System.IO;
 
-namespace System.Configuration
-{
-	internal class RuntimeOnlySection: ConfigurationSection
+namespace System.Configuration {
+
+	public sealed class IgnoreSection : ConfigurationSection
 	{
 		string xml;
-		
-		[MonoTODO]
-		protected internal override bool IsModified ()
+
+		public IgnoreSection ()
+		{
+		}
+
+		protected internal override  bool IsModified ()
 		{
 			return false;
 		}
 
-		[MonoTODO]
-		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
+		protected internal override void DeserializeSection (XmlReader reader)
 		{
 			xml = reader.ReadOuterXml ();
 		}
 
-		[MonoTODO]
-		protected internal override void Reset (ConfigurationElement parent_element)
+		protected internal override void Reset (ConfigurationElement parentElement)
 		{
 		}
 
-		[MonoTODO]
 		protected internal override void ResetModified ()
 		{
 		}
 
-		[MonoTODO]
-		protected internal override string SerializeSection (
-				ConfigurationElement parentElement,
-				string name,
-				ConfigurationSaveMode saveMode)
+		protected internal override string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
 		{
 			return xml;
 		}
 	}
 }
-
 #endif
