@@ -445,8 +445,7 @@ namespace System.Configuration
 			}
 			else {
 				if (elementName == clearElementName) {
-					ConfigurationElement elem = CreateNewElementInternal (null);
-					elem.DeserializeElement (reader, true);
+					reader.Skip ();
 					BaseClear ();
 					emitClear = true;
 					modified = false;

@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,7 +38,22 @@ namespace System.Configuration {
 	public sealed class AppSettingsSection : ConfigurationSection
 	{
 		KeyValueConfigurationCollection values;
-		
+		const string configFile = "file";
+
+                private static ConfigurationPropertyCollection _properties;
+                private static readonly ConfigurationProperty _propFile;
+
+                static AppSettingsSection ()
+                {
+                        _properties     = new ConfigurationPropertyCollection ();
+                        _propFile = new ConfigurationProperty (configFile, 
+                                                               typeof(string), 
+                                                               "", 
+                                                               ConfigurationPropertyOptions.None);
+
+                        _properties.Add (_propFile);
+                }
+
 		public AppSettingsSection ()
 		{
 		}
@@ -67,11 +83,10 @@ namespace System.Configuration {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		[ConfigurationProperty ("file", DefaultValue = "")]
 		public string File {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return (string)base [configFile]; }
+			set { base [configFile] = value; }
 		}
 
 		[ConfigurationProperty ("", DefaultValue = "System.Object", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
@@ -83,17 +98,16 @@ namespace System.Configuration {
 			}
 		}
 
-		[MonoTODO]
-		public new ConfigurationPropertyCollection Properties {
+		protected internal override ConfigurationPropertyCollection Properties {
 			get {
-				return base.Properties;
+				return _properties;
 			}
 		}
 
 		[MonoTODO]
 		protected internal override object GetRuntimeObject ()
 		{
-			return this;
+			return base.GetRuntimeObject();
 		}
 	}
 }

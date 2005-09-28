@@ -1,5 +1,26 @@
 2005-09-28  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationElementCollection.cs: more work on the "<clear />"
+	handling - just skip the element for now.  this causes a failure
+	in one test ('<clear hi="bye" />' doesn't throw an exception when
+	it should), but it succeeds for collections that have required
+	attributes.
+
+	* ConnectionStringSettings.cs: providerName isn't a required
+	attribute.
+
+	* AppSettingsSection.cs (.cctor): initialize our "file" Property.
+	(File): implement.
+	(Properties): fix.
+	(GetRuntimeObject): call the base class method instead of just
+	returning "this".
+
+	* ConnectionStringsSection.cs: Add a hacky DeserializeElement
+	method here (that isn't in MS's) for the time being so we actually
+	deserialize our collection.
+
+2005-09-28  Chris Toshok  <toshok@ximian.com>
+
 	* KeyValueInternalCollection.cs: found this by way of a stack
 	trace in one of the tests.  A NameValueCollection that wraps a
 	KeyValueConfigurationCollection.

@@ -63,7 +63,7 @@ namespace System.Configuration
                         _propProviderName = new ConfigurationProperty ("providerName",
                                                                        typeof (string),
                                                                        "",
-                                                                       ConfigurationPropertyOptions.IsRequired
+                                                                       ConfigurationPropertyOptions.None
                                                                        );
 
                         _propConnectionString = new ConfigurationProperty ("connectionString",

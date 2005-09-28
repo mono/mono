@@ -33,6 +33,7 @@
 
 #region Using directives
 using System;
+using System.Xml;
 #endregion
 
 namespace System.Configuration
@@ -58,12 +59,23 @@ namespace System.Configuration
                 }
                 #endregion // Constructors
 
+		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
+		{
+			ConnectionStrings.DeserializeElement (reader, serializeCollectionKey);
+		}
+
                 #region Properties
+		ConnectionStringSettingsCollection strings;
+		[ConfigurationProperty ("", DefaultValue = "System.Object", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
                 public ConnectionStringSettingsCollection ConnectionStrings
                 {
-                        get
-                        {
+                        get {
+				if (strings == null)
+					strings = new ConnectionStringSettingsCollection ();
+				return strings;
+#if false
                                 return (ConnectionStringSettingsCollection) base [_propConnectionStrings];
+#endif
                         }
                 }
                 protected internal override ConfigurationPropertyCollection Properties
