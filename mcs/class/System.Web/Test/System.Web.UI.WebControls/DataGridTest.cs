@@ -1397,9 +1397,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsTrue (-1 != render.IndexOf ("hola"), "template");
 		}
 
-		/* This one throw nullref on MS and works with mono
-		* [Test]
-		* public void OneTemplateColumn4 ()
+		// This one throw nullref on MS and works with mono
+		[Test]
+		[NUnit.Framework.CategoryAttribute ("NotDotNet")]
+		public void OneTemplateColumn4 ()
 		{
 			DataGridPoker p = new DataGridPoker ();
 			TemplateColumn tc = new TemplateColumn ();
@@ -1414,7 +1415,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			// ... but no template rendered.
 			Assert.IsTrue (-1 == render.IndexOf ("hola"), "template");
 		}
-		*/
 
 		[Test]
 		public void CreateControls ()
