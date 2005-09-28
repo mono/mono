@@ -165,7 +165,8 @@ namespace MonoTests.System.Web.Hosting {
 			Assert.AreEqual (false, setup.DisallowBindingRedirects, "D4");
 			Assert.AreEqual (true, setup.DisallowCodeDownload, "D5");
 			Assert.AreEqual (false, setup.DisallowPublisherPolicy, "D6");
-			Assert.AreEqual (null, setup.DynamicBase, "D7");
+			// Disabling D7 test, as we set it there to avoid locking in sys.web.compilation
+			// Assert.AreEqual (null, setup.DynamicBase, "D7");
 			Assert.AreEqual (null, setup.LicenseFile, "D8");
 			//Assert.AreEqual (LoaderOptimization.NotSpecified, setup.LoaderOptimization);
 			p ("LoaderOptimization is: ", setup.LoaderOptimization);
