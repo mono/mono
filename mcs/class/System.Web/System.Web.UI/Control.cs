@@ -87,7 +87,6 @@ namespace System.Web.UI
 		string uniqueID;
 		string _userId;
 		ControlCollection _controls;
-		IDictionary _childViewStates;
 		Control _namingContainer;
 		Page _page;
 		Control _parent;
@@ -455,23 +454,18 @@ namespace System.Web.UI
                                 return HttpContext.Current;
                         }
                 }
-                protected EventHandlerList Events //DIT
-                {
-                        get
-                        {
+
+                protected EventHandlerList Events {
+                        get {
                                 if (_events == null)
-                                {
-                                	_events = new EventHandlerList();
-                                }
+                                	_events = new EventHandlerList ();
                                 return _events;
                         }
                 }
-                protected bool HasChildViewState //DIT
-                {
-                        get
-                        {
-                                if (_childViewStates == null) return false;
-                                return true;
+
+                protected bool HasChildViewState {
+                        get {
+				return (pendingVS != null && pendingVS.Count > 0);
                         }
                 }
 
