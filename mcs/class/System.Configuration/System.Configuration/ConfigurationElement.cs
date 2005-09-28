@@ -72,6 +72,82 @@ namespace System.Configuration
 		{
 		}
 
+		[MonoTODO]
+		public ConfigurationElementProperty ElementProperty {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		protected ContextInformation EvaluationContext {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public ContextInformation EvaluationInformation {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public ConfigurationLockCollection LockAllAttributesExcept {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public ConfigurationLockCollection LockAllElementsExcept {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		ConfigurationLockCollection lockAttributes;
+		public ConfigurationLockCollection LockAttributes {
+			get {
+				if (lockAttributes == null) {
+					lockAttributes = new ConfigurationLockCollection (this, ConfigurationLockType.Attribute);
+				}
+
+				return lockAttributes;
+			}
+		}
+
+		[MonoTODO]
+		public ConfigurationLockCollection LockElements {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public bool LockItem {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public void ListErrors (IList list)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void SetPropertyValue (ConfigurationProperty prop, object value, bool ignoreLocks)
+		{
+			throw new NotImplementedException ();
+		}
+
 		internal ConfigurationPropertyCollection GetKeyProperties ()
 		{
 			if (keyProps != null) return keyProps;

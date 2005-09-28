@@ -1,8 +1,8 @@
 //
-// System.Configuration.ContextInformation.cs
+// System.Configuration.ConfigurationElementProperty.cs
 //
 // Authors:
-//  Lluis Sanchez Gual (lluis@novell.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,37 +27,24 @@
 //
 
 #if NET_2_0
-using System.Collections;
-using System.Xml;
 
-namespace System.Configuration
+namespace System.Configuration 
 {
-	public sealed class ContextInformation
+	public sealed class ConfigurationElementProperty
 	{
-		object ctx;
-		Configuration config;
-		
-		internal ContextInformation (Configuration config, object ctx)
+		public ConfigurationElementProperty (ConfigurationValidatorBase validator)
 		{
-			this.ctx = ctx;
-			this.config = config;
-		}
-		
-		public object GetSection (string sectionName)
-		{
-			return config.GetSection (sectionName);
-		}
-		
-		public object HostingContext {
-			get { return ctx; }
+			this.validator = validator;
 		}
 
-		[MonoTODO ("should this use HostingContext instead?")]
-		public bool IsMachineLevel {
+		public ConfigurationValidatorBase Validator {
 			get {
-				return config.ConfigPath == "machine";
+				return validator;
 			}
 		}
+
+		ConfigurationValidatorBase validator;
 	}
 }
+
 #endif
