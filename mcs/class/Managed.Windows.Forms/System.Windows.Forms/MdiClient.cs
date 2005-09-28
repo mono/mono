@@ -35,7 +35,7 @@ namespace System.Windows.Forms {
 	[ToolboxItem(false)]
 	public sealed class MdiClient : Control {
 		#region Local Variables
-                private int mdi_created;
+		private int mdi_created;
 		#endregion	// Local Variables
 
 		#region Public Classes
@@ -52,7 +52,7 @@ namespace System.Windows.Forms {
 					throw new ArgumentException("Form must be MdiChild");
 				}
 				base.Add (value);
-                                SetChildIndex (value, 0); // always insert at front
+				SetChildIndex (value, 0); // always insert at front
 			}
 
 			public override void Remove(Control value) {
