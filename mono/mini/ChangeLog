@@ -1,3 +1,11 @@
+2005-09-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot.c: Load profile files produced by the AOT profiling module, and
+	reorder methods based on the profiling info. Add a 'method_order' table
+	to the AOT file to make mono_aot_find_jit_info work with the reordered
+	methods.
+
+	* mini.h: Bump AOT file version info.
 
 Wed Sep 28 17:12:48 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
