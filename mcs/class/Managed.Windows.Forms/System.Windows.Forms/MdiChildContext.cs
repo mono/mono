@@ -123,16 +123,19 @@ namespace System.Windows.Forms {
 				return true;
 			}
 
-			SetCursorForPos (pos);
+			if (IsSizable) {
+				SetCursorForPos (pos);
 			
-			if ((pos & FormPos.AnyEdge) == 0)
-				return false;
+				if ((pos & FormPos.AnyEdge) == 0)
+					return false;
 
-			state = State.Sizing;
-			sizing_edge = pos;
-			form.Capture = true;
+				state = State.Sizing;
+				sizing_edge = pos;
+				form.Capture = true;
+				return true;
+			}
 
-			return true;
+			return false;
 		}
 
 		private void HandleTitleBarDown (int x, int y)
@@ -152,13 +155,17 @@ namespace System.Windows.Forms {
 				return true;
 			}
 
-			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
-			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
-			FormPos pos = FormPosForCoords (x, y);
+			if (IsSizable) {
+				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
+				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
+				FormPos pos = FormPosForCoords (x, y);
 
-			SetCursorForPos (pos);
+				SetCursorForPos (pos);
 
-			state = State.Idle;
+				state = State.Idle;
+
+			}
+
 			return false;
 		}
 	
@@ -240,6 +247,18 @@ namespace System.Windows.Forms {
 			UpdateVP (pos);
 		}
 
+		private bool IsSizable {
+			get {
+				switch (form.FormBorderStyle) {
+				case FormBorderStyle.Sizable:
+				case FormBorderStyle.SizableToolWindow:
+					return true;
+				default:
+					return false;
+				}
+			}
+		}
+
 		private void UpdateVP (Rectangle r)
 		{
 			UpdateVP (r.X, r.Y, r.Width, r.Height);
@@ -281,9 +300,20 @@ namespace System.Windows.Forms {
 			Color color = titlebar_color;
 			if (maximized)
 				color = ThemeEngine.Current.ColorButtonFace;
+			Rectangle tb = new Rectangle (BorderWidth, BorderWidth,
+					form.Width - BorderWidth, TitleBarHeight);
+
 			pe.Graphics.FillRectangle (new SolidBrush (color),
 						BorderWidth, BorderWidth,
 						form.Width - BorderWidth, TitleBarHeight);
+
+			if (form.Text != null) {
+				StringFormat format = new StringFormat ();
+				format.LineAlignment = StringAlignment.Center;
+				pe.Graphics.DrawString (form.Text, form.Font,
+						new SolidBrush (form.ForeColor),
+						tb, format);
+			}
 
 			if (form.Icon != null) {
 				pe.Graphics.DrawIcon (form.Icon, BorderWidth, BorderWidth);

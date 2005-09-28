@@ -1,3 +1,9 @@
+2005-09-28  Jackson Harper  <jackson@ximian.com>
+
+	* MdiChildContext.cs: Obey rules for fixed sized windows (no
+	sizing or cursor changes). Also added some temp code to draw the
+	titlebars text (Makes dev a little easier).
+
 2005-09-28  Kornél Pál  <kornelpal@hotmail.com>
 
 	* ImageList.cs: AddStrip: Throw ArgumentException when Image is not a Bitmap.
