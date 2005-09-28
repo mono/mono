@@ -57,10 +57,12 @@ System.Configuration/ElementInformation.cs
 System.Configuration/ExeConfigurationFileMap.cs
 System.Configuration/ExeContext.cs
 System.Configuration/IConfigXmlNode.cs
+System.Configuration/IgnoreSection.cs
 System.Configuration/InternalConfigurationFactory.cs
 System.Configuration/InternalConfigurationHost.cs
 System.Configuration/InternalConfigurationRoot.cs
 System.Configuration/KeyValueConfigurationCollection.cs
+System.Configuration/KeyValueInternalCollection.cs
 System.Configuration/KeyValueConfigurationElement.cs
 System.Configuration/PropertyInformation.cs
 System.Configuration/PropertyInformationCollection.cs
@@ -69,7 +71,6 @@ System.Configuration/ProtectedConfigurationProvider.cs
 System.Configuration/ProtectedConfigurationSection.cs
 System.Configuration/ProviderSettings.cs
 System.Configuration/ProviderSettingsCollection.cs
-System.Configuration/RuntimeOnlySection.cs
 System.Configuration/SectionInfo.cs
 System.Configuration/SectionGroupInfo.cs
 System.Configuration/SectionInformation.cs

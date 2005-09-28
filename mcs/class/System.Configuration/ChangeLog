@@ -1,3 +1,9 @@
+2005-09-28  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration.dll.sources: add
+	KeyValueInternalCollection.cs and IgnoreSection.cs.  Remove
+	RuntimeOnlySection.cs
+
 2005-09-27  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration.dll.sources: add
