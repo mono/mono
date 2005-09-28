@@ -817,7 +817,7 @@ namespace System.Web.UI.WebControls {
 
 		public CssStyleCollection GetStyleAttributes (IUrlResolutionService resolver)
 		{
-			CssStyleCollection col = new CssStyleCollection ();
+			CssStyleCollection col = new CssStyleCollection (new StateBag ());
 			FillStyleAttributes (col, resolver);
 			return col;
 		}
