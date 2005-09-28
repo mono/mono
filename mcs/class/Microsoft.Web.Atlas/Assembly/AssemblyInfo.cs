@@ -39,6 +39,6 @@ using System.Web.UI;
 [assembly: NeutralResourcesLanguage("en-US")]
 
 #if !TARGET_JVM
-[assembly: AssemblyDelaySign(true)]
-[assembly: AssemblyKeyFile("../msfinal.pub")]
+//[assembly: AssemblyDelaySign(true)]
+//[assembly: AssemblyKeyFile("../msfinal.pub")]
 #endif

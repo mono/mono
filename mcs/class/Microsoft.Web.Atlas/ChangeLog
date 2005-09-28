@@ -1,5 +1,10 @@
 2005-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* Assembly/AssemblyInfo.cs: comment out the signing stuff, as MS's
+	assembly isn't signed.
+
+2005-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.Atlas_test.dll.sources: add the new classes.
 
 	* Test/Microsoft.Web.UI/TextBoxTest.cs: subclass from
