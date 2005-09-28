@@ -1,3 +1,7 @@
+2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlHead.cs: fix the 2.0 build.
+
 2005-09-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlForm.cs: when transfering from one page to another and using

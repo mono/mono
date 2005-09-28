@@ -159,7 +159,7 @@ namespace System.Web.UI.HtmlControls
 
 			foreach (StyleEntry entry in entries) {
 				CssStyleCollection sts = entry.Style.GetStyleAttributes (entry.UrlResolver);
-				writer.Write ("\n" + entry.Selection + " {" + sts.BagToString () + "}");
+				writer.Write ("\n" + entry.Selection + " {" + sts.Value + "}");
 			}
 
 			writer.RenderEndTag ();
