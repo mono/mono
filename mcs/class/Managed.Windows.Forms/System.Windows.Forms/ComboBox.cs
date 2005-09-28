@@ -1614,7 +1614,11 @@ namespace System.Windows.Forms
 
 				item_rect.X = ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle);
 				item_rect.Width = textarea_drawable.Width;
-				item_rect.Y = 2 + ((height - 2) * (index - first_displayble));
+				item_rect.Y = ((height - 2) * (index - first_displayble));
+
+				if (owner.dropdown_style == ComboBoxStyle.Simple)
+					item_rect.Y += 2;
+
 				item_rect.Height = height;
 				return item_rect;
 			}

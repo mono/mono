@@ -1,3 +1,7 @@
+2005-09-28  Jordi Mas i Hernandez <jordi@ximian.com>
+	 
+	* ListBox.cs: Fixes bug 76253
+
 2005-09-28  Kornél Pál  <kornelpal@hotmail.com>
 
 	* ImageList.cs: Added comments about the current implementation. Added
