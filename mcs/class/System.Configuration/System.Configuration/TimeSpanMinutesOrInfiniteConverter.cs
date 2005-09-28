@@ -32,7 +32,7 @@ using System.ComponentModel;
 
 namespace System.Configuration
 {
-	public class TimeSpanMinutesOrInfiniteConverter: TimeSpanMinutesConverter
+	public sealed class TimeSpanMinutesOrInfiniteConverter: TimeSpanMinutesConverter
 	{
 	}
 }
