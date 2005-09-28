@@ -55,11 +55,6 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return TagName;
 		}
 
-		public void CreateCH (bool use_ds)
-		{
-			CreateControlHierarchy (use_ds);
-		}
-
 		public void PrepareCH ()
 		{
 			PrepareControlHierarchy ();
@@ -1348,9 +1343,10 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TemplateColumn tc = new TemplateColumn ();
 			tc.ItemTemplate = new MyTemplate ("hola");
 			p.Columns.Add (tc);
+			ControlCollection controls = p.Controls;
 			p.CreateControls (true);
 			Assert.AreEqual (1, p.Columns.Count, "columns");
-			Assert.AreEqual (0, p.Controls.Count, "controls");
+			Assert.AreEqual (0, controls.Count, "controls");
 			string render = p.Render ();
 			// no items, even with a templated column.
 			// The table is not added if DataSource == null
@@ -1370,7 +1366,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			p.Columns.Add (tc);
 			Assert.AreEqual (1, p.Columns.Count, "columns-1");
 			Assert.AreEqual (0, p.Controls.Count, "controls-1");
-			p.CreateCH (true);
+			p.CreateControls (true);
 			// This time we have the table there. Thanks to the empty ArrayList
 			Assert.AreEqual (1, p.Columns.Count, "columns-2");
 			Assert.AreEqual (1, p.Controls.Count, "controls-2");
@@ -1400,6 +1396,25 @@ namespace MonoTests.System.Web.UI.WebControls {
 			// no items, but we have a footer
 			Assert.IsTrue (-1 != render.IndexOf ("hola"), "template");
 		}
+
+		/* This one throw nullref on MS and works with mono
+		* [Test]
+		* public void OneTemplateColumn4 ()
+		{
+			DataGridPoker p = new DataGridPoker ();
+			TemplateColumn tc = new TemplateColumn ();
+			tc.ItemTemplate = new MyTemplate ("hola");
+			p.Columns.Add (tc);
+			p.DataSource = new ArrayList ();
+			p.CreateControls (false);
+			Assert.AreEqual (1, p.Columns.Count, "columns");
+			// Table added because useDataSource == false...
+			Assert.AreEqual (1, p.Controls.Count, "controls");
+			string render = p.Render ();
+			// ... but no template rendered.
+			Assert.IsTrue (-1 == render.IndexOf ("hola"), "template");
+		}
+		*/
 
 		[Test]
 		public void CreateControls ()
