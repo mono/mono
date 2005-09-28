@@ -1,3 +1,8 @@
+2005-09-28  Martin Baulig  <martin@ximian.com>
+
+	* object.c (mono_runtime_invoke_array): Added support for
+	MONO_TYPE_GENERICINST; fixes #75917.
+
 2005-09-27  Martin Baulig  <martin@ximian.com>
 
 	* reflection.c (encode_type): For `MONO_TYPE_CLASS/VALUETYPE', use
