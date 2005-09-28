@@ -308,5 +308,14 @@ namespace MonoTests.System.Web.UI.WebControls {
 				l.Add (i);
 			EnumeratorTester_NoPaging (ds.GetEnumerator (), "list");
 		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void NullSource ()
+		{
+			PagedDataSource ds = new PagedDataSource ();
+			ds.DataSource = null;
+			IEnumerator data = ds.GetEnumerator ();
+		}
 	}
 }

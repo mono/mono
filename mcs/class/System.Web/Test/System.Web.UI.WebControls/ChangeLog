@@ -1,5 +1,9 @@
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* PagedDataSourceTest.cs: nullref is throw on null DataSource.
+
+2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataGridTest.cs: fixed a test and added a commented out one that works
 	fine in mono but throws nullref with MS.
 
