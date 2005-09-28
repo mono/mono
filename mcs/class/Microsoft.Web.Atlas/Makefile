@@ -6,8 +6,7 @@ include ../../build/rules.make
 
 LIBRARY = Microsoft.Web.Atlas.dll
 LIB_MCS_FLAGS = \
-	-unsafe \
-	-nowarn:649  	\
+	-define:API_SUGGESTIONS		\
 	-r:$(corlib)	 		\
 	-r:System.dll 			\
 	-r:System.Configuration.dll	\

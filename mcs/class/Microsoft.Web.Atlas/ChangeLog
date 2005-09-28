@@ -1,5 +1,11 @@
 2005-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* Makefile (LIB_MCS_FLAGS): add -define:API_SUGGESTIONS.
+
+	* Microsoft.Web.Atlas.dll.sources: add in all the new files.
+
+2005-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.Services/JavaScriptObjectDeserializer.cs: new
 	file.
 
