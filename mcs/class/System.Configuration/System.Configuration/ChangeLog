@@ -1,3 +1,20 @@
+2005-09-28  Chris Toshok  <toshok@ximian.com>
+
+	* KeyValueInternalCollection.cs: found this by way of a stack
+	trace in one of the tests.  A NameValueCollection that wraps a
+	KeyValueConfigurationCollection.
+
+	* Configuration.cs (Init): save off configPath.
+	(EvaluationContext): new, mostly implemented.
+	(GetSectionInstance): use IgnoreSection instead of
+	RuntimeOnlySection.
+	(Load): don't fail when we can't load a file.
+
+	* IgnoreSection.cs: replace RuntimeOnlySection with this new
+	public type.
+
+	* RuntimeOnlySection.cs: nuke.
+	
 2005-09-27  Chris Toshok  <toshok@ximian.com>
 
 	* TimeSpanMinutesOrInfiniteConverter.cs: this is sealed.
