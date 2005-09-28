@@ -1,4 +1,4 @@
-TESTS = t1.exe t2.exe t3.exe t4.exe t5.exe t6.exe
+TESTS = t1.exe t2.exe t3.exe t4.exe t5.exe t6.exe t7.exe
 
 check:	local compare
 
