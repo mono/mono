@@ -1,3 +1,9 @@
+2005-09-28  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (AM_CFLAGS): Don't use += to append inside
+	conditionals.  Use ...
+	(PLATFORM_CFLAGS, ARCH_CFLAGS): ... these.
+
 2005-09-27  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_call_opcode): Use mono_class_value_size ()
