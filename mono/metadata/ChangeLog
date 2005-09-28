@@ -6,6 +6,14 @@ Wed Sep 28 17:06:01 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 2005-09-28  Martin Baulig  <martin@ximian.com>
 
+	* loader.c
+	(method_from_memberref): Added `MonoGenericContext *class_context'
+	argument; this is used when parsing a MONO_MEMBERREF_PARENT_TYPESPEC.
+	(method_from_methodspec): If we're a memberref, use the enclosing
+	context when parsing its parent.  Fixes #76262; see gtest-206.cs.
+
+2005-09-28  Martin Baulig  <martin@ximian.com>
+
 	* object.c (mono_runtime_invoke_array): Added support for
 	MONO_TYPE_GENERICINST; fixes #75917.
 
