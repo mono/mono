@@ -96,7 +96,11 @@ namespace System.Configuration
 		}
 
 		public bool IsRequired {
-			get { return (flags & ConfigurationPropertyOptions.IsRequired) != 0; }               
+			get { return (flags & ConfigurationPropertyOptions.IsRequired) != 0; }
+		}
+
+		public bool IsDefaultCollection {
+			get { return (flags & ConfigurationPropertyOptions.IsDefaultCollection) != 0; }
 		}
 
 		public string Name {

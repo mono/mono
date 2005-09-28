@@ -1,5 +1,9 @@
 2005-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationProperty.cs: add IsDefaultCollection property.
+
+2005-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* ConfigurationElementProperty.cs: new file.
 
 	* ConfigurationLockCollection.cs: new file.
