@@ -747,9 +747,9 @@ namespace System.Windows.Forms {
 				cp.Height = Height;
 
 				if (IsMdiChild) {
-					cp.Style |= (int)WindowStyles.WS_CHILD;
-					cp.Style |= (int)WindowStyles.WS_CLIPCHILDREN;
-					cp.Style |= (int)WindowStyles.WS_CLIPSIBLINGS;
+					cp.Style |= (int)WindowStyles.WS_CHILD |
+					(int)WindowStyles.WS_CLIPCHILDREN |
+					(int)WindowStyles.WS_CLIPSIBLINGS;
 					cp.Parent = Parent.Handle;
 				} else {
 					cp.Style |= (int)WindowStyles.WS_CAPTION;
@@ -1084,15 +1084,20 @@ namespace System.Windows.Forms {
 				this.is_visible = visible;
 			}
 
-			switch (StartPosition) {
+			if (!IsMdiChild) {
+				switch (StartPosition) {
 				case FormStartPosition.CenterScreen:
 					this.CenterToScreen();
 					break;
 				case FormStartPosition.CenterParent:
 					this.CenterToParent ();
 					break;
+				}
+			} else {
+				Left = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
+				Top = 25 * MdiParent.MdiContainer.ChildrenCreated + 1;
+				MdiParent.MdiContainer.ChildrenCreated++;
 			}
-
 
 			if (menu != null) {
 				XplatUI.SetMenu(window.Handle, menu.Handle);

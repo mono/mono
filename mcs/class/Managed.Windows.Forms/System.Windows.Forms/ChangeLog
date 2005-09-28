@@ -1,5 +1,9 @@
 2005-09-27  Jackson Harper  <jackson@ximian.com>
 
+	* Form.cs: Set the position of new mdi children correctly.
+
+2005-09-27  Jackson Harper  <jackson@ximian.com>
+
 	* MdiClient.cs: New mdi children need to be added to the back of
 	the controls collection so the zorder is set correctly. Also add a
 	count of all the child windows that have been created.
