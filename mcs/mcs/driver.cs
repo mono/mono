@@ -1436,7 +1436,8 @@ namespace Mono.CSharp
 							continue;
 						return false;
 					} else {
-						if (arg [0] == '/'){
+						// Need to skip `/home/test.cs' however /test.cs is considered as error
+						if (arg [0] == '/' && (arg.Length < 2 ||  arg.IndexOf ('/', 2) == -1)){
 							if (CSCParseOption (arg, ref args, ref i))
 								continue;
 							return false;
