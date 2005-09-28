@@ -30,40 +30,120 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Web.UI;
 
 namespace Microsoft.Web.UI
 {
-	public class ScriptManager : Control
+	class ScriptReference
 	{
+		public string scriptPath;
+		public bool commonScript;
+	}
+
+	class ScriptNamespace
+	{
+		public string prefix;
+		public string namespaceUri;
+	}
+
+	internal class XmlScriptNode : Control
+	{
+		ScriptManager mgr;
+
+		public XmlScriptNode (ScriptManager mgr)
+		{
+			this.mgr = mgr;
+		}
+
+		protected override void Render (HtmlTextWriter writer)
+		{
+			ScriptTextWriter scriptwriter = new ScriptTextWriter (writer);
+
+			scriptwriter.WriteStartElement ("script");
+			scriptwriter.WriteAttributeString ("type", "text/xml-script");
+			scriptwriter.WriteStartElement ("page");
+			scriptwriter.WriteAttributeString ("xmlns:script", "http://schemas.microsoft.com/xml-script/2005");
+
+			scriptwriter.WriteStartElement ("components");
+			foreach (IScriptComponent component in mgr.Components) {
+				if (((IScriptObject)component).Owner == null) // only render the toplevel script objects
+					component.RenderScript (scriptwriter);
+			}
+			scriptwriter.WriteEndElement (); // components 
+
+			scriptwriter.WriteStartElement ("references");
+			foreach (string scriptPath in mgr.ScriptRefs.Keys) {
+				if ((bool)mgr.ScriptRefs[scriptPath]) {
+					scriptwriter.WriteStartElement ("add");
+					scriptwriter.WriteAttributeString ("src", scriptPath);
+					scriptwriter.WriteEndElement ();
+				}
+			}
+			scriptwriter.WriteEndElement (); //references
+
+			scriptwriter.WriteEndElement (); // page
+			scriptwriter.WriteEndElement (); // script
+
+			ScriptManager.Pages.Remove (Page);
+		}
+	}
+
+	public class ScriptManager : Control, INamingContainer, IScriptComponentContainer
+	{
+		internal ScriptComponentCollection Components;
+		internal Hashtable ScriptRefs;
+		internal List<ScriptNamespace> Namespaces;
+
+		internal static Hashtable Pages = new Hashtable();
+
 		public ScriptManager ()
 		{
-			throw new NotImplementedException ();
+			Components = new ScriptComponentCollection();
+			Namespaces = new List<ScriptNamespace>();
+			ScriptRefs = new Hashtable();
+		}
+
+		protected override void OnInit (EventArgs e)
+		{
+			base.OnInit(e);
+
+			if (Page != null) {
+				Pages.Add (Page, this);
+				Page.Controls.Add (new XmlScriptNode(this));
+			}
 		}
 
 		public static ScriptManager GetCurrentScriptManager (Page page)
 		{
-			throw new NotImplementedException ();
+			return (ScriptManager)Pages[page];
 		}
 
 		public void RegisterComponent (IScriptComponent component)
 		{
-			throw new NotImplementedException ();
+			Components.Add (component);
 		}
 
 		public void RegisterScriptNamespace (string prefix, string namespaceUri)
 		{
-			throw new NotImplementedException ();
+			ScriptNamespace ns = new ScriptNamespace ();
+			ns.prefix = prefix;
+			ns.namespaceUri = namespaceUri;
+			Namespaces.Add (ns);
 		}
 
 		public void RegisterScriptReference (string scriptPath, bool commonScript)
 		{
-			throw new NotImplementedException ();
+			if (ScriptRefs.Contains (scriptPath))
+				return;
+
+			ScriptRefs.Add (scriptPath, commonScript);
 		}
 
 		public void RegisterScriptReference (string scriptPath)
 		{
-			throw new NotImplementedException ();
+			RegisterScriptReference (scriptPath, false);
 		}
 	}
 }

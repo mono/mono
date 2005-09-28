@@ -1,3 +1,19 @@
+2005-09-27  Chris Toshok  <toshok@ximian.com>
+
+	* Microsoft.Web.UI/ScriptManager.cs: implement things such that
+	things kinda work.
+
+	* Microsoft.Web.UI/Button.cs (AddAttributesToElement): call base
+	class method.
+	(InitializeTypeDescriptor): same.
+	(OnPreRender): same.
+
+	* Microsoft.Web.UI/Label.cs: new implementation.
+
+	* Microsoft.Web.UI/TextBox.cs: new implementation.
+
+	* Microsoft.Web.UI/ListView.cs: new implementation.
+	
 2005-09-16  Chris Toshok  <toshok@ximian.com>
 
 	* Test/Microsoft.Web.UI/LabelTest.cs: new test.

@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.UI.Button
+// Microsoft.Web.UI.Label
 //
 // Author:
 //   Chris Toshok (toshok@ximian.com)
@@ -36,49 +36,55 @@ using Microsoft.Web;
 
 namespace Microsoft.Web.UI
 {
-	public class Button : ScriptControl
+	public class Label : ScriptControl
 	{
-		public Button ()
+		public Label ()
 		{
 		}
 
-		protected override void AddAttributesToElement (ScriptTextWriter writer)
+		protected override void AddParsedSubObject (object obj)
 		{
-			base.AddAttributesToElement (writer);
+			base.AddParsedSubObject (obj);
 		}
 
 		protected override void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
 		{
 			base.InitializeTypeDescriptor (typeDescriptor);
+
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("text", ScriptType.String, false, "Text"));
 		}
 
 		protected override void OnPreRender (EventArgs e)
 		{
-			base.OnPreRender(e);
+			base.OnPreRender (e);
+
+			ScriptManager mgr = ScriptManager.GetCurrentScriptManager (Page);
+			mgr.RegisterScriptReference ("ScriptLibrary/AtlasUI.js", true);
+			mgr.RegisterScriptReference ("ScriptLibrary/AtlasControls.js", true);
 		}
 
 		protected override void Render (HtmlTextWriter writer)
 		{
 		}
 
-		public ScriptEvent Click {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
 		public override string TagName {
 			get {
-				throw new NotImplementedException ();
+				return "label";
 			}
 		}
 
 		public string Text {
 			get {
-				throw new NotImplementedException ();
+				object o = ViewState["Text"];
+				if (o == null)
+					return "";
+				return (string)o;
 			}
 			set {
-				throw new NotImplementedException ();
+				if (value == null)
+					ViewState.Remove ("Text");
+				else
+					ViewState["Text"] = value;
 			}
 		}
 	}
