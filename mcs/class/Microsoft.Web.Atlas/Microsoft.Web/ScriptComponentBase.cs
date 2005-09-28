@@ -114,12 +114,17 @@ namespace Microsoft.Web
 			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("id", ScriptType.String, "ID"));
 		}
 
-		void IScriptComponent.RenderScript (ScriptTextWriter writer)
+		protected internal virtual void RenderScript (ScriptTextWriter writer)
 		{
 			RenderScriptBeginTag (writer);
 			AddAttributesToElement (writer);
 			RenderScriptTagContents (writer);
 			RenderScriptEndTag (writer);
+		}
+
+		void IScriptComponent.RenderScript (ScriptTextWriter writer)
+		{
+			RenderScript (writer);
 		}
 
 		protected virtual void RenderScriptBeginTag (ScriptTextWriter writer)
@@ -134,6 +139,13 @@ namespace Microsoft.Web
 
 		protected virtual void RenderScriptTagContents (ScriptTextWriter writer)
 		{
+			if (bindings != null && bindings.Count > 0) {
+				writer.WriteStartElement ("bindings");
+				foreach (Binding b in bindings) {
+					b.RenderScript (writer);
+				}
+				writer.WriteEndElement (); // bindings
+			}
 		}
 
 		public void SetOwner (IScriptObject owner)

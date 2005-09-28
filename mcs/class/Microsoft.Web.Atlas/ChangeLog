@@ -1,5 +1,45 @@
 2005-09-27  Chris Toshok  <toshok@ximian.com>
 
+	* Microsoft.Web/ScriptEvent.cs (RenderActions): remove the
+	WriteWhitespace calls - the writer takes care of formatting for
+	us.
+
+	* Microsoft.Web/ScriptControl.cs (AddAttributesToElement): add
+	cssClass and targetElement.
+	(InitializeTypeDescriptor): flesh out the type descriptor.
+	(RenderScriptTagContents): call the base class method, then render
+	our behaviors.
+	(Behaviors): implement.
+	(CssClass): implement.
+
+	* Microsoft.Web/Behavior.cs (RenderBehavior): new.
+	(RenderScript): new.
+
+	* Microsoft.Web/ScriptComponent.cs (AddAttributesToRender): write
+	the ID.
+	(InitializeTypeDescriptor): implement.
+	(OnInit): register ourselves with the script manager.
+	(RenderScriptTagContents): render our bindings.
+	(Bindings): implement.
+	(PropertyChanged): implement.
+	(IScriptOwner.Owner): return null instead of NIE.
+
+	* Microsoft.Web/ScriptComponentBase.cs (RenderScript): add new
+	non-iface virtual method, and have the explicit interface impl
+	call it.
+	(RenderScriptTagContents): write out the bindings.
+
+	* Microsoft.Web/ScriptTextWriter.cs (.ctor): set Formatting to
+	Formatting.Indented.
+
+	* Microsoft.Web/IScriptComponentContainer.cs: new interface.
+
+	* Microsoft.Web/ScriptComponentCollection.cs: new implementation.
+
+	* Microsoft.Web/GenericScriptComponent.cs: new implementation.
+
+2005-09-27  Chris Toshok  <toshok@ximian.com>
+
 	* Microsoft.Web.UI/ScriptManager.cs: implement things such that
 	things kinda work.
 

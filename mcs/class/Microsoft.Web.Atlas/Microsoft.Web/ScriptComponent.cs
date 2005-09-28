@@ -30,12 +30,15 @@
 #if NET_2_0
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Web.UI;
+using Microsoft.Web.UI;
 
 namespace Microsoft.Web
 {
 
+	[ParseChildren (true, "Bindings")]
 	public abstract class ScriptComponent :  Control, IScriptComponent, IScriptObject
 	{
 		protected ScriptComponent ()
@@ -44,6 +47,8 @@ namespace Microsoft.Web
 
 		protected virtual void AddAttributesToElement (ScriptTextWriter writer)
 		{
+			if (ID != null && ID != "")
+				writer.WriteAttributeString ("id", ID);
 		}
 
 		ScriptTypeDescriptor IScriptObject.GetTypeDescriptor ()
@@ -56,6 +61,11 @@ namespace Microsoft.Web
 
 		protected virtual void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
 		{
+			foreach (ScriptEvent ev in ((IEnumerable<ScriptEvent>)ScriptEvents))
+				typeDescriptor.AddEvent (new ScriptEventDescriptor (ev.Name, ev.SupportsActions));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("bindings", ScriptType.Array, true, "Bindings"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("dataContext", ScriptType.Object));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("id", ScriptType.String, "ID"));
 		}
 
 		public ScriptTypeDescriptor GetTypeDescriptor ()
@@ -69,6 +79,12 @@ namespace Microsoft.Web
 		protected override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
+
+			ScriptManager mgr = ScriptManager.GetCurrentScriptManager (Page);
+			if (mgr == null)
+				throw new InvalidOperationException ("The page must contain a ScriptManager or the control must be placed inside a container");
+
+			mgr.RegisterComponent (this);
 		}
 
 		void IScriptComponent.RenderScript (ScriptTextWriter writer)
@@ -91,11 +107,21 @@ namespace Microsoft.Web
 
 		protected virtual void RenderScriptTagContents (ScriptTextWriter writer)
 		{
+			if (bindings != null && bindings.Count > 0) {
+				writer.WriteStartElement ("bindings");
+				foreach (Binding b in bindings) {
+					b.RenderScript (writer);
+				}
+				writer.WriteEndElement (); // bindings
+			}
 		}
 
+		BindingCollection bindings;
 		public BindingCollection Bindings {
 			get {
-				throw new NotImplementedException ();
+				if (bindings == null)
+					bindings = new BindingCollection(this);
+				return bindings;
 			}
 		}
 
@@ -107,15 +133,24 @@ namespace Microsoft.Web
 		}
 #endif
 
+		ScriptEvent propertyChanged = null;
 		public ScriptEvent PropertyChanged {
 			get {
-				throw new NotImplementedException ();
+				if (propertyChanged == null)
+					propertyChanged = new ScriptEvent (this, "propertyChanged", true);
+				return propertyChanged;
 			}
 		}
 
-		public ScriptEventCollection ScriptEvents {
+		ScriptEventCollection scriptEvents;
+		protected ScriptEventCollection ScriptEvents {
 			get {
-				throw new NotImplementedException ();
+				if (scriptEvents == null) {
+					scriptEvents = new ScriptEventCollection (this);
+					scriptEvents.Add (PropertyChanged);
+				}
+
+				return scriptEvents;
 			}
 		}
 
@@ -129,7 +164,7 @@ namespace Microsoft.Web
 
 		IScriptObject IScriptObject.Owner {
 			get {
-				throw new NotImplementedException ();
+				return null;
 			}
 		}
 	}

@@ -30,10 +30,13 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Collections.ObjectModel;
+using System.Web.UI;
 
 namespace Microsoft.Web
 {
+	[ControlBuilder (typeof (BindingCollectionBuilder))]
 	public class BindingCollection : Collection<Binding>, IScriptObject
 	{
 		IScriptObject owner;
@@ -86,6 +89,23 @@ namespace Microsoft.Web
 			throw new NotImplementedException ();
 		}
 	}
+
+	class BindingCollectionBuilder : ControlBuilder
+	{
+		public override bool AllowWhitespaceLiterals () 
+		{
+			return false;
+		}
+
+		public override Type GetChildControlType (string tagName, IDictionary attribs) 
+		{
+			if (System.String.Compare (tagName, "binding", true) != 0)
+				return null;
+
+			return typeof (Binding);
+		}
+	}
+
 }
 
 #endif

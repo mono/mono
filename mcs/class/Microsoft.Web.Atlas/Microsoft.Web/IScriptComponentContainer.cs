@@ -1,5 +1,5 @@
 //
-// Microsoft.Web.Behavior
+// Microsoft.Web.IScriptComponentContainer
 //
 // Author:
 //   Chris Toshok (toshok@ximian.com)
@@ -29,31 +29,16 @@
 
 #if NET_2_0
 
-using System;
+using System.Web.UI;
 
 namespace Microsoft.Web
 {
-	public abstract class Behavior : ScriptComponentBase, IScriptObject
+
+	public interface IScriptComponentContainer : INamingContainer
 	{
-		protected Behavior ()
-		{
-		}
-
-		protected internal virtual void RenderBehavior (ScriptTextWriter writer)
-		{
-			RenderScriptBeginTag (writer);
-			AddAttributesToElement (writer);
-			// XXX toshok: just a hunch, but we probably
-			// don't have bindings in behaviors..  so
-			// let's leave out the contents?
-			RenderScriptEndTag (writer);
-		}
-
-		protected internal sealed override void RenderScript (ScriptTextWriter writer)
-		{
-			RenderBehavior (writer);
-		}
+		void RegisterComponent (IScriptComponent component);
 	}
+
 }
 
 #endif

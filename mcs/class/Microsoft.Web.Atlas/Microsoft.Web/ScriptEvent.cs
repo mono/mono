@@ -82,12 +82,9 @@ namespace Microsoft.Web
 				return;
 
 			writer.WriteStartElement (Name);
-			writer.WriteWhitespace ("\r\n");
 
 			foreach (Action a in Actions) {
-				writer.WriteWhitespace ("  ");
 				a.RenderAction (writer);
-				writer.WriteWhitespace ("\r\n");
 			}
 
 			writer.WriteEndElement ();

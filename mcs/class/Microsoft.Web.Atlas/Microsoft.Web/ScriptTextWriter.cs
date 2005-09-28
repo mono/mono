@@ -39,6 +39,7 @@ namespace Microsoft.Web
 		public ScriptTextWriter (TextWriter writer)
 			: base (writer)
 		{
+			Formatting = Formatting.Indented;
 		}
 	}
 }

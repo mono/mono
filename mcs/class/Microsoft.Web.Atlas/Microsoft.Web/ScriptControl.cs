@@ -44,29 +44,68 @@ namespace Microsoft.Web
 		protected override void AddAttributesToElement (ScriptTextWriter writer)
 		{
 			base.AddAttributesToElement (writer);
+
+			if (CssClass != "")
+				writer.WriteAttributeString ("cssClass", CssClass);
+
+			if (ClientID != null && ClientID != "")
+				writer.WriteAttributeString ("targetElement", ClientID);
 		}
 
 		protected override void InitializeTypeDescriptor (ScriptTypeDescriptor typeDescriptor)
 		{
 			base.InitializeTypeDescriptor (typeDescriptor);
+
+			string[] args = new string[1];
+			args[0] = "className";
+
+			typeDescriptor.AddMethod (new ScriptMethodDescriptor ("addCssClass", args));
+			typeDescriptor.AddMethod (new ScriptMethodDescriptor ("focus"));
+			typeDescriptor.AddMethod (new ScriptMethodDescriptor ("scrollIntoView"));
+			typeDescriptor.AddMethod (new ScriptMethodDescriptor ("removeCssClass", args));
+			typeDescriptor.AddMethod (new ScriptMethodDescriptor ("toggleCssClass", args));
+
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("associatedElement", ScriptType.Object, true, ""));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("behaviors", ScriptType.Array, true, "Behaviors"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("cssClass", ScriptType.String, false, "CssClass"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("enabled", ScriptType.Boolean, false, "Enabled"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("style", ScriptType.Object, true, ""));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("visible", ScriptType.Boolean, false, "Visible"));
+			typeDescriptor.AddProperty (new ScriptPropertyDescriptor ("visibilityMode", ScriptType.Enum, false, "VisibilityMode"));
 		}
 
 		protected override void RenderScriptTagContents (ScriptTextWriter writer)
 		{
+			base.RenderScriptTagContents (writer);
+
+			if (behaviors != null && behaviors.Count > 0) {
+				writer.WriteStartElement ("behaviors");
+				foreach (Behavior b in behaviors) {
+					b.RenderScript (writer);
+				}
+				writer.WriteEndElement (); // behaviors
+			}
 		}
 
+		BehaviorCollection behaviors;
 		public BehaviorCollection Behaviors {
 			get {
-				throw new NotImplementedException ();
+				if (behaviors == null)
+					behaviors = new BehaviorCollection (this);
+
+				return behaviors;
 			}
 		}
 
 		public string CssClass {
 			get {
-				throw new NotImplementedException ();
+				object o = ViewState["CssClass"];
+				if (o == null)
+					return "";
+				return (string)o;
 			}
 			set {
-				throw new NotImplementedException ();
+				ViewState["CssClass"] = value;
 			}
 		}
 

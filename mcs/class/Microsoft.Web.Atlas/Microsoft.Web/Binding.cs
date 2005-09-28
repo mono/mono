@@ -30,9 +30,11 @@
 #if NET_2_0
 
 using System;
+using System.Web.UI;
 
 namespace Microsoft.Web
 {
+	[ControlBuilder (typeof (BindingBuilder))]
 	public class Binding : IScriptObject
 	{
 		public Binding ()
@@ -187,6 +189,14 @@ namespace Microsoft.Web
 			d.Close ();
 
 			return d;
+		}
+	}
+
+	class BindingBuilder : ControlBuilder
+	{
+		public override bool HasBody ()
+		{
+			return false;
 		}
 	}
 }
