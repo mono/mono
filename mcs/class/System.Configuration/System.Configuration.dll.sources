@@ -30,10 +30,12 @@ System.Configuration/ConfigurationConverterBase.cs
 System.Configuration/ConfigurationElement.cs
 System.Configuration/ConfigurationElementCollection.cs
 System.Configuration/ConfigurationElementCollectionType.cs
+System.Configuration/ConfigurationElementProperty.cs
 System.Configuration/ConfigurationErrorsException.cs
 System.Configuration/ConfigurationFileMap.cs
 System.Configuration/ConfigurationLocation.cs
 System.Configuration/ConfigurationLocationCollection.cs
+System.Configuration/ConfigurationLockCollection.cs
 System.Configuration/ConfigurationManager.cs
 System.Configuration/ConfigurationProperty.cs
 System.Configuration/ConfigurationPropertyAttribute.cs

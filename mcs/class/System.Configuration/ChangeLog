@@ -1,3 +1,8 @@
+2005-09-27  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration.dll.sources: add
+	ConfigurationElementProperty.cs and ConfigurationLockCollection.cs
+
 2005-09-23  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration.dll.sources: add the
