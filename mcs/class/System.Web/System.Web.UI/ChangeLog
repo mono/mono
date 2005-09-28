@@ -1,5 +1,17 @@
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* AttributeCollection.cs: avoid code duplication and
+	don't add "style" to the bag, or it will overwrite the settings made
+	by CssStyleCollection.
+
+	* CssStyleCollection.cs: make it throw where MS throws.
+	Minimize the number of times we create the "style" string and take
+	care of updating it for the AttributeCollection. FillStyle and
+	BagToString are now private. One should use the 2.0 (internal in <2.0)
+	Value property.
+
+2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Control.cs: fix HasChildViewStates.
 
 2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>

@@ -365,12 +365,93 @@ namespace System.Web.UI.WebControls
 					writer.AddAttribute (HtmlTextWriterAttribute.Class, s);
 			}
 
-			CssStyleCollection attributes = new CssStyleCollection ();
-			FillStyleAttributes (attributes);
-			foreach (string attr in attributes.Keys)
-				writer.AddStyleAttribute (attr, attributes [attr]);
+			WriteStyleAttributes (writer);
 		}
-		 
+
+		void WriteStyleAttributes (HtmlTextWriter writer) 
+		{
+			string		s;
+			Color		color;
+			BorderStyle	bs;
+			Unit		u;
+
+			if ((styles & Styles.BackColor) != 0) {
+				color = (Color)viewstate["BackColor"];
+				if (!color.IsEmpty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BackgroundColor, ColorTranslator.ToHtml(color));
+			}
+
+			if ((styles & Styles.BorderColor) != 0) {
+				color = (Color)viewstate["BorderColor"];
+				if (!color.IsEmpty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderColor, ColorTranslator.ToHtml(color));
+			}
+
+			if ((styles & Styles.BorderStyle) != 0) {
+				bs = (BorderStyle)viewstate["BorderStyle"];
+				if (bs != BorderStyle.NotSet) 
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, bs.ToString());
+			}
+
+			if ((styles & Styles.BorderWidth) != 0) {
+				u = (Unit)viewstate["BorderWidth"];
+				if (!u.IsEmpty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, u.ToString());
+			}
+
+			if ((styles & Styles.ForeColor) != 0) {
+				color = (Color)viewstate["ForeColor"];
+				if (!color.IsEmpty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.Color, ColorTranslator.ToHtml(color));
+			}
+
+			if ((styles & Styles.Height) != 0) {
+				u = (Unit)viewstate["Height"];
+				if (!u.IsEmpty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.Height, u.ToString());
+			}
+
+			if ((styles & Styles.Width) != 0) {
+				u = (Unit)viewstate["Width"];
+				if (!u.IsEmpty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.Width, u.ToString());
+			}
+
+			if (fontinfo != null) {
+				// Fonts are a bit weird
+				if (fontinfo.Name != string.Empty) {
+					s = fontinfo.Names[0];
+					for (int i = 1; i < fontinfo.Names.Length; i++)
+						s += "," + fontinfo.Names[i];
+					writer.AddStyleAttribute (HtmlTextWriterStyle.FontFamily, s);
+				}
+
+				if (fontinfo.Bold)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.FontWeight, "bold");
+
+				if (fontinfo.Italic)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.FontStyle, "italic");
+
+				if (!fontinfo.Size.IsEmpty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.FontSize, fontinfo.Size.ToString());
+
+				// These styles are munged into a attribute decoration
+				s = string.Empty;
+
+				if (fontinfo.Overline)
+					s += "overline ";
+
+				if (fontinfo.Strikeout)
+					s += "line-through ";
+
+				if (fontinfo.Underline)
+					s += "underline ";
+
+				if (s != string.Empty)
+					writer.AddStyleAttribute (HtmlTextWriterStyle.TextDecoration, s);
+			}
+		}
+
 		void FillStyleAttributes (CssStyleCollection attributes) 
 		{
 			string		s;

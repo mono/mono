@@ -1,7 +1,16 @@
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Style.cs: avoid unnecesary creation of a CssStyleCollection and
+	instead write the style attributes directly to the HtmlTextWriter.
+
+	* CheckBox.cs: adapted to new API.
+
 	* DataGrid.cs: handle null data sources. Fixed the contions that make
 	the table to be added to the Controls collection.
+
+	* Calendar.cs: the table needed an ID and the attributes from the
+	parent. Also don't create the ControlStyleCollection if it has not
+	already been created.
 
 2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
