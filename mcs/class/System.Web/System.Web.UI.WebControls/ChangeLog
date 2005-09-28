@@ -1,5 +1,9 @@
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Style.cs: fix the 2.0 build.
+
+2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Style.cs: avoid unnecesary creation of a CssStyleCollection and
 	instead write the style attributes directly to the HtmlTextWriter.
 
