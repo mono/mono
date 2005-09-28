@@ -3,6 +3,7 @@
 //
 // Author:
 //	Jackson Harper (jackson@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
@@ -54,6 +55,16 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return TagName;
 		}
 
+		public void CreateCH (bool use_ds)
+		{
+			CreateControlHierarchy (use_ds);
+		}
+
+		public void PrepareCH ()
+		{
+			PrepareControlHierarchy ();
+		}
+
 		public string Render ()
 		{
 			StringWriter sw = new StringWriter ();
@@ -68,7 +79,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return ViewState;
 		}
 
-		public Style ControlStyle ()
+		public new Style ControlStyle ()
 		{
 			return CreateControlStyle ();
 		}
@@ -1315,6 +1326,79 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (1, columns.Count, "A1");
 			Assert.AreEqual ("CustomName", ((DataGridColumn) columns [0]).HeaderText, "A2");
 			Assert.AreEqual (0, p.DataKeys.Count, "A3");
+		}
+
+		class MyTemplate : ITemplate {
+			string text;
+			public MyTemplate (string text)
+			{
+				this.text = text;
+			}
+
+			public void InstantiateIn (Control control)
+			{
+				control.Controls.Add (new LiteralControl (text));	
+			}
+		}
+
+		[Test]
+		public void OneTemplateColumn1 ()
+		{
+			DataGridPoker p = new DataGridPoker ();
+			TemplateColumn tc = new TemplateColumn ();
+			tc.ItemTemplate = new MyTemplate ("hola");
+			p.Columns.Add (tc);
+			p.CreateControls (true);
+			Assert.AreEqual (1, p.Columns.Count, "columns");
+			Assert.AreEqual (0, p.Controls.Count, "controls");
+			string render = p.Render ();
+			// no items, even with a templated column.
+			// The table is not added if DataSource == null
+			Assert.IsTrue (-1 == render.IndexOf ("hola"), "template");
+		}
+
+		[Test]
+		public void OneTemplateColumn2 ()
+		{
+			DataGridPoker p = new DataGridPoker ();
+			p.ShowFooter = true;
+			p.AutoGenerateColumns = false;
+			p.DataSource = new ArrayList ();
+			TemplateColumn tc = new TemplateColumn ();
+			tc.HeaderText = " ";
+			tc.FooterTemplate = new MyTemplate ("hola");
+			p.Columns.Add (tc);
+			Assert.AreEqual (1, p.Columns.Count, "columns-1");
+			Assert.AreEqual (0, p.Controls.Count, "controls-1");
+			p.CreateCH (true);
+			// This time we have the table there. Thanks to the empty ArrayList
+			Assert.AreEqual (1, p.Columns.Count, "columns-2");
+			Assert.AreEqual (1, p.Controls.Count, "controls-2");
+			p.PrepareCH ();
+			Assert.AreEqual (1, p.Columns.Count, "columns-3");
+			Assert.AreEqual (1, p.Controls.Count, "controls-3");
+		}
+
+		[Test]
+		public void OneTemplateColumn3 ()
+		{
+			DataGridPoker p = new DataGridPoker ();
+			p.ShowFooter = true;
+			p.AutoGenerateColumns = false;
+			p.DataSource = new ArrayList ();
+			TemplateColumn tc = new TemplateColumn ();
+			tc.FooterTemplate = new MyTemplate ("hola");
+			p.Columns.Add (tc);
+			p.DataBind ();
+
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter tw = new HtmlTextWriter (sw);
+			Assert.AreEqual (1, p.Columns.Count, "columns");
+			Assert.AreEqual (1, p.Controls.Count, "controls");
+
+			string render = p.Render ();
+			// no items, but we have a footer
+			Assert.IsTrue (-1 != render.IndexOf ("hola"), "template");
 		}
 
 		[Test]

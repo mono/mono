@@ -1,5 +1,9 @@
 2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataGridTest.cs: more tests that add a TemplateColumn.
+
+2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* EditCommandColumnTest.cs: added a test here for datagrid, as this was
 	the file whose test failed because the id of the datagrid generated
 	table.
