@@ -1,5 +1,8 @@
 2005-09-28  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_jit_compile_method_inner): Do not load AOT code when
+	there is a profiler interested in JIT events.
+
 	* aot.c: Load profile files produced by the AOT profiling module, and
 	reorder methods based on the profiling info. Add a 'method_order' table
 	to the AOT file to make mono_aot_find_jit_info work with the reordered
