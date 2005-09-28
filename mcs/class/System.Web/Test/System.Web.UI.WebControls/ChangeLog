@@ -1,5 +1,9 @@
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* PagedDataSourceTest.cs: more tests.
+
+2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* CalendarTest.cs: added test to check for ID and base attributes being
 	copied from the calendar into the table.
 

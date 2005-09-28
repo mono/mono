@@ -1,7 +1,9 @@
 //
 // PagedDataSourceTest.cs
 //
-// Author: Duncan Mak (duncan@novell.com)
+// Authors:
+// 	Duncan Mak (duncan@novell.com)
+// 	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -317,5 +319,134 @@ namespace MonoTests.System.Web.UI.WebControls {
 			ds.DataSource = null;
 			IEnumerator data = ds.GetEnumerator ();
 		}
+
+		static void FillTable (DataTable table)
+		{
+			table.Columns.Add (new DataColumn ("one", typeof (string)));
+			table.Columns.Add (new DataColumn ("two", typeof (string)));
+
+			for (int i = 0; i < 100; i++) {
+				DataRow row = table.NewRow ();
+				row ["one"] = i % 2;
+				row ["two"] = i / 2;
+				table.Rows.Add (row);
+			}
+		}
+
+		[Test]
+		public void Paging1 ()
+		{
+			PagedDataSource paged = new PagedDataSource ();
+			paged.AllowPaging = true;
+			paged.PageSize = 5;
+			DataTable table = new DataTable ();
+			FillTable (table);
+			paged.DataSource = new DataView (table);
+
+			Assert.IsTrue (paged.IsFirstPage, "first-1");
+			Assert.IsFalse (paged.IsLastPage, "last-1");
+
+			paged.CurrentPageIndex = 100; // no problem setting this.
+			Assert.AreEqual (100, paged.CurrentPageIndex, "current-1");
+			Assert.IsFalse (paged.IsFirstPage, "first-2");
+			Assert.IsFalse (paged.IsLastPage, "last-2");
+			IEnumerator rator = paged.GetEnumerator ();
+			Assert.IsFalse (rator.MoveNext (), "beyondtheend-1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+		public void Paging2 ()
+		{
+			PagedDataSource paged = new PagedDataSource ();
+			paged.AllowPaging = true;
+			paged.PageSize = 5;
+			DataTable table = new DataTable ();
+			FillTable (table);
+			paged.DataSource = new DataView (table);
+
+			paged.CurrentPageIndex = -1;
+			Assert.AreEqual (-1, paged.CurrentPageIndex, "current");
+			Assert.IsFalse (paged.IsFirstPage, "first");
+			Assert.IsFalse (paged.IsLastPage, "last");
+			IEnumerator rator = paged.GetEnumerator ();
+			Assert.AreEqual (-1, paged.CurrentPageIndex, "current-2");
+			Assert.IsTrue (rator.MoveNext (), "beyondtheend");
+			DataRowView drv = (DataRowView) rator.Current; // Throws (out of range)
+		}
+
+		[Test]
+		[ExpectedException (typeof (IndexOutOfRangeException))]
+		public void Paging3 ()
+		{
+			PagedDataSource paged = new PagedDataSource ();
+			paged.AllowPaging = true;
+			paged.PageSize = 5;
+			DataTable table = new DataTable ();
+			FillTable (table);
+			paged.DataSource = new DataView (table);
+
+			paged.CurrentPageIndex = -7;
+			Assert.AreEqual (-7, paged.CurrentPageIndex, "current");
+			Assert.IsFalse (paged.IsFirstPage, "first");
+			Assert.IsFalse (paged.IsLastPage, "last");
+			IEnumerator rator = paged.GetEnumerator ();
+			Assert.AreEqual (-7, paged.CurrentPageIndex, "current-2");
+			Assert.IsTrue (rator.MoveNext (), "beyondtheend");
+			DataRowView drv = (DataRowView) rator.Current; // Throws (out of range)
+		}
+
+		[Test]
+		public void Paging4 ()
+		{
+			PagedDataSource paged = new PagedDataSource ();
+			paged.AllowPaging = true;
+			paged.PageSize = 5;
+			DataTable table = new DataTable ();
+			FillTable (table);
+			paged.DataSource = new DataView (table);
+
+			paged.CurrentPageIndex = 1;
+			IEnumerator rator = paged.GetEnumerator ();
+			Assert.IsTrue (rator.MoveNext (), "beginning-1");
+			DataRowView drv = (DataRowView) rator.Current;
+			int one = Int32.Parse ((string) drv ["one"]);
+			Assert.IsTrue (one == 0 || one == 1, "one-1");
+			int res =  one + 2 * Int32.Parse ((string) drv ["two"]);
+			Assert.AreEqual (5, res, "five");
+		}
+
+		[Test]
+		public void Copy1 ()
+		{
+			PagedDataSource paged = new PagedDataSource ();
+			DataTable table = new DataTable ();
+			FillTable (table);
+			paged.DataSource = new DataView (table);
+			object [] data = new object [100];
+			paged.CopyTo (data, 0);
+			Type t = typeof (DataRowView);
+			Assert.AreEqual (t, data [0].GetType ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (NullReferenceException))]
+		public void Copy2 ()
+		{
+			PagedDataSource paged = new PagedDataSource ();
+			paged.DataSource = null;
+			object [] data = new object [100];
+			paged.CopyTo (data, 0);
+		}
+
+		[Test]
+		public void Copy3 ()
+		{
+			PagedDataSource paged = new PagedDataSource ();
+			paged.DataSource = new object [] {"1", "2"};
+			object [] data = new object [100];
+			paged.CopyTo (data, 0);
+		}
 	}
 }
+
