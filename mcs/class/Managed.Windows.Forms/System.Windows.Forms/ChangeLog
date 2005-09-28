@@ -1,3 +1,13 @@
+2005-09-28  Jordi Mas i Hernandez <jordi@ximian.com>
+	 
+	* DataGridDrawingLogic.cs: 
+		- Takes rows into account on Colum calculations
+		- Returns the column when clickig
+	* DataGrid.cs:
+		- Fixes default HitTestInfo values
+		- Fixes HitTestInfo.ToString
+		- Fixes ResetBackColor		
+	
 2005-09-28  Jackson Harper  <jackson@ximian.com>
 
 	* MdiChildContext.cs: Obey rules for fixed sized windows (no

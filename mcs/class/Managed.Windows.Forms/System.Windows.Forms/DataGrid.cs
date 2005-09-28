@@ -67,8 +67,8 @@ namespace System.Windows.Forms
 			#region Private Constructors
 			internal HitTestInfo ()
 			{
-				column = 0;
-				row = 0;
+				column = -1;
+				row = -1;
 				type =  HitTestType.None;
 			}
 			#endregion
@@ -103,7 +103,7 @@ namespace System.Windows.Forms
 
 			public override string ToString ()
 			{
-				return base.ToString ();
+				return "{ " + type + "," + row + "," + column + "}";
 			}
 
 		}
@@ -1347,7 +1347,8 @@ namespace System.Windows.Forms
 				CurrentCell = new DataGridCell (testinfo.Row, current_cell.ColumnNumber);
 				OnRowHeaderClick (EventArgs.Empty);
 				break;
-			}
+			}			
+			
 			default:
 				break;
 			}
@@ -1573,7 +1574,7 @@ namespace System.Windows.Forms
 
 		public override void ResetBackColor ()
 		{
-			base.ResetBackColor ();
+			backColor = ThemeEngine.Current.DataGridBackColor;
 		}
 
 		public override void ResetForeColor ()

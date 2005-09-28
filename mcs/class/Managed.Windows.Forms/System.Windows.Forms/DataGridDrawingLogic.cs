@@ -79,6 +79,9 @@ namespace System.Windows.Forms
 
 			if (cnt == 0)
 				return 0;
+				
+			if (grid.CurrentTableStyle.CurrentRowHeadersVisible)
+				width += rowshdrs_area.X + rowshdrs_area.Width;
 
 			for (int col = 0; col < cnt; col++) {
 				width += grid.CurrentTableStyle.GridColumnStyles[col].Width;
@@ -335,11 +338,12 @@ namespace System.Windows.Forms
 			grid.first_visiblecolumn = FromPixelToColumn (grid.horz_pixeloffset);
 
 			col = FromPixelToColumn (max_pixel);
+			
 			grid.visiblecolumn_count = 1 + col - grid.first_visiblecolumn;
 			
-			//if (grid.first_visiblecolumn + grid.visiblecolumn_count + 1 < grid.CurrentTableStyle.GridColumnStyles.Count) { 
-			//	grid.visiblecolumn_count++; // Partially visible column
-			//}
+			if (grid.first_visiblecolumn + grid.visiblecolumn_count + 1 < grid.CurrentTableStyle.GridColumnStyles.Count) { 
+				grid.visiblecolumn_count++; // Partially visible column
+			}
 		}
 
 		public void UpdateVisibleRowCount ()
@@ -388,6 +392,7 @@ namespace System.Windows.Forms
 			// TODO: Add missing ColumnResize and RowResize checks
 			if (columnshdrs_area.Contains (x, y)) {
 				hit.type = DataGrid.HitTestType.ColumnHeader;
+				hit.column = FromPixelToColumn (x);
 				return hit;
 			}
 
