@@ -89,8 +89,8 @@ namespace System.Windows.Forms
 		//private TextBox editor;   // Used for editing an item text
 		private ScrollBar h_scroll; // used for scrolling horizontally
 		private ScrollBar v_scroll; // used for scrolling vertically
-		private int h_marker;		// Position markers for scrolling
-		private int v_marker;
+		internal int h_marker;		// Position markers for scrolling
+		internal int v_marker;
 
 		// internal variables
 		internal ImageList large_image_list;
@@ -534,7 +534,7 @@ namespace System.Windows.Forms
 				// do a hit test for the scrolled position
 				else {
 					foreach (ListViewItem item in this.items) {
-						if (item.EntireRect.Contains (h_marker, v_marker))
+						if (item.EntireRect.X >= h_marker && item.EntireRect.Y >= v_marker)
 							return item;
 					}
 					return null;
@@ -561,6 +561,38 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 
 		#region Internal Methods Properties
+		
+		public int FirstVisibleIndex {
+			get {
+				// there is no item
+				if (this.items.Count == 0)
+					return 0;
+									
+				if (h_marker == 0 && v_marker == 0)
+					return 0;					
+				
+				foreach (ListViewItem item in this.items) {
+					if (item.EntireRect.X + item.EntireRect.Width >= h_marker 
+						&& item.EntireRect.Y + item.EntireRect.Height >= v_marker)
+						return item.Index;
+				}
+				return 0;
+
+			}
+		}
+
+		
+		internal int LastItemIndex {			
+			get {							
+				for (int i = FirstVisibleIndex; i < Items.Count; i++) {						
+					if (Items[i].EntireRect.Y > v_marker + ClientRectangle.Bottom)						
+							return i -1;					
+				}
+				
+				return Items.Count - 1;
+			}
+		}
+		
 		internal int TotalWidth {
 			get { return Math.Max (this.Width, this.layout_wd); }
 		}

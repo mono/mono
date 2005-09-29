@@ -1490,9 +1490,56 @@ namespace System.Windows.Forms
 			bool details = (control.View == View.Details);
 
 			dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor), clip);
+			
+			DrawListViewHeader (dc, clip, control);
+			
+			// In case of details view draw the items only if
+			// columns are non-zero
+			if (!details || control.Columns.Count > 0) {				
+				int first = control.FirstVisibleIndex;	
+				
+				for (int i = first; i <= control.LastItemIndex; i ++) {					
+					//if (clip.IntersectsWith (control.Items[i].entire_rect_real))
+						DrawListViewItem (dc, control, control.Items[i]);
+				}				
+			}	
+			
+			// draw the gridlines
+			if (details && control.GridLines) {
+				int top = (control.HeaderStyle == ColumnHeaderStyle.None) ?
+					2 : control.Font.Height + 2;
 
+				// draw vertical gridlines
+				foreach (ColumnHeader col in control.Columns)
+					dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
+						     col.Rect.Right, top,
+						     col.Rect.Right, control.TotalHeight);
+				// draw horizontal gridlines
+				ListViewItem last_item = null;
+				foreach (ListViewItem item in control.Items) {
+					dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
+						     item.entire_rect_real.Left, item.entire_rect_real.Top,
+						     control.TotalWidth, item.entire_rect_real.Top);
+					last_item = item;
+				}
+
+				// draw a line after at the bottom of the last item
+				if (last_item != null) {
+					dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
+						     last_item.entire_rect_real.Left,
+						     last_item.entire_rect_real.Bottom,
+						     control.TotalWidth,
+						     last_item.entire_rect_real.Bottom);
+				}
+			}
+		}
+		
+		private void DrawListViewHeader (Graphics dc, Rectangle clip, ListView control)
+		{	
+			bool details = (control.View == View.Details);
+				
 			// border is drawn directly in the Paint method
-			if (details && control.HeaderStyle != ColumnHeaderStyle.None) {
+			if (details && control.HeaderStyle != ColumnHeaderStyle.None) {				
 				dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor),
 						  0, 0, control.TotalWidth, control.Font.Height + 5);
 				if (control.Columns.Count > 0) {
@@ -1526,62 +1573,30 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-
-			// In case of details view draw the items only if
-			// columns are non-zero
-			if (!details || control.Columns.Count > 0)
-				foreach (ListViewItem item in control.Items) {
-					if (clip.IntersectsWith (item.EntireRect))
-						DrawListViewItem (dc, control, item);
-				}
-
-			// draw the gridlines
-			if (details && control.GridLines) {
-				int top = (control.HeaderStyle == ColumnHeaderStyle.None) ?
-					2 : control.Font.Height + 2;
-
-				// draw vertical gridlines
-				foreach (ColumnHeader col in control.Columns)
-					dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
-						     col.Rect.Right, top,
-						     col.Rect.Right, control.TotalHeight);
-				// draw horizontal gridlines
-				ListViewItem last_item = null;
-				foreach (ListViewItem item in control.Items) {
-					dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
-						     item.EntireRect.Left, item.EntireRect.Top,
-						     control.TotalWidth, item.EntireRect.Top);
-					last_item = item;
-				}
-
-				// draw a line after at the bottom of the last item
-				if (last_item != null) {
-					dc.DrawLine (this.ResPool.GetPen (this.ColorButtonFace),
-						     last_item.EntireRect.Left,
-						     last_item.EntireRect.Bottom,
-						     control.TotalWidth,
-						     last_item.EntireRect.Bottom);
-				}
-			}
 		}
 
 		// draws the ListViewItem of the given index
 		private void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
-		{
+		{						
+			Rectangle rect_checkrect = item.checkbox_rect_real;
+			Rectangle rect_iconrect = item.GetBounds (ItemBoundsPortion.Icon);
+			Rectangle full_rect = item.GetBounds (ItemBoundsPortion.Entire);
+			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);			
+			
 			if (control.CheckBoxes) {
 				if (control.StateImageList == null) {
 					// Make sure we've got at least a line width of 1
-					int check_wd = Math.Max (3, item.CheckRect.Width / 6);
-					int scale = Math.Max (1, item.CheckRect.Width / 12);
+					int check_wd = Math.Max (3, rect_checkrect.Width / 6);
+					int scale = Math.Max (1, rect_checkrect.Width / 12);
 
 					// set the checkbox background
 					dc.FillRectangle (this.ResPool.GetSolidBrush (this.ColorWindow),
-							  item.CheckRect);
+							  rect_checkrect);
 					// define a rectangle inside the border area
-					Rectangle rect = new Rectangle (item.CheckRect.X + 2,
-									item.CheckRect.Y + 2,
-									item.CheckRect.Width - 4,
-									item.CheckRect.Height - 4);
+					Rectangle rect = new Rectangle (rect_checkrect.X + 2,
+									rect_checkrect.Y + 2,
+									rect_checkrect.Width - 4,
+									rect_checkrect.Height - 4);
 					Pen pen = new Pen (this.ColorWindowText, 2);
 					dc.DrawRectangle (pen, rect);
 
@@ -1607,10 +1622,10 @@ namespace System.Windows.Forms
 				else {
 					if (item.Checked && control.StateImageList.Images.Count > 1)
 						control.StateImageList.Draw (dc,
-									     item.CheckRect.Location, 1);
+									     rect_checkrect.Location, 1);
 					else if (! item.Checked && control.StateImageList.Images.Count > 0)
 						control.StateImageList.Draw (dc,
-									     item.CheckRect.Location, 0);
+									     rect_checkrect.Location, 0);
 				}
 			}
 
@@ -1619,19 +1634,18 @@ namespace System.Windows.Forms
 				if (item.ImageIndex > -1 &&
 				    control.LargeImageList != null &&
 				    item.ImageIndex < control.LargeImageList.Images.Count)
-					control.LargeImageList.Draw (dc, item.IconRect.Location,
+					control.LargeImageList.Draw (dc, rect_iconrect.Location,
 								     item.ImageIndex);
 			}
 			else {
 				if (item.ImageIndex > -1 &&
 				    control.SmallImageList != null &&
 				    item.ImageIndex < control.SmallImageList.Images.Count)
-					control.SmallImageList.Draw (dc, item.IconRect.Location,
+					control.SmallImageList.Draw (dc, rect_iconrect.Location,
 								     item.ImageIndex);
 			}
 
-			// draw the item text
-			Rectangle text_rect = item.LabelRect;
+			// draw the item text			
 			// format for the item text
 			StringFormat format = new StringFormat ();
 			format.LineAlignment = StringAlignment.Center;
@@ -1646,8 +1660,7 @@ namespace System.Windows.Forms
 			if (item.Selected) {
 				if (control.View == View.Details) {
 					if (control.FullRowSelect) {
-						// fill the entire rect excluding the checkbox
-						Rectangle full_rect = item.EntireRect;
+						// fill the entire rect excluding the checkbox						
 						full_rect.Location = item.LabelRect.Location;
 						dc.FillRectangle (this.ResPool.GetSolidBrush
 								  (this.ColorHilight), full_rect);
@@ -1691,7 +1704,7 @@ namespace System.Windows.Forms
 				if (count > 0) {
 					ColumnHeader col;
 					ListViewItem.ListViewSubItem subItem;
-					Rectangle sub_item_rect = item.LabelRect;
+					Rectangle sub_item_rect = text_rect; 
 
 					// set the format for subitems
 					format.FormatFlags = StringFormatFlags.NoWrap;

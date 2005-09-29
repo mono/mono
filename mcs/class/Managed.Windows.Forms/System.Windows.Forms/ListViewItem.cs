@@ -59,6 +59,14 @@ namespace System.Windows.Forms
 		internal Rectangle icon_rect;
 		internal Rectangle item_rect;
 		internal Rectangle label_rect;
+		/* Original Ravi's design calculated all items in a virtual space
+		   we keep them	in the rects before and also the ones converted to
+		   real screen positions */
+		internal Rectangle checkbox_rect_real;
+		internal Rectangle entire_rect_real;
+		internal Rectangle icon_rect_real;
+		internal Rectangle item_rect_real;
+		internal Rectangle label_rect_real;
 		internal Point location = Point.Empty;	// set by the ListView control
 		internal ListView owner;
 		internal bool selected;
@@ -370,17 +378,21 @@ namespace System.Windows.Forms
 
 			switch (portion) {
 
-			case ItemBoundsPortion.Icon:
-				return icon_rect;
+			case ItemBoundsPortion.Icon: {
+				return icon_rect_real;
+			}
 
-			case ItemBoundsPortion.Label:
-				return label_rect;
+			case ItemBoundsPortion.Label: {
+				return label_rect_real;
+			}
 
-			case ItemBoundsPortion.ItemOnly:
-				return item_rect;
+			case ItemBoundsPortion.ItemOnly: {
+				return item_rect_real;
+			}
 
-			case ItemBoundsPortion.Entire:
-				return entire_rect;
+			case ItemBoundsPortion.Entire: {
+				return entire_rect_real;
+			}
 
 			default:
 				throw new ArgumentException ("Invalid value for portion.");
@@ -555,6 +567,24 @@ namespace System.Windows.Forms
 				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
 				break;
 			}
+			
+			checkbox_rect_real = checkbox_rect;
+			entire_rect_real = entire_rect;
+			icon_rect_real = icon_rect;
+			item_rect_real = item_rect;
+			label_rect_real = label_rect;
+			
+			checkbox_rect_real.X -= owner.h_marker;
+			checkbox_rect_real.Y -= owner.v_marker;
+			entire_rect_real.X -= owner.h_marker;
+			entire_rect_real.Y -= owner.v_marker;
+			icon_rect_real.X -= owner.h_marker;
+			icon_rect_real.Y -= owner.v_marker;
+			item_rect_real.X -= owner.h_marker;
+			item_rect_real.Y -= owner.v_marker;
+			label_rect_real.X -= owner.h_marker;
+			label_rect_real.Y -= owner.v_marker;
+			
 		}
 		#endregion	// Private Internal Methods
 
