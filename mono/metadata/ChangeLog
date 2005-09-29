@@ -1,3 +1,14 @@
+2005-09-29  Martin Baulig  <martin@ximian.com>
+
+	* class.c
+	(inflate_generic_context): If the new context has a `gmethod', set
+	its `container' that that gmethod's `container'.
+
+	* metadata.c
+	(mono_metadata_parse_generic_param): Simplify things;
+	`generic_container = generic_context->container;' is just fine.
+
+	* loader.c (method_from_methodspec): Code cleanups.
 
 Wed Sep 28 17:06:01 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
