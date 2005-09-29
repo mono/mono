@@ -148,8 +148,8 @@ namespace Microsoft.Win32
 		[MonoTODO]
 		public static event UserPreferenceChangedEventHandler UserPreferenceChanged 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 
 		[MonoTODO]
