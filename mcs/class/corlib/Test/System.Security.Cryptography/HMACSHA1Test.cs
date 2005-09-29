@@ -101,7 +101,11 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 
 	public void CheckA (string testName, byte[] key, byte[] data, byte[] result) 
 	{
+#if NET_2_0
+		algo = new HMACSHA1 (key, true);
+#else
 		algo = new HMACSHA1 (key);
+#endif
 		byte[] hmac = algo.ComputeHash (data);
 		AssertEquals (testName + "a1", result, hmac);
 		AssertEquals (testName + "a2", result, algo.Hash);
@@ -109,7 +113,11 @@ public class HMACSHA1Test : KeyedHashAlgorithmTest {
 
 	public void CheckB (string testName, byte[] key, byte[] data, byte[] result) 
 	{
+#if NET_2_0
+		algo = new HMACSHA1 (key, false);
+#else
 		algo = new HMACSHA1 (key);
+#endif
 		byte[] hmac = algo.ComputeHash (data, 0, data.Length);
 		AssertEquals (testName + "b1", result, hmac);
 		AssertEquals (testName + "b2", result, algo.Hash);
