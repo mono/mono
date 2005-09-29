@@ -1,3 +1,7 @@
+2005-09-28 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+
+        * System.Windows.Forms_test.dll.sources : Added Common.cs
+
 2005-09-27  Kornél Pál  <kornelpal@hotmail.com>
 
 	* Makefile: Replaced /codepage with CODEPAGE.

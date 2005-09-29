@@ -1,6 +1,16 @@
+2005-09-28 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+
+        * Common.cs : Add common things here.
+	* LabelTest.cs : Remove common declarations to Common.cs
+	* ScrollBarTest.cs : Remove common declarations to Common.cs
+	                     Add more propery range / exception tests
+			     Add more event order tests
+			     Fix Mouse tests.
+			     Add event arg tests.
+
 2005-09-27 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
-	* LabelTestl.cs : Added more event tests (external handlers)
+	* LabelTest.cs : Added more event tests (external handlers)
 	                  Added event arg checks
 			  Fixed OnPaint tests.
 			  Seperated invalidation tests.
