@@ -95,6 +95,10 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (DateTime.MaxValue.ToString (CultureInfo.InvariantCulture), 
 				converter.ConvertTo (null, CultureInfo.InvariantCulture, DateTime.MaxValue, 
 				typeof (string)), "#1");
+
+			// FIXME: We probably shouldn't be using CurrentCulture in these tests.
+			if (CultureInfo.CurrentCulture == CultureInfo.InvariantCulture)
+				return;
 			Assert.AreEqual (DateTime.MaxValue.ToString (pattern, 
 				CultureInfo.CurrentCulture), converter.ConvertTo (null, 
 				CultureInfo.CurrentCulture, DateTime.MaxValue, typeof (string)),
@@ -125,6 +129,9 @@ namespace MonoTests.System.ComponentModel
 				converter.ConvertToString (null, CultureInfo.InvariantCulture, 
 				DateTime.MaxValue), "#1");
 
+			// FIXME: We probably shouldn't be using CurrentCulture in these tests.
+			if (CultureInfo.CurrentCulture == CultureInfo.InvariantCulture)
+				return;
 			Assert.AreEqual (DateTime.MaxValue.ToString (pattern, CultureInfo.CurrentCulture),
 				converter.ConvertToString (null, DateTime.MaxValue), "#2");
 			Assert.AreEqual (DateTime.MaxValue.ToString (pattern, CultureInfo.CurrentCulture),

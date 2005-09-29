@@ -1,3 +1,9 @@
+2005-09-29  Raja R Harinath  <harinath@gmail.com>
+
+	* DateTimeConverterTests.cs (ConvertTo_MaxValue): Disable tests
+	that require CurrentCulture _not_ to be InvariantCulture.
+	(ConvertToString_MaxValue): Likewise.
+
 2005-09-19 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* TypeConverterTests.cs: Added tests for TypeConverter.
