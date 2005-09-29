@@ -57,7 +57,7 @@ namespace System.Drawing {
 		static private Color info_text = Color.FromArgbSystem (255, 0, 0, 0, "InfoText", KnownColor.InfoText);
 		static private Color menu = Color.FromArgbSystem (255, 131, 153, 177, "Menu", KnownColor.Menu);
 		static private Color menu_text = Color.FromArgbSystem (255, 0, 0, 0, "MenuText", KnownColor.MenuText);
-		static private Color scrollbar = Color.FromArgbSystem (255, 193, 204, 217, "ScrollBar", KnownColor.ScrollBar);
+		static private Color scroll_bar = Color.FromArgbSystem (255, 193, 204, 217, "ScrollBar", KnownColor.ScrollBar);
 		static private Color window = Color.FromArgbSystem (255, 255, 255, 255, "Window", KnownColor.Window);
 		static private Color window_frame = Color.FromArgbSystem (255, 0, 0, 0, "WindowFrame", KnownColor.WindowFrame);
 		static private Color window_text = Color.FromArgbSystem (255, 0, 0, 0, "WindowText", KnownColor.WindowText);
@@ -140,7 +140,7 @@ namespace System.Drawing {
 			Color.UpdateKnownColor (info_text.A, info_text.R, info_text.G, info_text.B, "InfoText", KnownColor.InfoText);
 			Color.UpdateKnownColor (menu.A, menu.R, menu.G, menu.B, "Menu", KnownColor.Menu);
 			Color.UpdateKnownColor (menu_text.A, menu_text.R, menu_text.G, menu_text.B, "MenuText", KnownColor.MenuText);
-			Color.UpdateKnownColor (scrollbar.A, scrollbar.R, scrollbar.G, scrollbar.B, "ScrollBar", KnownColor.ScrollBar);
+			Color.UpdateKnownColor (scroll_bar.A, scroll_bar.R, scroll_bar.G, scroll_bar.B, "ScrollBar", KnownColor.ScrollBar);
 			Color.UpdateKnownColor (window.A, window.R, window.G, window.B, "Window", KnownColor.Window);
 			Color.UpdateKnownColor (window_frame.A, window_frame.R, window_frame.G, window_frame.B, "WindowFrame", KnownColor.WindowFrame);
 			Color.UpdateKnownColor (window_text.A, window_text.R, window_text.G, window_text.B, "WindowText", KnownColor.WindowText);
@@ -171,7 +171,7 @@ namespace System.Drawing {
 				info_text = GetSysColor(GetSysColorIndex.COLOR_INFOTEXT);
 				menu = GetSysColor(GetSysColorIndex.COLOR_MENU);
 				menu_text = GetSysColor(GetSysColorIndex.COLOR_MENUTEXT);
-				scrollbar = GetSysColor(GetSysColorIndex.COLOR_SCROLLBAR);
+				scroll_bar = GetSysColor(GetSysColorIndex.COLOR_SCROLLBAR);
 				window = GetSysColor(GetSysColorIndex.COLOR_WINDOW);
 				window_frame = GetSysColor(GetSysColorIndex.COLOR_WINDOWFRAME);
 				window_text = GetSysColor(GetSysColorIndex.COLOR_WINDOWTEXT);
@@ -340,7 +340,7 @@ namespace System.Drawing {
 		static public Color ScrollBar
 		{	
 			get {
-				return scrollbar;
+				return scroll_bar;
 			}
 		}
 

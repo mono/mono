@@ -1,3 +1,8 @@
+2005-09-29  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* SystemColor.cs: Make internal names predictable to allow scripted
+	  generation of color table
+
 2005-09-28  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Color.cs(UpdateKnownColor): Ensure knownColors exists before trying
