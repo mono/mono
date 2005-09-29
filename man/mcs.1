@@ -31,6 +31,13 @@ Language Infrastructure virtual machine such as the Microsoft .NET
 runtime engine on Windows or the Mono runtime engine on Unix systems.
 Executables are not bound to a specific CPU or operating system.
 .PP
+The Mono C# compiler by default only references three assemblies:
+mscorlib.dll, System.dll and System.Xml.dll.   If you want to
+reference extra libraries you must manually specify them using the
+-pkg: command line option or the -r: command line option.
+Alternatively if you want to get all of the System libraries, you can
+use the -pkg:dotnet command line option.
+.PP
 .SH OPTIONS
 .TP
 .I \-\-about
