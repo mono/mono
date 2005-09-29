@@ -345,22 +345,18 @@ namespace Mono.CSharp {
 	}
 
 	/// <summary>
-	///   This is a wrapper around StreamReader which is seekable.
+	///   This is a wrapper around StreamReader which is seekable backwards
+	///   within a window of around 2048 chars.
 	/// </summary>
 	public class SeekableStreamReader
 	{
 		public SeekableStreamReader (StreamReader reader)
 		{
 			this.reader = reader;
-			this.buffer = new char [DefaultCacheSize];
-			
-			// Compute the preamble size
-			
+			this.buffer = new char [AverageReadLength * 3];
+
 			// Let the StreamWriter autodetect the encoder
 			reader.Peek ();
-			
-			Encoding enc = reader.CurrentEncoding;
-			preamble_size = (int) reader.BaseStream.Position;
 		}
 
 		public SeekableStreamReader (Stream stream, Encoding encoding)
@@ -369,61 +365,47 @@ namespace Mono.CSharp {
 
 		StreamReader reader;
 
-		private const int DefaultCacheSize = 1024;
+		private const int AverageReadLength = 1024;
 
 		char[] buffer;
-		int buffer_start;       // in bytes
-		int buffer_size;        // in bytes
+		int buffer_start;       // in chars
 		int char_count;         // count buffer[] valid characters
 		int pos;                // index into buffer[]
-		int preamble_size;
 
 		/// <remarks>
-		///   The difference to the StreamReader's BaseStream.Position is that this one is reliable; ie. it
-		//    always reports the correct position and if it's modified, it also takes care of the buffered data.
+		///   This value corresponds to the current position in a stream of characters.
+		///   The StreamReader hides its manipulation of the underlying byte stream and all
+		///   character set/decoding issues.  Thus, we cannot use this position to guess at
+		///   the corresponding position in the underlying byte stream even though there is
+		///   a correlation between them.
 		/// </remarks>
 		public int Position {
-			get {
-				return buffer_start + reader.CurrentEncoding.GetByteCount (buffer, 0, pos);
-			}
+			get { return buffer_start + pos; }
 
 			set {
-				// This one is easy: we're modifying the position within our current
-				// buffer.
-				if ((value >= buffer_start) && (value < buffer_start + buffer_size)) {
-					int byte_offset = value - buffer_start;
-
-					// If we have an uni-byte encoding, 'pos' will be the same as 
-					// 'byte_offset'.  If we have a multi-byte encoding, 'byte_offset'
-					// can be bigger than the desired value of 'pos', but not smaller.
-					// (IOW, the number of characters <= number of bytes)
-					//
-					// So, we start pos off at byte_offset, and fix it up.
-					pos = byte_offset;
-					if (pos > char_count)
-						pos = char_count;
-					while (reader.CurrentEncoding.GetByteCount (buffer, 0, pos) > byte_offset)
-						--pos;
-					return;
-				}
-
-				if (value == 0)	// Skip preamble
-					value = preamble_size;
-
-				// Ok, now we need to seek.
-				reader.DiscardBufferedData ();
-				reader.BaseStream.Position = buffer_start = value;
-				char_count = buffer_size = pos = 0;
+				if (value < buffer_start || value >= buffer_start + char_count)
+					throw new InternalErrorException ("can't seek that far back: " + (pos - value));
+				pos = value - buffer_start;
 			}
 		}
 
 		private bool ReadBuffer ()
 		{
-			pos = 0;
-			buffer_start += buffer_size;
-			char_count = reader.Read (buffer, 0, buffer.Length);
-			buffer_size = reader.CurrentEncoding.GetByteCount (buffer, 0, char_count);
-			return buffer_size > 0;
+			int slack = buffer.Length - char_count;
+			if (slack <= AverageReadLength / 2) {
+				// shift the buffer to make room for AverageReadLength number of characters
+				int shift = AverageReadLength - slack;
+				Array.Copy (buffer, shift, buffer, 0, char_count - shift);
+				pos -= shift;
+				char_count -= shift;
+				buffer_start += shift;
+				slack += shift;		// slack == AverageReadLength
+			}
+
+			int chars_read = reader.Read (buffer, char_count, slack);
+			char_count += chars_read;
+
+			return pos < char_count;
 		}
 
 		public int Peek ()
