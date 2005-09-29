@@ -1,3 +1,18 @@
+2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PagedDataSource.cs: fix IsLastPage. All tests pass.
+	* DataGrid.cs: InitializePager always add a cell and it's brand new. No
+	need to keep the old one in a field. Now all tests pass here too.
+
+2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PagedDataSource.cs: don't use the properties when they just return a
+	field. Fixed Count when paging is enabled. In GetEnumerator, IList goes
+	before ICollection (otherwise, an IList will always fall under the
+	ICollection case). The enumerator for lists will be empty if 'start'
+	is beyond the list size. All existing tests pass, but one in
+	DataGridTest that fails because of some problem with the paging.
+
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Style.cs: fix the 2.0 build.

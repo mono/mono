@@ -81,7 +81,6 @@ namespace System.Web.UI.WebControls {
 
 		private Table render_table;
 		private DataGridColumn [] render_columns;
-		private TableCell pager_cell;
 		private PagedDataSource paged_data_source;
 		private IEnumerator data_enumerator;
 		
@@ -651,17 +650,13 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		protected virtual void InitializePager (DataGridItem item, int columnSpan,
-				PagedDataSource pagedDataSource)
+		protected virtual void InitializePager (DataGridItem item, int columnSpan, PagedDataSource pagedDataSource)
 		{
-			if (pager_cell == null) {
-				if (PagerStyle.Mode == PagerMode.NextPrev)
-					pager_cell = InitializeNextPrevPager (item,
-							columnSpan, pagedDataSource);
-				else
-					pager_cell = InitializeNumericPager (item,
-							columnSpan, pagedDataSource);
-			}
+			TableCell pager_cell;
+			if (PagerStyle.Mode == PagerMode.NextPrev)
+				pager_cell = InitializeNextPrevPager (item, columnSpan, pagedDataSource);
+			else
+				pager_cell = InitializeNumericPager (item, columnSpan, pagedDataSource);
 
 			item.Controls.Add (pager_cell);
 		}
@@ -723,8 +718,7 @@ namespace System.Web.UI.WebControls {
 			return res;
 		}
 
-		private TableCell InitializeNextPrevPager (DataGridItem item, int columnSpan,
-				PagedDataSource paged)
+		private TableCell InitializeNextPrevPager (DataGridItem item, int columnSpan, PagedDataSource paged)
 		{
 			TableCell res = new TableCell ();
 			res.ColumnSpan = columnSpan;
@@ -895,7 +889,6 @@ namespace System.Web.UI.WebControls {
 
 			if (useDataSource)
 				ViewState ["Items"] = index;
-			pager_cell = null;
 		}
 
 		void ApplyColumnStyle (TableCellCollection cells, ListItemType type)

@@ -39,10 +39,6 @@ namespace System.Web.UI.WebControls {
 		public PagedDataSource ()
 		{
 			page_size = 10;
-			allow_paging = false;
-			current_page_index = 0;
-			allow_custom_paging = false;
-			virtual_count = 0;
 		}
 
 		public bool AllowCustomPaging {
@@ -57,15 +53,13 @@ namespace System.Web.UI.WebControls {
 
 		public int Count {
 			get {
-				if (DataSource == null)
+				if (source == null)
 					return 0;
 				
-				if (IsPagingEnabled == true) {
-					if (IsCustomPagingEnabled == true || IsLastPage == false)
-						return PageSize;
-
-					if (IsCustomPagingEnabled == false && IsLastPage == true)
-						return FirstIndexInPage - DataSourceCount;
+				if (IsPagingEnabled) {
+					if (IsCustomPagingEnabled || !IsLastPage)
+						return page_size;
+					return DataSourceCount - FirstIndexInPage;
 				}
 
 				return DataSourceCount;
@@ -99,7 +93,7 @@ namespace System.Web.UI.WebControls {
 
 		public int FirstIndexInPage {
 			get {
-				if (!IsPagingEnabled || IsCustomPagingEnabled || DataSource == null)
+				if (!IsPagingEnabled || IsCustomPagingEnabled || source == null)
 					return 0;
 				
 				return current_page_index * page_size;
@@ -107,32 +101,29 @@ namespace System.Web.UI.WebControls {
 		}
 
 		public bool IsCustomPagingEnabled {
-			get { return IsPagingEnabled && AllowCustomPaging; }
+			get { return IsPagingEnabled && allow_custom_paging; }
 		}
 
 		public bool IsFirstPage {
 			get { 
-				if (!AllowPaging)
+				if (!allow_paging)
 					return true;
 				
-				return CurrentPageIndex == 0; 
+				return current_page_index == 0; 
 			}
 		}
 
 		public bool IsLastPage {
 			get {
-				if (!AllowPaging)
+				if (!allow_paging || page_size == 0)
 					return true;
 
-				if (PageCount == 0)
-					return false;
-
-				return CurrentPageIndex == PageCount - 1;
+				return  (current_page_index == (PageCount - 1));
 			}
 		}
 
 		public bool IsPagingEnabled {
-			get { return AllowPaging && (PageSize != 0); }
+			get { return (allow_paging && page_size != 0); }
 		}
 
 		public bool IsReadOnly {
@@ -145,13 +136,13 @@ namespace System.Web.UI.WebControls {
 
 		public int PageCount {
 			get {
-				if (DataSource == null)
+				if (source == null)
 					return 0;
 
-				if (!IsPagingEnabled || DataSourceCount == 0 || PageSize == 0)
+				if (!IsPagingEnabled || DataSourceCount == 0 || page_size == 0)
 					return 1;
 
-				return (DataSourceCount + PageSize - 1) / PageSize;
+				return (DataSourceCount + page_size - 1) / page_size;
 			}
 		}
 		
@@ -213,23 +204,26 @@ namespace System.Web.UI.WebControls {
 
 		public IEnumerator GetEnumerator ()
 		{
-			ICollection col = source as ICollection;
-			if (col != null)
-				return GetEnumeratorEnum (col.GetEnumerator (),
-						FirstIndexInPage, FirstIndexInPage + PageSize);
-
+			// IList goes first, as it implements ICollection
 			IList list = source as IList;
-			if (list != null)
-				return GetListEnum (list, FirstIndexInPage,
-						FirstIndexInPage + PageSize);
+			int first = 0;
+			if (list != null) {
+				first = FirstIndexInPage;
+				return GetListEnum (list, first, first + page_size);
+			}
+
+			ICollection col = source as ICollection;
+			if (col != null) {
+				first = FirstIndexInPage;
+				return GetEnumeratorEnum (col.GetEnumerator (), first, first + page_size);
+			}
 
 			return source.GetEnumerator ();
 		}
 
-		public PropertyDescriptorCollection GetItemProperties (
-			PropertyDescriptor [] list_accessors)
+		public PropertyDescriptorCollection GetItemProperties (PropertyDescriptor [] list_accessors)
 		{
-			ITypedList typed = DataSource as ITypedList;
+			ITypedList typed = source as ITypedList;
 			if (typed == null)
 				return null;
 			return typed.GetItemProperties (list_accessors);
@@ -242,8 +236,11 @@ namespace System.Web.UI.WebControls {
 
 		private IEnumerator GetListEnum (IList list, int start, int end)
 		{
-			if (!AllowPaging)
+			if (!allow_paging)
 				end = list.Count;
+			else if (start >= list.Count)
+				yield break;
+			
 			for (int i = start; i < end; i++)
 				yield return list [i];
 		}
@@ -257,3 +254,4 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
+
