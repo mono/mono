@@ -228,6 +228,9 @@ public class PasswordDeriveBytes : DeriveBytes {
 	}
 
 	// note: Key is returned - we can't zeroize it ourselve :-(
+#if NET_2_0
+	[Obsolete ("see Rfc2898DeriveBytes for PKCS#5 v2 support")]
+#endif
 	public override byte[] GetBytes (int cb) 
 	{
 #if ! NET_2_0

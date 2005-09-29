@@ -1,3 +1,12 @@
+2005-09-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HMACSHA1.cs: Added the new 2.0 ctor that let the programmer choose
+	between the managed and unmanaged SHA1 algorithm used in the HMAC 
+	(that doesn't change much thing in the default config for Mono).
+	* PasswordDeriveBytes.cs: Added [Obsolete] on GetBytes (2.0) as new
+	applications should be using Rfc2898DeriveBytes to get PKCS#5 v2
+	support.
+
 2005-08-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FromBase64Transform.cs: Check that the TransformFinal can be called
