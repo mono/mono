@@ -48,6 +48,10 @@
 // Handle should be an HIMAGELIST returned by ImageList_Create. This
 // implementation uses (IntPtr)(-1) that is a non-zero but invalid handle.
 //
+// MS.NET creates handle when images are accessed. Add methods are caching the
+// original images without modification. This implementation adds images in
+// Add methods so handle is created in Add methods.
+//
 // MS.NET 1.x shares the same HIMAGELIST between ImageLists that were
 // initialized from the same ImageListStreamer and doesn't update ImageSize
 // and ColorDepth that are treated as bugs.
@@ -68,7 +72,6 @@ namespace System.Windows.Forms
 	public sealed class ImageList : System.ComponentModel.Component
 	{
 		#region Private Fields
-		private EventHandler recreateHandle;
 		private readonly ImageCollection images;
 		#endregion // Private Fields
 
@@ -175,6 +178,8 @@ namespace System.Windows.Forms
 			private ColorDepth colorDepth = ColorDepth.Depth8Bit;
 			private Color transparentColor = Color.Transparent;
 			private Size imageSize = new Size(16, 16);
+			private bool handleCreated;
+			private EventHandler recreateHandle;
 			private readonly ImageList owner;
 			private readonly ArrayList list;
 			#endregion // ImageCollection Private Fields
@@ -201,9 +206,26 @@ namespace System.Windows.Forms
 
 					if (this.colorDepth != value) {
 						this.colorDepth = value;
-						list.Clear();
-						owner.RaiseRecreateHandle();
+						if (handleCreated) {
+							list.Clear();
+							OnRecreateHandle();
+						}
 					}
+				}
+			}
+
+			// For use in ImageList
+			internal IntPtr Handle {
+				get {
+					this.handleCreated = true;
+					return (IntPtr)(-1);
+				}
+			}
+
+			// For use in ImageList
+			internal bool HandleCreated {
+				get {
+					return this.handleCreated;
 				}
 			}
 
@@ -219,8 +241,10 @@ namespace System.Windows.Forms
 
 					if (this.imageSize != value) {
 						this.imageSize = value;
-						list.Clear();
-						owner.RaiseRecreateHandle();
+						if (handleCreated) {
+							list.Clear();
+							OnRecreateHandle();
+						}
 					}
 				}
 			}
@@ -249,6 +273,7 @@ namespace System.Windows.Forms
 						this.imageSize = value.ImageSize;
 						this.colorDepth = value.ColorDepth;
 #if NET_2_0
+						// Event is raised even when handle was not created yet.
 						owner.RaiseRecreateHandle();
 #endif
 					}
@@ -331,6 +356,12 @@ namespace System.Windows.Forms
 				graphics.Dispose();
 
 				return ReduceColorDepth(bitmap);
+			}
+
+			private void OnRecreateHandle()
+			{
+				if (recreateHandle != null)
+					recreateHandle(this, EventArgs.Empty);
 			}
 
 			private unsafe Image ReduceColorDepth(Bitmap bitmap)
@@ -419,6 +450,7 @@ namespace System.Windows.Forms
 				if (value == null)
 					throw new ArgumentNullException("value");
 
+				this.handleCreated = true;
 				list.Add(ReduceColorDepth(value.ToBitmap()));
 			}
 
@@ -429,6 +461,7 @@ namespace System.Windows.Forms
 
 			public int Add(Image value, Color transparentColor)
 			{
+				this.handleCreated = true;
 				return list.Add(CreateImage(value, transparentColor));
 			}
 
@@ -455,6 +488,8 @@ namespace System.Windows.Forms
 
 				if (!(value is Bitmap))
 					throw new ArgumentException("Image must be a Bitmap.");
+
+				this.handleCreated = true;
 
 				imageRect = new Rectangle(0, 0, width, height);
 				if (this.transparentColor.A == 0)
@@ -593,6 +628,19 @@ namespace System.Windows.Forms
 					array.SetValue(this[index], index++);
 			}
 			#endregion // ImageCollection Interface Methods
+
+			#region ImageCollection Events
+			// For use in ImageList
+			internal event EventHandler RecreateHandle {
+				add {
+					recreateHandle += value;
+				}
+
+				remove {
+					recreateHandle -= value;
+				}
+			}
+			#endregion // ImageCollection Events
 		}
 		#endregion // Sub-classes
 
@@ -625,7 +673,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public IntPtr Handle {
 			get {
-				return (IntPtr)(-1);
+				return images.Handle;
 			}
 		}
 
@@ -634,7 +682,7 @@ namespace System.Windows.Forms
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool HandleCreated {
 			get {
-				return true;
+				return images.HandleCreated;
 			}
 		}
 
@@ -682,14 +730,6 @@ namespace System.Windows.Forms
 		}
 		#endregion // Public Instance Properties
 
-		#region Private Instance Methods
-		private void RaiseRecreateHandle()
-		{
-			if (recreateHandle != null)
-				recreateHandle(this, EventArgs.Empty);
-		}
-		#endregion // Private Instance Methods
-
 		#region Public Instance Methods
 		public void Draw(Graphics g, Point pt, int index)
 		{
@@ -724,11 +764,11 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public event EventHandler RecreateHandle {
 			add {
-				recreateHandle += value;
+				images.RecreateHandle += value;
 			}
 
 			remove {
-				recreateHandle -= value;
+				images.RecreateHandle -= value;
 			}
 		}
 		#endregion // Events
