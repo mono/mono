@@ -30,7 +30,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCompany("FirebirdSQL")]
 [assembly: AssemblyProduct("Firebird .NET Data Provider")]
 [assembly: AssemblyCopyright("(c) 2002-2004. Carlos Guzman Alvarez")]
-[assembly: AssemblyVersion("1.7.0.*")]
+[assembly: AssemblyVersion("1.7.0.0")]
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("FirebirdSql.Data.Firebird.snk")]
 [assembly: AssemblyKeyName("")]
