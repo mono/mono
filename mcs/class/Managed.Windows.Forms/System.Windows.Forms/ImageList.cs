@@ -274,7 +274,7 @@ namespace System.Windows.Forms
 						this.colorDepth = value.ColorDepth;
 #if NET_2_0
 						// Event is raised even when handle was not created yet.
-						owner.RaiseRecreateHandle();
+						OnRecreateHandle();
 #endif
 					}
 				}
