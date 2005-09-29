@@ -53,6 +53,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			LoadViewState (state);
 		}
 
+		/* Not called at all when running the current tests (2005/09/29)
+		protected override void OnInit (EventArgs e)
+		{
+			Console.WriteLine (Environment.StackTrace);
+			base.OnInit (e);
+		}
+		*/
 		public string RenderChildren ()
 		{
 			StringWriter sw = new StringWriter();
@@ -211,9 +218,9 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			FormPoker form = new FormPoker ();
 			form.Page = p;
 #if NET_2_0
-			Assert.AreEqual ("\r\n<div>\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"\r\n__VIEWSTATE\" value=\"\" />\r\n</div>\r\n", form.RenderChildren (), "A1");
+			Assert.AreEqual ("<div>\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" id=\"\r\n__VIEWSTATE\" value=\"\" />\r\n</div>", form.RenderChildren ().Trim (), "A1");
 #else
-			Assert.AreEqual ("\r\n<input type=\"hidden\" name=\"__VIEWSTATE\" value=\"\" />", form.RenderChildren (), "A1");
+			Assert.AreEqual ("<input type=\"hidden\" name=\"__VIEWSTATE\" value=\"\" />", form.RenderChildren ().Trim (), "A1");
 #endif
 		}
 
