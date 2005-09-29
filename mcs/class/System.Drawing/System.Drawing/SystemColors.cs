@@ -28,6 +28,42 @@
 //	Peter Dennis Bartok (pbartok@novell.com)
 //
 
+
+// The following method can be (and was) used to generate the defaults for the properties
+//private static void GenerateColorTable (Type type) {
+//	PropertyInfo [] props = type.GetProperties ();
+//	foreach (PropertyInfo prop in props){
+//		if (prop.PropertyType != typeof (Color))
+//			continue;
+//
+//		MethodInfo getget = prop.GetGetMethod ();
+//		if (getget == null || getget.IsStatic == false)
+//			continue;
+//
+//		object o = prop.GetValue (null, null);
+//
+//		Color c = (Color) o;
+//
+//		StringBuilder name = new StringBuilder(prop.Name);
+//		name[0] = Char.ToLower(name[0]);
+//		for (int i = 1; i < name.Length; i++) {
+//			if (Char.IsUpper(name[i])) {
+//				name[i] = Char.ToLower(name[i]);
+//				name.Insert(i, '_');
+//			}
+//		}
+//
+//		Console.WriteLine("static private Color " + name.ToString() + " = Color.FromArgbSystem (" + 
+//			c.A.ToString() + ", " +
+//			c.R.ToString() + ", " +
+//			c.G.ToString() + ", " +
+//			c.B.ToString() + ", " +
+//			"\"" + prop.Name + "\", " +
+//			"KnownColor." + prop.Name + ");");
+//	}
+//}
+
+
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -35,6 +71,37 @@ using System.Runtime.InteropServices;
 namespace System.Drawing {
 	public sealed class SystemColors
 	{
+		// Default Windows XP color table
+		static private Color active_border = Color.FromArgbSystem (255, 212, 208, 200, "ActiveBorder", KnownColor.ActiveBorder);
+		static private Color active_caption = Color.FromArgbSystem (255, 0, 164, 164, "ActiveCaption", KnownColor.ActiveCaption);
+		static private Color active_caption_text = Color.FromArgbSystem (255, 255, 255, 255, "ActiveCaptionText", KnownColor.ActiveCaptionText);
+		static private Color app_workspace = Color.FromArgbSystem (255, 128, 128, 128, "AppWorkspace", KnownColor.AppWorkspace);
+		static private Color control = Color.FromArgbSystem (255, 212, 208, 200, "Control", KnownColor.Control);
+		static private Color control_dark = Color.FromArgbSystem (255, 128, 128, 128, "ControlDark", KnownColor.ControlDark);
+		static private Color control_dark_dark = Color.FromArgbSystem (255, 64, 64, 64, "ControlDarkDark", KnownColor.ControlDarkDark);
+		static private Color control_light = Color.FromArgbSystem (255, 212, 208, 200, "ControlLight", KnownColor.ControlLight);
+		static private Color control_light_light = Color.FromArgbSystem (255, 255, 255, 255, "ControlLightLight", KnownColor.ControlLightLight);
+		static private Color control_text = Color.FromArgbSystem (255, 0, 0, 0, "ControlText", KnownColor.ControlText);
+		static private Color desktop = Color.FromArgbSystem (255, 0, 0, 0, "Desktop", KnownColor.Desktop);
+		static private Color gray_text = Color.FromArgbSystem (255, 128, 128, 128, "GrayText", KnownColor.GrayText);
+		static private Color highlight = Color.FromArgbSystem (255, 10, 36, 106, "Highlight", KnownColor.Highlight);
+		static private Color highlight_text = Color.FromArgbSystem (255, 255, 255, 255, "HighlightText", KnownColor.HighlightText);
+		static private Color hot_track = Color.FromArgbSystem (255, 0, 0, 128, "HotTrack", KnownColor.HotTrack);
+		static private Color inactive_border = Color.FromArgbSystem (255, 212, 208, 200, "InactiveBorder", KnownColor.InactiveBorder);
+		static private Color inactive_caption = Color.FromArgbSystem (255, 128, 128, 128, "InactiveCaption", KnownColor.InactiveCaption);
+		static private Color inactive_caption_text = Color.FromArgbSystem (255, 212, 208, 200, "InactiveCaptionText", KnownColor.InactiveCaptionText);
+		static private Color info = Color.FromArgbSystem (255, 255, 255, 225, "Info", KnownColor.Info);
+		static private Color info_text = Color.FromArgbSystem (255, 0, 0, 0, "InfoText", KnownColor.InfoText);
+		static private Color menu = Color.FromArgbSystem (255, 212, 208, 200, "Menu", KnownColor.Menu);
+		static private Color menu_text = Color.FromArgbSystem (255, 0, 0, 0, "MenuText", KnownColor.MenuText);
+		static private Color scroll_bar = Color.FromArgbSystem (255, 212, 208, 200, "ScrollBar", KnownColor.ScrollBar);
+		// This would give a better looking gray background instead of the high-contrast white background
+		//static private Color window = Color.FromArgbSystem (255, 212, 208, 200, "Window", KnownColor.Window);
+		static private Color window = Color.FromArgbSystem (255, 255, 255, 255, "Window", KnownColor.Window);
+		static private Color window_frame = Color.FromArgbSystem (255, 0, 0, 0, "WindowFrame", KnownColor.WindowFrame);
+		static private Color window_text = Color.FromArgbSystem (255, 0, 0, 0, "WindowText", KnownColor.WindowText);
+
+#if old
 		static private Color active_border = Color.FromArgbSystem (255, 131, 153, 177, "ActiveBorder", KnownColor.ActiveBorder);
 		static private Color active_caption = Color.FromArgbSystem (255, 79, 101, 125, "ActiveCaption", KnownColor.ActiveCaption);
 		static private Color active_caption_text = Color.FromArgbSystem (255, 255, 255, 255, "ActiveCaptionText", KnownColor.ActiveCaptionText);
@@ -61,7 +128,7 @@ namespace System.Drawing {
 		static private Color window = Color.FromArgbSystem (255, 255, 255, 255, "Window", KnownColor.Window);
 		static private Color window_frame = Color.FromArgbSystem (255, 0, 0, 0, "WindowFrame", KnownColor.WindowFrame);
 		static private Color window_text = Color.FromArgbSystem (255, 0, 0, 0, "WindowText", KnownColor.WindowText);
-
+#endif
 		private enum GetSysColorIndex {
 			COLOR_SCROLLBAR			= 0,
 			COLOR_BACKGROUND		= 1,

@@ -1,3 +1,8 @@
+2005-09-29  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* SystemColor.cs: Added code used to generate properties, updated with
+	  Windows XP colors
+
 2005-09-29  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* SystemColor.cs: Make internal names predictable to allow scripted
