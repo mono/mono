@@ -19,10 +19,6 @@
 #include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/io-layer/wapi.h"
-#include <limits.h>    /* for PAGESIZE */
-#ifndef PAGESIZE
-#define PAGESIZE 4096
-#endif
 
 typedef struct {
 	const char *fname;
