@@ -1,3 +1,14 @@
+/*
+ * Helper routines for some of the common methods that people P/Invoke
+ * on their applications.
+ *
+ * Authors:
+ *   Gonzalo Paniagua (gonzalo@ximian.com)
+ *   Miguel de Icaza  (miguel@novell.com)
+ *
+ * (C) 2005 Novell, Inc.
+ *
+ */
 #include <glib.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,24 +25,24 @@ typedef struct {
 	void *fnptr;
 } FnPtr;
 
-gpointer FindWindowExW (gpointer hwndParent, gpointer hwndChildAfter,
-			const char *classw, const char *window);
+gpointer FindWindowExW        (gpointer hwndParent, gpointer hwndChildAfter,
+			       const char *classw, const char *window);
 
-gpointer HeapAlloc (gpointer unused1, gint32 unused2, gint32 nbytes);
-gpointer HeapCreate (gint32 flags, gint32 initial_size, gint32 max_size);
-gboolean HeapSetInformation (gpointer handle, gpointer heap_info_class,
-				gpointer heap_info, gint32 head_info_length);
+gpointer HeapAlloc            (gpointer unused1, gint32 unused2, gint32 nbytes);
+gpointer HeapCreate           (gint32 flags, gint32 initial_size, gint32 max_size);
+gboolean HeapSetInformation   (gpointer handle, gpointer heap_info_class,
+			       gpointer heap_info, gint32 head_info_length);
 
 gboolean HeapQueryInformation (gpointer handle, gpointer heap_info_class,
-			gpointer heap_info, gint32 head_info_length, gint32 *ret_length);
+			       gpointer heap_info, gint32 head_info_length, gint32 *ret_length);
 
-gpointer HeapAlloc (gpointer handle, gint32 flags, gint32 nbytes);
-gpointer HeapReAlloc (gpointer handle, gint32 flags, gpointer mem, gint32 nbytes);
-gint32 HeapSize (gpointer handle, gint32 flags, gpointer mem);
-gboolean HeapFree (gpointer handle, gint32 flags, gpointer mem);
-gboolean HeapValidate (gpointer handle, gpointer mem);
-gboolean HeapDestroy (gpointer handle);
-gpointer GetProcessHeap (void);
+gpointer HeapAlloc            (gpointer handle, gint32 flags, gint32 nbytes);
+gpointer HeapReAlloc          (gpointer handle, gint32 flags, gpointer mem, gint32 nbytes);
+gint32   HeapSize             (gpointer handle, gint32 flags, gpointer mem);
+gboolean HeapFree             (gpointer handle, gint32 flags, gpointer mem);
+gboolean HeapValidate         (gpointer handle, gpointer mem);
+gboolean HeapDestroy          (gpointer handle);
+gpointer GetProcessHeap       (void);
 
 static FnPtr functions [] = {
 	{ "FindWindowExW", NULL }, /* user32 */
@@ -161,70 +172,4 @@ FindWindowExW (gpointer hwndParent, gpointer hwndChildAfter, const char *classw,
 	return func (hwndParent, hwndChildAfter, classw, window);
 }
 
-/* begin Heap* functions */
-gpointer
-HeapCreate (gint32 flags, gint32 initial_size, gint32 max_size)
-{
-	return (gpointer) 0xDEADBEEF;
-}
-
-gboolean
-HeapSetInformation (gpointer handle, gpointer heap_info_class, gpointer heap_info,
-			gint32 head_info_length)
-{
-	return TRUE;
-}
-
-gboolean
-HeapQueryInformation (gpointer handle, gpointer heap_info_class, gpointer heap_info,
-			gint32 head_info_length, gint32 *ret_length)
-{
-	*ret_length = 0;
-	return TRUE;
-}
-
-gpointer
-HeapAlloc (gpointer handle, gint32 flags, gint32 nbytes)
-{
-	return g_malloc0 (nbytes);
-}
-
-gpointer
-HeapReAlloc (gpointer handle, gint32 flags, gpointer mem, gint32 nbytes)
-{
-	return g_realloc (mem, nbytes);
-}
-
-gint32
-HeapSize (gpointer handle, gint32 flags, gpointer mem)
-{
-	return 0;
-}
-
-gboolean
-HeapFree (gpointer handle, gint32 flags, gpointer mem)
-{
-	g_free (mem);
-	return TRUE;
-}
-
-gboolean
-HeapValidate (gpointer handle, gpointer mem)
-{
-	return TRUE;
-}
-
-gboolean
-HeapDestroy (gpointer handle)
-{
-	return TRUE;
-}
-
-
-gpointer 
-GetProcessHeap ()
-{
-	return (gpointer) 0xDEADBEEF;
-}
-/* end Heap* functions */
 

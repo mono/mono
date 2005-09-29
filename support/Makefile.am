@@ -78,9 +78,10 @@ libMonoSupportW_la_LDFLAGS = -no-undefined -avoid-version
 
 libMonoSupportW_la_SOURCES =			\
 		supportw.c			\
+		support-heap.c			\
 		supportw.h
 
-libMonoSupportW_la_LIBADD =					\
+libMonoSupportW_la_LIBADD =			\
 		$(GLIB_LIBS)
 
 # 

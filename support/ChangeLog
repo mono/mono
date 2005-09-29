@@ -1,3 +1,7 @@
+2005-09-29  Miguel de Icaza  <miguel@novell.com>
+
+	* support-heap.c: Add meat to the Heap routines. 
+
 2005-09-20  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile.am (refresh): Use the make-map.exe in Mono.Unix.Native.
