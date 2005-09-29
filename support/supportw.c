@@ -19,6 +19,10 @@
 #include "mono/metadata/object.h"
 #include "mono/metadata/tabledefs.h"
 #include "mono/io-layer/wapi.h"
+#include <limits.h>    /* for PAGESIZE */
+#ifndef PAGESIZE
+#define PAGESIZE 4096
+#endif
 
 typedef struct {
 	const char *fname;
@@ -28,20 +32,6 @@ typedef struct {
 gpointer FindWindowExW        (gpointer hwndParent, gpointer hwndChildAfter,
 			       const char *classw, const char *window);
 
-gpointer HeapAlloc            (gpointer unused1, gint32 unused2, gint32 nbytes);
-gpointer HeapCreate           (gint32 flags, gint32 initial_size, gint32 max_size);
-gboolean HeapSetInformation   (gpointer handle, gpointer heap_info_class,
-			       gpointer heap_info, gint32 head_info_length);
-
-gboolean HeapQueryInformation (gpointer handle, gpointer heap_info_class,
-			       gpointer heap_info, gint32 head_info_length, gint32 *ret_length);
-
-gpointer HeapAlloc            (gpointer handle, gint32 flags, gint32 nbytes);
-gpointer HeapReAlloc          (gpointer handle, gint32 flags, gpointer mem, gint32 nbytes);
-gint32   HeapSize             (gpointer handle, gint32 flags, gpointer mem);
-gboolean HeapFree             (gpointer handle, gint32 flags, gpointer mem);
-gboolean HeapValidate         (gpointer handle, gpointer mem);
-gboolean HeapDestroy          (gpointer handle);
 gpointer GetProcessHeap       (void);
 
 static FnPtr functions [] = {
