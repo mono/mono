@@ -39,6 +39,8 @@ namespace System.Web.UI.HtmlControls
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HtmlForm : HtmlContainerControl 
 	{
+		bool inited;
+
 		public HtmlForm () : base ("form")
 		{
 		}
@@ -194,6 +196,7 @@ namespace System.Web.UI.HtmlControls
 #endif		
 		override void OnInit (EventArgs e)
 		{
+			inited = true;
 			Page.RegisterViewStateHandler ();
 
 #if NET_2_0
@@ -369,6 +372,12 @@ return true;
 #endif		
 		override void RenderChildren (HtmlTextWriter w)
 		{
+			if (!inited) {
+				Page.RegisterViewStateHandler ();
+#if NET_2_0
+				Page.RegisterForm (this);
+#endif
+			}
 			Page.OnFormRender (w, ClientID);
 			base.RenderChildren (w);
 			Page.OnFormPostRender (w, ClientID);

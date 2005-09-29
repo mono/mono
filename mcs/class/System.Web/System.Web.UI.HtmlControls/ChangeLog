@@ -1,3 +1,8 @@
+2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlForm.cs: register the form and require viewstate hidden field to
+	be rendered in Render() even if OnInit is not called.
+
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlHead.cs: fix the 2.0 build.
