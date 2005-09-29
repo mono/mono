@@ -42,10 +42,6 @@ namespace System.Web.UI.WebControls {
 		public PagedDataSource ()
 		{
 			page_size = 10;
-			allow_paging = false;
-			current_page_index = 0;
-			allow_custom_paging = false;
-			virtual_count = 0;
 		}
 
 		public bool AllowCustomPaging {
@@ -122,14 +118,10 @@ namespace System.Web.UI.WebControls {
 
 		public bool IsLastPage {
 			get {
-				if (!allow_paging)
+				if (!allow_paging || page_size == 0)
 					return true;
 
-				int pcount = PageCount;
-				if (pcount == 0)
-					return false;
-
-				return (current_page_index == pcount - 1);
+				return  (current_page_index == (PageCount - 1));
 			}
 		}
 

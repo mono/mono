@@ -1,3 +1,9 @@
+2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PagedDataSource.cs: fix IsLastPage. All tests pass.
+	* DataGrid.cs: InitializePager always add a cell and it's brand new. No
+	need to keep the old one in a field. Now all tests pass here too.
+
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PagedDataSource.cs: don't use the properties when they just return a
