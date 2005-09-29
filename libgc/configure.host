@@ -22,6 +22,7 @@
 gc_cflags=""
 
 if test :"$GCC": = :yes: ; then
+    :
 else
     case "$host" in 
         hppa*-*-hpux* )

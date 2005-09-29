@@ -1,3 +1,7 @@
+2005-09-29  Raja R Harinath  <harinath@gmail.com>
+
+	* configure.host: Fix syntax error.
+
 2005-08-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* win32_threads.c: If GC_INSIDE_DLL is defined, define the DllMain function for automatic registration
