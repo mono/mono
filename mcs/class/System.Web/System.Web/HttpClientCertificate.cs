@@ -38,8 +38,7 @@ namespace System.Web {
 	public class HttpClientCertificate : NameValueCollection {
 
 		private HttpWorkerRequest hwr;
-		private bool present;
-		private string issuer;
+		private int flags;
 		private DateTime from;
 		private DateTime until;
 
@@ -55,15 +54,8 @@ namespace System.Web {
 				throw new ArgumentNullException ("hwr");
 #endif
 			this.hwr = hwr;
-			issuer = hwr.GetServerVariable ("CERT_ISSUER");
-			if (issuer == null) {
-				issuer = String.Empty;
-				present = false;
-			} else {
-				present = (issuer.Length > 0);
-			}
-
-			if (present) {
+			flags = GetIntNoPresense ("CERT_FLAGS");
+			if (IsPresent) {
 				from = hwr.GetClientCertificateValidFrom ();
 				until = hwr.GetClientCertificateValidUntil ();
 			} else {
@@ -90,24 +82,23 @@ namespace System.Web {
 		}
 
 		public int Flags {
-			get { return GetInt ("CERT_FLAGS"); }
+			get { return flags; }
 		}
 
 		public bool IsPresent {
-			get { return present; }
+			get { return ((flags & 0x01) == 0x01); }
 		}
 
 		public string Issuer {
-			get { return issuer; }
+			get { return GetString ("CERT_ISSUER"); }
 		}
 
-		[MonoTODO ("validate certificate")]
 		public bool IsValid {
 			get {
-				if (!present)
-					return true;
-				// TODO - more complex stuff here
-				return false;
+				if (!IsPresent)
+					return true; // lame but true
+				// low on details
+				return ((flags & 0x02) == 0x00);
 			}
 		}
 
@@ -160,9 +151,14 @@ namespace System.Web {
 		// private stuff
 		private int GetInt (string variable)
 		{
-			if (!present)
+			if (!IsPresent)
 				return 0;
 
+			return GetIntNoPresense (variable);
+		}
+
+		private int GetIntNoPresense (string variable)
+		{
 			string s = hwr.GetServerVariable (variable);
 			if (s == null)
 				return 0;
@@ -177,7 +173,7 @@ namespace System.Web {
 
 		private string GetString (string variable)
 		{
-			if (!present)
+			if (!IsPresent)
 				return String.Empty;
 
 			string s = hwr.GetServerVariable (variable);
