@@ -1,3 +1,7 @@
+2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PagedDataSourceTest.cs: more tests.
+
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* PagedDataSourceTest.cs: more tests.

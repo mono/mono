@@ -320,12 +320,12 @@ namespace MonoTests.System.Web.UI.WebControls {
 			IEnumerator data = ds.GetEnumerator ();
 		}
 
-		static void FillTable (DataTable table)
+		static void FillTable (DataTable table, int nelems)
 		{
 			table.Columns.Add (new DataColumn ("one", typeof (string)));
 			table.Columns.Add (new DataColumn ("two", typeof (string)));
 
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < nelems; i++) {
 				DataRow row = table.NewRow ();
 				row ["one"] = i % 2;
 				row ["two"] = i / 2;
@@ -340,7 +340,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			paged.AllowPaging = true;
 			paged.PageSize = 5;
 			DataTable table = new DataTable ();
-			FillTable (table);
+			FillTable (table, 100);
 			paged.DataSource = new DataView (table);
 
 			Assert.IsTrue (paged.IsFirstPage, "first-1");
@@ -362,7 +362,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			paged.AllowPaging = true;
 			paged.PageSize = 5;
 			DataTable table = new DataTable ();
-			FillTable (table);
+			FillTable (table, 100);
 			paged.DataSource = new DataView (table);
 
 			paged.CurrentPageIndex = -1;
@@ -383,7 +383,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			paged.AllowPaging = true;
 			paged.PageSize = 5;
 			DataTable table = new DataTable ();
-			FillTable (table);
+			FillTable (table, 100);
 			paged.DataSource = new DataView (table);
 
 			paged.CurrentPageIndex = -7;
@@ -403,7 +403,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			paged.AllowPaging = true;
 			paged.PageSize = 5;
 			DataTable table = new DataTable ();
-			FillTable (table);
+			FillTable (table, 100);
 			paged.DataSource = new DataView (table);
 
 			paged.CurrentPageIndex = 1;
@@ -421,7 +421,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			PagedDataSource paged = new PagedDataSource ();
 			DataTable table = new DataTable ();
-			FillTable (table);
+			FillTable (table, 100);
 			paged.DataSource = new DataView (table);
 			object [] data = new object [100];
 			paged.CopyTo (data, 0);
@@ -446,6 +446,47 @@ namespace MonoTests.System.Web.UI.WebControls {
 			paged.DataSource = new object [] {"1", "2"};
 			object [] data = new object [100];
 			paged.CopyTo (data, 0);
+		}
+
+		[Test]
+		public void VirtualPager1 ()
+		{
+			PagedDataSource paged = new PagedDataSource ();
+			paged.AllowPaging = true;
+			paged.PageSize = 20;
+			paged.VirtualCount = 100;
+			DataTable table = new DataTable ();
+			FillTable (table, 100);
+			paged.DataSource = new DataView (table);
+
+			int count = 0;
+			IEnumerator rator = paged.GetEnumerator ();
+			while (rator.MoveNext ())
+				count++;
+			Assert.AreEqual (20, count, "count");
+			Assert.AreEqual (true, paged.IsFirstPage, "first");
+			Assert.AreEqual (false, paged.IsLastPage, "last");
+		}
+
+		[Test]
+		public void VirtualPager2 ()
+		{
+			PagedDataSource paged = new PagedDataSource ();
+			paged.AllowPaging = true;
+			paged.PageSize = 100;
+			paged.VirtualCount = 50;
+			paged.AllowCustomPaging = true;
+			DataTable table = new DataTable ();
+			FillTable (table, 100);
+			paged.DataSource = new DataView (table);
+
+			int count = 0;
+			IEnumerator rator = paged.GetEnumerator ();
+			while (rator.MoveNext ())
+				count++;
+			Assert.AreEqual (100, count, "count");
+			Assert.AreEqual (true, paged.IsFirstPage, "first");
+			Assert.AreEqual (true, paged.IsLastPage, "last");
 		}
 	}
 }
