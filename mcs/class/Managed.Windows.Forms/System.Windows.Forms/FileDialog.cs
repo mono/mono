@@ -2044,8 +2044,8 @@ namespace System.Windows.Forms
 			else
 			if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
 			{
-				backColor = ThemeEngine.Current.ColorHilight;
-				foreColor = ThemeEngine.Current.ColorHilightText;
+				backColor = ThemeEngine.Current.ColorHighlight;
+				foreColor = ThemeEngine.Current.ColorHighlightText;
 			}
 			
 			gr.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( backColor ), new Rectangle( 0, 0, bmp.Width, bmp.Height ) );

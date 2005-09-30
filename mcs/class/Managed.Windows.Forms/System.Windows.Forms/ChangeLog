@@ -1,3 +1,7 @@
+2005-09-30  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* FileDialog.cs: Fix Jordi's build break
+
 2005-09-30  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* FileDialog.cs: 
