@@ -1,3 +1,10 @@
+
+Fri Sep 30 11:37:51 EDT 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, liveness.c: patch by Patrik Torstensson and
+	Zoltan Varga to improve performance in methods with
+	exception clauses.
+
 2005-09-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c: Remove 'Globalization' entry from --version.
