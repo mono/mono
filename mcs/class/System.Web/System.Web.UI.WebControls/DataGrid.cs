@@ -686,9 +686,10 @@ namespace System.Web.UI.WebControls {
 		{
 			TableCell res = new TableCell ();
 			res.ColumnSpan = columnSpan;
+
 			int button_count = PagerStyle.PageButtonCount;
-			int start = paged.CurrentPageIndex;
-			int t = start / button_count;
+			int current = paged.CurrentPageIndex;
+			int start = current - (current % button_count);
 			int end = start + button_count;
 
 			if (end > paged.PageCount)
@@ -698,7 +699,7 @@ namespace System.Web.UI.WebControls {
 				LinkButton link = new LinkButton ();
 				link.Text = "...";
 				link.CommandName = PageCommandName;
-				link.CommandArgument = (start - 1).ToString (CultureInfo.InvariantCulture);
+				link.CommandArgument = start.ToString (CultureInfo.InvariantCulture);
 				link.CausesValidation = false;
 				res.Controls.Add (link);
 				res.Controls.Add (new LiteralControl ("&nbsp;"));

@@ -1,5 +1,9 @@
 2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataGrid.cs: fix the links for the numeric pager.
+
+2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataGrid.cs: when paging is enable, the actual number of items is not
 	the number of items rendered before the postback, but that number times
 	the number of pages. Now we store the page count in the viewstate. Also,
