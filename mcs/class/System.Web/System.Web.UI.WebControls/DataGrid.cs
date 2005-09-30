@@ -666,12 +666,10 @@ namespace System.Web.UI.WebControls {
 		{
 			TableCell res = new TableCell ();
 			res.ColumnSpan = columnSpan;
-			int start;
-			int end;
 			int button_count = PagerStyle.PageButtonCount;
-			int t = paged.CurrentPageIndex / button_count;
-			start = t * button_count;
-			end = start + button_count;
+			int start = paged.CurrentPageIndex;
+			int t = start / button_count;
+			int end = start + button_count;
 
 			if (end > paged.PageCount)
 				end = paged.PageCount;
@@ -798,6 +796,38 @@ namespace System.Web.UI.WebControls {
 			return res;
 		}
 
+		class NCollection : ICollection {
+			int n;
+
+			public NCollection (int n)
+			{
+				this.n = n;
+			}
+
+			public IEnumerator GetEnumerator ()
+			{
+				for (int i = 0; i < n; i++)
+					yield return i;
+			}
+
+			public int Count {
+				get { return n; }
+			}
+
+			public bool IsSynchronized {
+				get { return false; }
+			}
+
+			public object SyncRoot {
+				get { return this; }
+			}
+
+			public void CopyTo (Array array, int index)
+			{
+				throw new NotImplementedException ("This should never be called");
+			}
+		}
+
 		protected override void CreateControlHierarchy (bool useDataSource)
 		{
 			RenderTable.Controls.Clear ();
@@ -809,8 +839,9 @@ namespace System.Web.UI.WebControls {
 				keys = DataKeysArray;
 				keys.Clear ();
 			} else {
-				// This is a massive waste
-				data_source = new object [ViewState.GetInt ("Items", 0)];
+				int npages = ViewState.GetInt ("--pcount", 1);
+				int nitems = ViewState.GetInt ("Items", 0) * npages;
+				data_source = new NCollection (nitems);
 			}
 
 			paged_data_source = new PagedDataSource ();
@@ -884,8 +915,13 @@ namespace System.Web.UI.WebControls {
 			}
 
 			CreateItem (-1, -1, ListItemType.Footer, useDataSource, null, paged_data_source);
-			if (pds.IsPagingEnabled)
+			if (pds.IsPagingEnabled) {
 				CreateItem (-1, -1, ListItemType.Pager, false, null, paged_data_source);
+				if (useDataSource)
+					ViewState ["--pcount"] = pds.PageCount;
+			} else {
+				ViewState.Remove ("--pcount");
+			}
 
 			if (useDataSource)
 				ViewState ["Items"] = index;
