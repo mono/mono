@@ -1,5 +1,9 @@
 2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Xml.cs: the show must go on. Removed a few NotImplemented.
+
+2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Button.cs: implemented 2.0 RaisePostBackEvent in terms of the
 	existing code in 1.1 (or viceversa). RenderContents() does nothing.
 
