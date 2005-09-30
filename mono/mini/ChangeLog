@@ -1,4 +1,9 @@
 
+Fri Sep 30 19:10:29 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-x86.c, cpu-pentium.md: Patrik Torstensson's port
+	of the mul_imm optimizations from the old jit.
+
 Fri Sep 30 11:37:51 EDT 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, liveness.c: patch by Patrik Torstensson and
