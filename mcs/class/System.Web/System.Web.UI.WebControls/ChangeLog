@@ -1,5 +1,12 @@
 2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ImageButton.cs: fix a bug reported on the list. We were triggering the
+	command event on every POST. And the 'name' attribute was not being
+	rendered, so the 'x,y' coordinates didn't have 'uniqueid.' prepended
+	and we couldn't find the values.
+
+2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataGrid.cs: fix the links for the numeric pager.
 
 2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
