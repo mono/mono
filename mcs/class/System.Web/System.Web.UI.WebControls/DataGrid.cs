@@ -369,7 +369,7 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (render_table == null) {
 					render_table = new TableID (this);
-					render_table.PreventAutoID ();
+					render_table.AutoID = false;
 				}
 				return render_table;
 			}

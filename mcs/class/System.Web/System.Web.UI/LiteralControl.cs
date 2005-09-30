@@ -49,7 +49,7 @@ namespace System.Web.UI
                 public LiteralControl (string text)
                 {
 			EnableViewState = false;
-			PreventAutoID ();
+			AutoID = false;
 			_text = (text == null) ? "" : text; // Text property is not called for this.
                 }
 

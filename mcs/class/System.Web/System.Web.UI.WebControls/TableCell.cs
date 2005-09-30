@@ -52,7 +52,7 @@ namespace System.Web.UI.WebControls {
 		public TableCell ()
 			: base (HtmlTextWriterTag.Td)
 		{
-			PreventAutoID ();
+			AutoID = false;
 		}
 
 		// FIXME: is there a clean way to change the tag's name without using a ctor ?
@@ -60,7 +60,7 @@ namespace System.Web.UI.WebControls {
 		internal TableCell (HtmlTextWriterTag tag)
 			: base (tag)
 		{
-			PreventAutoID ();
+			AutoID = false;
 		}
 
 
@@ -258,11 +258,11 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void RenderContents (HtmlTextWriter writer)
 		{
-			object o = ViewState ["Text"];
-			if (o != null) {
-				writer.Write (o as string);
-			}
-			base.RenderContents (writer);
+			if (HasControls ())
+				base.RenderContents (writer);
+			else
+				writer.Write (Text);
 		}
 	}
 }
+

@@ -50,7 +50,7 @@ namespace System.Web.UI.WebControls {
 		public TableRow ()
 			: base (HtmlTextWriterTag.Tr)
 		{
-			PreventAutoID ();
+			AutoID = false;
 		}
 
 

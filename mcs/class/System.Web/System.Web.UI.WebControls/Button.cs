@@ -196,15 +196,7 @@ namespace System.Web.UI.WebControls {
 
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
-			if (CausesValidation)
-#if NET_2_0
-				Page.Validate (ValidationGroup);
-#else
-				Page.Validate ();
-#endif
-
-			OnClick (EventArgs.Empty);
-			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
+			RaisePostBackEvent (eventArgument);
 		}
 
 		protected virtual void OnClick (EventArgs e)
@@ -227,15 +219,22 @@ namespace System.Web.UI.WebControls {
 			RaiseBubbleEvent (this, e);
 		}
 
-#if NET_2_0		
-		[MonoTODO]
-		protected virtual void RaisePostBackEvent (string eventArgument)
+#if NET_2_0
+		protected virtual
+#endif
+		void RaisePostBackEvent (string eventArgument)
 		{
-			throw new NotImplementedException ();
-		}
-#endif		
+			if (CausesValidation)
+#if NET_2_0
+				Page.Validate (ValidationGroup);
+#else
+				Page.Validate ();
+#endif
 
-		[MonoTODO ("why is this here?")]
+			OnClick (EventArgs.Empty);
+			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
+		}
+
 #if NET_2_0
 		protected internal
 #else		
@@ -243,7 +242,6 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void RenderContents (HtmlTextWriter writer)
 		{
-			base.RenderContents (writer);
 		}
 
 		[WebSysDescription ("")]
@@ -301,3 +299,4 @@ namespace System.Web.UI.WebControls {
 
 	}
 }
+
