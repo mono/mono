@@ -1,3 +1,8 @@
+2005-09-30  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* X11DesktopColors.cs: Initial incomplete implementation
+	* XplatUIX11.cs: Added call to initialize X11DesktopColors
+
 2005-09-30  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Theme.cs: 

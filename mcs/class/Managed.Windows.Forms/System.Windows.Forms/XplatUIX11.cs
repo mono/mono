@@ -178,6 +178,7 @@ namespace System.Windows.Forms {
 
 			// X11 Initialization
 			SetDisplay(XOpenDisplay(IntPtr.Zero));
+			X11DesktopColors.Initialize();
 		}
 
 		~XplatUIX11() {
