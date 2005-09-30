@@ -32,29 +32,34 @@ namespace System.Windows.Forms
 {
 	public abstract class GridItem
 	{
+
+		#region	Fields
+		private bool expanded;
+		#endregion Fields
+
 		#region	Constructors
-		protected GridItem() {
+		protected GridItem() 
+		{
+			expanded = false;
 		}
 		#endregion	// Constructors
 
 		#region Public Instance Properties
-		[MonoTODO]
-		public virtual new bool Expandable
+		public virtual bool Expandable
 		{
 			get {
-				throw new NotImplementedException();
+				return GridItems.Count > 1;
 			}
 		}
 
-		[MonoTODO]
-		public virtual new bool Expanded
+		public virtual bool Expanded
 		{
 			get {
-				throw new NotImplementedException();
+				return expanded;
 			}
 
 			set {
-				throw new NotImplementedException();
+				expanded = value;
 			}
 		}
 

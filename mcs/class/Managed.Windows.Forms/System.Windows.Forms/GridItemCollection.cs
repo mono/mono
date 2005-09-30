@@ -30,7 +30,7 @@ using System.Collections;
 
 namespace System.Windows.Forms
 {
-	public class GridItemCollection : IEnumerable
+	public class GridItemCollection : IEnumerable, ICollection
 	{
 		#region	Local Variables
 		private System.Collections.SortedList list;
@@ -111,6 +111,31 @@ namespace System.Windows.Forms
 				}
 			}
 		}
+		#endregion
+
+		#region ICollection Members
+
+		public bool IsSynchronized
+		{
+			get
+			{
+				return list.IsSynchronized;
+			}
+		}
+
+		public void CopyTo(Array array, int index)
+		{
+			list.CopyTo(array, index);
+		}
+
+		public object SyncRoot
+		{
+			get
+			{
+				return list.SyncRoot;
+			}
+		}
+
 		#endregion
 	}
 }
