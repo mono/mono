@@ -116,14 +116,14 @@ namespace System.Web.UI.WebControls {
 				case ListItemType.Item:
 				case ListItemType.SelectedItem:
 				case ListItemType.AlternatingItem:{
-					cell.Controls.Add(CreateButton(ButtonType, EditText, "Edit"));
+					cell.Controls.Add(CreateButton(ButtonType, EditText, "Edit", false));
 					break;
 				}
 
 				case ListItemType.EditItem: {
-					cell.Controls.Add(CreateButton(ButtonType, UpdateText, "Update"));
+					cell.Controls.Add(CreateButton(ButtonType, UpdateText, "Update", true));
 					cell.Controls.Add(new LiteralControl("&nbsp;"));
-					cell.Controls.Add(CreateButton(ButtonType, CancelText, "Cancel"));
+					cell.Controls.Add(CreateButton(ButtonType, CancelText, "Cancel", false));
 					break;
 				}
 			}
@@ -131,7 +131,7 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Instance Methods
 
 		#region Private Methods
-		private Control CreateButton(ButtonColumnType type, string text, string command) {
+		private Control CreateButton(ButtonColumnType type, string text, string command, bool valid) {
 			Button b;
 			LinkButton d;
 
@@ -139,12 +139,14 @@ namespace System.Web.UI.WebControls {
 				d = new LinkButton();
 				d.Text = text;
 				d.CommandName = command;
+				d.CausesValidation = valid;
 				return d;
 			}
 
 			b = new Button();
 			b.Text = text;
 			b.CommandName = command;
+			b.CausesValidation = valid;
 			return b;
 		}
 		#endregion	// Private Methods

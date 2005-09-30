@@ -50,7 +50,7 @@ namespace System.Web.UI {
                 public LiteralControl (string text)
                 {
 			EnableViewState = false;
-			PreventAutoID ();
+			AutoID = false;
 			_text = text; // can be null in this case (see CAS unit tests)
                 }
 

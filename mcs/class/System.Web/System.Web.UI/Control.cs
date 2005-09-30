@@ -382,7 +382,10 @@ namespace System.Web.UI
 					return uniqueID;
 
 				if (_namingContainer == null) {
-					return _userId;
+					if ((stateMask & IS_NAMING_CONTAINER) == 0)
+						_namingContainer = NamingContainer;
+					if (_namingContainer == null)
+						return _userId;
 				}
 
 				if (_userId == null)
@@ -1379,11 +1382,6 @@ namespace System.Web.UI
 			}
 		}
 
-                internal void PreventAutoID()
-                {
-			AutoID = false;
-                }
-                
 		protected internal virtual void RemovedControl (Control control)
 		{
 			control.UnloadRecursive (false);

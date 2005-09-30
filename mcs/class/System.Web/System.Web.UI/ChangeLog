@@ -1,3 +1,13 @@
+2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DesignerDataBoundLiteralControl.cs: changed autoid api.
+	* DataBoundLiteralControl.cs: changed autoid api.
+
+	* Control.cs: fixlet for UniqueID and weird test case.  Removed
+	PreventAutoID and only use the property to set that value.
+
+	* LiteralControl.cs: changed autoid api.
+
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AttributeCollection.cs: avoid code duplication and

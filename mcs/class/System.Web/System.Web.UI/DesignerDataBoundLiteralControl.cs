@@ -43,7 +43,7 @@ namespace System.Web.UI
 
 		public DesignerDataBoundLiteralControl ()
 		{
-			base.PreventAutoID ();
+			AutoID = false;
 		}
 
 		public string Text {

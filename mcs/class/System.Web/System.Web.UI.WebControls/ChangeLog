@@ -1,5 +1,25 @@
 2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Button.cs: implemented 2.0 RaisePostBackEvent in terms of the
+	existing code in 1.1 (or viceversa). RenderContents() does nothing.
+
+	* DataGrid.cs: changed autoid api.
+
+	* EditCommandColumn.cs: only 'Update' causes validation.
+
+	* TableCell.cs: changed autoid api.  RenderContents checks the number
+	of controls to decide what to do, not the value of Text in the
+	viewstate.
+
+	* TableRow.cs: changed autoid api.
+
+	* BoundColumn.cs: SelectedItem was missing when attaching a DataBind
+	event. When we get an EditItem, we need a TextBox to be created and
+	this one will be the one that gets the event.  Changed
+	ItemDataBinding to deal with a TextBox too.
+
+2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* PagedDataSource.cs: fix IsLastPage. All tests pass.
 	* DataGrid.cs: InitializePager always add a cell and it's brand new. No
 	need to keep the old one in a field. Now all tests pass here too.

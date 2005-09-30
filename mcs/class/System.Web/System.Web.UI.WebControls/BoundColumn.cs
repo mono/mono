@@ -95,9 +95,16 @@ namespace System.Web.UI.WebControls {
 
 			switch (itemType) {
 			case ListItemType.Item:
-			case ListItemType.EditItem:
+			case ListItemType.SelectedItem:
 			case ListItemType.AlternatingItem:
 				cell.DataBinding += new EventHandler (ItemDataBinding);
+				break;
+			case ListItemType.EditItem:
+				string df = DataField;
+				TextBox tb = new TextBox ();
+				if (df != null && df != "")
+					tb.DataBinding += new EventHandler (ItemDataBinding);
+				cell.Controls.Add (tb);
 				break;
 			}
 		}
@@ -113,22 +120,32 @@ namespace System.Web.UI.WebControls {
 			return String.Format (data_format_string, dataValue);
 		}
 
-		private void ItemDataBinding (object sender, EventArgs e)
+		string GetValueFromItem (DataGridItem item)
 		{
-			TableCell cell = (TableCell) sender;
-			DataGridItem item  = (DataGridItem) cell.NamingContainer;
-			object value = null;
-
+			object val;
 			if (DataField != thisExpr) {
-				value = DataBinder.Eval (item.DataItem, DataField);
+				val = DataBinder.Eval (item.DataItem, DataField);
 			} else {
-				value = item.DataItem;
+				val = item.DataItem;
 			}
 
-			string text = FormatDataValue (value);
-			if (text == String.Empty)
-				text = "&nbsp;";
-			cell.Text = text;
+			string text = FormatDataValue (val);
+			return (text != "" ?  text : "&nbsp;");
+		}
+
+		void ItemDataBinding (object sender, EventArgs e)
+		{
+			Control ctrl = (Control) sender;
+			string text = GetValueFromItem ((DataGridItem) ctrl.NamingContainer);
+
+			TableCell cell = sender as TableCell;
+			if (cell == null) {
+				TextBox tb = (TextBox) sender;
+				tb.Text = text;
+			} else {
+				cell.Text = text;
+			}
 		}
 	}
 }
+
