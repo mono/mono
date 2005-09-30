@@ -58,6 +58,10 @@ namespace System.Web.UI.WebControls {
 		XslTransform xsl_transform;
 		XsltArgumentList transform_arguments;
 		string transform_file;
+#if NET_2_0
+		bool enable_theming;
+		string skin_id;
+#endif
 		
 		public Xml ()
 		{
@@ -65,20 +69,20 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[MonoTODO]
+		[MonoTODO ("Anything else?")]
 		public override string ClientID
 		{
 			get {
-				throw new NotImplementedException ();
+				return base.ClientID;
 			}
 		}
 
+		[MonoTODO ("Anything else?")]
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override ControlCollection Controls 
 		{
 			get {
-				throw new NotImplementedException ();
+				return base.Controls;
 			}
 		}
 #endif		
@@ -146,14 +150,14 @@ namespace System.Web.UI.WebControls {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Browsable (false)]
 		[DefaultValue (false)]
-		[MonoTODO]
+		[MonoTODO ("Theming is not implemented")]
 		public override bool EnableTheming 
 		{
 			get {
-				throw new NotImplementedException ();
+				return enable_theming;
 			}
 			set {
-				throw new NotImplementedException ();
+				enable_theming = value;
 			}
 		}
 
@@ -164,10 +168,10 @@ namespace System.Web.UI.WebControls {
 		public override string SkinID
 		{
 			get {
-				throw new NotImplementedException ();
+				return skin_id;
 			}
 			set {
-				throw new NotImplementedException ();
+				skin_id = value;
 			}
 		}
 #endif		
@@ -239,24 +243,20 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override Control FindControl (string id) 
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override void Focus ()
 		{
-			throw new NotImplementedException ();
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		[MonoTODO]
 		public override bool HasControls ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
 #endif		
 
@@ -314,16 +314,15 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		[MonoTODO]
 		protected override ControlCollection CreateControlCollection ()
 		{
-			throw new NotImplementedException ();
+			return new EmptyControlCollection (this);
 		}
 
 		[MonoTODO]
 		protected override IDictionary GetDesignModeState ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 #endif		
 	}
