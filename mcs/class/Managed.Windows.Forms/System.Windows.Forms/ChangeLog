@@ -1,3 +1,7 @@
+2005-09-30  Kornél Pál  <kornelpal@hotmail.com>
+
+	* ImageList.cs: Resize icons when needed.
+
 2005-09-29  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListViewItem.cs

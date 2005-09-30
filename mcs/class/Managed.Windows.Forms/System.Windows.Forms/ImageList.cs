@@ -447,11 +447,14 @@ namespace System.Windows.Forms
 			#region ImageCollection Public Instance Methods
 			public void Add(Icon value)
 			{
+				Bitmap bitmap;
+
 				if (value == null)
 					throw new ArgumentNullException("value");
 
-				this.handleCreated = true;
-				list.Add(ReduceColorDepth(value.ToBitmap()));
+				bitmap = value.ToBitmap();
+				Add(bitmap, Color.Transparent);
+				bitmap.Dispose();
 			}
 
 			public void Add(Image value)
