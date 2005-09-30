@@ -1,5 +1,11 @@
 2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaUtil.cs: (GetParserContext) if reader is not internal 
+	  IHasXmlParserContext, silently return null. This is for NVDL xsd
+	  support.
+
+2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchema.cs : XmlReader position after Read() is the end of the
 	  schema element.
 

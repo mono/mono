@@ -123,7 +123,7 @@ namespace System.Xml.Schema
 			if (xctx != null)
 				return xctx.ParserContext;
 
-			throw new NotSupportedException ("XmlParserContext cannot be acquired from this XmlReader.");
+			return null;
 		}
 
 		public static bool IsBuiltInDatatypeName (XmlQualifiedName qname)

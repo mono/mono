@@ -226,7 +226,7 @@ namespace Mono.Xml.Schema
 #endif
 		{
 			object o = XmlSchemaUtil.ReadTypedValue (this,
-				SchemaType, ParserContext.NamespaceManager,
+				SchemaType, NamespaceManager,
 				storedCharacters);
 			storedCharacters.Length = 0;
 			return o;
@@ -363,6 +363,10 @@ namespace Mono.Xml.Schema
 			get { return XmlSchemaUtil.GetParserContext (reader); }
 		}
 
+		internal XmlNamespaceManager NamespaceManager {
+			get { return ParserContext != null ? ParserContext.NamespaceManager : null; }
+		}
+
 		public override string Prefix {
 			get {
 				if (currentDefaultAttribute < 0)
@@ -370,7 +374,7 @@ namespace Mono.Xml.Schema
 				if (defaultAttributeConsumed)
 					return String.Empty;
 				QName qname = defaultAttributes [currentDefaultAttribute].QualifiedName;
-				string prefix = this.ParserContext.NamespaceManager.LookupPrefix (qname.Namespace, false);
+				string prefix = NamespaceManager != null ? NamespaceManager.LookupPrefix (qname.Namespace, false) : null;
 				if (prefix == null)
 					return String.Empty;
 				else
@@ -593,7 +597,7 @@ namespace Mono.Xml.Schema
 						// validate against ValidatedItemType
 						if (itemDatatype != null) {
 							try {
-								itemDatatype.ParseValue (each, NameTable, ParserContext.NamespaceManager);
+								itemDatatype.ParseValue (each, NameTable, NamespaceManager);
 							} catch (Exception ex) { // FIXME: (wishlist) better exception handling ;-(
 								HandleError ("List type value contains one or more invalid values.", ex);
 								break;
@@ -614,7 +618,7 @@ namespace Mono.Xml.Schema
 							itemSimpleType = eachType as SimpleType;
 							if (itemDatatype != null) {
 								try {
-									itemDatatype.ParseValue (each, NameTable, ParserContext.NamespaceManager);
+									itemDatatype.ParseValue (each, NameTable, NamespaceManager);
 								} catch (Exception) { // FIXME: (wishlist) better exception handling ;-(
 									continue;
 								}
@@ -659,7 +663,7 @@ namespace Mono.Xml.Schema
 			}
 			if (validatedDatatype != null) {
 				try {
-					validatedDatatype.ParseValue (value, NameTable, ParserContext.NamespaceManager);
+					validatedDatatype.ParseValue (value, NameTable, NamespaceManager);
 				} catch (Exception ex) {	// FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Invalidly typed data was specified.", ex);
 				}
@@ -977,13 +981,13 @@ namespace Mono.Xml.Schema
 				string normalized = dt.Normalize (reader.Value);
 				object parsedValue = null;
 				try {
-					parsedValue = dt.ParseValue (normalized, reader.NameTable, this.ParserContext.NamespaceManager);
+					parsedValue = dt.ParseValue (normalized, reader.NameTable, NamespaceManager);
 				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Attribute value is invalid against its data type " + dt.TokenizedType, ex);
 				}
 				if (attr.ValidatedFixedValue != null && attr.ValidatedFixedValue != normalized) {
 					HandleError ("The value of the attribute " + attr.QualifiedName + " does not match with its fixed value.");
-					parsedValue = dt.ParseValue (attr.ValidatedFixedValue, reader.NameTable, this.ParserContext.NamespaceManager);
+					parsedValue = dt.ParseValue (attr.ValidatedFixedValue, reader.NameTable, NamespaceManager);
 				}
 #region ID Constraints
 				if (this.checkIdentity) {
@@ -1112,7 +1116,7 @@ namespace Mono.Xml.Schema
 		private void ProcessKeyEntry (XsdKeyEntry entry)
 		{
 			bool isNil = XsiNilDepth == Depth;
-			entry.ProcessMatch (false, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, readerLineInfo, Depth, null, null, null, isNil, CurrentKeyFieldConsumers);
+			entry.ProcessMatch (false, elementQNameStack, this, NameTable, BaseURI, SchemaType, NamespaceManager, readerLineInfo, Depth, null, null, null, isNil, CurrentKeyFieldConsumers);
 			if (MoveToFirstAttribute ()) {
 				try {
 					do {
@@ -1121,7 +1125,7 @@ namespace Mono.Xml.Schema
 						case XmlSchema.InstanceNamespace:
 							continue;
 						}
-						entry.ProcessMatch (true, elementQNameStack, this, NameTable, BaseURI, SchemaType, ParserContext.NamespaceManager, readerLineInfo, Depth, LocalName, NamespaceURI, Value, false, CurrentKeyFieldConsumers);
+						entry.ProcessMatch (true, elementQNameStack, this, NameTable, BaseURI, SchemaType, NamespaceManager, readerLineInfo, Depth, LocalName, NamespaceURI, Value, false, CurrentKeyFieldConsumers);
 					} while (MoveToNextAttribute ());
 				} finally {
 					MoveToElement ();
@@ -1149,7 +1153,7 @@ namespace Mono.Xml.Schema
 					object identity = null; // This means empty value
 					if (dt != null) {
 						try {
-							identity = dt.ParseValue (value, NameTable, ParserContext.NamespaceManager);
+							identity = dt.ParseValue (value, NameTable, NamespaceManager);
 						} catch (Exception ex) { // FIXME: (wishlist) This is bad manner ;-(
 							HandleError ("Identity value is invalid against its data type " + dt.TokenizedType, ex);
 						}

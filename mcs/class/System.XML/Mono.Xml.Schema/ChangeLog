@@ -1,5 +1,10 @@
 2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XsdValidatingReader.cs: make ParserContext and its NamespaceManager
+	  optional. This is for NVDL xsd support.
+
+2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdValidatingReader.cs: allow validation for such XmlReader whose
 	  ReadState is Interactive (hold different "is started" flag). This
 	  is a fix for nvdl support.
