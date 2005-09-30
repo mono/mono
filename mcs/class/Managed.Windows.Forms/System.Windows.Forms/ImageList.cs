@@ -72,7 +72,8 @@ namespace System.Windows.Forms
 	public sealed class ImageList : System.ComponentModel.Component
 	{
 		#region Private Fields
-		private readonly ImageCollection images = new ImageCollection();
+		private EventHandler recreateHandle;
+		private readonly ImageCollection images;
 		#endregion // Private Fields
 
 		#region Sub-classes
@@ -179,14 +180,15 @@ namespace System.Windows.Forms
 			private Color transparentColor = Color.Transparent;
 			private Size imageSize = new Size(16, 16);
 			private bool handleCreated;
-			private EventHandler recreateHandle;
 			private readonly ArrayList list = new ArrayList();
+			private readonly ImageList owner;
 			#endregion // ImageCollection Private Fields
 
 			#region ImageCollection Internal Constructors
 			// For use in ImageList
-			internal ImageCollection()
+			internal ImageCollection(ImageList owner)
 			{
+				this.owner = owner;
 			}
 			#endregion // ImageCollection Internal Constructor
 
@@ -205,7 +207,7 @@ namespace System.Windows.Forms
 						this.colorDepth = value;
 						if (handleCreated) {
 							list.Clear();
-							OnRecreateHandle();
+							owner.OnRecreateHandle();
 						}
 					}
 				}
@@ -240,7 +242,7 @@ namespace System.Windows.Forms
 						this.imageSize = value;
 						if (handleCreated) {
 							list.Clear();
-							OnRecreateHandle();
+							owner.OnRecreateHandle();
 						}
 					}
 				}
@@ -271,7 +273,7 @@ namespace System.Windows.Forms
 						this.colorDepth = value.ColorDepth;
 #if NET_2_0
 						// Event is raised even when handle was not created yet.
-						OnRecreateHandle();
+						owner.OnRecreateHandle();
 #endif
 					}
 				}
@@ -353,12 +355,6 @@ namespace System.Windows.Forms
 				graphics.Dispose();
 
 				return ReduceColorDepth(bitmap);
-			}
-
-			private void OnRecreateHandle()
-			{
-				if (recreateHandle != null)
-					recreateHandle(this, EventArgs.Empty);
 			}
 
 			private unsafe Image ReduceColorDepth(Bitmap bitmap)
@@ -631,32 +627,26 @@ namespace System.Windows.Forms
 					array.SetValue(this[index], index++);
 			}
 			#endregion // ImageCollection Interface Methods
-
-			#region ImageCollection Events
-			// For use in ImageList
-			internal event EventHandler RecreateHandle {
-				add {
-					recreateHandle += value;
-				}
-
-				remove {
-					recreateHandle -= value;
-				}
-			}
-			#endregion // ImageCollection Events
 		}
 		#endregion // Sub-classes
 
 		#region Public Constructors
 		public ImageList()
 		{
+			images = new ImageCollection(this);
 		}
 
-		public ImageList(System.ComponentModel.IContainer container)
+		public ImageList(System.ComponentModel.IContainer container) : this()
 		{
 			container.Add(this);
 		}
 		#endregion // Public Constructors
+
+		private void OnRecreateHandle()
+		{
+			if (recreateHandle != null)
+				recreateHandle(this, EventArgs.Empty);
+		}
 
 		#region Public Instance Properties
 		[DefaultValue(ColorDepth.Depth8Bit)]
@@ -766,11 +756,11 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public event EventHandler RecreateHandle {
 			add {
-				images.RecreateHandle += value;
+				recreateHandle += value;
 			}
 
 			remove {
-				images.RecreateHandle -= value;
+				recreateHandle -= value;
 			}
 		}
 		#endregion // Events

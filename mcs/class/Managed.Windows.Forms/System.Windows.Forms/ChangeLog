@@ -1,5 +1,10 @@
 2005-09-30  Kornél Pál  <kornelpal@hotmail.com>
 
+	* ImageList.cs: Moved RecreateHandle back to ImageList as event
+	  source has to be the ImageList.
+
+2005-09-30  Kornél Pál  <kornelpal@hotmail.com>
+
 	* ImageList.cs: Add(Icon): Use Graphics.DrawIcon instead of Icon.ToBitmap.
 
 2005-09-30  Kornél Pál  <kornelpal@hotmail.com>
