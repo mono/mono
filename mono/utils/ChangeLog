@@ -1,3 +1,9 @@
+2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* strenc.c: don't use the UTF16 conversion with g_convert. It returns
+	the FF FE at the beginning, which is not what we expect. Now
+	MONO_EXTERNAL_ENCODINGS can roundtrip and works.
+
 2005-09-12  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mono-compiler.h (MONO_THREAD_VAR_OFFSET): Fix compilation on amd64
