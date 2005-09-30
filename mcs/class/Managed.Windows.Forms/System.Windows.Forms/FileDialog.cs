@@ -2044,8 +2044,8 @@ namespace System.Windows.Forms
 			else
 			if ( ( e.State & DrawItemState.Selected ) == DrawItemState.Selected )
 			{
-				backColor = Color.Blue;
-				foreColor = Color.White;
+				backColor = ThemeEngine.Current.ColorHilight;
+				foreColor = ThemeEngine.Current.ColorHilightText;
 			}
 			
 			gr.FillRectangle( ThemeEngine.Current.ResPool.GetSolidBrush( backColor ), new Rectangle( 0, 0, bmp.Width, bmp.Height ) );
@@ -2054,6 +2054,8 @@ namespace System.Windows.Forms
 			gr.DrawImage( imageList.Images[ dcbi.ImageIndex ], new Rectangle( new Point( xPos + 2, 0 ), new Size( 16, 16 ) ) );
 			
 			e.Graphics.DrawImage( bmp, e.Bounds.X, e.Bounds.Y );
+			gr.Dispose ();
+			bmp.Dispose ();
 		}
 		
 		protected override void OnSelectedIndexChanged( EventArgs e )
