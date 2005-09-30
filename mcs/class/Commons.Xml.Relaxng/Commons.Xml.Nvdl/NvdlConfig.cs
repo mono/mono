@@ -37,7 +37,7 @@ namespace Commons.Xml.Nvdl
 			if (schemaType == null)
 				schemaType = inheritSchemaType;
 			if (schemaType == null)
-				schemaType = "text/xml";
+				schemaType = "application/xml";
 
 			foreach (NvdlValidationProvider p in providers) {
 				NvdlValidatorGenerator g =

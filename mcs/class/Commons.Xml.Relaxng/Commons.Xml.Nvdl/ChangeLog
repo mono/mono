@@ -1,5 +1,10 @@
 2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
 
+	* NvdlConfig.cs : changed mime type due to the suggestion from Makoto
+	  Murata.
+
+2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
+
 	* NvdlXsdSupport.cs : related fix to r51030; XmlSchema.Read() now does
 	  not consume EndElement.
 
