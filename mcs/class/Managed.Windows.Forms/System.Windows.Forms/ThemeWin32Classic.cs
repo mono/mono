@@ -1488,14 +1488,22 @@ namespace System.Windows.Forms
 		public override void DrawListView (Graphics dc, Rectangle clip, ListView control)
 		{
 			bool details = (control.View == View.Details);
-
-			dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor), clip);
-			
+			Rectangle client_area_nohdrs;			
 			DrawListViewHeader (dc, clip, control);
 			
+			if (details && control.Columns.Count > 0) {
+				client_area_nohdrs = control.client_area;
+				client_area_nohdrs.Y += control.Columns[0].Ht;
+				client_area_nohdrs.Height -= control.Columns[0].Ht;
+				dc.SetClip (client_area_nohdrs);				
+			} else
+				dc.SetClip (control.client_area);
+			
+			dc.FillRectangle (ResPool.GetSolidBrush (control.BackColor), clip);						
+						
 			// In case of details view draw the items only if
-			// columns are non-zero
-			if (!details || control.Columns.Count > 0) {				
+			// columns are non-zero			
+			if (!details || control.Columns.Count > 0) {
 				int first = control.FirstVisibleIndex;	
 				
 				for (int i = first; i <= control.LastItemIndex; i ++) {					
@@ -1530,8 +1538,11 @@ namespace System.Windows.Forms
 						     last_item.entire_rect_real.Bottom,
 						     control.TotalWidth,
 						     last_item.entire_rect_real.Bottom);
-				}
-			}
+				}			
+				
+			}			
+			
+			dc.ResetClip ();
 		}
 		
 		private void DrawListViewHeader (Graphics dc, Rectangle clip, ListView control)
@@ -1545,7 +1556,9 @@ namespace System.Windows.Forms
 				if (control.Columns.Count > 0) {
 					if (control.HeaderStyle == ColumnHeaderStyle.Clickable) {
 						foreach (ColumnHeader col in control.Columns) {
-							this.CPDrawButton (dc, col.Rect,
+							Rectangle rect = col.Rect;
+							rect.X -= control.h_marker;
+							this.CPDrawButton (dc, rect,
 									   (col.Pressed ?
 									    ButtonState.Pushed :
 									    ButtonState.Normal));
@@ -1553,21 +1566,23 @@ namespace System.Windows.Forms
 								       ResPool.GetSolidBrush
 								       (this.ColorButtonText),
 								       //col.Rect,
-									col.Rect.X + 3,
-									col.Rect.Y + col.Rect.Height/2 + 1,
+									rect.X + 3,
+									rect.Y + rect.Height/2 + 1,
 									col.Format);
 						}
 					}
 					// Non-clickable columns
 					else {
 						foreach (ColumnHeader col in control.Columns) {
-							this.CPDrawButton (dc, col.Rect, ButtonState.Flat);
+							Rectangle rect = col.Rect;
+							rect.X -= control.h_marker;
+							this.CPDrawButton (dc, rect, ButtonState.Flat);
 							dc.DrawString (col.Text, ThemeEngine.Current.DefaultFont,
 								       ResPool.GetSolidBrush
 								       (this.ColorButtonText),
 									//col.Rect,
-									col.Rect.X + 3,
-									col.Rect.Y + col.Rect.Height/2 + 1,
+									rect.X + 3,
+									rect.Y + rect.Height/2 + 1,
 									col.Format);
 						}
 					}
@@ -1577,11 +1592,11 @@ namespace System.Windows.Forms
 
 		// draws the ListViewItem of the given index
 		private void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
-		{						
+		{				
 			Rectangle rect_checkrect = item.checkbox_rect_real;
 			Rectangle rect_iconrect = item.GetBounds (ItemBoundsPortion.Icon);
 			Rectangle full_rect = item.GetBounds (ItemBoundsPortion.Entire);
-			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);			
+			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);									
 			
 			if (control.CheckBoxes) {
 				if (control.StateImageList == null) {
@@ -1716,6 +1731,7 @@ namespace System.Windows.Forms
 						col = control.Columns [index];
 						sub_item_rect.X = col.Rect.Left;
 						sub_item_rect.Width = col.Wd;
+						sub_item_rect.X -= control.h_marker;
 
 						SolidBrush sub_item_back_br = null;
 						SolidBrush sub_item_fore_br = null;

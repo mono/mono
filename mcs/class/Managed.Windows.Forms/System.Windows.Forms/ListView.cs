@@ -91,6 +91,7 @@ namespace System.Windows.Forms
 		private ScrollBar v_scroll; // used for scrolling vertically
 		internal int h_marker;		// Position markers for scrolling
 		internal int v_marker;
+		internal Rectangle client_area; // ClientRectangle - scrollbars
 
 		// internal variables
 		internal ImageList large_image_list;
@@ -722,6 +723,8 @@ namespace System.Windows.Forms
 
 		private void CalculateScrollBars ()
 		{
+			client_area = ClientRectangle;
+			
 			if (!this.scrollable || this.items.Count <= 0) {
 				h_scroll.Visible = false;
 				v_scroll.Visible = false;
@@ -757,6 +760,7 @@ namespace System.Windows.Forms
    
 				h_scroll.LargeChange = Width;
 				h_scroll.SmallChange = Font.Height;
+				client_area.Height -= h_scroll.Height;
 			}
 
 			// vertical scrollbar
@@ -776,6 +780,7 @@ namespace System.Windows.Forms
 
 				v_scroll.LargeChange = Height;
 				v_scroll.SmallChange = Font.Height;
+				client_area.Width -= v_scroll.Width;
 			}
 		}
 
@@ -954,6 +959,7 @@ namespace System.Windows.Forms
 			}
 
                         CalculateScrollBars ();
+                        
 		}		
 		
 
@@ -1225,8 +1231,8 @@ namespace System.Windows.Forms
 		{
 			if (this.Width <= 0 || this.Height <=  0 ||
 			    this.Visible == false || this.updating == true)
-				return;
-
+				return;	
+				
 			CalculateScrollBars ();
 
 			ThemeEngine.Current.DrawListView (pe.Graphics,
@@ -1299,7 +1305,7 @@ namespace System.Windows.Forms
 
 		private void ListView_SizeChanged (object sender, EventArgs e)
 		{
-			CalculateScrollBars ();
+			CalculateListView (alignment);
 		}
 
 		private void HorizontalScroller (object sender, EventArgs e)
