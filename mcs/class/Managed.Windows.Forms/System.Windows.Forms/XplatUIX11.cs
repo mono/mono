@@ -2131,6 +2131,14 @@ namespace System.Windows.Forms {
 			gc_values.line_width = 1;
 			gc_values.foreground = XBlackPixel(DisplayHandle, ScreenNo);
 
+			// This logic will give us true rubber bands: (libsx, SANE_XOR)
+			//mask = foreground ^ background; 
+			//XSetForeground(DisplayHandle, gc, 0xffffffff);
+			//XSetBackground(DisplayHandle, gc, background);
+			//XSetFunction(DisplayHandle,   gc, GXxor);
+			//XSetPlaneMask(DisplayHandle,  gc, mask);
+
+
 			gc = XCreateGC(DisplayHandle, hwnd.client_window, GCFunction.GCSubwindowMode | GCFunction.GCLineWidth | GCFunction.GCForeground, ref gc_values);
 			XSetFunction(DisplayHandle, gc, GXFunction.GXinvert);	// GXinvert makes it reversible
 			XDrawRectangle(DisplayHandle, hwnd.client_window, gc, rect.Left, rect.Top, rect.Width, rect.Height);
