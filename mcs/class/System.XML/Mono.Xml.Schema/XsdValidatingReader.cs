@@ -70,6 +70,7 @@ namespace Mono.Xml.Schema
 		ValidationType validationType;
 		XmlSchemaSet schemas = new XmlSchemaSet ();
 		bool namespaces = true;
+		bool validationStarted;
 
 #region ID Constraints
 		bool checkIdentity = true;
@@ -147,7 +148,7 @@ namespace Mono.Xml.Schema
 		public XmlSchemaSet Schemas {
 			get { return schemas; }
 			set {
-				if (ReadState != ReadState.Initial)
+				if (validationStarted)
 					throw new InvalidOperationException ("Schemas must be set before the first call to Read().");
 				schemas = value;
 			}
@@ -189,7 +190,7 @@ namespace Mono.Xml.Schema
 		public ValidationType ValidationType {
 			get { return validationType; }
 			set {
-				if (ReadState != ReadState.Initial)
+				if (validationStarted)
 					throw new InvalidOperationException ("ValidationType must be set before reading.");
 				validationType = value;
 			}
@@ -1545,6 +1546,7 @@ namespace Mono.Xml.Schema
 
 		public override bool Read ()
 		{
+			validationStarted = true;
 			currentDefaultAttribute = -1;
 			defaultAttributeConsumed = false;
 			currentAttrType = null;

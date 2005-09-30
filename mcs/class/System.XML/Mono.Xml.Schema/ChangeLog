@@ -1,3 +1,9 @@
+2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs: allow validation for such XmlReader whose
+	  ReadState is Interactive (hold different "is started" flag). This
+	  is a fix for nvdl support.
+
 2005-09-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaValidatingReader.cs: XmlSchemaValidationFlags updates.
