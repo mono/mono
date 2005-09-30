@@ -1,3 +1,7 @@
+2005-09-30  Kornél Pál  <kornelpal@hotmail.com>
+
+	* ImageList.cs: ImageCollection: Removed owner field as it is no more used.
+
 2005-09-29  Jonathan Chambers <jonathan.chambers@ansys.com>
 	* GridItem.cs: Fixed TODOs
 	* GridItemCollection.cs: Added ICollection interface

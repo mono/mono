@@ -72,7 +72,7 @@ namespace System.Windows.Forms
 	public sealed class ImageList : System.ComponentModel.Component
 	{
 		#region Private Fields
-		private readonly ImageCollection images;
+		private readonly ImageCollection images = new ImageCollection();
 		#endregion // Private Fields
 
 		#region Sub-classes
@@ -180,16 +180,13 @@ namespace System.Windows.Forms
 			private Size imageSize = new Size(16, 16);
 			private bool handleCreated;
 			private EventHandler recreateHandle;
-			private readonly ImageList owner;
-			private readonly ArrayList list;
+			private readonly ArrayList list = new ArrayList();
 			#endregion // ImageCollection Private Fields
 
 			#region ImageCollection Internal Constructors
 			// For use in ImageList
-			internal ImageCollection(ImageList owner)
+			internal ImageCollection()
 			{
-				this.owner = owner;
-				this.list = new ArrayList();
 			}
 			#endregion // ImageCollection Internal Constructor
 
@@ -650,10 +647,9 @@ namespace System.Windows.Forms
 		#region Public Constructors
 		public ImageList()
 		{
-			images = new ImageCollection(this);
 		}
 
-		public ImageList(System.ComponentModel.IContainer container) : this()
+		public ImageList(System.ComponentModel.IContainer container)
 		{
 			container.Add(this);
 		}
