@@ -1,4 +1,11 @@
 
+Fri Sep 30 20:07:20 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, driver.c, mini-x86.c, mini.c, mini.h, branch-opts.c:
+	Patrik Torstensson's implementation of my exception-handling
+	optimization idea, when the exception object is not used
+	(bug #62150).
+
 Fri Sep 30 19:10:29 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini-x86.c, cpu-pentium.md: Patrik Torstensson's port
