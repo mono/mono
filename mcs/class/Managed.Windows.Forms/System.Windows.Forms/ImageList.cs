@@ -363,21 +363,21 @@ namespace System.Windows.Forms
 
 			private unsafe Image ReduceColorDepth(Bitmap bitmap)
 			{
-				int y;
-				int x;
-				int origPixel;
+				byte* pixelPtr;
+				byte* lineEndPtr;
+				byte* linePtr;
+				int line;
 				int pixel;
 				int height;
 				int widthBytes;
 				int stride;
-				byte* pixels;
 				BitmapData bitmapData;
 				ArgbColor[] palette;
 
 				if (this.colorDepth < ColorDepth.Depth32Bit) {
 					bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
 					try {
-						pixels = (byte*)bitmapData.Scan0;
+						linePtr = (byte*)bitmapData.Scan0;
 						height = bitmapData.Height;
 						widthBytes = bitmapData.Width << 2;
 						stride = bitmapData.Stride;
@@ -385,30 +385,27 @@ namespace System.Windows.Forms
 						if (this.colorDepth < ColorDepth.Depth16Bit) {
 							palette = (this.colorDepth < ColorDepth.Depth8Bit) ? IndexedColorDepths.Palette4Bit : IndexedColorDepths.Palette8Bit;
 
-							for (y = 0; y < height; y++) {
-								for (x = 0; x < widthBytes; x += 4)
-									if ((pixel = (((origPixel = *(int*)(pixels + x)) & AlphaMask) == 0) ? 0x00000000 : IndexedColorDepths.GetNearestColor(palette, origPixel | AlphaMask)) != origPixel)
-										*(int*)(pixels + x) = pixel;
-
-								pixels += stride;
+							for (line = 0; line < height; line++) {
+								lineEndPtr = linePtr + widthBytes;
+								for (pixelPtr = linePtr; pixelPtr < lineEndPtr; pixelPtr += 4)
+									*(int*)pixelPtr = (((pixel = *(int*)pixelPtr) & AlphaMask) == 0) ? 0x00000000 : IndexedColorDepths.GetNearestColor(palette, pixel | AlphaMask);
+								linePtr += stride;
 							}
 						}
 						else if (this.colorDepth < ColorDepth.Depth24Bit) {
-							for (y = 0; y < height; y++) {
-								for (x = 0; x < widthBytes; x += 4)
-									if ((pixel = (((origPixel = *(int*)(pixels + x)) & AlphaMask) == 0) ? 0x00000000 : (origPixel & 0x00F8F8F8) | AlphaMask) != origPixel)
-										*(int*)(pixels + x) = pixel;
-
-								pixels += stride;
+							for (line = 0; line < height; line++) {
+								lineEndPtr = linePtr + widthBytes;
+								for (pixelPtr = linePtr; pixelPtr < lineEndPtr; pixelPtr += 4)
+									*(int*)pixelPtr = (((pixel = *(int*)pixelPtr) & AlphaMask) == 0) ? 0x00000000 : (pixel & 0x00F8F8F8) | AlphaMask;
+								linePtr += stride;
 							}
 						}
 						else {
-							for (y = 0; y < height; y++) {
-								for (x = 0; x < widthBytes; x += 4)
-									if ((pixel = (((origPixel = *(int*)(pixels + x)) & AlphaMask) == 0) ? 0x00000000 : origPixel | AlphaMask) != origPixel)
-										*(int*)(pixels + x) = pixel;
-
-								pixels += stride;
+							for (line = 0; line < height; line++) {
+								lineEndPtr = linePtr + widthBytes;
+								for (pixelPtr = linePtr; pixelPtr < lineEndPtr; pixelPtr += 4)
+									*(int*)pixelPtr = (((pixel = *(int*)pixelPtr) & AlphaMask) == 0) ? 0x00000000 : pixel | AlphaMask;
+								linePtr += stride;
 							}
 						}
 					}
