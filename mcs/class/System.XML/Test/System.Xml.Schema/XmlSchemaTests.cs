@@ -289,5 +289,15 @@ namespace MonoTests.System.Xml
 			//AssertEquals (xmldecl + "<q2:schema xmlns:foo=\"urn:foo\" xmlns:q1=\"urn:q1\" xmlns=\"urn:foo\" xmlns:q2=\"http://www.w3.org/2001/XMLSchema\" />", sw.ToString ());
 			Assert("q1", sw.ToString ().IndexOf ("xmlns:q1=\"urn:q1\"") != -1);
 		}
+
+		[Test]
+		public void ReaderPositionAfterRead ()
+		{
+			string xsd = @"<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' elementFormDefault='qualified'>  <xs:element name='test' type='xs:integer'/></xs:schema>";
+			XmlTextReader xtr = new XmlTextReader (xsd, XmlNodeType.Document, null);
+			xtr.Read ();
+			XmlSchema xs = XmlSchema.Read (xtr, null);
+			AssertEquals (XmlNodeType.EndElement, xtr.NodeType);
+		}
 	}
 }

@@ -658,8 +658,6 @@ namespace System.Xml.Schema
 						else
 							rdr.Skip ();
 
-						if (rdr.NodeType == XmlNodeType.EndElement)
-							rdr.Read ();
 						return schema;
 					}
 					else
