@@ -1,3 +1,13 @@
+2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGrid.cs: when paging is enable, the actual number of items is not
+	the number of items rendered before the postback, but that number times
+	the number of pages. Now we store the page count in the viewstate. Also,
+	as the number might be big, don't allocate an array of objects to fake
+	the collection for the PagedDataSource, but use the new NCollection
+	class instead, which provides cheap (memory wise) enumerator for an
+	arbitrary number of items. Thanks to "Adriano" for the test case.
+
 2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Xml.cs: the show must go on. Removed a few NotImplemented.
