@@ -222,6 +222,7 @@ namespace System.Web.UI.WebControls {
 				Page.VerifyRenderingInServerForm (this);
 
 			writer.AddAttribute (HtmlTextWriterAttribute.Type, "image");
+			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 			if (CausesValidation && Page != null && Page.AreValidatorsUplevel ()) {
 				ClientScriptManager csm = new ClientScriptManager (Page);
 				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, csm.GetClientValidationEvent ());
@@ -246,16 +247,17 @@ namespace System.Web.UI.WebControls {
 		{
 			string x, y;
 
-			x = postCollection [UniqueID + ".x"];
-			y = postCollection [UniqueID + ".y"];
+			x = postCollection [postDataKey + ".x"];
+			y = postCollection [postDataKey + ".y"];
 
-			if (x != null && y != null) {
+			if (x != null && x != "" && y != null && y != "") {
 				pos_x = Int32.Parse(x);
 				pos_y = Int32.Parse(y);
 				Page.RegisterRequiresRaiseEvent (this);
+				return true;
 			}
 
-			return true;
+			return false;
 		}
 #if NET_2_0
 		protected virtual
