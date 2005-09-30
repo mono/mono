@@ -1,3 +1,7 @@
+2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseStream.cs: remove dead code.
+
 2005-09-29  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* HttpClientCertificate.cs: Remove last TODO on IsValid. This now 
