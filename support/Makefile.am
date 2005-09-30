@@ -82,7 +82,6 @@ libMonoSupportW_la_SOURCES =			\
 		supportw.h
 
 libMonoSupportW_la_LIBADD =			\
-		../mono/io-layer/libwapi.la	\
 		$(GLIB_LIBS)
 
 # 
