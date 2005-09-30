@@ -347,7 +347,7 @@ namespace System.Windows.Forms
 					imageAttributes.SetColorKey(transparentColor, transparentColor);
 				}
 
-				bitmap = new Bitmap((width = this.imageSize.Width), (height = this.imageSize.Height), PixelFormat.Format32bppArgb);
+				bitmap = new Bitmap(width = this.imageSize.Width, height = this.imageSize.Height, PixelFormat.Format32bppArgb);
 				graphics = Graphics.FromImage(bitmap);
 				graphics.DrawImage(value, new Rectangle(0, 0, width, height), 0, 0, value.Width, value.Height, GraphicsUnit.Pixel, imageAttributes);
 				graphics.Dispose();
@@ -383,12 +383,12 @@ namespace System.Windows.Forms
 						stride = bitmapData.Stride;
 
 						if (this.colorDepth < ColorDepth.Depth16Bit) {
-							palette = (this.colorDepth < ColorDepth.Depth8Bit) ? IndexedColorDepths.Palette4Bit : IndexedColorDepths.Palette8Bit;
+							palette = this.colorDepth < ColorDepth.Depth8Bit ? IndexedColorDepths.Palette4Bit : IndexedColorDepths.Palette8Bit;
 
 							for (line = 0; line < height; line++) {
 								lineEndPtr = linePtr + widthBytes;
 								for (pixelPtr = linePtr; pixelPtr < lineEndPtr; pixelPtr += 4)
-									*(int*)pixelPtr = (((pixel = *(int*)pixelPtr) & AlphaMask) == 0) ? 0x00000000 : IndexedColorDepths.GetNearestColor(palette, pixel | AlphaMask);
+									*(int*)pixelPtr = ((pixel = *(int*)pixelPtr) & AlphaMask) == 0 ? 0x00000000 : IndexedColorDepths.GetNearestColor(palette, pixel | AlphaMask);
 								linePtr += stride;
 							}
 						}
@@ -396,7 +396,7 @@ namespace System.Windows.Forms
 							for (line = 0; line < height; line++) {
 								lineEndPtr = linePtr + widthBytes;
 								for (pixelPtr = linePtr; pixelPtr < lineEndPtr; pixelPtr += 4)
-									*(int*)pixelPtr = (((pixel = *(int*)pixelPtr) & AlphaMask) == 0) ? 0x00000000 : (pixel & 0x00F8F8F8) | AlphaMask;
+									*(int*)pixelPtr = ((pixel = *(int*)pixelPtr) & AlphaMask) == 0 ? 0x00000000 : (pixel & 0x00F8F8F8) | AlphaMask;
 								linePtr += stride;
 							}
 						}
@@ -404,7 +404,7 @@ namespace System.Windows.Forms
 							for (line = 0; line < height; line++) {
 								lineEndPtr = linePtr + widthBytes;
 								for (pixelPtr = linePtr; pixelPtr < lineEndPtr; pixelPtr += 4)
-									*(int*)pixelPtr = (((pixel = *(int*)pixelPtr) & AlphaMask) == 0) ? 0x00000000 : pixel | AlphaMask;
+									*(int*)pixelPtr = ((pixel = *(int*)pixelPtr) & AlphaMask) == 0 ? 0x00000000 : pixel | AlphaMask;
 								linePtr += stride;
 							}
 						}
@@ -441,14 +441,20 @@ namespace System.Windows.Forms
 			#region ImageCollection Public Instance Methods
 			public void Add(Icon value)
 			{
+				int width;
+				int height;
 				Bitmap bitmap;
+				Graphics graphics;
 
 				if (value == null)
 					throw new ArgumentNullException("value");
 
-				bitmap = value.ToBitmap();
-				Add(bitmap, Color.Transparent);
-				bitmap.Dispose();
+				bitmap = new Bitmap(width = this.imageSize.Width, height = this.imageSize.Height, PixelFormat.Format32bppArgb);
+				graphics = Graphics.FromImage(bitmap);
+				graphics.DrawIcon(value, new Rectangle(0, 0, width, height));
+				graphics.Dispose();
+
+				list.Add(ReduceColorDepth(bitmap));
 			}
 
 			public void Add(Image value)
@@ -598,12 +604,12 @@ namespace System.Windows.Forms
 
 			bool IList.Contains(object value)
 			{
-				return (value is Image) ? this.Contains((Image)value) : false;
+				return value is Image ? this.Contains((Image)value) : false;
 			}
 
 			int IList.IndexOf(object value)
 			{
-				return (value is Image) ? this.IndexOf((Image)value) : -1;
+				return value is Image ? this.IndexOf((Image)value) : -1;
 			}
 
 			void IList.Insert(int index, object value)

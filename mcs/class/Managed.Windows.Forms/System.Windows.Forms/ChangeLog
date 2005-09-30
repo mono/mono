@@ -1,5 +1,9 @@
 2005-09-30  Kornél Pál  <kornelpal@hotmail.com>
 
+	* ImageList.cs: Add(Icon): Use Graphics.DrawIcon instead of Icon.ToBitmap.
+
+2005-09-30  Kornél Pál  <kornelpal@hotmail.com>
+
 	* ImageList.cs: ReduceColorDepth: Clean up pointer operations.
 
 2005-09-30  Kornél Pál  <kornelpal@hotmail.com>
