@@ -242,10 +242,12 @@ namespace System.Windows.Forms {
 					Controls.RemoveImplicit (hscrollbar);
 					hscrollbar.Dispose();
 					hscrollbar = null;
+					hscroll_visible = false;
 
 					Controls.RemoveImplicit (vscrollbar);
 					vscrollbar.Dispose();
 					vscrollbar = null;
+					vscroll_visible = false;
 
 					Controls.RemoveImplicit (sizegrip);
 					sizegrip.Dispose();
@@ -347,7 +349,6 @@ namespace System.Windows.Forms {
 				Rectangle rect;
 				
 				rect = base.DisplayRectangle;
-				
 				if (vscroll_visible) {
 					rect.Width -= vscrollbar.Width;
 					if (rect.Width < 0) {

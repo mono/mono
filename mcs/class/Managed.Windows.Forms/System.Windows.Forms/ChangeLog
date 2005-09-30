@@ -1,3 +1,37 @@
+2005-09-30  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Theme.cs: 
+	  - Switched Theme color names to match the names defined in 
+	    System.Drawing.KnownColors. Life's hard enough, no need to make 
+	    it harder.
+	  - Added setters to all theme color properties so themes can set
+	    their color schemes. The setters also propagate the color changes
+	    to System.Drawing.KnownColors via reflection
+	* ControlPaint.cs,  Label.cs, TextControl.cs, ToolTip.cs, ThemeNice.cs,
+	  ComboBox.cs, MdiChildContext.cs, TextBoxBase.cs, DateTimePicker.cs
+	  DataGridColumnStyle.cs, MonthCalendar.cs, TreeView.cs: Updated to
+	  use the new, more logical theme color names
+	* XplatUIWin32.cs: Updated the GetSysColorIndex enum to include new
+	  post-NT colors
+	* ThemeWin32Classic.cs:
+	  - Removed code to set the old classic Windows colors. Instead it
+	    now relies on the colors returned by System.Drawing.KnownColors
+	    which will be either modern static colors (Unix) or colors
+	    read from the user's configuration (Win32)
+	  - Updated to use the new, more logical theme color names
+	  - Switched DataGrid drawing code to use only Theme colors instead of
+	    a mix of System.Drawing.KnownColors and Theme colors
+	  - DrawFrameControl(): Removed code that fills the button area, the
+	    fill would overwrite any previous fill done by a control. This
+	    fixes bug #75338 
+	  - Added DrawReversibleRectangle() stub
+	* ScrollableControl.cs: Set visible state to false when scrollbars
+	  are removed (pdn fix)
+	* XplatUI.cs, XplatUIOSX.cs, XplatUIDriver.cs: Added 
+	  DrawReversibleRectangle() method to allow drawing primitive 
+	  'rubber bands'
+	* XplatUIX11.cs: Implemented DrawReversibleRectangle()
+
 2005-09-30  Kornél Pál  <kornelpal@hotmail.com>
 
 	* ImageList.cs: Add(Icon): Create handle.

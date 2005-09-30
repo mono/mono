@@ -2118,6 +2118,25 @@ namespace System.Windows.Forms {
 			return NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 		}
 
+		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect) {
+			Hwnd		hwnd;
+			XGCValues	gc_values;
+			IntPtr		gc;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			gc_values = new XGCValues();
+
+			gc_values.subwindow_mode = GCSubwindowMode.IncludeInferiors;
+			gc_values.line_width = 1;
+			gc_values.foreground = XBlackPixel(DisplayHandle, ScreenNo);
+
+			gc = XCreateGC(DisplayHandle, hwnd.client_window, GCFunction.GCSubwindowMode | GCFunction.GCLineWidth | GCFunction.GCForeground, ref gc_values);
+			XSetFunction(DisplayHandle, gc, GXFunction.GXinvert);	// GXinvert makes it reversible
+			XDrawRectangle(DisplayHandle, hwnd.client_window, gc, rect.Left, rect.Top, rect.Width, rect.Height);
+			XFreeGC(DisplayHandle, gc);
+		}
+
 		internal override void DoEvents() {
 			MSG msg = new MSG ();
 
@@ -3739,6 +3758,9 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XDrawLine")]
 		internal extern static int XDrawLine(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int x2, int y2);
+
+		[DllImport ("libX11", EntryPoint="XDrawRectangle")]
+		internal extern static int XDrawRectangle(IntPtr display, IntPtr drawable, IntPtr gc, int x1, int y1, int width, int height);
 
 		[DllImport ("libX11", EntryPoint="XSetWindowBackground")]
 		internal extern static int XSetWindowBackground(IntPtr display, IntPtr window, IntPtr background);

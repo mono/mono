@@ -1030,7 +1030,7 @@ namespace System.Windows.Forms
 			}
 			
 			if (CBoxInfo.show_button) {
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace),
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl),
 					combobox_info.button_rect);
 
 				ThemeEngine.Current.CPDrawComboButton (dc,

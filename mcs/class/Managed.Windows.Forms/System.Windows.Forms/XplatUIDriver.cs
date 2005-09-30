@@ -222,6 +222,8 @@ namespace System.Windows.Forms {
 		internal abstract int[] ClipboardAvailableFormats(IntPtr handle);
 		internal abstract object ClipboardRetrieve(IntPtr handle, int id, XplatUI.ClipboardToObject converter);
 
+		internal abstract void DrawReversibleRectangle(IntPtr handle, Rectangle rect);
+
 		// System information
 		internal abstract int KeyboardSpeed { get; } 
 		internal abstract int KeyboardDelay { get; } 

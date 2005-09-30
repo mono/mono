@@ -299,7 +299,7 @@ namespace System.Windows.Forms {
 		{
 			Color color = titlebar_color;
 			if (maximized)
-				color = ThemeEngine.Current.ColorButtonFace;
+				color = ThemeEngine.Current.ColorControl;
 			Rectangle tb = new Rectangle (BorderWidth, BorderWidth,
 					form.Width - BorderWidth, TitleBarHeight);
 
@@ -319,7 +319,7 @@ namespace System.Windows.Forms {
 				pe.Graphics.DrawIcon (form.Icon, BorderWidth, BorderWidth);
 			}
 
-			Pen bp = new Pen (ThemeEngine.Current.ColorButtonFace,
+			Pen bp = new Pen (ThemeEngine.Current.ColorControl,
 					BorderWidth);
 
 			// HACK: kludge the borders around

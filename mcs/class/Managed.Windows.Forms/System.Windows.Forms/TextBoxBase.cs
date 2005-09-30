@@ -1067,7 +1067,7 @@ static int current;
 			Rectangle	rect = ClientRectangle;
 			rect.Width--;
 			rect.Height--;
-			//pevent.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(ThemeEngine.Current.ColorButtonShadow), rect);
+			//pevent.Graphics.DrawRectangle(ThemeEngine.Current.ResPool.GetPen(ThemeEngine.Current.ColorControlDark), rect);
 
 			#if Debug
 				int		start;

@@ -1296,8 +1296,8 @@ namespace System.Windows.Forms {
 				Console.WriteLine("Started drawing: {0}s {1}ms", n.Second, n.Millisecond);
 			#endif
 
-			hilight = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilight);
-			hilight_text = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHilightText);
+			hilight = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlight);
+			hilight_text = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlight);
 
 			while (line_no <= end) {
 				line = GetLine(line_no);

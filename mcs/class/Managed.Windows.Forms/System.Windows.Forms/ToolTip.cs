@@ -70,7 +70,7 @@ namespace System.Windows.Forms {
 				Visible = false;
 				Size = new Size(100, 20);
 				ForeColor = ThemeEngine.Current.ColorInfoText;
-				BackColor = ThemeEngine.Current.ColorInfoWindow;
+				BackColor = ThemeEngine.Current.ColorInfo;
 
 				VisibleChanged += new EventHandler(ToolTipWindow_VisibleChanged);
 

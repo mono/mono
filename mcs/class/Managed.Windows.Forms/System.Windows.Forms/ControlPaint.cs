@@ -183,8 +183,8 @@ namespace System.Windows.Forms {
 		}
 
 		public static Color Light(Color baseColor) {
-			if (baseColor == ThemeEngine.Current.ColorButtonFace) {
-				return ThemeEngine.Current.ColorButtonLight;
+			if (baseColor == ThemeEngine.Current.ColorControl) {
+				return ThemeEngine.Current.ColorControlLight;
 			}
 
 			return Light( baseColor, 10.0f);
@@ -199,19 +199,19 @@ namespace System.Windows.Forms {
 		}
 
 		public static Color LightLight(Color baseColor) {
-			if (baseColor == ThemeEngine.Current.ColorButtonFace) {
-				return ThemeEngine.Current.ColorButtonHilight;
+			if (baseColor == ThemeEngine.Current.ColorControl) {
+				return ThemeEngine.Current.ColorControlLightLight;
 			}
 
 			return Light( baseColor, 20.0f);
 		}
 
 		public static Color Dark(Color baseColor) {
-			if (baseColor == ThemeEngine.Current.ColorButtonFace) {
-				return ThemeEngine.Current.ColorButtonShadow;
+			if (baseColor == ThemeEngine.Current.ColorControl) {
+				return ThemeEngine.Current.ColorControlDark;
 			}
 
-			return Dark(baseColor, 10.0f);
+			return Dark(baseColor, 20.0f);
 		}
 
 		public static Color Dark(Color baseColor,float percOfDarkDark) {
@@ -223,11 +223,11 @@ namespace System.Windows.Forms {
 		}
 
 		public static Color DarkDark(Color baseColor) {
-			if (baseColor == ThemeEngine.Current.ColorButtonFace) {
-				return ThemeEngine.Current.ColorButtonDkShadow;
+			if (baseColor == ThemeEngine.Current.ColorControl) {
+				return ThemeEngine.Current.ColorControlDarkDark;
 			}
 
-			return Dark(baseColor, 20.0f);
+			return Dark(baseColor, 60.0f);
 		}
 
 		public static void DrawBorder(Graphics graphics, Rectangle bounds, Color color, ButtonBorderStyle style) {

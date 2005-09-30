@@ -513,18 +513,18 @@ namespace System.Windows.Forms
 			if (grid.FlatMode == false) {			
 			
 				// Paint Borders
-				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),			
+				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),			
 					bounds.X, bounds.Y, bounds.X + bounds.Width, bounds.Y);
 				
 				if (colNum == 0) {	
-					g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
+					g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
 						bounds.X, bounds.Y, bounds.X, bounds.Y + bounds.Height);
 				} else {
-					g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonHilight),
+					g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlLight),
 						bounds.X, bounds.Y + 2, bounds.X, bounds.Y + bounds.Height - 2);
 				}
 				
-				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorButtonShadow),
+				g.DrawLine (ThemeEngine.Current.ResPool.GetPen (ThemeEngine.Current.ColorControlDark),
 					bounds.X + bounds.Width - 1, bounds.Y + 2 , bounds.X + bounds.Width - 1, bounds.Y + bounds.Height - 2);
 			}
 			

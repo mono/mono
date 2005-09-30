@@ -897,7 +897,7 @@ namespace System.Windows.Forms {
 			if (add_hscroll && add_vscroll) {
 				Rectangle corner = new Rectangle (hbar.Right, vbar.Bottom, vbar.Width, hbar.Height);
 				if (clip.IntersectsWith (corner))
-					dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorButtonFace), corner);
+					dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorControl), corner);
 			}
 		}
 
@@ -1030,7 +1030,7 @@ namespace System.Windows.Forms {
 		private void DrawSelectionAndFocus(TreeNode node, Graphics dc, Rectangle r)
 		{
 			if ((!HideSelection || Focused) && SelectedNode == node)
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHilight), r);
+				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (ThemeEngine.Current.ColorHighlight), r);
 			else
 				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (node.BackColor), r);
 			if (Focused && focused_node == node)
@@ -1052,7 +1052,7 @@ namespace System.Windows.Forms {
 			if (node.NodeFont == null)
 				font = Font;
 			Color text_color = ((Focused || !HideSelection) && SelectedNode == node ?
-					ThemeEngine.Current.ColorHilightText : node.ForeColor);
+					ThemeEngine.Current.ColorHighlightText : node.ForeColor);
 			dc.DrawString (node.Text, font,
 					ThemeEngine.Current.ResPool.GetSolidBrush (text_color),
 					r, format);

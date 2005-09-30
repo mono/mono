@@ -1802,6 +1802,9 @@ namespace System.Windows.Forms {
 			return true;
 		}
 		
+		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect) {
+			throw new NotImplementedException();
+		}
 		#endregion
 		
 		#region System information

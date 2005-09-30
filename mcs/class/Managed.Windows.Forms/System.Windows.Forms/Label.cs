@@ -98,7 +98,7 @@ namespace System.Windows.Forms
 			SetUseMnemonic (UseMnemonic);
 			flat_style = FlatStyle.Standard;
 
-			BackColor = ThemeEngine.Current.ColorButtonFace;
+			BackColor = ThemeEngine.Current.ColorControl;
 			ForeColor = ThemeEngine.Current.ColorWindowText;
 
 			CalcPreferredHeight ();

@@ -21,13 +21,15 @@
 //
 // Authors:
 //	Jordi Mas i Hernandez, jordi@ximian.com
+//	Peter Dennis Bartok, pbartok@novell.com
 //
 
 
+using System.Collections;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Collections;
+using System.Reflection;
 
 namespace System.Windows.Forms
 {
@@ -89,6 +91,20 @@ namespace System.Windows.Forms
 		protected Color defaultWindowBackColor;
 		protected Color defaultWindowForeColor;		
 		internal SystemResPool ResPool = new SystemResPool ();
+		private Type system_colors = Type.GetType("System.Drawing.SystemColors, System.Drawing");
+
+		private void SetSystemColors(string name, Color value) {
+			if (system_colors != null) {
+				MethodInfo update;
+
+				system_colors.GetField(name, System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).SetValue(null, value);
+				update = system_colors.GetMethod("UpdateColors", BindingFlags.Static | BindingFlags.NonPublic);
+				if (update != null) {
+					update.Invoke(null, null);
+				}
+			}
+		}
+
 
 		/* OS Feature support */
 		public abstract Version Version {
@@ -96,112 +112,144 @@ namespace System.Windows.Forms
 		}
 
 		/* Default properties */		
-		public virtual Color ColorScrollbar {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_SCROLLBAR);}
+		public virtual Color ColorScrollBar {
+			get { return SystemColors.ScrollBar;}
+			set { SetSystemColors("scroll_bar", value); }
 		}
 
-		public virtual Color ColorBackground {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BACKGROUND);}
+		public virtual Color ColorDesktop {
+			get { return SystemColors.Desktop;}
+			set { SetSystemColors("desktop", value); }
 		}
 
-		public virtual Color ColorActiveTitle {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_ACTIVECAPTION);}
+		public virtual Color ColorActiveCaption {
+			get { return SystemColors.ActiveCaption;}
+			set { SetSystemColors("active_caption", value); }
 		}
 
-		public virtual Color ColorInactiveTitle {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTION);}
+		public virtual Color ColorInactiveCaption {
+			get { return SystemColors.InactiveCaption;}
+			set { SetSystemColors("inactive_caption", value); }
 		}
 
 		public virtual Color ColorMenu {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_MENU);}
+			get { return SystemColors.Menu;}
+			set { SetSystemColors("menu", value); }
 		}
 
 		public virtual Color ColorWindow {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_WINDOW);}
+			get { return SystemColors.Window;}
+			set { SetSystemColors("window", value); }
 		}
 
 		public virtual Color ColorWindowFrame {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_WINDOWFRAME);}
+			get { return SystemColors.WindowFrame;}
+			set { SetSystemColors("window_frame", value); }
 		}
 
 		public virtual Color ColorMenuText {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_MENUTEXT);}
+			get { return SystemColors.MenuText;}
+			set { SetSystemColors("menu_text", value); }
 		}
 
 		public virtual Color ColorWindowText {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_WINDOWTEXT);}
+			get { return SystemColors.WindowText;}
+			set { SetSystemColors("window_text", value); }
 		}
 
-		public virtual Color ColorTitleText {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_CAPTIONTEXT);}
+		public virtual Color ColorActiveCaptionText {
+			get { return SystemColors.ActiveCaptionText;}
+			set { SetSystemColors("active_caption_text", value); }
 		}
 
 		public virtual Color ColorActiveBorder {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_ACTIVEBORDER);}
+			get { return SystemColors.ActiveBorder;}
+			set { SetSystemColors("active_border", value); }
 		}
 
 		public virtual Color ColorInactiveBorder{
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INACTIVEBORDER);}
+			get { return SystemColors.InactiveBorder;}
+			set { SetSystemColors("inactive_border", value); }
 		}
 
-		public virtual Color ColorAppWorkSpace {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_APPWORKSPACE);}
+		public virtual Color ColorAppWorkspace {
+			get { return SystemColors.AppWorkspace;}
+			set { SetSystemColors("app_workspace", value); }
 		}
 
-		public virtual Color ColorHilight {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHT);}
+		public virtual Color ColorHighlight {
+			get { return SystemColors.Highlight;}
+			set { SetSystemColors("highlight", value); }
 		}
 
-		public virtual Color ColorHilightText {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_HIGHLIGHTTEXT);}
+		public virtual Color ColorHighlightText {
+			get { return SystemColors.HighlightText;}
+			set { SetSystemColors("highlight_text", value); }
 		}
 
-		public virtual Color ColorButtonFace {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNFACE);}
+		public virtual Color ColorControl {
+			get { return SystemColors.Control;}
+			set { SetSystemColors("control", value); }
 		}
 
-		public virtual Color ColorButtonShadow {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNSHADOW);}
+		public virtual Color ColorControlDark {
+			get { return SystemColors.ControlDark;}
+			set { SetSystemColors("control_dark", value); }
 		}
 
 		public virtual Color ColorGrayText {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_GRAYTEXT);}
+			get { return SystemColors.GrayText;}
+			set { SetSystemColors("gray_text", value); }
 		}
 
-		public virtual Color ColorButtonText {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNTEXT);}
+		public virtual Color ColorControlText {
+			get { return SystemColors.ControlText;}
+			set { SetSystemColors("control_text", value); }
 		}
 
-		public virtual Color ColorInactiveTitleText {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT);}
+		public virtual Color ColorInactiveCaptionText {
+			get { return SystemColors.InactiveCaptionText;}
+			set { SetSystemColors("inactive_caption_text", value); }
 		}
 
-		public virtual Color ColorButtonHilight {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_BTNHIGHLIGHT);}
+		public virtual Color ColorControlLight {
+			get { return SystemColors.ControlLight;}
+			set { SetSystemColors("control_light", value); }
 		}
 
-		public virtual Color ColorButtonDkShadow {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_3DDKSHADOW);}
+		public virtual Color ColorControlDarkDark {
+			get { return SystemColors.ControlDarkDark;}
+			set { SetSystemColors("control_dark_dark", value); }
 		}
 
-		public virtual Color ColorButtonLight {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_3DLIGHT);}
+		public virtual Color ColorControlLightLight {
+			get { return SystemColors.ControlLightLight;}
+			set { SetSystemColors("control_light_light", value); }
 		}
 
 		public virtual Color ColorInfoText {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INFOTEXT);}
+			get { return SystemColors.InfoText;}
+			set { SetSystemColors("info_text", value); }
 		}
 
-		public virtual Color ColorInfoWindow {
-			get {return GetColor (XplatUIWin32.GetSysColorIndex.COLOR_INFOBK);}
+		public virtual Color ColorInfo {
+			get { return SystemColors.Info;}
+			set { SetSystemColors("info", value); }
+		}
+
+		public virtual Color ColorHotTrack {
+			get { return SystemColors.HotTrack;}
+			set { SetSystemColors("hot_track", value);}
 		}
 
 		public virtual Color DefaultControlBackColor {
-			get { return ColorButtonFace; }
+			get { return ColorControl; }
+			set { ColorControl = value; }
 		}
 
 		public virtual Color DefaultControlForeColor {
-			get { return ColorButtonText; }
+			get { return ColorControlText; }
+			set { ColorControlText = value; }
 		}
 
 		public virtual Font DefaultFont {

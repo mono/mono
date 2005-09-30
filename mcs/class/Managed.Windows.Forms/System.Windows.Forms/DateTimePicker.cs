@@ -53,8 +53,8 @@ namespace System.Windows.Forms {
 		#region Local variables
 		
 		protected static readonly Color DefaultMonthBackColor = ThemeEngine.Current.ColorWindow;
-		protected static readonly Color DefaultTitleBackColor = ThemeEngine.Current.ColorActiveTitle;
-		protected static readonly Color DefaultTitleForeColor = ThemeEngine.Current.ColorTitleText;
+		protected static readonly Color DefaultTitleBackColor = ThemeEngine.Current.ColorActiveCaption;
+		protected static readonly Color DefaultTitleForeColor = ThemeEngine.Current.ColorActiveCaptionText;
 		protected static readonly Color DefaultTrailingForeColor = Color.Gray;
 		
 		internal MonthCalendar			month_calendar;

@@ -131,8 +131,8 @@ namespace System.Windows.Forms {
 			show_today = true;
 			show_today_circle = true;
 			show_week_numbers = false;
-			title_back_color = ThemeEngine.Current.ColorActiveTitle;
-			title_fore_color = ThemeEngine.Current.ColorTitleText;
+			title_back_color = ThemeEngine.Current.ColorActiveCaption;
+			title_fore_color = ThemeEngine.Current.ColorActiveCaptionText;
 			today_date_set = false;
 			trailing_fore_color = Color.Gray;
 			

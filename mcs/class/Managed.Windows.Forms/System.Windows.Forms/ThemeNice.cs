@@ -267,7 +267,7 @@ namespace System.Windows.Forms
 				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( LightColor ),
 						    e.Bounds.X, e.Bounds.Y, e.Bounds.X + e.Bounds.Width, e.Bounds.Y );
 				
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( ThemeEngine.Current.ColorButtonHilight ),
+				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( ThemeEngine.Current.ColorControlLight ),
 						    e.Bounds.X, e.Bounds.Y + 1, e.Bounds.X + e.Bounds.Width, e.Bounds.Y + 1 );
 				
 				return;
@@ -286,7 +286,7 @@ namespace System.Windows.Forms
 				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( LightColor ),
 						    rect.X, rect.Y , rect.X, rect.Y + rect.Height );
 				
-				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( ThemeEngine.Current.ColorButtonHilight ),
+				e.Graphics.DrawLine( ThemeEngine.Current.ResPool.GetPen( ThemeEngine.Current.ColorControlLight ),
 						    rect.X + 1, rect.Y , rect.X + 1, rect.Y + rect.Height );
 			}
 			
@@ -967,7 +967,7 @@ namespace System.Windows.Forms
 			
 			if ( ( state & ButtonState.Checked ) != 0 )
 			{
-				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorButtonLight, ColorButtonHilight ), rectangle );
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControlLightLight, ColorControlLight ), rectangle );
 			}
 			
 			if ( ( state & ButtonState.Flat ) != 0 )
@@ -984,7 +984,7 @@ namespace System.Windows.Forms
 				}
 				else
 				{
-//					CPDrawBorder3D( graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorButtonFace );
+//					CPDrawBorder3D( graphics, rectangle, Border3DStyle.Raised, Border3DSide.Left | Border3DSide.Top | Border3DSide.Right | Border3DSide.Bottom, ColorControl );
 				}
 			}
 			
