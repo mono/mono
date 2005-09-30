@@ -1892,9 +1892,10 @@ namespace Microsoft.JScript {
 			for (i = 0; i < n; i++) {
 				e = exprs [i];
 				if (e is Exp)
-					r &= ((Exp) e).Resolve (context, true);
-				else
-					r &= ((AST) e).Resolve (context);
+					if (e is Assign)
+						r &= ((Assign) e).Resolve (context);
+					else
+						r &= ((Exp) e).Resolve (context, true);
 			}
 			e = exprs [n];
 			if (e is Exp)

@@ -1,3 +1,9 @@
+2005-09-30  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* expression.cs (Expression::Resolve): check if we have an
+	assigment in a chain of expressions and stms, it fixes
+	#75801, and give us 660 more successful tests.
+
 2005-09-13  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* SemanticAnalyser.cs: Add field assemblies. Run now receives the
