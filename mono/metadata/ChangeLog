@@ -1,3 +1,8 @@
+2005-09-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (ves_icall_System_Threading_Thread_Abort): Handle 
+	ThreadState_Stopped as well. Fixes #76047.
+
 2005-09-29  Martin Baulig  <martin@ximian.com>
 
 	* class.c
