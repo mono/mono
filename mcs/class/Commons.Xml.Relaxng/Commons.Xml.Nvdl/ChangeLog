@@ -1,3 +1,8 @@
+2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
+
+	* NvdlXsdSupport.cs : related fix to r51030; XmlSchema.Read() now does
+	  not consume EndElement.
+
 2005-09-25  Atsushi Enomoto <atsushi@ximian.com>
 
 	* NvdlValidationProvider.cs : GetSchemaXmlStream() should take NVDL

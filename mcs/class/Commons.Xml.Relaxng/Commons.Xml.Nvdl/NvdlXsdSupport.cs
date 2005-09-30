@@ -15,9 +15,15 @@ namespace Commons.Xml.Nvdl
 				return null;
 			ArrayList al = new ArrayList ();
 			while (!reader.EOF) {
+				if (reader.NodeType != XmlNodeType.Element) {
+					reader.Read ();
+					continue;
+				}
+				reader.MoveToContent ();
 				XmlSchema xs = XmlSchema.Read (reader, null);
 				xs.Compile (null, config.XmlResolverInternal);
 				al.Add (xs);
+				reader.Read ();
 			}
 			return new NvdlXsdValidatorGenerator (al.ToArray (typeof (XmlSchema)) as XmlSchema []);
 		}
