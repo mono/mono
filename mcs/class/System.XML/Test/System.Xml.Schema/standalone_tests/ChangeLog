@@ -1,3 +1,7 @@
+2005-09-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xsdtest.cs : noResolver option.
+
 2005-05-08  Andrew Skiba  <andrews@mainsoft.com>
 
 	* Makefile : track the timestamp so tar does not run when not needed

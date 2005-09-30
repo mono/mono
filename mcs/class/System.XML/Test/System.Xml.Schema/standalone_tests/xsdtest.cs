@@ -102,6 +102,8 @@ USAGE: mono xsdtest.exe options target-pattern
 	{
 		string basePath = @"xsd-test-suite" + SEP;
 		XmlDocument doc = new XmlDocument ();
+		if (noResolver)
+			doc.XmlResolver = null;
 		doc.Load (basePath + subdir + SEP + "tests-all.xml");
 
 		if (reportAsXml) {
@@ -130,7 +132,7 @@ USAGE: mono xsdtest.exe options target-pattern
 				if (noResolver)
 					sxr.XmlResolver = null;
 				schema = XmlSchema.Read (sxr, null);
-				schema.Compile (noValidate ? noValidateHandler : null);
+				schema.Compile (noValidate ? noValidateHandler : null, noResolver ? null : new XmlUrlResolver ());
 				if (!isValidSchema && !noValidate) {
 					Report (schemaFile, true, "should fail", "");
 					continue;
@@ -169,6 +171,7 @@ USAGE: mono xsdtest.exe options target-pattern
 			try {
 				XmlTextReader ixtr = new XmlTextReader (
 					Path.Combine (basePath, instanceFile));
+				xvr = ixtr;
 #if NET_2_0
 				if (version2) {
 					XmlReaderSettings settings =
