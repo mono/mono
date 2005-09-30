@@ -1,6 +1,11 @@
+2005-09-30  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.sources: Added X11DesktopColors.cs
+	* SWF.csproj: Updated
+
 2005-09-28 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
-        * System.Windows.Forms_test.dll.sources : Added Common.cs
+	* System.Windows.Forms_test.dll.sources : Added Common.cs
 
 2005-09-27  Kornél Pál  <kornelpal@hotmail.com>
 

@@ -909,6 +909,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "System.Windows.Forms\IRootGridEntry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "System.Windows.Forms\ItemActivation.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1340,6 +1345,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\PropertyGrid.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\PropertyGridCommands.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -1855,6 +1865,11 @@
                 />
                 <File
                     RelPath = "System.Windows.Forms\Win32DnD.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "System.Windows.Forms\X11DesktopColors.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
