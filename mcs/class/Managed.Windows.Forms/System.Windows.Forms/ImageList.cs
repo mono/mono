@@ -445,6 +445,8 @@ namespace System.Windows.Forms
 				if (value == null)
 					throw new ArgumentNullException("value");
 
+				this.handleCreated = true;
+
 				bitmap = new Bitmap(width = this.imageSize.Width, height = this.imageSize.Height, PixelFormat.Format32bppArgb);
 				graphics = Graphics.FromImage(bitmap);
 				graphics.DrawIcon(value, new Rectangle(0, 0, width, height));
