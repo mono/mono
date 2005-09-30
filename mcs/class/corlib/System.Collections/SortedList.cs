@@ -34,6 +34,7 @@
 using System;
 using System.Collections;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
@@ -43,7 +44,9 @@ namespace System.Collections {
 	///  and by index.
 	/// </summary>
 	[Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	public class SortedList : IDictionary, ICollection,
 	                          IEnumerable, ICloneable {
 

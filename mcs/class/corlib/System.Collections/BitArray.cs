@@ -31,8 +31,12 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Collections {
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	[Serializable]
 	public sealed class BitArray : ICollection, ICloneable {
 		int [] _array;

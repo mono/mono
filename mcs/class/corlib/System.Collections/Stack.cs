@@ -30,9 +30,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Collections {
+
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	[Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class Stack : ICollection, IEnumerable, ICloneable {
 
 		// properties

@@ -31,9 +31,13 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	[Serializable]
 	public abstract class CollectionBase : IList, ICollection, IEnumerable {
 
@@ -60,8 +64,33 @@ namespace System.Collections {
 		}
 		
 		// Protected Instance Constructors
-		protected CollectionBase() { 
+		protected CollectionBase()
+		{ 
 		}
+
+#if NET_2_0
+		protected CollectionBase (int capacity)
+		{
+			list = new ArrayList (capacity);
+		}
+
+		public int Capacity {
+			get {
+				if (list == null)
+					list = new ArrayList ();
+				
+				return list.Capacity;
+			}
+
+			set {
+				if (list == null)
+					list = new ArrayList ();
+							      
+				list.Capacity = value;
+			}
+		}
+			
+#endif
 		
 		// Protected Instance Properties
 		protected ArrayList InnerList {

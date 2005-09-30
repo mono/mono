@@ -30,12 +30,14 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Collections
 {
 	[Serializable]
 	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 #if NET_2_0
+	[ComVisible(true)]
 	[Obsolete ("Please use StringComparer instead.")]
 #endif
 	public class CaseInsensitiveHashCodeProvider : IHashCodeProvider

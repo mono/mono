@@ -1,3 +1,15 @@
+2005-09-29  Miguel de Icaza  <miguel@novell.com>
+
+	* Add ComVisible(true) to all the classes that needed it.
+
+	* Removed documentation from DictionaryBase.cs and moved it to
+	Monodoc. 
+
+	* ArrayList.cs: Fixed signature for constructor, parameter names
+	are normative.
+
+	* CollectionBase.cs: Add a couple of missing methods. 
+
 2005-09-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Hashtable.cs : SyncHashtable.GetEnumerator() returned keys instead

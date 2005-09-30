@@ -31,11 +31,14 @@
 //
 
 using System.Globalization;
+using System.Runtime.InteropServices;
 
 namespace System.Collections
 {
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	[Serializable]
-	[MonoTODO ("Fix serialization compatibility with MS.NET")]
 	public class CaseInsensitiveComparer : IComparer
 	{
 		private static CaseInsensitiveComparer defaultComparer = new CaseInsensitiveComparer ();

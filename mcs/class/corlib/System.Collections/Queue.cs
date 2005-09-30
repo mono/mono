@@ -32,9 +32,13 @@
 
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	[Serializable]
 	public class Queue : ICollection, IEnumerable, ICloneable {
 

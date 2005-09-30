@@ -49,9 +49,13 @@
 
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace System.Collections 
 {
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	[Serializable]
 	public class ArrayList
 		: IList, ICloneable, ICollection, IEnumerable 
@@ -2574,25 +2578,25 @@ namespace System.Collections
 		/// Initializes a new instance of the <see cref="ArrayList"/> class that is empty and
 		/// has the specified initial capacity.
 		/// </summary>
-		/// <param name="initialCapacity">
+		/// <param name="capacity">
 		/// The number of elements that hte new list is initially capable of storing.
 		/// </param>
 		/// <exception cref="ArgumentOutOfRangeException">
 		/// The <c>capacity</c> is less than zero.
 		/// </exception>
-		public ArrayList(int initialCapacity) 
+		public ArrayList(int capacity) 
 		{
-			if (initialCapacity < 0) 
+			if (capacity < 0) 
 			{
-				throw new ArgumentOutOfRangeException("initialCapacity",
-					initialCapacity, "The initial capacity can't be smaller than zero.");
+				throw new ArgumentOutOfRangeException("capacity",
+					capacity, "The initial capacity can't be smaller than zero.");
 			}
 
-			if (initialCapacity == 0) 
+			if (capacity == 0) 
 			{
-				initialCapacity = DefaultInitialCapacity;
+				capacity = DefaultInitialCapacity;
 			}
-			_items = new object[initialCapacity];
+			_items = new object [capacity];
 		}
 
 		/// <summary>

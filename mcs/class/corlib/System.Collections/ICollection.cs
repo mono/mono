@@ -32,9 +32,14 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
+#if NET_2_0
+	[ComVisible(true)]
+#endif
+		
 	public interface ICollection : IEnumerable {
 		int Count { get; }
 

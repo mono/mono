@@ -34,10 +34,14 @@ using System.Runtime.Serialization;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 #endif
 
 namespace System.Collections {
 
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	[Serializable]
 	public class Hashtable : IDictionary, ICollection, 
 		IEnumerable, ICloneable, ISerializable, IDeserializationCallback

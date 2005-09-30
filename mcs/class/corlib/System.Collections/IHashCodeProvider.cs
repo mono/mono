@@ -32,11 +32,13 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Collections {
 
 #if NET_2_0
 	[Obsolete ("Please use IEqualityComparer instead.")]
+	[ComVisible(true)]
 #endif
 	public interface IHashCodeProvider {
 		int GetHashCode (object obj);
