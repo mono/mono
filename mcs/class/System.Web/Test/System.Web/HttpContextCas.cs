@@ -109,8 +109,14 @@ namespace MonoCasTests.System.Web {
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, UnmanagedCode = true)]
 		[ExpectedException (typeof (SecurityException))]
+		[Ignore ("occurs only in certain conditions - removed in 2.0")]
 		public void Application_Deny_UnmanagedCode ()
 		{
+			// The SecurityException doesn't always occurs (e.g. CAS unit tests
+			// works for HttpContextCas alone but will fail if the whole suit
+			// is executed). This is because the value is cached and may be 
+			// created differently (without the check). This is _probably_ why
+			// this check has been removed in 2.0.
 			Assert.IsNotNull (context.Application, "Application");
 		}
 

@@ -42,7 +42,7 @@ namespace MonoCasTests.System.Web {
 	class BoolHttpBrowserCapabilities : HttpBrowserCapabilities {
 
 		public override string this [string key] {
-			get { return "true"; }
+			get { return (key == "platform") ? "Win32" : "true"; }
 		}
 	}
 
@@ -111,7 +111,9 @@ namespace MonoCasTests.System.Web {
 		public void TypeProperties_Deny_Unrestricted ()
 		{
 			HttpBrowserCapabilities cap = new StringHttpBrowserCapabilities ();
-			Assert.IsNull (cap.TagWriter, "TagWriter");
+			Type t = cap.TagWriter;
+			// note: right now the value is hardcoded in Mono, i.e. it doesn't come from the ini file
+			Assert.IsTrue (((t == null) || (t == typeof (HtmlTextWriter))), "TagWriter");
 		}
 
 		[Test]

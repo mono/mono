@@ -1,3 +1,12 @@
+2005-09-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpBrowserCapabilitiesCas.cs: Fixed tests case to work with both
+	values returned by Mono and MS runtimes.
+	* HttpContextCas.cs: Ignore the Application_Deny_UnmanagedCode test 
+	case. This check was removed in 2.0 and seems to be inconsistent in
+	previous versions (i.e. depends on the execution order which triggers
+	the initialization of the HttpRuntime).
+
 2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpContextCas.cs: Mono throws ArgumentNullException for RewritePath
