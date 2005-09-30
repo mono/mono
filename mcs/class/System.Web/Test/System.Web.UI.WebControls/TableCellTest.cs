@@ -357,6 +357,28 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (null, tc.ID, "#01");
 			page.Controls.Add (tc);
 			Assert.AreEqual (null, tc.ID, "#02");
+			Assert.IsNotNull (tc.UniqueID, "#03");
+			Assert.IsNull (tc.ID, "#04");
+		}
+
+		[Test]
+		public void PropertyOrControls ()
+		{
+			TestTableCell tc = new TestTableCell ();
+			tc.Controls.Add (new LiteralControl ("hola"));
+			tc.StateBag ["Text"] = "adios";
+			string str = tc.Render ();
+			Assert.AreEqual (1, tc.Controls.Count, "#01");
+			Assert.IsTrue (-1 != str.IndexOf ("hola"), "#02");
+			Assert.IsTrue (-1 == str.IndexOf ("adios"), "#03");
+
+			tc = new TestTableCell ();
+			tc.StateBag ["Text"] = "adios";
+			str = tc.Render ();
+			Assert.AreEqual (0, tc.Controls.Count, "#04");
+			Assert.IsTrue (-1 == str.IndexOf ("hola"), "#05");
+			Assert.IsTrue (-1 != str.IndexOf ("adios"), "#06");
 		}
 	}
 }
+

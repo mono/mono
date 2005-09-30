@@ -34,6 +34,7 @@ using System.Collections;
 using System.Data;
 using System.IO;
 using System.Globalization;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -110,6 +111,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void InitializeCell () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -156,7 +158,7 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			Assert.AreEqual (
 				"<table border=\"0\" id=\"sucker\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
-				"</tr><tr><td><a>Edit</a></td><td><input name type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" + 
+				"</tr><tr><td><a>Edit</a></td><td><input name=\"sucker:_ctl1:_ctl0\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" + 
 				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
 				"</tr></table>", markup, "I2");
 #endif
@@ -164,6 +166,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NotDotNet")]
 		public void ThisIsADGTest () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -213,13 +216,22 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			Assert.AreEqual (
 				"<table border=\"0\" id=\"sucker_tbl\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
-				"</tr><tr><td><a>Edit</a></td><td><input name type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" + 
+				"</tr><tr><td><a>Edit</a></td><td><input name=\"sucker:_ctl1:_ctl0\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" + 
 				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
 				"</tr></table>", markup, "I2");
 #endif
 		}
 
+		static void GetHierarchy (ControlCollection coll, int level, StringBuilder sb)
+		{
+			foreach (Control c in coll) {
+				sb.AppendFormat ("{0}{1}\n", new string (' ', 2 * level), c.GetType ());
+				GetHierarchy (c.Controls, level + 1, sb);
+			}
+		}
+
 		[Test]
+		[Category ("NotDotNet")]
 		public void InitializeEditCell () {
 			DataGridTest	p = new DataGridTest ();
 			DataTable	table = new DataTable ();
@@ -254,6 +266,19 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.CreateControls (true);
 			p.ID = "sucker";
 
+			StringBuilder sb = new StringBuilder ();
+			GetHierarchy (p.Controls, 0, sb);
+			string h = sb.ToString ();
+			int x = h.IndexOf (".TextBox");
+			// These are from the BoundColumns
+			Assert.IsTrue (x != -1, "textbox1");
+			x = h.IndexOf (".TextBox", x + 1);
+			Assert.IsTrue (x != -1, "textbox2");
+			x = h.IndexOf (".TextBox", x + 1);
+			Assert.IsTrue (x != -1, "textbox3");
+			x = h.IndexOf (".TextBox", x + 1);
+			Assert.IsTrue (x == -1, "textbox-end");
+
 			markup = ControlMarkup (p.Controls[0]);
 			markup = markup.Replace ("\t", "");
 			markup = markup.Replace ("\r", "");
@@ -275,11 +300,11 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			Assert.AreEqual (
 				"<table border=\"0\" id=\"sucker\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
-				"</tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name type=\"submit\" value=\"Refresh\" />&nbsp;" +
-				"<input name type=\"submit\" value=\"Abbrechen\" /></td>" +
-				"<td><input name=\"sucker:_ctl2:_ctl0\" type=\"text\" value=\"1\" /></td>" +
-				"<td><input name=\"sucker:_ctl2:_ctl1\" type=\"text\" value=\"2\" /></td>" +
-				"<td><input name=\"sucker:_ctl2:_ctl2\" type=\"text\" value=\"3\" /></td>" + 
+				"</tr><tr><td><a>Update</a>&nbsp;<a>Cancel</a></td><td><input name=\"sucker:_ctl1:_ctl0\" type=\"submit\" value=\"Refresh\" />&nbsp;" +
+				"<input name=\"sucker:_ctl1:_ctl1\" type=\"submit\" value=\"Abbrechen\" /></td>" +
+				"<td><input name=\"sucker:_ctl1:_ctl2\" type=\"text\" value=\"1\" /></td>" +
+				"<td><input name=\"sucker:_ctl1:_ctl3\" type=\"text\" value=\"2\" /></td>" +
+				"<td><input name=\"sucker:_ctl1:_ctl4\" type=\"text\" value=\"3\" /></td>" + 
 				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
 				"</tr></table>", markup, "I2");
 #endif
@@ -328,7 +353,6 @@ namespace MonoTests.System.Web.UI.WebControls
 			markup = markup.Replace ("\r", "");
 			markup = markup.Replace ("\n", "");
 
-			Console.WriteLine ("Markup:>{0}<", markup);
 			Assert.AreEqual (2, p.Columns.Count, "I1");
 			Assert.AreEqual (
 				"<table border=\"0\" id=\"sucker\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +

@@ -3,6 +3,7 @@
 //
 // Author:
 //	Jordi Mas i Hernandez (jordi@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 
 //
@@ -109,6 +110,19 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, sw.ToString().IndexOf ("value=\"Hello\"") != -1, "A4");
 			Assert.AreEqual (true, sw.ToString().IndexOf ("<input") != -1, "A5");
 			Assert.AreEqual (true, sw.ToString().IndexOf ("type=\"submit\"") != -1, "A6");
+		}
+
+		[Test]
+		public void IgnoresChildren ()
+		{
+			Button b = new  Button ();
+			b.Controls.Add (new LiteralControl ("hola"));
+			Assert.AreEqual (1, b.Controls.Count, "controls");
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter tw = new HtmlTextWriter (sw);
+			b.RenderControl (tw);
+			string str = tw.ToString ();
+			Assert.AreEqual (-1, str.IndexOf ("hola"), "hola");
 		}
 	}
 }

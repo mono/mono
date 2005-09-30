@@ -1,5 +1,17 @@
 2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* TableCellTest.cs: the "Text" viewstate value does not control whether
+	we render the children or not.
+
+	* EditCommandColumnTest.cs: some tests do not pass on MS rutime for me,
+	so I've made them NotDotNet and fixed all the problems. Also added tests
+	to ensure that the TextBox's form the BoundColumns are present in the
+	hierarchy, as before we did nothing there.
+	
+	* ButtonTest.cs: test to show that a Button's children are not rendered.
+
+2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* PagedDataSourceTest.cs: more tests.
 
 2005-09-28 Gonzalo Paniagua Javier <gonzalo@ximian.com>
