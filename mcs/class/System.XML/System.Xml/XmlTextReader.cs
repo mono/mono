@@ -101,19 +101,27 @@ namespace System.Xml
 
 		public XmlTextReader (string url, XmlNameTable nt)
 		{
-			Uri uri = resolver.ResolveUri (null, url);
-			string uriString = uri != null ? uri.ToString () : String.Empty;
-			Stream s = resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
+			string uriString;
+			Stream stream = GetStreamFromUrl (url, out uriString);
 			XmlParserContext ctx = new XmlParserContext (nt,
 				new XmlNamespaceManager (nt),
 				String.Empty,
 				XmlSpace.None);
-			this.InitializeContext (uriString, ctx, new XmlStreamReader (s), XmlNodeType.Document);
+			this.InitializeContext (uriString, ctx, new XmlStreamReader (stream), XmlNodeType.Document);
 		}
 
 		public XmlTextReader (TextReader input, XmlNameTable nt)
 			: this (String.Empty, input, nt)
 		{
+		}
+
+		// This is used in XmlReader.Create() to indicate that string
+		// argument is uri, not an xml fragment.
+		internal XmlTextReader (bool dummy, string url, XmlNodeType fragType, XmlParserContext context)
+		{
+			string uriString;
+			Stream stream = GetStreamFromUrl (url, out uriString);
+			this.InitializeContext (uriString, context, new XmlStreamReader (stream), fragType);
 		}
 
 		public XmlTextReader (Stream xmlFragment, XmlNodeType fragType, XmlParserContext context)
@@ -150,6 +158,13 @@ namespace System.Xml
 		internal XmlTextReader (string url, TextReader fragment, XmlNodeType fragType, XmlParserContext context)
 		{
 			InitializeContext (url, context, fragment, fragType);
+		}
+
+		private Stream GetStreamFromUrl (string url, out string absoluteUriString)
+		{
+			Uri uri = resolver.ResolveUri (null, url);
+			absoluteUriString = uri != null ? uri.ToString () : String.Empty;
+			return resolver.GetEntity (uri, null, typeof (Stream)) as Stream;
 		}
 
 		#endregion

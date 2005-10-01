@@ -1,3 +1,9 @@
+2005-10-01  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs, XmlTextReader.cs, XmlTextReader2.cs :
+	 XmlReader.Create() with string url argument are not working because
+	 of incorrect choice of the .ctor().
+
 2005-09-28  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNodeReaderImpl.cs : when the source node was not a document and

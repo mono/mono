@@ -235,7 +235,7 @@ namespace System.Xml
 			return
 				level == ConformanceLevel.Fragment ?
 				XmlNodeType.Element :
-				XmlNodeType.Element;
+				XmlNodeType.Document;
 		}
 
 		public static XmlReader Create (Stream stream)
@@ -301,7 +301,9 @@ namespace System.Xml
 				settings = new XmlReaderSettings ();
 			if (context == null)
 				context = PopulateParserContext (settings, url);
-			return CreateCustomizedTextReader (new XmlTextReader (url, GetNodeType (settings), context), settings);
+			return CreateCustomizedTextReader (
+				new XmlTextReader (true, url, GetNodeType (settings), context),
+				settings);
 		}
 
 		[MonoTODO ("ConformanceLevel")]

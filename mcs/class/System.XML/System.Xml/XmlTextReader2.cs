@@ -130,6 +130,11 @@ namespace System.Xml
 			source = new XmlTextReaderImpl (baseURI, xmlFragment, fragType, context);
 		}
 
+		internal XmlTextReader (bool dummy, string url, XmlNodeType fragType, XmlParserContext context)
+		{
+			source = new XmlTextReaderImpl (dummy, url, fragType, context);
+		}
+
 		private XmlTextReader (XmlTextReaderImpl entityContainer, bool insideAttribute)
 		{
 			source = entityContainer;

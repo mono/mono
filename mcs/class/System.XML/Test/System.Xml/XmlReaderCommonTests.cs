@@ -1429,5 +1429,19 @@ namespace MonoTests.System.Xml
 			xmlReader.Read ();
 			AssertEquals (String.Empty, xmlReader.ReadInnerXml ());
 		}
+
+#if NET_2_0
+		[Test]
+		public void CreateSimple ()
+		{
+			XmlReader xr = XmlReader.Create ("Test/XmlFiles/nested-dtd-test.xml");
+			xr.Read ();
+			AssertEquals ("#1", XmlNodeType.DocumentType, xr.NodeType);
+			xr.Read ();
+			AssertEquals ("#2", XmlNodeType.Whitespace, xr.NodeType);
+			xr.Read ();
+			AssertEquals ("#3", XmlNodeType.Element, xr.NodeType);
+		}
+#endif
 	}
 }
