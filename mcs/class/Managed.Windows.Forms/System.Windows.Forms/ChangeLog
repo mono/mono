@@ -1,3 +1,7 @@
+2005-10-01  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs: Include ComboBoxEdit flag for the edit item
+
 2005-10-01  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* X11DesktopColors.cs: Bow out gracefully if the Gtk libs cannot

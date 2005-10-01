@@ -1020,6 +1020,7 @@ namespace System.Windows.Forms
 					state |= DrawItemState.Focus;
 				}
 				
+				state |= DrawItemState.ComboBoxEdit;				
 				OnDrawItem (new DrawItemEventArgs (dc, Font, item_rect,
 							selected_index, state, ForeColor, BackColor));
 			}						
