@@ -1131,12 +1131,16 @@ namespace System.Windows.Forms
 		// Value Changed
 		private void HorizontalScrollEvent (object sender, EventArgs e)
 		{
-			if (multicolumn) {
-				LBoxInfo.top_item = listbox_info.page_size * hscrollbar_ctrl.Value;
-				LBoxInfo.last_item = LastVisibleItem ();
-			}
+			if (!multicolumn)
+				return;
+			int top_item = LBoxInfo.top_item;
+			int last_item = LBoxInfo.last_item;
+
+			LBoxInfo.top_item = listbox_info.page_size * hscrollbar_ctrl.Value;
+			LBoxInfo.last_item = LastVisibleItem ();
 			
-			base.Refresh ();
+			if (top_item != LBoxInfo.top_item || last_item != LBoxInfo.last_item)
+				base.Refresh ();
 		}
 
 		// Only returns visible points. The diference of with IndexFromPoint is that the rectangle
@@ -1839,10 +1843,14 @@ namespace System.Windows.Forms
 		// Value Changed
 		private void VerticalScrollEvent (object sender, EventArgs e)
 		{
+			int top_item = LBoxInfo.top_item;
+			int last_item = LBoxInfo.last_item;
+
 			LBoxInfo.top_item = /*listbox_info.page_size + */ vscrollbar_ctrl.Value;
 			LBoxInfo.last_item = LastVisibleItem ();
 
-			base.Refresh ();
+			if (top_item != LBoxInfo.top_item || last_item != LBoxInfo.last_item)
+				base.Refresh ();
 		}
 
 		#endregion Private Methods

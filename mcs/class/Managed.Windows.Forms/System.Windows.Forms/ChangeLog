@@ -1,5 +1,10 @@
 2005-09-30  Jackson Harper  <jackson@ximian.com>
 
+	* ListBox.cs: Don't do a full refresh unless some data has
+	actually changed.
+
+2005-09-30  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Make sure that the checkboxes size is factored in
 	even when not visible.
 
