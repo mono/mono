@@ -1,3 +1,8 @@
+2005-10-01  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* X11DesktopColors.cs: Bow out gracefully if the Gtk libs cannot
+	  be found
+
 2005-09-30  Jackson Harper  <jackson@ximian.com>
 
 	* ListBox.cs: Don't do a full refresh unless some data has

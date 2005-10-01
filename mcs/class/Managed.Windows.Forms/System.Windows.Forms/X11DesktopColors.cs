@@ -91,24 +91,34 @@ namespace System.Windows.Forms {
 					int		argc = 0;
 					string		argv = "";
 
-					gtk_init_check (out argc, argv);
-					dispmgr =  gdk_display_manager_get ();
-					gdkdisplay =  gdk_display_manager_get_default_display (dispmgr);
-					gtk_init_check (out argc, argv);
+					try {
+						gtk_init_check (out argc, argv);
+						dispmgr =  gdk_display_manager_get ();
+						gdkdisplay =  gdk_display_manager_get_default_display (dispmgr);
+						gtk_init_check (out argc, argv);
 
-					widget = gtk_invisible_new ();
-					gtk_widget_ensure_style (widget);
-					style_ptr = gtk_widget_get_style (widget);
+						widget = gtk_invisible_new ();
+						gtk_widget_ensure_style (widget);
+						style_ptr = gtk_widget_get_style (widget);
 
-					style = (GtkStyleStruct) Marshal.PtrToStructure (style_ptr, typeof (GtkStyleStruct));
-					
-					ThemeEngine.Current.ColorControl = ColorFromGdkColor (style.bg[0]);
-					ThemeEngine.Current.ColorControlText = ColorFromGdkColor (style.fg[0]);
-					ThemeEngine.Current.ColorControlDark = ColorFromGdkColor (style.dark[0]);
-					ThemeEngine.Current.ColorControlLight = ColorFromGdkColor (style.light[0]);
-					ThemeEngine.Current.ColorControlLightLight = ControlPaint.Light(ColorFromGdkColor (style.light[0]));
-					ThemeEngine.Current.ColorControlDarkDark = ControlPaint.Dark(ColorFromGdkColor (style.dark[0]));
-					Console.WriteLine("Gtk colorscheme read");
+						style = (GtkStyleStruct) Marshal.PtrToStructure (style_ptr, typeof (GtkStyleStruct));
+						
+						ThemeEngine.Current.ColorControl = ColorFromGdkColor (style.bg[0]);
+						ThemeEngine.Current.ColorControlText = ColorFromGdkColor (style.fg[0]);
+						ThemeEngine.Current.ColorControlDark = ColorFromGdkColor (style.dark[0]);
+						ThemeEngine.Current.ColorControlLight = ColorFromGdkColor (style.light[0]);
+						ThemeEngine.Current.ColorControlLightLight = ControlPaint.Light(ColorFromGdkColor (style.light[0]));
+						ThemeEngine.Current.ColorControlDarkDark = ControlPaint.Dark(ColorFromGdkColor (style.dark[0]));
+						Console.WriteLine("Gtk colorscheme read");
+					}
+
+					catch (DllNotFoundException) {
+						Console.WriteLine("Gtk not found (missing LD_LIBRARY_PATH to libgtk-x11-2.0.so?), using built-in colorscheme");
+					}
+
+					catch {
+						Console.WriteLine("Gtk colorscheme read failure, using built-in colorscheme");
+					}
 					break;
 				}
 
