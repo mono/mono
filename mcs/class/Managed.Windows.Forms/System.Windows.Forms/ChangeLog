@@ -1,3 +1,8 @@
+2005-09-30  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Make sure that the checkboxes size is factored in
+	even when not visible.
+
 2005-09-30  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* FileDialog.cs: Fix Jordi's build break

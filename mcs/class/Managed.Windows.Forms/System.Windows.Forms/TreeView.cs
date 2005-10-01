@@ -1088,8 +1088,9 @@ namespace System.Windows.Forms {
 
 			int ox = x;
 
-			if (visible && checkboxes) {
-				DrawNodeCheckBox (node, dc, ox, middle);
+			if (checkboxes) {
+				if (visible)
+					DrawNodeCheckBox (node, dc, ox, middle);
 				ox += 19;
 			}
 
