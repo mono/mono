@@ -345,5 +345,24 @@ namespace MonoTests.System.Xml
 			doc.LoadXml (xml);
 			doc.DocumentElement.Attributes [0].Value = "replaced";
 		}
+
+		[Test] // bug #76311
+		public void UpdateIDAttrValueAfterAppend ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<!DOCTYPE USS[<!ELEMENT USS EMPTY><!ATTLIST USS Id ID #REQUIRED>]><USS Id='foo'/>");
+			AssertNotNull ("#1", doc.SelectSingleNode ("id ('foo')"));
+			doc.DocumentElement.Attributes [0].Value = "bar";
+			AssertNull ("#2", doc.SelectSingleNode ("id ('foo')"));
+			AssertNotNull ("#3", doc.SelectSingleNode ("id ('bar')"));
+			doc.DocumentElement.Attributes [0].ChildNodes [0].Value = "baz";
+			// Tests below don't work fine under MS.NET
+//			AssertNull ("#4", doc.SelectSingleNode ("id ('bar')"));
+//			AssertNotNull ("#5", doc.SelectSingleNode ("id ('baz')"));
+			doc.DocumentElement.Attributes [0].AppendChild (doc.CreateTextNode ("baz"));
+			AssertNull ("#6", doc.SelectSingleNode ("id ('baz')"));
+//			AssertNull ("#6-2", doc.SelectSingleNode ("id ('bar')"));
+//			AssertNotNull ("#7", doc.SelectSingleNode ("id ('bazbaz')"));
+		}
 	}
 }

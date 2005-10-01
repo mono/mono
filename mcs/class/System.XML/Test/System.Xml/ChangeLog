@@ -1,5 +1,9 @@
 2005-10-01  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlAttributeTests.cs : test for bug #76311.
+
+2005-10-01  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReaderCommonTests.cs : added simple Create() test.
 
 2005-09-28  Atsushi Enomoto <atsushi@ximian.com>

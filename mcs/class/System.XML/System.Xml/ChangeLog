@@ -1,5 +1,10 @@
 2005-10-01  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlAttribute.cs, XmlDocument.cs : check id table updates when
+	  XmlAttribute.set_Value() was invoked. Fixed bug #76311.
+
+2005-10-01  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReader.cs, XmlTextReader.cs, XmlTextReader2.cs :
 	 XmlReader.Create() with string url argument are not working because
 	 of incorrect choice of the .ctor().

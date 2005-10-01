@@ -986,6 +986,14 @@ namespace System.Xml
 			nameTable.Add ("#significant-whitespace");
 		}
 
+		internal void CheckIdTableUpdate (XmlAttribute attr, string oldValue, string newValue)
+		{
+			if (idTable [oldValue] == attr) {
+				idTable.Remove (oldValue);
+				idTable [newValue] = attr;
+			}
+		}
+
 #if NET_2_0
 		public void Validate (ValidationEventHandler handler)
 		{

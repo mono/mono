@@ -226,6 +226,8 @@ namespace System.Xml
 			set {
 				if (this.IsReadOnly)
 					throw new ArgumentException ("Attempt to modify a read-only node.");
+				OwnerDocument.CheckIdTableUpdate (this, InnerText, value);
+
 				XmlNode textChild = FirstChild as XmlCharacterData;
 				if (textChild == null) {
 					this.RemoveAll ();
