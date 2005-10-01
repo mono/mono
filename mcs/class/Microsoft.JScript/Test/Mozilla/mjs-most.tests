@@ -91,8 +91,8 @@ ecma/Boolean/15.6.4.3-3.js
 # Invalid IL
 #ecma/Boolean/15.6.4.3.js
 ecma/Boolean/15.6.4.js
+ecma/Date/15.9.1.1-1.js
 # Invalid IL
-#ecma/Date/15.9.1.1-1.js
 #ecma/Date/15.9.1.1-2.js
 ecma/Date/15.9.2.1.js
 ecma/Date/15.9.2.2-1.js
@@ -249,10 +249,11 @@ ecma/Date/15.9.5.4-1.js
 # Invalid IL
 #ecma/Date/15.9.5.5.js
 #ecma/Date/15.9.5.6.js
-#ecma/Date/15.9.5.7.js
+ecma/Date/15.9.5.7.js
 #ecma/Date/15.9.5.8.js
 #ecma/Date/15.9.5.9.js
 ecma/Date/15.9.5.js
+# falls into an infinite loop
 #ecma/ExecutionContexts/10.1.3-1.js
 ecma/ExecutionContexts/10.1.3.js
 # Invalid IL
@@ -280,7 +281,7 @@ ecma/ExecutionContexts/10.1.4-10.js
 #ecma/ExecutionContexts/10.1.6.js
 # There is no Prototype class in the standard
 #ecma/ExecutionContexts/10.1.8-1.js
-# Invalid IL
+# Needs FunctionConstructor::CreateInstance
 #ecma/ExecutionContexts/10.1.8-2.js
 # Needs for in loops
 #ecma/ExecutionContexts/10.2.1.js
@@ -311,8 +312,8 @@ ecma/Expressions/11.12-3.js
 #ecma/Expressions/11.14-1.js
 #ecma/Expressions/11.2.1-1.js
 #ecma/Expressions/11.2.1-2.js
-#ecma/Expressions/11.2.1-3-n.js
-#ecma/Expressions/11.2.1-4-n.js
+ecma/Expressions/11.2.1-3-n.js
+ecma/Expressions/11.2.1-4-n.js
 #ecma/Expressions/11.2.1-5.js
 #ecma/Expressions/11.2.2-1-n.js
 ecma/Expressions/11.2.2-1.js
@@ -526,7 +527,7 @@ ecma/Math/15.8-2-n.js
 #ecma/Math/15.8.1.7-2.js
 #ecma/Math/15.8.1.8-1.js
 #ecma/Math/15.8.1.8-2.js
-#ecma/Math/15.8.1.8-3.js
+ecma/Math/15.8.1.8-3.js
 # Needs for in
 #ecma/Math/15.8.1.js
 # NotImplementedException from Binary:emit_access
@@ -1072,7 +1073,7 @@ js1_3/Boolean/boolean-001.js
 # Needs eval
 #js1_3/Script/function-001-n.js
 js1_3/Script/function-002.js
-# Freezes
+# EmitRelationalComp throws NotImplemented exception 
 #js1_3/Script/in-001.js
 # Invalid IL
 #js1_3/Script/new-001.js
@@ -1097,7 +1098,7 @@ js1_3/inherit/proto_9.js
 # Needs eval
 #js1_3/regress/function-001-n.js
 js1_3/regress/function-002.js
-# Freezes
+# EmitRelational throws NotImplementedException 
 #js1_3/regress/in-001.js
 # Invalid IL
 #js1_3/regress/new-001.js
