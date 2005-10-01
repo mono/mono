@@ -1,3 +1,7 @@
+2005-10-01  Ben Maurer  <bmaurer@ximian.com>
+
+	* BinaryReaderTest.cs: new test for long, non-ascii strings
+
 2005-09-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MemoryStreamTest.cs: Add more tests for publicly visible (or not)

@@ -1,3 +1,9 @@
+2005-10-01  Ben Maurer  <bmaurer@ximian.com>
+
+	* BinaryReader.cs: The patch below had a nasty little bug with
+	long strings that had non-ascii chars in it, because it was
+	looking at the char count, not the byte count.
+
 2005-09-11  Ben Maurer  <bmaurer@ximian.com>
 
 	* BinaryReader.cs: An optimization for ReadString that had been

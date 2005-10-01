@@ -485,7 +485,7 @@ namespace System.IO {
 					sb = new StringBuilder (len);
 				
 				sb.Append (charBuffer, 0, cch);
-				len -= cch;
+				len -= readLen;
 			} while (len > 0);
 
 			return sb.ToString();

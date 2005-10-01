@@ -1279,6 +1279,20 @@ namespace MonoTests.System.IO
 			stream.Close ();			
 		}
 	}
+
+	[Test]
+	public void ReadLongUTF8String ()
+	{
+		// \u00A9 == (C)
+		string s = new String ('\u00A9', 100);
+		MemoryStream ms = new MemoryStream ();
+		BinaryWriter w = new BinaryWriter (ms);		
+		w.Write (s);
+		w.Flush ();
+		ms.Position = 0;
+		BinaryReader r = new BinaryReader (ms);
+		AssertEquals (s, r.ReadString ());
+	}		
 	
 	[Test]
 	[ExpectedException(typeof(EndOfStreamException))]		
@@ -1395,6 +1409,6 @@ namespace MonoTests.System.IO
 	{
 		if (File.Exists (path))
 			File.Delete (path);
-	}	
+	}
 }
 }
