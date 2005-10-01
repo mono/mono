@@ -1,3 +1,11 @@
+2005-09-09  Martin Baulig  <martin@ximian.com>
+
+	Reflect latest API changes in the August CTP.
+
+	* MethodBase.cs (MethodBase.MakeGenericMethod): Removed.
+
+	* MethodInfo.cs (MethodInfo.MakeGenericMethod): Added here.
+
 2005-09-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyName.cs: Apply second half of Chris Micacchi's patch
