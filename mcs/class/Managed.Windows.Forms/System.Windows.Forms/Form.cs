@@ -372,6 +372,14 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		public Form ActiveMdiChild {
+			get {
+				if (!IsMdiContainer)
+					return null;
+				return (Form) mdi_container.ActiveMdiChild;
+			}
+		}
+
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public bool IsRestrictedWindow {

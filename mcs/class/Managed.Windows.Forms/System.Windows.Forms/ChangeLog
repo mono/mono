@@ -1,3 +1,9 @@
+2005-10-01  Jackson Harper  <jackson@ximian.com>
+
+	* Form.cs:
+	* MdiChildContext.cs:
+	* MdiClient.cs: Implement ActiveMdiChild in Form.
+
 2005-10-01  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs: Include ComboBoxEdit flag for the edit item

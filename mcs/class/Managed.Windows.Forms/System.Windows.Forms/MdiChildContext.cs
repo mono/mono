@@ -14,6 +14,7 @@ namespace System.Windows.Forms {
 		private Size MinTitleBarSize = new Size (115, 25);
 		
 		private Form form;
+		private MdiClient mdi_container;
 		private Button close_button;
 		private Button maximize_button;
 		private Button minimize_button;
@@ -84,6 +85,8 @@ namespace System.Windows.Forms {
 			form.Controls.AddImplicit (close_button);
 			form.Controls.AddImplicit (maximize_button);
 			form.Controls.AddImplicit (minimize_button);
+
+			mdi_container = (MdiClient) form.Parent;
 		}
 
 		public bool HandleMessage (ref Message m)
@@ -110,6 +113,7 @@ namespace System.Windows.Forms {
 		private bool HandleLButtonDown (Form form, ref Message m)
 		{
 			form.BringToFront ();
+			mdi_container.ActiveMdiChild = form;
 
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());

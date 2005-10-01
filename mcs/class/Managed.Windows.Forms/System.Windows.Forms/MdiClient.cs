@@ -36,6 +36,7 @@ namespace System.Windows.Forms {
 	public sealed class MdiClient : Control {
 		#region Local Variables
 		private int mdi_created;
+		private Form active;
 		#endregion	// Local Variables
 
 		#region Public Classes
@@ -53,6 +54,8 @@ namespace System.Windows.Forms {
 				}
 				base.Add (value);
 				SetChildIndex (value, 0); // always insert at front
+				// newest member is the active one
+				owner.ActiveMdiChild = (Form) value;
 			}
 
 			public override void Remove(Control value) {
@@ -127,6 +130,11 @@ namespace System.Windows.Forms {
 		internal int ChildrenCreated {
 			get { return mdi_created; }
 			set { mdi_created = value; }
+		}
+
+		internal Form ActiveMdiChild {
+			get { return active; }
+			set { active = value; }
 		}
 	}
 }
