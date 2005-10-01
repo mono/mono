@@ -2017,8 +2017,7 @@
 336396464=invalid lock level {0}
 336396465=invalid bookmark handle
 336396468=wrong or obsolete version
-336396471=The insert, update, delete, ddl or authorization statement cannot
- be executed because the transaction is inquiry only
+336396471=The insert, update, delete, ddl or authorization statement cannot be executed because the transaction is inquiry only
 336396472=external file could not be opened for output
 336396477=multiple rows in singleton select
 336396478=No subqueries permitted for VIEW WITH CHECK OPTION
