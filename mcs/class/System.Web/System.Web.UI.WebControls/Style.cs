@@ -652,6 +652,20 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
+		/*
+		internal void Print ()
+		{
+			Console.WriteLine ("BackColor: {0}", BackColor);
+			Console.WriteLine ("BorderColor: {0}", BorderColor);
+			Console.WriteLine ("BorderStyle: {0}", BorderStyle);
+			Console.WriteLine ("BorderWidth: {0}", BorderWidth);
+			Console.WriteLine ("CssClass: {0}", CssClass);
+			Console.WriteLine ("ForeColor: {0}", ForeColor);
+			Console.WriteLine ("Height: {0}", Height);
+			Console.WriteLine ("Width: {0}", Width);
+		}
+		*/
+
 		public virtual void Reset() 
 		{
 			viewstate.Remove("BackColor");

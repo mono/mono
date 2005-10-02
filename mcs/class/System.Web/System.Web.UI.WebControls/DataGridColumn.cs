@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Drawing;
 using System.Web.UI;
 using System.ComponentModel;
 
@@ -184,6 +185,32 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		class ForeColorLinkButton : LinkButton {
+			Color GetForeColor (WebControl control)
+			{
+				if (control == null)
+					return Color.Empty;
+
+				// don't go beyond the container table.
+				if (control is Table)
+					return control.ControlStyle.ForeColor;
+				
+				Color color = control.ControlStyle.ForeColor;
+				if (color != Color.Empty)
+					return color;
+
+				return GetForeColor ((WebControl) control.Parent);
+			}
+
+			protected override void Render (HtmlTextWriter writer)
+			{
+				Color color = GetForeColor (this);
+				if (color != Color.Empty)
+					ForeColor = color;
+				base.Render (writer);
+			}
+		}
+
 		public virtual void InitializeCell (TableCell cell,
 						    int columnIndex,
 						    ListItemType itemType)
@@ -234,7 +261,10 @@ namespace System.Web.UI.WebControls {
 					}
 				} else {
 					if (sort) {
-						LinkButton link = new LinkButton ();
+						// This one always gets the forecolor of the header_style
+						// from one of the parents, but we can't look it up at this
+						// point, as it can change afterwards.
+						LinkButton link = new ForeColorLinkButton ();
 
 						link.Text = HeaderText;
 						link.CommandName = "Sort";
