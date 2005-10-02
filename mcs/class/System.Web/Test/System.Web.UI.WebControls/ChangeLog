@@ -1,3 +1,9 @@
+2005-10-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGridTest.cs: new test for the style of the linkbutton in the
+	headers when sorting is enabled. Also test that the Items property
+	contains the DataGridItems.
+
 2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TableCellTest.cs: the "Text" viewstate value does not control whether

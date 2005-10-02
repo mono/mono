@@ -31,6 +31,7 @@
 using NUnit.Framework;
 using AttributeCollection = System.ComponentModel.AttributeCollection;
 using System;
+using System.Drawing;
 using System.IO;
 using System.Globalization;
 using System.Web;
@@ -1398,6 +1399,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 		// This one throw nullref on MS and works with mono
+		/*
 		[Test]
 		[NUnit.Framework.CategoryAttribute ("NotDotNet")]
 		public void OneTemplateColumn4 ()
@@ -1415,6 +1417,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			// ... but no template rendered.
 			Assert.IsTrue (-1 == render.IndexOf ("hola"), "template");
 		}
+		*/
 
 		[Test]
 		public void CreateControls ()
@@ -1617,6 +1620,54 @@ namespace MonoTests.System.Web.UI.WebControls {
 			DataGridPoker p = new DataGridPoker ();
 
 			Assert.AreEqual (p.Render (), String.Empty, "A1");
+		}
+
+		Control FindByType (Control parent, Type type)
+		{
+			if (!parent.HasControls ())
+				return null;
+
+			foreach (Control c in parent.Controls) {
+				if (type.IsAssignableFrom (c.GetType ()))
+					return c;
+
+				Control ret = FindByType (c, type);
+				if (ret != null)
+					return ret;
+			}
+			return null;
+		}
+
+		[Test]
+		public void SpecialLinkButton1 ()
+		{
+			DataTable dt = new DataTable();
+			dt.Columns.Add (new DataColumn("something", typeof(Int32)));
+			DataRow dr = dt.NewRow ();
+			dt.Rows.Add (new object [] { 1 });
+			DataView dv = new DataView (dt);
+			DataGridPoker dg = new DataGridPoker ();
+			dg.AllowSorting = true;
+			dg.HeaderStyle.Font.Bold = true;
+			dg.HeaderStyle.ForeColor = Color.FromArgb (255,255,255,255);
+			dg.HeaderStyle.BackColor = Color.FromArgb (33,33,33,33);
+			dg.DataSource = dv;
+			dg.DataBind ();
+			LinkButton lb = (LinkButton) FindByType (dg.Controls [0], typeof (LinkButton));
+			Assert.IsNotNull (lb, "lb");
+			StringWriter sr = new StringWriter ();
+			HtmlTextWriter output = new HtmlTextWriter (sr);
+			// Nothing here...
+			Assert.AreEqual (Color.Empty, lb.ControlStyle.ForeColor, "fore");
+			lb.RenderControl (output);
+			// Nothing here...
+			Assert.AreEqual (Color.Empty, lb.ControlStyle.ForeColor, "fore2");
+			dg.Render ();
+			// Surprise! after rendering the datagrid, the linkbutton has the ForeColor from the datagrid
+			Assert.AreEqual (Color.FromArgb (255,255,255,255), lb.ControlStyle.ForeColor, "fore2");
+
+			// Extra. Items != empty
+			Assert.AreEqual (1, dg.Items.Count, "itemCount");
 		}
 	}
 }
