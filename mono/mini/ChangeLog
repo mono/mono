@@ -1,5 +1,10 @@
 2005-10-02  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini.h (OP_PCONST): Move the definition of OP_PCONST into the rest
+	of the OP_P definitions.
+
+	* TODO: Add a proposal for dealing with the CEE/OP mess.
+
 	* mini-amd64.c (mono_arch_output_basic_block): Merge mul_imm 
 	optimizations from the x86 port.
 
