@@ -1,5 +1,10 @@
 2005-10-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ButtonColumn.cs: it was lacking databinding, so copied most of it
+	from BoundColumn.
+
+2005-10-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* FontInfo.cs: removed useless ctor.
 	* Style.cs: keep here some commented out debugging code.
 	* DataGrid.cs: the Items property does not create a new arraylist if

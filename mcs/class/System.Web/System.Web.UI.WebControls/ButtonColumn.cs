@@ -3,6 +3,7 @@
 //
 // Author:
 //      Dick Porter  <dick@ximian.com>
+//      Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -114,6 +115,7 @@ namespace System.Web.UI.WebControls {
 			}
 			set {
 				ViewState ["DataTextFormatString"] = value;
+				format = null;
 			}
 		}
 
@@ -174,6 +176,9 @@ namespace System.Web.UI.WebControls {
 					butt.Text = Text;
 					butt.CommandName = CommandName;
 
+					if (DataTextField != "")
+						butt.DataBinding += new EventHandler (DoDataBind);
+
 					cell.Controls.Add (butt);
 				}
 				break;
@@ -185,6 +190,8 @@ namespace System.Web.UI.WebControls {
 					butt.Text = Text;
 					butt.CommandName = CommandName;
 
+					if (DataTextField != "")
+						butt.DataBinding += new EventHandler (DoDataBind);
 					cell.Controls.Add (butt);
 				}
 				break;
@@ -193,12 +200,47 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		string text_field;
+		string GetValueFromItem (DataGridItem item)
+		{
+			object val = null;
+			if (text_field == null)
+				text_field = DataTextField;
+
+			if (text_field != "")
+				val = DataBinder.Eval (item.DataItem, text_field);
+
+			return FormatDataTextValue (val);
+		}
+
+		void DoDataBind (object sender, EventArgs e)
+		{
+			Control ctrl = (Control) sender;
+			string text = GetValueFromItem ((DataGridItem) ctrl.NamingContainer);
+
+			LinkButton lb = sender as LinkButton;
+			if (lb == null) {
+				Button b = (Button) sender;
+				b.Text = text;
+			} else {
+				lb.Text = text;
+			}
+		}
+
+		string format;
 		protected virtual string FormatDataTextValue (object dataTextValue)
 		{
-			if (DataTextFormatString == String.Empty)
+			if (dataTextValue == null)
+				return "";
+
+			if (format == null)
+				format = DataTextFormatString;
+
+			if (format == "")
 				return dataTextValue.ToString ();
 
-			return String.Format (DataTextFormatString, dataTextValue);
+			return String.Format (format, dataTextValue);
 		}
 	}
 }
+
