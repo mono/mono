@@ -1,5 +1,14 @@
 2005-10-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* FontInfo.cs: removed useless ctor.
+	* Style.cs: keep here some commented out debugging code.
+	* DataGrid.cs: the Items property does not create a new arraylist if
+	the items_list was already initialized. Add case for Separator.
+	* DataGridColumn.cs: when sorting is enabled, the linkbutton rendered
+	in the header columns has a special ForeColor handling.
+
+2005-10-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataGrid.cs: PageCount must persist in ViewState too and returns the
 	number of pages in the paged data source once we set that. Fix checks
 	for visibility of the pager: no more 2 pagers when custom paging is

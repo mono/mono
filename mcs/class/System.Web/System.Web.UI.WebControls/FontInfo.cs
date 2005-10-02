@@ -56,10 +56,6 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Fields
 
 		#region Constructors
-		private FontInfo() 
-		{
-		}
-
 		internal FontInfo(Style owner) 
 		{
 			this.bag = owner.ViewState;

@@ -320,7 +320,8 @@ namespace System.Web.UI.WebControls {
 		public virtual DataGridItemCollection Items {
 			get {
 				if (items == null) {
-					items_list = new ArrayList ();
+					if (items_list == null)
+						items_list = new ArrayList ();
 					items = new DataGridItemCollection (items_list);
 				}
 				return items;
@@ -1033,6 +1034,9 @@ namespace System.Web.UI.WebControls {
 					else
 						item.MergeStyle (item_style);
 					ApplyColumnStyle (item.Cells, ListItemType.SelectedItem);
+					break;
+				case ListItemType.Separator:
+					ApplyColumnStyle (item.Cells, ListItemType.Separator);
 					break;
 				case ListItemType.Pager:
 					DataGridPagerStyle ps = PagerStyle;
