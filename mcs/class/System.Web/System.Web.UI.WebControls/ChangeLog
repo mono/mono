@@ -1,3 +1,10 @@
+2005-10-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGrid.cs: PageCount must persist in ViewState too and returns the
+	number of pages in the paged data source once we set that. Fix checks
+	for visibility of the pager: no more 2 pagers when custom paging is
+	enabled.
+
 2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ImageButton.cs: fix a bug reported on the list. We were triggering the

@@ -68,8 +68,6 @@ namespace System.Web.UI.WebControls {
 		private TableItemStyle selected_style;
 		private DataGridPagerStyle pager_style;
 		
-		private int page_count = 0;
-
 		private ArrayList items_list;
 		private DataGridItemCollection items;
 
@@ -158,7 +156,12 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategory ("Style")]
 		public int PageCount {
-			get { return page_count; }
+			get {
+				if (paged_data_source != null)
+					return paged_data_source.PageCount;
+
+				return ViewState.GetInt ("PageCount", 0);
+			}
 		}
 
 		[DefaultValue(10)]
@@ -840,7 +843,9 @@ namespace System.Web.UI.WebControls {
 				keys = DataKeysArray;
 				keys.Clear ();
 			} else {
-				int npages = ViewState.GetInt ("--pcount", 1);
+				int npages = ViewState.GetInt ("PageCount", 1);
+				if (AllowCustomPaging)
+					npages = 1;
 				int nitems = ViewState.GetInt ("Items", 0) * npages;
 				data_source = new NCollection (nitems);
 			}
@@ -919,13 +924,14 @@ namespace System.Web.UI.WebControls {
 			if (pds.IsPagingEnabled) {
 				CreateItem (-1, -1, ListItemType.Pager, false, null, paged_data_source);
 				if (useDataSource)
-					ViewState ["--pcount"] = pds.PageCount;
+					ViewState ["PageCount"] = pds.PageCount;
 			} else {
-				ViewState.Remove ("--pcount");
+				ViewState ["PageCount"] = 1;
 			}
 
-			if (useDataSource)
+			if (useDataSource) {
 				ViewState ["Items"] = index;
+			}
 		}
 
 		void ApplyColumnStyle (TableCellCollection cells, ListItemType type)
@@ -960,14 +966,6 @@ namespace System.Web.UI.WebControls {
 
 			bool top_pager = true;
 			Style alt = null;
-			if (alt_item_style != null) {
-				alt = new Style ();
-				alt.CopyFrom (item_style);
-				alt.CopyFrom (alt_item_style);
-			} else {
-				alt = item_style;
-			}
-
 			foreach (DataGridItem item in rt.Rows) {
 				
 				switch (item.ItemType) {
@@ -976,6 +974,14 @@ namespace System.Web.UI.WebControls {
 					ApplyColumnStyle (item.Cells, ListItemType.Item);
 					break;
 				case ListItemType.AlternatingItem:
+					if (alt == null && alt_item_style != null) {
+						alt = new Style ();
+						alt.CopyFrom (item_style);
+						alt.CopyFrom (alt_item_style);
+					} else {
+						alt = item_style;
+					}
+
 					item.MergeStyle (alt);
 					ApplyColumnStyle (item.Cells, ListItemType.AlternatingItem);
 					break;
@@ -984,15 +990,19 @@ namespace System.Web.UI.WebControls {
 					ApplyColumnStyle (item.Cells, ListItemType.EditItem);
 					break;
 				case ListItemType.Footer:
-					if (!ShowFooter)
+					if (!ShowFooter) {
 						item.Visible = false;
+						break;
+					}
 					if (footer_style != null)
 						item.MergeStyle (footer_style);
 					ApplyColumnStyle (item.Cells, ListItemType.Footer);
 					break;
 				case ListItemType.Header:
-					if (!ShowHeader)
+					if (!ShowHeader) {
 						item.Visible = false;
+						break;
+					}
 					if (header_style != null)
 						item.MergeStyle (header_style);
 					ApplyColumnStyle (item.Cells, ListItemType.Header);
@@ -1005,19 +1015,19 @@ namespace System.Web.UI.WebControls {
 					ApplyColumnStyle (item.Cells, ListItemType.SelectedItem);
 					break;
 				case ListItemType.Pager:
-					if (!paged_data_source.IsPagingEnabled) {
+					DataGridPagerStyle ps = PagerStyle;
+					if (ps.Visible == false || !paged_data_source.IsPagingEnabled) {
 						item.Visible = false;
 					} else {
 						if (top_pager)
-							item.Visible = (PagerStyle.Position !=
-									PagerPosition.Bottom);
+							item.Visible = (ps.Position != PagerPosition.Bottom);
 						else
-							item.Visible = (PagerStyle.Position !=
-									PagerPosition.Top);
+							item.Visible = (ps.Position != PagerPosition.Top);
 						top_pager = false;
 					}
 
-					item.ApplyStyle (PagerStyle);
+					if (item.Visible)
+						item.MergeStyle (pager_style);
 					break;
 				}
 			}
