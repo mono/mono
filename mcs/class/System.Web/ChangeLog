@@ -1,3 +1,6 @@
+2005-10-02  Eyal Alaluf <eyala@mainsoft.com>
+	* System.Web.vmwcsproj - Added System.Web/HttpApplication.jvm.cs
+
 2005-09-22  Chris Toshok  <toshok@ximian.com>
 
 	* System.Web.dll.sources: add

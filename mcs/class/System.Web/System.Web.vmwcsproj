@@ -23,7 +23,7 @@
 			<Include>
 				<File RelPath="jar.resources" BuildAction="None"/>
 				<File RelPath="Locale.cs" Link="..\..\build\common\Locale.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Consts.cs" Link="..\..\build\common\Consts.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Consts.cs" Link="..\..\build\common\Consts.cs.in" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="MonoTODOAttribute.cs" Link="..\..\build\common\MonoTODOAttribute.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web.Mail\ChangeLog" BuildAction="None"/>
 				<File RelPath="Assembly\AssemblyInfo.cs" SubType="Code" BuildAction="Compile"/>
@@ -33,7 +33,7 @@
 				<File RelPath="System.Web\CapabilitiesLoader.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\EndEventHandler.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HtmlizedException.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Web\HttpApplication.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Web\HttpApplication.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpApplicationFactory.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpApplicationState.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Web\HttpBrowserCapabilities.cs" SubType="Code" BuildAction="Compile"/>
@@ -904,6 +904,6 @@
 				<File RelPath="System.Web.Util\WorkItemCallback.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
 		</Files>
-		<UserProperties REFS.JarPath.System.Drawing="..\lib\System.Drawing.jar" REFS.JarPath.j2ee.helpers="..\lib\J2EE.Helpers.jar" REFS.JarPath.j2se.helpers="..\lib\J2SE.Helpers.jar" project.JDKType="1.4.2_05" REFS.JarPath.System="..\lib\System.jar" REFS.JarPath.j2ee="..\lib\j2ee.jar" REFS.JarPath.rt="..\lib\rt.jar" REFS.JarPath.System.Data="..\lib\System.Data.jar" REFS.JarPath.vmwutils="..\lib\vmwutils.jar" REFS.JarPath.System.Xml="..\lib\System.Xml.jar" jarserver="ipa"/>
+		<UserProperties REFS.JarPath.System.Drawing="..\lib\System.Drawing.jar" REFS.JarPath.j2ee.helpers="..\lib\J2EE.Helpers.jar" REFS.JarPath.j2se.helpers="..\lib\J2SE.Helpers.jar" project.JDKType="1.4.2_05" REFS.JarPath.System="..\lib\System.jar" REFS.JarPath.j2ee="..\lib\j2ee.jar" REFS.JarPath.rt="..\lib\rt.jar" REFS.JarPath.System.Data="..\lib\System.Data.jar" REFS.JarPath.vmwutils="..\lib\vmwutils.jar" REFS.JarPath.System.Xml="..\lib\System.Xml.jar" jarserver="ip2"/>
 	</CSHARP>
 	<VisualMainWin><Project Prop2023="1.4.2_05" Prop2024="" Prop2026="" Prop2015="" Version="1.6.0" ProjectType="1"/><References/><Configs><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="3" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="-1" Prop2013="yen" Prop2014="8009" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="0" Name="Debug_Java"/><Config Prop2000="0" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="3" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="-1" Prop2013="yen" Prop2014="8007" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Release_Java"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="0" Prop2012="0" Prop2013="" Prop2014="0" Prop2016="" Prop2027="" Prop2019="0" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Release"/><Config Prop2000="1" Prop2001="0" Prop2002="0" Prop2003="0" Prop2004="0" Prop2005="0" Prop2006="" Prop2007="" Prop2008="" Prop2009="" Prop2010="" Prop2011="-1" Prop2012="0" Prop2013="" Prop2014="8000" Prop2016="" Prop2027="" Prop2019="-1" Prop2020="285212672" Prop2021="4096" Prop2022="0" Prop2017="0" Prop2018="-1" Name="Debug"/></Configs></VisualMainWin></VisualStudioProject>
