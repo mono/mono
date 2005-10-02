@@ -1638,6 +1638,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			return null;
 		}
 
+		// Header link
 		[Test]
 		public void SpecialLinkButton1 ()
 		{
@@ -1664,10 +1665,51 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (Color.Empty, lb.ControlStyle.ForeColor, "fore2");
 			dg.Render ();
 			// Surprise! after rendering the datagrid, the linkbutton has the ForeColor from the datagrid
-			Assert.AreEqual (Color.FromArgb (255,255,255,255), lb.ControlStyle.ForeColor, "fore2");
+			Assert.AreEqual (Color.FromArgb (255,255,255,255), lb.ControlStyle.ForeColor, "fore3");
 
 			// Extra. Items != empty
 			Assert.AreEqual (1, dg.Items.Count, "itemCount");
+		}
+
+		// value link in buttoncolumn
+		[Test]
+		public void SpecialLinkButton2 ()
+		{
+			DataTable dt = new DataTable();
+			dt.Columns.Add (new DataColumn("string_col", typeof(string)));
+			DataRow dr = dt.NewRow ();
+			dt.Rows.Add (new object [] { "Item 1" });
+			DataView dv = new DataView (dt);
+
+			DataGridPoker dg = new DataGridPoker ();
+			dg.DataSource = dv;
+			dg.AutoGenerateColumns = false;
+			dg.HeaderStyle.ForeColor = Color.FromArgb (255,255,255,255);
+			dg.HeaderStyle.BackColor = Color.FromArgb (33,33,33,33);
+
+			ButtonColumn bc = new ButtonColumn ();
+			bc.HeaderText = "Some header";
+			bc.DataTextField = "string_col";
+			bc.CommandName = "lalala";
+			dg.Columns.Add (bc);
+
+			BoundColumn bound = new BoundColumn ();
+			bound.HeaderText = "The other column";
+			bound.DataField = "string_col";
+			dg.Columns.Add (bound);
+
+			dg.DataBind ();
+
+			LinkButton lb = (LinkButton) FindByType (dg.Controls [0], typeof (LinkButton));
+			Assert.IsNotNull (lb, "lb");
+			StringWriter sr = new StringWriter ();
+			HtmlTextWriter output = new HtmlTextWriter (sr);
+			Assert.AreEqual (Color.Empty, lb.ControlStyle.ForeColor, "fore");
+			lb.RenderControl (output);
+			Assert.AreEqual (Color.Empty, lb.ControlStyle.ForeColor, "fore2");
+			string str = dg.Render ();
+			Assert.IsTrue (-1 != str.IndexOf ("<a>Item 1</a>"), "item1");
+			Assert.IsTrue (-1 != str.IndexOf ("<td>Item 1</td>"), "item1-2");
 		}
 	}
 }
