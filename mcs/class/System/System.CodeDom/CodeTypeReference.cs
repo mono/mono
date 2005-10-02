@@ -52,7 +52,14 @@ namespace System.CodeDom
 		//
 		// Constructors
 		//
-		public CodeTypeReference( string baseType )
+
+#if NET_2_0
+		public CodeTypeReference ()
+		{
+		}
+#endif
+
+		public CodeTypeReference (string baseType)
 		{
 			if (baseType == null || baseType.Length == 0) {
 				this.baseType = typeof (void).FullName;
@@ -64,18 +71,42 @@ namespace System.CodeDom
 				this.baseType = baseType;
 				return;
 			}
-			string[] args = baseType.Split (',');
+
+			int array_end = baseType.LastIndexOf (']');
+			if (array_end < array_start) {
+				this.baseType = baseType;
+				return;
+			}
+
+			string[] args = baseType.Substring (array_start + 1, array_end - array_start - 1).Split (',');
 
 #if NET_2_0
-			int array_end = baseType.LastIndexOf (']');
-
 			if ((array_end - array_start) != args.Length) {
+				this.baseType = baseType.Substring(0, array_start);
+				foreach (string arg in args) {
+					if (arg.Length != 0) {
+						TypeArguments.Add (new CodeTypeReference (arg));
+					}
+				}
+			} else {
 				arrayType = new CodeTypeReference (baseType.Substring (0, array_start));
-				array_start++;
-				TypeArguments.Add (new CodeTypeReference (baseType.Substring (array_start, array_end - array_start)));
-			} else
+				rank = args.Length;
+			}
+#else
+			bool isArray = true;
+			foreach (string arg in args) {
+				if (arg.Length != 0) {
+					isArray = false;
+					break;
+				}
+			}
+			if (isArray) {
+				arrayType = new CodeTypeReference (baseType.Substring (0, array_start));
+				rank = args.Length;
+			} else {
+				this.baseType = baseType;
+			}
 #endif
-				arrayType = new CodeTypeReference (baseType.Substring (0, array_start), args.Length);
 		}
 		
 		public CodeTypeReference( Type baseType )
@@ -106,11 +137,12 @@ namespace System.CodeDom
 			: this (new CodeTypeReference (baseType), rank)
 		{
 		}
-			
+
 #if NET_2_0
 		public CodeTypeReference( CodeTypeParameter typeParameter ) :
 			this (typeParameter.Name)
 		{
+			this.codeTypeReferenceOption = CodeTypeReferenceOptions.GenericTypeParameter;
 		}
 
 		public CodeTypeReference( string typeName, CodeTypeReferenceOptions codeTypeReferenceOption ) :
@@ -157,6 +189,10 @@ namespace System.CodeDom
 
 		public string BaseType {
 			get {
+				if (arrayType != null) {
+					return arrayType.BaseType;
+				}
+
 				if (baseType == null)
 					return String.Empty;
 

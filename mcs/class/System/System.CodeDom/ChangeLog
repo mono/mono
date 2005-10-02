@@ -1,3 +1,11 @@
+2005-10-02 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeTypeReference.cs: Added default ctor for 2.0 profile. Set
+	Options to CodeReferenceOptions.GenericTypeParameter when instance
+	is constructed using ctor taking CodeTypeParameter argument. Modified
+	BaseType property to return BaseType of ArrayElementType if
+	available. Fixed some bugs in array and typeparameter support.
+
 2005-07-24 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeTypeReference.cs: Added internal IsInterface property.
