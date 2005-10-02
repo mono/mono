@@ -1,3 +1,7 @@
+2005-10-02  Zoltan Varga  <vargaz@freemail.hu>
+
+	* get.h get.c main.c: Fix some warnings and bugs.
+
 2005-09-20  Ankit Jain  <jankit@novell.com>
 
 	* monodis.1: Update documentation for --output.
