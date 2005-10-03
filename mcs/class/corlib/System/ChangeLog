@@ -1,3 +1,7 @@
+2005-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StringComparer.cs : (OrdinalIgnoreCaseComparer.Equals()) reverse.
+
 2005-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* String.cs (ParseFormatSpecifier): Fix skipping of whitespace. Fixes
