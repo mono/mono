@@ -110,9 +110,8 @@ namespace Mono.CSharp {
 
 			if (ValueExpr != null) {
 				in_transit = true;
-				Constant c = ValueExpr.ResolveAsConstant (parent_enum.EmitContext, this);
-				in_transit = false;
 
+				Constant c = ValueExpr.ResolveAsConstant (parent_enum.EmitContext, this);
 				if (c == null)
 					return false;
 
@@ -156,17 +155,15 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool Emit (EmitContext ec)
+		public void Emit (EmitContext ec)
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this); 
 
-			if (!ResolveValue ())
-				return false;
+			if (ResolveValue ())
+				builder.SetConstant (value.GetValue ());
 
-			builder.SetConstant (value.GetValue ());
 			Emit ();
-			return true;
 		}
 
 		public override string GetSignatureForError()
@@ -313,8 +310,7 @@ namespace Mono.CSharp {
 			}
 
 			foreach (EnumMember em in defined_names.Values) {
-				if (!em.Emit (ec))
-					return;
+				em.Emit (ec);
 			}
 
 			base.Emit ();

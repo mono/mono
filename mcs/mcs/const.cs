@@ -138,8 +138,6 @@ namespace Mono.CSharp {
 			in_transit = true;
 			EmitContext ec = new EmitContext (Parent, Location, null, MemberType, ModFlags);
 			value = Expr.ResolveAsConstant (ec, this);
-			in_transit = false;
-
 			if (value == null)
 				return false;
 
@@ -153,6 +151,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			in_transit = false;
 			return true;
 		}
 

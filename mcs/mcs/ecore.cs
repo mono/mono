@@ -267,41 +267,9 @@ namespace Mono.CSharp {
 			Report.Error (122, loc, "`{0}' is inaccessible due to its protection level", name);
 		}
 
-		public virtual void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
+		public virtual void Error_ValueCannotBeConverted (Location loc, Type t)
 		{
-			if (Type.Name == target.Name){
-				Report.ExtraInformation (loc,
-					String.Format (
-					"The type {0} has two conflicting definitions, one comes from {1} and the other from {2}",
-					Type.Name, Type.Assembly.FullName, target.Assembly.FullName));
-							 
-			}
-
-			if (expl) {
-				Report.Error (30, loc, "Cannot convert type `{0}' to `{1}'",
-					GetSignatureForError (), TypeManager.CSharpName (target));
-				return;
-			}
-			
-			Expression e = (this is EnumConstant) ? ((EnumConstant)this).Child : this;
-			bool b = Convert.ExplicitNumericConversion (e, target) != null;
-
-			if (b || Convert.ExplicitReferenceConversionExists (Type, target) || Convert.ExplicitUnsafe (e, target) != null) {
-				Report.Error (266, loc, "Cannot implicitly convert type `{0}' to `{1}'. An explicit conversion exists (are you missing a cast?)",
-					GetSignatureForError (), TypeManager.CSharpName (target));
-				return;
-			}
-
-			if (Type != TypeManager.string_type && this is Constant) {
-				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					GetSignatureForError (), TypeManager.CSharpName (target));
-				return;
-			}
-
-			Report.Error (29, loc, "Cannot implicitly convert type {0} to `{1}'",
-				Type == TypeManager.anonymous_method_type ?
-				"anonymous method" : "`" + GetSignatureForError () + "'",
-				TypeManager.CSharpName (target));
+			Convert.Error_CannotImplicitConversion (loc, Type, t);
 		}
 
 		protected static void Error_TypeDoesNotContainDefinition (Location loc, Type type, string name)
@@ -548,6 +516,7 @@ namespace Mono.CSharp {
 		///   Returns a fully formed expression after a MemberLookup
 		/// </summary>
 		/// 
+		// TODO: This can be heavily cached
 		public static Expression ExprClassFromMemberInfo (EmitContext ec, MemberInfo mi, Location loc)
 		{
 			if (mi is EventInfo)
@@ -825,12 +794,12 @@ namespace Mono.CSharp {
 			//
 			// If no implicit conversion to bool exists, try using `operator true'
 			//
-			converted = Expression.GetOperatorTrue (ec, e, loc);
-			if (converted == null){
-				e.Error_ValueCannotBeConverted (loc, TypeManager.bool_type, false);
+			Expression operator_true = Expression.GetOperatorTrue (ec, e, loc);
+			if (operator_true == null){
+				Report.Error (31, loc, "Can not convert the expression to a boolean");
 				return null;
 			}
-			return converted;
+			return operator_true;
 		}
 		
 		public virtual string ExprClassName
@@ -1047,7 +1016,7 @@ namespace Mono.CSharp {
 					if (target == null){
 						target = Convert.ImplicitConversion (ec, source, TypeManager.uint64_type, loc);
 						if (target == null)
-							source.Error_ValueCannotBeConverted (loc, TypeManager.int32_type, false);
+							Convert.Error_CannotImplicitConversion (loc, source.Type, TypeManager.int32_type);
 					}
 				}
 			} 
@@ -1159,30 +1128,36 @@ namespace Mono.CSharp {
 
 		MethodInfo conversion_operator;
 
-		public CastToDecimal (Expression child)
-			: this (child, false)
+		public CastToDecimal (EmitContext ec, Expression child)
+			: this (ec, child, false)
 		{
 		}
 
-		public CastToDecimal (Expression child, bool find_explicit)
+		public CastToDecimal (EmitContext ec, Expression child, bool find_explicit)
 			: base (child, TypeManager.decimal_type)
 		{
-			conversion_operator = GetConversionOperator (find_explicit);
+			conversion_operator = GetConversionOperator (ec, find_explicit);
 
 			if (conversion_operator == null)
-				throw new InternalErrorException ("Outer conversion routine is out of sync");
+				Convert.Error_CannotImplicitConversion (loc, child.Type, type);
 		}
 
 		// Returns the implicit operator that converts from
 		// 'child.Type' to System.Decimal.
-		MethodInfo GetConversionOperator (bool find_explicit)
+		MethodInfo GetConversionOperator (EmitContext ec, bool find_explicit)
 		{
-			string operator_name = find_explicit ? "op_Explicit" : "op_Implicit";
-			
-			MemberInfo [] mi = TypeManager.MemberLookup (type, type, type, MemberTypes.Method,
-				BindingFlags.Static | BindingFlags.Public, operator_name, null);
+			string operator_name = "op_Implicit";
 
-			foreach (MethodInfo oper in mi) {
+			if (find_explicit)
+				operator_name = "op_Explicit";
+			
+			MethodGroupExpr opers = Expression.MethodLookup (
+				ec, type, operator_name, loc) as MethodGroupExpr;
+
+			if (opers == null)
+				Convert.Error_CannotImplicitConversion (loc, child.Type, type);
+			
+			foreach (MethodInfo oper in opers.Methods) {
 				ParameterData pd = TypeManager.GetParameterData (oper);
 
 				if (pd.ParameterType (0) == child.Type && oper.ReturnType == type)
@@ -1199,48 +1174,49 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Call, conversion_operator);
 		}
 	}
-
 	/// <summary>
 	/// 	This is an explicit numeric cast from a Decimal
 	/// </summary>
 	public class CastFromDecimal : EmptyCast
 	{
-		static IDictionary operators;
-
-		public CastFromDecimal (Expression child, Type return_type)
+		MethodInfo conversion_operator;
+		public CastFromDecimal (EmitContext ec, Expression child, Type return_type)
 			: base (child, return_type)
 		{
 			if (child.Type != TypeManager.decimal_type)
 				throw new InternalErrorException (
 					"The expected type is Decimal, instead it is " + child.Type.FullName);
+
+			conversion_operator = GetConversionOperator (ec);
+			if (conversion_operator == null)
+				Convert.Error_CannotImplicitConversion (loc, child.Type, type);
 		}
 
 		// Returns the explicit operator that converts from an
 		// express of type System.Decimal to 'type'.
-		public Expression Resolve ()
-		{
-			if (operators == null) {
-				 MemberInfo[] all_oper = TypeManager.MemberLookup (TypeManager.decimal_type,
-					TypeManager.decimal_type, TypeManager.decimal_type, MemberTypes.Method,
-					BindingFlags.Static | BindingFlags.Public, "op_Explicit", null);
+		MethodInfo GetConversionOperator (EmitContext ec)
+		{				
+			MethodGroupExpr opers = Expression.MethodLookup (
+				ec, child.Type, "op_Explicit", loc) as MethodGroupExpr;
 
-				operators = new System.Collections.Specialized.HybridDictionary ();
-				foreach (MethodInfo oper in all_oper) {
-					ParameterData pd = TypeManager.GetParameterData (oper);
-					if (pd.ParameterType (0) == TypeManager.decimal_type)
-						operators.Add (oper.ReturnType, oper);
-				}
+			if (opers == null)
+				Convert.Error_CannotImplicitConversion (loc, child.Type, type);
+			
+			foreach (MethodInfo oper in opers.Methods) {
+				ParameterData pd = TypeManager.GetParameterData (oper);
+
+				if (pd.ParameterType (0) == child.Type && oper.ReturnType == type)
+					return oper;
 			}
 
-			return operators.Contains (type) ? this : null;
+			return null;
 		}
-
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			child.Emit (ec);
 
-			ig.Emit (OpCodes.Call, (MethodInfo)operators [type]);
+			ig.Emit (OpCodes.Call, conversion_operator);
 		}
 	}
 
@@ -1328,11 +1304,6 @@ namespace Mono.CSharp {
 			Child.Emit (ec);
 		}
 
-		public override string GetSignatureForError()
-		{
-			return TypeManager.CSharpName (Type);
-		}
-
 		public override object GetValue ()
 		{
 			return Child.GetValue ();
@@ -1348,6 +1319,11 @@ namespace Mono.CSharp {
 			return System.Enum.ToObject (type, Child.GetValue ());
 		}
 		
+		public override void Error_ValueCannotBeConverted (Location loc, Type t)
+		{
+			Convert.Error_CannotImplicitConversion (loc, Type, t);
+		}
+
 		public override string AsString ()
 		{
 			return Child.AsString ();
@@ -1417,7 +1393,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, this, type)){
-				Error_ValueCannotBeConverted (loc, type, false);
+				Error_ValueCannotBeConverted (loc, type);
 				return null;
 			}
 
@@ -1505,10 +1481,13 @@ namespace Mono.CSharp {
 		}
 
 		Mode mode;
+		// TODO: is redundant as can be read in Emit directly
+		bool checked_state;
 		
-		public ConvCast (Expression child, Type return_type, Mode m)
+		public ConvCast (EmitContext ec, Expression child, Type return_type, Mode m)
 			: base (child, return_type)
 		{
+			checked_state = ec.CheckState;
 			mode = m;
 		}
 
@@ -1531,7 +1510,7 @@ namespace Mono.CSharp {
 			
 			base.Emit (ec);
 
-			if (ec.CheckState){
+			if (checked_state){
 				switch (mode){
 				case Mode.I1_U1: ig.Emit (OpCodes.Conv_Ovf_U1); break;
 				case Mode.I1_U2: ig.Emit (OpCodes.Conv_Ovf_U2); break;

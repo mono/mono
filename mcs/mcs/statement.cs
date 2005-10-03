@@ -3423,7 +3423,7 @@ namespace Mono.CSharp {
 						return false;
 
 					if (!Convert.ImplicitConversionExists (ec, e, expr_type)) {
-						e.Error_ValueCannotBeConverted (e.Location, expr_type, false);
+						Convert.Error_CannotImplicitConversion (e.Location, e.Type, expr_type);
 						return false;
 					}
 

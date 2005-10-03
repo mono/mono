@@ -2070,7 +2070,7 @@ namespace Mono.CSharp {
 							if (ll >= 0)
 								right = new ULongConstant ((ulong) ll, right.Location);
 						} else {
-							e = Convert.ImplicitNumericConversion (ec, right, l);
+							e = Convert.ImplicitNumericConversion (ec, right, l, loc);
 							if (e != null)
 								right = e;
 						}
@@ -2087,7 +2087,7 @@ namespace Mono.CSharp {
 						if (ll > 0)
 							left = new ULongConstant ((ulong) ll, right.Location);
 					} else {
-						e = Convert.ImplicitNumericConversion (ec, left, r);
+						e = Convert.ImplicitNumericConversion (ec, left, r, loc);
 						if (e != null)
 							left = e;
 					}
