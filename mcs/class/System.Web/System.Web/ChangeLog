@@ -1,3 +1,8 @@
+2005-10-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* InputFilterStream.cs proxy stream for use by filters.
+	* HttpRequest.cs: implement input filtering.
+
 2005-09-26  Chris Toshok  <toshok@ximian.com>
 
 	* HttpApplicationFactory.cs (OnAppFileChanged): add null checks

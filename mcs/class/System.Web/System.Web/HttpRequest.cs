@@ -66,6 +66,8 @@ namespace System.Web {
 		WebROCollection all_params;
 		WebROCollection headers;
 		Stream input_stream;
+		InputFilterStream input_filter;
+		Stream filter;
 		HttpCookieCollection cookies;
 		string http_method;
 
@@ -323,15 +325,25 @@ namespace System.Web {
 
 		public Stream Filter {
 			get {
-				throw new NotImplementedException ();
-			}
+				if (filter != null)
+					return filter;
 
-			set {
-				throw new NotImplementedException ();
-			}
+				if (input_filter == null)
+					input_filter = new InputFilterStream ();
+
+				return input_filter;
+  			}
+  
+  			set {
+				if (value == null)
+					throw new HttpException ("Invalid filter");
+
+				filter = value;
+  			}
+
 		}
 
-		static Stream StreamCopy (Stream stream)
+		Stream StreamCopy (Stream stream)
 		{
 #if !TARGET_JVM
 			if (stream is IntPtrStream)
@@ -555,8 +567,29 @@ namespace System.Web {
 #else
 		const int INPUT_BUFFER_SIZE = 32*1024;
 
+		void DoFilter (byte [] buffer)
+		{
+			if (input_filter == null)
+				return;
+
+			// Replace the input with the filtered input
+			input_filter.BaseStream = input_stream;
+			MemoryStream ms = new MemoryStream ();
+			while (true) {
+				int n = filter.Read (buffer, 0, buffer.Length);
+				if (n <= 0)
+					break;
+				ms.Write (buffer, 0, n);
+			}
+			// From now on input_stream has the filtered input
+			input_stream = new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length, false, true);
+		}
+
 		void MakeInputStream ()
 		{
+			if (input_stream != null)
+				return;
+
 			if (worker_request == null)
 				throw new HttpException ("No HttpWorkerRequest");
 
@@ -580,6 +613,7 @@ namespace System.Web {
 				} else {
 					input_stream = new MemoryStream (buffer, 0, buffer.Length, false, true);
 				}
+				DoFilter (new byte [1024]);
 				return;
 			}
 
@@ -605,7 +639,7 @@ namespace System.Web {
 					total += n;
 				}
 				input_stream = new IntPtrStream (content, total);
-
+				DoFilter (buffer);
 			} else {
 				MemoryStream ms = new MemoryStream ();
 				if (total > 0)
@@ -623,6 +657,7 @@ namespace System.Web {
 					ms.Write (buffer, 0, n);
 				}
 				input_stream = new MemoryStream (ms.GetBuffer (), 0, (int) ms.Length, false, true);
+				DoFilter (buffer);
 			}
 
 			if (total < content_length)
@@ -641,6 +676,7 @@ namespace System.Web {
 			get {
 				if (input_stream == null)
 					MakeInputStream ();
+
 				return input_stream;
 			}
 		}
