@@ -1,3 +1,8 @@
+2005-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomAttributeBuilder.cs : internal attributes should be allowed.
+	  Fixed bug #75723.
+
 2005-09-26  Marek Safar  <marek.safar@seznam.cz>
 
 	* PropertyBuilder.cs: Throw NotSupportedException for unsupported

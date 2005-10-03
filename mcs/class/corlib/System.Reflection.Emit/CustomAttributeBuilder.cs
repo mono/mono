@@ -123,7 +123,7 @@ namespace System.Reflection.Emit {
 				throw new ArgumentException ("Array lengths must be the same.",
 						"namedFields, fieldValues");
 			if ((con.Attributes & MethodAttributes.Static) == MethodAttributes.Static ||
-					(con.Attributes & MethodAttributes.Private) == MethodAttributes.Private)
+					(con.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private)
 				throw new ArgumentException ("Cannot have private or static constructor.");
 
 			Type atype = ctor.DeclaringType;

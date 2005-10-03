@@ -1,3 +1,7 @@
+2005-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-458.cs : test for bug #75723.
+
 2005-09-28  Martin Baulig  <martin@ximian.com>
 
 	* gtest-206.cs: New test for #76262.
