@@ -1,3 +1,7 @@
+2005-10-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (emit_section_change): Fix emitting of sections on win32. Fixes #76322.
+
 2005-10-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* liveness.c (mono_analyze_liveness): Revert parts of r51051 since it
