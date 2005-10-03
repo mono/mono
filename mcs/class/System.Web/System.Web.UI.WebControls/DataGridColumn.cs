@@ -202,7 +202,12 @@ namespace System.Web.UI.WebControls {
 				return GetForeColor ((WebControl) control.Parent);
 			}
 
-			protected override void Render (HtmlTextWriter writer)
+#if NET_2_0
+			protected internal
+#else		
+			protected
+#endif		
+			override void Render (HtmlTextWriter writer)
 			{
 				Color color = GetForeColor (this);
 				if (color != Color.Empty)
