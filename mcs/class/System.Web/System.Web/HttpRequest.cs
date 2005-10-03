@@ -578,7 +578,7 @@ namespace System.Web {
 
 		void DoFilter (byte [] buffer)
 		{
-			if (input_filter == null)
+			if (input_filter == null || filter == null)
 				return;
 
 			// Replace the input with the filtered input
