@@ -48,7 +48,7 @@ internal
 	// Use these assembly version constants to make code more maintainable.
 	//
 
-	public const string MonoVersion = "@MONO_VERSION@";
+	public const string MonoVersion = "1.1.9.1";
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 	public const string FxVersion = "2.0.0.0";
@@ -60,7 +60,7 @@ internal
 	public const string FxVersion = "1.0.3300.0";
 	public const string VsVersion = "7.0.3300.0";
 #else
-#error No profile symbols specified.
+#error No profile symbols defined.
 #endif
 
 	//
