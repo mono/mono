@@ -142,6 +142,12 @@ checked (			(ulong) a), checked ((char) a), checked ((decimal) a));
 		adouble (checked ((sbyte) a), checked ((byte) a), checked ((short) a), checked ((ushort) a), checked ((int) a), checked ((uint) a), checked ((long) a),
 checked (			(ulong) a), checked ((char) a), checked ((float) a), (decimal) a);
 	}
+	
+	void TestDecimal (decimal d)
+	{
+		double dec = (double)d;
+		decimal dec2 = (decimal)dec;
+	}
 
 	static void Main ()
 	{
