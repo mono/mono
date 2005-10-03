@@ -1,4 +1,4 @@
-// cs0031.cs: Constant value `256' cannot be converted to a `byte'
+// cs0266-7.cs: Cannot implicitly convert type `int' to `byte'. An explicit conversion exists (are you missing a cast?)
 // Line : 7
 
 public class Blah {
