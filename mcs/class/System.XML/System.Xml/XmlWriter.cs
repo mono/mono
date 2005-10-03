@@ -162,15 +162,16 @@ namespace System.Xml
 			if (settings.Indent) {
 				xtw.Formatting = Formatting.Indented;
 				xtw.IndentChars = settings.IndentChars;
+				xtw.NewLineOnAttributes = settings.NewLineOnAttributes;
 			}
 			// NewLineChars
 			xtw.NewLineChars = settings.NewLineChars;
 			// CloseOutput
 			xtw.CloseOutput = settings.CloseOutput;
-			// NewLineOnAttributes
-			xtw.NewLineOnAttributes = settings.NewLineOnAttributes;
 			// ConformanceLevel
 			xtw.ConformanceLevel = settings.ConformanceLevel;
+			// NormalizeNewLines
+			xtw.NormalizeNewLines = settings.NormalizeNewLines;
 			// OmitXmlDeclaration
 			xtw.OmitXmlDeclaration = settings.OmitXmlDeclaration;
 			// CheckCharacters

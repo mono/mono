@@ -48,6 +48,7 @@ namespace System.Xml
 		private string newLineChars;
 		private bool newLineOnAttributes;
 		private NewLineHandling newLineHandling;
+		private bool normalizeNewLines;
 		private bool omitXmlDeclaration;
 		private XmlOutputMethod outputMethod;
 
@@ -67,6 +68,7 @@ namespace System.Xml
 			newLineChars = org.newLineChars;
 			newLineOnAttributes = org.newLineOnAttributes;
 			newLineHandling = org.newLineHandling;
+			normalizeNewLines = org.normalizeNewLines;
 			outputMethod = org.outputMethod;
 			omitXmlDeclaration = org.omitXmlDeclaration;
 		}
@@ -88,6 +90,7 @@ namespace System.Xml
 			newLineChars = Environment.NewLine;
 			newLineOnAttributes = false;
 			newLineHandling = NewLineHandling.None;
+			normalizeNewLines = true;
 			omitXmlDeclaration = false;
 			outputMethod = XmlOutputMethod.AutoDetect;
 		}
@@ -143,6 +146,11 @@ namespace System.Xml
 		public NewLineHandling NewLineHandling {
 			get { return newLineHandling; }
 			set { newLineHandling = value; }
+		}
+
+		public bool NormalizeNewLines {
+			get { return normalizeNewLines; }
+			set { normalizeNewLines = value; }
 		}
 
 		// It affects only on XmlTextWriter

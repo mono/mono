@@ -1,3 +1,9 @@
+2005-10-03  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlWriter.cs, XmlWriterSettings.cs, XmlTextWriter.cs :
+	  added supprot for NormalizeNewLines.
+	  NewLineOnAttributes is considered only when Indent is true.
+
 2005-10-01  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlAttribute.cs, XmlDocument.cs : check id table updates when

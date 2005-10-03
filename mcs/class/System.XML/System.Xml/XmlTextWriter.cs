@@ -86,6 +86,7 @@ namespace System.Xml
 		bool checkCharacters;
 		bool closeOutput = true;
 		bool newLineOnAttributes;
+		bool normalizeNewLines = false;
 		string newLineChars;
 #if NET_2_0
 		bool outputXmlDeclaration;
@@ -214,6 +215,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		internal bool NewLineOnAttributes {
 //			get { return newLineOnAttributes; }
 			set { newLineOnAttributes = value; }
+		}
+
+		internal bool NormalizeNewLines {
+			set { normalizeNewLines = value; }
 		}
 
 		internal bool OmitXmlDeclaration {
@@ -984,7 +989,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			"&amp;", "&lt;", "&gt;", "&quot;", "&apos;",
 			"&#xD;", "&#xA;"};
 
-		private string EscapeString (string source, bool skipQuotations)
+		private string EscapeString (string source, bool outsideAttribute)
 		{
 			int start = 0;
 			int pos = 0;
@@ -996,18 +1001,20 @@ openElements [openElementCount - 1]).IndentingOverriden;
 				case '<':  pos = 1; break;
 				case '>':  pos = 2; break;
 				case '\"':
-					if (skipQuotations) continue;
+					if (outsideAttribute) continue;
 					if (QuoteChar == '\'') continue;
 					pos = 3; break;
 				case '\'':
-					if (skipQuotations) continue;
+					if (outsideAttribute) continue;
 					if (QuoteChar == '\"') continue;
 					pos = 4; break;
 				case '\r':
-					if (skipQuotations) continue;
+					if (!normalizeNewLines && outsideAttribute)
+						continue;
 					pos = 5; break;
 				case '\n':
-					if (skipQuotations) continue;
+					if (!normalizeNewLines && outsideAttribute)
+						continue;
 					pos = 6; break;
 				default:
 					if (XmlChar.IsInvalid (source [i])) {
@@ -1039,6 +1046,16 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					cachedStringBuilder.Append (((int) invalid).ToString ("X", CultureInfo.InvariantCulture));
 					cachedStringBuilder.Append (";");
 				}
+#if NET_2_0
+				else if (outsideAttribute && pos >= 5) {
+					cachedStringBuilder.Append (newLineChars);
+					// all \r,\n,\r\n are replaced with
+					// NewLineChars, so \n after \r should
+					// be consumed here.
+					if (pos == 5 && i + 1 < count && source [i + 1] == '\n')
+						i++;
+				}
+#endif
 				else
 					cachedStringBuilder.Append (replacements [pos]);
 				start = i + 1;

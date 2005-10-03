@@ -139,10 +139,26 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Ignore ("Write Test!")]
 		public void NormalizeNewLinesTest ()
 		{
-			throw new NotImplementedException ();
+			string output = "<foo\n\n\n  bar=\"hoge\"\n\n\n  baz=\"fuga&#xA;fuga\">test\n\n\nstring</foo>";
+			StringWriter sw = new StringWriter ();
+			XmlWriterSettings s = new XmlWriterSettings ();
+			s.OmitXmlDeclaration = true;
+			s.Indent = true;
+			s.NewLineOnAttributes = true;
+			s.NormalizeNewLines = true;
+			s.NewLineChars = "\n\n\n";
+			XmlWriter xw = XmlWriter.Create (sw, s);
+			xw.WriteStartElement ("foo");
+			xw.WriteStartAttribute ("bar");
+			xw.WriteString ("hoge");
+			xw.WriteEndAttribute ();
+			xw.WriteAttributeString ("baz", "fuga\nfuga");
+			xw.WriteString ("test\r\nstring");
+			xw.WriteEndElement ();
+			xw.Flush ();
+			AssertEquals (output, sw.ToString ());
 		}
 	}
 }
