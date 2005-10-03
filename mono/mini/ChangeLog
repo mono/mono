@@ -1,3 +1,7 @@
+2005-10-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_thread_cleanup): Fix reading of freed memory.
+
 2005-10-02  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.h (OP_PCONST): Move the definition of OP_PCONST into the rest
