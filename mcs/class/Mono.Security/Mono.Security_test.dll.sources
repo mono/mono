@@ -9,6 +9,7 @@ Mono.Math/PrimeGenerationTest.cs
 Mono.Math/PrimeTestingTest.cs
 Mono.Math/SearchGeneratorTest.cs
 Mono.Security/ASN1ConvertTest.cs
+Mono.Security/PKCS7Test.cs
 Mono.Security/StrongNameTest.cs
 Mono.Security.Authenticode/AuthenticodeDeformatterTest.cs
 Mono.Security.Authenticode/PrivateKeyTest.cs
