@@ -1,3 +1,9 @@
+2005-10-03  Raja R Harinath  <rharinath@novell.com>
+
+	* support.cs (SeekableStreamReader.Position): Don't error out when
+	the requested position is just beyond the end of the current
+	buffered data.
+
 2005-09-28  Raja R Harinath  <rharinath@novell.com>
 
 	* support.cs (SeekableStreamReader): Simplify drastically.  Don't

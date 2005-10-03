@@ -383,7 +383,7 @@ namespace Mono.CSharp {
 			get { return buffer_start + pos; }
 
 			set {
-				if (value < buffer_start || value >= buffer_start + char_count)
+				if (value < buffer_start || value > buffer_start + char_count)
 					throw new InternalErrorException ("can't seek that far back: " + (pos - value));
 				pos = value - buffer_start;
 			}
