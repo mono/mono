@@ -1,3 +1,7 @@
+2005-10-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StringComparer.cs : (OrdinalIgnoreCaseComparer.Equals()) reverse.
+
 2005-09-23  Miguel de Icaza  <miguel@novell.com>
 
 	* Decimal.cs: Fix typo, patch from Tomas Kukol <tomas.kukol@gmail.com>
