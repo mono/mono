@@ -49,7 +49,7 @@ namespace System.Web.UI {
 		{
 			staticLiterals = new string [staticLiteralsCount];
 			dataBoundLiterals = new string [dataBoundLiteralCount];
-			PreventAutoID ();
+			AutoID = false;
 		}
 
 		public string Text {

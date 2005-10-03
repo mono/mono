@@ -927,6 +927,11 @@ namespace System.Web {
 		}
 #endregion
 
+		internal int GetOutputByteCount ()
+		{
+			return output_stream.GetTotalLength ();
+		}
+
 		internal void ReleaseResources ()
 		{
 			output_stream.ReleaseResources ();

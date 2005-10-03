@@ -41,6 +41,12 @@
 	validated. VerifyRenderingInServerForm doesn't throw an exception
 	during unit testing (without a context?) but does in normal ops.
 
+2005-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: reverted hacks used with the wrong method of getting a
+	control rendered size.
+	* Control.cs: if the trace is enabled, save control rendered size.
+
 2005-09-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: default VS 2005 pages are compiled fine now.
