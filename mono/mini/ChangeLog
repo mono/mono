@@ -1,3 +1,7 @@
+2005-10-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* aot.c (emit_section_change): Fix emitting of sections on win32. Fixes #76322.
+
 Fri Sep 9 09:49:14 CEST 2005 Paolo Molaro <lupus@ximian.com>
  
 	* ldscript.mono, Makefile.am: use anonymous versions in the ldscript
