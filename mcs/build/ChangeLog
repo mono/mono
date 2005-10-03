@@ -1,3 +1,13 @@
+2005-10-03  Raja R Harinath  <rharinath@novell.com>
+
+	* profiles/basic.make (monolite_flag, use_monolite): New.  Used to
+	determine if we need to compile with 'monolite' rather than with
+	an external mcs.
+	(do-profile-check): Simplify.  Remove corlib version testing
+	scripts.  Delegate that work to the mono runtime itself.  Split
+	off 'monolite' handling into ...
+	(do-profile-check-monolite): ... this.
+
 2005-09-27  Kornél Pál  <kornelpal@hotmail.com>
 
 	* config-default.make: Added CODEPAGE that is the default encoding used by
