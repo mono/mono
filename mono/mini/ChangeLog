@@ -1,5 +1,8 @@
 2005-10-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* liveness.c (mono_analyze_liveness): Revert parts of r51051 since it
+	causes a regression.
+
 	* mini.c (mini_thread_cleanup): Fix reading of freed memory.
 
 2005-10-02  Zoltan Varga  <vargaz@freemail.hu>
