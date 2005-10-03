@@ -1,5 +1,9 @@
 2005-10-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ImageButtonTest.cs: test that 'name' attribute is rendered.
+
+2005-10-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataGridTest.cs: Test for ButtonColumn with DataTextField.
 
 2005-10-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>

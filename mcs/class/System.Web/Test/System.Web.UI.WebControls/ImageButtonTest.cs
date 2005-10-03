@@ -110,6 +110,22 @@ namespace MonoTests.System.Web.UI.WebControls
 #endif
 
 		}
+
+		[Test]
+		public void RenderName ()
+		{
+			StringWriter sw = new StringWriter ();
+			HtmlTextWriter tw = new HtmlTextWriter (sw);
+
+			Page page = new Page ();
+			ImageButton b = new ImageButton ();			
+			page.Controls.Add (b);
+			page.RenderControl (tw);
+			Assert.AreEqual (true, sw.ToString().IndexOf ("<input") != -1, "A1");
+			Assert.AreEqual (true, sw.ToString().IndexOf ("type=\"image\"") != -1, "A2");
+			Assert.AreEqual (true, sw.ToString().IndexOf ("name=\"") != -1, "A3");
+		}
+
 	}
 }
 
