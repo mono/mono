@@ -1,6 +1,12 @@
+2005-10-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* InputFilterStream.cs proxy stream for use by filters.
+	* HttpRequest.cs: implement input filtering.
+
 2005-10-02 Eyal Alaluf <eyala@mainsoft.com>
-	* HttpApplication.jvm.cs - Workaround for use of yield in HttpApplication.cs
-	* HttpRuntime.cs: AppDomain.Unload is not supported under TARGET_J2EE
+	* HttpApplication.jvm.cs - Workaround for use of yield in
+	HttpApplication.cs HttpRuntime.cs: AppDomain.Unload is not supported
+	* under TARGET_J2EE
 
 2005-09-30 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
