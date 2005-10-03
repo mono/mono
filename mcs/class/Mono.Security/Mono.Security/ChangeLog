@@ -1,3 +1,11 @@
+2005-10-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS7.cs: Ensure that attributes (authenticated and unauthenticated)
+	are sorted as required in ASN.1 SET with DER encoding. Kind of hackish
+	because this should be done in the ASN.1 encoder - but it solves
+	interop problems with BouncyCastle. Patch (modified) from Daniel 
+	Granath <dgranath#gmail.com>.
+
 2004-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1.cs: Throw an NotSupportedException when "undefined length 

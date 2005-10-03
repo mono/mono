@@ -2,11 +2,12 @@
 // PKCS7.cs: PKCS #7 - Cryptographic Message Syntax Standard 
 //	http://www.rsasecurity.com/rsalabs/pkcs/pkcs-7/index.html
 //
-// Author:
+// Authors:
 //	Sebastien Pouliot <sebastien@ximian.com>
+//	Daniel Granath <dgranath#gmail.com>
 //
 // (C) 2002, 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -933,6 +934,7 @@ namespace Mono.Security {
 				ASN1 aa = null;
 				if (authenticatedAttributes.Count > 0) {
 					aa = signerInfo.Add (new ASN1 (0xA0));
+					authenticatedAttributes.Sort(new SortedSet ());
 					foreach (ASN1 attr in authenticatedAttributes)
 						aa.Add (attr);
 				}
@@ -961,6 +963,7 @@ namespace Mono.Security {
 				// unauthenticatedAttributes [1] IMPLICIT Attributes OPTIONAL 
 				if (unauthenticatedAttributes.Count > 0) {
 					ASN1 ua = signerInfo.Add (new ASN1 (0xA1));
+					unauthenticatedAttributes.Sort(new SortedSet ());
 					foreach (ASN1 attr in unauthenticatedAttributes)
 						ua.Add (attr);
 				}
@@ -970,6 +973,45 @@ namespace Mono.Security {
 			public byte[] GetBytes () 
 			{
 				return GetASN1 ().GetBytes ();
+			}
+		}
+
+		internal class SortedSet : IComparer {
+
+			public int Compare (object x, object y)
+			{
+				if (x == null)
+					return (y == null) ? 0 : -1;
+				else if (y == null)
+					return 1;
+
+				ASN1 xx = x as ASN1;
+				ASN1 yy = y as ASN1;
+				
+				if ((xx == null) || (yy == null)) {
+					throw new ArgumentException (Locale.GetText ("Invalid objects."));
+				}
+
+				byte[] xb = xx.GetBytes ();
+				byte[] yb = yy.GetBytes ();
+
+				for (int i = 0; i < xb.Length; i++) {
+					if (i == yb.Length)
+						break;
+
+					if (xb[i] == yb[i]) 
+						continue;
+						
+					return (xb[i] < yb[i]) ? -1 : 1; 
+				}
+
+				// The arrays are equal up to the shortest of them.
+				if (xb.Length > yb.Length)
+					return 1;
+				else if (xb.Length < yb.Length)
+					return -1;
+
+				return 0;
 			}
 		}
 	}
