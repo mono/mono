@@ -458,16 +458,13 @@ namespace Mono.CSharp {
 				Binary b = source as Binary;
 				if (b != null){
 					//
-					// 1. if the source is explicitly convertible to the
-					//    target_type
+					// In the spec 2.4 they added: or if type of the target is int
+					// and the operator is a shift operator...
 					//
-					
-					source = Convert.ExplicitConversion (ec, source, target_type, loc);
-					if (source == null){
-						Convert.Error_CannotImplicitConversion (loc, source_type, target_type);
-						return null;
-					}
-				
+					if (source_type == TypeManager.int32_type &&
+						(b.Oper == Binary.Operator.LeftShift || b.Oper == Binary.Operator.RightShift))
+						return this;
+
 					//
 					// 2. and the original right side is implicitly convertible to
 					// the type of target
@@ -475,15 +472,7 @@ namespace Mono.CSharp {
 					if (Convert.ImplicitStandardConversionExists (ec, a.original_source, target_type))
 						return this;
 
-					//
-					// In the spec 2.4 they added: or if type of the target is int
-					// and the operator is a shift operator...
-					//
-					if (source_type == TypeManager.int32_type &&
-					    (b.Oper == Binary.Operator.LeftShift || b.Oper == Binary.Operator.RightShift))
-						return this;
-
-					Convert.Error_CannotImplicitConversion (loc, a.original_source.Type, target_type);
+					source.Error_ValueCannotBeConverted (loc, target_type, false);
 					return null;
 				}
 			}
