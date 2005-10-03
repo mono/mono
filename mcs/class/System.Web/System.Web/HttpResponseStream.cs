@@ -54,12 +54,6 @@ namespace System.Web {
 		HttpResponse response;
 		internal long total;
 
-		// Need to be delete later
-		[MonoTODO("Delete me")]
-		public HttpResponseStream (HttpWriter writer)
-		{
-		}
-		
 		public HttpResponseStream (HttpResponse response)
 		{
 			this.response = response;
@@ -158,21 +152,34 @@ namespace System.Web {
 		}
 
 #else // TARGET_JVM
-		
 		unsafe class Block {
 			byte* data;
-			public const int Length = 128 * 1024;
+
+			const int PreferredLength = 128 * 1024;
 			public const int ChunkSize = 32 * 1024;
-			public const int Chunks = Length / ChunkSize;
-			
+			const int PreferredChunks = PreferredLength / ChunkSize;
+
+			int actual_length;
+			int nchunks;
 			int taken;
 	
 			public Block Next, Prev;
 		
 	
-			public Block () 
+			public Block () : this (PreferredLength)
 			{
-				data = (byte*) Marshal.AllocHGlobal (Length);
+			}
+
+			public Block (int initial_size)
+			{
+				if (initial_size <= PreferredLength) {
+					actual_length = PreferredLength;
+					nchunks = PreferredChunks;
+				} else {
+					actual_length = initial_size;
+					nchunks = 1;
+				}
+				data = (byte*) Marshal.AllocHGlobal (actual_length);
 			}
 	
 			public void Dispose ()
@@ -180,12 +187,10 @@ namespace System.Web {
 				Marshal.FreeHGlobal ((IntPtr) data);
 			}
 	
-			public Chunk GetChunk ()
+			public Chunk GetChunk (int size)
 			{
-				Chunk c = new Chunk ();
-				c.size = ChunkSize;
-				
-				for (int i = 0; i < Chunks; i ++) {
+				Chunk c = new Chunk (size);
+				for (int i = 0; i < nchunks; i ++) {
 					if ((taken & (1 << i)) == 0) {
 						c.block = this;
 						c.block_area = 1 << i;
@@ -232,14 +237,14 @@ namespace System.Web {
 	
 			public bool IsFull {
 				get {				
-					return taken == (1 << Chunks) - 1;
+					return taken == (1 << nchunks) - 1;
 				}
 			}
 	
 			public override string ToString ()
 			{
 				string bitmap = "";
-				for (int i = 0; i < Chunks; i ++) {
+				for (int i = 0; i < nchunks; i ++) {
 					if ((taken & (1 << i)) == 0)
 						bitmap += ".";
 					else
@@ -257,6 +262,14 @@ namespace System.Web {
 			public int block_area;
 			public Block block;
 
+			public Chunk (int size)
+			{
+				this.size = size;
+				data = (byte *) 0;
+				block_area = 0;
+				block = null;
+			}
+
 			public static void Copy(byte[] buff, int offset, Chunk c, int pos, int len)
 			{
 				Marshal.Copy (buff, offset, (IntPtr) (c.data + pos), len);
@@ -266,9 +279,6 @@ namespace System.Web {
 			{
 				Marshal.Copy ((IntPtr) (c.data + pos), buff, offset, len);
 			}
-		}
-		
-		sealed class BufferManager {
 	
 			static Block filled;
 			static Block part_filled;
@@ -277,9 +287,12 @@ namespace System.Web {
 			// TODO: if cb > chunk size, try to get a larger chunk
 			public static Chunk GetChunk (int cb)
 			{
+				if (cb < Block.ChunkSize)
+					cb = Block.ChunkSize;
+
 				Chunk c;
 				if (part_filled != null) {
-					c = part_filled.GetChunk ();
+					c = part_filled.GetChunk (cb);
 					if (part_filled.IsFull)
 						Block.Link (ref filled, Block.Unlink (ref part_filled, part_filled));
 					
@@ -287,9 +300,9 @@ namespace System.Web {
 				}
 	
 				if (empty == null)
-					Block.Link (ref empty, new Block ());
+					Block.Link (ref empty, new Block (cb));
 				
-				c = empty.GetChunk ();
+				c = empty.GetChunk (cb);
 				if (empty.IsFull) // account for the case where we have 1 chunk/block
 					Block.Link (ref filled, Block.Unlink (ref empty, empty));
 				else
@@ -317,7 +330,7 @@ namespace System.Web {
 				empty = null;
 			}
 			
-	
+			/*	
 			public static void PrintState ()
 			{
 				Console.WriteLine ("Filled blocks:");
@@ -331,10 +344,10 @@ namespace System.Web {
 					Console.WriteLine ("\t{0}", b);	
 				
 			}
+			*/
 			
 		}
-#endif		
-	
+#endif
 		abstract class Bucket {
 			public Bucket Next;
 
@@ -361,7 +374,7 @@ namespace System.Web {
 			
 			public ByteBucket (int cb)
 			{
-				c = BufferManager.GetChunk (cb);
+				c = Chunk.GetChunk (cb);
 				start = pos = 0;
 				rem = c.size;
 			}
@@ -402,7 +415,7 @@ namespace System.Web {
 			public override void Dispose ()
 			{
 				if (!partial)
-					BufferManager.DisposeChunk (c);
+					Chunk.DisposeChunk (c);
 			}
 
 			public override void Send (HttpWorkerRequest wr)

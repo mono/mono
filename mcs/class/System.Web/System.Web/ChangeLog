@@ -1,5 +1,9 @@
 2005-10-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* HttpResponseStream.cs: allow for writes of more than 32K at once.
+
+2005-10-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* InputFilterStream.cs proxy stream for use by filters.
 	* HttpRequest.cs: implement input filtering.
 
