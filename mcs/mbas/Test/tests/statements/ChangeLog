@@ -1,3 +1,9 @@
+2005-09-26 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+           Alexandre Rocha Lima e Marcondes
+	   <alexandre@psl-pr.softwarelivre.org>
+	*  ForEachC.vb : For Each statement test using collections
+	    and a field as ForEach variable.      
+			
 2005-09-15  Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	    Alexandre Rocha Lima e Marcondes
 	    <alexandre@psl-pr.softwarelivre.org>

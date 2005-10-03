@@ -3046,8 +3046,30 @@ foreach_statement
 				// Get a reference to this variable.
 				v = new LocalVariableReference (current_block, (string) $3, l, vi, false);
 			}
-			else 
-				Report.Error (451, (Location)$4,"Name '" + (string) $3 + "' is not declared.");
+			else
+			{
+				ArrayList VarDeclarations = new ArrayList ();
+       				VarDeclarations.Add (new VariableDeclaration ("$FOREACH$" + (string) $3, null, l, (string) $3));
+                                ArrayList decl = new ArrayList ();
+                                decl.AddRange (VarDeclarations);
+
+                                DictionaryEntry de = new DictionaryEntry (DecomposeQI("_local_vars_", l), decl);
+
+                                Block b = declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, l);
+				
+				if(current_block.Used)
+				{
+					current_block.AddStatement ((Statement) b);
+					current_block = b;
+				}
+
+				//Mark these variables as Used
+                                vi = current_block.GetVariableInfo ("$FOREACH$" + (string) $3);
+                                //vi.Type = DecomposeQI ((String)$3, l);
+                                vi.Used = true;
+                                v = new LocalVariableReference (current_block,"$FOREACH$" + (string) $3, l, vi, false);
+
+			}
 		}
 		
 		oob_stack.Push (v);
@@ -3903,7 +3925,6 @@ declaration_statement
 			   field.Name = @"$STATIC$" + ((MethodBlock) block).MethodName + @"$" + ((Location) $2).Row + @"$" + field.Name;
 			   CheckDef (current_container.AddField (field), field.Name, l);
 			   var.Alias = field.Name;
-			   var.Static = true;
 
 			   //To do initialization only once.
 			   if( var.expression_or_array_initializer != null ) { //Like: Static a as Integer = 10
@@ -5380,7 +5401,7 @@ Block declare_local_variables (Expression dummy_type, ArrayList variable_declara
 	foreach (VariableDeclaration decl in variable_declarators){
 		Expression type = decl.type;
 		if (decl.Alias != null) {
-			if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, loc, decl.Alias, decl.Static) != null) {
+			if (implicit_block.AddVariable (type, decl.identifier, current_local_parameters, loc, decl.Alias) != null) {
 				if (decl.expression_or_array_initializer != null){
 					if (inits == null)
 						inits = new ArrayList ();

@@ -3330,7 +3330,7 @@ namespace Mono.MonoBASIC {
 			VariableInfo vi = VariableInfo;
 			ILGenerator ig = ec.ig;
 
-			if (vi.Alias != null && vi.Static) {
+			if (vi.Alias != null) {
 				ArrayList fields = ec.TypeContainer.Fields;
 				FieldBase fb = null;
 				for (int i = 0; i < fields.Count; i++) {
@@ -3358,7 +3358,7 @@ namespace Mono.MonoBASIC {
 
 			vi.Assigned = true;
 
-			if (vi.Alias != null && vi.Static) {
+			if (vi.Alias != null) {
 				ArrayList fields = ec.TypeContainer.Fields;
 				FieldBase fb = null;
 				for (int i = 0; i < fields.Count; i++) {
@@ -3367,6 +3367,7 @@ namespace Mono.MonoBASIC {
 						break;
 					}
 				}
+				Console.WriteLine("teste Maverson");
 				if ((fb.ModFlags & Modifiers.STATIC) != 0) {
 					source.Emit (ec);
 					ig.Emit (OpCodes.Stsfld, fb.FieldBuilder);
@@ -3383,11 +3384,27 @@ namespace Mono.MonoBASIC {
 			}
 		}
 		
+		public void EmitAssign (EmitContext ec, Expression source, FieldBase fb)
+		{
+			//This is used in specific cases with non Static fields with
+			//part of source assign emmited before this.
+			ILGenerator ig = ec.ig;
+			VariableInfo vi = VariableInfo;
+
+			vi.Assigned = true;
+
+			source.Emit (ec);
+			if ((fb.ModFlags & Modifiers.STATIC) != 0) 
+				ig.Emit (OpCodes.Stsfld, fb.FieldBuilder);
+			else
+				ig.Emit (OpCodes.Stfld, fb.FieldBuilder);
+		}
+		
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			VariableInfo vi = VariableInfo;
 
-			if (vi.Alias != null && vi.Static) {
+			if (vi.Alias != null) {
 				ArrayList fields = ec.TypeContainer.Fields;
 				FieldBase fb = null;
 				for (int i = 0; i < fields.Count; i++) {

@@ -2679,17 +2679,7 @@ namespace Mono.MonoBASIC {
 		public LocalBuilder LocalBuilder;
 		public Type VariableType;
 		public string Alias;
-		
-		bool mod_static;
-		public bool Static {
-			get {
-				return mod_static;
-			}
-			set {
-				mod_static = value;
-			}
-		}
-
+		FieldBase FieldAlias;
 		public readonly string Name;
 		public readonly Location Location;
 		public readonly int Block;
@@ -2805,6 +2795,24 @@ namespace Mono.MonoBASIC {
 				ec.CurrentBranching.SetVariableAssigned (this, StructInfo [name]);
 		}
 
+		public FieldBase GetFieldAlias (EmitContext ec)  {
+			if ( this.FieldAlias != null )
+				return this.FieldAlias;
+			else
+			{
+				ArrayList fields = ec.TypeContainer.Fields;
+                                for (int i = 0; i < fields.Count; i++) 
+				{
+                                	if (((Field) fields[i]).Name == this.Alias) 
+					{
+	                                	this.FieldAlias = (Field) fields[i];
+	                                	break;
+					}
+	                        }
+				return this.FieldAlias;
+		 	}
+		}
+		
 		public bool Resolve (DeclSpace decl)
 		{
 			if (struct_info != null)
@@ -4801,6 +4809,15 @@ namespace Mono.MonoBASIC {
 				return false;
 			}
 
+			if ( variable.VariableInfo.Alias != null )
+			{
+				if ( variable.VariableInfo.GetFieldAlias(ec) == null )
+				{
+					Report.Error (451, loc,"Name '" + variable.VariableInfo.Name  + "' is not declared.");	
+					return false;
+				}
+			}
+
 			if (expr.Type.IsArray) {
 				array_type = expr.Type;
 				element_type = array_type.GetElementType ();
@@ -5125,9 +5142,25 @@ namespace Mono.MonoBASIC {
 			ig.Emit (OpCodes.Ldloc, enumerator);
 			ig.Emit (OpCodes.Callvirt, hm.move_next);
 			ig.Emit (OpCodes.Brfalse, end_try);
+			
+			
+			FieldBase fb = null;
+			if ( variable.VariableInfo.Alias != null )
+			{
+				fb = variable.VariableInfo.GetFieldAlias(ec);
+				
+				if( (fb.ModFlags & Modifiers.STATIC) == 0 )
+					ig.Emit (OpCodes.Ldarg_0);
+			}	
+					
 			ig.Emit (OpCodes.Ldloc, enumerator);
 			ig.Emit (OpCodes.Callvirt, hm.get_current);
-			variable.EmitAssign (ec, conv);
+			
+			if ( fb == null)
+				variable.EmitAssign (ec, conv);
+			else
+				variable.EmitAssign (ec, conv, fb);
+			
 			statement.Emit (ec);
 			ig.Emit (OpCodes.Br, ec.LoopBegin);
 			ig.MarkLabel (end_try);
@@ -5195,11 +5228,23 @@ namespace Mono.MonoBASIC {
 				loop = ig.DefineLabel ();
 				ig.MarkLabel (loop);
 
+				FieldBase fb = null;
+				if ( variable.VariableInfo.Alias != null )
+				{
+					fb = variable.VariableInfo.GetFieldAlias(ec);
+
+					if( (fb.ModFlags & Modifiers.STATIC) == 0 )
+						ig.Emit (OpCodes.Ldarg_0);
+				}	
+					
 				ig.Emit (OpCodes.Ldloc, copy);
 				ig.Emit (OpCodes.Ldloc, counter);
 				ArrayAccess.EmitLoadOpcode (ig, var_type);
 
-				variable.EmitAssign (ec, conv);
+				if ( fb == null)
+					variable.EmitAssign (ec, conv);
+				else
+					variable.EmitAssign (ec, conv, fb);
 
 				statement.Emit (ec);
 

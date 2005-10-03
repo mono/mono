@@ -434,13 +434,11 @@ namespace Mono.MonoBASIC {
 		
 		
 		
-		public VariableInfo AddVariable (Expression type, string name, Parameters pars, Location l, string Alias, bool Static)
+		public VariableInfo AddVariable (Expression type, string name, Parameters pars, Location l, string Alias)
 		{
 			VariableInfo vi = AddVariable (type, name, pars, l);
-			if (vi != null) {
+			if (vi != null) 
 				vi.Alias = Alias;
-				vi.Static = Static;
-			}
 					
 			return vi;
 		}

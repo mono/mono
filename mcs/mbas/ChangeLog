@@ -1,3 +1,15 @@
+2005-09-26 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+           Alexandre Rocha Lima e Marcondes <alexandre@psl-pr.softwarelivre.org>       
+	* mb-parser.jay: Fix For Each when using fields as the variable used
+	to iterate through the elements.
+	* expression.cs: Created new LocalVariableReference EmitAssign used in
+	for each with non Static fields.
+	* statement.cs: Created new attribute of VariableInfo - FieldAlias wich
+	references a FieldBase indicated by the alias.
+		Added a field assign treatment if the foreach variable references
+	a non static field, in EmitCollectionForeach and EmitArrayForeach.
+	* mb-parser.jay, block.cs, statement.cs, expression.cs: Remove Bool Static Attribute from VariableInfo class.
+
 2005-09-22 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	* mb-parser.jay: Throws error for Option Strict on with Propeties
 	whitout an 'As' clause or a type character. Fix Interfaces errors with
