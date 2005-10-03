@@ -1,3 +1,8 @@
+2005-10-03  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* ObjectIDGenerator.cs: Use custom comparer instead of an instance
+	wrapper. Closes bug #76017.
+
 2005-06-13  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Formatter.cs: Properly initialize protected fields. Fixes bug #75233. 

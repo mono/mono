@@ -43,36 +43,29 @@ namespace System.Runtime.Serialization
 		// Private field
 		Hashtable table;
 		long current; // this is the current ID, starts at 1
+		static InstanceComparer comparer = new InstanceComparer ();
 
 
 		// ObjectIDGenerator must generate a new id for each object instance.
 		// If two objects have the same state (i.e. the method Equals() returns true),
 		// each one should have a different id.
 		// Thus, the object instance cannot be directly used as key of the hashtable.
-		// The key is then a wrapper of the object that compares object references
-		// instead of object content (unless the object is inmutable, like strings).
+		// InstanceComparer compares object references instead of object content
+		// (unless the object is inmutable, like strings).
 
-		class InstanceWrapper
+		class InstanceComparer: IComparer, IHashCodeProvider
 		{
-			object _instance;
-
-			public InstanceWrapper (object instance)
+			int IComparer.Compare (object o1, object o2)
 			{
-				_instance = instance;
-			}
-
-			public override bool Equals (object other)
-			{
-				InstanceWrapper ow = (InstanceWrapper)other;
-				if (_instance is string)
-					return _instance.Equals(ow._instance);
+				if (o1 is string)
+					return o1.Equals(o2) ? 0 : 1;
 				else 
-					return (_instance == ow._instance);
+					return (o1 == o2) ? 0 : 1;
 			}
 
-			public override int GetHashCode ()
+			int IHashCodeProvider.GetHashCode (object o)
 			{
-				return _instance.GetHashCode();
+				return object.InternalGetHashCode (o);
 			}
 		}
 		
@@ -80,7 +73,7 @@ namespace System.Runtime.Serialization
 		public ObjectIDGenerator ()
 			: base ()
 		{
-			table = new Hashtable ();
+			table = new Hashtable (comparer, comparer);
 			current = 1;
 		}
 
@@ -90,9 +83,7 @@ namespace System.Runtime.Serialization
 			if (obj == null)
 				throw new ArgumentNullException ("The obj parameter is null.");
 
-			InstanceWrapper iw = new InstanceWrapper(obj);
-
-			object val = table [iw];
+			object val = table [obj];
 
 			if (val != null) {
 				firstTime = false;
@@ -100,7 +91,7 @@ namespace System.Runtime.Serialization
 
 			} else {
 				firstTime = true;
-				table.Add (iw, current);
+				table.Add (obj, current);
 				return current ++; 
 			}
 		}
@@ -110,7 +101,7 @@ namespace System.Runtime.Serialization
 			if (obj == null)
 				throw new ArgumentNullException ("The obj parameter is null.");
 
- 			object val = table [new InstanceWrapper(obj)];
+ 			object val = table [obj];
  
  			if (val != null) {
  				firstTime = false;
