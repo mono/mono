@@ -1,3 +1,9 @@
+2005-10-03  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollBar.cs: My last scrollbar patch was broken. This is a
+	revert and a new patch to prevent the thumb from refreshing so
+	much.
+
 2005-10-02  Jackson Harper  <jackson@ximian.com>
 
 	* ScrollBar.cs: Don't update position if it hasn't actually

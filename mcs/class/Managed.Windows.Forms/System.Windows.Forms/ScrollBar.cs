@@ -630,10 +630,12 @@ namespace System.Windows.Forms
 
 			case TimerType.RepeatButton:
 			{
-				if ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed)
+				if ((firstbutton_state & ButtonState.Pushed) == ButtonState.Pushed &&
+						position != Minimum)
 					SmallDecrement();
 
-				if ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed)
+				if ((secondbutton_state & ButtonState.Pushed) == ButtonState.Pushed &&
+					position != Maximum)
 					SmallIncrement();
 
 				break;
@@ -1106,9 +1108,6 @@ namespace System.Windows.Forms
 			// pos can't be less than minimum
 			if (pos < minimum)
 				pos = minimum;
-
-			if (position == pos)
-				return;
 
 			if (update_thumbpos) {
 				if (vert)
