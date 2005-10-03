@@ -1,3 +1,9 @@
+2005-10-02  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollBar.cs: Don't update position if it hasn't actually
+	changed. This occurs when you hold down the increment/decrement
+	buttons and the thumb gets to the max/min.
+
 2005-10-01  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs:

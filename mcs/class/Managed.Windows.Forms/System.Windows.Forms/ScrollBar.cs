@@ -1100,12 +1100,15 @@ namespace System.Windows.Forms
     			else
     				if (newPos > maximum + 1 - large_change)
     					pos = maximum + 1 - large_change;
-    					else
-    						pos = newPos;
+				else
+					pos = newPos;
 
 			// pos can't be less than minimum
 			if (pos < minimum)
 				pos = minimum;
+
+			if (position == pos)
+				return;
 
 			if (update_thumbpos) {
 				if (vert)
