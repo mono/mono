@@ -88,6 +88,11 @@
 
 2005-10-04  Martin Baulig  <martin@ximian.com>
 
+	* ecore.cs (PropertyExpr.ResolveAccessors): Cosmetic fix; make the
+	`SetMemberIsUsed()' work for generics, too.
+
+2005-10-04  Martin Baulig  <martin@ximian.com>
+
 	* expression.cs (DelegateInvocation.EmitStatement): Make this work
 	for corlib.  Fixes #75691.
 

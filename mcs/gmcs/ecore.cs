@@ -3442,7 +3442,10 @@ namespace Mono.CSharp {
 			FindAccessors (ec.ContainerType);
 
 			if (getter != null) {
-				IMethodData md = TypeManager.GetMethod (getter);
+				MethodInfo the_getter = getter;
+				if (the_getter.Mono_IsInflatedMethod)
+					the_getter = the_getter.GetGenericMethodDefinition ();
+				IMethodData md = TypeManager.GetMethod (the_getter);
 				if (md != null)
 					md.SetMemberIsUsed ();
 
@@ -3451,7 +3454,10 @@ namespace Mono.CSharp {
 			}
 
 			if (setter != null) {
-				IMethodData md = TypeManager.GetMethod (setter);
+				MethodInfo the_setter = setter;
+				if (the_setter.Mono_IsInflatedMethod)
+					the_setter = the_setter.GetGenericMethodDefinition ();
+				IMethodData md = TypeManager.GetMethod (the_setter);
 				if (md != null)
 					md.SetMemberIsUsed ();
 
