@@ -60,6 +60,7 @@ namespace System.Drawing.Imaging
 
 		public void Dispose () {
 			// Nothing
+			GC.SuppressFinalize(this);
 		}
 #if !TARGET_JVM
 		internal IntPtr ToNativePtr () {

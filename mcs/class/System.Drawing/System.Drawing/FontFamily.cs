@@ -263,6 +263,7 @@ namespace System.Drawing {
 			Status status = GDIPlus.GdipDeleteFontFamily (nativeFontFamily);
 			if ( status == Status.Ok ) 
 				nativeFontFamily = IntPtr.Zero;								
+			GC.SuppressFinalize(this);
 		}		
 		
 		public override bool Equals(object obj)

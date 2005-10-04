@@ -155,6 +155,7 @@ namespace System.Drawing
 				GDIPlus.CheckStatus (status);
 				disposed = true;				
 			}
+			GC.SuppressFinalize(this);
 		}
 
 		

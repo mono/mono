@@ -1,3 +1,8 @@
+2005-10-04 Peter Dennis Bartok <pbartok@novell.com>
+
+	* EncoderParameter.cs, EncoderParameters.cs: Calling GC.SuppressFinalize
+	  from the Dispose method; fixes bug #76329
+
 2005-09-21 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* ImageCodec.jvm.cs: refactoring of read/write methods, members access levels
