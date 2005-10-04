@@ -1,3 +1,8 @@
+2005-10-04  Kornél Pál  <kornelpal@hotmail.com>
+
+	* ImageList.cs: Use upper case initials for internal fields. ImageStream:
+	  Create handle. NET_2_0: Destroy handle when value is null.
+
 2005-10-03  Jackson Harper  <jackson@ximian.com>
 
 	* ScrollBar.cs: My last scrollbar patch was broken. This is a

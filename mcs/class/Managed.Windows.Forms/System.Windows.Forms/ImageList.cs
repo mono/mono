@@ -86,15 +86,15 @@ namespace System.Windows.Forms
 			private struct ArgbColor
 			{
 				[FieldOffset(0)]
-				internal int argb;
+				internal int Argb;
 				[FieldOffset(0)]
-				internal byte blue;
+				internal byte Blue;
 				[FieldOffset(1)]
-				internal byte green;
+				internal byte Green;
 				[FieldOffset(2)]
-				internal byte red;
+				internal byte Red;
 				[FieldOffset(3)]
-				internal byte alpha;
+				internal byte Alpha;
 			}
 
 			private
@@ -127,7 +127,7 @@ namespace System.Windows.Forms
 
 					Palette4Bit = new ArgbColor[count = palette.Length];
 					for (index = 0; index < count; index++)
-						Palette4Bit[index].argb = palette[index].ToArgb();
+						Palette4Bit[index].Argb = palette[index].ToArgb();
 
 					bitmap = new Bitmap(1, 1, PixelFormat.Format8bppIndexed);
 					palette = bitmap.Palette.Entries;
@@ -135,7 +135,7 @@ namespace System.Windows.Forms
 
 					Palette8Bit = new ArgbColor[count = palette.Length];
 					for (index = 0; index < count; index++)
-						Palette8Bit[index].argb = palette[index].ToArgb();
+						Palette8Bit[index].Argb = palette[index].ToArgb();
 
 					squares = new int[511];
 					for (index = 0; index < 256; index++)
@@ -155,7 +155,7 @@ namespace System.Windows.Forms
 
 					count = palette.Length;
 					for (index = 0; index < count; index++)
-						if (palette[index].argb == color)
+						if (palette[index].Argb == color)
 							return color;
 
 					red = unchecked((int)(unchecked((uint)color) >> 16) & 0xFF);
@@ -165,8 +165,8 @@ namespace System.Windows.Forms
 					minDistance = int.MaxValue;
 
 					for (index = 0; index < count; index++)
-						if ((distance = squares[255 + palette[index].red - red] + squares[255 + palette[index].green - green] + squares[255 + palette[index].blue - blue]) < minDistance) {
-							nearestColor = palette[index].argb;
+						if ((distance = squares[255 + palette[index].Red - red] + squares[255 + palette[index].Green - green] + squares[255 + palette[index].Blue - blue]) < minDistance) {
+							nearestColor = palette[index].Argb;
 							minDistance = distance;
 						}
 
@@ -260,10 +260,12 @@ namespace System.Windows.Forms
 
 					if (value == null) {
 #if NET_2_0
+						this.handleCreated = false;
 						list.Clear();
 #endif
 					}
 					else if ((streamImages = value.Images) != null) {
+						this.handleCreated = true;
 						list.Clear();
 
 						for (index = 0; index < streamImages.Length; index++)
