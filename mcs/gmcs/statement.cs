@@ -55,16 +55,7 @@ namespace Mono.CSharp {
 
 			return ok;
 		}
-		
-		protected void CheckObsolete (Type type)
-		{
-			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type);
-			if (obsolete_attr == null)
-				return;
-
-			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, loc);
-		}
-		
+				
 		/// <summary>
 		///   Return value indicates whether all code paths emitted return.
 		/// </summary>
@@ -1060,7 +1051,7 @@ namespace Mono.CSharp {
 				if (texpr == null)
 					return false;
 				
-				VariableType = texpr.Type;
+				VariableType = texpr.ResolveType (ec);
 			}
 
 			if (VariableType == TypeManager.void_type) {
@@ -3373,9 +3364,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 
-			expr_type = texpr.Type;
-
-			CheckObsolete (expr_type);
+			expr_type = texpr.ResolveType (ec);
 
 			data = new Emitter [declarators.Count];
 
@@ -3594,8 +3583,6 @@ namespace Mono.CSharp {
 						return false;
 
 					type = te.ResolveType (ec);
-
-					CheckObsolete (type);
 
 					if (type != TypeManager.exception_type && !type.IsSubclassOf (TypeManager.exception_type)){
 						Error (155, "The type caught or thrown must be derived from System.Exception");
@@ -3822,7 +3809,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return false;
 
-			expr_type = texpr.Type;
+			expr_type = texpr.ResolveType (ec);
 
 			//
 			// The type must be an IDisposable or an implicit conversion

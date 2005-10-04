@@ -304,6 +304,11 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (Type);
+			if (obsolete_attr != null) {
+				AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (Type), Location);
+			}
+
 			if (Arguments == null) {
 				object o = att_cache [Type];
 				if (o != null) {
@@ -313,8 +318,14 @@ namespace Mono.CSharp {
 			}
 
 			ConstructorInfo ctor = ResolveArguments (ec);
-			if (ctor == null)
+			if (ctor == null) {
+				if (Type is TypeBuilder && 
+				    TypeManager.LookupDeclSpace (Type).MemberCache == null)
+					// The attribute type has been DefineType'd, but not Defined.  Let's not treat it as an error.
+					// It'll be resolved again when the attached-to entity is emitted.
+					resolve_error = false;
 				return null;
+			}
 
 			CustomAttributeBuilder cb;
 
@@ -508,6 +519,13 @@ namespace Mono.CSharp {
 				ec, Type, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly,
                                 Location);
+
+			if (mg == null) {
+				// FIXME: Punt the issue for now.
+				if (Type is TypeBuilder)
+					return null;
+				throw new InternalErrorException ("Type " + Type + " doesn't have constructors");
+			}
 
 			MethodBase constructor = Invocation.OverloadResolve (
 				ec, (MethodGroupExpr) mg, pos_args, false, Location);
@@ -1677,11 +1695,12 @@ namespace Mono.CSharp {
 					if (attribute.Length == 1)
 						result = (ObsoleteAttribute)attribute [0];
 				} else {
-					result = type_ds.GetObsoleteAttribute (type_ds);
+					result = type_ds.GetObsoleteAttribute ();
 				}
 			}
 
-			analyzed_types_obsolete.Add (type, result == null ? FALSE : result);
+			// Cannot use .Add because of corlib bootstrap
+			analyzed_types_obsolete [type] = result == null ? FALSE : result;
 			return result;
 		}
 

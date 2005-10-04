@@ -737,9 +737,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected override void VerifyObsoleteAttribute ()
-		{ }
-
 		public override void ApplyAttributeBuilder (Attribute a,
 							    CustomAttributeBuilder cb)
 		{ }
@@ -1495,11 +1492,6 @@ namespace Mono.CSharp {
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
-		{
-			// FIXME
-		}
-
-		protected override void VerifyObsoleteAttribute()
 		{
 			// FIXME
 		}

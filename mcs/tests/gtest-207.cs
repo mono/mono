@@ -1,3 +1,5 @@
+// Note that this test actually checks if we compiled mscorlib.dll properly.
+
 class M {
   static void p (string x) {
     System.Console.WriteLine (x);

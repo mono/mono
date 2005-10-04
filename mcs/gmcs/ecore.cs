@@ -145,18 +145,6 @@ namespace Mono.CSharp {
 		// Not nice but we have broken hierarchy
 		public virtual void CheckMarshallByRefAccess (Type container) {}
 
-		/// <summary>
-		/// Tests presence of ObsoleteAttribute and report proper error
-		/// </summary>
-		protected void CheckObsoleteAttribute (Type type)
-		{
-			ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (type);
-			if (obsolete_attr == null)
-				return;
-
-			AttributeTester.Report_ObsoleteMessage (obsolete_attr, type.FullName, loc);
-		}
-
 		public virtual string GetSignatureForError ()
 		{
 			return TypeManager.CSharpName (type);
@@ -284,6 +272,7 @@ namespace Mono.CSharp {
 			if ((ct != null) && !ec.ResolvingTypeTree && !ct.CheckConstraints (ec))
 				return null;
 
+			te.loc = loc;
 			return te;
 		}
 
@@ -2281,11 +2270,18 @@ namespace Mono.CSharp {
 
 		protected abstract TypeExpr DoResolveAsTypeStep (EmitContext ec);
 
-		public virtual Type ResolveType (EmitContext ec)
+		public Type ResolveType (EmitContext ec)
 		{
 			TypeExpr t = ResolveAsTypeTerminal (ec);
 			if (t == null)
 				return null;
+
+			if (ec.TestObsoleteMethodUsage) {
+				ObsoleteAttribute obsolete_attr = AttributeTester.GetObsoleteAttribute (t.Type);
+				if (obsolete_attr != null) {
+					AttributeTester.Report_ObsoleteMessage (obsolete_attr, Name, Location);
+				}
+			}
 
 			return t.Type;
 		}
@@ -2493,7 +2489,7 @@ namespace Mono.CSharp {
 			if (texpr == null)
 				return null;
 
-			Type type = texpr.Type;
+			Type type = texpr.ResolveType (ec);
 			int num_args = TypeManager.GetNumberOfTypeArguments (type);
 
 			if (args != null) {
@@ -2948,10 +2944,19 @@ namespace Mono.CSharp {
 		{
 			FieldInfo fi = FieldInfo.Mono_GetGenericFieldDefinition ();
 
-			if (fi.IsLiteral) {
+			Type t = fi.FieldType;
+
+			if (fi.IsLiteral || (fi.IsInitOnly && t == TypeManager.decimal_type)) {
 				IConstant ic = TypeManager.GetConstant (fi);
 				if (ic == null) {
-					ic = new ExternalConstant (fi);
+					if (fi.IsLiteral) {
+						ic = new ExternalConstant (fi);
+					} else {
+						ic = ExternalConstant.CreateDecimal (fi);
+						if (ic == null) {
+							return base.ResolveMemberAccess (ec, left, loc, original);
+						}
+					}
 					TypeManager.RegisterConstant (fi, ic);
 				}
 
@@ -2966,21 +2971,6 @@ namespace Mono.CSharp {
 					ic.CheckObsoleteness (loc);
 
 				return ic.Value;
-			}
-
-			bool is_emitted = fi is FieldBuilder;
-			Type t = fi.FieldType;
-			
-			//
-			// Decimal constants cannot be encoded in the constant blob, and thus are marked
-			// as IsInitOnly ('readonly' in C# parlance).  We get its value from the 
-			// DecimalConstantAttribute metadata.
-			//
-			//TODO: incorporate in GetContant otherwise we miss all error checks + obsoleteness check
-			if (fi.IsInitOnly && !is_emitted && t == TypeManager.decimal_type) {
-				object[] attrs = fi.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
-				if (attrs.Length == 1)
-					return new DecimalConstant (((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value, Location.Null);
 			}
 			
 			if (t.IsPointer && !ec.InUnsafe) {
@@ -3031,7 +3021,7 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			if (!in_initializer) {
+			if (!in_initializer && !ec.IsFieldInitializer) {
 				ObsoleteAttribute oa;
 				FieldBase f = TypeManager.GetField (FieldInfo);
 				if (f != null) {

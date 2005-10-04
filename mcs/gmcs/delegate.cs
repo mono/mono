@@ -222,13 +222,15 @@ namespace Mono.CSharp {
 					return false;
 			}
 			
- 			ReturnType = ReturnType.ResolveAsTypeTerminal (ec);
-                        if (ReturnType == null)
-                            return false;
+			ReturnType = ReturnType.ResolveAsTypeTerminal (ec, false);
+			if (ReturnType == null)
+				return false;
                         
-   			ret_type = ReturnType.Type;
+			ret_type = ReturnType.Type;
 			if (ret_type == null)
 				return false;
+
+			CheckObsoleteType (ReturnType);
 
 			if (!Parent.AsAccessible (ret_type, ModFlags)) {
 				Report.Error (58, Location,
@@ -721,14 +723,6 @@ namespace Mono.CSharp {
 			get { return "T:"; }
 		}
 
-		protected override void VerifyObsoleteAttribute()
-		{
-			CheckUsageOfObsoleteAttribute (ret_type);
-
-			foreach (Type type in param_types) {
-				CheckUsageOfObsoleteAttribute (type);
-			}
-		}
 	}
 
 	//
