@@ -2035,7 +2035,7 @@ namespace Mono.CSharp {
 	}
 	
 	/// <summary>
-	///   Fully resolved expression that evaluates to a type
+	///   Expression that evaluates to a type
 	/// </summary>
 	public abstract class TypeExpr : FullNamedExpression {
 		override public FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
@@ -2138,6 +2138,9 @@ namespace Mono.CSharp {
 		}
 	}
 
+	/// <summary>
+	///   Fully resolved Expression that already evaluated to a type
+	/// </summary>
 	public class TypeExpression : TypeExpr {
 		public TypeExpression (Type t, Location l)
 		{
