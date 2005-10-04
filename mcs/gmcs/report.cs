@@ -345,7 +345,7 @@ namespace Mono.CSharp {
 
 		static void SymbolRelatedToPreviousError (string loc, string symbol)
 		{
-			extra_information.Add (String.Format ("{0}: `{1}' (name of symbol related to previous ", loc, symbol));
+			extra_information.Add (String.Format ("{0}: `{1}', name of symbol related to previous ", loc, symbol));
 		}
 
 		public static void ExtraInformation (Location loc, string msg)

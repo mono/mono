@@ -94,7 +94,7 @@ namespace Mono.CSharp
 		//
 		// Encoding.
 		//
-		static Encoding defaultEncoding;
+		static Encoding default_encoding;
 		static Encoding encoding;
 
 		static public void Reset ()
@@ -109,7 +109,7 @@ namespace Mono.CSharp
 			win32ResourceFile = win32IconFile = null;
 			defines = null;
 			output_file = null;
-			encoding = defaultEncoding = null;
+			encoding = default_encoding = null;
 			first_source = null;
 		}
 
@@ -279,9 +279,11 @@ namespace Mono.CSharp
 
 		public static int counter1, counter2;
 		
-	public static int Main (string[] args)
+		public static int Main (string[] args)
 		{
 			RootContext.Version = LanguageVersion.Default;
+			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
+
 			bool ok = MainDriver (args);
 			
 			if (ok && Report.Errors == 0) {
@@ -1305,7 +1307,7 @@ namespace Mono.CSharp
 					encoding = new UTF8Encoding();
 					break;
 				case "reset":
-					encoding = defaultEncoding;
+					encoding = default_encoding;
 					break;
 				default:
 					try {
@@ -1318,11 +1320,15 @@ namespace Mono.CSharp
 				}
 				return true;
 			}
-			//Report.Error (2007, String.Format ("Unrecognized command-line option: `{0}'", option));
-			//Environment.Exit (1);
+
 			return false;
 		}
 		
+		static void Error_WrongOption (string option)
+		{
+			Report.Error (2007, "Unrecognized command-line option: `{0}'", option);
+		}
+
 		static string [] AddArgs (string [] args, string [] extra_args)
 		{
 			string [] new_args;
@@ -1364,12 +1370,12 @@ namespace Mono.CSharp
 
 			try {
 				// Latin1
-				defaultEncoding = Encoding.GetEncoding (28591);
+				default_encoding = Encoding.GetEncoding (28591);
 			} catch (Exception) {
 				// iso-8859-1
-				defaultEncoding = Encoding.GetEncoding (1252);
+				default_encoding = Encoding.GetEncoding (1252);
 			}
-			encoding = defaultEncoding;
+			encoding = default_encoding;
 
 			references = new ArrayList ();
 			soft_references = new ArrayList ();
@@ -1433,10 +1439,19 @@ namespace Mono.CSharp
 						string csc_opt = "/" + arg.Substring (1);
 						if (CSCParseOption (csc_opt, ref args, ref i))
 							continue;
+
+						Error_WrongOption (arg);
+						return false;
 					} else {
 						if (arg.StartsWith ("/")){
 							if (CSCParseOption (arg, ref args, ref i))
 								continue;
+
+							// Need to skip `/home/test.cs' however /test.cs is considered as error
+							if (arg.Length < 2 || arg.IndexOf ('/', 2) == -1) {
+								Error_WrongOption (arg);
+								return false;
+							}
 						}
 					}
 				}

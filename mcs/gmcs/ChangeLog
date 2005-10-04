@@ -1,3 +1,22 @@
+2005-09-28  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76255.
+	* driver.cs: Fix compilation files with full root path.
+
+2005-09-25  Miguel de Icaza  <miguel@novell.com>
+
+	* report.cs (SymbolRelatedToPreviousError): Format the output so
+	it does not use an open parenthesis that is never closed. 
+
+	* driver.cs: Follow coding guidelines
+
+2005-09-18  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Set InEmacs based on the environment variable EMACS. 
+
+	* location.cs (InEmacs): in this mode, do not report column
+	location as it confuses Emacs.
+
 2005-10-03  Raja R Harinath  <rharinath@novell.com>
 
 	* support.cs (SeekableStreamReader.Position): Don't error out when

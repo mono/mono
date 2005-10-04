@@ -88,8 +88,9 @@ namespace Mono.CSharp {
 		static int column_mask;
 		static Checkpoint [] checkpoints;
 		static int checkpoint_index;
-
+		
 		public readonly static Location Null = new Location (-1);
+		public static bool InEmacs;
 		
 		static Location ()
 		{
@@ -245,7 +246,7 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			if (column_bits == 0)
+			if (column_bits == 0 || InEmacs)
 				return Name + "(" + Row + "):";
 			else
 				return Name + "(" + Row + "," + Column +
