@@ -2853,6 +2853,14 @@ namespace Mono.CSharp {
 						lc;
 				}
 			}
+			else if (oper == Operator.BitwiseOr) {
+				if (lc is EnumConstant &&
+				    rc != null && rc.IsZeroInteger)
+					return lc;
+				if (rc is EnumConstant &&
+				    lc != null && lc.IsZeroInteger)
+					return rc;
+			}
 
 			if (rc != null && lc != null){
 				int prev_e = Report.Errors;
@@ -7158,8 +7166,7 @@ namespace Mono.CSharp {
 
 		public bool VerifyFixed ()
 		{
-			// Treat 'this' as a value parameter for the purpose of fixed variable determination.
-			return true;
+			return !TypeManager.IsValueType (Type);
 		}
 
 		public bool ResolveBase (EmitContext ec)

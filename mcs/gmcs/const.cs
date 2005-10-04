@@ -145,6 +145,12 @@ namespace Mono.CSharp {
 			if (value == null)
 				return false;
 
+			if (!MemberType.IsValueType && MemberType != TypeManager.string_type && !value.IsDefaultValue) {
+				Report.Error (134, Location, "`{0}': A const of reference other than string can only be initialized with null",
+					GetSignatureForError ());
+				return false;
+			}
+
 			in_transit = false;
 			return true;
 		}

@@ -273,8 +273,10 @@ namespace Mono.CSharp {
 
 		bool IsValidArgumentType (Type t)
 		{
+			if (t.IsArray)
+				t = t.GetElementType ();
+
 			return TypeManager.IsPrimitiveType (t) ||
-				(t.IsArray && TypeManager.IsPrimitiveType (t.GetElementType ())) ||
 				TypeManager.IsEnumType (t) ||
 				t == TypeManager.string_type ||
 				t == TypeManager.object_type ||

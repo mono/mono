@@ -1,3 +1,43 @@
+2005-09-27  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #72930.
+	* const.cs (Const.ResolveValue): Check for assigning non-null
+	value to reference type.
+
+2005-09-26  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76133.
+	* expression.cs (This.VerifyFixed): In a value type T, the type of
+	'this' is T&, iow, 'this' is either an out or ref parameter.  In a
+	value type R, 'this' is treated as a value parameter.
+
+2005-09-05  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs (Cast.TryReduce): Only reduce to an EnumConstant
+	if the underlying types are the same, otherwise we need to produce
+	code that will do the proper cast.
+
+	This was exposed by Marek's constant rewrite which produced
+	invalid code for the call site:
+
+	enum X : long { a }
+	void Method (X v) {}
+
+	Method ((X) 5)
+
+	This fixes test-49.cs
+
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* attribute.cs : (Attribute.IsValidArgumentType): array of string/
+	  Type/Object should be allowed as well. Fixed bug #75968.
+
+2005-09-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* expression.cs : (Binary.DoResolve): when one is enum constant and
+	  another is constant 0, then return enum one *as enum type*.
+	  Fixed bug 74846.
+
 2005-10-04  Martin Baulig  <martin@ximian.com>
 
 	* expression.cs (DelegateInvocation.EmitStatement): Make this work
