@@ -4,6 +4,12 @@
 
 2005-10-04  Martin Baulig  <martin@ximian.com>
 
+	* reflection.c
+	(mono_image_get_methodspec_token): Make the cache actually work;
+	fixes #75974.
+
+2005-10-04  Martin Baulig  <martin@ximian.com>
+
 	* class.c (mono_class_name_from_token): Removed the unneccessary
 	`MonoGenericContext *' argument.
 
