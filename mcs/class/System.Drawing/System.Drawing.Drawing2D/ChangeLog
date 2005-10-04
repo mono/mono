@@ -1,3 +1,7 @@
+2005-10-04 Peter Dennis Bartok <pbartok@novell.com>
+
+	* Matrix.cs: Call GC.SuppressFinalize with 'this' instead of 'true'
+
 2005-09-26 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* PathGradientBrush.jvm.cs: implemetated transform, WrapMode, ctors

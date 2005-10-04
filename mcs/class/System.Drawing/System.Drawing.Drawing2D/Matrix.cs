@@ -137,7 +137,7 @@ namespace System.Drawing.Drawing2D
 				nativeMatrix = IntPtr.Zero;
 			}
 
-			GC.SuppressFinalize (true);
+			GC.SuppressFinalize (this);
                 }                       
         
                 public override bool Equals (object obj)
