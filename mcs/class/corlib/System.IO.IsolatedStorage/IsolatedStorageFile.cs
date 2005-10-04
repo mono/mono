@@ -466,6 +466,8 @@ namespace System.IO.IsolatedStorage {
 
 		public void Dispose ()
 		{
+			// nothing to dispose, anyway we want to please the tools
+			GC.SuppressFinalize (this);
 		}
 
 		public string[] GetDirectoryNames (string searchPattern)

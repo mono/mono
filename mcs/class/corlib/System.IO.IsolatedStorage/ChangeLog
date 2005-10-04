@@ -1,3 +1,8 @@
+2005-10-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageFile.cs: Add a call to GC.SuppressFinalize in Dispose
+	(even if we're not disposing anything).
+
 2005-06-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFile.cs: Only assembly evidences are considered to
