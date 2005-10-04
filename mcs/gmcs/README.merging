@@ -1,0 +1,87 @@
+To preserve history and to make it easier to undo changes, I usually
+merge individual changes.  This may sound difficult, but in fact it's not.
+The most important thing is to get a feeling for it and find a good
+balance between merging time and testing time.
+
+Here's how I usually do it:
+
+* pick a day where you are not too busy doing other stuff
+
+* Look at the current merging status:
+
+  $ cd mcs/gmcs
+  $ svn propget gmcs .
+
+  For the rest of this document, let's assume everything till r49341 is
+  merged.
+
+* Do a
+
+  $ svn log -r 49341:HEAD .. /mcs/ | a2ps
+
+  to print the SVN history.
+
+  Read over it, completely to till the end.  Look out especially for
+  reverted changes.  If you encounter a reverted change, take a note
+  at the revision which introduced the change - so you know later on
+  that you don't have to merge that revision.
+
+* Make sure you have a working tree `make bootstrap-world' works; don't
+  touch that tree during the merging.  I usually do the merging in a
+  separate tree, so I can continue working while the tests are running.
+
+* After that, I start merging like this:
+
+  $ cd /work/rohan/mono/mcs
+  $ cp -a gmcs gmcs.0		# make a copy of the working version
+  $ cd gmcs
+  $ svn merge -r 49341:49488 ../mcs/
+  $ make			# make sure it compiles; this can save
+                                  you a lot of time later !
+  $ cp -a . ../gmcs.49489       # make a copy
+  $ svn merge -r 49488:49497
+
+  ....
+
+  You usually get conflicts in the ChangeLog; make sure to resolve them
+  before going on.
+
+* If there are several consecutive small changes from the same person,
+  I usually merge them at once.  The same applies if someone made trivial
+  changes like fixing a typo; I include them in the previous revision.
+
+* If the next revision contains a larger or structural change (patches
+  from Marek and Hari are a good example), I stop the merging and run
+  the tests:
+
+  $ make -C /work/rohan/mono bootstrap-world > logfile 2>&1 &
+  $ tail -f logfile
+
+  Then I go work on something else.  It usually takes about 20-30 minutes
+  for the tests to run.
+
+* If the tests succeeded, I commit all the previous revisions:
+
+  $ cd ../gmcs.49488
+  $ mv ChangeLog ChangeLog.new ; svn up ; mv ChangeLog.new ChangeLog
+  $ svn ci -m "**** Merged r49487-49488 from MCS ****"
+  $ cd ../gmcs.49497
+
+  The `mv ChangeLog' is a small trick: SVN would otherwise mark the file
+  as conflict.  The `svn up' is neccessary as it'd otherwise report a
+  "working directory out of date" error.
+
+* After that, I take a note on my paper that I merged everything till
+  this revision and clean up:
+
+  $ cp /work/gondor/mono/mcs/gmcs
+  $ rm -rf ../gmcs.*
+  $ cp -a . ../gmcs.0
+
+* When done, update the merging history:
+
+  svn propedit gmcs .
+
+That's it, basically.
+Martin
+
