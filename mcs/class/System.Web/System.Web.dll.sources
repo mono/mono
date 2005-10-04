@@ -168,6 +168,7 @@ System.Web/IHttpHandlerFactory.cs
 System.Web/IHttpMapPath.cs
 System.Web/IHttpModule.cs
 System.Web/InputFilterStream.cs
+System.Web/OutputFilterStream.cs
 System.Web.Mail/Base64AttachmentEncoder.cs
 System.Web.Mail/IAttachmentEncoder.cs
 System.Web.Mail/MailAddressCollection.cs
