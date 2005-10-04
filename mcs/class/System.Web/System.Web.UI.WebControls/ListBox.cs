@@ -149,9 +149,9 @@ namespace System.Web.UI.WebControls {
 
 #if NET_2_0
 			if (ID != null)
-				writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID);
+				writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 #else
-			writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID);
+			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 #endif
 
 			if (SelectionMode == ListSelectionMode.Multiple)

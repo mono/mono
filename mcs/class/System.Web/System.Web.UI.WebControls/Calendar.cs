@@ -1251,7 +1251,6 @@ namespace System.Web.UI.WebControls {
 		[WebCategory ("Action")]
 		public event EventHandler SelectionChanged {
 			add {
-				Console.WriteLine ("Adding one");
 				Events.AddHandler (SelectionChangedEvent, value);
 			}
 			remove {
