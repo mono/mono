@@ -1,3 +1,7 @@
+2005-10-04  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Makefile (LIBRARY_USE_INTERMEDIATE_FILE): Set this flag.
+
 2005-06-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Mono.Security_test.dll.sources: Added Mono.Security.X509.X509CrlTest
