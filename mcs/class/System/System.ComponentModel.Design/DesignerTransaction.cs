@@ -7,8 +7,7 @@
 //
 // (C) Alejandro Sánchez Acosta
 // (C) 2003 Andreas Nahr
-// 
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,8 +28,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-using System;
 
 namespace System.ComponentModel.Design
 {
@@ -54,12 +51,15 @@ namespace System.ComponentModel.Design
 		
 		void IDisposable.Dispose () 
 		{ 
-			this.Dispose (true); 
+			Dispose (true);
 		}
 		
 		protected virtual void Dispose (bool disposing)
 		{
-			this.Cancel ();
+			Cancel ();
+			if (disposing) {
+				GC.SuppressFinalize (true);
+			}
 		}
 
 		protected abstract void OnCancel ();

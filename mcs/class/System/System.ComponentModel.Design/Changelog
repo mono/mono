@@ -1,3 +1,8 @@
+2005-10-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DesignerTransaction.cs: Added a call to GC.SuppressFinalize in 
+	Dispose.
+
 2004-03-17  Ivan Hamilton <ivan@chimerical.com.au>
 
 	* RuntimeLicenseContext.cs: Implemented.
