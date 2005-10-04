@@ -1,3 +1,8 @@
+2005-10-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TempFileCollection.cs: Added a call to GC.SuppressFinalize in 
+	Dispose.
+
 2005-07-30 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGenerator.cs: In OutputMemberScopeModifier, only output 

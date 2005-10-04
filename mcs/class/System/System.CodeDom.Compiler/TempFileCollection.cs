@@ -5,8 +5,7 @@
 //	Dick Porter (dick@ximian.com)
 //
 // (C) Copyright 2003 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -169,6 +168,9 @@ namespace System.CodeDom.Compiler
 		protected virtual void Dispose(bool disposing)
 		{
 			Delete();
+			if (disposing) {
+				GC.SuppressFinalize (true);
+			}
 		}
 
 		~TempFileCollection()
