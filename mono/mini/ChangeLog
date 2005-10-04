@@ -1,3 +1,9 @@
+
+Tue Oct 4 20:23:25 CEST 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h: do not consider exception handlers blocks when
+	setting up interface variables.
+
 2005-10-04  Zoltan Varga  <vargaz@freemail.hu>
 
 	* aot.c (emit_section_change): Fix emitting of sections on win32. Fixes #76322.
