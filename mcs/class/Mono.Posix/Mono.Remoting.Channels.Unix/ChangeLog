@@ -1,0 +1,28 @@
+2005-09-11  Robert Jordan  <robertj@gmx.net>
+
+	* UnixChannel.cs: fixed default ctor.
+	* UnixServerChannel.cs: fixed GetUrlsForUri to return properly
+	 formatted unix URIs (the "?" was missing).
+
+2005-08-24  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* UnixServerChannel.cs:
+	* UnixClientChannel.cs: Use the internal binary formatter sink.
+	
+	* UnixBinaryServerFormatterSink.cs:
+	* UnixBinaryClientFormatterSinkProvider.cs:
+	* UnixBinaryClientFormatterSink.cs:
+	* UnixBinaryCore.cs:
+	* UnixBinaryServerFormatterSinkProvider.cs: New internal formatter sink,
+	to avoid dependency with System.Runtime.Remoting.dll.
+	
+	* UnixClientTransportSink.cs:
+	* UnixMessageIO.cs: Don't use CommonTransportKeys.
+
+2005-07-28  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* UnixChannel.cs, UnixClientChannel.cs, UnixClientTransportSink.cs,
+	UnixClientTransportSinkProvider.cs, UnixMessageIO.cs,
+	UnixServerChannel.cs, UnixServerTransportSink.cs,
+	UnixConnectionPool.cs: The new Unix socket remoting channel.
+
