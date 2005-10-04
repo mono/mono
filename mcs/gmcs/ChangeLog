@@ -1,3 +1,12 @@
+2005-10-01  Miguel de Icaza  <miguel@novell.com>
+
+	* expression.cs (Probe): instead of having a "Type probe_type"
+	keep the extra information as a TypeExpr probe_type_expr since the
+	"As" operator needs to perform some type checks.
+
+	* (As.DoResolve): If the type is a type parameter, ensure that it
+	is constrained by a class.
+
 2005-09-22  Miguel de Icaza  <miguel@novell.com>
 
 	* statement.cs (Lock): Use the TemporaryVariable class instead of

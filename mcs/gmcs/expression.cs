@@ -1034,7 +1034,7 @@ namespace Mono.CSharp {
 	public abstract class Probe : Expression {
 		public Expression ProbeType;
 		protected Expression expr;
-		protected Type probe_type;
+		protected TypeExpr probe_type_expr;
 		
 		public Probe (Expression expr, Expression probe_type, Location l)
 		{
@@ -1051,10 +1051,10 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolve (EmitContext ec)
 		{
-			TypeExpr texpr = ProbeType.ResolveAsTypeTerminal (ec);
-			if (texpr == null)
+			probe_type_expr = ProbeType.ResolveAsTypeTerminal (ec);
+			if (probe_type_expr == null)
 				return null;
-			probe_type = texpr.Type;
+			Type probe_type = probe_type_expr.Type;
 
 			CheckObsoleteAttribute (probe_type);
 
@@ -1108,7 +1108,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Ceq);
 				return;
 			case Action.Probe:
-				ig.Emit (OpCodes.Isinst, probe_type);
+				ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
 				ig.Emit (OpCodes.Ldnull);
 				ig.Emit (OpCodes.Cgt_Un);
 				return;
@@ -1138,7 +1138,7 @@ namespace Mono.CSharp {
 				return;
 			case Action.Probe:
 				expr.Emit (ec);
-				ig.Emit (OpCodes.Isinst, probe_type);
+				ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
 				ig.Emit (onTrue ? OpCodes.Brtrue : OpCodes.Brfalse, target);
 				return;
 			}
@@ -1163,6 +1163,7 @@ namespace Mono.CSharp {
 			// First case, if at compile time, there is an implicit conversion
 			// then e != null (objects) or true (value types)
 			//
+			Type probe_type = probe_type_expr.Type;
 			e = Convert.ImplicitConversionStandard (ec, expr, probe_type, loc);
 			if (e != null && !(e is NullCast)){
 				expr = e;
@@ -1217,7 +1218,7 @@ namespace Mono.CSharp {
 			expr.Emit (ec);
 
 			if (do_isinst)
-				ig.Emit (OpCodes.Isinst, probe_type);
+				ig.Emit (OpCodes.Isinst, probe_type_expr.Type);
 		}
 
 		static void Error_CannotConvertType (Type source, Type target, Location loc)
@@ -1234,25 +1235,49 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-			type = probe_type;
+			type = probe_type_expr.Type;
 			eclass = ExprClass.Value;
 			Type etype = expr.Type;
 
-			if (probe_type.IsValueType) {
+			if (type.IsValueType) {
 				Report.Error (77, loc, "The as operator must be used with a reference type (`" +
-					      TypeManager.CSharpName (probe_type) + "' is a value type)");
+					      TypeManager.CSharpName (type) + "' is a value type)");
 				return null;
 			
 			}
+
+			//
+			// If the type is a type parameter, ensure
+			// that it is constrained by a class
+			//
+			TypeParameterExpr tpe = probe_type_expr as TypeParameterExpr;
+			if (tpe != null){
+				Constraints constraints = tpe.TypeParameter.Constraints;
+				bool error = false;
+				
+				if (constraints == null)
+					error = true;
+				else {
+					if (!constraints.HasClassConstraint)
+						if ((constraints.Attributes & GenericParameterAttributes.ReferenceTypeConstraint) == 0)
+							error = true;
+				}
+				if (error){
+					Report.Error (413, loc,
+						      "The as operator requires that the `{0}' type parameter be constrained by a class",
+						      probe_type_expr);
+					return null;
+				}
+			}
 			
-			e = Convert.ImplicitConversion (ec, expr, probe_type, loc);
+			e = Convert.ImplicitConversion (ec, expr, type, loc);
 			if (e != null){
 				expr = e;
 				do_isinst = false;
 				return this;
 			}
 
-			if (Convert.ExplicitReferenceConversionExists (etype, probe_type)){
+			if (Convert.ExplicitReferenceConversionExists (etype, type)){
 				if (etype.IsGenericParameter)
 					expr = new BoxedCast (expr, etype);
 
@@ -1260,7 +1285,7 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			Error_CannotConvertType (etype, probe_type, loc);
+			Error_CannotConvertType (etype, type, loc);
 			return null;
 		}				
 	}
