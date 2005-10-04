@@ -158,6 +158,10 @@ namespace Mono.CSharp {
 		Type effective_base_type;
 		bool resolved;
 
+		/// <summary>
+		///   Resolve the constraints - but only resolve things into Expression's, not
+		///   into actual types.
+		/// </summary>
 		public bool Resolve (EmitContext ec)
 		{
 			if (resolved)
@@ -573,6 +577,37 @@ namespace Mono.CSharp {
 			}
 		}
 
+		/// <summary>
+		///   This is the first method which is called during the resolving
+		///   process; we're called immediately after creating the type parameters
+		///   with SRE (by calling `DefineGenericParameters()' on the TypeBuilder /
+		///   MethodBuilder).
+		///
+		///   We're either called from TypeContainer.DefineType() or from
+		///   GenericMethod.Define() (called from Method.Define()).
+		/// </summary>
+		public void Define (GenericTypeParameterBuilder type)
+		{
+			if (this.type != null)
+				throw new InvalidOperationException ();
+
+			this.type = type;
+			TypeManager.AddTypeParameter (type, this);
+		}
+
+		/// <summary>
+		///   This is the second method which is called during the resolving
+		///   process - in case of class type parameters, we're called from
+		///   TypeContainer.ResolveType() - after it resolved the class'es
+		///   base class and interfaces. For method type parameters, we're
+		///   called immediately after Define().
+		///
+		///   We're just resolving the constraints into expressions here, we
+		///   don't resolve them into actual types.
+		///
+		///   Note that in the special case of partial generic classes, we may be
+		///   called _before_ Define() and we may also be called multiple types.
+		/// </summary>
 		public bool Resolve (DeclSpace ds)
 		{
 			if (constraints != null) {
@@ -585,21 +620,33 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public void Define (GenericTypeParameterBuilder type)
-		{
-			if (this.type != null)
-				throw new InvalidOperationException ();
-
-			this.type = type;
-			TypeManager.AddTypeParameter (type, this);
-		}
-
+		/// <summary>
+		///   This is the third method which is called during the resolving
+		///   process.  We're called immediately after calling Resolve() on
+		///   all of the current class'es type parameters.
+		///
+		///   All we do is setting the attributes on the GenericTypeParameterBuilder.
+		/// </summary>
+		/// <remarks>
+		///   This is not done in Resolve() since Resolve() may be called before
+		///   Define() for partial generic classes.
+		/// </remarks>
 		public void DefineConstraints ()
 		{
 			if (constraints != null)
 				constraints.Define (type);
 		}
 
+		/// <summary>
+		///   This is the forth method which is called during the resolving
+		///   process.  We're called immediately after calling DefineConstraints()
+		///   on all of the current class'es type parameters.
+		///
+		///   Our job is to resolve the constraints to actual types.
+		///
+		///   Note that we may have circular dependencies on type parameters - this
+		///   is why Resolve() and ResolveType() are separate.
+		/// </summary>
 		public bool ResolveType (EmitContext ec)
 		{
 			if (constraints != null) {
@@ -612,11 +659,24 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   This is the fith and last method which is called during the resolving
+		///   process.  We're called after everything is fully resolved and actually
+		///   register the constraints with SRE and the TypeManager.
+		/// </summary>
 		public bool DefineType (EmitContext ec)
 		{
 			return DefineType (ec, null, null, false);
 		}
 
+		/// <summary>
+		///   This is the fith and last method which is called during the resolving
+		///   process.  We're called after everything is fully resolved and actually
+		///   register the constraints with SRE and the TypeManager.
+		///
+		///   The `builder', `implementing' and `is_override' arguments are only
+		///   applicable to method type parameters.
+		/// </summary>
 		public bool DefineType (EmitContext ec, MethodBuilder builder,
 					MethodInfo implementing, bool is_override)
 		{
