@@ -3870,4 +3870,92 @@ namespace Mono.CSharp {
 					ec, false, IsStatic, InstanceExpression, remove_accessor, args, loc);
 		}
 	}
+
+	
+	public class TemporaryVariable : Expression, IMemoryLocation
+	{
+		LocalInfo li;
+		
+		public TemporaryVariable (Type type, Location loc)
+		{
+			this.type = type;
+			this.loc = loc;
+			eclass = ExprClass.Value;
+		}
+		
+		public override Expression DoResolve (EmitContext ec)
+		{
+			if (li != null)
+				return this;
+			
+			TypeExpr te = new TypeExpression (type, loc);
+			li = ec.CurrentBlock.AddTemporaryVariable (te, loc);
+			if (!li.Resolve (ec))
+				return null;
+			
+			AnonymousContainer am = ec.CurrentAnonymousMethod;
+			if ((am != null) && am.IsIterator)
+				ec.CaptureVariable (li);
+			
+			return this;
+		}
+		
+		public override void Emit (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			if (li.FieldBuilder != null) {
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldfld, li.FieldBuilder);
+			} else {
+				ig.Emit (OpCodes.Ldloc, li.LocalBuilder);
+			}
+		}
+		
+		public void EmitLoadAddress (EmitContext ec)
+		{
+			ILGenerator ig = ec.ig;
+			
+			if (li.FieldBuilder != null) {
+				ig.Emit (OpCodes.Ldarg_0);
+				ig.Emit (OpCodes.Ldflda, li.FieldBuilder);
+			} else {
+				ig.Emit (OpCodes.Ldloca, li.LocalBuilder);
+			}
+		}
+		
+		public void Store (EmitContext ec, Expression right_side)
+		{
+			if (li.FieldBuilder != null)
+				ec.ig.Emit (OpCodes.Ldarg_0);
+			
+			right_side.Emit (ec);
+			if (li.FieldBuilder != null) {
+				ec.ig.Emit (OpCodes.Stfld, li.FieldBuilder);
+			} else {
+				ec.ig.Emit (OpCodes.Stloc, li.LocalBuilder);
+			}
+		}
+		
+		public void EmitThis (EmitContext ec)
+		{
+			if (li.FieldBuilder != null) {
+				ec.ig.Emit (OpCodes.Ldarg_0);
+			}
+		}
+		
+		public void EmitStore (ILGenerator ig)
+		{
+			if (li.FieldBuilder != null)
+				ig.Emit (OpCodes.Stfld, li.FieldBuilder);
+			else
+				ig.Emit (OpCodes.Stloc, li.LocalBuilder);
+		}
+		
+		public void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			EmitLoadAddress (ec);
+		}
+	}
+	
 }	

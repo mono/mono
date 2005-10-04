@@ -3090,7 +3090,7 @@ namespace Mono.CSharp {
 	public class Lock : ExceptionStatement {
 		Expression expr;
 		public Statement Statement;
-		LocalBuilder temp;
+		TemporaryVariable temp;
 			
 		public Lock (Expression expr, Statement stmt, Location l)
 		{
@@ -3107,8 +3107,8 @@ namespace Mono.CSharp {
 
 			if (expr.Type.IsValueType){
 				Report.Error (185, loc,
-					"`{0}' is not a reference type as required by the lock statement",
-			       TypeManager.CSharpName (expr.Type));
+					      "`{0}' is not a reference type as required by the lock statement",
+					      TypeManager.CSharpName (expr.Type));
 				return false;
 			}
 
@@ -3131,19 +3131,18 @@ namespace Mono.CSharp {
 				ec.NeedReturnLabel ();
 			}
 
+			temp = new TemporaryVariable (expr.Type, loc);
+			temp.Resolve (ec);
+			
 			return true;
 		}
 		
 		protected override void DoEmit (EmitContext ec)
 		{
-			Type type = expr.Type;
-			
 			ILGenerator ig = ec.ig;
-			temp = ig.DeclareLocal (type);
-				
-			expr.Emit (ec);
-			ig.Emit (OpCodes.Dup);
-			ig.Emit (OpCodes.Stloc, temp);
+
+			temp.Store (ec, expr);
+			temp.Emit (ec);
 			ig.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
 
 			// try
@@ -3159,9 +3158,8 @@ namespace Mono.CSharp {
 
 		public override void EmitFinally (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-			ig.Emit (OpCodes.Ldloc, temp);
-			ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
+			temp.Emit (ec);
+			ec.ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
 		}
 	}
 
@@ -4172,92 +4170,6 @@ namespace Mono.CSharp {
 			
 			ec.LoopBegin = old_begin;
 			ec.LoopEnd = old_end;
-		}
-
-		protected class TemporaryVariable : Expression, IMemoryLocation
-		{
-			LocalInfo li;
-
-			public TemporaryVariable (Type type, Location loc)
-			{
-				this.type = type;
-				this.loc = loc;
-				eclass = ExprClass.Value;
-			}
-
-			public override Expression DoResolve (EmitContext ec)
-			{
-				if (li != null)
-					return this;
-
-				TypeExpr te = new TypeExpression (type, loc);
-				li = ec.CurrentBlock.AddTemporaryVariable (te, loc);
-				if (!li.Resolve (ec))
-					return null;
-
-				AnonymousContainer am = ec.CurrentAnonymousMethod;
-				if ((am != null) && am.IsIterator)
-					ec.CaptureVariable (li);
-
-				return this;
-			}
-
-			public override void Emit (EmitContext ec)
-			{
-				ILGenerator ig = ec.ig;
-
-				if (li.FieldBuilder != null) {
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldfld, li.FieldBuilder);
-				} else {
-					ig.Emit (OpCodes.Ldloc, li.LocalBuilder);
-				}
-			}
-
-			public void EmitLoadAddress (EmitContext ec)
-			{
-				ILGenerator ig = ec.ig;
-
-				if (li.FieldBuilder != null) {
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldflda, li.FieldBuilder);
-				} else {
-					ig.Emit (OpCodes.Ldloca, li.LocalBuilder);
-				}
-			}
-
-			public void Store (EmitContext ec, Expression right_side)
-			{
-				if (li.FieldBuilder != null)
-					ec.ig.Emit (OpCodes.Ldarg_0);
-
-				right_side.Emit (ec);
-				if (li.FieldBuilder != null) {
-					ec.ig.Emit (OpCodes.Stfld, li.FieldBuilder);
-				} else {
-					ec.ig.Emit (OpCodes.Stloc, li.LocalBuilder);
-				}
-			}
-
-			public void EmitThis (EmitContext ec)
-			{
-				if (li.FieldBuilder != null) {
-					ec.ig.Emit (OpCodes.Ldarg_0);
-				}
-			}
-
-			public void EmitStore (ILGenerator ig)
-			{
-				if (li.FieldBuilder != null)
-					ig.Emit (OpCodes.Stfld, li.FieldBuilder);
-				else
-					ig.Emit (OpCodes.Stloc, li.LocalBuilder);
-			}
-
-			public void AddressOf (EmitContext ec, AddressOp mode)
-			{
-				EmitLoadAddress (ec);
-			}
 		}
 
 		protected class ArrayCounter : TemporaryVariable
