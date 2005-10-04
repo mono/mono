@@ -1,5 +1,16 @@
 2005-10-04  Martin Baulig  <martin@ximian.com>
 
+	* metadata.c
+	(mono_metadata_load_generic_param_constraints): New public
+	function; splitted the constraints loading out from
+	mono_metadata_load_generic_params().
+
+	* class.c (mono_class_create_from_typedef): Call
+	mono_metadata_load_generic_param_constraints() after setting up
+	the type and creating our parent; fixes #75329.
+
+2005-10-04  Martin Baulig  <martin@ximian.com>
+
 	* icall.c (ves_icall_MonoGenericClass_GetParentType): Allow
 	non-dynamic parent classes.
 
