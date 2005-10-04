@@ -59,14 +59,6 @@ namespace System.Windows.Forms
 		internal Rectangle icon_rect;
 		internal Rectangle item_rect;
 		internal Rectangle label_rect;
-		/* Original Ravi's design calculated all items in a virtual space
-		   we keep them	in the rects before and also the ones converted to
-		   real screen positions */
-		internal Rectangle checkbox_rect_real;
-		internal Rectangle entire_rect_real;
-		internal Rectangle icon_rect_real;
-		internal Rectangle item_rect_real;
-		internal Rectangle label_rect_real;
 		internal Point location = Point.Empty;	// set by the ListView control
 		internal ListView owner;
 		internal bool selected;
@@ -277,7 +269,9 @@ namespace System.Windows.Forms
 					else {
 						owner.SelectedItems.list.Remove (this);
 						owner.SelectedIndices.list.Remove (this.Index);
-					}
+					}	
+					
+					owner.Invalidate (Bounds);
 				}
 			}
 		}
@@ -372,26 +366,38 @@ namespace System.Windows.Forms
 		{
 			if (owner == null)
 				return Rectangle.Empty;
-			
-			// should we check for dirty flag to optimize this ?
-			CalcListViewItem ();
-
+				
+			/*  Original Ravi's design calculated all items in a virtual space
+			    We convert them real screen positions
+			*/
 			switch (portion) {
 
 			case ItemBoundsPortion.Icon: {
-				return icon_rect_real;
+				Rectangle rect = icon_rect;
+				rect.X -= owner.h_marker;
+				rect.Y -= owner.v_marker;
+				return rect;
 			}
 
 			case ItemBoundsPortion.Label: {
-				return label_rect_real;
+				Rectangle rect = label_rect;
+				rect.X -= owner.h_marker;
+				rect.Y -= owner.v_marker;
+				return rect;
 			}
 
 			case ItemBoundsPortion.ItemOnly: {
-				return item_rect_real;
+				Rectangle rect = item_rect;
+				rect.X -= owner.h_marker;
+				rect.Y -= owner.v_marker;
+				return rect;
 			}
 
 			case ItemBoundsPortion.Entire: {
-				return entire_rect_real;
+				Rectangle rect = entire_rect;
+				rect.X -= owner.h_marker;
+				rect.Y -= owner.v_marker;
+				return rect;				
 			}
 
 			default:
@@ -430,6 +436,15 @@ namespace System.Windows.Forms
 		#endregion	// Protected Methods
 
 		#region Private Internal Methods
+		internal Rectangle CheckRectReal {
+			get {
+				Rectangle rect = checkbox_rect;
+				rect.X -= owner.h_marker;
+				rect.Y -= owner.v_marker;
+				return rect;
+			}
+		}
+		
 		internal Rectangle CheckRect {
 			get { return this.checkbox_rect; }
 		}
@@ -567,23 +582,6 @@ namespace System.Windows.Forms
 				entire_rect = Rectangle.Union (item_rect, checkbox_rect);
 				break;
 			}
-			
-			checkbox_rect_real = checkbox_rect;
-			entire_rect_real = entire_rect;
-			icon_rect_real = icon_rect;
-			item_rect_real = item_rect;
-			label_rect_real = label_rect;
-			
-			checkbox_rect_real.X -= owner.h_marker;
-			checkbox_rect_real.Y -= owner.v_marker;
-			entire_rect_real.X -= owner.h_marker;
-			entire_rect_real.Y -= owner.v_marker;
-			icon_rect_real.X -= owner.h_marker;
-			icon_rect_real.Y -= owner.v_marker;
-			item_rect_real.X -= owner.h_marker;
-			item_rect_real.Y -= owner.v_marker;
-			label_rect_real.X -= owner.h_marker;
-			label_rect_real.Y -= owner.v_marker;
 			
 		}
 		#endregion	// Private Internal Methods

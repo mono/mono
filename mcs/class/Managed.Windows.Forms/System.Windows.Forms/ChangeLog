@@ -1,3 +1,14 @@
+2005-10-04  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ListView.cs, ThemeWin32Classic.cs, ListViewItem.cs:
+
+		- Implements vertical and horizontal scrolling using XplatUI
+		- Fixes keyboard navagation
+		- Fixes EnsureVisible
+		- Drawing fixes
+		- Handles and draws focus properly
+
+
 2005-10-04  Kornél Pál  <kornelpal@hotmail.com>
 
 	* ImageList.cs: Use upper case initials for internal fields. ImageStream:

@@ -24,16 +24,13 @@
 //	Jordi Mas i Hernandez, jordi@ximian.com
 //
 // TODO:
-//   - Keys to be handled ENTER/PAGE UP/PAGE DOWN/HOME/END/ARROWS/CTRL/SHIFT
 //   - Item text editing
 //   - Column resizing/reodering
 //   - Feedback for item activation, change in cursor types as mouse moves.
 //   - HideSelection
-//   - Focused item (broken and not drawn)
 //   - LabelEdit
 //   - Manual column resizing
 //   - Drag and drop
-//   - Clipping 
 
 
 // NOT COMPLETE
@@ -65,8 +62,7 @@ namespace System.Windows.Forms
 		private ColumnHeaderCollection columns;
 		private bool ctrl_pressed;
 		private bool shift_pressed;
-		private bool draw_headers = true; // Used for painting. Do we need to draw column headers ?
-		private ListViewItem focused_item;
+		internal ListViewItem focused_item;
 		private bool full_row_select = false;
 		private bool grid_lines = false;
 		private ColumnHeaderStyle header_style = ColumnHeaderStyle.Clickable;
@@ -87,8 +83,8 @@ namespace System.Windows.Forms
 		private int layout_wd;    // We might draw more than our client area
 		private int layout_ht;    // therefore we need to have these two.
 		//private TextBox editor;   // Used for editing an item text
-		private ScrollBar h_scroll; // used for scrolling horizontally
-		private ScrollBar v_scroll; // used for scrolling vertically
+		internal ScrollBar h_scroll; // used for scrolling horizontally
+		internal ScrollBar v_scroll; // used for scrolling vertically
 		internal int h_marker;		// Position markers for scrolling
 		internal int v_marker;
 		internal Rectangle client_area; // ClientRectangle - scrollbars
@@ -724,6 +720,10 @@ namespace System.Windows.Forms
 		private void CalculateScrollBars ()
 		{
 			client_area = ClientRectangle;
+			client_area.X += DecorationSize (); // Take into account borders
+			client_area.Y += DecorationSize ();
+			client_area.Width -= (DecorationSize () * 2);
+			client_area.Height -= (DecorationSize () * 2);
 			
 			if (!this.scrollable || this.items.Count <= 0) {
 				h_scroll.Visible = false;
@@ -732,58 +732,60 @@ namespace System.Windows.Forms
 			}
 
 			// making a scroll bar visible might make
-			// other scroll bar visible
-			if (layout_wd > this.Width) {
+			// other scroll bar visible			
+			if (layout_wd > client_area.Right) {
 				h_scroll.Visible = true;
-				if ((layout_ht + h_scroll.Height) > Height)
-					v_scroll.Visible = true;
-			} else if (layout_ht > Height) {
+				if ((layout_ht + h_scroll.Height) > client_area.Bottom) {
+					v_scroll.Visible = true;					
+				}
+			} else if (layout_ht > client_area.Bottom) {				
 				v_scroll.Visible = true;
-				if ((layout_wd + v_scroll.Width) > Width)
+				if ((layout_wd + v_scroll.Width) > client_area.Right)
 					h_scroll.Visible = true;
 			}
 
 			if (h_scroll.Visible) {
-				h_scroll.Location = new Point (0, Height - h_scroll.Height);
+				h_scroll.Location = new Point (client_area.X, client_area.Bottom - h_scroll.Height);
 				h_scroll.Minimum = 0;
 
 				// if v_scroll is visible, adjust the maximum of the
 				// h_scroll to account for the width of v_scroll
 				if (v_scroll.Visible) {
 					h_scroll.Maximum = layout_wd + v_scroll.Width;
-					h_scroll.Width = Width - v_scroll.Width;
+					h_scroll.Width = client_area.Width - v_scroll.Width;
 				}
 				else {
 					h_scroll.Maximum = layout_wd;
-					h_scroll.Width = Width;
+					h_scroll.Width = client_area.Width;
 				}
    
-				h_scroll.LargeChange = Width;
+				h_scroll.LargeChange = client_area.Width;
 				h_scroll.SmallChange = Font.Height;
 				client_area.Height -= h_scroll.Height;
 			}
 
 			// vertical scrollbar
 			if (v_scroll.Visible) {
-				v_scroll.Location = new Point (Width - v_scroll.Width, 0);
+				v_scroll.Location = new Point (client_area.Right - v_scroll.Width, client_area.Y);
 				v_scroll.Minimum = 0;
 
 				// if h_scroll is visible, adjust the maximum of the
 				// v_scroll to account for the height of h_scroll
 				if (h_scroll.Visible) {
 					v_scroll.Maximum = layout_ht + h_scroll.Height;
-					v_scroll.Height = Height - h_scroll.Height;
+					v_scroll.Height = client_area.Height; // - h_scroll.Height already done 
 				} else {
 					v_scroll.Maximum = layout_ht;
-					v_scroll.Height = Height;
+					v_scroll.Height = client_area.Height;
 				}
 
-				v_scroll.LargeChange = Height;
+				v_scroll.LargeChange = client_area.Height;
 				v_scroll.SmallChange = Font.Height;
 				client_area.Width -= v_scroll.Width;
 			}
 		}
-
+		
+		
 		// Sets the location of every item on
 		// the ListView as per the view
 		private void CalculateListView (ListViewAlignment align)
@@ -804,11 +806,12 @@ namespace System.Windows.Forms
 			case View.Details:
 				// ColumnHeaders are not drawn if headerstyle is none
 				int ht = (this.header_style == ColumnHeaderStyle.None) ? 
-					2 : this.Font.Height + 5;
+					0 : this.Font.Height + 3;
+				
 				if (columns.Count > 0) {
 					foreach (ColumnHeader col in columns) {
 						col.X = current_pos_x;
-						col.Y = 0;
+						col.Y = current_pos_y;
 						col.CalcColumnHeader ();
 						current_pos_x += col.Wd;
 					}
@@ -846,11 +849,11 @@ namespace System.Windows.Forms
 
 					// top (default) and snaptogrid alignments are handled same way
 					if (align == ListViewAlignment.Left) {
-						max = this.Height;
+						max = client_area.Height;
 						foreach (ListViewItem item in items) {
 							item.location.X = current_pos_x +
 								horizontal_spacing;
-							item.location.Y = current_pos_y;
+							item.location.Y = 0;
 							item.CalcListViewItem ();
 							current_pos_y += item_ht;
 
@@ -865,7 +868,7 @@ namespace System.Windows.Forms
 							else {
 								// is there enough space for another row ?
 								if ((current_pos_y + vertical_spacing
-								     + item_ht) <= this.Height)
+								     + item_ht) <= client_area.Height)
 									current_pos_y += vertical_spacing;
 								else {
 									// start another column
@@ -883,7 +886,7 @@ namespace System.Windows.Forms
 						this.layout_wd = current_pos_x;
 					}
 					else { // other default/top alignment
-						max = this.Width;
+						max = client_area.Width;
 						foreach (ListViewItem item in items) {
 							item.location.X = current_pos_x +
 								horizontal_spacing;
@@ -903,7 +906,7 @@ namespace System.Windows.Forms
 							else {
 								// is there enough space for another column?
 								if ((current_pos_x + horizontal_spacing
-								     + item_wd) <= this.Width)
+								     + item_wd) <= client_area.Width)
 									continue;
 								else {
 									// start another row
@@ -930,7 +933,7 @@ namespace System.Windows.Forms
 					item_ht = items [0].EntireRect.Height;
 					item_wd = items [0].EntireRect.Width;
 
-					max = this.Height / item_ht;
+					max = client_area.Height / item_ht;
 					if (max == 0)
 						max = 1; // we draw at least one row
 
@@ -960,8 +963,22 @@ namespace System.Windows.Forms
 
                         CalculateScrollBars ();
                         
-		}		
-		
+		}
+				
+		internal int DecorationSize ()
+		{
+			switch (border_style) {
+				case BorderStyle.Fixed3D:
+					return 2;
+				case BorderStyle.FixedSingle:					
+					return 1;
+				case BorderStyle.None:
+				default:
+					break;
+				}
+				
+			return 0;
+		}
 
 		// Event Handlers
 		private void ListView_DoubleClick (object sender, EventArgs e)
@@ -972,9 +989,9 @@ namespace System.Windows.Forms
 		}
 
 		private void ListView_KeyDown (object sender, KeyEventArgs ke)
-		{
+		{			
 			int index = -1;
-			if (ke.Handled)
+			if (ke.Handled || Items.Count == 0)
 				return;
 
 			ke.Handled = true;
@@ -982,61 +999,73 @@ namespace System.Windows.Forms
 			switch (ke.KeyCode) {
 
 			case Keys.ControlKey:
-				this.ctrl_pressed = true;
+				ctrl_pressed = true;
 				break;
 
-			case Keys.Down:				
-				// FIXME:TODO
+			case Keys.Down:
+				if (focused_item != null && focused_item.Index + 1 < Items.Count) {
+					index = focused_item.Index + 1;
+				}
 				break;
 
 			case Keys.End:
-				this.v_scroll.Value = this.v_scroll.Maximum;
+				index = Items.Count - 1;
 				break;
 
-			case Keys.Home:
-				this.v_scroll.Value = this.v_scroll.Minimum;
+			case Keys.Home:			
+				index = 0;
 				break;
 
 			case Keys.Left:
 				index = -1;
-				if (this.last_clicked_item != null)
-					index = this.last_clicked_item.Index;
+				if (focused_item != null)
+					index = focused_item.Index;
 				else
 					break;
 
 				if (index > 0)
 					index -= 1;
-
-				this.last_clicked_item = this.items [index];
-				this.last_clicked_item.Selected = true;
-				this.EnsureVisible (index);
+									
 				break;
 
 			case Keys.Right:
-				if (this.last_clicked_item != null)
-					index = this.last_clicked_item.Index + 1;
+				if (focused_item != null)
+					index = focused_item.Index + 1;
 				else
 					index = 1;
 
-				if (index == this.items.Count)
-					break;
+				if (index == items.Count)
+					index = -1;
 
-				this.last_clicked_item = this.items [index];
-				this.last_clicked_item.Selected = true;
-				this.EnsureVisible (index);
 				break;
 
 			case Keys.ShiftKey:
-				this.shift_pressed = true;
+				shift_pressed = true;
 				break;
 
 			case Keys.Up:				
-				// FIXME:TODO
+				if (focused_item != null)
+					index = focused_item.Index;
+				else
+					break;
+
+				if (index > 0)
+					index--;
+
+				if (index < 0) {
+					index = -1;
+				}
 				break;
 
 			default:
 				ke.Handled = false;
 				break;
+			}
+			
+			if (index != -1) {
+				items [index].Selected = true;
+				SetFocusedItem (items [index]);				
+				EnsureVisible (index);
 			}
 		}
 
@@ -1074,7 +1103,6 @@ namespace System.Windows.Forms
 
 					if (this.clicked_column != null) {
 						this.clicked_column.pressed = true;
-						this.draw_headers = true;
 						this.Redraw (false);
 						return;
 					}
@@ -1121,7 +1149,7 @@ namespace System.Windows.Forms
 			}
 			
 			// set the FocusedItem to be the current clicked_item
-			this.focused_item = this.clicked_item;
+			SetFocusedItem (clicked_item);
 
 			if (this.clicked_item != null) {
 				this.clicked_item.Selected = true;
@@ -1165,13 +1193,11 @@ namespace System.Windows.Forms
 				if (this.clicked_column.pressed == false &&
 				    this.clicked_column.Rect.Contains (hit)) {
 					this.clicked_column.pressed = true;
-					this.draw_headers = true;
 					this.Redraw (false);
 				}
 				else if (this.clicked_column.pressed && 
 					 ! this.clicked_column.Rect.Contains (hit)) {
 					this.clicked_column.pressed = false;
-					this.draw_headers = true;
 					this.Redraw (false);
 				}
 			}
@@ -1188,7 +1214,6 @@ namespace System.Windows.Forms
 			if (this.clicked_column != null) {
 				if (this.clicked_column.pressed) {
 					this.clicked_column.pressed = false;
-					this.draw_headers = true;
 					this.Redraw (false);
 
 					// Raise the ColumnClick event
@@ -1237,67 +1262,7 @@ namespace System.Windows.Forms
 
 			ThemeEngine.Current.DrawListView (pe.Graphics,
 					pe.ClipRectangle, this);
-
-			// We paint on the screen as per the location set
-			// by the two scrollbars. In case of details view
-			// since column headers can scroll only horizontally
-			// and items can scroll in both directions, paiting is
-			// done separtely for the column header and the items.
-
-			Rectangle srcRect = this.ClientRectangle;
-			Rectangle dstRect = this.ClientRectangle;
-
-			// set the visible starting point
-			if (scrollable) {
-				srcRect.X += h_marker;
-				srcRect.Y += v_marker;
-
-				if (h_scroll.Visible) {
-					srcRect.Height -= h_scroll.Height;
-					dstRect.Height -= h_scroll.Height;
-				}
-
-				if (v_scroll.Visible) {
-					srcRect.Width -= v_scroll.Width;
-					dstRect.Width -= v_scroll.Width;
-				}
-			}
-
-			// We paint the column headers always at the top, in case
-			// of vertical scrolling. Therefore, we advance the painting
-			// by the amount equal to the column height.
-                        /*
-			if (this.view == View.Details &&
-			    this.Columns.Count > 0 &&
-			    this.header_style != ColumnHeaderStyle.None &&
-			    v_marker > 0 ) {
-
-				int col_ht = this.Columns [0].Ht;
-
-				if (this.draw_headers) {
-					this.draw_headers = false;
-					// Move the source rect by the amount of horizontal
-					// scrolling done so far.
-					Rectangle headerSrc = new Rectangle (h_marker, 0,
-									     srcRect.Width, col_ht);
-					// dest rect is always stable at 0,0
-					Rectangle headerDst = new Rectangle (0, 0, srcRect.Width, col_ht);
-					pe.Graphics.DrawImage (this.ImageBuffer, headerDst,
-							       headerSrc, GraphicsUnit.Pixel);
-				}
-
-				dstRect.Y += col_ht;
-				srcRect.Y += col_ht;
-			}
-                        */
-                        
-			// Draw the border of the list view
-			// The border is painted here separately, because
-			// our imagebuffer might be scrollable
-			ThemeEngine.Current.CPDrawBorderStyle (pe.Graphics,
-							       this.ClientRectangle,
-							       this.BorderStyle);
-
+					
 			// Raise the Paint event
 			if (Paint != null)
 				Paint (this, pe);
@@ -1307,16 +1272,34 @@ namespace System.Windows.Forms
 		{
 			CalculateListView (alignment);
 		}
+		
+		public void SetFocusedItem (ListViewItem item)
+		{
+			if (focused_item != null)
+				focused_item.Focused = false;
+			
+			if (item != null)
+				item.Focused = true;
+				
+			focused_item = item;
+		}
 
 		private void HorizontalScroller (object sender, EventArgs e)
 		{
 			// Avoid unnecessary flickering, when button is
 			// kept pressed at the end
 			if (h_marker != h_scroll.Value) {
+				
+				int pixels =  h_marker - h_scroll.Value;
+				Rectangle area = client_area;
+				
+				if (View == View.Details && Columns.Count > 0) {
+					area.Y += Columns[0].Ht;
+					area.Height -= Columns[0].Ht;
+				}
+				
 				h_marker = h_scroll.Value;
-				// draw the headers again
-				this.draw_headers = true;
-				this.Refresh ();
+				XplatUI.ScrollWindow (Handle, area, pixels, 0, false);
 			}
 		}
 
@@ -1325,8 +1308,16 @@ namespace System.Windows.Forms
 			// Avoid unnecessary flickering, when button is
 			// kept pressed at the end
 			if (v_marker != v_scroll.Value) {
+				int pixels =  v_marker - v_scroll.Value;
+				Rectangle area = client_area;
+				
+				if (View == View.Details && Columns.Count > 0) {
+					area.Y += Columns[0].Ht;
+					area.Height -= Columns[0].Ht;
+				}
+				
 				v_marker = v_scroll.Value;
-				this.Refresh ();
+				XplatUI.ScrollWindow (Handle, area, 0, pixels, false);
 			}
 		}
 		#endregion	// Internal Methods Properties
@@ -1338,12 +1329,41 @@ namespace System.Windows.Forms
 		}
 
 		protected override void Dispose (bool disposing)
-		{
+		{			
+			if (disposing) {			
+				h_scroll.Dispose ();
+				v_scroll.Dispose ();
+				
+				if (large_image_list != null)
+					large_image_list.Dispose ();
+					
+				if (small_image_list != null)
+					small_image_list.Dispose ();
+					
+				if (state_image_list != null)
+					state_image_list.Dispose ();			
+			}
+			
 			base.Dispose (disposing);
 		}
 
 		protected override bool IsInputKey (Keys keyData)
 		{
+			switch (keyData) {
+			case Keys.Up:
+			case Keys.Down:
+			case Keys.PageUp:
+			case Keys.PageDown:
+			case Keys.Right:
+			case Keys.Left:
+			case Keys.End:
+			case Keys.Home:				
+				return true;
+
+			default:
+				break;
+			}
+			
 			return base.IsInputKey (keyData);
 		}
 
@@ -1459,6 +1479,7 @@ namespace System.Windows.Forms
 
 		public void Clear ()
 		{
+			SetFocusedItem (null);
 			columns.Clear ();
 			items.Clear ();
 			this.Redraw (true);
@@ -1479,11 +1500,11 @@ namespace System.Windows.Forms
 				return;
 
 			// dimensions of visible area
-			int view_wd = this.Width - (this.v_scroll.Visible ? this.v_scroll.Width : 0);
-			int view_ht = this.Height - (this.h_scroll.Visible ? this.h_scroll.Height : 0);
+			int view_wd = client_area.Width;
+			int view_ht = client_area.Height;
 			// visible area is decided by the h_marker and v_marker
 			Rectangle view_rect = new Rectangle (h_marker, v_marker, view_wd, view_ht);
-
+			
 			// an item's bounding rect
 			Rectangle rect = this.items [index].EntireRect;
 
@@ -2349,6 +2370,9 @@ namespace System.Windows.Forms
 					((ListViewItem) list [i]).selected = false;
 
 				list.Clear ();
+				
+				if (owner != null)
+					owner.Invalidate ();
 			}
 
 			public bool Contains (ListViewItem item)

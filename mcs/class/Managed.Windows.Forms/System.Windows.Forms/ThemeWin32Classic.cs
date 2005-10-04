@@ -1470,7 +1470,7 @@ namespace System.Windows.Forms
 				int first = control.FirstVisibleIndex;	
 				
 				for (int i = first; i <= control.LastItemIndex; i ++) {					
-					//if (clip.IntersectsWith (control.Items[i].entire_rect_real))
+					if (clip.IntersectsWith (control.Items[i].GetBounds (ItemBoundsPortion.Entire)))
 						DrawListViewItem (dc, control, control.Items[i]);
 				}				
 			}	
@@ -1489,23 +1489,37 @@ namespace System.Windows.Forms
 				ListViewItem last_item = null;
 				foreach (ListViewItem item in control.Items) {
 					dc.DrawLine (this.ResPool.GetPen (this.ColorControl),
-						     item.entire_rect_real.Left, item.entire_rect_real.Top,
-						     control.TotalWidth, item.entire_rect_real.Top);
+						     item.GetBounds (ItemBoundsPortion.Entire).Left, item.GetBounds (ItemBoundsPortion.Entire).Top,
+						     control.TotalWidth, item.GetBounds (ItemBoundsPortion.Entire).Top);
 					last_item = item;
 				}
 
 				// draw a line after at the bottom of the last item
 				if (last_item != null) {
 					dc.DrawLine (this.ResPool.GetPen (this.ColorControl),
-						     last_item.entire_rect_real.Left,
-						     last_item.entire_rect_real.Bottom,
+						     last_item.GetBounds (ItemBoundsPortion.Entire).Left,
+						     last_item.GetBounds (ItemBoundsPortion.Entire).Bottom,
 						     control.TotalWidth,
-						     last_item.entire_rect_real.Bottom);
-				}			
-				
+						     last_item.GetBounds (ItemBoundsPortion.Entire).Bottom);
+				}
 			}			
 			
 			dc.ResetClip ();
+			
+			ThemeEngine.Current.CPDrawBorderStyle (dc,
+							       control.ClientRectangle,
+							       control.BorderStyle);
+
+			// Draw corner between the two scrollbars
+			if (control.h_scroll.Visible == true && control.h_scroll.Visible == true) {
+				Rectangle rect = new Rectangle ();
+				rect.X = control.h_scroll.Location.X + control.h_scroll.Width;
+				rect.Width = control.v_scroll.Width;
+				rect.Y = control.v_scroll.Location.Y + control.v_scroll.Height;
+				rect.Height = control.h_scroll.Height;
+				dc.FillRectangle (ResPool.GetSolidBrush (ColorControl), rect);
+			}
+
 		}
 		
 		private void DrawListViewHeader (Graphics dc, Rectangle clip, ListView control)
@@ -1528,7 +1542,6 @@ namespace System.Windows.Forms
 							dc.DrawString (col.Text, ThemeEngine.Current.DefaultFont,
 								       ResPool.GetSolidBrush
 								       (this.ColorControlText),
-								       //col.Rect,
 									rect.X + 3,
 									rect.Y + rect.Height/2 + 1,
 									col.Format);
@@ -1543,7 +1556,6 @@ namespace System.Windows.Forms
 							dc.DrawString (col.Text, ThemeEngine.Current.DefaultFont,
 								       ResPool.GetSolidBrush
 								       (this.ColorControlText),
-									//col.Rect,
 									rect.X + 3,
 									rect.Y + rect.Height/2 + 1,
 									col.Format);
@@ -1556,10 +1568,20 @@ namespace System.Windows.Forms
 		// draws the ListViewItem of the given index
 		private void DrawListViewItem (Graphics dc, ListView control, ListViewItem item)
 		{				
-			Rectangle rect_checkrect = item.checkbox_rect_real;
+			Rectangle rect_checkrect = item.CheckRectReal;
 			Rectangle rect_iconrect = item.GetBounds (ItemBoundsPortion.Icon);
 			Rectangle full_rect = item.GetBounds (ItemBoundsPortion.Entire);
-			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);									
+			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);			
+			
+			// Adjust border decorations
+			rect_checkrect.X += control.DecorationSize (); 
+			rect_checkrect.Y += control.DecorationSize ();
+			rect_iconrect.X += control.DecorationSize (); 
+			rect_iconrect.Y += control.DecorationSize ();
+			full_rect.X += control.DecorationSize (); 
+			full_rect.Y += control.DecorationSize ();
+			text_rect.X += control.DecorationSize ();
+			text_rect.Y += control.DecorationSize ();
 			
 			if (control.CheckBoxes) {
 				if (control.StateImageList == null) {
@@ -1734,6 +1756,13 @@ namespace System.Windows.Forms
 						sub_item_rect.X += col.Wd;
 					}
 				}
+			}
+			
+			if (item.Focused) {				
+				if (item.Selected)
+					CPDrawFocusRectangle (dc, text_rect, ColorHighlightText, ColorHighlight);
+				else
+					CPDrawFocusRectangle (dc, text_rect, control.ForeColor, control.BackColor);
 			}
 		}
 
