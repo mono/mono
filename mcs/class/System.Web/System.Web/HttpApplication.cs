@@ -921,7 +921,10 @@ namespace System.Web {
 				foreach (bool stop in RunHooks (PostReleaseRequestState))
 					yield return stop;
 #endif
-			
+
+			if (context.Error == null)
+				context.Response.DoFilter (true);
+
 			if (UpdateRequestCache != null)
 				foreach (bool stop in RunHooks (UpdateRequestCache))
 					yield return stop;

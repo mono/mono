@@ -1,5 +1,18 @@
 2005-10-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* OutputFilterStream.cs: proxy class for response filters.
+	* HttpResponse.cs: moved all the actual write operations into the
+	response stream. Handle response filtering. When caching, get the
+	actual length of the data, not the buffer length.
+	* HttpApplication.cs: if there's no error, invoke the filters before
+	updating the request cache.
+	* HttpResponseStream.cs: new Filter property. SendChunkSize is moved
+	here and now supports writing the final chunk. New method ApplyFilter
+	that filters the existing buckets and replaces them with the filtered
+	ones. Modified Write to deal with buffering and filtering.
+
+2005-10-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpResponseStream.cs: allow for writes of more than 32K at once.
 
 2005-10-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>

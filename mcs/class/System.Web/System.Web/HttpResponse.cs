@@ -6,8 +6,6 @@
 //	Miguel de Icaza (miguel@novell.com)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-
-//
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -84,7 +82,7 @@ namespace System.Web {
 		// Transfer encoding state
 		//
 		string transfer_encoding;
-		internal byte [] use_chunked;
+		internal bool use_chunked;
 		
 		bool closed;
 		internal bool suppress_content;
@@ -99,8 +97,6 @@ namespace System.Web {
 		//
 		internal object FlagEnd = new object ();
 
-		internal readonly static byte [] ChunkedNewline = new byte [2] { 13, 10 };
-		
 		internal HttpResponse ()
 		{
 			output_stream = new HttpResponseStream (this);
@@ -117,7 +113,7 @@ namespace System.Web {
 			this.context = context;
 
 			if (worker_request != null)
-				use_chunked = worker_request.GetHttpVersion () == "HTTP/1.1" ? new byte [24] : null;
+				use_chunked = (worker_request.GetHttpVersion () == "HTTP/1.1");
 		}
 		
 		internal TextWriter SetTextWriter (TextWriter writer)
@@ -238,14 +234,13 @@ namespace System.Web {
 			}
 		}
 
-		[MonoTODO]
 		public Stream Filter {
 			get {
-				throw new NotImplementedException ();
+				return output_stream.Filter;
 			}
 
 			set {
-				throw new NotImplementedException ();
+				output_stream.Filter = value;
 			}
 		}
 #if NET_2_0
@@ -430,7 +425,7 @@ namespace System.Web {
 			
 			if (String.Compare (name, "content-length", true, CultureInfo.InvariantCulture) == 0){
 				content_length = Int64.Parse (value);
-				use_chunked = null;
+				use_chunked = false;
 				return;
 			}
 
@@ -441,7 +436,7 @@ namespace System.Web {
 
 			if (String.Compare (name, "transfer-encoding", true, CultureInfo.InvariantCulture) == 0){
 				transfer_encoding = value;
-				use_chunked = null;
+				use_chunked = false;
 				return;
 			}
 
@@ -487,37 +482,9 @@ namespace System.Web {
 			return virtualPath;
 		}
 
-		internal void SendSize (long l)
-		{
-			string s = l.ToString ();
-			int i;
-			
-			for (i = 0; i < s.Length; i++){
-				use_chunked [i] = (byte) s [i];
-			}
-			use_chunked [i++] = 13;
-			use_chunked [i++] = 10;
-
-			WorkerRequest.SendResponseFromMemory (use_chunked, i);
-		}
-		
 		public void BinaryWrite (byte [] buffer)
 		{
-			if (this.buffer)
-				output_stream.Write (buffer, 0, buffer.Length);
-			else {
-				if (use_chunked != null)
-					SendSize (buffer.Length);
-						
-				WorkerRequest.SendResponseFromMemory (buffer, buffer.Length);
-
-				WorkerRequest.SendResponseFromMemory (ChunkedNewline, 2);
-				
-				//
-				// TODO This hack is for current XSP
-				//
-				WorkerRequest.FlushResponse (false);
-			}
+			output_stream.Write (buffer, 0, buffer.Length);
 		}
 
 		internal void BinaryWrite (byte [] buffer, int start, int len)
@@ -579,8 +546,11 @@ namespace System.Web {
 		//   Content-Type
 		//   Transfer-Encoding (chunked)
 		//   Cache-Control
-		void WriteHeaders (bool final_flush)
+		internal void WriteHeaders (bool final_flush)
 		{
+			if (headers_sent)
+				return;
+
 			if (WorkerRequest != null)
 				WorkerRequest.SendStatus (status_code, StatusDescription);
 
@@ -596,7 +566,7 @@ namespace System.Web {
 			//
 			// Transfer-Encoding
 			//
-			if (use_chunked != null)
+			if (use_chunked)
 				write_headers.Add (new UnknownResponseHeader ("Transfer-Encoding", "chunked"));
 			else if (transfer_encoding != null)
 				write_headers.Add (new UnknownResponseHeader ("Transfer-Encoding", transfer_encoding));
@@ -631,7 +601,7 @@ namespace System.Web {
 					// We are buffering, and this is a flush in the middle.
 					// If we are not chunked, we need to set "Connection: close".
 					//
-					if (use_chunked == null){
+					if (use_chunked){
 						Console.WriteLine ("Setting to close2");
 						write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderConnection, "close"));
 					}
@@ -641,7 +611,7 @@ namespace System.Web {
 				// If the content-length is not set, and we are not buffering, we must
 				// close at the end.
 				//
-				if (use_chunked == null){
+				if (use_chunked){
 					Console.WriteLine ("Setting to close");
 					write_headers.Add (new KnownResponseHeader (HttpWorkerRequest.HeaderConnection, "close"));
 				}
@@ -693,23 +663,33 @@ namespace System.Web {
 			}
 			headers_sent = true;
 		}
-		
+
+		internal void DoFilter (bool close)
+		{
+			if (output_stream.Filter != null && context != null && context.Error == null)
+				output_stream.ApplyFilter (close);
+		}
+
 		internal void Flush (bool final_flush)
 		{
+			DoFilter (final_flush);
 			if (!headers_sent){
 				if (final_flush || status_code != 200)
-					use_chunked = null;
-
-				WriteHeaders (final_flush);
+					use_chunked = false;
 			}
 
 			bool head = ((context != null) && (context.Request.HttpMethod == "HEAD"));
 			if (suppress_content || head) {
+				if (!headers_sent)
+					WriteHeaders (true);
 				output_stream.Clear ();
 				if (WorkerRequest != null)
-					output_stream.Flush (WorkerRequest, final_flush);
+					output_stream.Flush (WorkerRequest, true); // ignore final_flush here.
 				return;
 			}
+
+			if (!headers_sent)
+				WriteHeaders (final_flush);
 
 			if (context != null) {
 				HttpApplication app_instance = context.ApplicationInstance;
@@ -718,17 +698,13 @@ namespace System.Web {
 			}
 
 			if (IsCached) {
-				byte [] data = output_stream.GetData ();
-				cached_response.ContentLength = data.Length;
-				cached_response.SetData (data);
+				MemoryStream ms = output_stream.GetData ();
+				cached_response.ContentLength = (int) ms.Length;
+				cached_response.SetData (ms.GetBuffer ());
 			}
 
 			if (WorkerRequest != null)
 				output_stream.Flush (WorkerRequest, final_flush);
-
-			// FIXME
-			if (final_flush && use_chunked != null)
-				Write ("0\r\n\r\n");
 		}
 
 		public void Flush ()
@@ -844,6 +820,7 @@ namespace System.Web {
 			if (buffer)
 				return;
 
+			output_stream.ApplyFilter (false);
 			Flush ();
 		}
 
@@ -865,6 +842,7 @@ namespace System.Web {
 
 			if (buffer)
 				return;
+			output_stream.ApplyFilter (false);
 			Flush ();
 		}
 #endif
@@ -887,6 +865,7 @@ namespace System.Web {
 			if (buffer)
 				return;
 
+			output_stream.ApplyFilter (false);
 			Flush ();
 		}
 #if NET_2_0
@@ -911,6 +890,7 @@ namespace System.Web {
 		{
 			FileInfo fi = new FileInfo (filename);
 			output_stream.WriteFile (filename, 0, fi.Length);
+			output_stream.ApplyFilter (final_flush);
 			Flush (final_flush);
 		}
 		
@@ -1007,9 +987,9 @@ namespace System.Web {
 
 		internal void ReleaseResources ()
 		{
-			output_stream.ReleaseResources ();
+			output_stream.ReleaseResources (true);
 			output_stream = null;
 		}
 	}
-	
 }
+

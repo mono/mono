@@ -53,12 +53,24 @@ namespace System.Web {
 		Bucket split_after_file;
 		HttpResponse response;
 		internal long total;
+		Stream filter;
+		byte [] chunk_buffer = new byte [24];
 
 		public HttpResponseStream (HttpResponse response)
 		{
 			this.response = response;
 		}
 		
+		public Stream Filter {
+			get {
+				if (filter == null)
+					filter = new OutputFilterStream (this);
+				return filter;
+			}
+			set {
+				filter = value;
+			}
+		}
 #if TARGET_JVM
 		class Chunk
 		{
@@ -510,16 +522,44 @@ namespace System.Web {
 		{
 		}
 
+		void SendChunkSize (long l, bool last)
+		{
+			if (l == 0 && !last)
+				return;
+
+			int i = 0;
+			if (l >= 0) {
+				string s = String.Format ("{0:x}", l);
+				for (; i < s.Length; i++)
+					chunk_buffer [i] = (byte) s [i];
+			}
+
+			chunk_buffer [i++] = 13;
+			chunk_buffer [i++] = 10;
+			if (last) {
+				chunk_buffer [i++] = 13;
+				chunk_buffer [i++] = 10;
+			}
+
+			response.WorkerRequest.SendResponseFromMemory (chunk_buffer, i);
+		}
+
 		internal void Flush (HttpWorkerRequest wr, bool final_flush)
 		{
-			if (response.use_chunked != null)
-				response.SendSize (total);
+			if (total == 0 && !final_flush)
+				return;
+
+			if (response.use_chunked) 
+				SendChunkSize (total, false);
 			
 			for (Bucket b = first_bucket; b != null; b = b.Next) 
 				b.Send (wr);
 
-			if (response.use_chunked != null)
-				wr.SendResponseFromMemory (HttpResponse.ChunkedNewline, 2);
+			if (response.use_chunked) {
+				SendChunkSize (-1, false);
+				if (final_flush)
+					SendChunkSize (0, true);
+			}
 
 			wr.FlushResponse (final_flush);
 
@@ -535,12 +575,12 @@ namespace System.Web {
 			return size;
 		}
 
-		internal byte [] GetData ()
+		internal MemoryStream GetData ()
 		{
 			MemoryStream stream = new MemoryStream ();
 			for (Bucket b = first_bucket; b != null; b = b.Next)
 				b.Send (stream);
-			return stream.GetBuffer ();
+			return stream;
 		}
 
 		public void WriteFile (string f, long offset, long length)
@@ -553,9 +593,72 @@ namespace System.Web {
 			total += length;
 			
 			AppendBucket (new BufferedFileBucket (f, offset, length));
+			// Flush () is called from HttpResponse if needed (WriteFile/TransmitFile)
 		}
 
-	        public override void Write (byte [] buffer, int offset, int count) 
+		bool filtering;
+		internal void ApplyFilter (bool close)
+		{
+			if (filter == null)
+				return;
+
+			filtering = true;
+			Bucket one = first_bucket;
+			first_bucket = null; // This will recreate new buckets for the filtered content
+			cur_bucket = null;
+			total = 0;
+			for (Bucket b = one; b != null; b = b.Next)
+				b.Send (filter);
+
+			for (Bucket b = one; b != null; b = b.Next)
+				b.Dispose ();
+
+			if (close) {
+				filter.Close ();
+				filter = null;
+			} else {
+				filter.Flush ();
+			}
+			filtering = false;
+		}
+
+	        public override void Write (byte [] buffer, int offset, int count)
+		{
+			bool buffering = response.Buffer;
+
+			if (buffering) {
+				// It does not matter whether we're in ApplyFilter or not
+				AppendBuffer (buffer, offset, count);
+			} else if (filter == null || filtering) {
+				response.WriteHeaders (false);
+				HttpWorkerRequest wr = response.WorkerRequest;
+				// Direct write because not buffering
+				if (offset == 0) {
+					wr.SendResponseFromMemory (buffer, count);
+				} else {
+					UnsafeWrite (wr, buffer, offset, count);
+				}
+				wr.FlushResponse (false);
+			} else {
+				// Write to the filter, which will call us back, and then Flush
+				filtering = true;
+				try {
+					filter.Write (buffer, offset, count);
+				} finally {
+					filtering = false;
+				}
+				Flush (response.WorkerRequest, false);
+			}
+		}
+
+		unsafe void UnsafeWrite (HttpWorkerRequest wr, byte [] buffer, int offset, int count)
+		{
+			fixed (byte *ptr = buffer) {
+				wr.SendResponseFromMemory ((IntPtr) (ptr + offset), count);
+			}
+		}
+
+		void AppendBuffer (byte [] buffer, int offset, int count)
 		{
 			if (cur_bucket == null)
 				AppendBucket (new ByteBucket (count));
@@ -584,8 +687,13 @@ namespace System.Web {
 		// just to free any memory we might have allocated (when we later
 		// implement something with unmanaged memory).
 		//
-		internal void ReleaseResources ()
+		internal void ReleaseResources (bool close_filter)
 		{
+			if (close_filter && filter != null) {
+				filter.Close ();
+				filter = null;
+			}
+
 			for (Bucket b = first_bucket; b != null; b = b.Next)
 				b.Dispose ();
 
@@ -600,10 +708,9 @@ namespace System.Web {
 			// IMPORTANT: you must dispose *AFTER* using all the buckets Byte chunks might be
 			// split across two buckets if there is a file between the data.
 			//
-			ReleaseResources ();
+			ReleaseResources (false);
 			total = 0;
 		}
-
 		
 	        public override bool CanRead {
 	                get {
