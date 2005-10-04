@@ -107,6 +107,13 @@ namespace Mono.CSharp {
 		{
 			throw new Exception ("Should not happen");
 		}
+
+		public override Location Location
+		{
+			get {
+				return Expr.Location;
+			}
+		}
 	}
 	
 	/// <summary>
@@ -188,37 +195,37 @@ namespace Mono.CSharp {
 			Expression e = null;
 
 			if (expr is IntConstant)
-				e = new IntConstant (-((IntConstant) expr).Value);
+				e = new IntConstant (-((IntConstant) expr).Value, expr.Location);
 			else if (expr is UIntConstant){
 				uint value = ((UIntConstant) expr).Value;
 
 				if (value < 2147483649)
-					return new IntConstant (-(int)value);
+					return new IntConstant (-(int)value, expr.Location);
 				else
-					e = new LongConstant (-value);
+					e = new LongConstant (-value, expr.Location);
 			}
 			else if (expr is LongConstant)
-				e = new LongConstant (-((LongConstant) expr).Value);
+				e = new LongConstant (-((LongConstant) expr).Value, expr.Location);
 			else if (expr is ULongConstant){
 				ulong value = ((ULongConstant) expr).Value;
 
 				if (value < 9223372036854775809)
-					return new LongConstant(-(long)value);
+					return new LongConstant(-(long)value, expr.Location);
 			}
 			else if (expr is FloatConstant)
-				e = new FloatConstant (-((FloatConstant) expr).Value);
+				e = new FloatConstant (-((FloatConstant) expr).Value, expr.Location);
 			else if (expr is DoubleConstant)
-				e = new DoubleConstant (-((DoubleConstant) expr).Value);
+				e = new DoubleConstant (-((DoubleConstant) expr).Value, expr.Location);
 			else if (expr is DecimalConstant)
-				e = new DecimalConstant (-((DecimalConstant) expr).Value);
+				e = new DecimalConstant (-((DecimalConstant) expr).Value, expr.Location);
 			else if (expr is ShortConstant)
-				e = new IntConstant (-((ShortConstant) expr).Value);
+				e = new IntConstant (-((ShortConstant) expr).Value, expr.Location);
 			else if (expr is UShortConstant)
-				e = new IntConstant (-((UShortConstant) expr).Value);
+				e = new IntConstant (-((UShortConstant) expr).Value, expr.Location);
 			else if (expr is SByteConstant)
-				e = new IntConstant (-((SByteConstant) expr).Value);
+				e = new IntConstant (-((SByteConstant) expr).Value, expr.Location);
 			else if (expr is ByteConstant)
-				e = new IntConstant (-((ByteConstant) expr).Value);
+				e = new IntConstant (-((ByteConstant) expr).Value, expr.Location);
 			return e;
 		}
 
@@ -255,7 +262,7 @@ namespace Mono.CSharp {
 				}
 				
 				BoolConstant b = (BoolConstant) e;
-				result = new BoolConstant (!(b.Value));
+				result = new BoolConstant (!(b.Value), b.Location);
 				return true;
 				
 			case Operator.OnesComplement:
@@ -304,13 +311,13 @@ namespace Mono.CSharp {
 				}
 
 				if (expr_type == TypeManager.int32_type){
-					result = new IntConstant (~ ((IntConstant) e).Value);
+					result = new IntConstant (~ ((IntConstant) e).Value, e.Location);
 				} else if (expr_type == TypeManager.uint32_type){
-					result = new UIntConstant (~ ((UIntConstant) e).Value);
+					result = new UIntConstant (~ ((UIntConstant) e).Value, e.Location);
 				} else if (expr_type == TypeManager.int64_type){
-					result = new LongConstant (~ ((LongConstant) e).Value);
+					result = new LongConstant (~ ((LongConstant) e).Value, e.Location);
 				} else if (expr_type == TypeManager.uint64_type){
-					result = new ULongConstant (~ ((ULongConstant) e).Value);
+					result = new ULongConstant (~ ((ULongConstant) e).Value, e.Location);
 				} else {
 					result = null;
 					Error23 (expr_type);
@@ -1362,28 +1369,28 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.sbyte_type) {
 					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
 						return null;
-					return new SByteConstant ((sbyte) v);
+					return new SByteConstant ((sbyte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.short_type)
-					return new ShortConstant ((short) v);
+					return new ShortConstant ((short) v, real_expr.Location);
 				if (target_type == TypeManager.ushort_type)
-					return new UShortConstant ((ushort) v);
+					return new UShortConstant ((ushort) v, real_expr.Location);
 				if (target_type == TypeManager.int32_type)
-					return new IntConstant ((int) v);
+					return new IntConstant ((int) v, real_expr.Location);
 				if (target_type == TypeManager.uint32_type)
-					return new UIntConstant ((uint) v);
+					return new UIntConstant ((uint) v, real_expr.Location);
 				if (target_type == TypeManager.int64_type)
-					return new LongConstant ((long) v);
+					return new LongConstant ((long) v, real_expr.Location);
 				if (target_type == TypeManager.uint64_type)
-					return new ULongConstant ((ulong) v);
+					return new ULongConstant ((ulong) v, real_expr.Location);
 				if (target_type == TypeManager.float_type)
-					return new FloatConstant ((float) v);
+					return new FloatConstant ((float) v, real_expr.Location);
 				if (target_type == TypeManager.double_type)
-					return new DoubleConstant ((double) v);
+					return new DoubleConstant ((double) v, real_expr.Location);
 				if (target_type == TypeManager.char_type)
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 			if (real_expr is SByteConstant){
 				sbyte v = ((SByteConstant) real_expr).Value;
@@ -1391,38 +1398,38 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckUnsigned (ec, v, target_type))
 						return null;
-					return new ByteConstant ((byte) v);
+					return new ByteConstant ((byte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.short_type)
-					return new ShortConstant ((short) v);
+					return new ShortConstant ((short) v, real_expr.Location);
 				if (target_type == TypeManager.ushort_type) {
 					if (!CheckUnsigned (ec, v, target_type))
 						return null;
-					return new UShortConstant ((ushort) v);
+					return new UShortConstant ((ushort) v, real_expr.Location);
 				} if (target_type == TypeManager.int32_type)
-					return new IntConstant ((int) v);
+					return new IntConstant ((int) v, real_expr.Location);
 				if (target_type == TypeManager.uint32_type) {
 					if (!CheckUnsigned (ec, v, target_type))
 						return null;
-					return new UIntConstant ((uint) v);
+					return new UIntConstant ((uint) v, real_expr.Location);
 				} if (target_type == TypeManager.int64_type)
-					return new LongConstant ((long) v);
+					return new LongConstant ((long) v, real_expr.Location);
 				if (target_type == TypeManager.uint64_type) {
 					if (!CheckUnsigned (ec, v, target_type))
 						return null;
-					return new ULongConstant ((ulong) v);
+					return new ULongConstant ((ulong) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.float_type)
-					return new FloatConstant ((float) v);
+					return new FloatConstant ((float) v, real_expr.Location);
 				if (target_type == TypeManager.double_type)
-					return new DoubleConstant ((double) v);
+					return new DoubleConstant ((double) v, real_expr.Location);
 				if (target_type == TypeManager.char_type) {
 					if (!CheckUnsigned (ec, v, target_type))
 						return null;
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 			if (real_expr is ShortConstant){
 				short v = ((ShortConstant) real_expr).Value;
@@ -1430,43 +1437,43 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
 						return null;
-					return new ByteConstant ((byte) v);
+					return new ByteConstant ((byte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.sbyte_type) {
 					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
 						return null;
-					return new SByteConstant ((sbyte) v);
+					return new SByteConstant ((sbyte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.ushort_type) {
 					if (!CheckUnsigned (ec, v, target_type))
 						return null;
-					return new UShortConstant ((ushort) v);
+					return new UShortConstant ((ushort) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.int32_type)
-					return new IntConstant ((int) v);
+					return new IntConstant ((int) v, real_expr.Location);
 				if (target_type == TypeManager.uint32_type) {
 					if (!CheckUnsigned (ec, v, target_type))
 						return null;
-					return new UIntConstant ((uint) v);
+					return new UIntConstant ((uint) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.int64_type)
-					return new LongConstant ((long) v);
+					return new LongConstant ((long) v, real_expr.Location);
 				if (target_type == TypeManager.uint64_type) {
 					if (!CheckUnsigned (ec, v, target_type))
 						return null;
-					return new ULongConstant ((ulong) v);
+					return new ULongConstant ((ulong) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.float_type)
-					return new FloatConstant ((float) v);
+					return new FloatConstant ((float) v, real_expr.Location);
 				if (target_type == TypeManager.double_type)
-					return new DoubleConstant ((double) v);
+					return new DoubleConstant ((double) v, real_expr.Location);
 				if (target_type == TypeManager.char_type) {
 					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
 						return null;
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 			if (real_expr is UShortConstant){
 				ushort v = ((UShortConstant) real_expr).Value;
@@ -1474,37 +1481,37 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
 						return null;
-					return new ByteConstant ((byte) v);
+					return new ByteConstant ((byte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.sbyte_type) {
 					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
 						return null;
-					return new SByteConstant ((sbyte) v);
+					return new SByteConstant ((sbyte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.short_type) {
 					if (!CheckRange (ec, v, target_type, Int16.MinValue, Int16.MaxValue))
 						return null;
-					return new ShortConstant ((short) v);
+					return new ShortConstant ((short) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.int32_type)
-					return new IntConstant ((int) v);
+					return new IntConstant ((int) v, real_expr.Location);
 				if (target_type == TypeManager.uint32_type)
-					return new UIntConstant ((uint) v);
+					return new UIntConstant ((uint) v, real_expr.Location);
 				if (target_type == TypeManager.int64_type)
-					return new LongConstant ((long) v);
+					return new LongConstant ((long) v, real_expr.Location);
 				if (target_type == TypeManager.uint64_type)
-					return new ULongConstant ((ulong) v);
+					return new ULongConstant ((ulong) v, real_expr.Location);
 				if (target_type == TypeManager.float_type)
-					return new FloatConstant ((float) v);
+					return new FloatConstant ((float) v, real_expr.Location);
 				if (target_type == TypeManager.double_type)
-					return new DoubleConstant ((double) v);
+					return new DoubleConstant ((double) v, real_expr.Location);
 				if (target_type == TypeManager.char_type) {
 					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
 						return null;
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 			if (real_expr is IntConstant){
 				int v = ((IntConstant) real_expr).Value;
@@ -1512,46 +1519,46 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
 						return null;
-					return new ByteConstant ((byte) v);
+					return new ByteConstant ((byte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.sbyte_type) {
 					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
 						return null;
-					return new SByteConstant ((sbyte) v);
+					return new SByteConstant ((sbyte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.short_type) {
 					if (!CheckRange (ec, v, target_type, Int16.MinValue, Int16.MaxValue))
 						return null;
-					return new ShortConstant ((short) v);
+					return new ShortConstant ((short) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.ushort_type) {
 					if (!CheckRange (ec, v, target_type, UInt16.MinValue, UInt16.MaxValue))
 						return null;
-					return new UShortConstant ((ushort) v);
+					return new UShortConstant ((ushort) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.uint32_type) {
 					if (!CheckRange (ec, v, target_type, Int32.MinValue, Int32.MaxValue))
 						return null;
-					return new UIntConstant ((uint) v);
+					return new UIntConstant ((uint) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.int64_type)
-					return new LongConstant ((long) v);
+					return new LongConstant ((long) v, real_expr.Location);
 				if (target_type == TypeManager.uint64_type) {
 					if (!CheckUnsigned (ec, v, target_type))
 						return null;
-					return new ULongConstant ((ulong) v);
+					return new ULongConstant ((ulong) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.float_type)
-					return new FloatConstant ((float) v);
+					return new FloatConstant ((float) v, real_expr.Location);
 				if (target_type == TypeManager.double_type)
-					return new DoubleConstant ((double) v);
+					return new DoubleConstant ((double) v, real_expr.Location);
 				if (target_type == TypeManager.char_type) {
 					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
 						return null;
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 			if (real_expr is UIntConstant){
 				uint v = ((UIntConstant) real_expr).Value;
@@ -1559,43 +1566,43 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
 						return null;
-					return new ByteConstant ((byte) v);
+					return new ByteConstant ((byte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.sbyte_type) {
 					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
 						return null;
-					return new SByteConstant ((sbyte) v);
+					return new SByteConstant ((sbyte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.short_type) {
 					if (!CheckRange (ec, v, target_type, Int16.MinValue, Int16.MaxValue))
 						return null;
-					return new ShortConstant ((short) v);
+					return new ShortConstant ((short) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.ushort_type) {
 					if (!CheckRange (ec, v, target_type, UInt16.MinValue, UInt16.MaxValue))
 						return null;
-					return new UShortConstant ((ushort) v);
+					return new UShortConstant ((ushort) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.int32_type) {
 					if (!CheckRange (ec, v, target_type, Int32.MinValue, Int32.MaxValue))
 						return null;
-					return new IntConstant ((int) v);
+					return new IntConstant ((int) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.int64_type)
-					return new LongConstant ((long) v);
+					return new LongConstant ((long) v, real_expr.Location);
 				if (target_type == TypeManager.uint64_type)
-					return new ULongConstant ((ulong) v);
+					return new ULongConstant ((ulong) v, real_expr.Location);
 				if (target_type == TypeManager.float_type)
-					return new FloatConstant ((float) v);
+					return new FloatConstant ((float) v, real_expr.Location);
 				if (target_type == TypeManager.double_type)
-					return new DoubleConstant ((double) v);
+					return new DoubleConstant ((double) v, real_expr.Location);
 				if (target_type == TypeManager.char_type) {
 					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
 						return null;
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 			if (real_expr is LongConstant){
 				long v = ((LongConstant) real_expr).Value;
@@ -1603,49 +1610,49 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
 						return null;
-					return new ByteConstant ((byte) v);
+					return new ByteConstant ((byte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.sbyte_type) {
 					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
 						return null;
-					return new SByteConstant ((sbyte) v);
+					return new SByteConstant ((sbyte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.short_type) {
 					if (!CheckRange (ec, v, target_type, Int16.MinValue, Int16.MaxValue))
 						return null;
-					return new ShortConstant ((short) v);
+					return new ShortConstant ((short) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.ushort_type) {
 					if (!CheckRange (ec, v, target_type, UInt16.MinValue, UInt16.MaxValue))
 						return null;
-					return new UShortConstant ((ushort) v);
+					return new UShortConstant ((ushort) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.int32_type) {
 					if (!CheckRange (ec, v, target_type, Int32.MinValue, Int32.MaxValue))
 						return null;
-					return new IntConstant ((int) v);
+					return new IntConstant ((int) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.uint32_type) {
 					if (!CheckRange (ec, v, target_type, UInt32.MinValue, UInt32.MaxValue))
 						return null;
-					return new UIntConstant ((uint) v);
+					return new UIntConstant ((uint) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.uint64_type) {
 					if (!CheckUnsigned (ec, v, target_type))
 						return null;
-					return new ULongConstant ((ulong) v);
+					return new ULongConstant ((ulong) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.float_type)
-					return new FloatConstant ((float) v);
+					return new FloatConstant ((float) v, real_expr.Location);
 				if (target_type == TypeManager.double_type)
-					return new DoubleConstant ((double) v);
+					return new DoubleConstant ((double) v, real_expr.Location);
 				if (target_type == TypeManager.char_type) {
 					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
 						return null;
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 			if (real_expr is ULongConstant){
 				ulong v = ((ULongConstant) real_expr).Value;
@@ -1653,101 +1660,101 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MaxValue))
 						return null;
-					return new ByteConstant ((byte) v);
+					return new ByteConstant ((byte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.sbyte_type) {
 					if (!CheckRange (ec, v, target_type, (ulong) SByte.MaxValue))
 						return null;
-					return new SByteConstant ((sbyte) v);
+					return new SByteConstant ((sbyte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.short_type) {
 					if (!CheckRange (ec, v, target_type, (ulong) Int16.MaxValue))
 						return null;
-					return new ShortConstant ((short) v);
+					return new ShortConstant ((short) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.ushort_type) {
 					if (!CheckRange (ec, v, target_type, UInt16.MaxValue))
 						return null;
-					return new UShortConstant ((ushort) v);
+					return new UShortConstant ((ushort) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.int32_type) {
 					if (!CheckRange (ec, v, target_type, Int32.MaxValue))
 						return null;
-					return new IntConstant ((int) v);
+					return new IntConstant ((int) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.uint32_type) {
 					if (!CheckRange (ec, v, target_type, UInt32.MaxValue))
 						return null;
-					return new UIntConstant ((uint) v);
+					return new UIntConstant ((uint) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.int64_type) {
 					if (!CheckRange (ec, v, target_type, (ulong) Int64.MaxValue))
 						return null;
-					return new LongConstant ((long) v);
+					return new LongConstant ((long) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.float_type)
-					return new FloatConstant ((float) v);
+					return new FloatConstant ((float) v, real_expr.Location);
 				if (target_type == TypeManager.double_type)
-					return new DoubleConstant ((double) v);
+					return new DoubleConstant ((double) v, real_expr.Location);
 				if (target_type == TypeManager.char_type) {
 					if (!CheckRange (ec, v, target_type, Char.MaxValue))
 						return null;
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 			if (real_expr is FloatConstant){
 				float v = ((FloatConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type)
-					return new ByteConstant ((byte) v);
+					return new ByteConstant ((byte) v, real_expr.Location);
 				if (target_type == TypeManager.sbyte_type)
-					return new SByteConstant ((sbyte) v);
+					return new SByteConstant ((sbyte) v, real_expr.Location);
 				if (target_type == TypeManager.short_type)
-					return new ShortConstant ((short) v);
+					return new ShortConstant ((short) v, real_expr.Location);
 				if (target_type == TypeManager.ushort_type)
-					return new UShortConstant ((ushort) v);
+					return new UShortConstant ((ushort) v, real_expr.Location);
 				if (target_type == TypeManager.int32_type)
-					return new IntConstant ((int) v);
+					return new IntConstant ((int) v, real_expr.Location);
 				if (target_type == TypeManager.uint32_type)
-					return new UIntConstant ((uint) v);
+					return new UIntConstant ((uint) v, real_expr.Location);
 				if (target_type == TypeManager.int64_type)
-					return new LongConstant ((long) v);
+					return new LongConstant ((long) v, real_expr.Location);
 				if (target_type == TypeManager.uint64_type)
-					return new ULongConstant ((ulong) v);
+					return new ULongConstant ((ulong) v, real_expr.Location);
 				if (target_type == TypeManager.double_type)
-					return new DoubleConstant ((double) v);
+					return new DoubleConstant ((double) v, real_expr.Location);
 				if (target_type == TypeManager.char_type)
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 			if (real_expr is DoubleConstant){
 				double v = ((DoubleConstant) real_expr).Value;
 	
 				if (target_type == TypeManager.byte_type){
-					return new ByteConstant ((byte) v);
+					return new ByteConstant ((byte) v, real_expr.Location);
 				} if (target_type == TypeManager.sbyte_type)
-					return new SByteConstant ((sbyte) v);
+					return new SByteConstant ((sbyte) v, real_expr.Location);
 				if (target_type == TypeManager.short_type)
-					return new ShortConstant ((short) v);
+					return new ShortConstant ((short) v, real_expr.Location);
 				if (target_type == TypeManager.ushort_type)
-					return new UShortConstant ((ushort) v);
+					return new UShortConstant ((ushort) v, real_expr.Location);
 				if (target_type == TypeManager.int32_type)
-					return new IntConstant ((int) v);
+					return new IntConstant ((int) v, real_expr.Location);
 				if (target_type == TypeManager.uint32_type)
-					return new UIntConstant ((uint) v);
+					return new UIntConstant ((uint) v, real_expr.Location);
 				if (target_type == TypeManager.int64_type)
-					return new LongConstant ((long) v);
+					return new LongConstant ((long) v, real_expr.Location);
 				if (target_type == TypeManager.uint64_type)
-					return new ULongConstant ((ulong) v);
+					return new ULongConstant ((ulong) v, real_expr.Location);
 				if (target_type == TypeManager.float_type)
-					return new FloatConstant ((float) v);
+					return new FloatConstant ((float) v, real_expr.Location);
 				if (target_type == TypeManager.char_type)
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 
 			if (real_expr is CharConstant){
@@ -1756,37 +1763,37 @@ namespace Mono.CSharp {
 				if (target_type == TypeManager.byte_type) {
 					if (!CheckRange (ec, v, target_type, Byte.MinValue, Byte.MaxValue))
 						return null;
-					return new ByteConstant ((byte) v);
+					return new ByteConstant ((byte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.sbyte_type) {
 					if (!CheckRange (ec, v, target_type, SByte.MinValue, SByte.MaxValue))
 						return null;
-					return new SByteConstant ((sbyte) v);
+					return new SByteConstant ((sbyte) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.short_type) {
 					if (!CheckRange (ec, v, target_type, Int16.MinValue, Int16.MaxValue))
 						return null;
-					return new ShortConstant ((short) v);
+					return new ShortConstant ((short) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.int32_type)
-					return new IntConstant ((int) v);
+					return new IntConstant ((int) v, real_expr.Location);
 				if (target_type == TypeManager.uint32_type)
-					return new UIntConstant ((uint) v);
+					return new UIntConstant ((uint) v, real_expr.Location);
 				if (target_type == TypeManager.int64_type)
-					return new LongConstant ((long) v);
+					return new LongConstant ((long) v, real_expr.Location);
 				if (target_type == TypeManager.uint64_type)
-					return new ULongConstant ((ulong) v);
+					return new ULongConstant ((ulong) v, real_expr.Location);
 				if (target_type == TypeManager.float_type)
-					return new FloatConstant ((float) v);
+					return new FloatConstant ((float) v, real_expr.Location);
 				if (target_type == TypeManager.double_type)
-					return new DoubleConstant ((double) v);
+					return new DoubleConstant ((double) v, real_expr.Location);
 				if (target_type == TypeManager.char_type) {
 					if (!CheckRange (ec, v, target_type, Char.MinValue, Char.MaxValue))
 						return null;
-					return new CharConstant ((char) v);
+					return new CharConstant ((char) v, real_expr.Location);
 				}
 				if (target_type == TypeManager.decimal_type)
-					return new DecimalConstant ((decimal) v);
+					return new DecimalConstant ((decimal) v, real_expr.Location);
 			}
 
 			return null;
@@ -2074,7 +2081,7 @@ namespace Mono.CSharp {
 							long ll = ((LongConstant) right).Value;
 
 							if (ll >= 0)
-								right = new ULongConstant ((ulong) ll);
+								right = new ULongConstant ((ulong) ll, right.Location);
 						} else {
 							e = Convert.ImplicitNumericConversion (ec, right, l, loc);
 							if (e != null)
@@ -2091,7 +2098,7 @@ namespace Mono.CSharp {
 						long ll = ((LongConstant) left).Value;
 						
 						if (ll > 0)
-							left = new ULongConstant ((ulong) ll);
+							left = new ULongConstant ((ulong) ll, right.Location);
 					} else {
 						e = Convert.ImplicitNumericConversion (ec, left, r, loc);
 						if (e != null)
@@ -2135,7 +2142,7 @@ namespace Mono.CSharp {
 						int val = ic.Value;
 						
 						if (val >= 0){
-							right = new UIntConstant ((uint) val);
+							right = new UIntConstant ((uint) val, ic.Location);
 							type = l;
 							
 							return true;
@@ -2148,7 +2155,7 @@ namespace Mono.CSharp {
 						int val = ic.Value;
 						
 						if (val >= 0){
-							left = new UIntConstant ((uint) val);
+							left = new UIntConstant ((uint) val, ic.Location);
 							type = r;
 							return true;
 						}
@@ -2197,13 +2204,18 @@ namespace Mono.CSharp {
 
 		static public void Error_OperatorCannotBeApplied (Location loc, string name, Type l, Type r)
 		{
+			Error_OperatorCannotBeApplied (loc, name, TypeManager.CSharpName (l), TypeManager.CSharpName (r));
+		}
+
+		public static void Error_OperatorCannotBeApplied (Location loc, string name, string left, string right)
+		{
 			Report.Error (19, loc, "Operator `{0}' cannot be applied to operands of type `{1}' and `{2}'",
-			       name, TypeManager.CSharpName (l), TypeManager.CSharpName (r));
+				name, left, right);
 		}
 		
 		void Error_OperatorCannotBeApplied ()
 		{
-			Error_OperatorCannotBeApplied (loc, OperName (oper), left.Type, right.Type);
+			Error_OperatorCannotBeApplied (Location, OperName (oper), left.GetSignatureForError (), right.GetSignatureForError ());
 		}
 
 		static bool is_unsigned (Type t)
@@ -2262,10 +2274,10 @@ namespace Mono.CSharp {
 				type = e.Type;
 
 				if (type == TypeManager.int32_type || type == TypeManager.uint32_type){
-					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (31));
+					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntConstant (31, loc));
 					right = right.DoResolve (ec);
 				} else {
-					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntLiteral (63));
+					right = new Binary (Binary.Operator.BitwiseAnd, right, new IntConstant (63, loc));
 					right = right.DoResolve (ec);
 				}
 
@@ -2384,7 +2396,7 @@ namespace Mono.CSharp {
 				
 				// Simple constant folding
 				if (left is StringConstant && right is StringConstant)
-					return new StringConstant (((StringConstant) left).Value + ((StringConstant) right).Value);
+					return new StringConstant (((StringConstant) left).Value + ((StringConstant) right).Value, left.Location);
 
 				if (l == TypeManager.string_type || r == TypeManager.string_type) {
 
@@ -2813,7 +2825,7 @@ namespace Mono.CSharp {
 					return null;
 
 				if (left.eclass == ExprClass.Type) {
-					Error (75, "To cast a negative value, you must enclose the value in parentheses");
+					Report.Error (75, loc, "To cast a negative value, you must enclose the value in parentheses");
 					return null;
 				}
 			} else
@@ -3389,7 +3401,7 @@ namespace Mono.CSharp {
 			if (operand is StringConstant && operands.Count != 0) {
 				StringConstant last_operand = operands [operands.Count - 1] as StringConstant;
 				if (last_operand != null) {
-					operands [operands.Count - 1] = new StringConstant (last_operand.Value + ((StringConstant) operand).Value);
+					operands [operands.Count - 1] = new StringConstant (last_operand.Value + ((StringConstant) operand).Value, last_operand.Location);
 					return;
 				}
 			}
@@ -3546,7 +3558,7 @@ namespace Mono.CSharp {
 
 		protected void Error19 ()
 		{
-			Binary.Error_OperatorCannotBeApplied (loc, is_and ? "&&" : "||", type, type);
+			Binary.Error_OperatorCannotBeApplied (loc, is_and ? "&&" : "||", left.GetSignatureForError (), right.GetSignatureForError ());
 		}
 
 		protected void Error218 ()
@@ -3684,7 +3696,7 @@ namespace Mono.CSharp {
 
 				Constant right_const = right as Constant;
 				if (right_const != null && size != 0) {
-					Expression ex = ConstantFold.BinaryFold (ec, Binary.Operator.Multiply, new IntConstant (size), right_const, loc);
+					Expression ex = ConstantFold.BinaryFold (ec, Binary.Operator.Multiply, new IntConstant (size, right.Location), right_const, loc);
 					if (ex == null)
 						return;
 					ex.Emit (ec);
@@ -6138,31 +6150,31 @@ namespace Mono.CSharp {
 		public static Constant Constantify (Type t)
 		{
 			if (t == TypeManager.int32_type)
-				return new IntConstant (0);
+				return new IntConstant (0, Location.Null);
 			if (t == TypeManager.uint32_type)
-				return new UIntConstant (0);
+				return new UIntConstant (0, Location.Null);
 			if (t == TypeManager.int64_type)
-				return new LongConstant (0);
+				return new LongConstant (0, Location.Null);
 			if (t == TypeManager.uint64_type)
-				return new ULongConstant (0);
+				return new ULongConstant (0, Location.Null);
 			if (t == TypeManager.float_type)
-				return new FloatConstant (0);
+				return new FloatConstant (0, Location.Null);
 			if (t == TypeManager.double_type)
-				return new DoubleConstant (0);
+				return new DoubleConstant (0, Location.Null);
 			if (t == TypeManager.short_type)
-				return new ShortConstant (0);
+				return new ShortConstant (0, Location.Null);
 			if (t == TypeManager.ushort_type)
-				return new UShortConstant (0);
+				return new UShortConstant (0, Location.Null);
 			if (t == TypeManager.sbyte_type)
-				return new SByteConstant (0);
+				return new SByteConstant (0, Location.Null);
 			if (t == TypeManager.byte_type)
-				return new ByteConstant (0);
+				return new ByteConstant (0, Location.Null);
 			if (t == TypeManager.char_type)
-				return new CharConstant ('\0');
+				return new CharConstant ('\0', Location.Null);
 			if (t == TypeManager.bool_type)
-				return new BoolConstant (false);
+				return new BoolConstant (false, Location.Null);
 			if (t == TypeManager.decimal_type)
-				return new DecimalConstant (0);
+				return new DecimalConstant (0, Location.Null);
 
 			return null;
 		}
@@ -6589,7 +6601,7 @@ namespace Mono.CSharp {
 			int i = 0;
 			for (ArrayList probe = initializers; probe != null;) {
 				if (probe.Count > 0 && probe [0] is ArrayList) {
-					Expression e = new IntConstant (probe.Count);
+					Expression e = new IntConstant (probe.Count, Location.Null);
 					arguments.Add (new Argument (e, Argument.AType.Expression));
 
 					bounds [i++] =  probe.Count;
@@ -6597,7 +6609,7 @@ namespace Mono.CSharp {
 					probe = (ArrayList) probe [0];
 					
 				} else {
-					Expression e = new IntConstant (probe.Count);
+					Expression e = new IntConstant (probe.Count, Location.Null);
 					arguments.Add (new Argument (e, Argument.AType.Expression));
 
 					bounds [i++] = probe.Count;
@@ -7486,7 +7498,7 @@ namespace Mono.CSharp {
 
 			int size_of = GetTypeSize (type_queried);
 			if (size_of > 0) {
-				return new IntConstant (size_of);
+				return new IntConstant (size_of, loc);
 			}
 
 			if (!ec.InUnsafe) {

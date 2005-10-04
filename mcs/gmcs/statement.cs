@@ -812,7 +812,7 @@ namespace Mono.CSharp {
 
 			object val = c.GetValue ();
 			if (val == null)
-				val = c;
+				val = SwitchLabel.NullStringCase;
 					
 			sl = (SwitchLabel) ec.Switch.Elements [val];
 
@@ -1920,7 +1920,7 @@ namespace Mono.CSharp {
 
 					if (!unreachable_shown && (RootContext.WarningLevel >= 2)) {
 						Report.Warning (
-							162, loc, "Unreachable code detected");
+							162, s.loc, "Unreachable code detected");
 						unreachable_shown = true;
 					}
 				}
@@ -2302,6 +2302,8 @@ namespace Mono.CSharp {
 		Label il_label_code;
 		bool  il_label_code_set;
 
+		public static readonly object NullStringCase = new object ();
+
 		//
 		// if expr == null, then it is the default case.
 		//
@@ -2359,7 +2361,7 @@ namespace Mono.CSharp {
 			}
 
 			if (required_type == TypeManager.string_type && e is NullLiteral) {
-				converted = e;
+				converted = NullStringCase;
 				return true;
 			}
 
@@ -2857,7 +2859,7 @@ namespace Mono.CSharp {
 
 			ig.Emit (OpCodes.Ldloc, val);
 			
-			if (Elements.Contains (NullLiteral.Null)){
+			if (Elements.Contains (SwitchLabel.NullStringCase)){
 				ig.Emit (OpCodes.Brfalse, null_target);
 			} else
 				ig.Emit (OpCodes.Brfalse, default_target);
@@ -2896,7 +2898,7 @@ namespace Mono.CSharp {
 					if (sl.Label != null){
 						object lit = sl.Converted;
 
-						if (lit is NullLiteral){
+						if (lit == SwitchLabel.NullStringCase){
 							null_found = true;
 							if (label_count == 1)
 								ig.Emit (OpCodes.Br, next_test);
@@ -3882,7 +3884,7 @@ namespace Mono.CSharp {
 		{
 			if (!TypeManager.ImplementsInterface (expr_type, TypeManager.idisposable_type)){
 				if (Convert.ImplicitConversion (ec, expr, TypeManager.idisposable_type, loc) == null) {
-					Report.Error (1674, loc, "`{0}': type used in a using statement must be implicitly convertible to 'System.IDisposable'",
+					Report.Error (1674, loc, "`{0}': type used in a using statement must be implicitly convertible to `System.IDisposable'",
 						TypeManager.CSharpName (expr_type));
 					return false;
 				}

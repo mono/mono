@@ -1,3 +1,32 @@
+2005-09-19  Marek Safar  <marek.safar@seznam.cz>
+
+	* cs-parser.jay: interface_accessors replaced by
+	accessor_declarations.
+
+	* ecore.cs, literal.cs, statement.cs: NullLiteral holds null
+	location.
+	
+	* statement.cs (GotoCase.Resolve): Convert null constant to
+	null case.
+	(SwitchLabel.ResolveAndReduce): Ditto.
+	(SwitchLabel.NullStringCase): Custom null stamp.
+	(Switch.SimpleSwitchEmit): Fix from NullLiteral to NullStringCase.
+	
+	typemanager.cs (CSharpSignature): Don't skip first argument
+	for full names.
+
+2005-09-16  Marek Safar  <marek.safar@seznam.cz>
+
+	* cfold.cs, constant.cs, convert.cs, ecore.cs,
+	expression.cs, iterators.cs, literal.cs: Store constants and
+	literals location.
+	
+	* class.cs (MemberBase.ShortName): Pass location.
+	
+	* cs-parser.jay: Some location fixes.
+	
+	* ecore.cs (Expression.Location): Made virtual.
+
 2005-09-27  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #72930.

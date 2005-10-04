@@ -119,7 +119,7 @@ namespace Mono.CSharp {
 			set { type = value; }
 		}
 
-		public Location Location {
+		public virtual Location Location {
 			get { return loc; }
 		}
 
@@ -495,33 +495,33 @@ namespace Mono.CSharp {
 		public static Constant Constantify (object v, Type t)
 		{
 			if (t == TypeManager.int32_type)
-				return new IntConstant ((int) v);
+				return new IntConstant ((int) v, Location.Null);
 			else if (t == TypeManager.uint32_type)
-				return new UIntConstant ((uint) v);
+				return new UIntConstant ((uint) v, Location.Null);
 			else if (t == TypeManager.int64_type)
-				return new LongConstant ((long) v);
+				return new LongConstant ((long) v, Location.Null);
 			else if (t == TypeManager.uint64_type)
-				return new ULongConstant ((ulong) v);
+				return new ULongConstant ((ulong) v, Location.Null);
 			else if (t == TypeManager.float_type)
-				return new FloatConstant ((float) v);
+				return new FloatConstant ((float) v, Location.Null);
 			else if (t == TypeManager.double_type)
-				return new DoubleConstant ((double) v);
+				return new DoubleConstant ((double) v, Location.Null);
 			else if (t == TypeManager.string_type)
-				return new StringConstant ((string) v);
+				return new StringConstant ((string) v, Location.Null);
 			else if (t == TypeManager.short_type)
-				return new ShortConstant ((short)v);
+				return new ShortConstant ((short)v, Location.Null);
 			else if (t == TypeManager.ushort_type)
-				return new UShortConstant ((ushort)v);
+				return new UShortConstant ((ushort)v, Location.Null);
 			else if (t == TypeManager.sbyte_type)
-				return new SByteConstant (((sbyte)v));
+				return new SByteConstant ((sbyte)v, Location.Null);
 			else if (t == TypeManager.byte_type)
-				return new ByteConstant ((byte)v);
+				return new ByteConstant ((byte)v, Location.Null);
 			else if (t == TypeManager.char_type)
-				return new CharConstant ((char)v);
+				return new CharConstant ((char)v, Location.Null);
 			else if (t == TypeManager.bool_type)
-				return new BoolConstant ((bool) v);
+				return new BoolConstant ((bool) v, Location.Null);
 			else if (t == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) v);
+				return new DecimalConstant ((decimal) v, Location.Null);
 			else if (TypeManager.IsEnumType (t)){
 				Type real_type = TypeManager.TypeToCoreType (v.GetType ());
 				if (real_type == t)
@@ -531,7 +531,7 @@ namespace Mono.CSharp {
 
 				return new EnumConstant (e, t);
 			} else if (v == null && !TypeManager.IsValueType (t))
-				return NullLiteral.Null;
+				return new NullLiteral (Location.Null);
 			else
 				throw new Exception ("Unknown type for constant (" + t +
 						     "), details: " + v);
@@ -1276,7 +1276,8 @@ namespace Mono.CSharp {
 	public class NullCast : Constant {
 		protected Expression child;
 				
-		public NullCast (Expression child, Type return_type)
+		public NullCast (Expression child, Type return_type):
+			base (Location.Null)
 		{
 			eclass = child.eclass;
 			type = return_type;
@@ -1331,7 +1332,8 @@ namespace Mono.CSharp {
 	public class EnumConstant : Constant {
 		public Constant Child;
 
-		public EnumConstant (Constant child, Type enum_type)
+		public EnumConstant (Constant child, Type enum_type):
+			base (child.Location)
 		{
 			eclass = child.eclass;
 			this.Child = child;
@@ -2974,10 +2976,11 @@ namespace Mono.CSharp {
 			// as IsInitOnly ('readonly' in C# parlance).  We get its value from the 
 			// DecimalConstantAttribute metadata.
 			//
+			//TODO: incorporate in GetContant otherwise we miss all error checks + obsoleteness check
 			if (fi.IsInitOnly && !is_emitted && t == TypeManager.decimal_type) {
 				object[] attrs = fi.GetCustomAttributes (TypeManager.decimal_constant_attribute_type, false);
 				if (attrs.Length == 1)
-					return new DecimalConstant (((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value);
+					return new DecimalConstant (((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value, Location.Null);
 			}
 			
 			if (t.IsPointer && !ec.InUnsafe) {
