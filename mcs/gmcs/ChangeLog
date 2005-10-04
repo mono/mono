@@ -1,3 +1,8 @@
+2005-10-04  Martin Baulig  <martin@ximian.com>
+
+	* expression.cs (DelegateInvocation.EmitStatement): Make this work
+	for corlib.  Fixes #75691.
+
 2005-09-28  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76255.

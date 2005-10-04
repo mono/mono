@@ -1052,7 +1052,8 @@ namespace Mono.CSharp {
 			// Pop the return value if there is one
 			//
 			if (method is MethodInfo){
-				if (((MethodInfo) method).ReturnType != TypeManager.void_type)
+				Type ret = ((MethodInfo)method).ReturnType;
+				if (TypeManager.TypeToCoreType (ret) != TypeManager.void_type)
 					ec.ig.Emit (OpCodes.Pop);
 			}
 		}

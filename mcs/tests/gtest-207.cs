@@ -1,0 +1,10 @@
+class M {
+  static void p (string x) {
+    System.Console.WriteLine (x);
+  }
+
+  static void Main () {
+    string[] arr = new string[] { "a", "b", "c" };
+    System.Array.ForEach (arr, p);
+  }
+}
