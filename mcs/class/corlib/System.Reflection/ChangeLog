@@ -1,3 +1,8 @@
+2005-10-04  Martin Baulig  <martin@ximian.com>
+
+	* MonoGenericClass.cs (MonoGenericClass.GetParentType): Changed
+	return type from `MonoGenericClass to `Type'.
+
 2005-09-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* AssemblyName.cs: Add ParseName internal call, to parse

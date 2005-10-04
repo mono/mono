@@ -96,7 +96,7 @@ namespace System.Reflection
 			if (initialized)
 				return;
 
-			MonoGenericClass parent = GetParentType ();
+			MonoGenericClass parent = GetParentType () as MonoGenericClass;
 			if (parent != null)
 				parent.initialize ();
 
@@ -110,14 +110,14 @@ namespace System.Reflection
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		protected extern MonoGenericClass GetParentType ();
+		protected extern Type GetParentType ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		protected extern MonoGenericClass[] GetInterfaces_internal ();
 
 		public override Type BaseType {
 			get {
-				MonoGenericClass parent = GetParentType ();
+				Type parent = GetParentType ();
 				return parent != null ? parent : generic_type.BaseType;
 			}
 		}
