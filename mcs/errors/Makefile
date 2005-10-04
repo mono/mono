@@ -3,6 +3,7 @@ SUBDIRS =
 include ../build/rules.make
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
+with_mono_path_n11b = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH"
 
 ifeq (default, $(PROFILE))
 # force this, we don't case if CSC is broken. This also
@@ -12,7 +13,7 @@ MCS = $(with_mono_path) $(INTERNAL_MCS)
 endif
 
 ilasm = $(topdir)/class/lib/net_1_1_bootstrap/ilasm.exe
-ILASM = $(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
+ILASM = $(with_mono_path_n11b) $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
 
 GENERICS_COMPILE = $(CSCOMPILE) /target:library
 
@@ -62,7 +63,7 @@ run-mcs-tests: $(TEST_SUPPORT_FILES)
 
 run-mcs-tests:
 	$(TEST_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe negative $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
-	
+
 clean-local:
 	rm -f *.exe *.dll *.log *.mdb dummy.xml *.junk
 
