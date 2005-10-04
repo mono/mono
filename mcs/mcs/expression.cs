@@ -6083,7 +6083,7 @@ namespace Mono.CSharp {
 					return c;
 			}
 
-	        if (TypeManager.IsDelegateType (type)) {
+			if (TypeManager.IsDelegateType (type)) {
 				RequestedType = (new NewDelegate (type, Arguments, loc)).Resolve (ec);
 				if (RequestedType != null)
 					if (!(RequestedType is DelegateCreation))
