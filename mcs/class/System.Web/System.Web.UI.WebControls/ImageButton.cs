@@ -32,6 +32,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls {
+
 	[DefaultEvent("Click")]
 #if NET_2_0
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
@@ -39,7 +40,7 @@ namespace System.Web.UI.WebControls {
 	public class ImageButton : Image, IPostBackDataHandler, IPostBackEventHandler
 #if NET_2_0
 	, IButtonControl
-#endif	
+#endif
 	{
 
 		private static readonly object ClickEvent = new object ();
@@ -242,15 +243,22 @@ namespace System.Web.UI.WebControls {
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
 		{
 			string x, y;
-
-			x = postCollection [postDataKey + ".x"];
-			y = postCollection [postDataKey + ".y"];
-
+			string unique = UniqueID;
+			x = postCollection [unique + ".x"];
+			y = postCollection [unique + ".y"];
 			if (x != null && x != "" && y != null && y != "") {
 				pos_x = Int32.Parse(x);
 				pos_y = Int32.Parse(y);
 				Page.RegisterRequiresRaiseEvent (this);
 				return true;
+			} else {
+				x = postCollection [unique];
+				if (x != null && x != "") {
+					pos_x = Int32.Parse (x);
+					pos_y = 0;
+					Page.RegisterRequiresRaiseEvent (this);
+					return true;
+				}
 			}
 
 			return false;
