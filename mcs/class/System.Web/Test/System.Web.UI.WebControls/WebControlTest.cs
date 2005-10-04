@@ -519,5 +519,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			c.Load (o);
 			Assert.IsFalse (c.Enabled, "not enabled");
 		}
+
+		[Test]
+		public void AttributeIsCaseInsensitive ()
+		{
+			WebControlTestClass c = new WebControlTestClass ();
+			c.Attributes ["hola"] = "hello";
+			c.Attributes ["HOla"] = "hi";
+			Assert.AreEqual ("hi", c.Attributes ["hoLA"], "#01");
+		}
 	}
 }

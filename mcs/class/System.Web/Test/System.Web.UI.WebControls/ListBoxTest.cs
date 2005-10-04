@@ -239,6 +239,22 @@ namespace MonoTests.System.Web.UI.WebControls
 #endif
 			Assert.AreEqual (exp, l.Render ());
 		}
+
+		class MyNC : Control, INamingContainer {
+		}
+
+		[Test]
+		public void NameIsUniqueID ()
+		{
+			ListBoxPoker list = new ListBoxPoker ();
+			Page page = new Page ();
+			page.ID = "pg";
+			Control ctrl = new MyNC ();
+			ctrl.ID = "ctrl";
+			page.Controls.Add (ctrl);
+			ctrl.Controls.Add (list);
+			Assert.IsTrue (-1 != list.Render ().IndexOf (':'), "unique");
+		}
 	}
 }
 

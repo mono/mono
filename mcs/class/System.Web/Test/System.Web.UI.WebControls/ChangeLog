@@ -1,3 +1,8 @@
+2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListBoxTest.cs: the name is the UniqueID, not the ClientID.
+	* WebControlTest.cs: Attributes statebag is case insensitive.
+
 2005-10-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ImageButtonTest.cs: test that 'name' attribute is rendered.
