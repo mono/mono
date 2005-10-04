@@ -7,10 +7,7 @@
 //
 // Copyright (C) Rodrigo Moya, 2002
 // Copyright (C) Tim Coleman, 2002
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,7 +31,6 @@
 
 using System.Collections;
 using System.ComponentModel;
-using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
 
@@ -683,11 +679,13 @@ namespace System.Data.OleDb
 
 		#region Destructors
 
-		private void Dispose (bool disposing) {
+		private void Dispose (bool disposing)
+		{
 			if (!this.disposed) {
 				if (disposing) {
 					// release any managed resources
 					command = null;
+					GC.SuppressFinalize (this);
 				}
 				// release any unmanaged resources
 				if (gdaResults != null) {

@@ -7,10 +7,7 @@
 //
 // Copyright (C) Rodrigo Moya, 2002
 // Copyright (C) Tim Coleman, 2002
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,7 +29,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Data;
 using System.Data.Common;
 
 namespace System.Data.OleDb
@@ -157,6 +153,7 @@ namespace System.Data.OleDb
 		[MonoTODO]
 		void IDisposable.Dispose ()
 		{
+			GC.SuppressFinalize (this);
 			throw new NotImplementedException ();
 		}
 

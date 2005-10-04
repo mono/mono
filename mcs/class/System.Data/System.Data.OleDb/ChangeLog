@@ -1,3 +1,11 @@
+2005-10-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* OleDbDataReader.cs: Added a call to GC.SuppressFinalize in Dispose
+	method (and avoids calling the destructor if the object was disposed).
+	* OleDbTransaction.cs: Added a call to GC.SuppressFinalize in Dispose
+	method (even if we throw an NotImplementedException afterward). This
+	will remove warnings from gendarme.
+
 2005-09-20  Alexandre Miguel Pedro Gomes  <alexmipego@gmail.com>
 	
 	* OleDbConnection.cs: Verify and throw an exception if the
