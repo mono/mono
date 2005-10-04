@@ -1,5 +1,11 @@
 2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* Calendar.cs: remove Console.
+	* ListBox.cs: the name is the UniqueID, not the ClientID.
+	* WebControl.cs: Attributes is case insensitive.
+
+2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* ImageButton.cs: use UniqueID in LoadPostData and also try just the
 	UniqueID without appending a ".x" or ".y". Fixes several issues in
 	mojoPortal. Thanks to Joe Audetter for his patience.

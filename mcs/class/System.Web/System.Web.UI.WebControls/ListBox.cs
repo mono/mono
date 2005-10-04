@@ -139,7 +139,12 @@ namespace System.Web.UI.WebControls {
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
 
-			writer.AddAttribute (HtmlTextWriterAttribute.Name, ClientID);
+#if NET_2_0
+  			if (ID != null)
+				writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+#else
+			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+#endif
 
 			if (SelectionMode == ListSelectionMode.Multiple)
 				writer.AddAttribute (HtmlTextWriterAttribute.Multiple,

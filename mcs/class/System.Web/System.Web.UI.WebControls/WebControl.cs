@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls {
 		public AttributeCollection Attributes {
 			get {
 				if (attributes == null) {
-					attribute_state = new StateBag ();
+					attribute_state = new StateBag (true);
 					if (IsTrackingViewState)
 						attribute_state.TrackViewState ();
 					
