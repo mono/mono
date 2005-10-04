@@ -279,6 +279,8 @@ namespace System.Windows.Forms {
 				this.mask.Dispose();
 				this.mask = null;
 			}
+
+			GC.SuppressFinalize (this);
 		}
 
 		public void Draw(Graphics g, Rectangle targetRect) {

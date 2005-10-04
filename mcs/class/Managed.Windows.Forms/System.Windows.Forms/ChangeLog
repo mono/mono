@@ -1,3 +1,8 @@
+2005-10-04  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Cursor.cs, Hwnd.cs: Added call to GC.SuppressFinalize() 
+	  in dispose method. Fixes #76330
+
 2005-10-04  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListView.cs, ThemeWin32Classic.cs, ListViewItem.cs:

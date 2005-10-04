@@ -267,6 +267,7 @@ namespace System.Resources
 		public void Dispose ()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		public void Generate ()

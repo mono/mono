@@ -1,3 +1,8 @@
+2005-10-04  Peter Bartok  <pbartok@novell.com>
+
+	* ResXResourceReader.cs, ResXResourceWriter.cs: Added call
+	  to GC.SuppressFinalize() in dispose method. Fixes #76330
+
 2005-05-13  Peter Bartok  <pbartok@novell.com>
 
 	* ResXResourceWriter.cs: 

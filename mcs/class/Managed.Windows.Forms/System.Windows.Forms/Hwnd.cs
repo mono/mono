@@ -96,6 +96,8 @@ namespace System.Windows.Forms {
 				Marshal.FreeHGlobal((IntPtr)marshal_free_list[i]);
 			}
 			marshal_free_list.Clear();
+
+			GC.SuppressFinalize (this);
 		}
 		#endregion
 

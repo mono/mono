@@ -260,6 +260,7 @@ namespace System.Resources
 		void IDisposable.Dispose ()
 		{
 			Dispose(true);
+			GC.SuppressFinalize(this);
 		}
 
 		protected virtual void Dispose(bool disposing) {
