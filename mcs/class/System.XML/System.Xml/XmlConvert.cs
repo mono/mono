@@ -564,9 +564,8 @@ namespace System.Xml {
 				int value = int.Parse (s.Substring (start, i - start), CultureInfo.InvariantCulture);
 				if (parseStep == 7) {
 					// adjust to 3 digits so that it makes sense as millisecond digits
-					while (parsedDigits > 3)
-						value /= 10;
-					while (parsedDigits < 3)
+					for (; parsedDigits > 3; parsedDigits--)						value /= 10;
+					for (; parsedDigits < 3; parsedDigits++)
 						value *= 10;
 				}
 				switch (s [i]) {

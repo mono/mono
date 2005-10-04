@@ -1,3 +1,7 @@
+2005-10-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : backport r51188.
+
 2005-08-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDocument.cs: Added an InheritanceDemand for Unrestricted on 
