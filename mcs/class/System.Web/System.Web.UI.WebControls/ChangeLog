@@ -1,5 +1,10 @@
 2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataGrid.cs: fix breakaga of alternating item style in one of my
+	last patches.
+
+2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Calendar.cs: remove Console.
 	* ListBox.cs: the name is the UniqueID, not the ClientID.
 	* WebControl.cs: Attributes is case insensitive.

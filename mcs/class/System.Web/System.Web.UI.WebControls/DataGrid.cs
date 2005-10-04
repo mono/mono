@@ -995,12 +995,14 @@ namespace System.Web.UI.WebControls {
 					ApplyColumnStyle (item.Cells, ListItemType.Item);
 					break;
 				case ListItemType.AlternatingItem:
-					if (alt == null && alt_item_style != null) {
-						alt = new Style ();
-						alt.CopyFrom (item_style);
-						alt.CopyFrom (alt_item_style);
-					} else {
-						alt = item_style;
+					if (alt == null) {
+						if (alt_item_style != null) {
+							alt = new Style ();
+							alt.CopyFrom (item_style);
+							alt.CopyFrom (alt_item_style);
+						} else {
+							alt = item_style;
+						}
 					}
 
 					item.MergeStyle (alt);
