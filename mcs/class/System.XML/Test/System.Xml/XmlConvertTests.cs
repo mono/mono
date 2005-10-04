@@ -258,6 +258,15 @@ namespace MonoTests.System.Xml
 		{
 			AssertEquals ("#1", new TimeSpan (0, 0, 0, 0, 1),
 				XmlConvert.ToTimeSpan ("PT0.001S"));
+			// bug #76328
+			AssertEquals ("#2", new TimeSpan (0, 0, 0, 0, 100),
+				XmlConvert.ToTimeSpan ("PT0.1S"));
+			AssertEquals ("#3", new TimeSpan (0, 0, 0, 0, 100),
+				XmlConvert.ToTimeSpan ("PT0.100S"));
+			AssertEquals ("#4", new TimeSpan (0, 0, 0, 0, 10),
+				XmlConvert.ToTimeSpan ("PT0.010S"));
+			AssertEquals ("#5", new TimeSpan (0, 0, 0, 0, 10),
+				XmlConvert.ToTimeSpan ("PT0.01S"));
 		}
 		
 		[Test]

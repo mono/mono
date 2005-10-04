@@ -1,5 +1,10 @@
 2005-10-04  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlConvert.cs : ToTimeSpan() resulted in an infinite loop when the
+	  digits for "second" were not exactly 3. Fixed bug #76328.
+
+2005-10-04  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReader.cs : Name is virtual in NET_2_0.
 
 2005-10-03  Atsushi Enomoto <atsushi@ximian.com>
