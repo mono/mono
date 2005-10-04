@@ -1,3 +1,7 @@
+2005-10-04  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs : Name is virtual in NET_2_0.
+
 2005-10-03  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlWriter.cs, XmlWriterSettings.cs, XmlTextWriter.cs :

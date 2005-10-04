@@ -156,7 +156,17 @@ namespace System.Xml
 
 		public abstract string LocalName { get; }
 
+#if NET_2_0
+		public virtual string Name {
+			get {
+				return Prefix.Length > 0 ?
+					String.Concat (Prefix, ":", LocalName) :
+					LocalName;
+			}
+		}
+#else
 		public abstract string Name { get; }
+#endif
 
 		public abstract string NamespaceURI { get; }
 
