@@ -1,10 +1,10 @@
 //
-// System.Web.UI.IStyleSheet.cs
+// System.Web.HttpResponseSubstitutionCallback delegate
 //
-// Authors:
-//      Sanjay Gupta (gsanjay@novell.com)
+// Author:
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,18 +26,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
 #if NET_2_0
 
-using System.Web.UI.WebControls;
+namespace System.Web {
 
-namespace System.Web.UI
-{
-	public interface IStyleSheet
-	{
-		void CreateStyleRule (Style style, IUrlResolutionService urlResolver, string selection);
-		void RegisterStyle (Style style, IUrlResolutionService urlResolver);
-	}
+	public delegate string HttpResponseSubstitutionCallback (HttpContext context);
+
 }
-#endif
 
+#endif

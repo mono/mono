@@ -152,6 +152,7 @@ System.Web/HttpRequestPriority.cs
 System.Web/HttpRequestValidationException.cs
 System.Web/HttpResponseHeader.cs
 System.Web/HttpResponseStream.cs
+System.Web/HttpResponseSubstitutionCallback.cs
 System.Web/HttpResponse.cs
 System.Web/HttpRuntime.cs
 System.Web/HttpServerUtility.cs
