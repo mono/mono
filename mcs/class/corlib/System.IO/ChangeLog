@@ -1,3 +1,9 @@
+2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* MonoIO.cs: replace FindFirst/FindNext/FindClose with
+	GetFileSystemEntries.
+	* Directory.cs: simplify GetFileSystemEntries by using the new icall.
+
 2005-10-01  Ben Maurer  <bmaurer@ximian.com>
 
 	* BinaryReader.cs: The patch below had a nasty little bug with
