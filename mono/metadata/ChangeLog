@@ -1,3 +1,11 @@
+2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* file-io.c:
+	* file-io.h:
+	* icall.c: replace FindFirst/FindNext/FindClose calls with a new
+	GetFileSystemEntries that performs the same work but without going
+	into io-layer, locking, etc.
+
 2005-09-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (ves_icall_System_Threading_Thread_Abort): Handle 
