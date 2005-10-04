@@ -1,3 +1,8 @@
+2005-10-05  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeTypeReferenceTest.cs: Added tests for generic types and base
+	types with generic type parameters.
+
 2005-10-02  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeTypeReferenceTest.cs: Added tests for CodeTypeParameter ctor,

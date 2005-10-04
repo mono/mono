@@ -1,3 +1,7 @@
+2005-10-05 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeTypeReference.cs: Added support for generic type parameters.
+
 2005-10-02 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeTypeReference.cs: Added default ctor for 2.0 profile. Set
