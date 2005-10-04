@@ -1,3 +1,9 @@
+2005-10-04  Martin Baulig  <martin@ximian.com>
+
+	* loader.c
+	(method_from_methodspec): Make the caching work again; fixes the
+	performance regression from #76262.
+
 2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* file-io.c:
