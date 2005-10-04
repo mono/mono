@@ -117,6 +117,7 @@ namespace System.ComponentModel.Design
 		[MonoTODO]
 		public void Dispose ()
 		{
+			GC.SuppressFinalize (this);
 			throw new NotImplementedException ();
 		}
 

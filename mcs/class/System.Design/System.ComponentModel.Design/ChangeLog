@@ -1,3 +1,9 @@
+2005-10-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ComponentDesigner.cs: Added a call to GC.SuppressFinalize in Dispose
+	method (even if we throw an NotImplementedException afterward). This
+	will remove warnings from gendarme.
+
 2004-06-13  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* DisplayMode.cs: changed enum field values to match MS.NET
