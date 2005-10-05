@@ -1,5 +1,11 @@
 2005-10-05  Chris Toshok  <toshok@ximian.com>
 
+	* NameValueConfigurationCollection.cs: new implementation.
+
+	* NameValueConfigurationElement.cs: new implementation.
+
+2005-10-05  Chris Toshok  <toshok@ximian.com>
+
 	* ValidatorCallback.cs: new implementation.
 
 	* SubclassTypeValidator.cs, SubclassTypeValidatorAttribute.cs: new
