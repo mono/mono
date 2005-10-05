@@ -1,6 +1,6 @@
 //
-// System.Configuration.TimeSpanConverterTest.cs - Unit tests
-// for System.Configuration.TimeSpanConverter.
+// System.Configuration.TimeSpanMinutesConverterTest.cs - Unit tests
+// for System.Configuration.TimeSpanMinutesConverter.
 //
 // Author:
 //	Chris Toshok  <toshok@ximian.com>
