@@ -50,8 +50,6 @@ namespace NotePadExample
 			 base.Dispose( disposing );
 		 }
 
-#region Windows Form Designer generated code
-
 		private void InitializeComponent()
 		 {
 			 this.mainMenu1 = new System.Windows.Forms.MainMenu();
@@ -124,7 +122,6 @@ namespace NotePadExample
 							   );
 			 this.menuItemEdit.Text = "Edit";
 
-
 			 this.menuItemCut.Index = 0;
 			 this.menuItemCut.Text = "&Cut";
 			 this.menuItemCut.Click += new System.EventHandler(this.menuItemCut_Click);
@@ -183,7 +180,6 @@ namespace NotePadExample
 			 this.Load += new System.EventHandler(this.Form1_Load);
 			 this.ResumeLayout(false);			 
 		 }
-#endregion
 		
 		[STAThread]
 		public static void Main()
