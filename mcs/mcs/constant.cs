@@ -57,17 +57,6 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void Error_ValueCannotBeConverted (Location loc, Type t)
-		{
-			// string is not real constant
-			if (type == TypeManager.string_type)
-				base.Error_ValueCannotBeConverted (loc, t);
-			else
-				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
-					AsString (), TypeManager.CSharpName (t));
-		}
-
-
 		//
 		// The various ToXXXX conversion functions are used by the constant
 		// folding evaluator.   A null value is returned if the conversion is
@@ -84,7 +73,7 @@ namespace Mono.CSharp {
 			DoubleConstant c = ConvertToDouble ();
 
 			if (c == null)
-				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.double_type);
+				Error_ValueCannotBeConverted (loc, TypeManager.double_type, false);
 
 			return c;
 		}
@@ -94,7 +83,7 @@ namespace Mono.CSharp {
 			FloatConstant c = ConvertToFloat ();
 
 			if (c == null)
-				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.float_type);
+				Error_ValueCannotBeConverted (loc, TypeManager.float_type, false);
 
 			return c;
 		}
@@ -104,7 +93,7 @@ namespace Mono.CSharp {
 			ULongConstant c = ConvertToULong ();
 
 			if (c == null)
-				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.uint64_type);
+				Error_ValueCannotBeConverted (loc, TypeManager.uint64_type, false);
 
 			return c;
 		}
@@ -114,7 +103,7 @@ namespace Mono.CSharp {
 			LongConstant c = ConvertToLong ();
 
 			if (c == null)
-				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.int64_type);
+				Error_ValueCannotBeConverted (loc, TypeManager.int64_type, false);
 
 			return c;
 		}
@@ -124,7 +113,7 @@ namespace Mono.CSharp {
 			UIntConstant c = ConvertToUInt ();
 
 			if (c == null)
-				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.uint32_type);
+				Error_ValueCannotBeConverted (loc, TypeManager.uint32_type, false);
 
 			return c;
 		}
@@ -134,7 +123,7 @@ namespace Mono.CSharp {
 			IntConstant c = ConvertToInt ();
 
 			if (c == null)
-				Convert.Error_CannotImplicitConversion (loc, Type, TypeManager.int32_type);
+				Error_ValueCannotBeConverted (loc, TypeManager.int32_type, false);
 
 			return c;
 		}
@@ -144,7 +133,7 @@ namespace Mono.CSharp {
 			DecimalConstant c = ConvertToDecimal ();
 
 			if (c == null)
-				Convert.Error_CannotConvertType (loc, Type, TypeManager.decimal_type);
+				Error_ValueCannotBeConverted (loc, TypeManager.decimal_type, false);
 
 			return c;
 		}
@@ -158,7 +147,7 @@ namespace Mono.CSharp {
 				return this;
 
 			if (!Convert.ImplicitStandardConversionExists (Convert.ConstantEC, this, type)){
-				Error_ValueCannotBeConverted (loc, type);
+				Error_ValueCannotBeConverted (loc, type, false);
 				return null;
 			}
 
@@ -171,7 +160,7 @@ namespace Mono.CSharp {
 			bool fail;			
 			object constant_value = TypeManager.ChangeType (GetValue (), type, out fail);
 			if (fail){
-				Convert.Error_CannotImplicitConversion (loc, Type, type);
+				Error_ValueCannotBeConverted (loc, type, false);
 				
 				//
 				// We should always catch the error before this is ever

@@ -1,3 +1,35 @@
+2005-10-05  Marek Safar  <marek.safar@seznam.cz>
+
+	* assign.cs (Assign.DoResolve): Error method changed.
+
+	* cfold.cs (DoConstantNumericPromotions): Error method changed.
+	
+	* const.cs (ResolveValue): Reset in_transit immediately.
+	
+	* constant.cs: Error method changed.
+	
+	* convert.cs: Removed useless location parameter.
+	(ExplicitNumericConversion): Don't do double enum check.
+	(ExplicitConversionCore): Renamed from ExplicitConversion.
+	(ExplicitUnsafe): Extracted from ExplicitConversion.
+	(ExplicitConversion): Uses for error reporting.
+	
+	* ecore.cs (Error_ValueCannotBeConverted): More logic for more
+	error messages.
+	(ResolveBoolean): Uses common error method.
+	(CastToDecimal): Get rid of ec.
+	(CastFromDecimal): Optimized.
+	(ConvCast): Get rid of ec.
+	
+	* enum.cs (ResolveValue): Reset in_transit immediately.
+	(Emit): Return after first error.
+	
+	* expression.cs: Convert changes.
+	
+	* literal.cs: Error method changed.
+	
+	* statement.cs: Error method changed.
+
 2005-10-03  Raja R Harinath  <rharinath@novell.com>
 
 	* support.cs (SeekableStreamReader.Position): Don't error out when
