@@ -1,5 +1,9 @@
 2005-10-05  Chris Toshok  <toshok@ximian.com>
 
+	* System.Configuration/TimeSpanMinutesConverterTest.cs: new tests.
+
+2005-10-05  Chris Toshok  <toshok@ximian.com>
+
 	* System.Configuration/ConfigurationPermissionTest.cs: beginnings
 	of tests.
 
