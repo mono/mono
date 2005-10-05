@@ -1,3 +1,7 @@
+2005-10-05  Alexander Olk  <alex.olk@googlemail.com>
+
+	* FileDialog.cs: Fix InitialDirectory
+
 2005-10-05  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ComboBox.cs:

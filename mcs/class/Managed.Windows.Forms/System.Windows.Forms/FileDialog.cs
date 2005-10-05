@@ -244,6 +244,8 @@ namespace System.Windows.Forms
 			
 			set {
 				initialDirectory = value;
+				
+				fileDialogPanel.ChangeDirectory( null, initialDirectory );
 			}
 		}
 		
@@ -740,10 +742,7 @@ namespace System.Windows.Forms
 				
 				ResumeLayout( false );
 				
-				if ( fileDialog.InitialDirectory == String.Empty )
-					currentDirectoryName = Environment.CurrentDirectory;
-				else
-					currentDirectoryName = fileDialog.InitialDirectory;
+				currentDirectoryName = Environment.CurrentDirectory;
 				
 				directoryInfo = new DirectoryInfo( currentDirectoryName );
 				
