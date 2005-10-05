@@ -438,6 +438,7 @@ System.IO.Ports/SerialPinChangedEventArgs.cs
 System.IO.Ports/SerialPort.cs
 System.IO.Ports/SerialReceivedEventArgs.cs
 System.Net/AuthenticationManager.cs
+System.Net/AuthenticationSchemes.cs
 System.Net/Authorization.cs
 System.Net/BasicClient.cs
 System.Net/ChunkStream.cs

@@ -1,3 +1,7 @@
+2005-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AuthenticationSchemes.cs : new 2.0 enum.
+
 2005-08-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* GlobalProxySelection.cs: remove double lock.

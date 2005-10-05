@@ -1,3 +1,7 @@
+2005-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.dll.sources: added System.Net/AuthenticationSchemes.cs.
+
 2005-09-23  Chris Toshok  <toshok@ximian.com>
 
 	* System.dll.sources: remove the System.Configuration.Property/*
