@@ -1,3 +1,10 @@
+2005-10-05  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration_test.dll.sources: add a bunch of new tests.
+
+	* System.Configuration.dll.sources: add a bunch of new files to
+	the build.
+
 2005-09-28  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration.dll.sources: add
