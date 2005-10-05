@@ -109,6 +109,15 @@ namespace System.Windows.Forms {
 						ThemeEngine.Current.ColorControlLight = ColorFromGdkColor (style.light[0]);
 						ThemeEngine.Current.ColorControlLightLight = ControlPaint.Light(ColorFromGdkColor (style.light[0]));
 						ThemeEngine.Current.ColorControlDarkDark = ControlPaint.Dark(ColorFromGdkColor (style.dark[0]));
+
+						widget = gtk_menu_new ();
+						gtk_widget_ensure_style (widget);
+						style_ptr = gtk_widget_get_style (widget);
+
+						style = (GtkStyleStruct) Marshal.PtrToStructure (style_ptr, typeof (GtkStyleStruct));
+
+						ThemeEngine.Current.ColorMenu = ColorFromGdkColor (style.bg [0]);
+						ThemeEngine.Current.ColorMenuText = ColorFromGdkColor (style.text [0]);
 						Console.WriteLine("Gtk colorscheme read");
 					}
 
@@ -159,6 +168,12 @@ namespace System.Windows.Forms {
 
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern IntPtr gtk_invisible_new ();
+
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern IntPtr gtk_menu_new ();
+
+		[DllImport("libgtk-x11-2.0.so")]
+		static extern IntPtr gtk_menu_item_new_with_label (string label);
 
 		[DllImport("libgtk-x11-2.0.so")]
 		static extern void gtk_widget_ensure_style (IntPtr raw);

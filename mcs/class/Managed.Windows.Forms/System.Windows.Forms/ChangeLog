@@ -1,3 +1,7 @@
+2005-10-05  Jackson Harper  <jackson@ximian.com>
+
+	* X11DesktopColors.cs: Get menu colours for the gtk theme.
+
 2005-10-05  Alexander Olk  <alex.olk@googlemail.com>
 
 	* FileDialog.cs: Fix InitialDirectory
