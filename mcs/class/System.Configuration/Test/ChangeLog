@@ -1,3 +1,12 @@
+2005-10-05  Chris Toshok  <toshok@ximian.com>
+
+	* CallbackValidatorTest.cs, IntegerValidatorTest.cs,
+	StringValidatorTest.cs, DefaultValidatorTest.cs,
+	LongValidatorTest.cs, RegexStringValidatorTest.cs,
+	SubclassTypeValidatorTest.cs, ConfiguratoinLockCollectionTest.cs,
+	ConfigurationElementCollectionTest.cs,
+	ConfigurationManagerTest.cs: lots more tests.
+
 2005-09-23  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration/StringValidatorTest.cs: new test.
