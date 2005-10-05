@@ -777,6 +777,9 @@ namespace System.Windows.Forms {
 
 		private bool IsPlusMinusArea (TreeNode node, int x)
 		{
+			if (node.Nodes.Count == 0)
+				return false;
+
 			int l = node.Bounds.Left + 5;
 
 			if (show_root_lines || node.Parent != null)

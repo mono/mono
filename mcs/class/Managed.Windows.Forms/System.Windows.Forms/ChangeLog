@@ -1,5 +1,10 @@
 2005-10-05  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: There are no expand/collapse boxes if the node has
+	no children.
+
+2005-10-05  Jackson Harper  <jackson@ximian.com>
+
 	* X11DesktopColors.cs: Get menu colours for the gtk theme.
 
 2005-10-05  Alexander Olk  <alex.olk@googlemail.com>
