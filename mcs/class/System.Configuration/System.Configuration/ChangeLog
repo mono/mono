@@ -1,5 +1,9 @@
 2005-10-05  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationPermissionAttribute.cs: stub out.
+
+2005-10-05  Chris Toshok  <toshok@ximian.com>
+
 	* TimeSpanMinutesOrInfiniteConverter.cs: fill in the
 	implementation.
 
