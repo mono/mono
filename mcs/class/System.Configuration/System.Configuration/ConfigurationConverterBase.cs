@@ -34,16 +34,20 @@ namespace System.Configuration
 {
 	public abstract class ConfigurationConverterBase: TypeConverter
 	{
-		[MonoTODO]
 		public override bool CanConvertFrom (ITypeDescriptorContext ctx, Type type)
 		{
-			return false;
+			if (type == typeof (string))
+				return true;
+
+			return base.CanConvertFrom (ctx, type);
 		}
 
-		[MonoTODO]
 		public override bool CanConvertTo (ITypeDescriptorContext ctx, Type type)
 		{
-			return false;
+			if (type == typeof (string))
+				return true;
+
+			return base.CanConvertTo (ctx, type);
 		}
 	}
 }
