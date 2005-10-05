@@ -1402,6 +1402,16 @@ namespace Mono.CSharp {
 						source.Name, source.Assembly.FullName, target.Assembly.FullName));
 							 
 			}
+			
+			// TODO: Missing explicit numeric check
+			//ExplicitNumericConversion
+
+			if (ExplicitReferenceConversionExists (source, target)) {
+				Report.Error (266, loc, "Cannot implicitly convert type `{0}' to `{1}'. An explicit conversion exists (are you missing a cast?)",
+					TypeManager.CSharpName (source), TypeManager.CSharpName (target));
+				return;
+			}
+
 			Report.Error (29, loc, "Cannot implicitly convert type {0} to `{1}'",
 				      source == TypeManager.anonymous_method_type ?
 				      "anonymous method" : "`" + TypeManager.CSharpName (source) + "'",

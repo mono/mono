@@ -13,23 +13,14 @@
 
 cs0029.cs
 cs0030-2.cs
-cs0201.cs
-cs0202.cs # new in GMCS
 cs0229-2.cs
 cs0229.cs NO ERROR
-cs0266-2.cs NO ERROR
-cs0266-3.cs
+cs0266-2.cs
 cs0266-4.cs
 cs0266-5.cs
 cs0266-6.cs
 cs0266-7.cs
 cs0266.cs
-cs0428.cs
-cs0443.cs
-cs0445-2.cs
-cs0445.cs
-cs0446-2.cs
-cs0446.cs NO ERROR
 cs0525.cs
 cs0526.cs
 cs0547-2.cs # new in GMCS; grammar issue
@@ -44,10 +35,8 @@ cs0619-4.cs  NO ERROR
 cs0619-42.cs
 cs0619-7.cs NO ERROR
 cs0619-8.cs NO ERROR
-cs0647-15.cs NO ERROR # corlib bug 73143
 cs1013.cs # new in GMCS; grammar issue
 cs1041.cs # new in GMCS; grammar issue
-cs1057.cs NO ERROR
 cs1501-5.cs
 cs1513.cs
 cs1518.cs
@@ -57,7 +46,6 @@ cs1540-2.cs # new in GMCS
 cs1540-3.cs NO ERROR # new in GMCS
 cs1540-5.cs NO ERROR # new in GMCS
 cs1586.cs
-cs1638.cs NO ERROR
 cs1641.cs
 cs1666.cs NO ERROR
-cs1674-2.cs
+

@@ -488,6 +488,12 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (source.eclass == ExprClass.MethodGroup && !TypeManager.IsDelegateType (target_type)) {
+				Report.Error (428, source.Location, "Cannot convert method group `{0}' to non-delegate type `{1}'. Did you intend to invoke the method?",
+					((MethodGroupExpr)source).Name, target.GetSignatureForError ());
+				return null;
+			}
+
 			source = Convert.ImplicitConversionRequired (ec, source, target_type, loc);
 			if (source == null)
 				return null;

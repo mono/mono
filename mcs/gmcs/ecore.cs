@@ -842,31 +842,33 @@ namespace Mono.CSharp {
 			return operator_true;
 		}
 		
-		string ExprClassName ()
+		public virtual string ExprClassName
 		{
-			switch (eclass){
-			case ExprClass.Invalid:
-				return "Invalid";
-			case ExprClass.Value:
-				return "value";
-			case ExprClass.Variable:
-				return "variable";
-			case ExprClass.Namespace:
-				return "namespace";
-			case ExprClass.Type:
-				return "type";
-			case ExprClass.MethodGroup:
-				return "method group";
-			case ExprClass.PropertyAccess:
-				return "property access";
-			case ExprClass.EventAccess:
-				return "event access";
-			case ExprClass.IndexerAccess:
-				return "indexer access";
-			case ExprClass.Nothing:
-				return "null";
+			get {
+				switch (eclass){
+					case ExprClass.Invalid:
+						return "Invalid";
+					case ExprClass.Value:
+						return "value";
+					case ExprClass.Variable:
+						return "variable";
+					case ExprClass.Namespace:
+						return "namespace";
+					case ExprClass.Type:
+						return "type";
+					case ExprClass.MethodGroup:
+						return "method group";
+					case ExprClass.PropertyAccess:
+						return "property access";
+					case ExprClass.EventAccess:
+						return "event access";
+					case ExprClass.IndexerAccess:
+						return "indexer access";
+					case ExprClass.Nothing:
+						return "null";
+				}
+				throw new Exception ("Should not happen");
 			}
-			throw new Exception ("Should not happen");
 		}
 		
 		/// <summary>
@@ -874,7 +876,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Error_UnexpectedKind (EmitContext ec, string expected, Location loc)
 		{
-			Error_UnexpectedKind (ec, expected, ExprClassName (), loc);
+			Error_UnexpectedKind (ec, expected, ExprClassName, loc);
 		}
 
 		public void Error_UnexpectedKind (EmitContext ec, string expected, string was, Location loc)
@@ -917,7 +919,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.Error (119, loc, 
-				"Expression denotes a `{0}', where a `{1}' was expected", ExprClassName (), sb);
+				"Expression denotes a `{0}', where a `{1}' was expected", ExprClassName, sb);
 		}
 		
 		public static void UnsafeError (Location loc)
@@ -1523,6 +1525,7 @@ namespace Mono.CSharp {
 		}
 
 		Mode mode;
+		// TODO: is redundant as can be read in Emit directly
 		bool checked_state;
 		
 		public ConvCast (EmitContext ec, Expression child, Type return_type, Mode m)
@@ -2587,6 +2590,24 @@ namespace Mono.CSharp {
 				      "with an instance reference, qualify it with a type name instead", name);
 		}
 
+		protected bool CheckIntermediateModification ()
+		{
+			if (!InstanceExpression.Type.IsValueType)
+				return true;
+
+			if (InstanceExpression is UnboxCast) {
+				Report.Error (445, loc, "Cannot modify the result of an unboxing conversion");
+				return false;
+			}
+
+			if (!(InstanceExpression is IMemoryLocation)) {
+				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
+					InstanceExpression.GetSignatureForError ());
+				return false;
+			}
+
+			return true;
+		}
 
 		// TODO: possible optimalization
 		// Cache resolved constant result in FieldBuilder <-> expression map
@@ -3084,11 +3105,8 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-			if (!FieldInfo.IsStatic && (InstanceExpression.Type.IsValueType && !(InstanceExpression is IMemoryLocation))) {
-				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
-					InstanceExpression.GetSignatureForError ());
+			if (!FieldInfo.IsStatic && !CheckIntermediateModification ())
 				return null;
-			}
 
 			FieldBase fb = TypeManager.GetField (FieldInfo);
 			if (fb != null)
@@ -3624,11 +3642,8 @@ namespace Mono.CSharp {
 			//
 			// Check that we are not making changes to a temporary memory location
 			//
-			if (InstanceExpression != null && InstanceExpression.Type.IsValueType && !(InstanceExpression is IMemoryLocation)) {
-				Report.Error (1612, loc, "Cannot modify the return value of `{0}' because it is not a variable",
-					InstanceExpression.GetSignatureForError ());
+			if (InstanceExpression != null && !CheckIntermediateModification ())
 				return null;
-			}
 
 			return this;
 		}

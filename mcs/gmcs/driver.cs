@@ -1443,7 +1443,7 @@ namespace Mono.CSharp
 						Error_WrongOption (arg);
 						return false;
 					} else {
-						if (arg.StartsWith ("/")){
+						if (arg [0] == '/'){
 							if (CSCParseOption (arg, ref args, ref i))
 								continue;
 
