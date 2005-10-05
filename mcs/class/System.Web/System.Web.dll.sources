@@ -53,6 +53,7 @@ System.Web.Configuration/AuthorizationRuleAction.cs
 System.Web.Configuration/BuildProviderAppliesTo.cs
 System.Web.Configuration/BuildProviderCollection.cs
 System.Web.Configuration/BuildProvider.cs
+System.Web.Configuration/ClientTargetSectionHandler.cs
 System.Web.Configuration/CodeSubDirectoriesCollection.cs
 System.Web.Configuration/CodeSubDirectory.cs
 System.Web.Configuration/CompilationConfiguration.cs
