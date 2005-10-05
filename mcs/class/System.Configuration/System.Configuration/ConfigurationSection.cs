@@ -65,7 +65,7 @@ namespace System.Configuration
 		[MonoTODO]
 		protected internal override void ResetModified ()
 		{
-			throw new NotImplementedException ();
+			base.ResetModified ();
 		}
 
 		ConfigurationElement CreateElement (Type t)

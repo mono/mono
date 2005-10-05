@@ -346,6 +346,12 @@ namespace System.Configuration
 			return modified;
 		}
 
+		[MonoTODO]
+		public override bool IsReadOnly ()
+		{
+			return base.IsReadOnly ();
+		}
+
 		internal override bool HasValues ()
 		{
 			return list.Count > 0;
@@ -379,6 +385,12 @@ namespace System.Configuration
 		protected internal override void ResetModified ()
 		{
 			modified = false;
+		}
+
+		[MonoTODO]
+		protected internal override void SetReadOnly ()
+		{
+			base.SetReadOnly ();
 		}
 
 		protected internal override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)

@@ -77,7 +77,7 @@ namespace System.Configuration {
 		}
 
 		[MonoTODO]
-		protected internal string SerializeSection (
+		protected internal override string SerializeSection (
 			ConfigurationElement parent, string name, ConfigurationSaveMode mode)
 		{
 			throw new NotImplementedException ();

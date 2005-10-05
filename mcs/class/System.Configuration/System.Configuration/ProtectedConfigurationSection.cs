@@ -2,7 +2,8 @@
 // System.Configuration.ProtectedConfigurationSection.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+// 	Duncan Mak (duncan@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,7 +24,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -32,6 +33,29 @@ namespace System.Configuration
 {
 	public sealed class ProtectedConfigurationSection: ConfigurationSection
 	{
+		[ConfigurationProperty ("defaultProvider", DefaultValue="RsaProtectedConfigurationProvider")]
+		public string DefaultProvider {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+		protected internal override ConfigurationPropertyCollection Properties {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[ConfigurationProperty ("providers", DefaultValue="System.Object")] 
+		public ProviderSettingsCollection Providers {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 	}
 }
 #endif

@@ -32,6 +32,7 @@ using System.Xml;
 
 namespace System.Configuration
 {
+	[ConfigurationCollection (typeof (KeyValueConfigurationElement), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public class KeyValueConfigurationCollection: ConfigurationElementCollection
 	{
 		public void Add (KeyValueConfigurationElement keyValue)
@@ -76,6 +77,13 @@ namespace System.Configuration
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			return ((KeyValueConfigurationElement)element).Key;
+		}
+
+		[MonoTODO]
+		protected internal override ConfigurationPropertyCollection Properties {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 		
 		protected override bool ThrowOnDuplicate {

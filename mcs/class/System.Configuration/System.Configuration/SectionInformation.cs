@@ -94,6 +94,11 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
+		public bool IsDeclarationRequired {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
 		public bool IsDeclared {
 			get { return is_declared; }
 		}
@@ -118,9 +123,20 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
+		public bool RequirePermission {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
 		public bool RestartOnExternalChanges {
 			get { return restart_on_external_changes; }
 			set { restart_on_external_changes = value; }
+		}
+
+		[MonoTODO]
+		public string SectionName {
+			get { throw new NotImplementedException (); }
 		}
 
 		public string Type {

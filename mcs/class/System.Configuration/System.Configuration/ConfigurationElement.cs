@@ -3,7 +3,7 @@
 //
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
-//  Lluis Sanchez Gual (lluis@novell.com)
+// 	Lluis Sanchez Gual (lluis@novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -81,13 +81,6 @@ namespace System.Configuration
 
 		[MonoTODO]
 		protected ContextInformation EvaluationContext {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public ContextInformation EvaluationInformation {
 			get {
 				throw new NotImplementedException ();
 			}

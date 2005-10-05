@@ -34,6 +34,17 @@ namespace System.Configuration
 {
 	public abstract class ConfigurationConverterBase: TypeConverter
 	{
+		[MonoTODO]
+		public override bool CanConvertFrom (ITypeDescriptorContext ctx, Type type)
+		{
+			return false;
+		}
+
+		[MonoTODO]
+		public override bool CanConvertTo (ITypeDescriptorContext ctx, Type type)
+		{
+			return false;
+		}
 	}
 }
 #endif

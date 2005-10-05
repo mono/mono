@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
 
 namespace System.Configuration {
 
@@ -46,8 +47,8 @@ namespace System.Configuration {
 			this.group = group;
 		}
 		
-		public ICollection AllKeys {
-			get { return group.Groups.AllKeys; }
+		public override NameObjectCollectionBase.KeysCollection Keys {
+			get { return group.Groups.Keys; }
 		}
 
 		public override int Count {
@@ -121,6 +122,12 @@ namespace System.Configuration {
 		{
 			SectionGroupInfo secData = group.Groups [index] as SectionGroupInfo;
 			config.RemoveConfigInfo (secData);
+		}
+
+		[MonoTODO]
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

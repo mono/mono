@@ -1,5 +1,62 @@
 2005-10-05  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationLockCollection.cs: add NIE'd AttributeList
+	property.
+
+	* ConfigurationConverterBase.cs: add MonoTODO'd CanConvertFrom and
+	CanConvertTo methods.
+
+	* ConfigurationSectionGroup.cs: add NIE'd IsDeclared property.
+
+	* ProtectedConfigurationSection.cs: add NIE'd properties.
+
+	* ConfigurationElementCollection.cs: add MonoTODO'd IsReadOnly
+	and SetReadOnly methods, and have then chain up to the base class.
+
+	* KeyValueConfigurationCollection.cs: add the class level
+	ConfigurationCollectionAttribute, and add a NIE'ed Properties
+	property.
+
+	* ProviderSettingsCollection.cs: add the class level
+	ConfigurationCollectionAttribute, and add a "new" keyword to the
+	this property.  Also, nuke the Provider's property.
+
+	* SectionInformation.cs: add some NEI'd properties.
+
+	* ConfigurationSection.cs (ResetModified): leave the MonoTODO, but
+	chain up to base class's method instead of throwing NIE.
+
+	* ConnectionStringSettingsCollection.cs: add the class-level
+	ConfigurationCollectionAttribute, and add the unimplemented
+	Properties property.
+
+	* ConfigurationErrorsException.cs: flesh this out, and add a
+	pragma to disable the obsolete warnings from our base class.
+
+	* ProviderSettings.cs: add unimplemented Properties property.
+
+	* ConfigurationElement.cs: remove unnecessary
+	EvaluationInformation.
+
+	* InternalConfigurationRoot.cs: add unimplemented IsDesignTime
+	property.
+
+	* ConfigurationProperty.cs: add a missing ctor.
+
+	* AppSettingsSection.cs: add missing "override" keyword.
+
+	* ConnectionStringsSection.cs: remove override.
+	
+	* ConfigurationSectionCollection.cs: AllKeys -> Keys, and add
+	unimplemented GetObjectData override.
+
+	* ConfigurationSectionGroupCollection.cs: same.
+
+	* ConfigurationCollectionAttribute.cs: add missing CollectionType
+	property.
+
+2005-10-05  Chris Toshok  <toshok@ximian.com>
+
 	* ConfigurationPermission.cs: new implementation.
 
 	* IgnoreSection.cs: new implementation.

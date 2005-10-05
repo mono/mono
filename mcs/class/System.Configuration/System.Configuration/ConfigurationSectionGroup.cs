@@ -69,6 +69,11 @@ namespace System.Configuration
 		}
 		
 		[MonoTODO]
+		public bool IsDeclared {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
 		public bool IsDeclarationRequired {
 			get { return require_declaration; }
 		}

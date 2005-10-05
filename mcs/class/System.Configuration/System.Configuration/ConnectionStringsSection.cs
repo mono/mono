@@ -59,11 +59,6 @@ namespace System.Configuration
                 }
                 #endregion // Constructors
 
-		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
-		{
-			ConnectionStrings.DeserializeElement (reader, serializeCollectionKey);
-		}
-
                 #region Properties
 		ConnectionStringSettingsCollection strings;
 		[ConfigurationProperty ("", DefaultValue = "System.Object", Options = ConfigurationPropertyOptions.IsDefaultCollection)]

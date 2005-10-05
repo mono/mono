@@ -113,7 +113,14 @@ namespace System.Configuration
 		{
 			names.CopyTo (array, index);
 		}
-		
+
+		[MonoTODO]
+		public string AttributeList {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 		public int Count {
 			get {
 				return names.Count;

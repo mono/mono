@@ -35,6 +35,8 @@ using System;
 
 namespace System.Configuration
 {
+	[ConfigurationCollection (typeof (ConnectionStringSettings),
+				  CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
         public sealed class ConnectionStringSettingsCollection : ConfigurationElementCollection
         {
 
@@ -73,6 +75,14 @@ namespace System.Configuration
                                 BaseAdd (index, value);
                         }
                 }
+
+		[MonoTODO]
+		protected internal override ConfigurationPropertyCollection Properties {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
                 #endregion // Properties
 
                 #region Methods

@@ -46,26 +46,27 @@ namespace System.Configuration
 		string description;
 		ConfigurationCollectionAttribute collectionAttribute;
 		
+		public ConfigurationProperty (string name, Type type)
+			: this (name, type, null, ConfigurationPropertyOptions.None)
+		{ }
+
 		public ConfigurationProperty (string name, Type type, object default_value)
 			: this (name, type, default_value, ConfigurationPropertyOptions.None)
-		{
-		}
+		{ }
 
 		public ConfigurationProperty (
 					string name, Type type, object default_value,
 					ConfigurationPropertyOptions flags)
 			:this (name, type, default_value, TypeDescriptor.GetConverter (type), null, flags, null)
-		{
-		}
+		{ }
 		
 		public ConfigurationProperty (
 					string name, Type type, object default_value,
 					TypeConverter converter,
 					ConfigurationValidatorBase validation,
 					ConfigurationPropertyOptions flags)
-		: this (name, type, default_value, converter, validation, flags, null)
-		{
-		}
+			: this (name, type, default_value, converter, validation, flags, null)
+		{ }
 
 		public ConfigurationProperty (
 					string name, Type type, object default_value,

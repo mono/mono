@@ -37,6 +37,7 @@ namespace System.Configuration
 		string addItemName = "add";
 		string clearItemsName = "clear";
 		string removeItemName = "remove";
+		ConfigurationElementCollectionType collectionType = ConfigurationElementCollectionType.BasicMap;
 		Type itemType;
 		
 		public ConfigurationCollectionAttribute (Type itemType)
@@ -57,6 +58,11 @@ namespace System.Configuration
 		public string RemoveItemName {
 			get { return removeItemName; }
 			set { removeItemName = value; }
+		}
+
+		public ConfigurationElementCollectionType CollectionType {
+			get { return collectionType; }
+			set { collectionType = value; }
 		}
 		
 		[MonoTODO ("Do something with this in ConfigurationElementCollection")]

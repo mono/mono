@@ -68,6 +68,12 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 		
+		public bool IsDesignTime {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 		public event InternalConfigEventHandler ConfigChanged;
 		public event InternalConfigEventHandler ConfigRemoved;
 	}

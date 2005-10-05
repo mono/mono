@@ -35,7 +35,7 @@ using System.Configuration;
 
 namespace System.Configuration
 {
-	[ConfigurationCollection (typeof(ProviderSettings))]
+	[ConfigurationCollection (typeof(ProviderSettings), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class ProviderSettingsCollection: ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection props = new ConfigurationPropertyCollection ();
@@ -71,18 +71,13 @@ namespace System.Configuration
 			set { BaseAdd (n, value); }
 		}
 		
-		public ProviderSettings this [object key]
+		public new ProviderSettings this [string key]
 		{
 			get { return (ProviderSettings) BaseGet (key); }
 		}
 		
 		protected internal override ConfigurationPropertyCollection Properties {
 			get { return props; }
-		}
-		
-		[MonoTODO ("What should this return?")]
-		public ProviderSettingsCollection Providers {
-			get { return this; }
 		}
 	}
 }

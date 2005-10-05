@@ -93,6 +93,13 @@ namespace System.Configuration
 			get { return (string) this ["type"]; }
 			set { this ["type"] = value; }
 		}
+
+		[MonoTODO]
+		protected internal override ConfigurationPropertyCollection Properties {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 		
 		public NameValueCollection Parameters {
 			get {
