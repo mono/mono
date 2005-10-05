@@ -19,6 +19,10 @@ using System.Text.RegularExpressions;
 	
 namespace Mono.CSharp {
 
+	/// <summary>
+	///   Abstract base class for type parameter constraints.
+	///   The type parameter can come from a generic type definition or from reflection.
+	/// </summary>
 	public abstract class GenericConstraints {
 		public abstract GenericParameterAttributes Attributes {
 			get;
@@ -122,9 +126,9 @@ namespace Mono.CSharp {
 		ValueType
 	}
 
-	//
-	// Tracks the constraints for a type parameter
-	//
+	/// <summary>
+	///   Tracks the constraints for a type parameter from a generic type definition.
+	/// </summary>
 	public class Constraints : GenericConstraints {
 		string name;
 		ArrayList constraints;
@@ -291,6 +295,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   Resolve the constraints into actual types.
+		/// </summary>
 		public bool ResolveTypes (EmitContext ec)
 		{
 			if (effective_base_type != null)
@@ -403,6 +410,15 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   Check whether there are no conflicts in our type parameter constraints.
+		///
+		///   This is an example:
+		///
+		///   class Foo<T,U>
+		///      where T : class
+		///      where U : T, struct
+		/// </summary>
 		public bool CheckDependencies (EmitContext ec)
 		{
 			foreach (TypeParameterExpr expr in type_param_constraints) {
@@ -454,6 +470,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   Set the attributes on the GenericTypeParameterBuilder.
+		/// </summary>
+		/// <remarks>
+		///   This is not done in Resolve() since Resolve() may be called before
+		///   the GenericTypeParameterBuilder is created (partial generic classes).
+		/// </remarks>
 		public void Define (GenericTypeParameterBuilder type)
 		{
 			type.SetGenericParameterAttributes (attrs);
@@ -479,7 +502,7 @@ namespace Mono.CSharp {
 			get { return effective_base_type; }
 		}
 
-		internal bool IsSubclassOf (Type t)
+		public bool IsSubclassOf (Type t)
 		{
 			if ((class_constraint_type != null) &&
 			    class_constraint_type.IsSubclassOf (t))
@@ -496,6 +519,13 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		/// <summary>
+		///   This is used when we're implementing a generic interface method.
+		///   Each method type parameter in implementing method must have the same
+		///   constraints than the corresponding type parameter in the interface
+		///   method.  To do that, we're called on each of the implementing method's
+		///   type parameters.
+		/// </summary>
 		public bool CheckInterfaceMethod (EmitContext ec, GenericConstraints gc)
 		{
 			if (gc.Attributes != attrs)
@@ -531,9 +561,9 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// This type represents a generic type parameter
-	//
+	/// <summary>
+	///   A type parameter from a generic type definition.
+	/// </summary>
 	public class TypeParameter : MemberCore, IMemberContainer {
 		string name;
 		GenericConstraints gc;
@@ -747,6 +777,15 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   Check whether there are no conflicts in our type parameter constraints.
+		///
+		///   This is an example:
+		///
+		///   class Foo<T,U>
+		///      where T : class
+		///      where U : T, struct
+		/// </summary>
 		public bool CheckDependencies (EmitContext ec)
 		{
 			if (constraints != null)
@@ -755,15 +794,16 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   This is called for each part of a partial generic type definition.
+		///
+		///   If `new_constraints' is not null and we don't already have constraints,
+		///   they become our constraints.  If we already have constraints, we must
+		///   check that they're the same.
+		///   con
+		/// </summary>
 		public bool UpdateConstraints (EmitContext ec, Constraints new_constraints)
 		{
-			//
-			// We're used in partial generic type definitions.
-			// If `check' is false, we just encountered the first ClassPart which has
-			// constraints - they become our "real" constraints.
-			// Otherwise we're called after the type parameters have already been defined
-			// and check whether the constraints are the same in all parts.
-			//
 			if (type == null)
 				throw new InvalidOperationException ();
 
@@ -956,11 +996,9 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// This type represents a generic type parameter reference.
-	//
-	// These expressions are born in a fully resolved state.
-	//
+	/// <summary>
+	///   A TypeExpr which already resolved to a type parameter.
+	/// </summary>
 	public class TypeParameterExpr : TypeExpr {
 		TypeParameter type_parameter;
 
@@ -1010,6 +1048,10 @@ namespace Mono.CSharp {
 		}
 	}
 
+	/// <summary>
+	///   Tracks the type arguments when instantiating a generic type.  We're used in
+	///   ConstructedType.
+	/// </summary>
 	public class TypeArguments {
 		public readonly Location Location;
 		ArrayList args;
@@ -1046,6 +1088,12 @@ namespace Mono.CSharp {
 			args.AddRange (new_args.args);
 		}
 
+		/// <summary>
+		///   We're used during the parsing process: the parser can't distinguish
+		///   between type parameters and type arguments.  Because of that, the
+		///   parser creates a `MemberName' with `TypeArguments' for both cases and
+		///   in case of a generic type definition, we call GetDeclarations().
+		/// </summary>
 		public string[] GetDeclarations ()
 		{
 			string[] ret = new string [args.Count];
@@ -1063,6 +1111,10 @@ namespace Mono.CSharp {
 			return ret;
 		}
 
+		/// <summary>
+		///   We may only be used after Resolve() is called and return the fully
+		///   resolved types.
+		/// </summary>
 		public Type[] Arguments {
 			get {
 				return atypes;
@@ -1107,6 +1159,9 @@ namespace Mono.CSharp {
 			return s.ToString ();
 		}
 
+		/// <summary>
+		///   Resolve the type arguments.
+		/// </summary>
 		public bool Resolve (EmitContext ec)
 		{
 			int count = args.Count;
@@ -1134,14 +1189,20 @@ namespace Mono.CSharp {
 			return ok;
 		}
 	}
-	
+
+	/// <summary>
+	///   An instantiation of a generic type.
+	/// </summary>	
 	public class ConstructedType : TypeExpr {
 		string full_name;
 		FullNamedExpression name;
 		TypeArguments args;
 		Type[] gen_params, atypes;
 		Type gt;
-		
+
+		/// <summary>
+		///   Instantiate the generic type `fname' with the type arguments `args'.
+		/// </summary>		
 		public ConstructedType (FullNamedExpression fname, TypeArguments args, Location l)
 		{
 			loc = l;
@@ -1171,6 +1232,9 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Type;
 		}
 
+		/// <summary>
+		///   This is used to construct the `this' type inside a generic type definition.
+		/// </summary>
 		public ConstructedType (Type t, TypeParameter[] type_params, Location l)
 			: this (type_params, l)
 		{
@@ -1180,6 +1244,11 @@ namespace Mono.CSharp {
 			full_name = gt.FullName + "<" + args.ToString () + ">";
 		}
 
+		/// <summary>
+		///   Instantiate the generic type `t' with the type arguments `args'.
+		///   Use this constructor if you already know the fully resolved
+		///   generic type.
+		/// </summary>		
 		public ConstructedType (Type t, TypeArguments args, Location l)
 			: this (args, l)
 		{
@@ -1355,6 +1424,10 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		/// <summary>
+		///   Check the constraints; we're called from ResolveAsTypeTerminal()
+		///   after fully resolving the constructed type.
+		/// </summary>
 		public bool CheckConstraints (EmitContext ec)
 		{
 			for (int i = 0; i < gen_params.Length; i++) {
@@ -1365,10 +1438,14 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   Resolve the constructed type, but don't check the constraints.
+		/// </summary>
 		public bool ResolveConstructedType (EmitContext ec)
 		{
 			if (type != null)
 				return true;
+			// If we already know the fully resolved generic type.
 			if (gt != null)
 				return DoResolveType (ec);
 
