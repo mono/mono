@@ -1,3 +1,9 @@
+2005-10-05  Dick Porter  <dick@ximian.com>
+
+	* threads.c (_wapi_thread_own_mutex, _wapi_thread_disown_mutex):
+	Keep a reference to mutexes owned by threads, so they won't be
+	destroyed prematurely.  Fixes dotmsnclient crash.
+
 2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* io.c: Apply patch from #76192 (Can't write files past 2gb on AMD64 
