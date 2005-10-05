@@ -1,3 +1,7 @@
+2005-10-05  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* LinkLabel.cs: Related to 76045. Stops the LinkLabel been drawn as a Label
+
 2005-10-05  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: If updating the root node do a full refresh.
