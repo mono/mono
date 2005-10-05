@@ -1,10 +1,11 @@
 //
 // System.Configuration.ConfigurationErrorsException.cs
 //
-// Author:
-//   Duncan Mak (duncan@ximian.com)
+// Authors:
+// 	Duncan Mak (duncan@ximian.com)
+// 	Chris Toshok (toshok@ximian.com)
 //
-// (C) Ximian, Inc.  http://www.ximian.com
+// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -31,10 +32,14 @@
 using System;
 using System.Globalization;
 using System.Runtime.Serialization;
+using System.Collections;
 using System.Xml;
 
 namespace System.Configuration 
 {
+/* disable the obsolete warnings about ConfigurationException */
+#pragma warning disable 618
+
 	[Serializable]
 	public class ConfigurationErrorsException : ConfigurationException
 	{
@@ -46,13 +51,15 @@ namespace System.Configuration
 		}
 		
 		public ConfigurationErrorsException (string message)
-			: base (message)
 		{
+			bareMessage = message;
 		}
 
 		protected ConfigurationErrorsException (SerializationInfo info, StreamingContext context)
 			: base (info, context)
 		{
+			filename = info.GetString ("ConfigurationErrors_Filename");
+			line = info.GetInt32 ("ConfigurationErrors_Line");
 		}
 
 		public ConfigurationErrorsException (string message, Exception inner)
@@ -61,49 +68,57 @@ namespace System.Configuration
 		}
 
 		public ConfigurationErrorsException (string message, XmlNode node)
-			: base (message, GetFilename (node), GetLineNumber (node))
+			: this (message, null, GetFilename (node), GetLineNumber (node))
 		{
 		}
 
 		public ConfigurationErrorsException (string message, Exception inner, XmlNode node)
-			: base (message, inner, GetFilename (node), GetLineNumber (node))
+			: this (message, inner, GetFilename (node), GetLineNumber (node))
 		{
 		}
 		
 		public ConfigurationErrorsException (string message, XmlReader reader)
-			: base (message, GetFilename (reader), GetLineNumber (reader))
+			: this (message, null, GetFilename (reader), GetLineNumber (reader))
 		{
 		}
 
 		public ConfigurationErrorsException (string message, Exception inner, XmlReader reader)
-			: base (message, inner, GetFilename (reader), GetLineNumber (reader))
+			: this (message, inner, GetFilename (reader), GetLineNumber (reader))
 		{
 		}
 		
 		public ConfigurationErrorsException (string message, string filename, int line)
-			: base (message, filename, line)
+			: this (message, null, filename, line)
 		{
 		}
 
 		public ConfigurationErrorsException (string message, Exception inner, string filename, int line)
-			: base (message, inner, filename, line)
+			: base (message, inner)
 		{
+			bareMessage = message;
+			this.filename = filename;
+			this.line = line;
 		}
 		
 		//
 		// Properties
 		//
-/*		public override string BareMessage
+		public new string BareMessage
 		{
 			get  { return bareMessage; }
 		}
 
-		public override string Filename
+		public ICollection Errors
+		{
+			get { throw new NotImplementedException (); }
+		}
+
+		public new string Filename
 		{
 			get { return filename; }
 		}
 		
-		public override int Line
+		public new int Line
 		{
 			get { return line; }
 		}
@@ -118,7 +133,6 @@ namespace System.Configuration
 				return baseMsg + " (" + f + l + ")";
 			}
 		}
-*/
 		//
 		// Methods
 		//
@@ -138,7 +152,7 @@ namespace System.Configuration
 				return 0;
 		}
 
-		static string GetFilename (XmlNode node)
+		public static string GetFilename (XmlNode node)
 		{
 			if (!(node is IConfigXmlNode))
 				return String.Empty;
@@ -146,7 +160,7 @@ namespace System.Configuration
 			return ((IConfigXmlNode) node).Filename;
 		}
 
-		static int GetLineNumber (XmlNode node)
+		public static int GetLineNumber (XmlNode node)
 		{
 			if (!(node is IConfigXmlNode))
 				return 0;
@@ -154,12 +168,16 @@ namespace System.Configuration
 			return ((IConfigXmlNode) node).LineNumber;
 		}
 		
-/*		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			base.GetObjectData (info, context);
-			info.AddValue ("filename", filename);
-			info.AddValue ("line", line);
+			info.AddValue ("ConfigurationErrors_Filename", filename);
+			info.AddValue ("ConfigurationErrors_Line", line);
 		}
-		*/
+
+		string bareMessage = "";
+		string filename = "";
+		int line = 0;
 	}
+#pragma warning restore
 }
