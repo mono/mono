@@ -238,6 +238,7 @@ namespace System.Windows.Forms
 						Controls.RemoveImplicit (listbox_ctrl);
 						listbox_ctrl.Dispose ();						
 						listbox_ctrl = null;
+						Height = combobox_info.original_height;
 					}
 				}
 
@@ -253,6 +254,7 @@ namespace System.Windows.Forms
 				
 				if (dropdown_style == ComboBoxStyle.Simple) {
 					CBoxInfo.show_button = false;					
+					combobox_info.original_height = Height;
 					Height = combobox_info.combosimple_height;
 					
 					CreateComboListBox ();
@@ -783,7 +785,10 @@ namespace System.Windows.Forms
 
 			if (listbox_ctrl != null) {
 				Controls.AddImplicit (listbox_ctrl);
-				Height = combobox_info.combosimple_height;
+
+				if (dropdown_style == ComboBoxStyle.Simple)
+					Height = combobox_info.combosimple_height;
+				
 			}
 			
 			if (textbox_ctrl != null) {
@@ -815,10 +820,14 @@ namespace System.Windows.Forms
 		}
 
 		protected override void OnResize (EventArgs e)
-		{
+		{			
 			base.OnResize (e);
 			AdjustHeightForDropDown ();
-			CalcTextArea ();			
+
+			if (listbox_ctrl != null)
+				listbox_ctrl.CalcListBoxArea ();
+
+			CalcTextArea ();
 		}
 
 		protected override void OnSelectedIndexChanged (EventArgs e)
@@ -878,10 +887,7 @@ namespace System.Windows.Forms
 		}		
 
 		protected override void SetBoundsCore (int x, int y, int width, int height, BoundsSpecified specified)
-		{
-			if ((specified & BoundsSpecified.Height) != 0)
-				combobox_info.combosimple_height = height;
-
+		{			
 			base.SetBoundsCore (x, y, width, height, specified);
 		}
 
@@ -1439,7 +1445,7 @@ namespace System.Windows.Forms
 			}
 
 			public ComboListBox (ComboBox owner) : base ()
-			{	
+			{					
 				this.owner = owner;								
 				top_item = 0;
 				last_item = 0;
@@ -1517,7 +1523,7 @@ namespace System.Windows.Forms
 						vscrollbar_ctrl.Visible = false;						
 					}					
 				}
-				else {
+				else {					
 					/* Need vertical scrollbar */
 					if (vscrollbar_ctrl == null) {
 						vscrollbar_ctrl = new VScrollBarLB ();
@@ -1535,10 +1541,9 @@ namespace System.Windows.Forms
 							
 					vscrollbar_ctrl.Location = new Point (width - vscrollbar_ctrl.Width - ThemeEngine.Current.DrawComboListBoxDecorationRight (owner.DropDownStyle), 
 							ThemeEngine.Current.DrawComboListBoxDecorationTop (owner.DropDownStyle));
-						
-					vscrollbar_ctrl.Maximum = owner.Items.Count - owner.MaxDropDownItems;
+										
+					vscrollbar_ctrl.Maximum = owner.Items.Count - (owner.DropDownStyle == ComboBoxStyle.Simple ? page_size : owner.maxdrop_items);
 					show_scrollbar = vscrollbar_ctrl.Visible = true;
-					
 				}
 				
 				Size = new Size (width, height);
@@ -1781,7 +1786,7 @@ namespace System.Windows.Forms
 				/* Previous item */
     				if (GetHighLightedIndex () != -1) {    					
 					invalidate = GetItemDisplayRectangle (GetHighLightedIndex (), top_item);
-	    				if (ClientRectangle.Contains (invalidate))
+	    				if (ClientRectangle.IntersectsWith (invalidate))
 	    					Invalidate (invalidate);
 	    			}
 				
@@ -1790,7 +1795,7 @@ namespace System.Windows.Forms
     				if (highlighted_item != null) {
 	    				 /* Current item */
 	    				invalidate = GetItemDisplayRectangle (GetHighLightedIndex (), top_item);
-	    				if (ClientRectangle.Contains (invalidate))
+	    				if (ClientRectangle.IntersectsWith (invalidate))
 	    					Invalidate (invalidate);
 	    			}
     				
@@ -1902,7 +1907,7 @@ namespace System.Windows.Forms
 			}
 
 			private void OnPaintPUW (Object o, PaintEventArgs pevent)
-			{
+			{				
 				Draw (pevent.ClipRectangle,pevent.Graphics);
 			}
 
@@ -1942,7 +1947,7 @@ namespace System.Windows.Forms
 				UpdateLastVisibleItem ();
 				Refresh ();
 			}			
-
+			
 			#endregion Private Methods
 		}
 	}
