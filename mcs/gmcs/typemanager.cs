@@ -1776,7 +1776,7 @@ public partial class TypeManager {
 		}
 
 		do {
-			if (IsEqualGenericInstance (type, parent))
+			if (IsInstantiationOfSameGenericType (type, parent))
 				return true;
 
 			type = type.BaseType;
@@ -2583,7 +2583,7 @@ public partial class TypeManager {
 				// => Ancestry should be: declaring_type ->* invocation_type ->*  qualified_type
 				if (is_static ||
 				    qualifier_type == null ||
-				    IsEqualGenericInstance (invocation_type, qualifier_type) ||
+				    IsInstantiationOfSameGenericType (invocation_type, qualifier_type) ||
 				    !IsFamilyAccessible (invocation_type, qualifier_type) ||
 				    IsNestedChildOf (invocation_type, qualifier_type))
 					return true;

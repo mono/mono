@@ -1559,6 +1559,9 @@ namespace Mono.CSharp {
 		}
 	}
 
+	/// <summary>
+	///   A generic method definition.
+	/// </summary>
 	public class GenericMethod : DeclSpace
 	{
 		public GenericMethod (NamespaceEntry ns, TypeContainer parent, MemberName name)
@@ -1581,6 +1584,10 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   Define and resolve the type parameters.
+		///   We're called from Method.Define().
+		/// </summary>
 		public bool Define (MethodBuilder mb)
 		{
 			GenericTypeParameterBuilder[] gen_params;
@@ -1600,6 +1607,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   We're called from MethodData.Define() after creating the MethodBuilder.
+		/// </summary>
 		public bool DefineType (EmitContext ec, MethodBuilder mb,
 					MethodInfo implementing, bool is_override)
 		{
@@ -1935,7 +1945,11 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public static bool MayBecomeEqualGenericTypes (Type a, Type b, Type[] class_infered, Type[] method_infered)
+		/// <summary>
+		///   Check whether `a' and `b' may become equal generic types.
+		/// </summary>
+		public static bool MayBecomeEqualGenericTypes (Type a, Type b, Type[] class_infered,
+							       Type[] method_infered)
 		{
 			if (a.IsGenericParameter) {
 				//
@@ -2029,7 +2043,8 @@ namespace Mono.CSharp {
 		// particular instantiation (26.3.1).
 		//
 		public static bool MayBecomeEqualGenericInstances (Type a, Type b,
-								   Type[] class_infered, Type[] method_infered)
+								   Type[] class_infered,
+								   Type[] method_infered)
 		{
 			if (!a.IsGenericInstance || !b.IsGenericInstance)
 				return false;
@@ -2041,7 +2056,8 @@ namespace Mono.CSharp {
 		}
 
 		public static bool MayBecomeEqualGenericInstances (Type[] aargs, Type[] bargs,
-								   Type[] class_infered, Type[] method_infered)
+								   Type[] class_infered,
+								   Type[] method_infered)
 		{
 			if (aargs.Length != bargs.Length)
 				return false;
@@ -2054,7 +2070,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public static bool IsEqualGenericInstance (Type type, Type parent)
+		/// <summary>
+		///   Check whether `type' and `parent' are both instantiations of the same
+		///   generic type.  Note that we do not check the type parameters here.
+		/// </summary>
+		public static bool IsInstantiationOfSameGenericType (Type type, Type parent)
 		{
 			int tcount = GetNumberOfTypeArguments (type);
 			int pcount = GetNumberOfTypeArguments (parent);
@@ -2070,7 +2090,7 @@ namespace Mono.CSharp {
 			return type.Equals (parent);
 		}
 
-		static public bool IsGenericMethod (MethodBase mb)
+		public static bool IsGenericMethod (MethodBase mb)
 		{
 			if (mb.DeclaringType is TypeBuilder) {
 				IMethodData method = (IMethodData) builder_to_method [mb];
@@ -2191,6 +2211,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   Type inference.  Try to infer the type arguments from the params method
+		///   `method', which is invoked with the arguments `arguments'.  This is used
+		///   when resolving an Invocation or a DelegateInvocation and the user
+		///   did not explicitly specify type arguments.
+		/// </summary>
 		public static bool InferParamsTypeArguments (EmitContext ec, ArrayList arguments,
 							     ref MethodBase method)
 		{
@@ -2261,7 +2287,8 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public static bool InferTypeArguments (Type[] param_types, Type[] arg_types, Type[] infered_types)
+		static bool InferTypeArguments (Type[] param_types, Type[] arg_types,
+						Type[] infered_types)
 		{
 			if (infered_types == null)
 				return false;
@@ -2281,6 +2308,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   Type inference.  Try to infer the type arguments from `method',
+		///   which is invoked with the arguments `arguments'.  This is used
+		///   when resolving an Invocation or a DelegateInvocation and the user
+		///   did not explicitly specify type arguments.
+		/// </summary>
 		public static bool InferTypeArguments (EmitContext ec, ArrayList arguments,
 						       ref MethodBase method)
 		{
@@ -2332,6 +2365,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		/// <summary>
+		///   Type inference.
+		/// </summary>
 		public static bool InferTypeArguments (EmitContext ec, ParameterData apd,
 						       ref MethodBase method)
 		{
