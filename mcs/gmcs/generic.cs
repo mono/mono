@@ -1947,6 +1947,7 @@ namespace Mono.CSharp {
 
 		/// <summary>
 		///   Check whether `a' and `b' may become equal generic types.
+		///   The algorithm to do that is a little bit complicated.
 		/// </summary>
 		public static bool MayBecomeEqualGenericTypes (Type a, Type b, Type[] class_infered,
 							       Type[] method_infered)
@@ -2090,6 +2091,9 @@ namespace Mono.CSharp {
 			return type.Equals (parent);
 		}
 
+		/// <summary>
+		///   Whether `mb' is a generic method definition.
+		/// </summary>
 		public static bool IsGenericMethod (MethodBase mb)
 		{
 			if (mb.DeclaringType is TypeBuilder) {
