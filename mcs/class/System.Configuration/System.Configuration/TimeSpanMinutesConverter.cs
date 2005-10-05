@@ -2,7 +2,8 @@
 // System.Configuration.TimeSpanMinutesConverter.cs
 //
 // Authors:
-//  Lluis Sanchez Gual (lluis@novell.com)
+// 	Lluis Sanchez Gual (lluis@novell.com)
+// 	Chris Toshok (toshok@ximian.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
