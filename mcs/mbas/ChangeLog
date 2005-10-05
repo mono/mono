@@ -1,3 +1,11 @@
+2005-10-05 Aldo Monteiro <aldo@psl-pr.softwarelivre.org>
+ 
+ 	* ecore.cs : Created a public property (Id) to access externally the field
+ 	id in DecoratedIdentifier class
+ 	* assign.cs : Before get the expression for construct 'Mid' statement
+ 	testing if that expression is 'DecoratedIdentifier', and, if it is,
+ 	getting the expression assigned in its 'id' field.
+
 2005-09-26 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
            Alexandre Rocha Lima e Marcondes <alexandre@psl-pr.softwarelivre.org>       
 	* mb-parser.jay: Fix For Each when using fields as the variable used

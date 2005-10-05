@@ -234,7 +234,11 @@ namespace Mono.MonoBASIC {
 
                         	Invocation i = (Invocation) target;
                         	Expression mid_expr;
-                        	mid_expr = i.Expr;
+				if (i.Expr is DecoratedIdentifier)
+					mid_expr = ((DecoratedIdentifier) i.Expr).Id;
+				else
+                        		mid_expr = i.Expr;
+					
 
                         	if (mid_expr is SimpleName) {
                                 	SimpleName sn = mid_expr as SimpleName;

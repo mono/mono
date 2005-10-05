@@ -1,7 +1,11 @@
 Imports System
+Imports System.Globalization
+Imports System.Threading
 
 Module ConcatenationOperator
     Sub main()
+    	Thread.CurrentThread.CurrentCulture = New CultureInfo("en-US")
+    
         Dim a As String = "Hello "
         Dim b As String = "World"
 

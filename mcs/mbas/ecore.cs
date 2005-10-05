@@ -4504,6 +4504,14 @@ namespace Mono.MonoBASIC {
 		Expression id;
 		Type decoration;
 
+		public Expression Id
+		{
+			get
+			{
+				return this.id;
+			}
+		}
+		
 		public DecoratedIdentifier (Expression id, Type decoration)
 		{
 			this.id = id;
