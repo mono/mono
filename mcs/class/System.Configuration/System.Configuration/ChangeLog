@@ -1,5 +1,17 @@
 2005-10-05  Chris Toshok  <toshok@ximian.com>
 
+	* TimeSpanSecondsConverter.cs: new implementation.
+
+2005-10-05  Chris Toshok  <toshok@ximian.com>
+
+	* TimeSpanMinutesConverter.cs: flesh out implementation.
+
+	* ConfigurationConverterBase.cs: make all subclasses work with
+	strings only, since that's what seems to manifest itself in the
+	tests.
+
+2005-10-05  Chris Toshok  <toshok@ximian.com>
+
 	* ConfigurationLockCollection.cs: add NIE'd AttributeList
 	property.
 
