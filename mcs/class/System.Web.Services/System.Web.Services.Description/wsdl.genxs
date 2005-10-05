@@ -15,7 +15,7 @@
 				<select>
 					<typeName>System.Xml.Schema.XmlSchema</typeName>
 				</select>
-				<replace>$OBJECT = System.Xml.Schema.XmlSchema.Read (Reader, null);</replace>
+				<replace>$OBJECT = System.Xml.Schema.XmlSchema.Read (Reader, null); Reader.Read ();</replace>
 			</hook>
 		</readerHooks>
 		<writerHooks>

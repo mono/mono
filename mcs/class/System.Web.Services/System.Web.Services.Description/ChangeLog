@@ -1,3 +1,10 @@
+2005-10-05  Atsushi Enomoto <atsushi@ximian.com>
+
+	* wsdl.genxs, ServiceDescriptionSerializerBase.cs : dependent fix on
+	  XmlSchema.Read(). Fixed bug #76311.
+	* ServiceDescription.cs : name is null by default otherwise it fails
+	  to be written.
+
 2005-09-01  Ilya Kharmatsky <ilyak at mainsoft.com >
 
     * In WebReference.cs excluded by TARGET_J2EE directives 

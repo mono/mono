@@ -815,6 +815,7 @@ namespace System.Web.Services.Description
 		{
 			System.Xml.Schema.XmlSchema ob = null;
 			ob = System.Xml.Schema.XmlSchema.Read (Reader, null);
+			Reader.Read ();
 			return ob;
 		}
 

@@ -95,7 +95,7 @@ namespace System.Web.Services.Description
 			imports = new ImportCollection (this);
 			messages = new MessageCollection (this);
 #if !NET_2_0
-			name = String.Empty;		
+//			name = String.Empty;		
 #endif
 			portTypes = new PortTypeCollection (this);
 

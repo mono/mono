@@ -1,3 +1,7 @@
+2005-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDescriptionTest.cs : new file (for part of bug #76311).
+
 2003-09-14  Lluis Sanchez Gual  <lluis@ximian.com>
 
 	* BindingCollectionTest.cs ChangeLog DocumentableItemTest.cs 
