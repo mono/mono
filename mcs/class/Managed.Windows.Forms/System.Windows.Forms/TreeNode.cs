@@ -59,6 +59,7 @@ namespace System.Windows.Forms {
 		internal TreeNode (TreeView tree_view) : this ()
 		{
 			this.tree_view = tree_view;
+			is_expanded = true;
 		}
 
 		#endregion	// Internal Constructors
@@ -444,6 +445,16 @@ namespace System.Windows.Forms {
 		#endregion	// Public Instance Methods
 
 		#region Internal & Private Methods and Properties
+
+		internal bool IsRoot {
+			get {
+				if (tree_view == null)
+					return false;
+				if (tree_view.root_node == this)
+					return true;
+				return false;
+			}
+		}
 
 		bool BuildFullPath (StringBuilder path)
 		{

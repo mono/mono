@@ -827,6 +827,11 @@ namespace System.Windows.Forms {
 
 		internal void UpdateBelow (TreeNode node)
 		{
+			if (node == root_node) {
+				Refresh ();
+				return;
+			}
+				
 			// We need to update the current node so the plus/minus block gets update too
 			Rectangle invalid = new Rectangle (0, node.Bounds.Top + 2, Width, Height - node.Bounds.Top);
 			Invalidate (invalid);
@@ -834,6 +839,11 @@ namespace System.Windows.Forms {
 
 		internal void UpdateNode (TreeNode node)
 		{
+			if (node == root_node) {
+				Refresh ();
+				return;
+			}
+
 			Rectangle invalid = new Rectangle (0, node.Bounds.Top + 2, Width, node.Bounds.Height);
 			Invalidate (invalid);
 		}

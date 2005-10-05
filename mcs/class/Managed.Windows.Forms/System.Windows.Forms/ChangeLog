@@ -1,3 +1,12 @@
+2005-10-05  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: If updating the root node do a full refresh.
+	* TreeNode.cs: The root node should be expanded by default. Also
+	added a utility prop to tell if we are the root node.
+	* TreeNodeCollection.cs: Only refresh if the node we are being
+	added to is expanded. Also added a comment on a potential
+	optimization.
+	
 2005-10-04  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Cursor.cs, Hwnd.cs: Added call to GC.SuppressFinalize() 

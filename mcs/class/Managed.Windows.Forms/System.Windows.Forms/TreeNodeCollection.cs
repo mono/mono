@@ -119,8 +119,15 @@ namespace System.Windows.Forms {
 				Grow ();
 			nodes [count++] = node;
 
-			if (owner.TreeView != null)
+			if (owner.TreeView != null && (owner.IsExpanded || owner.IsRoot)) {
+				// XXX:
+				// Ideally we could just call TreeView::UpdateNode here, but most
+				// likely the bounding boxes for the nodes have not been created yet
+				// so the update wouldn't work well....setting the bounds on
+				// insert would allow this optimization.
 				owner.TreeView.Refresh ();
+			}
+
 			return count;
 		}
 
