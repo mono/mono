@@ -1,0 +1,4 @@
+2005-10-05 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+
+	* Added notepad.cs which serves as a visual test and sample for 
+	  scrollbars, menus, file save dialog, and text area.

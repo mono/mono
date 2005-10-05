@@ -1,3 +1,7 @@
+2005-10-05 Hisham Mardam Bey <hisham.mardambey@gmail.com>
+
+        * Created samples/ directory.	
+
 2005-09-30  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.sources: Added X11DesktopColors.cs
