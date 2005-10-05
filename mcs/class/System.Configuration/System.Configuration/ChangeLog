@@ -1,5 +1,11 @@
 2005-10-05  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationPermission.cs: new implementation.
+
+	* IgnoreSection.cs: new implementation.
+
+2005-10-05  Chris Toshok  <toshok@ximian.com>
+
 	* CommaDelimitedStringCollection.cs: new implementation.
 
 2005-10-05  Chris Toshok  <toshok@ximian.com>

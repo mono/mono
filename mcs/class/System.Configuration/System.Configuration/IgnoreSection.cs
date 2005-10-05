@@ -53,17 +53,31 @@ namespace System.Configuration {
 			xml = reader.ReadOuterXml ();
 		}
 
+		[MonoTODO]
 		protected internal override void Reset (ConfigurationElement parentElement)
 		{
+			base.Reset (parentElement);
 		}
 
+		[MonoTODO]
 		protected internal override void ResetModified ()
 		{
+			base.ResetModified ();
 		}
 
 		protected internal override string SerializeSection (ConfigurationElement parentElement, string name, ConfigurationSaveMode saveMode)
 		{
 			return xml;
+		}
+
+		ConfigurationPropertyCollection properties;
+		[MonoTODO]
+		protected internal override ConfigurationPropertyCollection Properties {
+			get {
+				if (properties == null)
+					properties = new ConfigurationPropertyCollection ();
+				return properties;
+			}
 		}
 	}
 }
