@@ -88,7 +88,6 @@ namespace System.Windows.Forms
     		{
 			// Defaults in the Spec
 			autosize = false;
-			border_style = BorderStyle.None;
 			string_format = new StringFormat();
 			TextAlign = ContentAlignment.TopLeft;
 			image = null;
@@ -97,9 +96,6 @@ namespace System.Windows.Forms
 			image_align = ContentAlignment.MiddleCenter;
 			SetUseMnemonic (UseMnemonic);
 			flat_style = FlatStyle.Standard;
-
-			BackColor = ThemeEngine.Current.ColorControl;
-			ForeColor = ThemeEngine.Current.ColorWindowText;
 
 			CalcPreferredHeight ();
 			CalcPreferredWidth ();
@@ -155,17 +151,13 @@ namespace System.Windows.Forms
 		[DispId(-504)]
     		public virtual BorderStyle BorderStyle {
     			get {
-    				return border_style;
+    				return InternalBorderStyle;
     			}
     			set {
 				if (!Enum.IsDefined (typeof (BorderStyle), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for BorderStyle", value));
 
-				if (border_style == value)
-					return;
-
-    				border_style = value;
-				Refresh ();
+				InternalBorderStyle = value;
     			}
     		}
 

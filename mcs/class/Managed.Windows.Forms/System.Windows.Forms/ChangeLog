@@ -1,3 +1,10 @@
+2005-10-06  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Label.cs:
+	  - Do not explicitly set the foreground and background colors, to
+	    allow inheriting from parents (fixes #76302)
+	  - Use Control's InternalBorderStyle property to deal with borders
+
 2005-10-06  Jackson Harper  <jackson@ximian.com>
 
 	* MdiChildContext.cs: Use the new xplatui function to draw a
