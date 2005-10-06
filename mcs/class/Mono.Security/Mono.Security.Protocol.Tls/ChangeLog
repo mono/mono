@@ -1,3 +1,14 @@
+2005-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientRecordProtocol.cs: Update HandshakeMessages after each 
+	message. Fix bug #76258.
+	* RecordProtocol.cs: Remove writing into the HandshakeMessages stream
+	at this stage. We may need the data before that. Fix bug #76258.
+	* ServerRecordProtocol.cs: Update HandshakeMessages after each 
+	message. Fix bug #76258.
+	* SslServerStream.cs: Changed check for the presence of client 
+	certificates during handshake.
+
 2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslStreamBase.cs, ServerRecordProtocol.cs, SslClientStream.cs,

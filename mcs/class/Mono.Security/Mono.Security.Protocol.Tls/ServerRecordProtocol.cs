@@ -89,6 +89,9 @@ namespace Mono.Security.Protocol.Tls
 			if (message != null)
 			{
 				message.Update();
+				this.Context.HandshakeMessages.WriteByte ((byte) handshakeType);
+				this.Context.HandshakeMessages.WriteInt24 (length);
+				this.Context.HandshakeMessages.Write (data, 0, data.Length);
 			}
 		}
 

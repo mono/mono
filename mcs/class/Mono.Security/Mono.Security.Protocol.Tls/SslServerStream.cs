@@ -230,11 +230,9 @@ namespace Mono.Security.Protocol.Tls
 			while (this.context.LastHandshakeMsg != HandshakeType.Finished)
 			{
 				this.protocol.ReceiveRecord(this.innerStream);
-				if (this.context.LastHandshakeMsg == HandshakeType.Certificate)
-					certRequested = false;
 			}
 
-			if (certRequested)
+			if (certRequested && (this.context.ClientSettings.ClientCertificate == null))
 			{
 				// we asked for a certificate but didn't receive one
 				// e.g. wget for SSL3

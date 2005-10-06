@@ -356,9 +356,6 @@ namespace Mono.Security.Protocol.Tls
 						{
 							this.ProcessHandshakeMessage(message);
 						}
-
-						// Update handshakes of current messages
-						this.context.HandshakeMessages.Write(buffer);
 						break;
 
 	// FIXME / MCS bug - http://bugzilla.ximian.com/show_bug.cgi?id=67711
