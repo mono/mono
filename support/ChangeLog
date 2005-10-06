@@ -1,3 +1,9 @@
+2005-10-06  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am (MPH_C_SOURCE): Add string.c.
+	* string.c: Added; exports strlen(3) wrapper.
+	* map-icalls.h: Prototype for strlen(3) wrapper.
+
 2005-09-29  Miguel de Icaza  <miguel@novell.com>
 
 	* support-heap.c: Add meat to the Heap routines. 

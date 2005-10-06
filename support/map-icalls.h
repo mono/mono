@@ -92,6 +92,7 @@ int Mono_Posix_Stdlib_setvbuf (void* stream, void* buf, int mode, guint64 size);
 void* Mono_Posix_Stdlib_stderr (void);
 void* Mono_Posix_Stdlib_stdin (void);
 void* Mono_Posix_Stdlib_stdout (void);
+guint64 Mono_Posix_Stdlib_strlen (void* p);
 int Mono_Posix_Syscall_L_ctermid (void);
 int Mono_Posix_Syscall_L_cuserid (void);
 int Mono_Posix_Syscall_WEXITSTATUS (int status);

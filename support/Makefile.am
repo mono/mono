@@ -20,6 +20,7 @@ MPH_C_SOURCE =					\
 	mph.h					\
 	signal.c				\
 	stdio.c					\
+	string.c					\
 	stdlib.c				\
 	map-icalls.h
 
