@@ -37,8 +37,7 @@ namespace System.CodeDom
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
 	[ComVisible(true)]
-	public class CodeTypeReference
-		: CodeObject
+	public class CodeTypeReference : CodeObject
 	{
 		private string baseType;
 		private CodeTypeReference arrayType;
@@ -60,11 +59,17 @@ namespace System.CodeDom
 		}
 #endif
 
+#if NET_2_0
+		[MonoTODO("We should parse basetype from right to left in 2.0 profile.")]
+#endif
 		public CodeTypeReference (string baseType)
 		{
 			Parse (baseType);
 		}
-		
+
+#if NET_2_0
+		[MonoTODO("We should parse basetype from right to left in 2.0 profile.")]
+#endif
 		public CodeTypeReference (Type baseType)
 		{
 #if NET_2_0
@@ -89,6 +94,9 @@ namespace System.CodeDom
 			this.arrayType = arrayType;
 		}
 
+#if NET_2_0
+		[MonoTODO("We should parse basetype from right to left in 2.0 profile.")]
+#endif
 		public CodeTypeReference( string baseType, int rank )
 			: this (new CodeTypeReference (baseType), rank)
 		{
@@ -170,6 +178,7 @@ namespace System.CodeDom
 				return;
 			}
 
+#if NET_2_0
 			int array_start = baseType.IndexOf ('[');
 			if (array_start == -1) {
 				this.baseType = baseType;
@@ -184,7 +193,6 @@ namespace System.CodeDom
 
 			string[] args = baseType.Substring (array_start + 1, array_end - array_start - 1).Split (',');
 
-#if NET_2_0
 			if ((array_end - array_start) != args.Length) {
 				this.baseType = baseType.Substring (0, array_start);
 				int escapeCount = 0;
@@ -238,6 +246,20 @@ namespace System.CodeDom
 				rank = args.Length;
 			}
 #else
+			int array_start = baseType.LastIndexOf ('[');
+			if (array_start == -1) {
+				this.baseType = baseType;
+				return;
+			}
+
+			int array_end = baseType.LastIndexOf (']');
+			if (array_end < array_start) {
+				this.baseType = baseType;
+				return;
+			}
+
+			string[] args = baseType.Substring (array_start + 1, array_end - array_start - 1).Split (',');
+
 			bool isArray = true;
 			foreach (string arg in args) {
 				if (arg.Length != 0) {

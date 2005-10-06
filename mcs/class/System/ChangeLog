@@ -1,3 +1,8 @@
+2005-10-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added CodeGeneratorTypeOutputTest.cs
+	from Test/Microsoft.CSharp.
+
 2005-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.dll.sources: added System.Net/AuthenticationSchemes.cs.

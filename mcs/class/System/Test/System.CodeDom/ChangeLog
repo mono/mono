@@ -1,3 +1,8 @@
+2005-10-07  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeTypeReferenceTest.cs: Added tests for multi-dimensional
+	arrays.
+
 2005-10-05  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeTypeReferenceTest.cs: Added tests for generic types and base

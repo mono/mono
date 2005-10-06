@@ -916,9 +916,9 @@ namespace Mono.CSharp
 			Output.Write (')');
 		}
 
-		protected override void OutputType( CodeTypeReference type )
+		protected override void OutputType (CodeTypeReference type)
 		{
-			Output.Write( GetTypeOutput( type ) );
+			Output.Write (GetTypeOutput (type));
 		}
 
 		private void OutputVTableModifier (MemberAttributes attributes)
@@ -1055,6 +1055,25 @@ namespace Mono.CSharp
 			}
 		}
 
+		private void OutputTypeArguments (CodeTypeReferenceCollection typeArguments, StringBuilder sb, int count)
+		{
+			if (count == 0) {
+				return;
+			}
+
+			sb.Append ('<');
+
+			// write first type argument
+			sb.Append (GetTypeOutput (typeArguments[0]));
+			// subsequent type argument are prefixed by ', ' separator
+			for (int i = 1; i < count; i++) {
+				sb.Append (", ");
+				sb.Append (GetTypeOutput (typeArguments[i]));
+			}
+
+			sb.Append ('>');
+		}
+
 		[MonoTODO ("Implement missing special characters")]
 		protected override string QuoteSnippetString( string value )
 		{
@@ -1109,89 +1128,137 @@ namespace Mono.CSharp
 				return value;
 		}
 
-		protected override string GetTypeOutput( CodeTypeReference type )
+		protected override string GetTypeOutput (CodeTypeReference type)
 		{
-			string output;
-			CodeTypeReference arrayType;
+			string typeOutput = null;
 
-			arrayType = type.ArrayElementType;
-			if ( arrayType != null )
-				output = GetTypeOutput( arrayType );
-			else { 
+			if (type.ArrayElementType != null) {
+				typeOutput = GetTypeOutput (type.ArrayElementType);
+			} else {
+				typeOutput = DetermineTypeOutput (type);
+			}
 
-				switch ( type.BaseType.ToLower (System.Globalization.CultureInfo.InvariantCulture)) {
+			int rank = type.ArrayRank;
+			if (rank > 0) {
+				typeOutput += '[';
+				for (--rank; rank > 0; --rank) {
+					typeOutput += ',';
+				}
+				typeOutput += ']';
+			}
+			return typeOutput;
+		}
+
+		private string DetermineTypeOutput (CodeTypeReference type)
+		{
+			string typeOutput = null;
+			string baseType = type.BaseType;
+
+			switch (baseType.ToLower (System.Globalization.CultureInfo.InvariantCulture)) {
 				case "system.int32":
-					output = "int";
+					typeOutput = "int";
 					break;
 				case "system.int64":
-					output = "long";
+					typeOutput = "long";
 					break;
 				case "system.int16":
-					output = "short";
+					typeOutput = "short";
 					break;
 				case "system.boolean":
-					output = "bool";
+					typeOutput = "bool";
 					break;
 				case "system.char":
-					output = "char";
+					typeOutput = "char";
 					break;
 				case "system.string":
-					output = "string";
+					typeOutput = "string";
 					break;
 				case "system.object":
-					output = "object";
+					typeOutput = "object";
 					break;
 				case "system.void":
-					output = "void";
+					typeOutput = "void";
 					break;
 #if NET_2_0
 				case "system.byte":
-					output = "byte";
+					typeOutput = "byte";
 					break;
 				case "system.sbyte":
-					output = "sbyte";
+					typeOutput = "sbyte";
 					break;
 				case "system.decimal":
-					output = "decimal";
+					typeOutput = "decimal";
 					break;
 				case "system.double":
-					output = "double";
+					typeOutput = "double";
 					break;
 				case "system.single":
-					output = "float";
+					typeOutput = "float";
 					break;
 				case "system.uint16":
-					output = "ushort";
+					typeOutput = "ushort";
 					break;
 				case "system.uint32":
-					output = "uint";
+					typeOutput = "uint";
 					break;
 				case "system.uint64":
-					output = "ulong";
+					typeOutput = "ulong";
 					break;
 #endif
 				default:
-					output = GetSafeName (type.BaseType);
-					break;
-				}
-			}
-			
 #if NET_2_0
-			if (type.Options == CodeTypeReferenceOptions.GlobalReference)
-				output = String.Concat ("global::", output);
+					StringBuilder sb = new StringBuilder (baseType.Length);
+					if (type.Options == CodeTypeReferenceOptions.GlobalReference) {
+						sb.Append ("global::");
+					}
 
-			if (type.TypeArguments.Count > 0)
-				output += GetTypeArguments (type.TypeArguments);
+					int lastProcessedChar = 0;
+					for (int i = 0; i < baseType.Length; i++) {
+						char currentChar = baseType[i];
+						if (currentChar != '+' && currentChar != '.') {
+							if (currentChar == '`') {
+								sb.Append (CreateEscapedIdentifier (baseType.Substring (
+									lastProcessedChar, i - lastProcessedChar)));
+								// skip ` character
+								i++;
+								// determine number of type arguments to output
+								int typeArgCount = baseType[i] - '0';
+								// output type arguments
+								OutputTypeArguments (type.TypeArguments, sb, typeArgCount);
+								// skip type argument indicator
+								i++;
+								// if next character is . or +, then append .
+								if ((i < baseType.Length) && ((baseType[i] == '+') || (baseType[i] == '.'))) {
+									sb.Append ('.');
+									// skip character that we just processed
+									i++;
+								}
+								// save postion of last processed character
+								lastProcessedChar = i;
+							}
+						} else {
+							sb.Append (CreateEscapedIdentifier (baseType.Substring (
+								lastProcessedChar, i - lastProcessedChar)));
+							sb.Append ('.');
+							// skip separator
+							i++;
+							// save postion of last processed character
+							lastProcessedChar = i;
+						}
+					}
+
+					// add characters that have not yet been processed 
+					if (lastProcessedChar < baseType.Length) {
+						sb.Append (CreateEscapedIdentifier (baseType.Substring (lastProcessedChar)));
+					}
+
+					typeOutput = sb.ToString ();
+#else
+					typeOutput = GetSafeName (baseType);
 #endif
-			int rank = type.ArrayRank;
-			if ( rank > 0 ) {
-				output += "[";
-				for ( --rank; rank > 0; --rank  )
-					output += ",";
-				output += "]";
+					break;
 			}
-
-			return output.Replace ('+', '.');
+			return typeOutput;
 		}
 
 		protected override bool IsValidIdentifier ( string identifier )

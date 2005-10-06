@@ -1,3 +1,8 @@
+2005-10-07 Gert Driesen <drieseng@users.sourceforge.net>
+	
+	* CodeTypeReference.cs: Fixed Parse implementation on 1.0 profile.
+	Added MonoTODO's.
+
 2005-10-05 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeTypeReference.cs: Added support for generic type parameters.

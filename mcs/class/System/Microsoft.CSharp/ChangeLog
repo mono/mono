@@ -1,3 +1,8 @@
+2005-10-07 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Fixed supported for type arguments in
+	GetTypeOutput on 2.0 profile. Partial fix for bug #76286.
+
 2005-08-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CSharpCodeCompiler.cs: patch from Maksim Vorobiev that prevents
