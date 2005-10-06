@@ -2867,13 +2867,19 @@ namespace Mono.CSharp {
 				Label true_label = ig.DefineLabel ();
 				Label end_label = ig.DefineLabel ();
 
+				bool false_label_used = false;
+				bool true_label_used = false;
+
 				if (left_unwrap != null) {
 					left_unwrap.EmitCheck (ec);
 					if (right is NullLiteral) {
-						if (Oper == Binary.Operator.Equality)
+						if (Oper == Binary.Operator.Equality) {
+							true_label_used = true;
 							ig.Emit (OpCodes.Brfalse, true_label);
-						else
+						} else {
+							false_label_used = true;
 							ig.Emit (OpCodes.Brfalse, false_label);
+						}
 					} else if (right_unwrap != null) {
 						ig.Emit (OpCodes.Dup);
 						ig.Emit (OpCodes.Brtrue, left_not_null_label);
@@ -2888,25 +2894,34 @@ namespace Mono.CSharp {
 						ig.MarkLabel (left_not_null_label);
 						ig.Emit (OpCodes.Pop);
 					} else {
-						if (Oper == Binary.Operator.Equality)
+						if (Oper == Binary.Operator.Equality) {
+							false_label_used = true;
 							ig.Emit (OpCodes.Brfalse, false_label);
-						else
+						} else {
+							true_label_used = true;
 							ig.Emit (OpCodes.Brfalse, true_label);
+						}
 					}
 				}
 
 				if (right_unwrap != null) {
 					right_unwrap.EmitCheck (ec);
 					if (left is NullLiteral) {
-						if (Oper == Binary.Operator.Equality)
+						if (Oper == Binary.Operator.Equality) {
+							true_label_used = true;
 							ig.Emit (OpCodes.Brfalse, true_label);
-						else
+						} else {
+							false_label_used = true;
 							ig.Emit (OpCodes.Brfalse, false_label);
+						}
 					} else {
-						if (Oper == Binary.Operator.Equality)
+						if (Oper == Binary.Operator.Equality) {
+							false_label_used = true;
 							ig.Emit (OpCodes.Brfalse, false_label);
-						else
+						} else {
+							true_label_used = true;
 							ig.Emit (OpCodes.Brfalse, true_label);
+						}
 					}
 				}
 
@@ -2914,21 +2929,28 @@ namespace Mono.CSharp {
 				bool right_is_null = right is NullLiteral;
 				if (left_is_null || right_is_null) {
 					if (((Oper == Binary.Operator.Equality) && (left_is_null == right_is_null)) ||
-					    ((Oper == Binary.Operator.Inequality) && (left_is_null != right_is_null)))
+					    ((Oper == Binary.Operator.Inequality) && (left_is_null != right_is_null))) {
+						true_label_used = true;
 						ig.Emit (OpCodes.Br, true_label);
-					else
+					} else {
+						false_label_used = true;
 						ig.Emit (OpCodes.Br, false_label);
+					}
 				} else {
 					underlying.Emit (ec);
 					ig.Emit (OpCodes.Br, end_label);
 				}
 
 				ig.MarkLabel (false_label);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Br, end_label);
+				if (false_label_used) {
+					ig.Emit (OpCodes.Ldc_I4_0);
+					if (true_label_used)
+						ig.Emit (OpCodes.Br, end_label);
+				}
 
 				ig.MarkLabel (true_label);
-				ig.Emit (OpCodes.Ldc_I4_1);
+				if (true_label_used)
+					ig.Emit (OpCodes.Ldc_I4_1);
 
 				ig.MarkLabel (end_label);
 			}

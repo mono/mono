@@ -1,3 +1,10 @@
+2005-10-06  Raja R Harinath  <rharinath@novell.com>
+
+	Fix gtest-131.cs and gtest-211.cs.
+	* generic.cs (Nullable.LiftedBinaryOperator.EmitEquality):
+	Only emit code for a label if it is used.  Unreachable code can
+	violate ECMA evaluation stack invariants.
+
 2005-09-27  Marek Safar  <marek.safar@seznam.cz>
 
 	* anonymous.cs: Implemented ExprClassName.

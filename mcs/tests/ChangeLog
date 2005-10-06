@@ -1,3 +1,8 @@
+2005-10-06  Raja R Harinath  <rharinath@novell.com>
+
+	* gtest-211.cs: New test to check that we don't emit unreachable
+	code that violates execution stack invariants.
+
 2005-10-03  Marek Safar <marek.safar@seznam.cz>
 
 	* test-10.cs: One more test.
