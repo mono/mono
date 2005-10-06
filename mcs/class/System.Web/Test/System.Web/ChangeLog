@@ -1,0 +1,104 @@
+2005-09-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpContextCas.cs: New. CAS unit tests for SkipAuthorization and
+	User property setters.
+
+2005-08-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequestTest.cs: test for negative content length.
+
+2005-08-25  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HttpClientCertificateTest.cs: Most of the test throws a 
+	ArgumentNullException on MS 1.x implementation - even for getting 
+	properties. Mono only support the 2.0 (right) behaviour so we're
+	skipping the tests on 1.1.
+
+2005-08-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpContext.cs: Added test case for using the .ctor with a null
+	HttpWorkerRequest.
+
+2005-08-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequestTest.cs: test for MapImageCoordinates.
+
+2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequestTest.cs: test for UserLanguages.
+
+2005-08-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequestTest.cs: new test for AcceptTypes property.
+
+2005-08-10  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HttpClientCertificateTest.cs: Unit tests for HttpClientCertificate.
+
+2005-08-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseTest.cs: added tests for Status, StatusDescription and
+	StatusCode.
+
+2005-08-01 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequestTest.cs: test case to ensure that the first variable in 
+	the query string does not get a wrong name.
+
+2005-07-21  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookieCollectionTest.cs: fix warnings.
+
+2005-07-18  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCacheVaryByParamsTest.cs: rework these tests a bit.
+
+	* HttpCacheVaryByHeadersTest.cs: add case sensitivity check.
+
+2005-07-15  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookieCollectionTest.cs: tests for
+	System.Web.HttpCookieCollection
+
+2005-07-15  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookieTest.cs: add a subkeys-only test.
+
+2005-07-15  Chris Toshok  <toshok@ximian.com>
+
+	* HttpCookieTest.cs: new tests for S.W.HttpCookie.
+
+2005-07-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpUtilityTest.cs: Use Assert.Fail (and not Assertion.Fail) to 
+	remove warning from compiler (obsolete).
+
+2005-06-26 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtilityTest.cs: added one more test.
+
+2005-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtilityTest.cs: new test for extra '0'.
+
+2005-06-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpUtilityTest.cs: new tests.
+
+2005-05-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpUtilityTest.cs : test for url decode.
+
+2005-02-23  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* HttpRequestTest.cs: Added another XSS case that was found on ASP.NET
+	(fixed now) but didn't affect Mono.
+
+2005-02-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpRequestTest.cs: New. Test that ValidateInput throw exceptions
+	when expected.
+	* HttpServerUtilityTest.cs: New. Test for possible XSS when using 
+	HtmlEncode.
+	* HttpUtilityTest.cs: New. Test for possible XSS when using 
+	HtmlEncode.
