@@ -1,3 +1,8 @@
+2005-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ThreadTest.cs: Added regression test for #76332 when an IPrincipal
+	instance should be copied in any new thread created.
+
 2005-06-30  Ben Maurer  <bmaurer@ximian.com>
 
 	* MutexTest.cs: Redisable. They didn't work so well ;-(.

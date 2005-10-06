@@ -71,6 +71,12 @@ namespace MonoTests.System.Threading {
 			AssertNotNull ("Thread.CurrentPrincipal-3", Thread.CurrentPrincipal);
 			// in this case we can't return to null
 		}
+
+		public static void CopyOnNewThread ()
+		{
+			AssertNotNull ("Thread.CurrentPrincipal", Thread.CurrentPrincipal);
+			AssertEquals ("Identity", "good", Thread.CurrentPrincipal.Identity.Name);
+		}
 	}
 
 	[TestFixture]
@@ -514,6 +520,21 @@ namespace MonoTests.System.Threading {
 			}
 		}
 		
+		[Test]
+		public void IPrincipal_CopyOnNewThread () 
+		{
+			Thread.CurrentPrincipal = new GenericPrincipal (new GenericIdentity ("bad"), null);
+			Thread t = new Thread (new ThreadStart (ThreadedPrincipalTest.CopyOnNewThread));
+			try {
+				Thread.CurrentPrincipal = new GenericPrincipal (new GenericIdentity ("good"), null);
+				t.Start ();
+				t.Join ();
+			}
+			catch {
+				t.Abort ();
+			}
+		}
+
 		int counter = 0;
 		
 		[Category("NotDotNet")]
