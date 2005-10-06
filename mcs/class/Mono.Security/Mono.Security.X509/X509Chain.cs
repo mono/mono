@@ -124,10 +124,10 @@ namespace Mono.Security.X509 {
 		{
 			_status = X509ChainStatusFlags.NoError;
 			if (_chain == null) {
-				// chain not supplied - we must built it ourselve
+				// chain not supplied - we must build it ourselve
 				_chain = new X509CertificateCollection ();
 				X509Certificate x = leaf;
-				X509Certificate tmp = null;
+				X509Certificate tmp = x;
 				while ((x != null) && (!x.IsSelfSigned)) {
 					tmp = FindCertificateParent (x);
 					if (x != null) {
