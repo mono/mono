@@ -150,15 +150,8 @@ namespace System.Windows.Forms
 		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
     		public virtual BorderStyle BorderStyle {
-    			get {
-    				return InternalBorderStyle;
-    			}
-    			set {
-				if (!Enum.IsDefined (typeof (BorderStyle), value))
-					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for BorderStyle", value));
-
-				InternalBorderStyle = value;
-    			}
+    			get { return InternalBorderStyle; }
+    			set { InternalBorderStyle = value; }
     		}
 
     		protected override CreateParams CreateParams {
