@@ -210,14 +210,20 @@ namespace System.Web.UI.WebControls {
 			// IList goes first, as it implements ICollection
 			IList list = source as IList;
 			int first = 0;
+			int count;
+			int limit;
 			if (list != null) {
 				first = FirstIndexInPage;
-				return GetListEnum (list, first, first + page_size);
+				count = ((ICollection) source).Count;
+				limit = ((first + page_size) > count) ? count : page_size;
+				return GetListEnum (list, first, first + limit);
 			}
 
 			ICollection col = source as ICollection;
 			if (col != null) {
 				first = FirstIndexInPage;
+				count = col.Count;
+				limit = ((first + page_size) > count) ? count : page_size;
 				return GetEnumeratorEnum (col.GetEnumerator (), first, first + page_size);
 			}
 
