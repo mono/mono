@@ -47,11 +47,11 @@ SUBDIRS = \
 	System.Configuration.Install 	\
 	System.Management		\
 	$(MONO_SYMBOLWRITER)		\
+	$(MONO_POSIX)			\
 	Mono.Data.SqliteClient		\
 	Mono.Data.SybaseClient		\
 	Mono.Data.TdsClient		\
 	System.Data.OracleClient	\
-	$(MONO_POSIX)			\
 	Accessibility			\
 	Microsoft.VisualC		\
 	Cscompmgd			\

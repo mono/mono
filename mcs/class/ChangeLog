@@ -1,3 +1,7 @@
+2005-10-06  Chris Lahey  <clahey@ximian.com>
+
+	* Makefile (SUBDIRS): Compile Mono Posix before Mono SqliteClient.
+
 2005-06-14  Lluis Sanchez Gual <lluis@novell.com>
 
 	* Makefile: Added System.Configuration to the build.

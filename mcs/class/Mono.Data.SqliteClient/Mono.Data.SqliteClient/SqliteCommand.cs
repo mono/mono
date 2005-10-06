@@ -35,10 +35,12 @@
 using System;
 using System.Collections;
 using System.Text;
+using Mono.Unix;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Data;
 using System.Diagnostics; 
+using Group = System.Text.RegularExpressions.Group;
 
 namespace Mono.Data.SqliteClient 
 {
@@ -230,7 +232,7 @@ namespace Mono.Data.SqliteClient
 			}
 			
 			SqliteError err = SqliteError.OK;
-			IntPtr psql = Marshal.StringToCoTaskMemAnsi(sqlcmds);
+			IntPtr psql = UnixMarshal.StringToAlloc(sqlcmds);
 			IntPtr pzTail = psql;
 			try {
 				do { // sql may contain multiple sql commands, loop until they're all processed
@@ -343,7 +345,7 @@ namespace Mono.Data.SqliteClient
 					}
 				} while ((int)pzTail - (int)psql < sql.Length);
 			} finally {
-				Marshal.FreeCoTaskMem(psql);
+				UnixMarshal.Free(psql);
 			}
 			prepared=true;
 		}

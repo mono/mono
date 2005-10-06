@@ -1,3 +1,7 @@
+2005-10-06  Chris Lahey  <clahey@localhost.localdomain>
+
+	* Makefile (LIB_MCS_FLAGS): Requires Mono.Posix.dll.
+
 2005-05-20  Sureshkumar T  <tsureshkumar@novell.com>
 	    Raja R Harinath <rharinath@novell.com>
 

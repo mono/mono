@@ -1,3 +1,8 @@
+2005-10-06  Chris Lahey  <clahey@localhost.localdomain>
+
+	* SqliteCommand.cs (Prepare): Use UnixMarshal here to get proper
+	utf8 behavior.
+
 2005-07-28  Joshua Tauberer <tauberer@for.net>
 
 	* Sqlite.cs, SqliteCommand.cs: Report string error messages
