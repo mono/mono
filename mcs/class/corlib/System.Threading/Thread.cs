@@ -644,6 +644,8 @@ namespace System.Threading {
 			if (SecurityManager.SecurityEnabled)
 				_ec = ExecutionContext.Capture ();
 #endif
+			if (CurrentThread._principal != null)
+				_principal = CurrentThread._principal;
 
 			// Thread_internal creates and starts the new thread, 
 			if (Thread_internal(threadstart) == (IntPtr) 0)

@@ -1,3 +1,8 @@
+2005-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* Thread.cs: Copy an existing IPrincipal to new threads. Fix bug 
+	#76332.
+
 2005-10-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Thread.cs: Added new attributes, [ReliabilityContract] for 
