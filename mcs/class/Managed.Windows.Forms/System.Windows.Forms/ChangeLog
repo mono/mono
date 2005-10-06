@@ -1,5 +1,9 @@
 2005-10-06  Peter Dennis Bartok  <pbartok@novell.com> 
 
+	* TextControl.cs: Use proper color for highlighted text; fixes #76350
+
+2005-10-06  Peter Dennis Bartok  <pbartok@novell.com> 
+
 	* Form.cs: 
 	  - Added loading and setting of our new default icon
 	  - Only set icon if window is already created

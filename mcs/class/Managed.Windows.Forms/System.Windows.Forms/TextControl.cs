@@ -1297,7 +1297,7 @@ namespace System.Windows.Forms {
 			#endif
 
 			hilight = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlight);
-			hilight_text = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlight);
+			hilight_text = ThemeEngine.Current.ResPool.GetSolidBrush(ThemeEngine.Current.ColorHighlightText);
 
 			while (line_no <= end) {
 				line = GetLine(line_no);
