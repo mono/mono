@@ -1,3 +1,9 @@
+2005-10-06  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Thread.cs: Added new attributes, [ReliabilityContract] for 
+	destructor and [Obsolete] for [Get|Set]CompressedStack, that were 
+	added in 2.0 RC.
+
 2005-09-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* Thread.cs (MemoryBarrier): Make this an icall.

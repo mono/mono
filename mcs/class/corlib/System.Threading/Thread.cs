@@ -666,6 +666,9 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Thread_free_internal(IntPtr handle);
 
+#if NET_2_0
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+#endif
 		~Thread() {
 			// Free up the handle
 			if (system_thread_handle != (IntPtr) 0)
@@ -911,6 +914,9 @@ namespace System.Threading {
 		// But it's there!
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
+#if NET_2_0
+		[Obsolete ("see CompressedStack class")]
+#endif
 #if NET_1_1
 		public
 #else
@@ -930,6 +936,9 @@ namespace System.Threading {
 		// But it's there!
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode = true)]
 		[StrongNameIdentityPermission (SecurityAction.LinkDemand, PublicKey="00000000000000000400000000000000")]
+#if NET_2_0
+		[Obsolete ("see CompressedStack class")]
+#endif
 #if NET_1_1
 		public
 #else
