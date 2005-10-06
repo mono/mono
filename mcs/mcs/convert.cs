@@ -1715,9 +1715,6 @@ namespace Mono.CSharp {
 				return new UnboxCast (expr, target_type);
 
 			if (TypeManager.IsEnumType (expr_type)) {
-				if (TypeManager.IsEnumType (target_type))
-					return new UnboxCast (expr, target_type);
-
 				if (expr is EnumConstant)
 					return ExplicitConversionCore (ec, ((EnumConstant) expr).Child, target_type, loc);
 
