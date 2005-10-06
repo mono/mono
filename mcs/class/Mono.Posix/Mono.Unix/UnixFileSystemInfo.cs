@@ -103,11 +103,13 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release.")]
 		public FilePermissions Permissions {
 			get {AssertValid (); return stat.st_mode & ~FilePermissions.S_IFMT;}
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release.")]
 		public FilePermissions FileType {
 			get {AssertValid (); return stat.st_mode & FilePermissions.S_IFMT;}
 		}
@@ -219,9 +221,17 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use CanAccess (Mono.Unix.Native.AccessModes)")]
 		public bool CanAccess (AccessMode mode)
 		{
 			int r = Syscall.access (FullPath, mode);
+			return r == 0;
+		}
+
+		[CLSCompliant (false)]
+		public bool CanAccess (Native.AccessModes mode)
+		{
+			int r = Native.Syscall.access (FullPath, mode);
 			return r == 0;
 		}
 
@@ -242,10 +252,21 @@ namespace Mono.Unix {
 		public abstract void Delete ();
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathConf)")]
 		public long GetConfigurationValue (PathConf name)
 		{
 			Syscall.SetLastError ((Error) 0);
 			long r = Syscall.pathconf (FullPath, name);
+			if (r == -1 && Syscall.GetLastError() != (Error) 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return r;
+		}
+
+		[CLSCompliant (false)]
+		public long GetConfigurationValue (Native.PathConf name)
+		{
+			Syscall.SetLastError ((Error) 0);
+			long r = Native.Syscall.pathconf (FullPath, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
@@ -264,9 +285,15 @@ namespace Mono.Unix {
 			valid = r == 0;
 		}
 
+		[Obsolete ("Use GetFileStatus (string, Mono.Unix.Native.Stat)")]
 		protected virtual int GetFileStatus (string path, out Stat stat)
 		{
 			return Syscall.stat (path, out stat);
+		}
+
+		protected virtual int GetFileStatus (string path, out Native.Stat stat)
+		{
+			return Native.Syscall.stat (path, out stat);
 		}
 
 		public void SetLength (long length)
@@ -279,9 +306,17 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use SetPermissions (Mono.Unix.Native.FilePermissions)")]
 		public void SetPermissions (FilePermissions perms)
 		{
 			int r = Syscall.chmod (FullPath, perms);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		[CLSCompliant (false)]
+		public void SetPermissions (Native.FilePermissions perms)
+		{
+			int r = Native.Syscall.chmod (FullPath, perms);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 

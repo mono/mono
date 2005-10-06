@@ -104,6 +104,7 @@ namespace Mono.Unix {
 			return new UnixFileInfo (path).LastAccessTime;
 		}
 
+		[Obsolete ("The return type of this method will change in the next release")]
 		public static Stat GetFileStatus (string path)
 		{
 			Stat stat;

@@ -40,9 +40,18 @@ namespace Mono.Unix {
 		private UnixDirectory () {}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use CreateDirectory (string, Mono.Unix.Native.FilePermissions)")]
 		public static UnixDirectoryInfo CreateDirectory (string path, FilePermissions mode)
 		{
 			int r = Syscall.mkdir (path, mode);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			return new UnixDirectoryInfo (path);
+		}
+
+		[CLSCompliant (false)]
+		public static UnixDirectoryInfo CreateDirectory (string path, Native.FilePermissions mode)
+		{
+			int r = Native.Syscall.mkdir (path, mode);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 			return new UnixDirectoryInfo (path);
 		}
@@ -71,16 +80,19 @@ namespace Mono.Unix {
 			return false;
 		}
 
+		[Obsolete ("The return type of this method will change in the next release")]
 		public static Dirent[] GetEntries (string path)
 		{
 			return new UnixDirectoryInfo(path).GetEntries ();
 		}
 
+		[Obsolete ("The return type of this method will change in the next release")]
 		public static Dirent[] GetEntries (string path, Regex regex)
 		{
 			return new UnixDirectoryInfo(path).GetEntries (regex);
 		}
 
+		[Obsolete ("The return type of this method will change in the next release")]
 		public static Dirent[] GetEntries (string path, string regex)
 		{
 			return new UnixDirectoryInfo(path).GetEntries (regex);
@@ -101,6 +113,7 @@ namespace Mono.Unix {
 			return new UnixDirectoryInfo(path).GetFileSystemEntries (regex);
 		}
 
+		[Obsolete ("The return type of this method will change in the next release")]
 		public static Stat GetDirectoryStatus (string path)
 		{
 			return UnixFile.GetFileStatus (path);

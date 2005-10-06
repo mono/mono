@@ -368,11 +368,23 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathConf")]
 		public long GetConfigurationValue (PathConf name)
 		{
 			AssertNotDisposed ();
 			Syscall.SetLastError ((Error) 0);
 			long r = Syscall.fpathconf (fileDescriptor, name);
+			if (r == -1 && Syscall.GetLastError() != (Error) 0)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return r;
+		}
+
+		[CLSCompliant (false)]
+		public long GetConfigurationValue (Native.PathConf name)
+		{
+			AssertNotDisposed ();
+			Syscall.SetLastError ((Error) 0);
+			long r = Native.Syscall.fpathconf (fileDescriptor, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return r;

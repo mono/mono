@@ -100,6 +100,7 @@ namespace Mono.Unix {
 			return group.ToString();
 		}
 
+		[Obsolete ("The return type of this method will change in the next release")]
 		public Group ToGroup ()
 		{
 			return group;

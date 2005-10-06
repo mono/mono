@@ -119,6 +119,7 @@ namespace Mono.Unix {
 			base.Refresh ();
 		}
 
+		[Obsolete ("The return type of this method will change in the next release")]
 		public Dirent[] GetEntries ()
 		{
 			IntPtr dirp = Syscall.opendir (FullPath);
@@ -159,6 +160,7 @@ namespace Mono.Unix {
 			return (Dirent[]) entries.ToArray (typeof(Dirent));
 		}
 
+		[Obsolete ("The return type of this method will change in the next release")]
 		public Dirent[] GetEntries (Regex regex)
 		{
 			IntPtr dirp = Syscall.opendir (FullPath);
@@ -195,6 +197,7 @@ namespace Mono.Unix {
 			return (Dirent[]) entries.ToArray (typeof(Dirent));
 		}
 
+		[Obsolete ("The return type of this method will change in the next release")]
 		public Dirent[] GetEntries (string regex)
 		{
 			Regex re = new Regex (regex);

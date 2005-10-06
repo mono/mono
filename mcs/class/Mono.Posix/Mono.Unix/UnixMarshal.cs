@@ -94,9 +94,15 @@ namespace Mono.Unix {
 	{
 		private UnixMarshal () {}
 
+		[Obsolete ("Use GetErrorDescription (Mono.Unix.Native.Errno)")]
 		public static string GetErrorDescription (Error errno)
 		{
 			return ErrorMarshal.Translate (errno);
+		}
+
+		public static string GetErrorDescription (Native.Errno errno)
+		{
+			return ErrorMarshal.Translate ((Error) (int) errno);
 		}
 
 		public static IntPtr Alloc (long size)
@@ -183,6 +189,32 @@ namespace Mono.Unix {
 			return members;
 		}
 
+		public static IntPtr StringToAlloc (string s)
+		{
+			return StringToAlloc (s, Encoding.UTF8);
+		}
+
+		public static IntPtr StringToAlloc (string s, Encoding e)
+		{
+			byte[] marshal = new byte [e.GetByteCount (s) + 1];
+			if (e.GetBytes (s, 0, s.Length, marshal, 0) != (marshal.Length-1))
+				throw new NotSupportedException ("e.GetBytes() doesn't equal e.GetByteCount()!");
+			marshal [marshal.Length-1] = 0;
+			IntPtr mem = Alloc (marshal.Length);
+			if (mem == IntPtr.Zero)
+				throw new OutOfMemoryException ();
+			bool copied = false;
+			try {
+				Marshal.Copy (marshal, 0, mem, marshal.Length);
+				copied = true;
+			}
+			finally {
+				if (!copied)
+					Free (mem);
+			}
+			return mem;
+		}
+
 		public static bool ShouldRetrySyscall (int r)
 		{
 			if (r == -1 && Stdlib.GetLastError () == Error.EINTR)
@@ -190,10 +222,19 @@ namespace Mono.Unix {
 			return false;
 		}
 
+		[Obsolete ("Use ShouldRetrySyscall (int, out Mono.Unix.Native.Errno")]
 		public static bool ShouldRetrySyscall (int r, out Error error)
 		{
 			error = (Error) 0;
 			if (r == -1 && (error = Stdlib.GetLastError ()) == Error.EINTR)
+				return true;
+			return false;
+		}
+
+		public static bool ShouldRetrySyscall (int r, out Native.Errno error)
+		{
+			error = (Native.Errno) 0;
+			if (r == -1 && (error = Native.Stdlib.GetLastError ()) == Native.Errno.EINTR)
 				return true;
 			return false;
 		}
@@ -235,6 +276,7 @@ namespace Mono.Unix {
 			return false;
 		}
 
+		[Obsolete ("Use CreateExceptionForError (Mono.Unix.Native.Errno)")]
 		internal static Exception CreateExceptionForError (Error errno)
 		{
 			string message = GetErrorDescription (errno);
@@ -257,12 +299,40 @@ namespace Mono.Unix {
 			return p;
 		}
 
+		internal static Exception CreateExceptionForError (Native.Errno errno)
+		{
+			string message = GetErrorDescription (errno);
+			UnixIOException p = new UnixIOException (errno);
+			switch (errno) {
+				case Native.Errno.EFAULT:        return new NullReferenceException (message, p);
+				case Native.Errno.EINVAL:        return new ArgumentException (message, p);
+				case Native.Errno.EIO:
+				  case Native.Errno.ENOSPC:
+				  case Native.Errno.EROFS:
+				  case Native.Errno.ESPIPE:
+					return new IOException (message, p);
+				case Native.Errno.ENAMETOOLONG:  return new PathTooLongException (message, p);
+				case Native.Errno.ENOENT:        return new FileNotFoundException (message, p);
+				case Native.Errno.ENOEXEC:       return new InvalidProgramException (message, p);
+				case Native.Errno.EOVERFLOW:     return new OverflowException (message, p);
+				case Native.Errno.ERANGE:        return new ArgumentOutOfRangeException (message);
+				default: /* ignore */     break;
+			}
+			return p;
+		}
+
 		internal static Exception CreateExceptionForLastError ()
 		{
 			return CreateExceptionForError (Stdlib.GetLastError());
 		}
 
+		[Obsolete ("Use ThrowExceptionForError (Mono.Unix.Native.Errno)")]
 		public static void ThrowExceptionForError (Error errno)
+		{
+			throw CreateExceptionForError (errno);
+		}
+
+		public static void ThrowExceptionForError (Native.Errno errno)
 		{
 			throw CreateExceptionForError (errno);
 		}
@@ -272,7 +342,14 @@ namespace Mono.Unix {
 			throw CreateExceptionForLastError ();
 		}
 
+		[Obsolete ("Use ThrowExceptionForErrorIf (int, Mono.Unix.Native.Errno)")]
 		public static void ThrowExceptionForErrorIf (int retval, Error errno)
+		{
+			if (retval == -1)
+				ThrowExceptionForError (errno);
+		}
+
+		public static void ThrowExceptionForErrorIf (int retval, Native.Errno errno)
 		{
 			if (retval == -1)
 				ThrowExceptionForError (errno);

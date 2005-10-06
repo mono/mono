@@ -1,3 +1,11 @@
+2005-10-06  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixDirectory.cs, UnixDirectoryInfo.cs UnixFile.cs, UnixFileSystemInfo.cs, 
+	  UnixGroupInfo.cs, UnixIOException.cs, UnixStream.cs, UnixUserInfo.cs:
+	  API Review: Obsolete appropriate members and add appropriate overloads for
+	  pending move to Mono.Unix.Native types.
+	* UnixMarshal.cs: API Review; add StringToAlloc().
+
 2005-09-26  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixFileSystemInfo.cs: Exists shouldn't use access(2), as (1) Exists isn't

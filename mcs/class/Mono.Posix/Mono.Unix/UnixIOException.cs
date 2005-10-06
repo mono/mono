@@ -52,15 +52,29 @@ namespace Mono.Unix {
 			this.error = error;
 		}
 
+		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno) constructor")]
 		public UnixIOException (Error error)
 		{
 			this.error = UnixConvert.FromError (error);
 		}
 
+		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno, System.Exception) constructor")]
 		public UnixIOException (Error error, Exception inner)
 			: base ("Unix-generated exception", inner)
 		{
 			this.error = UnixConvert.FromError (error);
+		}
+
+		public UnixIOException (Native.Errno error)
+		{
+			this.error = Native.NativeConvert.FromErrno (error);
+		}
+
+		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno, System.Exception) constructor")]
+		public UnixIOException (Native.Errno error, Exception inner)
+			: base ("Unix-generated exception", inner)
+		{
+			this.error = Native.NativeConvert.FromErrno (error);
 		}
 
 		protected UnixIOException (SerializationInfo info, StreamingContext context)
@@ -72,6 +86,7 @@ namespace Mono.Unix {
 			get {return error;}
 		}
 		
+		[Obsolete ("The type of this property will change in the next release")]
 		public Error ErrorCode {
 			get {return UnixConvert.ToError (error);}
 		}
