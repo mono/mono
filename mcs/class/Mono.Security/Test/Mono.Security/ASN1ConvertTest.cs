@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot (sebastien@ximian.com)
 //
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -126,10 +126,16 @@ namespace MonoTests.Mono.Security {
 		public void ConvertFromUnsignedBigInteger () 
 		{
 			byte[] big = new byte [16];
+
 			big [0] = 1;
 			ASN1 bigint = ASN1Convert.FromUnsignedBigInteger (big);
-			// one byte added as 0x00 to be sure for sign
-			AssertEquals ("BigInteger", 17, bigint.Value.Length);
+			// no byte is required for the sign (100% positive it's positive ;-)
+			AssertEquals ("BigInteger-NotExtended", 16, bigint.Value.Length);
+
+			big [0] = 0x80;
+			bigint = ASN1Convert.FromUnsignedBigInteger (big);
+			// one byte added as 0x00 to be sure it's not interpreted as a negative
+			AssertEquals ("BigInteger-SignExtended", 17, bigint.Value.Length);
 		}
 
 		[Test]

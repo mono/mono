@@ -1,3 +1,8 @@
+2006-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1ConvertTest.cs: Adjusted big integer convertion test cases for
+	both a sign-extended result and a "normal" (not extended) result.
+
 2005-10-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS7Test.cs: New. Unit tests to ensure authenticated attributes
