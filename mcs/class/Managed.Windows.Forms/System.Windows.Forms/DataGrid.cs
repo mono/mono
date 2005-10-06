@@ -130,7 +130,6 @@ namespace System.Windows.Forms
 		private Color alternating_backcolor;
 		private Color backColor;
 		private Color background_color;
-		internal BorderStyle border_style;
 		private Color caption_backcolor;
 		private Font caption_font;
 		private Color caption_forecolor;
@@ -336,16 +335,11 @@ namespace System.Windows.Forms
 		[DispId(-504)]
 		[DefaultValue(BorderStyle.Fixed3D)]
 		public BorderStyle BorderStyle {
-			get {
-				return border_style;
-			}
-
-			set {
-				 if (border_style != value) {
-					border_style = value;
-					CalcAreasAndInvalidate ();
-					OnBorderStyleChanged (EventArgs.Empty);					
-				}
+			get { return InternalBorderStyle; }
+			set { 
+				InternalBorderStyle = value; 
+				CalcAreasAndInvalidate ();
+				OnBorderStyleChanged (EventArgs.Empty);
 			}
 		}
 

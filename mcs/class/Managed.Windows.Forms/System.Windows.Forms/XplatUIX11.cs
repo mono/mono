@@ -765,6 +765,34 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private void InvalidateWholeWindow(IntPtr handle) {
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			InvalidateWholeWindow(handle, new Rectangle(0, 0, hwnd.Width, hwnd.Height));
+		}
+
+		private void InvalidateWholeWindow(IntPtr handle, Rectangle rectangle) {
+			Hwnd	hwnd;
+			XEvent	xevent;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+
+			xevent = new XEvent ();
+			xevent.type = XEventName.Expose;
+			xevent.ExposeEvent.display = DisplayHandle;
+			xevent.ExposeEvent.window = hwnd.whole_window;
+
+			xevent.ExposeEvent.x = rectangle.X;
+			xevent.ExposeEvent.y = rectangle.Y;
+			xevent.ExposeEvent.width = rectangle.Width;
+			xevent.ExposeEvent.height = rectangle.Height;
+
+			AddExpose (xevent);
+		}
+
 		private void AddConfigureNotify (XEvent xevent) {
 			Hwnd	hwnd;
 
@@ -780,10 +808,18 @@ namespace System.Windows.Forms {
 					hwnd.x = xevent.ConfigureEvent.x;
 					hwnd.y = xevent.ConfigureEvent.y;
 				} else {
+					int	decoration_x;
+					int	decoration_y;
+					int	whole_x;
+					int	whole_y;
 					IntPtr	child;
 
 					// We need to 'discount' the window the WM has put us in
-					XTranslateCoordinates(DisplayHandle, XGetParent(hwnd.whole_window), RootWindow, xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, out hwnd.x, out hwnd.y, out child);
+					XTranslateCoordinates(DisplayHandle, hwnd.whole_window, RootWindow, xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, out whole_x, out whole_y, out child);
+					XTranslateCoordinates(DisplayHandle, XGetParent(hwnd.whole_window), RootWindow, xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, out decoration_x, out decoration_y, out child);
+					hwnd.x = xevent.ConfigureEvent.x - whole_x + decoration_x;
+					hwnd.y = xevent.ConfigureEvent.y - whole_y + decoration_y;
+					Console.WriteLine("Got configureNotify, window is at {0},{1}, translated to {2},{3}", xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, hwnd.x, hwnd.y);
 				}
 
 				hwnd.width = xevent.ConfigureEvent.width;
@@ -2584,6 +2620,25 @@ namespace System.Windows.Forms {
 
 				case XEventName.Expose: {
 					if (!client) {
+						switch (hwnd.border_style) {
+							case BorderStyle.Fixed3D: {
+								Graphics g;
+
+								g = Graphics.FromHwnd(hwnd.whole_window);
+								ControlPaint.DrawBorder3D(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height));
+								g.Dispose();
+								break;
+							}
+
+							case BorderStyle.FixedSingle: {
+								Graphics g;
+
+								g = Graphics.FromHwnd(hwnd.whole_window);
+								ControlPaint.DrawBorder(g, new Rectangle(0, 0, hwnd.Width, hwnd.Height), Color.Black, ButtonBorderStyle.Solid);
+								g.Dispose();
+								break;
+							}
+						}
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}", hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 						#endif
@@ -2841,7 +2896,7 @@ namespace System.Windows.Forms {
 			xevent = new XEvent ();
 			xevent.type = XEventName.Expose;
 			xevent.ExposeEvent.display = DisplayHandle;
-			xevent.ExposeEvent.window = Hwnd.ObjectFromHandle(handle).client_window;
+			xevent.ExposeEvent.window = hwnd.client_window;
 
 			if (clear) {
 				hwnd.erase_pending = true;
@@ -3111,11 +3166,13 @@ namespace System.Windows.Forms {
 		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
 			Hwnd	hwnd;
 
-                        Console.WriteLine ("Setting Border Style  {0:X}", handle);
 			hwnd = Hwnd.ObjectFromHandle(handle);
+
 			hwnd.border_style = border_style;
 
-			// FIXME - do we need to trigger some resize?
+			XMoveResizeWindow(DisplayHandle, hwnd.client_window, hwnd.ClientRect.X, hwnd.ClientRect.Y, hwnd.ClientRect.Width, hwnd.ClientRect.Height);
+
+			InvalidateWholeWindow(handle);
 		}
 
 		internal override void SetCaretPos(IntPtr handle, int x, int y) {

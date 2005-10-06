@@ -49,7 +49,6 @@ namespace System.Windows.Forms
 		#region Instance Variables
 		internal ToolBarAppearance	appearance;
 		internal bool			autosize;
-		internal BorderStyle		borderStyle;
 		internal ToolBarButtonCollection buttons;
 		internal Size			buttonSize;
 		internal bool			divider;
@@ -103,7 +102,7 @@ namespace System.Windows.Forms
 			appearance = ToolBarAppearance.Normal;
 			autosize = true;
 			background_color = ThemeEngine.Current.DefaultControlBackColor;
-			borderStyle = BorderStyle.None;
+			border_style = BorderStyle.None;
 			buttons = new ToolBarButtonCollection (this);
 			buttonSize = Size.Empty;
 			divider = true;
@@ -200,14 +199,8 @@ namespace System.Windows.Forms
 		[DefaultValue (BorderStyle.None)]
 		[DispIdAttribute (-504)]
 		public BorderStyle BorderStyle {
-			get { return borderStyle; }
-			set {
-				if (value == borderStyle)
-					return;
-
-				borderStyle = value;
-				Redraw (false);
-			}
+			get { return InternalBorderStyle; }
+			set { InternalBorderStyle = value; }
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]

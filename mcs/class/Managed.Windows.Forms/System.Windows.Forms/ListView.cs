@@ -281,19 +281,8 @@ namespace System.Windows.Forms
 		[DefaultValue (BorderStyle.Fixed3D)]
 		[DispId (-504)]
 		public BorderStyle BorderStyle {
-			get { return border_style; }
-			set {
-				if (value != BorderStyle.Fixed3D && value != BorderStyle.FixedSingle  && 
-					value != BorderStyle.None) {
-					throw new InvalidEnumArgumentException (string.Format 
-						("Enum argument value '{0}' is not valid for BorderStyle", value));
-				}
-				
-				if (border_style != value) {
-					border_style = value;
-					this.Redraw (true);
-				}
-			}
+			get { return InternalBorderStyle; }
+			set { InternalBorderStyle = value; }
 		}
 
 		[DefaultValue (false)]
@@ -720,10 +709,6 @@ namespace System.Windows.Forms
 		private void CalculateScrollBars ()
 		{
 			client_area = ClientRectangle;
-			client_area.X += DecorationSize (); // Take into account borders
-			client_area.Y += DecorationSize ();
-			client_area.Width -= (DecorationSize () * 2);
-			client_area.Height -= (DecorationSize () * 2);
 			
 			if (!this.scrollable || this.items.Count <= 0) {
 				h_scroll.Visible = false;
@@ -965,21 +950,6 @@ namespace System.Windows.Forms
                         
 		}
 				
-		internal int DecorationSize ()
-		{
-			switch (border_style) {
-				case BorderStyle.Fixed3D:
-					return 2;
-				case BorderStyle.FixedSingle:					
-					return 1;
-				case BorderStyle.None:
-				default:
-					break;
-				}
-				
-			return 0;
-		}
-
 		// Event Handlers
 		private void ListView_DoubleClick (object sender, EventArgs e)
 		{

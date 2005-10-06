@@ -65,7 +65,7 @@ namespace System.Windows.Forms
 				this.SetStyle(ControlStyles.Opaque, true);
 				this.SetStyle(ControlStyles.ResizeRedraw, true);
 				this.SetStyle(ControlStyles.UserPaint, true);
-				this.GotFocus += new EventHandler(UpDownSpinner_GotFocus);
+				this.SetStyle(ControlStyles.Selectable, false);
 
 				tmrRepeat = new Timer();
 
@@ -133,14 +133,12 @@ namespace System.Windows.Forms
 					owner.DownButton();
 				}
 			}
-
-			private void UpDownSpinner_GotFocus(object sender, EventArgs e) {
-				this.Select(owner.txtView);
-			}
 			#endregion	// Private & Internal Methods
 
 			#region Protected Instance Methods
 			protected override void OnMouseDown(MouseEventArgs e) {
+				this.Select(owner.txtView);
+
 				if (e.Button != MouseButtons.Left) {
 					return;
 				}
@@ -236,7 +234,6 @@ namespace System.Windows.Forms
 		#region Local Variables
 		internal TextBox		txtView;
 		private UpDownSpinner		spnSpinner;
-		private BorderStyle		border_style;
 		private bool			_InterceptArrowKeys = true;
 		private LeftRightAlignment	_UpDownAlign;
 		private bool			changing_text;
@@ -291,30 +288,23 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 		void reseat_controls() {
-			int border = 0;
-
-			switch (border_style) {
-				case BorderStyle.FixedSingle: border = 1; break;
-				case BorderStyle.Fixed3D:     border = 2; break;
-			}
-
 			int text_displacement = 0;
 
 			int spinner_width = 16;
-			//int spinner_width = ClientSize.Height - 2 * border;
+			//int spinner_width = ClientSize.Height;
 
 			if (_UpDownAlign == LeftRightAlignment.Left) {
-				spnSpinner.Bounds = new Rectangle(border, border, spinner_width, ClientSize.Height - 2 * border);
+				spnSpinner.Bounds = new Rectangle(0, 0, spinner_width, ClientSize.Height);
 				text_displacement = spnSpinner.Width;
 
 				spnSpinner.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
 			} else {
-				spnSpinner.Bounds = new Rectangle(ClientSize.Width - spinner_width - border, border, spinner_width, ClientSize.Height - 2 * border);
+				spnSpinner.Bounds = new Rectangle(ClientSize.Width - spinner_width, 0, spinner_width, ClientSize.Height);
 
 				spnSpinner.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right;
 			}
 			
-			txtView.Bounds = new Rectangle(text_displacement + border, border, ClientSize.Width - spinner_width - 2 * border, Height - 2 * border);
+			txtView.Bounds = new Rectangle(text_displacement, 0, ClientSize.Width - spinner_width, Height);
 		}
 
 		private void txtView_MouseWheel(object sender, MouseEventArgs e) {
@@ -327,29 +317,8 @@ namespace System.Windows.Forms
 
 
 		private void UpDownBase_Paint(object sender, PaintEventArgs e) {
-			int border = 0;
-
-			switch (border_style) {
-				case BorderStyle.FixedSingle: {
-					ControlPaint.DrawBorder(e.Graphics, ClientRectangle, Color.Black, ButtonBorderStyle.Solid);
-					border = 1;
-					break;
-				}
-
-				case BorderStyle.Fixed3D: {
-					ControlPaint.DrawBorder3D(e.Graphics,
-						ClientRectangle, Border3DStyle.Sunken, Border3DSide.All);
-					border = 2;
-					break;
-				}
-			}
-
-			Rectangle rect = ClientRectangle;
-
-			rect.Inflate(-border, -border);
-
 			using (SolidBrush background = new SolidBrush(BackColor)) {
-				e.Graphics.FillRectangle(background, rect);
+				e.Graphics.FillRectangle(background, ClientRectangle);
 			}
 		}
 		#endregion	// Private Methods
@@ -422,28 +391,8 @@ namespace System.Windows.Forms
 		[DefaultValue(BorderStyle.Fixed3D)]
 		[DispId(-504)]
 		public BorderStyle BorderStyle {
-			get {
-				return border_style;
-			}
-
-			set {
-				switch (border_style) {
-					case BorderStyle.None:
-					case BorderStyle.FixedSingle:
-					case BorderStyle.Fixed3D:
-						// acceptable types
-						break;
-
-					default:
-						throw new InvalidEnumArgumentException("value", (int)value, typeof(BorderStyle));
-				}
-
-				border_style = value;
-
-				reseat_controls();
-
-				Invalidate();
-			}
+			get { return InternalBorderStyle; }
+			set { InternalBorderStyle = value; }
 		}
 
 		public override ContextMenu ContextMenu {

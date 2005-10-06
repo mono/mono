@@ -83,8 +83,8 @@ namespace System.Windows.Forms {
 
 			switch(desktop) {
 				case Desktop.Gtk: {
-					IntPtr		dispmgr;
-					IntPtr		gdkdisplay;
+					//IntPtr		dispmgr;
+					//IntPtr		gdkdisplay;
 					IntPtr		widget;
 					IntPtr		style_ptr;
 					GtkStyleStruct	style;
@@ -93,8 +93,8 @@ namespace System.Windows.Forms {
 
 					try {
 						gtk_init_check (out argc, argv);
-						dispmgr =  gdk_display_manager_get ();
-						gdkdisplay =  gdk_display_manager_get_default_display (dispmgr);
+						//dispmgr =  gdk_display_manager_get ();
+						//gdkdisplay =  gdk_display_manager_get_default_display (dispmgr);
 						gtk_init_check (out argc, argv);
 
 						widget = gtk_invisible_new ();

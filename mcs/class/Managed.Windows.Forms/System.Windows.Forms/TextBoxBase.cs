@@ -202,15 +202,10 @@ namespace System.Windows.Forms {
 		[DefaultValue(BorderStyle.Fixed3D)]
 		[DispId(-504)]
 		public BorderStyle BorderStyle {
-			get {
-				return border_style;
-			}
-
-			set {
-				if (value != border_style) {
-					border_style = value;
-					OnBorderStyleChanged(EventArgs.Empty);
-				}
+			get { return InternalBorderStyle; }
+			set { 
+				InternalBorderStyle = value; 
+				OnBorderStyleChanged(EventArgs.Empty);
 			}
 		}
 

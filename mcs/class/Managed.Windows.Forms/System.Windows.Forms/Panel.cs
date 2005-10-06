@@ -47,13 +47,8 @@ namespace System.Windows.Forms {
 		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
 		public BorderStyle BorderStyle {
-			get { return border_style; }
-			set {
-				if (value == border_style)
-					return;
-				border_style = value;
-				Refresh ();
-			}
+			get { return InternalBorderStyle; }
+			set { InternalBorderStyle = value; }
 		}
 
 		[DefaultValue(false)]

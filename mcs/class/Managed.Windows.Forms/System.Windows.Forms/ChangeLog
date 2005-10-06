@@ -1,3 +1,26 @@
+2005-10-06  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: 
+	  - Defaulting BorderStyle and setting it in XplatUI when our window 
+	    is created
+	  - Added enum check to InternalBorderStyle setter
+	* XplatUIX11.cs: 
+	  - Added drawing of window borders
+	  - Now properly calculates WM decorations offset for toplevel 
+	    windows (fixes bug #74763)
+	* XplatUIWin32.cs: 
+	  - Implemented BorderStyles for windows (we're letting win32 draw 
+	    the border for us)
+	  - Fixed the signature for SetWindowLong
+	* PictureBox.cs, DataGrid.cs, TextBoxBase.cs, ToolBar.cs, Panel.cs: 
+	  Now uses Control.InternalBorderStyle for setting borders
+	* UpDownBase.cs: Remove drawing of borders, this is handled by
+	  the driver, outside the client area
+	* ListView.cs: Removed bogus border calculations. The control should
+	  be oblivious to borders, since those are not part of the client
+	  area. 
+	* X11DesktopColors.cs: Commented out (currently) unneeded variables
+
 2005-10-06  Jackson Harper  <jackson@ximian.com>
 
 	* MdiChildContext.cs: Clear out the old virtual position remove

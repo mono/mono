@@ -654,6 +654,8 @@ namespace System.Windows.Forms
 			tab_index = -1;
 			cursor = null;
 			right_to_left = RightToLeft.Inherit;
+			border_style = BorderStyle.None;
+			background_color = Color.Empty;
 
 			control_style = ControlStyles.Selectable | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
 
@@ -725,12 +727,16 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				if (!Enum.IsDefined (typeof (BorderStyle), value))
+					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for BorderStyle", value));
+
 				if (border_style != value) {
 					border_style = value;
 
-					if (IsHandleCreated)
-						XplatUI.SetBorderStyle(window.Handle,
-								border_style);
+					if (IsHandleCreated) {
+						XplatUI.SetBorderStyle(window.Handle, border_style);
+						Refresh();
+					}
 				}
 			}
 		}
@@ -2840,6 +2846,9 @@ namespace System.Windows.Forms
 			// Find out where the window manager placed us
 			UpdateBounds();
 			UpdateStyles();
+			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) != 0) {
+				XplatUI.SetBorderStyle(window.Handle, border_style);
+			}
 
 			if (window.Handle!=IntPtr.Zero) {
 				if (!controls.Contains(window.Handle)) {

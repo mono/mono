@@ -968,7 +968,7 @@ namespace System.Windows.Forms {
 
 			hwnd.ClientWindow = WindowHandle;
 
-			Win32SetWindowLong(WindowHandle, WindowLong.GWL_USERDATA, (IntPtr)ThemeEngine.Current.DefaultControlBackColor.ToArgb());
+			Win32SetWindowLong(WindowHandle, WindowLong.GWL_USERDATA, (uint)ThemeEngine.Current.DefaultControlBackColor.ToArgb());
 
 			return WindowHandle;
 		}
@@ -1032,8 +1032,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowStyle(IntPtr handle, CreateParams cp) {
-			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, (IntPtr)cp.Style);
-			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (IntPtr)cp.ExStyle);
+			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, (uint)cp.Style);
+			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, (uint)cp.ExStyle);
 		}
 
 		internal override void UpdateWindow(IntPtr handle) {
@@ -1041,7 +1041,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetWindowBackground(IntPtr handle, Color color) {
-			Win32SetWindowLong(handle, WindowLong.GWL_USERDATA, (IntPtr)color.ToArgb());
+			Win32SetWindowLong(handle, WindowLong.GWL_USERDATA, (uint)color.ToArgb());
 		}
 
 		[MonoTODO("FIXME - Add support for internal table of windows/DCs for cleanup; handle client=false to draw in NC area")]
@@ -1690,6 +1690,35 @@ namespace System.Windows.Forms {
 
 
 		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
+			uint	style;
+			uint	exstyle;
+
+			style = Win32GetWindowLong(handle, WindowLong.GWL_STYLE);
+			exstyle = Win32GetWindowLong(handle, WindowLong.GWL_EXSTYLE);
+
+			switch (border_style) {
+				case BorderStyle.None: {
+					style &= ~(uint)WindowStyles.WS_BORDER;
+					exstyle &= ~(uint)WindowStyles.WS_EX_CLIENTEDGE;
+					break;
+				}
+
+				case BorderStyle.FixedSingle: {
+					style |= (uint)WindowStyles.WS_BORDER;
+					exstyle &= ~(uint)WindowStyles.WS_EX_CLIENTEDGE;
+					break;
+				}
+
+				case BorderStyle.Fixed3D: {
+					style &= ~(uint)WindowStyles.WS_BORDER;
+					exstyle |= (uint)WindowStyles.WS_EX_CLIENTEDGE;
+					break;
+				}
+			}
+
+			Win32SetWindowLong(handle, WindowLong.GWL_STYLE, style);
+			Win32SetWindowLong(handle, WindowLong.GWL_EXSTYLE, exstyle);
+			
 			Win32SetWindowPos(handle, IntPtr.Zero, 0, 0, 0, 0, 
 				SetWindowPosFlags.SWP_FRAMECHANGED | SetWindowPosFlags.SWP_NOMOVE | SetWindowPosFlags.SWP_NOSIZE | SetWindowPosFlags.SWP_NOACTIVATE);
 		}
@@ -2118,7 +2147,7 @@ namespace System.Windows.Forms {
 		private extern static int Win32FillRect(IntPtr hdc, ref RECT rect, IntPtr hbr);
 
 		[DllImport ("user32.dll", EntryPoint="SetWindowLong", CallingConvention=CallingConvention.StdCall)]
-		private extern static IntPtr Win32SetWindowLong(IntPtr hwnd, WindowLong index, IntPtr value);
+		private extern static uint Win32SetWindowLong(IntPtr hwnd, WindowLong index, uint value);
 
 		[DllImport ("user32.dll", EntryPoint="GetWindowLong", CallingConvention=CallingConvention.StdCall)]
 		private extern static uint Win32GetWindowLong(IntPtr hwnd, WindowLong index);

@@ -90,11 +90,8 @@ namespace System.Windows.Forms {
 		[DefaultValue(BorderStyle.None)]
 		[DispId(-504)]
 		public BorderStyle BorderStyle {
-			get { return border_style; }
-			set {
-				border_style = value;
-				Redraw (true);
-			}
+			get { return InternalBorderStyle; }
+			set { InternalBorderStyle = value; }
 		}
 
 		[Browsable(false)]
