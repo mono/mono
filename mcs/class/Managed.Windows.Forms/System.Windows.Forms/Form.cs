@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Peter Bartok	pbartok@novell.com
@@ -47,6 +47,7 @@ namespace System.Windows.Forms {
 		FormBorderStyle			formBorderStyle;
 		private static bool		autoscale;
 		private static Size		autoscale_base_size;
+		private static Icon		default_icon;
 		internal bool			is_modal;
 		internal bool			end_modal;			// This var is being monitored by the application modal loop
 		private bool			control_box;
@@ -78,6 +79,9 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Private & Internal Methods
+		static Form() {
+			default_icon = (Icon)Locale.GetResource("mono.ico");
+		}
 		#endregion	// Private & Internal Methods
 
 		#region Public Classes
@@ -113,7 +117,7 @@ namespace System.Windows.Forms {
 			key_preview = false;
 			opacity = 1D;
 			menu = null;
-			icon = null;
+			icon = default_icon;
 			minimum_size = new Size(0, 0);
 			maximum_size = new Size(0, 0);
 			control_box = true;
@@ -342,7 +346,9 @@ namespace System.Windows.Forms {
 				if (icon != value) {
 					icon = value;
 
-					XplatUI.SetIcon(Handle, icon);
+					if (IsHandleCreated) {
+						XplatUI.SetIcon(Handle, icon);
+					}
 				}
 			}
 		}
@@ -1042,6 +1048,9 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void CreateHandle() {
 			base.CreateHandle ();
+			if (icon != null) {
+				XplatUI.SetIcon(window.Handle, icon);
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

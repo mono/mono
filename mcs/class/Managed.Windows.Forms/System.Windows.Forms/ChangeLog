@@ -1,3 +1,9 @@
+2005-10-06  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Form.cs: 
+	  - Added loading and setting of our new default icon
+	  - Only set icon if window is already created
+
 2005-10-06  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Label.cs:
