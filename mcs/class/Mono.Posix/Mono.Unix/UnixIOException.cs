@@ -65,12 +65,14 @@ namespace Mono.Unix {
 			this.error = UnixConvert.FromError (error);
 		}
 
+		[CLSCompliant (false)]
 		public UnixIOException (Native.Errno error)
 		{
 			this.error = Native.NativeConvert.FromErrno (error);
 		}
 
 		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno, System.Exception) constructor")]
+		[CLSCompliant (false)]
 		public UnixIOException (Native.Errno error, Exception inner)
 			: base ("Unix-generated exception", inner)
 		{

@@ -100,6 +100,7 @@ namespace Mono.Unix {
 			return ErrorMarshal.Translate (errno);
 		}
 
+		[CLSCompliant (false)]
 		public static string GetErrorDescription (Native.Errno errno)
 		{
 			return ErrorMarshal.Translate ((Error) (int) errno);
@@ -231,6 +232,7 @@ namespace Mono.Unix {
 			return false;
 		}
 
+		[CLSCompliant (false)]
 		public static bool ShouldRetrySyscall (int r, out Native.Errno error)
 		{
 			error = (Native.Errno) 0;
@@ -332,6 +334,7 @@ namespace Mono.Unix {
 			throw CreateExceptionForError (errno);
 		}
 
+		[CLSCompliant (false)]
 		public static void ThrowExceptionForError (Native.Errno errno)
 		{
 			throw CreateExceptionForError (errno);
@@ -349,6 +352,7 @@ namespace Mono.Unix {
 				ThrowExceptionForError (errno);
 		}
 
+		[CLSCompliant (false)]
 		public static void ThrowExceptionForErrorIf (int retval, Native.Errno errno)
 		{
 			if (retval == -1)
