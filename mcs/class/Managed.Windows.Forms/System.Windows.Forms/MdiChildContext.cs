@@ -24,6 +24,7 @@ namespace System.Windows.Forms {
 		private State state;
 		private FormPos sizing_edge;
 		private Rectangle virtual_position;
+		private Rectangle prev_virtual_position;
 		private Rectangle prev_bounds;
 		private bool maximized;
 		
@@ -166,6 +167,7 @@ namespace System.Windows.Forms {
 
 				SetCursorForPos (pos);
 
+				ClearVirtualPosition ();
 				state = State.Idle;
 
 			}
@@ -207,8 +209,7 @@ namespace System.Windows.Forms {
 			virtual_position.Width = form.Width;
 			virtual_position.Height = form.Height;
 
-			Graphics g = form.Parent.CreateGraphics ();
-			DrawVirtualPosition (g);
+			DrawVirtualPosition ();
 		}
 
 		private void HandleSizing (Message m)
@@ -280,8 +281,7 @@ namespace System.Windows.Forms {
 			virtual_position.Width = w;
 			virtual_position.Height = h;
 
-			Graphics g = form.Parent.CreateGraphics ();
-			DrawVirtualPosition (g);
+			DrawVirtualPosition ();
 		}
 
 		private void HandleLButtonUp (ref Message m)
@@ -289,12 +289,9 @@ namespace System.Windows.Forms {
 			if (state == State.Idle)
 				return;
 
+			ClearVirtualPosition ();
+
 			form.Capture = false;
-
-			// Clear the virtual position
-			Graphics g = form.Parent.CreateGraphics ();
-			g.Clear (form.Parent.BackColor);
-
 			form.Bounds = virtual_position;
 			state = State.Idle;
 		}
@@ -419,16 +416,20 @@ namespace System.Windows.Forms {
 
 		// For now just use a solid pen as it is 10 billion times
 		// faster then using the hatch, and what we really need is invert
-		private void DrawVirtualPosition (Graphics graphics)
+		private void DrawVirtualPosition ()
 		{
-			/*
-			Pen pen = new Pen (Color.Black, 3);
+			ClearVirtualPosition ();
 
-			graphics.Clear (form.Parent.BackColor);
-			graphics.DrawRectangle (pen, virtual_position);
-			pen.Dispose ();
-			*/
 			XplatUI.DrawReversibleRectangle (mdi_container.Handle, virtual_position);
+			prev_virtual_position = virtual_position;
+		}
+
+		private void ClearVirtualPosition ()
+		{
+			if (prev_virtual_position != Rectangle.Empty)
+				XplatUI.DrawReversibleRectangle (mdi_container.Handle,
+						prev_virtual_position);
+			prev_virtual_position = Rectangle.Empty;
 		}
 
 		private FormPos FormPosForCoords (int x, int y)

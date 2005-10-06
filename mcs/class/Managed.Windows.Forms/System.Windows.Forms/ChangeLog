@@ -1,3 +1,8 @@
+2005-10-06  Jackson Harper  <jackson@ximian.com>
+
+	* MdiChildContext.cs: Clear out the old virtual position remove
+	all the unneeded calls to CreateGraphics.
+
 2005-10-06  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* TextControl.cs: Use proper color for highlighted text; fixes #76350
