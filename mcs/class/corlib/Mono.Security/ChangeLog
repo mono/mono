@@ -1,3 +1,8 @@
+2005-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1Convert.cs: Better handle big integer than cannot be interpreted
+	as a negative number (don't extend). Fix bug #75778.
+
 2004-12-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1.cs: Fixed warning for unused variable.
