@@ -1,7 +1,0 @@
-2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
-
-	* CacheCas.cs: New. CAS unit tests for Cache. It turns out that 
-	UnmanagedCode permission is also required (down-level).
-	* CacheDependencyCas.cs: New. CAS unit tests for CacheDependency. It 
-	turns out that FileIOPermission is also required (down-level) and that
-	Mono (currently) requires Unmanaged permission for FAM.
