@@ -1,3 +1,9 @@
+2005-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* file-io.c: now that we return symlinks, use lstat and, when the file
+	is a symbolic link, stat, to get the file attributes. Also avoid the
+	conversion to/from utf16/external.
+
 2005-10-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_layout_fields): Compute klass->has_references
