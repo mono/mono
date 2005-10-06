@@ -468,8 +468,8 @@ namespace System.Windows.Forms {
 
 				mdi_parent = value;
 				if (mdi_parent != null) {
-					mdi_child_context = new MdiChildContext (this);
 					mdi_parent.MdiContainer.Controls.Add (this);
+					mdi_child_context = new MdiChildContext (this);
 				}
 
 				ResumeLayout ();

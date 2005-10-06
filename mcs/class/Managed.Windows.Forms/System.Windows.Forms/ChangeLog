@@ -1,5 +1,10 @@
 2005-10-06  Jackson Harper  <jackson@ximian.com>
 
+	* Form.cs: Add the parent before creating the child context cause
+	we need the parent when setting up the child.
+
+2005-10-06  Jackson Harper  <jackson@ximian.com>
+
 	* FolderBrowserDialog.cs: redo the tree population code so a
 	second thread isn't used. Should be a lot faster and more stable
 	now.
