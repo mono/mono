@@ -1,5 +1,10 @@
 2005-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* PagedDataSource.cs: fix the upper bound for collection and ilist
+	enumarators.
+
+2005-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataGrid.cs: change the ListItemType for the item selected, set
 	SelectedIndex before calling OnSelectedIndexChanged and set the selected
 	item type correctly when creating the columns. Fixes bug #76334.
