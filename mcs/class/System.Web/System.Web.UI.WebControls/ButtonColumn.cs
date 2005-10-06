@@ -171,7 +171,7 @@ namespace System.Web.UI.WebControls {
 				switch (ButtonType) {
 				case ButtonColumnType.LinkButton: 
 				{
-					LinkButton butt = new LinkButton ();
+					LinkButton butt = new ForeColorLinkButton ();
 					
 					butt.Text = Text;
 					butt.CommandName = CommandName;

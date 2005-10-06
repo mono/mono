@@ -1,3 +1,15 @@
+2005-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataGrid.cs: change the ListItemType for the item selected, set
+	SelectedIndex before calling OnSelectedIndexChanged and set the selected
+	item type correctly when creating the columns. Fixes bug #76334.
+
+	* ButtonColumn.cs:
+	* EditCommandColumn.cs: use a ForeColorLinkbutton, otherwise when
+	selecting the row, the button keep the regular link color.
+
+	* DataGridColumn.cs: made the class internal.
+
 2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataGrid.cs: fix breakaga of alternating item style in one of my
