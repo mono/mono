@@ -12,8 +12,8 @@
 	  - Implemented BorderStyles for windows (we're letting win32 draw 
 	    the border for us)
 	  - Fixed the signature for SetWindowLong
-	* PictureBox.cs, DataGrid.cs, TextBoxBase.cs, ToolBar.cs, Panel.cs: 
-	  Now uses Control.InternalBorderStyle for setting borders
+	* PictureBox.cs, DataGrid.cs, TextBoxBase.cs, ToolBar.cs, Panel.cs,
+	  ListBox.cs: Now uses Control.InternalBorderStyle for setting borders
 	* UpDownBase.cs: Remove drawing of borders, this is handled by
 	  the driver, outside the client area
 	* ListView.cs: Removed bogus border calculations. The control should

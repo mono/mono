@@ -110,7 +110,6 @@ namespace System.Windows.Forms
 			AllItems
 		}
 
-		private BorderStyle border_style;
 		private int column_width;
 		private DrawMode draw_mode;
 		private int horizontal_extent;
@@ -250,18 +249,8 @@ namespace System.Windows.Forms
 		[DefaultValue (BorderStyle.Fixed3D)]
 		[DispId(-504)]
 		public BorderStyle BorderStyle {
-			get { return border_style; }
-
-    			set {
-				if (!Enum.IsDefined (typeof (BorderStyle), value))
-					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for BorderStyle", value));
-
-				if (border_style == value)
-					return;
-
-    				border_style = value;
-				base.Refresh ();
-    			}
+			get { return InternalBorderStyle; }
+			set { InternalBorderStyle = value; }
 		}
 
 		[DefaultValue (0)]
