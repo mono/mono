@@ -193,7 +193,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		class ForeColorLinkButton : LinkButton {
+		internal class ForeColorLinkButton : LinkButton {
 			Color GetForeColor (WebControl control)
 			{
 				if (control == null)

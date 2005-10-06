@@ -136,7 +136,7 @@ namespace System.Web.UI.WebControls {
 			LinkButton d;
 
 			if (type == ButtonColumnType.LinkButton) {
-				d = new LinkButton();
+				d = new ForeColorLinkButton();
 				d.Text = text;
 				d.CommandName = command;
 				d.CausesValidation = valid;

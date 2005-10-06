@@ -186,6 +186,37 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
+		void AdjustItemTypes (int prev_select, int new_select)
+		{
+			if (items_list == null)
+				return; // nothing to select
+
+			int count = items_list.Count;
+			if (count == 0)
+				return; // nothing to select
+
+			DataGridItem item;
+			// Restore item type for the previously selected one.
+			if (prev_select >= 0 && prev_select < count) {
+				item = (DataGridItem) items_list [prev_select];
+				
+				if (item.ItemType == ListItemType.EditItem) {
+					// nothing to do. This has priority.
+				} else if ((item.ItemIndex % 2) != 0) {
+					item.SetItemType (ListItemType.AlternatingItem);
+				} else {
+					item.SetItemType (ListItemType.Item);
+				}
+			}
+
+			if (new_select == -1 || new_select >= count)
+				return; // nothing to select
+
+			item = (DataGridItem) items_list [new_select];
+			if (item.ItemType != ListItemType.EditItem) // EditItem takes precedence
+				item.SetItemType (ListItemType.SelectedItem);
+		}
+
 		[Bindable(true)]
 		[DefaultValue(-1)]
 		[WebSysDescription ("")]
@@ -195,6 +226,9 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (value < -1)
 					throw new ArgumentOutOfRangeException ("value");
+
+				int selected_index = ViewState.GetInt ("SelectedIndex", -1);
+				AdjustItemTypes (selected_index, value);
 				ViewState ["SelectedIndex"] = value;
 			}
 		}
@@ -913,6 +947,8 @@ namespace System.Web.UI.WebControls {
 			int index = 0;
 			bool first = true;
 			string key = null;
+			int selected_index = SelectedIndex;
+			int edit_item_index = EditItemIndex;
 			while (enumerator != null && (skip_first || enumerator.MoveNext ())) {
 				// MS does not render <table blah></table> on empty datasource.
 				if (first) {
@@ -931,9 +967,10 @@ namespace System.Web.UI.WebControls {
 					keys.Add (DataBinder.GetPropertyValue (data, key));
 
 				ListItemType type = ListItemType.Item;
-
-				if (this.EditItemIndex == index) 
+				if (index == edit_item_index) 
 					type = ListItemType.EditItem;
+				else if (index == selected_index) 
+					type = ListItemType.SelectedItem;
 				else if (index % 2 != 0) 
 					type = ListItemType.AlternatingItem;
 
@@ -1077,6 +1114,7 @@ namespace System.Web.UI.WebControls {
 			} else if (String.Compare (cn, EditCommandName, true, inv) == 0) {
 				OnEditCommand (de);
 			} else if (String.Compare (cn, SelectCommandName, true, inv) == 0) {
+				SelectedIndex = de.Item.ItemIndex;
 				OnSelectedIndexChanged (de);
 			} else if (String.Compare (cn, SortCommandName, true, inv) == 0) {
 				DataGridSortCommandEventArgs se = new DataGridSortCommandEventArgs (de.CommandSource, de);
