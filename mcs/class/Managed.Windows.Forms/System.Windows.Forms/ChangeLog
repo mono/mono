@@ -1,3 +1,9 @@
+2005-10-06  Jackson Harper  <jackson@ximian.com>
+
+	* FolderBrowserDialog.cs: redo the tree population code so a
+	second thread isn't used. Should be a lot faster and more stable
+	now.
+
 2005-10-05  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: There are no expand/collapse boxes if the node has

@@ -36,7 +36,6 @@ using System.ComponentModel;
 using System.Resources;
 using System.IO;
 using System.Collections;
-using System.Threading;
 
 namespace System.Windows.Forms
 {
@@ -50,24 +49,16 @@ namespace System.Windows.Forms
 		private Environment.SpecialFolder rootFolder = Environment.SpecialFolder.Desktop;
 		private string selectedPath = "";
 		private bool showNewFolderButton = true;
-		
-		private FolderBrowserDialogPanel folderBrowserDialogPanel;
-		
-		private bool treeViewFull = false;
+
 		#endregion	// Local Variables
 		
 		#region Public Constructors
 		public FolderBrowserDialog( )
 		{
 			form = new FolderBrowserDialogForm( this );
-			
 			form.Size =  new Size( 322, 288 );
-			
 			form.MinimumSize = new Size( 322, 288 );
-			
 			form.Text = "Search Folder";
-			
-			folderBrowserDialogPanel = new FolderBrowserDialogPanel( this );
 		}
 		#endregion	// Public Constructors
 		
@@ -80,7 +71,6 @@ namespace System.Windows.Forms
 			set
 			{
 				description = value;
-				folderBrowserDialogPanel.DescriptionLabel.Text = value;
 			}
 			
 			get
@@ -97,7 +87,6 @@ namespace System.Windows.Forms
 			set
 			{
 				rootFolder = value;
-				folderBrowserDialogPanel.RootFolder = value;
 			}
 			
 			get
@@ -115,7 +104,6 @@ namespace System.Windows.Forms
 			set
 			{
 				selectedPath = value;
-				folderBrowserDialogPanel.SelectedPath = value;
 			}
 			
 			get
@@ -132,11 +120,6 @@ namespace System.Windows.Forms
 			set
 			{
 				showNewFolderButton = value;
-				
-				if ( value )
-					folderBrowserDialogPanel.NewFolderButton.Enabled = true;
-				else
-					folderBrowserDialogPanel.NewFolderButton.Enabled = false;
 			}
 			
 			get
@@ -153,26 +136,12 @@ namespace System.Windows.Forms
 			rootFolder = Environment.SpecialFolder.Desktop;
 			selectedPath = "";
 			showNewFolderButton = true;
-			
-			ResetPanelValues( );
-		}
-		
-		private void ResetPanelValues( )
-		{
-			folderBrowserDialogPanel.NewFolderButton.Enabled = true;
-			folderBrowserDialogPanel.RootFolder = rootFolder;
-			folderBrowserDialogPanel.SelectedPath = "";
-			folderBrowserDialogPanel.DescriptionLabel.Text = "";
 		}
 		
 		protected override bool RunDialog( IntPtr hwndOwner )
 		{
-			form.Controls.Add( folderBrowserDialogPanel );
-			if ( !treeViewFull )
-			{
-				folderBrowserDialogPanel.FillTreeView( );
-				treeViewFull = true;
-			}
+			FolderBrowserDialogPanel fb = new FolderBrowserDialogPanel (this);
+			form.Controls.Add (fb);
 			return true;
 		}
 		#endregion	// Public Instance Methods
@@ -212,27 +181,13 @@ namespace System.Windows.Forms
 			private Button newFolderButton;
 			
 			private FolderBrowserDialog folderBrowserDialog;
-			
-			private Environment.SpecialFolder rootFolder;
 			private string selectedPath;
 			
 			private ImageList imageList;
-			
-			private Hashtable dirHashTable = new Hashtable();
-			
-			private FolderBrowserTreeNode selectedPathNode = null;
-			
-			private string globalPath = "";
-			
-			private TreeNode globalTreeNode = null;
-			
-			private Thread reader_thread = null;
-			
-			public delegate void ThreadEventHandler( object sender, ThreadEventArgs e );
-			
-			private ThreadEventHandler OnThreadTreeViewUpdate;
-			
-			public FolderBrowserDialogPanel( FolderBrowserDialog folderBrowserDialog )
+			private TreeNode selectedPathNode = null;
+			private TreeNode root_node;
+
+			public FolderBrowserDialogPanel (FolderBrowserDialog folderBrowserDialog)
 			{
 				this.folderBrowserDialog = folderBrowserDialog;
 				
@@ -255,7 +210,7 @@ namespace System.Windows.Forms
 				descriptionLabel.Location = new Point( 17, 14 );
 				descriptionLabel.Size = new Size( 290, 40 );
 				descriptionLabel.TabIndex = 0;
-				descriptionLabel.Text = "";
+				descriptionLabel.Text = folderBrowserDialog.Description;
 				
 				// folderBrowserTreeView
 				folderBrowserTreeView.Anchor = ( (AnchorStyles)( ( ( ( AnchorStyles.Top | AnchorStyles.Bottom )
@@ -279,6 +234,7 @@ namespace System.Windows.Forms
 				newFolderButton.Size = new Size( 125, 23 );
 				newFolderButton.TabIndex = 2;
 				newFolderButton.Text = "New Folder";
+				newFolderButton.Enabled = folderBrowserDialog.ShowNewFolderButton;
 				
 				// okButton
 				okButton.Anchor = ( (AnchorStyles)( ( AnchorStyles.Bottom | AnchorStyles.Right ) ) );
@@ -300,6 +256,7 @@ namespace System.Windows.Forms
 				// FolderBrowserDialog
 				ClientSize = new Size( 322, 288 );
 				Dock = DockStyle.Fill;
+
 				Controls.Add( cancelButton );
 				Controls.Add( okButton );
 				Controls.Add( newFolderButton );
@@ -311,49 +268,46 @@ namespace System.Windows.Forms
 				
 				okButton.Click += new EventHandler( OnClickOKButton );
 				cancelButton.Click += new EventHandler( OnClickCancelButton );
-				
+
+				string root_path = Environment.GetFolderPath (folderBrowserDialog.RootFolder);
+				root_node = new TreeNode (Path.GetFileName (root_path));
+				root_node.Tag = root_path;
+				root_node.ImageIndex = NodeImageIndex (root_path);
+
+				// If we add the sub nodes before the root is added to the
+				// tree no refreshing will be done whil adding
+				if (folderBrowserDialog.RootFolder == Environment.SpecialFolder.Desktop) {
+
+
+					// Add something similar to 'My Computer'
+					TreeNode mycomp = new TreeNode ("My Computer");
+					if (Path.DirectorySeparatorChar == '/')
+						mycomp.Tag = "/";
+					else
+						mycomp.Tag = Environment.GetFolderPath (Environment.SpecialFolder.MyComputer);
+					mycomp.ImageIndex = NodeImageIndex ((string) mycomp.Tag);
+
+					// A home directory
+					string home_path = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
+					TreeNode home = new TreeNode (Path.GetFileName (home_path));
+					home.Tag = home_path;
+					home.ImageIndex = NodeImageIndex (home_path);
+					
+					// This is so we get the expand box
+					mycomp.Nodes.Add (new TreeNode (String.Empty));
+					home.Nodes.Add (new TreeNode (String.Empty)); 
+
+					root_node.Nodes.Add (mycomp);
+					root_node.Nodes.Add (home);
+					root_node.Expand ();
+				} else {
+					FillNode (root_node);
+				}
+
+				folderBrowserTreeView.Nodes.Add (root_node);
+
+				folderBrowserTreeView.BeforeExpand += new TreeViewCancelEventHandler (OnBeforeExpand);
 				folderBrowserTreeView.AfterSelect += new TreeViewEventHandler( OnAfterSelectFolderBrowserTreeView );
-				
-				OnThreadTreeViewUpdate = new ThreadEventHandler( ThreadTreeViewUpdate );
-			}
-			
-			public Label DescriptionLabel
-			{
-				set
-				{
-					descriptionLabel = value;
-				}
-				
-				get
-				{
-					return descriptionLabel;
-				}
-			}
-			
-			public Button NewFolderButton
-			{
-				set
-				{
-					newFolderButton = value;
-				}
-				
-				get
-				{
-					return newFolderButton;
-				}
-			}
-			
-			public Environment.SpecialFolder RootFolder
-			{
-				set
-				{
-					rootFolder = value;
-				}
-				
-				get
-				{
-					return rootFolder;
-				}
 			}
 			
 			public string SelectedPath
@@ -371,8 +325,6 @@ namespace System.Windows.Forms
 			
 			void OnClickOKButton( object sender, EventArgs e )
 			{
-				StopThread( );
-				
 				folderBrowserDialog.SelectedPath = selectedPath;
 				
 				folderBrowserDialog.form.Controls.Remove( this );
@@ -381,152 +333,72 @@ namespace System.Windows.Forms
 			
 			void OnClickCancelButton( object sender, EventArgs e )
 			{
-				StopThread( );
-				
 				folderBrowserDialog.form.Controls.Remove( this );
 				folderBrowserDialog.form.DialogResult = DialogResult.Cancel;
 			}
 			
 			void OnAfterSelectFolderBrowserTreeView( object sender, TreeViewEventArgs e )
 			{
-				if ( e.Node == null ) return;
-				
-				FolderBrowserTreeNode tn = e.Node as FolderBrowserTreeNode;
-				
-				selectedPath = tn.FullPathName;
+				if (e.Node == null)
+					return;
+				selectedPath = (string) e.Node.Tag;
 			}
-			
-			// FIXME
-			// this needs some work, because almost no paths are available for
-			// Environment.GetFolderPath( Environment.SpecialFolder.xxx)
-			// under non windows platforms !!!!!!!!!
-			public void FillTreeView( )
+
+			private void OnBeforeExpand (object sender, TreeViewCancelEventArgs e)
 			{
-				selectedPathNode = null;
-				
-				Cursor oldCursor = Cursor;
-				Cursor = Cursors.WaitCursor;
-				
-				if ( rootFolder == Environment.SpecialFolder.Desktop )
-				{
-					folderBrowserTreeView.BeginUpdate( );
-					string path = Environment.GetFolderPath( rootFolder );
-					FolderBrowserTreeNode node = new FolderBrowserTreeNode( Path.GetFileName( path ) );
-					node.FullPathName = path;
-					node.ImageIndex = 1;
-					folderBrowserTreeView.Nodes.Add( node );
-					folderBrowserTreeView.EndUpdate( );
-					
-					globalPath = Environment.GetFolderPath( Environment.SpecialFolder.Personal );
-					globalTreeNode = null;
-					
-					StartThread( );
-					
-//					folderBrowserTreeView.BeginUpdate();
-//					GetAllSubDirs( Environment.GetFolderPath( Environment.SpecialFolder.MyComputer ), null );
-//					folderBrowserTreeView.EndUpdate();
-				}
-				else
-				{
-					folderBrowserTreeView.BeginUpdate( );
-					GetAllSubDirs( Environment.GetFolderPath( rootFolder ), null );
-					folderBrowserTreeView.EndUpdate( );
-				}
-				
-				if ( selectedPathNode != null )
-				{
-					folderBrowserTreeView.SelectedNode = selectedPathNode;
-				}
-				
-				Cursor = oldCursor;
+				if (e.Node == root_node)
+					return;
+				FillNode (e.Node);
 			}
-			
-			void StartThread( )
+
+			private void OnAfterCollapse (object sender, TreeViewCancelEventArgs e)
 			{
-				reader_thread = new Thread( new ThreadStart( ThreadFunc ) );
-				reader_thread.Start( );
+				if (e.Node == root_node)
+					return;
+				e.Node.Nodes.Clear ();
 			}
-			
-			void StopThread( )
+
+			private void FillNode (TreeNode node)
 			{
-				if ( reader_thread != null )
-				{
-					// is there any other safe and clean
-					// way to stop a thread that calls a recursive
-					// method ??
-					// maybe throw some other exception...
-					reader_thread.Abort( );
-					reader_thread = null;
+				Cursor old = folderBrowserTreeView.Cursor;
+				folderBrowserTreeView.Cursor = Cursors.WaitCursor;
+
+				folderBrowserTreeView.BeginUpdate ();
+
+				node.Nodes.Clear ();
+				string path = node.Tag as string;
+				string [] dirs = Directory.GetDirectories (path);
+
+				foreach (string s in dirs) {
+					string name = Path.GetFileName (s);
+					// filter out . directories
+					if (name.StartsWith ("."))
+						continue;
+					TreeNode child = new TreeNode (name);
+					child.Tag = s;
+					child.ImageIndex = NodeImageIndex (s);
+
+					try {
+						// so we get the plus
+						string [] subdirs = Directory.GetDirectories (s);
+						foreach (string subdir in subdirs) {
+							// filter out . directories (le sigh)
+							string subdirname = Path.GetFileName (subdir);
+							if (!subdirname.StartsWith (".")) {
+								child.Nodes.Add (new TreeNode (String.Empty));
+								break;
+							}
+						}
+					} catch {
+						// Probably don't have access
+					}
+
+					node.Nodes.Add (child);
 				}
+
+				folderBrowserTreeView.Cursor = old;
 			}
-			
-			void ThreadFunc( )
-			{
-				Console.WriteLine( "Starting thread..." );
-				
-				try
-				{
-					
-					GetAllSubDirs( globalPath, globalTreeNode );
-				}
-				catch (ThreadAbortException)
-				{
-					Console.WriteLine( "Thread aborted..." );
-				}
-				finally
-				{
-					Console.WriteLine( "Leaving thread..." );
-					reader_thread = null;
-				}
-			}
-			
-			void ThreadTreeViewUpdate( object sender, ThreadEventArgs e )
-			{
-				if ( e.ParentTreeNode == null )
-				{
-					folderBrowserTreeView.Nodes.Add( e.FolderBrowserTreeNode );
-				}
-				else
-				{
-					e.ParentTreeNode.Nodes.Add( e.FolderBrowserTreeNode );
-				}
-			}
-			
-			private void GetAllSubDirs( string path, TreeNode parent )
-			{
-				string shortname = Path.GetFileName( path );
-				
-				// no hidden dirs in *nix
-				if ( shortname.StartsWith( "." ) ) return;
-				
-				FolderBrowserTreeNode node = new FolderBrowserTreeNode( shortname );
-				node.FullPathName = path;
-				
-				if ( selectedPath == path )
-				{
-					selectedPathNode = node;
-					node.EnsureVisible( );
-				}
-				
-				node.ImageIndex = NodeImageIndex( path );
-				
-				BeginInvoke( OnThreadTreeViewUpdate, new object[] { this, new ThreadEventArgs( node, parent ) } );
-				
-				Thread.Sleep( 20 );
-				
-				try
-				{
-					string[] directories = Directory.GetDirectories( path );
-					
-					foreach ( string s in directories )
-						GetAllSubDirs( s, node );
-				}
-				catch ( Exception ex ) // if we have no permission
-				{
-					Console.WriteLine( ex.ToString( ) );
-				}
-			}
-			
+
 			private int NodeImageIndex( string path )
 			{
 				int index = 5;
@@ -552,57 +424,6 @@ namespace System.Windows.Forms
 				imageList.Images.Add( (Image)Locale.GetResource( "folder" ) );
 				imageList.Images.Add( (Image)Locale.GetResource( "paper" ) );
 				imageList.TransparentColor = Color.Transparent;
-			}
-			
-			public class ThreadEventArgs : EventArgs
-			{
-				FolderBrowserTreeNode folderBrowserTreeNode;
-				
-				TreeNode parentTreeNode;
-				
-				public FolderBrowserTreeNode FolderBrowserTreeNode
-				{
-					get
-					{
-						return folderBrowserTreeNode;
-					}
-				}
-				
-				public TreeNode ParentTreeNode
-				{
-					get
-					{
-						return parentTreeNode;
-					}
-				}
-				
-				public ThreadEventArgs( FolderBrowserTreeNode folderBrowserTreeNode, TreeNode parentTreeNode )
-				{
-					this.folderBrowserTreeNode = folderBrowserTreeNode;
-					this.parentTreeNode = parentTreeNode;
-				}
-			}
-			
-			internal class FolderBrowserTreeNode : TreeNode
-			{
-				private string fullPathName = "";
-				
-				public FolderBrowserTreeNode( string text )
-				: base( text )
-				{}
-				
-				public string FullPathName
-				{
-					set
-					{
-						fullPathName = value;
-					}
-					
-					get
-					{
-						return fullPathName;
-					}
-				}
 			}
 		}
 		#endregion	// Internal Methods
