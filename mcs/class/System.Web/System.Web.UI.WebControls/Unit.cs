@@ -39,7 +39,6 @@ namespace System.Web.UI.WebControls {
 #else
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 #endif
 	public struct Unit {
 		UnitType type;

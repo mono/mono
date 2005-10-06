@@ -31,7 +31,6 @@ namespace System.Web.UI.WebControls {
 
 	// CAS
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
 	public sealed class FontInfo 
