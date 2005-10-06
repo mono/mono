@@ -6,10 +6,8 @@
 //	Jesper Pedersen  <jep@itplus.dk>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
 // (C) 2004 IT+ A/S (http://www.itplus.dk)
-//
-
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,12 +46,15 @@ namespace Mono.Security {
 #else
 	public
 #endif
+#if NET_2_0
+	static class ASN1Convert {
+#else
 	sealed class ASN1Convert {
 
 		private ASN1Convert ()
 		{
 		}
-
+#endif
 		// RFC3280, section 4.2.1.5
 		// CAs conforming to this profile MUST always encode certificate
 		// validity dates through the year 2049 as UTCTime; certificate validity
@@ -110,10 +111,12 @@ namespace Mono.Security {
 		{
 			if (big == null)
 				throw new ArgumentNullException ("big");
-				
-			if (big [0] != 0x00) {
-				// this first byte is added so we're sure this is an unsigned integer
-				// however we can't feed it into RSAParameters or DSAParameters
+
+			// check for numbers that could be interpreted as negative (first bit)
+			if (big [0] >= 0x80) {
+				// in thie cas we add a new, empty, byte (position 0) so we're
+				// sure this will always be interpreted an unsigned integer.
+				// However we can't feed it into RSAParameters or DSAParameters
 				int length = big.Length + 1;
 				byte[] uinteger = new byte [length];
 				Buffer.BlockCopy (big, 0, uinteger, 1, length - 1);

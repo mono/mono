@@ -1,3 +1,8 @@
+2005-10-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1Convert.cs: Better handle big integer than cannot be interpreted
+	as a negative number (don't extend). Fix bug #75778.
+
 2005-10-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS7.cs: Ensure that attributes (authenticated and unauthenticated)
