@@ -347,7 +347,6 @@ namespace System.Windows.Forms {
 					style,
 					Border3DSide.Left | Border3DSide.Right |
 					Border3DSide.Top | Border3DSide.Bottom);
-
 		}
 
 		private void PaintButtonHandler (object sender, PaintEventArgs pe)
@@ -421,12 +420,15 @@ namespace System.Windows.Forms {
 		// For now just use a solid pen as it is 10 billion times
 		// faster then using the hatch, and what we really need is invert
 		private void DrawVirtualPosition (Graphics graphics)
-		{			
+		{
+			/*
 			Pen pen = new Pen (Color.Black, 3);
 
 			graphics.Clear (form.Parent.BackColor);
 			graphics.DrawRectangle (pen, virtual_position);
 			pen.Dispose ();
+			*/
+			XplatUI.DrawReversibleRectangle (mdi_container.Handle, virtual_position);
 		}
 
 		private FormPos FormPosForCoords (int x, int y)

@@ -1,5 +1,10 @@
 2005-10-06  Jackson Harper  <jackson@ximian.com>
 
+	* MdiChildContext.cs: Use the new xplatui function to draw a
+	reversible rect.
+
+2005-10-06  Jackson Harper  <jackson@ximian.com>
+
 	* Form.cs: Add the parent before creating the child context cause
 	we need the parent when setting up the child.
 
