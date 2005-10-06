@@ -20,6 +20,8 @@
 	  be oblivious to borders, since those are not part of the client
 	  area. 
 	* X11DesktopColors.cs: Commented out (currently) unneeded variables
+	* ThemeWin32Classic.cs: Removed border calculations from ListView 
+	  drawing code
 
 2005-10-06  Jackson Harper  <jackson@ximian.com>
 

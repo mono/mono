@@ -1573,16 +1573,6 @@ namespace System.Windows.Forms
 			Rectangle full_rect = item.GetBounds (ItemBoundsPortion.Entire);
 			Rectangle text_rect = item.GetBounds (ItemBoundsPortion.Label);			
 			
-			// Adjust border decorations
-			rect_checkrect.X += control.DecorationSize (); 
-			rect_checkrect.Y += control.DecorationSize ();
-			rect_iconrect.X += control.DecorationSize (); 
-			rect_iconrect.Y += control.DecorationSize ();
-			full_rect.X += control.DecorationSize (); 
-			full_rect.Y += control.DecorationSize ();
-			text_rect.X += control.DecorationSize ();
-			text_rect.Y += control.DecorationSize ();
-			
 			if (control.CheckBoxes) {
 				if (control.StateImageList == null) {
 					// Make sure we've got at least a line width of 1
