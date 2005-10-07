@@ -1,3 +1,9 @@
+2005-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot.c: Add support for ldflda wrappers.
+
+	* mini.c (mono_method_to_ir): Use ldflda wrappers for CEE_LDFLDA. Fixes
+	#75902.
 
 Tue Oct 4 20:23:25 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
