@@ -54,10 +54,12 @@ namespace System.Drawing {
 		{
 			if (nativeFontFamily != IntPtr.Zero) {
 				int language = 0;			
-				StringBuilder sBuilder = new StringBuilder (GDIPlus.FACESIZE * UnicodeEncoding.CharSize);	
-				Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, sBuilder, language);
+				IntPtr buffer;
+
+				buffer = Marshal.AllocHGlobal(GDIPlus.FACESIZE * UnicodeEncoding.CharSize);
+				Status status = GDIPlus.GdipGetFamilyName (nativeFontFamily, buffer, language);
 				GDIPlus.CheckStatus (status);
-				name = sBuilder.ToString();    		    		
+				name = Marshal.PtrToStringUni(buffer);
 			}
 		}
 		

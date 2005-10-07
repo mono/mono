@@ -1,3 +1,12 @@
+2005-10-07  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* FontFamily.cs: Use Marshal.PtrToStringUni to do the string
+	  conversion, it's less overhead than StringBuilder. (Part of the
+	  bugfix for #74871 and #75534)
+
+	* gdipFunctions: Changed signature for GdipGetFamilyName to just
+	  have an IntPtr for the buffer
+
 2005-10-04  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Graphics.cs, FontFamily.cs: Calling GC.SuppressFinalize from Dispose,

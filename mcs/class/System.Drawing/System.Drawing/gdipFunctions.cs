@@ -1433,8 +1433,8 @@ namespace System.Drawing
 		internal static extern Status GdipCreateFontFamilyFromName (
                         [MarshalAs(UnmanagedType.LPWStr)] string fName, IntPtr collection, out IntPtr fontFamily);
 
-		[DllImport ("gdiplus.dll", CharSet=CharSet.Unicode)]
-		internal static extern Status GdipGetFamilyName(IntPtr family, StringBuilder fName, int language);
+		[DllImport ("gdiplus.dll")]
+		internal static extern Status GdipGetFamilyName(IntPtr family, IntPtr fName, int language);
 
 		[DllImport ("gdiplus.dll")]
 		internal static extern Status GdipGetGenericFontFamilySansSerif (out IntPtr fontFamily);
