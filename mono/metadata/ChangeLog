@@ -1,3 +1,8 @@
+2005-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h debug-helpers.c marshal.h marshal.c: Add ldflda
+	wrappers.
+
 2005-10-06 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* file-io.c: now that we return symlinks, use lstat and, when the file
