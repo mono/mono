@@ -1,3 +1,9 @@
+2005-10-07  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
+	* in all versions of test-mbas.make at every depth added line:
+		RUNTIME_FLAGS = --debug
+		so that logs for individual test execution give ever so helpful 
+		stacktraces WITH line-numbers when exceptions occur in the compiler.
+		 
 2005-08-04 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* misc/RedimPreserve.vb : Refactored printing code and now test redimensioning 
 		multiple arrays in the same statement (previously not working)
