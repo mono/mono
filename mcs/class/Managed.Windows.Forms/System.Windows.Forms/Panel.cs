@@ -41,7 +41,6 @@ namespace System.Windows.Forms {
 			base.TabStop = false;
 			SetStyle(ControlStyles.Selectable, false);
 			SetStyle(ControlStyles.UserPaint, true);
-			this.Paint +=new PaintEventHandler(Panel_Paint);
 		}
 		#endregion	// Constructors & Destructors
 
@@ -122,9 +121,11 @@ namespace System.Windows.Forms {
 		public event EventHandler		TextChanged;
 		#endregion
 
-		private void Panel_Paint(object sender, PaintEventArgs e) {
-			e.Graphics.FillRectangle(new SolidBrush(this.BackColor), e.ClipRectangle);
+		#region Internal Methods
+		internal override void PaintControlBackground(PaintEventArgs pevent) {
+			pevent.Graphics.FillRectangle(new SolidBrush(this.BackColor), pevent.ClipRectangle);
 		}
+		#endregion	// Internal methods
 	}
 }
 

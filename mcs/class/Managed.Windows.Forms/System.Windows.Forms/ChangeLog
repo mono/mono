@@ -1,4 +1,11 @@
-2005-10-05  Jordi Mas i Hernandez <jordi@ximian.com>
+2005-10-06  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Made PaintControlBackground virtual
+	* Panel.cs: Overriding PaintControlBackground instead of using paint
+	  event; paint event method was interfering with 'real' users of the
+	  event.
+
+2005-10-06  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ThemeWin32Classic.cs: remove border drawing since it is handled
 	by the base control class now and was causing double border drawing.

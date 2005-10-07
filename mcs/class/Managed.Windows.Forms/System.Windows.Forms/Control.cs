@@ -891,7 +891,7 @@ namespace System.Windows.Forms
 		}
 
 		// This method exists so controls overriding OnPaintBackground can have default background painting done
-		internal void PaintControlBackground (PaintEventArgs pevent)
+		internal virtual void PaintControlBackground (PaintEventArgs pevent)
 		{
 			if (background_image == null)
 				return;
