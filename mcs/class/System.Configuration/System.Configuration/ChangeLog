@@ -1,3 +1,22 @@
+2005-10-06  Chris Toshok  <toshok@ximian.com>
+
+	* KeyValueConfigurationElement.cs: uncomment out some stuff.
+	(Properties): just return base.Properties.  Not sure why they
+	override this, as the base class's implementation passes our test.
+
+	* KeyValueConfigurationCollection.cs (Add): for the keyValue
+	overload, call keyValue.Init as the unit test stack traces
+	indicates that's where it's called.  For the string,string
+	overload, just call the keyValue overload instead of calling
+	BaseAdd.
+	(CreateNewElement): just use the name/value ctor, and specify ""
+	for each.
+	(GetElementKey): this function always returns "" for elements that
+	haven't been added to the collection.  Once theyre added, it seems
+	to always return keyValue.Key.
+	(Properties): the unit tests show this returns a 0 length
+	collection.
+
 2005-10-05  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationPermissionAttribute.cs: stub out.

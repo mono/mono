@@ -37,12 +37,13 @@ namespace System.Configuration
 	{
 		public void Add (KeyValueConfigurationElement keyValue)
 		{
+			keyValue.Init ();
 			BaseAdd (keyValue);
 		}
 		
 		public void Add (string key, string value)
 		{
-			BaseAdd (new KeyValueConfigurationElement (key, value));
+			Add (new KeyValueConfigurationElement (key, value));
 		}
 		
 		public void Clear ()
@@ -71,18 +72,26 @@ namespace System.Configuration
 		
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new KeyValueConfigurationElement ();
+			return new KeyValueConfigurationElement ("", "");
 		}
 		
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			return ((KeyValueConfigurationElement)element).Key;
+			KeyValueConfigurationElement e = (KeyValueConfigurationElement) element;
+
+			if (BaseGet (element) != null)
+				return ((KeyValueConfigurationElement)element).Key;
+			else
+				return "";
 		}
 
-		[MonoTODO]
+		ConfigurationPropertyCollection properties;
 		protected internal override ConfigurationPropertyCollection Properties {
 			get {
-				throw new NotImplementedException ();
+				if (properties == null)
+					properties = new ConfigurationPropertyCollection ();
+
+				return properties;
 			}
 		}
 		

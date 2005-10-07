@@ -34,12 +34,6 @@ namespace System.Configuration
 {
 	public class KeyValueConfigurationElement: ConfigurationElement
 	{
-//		ConfigurationPropertyCollection properties;
-		
-		internal KeyValueConfigurationElement ()
-		{
-		}
-		
 		public KeyValueConfigurationElement (string key, string value)
 		{
 			this["key"] = key;
@@ -56,14 +50,16 @@ namespace System.Configuration
 			get { return (string) this["value"]; }
 			set { this ["value"] = value; }
 		}
-		
-/*		protected internal override void Init ()
+
+		[MonoTODO]
+		protected internal override void Init ()
 		{
 		}
 		
+		[MonoTODO ("why override?")]
 		protected internal override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+			get { return base.Properties; }
 		}
-*/	}
+	}
 }
 #endif
