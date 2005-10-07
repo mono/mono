@@ -1,3 +1,8 @@
+2005-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs:
+	* HttpRequest.cs: buglets in error checking in Filter.
+
 2005-10-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* OutputFilterStream.cs: proxy class for response filters.

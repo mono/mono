@@ -236,6 +236,9 @@ namespace System.Web {
 
 		public Stream Filter {
 			get {
+				if (WorkerRequest == null)
+					return null;
+
 				return output_stream.Filter;
 			}
 

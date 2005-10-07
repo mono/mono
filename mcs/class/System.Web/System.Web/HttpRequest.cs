@@ -342,7 +342,8 @@ namespace System.Web {
 			}
 
 			set {
-				if (value == null)
+				// This checks that get_ was called before.
+				if (input_filter == null)
 					throw new HttpException ("Invalid filter");
 
 				filter = value;
