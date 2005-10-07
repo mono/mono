@@ -47,6 +47,13 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 		// note: we do not inherit from AspNetHostingMinimal because
 		// BaseValidator is an abstract class
 
+		[SetUp]
+		public virtual void SetUp ()
+		{
+			if (!SecurityManager.SecurityEnabled)
+				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+		}
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Deny_Unrestricted ()

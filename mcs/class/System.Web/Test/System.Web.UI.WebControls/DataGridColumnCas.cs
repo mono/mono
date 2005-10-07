@@ -32,6 +32,7 @@ using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Security;
 using System.Security.Permissions;
 using System.Web;
 using System.Web.UI.WebControls;
@@ -46,6 +47,13 @@ namespace MonoCasTests.System.Web.UI.WebControls {
 
 		// note: we do not inherit from AspNetHostingMinimal because
 		// DataGridColumn is an abstract class
+
+		[SetUp]
+		public virtual void SetUp ()
+		{
+			if (!SecurityManager.SecurityEnabled)
+				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+		}
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]

@@ -29,6 +29,7 @@
 using NUnit.Framework;
 
 using System;
+using System.Security;
 using System.IO;
 using System.Security.Permissions;
 using System.Web;
@@ -46,6 +47,13 @@ namespace MonoCasTests.System.Web.UI {
 	[TestFixture]
 	[Category ("CAS")]
 	public class TemplateControlCas {
+
+		[SetUp]
+		public virtual void SetUp ()
+		{
+			if (!SecurityManager.SecurityEnabled)
+				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+		}
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]

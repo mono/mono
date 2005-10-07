@@ -30,6 +30,7 @@
 using NUnit.Framework;
 
 using System;
+using System.Security;
 using System.Security.Permissions;
 using System.Web.UI.HtmlControls;
 
@@ -43,6 +44,13 @@ namespace MonoCasTests.System.Web.UI.HtmlControls {
 
 		// note: we do not inherit from AspNetHostingMinimal because
 		// HtmlInputControl is an abstract class
+
+		[SetUp]
+		public virtual void SetUp ()
+		{
+			if (!SecurityManager.SecurityEnabled)
+				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+		}
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]

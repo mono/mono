@@ -124,6 +124,13 @@ namespace MonoCasTests.System.Web {
 	[Category ("CAS")]
 	public class HttpWorkerRequestCas {
 
+		[SetUp]
+		public virtual void SetUp ()
+		{
+			if (!SecurityManager.SecurityEnabled)
+				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+		}
+
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void Properties_Deny_Unrestricted ()
