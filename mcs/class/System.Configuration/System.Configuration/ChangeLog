@@ -1,5 +1,7 @@
 2005-10-07  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigHelper.cs: remove some unused code.
+
 	* ConfigurationProperty.cs: disambiguate the ctor we chain to.
 
 	* ConfigurationElement.cs (ElementProperty): implement.
