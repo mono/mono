@@ -479,7 +479,11 @@ namespace System.Configuration
 				ConfigurationPropertyAttribute at = Attribute.GetCustomAttribute (prop, typeof(ConfigurationPropertyAttribute)) as ConfigurationPropertyAttribute;
 				if (at == null) continue;
 				string name = at.Name != null ? at.Name : prop.Name;
-				
+
+				if (at.DefaultValue != null && !prop.PropertyType.IsAssignableFrom (at.DefaultValue.GetType()))
+					throw new ConfigurationErrorsException (String.Format ("The default value for property '{0}' has a different type than the one of the property itself",
+											       name));
+
 				ConfigurationValidatorAttribute validatorAttr = Attribute.GetCustomAttribute (t, typeof(ConfigurationValidatorAttribute)) as ConfigurationValidatorAttribute;
 				ConfigurationValidatorBase validator = validatorAttr != null ? validatorAttr.ValidatorInstance : new DefaultValidator();
 				

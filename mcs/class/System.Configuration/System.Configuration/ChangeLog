@@ -1,5 +1,12 @@
 2005-10-07  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationElement.cs (ElementMap.ReflectProperties): make
+	sure the type of the default value is compatible with that of the
+	property itself, and throw ConfigurationErrorsException if they
+	don't match.  Fixes t12.
+
+2005-10-07  Chris Toshok  <toshok@ximian.com>
+
 	* ConfigHelper.cs: remove some unused code.
 
 	* ConfigurationProperty.cs: disambiguate the ctor we chain to.
