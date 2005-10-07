@@ -6,6 +6,8 @@ System.Configuration/ConfigurationManagerTest.cs
 System.Configuration/DefaultValidatorTest.cs
 System.Configuration/ExeConfigurationFileMapTest.cs
 System.Configuration/IntegerValidatorTest.cs
+System.Configuration/KeyValueConfigurationCollectionTest.cs
+System.Configuration/KeyValueConfigurationElementTest.cs
 System.Configuration/LongValidatorTest.cs
 System.Configuration/RegexStringValidatorTest.cs
 System.Configuration/StringValidatorTest.cs
