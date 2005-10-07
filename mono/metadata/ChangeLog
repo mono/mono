@@ -1,3 +1,8 @@
+2005-10-07  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (mono_debug_add_method): Create a wrapper entry for
+	methods without debug info.
+
 2005-10-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* class-internals.h debug-helpers.c marshal.h marshal.c: Add ldflda
