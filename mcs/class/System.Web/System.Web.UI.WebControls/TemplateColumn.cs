@@ -44,6 +44,7 @@ namespace System.Web.UI.WebControls {
 				break;
 			case ListItemType.Item:
 			case ListItemType.AlternatingItem:
+			case ListItemType.SelectedItem:
 				t = ItemTemplate;
 				break;
 			case ListItemType.EditItem:
