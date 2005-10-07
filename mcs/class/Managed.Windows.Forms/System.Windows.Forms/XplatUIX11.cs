@@ -2177,7 +2177,36 @@ namespace System.Windows.Forms {
 
 
 			gc = XCreateGC(DisplayHandle, hwnd.client_window, GCFunction.GCSubwindowMode | GCFunction.GCLineWidth | GCFunction.GCForeground, ref gc_values);
+#if not
 			XSetFunction(DisplayHandle, gc, GXFunction.GXinvert);	// GXinvert makes it reversible
+#else
+			uint foreground;
+			uint background;
+
+			Control control;
+			control = Control.FromHandle(handle);
+
+			XColor xcolor = new XColor();
+
+			xcolor.red = (ushort)(control.ForeColor.R * 257);
+			xcolor.green = (ushort)(control.ForeColor.G * 257);
+			xcolor.blue = (ushort)(control.ForeColor.B * 257);
+			XAllocColor(DisplayHandle, DefaultColormap, ref xcolor);
+			foreground = (uint)xcolor.pixel.ToInt32();
+
+			xcolor.red = (ushort)(control.BackColor.R * 257);
+			xcolor.green = (ushort)(control.BackColor.G * 257);
+			xcolor.blue = (ushort)(control.BackColor.B * 257);
+			XAllocColor(DisplayHandle, DefaultColormap, ref xcolor);
+			background = (uint)xcolor.pixel.ToInt32();
+
+			uint mask = foreground ^ background; 
+
+			XSetForeground(DisplayHandle, gc, 0xffffffff);
+			XSetBackground(DisplayHandle, gc, background);
+			XSetFunction(DisplayHandle,   gc, GXFunction.GXxor);
+			XSetPlaneMask(DisplayHandle,  gc, mask);
+#endif
 			XDrawRectangle(DisplayHandle, hwnd.client_window, gc, rect.Left, rect.Top, rect.Width, rect.Height);
 			XFreeGC(DisplayHandle, gc);
 		}
@@ -3911,6 +3940,15 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11", EntryPoint="XSetSelectionOwner")]
 		internal extern static int XSetSelectionOwner(IntPtr display, int selection, IntPtr owner, IntPtr time);
+
+		[DllImport ("libX11", EntryPoint="XSetPlaneMask")]
+		internal extern static int XSetPlaneMask(IntPtr display, IntPtr gc, uint mask);
+
+		[DllImport ("libX11", EntryPoint="XSetForeground")]
+		internal extern static int XSetForeground(IntPtr display, IntPtr gc, uint foreground);
+
+		[DllImport ("libX11", EntryPoint="XSetBackground")]
+		internal extern static int XSetBackground(IntPtr display, IntPtr gc, uint background);
 		#endregion
 	}
 }
