@@ -1136,13 +1136,8 @@ namespace Mono.CSharp {
 					}
 				}
 				
-				if (target_type.IsPointer) {
-					if (expr_type == TypeManager.null_type)
-						return new EmptyCast (NullPointer.Null, target_type);
-
-					if (expr_type == TypeManager.void_ptr_type)
-						return new EmptyCast (expr, target_type);
-				}
+				if (expr_type == TypeManager.null_type && target_type.IsPointer)
+					return new EmptyCast (NullPointer.Null, target_type);
 			}
 
 			if (expr_type == TypeManager.anonymous_method_type){
@@ -1793,6 +1788,9 @@ namespace Mono.CSharp {
 			ne = ExplicitReferenceConversion (expr, target_type);
 			if (ne != null)
 				return ne;
+
+			if (ec.InUnsafe && expr.Type == TypeManager.void_ptr_type && target_type.IsPointer)
+				return new EmptyCast (expr, target_type);
 
 			expr.Error_ValueCannotBeConverted (l, target_type, true);
 			return null;

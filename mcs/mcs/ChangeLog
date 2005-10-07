@@ -1,5 +1,14 @@
 2005-10-07  Raja R Harinath  <rharinath@novell.com>
 
+	Fix #76323.
+	* convert.cs (ImplicitConversionStandard): Move conversion of
+	void* to arbitrary pointer types ...
+	(ExplicitConversionStandard): .. here.
+	* ecore.cs (Expression.Error_ValueCannotBeConverted): Fix CS0266
+	error to always print typenames.
+
+2005-10-07  Raja R Harinath  <rharinath@novell.com>
+
 	* convert.cs (GetConversionOperator): Rename from
 	GetConversionOperators.  Move operator selection code from ...
 	(UserDefinedConversion): ... here.
