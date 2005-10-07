@@ -1,3 +1,8 @@
+2005-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateColumn.cs: SelectedItem was missing from the select (). Fixes
+	bug #76359.
+
 2005-10-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* FontInfo.cs: Gendarme strikes again. Sealed class have no need for 
