@@ -36,7 +36,7 @@ namespace System.Configuration.Provider {
 	{
 		public ProviderCollection ()
 		{
-			lookup = new Hashtable (10, CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
+			lookup = new Hashtable (10, StringComparer.InvariantCultureIgnoreCase);
 			values = new ArrayList ();
 		}
 	
