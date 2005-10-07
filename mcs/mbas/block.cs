@@ -709,9 +709,10 @@ namespace Mono.MonoBASIC {
 					if (vi.VariableType == null)
 						continue;
 
-					vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
+                                       if (vi.Alias == null)
+                                               vi.LocalBuilder = ig.DeclareLocal (vi.VariableType);
 
-					if (CodeGen.SymbolWriter != null)
+                                       if (CodeGen.SymbolWriter != null && vi.LocalBuilder != null)
 						vi.LocalBuilder.SetLocalSymInfo (name);
 
 					if (constants == null)

@@ -8,7 +8,6 @@ Module ForEachB
         Sub New()
             Dim arr() As Integer = {1, 2, 3}
             For Each index In arr
-                Console.WriteLine(index)
             Next
         End Sub
 

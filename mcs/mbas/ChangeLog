@@ -1,3 +1,9 @@
+2005-10-07 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+           Alexandre Rocha Lima e Marcondes <alexandre@psl-pr.softwarelivre.org>       
+           Rafael Teixeira <rafaelteixeirabr@hotmail.com>  
+           
+  	* block.cs, statements.cs, expression.cs: Fix ForEach when iterating fields
+  	
 2005-10-05 Aldo Monteiro <aldo@psl-pr.softwarelivre.org>
  
  	* ecore.cs : Created a public property (Id) to access externally the field
@@ -8,7 +14,7 @@
 
 2005-09-26 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
            Alexandre Rocha Lima e Marcondes <alexandre@psl-pr.softwarelivre.org>       
-	* mb-parser.jay: Fix For Each when using fields as the variable used
+	* mb-parser.jay: Fix ForEach when using fields as the variable used
 	to iterate through the elements.
 	* expression.cs: Created new LocalVariableReference EmitAssign used in
 	for each with non Static fields.

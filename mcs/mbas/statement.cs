@@ -4792,6 +4792,19 @@ namespace Mono.MonoBASIC {
 			if (expr == null)
 				return false;
 
+			if ( variable.VariableInfo.Alias != null )
+			{
+				FieldBase fb = variable.VariableInfo.GetFieldAlias(ec);
+
+				if ( fb == null )
+				{
+					Report.Error (451, loc,"Name '" + variable.VariableInfo.Name  + "' is not declared.");
+					return false;
+				}
+				else
+				type = fb.Type;
+			}
+						
 			var_type = ec.DeclSpace.ResolveType (type, false, loc);
 			if (var_type == null)
 				return false;
@@ -4807,15 +4820,6 @@ namespace Mono.MonoBASIC {
 			      expr.eclass == ExprClass.PropertyAccess || expr.eclass == ExprClass.IndexerAccess)){
 				error1579 (expr.Type);
 				return false;
-			}
-
-			if ( variable.VariableInfo.Alias != null )
-			{
-				if ( variable.VariableInfo.GetFieldAlias(ec) == null )
-				{
-					Report.Error (451, loc,"Name '" + variable.VariableInfo.Name  + "' is not declared.");	
-					return false;
-				}
 			}
 
 			if (expr.Type.IsArray) {

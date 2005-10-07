@@ -3367,7 +3367,7 @@ namespace Mono.MonoBASIC {
 						break;
 					}
 				}
-				Console.WriteLine("teste Maverson");
+				
 				if ((fb.ModFlags & Modifiers.STATIC) != 0) {
 					source.Emit (ec);
 					ig.Emit (OpCodes.Stsfld, fb.FieldBuilder);
@@ -3390,9 +3390,8 @@ namespace Mono.MonoBASIC {
 			//part of source assign emmited before this.
 			ILGenerator ig = ec.ig;
 			VariableInfo vi = VariableInfo;
-
+			
 			vi.Assigned = true;
-
 			source.Emit (ec);
 			if ((fb.ModFlags & Modifiers.STATIC) != 0) 
 				ig.Emit (OpCodes.Stsfld, fb.FieldBuilder);

@@ -26,7 +26,7 @@ Module ForEachC
 
     Sub main()
         Dim c As New C1()
-        If c.index <> "c" Then
+        If not c.index.Equals("c") Then
             Throw New Exception("#FEC1")
         End If
     End Sub
