@@ -28,7 +28,6 @@ namespace System.Windows.Forms {
 		private Rectangle prev_bounds;
 		private bool maximized;
 		
-		
 		private enum State {
 			Idle,
 			Moving,
@@ -88,14 +87,13 @@ namespace System.Windows.Forms {
 			form.Controls.AddImplicit (minimize_button);
 
 			mdi_container = (MdiClient) form.Parent;
+
+			form.InternalBorderStyle = BorderStyle.FixedSingle;
 		}
 
 		public bool HandleMessage (ref Message m)
 		{
 			switch ((Msg)m.Msg) {
-				//case Msg.WM_PAINT:
-				//DrawWindowDecorations (form.CreateGraphics ());
-				//break;
 
 			case Msg.WM_LBUTTONDOWN:
 				return HandleLButtonDown (form, ref m);
@@ -169,7 +167,6 @@ namespace System.Windows.Forms {
 
 				ClearVirtualPosition ();
 				state = State.Idle;
-
 			}
 
 			return false;
@@ -320,6 +317,7 @@ namespace System.Windows.Forms {
 				pe.Graphics.DrawIcon (form.Icon, BorderWidth, BorderWidth);
 			}
 
+			/*
 			Pen bp = new Pen (ThemeEngine.Current.ColorControl,
 					BorderWidth);
 
@@ -344,6 +342,7 @@ namespace System.Windows.Forms {
 					style,
 					Border3DSide.Left | Border3DSide.Right |
 					Border3DSide.Top | Border3DSide.Bottom);
+			*/
 		}
 
 		private void PaintButtonHandler (object sender, PaintEventArgs pe)
