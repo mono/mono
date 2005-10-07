@@ -56,15 +56,24 @@ namespace System.Configuration.Internal
 		bool IsConfigRecordRequired (string configPath);
 		bool IsDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition);
 		bool IsFile (string streamName);
+		bool IsFullTrustSectionWithoutAptcaAllowed (IInternalConfigRecord configRecord);
+		bool IsInitDelayed (IInternalConfigRecord configRecord);
 		bool IsLocationApplicable (string configPath);
+		bool IsRemote { get; }
+		bool IsSecondaryRoot (string configPath);
+		bool IsTrustedConfigPath (string configPath);
 		Stream OpenStreamForRead (string streamName);
+		Stream OpenStreamForRead (string streamName, bool assertPermissions);
 		Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext);
+		Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext, bool assertPermissions);
 		bool PrefetchAll (string configPath, string streamName);
 		bool PrefetchSection (string sectionGroupName, string sectionName);
+		void RequireCompleteInit (IInternalConfigRecord configRecord);
 		object StartMonitoringStreamForChanges (string streamName, StreamChangeCallback callback);
 		void StopMonitoringStreamForChanges (string streamName, StreamChangeCallback callback);
 		void VerifyDefinitionAllowed (string configPath, ConfigurationAllowDefinition allowDefinition, ConfigurationAllowExeDefinition allowExeDefinition, IConfigErrorInfo errorInfo);
 		void WriteCompleted (string streamName, bool success, object writeContext);
+		void WriteCompleted (string streamName, bool success, object writeContext, bool assertPermissions);
 		
 		bool SupportsChangeNotifications { get; }
 		bool SupportsLocation { get; }

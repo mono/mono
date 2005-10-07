@@ -40,6 +40,7 @@ namespace System.Configuration.Internal
 		string GetUniqueConfigPath (string configPath);
 		IInternalConfigRecord GetUniqueConfigRecord (string configPath);
 		void Init (IInternalConfigHost host, bool isDesignTime);
+		bool IsDesignTime { get; }
 		void RemoveConfig (string configPath);
 		
 		event InternalConfigEventHandler ConfigChanged;

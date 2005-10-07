@@ -136,20 +136,51 @@ namespace System.Configuration.Internal
 		{
 			return host.IsDefinitionAllowed (configPath, allowDefinition, allowExeDefinition);
 		}
+
+		public virtual bool IsInitDelayed (IInternalConfigRecord configRecord)
+		{
+			throw new NotImplementedException ();
+		}
 		
 		public virtual bool IsFile (string streamName)
 		{
 			return host.IsFile (streamName);
 		}
 		
+		public bool IsFullTrustSectionWithoutAptcaAllowed (IInternalConfigRecord configRecord)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual bool IsLocationApplicable (string configPath)
 		{
 			return host.IsLocationApplicable (configPath);
+		}
+
+		public bool IsRemote {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public bool IsSecondaryRoot (string configPath)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool IsTrustedConfigPath (string configPath)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		public virtual Stream OpenStreamForRead (string streamName)
 		{
 			return host.OpenStreamForRead (streamName);
+		}
+
+		public Stream OpenStreamForRead (string streamName, bool assertPermissions)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext)
@@ -157,6 +188,11 @@ namespace System.Configuration.Internal
 			return host.OpenStreamForWrite (streamName, templateStreamName, ref writeContext);
 		}
 		
+		public Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext, bool assertPermissions)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual bool PrefetchAll (string configPath, string streamName)
 		{
 			return host.PrefetchAll (configPath, streamName);
@@ -165,6 +201,11 @@ namespace System.Configuration.Internal
 		public virtual bool PrefetchSection (string sectionGroupName, string sectionName)
 		{
 			return host.PrefetchSection (sectionGroupName, sectionName);
+		}
+
+		public virtual void RequireCompleteInit (IInternalConfigRecord configRecord)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		public virtual object StartMonitoringStreamForChanges (string streamName, StreamChangeCallback callback)
@@ -187,6 +228,10 @@ namespace System.Configuration.Internal
 			host.WriteCompleted (streamName, success, writeContext);
 		}
 		
+		public void WriteCompleted (string streamName, bool success, object writeContext, bool assertPermissions)
+		{
+			throw new NotImplementedException ();
+		}
 		
 		public virtual bool SupportsChangeNotifications {
 			get { return host.SupportsChangeNotifications; }
