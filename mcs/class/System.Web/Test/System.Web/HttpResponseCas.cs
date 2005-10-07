@@ -159,16 +159,8 @@ namespace MonoCasTests.System.Web {
 			catch (HttpException) {
 				// ms
 			}
-			catch (NotImplementedException) {
-				// mono
-			}
 
-			try {
-				Assert.IsNull (response.Filter, "Filter");
-			}
-			catch (NotImplementedException) {
-				// mono
-			}
+			Assert.IsNull (response.Filter, "Filter");
 		}
 
 		[Test]

@@ -97,13 +97,8 @@ namespace MonoCasTests.System.Web {
 
 			Assert.IsNotNull (request.Files, "Files");
 
-			try {
-				Assert.IsNotNull (request.Filter, "Filter");
-				request.Filter = null;
-			}
-			catch (NotImplementedException) {
-				// mono
-			}
+			Assert.IsNotNull (request.Filter, "Filter");
+			request.Filter = null;
 
 			Assert.IsNotNull (request.Form, "Form");
 			Assert.IsNotNull (request.Headers, "Headers");

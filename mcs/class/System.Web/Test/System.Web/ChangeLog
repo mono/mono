@@ -1,3 +1,9 @@
+2005-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseCas.cs:
+	* HttpRequestCas.cs: now that filters are implemented, remove the catch
+	for NotImplementedException.
+
 2005-09-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpBrowserCapabilitiesCas.cs: Fixed tests case to work with both
