@@ -1,3 +1,14 @@
+2005-10-06  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* TextBoxBase.cs:
+	  - We now accept Enter even if AcceptEnter is false, if the containing
+	    form does not have an AcceptButton configured (fixes bug #76355)
+	  - Calculations are now fixed to no longer use Width/Height, but
+	    ClientSize.Width/Height, since we now support borders (this was
+	    a result of fixing borders and therefore bug #76166)
+	  - We no longer show the horizontal scrollbar if TextBox.WordWrap is 
+	    true (fixes bug #76354)
+	
 2005-10-06  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: 

@@ -88,6 +88,7 @@ namespace System.Windows.Forms {
 			richtext = false;
 			document = new Document(this);
 			document.WidthChanged += new EventHandler(document_WidthChanged);
+			document.HeightChanged += new EventHandler(document_HeightChanged);
 			//document.CaretMoved += new EventHandler(CaretMoved);
 			document.Wrap = false;
 			requested_height = -1;
@@ -122,8 +123,8 @@ namespace System.Windows.Forms {
 			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
 			SetStyle(ControlStyles.UserPaint, true);
 
-			canvas_width = this.Width;
-			canvas_height = this.Height;
+			canvas_width = ClientSize.Width;
+			canvas_height = ClientSize.Height;
 
 			CalculateScrollBars();
 		}
@@ -169,8 +170,8 @@ namespace System.Windows.Forms {
 				if (value != auto_size) {
 					auto_size = value;
 					if (auto_size) {
-						if (PreferredHeight != Height) {
-							Height = PreferredHeight;
+						if (PreferredHeight != ClientSize.Height) {
+							ClientSize = new Size(ClientSize.Width, PreferredHeight);
 						}
 					}
 					OnAutoSizeChanged(EventArgs.Empty);
@@ -700,7 +701,7 @@ namespace System.Windows.Forms {
 			base.OnFontChanged (e);
 
 			if (auto_size) {
-				if (PreferredHeight != Height) {
+				if (PreferredHeight != ClientSize.Height) {
 					Height = PreferredHeight;
 				}
 			}
@@ -803,7 +804,8 @@ namespace System.Windows.Forms {
 				}
 
 				case Keys.Enter: {
-					if (!read_only && multiline && (accepts_return || ((Control.ModifierKeys & Keys.Control) != 0))) {
+					// ignoring accepts_return, fixes bug #76355
+					if (!read_only && multiline && (accepts_return || (FindForm().AcceptButton == null) || ((Control.ModifierKeys & Keys.Control) != 0))) {
 						Line	line;
 
 						if (document.selection_visible) {
@@ -1160,11 +1162,12 @@ static int current;
 
 
 		private void TextBoxBase_SizeChanged(object sender, EventArgs e) {
-			canvas_width = this.Width;
-			canvas_height = this.Height;
+			canvas_width = ClientSize.Width;
+			canvas_height = ClientSize.Height;
+
 			// We always move them, they just might not be displayed
-			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hscroll.Height, Width, hscroll.Height);
-			vscroll.Bounds = new Rectangle (ClientRectangle.Right - vscroll.Width, ClientRectangle.Top, vscroll.Width, Height);
+			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hscroll.Height, ClientSize.Width, hscroll.Height);
+			vscroll.Bounds = new Rectangle (ClientRectangle.Right - vscroll.Width, ClientRectangle.Top, vscroll.Width, ClientSize.Height);
 			
 		}
 
@@ -1181,19 +1184,19 @@ static int current;
 		internal void CalculateScrollBars() {
 			// FIXME - need separate calculations for center and right alignment
 			// No scrollbars for a single line
-			if (document.Width >= this.Width) {
+			if (document.Width >= ClientSize.Width) {
 				hscroll.Enabled = true;
 				hscroll.Minimum = 0;
-				hscroll.Maximum = document.Width - this.Width;
+				hscroll.Maximum = document.Width - ClientSize.Width;
 			} else {
 				hscroll.Maximum = document.ViewPortWidth;
 				hscroll.Enabled = false;
 			}
 
-			if (document.Height >= this.Height) {
+			if (document.Height >= ClientSize.Height) {
 				vscroll.Enabled = true;
 				vscroll.Minimum = 0;
-				vscroll.Maximum = document.Height - this.Height;
+				vscroll.Maximum = document.Height - ClientSize.Height;
 			} else {
 				vscroll.Maximum = document.ViewPortHeight;
 				vscroll.Enabled = false;
@@ -1204,9 +1207,11 @@ static int current;
 				return;
 			}
 
-			if ((scrollbars & RichTextBoxScrollBars.Horizontal) != 0) {
-				if (((scrollbars & RichTextBoxScrollBars.ForcedHorizontal) != 0) || hscroll.Enabled) {
-					hscroll.Visible = true;
+			if (!WordWrap) {
+				if ((scrollbars & RichTextBoxScrollBars.Horizontal) != 0) {
+					if (((scrollbars & RichTextBoxScrollBars.ForcedHorizontal) != 0) || hscroll.Enabled) {
+						hscroll.Visible = true;
+					}
 				}
 			}
 
@@ -1218,16 +1223,20 @@ static int current;
 
 			if (hscroll.Visible) {
 				vscroll.Maximum += hscroll.Height;
-				canvas_height = this.Height - hscroll.Height;
+				canvas_height = ClientSize.Height - hscroll.Height;
 			}
 
 			if (vscroll.Visible) {
 				hscroll.Maximum += vscroll.Width * 2;
-				canvas_width = this.Width - vscroll.Width * 2;
+				canvas_width = ClientSize.Width - vscroll.Width * 2;
 			}
 		}
 
 		private void document_WidthChanged(object sender, EventArgs e) {
+			CalculateScrollBars();
+		}
+
+		private void document_HeightChanged(object sender, EventArgs e) {
 			CalculateScrollBars();
 		}
 
