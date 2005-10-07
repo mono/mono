@@ -112,16 +112,47 @@ namespace System
 			if (!method.IsStatic)
 				throw new ArgumentException ("The method should be static.", "method");
 
-			ParameterInfo[] delargs = type.GetMethod ("Invoke").GetParameters ();
+			MethodInfo invoke = type.GetMethod ("Invoke");
+
+			// FIXME: Check the return type on the 1.0 profile as well
+#if NET_2_0
+			Type returnType = method.ReturnType;
+			Type delReturnType = invoke.ReturnType;
+			bool returnMatch = returnType == delReturnType;
+
+			if (!returnMatch) {
+				// Delegate covariance
+				if (!delReturnType.IsValueType && (delReturnType != typeof (ValueType)) && (delReturnType.IsAssignableFrom (returnType)))
+					returnMatch = true;
+			}
+
+			if (!returnMatch)
+				throw new ArgumentException ("method return type is incompatible");
+#endif
+
+			ParameterInfo[] delargs = invoke.GetParameters ();
 			ParameterInfo[] args = method.GetParameters ();
 
 			if (args.Length != delargs.Length)
 				throw new ArgumentException ("method argument length mismatch");
 			
 			int length = delargs.Length;
-			for (int i = 0; i < length; i++)
-				if (delargs [i].ParameterType != args [i].ParameterType)
+			for (int i = 0; i < length; i++) {
+				bool match = delargs [i].ParameterType == args [i].ParameterType;
+
+#if NET_2_0
+				// Delegate contravariance
+				if (!match) {
+					Type argType = delargs [i].ParameterType;
+
+					if (!argType.IsValueType && (argType != typeof (ValueType)) && (args [i].ParameterType.IsAssignableFrom (argType)))
+						match = true;
+				}
+#endif
+
+				if (!match)
 					throw new ArgumentException ("method arguments are incompatible");
+			}
 
 			return CreateDelegate_internal (type, null, method);
 		}

@@ -1,3 +1,8 @@
+2005-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* Delegate.cs: Add support for delegate covariance and contravariance
+	from net 2.0.
+
 2005-10-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StringComparer.cs : (OrdinalIgnoreCaseComparer.Equals()) reverse.
