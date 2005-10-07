@@ -931,42 +931,60 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Computes the list of the user-defined conversion
-		///   operators from source_type to target_type.  `look_for_explicit'
-		///   controls whether we should also include the list of explicit
-		///   operators
+		///   Compute the user-defined conversion operator from source_type to target_type. 
+		///   `look_for_explicit' controls whether we should also include the list of explicit operators
 		/// </summary>
-		static IList GetConversionOperators (EmitContext ec,
-						     Expression source, Type target_type,
-						     Location loc, bool look_for_explicit)
+		static MethodInfo GetConversionOperator (EmitContext ec, Expression source, Type target_type, bool look_for_explicit)
 		{
-			ArrayList ret = new ArrayList (4);
+			ArrayList ops = new ArrayList (4);
 
 			Type source_type = source.Type;
 
 			if (source_type != TypeManager.decimal_type) {
-				AddConversionOperators (ec, ret, source, target_type, look_for_explicit,
-					Expression.MethodLookup (
-						ec, source_type, "op_Implicit", loc) as MethodGroupExpr);
+				AddConversionOperators (ec, ops, source, target_type, look_for_explicit,
+					Expression.MethodLookup (ec, source_type, "op_Implicit", Location.Null) as MethodGroupExpr);
 				if (look_for_explicit) {
-					AddConversionOperators (ec, ret, source, target_type, look_for_explicit,
+					AddConversionOperators (ec, ops, source, target_type, look_for_explicit,
 						Expression.MethodLookup (
-							ec, source_type, "op_Explicit", loc) as MethodGroupExpr);
+							ec, source_type, "op_Explicit", Location.Null) as MethodGroupExpr);
 				}
 			}
 
 			if (target_type != TypeManager.decimal_type) {
-				AddConversionOperators (ec, ret, source, target_type, look_for_explicit,
-					Expression.MethodLookup (
-						ec, target_type, "op_Implicit", loc) as MethodGroupExpr);
+				AddConversionOperators (ec, ops, source, target_type, look_for_explicit,
+					Expression.MethodLookup (ec, target_type, "op_Implicit", Location.Null) as MethodGroupExpr);
 				if (look_for_explicit) {
-					AddConversionOperators (ec, ret, source, target_type, look_for_explicit,
+					AddConversionOperators (ec, ops, source, target_type, look_for_explicit,
 						Expression.MethodLookup (
-							ec, target_type, "op_Explicit", loc) as MethodGroupExpr);
+							ec, target_type, "op_Explicit", Location.Null) as MethodGroupExpr);
 				}
 			}
 
-			return ret;
+			if (ops.Count == 0)
+				return null;
+
+			Type most_specific_source = FindMostSpecificSource (ec, ops, source, look_for_explicit);
+			if (most_specific_source == null)
+				return null;
+
+			Type most_specific_target = FindMostSpecificTarget (ec, ops, target_type, look_for_explicit);
+			if (most_specific_target == null)
+				return null;
+
+			MethodInfo method = null;
+
+			foreach (MethodInfo m in ops) {
+				if (m.ReturnType != most_specific_target)
+					continue;
+				if (TypeManager.GetParameterData (m).ParameterType (0) != most_specific_source)
+					continue;
+				// Ambiguous: more than one conversion operator satisfies the signature.
+				if (method != null)
+					return null;
+				method = m;
+			}
+
+			return method;
 		}
 
 		static DoubleHash explicit_conv = new DoubleHash (100);
@@ -981,53 +999,14 @@ namespace Mono.CSharp {
 		{
 			Type source_type = source.Type;
 			MethodInfo method = null;
-			Type most_specific_source = null;
-			Type most_specific_target = null;
 
 			object o;
 			DoubleHash hash = look_for_explicit ? explicit_conv : implicit_conv;
 
 			if (!(source is Constant) && hash.Lookup (source_type, target, out o)) {
 				method = (MethodInfo) o;
-				if (method != null) {
-					ParameterData pd = TypeManager.GetParameterData (method);
-					most_specific_source = pd.ParameterType (0);
-					most_specific_target = method.ReturnType;
-				}
 			} else {
-				IList ops = GetConversionOperators (ec, source, target, loc, look_for_explicit);
-				if (ops == null || ops.Count == 0) {
-					method = null;
-					goto skip;
-				}
-					
-				most_specific_source = FindMostSpecificSource (ec, ops, source, look_for_explicit);
-				if (most_specific_source == null) {
-					method = null;
-					goto skip;
-				}
-				
-				most_specific_target = FindMostSpecificTarget (ec, ops, target, look_for_explicit);
-				if (most_specific_target == null) {
-					method = null;
-					goto skip;
-				}
-				
-				int count = 0;
-				
-				foreach (MethodInfo m in ops) {
-					ParameterData pd = TypeManager.GetParameterData (m);
-					
-					if (pd.ParameterType (0) == most_specific_source &&
-					    m.ReturnType == most_specific_target) {
-						method = m;
-						count++;
-					}
-				}
-				if (count > 1)
-					method = null;
-				
-			skip:
+				method = GetConversionOperator (ec, source, target, look_for_explicit);
 				if (!(source is Constant))
 					hash.Insert (source_type, target, method);
 			}
@@ -1035,6 +1014,8 @@ namespace Mono.CSharp {
 			if (method == null)
 				return null;
 			
+			Type most_specific_source = TypeManager.GetParameterData (method).ParameterType (0);
+
 			//
 			// This will do the conversion to the best match that we
 			// found.  Now we need to perform an implict standard conversion
