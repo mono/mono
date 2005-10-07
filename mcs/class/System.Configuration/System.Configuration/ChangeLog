@@ -1,5 +1,10 @@
 2005-10-07  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationErrorsException.cs (.ctor): for the (string)
+	overload, chain up to the base (string) ctor.
+
+2005-10-07  Chris Toshok  <toshok@ximian.com>
+
 	* ConfigurationElement.cs (ElementMap.ReflectProperties): make
 	sure the type of the default value is compatible with that of the
 	property itself, and throw ConfigurationErrorsException if they

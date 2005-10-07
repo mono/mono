@@ -51,6 +51,7 @@ namespace System.Configuration
 		}
 		
 		public ConfigurationErrorsException (string message)
+			: base (message)
 		{
 			bareMessage = message;
 		}
