@@ -1,3 +1,16 @@
+2005-10-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* assembly.c (mono_stringify_assembly_name): New helper function.
+
+	* class.c: Use mono_stringify_assembly_name instead of the similar
+	static function.
+
+	* assembly.h assembly.c: Add support for calling a postload search 
+	hook if an assembly cannot be loaded.
+
+	* appdomain.c: Register new search hooks which call the AssemblyResolve
+	events in AppDomain. Fixes #75231
+
 2005-10-07  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c (mono_debug_add_method): Create a wrapper entry for
