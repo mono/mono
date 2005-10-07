@@ -537,7 +537,9 @@ System.Runtime.CompilerServices/NewConstraintAttribute.cs
 System.Runtime.CompilerServices/NGenAttribute.cs
 System.Runtime.CompilerServices/NGenHint.cs
 System.Runtime.CompilerServices/RequiredAttributeAttribute.cs
+System.Runtime.CompilerServices/RuntimeCompatibilityAttribute.cs
 System.Runtime.CompilerServices/RuntimeHelpers.cs
+System.Runtime.CompilerServices/RuntimeWrappedException.cs
 System.Runtime.CompilerServices/SpecialNameAttribute.cs 
 System.Runtime.CompilerServices/ScopelessEnumAttribute.cs
 System.Runtime.CompilerServices/StringFreezingAttribute.cs 

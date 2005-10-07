@@ -1,5 +1,7 @@
 2005-10-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* corlib.dll.sources: Add System.Runtime.CompilerServices/{RuntimeCompatibilityAttribute.cs, RuntimeWrappedException.cs}.
+
 	* corlib_test.dll.sources: Add System/DelegateTest.cs
 
 2005-08-13  Zoltan Varga  <vargaz@freemail.hu>
