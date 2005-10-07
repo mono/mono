@@ -1,3 +1,7 @@
+2005-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* pinvoke.cs: Remove test loading cygwin1.dll under cygwin.
+
 2005-09-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* custom-attr.cs: Add tests for bug #76062.
