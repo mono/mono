@@ -1,3 +1,9 @@
+2005-10-07  Peter Dennis Bartok <pbartok@novell.com>
+
+	* GenerateControlStyleTest.cs: Code to auto-generate the
+	  source file ControlStyleTest.cs
+	* ControlStyleTest.cs: Tests for testing ControlStyles
+
 2005-09-28 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
         * Common.cs : Add common things here.
