@@ -29,6 +29,7 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
+using System.Runtime.Serialization;
 
 namespace System.Configuration
 {
@@ -56,6 +57,12 @@ namespace System.Configuration
 		internal void Add (PropertyInformation pi)
 		{
 			BaseAdd (pi.Name, pi);
+		}
+
+		[MonoTODO]
+		public override void GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			throw new NotImplementedException ();
 		}
 
 		class PropertyInformationEnumerator : IEnumerator

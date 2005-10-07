@@ -176,6 +176,16 @@ namespace System.Configuration {
 			}
 		}
 
+		[MonoTODO]
+		public bool NamespaceDeclared {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
 		public ConfigurationSectionGroup RootSectionGroup {
 			get {
 				if (rootSectionGroup == null) {
@@ -351,7 +361,7 @@ namespace System.Configuration {
 		{
 			Save (new FileStream (filename, FileMode.Open, FileAccess.Write), mode, forceUpdateAll);
 		}
-		
+
 		void Save (Stream stream, ConfigurationSaveMode mode, bool forceUpdateAll)
 		{
 			XmlTextWriter tw = new XmlTextWriter (new StreamWriter (stream));

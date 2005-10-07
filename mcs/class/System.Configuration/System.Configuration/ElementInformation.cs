@@ -42,7 +42,14 @@ namespace System.Configuration
 			this.propertyInfo = propertyInfo;
 			this.owner = owner;
 		}
-		
+
+		[MonoTODO]
+		public ICollection Errors {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 		public bool IsCollection {
 			get { return owner is ConfigurationElementCollection; }
 		}

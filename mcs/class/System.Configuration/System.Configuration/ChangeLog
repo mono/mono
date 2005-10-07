@@ -1,5 +1,21 @@
 2005-10-07  Chris Toshok  <toshok@ximian.com>
 
+	* InternalConfigurationHost.cs: some interface work, adding in the
+	new methods.
+
+	* ConfigurationProperty.cs: remove debug spew.
+
+	* Configuration.cs: add NIE'd NamespaceDeclared property.
+
+	* ElementInformation.cs: add NIE'd Errors property.
+
+	* PropertyInformationCollection.cs: add NIE'd GetObjectData().
+
+	* ConfigurationManager.cs: quite a bit of new work here.  Some
+	definie TODO's still though.
+
+2005-10-07  Chris Toshok  <toshok@ximian.com>
+
 	* ConfigurationErrorsException.cs (.ctor): for the (string)
 	overload, chain up to the base (string) ctor.
 

@@ -29,35 +29,98 @@
 #if NET_2_0
 using System;
 using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Xml;
 using System.IO;
+using System.Text;
 using System.Configuration.Internal;
 
 namespace System.Configuration {
 
+	/*roaming user config path: C:\Documents and Settings\toshok\Application Data\domain-System.Configurati_Url_py3nlovv3wxe21qgacxc3n2b1mph2log\1.0.0.0\user.config */
+
 	public static class ConfigurationManager
 	{
 		static InternalConfigurationFactory configFactory = new InternalConfigurationFactory ();
-		
-		public static Configuration OpenExeConfiguration (ConfigurationUserLevel userLevel)
+
+		[MonoTODO ("Evidence and version still needs work")]
+		static string GetAssemblyInfo (Assembly a)
 		{
-			return OpenExeConfiguration (userLevel, null);
+			object[] attrs;
+			StringBuilder sb;
+
+			string app_name;
+			string evidence_str;
+			string version;
+
+			attrs = a.GetCustomAttributes (typeof (AssemblyProductAttribute), false);
+			if (attrs != null && attrs.Length > 0)
+				app_name = ((AssemblyProductAttribute)attrs[0]).Product;
+			else
+				app_name = AppDomain.CurrentDomain.FriendlyName;
+
+			sb = new StringBuilder();
+
+			sb.Append ("evidencehere");
+
+			evidence_str = sb.ToString();
+
+			attrs = a.GetCustomAttributes (typeof (AssemblyVersionAttribute), false);
+			if (attrs != null && attrs.Length > 0)
+				version = ((AssemblyVersionAttribute)attrs[0]).Version;
+			else
+				version = "1.0.0.0" /* XXX */;
+
+
+			return Path.Combine (String.Format ("{0}_{1}", app_name, evidence_str), version);
 		}
-		
-		[MonoTODO ("userLevel")]
-		public static Configuration OpenExeConfiguration (ConfigurationUserLevel userLevel, string exePath)
+
+		static Configuration OpenExeConfigurationInternal (ConfigurationUserLevel userLevel, Assembly calling_assembly, string exePath)
 		{
-			if (exePath == null) {
-				exePath = Assembly.GetCallingAssembly ().Location;
-			} else if (!File.Exists (exePath)) {
-				throw new ArgumentException ("File not found or not readable.", "exePath");
+			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
+
+			/* Roaming and RoamingAndLocal should be different
+
+			On windows,
+			  PerUserRoaming = \Documents and Settings\<username>\Application Data\...
+			  PerUserRoamingAndLocal = \Documents and Settings\<username>\Local Settings\Application Data\...
+			*/
+
+			switch (userLevel) {
+			case ConfigurationUserLevel.None:
+				if (exePath == null)
+					exePath = Assembly.GetCallingAssembly ().Location;
+				else if (!File.Exists (exePath))
+					exePath = "";
+
+				if (exePath != "")
+					map.ExeConfigFilename = exePath + ".config";
+
+				break;
+			case ConfigurationUserLevel.PerUserRoaming:
+				map.RoamingUserConfigFilename = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData), GetAssemblyInfo(calling_assembly));
+				map.RoamingUserConfigFilename = Path.Combine (map.RoamingUserConfigFilename, "user.config");
+				goto case ConfigurationUserLevel.PerUserRoamingAndLocal;
+
+			case ConfigurationUserLevel.PerUserRoamingAndLocal:
+				map.LocalUserConfigFilename = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.LocalApplicationData), GetAssemblyInfo(calling_assembly));
+				map.LocalUserConfigFilename = Path.Combine (map.LocalUserConfigFilename, "user.config");
+				break;
 			}
 
-			ExeConfigurationFileMap map = new ExeConfigurationFileMap ();
-			map.ExeConfigFilename = exePath + ".config";
 			return ConfigurationFactory.Create (typeof(ExeConfigurationHost), map);
+		}
+
+		public static Configuration OpenExeConfiguration (ConfigurationUserLevel userLevel)
+		{
+			return OpenExeConfigurationInternal (userLevel, Assembly.GetCallingAssembly (), Assembly.GetCallingAssembly ().Location);
+		}
+		
+		public static Configuration OpenExeConfiguration (string exePath)
+		{
+			return OpenExeConfigurationInternal (ConfigurationUserLevel.None, Assembly.GetCallingAssembly (), exePath);
 		}
 
 		[MonoTODO ("userLevel")]
@@ -79,6 +142,45 @@ namespace System.Configuration {
 		
 		internal static IInternalConfigConfigurationFactory ConfigurationFactory {
 			get { return configFactory; }
+		}
+
+		public static object GetSection (string sectionName)
+		{
+			Configuration cfg = OpenExeConfigurationInternal (ConfigurationUserLevel.None,
+									  Assembly.GetEntryAssembly (),
+									  Assembly.GetEntryAssembly ().Location);
+
+			return cfg.GetSection (sectionName);
+		}
+
+		[MonoTODO]
+		public static void RefreshSection (string sectionName)
+		{
+		}
+
+		[MonoTODO]
+		public static NameValueCollection AppSettings {
+			get {
+				AppSettingsSection appsettings = (AppSettingsSection) GetSection ("appSettings");
+				KeyValueInternalCollection col = new KeyValueInternalCollection ();
+				
+				foreach (string key in appsettings.Settings.AllKeys) {
+					col.Add (appsettings.Settings[key].Key, appsettings.Settings[key].Value);
+				}
+				
+				col.SetReadOnly ();
+
+				return col;
+			}
+		}
+
+		[MonoTODO]
+		public static ConnectionStringSettingsCollection ConnectionStrings {
+			get {
+				ConnectionStringsSection connectionStrings = (ConnectionStringsSection) GetSection ("connectionStrings");
+
+				return connectionStrings.ConnectionStrings;
+			}
 		}
 	}
 }

@@ -62,9 +62,9 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 		
-		public virtual string GetConfigPathFromLocationSubPath (string configPath, string locatinSubPath)
+		public virtual string GetConfigPathFromLocationSubPath (string configPath, string locationSubPath)
 		{
-			throw new NotImplementedException ();
+			return configPath;
 		}
 		
 		public virtual Type GetConfigType (string typeName, bool throwOnError)
@@ -140,8 +140,34 @@ namespace System.Configuration
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+		public virtual bool IsFullTrustSectionWithoutAptcaAllowed (IInternalConfigRecord configRecord)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual bool IsInitDelayed (IInternalConfigRecord configRecord)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual bool IsLocationApplicable (string configPath)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual bool IsRemote {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		public virtual bool IsSecondaryRoot (string configPath)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual bool IsTrustedConfigPath (string configPath)
 		{
 			throw new NotImplementedException ();
 		}
@@ -153,10 +179,20 @@ namespace System.Configuration
 				
 			return new FileStream (streamName, FileMode.Open, FileAccess.Read);
 		}
+
+		public virtual Stream OpenStreamForRead (string streamName, bool assertPermissions)
+		{
+			throw new NotImplementedException ();
+		}
 		
 		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext)
 		{
 			return new FileStream (streamName, FileMode.Create, FileAccess.Write);
+		}
+
+		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext, bool assertPermissions)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		public virtual bool PrefetchAll (string configPath, string streamName)
@@ -168,7 +204,12 @@ namespace System.Configuration
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+		public virtual void RequireCompleteInit (IInternalConfigRecord configRecord)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual object StartMonitoringStreamForChanges (string streamName, StreamChangeCallback callback)
 		{
 			throw new NotImplementedException ();
@@ -186,6 +227,10 @@ namespace System.Configuration
 		}
 		
 		public virtual void WriteCompleted (string streamName, bool success, object writeContext)
+		{
+		}
+
+		public virtual void WriteCompleted (string streamName, bool success, object writeContext, bool assertPermissions)
 		{
 		}
 		
@@ -231,29 +276,33 @@ namespace System.Configuration
 			map = (ExeConfigurationFileMap) hostInitConfigurationParams [0];
 			configPath = null;
 			string next = null;
-			
+
+			locationConfigPath = null;
+
 			if ((locationSubPath == "exe" || locationSubPath == null) && map.ExeConfigFilename != null) {
 				configPath = "exe";
 				next = "local";
+				locationConfigPath = map.ExeConfigFilename;
 			}
 			
 			if ((locationSubPath == "local" || configPath == null) && map.LocalUserConfigFilename != null) {
 				configPath = "local";
 				next = "roaming";
+				locationConfigPath = map.LocalUserConfigFilename;
 			}
 			
 			if ((locationSubPath == "roaming" || configPath == null) && map.RoamingUserConfigFilename != null) {
 				configPath = "roaming";
 				next = "machine";
+				locationConfigPath = map.RoamingUserConfigFilename;
 			}
 			
 			if ((locationSubPath == "machine" || configPath == null) && map.MachineConfigFilename != null) {
 				configPath = "machine";
 				next = null;
 			}
-			
+
 			locationSubPath = next;
-			locationConfigPath = null;
 		}
 	}
 	

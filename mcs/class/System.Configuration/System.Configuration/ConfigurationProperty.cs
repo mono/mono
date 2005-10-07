@@ -75,7 +75,6 @@ namespace System.Configuration
 					ConfigurationPropertyOptions flags,
 					string description)
 		{
-			Console.WriteLine ("Creating Property '{0}' with validation = '{1}'",name, validation);
 			this.name = name;
 			this.converter = converter;
 			this.default_value = default_value;
