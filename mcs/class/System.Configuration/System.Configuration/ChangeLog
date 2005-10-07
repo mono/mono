@@ -1,3 +1,11 @@
+2005-10-07  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationProperty.cs: disambiguate the ctor we chain to.
+
+	* ConfigurationElement.cs (ElementProperty): implement.
+	(ElementMap.ReflectProperties): make DefaultValidator the default
+	validator, not null.
+
 2005-10-06  Chris Toshok  <toshok@ximian.com>
 
 	* KeyValueConfigurationElement.cs: uncomment out some stuff.
@@ -6,7 +14,7 @@
 
 	* KeyValueConfigurationCollection.cs (Add): for the keyValue
 	overload, call keyValue.Init as the unit test stack traces
-	indicates that's where it's called.  For the string,string
+	indicates that'9s where it's called.  For the string,string
 	overload, just call the keyValue overload instead of calling
 	BaseAdd.
 	(CreateNewElement): just use the name/value ctor, and specify ""

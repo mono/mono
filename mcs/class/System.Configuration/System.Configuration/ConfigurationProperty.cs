@@ -47,17 +47,17 @@ namespace System.Configuration
 		ConfigurationCollectionAttribute collectionAttribute;
 		
 		public ConfigurationProperty (string name, Type type)
-			: this (name, type, null, ConfigurationPropertyOptions.None)
+			: this (name, type, null, TypeDescriptor.GetConverter (type), new DefaultValidator(), ConfigurationPropertyOptions.None, null)
 		{ }
 
 		public ConfigurationProperty (string name, Type type, object default_value)
-			: this (name, type, default_value, ConfigurationPropertyOptions.None)
+			: this (name, type, default_value, TypeDescriptor.GetConverter (type), new DefaultValidator(), ConfigurationPropertyOptions.None, null)
 		{ }
 
 		public ConfigurationProperty (
 					string name, Type type, object default_value,
 					ConfigurationPropertyOptions flags)
-			:this (name, type, default_value, TypeDescriptor.GetConverter (type), null, flags, null)
+			:this (name, type, default_value, TypeDescriptor.GetConverter (type), new DefaultValidator(), flags, null)
 		{ }
 		
 		public ConfigurationProperty (
@@ -75,6 +75,7 @@ namespace System.Configuration
 					ConfigurationPropertyOptions flags,
 					string description)
 		{
+			Console.WriteLine ("Creating Property '{0}' with validation = '{1}'",name, validation);
 			this.name = name;
 			this.converter = converter;
 			this.default_value = default_value;

@@ -44,7 +44,8 @@ namespace System.Configuration
 		ConfigurationPropertyCollection keyProps;
 		bool readOnly;
 		ElementInformation elementInfo;
-		
+		ConfigurationElementProperty elementProperty;
+
 		protected ConfigurationElement ()
 		{
 		}
@@ -72,10 +73,11 @@ namespace System.Configuration
 		{
 		}
 
-		[MonoTODO]
 		public ConfigurationElementProperty ElementProperty {
 			get {
-				throw new NotImplementedException ();
+				if (elementProperty == null)
+					elementProperty = new ConfigurationElementProperty (ElementInformation.Validator);
+				return elementProperty;
 			}
 		}
 
@@ -479,7 +481,7 @@ namespace System.Configuration
 				string name = at.Name != null ? at.Name : prop.Name;
 				
 				ConfigurationValidatorAttribute validatorAttr = Attribute.GetCustomAttribute (t, typeof(ConfigurationValidatorAttribute)) as ConfigurationValidatorAttribute;
-				ConfigurationValidatorBase validator = validatorAttr != null ? validatorAttr.ValidatorInstance : null;
+				ConfigurationValidatorBase validator = validatorAttr != null ? validatorAttr.ValidatorInstance : new DefaultValidator();
 				
 				TypeConverter converter = TypeDescriptor.GetConverter (prop.PropertyType);
 				ConfigurationProperty cp = new ConfigurationProperty (name, prop.PropertyType, at.DefaultValue, converter, validator, at.Options);
