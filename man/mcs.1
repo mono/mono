@@ -1,6 +1,6 @@
 .TH mcs 1 "6 January 2001"
 .SH NAME 
-mcs \- Mono Compiler Suite.
+mcs, gmcs \- Mono Compiler Suite.
 .SH SYNOPSIS
 .B mcs 
 [option] [source-files]
@@ -10,6 +10,14 @@ language specification.  You can pass one or more options to drive the
 compiler, and a set of source files.  Extra options or arguments can
 be provided in a response file.  Response files are referenced by
 prepending the @ symbol to the response file name.
+.PP
+The 
+.I mcs
+compiler is used to compile against the 1.x profile and implements
+C# 1.0 and 2.0 with the exception of generics and nullable types.  The
+.I gmcs
+compiler is used to compile against the 2.x profile and implements
+the complete C# 2.0 specification.
 .PP
 The Mono C# compiler accepts the same options than the Microsoft C#
 compiler does.  Those options can start with a slash or a dash
