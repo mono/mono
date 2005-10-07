@@ -1,5 +1,10 @@
 2005-10-06  Peter Dennis Bartok  <pbartok@novell.com>
 
+	* Panel.cs: Redraw our background on paint. Not a pretty solution,
+	  but it does seem to match MS behaviour. This fixes bug #75324
+
+2005-10-06  Peter Dennis Bartok  <pbartok@novell.com>
+
 	* XplatUIX11.cs: A better DrawReversibleRectangle version, however
 	  somewhat hackish looking
 
