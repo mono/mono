@@ -2844,11 +2844,11 @@ namespace System.Windows.Forms
 			window.CreateHandle(CreateParams);
 
 			// Find out where the window manager placed us
-			UpdateBounds();
 			UpdateStyles();
 			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) != 0) {
 				XplatUI.SetBorderStyle(window.Handle, border_style);
 			}
+			UpdateBounds();
 
 			if (window.Handle!=IntPtr.Zero) {
 				if (!controls.Contains(window.Handle)) {

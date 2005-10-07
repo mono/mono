@@ -1,3 +1,8 @@
+2005-10-06  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Calling UpdateBounds after changing the window's BorderStyle 
+	since the style can change the ClientSize
+
 2005-10-06  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: Made PaintControlBackground virtual
