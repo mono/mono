@@ -1,3 +1,11 @@
+2005-10-06  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration/KeyValueConfigurationCollectionTest.cs: new
+	tests.
+
+	* System.Configuration/KeyValueConfigurationElementTest.cs: new
+	tests.
+
 2005-10-06  Raja R Harinath  <rharinath@novell.com>
 
 	* System.Configuration/ConfigurationManagerTest.cs
