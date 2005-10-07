@@ -1,3 +1,7 @@
+2005-10-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* DelegateTest.cs: New file.
+
 2005-09-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* StringTest.cs: Add test for #76204.
