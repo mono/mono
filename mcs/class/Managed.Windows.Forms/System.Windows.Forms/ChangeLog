@@ -1,3 +1,8 @@
+2005-10-05  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ThemeWin32Classic.cs: remove border drawing since it is handled
+	by the base control class now and was causing double border drawing.
+
 2005-10-06  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Panel.cs: Redraw our background on paint. Not a pretty solution,

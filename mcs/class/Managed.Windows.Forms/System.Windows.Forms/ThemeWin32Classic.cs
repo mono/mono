@@ -895,8 +895,6 @@ namespace System.Windows.Forms
 						corner);
 				}
 			}
-			
-			ThemeEngine.Current.CPDrawBorderStyle (pe.Graphics, grid.ClientRectangle, grid.border_style);
 		}
 		
 		public override void DataGridPaintCaption (Graphics g, Rectangle clip, DataGrid grid)
@@ -1319,8 +1317,6 @@ namespace System.Windows.Forms
 		public  override void DrawLabel (Graphics dc, Rectangle clip_rectangle, Label label) 
 		{		
 			dc.FillRectangle (ResPool.GetSolidBrush (label.BackColor), clip_rectangle);
-			
-			CPDrawBorderStyle (dc, label.ClientRectangle, label.BorderStyle);		
 
 			if (label.Enabled) {
 				dc.DrawString (label.Text, label.Font, ResPool.GetSolidBrush (label.ForeColor), clip_rectangle, label.string_format);
@@ -1343,7 +1339,6 @@ namespace System.Windows.Forms
 			Color color;
 
 			dc.FillRectangle (ResPool.GetSolidBrush (label.BackColor), clip_rectangle);
-			CPDrawBorderStyle (dc, label.ClientRectangle, label.BorderStyle);						
 
 			for (int i = 0; i < label.num_pieces; i++) {
 				
@@ -1506,10 +1501,6 @@ namespace System.Windows.Forms
 			
 			dc.ResetClip ();
 			
-			ThemeEngine.Current.CPDrawBorderStyle (dc,
-							       control.ClientRectangle,
-							       control.BorderStyle);
-
 			// Draw corner between the two scrollbars
 			if (control.h_scroll.Visible == true && control.h_scroll.Visible == true) {
 				Rectangle rect = new Rectangle ();
@@ -2619,8 +2610,7 @@ namespace System.Windows.Forms
 					dc.DrawImage(pb.Image, 0, 0, pb.Image.Width, pb.Image.Height);
 					break;
 				}
-			}
-			CPDrawBorderStyle (dc, client, pb.BorderStyle);
+			}			
 		}
 
 		public override Size PictureBoxDefaultSize {
@@ -3591,8 +3581,6 @@ namespace System.Windows.Forms
 				control.Width, control.Height - ToolBarGripWidth / 2);
 			bool flat = (control.Appearance == ToolBarAppearance.Flat);
 			dc.FillRectangle (ResPool.GetSolidBrush( DefaultControlBackColor ), paint_area);
-			CPDrawBorderStyle (dc, paint_area, control.BorderStyle);
-
 			if (control.Divider)
 				dc.DrawLine (ResPool.GetPen (ColorControlLight), 0, 0, paint_area.Width, 0);
 
