@@ -50,7 +50,6 @@ using NSResolver = System.Xml.XmlNamespaceManager;
 namespace System.Xml.XPath
 {
 #if NET_2_0
-	[DebuggerDisplay ("{new DebuggerDisplayProxy(this)}")]
 	public abstract class XPathNavigator : XPathItem,
 		ICloneable, IXPathNavigable, IXmlNamespaceResolver
 #else

@@ -1,5 +1,10 @@
 2005-10-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* XPathNavigator.cs: Removed DebuggerDisplay attribute.
+	* XPathNodeIterator.cs: Removed DebuggerDisplay attribute.
+
+2005-10-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* XPathNavigator.cs: [NET_2_0] Added DebuggerDisplay attribute,
 	added ReplaceRange and DeleteRange methods.
 	* XPathNodeIterator.cs: [NET_2_0] Added DebuggerDisplay attribute.
