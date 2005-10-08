@@ -39,7 +39,7 @@ using XsValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags;
 
 namespace System.Xml
 {
-	public class XmlReaderSettings
+	public sealed class XmlReaderSettings
 	{
 		private bool checkCharacters;
 		private bool closeInput;

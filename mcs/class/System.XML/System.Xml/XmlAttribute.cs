@@ -108,9 +108,11 @@ namespace System.Xml
 		}
 
 		public override string InnerText {
+#if !(NET_2_0)
 			get {
 				return base.InnerText;
 			}
+#endif
 
 			set {
 				Value = value;
@@ -118,10 +120,12 @@ namespace System.Xml
 		}
 
 		public override string InnerXml {
+#if !(NET_2_0)
 			get {
 				// Not sure why this is an override.  Passing through for now.
 				return base.InnerXml;
 			}
+#endif
 
 			set {
 				RemoveAll ();
@@ -207,7 +211,6 @@ namespace System.Xml
 		}
 
 #if NET_2_0
-		[CLSCompliant(false)]
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return schemaInfo; }
 			internal set { schemaInfo = value; }

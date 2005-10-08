@@ -1,3 +1,9 @@
+2005-10-08  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* XmlAttribute.cs: InnerText and InnerXml do not override getters in
+	NET_2_0. Removed extra CLSCompliant attribute on SchemaInfo.
+	* XmlReaderSettings.cs: Marked sealed.
+
 2005-10-04  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlConvert.cs : ToTimeSpan() resulted in an infinite loop when the
