@@ -217,23 +217,6 @@ namespace MonoTests.System.Xml.Xsl
 				new StringReader (xsl)));
 		}
 
-		[Test]
-		[Category ("NotDotNet")]
-		public void DontHoldStylesheetReference ()
-		{
-			// This test is optional. Examines whether Load() does
-			// not hold loaded stylesheet XPathNavigator internally.
-			XslTransform t = new XslTransform ();
-			WeakReference wr = StylesheetLoad (t, "<xsl:transform xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='1.0'/>");
-			GC.Collect (0);
-			GC.Collect (2);
-			Assert ("load", !wr.IsAlive);
-			wr = StylesheetTransform (t, "<root/>");
-			GC.Collect (0);
-			GC.Collect (2);
-			Assert ("transform", !wr.IsAlive);
-		}
-
 		private WeakReference StylesheetLoad (XslTransform t, string xsl)
 		{
 			XPathDocument doc = new XPathDocument (
