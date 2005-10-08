@@ -1,3 +1,8 @@
+2005-10-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain-unload.cs: Allocate some MBR objects between unloads to
+	exercise more code.
+
 2005-10-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* remoting5.cs: Add test for ldflda on MBR objects.
