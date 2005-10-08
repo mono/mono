@@ -1,3 +1,9 @@
+2005-10-07  Joshua Tauberer <tauberer@for.net>
+
+	* XmlTextReader.cs: SkipTextDeclaration would not accept processing
+	instructions that began with the string 'xml', e.g. rejecting
+	'xml-stylesheet'.
+
 2005-10-08  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* XmlAttribute.cs: InnerText and InnerXml do not override getters in

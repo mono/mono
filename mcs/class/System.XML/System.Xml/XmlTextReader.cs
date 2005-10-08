@@ -2006,7 +2006,7 @@ namespace System.Xml
 					ReadChar ();
 			}
 			if (new string (peekChars, 2, 4) != "xml ") {
-				if (new string (peekChars, 2, 3).ToLower (CultureInfo.InvariantCulture) == "xml") {
+				if (new string (peekChars, 2, 4).ToLower (CultureInfo.InvariantCulture) == "xml ") {
 					throw NotWFError ("Processing instruction name must not be character sequence 'X' 'M' 'L' with case insensitivity.");
 				}
 				peekCharsIndex = 0;
