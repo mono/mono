@@ -496,7 +496,7 @@ namespace System.Windows.Forms {
 			rtf_skip_count = 0;
 			rtf_line = new StringBuilder();
 			rtf_font = Font;
-			rtf_color = ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor);
+			rtf_color = new SolidBrush(ForeColor);
 			rtf_rtffont_size = this.Font.Height;
 			rtf_rtfalign = HorizontalAlignment.Left;
 			rtf_rtffont = null;
@@ -691,9 +691,9 @@ namespace System.Windows.Forms {
 							if (color != null) {
 								FlushText(false);
 								if (color.Red == -1 && color.Green == -1 && color.Blue == -1) {
-									this.rtf_color = ThemeEngine.Current.ResPool.GetSolidBrush(ForeColor);
+									this.rtf_color = new SolidBrush(ForeColor);
 								} else {
-									this.rtf_color = ThemeEngine.Current.ResPool.GetSolidBrush(Color.FromArgb(color.Red, color.Green, color.Blue));
+									this.rtf_color = new SolidBrush(Color.FromArgb(color.Red, color.Green, color.Blue));
 								}
 							}
 							break;
@@ -815,32 +815,32 @@ namespace System.Windows.Forms {
 				}
 
 				case Minor.EmDash: {
-					Console.Write("ï¿½");
+					Console.Write("—");
 					break;
 				}
 
 				case Minor.EnDash: {
-					Console.Write("ï¿½");
+					Console.Write("–");
 					break;
 				}
 
 				case Minor.LQuote: {
-					Console.Write("ï¿½");
+					Console.Write("‘");
 					break;
 				}
 
 				case Minor.RQuote: {
-					Console.Write("ï¿½");
+					Console.Write("’");
 					break;
 				}
 
 				case Minor.LDblQuote: {
-					Console.Write("ï¿½");
+					Console.Write("“");
 					break;
 				}
 
 				case Minor.RDblQuote: {
-					Console.Write("ï¿½");
+					Console.Write("”");
 					break;
 				}
 
