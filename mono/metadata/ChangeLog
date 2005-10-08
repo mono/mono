@@ -1,3 +1,7 @@
+2005-10-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* profiler.c: Add support for allocations > 2GB. Fixes #74886.
+
 2005-10-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* threads.c: remove debug output.
