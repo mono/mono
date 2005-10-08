@@ -1,3 +1,8 @@
+2005-10-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_jit_compile_method_with_opt): Create the function
+	pointers in the correct domain.
+
 2005-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-exceptions.c (mono_handle_exception_internal): Fix bug 
