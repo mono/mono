@@ -123,7 +123,7 @@ namespace System.Windows.Forms {
 
 		#region Internal Methods
 		internal override void PaintControlBackground(PaintEventArgs pevent) {
-			pevent.Graphics.FillRectangle(new SolidBrush(this.BackColor), pevent.ClipRectangle);
+			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(this.BackColor), pevent.ClipRectangle);
 		}
 		#endregion	// Internal methods
 	}

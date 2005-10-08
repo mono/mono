@@ -574,7 +574,7 @@ namespace System.Windows.Forms {
 
 			// We always have a blank line
 			owner.HandleCreated += new EventHandler(owner_HandleCreated);
-			Add(1, "", owner.Font, new SolidBrush(owner.ForeColor));
+			Add(1, "", owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.ForeColor));
 			lines=1;
 
 			selection_visible = false;
@@ -1013,7 +1013,7 @@ namespace System.Windows.Forms {
 			lines = 0;
 
 			// We always have a blank line
-			Add(1, "", owner.Font, new SolidBrush(owner.ForeColor));
+			Add(1, "", owner.Font, ThemeEngine.Current.ResPool.GetSolidBrush(owner.ForeColor));
 			this.RecalculateDocument(owner.CreateGraphics());
 			PositionCaret(0, 0);
 

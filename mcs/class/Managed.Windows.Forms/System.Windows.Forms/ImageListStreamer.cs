@@ -163,7 +163,7 @@ namespace System.Windows.Forms {
 
 			Bitmap main = new Bitmap (cols * ImageSize.Width, rows * ImageSize.Height);
 			using (Graphics g = Graphics.FromImage (main)) {
-				g.FillRectangle (new SolidBrush (BackColor), 0, 0, cols * ImageSize.Width, rows * ImageSize.Height);
+				g.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), 0, 0, cols * ImageSize.Width, rows * ImageSize.Height);
 				for (int i = 0; i < images.Length; i++) {
 					g.DrawImage (images [i], (i % cols) * ImageSize.Width,
 							(i / cols) * ImageSize.Height);

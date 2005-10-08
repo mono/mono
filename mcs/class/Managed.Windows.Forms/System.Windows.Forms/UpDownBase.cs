@@ -317,9 +317,7 @@ namespace System.Windows.Forms
 
 
 		private void UpDownBase_Paint(object sender, PaintEventArgs e) {
-			using (SolidBrush background = new SolidBrush(BackColor)) {
-				e.Graphics.FillRectangle(background, ClientRectangle);
-			}
+			e.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), ClientRectangle);
 		}
 		#endregion	// Private Methods
 

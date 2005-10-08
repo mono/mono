@@ -1,3 +1,11 @@
+2005-10-08  Alexander Olk  <alex.olk@googlemail.com>
+
+	* ImageListStreamer.cs, TreeView.cs, UpDownBase.cs, RichTextBox.cs,
+	  ColorDialog.cs, TextControl.cs, Panel.cs, MdiChildContext.cs,
+	  ErrorProvider.cs:
+	  Use ResPool for brushes and dispose System.Drawing objects that
+	  are not used anymore.
+
 2005-10-07  Jackson Harper  <jackson@ximian.com>
 
 	* MdiChildContext.cs: Use the new borders instead of drawing them

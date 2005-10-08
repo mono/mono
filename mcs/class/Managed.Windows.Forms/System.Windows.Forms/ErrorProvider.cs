@@ -239,7 +239,7 @@ namespace System.Windows.Forms {
 					// Dunno why this POS doesn't reliably blink
 					g = window.CreateGraphics();
 					if ((blink_count % 2) == 0) {
-						g.FillRectangle(new SolidBrush(window.parent.BackColor), window.ClientRectangle);
+						g.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(window.parent.BackColor), window.ClientRectangle);
 					} else {
 						g.DrawIcon(this.ep.icon, 0, 0);
 					}

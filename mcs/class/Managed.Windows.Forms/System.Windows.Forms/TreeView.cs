@@ -928,16 +928,17 @@ namespace System.Windows.Forms {
 
 		private void DrawNodeCheckBox (TreeNode node, Graphics dc, int x, int middle)
 		{
-			dc.DrawRectangle (new Pen (Color.Black, 2), x+ 3, middle - 4, 11, 11);
+			using(Pen pen = new Pen (Color.Black, 2) ) 
+				dc.DrawRectangle (pen, x+ 3, middle - 4, 11, 11);
 
 			if (node.Checked) {
-				Pen check_pen = new Pen (Color.Black, 1);
-
-				dc.DrawLine (check_pen, x + 6, middle + 0, x + 8, middle + 3);
-				dc.DrawLine (check_pen, x + 6, middle + 1, x + 8, middle + 4);
-
-				dc.DrawLine (check_pen, x + 7, middle + 3, x + 13, middle - 2);
-				dc.DrawLine (check_pen, x + 7, middle + 4, x + 13, middle - 1);
+				using(Pen check_pen = new Pen (Color.Black, 1)) {
+					dc.DrawLine (check_pen, x + 6, middle + 0, x + 8, middle + 3);
+					dc.DrawLine (check_pen, x + 6, middle + 1, x + 8, middle + 4);
+	
+					dc.DrawLine (check_pen, x + 7, middle + 3, x + 13, middle - 2);
+					dc.DrawLine (check_pen, x + 7, middle + 4, x + 13, middle - 1);
+				}
 			}
 		}
 

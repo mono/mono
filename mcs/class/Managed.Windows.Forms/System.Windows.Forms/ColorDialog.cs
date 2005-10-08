@@ -1076,8 +1076,11 @@ namespace System.Windows.Forms
 					
 					if ( isSelected )
 					{
-						pe.Graphics.DrawRectangle( new Pen( ThemeEngine.Current.ResPool.GetSolidBrush( Color.Black ) ),
-									  new Rectangle( 2, 2, 20, 18 ) );
+						using ( Pen pen = new Pen( ThemeEngine.Current.ResPool.GetSolidBrush( Color.Black ) ) )
+						{
+							pe.Graphics.DrawRectangle( pen,
+										  new Rectangle( 2, 2, 20, 18 ) );
+						}
 					}
 					
 					if ( hasFocus && isSelected )
@@ -1697,14 +1700,16 @@ namespace System.Windows.Forms
 				
 				public void Draw( )
 				{
-					Pen pen = new Pen( ThemeEngine.Current.ResPool.GetSolidBrush( cursorColor ), 3 );
-					
-					Graphics graphics = Graphics.FromImage( bitmap );
-					
-					graphics.DrawLine( pen, 11, 0, 11, 7 );
-					graphics.DrawLine( pen, 11, 14, 11, 21 );
-					graphics.DrawLine( pen, 0, 11, 7, 11 );
-					graphics.DrawLine( pen, 14, 11, 21, 11 );
+					using( Pen pen = new Pen( ThemeEngine.Current.ResPool.GetSolidBrush( cursorColor ), 3 ) )
+					{
+						using( Graphics graphics = Graphics.FromImage( bitmap ) )
+						{
+							graphics.DrawLine( pen, 11, 0, 11, 7 );
+							graphics.DrawLine( pen, 11, 14, 11, 21 );
+							graphics.DrawLine( pen, 0, 11, 7, 11 );
+							graphics.DrawLine( pen, 14, 11, 21, 11 );
+						}
+					}
 				}
 				
 				public Bitmap Bitmap

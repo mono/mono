@@ -301,7 +301,7 @@ namespace System.Windows.Forms {
 			Rectangle tb = new Rectangle (BorderWidth, BorderWidth,
 					form.Width - BorderWidth, TitleBarHeight);
 
-			pe.Graphics.FillRectangle (new SolidBrush (color),
+			pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color),
 						BorderWidth, BorderWidth,
 						form.Width - BorderWidth, TitleBarHeight);
 
@@ -309,7 +309,7 @@ namespace System.Windows.Forms {
 				StringFormat format = new StringFormat ();
 				format.LineAlignment = StringAlignment.Center;
 				pe.Graphics.DrawString (form.Text, form.Font,
-						new SolidBrush (form.ForeColor),
+						ThemeEngine.Current.ResPool.GetSolidBrush (form.ForeColor),
 						tb, format);
 			}
 
