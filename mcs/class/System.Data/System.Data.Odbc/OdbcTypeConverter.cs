@@ -1,5 +1,5 @@
 //
-// System.Data.Odbc.OdbcTypeConverter
+// OdbcTypeConvert.cs : helps conversion between various odbc types.
 //
 // Author:
 //   Sureshkumar T <tsureshkumar@novell.com>
@@ -29,49 +29,9 @@
 
 //
 //
-// * Type mapping between various odbc driver types.
-// For further infomartion between these mapping visit following msdn site
-//
-//      * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/
-//        odbcc_data_types.asp
-//      * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/
-//        odbcconverting_data_from_c_to_sql_data_types.asp
-//      * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/
-//        odbcconverting_data_from_sql_to_c_data_types.asp
-//      * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/
-//        odbcparameter_data_types.asp
-//      * http://msdn.microsoft.com/library/default.asp?url=/library/en-us/cpref/
-//        html/frlrfsystemdataodbcodbctypeclasstopic.asp
+// For mapping between types, refer OdbcTypeMap.cs
 //
 //
-// OdbcType             SQL_C_TYPE              SQL_TYPE
-// ===================================================================
-// BigInt		SQL_C_TYPE.SBIGINT	SQL_TYPE.BIGINT	    
-// Binary		SQL_C_TYPE.BINARY	SQL_TYPE.BINARY	    
-// Bit			SQL_C_TYPE.BIT		SQL_TYPE.BIT	    
-// Char			SQL_C_TYPE.CHAR		SQL_TYPE.CHAR	    
-// Date			SQL_C_TYPE.TYPE_DATE	SQL_TYPE.TYPE_DATE  
-// DateTime		SQL_C_TYPE.TIMESTAMP	SQL_TYPE.TIMESTAMP  
-// Decimal		SQL_C_TYPE.NUMERIC	SQL_TYPE.NUMERIC    
-// Double		SQL_C_TYPE.DOUBLE	SQL_TYPE.DOUBLE	    
-// Image		SQL_C_TYPE.BINARY	SQL_TYPE.BINARY	    
-// Int			SQL_C_TYPE.LONG		SQL_TYPE.INTEGER    
-// NChar		SQL_C_TYPE.WCHAR	SQL_TYPE.WCHAR	    
-// NText		SQL_C_TYPE.WCHAR	SQL_TYPE.WLONGVARCHAR
-// Numeric		SQL_C_TYPE.NUMERIC	SQL_TYPE.NUMERIC    
-// NVarChar		SQL_C_TYPE.WCHAR	SQL_TYPE.WVARCHAR   
-// Real			SQL_C_TYPE.FLOAT	SQL_TYPE.REAL	    
-// SignedBigInt		SQL_C_TYPE.SBIGINT	SQL_TYPE.BIGINT	    
-// SmallDateTime	SQL_C_TYPE.TIMESTAMP	SQL_TYPE.TIMESTAMP  
-// SmallInt		SQL_C_TYPE.SHORT	SQL_TYPE.SMALLINT   
-// Text			SQL_C_TYPE.WCHAR	SQL_TYPE.LONGVARCHAR
-// Time			SQL_C_TYPE.TYPE_TIME	SQL_TYPE.TYPE_TIME  
-// Timestamp		SQL_C_TYPE.BINARY	SQL_TYPE.BINARY	    
-// TinyInt		SQL_C_TYPE.UTINYINT	SQL_TYPE.TINYINT    
-// UniqueIdentifier	SQL_C_TYPE.GUID		SQL_TYPE.GUID	    
-// VarBinary		SQL_C_TYPE.BINARY	SQL_TYPE.VARBINARY  
-// VarChar		SQL_C_TYPE.WCHAR	SQL_TYPE.WVARCHAR   
-//====================================================================
 
 
 using System.Data;
@@ -80,344 +40,190 @@ using System.Data.Common;
 
 namespace System.Data.Odbc
 { 
-        internal sealed class OdbcTypeConverter
-        {
-                internal struct TypeMap
-                {
-                        public const short DefaultForOdbcType   = 1;
-                        public const short DefaultForSQLCType   = 1<<1;
-                        public const short DefaultForSQLType    = 1<<2;
-                        public const short DefaultAll           = (DefaultForOdbcType |
-                                                                   DefaultForSQLCType |
-                                                                   DefaultForSQLType);
-                        public OdbcType         OdbcType;
-                        public SQL_C_TYPE       SqlCType;
-                        public SQL_TYPE         SqlType;
-                        public short            BitMask;
+	internal class OdbcTypeConverter  
+	{
+		public static OdbcTypeMap GetTypeMap (OdbcType odbcType)
+		{
+			return (OdbcTypeMap) OdbcTypeMap.Maps [odbcType];
+		}
 
-                        public TypeMap (OdbcType odbcType, SQL_C_TYPE sqlCType, SQL_TYPE sqlType)
-                        {
-                                OdbcType        = odbcType;
-                                SqlType         = sqlType;
-                                SqlCType        = sqlCType;
-                                BitMask         = DefaultForOdbcType 
-                                        | DefaultForSQLCType
-                                        | DefaultForSQLType
-                                        ;
-                        }
+		public static OdbcTypeMap InferFromValue (object value)
+		{
 
-                        public TypeMap (OdbcType odbcType, SQL_C_TYPE sqlCType, SQL_TYPE sqlType, short defaultFlags)
-                                : this (odbcType, sqlCType, sqlType)
-                        {
-                                BitMask = defaultFlags;
-                        }
-                        
-                }
+			if (value.GetType ().IsArray)
+				if (value.GetType ().GetElementType () == typeof (byte))
+					return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Binary];
+				else
+					return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.VarChar]; // change
 
+			switch (Type.GetTypeCode (value.GetType ())) {
+			case TypeCode.Empty:
+			case TypeCode.Object:
+			case TypeCode.DBNull:
+				throw new ArgumentException (String.Format ("Infering OdbcType from {0} is not supported",
+									    Type.GetTypeCode (value.GetType ())));
+			case TypeCode.Boolean:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Bit];
+			case TypeCode.Char:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Char];
+			case TypeCode.SByte:
+				throw new ArgumentException ("infering OdbcType from SByte is not supported");
+			case TypeCode.Byte:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.TinyInt];
+			case TypeCode.Int16:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.SmallInt];
+			case TypeCode.UInt16:
+			case TypeCode.Int32:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Int];
+			case TypeCode.UInt32:
+			case TypeCode.Int64:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.BigInt];
+			case TypeCode.UInt64:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Numeric];
+			case TypeCode.Single:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Real];
+			case TypeCode.Double:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Double];
+			case TypeCode.Decimal:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Numeric];
+			case TypeCode.DateTime:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.DateTime];
+			case TypeCode.String:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.NVarChar];
+			}
 
-                // FIXME: Write a binary search to make faster
-                internal class MapCollection : CollectionBase
-                {
-                        public TypeMap this [OdbcType odbcType]
-                        {
-                                get {
-                                        foreach (TypeMap map in List){
-                                                if (map.OdbcType == odbcType
-                                                    && (map.BitMask & TypeMap.DefaultForOdbcType) > 0 )
-                                                        return map;
-                                        }
-                                        throw new ArgumentException (String.Format ("Type mapping for odbc type {0} is not found", 
-                                                                                    odbcType.ToString ()
-                                                                                    )
-                                                                     );
-                                }
-                                set {
-                                        int i = IndexOf (odbcType);
-                                        if (i == -1)
-                                                Add (value);
-                                        List [i] = value;
-                                }
-                        }
+			// FIXME : Guid
+			// FIXME : TimeSpan
+			// FIXME : DateTime
 
-                        public TypeMap this [SQL_C_TYPE sqlCType]
-                        {
-                                get {
-                                        foreach (TypeMap map in List){
-                                                if (map.SqlCType == sqlCType
-                                                    && (map.BitMask & TypeMap.DefaultForSQLCType) > 0 )
-                                                        return map;
-                                        }
-                                        throw new ArgumentException (String.Format ("Type mapping for odbc type {0} is not found", 
-                                                                                    sqlCType.ToString ()
-                                                                                    )
-                                                                     );
-                                }
-                                set {
-                                        int i = IndexOf (sqlCType);
-                                        if (i == -1)
-                                                Add (value);
-                                        List [i] = value;
-                                }
-                                
-                        }
+			return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.VarChar];
+		}
 
+		public static OdbcTypeMap GetTypeMap (SQL_TYPE sqlType) 
+		{
+			switch (sqlType) {
+			case SQL_TYPE.BINARY:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Binary];
+			case SQL_TYPE.BIT:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Bit];
+			case SQL_TYPE.CHAR:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Char];
+			case SQL_TYPE.DATE:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Date];
+			case SQL_TYPE.DECIMAL:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Decimal];
+			case SQL_TYPE.DOUBLE:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Double];
+			case SQL_TYPE.GUID:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.UniqueIdentifier];
+			case SQL_TYPE.INTEGER:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Int];
+			case SQL_TYPE.INTERVAL_DAY:
+			case SQL_TYPE.INTERVAL_DAY_TO_HOUR:
+			case SQL_TYPE.INTERVAL_DAY_TO_MINUTE:
+			case SQL_TYPE.INTERVAL_DAY_TO_SECOND:
+			case SQL_TYPE.INTERVAL_HOUR:
+			case SQL_TYPE.INTERVAL_HOUR_TO_MINUTE:
+			case SQL_TYPE.INTERVAL_HOUR_TO_SECOND:
+			case SQL_TYPE.INTERVAL_MINUTE:
+			case SQL_TYPE.INTERVAL_MINUTE_TO_SECOND:
+			case SQL_TYPE.INTERVAL_MONTH:
+			case SQL_TYPE.INTERVAL_SECOND:
+			case SQL_TYPE.INTERVAL_YEAR:
+			case SQL_TYPE.INTERVAL_YEAR_TO_MONTH:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.DateTime];
+			case SQL_TYPE.LONGVARBINARY:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.VarBinary];
+			case SQL_TYPE.LONGVARCHAR:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Text];
+			case SQL_TYPE.NUMERIC:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Numeric];
+			case SQL_TYPE.REAL:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.Real];
+			case SQL_TYPE.SMALLINT:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.SmallInt];
+			case SQL_TYPE.TIME:
+			case SQL_TYPE.TIMESTAMP:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.DateTime];
+			case SQL_TYPE.TINYINT:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.TinyInt];
+			case SQL_TYPE.TYPE_DATE:
+			case SQL_TYPE.TYPE_TIME:
+			case SQL_TYPE.TYPE_TIMESTAMP:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.DateTime];
+			case SQL_TYPE.VARBINARY:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.VarBinary];
+			case SQL_TYPE.VARCHAR:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.VarChar];
+			case SQL_TYPE.WCHAR:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.NChar];
+			case SQL_TYPE.WLONGVARCHAR:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.NText];
+			case SQL_TYPE.WVARCHAR:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.NVarChar];
+			case SQL_TYPE.UNASSIGNED:
+				return (OdbcTypeMap)  OdbcTypeMap.Maps [OdbcType.VarChar];
+			}
+			return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.VarChar];
+		}
 
-                        public TypeMap this [SQL_TYPE sqlType]
-                        {
-                                get {
-                                        foreach (TypeMap map in List){
-                                                if (map.SqlType == sqlType
-                                                    && (map.BitMask & TypeMap.DefaultForSQLType) > 0 )
-                                                        return map;
-                                        }
-                                        throw new ArgumentException (String.Format ("Type mapping for odbc type {0} is not found", 
-                                                                                    sqlType.ToString ()
-                                                                                    )
-                                                                     );
-                                }
-                                set {
-                                        int i = IndexOf (sqlType);
-                                        if (i == -1)
-                                                Add (value);
-                                        List [i] = value;
-                                }
-                                
-                        }
-
-                        public TypeMap this [int index]
-                        {
-                                get { return (TypeMap) List [index];}
-                                set { List [index] = value;}
-                        }
-                        
-
-                        
-                        public int IndexOf (OdbcType odbcType)
-                        {
-                                for (int i=0; i < List.Count; i++) {
-                                        TypeMap map = (TypeMap) List [i];
-                                        if (map.OdbcType == odbcType
-                                            && (map.BitMask & TypeMap.DefaultForOdbcType) > 0 )
-                                                return i;
-                                }
-                                return -1;
-                        }
-                        
-                        public int IndexOf (SQL_C_TYPE sqlCType)
-                        {
-                                for (int i=0; i < List.Count; i++) {
-                                        TypeMap map = (TypeMap) List [i];
-                                        if (map.SqlCType == sqlCType
-                                            && (map.BitMask & TypeMap.DefaultForSQLCType) > 0 )
-                                                return i;
-                                }
-                                return -1;
-                        }
-
-                        public int IndexOf (SQL_TYPE sqlType)
-                        {
-                                for (int i=0; i < List.Count; i++) {
-                                        TypeMap map = (TypeMap) List [i];
-                                        if (map.SqlType == sqlType
-                                            && (map.BitMask & TypeMap.DefaultForSQLType) > 0 )
-                                                return i;
-                                }
-                                return -1;
-                        }
-
-                        public int Add (TypeMap map)
-                        {
-                                return List.Add (map);
-                        }
-                        
-                        protected override void OnValidate (object value)
-                        {
-                                if (value.GetType () != typeof (TypeMap))
-                                        throw new ArgumentException ("value is not of type TypeMap");
-                        }
-                        
-                }
-                
-
-                private static MapCollection OdbcTypeMap;
-
-                static OdbcTypeConverter ()
-                {
-			OdbcTypeMap = new MapCollection ();
-			OdbcTypeMap.Add (new TypeMap (OdbcType.BigInt,		SQL_C_TYPE.SBIGINT,		SQL_TYPE.BIGINT	    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Binary,		SQL_C_TYPE.BINARY,		SQL_TYPE.BINARY	    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Bit,		SQL_C_TYPE.BIT,		        SQL_TYPE.BIT	    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Char,            SQL_C_TYPE.CHAR,		SQL_TYPE.CHAR	    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Date,		SQL_C_TYPE.TYPE_DATE,		SQL_TYPE.TYPE_DATE  ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.DateTime,	SQL_C_TYPE.TIMESTAMP,		SQL_TYPE.TIMESTAMP  ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Decimal,		SQL_C_TYPE.NUMERIC,		SQL_TYPE.NUMERIC    , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Double,		SQL_C_TYPE.DOUBLE,		SQL_TYPE.DOUBLE	    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Image,		SQL_C_TYPE.BINARY,		SQL_TYPE.BINARY	    , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Int,		SQL_C_TYPE.LONG,		SQL_TYPE.INTEGER    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.NChar,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WCHAR	    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.NText,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WLONGVARCHAR));
-			// Currently, NUMERIC types works only with NUMERIC SQL Type to CHAR C Type mapping (pgsql). Other databases return 
-			// SQL_TYPE.DECIMAL in place of numeric types.
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Numeric,		SQL_C_TYPE.CHAR,		SQL_TYPE.NUMERIC    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.NVarChar,	SQL_C_TYPE.WCHAR,		SQL_TYPE.WVARCHAR   ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Real,		SQL_C_TYPE.FLOAT,		SQL_TYPE.REAL	    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.SmallDateTime,	SQL_C_TYPE.TIMESTAMP,		SQL_TYPE.TIMESTAMP  , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.SmallInt,	SQL_C_TYPE.SHORT,		SQL_TYPE.SMALLINT   ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Text,		SQL_C_TYPE.WCHAR,		SQL_TYPE.LONGVARCHAR));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Time,		SQL_C_TYPE.TYPE_TIME,		SQL_TYPE.TYPE_TIME  ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.Timestamp,	SQL_C_TYPE.BINARY,		SQL_TYPE.BINARY	    , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.TinyInt,		SQL_C_TYPE.UTINYINT,		SQL_TYPE.TINYINT    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.UniqueIdentifier,SQL_C_TYPE.GUID,		SQL_TYPE.GUID	    ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.VarBinary,	SQL_C_TYPE.BINARY,		SQL_TYPE.VARBINARY  ));
-			OdbcTypeMap.Add (new TypeMap (OdbcType.VarChar,		SQL_C_TYPE.WCHAR,		SQL_TYPE.WVARCHAR   , TypeMap.DefaultAll & (~TypeMap.DefaultForSQLType)));
-                }
-                
-                public static SQL_C_TYPE ConvertToSqlCType (OdbcType type)
-                {
-			// FIXME: currently, odbc provider does not support unicode.
-			// instead of WCHAR, use currently CHAR
-			if (type == OdbcType.VarChar)
-				return SQL_C_TYPE.CHAR;
-			return OdbcTypeMap [type].SqlCType;
-				
-                }
-                
-                public static SQL_TYPE ConvertToSqlType (OdbcType type)
-                {
-			// FIXME: currently, odbc provider does not support unicode.
-			// instead of WVARCHAR, use currently VARCHAR
-			if (type == OdbcType.VarChar)
-				return SQL_TYPE.VARCHAR;
-                        return OdbcTypeMap [type].SqlType;
-                }
-
-
-                public static OdbcType ConvertToOdbcType (SQL_TYPE sqlType)
-                {
-                        // Unmapped SQL Types
-                        //
-                        //#define SQL_FLOAT     6
-                        //	could map to SQL_DOUBLE?
-                        //#define SQL_INTERVAL	10
-                        //	could map to SmallDateTime?
-                        return GetTypeMap (sqlType).OdbcType;
-                }
-
-                public static TypeMap GetTypeMap (SQL_TYPE sqlType)
-                {
-                        TypeMap map;
-                        try {
-                                map  = OdbcTypeMap [sqlType];
-                                return map;
-                        } catch (ArgumentException) {
-                                
-                        }
-
-                        // If not in default translation
-                        map = new TypeMap ();
-                        map.SqlType = sqlType;
-                        switch (sqlType) {
-			case SQL_TYPE.DATE:                      
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.TYPE_DATE;
-                                return map;
-
-			case SQL_TYPE.DECIMAL:                      
-                                map.OdbcType = OdbcType.Decimal;
-                                map.SqlCType = SQL_C_TYPE.CHAR;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_DAY:              
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_DAY;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_DAY_TO_HOUR:      
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_DAY_TO_HOUR;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_DAY_TO_MINUTE:    
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_DAY_TO_MINUTE;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_DAY_TO_SECOND:    
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_DAY_TO_SECOND;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_HOUR:             
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_HOUR;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_HOUR_TO_MINUTE:   
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_HOUR_TO_MINUTE;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_HOUR_TO_SECOND:   
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_HOUR_TO_SECOND;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_MINUTE:           
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_MINUTE;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_MINUTE_TO_SECOND: 
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_MINUTE_TO_SECOND;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_MONTH:            
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_MONTH;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_SECOND:           
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_SECOND;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_YEAR:             
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_YEAR;
-                                return map;
-
-			case SQL_TYPE.INTERVAL_YEAR_TO_MONTH:    
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.INTERVAL_YEAR_TO_MONTH;
-                                return map;
-
-                        case SQL_TYPE.LONGVARBINARY:    
-                                map.OdbcType = OdbcType.Binary;
-                                map.SqlCType = SQL_C_TYPE.BINARY;
-                                return map;
-
-			case SQL_TYPE.TIME:                      
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.TIME;
-                                return map;
-
-			case SQL_TYPE.TYPE_TIMESTAMP:            
-                                map.OdbcType = OdbcType.DateTime;
-                                map.SqlCType = SQL_C_TYPE.TIMESTAMP;
-                                return map;
-
-			case SQL_TYPE.VARCHAR:                   
-                                map.OdbcType = OdbcType.VarChar;
-                                map.SqlCType = SQL_C_TYPE.CHAR;
-                                return map;
-
-                        default:                        
-                                map.OdbcType = OdbcType.NVarChar;
-                                map.SqlCType = SQL_C_TYPE.WCHAR;
-                                return map;
-                        }
-                }
-                
-        }
+		public static OdbcTypeMap GetTypeMap (DbType dbType) 
+		{
+			switch (dbType) {
+			case DbType.AnsiString:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.VarChar];
+			case DbType.Binary:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Binary];
+			case DbType.Byte:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.TinyInt];
+			case DbType.Boolean:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Bit];
+			case DbType.Currency:
+				throw new NotSupportedException ("Infering OdbcType from DbType.Currency is not" +
+								 " supported");
+			case DbType.Date:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Date];
+			case DbType.DateTime:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.DateTime];
+			case DbType.Decimal:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Numeric];
+			case DbType.Double:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Double];
+			case DbType.Guid:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.UniqueIdentifier];
+			case DbType.Int16:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.SmallInt];
+			case DbType.Int32:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Int];
+			case DbType.Int64:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.BigInt];
+			case DbType.Object:
+				throw new NotSupportedException ("Infering OdbcType from DbType.Object is not" +
+								 " supported");
+			case DbType.SByte:
+				throw new NotSupportedException ("Infering OdbcType from DbType.SByte is not" +
+								 " supported");
+			case DbType.Single:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Real];
+			case DbType.String:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.NVarChar];
+			case DbType.Time:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Time];
+			case DbType.UInt16:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Int];
+			case DbType.UInt32:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.BigInt];
+			case DbType.UInt64:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Numeric];
+			case DbType.VarNumeric:
+				throw new NotSupportedException ("Infering OdbcType from DbType.VarNumeric is not" +
+								 " supported");
+			case DbType.AnsiStringFixedLength:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.Char];
+			case DbType.StringFixedLength:
+				return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.NChar];
+			}
+			return (OdbcTypeMap) OdbcTypeMap.Maps [OdbcType.VarChar];
+		}
+	}
 }

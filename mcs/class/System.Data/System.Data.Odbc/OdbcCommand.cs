@@ -502,6 +502,7 @@ namespace System.Data.Odbc
 			foreach (OdbcParameter p in Parameters)
 			{
 				p.Bind(hstmt, i);
+				p.CopyValue ();
 				i++;
 			}
 		}

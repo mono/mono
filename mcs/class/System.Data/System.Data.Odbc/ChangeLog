@@ -1,3 +1,23 @@
+2005-10-08  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcCommand.cs (BindParameters): Copy the parameter Value after
+	binding.
+
+	* OdbcParameter.cs: re-implemented the native buffer handling and
+	odbc type handling.
+
+	* NativeBuffer.cs: A native buffer class to hold pointer to native
+	memory.
+
+	* OdbcTypeMap.cs (OdbcTypeMap): structure to hold different odbc
+	types and the default mapping.
+
+	* OdbcTypeConverter.cs: Simplified mapping between different odbc
+	types using switch-case.
+
+	* libodbc.cs (SQLBindParameter): use only one entry point and use
+	IntPtr instead of ref.
+
 2005-08-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* OdbcDataReader.cs: Marked GetPrimaryKeysBySQLStatistics unsafe.

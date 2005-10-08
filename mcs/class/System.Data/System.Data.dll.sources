@@ -241,6 +241,7 @@ System.Data.SqlTypes/StorageState.cs
 System.Data.SqlTypes/SqlAlreadyFilledException.cs
 System.Data.SqlTypes/SqlNotFilledException.cs
 System.Data.SqlTypes/SqlXml.cs
+System.Data.Odbc/NativeBuffer.cs
 System.Data.Odbc/OdbcConnectionFactory.cs
 System.Data.Odbc/OdbcFactory.cs
 System.Data.Odbc/OdbcParameterConverter.cs
@@ -257,6 +258,7 @@ System.Data.Odbc/OdbcParameter.cs
 System.Data.Odbc/OdbcParameterCollection.cs
 System.Data.Odbc/OdbcTransaction.cs
 System.Data.Odbc/OdbcType.cs
+System.Data.Odbc/OdbcTypeMap.cs
 System.Data.Odbc/OdbcTypeConverter.cs
 System.Data.Odbc/libodbc.cs
 System.Data.Odbc/OdbcDataAdapter.cs

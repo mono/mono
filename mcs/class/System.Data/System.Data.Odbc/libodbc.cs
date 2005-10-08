@@ -256,12 +256,7 @@ namespace System.Data.Odbc
 		[DllImport("odbc32.dll")]
 		internal static extern OdbcReturn SQLBindParameter(IntPtr StatementHandle, ushort ParamNum, 
 				short InputOutputType, SQL_C_TYPE ValueType, SQL_TYPE ParamType, uint ColSize, 
-				short DecimalDigits, byte[] ParamValue, int BufLen, ref int StrLen);
-
-		[DllImport("odbc32.dll")]
-		internal static extern OdbcReturn SQLBindParameter(IntPtr StatementHandle, ushort ParamNum, 
-				short InputOutputType, SQL_C_TYPE ValueType, SQL_TYPE ParamType, uint ColSize, 
-				short DecimalDigits, ref int ParamValue, int BufLen, ref int StrLen);
+				short DecimalDigits, IntPtr ParamValue, int BufLen, IntPtr StrLen);
 
 		[DllImport("odbc32.dll")]
 		internal static extern OdbcReturn SQLCancel(IntPtr StatementHandle);

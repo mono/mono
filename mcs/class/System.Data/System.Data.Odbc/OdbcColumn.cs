@@ -149,7 +149,7 @@ namespace System.Data.Odbc
                 {
                         get {
                                 if ( _sqlType == SQL_TYPE.UNASSIGNED)
-                                        _sqlType = OdbcTypeConverter.ConvertToSqlType (OdbcType);
+                                        _sqlType = OdbcTypeConverter.GetTypeMap (OdbcType).SqlType;
                                 return _sqlType;
                         }
 
@@ -161,7 +161,7 @@ namespace System.Data.Odbc
                         get {
                                 
                                 if ( _sqlCType == SQL_C_TYPE.UNASSIGNED)
-                                        _sqlCType = OdbcTypeConverter.ConvertToSqlCType (OdbcType);
+                                        _sqlCType = OdbcTypeConverter.GetTypeMap (OdbcType).NativeType;
                                 return _sqlCType;
                         }
                         set {_sqlCType = value;}
@@ -170,9 +170,9 @@ namespace System.Data.Odbc
                 internal void UpdateTypes (SQL_TYPE sqlType)
                 {
                         SqlType = sqlType;
-                        OdbcTypeConverter.TypeMap map = OdbcTypeConverter.GetTypeMap (SqlType);
+                        OdbcTypeMap map = OdbcTypeConverter.GetTypeMap (SqlType);
                         OdbcType = map.OdbcType;
-                        SqlCType = map.SqlCType;
+                        SqlCType = map.NativeType;
                 }
                 
                 

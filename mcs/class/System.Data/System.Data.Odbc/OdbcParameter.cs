@@ -35,6 +35,10 @@ using System;
 using System.Text;
 using System.Data;
 using System.Data.Common;
+
+using System.Runtime.InteropServices;
+using System.Globalization;
+
 #if NET_2_0
 using System.Data.ProviderBase;
 #endif // NET_2_0
@@ -56,88 +60,77 @@ namespace System.Data.Odbc
 		ParameterDirection direction;
 		bool isNullable;
 		int size;
-		byte precision;
-		byte scale;
-		object paramValue;
 		DataRowVersion sourceVersion;
 		string sourceColumn;
+		byte _precision;
+		byte _scale;
+		object _value;
 #endif // ONLY_1_1
-		OdbcType odbcType = OdbcType.NVarChar;
-		DbType dbType = DbType.String;
-		OdbcParameterCollection container = null;	
-		
-		// Buffers for parameter value based on type. Currently I've only optimized 
-		// for int parameters and everything else is just converted to a string.
-		private bool bufferIsSet;
-		int intbuf;
-		byte[] buffer;
 
+		private OdbcTypeMap _typeMap;
+		private NativeBuffer _nativeBuffer = new NativeBuffer ();
+		private NativeBuffer _cbLengthInd;
+		private OdbcParameterCollection container = null;	
+		
 		#endregion
 
 		#region Constructors
 		
 		public OdbcParameter ()
 		{
+			_cbLengthInd = new NativeBuffer ();
 			ParameterName = String.Empty;
-			Value = null;
-			Size = 0;
 			IsNullable = true;
-			Precision = 0;
-			Scale = 0;
 			SourceColumn = String.Empty;
 			Direction = ParameterDirection.Input;
+			_typeMap = OdbcTypeConverter.GetTypeMap (OdbcType.VarChar);
 		}
 
 		public OdbcParameter (string name, object value) 
 			: this ()
 		{
 			this.ParameterName = name;
-			this.Value = value;
-                        
-                        if (value != null && !value.GetType ().IsValueType) {
-                                Type type = value.GetType ();
-                                if (type.IsArray)
-                                        Size = type.GetElementType () == typeof (byte) ? 
+			Value = value;
+			_typeMap = OdbcTypeConverter.InferFromValue (value);
+			if (value != null && !value.GetType ().IsValueType) {
+				Type type = value.GetType ();
+				if (type.IsArray)
+					Size = type.GetElementType () == typeof (byte) ?
                                                 ((Array) value).Length : 0;
-                                else
-                                        Size = value.ToString ().Length;
+				else
+					Size = value.ToString ().Length;
                         }
-
-
 		}
 
-		public OdbcParameter (string name, OdbcType dataType) 
+		public OdbcParameter (string name, OdbcType odbcType) 
 			: this ()
 		{
 			this.ParameterName = name;
-			OdbcType = dataType;
+			_typeMap = (OdbcTypeMap) OdbcTypeConverter.GetTypeMap (odbcType);
 		}
 
-		public OdbcParameter (string name, OdbcType dataType, int size)
-			: this (name, dataType)
+		public OdbcParameter (string name, OdbcType odbcType, int size)
+			: this (name, odbcType)
 		{
 			this.Size = size;
 		}
 
-		public OdbcParameter (string name, OdbcType dataType, int size, string srcColumn)
-			: this (name, dataType, size)
+		public OdbcParameter (string name, OdbcType odbcType, int size, string srcColumn)
+			: this (name, odbcType, size)
 		{
 			this.SourceColumn = srcColumn;
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
-		public OdbcParameter(string name, OdbcType dataType, int size, 
+		public OdbcParameter(string name, OdbcType odbcType, int size, 
 				     ParameterDirection direction, bool isNullable, 
 				     byte precision, byte scale, string srcColumn, 
 				     DataRowVersion srcVersion, object value)
-			: this (name, dataType, size, srcColumn)
+			: this (name, odbcType, size, srcColumn)
 		{
 			this.Direction = direction;
 			this.IsNullable = isNullable;
-			this.Precision = precision;
-			this.Scale = scale;
 			this.SourceVersion = srcVersion;
-			this.Value = value;
 		}
 
 		#endregion
@@ -161,9 +154,12 @@ namespace System.Data.Odbc
                 override 
 #endif // NET_2_0
                 DbType DbType {
-			get { return dbType; }
+			get { return _typeMap.DbType; }
 			set { 
-				dbType = value;
+				if (value == _typeMap.DbType)
+					return;
+				
+				_typeMap = OdbcTypeConverter.GetTypeMap (value);
 			}
 		}
 		
@@ -193,9 +189,12 @@ namespace System.Data.Odbc
                 [RefreshPropertiesAttribute (RefreshProperties.All)]
 		[OdbcCategory ("Data")]
 		public OdbcType OdbcType {
-			get { return odbcType; }
+			get { return _typeMap.OdbcType; }
 			set {
-				odbcType = value;
+				if (value == OdbcType)
+					return;
+
+				_typeMap = OdbcTypeConverter.GetTypeMap (value);
 			}
 		}
 		
@@ -211,16 +210,16 @@ namespace System.Data.Odbc
                 [OdbcCategory ("DataCategory_Data")]
                 [DefaultValue (0)]
 		public byte Precision {
-			get { return precision; }
-			set { precision = value; }
+			get { return _precision; }
+			set { _precision = value; }
 		}
 		
                 [OdbcDescription ("DbDataParameter_Scale")]
                 [OdbcCategory ("DataCategory_Data")]
                 [DefaultValue (0)]
 		public byte Scale {
-			get { return scale; }
-			set { scale = value; }
+			get { return _scale; }
+			set { _scale = value; }
 		}
 		
 		[OdbcDescription ("DbDataParameter_Size")]
@@ -251,34 +250,16 @@ namespace System.Data.Odbc
                 [OdbcDescription ("DataParameter_Value")]
                 [OdbcCategory ("DataCategory_Data")]
                 [DefaultValue (null)]		
-		public object Value {
+		public	object Value {
 			get { 
-				return paramValue;
+				return _value;
 			}
 			set { 
-				paramValue = value;
-				bufferIsSet = false;
+				_value = value;
 			}
 		}
+
 #endif // ONLY_1_1
-
-#if NET_2_0
-		[TypeConverter (typeof(StringConverter))]
-                [OdbcDescription ("DataParameter_Value")]
-                [OdbcCategory ("DataCategory_Data")]
-                [DefaultValue (null)]		
-		public override object Value {
-			get { 
-				return base.Value;
-			}
-			set { 
-				base.Value = value;
-				bufferIsSet = false;
-			}
-		}
-
-#endif // NET_2_0
-
 
 		#endregion // Properties
 
@@ -286,68 +267,20 @@ namespace System.Data.Odbc
 
 		internal void Bind(IntPtr hstmt, int ParamNum) {
 			OdbcReturn ret;
-			// Set up the buffer if we haven't done so yet
-			if (!bufferIsSet)
-				setBuffer();
-
+			
 			// Convert System.Data.ParameterDirection into odbc enum
 			OdbcInputOutputDirection paramdir = libodbc.ConvertParameterDirection(this.Direction);
 
-                        SQL_C_TYPE ctype = OdbcTypeConverter.ConvertToSqlCType (odbcType);
-                        SQL_TYPE   sqltype = OdbcTypeConverter.ConvertToSqlType (odbcType);
-                        
-			// Bind parameter based on type
-                        int ind = -3;
-			if (odbcType == OdbcType.Int || odbcType == OdbcType.SmallInt)
-                                ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
-                                                               ctype, sqltype, Convert.ToUInt32(Size),
-                                                               0, ref intbuf, 0, ref ind);
-			else
-                                ret = libodbc.SQLBindParameter(hstmt, (ushort)ParamNum, (short)paramdir,
-                                                               ctype, sqltype, Convert.ToUInt32(Size),
-                                                               0, buffer, buffer.Length, ref ind);
+			_cbLengthInd.EnsureAlloc (Marshal.SizeOf (typeof (int)));
+			Marshal.WriteInt32 (_cbLengthInd, GetNativeSize ());
+			AllocateBuffer ();
+			ret = libodbc.SQLBindParameter(hstmt, (ushort) ParamNum, (short) paramdir,
+						       _typeMap.NativeType, _typeMap.SqlType, Convert.ToUInt32(Size),
+						       0, (IntPtr) _nativeBuffer, 0, _cbLengthInd);
+
 			// Check for error condition
 			if ((ret != OdbcReturn.Success) && (ret != OdbcReturn.SuccessWithInfo))
 				throw new OdbcException(new OdbcError("SQLBindParam", OdbcHandleType.Stmt, hstmt));
-		}
-
-		private void setBuffer() {
-			// Load buffer with new value
-			if (odbcType == OdbcType.Int)
-                                intbuf = Value == null ? new int () : (int) Value;
-			else if (odbcType == OdbcType.SmallInt)
-				intbuf = Value == null ? new short () : Convert.ToInt16(Value);
-			else if (odbcType == OdbcType.Numeric
-				 || odbcType == OdbcType.Decimal) {
-				// for numeric, the buffer is a packed decimal struct.
-				// ref http://www.it-faq.pl/mskb/181/254.HTM
-				if (Value == null)
-					Value = (decimal) 0;
-				int [] bits = Decimal.GetBits (Convert.ToDecimal (Value));
-				buffer = new byte [19]; // ref sqltypes.h
-
-				buffer [0] = Precision;
-				buffer [1] = (byte) ((bits [3] & 0x00FF0000) >> 16); // scale
-				buffer [2] = (byte) ((bits [3] & 0x80000000) > 0 ? 2 : 1); //sign
-				Buffer.BlockCopy (bits, 0, buffer, 3, 12); // copy data
-				for (int j = 16; j < 19; j++) // pad with 0
-					buffer [j] = 0;
-                        } else {
-				string paramValueString = Value.ToString();
-				// Treat everything else as a string
-				// Init string buffer
-				int minSize = Size;
-				minSize = Size > 20 ? Size : 20;
-				if (buffer == null || buffer.Length < minSize)
-					buffer = new byte[minSize];
-				else
-					buffer.Initialize();
-                                 
-				// Convert value into string and store into buffer
-				minSize = paramValueString.Length < minSize ? paramValueString.Length : minSize;
-				Encoding.ASCII.GetBytes(paramValueString, 0, minSize, buffer, 0);
-			}
-			bufferIsSet = true;
 		}
 
 		[MonoTODO]
@@ -359,6 +292,176 @@ namespace System.Data.Odbc
 		public override string ToString ()
 		{
 			return ParameterName;
+		}
+		
+		private int GetNativeSize ()
+		{
+			TextInfo ti = CultureInfo.InvariantCulture.TextInfo;
+			Encoding enc = Encoding.GetEncoding (ti.ANSICodePage);
+
+			switch (_typeMap.OdbcType) {
+			case OdbcType.Binary:
+				if (Value.GetType ().IsArray &&
+				    Value.GetType ().GetElementType () == typeof (byte))
+					return ( (Array) Value).Length;
+				else
+					return Value.ToString ().Length;
+			case OdbcType.Bit:
+				return Marshal.SizeOf (typeof  (byte));
+			case OdbcType.Double:
+				return Marshal.SizeOf (typeof (double));
+			case OdbcType.Real:
+				return Marshal.SizeOf (typeof (float));
+			case OdbcType.Int:
+				return Marshal.SizeOf (typeof (int));
+			case OdbcType.BigInt:
+				return Marshal.SizeOf (typeof  (long));
+			case OdbcType.Numeric:
+				return Value.ToString ().Length;
+			case OdbcType.SmallInt:
+				return Marshal.SizeOf (typeof  (Int16));
+			case OdbcType.TinyInt:
+				return Marshal.SizeOf (typeof  (byte));
+			case OdbcType.Char:
+			case OdbcType.Text:
+			case OdbcType.VarChar:
+				return enc.GetByteCount (Convert.ToString (Value)) + 1;
+			case OdbcType.NChar:
+			case OdbcType.NText:
+			case OdbcType.NVarChar:
+				// FIXME: Change to unicode
+				return enc.GetByteCount (Convert.ToString (Value)) + 1;
+			case OdbcType.VarBinary:
+			case OdbcType.Image:
+				if (Value.GetType ().IsArray &&
+				    Value.GetType ().GetElementType () == typeof (byte))
+					return ( (Array) Value).Length;
+				throw new ArgumentException ("Unsupported Native Type!");
+			case OdbcType.Date:
+			case OdbcType.DateTime:
+			case OdbcType.SmallDateTime:
+			case OdbcType.Time:
+			case OdbcType.Timestamp:
+				return 18;
+			case OdbcType.UniqueIdentifier:
+				return Marshal.SizeOf (typeof (Guid));
+			}
+
+			if (Value.GetType ().IsArray &&
+			    Value.GetType ().GetElementType () == typeof (byte))
+				return ( (Array) Value).Length;
+			
+			return Value.ToString ().Length;
+		}
+
+		private void AllocateBuffer ()
+		{
+			int size = GetNativeSize ();
+
+			if (_nativeBuffer.Size == size)
+				return;
+
+			_nativeBuffer.AllocBuffer (size);
+		}
+
+		internal void CopyValue ()
+		{
+			if (_nativeBuffer.Handle == IntPtr.Zero)
+				return;
+
+			DateTime dt;
+			TextInfo ti = CultureInfo.InvariantCulture.TextInfo;
+			Encoding enc = Encoding.GetEncoding (ti.ANSICodePage);
+			byte [] nativeBytes, buffer;
+
+			switch (_typeMap.OdbcType) {
+			case OdbcType.Binary:
+				throw new NotImplementedException ();
+			case OdbcType.Bit:
+				Marshal.WriteByte (_nativeBuffer, Convert.ToByte (Value));
+				return;
+			case OdbcType.Double:
+				Marshal.StructureToPtr (Convert.ToDouble (Value), _nativeBuffer, false);
+				return;
+			case OdbcType.Real:
+				Marshal.StructureToPtr (Convert.ToSingle (Value), _nativeBuffer, false);
+				return;
+			case OdbcType.Int:
+				Marshal.WriteInt32 (_nativeBuffer, Convert.ToInt32 (Value));
+				return;
+			case OdbcType.BigInt:
+				Marshal.WriteInt64 (_nativeBuffer, Convert.ToInt64 (Value));
+				return;
+			case OdbcType.Numeric:
+				throw new NotImplementedException ();
+			case OdbcType.SmallInt:
+				Marshal.WriteInt16 (_nativeBuffer, Convert.ToInt16 (Value));
+				return;
+			case OdbcType.TinyInt:
+				Marshal.WriteByte (_nativeBuffer, Convert.ToByte (Value));
+				return;
+			case OdbcType.Char:
+			case OdbcType.Text:
+			case OdbcType.VarChar:
+				buffer = new byte [GetNativeSize ()];
+				nativeBytes = enc.GetBytes (Convert.ToString (Value));
+				Array.Copy (nativeBytes, 0, buffer, 0, nativeBytes.Length);
+				buffer [buffer.Length-1] = (byte) 0;
+				Marshal.Copy (buffer, 0, _nativeBuffer, buffer.Length);
+				Marshal.WriteInt32 (_cbLengthInd, -3);
+				return;
+			case OdbcType.NChar:
+			case OdbcType.NText:
+			case OdbcType.NVarChar:
+				// FIXME : change to unicode
+				buffer = new byte [GetNativeSize ()];
+				nativeBytes = enc.GetBytes (Convert.ToString (Value));
+				Array.Copy (nativeBytes, 0, buffer, 0, nativeBytes.Length);
+				buffer [buffer.Length-1] = (byte) 0;
+				Marshal.Copy (buffer, 0, _nativeBuffer, buffer.Length);
+				Marshal.WriteInt32 (_cbLengthInd, -3);
+				return;
+			case OdbcType.VarBinary:
+			case OdbcType.Image:
+				if (Value.GetType ().IsArray &&
+				    Value.GetType ().GetElementType () == typeof (byte)) {
+					Marshal.Copy ( (byte []) Value, 0, _nativeBuffer, ((byte []) Value).Length);
+				}else
+					throw new ArgumentException ("Unsupported Native Type!");
+				return;
+			case OdbcType.Date:
+				dt = (DateTime) Value;
+				Marshal.WriteInt16 (_nativeBuffer, 0, (short) dt.Year);
+				Marshal.WriteInt16 (_nativeBuffer, 2, (short) dt.Month);
+				Marshal.WriteInt16 (_nativeBuffer, 4, (short) dt.Day);
+				return;
+			case OdbcType.Time:
+				dt = (DateTime) Value;
+				Marshal.WriteInt16 (_nativeBuffer, 0, (short) dt.Hour);
+				Marshal.WriteInt16 (_nativeBuffer, 2, (short) dt.Minute);
+				Marshal.WriteInt16 (_nativeBuffer, 4, (short) dt.Second);
+				return;
+			case OdbcType.SmallDateTime:
+			case OdbcType.Timestamp:
+			case OdbcType.DateTime:
+				dt = (DateTime) Value;
+				Marshal.WriteInt16 (_nativeBuffer, 0, (short) dt.Year);
+				Marshal.WriteInt16 (_nativeBuffer, 2, (short) dt.Month);
+				Marshal.WriteInt16 (_nativeBuffer, 4, (short) dt.Day);
+				Marshal.WriteInt16 (_nativeBuffer, 6, (short) dt.Hour);
+				Marshal.WriteInt16 (_nativeBuffer, 8, (short) dt.Minute);
+				Marshal.WriteInt16 (_nativeBuffer, 10, (short) dt.Second);
+				Marshal.WriteInt32 (_nativeBuffer, 12, (int) (dt.Ticks % 10000000) * 100);
+				return;
+			case OdbcType.UniqueIdentifier:
+				throw new NotImplementedException ();
+			}
+
+			if (Value.GetType ().IsArray &&
+			    Value.GetType ().GetElementType () == typeof (byte)) {
+				Marshal.Copy ( (byte []) Value, 0, _nativeBuffer, ((byte []) Value).Length);
+			}else
+				throw new ArgumentException ("Unsupported Native Type!");
 		}
 
 #if NET_2_0

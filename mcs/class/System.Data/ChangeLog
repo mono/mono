@@ -1,3 +1,8 @@
+2005-10-08  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* System.Data.dll.sources: added
+	System.Data.Odbc/NativeBuffer.cs. native buffer pointer.
+
 2005-09-20 Konstantin Triger <kostat@mainsoft.com>
 
 	* Added jay.bat to run jay in java prebuild step
