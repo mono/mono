@@ -1,3 +1,7 @@
+2005-10-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XsltSettings.cs: Marked sealed.
+
 2005-09-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslTransform.cs : When Transform() returns XmlReader, allow empty

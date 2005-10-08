@@ -30,7 +30,7 @@
 #if NET_2_0
 namespace System.Xml.Xsl
 {
-	public class XsltSettings
+	public sealed class XsltSettings
 	{
 		static readonly XsltSettings defaultSettings;
 		static readonly XsltSettings trustedXslt;
