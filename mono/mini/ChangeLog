@@ -1,8 +1,11 @@
 2005-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-exceptions.c (mono_handle_exception_internal): Fix bug 
+	introduced by previous patch.
+	
 	* mini-exceptions.c (mono_handle_exception_internal): Handle the case
 	when out_filter_idx is NULL.
-	
+
 	* mini-exceptions.c: Don't run filter clauses twice during exception
 	handling. Fixes #75755.
 
