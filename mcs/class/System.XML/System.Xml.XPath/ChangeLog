@@ -1,3 +1,9 @@
+2005-10-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* XPathNavigator.cs: [NET_2_0] Added DebuggerDisplay attribute,
+	added ReplaceRange and DeleteRange methods.
+	* XPathNodeIterator.cs: [NET_2_0] Added DebuggerDisplay attribute.
+
 2004-09-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : Now that managed collation is default, we don't need

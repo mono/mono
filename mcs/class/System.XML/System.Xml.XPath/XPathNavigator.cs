@@ -34,6 +34,7 @@ using System;
 #if NET_2_0
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 #endif
 using System.IO;
 using System.Xml;
@@ -49,6 +50,7 @@ using NSResolver = System.Xml.XmlNamespaceManager;
 namespace System.Xml.XPath
 {
 #if NET_2_0
+	[DebuggerDisplay ("{new DebuggerDisplayProxy(this)}")]
 	public abstract class XPathNavigator : XPathItem,
 		ICloneable, IXPathNavigable, IXmlNamespaceResolver
 #else
@@ -1045,6 +1047,16 @@ namespace System.Xml.XPath
 			throw new NotSupportedException ();
 		}
 
+		public virtual void DeleteRange (XPathNavigator nav)
+		{
+			throw new NotSupportedException ();
+		}
+
+		public virtual XmlWriter ReplaceRange (XPathNavigator nav)
+		{
+			throw new NotSupportedException ();
+		}
+	
 		public virtual XmlWriter InsertAfter ()
 		{
 			XPathNavigator nav = Clone ();
