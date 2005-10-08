@@ -5,6 +5,7 @@ System.Data.Odbc/OdbcCommandBuilderTest.cs
 System.Data.Odbc/OdbcCommandTest.cs
 System.Data.Odbc/OdbcDataReaderTest.cs
 System.Data.Odbc/OdbcDataAdapterTest.cs
+System.Data.Odbc/OdbcParameterTest.cs
 System.Data.Odbc/OdbcParameterCollectionTest.cs
 ProviderIndependant/DataReaderTest.cs
 ProviderIndependant/IDbCommandTest.cs

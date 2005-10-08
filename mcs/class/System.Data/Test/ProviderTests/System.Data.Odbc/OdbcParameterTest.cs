@@ -93,7 +93,7 @@ namespace MonoTests.System.Data
 				OdbcCommand cmd = (OdbcCommand) conn.CreateCommand ();
 				cmd.CommandText = query;
 
-				OdbcParameter param = cmd.Parameters.Add ("type_smallint", OdbcType.BigInt);
+				OdbcParameter param = cmd.Parameters.Add ("type_smallint", OdbcType.SmallInt);
 				param.Value = 32767;
 				OdbcDataReader reader = cmd.ExecuteReader ();
 				Assert.IsTrue (reader.Read (), "#1 no data to test");
@@ -113,7 +113,7 @@ namespace MonoTests.System.Data
 				OdbcCommand cmd = (OdbcCommand) conn.CreateCommand ();
 				cmd.CommandText = query;
 
-				OdbcParameter param = cmd.Parameters.Add ("type_tinyint", OdbcType.BigInt);
+				OdbcParameter param = cmd.Parameters.Add ("type_tinyint", OdbcType.TinyInt);
 				param.Value = 255;
 				OdbcDataReader reader = cmd.ExecuteReader ();
 				Assert.IsTrue (reader.Read (), "#1 no data to test");
@@ -242,6 +242,8 @@ namespace MonoTests.System.Data
 				int count = (int) cmd.ExecuteScalar ();
 				Assert.AreEqual (1, count, "#1 value not matching");
 			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Singleton.OpenConnection ();
 				DBHelper.ExecuteNonQuery (conn, "delete from binary_family where id = 6000");
 				ConnectionManager.Singleton.CloseConnection ();
 			}
@@ -283,8 +285,11 @@ namespace MonoTests.System.Data
 				cmd.CommandText = "select count (*) from string_family where id = 6000";
 				Assert.AreEqual (1,(int) cmd.ExecuteScalar (), "#1 value not matching");
 			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Singleton.OpenConnection ();
 				DBHelper.ExecuteNonQuery (conn, "delete from string_family where id = 6000");
 				ConnectionManager.Singleton.CloseConnection ();
+
 			}
 		}
 
@@ -304,6 +309,8 @@ namespace MonoTests.System.Data
 				cmd.CommandText = "select count (*) from string_family where id = 6000";
 				Assert.AreEqual (1,(int) cmd.ExecuteScalar (), "#1 value not matching");
 			} finally {
+				ConnectionManager.Singleton.CloseConnection ();
+				ConnectionManager.Singleton.OpenConnection ();
 				DBHelper.ExecuteNonQuery (conn, "delete from string_family where id = 6000");
 				ConnectionManager.Singleton.CloseConnection ();
 			}

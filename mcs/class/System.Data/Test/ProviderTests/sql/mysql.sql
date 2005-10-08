@@ -18,13 +18,16 @@ create table numeric_family (
 	type_decimal decimal (38, 0) NULL,
 	type_numeric numeric (38, 0) NULL,
 	type_money numeric (38,0) NULL,
-	type_smallmoney numeric (12,0) NULL);
+	type_smallmoney numeric (12,0) NULL,
+        type_float real NULL,
+        type_double float NULL);
 -- does not have money & smallmoney types
 //
 
-insert into numeric_family values (1,1,255,32767,2147483647,9223372036854775807,1000,1000,922337203685477.5807,214748.3647);
-insert into numeric_family values (2,0,0,-32768,-2147483648,-9223372036854775808,-1000,-1000,-922337203685477.5808,-214748.3648);
-insert into numeric_family values (3,0,0,0,0,0,0,0,0,0); insert into numeric_family values (4,null,null,null,null,null,null,null,null,null); //
+insert into numeric_family values (1,1,255,32767,2147483647,9223372036854775807,1000,1000,922337203685477.5807,214748.3647,3.40E+38,1.79E+308);
+insert into numeric_family values (2,0,0,-32768,-2147483648,-9223372036854775808,-1000,-1000,-922337203685477.5808,-214748.3648,-3.40E+38,-1.79E+308);
+insert into numeric_family values (3,0,0,0,0,0,0,0,0,0,0,0);
+insert into numeric_family values (4,null,null,null,null,null,null,null,null,null,null,null);
 
 -- =================================== END OBJECT NUMERIC_FAMILY ========================
 
@@ -51,6 +54,49 @@ insert into binary_family values (4,null,null,null,null,null,null);
 //
 
 -- =================================== END OBJECT BINARY_FAMILY ========================
+
+-- =================================== OBJECT STRING_FAMILY============================
+-- TABLE : string_family 
+-- data with id above 6000 is not gaurenteed to be read-only.
+drop table if exists string_family;
+//
+
+create table string_family (
+	id int PRIMARY KEY NOT NULL,
+        type_char char(10) NULL,
+        type_varchar varchar(10) NULL,
+        type_text text NULL,
+        type_ntext longtext NULL);
+//
+
+grant all privileges on string_family to monotester;
+//
+
+insert into string_family values (1,"char","varchar","text","ntext");
+insert into string_family values (4,null,null,null,null);
+//
+-- =================================== END OBJECT STRING_FAMILY ========================
+
+-- =================================== OBJECT DATETIME_FAMILY============================
+-- TABLE : datetime_family
+-- data with id above 6000 is not gaurenteed to be read-only.
+
+drop table if exists datetime_family;
+//
+
+create table datetime_family (
+        id int PRIMARY KEY NOT NULL,
+        type_smalldatetime timestamp NULL,
+        type_datetime datetime NULL);
+
+grant all privileges on datetime_family to monotester;
+//
+
+insert into datetime_family values (1,'2079-06-06 23:59:00','9999-12-31 23:59:59.997');
+insert into datetime_family values (4,null,null);
+//
+
+-- =================================== END OBJECT DATETIME_FAMILY========================
 
 
 -- =================================== OBJECT EMPLOYEE ============================
