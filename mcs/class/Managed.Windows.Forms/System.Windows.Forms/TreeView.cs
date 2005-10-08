@@ -756,7 +756,10 @@ namespace System.Windows.Forms {
 		}
 
 		[MonoTODO ("Need to know if we are editing, not if editing is enabled")]
-		private TreeNode GetNodeAt (int y) {
+		private TreeNode GetNodeAt (int y)
+		{
+			if (nodes.Count <= 0)
+				return null;
 
 			if (top_node == null)
 				top_node = nodes [0];
@@ -1258,22 +1261,6 @@ namespace System.Windows.Forms {
 				hbar_offset = 0;
 
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, old_offset - hbar_offset, 0, false);
-		}
-
-		private int GetOpenNodeCount ()
-		{
-
-			if (Nodes.Count < 1)
-				return 0;
-
-			OpenTreeNodeEnumerator e = new OpenTreeNodeEnumerator (root_node.Nodes [0]);
-
-			int count = 0;
-			while (e.MoveNext ()) {
-				count++;
-			}
-
-			return count;
 		}
 
 		private void MouseDownHandler (object sender, MouseEventArgs e)
