@@ -1,3 +1,8 @@
+2005-10-08 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* WebConfigurationHost.cs: Added stubs for missing implementation
+	of IInternalConfigHost to fix build for 2.0 profile.
+
 2005-10-05 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ClientTargetSectionHandler.cs: New file.

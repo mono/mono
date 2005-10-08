@@ -282,10 +282,22 @@ namespace System.Web.Configuration
 				
 			return new FileStream (streamName, FileMode.Open, FileAccess.Read);
 		}
-		
+
+		[MonoTODO]
+		public virtual Stream OpenStreamForRead (string streamName, bool assertPermissions)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext)
 		{
 			return new FileStream (streamName, FileMode.Create, FileAccess.Write);
+		}
+
+		[MonoTODO]
+		public virtual Stream OpenStreamForWrite (string streamName, string templateStreamName, ref object writeContext, bool assertPermissions)
+		{
+			throw new NotImplementedException ();
 		}
 		
 		public virtual bool PrefetchAll (string configPath, string streamName)
@@ -297,7 +309,13 @@ namespace System.Web.Configuration
 		{
 			throw new NotImplementedException ();
 		}
-		
+
+		[MonoTODO]
+		public virtual void RequireCompleteInit (IInternalConfigRecord configRecord)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public virtual object StartMonitoringStreamForChanges (string streamName, StreamChangeCallback callback)
 		{
 			throw new NotImplementedException ();
@@ -318,6 +336,11 @@ namespace System.Web.Configuration
 		{
 		}
 		
+		[MonoTODO]
+		public virtual void WriteCompleted (string streamName, bool success, object writeContext, bool assertPermissions)
+		{
+		}
+
 		public virtual bool SupportsChangeNotifications {
 			get { return false; }
 		}
@@ -332,6 +355,35 @@ namespace System.Web.Configuration
 		
 		public virtual bool SupportsRefresh {
 			get { return false; }
+		}
+
+		[MonoTODO]
+		public virtual bool IsRemote {
+			get { return false; }
+		}
+
+		[MonoTODO]
+		public virtual bool IsFullTrustSectionWithoutAptcaAllowed (IInternalConfigRecord configRecord)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual bool IsInitDelayed (IInternalConfigRecord configRecord)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual bool IsSecondaryRoot (string configPath)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual bool IsTrustedConfigPath (string configPath)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
