@@ -15,6 +15,7 @@ using System.Reflection;
 using System.IO;
 using System.Runtime.InteropServices;
 using Mono.Unix;
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
 class MakeBundle {
 	static string output = "a.out";
@@ -27,6 +28,7 @@ class MakeBundle {
 	static string config_file = null;
 	static string config_dir = null;
 	static string style = "linux";
+	static bool compress;
 	
 	static int Main (string [] args)
 	{
@@ -97,6 +99,9 @@ class MakeBundle {
 				}
 
 				config_dir = args [++i];
+				break;
+			case "-z":
+				compress = true;
 				break;
 			default:
 				sources.Add (args [i]);
@@ -171,6 +176,14 @@ class MakeBundle {
 
 			tc.WriteLine ("/* This source code was produced by mkbundle, do not edit */");
 			tc.WriteLine ("#include <mono/metadata/assembly.h>\n");
+
+			if (compress) {
+				tc.WriteLine ("typedef struct _compressed_data {");
+				tc.WriteLine ("\tMonoBundledAssembly assembly;");
+				tc.WriteLine ("\tint compressed_size;");
+				tc.WriteLine ("} CompressedAssembly;\n");
+			}
+
 			foreach (string url in files){
 				string fname = url.Substring (7);
 				string aname = fname.Substring (fname.LastIndexOf ("/") + 1);
@@ -181,22 +194,44 @@ class MakeBundle {
 				
 				Console.WriteLine ("   embedding: " + fname);
 				
-				FileInfo fi = new FileInfo (fname);
-				FileStream fs = File.OpenRead (fname);
+				Stream stream = File.OpenRead (fname);
 
-				WriteSymbol (ts, "assembly_data_" + encoded, fi.Length);
-
+				long real_size = stream.Length;
 				int n;
-				while ((n = fs.Read (buffer, 0, 8192)) != 0){
+				if (compress) {
+					MemoryStream ms = new MemoryStream ();
+					DeflaterOutputStream deflate = new DeflaterOutputStream (ms);
+					while ((n = stream.Read (buffer, 0, 8192)) != 0){
+						deflate.Write (buffer, 0, n);
+					}
+					stream.Close ();
+					deflate.Finish ();
+					byte [] bytes = ms.GetBuffer ();
+					stream = new MemoryStream (bytes, 0, (int) ms.Length, false, false);
+				}
+
+				WriteSymbol (ts, "assembly_data_" + encoded, stream.Length);
+
+				while ((n = stream.Read (buffer, 0, 8192)) != 0){
 					for (int i = 0; i < n; i++){
 						ts.Write ("\t.byte {0}\n", buffer [i]);
 					}
 				}
 				ts.WriteLine ();
 
-				tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
-				tc.WriteLine ("static const MonoBundledAssembly assembly_bundle_{0} = {{\"{1}\", assembly_data_{0}, {2}}};",
-					      encoded, aname, fi.Length);
+				if (compress) {
+					tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
+					tc.WriteLine ("static CompressedAssembly assembly_bundle_{0} = {{{{\"{1}\"," +
+							" assembly_data_{0}, {2}}}, {3}}};",
+						      encoded, aname, real_size, stream.Length);
+					double ratio = ((double) stream.Length * 100) / real_size;
+					Console.WriteLine ("   compression ratio: {0:.00}%", ratio);
+				} else {
+					tc.WriteLine ("extern const unsigned char assembly_data_{0} [];", encoded);
+					tc.WriteLine ("static const MonoBundledAssembly assembly_bundle_{0} = {{\"{1}\", assembly_data_{0}, {2}}};",
+						      encoded, aname, real_size);
+				}
+				stream.Close ();
 
 				c_bundle_names.Add ("assembly_bundle_" + encoded);
 
@@ -250,7 +285,11 @@ class MakeBundle {
 				return;
 			}
 
-			tc.WriteLine ("\nstatic const MonoBundledAssembly *bundled [] = {");
+			if (compress)
+				tc.WriteLine ("\nstatic const CompressedAssembly *compressed [] = {");
+			else
+				tc.WriteLine ("\nstatic const MonoBundledAssembly *bundled [] = {");
+
 			foreach (string c in c_bundle_names){
 				tc.WriteLine ("\t&{0},", c);
 			}
@@ -269,9 +308,15 @@ class MakeBundle {
 				tc.WriteLine ("static const char *config_dir = \"{0}\";", config_dir);
 			else
 				tc.WriteLine ("static const char *config_dir = NULL;");
-				      
-			StreamReader s = new StreamReader (
-				Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c"));
+
+			Stream template_stream;
+			if (compress) {
+				template_stream = Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template_z.c");
+			} else {
+				template_stream = Assembly.GetAssembly (typeof(MakeBundle)).GetManifestResourceStream ("template.c");
+			}
+
+			StreamReader s = new StreamReader (template_stream);
 			string template = s.ReadToEnd ();
 			tc.Write (template);
 			tc.Close ();
@@ -279,14 +324,15 @@ class MakeBundle {
 			if (compile_only)
 				return;
 
+			string zlib = (compress ? "-lz" : "");
 			if (static_link)
-				cmd = String.Format ("cc -o {2} -Wall `pkg-config --cflags mono` {0} " +
+				cmd = String.Format ("cc -o {2} -Wall `pkg-config --cflags mono` {0} {3}" +
 						     "`pkg-config --libs-only-L mono` -Wl,-Bstatic -lmono -Wl,-Bdynamic " +
 						     "`pkg-config --libs-only-l mono | sed -e \"s/\\-lmono //\"` {1}",
-						     temp_c, temp_o, output);
+						     temp_c, temp_o, output, zlib);
 			else
-				cmd = String.Format ("cc -o {2} -Wall {0} `pkg-config --cflags --libs mono` {1}",
-						     temp_c, temp_o, output);
+				cmd = String.Format ("cc -ggdb -o {2} -Wall {0} `pkg-config --cflags --libs mono` {3} {1}",
+						     temp_c, temp_o, output, zlib);
 
                             
 			Console.WriteLine (cmd);
@@ -411,7 +457,8 @@ class MakeBundle {
 				   "    --keeptemp      Keeps the temporary files\n" +
 				   "    --config F      Bundle system config file `F'\n" +
 				   "    --config-dir D  Set MONO_CFG_DIR to `D'\n" +
-				   "    --static        Statically link to mono libs\n");
+				   "    --static        Statically link to mono libs\n" +
+				   "    -z		Compress the assemblies before embedding.\n");
 	}
 
 	[DllImport ("libc")]

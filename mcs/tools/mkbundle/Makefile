@@ -4,11 +4,12 @@ include ../../build/rules.make
 
 PROGRAM = mkbundle.exe
 
-OTHER_RES = template.c
+OTHER_RES = template.c template_z.c
 
 RESOURCE_FILES = $(OTHER_RES)
 
-LOCAL_MCS_FLAGS=-r:Mono.Posix.dll $(OTHER_RES:%=-resource:%)
+LOCAL_MCS_FLAGS=-r:Mono.Posix.dll -r:ICSharpCode.SharpZipLib.dll \
+		$(OTHER_RES:%=-resource:%)
 
 EXTRA_DISTFILES = $(RESOURCE_FILES)
 

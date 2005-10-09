@@ -1,3 +1,10 @@
+2005-10-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TODO: remove obsolete stuff.
+	* mkbundle.cs: added -z option so that assemblies are deflated before
+	being embedded.
+	* template_z.c: template C code used when -z is used.
+	* Makefile: add new resource file.
 
 Thu Jul 7 19:12:23 CEST 2005 Paolo Molaro <lupus@ximian.com>
 
