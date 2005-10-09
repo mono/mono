@@ -82,6 +82,11 @@ causes it to statically link instead.
 .TP
 .I "--config-dir DIR"
 When passed, DIR will be set for the MONO_CFG_DIR environment variable
+.TP
+.I "-z"
+Compresses the assemblies before embedding. This results in smaller
+executable files, but increases startup time and requires zlib to be
+installed on the target system.
 .SH FILES
 This program will load referenced assemblies from the Mono assembly
 cache. 
