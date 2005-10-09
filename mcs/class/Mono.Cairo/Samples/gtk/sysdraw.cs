@@ -59,10 +59,11 @@ namespace Gdk
 			
 			int x, y, w, h, d;
 			((Gdk.Window)drawable).GetGeometry(out x, out y, out w, out h, out d);
-			
-			if (drawable is Gdk.Window)
-			  ((Gdk.Window) drawable).GetInternalPaintInfo(out drawable, 
-								    out x_off, out y_off);
+
+			bool is_gdk_window = drawable is Gdk.Window;
+			if (is_gdk_window)
+				((Gdk.Window) drawable).GetInternalPaintInfo(out drawable, 
+									     out x_off, out y_off);
 			
 			x_drawable = drawable.Handle;			
 			IntPtr visual = gdk_drawable_get_visual(x_drawable);
@@ -82,8 +83,8 @@ namespace Gdk
 			//Cairo.Graphics g = new Cairo.Graphics (
 			//                    gdk_cairo_create (x_drawable ));
 			
-			if (drawable is Gdk.Window)
-			  g.Translate (-(double)x_off,-(double)y_off);
+			if (is_gdk_window)
+				g.Translate (-(double)x_off,-(double)y_off);
 			return g;
 		}
 	}

@@ -1,3 +1,8 @@
+2005-10-09  Miguel de Icaza  <miguel@novell.com>
+
+	* Samples/gtk/sysdraw.cs: Fix the sample
+	
+
 2005-09-19  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Graphics.cs: add SelectFontFace and SetFontSize
