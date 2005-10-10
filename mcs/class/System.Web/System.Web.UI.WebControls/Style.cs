@@ -416,16 +416,21 @@ namespace System.Web.UI.WebControls {
 					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderColor, ColorTranslator.ToHtml(color));
 			}
 
+			bool have_width = false;
+			if ((styles & Styles.BorderWidth) != 0) {
+				u = (Unit)viewstate["BorderWidth"];
+				if (!u.IsEmpty) {
+					have_width = true;
+					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, u.ToString());
+				}
+			}
+
 			if ((styles & Styles.BorderStyle) != 0) {
 				bs = (BorderStyle)viewstate["BorderStyle"];
 				if (bs != BorderStyle.NotSet) 
 					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, bs.ToString());
-			}
-
-			if ((styles & Styles.BorderWidth) != 0) {
-				u = (Unit)viewstate["BorderWidth"];
-				if (!u.IsEmpty)
-					writer.AddStyleAttribute (HtmlTextWriterStyle.BorderWidth, u.ToString());
+			} else if (have_width) {
+				writer.AddStyleAttribute (HtmlTextWriterStyle.BorderStyle, "solid");
 			}
 
 			if ((styles & Styles.ForeColor) != 0) {

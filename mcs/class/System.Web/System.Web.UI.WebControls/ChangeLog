@@ -1,3 +1,8 @@
+2005-10-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Style.cs: add a 'border-style: solid' to make IE happy. Fixes bug
+	76373.
+
 2005-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateColumn.cs: SelectedItem was missing from the select (). Fixes
