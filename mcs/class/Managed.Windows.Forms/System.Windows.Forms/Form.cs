@@ -727,11 +727,11 @@ namespace System.Windows.Forms {
 		[DefaultValue(FormWindowState.Normal)]
 		public FormWindowState WindowState {
 			get {
-				return XplatUI.GetWindowState(window.Handle);
+				return XplatUI.GetWindowState(Handle);
 			}
 
 			set {
-				XplatUI.SetWindowState(window.Handle, value);
+				XplatUI.SetWindowState(Handle, value);
 			}
 		}
 

@@ -1,5 +1,10 @@
 2005-10-10  Jackson Harper  <jackson@ximian.com>
 
+	* Form.cs: Use the property to get the window handle instead of
+	accessing it directly. Prevents a null reference exception.
+
+2005-10-10  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Don't adjust the rect given to DrawString now that
 	our libgdiplus draws correctly.
 
