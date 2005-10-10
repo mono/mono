@@ -1,3 +1,8 @@
+2005-10-10  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Don't adjust the rect given to DrawString now that
+	our libgdiplus draws correctly.
+
 2005-10-08  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: Don't try to find the clicked on node if there are

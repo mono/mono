@@ -1056,15 +1056,12 @@ namespace System.Windows.Forms {
 		 
 		private void DrawStaticNode (TreeNode node, Graphics dc)
 		{
-			Rectangle r = node.Bounds;
 			StringFormat format = new StringFormat ();
 			format.LineAlignment = StringAlignment.Center;
 
-			r.Y += 2; // we have to adjust this to get nice middle alignment
 			if (!full_row_select)
-				DrawSelectionAndFocus(node, dc, r);
-			r.X += 4;
-			r.Width -= 8;
+				DrawSelectionAndFocus(node, dc, node.Bounds);
+
 			Font font = node.NodeFont;
 			if (node.NodeFont == null)
 				font = Font;
@@ -1072,7 +1069,7 @@ namespace System.Windows.Forms {
 					ThemeEngine.Current.ColorHighlightText : node.ForeColor);
 			dc.DrawString (node.Text, font,
 					ThemeEngine.Current.ResPool.GetSolidBrush (text_color),
-					r, format);
+					node.Bounds, format);
 		}
 
 		private void DrawNode (TreeNode node, Graphics dc, Rectangle clip, ref int depth, int item_height, int max_height)
