@@ -5548,33 +5548,12 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static void EmitArguments (EmitContext ec, MethodBase mb, ArrayList arguments, bool dup_args, LocalTemporary this_arg)
 		{
-			ParameterData pd;
-			if (mb != null)
-				pd = TypeManager.GetParameterData (mb);
-			else
-				pd = null;
-			
+			ParameterData pd = mb == null ? null : TypeManager.GetParameterData (mb);
+			int top = arguments == null ? 0 : arguments.Count;
 			LocalTemporary [] temps = null;
 			
-			if (dup_args)
-				temps = new LocalTemporary [arguments.Count];
-
-			//
-			// If we are calling a params method with no arguments, special case it
-			//
-			if (arguments == null){
-				if (pd != null && pd.Count > 0 &&
-				    pd.ParameterModifier (0) == Parameter.Modifier.PARAMS){
-					ILGenerator ig = ec.ig;
-
-					IntConstant.EmitInt (ig, 0);
-					ig.Emit (OpCodes.Newarr, TypeManager.GetElementType (pd.ParameterType (0)));
-				}
-
-				return;
-			}
-
-			int top = arguments.Count;
+			if (dup_args && top != 0)
+				temps = new LocalTemporary [top];
 
 			for (int i = 0; i < top; i++){
 				Argument a = (Argument) arguments [i];
@@ -5780,9 +5759,11 @@ namespace Mono.CSharp {
 					}
 
 					if (dup_args) {
-						this_arg = new LocalTemporary (ec, t);
 						ig.Emit (OpCodes.Dup);
-						this_arg.Store (ec);
+						if (Arguments != null && Arguments.Count != 0) {
+							this_arg = new LocalTemporary (ec, t);
+							this_arg.Store (ec);
+						}
 					}
 				}
 			}
