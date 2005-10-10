@@ -1,3 +1,10 @@
+2005-10-09  Miguel de Icaza  <miguel@novell.com>
+
+	* class.c (mono_type_get_full_name): Reimplement method that was
+	removed. 
+
+	* image.c: Some docs
+
 2005-10-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* profiler.c (output_newobj_profile): Fix printing of Total memory
