@@ -132,7 +132,7 @@ namespace System.Windows.Forms {
 			return DragDropEffects.None;
 		}
 
-		internal abstract void SetBorderStyle(IntPtr handle, BorderStyle border_style);
+		internal abstract void SetBorderStyle(IntPtr handle, FormBorderStyle border_style);
 		internal abstract void SetMenu(IntPtr handle, IntPtr menu_handle);
 
 		internal abstract bool GetText(IntPtr handle, out string text);

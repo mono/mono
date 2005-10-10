@@ -317,8 +317,11 @@ namespace System.Windows.Forms {
 			}
 			set {
 				formBorderStyle = value;
+				if (IsHandleCreated) {
+					XplatUI.SetBorderStyle(window.Handle, formBorderStyle);
+				}
 				UpdateStyles();
-			}
+			} 
 		}
 
 		[DefaultValue(false)]
@@ -760,14 +763,11 @@ namespace System.Windows.Forms {
 				cp.Width = Width;
 				cp.Height = Height;
 
+				cp.Style |= (int)WindowStyles.WS_CLIPCHILDREN | (int)WindowStyles.WS_CLIPSIBLINGS;
+
 				if (IsMdiChild) {
-					cp.Style |= (int)WindowStyles.WS_CHILD |
-					(int)WindowStyles.WS_CLIPCHILDREN |
-					(int)WindowStyles.WS_CLIPSIBLINGS;
+					cp.Style |= (int)WindowStyles.WS_CHILD;
 					cp.Parent = Parent.Handle;
-				} else {
-					cp.Style |= (int)WindowStyles.WS_CAPTION;
-					cp.ExStyle |= (int)WindowStyles.WS_EX_OVERLAPPEDWINDOW;
 				}
 
 				if (!IsMdiChild) {
@@ -1140,6 +1140,7 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnHandleCreated(EventArgs e) {
+			XplatUI.SetBorderStyle(window.Handle, formBorderStyle);
 			base.OnHandleCreated (e);
 		}
 

@@ -1689,7 +1689,7 @@ namespace System.Windows.Forms {
 		}
 
 
-		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
+		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
 			uint	style;
 			uint	exstyle;
 
@@ -1697,19 +1697,19 @@ namespace System.Windows.Forms {
 			exstyle = Win32GetWindowLong(handle, WindowLong.GWL_EXSTYLE);
 
 			switch (border_style) {
-				case BorderStyle.None: {
+				case FormBorderStyle.None: {
 					style &= ~(uint)WindowStyles.WS_BORDER;
 					exstyle &= ~(uint)WindowStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
 
-				case BorderStyle.FixedSingle: {
+				case FormBorderStyle.FixedSingle: {
 					style |= (uint)WindowStyles.WS_BORDER;
 					exstyle &= ~(uint)WindowStyles.WS_EX_CLIENTEDGE;
 					break;
 				}
 
-				case BorderStyle.Fixed3D: {
+				case FormBorderStyle.Fixed3D: {
 					style &= ~(uint)WindowStyles.WS_BORDER;
 					exstyle |= (uint)WindowStyles.WS_EX_CLIENTEDGE;
 					break;

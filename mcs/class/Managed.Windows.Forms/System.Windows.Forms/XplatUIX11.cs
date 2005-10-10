@@ -564,23 +564,25 @@ namespace System.Windows.Forms {
 		}
 
 		private void SetHwndStyles(Hwnd hwnd, CreateParams cp) {
-			if ((cp.Style & (int)WindowStyles.WS_CHILD) != 0) {
-				if ((cp.Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-					hwnd.BorderStyle = BorderStyle.Fixed3D;
-				} else if ((cp.Style & (int)WindowStyles.WS_BORDER) != 0) {
-					hwnd.BorderStyle = BorderStyle.FixedSingle;
+			hwnd.border_style = FormBorderStyle.None;
+			if ((cp.ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
+				if ((cp.ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+					if ((cp.Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
+						hwnd.border_style = FormBorderStyle.SizableToolWindow;
+					} else {
+						hwnd.border_style = FormBorderStyle.FixedToolWindow;
+					}
+				} else if ((cp.ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
+					hwnd.border_style = FormBorderStyle.FixedDialog;
+				} else if ((cp.ExStyle & (int)WindowStyles.WS_THICKFRAME) != 0) {
+					hwnd.border_style = FormBorderStyle.Sizable;
+				} else {
+					hwnd.border_style = FormBorderStyle.FixedSingle;
 				}
+			} else {
+				hwnd.border_style = FormBorderStyle.Fixed3D;
 			}
 
-			if ((cp.ExStyle & (int)WindowStyles.WS_EX_CLIENTEDGE) != 0) {
-				hwnd.edge_style = Border3DStyle.Sunken;
-			} else if ((cp.ExStyle & (int)WindowStyles.WS_EX_STATICEDGE) != 0) {
-				hwnd.edge_style = Border3DStyle.Flat;
-			} else if ((cp.ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
-				hwnd.edge_style = Border3DStyle.Raised;
-			} else if ((cp.ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
-				hwnd.edge_style = Border3DStyle.Raised;
-			}
 
 			if ((cp.Style & (int)WindowStyles.WS_CAPTION) != 0) {
 				if ((cp.ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
@@ -819,7 +821,6 @@ namespace System.Windows.Forms {
 					XTranslateCoordinates(DisplayHandle, XGetParent(hwnd.whole_window), RootWindow, xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, out decoration_x, out decoration_y, out child);
 					hwnd.x = xevent.ConfigureEvent.x - whole_x + decoration_x;
 					hwnd.y = xevent.ConfigureEvent.y - whole_y + decoration_y;
-					Console.WriteLine("Got configureNotify, window is at {0},{1}, translated to {2},{3}", xevent.ConfigureEvent.x, xevent.ConfigureEvent.y, hwnd.x, hwnd.y);
 				}
 
 				hwnd.width = xevent.ConfigureEvent.width;
@@ -1542,7 +1543,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override bool CalculateWindowRect(IntPtr handle, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect) {
-			BorderStyle	border_style;
+			FormBorderStyle	border_style;
 			TitleStyle	title_style;
 
 			title_style = TitleStyle.None;
@@ -1554,13 +1555,23 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			border_style = BorderStyle.None;
-			if ((Style & (int)WindowStyles.WS_CHILD) != 0) {
-				if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-					border_style = BorderStyle.Fixed3D;
-				} else if ((Style & (int)WindowStyles.WS_BORDER) != 0) {
-					border_style = BorderStyle.FixedSingle;
+			border_style = FormBorderStyle.None;
+			if ((ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
+				if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+					if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
+						border_style = FormBorderStyle.SizableToolWindow;
+					} else {
+						border_style = FormBorderStyle.FixedToolWindow;
+					}
+				} else if ((ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
+					border_style = FormBorderStyle.FixedDialog;
+				} else if ((ExStyle & (int)WindowStyles.WS_THICKFRAME) != 0) {
+					border_style = FormBorderStyle.Sizable;
+				} else {
+					border_style = FormBorderStyle.FixedSingle;
 				}
+			} else {
+				border_style = FormBorderStyle.Fixed3D;
 			}
 
 			WindowRect = Hwnd.GetWindowRectangle(border_style, MenuHandle, title_style, ClientRect);
@@ -2650,7 +2661,7 @@ namespace System.Windows.Forms {
 				case XEventName.Expose: {
 					if (!client) {
 						switch (hwnd.border_style) {
-							case BorderStyle.Fixed3D: {
+							case FormBorderStyle.Fixed3D: {
 								Graphics g;
 
 								g = Graphics.FromHwnd(hwnd.whole_window);
@@ -2659,7 +2670,7 @@ namespace System.Windows.Forms {
 								break;
 							}
 
-							case BorderStyle.FixedSingle: {
+							case FormBorderStyle.FixedSingle: {
 								Graphics g;
 
 								g = Graphics.FromHwnd(hwnd.whole_window);
@@ -3192,7 +3203,7 @@ namespace System.Windows.Forms {
 			// We allow drop on all windows
 		}
 
-		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
+		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);

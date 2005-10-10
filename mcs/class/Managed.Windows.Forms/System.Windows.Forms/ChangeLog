@@ -1,3 +1,18 @@
+2005-10-10  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIOSX.cs, XplatUIWin32.cs: Switched from BorderStyle to 
+	  FormBorderStyle enum
+	* XplatUIX11.cs: Switched BorderStyle to FormBorderStyle, added 
+	  code to determine FormBorderStyles from CreateParams
+	* Form.cs:
+	  - Fixed bug where we'd set the wrong window styles if we were
+	    not creating an MDI window
+	  - Added call to XplatUI.SetBorderStyle when form borders are set
+	* Control.cs: Casting BorderStyles to accommodate changed XplatUI APIs
+	* Hwnd.cs:
+	  - Removed obsolete edge style
+	  - Switched from BorderStyle to FormBorderStyle
+	
 2005-10-10  Jackson Harper  <jackson@ximian.com>
 
 	* Form.cs: Use the property to get the window handle instead of

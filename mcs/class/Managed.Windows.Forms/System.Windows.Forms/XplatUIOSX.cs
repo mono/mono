@@ -684,31 +684,7 @@ namespace System.Windows.Forms {
 		}
 		
 		private void SetHwndStyles(Hwnd hwnd, CreateParams cp) {
-			if ((cp.Style & (int)WindowStyles.WS_CHILD) != 0) {
-				if ((cp.Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-					hwnd.BorderStyle = BorderStyle.Fixed3D;
-				} else if ((cp.Style & (int)WindowStyles.WS_BORDER) != 0) {
-					hwnd.BorderStyle = BorderStyle.FixedSingle;
-				}
-			}
-
-			if ((cp.ExStyle & (int)WindowStyles.WS_EX_CLIENTEDGE) != 0) {
-				hwnd.edge_style = Border3DStyle.Sunken;
-			} else if ((cp.ExStyle & (int)WindowStyles.WS_EX_STATICEDGE) != 0) {
-				hwnd.edge_style = Border3DStyle.Flat;
-			} else if ((cp.ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
-				hwnd.edge_style = Border3DStyle.Raised;
-			} else if ((cp.ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
-				hwnd.edge_style = Border3DStyle.Raised;
-			}
-
-			if ((cp.Style & (int)WindowStyles.WS_CAPTION) != 0) {
-				if ((cp.ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
-					hwnd.title_style = TitleStyle.Tool;
-				} else {
-					hwnd.title_style = TitleStyle.Normal;
-				}
-			}
+			throw new NotImplementedException();
 		}
 		
 		internal void ShowCaret () {
@@ -812,7 +788,7 @@ namespace System.Windows.Forms {
 		}
 		
 		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect) {
-			BorderStyle	border_style;
+			FormBorderStyle	border_style;
 			TitleStyle	title_style;
 
 			title_style = TitleStyle.None;
@@ -824,13 +800,23 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			border_style = BorderStyle.None;
-			if ((Style & (int)WindowStyles.WS_CHILD) != 0) {
-				if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-					border_style = BorderStyle.Fixed3D;
-				} else if ((Style & (int)WindowStyles.WS_BORDER) != 0) {
-					border_style = BorderStyle.FixedSingle;
+			border_style = FormBorderStyle.None;
+			if ((ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
+				if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+					if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
+						border_style = FormBorderStyle.SizableToolWindow;
+					} else {
+						border_style = FormBorderStyle.FixedToolWindow;
+					}
+				} else if ((ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
+					border_style = FormBorderStyle.FixedDialog;
+				} else if ((ExStyle & (int)WindowStyles.WS_THICKFRAME) != 0) {
+					border_style = FormBorderStyle.Sizable;
+				} else {
+					border_style = FormBorderStyle.FixedSingle;
 				}
+			} else {
+				border_style = FormBorderStyle.Fixed3D;
 			}
 
 			WindowRect = Hwnd.GetWindowRectangle(border_style, MenuHandle, title_style, ClientRect);
@@ -1605,7 +1591,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal override void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
+		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);

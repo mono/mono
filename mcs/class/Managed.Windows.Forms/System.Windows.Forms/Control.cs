@@ -734,7 +734,7 @@ namespace System.Windows.Forms
 					border_style = value;
 
 					if (IsHandleCreated) {
-						XplatUI.SetBorderStyle(window.Handle, border_style);
+						XplatUI.SetBorderStyle(window.Handle, (FormBorderStyle)border_style);
 						Refresh();
 					}
 				}
@@ -2846,7 +2846,7 @@ namespace System.Windows.Forms
 			// Find out where the window manager placed us
 			UpdateStyles();
 			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) != 0) {
-				XplatUI.SetBorderStyle(window.Handle, border_style);
+				XplatUI.SetBorderStyle(window.Handle, (FormBorderStyle)border_style);
 			}
 			UpdateBounds();
 

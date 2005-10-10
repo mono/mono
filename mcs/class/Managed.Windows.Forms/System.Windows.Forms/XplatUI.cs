@@ -596,7 +596,7 @@ namespace System.Windows.Forms {
 			driver.SetAllowDrop (handle, value);
 		}
 
-		internal static void SetBorderStyle(IntPtr handle, BorderStyle border_style) {
+		internal static void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {
 			#if DriverDebug
 				Console.WriteLine("SetBorderStyle({0:X}, {1}): Called", handle.ToInt32(), border_style);
 			#endif

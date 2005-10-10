@@ -48,8 +48,7 @@ namespace System.Windows.Forms {
 		internal IntPtr		whole_window;
 		internal IntPtr		menu_handle;
 		internal TitleStyle	title_style;
-		internal BorderStyle	border_style;
-		internal Border3DStyle	edge_style;
+		internal FormBorderStyle	border_style;
 		internal int		x;
 		internal int		y;
 		internal int		width;
@@ -75,7 +74,7 @@ namespace System.Windows.Forms {
 			height = 0;
 			visible = false;
 			menu_handle = IntPtr.Zero;
-			border_style = BorderStyle.None;
+			border_style = FormBorderStyle.None;
 			client_window = IntPtr.Zero;
 			whole_window = IntPtr.Zero;
 			handle = IntPtr.Zero;
@@ -83,7 +82,6 @@ namespace System.Windows.Forms {
 			invalid = Rectangle.Empty;
 			expose_pending = false;
 			nc_expose_pending = false;
-			edge_style = Border3DStyle.Raised;
 			client_rectangle = Rectangle.Empty;
 			erase_pending = true;
 			marshal_free_list = new ArrayList(2);
@@ -134,7 +132,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static Rectangle GetWindowRectangle(BorderStyle border_style, IntPtr menu_handle, TitleStyle title_style, Rectangle client_rect) {
+		public static Rectangle GetWindowRectangle(FormBorderStyle border_style, IntPtr menu_handle, TitleStyle title_style, Rectangle client_rect) {
 			Rectangle	rect;
 
 			rect = new Rectangle(client_rect.Location, client_rect.Size);
@@ -149,16 +147,22 @@ namespace System.Windows.Forms {
 					Console.WriteLine("Hwnd.GetWindowRectangle: No MENU for menu_handle = {0}", menu_handle);
 			}
 
-			if (border_style == BorderStyle.Fixed3D) {
-				rect.X -= 2;
-				rect.Y -= 2;
-				rect.Width += 4;
-				rect.Height += 4;
-			} else if (border_style == BorderStyle.FixedSingle) {
-				rect.X -= 1;
-				rect.Y -= 1;
-				rect.Width += 2;
-				rect.Height += 2;
+			switch(border_style) {
+				case FormBorderStyle.Fixed3D: {
+					rect.X -= 2;
+					rect.Y -= 2;
+					rect.Width += 4;
+					rect.Height += 4;
+					break;
+				}
+
+				case FormBorderStyle.FixedSingle: {
+					rect.X -= 1;
+					rect.Y -= 1;
+					rect.Width += 2;
+					rect.Height += 2;
+					break;
+				}
 			}
 
 			if (title_style == TitleStyle.Normal) {
@@ -172,7 +176,7 @@ namespace System.Windows.Forms {
 			return rect;
 		}
 
-		public static Rectangle GetClientRectangle(BorderStyle border_style, IntPtr menu_handle, TitleStyle title_style, int width, int height) {
+		public static Rectangle GetClientRectangle(FormBorderStyle border_style, IntPtr menu_handle, TitleStyle title_style, int width, int height) {
 			Rectangle rect;
 
 			rect = new Rectangle(0, 0, width, height);
@@ -187,12 +191,12 @@ namespace System.Windows.Forms {
 					Console.WriteLine("Hwnd.GetClientRectangle: No MENU for menu_handle = {0}", menu_handle);
 			}
 
-			if (border_style == BorderStyle.Fixed3D) {
+			if (border_style == FormBorderStyle.Fixed3D) {
 				rect.X += 2;
 				rect.Y += 2;
 				rect.Width -= 4;
 				rect.Height -= 4;
-			} else if (border_style == BorderStyle.FixedSingle) {
+			} else if (border_style == FormBorderStyle.FixedSingle) {
 				rect.X += 1;
 				rect.Y += 1;
 				rect.Width -= 2;
@@ -212,7 +216,7 @@ namespace System.Windows.Forms {
 		#endregion	// Static Methods
 
 		#region Instance Properties
-		public BorderStyle BorderStyle {
+		public FormBorderStyle BorderStyle {
 			get {
 				return border_style;
 			}
@@ -266,12 +270,12 @@ namespace System.Windows.Forms {
 
 				rect = new Rectangle(0, 0, width, height);
 
-				if (border_style == BorderStyle.Fixed3D) {
+				if (border_style == FormBorderStyle.Fixed3D) {
 					rect.X += 2;
 					rect.Y += 2;
 					rect.Width -= 4;
 					rect.Height -= 4;
-				} else if (border_style == BorderStyle.FixedSingle) {
+				} else if (border_style == FormBorderStyle.FixedSingle) {
 					rect.X += 1;
 					rect.Y += 1;
 					rect.Width -= 2;
@@ -287,16 +291,6 @@ namespace System.Windows.Forms {
 				}
 
 				return rect;
-			}
-		}
-
-		public Border3DStyle EdgeStyle {
-			get {
-				return edge_style;
-			}
-
-			set {
-				edge_style = value;
 			}
 		}
 
@@ -355,10 +349,10 @@ namespace System.Windows.Forms {
 
 				pt = new Point(0, 0);
 
-				if (border_style == BorderStyle.Fixed3D) {
+				if (border_style == FormBorderStyle.Fixed3D) {
 					pt.X += 2;
 					pt.Y += 2;
-				} else if (border_style == BorderStyle.FixedSingle) {
+				} else if (border_style == FormBorderStyle.FixedSingle) {
 					pt.X += 1;
 					pt.Y += 1;
 				}
