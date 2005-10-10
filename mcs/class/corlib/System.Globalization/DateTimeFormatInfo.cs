@@ -589,12 +589,12 @@ namespace System.Globalization
 				list = PopulateCombinedList (_ShortDatePatterns, _LongTimePatterns);
 				if (list != null && list.Length > 0)
 					return list;
-				return new string [] {ShortDatePattern + ' ' + LongTimePattern};
+				return new string [] {ShortDatePattern + " " + LongTimePattern};
 			case 'g':
 				list = PopulateCombinedList (_ShortDatePatterns, _ShortTimePatterns);
 				if (list != null && list.Length > 0)
 					return list;
-				return new string [] {ShortDatePattern + ' ' + ShortTimePattern};
+				return new string [] {ShortDatePattern + " " + ShortTimePattern};
 			// The 'U' pattern strings are always the same as 'F'.
 			// (only differs in assuming UTC or not.)
 			case 'U':
@@ -602,12 +602,12 @@ namespace System.Globalization
 				list = PopulateCombinedList (_LongDatePatterns, _LongTimePatterns);
 				if (list != null && list.Length > 0)
 					return list;
-				return new string [] {LongDatePattern + ' ' + LongTimePattern};
+				return new string [] {LongDatePattern + " " + LongTimePattern};
 			case 'f':
 				list = PopulateCombinedList (_LongDatePatterns, _ShortTimePatterns);
 				if (list != null && list.Length > 0)
 					return list;
-				return new string [] {LongDatePattern + ' ' + ShortTimePattern};
+				return new string [] {LongDatePattern + " " + ShortTimePattern};
 			// MonthDay
 			case 'm':
 			case 'M':
@@ -670,7 +670,7 @@ namespace System.Globalization
 				int i = 0;
 				foreach (string d in dates)
 					foreach (string t in times)
-						list [i++] = d + ' ' + t;
+						list [i++] = d + " " + t;
 				return list;
 			}
 			return null;

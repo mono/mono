@@ -1,3 +1,10 @@
+2005-10-10  Ben Maurer  <bmaurer@ximian.com>
+
+	* DateTimeFormatInfo.cs: Rather than having a + ' ' + b, have a +
+	" " + b. This lets us avoid 1) boxing the char and 2) calling
+	char.ToString. Results in a fairly substantial savings on
+	DateTime.Parse.
+
 2005-09-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CompareInfo.cs : switched to "managed collation by default" mode.
