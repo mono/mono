@@ -1,3 +1,7 @@
+2005-10-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* DataListTest.cs: added some style and IRepeatInfoUser tests.
+
 2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListBoxTest.cs: the name is the UniqueID, not the ClientID.

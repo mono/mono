@@ -3,6 +3,7 @@
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
+//	Gonzalo Paniagua Javier <gonzalo@ximian.com>
 //
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -70,6 +71,16 @@ namespace MonoTests.System.Web.UI.WebControls {
 			HtmlTextWriter writer = GetWriter ();
 			(this as IRepeatInfoUser).RenderItem (itemType, repeatIndex, repeatInfo, writer);
 			return writer.InnerWriter.ToString ();
+		}
+
+		public void CreateCH ()
+		{
+			CreateControlHierarchy (true);
+		}
+
+		public void PrepareCH ()
+		{
+			PrepareControlHierarchy ();
 		}
 
 		public void TrackState ()
@@ -950,5 +961,176 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.IsTrue (selectedIndexChangedEvent, "selectedIndexChangedEvent-3");
 			Assert.IsTrue (itemCommandEvent, "#00");
 		}
+
+		[Test]
+		public void NControls1 ()
+		{
+			TestDataList dl = new TestDataList ();
+			dl.DataSource = GetData (5);
+			dl.CreateCH ();
+			Assert.AreEqual (5, dl.Controls.Count, "#01");
+		}
+
+		[Test]
+		public void NControls2 ()
+		{
+			TestDataList dl = new TestDataList ();
+			dl.ShowHeader = true;
+			dl.ShowFooter = true;
+			dl.DataSource = GetData (5);
+			dl.CreateCH ();
+			Assert.AreEqual (5, dl.Controls.Count, "#01");
+		}
+
+		class Templ : ITemplate {
+			public void InstantiateIn (Control ctrl)
+			{
+				ctrl.Controls.Add (new LiteralControl ("Lalalaa"));
+			}
+		}
+
+		[Test]
+		public void NControls3 ()
+		{
+			TestDataList dl = new TestDataList ();
+			dl.ShowHeader = true;
+			dl.HeaderTemplate = new Templ ();
+			dl.ShowFooter = true;
+			dl.FooterTemplate = new Templ ();
+			dl.DataSource = GetData (5);
+			dl.CreateCH ();
+			Assert.AreEqual (7, dl.Controls.Count, "#01");
+		}
+
+		[Test]
+		public void NControls4 ()
+		{
+			TestDataList dl = new TestDataList ();
+			dl.SeparatorTemplate = new Templ ();
+			dl.DataSource = GetData (5);
+			dl.CreateCH ();
+			Assert.AreEqual (10, dl.Controls.Count, "#01");
+		}
+
+		[Test]
+		public void NControls5 ()
+		{
+			TestDataList dl = new TestDataList ();
+			dl.ShowHeader = true;
+			dl.HeaderTemplate = new Templ ();
+			dl.SeparatorTemplate = new Templ ();
+			dl.DataSource = GetData (5);
+			dl.CreateCH ();
+			Assert.AreEqual (11, dl.Controls.Count, "#01");
+		}
+
+		[Test]
+		public void NControls6 ()
+		{
+			TestDataList dl = new TestDataList ();
+			dl.ShowHeader = true;
+			dl.HeaderTemplate = new Templ ();
+			dl.ShowFooter = true;
+			dl.FooterTemplate = new Templ ();
+			dl.SeparatorTemplate = new Templ ();
+			dl.DataSource = GetData (6);
+			dl.CreateCH ();
+			Assert.AreEqual (14, dl.Controls.Count, "#01");
+
+			Assert.AreEqual (ListItemType.Header, ((DataListItem) dl.Controls [0]).ItemType, "#02");
+			for (int i = 0; i < 3; i++) {
+				int b = (i * 4) + 1;
+				DataListItem one = (DataListItem) dl.Controls [b];
+				DataListItem two = (DataListItem) dl.Controls [b + 1];
+				DataListItem three = (DataListItem) dl.Controls [b + 2];
+				DataListItem four = (DataListItem) dl.Controls [b + 3];
+				Assert.AreEqual (ListItemType.Item, one.ItemType, String.Format ("#02-{0}", b));
+				Assert.AreEqual (ListItemType.Separator, two.ItemType, String.Format ("#02-{0}", b + 1));
+				Assert.AreEqual (ListItemType.AlternatingItem, three.ItemType, String.Format ("#02-{0}", b + 2));
+				Assert.AreEqual (ListItemType.Separator, four.ItemType, String.Format ("#02-{0}", b + 3));
+				
+			}
+			Assert.AreEqual (ListItemType.Footer, ((DataListItem) dl.Controls [13]).ItemType, "#03");
+		}
+
+		[Test]
+		public void RepeatInfo1 ()
+		{
+			TestDataList dl = new TestDataList ();
+			dl.ShowHeader = true;
+			dl.HeaderTemplate = new Templ ();
+			dl.ShowFooter = true;
+			dl.FooterTemplate = new Templ ();
+			dl.SeparatorTemplate = new Templ ();
+			dl.DataSource = GetData (6);
+			dl.CreateCH ();
+			IRepeatInfoUser repeater = (IRepeatInfoUser) dl;
+			Assert.AreEqual (true, repeater.HasHeader, "#01");
+			Assert.AreEqual (true, repeater.HasFooter, "#02");
+			Assert.AreEqual (true, repeater.HasSeparators, "#03");
+			Assert.AreEqual (6, repeater.RepeatedItemCount, "#04");
+		}
+
+		[Test]
+		public void RepeatInfo2 ()
+		{
+			TestDataList dl = new TestDataList ();
+			dl.ShowHeader = true;
+			dl.HeaderTemplate = new Templ ();
+			dl.ShowFooter = true;
+			dl.FooterTemplate = new Templ ();
+			dl.SeparatorTemplate = new Templ ();
+			dl.DataSource = GetData (6);
+			dl.CreateCH ();
+			IRepeatInfoUser repeater = (IRepeatInfoUser) dl;
+			Style style = repeater.GetItemStyle (ListItemType.Pager, -1);
+			Assert.IsNull (style, "#01");
+			style = repeater.GetItemStyle (ListItemType.Pager, 0);
+			Assert.IsNull (style, "#02");
+			style = repeater.GetItemStyle (ListItemType.Pager, 15);
+			Assert.IsNull (style, "#03");
+		}
+
+		[Test]
+		public void RepeatInfo3 ()
+		{
+			TestDataList dl = new TestDataList ();
+			dl.ShowHeader = true;
+			dl.HeaderTemplate = new Templ ();
+			dl.ShowFooter = true;
+			dl.FooterTemplate = new Templ ();
+			dl.SeparatorTemplate = new Templ ();
+			dl.DataSource = GetData (6);
+			dl.CreateCH ();
+			IRepeatInfoUser repeater = (IRepeatInfoUser) dl;
+			Style style = repeater.GetItemStyle (ListItemType.Header, -1);
+			DataListItem header = (DataListItem) dl.Controls [0];
+			Assert.IsNull (style, "#01");
+
+			style = repeater.GetItemStyle (ListItemType.Footer, -1);
+			DataListItem footer = (DataListItem) dl.Controls [13];
+			Assert.IsNull (style, "#02");
+			for (int i = 0; i < 6; i++) {
+				style = repeater.GetItemStyle (ListItemType.Item, i);
+				Assert.IsNull (style, String.Format ("#02-{0}", i));
+			}
+		}
+
+		[Test]
+		public void RepeatInfo4 ()
+		{
+			TestDataList dl = new TestDataList ();
+			dl.DataSource = GetData (6);
+			dl.ItemStyle.ForeColor = Color.Blue;
+			dl.CreateCH ();
+			dl.PrepareCH (); // removing this causes all the GetItemStyle calls to return null
+			IRepeatInfoUser repeater = (IRepeatInfoUser) dl;
+			for (int i = 0; i < 6; i++) {
+				Style style = repeater.GetItemStyle (ListItemType.Item, i);
+				DataListItem item = (DataListItem) dl.Controls [i];
+				Assert.AreEqual (style, item.ControlStyle, String.Format ("#01-{0}", i));
+			}
+		}
 	}
 }
+
