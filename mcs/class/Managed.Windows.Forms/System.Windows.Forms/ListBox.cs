@@ -417,9 +417,6 @@ namespace System.Windows.Forms
 						itemsHeight += items.GetListBoxItem (i).ItemHeight;
 				}
 				
-				itemsHeight += ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
-				itemsHeight += ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle);
-				
 				return itemsHeight;
 			}
 		}
@@ -998,14 +995,9 @@ namespace System.Windows.Forms
 		#region Private Methods
 
 		internal void CalcClientArea ()
-		{
-			listbox_info.textdrawing_rect = listbox_info.client_rect;
-			listbox_info.textdrawing_rect.Y += ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
-			listbox_info.textdrawing_rect.X += ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
-			//BUG: Top and Left decorations
-			listbox_info.textdrawing_rect.Height -= ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
-			listbox_info.textdrawing_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
-
+		{		
+			listbox_info.textdrawing_rect = listbox_info.client_rect;			
+			
 			if (listbox_info.show_verticalsb)
 				listbox_info.textdrawing_rect.Width -= vscrollbar_ctrl.Width;
 
@@ -1032,17 +1024,14 @@ namespace System.Windows.Forms
 				listbox_info.page_size = 1;
 			}
 
-			/* Adjust size to visible the maxim number of displayable items */
+			/* Adjust size to visible the maximum number of displayable items */
 			if (IntegralHeight == true) {
 
 				// From MS Docs: The integral height is based on the height of the ListBox, rather than
 				// the client area height. As a result, when the IntegralHeight property is set true,
 				// items can still be partially shown if scroll bars are displayed.
 
-				int remaining =  (listbox_info.client_rect.Height -
-					ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle) -
-					ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle)) %
-					listbox_info.item_height;
+				int remaining = listbox_info.client_rect.Height % listbox_info.item_height;
 
 				if (remaining > 0) {
 					listbox_info.client_rect.Height -= remaining;
@@ -1054,19 +1043,27 @@ namespace System.Windows.Forms
 		}
 
 		internal void Draw (Rectangle clip, Graphics dc)
-		{	
-			if (LBoxInfo.textdrawing_rect.Contains (clip) == false) {
-				// IntegralHeight has effect, we also have to paint the unused area
+		{				
+			// IntegralHeight has effect, we also have to paint the unused area	
+			if (IntegralHeight) {				
 				if (ClientRectangle.Height > listbox_info.client_rect.Height) {
 					Region area = new Region (ClientRectangle);
-					area.Exclude (listbox_info.client_rect);
+					area.Exclude (LBoxInfo.textdrawing_rect);
 
-					dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (Parent.BackColor),
+					if (listbox_info.show_horizontalsb) {
+						area.Exclude (new Rectangle (hscrollbar_ctrl.Location.X, hscrollbar_ctrl.Location.Y,
+							hscrollbar_ctrl.Width, hscrollbar_ctrl.Height));
+					}						
+
+					dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor),
 						area.GetBounds (dc));
-				}
 
-				dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), LBoxInfo.textdrawing_rect);				
-			}					
+					area.Dispose ();
+				}
+			}
+			
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor),
+					LBoxInfo.textdrawing_rect);
 
 			if (Items.Count > 0) {
 				Rectangle item_rect;
@@ -1096,9 +1093,8 @@ namespace System.Windows.Forms
 					OnDrawItem (new DrawItemEventArgs (dc, Font, item_rect,
 						i, state, ForeColor, BackColor));
 				}
-			}			
+			}
 			
-			ThemeEngine.Current.DrawListBoxDecorations (dc, this);
 		}
 
 		// Converts a GetItemRectangle to a one that we can display
@@ -1109,19 +1105,18 @@ namespace System.Windows.Forms
 			item_rect = GetItemRectangle (index);
 			item_rect.X -= first_item_rect.X;
 			item_rect.Y -= first_item_rect.Y;
-
-			item_rect.Y += ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle);
-			item_rect.X += ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
-			item_rect.Width -= ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle);// + ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle);
-
+			
 			return item_rect;
 		}
 
 		// Value Changed
 		private void HorizontalScrollEvent (object sender, EventArgs e)
 		{
-			if (!multicolumn)
+			if (!multicolumn) {
+				base.Refresh ();
 				return;
+			}
+
 			int top_item = LBoxInfo.top_item;
 			int last_item = LBoxInfo.last_item;
 
@@ -1164,15 +1159,9 @@ namespace System.Windows.Forms
 					if (item_rect.X > LBoxInfo.textdrawing_rect.Width)
 						return i - 1;
 				}
-				else {
-					if (IntegralHeight) {
-						if (item_rect.Y + item_rect.Height > top_y) {
-							return i - 1;
-						}
-					}
-					else {
-						if (item_rect.Y + item_rect.Height > top_y)
-							return i;
+				else {					
+					if (item_rect.Y + item_rect.Height > top_y) {
+						return i;
 					}
 				}
 			}
@@ -1484,31 +1473,18 @@ namespace System.Windows.Forms
 		internal void RellocateScrollBars ()
 		{
 			if (listbox_info.show_verticalsb) {
-
-				vscrollbar_ctrl.Size = new Size (vscrollbar_ctrl.Width,
-					listbox_info.client_rect.Height - ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle) -
-					ThemeEngine.Current.DrawListBoxDecorationBottom (BorderStyle));
-
-				vscrollbar_ctrl.Location = new Point (listbox_info.client_rect.Width - vscrollbar_ctrl.Width
-					- ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle),
-					ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle));
-
+				vscrollbar_ctrl.Size = new Size (vscrollbar_ctrl.Width,	ClientRectangle.Height);
+				vscrollbar_ctrl.Location = new Point (ClientRectangle.Width - vscrollbar_ctrl.Width, 0);
 			}
 
 			if (listbox_info.show_horizontalsb) {
-
-				int width;
-
-				width = listbox_info.client_rect.Width - (ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle) + ThemeEngine.Current.DrawListBoxDecorationRight (BorderStyle));
+				int width = listbox_info.client_rect.Width;
 
 				if (listbox_info.show_verticalsb)
 					width -= vscrollbar_ctrl.Width;
 
 				hscrollbar_ctrl.Size = new Size (width, hscrollbar_ctrl.Height);
-
-				hscrollbar_ctrl.Location = new Point (ThemeEngine.Current.DrawListBoxDecorationLeft (BorderStyle),
-					listbox_info.client_rect.Height - hscrollbar_ctrl.Height
-					- ThemeEngine.Current.DrawListBoxDecorationTop (BorderStyle));
+				hscrollbar_ctrl.Location = new Point (0, ClientRectangle.Height - hscrollbar_ctrl.Height);
 			}
 
 			CalcClientArea ();

@@ -543,14 +543,7 @@ namespace System.Windows.Forms
 		
 		#region ListBox
 		// Drawing
-		public abstract void DrawListBoxDecorations (Graphics dc, ListBox ctrl);
-		public abstract void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e);
-		
-		// Sizing
-		public abstract int DrawListBoxDecorationTop (BorderStyle border_style);
-		public abstract int DrawListBoxDecorationBottom (BorderStyle border_style);
-		public abstract int DrawListBoxDecorationRight (BorderStyle border_style);
-		public abstract int DrawListBoxDecorationLeft (BorderStyle border_style);
+		public abstract void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e);		
 		#endregion	// ListBox		
 		
 		#region ListView

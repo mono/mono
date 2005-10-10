@@ -1365,31 +1365,6 @@ namespace System.Windows.Forms
 		#region ListBox
 		
 		// Drawing		
-		public override void DrawListBoxDecorations (Graphics dc, ListBox ctrl)
-		{			
-			Rectangle cl = ctrl.LBoxInfo.client_rect;
-			
-			// Draw decorations
-			switch (ctrl.BorderStyle) {
-			case BorderStyle.Fixed3D: {				
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), cl.X, cl.Y, cl.X + cl.Width, cl.Y); //top 
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), cl.X + 1, cl.Y + 1, cl.X + cl.Width - 2, cl.Y + 1);
-				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X, cl.Y + cl.Height - 2, cl.X + cl.Width, cl.Y + cl.Height - 2); //down
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), cl.X, cl.Y + cl.Height - 1, cl.X + cl.Width, cl.Y + cl.Height - 1);
-				dc.DrawLine (ResPool.GetPen (ColorControlDark), cl.X, cl.Y, cl.X, cl.Y + cl.Height); //left
-				dc.DrawLine (ResPool.GetPen (ColorControlDarkDark), cl.X + 1, cl.Y + 1, cl.X + 1, cl.Y + cl.Height - 2); 
-				dc.DrawLine (ResPool.GetPen (ColorControl), cl.X + cl.Width - 2, cl.Y, cl.X + cl.Width - 2, cl.Y + cl.Height); //right
-				dc.DrawLine (ResPool.GetPen (ColorControlLight), cl.X + cl.Width - 1, cl.Y + 1 , cl.X + cl.Width - 1, cl.Y + cl.Height - 1);		
-				break;
-			}
-			case BorderStyle.FixedSingle:
-				dc.DrawRectangle (ResPool.GetPen (ColorWindowFrame), cl.X, cl.Y, cl.Width - 1, cl.Height - 1);
-				break;
-			case BorderStyle.None:
-			default:
-				break;
-			}		
-		}		
 		
 		private int DrawListBoxDecorationSize (BorderStyle border_style)
 		{
@@ -1407,11 +1382,6 @@ namespace System.Windows.Forms
 		}			
 		
 		// Sizing				
-		public override int DrawListBoxDecorationTop  (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
-		public override int DrawListBoxDecorationBottom  (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
-		public override int DrawListBoxDecorationRight (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
-		public override int DrawListBoxDecorationLeft (BorderStyle border_style) { return DrawListBoxDecorationSize (border_style);}
-		
 		public override void DrawListBoxItem (ListBox ctrl, DrawItemEventArgs e)
 		{
 			Color back_color, fore_color;
