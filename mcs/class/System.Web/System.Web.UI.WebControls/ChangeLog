@@ -1,5 +1,13 @@
 2005-10-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataList.cs: copied and adapted PrepareControlHierarchy from DataGrid.
+	Now the items get the attributes from the styles in datalist.  Add the
+	separators after each item, not before. GetItemStyle returns the actual
+	item style, not the styles in the datalist. Fixes bug #76384 and all
+	new tests pass.
+
+2005-10-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* Style.cs: add a 'border-style: solid' to make IE happy. Fixes bug
 	76373.
 

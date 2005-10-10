@@ -516,12 +516,12 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		private void DoItemInLoop (int i, object d, bool databind)
+		private void DoItemInLoop (int i, object d, bool databind, ListItemType type)
 		{
-			if (i > 0 && SeparatorTemplate != null)
+			DoItem (i, type, d, databind);
+			if (SeparatorTemplate != null)
 				DoItem (i - 1, ListItemType.Separator, null, databind);
 
-			DoItem (i, i % 2 == 0 ? ListItemType.Item : ListItemType.AlternatingItem, d, databind);
 		}
 
 		protected override void CreateControlHierarchy (bool useDataSource)
@@ -547,17 +547,36 @@ namespace System.Web.UI.WebControls {
 				DoItem (-1, ListItemType.Header, null, useDataSource);
 
 			// items
+			int selected_index = SelectedIndex;
+			int edit_item_index = EditItemIndex;
+			ListItemType type;
 			if (ds != null) {
 				string key = DataKeyField;
 				foreach (object o in ds) {
 					if (useDataSource && key != "")
 						keys.Add (DataBinder.GetPropertyValue (o, key));
-					DoItemInLoop (idx, o, useDataSource);
+					type = ListItemType.Item;
+					if (idx == edit_item_index) 
+						type = ListItemType.EditItem;
+					else if (idx == selected_index) 
+						type = ListItemType.SelectedItem;
+					else if (idx % 2 != 0) 
+						type = ListItemType.AlternatingItem;
+
+					DoItemInLoop (idx, o, useDataSource, type);
 					idx++;
 				}
 			} else {
 				for (int i = 0; i < idx; i++) {
-					DoItemInLoop (i, null, useDataSource);
+					type = ListItemType.Item;
+					if (idx == edit_item_index) 
+						type = ListItemType.EditItem;
+					else if (idx == selected_index) 
+						type = ListItemType.SelectedItem;
+					else if (idx % 2 != 0) 
+						type = ListItemType.AlternatingItem;
+
+					DoItemInLoop (i, null, useDataSource, type);
 				}
 			}
 
@@ -721,8 +740,84 @@ namespace System.Web.UI.WebControls {
 				updateCommand (this, e);
 		}
 
+		void ApplyControlStyle (Control ctrl, Style style)
+		{
+			if (style == null || false == ctrl.HasControls ())
+				return;
+
+			foreach (Control c in ctrl.Controls) {
+				if (c is Table) {
+					Table tbl = (Table) c;
+					foreach (TableRow row in tbl.Rows)
+						row.MergeStyle (style);
+				}
+			}
+		}
+
 		protected override void PrepareControlHierarchy ()
 		{
+			if (!HasControls () || Controls.Count == 0)
+				return; // No one called CreateControlHierarchy() with DataSource != null
+
+			Style alt = null;
+			foreach (DataListItem item in Controls) {
+				switch (item.ItemType) {
+				case ListItemType.Item:
+					item.MergeStyle (itemStyle);
+					ApplyControlStyle (item, itemStyle);
+					break;
+				case ListItemType.AlternatingItem:
+					if (alt == null) {
+						if (alternatingItemStyle != null) {
+							alt = new Style ();
+							alt.CopyFrom (itemStyle);
+							alt.CopyFrom (alternatingItemStyle);
+						} else {
+							alt = itemStyle;
+						}
+					}
+
+					item.MergeStyle (alt);
+					ApplyControlStyle (item, alt);
+					break;
+				case ListItemType.EditItem:
+					item.MergeStyle (editItemStyle);
+					ApplyControlStyle (item, editItemStyle);
+					break;
+				case ListItemType.Footer:
+					if (!ShowFooter) {
+						item.Visible = false;
+						break;
+					}
+					if (footerStyle != null) {
+						item.MergeStyle (footerStyle);
+						ApplyControlStyle (item, footerStyle);
+					}
+					break;
+				case ListItemType.Header:
+					if (!ShowHeader) {
+						item.Visible = false;
+						break;
+					}
+					if (headerStyle != null) {
+						item.MergeStyle (headerStyle);
+						ApplyControlStyle (item, headerStyle);
+					}
+					break;
+				case ListItemType.SelectedItem:
+					if (selectedItemStyle != null) {
+						item.MergeStyle (selectedItemStyle);
+						ApplyControlStyle (item, selectedItemStyle);
+					} else {
+						item.MergeStyle (itemStyle);
+						ApplyControlStyle (item, itemStyle);
+					}
+					break;
+				case ListItemType.Separator:
+					ApplyControlStyle (item, separatorStyle);
+					break;
+				}
+			}
 		}
 
 #if NET_2_0
@@ -754,15 +849,15 @@ for (int i=0; i < Items.Count; i++) {
 			bool extract = ExtractTemplateRows;
 			if (extract) {
 				ri.OuterTableImplied = true;
-				writer.AddAttribute (HtmlTextWriterAttribute.Id, ID);
+				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 				if (ControlStyleCreated) {
 					ControlStyle.AddAttributesToRender (writer);
 				}
 				writer.RenderBeginTag (HtmlTextWriterTag.Table);
-				ri.RenderRepeater (writer, this, TableStyle, this);
+				ri.RenderRepeater (writer, this, ControlStyle, this);
 				writer.RenderEndTag ();
 			} else {
-				ri.RenderRepeater (writer, this, TableStyle, this);
+				ri.RenderRepeater (writer, this, ControlStyle, this);
 			}
 		}
 
@@ -890,43 +985,39 @@ for (int i=0; i < Items.Count; i++) {
 
 		Style IRepeatInfoUser.GetItemStyle (ListItemType itemType, int repeatIndex)
 		{
+			DataListItem item = null;
 			switch (itemType) {
 			case ListItemType.Header:
-				if (repeatIndex >= Items.Count)
-					throw new ArgumentOutOfRangeException ("repeatIndex");
-				return headerStyle;
 			case ListItemType.Footer:
-				if (repeatIndex >= Items.Count)
-					throw new ArgumentOutOfRangeException ("repeatIndex");
-				return footerStyle;
+				if (repeatIndex >= 0 && (!HasControls () || repeatIndex >= Controls.Count))
+					throw new ArgumentOutOfRangeException ();
+
+				item = FindFirstItem (itemType);
+				break;
 			case ListItemType.Item:
 			case ListItemType.AlternatingItem:
 			case ListItemType.SelectedItem:
 			case ListItemType.EditItem:
-				if (repeatIndex >= Items.Count)
-					throw new ArgumentOutOfRangeException ("repeatIndex");
+				if (repeatIndex >= 0 && (!HasControls () || repeatIndex >= Controls.Count))
+					throw new ArgumentOutOfRangeException ();
 
-				if (SelectedIndex == repeatIndex)
-					return selectedItemStyle;
-
-				if (EditItemIndex == repeatIndex)
-					return editItemStyle;
-
-				if (((repeatIndex & 1) == 0) || (alternatingItemStyle == null))
-					return itemStyle;
-
-				// alternate style
-				TableItemStyle alt = new TableItemStyle ();
-				alt.CopyFrom (itemStyle);
-				alt.CopyFrom (alternatingItemStyle);
-				return alt;
+				item = FindBestItem (repeatIndex);
+				break;
 			case ListItemType.Separator:
-				if (repeatIndex >= Items.Count)
-					throw new ArgumentOutOfRangeException ("repeatIndex");
-				return separatorStyle;
+				if (repeatIndex >= 0 && (!HasControls () || repeatIndex >= Controls.Count))
+					throw new ArgumentOutOfRangeException ();
+
+				item = FindSpecificItem (itemType, repeatIndex);
+				break;
 			default:
-				return null;
+				item = null;
+				break;
 			}
+
+			if (item == null || item.ControlStyleCreated == false)
+				return null;
+
+			return item.ControlStyle;
 		}
 
 		// Header and Footer don't have a "real" index (-1)
