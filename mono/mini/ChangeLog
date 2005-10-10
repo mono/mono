@@ -1,3 +1,10 @@
+2005-10-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-mini.c (mono_debug_init_method): Fix warning.
+
+	* mini.h branch-opts.c (mono_branch_optimize_exception_target): Make
+	the 'exname' parameter const to fix some warnings.
+
 2005-10-09  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-exceptions.c (mono_handle_exception_internal): Fix another bug
