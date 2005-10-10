@@ -3404,8 +3404,6 @@ namespace Mono.CSharp {
 				if (leave_copy) {
 					ec.ig.Emit (OpCodes.Dup);
 					if (!is_static) {
-						if (temp != null)
-							throw new InternalErrorException ("temp in non-null: leave copy, prepare");
 						temp = new LocalTemporary (ec, this.Type);
 						temp.Store (ec);
 					}
@@ -3413,8 +3411,6 @@ namespace Mono.CSharp {
 			} else if (leave_copy) {
 				source.Emit (ec);
 				if (!is_static) {
-						if (temp != null)
-							throw new InternalErrorException ("temp is non-null: leave copy");
 					temp = new LocalTemporary (ec, this.Type);
 					temp.Store (ec);
 				}
