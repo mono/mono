@@ -74,7 +74,7 @@ namespace TestApp {
 				}
 			}
 			file.WriteLine("\t\t\t};\n");
-			file.WriteLine("\t\t\tAssert.AreEqual(GetStyles(new {0}()), {0}_want, \"{0}Styles\");", name);
+			file.WriteLine("\t\t\tAssert.AreEqual({0}_want, GetStyles(new {0}()), \"{0}Styles\");", name);
 			file.WriteLine("\t\t}\n\n");
 		}
 

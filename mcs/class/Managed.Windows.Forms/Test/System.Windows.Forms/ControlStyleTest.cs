@@ -52,7 +52,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new Control()), Control_want, "ControlStyles");
+			Assert.AreEqual(Control_want, GetStyles(new Control()), "ControlStyles");
 		}
 
 
@@ -77,7 +77,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=True"
 			};
 
-			Assert.AreEqual(GetStyles(new Button()), Button_want, "ButtonStyles");
+			Assert.AreEqual(Button_want, GetStyles(new Button()), "ButtonStyles");
 		}
 
 
@@ -102,7 +102,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=True"
 			};
 
-			Assert.AreEqual(GetStyles(new CheckBox()), CheckBox_want, "CheckBoxStyles");
+			Assert.AreEqual(CheckBox_want, GetStyles(new CheckBox()), "CheckBoxStyles");
 		}
 
 
@@ -127,7 +127,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=True"
 			};
 
-			Assert.AreEqual(GetStyles(new RadioButton()), RadioButton_want, "RadioButtonStyles");
+			Assert.AreEqual(RadioButton_want, GetStyles(new RadioButton()), "RadioButtonStyles");
 		}
 
 
@@ -152,7 +152,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new DataGrid()), DataGrid_want, "DataGridStyles");
+			Assert.AreEqual(DataGrid_want, GetStyles(new DataGrid()), "DataGridStyles");
 		}
 
 
@@ -177,7 +177,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new DateTimePicker()), DateTimePicker_want, "DateTimePickerStyles");
+			Assert.AreEqual(DateTimePicker_want, GetStyles(new DateTimePicker()), "DateTimePickerStyles");
 		}
 
 
@@ -202,7 +202,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new GroupBox()), GroupBox_want, "GroupBoxStyles");
+			Assert.AreEqual(GroupBox_want, GetStyles(new GroupBox()), "GroupBoxStyles");
 		}
 
 
@@ -227,7 +227,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=True"
 			};
 
-			Assert.AreEqual(GetStyles(new Label()), Label_want, "LabelStyles");
+			Assert.AreEqual(Label_want, GetStyles(new Label()), "LabelStyles");
 		}
 
 
@@ -252,7 +252,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=True"
 			};
 
-			Assert.AreEqual(GetStyles(new LinkLabel()), LinkLabel_want, "LinkLabelStyles");
+			Assert.AreEqual(LinkLabel_want, GetStyles(new LinkLabel()), "LinkLabelStyles");
 		}
 
 
@@ -277,7 +277,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new ComboBox()), ComboBox_want, "ComboBoxStyles");
+			Assert.AreEqual(ComboBox_want, GetStyles(new ComboBox()), "ComboBoxStyles");
 		}
 
 
@@ -302,7 +302,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new ListBox()), ListBox_want, "ListBoxStyles");
+			Assert.AreEqual(ListBox_want, GetStyles(new ListBox()), "ListBoxStyles");
 		}
 
 
@@ -327,7 +327,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new CheckedListBox()), CheckedListBox_want, "CheckedListBoxStyles");
+			Assert.AreEqual(CheckedListBox_want, GetStyles(new CheckedListBox()), "CheckedListBoxStyles");
 		}
 
 
@@ -352,7 +352,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new ListView()), ListView_want, "ListViewStyles");
+			Assert.AreEqual(ListView_want, GetStyles(new ListView()), "ListViewStyles");
 		}
 
 
@@ -377,7 +377,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new MdiClient()), MdiClient_want, "MdiClientStyles");
+			Assert.AreEqual(MdiClient_want, GetStyles(new MdiClient()), "MdiClientStyles");
 		}
 
 
@@ -402,7 +402,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new MonthCalendar()), MonthCalendar_want, "MonthCalendarStyles");
+			Assert.AreEqual(MonthCalendar_want, GetStyles(new MonthCalendar()), "MonthCalendarStyles");
 		}
 
 
@@ -427,7 +427,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=True"
 			};
 
-			Assert.AreEqual(GetStyles(new PictureBox()), PictureBox_want, "PictureBoxStyles");
+			Assert.AreEqual(PictureBox_want, GetStyles(new PictureBox()), "PictureBoxStyles");
 		}
 
 
@@ -452,7 +452,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new ProgressBar()), ProgressBar_want, "ProgressBarStyles");
+			Assert.AreEqual(ProgressBar_want, GetStyles(new ProgressBar()), "ProgressBarStyles");
 		}
 
 
@@ -477,7 +477,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new ScrollableControl()), ScrollableControl_want, "ScrollableControlStyles");
+			Assert.AreEqual(ScrollableControl_want, GetStyles(new ScrollableControl()), "ScrollableControlStyles");
 		}
 
 
@@ -502,7 +502,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new ContainerControl()), ContainerControl_want, "ContainerControlStyles");
+			Assert.AreEqual(ContainerControl_want, GetStyles(new ContainerControl()), "ContainerControlStyles");
 		}
 
 
@@ -527,7 +527,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new Form()), Form_want, "FormStyles");
+			Assert.AreEqual(Form_want, GetStyles(new Form()), "FormStyles");
 		}
 
 
@@ -552,7 +552,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new PropertyGrid()), PropertyGrid_want, "PropertyGridStyles");
+			Assert.AreEqual(PropertyGrid_want, GetStyles(new PropertyGrid()), "PropertyGridStyles");
 		}
 
 
@@ -577,7 +577,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new DomainUpDown()), DomainUpDown_want, "DomainUpDownStyles");
+			Assert.AreEqual(DomainUpDown_want, GetStyles(new DomainUpDown()), "DomainUpDownStyles");
 		}
 
 
@@ -602,7 +602,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new NumericUpDown()), NumericUpDown_want, "NumericUpDownStyles");
+			Assert.AreEqual(NumericUpDown_want, GetStyles(new NumericUpDown()), "NumericUpDownStyles");
 		}
 
 
@@ -627,7 +627,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new UserControl()), UserControl_want, "UserControlStyles");
+			Assert.AreEqual(UserControl_want, GetStyles(new UserControl()), "UserControlStyles");
 		}
 
 
@@ -652,7 +652,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new Panel()), Panel_want, "PanelStyles");
+			Assert.AreEqual(Panel_want, GetStyles(new Panel()), "PanelStyles");
 		}
 
 
@@ -677,7 +677,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new TabPage()), TabPage_want, "TabPageStyles");
+			Assert.AreEqual(TabPage_want, GetStyles(new TabPage()), "TabPageStyles");
 		}
 
 
@@ -702,7 +702,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new HScrollBar()), HScrollBar_want, "HScrollBarStyles");
+			Assert.AreEqual(HScrollBar_want, GetStyles(new HScrollBar()), "HScrollBarStyles");
 		}
 
 
@@ -727,7 +727,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new VScrollBar()), VScrollBar_want, "VScrollBarStyles");
+			Assert.AreEqual(VScrollBar_want, GetStyles(new VScrollBar()), "VScrollBarStyles");
 		}
 
 
@@ -752,7 +752,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new Splitter()), Splitter_want, "SplitterStyles");
+			Assert.AreEqual(Splitter_want, GetStyles(new Splitter()), "SplitterStyles");
 		}
 
 
@@ -777,7 +777,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new StatusBar()), StatusBar_want, "StatusBarStyles");
+			Assert.AreEqual(StatusBar_want, GetStyles(new StatusBar()), "StatusBarStyles");
 		}
 
 
@@ -802,7 +802,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new TabControl()), TabControl_want, "TabControlStyles");
+			Assert.AreEqual(TabControl_want, GetStyles(new TabControl()), "TabControlStyles");
 		}
 
 
@@ -827,7 +827,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new RichTextBox()), RichTextBox_want, "RichTextBoxStyles");
+			Assert.AreEqual(RichTextBox_want, GetStyles(new RichTextBox()), "RichTextBoxStyles");
 		}
 
 
@@ -852,7 +852,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new TextBox()), TextBox_want, "TextBoxStyles");
+			Assert.AreEqual(TextBox_want, GetStyles(new TextBox()), "TextBoxStyles");
 		}
 
 
@@ -877,7 +877,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new DataGridTextBox()), DataGridTextBox_want, "DataGridTextBoxStyles");
+			Assert.AreEqual(DataGridTextBox_want, GetStyles(new DataGridTextBox()), "DataGridTextBoxStyles");
 		}
 
 
@@ -902,7 +902,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new ToolBar()), ToolBar_want, "ToolBarStyles");
+			Assert.AreEqual(ToolBar_want, GetStyles(new ToolBar()), "ToolBarStyles");
 		}
 
 
@@ -927,7 +927,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new TrackBar()), TrackBar_want, "TrackBarStyles");
+			Assert.AreEqual(TrackBar_want, GetStyles(new TrackBar()), "TrackBarStyles");
 		}
 
 
@@ -952,7 +952,7 @@ namespace MonoTests.System.Windows.Forms {
 				"DoubleBuffer=False"
 			};
 
-			Assert.AreEqual(GetStyles(new TreeView()), TreeView_want, "TreeViewStyles");
+			Assert.AreEqual(TreeView_want, GetStyles(new TreeView()), "TreeViewStyles");
 		}
 
 

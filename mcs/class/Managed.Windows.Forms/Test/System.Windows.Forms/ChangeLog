@@ -1,3 +1,8 @@
+2005-10-10  Peter Dennis Bartok <pbartok@novell.com>
+
+	* GenerateControlStyleTest.cs, ControlStyleTest.cs: Flipped
+	  order for want and actual to avoid misleading errors
+
 2005-10-07  Peter Dennis Bartok <pbartok@novell.com>
 
 	* GenerateControlStyleTest.cs: Code to auto-generate the
