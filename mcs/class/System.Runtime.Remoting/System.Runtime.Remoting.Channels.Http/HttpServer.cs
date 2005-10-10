@@ -90,6 +90,11 @@ namespace System.Runtime.Remoting.Channels.Http
 
 	internal sealed class HttpServer
 	{
+		static HttpServer ()
+		{
+			Array.Sort (knownHeaders);
+		}
+		
 		public static void ProcessRequest (RequestArguments reqArg)
 		{
 			try {
@@ -178,16 +183,40 @@ namespace System.Runtime.Remoting.Channels.Http
 		
 		private static bool ParseHeader (RequestArguments reqArg, ArrayList Headers, IDictionary HeaderFields, IDictionary CustomHeaders)
 		{
-			for (int i=0;i<Headers.Count;i++)
+			// The first "header" is the method
+
+			string[] met = ((string) Headers [0]).Split (' ');
+			HeaderFields.Add ("method", met[0]);
+
+			if (met.Length >= 1)
+				HeaderFields.Add ("request-url", met [1]);
+			
+			if (met.Length >= 2)
+				HeaderFields.Add ("http-version", met [2]);
+			
+			for (int i = 1; i < Headers.Count; i++)
 			{
-				if (ReqMessageParser.ParseHeaderField ((string)Headers[i],HeaderFields))
-					continue;
-					
-				if (!ReqMessageParser.IsCustomHeader((string)Headers[i],CustomHeaders ) )
-				{
-					SendResponse (reqArg, 400, null, null);
-					return false;
-				}
+				string header = (string) Headers [i];
+			 	int p = header.IndexOf (':');
+			 	
+			 	string id;
+			 	object val;
+			 	if (p == -1) {
+			 		id = header.Trim ().ToLower ();
+			 		val = "";
+			 	} else {
+			 		id = header.Substring (0, p).Trim ().ToLower ();
+			 		val = header.Substring (p + 1).Trim ();
+			 	}
+			 	
+			 	if (Array.BinarySearch (knownHeaders, id) >= 0) {
+			 		if (id == "content-length")
+			 			val = int.Parse ((string)val);
+			 		HeaderFields [id] = val;
+			 	}
+			 	else {
+			 		CustomHeaders [id] = val;
+			 	}
 			}
 
 			return true;
@@ -255,7 +284,7 @@ namespace System.Runtime.Remoting.Channels.Http
 			THeaders[CommonTransportKeys.HttpVersion] = HeaderFields["http-version"];
 			THeaders[CommonTransportKeys.UserAgent] = HeaderFields["user-agent"];
 			THeaders[CommonTransportKeys.Host] = HeaderFields["host"];
-			THeaders[CommonTransportKeys.SoapAction] = HeaderFields["SOAPAction"];
+			THeaders[CommonTransportKeys.SoapAction] = HeaderFields["soapaction"];
 			THeaders[CommonTransportKeys.IPAddress] = reqArg.ClientAddress;
 			THeaders[CommonTransportKeys.ConnectionId] = reqArg.Id;
 
@@ -385,540 +414,37 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 		}
 		
+		static string[] knownHeaders = new string [] {
+			"accept",
+			"accept-charset",
+			"accept-encoding",
+			"authorization",
+			"accept-language",
+			"from",
+			"host",
+			"if-modified-since",
+			"proxy-authorization",
+			"range",
+			"user-agent",
+			"expect",
+			"connection",
+			"allow",
+		    "content-encoding",
+			"content-language",
+			"content-length",
+			"content-range",
+			"content-type",
+			"content-version",
+			"derived-from",
+			"expires",
+			"last-modified",
+			"link",
+			"title",
+		    "transfere-encoding",
+		    "url-header",
+			"extension-header"
+		 };
 	}
-	
-	
-	internal sealed class ReqMessageParser
-	{
-		private  const int nCountReq = 14;
-		private  const int nCountEntity = 15;
-		
-		private static bool bInitialized = false;
-		
-		private static String [] ReqRegExpString = new String [nCountReq ];
-		private static String [] EntityRegExpString = new String[nCountEntity]; 
-		
-		private static Regex [] ReqRegExp = new Regex[nCountReq];
-		private static Regex [] EntityRegExp = new Regex[nCountEntity];
-		 
-
-		 
-		public ReqMessageParser ()
-		{
-		}
-
-		 public static bool ParseHeaderField(string buffer,IDictionary headers)
-		 {
-			 try
-			 {
-				 if(!bInitialized)
-				 {
-					 Initialize();
-					 bInitialized =true;
-				 }
-
-				 if(IsRequestField(buffer,headers))
-					 return true;
-				 if(IsEntityField(buffer,headers))
-					 return true ;
-			 
-			 }
-			 catch(Exception )
-			 {
-				 //<Exception>
-			 }
-
-			 //Exception
-
-			 return false;
-		 }
-		 
-		 private static bool Initialize()
-		 {
-			 if(bInitialized)
-				 return true;
-
-			 bInitialized = true;
-
-			 //initialize array
-			 //Create all the Regular expressions
-			 InitializeRequestRegExp();
-			 InitiazeEntityRegExp();
-
-			 for(int i=0;i<nCountReq;i++)
-				 ReqRegExp[i] = new Regex(ReqRegExpString[i],RegexOptions.Compiled|RegexOptions.IgnoreCase);
-			
-			 for(int i=0;i<nCountEntity;i++)
-				 EntityRegExp[i] = new Regex(EntityRegExpString[i],RegexOptions.Compiled|RegexOptions.IgnoreCase);
-
-			 return true;
-
-		 }
-
-		 private static void InitializeRequestRegExp()
-		 {
-			 //Request Header Fields
-			 //
-			 ReqRegExpString[0] = "^accept(\\s*:\\s*)(?<accept>\\S+)(\\s*|)(\\s*)$";
-			 ReqRegExpString[1] = "^accept-charset(\\s*:\\s*)(?<accept_charset>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[2] = "^accept-encoding(\\s*:\\s*)(?<accept_Encoding>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[3] = "^authorization(\\s*:\\s*)(?<authorization>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[4] = "^accept-language(\\s*:\\s*)(?<accept_Language>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[5] = "^from(\\s*:\\s*)(?<from>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[6] = "^host(\\s*:\\s*)(?<host>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[7] = "^if-modified-since(\\s*:\\s*)(?<if_modified>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[8] = "^proxy-authorization(\\s*:\\s*)(?<proxy_auth>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[9] = "^range(\\s*:\\s*)(?<range>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[10] = "^user-agent(\\s*:\\s*)(?<user_agent>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[11] = "^expect(\\s*:\\s*)(?<expect>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[12] = "^connection(\\s*:\\s*)(?<connection>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			 ReqRegExpString[13] = "^(?<method>\\w+)(\\s+)(?<request_url>\\S+)(\\s+)(?<http_version>\\S+)(\\s*)$";
-			// ReqRegExpString[14] = "";			 
-		 }
-
-		 private static void InitiazeEntityRegExp()
-		 {
-			EntityRegExpString[0] = "^allow(\\s*:\\s*)(?<allow>[0-9]+)(\\s*)$";
-		    EntityRegExpString[1] = "^content-encoding(\\s*:\\s*)(?<content_encoding>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			EntityRegExpString[2] = "^content-language(\\s*:\\s*)(?<content_language>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			EntityRegExpString[3] = "^content-length(\\s*:\\s*)(?<content_length>[0-9]+)(\\s*)$";
-			EntityRegExpString[4] = "^content-range(\\s*:\\s*)(?<content_range>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			EntityRegExpString[5] = "^content-type(\\s*:\\s*)(?<content_type>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			EntityRegExpString[6] = "^content-version(\\s*:\\s*)(?<content_version>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			EntityRegExpString[7] = "^derived-from(\\s*:\\s*)(?<derived_from>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			EntityRegExpString[8] = "^expires(\\s*:\\s*)(?<expires>\\S+(\\s|\\S)*\\S)(\\s*)$";//date
-			EntityRegExpString[9] = "^last-modified(\\s*:\\s*)(?<last_modified>\\S+(\\s|\\S)*\\S)(\\s*)$";//date
-			EntityRegExpString[10] = "^link(\\s*:\\s*)(?<link>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			EntityRegExpString[11] = "^title(\\s*:\\s*)(?<title>\\S+(\\s|\\S)*\\S)(\\s*)$";
-		    EntityRegExpString[12] = "^transfere-encoding(\\s*:\\s*)(?<transfere_encoding>\\S+(\\s|\\S)*\\S)(\\s*)$";
-		    EntityRegExpString[13] = "^url-header(\\s*:\\s*)(?<url_header>\\S+(\\s|\\S)*\\S)(\\s*)$";
-			EntityRegExpString[14] = "^extension-header(\\s*:\\s*)(?<extension_header>\\S+(\\s|\\S)*\\S)(\\s*)$";
-		 }
-				
-		 private static void CopyGroupNames(Regex regEx , Match m , IDictionary headers)
-		 {
-			 
-			 if(!m.Success)
-				 return;
-
-			 string [] ar = regEx.GetGroupNames();
-			 GroupCollection gc = m.Groups;
-
-			 for(int i=0;i<ar.Length;i++)
-			 {
-				 if(! char.IsLetter(ar[i],0))
-					 continue;
-                 
-				headers.Add(ar[i],gc[ar[i]].Value);
-			 }
-		 }
-		 
-
-		 private static bool IsRequestField(string buffer , IDictionary HeaderItems)
-		 {
-			 
-			 if(Request_accept(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_accept_charset(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_accept_encoding(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_accept_language(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_authorization(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_connection(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_expect(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_from(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_host(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_modified(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_proxy_authorization(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_user_agent(buffer , HeaderItems))
-				 return true;
-
-			 if(Request_request_line(buffer , HeaderItems))
-				 return true;
-
-			 return false;
-		 }
-
-		 private static bool IsEntityField(string buffer , IDictionary HeaderItems)
-		 {
-			 if(Entity_allow(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_content_encoding(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_content_language(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_content_length(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_content_range(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_content_type(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_content_version(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_dervied_from(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_expires(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_extension_header(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_last_modified(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_link(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_title(buffer , HeaderItems))
-				 return true;
-
-			 if(Entity_transfere_encoding(buffer , HeaderItems))
-				 return true;
-			 
-			 if(Entity_url_header(buffer , HeaderItems))           
-				 return true;
-
-			 return false;
-
-		 }
-		
-		 public static bool IsCustomHeader(string buffer,IDictionary CustomHeader)
-		 {
-			 Regex CustomHeaderEx = new Regex("^(?<header>\\S+)(\\s*:\\s*)(?<field>\\S+(\\s|\\S)*\\S)(\\s*)",RegexOptions.Compiled);
-			
-			 Match m = CustomHeaderEx.Match(buffer);
-			 if(!m.Success)
-				 return false;
-
-			 CustomHeader.Add(m.Groups["header"].Value,m.Groups["field"].Value);
-			 return true;
-
-		 }
-		
-		 //********************************************************
-		 //REQUEST
-		 private static bool Request_accept(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[0].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("accept",m.Groups["accept"].Value);
-			 return true;
-		 }
-
-		 private static bool Request_accept_charset(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[1].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("accept-charset",m.Groups["accept_charset"].Value);
-			 return true;
-
-		 }
-		 private static bool Request_accept_encoding(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[2].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("accept-encoding",m.Groups["accept_encoding"].Value);
-			 return true;
-		 }
-		 private static bool Request_authorization(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[3].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("authorization",m.Groups["authorization"].Value);
-			 return true;
-		 }
-		 private static bool Request_accept_language(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[4].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("accept-language",m.Groups["accept_language"].Value);
-			 return true;
-		 }
-		 private static bool Request_from(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[5].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("from",m.Groups["from"].Value);
-			 return true;
-		 }
-		 private static bool Request_host(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[6].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("host",m.Groups["host"].Value);
-			 return true;
-		 }
-		 private static bool Request_modified(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[7].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("modified",m.Groups["modified"].Value);
-			 return true;
-		 }
-		 private static bool Request_proxy_authorization(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[8].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("proxy-authorization",m.Groups["proxy_authorization"].Value);
-			 return true;
-		 }
-		 private static bool Request_range(string buffer , IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[9].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("range",m.Groups["range"].Value);
-			 return true;
-			 
-		 }
-		 private static bool Request_user_agent(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[10].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("user-agent",m.Groups["user_agent"].Value);
-			 return true;
-		 }
-		 private static bool Request_expect(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[11].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("expect",m.Groups["expect"].Value);
-			 return true;
-		 }
-
-		 private static bool Request_connection(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[12].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("connection",m.Groups["connection"].Value);
-			 return true;
-		 }
-
-		 private static bool Request_request_line(string buffer, IDictionary HeaderItems)
-		 {
-			 Match m = ReqRegExp[13].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			//ReqRegExpString[13] = "(?<method>\\w+)(\\s+)(?<request_url>\\S+)(\\s+)(?<http_version>\\S+)";
-			 
-			 HeaderItems.Add("method",m.Groups["method"].Value);
-			 HeaderItems.Add("request-url",m.Groups["request_url"].Value);
-			 HeaderItems.Add("http-version",m.Groups["http_version"].Value);
-			 return true;
-		 }
-		//********************************************************
-
-		
-		 //********************************************************
-		 //ENTITY
-		 private static bool Entity_allow(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[0].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("allow",m.Groups["allow"].Value);
-			 return true;
-		 }
-
-		 
-		 private static bool Entity_content_encoding(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[1].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("content-encoding",m.Groups["content_encoding"].Value);
-			 return true;
-		 }
-		 private static bool Entity_content_language(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[2].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("content-language",m.Groups["content_language"].Value);
-			 return true;
-		 }
-		 private static bool Entity_content_length(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[3].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			int length;
-			 try
-			 {
-				 length = Int32.Parse(m.Groups["content_length"].ToString());
-			 }
-			 catch (Exception )
-			 {
-				 //<Exception>
-				 return false;
-			 }
-
-			 HeaderItems.Add("content-length",length);
-			 return true;
-		 }
-		 private static bool Entity_content_range(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[4].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("content-range",m.Groups["content_range"].Value);
-			 return true;
-		 }
-		 private static bool Entity_content_type(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[5].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("content-type",m.Groups["content_type"].Value);
-			 return true;
-		 }
-
-		 private static bool Entity_content_version(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[6].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("content-version",m.Groups["content_version"].Value);
-			 return true;
-		 }
-		 private static bool Entity_dervied_from(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[7].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("dervied-from",m.Groups["dervied_from"].Value);
-			 return true;
-		 }
-		 private static bool Entity_expires(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[8].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("expires",m.Groups["expires"].Value);
-			 return true;
-		 }
-		 private static bool Entity_last_modified(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[9].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("last-modified",m.Groups["last_modified"].Value);
-			 return true;
-		 }
-		 private static bool Entity_link(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[10].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("link",m.Groups["link"].Value);
-			 return true;
-		 }
-		 private static bool Entity_title(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[11].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("title",m.Groups["title"].Value);
-			 return true;
-		 }
-
-		 private static bool Entity_transfere_encoding(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[12].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("transfere-encoding",m.Groups["transfere_encoding"].Value);
-			 return true;
-		 }
-		 private static bool Entity_url_header(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[13].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("url-header",m.Groups["url_header"].Value);
-			 return true;
-		 }
-
-		 private static bool Entity_extension_header(string buffer,IDictionary HeaderItems)
-		 {
-			 Match m = EntityRegExp[14].Match(buffer);
-			 if(!m.Success)
-				 return false;
-			
-			 HeaderItems.Add("extension-header",m.Groups["extension_header"].Value);
-			 return true;
-		 }
-
-		 //********************************************************		 
-	}
-
 }
 
 

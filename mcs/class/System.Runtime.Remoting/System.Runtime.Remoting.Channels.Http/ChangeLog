@@ -1,3 +1,8 @@
+2005-10-10  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* HttpServer.cs: Removed all non-sense regular expressions for
+	parsing files. Makes the channel faster and fixes bug #75886.
+
 2005-07-06  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* HttpServer.cs: Close the connection after processing the request.
