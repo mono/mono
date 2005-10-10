@@ -1,3 +1,8 @@
+2005-10-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* profiler.c (output_newobj_profile): Fix printing of Total memory
+	on x86.
+
 2005-10-08  Zoltan Varga  <vargaz@freemail.hu>
 
 	* profiler.c: Add support for allocations > 2GB. Fixes #74886.
