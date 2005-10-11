@@ -29,6 +29,7 @@ using System;
 public class Options
 {
 	public bool DeclaredOnly = false;
+	public bool FilterObsolete = false;
 	public bool Search = false;
 	public bool ShowPrivate = false;
 	public string AssemblyReference = null;
@@ -59,6 +60,10 @@ public class Options
 				case "-d":
 				case "--declared-only":
 					DeclaredOnly = true;
+					break;
+				case "--filter-obsolete":
+				case "-f":
+					FilterObsolete = true;
 					break;
 				case "-p":
 				case "--private":

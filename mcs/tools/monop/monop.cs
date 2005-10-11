@@ -198,7 +198,7 @@ class MonoP {
 		return GetType (tname, false);
 	}
 
-	static void PrintTypes (string assembly, bool show_private)
+	static void PrintTypes (string assembly, bool show_private, bool filter_obsolete)
 	{
 		Assembly a = GetAssembly (assembly, true);
 
@@ -219,10 +219,15 @@ class MonoP {
 		Type [] types = show_private ? a.GetTypes () : a.GetExportedTypes ();
 		Array.Sort (types, new TypeSorter ());
 
-		foreach (Type t in types)
-			Console.WriteLine (t.FullName);
+		int obsolete_count = 0;
+		foreach (Type t in types) {
+			if (filter_obsolete && t.IsDefined (typeof (ObsoleteAttribute), false))
+				obsolete_count ++;
+			else
+				Console.WriteLine (t.FullName);
+		}
 
-		Console.WriteLine ("\nTotal: {0} types.", types.Length);
+		Console.WriteLine ("\nTotal: {0} types.", types.Length - obsolete_count);
 	}
 	
 	internal static void Completion (string prefix)
@@ -274,7 +279,7 @@ class MonoP {
 			assembly = options.AssemblyReference;
 			
 			if (options.Type == null) {
-				PrintTypes (assembly, options.ShowPrivate);
+				PrintTypes (assembly, options.ShowPrivate, options.FilterObsolete);
 				return;
 			}
 		}

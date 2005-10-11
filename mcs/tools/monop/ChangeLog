@@ -1,3 +1,11 @@
+2005-10-10  John Luke  <john.luke@gmail.com>
+
+	* monop.cs: don't print obsolete types if the
+	--filter-obsolete option is passed
+	* options.cs: add FilterObsolete option
+	* outline.cs: don't print obsolete members if
+	the --filter-obsolete option is passed
+
 2005-09-21  John Luke  <john.luke@gmail.com>
 
 	* monop.cs: catch exception on Process.Start

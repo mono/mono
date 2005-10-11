@@ -805,6 +805,9 @@ public class Outline {
 		
 		if (options.ShowPrivate)
 			return true;
+
+		if (options.FilterObsolete && mi.IsDefined (typeof (ObsoleteAttribute), false))
+			return false;
 		
 		switch (mi.MemberType) {
 		case MemberTypes.Constructor:
