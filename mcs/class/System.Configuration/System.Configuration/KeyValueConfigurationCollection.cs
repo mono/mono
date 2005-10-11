@@ -77,12 +77,10 @@ namespace System.Configuration
 		
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			KeyValueConfigurationElement e = (KeyValueConfigurationElement) element;
-
-			if (BaseGet (element) != null)
-				return ((KeyValueConfigurationElement)element).Key;
-			else
+			if (element == null || BaseIndexOf (element) == -1)
 				return "";
+
+			return ((KeyValueConfigurationElement)element).Key;
 		}
 
 		ConfigurationPropertyCollection properties;

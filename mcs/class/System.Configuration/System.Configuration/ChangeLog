@@ -1,3 +1,9 @@
+2005-10-11  Chris Toshok  <toshok@ximian.com>
+
+	* KeyValueConfigurationCollection.cs (GetElementKey): duh.
+	BaseGet calls GetElementKey, so we were hitting an infinite
+	recursion here.  Use BaseIndexOf instead.
+
 2005-10-07  Chris Toshok  <toshok@ximian.com>
 
 	* InternalConfigurationHost.cs: some interface work, adding in the
