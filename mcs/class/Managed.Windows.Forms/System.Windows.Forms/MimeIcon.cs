@@ -535,7 +535,11 @@ namespace System.Windows.Forms
 					
 					foreach ( string f in files )
 					{
+					    try {
 						ReadDotDesktop( f );
+					    } catch {
+						// Ignore errors if the file can not be read.
+					    }
 					}
 				}
 			}
