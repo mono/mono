@@ -678,6 +678,10 @@ namespace Microsoft.JScript {
 
 			if (op == JSToken.Instanceof)
 				return;
+			else if (op == JSToken.In) {
+				ig.Emit (OpCodes.Box, typeof (bool));
+				return;
+			}
 
 			Label true_case = ig.DefineLabel ();
 			Label box_to_bool = ig.DefineLabel ();

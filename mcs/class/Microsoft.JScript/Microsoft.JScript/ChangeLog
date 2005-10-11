@@ -1,5 +1,8 @@
 2005-10-11  Cesar Lopez Nataren  <cnataren@novell.com>
 
+	* CodeGenerator.cs (CodeGenerator): EmitRelationalComp handle 'in'
+	operator case.
+
 	* Add support for multiple files compilation. This involved addig
 	an extra pass into the AST for ensuring the resolve process, this
 	pass is named PopulateContext. The AST nodes that implement
