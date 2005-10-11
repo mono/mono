@@ -1,5 +1,10 @@
 2005-10-11  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationProperty.cs: don't use null to mean no default
+	value, use NoDefaultValue.
+
+2005-10-11  Chris Toshok  <toshok@ximian.com>
+
 	* KeyValueConfigurationCollection.cs (GetElementKey): duh.
 	BaseGet calls GetElementKey, so we were hitting an infinite
 	recursion here.  Use BaseIndexOf instead.

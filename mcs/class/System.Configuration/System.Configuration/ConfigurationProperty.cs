@@ -47,7 +47,7 @@ namespace System.Configuration
 		ConfigurationCollectionAttribute collectionAttribute;
 		
 		public ConfigurationProperty (string name, Type type)
-			: this (name, type, null, TypeDescriptor.GetConverter (type), new DefaultValidator(), ConfigurationPropertyOptions.None, null)
+			: this (name, type, NoDefaultValue, TypeDescriptor.GetConverter (type), new DefaultValidator(), ConfigurationPropertyOptions.None, null)
 		{ }
 
 		public ConfigurationProperty (string name, Type type, object default_value)
