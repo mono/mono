@@ -42,7 +42,7 @@ $(bootstrap_libfiles): bootstrap-libs
 bootstrap-libs:
 	cd .. && $(MAKE) PROFILE=net_2_0_bootstrap all
 
-gmcs.exe: $(bootstrap_libfiles)
+$(PROGRAM): $(bootstrap_libfiles)
 
 gmcs2.exe: $(PROGRAM)
 	MONO_PATH="../class/lib/net_2_0$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" time $(PROGRAM) -2 /target:exe /debug /out:$@ $^ $(DEBUG_FLAGS) 

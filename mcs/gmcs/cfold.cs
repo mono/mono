@@ -162,7 +162,7 @@ namespace Mono.CSharp {
 
 				if (need_check &&
 				    !Convert.ImplicitConversionExists (ec, match, other.Type)) {
-					Convert.Error_CannotImplicitConversion (loc, match.Type, other.Type);
+					match.Error_ValueCannotBeConverted (loc, other.Type, false);
 					left = null;
 					right = null;
 					return;
