@@ -131,7 +131,9 @@ public class Options
 		Console.WriteLine ("options:");
 		Console.WriteLine ("\t--declared-only,-d\tOnly show members declared in the Type");
 		Console.WriteLine ("\t--help,-h\t\tShow this information");
+		Console.WriteLine ("\t--filter-obsolete,-f\tDo not show obsolete types and members");
 		Console.WriteLine ("\t--private,-p\t\tShow private members");
+		Console.WriteLine ("\t--refs\t\t\tPrint a list of the referenced assemblies for an assembly");
 		Console.WriteLine ("\t--runtime-version\tPrint runtime version");
 		Console.WriteLine ("\t--search,-s,-k\t\tSearch through all known namespaces");
 	}

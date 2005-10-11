@@ -1,5 +1,10 @@
 2005-10-10  John Luke  <john.luke@gmail.com>
 
+	* options.cs: add --help output for the two new
+	options
+
+2005-10-10  John Luke  <john.luke@gmail.com>
+
 	* monop.cs: add PrintRefs and use it if the
 	option is set
 	* options.cs: add PrintRefs option to see the
