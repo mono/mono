@@ -1,3 +1,7 @@
+2005-10-11  Raja R Harinath  <rharinath@novell.com>
+
+	* gtest-212.cs, gtest-213.cs: New tests based on #76084.
+
 2005-10-11  Marek Safar <marek.safar@seznam.cz>
 
 	* test-461.cs: New test for #76370.
