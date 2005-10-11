@@ -198,6 +198,13 @@ class MonoP {
 		return GetType (tname, false);
 	}
 
+	static void PrintRefs (string assembly)
+	{
+		Assembly a = GetAssembly (assembly, true);
+		foreach (AssemblyName an in a.GetReferencedAssemblies ())
+			Console.WriteLine (an);
+	}
+
 	static void PrintTypes (string assembly, bool show_private, bool filter_obsolete)
 	{
 		Assembly a = GetAssembly (assembly, true);
@@ -279,7 +286,10 @@ class MonoP {
 			assembly = options.AssemblyReference;
 			
 			if (options.Type == null) {
-				PrintTypes (assembly, options.ShowPrivate, options.FilterObsolete);
+				if (options.PrintRefs)
+					PrintRefs (assembly);
+				else
+					PrintTypes (assembly, options.ShowPrivate, options.FilterObsolete);
 				return;
 			}
 		}

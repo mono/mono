@@ -30,6 +30,7 @@ public class Options
 {
 	public bool DeclaredOnly = false;
 	public bool FilterObsolete = false;
+	public bool PrintRefs = false;
 	public bool Search = false;
 	public bool ShowPrivate = false;
 	public string AssemblyReference = null;
@@ -68,6 +69,9 @@ public class Options
 				case "-p":
 				case "--private":
 					ShowPrivate = true;
+					break;
+				case "--refs":
+					PrintRefs = true;
 					break;
 				case "-s":
 				case "-k":

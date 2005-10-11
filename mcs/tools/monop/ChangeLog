@@ -1,5 +1,12 @@
 2005-10-10  John Luke  <john.luke@gmail.com>
 
+	* monop.cs: add PrintRefs and use it if the
+	option is set
+	* options.cs: add PrintRefs option to see the
+	assemblies referenced by an assembly
+
+2005-10-10  John Luke  <john.luke@gmail.com>
+
 	* monop.cs: don't print obsolete types if the
 	--filter-obsolete option is passed
 	* options.cs: add FilterObsolete option
