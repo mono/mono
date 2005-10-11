@@ -8,8 +8,6 @@
 //
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -169,9 +167,14 @@ namespace Mono.Security.X509 {
 				}
 				// CertificateList / TBSCertList / revokedCertificates	SEQUENCE OF SEQUENCE  {
 				entries = new ArrayList ();
-				ASN1 revokedCertificates = next;
-				for (int i=0; i < revokedCertificates.Count; i++) {
-					entries.Add (new X509CrlEntry (revokedCertificates [i]));
+				// this is OPTIONAL so it may not be present if no entries exists
+				if (next.Tag == 0x30) {
+					ASN1 revokedCertificates = next;
+					for (int i=0; i < revokedCertificates.Count; i++) {
+						entries.Add (new X509CrlEntry (revokedCertificates [i]));
+					}
+				} else {
+					n--;
 				}
 				// CertificateList / TBSCertList / crlExtensions [0] Extensions OPTIONAL }
 				ASN1 extns = toBeSigned [n];
@@ -240,7 +243,7 @@ namespace Mono.Security.X509 {
 		}
 
 		public bool IsCurrent {
-			get { return WasCurrent (DateTime.UtcNow); }
+			get { return WasCurrent (DateTime.Now); }
 		}
 
 		public bool WasCurrent (DateTime instant) 

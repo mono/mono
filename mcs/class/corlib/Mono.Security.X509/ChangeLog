@@ -2,6 +2,8 @@
 
 	* X509Certificate.cs: Fixed bug #76407. ValidFrom and ValidUntil are
 	local date/time so IsCurrent most also use a local date/time.
+	* X509CRL.cs: Updated from Mono.Security.dll (same IsCurrent problem
+	and another previously fixed bug).
 
 2005-09-09  Sebastien Pouliot  <sebastien@ximian.com>
 
