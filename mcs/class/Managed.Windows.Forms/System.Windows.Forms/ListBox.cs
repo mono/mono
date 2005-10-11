@@ -123,7 +123,6 @@ namespace System.Windows.Forms
 		private SelectionMode selection_mode;
 		private bool sorted;
 		private bool use_tabstops;
-		private int top_index;
 		private int column_width_internal;
 		private VScrollBar vscrollbar_ctrl;
 		private HScrollBar hscrollbar_ctrl;
@@ -150,7 +149,6 @@ namespace System.Windows.Forms
 			focused_item = -1;
 			selection_mode = SelectionMode.One;
 			sorted = false;
-			top_index = 0;
 			use_tabstops = true;
 			BackColor = ThemeEngine.Current.ColorWindow;
 			ColumnWidth = 0;
@@ -583,15 +581,16 @@ namespace System.Windows.Forms
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int TopIndex {
-			get { return top_index;}
+			get { return LBoxInfo.top_item; }
 			set {
-				if (value == top_index)
+				if (value == LBoxInfo.top_item)
 					return;
 
 				if (value < 0 || value >= Items.Count)
 					return;
 
-				value = top_index;
+				LBoxInfo.top_item = value;
+				UpdatedTopItem ();
 				base.Refresh ();
 			}
 		}
