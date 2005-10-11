@@ -1,3 +1,8 @@
+2005-10-11  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataViewTest_IBindingList.cs: Added test cases for IBindingList
+	implementation by DataView. This is used by DataGrid control.
+
 2005-09-20  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataViewTest.cs: Added a case for Sort to accept columns with

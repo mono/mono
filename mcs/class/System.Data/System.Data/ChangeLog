@@ -1,3 +1,7 @@
+2005-10-11  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataView.cs (IBindingList): Implemented methods for IBindingList interface.
+
 2005-09-26  Lluis Sanchez Gual <lluis@novell.com>
 
 	* DataSet.cs: In IXmlSerializable.GetSchema, return null again for

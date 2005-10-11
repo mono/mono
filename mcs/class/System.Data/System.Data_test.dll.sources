@@ -42,6 +42,7 @@ System.Data/DataTableReaderTest.cs
 System.Data/DataViewManagerTest.cs
 System.Data/DataViewTest.cs
 System.Data/DataViewTest2.cs
+System.Data/DataViewTest_IBindingList.cs
 System.Data/ForeignKeyConstraintTest.cs
 System.Data/ForeignKeyConstraintTest2.cs
 System.Data/TypedDataSetGeneratorTest.cs

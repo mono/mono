@@ -41,6 +41,9 @@ namespace System.Data
 		string rowFilter = String.Empty;
 		IExpression rowFilterExpr;
 		string sort = String.Empty;
+		ListSortDirection [] sortOrder = null;
+		PropertyDescriptor sortProperty = null;
+		DataColumn [] sortColumns = null;
 		internal DataViewRowState rowState;
 		internal DataRowView[] rowCache = new DataRowView [0];
 
@@ -370,7 +373,8 @@ namespace System.Data
 			else {
 				_lastAdded.CancelEdit();
 				_lastAdded = null;
-				OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, Count - 1));
+				OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, Count - 1, -1));
+				// FIXME : remove from rowCache
 			}
 		}
 
@@ -752,9 +756,8 @@ namespace System.Data
 			}
 
 			if (Index == null || force) {
-				ListSortDirection[] sortOrder = null;
-				DataColumn[] columns = DataTable.ParseSortString(Table, Sort, out sortOrder, false);
-				Index = dataTable.GetIndex(columns,sortOrder,RowStateFilter,FilterExpression,true);
+				sortColumns = DataTable.ParseSortString(Table, Sort, out sortOrder, false);
+				Index = dataTable.GetIndex(sortColumns,sortOrder,RowStateFilter,FilterExpression,true);
 			}
 			else {
 				Index.Key.RowStateFilter = RowStateFilter;
@@ -926,16 +929,20 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		object IBindingList.AddNew () 
 		{
 			return this.AddNew ();
 		}
 
-		[MonoTODO]
 		void IBindingList.ApplySort (PropertyDescriptor property, ListSortDirection direction) 
 		{
-			throw new NotImplementedException ();
+			if (! (property is DataColumnPropertyDescriptor))
+				throw new ArgumentException ("Dataview accepts only DataColumnPropertyDescriptors", "property");
+			sortProperty = property;
+			string sort = String.Format ("[{0}]" , property.Name);
+			if (direction == ListSortDirection.Descending)
+				sort += " DESC";
+			this.Sort = sort;
 		}
 
 		[MonoTODO]
@@ -950,21 +957,19 @@ namespace System.Data
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		void IBindingList.RemoveSort () 
 		{
-			throw new NotImplementedException ();
+			sortProperty = null;
+			this.Sort = String.Empty;
 		}
 		
 		bool IBindingList.AllowEdit {
-			[MonoTODO]
 			get {
 				return AllowEdit;
 			}
 		}
 
 		bool IBindingList.AllowNew {
-			[MonoTODO]
 			get {
 				return AllowNew;
 			}
@@ -978,46 +983,45 @@ namespace System.Data
 		}
 
 		bool IBindingList.IsSorted {
-			[MonoTODO]
 			get {
-				return isSorted;
+				return Sort != null && Sort != String.Empty;
 			}
 		}
 
 		ListSortDirection IBindingList.SortDirection {
-			[MonoTODO]
 			get {
-				// FIXME: 
+				if (sortOrder != null && sortOrder.Length > 0)
+					return sortOrder [0];
 				return ListSortDirection.Ascending;
 			}
 		}
 
 		PropertyDescriptor IBindingList.SortProperty {
-			[MonoTODO]
 			get {
-				// FIXME:
-				return null;
+				if (sortProperty == null && sortColumns != null && sortColumns.Length > 0) {
+					// return property from Sort String
+					PropertyDescriptorCollection properties = ( (ITypedList) this).GetItemProperties (null);
+					return properties.Find ( sortColumns [0].ColumnName, false);
+				}
+				return sortProperty;
 			}
 		}
 
 		bool IBindingList.SupportsChangeNotification {
-			[MonoTODO]
 			get {
-				return false;
+				return true;
 			}
 		}
 
 		bool IBindingList.SupportsSearching {
-			[MonoTODO]
 			get {
-				return false;
+				return true;
 			}
 		}
 
 		bool IBindingList.SupportsSorting {
-			[MonoTODO]
 			get {
-				return false;
+				return true;
 			}
 		}
 
