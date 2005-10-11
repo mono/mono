@@ -283,8 +283,19 @@ namespace System.Net.Sockets
 			public void Connect ()
 			{
 				try {
-					result.Sock.Connect (result.EndPoint);
-					result.Sock.connected = true;
+					if (!result.Sock.Blocking) {
+						result.Sock.Poll (-1, SelectMode.SelectWrite);
+						int success = (int)result.Sock.GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+						if (success == 0) {
+							result.Sock.connected = true;
+						} else {
+							result.Complete (new SocketException (success));
+							return;
+						}
+					} else {
+						result.Sock.Connect (result.EndPoint);
+						result.Sock.connected = true;
+					}
 				} catch (Exception e) {
 					result.Complete (e);
 					return;

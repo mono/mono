@@ -1,3 +1,9 @@
+2005-10-11  Dick Porter  <dick@ximian.com>
+
+	* Socket.cs: Don't call connect(2) twice for non-blocking sockets,
+	it breaks on macos (and probably other bsd-based stacks too,) use
+	poll() and getsockopt() to check if it worked.
+
 2005-09-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Socket.cs: add checks for 'disposed' all over. Fixes bug #76249.
