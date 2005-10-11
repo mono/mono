@@ -1,3 +1,13 @@
+2005-10-10  Raja R Harinath  <rharinath@novell.com>
+
+	* ecore.cs (PropertyExpr.Emit): Use Invocation.EmitCall to emit
+	InstanceExpression.
+	(PropertyExpr.EmitCall): Likewise.
+	* expression.cs (Invocation.EmitArguments): Handle case where
+	arguments == null.
+	(Invocation.EmitCall): Avoid allocating temporary variable if
+	there are no arguments.
+
 2005-10-11  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76370.

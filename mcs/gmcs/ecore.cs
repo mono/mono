@@ -3679,9 +3679,6 @@ namespace Mono.CSharp {
 		
 		public void Emit (EmitContext ec, bool leave_copy)
 		{
-			if (!prepared)
-				EmitInstance (ec, false);
-			
 			//
 			// Special case: length of single dimension array property is turned into ldlen
 			//
@@ -3694,21 +3691,22 @@ namespace Mono.CSharp {
 				// support invoking GetArrayRank, so test for that case first
 				//
 				if (iet != TypeManager.array_type && (iet.GetArrayRank () == 1)) {
+					if (!prepared)
+						EmitInstance (ec, false);
 					ec.ig.Emit (OpCodes.Ldlen);
 					ec.ig.Emit (OpCodes.Conv_I4);
 					return;
 				}
 			}
 
-			Invocation.EmitCall (ec, IsBase, IsStatic, new EmptyAddressOf (), getter, null, loc);
+			Invocation.EmitCall (ec, IsBase, IsStatic, InstanceExpression, getter, null, loc, prepared, false);
 			
-			if (!leave_copy)
-				return;
-			
-			ec.ig.Emit (OpCodes.Dup);
-			if (!is_static) {
-				temp = new LocalTemporary (ec, this.Type);
-				temp.Store (ec);
+			if (leave_copy) {
+				ec.ig.Emit (OpCodes.Dup);
+				if (!is_static) {
+					temp = new LocalTemporary (ec, this.Type);
+					temp.Store (ec);
+				}
 			}
 		}
 
@@ -3717,23 +3715,32 @@ namespace Mono.CSharp {
 		//
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
+			Expression my_source = source;
+
 			prepared = prepare_for_load;
 			
-			EmitInstance (ec, prepare_for_load);
-
-			source.Emit (ec);
-			if (leave_copy) {
-				ec.ig.Emit (OpCodes.Dup);
+			if (prepared) {
+				source.Emit (ec);
+				if (leave_copy) {
+					ec.ig.Emit (OpCodes.Dup);
+					if (!is_static) {
+						temp = new LocalTemporary (ec, this.Type);
+						temp.Store (ec);
+					}
+				}
+			} else if (leave_copy) {
+				source.Emit (ec);
 				if (!is_static) {
 					temp = new LocalTemporary (ec, this.Type);
 					temp.Store (ec);
 				}
+				my_source = temp;
 			}
 			
 			ArrayList args = new ArrayList (1);
-			args.Add (new Argument (new EmptyAddressOf (), Argument.AType.Expression));
+			args.Add (new Argument (my_source, Argument.AType.Expression));
 			
-			Invocation.EmitCall (ec, IsBase, IsStatic, new EmptyAddressOf (), setter, args, loc);
+			Invocation.EmitCall (ec, IsBase, IsStatic, InstanceExpression, setter, args, loc, false, prepared);
 			
 			if (temp != null)
 				temp.Emit (ec);
