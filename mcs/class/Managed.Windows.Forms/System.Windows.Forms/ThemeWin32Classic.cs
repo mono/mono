@@ -886,8 +886,8 @@ namespace System.Windows.Forms
 			// Paint scrollBar corner
 			if (grid.vert_scrollbar.Visible && grid.horiz_scrollbar.Visible) {
 
-				Rectangle corner = new Rectangle (grid.grid_drawing.client_area.X + grid.grid_drawing.client_area.Width - grid.horiz_scrollbar.Height,
-					 grid.grid_drawing.client_area.Y + grid.grid_drawing.client_area.Height - grid.horiz_scrollbar.Height,
+				Rectangle corner = new Rectangle (grid.ClientRectangle.X + grid.ClientRectangle.Width - grid.horiz_scrollbar.Height,
+					 grid.ClientRectangle.Y + grid.ClientRectangle.Height - grid.horiz_scrollbar.Height,
 					 grid.horiz_scrollbar.Height, grid.horiz_scrollbar.Height);
 
 				if (pe.ClipRectangle.IntersectsWith (corner)) {
@@ -966,11 +966,11 @@ namespace System.Windows.Forms
 			g.ResetClip ();
 			
 			// This fills with background colour the unused part in the row headers
-			if (rect_columnhdr.X + rect_columnhdr.Height < grid.grid_drawing.client_area.X + grid.grid_drawing.client_area.Width) {
+			if (rect_columnhdr.X + rect_columnhdr.Height < grid.ClientRectangle.X + grid.ClientRectangle.Width) {
 				
 				Rectangle not_usedarea = columnshdrs_area_complete;				
 				not_usedarea.X = rect_columnhdr.X + rect_columnhdr.Width;
-				not_usedarea.Width = grid.grid_drawing.client_area.X + grid.grid_drawing.client_area.Width - rect_columnhdr.X - rect_columnhdr.Height;
+				not_usedarea.Width = grid.ClientRectangle.X + grid.ClientRectangle.Width - rect_columnhdr.X - rect_columnhdr.Height;
 			
 				g.FillRectangle (ResPool.GetSolidBrush (grid.BackgroundColor),
 					not_usedarea);

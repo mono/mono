@@ -1,5 +1,12 @@
 2005-10-11  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* DataGridTextBoxColumn.cs: Sets location and size before attachment
+	* ThemeWin32Classic.cs: Fixes border drawing and calculations
+	* DataGridDrawingLogic.cs: Fixes border drawing and calculations
+
+
+2005-10-11  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* ComboBox.cs: Fixes border drawing
 
 2005-10-10  Miguel de Icaza  <miguel@novell.com>

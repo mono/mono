@@ -39,7 +39,6 @@ namespace System.Windows.Forms
 		private DataGrid grid;
 
 		// Areas
-		internal Rectangle client_area;		// ClientRectangle - BorderStyle decorations, effetive client area
 		internal Rectangle caption_area;
 		internal Rectangle parent_rows;
 		internal Rectangle columnshdrs_area;	// Used columns header area
@@ -130,24 +129,13 @@ namespace System.Windows.Forms
 			}			
 		}
 
-		public void CalcClientArea ()
-		{
-			client_area = grid.ClientRectangle;
-			client_area.X += BorderStyleSize;
-			client_area.Y += BorderStyleSize;
-			client_area.Width -= BorderStyleSize * 2;
-			client_area.Height -= BorderStyleSize * 2;
-			
-		}
-
 		public void CalcGridAreas ()
 		{
 			if (grid.IsHandleCreated == false) // Delay calculations until the handle is created
 				return;
 
 			/* Order is important. E.g. row headers max. height depends on caption */
-			grid.horz_pixeloffset = 0;
-			CalcClientArea ();
+			grid.horz_pixeloffset = 0;			
 			CalcCaption ();
 			CalcParentRows ();
 			CalcRowsHeaders ();
@@ -175,7 +163,7 @@ namespace System.Windows.Forms
 			if (SetUpHorizontalScrollBar ()) { // We need a Horizontal ScrollBar
 				cells_area.Height -= grid.horiz_scrollbar.Height;
 
-				if (rowshdrs_area.Y + rowshdrs_area.Height > client_area.Y + client_area.Height) {
+				if (rowshdrs_area.Y + rowshdrs_area.Height > grid.ClientRectangle.Y + grid.ClientRectangle.Height) {
 					rowshdrs_area.Height -= grid.horiz_scrollbar.Height;
 					rowshdrs_maxheight -= grid.horiz_scrollbar.Height;
 				}
@@ -200,9 +188,9 @@ namespace System.Windows.Forms
 				return;
 			}
 
-			caption_area.X = client_area.X;
-			caption_area.Y = client_area.Y;
-			caption_area.Width = client_area.Width;
+			caption_area.X = grid.ClientRectangle.X;
+			caption_area.Y = grid.ClientRectangle.Y;
+			caption_area.Width = grid.ClientRectangle.Width;
 			caption_area.Height = grid.CaptionFont.Height + 6;
 
 			//Console.WriteLine ("DataGridDrawing.CalcCaption {0}", caption_area);
@@ -213,7 +201,7 @@ namespace System.Windows.Forms
 			if (grid.caption_visible) {
 				cells_area.Y = caption_area.Y + caption_area.Height;
 			} else {
-				cells_area.Y = client_area.Y;
+				cells_area.Y = grid.ClientRectangle.Y;
 			}
 
 			if (grid.ShowParentRowsVisible) {
@@ -224,9 +212,9 @@ namespace System.Windows.Forms
 				cells_area.Y += columnshdrs_area.Height;
 			}
 
-			cells_area.X = client_area.X + rowshdrs_area.Width;
-			cells_area.Width = client_area.X + client_area.Width - cells_area.X;
-			cells_area.Height = client_area.Y + client_area.Height - cells_area.Y;
+			cells_area.X = grid.ClientRectangle.X + rowshdrs_area.Width;
+			cells_area.Width = grid.ClientRectangle.X + grid.ClientRectangle.Width - cells_area.X;
+			cells_area.Height = grid.ClientRectangle.Y + grid.ClientRectangle.Height - cells_area.Y;
 
 			//Console.WriteLine ("DataGridDrawing.CalcCellsArea {0}", cells_area);
 		}
@@ -243,19 +231,19 @@ namespace System.Windows.Forms
 			if (grid.caption_visible) {
 				columnshdrs_area.Y = caption_area.Y + caption_area.Height;
 			} else {
-				columnshdrs_area.Y = client_area.Y;
+				columnshdrs_area.Y = grid.ClientRectangle.Y;
 			}
 
 			if (grid.ShowParentRowsVisible) {
 				columnshdrs_area.Y += parent_rows.Height;
 			}
 
-			columnshdrs_area.X = client_area.X;
+			columnshdrs_area.X = grid.ClientRectangle.X;
 			columnshdrs_area.Height = ColumnsHeaderHeight;
 			width_all_cols = CalcAllColumnsWidth ();
 
 			// TODO: take into account Scrollbars
-			columnshdrs_maxwidth = client_area.X + client_area.Width - columnshdrs_area.X;
+			columnshdrs_maxwidth = grid.ClientRectangle.X + grid.ClientRectangle.Width - columnshdrs_area.X;
 			max_width_cols = columnshdrs_maxwidth;
 
 			if (grid.CurrentTableStyle.CurrentRowHeadersVisible) {
@@ -286,11 +274,11 @@ namespace System.Windows.Forms
 				parent_rows.Y = caption_area.Y + caption_area.Height;
 
 			} else {
-				parent_rows.Y = client_area.Y;
+				parent_rows.Y = grid.ClientRectangle.Y;
 			}
 
-			parent_rows.X = client_area.X;
-			parent_rows.Width = client_area.Width;
+			parent_rows.X = grid.ClientRectangle.X;
+			parent_rows.Width = grid.ClientRectangle.Width;
 			parent_rows.Height = grid.CaptionFont.Height + 3;
 
 			//Console.WriteLine ("DataGridDrawing.CalcParentRows {0}", parent_rows);
@@ -306,7 +294,7 @@ namespace System.Windows.Forms
 			if (grid.caption_visible) {
 				rowshdrs_area.Y = caption_area.Y + caption_area.Height;
 			} else {
-				rowshdrs_area.Y = client_area.Y;
+				rowshdrs_area.Y = grid.ClientRectangle.Y;
 			}
 
 			if (grid.ShowParentRowsVisible) {
@@ -317,10 +305,10 @@ namespace System.Windows.Forms
 				rowshdrs_area.Y += ColumnsHeaderHeight;
 			}
 
-			rowshdrs_area.X = client_area.X;
+			rowshdrs_area.X = grid.ClientRectangle.X;
 			rowshdrs_area.Width = grid.RowHeaderWidth;
 			rowshdrs_area.Height = grid.visiblerow_count * grid.RowHeight;
-			rowshdrs_maxheight = client_area.Height + client_area.Y - rowshdrs_area.Y;
+			rowshdrs_maxheight = grid.ClientRectangle.Height + grid.ClientRectangle.Y - rowshdrs_area.Y;
 
 			//Console.WriteLine ("DataGridDrawing.CalcRowsHeaders {0} {1}", rowshdrs_area,
 			//	rowshdrs_maxheight);
@@ -527,10 +515,10 @@ namespace System.Windows.Forms
 				return false;
 			}
 
-			grid.horiz_scrollbar.Location = new Point (client_area.X, client_area.Y +
-				client_area.Height - grid.horiz_scrollbar.Height);
+			grid.horiz_scrollbar.Location = new Point (grid.ClientRectangle.X, grid.ClientRectangle.Y +
+				grid.ClientRectangle.Height - grid.horiz_scrollbar.Height);
 
-			grid.horiz_scrollbar.Size = new Size (client_area.Width,
+			grid.horiz_scrollbar.Size = new Size (grid.ClientRectangle.Width,
 				grid.horiz_scrollbar.Height);
 
 			grid.horiz_scrollbar.Maximum = width_all;// - cells_area.Width;
@@ -557,15 +545,15 @@ namespace System.Windows.Forms
 			}
 			
 			if (grid.caption_visible) {
-				y = client_area.Y + caption_area.Height;
-				height = client_area.Height - caption_area.Height;
+				y = grid.ClientRectangle.Y + caption_area.Height;
+				height = grid.ClientRectangle.Height - caption_area.Height;
 			} else {
-				y = client_area.Y;
-				height = client_area.Height;
+				y = grid.ClientRectangle.Y;
+				height = grid.ClientRectangle.Height;
 			}
 
-			grid.vert_scrollbar.Location = new Point (client_area.X +
-				client_area.Width - grid.vert_scrollbar.Width, y);
+			grid.vert_scrollbar.Location = new Point (grid.ClientRectangle.X +
+				grid.ClientRectangle.Width - grid.vert_scrollbar.Width, y);
 
 			grid.vert_scrollbar.Size = new Size (grid.vert_scrollbar.Width,
 				height);
@@ -586,22 +574,6 @@ namespace System.Windows.Forms
 		#endregion // Public Instance Methods
 
 		#region Instance Properties
-		internal int BorderStyleSize {
-			get {
-				switch (grid.border_style) {
-					case BorderStyle.Fixed3D:
-						return 2;
-					case BorderStyle.FixedSingle:
-						return 1;
-					case BorderStyle.None:
-					default:
-						break;
-					}
-
-				return 0;
-			}
-		}
-
 		public Rectangle CellsArea {
 			get {
 				return cells_area;

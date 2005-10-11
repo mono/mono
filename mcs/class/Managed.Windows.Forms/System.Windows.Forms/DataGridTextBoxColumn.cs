@@ -165,11 +165,12 @@ namespace System.Windows.Forms
 		protected internal override void Edit (CurrencyManager source, int rowNum,  Rectangle bounds,  bool _ro, string instantText, bool cellIsVisible)
 		{
 			object obj;
+			bool newctrl = false;
 			
 			if (textbox == null) {
 				textbox = new DataGridTextBox ();
 				textbox.SetDataGrid (DataGridTableStyle.DataGrid);
-				DataGridTableStyle.DataGrid.Controls.Add (textbox);
+				newctrl = true;				
 				textbox.Multiline = true;
 				textbox.BorderStyle = BorderStyle.None;
 			}			
@@ -190,6 +191,10 @@ namespace System.Windows.Forms
 
 			obj = GetColumnValueAtRow (source, rowNum);
 			textbox.Text = GetFormattedString (obj);
+
+			if (newctrl == true)
+				DataGridTableStyle.DataGrid.Controls.Add (textbox);
+
 			textbox.Focus ();
 			textbox.SelectAll ();			
 		}
