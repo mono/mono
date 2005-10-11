@@ -35,7 +35,7 @@ using Microsoft.JScript.Vsa;
 
 namespace Microsoft.JScript {
 
-	public class FunctionExpression : Function {
+	public class FunctionExpression : Function, ICanModifyContext {
 
 		internal LocalBuilder local_script_func;
 		internal FieldBuilder field;
@@ -43,6 +43,7 @@ namespace Microsoft.JScript {
 		internal FunctionExpression (AST parent, string name, Location location)
 			: this (parent, name, null, String.Empty, null, location)
 		{
+			this.location = location;
 		}
 
 		internal FunctionExpression (AST parent, string name, 
@@ -67,23 +68,57 @@ namespace Microsoft.JScript {
 			return fun;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			//
+			// In the case of function
+			// expressions we add
+			// function's name to the
+			// table but we resolve its
+			// body until later, as free
+			// variables can be referenced
+			// in function's body.
+			//
+			string name = func_obj.name;
+			AST binding = null;
+
+			if (name != null && name != String.Empty)
+				binding = (AST) env.Get (ns, Symbol.CreateSymbol (name));
+
+			if (binding == null)
+				env.Enter (ns, Symbol.CreateSymbol (name), new FunctionDeclaration ());
+			else {
+				Console.WriteLine ("repeated functions are not handled yet");
+				throw new NotImplementedException ();
+			}
+		}
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			((ICanModifyContext) func_obj.body).EmitDecls (ec);
+		}
+		
+		internal override bool Resolve (Environment env)
 		{
 			set_function_type ();
+
 			if (func_obj.name != null && func_obj.name != String.Empty)
-				context.Enter (Symbol.CreateSymbol (func_obj.name), this);
-			context.BeginScope ();
+				env.Enter (String.Empty, Symbol.CreateSymbol (func_obj.name), this);
+			env.BeginScope (String.Empty);
+
+			((ICanModifyContext) func_obj).PopulateContext (env, String.Empty);
+			
 			FormalParameterList p = func_obj.parameters;
 
 			if (p != null)
-				p.Resolve (context);
+				p.Resolve (env);
 
 			Block body = func_obj.body;
 			if (body != null)
-				body.Resolve (context);
+				body.Resolve (env);
 
-			locals = context.CurrentLocals;
-			context.EndScope ();
+			locals = env.CurrentLocals (String.Empty);
+			env.EndScope (String.Empty);
 			return true;
 		}
 
@@ -141,7 +176,7 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			string name = func_obj.name;
 
-			Type t = ec.mod_builder.GetType ("JScript 0");
+			Type t = ec.mod_builder.GetType (CodeGenerator.GetTypeName (Location.SourceName));
 			ig.Emit (OpCodes.Ldtoken, t);
 			
 			if (name != String.Empty)

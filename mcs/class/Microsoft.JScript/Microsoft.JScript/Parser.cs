@@ -31,6 +31,7 @@
 //
 
 using System.Collections;
+using Microsoft.Vsa;
 using System.IO;
 using System;
 
@@ -86,7 +87,6 @@ namespace Microsoft.JScript {
 
 		TokenStream ts;
 		bool ok; // did the parse encounter an error?
-		ScriptBlock current_script_or_fn;
 		int nesting_of_function;
 		int nesting_of_with;
 		bool allow_member_expr_as_function_name;
@@ -96,20 +96,21 @@ namespace Microsoft.JScript {
 		internal Parser ()
 		{
 		}
-
+		
 		internal Parser (ArrayList code_items)
 		{
 			this.code_items = code_items;
 		}
-
-		internal AST ParseAll ()
+		
+		internal ScriptBlock [] ParseAll ()
 		{
-			ScriptBlock block = new ScriptBlock ();
+			int i = 0, n = code_items.Count;
+			ScriptBlock [] blocks = new ScriptBlock [n];
 
 			foreach (VsaCodeItem item in code_items)
-				block.Add (Parse (item.SourceText, item.Name, 0));
+				blocks [i++] = Parse (item.SourceText, item.Name, 0);
 
-			return block;
+			return blocks;
 		}
 
 		internal Decompiler CreateDecompiler ()
@@ -135,10 +136,11 @@ namespace Microsoft.JScript {
 		/// </summary>
 		///
 		/// <remarks>
-		///   return an AST representing the parsed program.
-		///    If the parse fails, null will be returned.
+		///   return an ScriptBlock representing the parsed program
+		///   that corresponds to a source file.
+		///   If the parse fails, null will be returned.
 		/// </remarks>
-		internal AST Parse (string source_string, string source_location, int line_number)
+		internal ScriptBlock Parse (string source_string, string source_location, int line_number)
 		{
 			ts = new TokenStream (null, source_string, source_location, line_number);
 			try {
@@ -178,10 +180,10 @@ namespace Microsoft.JScript {
 			throw new ParserException ();
 		}
 	
-		AST Parse ()
+		ScriptBlock Parse ()
 		{
 			decompiler = CreateDecompiler ();
-			current_script_or_fn = new ScriptBlock (new Location (ts.SourceName, ts.LineNumber));
+			ScriptBlock current_script_or_fn = new ScriptBlock (new Location (ts.SourceName, ts.LineNumber));
 			decompiler.GetCurrentOffset ();
 			decompiler.AddToken (Token.SCRIPT);
 			ok = true;
@@ -232,6 +234,7 @@ namespace Microsoft.JScript {
 		{
 			++nesting_of_function;
 			Block pn = new Block (parent, new Location (ts.SourceName, ts.LineNumber));
+
 			try {
 				int tt;
 				while ((tt = ts.PeekToken ()) > Token.EOF && tt != Token.RC) {
@@ -312,7 +315,6 @@ namespace Microsoft.JScript {
 			if (name != "")
 				decompiler.AddName (name);
 
-			ScriptBlock saved_script_or_fn = current_script_or_fn;
 			int saved_nesting_of_with = nesting_of_with;
 			nesting_of_with = 0;
 
@@ -354,7 +356,6 @@ namespace Microsoft.JScript {
 						decompiler.AddEOL (Token.SEMI);
 				}
 			} finally {
-				current_script_or_fn = saved_script_or_fn;
 				nesting_of_with = saved_nesting_of_with;
 			}
 
@@ -372,6 +373,7 @@ namespace Microsoft.JScript {
 				// FIXME
 				pn = fn;
 				pn = new Assign (null, member_expr, pn, JSToken.Assign, false, new Location (ts.SourceName, ts.LineNumber));
+
 				// FIXME, research about createExprStatement
 				if (ft != FunctionType.Expression)
 					;
@@ -495,9 +497,7 @@ namespace Microsoft.JScript {
 
 			if (tt == Token.IF) {
 				skip_semi = true;
-
 				decompiler.AddToken (Token.IF);
-
 				AST cond = Condition (parent);
 
 				decompiler.AddEOL (Token.LC);

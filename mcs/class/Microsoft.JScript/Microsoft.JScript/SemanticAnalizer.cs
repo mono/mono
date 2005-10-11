@@ -39,7 +39,7 @@ namespace Microsoft.JScript {
 
 		internal static bool print = true;
 		internal static bool allow_member_expr_as_function_name;
-		static IdentificationTable context;
+		static Environment env;
 		static IdentificationTable label_set;
 
 		private static Hashtable obj_ctrs;
@@ -47,6 +47,7 @@ namespace Microsoft.JScript {
 		internal static Hashtable methods_with_eval = new Hashtable ();
 		internal static Hashtable methods_with_outter_scope_refs = new Hashtable ();
 		internal static Hashtable methods_with_vars_used_nested = new Hashtable ();
+		internal static Environment Ocurrences = new Environment ();
 
 		//
 		// Type to GlobalObject
@@ -55,6 +56,11 @@ namespace Microsoft.JScript {
 
 		internal static bool NoFast = true;
 		private static Assembly [] assemblies;
+
+		private static readonly string global_namespace = String.Empty;
+		internal static string GlobalNamespace {
+			get { return global_namespace; }
+		}
 
 		static SemanticAnalyser ()
 		{
@@ -133,14 +139,20 @@ namespace Microsoft.JScript {
 			return name.Substring (i + 1);
 		}
 
-		internal static bool Run (ScriptBlock prog, Assembly [] ref_items)
+		internal static bool Run (ScriptBlock [] blocks, Assembly [] ref_items)
 		{
-			assemblies = ref_items;			
+			assemblies = ref_items;
 			ComputeNamespaces ();
+			env = new Environment (blocks);
+			bool r = true;
 
-			context = new IdentificationTable ();
-			context.BuildGlobalEnv ();
-			return prog.Resolve (context);
+			foreach (ScriptBlock script_block in blocks)
+				((ICanModifyContext) script_block).PopulateContext (env, String.Empty);
+
+			foreach (ScriptBlock script_block in blocks)
+				r &= script_block.Resolve (env);
+
+			return r;
 		}
 
 		static int anon_method_counter = -1;

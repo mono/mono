@@ -47,9 +47,9 @@ namespace Microsoft.JScript {
 			return new JScriptException (Convert.ToString (value));
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
-			return expression.Resolve (context);
+			return expression.Resolve (env);
 		}
 
 		internal override void Emit (EmitContext ec)

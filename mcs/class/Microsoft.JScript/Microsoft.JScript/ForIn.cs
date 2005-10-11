@@ -34,7 +34,7 @@ using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
-	public class ForIn : AST {
+	public class ForIn : AST, ICanModifyContext {
 
 		AST lhs, obj, body;
 		
@@ -51,19 +51,37 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			if (lhs is ICanModifyContext)
+				((ICanModifyContext) lhs).PopulateContext (env, ns);
+
+			if (body is ICanModifyContext)
+				((ICanModifyContext) body).PopulateContext (env, ns);
+		}
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			if (lhs is ICanModifyContext)
+				((ICanModifyContext) lhs).EmitDecls (ec);
+
+			if (body is ICanModifyContext)
+				((ICanModifyContext) body).EmitDecls (ec);
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 			if (lhs != null)
 				if (lhs is VariableStatement)
-					((VariableStatement) lhs).PopulateContext (context);
+					((ICanModifyContext) lhs).PopulateContext (env, String.Empty);
 				else
-					r &= lhs.Resolve (context);
+					r &= lhs.Resolve (env);
 			if (obj != null)
-				r &= obj.Resolve (context);
+				r &= obj.Resolve (env);
 
 			if (body != null)
-				r &= body.Resolve (context);
+				r &= body.Resolve (env);
 			return r;
 		}
 
@@ -73,7 +91,6 @@ namespace Microsoft.JScript {
 			
 			if (lhs is VariableStatement) {
 				VariableStatement stm = (VariableStatement) lhs;
-				stm.EmitVariableDecls (ec);
 				ig = ec.ig;
 				ig.Emit (OpCodes.Ldnull);
 				object var = TypeManager.Get (((VariableDeclaration) stm.var_decls [0]).id);

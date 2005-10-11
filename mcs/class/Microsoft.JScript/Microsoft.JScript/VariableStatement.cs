@@ -34,7 +34,7 @@ using System;
 
 namespace Microsoft.JScript {
 
-	internal class VariableStatement : AST {
+	internal class VariableStatement : AST, ICanModifyContext {
 
 		internal ArrayList var_decls;
 
@@ -61,11 +61,10 @@ namespace Microsoft.JScript {
 			return sb.ToString ();
 		}
 
-		internal void EmitVariableDecls (EmitContext ec)
+		void ICanModifyContext.EmitDecls (EmitContext ec)
 		{
-			int n = var_decls.Count;
-			for (int i = 0; i < n; i++)
-				((VariableDeclaration) var_decls [i]).EmitDecl (ec);
+			foreach (VariableDeclaration var_decl in var_decls)
+				((ICanModifyContext) var_decl).EmitDecls (ec);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -76,22 +75,13 @@ namespace Microsoft.JScript {
 				((VariableDeclaration) var_decls [i]).Emit (ec);
 		}
 
-		internal void PopulateContext (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
 		{
-			VariableDeclaration tmp_decl;
-			int n = var_decls.Count;
-			Symbol id;
-
-			for (int i = 0; i < n; i++) {
-				tmp_decl = (VariableDeclaration) var_decls [i];
-				id = Symbol.CreateSymbol (tmp_decl.id);
-				if (context.InCurrentScope (id))
-					continue;
-				context.Enter (id, tmp_decl);
-			}
+			foreach (VariableDeclaration var_decl in var_decls)
+				((ICanModifyContext) var_decl).PopulateContext (env, ns);
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			VariableDeclaration tmp_decl;
 			int n = var_decls.Count;
@@ -99,7 +89,7 @@ namespace Microsoft.JScript {
 
 			for (int i = 0; i < n; i++) {
 				tmp_decl = (VariableDeclaration) var_decls [i];
-				r &= tmp_decl.Resolve (context);
+				r &= tmp_decl.Resolve (env);
 			}
 			return r;
 		}

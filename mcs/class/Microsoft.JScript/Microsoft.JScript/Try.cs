@@ -35,7 +35,7 @@ using System.Collections;
 
 namespace Microsoft.JScript {
 
-	public sealed class Try : AST {
+	public sealed class Try : AST, ICanModifyContext {
 
  		internal FieldBuilder field_info;
  		internal LocalBuilder local_builder;
@@ -69,22 +69,22 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 			if (guarded_block != null)
-				r &= guarded_block.Resolve (context);
-			
+				r &= guarded_block.Resolve (env);
+
 			if (catch_blocks != null && catch_blocks.Count > 0) {
 				foreach (Catch c in catch_blocks) {
-					context.BeginScope (true);
-					context.Enter (Symbol.CreateSymbol (c.id), c);
-					r &= c.Resolve (context);
-					context.EndScope ();
+					env.BeginScope (String.Empty, true);
+					env.Enter (String.Empty, Symbol.CreateSymbol (c.id), c);
+					r &= c.Resolve (env);
+					env.EndScope (String.Empty);
 				}
 			}
 			if (finally_block != null)
-				r &= finally_block.Resolve (context);
+				r &= finally_block.Resolve (env);
 			return r;
 		}
 
@@ -106,6 +106,33 @@ namespace Microsoft.JScript {
 				finally_block.Emit (ec);
 			}
 			ig.EndExceptionBlock ();
+		}
+
+
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			if (guarded_block is ICanModifyContext)
+				((ICanModifyContext) guarded_block).PopulateContext (env, ns);
+
+			foreach (AST ast in catch_blocks)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).PopulateContext (env, ns);
+
+			if (finally_block is ICanModifyContext)
+				((ICanModifyContext) finally_block).PopulateContext (env, ns);
+		}
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			if (guarded_block is ICanModifyContext)
+				((ICanModifyContext) guarded_block).EmitDecls (ec);
+
+			foreach (AST ast in catch_blocks)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).EmitDecls (ec);
+
+			if (finally_block is ICanModifyContext)
+				((ICanModifyContext) finally_block).EmitDecls (ec);
 		}
 	}
 }

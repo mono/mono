@@ -55,7 +55,7 @@ namespace Microsoft.JScript {
 			get { return elems.Count; }
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			throw new NotImplementedException ();
 		}

@@ -34,7 +34,7 @@ using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 
-	public class With : AST {
+	public class With : AST, ICanModifyContext {
 
 		AST exp, stm;
 
@@ -51,13 +51,25 @@ namespace Microsoft.JScript {
 			return withObj;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			if (stm is ICanModifyContext)
+				((ICanModifyContext) stm).PopulateContext (env, ns);
+		}
+		
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			if (stm is ICanModifyContext)
+				((ICanModifyContext) stm).EmitDecls (ec);
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 			if (exp != null)
-				r &= exp.Resolve (context);
+				r &= exp.Resolve (env);
 			if (stm != null)
-				r &= stm.Resolve (context);
+				r &= stm.Resolve (env);
 			return r;
 		}
 

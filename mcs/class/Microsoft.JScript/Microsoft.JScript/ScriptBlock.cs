@@ -1,9 +1,10 @@
 //
-// ScriptBlock.cs:
+// ScriptBlock.cs: Represents a file, which maps to a 'JScript N' class in the assembly.
 //
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// Copyright (C) 2005 Novell Inc (http://novell.com)
 //
 
 //
@@ -27,11 +28,29 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Reflection;
+using Microsoft.JScript.Vsa;
+using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
+
 namespace Microsoft.JScript {
 
-	public class ScriptBlock : AST {
+	public class ScriptBlock : AST, ICanModifyContext {
 
+		private TypeBuilder type_builder;
+		private MethodBuilder global_code;
+		private ILGenerator global_code_ig;
+		private EmitContext base_emit_context;
 		internal Block src_elems;
+		
+		internal MethodBuilder GlobalCode {
+			get { return global_code; }
+		}
+
+		internal TypeBuilder TypeBuilder {
+			get { return type_builder; }
+		}
 
 		internal ScriptBlock ()
 			: base (null, null)
@@ -50,14 +69,101 @@ namespace Microsoft.JScript {
 			src_elems.Add (e);
 		}
 
+		internal void EmitDecls (ModuleBuilder mb)
+		{
+			base_emit_context = new EmitContext (type_builder, mb, global_code_ig);
+			EmitInitGlobalCode ();
+			((ICanModifyContext) src_elems).EmitDecls (base_emit_context);
+		}
+
+		internal void Emit ()
+		{
+			Emit (base_emit_context);
+			EmitEndGlobalCode ();
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
+			EmitTypeCtr ();
 			src_elems.Emit (ec);
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
 		{
-			return src_elems.Resolve (context);
+			((ICanModifyContext) src_elems).PopulateContext (env, ns);
+		}
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+		}
+
+		internal override bool Resolve (Environment env)
+		{
+			return src_elems.Resolve (env);
+		}
+
+
+		internal void InitTypeBuilder (ModuleBuilder moduleBuilder, string next_type)
+		{ 
+			type_builder = moduleBuilder.DefineType (next_type, TypeAttributes.Public);
+			type_builder.SetParent (typeof (GlobalScope));
+			type_builder.SetCustomAttribute (new CustomAttributeBuilder
+							 (typeof (CompilerGlobalScopeAttribute).GetConstructor (new Type [] {}), new object [] {}));
+		}
+
+		internal void CreateType ()
+		{
+			type_builder.CreateType ();
+		}
+
+		internal void EmitTypeCtr ()
+		{
+			ConstructorBuilder cons_builder;
+			cons_builder = type_builder.DefineConstructor (MethodAttributes.Public,
+							       CallingConventions.Standard,
+							       new Type [] { typeof (GlobalScope) });
+			ILGenerator ig = cons_builder.GetILGenerator ();
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldarg_1);
+			ig.Emit (OpCodes.Dup);
+			ig.Emit (OpCodes.Ldfld,
+				 typeof (ScriptObject).GetField ("engine"));
+			
+			ig.Emit (OpCodes.Call, 
+				 typeof (GlobalScope).GetConstructor (new Type [] {typeof (GlobalScope), 
+										   typeof (VsaEngine)}));
+			ig.Emit (OpCodes.Ret);
+		}
+
+		internal void InitGlobalCode ()
+		{
+			global_code = type_builder.DefineMethod ("Global Code", MethodAttributes.Public,
+							 typeof (System.Object), new Type [] {});
+			global_code_ig = global_code.GetILGenerator ();
+		}
+
+		private void EmitInitGlobalCode ()
+		{
+			ILGenerator ig = global_code_ig;
+
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Call,
+				typeof (VsaEngine).GetMethod ("PushScriptObject",
+							      new Type [] { typeof (ScriptObject)}));
+		}
+
+		private void EmitEndGlobalCode ()
+		{
+			ILGenerator ig = global_code_ig;
+
+			ig.Emit (OpCodes.Ldnull);
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
+			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("PopScriptObject"));
+			ig.Emit (OpCodes.Pop);
+			ig.Emit (OpCodes.Ret);
 		}
 	}
 }

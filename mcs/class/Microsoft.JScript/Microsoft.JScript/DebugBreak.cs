@@ -38,7 +38,7 @@ namespace Microsoft.JScript {
 		{
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			throw new NotImplementedException ();
 		}

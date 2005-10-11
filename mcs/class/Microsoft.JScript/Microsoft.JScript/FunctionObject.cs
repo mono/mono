@@ -35,7 +35,7 @@ using System.Collections;
 
 namespace Microsoft.JScript {
 
-	public class FunctionObject : ScriptFunction {
+	public class FunctionObject : ScriptFunction, ICanModifyContext {
 
 		internal string type_annot;
 		internal Block body;
@@ -119,5 +119,15 @@ namespace Microsoft.JScript {
 				return types;
 			}
 		}
+
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			((ICanModifyContext) body).PopulateContext (env, ns);
+		}
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			((ICanModifyContext) body).EmitDecls (ec);
+		}		
 	}
 }

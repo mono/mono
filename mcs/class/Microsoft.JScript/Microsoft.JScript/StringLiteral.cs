@@ -45,12 +45,12 @@ namespace Microsoft.JScript {
 			str = s;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			return true;
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
 			return true;

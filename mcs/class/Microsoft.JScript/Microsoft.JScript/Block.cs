@@ -33,16 +33,14 @@ using System;
 
 namespace Microsoft.JScript {
 
-	public class Block : AST {
+	public class Block : AST, ICanModifyContext {
 
 		internal ArrayList elems;
-		private Hashtable ocurrences;
 
 		internal Block (AST parent, Location location)
 			: base (parent, location)
 		{
 			elems = new ArrayList ();
-			ocurrences = new Hashtable ();
 		}
 
 		internal void Add (AST e)
@@ -51,44 +49,63 @@ namespace Microsoft.JScript {
 				elems.Add (e);
 		}
 
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			//
+			// Emit variable declarations and function's closure first
+			// because of posible free occurrences inside a method. 
+			//
+			foreach (AST ast in elems)
+				if (ast is FunctionDeclaration)
+					((FunctionDeclaration) ast).create_closure (ec);
+				else if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).EmitDecls (ec);
+		}
+
 		internal override void Emit (EmitContext ec)
 		{
-			int i, n = elems.Count;
+			int n = elems.Count;
 			object e;
 
 			//
-			// Emit variable declarations first
-			// because of posible free occurrences inside
-			// a method. 
-			//
-			for (i = 0; i < n; i++) {
-				e = elems [i];
-				if (e is VariableStatement)
-					((VariableStatement) e).EmitVariableDecls (ec);
-			}
-
-			//
-			// Emit the function closure before any
-			// expression because the ScriptFunction and
-			// field created must be set properly before
-			// any use. The body gets emitted later.
-			//			
-			for (i = 0; i < n; i++) {
-				e = elems [i];
-				if (e is FunctionDeclaration)
-					((FunctionDeclaration) e).create_closure (ec);
-			}
-			
-			//
 			// Emit the rest of expressions and statements.
 			//
-			for (i = 0; i < n; i++) {
+			for (int i = 0; i < n; i++) {
 				e = elems [i];
 				((AST) e).Emit (ec);
 			}
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			AST ast;
+			for (int i = 0; i < elems.Count; i++) {
+				ast = (AST) elems [i];
+				if (ast is FunctionDeclaration) {
+					string name = ((FunctionDeclaration) ast).func_obj.name;
+					AST binding = (AST) env.Get (ns, Symbol.CreateSymbol (name));
+
+					if (binding == null)
+						SemanticAnalyser.Ocurrences.Enter (ns, Symbol.CreateSymbol (name), new DeleteInfo (i, this));
+					else {
+						DeleteInfo delete_info = (DeleteInfo) SemanticAnalyser.Ocurrences.Get (ns, Symbol.CreateSymbol (name));
+						if (delete_info != null) {
+							delete_info.Block.elems.RemoveAt (delete_info.Index);
+							SemanticAnalyser.Ocurrences.Remove (ns, Symbol.CreateSymbol (name));
+							if (delete_info.Block == this)
+								if (delete_info.Index < i)
+									i--;
+
+							SemanticAnalyser.Ocurrences.Enter (ns, Symbol.CreateSymbol (name), new DeleteInfo (i, this));
+						}
+					}
+				}
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).PopulateContext (env, ns);
+			}
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			AST e;
 			bool no_effect;
@@ -100,56 +117,35 @@ namespace Microsoft.JScript {
 			else
 				no_effect = false;
 			
-			for (i = 0; i < elems.Count; i++) {
-				e = (AST) elems [i];
-				//
-				// Add the variables to the symbol
-				// tables. If a variable declaration
-				// has an initializer we postpone the
-				// resolve process of the initializer
-				// until we have collected all the
-				// variable declarations. 
-				//
-				if (e is VariableStatement)
-					(e as VariableStatement).PopulateContext (context);
-				else if (e is FunctionDeclaration) {
-					//
-					// In the case of function
-					// declarations we add
-					// function's name to the
-					// table but we resolve its
-					// body until later, as free
-					// variables can be referenced
-					// in function's body.
-					//
-					string name = ((FunctionDeclaration) e).func_obj.name;
-					AST binding = (AST) context.Get (Symbol.CreateSymbol (name));
-
-					if (binding == null) {
-						ocurrences.Add (name, i);
-						context.Enter (Symbol.CreateSymbol (((FunctionDeclaration) e).func_obj.name), new FunctionDeclaration ());
-					} else {
-						Console.WriteLine ("warning: JS1111: '{0}' has already been defined.", name);
-						if (!(binding is FunctionDeclaration))
-							throw new Exception ("error JS5040: '" + ((VariableDeclaration) binding).id + "' it's read only.");
-						int k = (int) ocurrences [name];
-						elems.RemoveAt (k);
-						if (k < i)
-							i -= 1;
-						ocurrences [name] = i;
-					}
-				}
-			}			
 			n = elems.Count;
 			
 			for (i = 0; i < n; i++) {
 				e = (AST) elems [i];
 				if (e is Exp) 
-					r &= ((Exp) e).Resolve (context, no_effect);
-				else
-					r &= e.Resolve (context);
+					r &= ((Exp) e).Resolve (env, no_effect);
+				else 
+					r &= e.Resolve (env);
 			}
-			return r;			
+			return r;
+		}
+	}
+
+	internal class DeleteInfo {
+		private int index;
+		private Block block;
+
+		internal DeleteInfo (int index, Block block)
+		{
+			this.index = index;
+			this.block = block;
+		}
+
+		internal int Index {
+			get { return index; }
+		}
+
+		internal Block Block {
+			get { return block; }
 		}
 	}
 }

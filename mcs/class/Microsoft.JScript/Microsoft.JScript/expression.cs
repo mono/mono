@@ -40,7 +40,7 @@ namespace Microsoft.JScript {
 	
 	public abstract class Exp : AST {
 		internal bool no_effect;
-		internal abstract bool Resolve (IdentificationTable context, bool no_effect);
+		internal abstract bool Resolve (Environment env, bool no_effect);
 
 		internal Exp (AST parent, Location location)
 			: base (parent, location)
@@ -72,7 +72,7 @@ namespace Microsoft.JScript {
 			return sb.ToString ();
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			bool r = false;		       
 
@@ -80,19 +80,19 @@ namespace Microsoft.JScript {
 				Binary bin = (Binary) operand;
 				if (oper == JSToken.Delete && bin.AccessField)
 					this.deletable = bin.IsDeletable (out isCtr);
-				bin.Resolve (context);
+				bin.Resolve (env);
 			} else if (operand is Exp) {
 				if (oper != JSToken.Increment && oper != JSToken.Decrement)
-					r = ((Exp) operand).Resolve (context, no_effect);
+					r = ((Exp) operand).Resolve (env, no_effect);
 			} else 
-				r = operand.Resolve (context);
+				r = operand.Resolve (env);
 			return r;
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return Resolve (context);
+			return Resolve (env);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -269,7 +269,7 @@ namespace Microsoft.JScript {
 			get { return late_bind; }
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			bool found = true;
 
@@ -279,30 +279,30 @@ namespace Microsoft.JScript {
 					if (!found)
 						late_bind = true;
 				} else
-					found &= left.Resolve (context);
+					found &= left.Resolve (env);
 			if (right != null)
 				if (op == JSToken.AccessField && right is IAccessible) {
 					found &= ((IAccessible) right).ResolveFieldAccess (left);
 					if (!found)
 						late_bind = true;
 				} else
-					found &= right.Resolve (context);
+					found &= right.Resolve (env);
 			return found;
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return Resolve (context);
+			return Resolve (env);
 		}
 		
-		public bool ResolveAssign (IdentificationTable context, AST right_side)
+		public bool ResolveAssign (Environment env, AST right_side)
 		{
 			if (op == JSToken.LeftBracket || op == JSToken.AccessField) {
 				this.no_effect = false;
 				this.assign = true;
 				this.right_side = right_side;
-				return Resolve (context);
+				return Resolve (env);
 			} else 
 				throw new Exception (location.SourceName + " (" + location.LineNumber + ",0): error JS5008: Illegal assignment");
 		}
@@ -659,22 +659,22 @@ namespace Microsoft.JScript {
 			return sb.ToString ();
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 			if (cond_exp != null)
-				r &= cond_exp.Resolve (context);
+				r &= cond_exp.Resolve (env);
 			if (true_exp != null)
-				r &= true_exp.Resolve (context);
+				r &= true_exp.Resolve (env);
 			if (false_exp != null)
-				r &= false_exp.Resolve (context);
+				r &= false_exp.Resolve (env);
 			return r;
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return Resolve (context);
+			return Resolve (env);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -734,14 +734,14 @@ namespace Microsoft.JScript {
 			args.Add (arg);
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 
 			if (member_exp != null) {
 				if (member_exp is Identifier) {
-					member_exp.Resolve (context);
-					binding = context.Get ((member_exp as Identifier).name);
+					member_exp.Resolve (env);
+					binding = env.Get (String.Empty, (member_exp as Identifier).name);
 					bind_type = binding.GetType ();
 
 					if (bind_type == typeof (BuiltIn)) {
@@ -762,19 +762,19 @@ namespace Microsoft.JScript {
 						}
 					}
 				} else if (member_exp is Binary) {
-					member_exp.Resolve (context);
+					member_exp.Resolve (env);
 					Binary bin = (Binary) member_exp;
 					if (bin.AccessField)
 						binding = bin.Binding;
 					if (binding is MethodInfo)
 						NeedThis ((MethodInfo) binding);
 				} else
-					r &= member_exp.Resolve (context);
+					r &= member_exp.Resolve (env);
 
 				args.BoundToMethod = binding;
 
 				if (args != null)
-					r &= args.Resolve (context);
+					r &= args.Resolve (env);
 			} else
 				throw new Exception ("Call.Resolve, member_exp can't be null");
 			return r;
@@ -785,10 +785,10 @@ namespace Microsoft.JScript {
 			need_this = SemanticAnalyser.Needs (JSFunctionAttributeEnum.HasThisObject, method);
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return Resolve (context);
+			return Resolve (env);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -830,7 +830,7 @@ namespace Microsoft.JScript {
 			} else if (bind_type == typeof (FunctionDeclaration) || bind_type == typeof (FunctionExpression)) {
 				Function function = binding as Function;
 				MethodBuilder method = (MethodBuilder) TypeManager.Get (function.func_obj.name);
-				
+
 				if (SemanticAnalyser.MethodContainsEval (function.func_obj.name) ||
 				    SemanticAnalyser.MethodReferenceOutterScopeVar (function.func_obj.name) ||
 				    SemanticAnalyser.MethodVarsUsedNested (function.func_obj.name)) {
@@ -1243,44 +1243,50 @@ namespace Microsoft.JScript {
 			return name.Value;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
-			bool contained = context.Contains (this.name);
+			bool contained = env.Contains (String.Empty, this.name);
 			if (contained) {
-				binding = (AST) context.Get (this.name);
+				binding = (AST) env.Get (String.Empty, this.name);
 				if (binding is VariableDeclaration) {
 					VariableDeclaration decl = (VariableDeclaration) binding;
-					lexical_difference = context.depth - decl.lexical_depth;
+					lexical_difference = env.Depth (String.Empty) - decl.lexical_depth;
 					no_field = decl.lexical_depth != 0;
-					if (no_field && lexical_difference > 0 && !context.CatchScope) {
+
+					if (no_field && lexical_difference > 0 && !env.CatchScope (String.Empty)) {
 						Function container_func = GetContainerFunction;
 						SemanticAnalyser.AddMethodReferenceOutterScopeVar (container_func.func_obj.name, decl);
-						context.Enter (Symbol.CreateSymbol (decl.id), decl);
+						env.Enter (String.Empty, Symbol.CreateSymbol (decl.id), decl);
 						SemanticAnalyser.AddMethodVarsUsedNested (decl.GetContainerFunction.func_obj.name, decl);
 					}
 				}
 			} else if (SemanticAnalyser.NoFast) {
 				undeclared = true;
 				Console.WriteLine ("warning JS1135: Variable '" + name + "' has not been declared");
-			} else
+			} else {
+				//
+				// Identifier not into stand-alone JScript, we'll search into 
+				// referenced assemblies and namespaces 
+				//
 				throw new Exception (location.SourceName + "(" + location.LineNumber + 
 					     ",0) : error JS1135: Variable '" + name + "' has not been declared");
+			}
 			return true;
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return Resolve (context);
+			return Resolve (env);
 		}
 
-		public bool ResolveAssign (IdentificationTable context, AST right_side)
+		public bool ResolveAssign (Environment env, AST right_side)
 		{
 			this.assign = true;
 			this.no_effect = false;
 			this.right_side = right_side;
 			if (name.Value != String.Empty)			
-				return Resolve (context);
+				return Resolve (env);
 			return true;
 		}
 
@@ -1644,7 +1650,7 @@ namespace Microsoft.JScript {
 			}
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			AST tmp;
 			bool r = true;
@@ -1674,8 +1680,9 @@ namespace Microsoft.JScript {
 				tmp = (AST) elems [i];
 				if (tmp != null)
 					if (tmp is Exp)
-						r &= ((Exp) tmp).Resolve (context, false);
-					r &= tmp.Resolve (context);
+						r &= ((Exp) tmp).Resolve (env, false);
+					else
+						r &= tmp.Resolve (env);
 			}
 			return r;
 		}
@@ -1881,7 +1888,7 @@ namespace Microsoft.JScript {
 			} else return String.Empty;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			int i, n;
 			object e;
@@ -1893,26 +1900,26 @@ namespace Microsoft.JScript {
 				e = exprs [i];
 				if (e is Exp)
 					if (e is Assign)
-						r &= ((Assign) e).Resolve (context);
+						r &= ((Assign) e).Resolve (env);
 					else
-						r &= ((Exp) e).Resolve (context, true);
+						r &= ((Exp) e).Resolve (env, true);
 			}
 			e = exprs [n];
 			if (e is Exp)
 				if (e is Assign)
-					r &= ((Assign) e).Resolve (context);
+					r &= ((Assign) e).Resolve (env);
 				else
-					r &= ((Exp) e).Resolve (context, no_effect);
+					r &= ((Exp) e).Resolve (env, no_effect);
 			else 
-				((AST) e).Resolve (context);
+				((AST) e).Resolve (env);
 
 			return r;
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return Resolve (context);
+			return Resolve (env);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -1942,22 +1949,22 @@ namespace Microsoft.JScript {
 		// after calling Resolve, left contains all the 
 		// information about the assignment
 		//
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{						
 			bool r;
 
 			if (left is IAssignable)
-				r = ((IAssignable) left).ResolveAssign (context, right);
+				r = ((IAssignable) left).ResolveAssign (env, right);
 			else
 				throw new Exception (location.SourceName + " (" + location.LineNumber + ",0): error JS5008: Illegal assignment");
 			if (right is Exp)
-				r &=((Exp) right).Resolve (context, false);
+				r &=((Exp) right).Resolve (env, false);
 			else
-				r &= right.Resolve (context);
+				r &= right.Resolve (env);
 			return r;
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			return true;
 		}
@@ -1967,7 +1974,7 @@ namespace Microsoft.JScript {
 			if (op == JSToken.Assign) {
 				if (is_embedded) {
 					Console.WriteLine ("embedded assignments not supported yet");
-					Environment.Exit (-1);
+					System.Environment.Exit (-1);
 				} 
 				left.Emit (ec);
 			} else {
@@ -2120,7 +2127,7 @@ namespace Microsoft.JScript {
 			args.Add (arg);
 		}
 		
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 
@@ -2128,11 +2135,11 @@ namespace Microsoft.JScript {
 				Identifier id = (Identifier) exp;
 				late_bind = !SemanticAnalyser.is_js_object (id.name.Value);
 			} 
-			exp.Resolve (context);
+			exp.Resolve (env);
 
 			if (args != null) {
 				args.InNew = true;
-				r &= args.Resolve (context);
+				r &= args.Resolve (env);
 			}
 			return r;
 		}
@@ -2236,7 +2243,7 @@ namespace Microsoft.JScript {
 	}
 	
 	internal interface IAssignable {
-		bool ResolveAssign (IdentificationTable context, AST right_side);
+		bool ResolveAssign (Environment env, AST right_side);
 	}
 
 	internal class BuiltIn : AST {
@@ -2252,7 +2259,7 @@ namespace Microsoft.JScript {
 			this.allowed_as_func = allowed_as_func;
 		}
 
- 		internal override bool Resolve (IdentificationTable context)
+ 		internal override bool Resolve (Environment env)
 		{
 			return true;
 		}

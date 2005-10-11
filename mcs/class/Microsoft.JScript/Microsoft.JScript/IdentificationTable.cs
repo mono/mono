@@ -8,7 +8,7 @@
 //	Cesar Lopez Nataren (cnataren@novell.com)
 //
 // (C) 2003, Cesar Lopez Nataren
-// (C) 2005 Novell Inc.
+// Copyright (C) 2005 Novell Inc (http://novell.com)
 //
 
 //
@@ -190,7 +190,7 @@ namespace Microsoft.JScript {
 		/// Delete symbol from the table
 		/// </summary>
 		internal void Remove (Symbol key)
-		{			
+		{
 			Binder e = (Binder) dict [key];
 			if (e != null)
 				if (e.Tail != null)
@@ -292,19 +292,181 @@ namespace Microsoft.JScript {
 			((Hashtable) locals.Peek ()).Add (name, o);
 		}
 
+		internal DictionaryEntry [] LocalsAtDepth (int depth)
+		{
+			object [] hashes = new object [locals.Count];
+			locals.CopyTo (hashes, 0);
+			Hashtable hash = (Hashtable) hashes [locals.Count - depth - 1];
+			DictionaryEntry [] _locals = new DictionaryEntry [hash.Count];
+			hash.CopyTo (_locals, 0);
+			return _locals;
+		}
+	}
+
+
+	//
+	// Lookup table with namespace context.
+	// 
+	internal class Environment {
+
+		private Hashtable namespaces;
+
+		internal Environment ()
+		{
+			namespaces = new Hashtable ();
+
+			//
+			// global variables identification table
+			//
+			namespaces.Add (String.Empty, new IdentificationTable ());
+		}
+
+		internal Environment (ScriptBlock [] blocks)
+			: this ()
+		{
+			//
+			// FIXME: when we implement the package stm. For each package
+			// name we must add a identification table that will store
+			// id's defined inside it.
+			//
+
+			//
+			// integrate the builtin functions, objects, ...
+			//
+			BuildGlobalEnv ();
+		}
+
+		//
+		// retrieves the identification table for the ns namespace
+		//
+		internal IdentificationTable GetIdentificationTable (string ns)
+		{
+			return (IdentificationTable) namespaces [ns];
+		}
+
+		internal bool Contains (string ns, Symbol key)
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+
+			if (symbols == null)
+				return false;
+
+			return symbols.Contains (key);
+		}
+
+		internal object Get (string ns, Symbol key)
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+
+			if (symbols == null)
+				return null;
+
+			return symbols.Get (key);
+		}
+
+		internal void Enter (string ns, Symbol key, object value)
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+			
+			if (symbols == null)
+				throw new Exception (ns + " does not exist");
+
+			symbols.Enter (key, value);
+		}
+
+		internal void Remove (string ns, Symbol key)
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+			
+			if (symbols == null)
+				throw new Exception (ns + " does not exist");
+
+			symbols.Remove (key);
+		}
+
+		internal void BeginScope (string ns)
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+
+			if (symbols == null)
+				throw new Exception (ns + " does not exist");
+
+			symbols.BeginScope ();
+		}
+
+		internal void BeginScope (string ns, bool catchScope)
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+
+			if (symbols == null)
+				throw new Exception (ns + " does not exist");
+
+			symbols.BeginScope (catchScope);
+		}
+
+		internal void EndScope (string ns)
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+
+			if (symbols == null)
+				throw new Exception (ns + " does not exist");
+
+			symbols.EndScope ();
+		}
+
+		internal object [] CurrentLocals (string ns)
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+
+			if (symbols == null)
+				throw new Exception (ns + " does not exist");
+
+			return symbols.CurrentLocals;
+		}
+
+		internal int Depth (string ns)
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+
+			if (symbols == null)
+				throw new Exception (ns + " does not exist");
+
+			return symbols.depth;
+		}
+
+		internal bool InCurrentScope (string ns, Symbol id) 
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+
+			if (symbols == null)
+				throw new Exception (ns + " does not exist");
+
+			return symbols.InCurrentScope (id);
+		}
+
+		internal bool CatchScope (string ns)
+		{
+			IdentificationTable symbols = (IdentificationTable) namespaces [ns];
+
+			if (symbols == null)
+				throw new Exception (ns + " does not exist");
+
+			return symbols.CatchScope;
+		}
+
 		internal void BuildGlobalEnv ()
 		{
 			//
 			// built in print function
 			//
 			if (SemanticAnalyser.print)
-				Enter (Symbol.CreateSymbol ("print"), new BuiltIn ("print", false, true));
+				Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("print"), new BuiltIn ("print", false, true));
 
 			/* value properties of the Global Object */
-			Enter (Symbol.CreateSymbol ("NaN"), new BuiltIn ("NaN", false, false));
-			Enter (Symbol.CreateSymbol ("Infinity"), new BuiltIn ("Infinity", false, false));
- 			Enter (Symbol.CreateSymbol ("undefined"), new BuiltIn ("undefined", false, false));
-			Enter (Symbol.CreateSymbol ("null"), new BuiltIn ("null", false, false));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("NaN"), new BuiltIn ("NaN", false, false));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("Infinity"), new BuiltIn ("Infinity", false, false));
+ 			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("undefined"), new BuiltIn ("undefined", false, false));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("null"), new BuiltIn ("null", false, false));
 			
  			/* function properties of the Global Object */
 			object [] custom_attrs;
@@ -314,38 +476,28 @@ namespace Microsoft.JScript {
 				custom_attrs = mi.GetCustomAttributes (typeof (JSFunctionAttribute), false);
 				foreach (JSFunctionAttribute attr in custom_attrs)
 					if (attr.IsBuiltIn)
- 						Enter (Symbol.CreateSymbol (mi.Name), new BuiltIn (SemanticAnalyser.ImplementationName (attr.BuiltIn.ToString ()), false, true));
+ 						Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol (mi.Name), new BuiltIn (SemanticAnalyser.ImplementationName (attr.BuiltIn.ToString ()), false, true));
  			}
 
  			/* built in objects */
-			Enter (Symbol.CreateSymbol ("Object"), new BuiltIn ("Object", true, true));
-			Enter (Symbol.CreateSymbol ("Function"), new BuiltIn ("Function", true, true));
-			Enter (Symbol.CreateSymbol ("Array"), new BuiltIn ("Array", true, true));
-			Enter (Symbol.CreateSymbol ("String"), new BuiltIn ("String", true, true));
-			Enter (Symbol.CreateSymbol ("Boolean"), new BuiltIn ("Boolean", true, true));
-			Enter (Symbol.CreateSymbol ("Number"), new BuiltIn ("Number", true, true));
-			Enter (Symbol.CreateSymbol ("Math"), new BuiltIn ("Math", false, false));
-			Enter (Symbol.CreateSymbol ("Date"), new BuiltIn ("Date", true, true));
-			Enter (Symbol.CreateSymbol ("RegExp"), new BuiltIn ("RegExp", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("Object"), new BuiltIn ("Object", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("Function"), new BuiltIn ("Function", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("Array"), new BuiltIn ("Array", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("String"), new BuiltIn ("String", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("Boolean"), new BuiltIn ("Boolean", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("Number"), new BuiltIn ("Number", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("Math"), new BuiltIn ("Math", false, false));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("Date"), new BuiltIn ("Date", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("RegExp"), new BuiltIn ("RegExp", true, true));
 
  			/* built in Error objects */
-			Enter (Symbol.CreateSymbol ("Error"), new BuiltIn ("Error", true, true));
-			Enter (Symbol.CreateSymbol ("EvalError"), new BuiltIn ("EvalError", true, true));
-			Enter (Symbol.CreateSymbol ("RangeError"), new BuiltIn ("RangeError", true, true));
-			Enter (Symbol.CreateSymbol ("ReferenceError"), new BuiltIn ("ReferenceError", true, true));
-			Enter (Symbol.CreateSymbol ("SyntaxError"), new BuiltIn ("SyntaxError", true, true));
-			Enter (Symbol.CreateSymbol ("TypeError"), new BuiltIn ("TypeError", true, true));
-			Enter (Symbol.CreateSymbol ("URIError"), new BuiltIn ("URIError", true, true));
-		}
-
-		internal DictionaryEntry [] LocalsAtDepth (int depth)
-		{
-			object [] hashes = new object [locals.Count];
-			locals.CopyTo (hashes, 0);
-			Hashtable hash = (Hashtable) hashes [locals.Count - depth - 1];
-			DictionaryEntry [] _locals = new DictionaryEntry [hash.Count];
-			hash.CopyTo (_locals, 0);
-			return _locals;
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("Error"), new BuiltIn ("Error", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("EvalError"), new BuiltIn ("EvalError", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("RangeError"), new BuiltIn ("RangeError", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("ReferenceError"), new BuiltIn ("ReferenceError", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("SyntaxError"), new BuiltIn ("SyntaxError", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("TypeError"), new BuiltIn ("TypeError", true, true));
+			Enter (SemanticAnalyser.GlobalNamespace, Symbol.CreateSymbol ("URIError"), new BuiltIn ("URIError", true, true));
 		}
 	}
 }

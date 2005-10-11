@@ -46,7 +46,7 @@ namespace Microsoft.JScript {
 		public static void JScriptPackage (string rootName, VsaEngine engine)
 		{}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			throw new NotImplementedException ();
 		}

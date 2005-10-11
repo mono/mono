@@ -44,7 +44,7 @@ namespace Microsoft.JScript {
 		{
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			return true;
 		}
@@ -65,15 +65,15 @@ namespace Microsoft.JScript {
 		{
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			return true;
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return Resolve (context);
+			return Resolve (env);
 		}
 	}
 
@@ -86,7 +86,7 @@ namespace Microsoft.JScript {
 			this.Value = val;
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
 			return true;
@@ -296,17 +296,17 @@ namespace Microsoft.JScript {
 			this.elems = elems;
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return Resolve (context);
+			return Resolve (env);
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 			foreach (AST ast in elems)
-				r &= ast.Resolve (context);
+				r &= ast.Resolve (env);
 			return r;
 		}
 
@@ -345,9 +345,9 @@ namespace Microsoft.JScript {
 				property_name = obj.ToString ();
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
-			return exp.Resolve (context);
+			return exp.Resolve (env);
 		}
 
 		internal override void Emit (EmitContext ec)
@@ -381,7 +381,7 @@ namespace Microsoft.JScript {
 			this.flags = flags;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			return true;
 		}

@@ -65,17 +65,17 @@ namespace Microsoft.JScript {
 				return value - 1;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
-			return operand.Resolve (context);
+			return operand.Resolve (env);
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			if (operand is Exp)
-				return ((Exp) operand).Resolve (context, no_effect);
+				return ((Exp) operand).Resolve (env, no_effect);
 			else
-				return operand.Resolve (context);
+				return operand.Resolve (env);
 		}
 
 		internal override void Emit (EmitContext ec)

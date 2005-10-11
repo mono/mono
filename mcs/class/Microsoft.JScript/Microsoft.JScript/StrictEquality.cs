@@ -92,20 +92,20 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 			if (left != null)
-				r &= left.Resolve (context);
+				r &= left.Resolve (env);
 			if (right != null)
-				r &= right.Resolve (context);
+				r &= right.Resolve (env);
 			return r;
 		}
 		
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			this.no_effect = no_effect;
-			return Resolve (context);
+			return Resolve (env);
 		}
 
 		internal override void Emit (EmitContext ec)

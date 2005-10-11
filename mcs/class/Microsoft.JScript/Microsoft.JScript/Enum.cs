@@ -88,7 +88,7 @@ namespace Microsoft.JScript {
 			return sb.ToString ();
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			throw new NotImplementedException ();
 		}					

@@ -35,7 +35,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 using Microsoft.JScript.Vsa;
-using System.Runtime.CompilerServices;
 using System.Collections;
 
 namespace Microsoft.JScript {
@@ -45,22 +44,9 @@ namespace Microsoft.JScript {
 		internal TypeBuilder type_builder;
 		internal ILGenerator ig;
 		internal ModuleBuilder mod_builder;
+		internal MethodBuilder global_code;
 
 		internal Label LoopBegin, LoopEnd;
-
-		internal EmitContext (TypeBuilder type)
-		{
-			type_builder = type;
-
-			if (type_builder != null) {
-				MethodBuilder global_code =  type_builder.DefineMethod (
-									"Global Code",
-									MethodAttributes.Public,
-									typeof (System.Object),
-									new Type [] {});
-				ig = global_code.GetILGenerator ();
-			}
-		}
 
 		internal EmitContext (TypeBuilder type_builder, ModuleBuilder mod_builder, ILGenerator ig)
 		{
@@ -80,6 +66,14 @@ namespace Microsoft.JScript {
 		internal static AssemblyName assembly_name;
 		internal static AssemblyBuilder assembly_builder;
 		internal static ModuleBuilder module_builder;
+		private static int next_type = 0;
+		private static ArrayList global_types = new ArrayList ();
+		private static Hashtable global_methods = new Hashtable ();
+		private static Hashtable source_file_to_type = new Hashtable ();
+
+		private static string NextType {
+			get { return "JScript " + next_type++; }
+		}
 
 		internal static string Basename (string name)
 		{
@@ -146,75 +140,21 @@ namespace Microsoft.JScript {
 			assembly_builder.Save (CodeGenerator.Basename (target_name));
 		}
 
-		internal static void Emit (AST prog)
+		internal static void EmitDecls (ScriptBlock prog)
 		{
 			if (prog == null)
 				return;
 
-			TypeBuilder type_builder;
-			type_builder = module_builder.DefineType ("JScript 0", TypeAttributes.Public);
+			string next_type = CodeGenerator.NextType;
 
-			type_builder.SetParent (typeof (GlobalScope));
-			type_builder.SetCustomAttribute (new CustomAttributeBuilder
-							 (typeof (CompilerGlobalScopeAttribute).GetConstructor (new Type [] {}), new object [] {}));
+			prog.InitTypeBuilder (module_builder, next_type);
+			prog.InitGlobalCode ();
 
-			EmitContext ec = new EmitContext (type_builder);
-			ec.mod_builder = module_builder;
-			ILGenerator global_code = ec.ig;
+			global_types.Add (next_type);
+			global_methods.Add (next_type, prog.GlobalCode);
+			source_file_to_type.Add (prog.Location.SourceName, next_type);
 
-			emit_default_script_constructor (ec);
-			emit_default_init_global_code (global_code);
-			prog.Emit (ec);
-			emit_default_end_global_code (global_code);
-			ec.type_builder.CreateType ();
-
-			//
-			// Build the default 'JScript Main' class
-			//
-			ec.type_builder = module_builder.DefineType ("JScript Main");
-			emit_jscript_main (ec.type_builder);
-			ec.type_builder.CreateType ();
-		}
-
-		internal static void emit_default_init_global_code (ILGenerator ig)
-		{
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Call,
-				typeof (VsaEngine).GetMethod ("PushScriptObject",
-							      new Type [] { typeof (ScriptObject)}));
-		}
-
-		internal static void emit_default_end_global_code (ILGenerator ig)
-		{
-			ig.Emit (OpCodes.Ldnull);
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, typeof (ScriptObject).GetField ("engine"));
-			ig.Emit (OpCodes.Call, typeof (VsaEngine).GetMethod ("PopScriptObject"));
-			ig.Emit (OpCodes.Pop);
-			ig.Emit (OpCodes.Ret);		
-		}
-
-		internal static void emit_default_script_constructor (EmitContext ec)
-		{
-			ConstructorBuilder cons_builder;
-			TypeBuilder tb = ec.type_builder;
-			cons_builder = tb.DefineConstructor (MethodAttributes.Public,
-							     CallingConventions.Standard,
-							     new Type [] { typeof (GlobalScope) });
-
-			ILGenerator ig = cons_builder.GetILGenerator ();
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldarg_1);
-			ig.Emit (OpCodes.Dup);
-			ig.Emit (OpCodes.Ldfld,
-				 typeof (ScriptObject).GetField ("engine"));
-			
-			ig.Emit (OpCodes.Call, 
-				 typeof (GlobalScope).GetConstructor (new Type [] {typeof (GlobalScope), 
-										   typeof (VsaEngine)}));
-			ig.Emit (OpCodes.Ret);
+			prog.EmitDecls (module_builder);
 		}
 
 		internal static void emit_jscript_main (TypeBuilder tb)
@@ -265,24 +205,48 @@ namespace Microsoft.JScript {
 							       new Type [] {typeof (bool), 
 									    typeof (string [])}));	
 			ig.Emit (OpCodes.Stloc_0);
-			ig.Emit (OpCodes.Ldloc_0);
-			
-			ig.Emit (OpCodes.Newobj,
-				 assembly_builder.GetType ("JScript 0").GetConstructor (
-									new Type [] {typeof (GlobalScope)})); 
-			ig.Emit (OpCodes.Call, 
-				 assembly_builder.GetType ("JScript 0").GetMethod (
-									   "Global Code", new Type [] {}));
-			ig.Emit (OpCodes.Pop);
+
+			foreach (string type_name in global_types) {
+				ig.Emit (OpCodes.Ldloc_0);
+				ig.Emit (OpCodes.Newobj, assembly_builder.GetType (type_name).GetConstructor (
+									      new Type [] {typeof (GlobalScope)})); 
+				ig.Emit (OpCodes.Call, (MethodInfo) global_methods [type_name]);
+				ig.Emit (OpCodes.Pop);
+			}
 			ig.Emit (OpCodes.Ret);
 
 			assembly_builder.SetEntryPoint (method);
 		}
 
-		public static void Run (string file_name, AST prog)
+		public static void Run (string file_name, ScriptBlock [] blocks)
 		{
 			CodeGenerator.Init (file_name);
-			CodeGenerator.Emit (prog);
+
+			//
+			// Emit first all the declarations (function and variables)
+			//
+			foreach (ScriptBlock script_block in blocks)
+				CodeGenerator.EmitDecls (script_block);
+
+			//
+			// emit everything that's not a declaration
+			//
+			foreach (ScriptBlock script_block in blocks)
+				script_block.Emit ();
+
+			//
+			// Create the types ('JScript N')
+			//
+			foreach (ScriptBlock script_block in blocks)
+				script_block.CreateType ();
+			
+			//
+			// Build the default 'JScript Main' class
+			//
+			TypeBuilder main_type_builder = module_builder.DefineType ("JScript Main");
+			emit_jscript_main (main_type_builder);
+			main_type_builder.CreateType ();
+
 			CodeGenerator.Save (trim_extension (file_name) + ".exe");
 		}
 
@@ -316,6 +280,13 @@ namespace Microsoft.JScript {
 					ig.Emit (OpCodes.Conv_R8);
 					ig.Emit (OpCodes.Blt, lbl);
 					break;
+
+				default:
+					ast.Emit (ec);
+					ig.Emit (OpCodes.Ldc_I4_1);
+					ig.Emit (OpCodes.Call, typeof (Convert).GetMethod ("ToBoolean", new Type [] {typeof (object), typeof (bool)}));
+					ig.Emit (OpCodes.Brfalse, lbl);
+					break;
 				}
 			}
 		}
@@ -347,9 +318,9 @@ namespace Microsoft.JScript {
 		{
 			Type type = ast.GetType ();
 
-			if (type == typeof (Expression)) {  
-				Expression exp = ast as Expression;				
-				AST last_exp = last_exp = (AST) exp.exprs [exp.exprs.Count - 1];
+			if (type == typeof (Expression)) {
+				Expression exp = ast as Expression;
+				AST last_exp = (AST) exp.exprs [exp.exprs.Count - 1];
 				if (exp.exprs.Count >= 2)
 					exp.Emit (ec);
 				fall_true (ec, last_exp, lbl);
@@ -357,6 +328,8 @@ namespace Microsoft.JScript {
 				ft_binary_recursion (ec, ast, lbl);
 			else if (type == typeof (Equality) || type == typeof (StrictEquality))
 				ft_emit_equality (ec, ast, lbl);
+			else if (type == typeof (Relational))
+				ft_emit_relational (ec, (Relational) ast, lbl);
 			else
 				emit_default_case (ec, ast, OpCodes.Brfalse, lbl);
 		}
@@ -367,13 +340,68 @@ namespace Microsoft.JScript {
 			Relational r = ast as Relational;
 			r.Emit (ec);
 
+			OpCode opcode;
+
 			switch (r.op) {
 			case JSToken.LessThan:
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Conv_R8);
-				ig.Emit (OpCodes.Blt, lbl);
+				opcode = OpCodes.Blt;
 				break;
+
+			case JSToken.GreaterThan:
+				opcode = OpCodes.Bgt;
+				break;
+
+			case JSToken.LessThanEqual:
+				opcode = OpCodes.Ble;
+				break;
+
+			case JSToken.GreaterThanEqual:
+				opcode = OpCodes.Bge;
+				break;
+
+			default:
+				throw new Exception ("unexpected token");
 			}
+
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Conv_R8);
+			ig.Emit (opcode, lbl);
+		}
+
+		static void ft_emit_relational (EmitContext ec, Relational re, Label lbl)
+		{
+			ILGenerator ig = ec.ig;
+
+			re.Emit (ec);
+			JSToken op = re.op;
+			
+			OpCode opcode;
+
+			switch (op) {
+			case JSToken.LessThan:
+				opcode = OpCodes.Bge_Un;
+				break;
+
+			case JSToken.GreaterThan:
+				opcode = OpCodes.Ble_Un;
+				break;
+
+			case JSToken.LessThanEqual:
+				opcode = OpCodes.Bgt_Un;
+				break;
+
+			case JSToken.GreaterThanEqual:
+				opcode = OpCodes.Blt_Un;
+				break;
+
+			default:
+				Console.WriteLine (re.Location.LineNumber);
+				throw new NotImplementedException ();
+			}
+
+			ig.Emit (OpCodes.Ldc_I4_0);
+			ig.Emit (OpCodes.Conv_R8);
+			ig.Emit (opcode, lbl);
 		}
 
 		static void ff_binary_recursion (EmitContext ec, AST ast, Label lbl)
@@ -432,10 +460,12 @@ namespace Microsoft.JScript {
 					ff_emit_equality_cond (ec, last_exp, lbl);
 				else {
 					Console.WriteLine ("fall_false, last_exp.GetType () == {0}", last_exp);
- 					throw new Exception ("uknown type: " + last_exp.GetType ().ToString ());
+ 					throw new Exception ("unknown type: " + last_exp.GetType ().ToString ());
 				}
 			} else if (type == typeof (Binary))
 				ff_binary_recursion (ec, ast, lbl);
+			else if (type == typeof (Relational))
+				ff_emit_relational (ec, ast, lbl);
 			else 
 				emit_default_case (ec, ast, OpCodes.Brtrue, lbl);
 		}
@@ -678,6 +708,7 @@ namespace Microsoft.JScript {
 				Console.WriteLine (re.Location.LineNumber);
 				throw new NotImplementedException ();
 			}
+
 			ig.Emit (opcode, true_case);
 			ig.Emit (OpCodes.Ldc_I4_0);
 			ig.Emit (OpCodes.Br, box_to_bool);
@@ -685,6 +716,11 @@ namespace Microsoft.JScript {
 			ig.Emit (OpCodes.Ldc_I4_1);
 			ig.MarkLabel (box_to_bool);
 			ig.Emit (OpCodes.Box, typeof (bool));
+		}
+
+		internal static string GetTypeName (string srcName)
+		{
+			return (string) source_file_to_type [srcName];
 		}
 	}
 }

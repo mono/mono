@@ -35,7 +35,7 @@ using System.Reflection.Emit;
 
 namespace Microsoft.JScript {
 	
-	internal class VariableDeclaration : AST {
+	internal class VariableDeclaration : AST, ICanModifyContext {
 
 		internal string id;
 		internal Type type;
@@ -79,7 +79,15 @@ namespace Microsoft.JScript {
 			return "var " + sb.ToString ();
 		}
 
-		internal void EmitDecl (EmitContext ec)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			Symbol _id = Symbol.CreateSymbol (id);
+
+			if (!env.InCurrentScope (ns, _id))
+				env.Enter (ns, _id, this);
+		}
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
 		{
 			object var;
 			
@@ -127,12 +135,12 @@ namespace Microsoft.JScript {
 			}
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
  			if (val != null)
- 				r = val.Resolve (context);
-			lexical_depth = context.depth;
+ 				r = val.Resolve (env);
+			lexical_depth = env.Depth (String.Empty);
 			func_decl = GetContainerFunction;
 			return r;
 		}

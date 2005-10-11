@@ -64,12 +64,12 @@ namespace Microsoft.JScript {
 			throw new NotImplementedException ();
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			throw new NotImplementedException ();
 		}
 
-		internal override bool Resolve (IdentificationTable context, bool no_effect)
+		internal override bool Resolve (Environment env, bool no_effect)
 		{
 			throw new NotImplementedException ();
 		}

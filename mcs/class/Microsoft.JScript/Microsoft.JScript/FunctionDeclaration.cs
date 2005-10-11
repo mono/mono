@@ -38,7 +38,7 @@ using System.Collections;
 
 namespace Microsoft.JScript {
 	
-	public class FunctionDeclaration : Function {
+	public class FunctionDeclaration : Function, ICanModifyContext {
 
 		private int lexical_depth;
 
@@ -123,6 +123,8 @@ namespace Microsoft.JScript {
 			TypeManager.BeginScope ();
 			ILGenerator old_ig = ec.ig;
 			ec.ig = this.ig;
+
+			((ICanModifyContext) func_obj.body).EmitDecls (ec);
 			func_obj.body.Emit (ec);
 
 			string func_name = func_obj.name;
@@ -148,8 +150,7 @@ namespace Microsoft.JScript {
 		{
 			ILGenerator ig = ec.ig;
 			string name = func_obj.name;
-
-			Type t = ec.mod_builder.GetType ("JScript 0");
+			Type t = ec.mod_builder.GetType (CodeGenerator.GetTypeName (Location.SourceName));
 			ig.Emit (OpCodes.Ldtoken, t);
 			ig.Emit (OpCodes.Ldstr, name);
 			ig.Emit (OpCodes.Ldstr, full_name);
@@ -225,32 +226,60 @@ namespace Microsoft.JScript {
 				emit_return_local_field (ig, ctr_info, n);
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			//
+			// In the case of function
+			// declarations we add
+			// function's name to the
+			// table but we resolve its
+			// body until later, as free
+			// variables can be referenced
+			// in function's body.
+			//
+			string name = func_obj.name;
+			AST binding = (AST) env.Get (String.Empty, Symbol.CreateSymbol (name));
+
+			if (binding == null)
+				env.Enter (String.Empty, Symbol.CreateSymbol (name), this);
+			else if (binding is FunctionDeclaration || binding is VariableDeclaration) {
+				Console.WriteLine ("{0}({1},0) : warning JS1111: '{2}' is already defined",
+					   Location.SourceName, Location.LineNumber, name);
+			}
+
+			if (binding is VariableDeclaration) {
+				VariableDeclaration var_decl = (VariableDeclaration) binding;
+				string error_msg = Location.SourceName + "(" + var_decl.Location.LineNumber + ",0) : "
+					+ "error JS5040: '" + var_decl.id + "' is read-only";
+				throw new Exception (error_msg);
+			}
+		}
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			((ICanModifyContext) func_obj.body).EmitDecls (ec);
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			set_function_type ();
+			env.BeginScope (String.Empty);
+			lexical_depth = env.Depth (String.Empty);
 
-			//
-			// outer scope has already added the symbol to the
-			// table but not the correct binding.
-			//
-			FunctionDeclaration func_decl = (FunctionDeclaration) context.Get (Symbol.CreateSymbol (func_obj.name));
-			func_decl.Init (this.parent, this.func_obj.name, this.func_obj.parameters, this.func_obj.type_annot, this.func_obj.body);
-
-			context.BeginScope ();
-			lexical_depth = context.depth;
+			((ICanModifyContext) func_obj).PopulateContext (env, String.Empty);
 
 			FormalParameterList p = func_obj.parameters;
 
 			if (p != null)
-				p.Resolve (context);
-
+				p.Resolve (env);
+			
 			Block body = func_obj.body;
 
 			if (body != null)
-				body.Resolve (context);
+				body.Resolve (env);
 
-			locals = context.CurrentLocals;
-			context.EndScope ();
+			locals = env.CurrentLocals (String.Empty);
+			env.EndScope (String.Empty);
 			return true;
 		}		
 	}

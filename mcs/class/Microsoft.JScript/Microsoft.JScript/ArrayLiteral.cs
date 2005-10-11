@@ -53,12 +53,12 @@ namespace Microsoft.JScript {
 			this.location = location;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			 bool r = true;
 			 foreach (AST ast in elems.elems)
 				 if (ast != null)
-					 r &= ast.Resolve (context);
+					 r &= ast.Resolve (env);
 			return r;
 		}
 

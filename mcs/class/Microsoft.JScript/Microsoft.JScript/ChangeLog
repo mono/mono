@@ -1,3 +1,14 @@
+2005-10-11  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Add support for multiple files compilation. This involved addig
+	an extra pass into the AST for ensuring the resolve process, this
+	pass is named PopulateContext. The AST nodes that implement
+	ICanModifyContext call PopulateContext.
+
+	* IdentificationTable.cs: Added class Environment, which is a
+	symbol table which takes into account namespace info, this is for
+	package statement future implementation.
+
 2005-09-30  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* expression.cs (Expression::Resolve): check if we have an

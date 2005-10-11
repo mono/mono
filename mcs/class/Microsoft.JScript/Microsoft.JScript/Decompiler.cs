@@ -247,7 +247,6 @@ internal class Decompiler {
 			newCapacity = minimalCapacity;
 
 		char [] tmp = new char [newCapacity];
-		// System.arraycopy (sourceBuffer, 0, tmp, 0, sourceTop);
 		Array.Copy (sourceBuffer, 0, tmp, 0, sourceTop);
 		sourceBuffer = tmp;
 	}

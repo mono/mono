@@ -54,12 +54,12 @@ namespace Microsoft.JScript {
 		// Here the actual IL code generation happens.
 		//
 		internal abstract void Emit (EmitContext ec);
-
+			
 		//
 		// Perform type checks and associates expressions
 		// with their declarations
 		//
-		internal abstract bool Resolve (IdentificationTable context);
+		internal abstract bool Resolve (Environment env);
 
 		internal bool InLoop {
 			get {

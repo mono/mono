@@ -76,10 +76,10 @@ namespace Microsoft.JScript.Vsa {
 					throw new Exception ("FIXME: VsaItemType.AppGlobal");
 			}
 			Parser parser = new Parser (code_items);
-			ScriptBlock block = (ScriptBlock) parser.ParseAll ();
-			if (block != null) {
-				SemanticAnalyser.Run (block, (Assembly []) GetOption ("assemblies"));
-				CodeGenerator.Run ((string) GetOption ("first_source"), block);
+			ScriptBlock [] blocks = parser.ParseAll ();
+			if (blocks != null) {
+				SemanticAnalyser.Run (blocks, (Assembly []) GetOption ("assemblies"));
+				CodeGenerator.Run ((string) GetOption ("first_source"), blocks);
 				Console.WriteLine ("Compilation succeeded");
 			}
 			return false;

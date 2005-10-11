@@ -4,7 +4,7 @@
 // Author: Cesar Octavio Lopez Nataren
 //
 // (C) 2003, Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
-// (C) 2005 Copyright , Novell Inc (http://novell.com)
+// Copyright (C) 2005 , Novell Inc (http://novell.com)
 //
 
 //
@@ -48,7 +48,7 @@ namespace Microsoft.JScript {
 		{
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			if (InFunction) {
 				string err = location.SourceName + "(" + location.LineNumber + ",0) : " +

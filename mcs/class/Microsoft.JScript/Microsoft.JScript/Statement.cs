@@ -5,6 +5,7 @@
 //	Cesar Octavio Lopez Nataren
 //
 // (C) 2003, 2004 Cesar Octavio Lopez Nataren, <cesar@ciencias.unam.mx>
+// Copyright (C) 2005 Novell Inc (http://novell.com)
 //
 
 //
@@ -36,7 +37,15 @@ using System.Collections;
 
 namespace Microsoft.JScript {
 
-	internal class If : AST {
+	internal interface ICanModifyContext {
+		//
+		// Populate the symbol table before resolving references
+		//
+		void PopulateContext (Environment env, string ns);
+		void EmitDecls (EmitContext ec);
+	}
+
+	internal class If : AST, ICanModifyContext {
 
 		internal AST cond, true_stm, false_stm;
 
@@ -61,26 +70,44 @@ namespace Microsoft.JScript {
 			
 			return sb.ToString ();
 		}
+
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			if (true_stm is ICanModifyContext)
+				((ICanModifyContext) true_stm).PopulateContext (env, ns);
+
+			if (false_stm is ICanModifyContext)
+				((ICanModifyContext) false_stm).PopulateContext (env, ns);
+		}
 		
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			if (true_stm is ICanModifyContext)
+				((ICanModifyContext) true_stm).EmitDecls (ec);
+
+			if (false_stm is ICanModifyContext)
+				((ICanModifyContext) false_stm).EmitDecls (ec);
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 
 			if (cond != null)
 				if (cond is Exp)
-					r &= ((Exp) cond).Resolve (context, false);
+					r &= ((Exp) cond).Resolve (env, false);
 
 			if (true_stm != null)
 				if (true_stm is Exp)
-					r &= ((Exp) true_stm).Resolve (context, true);
+					r &= ((Exp) true_stm).Resolve (env, true);
 				else
-					r &= true_stm.Resolve (context);			
+					r &= true_stm.Resolve (env);
 
 			if (false_stm != null)
 				if (false_stm is Exp)
-					r &= ((Exp) false_stm).Resolve (context, true);
+					r &= ((Exp) false_stm).Resolve (env, true);
 				else
-					r &= false_stm.Resolve (context);			
+					r &= false_stm.Resolve (env);
 			return r;
 		}
 
@@ -131,7 +158,7 @@ namespace Microsoft.JScript {
 			this.label += label;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
                 {
                         if (!InLoop)
                                 throw new Exception ("A continue can't be outside a iteration stm");
@@ -158,7 +185,7 @@ namespace Microsoft.JScript {
 			this.label += label;
 		}
 
-		 internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
                 {
                         if (!InLoop && !InSwitch)
 				throw new Exception ("A break statement can't be outside a switch or iteration stm");
@@ -214,13 +241,13 @@ namespace Microsoft.JScript {
 				return String.Empty;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			if (!InFunction)
 				throw new Exception ("error JS1018: 'return' statement outside of function");
 			if (expression != null) {
 				OnNotVoidReturn (null);
-				return expression.Resolve (context);
+				return expression.Resolve (env);
 			} else 
 				return true;
 		}
@@ -245,7 +272,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	internal class DoWhile : AST {
+	internal class DoWhile : AST, ICanModifyContext {
 
 		AST stm, exp;
 
@@ -261,14 +288,26 @@ namespace Microsoft.JScript {
 			this.exp = exp;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			if (stm is ICanModifyContext)
+				((ICanModifyContext) stm).PopulateContext (env, ns);
+		}
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			if (stm is ICanModifyContext)
+				((ICanModifyContext) stm).EmitDecls (ec);
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 
 			if (stm != null)
-				r &= stm.Resolve (context);
+				r &= stm.Resolve (env);
 			if (exp != null)
-				r &= exp.Resolve (context);
+				r &= exp.Resolve (env);
 			return r;
 		}
 
@@ -301,7 +340,7 @@ namespace Microsoft.JScript {
 	}
 
 
-	internal class While : AST {		
+	internal class While : AST, ICanModifyContext {
 		AST exp, stm;
 
 		internal While (Location location)
@@ -316,16 +355,28 @@ namespace Microsoft.JScript {
 			this.stm = stm;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			if (stm is ICanModifyContext)
+				((ICanModifyContext) stm).PopulateContext (env, ns);
+		}
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			if (stm is ICanModifyContext)
+				((ICanModifyContext) stm).EmitDecls (ec);
+		}
+		
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 			if (exp != null)
 				if (exp is Exp)
-					r &= ((Exp) exp).Resolve (context, false);
+					r &= ((Exp) exp).Resolve (env, false);
 				else 
-					r &= exp.Resolve (context);
+					r &= exp.Resolve (env);
 			if (stm != null)
-				r &= stm.Resolve (context);
+				r &= stm.Resolve (env);
 			return r;
 		}
 
@@ -364,7 +415,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	internal class For : AST {
+	internal class For : AST, ICanModifyContext {
 		
 		AST [] exprs = new AST [3];
 		AST stms;
@@ -378,17 +429,34 @@ namespace Microsoft.JScript {
 			stms = body;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			foreach (AST ast in exprs)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).PopulateContext (env, ns);
+
+			if (stms is ICanModifyContext)
+				((ICanModifyContext) stms).PopulateContext (env, ns);
+		}
+		
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			foreach (AST ast in exprs)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).EmitDecls (ec);
+
+			if (stms is ICanModifyContext)
+				((ICanModifyContext) stms).EmitDecls (ec);
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 
 			foreach (AST ast in exprs)
-				if (ast is VariableStatement)
-					((VariableStatement) ast).PopulateContext (context);
-				else
-					r &= ast.Resolve (context);
+				r &= ast.Resolve (env);
 			if (stms != null)
-				r &= stms.Resolve (context);
+				r &= stms.Resolve (env);
 			return true;
 		}
 
@@ -404,13 +472,9 @@ namespace Microsoft.JScript {
 
 			/* emit init expr */
 			tmp = exprs [0];
-			if (tmp != null) {
-				if (tmp is VariableStatement) {
-					VariableStatement stm = (VariableStatement) tmp;
-					stm.EmitVariableDecls (ec);
-				}
+			if (tmp != null)
 				tmp.Emit (ec);
-			}
+
                         ec.LoopBegin = ig.DefineLabel ();
 			ec.LoopEnd = ig.DefineLabel ();
 			
@@ -454,7 +518,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	internal class Switch : AST {	       
+	internal class Switch : AST, ICanModifyContext {
 
 		internal AST exp;
 		internal ArrayList case_clauses;
@@ -477,20 +541,50 @@ namespace Microsoft.JScript {
 				sec_case_clauses.Add (clause);
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			foreach (AST ast in case_clauses)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).PopulateContext (env, ns);
+
+			foreach (AST ast in default_clauses)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).PopulateContext (env, ns);
+
+			foreach (AST ast in sec_case_clauses)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).PopulateContext (env, ns);
+		}
+		
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			foreach (AST ast in case_clauses)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).EmitDecls (ec);
+
+			foreach (AST ast in default_clauses)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).EmitDecls (ec);
+
+			foreach (AST ast in sec_case_clauses)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).EmitDecls (ec);
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 			if (exp != null)
-				r &= exp.Resolve (context);
+				r &= exp.Resolve (env);
 			if (case_clauses != null)
 				foreach (Clause c in case_clauses)
-					r &= c.Resolve (context);
+					r &= c.Resolve (env);
 			if (default_clauses != null)
 				foreach (AST dc in default_clauses)
-					r &= dc.Resolve (context);
+					r &= dc.Resolve (env);
 			if (sec_case_clauses != null)
 				foreach (Clause sc in sec_case_clauses)
-					r &= sc.Resolve (context);
+					r &= sc.Resolve (env);
 			return r;
 		}
 
@@ -542,7 +636,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	internal class Clause : AST {
+	internal class Clause : AST, ICanModifyContext {
 		internal AST exp;
 		internal ArrayList stm_list;
 		internal Label matched_block;
@@ -558,13 +652,28 @@ namespace Microsoft.JScript {
 			stm_list.Add (stm);
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			foreach (AST ast in stm_list)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).PopulateContext (env, ns);
+		}
+		
+
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			foreach (AST ast in stm_list)
+				if (ast is ICanModifyContext)
+					((ICanModifyContext) ast).EmitDecls (ec);
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 			if (exp != null)
-				r &= exp.Resolve (context);
+				r &= exp.Resolve (env);
 			foreach (AST ast in stm_list)
-				r &= ast.Resolve (context);
+				r &= ast.Resolve (env);
 			return r;			
 		}
 
@@ -589,7 +698,7 @@ namespace Microsoft.JScript {
 		}	
 	}
 
-	internal class Catch : AST {
+	internal class Catch : AST, ICanModifyContext {
 		internal string id;
 		internal AST catch_cond;
 		internal AST stms;
@@ -605,11 +714,23 @@ namespace Microsoft.JScript {
 			this.stms = stms;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			if (stms is ICanModifyContext)
+				((ICanModifyContext) stms).PopulateContext (env, ns);
+		}
+		
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			if (stms is ICanModifyContext)
+				((ICanModifyContext) stms).EmitDecls (ec);
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			bool r = true;
 			if (stms != null)
-				r &= stms.Resolve (context);
+				r &= stms.Resolve (env);
 			return r;
 		}
 
@@ -642,7 +763,7 @@ namespace Microsoft.JScript {
 		}
 	}
 
-	internal class Labelled : AST {
+	internal class Labelled : AST, ICanModifyContext {
 		string name;
 		Label init_addrs; 
 		Label end_addrs;
@@ -671,7 +792,19 @@ namespace Microsoft.JScript {
 			this.location = location;
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		void ICanModifyContext.PopulateContext (Environment env, string ns)
+		{
+			if (stm is ICanModifyContext)
+				((ICanModifyContext) stm).PopulateContext (env, ns);
+		}
+		
+		void ICanModifyContext.EmitDecls (EmitContext ec)
+		{
+			if (stm is ICanModifyContext)
+				((ICanModifyContext) stm).EmitDecls (ec);
+		}
+
+		internal override bool Resolve (Environment env)
 		{
 			try {
 				SemanticAnalyser.AddLabel (name, this);
@@ -679,7 +812,7 @@ namespace Microsoft.JScript {
 				throw new Exception ("error JS1025: Label redefined");
 			}
 			if (stm != null)
-				stm.Resolve (context);
+				stm.Resolve (env);
 			SemanticAnalyser.RemoveLabel (name);
 			return true;
 		}

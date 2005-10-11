@@ -62,10 +62,10 @@ namespace Microsoft.JScript {
 		internal override void Emit (EmitContext ec)
 		{
 		}
-	
-		internal override bool Resolve (IdentificationTable context)
+
+		internal override bool Resolve (Environment env)
 		{
-			context.Enter (Symbol.CreateSymbol (id), this);
+			env.Enter (String.Empty, Symbol.CreateSymbol (id), this);
 			return true;
 		}
 	}
@@ -83,7 +83,7 @@ namespace Microsoft.JScript {
 		internal void Add (string id, string type_annot, Location location)
 		{
 			FormalParam p = new FormalParam (id, type_annot, location);
-			ids.Add (p); 
+			ids.Add (p);
 		}
 
 		public override string ToString ()
@@ -96,7 +96,7 @@ namespace Microsoft.JScript {
 			return sb.ToString ();
 		}
 
-		internal override bool Resolve (IdentificationTable context)
+		internal override bool Resolve (Environment env)
 		{
 			FormalParam f;
 			int i, n = ids.Count;
@@ -104,7 +104,7 @@ namespace Microsoft.JScript {
 			for (i = 0; i < n; i++) {
 				f = (FormalParam) ids [i];
 				f.pos = (byte) (i + 2);
-				f.Resolve (context);
+				f.Resolve (env);
 			}
 			return true;
 		} 
