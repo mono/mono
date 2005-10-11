@@ -1,3 +1,7 @@
+2005-10-11  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ComboBox.cs: Fixes border drawing
+
 2005-10-10  Miguel de Icaza  <miguel@novell.com>
 
 	* MimeIcon.cs: Ignore errors if the file can not be read.
