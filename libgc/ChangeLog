@@ -1,3 +1,8 @@
+2005-10-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* pthread_support.c (GC_thread_deregister_foreign): Make this return
+	void instead of void*.
+
 2005-09-29  Raja R Harinath  <harinath@gmail.com>
 
 	* configure.host: Fix syntax error.
