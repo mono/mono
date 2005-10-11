@@ -1,3 +1,8 @@
+2005-10-11  Zoltan Varga  <vargaz@gmail.com>
+ 
+	* pthread_support.c (GC_thread_deregister_foreign): Make this return
+	void instead of void*.
+	
 2005-08-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* win32_threads.c: If GC_INSIDE_DLL is defined, define the DllMain function for automatic registration

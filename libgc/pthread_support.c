@@ -223,7 +223,7 @@ static ptr_t size_zero_object = (ptr_t)(&size_zero_object);
 
 void GC_delete_thread(pthread_t id);
 
-void *GC_thread_deregister_foreign (void *data)
+void GC_thread_deregister_foreign (void *data)
 {
     GC_thread me = (GC_thread)data;
  /*   GC_fprintf1( "\n\n\n\n --- Deregister %x ---\n\n\n\n\n", me->flags ); */
