@@ -1,3 +1,9 @@
+2005-10-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Makefile: Add mozroot to the build.
+	* mozroots.cs: A new command-line tool to download and import the list
+	of Mozilla's trusted root certificates into Mono's stores.
+
 2005-09-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* makecert.cs: For PKCS#12, added localKeyID attribute support, for 
