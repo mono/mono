@@ -1,3 +1,7 @@
+2005-10-11  Marek Safar <marek.safar@seznam.cz>
+
+	* test-461.cs: New test for #76370.
+
 2005-10-07  Raja R Harinath  <rharinath@novell.com>
 
 	* test-460.cs: New test.
