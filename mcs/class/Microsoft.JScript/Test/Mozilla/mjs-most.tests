@@ -1073,8 +1073,7 @@ js1_3/Boolean/boolean-001.js
 # Needs eval
 #js1_3/Script/function-001-n.js
 js1_3/Script/function-002.js
-# EmitRelationalComp throws NotImplemented exception 
-#js1_3/Script/in-001.js
+js1_3/Script/in-001.js
 # Invalid IL
 #js1_3/Script/new-001.js
 js1_3/Script/script-001.js
@@ -1098,8 +1097,7 @@ js1_3/inherit/proto_9.js
 # Needs eval
 #js1_3/regress/function-001-n.js
 js1_3/regress/function-002.js
-# EmitRelational throws NotImplementedException 
-#js1_3/regress/in-001.js
+js1_3/regress/in-001.js
 # Invalid IL
 #js1_3/regress/new-001.js
 js1_3/regress/switch-001.js
