@@ -34,7 +34,7 @@ namespace Mono.MonoBASIC {
 	///   declarations.
 	/// </remarks>
 	public class Block : Statement {
-		public readonly Block     Parent;
+		public Block     Parent;
 		public readonly bool      Implicit;
 		public readonly Location  StartLocation;
 		public Location	   EndLocation;
@@ -156,7 +156,7 @@ namespace Mono.MonoBASIC {
 			}
 		}
 
-		void AddChild (Block b)
+		public void AddChild (Block b)
 		{
 			if (children == null)
 				children = new ArrayList ();
@@ -886,6 +886,8 @@ namespace Mono.MonoBASIC {
 	/// </remarks>
 	public class MethodBlock : Block {
 		public readonly string MethodName;
+		public Block onerror;
+		public ArrayList Pending_Assigns;
 		
 		public MethodBlock (Block parent, string MethodName)
 			: base (parent, false, Location.Null, Location.Null)

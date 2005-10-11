@@ -1,3 +1,8 @@
+2005-10-11 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+           
+  	* block.cs, statements.cs, mb-parser.jay: Support for On Error Goto 0,
+  	On Error Goto -1 and On Error Goto <Label>
+  	
 2005-10-07 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
            Alexandre Rocha Lima e Marcondes <alexandre@psl-pr.softwarelivre.org>       
            Rafael Teixeira <rafaelteixeirabr@hotmail.com>  

@@ -1593,6 +1593,10 @@ sub_declaration
 					    (ArrayList) $6, (Location)$3);
 	
 		method.Block = (Block) end_block();
+		
+		if ( ((MethodBlock) method.Block).onerror != null ) {
+			method.Block = ((MethodBlock) method.Block).onerror;
+		}
 		$$ = method;
 
 		if ($5 != null) { 
@@ -2807,6 +2811,7 @@ embedded_statement
 	| selection_statement
 	| iteration_statement
 	| try_statement
+	| on_error_statement
 	| synclock_statement
 	| jump_statement
 	| array_handling_statement 
@@ -3333,7 +3338,195 @@ catch_args
 		$$ = null;
 	}
         ;
-        
+
+on_error_statement
+	: ON ERROR GOTO MINUS _mark_ LITERAL_INTEGER //ON ERROR GOTO -1
+	  {// This should disables the exception in the current procedure.
+		
+		Location l = (Location) $5;
+	
+		if ( $6.ToString() == "1" )
+		{
+			Block method_block = current_block;
+			
+			while ( !(method_block is MethodBlock) && (method_block.Parent != null) )
+                       		method_block = method_block.Parent;
+
+			// call Microsoft.VisualBasic.CompilerServices.ProjectData.ClearProjectError()
+			// This call will be created in all kinds of on error goto ( 0, -1, label )
+			Expression clearerrors = DecomposeQI ("Microsoft.VisualBasic.CompilerServices.ProjectData.ClearProjectError", l);
+			StatementExpression stex = new StatementExpression (
+							(ExpressionStatement) new Invocation (clearerrors, null, l),
+							l);
+			current_block.AddStatement ((Statement) stex );
+			
+			String var2 = "$ONERROR$2";//Loc_1 -Int-
+			
+			// This Assignment must be emited only if the method have a statement like ON ERROR GOTO label.
+			// $ONERROR$2 = 0  (this Variable is created in a on error goto label stmt)
+			// This variable will be used in a filter block to disable de exception, if the method have a statement like ON ERROR GOTO label.
+
+			Expression var = DecomposeQI (var2, l);
+			Expression value = new IntLiteral (0);
+				
+			StatementExpression assign = new StatementExpression( ((ExpressionStatement) new Assign (var, value, l)), l);
+
+			if( ((MethodBlock) method_block).onerror  != null ) //There is an On_Error Statement created.
+				current_block.AddStatement ( (Statement) assign );
+			else // Mark this assignment as pending, if exists an ON ERROR GOTO LABEL statement after this.
+			{
+				if ( ((MethodBlock) method_block).Pending_Assigns == null )
+					((MethodBlock) method_block).Pending_Assigns = new ArrayList();
+
+				Pending_Assign pa = new Pending_Assign(current_block, (Statement) assign, current_block.statements.Count );
+				((MethodBlock) method_block).Pending_Assigns.Add(pa) ;
+			}	
+		}
+		else
+		{
+			Report.Error (30203, l, "Identifier expected.");
+		}
+
+		$$ = null;
+	  }
+	| ON ERROR GOTO _mark_ label_name
+	  {
+		Location l = (Location) $4;
+		Block old_current = current_block;
+		Block method_block = current_block;
+			
+		while ( !(method_block is MethodBlock) && (method_block.Parent != null) )
+                       	method_block = method_block.Parent;
+
+		// call Microsoft.VisualBasic.CompilerServices.ProjectData.ClearProjectError()
+		// This call will be created in all kinds of on error goto ( 0, -1, label )
+		Expression clearerrors = DecomposeQI ("Microsoft.VisualBasic.CompilerServices.ProjectData.ClearProjectError", l);
+		StatementExpression stex = new StatementExpression (
+						(ExpressionStatement) new Invocation (clearerrors, null, l),
+						l);
+		current_block.AddStatement ((Statement) stex );
+
+		if ( $5.ToString() == "0") // ON ERROR GOTO 0
+		{// This should disables error handling in the current procedure.
+			
+			String var1 = "$ONERROR$1";//Loc_0 -Int- Number of Label.
+	                
+			// This Assignment must be emited only if the method have a statement like ON ERROR GOTO label.
+			// $ONERROR$1 = 0  (this Variable is created in a on error goto label stmt)
+			// This variable will be used in a filter block to disable error handling, if the method have a statement like ON ERROR GOTO label.
+
+			Expression var = DecomposeQI (var1, l);
+			Expression value = new IntLiteral (0);
+				
+			StatementExpression assign = new StatementExpression( ((ExpressionStatement) new Assign (var, value, l)), l);
+
+			if( ((MethodBlock) method_block).onerror  != null ) //There is an On_Error Statement created.
+				current_block.AddStatement ( (Statement) assign );
+			else // Mark this assignment as pending, if exists an ON ERROR GOTO LABEL statement after this.
+			{
+				if ( ((MethodBlock) method_block).Pending_Assigns == null )
+					((MethodBlock) method_block).Pending_Assigns = new ArrayList();
+
+				Pending_Assign pa = new Pending_Assign(current_block, (Statement) assign, current_block.statements.Count );
+				((MethodBlock) method_block).Pending_Assigns.Add(pa) ;
+			}	
+		}
+		else // ON ERROR GOTO LABEL
+		{// This should Enables the error-handling routine that starts at the line specified in the required line argument.
+	
+			String var1 = "$ONERROR$1";//Loc_0 -Int-Number of Label.
+			String var2 = "$ONERROR$2";//Loc_1 -Int-
+			String var3 = "$ONERROR$3";//Loc_2 -System.Exception- Exception Object.
+	                
+			VariableInfo vi = current_block.GetVariableInfo (var1);
+			
+			if( vi == null )
+			{ // First On Error Statement
+			  // 1) Declare local variables to handle goto.
+			  // 1.1) Dim $ONERROR$01  (Variable Generated because on error stmt)
+			  // 1.2) Dim $ONERROR$02  (Variable Generated because on error stmt)
+			  // 1.3) Dim $ONERROR$03  (Variable Generated because on error stmt)
+			  // 2) Declare a Parent Block of Method_Block to handle the method_block stmts within a try stmt.
+			  // 3) Declere OnError stmt and mark its block as Parent of method_block.
+			  // 4) Assign the pending assignments if they exist.
+			
+				Block block = new Block( method_block.Parent, null,
+                        	   lexer.Location, Location.Null);
+
+				//Cleaning the variables created in a top block(these variables already were created in method_block)
+				block.Variables.Clear();
+
+				// Dim $ONERROR$01 As Integer (Variable Genearted because on error stmt)
+				// Dim $ONERROR$02 As Integer (Variable Genearted because on error stmt)
+				// Dim $ONERROR$03 As System.Exception (Variable Genearted because on error stmt)
+				ArrayList VarDeclarations = new ArrayList ();
+				VarDeclarations.Add (new VariableDeclaration (var1, TypeManager.system_int32_expr, null, l, null));
+				VarDeclarations.Add (new VariableDeclaration (var2, TypeManager.system_int32_expr, null, l, null));
+				VarDeclarations.Add (new VariableDeclaration (var3, DecomposeQI("System.Exception", l), null, l, null));
+				ArrayList decl = new ArrayList ();
+				decl.AddRange (VarDeclarations);
+			
+				DictionaryEntry de = new DictionaryEntry (DecomposeQI("_local_vars_", l), decl);
+				current_block = block;
+				declare_local_variables ((Expression) de.Key, (ArrayList) de.Value, l);
+
+				//Mark these variables as Used
+				vi = current_block.GetVariableInfo (var1);
+				vi.Used = true;
+				vi = current_block.GetVariableInfo (var2);
+				vi.Used = true;
+				vi = current_block.GetVariableInfo (var3);
+				vi.Used = true;
+
+				current_block = old_current;
+				
+				Statement stmt = new On_Error( method_block, l );
+				block.AddStatement(stmt);
+				block.AddChild(method_block);
+				// This will make on_error block as Parent of method_block
+				// This is needed because an implicit insertion of a try outside of method_block statements.
+				((MethodBlock) method_block).onerror = block;
+				method_block.Parent = block;
+
+				//This adds the pendinding assignments of any on error goto 0 or -1 before the first ON ERROR GOTO LABEL statement.
+				if ( ((MethodBlock) method_block).Pending_Assigns != null )
+				{
+					foreach ( Pending_Assign pa in  ((MethodBlock) method_block).Pending_Assigns )
+						pa.AddAssign();
+					((MethodBlock) method_block).Pending_Assigns.Clear();
+				}
+			}
+		
+			int targetnumber = 0;
+
+			foreach ( Statement s in ((MethodBlock) method_block).onerror.statements )
+			{
+				if ( s is On_Error )
+				{
+					targetnumber = ((On_Error) s).AddTarget( (string) $5 );
+					break;	
+				}
+			}
+
+			// $ONERROR$1 = targetnumber + 1 (this Variable already was created in a on error stmt)
+			// This variable will be used in a switch to indicate de used label
+			// and to indicate the exit in a comparison with false.
+
+			Expression var = DecomposeQI (var1, l);
+			Expression value = new IntLiteral (targetnumber + 1);
+				
+			StatementExpression assign = new StatementExpression( ((ExpressionStatement) new Assign (var, value, l)), l);
+			current_block.AddStatement ( (Statement) assign );
+			
+		}
+		$$ = null;
+	  } 
+	| ON ERROR _mark_ RESUME NEXT
+	  { //Control goes to the statement immediately following the statement 
+	    //where the error occurred and execution continues from that point.
+		
+	  }
+	;
        
 do_statement
 	: DO _mark_ opt_do_construct end_of_stmt

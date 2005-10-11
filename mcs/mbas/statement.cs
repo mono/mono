@@ -4560,6 +4560,212 @@ namespace Mono.MonoBASIC {
 			return true;
 		}
 	}
+	
+	public  class Pending_Assign {
+		Statement assign;
+		Block block_to_be_inserted;
+		int statement_index;
+		
+		public Pending_Assign (Block block, Statement assign, int index)
+		{
+			this.assign = assign;
+			this.block_to_be_inserted = block;
+			this.statement_index = index;
+		}
+
+		public  void AddAssign()
+		{
+			block_to_be_inserted.statements.Insert( statement_index, assign );
+		}	
+	}
+	
+	public class On_Error : Statement {
+		public readonly Block method_block;
+		ArrayList targets;
+		LabeledStatement[] labeledstatements;
+		
+		public On_Error (Block method_block, Location l)
+		{	
+			//Goto
+			this.method_block = method_block;
+			base.loc = l;
+			targets = new ArrayList();
+		}
+
+		public int AddTarget ( string target )
+		{				
+			int i = targets.IndexOf( target ) ;
+			
+			if ( i == -1 ) 
+				return targets.Add ( target );
+			else
+				return i;
+		}
+
+		public ArrayList Targets {
+			get {
+				return targets;
+			}
+		}
+
+		public override bool Resolve (EmitContext ec)
+		{
+			this.labeledstatements = new LabeledStatement[targets.Count];
+			
+			bool ok = true;
+			
+			ec.StartFlowBranching (FlowBranchingType.EXCEPTION, method_block.StartLocation);
+
+			Report.Debug (1, "START OF TRY BLOCK", method_block.StartLocation);
+
+			bool old_in_try = ec.InTry;
+			ec.InTry = true;
+
+			if (!method_block.Resolve (ec))
+				ok = false;
+
+			ec.InTry = old_in_try;
+
+			FlowBranching.UsageVector vector = ec.CurrentBranching.CurrentUsageVector;
+
+			ec.EndFlowBranching ();
+
+			ec.CurrentBranching.CurrentUsageVector.Or (vector);
+
+			Report.Debug (1, "END OF TRY", ec.CurrentBranching);
+
+			//This statement has more than one label in cases of more than one 'on error goto' specification.
+			for ( int i = 0 ; i < targets.Count ; i++ )
+			{
+				labeledstatements[i] = method_block.Parent.LookupLabel ((string) targets[i]);
+
+				// If this is a forward goto.
+				if (!labeledstatements[i].IsDefined)
+					labeledstatements[i].AddUsageVector (ec.CurrentBranching.CurrentUsageVector);
+
+				labeledstatements[i].AddReference ();
+			}
+			ec.CurrentBranching.CurrentUsageVector.Breaks = FlowReturns.ALWAYS;
+			
+			return ok;
+		}
+		protected override bool DoEmit (EmitContext ec)
+		{	
+			ILGenerator ig = ec.ig;
+				
+			//Try
+
+			bool returns;
+
+			ec.TryCatchLevel++;
+			
+			Label finish = ig.BeginExceptionBlock ();
+				ec.HasExitLabel = true;
+				ec.ExitLabel = finish;
+				
+				bool old_in_try = ec.InTry;
+				ec.InTry = true;
+				returns = method_block.Emit (ec);
+				ec.InTry = old_in_try;
+				bool old_in_catch = ec.InCatch;
+				ec.InCatch = true;
+
+			Label error = ig.DefineLabel();
+			Label endfilter = ig.DefineLabel();
+			Label verification = ig.DefineLabel();
+			
+			ig.BeginExceptFilterBlock();
+				ig.Emit (OpCodes.Isinst, Type.GetType("System.Exception") );
+				ig.Emit (OpCodes.Brtrue_S, verification );
+
+				ig.Emit (OpCodes.Br_S, error);
+			
+				ig.MarkLabel ( verification );	
+				ig.Emit (OpCodes.Ldloc_0);
+				ig.Emit (OpCodes.Brfalse_S, error);
+				
+				ig.Emit (OpCodes.Ldloc_1);
+				ig.Emit (OpCodes.Brtrue_S, error);
+
+				ig.Emit (OpCodes.Ldc_I4_1);
+				ig.Emit (OpCodes.Br_S, endfilter);
+				
+				ig.MarkLabel (error);	
+				ig.Emit (OpCodes.Ldc_I4_0);
+
+				ig.MarkLabel ( endfilter );	
+			
+			
+			Label endcatch = ig.DefineLabel();		
+			Label verification2 = ig.DefineLabel();
+			
+			ig.BeginCatchBlock (null);
+				ig.Emit (OpCodes.Castclass, Type.GetType("System.Exception"));
+				ig.Emit (OpCodes.Dup);
+
+				Type t = typeof(Microsoft.VisualBasic.CompilerServices.ProjectData);
+				MethodInfo mi = t.GetMethod("SetProjectError", new Type[] { typeof(System.Exception) } );
+				ig.Emit (OpCodes.Call, mi);
+				ig.Emit (OpCodes.Stloc_3);
+				ig.Emit (OpCodes.Ldloc_1);
+				ig.Emit (OpCodes.Brfalse_S, verification2 );
+				ig.Emit (OpCodes.Leave_S, finish );
+				ig.MarkLabel ( verification2 );
+				ig.Emit (OpCodes.Ldc_I4_M1);
+				ig.Emit (OpCodes.Stloc_1);
+				ig.Emit (OpCodes.Ldloc_0);
+
+				Label[] lbswitch = new Label[targets.Count + 1];
+				for ( int i = 0; i <= targets.Count; i++ )
+					lbswitch[i] = ig.DefineLabel();
+				
+				ig.Emit (OpCodes.Switch, lbswitch);	
+				ig.MarkLabel ( lbswitch[0] ) ;
+				ig.Emit (OpCodes.Leave_S, endcatch);	
+								
+				Label[] labels = new Label[targets.Count];
+				for ( int i = 0; i < targets.Count; i++ )
+				{
+					labels[i] = labeledstatements[i].LabelTarget(ec);
+
+					ig.MarkLabel ( lbswitch[i+1] ) ;
+					ig.Emit ( OpCodes.Leave, labels[i] );
+				}
+
+				ig.MarkLabel ( endcatch );
+				ig.Emit ( OpCodes.Rethrow );	
+
+			ec.InCatch = old_in_catch;
+
+			ig.EndExceptionBlock ();
+			ec.TryCatchLevel--;
+
+			Label end = ig.DefineLabel();
+			//ig.MarkLabel ( finish ) ;
+			ig.Emit (OpCodes.Ldloc_1);
+			ig.Emit (OpCodes.Brfalse_S, end );
+				
+			mi = t.GetMethod("ClearProjectError");
+			ig.Emit (OpCodes.Call, mi);
+
+			ig.MarkLabel(end) ;
+			
+			if (!returns)
+				return returns;
+
+			// Unfortunately, System.Reflection.Emit automatically emits a leave
+			// to the end of the finally block.  This is a problem if 'returns'
+			// is true since we may jump to a point after the end of the method.
+			// As a workaround, emit an explicit ret here.
+
+			if (ec.ReturnType != null)
+				ec.ig.Emit (OpCodes.Ldloc, ec.TemporaryReturn ());
+			ec.ig.Emit (OpCodes.Ret);
+
+			return true;
+		}
+		
+	}
 
 	public class Using : Statement {
 		object expression_or_block;
