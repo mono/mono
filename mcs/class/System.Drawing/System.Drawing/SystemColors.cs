@@ -175,12 +175,12 @@ namespace System.Drawing {
 		[DllImport ("user32.dll", EntryPoint="GetSysColor", CallingConvention=CallingConvention.StdCall)]
 		private extern static uint Win32GetSysColor(GetSysColorIndex index);
 
-		private static Color GetSysColor(GetSysColorIndex index) {
+		private static Color GetSysColor(GetSysColorIndex index, string name, KnownColor knownColor) {
 			uint color;
 
 			color = Win32GetSysColor(index);
 
-			return Color.FromArgb((byte)(color & 0xff), (byte)((color >> 8) & 0xff), (byte)((color >> 16) & 0xff));
+			return Color.FromArgbSystem(255, (byte)(color & 0xff), (byte)((color >> 8) & 0xff), (byte)((color >> 16) & 0xff), name, knownColor);
 		}
 
 		// When this method is called, we teach any new color(s) to the Color class
@@ -216,32 +216,32 @@ namespace System.Drawing {
 		static SystemColors () {
 			// If we're on a Win32 platform we should behave like MS and pull the colors
 			if (((int)Environment.OSVersion.Platform != 4) && ((int)Environment.OSVersion.Platform != 128)) {
-				active_border = GetSysColor(GetSysColorIndex.COLOR_ACTIVEBORDER);
-				active_caption = GetSysColor(GetSysColorIndex.COLOR_ACTIVECAPTION);
-				active_caption_text = GetSysColor(GetSysColorIndex.COLOR_CAPTIONTEXT);
-				app_workspace = GetSysColor(GetSysColorIndex.COLOR_APPWORKSPACE);
-				control = GetSysColor(GetSysColorIndex.COLOR_BTNFACE);
-				control_dark = GetSysColor(GetSysColorIndex.COLOR_BTNSHADOW);
-				control_dark_dark = GetSysColor(GetSysColorIndex.COLOR_3DDKSHADOW);
-				control_light = GetSysColor(GetSysColorIndex.COLOR_BTNHIGHLIGHT);
-				control_light_light = GetSysColor(GetSysColorIndex.COLOR_3DLIGHT);
-				control_text = GetSysColor(GetSysColorIndex.COLOR_BTNTEXT);
-				desktop = GetSysColor(GetSysColorIndex.COLOR_DESKTOP);
-				gray_text = GetSysColor(GetSysColorIndex.COLOR_GRAYTEXT);
-				highlight = GetSysColor(GetSysColorIndex.COLOR_HIGHLIGHT);
-				highlight_text = GetSysColor(GetSysColorIndex.COLOR_HIGHLIGHTTEXT);
-				hot_track = GetSysColor(GetSysColorIndex.COLOR_HOTLIGHT);
-				inactive_border = GetSysColor(GetSysColorIndex.COLOR_INACTIVEBORDER);
-				inactive_caption = GetSysColor(GetSysColorIndex.COLOR_INACTIVECAPTION);
-				inactive_caption_text = GetSysColor(GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT);
-				info = GetSysColor(GetSysColorIndex.COLOR_INFOBK);
-				info_text = GetSysColor(GetSysColorIndex.COLOR_INFOTEXT);
-				menu = GetSysColor(GetSysColorIndex.COLOR_MENU);
-				menu_text = GetSysColor(GetSysColorIndex.COLOR_MENUTEXT);
-				scroll_bar = GetSysColor(GetSysColorIndex.COLOR_SCROLLBAR);
-				window = GetSysColor(GetSysColorIndex.COLOR_WINDOW);
-				window_frame = GetSysColor(GetSysColorIndex.COLOR_WINDOWFRAME);
-				window_text = GetSysColor(GetSysColorIndex.COLOR_WINDOWTEXT);
+				active_border = GetSysColor(GetSysColorIndex.COLOR_ACTIVEBORDER, "ActiveBorder", KnownColor.ActiveBorder);
+				active_caption = GetSysColor(GetSysColorIndex.COLOR_ACTIVECAPTION, "ActiveCaption", KnownColor.ActiveCaption);
+				active_caption_text = GetSysColor(GetSysColorIndex.COLOR_CAPTIONTEXT, "ActiveCaptionText", KnownColor.ActiveCaptionText);
+				app_workspace = GetSysColor(GetSysColorIndex.COLOR_APPWORKSPACE, "AppWorkspace", KnownColor.AppWorkspace);
+				control = GetSysColor(GetSysColorIndex.COLOR_BTNFACE, "Control", KnownColor.Control);
+				control_dark = GetSysColor(GetSysColorIndex.COLOR_BTNSHADOW, "ControlDark", KnownColor.ControlDark);
+				control_dark_dark = GetSysColor(GetSysColorIndex.COLOR_3DDKSHADOW, "ControlDarkDark", KnownColor.ControlDarkDark);
+				control_light = GetSysColor(GetSysColorIndex.COLOR_BTNHIGHLIGHT, "ControlLight", KnownColor.ControlLight);
+				control_light_light = GetSysColor(GetSysColorIndex.COLOR_3DLIGHT, "ControlLightLight", KnownColor.ControlLightLight);
+				control_text = GetSysColor(GetSysColorIndex.COLOR_BTNTEXT, "ControlText", KnownColor.ControlText);
+				desktop = GetSysColor(GetSysColorIndex.COLOR_DESKTOP, "Desktop", KnownColor.Desktop);
+				gray_text = GetSysColor(GetSysColorIndex.COLOR_GRAYTEXT, "GrayText", KnownColor.GrayText);
+				highlight = GetSysColor(GetSysColorIndex.COLOR_HIGHLIGHT, "Highlight", KnownColor.Highlight);
+				highlight_text = GetSysColor(GetSysColorIndex.COLOR_HIGHLIGHTTEXT, "HighlightText", KnownColor.HighlightText);
+				hot_track = GetSysColor(GetSysColorIndex.COLOR_HOTLIGHT, "HotTrack", KnownColor.HotTrack);
+				inactive_border = GetSysColor(GetSysColorIndex.COLOR_INACTIVEBORDER, "InactiveBorder", KnownColor.InactiveBorder);
+				inactive_caption = GetSysColor(GetSysColorIndex.COLOR_INACTIVECAPTION, "InactiveCaption", KnownColor.InactiveCaption);
+				inactive_caption_text = GetSysColor(GetSysColorIndex.COLOR_INACTIVECAPTIONTEXT, "InactiveCaptionText", KnownColor.InactiveCaptionText);
+				info = GetSysColor(GetSysColorIndex.COLOR_INFOBK, "Info", KnownColor.Info);
+				info_text = GetSysColor(GetSysColorIndex.COLOR_INFOTEXT, "InfoText", KnownColor.InfoText);
+				menu = GetSysColor(GetSysColorIndex.COLOR_MENU, "Menu", KnownColor.Menu);
+				menu_text = GetSysColor(GetSysColorIndex.COLOR_MENUTEXT, "MenuText", KnownColor.MenuText);
+				scroll_bar = GetSysColor(GetSysColorIndex.COLOR_SCROLLBAR, "ScrollBar", KnownColor.ScrollBar);
+				window = GetSysColor(GetSysColorIndex.COLOR_WINDOW, "Window", KnownColor.Window);
+				window_frame = GetSysColor(GetSysColorIndex.COLOR_WINDOWFRAME, "WindowFrame", KnownColor.WindowFrame);
+				window_text = GetSysColor(GetSysColorIndex.COLOR_WINDOWTEXT, "WindowText", KnownColor.WindowText);
 			}
 		}
 

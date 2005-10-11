@@ -1,3 +1,8 @@
+2005-10-11 Jordi Mas i Hernandez <jordi@ximian.com> 
+
+	* SystemColors.cs: Fixes the Win32 system colors including the color
+	name and the knownColor properties.
+
 2005-10-07  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* FontFamily.cs: Use Marshal.PtrToStringUni to do the string
