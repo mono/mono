@@ -1,7 +1,9 @@
-2005-10-11  Sebastien Pouliot  <sebastien@ximian.com>
-
+2005-10-11  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
 	* X509Certificate.cs: Fixed bug #76407. ValidFrom and ValidUntil are
 	local date/time so IsCurrent most also use a local date/time.
+	* X509CRL.cs: ValidFrom and ValidUntil are local date/time so 
+	IsCurrent most also use a local date/time.
 
 2005-10-06  Sebastien Pouliot  <sebastien@ximian.com>
 

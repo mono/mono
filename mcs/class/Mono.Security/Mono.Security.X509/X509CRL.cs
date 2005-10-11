@@ -243,7 +243,7 @@ namespace Mono.Security.X509 {
 		}
 
 		public bool IsCurrent {
-			get { return WasCurrent (DateTime.UtcNow); }
+			get { return WasCurrent (DateTime.Now); }
 		}
 
 		public bool WasCurrent (DateTime instant) 
