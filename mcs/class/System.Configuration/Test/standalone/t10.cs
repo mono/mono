@@ -21,9 +21,9 @@ class T1
 				Console.WriteLine ("connectionstring[{0}] = `{1}',`{2}'", cs.Name, cs.ProviderName, cs.ConnectionString);
 			}
 		}
-		catch (ConfigurationErrorsException e)
+		catch (Exception e)
 		{
-			Console.WriteLine ("ConfigurationErrorsException raised");
+			Console.WriteLine ("{0} raised", e.GetType());
 		}
 	}
 }
