@@ -1,3 +1,7 @@
+2005-10-11  Dick Porter  <dick@ximian.com>
+
+	* handles.c: Fix several race conditions
+
 2005-10-11 Miguel de Icaza <miguel@novell.com>
 
 	* io.c: no need to block SIGPIPE anymore, as it is ignored.
