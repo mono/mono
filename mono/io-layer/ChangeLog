@@ -1,5 +1,13 @@
 2005-10-11  Dick Porter  <dick@ximian.com>
 
+	* sockets.c (_wapi_getsockopt): Translate SO_ERROR results into
+	w32 error codes.
+
+	* error.c (errno_to_WSA): Don't return a bogus error if someone
+	asks to translate errno 0.
+
+2005-10-11  Dick Porter  <dick@ximian.com>
+
 	* handles.c: Fix several race conditions
 
 2005-10-11 Miguel de Icaza <miguel@novell.com>
