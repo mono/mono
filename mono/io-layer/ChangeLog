@@ -1,3 +1,7 @@
+2005-10-11 Miguel de Icaza <miguel@novell.com>
+
+	* io.c: no need to block SIGPIPE anymore, as it is ignored.
+
 2005-10-05  Dick Porter  <dick@ximian.com>
 
 	* threads.c (_wapi_thread_own_mutex, _wapi_thread_disown_mutex):
