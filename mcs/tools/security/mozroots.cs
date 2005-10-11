@@ -175,9 +175,9 @@ namespace Mono.Tools {
 				}
 				if (removed.Count > 0) {
 					if (confirmRemoval) {
-						WriteLine ("{0} previously trusted certificates were not part of the update.");
+						WriteLine ("{0} previously trusted certificates were not part of the update.", removed.Count);
 					} else {
-						WriteLine ("{0} previously trusted certificates were removed.");
+						WriteLine ("{0} previously trusted certificates were removed.", removed.Count);
 					}
 
 					foreach (X509Certificate old in removed) {
@@ -188,6 +188,7 @@ namespace Mono.Tools {
 						}
 					}
 				}
+				WriteLine ("Import process completed.{0}", Environment.NewLine);
 			}
 			return 0;
 		}
