@@ -1,3 +1,9 @@
+2005-10-11  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76370.
+	* convert.cs (ExplicitConversionCore): Fixed object->enum
+	conversion.
+
 2005-10-10  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (PropertyExpr.Emit): Use Invocation.EmitCall to emit

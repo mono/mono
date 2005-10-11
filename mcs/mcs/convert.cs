@@ -1685,9 +1685,9 @@ namespace Mono.CSharp {
 				return ne;
 
 			//
-			// Unboxing conversion.
+			// Unboxing conversions; only object types can be convertible to enum
 			//
-			if (expr_type == TypeManager.object_type && target_type.IsValueType)
+			if (expr_type == TypeManager.object_type && target_type.IsValueType || expr_type == TypeManager.enum_type)
 				return new UnboxCast (expr, target_type);
 
 			if (TypeManager.IsEnumType (expr_type)) {
