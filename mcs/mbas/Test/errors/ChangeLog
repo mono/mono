@@ -1,3 +1,6 @@
+2005-10-11 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* Added ExceptionHandlingC25.vb : On Error Goto structure.
+	
 2005-07-13 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	* Added LocalDeclarationD.vb : Static local on structures.
 	
