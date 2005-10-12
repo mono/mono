@@ -54,16 +54,17 @@ ecma/Array/15.4.4.2.js
 #ecma/Array/15.4.4.5-2.js
 ecma/Array/15.4.4.5-3.js
 ecma/Array/15.4.4.js
-# Invalid IL, TryDirectGetObjectProperty throws NullReferenceException
+# Eval::JScriptEvaluate throws NotImplementedException
 #ecma/Array/15.4.5.1-1.js
 ecma/Array/15.4.5.1-2.js
 # Needs ToForInObject
 #ecma/Array/15.4.5.2-1.js
-# Invalid IL
+# Eval::JScriptEvaluate throws NotImplementedException
 #ecma/Array/15.4.5.2-2.js
+# invalid IL
 #ecma/Boolean/15.6.1.js
 ecma/Boolean/15.6.2.js
-# Need to implement for in loops first
+# ToForInObject
 #ecma/Boolean/15.6.3.1-1.js
 ecma/Boolean/15.6.3.1-2.js
 # invalid IL
@@ -912,11 +913,11 @@ ecma_2/RegExp/regress-001.js
 # RegExpObject:Initialize throws JScriptException
 #ecma_2/RegExp/unicode-001.js
 ecma_2/Statements/dowhile-001.js
-# Endless loop
+# invalid IL
 #ecma_2/Statements/dowhile-002.js
 # Invalid IL
 #ecma_2/Statements/dowhile-003.js
-# Endless loop
+# invalid IL
 #ecma_2/Statements/dowhile-004.js
 ecma_2/Statements/dowhile-005.js
 ecma_2/Statements/dowhile-006.js
