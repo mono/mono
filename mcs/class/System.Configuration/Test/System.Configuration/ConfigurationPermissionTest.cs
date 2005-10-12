@@ -54,11 +54,16 @@ namespace MonoTests.System.Configuration {
 		{
 			ConfigurationPermission p = new ConfigurationPermission (PermissionState.Unrestricted);
 
-			Console.WriteLine (p.ToString());
+			Assert.AreEqual(
+					"<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\r\nversion=\"1\"\r\nUnrestricted=\"true\"/>\r\n",
+					p.ToString(), "A1");
+
 
 			p = new ConfigurationPermission (PermissionState.None);
 
-			Console.WriteLine (p.ToString());
+			Assert.AreEqual (
+					 "<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\r\nversion=\"1\"/>\r\n",
+					 p.ToString(), "A2");
 		}
 	}
 }

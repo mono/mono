@@ -1,5 +1,10 @@
 2005-10-12  Chris Toshok  <toshok@ximian.com>
 
+	* System.Configuration/ConfigurationPermissionTest.cs: turn the
+	Console.WriteLines into actual assertions.
+
+2005-10-12  Chris Toshok  <toshok@ximian.com>
+
 	* System.Configuration/KeyValueConfigurationCollectionTest.cs: add
 	some duplicate add tests.
 
