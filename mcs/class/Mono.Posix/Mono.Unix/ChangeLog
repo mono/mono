@@ -1,3 +1,10 @@
+2005-10-12  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixStream.cs: Check for EROFS and EINVAL in Flush().  Snorp was getting
+	  an exception when he created a UnixStream around a socket, because
+	  sockets can't be flushed.  It should be acceptable to create a UnixStream
+	  around a socket, so don't throw an exception in this scenario.
+
 2005-10-06  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixDirectory.cs, UnixDirectoryInfo.cs UnixFile.cs, UnixFileSystemInfo.cs, 

@@ -189,8 +189,24 @@ namespace Mono.Unix {
 
 		public override void Flush ()
 		{
-			int r = Syscall.fsync (fileDescriptor);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			int r = Native.Syscall.fsync (fileDescriptor);
+
+			if (r == -1) {
+				Native.Errno e = Native.Stdlib.GetLastError ();
+
+				// From the man page:
+				//  EROFS, EINVAL:
+				//    fd is bound to a special file which does not support
+				//    synchronization.
+				// Sockets are such a file, and since Close() calls Flush(), and we
+				// want to support manually opened sockets, we shouldn't generate an
+				// exception for these errors.
+				if (e == Native.Errno.EROFS || e == Native.Errno.EINVAL) {
+					return;
+				}
+
+				UnixMarshal.ThrowExceptionForError (e);
+			}
 		}
 
 		public override unsafe int Read ([In, Out] byte[] buffer, int offset, int count)
