@@ -1,0 +1,70 @@
+.\" 
+.\" mozroots man page
+.\" (C) 2005 Novell, Inc. 
+.\" Author:
+.\"   Miguel de Icaza (miguel@gnu.org)
+.\"
+.de Sp \" Vertical space (when we can't use .PP)
+.if t .sp .5v
+.if n .sp
+..
+.TH Mono "Mono 1.0"
+.SH NAME
+mozroots \- Download and import trusted root certificates from Mozilla's LXR into Mono's certificate store
+.SH SYNOPSIS
+.PP
+.B mozroots [--import [--machine] [--sync | --ask | --ask-add | --ask-remove]]
+.SH DESCRIPTION
+This program downloads the trusted root certificates from the Mozilla
+LXR web site into the Mono certificate store.  
+.PP
+Mono by default does not ship with any default certificates and allows
+the user to pick its trusted certificates.  The mozroots command will
+bring the Mozilla certificates into your local machine. 
+.SH OPTIONS
+.TP
+.I "--import"
+Import the certificates into the trust store.
+.TP
+.I "--sync"
+Synchronize (add/remove) the trust store with the certificates.
+.TP
+.I "--ask"
+Always confirm before adding or removing trusted certificates.
+.TP
+.I "--ask-add"
+Always confirm before adding a new trusted certificate.
+.TP
+.I "--ask-remove"
+Always confirm before removing an existing trusted certificate.
+.SH ADVANCED OPTIONS
+.TP
+.I "--url url"
+Specify an alternative URL for downloading the trusted certificates
+(LXR source format).
+.TP
+.I "--file name"
+Do not download but use the specified file.
+.TP
+.I "--pkcs7 name"
+Export the certificates into a PKCS#7 file.
+.TP
+.I "--machine"
+Import the certificate in the machine trust store. The default is to
+import into the user store.
+.TP
+.I "--quiet"
+Limit console output to errors and confirmations messages.
+.SH FILES
+.PP
+~/.config/.mono/certs, /usr/share/.mono/certs
+.PP
+Contains Mono certificate stores for users / machine. See the certmgr(1) 
+manual page for more information on managing certificate stores.
+.SH MAILING LISTS
+Mailing lists are listed at the
+http://www.mono-project.com/Mailing_Lists
+.SH WEB SITE
+http://www.mono-project.com
+.SH SEE ALSO
+.BR mono(1), certmgr(1).
