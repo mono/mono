@@ -276,7 +276,7 @@ namespace FirebirdSql.Data.Firebird
 		{
 			get
 			{
-				if (this.statement != null)
+				if (this.statement != null && this.CommandType != CommandType.StoredProcedure)
 				{
 					return this.statement.RecordsAffected;
 				}
@@ -521,7 +521,7 @@ namespace FirebirdSql.Data.Firebird
 				}
 			}
 
-			return this.statement.RecordsAffected;
+			return this.RecordsAffected;
 		}
 
 		IDataReader IDbCommand.ExecuteReader()
@@ -791,48 +791,49 @@ namespace FirebirdSql.Data.Firebird
 
 		#endregion
 
-		#region Input parameter	descriptor generation methods
+		#region · Input parameter descriptor generation methods ·
 
 		private void DescribeInput()
 		{
 			if (this.parameters.Count > 0)
 			{
-				if (this.statement.Parameters == null || this.CountInputParameters() != this.statement.Parameters.Count) 
+				Descriptor descriptor = this.BuildParametersDescriptor();
+				if (descriptor == null)
 				{
-					// Build or Rebuild the parameter descriptor
-					if (this.CanInferInputParameters())
-					{
-						this.statement.Parameters = null;
-					}
-					else
-					{
-						this.statement.DescribeParameters();
-					}
+					this.statement.DescribeParameters();
 				}
-
-				this.UpdateInputParameterDescriptor();
+				else
+				{
+					this.statement.Parameters = descriptor;
+				}
 			}
 		}
 
-		private void UpdateInputParameterDescriptor()
+		private Descriptor BuildParametersDescriptor()
 		{
-			if (this.statement.Parameters == null)
+			short count = this.ValidateInputParameters();
+
+			if (count > 0)
 			{
-				this.statement.Parameters = new Descriptor(this.CountInputParameters());
+				if (this.namedParameters.Count > 0)
+				{
+					count = (short)this.namedParameters.Count;
+					return this.BuildNamedParametersDescriptor(count);
+				}
+				else
+				{
+					return this.BuildPlaceHoldersDescriptor(count);
+				}
 			}
 
-			if (this.namedParameters.Count > 0)
-			{
-				this.UpdateNamedParametersDescriptor();
-			}
-			else
-			{
-				this.UpdatePlaceHoldersDescriptor();
-			}
+			return null;
 		}
 
-		private void UpdateNamedParametersDescriptor()
+		private Descriptor BuildNamedParametersDescriptor(short count)
 		{
+			Descriptor descriptor = new Descriptor(count);
+			int index = 0;
+
 			for (int i = 0; i < this.namedParameters.Count; i++)
 			{
 				FbParameter parameter = this.parameters[this.namedParameters[i]];
@@ -840,13 +841,19 @@ namespace FirebirdSql.Data.Firebird
 				if (parameter.Direction == ParameterDirection.Input ||
 					parameter.Direction == ParameterDirection.InputOutput)
 				{
-					this.UpdateParameterDescriptor(parameter, this.statement.Parameters[i]);
+					if (!this.BuildParameterDescriptor(descriptor, parameter, index++))
+					{
+						return null;
+					}
 				}
 			}
+
+			return descriptor;
 		}
 
-		private void UpdatePlaceHoldersDescriptor()
+		private Descriptor BuildPlaceHoldersDescriptor(short count)
 		{
+			Descriptor descriptor = new Descriptor(count);
 			int index = 0;
 
 			for (int i = 0; i < this.parameters.Count; i++)
@@ -856,20 +863,26 @@ namespace FirebirdSql.Data.Firebird
 				if (parameter.Direction == ParameterDirection.Input ||
 					parameter.Direction == ParameterDirection.InputOutput)
 				{
-					this.UpdateParameterDescriptor(parameter, this.statement.Parameters[index++]);
+					if (!this.BuildParameterDescriptor(descriptor, parameter, index++))
+					{
+						return null;
+					}
 				}
 			}
+
+			return descriptor;
 		}
 
-		private void UpdateParameterDescriptor(FbParameter source, DbField target)
+		private bool BuildParameterDescriptor(
+			Descriptor descriptor, FbParameter parameter, int index)
 		{
-			Charset		charset	= this.connection.InnerConnection.Database.Charset;
-			FbDbType	type	= source.FbDbType;
+			Charset charset = this.connection.InnerConnection.Database.Charset;
+			FbDbType type = parameter.FbDbType;
 
 			// Check the parameter character set
-			if (source.Charset != FbCharset.Default)
+			if (parameter.Charset != FbCharset.Default)
 			{
-				int idx = Charset.SupportedCharsets.IndexOf((int)source.Charset);
+				int idx = Charset.SupportedCharsets.IndexOf((int)parameter.Charset);
 				charset = Charset.SupportedCharsets[idx];
 			}
 			else
@@ -881,51 +894,54 @@ namespace FirebirdSql.Data.Firebird
 			}
 
 			// Set parameter Data Type
-			if (type != FbDbType.Numeric && type != FbDbType.Decimal)
-			{
-				target.DataType = (short)TypeHelper.GetFbType((DbDataType)type, source.IsNullable);
-			}
+			descriptor[index].DataType = 
+				(short)TypeHelper.GetFbType((DbDataType)type, parameter.IsNullable);
 
 			// Set parameter Sub Type
 			switch (type)
 			{
 				case FbDbType.Binary:
-					target.SubType = 0;
+					descriptor[index].SubType = 0;
 					break;
 
 				case FbDbType.Text:
-					target.SubType = 1;
+					descriptor[index].SubType = 1;
 					break;
 
 				case FbDbType.Guid:
-					target.SubType = (short)charset.ID;
+					descriptor[index].SubType = (short)charset.ID;
 					break;
 
 				case FbDbType.Char:
 				case FbDbType.VarChar:
-					if (target.SubType == 0)
+					descriptor[index].SubType = (short)charset.ID;
+					if (parameter.Size > 0)
 					{
-						target.SubType = (short)charset.ID;
-					}
-					if (source.Size > 0)
-					{
-						target.Length = (short)(source.Size * charset.BytesPerCharacter);
+						short len = (short)(parameter.Size * charset.BytesPerCharacter);
+						descriptor[index].Length = len;
 					}
 					break;
 			}
 
 			// Set parameter length
-			if (target.Length == 0)
+			if (descriptor[index].Length == 0)
 			{
-				target.Length = TypeHelper.GetSize((DbDataType)type);
+				descriptor[index].Length = TypeHelper.GetSize((DbDataType)type);
 			}
 
-			// Update parameter value
-			this.UpdateInputParameterValue(source, target);
+			// Verify parameter
+			if (descriptor[index].SqlType == 0 || descriptor[index].Length == 0)
+			{
+				return false;
+			}
+
+			return true;
 		}
 
-		private bool CanInferInputParameters()
+		private short ValidateInputParameters()
 		{
+			short count = 0;
+
 			for (int i = 0; i < this.parameters.Count; i++)
 			{
 				if (this.parameters[i].Direction == ParameterDirection.Input ||
@@ -933,103 +949,104 @@ namespace FirebirdSql.Data.Firebird
 				{
 					FbDbType type = this.parameters[i].FbDbType;
 
-					if ((type == FbDbType.Char || type == FbDbType.VarChar) && this.Parameters[i].Size == 0)
+					if (type == FbDbType.Array || type == FbDbType.Decimal ||
+						type == FbDbType.Numeric)
 					{
-						return false;
+						return -1;
 					}
-					else if (type == FbDbType.Array || type == FbDbType.Decimal || type == FbDbType.Numeric)
-					{
-						return false;
-					}
-				}
-			}
-
-			return true;
-		}
-
-		private int CountInputParameters()
-		{
-			int count = 0;
-
-			if (this.namedParameters.Count == 0)
-			{
-				for (int i = 0; i < this.parameters.Count; i++)
-				{
-					if (this.parameters[i].Direction == ParameterDirection.Input ||
-						this.parameters[i].Direction == ParameterDirection.InputOutput)
+					else
 					{
 						count++;
 					}
 				}
 			}
-			else
-			{
-				count = this.namedParameters.Count;
-			}
 
 			return count;
 		}
 
-		private void UpdateInputParameterValue(FbParameter source, DbField target)
+		private void UpdateParameterValues()
 		{
-			if (source.Value == DBNull.Value || source.Value == null)
-			{
-				target.NullFlag = -1;
-				target.Value	= DBNull.Value;
+			int index = -1;
 
-//				if (!target.AllowDBNull())
-//				{
-//					target.DataType++;
-//				}
-			}
-			else
+			for (int i = 0; i < this.statement.Parameters.Count; i++)
 			{
-				// Parameter value is not null
-				target.NullFlag = 0;
+				index = i;
 
-				switch (target.DbDataType)
+				if (this.namedParameters.Count > 0)
 				{
-					case DbDataType.Binary:
-						BlobBase blob = this.statement.CreateBlob();
-						blob.Write((byte[])source.Value);
-						target.Value = blob.Id;
-						break;
+					index = this.parameters.IndexOf(this.namedParameters[i]);
+				}
 
-					case DbDataType.Text:
-						BlobBase clob = this.statement.CreateBlob();
-						clob.Write((string)source.Value);
-						target.Value = clob.Id;
-						break;
-
-					case DbDataType.Array:
+				if (index != -1)
+				{
+					if (this.parameters[index].Value == DBNull.Value || this.parameters[index].Value == null)
 					{
-						if (target.ArrayHandle == null)
-						{
-							target.ArrayHandle = this.statement.CreateArray(target.Relation, target.Name);
-						}
-						else
-						{
-							target.ArrayHandle.DB			= this.statement.DB;
-							target.ArrayHandle.Transaction	= this.statement.Transaction;
-						}
+						this.statement.Parameters[i].NullFlag = -1;
+						this.statement.Parameters[i].Value = DBNull.Value;
 
-						target.ArrayHandle.Handle = 0;
-						target.ArrayHandle.Write((System.Array)source.Value);
-						target.Value = target.ArrayHandle.Handle;
+						if (!this.statement.Parameters[i].AllowDBNull())
+						{
+							this.statement.Parameters[i].DataType++;
+						}
 					}
-					break;
+					else
+					{
+						// Parameter value is not null
+						this.statement.Parameters[i].NullFlag = 0;
 
-					case DbDataType.Guid:
-						if (!(source.Value is Guid) && !(source.Value is byte[]))
+						switch (this.statement.Parameters[i].DbDataType)
 						{
-							throw new InvalidOperationException("Incorrect Guid value.");
-						}
-						target.Value = source.Value;
-						break;
+							case DbDataType.Binary:
+								{
+									BlobBase blob = this.statement.CreateBlob();
+									blob.Write((byte[])this.parameters[index].Value);
+									this.statement.Parameters[i].Value = blob.Id;
+								}
+								break;
 
-					default:
-						target.Value = source.Value;
-						break;
+							case DbDataType.Text:
+								{
+									BlobBase blob = this.statement.CreateBlob();
+									blob.Write((string)this.parameters[index].Value);
+									this.statement.Parameters[i].Value = blob.Id;
+								}
+								break;
+
+							case DbDataType.Array:
+								{
+									if (this.statement.Parameters[i].ArrayHandle == null)
+									{
+										this.statement.Parameters[i].ArrayHandle =
+										this.statement.CreateArray(
+											this.statement.Parameters[i].Relation,
+											this.statement.Parameters[i].Name);
+									}
+									else
+									{
+										this.statement.Parameters[i].ArrayHandle.DB = this.statement.DB;
+										this.statement.Parameters[i].ArrayHandle.Transaction = this.statement.Transaction;
+									}
+
+									this.statement.Parameters[i].ArrayHandle.Handle = 0;
+									this.statement.Parameters[i].ArrayHandle.Write((System.Array)this.parameters[index].Value);
+									this.statement.Parameters[i].Value = this.statement.Parameters[i].ArrayHandle.Handle;
+								}
+								break;
+
+							case DbDataType.Guid:
+								if (!(this.parameters[index].Value is Guid) &&
+									!(this.parameters[index].Value is byte[]))
+								{
+									throw new InvalidOperationException("Incorrect Guid value.");
+								}
+								this.statement.Parameters[i].Value = this.parameters[index].Value;
+								break;
+
+							default:
+								this.statement.Parameters[i].Value = this.parameters[index].Value;
+								break;
+						}
+					}
 				}
 			}
 		}
@@ -1121,11 +1138,16 @@ namespace FirebirdSql.Data.Firebird
 			{
 				// Set the fetch size
 				this.statement.FetchSize = this.fetchSize;
-
+				
 				// Update input parameter values
 				if (this.parameters.Count > 0)
 				{
-					this.DescribeInput();
+					if (this.statement.Parameters == null)
+					{
+						this.DescribeInput();
+					}
+					
+					this.UpdateParameterValues();
 				}
 
 				// Execute statement

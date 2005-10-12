@@ -29,35 +29,19 @@ namespace FirebirdSql.Data.Firebird
 	{
 		#region Static fields
 
-		private static FbPoolManager instance;
+		public static readonly FbPoolManager Instance = new FbPoolManager();
 
 		#endregion
 
 		#region Fields
 
-		private Hashtable pools;
-		private Hashtable handlers;
+		private Hashtable	pools;
+		private Hashtable	handlers;
+		private object		syncObject;
 
 		#endregion
 
-		#region Static Properties
-
-		public static FbPoolManager Instance
-		{
-			get
-			{
-				if (FbPoolManager.instance == null)
-				{
-					FbPoolManager.instance = new FbPoolManager();
-				}
-
-				return FbPoolManager.instance;
-			}
-		}
-
-		#endregion
-
-		#region Priperties
+		#region Properties
 
 		public int PoolsCount
 		{
@@ -77,8 +61,9 @@ namespace FirebirdSql.Data.Firebird
 
 		private FbPoolManager()
 		{
-			this.pools = Hashtable.Synchronized(new Hashtable());
-			this.handlers = Hashtable.Synchronized(new Hashtable());
+			this.pools		= Hashtable.Synchronized(new Hashtable());
+			this.handlers	= Hashtable.Synchronized(new Hashtable());
+			this.syncObject	= new object();
 		}
 
 		#endregion
@@ -89,7 +74,7 @@ namespace FirebirdSql.Data.Firebird
 		{
 			FbConnectionPool pool = null;
 
-			lock (this)
+			lock (this.syncObject)
 			{
 				if (this.pools.ContainsKey(connectionString.GetHashCode()))
 				{
@@ -104,7 +89,7 @@ namespace FirebirdSql.Data.Firebird
 		{
 			FbConnectionPool pool = null;
 
-			lock (this)
+			lock (this.syncObject)
 			{
 				pool = this.FindPool(connectionString);
 
@@ -134,7 +119,7 @@ namespace FirebirdSql.Data.Firebird
 
 		public void ClearAllPools()
 		{
-			lock (this)
+			lock (this.syncObject)
 			{
 				lock (this.pools.SyncRoot)
 				{
@@ -157,7 +142,7 @@ namespace FirebirdSql.Data.Firebird
 
 		public void ClearPool(string connectionString)
 		{
-			lock (this)
+			lock (this.syncObject)
 			{
 				lock (this.pools.SyncRoot)
 				{
@@ -216,6 +201,7 @@ namespace FirebirdSql.Data.Firebird
 		private string				connectionString;
 		private bool				isRunning;
 		private long				lifeTime;
+		private	object				syncObject;
 
 		#endregion
 
@@ -238,6 +224,7 @@ namespace FirebirdSql.Data.Firebird
 
 		public FbConnectionPool(string connectionString)
 		{
+			this.syncObject			= new object();
 			this.connectionString	= connectionString;
 			this.options			= new FbConnectionString(connectionString);
 			this.lifeTime			= this.options.ConnectionLifeTime * TimeSpan.TicksPerSecond;
@@ -286,7 +273,7 @@ namespace FirebirdSql.Data.Firebird
 		{
 			FbConnectionInternal newConnection = null;
 
-			lock (this)
+			lock (this.syncObject)
 			{
 				this.CheckMaxPoolSize();
 
@@ -314,7 +301,7 @@ namespace FirebirdSql.Data.Firebird
 
 		public void Clear()
 		{
-			lock (this)
+			lock (this.syncObject)
 			{
 				// Stop	cleanup	thread
 				if (this.cleanUpThread != null)
@@ -376,7 +363,7 @@ namespace FirebirdSql.Data.Firebird
 
 		private void CheckMaxPoolSize()
 		{
-			lock (this)
+			lock (this.syncObject)
 			{
 				if (this.options.MaxPoolSize > 0 &&
 					(this.Count + 1) >= this.options.MaxPoolSize)
@@ -406,7 +393,7 @@ namespace FirebirdSql.Data.Firebird
 
 		private void Initialize()
 		{
-			lock (this)
+			lock (this.syncObject)
 			{
 				for (int i = 0; i < this.options.MinPoolSize; i++)
 				{
@@ -501,7 +488,7 @@ namespace FirebirdSql.Data.Firebird
 
 					if (this.Count == 0)
 					{
-						lock (this)
+						lock (this.syncObject)
 						{
 							// Empty pool
 							if (this.EmptyPool != null)
