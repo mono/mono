@@ -1,3 +1,7 @@
+2005-10-12  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationPermission.cs: flesh out as per tests.
+
 2005-10-11  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationProperty.cs: don't use null to mean no default

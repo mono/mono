@@ -42,10 +42,9 @@ namespace System.Configuration {
                         unrestricted = (state == PermissionState.Unrestricted);
 		}
 
-		[MonoTODO]
 		public override IPermission Copy ()
 		{
-			throw new NotImplementedException ();
+			return new ConfigurationPermission (unrestricted ? PermissionState.Unrestricted : PermissionState.None);
 		}
 
 		public override void FromXml (SecurityElement securityElement)
@@ -63,16 +62,43 @@ namespace System.Configuration {
                         }
 		}
 
-		[MonoTODO]
 		public override IPermission Intersect (IPermission target)
 		{
-			throw new NotImplementedException ();
+			if (target == null)
+				return null;
+
+			ConfigurationPermission p = target as ConfigurationPermission;
+			if (p == null)
+				throw new ArgumentException ("target");
+
+			return new ConfigurationPermission (unrestricted && p.IsUnrestricted() ? PermissionState.Unrestricted : PermissionState.None);
 		}
 
-		[MonoTODO]
+		public override IPermission Union (IPermission target)
+		{
+			if (target == null)
+				return Copy ();
+
+			ConfigurationPermission p = target as ConfigurationPermission;
+			if (p == null)
+				throw new ArgumentException ("target");
+
+			return new ConfigurationPermission (unrestricted || p.IsUnrestricted() ? PermissionState.Unrestricted : PermissionState.None);
+		}
+
 		public override bool IsSubsetOf (IPermission target)
 		{
-			throw new NotImplementedException ();
+			if (target == null)
+				return !unrestricted;
+
+			ConfigurationPermission p = target as ConfigurationPermission;
+			if (p == null)
+				throw new ArgumentException ("target");
+
+			if (unrestricted)
+				return p.IsUnrestricted();
+			else
+				return true;
 		}
 
 		public bool IsUnrestricted ()
@@ -89,12 +115,6 @@ namespace System.Configuration {
 				root.AddAttribute ("Unrestricted", "true");
 			}
 			return root;
-		}
-
-		[MonoTODO]
-		public override IPermission Union (IPermission target)
-		{
-			throw new NotImplementedException ();
 		}
 
 		bool unrestricted;
