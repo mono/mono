@@ -53,6 +53,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 		private bool dropdown_form_showing;
 		private Form dialog_form;
 		private VScrollBar vbar;
+		private StringFormat stringFormat;
 		#endregion
 
 		#region Contructors
@@ -62,6 +63,10 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 			property_grid.SelectedGridItemChanged+=new SelectedGridItemChangedEventHandler(HandleSelectedGridItemChanged);
 			property_grid.PropertyValueChanged+=new PropertyValueChangedEventHandler(HandlePropertyValueChanged);
+
+			stringFormat = new StringFormat();
+			stringFormat.FormatFlags = StringFormatFlags.NoWrap;
+			stringFormat.Trimming = StringTrimming.None;
 
 			this.BackColor = Color.Beige;
 			grid_textbox = new PropertyGridTextBox();
@@ -78,11 +83,12 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 			
 
-			grid_textbox.Visible = true;
+			grid_textbox.Visible = false;
 			grid_textbox.Font = this.Font;//new Font(this.Font,FontStyle.Bold);
 			grid_textbox.BackColor = this.BackColor;
 			// Not working at all, used to??
 			grid_textbox.Validating += new CancelEventHandler(TextBoxValidating);
+			this.Controls.Add(grid_textbox);
 
 			vbar = new VScrollBar();
 			vbar.Visible = false;
@@ -113,13 +119,13 @@ namespace System.Windows.Forms.PropertyGridInternal
 		{
 			if (property_grid.SelectedGridItem != null && property_grid.SelectedGridItem.GridItemType == GridItemType.Property) 
 			{
-				this.Controls.Add(grid_textbox);
+				grid_textbox.Visible = true;
 				if (!grid_textbox.Focused)
 					grid_textbox.Focus();
 			}
 			else 
 			{
-				this.Controls.Remove(grid_textbox);
+				grid_textbox.Visible = false;
 			}
 
 			// Decide if we need a scrollbar
@@ -149,25 +155,34 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 		protected override void OnMouseMove (MouseEventArgs e) 
 		{
+
 			if (resizing_grid) 
 			{
-				splitter_location = Math.Max(e.X,V_INDENT);
+				splitter_location = Math.Max(e.X,2*V_INDENT);
 				Refresh();
 			}
+			if (e.X > splitter_location - RESIZE_WIDTH && e.X < splitter_location + RESIZE_WIDTH) 
+				this.Cursor = Cursors.SizeWE;
+			else
+				this.Cursor = Cursors.Default;
 			base.OnMouseMove (e);
 		}
 
-		private GridItem GetSelectedGridItem (GridItemCollection grid_items, int y) 
+		private GridItem GetSelectedGridItem (GridItemCollection grid_items, int y, ref int current) 
 		{
 			foreach (GridItem child_grid_item in grid_items) 
 			{
-				if (y > child_grid_item.Top && y < child_grid_item.Top + ROW_HEIGHT) 
+				if (y > current && y < current + ROW_HEIGHT) 
 				{
 					return child_grid_item;
 				}
-				GridItem foundItem = GetSelectedGridItem(child_grid_item.GridItems, y);
-				if (foundItem != null)
-					return foundItem;
+				current += ROW_HEIGHT;
+				if (child_grid_item.Expanded)
+				{
+					GridItem foundItem = GetSelectedGridItem(child_grid_item.GridItems, y, ref current);
+					if (foundItem != null)
+						return foundItem;
+				}
 			}
 			return null;
 		}
@@ -180,15 +195,17 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 			else 
 			{
-				GridItem foundItem = GetSelectedGridItem(property_grid.grid_items, e.Y);
+				int offset = -vbar.Value*ROW_HEIGHT;
+				GridItem foundItem = GetSelectedGridItem(property_grid.grid_items, e.Y, ref offset);
 				
 				if (foundItem != null)
 				{
 					if (foundItem.Expandable) 
 					{
-						if (foundItem.PlusMinusBounds.Contains(e.X,e.Y))
+						if (e.X >=3 && e.X <= 11 && (e.Y % ROW_HEIGHT >= 3 && e.Y % ROW_HEIGHT <= 11))
 						{
 							foundItem.Expanded = !foundItem.Expanded;
+							Invalidate();
 						}
 					}
 					this.property_grid.SelectedGridItem = foundItem;
@@ -258,7 +275,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			{
 				DrawGridItem (grid_item, pevent, depth, ref yLoc);
 				if (grid_item.Expanded)
-					DrawGridItems(grid_item.GridItems, pevent, depth, ref yLoc);
+					DrawGridItems(grid_item.GridItems, pevent, (grid_item.GridItemType == GridItemType.Category) ? depth : depth+1, ref yLoc);
 			}
 		}
 
@@ -284,7 +301,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 			}
 
 			
-			pevent.Graphics.DrawString(grid_item.Label,font,brush,new Rectangle(x, rect.Y + 2,x-rect.X+rect.Width,rect.Height-2));
+			pevent.Graphics.DrawString(grid_item.Label,font,brush,new Rectangle(x, rect.Y + 2,x-rect.X+rect.Width-2,rect.Height-2),stringFormat);
 		}
 
 		private void DrawGridItemValue(GridItem grid_item, PaintEventArgs pevent, Rectangle rect)
@@ -304,6 +321,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 
 				if (grid_item == property_grid.SelectedGridItem)
 				{
+					grid_textbox.ReadOnly = false;
 					grid_textbox.DropDownButtonVisible = false;
 					grid_textbox.DialogButtonVisible = false;
 					if (editor != null) 
@@ -373,7 +391,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 						if (grid_item.PropertyDescriptor.CanResetValue(property_grid.SelectedObject))
 							font = new Font(font, FontStyle.Bold);
 				
-						pevent.Graphics.DrawString(value,font,SystemBrushes.WindowText,new RectangleF(xLoc,rect.Y+2, ClientRectangle.Width-(xLoc), ROW_HEIGHT));
+						pevent.Graphics.DrawString(value,font,SystemBrushes.WindowText,new RectangleF(xLoc,rect.Y+2, ClientRectangle.Width-(xLoc), ROW_HEIGHT),stringFormat);
 					}
 					else
 					{
@@ -386,8 +404,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 				}
 				if (grid_item == property_grid.SelectedGridItem && grid_item.GridItemType != GridItemType.Category)
 				{
-					grid_textbox.Location = new Point(xLoc, rect.Top);
-					grid_textbox.Size = new Size(ClientRectangle.Width-xLoc,ROW_HEIGHT);
+					grid_textbox.SetBounds(xLoc, rect.Top, ClientRectangle.Width-xLoc - (vbar.Visible ? vbar.Width: 0),ROW_HEIGHT);
 				}
 			}
 		}
@@ -410,7 +427,7 @@ namespace System.Windows.Forms.PropertyGridInternal
 					pevent.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (property_grid.LineColor), depth*V_INDENT,yLoc,ClientRectangle.Width-(depth*V_INDENT), ROW_HEIGHT);
 				}
 
-				DrawGridItemLabel(grid_item, pevent, new Rectangle(V_INDENT,yLoc, splitter_location-V_INDENT, ROW_HEIGHT));
+				DrawGridItemLabel(grid_item, pevent, new Rectangle(depth*V_INDENT,yLoc, splitter_location-depth*V_INDENT, ROW_HEIGHT));
 				DrawGridItemValue(grid_item, pevent, new Rectangle(splitter_location+2,yLoc, ClientRectangle.Width-splitter_location-2, ROW_HEIGHT));
 			
 				

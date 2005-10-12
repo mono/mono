@@ -505,11 +505,12 @@ namespace System.Windows.Forms
 				if (this.SelectedObject == null)
 					return;
 				PropertyTabAttribute[] propTabs = (PropertyTabAttribute[])this.SelectedObject.GetType().GetCustomAttributes(typeof(PropertyTabAttribute),true);
-				if (propTabs.Length == 0)
-					return;
-				foreach (Type tabType in propTabs[0].TabClasses)
+				if (propTabs.Length > 0)
 				{
-					this.PropertyTabs.AddTabType(tabType);
+					foreach (Type tabType in propTabs[0].TabClasses)
+					{
+						this.PropertyTabs.AddTabType(tabType);
+					}
 				}
 				RefreshTabs(PropertyTabScope.Component);
 				Console.WriteLine("SelectedObject");
@@ -1003,38 +1004,44 @@ namespace System.Windows.Forms
 
 		private void ReflectObjects () 
 		{
-			GridItemCollection alphabetical_grid_items = new GridItemCollection();
-			GridItemCollection category_grid_items = new GridItemCollection();
+			grid_items = new GridItemCollection();
 			foreach (object obj in selected_objects) {
 				if (obj != null) {
-					PopulateGridItemCollection(obj,alphabetical_grid_items, category_grid_items);
+					PopulateGridItemCollection(obj,grid_items, true);
 				}
-			}
-			if (PropertySort == PropertySort.Alphabetical) {
-				grid_items = alphabetical_grid_items;
-			}
-			// need to use categories
-			else {
-				grid_items = category_grid_items;
 			}
 		}
 
-		private void PopulateGridItemCollection (object obj, GridItemCollection grid_item_coll, GridItemCollection category_grid_item_coll) 
+		private void PopulateGridItemCollection (object obj, GridItemCollection grid_item_coll, bool recurse) 
 		{
 			//TypeConverter converter = TypeDescriptor.GetConverter(obj);
 			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(obj);
 			foreach (PropertyDescriptor property in properties) {
 				if (property.IsBrowsable) {
 					GridEntry grid_entry = new GridEntry(obj, property);
-					grid_item_coll.Add(property.Name,grid_entry);
-
-					string category = property.Category;
-					GridItem cat_item = category_grid_item_coll[category];
-					if (cat_item == null) {
-						cat_item = new CategoryGridEntry(category);
-						category_grid_item_coll.Add(category,cat_item);
+					if (property_sort == PropertySort.Alphabetical || !recurse)
+					{
+						if (grid_item_coll[property.Name] == null)
+							grid_item_coll.Add(property.Name,grid_entry);
 					}
-					cat_item.GridItems.Add(property.Name,grid_entry);
+					else if (property_sort == PropertySort.Categorized || property_sort == PropertySort.CategorizedAlphabetical)
+					{
+
+						string category = property.Category;
+						GridItem cat_item = grid_item_coll[category];
+						if (cat_item == null) 
+						{
+							cat_item = new CategoryGridEntry(category);
+							grid_item_coll.Add(category,cat_item);
+						}
+						cat_item.GridItems.Add(property.Name,grid_entry);
+					}
+					if (recurse)
+					{
+						object propObj = property.GetValue(obj);
+						if (propObj != null)
+							PopulateGridItemCollection(propObj,grid_entry.GridItems, false);
+					}
 				}
 			}
 		}

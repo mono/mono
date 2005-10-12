@@ -1,3 +1,8 @@
+2005-10-12  Jonathan Chambers <jonathan.chambers@ansys.com>
+
+	* PropertyGrids.cs: Get sub properties
+	* PropertyGridView.cs: Fix drawing code
+
 2005-10-11  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListBox.cs: Fixes 76383
