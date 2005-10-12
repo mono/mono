@@ -1,3 +1,7 @@
+2005-10-12 Renato Suga <renato@psl-pr.softwarelivre.org>
+ 	* mb-parser.jay: foreach_statement now emits the correct error code for test ForEachC1.vb, which is an error test
+ 
+
 2005-10-11 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
            
   	* block.cs, statements.cs, mb-parser.jay: Support for On Error Goto 0,

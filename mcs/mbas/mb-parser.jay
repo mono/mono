@@ -3097,7 +3097,6 @@ foreach_statement
 				}
 		LocalVariableReference v = (LocalVariableReference) oob_stack.Pop ();
 		Block foreach_block = end_block();
-
 		Foreach f = null;
 		if (v != null)
 			f = new Foreach (null, v, (Expression) $7, foreach_block, (Location)$4);
@@ -3109,6 +3108,9 @@ foreach_statement
 		}
 		else
 			$$ = f;
+	
+		if (foreach_block.HasLabeledStatement && !foreach_block.HasGotoStatement)
+		Report.Error(30757, foreach_block.Parent.Parent.EndLocation, "'Goto "+foreach_block.LabelName+"' is not valid because '"+foreach_block.LabelName+"' is inside a 'For' or 'ForEach' statement that does not contain this statement.");
 	  }	  
 	;
 
