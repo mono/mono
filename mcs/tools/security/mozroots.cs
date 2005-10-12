@@ -157,7 +157,7 @@ namespace Mono.Tools {
 				foreach (X509Certificate root in roots) {
 					if (!trusted.Contains (root)) {
 						if (!confirmAddition || AskConfirmation ("add", root)) {
-							trusted.Add (root);
+							stores.TrustedRoot.Import (root);
 							if (confirmAddition)
 								WriteLine ("Certificate added.{0}", Environment.NewLine);
 							additions++;
@@ -203,6 +203,7 @@ namespace Mono.Tools {
 		static bool AskConfirmation (string action, X509Certificate certificate)
 		{
 			// the quiet flag is ignored for confirmations
+			Console.WriteLine ();
 			Console.WriteLine ("Issuer: {0}", certificate.IssuerName);
 			Console.WriteLine ("Serial number: {0}", BitConverter.ToString (certificate.SerialNumber));
 			Console.WriteLine ("Valid from {0} to {1}", certificate.ValidFrom, certificate.ValidUntil);
@@ -260,9 +261,11 @@ namespace Mono.Tools {
 					confirmRemoval = true;
 					break;
 				case "--ask-add":
-					confirmRemoval = true;
+					confirmAddition = true;
+					confirmRemoval = false;
 					break;
 				case "--ask-remove":
+					confirmAddition = false;
 					confirmRemoval = true;
 					break;
 				case "--quiet":

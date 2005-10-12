@@ -1,3 +1,7 @@
+2005-10-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mozroots.cs: Fix confirmations and "really" import the certificates.
+
 2005-10-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: Add mozroot to the build.
