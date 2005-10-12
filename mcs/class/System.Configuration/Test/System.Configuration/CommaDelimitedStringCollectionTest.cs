@@ -64,9 +64,9 @@ namespace MonoTests.System.Configuration {
 			Assert.AreEqual ("1,2,3", c.ToString(), "A4");
 
 			c.Clear ();
-			Assert.AreEqual ("", c.ToString(), "A5");
+			Assert.AreEqual (null, c.ToString(), "A5");
 
-			string[] foo = new string[2];
+			string[] foo = new string[3];
 			foo[0] = "1";
 			foo[1] = "2";
 			foo[2] = "3";
@@ -75,6 +75,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ConfigurationErrorsException))]
 		public void RO_Add ()
 		{
 			CommaDelimitedStringCollection c = new CommaDelimitedStringCollection ();
@@ -84,6 +85,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ConfigurationErrorsException))]
 		public void RO_AddRange ()
 		{
 			CommaDelimitedStringCollection c = new CommaDelimitedStringCollection ();
@@ -97,6 +99,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ConfigurationErrorsException))]
 		public void RO_Clear ()
 		{
 			CommaDelimitedStringCollection c = new CommaDelimitedStringCollection ();
@@ -106,6 +109,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ConfigurationErrorsException))]
 		public void RO_Remove ()
 		{
 			CommaDelimitedStringCollection c = new CommaDelimitedStringCollection ();
@@ -115,6 +119,7 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		[ExpectedException (typeof (ConfigurationErrorsException))]
 		public void RO_Insert ()
 		{
 			CommaDelimitedStringCollection c = new CommaDelimitedStringCollection ();

@@ -64,6 +64,11 @@ namespace MonoTests.System.Configuration {
 			{
 				return base.GetElementKey (element);
 			}
+
+			public object[] GetAllKeys ()
+			{
+				return base.BaseGetAllKeys();
+			}
 		}
 
 		class ElementPoker : KeyValueConfigurationElement
@@ -121,6 +126,23 @@ namespace MonoTests.System.Configuration {
 			ElementPoker ep = new ElementPoker ("", "");
 
 			p.Add (ep);
+		}
+
+
+		[Test]
+		public void AddDuplicate ()
+		{
+			Poker p = new Poker (true);
+			ElementPoker ep;
+
+			ep = new ElementPoker ("hi", "bye");
+			p.Add (ep);
+
+			ep = new ElementPoker ("hi", "bye2");
+			p.Add (ep);
+
+			Assert.AreEqual (1, p.AllKeys.Length, "A1");
+			Assert.AreEqual (1, p.GetAllKeys().Length, "A2");
 		}
 
 		[Test]

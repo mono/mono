@@ -1,3 +1,14 @@
+2005-10-12  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration/KeyValueConfigurationCollectionTest.cs: add
+	some duplicate add tests.
+
+	* System.Configuration/CommaDelimitedStringCollectionTest.cs:
+	correct for 2.0 RC.
+
+	* System.Configuration/KeyValueConfigurationElementTest.cs:
+	correct for 2.0 RC.
+
 2005-10-06  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration/KeyValueConfigurationCollectionTest.cs: new

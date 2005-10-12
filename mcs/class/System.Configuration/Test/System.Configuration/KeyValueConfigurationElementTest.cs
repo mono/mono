@@ -77,28 +77,21 @@ namespace MonoTests.System.Configuration {
 			Assert.AreEqual (typeof (DefaultValidator), prop.Validator.GetType(), "A7");
 			Assert.AreEqual ("", prop.DefaultValue, "A8");
 			Assert.IsTrue   (prop.IsKey, "A9");
-			Assert.IsFalse  (prop.IsRequired, "A9");
+			Assert.IsTrue   (prop.IsRequired, "A10");
 
-#if notyet
-			// 2.0 RC property
-			Assert.IsFalse  (prop.IsDefaultCollection, "A10");
-#endif
+			Assert.IsFalse  (prop.IsDefaultCollection, "A11");
 
 			prop = props["value"];
-			Assert.AreEqual ("value", prop.Name, "A11");
-			Assert.IsNull   (prop.Description, "A12");
-			Assert.AreEqual (typeof (string), prop.Type, "A13");
-			Assert.AreEqual (typeof (StringConverter), prop.Converter.GetType(), "A14");
-			Assert.AreEqual (typeof (DefaultValidator), prop.Validator.GetType(), "A15");
-			Assert.AreEqual ("", prop.DefaultValue, "A16");
-			Assert.IsFalse  (prop.IsKey, "A17");
-			Assert.IsFalse  (prop.IsRequired, "A18");
+			Assert.AreEqual ("value", prop.Name, "A12");
+			Assert.IsNull   (prop.Description, "A13");
+			Assert.AreEqual (typeof (string), prop.Type, "A14");
+			Assert.AreEqual (typeof (StringConverter), prop.Converter.GetType(), "A15");
+			Assert.AreEqual (typeof (DefaultValidator), prop.Validator.GetType(), "A16");
+			Assert.AreEqual ("", prop.DefaultValue, "A17");
+			Assert.IsFalse  (prop.IsKey, "A18");
+			Assert.IsFalse  (prop.IsRequired, "A19");
 
-#if notyet
-			// 2.0 RC property
-			Assert.IsFalse  (prop.IsDefaultCollection, "A19");
-#endif
-
+			Assert.IsFalse  (prop.IsDefaultCollection, "A20");
 		}
 	}
 
