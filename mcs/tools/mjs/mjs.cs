@@ -330,6 +330,10 @@ namespace Mono.JScript {
 					link_paths.Add (dir);
 				return true;
 			}
+
+			case "/about":
+				About ();
+				return true;
 			}
 			return false;
 		}
