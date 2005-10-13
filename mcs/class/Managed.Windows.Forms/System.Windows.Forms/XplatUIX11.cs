@@ -1787,6 +1787,7 @@ namespace System.Windows.Forms {
 						Attributes.colormap = CustomColormap;
 					}
 					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, ClientRect.X, ClientRect.Y, ClientRect.Width, ClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, ValueMask, ref Attributes);
+Console.WriteLine("Creating client with width {0}", ClientRect.Width);
 				}
 			}
 
@@ -2150,7 +2151,7 @@ namespace System.Windows.Forms {
 			return NativeWindow.WndProc(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 		}
 
-		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect) {
+		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
 			Hwnd		hwnd;
 			XGCValues	gc_values;
 			IntPtr		gc;
@@ -2160,7 +2161,7 @@ namespace System.Windows.Forms {
 			gc_values = new XGCValues();
 
 			gc_values.subwindow_mode = GCSubwindowMode.IncludeInferiors;
-			gc_values.line_width = 1;
+			gc_values.line_width = line_width;
 			gc_values.foreground = XBlackPixel(DisplayHandle, ScreenNo);
 
 			// This logic will give us true rubber bands: (libsx, SANE_XOR)
@@ -2172,9 +2173,6 @@ namespace System.Windows.Forms {
 
 
 			gc = XCreateGC(DisplayHandle, hwnd.client_window, GCFunction.GCSubwindowMode | GCFunction.GCLineWidth | GCFunction.GCForeground, ref gc_values);
-#if not
-			XSetFunction(DisplayHandle, gc, GXFunction.GXinvert);	// GXinvert makes it reversible
-#else
 			uint foreground;
 			uint background;
 
@@ -2201,8 +2199,16 @@ namespace System.Windows.Forms {
 			XSetBackground(DisplayHandle, gc, background);
 			XSetFunction(DisplayHandle,   gc, GXFunction.GXxor);
 			XSetPlaneMask(DisplayHandle,  gc, mask);
-#endif
-			XDrawRectangle(DisplayHandle, hwnd.client_window, gc, rect.Left, rect.Top, rect.Width, rect.Height);
+
+			if ((rect.Width > 0) && (rect.Height > 0)) {
+				XDrawRectangle(DisplayHandle, hwnd.client_window, gc, rect.Left, rect.Top, rect.Width, rect.Height);
+			} else {
+				if (rect.Width > 0) {
+					XDrawLine(DisplayHandle, hwnd.client_window, gc, rect.X, rect.Y, rect.Right, rect.Y);
+				} else {
+					XDrawLine(DisplayHandle, hwnd.client_window, gc, rect.X, rect.Y, rect.X, rect.Bottom);
+				}
+			}
 			XFreeGC(DisplayHandle, gc);
 		}
 

@@ -367,11 +367,11 @@ namespace System.Windows.Forms {
 			driver.DoEvents();
 		}
 
-		internal static void DrawReversibleRectangle(IntPtr handle, Rectangle rect) {
+		internal static void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
 			#if DriverDebug
-				Console.WriteLine("DrawReversibleRectangle({0:X}, {1}): Called", handle.ToInt32(), rect);
+				Console.WriteLine("DrawReversibleRectangle({0:X}, {1}, {2}): Called", handle.ToInt32(), rect, line_width);
 			#endif
-			driver.DrawReversibleRectangle(handle, rect);
+			driver.DrawReversibleRectangle(handle, rect, line_width);
 		}
 
 		internal static void EnableThemes() {

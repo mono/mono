@@ -307,7 +307,7 @@ namespace System.Windows.Forms {
 			HS_DIAGCROSS        		= 5,       /* xxxxx */
 		}
 
-		private struct COLORREF {
+		internal struct COLORREF {
 			internal byte			B;
 			internal byte			G;
 			internal byte			R;
@@ -536,6 +536,38 @@ namespace System.Windows.Forms {
 			GMEM_INVALID_HANDLE 		= 0x8000,
 			GHND                		= (GMEM_MOVEABLE | GMEM_ZEROINIT),
 			GPTR                		= (GMEM_FIXED | GMEM_ZEROINIT)
+		}
+
+		internal enum ROP2DrawMode : int {
+			R2_BLACK			= 1,
+			R2_NOTMERGEPEN      		= 2,
+			R2_MASKNOTPEN       		= 3,
+			R2_NOTCOPYPEN       		= 4,
+			R2_MASKPENNOT       		= 5,
+			R2_NOT              		= 6,
+			R2_XORPEN           		= 7,
+			R2_NOTMASKPEN       		= 8,
+			R2_MASKPEN          		= 9,
+			R2_NOTXORPEN        		= 10,
+			R2_NOP              		= 11,
+			R2_MERGENOTPEN      		= 12,
+			R2_COPYPEN          		= 13,
+			R2_MERGEPENNOT      		= 14,
+			R2_MERGEPEN         		= 15,
+			R2_WHITE            		= 16,
+			R2_LAST             		= 16
+		}
+
+		internal enum PenStyle : int {
+			PS_SOLID			= 0,
+			PS_DASH             		= 1,
+			PS_DOT              		= 2,
+			PS_DASHDOT          		= 3,
+			PS_DASHDOTDOT       		= 4,
+			PS_NULL             		= 5,
+			PS_INSIDEFRAME      		= 6,
+			PS_USERSTYLE        		= 7,
+			PS_ALTERNATE        		= 8
 		}
 
 		#endregion
@@ -1938,9 +1970,42 @@ namespace System.Windows.Forms {
 			return Win32DnD.StartDrag(hwnd, data, allowedEffects);
 		}
 
-		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect) {
-			// Need to build the command with some ROP2 DC fun
-			throw new NotImplementedException();
+		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
+			IntPtr		hdc;
+			IntPtr		pen;
+			IntPtr		oldpen;
+			int		x_offset;
+			int		y_offset;
+			RECT		window_rect;
+
+			Win32GetWindowRect(handle, out window_rect);
+
+			// Grab a pen
+			pen = Win32CreatePen(PenStyle.PS_SOLID, line_width, IntPtr.Zero);
+
+			hdc = Win32GetDC(IntPtr.Zero);
+			Win32SetROP2(hdc, ROP2DrawMode.R2_NOT);
+			oldpen = Win32SelectObject(hdc, pen);
+
+			// We might need to add clipping to the WindowRect of 'handle' - right now we're drawing on the desktop
+
+			Win32MoveToEx(hdc, window_rect.left + rect.Left, window_rect.top + rect.Top, IntPtr.Zero);
+			if ((rect.Width > 0) && (rect.Height > 0)) {
+				Win32LineTo(hdc, window_rect.left + rect.Right, window_rect.top + rect.Top);
+				Win32LineTo(hdc, window_rect.left + rect.Right, window_rect.top + rect.Bottom);
+				Win32LineTo(hdc, window_rect.left + rect.Left, window_rect.top + rect.Bottom);
+				Win32LineTo(hdc, window_rect.left + rect.Left, window_rect.top + rect.Top);
+			} else {
+				if (rect.Width > 0) {
+					Win32LineTo(hdc, window_rect.left + rect.Right, window_rect.top + rect.Top);
+				} else {
+					Win32LineTo(hdc, window_rect.left + rect.Left, window_rect.top + rect.Bottom);
+				}
+			}
+
+			Win32SelectObject(hdc, oldpen);
+			Win32DeleteObject(pen);
+			Win32ReleaseDC(IntPtr.Zero, hdc);
 		}
 
 		internal override SizeF GetAutoScaleSize(Font font) {
@@ -2185,7 +2250,7 @@ namespace System.Windows.Forms {
 		internal extern static bool Win32GetTextMetrics(IntPtr hdc, ref TEXTMETRIC tm);
 
 		[DllImport ("gdi32.dll", EntryPoint="SelectObject", CallingConvention=CallingConvention.StdCall)]
-		internal extern static bool Win32SelectObject(IntPtr hdc, IntPtr hgdiobject);
+		internal extern static IntPtr Win32SelectObject(IntPtr hdc, IntPtr hgdiobject);
 
 		[DllImport ("user32.dll", EntryPoint="ScrollWindowEx", CallingConvention=CallingConvention.StdCall)]
 		private extern static bool Win32ScrollWindowEx(IntPtr hwnd, int dx, int dy, ref RECT prcScroll, ref RECT prcClip, IntPtr hrgnUpdate, out RECT prcUpdate, ScrollWindowExFlags flags);
@@ -2260,7 +2325,25 @@ namespace System.Windows.Forms {
 		internal extern static IntPtr Win32GlobalLock(IntPtr hMem);
 
 		[DllImport ("kernel32.dll", EntryPoint="GlobalUnlock", CallingConvention=CallingConvention.StdCall)]
-		internal extern static bool Win32GlobalUnlock(IntPtr hMem);
+		internal extern static IntPtr Win32GlobalUnlock(IntPtr hMem);
+
+		[DllImport ("gdi32.dll", EntryPoint="SetROP2", CallingConvention=CallingConvention.StdCall)]
+		internal extern static int Win32SetROP2(IntPtr hdc, ROP2DrawMode fnDrawMode);
+
+		[DllImport ("gdi32.dll", EntryPoint="MoveToEx", CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32MoveToEx(IntPtr hdc, int x, int y, ref POINT lpPoint);
+
+		[DllImport ("gdi32.dll", EntryPoint="MoveToEx", CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32MoveToEx(IntPtr hdc, int x, int y, IntPtr lpPoint);
+
+		[DllImport ("gdi32.dll", EntryPoint="LineTo", CallingConvention=CallingConvention.StdCall)]
+		internal extern static bool Win32LineTo(IntPtr hdc, int x, int y);
+
+		[DllImport ("gdi32.dll", EntryPoint="CreatePen", CallingConvention=CallingConvention.StdCall)]
+		internal extern static IntPtr Win32CreatePen(PenStyle fnPenStyle, int nWidth, ref COLORREF color);
+
+		[DllImport ("gdi32.dll", EntryPoint="CreatePen", CallingConvention=CallingConvention.StdCall)]
+		internal extern static IntPtr Win32CreatePen(PenStyle fnPenStyle, int nWidth, IntPtr color);
 		#endregion
 	}
 }

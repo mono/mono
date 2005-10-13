@@ -1756,7 +1756,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 		
-		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect) {
+		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width) {
 			throw new NotImplementedException();
 		}
 

@@ -219,7 +219,7 @@ namespace System.Windows.Forms {
 		internal abstract int[] ClipboardAvailableFormats(IntPtr handle);
 		internal abstract object ClipboardRetrieve(IntPtr handle, int id, XplatUI.ClipboardToObject converter);
 
-		internal abstract void DrawReversibleRectangle(IntPtr handle, Rectangle rect);
+		internal abstract void DrawReversibleRectangle(IntPtr handle, Rectangle rect, int line_width);
 
 		internal abstract SizeF GetAutoScaleSize(Font font);
 
