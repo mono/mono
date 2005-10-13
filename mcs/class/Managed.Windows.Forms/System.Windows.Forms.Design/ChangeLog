@@ -1,3 +1,7 @@
+2005-10-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* EventsTab.cs: Made .ctor() private to fix signature
+
 2005-05-14  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* EventsTab.cs: Implementation start with many gaping holes
 

@@ -35,7 +35,7 @@ namespace System.Windows.Forms.Design
 	public class EventsTab : PropertyTab
 	{
 		[MonoTODO]
-		public EventsTab()
+		private EventsTab()
 		{
 		}
 		
