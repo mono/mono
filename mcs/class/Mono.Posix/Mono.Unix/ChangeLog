@@ -1,3 +1,13 @@
+2005-10-13  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixMarshal.cs: More/better StringToAlloc/PtrToString which take a
+	  System.Text.Encoding instance for proper string marshaling.  
+	  - PtrToString(string,Encoding) is particularly tricky due to variable
+	    length encodings.
+	  - Fix StringToAlloc so that it works properly with UTF-16 encodings 
+	    (we need a terminating null 16-bit word, not a null byte).
+	  - StringToAlloc overload for doing substrings.
+
 2005-10-12  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixStream.cs: Check for EROFS and EINVAL in Flush().  Snorp was getting

@@ -127,11 +127,90 @@ namespace Mono.Unix {
 
 		public static string PtrToString (IntPtr p)
 		{
-			// TODO: deal with character set issues.  Will PtrToStringAnsi always
-			// "Do The Right Thing"?
 			if (p == IntPtr.Zero)
 				return null;
-			return Marshal.PtrToStringAnsi (p);
+			return PtrToString (p, Encoding.Default);
+		}
+
+		public static string PtrToString (IntPtr p, Encoding encoding)
+		{
+			if (p == IntPtr.Zero)
+				return null;
+
+			int len = GetStringByteLength (p, encoding);
+			byte[] string_buf = new byte [len];
+			Marshal.Copy (p, string_buf, 0, string_buf.Length);
+			return encoding.GetString (string_buf);
+		}
+
+		private static int GetStringByteLength (IntPtr p, Encoding encoding)
+		{
+			Type encodingType = encoding.GetType ();
+
+			int len = -1;
+
+			// Encodings that will always end with a null byte
+			if (encodingType == typeof(UTF8Encoding) ||
+					encodingType == typeof(UTF7Encoding) ||
+					encodingType == typeof(ASCIIEncoding)) {
+				len = checked ((int) Native.Stdlib.strlen (p));
+			}
+			// Encodings that will always end with a 0x0000 16-bit word
+			else if (encodingType == typeof(UnicodeEncoding)) {
+				len = GetInt16BufferLength (p);
+			}
+			// Some non-public encoding, such as Latin1 or a DBCS charset.
+			// Look for a sequence of encoding.GetMaxByteCount() bytes that are all
+			// 0, which should be the terminating null.
+			// This is "iffy", since it may fail for variable-width encodings; for
+			// example, UTF8Encoding.GetMaxByteCount(1) = 4, so this would read 3
+			// bytes past the end of the string, possibly into garbage memory
+			// (which is why we special case UTF above).
+			else {
+				len = GetRandomBufferLength (p, encoding.GetMaxByteCount(1));
+			}
+
+			if (len == -1)
+				throw new NotSupportedException ("Unable to determine native string buffer length");
+			return len;
+		}
+
+		private static int GetInt16BufferLength (IntPtr p)
+		{
+			int len = 0;
+			while (Marshal.ReadInt16 (p, len) != 0)
+				checked {++len;}
+			return len;
+		}
+
+		private static int GetInt32BufferLength (IntPtr p)
+		{
+			int len = 0;
+			while (Marshal.ReadInt32 (p, len) != 0)
+				checked {++len;}
+			return len;
+		}
+
+		private static int GetRandomBufferLength (IntPtr p, int nullLength)
+		{
+			switch (nullLength) {
+				case 1: return checked ((int) Native.Stdlib.strlen (p));
+				case 2: return GetInt16BufferLength (p);
+				case 4: return GetInt32BufferLength (p);
+			}
+
+			int len = 0;
+			int num_null_seen = 0;
+
+			do {
+				byte b = Marshal.ReadByte (p, len++);
+				if (b == 0)
+					++num_null_seen;
+				else
+					num_null_seen = 0;
+			} while (num_null_seen != nullLength);
+
+			return len;
 		}
 
 		/*
@@ -150,11 +229,16 @@ namespace Mono.Unix {
 		 */
 		public static string[] PtrToStringArray (IntPtr stringArray)
 		{
+			return PtrToStringArray (stringArray, Encoding.Default);
+		}
+
+		public static string[] PtrToStringArray (IntPtr stringArray, Encoding encoding)
+		{
 			if (stringArray == IntPtr.Zero)
 				return new string[]{};
 
 			int argc = CountStrings (stringArray);
-			return PtrToStringArray (argc, stringArray);
+			return PtrToStringArray (argc, stringArray, encoding);
 		}
 
 		private static int CountStrings (IntPtr stringArray)
@@ -176,6 +260,11 @@ namespace Mono.Unix {
 		 */
 		public static string[] PtrToStringArray (int count, IntPtr stringArray)
 		{
+			return PtrToStringArray (count, stringArray, Encoding.Default);
+		}
+
+		public static string[] PtrToStringArray (int count, IntPtr stringArray, Encoding encoding)
+		{
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count", "< 0");
 			if (stringArray == IntPtr.Zero)
@@ -184,7 +273,7 @@ namespace Mono.Unix {
 			string[] members = new string[count];
 			for (int i = 0; i < count; ++i) {
 				IntPtr s = Marshal.ReadIntPtr (stringArray, i * IntPtr.Size);
-				members[i] = PtrToString (s);
+				members[i] = PtrToString (s, encoding);
 			}
 
 			return members;
@@ -192,18 +281,34 @@ namespace Mono.Unix {
 
 		public static IntPtr StringToAlloc (string s)
 		{
-			return StringToAlloc (s, Encoding.UTF8);
+			return StringToAlloc (s, Encoding.Default);
 		}
 
-		public static IntPtr StringToAlloc (string s, Encoding e)
+		public static IntPtr StringToAlloc (string s, Encoding encoding)
 		{
-			byte[] marshal = new byte [e.GetByteCount (s) + 1];
-			if (e.GetBytes (s, 0, s.Length, marshal, 0) != (marshal.Length-1))
-				throw new NotSupportedException ("e.GetBytes() doesn't equal e.GetByteCount()!");
-			marshal [marshal.Length-1] = 0;
+			return StringToAlloc (s, 0, s.Length, encoding);
+		}
+
+		public static IntPtr StringToAlloc (string s, int index, int count)
+		{
+			return StringToAlloc (s, index, count, Encoding.Default);
+		}
+
+		public static IntPtr StringToAlloc (string s, int index, int count, Encoding encoding)
+		{
+			int min_byte_count = encoding.GetMaxByteCount(1);
+			char[] copy = s.ToCharArray (index, count);
+			byte[] marshal = new byte [encoding.GetByteCount (copy) + min_byte_count];
+
+			int bytes_copied = encoding.GetBytes (copy, 0, copy.Length, marshal, 0);
+
+			if (bytes_copied != (marshal.Length-min_byte_count))
+				throw new NotSupportedException ("encoding.GetBytes() doesn't equal encoding.GetByteCount()!");
+
 			IntPtr mem = Alloc (marshal.Length);
 			if (mem == IntPtr.Zero)
 				throw new OutOfMemoryException ();
+
 			bool copied = false;
 			try {
 				Marshal.Copy (marshal, 0, mem, marshal.Length);
@@ -213,6 +318,7 @@ namespace Mono.Unix {
 				if (!copied)
 					Free (mem);
 			}
+
 			return mem;
 		}
 
