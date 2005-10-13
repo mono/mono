@@ -396,6 +396,13 @@ namespace System.Windows.Forms {
 			return driver.GetActive();
 		}
 
+		internal static SizeF GetAutoScaleSize(Font font) {
+			#if DriverDebug
+				Console.WriteLine("GetAutoScaleSize({0}): Called", font);
+			#endif
+			return driver.GetAutoScaleSize(font);
+		}
+
 		internal static void GetCursorInfo(IntPtr cursor, out int width, out int height, out int hotspot_x, out int hotspot_y) {
 			#if DriverDebug
 				Console.WriteLine("GetCursorInfo({0:X}): Called", cursor.ToInt32());

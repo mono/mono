@@ -1,3 +1,10 @@
+2005-10-12  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUI.cs, XplatUIDriver.cs: Added GetAutoScaleSize()
+	* XplatUIOSX.cs: Stubbed GetAutoScaleSize() method
+	* XplatUIWin32.cs, XplatUIX11.cs: Implemented GetAutoScaleSize()
+	  method (it uses our FosterParent window to get a graphics context)
+
 2005-10-12  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs, XplatUIDriver.cs: Removed EraseWindowBackground 

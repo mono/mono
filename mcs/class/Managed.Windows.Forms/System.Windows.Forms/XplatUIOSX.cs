@@ -1759,6 +1759,11 @@ namespace System.Windows.Forms {
 		internal override void DrawReversibleRectangle(IntPtr handle, Rectangle rect) {
 			throw new NotImplementedException();
 		}
+
+		[MonoTODO]
+		internal override SizeF GetAutoScaleSize(Font font) {
+			throw new NotImplementedException();
+		}
 		#endregion
 		
 		#region System information

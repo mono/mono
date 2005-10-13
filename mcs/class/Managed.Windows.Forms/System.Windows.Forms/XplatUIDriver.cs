@@ -221,6 +221,8 @@ namespace System.Windows.Forms {
 
 		internal abstract void DrawReversibleRectangle(IntPtr handle, Rectangle rect);
 
+		internal abstract SizeF GetAutoScaleSize(Font font);
+
 		// System information
 		internal abstract int KeyboardSpeed { get; } 
 		internal abstract int KeyboardDelay { get; } 
