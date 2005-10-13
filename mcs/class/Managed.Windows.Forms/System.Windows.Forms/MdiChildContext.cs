@@ -413,13 +413,11 @@ namespace System.Windows.Forms {
 			return new Point (x_move, y_move);
 		}
 
-		// For now just use a solid pen as it is 10 billion times
-		// faster then using the hatch, and what we really need is invert
 		private void DrawVirtualPosition ()
 		{
 			ClearVirtualPosition ();
 
-			XplatUI.DrawReversibleRectangle (mdi_container.Handle, virtual_position);
+			XplatUI.DrawReversibleRectangle (mdi_container.Handle, virtual_position, 2);
 			prev_virtual_position = virtual_position;
 		}
 
@@ -427,7 +425,7 @@ namespace System.Windows.Forms {
 		{
 			if (prev_virtual_position != Rectangle.Empty)
 				XplatUI.DrawReversibleRectangle (mdi_container.Handle,
-						prev_virtual_position);
+						prev_virtual_position, 2);
 			prev_virtual_position = Rectangle.Empty;
 		}
 
