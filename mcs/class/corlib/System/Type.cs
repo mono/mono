@@ -468,6 +468,10 @@ namespace System {
 		internal extern static TypeCode GetTypeCodeInternal (Type type);
 
 		public static TypeCode GetTypeCode (Type type) {
+			if (type == null)
+				/* MS.NET returns this */
+				return TypeCode.Empty;
+
 			type = type.UnderlyingSystemType;
 
 			if (!type.IsSystemType)

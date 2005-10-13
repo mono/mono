@@ -1,3 +1,9 @@
+2005-10-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* Type.cs (GetTypeCode): Applied patch from 
+	Mike Welham <mwelham@gmail.com>. Return TypeCode.Empty when null is
+	passed in.
+
 2005-10-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* Delegate.cs: Add support for delegate covariance and contravariance
