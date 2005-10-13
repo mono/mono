@@ -44,9 +44,9 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		internal static Form		active_form;
 		internal bool			closing;
-		FormBorderStyle			formBorderStyle;
-		private static bool		autoscale;
-		private static Size		autoscale_base_size;
+		FormBorderStyle			form_border_style;
+		private bool		        autoscale;
+		private Size		        autoscale_base_size;
 		private static Icon		default_icon;
 		internal bool			is_modal;
 		internal bool			end_modal;			// This var is being monitored by the application modal loop
@@ -79,7 +79,8 @@ namespace System.Windows.Forms {
 		#endregion	// Local Variables
 
 		#region Private & Internal Methods
-		static Form() {
+		static Form ()
+		{
 			default_icon = (Icon)Locale.GetResource("mono.ico");
 		}
 		#endregion	// Private & Internal Methods
@@ -107,13 +108,18 @@ namespace System.Windows.Forms {
 		#endregion	// Public Classes
 
 		#region Public Constructor & Destructor
-		public Form() {
+		public Form ()
+		{
+			SizeF current_scale = GetAutoScaleSize (DeviceContext, Font);
+
+			autoscale = true;
+			autoscale_base_size = new Size ((int)current_scale.Width, (int) current_scale.Height);
 			closing = false;
 			is_modal = false;
 			end_modal = false;
 			dialog_result = DialogResult.None;
 			start_position = FormStartPosition.WindowsDefaultLocation;
-			formBorderStyle = FormBorderStyle.Sizable;
+			form_border_style = FormBorderStyle.Sizable;
 			key_preview = false;
 			opacity = 1D;
 			menu = null;
@@ -196,7 +202,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				autoscale=value;
+				autoscale = value;
 			}
 		}
 
@@ -209,7 +215,7 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				autoscale_base_size=value;
+				autoscale_base_size = value;
 			}
 		}
 
@@ -313,12 +319,12 @@ namespace System.Windows.Forms {
 		[DispId(-504)]
 		public FormBorderStyle FormBorderStyle {
 			get {
-				return formBorderStyle;
+				return form_border_style;
 			}
 			set {
-				formBorderStyle = value;
+				form_border_style = value;
 				if (IsHandleCreated) {
-					XplatUI.SetBorderStyle(window.Handle, formBorderStyle);
+					XplatUI.SetBorderStyle(window.Handle, form_border_style);
 				}
 				UpdateStyles();
 			} 
@@ -863,19 +869,33 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Properties
 
 		#region Public Static Methods
-		[MonoTODO("Figure out the math")]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		public static SizeF GetAutoScaleSize(Font font) {
-			SizeF	result;
-
-			result = new SizeF(250, 250);
-			result.Width *= font.SizeInPoints / 12;
-			result.Height *= font.SizeInPoints / 12;
-			return result;
+		public static SizeF GetAutoScaleSize (Font font)
+		{
+			return XplatUI.GetAutoScaleSize(font);
 		}
+
 		#endregion	// Public Static Methods
 
 		#region Public Instance Methods
+		internal SizeF GetAutoScaleSize (Graphics g, Font font)
+		{
+			//
+			// The following constants come from the dotnet mailing list
+			// discussion: http://discuss.develop.com/archives/wa.exe?A2=ind0203A&L=DOTNET&P=R3655
+			//
+			// The magic number is "Its almost the length
+			// of the string with a smattering added in
+			// for compat with earlier code".
+			//
+	
+			string magic_string = "The quick brown fox jumped over the lazy dog.";
+			double magic_number = 44.549996948242189;
+			float width = (float) (g.MeasureString (magic_string, font).Width / magic_number);
+			
+			return new SizeF (width, font.Height);
+		}
+						 
 		public void Activate() {
 			Form	active;
 
@@ -986,8 +1006,23 @@ namespace System.Windows.Forms {
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
-		protected void ApplyAutoScaling() {
-			// Hm, not sure what this does
+		protected void ApplyAutoScaling()
+		{
+			SizeF current_size_f = GetAutoScaleSize (DeviceContext, Font);
+			Size current_size = new Size ((int) current_size_f.Width, (int) current_size_f.Height);
+
+			if (current_size == autoscale_base_size)
+				return;
+
+			//
+			// I tried applying the Fudge height factor from:
+			// http://blogs.msdn.com/mharsh/archive/2004/01/25/62621.aspx
+			// but it makes things larger without looking better.
+			//
+			Scale (current_size_f.Width / AutoScaleBaseSize.Width,
+			       current_size_f.Height / AutoScaleBaseSize.Height);
+			
+			AutoScaleBaseSize = current_size;
 		}
 
 		protected void CenterToParent() {
@@ -1140,7 +1175,7 @@ namespace System.Windows.Forms {
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void OnHandleCreated(EventArgs e) {
-			XplatUI.SetBorderStyle(window.Handle, formBorderStyle);
+			XplatUI.SetBorderStyle(window.Handle, form_border_style);
 			base.OnHandleCreated (e);
 		}
 
@@ -1167,6 +1202,10 @@ namespace System.Windows.Forms {
 		protected virtual void OnLoad(EventArgs e) {
 			if (Load != null) {
 				Load(this, e);
+			}
+			if (AutoScale){
+				ApplyAutoScaling ();
+				AutoScale = false;
 			}
 		}
 

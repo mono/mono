@@ -1,3 +1,11 @@
+2005-10-12  Miguel de Icaza  <miguel@novell.com>
+
+	* Form.cs (Form): Setup default values for autoscale and
+	autoscale_base_size;  Make these instance variables, not static
+	variables. 
+
+	(OnLoad): on the first load, adjust the size of the form.
+
 2005-10-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs, XplatUIDriver.cs, XplatUIOSX.cs: Added 
