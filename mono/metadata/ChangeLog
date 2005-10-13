@@ -1,3 +1,9 @@
+2005-10-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* assembly.c metadata-internals.h icall.c: Define an additional
+	parameter for mono_assembly_name_parse_full, so we can avoid creating
+	S.R.AssemblyName.Version when no version info wasn't passed.
+	
 2005-10-09  Miguel de Icaza  <miguel@novell.com>
 
 	* class.c (mono_type_get_full_name): Reimplement method that was
