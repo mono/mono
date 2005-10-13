@@ -49,6 +49,9 @@ namespace System.Windows.Forms
 		{
 			isedit = true;
 			grid = null;
+
+			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
+			SetStyle (ControlStyles.FixedHeight, true);
 		}
 		#endregion
 

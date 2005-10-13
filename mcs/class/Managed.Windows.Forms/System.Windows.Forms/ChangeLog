@@ -1,3 +1,48 @@
+2005-10-12  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs, XplatUIDriver.cs: Removed EraseWindowBackground 
+	  and SetWindowBackground methods
+	* Control.cs:
+	  - Setting proper ControlStyles
+	  - We no longer call XplatUI.SetWindowBackground and XplatUI.
+	    EraseWindowBackground, instead we draw the window background
+	    ourselves in PaintControlBackground. This behaviour is
+	    required to match MS, where, when OnPaintBackground is not
+	    called, the background is not drawn.
+	  - Removed unneeded Refresh() in set_Text
+	* Hwnd.cs: Dropped the ErasePending support. No longer needed
+	* XplatUIX11.cs:
+	  - Created DeriveStyles method to translate from CreateParams to
+	    FormBorderStyle and TitleStyle, also handles BorderStyle (which
+	    matches FormBorderStyle enum values)
+	  - Consolidated SetHwndStyles and CalculateWindowRect border/title
+	    style calculations into single DeriveStyles method
+	  - Fixed CreateWindow to (finally) use Gravity. This prevents X11
+	    from redrawing the whole window on any resize or expose.
+	  - Fixed CreateWindow usage of SetWindowValuemask. Before not
+	    all styles were applied to our whole/client window appropriately
+	  - Removed EraseWindowBackground() and SetWindowBackground() methods
+	  - Removed handling of WM_ERASEBKGND message from DefWndProc, we
+	    no longer clear/redraw the background through X
+	  - Removed handling of erase_pending bit, we have no use for it (or
+	    so it seems)
+	* XplatUIOSX.cs:
+	  - Removed generation and handling of WM_ERASEBKGND message
+	  - Removed EraseWindowBackground() and SetWindowBackground() methods
+	  - Removed handling of hwnd.ErasePending flag
+	* XplatUIWin32.cs:
+	  - Removed EraseWindowBackground() and SetWindowBackground() methods
+	  - We no longer call EraseWindowBackground on PaintEventStart, we 
+	    ignore the fErase flag, erasing is handled in Control in the
+	    background handler
+	* Button.cs, GroupBox.cs, Label.cs, CheckBox.cs, ProgressBar.cs,
+	  LinkLabel.cs, ListControl.cs, TabPage.cs, UpDownBase.cs,
+	  TextBoxBase.cs, TextBox.cs, ListView.cs, ButtonBase.cs, 
+	  CheckedListBox.cs, MdiClient.cs, Panel.cs, DataGrid.cs, 
+	  DataGridTextBox.cs, ScrollBar.cs, ListBox.cs, TrackBar.cs, 
+	  TabControl.cs, ScrollableControl.cs, ToolBar.cs, PictureBox.cs,
+	  DateTimePicker.cs, StatusBar.cs, MonthCalendar.cs: Setting proper ControlStyles
+
 2005-10-12  Jonathan Chambers <jonathan.chambers@ansys.com>
 
 	* PropertyGrids.cs: Get sub properties

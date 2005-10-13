@@ -563,34 +563,52 @@ namespace System.Windows.Forms {
 			XSendEvent(DisplayHandle, window, false, EventMask.NoEventMask, ref xev);
 		}
 
-		private void SetHwndStyles(Hwnd hwnd, CreateParams cp) {
-			hwnd.border_style = FormBorderStyle.None;
-			if ((cp.ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
-				if ((cp.ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
-					if ((cp.Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-						hwnd.border_style = FormBorderStyle.SizableToolWindow;
-					} else {
-						hwnd.border_style = FormBorderStyle.FixedToolWindow;
-					}
-				} else if ((cp.ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
-					hwnd.border_style = FormBorderStyle.FixedDialog;
-				} else if ((cp.ExStyle & (int)WindowStyles.WS_THICKFRAME) != 0) {
-					hwnd.border_style = FormBorderStyle.Sizable;
+
+		private void DeriveStyles(IntPtr handle, int Style, int ExStyle, out FormBorderStyle border_style, out TitleStyle title_style) {
+			Control		control;
+
+			control = Control.FromHandle(handle);
+
+			if ( !(control is Form)) {
+				if (control != null) {
+					border_style = (FormBorderStyle)control.border_style;
 				} else {
-					hwnd.border_style = FormBorderStyle.FixedSingle;
+					border_style = FormBorderStyle.None;
 				}
+				title_style = TitleStyle.None;
 			} else {
-				hwnd.border_style = FormBorderStyle.Fixed3D;
-			}
+				title_style = TitleStyle.None;
+				if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
+					if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+						title_style = TitleStyle.Tool;
+					} else {
+						title_style = TitleStyle.Normal;
+					}
+				}
 
-
-			if ((cp.Style & (int)WindowStyles.WS_CAPTION) != 0) {
-				if ((cp.ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
-					hwnd.title_style = TitleStyle.Tool;
+				border_style = FormBorderStyle.None;
+				if ((ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
+					if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+						if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
+							border_style = FormBorderStyle.SizableToolWindow;
+						} else {
+							border_style = FormBorderStyle.FixedToolWindow;
+						}
+					} else if ((ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
+						border_style = FormBorderStyle.FixedDialog;
+					} else if ((ExStyle & (int)WindowStyles.WS_THICKFRAME) != 0) {
+						border_style = FormBorderStyle.Sizable;
+					} else {
+						border_style = FormBorderStyle.FixedSingle;
+					}
 				} else {
-					hwnd.title_style = TitleStyle.Normal;
+					border_style = FormBorderStyle.Fixed3D;
 				}
 			}
+		}
+
+		private void SetHwndStyles(Hwnd hwnd, CreateParams cp) {
+			DeriveStyles(hwnd.Handle, cp.Style, cp.ExStyle, out hwnd.border_style, out hwnd.title_style);
 		}
 
 		private void SetWMStyles(Hwnd hwnd, CreateParams cp) {
@@ -1546,34 +1564,7 @@ namespace System.Windows.Forms {
 			FormBorderStyle	border_style;
 			TitleStyle	title_style;
 
-			title_style = TitleStyle.None;
-			if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
-				if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
-					title_style = TitleStyle.Tool;
-				} else {
-					title_style = TitleStyle.Normal;
-				}
-			}
-
-			border_style = FormBorderStyle.None;
-			if ((ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
-				if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
-					if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-						border_style = FormBorderStyle.SizableToolWindow;
-					} else {
-						border_style = FormBorderStyle.FixedToolWindow;
-					}
-				} else if ((ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
-					border_style = FormBorderStyle.FixedDialog;
-				} else if ((ExStyle & (int)WindowStyles.WS_THICKFRAME) != 0) {
-					border_style = FormBorderStyle.Sizable;
-				} else {
-					border_style = FormBorderStyle.FixedSingle;
-				}
-			} else {
-				border_style = FormBorderStyle.Fixed3D;
-			}
-
+			DeriveStyles(handle, Style, ExStyle, out border_style, out title_style);
 			WindowRect = Hwnd.GetWindowRectangle(border_style, MenuHandle, title_style, ClientRect);
 
 			return true;
@@ -1732,8 +1723,6 @@ namespace System.Windows.Forms {
 
 			hwnd = new Hwnd();
 
-			SetHwndStyles(hwnd, cp);
-
 			Attributes = new XSetWindowAttributes();
 			X = cp.X;
 			Y = cp.Y;
@@ -1759,9 +1748,15 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			ValueMask = SetWindowValuemask.BitGravity | SetWindowValuemask.WinGravity;
+
+			Attributes.bit_gravity = Gravity.NorthWestGravity;
+			Attributes.win_gravity = Gravity.NorthWestGravity;
+
 			// Save what's under the toolwindow
 			if ((cp.ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
 				Attributes.save_under = true;
+				ValueMask |= SetWindowValuemask.SaveUnder;
 			}
 
 
@@ -1769,11 +1764,9 @@ namespace System.Windows.Forms {
 			if ((cp.Style & ((int)WindowStyles.WS_POPUP)) != 0) {
 				if ((cp.Style & (int)WindowStyles.WS_CAPTION) == 0) {
 					Attributes.override_redirect = true;
+					ValueMask |= SetWindowValuemask.OverrideRedirect;
 				}
 			}
-
-			Attributes.bit_gravity = Gravity.NorthWestGravity;
-			Attributes.win_gravity = Gravity.NorthWestGravity;
 
 			hwnd.x = X;
 			hwnd.y = Y;
@@ -1785,15 +1778,14 @@ namespace System.Windows.Forms {
 			ClientWindow = IntPtr.Zero;
 
 			lock (XlibLock) {
-				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, SetWindowValuemask.BitGravity | SetWindowValuemask.WinGravity | SetWindowValuemask.SaveUnder | SetWindowValuemask.OverrideRedirect, ref Attributes);
+				WholeWindow = XCreateWindow(DisplayHandle, ParentHandle, X, Y, Width, Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, IntPtr.Zero, ValueMask, ref Attributes);
 				if (WholeWindow != IntPtr.Zero) {
-					if (CustomVisual == IntPtr.Zero || CustomColormap == IntPtr.Zero) {
-						ValueMask = SetWindowValuemask.Nothing;
-					} else {
+					ValueMask &= ~(SetWindowValuemask.OverrideRedirect | SetWindowValuemask.SaveUnder);
+
+					if (CustomVisual != IntPtr.Zero && CustomColormap != IntPtr.Zero) {
 						ValueMask = SetWindowValuemask.ColorMap;
 						Attributes.colormap = CustomColormap;
 					}
-
 					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, ClientRect.X, ClientRect.Y, ClientRect.Width, ClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, ValueMask, ref Attributes);
 				}
 			}
@@ -1804,6 +1796,8 @@ namespace System.Windows.Forms {
 
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
+
+			SetHwndStyles(hwnd, cp);
 
 			#if DriverDebug
 				Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0);
@@ -2093,16 +2087,6 @@ namespace System.Windows.Forms {
 		}
 
 		internal override IntPtr DefWndProc(ref Message msg) {
-			switch((Msg)msg.Msg) {
-				case Msg.WM_ERASEBKGND: {
-					Hwnd	hwnd;
-
-					hwnd = Hwnd.ObjectFromHandle(msg.HWnd);
-					XClearArea(DisplayHandle, hwnd.client_window, hwnd.invalid.X, hwnd.invalid.Y, hwnd.invalid.Width, hwnd.invalid.Height, false);
-
-					return (IntPtr)1;
-				}
-			}
 			return IntPtr.Zero;
 		}
 
@@ -2239,16 +2223,6 @@ namespace System.Windows.Forms {
 
 		internal override void EnableWindow(IntPtr handle, bool Enable) {
 			// We do nothing; On X11 SetModal is used to create modal dialogs, on Win32 this function is used (see comment there)
-		}
-
-		internal override void EraseWindowBackground(IntPtr handle, IntPtr wParam) {
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-
-			lock (XlibLock) {
-				XClearArea (DisplayHandle, hwnd.client_window, hwnd.invalid.Left, hwnd.invalid.Top, hwnd.invalid.Width, hwnd.invalid.Height, false);
-			}
 		}
 
 		internal override void Exit() {
@@ -2939,7 +2913,6 @@ namespace System.Windows.Forms {
 			xevent.ExposeEvent.window = hwnd.client_window;
 
 			if (clear) {
-				hwnd.erase_pending = true;
 				xevent.ExposeEvent.x = hwnd.X;
 				xevent.ExposeEvent.y = hwnd.Y;
 				xevent.ExposeEvent.width = hwnd.Width;
@@ -2996,12 +2969,6 @@ namespace System.Windows.Forms {
 			}
 
 			if (client) {
-				if (hwnd.erase_pending) {
-					// In our implementation WM_ERASEBKGND always returns 1; otherwise we'd check the result and only call clear if it returned 0
-					NativeWindow.WndProc(hwnd.client_window, Msg.WM_ERASEBKGND, IntPtr.Zero, IntPtr.Zero);
-					hwnd.erase_pending = false;
-				}
-
 				hwnd.client_dc = Graphics.FromHwnd (hwnd.client_window);
 				hwnd.client_dc.SetClip(hwnd.invalid);
 				paint_event = new PaintEventArgs(hwnd.client_dc, hwnd.invalid);
@@ -3386,24 +3353,6 @@ namespace System.Windows.Forms {
 				}
 			}
 			return true;
-		}
-
-		internal override void SetWindowBackground(IntPtr handle, Color color) {
-			XColor	xcolor;
-			Hwnd	hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-			xcolor = new XColor();
-
-			xcolor.red = (ushort)(color.R * 257);
-			xcolor.green = (ushort)(color.G * 257);
-			xcolor.blue = (ushort)(color.B * 257);
-
-			lock (XlibLock) {
-				XAllocColor(DisplayHandle, DefaultColormap, ref xcolor);
-				XSetWindowBackground(DisplayHandle, hwnd.client_window, xcolor.pixel);
-				XClearWindow(DisplayHandle, hwnd.client_window);
-			}
 		}
 
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {

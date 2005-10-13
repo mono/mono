@@ -39,6 +39,7 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public Button() {
 			dialog_result = DialogResult.None;
+			SetStyle(ControlStyles.StandardDoubleClick, false);
 		}
 		#endregion	// Public Constructors
 

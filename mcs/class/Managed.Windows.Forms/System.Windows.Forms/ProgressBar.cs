@@ -120,8 +120,10 @@ namespace System.Windows.Forms
 			base.Paint += new PaintEventHandler (OnPaintPB);
 			base.Resize += new EventHandler (OnResizeTB);
 
-			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
+			SetStyle (ControlStyles.UserPaint | 
+				ControlStyles.Selectable | 
+				ControlStyles.ResizeRedraw | 
+				ControlStyles.Opaque, false);
 		}
 		#endregion	// Public Constructors
 

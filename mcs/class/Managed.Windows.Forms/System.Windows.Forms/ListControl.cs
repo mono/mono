@@ -47,6 +47,7 @@ namespace System.Windows.Forms
 			value_member = new BindingMemberInfo (string.Empty);
 			display_member = string.Empty;
 			data_manager = null;
+			SetStyle (ControlStyles.StandardClick | ControlStyles.UserPaint, false);
 		}
 
 		#region Events

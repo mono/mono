@@ -46,6 +46,9 @@ namespace System.Windows.Forms {
 			this.LostFocus +=new EventHandler(TextBox_LostFocus);
 			this.BackColor = ThemeEngine.Current.ColorWindow;
 			this.ForeColor = ThemeEngine.Current.ColorWindowText;
+
+			SetStyle (ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
+			SetStyle (ControlStyles.FixedHeight, true);
 		}
 		#endregion	// Public Constructors
 

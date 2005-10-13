@@ -120,8 +120,7 @@ namespace System.Windows.Forms {
 			ResumeLayout ();
 			
 			//SetStyle(ControlStyles.ResizeRedraw, true);
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.UserPaint, true);
+			SetStyle(ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 
 			canvas_width = ClientSize.Width;
 			canvas_height = ClientSize.Height;

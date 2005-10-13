@@ -198,6 +198,7 @@ namespace System.Windows.Forms {
 		#region Public Constructors
 		public ScrollableControl() {
 			SetStyle(ControlStyles.ContainerControl, true);
+			SetStyle(ControlStyles.AllPaintingInWmPaint, false);
 			auto_scroll = false;
 			auto_hscroll = false;
 			auto_vscroll = false;

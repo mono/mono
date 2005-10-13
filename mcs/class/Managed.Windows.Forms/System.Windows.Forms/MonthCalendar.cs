@@ -102,8 +102,7 @@ namespace System.Windows.Forms {
 
 		public MonthCalendar () {
 			// set up the control painting
-			SetStyle (ControlStyles.UserPaint, true);
-			SetStyle (ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 			
 			// mouse down timer
 			timer = new Timer ();

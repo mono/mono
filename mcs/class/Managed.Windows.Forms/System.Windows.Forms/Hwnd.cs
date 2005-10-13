@@ -57,7 +57,6 @@ namespace System.Windows.Forms {
 		internal bool		visible;
 		internal Rectangle	invalid;
 		internal bool		expose_pending;
-		internal bool		erase_pending;
 		internal bool		nc_expose_pending;
 		internal bool		configure_pending;
 		internal Graphics	client_dc;
@@ -83,7 +82,6 @@ namespace System.Windows.Forms {
 			expose_pending = false;
 			nc_expose_pending = false;
 			client_rectangle = Rectangle.Empty;
-			erase_pending = true;
 			marshal_free_list = new ArrayList(2);
 		}
 
@@ -291,16 +289,6 @@ namespace System.Windows.Forms {
 				}
 
 				return rect;
-			}
-		}
-
-		public bool ErasePending {
-			get {
-				return erase_pending;
-			}
-
-			set {
-				erase_pending = value;
 			}
 		}
 

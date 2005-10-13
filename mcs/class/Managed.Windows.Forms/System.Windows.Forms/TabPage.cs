@@ -46,6 +46,8 @@ namespace System.Windows.Forms {
 		public TabPage ()
 		{
 			Visible = true;
+
+			SetStyle (ControlStyles.CacheText, true);
 		}
 
 		public TabPage (string text) : base ()

@@ -276,11 +276,7 @@ namespace System.Windows.Forms
 			txtView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
 			this.Paint +=new PaintEventHandler(UpDownBase_Paint);
 
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.DoubleBuffer, true);
-			SetStyle(ControlStyles.Opaque, true);
-			SetStyle(ControlStyles.ResizeRedraw, true);
-			SetStyle(ControlStyles.UserPaint, true);
+			SetStyle(ControlStyles.FixedHeight, true);
 
 			UpdateEditText();
 		}

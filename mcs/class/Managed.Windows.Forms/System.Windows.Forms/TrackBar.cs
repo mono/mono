@@ -119,8 +119,7 @@ namespace System.Windows.Forms
 			MouseMove += new MouseEventHandler (OnMouseMoveTB);
 			holdclick_timer.Elapsed += new ElapsedEventHandler (OnFirstClickTimer);
 
-			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);			
+			SetStyle (ControlStyles.UserPaint | ControlStyles.Opaque, false);
 		}
 
 		#region Private & Internal Properties

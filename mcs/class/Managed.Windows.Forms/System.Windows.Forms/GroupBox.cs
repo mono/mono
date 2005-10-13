@@ -96,9 +96,8 @@ namespace System.Windows.Forms
 			TabStop = false;
 			flat_style = FlatStyle.Standard;
 
-			SetStyle(ControlStyles.ContainerControl, true);
+			SetStyle(ControlStyles.ContainerControl | ControlStyles.ResizeRedraw | ControlStyles.SupportsTransparentBackColor, true);
 			SetStyle(ControlStyles.Selectable, false);
-			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
 		}
 
 		#region Public Properties

@@ -1079,10 +1079,6 @@ namespace System.Windows.Forms {
 		internal override IntPtr DefWndProc(ref Message msg) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (msg.HWnd);
 			switch ((Msg)msg.Msg) {
-				case Msg.WM_ERASEBKGND: {
-					HIViewSetNeedsDisplay (hwnd.whole_window, true);
-					return (IntPtr)1;
-				}
 				case Msg.WM_DESTROY: {
 					if (WindowMapping [hwnd.Handle] != null)
 
@@ -1135,12 +1131,6 @@ namespace System.Windows.Forms {
 		internal override void EnableWindow(IntPtr handle, bool Enable) {
 			//Like X11 we need not do anything here
 		}
-
-		internal override void EraseWindowBackground(IntPtr handle, IntPtr wParam) {
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			HIViewSetNeedsDisplay (hwnd.whole_window, true);
-		}
-
 
 		internal override void Exit() {
 			GetMessageResult = false;
@@ -1286,8 +1276,6 @@ namespace System.Windows.Forms {
 		internal override void Invalidate (IntPtr handle, Rectangle rc, bool clear) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
 			
-			if (clear)
-				hwnd.erase_pending = true;
 			if (hwnd.visible && HIViewIsVisible (handle)) {
 				MSG msg = new MSG ();
 				msg.hwnd = hwnd.Handle;
@@ -1343,11 +1331,6 @@ namespace System.Windows.Forms {
 			if (Caret.Visible == 1) {
 				Caret.Paused = true;
 				HideCaret();
-			}
-
-			if (hwnd.erase_pending) {
-				NativeWindow.WndProc (hwnd.client_window, Msg.WM_ERASEBKGND, IntPtr.Zero, IntPtr.Zero);
-				hwnd.erase_pending = false;
 			}
 
 			hwnd.client_dc  = Graphics.FromHwnd (hwnd.client_window);
@@ -1574,21 +1557,6 @@ namespace System.Windows.Forms {
 			HIViewSetVisible (hwnd.client_window, visible);
 			hwnd.visible = visible;
 			return true;
-		}
-		
-		internal override void SetWindowBackground(IntPtr handle, Color color) {
-			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			
-			if (WindowMapping [hwnd.Handle] != null) {
-				RGBColor backColor = new RGBColor ();
-				backColor.red = (short)(color.R * 257); 
-				backColor.green = (short)(color.G * 257);
-				backColor.blue = (short)(color.B * 257);
-
-				CheckError (SetWindowContentColor ((IntPtr) WindowMapping [hwnd.Handle], ref backColor));
-			} else {
-				WindowBackgrounds [hwnd] = color;
-			}
 		}
 		
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {

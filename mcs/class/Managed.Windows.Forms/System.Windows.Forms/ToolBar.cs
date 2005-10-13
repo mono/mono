@@ -121,6 +121,9 @@ namespace System.Windows.Forms
 			this.MouseMove += new MouseEventHandler (ToolBar_MouseMove);
 			this.MouseUp += new MouseEventHandler (ToolBar_MouseUp);
 			base.Paint += new PaintEventHandler (ToolBar_Paint);
+
+			SetStyle (ControlStyles.UserPaint, false);
+			SetStyle (ControlStyles.FixedHeight, true);
 		}
 		#endregion Constructor
 

@@ -250,7 +250,7 @@ namespace System.Windows.Forms
 			vert_scrollbar.Scroll += new ScrollEventHandler (GridVScrolled);			
 			KeyUp += new KeyEventHandler (OnKeyUpDG);			
 
-			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle (ControlStyles.UserMouse, true);
 
 		}
 

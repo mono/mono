@@ -657,7 +657,9 @@ namespace System.Windows.Forms
 			border_style = BorderStyle.None;
 			background_color = Color.Empty;
 
-			control_style = ControlStyles.Selectable | ControlStyles.StandardClick | ControlStyles.StandardDoubleClick;
+			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
+					ControlStyles.Selectable | ControlStyles.StandardClick | 
+					ControlStyles.StandardDoubleClick;
 
 			parent = null;
 			background_image = null;
@@ -835,11 +837,6 @@ namespace System.Windows.Forms
 
 			for (int i=0; i < parent.child_controls.Count; i++) {
 				child=parent.child_controls[i];
-				if (child.IsHandleCreated) {
-					if (!child.GetStyle (ControlStyles.UserPaint)) {
-						XplatUI.SetWindowBackground(child.window.Handle, child.BackColor);
-					}
-				}
 				if (child.child_controls.Count>0) {
 					SetChildColor(child);
 				}
@@ -893,8 +890,10 @@ namespace System.Windows.Forms
 		// This method exists so controls overriding OnPaintBackground can have default background painting done
 		internal virtual void PaintControlBackground (PaintEventArgs pevent)
 		{
-			if (background_image == null)
+			if (background_image == null) {
+				pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(BackColor), new Rectangle(pevent.ClipRectangle.X - 1, pevent.ClipRectangle.Y - 1, pevent.ClipRectangle.Width + 2, pevent.ClipRectangle.Height + 2));
 				return;
+			}
 
 			DrawBackgroundImage (pevent.Graphics);
 		}
@@ -1255,9 +1254,6 @@ namespace System.Windows.Forms
 
 			set {
 				background_color=value;
-				if (this.IsHandleCreated && !GetStyle (ControlStyles.UserPaint)) {
-					XplatUI.SetWindowBackground(this.window.Handle, value);
-				}
 				SetChildColor(this);
 				OnBackColorChanged(EventArgs.Empty);
 				Invalidate();
@@ -1992,6 +1988,7 @@ namespace System.Windows.Forms
 		[BindableAttribute(true)]
 		public virtual string Text {
 			get {
+				// Our implementation ignores ControlStyles.CacheText - we always cache
 				return this.text;
 			}
 
@@ -2004,9 +2001,6 @@ namespace System.Windows.Forms
 					text=value;
 					if (IsHandleCreated) {
 						XplatUI.Text(Handle, text);
-					} else {
-						// FIXME: Do we need a Refresh() here?
-						Refresh();
 					}
 					OnTextChanged (EventArgs.Empty);
 				}
@@ -2857,10 +2851,6 @@ namespace System.Windows.Forms
 
 				creator_thread = Thread.CurrentThread;
 
-				if (!GetStyle (ControlStyles.UserPaint)) {
-					XplatUI.SetWindowBackground(window.Handle, this.BackColor);
-				}
-
 				OnHandleCreated(EventArgs.Empty);
 			}
 		}
@@ -3510,8 +3500,6 @@ namespace System.Windows.Forms
 									Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
 							OnPaintBackground (eraseEventArgs);
 						}
-					} else {
-						XplatUI.EraseWindowBackground(m.HWnd, m.WParam);
 					}
 					// The DefWndProc will never have to handle this, we don't ever set hbr on the window
 					m.Result = (IntPtr)1;

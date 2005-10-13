@@ -40,7 +40,7 @@ namespace System.Windows.Forms {
 		public Panel () {
 			base.TabStop = false;
 			SetStyle(ControlStyles.Selectable, false);
-			SetStyle(ControlStyles.UserPaint, true);
+			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 		}
 		#endregion	// Constructors & Destructors
 

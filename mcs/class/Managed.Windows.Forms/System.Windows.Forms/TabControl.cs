@@ -60,7 +60,7 @@ namespace System.Windows.Forms {
 		public TabControl ()
 		{
 			tab_pages = new TabPageCollection (this);
-			SetStyle (ControlStyles.UserPaint, true);
+			SetStyle (ControlStyles.UserPaint, false);
 			padding = ThemeEngine.Current.TabControlDefaultPadding;
 			item_size = ThemeEngine.Current.TabControlDefaultItemSize;
 

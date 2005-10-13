@@ -142,10 +142,13 @@ namespace System.Windows.Forms {
 			FontChanged+=new EventHandler(RedrawEvent);
 			SizeChanged+=new EventHandler(RedrawEvent);
 
-			SetStyle(ControlStyles.UserPaint, true);
-			SetStyle(ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle(ControlStyles.ResizeRedraw, true);
-			SetStyle(ControlStyles.StandardClick | ControlStyles.StandardDoubleClick, false);
+			SetStyle(ControlStyles.ResizeRedraw | 
+				ControlStyles.Opaque | 
+				ControlStyles.UserMouse | 
+				ControlStyles.SupportsTransparentBackColor | 
+				ControlStyles.CacheText |
+				ControlStyles.DoubleBuffer, true);
+			SetStyle(ControlStyles.StandardClick, false);
 		}
 		#endregion	// Public Constructors
 

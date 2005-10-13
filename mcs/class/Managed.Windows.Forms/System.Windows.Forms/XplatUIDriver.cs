@@ -143,7 +143,6 @@ namespace System.Windows.Forms {
 		internal abstract IntPtr GetParent(IntPtr handle);
 
 		internal abstract void UpdateWindow(IntPtr handle);
-		internal abstract void SetWindowBackground(IntPtr handle, Color color);
 		internal abstract PaintEventArgs PaintEventStart(IntPtr handle, bool client);
 		internal abstract void PaintEventEnd(IntPtr handle, bool client);
 
@@ -212,8 +211,6 @@ namespace System.Windows.Forms {
 		internal abstract void ScreenToMenu(IntPtr hwnd, ref int x, ref int y);
 
 		internal abstract void SetIcon(IntPtr handle, Icon icon);
-
-		internal abstract void EraseWindowBackground(IntPtr handle, IntPtr wParam);
 
 		internal abstract void ClipboardClose(IntPtr handle);
 		internal abstract IntPtr ClipboardOpen();

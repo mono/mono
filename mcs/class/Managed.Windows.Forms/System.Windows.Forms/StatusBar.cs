@@ -54,7 +54,7 @@ namespace System.Windows.Forms {
 			base.Dock = DockStyle.Bottom;
 			Anchor = AnchorStyles.Top | AnchorStyles.Left;
 			this.TabStop = false;
-			this.SetStyle(ControlStyles.ResizeRedraw, true);
+			this.SetStyle(ControlStyles.UserPaint | ControlStyles.Selectable, false);
 		}
 		#endregion	// Public Constructors
 

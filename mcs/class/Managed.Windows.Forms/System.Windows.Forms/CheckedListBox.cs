@@ -50,6 +50,7 @@ namespace System.Windows.Forms
 			check_onclick = false;
 			three_dcheckboxes = false;
 			listbox_info.item_height = FontHeight + 2;
+			SetStyle (ControlStyles.ResizeRedraw, true);
 		}
 
 		#region events

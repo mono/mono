@@ -50,6 +50,8 @@ namespace System.Windows.Forms {
 			redraw = true;
 			recalc = true;
 			allow_drop = false;
+			SetStyle (ControlStyles.Selectable, false);
+			SetStyle (ControlStyles.DoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
 		}
 
 		[DefaultValue(PictureBoxSizeMode.Normal)]

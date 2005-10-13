@@ -68,6 +68,7 @@ namespace System.Windows.Forms {
 		public MdiClient() {
 			BackColor = SystemColors.AppWorkspace;
 			Dock = DockStyle.Fill;
+			SetStyle (ControlStyles.Selectable, false);
 		}
 		#endregion	// Public Constructors
 

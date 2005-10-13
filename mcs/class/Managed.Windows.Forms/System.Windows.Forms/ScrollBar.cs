@@ -164,8 +164,7 @@ namespace System.Windows.Forms
 			base.Resize += new EventHandler (OnResizeSB);
 			base.TabStop = false;
                         
-			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
-			SetStyle (ControlStyles.ResizeRedraw | ControlStyles.Opaque, true);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 		}
 
 		#region Internal & Private Properties

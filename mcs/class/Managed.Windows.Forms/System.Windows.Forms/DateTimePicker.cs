@@ -113,7 +113,8 @@ namespace System.Windows.Forms {
 			MouseDown += new MouseEventHandler (MouseDownHandler);			
 			Paint += new PaintEventHandler (PaintHandler);
 			
-			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
+			SetStyle (ControlStyles.FixedHeight, true);
 		}
 		
 		#endregion

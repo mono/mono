@@ -103,9 +103,12 @@ namespace System.Windows.Forms
 			AutoSizeChanged = null;
     			TextAlignChanged = null;
 
-			SetStyle (ControlStyles.ResizeRedraw, true);
 			SetStyle (ControlStyles.Selectable, false);
-			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle (ControlStyles.ResizeRedraw | 
+				ControlStyles.UserPaint | 
+				ControlStyles.AllPaintingInWmPaint |
+				ControlStyles.SupportsTransparentBackColor |
+				ControlStyles.DoubleBuffer, true);
 			
 			HandleCreated += new EventHandler (OnHandleCreatedLB);
 		}

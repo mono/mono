@@ -100,6 +100,7 @@ namespace System.Windows.Forms {
 			auto_check = true;
 			check_alignment = ContentAlignment.MiddleLeft;
 			text_alignment = ContentAlignment.MiddleLeft;
+			SetStyle(ControlStyles.StandardDoubleClick, false);
 		}
 		#endregion	// Public Constructors
 

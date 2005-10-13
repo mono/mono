@@ -389,10 +389,6 @@ namespace System.Windows.Forms {
 			driver.Exit();
 		}
 
-		internal static void EraseWindowBackground(IntPtr handle, IntPtr wParam) {
-			driver.EraseWindowBackground(handle, wParam);
-		}
-
 		internal static IntPtr GetActive() {
 			#if DriverDebug
 				Console.WriteLine("GetActive(): Called");
@@ -702,13 +698,6 @@ namespace System.Windows.Forms {
 			driver.SetWindowStyle(handle, cp);
 		}
 
-		internal static void SetWindowBackground(IntPtr handle, Color color) {
-			#if DriverDebug
-				Console.WriteLine("SetWindowBackground({0:X}, {1}): Called", handle.ToInt32(), color);
-			#endif
-			driver.SetWindowBackground(handle, color);
-		}
-			
 		internal static bool SetZOrder(IntPtr handle, IntPtr AfterhWnd, bool Top, bool Bottom) {
 			#if DriverDebug
 				Console.WriteLine("SetZOrder({0:X}, {1:X}, {2}, {3}): Called", handle.ToInt32(), AfterhWnd.ToInt32(), Top, Bottom);

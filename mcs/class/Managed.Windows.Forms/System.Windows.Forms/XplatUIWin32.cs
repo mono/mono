@@ -1040,10 +1040,6 @@ namespace System.Windows.Forms {
 			Win32UpdateWindow(handle);
 		}
 
-		internal override void SetWindowBackground(IntPtr handle, Color color) {
-			Win32SetWindowLong(handle, WindowLong.GWL_USERDATA, (uint)color.ToArgb());
-		}
-
 		[MonoTODO("FIXME - Add support for internal table of windows/DCs for cleanup; handle client=false to draw in NC area")]
 		internal override PaintEventArgs PaintEventStart(IntPtr handle, bool client) {
 			IntPtr		hdc;
@@ -1064,13 +1060,7 @@ namespace System.Windows.Forms {
 
 				hwnd.user_data = (object)ps;
 
-				// FIXME: Figure out why the rectangle is always 0 size
 				clip_rect = new Rectangle(ps.rcPaint.left, ps.rcPaint.top, ps.rcPaint.right-ps.rcPaint.left, ps.rcPaint.bottom-ps.rcPaint.top);
-//				clip_rect = new Rectangle(rect.left, rect.top, rect.right-rect.left, rect.bottom-rect.top);
-
-				if (ps.fErase != 0) {
-					EraseWindowBackground(handle, hdc);
-				}
 			} else {
 				hdc = Win32GetDC(handle);
 				// FIXME: Add the DC to internal list
@@ -1755,27 +1745,6 @@ namespace System.Windows.Forms {
 
 		internal override void SetIcon(IntPtr hwnd, Icon icon) {
 			Win32SendMessage(hwnd, Msg.WM_SETICON, (IntPtr)1, icon.Handle);	// 1 = large icon (0 would be small)
-		}
-
-		internal override void EraseWindowBackground(IntPtr hWnd, IntPtr hDc) {
-			IntPtr          hbr;
-			LOGBRUSH        lb;
-			uint            argb;
-			RECT            rect;
-
-			//msg.wParam
-			argb = Win32GetWindowLong(hWnd, WindowLong.GWL_USERDATA);
-			lb = new LOGBRUSH();
-
-			lb.lbColor.B = (byte)((argb & 0xff0000)>>16);
-			lb.lbColor.G = (byte)((argb & 0xff00)>>8);
-			lb.lbColor.R = (byte)(argb & 0xff);
-
-			lb.lbStyle = LogBrushStyle.BS_SOLID;
-			hbr = Win32CreateBrushIndirect(ref lb);
-			Win32GetClientRect(hWnd, out rect);
-			Win32FillRect(hDc, ref rect, hbr);
-			Win32DeleteObject(hbr);
 		}
 
 		internal override void ClipboardClose(IntPtr handle) {

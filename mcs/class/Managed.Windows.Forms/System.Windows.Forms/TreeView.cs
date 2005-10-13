@@ -113,8 +113,7 @@ namespace System.Windows.Forms {
 			MouseMove += new MouseEventHandler(MouseMoveHandler);
 			SizeChanged += new EventHandler (SizeChangedHandler);
 
-			SetStyle (ControlStyles.AllPaintingInWmPaint | ControlStyles.ResizeRedraw, true);
-			SetStyle (ControlStyles.UserPaint | ControlStyles.Selectable, true);
+			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 
 			dash = new Pen (SystemColors.ControlLight, 1);
 			dash.DashStyle = DashStyle.Dash;

@@ -154,7 +154,7 @@ namespace System.Windows.Forms
 			base.Paint += new PaintEventHandler (ListView_Paint);
 			SizeChanged += new EventHandler (ListView_SizeChanged);
 
-			this.SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+			this.SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 		}
 		#endregion	// Public Constructors
 

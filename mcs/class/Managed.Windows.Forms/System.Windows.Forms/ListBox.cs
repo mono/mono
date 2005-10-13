@@ -189,7 +189,7 @@ namespace System.Windows.Forms
 			GotFocus += new EventHandler (OnGotFocus);
 			LostFocus += new EventHandler (OnLostFocus);
 			
-			SetStyle (ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint, true);
+			SetStyle (ControlStyles.UserPaint, false);
 		}
 
 		#region Events
