@@ -975,6 +975,9 @@ namespace Mono.Unix.Native {
 				return UnixMarshal.PtrToString (r);
 			}
 		}
+
+		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl)]
+		public static extern int strlen (IntPtr ptr);
 	}
 
 	#endregion // Classes
