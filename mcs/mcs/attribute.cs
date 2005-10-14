@@ -112,13 +112,16 @@ namespace Mono.CSharp {
 
 		void Error_InvalidNamedArgument (string name)
 		{
-			Report.Error (617, Location, "`{0}' is not a valid named attribute argument. Named attribute arguments must be fields which are not readonly, static, const or read-write properties which are public and not static",
+			Report.Error (617, Location, "`{0}' is not a valid named attribute argument. Named attribute arguments " +
+				      "must be fields which are not readonly, static, const or read-write properties which are " +
+				      "public and not static",
 			      name);
 		}
 
 		void Error_InvalidNamedAgrumentType (string name)
 		{
-			Report.Error (655, Location, "`{0}' is not a valid named attribute argument because it is not a valid attribute parameter type", name);
+			Report.Error (655, Location, "`{0}' is not a valid named attribute argument because it is not a valid " +
+				      "attribute parameter type", name);
 		}
 
 		static void Error_AttributeArgumentNotValid (string extra, Location loc)
@@ -140,7 +143,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		public void Error_AttributeEmitError (string inner)
 		{
-			Report.Error (647, Location, "Error during emitting `{0}' attribute. The reason is `{1}'", TypeManager.CSharpName (Type), inner);
+			Report.Error (647, Location, "Error during emitting `{0}' attribute. The reason is `{1}'",
+				      TypeManager.CSharpName (Type), inner);
 		}
 
 		public void Error_InvalidSecurityParent ()
@@ -197,7 +201,8 @@ namespace Mono.CSharp {
 				ResolvePossibleAttributeType (ec, Identifier + "Attribute", true, ref t2_is_attr);
 
 			if (t1_is_attr && t2_is_attr) {
-				Report.Error (1614, Location, "`{0}' is ambiguous between `{0}' and `{0}Attribute'. Use either `@{0}' or `{0}Attribute'", GetSignatureForError ());
+				Report.Error (1614, Location, "`{0}' is ambiguous between `{0}' and `{0}Attribute'. " +
+					      "Use either `@{0}' or `{0}Attribute'", GetSignatureForError ());
 				resolve_error = true;
 				return;
 			}
@@ -798,16 +803,18 @@ namespace Mono.CSharp {
 		{
 			SecurityAction action  = GetSecurityActionValue ();
 
-			if ((action == SecurityAction.RequestMinimum || action == SecurityAction.RequestOptional || action == SecurityAction.RequestRefuse) && for_assembly)
+			if ((action == SecurityAction.RequestMinimum || action == SecurityAction.RequestOptional ||
+			     action == SecurityAction.RequestRefuse) && for_assembly)
 				return true;
-
+			
 			if (!for_assembly) {
 				if (action < SecurityAction.Demand || action > SecurityAction.InheritanceDemand) {
 					Error_AttributeEmitError ("SecurityAction is out of range");
 					return false;
 				}
-
-				if ((action != SecurityAction.RequestMinimum && action != SecurityAction.RequestOptional && action != SecurityAction.RequestRefuse) && !for_assembly)
+				
+				if ((action != SecurityAction.RequestMinimum && action != SecurityAction.RequestOptional &&
+				     action != SecurityAction.RequestRefuse) && !for_assembly)
 					return true;
 			}
 
@@ -845,7 +852,8 @@ namespace Mono.CSharp {
 
 					orig_assembly_type = orig_sec_assembly.GetType (Type.FullName, true);
 					if (orig_assembly_type == null) {
-						Report.Warning (-112, 1, Location, "Self-referenced security attribute `{0}' was not found in previous version of assembly");
+						Report.Warning (-112, 1, Location, "Self-referenced security attribute `{0}' " +
+								"was not found in previous version of assembly");
 						return;
 					}
 				}
@@ -1059,7 +1067,8 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage (ec);
 			if ((usage_attr.ValidOn & Target) == 0) {
-				Report.Error (592, Location, "Attribute `{0}' is not valid on this declaration type. It is valid on `{1}' declarations only",
+				Report.Error (592, Location, "Attribute `{0}' is not valid on this declaration type.  " +
+					      "It is valid on `{1}' declarations only",
 					GetSignatureForError (), GetValidTargets ());
 				return;
 			}
@@ -1159,52 +1168,58 @@ namespace Mono.CSharp {
 			MethodInfo set_set_last_error = null;
 
 			if (field_info_arr != null) {
-
+				
 				for (int i = 0; i < field_info_arr.Length; i++) {
 					switch (field_info_arr [i].Name) {
-						case "BestFitMapping":
-							best_fit_mapping = (bool) field_values_arr [i];
-							best_fit_mapping_set = true;
-							break;
-						case "CallingConvention":
-							cc = (CallingConvention) field_values_arr [i];
-							break;
-						case "CharSet":
-							charset = (CharSet) field_values_arr [i];
-							break;
-						case "EntryPoint":
-							entry_point = (string) field_values_arr [i];
-							break;
-						case "ExactSpelling":
-							exact_spelling = (bool) field_values_arr [i];
-							exact_spelling_set = true;
-							break;
-						case "PreserveSig":
-							preserve_sig = (bool) field_values_arr [i];
-							break;
-						case "SetLastError":
-							set_last_error = (bool) field_values_arr [i];
-							set_last_error_set = true;
-							break;
-						case "ThrowOnUnmappableChar":
-							throw_on_unmappable = (bool) field_values_arr [i];
-							throw_on_unmappable_set = true;
-							break;
-						default: 
-							throw new InternalErrorException (field_info_arr [i].ToString ());
+					case "BestFitMapping":
+						best_fit_mapping = (bool) field_values_arr [i];
+						best_fit_mapping_set = true;
+						break;
+					case "CallingConvention":
+						cc = (CallingConvention) field_values_arr [i];
+						break;
+					case "CharSet":
+						charset = (CharSet) field_values_arr [i];
+						break;
+					case "EntryPoint":
+						entry_point = (string) field_values_arr [i];
+						break;
+					case "ExactSpelling":
+						exact_spelling = (bool) field_values_arr [i];
+						exact_spelling_set = true;
+						break;
+					case "PreserveSig":
+						preserve_sig = (bool) field_values_arr [i];
+						break;
+					case "SetLastError":
+						set_last_error = (bool) field_values_arr [i];
+						set_last_error_set = true;
+						break;
+					case "ThrowOnUnmappableChar":
+						throw_on_unmappable = (bool) field_values_arr [i];
+						throw_on_unmappable_set = true;
+						break;
+					default: 
+						throw new InternalErrorException (field_info_arr [i].ToString ());
 					}
 				}
 			}
-
+			
 			if (throw_on_unmappable_set || best_fit_mapping_set || exact_spelling_set || set_last_error_set) {
-				set_best_fit = typeof (MethodBuilder).GetMethod ("set_BestFitMapping", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				set_throw_on = typeof (MethodBuilder).GetMethod ("set_ThrowOnUnmappableChar", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				set_exact_spelling = typeof (MethodBuilder).GetMethod ("set_ExactSpelling", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				set_set_last_error = typeof (MethodBuilder).GetMethod ("set_SetLastError", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				set_best_fit = typeof (MethodBuilder).
+					GetMethod ("set_BestFitMapping", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				set_throw_on = typeof (MethodBuilder).
+					GetMethod ("set_ThrowOnUnmappableChar", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				set_exact_spelling = typeof (MethodBuilder).
+					GetMethod ("set_ExactSpelling", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+				set_set_last_error = typeof (MethodBuilder).
+					GetMethod ("set_SetLastError", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-				if ((set_best_fit == null) || (set_throw_on == null) || (set_exact_spelling == null) || (set_set_last_error == null)) {
+				if ((set_best_fit == null) || (set_throw_on == null) ||
+				    (set_exact_spelling == null) || (set_set_last_error == null)) {
 					Report.Error (-1, Location,
-								  "The ThrowOnUnmappableChar, BestFitMapping, SetLastError, and ExactSpelling attributes can only be emitted when running on the mono runtime.");
+								  "The ThrowOnUnmappableChar, BestFitMapping, SetLastError, " +
+						      "and ExactSpelling attributes can only be emitted when running on the mono runtime.");
 					return null;
 				}
 			}
@@ -1369,22 +1384,23 @@ namespace Mono.CSharp {
 				// TODO: we can skip the first item
 				if (((IList) valid_targets).Contains (a.ExplicitTarget)) {
 					switch (a.ExplicitTarget) {
-						case "return": a.Target = AttributeTargets.ReturnValue; continue;
-						case "param": a.Target = AttributeTargets.Parameter; continue;
-						case "field": a.Target = AttributeTargets.Field; continue;
-						case "method": a.Target = AttributeTargets.Method; continue;
-						case "property": a.Target = AttributeTargets.Property; continue;
+					case "return": a.Target = AttributeTargets.ReturnValue; continue;
+					case "param": a.Target = AttributeTargets.Parameter; continue;
+					case "field": a.Target = AttributeTargets.Field; continue;
+					case "method": a.Target = AttributeTargets.Method; continue;
+					case "property": a.Target = AttributeTargets.Property; continue;
 					}
 					throw new InternalErrorException ("Unknown explicit target: " + a.ExplicitTarget);
 				}
-
+				
 				StringBuilder sb = new StringBuilder ();
 				foreach (string s in valid_targets) {
 					sb.Append (s);
 					sb.Append (", ");
 				}
 				sb.Remove (sb.Length - 2, 2);
-				Report.Error (657, a.Location, "`{0}' is not a valid attribute location for this declaration. Valid attribute locations for this declaration are `{1}'", a.ExplicitTarget, sb.ToString ());
+				Report.Error (657, a.Location, "`{0}' is not a valid attribute location for this declaration.  " +
+					      "Valid attribute locations for this declaration are `{1}'", a.ExplicitTarget, sb.ToString ());
 				return false;
 			}
 			return true;
@@ -1602,7 +1618,8 @@ namespace Mono.CSharp {
 			for (int i = 1; i < modules.Length; ++i) {
 				Module module = modules [i];
 				if (!IsClsCompliant (module)) {
-					Report.Error (3013, "Added modules must be marked with the CLSCompliant attribute to match the assembly", module.Name);
+					Report.Error (3013, "Added modules must be marked with the CLSCompliant attribute " +
+						      "to match the assembly", module.Name);
 					return;
 				}
 			}
@@ -1714,7 +1731,8 @@ namespace Mono.CSharp {
 			if (type_obsolete != null)
 				return (ObsoleteAttribute)type_obsolete;
 
-			ObsoleteAttribute oa = System.Attribute.GetCustomAttribute (mi, TypeManager.obsolete_attribute_type, false) as ObsoleteAttribute;
+			ObsoleteAttribute oa = System.Attribute.GetCustomAttribute (mi, TypeManager.obsolete_attribute_type, false)
+				as ObsoleteAttribute;
 			analyzed_member_obsolete.Add (mi, oa == null ? FALSE : oa);
 			return oa;
 		}
@@ -1743,7 +1761,8 @@ namespace Mono.CSharp {
 			if (excluded != null)
 				return excluded == TRUE ? true : false;
 			
-			ConditionalAttribute[] attrs = mb.GetCustomAttributes (TypeManager.conditional_attribute_type, true) as ConditionalAttribute[];
+			ConditionalAttribute[] attrs = mb.GetCustomAttributes (TypeManager.conditional_attribute_type, true)
+				as ConditionalAttribute[];
 			if (attrs.Length == 0) {
 				analyzed_method_excluded.Add (mb, FALSE);
 				return false;
