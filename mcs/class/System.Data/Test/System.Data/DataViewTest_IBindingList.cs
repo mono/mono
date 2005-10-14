@@ -72,7 +72,6 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Enable this after rowCache removal is fixed
 		public void AddNewTest ()
 		{
 			DataView dv = dt.DefaultView;

@@ -381,8 +381,8 @@ namespace System.Data
 			else {
 				_lastAdded.CancelEdit();
 				_lastAdded = null;
-				OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, Count - 1, -1));
-				// FIXME : remove from rowCache
+				UpdateIndex ();
+				OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, Count, -1));
 			}
 		}
 
