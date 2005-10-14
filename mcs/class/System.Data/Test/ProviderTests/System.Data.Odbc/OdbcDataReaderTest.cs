@@ -71,5 +71,26 @@ namespace MonoTests.System.Data
 				ConnectionManager.Singleton.CloseConnection ();
 			}
 		}
+		[Test]
+		public void LongTextTest ()
+		{
+			IDbConnection conn = new OdbcConnection (
+						ConnectionManager.Singleton.ConnectionString);
+			IDataReader rdr = null; 
+			try {
+				conn.Open ();
+				IDbCommand cmd = conn.CreateCommand ();
+				cmd.CommandText = "Select type_text"; 
+				cmd.CommandText += " from string_family where id=3";
+
+				rdr = cmd.ExecuteReader ();
+				rdr.Read ();
+				rdr.GetValue (0);
+			}finally {
+				if (rdr != null)
+					rdr.Close ();
+				conn.Close ();
+			}
+		}
 	}
 }

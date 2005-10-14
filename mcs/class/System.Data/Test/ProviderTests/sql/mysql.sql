@@ -73,6 +73,7 @@ grant all privileges on string_family to monotester;
 //
 
 insert into string_family values (1,"char","varchar","text","ntext");
+insert into string_family values (2, '0123456789','varchar' ,'longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext longtext ','ntext');
 insert into string_family values (4,null,null,null,null);
 //
 -- =================================== END OBJECT STRING_FAMILY ========================

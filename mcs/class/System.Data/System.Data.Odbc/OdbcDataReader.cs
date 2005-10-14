@@ -703,6 +703,7 @@ namespace System.Data.Odbc
 					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, ref long_data, 0, ref outsize);
 					DataValue=long_data;
 					break;
+				case OdbcType.NText:
 				case OdbcType.NVarChar:
 					bufsize=col.MaxLength*2+1; // Unicode is double byte
 					buffer=new byte[bufsize];
@@ -710,6 +711,7 @@ namespace System.Data.Odbc
 					if (outsize!=-1)
 						DataValue=System.Text.Encoding.Unicode.GetString(buffer,0,outsize);
 					break;
+				case OdbcType.Text:
 				case OdbcType.VarChar:
 					bufsize=col.MaxLength+1;
 					buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for both char and varchar
