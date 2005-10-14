@@ -2,6 +2,8 @@
 
 	* DataView.cs: Correct multiple throwing of events. Patch from
 	Marc Haisenko.
+	(RowStateFilter): Fire ListChangedEvent.
+	(ApplyDefaultSort): Fire ListChangedEvent.
 
 2005-10-11  Sureshkumar T  <tsureshkumar@novell.com>
 

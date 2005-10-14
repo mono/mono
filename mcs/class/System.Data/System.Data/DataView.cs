@@ -170,8 +170,10 @@ namespace System.Data
 				if (applyDefaultSort == true &&
 					(sort == null || sort == string.Empty))
 					PopulateDefaultSort ();
-				if (!inEndInit)
+				if (!inEndInit) {
 					UpdateIndex (true);
+					OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
+				}
 			}
 		}
 		// get the count of rows in the DataView after RowFilter 
@@ -253,8 +255,10 @@ namespace System.Data
 					return;
 
 				rowState = value;
-				if (!inEndInit)
+				if (!inEndInit) {
 					UpdateIndex (true);
+					OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
+				}
 			}
 		}
 
