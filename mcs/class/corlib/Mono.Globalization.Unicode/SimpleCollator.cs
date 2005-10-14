@@ -77,10 +77,10 @@ namespace Mono.Globalization.Unicode
 {
 	internal class SimpleCollator
 	{
-		struct PreviousInfo
+		unsafe struct PreviousInfo
 		{
 			public int Code;
-			public byte [] SortKey;
+			public byte* SortKey;
 
 			public PreviousInfo (bool dummy)
 			{
@@ -495,10 +495,13 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return buf.GetResultAndReset ();
 		}
 
-		void GetSortKey (string s, int start, int end,
+		unsafe void GetSortKey (string s, int start, int end,
 			SortKeyBuffer buf, CompareOptions opt)
 		{
 			PreviousInfo prev = new PreviousInfo (false);
+			byte* prevbuf = stackalloc byte [4];
+			ClearBuffer (prevbuf, 4);
+			prev.SortKey = prevbuf;
 
 			for (int n = start; n < end; n++) {
 				int i = s [n];
@@ -509,7 +512,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					if (i >= 0)
 						FillSortKeyRaw (i, ext, buf, opt);
 					else if (prev.SortKey != null) {
-						byte [] b = prev.SortKey;
+						byte* b = prev.SortKey;
 						buf.AppendNormal (
 							b [0],
 							b [1],
@@ -531,13 +534,14 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 					if (ct.Replacement != null) {
 						GetSortKey (ct.Replacement, 0, ct.Replacement.Length, buf, opt);
 					} else {
-						byte [] b = ct.SortKey;
+						byte* b = prev.SortKey;
+						for (int bi = 0; bi < ct.SortKey.Length; bi++)
+							b [bi] = ct.SortKey [bi];
 						buf.AppendNormal (
 							b [0],
 							b [1],
 							b [2] != 1 ? b [2] : Level2 (i, ext),
 							b [3] != 1 ? b [3] : Uni.Level3 (i));
-						prev.SortKey = b;
 						prev.Code = -1;
 					}
 					n += ct.Source.Length - 1;
@@ -663,7 +667,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				len1 == min ? - 1 : 1;
 		}
 
-		public int Compare (string s1, int idx1, int len1,
+		public unsafe int Compare (string s1, int idx1, int len1,
 			string s2, int idx2, int len2, CompareOptions options)
 		{
 			// quick equality check
@@ -690,19 +694,27 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return d1.Length == d2.Length ? 0 : d1.Length < d2.Length ? -1 : 1;
 #else
 			PreviousInfo prev1 = new PreviousInfo (false);
-			byte [] sk1 = new byte [4];
-			byte [] sk2 = new byte [4];
+			byte* sk1 = stackalloc byte [4];
+			ClearBuffer (sk1, 4);
+			byte* sk2 = stackalloc byte [4];
+			ClearBuffer (sk2, 4);
 			bool dummy, dummy2;
 			int ret = CompareInternal (options, s1, idx1, len1, s2, idx2, len2, out dummy, out dummy2, true, ref prev1, sk1, sk2);
 			return ret == 0 ? 0 : ret < 0 ? -1 : 1;
 #endif
 		}
 
-		int CompareInternal (COpt opt, string s1, int idx1, int len1, string s2,
+		unsafe void ClearBuffer (byte* buffer, int size)
+		{
+			for (int i = 0; i < size; i++)
+				buffer [i] = 0;
+		}
+
+		unsafe int CompareInternal (COpt opt, string s1, int idx1, int len1, string s2,
 			int idx2, int len2,
 			out bool targetConsumed, out bool sourceConsumed,
 			bool skipHeadingExtenders, ref PreviousInfo prev1,
-			byte [] charSortKey, byte [] charSortKey2)
+			byte* charSortKey, byte* charSortKey2)
 		{
 			int start1 = idx1;
 			int start2 = idx2;
@@ -819,8 +831,8 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 				int cur1 = idx1;
 				int cur2 = idx2;
-				byte [] sk1 = null;
-				byte [] sk2 = null;
+				byte* sk1 = null;
+				byte* sk2 = null;
 				int i1 = FilterOptions (s1 [idx1], opt);
 				int i2 = FilterOptions (s2 [idx2], opt);
 				bool special1 = false;
@@ -1115,17 +1127,19 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return IsPrefix (src, target, 0, src.Length, opt);
 		}
 
-		public bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
+		public unsafe bool IsPrefix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			if (target.Length == 0)
 				return true;
 			PreviousInfo prev = new PreviousInfo (false);
-			byte [] sk1 = new byte [4];
-			byte [] sk2 = new byte [4];
+			byte* sk1 = stackalloc byte [4];
+			byte* sk2 = stackalloc byte [4];
+			ClearBuffer (sk1, 4);
+			ClearBuffer (sk2, 4);
 			return IsPrefix (opt, s, target, start, length, true, ref prev, sk1, sk2);
 		}
 
-		bool IsPrefix (COpt opt, string s, string target, int start, int length, bool skipHeadingExtenders, ref PreviousInfo prev, byte [] sk1, byte [] sk2)
+		unsafe bool IsPrefix (COpt opt, string s, string target, int start, int length, bool skipHeadingExtenders, ref PreviousInfo prev, byte* sk1, byte* sk2)
 		{
 			bool consumed, dummy;
 			CompareInternal (opt, s, start, length,
@@ -1161,13 +1175,15 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			}
 
 			PreviousInfo prev = new PreviousInfo (false);
-			byte [] sk1 = new byte [4];
-			byte [] sk2 = new byte [4];
+			byte* sk1 = stackalloc byte [4];
+			byte* sk2 = stackalloc byte [4];
+			ClearBuffer (sk1, 4);
+			ClearBuffer (sk2, 4);
 			return IsSuffix (opt, s, target, start, length, ref prev, sk1, sk2);
 */
 		}
 
-		bool IsSuffix (COpt opt, string s, string t, int start, int length, ref PreviousInfo prev, byte [] sk1, byte [] sk2)
+		unsafe bool IsSuffix (COpt opt, string s, string t, int start, int length, ref PreviousInfo prev, byte* sk1, byte* sk2)
 		{
 			int tstart = 0;
 			for (;tstart < t.Length; tstart++)
@@ -1255,13 +1271,17 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return IndexOf (s, target, 0, s.Length, opt);
 		}
 
-		public int IndexOf (string s, string target, int start, int length, CompareOptions opt)
+		public unsafe int IndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
 			PreviousInfo prev = new PreviousInfo (false);
-			byte [] checkedFlags = s.Length > 50 ? new byte [16] : null;
-			byte [] targetSortKey = new byte [4];
-			byte [] sk1 = new byte [4];
-			byte [] sk2 = new byte [4];
+			byte* checkedFlags = stackalloc byte [16];
+			byte* targetSortKey = stackalloc byte [4];
+			byte* sk1 = stackalloc byte [4];
+			byte* sk2 = stackalloc byte [4];
+			ClearBuffer (checkedFlags, 16);
+			ClearBuffer (targetSortKey, 4);
+			ClearBuffer (sk1, 4);
+			ClearBuffer (sk2, 4);
 
 			return IndexOf (opt, s, target, start, length,
 				checkedFlags, targetSortKey, ref prev, sk1, sk2);
@@ -1272,13 +1292,17 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return IndexOf (s, target, 0, s.Length, opt);
 		}
 
-		public int IndexOf (string s, char target, int start, int length, CompareOptions opt)
+		public unsafe int IndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
 			PreviousInfo prev = new PreviousInfo (false);
-			byte [] sk1 = new byte [4];
-			byte [] sk2 = new byte [4];
-			byte [] checkedFlags = s.Length > 50 ? new byte [16] : null;
-			byte [] targetSortKey = new byte [4];
+			byte* checkedFlags = stackalloc byte [16];
+			byte* targetSortKey = stackalloc byte [4];
+			byte* sk1 = stackalloc byte [4];
+			byte* sk2 = stackalloc byte [4];
+			ClearBuffer (checkedFlags, 16);
+			ClearBuffer (targetSortKey, 4);
+			ClearBuffer (sk1, 4);
+			ClearBuffer (sk2, 4);
 
 			// If target is contraction, then use string search.
 			Contraction ct = GetContraction (target);
@@ -1286,8 +1310,11 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				if (ct.Replacement != null)
 					return IndexOf (opt, s, ct.Replacement,
 						start, length, checkedFlags, targetSortKey, ref prev, sk1, sk2);
-				else
-					return IndexOfSortKey (opt, s, start, length, ct.SortKey, char.MinValue, -1, true, checkedFlags, ref prev, sk1);
+				else {
+					for (int i = 0; i < ct.SortKey.Length; i++)
+						sk2 [i] = ct.SortKey [i];
+					return IndexOfSortKey (opt, s, start, length, sk2, char.MinValue, -1, true, checkedFlags, ref prev, sk1);
+				}
 			} else {
 				int ti = FilterOptions ((int) target, opt);
 				targetSortKey [0] = Category (ti);
@@ -1303,7 +1330,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		}
 
 		// Searches target byte[] keydata
-		int IndexOfSortKey (COpt opt, string s, int start, int length, byte [] sortkey, char target, int ti, bool noLv4, byte [] checkedFlags, ref PreviousInfo prev, byte [] sk)
+		unsafe int IndexOfSortKey (COpt opt, string s, int start, int length, byte* sortkey, char target, int ti, bool noLv4, byte* checkedFlags, ref PreviousInfo prev, byte* sk)
 		{
 			int end = start + length;
 			int idx = start;
@@ -1318,7 +1345,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 
 		// Searches string. Search head character (or keydata when
 		// the head is contraction sortkey) and try IsPrefix().
-		int IndexOf (COpt opt, string s, string target, int start, int length, byte [] checkedFlags, byte [] targetSortKey, ref PreviousInfo prev, byte [] sk1, byte [] sk2)
+		unsafe int IndexOf (COpt opt, string s, string target, int start, int length, byte* checkedFlags, byte* targetSortKey, ref PreviousInfo prev, byte* sk1, byte* sk2)
 		{
 			int tidx = 0;
 			for (; tidx < target.Length; tidx++)
@@ -1328,7 +1355,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				return start;
 			Contraction ct = GetContraction (target, tidx, target.Length - tidx);
 			string replace = ct != null ? ct.Replacement : null;
-			byte [] sk = replace == null ? targetSortKey : null;
+			byte* sk = replace == null ? targetSortKey : null;
 			bool noLv4 = true;
 			char tc = char.MinValue;
 			int ti = -1;
@@ -1389,13 +1416,17 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return LastIndexOf (s, target, s.Length - 1, s.Length, opt);
 		}
 
-		public int LastIndexOf (string s, string target, int start, int length, CompareOptions opt)
+		public unsafe int LastIndexOf (string s, string target, int start, int length, CompareOptions opt)
 		{
 			PreviousInfo prev = new PreviousInfo (false);
-			byte [] sk1 = new byte [4];
-			byte [] sk2 = new byte [4];
-			byte [] checkedFlags = s.Length > 50 ? new byte [16] : null;
-			byte [] targetSortKey = new byte [4];
+			byte* checkedFlags = stackalloc byte [16];
+			byte* targetSortKey = stackalloc byte [4];
+			byte* sk1 = stackalloc byte [4];
+			byte* sk2 = stackalloc byte [4];
+			ClearBuffer (checkedFlags, 16);
+			ClearBuffer (targetSortKey, 4);
+			ClearBuffer (sk1, 4);
+			ClearBuffer (sk2, 4);
 			return LastIndexOf (opt, s, target, start, length,
 				checkedFlags, targetSortKey, ref prev, sk1, sk2);
 		}
@@ -1405,13 +1436,17 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return LastIndexOf (s, target, s.Length - 1, s.Length, opt);
 		}
 
-		public int LastIndexOf (string s, char target, int start, int length, CompareOptions opt)
+		public unsafe int LastIndexOf (string s, char target, int start, int length, CompareOptions opt)
 		{
 			PreviousInfo prev = new PreviousInfo (false);
-			byte [] sk1 = new byte [4];
-			byte [] sk2 = new byte [4];
-			byte [] checkedFlags = s.Length > 50 ? new byte [16] : null;
-			byte [] targetSortKey = new byte [4];
+			byte* checkedFlags = stackalloc byte [16];
+			byte* targetSortKey = stackalloc byte [4];
+			byte* sk1 = stackalloc byte [4];
+			byte* sk2 = stackalloc byte [4];
+			ClearBuffer (checkedFlags, 16);
+			ClearBuffer (targetSortKey, 4);
+			ClearBuffer (sk1, 4);
+			ClearBuffer (sk2, 4);
 
 			// If target is contraction, then use string search.
 			Contraction ct = GetContraction (target);
@@ -1420,11 +1455,14 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 					return LastIndexOf (opt, s,
 						ct.Replacement, start, length,
 						checkedFlags, targetSortKey, ref prev, sk1, sk2);
-				else
+				else {
+					for (int bi = 0; bi < ct.SortKey.Length; bi++)
+						sk2 [bi] = ct.SortKey [bi];
 					return LastIndexOfSortKey (opt, s, start,
-						start, length, ct.SortKey,
+						start, length, sk2,
 						char.MinValue, -1, true,
 						checkedFlags, ref prev, sk1);
+				}
 			}
 			else {
 				int ti = FilterOptions ((int) target, opt);
@@ -1441,7 +1479,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 		}
 
 		// Searches target byte[] keydata
-		int LastIndexOfSortKey (COpt opt, string s, int start, int orgStart, int length, byte [] sortkey, char target, int ti, bool noLv4, byte [] checkedFlags, ref PreviousInfo prev, byte [] sk)
+		unsafe int LastIndexOfSortKey (COpt opt, string s, int start, int orgStart, int length, byte* sortkey, char target, int ti, bool noLv4, byte* checkedFlags, ref PreviousInfo prev, byte* sk)
 		{
 			int end = start - length;
 			int idx = start;
@@ -1456,7 +1494,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 
 		// Searches string. Search head character (or keydata when
 		// the head is contraction sortkey) and try IsPrefix().
-		int LastIndexOf (COpt opt, string s, string target, int start, int length, byte [] checkedFlags, byte [] targetSortKey, ref PreviousInfo prev, byte [] sk1, byte [] sk2)
+		unsafe int LastIndexOf (COpt opt, string s, string target, int start, int length, byte* checkedFlags, byte* targetSortKey, ref PreviousInfo prev, byte* sk1, byte* sk2)
 		{
 			int orgStart = start;
 			int tidx = 0;
@@ -1467,7 +1505,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				return start;
 			Contraction ct = GetContraction (target, tidx, target.Length - tidx);
 			string replace = ct != null ? ct.Replacement : null;
-			byte [] sk = replace == null ? targetSortKey : null;
+			byte* sk = replace == null ? targetSortKey : null;
 
 			bool noLv4 = true;
 			char tc = char.MinValue;
@@ -1527,7 +1565,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return -1;
 		}
 
-		private bool MatchesForward (COpt opt, string s, ref int idx, int end, int ti, byte [] sortkey, bool noLv4, byte [] checkedFlags, ref PreviousInfo prev, byte [] sk)
+		unsafe bool MatchesForward (COpt opt, string s, ref int idx, int end, int ti, byte* sortkey, bool noLv4, byte* checkedFlags, ref PreviousInfo prev, byte* sk)
 		{
 			int si = s [idx];
 			if (checkedFlags != null && si < 128 && (checkedFlags [si / 8] & (1 << (si % 8))) != 0) {
@@ -1544,7 +1582,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return false;
 		}
 
-		private bool MatchesForwardCore (COpt opt, string s, ref int idx, int end, int ti, byte [] sortkey, bool noLv4, ExtenderType ext, ref Contraction ct, byte [] checkedFlags, ref PreviousInfo prev, byte [] charSortKey)
+		unsafe bool MatchesForwardCore (COpt opt, string s, ref int idx, int end, int ti, byte* sortkey, bool noLv4, ExtenderType ext, ref Contraction ct, byte* checkedFlags, ref PreviousInfo prev, byte* charSortKey)
 		{
 			bool ignoreNonSpace = (opt & COpt.IgnoreNonSpace) != 0;
 			int si = -1;
@@ -1565,7 +1603,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				if (!noLv4)
 					return false;
 				if (ct.SortKey != null) {
-					for (int i = 0; i < sortkey.Length; i++)
+					for (int i = 0; i < 4; i++)
 						charSortKey [i] = sortkey [i];
 					prev.Code = -1;
 					prev.SortKey = charSortKey;
@@ -1615,7 +1653,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return MatchesPrimitive (opt, charSortKey, si, ext, sortkey, ti, noLv4);
 		}
 
-		private bool MatchesPrimitive (COpt opt, byte [] source, int si, ExtenderType ext, byte [] target, int ti, bool noLv4)
+		unsafe bool MatchesPrimitive (COpt opt, byte* source, int si, ExtenderType ext, byte* target, int ti, bool noLv4)
 		{
 			bool ignoreNonSpace = (opt & COpt.IgnoreNonSpace) != 0;
 			if (source [0] != target [0] ||
@@ -1644,7 +1682,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return true;
 		}
 
-		private bool MatchesBackward (COpt opt, string s, ref int idx, int end, int orgStart, int ti, byte [] sortkey, bool noLv4, byte [] checkedFlags, ref PreviousInfo prev, byte [] sk)
+		unsafe bool MatchesBackward (COpt opt, string s, ref int idx, int end, int orgStart, int ti, byte* sortkey, bool noLv4, byte* checkedFlags, ref PreviousInfo prev, byte* sk)
 		{
 			int si = s [idx];
 			if (checkedFlags != null && si < 128 && (checkedFlags [si / 8] & (1 << (si % 8))) != 0) {
@@ -1661,7 +1699,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			return false;
 		}
 
-		private bool MatchesBackwardCore (COpt opt, string s, ref int idx, int end, int orgStart, int ti, byte [] sortkey, bool noLv4, ExtenderType ext, ref Contraction ct, byte [] checkedFlags, ref PreviousInfo prev, byte [] charSortKey)
+		unsafe bool MatchesBackwardCore (COpt opt, string s, ref int idx, int end, int orgStart, int ti, byte* sortkey, bool noLv4, ExtenderType ext, ref Contraction ct, byte* checkedFlags, ref PreviousInfo prev, byte* charSortKey)
 		{
 			bool ignoreNonSpace = (opt & COpt.IgnoreNonSpace) != 0;
 			int cur = idx;
@@ -1705,7 +1743,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				if (!noLv4)
 					return false;
 				if (ct.SortKey != null) {
-					for (int i = 0; i < sortkey.Length; i++)
+					for (int i = 0; i < 4; i++)
 						charSortKey [i] = sortkey [i];
 					prev.Code = -1;
 					prev.SortKey = charSortKey;

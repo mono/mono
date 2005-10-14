@@ -1,3 +1,7 @@
+2005-10-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : modified to use stackalloc for byte array.
+
 2005-09-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : in CompareInternal(), there was a possibility of
