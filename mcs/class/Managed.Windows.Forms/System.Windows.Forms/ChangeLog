@@ -1,3 +1,8 @@
+2005-10-16  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ControlPaint.cs: Fixes methods Dark, DarkDark, Light, LightLight
+	to match more to match more precisely the MS Net behavior
+
 2005-10-13  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Hwnd.cs: Added field to track if window is mapped
