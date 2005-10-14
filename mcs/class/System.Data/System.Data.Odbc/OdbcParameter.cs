@@ -316,8 +316,9 @@ namespace System.Data.Odbc
 				return Marshal.SizeOf (typeof (int));
 			case OdbcType.BigInt:
 				return Marshal.SizeOf (typeof  (long));
+			case OdbcType.Decimal:
 			case OdbcType.Numeric:
-				return Value.ToString ().Length;
+				return 19;
 			case OdbcType.SmallInt:
 				return Marshal.SizeOf (typeof  (Int16));
 			case OdbcType.TinyInt:
@@ -392,8 +393,20 @@ namespace System.Data.Odbc
 			case OdbcType.BigInt:
 				Marshal.WriteInt64 (_nativeBuffer, Convert.ToInt64 (Value));
 				return;
+			case OdbcType.Decimal:
 			case OdbcType.Numeric:
-				throw new NotImplementedException ();
+				// for numeric, the buffer is a packed decimal struct.
+				// ref http://www.it-faq.pl/mskb/181/254.HTM
+				int [] bits = Decimal.GetBits (Convert.ToDecimal (Value));
+				buffer = new byte [19]; // ref sqltypes.h
+				buffer [0] = Precision;
+				buffer [1] = (byte) ((bits [3] & 0x00FF0000) >> 16); // scale
+				buffer [2] = (byte) ((bits [3] & 0x80000000) > 0 ? 2 : 1); //sign
+				Buffer.BlockCopy (bits, 0, buffer, 3, 12); // copy data
+				for (int j = 16; j < 19; j++) // pad with 0
+					buffer [j] = 0;
+				Marshal.Copy (buffer, 0, _nativeBuffer, 19); 
+				return; 
 			case OdbcType.SmallInt:
 				Marshal.WriteInt16 (_nativeBuffer, Convert.ToInt16 (Value));
 				return;

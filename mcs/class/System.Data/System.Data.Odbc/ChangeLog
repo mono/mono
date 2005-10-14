@@ -1,3 +1,8 @@
+2005-10-14  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* OdbcParameter.cs (CopyValue): Add support for Numeric & Decimal
+	parameters.
+
 2005-10-08  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* OdbcCommand.cs (BindParameters): Copy the parameter Value after
