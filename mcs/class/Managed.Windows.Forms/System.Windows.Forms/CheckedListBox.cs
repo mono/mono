@@ -311,7 +311,7 @@ namespace System.Windows.Forms
 
 		internal override void OnMouseDownLB (object sender, MouseEventArgs e)
 		{			
-			Rectangle hit_rect, item_rect;
+			Rectangle hit_rect;
 			CheckState value =  CheckState.Checked;
 			bool set_value = false;
 			int index = IndexFromPointDisplayRectangle (e.X, e.Y);
@@ -326,7 +326,7 @@ namespace System.Windows.Forms
 				return;
 			
 			/* CheckBox hit */
-			hit_rect = item_rect = GetItemDisplayRectangle (index, LBoxInfo.top_item); // Full item rect
+			hit_rect = GetItemDisplayRectangle (index, LBoxInfo.top_item); // Full item rect
 			hit_rect.X += ThemeEngine.Current.CheckedListBoxCheckRectangle().X;
 			hit_rect.Y += ThemeEngine.Current.CheckedListBoxCheckRectangle().Y;
 			hit_rect.Width = ThemeEngine.Current.CheckedListBoxCheckRectangle().Width;

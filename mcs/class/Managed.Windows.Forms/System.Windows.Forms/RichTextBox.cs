@@ -298,14 +298,12 @@ namespace System.Windows.Forms {
 		public HorizontalAlignment SelectionAlignment {
 			get {
 				HorizontalAlignment	align;
-				int			line_no;
 				Line			start;
 				Line			end;
 				Line			line;
 
 				start = document.ParagraphStart(document.selection_start.line);
 				align = start.alignment;
-				line_no = start.line_no;
 
 				end = document.ParagraphEnd(document.selection_end.line);
 
@@ -326,14 +324,11 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				HorizontalAlignment	align;
-				int			line_no;
 				Line			start;
 				Line			end;
 				Line			line;
 
 				start = document.ParagraphStart(document.selection_start.line);
-				line_no = start.line_no;
 
 				end = document.ParagraphEnd(document.selection_end.line);
 
@@ -473,7 +468,6 @@ namespace System.Windows.Forms {
 
 				catch {
 					throw new IOException("Not enough memory to load document");
-					return;
 				}
 
 				count = 0;
@@ -540,6 +534,15 @@ namespace System.Windows.Forms {
 		}
 
 		public void SaveFile(Stream data, RichTextBoxStreamType fileType) {
+			#if later
+			Encoding	encoding;
+
+			if (fileType == RichTextBoxStreamType.UnicodePlainText) {
+				encoding = Encoding.Unicode;
+			} else {
+				encoding = Encoding.ASCII;
+			}
+			#endif
 		}
 
 		public void SaveFile(string path) {
@@ -552,14 +555,8 @@ namespace System.Windows.Forms {
 
 		public void SaveFile(string path, RichTextBoxStreamType fileType) {
 			FileStream	data;
-			Encoding	encoding;
 
 			data = null;
-			if (fileType == RichTextBoxStreamType.UnicodePlainText) {
-				encoding = Encoding.Unicode;
-			} else {
-				encoding = Encoding.ASCII;
-			}
 
 			try {
 				data = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, 1024, false);
@@ -685,7 +682,6 @@ namespace System.Windows.Forms {
 					switch(rtf.Minor) {
 						case Minor.ForeColor: {
 							System.Windows.Forms.RTF.Color	color;
-							int	num;
 
 							color = System.Windows.Forms.RTF.Color.GetColor(rtf, rtf.Param);
 							if (color != null) {

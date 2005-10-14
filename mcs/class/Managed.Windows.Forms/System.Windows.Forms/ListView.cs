@@ -548,7 +548,7 @@ namespace System.Windows.Forms
 
 		#region Internal Methods Properties
 		
-		public int FirstVisibleIndex {
+		internal int FirstVisibleIndex {
 			get {
 				// there is no item
 				if (this.items.Count == 0)
@@ -1243,7 +1243,7 @@ namespace System.Windows.Forms
 			CalculateListView (alignment);
 		}
 		
-		public void SetFocusedItem (ListViewItem item)
+		private void SetFocusedItem (ListViewItem item)
 		{
 			if (focused_item != null)
 				focused_item.Focused = false;

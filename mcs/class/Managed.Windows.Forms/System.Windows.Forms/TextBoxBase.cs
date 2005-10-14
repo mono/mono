@@ -1097,10 +1097,6 @@ static int current;
 		}
 
 		private void TextBoxBase_MouseDown(object sender, MouseEventArgs e) {
-			LineTag	tag;
-			Line	line;
-			int	pos;
-
 			if (e.Button == MouseButtons.Left) {
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
 				document.SetSelectionToCaret(true);
@@ -1110,6 +1106,10 @@ static int current;
 			}
 
 			#if Debug
+				LineTag	tag;
+				Line	line;
+				int	pos;
+
 				if (e.Button == MouseButtons.Right) {
 					draw_lines = !draw_lines;
 					this.Invalidate();

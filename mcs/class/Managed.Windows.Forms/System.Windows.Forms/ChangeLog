@@ -1,3 +1,13 @@
+2005-10-13  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* CheckedListBox.cs: Removed unused vars
+	* ListView.cs: Fixed signatures
+	* RichTextBox.cs: Removed unused vars
+	* TextBoxBase.cs: Removed unused vars
+	* XplatUIWin32.cs: Removed unused vars
+	* XplatUIX11.cs: Removed unused vars
+	* XplatUI.cs: Updated version and date to latest published
+
 2005-10-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Cursor.cs: Added private .ctor to work around a bug in
