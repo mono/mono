@@ -38,7 +38,7 @@ namespace System.Windows.Forms
 	{
 		[Flags]
 		private enum CheckState {
-			Checked		= 0x00000000,
+			Checked		= 0x00000001,
 			UnChecked	= 0x00000002,
 			Null		= 0x00000004,
 			Selected	= 0x00000008
