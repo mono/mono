@@ -1,4 +1,17 @@
-2005-10-12  Miguel de Icaza  <miguel@novell.com>
+2005-10-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Cursor.cs: Added private .ctor to work around a bug in
+	  resourceset (Thanks to Geoff Norton for the help on this)
+	* SplitterEventArgs.cs: Made fields accessible so we don't
+	  waste boatloads of objects and can reuse the same one
+	  in Splitter
+	* XplatUIWin32.cs(DrawReversibleLine): Now also considers
+	  any captions and borders when generating screen coordinates
+	* Splitter.cs: Reimplemented control, now fully complete, uses
+	  rubberband drawing, supports and obeys all properties, has
+	  proper cursors
+
+2005-10-13  Miguel de Icaza  <miguel@novell.com>
 
 	* Form.cs (Form): Setup default values for autoscale and
 	autoscale_base_size;  Make these instance variables, not static

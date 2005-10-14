@@ -21,6 +21,7 @@
 //
 // Authors:
 //	Aleksandar Dezelin	adezelin@beotel.net
+//	Peter Dennis Bartok	pbartok@novell.com
 //
 
 using System;
@@ -32,10 +33,10 @@ namespace System.Windows.Forms {
 	{
 		#region Private fields
 	    
-		private int split_x;
-		private int split_y;
-		private readonly int x;
-		private readonly int y;
+		internal int split_x;
+		internal int split_y;
+		internal int x;
+		internal int y;
 
 		#endregion
 		

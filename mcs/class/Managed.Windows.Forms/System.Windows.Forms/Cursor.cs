@@ -114,6 +114,9 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private Cursor(SerializationInfo info, StreamingContext context) {
+		}
+
 		private Cursor() {
 		}
 

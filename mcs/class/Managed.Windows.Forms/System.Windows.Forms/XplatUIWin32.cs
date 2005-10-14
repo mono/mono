@@ -570,6 +570,34 @@ namespace System.Windows.Forms {
 			PS_ALTERNATE        		= 8
 		}
 
+		internal enum StockObject : int {
+			WHITE_BRUSH			= 0,
+			LTGRAY_BRUSH        		= 1,
+			GRAY_BRUSH          		= 2,
+			DKGRAY_BRUSH        		= 3,
+			BLACK_BRUSH         		= 4,
+			NULL_BRUSH          		= 5,
+			HOLLOW_BRUSH        		= NULL_BRUSH,
+			WHITE_PEN   			= 6,
+			BLACK_PEN           		= 7,
+			NULL_PEN            		= 8,
+			OEM_FIXED_FONT      		= 10,
+			ANSI_FIXED_FONT     		= 11,
+			ANSI_VAR_FONT       		= 12,
+			SYSTEM_FONT         		= 13,
+			DEVICE_DEFAULT_FONT 		= 14,
+			DEFAULT_PALETTE     		= 15,
+			SYSTEM_FIXED_FONT  		= 16
+		}
+
+		internal enum HatchStyle : int {
+			HS_HORIZONTAL			= 0,
+			HS_VERTICAL         		= 1,
+			HS_FDIAGONAL        		= 2,
+			HS_BDIAGONAL        		= 3,
+			HS_CROSS            		= 4,
+			HS_DIAGCROSS        		= 5
+		}
 		#endregion
 
 		#region Constructor & Destructor
@@ -1976,9 +2004,15 @@ namespace System.Windows.Forms {
 			IntPtr		oldpen;
 			int		x_offset;
 			int		y_offset;
-			RECT		window_rect;
+			POINT		pt;
 
-			Win32GetWindowRect(handle, out window_rect);
+			pt = new POINT();
+			pt.x = 0;
+			pt.y = 0;
+			Win32ClientToScreen(handle, ref pt);
+
+			// If we want the standard hatch pattern we would
+			// need to create a brush
 
 			// Grab a pen
 			pen = Win32CreatePen(PenStyle.PS_SOLID, line_width, IntPtr.Zero);
@@ -1989,17 +2023,17 @@ namespace System.Windows.Forms {
 
 			// We might need to add clipping to the WindowRect of 'handle' - right now we're drawing on the desktop
 
-			Win32MoveToEx(hdc, window_rect.left + rect.Left, window_rect.top + rect.Top, IntPtr.Zero);
+			Win32MoveToEx(hdc, pt.x + rect.Left, pt.y + rect.Top, IntPtr.Zero);
 			if ((rect.Width > 0) && (rect.Height > 0)) {
-				Win32LineTo(hdc, window_rect.left + rect.Right, window_rect.top + rect.Top);
-				Win32LineTo(hdc, window_rect.left + rect.Right, window_rect.top + rect.Bottom);
-				Win32LineTo(hdc, window_rect.left + rect.Left, window_rect.top + rect.Bottom);
-				Win32LineTo(hdc, window_rect.left + rect.Left, window_rect.top + rect.Top);
+				Win32LineTo(hdc, pt.x + rect.Right, pt.y + rect.Top);
+				Win32LineTo(hdc, pt.x + rect.Right, pt.y + rect.Bottom);
+				Win32LineTo(hdc, pt.x + rect.Left, pt.y + rect.Bottom);
+				Win32LineTo(hdc, pt.x + rect.Left, pt.y + rect.Top);
 			} else {
 				if (rect.Width > 0) {
-					Win32LineTo(hdc, window_rect.left + rect.Right, window_rect.top + rect.Top);
+					Win32LineTo(hdc, pt.x + rect.Right, pt.y + rect.Top);
 				} else {
-					Win32LineTo(hdc, window_rect.left + rect.Left, window_rect.top + rect.Bottom);
+					Win32LineTo(hdc, pt.x + rect.Left, pt.y + rect.Bottom);
 				}
 			}
 
@@ -2344,6 +2378,15 @@ namespace System.Windows.Forms {
 
 		[DllImport ("gdi32.dll", EntryPoint="CreatePen", CallingConvention=CallingConvention.StdCall)]
 		internal extern static IntPtr Win32CreatePen(PenStyle fnPenStyle, int nWidth, IntPtr color);
+
+		[DllImport ("gdi32.dll", EntryPoint="GetStockObject", CallingConvention=CallingConvention.StdCall)]
+		internal extern static IntPtr Win32GetStockObject(StockObject fnObject);
+
+		[DllImport ("gdi32.dll", EntryPoint="CreateHatchBrush", CallingConvention=CallingConvention.StdCall)]
+		internal extern static IntPtr Win32CreateHatchBrush(HatchStyle fnStyle, IntPtr color);
+
+		[DllImport ("gdi32.dll", EntryPoint="CreateHatchBrush", CallingConvention=CallingConvention.StdCall)]
+		internal extern static IntPtr Win32CreateHatchBrush(HatchStyle fnStyle, ref COLORREF color);
 		#endregion
 	}
 }
