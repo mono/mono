@@ -167,10 +167,10 @@ namespace MonoTests.System.Data
 		}
 
 		[Test]
-		[Category ("NotWorking")] // Feature not yet implemented
 		public void FindTest ()
 		{
 			DataView dv = dt.DefaultView;
+
 			IBindingList ib = (IBindingList) dv;
 			ib.ListChanged += new ListChangedEventHandler (OnListChanged);
 			try {
@@ -179,7 +179,7 @@ namespace MonoTests.System.Data
 				PropertyDescriptorCollection pds = ( (ITypedList) dv).GetItemProperties (null);
 				PropertyDescriptor pd = pds.Find ("id", false);
 				int index = ib.Find (pd, 15);
-				Assert.AreEqual (2, index, "#1");
+				Assert.AreEqual (1, index, "#1");
 
 				// negative search
 				index = ib.Find (pd, 44);

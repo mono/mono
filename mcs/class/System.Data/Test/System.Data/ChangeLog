@@ -1,3 +1,8 @@
+2005-10-14  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataViewTest_IBindingList.cs (FindTest): mark working. According
+	to printed DataView, the index returned is correct.
+
 2005-10-11  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataViewTest_IBindingList.cs: Added test cases for IBindingList

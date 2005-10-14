@@ -5,6 +5,7 @@
 	(RowStateFilter): Fire ListChangedEvent.
 	(ApplyDefaultSort): Fire ListChangedEvent.
 	(CompleteLastAdded): call UpdateIndex to remove the row from rowCache.
+	(IBindingList.Find): Implemented.
 
 2005-10-11  Sureshkumar T  <tsureshkumar@novell.com>
 

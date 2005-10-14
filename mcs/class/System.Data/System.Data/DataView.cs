@@ -951,10 +951,13 @@ namespace System.Data
 			this.Sort = sort;
 		}
 
-		[MonoTODO]
 		int IBindingList.Find (PropertyDescriptor property, object key) 
 		{
-			throw new NotImplementedException ();
+			DataColumn dc = Table.Columns [property.Name];
+			Index index = Table.FindIndex (new DataColumn [] { dc }, sortOrder, RowStateFilter, FilterExpression);
+			if (index == null)
+				index = new Index(new Key (Table, new DataColumn [] { dc }, sortOrder, RowStateFilter, FilterExpression));
+			return index.FindIndex (new object [] {key});
 		}
 
 		[MonoTODO]
