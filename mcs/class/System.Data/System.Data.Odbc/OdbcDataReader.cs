@@ -671,8 +671,9 @@ namespace System.Data.Odbc
 				case OdbcType.Numeric:
 				case OdbcType.Decimal:
 					bufsize=50;
-					buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for decimal. 
-					ret=libodbc.SQLGetData(hstmt, ColIndex, col.SqlCType, buffer, bufsize, ref outsize);
+					buffer=new byte[bufsize];  // According to sqlext.h, use SQL_CHAR for decimal.
+					// FIXME : use Numeric.
+					ret=libodbc.SQLGetData(hstmt, ColIndex, SQL_C_TYPE.CHAR, buffer, bufsize, ref outsize);
 					if (outsize!=-1) {
 						byte[] temp = new byte[outsize];
 						for (int i=0;i<outsize;i++)

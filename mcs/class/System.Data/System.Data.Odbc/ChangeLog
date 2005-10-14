@@ -1,5 +1,8 @@
 2005-10-14  Sureshkumar T  <tsureshkumar@novell.com>
 
+	* OdbcDataReader.cs (GetValue): Use SQL_CHAR for Numeric as
+	temporary fix.
+
 	* OdbcParameter.cs (CopyValue): Add support for Numeric & Decimal
 	parameters.
 
