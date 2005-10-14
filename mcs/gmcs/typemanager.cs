@@ -100,6 +100,7 @@ public partial class TypeManager {
 	static public Type required_attr_type;
 	static public Type guid_attr_type;
 	static public Type assembly_culture_attribute_type;
+	static public Type runtime_compatibility_attribute_type;
 
 	/// 
 	/// .NET 2.0
@@ -1134,6 +1135,7 @@ public partial class TypeManager {
 		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RequiredAttributeAttribute");
 		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices", "GuidAttribute");
 		assembly_culture_attribute_type = CoreLookupType ("System.Reflection", "AssemblyCultureAttribute");
+		runtime_compatibility_attribute_type = CoreLookupType ("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute");
 
 		InitGenericCoreTypes ();
 

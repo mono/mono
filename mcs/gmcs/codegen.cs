@@ -1062,7 +1062,8 @@ namespace Mono.CSharp {
 					byte[] publickey = CryptoConvert.ToCapiPublicKeyBlob (rsa);
 					
 					// AssemblyName.SetPublicKey requires an additional header
-					byte[] publicKeyHeader = new byte [12] { 0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00 };
+					byte[] publicKeyHeader = new byte [12] {
+						0x00, 0x24, 0x00, 0x00, 0x04, 0x80, 0x00, 0x00, 0x94, 0x00, 0x00, 0x00 };
 
 					byte[] encodedPublicKey = new byte [12 + publickey.Length];
 					Buffer.BlockCopy (publicKeyHeader, 0, encodedPublicKey, 0, 12);
@@ -1090,43 +1091,44 @@ namespace Mono.CSharp {
 					//       are loaded yet.
 					// TODO: Does not handle quoted attributes properly
 					switch (a.Name) {
-						case "AssemblyKeyFile":
-                                               case "AssemblyKeyFileAttribute":
-                                               case "System.Reflection.AssemblyKeyFileAttribute":
-							if (RootContext.StrongNameKeyFile != null) {
-								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
-								Report.Warning (1616, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
-                                    "keyfile", "System.Reflection.AssemblyKeyFileAttribute");
-							}
-							else {
-								string value = a.GetString ();
-								if (value != String.Empty)
-									RootContext.StrongNameKeyFile = value;
-							}
-							break;
-						case "AssemblyKeyName":
-                                               case "AssemblyKeyNameAttribute":
-                                               case "System.Reflection.AssemblyKeyNameAttribute":
-							if (RootContext.StrongNameKeyContainer != null) {
-								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
-								Report.Warning (1616, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
+					case "AssemblyKeyFile":
+					case "AssemblyKeyFileAttribute":
+					case "System.Reflection.AssemblyKeyFileAttribute":
+						if (RootContext.StrongNameKeyFile != null) {
+							Report.SymbolRelatedToPreviousError (a.Location, a.Name);
+							Report.Warning (1616, "Option `{0}' overrides attribute `{1}' " +
+									"given in a source file or added module",
+									"keyfile", "System.Reflection.AssemblyKeyFileAttribute");
+						}
+						else {
+							string value = a.GetString ();
+							if (value != String.Empty)
+								RootContext.StrongNameKeyFile = value;
+						}
+						break;
+					case "AssemblyKeyName":
+					case "AssemblyKeyNameAttribute":
+					case "System.Reflection.AssemblyKeyNameAttribute":
+						if (RootContext.StrongNameKeyContainer != null) {
+							Report.SymbolRelatedToPreviousError (a.Location, a.Name);
+							Report.Warning (1616, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
 									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
-							}
-							else {
-								string value = a.GetString ();
-								if (value != String.Empty)
-									RootContext.StrongNameKeyContainer = value;
-							}
-							break;
-						case "AssemblyDelaySign":
-                                               case "AssemblyDelaySignAttribute":
-                                               case "System.Reflection.AssemblyDelaySignAttribute":
-							RootContext.StrongNameDelaySign = a.GetBoolean ();
-							break;
+						}
+						else {
+							string value = a.GetString ();
+							if (value != String.Empty)
+								RootContext.StrongNameKeyContainer = value;
+						}
+						break;
+					case "AssemblyDelaySign":
+					case "AssemblyDelaySignAttribute":
+					case "System.Reflection.AssemblyDelaySignAttribute":
+						RootContext.StrongNameDelaySign = a.GetBoolean ();
+						break;
 					}
-				}
+			       }
 			}
-
+			
 			AssemblyName an = new AssemblyName ();
 			an.Name = Path.GetFileNameWithoutExtension (name);
 
@@ -1163,8 +1165,7 @@ namespace Mono.CSharp {
 					if (RootContext.StrongNameDelaySign) {
 						// delayed signing - DO NOT include private key
 						SetPublicKey (an, snkeypair);
-					}
-					else {
+					} else {
 						// no delay so we make sure we have the private key
 						try {
 							CryptoConvert.FromCapiPrivateKeyBlob (snkeypair);
@@ -1175,16 +1176,15 @@ namespace Mono.CSharp {
 								// error # is different for ECMA key
 								Report.Error (1606, "Could not sign the assembly. " + 
 									"ECMA key can only be used to delay-sign assemblies");
-							}
-							else {
-								Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' does not have a private key");
+							} else {
+								Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile
+										       + "' does not have a private key");
 							}
 							return null;
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' does not exist");
 				return null;
 			}
@@ -1222,26 +1222,52 @@ namespace Mono.CSharp {
 
 		public override void Emit (TypeContainer tc)
 		{
+			//
+			// In .NET 2.0 if the user has not specified the RuntimeCompatibility attribute
+			// we provide one with a default:
+			// [assembly:RuntimeCompatibilityAttribute (WrapNonExceptionThrows=true)]
+			//
+			if (ResolveAttribute (TypeManager.runtime_compatibility_attribute_type) == null){
+				CustomAttributeBuilder runtime_compatibility_attribute;
+				
+				PropertyInfo [] pi = new PropertyInfo [1];
+				object [] pi_values = new object [1];
+				
+				pi [0] = TypeManager.runtime_compatibility_attribute_type.GetProperty ("WrapNonExceptionThrows");
+				pi_values [0] = true;
+				
+				runtime_compatibility_attribute = new CustomAttributeBuilder (
+					TypeManager.GetConstructor (TypeManager.runtime_compatibility_attribute_type, new Type [0] {}),
+					new object [0], pi, pi_values);
+				
+				Builder.SetCustomAttribute (runtime_compatibility_attribute);
+			}
+			
 			base.Emit (tc);
-
+			
 			if (declarative_security != null) {
 
-				MethodInfo add_permission = typeof (AssemblyBuilder).GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
+				MethodInfo add_permission = typeof (AssemblyBuilder).
+					GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
 				object builder_instance = Builder;
 
 				try {
 					// Microsoft runtime hacking
 					if (add_permission == null) {
-						Type assembly_builder = typeof (AssemblyBuilder).Assembly.GetType ("System.Reflection.Emit.AssemblyBuilderData");
-						add_permission = assembly_builder.GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
+						Type assembly_builder = typeof (AssemblyBuilder).
+							Assembly.GetType ("System.Reflection.Emit.AssemblyBuilderData");
+						add_permission = assembly_builder.GetMethod ("AddPermissionRequests",
+											     BindingFlags.Instance | BindingFlags.NonPublic);
 
-						FieldInfo fi = typeof (AssemblyBuilder).GetField ("m_assemblyData", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);
+						FieldInfo fi = typeof (AssemblyBuilder).
+							GetField ("m_assemblyData", BindingFlags.Instance | BindingFlags.NonPublic |
+								  BindingFlags.GetField);
 						builder_instance = fi.GetValue (Builder);
 					}
 
 					object[] args = new object [] { declarative_security [SecurityAction.RequestMinimum],
-												  declarative_security [SecurityAction.RequestOptional],
-												  declarative_security [SecurityAction.RequestRefuse] };
+									declarative_security [SecurityAction.RequestOptional],
+									declarative_security [SecurityAction.RequestRefuse] };
 					add_permission.Invoke (builder_instance, args);
 				}
 				catch {
@@ -1302,11 +1328,14 @@ namespace Mono.CSharp {
 		{
 			if (a.Type == TypeManager.cls_compliant_attribute_type) {
 				if (CodeGen.Assembly.ClsCompliantAttribute == null) {
-					Report.Warning (3012, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
+					Report.Warning (3012, a.Location, "You must specify the CLSCompliant attribute " +
+							"on the assembly, not the module, to enable CLS compliance checking");
 				}
 				else if (CodeGen.Assembly.IsClsCompliant != a.GetBoolean ()) {
-					Report.SymbolRelatedToPreviousError (CodeGen.Assembly.ClsCompliantAttribute.Location, CodeGen.Assembly.ClsCompliantAttribute.GetSignatureForError ());
-					Report.Error (3017, a.Location, "You cannot specify the CLSCompliant attribute on a module that differs from the CLSCompliant attribute on the assembly");
+					Report.SymbolRelatedToPreviousError (CodeGen.Assembly.ClsCompliantAttribute.Location,
+									     CodeGen.Assembly.ClsCompliantAttribute.GetSignatureForError ());
+					Report.Error (3017, a.Location, "You cannot specify the CLSCompliant attribute on a module " +
+						      "that differs from the CLSCompliant attribute on the assembly");
 					return;
 				}
 			}
@@ -1333,7 +1362,8 @@ namespace Mono.CSharp {
 						DefaultCharSetType = TypeAttributes.UnicodeClass;
 						break;
 					default:
-						Report.Error (1724, a.Location, "Value specified for the argument to 'System.Runtime.InteropServices.DefaultCharSetAttribute' is not valid");
+						Report.Error (1724, a.Location, "Value specified for the argument to " +
+							      "'System.Runtime.InteropServices.DefaultCharSetAttribute' is not valid");
 						break;
 				}
 			}
