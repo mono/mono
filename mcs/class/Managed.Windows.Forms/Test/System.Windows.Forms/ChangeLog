@@ -1,3 +1,8 @@
+2005-11-16  Jordi Mas i Hernandez <jordi@ximian.com>
+	 
+	* ControlPaintTest.cs: Adds ControlPaint test unit for testing Dark
+	and Light methods
+
 2005-10-10  Peter Dennis Bartok <pbartok@novell.com>
 
 	* GenerateControlStyleTest.cs, ControlStyleTest.cs: Flipped
