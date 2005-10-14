@@ -1,3 +1,9 @@
+2005-10-14  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ServerVariablesCollection.cs: Added a demand for 
+	SerializationFormatter on GetObjectData method (even if it's not 
+	really required in this case as it remove warnings from gendarme.
+
 2005-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs:

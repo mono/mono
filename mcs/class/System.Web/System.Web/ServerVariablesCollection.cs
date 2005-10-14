@@ -7,8 +7,7 @@
 //   	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
 // (c) 2004 Mainsoft, Inc. (http://www.mainsoft.com)
-// (c) 2005 Novell, Inc. (http://www.novell.com)
-//
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,12 +28,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
+
 using System.Text;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Runtime.Serialization;
 using System.Globalization;
+using System.Security.Permissions;
 
 namespace System.Web
 {
@@ -289,6 +289,8 @@ namespace System.Web
 			return array1; 
 		}
  
+		// not really useful except for not triggering Gendarme warnings
+		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public override void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			throw new SerializationException(); 
