@@ -43,6 +43,7 @@ MPH_UNIX_SOURCE =				\
 	sys-time.c				\
 	sys-wait.c				\
 	sys-xattr.c				\
+	syslog.c				\
 	time.c					\
 	unistd.c				\
 	utime.c					\

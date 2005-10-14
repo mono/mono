@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004-2005 Jonathan Pryor
  */
 
 #include <sys/types.h>
@@ -286,6 +286,23 @@ Mono_Posix_Syscall_setgroups (mph_size_t size, mph_gid_t *list)
 	mph_return_if_size_t_overflow (size);
 	return setgroups ((size_t) size, list);
 }
+
+int
+Mono_Posix_Syscall_setgrent (void)
+{
+	errno = 0;
+	setgrent ();
+	return errno == 0 ? 0 : -1;
+}
+
+int
+Mono_Posix_Syscall_endgrent (void)
+{
+	errno = 0;
+	endgrent();
+	return errno == 0 ? 0 : -1;
+}
+
 
 G_END_DECLS
 

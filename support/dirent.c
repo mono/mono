@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004-2005 Jonathan Pryor
  */
 
 #include <dirent.h>
@@ -96,6 +96,14 @@ Mono_Posix_Syscall_readdir_r (void *dirp, struct Mono_Posix_Syscall__Dirent *ent
 	}
 
 	return r;
+}
+
+int
+Mono_Posix_Syscall_rewinddir (void* dir)
+{
+	errno = 0;
+	rewinddir (dir);
+	return errno == 0 ? 0 : -1;
 }
 
 G_END_DECLS

@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004-2005 Jonathan Pryor
  */
 
 #include <pwd.h>
@@ -242,6 +242,22 @@ Mono_Posix_Syscall_fgetpwent (void *stream, struct Mono_Posix_Syscall__Passwd *p
 	return 0;
 }
 #endif /* ndef HAVE_FGETPWENT */
+
+int
+Mono_Posix_Syscall_setpwent (void)
+{
+	errno = 0;
+	setpwent ();
+	return errno == 0 ? 0 : -1;
+}
+
+int
+Mono_Posix_Syscall_endpwent (void)
+{
+	errno = 0;
+	endpwent ();
+	return errno == 0 ? 0 : -1;
+}
 
 G_END_DECLS
 

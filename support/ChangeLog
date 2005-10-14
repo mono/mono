@@ -1,3 +1,21 @@
+2005-10-14  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile.am (MPH_UNIX_SOURCE): Add syslog.c.
+	* dirent.c, grp.c, pwd.c, signal.c, stdio.c, stdlib.c: Wrap functions which
+	  return `void' so that they instead: (1) return `int', (2) clear errno
+	  before calling the real function, and (3) return -1 if errno changed.
+	  This must be done in native code because calling 
+	  Stdlib.SetLastError/Syscall.xxx
+	  from managed code won't work reliably (since errno may change between the
+	  SetLastError call and the actual Syscall invocation).
+	* unistd.c: Same as above, and allow fpathconf(3), pathconf(3), sysconf(3), 
+	  and confstr(3) callers to explicitly choose their own errno value.
+	* map.c, map.h: Handle enumeration name change in Mono.Unix.Native
+	  (e.g. ConfStr --> ConfstrName, etc.).  This is so that they follow the
+	  established naming conventions.
+	* map-icalls.h: Add new icalls.
+	* syslog.c: Added; wraps <syslog.h> functions.
+
 2005-10-06  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Makefile.am (MPH_C_SOURCE): Add string.c.

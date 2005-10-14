@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004-2005 Jonathan Pryor
  */
 
 #include <stdlib.h>
@@ -63,6 +63,16 @@ Mono_Posix_Stdlib_realloc (void* ptr, mph_size_t size)
 
 	return realloc (ptr, (size_t) size);
 }
+
+#ifndef PLATFORM_WIN32
+int
+Mono_Posix_Syscall_setkey (const char* key)
+{
+	errno = 0;
+	setkey (key);
+	return errno == 0 ? 0 : -1;
+}
+#endif /* ndef PLATFORM_WIN32 */
 
 G_END_DECLS
 

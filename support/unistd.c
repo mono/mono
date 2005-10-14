@@ -4,7 +4,7 @@
  * Authors:
  *   Jonathan Pryor (jonpryor@vt.edu)
  *
- * Copyright (C) 2004 Jonathan Pryor
+ * Copyright (C) 2004-2005 Jonathan Pryor
  */
 
 #ifndef _GNU_SOURCE
@@ -90,25 +90,28 @@ Mono_Posix_Syscall_getcwd (char *buf, mph_size_t size)
 }
 
 gint64
-Mono_Posix_Syscall_fpathconf (int filedes, int name)
+Mono_Posix_Syscall_fpathconf (int filedes, int name, int defaultError)
 {
-	if (Mono_Posix_FromPathConf (name, &name) == -1)
+	errno = defaultError;
+	if (Mono_Posix_FromPathconfName (name, &name) == -1)
 		return -1;
 	return fpathconf (filedes, name);
 }
 
 gint64
-Mono_Posix_Syscall_pathconf (const char *path, int name)
+Mono_Posix_Syscall_pathconf (const char *path, int name, int defaultError)
 {
-	if (Mono_Posix_FromPathConf (name, &name) == -1)
+	errno = defaultError;
+	if (Mono_Posix_FromPathconfName (name, &name) == -1)
 		return -1;
 	return pathconf (path, name);
 }
 
 gint64
-Mono_Posix_Syscall_sysconf (int name)
+Mono_Posix_Syscall_sysconf (int name, int defaultError)
 {
-	if (Mono_Posix_FromSysConf (name, &name) == -1)
+	errno = defaultError;
+	if (Mono_Posix_FromSysconfName (name, &name) == -1)
 		return -1;
 	return sysconf (name);
 }
@@ -117,7 +120,7 @@ mph_size_t
 Mono_Posix_Syscall_confstr (int name, char *buf, mph_size_t len)
 {
 	mph_return_if_size_t_overflow (len);
-	if (Mono_Posix_FromConfStr (name, &name) == -1)
+	if (Mono_Posix_FromConfstrName (name, &name) == -1)
 		return -1;
 	return confstr (name, buf, (size_t) len);
 }
@@ -231,6 +234,39 @@ Mono_Posix_Syscall_swab (void *from, void *to, mph_ssize_t n)
 		return;
 	swab (from, to, (ssize_t) n);
 }
+
+int
+Mono_Posix_Syscall_encrypt (void* block, int edflag)
+{
+	errno = 0;
+	encrypt (block, edflag);
+	return errno == 0 ? 0 : -1;
+}
+
+int
+Mono_Posix_Syscall_setusershell (void)
+{
+	errno = 0;
+	setusershell ();
+	return errno == 0 ? 0 : -1;
+}
+
+int
+Mono_Posix_Syscall_endusershell (void)
+{
+	errno = 0;
+	endusershell ();
+	return errno == 0 ? 0 : -1;
+}
+
+int
+Mono_Posix_Syscall_sync (void)
+{
+	errno = 0;
+	sync ();
+	return errno == 0 ? 0 : -1;
+}
+
 
 G_END_DECLS
 

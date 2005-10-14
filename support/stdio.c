@@ -63,7 +63,7 @@ Mono_Posix_Stdlib_snprintf (char *s, mph_size_t n, char *format, ...)
 
 	return r;
 }
-#endif /* def HAVE_SNPRINTF */
+#endif /* def HAVE_VSNPRINTF */
 
 gint32
 Mono_Posix_Stdlib__IOFBF (void)
@@ -144,6 +144,14 @@ Mono_Posix_Stdlib_setvbuf (void* stream, void *buf, int mode, mph_size_t size)
 	return setvbuf (stream, (char *) buf, mode, (size_t) size);
 }
 
+int 
+Mono_Posix_Stdlib_setbuf (void* stream, void* buf)
+{
+	errno = 0;
+	setbuf (stream, buf);
+	return errno == 0 ? 0 : -1;
+}
+
 gint32
 Mono_Posix_Stdlib_fseek (void* stream, gint64 offset, int origin)
 {
@@ -175,6 +183,30 @@ gint32
 Mono_Posix_Stdlib_fsetpos (void* stream, void *pos)
 {
 	return fsetpos (stream, (fpos_t*) pos);
+}
+
+int
+Mono_Posix_Stdlib_rewind (void* stream)
+{
+	errno = 0;
+	rewind (stream);
+	return errno == 0 ? 0 : -1;
+}
+
+int
+Mono_Posix_Stdlib_clearerr (void* stream)
+{
+	errno = 0;
+	clearerr (stream);
+	return errno == 0 ? 0 : -1;
+}
+
+int
+Mono_Posix_Stdlib_perror (const char* s)
+{
+	errno = 0;
+	perror (s);
+	return errno == 0 ? 0 : -1;
 }
 
 #define MPH_FPOS_LENGTH (sizeof(fpos_t)*2)

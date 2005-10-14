@@ -97,6 +97,462 @@ int Mono_Posix_ToAccessMode (int x, int *r)
 	return 0;
 }
 
+int Mono_Posix_FromConfStr (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if (x == Mono_Posix_ConfStr__CS_GNU_LIBC_VERSION)
+#ifdef _CS_GNU_LIBC_VERSION
+		{*r = _CS_GNU_LIBC_VERSION; return 0;}
+#else /* def _CS_GNU_LIBC_VERSION */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_GNU_LIBC_VERSION */
+	if (x == Mono_Posix_ConfStr__CS_GNU_LIBPTHREAD_VERSION)
+#ifdef _CS_GNU_LIBPTHREAD_VERSION
+		{*r = _CS_GNU_LIBPTHREAD_VERSION; return 0;}
+#else /* def _CS_GNU_LIBPTHREAD_VERSION */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_GNU_LIBPTHREAD_VERSION */
+	if (x == Mono_Posix_ConfStr__CS_LFS64_CFLAGS)
+#ifdef _CS_LFS64_CFLAGS
+		{*r = _CS_LFS64_CFLAGS; return 0;}
+#else /* def _CS_LFS64_CFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_LFS64_CFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_LFS64_LDFLAGS)
+#ifdef _CS_LFS64_LDFLAGS
+		{*r = _CS_LFS64_LDFLAGS; return 0;}
+#else /* def _CS_LFS64_LDFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_LFS64_LDFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_LFS64_LIBS)
+#ifdef _CS_LFS64_LIBS
+		{*r = _CS_LFS64_LIBS; return 0;}
+#else /* def _CS_LFS64_LIBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_LFS64_LIBS */
+	if (x == Mono_Posix_ConfStr__CS_LFS64_LINTFLAGS)
+#ifdef _CS_LFS64_LINTFLAGS
+		{*r = _CS_LFS64_LINTFLAGS; return 0;}
+#else /* def _CS_LFS64_LINTFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_LFS64_LINTFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_LFS_CFLAGS)
+#ifdef _CS_LFS_CFLAGS
+		{*r = _CS_LFS_CFLAGS; return 0;}
+#else /* def _CS_LFS_CFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_LFS_CFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_LFS_LDFLAGS)
+#ifdef _CS_LFS_LDFLAGS
+		{*r = _CS_LFS_LDFLAGS; return 0;}
+#else /* def _CS_LFS_LDFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_LFS_LDFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_LFS_LIBS)
+#ifdef _CS_LFS_LIBS
+		{*r = _CS_LFS_LIBS; return 0;}
+#else /* def _CS_LFS_LIBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_LFS_LIBS */
+	if (x == Mono_Posix_ConfStr__CS_LFS_LINTFLAGS)
+#ifdef _CS_LFS_LINTFLAGS
+		{*r = _CS_LFS_LINTFLAGS; return 0;}
+#else /* def _CS_LFS_LINTFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_LFS_LINTFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_PATH)
+#ifdef _CS_PATH
+		{*r = _CS_PATH; return 0;}
+#else /* def _CS_PATH */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_PATH */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_CFLAGS)
+#ifdef _CS_POSIX_V6_ILP32_OFF32_CFLAGS
+		{*r = _CS_POSIX_V6_ILP32_OFF32_CFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_ILP32_OFF32_CFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFF32_CFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LDFLAGS)
+#ifdef _CS_POSIX_V6_ILP32_OFF32_LDFLAGS
+		{*r = _CS_POSIX_V6_ILP32_OFF32_LDFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_ILP32_OFF32_LDFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LDFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LIBS)
+#ifdef _CS_POSIX_V6_ILP32_OFF32_LIBS
+		{*r = _CS_POSIX_V6_ILP32_OFF32_LIBS; return 0;}
+#else /* def _CS_POSIX_V6_ILP32_OFF32_LIBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LIBS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LINTFLAGS)
+#ifdef _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS
+		{*r = _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_CFLAGS)
+#ifdef _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS
+		{*r = _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS)
+#ifdef _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS
+		{*r = _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LIBS)
+#ifdef _CS_POSIX_V6_ILP32_OFFBIG_LIBS
+		{*r = _CS_POSIX_V6_ILP32_OFFBIG_LIBS; return 0;}
+#else /* def _CS_POSIX_V6_ILP32_OFFBIG_LIBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LIBS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS)
+#ifdef _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS
+		{*r = _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_CFLAGS)
+#ifdef _CS_POSIX_V6_LP64_OFF64_CFLAGS
+		{*r = _CS_POSIX_V6_LP64_OFF64_CFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_LP64_OFF64_CFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_LP64_OFF64_CFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LDFLAGS)
+#ifdef _CS_POSIX_V6_LP64_OFF64_LDFLAGS
+		{*r = _CS_POSIX_V6_LP64_OFF64_LDFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_LP64_OFF64_LDFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_LP64_OFF64_LDFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LIBS)
+#ifdef _CS_POSIX_V6_LP64_OFF64_LIBS
+		{*r = _CS_POSIX_V6_LP64_OFF64_LIBS; return 0;}
+#else /* def _CS_POSIX_V6_LP64_OFF64_LIBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_LP64_OFF64_LIBS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LINTFLAGS)
+#ifdef _CS_POSIX_V6_LP64_OFF64_LINTFLAGS
+		{*r = _CS_POSIX_V6_LP64_OFF64_LINTFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_LP64_OFF64_LINTFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_LP64_OFF64_LINTFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS)
+#ifdef _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS
+		{*r = _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS)
+#ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS
+		{*r = _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LIBS)
+#ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LIBS
+		{*r = _CS_POSIX_V6_LPBIG_OFFBIG_LIBS; return 0;}
+#else /* def _CS_POSIX_V6_LPBIG_OFFBIG_LIBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LIBS */
+	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS)
+#ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS
+		{*r = _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS; return 0;}
+#else /* def _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_V6_WIDTH_RESTRICTED_ENVS)
+#ifdef _CS_V6_WIDTH_RESTRICTED_ENVS
+		{*r = _CS_V6_WIDTH_RESTRICTED_ENVS; return 0;}
+#else /* def _CS_V6_WIDTH_RESTRICTED_ENVS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_V6_WIDTH_RESTRICTED_ENVS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_CFLAGS)
+#ifdef _CS_XBS5_ILP32_OFF32_CFLAGS
+		{*r = _CS_XBS5_ILP32_OFF32_CFLAGS; return 0;}
+#else /* def _CS_XBS5_ILP32_OFF32_CFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_ILP32_OFF32_CFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LDFLAGS)
+#ifdef _CS_XBS5_ILP32_OFF32_LDFLAGS
+		{*r = _CS_XBS5_ILP32_OFF32_LDFLAGS; return 0;}
+#else /* def _CS_XBS5_ILP32_OFF32_LDFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_ILP32_OFF32_LDFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LIBS)
+#ifdef _CS_XBS5_ILP32_OFF32_LIBS
+		{*r = _CS_XBS5_ILP32_OFF32_LIBS; return 0;}
+#else /* def _CS_XBS5_ILP32_OFF32_LIBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_ILP32_OFF32_LIBS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LINTFLAGS)
+#ifdef _CS_XBS5_ILP32_OFF32_LINTFLAGS
+		{*r = _CS_XBS5_ILP32_OFF32_LINTFLAGS; return 0;}
+#else /* def _CS_XBS5_ILP32_OFF32_LINTFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_ILP32_OFF32_LINTFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_CFLAGS)
+#ifdef _CS_XBS5_ILP32_OFFBIG_CFLAGS
+		{*r = _CS_XBS5_ILP32_OFFBIG_CFLAGS; return 0;}
+#else /* def _CS_XBS5_ILP32_OFFBIG_CFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_ILP32_OFFBIG_CFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LDFLAGS)
+#ifdef _CS_XBS5_ILP32_OFFBIG_LDFLAGS
+		{*r = _CS_XBS5_ILP32_OFFBIG_LDFLAGS; return 0;}
+#else /* def _CS_XBS5_ILP32_OFFBIG_LDFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_ILP32_OFFBIG_LDFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LIBS)
+#ifdef _CS_XBS5_ILP32_OFFBIG_LIBS
+		{*r = _CS_XBS5_ILP32_OFFBIG_LIBS; return 0;}
+#else /* def _CS_XBS5_ILP32_OFFBIG_LIBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_ILP32_OFFBIG_LIBS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LINTFLAGS)
+#ifdef _CS_XBS5_ILP32_OFFBIG_LINTFLAGS
+		{*r = _CS_XBS5_ILP32_OFFBIG_LINTFLAGS; return 0;}
+#else /* def _CS_XBS5_ILP32_OFFBIG_LINTFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_ILP32_OFFBIG_LINTFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_CFLAGS)
+#ifdef _CS_XBS5_LP64_OFF64_CFLAGS
+		{*r = _CS_XBS5_LP64_OFF64_CFLAGS; return 0;}
+#else /* def _CS_XBS5_LP64_OFF64_CFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_LP64_OFF64_CFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LDFLAGS)
+#ifdef _CS_XBS5_LP64_OFF64_LDFLAGS
+		{*r = _CS_XBS5_LP64_OFF64_LDFLAGS; return 0;}
+#else /* def _CS_XBS5_LP64_OFF64_LDFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_LP64_OFF64_LDFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LIBS)
+#ifdef _CS_XBS5_LP64_OFF64_LIBS
+		{*r = _CS_XBS5_LP64_OFF64_LIBS; return 0;}
+#else /* def _CS_XBS5_LP64_OFF64_LIBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_LP64_OFF64_LIBS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LINTFLAGS)
+#ifdef _CS_XBS5_LP64_OFF64_LINTFLAGS
+		{*r = _CS_XBS5_LP64_OFF64_LINTFLAGS; return 0;}
+#else /* def _CS_XBS5_LP64_OFF64_LINTFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_LP64_OFF64_LINTFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_CFLAGS)
+#ifdef _CS_XBS5_LPBIG_OFFBIG_CFLAGS
+		{*r = _CS_XBS5_LPBIG_OFFBIG_CFLAGS; return 0;}
+#else /* def _CS_XBS5_LPBIG_OFFBIG_CFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_LPBIG_OFFBIG_CFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LDFLAGS)
+#ifdef _CS_XBS5_LPBIG_OFFBIG_LDFLAGS
+		{*r = _CS_XBS5_LPBIG_OFFBIG_LDFLAGS; return 0;}
+#else /* def _CS_XBS5_LPBIG_OFFBIG_LDFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LDFLAGS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LIBS)
+#ifdef _CS_XBS5_LPBIG_OFFBIG_LIBS
+		{*r = _CS_XBS5_LPBIG_OFFBIG_LIBS; return 0;}
+#else /* def _CS_XBS5_LPBIG_OFFBIG_LIBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LIBS */
+	if (x == Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LINTFLAGS)
+#ifdef _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS
+		{*r = _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS; return 0;}
+#else /* def _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS */
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_ToConfStr (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef _CS_GNU_LIBC_VERSION
+	if (x == _CS_GNU_LIBC_VERSION)
+		{*r = Mono_Posix_ConfStr__CS_GNU_LIBC_VERSION; return 0;}
+#endif /* ndef _CS_GNU_LIBC_VERSION */
+#ifdef _CS_GNU_LIBPTHREAD_VERSION
+	if (x == _CS_GNU_LIBPTHREAD_VERSION)
+		{*r = Mono_Posix_ConfStr__CS_GNU_LIBPTHREAD_VERSION; return 0;}
+#endif /* ndef _CS_GNU_LIBPTHREAD_VERSION */
+#ifdef _CS_LFS64_CFLAGS
+	if (x == _CS_LFS64_CFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_LFS64_CFLAGS; return 0;}
+#endif /* ndef _CS_LFS64_CFLAGS */
+#ifdef _CS_LFS64_LDFLAGS
+	if (x == _CS_LFS64_LDFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_LFS64_LDFLAGS; return 0;}
+#endif /* ndef _CS_LFS64_LDFLAGS */
+#ifdef _CS_LFS64_LIBS
+	if (x == _CS_LFS64_LIBS)
+		{*r = Mono_Posix_ConfStr__CS_LFS64_LIBS; return 0;}
+#endif /* ndef _CS_LFS64_LIBS */
+#ifdef _CS_LFS64_LINTFLAGS
+	if (x == _CS_LFS64_LINTFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_LFS64_LINTFLAGS; return 0;}
+#endif /* ndef _CS_LFS64_LINTFLAGS */
+#ifdef _CS_LFS_CFLAGS
+	if (x == _CS_LFS_CFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_LFS_CFLAGS; return 0;}
+#endif /* ndef _CS_LFS_CFLAGS */
+#ifdef _CS_LFS_LDFLAGS
+	if (x == _CS_LFS_LDFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_LFS_LDFLAGS; return 0;}
+#endif /* ndef _CS_LFS_LDFLAGS */
+#ifdef _CS_LFS_LIBS
+	if (x == _CS_LFS_LIBS)
+		{*r = Mono_Posix_ConfStr__CS_LFS_LIBS; return 0;}
+#endif /* ndef _CS_LFS_LIBS */
+#ifdef _CS_LFS_LINTFLAGS
+	if (x == _CS_LFS_LINTFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_LFS_LINTFLAGS; return 0;}
+#endif /* ndef _CS_LFS_LINTFLAGS */
+#ifdef _CS_PATH
+	if (x == _CS_PATH)
+		{*r = Mono_Posix_ConfStr__CS_PATH; return 0;}
+#endif /* ndef _CS_PATH */
+#ifdef _CS_POSIX_V6_ILP32_OFF32_CFLAGS
+	if (x == _CS_POSIX_V6_ILP32_OFF32_CFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_CFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFF32_CFLAGS */
+#ifdef _CS_POSIX_V6_ILP32_OFF32_LDFLAGS
+	if (x == _CS_POSIX_V6_ILP32_OFF32_LDFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LDFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LDFLAGS */
+#ifdef _CS_POSIX_V6_ILP32_OFF32_LIBS
+	if (x == _CS_POSIX_V6_ILP32_OFF32_LIBS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LIBS; return 0;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LIBS */
+#ifdef _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS
+	if (x == _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LINTFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS */
+#ifdef _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS
+	if (x == _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_CFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS */
+#ifdef _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS
+	if (x == _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS */
+#ifdef _CS_POSIX_V6_ILP32_OFFBIG_LIBS
+	if (x == _CS_POSIX_V6_ILP32_OFFBIG_LIBS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LIBS; return 0;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LIBS */
+#ifdef _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS
+	if (x == _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS */
+#ifdef _CS_POSIX_V6_LP64_OFF64_CFLAGS
+	if (x == _CS_POSIX_V6_LP64_OFF64_CFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_CFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_LP64_OFF64_CFLAGS */
+#ifdef _CS_POSIX_V6_LP64_OFF64_LDFLAGS
+	if (x == _CS_POSIX_V6_LP64_OFF64_LDFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LDFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_LP64_OFF64_LDFLAGS */
+#ifdef _CS_POSIX_V6_LP64_OFF64_LIBS
+	if (x == _CS_POSIX_V6_LP64_OFF64_LIBS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LIBS; return 0;}
+#endif /* ndef _CS_POSIX_V6_LP64_OFF64_LIBS */
+#ifdef _CS_POSIX_V6_LP64_OFF64_LINTFLAGS
+	if (x == _CS_POSIX_V6_LP64_OFF64_LINTFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LINTFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_LP64_OFF64_LINTFLAGS */
+#ifdef _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS
+	if (x == _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS */
+#ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS
+	if (x == _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS */
+#ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LIBS
+	if (x == _CS_POSIX_V6_LPBIG_OFFBIG_LIBS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LIBS; return 0;}
+#endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LIBS */
+#ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS
+	if (x == _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS; return 0;}
+#endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS */
+#ifdef _CS_V6_WIDTH_RESTRICTED_ENVS
+	if (x == _CS_V6_WIDTH_RESTRICTED_ENVS)
+		{*r = Mono_Posix_ConfStr__CS_V6_WIDTH_RESTRICTED_ENVS; return 0;}
+#endif /* ndef _CS_V6_WIDTH_RESTRICTED_ENVS */
+#ifdef _CS_XBS5_ILP32_OFF32_CFLAGS
+	if (x == _CS_XBS5_ILP32_OFF32_CFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_CFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_ILP32_OFF32_CFLAGS */
+#ifdef _CS_XBS5_ILP32_OFF32_LDFLAGS
+	if (x == _CS_XBS5_ILP32_OFF32_LDFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LDFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_ILP32_OFF32_LDFLAGS */
+#ifdef _CS_XBS5_ILP32_OFF32_LIBS
+	if (x == _CS_XBS5_ILP32_OFF32_LIBS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LIBS; return 0;}
+#endif /* ndef _CS_XBS5_ILP32_OFF32_LIBS */
+#ifdef _CS_XBS5_ILP32_OFF32_LINTFLAGS
+	if (x == _CS_XBS5_ILP32_OFF32_LINTFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LINTFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_ILP32_OFF32_LINTFLAGS */
+#ifdef _CS_XBS5_ILP32_OFFBIG_CFLAGS
+	if (x == _CS_XBS5_ILP32_OFFBIG_CFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_CFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_ILP32_OFFBIG_CFLAGS */
+#ifdef _CS_XBS5_ILP32_OFFBIG_LDFLAGS
+	if (x == _CS_XBS5_ILP32_OFFBIG_LDFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LDFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_ILP32_OFFBIG_LDFLAGS */
+#ifdef _CS_XBS5_ILP32_OFFBIG_LIBS
+	if (x == _CS_XBS5_ILP32_OFFBIG_LIBS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LIBS; return 0;}
+#endif /* ndef _CS_XBS5_ILP32_OFFBIG_LIBS */
+#ifdef _CS_XBS5_ILP32_OFFBIG_LINTFLAGS
+	if (x == _CS_XBS5_ILP32_OFFBIG_LINTFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LINTFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_ILP32_OFFBIG_LINTFLAGS */
+#ifdef _CS_XBS5_LP64_OFF64_CFLAGS
+	if (x == _CS_XBS5_LP64_OFF64_CFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_CFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_LP64_OFF64_CFLAGS */
+#ifdef _CS_XBS5_LP64_OFF64_LDFLAGS
+	if (x == _CS_XBS5_LP64_OFF64_LDFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LDFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_LP64_OFF64_LDFLAGS */
+#ifdef _CS_XBS5_LP64_OFF64_LIBS
+	if (x == _CS_XBS5_LP64_OFF64_LIBS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LIBS; return 0;}
+#endif /* ndef _CS_XBS5_LP64_OFF64_LIBS */
+#ifdef _CS_XBS5_LP64_OFF64_LINTFLAGS
+	if (x == _CS_XBS5_LP64_OFF64_LINTFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LINTFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_LP64_OFF64_LINTFLAGS */
+#ifdef _CS_XBS5_LPBIG_OFFBIG_CFLAGS
+	if (x == _CS_XBS5_LPBIG_OFFBIG_CFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_CFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_LPBIG_OFFBIG_CFLAGS */
+#ifdef _CS_XBS5_LPBIG_OFFBIG_LDFLAGS
+	if (x == _CS_XBS5_LPBIG_OFFBIG_LDFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LDFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LDFLAGS */
+#ifdef _CS_XBS5_LPBIG_OFFBIG_LIBS
+	if (x == _CS_XBS5_LPBIG_OFFBIG_LIBS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LIBS; return 0;}
+#endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LIBS */
+#ifdef _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS
+	if (x == _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS)
+		{*r = Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LINTFLAGS; return 0;}
+#endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS */
+	errno = EINVAL; return -1;
+}
+
 int Mono_Posix_FromError (int x, int *r)
 {
 	*r = 0;
@@ -1485,270 +1941,270 @@ int Mono_Posix_ToAccessModes (int x, int *r)
 	return 0;
 }
 
-int Mono_Posix_FromConfStr (int x, int *r)
+int Mono_Posix_FromConfstrName (int x, int *r)
 {
 	*r = 0;
 	if (x == 0)
 		return 0;
-	if (x == Mono_Posix_ConfStr__CS_GNU_LIBC_VERSION)
+	if (x == Mono_Posix_ConfstrName__CS_GNU_LIBC_VERSION)
 #ifdef _CS_GNU_LIBC_VERSION
 		{*r = _CS_GNU_LIBC_VERSION; return 0;}
 #else /* def _CS_GNU_LIBC_VERSION */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_GNU_LIBC_VERSION */
-	if (x == Mono_Posix_ConfStr__CS_GNU_LIBPTHREAD_VERSION)
+	if (x == Mono_Posix_ConfstrName__CS_GNU_LIBPTHREAD_VERSION)
 #ifdef _CS_GNU_LIBPTHREAD_VERSION
 		{*r = _CS_GNU_LIBPTHREAD_VERSION; return 0;}
 #else /* def _CS_GNU_LIBPTHREAD_VERSION */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_GNU_LIBPTHREAD_VERSION */
-	if (x == Mono_Posix_ConfStr__CS_LFS64_CFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_LFS64_CFLAGS)
 #ifdef _CS_LFS64_CFLAGS
 		{*r = _CS_LFS64_CFLAGS; return 0;}
 #else /* def _CS_LFS64_CFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_LFS64_CFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_LFS64_LDFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_LFS64_LDFLAGS)
 #ifdef _CS_LFS64_LDFLAGS
 		{*r = _CS_LFS64_LDFLAGS; return 0;}
 #else /* def _CS_LFS64_LDFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_LFS64_LDFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_LFS64_LIBS)
+	if (x == Mono_Posix_ConfstrName__CS_LFS64_LIBS)
 #ifdef _CS_LFS64_LIBS
 		{*r = _CS_LFS64_LIBS; return 0;}
 #else /* def _CS_LFS64_LIBS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_LFS64_LIBS */
-	if (x == Mono_Posix_ConfStr__CS_LFS64_LINTFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_LFS64_LINTFLAGS)
 #ifdef _CS_LFS64_LINTFLAGS
 		{*r = _CS_LFS64_LINTFLAGS; return 0;}
 #else /* def _CS_LFS64_LINTFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_LFS64_LINTFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_LFS_CFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_LFS_CFLAGS)
 #ifdef _CS_LFS_CFLAGS
 		{*r = _CS_LFS_CFLAGS; return 0;}
 #else /* def _CS_LFS_CFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_LFS_CFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_LFS_LDFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_LFS_LDFLAGS)
 #ifdef _CS_LFS_LDFLAGS
 		{*r = _CS_LFS_LDFLAGS; return 0;}
 #else /* def _CS_LFS_LDFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_LFS_LDFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_LFS_LIBS)
+	if (x == Mono_Posix_ConfstrName__CS_LFS_LIBS)
 #ifdef _CS_LFS_LIBS
 		{*r = _CS_LFS_LIBS; return 0;}
 #else /* def _CS_LFS_LIBS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_LFS_LIBS */
-	if (x == Mono_Posix_ConfStr__CS_LFS_LINTFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_LFS_LINTFLAGS)
 #ifdef _CS_LFS_LINTFLAGS
 		{*r = _CS_LFS_LINTFLAGS; return 0;}
 #else /* def _CS_LFS_LINTFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_LFS_LINTFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_PATH)
+	if (x == Mono_Posix_ConfstrName__CS_PATH)
 #ifdef _CS_PATH
 		{*r = _CS_PATH; return 0;}
 #else /* def _CS_PATH */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_PATH */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_CFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFF32_CFLAGS)
 #ifdef _CS_POSIX_V6_ILP32_OFF32_CFLAGS
 		{*r = _CS_POSIX_V6_ILP32_OFF32_CFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_ILP32_OFF32_CFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFF32_CFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LDFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFF32_LDFLAGS)
 #ifdef _CS_POSIX_V6_ILP32_OFF32_LDFLAGS
 		{*r = _CS_POSIX_V6_ILP32_OFF32_LDFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_ILP32_OFF32_LDFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LDFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LIBS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFF32_LIBS)
 #ifdef _CS_POSIX_V6_ILP32_OFF32_LIBS
 		{*r = _CS_POSIX_V6_ILP32_OFF32_LIBS; return 0;}
 #else /* def _CS_POSIX_V6_ILP32_OFF32_LIBS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LIBS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LINTFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFF32_LINTFLAGS)
 #ifdef _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS
 		{*r = _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_CFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFFBIG_CFLAGS)
 #ifdef _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS
 		{*r = _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS)
 #ifdef _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS
 		{*r = _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LIBS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFFBIG_LIBS)
 #ifdef _CS_POSIX_V6_ILP32_OFFBIG_LIBS
 		{*r = _CS_POSIX_V6_ILP32_OFFBIG_LIBS; return 0;}
 #else /* def _CS_POSIX_V6_ILP32_OFFBIG_LIBS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LIBS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS)
 #ifdef _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS
 		{*r = _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_CFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_LP64_OFF64_CFLAGS)
 #ifdef _CS_POSIX_V6_LP64_OFF64_CFLAGS
 		{*r = _CS_POSIX_V6_LP64_OFF64_CFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_LP64_OFF64_CFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_LP64_OFF64_CFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LDFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_LP64_OFF64_LDFLAGS)
 #ifdef _CS_POSIX_V6_LP64_OFF64_LDFLAGS
 		{*r = _CS_POSIX_V6_LP64_OFF64_LDFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_LP64_OFF64_LDFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_LP64_OFF64_LDFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LIBS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_LP64_OFF64_LIBS)
 #ifdef _CS_POSIX_V6_LP64_OFF64_LIBS
 		{*r = _CS_POSIX_V6_LP64_OFF64_LIBS; return 0;}
 #else /* def _CS_POSIX_V6_LP64_OFF64_LIBS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_LP64_OFF64_LIBS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LINTFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_LP64_OFF64_LINTFLAGS)
 #ifdef _CS_POSIX_V6_LP64_OFF64_LINTFLAGS
 		{*r = _CS_POSIX_V6_LP64_OFF64_LINTFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_LP64_OFF64_LINTFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_LP64_OFF64_LINTFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS)
 #ifdef _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS
 		{*r = _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS)
 #ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS
 		{*r = _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LIBS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_LPBIG_OFFBIG_LIBS)
 #ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LIBS
 		{*r = _CS_POSIX_V6_LPBIG_OFFBIG_LIBS; return 0;}
 #else /* def _CS_POSIX_V6_LPBIG_OFFBIG_LIBS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LIBS */
-	if (x == Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS)
 #ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS
 		{*r = _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS; return 0;}
 #else /* def _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_V6_WIDTH_RESTRICTED_ENVS)
+	if (x == Mono_Posix_ConfstrName__CS_V6_WIDTH_RESTRICTED_ENVS)
 #ifdef _CS_V6_WIDTH_RESTRICTED_ENVS
 		{*r = _CS_V6_WIDTH_RESTRICTED_ENVS; return 0;}
 #else /* def _CS_V6_WIDTH_RESTRICTED_ENVS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_V6_WIDTH_RESTRICTED_ENVS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_CFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFF32_CFLAGS)
 #ifdef _CS_XBS5_ILP32_OFF32_CFLAGS
 		{*r = _CS_XBS5_ILP32_OFF32_CFLAGS; return 0;}
 #else /* def _CS_XBS5_ILP32_OFF32_CFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_ILP32_OFF32_CFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LDFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFF32_LDFLAGS)
 #ifdef _CS_XBS5_ILP32_OFF32_LDFLAGS
 		{*r = _CS_XBS5_ILP32_OFF32_LDFLAGS; return 0;}
 #else /* def _CS_XBS5_ILP32_OFF32_LDFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_ILP32_OFF32_LDFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LIBS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFF32_LIBS)
 #ifdef _CS_XBS5_ILP32_OFF32_LIBS
 		{*r = _CS_XBS5_ILP32_OFF32_LIBS; return 0;}
 #else /* def _CS_XBS5_ILP32_OFF32_LIBS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_ILP32_OFF32_LIBS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LINTFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFF32_LINTFLAGS)
 #ifdef _CS_XBS5_ILP32_OFF32_LINTFLAGS
 		{*r = _CS_XBS5_ILP32_OFF32_LINTFLAGS; return 0;}
 #else /* def _CS_XBS5_ILP32_OFF32_LINTFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_ILP32_OFF32_LINTFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_CFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFFBIG_CFLAGS)
 #ifdef _CS_XBS5_ILP32_OFFBIG_CFLAGS
 		{*r = _CS_XBS5_ILP32_OFFBIG_CFLAGS; return 0;}
 #else /* def _CS_XBS5_ILP32_OFFBIG_CFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_ILP32_OFFBIG_CFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LDFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFFBIG_LDFLAGS)
 #ifdef _CS_XBS5_ILP32_OFFBIG_LDFLAGS
 		{*r = _CS_XBS5_ILP32_OFFBIG_LDFLAGS; return 0;}
 #else /* def _CS_XBS5_ILP32_OFFBIG_LDFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_ILP32_OFFBIG_LDFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LIBS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFFBIG_LIBS)
 #ifdef _CS_XBS5_ILP32_OFFBIG_LIBS
 		{*r = _CS_XBS5_ILP32_OFFBIG_LIBS; return 0;}
 #else /* def _CS_XBS5_ILP32_OFFBIG_LIBS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_ILP32_OFFBIG_LIBS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LINTFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFFBIG_LINTFLAGS)
 #ifdef _CS_XBS5_ILP32_OFFBIG_LINTFLAGS
 		{*r = _CS_XBS5_ILP32_OFFBIG_LINTFLAGS; return 0;}
 #else /* def _CS_XBS5_ILP32_OFFBIG_LINTFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_ILP32_OFFBIG_LINTFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_CFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_LP64_OFF64_CFLAGS)
 #ifdef _CS_XBS5_LP64_OFF64_CFLAGS
 		{*r = _CS_XBS5_LP64_OFF64_CFLAGS; return 0;}
 #else /* def _CS_XBS5_LP64_OFF64_CFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_LP64_OFF64_CFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LDFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_LP64_OFF64_LDFLAGS)
 #ifdef _CS_XBS5_LP64_OFF64_LDFLAGS
 		{*r = _CS_XBS5_LP64_OFF64_LDFLAGS; return 0;}
 #else /* def _CS_XBS5_LP64_OFF64_LDFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_LP64_OFF64_LDFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LIBS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_LP64_OFF64_LIBS)
 #ifdef _CS_XBS5_LP64_OFF64_LIBS
 		{*r = _CS_XBS5_LP64_OFF64_LIBS; return 0;}
 #else /* def _CS_XBS5_LP64_OFF64_LIBS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_LP64_OFF64_LIBS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LINTFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_LP64_OFF64_LINTFLAGS)
 #ifdef _CS_XBS5_LP64_OFF64_LINTFLAGS
 		{*r = _CS_XBS5_LP64_OFF64_LINTFLAGS; return 0;}
 #else /* def _CS_XBS5_LP64_OFF64_LINTFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_LP64_OFF64_LINTFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_CFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_LPBIG_OFFBIG_CFLAGS)
 #ifdef _CS_XBS5_LPBIG_OFFBIG_CFLAGS
 		{*r = _CS_XBS5_LPBIG_OFFBIG_CFLAGS; return 0;}
 #else /* def _CS_XBS5_LPBIG_OFFBIG_CFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_LPBIG_OFFBIG_CFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LDFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_LPBIG_OFFBIG_LDFLAGS)
 #ifdef _CS_XBS5_LPBIG_OFFBIG_LDFLAGS
 		{*r = _CS_XBS5_LPBIG_OFFBIG_LDFLAGS; return 0;}
 #else /* def _CS_XBS5_LPBIG_OFFBIG_LDFLAGS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LDFLAGS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LIBS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_LPBIG_OFFBIG_LIBS)
 #ifdef _CS_XBS5_LPBIG_OFFBIG_LIBS
 		{*r = _CS_XBS5_LPBIG_OFFBIG_LIBS; return 0;}
 #else /* def _CS_XBS5_LPBIG_OFFBIG_LIBS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LIBS */
-	if (x == Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LINTFLAGS)
+	if (x == Mono_Posix_ConfstrName__CS_XBS5_LPBIG_OFFBIG_LINTFLAGS)
 #ifdef _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS
 		{*r = _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS; return 0;}
 #else /* def _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS */
@@ -1757,186 +2213,186 @@ int Mono_Posix_FromConfStr (int x, int *r)
 	errno = EINVAL; return -1;
 }
 
-int Mono_Posix_ToConfStr (int x, int *r)
+int Mono_Posix_ToConfstrName (int x, int *r)
 {
 	*r = 0;
 	if (x == 0)
 		return 0;
 #ifdef _CS_GNU_LIBC_VERSION
 	if (x == _CS_GNU_LIBC_VERSION)
-		{*r = Mono_Posix_ConfStr__CS_GNU_LIBC_VERSION; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_GNU_LIBC_VERSION; return 0;}
 #endif /* ndef _CS_GNU_LIBC_VERSION */
 #ifdef _CS_GNU_LIBPTHREAD_VERSION
 	if (x == _CS_GNU_LIBPTHREAD_VERSION)
-		{*r = Mono_Posix_ConfStr__CS_GNU_LIBPTHREAD_VERSION; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_GNU_LIBPTHREAD_VERSION; return 0;}
 #endif /* ndef _CS_GNU_LIBPTHREAD_VERSION */
 #ifdef _CS_LFS64_CFLAGS
 	if (x == _CS_LFS64_CFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_LFS64_CFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_LFS64_CFLAGS; return 0;}
 #endif /* ndef _CS_LFS64_CFLAGS */
 #ifdef _CS_LFS64_LDFLAGS
 	if (x == _CS_LFS64_LDFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_LFS64_LDFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_LFS64_LDFLAGS; return 0;}
 #endif /* ndef _CS_LFS64_LDFLAGS */
 #ifdef _CS_LFS64_LIBS
 	if (x == _CS_LFS64_LIBS)
-		{*r = Mono_Posix_ConfStr__CS_LFS64_LIBS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_LFS64_LIBS; return 0;}
 #endif /* ndef _CS_LFS64_LIBS */
 #ifdef _CS_LFS64_LINTFLAGS
 	if (x == _CS_LFS64_LINTFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_LFS64_LINTFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_LFS64_LINTFLAGS; return 0;}
 #endif /* ndef _CS_LFS64_LINTFLAGS */
 #ifdef _CS_LFS_CFLAGS
 	if (x == _CS_LFS_CFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_LFS_CFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_LFS_CFLAGS; return 0;}
 #endif /* ndef _CS_LFS_CFLAGS */
 #ifdef _CS_LFS_LDFLAGS
 	if (x == _CS_LFS_LDFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_LFS_LDFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_LFS_LDFLAGS; return 0;}
 #endif /* ndef _CS_LFS_LDFLAGS */
 #ifdef _CS_LFS_LIBS
 	if (x == _CS_LFS_LIBS)
-		{*r = Mono_Posix_ConfStr__CS_LFS_LIBS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_LFS_LIBS; return 0;}
 #endif /* ndef _CS_LFS_LIBS */
 #ifdef _CS_LFS_LINTFLAGS
 	if (x == _CS_LFS_LINTFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_LFS_LINTFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_LFS_LINTFLAGS; return 0;}
 #endif /* ndef _CS_LFS_LINTFLAGS */
 #ifdef _CS_PATH
 	if (x == _CS_PATH)
-		{*r = Mono_Posix_ConfStr__CS_PATH; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_PATH; return 0;}
 #endif /* ndef _CS_PATH */
 #ifdef _CS_POSIX_V6_ILP32_OFF32_CFLAGS
 	if (x == _CS_POSIX_V6_ILP32_OFF32_CFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_CFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFF32_CFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFF32_CFLAGS */
 #ifdef _CS_POSIX_V6_ILP32_OFF32_LDFLAGS
 	if (x == _CS_POSIX_V6_ILP32_OFF32_LDFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LDFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFF32_LDFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LDFLAGS */
 #ifdef _CS_POSIX_V6_ILP32_OFF32_LIBS
 	if (x == _CS_POSIX_V6_ILP32_OFF32_LIBS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LIBS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFF32_LIBS; return 0;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LIBS */
 #ifdef _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS
 	if (x == _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFF32_LINTFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFF32_LINTFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFF32_LINTFLAGS */
 #ifdef _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS
 	if (x == _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_CFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFFBIG_CFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_CFLAGS */
 #ifdef _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS
 	if (x == _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LDFLAGS */
 #ifdef _CS_POSIX_V6_ILP32_OFFBIG_LIBS
 	if (x == _CS_POSIX_V6_ILP32_OFFBIG_LIBS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LIBS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFFBIG_LIBS; return 0;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LIBS */
 #ifdef _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS
 	if (x == _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_ILP32_OFFBIG_LINTFLAGS */
 #ifdef _CS_POSIX_V6_LP64_OFF64_CFLAGS
 	if (x == _CS_POSIX_V6_LP64_OFF64_CFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_CFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_LP64_OFF64_CFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_LP64_OFF64_CFLAGS */
 #ifdef _CS_POSIX_V6_LP64_OFF64_LDFLAGS
 	if (x == _CS_POSIX_V6_LP64_OFF64_LDFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LDFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_LP64_OFF64_LDFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_LP64_OFF64_LDFLAGS */
 #ifdef _CS_POSIX_V6_LP64_OFF64_LIBS
 	if (x == _CS_POSIX_V6_LP64_OFF64_LIBS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LIBS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_LP64_OFF64_LIBS; return 0;}
 #endif /* ndef _CS_POSIX_V6_LP64_OFF64_LIBS */
 #ifdef _CS_POSIX_V6_LP64_OFF64_LINTFLAGS
 	if (x == _CS_POSIX_V6_LP64_OFF64_LINTFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LP64_OFF64_LINTFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_LP64_OFF64_LINTFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_LP64_OFF64_LINTFLAGS */
 #ifdef _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS
 	if (x == _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_CFLAGS */
 #ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS
 	if (x == _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LDFLAGS */
 #ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LIBS
 	if (x == _CS_POSIX_V6_LPBIG_OFFBIG_LIBS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LIBS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_LPBIG_OFFBIG_LIBS; return 0;}
 #endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LIBS */
 #ifdef _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS
 	if (x == _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS; return 0;}
 #endif /* ndef _CS_POSIX_V6_LPBIG_OFFBIG_LINTFLAGS */
 #ifdef _CS_V6_WIDTH_RESTRICTED_ENVS
 	if (x == _CS_V6_WIDTH_RESTRICTED_ENVS)
-		{*r = Mono_Posix_ConfStr__CS_V6_WIDTH_RESTRICTED_ENVS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_V6_WIDTH_RESTRICTED_ENVS; return 0;}
 #endif /* ndef _CS_V6_WIDTH_RESTRICTED_ENVS */
 #ifdef _CS_XBS5_ILP32_OFF32_CFLAGS
 	if (x == _CS_XBS5_ILP32_OFF32_CFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_CFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFF32_CFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_ILP32_OFF32_CFLAGS */
 #ifdef _CS_XBS5_ILP32_OFF32_LDFLAGS
 	if (x == _CS_XBS5_ILP32_OFF32_LDFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LDFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFF32_LDFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_ILP32_OFF32_LDFLAGS */
 #ifdef _CS_XBS5_ILP32_OFF32_LIBS
 	if (x == _CS_XBS5_ILP32_OFF32_LIBS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LIBS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFF32_LIBS; return 0;}
 #endif /* ndef _CS_XBS5_ILP32_OFF32_LIBS */
 #ifdef _CS_XBS5_ILP32_OFF32_LINTFLAGS
 	if (x == _CS_XBS5_ILP32_OFF32_LINTFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFF32_LINTFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFF32_LINTFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_ILP32_OFF32_LINTFLAGS */
 #ifdef _CS_XBS5_ILP32_OFFBIG_CFLAGS
 	if (x == _CS_XBS5_ILP32_OFFBIG_CFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_CFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFFBIG_CFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_ILP32_OFFBIG_CFLAGS */
 #ifdef _CS_XBS5_ILP32_OFFBIG_LDFLAGS
 	if (x == _CS_XBS5_ILP32_OFFBIG_LDFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LDFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFFBIG_LDFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_ILP32_OFFBIG_LDFLAGS */
 #ifdef _CS_XBS5_ILP32_OFFBIG_LIBS
 	if (x == _CS_XBS5_ILP32_OFFBIG_LIBS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LIBS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFFBIG_LIBS; return 0;}
 #endif /* ndef _CS_XBS5_ILP32_OFFBIG_LIBS */
 #ifdef _CS_XBS5_ILP32_OFFBIG_LINTFLAGS
 	if (x == _CS_XBS5_ILP32_OFFBIG_LINTFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_ILP32_OFFBIG_LINTFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_ILP32_OFFBIG_LINTFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_ILP32_OFFBIG_LINTFLAGS */
 #ifdef _CS_XBS5_LP64_OFF64_CFLAGS
 	if (x == _CS_XBS5_LP64_OFF64_CFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_CFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_LP64_OFF64_CFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_LP64_OFF64_CFLAGS */
 #ifdef _CS_XBS5_LP64_OFF64_LDFLAGS
 	if (x == _CS_XBS5_LP64_OFF64_LDFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LDFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_LP64_OFF64_LDFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_LP64_OFF64_LDFLAGS */
 #ifdef _CS_XBS5_LP64_OFF64_LIBS
 	if (x == _CS_XBS5_LP64_OFF64_LIBS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LIBS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_LP64_OFF64_LIBS; return 0;}
 #endif /* ndef _CS_XBS5_LP64_OFF64_LIBS */
 #ifdef _CS_XBS5_LP64_OFF64_LINTFLAGS
 	if (x == _CS_XBS5_LP64_OFF64_LINTFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_LP64_OFF64_LINTFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_LP64_OFF64_LINTFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_LP64_OFF64_LINTFLAGS */
 #ifdef _CS_XBS5_LPBIG_OFFBIG_CFLAGS
 	if (x == _CS_XBS5_LPBIG_OFFBIG_CFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_CFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_LPBIG_OFFBIG_CFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_LPBIG_OFFBIG_CFLAGS */
 #ifdef _CS_XBS5_LPBIG_OFFBIG_LDFLAGS
 	if (x == _CS_XBS5_LPBIG_OFFBIG_LDFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LDFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_LPBIG_OFFBIG_LDFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LDFLAGS */
 #ifdef _CS_XBS5_LPBIG_OFFBIG_LIBS
 	if (x == _CS_XBS5_LPBIG_OFFBIG_LIBS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LIBS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_LPBIG_OFFBIG_LIBS; return 0;}
 #endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LIBS */
 #ifdef _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS
 	if (x == _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS)
-		{*r = Mono_Posix_ConfStr__CS_XBS5_LPBIG_OFFBIG_LINTFLAGS; return 0;}
+		{*r = Mono_Posix_ConfstrName__CS_XBS5_LPBIG_OFFBIG_LINTFLAGS; return 0;}
 #endif /* ndef _CS_XBS5_LPBIG_OFFBIG_LINTFLAGS */
 	errno = EINVAL; return -1;
 }
@@ -4449,132 +4905,132 @@ int Mono_Posix_ToOpenFlags (int x, int *r)
 	return 0;
 }
 
-int Mono_Posix_FromPathConf (int x, int *r)
+int Mono_Posix_FromPathconfName (int x, int *r)
 {
 	*r = 0;
 	if (x == 0)
 		return 0;
-	if (x == Mono_Posix_PathConf__PC_2_SYMLINKS)
+	if (x == Mono_Posix_PathconfName__PC_2_SYMLINKS)
 #ifdef _PC_2_SYMLINKS
 		{*r = _PC_2_SYMLINKS; return 0;}
 #else /* def _PC_2_SYMLINKS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_2_SYMLINKS */
-	if (x == Mono_Posix_PathConf__PC_ALLOC_SIZE_MIN)
+	if (x == Mono_Posix_PathconfName__PC_ALLOC_SIZE_MIN)
 #ifdef _PC_ALLOC_SIZE_MIN
 		{*r = _PC_ALLOC_SIZE_MIN; return 0;}
 #else /* def _PC_ALLOC_SIZE_MIN */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_ALLOC_SIZE_MIN */
-	if (x == Mono_Posix_PathConf__PC_ASYNC_IO)
+	if (x == Mono_Posix_PathconfName__PC_ASYNC_IO)
 #ifdef _PC_ASYNC_IO
 		{*r = _PC_ASYNC_IO; return 0;}
 #else /* def _PC_ASYNC_IO */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_ASYNC_IO */
-	if (x == Mono_Posix_PathConf__PC_CHOWN_RESTRICTED)
+	if (x == Mono_Posix_PathconfName__PC_CHOWN_RESTRICTED)
 #ifdef _PC_CHOWN_RESTRICTED
 		{*r = _PC_CHOWN_RESTRICTED; return 0;}
 #else /* def _PC_CHOWN_RESTRICTED */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_CHOWN_RESTRICTED */
-	if (x == Mono_Posix_PathConf__PC_FILESIZEBITS)
+	if (x == Mono_Posix_PathconfName__PC_FILESIZEBITS)
 #ifdef _PC_FILESIZEBITS
 		{*r = _PC_FILESIZEBITS; return 0;}
 #else /* def _PC_FILESIZEBITS */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_FILESIZEBITS */
-	if (x == Mono_Posix_PathConf__PC_LINK_MAX)
+	if (x == Mono_Posix_PathconfName__PC_LINK_MAX)
 #ifdef _PC_LINK_MAX
 		{*r = _PC_LINK_MAX; return 0;}
 #else /* def _PC_LINK_MAX */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_LINK_MAX */
-	if (x == Mono_Posix_PathConf__PC_MAX_CANON)
+	if (x == Mono_Posix_PathconfName__PC_MAX_CANON)
 #ifdef _PC_MAX_CANON
 		{*r = _PC_MAX_CANON; return 0;}
 #else /* def _PC_MAX_CANON */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_MAX_CANON */
-	if (x == Mono_Posix_PathConf__PC_MAX_INPUT)
+	if (x == Mono_Posix_PathconfName__PC_MAX_INPUT)
 #ifdef _PC_MAX_INPUT
 		{*r = _PC_MAX_INPUT; return 0;}
 #else /* def _PC_MAX_INPUT */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_MAX_INPUT */
-	if (x == Mono_Posix_PathConf__PC_NAME_MAX)
+	if (x == Mono_Posix_PathconfName__PC_NAME_MAX)
 #ifdef _PC_NAME_MAX
 		{*r = _PC_NAME_MAX; return 0;}
 #else /* def _PC_NAME_MAX */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_NAME_MAX */
-	if (x == Mono_Posix_PathConf__PC_NO_TRUNC)
+	if (x == Mono_Posix_PathconfName__PC_NO_TRUNC)
 #ifdef _PC_NO_TRUNC
 		{*r = _PC_NO_TRUNC; return 0;}
 #else /* def _PC_NO_TRUNC */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_NO_TRUNC */
-	if (x == Mono_Posix_PathConf__PC_PATH_MAX)
+	if (x == Mono_Posix_PathconfName__PC_PATH_MAX)
 #ifdef _PC_PATH_MAX
 		{*r = _PC_PATH_MAX; return 0;}
 #else /* def _PC_PATH_MAX */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_PATH_MAX */
-	if (x == Mono_Posix_PathConf__PC_PIPE_BUF)
+	if (x == Mono_Posix_PathconfName__PC_PIPE_BUF)
 #ifdef _PC_PIPE_BUF
 		{*r = _PC_PIPE_BUF; return 0;}
 #else /* def _PC_PIPE_BUF */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_PIPE_BUF */
-	if (x == Mono_Posix_PathConf__PC_PRIO_IO)
+	if (x == Mono_Posix_PathconfName__PC_PRIO_IO)
 #ifdef _PC_PRIO_IO
 		{*r = _PC_PRIO_IO; return 0;}
 #else /* def _PC_PRIO_IO */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_PRIO_IO */
-	if (x == Mono_Posix_PathConf__PC_REC_INCR_XFER_SIZE)
+	if (x == Mono_Posix_PathconfName__PC_REC_INCR_XFER_SIZE)
 #ifdef _PC_REC_INCR_XFER_SIZE
 		{*r = _PC_REC_INCR_XFER_SIZE; return 0;}
 #else /* def _PC_REC_INCR_XFER_SIZE */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_REC_INCR_XFER_SIZE */
-	if (x == Mono_Posix_PathConf__PC_REC_MAX_XFER_SIZE)
+	if (x == Mono_Posix_PathconfName__PC_REC_MAX_XFER_SIZE)
 #ifdef _PC_REC_MAX_XFER_SIZE
 		{*r = _PC_REC_MAX_XFER_SIZE; return 0;}
 #else /* def _PC_REC_MAX_XFER_SIZE */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_REC_MAX_XFER_SIZE */
-	if (x == Mono_Posix_PathConf__PC_REC_MIN_XFER_SIZE)
+	if (x == Mono_Posix_PathconfName__PC_REC_MIN_XFER_SIZE)
 #ifdef _PC_REC_MIN_XFER_SIZE
 		{*r = _PC_REC_MIN_XFER_SIZE; return 0;}
 #else /* def _PC_REC_MIN_XFER_SIZE */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_REC_MIN_XFER_SIZE */
-	if (x == Mono_Posix_PathConf__PC_REC_XFER_ALIGN)
+	if (x == Mono_Posix_PathconfName__PC_REC_XFER_ALIGN)
 #ifdef _PC_REC_XFER_ALIGN
 		{*r = _PC_REC_XFER_ALIGN; return 0;}
 #else /* def _PC_REC_XFER_ALIGN */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_REC_XFER_ALIGN */
-	if (x == Mono_Posix_PathConf__PC_SOCK_MAXBUF)
+	if (x == Mono_Posix_PathconfName__PC_SOCK_MAXBUF)
 #ifdef _PC_SOCK_MAXBUF
 		{*r = _PC_SOCK_MAXBUF; return 0;}
 #else /* def _PC_SOCK_MAXBUF */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_SOCK_MAXBUF */
-	if (x == Mono_Posix_PathConf__PC_SYMLINK_MAX)
+	if (x == Mono_Posix_PathconfName__PC_SYMLINK_MAX)
 #ifdef _PC_SYMLINK_MAX
 		{*r = _PC_SYMLINK_MAX; return 0;}
 #else /* def _PC_SYMLINK_MAX */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_SYMLINK_MAX */
-	if (x == Mono_Posix_PathConf__PC_SYNC_IO)
+	if (x == Mono_Posix_PathconfName__PC_SYNC_IO)
 #ifdef _PC_SYNC_IO
 		{*r = _PC_SYNC_IO; return 0;}
 #else /* def _PC_SYNC_IO */
 		{errno = EINVAL; return -1;}
 #endif /* ndef _PC_SYNC_IO */
-	if (x == Mono_Posix_PathConf__PC_VDISABLE)
+	if (x == Mono_Posix_PathconfName__PC_VDISABLE)
 #ifdef _PC_VDISABLE
 		{*r = _PC_VDISABLE; return 0;}
 #else /* def _PC_VDISABLE */
@@ -4583,94 +5039,94 @@ int Mono_Posix_FromPathConf (int x, int *r)
 	errno = EINVAL; return -1;
 }
 
-int Mono_Posix_ToPathConf (int x, int *r)
+int Mono_Posix_ToPathconfName (int x, int *r)
 {
 	*r = 0;
 	if (x == 0)
 		return 0;
 #ifdef _PC_2_SYMLINKS
 	if (x == _PC_2_SYMLINKS)
-		{*r = Mono_Posix_PathConf__PC_2_SYMLINKS; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_2_SYMLINKS; return 0;}
 #endif /* ndef _PC_2_SYMLINKS */
 #ifdef _PC_ALLOC_SIZE_MIN
 	if (x == _PC_ALLOC_SIZE_MIN)
-		{*r = Mono_Posix_PathConf__PC_ALLOC_SIZE_MIN; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_ALLOC_SIZE_MIN; return 0;}
 #endif /* ndef _PC_ALLOC_SIZE_MIN */
 #ifdef _PC_ASYNC_IO
 	if (x == _PC_ASYNC_IO)
-		{*r = Mono_Posix_PathConf__PC_ASYNC_IO; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_ASYNC_IO; return 0;}
 #endif /* ndef _PC_ASYNC_IO */
 #ifdef _PC_CHOWN_RESTRICTED
 	if (x == _PC_CHOWN_RESTRICTED)
-		{*r = Mono_Posix_PathConf__PC_CHOWN_RESTRICTED; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_CHOWN_RESTRICTED; return 0;}
 #endif /* ndef _PC_CHOWN_RESTRICTED */
 #ifdef _PC_FILESIZEBITS
 	if (x == _PC_FILESIZEBITS)
-		{*r = Mono_Posix_PathConf__PC_FILESIZEBITS; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_FILESIZEBITS; return 0;}
 #endif /* ndef _PC_FILESIZEBITS */
 #ifdef _PC_LINK_MAX
 	if (x == _PC_LINK_MAX)
-		{*r = Mono_Posix_PathConf__PC_LINK_MAX; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_LINK_MAX; return 0;}
 #endif /* ndef _PC_LINK_MAX */
 #ifdef _PC_MAX_CANON
 	if (x == _PC_MAX_CANON)
-		{*r = Mono_Posix_PathConf__PC_MAX_CANON; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_MAX_CANON; return 0;}
 #endif /* ndef _PC_MAX_CANON */
 #ifdef _PC_MAX_INPUT
 	if (x == _PC_MAX_INPUT)
-		{*r = Mono_Posix_PathConf__PC_MAX_INPUT; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_MAX_INPUT; return 0;}
 #endif /* ndef _PC_MAX_INPUT */
 #ifdef _PC_NAME_MAX
 	if (x == _PC_NAME_MAX)
-		{*r = Mono_Posix_PathConf__PC_NAME_MAX; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_NAME_MAX; return 0;}
 #endif /* ndef _PC_NAME_MAX */
 #ifdef _PC_NO_TRUNC
 	if (x == _PC_NO_TRUNC)
-		{*r = Mono_Posix_PathConf__PC_NO_TRUNC; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_NO_TRUNC; return 0;}
 #endif /* ndef _PC_NO_TRUNC */
 #ifdef _PC_PATH_MAX
 	if (x == _PC_PATH_MAX)
-		{*r = Mono_Posix_PathConf__PC_PATH_MAX; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_PATH_MAX; return 0;}
 #endif /* ndef _PC_PATH_MAX */
 #ifdef _PC_PIPE_BUF
 	if (x == _PC_PIPE_BUF)
-		{*r = Mono_Posix_PathConf__PC_PIPE_BUF; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_PIPE_BUF; return 0;}
 #endif /* ndef _PC_PIPE_BUF */
 #ifdef _PC_PRIO_IO
 	if (x == _PC_PRIO_IO)
-		{*r = Mono_Posix_PathConf__PC_PRIO_IO; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_PRIO_IO; return 0;}
 #endif /* ndef _PC_PRIO_IO */
 #ifdef _PC_REC_INCR_XFER_SIZE
 	if (x == _PC_REC_INCR_XFER_SIZE)
-		{*r = Mono_Posix_PathConf__PC_REC_INCR_XFER_SIZE; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_REC_INCR_XFER_SIZE; return 0;}
 #endif /* ndef _PC_REC_INCR_XFER_SIZE */
 #ifdef _PC_REC_MAX_XFER_SIZE
 	if (x == _PC_REC_MAX_XFER_SIZE)
-		{*r = Mono_Posix_PathConf__PC_REC_MAX_XFER_SIZE; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_REC_MAX_XFER_SIZE; return 0;}
 #endif /* ndef _PC_REC_MAX_XFER_SIZE */
 #ifdef _PC_REC_MIN_XFER_SIZE
 	if (x == _PC_REC_MIN_XFER_SIZE)
-		{*r = Mono_Posix_PathConf__PC_REC_MIN_XFER_SIZE; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_REC_MIN_XFER_SIZE; return 0;}
 #endif /* ndef _PC_REC_MIN_XFER_SIZE */
 #ifdef _PC_REC_XFER_ALIGN
 	if (x == _PC_REC_XFER_ALIGN)
-		{*r = Mono_Posix_PathConf__PC_REC_XFER_ALIGN; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_REC_XFER_ALIGN; return 0;}
 #endif /* ndef _PC_REC_XFER_ALIGN */
 #ifdef _PC_SOCK_MAXBUF
 	if (x == _PC_SOCK_MAXBUF)
-		{*r = Mono_Posix_PathConf__PC_SOCK_MAXBUF; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_SOCK_MAXBUF; return 0;}
 #endif /* ndef _PC_SOCK_MAXBUF */
 #ifdef _PC_SYMLINK_MAX
 	if (x == _PC_SYMLINK_MAX)
-		{*r = Mono_Posix_PathConf__PC_SYMLINK_MAX; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_SYMLINK_MAX; return 0;}
 #endif /* ndef _PC_SYMLINK_MAX */
 #ifdef _PC_SYNC_IO
 	if (x == _PC_SYNC_IO)
-		{*r = Mono_Posix_PathConf__PC_SYNC_IO; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_SYNC_IO; return 0;}
 #endif /* ndef _PC_SYNC_IO */
 #ifdef _PC_VDISABLE
 	if (x == _PC_VDISABLE)
-		{*r = Mono_Posix_PathConf__PC_VDISABLE; return 0;}
+		{*r = Mono_Posix_PathconfName__PC_VDISABLE; return 0;}
 #endif /* ndef _PC_VDISABLE */
 	errno = EINVAL; return -1;
 }
@@ -5372,6 +5828,2733 @@ int Mono_Posix_ToSignum (int x, int *r)
 	if (x == SIGXFSZ)
 		{*r = Mono_Posix_Signum_SIGXFSZ; return 0;}
 #endif /* ndef SIGXFSZ */
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_FromSysconfName (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if (x == Mono_Posix_SysconfName__SC_2_CHAR_TERM)
+#ifdef _SC_2_CHAR_TERM
+		{*r = _SC_2_CHAR_TERM; return 0;}
+#else /* def _SC_2_CHAR_TERM */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_CHAR_TERM */
+	if (x == Mono_Posix_SysconfName__SC_2_C_BIND)
+#ifdef _SC_2_C_BIND
+		{*r = _SC_2_C_BIND; return 0;}
+#else /* def _SC_2_C_BIND */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_C_BIND */
+	if (x == Mono_Posix_SysconfName__SC_2_C_DEV)
+#ifdef _SC_2_C_DEV
+		{*r = _SC_2_C_DEV; return 0;}
+#else /* def _SC_2_C_DEV */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_C_DEV */
+	if (x == Mono_Posix_SysconfName__SC_2_C_VERSION)
+#ifdef _SC_2_C_VERSION
+		{*r = _SC_2_C_VERSION; return 0;}
+#else /* def _SC_2_C_VERSION */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_C_VERSION */
+	if (x == Mono_Posix_SysconfName__SC_2_FORT_DEV)
+#ifdef _SC_2_FORT_DEV
+		{*r = _SC_2_FORT_DEV; return 0;}
+#else /* def _SC_2_FORT_DEV */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_FORT_DEV */
+	if (x == Mono_Posix_SysconfName__SC_2_FORT_RUN)
+#ifdef _SC_2_FORT_RUN
+		{*r = _SC_2_FORT_RUN; return 0;}
+#else /* def _SC_2_FORT_RUN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_FORT_RUN */
+	if (x == Mono_Posix_SysconfName__SC_2_LOCALEDEF)
+#ifdef _SC_2_LOCALEDEF
+		{*r = _SC_2_LOCALEDEF; return 0;}
+#else /* def _SC_2_LOCALEDEF */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_LOCALEDEF */
+	if (x == Mono_Posix_SysconfName__SC_2_PBS)
+#ifdef _SC_2_PBS
+		{*r = _SC_2_PBS; return 0;}
+#else /* def _SC_2_PBS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_PBS */
+	if (x == Mono_Posix_SysconfName__SC_2_PBS_ACCOUNTING)
+#ifdef _SC_2_PBS_ACCOUNTING
+		{*r = _SC_2_PBS_ACCOUNTING; return 0;}
+#else /* def _SC_2_PBS_ACCOUNTING */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_PBS_ACCOUNTING */
+	if (x == Mono_Posix_SysconfName__SC_2_PBS_CHECKPOINT)
+#ifdef _SC_2_PBS_CHECKPOINT
+		{*r = _SC_2_PBS_CHECKPOINT; return 0;}
+#else /* def _SC_2_PBS_CHECKPOINT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_PBS_CHECKPOINT */
+	if (x == Mono_Posix_SysconfName__SC_2_PBS_LOCATE)
+#ifdef _SC_2_PBS_LOCATE
+		{*r = _SC_2_PBS_LOCATE; return 0;}
+#else /* def _SC_2_PBS_LOCATE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_PBS_LOCATE */
+	if (x == Mono_Posix_SysconfName__SC_2_PBS_MESSAGE)
+#ifdef _SC_2_PBS_MESSAGE
+		{*r = _SC_2_PBS_MESSAGE; return 0;}
+#else /* def _SC_2_PBS_MESSAGE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_PBS_MESSAGE */
+	if (x == Mono_Posix_SysconfName__SC_2_PBS_TRACK)
+#ifdef _SC_2_PBS_TRACK
+		{*r = _SC_2_PBS_TRACK; return 0;}
+#else /* def _SC_2_PBS_TRACK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_PBS_TRACK */
+	if (x == Mono_Posix_SysconfName__SC_2_SW_DEV)
+#ifdef _SC_2_SW_DEV
+		{*r = _SC_2_SW_DEV; return 0;}
+#else /* def _SC_2_SW_DEV */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_SW_DEV */
+	if (x == Mono_Posix_SysconfName__SC_2_UPE)
+#ifdef _SC_2_UPE
+		{*r = _SC_2_UPE; return 0;}
+#else /* def _SC_2_UPE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_UPE */
+	if (x == Mono_Posix_SysconfName__SC_2_VERSION)
+#ifdef _SC_2_VERSION
+		{*r = _SC_2_VERSION; return 0;}
+#else /* def _SC_2_VERSION */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_2_VERSION */
+	if (x == Mono_Posix_SysconfName__SC_ADVISORY_INFO)
+#ifdef _SC_ADVISORY_INFO
+		{*r = _SC_ADVISORY_INFO; return 0;}
+#else /* def _SC_ADVISORY_INFO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_ADVISORY_INFO */
+	if (x == Mono_Posix_SysconfName__SC_AIO_LISTIO_MAX)
+#ifdef _SC_AIO_LISTIO_MAX
+		{*r = _SC_AIO_LISTIO_MAX; return 0;}
+#else /* def _SC_AIO_LISTIO_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_AIO_LISTIO_MAX */
+	if (x == Mono_Posix_SysconfName__SC_AIO_MAX)
+#ifdef _SC_AIO_MAX
+		{*r = _SC_AIO_MAX; return 0;}
+#else /* def _SC_AIO_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_AIO_MAX */
+	if (x == Mono_Posix_SysconfName__SC_AIO_PRIO_DELTA_MAX)
+#ifdef _SC_AIO_PRIO_DELTA_MAX
+		{*r = _SC_AIO_PRIO_DELTA_MAX; return 0;}
+#else /* def _SC_AIO_PRIO_DELTA_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_AIO_PRIO_DELTA_MAX */
+	if (x == Mono_Posix_SysconfName__SC_ARG_MAX)
+#ifdef _SC_ARG_MAX
+		{*r = _SC_ARG_MAX; return 0;}
+#else /* def _SC_ARG_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_ARG_MAX */
+	if (x == Mono_Posix_SysconfName__SC_ASYNCHRONOUS_IO)
+#ifdef _SC_ASYNCHRONOUS_IO
+		{*r = _SC_ASYNCHRONOUS_IO; return 0;}
+#else /* def _SC_ASYNCHRONOUS_IO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_ASYNCHRONOUS_IO */
+	if (x == Mono_Posix_SysconfName__SC_ATEXIT_MAX)
+#ifdef _SC_ATEXIT_MAX
+		{*r = _SC_ATEXIT_MAX; return 0;}
+#else /* def _SC_ATEXIT_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_ATEXIT_MAX */
+	if (x == Mono_Posix_SysconfName__SC_AVPHYS_PAGES)
+#ifdef _SC_AVPHYS_PAGES
+		{*r = _SC_AVPHYS_PAGES; return 0;}
+#else /* def _SC_AVPHYS_PAGES */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_AVPHYS_PAGES */
+	if (x == Mono_Posix_SysconfName__SC_BARRIERS)
+#ifdef _SC_BARRIERS
+		{*r = _SC_BARRIERS; return 0;}
+#else /* def _SC_BARRIERS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_BARRIERS */
+	if (x == Mono_Posix_SysconfName__SC_BASE)
+#ifdef _SC_BASE
+		{*r = _SC_BASE; return 0;}
+#else /* def _SC_BASE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_BASE */
+	if (x == Mono_Posix_SysconfName__SC_BC_BASE_MAX)
+#ifdef _SC_BC_BASE_MAX
+		{*r = _SC_BC_BASE_MAX; return 0;}
+#else /* def _SC_BC_BASE_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_BC_BASE_MAX */
+	if (x == Mono_Posix_SysconfName__SC_BC_DIM_MAX)
+#ifdef _SC_BC_DIM_MAX
+		{*r = _SC_BC_DIM_MAX; return 0;}
+#else /* def _SC_BC_DIM_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_BC_DIM_MAX */
+	if (x == Mono_Posix_SysconfName__SC_BC_SCALE_MAX)
+#ifdef _SC_BC_SCALE_MAX
+		{*r = _SC_BC_SCALE_MAX; return 0;}
+#else /* def _SC_BC_SCALE_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_BC_SCALE_MAX */
+	if (x == Mono_Posix_SysconfName__SC_BC_STRING_MAX)
+#ifdef _SC_BC_STRING_MAX
+		{*r = _SC_BC_STRING_MAX; return 0;}
+#else /* def _SC_BC_STRING_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_BC_STRING_MAX */
+	if (x == Mono_Posix_SysconfName__SC_CHARCLASS_NAME_MAX)
+#ifdef _SC_CHARCLASS_NAME_MAX
+		{*r = _SC_CHARCLASS_NAME_MAX; return 0;}
+#else /* def _SC_CHARCLASS_NAME_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_CHARCLASS_NAME_MAX */
+	if (x == Mono_Posix_SysconfName__SC_CHAR_BIT)
+#ifdef _SC_CHAR_BIT
+		{*r = _SC_CHAR_BIT; return 0;}
+#else /* def _SC_CHAR_BIT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_CHAR_BIT */
+	if (x == Mono_Posix_SysconfName__SC_CHAR_MAX)
+#ifdef _SC_CHAR_MAX
+		{*r = _SC_CHAR_MAX; return 0;}
+#else /* def _SC_CHAR_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_CHAR_MAX */
+	if (x == Mono_Posix_SysconfName__SC_CHAR_MIN)
+#ifdef _SC_CHAR_MIN
+		{*r = _SC_CHAR_MIN; return 0;}
+#else /* def _SC_CHAR_MIN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_CHAR_MIN */
+	if (x == Mono_Posix_SysconfName__SC_CHILD_MAX)
+#ifdef _SC_CHILD_MAX
+		{*r = _SC_CHILD_MAX; return 0;}
+#else /* def _SC_CHILD_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_CHILD_MAX */
+	if (x == Mono_Posix_SysconfName__SC_CLK_TCK)
+#ifdef _SC_CLK_TCK
+		{*r = _SC_CLK_TCK; return 0;}
+#else /* def _SC_CLK_TCK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_CLK_TCK */
+	if (x == Mono_Posix_SysconfName__SC_CLOCK_SELECTION)
+#ifdef _SC_CLOCK_SELECTION
+		{*r = _SC_CLOCK_SELECTION; return 0;}
+#else /* def _SC_CLOCK_SELECTION */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_CLOCK_SELECTION */
+	if (x == Mono_Posix_SysconfName__SC_COLL_WEIGHTS_MAX)
+#ifdef _SC_COLL_WEIGHTS_MAX
+		{*r = _SC_COLL_WEIGHTS_MAX; return 0;}
+#else /* def _SC_COLL_WEIGHTS_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_COLL_WEIGHTS_MAX */
+	if (x == Mono_Posix_SysconfName__SC_CPUTIME)
+#ifdef _SC_CPUTIME
+		{*r = _SC_CPUTIME; return 0;}
+#else /* def _SC_CPUTIME */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_CPUTIME */
+	if (x == Mono_Posix_SysconfName__SC_C_LANG_SUPPORT)
+#ifdef _SC_C_LANG_SUPPORT
+		{*r = _SC_C_LANG_SUPPORT; return 0;}
+#else /* def _SC_C_LANG_SUPPORT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_C_LANG_SUPPORT */
+	if (x == Mono_Posix_SysconfName__SC_C_LANG_SUPPORT_R)
+#ifdef _SC_C_LANG_SUPPORT_R
+		{*r = _SC_C_LANG_SUPPORT_R; return 0;}
+#else /* def _SC_C_LANG_SUPPORT_R */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_C_LANG_SUPPORT_R */
+	if (x == Mono_Posix_SysconfName__SC_DELAYTIMER_MAX)
+#ifdef _SC_DELAYTIMER_MAX
+		{*r = _SC_DELAYTIMER_MAX; return 0;}
+#else /* def _SC_DELAYTIMER_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_DELAYTIMER_MAX */
+	if (x == Mono_Posix_SysconfName__SC_DEVICE_IO)
+#ifdef _SC_DEVICE_IO
+		{*r = _SC_DEVICE_IO; return 0;}
+#else /* def _SC_DEVICE_IO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_DEVICE_IO */
+	if (x == Mono_Posix_SysconfName__SC_DEVICE_SPECIFIC)
+#ifdef _SC_DEVICE_SPECIFIC
+		{*r = _SC_DEVICE_SPECIFIC; return 0;}
+#else /* def _SC_DEVICE_SPECIFIC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_DEVICE_SPECIFIC */
+	if (x == Mono_Posix_SysconfName__SC_DEVICE_SPECIFIC_R)
+#ifdef _SC_DEVICE_SPECIFIC_R
+		{*r = _SC_DEVICE_SPECIFIC_R; return 0;}
+#else /* def _SC_DEVICE_SPECIFIC_R */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_DEVICE_SPECIFIC_R */
+	if (x == Mono_Posix_SysconfName__SC_EQUIV_CLASS_MAX)
+#ifdef _SC_EQUIV_CLASS_MAX
+		{*r = _SC_EQUIV_CLASS_MAX; return 0;}
+#else /* def _SC_EQUIV_CLASS_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_EQUIV_CLASS_MAX */
+	if (x == Mono_Posix_SysconfName__SC_EXPR_NEST_MAX)
+#ifdef _SC_EXPR_NEST_MAX
+		{*r = _SC_EXPR_NEST_MAX; return 0;}
+#else /* def _SC_EXPR_NEST_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_EXPR_NEST_MAX */
+	if (x == Mono_Posix_SysconfName__SC_FD_MGMT)
+#ifdef _SC_FD_MGMT
+		{*r = _SC_FD_MGMT; return 0;}
+#else /* def _SC_FD_MGMT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_FD_MGMT */
+	if (x == Mono_Posix_SysconfName__SC_FIFO)
+#ifdef _SC_FIFO
+		{*r = _SC_FIFO; return 0;}
+#else /* def _SC_FIFO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_FIFO */
+	if (x == Mono_Posix_SysconfName__SC_FILE_ATTRIBUTES)
+#ifdef _SC_FILE_ATTRIBUTES
+		{*r = _SC_FILE_ATTRIBUTES; return 0;}
+#else /* def _SC_FILE_ATTRIBUTES */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_FILE_ATTRIBUTES */
+	if (x == Mono_Posix_SysconfName__SC_FILE_LOCKING)
+#ifdef _SC_FILE_LOCKING
+		{*r = _SC_FILE_LOCKING; return 0;}
+#else /* def _SC_FILE_LOCKING */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_FILE_LOCKING */
+	if (x == Mono_Posix_SysconfName__SC_FILE_SYSTEM)
+#ifdef _SC_FILE_SYSTEM
+		{*r = _SC_FILE_SYSTEM; return 0;}
+#else /* def _SC_FILE_SYSTEM */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_FILE_SYSTEM */
+	if (x == Mono_Posix_SysconfName__SC_FSYNC)
+#ifdef _SC_FSYNC
+		{*r = _SC_FSYNC; return 0;}
+#else /* def _SC_FSYNC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_FSYNC */
+	if (x == Mono_Posix_SysconfName__SC_GETGR_R_SIZE_MAX)
+#ifdef _SC_GETGR_R_SIZE_MAX
+		{*r = _SC_GETGR_R_SIZE_MAX; return 0;}
+#else /* def _SC_GETGR_R_SIZE_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_GETGR_R_SIZE_MAX */
+	if (x == Mono_Posix_SysconfName__SC_GETPW_R_SIZE_MAX)
+#ifdef _SC_GETPW_R_SIZE_MAX
+		{*r = _SC_GETPW_R_SIZE_MAX; return 0;}
+#else /* def _SC_GETPW_R_SIZE_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_GETPW_R_SIZE_MAX */
+	if (x == Mono_Posix_SysconfName__SC_HOST_NAME_MAX)
+#ifdef _SC_HOST_NAME_MAX
+		{*r = _SC_HOST_NAME_MAX; return 0;}
+#else /* def _SC_HOST_NAME_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_HOST_NAME_MAX */
+	if (x == Mono_Posix_SysconfName__SC_INT_MAX)
+#ifdef _SC_INT_MAX
+		{*r = _SC_INT_MAX; return 0;}
+#else /* def _SC_INT_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_INT_MAX */
+	if (x == Mono_Posix_SysconfName__SC_INT_MIN)
+#ifdef _SC_INT_MIN
+		{*r = _SC_INT_MIN; return 0;}
+#else /* def _SC_INT_MIN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_INT_MIN */
+	if (x == Mono_Posix_SysconfName__SC_IOV_MAX)
+#ifdef _SC_IOV_MAX
+		{*r = _SC_IOV_MAX; return 0;}
+#else /* def _SC_IOV_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_IOV_MAX */
+	if (x == Mono_Posix_SysconfName__SC_JOB_CONTROL)
+#ifdef _SC_JOB_CONTROL
+		{*r = _SC_JOB_CONTROL; return 0;}
+#else /* def _SC_JOB_CONTROL */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_JOB_CONTROL */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL1_DCACHE_ASSOC)
+#ifdef _SC_LEVEL1_DCACHE_ASSOC
+		{*r = _SC_LEVEL1_DCACHE_ASSOC; return 0;}
+#else /* def _SC_LEVEL1_DCACHE_ASSOC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL1_DCACHE_ASSOC */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL1_DCACHE_LINESIZE)
+#ifdef _SC_LEVEL1_DCACHE_LINESIZE
+		{*r = _SC_LEVEL1_DCACHE_LINESIZE; return 0;}
+#else /* def _SC_LEVEL1_DCACHE_LINESIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL1_DCACHE_LINESIZE */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL1_DCACHE_SIZE)
+#ifdef _SC_LEVEL1_DCACHE_SIZE
+		{*r = _SC_LEVEL1_DCACHE_SIZE; return 0;}
+#else /* def _SC_LEVEL1_DCACHE_SIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL1_DCACHE_SIZE */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL1_ICACHE_ASSOC)
+#ifdef _SC_LEVEL1_ICACHE_ASSOC
+		{*r = _SC_LEVEL1_ICACHE_ASSOC; return 0;}
+#else /* def _SC_LEVEL1_ICACHE_ASSOC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL1_ICACHE_ASSOC */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL1_ICACHE_LINESIZE)
+#ifdef _SC_LEVEL1_ICACHE_LINESIZE
+		{*r = _SC_LEVEL1_ICACHE_LINESIZE; return 0;}
+#else /* def _SC_LEVEL1_ICACHE_LINESIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL1_ICACHE_LINESIZE */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL1_ICACHE_SIZE)
+#ifdef _SC_LEVEL1_ICACHE_SIZE
+		{*r = _SC_LEVEL1_ICACHE_SIZE; return 0;}
+#else /* def _SC_LEVEL1_ICACHE_SIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL1_ICACHE_SIZE */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL2_CACHE_ASSOC)
+#ifdef _SC_LEVEL2_CACHE_ASSOC
+		{*r = _SC_LEVEL2_CACHE_ASSOC; return 0;}
+#else /* def _SC_LEVEL2_CACHE_ASSOC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL2_CACHE_ASSOC */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL2_CACHE_LINESIZE)
+#ifdef _SC_LEVEL2_CACHE_LINESIZE
+		{*r = _SC_LEVEL2_CACHE_LINESIZE; return 0;}
+#else /* def _SC_LEVEL2_CACHE_LINESIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL2_CACHE_LINESIZE */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL2_CACHE_SIZE)
+#ifdef _SC_LEVEL2_CACHE_SIZE
+		{*r = _SC_LEVEL2_CACHE_SIZE; return 0;}
+#else /* def _SC_LEVEL2_CACHE_SIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL2_CACHE_SIZE */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL3_CACHE_ASSOC)
+#ifdef _SC_LEVEL3_CACHE_ASSOC
+		{*r = _SC_LEVEL3_CACHE_ASSOC; return 0;}
+#else /* def _SC_LEVEL3_CACHE_ASSOC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL3_CACHE_ASSOC */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL3_CACHE_LINESIZE)
+#ifdef _SC_LEVEL3_CACHE_LINESIZE
+		{*r = _SC_LEVEL3_CACHE_LINESIZE; return 0;}
+#else /* def _SC_LEVEL3_CACHE_LINESIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL3_CACHE_LINESIZE */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL3_CACHE_SIZE)
+#ifdef _SC_LEVEL3_CACHE_SIZE
+		{*r = _SC_LEVEL3_CACHE_SIZE; return 0;}
+#else /* def _SC_LEVEL3_CACHE_SIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL3_CACHE_SIZE */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL4_CACHE_ASSOC)
+#ifdef _SC_LEVEL4_CACHE_ASSOC
+		{*r = _SC_LEVEL4_CACHE_ASSOC; return 0;}
+#else /* def _SC_LEVEL4_CACHE_ASSOC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL4_CACHE_ASSOC */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL4_CACHE_LINESIZE)
+#ifdef _SC_LEVEL4_CACHE_LINESIZE
+		{*r = _SC_LEVEL4_CACHE_LINESIZE; return 0;}
+#else /* def _SC_LEVEL4_CACHE_LINESIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL4_CACHE_LINESIZE */
+	if (x == Mono_Posix_SysconfName__SC_LEVEL4_CACHE_SIZE)
+#ifdef _SC_LEVEL4_CACHE_SIZE
+		{*r = _SC_LEVEL4_CACHE_SIZE; return 0;}
+#else /* def _SC_LEVEL4_CACHE_SIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LEVEL4_CACHE_SIZE */
+	if (x == Mono_Posix_SysconfName__SC_LINE_MAX)
+#ifdef _SC_LINE_MAX
+		{*r = _SC_LINE_MAX; return 0;}
+#else /* def _SC_LINE_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LINE_MAX */
+	if (x == Mono_Posix_SysconfName__SC_LOGIN_NAME_MAX)
+#ifdef _SC_LOGIN_NAME_MAX
+		{*r = _SC_LOGIN_NAME_MAX; return 0;}
+#else /* def _SC_LOGIN_NAME_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LOGIN_NAME_MAX */
+	if (x == Mono_Posix_SysconfName__SC_LONG_BIT)
+#ifdef _SC_LONG_BIT
+		{*r = _SC_LONG_BIT; return 0;}
+#else /* def _SC_LONG_BIT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_LONG_BIT */
+	if (x == Mono_Posix_SysconfName__SC_MAPPED_FILES)
+#ifdef _SC_MAPPED_FILES
+		{*r = _SC_MAPPED_FILES; return 0;}
+#else /* def _SC_MAPPED_FILES */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_MAPPED_FILES */
+	if (x == Mono_Posix_SysconfName__SC_MB_LEN_MAX)
+#ifdef _SC_MB_LEN_MAX
+		{*r = _SC_MB_LEN_MAX; return 0;}
+#else /* def _SC_MB_LEN_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_MB_LEN_MAX */
+	if (x == Mono_Posix_SysconfName__SC_MEMLOCK)
+#ifdef _SC_MEMLOCK
+		{*r = _SC_MEMLOCK; return 0;}
+#else /* def _SC_MEMLOCK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_MEMLOCK */
+	if (x == Mono_Posix_SysconfName__SC_MEMLOCK_RANGE)
+#ifdef _SC_MEMLOCK_RANGE
+		{*r = _SC_MEMLOCK_RANGE; return 0;}
+#else /* def _SC_MEMLOCK_RANGE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_MEMLOCK_RANGE */
+	if (x == Mono_Posix_SysconfName__SC_MEMORY_PROTECTION)
+#ifdef _SC_MEMORY_PROTECTION
+		{*r = _SC_MEMORY_PROTECTION; return 0;}
+#else /* def _SC_MEMORY_PROTECTION */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_MEMORY_PROTECTION */
+	if (x == Mono_Posix_SysconfName__SC_MESSAGE_PASSING)
+#ifdef _SC_MESSAGE_PASSING
+		{*r = _SC_MESSAGE_PASSING; return 0;}
+#else /* def _SC_MESSAGE_PASSING */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_MESSAGE_PASSING */
+	if (x == Mono_Posix_SysconfName__SC_MONOTONIC_CLOCK)
+#ifdef _SC_MONOTONIC_CLOCK
+		{*r = _SC_MONOTONIC_CLOCK; return 0;}
+#else /* def _SC_MONOTONIC_CLOCK */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_MONOTONIC_CLOCK */
+	if (x == Mono_Posix_SysconfName__SC_MQ_OPEN_MAX)
+#ifdef _SC_MQ_OPEN_MAX
+		{*r = _SC_MQ_OPEN_MAX; return 0;}
+#else /* def _SC_MQ_OPEN_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_MQ_OPEN_MAX */
+	if (x == Mono_Posix_SysconfName__SC_MQ_PRIO_MAX)
+#ifdef _SC_MQ_PRIO_MAX
+		{*r = _SC_MQ_PRIO_MAX; return 0;}
+#else /* def _SC_MQ_PRIO_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_MQ_PRIO_MAX */
+	if (x == Mono_Posix_SysconfName__SC_MULTI_PROCESS)
+#ifdef _SC_MULTI_PROCESS
+		{*r = _SC_MULTI_PROCESS; return 0;}
+#else /* def _SC_MULTI_PROCESS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_MULTI_PROCESS */
+	if (x == Mono_Posix_SysconfName__SC_NETWORKING)
+#ifdef _SC_NETWORKING
+		{*r = _SC_NETWORKING; return 0;}
+#else /* def _SC_NETWORKING */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NETWORKING */
+	if (x == Mono_Posix_SysconfName__SC_NGROUPS_MAX)
+#ifdef _SC_NGROUPS_MAX
+		{*r = _SC_NGROUPS_MAX; return 0;}
+#else /* def _SC_NGROUPS_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NGROUPS_MAX */
+	if (x == Mono_Posix_SysconfName__SC_NL_ARGMAX)
+#ifdef _SC_NL_ARGMAX
+		{*r = _SC_NL_ARGMAX; return 0;}
+#else /* def _SC_NL_ARGMAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NL_ARGMAX */
+	if (x == Mono_Posix_SysconfName__SC_NL_LANGMAX)
+#ifdef _SC_NL_LANGMAX
+		{*r = _SC_NL_LANGMAX; return 0;}
+#else /* def _SC_NL_LANGMAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NL_LANGMAX */
+	if (x == Mono_Posix_SysconfName__SC_NL_MSGMAX)
+#ifdef _SC_NL_MSGMAX
+		{*r = _SC_NL_MSGMAX; return 0;}
+#else /* def _SC_NL_MSGMAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NL_MSGMAX */
+	if (x == Mono_Posix_SysconfName__SC_NL_NMAX)
+#ifdef _SC_NL_NMAX
+		{*r = _SC_NL_NMAX; return 0;}
+#else /* def _SC_NL_NMAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NL_NMAX */
+	if (x == Mono_Posix_SysconfName__SC_NL_SETMAX)
+#ifdef _SC_NL_SETMAX
+		{*r = _SC_NL_SETMAX; return 0;}
+#else /* def _SC_NL_SETMAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NL_SETMAX */
+	if (x == Mono_Posix_SysconfName__SC_NL_TEXTMAX)
+#ifdef _SC_NL_TEXTMAX
+		{*r = _SC_NL_TEXTMAX; return 0;}
+#else /* def _SC_NL_TEXTMAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NL_TEXTMAX */
+	if (x == Mono_Posix_SysconfName__SC_NPROCESSORS_CONF)
+#ifdef _SC_NPROCESSORS_CONF
+		{*r = _SC_NPROCESSORS_CONF; return 0;}
+#else /* def _SC_NPROCESSORS_CONF */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NPROCESSORS_CONF */
+	if (x == Mono_Posix_SysconfName__SC_NPROCESSORS_ONLN)
+#ifdef _SC_NPROCESSORS_ONLN
+		{*r = _SC_NPROCESSORS_ONLN; return 0;}
+#else /* def _SC_NPROCESSORS_ONLN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NPROCESSORS_ONLN */
+	if (x == Mono_Posix_SysconfName__SC_NZERO)
+#ifdef _SC_NZERO
+		{*r = _SC_NZERO; return 0;}
+#else /* def _SC_NZERO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_NZERO */
+	if (x == Mono_Posix_SysconfName__SC_OPEN_MAX)
+#ifdef _SC_OPEN_MAX
+		{*r = _SC_OPEN_MAX; return 0;}
+#else /* def _SC_OPEN_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_OPEN_MAX */
+	if (x == Mono_Posix_SysconfName__SC_PAGESIZE)
+#ifdef _SC_PAGESIZE
+		{*r = _SC_PAGESIZE; return 0;}
+#else /* def _SC_PAGESIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PAGESIZE */
+	if (x == Mono_Posix_SysconfName__SC_PASS_MAX)
+#ifdef _SC_PASS_MAX
+		{*r = _SC_PASS_MAX; return 0;}
+#else /* def _SC_PASS_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PASS_MAX */
+	if (x == Mono_Posix_SysconfName__SC_PHYS_PAGES)
+#ifdef _SC_PHYS_PAGES
+		{*r = _SC_PHYS_PAGES; return 0;}
+#else /* def _SC_PHYS_PAGES */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PHYS_PAGES */
+	if (x == Mono_Posix_SysconfName__SC_PII)
+#ifdef _SC_PII
+		{*r = _SC_PII; return 0;}
+#else /* def _SC_PII */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PII */
+	if (x == Mono_Posix_SysconfName__SC_PII_INTERNET)
+#ifdef _SC_PII_INTERNET
+		{*r = _SC_PII_INTERNET; return 0;}
+#else /* def _SC_PII_INTERNET */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PII_INTERNET */
+	if (x == Mono_Posix_SysconfName__SC_PII_INTERNET_DGRAM)
+#ifdef _SC_PII_INTERNET_DGRAM
+		{*r = _SC_PII_INTERNET_DGRAM; return 0;}
+#else /* def _SC_PII_INTERNET_DGRAM */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PII_INTERNET_DGRAM */
+	if (x == Mono_Posix_SysconfName__SC_PII_INTERNET_STREAM)
+#ifdef _SC_PII_INTERNET_STREAM
+		{*r = _SC_PII_INTERNET_STREAM; return 0;}
+#else /* def _SC_PII_INTERNET_STREAM */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PII_INTERNET_STREAM */
+	if (x == Mono_Posix_SysconfName__SC_PII_OSI)
+#ifdef _SC_PII_OSI
+		{*r = _SC_PII_OSI; return 0;}
+#else /* def _SC_PII_OSI */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PII_OSI */
+	if (x == Mono_Posix_SysconfName__SC_PII_OSI_CLTS)
+#ifdef _SC_PII_OSI_CLTS
+		{*r = _SC_PII_OSI_CLTS; return 0;}
+#else /* def _SC_PII_OSI_CLTS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PII_OSI_CLTS */
+	if (x == Mono_Posix_SysconfName__SC_PII_OSI_COTS)
+#ifdef _SC_PII_OSI_COTS
+		{*r = _SC_PII_OSI_COTS; return 0;}
+#else /* def _SC_PII_OSI_COTS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PII_OSI_COTS */
+	if (x == Mono_Posix_SysconfName__SC_PII_OSI_M)
+#ifdef _SC_PII_OSI_M
+		{*r = _SC_PII_OSI_M; return 0;}
+#else /* def _SC_PII_OSI_M */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PII_OSI_M */
+	if (x == Mono_Posix_SysconfName__SC_PII_SOCKET)
+#ifdef _SC_PII_SOCKET
+		{*r = _SC_PII_SOCKET; return 0;}
+#else /* def _SC_PII_SOCKET */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PII_SOCKET */
+	if (x == Mono_Posix_SysconfName__SC_PII_XTI)
+#ifdef _SC_PII_XTI
+		{*r = _SC_PII_XTI; return 0;}
+#else /* def _SC_PII_XTI */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PII_XTI */
+	if (x == Mono_Posix_SysconfName__SC_PIPE)
+#ifdef _SC_PIPE
+		{*r = _SC_PIPE; return 0;}
+#else /* def _SC_PIPE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PIPE */
+	if (x == Mono_Posix_SysconfName__SC_POLL)
+#ifdef _SC_POLL
+		{*r = _SC_POLL; return 0;}
+#else /* def _SC_POLL */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_POLL */
+	if (x == Mono_Posix_SysconfName__SC_PRIORITIZED_IO)
+#ifdef _SC_PRIORITIZED_IO
+		{*r = _SC_PRIORITIZED_IO; return 0;}
+#else /* def _SC_PRIORITIZED_IO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PRIORITIZED_IO */
+	if (x == Mono_Posix_SysconfName__SC_PRIORITY_SCHEDULING)
+#ifdef _SC_PRIORITY_SCHEDULING
+		{*r = _SC_PRIORITY_SCHEDULING; return 0;}
+#else /* def _SC_PRIORITY_SCHEDULING */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_PRIORITY_SCHEDULING */
+	if (x == Mono_Posix_SysconfName__SC_READER_WRITER_LOCKS)
+#ifdef _SC_READER_WRITER_LOCKS
+		{*r = _SC_READER_WRITER_LOCKS; return 0;}
+#else /* def _SC_READER_WRITER_LOCKS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_READER_WRITER_LOCKS */
+	if (x == Mono_Posix_SysconfName__SC_REALTIME_SIGNALS)
+#ifdef _SC_REALTIME_SIGNALS
+		{*r = _SC_REALTIME_SIGNALS; return 0;}
+#else /* def _SC_REALTIME_SIGNALS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_REALTIME_SIGNALS */
+	if (x == Mono_Posix_SysconfName__SC_REGEXP)
+#ifdef _SC_REGEXP
+		{*r = _SC_REGEXP; return 0;}
+#else /* def _SC_REGEXP */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_REGEXP */
+	if (x == Mono_Posix_SysconfName__SC_REGEX_VERSION)
+#ifdef _SC_REGEX_VERSION
+		{*r = _SC_REGEX_VERSION; return 0;}
+#else /* def _SC_REGEX_VERSION */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_REGEX_VERSION */
+	if (x == Mono_Posix_SysconfName__SC_RE_DUP_MAX)
+#ifdef _SC_RE_DUP_MAX
+		{*r = _SC_RE_DUP_MAX; return 0;}
+#else /* def _SC_RE_DUP_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_RE_DUP_MAX */
+	if (x == Mono_Posix_SysconfName__SC_RTSIG_MAX)
+#ifdef _SC_RTSIG_MAX
+		{*r = _SC_RTSIG_MAX; return 0;}
+#else /* def _SC_RTSIG_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_RTSIG_MAX */
+	if (x == Mono_Posix_SysconfName__SC_SAVED_IDS)
+#ifdef _SC_SAVED_IDS
+		{*r = _SC_SAVED_IDS; return 0;}
+#else /* def _SC_SAVED_IDS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SAVED_IDS */
+	if (x == Mono_Posix_SysconfName__SC_SCHAR_MAX)
+#ifdef _SC_SCHAR_MAX
+		{*r = _SC_SCHAR_MAX; return 0;}
+#else /* def _SC_SCHAR_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SCHAR_MAX */
+	if (x == Mono_Posix_SysconfName__SC_SCHAR_MIN)
+#ifdef _SC_SCHAR_MIN
+		{*r = _SC_SCHAR_MIN; return 0;}
+#else /* def _SC_SCHAR_MIN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SCHAR_MIN */
+	if (x == Mono_Posix_SysconfName__SC_SELECT)
+#ifdef _SC_SELECT
+		{*r = _SC_SELECT; return 0;}
+#else /* def _SC_SELECT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SELECT */
+	if (x == Mono_Posix_SysconfName__SC_SEMAPHORES)
+#ifdef _SC_SEMAPHORES
+		{*r = _SC_SEMAPHORES; return 0;}
+#else /* def _SC_SEMAPHORES */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SEMAPHORES */
+	if (x == Mono_Posix_SysconfName__SC_SEM_NSEMS_MAX)
+#ifdef _SC_SEM_NSEMS_MAX
+		{*r = _SC_SEM_NSEMS_MAX; return 0;}
+#else /* def _SC_SEM_NSEMS_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SEM_NSEMS_MAX */
+	if (x == Mono_Posix_SysconfName__SC_SEM_VALUE_MAX)
+#ifdef _SC_SEM_VALUE_MAX
+		{*r = _SC_SEM_VALUE_MAX; return 0;}
+#else /* def _SC_SEM_VALUE_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SEM_VALUE_MAX */
+	if (x == Mono_Posix_SysconfName__SC_SHARED_MEMORY_OBJECTS)
+#ifdef _SC_SHARED_MEMORY_OBJECTS
+		{*r = _SC_SHARED_MEMORY_OBJECTS; return 0;}
+#else /* def _SC_SHARED_MEMORY_OBJECTS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SHARED_MEMORY_OBJECTS */
+	if (x == Mono_Posix_SysconfName__SC_SHELL)
+#ifdef _SC_SHELL
+		{*r = _SC_SHELL; return 0;}
+#else /* def _SC_SHELL */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SHELL */
+	if (x == Mono_Posix_SysconfName__SC_SHRT_MAX)
+#ifdef _SC_SHRT_MAX
+		{*r = _SC_SHRT_MAX; return 0;}
+#else /* def _SC_SHRT_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SHRT_MAX */
+	if (x == Mono_Posix_SysconfName__SC_SHRT_MIN)
+#ifdef _SC_SHRT_MIN
+		{*r = _SC_SHRT_MIN; return 0;}
+#else /* def _SC_SHRT_MIN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SHRT_MIN */
+	if (x == Mono_Posix_SysconfName__SC_SIGNALS)
+#ifdef _SC_SIGNALS
+		{*r = _SC_SIGNALS; return 0;}
+#else /* def _SC_SIGNALS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SIGNALS */
+	if (x == Mono_Posix_SysconfName__SC_SIGQUEUE_MAX)
+#ifdef _SC_SIGQUEUE_MAX
+		{*r = _SC_SIGQUEUE_MAX; return 0;}
+#else /* def _SC_SIGQUEUE_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SIGQUEUE_MAX */
+	if (x == Mono_Posix_SysconfName__SC_SINGLE_PROCESS)
+#ifdef _SC_SINGLE_PROCESS
+		{*r = _SC_SINGLE_PROCESS; return 0;}
+#else /* def _SC_SINGLE_PROCESS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SINGLE_PROCESS */
+	if (x == Mono_Posix_SysconfName__SC_SPAWN)
+#ifdef _SC_SPAWN
+		{*r = _SC_SPAWN; return 0;}
+#else /* def _SC_SPAWN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SPAWN */
+	if (x == Mono_Posix_SysconfName__SC_SPIN_LOCKS)
+#ifdef _SC_SPIN_LOCKS
+		{*r = _SC_SPIN_LOCKS; return 0;}
+#else /* def _SC_SPIN_LOCKS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SPIN_LOCKS */
+	if (x == Mono_Posix_SysconfName__SC_SPORADIC_SERVER)
+#ifdef _SC_SPORADIC_SERVER
+		{*r = _SC_SPORADIC_SERVER; return 0;}
+#else /* def _SC_SPORADIC_SERVER */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SPORADIC_SERVER */
+	if (x == Mono_Posix_SysconfName__SC_SSIZE_MAX)
+#ifdef _SC_SSIZE_MAX
+		{*r = _SC_SSIZE_MAX; return 0;}
+#else /* def _SC_SSIZE_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SSIZE_MAX */
+	if (x == Mono_Posix_SysconfName__SC_STREAMS)
+#ifdef _SC_STREAMS
+		{*r = _SC_STREAMS; return 0;}
+#else /* def _SC_STREAMS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_STREAMS */
+	if (x == Mono_Posix_SysconfName__SC_STREAM_MAX)
+#ifdef _SC_STREAM_MAX
+		{*r = _SC_STREAM_MAX; return 0;}
+#else /* def _SC_STREAM_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_STREAM_MAX */
+	if (x == Mono_Posix_SysconfName__SC_SYMLOOP_MAX)
+#ifdef _SC_SYMLOOP_MAX
+		{*r = _SC_SYMLOOP_MAX; return 0;}
+#else /* def _SC_SYMLOOP_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SYMLOOP_MAX */
+	if (x == Mono_Posix_SysconfName__SC_SYNCHRONIZED_IO)
+#ifdef _SC_SYNCHRONIZED_IO
+		{*r = _SC_SYNCHRONIZED_IO; return 0;}
+#else /* def _SC_SYNCHRONIZED_IO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SYNCHRONIZED_IO */
+	if (x == Mono_Posix_SysconfName__SC_SYSTEM_DATABASE)
+#ifdef _SC_SYSTEM_DATABASE
+		{*r = _SC_SYSTEM_DATABASE; return 0;}
+#else /* def _SC_SYSTEM_DATABASE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SYSTEM_DATABASE */
+	if (x == Mono_Posix_SysconfName__SC_SYSTEM_DATABASE_R)
+#ifdef _SC_SYSTEM_DATABASE_R
+		{*r = _SC_SYSTEM_DATABASE_R; return 0;}
+#else /* def _SC_SYSTEM_DATABASE_R */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_SYSTEM_DATABASE_R */
+	if (x == Mono_Posix_SysconfName__SC_THREADS)
+#ifdef _SC_THREADS
+		{*r = _SC_THREADS; return 0;}
+#else /* def _SC_THREADS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREADS */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_ATTR_STACKADDR)
+#ifdef _SC_THREAD_ATTR_STACKADDR
+		{*r = _SC_THREAD_ATTR_STACKADDR; return 0;}
+#else /* def _SC_THREAD_ATTR_STACKADDR */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_ATTR_STACKADDR */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_ATTR_STACKSIZE)
+#ifdef _SC_THREAD_ATTR_STACKSIZE
+		{*r = _SC_THREAD_ATTR_STACKSIZE; return 0;}
+#else /* def _SC_THREAD_ATTR_STACKSIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_ATTR_STACKSIZE */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_CPUTIME)
+#ifdef _SC_THREAD_CPUTIME
+		{*r = _SC_THREAD_CPUTIME; return 0;}
+#else /* def _SC_THREAD_CPUTIME */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_CPUTIME */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_DESTRUCTOR_ITERATIONS)
+#ifdef _SC_THREAD_DESTRUCTOR_ITERATIONS
+		{*r = _SC_THREAD_DESTRUCTOR_ITERATIONS; return 0;}
+#else /* def _SC_THREAD_DESTRUCTOR_ITERATIONS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_DESTRUCTOR_ITERATIONS */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_KEYS_MAX)
+#ifdef _SC_THREAD_KEYS_MAX
+		{*r = _SC_THREAD_KEYS_MAX; return 0;}
+#else /* def _SC_THREAD_KEYS_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_KEYS_MAX */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_PRIORITY_SCHEDULING)
+#ifdef _SC_THREAD_PRIORITY_SCHEDULING
+		{*r = _SC_THREAD_PRIORITY_SCHEDULING; return 0;}
+#else /* def _SC_THREAD_PRIORITY_SCHEDULING */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_PRIORITY_SCHEDULING */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_PRIO_INHERIT)
+#ifdef _SC_THREAD_PRIO_INHERIT
+		{*r = _SC_THREAD_PRIO_INHERIT; return 0;}
+#else /* def _SC_THREAD_PRIO_INHERIT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_PRIO_INHERIT */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_PRIO_PROTECT)
+#ifdef _SC_THREAD_PRIO_PROTECT
+		{*r = _SC_THREAD_PRIO_PROTECT; return 0;}
+#else /* def _SC_THREAD_PRIO_PROTECT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_PRIO_PROTECT */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_PROCESS_SHARED)
+#ifdef _SC_THREAD_PROCESS_SHARED
+		{*r = _SC_THREAD_PROCESS_SHARED; return 0;}
+#else /* def _SC_THREAD_PROCESS_SHARED */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_PROCESS_SHARED */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_SAFE_FUNCTIONS)
+#ifdef _SC_THREAD_SAFE_FUNCTIONS
+		{*r = _SC_THREAD_SAFE_FUNCTIONS; return 0;}
+#else /* def _SC_THREAD_SAFE_FUNCTIONS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_SAFE_FUNCTIONS */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_SPORADIC_SERVER)
+#ifdef _SC_THREAD_SPORADIC_SERVER
+		{*r = _SC_THREAD_SPORADIC_SERVER; return 0;}
+#else /* def _SC_THREAD_SPORADIC_SERVER */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_SPORADIC_SERVER */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_STACK_MIN)
+#ifdef _SC_THREAD_STACK_MIN
+		{*r = _SC_THREAD_STACK_MIN; return 0;}
+#else /* def _SC_THREAD_STACK_MIN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_STACK_MIN */
+	if (x == Mono_Posix_SysconfName__SC_THREAD_THREADS_MAX)
+#ifdef _SC_THREAD_THREADS_MAX
+		{*r = _SC_THREAD_THREADS_MAX; return 0;}
+#else /* def _SC_THREAD_THREADS_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_THREAD_THREADS_MAX */
+	if (x == Mono_Posix_SysconfName__SC_TIMEOUTS)
+#ifdef _SC_TIMEOUTS
+		{*r = _SC_TIMEOUTS; return 0;}
+#else /* def _SC_TIMEOUTS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_TIMEOUTS */
+	if (x == Mono_Posix_SysconfName__SC_TIMERS)
+#ifdef _SC_TIMERS
+		{*r = _SC_TIMERS; return 0;}
+#else /* def _SC_TIMERS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_TIMERS */
+	if (x == Mono_Posix_SysconfName__SC_TIMER_MAX)
+#ifdef _SC_TIMER_MAX
+		{*r = _SC_TIMER_MAX; return 0;}
+#else /* def _SC_TIMER_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_TIMER_MAX */
+	if (x == Mono_Posix_SysconfName__SC_TRACE)
+#ifdef _SC_TRACE
+		{*r = _SC_TRACE; return 0;}
+#else /* def _SC_TRACE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_TRACE */
+	if (x == Mono_Posix_SysconfName__SC_TRACE_EVENT_FILTER)
+#ifdef _SC_TRACE_EVENT_FILTER
+		{*r = _SC_TRACE_EVENT_FILTER; return 0;}
+#else /* def _SC_TRACE_EVENT_FILTER */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_TRACE_EVENT_FILTER */
+	if (x == Mono_Posix_SysconfName__SC_TRACE_INHERIT)
+#ifdef _SC_TRACE_INHERIT
+		{*r = _SC_TRACE_INHERIT; return 0;}
+#else /* def _SC_TRACE_INHERIT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_TRACE_INHERIT */
+	if (x == Mono_Posix_SysconfName__SC_TRACE_LOG)
+#ifdef _SC_TRACE_LOG
+		{*r = _SC_TRACE_LOG; return 0;}
+#else /* def _SC_TRACE_LOG */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_TRACE_LOG */
+	if (x == Mono_Posix_SysconfName__SC_TTY_NAME_MAX)
+#ifdef _SC_TTY_NAME_MAX
+		{*r = _SC_TTY_NAME_MAX; return 0;}
+#else /* def _SC_TTY_NAME_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_TTY_NAME_MAX */
+	if (x == Mono_Posix_SysconfName__SC_TYPED_MEMORY_OBJECTS)
+#ifdef _SC_TYPED_MEMORY_OBJECTS
+		{*r = _SC_TYPED_MEMORY_OBJECTS; return 0;}
+#else /* def _SC_TYPED_MEMORY_OBJECTS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_TYPED_MEMORY_OBJECTS */
+	if (x == Mono_Posix_SysconfName__SC_TZNAME_MAX)
+#ifdef _SC_TZNAME_MAX
+		{*r = _SC_TZNAME_MAX; return 0;}
+#else /* def _SC_TZNAME_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_TZNAME_MAX */
+	if (x == Mono_Posix_SysconfName__SC_T_IOV_MAX)
+#ifdef _SC_T_IOV_MAX
+		{*r = _SC_T_IOV_MAX; return 0;}
+#else /* def _SC_T_IOV_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_T_IOV_MAX */
+	if (x == Mono_Posix_SysconfName__SC_UCHAR_MAX)
+#ifdef _SC_UCHAR_MAX
+		{*r = _SC_UCHAR_MAX; return 0;}
+#else /* def _SC_UCHAR_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_UCHAR_MAX */
+	if (x == Mono_Posix_SysconfName__SC_UINT_MAX)
+#ifdef _SC_UINT_MAX
+		{*r = _SC_UINT_MAX; return 0;}
+#else /* def _SC_UINT_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_UINT_MAX */
+	if (x == Mono_Posix_SysconfName__SC_UIO_MAXIOV)
+#ifdef _SC_UIO_MAXIOV
+		{*r = _SC_UIO_MAXIOV; return 0;}
+#else /* def _SC_UIO_MAXIOV */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_UIO_MAXIOV */
+	if (x == Mono_Posix_SysconfName__SC_ULONG_MAX)
+#ifdef _SC_ULONG_MAX
+		{*r = _SC_ULONG_MAX; return 0;}
+#else /* def _SC_ULONG_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_ULONG_MAX */
+	if (x == Mono_Posix_SysconfName__SC_USER_GROUPS)
+#ifdef _SC_USER_GROUPS
+		{*r = _SC_USER_GROUPS; return 0;}
+#else /* def _SC_USER_GROUPS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_USER_GROUPS */
+	if (x == Mono_Posix_SysconfName__SC_USER_GROUPS_R)
+#ifdef _SC_USER_GROUPS_R
+		{*r = _SC_USER_GROUPS_R; return 0;}
+#else /* def _SC_USER_GROUPS_R */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_USER_GROUPS_R */
+	if (x == Mono_Posix_SysconfName__SC_USHRT_MAX)
+#ifdef _SC_USHRT_MAX
+		{*r = _SC_USHRT_MAX; return 0;}
+#else /* def _SC_USHRT_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_USHRT_MAX */
+	if (x == Mono_Posix_SysconfName__SC_V6_ILP32_OFF32)
+#ifdef _SC_V6_ILP32_OFF32
+		{*r = _SC_V6_ILP32_OFF32; return 0;}
+#else /* def _SC_V6_ILP32_OFF32 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_V6_ILP32_OFF32 */
+	if (x == Mono_Posix_SysconfName__SC_V6_ILP32_OFFBIG)
+#ifdef _SC_V6_ILP32_OFFBIG
+		{*r = _SC_V6_ILP32_OFFBIG; return 0;}
+#else /* def _SC_V6_ILP32_OFFBIG */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_V6_ILP32_OFFBIG */
+	if (x == Mono_Posix_SysconfName__SC_V6_LP64_OFF64)
+#ifdef _SC_V6_LP64_OFF64
+		{*r = _SC_V6_LP64_OFF64; return 0;}
+#else /* def _SC_V6_LP64_OFF64 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_V6_LP64_OFF64 */
+	if (x == Mono_Posix_SysconfName__SC_V6_LPBIG_OFFBIG)
+#ifdef _SC_V6_LPBIG_OFFBIG
+		{*r = _SC_V6_LPBIG_OFFBIG; return 0;}
+#else /* def _SC_V6_LPBIG_OFFBIG */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_V6_LPBIG_OFFBIG */
+	if (x == Mono_Posix_SysconfName__SC_VERSION)
+#ifdef _SC_VERSION
+		{*r = _SC_VERSION; return 0;}
+#else /* def _SC_VERSION */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_VERSION */
+	if (x == Mono_Posix_SysconfName__SC_WORD_BIT)
+#ifdef _SC_WORD_BIT
+		{*r = _SC_WORD_BIT; return 0;}
+#else /* def _SC_WORD_BIT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_WORD_BIT */
+	if (x == Mono_Posix_SysconfName__SC_XBS5_ILP32_OFF32)
+#ifdef _SC_XBS5_ILP32_OFF32
+		{*r = _SC_XBS5_ILP32_OFF32; return 0;}
+#else /* def _SC_XBS5_ILP32_OFF32 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XBS5_ILP32_OFF32 */
+	if (x == Mono_Posix_SysconfName__SC_XBS5_ILP32_OFFBIG)
+#ifdef _SC_XBS5_ILP32_OFFBIG
+		{*r = _SC_XBS5_ILP32_OFFBIG; return 0;}
+#else /* def _SC_XBS5_ILP32_OFFBIG */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XBS5_ILP32_OFFBIG */
+	if (x == Mono_Posix_SysconfName__SC_XBS5_LP64_OFF64)
+#ifdef _SC_XBS5_LP64_OFF64
+		{*r = _SC_XBS5_LP64_OFF64; return 0;}
+#else /* def _SC_XBS5_LP64_OFF64 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XBS5_LP64_OFF64 */
+	if (x == Mono_Posix_SysconfName__SC_XBS5_LPBIG_OFFBIG)
+#ifdef _SC_XBS5_LPBIG_OFFBIG
+		{*r = _SC_XBS5_LPBIG_OFFBIG; return 0;}
+#else /* def _SC_XBS5_LPBIG_OFFBIG */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XBS5_LPBIG_OFFBIG */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_CRYPT)
+#ifdef _SC_XOPEN_CRYPT
+		{*r = _SC_XOPEN_CRYPT; return 0;}
+#else /* def _SC_XOPEN_CRYPT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_CRYPT */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_ENH_I18N)
+#ifdef _SC_XOPEN_ENH_I18N
+		{*r = _SC_XOPEN_ENH_I18N; return 0;}
+#else /* def _SC_XOPEN_ENH_I18N */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_ENH_I18N */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_LEGACY)
+#ifdef _SC_XOPEN_LEGACY
+		{*r = _SC_XOPEN_LEGACY; return 0;}
+#else /* def _SC_XOPEN_LEGACY */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_LEGACY */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_REALTIME)
+#ifdef _SC_XOPEN_REALTIME
+		{*r = _SC_XOPEN_REALTIME; return 0;}
+#else /* def _SC_XOPEN_REALTIME */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_REALTIME */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_REALTIME_THREADS)
+#ifdef _SC_XOPEN_REALTIME_THREADS
+		{*r = _SC_XOPEN_REALTIME_THREADS; return 0;}
+#else /* def _SC_XOPEN_REALTIME_THREADS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_REALTIME_THREADS */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_SHM)
+#ifdef _SC_XOPEN_SHM
+		{*r = _SC_XOPEN_SHM; return 0;}
+#else /* def _SC_XOPEN_SHM */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_SHM */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_UNIX)
+#ifdef _SC_XOPEN_UNIX
+		{*r = _SC_XOPEN_UNIX; return 0;}
+#else /* def _SC_XOPEN_UNIX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_UNIX */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_VERSION)
+#ifdef _SC_XOPEN_VERSION
+		{*r = _SC_XOPEN_VERSION; return 0;}
+#else /* def _SC_XOPEN_VERSION */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_VERSION */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_XCU_VERSION)
+#ifdef _SC_XOPEN_XCU_VERSION
+		{*r = _SC_XOPEN_XCU_VERSION; return 0;}
+#else /* def _SC_XOPEN_XCU_VERSION */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_XCU_VERSION */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_XPG2)
+#ifdef _SC_XOPEN_XPG2
+		{*r = _SC_XOPEN_XPG2; return 0;}
+#else /* def _SC_XOPEN_XPG2 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_XPG2 */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_XPG3)
+#ifdef _SC_XOPEN_XPG3
+		{*r = _SC_XOPEN_XPG3; return 0;}
+#else /* def _SC_XOPEN_XPG3 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_XPG3 */
+	if (x == Mono_Posix_SysconfName__SC_XOPEN_XPG4)
+#ifdef _SC_XOPEN_XPG4
+		{*r = _SC_XOPEN_XPG4; return 0;}
+#else /* def _SC_XOPEN_XPG4 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _SC_XOPEN_XPG4 */
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_ToSysconfName (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef _SC_2_CHAR_TERM
+	if (x == _SC_2_CHAR_TERM)
+		{*r = Mono_Posix_SysconfName__SC_2_CHAR_TERM; return 0;}
+#endif /* ndef _SC_2_CHAR_TERM */
+#ifdef _SC_2_C_BIND
+	if (x == _SC_2_C_BIND)
+		{*r = Mono_Posix_SysconfName__SC_2_C_BIND; return 0;}
+#endif /* ndef _SC_2_C_BIND */
+#ifdef _SC_2_C_DEV
+	if (x == _SC_2_C_DEV)
+		{*r = Mono_Posix_SysconfName__SC_2_C_DEV; return 0;}
+#endif /* ndef _SC_2_C_DEV */
+#ifdef _SC_2_C_VERSION
+	if (x == _SC_2_C_VERSION)
+		{*r = Mono_Posix_SysconfName__SC_2_C_VERSION; return 0;}
+#endif /* ndef _SC_2_C_VERSION */
+#ifdef _SC_2_FORT_DEV
+	if (x == _SC_2_FORT_DEV)
+		{*r = Mono_Posix_SysconfName__SC_2_FORT_DEV; return 0;}
+#endif /* ndef _SC_2_FORT_DEV */
+#ifdef _SC_2_FORT_RUN
+	if (x == _SC_2_FORT_RUN)
+		{*r = Mono_Posix_SysconfName__SC_2_FORT_RUN; return 0;}
+#endif /* ndef _SC_2_FORT_RUN */
+#ifdef _SC_2_LOCALEDEF
+	if (x == _SC_2_LOCALEDEF)
+		{*r = Mono_Posix_SysconfName__SC_2_LOCALEDEF; return 0;}
+#endif /* ndef _SC_2_LOCALEDEF */
+#ifdef _SC_2_PBS
+	if (x == _SC_2_PBS)
+		{*r = Mono_Posix_SysconfName__SC_2_PBS; return 0;}
+#endif /* ndef _SC_2_PBS */
+#ifdef _SC_2_PBS_ACCOUNTING
+	if (x == _SC_2_PBS_ACCOUNTING)
+		{*r = Mono_Posix_SysconfName__SC_2_PBS_ACCOUNTING; return 0;}
+#endif /* ndef _SC_2_PBS_ACCOUNTING */
+#ifdef _SC_2_PBS_CHECKPOINT
+	if (x == _SC_2_PBS_CHECKPOINT)
+		{*r = Mono_Posix_SysconfName__SC_2_PBS_CHECKPOINT; return 0;}
+#endif /* ndef _SC_2_PBS_CHECKPOINT */
+#ifdef _SC_2_PBS_LOCATE
+	if (x == _SC_2_PBS_LOCATE)
+		{*r = Mono_Posix_SysconfName__SC_2_PBS_LOCATE; return 0;}
+#endif /* ndef _SC_2_PBS_LOCATE */
+#ifdef _SC_2_PBS_MESSAGE
+	if (x == _SC_2_PBS_MESSAGE)
+		{*r = Mono_Posix_SysconfName__SC_2_PBS_MESSAGE; return 0;}
+#endif /* ndef _SC_2_PBS_MESSAGE */
+#ifdef _SC_2_PBS_TRACK
+	if (x == _SC_2_PBS_TRACK)
+		{*r = Mono_Posix_SysconfName__SC_2_PBS_TRACK; return 0;}
+#endif /* ndef _SC_2_PBS_TRACK */
+#ifdef _SC_2_SW_DEV
+	if (x == _SC_2_SW_DEV)
+		{*r = Mono_Posix_SysconfName__SC_2_SW_DEV; return 0;}
+#endif /* ndef _SC_2_SW_DEV */
+#ifdef _SC_2_UPE
+	if (x == _SC_2_UPE)
+		{*r = Mono_Posix_SysconfName__SC_2_UPE; return 0;}
+#endif /* ndef _SC_2_UPE */
+#ifdef _SC_2_VERSION
+	if (x == _SC_2_VERSION)
+		{*r = Mono_Posix_SysconfName__SC_2_VERSION; return 0;}
+#endif /* ndef _SC_2_VERSION */
+#ifdef _SC_ADVISORY_INFO
+	if (x == _SC_ADVISORY_INFO)
+		{*r = Mono_Posix_SysconfName__SC_ADVISORY_INFO; return 0;}
+#endif /* ndef _SC_ADVISORY_INFO */
+#ifdef _SC_AIO_LISTIO_MAX
+	if (x == _SC_AIO_LISTIO_MAX)
+		{*r = Mono_Posix_SysconfName__SC_AIO_LISTIO_MAX; return 0;}
+#endif /* ndef _SC_AIO_LISTIO_MAX */
+#ifdef _SC_AIO_MAX
+	if (x == _SC_AIO_MAX)
+		{*r = Mono_Posix_SysconfName__SC_AIO_MAX; return 0;}
+#endif /* ndef _SC_AIO_MAX */
+#ifdef _SC_AIO_PRIO_DELTA_MAX
+	if (x == _SC_AIO_PRIO_DELTA_MAX)
+		{*r = Mono_Posix_SysconfName__SC_AIO_PRIO_DELTA_MAX; return 0;}
+#endif /* ndef _SC_AIO_PRIO_DELTA_MAX */
+#ifdef _SC_ARG_MAX
+	if (x == _SC_ARG_MAX)
+		{*r = Mono_Posix_SysconfName__SC_ARG_MAX; return 0;}
+#endif /* ndef _SC_ARG_MAX */
+#ifdef _SC_ASYNCHRONOUS_IO
+	if (x == _SC_ASYNCHRONOUS_IO)
+		{*r = Mono_Posix_SysconfName__SC_ASYNCHRONOUS_IO; return 0;}
+#endif /* ndef _SC_ASYNCHRONOUS_IO */
+#ifdef _SC_ATEXIT_MAX
+	if (x == _SC_ATEXIT_MAX)
+		{*r = Mono_Posix_SysconfName__SC_ATEXIT_MAX; return 0;}
+#endif /* ndef _SC_ATEXIT_MAX */
+#ifdef _SC_AVPHYS_PAGES
+	if (x == _SC_AVPHYS_PAGES)
+		{*r = Mono_Posix_SysconfName__SC_AVPHYS_PAGES; return 0;}
+#endif /* ndef _SC_AVPHYS_PAGES */
+#ifdef _SC_BARRIERS
+	if (x == _SC_BARRIERS)
+		{*r = Mono_Posix_SysconfName__SC_BARRIERS; return 0;}
+#endif /* ndef _SC_BARRIERS */
+#ifdef _SC_BASE
+	if (x == _SC_BASE)
+		{*r = Mono_Posix_SysconfName__SC_BASE; return 0;}
+#endif /* ndef _SC_BASE */
+#ifdef _SC_BC_BASE_MAX
+	if (x == _SC_BC_BASE_MAX)
+		{*r = Mono_Posix_SysconfName__SC_BC_BASE_MAX; return 0;}
+#endif /* ndef _SC_BC_BASE_MAX */
+#ifdef _SC_BC_DIM_MAX
+	if (x == _SC_BC_DIM_MAX)
+		{*r = Mono_Posix_SysconfName__SC_BC_DIM_MAX; return 0;}
+#endif /* ndef _SC_BC_DIM_MAX */
+#ifdef _SC_BC_SCALE_MAX
+	if (x == _SC_BC_SCALE_MAX)
+		{*r = Mono_Posix_SysconfName__SC_BC_SCALE_MAX; return 0;}
+#endif /* ndef _SC_BC_SCALE_MAX */
+#ifdef _SC_BC_STRING_MAX
+	if (x == _SC_BC_STRING_MAX)
+		{*r = Mono_Posix_SysconfName__SC_BC_STRING_MAX; return 0;}
+#endif /* ndef _SC_BC_STRING_MAX */
+#ifdef _SC_CHARCLASS_NAME_MAX
+	if (x == _SC_CHARCLASS_NAME_MAX)
+		{*r = Mono_Posix_SysconfName__SC_CHARCLASS_NAME_MAX; return 0;}
+#endif /* ndef _SC_CHARCLASS_NAME_MAX */
+#ifdef _SC_CHAR_BIT
+	if (x == _SC_CHAR_BIT)
+		{*r = Mono_Posix_SysconfName__SC_CHAR_BIT; return 0;}
+#endif /* ndef _SC_CHAR_BIT */
+#ifdef _SC_CHAR_MAX
+	if (x == _SC_CHAR_MAX)
+		{*r = Mono_Posix_SysconfName__SC_CHAR_MAX; return 0;}
+#endif /* ndef _SC_CHAR_MAX */
+#ifdef _SC_CHAR_MIN
+	if (x == _SC_CHAR_MIN)
+		{*r = Mono_Posix_SysconfName__SC_CHAR_MIN; return 0;}
+#endif /* ndef _SC_CHAR_MIN */
+#ifdef _SC_CHILD_MAX
+	if (x == _SC_CHILD_MAX)
+		{*r = Mono_Posix_SysconfName__SC_CHILD_MAX; return 0;}
+#endif /* ndef _SC_CHILD_MAX */
+#ifdef _SC_CLK_TCK
+	if (x == _SC_CLK_TCK)
+		{*r = Mono_Posix_SysconfName__SC_CLK_TCK; return 0;}
+#endif /* ndef _SC_CLK_TCK */
+#ifdef _SC_CLOCK_SELECTION
+	if (x == _SC_CLOCK_SELECTION)
+		{*r = Mono_Posix_SysconfName__SC_CLOCK_SELECTION; return 0;}
+#endif /* ndef _SC_CLOCK_SELECTION */
+#ifdef _SC_COLL_WEIGHTS_MAX
+	if (x == _SC_COLL_WEIGHTS_MAX)
+		{*r = Mono_Posix_SysconfName__SC_COLL_WEIGHTS_MAX; return 0;}
+#endif /* ndef _SC_COLL_WEIGHTS_MAX */
+#ifdef _SC_CPUTIME
+	if (x == _SC_CPUTIME)
+		{*r = Mono_Posix_SysconfName__SC_CPUTIME; return 0;}
+#endif /* ndef _SC_CPUTIME */
+#ifdef _SC_C_LANG_SUPPORT
+	if (x == _SC_C_LANG_SUPPORT)
+		{*r = Mono_Posix_SysconfName__SC_C_LANG_SUPPORT; return 0;}
+#endif /* ndef _SC_C_LANG_SUPPORT */
+#ifdef _SC_C_LANG_SUPPORT_R
+	if (x == _SC_C_LANG_SUPPORT_R)
+		{*r = Mono_Posix_SysconfName__SC_C_LANG_SUPPORT_R; return 0;}
+#endif /* ndef _SC_C_LANG_SUPPORT_R */
+#ifdef _SC_DELAYTIMER_MAX
+	if (x == _SC_DELAYTIMER_MAX)
+		{*r = Mono_Posix_SysconfName__SC_DELAYTIMER_MAX; return 0;}
+#endif /* ndef _SC_DELAYTIMER_MAX */
+#ifdef _SC_DEVICE_IO
+	if (x == _SC_DEVICE_IO)
+		{*r = Mono_Posix_SysconfName__SC_DEVICE_IO; return 0;}
+#endif /* ndef _SC_DEVICE_IO */
+#ifdef _SC_DEVICE_SPECIFIC
+	if (x == _SC_DEVICE_SPECIFIC)
+		{*r = Mono_Posix_SysconfName__SC_DEVICE_SPECIFIC; return 0;}
+#endif /* ndef _SC_DEVICE_SPECIFIC */
+#ifdef _SC_DEVICE_SPECIFIC_R
+	if (x == _SC_DEVICE_SPECIFIC_R)
+		{*r = Mono_Posix_SysconfName__SC_DEVICE_SPECIFIC_R; return 0;}
+#endif /* ndef _SC_DEVICE_SPECIFIC_R */
+#ifdef _SC_EQUIV_CLASS_MAX
+	if (x == _SC_EQUIV_CLASS_MAX)
+		{*r = Mono_Posix_SysconfName__SC_EQUIV_CLASS_MAX; return 0;}
+#endif /* ndef _SC_EQUIV_CLASS_MAX */
+#ifdef _SC_EXPR_NEST_MAX
+	if (x == _SC_EXPR_NEST_MAX)
+		{*r = Mono_Posix_SysconfName__SC_EXPR_NEST_MAX; return 0;}
+#endif /* ndef _SC_EXPR_NEST_MAX */
+#ifdef _SC_FD_MGMT
+	if (x == _SC_FD_MGMT)
+		{*r = Mono_Posix_SysconfName__SC_FD_MGMT; return 0;}
+#endif /* ndef _SC_FD_MGMT */
+#ifdef _SC_FIFO
+	if (x == _SC_FIFO)
+		{*r = Mono_Posix_SysconfName__SC_FIFO; return 0;}
+#endif /* ndef _SC_FIFO */
+#ifdef _SC_FILE_ATTRIBUTES
+	if (x == _SC_FILE_ATTRIBUTES)
+		{*r = Mono_Posix_SysconfName__SC_FILE_ATTRIBUTES; return 0;}
+#endif /* ndef _SC_FILE_ATTRIBUTES */
+#ifdef _SC_FILE_LOCKING
+	if (x == _SC_FILE_LOCKING)
+		{*r = Mono_Posix_SysconfName__SC_FILE_LOCKING; return 0;}
+#endif /* ndef _SC_FILE_LOCKING */
+#ifdef _SC_FILE_SYSTEM
+	if (x == _SC_FILE_SYSTEM)
+		{*r = Mono_Posix_SysconfName__SC_FILE_SYSTEM; return 0;}
+#endif /* ndef _SC_FILE_SYSTEM */
+#ifdef _SC_FSYNC
+	if (x == _SC_FSYNC)
+		{*r = Mono_Posix_SysconfName__SC_FSYNC; return 0;}
+#endif /* ndef _SC_FSYNC */
+#ifdef _SC_GETGR_R_SIZE_MAX
+	if (x == _SC_GETGR_R_SIZE_MAX)
+		{*r = Mono_Posix_SysconfName__SC_GETGR_R_SIZE_MAX; return 0;}
+#endif /* ndef _SC_GETGR_R_SIZE_MAX */
+#ifdef _SC_GETPW_R_SIZE_MAX
+	if (x == _SC_GETPW_R_SIZE_MAX)
+		{*r = Mono_Posix_SysconfName__SC_GETPW_R_SIZE_MAX; return 0;}
+#endif /* ndef _SC_GETPW_R_SIZE_MAX */
+#ifdef _SC_HOST_NAME_MAX
+	if (x == _SC_HOST_NAME_MAX)
+		{*r = Mono_Posix_SysconfName__SC_HOST_NAME_MAX; return 0;}
+#endif /* ndef _SC_HOST_NAME_MAX */
+#ifdef _SC_INT_MAX
+	if (x == _SC_INT_MAX)
+		{*r = Mono_Posix_SysconfName__SC_INT_MAX; return 0;}
+#endif /* ndef _SC_INT_MAX */
+#ifdef _SC_INT_MIN
+	if (x == _SC_INT_MIN)
+		{*r = Mono_Posix_SysconfName__SC_INT_MIN; return 0;}
+#endif /* ndef _SC_INT_MIN */
+#ifdef _SC_IOV_MAX
+	if (x == _SC_IOV_MAX)
+		{*r = Mono_Posix_SysconfName__SC_IOV_MAX; return 0;}
+#endif /* ndef _SC_IOV_MAX */
+#ifdef _SC_JOB_CONTROL
+	if (x == _SC_JOB_CONTROL)
+		{*r = Mono_Posix_SysconfName__SC_JOB_CONTROL; return 0;}
+#endif /* ndef _SC_JOB_CONTROL */
+#ifdef _SC_LEVEL1_DCACHE_ASSOC
+	if (x == _SC_LEVEL1_DCACHE_ASSOC)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL1_DCACHE_ASSOC; return 0;}
+#endif /* ndef _SC_LEVEL1_DCACHE_ASSOC */
+#ifdef _SC_LEVEL1_DCACHE_LINESIZE
+	if (x == _SC_LEVEL1_DCACHE_LINESIZE)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL1_DCACHE_LINESIZE; return 0;}
+#endif /* ndef _SC_LEVEL1_DCACHE_LINESIZE */
+#ifdef _SC_LEVEL1_DCACHE_SIZE
+	if (x == _SC_LEVEL1_DCACHE_SIZE)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL1_DCACHE_SIZE; return 0;}
+#endif /* ndef _SC_LEVEL1_DCACHE_SIZE */
+#ifdef _SC_LEVEL1_ICACHE_ASSOC
+	if (x == _SC_LEVEL1_ICACHE_ASSOC)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL1_ICACHE_ASSOC; return 0;}
+#endif /* ndef _SC_LEVEL1_ICACHE_ASSOC */
+#ifdef _SC_LEVEL1_ICACHE_LINESIZE
+	if (x == _SC_LEVEL1_ICACHE_LINESIZE)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL1_ICACHE_LINESIZE; return 0;}
+#endif /* ndef _SC_LEVEL1_ICACHE_LINESIZE */
+#ifdef _SC_LEVEL1_ICACHE_SIZE
+	if (x == _SC_LEVEL1_ICACHE_SIZE)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL1_ICACHE_SIZE; return 0;}
+#endif /* ndef _SC_LEVEL1_ICACHE_SIZE */
+#ifdef _SC_LEVEL2_CACHE_ASSOC
+	if (x == _SC_LEVEL2_CACHE_ASSOC)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL2_CACHE_ASSOC; return 0;}
+#endif /* ndef _SC_LEVEL2_CACHE_ASSOC */
+#ifdef _SC_LEVEL2_CACHE_LINESIZE
+	if (x == _SC_LEVEL2_CACHE_LINESIZE)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL2_CACHE_LINESIZE; return 0;}
+#endif /* ndef _SC_LEVEL2_CACHE_LINESIZE */
+#ifdef _SC_LEVEL2_CACHE_SIZE
+	if (x == _SC_LEVEL2_CACHE_SIZE)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL2_CACHE_SIZE; return 0;}
+#endif /* ndef _SC_LEVEL2_CACHE_SIZE */
+#ifdef _SC_LEVEL3_CACHE_ASSOC
+	if (x == _SC_LEVEL3_CACHE_ASSOC)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL3_CACHE_ASSOC; return 0;}
+#endif /* ndef _SC_LEVEL3_CACHE_ASSOC */
+#ifdef _SC_LEVEL3_CACHE_LINESIZE
+	if (x == _SC_LEVEL3_CACHE_LINESIZE)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL3_CACHE_LINESIZE; return 0;}
+#endif /* ndef _SC_LEVEL3_CACHE_LINESIZE */
+#ifdef _SC_LEVEL3_CACHE_SIZE
+	if (x == _SC_LEVEL3_CACHE_SIZE)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL3_CACHE_SIZE; return 0;}
+#endif /* ndef _SC_LEVEL3_CACHE_SIZE */
+#ifdef _SC_LEVEL4_CACHE_ASSOC
+	if (x == _SC_LEVEL4_CACHE_ASSOC)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL4_CACHE_ASSOC; return 0;}
+#endif /* ndef _SC_LEVEL4_CACHE_ASSOC */
+#ifdef _SC_LEVEL4_CACHE_LINESIZE
+	if (x == _SC_LEVEL4_CACHE_LINESIZE)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL4_CACHE_LINESIZE; return 0;}
+#endif /* ndef _SC_LEVEL4_CACHE_LINESIZE */
+#ifdef _SC_LEVEL4_CACHE_SIZE
+	if (x == _SC_LEVEL4_CACHE_SIZE)
+		{*r = Mono_Posix_SysconfName__SC_LEVEL4_CACHE_SIZE; return 0;}
+#endif /* ndef _SC_LEVEL4_CACHE_SIZE */
+#ifdef _SC_LINE_MAX
+	if (x == _SC_LINE_MAX)
+		{*r = Mono_Posix_SysconfName__SC_LINE_MAX; return 0;}
+#endif /* ndef _SC_LINE_MAX */
+#ifdef _SC_LOGIN_NAME_MAX
+	if (x == _SC_LOGIN_NAME_MAX)
+		{*r = Mono_Posix_SysconfName__SC_LOGIN_NAME_MAX; return 0;}
+#endif /* ndef _SC_LOGIN_NAME_MAX */
+#ifdef _SC_LONG_BIT
+	if (x == _SC_LONG_BIT)
+		{*r = Mono_Posix_SysconfName__SC_LONG_BIT; return 0;}
+#endif /* ndef _SC_LONG_BIT */
+#ifdef _SC_MAPPED_FILES
+	if (x == _SC_MAPPED_FILES)
+		{*r = Mono_Posix_SysconfName__SC_MAPPED_FILES; return 0;}
+#endif /* ndef _SC_MAPPED_FILES */
+#ifdef _SC_MB_LEN_MAX
+	if (x == _SC_MB_LEN_MAX)
+		{*r = Mono_Posix_SysconfName__SC_MB_LEN_MAX; return 0;}
+#endif /* ndef _SC_MB_LEN_MAX */
+#ifdef _SC_MEMLOCK
+	if (x == _SC_MEMLOCK)
+		{*r = Mono_Posix_SysconfName__SC_MEMLOCK; return 0;}
+#endif /* ndef _SC_MEMLOCK */
+#ifdef _SC_MEMLOCK_RANGE
+	if (x == _SC_MEMLOCK_RANGE)
+		{*r = Mono_Posix_SysconfName__SC_MEMLOCK_RANGE; return 0;}
+#endif /* ndef _SC_MEMLOCK_RANGE */
+#ifdef _SC_MEMORY_PROTECTION
+	if (x == _SC_MEMORY_PROTECTION)
+		{*r = Mono_Posix_SysconfName__SC_MEMORY_PROTECTION; return 0;}
+#endif /* ndef _SC_MEMORY_PROTECTION */
+#ifdef _SC_MESSAGE_PASSING
+	if (x == _SC_MESSAGE_PASSING)
+		{*r = Mono_Posix_SysconfName__SC_MESSAGE_PASSING; return 0;}
+#endif /* ndef _SC_MESSAGE_PASSING */
+#ifdef _SC_MONOTONIC_CLOCK
+	if (x == _SC_MONOTONIC_CLOCK)
+		{*r = Mono_Posix_SysconfName__SC_MONOTONIC_CLOCK; return 0;}
+#endif /* ndef _SC_MONOTONIC_CLOCK */
+#ifdef _SC_MQ_OPEN_MAX
+	if (x == _SC_MQ_OPEN_MAX)
+		{*r = Mono_Posix_SysconfName__SC_MQ_OPEN_MAX; return 0;}
+#endif /* ndef _SC_MQ_OPEN_MAX */
+#ifdef _SC_MQ_PRIO_MAX
+	if (x == _SC_MQ_PRIO_MAX)
+		{*r = Mono_Posix_SysconfName__SC_MQ_PRIO_MAX; return 0;}
+#endif /* ndef _SC_MQ_PRIO_MAX */
+#ifdef _SC_MULTI_PROCESS
+	if (x == _SC_MULTI_PROCESS)
+		{*r = Mono_Posix_SysconfName__SC_MULTI_PROCESS; return 0;}
+#endif /* ndef _SC_MULTI_PROCESS */
+#ifdef _SC_NETWORKING
+	if (x == _SC_NETWORKING)
+		{*r = Mono_Posix_SysconfName__SC_NETWORKING; return 0;}
+#endif /* ndef _SC_NETWORKING */
+#ifdef _SC_NGROUPS_MAX
+	if (x == _SC_NGROUPS_MAX)
+		{*r = Mono_Posix_SysconfName__SC_NGROUPS_MAX; return 0;}
+#endif /* ndef _SC_NGROUPS_MAX */
+#ifdef _SC_NL_ARGMAX
+	if (x == _SC_NL_ARGMAX)
+		{*r = Mono_Posix_SysconfName__SC_NL_ARGMAX; return 0;}
+#endif /* ndef _SC_NL_ARGMAX */
+#ifdef _SC_NL_LANGMAX
+	if (x == _SC_NL_LANGMAX)
+		{*r = Mono_Posix_SysconfName__SC_NL_LANGMAX; return 0;}
+#endif /* ndef _SC_NL_LANGMAX */
+#ifdef _SC_NL_MSGMAX
+	if (x == _SC_NL_MSGMAX)
+		{*r = Mono_Posix_SysconfName__SC_NL_MSGMAX; return 0;}
+#endif /* ndef _SC_NL_MSGMAX */
+#ifdef _SC_NL_NMAX
+	if (x == _SC_NL_NMAX)
+		{*r = Mono_Posix_SysconfName__SC_NL_NMAX; return 0;}
+#endif /* ndef _SC_NL_NMAX */
+#ifdef _SC_NL_SETMAX
+	if (x == _SC_NL_SETMAX)
+		{*r = Mono_Posix_SysconfName__SC_NL_SETMAX; return 0;}
+#endif /* ndef _SC_NL_SETMAX */
+#ifdef _SC_NL_TEXTMAX
+	if (x == _SC_NL_TEXTMAX)
+		{*r = Mono_Posix_SysconfName__SC_NL_TEXTMAX; return 0;}
+#endif /* ndef _SC_NL_TEXTMAX */
+#ifdef _SC_NPROCESSORS_CONF
+	if (x == _SC_NPROCESSORS_CONF)
+		{*r = Mono_Posix_SysconfName__SC_NPROCESSORS_CONF; return 0;}
+#endif /* ndef _SC_NPROCESSORS_CONF */
+#ifdef _SC_NPROCESSORS_ONLN
+	if (x == _SC_NPROCESSORS_ONLN)
+		{*r = Mono_Posix_SysconfName__SC_NPROCESSORS_ONLN; return 0;}
+#endif /* ndef _SC_NPROCESSORS_ONLN */
+#ifdef _SC_NZERO
+	if (x == _SC_NZERO)
+		{*r = Mono_Posix_SysconfName__SC_NZERO; return 0;}
+#endif /* ndef _SC_NZERO */
+#ifdef _SC_OPEN_MAX
+	if (x == _SC_OPEN_MAX)
+		{*r = Mono_Posix_SysconfName__SC_OPEN_MAX; return 0;}
+#endif /* ndef _SC_OPEN_MAX */
+#ifdef _SC_PAGESIZE
+	if (x == _SC_PAGESIZE)
+		{*r = Mono_Posix_SysconfName__SC_PAGESIZE; return 0;}
+#endif /* ndef _SC_PAGESIZE */
+#ifdef _SC_PASS_MAX
+	if (x == _SC_PASS_MAX)
+		{*r = Mono_Posix_SysconfName__SC_PASS_MAX; return 0;}
+#endif /* ndef _SC_PASS_MAX */
+#ifdef _SC_PHYS_PAGES
+	if (x == _SC_PHYS_PAGES)
+		{*r = Mono_Posix_SysconfName__SC_PHYS_PAGES; return 0;}
+#endif /* ndef _SC_PHYS_PAGES */
+#ifdef _SC_PII
+	if (x == _SC_PII)
+		{*r = Mono_Posix_SysconfName__SC_PII; return 0;}
+#endif /* ndef _SC_PII */
+#ifdef _SC_PII_INTERNET
+	if (x == _SC_PII_INTERNET)
+		{*r = Mono_Posix_SysconfName__SC_PII_INTERNET; return 0;}
+#endif /* ndef _SC_PII_INTERNET */
+#ifdef _SC_PII_INTERNET_DGRAM
+	if (x == _SC_PII_INTERNET_DGRAM)
+		{*r = Mono_Posix_SysconfName__SC_PII_INTERNET_DGRAM; return 0;}
+#endif /* ndef _SC_PII_INTERNET_DGRAM */
+#ifdef _SC_PII_INTERNET_STREAM
+	if (x == _SC_PII_INTERNET_STREAM)
+		{*r = Mono_Posix_SysconfName__SC_PII_INTERNET_STREAM; return 0;}
+#endif /* ndef _SC_PII_INTERNET_STREAM */
+#ifdef _SC_PII_OSI
+	if (x == _SC_PII_OSI)
+		{*r = Mono_Posix_SysconfName__SC_PII_OSI; return 0;}
+#endif /* ndef _SC_PII_OSI */
+#ifdef _SC_PII_OSI_CLTS
+	if (x == _SC_PII_OSI_CLTS)
+		{*r = Mono_Posix_SysconfName__SC_PII_OSI_CLTS; return 0;}
+#endif /* ndef _SC_PII_OSI_CLTS */
+#ifdef _SC_PII_OSI_COTS
+	if (x == _SC_PII_OSI_COTS)
+		{*r = Mono_Posix_SysconfName__SC_PII_OSI_COTS; return 0;}
+#endif /* ndef _SC_PII_OSI_COTS */
+#ifdef _SC_PII_OSI_M
+	if (x == _SC_PII_OSI_M)
+		{*r = Mono_Posix_SysconfName__SC_PII_OSI_M; return 0;}
+#endif /* ndef _SC_PII_OSI_M */
+#ifdef _SC_PII_SOCKET
+	if (x == _SC_PII_SOCKET)
+		{*r = Mono_Posix_SysconfName__SC_PII_SOCKET; return 0;}
+#endif /* ndef _SC_PII_SOCKET */
+#ifdef _SC_PII_XTI
+	if (x == _SC_PII_XTI)
+		{*r = Mono_Posix_SysconfName__SC_PII_XTI; return 0;}
+#endif /* ndef _SC_PII_XTI */
+#ifdef _SC_PIPE
+	if (x == _SC_PIPE)
+		{*r = Mono_Posix_SysconfName__SC_PIPE; return 0;}
+#endif /* ndef _SC_PIPE */
+#ifdef _SC_POLL
+	if (x == _SC_POLL)
+		{*r = Mono_Posix_SysconfName__SC_POLL; return 0;}
+#endif /* ndef _SC_POLL */
+#ifdef _SC_PRIORITIZED_IO
+	if (x == _SC_PRIORITIZED_IO)
+		{*r = Mono_Posix_SysconfName__SC_PRIORITIZED_IO; return 0;}
+#endif /* ndef _SC_PRIORITIZED_IO */
+#ifdef _SC_PRIORITY_SCHEDULING
+	if (x == _SC_PRIORITY_SCHEDULING)
+		{*r = Mono_Posix_SysconfName__SC_PRIORITY_SCHEDULING; return 0;}
+#endif /* ndef _SC_PRIORITY_SCHEDULING */
+#ifdef _SC_READER_WRITER_LOCKS
+	if (x == _SC_READER_WRITER_LOCKS)
+		{*r = Mono_Posix_SysconfName__SC_READER_WRITER_LOCKS; return 0;}
+#endif /* ndef _SC_READER_WRITER_LOCKS */
+#ifdef _SC_REALTIME_SIGNALS
+	if (x == _SC_REALTIME_SIGNALS)
+		{*r = Mono_Posix_SysconfName__SC_REALTIME_SIGNALS; return 0;}
+#endif /* ndef _SC_REALTIME_SIGNALS */
+#ifdef _SC_REGEXP
+	if (x == _SC_REGEXP)
+		{*r = Mono_Posix_SysconfName__SC_REGEXP; return 0;}
+#endif /* ndef _SC_REGEXP */
+#ifdef _SC_REGEX_VERSION
+	if (x == _SC_REGEX_VERSION)
+		{*r = Mono_Posix_SysconfName__SC_REGEX_VERSION; return 0;}
+#endif /* ndef _SC_REGEX_VERSION */
+#ifdef _SC_RE_DUP_MAX
+	if (x == _SC_RE_DUP_MAX)
+		{*r = Mono_Posix_SysconfName__SC_RE_DUP_MAX; return 0;}
+#endif /* ndef _SC_RE_DUP_MAX */
+#ifdef _SC_RTSIG_MAX
+	if (x == _SC_RTSIG_MAX)
+		{*r = Mono_Posix_SysconfName__SC_RTSIG_MAX; return 0;}
+#endif /* ndef _SC_RTSIG_MAX */
+#ifdef _SC_SAVED_IDS
+	if (x == _SC_SAVED_IDS)
+		{*r = Mono_Posix_SysconfName__SC_SAVED_IDS; return 0;}
+#endif /* ndef _SC_SAVED_IDS */
+#ifdef _SC_SCHAR_MAX
+	if (x == _SC_SCHAR_MAX)
+		{*r = Mono_Posix_SysconfName__SC_SCHAR_MAX; return 0;}
+#endif /* ndef _SC_SCHAR_MAX */
+#ifdef _SC_SCHAR_MIN
+	if (x == _SC_SCHAR_MIN)
+		{*r = Mono_Posix_SysconfName__SC_SCHAR_MIN; return 0;}
+#endif /* ndef _SC_SCHAR_MIN */
+#ifdef _SC_SELECT
+	if (x == _SC_SELECT)
+		{*r = Mono_Posix_SysconfName__SC_SELECT; return 0;}
+#endif /* ndef _SC_SELECT */
+#ifdef _SC_SEMAPHORES
+	if (x == _SC_SEMAPHORES)
+		{*r = Mono_Posix_SysconfName__SC_SEMAPHORES; return 0;}
+#endif /* ndef _SC_SEMAPHORES */
+#ifdef _SC_SEM_NSEMS_MAX
+	if (x == _SC_SEM_NSEMS_MAX)
+		{*r = Mono_Posix_SysconfName__SC_SEM_NSEMS_MAX; return 0;}
+#endif /* ndef _SC_SEM_NSEMS_MAX */
+#ifdef _SC_SEM_VALUE_MAX
+	if (x == _SC_SEM_VALUE_MAX)
+		{*r = Mono_Posix_SysconfName__SC_SEM_VALUE_MAX; return 0;}
+#endif /* ndef _SC_SEM_VALUE_MAX */
+#ifdef _SC_SHARED_MEMORY_OBJECTS
+	if (x == _SC_SHARED_MEMORY_OBJECTS)
+		{*r = Mono_Posix_SysconfName__SC_SHARED_MEMORY_OBJECTS; return 0;}
+#endif /* ndef _SC_SHARED_MEMORY_OBJECTS */
+#ifdef _SC_SHELL
+	if (x == _SC_SHELL)
+		{*r = Mono_Posix_SysconfName__SC_SHELL; return 0;}
+#endif /* ndef _SC_SHELL */
+#ifdef _SC_SHRT_MAX
+	if (x == _SC_SHRT_MAX)
+		{*r = Mono_Posix_SysconfName__SC_SHRT_MAX; return 0;}
+#endif /* ndef _SC_SHRT_MAX */
+#ifdef _SC_SHRT_MIN
+	if (x == _SC_SHRT_MIN)
+		{*r = Mono_Posix_SysconfName__SC_SHRT_MIN; return 0;}
+#endif /* ndef _SC_SHRT_MIN */
+#ifdef _SC_SIGNALS
+	if (x == _SC_SIGNALS)
+		{*r = Mono_Posix_SysconfName__SC_SIGNALS; return 0;}
+#endif /* ndef _SC_SIGNALS */
+#ifdef _SC_SIGQUEUE_MAX
+	if (x == _SC_SIGQUEUE_MAX)
+		{*r = Mono_Posix_SysconfName__SC_SIGQUEUE_MAX; return 0;}
+#endif /* ndef _SC_SIGQUEUE_MAX */
+#ifdef _SC_SINGLE_PROCESS
+	if (x == _SC_SINGLE_PROCESS)
+		{*r = Mono_Posix_SysconfName__SC_SINGLE_PROCESS; return 0;}
+#endif /* ndef _SC_SINGLE_PROCESS */
+#ifdef _SC_SPAWN
+	if (x == _SC_SPAWN)
+		{*r = Mono_Posix_SysconfName__SC_SPAWN; return 0;}
+#endif /* ndef _SC_SPAWN */
+#ifdef _SC_SPIN_LOCKS
+	if (x == _SC_SPIN_LOCKS)
+		{*r = Mono_Posix_SysconfName__SC_SPIN_LOCKS; return 0;}
+#endif /* ndef _SC_SPIN_LOCKS */
+#ifdef _SC_SPORADIC_SERVER
+	if (x == _SC_SPORADIC_SERVER)
+		{*r = Mono_Posix_SysconfName__SC_SPORADIC_SERVER; return 0;}
+#endif /* ndef _SC_SPORADIC_SERVER */
+#ifdef _SC_SSIZE_MAX
+	if (x == _SC_SSIZE_MAX)
+		{*r = Mono_Posix_SysconfName__SC_SSIZE_MAX; return 0;}
+#endif /* ndef _SC_SSIZE_MAX */
+#ifdef _SC_STREAMS
+	if (x == _SC_STREAMS)
+		{*r = Mono_Posix_SysconfName__SC_STREAMS; return 0;}
+#endif /* ndef _SC_STREAMS */
+#ifdef _SC_STREAM_MAX
+	if (x == _SC_STREAM_MAX)
+		{*r = Mono_Posix_SysconfName__SC_STREAM_MAX; return 0;}
+#endif /* ndef _SC_STREAM_MAX */
+#ifdef _SC_SYMLOOP_MAX
+	if (x == _SC_SYMLOOP_MAX)
+		{*r = Mono_Posix_SysconfName__SC_SYMLOOP_MAX; return 0;}
+#endif /* ndef _SC_SYMLOOP_MAX */
+#ifdef _SC_SYNCHRONIZED_IO
+	if (x == _SC_SYNCHRONIZED_IO)
+		{*r = Mono_Posix_SysconfName__SC_SYNCHRONIZED_IO; return 0;}
+#endif /* ndef _SC_SYNCHRONIZED_IO */
+#ifdef _SC_SYSTEM_DATABASE
+	if (x == _SC_SYSTEM_DATABASE)
+		{*r = Mono_Posix_SysconfName__SC_SYSTEM_DATABASE; return 0;}
+#endif /* ndef _SC_SYSTEM_DATABASE */
+#ifdef _SC_SYSTEM_DATABASE_R
+	if (x == _SC_SYSTEM_DATABASE_R)
+		{*r = Mono_Posix_SysconfName__SC_SYSTEM_DATABASE_R; return 0;}
+#endif /* ndef _SC_SYSTEM_DATABASE_R */
+#ifdef _SC_THREADS
+	if (x == _SC_THREADS)
+		{*r = Mono_Posix_SysconfName__SC_THREADS; return 0;}
+#endif /* ndef _SC_THREADS */
+#ifdef _SC_THREAD_ATTR_STACKADDR
+	if (x == _SC_THREAD_ATTR_STACKADDR)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_ATTR_STACKADDR; return 0;}
+#endif /* ndef _SC_THREAD_ATTR_STACKADDR */
+#ifdef _SC_THREAD_ATTR_STACKSIZE
+	if (x == _SC_THREAD_ATTR_STACKSIZE)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_ATTR_STACKSIZE; return 0;}
+#endif /* ndef _SC_THREAD_ATTR_STACKSIZE */
+#ifdef _SC_THREAD_CPUTIME
+	if (x == _SC_THREAD_CPUTIME)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_CPUTIME; return 0;}
+#endif /* ndef _SC_THREAD_CPUTIME */
+#ifdef _SC_THREAD_DESTRUCTOR_ITERATIONS
+	if (x == _SC_THREAD_DESTRUCTOR_ITERATIONS)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_DESTRUCTOR_ITERATIONS; return 0;}
+#endif /* ndef _SC_THREAD_DESTRUCTOR_ITERATIONS */
+#ifdef _SC_THREAD_KEYS_MAX
+	if (x == _SC_THREAD_KEYS_MAX)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_KEYS_MAX; return 0;}
+#endif /* ndef _SC_THREAD_KEYS_MAX */
+#ifdef _SC_THREAD_PRIORITY_SCHEDULING
+	if (x == _SC_THREAD_PRIORITY_SCHEDULING)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_PRIORITY_SCHEDULING; return 0;}
+#endif /* ndef _SC_THREAD_PRIORITY_SCHEDULING */
+#ifdef _SC_THREAD_PRIO_INHERIT
+	if (x == _SC_THREAD_PRIO_INHERIT)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_PRIO_INHERIT; return 0;}
+#endif /* ndef _SC_THREAD_PRIO_INHERIT */
+#ifdef _SC_THREAD_PRIO_PROTECT
+	if (x == _SC_THREAD_PRIO_PROTECT)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_PRIO_PROTECT; return 0;}
+#endif /* ndef _SC_THREAD_PRIO_PROTECT */
+#ifdef _SC_THREAD_PROCESS_SHARED
+	if (x == _SC_THREAD_PROCESS_SHARED)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_PROCESS_SHARED; return 0;}
+#endif /* ndef _SC_THREAD_PROCESS_SHARED */
+#ifdef _SC_THREAD_SAFE_FUNCTIONS
+	if (x == _SC_THREAD_SAFE_FUNCTIONS)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_SAFE_FUNCTIONS; return 0;}
+#endif /* ndef _SC_THREAD_SAFE_FUNCTIONS */
+#ifdef _SC_THREAD_SPORADIC_SERVER
+	if (x == _SC_THREAD_SPORADIC_SERVER)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_SPORADIC_SERVER; return 0;}
+#endif /* ndef _SC_THREAD_SPORADIC_SERVER */
+#ifdef _SC_THREAD_STACK_MIN
+	if (x == _SC_THREAD_STACK_MIN)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_STACK_MIN; return 0;}
+#endif /* ndef _SC_THREAD_STACK_MIN */
+#ifdef _SC_THREAD_THREADS_MAX
+	if (x == _SC_THREAD_THREADS_MAX)
+		{*r = Mono_Posix_SysconfName__SC_THREAD_THREADS_MAX; return 0;}
+#endif /* ndef _SC_THREAD_THREADS_MAX */
+#ifdef _SC_TIMEOUTS
+	if (x == _SC_TIMEOUTS)
+		{*r = Mono_Posix_SysconfName__SC_TIMEOUTS; return 0;}
+#endif /* ndef _SC_TIMEOUTS */
+#ifdef _SC_TIMERS
+	if (x == _SC_TIMERS)
+		{*r = Mono_Posix_SysconfName__SC_TIMERS; return 0;}
+#endif /* ndef _SC_TIMERS */
+#ifdef _SC_TIMER_MAX
+	if (x == _SC_TIMER_MAX)
+		{*r = Mono_Posix_SysconfName__SC_TIMER_MAX; return 0;}
+#endif /* ndef _SC_TIMER_MAX */
+#ifdef _SC_TRACE
+	if (x == _SC_TRACE)
+		{*r = Mono_Posix_SysconfName__SC_TRACE; return 0;}
+#endif /* ndef _SC_TRACE */
+#ifdef _SC_TRACE_EVENT_FILTER
+	if (x == _SC_TRACE_EVENT_FILTER)
+		{*r = Mono_Posix_SysconfName__SC_TRACE_EVENT_FILTER; return 0;}
+#endif /* ndef _SC_TRACE_EVENT_FILTER */
+#ifdef _SC_TRACE_INHERIT
+	if (x == _SC_TRACE_INHERIT)
+		{*r = Mono_Posix_SysconfName__SC_TRACE_INHERIT; return 0;}
+#endif /* ndef _SC_TRACE_INHERIT */
+#ifdef _SC_TRACE_LOG
+	if (x == _SC_TRACE_LOG)
+		{*r = Mono_Posix_SysconfName__SC_TRACE_LOG; return 0;}
+#endif /* ndef _SC_TRACE_LOG */
+#ifdef _SC_TTY_NAME_MAX
+	if (x == _SC_TTY_NAME_MAX)
+		{*r = Mono_Posix_SysconfName__SC_TTY_NAME_MAX; return 0;}
+#endif /* ndef _SC_TTY_NAME_MAX */
+#ifdef _SC_TYPED_MEMORY_OBJECTS
+	if (x == _SC_TYPED_MEMORY_OBJECTS)
+		{*r = Mono_Posix_SysconfName__SC_TYPED_MEMORY_OBJECTS; return 0;}
+#endif /* ndef _SC_TYPED_MEMORY_OBJECTS */
+#ifdef _SC_TZNAME_MAX
+	if (x == _SC_TZNAME_MAX)
+		{*r = Mono_Posix_SysconfName__SC_TZNAME_MAX; return 0;}
+#endif /* ndef _SC_TZNAME_MAX */
+#ifdef _SC_T_IOV_MAX
+	if (x == _SC_T_IOV_MAX)
+		{*r = Mono_Posix_SysconfName__SC_T_IOV_MAX; return 0;}
+#endif /* ndef _SC_T_IOV_MAX */
+#ifdef _SC_UCHAR_MAX
+	if (x == _SC_UCHAR_MAX)
+		{*r = Mono_Posix_SysconfName__SC_UCHAR_MAX; return 0;}
+#endif /* ndef _SC_UCHAR_MAX */
+#ifdef _SC_UINT_MAX
+	if (x == _SC_UINT_MAX)
+		{*r = Mono_Posix_SysconfName__SC_UINT_MAX; return 0;}
+#endif /* ndef _SC_UINT_MAX */
+#ifdef _SC_UIO_MAXIOV
+	if (x == _SC_UIO_MAXIOV)
+		{*r = Mono_Posix_SysconfName__SC_UIO_MAXIOV; return 0;}
+#endif /* ndef _SC_UIO_MAXIOV */
+#ifdef _SC_ULONG_MAX
+	if (x == _SC_ULONG_MAX)
+		{*r = Mono_Posix_SysconfName__SC_ULONG_MAX; return 0;}
+#endif /* ndef _SC_ULONG_MAX */
+#ifdef _SC_USER_GROUPS
+	if (x == _SC_USER_GROUPS)
+		{*r = Mono_Posix_SysconfName__SC_USER_GROUPS; return 0;}
+#endif /* ndef _SC_USER_GROUPS */
+#ifdef _SC_USER_GROUPS_R
+	if (x == _SC_USER_GROUPS_R)
+		{*r = Mono_Posix_SysconfName__SC_USER_GROUPS_R; return 0;}
+#endif /* ndef _SC_USER_GROUPS_R */
+#ifdef _SC_USHRT_MAX
+	if (x == _SC_USHRT_MAX)
+		{*r = Mono_Posix_SysconfName__SC_USHRT_MAX; return 0;}
+#endif /* ndef _SC_USHRT_MAX */
+#ifdef _SC_V6_ILP32_OFF32
+	if (x == _SC_V6_ILP32_OFF32)
+		{*r = Mono_Posix_SysconfName__SC_V6_ILP32_OFF32; return 0;}
+#endif /* ndef _SC_V6_ILP32_OFF32 */
+#ifdef _SC_V6_ILP32_OFFBIG
+	if (x == _SC_V6_ILP32_OFFBIG)
+		{*r = Mono_Posix_SysconfName__SC_V6_ILP32_OFFBIG; return 0;}
+#endif /* ndef _SC_V6_ILP32_OFFBIG */
+#ifdef _SC_V6_LP64_OFF64
+	if (x == _SC_V6_LP64_OFF64)
+		{*r = Mono_Posix_SysconfName__SC_V6_LP64_OFF64; return 0;}
+#endif /* ndef _SC_V6_LP64_OFF64 */
+#ifdef _SC_V6_LPBIG_OFFBIG
+	if (x == _SC_V6_LPBIG_OFFBIG)
+		{*r = Mono_Posix_SysconfName__SC_V6_LPBIG_OFFBIG; return 0;}
+#endif /* ndef _SC_V6_LPBIG_OFFBIG */
+#ifdef _SC_VERSION
+	if (x == _SC_VERSION)
+		{*r = Mono_Posix_SysconfName__SC_VERSION; return 0;}
+#endif /* ndef _SC_VERSION */
+#ifdef _SC_WORD_BIT
+	if (x == _SC_WORD_BIT)
+		{*r = Mono_Posix_SysconfName__SC_WORD_BIT; return 0;}
+#endif /* ndef _SC_WORD_BIT */
+#ifdef _SC_XBS5_ILP32_OFF32
+	if (x == _SC_XBS5_ILP32_OFF32)
+		{*r = Mono_Posix_SysconfName__SC_XBS5_ILP32_OFF32; return 0;}
+#endif /* ndef _SC_XBS5_ILP32_OFF32 */
+#ifdef _SC_XBS5_ILP32_OFFBIG
+	if (x == _SC_XBS5_ILP32_OFFBIG)
+		{*r = Mono_Posix_SysconfName__SC_XBS5_ILP32_OFFBIG; return 0;}
+#endif /* ndef _SC_XBS5_ILP32_OFFBIG */
+#ifdef _SC_XBS5_LP64_OFF64
+	if (x == _SC_XBS5_LP64_OFF64)
+		{*r = Mono_Posix_SysconfName__SC_XBS5_LP64_OFF64; return 0;}
+#endif /* ndef _SC_XBS5_LP64_OFF64 */
+#ifdef _SC_XBS5_LPBIG_OFFBIG
+	if (x == _SC_XBS5_LPBIG_OFFBIG)
+		{*r = Mono_Posix_SysconfName__SC_XBS5_LPBIG_OFFBIG; return 0;}
+#endif /* ndef _SC_XBS5_LPBIG_OFFBIG */
+#ifdef _SC_XOPEN_CRYPT
+	if (x == _SC_XOPEN_CRYPT)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_CRYPT; return 0;}
+#endif /* ndef _SC_XOPEN_CRYPT */
+#ifdef _SC_XOPEN_ENH_I18N
+	if (x == _SC_XOPEN_ENH_I18N)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_ENH_I18N; return 0;}
+#endif /* ndef _SC_XOPEN_ENH_I18N */
+#ifdef _SC_XOPEN_LEGACY
+	if (x == _SC_XOPEN_LEGACY)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_LEGACY; return 0;}
+#endif /* ndef _SC_XOPEN_LEGACY */
+#ifdef _SC_XOPEN_REALTIME
+	if (x == _SC_XOPEN_REALTIME)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_REALTIME; return 0;}
+#endif /* ndef _SC_XOPEN_REALTIME */
+#ifdef _SC_XOPEN_REALTIME_THREADS
+	if (x == _SC_XOPEN_REALTIME_THREADS)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_REALTIME_THREADS; return 0;}
+#endif /* ndef _SC_XOPEN_REALTIME_THREADS */
+#ifdef _SC_XOPEN_SHM
+	if (x == _SC_XOPEN_SHM)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_SHM; return 0;}
+#endif /* ndef _SC_XOPEN_SHM */
+#ifdef _SC_XOPEN_UNIX
+	if (x == _SC_XOPEN_UNIX)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_UNIX; return 0;}
+#endif /* ndef _SC_XOPEN_UNIX */
+#ifdef _SC_XOPEN_VERSION
+	if (x == _SC_XOPEN_VERSION)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_VERSION; return 0;}
+#endif /* ndef _SC_XOPEN_VERSION */
+#ifdef _SC_XOPEN_XCU_VERSION
+	if (x == _SC_XOPEN_XCU_VERSION)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_XCU_VERSION; return 0;}
+#endif /* ndef _SC_XOPEN_XCU_VERSION */
+#ifdef _SC_XOPEN_XPG2
+	if (x == _SC_XOPEN_XPG2)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_XPG2; return 0;}
+#endif /* ndef _SC_XOPEN_XPG2 */
+#ifdef _SC_XOPEN_XPG3
+	if (x == _SC_XOPEN_XPG3)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_XPG3; return 0;}
+#endif /* ndef _SC_XOPEN_XPG3 */
+#ifdef _SC_XOPEN_XPG4
+	if (x == _SC_XOPEN_XPG4)
+		{*r = Mono_Posix_SysconfName__SC_XOPEN_XPG4; return 0;}
+#endif /* ndef _SC_XOPEN_XPG4 */
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_FromSyslogFacility (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if (x == Mono_Posix_SyslogFacility_LOG_AUTH)
+#ifdef LOG_AUTH
+		{*r = LOG_AUTH; return 0;}
+#else /* def LOG_AUTH */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_AUTH */
+	if (x == Mono_Posix_SyslogFacility_LOG_AUTHPRIV)
+#ifdef LOG_AUTHPRIV
+		{*r = LOG_AUTHPRIV; return 0;}
+#else /* def LOG_AUTHPRIV */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_AUTHPRIV */
+	if (x == Mono_Posix_SyslogFacility_LOG_CRON)
+#ifdef LOG_CRON
+		{*r = LOG_CRON; return 0;}
+#else /* def LOG_CRON */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_CRON */
+	if (x == Mono_Posix_SyslogFacility_LOG_DAEMON)
+#ifdef LOG_DAEMON
+		{*r = LOG_DAEMON; return 0;}
+#else /* def LOG_DAEMON */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_DAEMON */
+	if (x == Mono_Posix_SyslogFacility_LOG_FTP)
+#ifdef LOG_FTP
+		{*r = LOG_FTP; return 0;}
+#else /* def LOG_FTP */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_FTP */
+	if (x == Mono_Posix_SyslogFacility_LOG_KERN)
+#ifdef LOG_KERN
+		{*r = LOG_KERN; return 0;}
+#else /* def LOG_KERN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_KERN */
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL0)
+#ifdef LOG_LOCAL0
+		{*r = LOG_LOCAL0; return 0;}
+#else /* def LOG_LOCAL0 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_LOCAL0 */
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL1)
+#ifdef LOG_LOCAL1
+		{*r = LOG_LOCAL1; return 0;}
+#else /* def LOG_LOCAL1 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_LOCAL1 */
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL2)
+#ifdef LOG_LOCAL2
+		{*r = LOG_LOCAL2; return 0;}
+#else /* def LOG_LOCAL2 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_LOCAL2 */
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL3)
+#ifdef LOG_LOCAL3
+		{*r = LOG_LOCAL3; return 0;}
+#else /* def LOG_LOCAL3 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_LOCAL3 */
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL4)
+#ifdef LOG_LOCAL4
+		{*r = LOG_LOCAL4; return 0;}
+#else /* def LOG_LOCAL4 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_LOCAL4 */
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL5)
+#ifdef LOG_LOCAL5
+		{*r = LOG_LOCAL5; return 0;}
+#else /* def LOG_LOCAL5 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_LOCAL5 */
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL6)
+#ifdef LOG_LOCAL6
+		{*r = LOG_LOCAL6; return 0;}
+#else /* def LOG_LOCAL6 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_LOCAL6 */
+	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL7)
+#ifdef LOG_LOCAL7
+		{*r = LOG_LOCAL7; return 0;}
+#else /* def LOG_LOCAL7 */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_LOCAL7 */
+	if (x == Mono_Posix_SyslogFacility_LOG_LPR)
+#ifdef LOG_LPR
+		{*r = LOG_LPR; return 0;}
+#else /* def LOG_LPR */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_LPR */
+	if (x == Mono_Posix_SyslogFacility_LOG_MAIL)
+#ifdef LOG_MAIL
+		{*r = LOG_MAIL; return 0;}
+#else /* def LOG_MAIL */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_MAIL */
+	if (x == Mono_Posix_SyslogFacility_LOG_NEWS)
+#ifdef LOG_NEWS
+		{*r = LOG_NEWS; return 0;}
+#else /* def LOG_NEWS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_NEWS */
+	if (x == Mono_Posix_SyslogFacility_LOG_SYSLOG)
+#ifdef LOG_SYSLOG
+		{*r = LOG_SYSLOG; return 0;}
+#else /* def LOG_SYSLOG */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_SYSLOG */
+	if (x == Mono_Posix_SyslogFacility_LOG_USER)
+#ifdef LOG_USER
+		{*r = LOG_USER; return 0;}
+#else /* def LOG_USER */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_USER */
+	/* Mono_Posix_SyslogFacility_LOG_USRE is obsolete; ignoring */
+	if (x == Mono_Posix_SyslogFacility_LOG_UUCP)
+#ifdef LOG_UUCP
+		{*r = LOG_UUCP; return 0;}
+#else /* def LOG_UUCP */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_UUCP */
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_ToSyslogFacility (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef LOG_AUTH
+	if (x == LOG_AUTH)
+		{*r = Mono_Posix_SyslogFacility_LOG_AUTH; return 0;}
+#endif /* ndef LOG_AUTH */
+#ifdef LOG_AUTHPRIV
+	if (x == LOG_AUTHPRIV)
+		{*r = Mono_Posix_SyslogFacility_LOG_AUTHPRIV; return 0;}
+#endif /* ndef LOG_AUTHPRIV */
+#ifdef LOG_CRON
+	if (x == LOG_CRON)
+		{*r = Mono_Posix_SyslogFacility_LOG_CRON; return 0;}
+#endif /* ndef LOG_CRON */
+#ifdef LOG_DAEMON
+	if (x == LOG_DAEMON)
+		{*r = Mono_Posix_SyslogFacility_LOG_DAEMON; return 0;}
+#endif /* ndef LOG_DAEMON */
+#ifdef LOG_FTP
+	if (x == LOG_FTP)
+		{*r = Mono_Posix_SyslogFacility_LOG_FTP; return 0;}
+#endif /* ndef LOG_FTP */
+#ifdef LOG_KERN
+	if (x == LOG_KERN)
+		{*r = Mono_Posix_SyslogFacility_LOG_KERN; return 0;}
+#endif /* ndef LOG_KERN */
+#ifdef LOG_LOCAL0
+	if (x == LOG_LOCAL0)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL0; return 0;}
+#endif /* ndef LOG_LOCAL0 */
+#ifdef LOG_LOCAL1
+	if (x == LOG_LOCAL1)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL1; return 0;}
+#endif /* ndef LOG_LOCAL1 */
+#ifdef LOG_LOCAL2
+	if (x == LOG_LOCAL2)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL2; return 0;}
+#endif /* ndef LOG_LOCAL2 */
+#ifdef LOG_LOCAL3
+	if (x == LOG_LOCAL3)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL3; return 0;}
+#endif /* ndef LOG_LOCAL3 */
+#ifdef LOG_LOCAL4
+	if (x == LOG_LOCAL4)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL4; return 0;}
+#endif /* ndef LOG_LOCAL4 */
+#ifdef LOG_LOCAL5
+	if (x == LOG_LOCAL5)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL5; return 0;}
+#endif /* ndef LOG_LOCAL5 */
+#ifdef LOG_LOCAL6
+	if (x == LOG_LOCAL6)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL6; return 0;}
+#endif /* ndef LOG_LOCAL6 */
+#ifdef LOG_LOCAL7
+	if (x == LOG_LOCAL7)
+		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL7; return 0;}
+#endif /* ndef LOG_LOCAL7 */
+#ifdef LOG_LPR
+	if (x == LOG_LPR)
+		{*r = Mono_Posix_SyslogFacility_LOG_LPR; return 0;}
+#endif /* ndef LOG_LPR */
+#ifdef LOG_MAIL
+	if (x == LOG_MAIL)
+		{*r = Mono_Posix_SyslogFacility_LOG_MAIL; return 0;}
+#endif /* ndef LOG_MAIL */
+#ifdef LOG_NEWS
+	if (x == LOG_NEWS)
+		{*r = Mono_Posix_SyslogFacility_LOG_NEWS; return 0;}
+#endif /* ndef LOG_NEWS */
+#ifdef LOG_SYSLOG
+	if (x == LOG_SYSLOG)
+		{*r = Mono_Posix_SyslogFacility_LOG_SYSLOG; return 0;}
+#endif /* ndef LOG_SYSLOG */
+#ifdef LOG_USER
+	if (x == LOG_USER)
+		{*r = Mono_Posix_SyslogFacility_LOG_USER; return 0;}
+#endif /* ndef LOG_USER */
+#ifdef LOG_USRE
+	if (x == LOG_USRE)
+		{*r = Mono_Posix_SyslogFacility_LOG_USRE; return 0;}
+#endif /* ndef LOG_USRE */
+#ifdef LOG_UUCP
+	if (x == LOG_UUCP)
+		{*r = Mono_Posix_SyslogFacility_LOG_UUCP; return 0;}
+#endif /* ndef LOG_UUCP */
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_FromSyslogLevel (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if (x == Mono_Posix_SyslogLevel_LOG_ALERT)
+#ifdef LOG_ALERT
+		{*r = LOG_ALERT; return 0;}
+#else /* def LOG_ALERT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_ALERT */
+	if (x == Mono_Posix_SyslogLevel_LOG_CRIT)
+#ifdef LOG_CRIT
+		{*r = LOG_CRIT; return 0;}
+#else /* def LOG_CRIT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_CRIT */
+	if (x == Mono_Posix_SyslogLevel_LOG_DEBUG)
+#ifdef LOG_DEBUG
+		{*r = LOG_DEBUG; return 0;}
+#else /* def LOG_DEBUG */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_DEBUG */
+	if (x == Mono_Posix_SyslogLevel_LOG_EMERG)
+#ifdef LOG_EMERG
+		{*r = LOG_EMERG; return 0;}
+#else /* def LOG_EMERG */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_EMERG */
+	if (x == Mono_Posix_SyslogLevel_LOG_ERR)
+#ifdef LOG_ERR
+		{*r = LOG_ERR; return 0;}
+#else /* def LOG_ERR */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_ERR */
+	if (x == Mono_Posix_SyslogLevel_LOG_INFO)
+#ifdef LOG_INFO
+		{*r = LOG_INFO; return 0;}
+#else /* def LOG_INFO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_INFO */
+	if (x == Mono_Posix_SyslogLevel_LOG_NOTICE)
+#ifdef LOG_NOTICE
+		{*r = LOG_NOTICE; return 0;}
+#else /* def LOG_NOTICE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_NOTICE */
+	if (x == Mono_Posix_SyslogLevel_LOG_WARNING)
+#ifdef LOG_WARNING
+		{*r = LOG_WARNING; return 0;}
+#else /* def LOG_WARNING */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_WARNING */
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_ToSyslogLevel (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef LOG_ALERT
+	if (x == LOG_ALERT)
+		{*r = Mono_Posix_SyslogLevel_LOG_ALERT; return 0;}
+#endif /* ndef LOG_ALERT */
+#ifdef LOG_CRIT
+	if (x == LOG_CRIT)
+		{*r = Mono_Posix_SyslogLevel_LOG_CRIT; return 0;}
+#endif /* ndef LOG_CRIT */
+#ifdef LOG_DEBUG
+	if (x == LOG_DEBUG)
+		{*r = Mono_Posix_SyslogLevel_LOG_DEBUG; return 0;}
+#endif /* ndef LOG_DEBUG */
+#ifdef LOG_EMERG
+	if (x == LOG_EMERG)
+		{*r = Mono_Posix_SyslogLevel_LOG_EMERG; return 0;}
+#endif /* ndef LOG_EMERG */
+#ifdef LOG_ERR
+	if (x == LOG_ERR)
+		{*r = Mono_Posix_SyslogLevel_LOG_ERR; return 0;}
+#endif /* ndef LOG_ERR */
+#ifdef LOG_INFO
+	if (x == LOG_INFO)
+		{*r = Mono_Posix_SyslogLevel_LOG_INFO; return 0;}
+#endif /* ndef LOG_INFO */
+#ifdef LOG_NOTICE
+	if (x == LOG_NOTICE)
+		{*r = Mono_Posix_SyslogLevel_LOG_NOTICE; return 0;}
+#endif /* ndef LOG_NOTICE */
+#ifdef LOG_WARNING
+	if (x == LOG_WARNING)
+		{*r = Mono_Posix_SyslogLevel_LOG_WARNING; return 0;}
+#endif /* ndef LOG_WARNING */
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_FromSyslogOptions (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if ((x & Mono_Posix_SyslogOptions_LOG_CONS) == Mono_Posix_SyslogOptions_LOG_CONS)
+#ifdef LOG_CONS
+		*r |= LOG_CONS;
+#else /* def LOG_CONS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_CONS */
+	if ((x & Mono_Posix_SyslogOptions_LOG_NDELAY) == Mono_Posix_SyslogOptions_LOG_NDELAY)
+#ifdef LOG_NDELAY
+		*r |= LOG_NDELAY;
+#else /* def LOG_NDELAY */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_NDELAY */
+	if ((x & Mono_Posix_SyslogOptions_LOG_NOWAIT) == Mono_Posix_SyslogOptions_LOG_NOWAIT)
+#ifdef LOG_NOWAIT
+		*r |= LOG_NOWAIT;
+#else /* def LOG_NOWAIT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_NOWAIT */
+	if ((x & Mono_Posix_SyslogOptions_LOG_ODELAY) == Mono_Posix_SyslogOptions_LOG_ODELAY)
+#ifdef LOG_ODELAY
+		*r |= LOG_ODELAY;
+#else /* def LOG_ODELAY */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_ODELAY */
+	if ((x & Mono_Posix_SyslogOptions_LOG_PERROR) == Mono_Posix_SyslogOptions_LOG_PERROR)
+#ifdef LOG_PERROR
+		*r |= LOG_PERROR;
+#else /* def LOG_PERROR */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_PERROR */
+	if ((x & Mono_Posix_SyslogOptions_LOG_PID) == Mono_Posix_SyslogOptions_LOG_PID)
+#ifdef LOG_PID
+		*r |= LOG_PID;
+#else /* def LOG_PID */
+		{errno = EINVAL; return -1;}
+#endif /* ndef LOG_PID */
+	return 0;
+}
+
+int Mono_Posix_ToSyslogOptions (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef LOG_CONS
+	if ((x & LOG_CONS) == LOG_CONS)
+		*r |= Mono_Posix_SyslogOptions_LOG_CONS;
+#endif /* ndef LOG_CONS */
+#ifdef LOG_NDELAY
+	if ((x & LOG_NDELAY) == LOG_NDELAY)
+		*r |= Mono_Posix_SyslogOptions_LOG_NDELAY;
+#endif /* ndef LOG_NDELAY */
+#ifdef LOG_NOWAIT
+	if ((x & LOG_NOWAIT) == LOG_NOWAIT)
+		*r |= Mono_Posix_SyslogOptions_LOG_NOWAIT;
+#endif /* ndef LOG_NOWAIT */
+#ifdef LOG_ODELAY
+	if ((x & LOG_ODELAY) == LOG_ODELAY)
+		*r |= Mono_Posix_SyslogOptions_LOG_ODELAY;
+#endif /* ndef LOG_ODELAY */
+#ifdef LOG_PERROR
+	if ((x & LOG_PERROR) == LOG_PERROR)
+		*r |= Mono_Posix_SyslogOptions_LOG_PERROR;
+#endif /* ndef LOG_PERROR */
+#ifdef LOG_PID
+	if ((x & LOG_PID) == LOG_PID)
+		*r |= Mono_Posix_SyslogOptions_LOG_PID;
+#endif /* ndef LOG_PID */
+	return 0;
+}
+
+int Mono_Posix_FromWaitOptions (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if ((x & Mono_Posix_WaitOptions_WNOHANG) == Mono_Posix_WaitOptions_WNOHANG)
+#ifdef WNOHANG
+		*r |= WNOHANG;
+#else /* def WNOHANG */
+		{errno = EINVAL; return -1;}
+#endif /* ndef WNOHANG */
+	if ((x & Mono_Posix_WaitOptions_WUNTRACED) == Mono_Posix_WaitOptions_WUNTRACED)
+#ifdef WUNTRACED
+		*r |= WUNTRACED;
+#else /* def WUNTRACED */
+		{errno = EINVAL; return -1;}
+#endif /* ndef WUNTRACED */
+	return 0;
+}
+
+int Mono_Posix_ToWaitOptions (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef WNOHANG
+	if ((x & WNOHANG) == WNOHANG)
+		*r |= Mono_Posix_WaitOptions_WNOHANG;
+#endif /* ndef WNOHANG */
+#ifdef WUNTRACED
+	if ((x & WUNTRACED) == WUNTRACED)
+		*r |= Mono_Posix_WaitOptions_WUNTRACED;
+#endif /* ndef WUNTRACED */
+	return 0;
+}
+
+int Mono_Posix_FromXattrFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if ((x & Mono_Posix_XattrFlags_XATTR_AUTO) == Mono_Posix_XattrFlags_XATTR_AUTO)
+#ifdef XATTR_AUTO
+		*r |= XATTR_AUTO;
+#else /* def XATTR_AUTO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef XATTR_AUTO */
+	if ((x & Mono_Posix_XattrFlags_XATTR_CREATE) == Mono_Posix_XattrFlags_XATTR_CREATE)
+#ifdef XATTR_CREATE
+		*r |= XATTR_CREATE;
+#else /* def XATTR_CREATE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef XATTR_CREATE */
+	if ((x & Mono_Posix_XattrFlags_XATTR_REPLACE) == Mono_Posix_XattrFlags_XATTR_REPLACE)
+#ifdef XATTR_REPLACE
+		*r |= XATTR_REPLACE;
+#else /* def XATTR_REPLACE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef XATTR_REPLACE */
+	return 0;
+}
+
+int Mono_Posix_ToXattrFlags (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef XATTR_AUTO
+	if ((x & XATTR_AUTO) == XATTR_AUTO)
+		*r |= Mono_Posix_XattrFlags_XATTR_AUTO;
+#endif /* ndef XATTR_AUTO */
+#ifdef XATTR_CREATE
+	if ((x & XATTR_CREATE) == XATTR_CREATE)
+		*r |= Mono_Posix_XattrFlags_XATTR_CREATE;
+#endif /* ndef XATTR_CREATE */
+#ifdef XATTR_REPLACE
+	if ((x & XATTR_REPLACE) == XATTR_REPLACE)
+		*r |= Mono_Posix_XattrFlags_XATTR_REPLACE;
+#endif /* ndef XATTR_REPLACE */
+	return 0;
+}
+
+int Mono_Posix_FromPathConf (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+	if (x == Mono_Posix_PathConf__PC_2_SYMLINKS)
+#ifdef _PC_2_SYMLINKS
+		{*r = _PC_2_SYMLINKS; return 0;}
+#else /* def _PC_2_SYMLINKS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_2_SYMLINKS */
+	if (x == Mono_Posix_PathConf__PC_ALLOC_SIZE_MIN)
+#ifdef _PC_ALLOC_SIZE_MIN
+		{*r = _PC_ALLOC_SIZE_MIN; return 0;}
+#else /* def _PC_ALLOC_SIZE_MIN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_ALLOC_SIZE_MIN */
+	if (x == Mono_Posix_PathConf__PC_ASYNC_IO)
+#ifdef _PC_ASYNC_IO
+		{*r = _PC_ASYNC_IO; return 0;}
+#else /* def _PC_ASYNC_IO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_ASYNC_IO */
+	if (x == Mono_Posix_PathConf__PC_CHOWN_RESTRICTED)
+#ifdef _PC_CHOWN_RESTRICTED
+		{*r = _PC_CHOWN_RESTRICTED; return 0;}
+#else /* def _PC_CHOWN_RESTRICTED */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_CHOWN_RESTRICTED */
+	if (x == Mono_Posix_PathConf__PC_FILESIZEBITS)
+#ifdef _PC_FILESIZEBITS
+		{*r = _PC_FILESIZEBITS; return 0;}
+#else /* def _PC_FILESIZEBITS */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_FILESIZEBITS */
+	if (x == Mono_Posix_PathConf__PC_LINK_MAX)
+#ifdef _PC_LINK_MAX
+		{*r = _PC_LINK_MAX; return 0;}
+#else /* def _PC_LINK_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_LINK_MAX */
+	if (x == Mono_Posix_PathConf__PC_MAX_CANON)
+#ifdef _PC_MAX_CANON
+		{*r = _PC_MAX_CANON; return 0;}
+#else /* def _PC_MAX_CANON */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_MAX_CANON */
+	if (x == Mono_Posix_PathConf__PC_MAX_INPUT)
+#ifdef _PC_MAX_INPUT
+		{*r = _PC_MAX_INPUT; return 0;}
+#else /* def _PC_MAX_INPUT */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_MAX_INPUT */
+	if (x == Mono_Posix_PathConf__PC_NAME_MAX)
+#ifdef _PC_NAME_MAX
+		{*r = _PC_NAME_MAX; return 0;}
+#else /* def _PC_NAME_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_NAME_MAX */
+	if (x == Mono_Posix_PathConf__PC_NO_TRUNC)
+#ifdef _PC_NO_TRUNC
+		{*r = _PC_NO_TRUNC; return 0;}
+#else /* def _PC_NO_TRUNC */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_NO_TRUNC */
+	if (x == Mono_Posix_PathConf__PC_PATH_MAX)
+#ifdef _PC_PATH_MAX
+		{*r = _PC_PATH_MAX; return 0;}
+#else /* def _PC_PATH_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_PATH_MAX */
+	if (x == Mono_Posix_PathConf__PC_PIPE_BUF)
+#ifdef _PC_PIPE_BUF
+		{*r = _PC_PIPE_BUF; return 0;}
+#else /* def _PC_PIPE_BUF */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_PIPE_BUF */
+	if (x == Mono_Posix_PathConf__PC_PRIO_IO)
+#ifdef _PC_PRIO_IO
+		{*r = _PC_PRIO_IO; return 0;}
+#else /* def _PC_PRIO_IO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_PRIO_IO */
+	if (x == Mono_Posix_PathConf__PC_REC_INCR_XFER_SIZE)
+#ifdef _PC_REC_INCR_XFER_SIZE
+		{*r = _PC_REC_INCR_XFER_SIZE; return 0;}
+#else /* def _PC_REC_INCR_XFER_SIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_REC_INCR_XFER_SIZE */
+	if (x == Mono_Posix_PathConf__PC_REC_MAX_XFER_SIZE)
+#ifdef _PC_REC_MAX_XFER_SIZE
+		{*r = _PC_REC_MAX_XFER_SIZE; return 0;}
+#else /* def _PC_REC_MAX_XFER_SIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_REC_MAX_XFER_SIZE */
+	if (x == Mono_Posix_PathConf__PC_REC_MIN_XFER_SIZE)
+#ifdef _PC_REC_MIN_XFER_SIZE
+		{*r = _PC_REC_MIN_XFER_SIZE; return 0;}
+#else /* def _PC_REC_MIN_XFER_SIZE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_REC_MIN_XFER_SIZE */
+	if (x == Mono_Posix_PathConf__PC_REC_XFER_ALIGN)
+#ifdef _PC_REC_XFER_ALIGN
+		{*r = _PC_REC_XFER_ALIGN; return 0;}
+#else /* def _PC_REC_XFER_ALIGN */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_REC_XFER_ALIGN */
+	if (x == Mono_Posix_PathConf__PC_SOCK_MAXBUF)
+#ifdef _PC_SOCK_MAXBUF
+		{*r = _PC_SOCK_MAXBUF; return 0;}
+#else /* def _PC_SOCK_MAXBUF */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_SOCK_MAXBUF */
+	if (x == Mono_Posix_PathConf__PC_SYMLINK_MAX)
+#ifdef _PC_SYMLINK_MAX
+		{*r = _PC_SYMLINK_MAX; return 0;}
+#else /* def _PC_SYMLINK_MAX */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_SYMLINK_MAX */
+	if (x == Mono_Posix_PathConf__PC_SYNC_IO)
+#ifdef _PC_SYNC_IO
+		{*r = _PC_SYNC_IO; return 0;}
+#else /* def _PC_SYNC_IO */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_SYNC_IO */
+	if (x == Mono_Posix_PathConf__PC_VDISABLE)
+#ifdef _PC_VDISABLE
+		{*r = _PC_VDISABLE; return 0;}
+#else /* def _PC_VDISABLE */
+		{errno = EINVAL; return -1;}
+#endif /* ndef _PC_VDISABLE */
+	errno = EINVAL; return -1;
+}
+
+int Mono_Posix_ToPathConf (int x, int *r)
+{
+	*r = 0;
+	if (x == 0)
+		return 0;
+#ifdef _PC_2_SYMLINKS
+	if (x == _PC_2_SYMLINKS)
+		{*r = Mono_Posix_PathConf__PC_2_SYMLINKS; return 0;}
+#endif /* ndef _PC_2_SYMLINKS */
+#ifdef _PC_ALLOC_SIZE_MIN
+	if (x == _PC_ALLOC_SIZE_MIN)
+		{*r = Mono_Posix_PathConf__PC_ALLOC_SIZE_MIN; return 0;}
+#endif /* ndef _PC_ALLOC_SIZE_MIN */
+#ifdef _PC_ASYNC_IO
+	if (x == _PC_ASYNC_IO)
+		{*r = Mono_Posix_PathConf__PC_ASYNC_IO; return 0;}
+#endif /* ndef _PC_ASYNC_IO */
+#ifdef _PC_CHOWN_RESTRICTED
+	if (x == _PC_CHOWN_RESTRICTED)
+		{*r = Mono_Posix_PathConf__PC_CHOWN_RESTRICTED; return 0;}
+#endif /* ndef _PC_CHOWN_RESTRICTED */
+#ifdef _PC_FILESIZEBITS
+	if (x == _PC_FILESIZEBITS)
+		{*r = Mono_Posix_PathConf__PC_FILESIZEBITS; return 0;}
+#endif /* ndef _PC_FILESIZEBITS */
+#ifdef _PC_LINK_MAX
+	if (x == _PC_LINK_MAX)
+		{*r = Mono_Posix_PathConf__PC_LINK_MAX; return 0;}
+#endif /* ndef _PC_LINK_MAX */
+#ifdef _PC_MAX_CANON
+	if (x == _PC_MAX_CANON)
+		{*r = Mono_Posix_PathConf__PC_MAX_CANON; return 0;}
+#endif /* ndef _PC_MAX_CANON */
+#ifdef _PC_MAX_INPUT
+	if (x == _PC_MAX_INPUT)
+		{*r = Mono_Posix_PathConf__PC_MAX_INPUT; return 0;}
+#endif /* ndef _PC_MAX_INPUT */
+#ifdef _PC_NAME_MAX
+	if (x == _PC_NAME_MAX)
+		{*r = Mono_Posix_PathConf__PC_NAME_MAX; return 0;}
+#endif /* ndef _PC_NAME_MAX */
+#ifdef _PC_NO_TRUNC
+	if (x == _PC_NO_TRUNC)
+		{*r = Mono_Posix_PathConf__PC_NO_TRUNC; return 0;}
+#endif /* ndef _PC_NO_TRUNC */
+#ifdef _PC_PATH_MAX
+	if (x == _PC_PATH_MAX)
+		{*r = Mono_Posix_PathConf__PC_PATH_MAX; return 0;}
+#endif /* ndef _PC_PATH_MAX */
+#ifdef _PC_PIPE_BUF
+	if (x == _PC_PIPE_BUF)
+		{*r = Mono_Posix_PathConf__PC_PIPE_BUF; return 0;}
+#endif /* ndef _PC_PIPE_BUF */
+#ifdef _PC_PRIO_IO
+	if (x == _PC_PRIO_IO)
+		{*r = Mono_Posix_PathConf__PC_PRIO_IO; return 0;}
+#endif /* ndef _PC_PRIO_IO */
+#ifdef _PC_REC_INCR_XFER_SIZE
+	if (x == _PC_REC_INCR_XFER_SIZE)
+		{*r = Mono_Posix_PathConf__PC_REC_INCR_XFER_SIZE; return 0;}
+#endif /* ndef _PC_REC_INCR_XFER_SIZE */
+#ifdef _PC_REC_MAX_XFER_SIZE
+	if (x == _PC_REC_MAX_XFER_SIZE)
+		{*r = Mono_Posix_PathConf__PC_REC_MAX_XFER_SIZE; return 0;}
+#endif /* ndef _PC_REC_MAX_XFER_SIZE */
+#ifdef _PC_REC_MIN_XFER_SIZE
+	if (x == _PC_REC_MIN_XFER_SIZE)
+		{*r = Mono_Posix_PathConf__PC_REC_MIN_XFER_SIZE; return 0;}
+#endif /* ndef _PC_REC_MIN_XFER_SIZE */
+#ifdef _PC_REC_XFER_ALIGN
+	if (x == _PC_REC_XFER_ALIGN)
+		{*r = Mono_Posix_PathConf__PC_REC_XFER_ALIGN; return 0;}
+#endif /* ndef _PC_REC_XFER_ALIGN */
+#ifdef _PC_SOCK_MAXBUF
+	if (x == _PC_SOCK_MAXBUF)
+		{*r = Mono_Posix_PathConf__PC_SOCK_MAXBUF; return 0;}
+#endif /* ndef _PC_SOCK_MAXBUF */
+#ifdef _PC_SYMLINK_MAX
+	if (x == _PC_SYMLINK_MAX)
+		{*r = Mono_Posix_PathConf__PC_SYMLINK_MAX; return 0;}
+#endif /* ndef _PC_SYMLINK_MAX */
+#ifdef _PC_SYNC_IO
+	if (x == _PC_SYNC_IO)
+		{*r = Mono_Posix_PathConf__PC_SYNC_IO; return 0;}
+#endif /* ndef _PC_SYNC_IO */
+#ifdef _PC_VDISABLE
+	if (x == _PC_VDISABLE)
+		{*r = Mono_Posix_PathConf__PC_VDISABLE; return 0;}
+#endif /* ndef _PC_VDISABLE */
 	errno = EINVAL; return -1;
 }
 
@@ -7399,480 +10582,5 @@ int Mono_Posix_ToSysConf (int x, int *r)
 		{*r = Mono_Posix_SysConf__SC_XOPEN_XPG4; return 0;}
 #endif /* ndef _SC_XOPEN_XPG4 */
 	errno = EINVAL; return -1;
-}
-
-int Mono_Posix_FromSyslogFacility (int x, int *r)
-{
-	*r = 0;
-	if (x == 0)
-		return 0;
-	if (x == Mono_Posix_SyslogFacility_LOG_AUTH)
-#ifdef LOG_AUTH
-		{*r = LOG_AUTH; return 0;}
-#else /* def LOG_AUTH */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_AUTH */
-	if (x == Mono_Posix_SyslogFacility_LOG_AUTHPRIV)
-#ifdef LOG_AUTHPRIV
-		{*r = LOG_AUTHPRIV; return 0;}
-#else /* def LOG_AUTHPRIV */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_AUTHPRIV */
-	if (x == Mono_Posix_SyslogFacility_LOG_CRON)
-#ifdef LOG_CRON
-		{*r = LOG_CRON; return 0;}
-#else /* def LOG_CRON */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_CRON */
-	if (x == Mono_Posix_SyslogFacility_LOG_DAEMON)
-#ifdef LOG_DAEMON
-		{*r = LOG_DAEMON; return 0;}
-#else /* def LOG_DAEMON */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_DAEMON */
-	if (x == Mono_Posix_SyslogFacility_LOG_FTP)
-#ifdef LOG_FTP
-		{*r = LOG_FTP; return 0;}
-#else /* def LOG_FTP */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_FTP */
-	if (x == Mono_Posix_SyslogFacility_LOG_KERN)
-#ifdef LOG_KERN
-		{*r = LOG_KERN; return 0;}
-#else /* def LOG_KERN */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_KERN */
-	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL0)
-#ifdef LOG_LOCAL0
-		{*r = LOG_LOCAL0; return 0;}
-#else /* def LOG_LOCAL0 */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_LOCAL0 */
-	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL1)
-#ifdef LOG_LOCAL1
-		{*r = LOG_LOCAL1; return 0;}
-#else /* def LOG_LOCAL1 */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_LOCAL1 */
-	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL2)
-#ifdef LOG_LOCAL2
-		{*r = LOG_LOCAL2; return 0;}
-#else /* def LOG_LOCAL2 */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_LOCAL2 */
-	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL3)
-#ifdef LOG_LOCAL3
-		{*r = LOG_LOCAL3; return 0;}
-#else /* def LOG_LOCAL3 */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_LOCAL3 */
-	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL4)
-#ifdef LOG_LOCAL4
-		{*r = LOG_LOCAL4; return 0;}
-#else /* def LOG_LOCAL4 */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_LOCAL4 */
-	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL5)
-#ifdef LOG_LOCAL5
-		{*r = LOG_LOCAL5; return 0;}
-#else /* def LOG_LOCAL5 */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_LOCAL5 */
-	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL6)
-#ifdef LOG_LOCAL6
-		{*r = LOG_LOCAL6; return 0;}
-#else /* def LOG_LOCAL6 */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_LOCAL6 */
-	if (x == Mono_Posix_SyslogFacility_LOG_LOCAL7)
-#ifdef LOG_LOCAL7
-		{*r = LOG_LOCAL7; return 0;}
-#else /* def LOG_LOCAL7 */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_LOCAL7 */
-	if (x == Mono_Posix_SyslogFacility_LOG_LPR)
-#ifdef LOG_LPR
-		{*r = LOG_LPR; return 0;}
-#else /* def LOG_LPR */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_LPR */
-	if (x == Mono_Posix_SyslogFacility_LOG_MAIL)
-#ifdef LOG_MAIL
-		{*r = LOG_MAIL; return 0;}
-#else /* def LOG_MAIL */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_MAIL */
-	if (x == Mono_Posix_SyslogFacility_LOG_NEWS)
-#ifdef LOG_NEWS
-		{*r = LOG_NEWS; return 0;}
-#else /* def LOG_NEWS */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_NEWS */
-	if (x == Mono_Posix_SyslogFacility_LOG_SYSLOG)
-#ifdef LOG_SYSLOG
-		{*r = LOG_SYSLOG; return 0;}
-#else /* def LOG_SYSLOG */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_SYSLOG */
-	if (x == Mono_Posix_SyslogFacility_LOG_USER)
-#ifdef LOG_USER
-		{*r = LOG_USER; return 0;}
-#else /* def LOG_USER */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_USER */
-	/* Mono_Posix_SyslogFacility_LOG_USRE is obsolete; ignoring */
-	if (x == Mono_Posix_SyslogFacility_LOG_UUCP)
-#ifdef LOG_UUCP
-		{*r = LOG_UUCP; return 0;}
-#else /* def LOG_UUCP */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_UUCP */
-	errno = EINVAL; return -1;
-}
-
-int Mono_Posix_ToSyslogFacility (int x, int *r)
-{
-	*r = 0;
-	if (x == 0)
-		return 0;
-#ifdef LOG_AUTH
-	if (x == LOG_AUTH)
-		{*r = Mono_Posix_SyslogFacility_LOG_AUTH; return 0;}
-#endif /* ndef LOG_AUTH */
-#ifdef LOG_AUTHPRIV
-	if (x == LOG_AUTHPRIV)
-		{*r = Mono_Posix_SyslogFacility_LOG_AUTHPRIV; return 0;}
-#endif /* ndef LOG_AUTHPRIV */
-#ifdef LOG_CRON
-	if (x == LOG_CRON)
-		{*r = Mono_Posix_SyslogFacility_LOG_CRON; return 0;}
-#endif /* ndef LOG_CRON */
-#ifdef LOG_DAEMON
-	if (x == LOG_DAEMON)
-		{*r = Mono_Posix_SyslogFacility_LOG_DAEMON; return 0;}
-#endif /* ndef LOG_DAEMON */
-#ifdef LOG_FTP
-	if (x == LOG_FTP)
-		{*r = Mono_Posix_SyslogFacility_LOG_FTP; return 0;}
-#endif /* ndef LOG_FTP */
-#ifdef LOG_KERN
-	if (x == LOG_KERN)
-		{*r = Mono_Posix_SyslogFacility_LOG_KERN; return 0;}
-#endif /* ndef LOG_KERN */
-#ifdef LOG_LOCAL0
-	if (x == LOG_LOCAL0)
-		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL0; return 0;}
-#endif /* ndef LOG_LOCAL0 */
-#ifdef LOG_LOCAL1
-	if (x == LOG_LOCAL1)
-		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL1; return 0;}
-#endif /* ndef LOG_LOCAL1 */
-#ifdef LOG_LOCAL2
-	if (x == LOG_LOCAL2)
-		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL2; return 0;}
-#endif /* ndef LOG_LOCAL2 */
-#ifdef LOG_LOCAL3
-	if (x == LOG_LOCAL3)
-		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL3; return 0;}
-#endif /* ndef LOG_LOCAL3 */
-#ifdef LOG_LOCAL4
-	if (x == LOG_LOCAL4)
-		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL4; return 0;}
-#endif /* ndef LOG_LOCAL4 */
-#ifdef LOG_LOCAL5
-	if (x == LOG_LOCAL5)
-		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL5; return 0;}
-#endif /* ndef LOG_LOCAL5 */
-#ifdef LOG_LOCAL6
-	if (x == LOG_LOCAL6)
-		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL6; return 0;}
-#endif /* ndef LOG_LOCAL6 */
-#ifdef LOG_LOCAL7
-	if (x == LOG_LOCAL7)
-		{*r = Mono_Posix_SyslogFacility_LOG_LOCAL7; return 0;}
-#endif /* ndef LOG_LOCAL7 */
-#ifdef LOG_LPR
-	if (x == LOG_LPR)
-		{*r = Mono_Posix_SyslogFacility_LOG_LPR; return 0;}
-#endif /* ndef LOG_LPR */
-#ifdef LOG_MAIL
-	if (x == LOG_MAIL)
-		{*r = Mono_Posix_SyslogFacility_LOG_MAIL; return 0;}
-#endif /* ndef LOG_MAIL */
-#ifdef LOG_NEWS
-	if (x == LOG_NEWS)
-		{*r = Mono_Posix_SyslogFacility_LOG_NEWS; return 0;}
-#endif /* ndef LOG_NEWS */
-#ifdef LOG_SYSLOG
-	if (x == LOG_SYSLOG)
-		{*r = Mono_Posix_SyslogFacility_LOG_SYSLOG; return 0;}
-#endif /* ndef LOG_SYSLOG */
-#ifdef LOG_USER
-	if (x == LOG_USER)
-		{*r = Mono_Posix_SyslogFacility_LOG_USER; return 0;}
-#endif /* ndef LOG_USER */
-#ifdef LOG_USRE
-	if (x == LOG_USRE)
-		{*r = Mono_Posix_SyslogFacility_LOG_USRE; return 0;}
-#endif /* ndef LOG_USRE */
-#ifdef LOG_UUCP
-	if (x == LOG_UUCP)
-		{*r = Mono_Posix_SyslogFacility_LOG_UUCP; return 0;}
-#endif /* ndef LOG_UUCP */
-	errno = EINVAL; return -1;
-}
-
-int Mono_Posix_FromSyslogLevel (int x, int *r)
-{
-	*r = 0;
-	if (x == 0)
-		return 0;
-	if (x == Mono_Posix_SyslogLevel_LOG_ALERT)
-#ifdef LOG_ALERT
-		{*r = LOG_ALERT; return 0;}
-#else /* def LOG_ALERT */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_ALERT */
-	if (x == Mono_Posix_SyslogLevel_LOG_CRIT)
-#ifdef LOG_CRIT
-		{*r = LOG_CRIT; return 0;}
-#else /* def LOG_CRIT */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_CRIT */
-	if (x == Mono_Posix_SyslogLevel_LOG_DEBUG)
-#ifdef LOG_DEBUG
-		{*r = LOG_DEBUG; return 0;}
-#else /* def LOG_DEBUG */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_DEBUG */
-	if (x == Mono_Posix_SyslogLevel_LOG_EMERG)
-#ifdef LOG_EMERG
-		{*r = LOG_EMERG; return 0;}
-#else /* def LOG_EMERG */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_EMERG */
-	if (x == Mono_Posix_SyslogLevel_LOG_ERR)
-#ifdef LOG_ERR
-		{*r = LOG_ERR; return 0;}
-#else /* def LOG_ERR */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_ERR */
-	if (x == Mono_Posix_SyslogLevel_LOG_INFO)
-#ifdef LOG_INFO
-		{*r = LOG_INFO; return 0;}
-#else /* def LOG_INFO */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_INFO */
-	if (x == Mono_Posix_SyslogLevel_LOG_NOTICE)
-#ifdef LOG_NOTICE
-		{*r = LOG_NOTICE; return 0;}
-#else /* def LOG_NOTICE */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_NOTICE */
-	if (x == Mono_Posix_SyslogLevel_LOG_WARNING)
-#ifdef LOG_WARNING
-		{*r = LOG_WARNING; return 0;}
-#else /* def LOG_WARNING */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_WARNING */
-	errno = EINVAL; return -1;
-}
-
-int Mono_Posix_ToSyslogLevel (int x, int *r)
-{
-	*r = 0;
-	if (x == 0)
-		return 0;
-#ifdef LOG_ALERT
-	if (x == LOG_ALERT)
-		{*r = Mono_Posix_SyslogLevel_LOG_ALERT; return 0;}
-#endif /* ndef LOG_ALERT */
-#ifdef LOG_CRIT
-	if (x == LOG_CRIT)
-		{*r = Mono_Posix_SyslogLevel_LOG_CRIT; return 0;}
-#endif /* ndef LOG_CRIT */
-#ifdef LOG_DEBUG
-	if (x == LOG_DEBUG)
-		{*r = Mono_Posix_SyslogLevel_LOG_DEBUG; return 0;}
-#endif /* ndef LOG_DEBUG */
-#ifdef LOG_EMERG
-	if (x == LOG_EMERG)
-		{*r = Mono_Posix_SyslogLevel_LOG_EMERG; return 0;}
-#endif /* ndef LOG_EMERG */
-#ifdef LOG_ERR
-	if (x == LOG_ERR)
-		{*r = Mono_Posix_SyslogLevel_LOG_ERR; return 0;}
-#endif /* ndef LOG_ERR */
-#ifdef LOG_INFO
-	if (x == LOG_INFO)
-		{*r = Mono_Posix_SyslogLevel_LOG_INFO; return 0;}
-#endif /* ndef LOG_INFO */
-#ifdef LOG_NOTICE
-	if (x == LOG_NOTICE)
-		{*r = Mono_Posix_SyslogLevel_LOG_NOTICE; return 0;}
-#endif /* ndef LOG_NOTICE */
-#ifdef LOG_WARNING
-	if (x == LOG_WARNING)
-		{*r = Mono_Posix_SyslogLevel_LOG_WARNING; return 0;}
-#endif /* ndef LOG_WARNING */
-	errno = EINVAL; return -1;
-}
-
-int Mono_Posix_FromSyslogOptions (int x, int *r)
-{
-	*r = 0;
-	if (x == 0)
-		return 0;
-	if ((x & Mono_Posix_SyslogOptions_LOG_CONS) == Mono_Posix_SyslogOptions_LOG_CONS)
-#ifdef LOG_CONS
-		*r |= LOG_CONS;
-#else /* def LOG_CONS */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_CONS */
-	if ((x & Mono_Posix_SyslogOptions_LOG_NDELAY) == Mono_Posix_SyslogOptions_LOG_NDELAY)
-#ifdef LOG_NDELAY
-		*r |= LOG_NDELAY;
-#else /* def LOG_NDELAY */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_NDELAY */
-	if ((x & Mono_Posix_SyslogOptions_LOG_NOWAIT) == Mono_Posix_SyslogOptions_LOG_NOWAIT)
-#ifdef LOG_NOWAIT
-		*r |= LOG_NOWAIT;
-#else /* def LOG_NOWAIT */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_NOWAIT */
-	if ((x & Mono_Posix_SyslogOptions_LOG_ODELAY) == Mono_Posix_SyslogOptions_LOG_ODELAY)
-#ifdef LOG_ODELAY
-		*r |= LOG_ODELAY;
-#else /* def LOG_ODELAY */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_ODELAY */
-	if ((x & Mono_Posix_SyslogOptions_LOG_PERROR) == Mono_Posix_SyslogOptions_LOG_PERROR)
-#ifdef LOG_PERROR
-		*r |= LOG_PERROR;
-#else /* def LOG_PERROR */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_PERROR */
-	if ((x & Mono_Posix_SyslogOptions_LOG_PID) == Mono_Posix_SyslogOptions_LOG_PID)
-#ifdef LOG_PID
-		*r |= LOG_PID;
-#else /* def LOG_PID */
-		{errno = EINVAL; return -1;}
-#endif /* ndef LOG_PID */
-	return 0;
-}
-
-int Mono_Posix_ToSyslogOptions (int x, int *r)
-{
-	*r = 0;
-	if (x == 0)
-		return 0;
-#ifdef LOG_CONS
-	if ((x & LOG_CONS) == LOG_CONS)
-		*r |= Mono_Posix_SyslogOptions_LOG_CONS;
-#endif /* ndef LOG_CONS */
-#ifdef LOG_NDELAY
-	if ((x & LOG_NDELAY) == LOG_NDELAY)
-		*r |= Mono_Posix_SyslogOptions_LOG_NDELAY;
-#endif /* ndef LOG_NDELAY */
-#ifdef LOG_NOWAIT
-	if ((x & LOG_NOWAIT) == LOG_NOWAIT)
-		*r |= Mono_Posix_SyslogOptions_LOG_NOWAIT;
-#endif /* ndef LOG_NOWAIT */
-#ifdef LOG_ODELAY
-	if ((x & LOG_ODELAY) == LOG_ODELAY)
-		*r |= Mono_Posix_SyslogOptions_LOG_ODELAY;
-#endif /* ndef LOG_ODELAY */
-#ifdef LOG_PERROR
-	if ((x & LOG_PERROR) == LOG_PERROR)
-		*r |= Mono_Posix_SyslogOptions_LOG_PERROR;
-#endif /* ndef LOG_PERROR */
-#ifdef LOG_PID
-	if ((x & LOG_PID) == LOG_PID)
-		*r |= Mono_Posix_SyslogOptions_LOG_PID;
-#endif /* ndef LOG_PID */
-	return 0;
-}
-
-int Mono_Posix_FromWaitOptions (int x, int *r)
-{
-	*r = 0;
-	if (x == 0)
-		return 0;
-	if ((x & Mono_Posix_WaitOptions_WNOHANG) == Mono_Posix_WaitOptions_WNOHANG)
-#ifdef WNOHANG
-		*r |= WNOHANG;
-#else /* def WNOHANG */
-		{errno = EINVAL; return -1;}
-#endif /* ndef WNOHANG */
-	if ((x & Mono_Posix_WaitOptions_WUNTRACED) == Mono_Posix_WaitOptions_WUNTRACED)
-#ifdef WUNTRACED
-		*r |= WUNTRACED;
-#else /* def WUNTRACED */
-		{errno = EINVAL; return -1;}
-#endif /* ndef WUNTRACED */
-	return 0;
-}
-
-int Mono_Posix_ToWaitOptions (int x, int *r)
-{
-	*r = 0;
-	if (x == 0)
-		return 0;
-#ifdef WNOHANG
-	if ((x & WNOHANG) == WNOHANG)
-		*r |= Mono_Posix_WaitOptions_WNOHANG;
-#endif /* ndef WNOHANG */
-#ifdef WUNTRACED
-	if ((x & WUNTRACED) == WUNTRACED)
-		*r |= Mono_Posix_WaitOptions_WUNTRACED;
-#endif /* ndef WUNTRACED */
-	return 0;
-}
-
-int Mono_Posix_FromXattrFlags (int x, int *r)
-{
-	*r = 0;
-	if (x == 0)
-		return 0;
-	if ((x & Mono_Posix_XattrFlags_XATTR_AUTO) == Mono_Posix_XattrFlags_XATTR_AUTO)
-#ifdef XATTR_AUTO
-		*r |= XATTR_AUTO;
-#else /* def XATTR_AUTO */
-		{errno = EINVAL; return -1;}
-#endif /* ndef XATTR_AUTO */
-	if ((x & Mono_Posix_XattrFlags_XATTR_CREATE) == Mono_Posix_XattrFlags_XATTR_CREATE)
-#ifdef XATTR_CREATE
-		*r |= XATTR_CREATE;
-#else /* def XATTR_CREATE */
-		{errno = EINVAL; return -1;}
-#endif /* ndef XATTR_CREATE */
-	if ((x & Mono_Posix_XattrFlags_XATTR_REPLACE) == Mono_Posix_XattrFlags_XATTR_REPLACE)
-#ifdef XATTR_REPLACE
-		*r |= XATTR_REPLACE;
-#else /* def XATTR_REPLACE */
-		{errno = EINVAL; return -1;}
-#endif /* ndef XATTR_REPLACE */
-	return 0;
-}
-
-int Mono_Posix_ToXattrFlags (int x, int *r)
-{
-	*r = 0;
-	if (x == 0)
-		return 0;
-#ifdef XATTR_AUTO
-	if ((x & XATTR_AUTO) == XATTR_AUTO)
-		*r |= Mono_Posix_XattrFlags_XATTR_AUTO;
-#endif /* ndef XATTR_AUTO */
-#ifdef XATTR_CREATE
-	if ((x & XATTR_CREATE) == XATTR_CREATE)
-		*r |= Mono_Posix_XattrFlags_XATTR_CREATE;
-#endif /* ndef XATTR_CREATE */
-#ifdef XATTR_REPLACE
-	if ((x & XATTR_REPLACE) == XATTR_REPLACE)
-		*r |= Mono_Posix_XattrFlags_XATTR_REPLACE;
-#endif /* ndef XATTR_REPLACE */
-	return 0;
 }
 

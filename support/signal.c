@@ -1,5 +1,10 @@
 /*
  * <signal.h> wrapper functions.
+ *
+ * Authors:
+ *   Jonathan Pryor (jonpryor@vt.edu)
+ *
+ * Copyright (C) 2004-2005 Jonathan Pryor
  */
 
 #include <signal.h>
@@ -34,6 +39,15 @@ Mono_Posix_Stdlib_InvokeSignalHandler (int signum, void *handler)
 	mph_sighandler_t _h = (mph_sighandler_t) handler;
 	_h (signum);
 }
+
+int
+Mono_Posix_Syscall_psignal (int sig, const char* s)
+{
+	errno = 0;
+	psignal (sig, s);
+	return errno == 0 ? 0 : -1;
+}
+
 
 G_END_DECLS
 
