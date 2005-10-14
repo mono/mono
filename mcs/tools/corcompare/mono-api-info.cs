@@ -302,6 +302,28 @@ namespace Mono.AssemblyInfo
 				}
 			}
 
+#if NET_2_0
+			// Generic constraints
+			Type [] gargs = type.GetGenericArguments ();
+			XmlElement ngeneric = (gargs.Length == 0) ? null :
+				document.CreateElement ("generic-type-constraints");
+			foreach (Type garg in gargs) {
+				Type [] csts = garg.GetGenericParameterConstraints ();
+				if (csts.Length == 0 || csts [0] == typeof (object))
+					continue;
+				XmlElement el = document.CreateElement ("generic-type-constraint");
+				el.SetAttribute ("name", garg.ToString ());
+				ngeneric.AppendChild (el);
+				foreach (Type ct in csts) {
+					XmlElement cel = document.CreateElement ("type");
+					cel.AppendChild (document.CreateTextNode (ct.FullName));
+					el.AppendChild (cel);
+				}
+			}
+			if (ngeneric != null && ngeneric.FirstChild != null)
+				nclass.AppendChild (ngeneric);
+#endif
+
 			ArrayList members = new ArrayList ();
 
 			FieldInfo[] fields = GetFields (type);
@@ -702,6 +724,28 @@ namespace Mono.AssemblyInfo
 
 			AttributeData.OutputAttributes (document, p,
 				method.ReturnTypeCustomAttributes.GetCustomAttributes (false));
+#if NET_2_0
+			// Generic constraints
+			Type [] gargs = method.GetGenericArguments ();
+			XmlElement ngeneric = (gargs.Length == 0) ? null :
+				document.CreateElement ("generic-method-constraints");
+			foreach (Type garg in gargs) {
+				Type [] csts = garg.GetGenericParameterConstraints ();
+				if (csts.Length == 0 || csts [0] == typeof (object))
+					continue;
+				XmlElement el = document.CreateElement ("generic-method-constraint");
+				el.SetAttribute ("name", garg.ToString ());
+				ngeneric.AppendChild (el);
+				foreach (Type ct in csts) {
+					XmlElement cel = document.CreateElement ("type");
+					cel.AppendChild (document.CreateTextNode (ct.FullName));
+					el.AppendChild (cel);
+				}
+			}
+			if (ngeneric != null && ngeneric.FirstChild != null)
+				p.AppendChild (ngeneric);
+#endif
+
 		}
 
 		public override bool NoMemberAttributes {

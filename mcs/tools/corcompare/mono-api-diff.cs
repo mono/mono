@@ -292,7 +292,8 @@ namespace Mono.AssemblyCompare
 				string name = n.Attributes ["name"].Value;
 				if (CheckIfAdd (name, n)) {
 					string key = GetNodeKey (name, n);
-					keys.Add (key, name);
+					//keys.Add (key, name);
+					keys [key] = name;
 					LoadExtraData (key, n);
 				}
 			}
@@ -628,6 +629,7 @@ namespace Mono.AssemblyCompare
 		string layout;
 		XMLAttributes attributes;
 		XMLInterfaces interfaces;
+		XMLGenericTypeConstraints genericConstraints;
 		XMLFields fields;
 		XMLConstructors constructors;
 		XMLProperties properties;
@@ -678,6 +680,12 @@ namespace Mono.AssemblyCompare
 			if (child != null && child.Name == "interfaces") {
 				interfaces = new XMLInterfaces ();
 				interfaces.LoadData (child);
+				child = child.NextSibling;
+			}
+
+			if (child != null && child.Name == "generic-type-constraints") {
+				genericConstraints = new XMLGenericTypeConstraints ();
+				genericConstraints.LoadData (child);
 				child = child.NextSibling;
 			}
 
@@ -773,6 +781,14 @@ namespace Mono.AssemblyCompare
 
 				interfaces.CompareTo (doc, parent, oclass.interfaces);
 				counters.AddPartialToPartial (interfaces.Counters);
+			}
+
+			if (genericConstraints != null || oclass.genericConstraints != null) {
+				if (genericConstraints == null)
+					genericConstraints = new XMLGenericTypeConstraints ();
+
+				genericConstraints.CompareTo (doc, parent, oclass.genericConstraints);
+				counters.AddPartialToPartial (genericConstraints.Counters);
 			}
 
 			if (fields != null || oclass.fields != null) {
@@ -1166,6 +1182,28 @@ namespace Mono.AssemblyCompare
 		}
 	}
 
+	class XMLGenericTypeConstraints : XMLNameGroup
+	{
+		public override string GroupName {
+			get { return "generic-type-constraints"; }
+		}
+
+		public override string Name {
+			get { return "generic-type-constraint"; }
+		}
+	}
+
+	class XMLGenericMethodConstraints : XMLNameGroup
+	{
+		public override string GroupName {
+			get { return "generic-method-constraints"; }
+		}
+
+		public override string Name {
+			get { return "generic-method-constraint"; }
+		}
+	}
+
 	abstract class XMLMember : XMLNameGroup
 	{
 		Hashtable attributeMap;
@@ -1542,6 +1580,7 @@ namespace Mono.AssemblyCompare
 	{
 		Hashtable returnTypes;
 		Hashtable parameters;
+		Hashtable genericConstraints;
 
 		protected override void LoadExtraData (string name, XmlNode node)
 		{
@@ -1562,6 +1601,15 @@ namespace Mono.AssemblyCompare
 				parms.LoadData (parametersNode);
 
 				parameters[name] = parms;
+			}
+
+			XmlNode genericNode = node.SelectSingleNode ("generic-method-constraints");
+			if (genericNode != null) {
+				if (genericConstraints == null)
+					genericConstraints = new Hashtable ();
+				XMLGenericMethodConstraints csts = new XMLGenericMethodConstraints ();
+				csts.LoadData (genericNode);
+				genericConstraints [name] = csts;
 			}
 
 			base.LoadExtraData (name, node);

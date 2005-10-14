@@ -227,6 +227,24 @@
 	</xsl:template>
 
 
+	<!-- generic constraints -->
+	<xsl:template match="generic-type-constraints">
+		<xsl:apply-templates select="generic-type-constraint">
+			<xsl:sort select="@name"/>
+		</xsl:apply-templates>
+	</xsl:template>
+
+	<xsl:template match="generic-type-constraint[@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">
+		<DIV>
+			<xsl:call-template name="ELEMENT">
+				<xsl:with-param name="class">w</xsl:with-param>
+			</xsl:call-template>
+			<xsl:if test="not(@presence)">
+				<xsl:apply-templates/>
+			</xsl:if>
+		</DIV>
+	</xsl:template>
+
 
 	<!-- delegate -->
 	<xsl:template match="class[@type='delegate'][@missing_total or @todo_total or @extra_total or @warning_total or @error or @presence]">

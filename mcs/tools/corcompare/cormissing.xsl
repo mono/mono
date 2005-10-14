@@ -92,6 +92,10 @@
 							<TD> <IMG src="cm/r.gif"/> </TD>
 							<TD> Attribute </TD>
 						</TR>
+						<TR>
+							<TD> <IMG src="cm/w.gif" /> </TD>
+							<TD colspan="10"> Generic Constraints</TD>
+						</TR>
 					</TABLE>
 
 				</P>
