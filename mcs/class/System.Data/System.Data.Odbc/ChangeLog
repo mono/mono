@@ -1,5 +1,10 @@
 2005-10-14  Senganal T <tsenganal@novell.com>
 
+	* OdbcColumn.cs : Changed the mapping of OdbcType.Char to string
+	instead of char. Fixes bug #67269
+
+2005-10-14  Senganal T <tsenganal@novell.com>
+
 	* OdbcDataReader.cs: Added Text and NText datatypes to the list
 	of datatypes checked by GetValue () method. Fixes bug #75032
 

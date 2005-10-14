@@ -79,7 +79,7 @@ namespace System.Data.Odbc
 						return typeof(bool);
 					case OdbcType.NChar:
 					case OdbcType.Char:
-						return typeof(char);
+						return typeof(string);
 					case OdbcType.Time:
 					case OdbcType.Timestamp:
 					case OdbcType.DateTime:
