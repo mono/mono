@@ -1,3 +1,8 @@
+2005-10-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* DateTime.cs: Speed up when parsing date time objects by not
+	duplicating cultureinfo arrays.
+
 2005-10-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* Type.cs (GetTypeCode): Applied patch from 

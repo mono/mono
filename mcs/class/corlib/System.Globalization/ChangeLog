@@ -1,3 +1,8 @@
+2005-10-14  Ben Maurer  <bmaurer@ximian.com>
+
+	* DateTimeFormatInfo.cs: Speed up GetAllDateTimePatterns by
+	caching the result and then cloning it.
+
 2005-10-10  Ben Maurer  <bmaurer@ximian.com>
 
 	* DateTimeFormatInfo.cs: Rather than having a + ' ' + b, have a +

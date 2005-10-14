@@ -705,7 +705,7 @@ namespace System
 			bool longYear = false;
 
 			// Try all the patterns
-			if (ParseExact (s, dfi.GetAllDateTimePatterns (), dfi, styles, out result, false, ref longYear))
+			if (ParseExact (s, dfi.GetAllDateTimePatternsInternal (), dfi, styles, out result, false, ref longYear))
 				return result;
 
 			// Try common formats.
@@ -822,7 +822,7 @@ namespace System
 			int valuePos = 0;
 			if (format.Length == 1)
 				format = _GetStandardPattern (format [0], dfi, out useutc, out use_invariant);
-			else if (!exact && format.IndexOf ("GMT") >= 0)
+			else if (!exact && CultureInfo.InvariantCulture.CompareInfo.IndexOf (format, "GMT", CompareOptions.Ordinal) >= 0)
 				useutc = true;
 
 			if ((style & DateTimeStyles.AllowLeadingWhite) != 0) {

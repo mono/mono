@@ -512,8 +512,29 @@ namespace System.Globalization
 		
 		// LAMESPEC: this is not in ECMA specs
 		[MonoTODO ("Not complete depending on GetAllDateTimePatterns(char)")]
-		public string[] GetAllDateTimePatterns()
+		public string[] GetAllDateTimePatterns() 
 		{
+			FillAllDateTimePatterns ();
+			return (string []) all_date_time_patterns.Clone ();
+		}
+
+
+		// Same as above, but with no cloning, because we know that
+		// clients are friendly
+		internal string [] GetAllDateTimePatternsInternal ()
+		{
+			FillAllDateTimePatterns ();
+			return all_date_time_patterns;
+		}
+		
+		// Prevent write reordering
+		volatile string [] all_date_time_patterns;
+		
+		void FillAllDateTimePatterns (){
+
+			if (all_date_time_patterns != null)
+				return;
+			
 			ArrayList al = new ArrayList ();
 			foreach (string s in GetAllDateTimePatterns ('d'))
 				al.Add (s);
@@ -555,7 +576,9 @@ namespace System.Globalization
 			foreach (string s in GetAllDateTimePatterns ('Y'))
 				al.Add (s);
 
-			return al.ToArray (typeof (string)) as string [];
+			// all_date_time_patterns needs to be volatile to prevent
+			// reordering of writes here and still avoid any locking.
+			all_date_time_patterns = (string []) al.ToArray (typeof (string)) as string [];
 		}
 
 		// LAMESPEC: this is not in ECMA specs
