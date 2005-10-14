@@ -55,6 +55,7 @@ namespace System.Windows.Forms {
 		internal int		height;
 		internal Hwnd		parent;
 		internal bool		visible;
+		internal bool		zero_sized;
 		internal Rectangle	invalid;
 		internal bool		expose_pending;
 		internal bool		nc_expose_pending;

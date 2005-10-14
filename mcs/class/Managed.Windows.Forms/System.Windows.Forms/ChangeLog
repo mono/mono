@@ -1,5 +1,15 @@
 2005-10-13  Peter Dennis Bartok  <pbartok@novell.com> 
 
+	* Hwnd.cs: Added field to track if window is mapped
+	* XplatUIX11.cs: 
+	  - Unmap windows if they become 0-size, re-map when 
+	    they are >0 again; fixes #76035
+	  - Re-set our error handler after initializing X11Desktop
+	    to override any error handlers Gtk or whatever was called
+	    may have set.
+
+2005-10-13  Peter Dennis Bartok  <pbartok@novell.com> 
+
 	* CheckedListBox.cs: Removed unused vars
 	* ListView.cs: Fixed signatures
 	* RichTextBox.cs: Removed unused vars

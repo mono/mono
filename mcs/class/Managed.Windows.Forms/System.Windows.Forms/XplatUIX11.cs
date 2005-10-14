@@ -179,6 +179,10 @@ namespace System.Windows.Forms {
 			// X11 Initialization
 			SetDisplay(XOpenDisplay(IntPtr.Zero));
 			X11DesktopColors.Initialize();
+
+			// Handle any upcoming errors; we re-set it here, X11DesktopColor stuff might have stolen it (gtk does)
+			ErrorHandler = new XErrorHandler(HandleError);
+			XSetErrorHandler(ErrorHandler);
 		}
 
 		~XplatUIX11() {
@@ -3379,12 +3383,19 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			// X requires a sanity check for width & height; otherwise it dies
+			if (hwnd.zero_sized && width > 0 && height > 0) {
+				XMapWindow(DisplayHandle, hwnd.whole_window);
+				hwnd.zero_sized = false;
+			}
+
 			if (width < 1) {
-				width = 1;
+				hwnd.zero_sized = true;
+				XUnmapWindow(DisplayHandle, hwnd.whole_window);
 			}
 
 			if (height < 1) {
-				height = 1;
+				hwnd.zero_sized = true;
+				XUnmapWindow(DisplayHandle, hwnd.whole_window);
 			}
 
 			client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle, hwnd.title_style, width, height);
@@ -3396,9 +3407,11 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			lock (XlibLock) {
-				XMoveResizeWindow(DisplayHandle, hwnd.whole_window, x, y, width, height);
-				XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
+			if (!hwnd.zero_sized) {
+				lock (XlibLock) {
+					XMoveResizeWindow(DisplayHandle, hwnd.whole_window, x, y, width, height);
+					XMoveResizeWindow(DisplayHandle, hwnd.client_window, client_rect.X, client_rect.Y, client_rect.Width, client_rect.Height);
+				}
 			}
 
 			// Prevent an old queued ConfigureNotify from setting our width with outdated data, set it now
