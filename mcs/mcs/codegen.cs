@@ -946,7 +946,7 @@ namespace Mono.CSharp {
 	}
 
 
-	public abstract class CommonAssemblyModulClass: Attributable {
+	public abstract class CommonAssemblyModulClass : Attributable {
 		protected CommonAssemblyModulClass ():
 			base (null)
 		{
@@ -988,7 +988,7 @@ namespace Mono.CSharp {
 		}
 	}
                 
-	public class AssemblyClass: CommonAssemblyModulClass {
+	public class AssemblyClass : CommonAssemblyModulClass {
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
 		bool is_cls_compliant;
@@ -1241,7 +1241,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class ModuleClass: CommonAssemblyModulClass {
+	public class ModuleClass : CommonAssemblyModulClass {
 		// TODO: make it private and move all builder based methods here
 		public ModuleBuilder Builder;
 		bool m_module_is_unsafe;

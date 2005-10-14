@@ -1,3 +1,7 @@
+2005-10-14  Miguel de Icaza  <miguel@novell.com>
+
+	* ecore.cs (GetMemberType): Report the correct mapping for the MemberCore
+
 2005-10-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs-parser.jay, expression.cs : CS0214 was missing error location

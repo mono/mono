@@ -1847,6 +1847,10 @@ namespace Mono.CSharp {
 				return "indexer";
 			if (mc is FieldBase)
 				return "field";
+			if (mc is MethodCore)
+				return "method";
+			if (mc is EnumMember)
+				return "enum";
 
 			return "type";
 		}

@@ -8788,7 +8788,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class FixedBufferPtr: Expression {
+	public class FixedBufferPtr : Expression {
 		Expression array;
 
 		public FixedBufferPtr (Expression array, Type array_type, Location l)

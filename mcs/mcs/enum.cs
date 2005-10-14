@@ -19,7 +19,7 @@ using System.Globalization;
 
 namespace Mono.CSharp {
 
-	public class EnumMember: MemberCore, IConstant {
+	public class EnumMember : MemberCore, IConstant {
 		static string[] attribute_targets = new string [] { "field" };
 
 		public FieldBuilder builder;
