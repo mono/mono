@@ -1,3 +1,12 @@
+2005-10-13  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* System.Windows.Forms.dll.resources: Added cursors
+	* build-csproj: Updated to support resources
+	* SWF.csproj: Updated
+	* System.Windows.Forms.dll.sources: Removed blank line to support
+	  build-csproj
+	* System.Windows.Forms_test.dll.sources: Added ControlStyleTest
+
 2005-10-05 Hisham Mardam Bey <hisham.mardambey@gmail.com>
 
         * Created samples/ directory.	

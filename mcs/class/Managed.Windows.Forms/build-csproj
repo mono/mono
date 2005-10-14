@@ -8,6 +8,7 @@
 tr=tr
 OutFile=SWF.csproj
 Source=System.Windows.Forms.dll.sources
+Resource=System.Windows.Forms.dll.resources
 
 SWFhead()
 {
@@ -122,6 +123,24 @@ fi
 done
 }
 
+SWFresourcelist()
+{
+cat $Resource | while read SRC; do
+# Don't do AssemblyInfo, it's got signing requests and such that we don't want
+if [ "x$SRC" != "xAssembly/AssemblyInfo.cs" ] ; then
+SRC=`echo $SRC | $tr '/' '\\\\'`
+SRC=`echo $SRC | $tr '/' '\\\\' | sed 's/-resource://' | awk -F , '{print "                    RelPath = \"" $1 "\"\n                    CustomToolNameSpace = \"" $2 "\""}' | fgrep -v \"\"`
+
+cat << EOT
+                <File
+$SRC
+                    BuildAction = "EmbeddedResource"
+                />
+EOT
+fi
+done
+}
+
 SWFtail()
 {
 cat << EOT
@@ -134,5 +153,6 @@ EOT
 
 SWFhead > $OutFile
 SWFfilelist >> $OutFile
+SWFresourcelist >> $OutFile
 SWFtail >> $OutFile
 

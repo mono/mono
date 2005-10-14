@@ -2029,9 +2029,26 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = ""
-                    SubType = "Code"
-                    BuildAction = "Compile"
+                    RelPath = "resources\System.Windows.Forms.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\System.Windows.Forms.en.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\System.Windows.Forms.de.resources"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\SplitterNS.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.SplitterNS.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\SplitterWE.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.SplitterWE.cur"
+                    BuildAction = "EmbeddedResource"
                 />
             </Include>
         </Files>
