@@ -1,3 +1,8 @@
+2005-10-14  Sureshkumar T  <tsureshkumar@novell.com>
+
+	* DataView.cs: Correct multiple throwing of events. Patch from
+	Marc Haisenko.
+
 2005-10-11  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataView.cs (IBindingList): Implemented methods for IBindingList interface.

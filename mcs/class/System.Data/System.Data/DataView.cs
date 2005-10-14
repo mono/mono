@@ -291,8 +291,10 @@ namespace System.Data
 					sort = value;
 					//sortedColumns = SortableColumn.ParseSortString (dataTable, value, true);
 				}
-				if (!inEndInit)
+				if (!inEndInit) {
 					UpdateIndex (true);
+					OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
+				}
 			}
 		}
 
@@ -325,8 +327,10 @@ namespace System.Data
 					sort = null;
 					rowFilter = null;
 					rowFilterExpr = null;
-					if (!inEndInit)
+					if (!inEndInit) {
 						UpdateIndex (true);
+						OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
+					}
 				}
 			}
 		}
@@ -720,7 +724,7 @@ namespace System.Data
 			Close ();
 			rowCache = new DataRowView [0];
 			Open ();
-			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1 ));
+			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1 ));
 		}
 
 #if NET_2_0
@@ -772,8 +776,6 @@ namespace System.Data
 			else {
 				rowCache = new DataRowView[0];
 			}
-
-			OnListChanged (new ListChangedEventArgs (ListChangedType.Reset, -1, -1));
 		}
 
 		internal virtual IExpression FilterExpression
