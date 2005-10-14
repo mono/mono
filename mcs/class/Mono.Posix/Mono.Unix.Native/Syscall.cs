@@ -1044,6 +1044,18 @@ namespace Mono.Unix.Native {
 	//  (3) The return type SHOULD NOT be changed.  If you want to provide a
 	//      convenience function with a nicer return type, place it into one of
 	//      the Mono.Unix.Unix* wrapper classes, and give it a .NET-styled name.
+	//      - EXCEPTION: No public functions should have a `void' return type.
+	//        `void' return types should be replaced with `int'.
+	//        Rationality: `void'-return functions typically require a
+	//        complicated call sequence, such as clear errno, then call, then
+	//        check errno to see if any errors occurred.  This sequence can't 
+	//        be done safely in managed code, as errno may change as part of 
+	//        the P/Invoke mechanism.
+	//        Instead, add a MonoPosixHelper export which does:
+	//          errno = 0;
+	//          INVOKE SYSCALL;
+	//          return errno == 0 ? 0 : -1;
+	//        This lets managed code check the return value in the usual manner.
 	//  (4) Exceptions SHOULD NOT be thrown.  EXCEPTIONS: 
 	//      - If you're wrapping *broken* methods which make assumptions about 
 	//        input data, such as that an argument refers to N bytes of data.  
@@ -1062,8 +1074,8 @@ namespace Mono.Unix.Native {
 	//    and SyslogLevel arguments.
 	//  - Type names (structures, classes, enumerations) are always PascalCased.
 	//  - Enumerations are named as <MethodName><ArgumentName>, and are located
-	//    in the Mono.Unix namespace.  For readability, if ArgumentName is
-	//    "cmd", use Command instead.  For example, fcntl(2) takes a
+	//    in the Mono.Unix.Native namespace.  For readability, if ArgumentName 
+	//    is "cmd", use Command instead.  For example, fcntl(2) takes a
 	//    FcntlCommand argument.  This naming convention is to provide an
 	//    assocation between an enumeration and where it should be used, and
 	//    allows a single method to accept multiple different enumerations 

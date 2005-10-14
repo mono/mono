@@ -1,5 +1,13 @@
 2005-10-14  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Stdlib.cs, Syscall.cs: Flush naming convention documentation.
+
+2005-10-14  Jonathan Pryor <jonpryor@vt.edu>
+
+	* NativeConvert.generated.cs: Flush currently generated version.
+
+2005-10-14  Jonathan Pryor <jonpryor@vt.edu>
+
 	* make-map.cs: Fix documentation comment.
 	* Stdlib.cs: Fix export of XprintfFunctions.syslog(); make SetLastError()
 	  protected (normal user code shouldn't call it, as it isn't safe); 
