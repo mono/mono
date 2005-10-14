@@ -1,3 +1,19 @@
+2005-10-14  Jonathan Pryor <jonpryor@vt.edu>
+
+	* make-map.cs: Fix documentation comment.
+	* Stdlib.cs: Fix export of XprintfFunctions.syslog(); make SetLastError()
+	  protected (normal user code shouldn't call it, as it isn't safe); 
+	  replace functions which return `void' with functions which return `int'
+	  (adding them to MonoPosixHelper.so as well) -- since users can't reliably
+	  use SetLastError(), they need the "normal" error detection mechanism;
+	  correct the strlen(3) export.
+	* Syscall.cs: 
+	  - s/PathConf/PathconfName/, s/SysConf/SysconfName/, s/ConfStr/ConfstrName/ 
+	    to follow documented enumeration naming conventions.
+	  - replace functions which return `void' with functions which return `int'
+	    (adding them to MonoPosixHelper.so as well) -- since users can't reliably
+	    use SetLastError(), they need the "normal" error detection mechanism;
+
 2005-10-13 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Stdlib.cs: add strlen() to fix the build.

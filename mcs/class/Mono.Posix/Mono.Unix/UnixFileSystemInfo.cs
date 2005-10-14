@@ -48,11 +48,20 @@ namespace Mono.Unix {
 			Refresh (true);
 		}
 
+		[Obsolete ("Use UnixFileSystemInfo (string, Mono.Unix.Native.Stat)")]
 		internal UnixFileSystemInfo (String path, Stat stat)
 		{
 			this.originalPath = path;
 			this.fullPath = UnixPath.GetFullPath (path);
 			this.stat = stat;
+			this.valid = true;
+		}
+
+		internal UnixFileSystemInfo (String path, Native.Stat stat)
+		{
+			this.originalPath = path;
+			this.fullPath = UnixPath.GetFullPath (path);
+			// this.stat = stat;
 			this.valid = true;
 		}
 
@@ -87,11 +96,13 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release.")]
 		public ulong Device {
 			get {AssertValid (); return stat.st_dev;}
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release.")]
 		public ulong Inode {
 			get {AssertValid (); return stat.st_ino;}
 		}
@@ -115,21 +126,25 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release.")]
 		public ulong LinkCount {
 			get {AssertValid (); return (ulong) stat.st_nlink;}
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release.")]
 		public uint OwnerUser {
 			get {AssertValid (); return stat.st_uid;}
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release.")]
 		public uint OwnerGroup {
 			get {AssertValid (); return stat.st_gid;}
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release.")]
 		public ulong DeviceType {
 			get {AssertValid (); return stat.st_rdev;}
 		}
@@ -252,7 +267,7 @@ namespace Mono.Unix {
 		public abstract void Delete ();
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathConf)")]
+		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathconfName)")]
 		public long GetConfigurationValue (PathConf name)
 		{
 			Syscall.SetLastError ((Error) 0);
@@ -263,7 +278,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		public long GetConfigurationValue (Native.PathConf name)
+		public long GetConfigurationValue (Native.PathconfName name)
 		{
 			Syscall.SetLastError ((Error) 0);
 			long r = Native.Syscall.pathconf (FullPath, name);

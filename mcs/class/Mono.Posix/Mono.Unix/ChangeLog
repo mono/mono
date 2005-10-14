@@ -1,3 +1,14 @@
+2005-10-14  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Catalog.cs: Create a constructor and mark it [Obsolete].  It will be made
+	  private after the next release.
+	* UnixFile.cs, UnixStream.cs: Deal with Mono.Unix.Native type name changes.
+	* UnixFileSystemInfo.cs: [Obsolete] more members; Deal with Mono.Unix.Native 
+	  type name changes.
+	* Syscall.cs: Create maps for PathConf, SysConf, ConfStr again; fpathconf(),
+	  pathconf(), and sysconf() should call Native.Syscall since the
+	  MonoPosixHelper.so helpers have changed.
+
 2005-10-13  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixMarshal.cs: More/better StringToAlloc/PtrToString which take a

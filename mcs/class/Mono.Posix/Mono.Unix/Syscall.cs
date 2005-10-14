@@ -337,8 +337,9 @@ namespace Mono.Unix {
 		F_OK = 8,
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.PathConf")]
+	[Obsolete ("Use Mono.Unix.Native.PathconfName")]
 	public enum PathConf : int {
 		_PC_LINK_MAX,
 		_PC_MAX_CANON,
@@ -363,8 +364,9 @@ namespace Mono.Unix {
 		_PC_2_SYMLINKS
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.SysConf")]
+	[Obsolete ("Use Mono.Unix.Native.SysconfName")]
 	public enum SysConf : int {
 		_SC_ARG_MAX,
 		_SC_CHILD_MAX,
@@ -572,8 +574,9 @@ namespace Mono.Unix {
 		_SC_LEVEL4_CACHE_LINESIZE
 	}
 
+	[Map]
 	[CLSCompliant (false)]
-	[Obsolete ("Use Mono.Unix.Native.ConfStr")]
+	[Obsolete ("Use Mono.Unix.Native.ConfstrName")]
 	public enum ConfStr : int {
 		_CS_PATH,			/* The default search path.  */
 		_CS_V6_WIDTH_RESTRICTED_ENVS,
@@ -2746,17 +2749,20 @@ namespace Mono.Unix {
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int _exit (int status);
 
-		[DllImport (MPH, SetLastError=true,
-				EntryPoint="Mono_Posix_Syscall_fpathconf")]
-		public static extern long fpathconf (int filedes, PathConf name);
+		public static long fpathconf (int filedes, PathConf name)
+		{
+			return Native.Syscall.fpathconf (filedes, (Native.PathconfName) (int) name);
+		}
 
-		[DllImport (MPH, SetLastError=true,
-				EntryPoint="Mono_Posix_Syscall_pathconf")]
-		public static extern long pathconf (string path, PathConf name);
+		public static long pathconf (string path, PathConf name)
+		{
+			return Native.Syscall.pathconf (path, (Native.PathconfName) (int) name);
+		}
 
-		[DllImport (MPH, SetLastError=true,
-				EntryPoint="Mono_Posix_Syscall_sysconf")]
-		public static extern long sysconf (SysConf name);
+		public static long sysconf (SysConf name)
+		{
+			return Native.Syscall.sysconf ((Native.SysconfName) (int) name);
+		}
 
 		// confstr(3)
 		//    size_t confstr(int name, char *buf, size_t len);

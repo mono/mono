@@ -384,7 +384,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathConf")]
+		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathconfName")]
 		public long GetConfigurationValue (PathConf name)
 		{
 			AssertNotDisposed ();
@@ -396,7 +396,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		public long GetConfigurationValue (Native.PathConf name)
+		public long GetConfigurationValue (Native.PathconfName name)
 		{
 			AssertNotDisposed ();
 			Syscall.SetLastError ((Error) 0);

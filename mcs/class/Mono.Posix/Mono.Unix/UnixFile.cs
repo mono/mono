@@ -79,7 +79,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationValue(string, Mono.Unix.Native.PathConf)")]
+		[Obsolete ("Use GetConfigurationValue(string, Mono.Unix.Native.PathconfName)")]
 		public static long GetConfigurationValue (string path, PathConf name)
 		{
 			Syscall.SetLastError ((Error) 0);
@@ -90,11 +90,10 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		public static long GetConfigurationValue (string path, Native.PathConf name)
+		public static long GetConfigurationValue (string path, Native.PathconfName name)
 		{
-			Native.Stdlib.SetLastError ((Native.Errno) 0);
-			long r = Native.Syscall.pathconf (path, name);
-			if (r == -1 && Native.Stdlib.GetLastError() != (Native.Errno) 0)
+			long r = Native.Syscall.pathconf (path, name, (Native.Errno) 0);
+			if (r == -1 && Native.Stdlib.GetLastError () != (Native.Errno) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
 			return r;
 		}

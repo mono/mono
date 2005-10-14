@@ -564,7 +564,7 @@ class ConvertDocFileGenerator : FileGenerator {
         <param name=""value"">The managed value to convert.</param>
         <param name=""rval"">The OS-specific equivalent value.</param>
         <summary>Converts a <see cref=""T:{0}"" /> 
-          to an OS-specific value.</summary>
+          enumeration value to an OS-specific value.</summary>
         <returns><see langword=""true"" /> if the conversion was successful; 
         otherwise, <see langword=""false"" />.</returns>
         <remarks><para>This is an exception-safe alternative to 

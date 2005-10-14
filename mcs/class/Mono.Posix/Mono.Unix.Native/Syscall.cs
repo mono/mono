@@ -342,7 +342,7 @@ namespace Mono.Unix.Native {
 
 	[Map]
 	[CLSCompliant (false)]
-	public enum PathConf : int {
+	public enum PathconfName : int {
 		_PC_LINK_MAX,
 		_PC_MAX_CANON,
 		_PC_MAX_INPUT,
@@ -368,7 +368,7 @@ namespace Mono.Unix.Native {
 
 	[Map]
 	[CLSCompliant (false)]
-	public enum SysConf : int {
+	public enum SysconfName : int {
 		_SC_ARG_MAX,
 		_SC_CHILD_MAX,
 		_SC_CLK_TCK,
@@ -577,7 +577,7 @@ namespace Mono.Unix.Native {
 
 	[Map]
 	[CLSCompliant (false)]
-	public enum ConfStr : int {
+	public enum ConfstrName : int {
 		_CS_PATH,			/* The default search path.  */
 		_CS_V6_WIDTH_RESTRICTED_ENVS,
 		_CS_GNU_LIBC_VERSION,
@@ -1391,8 +1391,9 @@ namespace Mono.Unix.Native {
 				EntryPoint="Mono_Posix_Syscall_telldir")]
 		public static extern long telldir (IntPtr dir);
 
-		[DllImport (LIBC, SetLastError=true)]
-		public static extern void rewinddir (IntPtr dir);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_rewinddir")]
+		public static extern int rewinddir (IntPtr dir);
 
 		private struct _Dirent {
 			public /* ino_t */ ulong  d_ino;
@@ -1551,12 +1552,12 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_endfsent")]
-		private static extern void sys_endfsent ();
+		private static extern int sys_endfsent ();
 
-		public static void endfsent ()
+		public static int endfsent ()
 		{
 			lock (fstab_lock) {
-				sys_endfsent ();
+				return sys_endfsent ();
 			}
 		}
 
@@ -1765,23 +1766,25 @@ namespace Mono.Unix.Native {
 			return gr;
 		}
 
-		[DllImport (LIBC, SetLastError=true, EntryPoint="setgrent")]
-		private static extern void sys_setgrent ();
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_setgrent")]
+		private static extern int sys_setgrent ();
 
-		public static void setgrent ()
+		public static int setgrent ()
 		{
 			lock (grp_lock) {
-				sys_setgrent ();
+				return sys_setgrent ();
 			}
 		}
 
-		[DllImport (LIBC, SetLastError=true, EntryPoint="endgrent")]
-		private static extern void sys_endgrent ();
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_endgrent")]
+		private static extern int sys_endgrent ();
 
-		public static void endgrent ()
+		public static int endgrent ()
 		{
 			lock (grp_lock) {
-				sys_endgrent ();
+				return sys_endgrent ();
 			}
 		}
 
@@ -1936,23 +1939,25 @@ namespace Mono.Unix.Native {
 			return pw;
 		}
 
-		[DllImport (LIBC, SetLastError=true, EntryPoint="setpwent")]
-		private static extern void sys_setpwent ();
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_setpwent")]
+		private static extern int sys_setpwent ();
 
-		public static void setpwent ()
+		public static int setpwent ()
 		{
 			lock (pwd_lock) {
-				sys_setpwent ();
+				return sys_setpwent ();
 			}
 		}
 
-		[DllImport (LIBC, SetLastError=true, EntryPoint="endpwent")]
-		private static extern void sys_endpwent ();
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_endpwent")]
+		private static extern int sys_endpwent ();
 
-		public static void endpwent ()
+		public static int endpwent ()
 		{
 			lock (pwd_lock) {
-				sys_endpwent ();
+				return sys_endpwent ();
 			}
 		}
 
@@ -1979,13 +1984,14 @@ namespace Mono.Unix.Native {
 		//
 		// <signal.h>
 		//
-		[DllImport (LIBC, SetLastError=true)]
-		private static extern void psignal (int sig, string s);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_psignal")]
+		private static extern int psignal (int sig, string s);
 
-		public static void psignal (Signum sig, string s)
+		public static int psignal (Signum sig, string s)
 		{
 			int signum = NativeConvert.FromSignum (sig);
-			psignal (signum, s);
+			return psignal (signum, s);
 		}
 
 		// kill(2)
@@ -2064,8 +2070,9 @@ namespace Mono.Unix.Native {
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int ttyslot ();
 
-		[DllImport (CRYPT, SetLastError=true)]
-		public static extern void setkey (string key);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_setkey")]
+		public static extern int setkey (string key);
 
 		#endregion
 
@@ -2470,32 +2477,34 @@ namespace Mono.Unix.Native {
 		// <syslog.h>
 		//
 
-		[DllImport (LIBC, EntryPoint="openlog")]
-		private static extern void sys_openlog (IntPtr ident, int option, int facility);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_openlog")]
+		private static extern int sys_openlog (IntPtr ident, int option, int facility);
 
-		public static void openlog (IntPtr ident, SyslogOptions option, 
+		public static int openlog (IntPtr ident, SyslogOptions option, 
 				SyslogFacility defaultFacility)
 		{
 			int _option   = NativeConvert.FromSyslogOptions (option);
 			int _facility = NativeConvert.FromSyslogFacility (defaultFacility);
 
-			sys_openlog (ident, _option, _facility);
+			return sys_openlog (ident, _option, _facility);
 		}
 
-		[DllImport (LIBC, EntryPoint="syslog")]
-		private static extern void sys_syslog (int priority, string message);
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_syslog")]
+		private static extern int sys_syslog (int priority, string message);
 
-		public static void syslog (SyslogFacility facility, SyslogLevel level, string message)
+		public static int syslog (SyslogFacility facility, SyslogLevel level, string message)
 		{
 			int _facility = NativeConvert.FromSyslogFacility (facility);
 			int _level = NativeConvert.FromSyslogLevel (level);
-			sys_syslog (_facility | _level, GetSyslogMessage (message));
+			return sys_syslog (_facility | _level, GetSyslogMessage (message));
 		}
 
-		public static void syslog (SyslogLevel level, string message)
+		public static int syslog (SyslogLevel level, string message)
 		{
 			int _level = NativeConvert.FromSyslogLevel (level);
-			sys_syslog (_level, GetSyslogMessage (message));
+			return sys_syslog (_level, GetSyslogMessage (message));
 		}
 
 		private static string GetSyslogMessage (string message)
@@ -2505,7 +2514,7 @@ namespace Mono.Unix.Native {
 
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
 				"Use syslog(SyslogFacility, SyslogLevel, string) instead.")]
-		public static void syslog (SyslogFacility facility, SyslogLevel level, 
+		public static int syslog (SyslogFacility facility, SyslogLevel level, 
 				string format, params object[] parameters)
 		{
 			int _facility = NativeConvert.FromSyslogFacility (facility);
@@ -2515,12 +2524,12 @@ namespace Mono.Unix.Native {
 			_parameters [0] = _facility | _level;
 			_parameters [1] = format;
 			Array.Copy (parameters, 0, _parameters, 2, parameters.Length);
-			XPrintfFunctions.syslog (_parameters);
+			return (int) XPrintfFunctions.syslog (_parameters);
 		}
 
 		[Obsolete ("Not necessarily portable due to cdecl restrictions.\n" +
 				"Use syslog(SyslogLevel, string) instead.")]
-		public static void syslog (SyslogLevel level, string format, 
+		public static int syslog (SyslogLevel level, string format, 
 				params object[] parameters)
 		{
 			int _level = NativeConvert.FromSyslogLevel (level);
@@ -2529,13 +2538,14 @@ namespace Mono.Unix.Native {
 			_parameters [0] = _level;
 			_parameters [1] = format;
 			Array.Copy (parameters, 0, _parameters, 2, parameters.Length);
-			XPrintfFunctions.syslog (_parameters);
+			return (int) XPrintfFunctions.syslog (_parameters);
 		}
 
-		[DllImport (LIBC)]
-		public static extern void closelog ();
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_closelog")]
+		public static extern int closelog ();
 
-		[DllImport (LIBC, EntryPoint="setlogmask")]
+		[DllImport (LIBC, SetLastError=true, EntryPoint="setlogmask")]
 		private static extern int sys_setlogmask (int mask);
 
 		public static int setlogmask (SyslogLevel mask)
@@ -2740,21 +2750,36 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_fpathconf")]
-		public static extern long fpathconf (int filedes, PathConf name);
+		public static extern long fpathconf (int filedes, PathconfName name, Errno defaultError);
+
+		public static long fpathconf (int filedes, PathconfName name)
+		{
+			return fpathconf (filedes, name, (Errno) 0);
+		}
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_pathconf")]
-		public static extern long pathconf (string path, PathConf name);
+		public static extern long pathconf (string path, PathconfName name, Errno defaultError);
+
+		public static long pathconf (string path, PathconfName name)
+		{
+			return pathconf (path, name, (Errno) 0);
+		}
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_sysconf")]
-		public static extern long sysconf (SysConf name);
+		public static extern long sysconf (SysconfName name, Errno defaultError);
+
+		public static long sysconf (SysconfName name)
+		{
+			return sysconf (name, (Errno) 0);
+		}
 
 		// confstr(3)
 		//    size_t confstr(int name, char *buf, size_t len);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_confstr")]
-		public static extern ulong confstr (ConfStr name, [Out] StringBuilder buf, ulong len);
+		public static extern ulong confstr (ConfstrName name, [Out] StringBuilder buf, ulong len);
 
 		// getpid(2)
 		//    pid_t getpid(void);
@@ -2874,6 +2899,7 @@ namespace Mono.Unix.Native {
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int setresgid (uint rgid, uint egid, uint sgid);
 
+#if false
 		// fork(2)
 		//    pid_t fork(void);
 		[DllImport (LIBC, SetLastError=true)]
@@ -2887,6 +2913,7 @@ namespace Mono.Unix.Native {
 		[Obsolete ("DO NOT directly call vfork(2); it bypasses essential " + 
 				"shutdown code.\nUse System.Diagnostics.Process instead")]
 		private static extern int vfork ();
+#endif
 
 		private static object tty_lock = new object ();
 
@@ -3055,33 +3082,38 @@ namespace Mono.Unix.Native {
 			}
 		}
 
-		[DllImport (LIBC, SetLastError=true, EntryPoint="setusershell")]
-		private static extern void sys_setusershell ();
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_setusershell")]
+		private static extern int sys_setusershell ();
 
-		public static void setusershell ()
+		public static int setusershell ()
 		{
 			lock (usershell_lock) {
-				sys_setusershell ();
+				return sys_setusershell ();
 			}
 		}
 
-		[DllImport (LIBC, SetLastError=true, EntryPoint="endusershell")]
-		private static extern void sys_endusershell ();
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_endusershell")]
+		private static extern int sys_endusershell ();
 
-		public static void endusershell ()
+		public static int endusershell ()
 		{
 			lock (usershell_lock) {
-				sys_endusershell ();
+				return sys_endusershell ();
 			}
 		}
 
+#if false
 		[DllImport (LIBC, SetLastError=true)]
 		private static extern int daemon (int nochdir, int noclose);
 
-		public static int daemon (bool nochdir, bool noclose)
+		// this implicitly forks, and thus isn't safe.
+		private static int daemon (bool nochdir, bool noclose)
 		{
 			return daemon (nochdir ? 1 : 0, noclose ? 1 : 0);
 		}
+#endif
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int chroot (string path);
@@ -3095,8 +3127,9 @@ namespace Mono.Unix.Native {
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int fdatasync (int fd);
 
-		[DllImport (LIBC, SetLastError=true)]
-		public static extern void sync ();
+		[DllImport (MPH, SetLastError=true,
+				EntryPoint="Mono_Posix_Syscall_sync")]
+		public static extern int sync ();
 
 		[DllImport (LIBC, SetLastError=true)]
 		[Obsolete ("Dropped in POSIX 1003.1-2001.  " +
@@ -3148,15 +3181,16 @@ namespace Mono.Unix.Native {
 
 		internal static object encrypt_lock = new object ();
 
-		[DllImport (CRYPT, SetLastError=true, EntryPoint="encrypt")]
-		private static extern void sys_encrypt ([In, Out] byte[] block, int edflag);
+		[DllImport (MPH, SetLastError=true, 
+				EntryPoint="Mono_Posix_Syscall_encrypt")]
+		private static extern int sys_encrypt ([In, Out] byte[] block, int edflag);
 
-		public static void encrypt (byte[] block, bool decode)
+		public static int encrypt (byte[] block, bool decode)
 		{
 			if (block.Length < 64)
 				throw new ArgumentOutOfRangeException ("block", "Must refer to at least 64 bytes");
 			lock (encrypt_lock) {
-				sys_encrypt (block, decode ? 1 : 0);
+				return sys_encrypt (block, decode ? 1 : 0);
 			}
 		}
 
@@ -3164,7 +3198,7 @@ namespace Mono.Unix.Native {
 		//    void swab(const void *from, void *to, ssize_t n);
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_swab")]
-		public static extern void swab (IntPtr from, IntPtr to, long n);
+		public static extern int swab (IntPtr from, IntPtr to, long n);
 
 		public static unsafe void swab (void* from, void* to, long n)
 		{
