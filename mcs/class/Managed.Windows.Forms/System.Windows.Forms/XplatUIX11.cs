@@ -1787,7 +1787,6 @@ namespace System.Windows.Forms {
 						Attributes.colormap = CustomColormap;
 					}
 					ClientWindow = XCreateWindow(DisplayHandle, WholeWindow, ClientRect.X, ClientRect.Y, ClientRect.Width, ClientRect.Height, 0, (int)CreateWindowArgs.CopyFromParent, (int)CreateWindowArgs.InputOutput, CustomVisual, ValueMask, ref Attributes);
-Console.WriteLine("Creating client with width {0}", ClientRect.Width);
 				}
 			}
 
