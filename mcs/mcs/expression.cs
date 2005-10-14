@@ -6492,7 +6492,7 @@ namespace Mono.CSharp {
 			// Lookup the type
 			//
 			TypeExpr array_type_expr;
-			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString ());
+			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
 			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec, false);
 			if (array_type_expr == null)
 				return false;

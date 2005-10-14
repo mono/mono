@@ -2541,11 +2541,17 @@ non_expression_type
 	: builtin_types	
 	| non_expression_type rank_specifier
 	  {
-		$$ = new ComposedCast ((Expression) $1, (string) $2);
+		Location loc = GetLocation ($1);
+		if (loc.IsNull)
+			loc = lexer.Location;
+		$$ = new ComposedCast ((Expression) $1, (string) $2, loc);
 	  }
 	| non_expression_type STAR
 	  {
-		$$ = new ComposedCast ((Expression) $1, "*");
+		Location loc = GetLocation ($1);
+		if (loc.IsNull)
+			loc = lexer.Location;
+		$$ = new ComposedCast ((Expression) $1, "*", loc);
 	  }
 	| expression rank_specifiers 
 	  {
@@ -3763,7 +3769,7 @@ local_variable_pointer_type
 	  }
         | builtin_types STAR
 	  {
-		$$ = new ComposedCast ((Expression) $1, "*");
+		$$ = new ComposedCast ((Expression) $1, "*", lexer.Location);
 	  }
         | VOID STAR
 	  {
