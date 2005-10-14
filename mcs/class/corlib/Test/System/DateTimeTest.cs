@@ -767,6 +767,7 @@ public class DateTimeTest : Assertion
 		foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
 			DateTime.Parse ("8/16/2005", ci); // see also bug #53023
 			DateTime.Parse ("01-Sep-05", ci);
+			DateTime.Parse ("4:35:35 AM", ci);
 		}
 
 		// don't allow 2 digit years where we require 4.

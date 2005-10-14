@@ -1,3 +1,7 @@
+2005-10-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : another crappy Windows dependent format.
+
 2005-10-14  Ben Maurer  <bmaurer@ximian.com>
 
 	* DateTime.cs: Speed up when parsing date time objects by not

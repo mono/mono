@@ -114,6 +114,7 @@ namespace System
 
 			// bug #60912
 			"M/d/yyyy HH':'mm':'ss tt",
+			"H':'mm':'ss tt",
 			// another funky COM dependent one
 			"dd-MMM-yy",
 
