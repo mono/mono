@@ -223,8 +223,8 @@ namespace System.Drawing {
 				control = GetSysColor(GetSysColorIndex.COLOR_BTNFACE, "Control", KnownColor.Control);
 				control_dark = GetSysColor(GetSysColorIndex.COLOR_BTNSHADOW, "ControlDark", KnownColor.ControlDark);
 				control_dark_dark = GetSysColor(GetSysColorIndex.COLOR_3DDKSHADOW, "ControlDarkDark", KnownColor.ControlDarkDark);
-				control_light = GetSysColor(GetSysColorIndex.COLOR_BTNHIGHLIGHT, "ControlLight", KnownColor.ControlLight);
-				control_light_light = GetSysColor(GetSysColorIndex.COLOR_3DLIGHT, "ControlLightLight", KnownColor.ControlLightLight);
+				control_light = GetSysColor(GetSysColorIndex.COLOR_3DLIGHT, "ControlLight", KnownColor.ControlLight);
+				control_light_light = GetSysColor(GetSysColorIndex.COLOR_BTNHIGHLIGHT, "ControlLightLight", KnownColor.ControlLightLight);
 				control_text = GetSysColor(GetSysColorIndex.COLOR_BTNTEXT, "ControlText", KnownColor.ControlText);
 				desktop = GetSysColor(GetSysColorIndex.COLOR_DESKTOP, "Desktop", KnownColor.Desktop);
 				gray_text = GetSysColor(GetSysColorIndex.COLOR_GRAYTEXT, "GrayText", KnownColor.GrayText);

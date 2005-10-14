@@ -1,3 +1,7 @@
+2005-10-14 Jordi Mas i Hernandez <jordi@ximian.com> 
+
+	* SystemColors.cs: Fixes the Win32 light and lightlight colours
+
 2005-10-11 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* SystemColors.cs: Fixes the Win32 system colors including the color
