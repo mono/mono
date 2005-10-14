@@ -6,5 +6,7 @@
 	<string>%APPNAME%</string>
 	<key>CFBundleExecutable</key>
 	<string>%APPNAME%</string>
+	<key>CFBundleIconFile</key>
+	<string>%ICONFILE%</string>
 </dict>
 </plist>

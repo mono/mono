@@ -18,6 +18,9 @@ namespace Mac {
 		[Option ("Assembly Location", 'a')]
 		public string assembly;
 		
+		[Option ("Icon", 'i')]
+		public string icon;
+
 		[Option (999, "Resources", 'r')]
 		public string[] resource;
 
@@ -56,6 +59,8 @@ namespace Mac {
 					}
 				}
 			}
+			if (opts.icon != null)
+				File.Copy (opts.icon, Path.Combine (opts.output, String.Format ("{0}.app/Contents/Resources/{1}", opts.appname, Path.GetFileName (opts.icon))));
 			if (opts.mode <= 2) {
 				File.Copy (opts.assembly, Path.Combine (opts.output, String.Format ("{0}.app/Contents/Resources/{0}.exe", opts.appname))); 
 			} else {
@@ -103,6 +108,7 @@ namespace Mac {
 			writer = new BinaryWriter (File.Create (Path.Combine (opts.output, String.Format ("{0}.app/Contents/Info.plist", opts.appname))));
 			string plist = Encoding.UTF8.GetString (data);
 			plist = plist.Replace ("%APPNAME%", opts.appname);
+			plist = plist.Replace ("%ICONFILE%", opts.icon);
 			data = Encoding.UTF8.GetBytes (plist);
 			writer.Write (data, 0, data.Length);
 			writer.Close ();
