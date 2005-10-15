@@ -56,80 +56,106 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void DefaultTypeTest ()
 		{
-			string code = GenerateDefaultType ();
+			string code = GenerateDefaultType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class  {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void DefaultTypeTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateDefaultType (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class {0}" +
+				"{{{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public override void NullTypeTest ()
 		{
-			GenerateNullType ();
+			GenerateNullType (Options);
 		}
 
 		[Test]
 		public override void SimpleTypeTest ()
 		{
-			string code = GenerateSimpleType ();
+			string code = GenerateSimpleType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void SimpleTypeTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateSimpleType (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1{0}" +
+				"{{{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void DerivedTypeTest ()
 		{
-			string code = GenerateDerivedType ();
+			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 #if NET_2_0
 				"internal abstract class Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
 #else
 				"abstract class Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
 #endif
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void AttributesAndTypeTest ()
 		{
-			string code = GenerateAttributesAndType ();
+			string code = GenerateAttributesAndType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"[A()]{0}" +
 				"[B()]{0}" +
 				"public class Test1 {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventMembersTypeTest1 ()
 		{
-			string code = GenerateEventMembersType1 ();
+			string code = GenerateEventMembersType1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
 				"    private event void ;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventMembersTypeTest2 ()
 		{	
-			string code = GenerateEventMembersType2 ();
+			string code = GenerateEventMembersType2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public event int Click;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventImplementationTypes ()
 		{
-			string code = GenerateEventImplementationTypes ();
+			string code = GenerateEventImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -138,7 +164,7 @@ namespace MonoTests.Microsoft.CSharp
 #else
 				"    /*FamANDAssem*/ internal event int Click;{0}" +
 #endif
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -148,12 +174,12 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void EventPrivateImplementationType ()
 		{
-			string code = GenerateEventPrivateImplementationType ();
+			string code = GenerateEventPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    event int System.Int32.Click;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -163,54 +189,54 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void EventImplementationTypeOrder ()
 		{
-			string code = GenerateEventImplementationTypeOrder ();
+			string code = GenerateEventImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    event int System.Int32.Click;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldMembersAttributesTest ()
 		{
-			string code = GenerateFieldMembersAttributes ();
+			string code = GenerateFieldMembersAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
 				"    private void ;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldMembersTypeTest ()
 		{
-			string code = GenerateFieldMembersType (MemberAttributes.Public);
+			string code = GenerateFieldMembersType (MemberAttributes.Public, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public int Name = 2;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldNewSlotTest ()
 		{
 			string code = GenerateFieldMembersType (MemberAttributes.Assembly |
-				MemberAttributes.New);
+				MemberAttributes.New, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    internal new int Name = 2;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeTest1 ()
 		{
-			string code = GeneratePropertyMembersAttributes ();
+			string code = GeneratePropertyMembersAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -218,27 +244,46 @@ namespace MonoTests.Microsoft.CSharp
 				"    [B()]{0}" +
 				"    private void  {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeTest1_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GeneratePropertyMembersAttributes (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"    [A()]{0}" +
+				"    [B()]{0}" +
+				"    private void {0}" + 
+				"    {{{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeTest2 ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Public,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeGetOnly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Family,
-				true, false);
+				true, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -246,14 +291,14 @@ namespace MonoTests.Microsoft.CSharp
 				"        get {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeSetOnly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Assembly,
-				false, true);
+				false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -265,14 +310,14 @@ namespace MonoTests.Microsoft.CSharp
 				"        set {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeGetSet ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Family,
-				true, true);
+				true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -282,27 +327,51 @@ namespace MonoTests.Microsoft.CSharp
 				"        set {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeGetSet_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GeneratePropertyMembersType (MemberAttributes.Family,
+				true, true, options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"    protected virtual int Name{0}" + 
+				"    {{{0}" +
+				"        get{0}" + 
+				"        {{{0}" +
+				"        }}{0}" +
+				"        set{0}" + 
+				"        {{{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeFamilyOrAssembly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.FamilyOrAssembly,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    protected internal int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeAssembly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Assembly,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -312,7 +381,7 @@ namespace MonoTests.Microsoft.CSharp
 				"    internal int Name {{{0}" +
 #endif
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -322,46 +391,46 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void PropertyParametersTest ()
 		{
-			string code = GeneratePropertyParameters ();
+			string code = GeneratePropertyParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerTest1 ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Public,
-				false, false, true);
+				false, false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int this[object value1, ref int value2] {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerTest2 ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Public,
-				false, false, false);
+				false, false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int iTem {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerGetOnly ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Family,
-				true, false, true);
+				true, false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -369,14 +438,14 @@ namespace MonoTests.Microsoft.CSharp
 				"        get {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerSetOnly ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Family,
-				false, true, true);
+				false, true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -384,19 +453,19 @@ namespace MonoTests.Microsoft.CSharp
 				"        set {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyImplementationTypes ()
 		{
-			string code = GeneratePropertyImplementationTypes ();
+			string code = GeneratePropertyImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -406,13 +475,13 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void PropertyOverloadsTest1 ()
 		{
-			string code = GeneratePropertyOverloads1 ();
+			string code = GeneratePropertyOverloads1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    protected virtual int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -422,7 +491,7 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void PropertyOverloadsTest2 ()
 		{
-			string code = GeneratePropertyOverloads2 ();
+			string code = GeneratePropertyOverloads2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -431,7 +500,7 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    private int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -441,7 +510,7 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void PropertyOverloadsTest3 ()
 		{
-			string code = GeneratePropertyOverloads3 ();
+			string code = GeneratePropertyOverloads3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -450,7 +519,7 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    int System.Int32.Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -460,13 +529,13 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void PropertyPrivateImplementationType ()
 		{
-			string code = GeneratePropertyPrivateImplementationType ();
+			string code = GeneratePropertyPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    int System.Int32.this[object value1] {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -476,20 +545,20 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void PropertyImplementationTypeOrder ()
 		{
-			string code = GeneratePropertyImplementationTypeOrder ();
+			string code = GeneratePropertyImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    int System.Int32.this[object value1] {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyNewSlotTest ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Private |
-				MemberAttributes.New, true, true);
+				MemberAttributes.New, true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -499,13 +568,13 @@ namespace MonoTests.Microsoft.CSharp
 				"        set {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest1 ()
 		{
-			string code = GenerateMethodMembersType1 ();
+			string code = GenerateMethodMembersType1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -513,37 +582,56 @@ namespace MonoTests.Microsoft.CSharp
 				"    [B()]{0}" +
 				"    private void () {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void MethodMembersTypeTest1_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateMethodMembersType1 (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"    [A()]{0}" +
+				"    [B()]{0}" +
+				"    private void (){0}" + 
+				"    {{{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest2 ()
 		{
-			string code = GenerateMethodMembersType2 ();
+			string code = GenerateMethodMembersType2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int Something(object value1, object value2, out int index, ref int count) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest3 ()
 		{
-			string code = GenerateMethodMembersType3 ();
+			string code = GenerateMethodMembersType3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int Something([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int index) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodImplementationTypes ()
 		{
-			string code = GenerateMethodImplementationTypes ();
+			string code = GenerateMethodImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -553,13 +641,13 @@ namespace MonoTests.Microsoft.CSharp
 				"    internal int Execute() {{{0}" +
 #endif
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest1 ()
 		{
-			string code = GenerateMethodOverloads1 ();
+			string code = GenerateMethodOverloads1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -569,13 +657,13 @@ namespace MonoTests.Microsoft.CSharp
 				"    internal int Execute() {{{0}" +
 #endif
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest2 ()
 		{
-			string code = GenerateMethodOverloads2 ();
+			string code = GenerateMethodOverloads2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -584,7 +672,7 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    private int Execute(object value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -594,7 +682,7 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void MethodOverloadsTest3 ()
 		{
-			string code = GenerateMethodOverloads3 ();
+			string code = GenerateMethodOverloads3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -603,7 +691,7 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    int System.Int32.Execute(object value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -613,13 +701,13 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void MethodPrivateImplementationType ()
 		{
-			string code = GenerateMethodPrivateImplementationType ();
+			string code = GenerateMethodPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    int System.Int32.Execute(object value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -629,19 +717,19 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void MethodImplementationTypeOrder ()
 		{
-			string code = GenerateMethodImplementationTypeOrder ();
+			string code = GenerateMethodImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    int System.Int32.Execute(object value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
-			string code = GenerateMethodReturnTypeAttributes ();
+			string code = GenerateMethodReturnTypeAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -651,25 +739,25 @@ namespace MonoTests.Microsoft.CSharp
 				"    [return: D()]{0}" +
 				"    public virtual int Execute() {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodNewSlotTest ()
 		{
-			string code = GenerateMethodNewSlot ();
+			string code = GenerateMethodNewSlot (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public new virtual int Execute() {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorAttributesTest ()
 		{
-			string code = GenerateConstructorAttributes ();
+			string code = GenerateConstructorAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -677,63 +765,82 @@ namespace MonoTests.Microsoft.CSharp
 				"    [B()]{0}" +
 				"    private Test1() {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void ConstructorAttributesTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateConstructorAttributes (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"    [A()]{0}" +
+				"    [B()]{0}" +
+				"    private Test1(){0}" + 
+				"    {{{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorParametersTest ()
 		{
-			string code = GenerateConstructorParameters ();
+			string code = GenerateConstructorParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    public Test1(object value1, object value2, out int index, ref int count) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorParameterAttributesTest ()
 		{
-			string code = GenerateConstructorParameterAttributes ();
+			string code = GenerateConstructorParameterAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    private Test1([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int index) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void BaseConstructorSingleArg ()
 		{
-			string code = GenerateBaseConstructor (false);
+			string code = GenerateBaseConstructor (false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    protected Test1(object value1, out int value2) : {0}" +
 				"            base(value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void BaseConstructorMultipleArgs ()
 		{
-			string code = GenerateBaseConstructor (true);
+			string code = GenerateBaseConstructor (true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
 				"    protected Test1(object value1, out int value2) : {0}" +
 				"            base(value1, value2) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ChainedConstructorSingleArg ()
 		{
-			string code = GenerateChainedConstructor (false);
+			string code = GenerateChainedConstructor (false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -741,13 +848,13 @@ namespace MonoTests.Microsoft.CSharp
 				"            base(value3) : {0}" +
 				"            this(value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ChainedConstructorMultipleArgs ()
 		{
-			string code = GenerateChainedConstructor (true);
+			string code = GenerateChainedConstructor (true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -755,13 +862,13 @@ namespace MonoTests.Microsoft.CSharp
 				"            base(value3) : {0}" +
 				"            this(value1, value2) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void TypeConstructorTest ()
 		{
-			string code = GenerateTypeConstructor ();
+			string code = GenerateTypeConstructor (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public class Test1 {{{0}" +
 				"    {0}" +
@@ -771,14 +878,35 @@ namespace MonoTests.Microsoft.CSharp
 #endif
 				"    static Test1() {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void TypeConstructorTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateTypeConstructor (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    [A()]{0}" +
+				"    [B()]{0}" +
+#endif
+				"    static Test1(){0}" + 
+				"    {{{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}
 
 	[TestFixture]
-	public class dCodeGeneratorFromTypeTest_Delegate : CodeGeneratorFromTypeTestBase
+	public class CodeGeneratorFromTypeTest_Delegate : CodeGeneratorFromTypeTestBase
 	{
 		private CodeTypeDeclaration _typeDeclaration;
 		private ICodeGenerator _codeGenerator;
@@ -812,32 +940,32 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void DefaultTypeTest ()
 		{
-			string code = GenerateDefaultType ();
+			string code = GenerateDefaultType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void ();{0}", Writer.NewLine), code);
+				"public delegate void ();{0}", NewLine), code);
 		}
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public override void NullTypeTest ()
 		{
-			GenerateNullType ();
+			GenerateNullType (Options);
 		}
 
 		[Test]
 		public override void SimpleTypeTest ()
 		{
-			string code = GenerateSimpleType ();
+			string code = GenerateSimpleType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void DerivedTypeTest ()
 		{
-			string code = GenerateDerivedType ();
+			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"delegate void Test1();{0}", Writer.NewLine), code);
+				"delegate void Test1();{0}", NewLine), code);
 		}
 
 		[Test]
@@ -848,35 +976,35 @@ namespace MonoTests.Microsoft.CSharp
 
 			_typeDeclaration = delegateDecl;
 
-			string code = GenerateAttributesAndType ();
+			string code = GenerateAttributesAndType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"[A()]{0}" +
 				"[B()]{0}" +
-				"public delegate int Test1();{0}", Writer.NewLine), code);
+				"public delegate int Test1();{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventMembersTypeTest1 ()
 		{
-			string code = GenerateEventMembersType1 ();
+			string code = GenerateEventMembersType1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventMembersTypeTest2 ()
 		{
-			string code = GenerateEventMembersType2 ();
+			string code = GenerateEventMembersType2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventImplementationTypes ()
 		{
-			string code = GenerateEventImplementationTypes ();
+			string code = GenerateEventImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -886,9 +1014,9 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void EventPrivateImplementationType ()
 		{
-			string code = GenerateEventPrivateImplementationType ();
+			string code = GenerateEventPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		/// <summary>
@@ -898,349 +1026,349 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void EventImplementationTypeOrder ()
 		{
-			string code = GenerateEventImplementationTypeOrder ();
+			string code = GenerateEventImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldMembersAttributesTest ()
 		{
-			string code = GenerateFieldMembersAttributes ();
+			string code = GenerateFieldMembersAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldMembersTypeTest ()
 		{
-			string code = GenerateFieldMembersType (MemberAttributes.Public);
+			string code = GenerateFieldMembersType (MemberAttributes.Public, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldNewSlotTest ()
 		{
 			string code = GenerateFieldMembersType (MemberAttributes.Assembly |
-				MemberAttributes.New);
+				MemberAttributes.New, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeTest1 ()
 		{
-			string code = GeneratePropertyMembersAttributes ();
+			string code = GeneratePropertyMembersAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeTest2 ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Public,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeGetOnly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Family,
-				true, false);
+				true, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeSetOnly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Assembly,
-				false, true);
+				false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeGetSet ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Family,
-				true, true);
+				true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeFamilyOrAssembly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.FamilyOrAssembly,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeAssembly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Assembly,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyParametersTest ()
 		{
-			string code = GeneratePropertyParameters ();
+			string code = GeneratePropertyParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerTest1 ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Public,
-				false, false, true);
+				false, false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerTest2 ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Public,
-				false, false, false);
+				false, false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerGetOnly ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Family,
-				true, false, true);
+				true, false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerSetOnly ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Family,
-				false, true, true);
+				false, true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyImplementationTypes ()
 		{
-			string code = GeneratePropertyImplementationTypes ();
+			string code = GeneratePropertyImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest1 ()
 		{
-			string code = GeneratePropertyOverloads1 ();
+			string code = GeneratePropertyOverloads1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest2 ()
 		{
-			string code = GeneratePropertyOverloads2 ();
+			string code = GeneratePropertyOverloads2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest3 ()
 		{
-			string code = GeneratePropertyOverloads3 ();
+			string code = GeneratePropertyOverloads3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyPrivateImplementationType ()
 		{
-			string code = GeneratePropertyPrivateImplementationType ();
+			string code = GeneratePropertyPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyImplementationTypeOrder ()
 		{
-			string code = GeneratePropertyImplementationTypeOrder ();
+			string code = GeneratePropertyImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyNewSlotTest ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Private |
-				MemberAttributes.New, true, true);
+				MemberAttributes.New, true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest1 ()
 		{
-			string code = GenerateMethodMembersType1 ();
+			string code = GenerateMethodMembersType1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest2 ()
 		{
-			string code = GenerateMethodMembersType2 ();
+			string code = GenerateMethodMembersType2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest3 ()
 		{
-			string code = GenerateMethodMembersType3 ();
+			string code = GenerateMethodMembersType3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodImplementationTypes ()
 		{
-			string code = GenerateMethodImplementationTypes ();
+			string code = GenerateMethodImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest1 ()
 		{
-			string code = GenerateMethodOverloads1 ();
+			string code = GenerateMethodOverloads1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest2 ()
 		{
-			string code = GenerateMethodOverloads2 ();
+			string code = GenerateMethodOverloads2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest3 ()
 		{
-			string code = GenerateMethodOverloads3 ();
+			string code = GenerateMethodOverloads3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodPrivateImplementationType ()
 		{
-			string code = GenerateMethodPrivateImplementationType ();
+			string code = GenerateMethodPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodImplementationTypeOrder ()
 		{
-			string code = GenerateMethodImplementationTypeOrder ();
+			string code = GenerateMethodImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
-			string code = GenerateMethodReturnTypeAttributes ();
+			string code = GenerateMethodReturnTypeAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodNewSlotTest ()
 		{
-			string code = GenerateMethodNewSlot ();
+			string code = GenerateMethodNewSlot (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorAttributesTest ()
 		{
-			string code = GenerateConstructorAttributes ();
+			string code = GenerateConstructorAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorParametersTest ()
 		{
-			string code = GenerateConstructorParameters ();
+			string code = GenerateConstructorParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorParameterAttributesTest ()
 		{
-			string code = GenerateConstructorParameterAttributes ();
+			string code = GenerateConstructorParameterAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void BaseConstructorSingleArg ()
 		{
-			string code = GenerateBaseConstructor (false);
+			string code = GenerateBaseConstructor (false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void BaseConstructorMultipleArgs ()
 		{
-			string code = GenerateBaseConstructor (true);
+			string code = GenerateBaseConstructor (true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ChainedConstructorSingleArg ()
 		{
-			string code = GenerateChainedConstructor (false);
+			string code = GenerateChainedConstructor (false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ChainedConstructorMultipleArgs ()
 		{
-			string code = GenerateChainedConstructor (true);
+			string code = GenerateChainedConstructor (true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void TypeConstructorTest ()
 		{
-			string code = GenerateTypeConstructor ();
+			string code = GenerateTypeConstructor (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"public delegate void Test1();{0}{0}", Writer.NewLine), code);
+				"public delegate void Test1();{0}{0}", NewLine), code);
 		}
 
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
@@ -1282,80 +1410,106 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void DefaultTypeTest ()
 		{
-			string code = GenerateDefaultType ();
+			string code = GenerateDefaultType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface  {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void DefaultTypeTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateDefaultType (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public interface {0}" + 
+				"{{{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public override void NullTypeTest ()
 		{
-			GenerateNullType ();
+			GenerateNullType (Options);
 		}
 
 		[Test]
 		public override void SimpleTypeTest ()
 		{
-			string code = GenerateSimpleType ();
+			string code = GenerateSimpleType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void SimpleTypeTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateSimpleType (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public interface Test1{0}" + 
+				"{{{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void DerivedTypeTest ()
 		{
-			string code = GenerateDerivedType ();
+			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 #if NET_2_0
 				"internal interface Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
 #else
 				"interface Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
 #endif
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void AttributesAndTypeTest ()
 		{
-			string code = GenerateAttributesAndType ();
+			string code = GenerateAttributesAndType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"[A()]{0}" +
 				"[B()]{0}" +
 				"public interface Test1 {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventMembersTypeTest1 ()
 		{
-			string code = GenerateEventMembersType1 ();
+			string code = GenerateEventMembersType1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
 				"    private event void ;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventMembersTypeTest2 ()
 		{
-			string code = GenerateEventMembersType2 ();
+			string code = GenerateEventMembersType2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    public event int Click;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventImplementationTypes ()
 		{
-			string code = GenerateEventImplementationTypes ();
+			string code = GenerateEventImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
@@ -1364,66 +1518,66 @@ namespace MonoTests.Microsoft.CSharp
 #else
 				"    /*FamANDAssem*/ internal event int Click;{0}" +
 #endif
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventPrivateImplementationType ()
 		{
-			string code = GenerateEventPrivateImplementationType ();
+			string code = GenerateEventPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    event int System.Int32.Click;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventImplementationTypeOrder ()
 		{
-			string code = GenerateEventImplementationTypeOrder ();
+			string code = GenerateEventImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    event int System.Int32.Click;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldMembersAttributesTest ()
 		{
-			string code = GenerateFieldMembersAttributes ();
+			string code = GenerateFieldMembersAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldMembersTypeTest ()
 		{
-			string code = GenerateFieldMembersType (MemberAttributes.Public);
+			string code = GenerateFieldMembersType (MemberAttributes.Public, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldNewSlotTest ()
 		{
 			string code = GenerateFieldMembersType (MemberAttributes.Assembly |
-				MemberAttributes.New);
+				MemberAttributes.New, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeTest1 ()
 		{
-			string code = GeneratePropertyMembersAttributes ();
+			string code = GeneratePropertyMembersAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
@@ -1431,55 +1585,55 @@ namespace MonoTests.Microsoft.CSharp
 				"    [B()]{0}" +
 				"    void  {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeTest2 ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Public,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeGetOnly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Family,
-				true, false);
+				true, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Name {{{0}" +
 				"        get;{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeSetOnly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Assembly,
-				false, true);
+				false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Name {{{0}" +
 				"        set;{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeGetSet ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Family,
-				true, true);
+				true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
@@ -1487,129 +1641,149 @@ namespace MonoTests.Microsoft.CSharp
 				"        get;{0}" +
 				"        set;{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeGetSet_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GeneratePropertyMembersType (MemberAttributes.Family,
+				true, true, options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public interface Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"    int Name{0}" + 
+				"    {{{0}" +
+				"        get;{0}" +
+				"        set;{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeFamilyOrAssembly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.FamilyOrAssembly,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeAssembly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Assembly,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyParametersTest ()
 		{
-			string code = GeneratePropertyParameters ();
+			string code = GeneratePropertyParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerTest1 ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Public,
-				false, false, true);
+				false, false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int this[object value1, ref int value2] {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerTest2 ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Public,
-				false, false, false);
+				false, false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int iTem {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerGetOnly ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Family,
-				true, false, true);
+				true, false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int this[object value1, ref int value2] {{{0}" +
 				"        get;{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerSetOnly ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Family,
-				false, true, true);
+				false, true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int this[object value1, ref int value2] {{{0}" +
 				"        set;{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyImplementationTypes ()
 		{
-			string code = GeneratePropertyImplementationTypes ();
+			string code = GeneratePropertyImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest1 ()
 		{
-			string code = GeneratePropertyOverloads1 ();
+			string code = GeneratePropertyOverloads1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest2 ()
 		{
-			string code = GeneratePropertyOverloads2 ();
+			string code = GeneratePropertyOverloads2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
@@ -1618,13 +1792,13 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest3 ()
 		{
-			string code = GeneratePropertyOverloads3 ();
+			string code = GeneratePropertyOverloads3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
@@ -1633,38 +1807,38 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyPrivateImplementationType ()
 		{
-			string code = GeneratePropertyPrivateImplementationType ();
+			string code = GeneratePropertyPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int this[object value1] {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyImplementationTypeOrder ()
 		{
-			string code = GeneratePropertyImplementationTypeOrder ();
+			string code = GeneratePropertyImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int this[object value1] {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyNewSlotTest ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Private |
-				MemberAttributes.New, true, true);
+				MemberAttributes.New, true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
@@ -1672,118 +1846,135 @@ namespace MonoTests.Microsoft.CSharp
 				"        get;{0}" +
 				"        set;{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest1 ()
 		{
-			string code = GenerateMethodMembersType1 ();
+			string code = GenerateMethodMembersType1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
 				"    void ();{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void MethodMembersTypeTest1_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateMethodMembersType1 (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public interface Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"    [A()]{0}" +
+				"    [B()]{0}" +
+				"    void ();{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest2 ()
 		{
-			string code = GenerateMethodMembersType2 ();
+			string code = GenerateMethodMembersType2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Something(object value1, object value2, out int index, ref int count);{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest3 ()
 		{
-			string code = GenerateMethodMembersType3 ();
+			string code = GenerateMethodMembersType3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Something([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int index);{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodImplementationTypes ()
 		{
-			string code = GenerateMethodImplementationTypes ();
+			string code = GenerateMethodImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Execute();{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest1 ()
 		{
-			string code = GenerateMethodOverloads1 ();
+			string code = GenerateMethodOverloads1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int Execute();{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest2 ()
 		{
-			string code = GenerateMethodOverloads2 ();
+			string code = GenerateMethodOverloads2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    void Execute();{0}" +
 				"    {0}" +
 				"    int Execute(object value1);{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest3 ()
 		{
-			string code = GenerateMethodOverloads3 ();
+			string code = GenerateMethodOverloads3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    void Execute();{0}" +
 				"    {0}" +
 				"    int System.Int32.Execute(object value1);{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodPrivateImplementationType ()
 		{
-			string code = GenerateMethodPrivateImplementationType ();
+			string code = GenerateMethodPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int System.Int32.Execute(object value1);{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodImplementationTypeOrder ()
 		{
-			string code = GenerateMethodImplementationTypeOrder ();
+			string code = GenerateMethodImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    int System.Int32.Execute(object value1);{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
-			string code = GenerateMethodReturnTypeAttributes ();
+			string code = GenerateMethodReturnTypeAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
@@ -1792,98 +1983,126 @@ namespace MonoTests.Microsoft.CSharp
 				"    [return: C(A1=false, A2=true)]{0}" +
 				"    [return: D()]{0}" +
 				"    int Execute();{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodNewSlotTest ()
 		{
-			string code = GenerateMethodNewSlot ();
+			string code = GenerateMethodNewSlot (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
 				"    new int Execute();{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorAttributesTest ()
 		{
-			string code = GenerateConstructorAttributes ();
+			string code = GenerateConstructorAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void ConstructorAttributesTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateConstructorAttributes (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public interface Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorParametersTest ()
 		{
-			string code = GenerateConstructorParameters ();
+			string code = GenerateConstructorParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorParameterAttributesTest ()
 		{
-			string code = GenerateConstructorParameterAttributes ();
+			string code = GenerateConstructorParameterAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code, "#1");
 		}
 
 		[Test]
 		public override void BaseConstructorSingleArg ()
 		{
-			string code = GenerateBaseConstructor (false);
+			string code = GenerateBaseConstructor (false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void BaseConstructorMultipleArgs ()
 		{
-			string code = GenerateBaseConstructor (true);
+			string code = GenerateBaseConstructor (true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ChainedConstructorSingleArg ()
 		{
-			string code = GenerateChainedConstructor (false);
+			string code = GenerateChainedConstructor (false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ChainedConstructorMultipleArgs ()
 		{
-			string code = GenerateChainedConstructor (true);
+			string code = GenerateChainedConstructor (true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void TypeConstructorTest ()
 		{
-			string code = GenerateTypeConstructor ();
+			string code = GenerateTypeConstructor (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public interface Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void TypeConstructorTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateTypeConstructor (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public interface Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
@@ -1925,80 +2144,106 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void DefaultTypeTest ()
 		{
-			string code = GenerateDefaultType ();
+			string code = GenerateDefaultType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct  {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void DefaultTypeTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateDefaultType (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public struct {0}" + 
+				"{{{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public override void NullTypeTest ()
 		{
-			GenerateNullType ();
+			GenerateNullType (Options);
 		}
 
 		[Test]
 		public override void SimpleTypeTest ()
 		{
-			string code = GenerateSimpleType ();
+			string code = GenerateSimpleType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void SimpleTypeTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateSimpleType (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public struct Test1{0}" + 
+				"{{{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void DerivedTypeTest ()
 		{
-			string code = GenerateDerivedType ();
+			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 #if NET_2_0
 				"internal struct Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
 #else
 				"struct Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
 #endif
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void AttributesAndTypeTest ()
 		{
-			string code = GenerateAttributesAndType ();
+			string code = GenerateAttributesAndType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"[A()]{0}" +
 				"[B()]{0}" +
 				"public struct Test1 {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventMembersTypeTest1 ()
 		{
-			string code = GenerateEventMembersType1 ();
+			string code = GenerateEventMembersType1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
 				"    private event void ;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventMembersTypeTest2 ()
 		{
-			string code = GenerateEventMembersType2 ();
+			string code = GenerateEventMembersType2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public event int Click;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventImplementationTypes ()
 		{
-			string code = GenerateEventImplementationTypes ();
+			string code = GenerateEventImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2007,71 +2252,71 @@ namespace MonoTests.Microsoft.CSharp
 #else
 				"    /*FamANDAssem*/ internal event int Click;{0}" +
 #endif
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventPrivateImplementationType ()
 		{
-			string code = GenerateEventPrivateImplementationType ();
+			string code = GenerateEventPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    event int System.Int32.Click;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventImplementationTypeOrder ()
 		{
-			string code = GenerateEventImplementationTypeOrder ();
+			string code = GenerateEventImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    event int System.Int32.Click;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldMembersAttributesTest ()
 		{
-			string code = GenerateFieldMembersAttributes ();
+			string code = GenerateFieldMembersAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
 				"    private void ;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldMembersTypeTest ()
 		{
-			string code = GenerateFieldMembersType (MemberAttributes.Public);
+			string code = GenerateFieldMembersType (MemberAttributes.Public, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public int Name = 2;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldNewSlotTest ()
 		{
 			string code = GenerateFieldMembersType (MemberAttributes.Assembly |
-				MemberAttributes.New);
+				MemberAttributes.New, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    internal new int Name = 2;{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeTest1 ()
 		{
-			string code = GeneratePropertyMembersAttributes ();
+			string code = GeneratePropertyMembersAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2079,27 +2324,27 @@ namespace MonoTests.Microsoft.CSharp
 				"    [B()]{0}" +
 				"    private void  {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeTest2 ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Public,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeGetOnly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Family,
-				true, false);
+				true, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2107,14 +2352,14 @@ namespace MonoTests.Microsoft.CSharp
 				"        get {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeSetOnly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Assembly,
-				false, true);
+				false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2126,14 +2371,14 @@ namespace MonoTests.Microsoft.CSharp
 				"        set {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeGetSet ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Family,
-				true, true);
+				true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2143,27 +2388,51 @@ namespace MonoTests.Microsoft.CSharp
 				"        set {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeGetSet_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GeneratePropertyMembersType (MemberAttributes.Family,
+				true, true, options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public struct Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"    protected virtual int Name{0}" + 
+				"    {{{0}" +
+				"        get{0}" + 
+				"        {{{0}" +
+				"        }}{0}" +
+				"        set{0}" + 
+				"        {{{0}" +
+				"        }}{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeFamilyOrAssembly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.FamilyOrAssembly,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    protected internal int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeAssembly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Assembly,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2173,52 +2442,52 @@ namespace MonoTests.Microsoft.CSharp
 				"    internal int Name {{{0}" +
 #endif
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyParametersTest ()
 		{
-			string code = GeneratePropertyParameters ();
+			string code = GeneratePropertyParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerTest1 ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Public,
-				false, false, true);
+				false, false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int this[object value1, ref int value2] {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerTest2 ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Public,
-				false, false, false);
+				false, false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int iTem {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerGetOnly ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Family,
-				true, false, true);
+				true, false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2226,14 +2495,14 @@ namespace MonoTests.Microsoft.CSharp
 				"        get {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerSetOnly ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Family,
-				false, true, true);
+				false, true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2241,37 +2510,37 @@ namespace MonoTests.Microsoft.CSharp
 				"        set {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyImplementationTypes ()
 		{
-			string code = GeneratePropertyImplementationTypes ();
+			string code = GeneratePropertyImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest1 ()
 		{
-			string code = GeneratePropertyOverloads1 ();
+			string code = GeneratePropertyOverloads1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    protected virtual int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest2 ()
 		{
-			string code = GeneratePropertyOverloads2 ();
+			string code = GeneratePropertyOverloads2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2280,13 +2549,13 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    private int Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest3 ()
 		{
-			string code = GeneratePropertyOverloads3 ();
+			string code = GeneratePropertyOverloads3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2295,38 +2564,38 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    int System.Int32.Name {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyPrivateImplementationType ()
 		{
-			string code = GeneratePropertyPrivateImplementationType ();
+			string code = GeneratePropertyPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    int System.Int32.this[object value1] {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyImplementationTypeOrder ()
 		{
-			string code = GeneratePropertyImplementationTypeOrder ();
+			string code = GeneratePropertyImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    int System.Int32.this[object value1] {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyNewSlotTest ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Private |
-				MemberAttributes.New, true, true);
+				MemberAttributes.New, true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2336,13 +2605,13 @@ namespace MonoTests.Microsoft.CSharp
 				"        set {{{0}" +
 				"        }}{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest1 ()
 		{
-			string code = GenerateMethodMembersType1 ();
+			string code = GenerateMethodMembersType1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2350,37 +2619,56 @@ namespace MonoTests.Microsoft.CSharp
 				"    [B()]{0}" +
 				"    private void () {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void MethodMembersTypeTest1_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateMethodMembersType1 (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public struct Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"    [A()]{0}" +
+				"    [B()]{0}" +
+				"    private void (){0}" + 
+				"    {{{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest2 ()
 		{
-			string code = GenerateMethodMembersType2 ();
+			string code = GenerateMethodMembersType2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int Something(object value1, object value2, out int index, ref int count) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest3 ()
 		{
-			string code = GenerateMethodMembersType3 ();
+			string code = GenerateMethodMembersType3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public virtual int Something([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int index) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodImplementationTypes ()
 		{
-			string code = GenerateMethodImplementationTypes ();
+			string code = GenerateMethodImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2390,13 +2678,13 @@ namespace MonoTests.Microsoft.CSharp
 				"    internal int Execute() {{{0}" +
 #endif
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest1 ()
 		{
-			string code = GenerateMethodOverloads1 ();
+			string code = GenerateMethodOverloads1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2406,13 +2694,13 @@ namespace MonoTests.Microsoft.CSharp
 				"    internal int Execute() {{{0}" +
 #endif
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest2 ()
 		{
-			string code = GenerateMethodOverloads2 ();
+			string code = GenerateMethodOverloads2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2421,13 +2709,13 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    private int Execute(object value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest3 ()
 		{
-			string code = GenerateMethodOverloads3 ();
+			string code = GenerateMethodOverloads3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2436,37 +2724,37 @@ namespace MonoTests.Microsoft.CSharp
 				"    {0}" +
 				"    int System.Int32.Execute(object value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodPrivateImplementationType ()
 		{
-			string code = GenerateMethodPrivateImplementationType ();
+			string code = GenerateMethodPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    int System.Int32.Execute(object value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodImplementationTypeOrder ()
 		{
-			string code = GenerateMethodImplementationTypeOrder ();
+			string code = GenerateMethodImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    int System.Int32.Execute(object value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
-			string code = GenerateMethodReturnTypeAttributes ();
+			string code = GenerateMethodReturnTypeAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2476,25 +2764,25 @@ namespace MonoTests.Microsoft.CSharp
 				"    [return: D()]{0}" +
 				"    public virtual int Execute() {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodNewSlotTest ()
 		{
-			string code = GenerateMethodNewSlot ();
+			string code = GenerateMethodNewSlot (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public new virtual int Execute() {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorAttributesTest ()
 		{
-			string code = GenerateConstructorAttributes ();
+			string code = GenerateConstructorAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2502,63 +2790,82 @@ namespace MonoTests.Microsoft.CSharp
 				"    [B()]{0}" +
 				"    private Test1() {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void ConstructorAttributesTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateConstructorAttributes (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public struct Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"    [A()]{0}" +
+				"    [B()]{0}" +
+				"    private Test1(){0}" + 
+				"    {{{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorParametersTest ()
 		{
-			string code = GenerateConstructorParameters ();
+			string code = GenerateConstructorParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    public Test1(object value1, object value2, out int index, ref int count) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorParameterAttributesTest ()
 		{
-			string code = GenerateConstructorParameterAttributes ();
+			string code = GenerateConstructorParameterAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    private Test1([A()] [B()] object value, [C(A1=false, A2=true)] [D()] out int index) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void BaseConstructorSingleArg ()
 		{
-			string code = GenerateBaseConstructor (false);
+			string code = GenerateBaseConstructor (false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    protected Test1(object value1, out int value2) : {0}" +
 				"            base(value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void BaseConstructorMultipleArgs ()
 		{
-			string code = GenerateBaseConstructor (true);
+			string code = GenerateBaseConstructor (true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
 				"    protected Test1(object value1, out int value2) : {0}" +
 				"            base(value1, value2) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ChainedConstructorSingleArg ()
 		{
-			string code = GenerateChainedConstructor (false);
+			string code = GenerateChainedConstructor (false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2566,13 +2873,13 @@ namespace MonoTests.Microsoft.CSharp
 				"            base(value3) : {0}" +
 				"            this(value1) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ChainedConstructorMultipleArgs ()
 		{
-			string code = GenerateChainedConstructor (true);
+			string code = GenerateChainedConstructor (true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2580,13 +2887,13 @@ namespace MonoTests.Microsoft.CSharp
 				"            base(value3) : {0}" +
 				"            this(value1, value2) {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void TypeConstructorTest ()
 		{
-			string code = GenerateTypeConstructor ();
+			string code = GenerateTypeConstructor (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public struct Test1 {{{0}" +
 				"    {0}" +
@@ -2596,7 +2903,28 @@ namespace MonoTests.Microsoft.CSharp
 #endif
 				"    static Test1() {{{0}" +
 				"    }}{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code, "#1");
+		}
+
+		[Test]
+		public void TypeConstructorTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateTypeConstructor (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public struct Test1{0}" +
+				"{{{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    [A()]{0}" +
+				"    [B()]{0}" +
+#endif
+				"    static Test1(){0}" + 
+				"    {{{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code, "#2");
 		}
 
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
@@ -2638,531 +2966,600 @@ namespace MonoTests.Microsoft.CSharp
 		[Test]
 		public override void DefaultTypeTest ()
 		{
-			string code = GenerateDefaultType ();
+			string code = GenerateDefaultType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum  {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void DefaultTypeTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateDefaultType (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public enum {0}" + 
+				"{{{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		[ExpectedException (typeof (NullReferenceException))]
 		public override void NullTypeTest ()
 		{
-			GenerateNullType ();
+			GenerateNullType (Options);
 		}
 
 		[Test]
 		public override void SimpleTypeTest ()
 		{
-			string code = GenerateSimpleType ();
+			string code = GenerateSimpleType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void SimpleTypeTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateSimpleType (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public enum Test1{0}" + 
+				"{{{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void DerivedTypeTest ()
 		{
-			string code = GenerateDerivedType ();
+			string code = GenerateDerivedType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 #if NET_2_0
 				"internal enum Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
 #else
 				"enum Test1 : int, System.Security.Principal.IIdentity, string, System.Security.IPermission {{{0}" +
 #endif
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void AttributesAndTypeTest ()
 		{
-			string code = GenerateAttributesAndType ();
+			string code = GenerateAttributesAndType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"[A()]{0}" +
 				"[B()]{0}" +
 				"public enum Test1 {{{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventMembersTypeTest1 ()
 		{
-			string code = GenerateEventMembersType1 ();
+			string code = GenerateEventMembersType1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventMembersTypeTest2 ()
 		{
-			string code = GenerateEventMembersType2 ();
+			string code = GenerateEventMembersType2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventImplementationTypes ()
 		{
-			string code = GenerateEventImplementationTypes ();
+			string code = GenerateEventImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventPrivateImplementationType ()
 		{
-			string code = GenerateEventPrivateImplementationType ();
+			string code = GenerateEventPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void EventImplementationTypeOrder ()
 		{
-			string code = GenerateEventImplementationTypeOrder ();
+			string code = GenerateEventImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldMembersAttributesTest ()
 		{
-			string code = GenerateFieldMembersAttributes ();
+			string code = GenerateFieldMembersAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
 				"    [A()]{0}" +
 				"    [B()]{0}" +
 				"    ,{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldMembersTypeTest ()
 		{
-			string code = GenerateFieldMembersType (MemberAttributes.Public);
+			string code = GenerateFieldMembersType (MemberAttributes.Public, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
 				"    Name = 2,{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void FieldNewSlotTest ()
 		{
 			string code = GenerateFieldMembersType (MemberAttributes.Assembly |
-				MemberAttributes.New);
+				MemberAttributes.New, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
 				"    Name = 2,{0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeTest1 ()
 		{
-			string code = GeneratePropertyMembersAttributes ();
+			string code = GeneratePropertyMembersAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeTest2 ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Public,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeGetOnly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Family,
-				true, false);
+				true, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeSetOnly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Assembly,
-				false, true);
+				false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeGetSet ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Family,
-				true, true);
+				true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void PropertyMembersTypeGetSet_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GeneratePropertyMembersType (MemberAttributes.Family,
+				true, true, options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public enum Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeFamilyOrAssembly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.FamilyOrAssembly,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyMembersTypeAssembly ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Assembly,
-				false, false);
+				false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyParametersTest ()
 		{
-			string code = GeneratePropertyParameters ();
+			string code = GeneratePropertyParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerTest1 ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Public,
-				false, false, true);
+				false, false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerTest2 ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Public,
-				false, false, false);
+				false, false, false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerGetOnly ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Family,
-				true, false, true);
+				true, false, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyIndexerSetOnly ()
 		{
 			string code = GeneratePropertyIndexer (MemberAttributes.Family,
-				false, true, true);
+				false, true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyImplementationTypes ()
 		{
-			string code = GeneratePropertyImplementationTypes ();
+			string code = GeneratePropertyImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest1 ()
 		{
-			string code = GeneratePropertyOverloads1 ();
+			string code = GeneratePropertyOverloads1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest2 ()
 		{
-			string code = GeneratePropertyOverloads2 ();
+			string code = GeneratePropertyOverloads2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyOverloadsTest3 ()
 		{
-			string code = GeneratePropertyOverloads3 ();
+			string code = GeneratePropertyOverloads3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyPrivateImplementationType ()
 		{
-			string code = GeneratePropertyPrivateImplementationType ();
+			string code = GeneratePropertyPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyImplementationTypeOrder ()
 		{
-			string code = GeneratePropertyImplementationTypeOrder ();
+			string code = GeneratePropertyImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void PropertyNewSlotTest ()
 		{
 			string code = GeneratePropertyMembersType (MemberAttributes.Private |
-				MemberAttributes.New, true, true);
+				MemberAttributes.New, true, true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest1 ()
 		{
-			string code = GenerateMethodMembersType1 ();
+			string code = GenerateMethodMembersType1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest2 ()
 		{
-			string code = GenerateMethodMembersType2 ();
+			string code = GenerateMethodMembersType2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodMembersTypeTest3 ()
 		{
-			string code = GenerateMethodMembersType3 ();
+			string code = GenerateMethodMembersType3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodImplementationTypes ()
 		{
-			string code = GenerateMethodImplementationTypes ();
+			string code = GenerateMethodImplementationTypes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest1 ()
 		{
-			string code = GenerateMethodOverloads1 ();
+			string code = GenerateMethodOverloads1 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest2 ()
 		{
-			string code = GenerateMethodOverloads2 ();
+			string code = GenerateMethodOverloads2 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodOverloadsTest3 ()
 		{
-			string code = GenerateMethodOverloads3 ();
+			string code = GenerateMethodOverloads3 (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodPrivateImplementationType ()
 		{
-			string code = GenerateMethodPrivateImplementationType ();
+			string code = GenerateMethodPrivateImplementationType (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodImplementationTypeOrder ()
 		{
-			string code = GenerateMethodImplementationTypeOrder ();
+			string code = GenerateMethodImplementationTypeOrder (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodNewSlotTest ()
 		{
-			string code = GenerateMethodNewSlot ();
+			string code = GenerateMethodNewSlot (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void MethodReturnTypeAttributes ()
 		{
-			string code = GenerateMethodReturnTypeAttributes ();
+			string code = GenerateMethodReturnTypeAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorAttributesTest ()
 		{
-			string code = GenerateConstructorAttributes ();
+			string code = GenerateConstructorAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void ConstructorAttributesTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateConstructorAttributes (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public enum Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorParametersTest ()
 		{
-			string code = GenerateConstructorParameters ();
+			string code = GenerateConstructorParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ConstructorParameterAttributesTest ()
 		{
-			string code = GenerateConstructorParameterAttributes ();
+			string code = GenerateConstructorParameterAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void BaseConstructorSingleArg ()
 		{
-			string code = GenerateBaseConstructor (false);
+			string code = GenerateBaseConstructor (false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void BaseConstructorMultipleArgs ()
 		{
-			string code = GenerateBaseConstructor (true);
+			string code = GenerateBaseConstructor (true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ChainedConstructorSingleArg ()
 		{
-			string code = GenerateChainedConstructor (false);
+			string code = GenerateChainedConstructor (false, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void ChainedConstructorMultipleArgs ()
 		{
-			string code = GenerateChainedConstructor (true);
+			string code = GenerateChainedConstructor (true, Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
 		}
 
 		[Test]
 		public override void TypeConstructorTest ()
 		{
-			string code = GenerateTypeConstructor ();
+			string code = GenerateTypeConstructor (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public enum Test1 {{{0}" +
 				"    {0}" +
-				"}}{0}", Writer.NewLine), code);
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public void TypeConstructorTest_C ()
+		{
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+
+			string code = GenerateTypeConstructor (options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public enum Test1{0}" + 
+				"{{{0}" +
+				"    {0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase

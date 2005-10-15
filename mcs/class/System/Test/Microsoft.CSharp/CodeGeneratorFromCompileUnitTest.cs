@@ -7,32 +7,30 @@
 // (c) 2003 Erik LeBel
 //
 using System;
-using System.Globalization;
-using System.Text;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.Globalization;
+using System.IO;
+using System.Text;
 
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.CSharp
 {
-	///
 	/// <summary>
-	///	Test ICodeGenerator's GenerateCodeFromCompileUnit, along with a 
-	///	minimal set CodeDom components.
+	/// Test ICodeGenerator's GenerateCodeFromCompileUnit, along with a 
+	/// minimal set CodeDom components.
 	/// </summary>
-	///
 	[TestFixture]
 	public class CodeGeneratorFromCompileUnitTest : CodeGeneratorTestBase
 	{
-		string codeUnitHeader = "";
-		CodeCompileUnit codeUnit = null;
+		private string codeUnitHeader = "";
+		private CodeCompileUnit codeUnit = null;
 
 		public CodeGeneratorFromCompileUnitTest ()
 		{
 			Init();
-			Generate();
-			codeUnitHeader = Code;
+			codeUnitHeader = Generate ();
 		}
 		
 		[SetUp]
@@ -42,21 +40,20 @@ namespace MonoTests.Microsoft.CSharp
 			codeUnit = new CodeCompileUnit ();
 		}
 		
-		protected override string Code {
-			get { return base.Code.Substring (codeUnitHeader.Length); }
-		}
-		
-		protected override void Generate ()
+		protected override string Generate (CodeGeneratorOptions options)
 		{
+			StringWriter writer = new StringWriter ();
+			writer.NewLine = NewLine;
+
 			generator.GenerateCodeFromCompileUnit (codeUnit, writer, options);
 			writer.Close ();
+			return writer.ToString ().Substring (codeUnitHeader.Length);
 		}
 		
 		[Test]
 		public void DefaultCodeUnitTest ()
 		{
-			Generate ();
-			Assertion.AssertEquals ("", Code);
+			Assert.AreEqual ("", Generate ());
 		}
 
 		[Test]
@@ -64,24 +61,30 @@ namespace MonoTests.Microsoft.CSharp
 		public void NullCodeUnitTest ()
 		{
 			codeUnit = null;
-			Generate();
+			Generate ();
 		}
 
 		[Test]
 		public void ReferencedTest ()
 		{
 			codeUnit.ReferencedAssemblies.Add ("System.dll");
-			Generate();
-			Assertion.AssertEquals ("", Code);
+			Assertion.AssertEquals ("", Generate ());
 		}
 
 		[Test]
 		public void SimpleNamespaceTest ()
 		{
+			string code = null;
+
 			CodeNamespace ns = new CodeNamespace ("A");
 			codeUnit.Namespaces.Add (ns);
-			Generate ();
-			Assertion.AssertEquals ("namespace A {\n    \n}\n", Code);
+			code = Generate ();
+			Assert.AreEqual ("namespace A {\n    \n}\n", code, "#1");
+
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+			code = Generate (options);
+			Assert.AreEqual ("namespace A\n{\n    \n}\n", code, "#2");
 		}
 
 		[Test]
@@ -90,8 +93,7 @@ namespace MonoTests.Microsoft.CSharp
 			CodeNamespace ns = new CodeNamespace ("A");
 			codeUnit.Namespaces.Add (ns);
 			codeUnit.ReferencedAssemblies.Add ("using System;");
-			Generate ();
-			Assertion.AssertEquals ("namespace A {\n    \n}\n", Code);
+			Assert.AreEqual ("namespace A {\n    \n}\n", Generate ());
 		}
 
 		[Test]
@@ -101,9 +103,8 @@ namespace MonoTests.Microsoft.CSharp
 			attrDec.Name = "A";
 
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
-			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
-				"[assembly: A()]{0}{0}", writer.NewLine), Code);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"[assembly: A()]{0}{0}", NewLine), Generate ());
 		}
 
 		[Test]
@@ -118,9 +119,9 @@ namespace MonoTests.Microsoft.CSharp
 				new CodePrimitiveExpression (true)));
 
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
-			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
-				"[assembly: A(A1=false, A2=true)]{0}{0}", writer.NewLine), Code);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"[assembly: A(A1=false, A2=true)]{0}{0}", NewLine), 
+				Generate ());
 		}
 
 		[Test]
@@ -133,9 +134,9 @@ namespace MonoTests.Microsoft.CSharp
 			attrDec = new CodeAttributeDeclaration ();
 			attrDec.Name = "B";
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
-			Generate ();
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
-				"[assembly: A()]{0}[assembly: B()]{0}{0}", writer.NewLine), Code);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"[assembly: A()]{0}[assembly: B()]{0}{0}", NewLine),
+				Generate ());
 		}
 
 		[Test]
@@ -152,20 +153,21 @@ namespace MonoTests.Microsoft.CSharp
 			attrDec.Name = "B";
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 
-			Generate ();
-
-			Assertion.AssertEquals (string.Format (CultureInfo.InvariantCulture,
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"[assembly: A()]{0}[assembly: B()]{0}{0}namespace A {{{0}    {0}"
-				+ "}}{0}", writer.NewLine), Code);
+				+ "}}{0}", NewLine), Generate ());
 		}
 
 		[Test]
 		public void CodeSnippetTest ()
 		{
+			StringWriter writer = new StringWriter ();
+			writer.NewLine = NewLine;
+
 			codeUnit = new CodeSnippetCompileUnit ("public class Test1 {}");
 			generator.GenerateCodeFromCompileUnit (codeUnit, writer, options);
 			writer.Close ();
-			Assertion.AssertEquals ("public class Test1 {}" + writer.NewLine, writer.ToString ());
+			Assert.AreEqual ("public class Test1 {}" + writer.NewLine, writer.ToString ());
 		}
 	}
 }

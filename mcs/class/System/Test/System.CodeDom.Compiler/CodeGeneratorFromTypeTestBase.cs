@@ -8,6 +8,7 @@
 //
 
 using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Reflection;
 using System.Security;
 using System.Security.Principal;
@@ -176,23 +177,23 @@ namespace MonoTests.System.CodeDom.Compiler
 		[Test]
 		public abstract void TypeConstructorTest ();
 
-		protected string GenerateDefaultType ()
+		protected string GenerateDefaultType (CodeGeneratorOptions options)
 		{
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateNullType ()
+		protected string GenerateNullType (CodeGeneratorOptions options)
 		{
-			return GenerateCodeFromType (null);
+			return GenerateCodeFromType (null, options);
 		}
 
-		protected string GenerateSimpleType ()
+		protected string GenerateSimpleType (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateDerivedType ()
+		protected string GenerateDerivedType (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 			TypeDeclaration.TypeAttributes |= TypeAttributes.NestedFamily | 
@@ -201,10 +202,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			TypeDeclaration.BaseTypes.Add (new CodeTypeReference (typeof (IIdentity)));
 			TypeDeclaration.BaseTypes.Add (new CodeTypeReference (typeof (string)));
 			TypeDeclaration.BaseTypes.Add (new CodeTypeReference (typeof (IPermission)));
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateAttributesAndType ()
+		protected string GenerateAttributesAndType (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -216,10 +217,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			attrDec.Name = "B";
 			TypeDeclaration.CustomAttributes.Add (attrDec);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateEventMembersType1 ()
+		protected string GenerateEventMembersType1 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -235,10 +236,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (evt);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateEventMembersType2 ()
+		protected string GenerateEventMembersType2 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -250,10 +251,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			evt.Type = new CodeTypeReference (typeof (int));
 			TypeDeclaration.Members.Add (evt);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateEventImplementationTypes ()
+		protected string GenerateEventImplementationTypes (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -265,10 +266,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			evt.ImplementationTypes.Add (new CodeTypeReference ("IWhatever"));
 			TypeDeclaration.Members.Add (evt);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateEventPrivateImplementationType ()
+		protected string GenerateEventPrivateImplementationType (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -279,10 +280,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			evt.PrivateImplementationType = new CodeTypeReference (typeof (int));
 			TypeDeclaration.Members.Add (evt);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateEventImplementationTypeOrder ()
+		protected string GenerateEventImplementationTypeOrder (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -294,10 +295,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			evt.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
 			TypeDeclaration.Members.Add (evt);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateFieldMembersAttributes ()
+		protected string GenerateFieldMembersAttributes (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -313,10 +314,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (fld);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateFieldMembersType (MemberAttributes memberAttributes)
+		protected string GenerateFieldMembersType (MemberAttributes memberAttributes, CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -327,10 +328,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			fld.InitExpression = new CodePrimitiveExpression (2);
 			TypeDeclaration.Members.Add (fld);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GeneratePropertyMembersAttributes ()
+		protected string GeneratePropertyMembersAttributes (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -345,10 +346,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			attrDec.Name = "B";
 			property.CustomAttributes.Add (attrDec);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GeneratePropertyMembersType (MemberAttributes memberAttributes, bool hasGet, bool hasSet)
+		protected string GeneratePropertyMembersType (MemberAttributes memberAttributes, bool hasGet, bool hasSet, CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -360,10 +361,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			property.Type = new CodeTypeReference (typeof (int));
 			TypeDeclaration.Members.Add (property);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GeneratePropertyParameters ()
+		protected string GeneratePropertyParameters (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -383,10 +384,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (property);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GeneratePropertyIndexer (MemberAttributes memberAttributes, bool hasGet, bool hasSet, bool addParameters)
+		protected string GeneratePropertyIndexer (MemberAttributes memberAttributes, bool hasGet, bool hasSet, bool addParameters, CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -410,10 +411,10 @@ namespace MonoTests.System.CodeDom.Compiler
 				property.Parameters.Add (param);
 			}
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GeneratePropertyImplementationTypes ()
+		protected string GeneratePropertyImplementationTypes (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -425,10 +426,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			property.ImplementationTypes.Add (new CodeTypeReference ("IWhatever"));
 			TypeDeclaration.Members.Add (property);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GeneratePropertyOverloads1 ()
+		protected string GeneratePropertyOverloads1 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -438,10 +439,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			property.Type = new CodeTypeReference (typeof (int));
 			TypeDeclaration.Members.Add (property);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GeneratePropertyOverloads2 ()
+		protected string GeneratePropertyOverloads2 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -460,10 +461,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			property.Parameters.Add (param);
 			TypeDeclaration.Members.Add (property);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GeneratePropertyOverloads3 ()
+		protected string GeneratePropertyOverloads3 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -483,10 +484,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			property.PrivateImplementationType = new CodeTypeReference (typeof (int));
 			TypeDeclaration.Members.Add (property);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GeneratePropertyPrivateImplementationType ()
+		protected string GeneratePropertyPrivateImplementationType (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -500,10 +501,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			property.Parameters.Add (param);
 			TypeDeclaration.Members.Add (property);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GeneratePropertyImplementationTypeOrder ()
+		protected string GeneratePropertyImplementationTypeOrder (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -518,10 +519,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			property.Parameters.Add (param);
 			TypeDeclaration.Members.Add (property);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodMembersType1 ()
+		protected string GenerateMethodMembersType1 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -537,10 +538,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (method);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodMembersType2 ()
+		protected string GenerateMethodMembersType2 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -568,10 +569,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (method);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodMembersType3 ()
+		protected string GenerateMethodMembersType3 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -612,10 +613,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (method);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodImplementationTypes ()
+		protected string GenerateMethodImplementationTypes (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -627,10 +628,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			method.ImplementationTypes.Add (new CodeTypeReference ("IWhatever"));
 			TypeDeclaration.Members.Add (method);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodOverloads1 ()
+		protected string GenerateMethodOverloads1 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -640,10 +641,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			method.ReturnType = new CodeTypeReference (typeof (int));
 			TypeDeclaration.Members.Add (method);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodOverloads2 ()
+		protected string GenerateMethodOverloads2 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -661,10 +662,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			method.Parameters.Add (param);
 			TypeDeclaration.Members.Add (method);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodOverloads3 ()
+		protected string GenerateMethodOverloads3 (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -683,10 +684,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			method.PrivateImplementationType = new CodeTypeReference (typeof (int));
 			TypeDeclaration.Members.Add (method);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodPrivateImplementationType ()
+		protected string GenerateMethodPrivateImplementationType (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -700,10 +701,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			method.Parameters.Add (param);
 			TypeDeclaration.Members.Add (method);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodImplementationTypeOrder ()
+		protected string GenerateMethodImplementationTypeOrder (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -718,10 +719,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			method.ImplementationTypes.Add (new CodeTypeReference ("IPolicy"));
 			TypeDeclaration.Members.Add (method);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodReturnTypeAttributes ()
+		protected string GenerateMethodReturnTypeAttributes (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -753,10 +754,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			attrDec.Name = "D";
 			method.ReturnTypeCustomAttributes.Add (attrDec);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateConstructorAttributes ()
+		protected string GenerateConstructorAttributes (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -772,10 +773,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (ctor);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateMethodNewSlot ()
+		protected string GenerateMethodNewSlot (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -785,10 +786,10 @@ namespace MonoTests.System.CodeDom.Compiler
 			method.ReturnType = new CodeTypeReference (typeof (int));
 			TypeDeclaration.Members.Add (method);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateConstructorParameters ()
+		protected string GenerateConstructorParameters (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -821,10 +822,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (ctor);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateConstructorParameterAttributes ()
+		protected string GenerateConstructorParameterAttributes (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -864,10 +865,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (ctor);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateBaseConstructor (bool multipleArgs)
+		protected string GenerateBaseConstructor (bool multipleArgs, CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -894,10 +895,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (ctor);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateChainedConstructor (bool multipleArgs)
+		protected string GenerateChainedConstructor (bool multipleArgs, CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -931,10 +932,10 @@ namespace MonoTests.System.CodeDom.Compiler
 
 			TypeDeclaration.Members.Add (ctor);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 
-		protected string GenerateTypeConstructor ()
+		protected string GenerateTypeConstructor (CodeGeneratorOptions options)
 		{
 			TypeDeclaration.Name = "Test1";
 
@@ -978,7 +979,7 @@ namespace MonoTests.System.CodeDom.Compiler
 				new CodePrimitiveExpression (true)));
 			typeCtor.ReturnTypeCustomAttributes.Add (attrDec);
 
-			return GenerateCodeFromType (TypeDeclaration);
+			return GenerateCodeFromType (TypeDeclaration, options);
 		}
 	}
 }

@@ -18,18 +18,16 @@ using NUnit.Framework;
 
 namespace MonoTests.Microsoft.CSharp
 {
-	///
 	/// <summary>
-	///	Test ICodeGenerator's GenerateCodeFromExpression, along with a 
-	///	minimal set CodeDom components.
+	/// Test ICodeGenerator's GenerateCodeFromExpression, along with a 
+	/// minimal set CodeDom components.
 	/// </summary>
-	///
 	[TestFixture]
 	public class CodeGeneratorFromExpressionTest
 	{
-		CSharpCodeProvider provider;
-		ICodeGenerator generator;
-		CodeGeneratorOptions options;
+		private CSharpCodeProvider provider;
+		private ICodeGenerator generator;
+		private CodeGeneratorOptions options;
 
 		[SetUp]
 		public void SetUp ()
@@ -128,15 +126,5 @@ namespace MonoTests.Microsoft.CSharp
 			generator.GenerateCodeFromExpression (expression, sw, options);
 			return sw.ToString ();
 		}
-
-		/*
-		[Test]
-		public void ReferencedTest ()
-		{
-			codeUnit.ReferencedAssemblies.Add ("System.dll");
-			Generate ();
-			Assertion.AssertEquals ("", Code);
-		}
-		*/
 	}
 }

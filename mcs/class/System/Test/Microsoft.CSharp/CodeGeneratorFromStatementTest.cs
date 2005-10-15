@@ -7,24 +7,23 @@
 // (c) 2003 Erik LeBel
 //
 using System;
-using System.Text;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.IO;
+using System.Text;
 
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.CSharp
 {
-	///
 	/// <summary>
-	///	Test ICodeGenerator's GenerateCodeFromStatement, along with a 
-	///	minimal set CodeDom components.
+	/// Test ICodeGenerator's GenerateCodeFromStatement, along with a 
+	/// minimal set CodeDom components.
 	/// </summary>
-	///
 	[TestFixture]
 	public class CodeGeneratorFromStatementTest: CodeGeneratorTestBase
 	{
-		CodeStatement statement = null;
+		private CodeStatement statement = null;
 
 		[SetUp]
 		public void Init ()
@@ -33,10 +32,14 @@ namespace MonoTests.Microsoft.CSharp
 			statement = new CodeStatement ();
 		}
 		
-		protected override void Generate ()
+		protected override string Generate (CodeGeneratorOptions options)
 		{
+			StringWriter writer = new StringWriter ();
+			writer.NewLine = NewLine;
+
 			generator.GenerateCodeFromStatement (statement, writer, options);
 			writer.Close ();
+			return writer.ToString ();
 		}
 		
 		[Test]
@@ -63,8 +66,7 @@ namespace MonoTests.Microsoft.CSharp
 			commentStatement.Comment = comment;
 			statement = commentStatement;
 			
-			Generate ();
-			Assertion.AssertEquals ("// \n", Code);
+			Assertion.AssertEquals ("// \n", Generate ());
 		}
 
 		[Test]
@@ -76,20 +78,15 @@ namespace MonoTests.Microsoft.CSharp
 			comment.Text = "a\nb";
 			commentStatement.Comment = comment;
 			statement = commentStatement;
-			
-			Generate ();
-			Assertion.AssertEquals ("// a\n//b\n", Code);
+
+			Assertion.AssertEquals ("// a\n//b\n", Generate ());
 		}
 
 		[Test]
 		public void DefaultThrowExceptionStatementTest ()
 		{
-			CodeThrowExceptionStatement throwStatement = new CodeThrowExceptionStatement ();
-
-			statement = throwStatement;
-
-			Generate ();
-			Assertion.AssertEquals ("throw;\n", Code);
+			statement = new CodeThrowExceptionStatement ();
+			Assertion.AssertEquals ("throw;\n", Generate ());
 		}
 		
 		/*

@@ -1,3 +1,8 @@
+2005-10-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromTypeTest.cs: Reworked tests to pass 
+	CodeGeneratorOptions to Generate* methods.
+
 2005-09-12  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* VBCodeProviderTest.cs: Re-enabled CreateCompiler test as bug #75223

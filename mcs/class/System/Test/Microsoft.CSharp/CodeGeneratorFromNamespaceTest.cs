@@ -7,21 +7,19 @@
 // (c) 2003 Erik LeBel
 //
 using System;
-using System.Text;
 using System.CodeDom;
 using System.CodeDom.Compiler;
+using System.IO;
+using System.Text;
 
 using NUnit.Framework;
 
 namespace MonoTests.Microsoft.CSharp
 {
-	
-	///
 	/// <summary>
-	///	Test ICodeGenerator's GenerateCodeFromNamespace, along with a 
-	///	minimal set CodeDom components.
+	/// Test ICodeGenerator's GenerateCodeFromNamespace, along with a 
+	/// minimal set CodeDom components.
 	/// </summary>
-	///
 	[TestFixture]
 	public class CodeGeneratorFromNamespaceTest : CodeGeneratorTestBase
 	{
@@ -34,10 +32,14 @@ namespace MonoTests.Microsoft.CSharp
 			codeNamespace = new CodeNamespace ();
 		}
 		
-		protected override void Generate ()
+		protected override string Generate (CodeGeneratorOptions options)
 		{
+			StringWriter writer = new StringWriter ();
+			writer.NewLine = NewLine;
+
 			generator.GenerateCodeFromNamespace (codeNamespace, writer, options);
 			writer.Close ();
+			return writer.ToString ();
 		}
 		
 		[Test]
@@ -52,49 +54,44 @@ namespace MonoTests.Microsoft.CSharp
 		public void NullNamespaceNameTest ()
 		{
 			codeNamespace.Name = null;
-			Generate ();
-			Assertion.AssertEquals ("\n", Code);
+			Assert.AreEqual ("\n", Generate ());
 		}
 
 		
 		[Test]
 		public void DefaultNamespaceTest ()
 		{
-			Generate ();
-			Assertion.AssertEquals ("\n", Code);
+			Assert.AreEqual ("\n", Generate ());
 		}
 
 		[Test]
 		public void SimpleNamespaceTest ()
 		{
+			string code = null;
+
 			codeNamespace.Name = "A";
-			Generate();
-			Assertion.AssertEquals ("namespace A {\n    \n}\n", Code);
+			code = Generate ();
+			Assert.AreEqual ("namespace A {\n    \n}\n", code, "#1");
+
+			CodeGeneratorOptions options = new CodeGeneratorOptions ();
+			options.BracingStyle = "C";
+			code = Generate (options);
+			Assert.AreEqual ("namespace A\n{\n    \n}\n", code, "#2");
 		}
 
 		[Test]
 		public void InvalidNamespaceTest ()
 		{
 			codeNamespace.Name = "A,B";
-			Generate();
-			Assertion.AssertEquals ("namespace A,B {\n    \n}\n", Code);
+			Assert.AreEqual ("namespace A,B {\n    \n}\n", Generate ());
 		}
-
 
 		[Test]
 		public void CommentOnlyNamespaceTest ()
 		{
 			CodeCommentStatement comment = new CodeCommentStatement ("a");
 			codeNamespace.Comments.Add (comment);
-			Generate ();
-			Assertion.AssertEquals ("// a\n\n", Code);
+			Assert.AreEqual ("// a\n\n", Generate ());
 		}
 	}
-
-	// FIXME implement tests for these methods:
-	// GenerateCodeFromType
-	// GenerateCodeFromExpression
-	// GenerateCodeFromStatement
-
 }
-

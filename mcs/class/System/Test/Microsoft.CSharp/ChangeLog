@@ -1,3 +1,13 @@
+2005-10-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorTestBase.cs: Generate now returns code that was output,
+	and take CodeGeneratorOptions instance in order to support testing
+	bracing style.
+	* CodeGeneratorFromCompileUnitTest.cs: Added tests for C bracing style.
+	* CodeGeneratorFromNamespaceTest.cs: Added tests for C bracing style. 
+	* CodeGeneratorFromExpressionTest.cs: Clean up.
+	* CodeGeneratorFromTypeTest.cs: Added tests for C bracing style.
+
 2005-10-07  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorTypeOutputTest.cs: Added tests for 

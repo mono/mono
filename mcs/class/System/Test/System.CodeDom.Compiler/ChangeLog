@@ -1,3 +1,12 @@
+2005-10-15  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorTestBase.cs: No longer keep instance of StringWriter to
+	allow GenerateCodeFromType to be executed multiple times with relying
+	on user to reset writer. Allow CodeGeneratorOptions to be passed in,
+	in order to support bracing style tests.
+	* CodeGeneratorFromTypeTestBase.cs: Modify Generate* methods to take
+	CodeGeneratorOptions instance and pass it on to GenerateCodeFromType.
+
 2005-07-30  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTestBase.cs: Added NewSlot tests.
