@@ -1,3 +1,7 @@
+2005-10-15  Zoltan Varga  <vargaz@freemail.hu>
+
+	* ICSharpCode.SharpZipLib: Remove 0.6 version.
+
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Add SharpZipLib.pub.
