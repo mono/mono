@@ -1,3 +1,7 @@
+2005-10-16  Ritvik Mayank  <mritvik@novell.com>
+
+	* TextBoxBase.cs: Fixes #76352 (passing tab key in a multiline textbox)
+
 2005-10-16  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGridBoolColumn.cs: fixes warning

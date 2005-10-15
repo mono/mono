@@ -668,7 +668,7 @@ namespace System.Windows.Forms {
 #endif
 
 				case Keys.Tab: {
-					if (accepts_tab) {
+					if (accepts_tab && multiline) {
 						return true;
 					}
 					return false;
@@ -825,7 +825,7 @@ namespace System.Windows.Forms {
 				}
 
 				case Keys.Tab: {
-					if (!read_only && accepts_tab) {
+					if (!read_only && accepts_tab && multiline) {
 						document.InsertChar(document.CaretLine, document.CaretPosition, '\t');
 						if (document.selection_visible) {
 							document.ReplaceSelection("");
