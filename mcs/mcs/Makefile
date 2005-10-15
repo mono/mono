@@ -51,7 +51,7 @@ wc:
 
 ctest: 
 	rm -f mcs2.exe mcs3.exe
-	$(MAKE) USE_MCS_FLAGS= btest
+	$(MAKE) USE_MCS_FLAGS="-d:NET_1_1 -d:ONLY_1_1" btest
 
 # we need this because bash tries to use its own crappy timer
 FRIENDLY_TIME = $(shell which time) -f'%U seconds'
