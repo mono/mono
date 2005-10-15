@@ -1046,11 +1046,13 @@ namespace System.Xml.XPath
 			throw new NotSupportedException ();
 		}
 
+		[MonoTODO ("no concrete implementation yet")]
 		public virtual void DeleteRange (XPathNavigator nav)
 		{
 			throw new NotSupportedException ();
 		}
 
+		[MonoTODO ("no concrete implementation yet")]
 		public virtual XmlWriter ReplaceRange (XPathNavigator nav)
 		{
 			throw new NotSupportedException ();
