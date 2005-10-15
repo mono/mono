@@ -48,7 +48,12 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
+#if NET_2_0
+[assembly: AssemblyVersion("2.84.0.0")]
+#else
+// not worrying about the NET_1_0 profile for now.
 [assembly: AssemblyVersion("0.84.0.0")]
+#endif
 
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("../ICSharpCode.SharpZipLib.key")]
+[assembly: AssemblyDelaySign(true)]
+[assembly: AssemblyKeyFile("SharpZipLib.pub")]

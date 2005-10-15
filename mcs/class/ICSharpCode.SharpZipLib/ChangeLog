@@ -1,5 +1,8 @@
 2005-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Import 0.84 version of SharpZipLib and merge local changes. This is
+	needed by newer versions of IKVM.
+	
 	* ICSharpCode.SharpZipLib: Remove 0.6 version.
 
 2004-11-25  Raja R Harinath  <rharinath@novell.com>
