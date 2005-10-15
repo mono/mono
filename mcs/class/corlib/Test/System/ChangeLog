@@ -1,3 +1,7 @@
+2005-10-15  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* TypeTest.cs: Added GetTypeCode test.
+
 2005-10-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : another crappy Windows dependent format.

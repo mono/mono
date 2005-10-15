@@ -415,6 +415,29 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsTrue (typeof (A).IsDefined (typeof (VolatileModifier), false), "#2");
 		}
 
+		[Test]
+		public void GetTypeCode ()
+		{
+			Assert.AreEqual (TypeCode.Boolean, Type.GetTypeCode (typeof (bool)), "#1");
+			Assert.AreEqual (TypeCode.Byte, Type.GetTypeCode (typeof (byte)), "#2");
+			Assert.AreEqual (TypeCode.Char, Type.GetTypeCode (typeof (char)), "#3");
+			Assert.AreEqual (TypeCode.DateTime, Type.GetTypeCode (typeof (DateTime)), "#4");
+			Assert.AreEqual (TypeCode.DBNull, Type.GetTypeCode (typeof (DBNull)), "#5");
+			Assert.AreEqual (TypeCode.Decimal, Type.GetTypeCode (typeof (decimal)), "#6");
+			Assert.AreEqual (TypeCode.Double, Type.GetTypeCode (typeof (double)), "#7");
+			Assert.AreEqual (TypeCode.Empty, Type.GetTypeCode (null), "#8");
+			Assert.AreEqual (TypeCode.Int16, Type.GetTypeCode (typeof (short)), "#9");
+			Assert.AreEqual (TypeCode.Int32, Type.GetTypeCode (typeof (int)), "#10");
+			Assert.AreEqual (TypeCode.Int64, Type.GetTypeCode (typeof (long)), "#11");
+			Assert.AreEqual (TypeCode.Object, Type.GetTypeCode (typeof (TakesInt)), "#12");
+			Assert.AreEqual (TypeCode.SByte, Type.GetTypeCode (typeof (sbyte)), "#13");
+			Assert.AreEqual (TypeCode.Single, Type.GetTypeCode (typeof (float)), "#14");
+			Assert.AreEqual (TypeCode.String, Type.GetTypeCode (typeof (string)), "#15");
+			Assert.AreEqual (TypeCode.UInt16, Type.GetTypeCode (typeof (ushort)), "#16");
+			Assert.AreEqual (TypeCode.UInt32, Type.GetTypeCode (typeof (uint)), "#17");
+			Assert.AreEqual (TypeCode.UInt64, Type.GetTypeCode (typeof (ulong)), "#18");
+		}
+
 #if NET_2_0
 		[Test]
 		public void FullNameGenerics ()
