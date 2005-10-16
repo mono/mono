@@ -1,3 +1,8 @@
+2005-10-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.h mini-amd64.c: Add preliminary support for frame pointer
+	elimination.
+
 2005-10-16  Martin Baulig  <martin@ximian.com>
 
 	* mini-exceptions.c
