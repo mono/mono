@@ -464,11 +464,15 @@ namespace System.Windows.Forms {
 				invalid = new Rectangle (x, y, width, height);
 				return;
 			}
-			// invalid = Rectangle.Union (invalid, new Rectangle (x, y, width, height));
+
+			int right, bottom;
+			right = Math.Max (invalid.Right, x + width);
+			bottom = Math.Max (invalid.Bottom, y + height);
 			invalid.X = Math.Min (invalid.X, x);
 			invalid.Y = Math.Min (invalid.Y, y);
-			invalid.Width = Math.Max (invalid.Right, x + width) - invalid.X;
-			invalid.Height = Math.Max (invalid.Height, y + height) - invalid.Y;
+
+			invalid.Width = right - invalid.X;
+			invalid.Height = bottom - invalid.Y;
 		}
 
 		public void AddInvalidArea(Rectangle rect) {
