@@ -1,3 +1,7 @@
+2005-10-16  Zoltan Varga  <vargaz@freemail.hu>
+
+	* amd64/amd64-codegen.h (AMD64_CALLEE_SAVED_REGS): Add %rbp.
+
 2005-09-27  Raja R Harinath  <rharinath@novell.com>
 
 	* arm/dpiops.sh, arm/fpaops.h: Output to stdout.
