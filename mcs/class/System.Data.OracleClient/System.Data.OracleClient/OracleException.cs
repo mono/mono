@@ -25,23 +25,20 @@ namespace System.Data.OracleClient {
 	{
 		#region Fields
 
-		int code;
-		string message;
+		private int code;
 
 		#endregion // Fields
 
 		#region Constructors
 
-		internal OracleException (int code, string message)
+		internal OracleException (int code, string message) : base (message)
 		{
 			this.code = code;
-			this.message = message;
 		}
 
 		private OracleException (SerializationInfo si, StreamingContext sc) : base(si, sc)
 		{
-			message = si.GetString ("message");
-			code = si.GetInt32 ("source");
+			code = si.GetInt32 ("code");
 		}
 
 		#endregion // Constructors
@@ -52,10 +49,16 @@ namespace System.Data.OracleClient {
 			get { return code; }
 		}
 
-		public override string Message {
-			get { return message; }
+		#endregion // Properties
+
+		#region Override implementation of Exception
+
+		public override void GetObjectData (SerializationInfo si, StreamingContext context)
+		{
+			si.AddValue ("code", code, typeof(int));
+			base.GetObjectData (si, context);
 		}
 
-		#endregion // Properties
+		#endregion Override implementation of Exception
 	}
 }

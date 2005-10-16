@@ -85,7 +85,7 @@ namespace System.Data.OracleClient {
 
 		#region Properties
 
-		[DataSysDescription ("The DataAdapter for which to automatically generate OracleCommands")]
+		//[DataSysDescription ("The DataAdapter for which to automatically generate OracleCommands")]
 		[DefaultValue (null)]
 		public new OracleDataAdapter DataAdapter {
 			get { return adapter; }
@@ -105,7 +105,7 @@ namespace System.Data.OracleClient {
 		}
 
 		[Browsable (false)]
-		[DataSysDescription ("The character used in a text command as the opening quote for quoting identifiers that contain special characters.")]
+		//[DataSysDescription ("The character used in a text command as the opening quote for quoting identifiers that contain special characters.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0
@@ -121,7 +121,7 @@ namespace System.Data.OracleClient {
 		}
 
 		[Browsable (false)]
-		[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters.")]
+		//[DataSysDescription ("The character used in a text command as the closing quote for quoting identifiers that contain special characters.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public 
 #if NET_2_0

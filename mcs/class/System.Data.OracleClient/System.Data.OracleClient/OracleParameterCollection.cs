@@ -25,7 +25,7 @@ using System.Reflection;
 
 namespace System.Data.OracleClient {
 	[ListBindable (false)]
-	[Editor ("Microsoft.VSDesigner.Data.Oracle.Design.DBParametersEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
+	[Editor ("Microsoft.VSDesigner.Data.Design.DBParametersEditor, " + Consts.AssemblyMicrosoft_VSDesigner, typeof(UITypeEditor))]
 	public sealed class OracleParameterCollection : MarshalByRefObject, IDataParameterCollection, IList, ICollection, IEnumerable
 	{
 		#region Fields

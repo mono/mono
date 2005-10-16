@@ -1,3 +1,11 @@
+2005-10-16  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* OracleException.cs: Pass message to base ctor, thereby avoiding
+	need to override Message property (and fixing API mismatch). Fixed
+	serialization by also adding code to si.
+	* OracleCommandBuilder.cs: Removed usage of DataSysDescription to
+	fix API mismatches.
+
 2005-08-10  Daniel Morgan <danielmorgan@verizon.net>
 
 	* System.Data.OracleClient/OracleCommandBuilder.cs: update 
