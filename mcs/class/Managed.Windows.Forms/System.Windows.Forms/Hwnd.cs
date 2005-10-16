@@ -93,8 +93,6 @@ namespace System.Windows.Forms {
 				Marshal.FreeHGlobal((IntPtr)marshal_free_list[i]);
 			}
 			marshal_free_list.Clear();
-
-			GC.SuppressFinalize (this);
 		}
 		#endregion
 
@@ -466,7 +464,11 @@ namespace System.Windows.Forms {
 				invalid = new Rectangle (x, y, width, height);
 				return;
 			}
-			invalid = Rectangle.Union (invalid, new Rectangle (x, y, width, height));
+			// invalid = Rectangle.Union (invalid, new Rectangle (x, y, width, height));
+			invalid.X = Math.Min (invalid.X, x);
+			invalid.Y = Math.Min (invalid.Y, y);
+			invalid.Width = Math.Max (invalid.Width, width);
+			invalid.Height = Math.Max (invalid.Height, height);
 		}
 
 		public void AddInvalidArea(Rectangle rect) {

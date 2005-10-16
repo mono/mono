@@ -1,3 +1,27 @@
+2005-10-16  Jackson Harper  <jackson@ximian.com>
+
+	* XEventQueue.cs: Increase the default queue size (very simple
+	apps needed to grow the queue).
+	* Hwnd.cs: No finalizer so we don't need to suppress
+	finalization. Compute the invalid area manually so a new rectangle
+	does not newto be created.
+	* ScrollableControl.cs: Don't set any params (otherwise visibility
+	isn't set correctly).
+	* MdiChildContext.cs: New constructor takes the mdi parent so it
+	doesn't have to be computed and avoids a crash on windows. Draw
+	the window icon properly, and allow the text to be seen.
+	* Form.cs: Use new MdiChildContext constructor. Make sure the
+	child context isn't null in wndproc.
+	* TabControl.cs: Don't set focus, this is muddling keyboard
+	behavoir. Expand the tab rows when a window size increase will
+	allow extra tabs to be seen. Don't allow tabs smaller than the
+	width of a window to be scrolled out of view.
+	* TreeNode.cs:
+	* TreeView.cs: Use measure string to calculate a nodes width, the
+	width is cached and only updated when the text or the font is
+	changed. Don't check for expand/collapse clicks on the first level
+	nodes if root lines are disabled.
+	
 2005-10-16  Ritvik Mayank  <mritvik@novell.com>
 
 	* TextBoxBase.cs: Fixes #76352 (passing tab key in a multiline textbox)

@@ -19,7 +19,7 @@ namespace System.Windows.Forms {
 		private XQueue xqueue;
 		private XQueue lqueue;	// Events inserted from threads other then the main X thread
 
-		private static readonly int InitialXEventSize = 50;
+		private static readonly int InitialXEventSize = 100;
 		private static readonly int InitialLXEventSize = 10;
 
 		public XEventQueue ()

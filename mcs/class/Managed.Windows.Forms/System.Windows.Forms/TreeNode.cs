@@ -265,6 +265,7 @@ namespace System.Windows.Forms {
 				if (prop_bag == null)
 					prop_bag = new OwnerDrawPropertyBag (); 
 				prop_bag.Font = value;
+				InvalidateWidth ();
 			}
 		}
 
@@ -383,7 +384,7 @@ namespace System.Windows.Forms {
 		public void EndEdit (bool cancel) {
 			is_editing = false;
 			if (!cancel && TreeView != null)
-				text = TreeView.LabelEditText;
+				Text = TreeView.LabelEditText;
 		}
 
 		public void Expand () {
@@ -584,12 +585,29 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal void UpdateBounds (int x, int y, int width, int height)
+		internal bool NeedsWidth {
+			get { return bounds.Width == 0; }
+		}
+
+		internal void InvalidateWidth ()
+		{
+			bounds.Width = 0;
+		}
+
+		internal void SetWidth (int width)
+		{
+			bounds.Width = width;
+		}
+
+		internal void SetHeight (int height)
+		{
+			bounds.Height = height;
+		}
+
+		internal void SetPosition (int x, int y)
 		{
 			bounds.X = x;
 			bounds.Y = y;
-			bounds.Width = width;
-			bounds.Height = height;
 		}
 
 		internal void SetAddedData (TreeView tree_view, TreeNode parent, int index)

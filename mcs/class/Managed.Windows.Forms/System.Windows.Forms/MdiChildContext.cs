@@ -54,10 +54,11 @@ namespace System.Windows.Forms {
 			AnyEdge = Top | Left | Right | Bottom,
 		}
 
-		public MdiChildContext (Form form)
+		public MdiChildContext (Form form, MdiClient mdi_container)
 		{
 			titlebar_color = Color.FromArgb (255, 0, 0, 255);
 			this.form = form;
+			this.mdi_container = mdi_container;
 
 			form.Paint += new PaintEventHandler (PaintWindowDecorations);
 
@@ -85,10 +86,6 @@ namespace System.Windows.Forms {
 			form.Controls.AddImplicit (close_button);
 			form.Controls.AddImplicit (maximize_button);
 			form.Controls.AddImplicit (minimize_button);
-
-			mdi_container = (MdiClient) form.Parent;
-
-			form.InternalBorderStyle = BorderStyle.FixedSingle;
 		}
 
 		public bool HandleMessage (ref Message m)
@@ -305,6 +302,7 @@ namespace System.Windows.Forms {
 						BorderWidth, BorderWidth,
 						form.Width - BorderWidth, TitleBarHeight);
 
+			tb.X += 18; // Room for the icon
 			if (form.Text != null) {
 				StringFormat format = new StringFormat ();
 				format.LineAlignment = StringAlignment.Center;
@@ -314,35 +312,9 @@ namespace System.Windows.Forms {
 			}
 
 			if (form.Icon != null) {
-				pe.Graphics.DrawIcon (form.Icon, BorderWidth, BorderWidth);
+				pe.Graphics.DrawIcon (form.Icon, new Rectangle (BorderWidth + 2,
+								      BorderWidth + 2, 16, 16));
 			}
-
-			/*
-			Pen bp = new Pen (ThemeEngine.Current.ColorControl,
-					BorderWidth);
-
-			// HACK: kludge the borders around
-			Rectangle border = form.ClientRectangle;
-			border.X++;
-			border.Y++;
-			border.Width -= 4;
-			border.Height -= 4;
-			pe.Graphics.DrawRectangle (bp, border);
-
-			Border3DStyle style = Border3DStyle.Raised | Border3DStyle.Bump;
-			border = form.ClientRectangle;
-
-			if (maximized) {
-				style = Border3DStyle.SunkenInner;
-				border.Y = TitleBarHeight + BorderWidth * 2;
-				border.Height -= TitleBarHeight;
-			}
-			
-			ControlPaint.DrawBorder3D (pe.Graphics, border,
-					style,
-					Border3DSide.Left | Border3DSide.Right |
-					Border3DSide.Top | Border3DSide.Bottom);
-			*/
 		}
 
 		private void PaintButtonHandler (object sender, PaintEventArgs pe)

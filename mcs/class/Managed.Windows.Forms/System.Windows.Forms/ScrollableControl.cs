@@ -386,13 +386,7 @@ namespace System.Windows.Forms {
 		#region Protected Instance Methods
 		protected override CreateParams CreateParams {
 			get {
-				CreateParams	ret;
-
-				ret = base.CreateParams;
-
-				ret.Style |= (int)(WindowStyles.WS_CLIPCHILDREN | WindowStyles.WS_CLIPSIBLINGS | WindowStyles.WS_VISIBLE);
-
-				return ret;
+				return base.CreateParams;
 			}
 		}
 

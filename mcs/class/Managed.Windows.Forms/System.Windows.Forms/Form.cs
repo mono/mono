@@ -483,8 +483,9 @@ namespace System.Windows.Forms {
 
 				mdi_parent = value;
 				if (mdi_parent != null) {
+					mdi_child_context = new MdiChildContext (this,
+							mdi_parent.MdiContainer);
 					mdi_parent.MdiContainer.Controls.Add (this);
-					mdi_child_context = new MdiChildContext (this);
 				}
 
 				ResumeLayout ();
@@ -1382,7 +1383,8 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected override void WndProc(ref Message m) {
 
-			if (IsMdiChild && mdi_child_context.HandleMessage (ref m)) {
+			if (IsMdiChild && mdi_child_context != null &&
+					mdi_child_context.HandleMessage (ref m)) {
 				return;
 			}
 

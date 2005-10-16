@@ -76,6 +76,7 @@ namespace System.Windows.Forms {
 		private HScrollBar hbar;
 		private int hbar_offset;
 		private int used_height;
+		private bool update_node_bounds;
 		
 		private int update_stack;
 
@@ -112,7 +113,8 @@ namespace System.Windows.Forms {
 			MouseUp += new MouseEventHandler(MouseUpHandler);
 			MouseMove += new MouseEventHandler(MouseMoveHandler);
 			SizeChanged += new EventHandler (SizeChangedHandler);
-
+			FontChanged += new EventHandler (FontChangedHandler);
+			
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 
 			dash = new Pen (SystemColors.ControlLight, 1);
@@ -779,7 +781,7 @@ namespace System.Windows.Forms {
 
 		private bool IsPlusMinusArea (TreeNode node, int x)
 		{
-			if (node.Nodes.Count == 0)
+			if (node.Nodes.Count == 0 || (node.parent == root_node && !show_root_lines))
 				return false;
 
 			int l = node.Bounds.Left + 5;
@@ -1031,16 +1033,16 @@ namespace System.Windows.Forms {
 			UpdateNode(edit_node);
 		}
 
-		[MonoTODO("When Graphics.MeasureString starts to work correctly use it")]
 		private void UpdateNodeBounds (TreeNode node, int x, int y, int item_height, Graphics dc)
 		{
-//			SizeF size = dc.MeasureString (Text, Font, ClientSize.Width, new StringFormat ());
-//		int width = (int) size.Width + 3;
 			Font font = node.NodeFont;
 			if (node.NodeFont == null)
 				font = Font;
-			int width = (int)(node.Text.Length * font.Size * 0.85);
-			node.UpdateBounds (x, y, width, item_height);
+
+			if (node.NeedsWidth || update_node_bounds)
+				node.SetWidth ((int) dc.MeasureString (node.Text, font).Width + 3);
+			node.SetHeight (item_height);
+			node.SetPosition (x, y);
 		}
 		
 		private void DrawSelectionAndFocus(TreeNode node, Graphics dc, Rectangle r)
@@ -1257,6 +1259,11 @@ namespace System.Windows.Forms {
 				hbar_offset = 0;
 
 			XplatUI.ScrollWindow (Handle, ViewportRectangle, old_offset - hbar_offset, 0, false);
+		}
+
+		private void FontChangedHandler (object sender, EventArgs e)
+		{
+			update_node_bounds = true;
 		}
 
 		private void MouseDownHandler (object sender, MouseEventArgs e)

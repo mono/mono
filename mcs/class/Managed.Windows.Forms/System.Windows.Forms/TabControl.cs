@@ -249,7 +249,7 @@ namespace System.Windows.Forms {
 				if (selected_index != -1) {
 					invalid = Rectangle.Union (invalid, GetTabRect (selected_index));
 					selected.Visible = true;
-					selected.Focus ();
+					// selected.Focus ();
 				}
 
 				ResumeLayout ();
@@ -540,9 +540,7 @@ namespace System.Windows.Forms {
 		#region Internal & Private Methods
 		private bool CanScrollRight {
 			get {
-				if (TabPages [TabCount - 1].TabBounds.Right > ClientRectangle.Right - 40)
-					return true;
-				return false;
+				return (slider_pos < TabCount - 1);
 			}
 		}
 
@@ -558,6 +556,7 @@ namespace System.Windows.Forms {
 				if (right.Contains (e.X, e.Y)) {
 					right_slider_state = ButtonState.Pushed;
 					if (CanScrollRight) {
+						Console.WriteLine ("Can scroll right");
 						slider_pos++;
 						SizeTabs ();
 						Refresh ();
@@ -836,6 +835,11 @@ namespace System.Windows.Forms {
 
 			prev_row = TabPages [0].Row;
 
+			// Reset the slider position if the slider isn't needed
+			// anymore (ie window size was increased so all tabs are visible)
+			if (!show_slider)
+				slider_pos = 0;
+
 			for (int i = slider_pos; i < TabPages.Count; i++) {
 				TabPage page = TabPages [i];
 				int width;
@@ -942,9 +946,6 @@ namespace System.Windows.Forms {
 
 		private void PaintInternal (PaintEventArgs pe)
 		{
-			if (this.Width <= 0 || this.Height <=  0 || this.Visible == false)
-				return;
-
 			Draw (pe.Graphics, pe.ClipRectangle);
 			// On MS the Paint event never seems to be raised
 		}
