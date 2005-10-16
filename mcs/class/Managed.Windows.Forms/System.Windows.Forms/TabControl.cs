@@ -556,7 +556,6 @@ namespace System.Windows.Forms {
 				if (right.Contains (e.X, e.Y)) {
 					right_slider_state = ButtonState.Pushed;
 					if (CanScrollRight) {
-						Console.WriteLine ("Can scroll right");
 						slider_pos++;
 						SizeTabs ();
 						Refresh ();

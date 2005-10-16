@@ -1,5 +1,9 @@
 2005-10-16  Jackson Harper  <jackson@ximian.com>
 
+	* TabControl.cs: Remove debug code.
+
+2005-10-16  Jackson Harper  <jackson@ximian.com>
+
 	* XEventQueue.cs: Increase the default queue size (very simple
 	apps needed to grow the queue).
 	* Hwnd.cs: No finalizer so we don't need to suppress
