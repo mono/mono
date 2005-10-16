@@ -1,5 +1,9 @@
 2005-10-16  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.h mini-amd64.c exceptions-amd64.c: Add support for fp
+	elimination during exception handling. Enable fp elimination by
+	default.
+
 	* mini-amd64.h mini-amd64.c: Add preliminary support for frame pointer
 	elimination.
 
