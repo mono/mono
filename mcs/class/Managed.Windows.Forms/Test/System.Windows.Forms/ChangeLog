@@ -1,3 +1,7 @@
+2005-10-16  Ritvik Mayank  <mritvik@novell.com>
+
+	* TrackBarTest.cs : Added test case for TrackBar
+
 2005-11-16  Jordi Mas i Hernandez <jordi@ximian.com>
 	 
 	* ControlPaintTest.cs: Adds ControlPaint test unit for testing Dark
