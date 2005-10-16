@@ -467,8 +467,8 @@ namespace System.Windows.Forms {
 			// invalid = Rectangle.Union (invalid, new Rectangle (x, y, width, height));
 			invalid.X = Math.Min (invalid.X, x);
 			invalid.Y = Math.Min (invalid.Y, y);
-			invalid.Width = Math.Max (invalid.Width, width);
-			invalid.Height = Math.Max (invalid.Height, height);
+			invalid.Width = Math.Max (invalid.Right, x + width) - invalid.X;
+			invalid.Height = Math.Max (invalid.Height, y + height) - invalid.Y;
 		}
 
 		public void AddInvalidArea(Rectangle rect) {

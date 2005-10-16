@@ -1,5 +1,10 @@
 2005-10-16  Jackson Harper  <jackson@ximian.com>
 
+	* Hwnd.cs: Compute invalid area correctly (fixes my last commit
+	which was broken).
+
+2005-10-16  Jackson Harper  <jackson@ximian.com>
+
 	* TabControl.cs: Remove debug code.
 
 2005-10-16  Jackson Harper  <jackson@ximian.com>
