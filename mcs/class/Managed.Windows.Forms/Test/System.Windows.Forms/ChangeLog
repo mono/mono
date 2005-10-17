@@ -1,3 +1,7 @@
+2005-10-17  Ritvik Mayank  <mritvik@novell.com>
+
+	* TabControlTest.cs : Added test case for TabControl
+
 2005-10-16  Ritvik Mayank  <mritvik@novell.com>
 
 	* TrackBarTest.cs : Added test case for TrackBar
