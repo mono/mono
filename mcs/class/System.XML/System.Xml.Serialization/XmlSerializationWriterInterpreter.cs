@@ -456,10 +456,8 @@ namespace System.Xml.Serialization
 					else
 						throw CreateUnknownAnyElementException (elem.Name, elem.NamespaceURI);
 				}
-				else if (elem is XmlCharacterData)
-					elem.WriteTo (Writer);
 				else
-					throw CreateUnknownTypeException (elem);
+					elem.WriteTo (Writer);
 			}
 		}
 

@@ -903,8 +903,8 @@ namespace System.Xml.Serialization
 			}
 			
 			string elem = GetObTempVar ();
-			WriteLine ("XmlElement " + elem + " = " + var + " as XmlElement;");
-			WriteLine ("if (" + elem + " == null) throw CreateUnknownTypeException (" + elem + ");");
+			WriteLine ("XmlNode " + elem + " = " + var + ";");
+			WriteLine ("if (" + elem + " is XmlElement) {");
 			
 			if (!member.IsDefaultAny) {
 				for (int n=0; n<member.ElementInfo.Count; n++) {
@@ -915,7 +915,9 @@ namespace System.Xml.Serialization
 					else WriteLine ("|| " + txt);
 				}				
 			}
-			
+			WriteLine ("}");
+			WriteLine ("else " + elem + ".WriteTo (Writer);");
+
 			if (_format == SerializationFormat.Literal) 
 				WriteLine ("WriteElementLiteral (" + elem + ", \"\", \"\", false, true);");
 			else 
