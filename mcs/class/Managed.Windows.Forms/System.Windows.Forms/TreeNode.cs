@@ -146,7 +146,7 @@ namespace System.Windows.Forms {
 				check = value;
 
 				if (TreeView != null)
-					tree_view.UpdateNode (this);
+					TreeView.UpdateNode (this);
 			}
 		}
 
