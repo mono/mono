@@ -1,3 +1,7 @@
+2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CSharpCodeProviderCas.cs: New. CAS unit tests.
+
 2005-10-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorTestBase.cs: Generate now returns code that was output,
