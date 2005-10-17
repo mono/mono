@@ -36,6 +36,7 @@ using System.IO;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 
 namespace MonoTests.System.Web.UI.WebControls
@@ -47,6 +48,11 @@ namespace MonoTests.System.Web.UI.WebControls
 		public class CustomValidatorTestClass : CustomValidator {
 			public CustomValidatorTestClass () {
 				TrackViewState();
+			}
+
+			public bool AreControlPropertiesValid ()
+			{
+				return ControlPropertiesValid ();
 			}
 
 			public object SaveState () {
@@ -163,6 +169,17 @@ namespace MonoTests.System.Web.UI.WebControls
 #else
 			Assert.AreEqual("<span style=\"color:Red;\">aw shucks</span>", c.Render(), "R2");
 #endif
+		}
+
+		[Test]
+		public void EmptyControlName ()
+		{
+			Page page = new Page ();
+			HtmlForm form = new HtmlForm ();
+			CustomValidatorTestClass tc = new CustomValidatorTestClass ();
+			page.Controls.Add (form);
+			form.Controls.Add (tc);
+			Assert.IsTrue (tc.AreControlPropertiesValid (), "#01");
 		}
 	}
 }
