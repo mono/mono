@@ -13,16 +13,22 @@ LIB_MCS_FLAGS = /unsafe \
 	@System.Windows.Forms.dll.resources \
 	/nowarn:649 /nowarn:169 /nowarn:67 /nowarn:108 /nowarn:114
 
-RESOURCES = \
+RESX_RESOURCES = \
 	resources/System.Windows.Forms.resources \
 	resources/System.Windows.Forms.en.resources \
 	resources/System.Windows.Forms.de.resources
 
-PREBUILT = $(RESOURCES:=.prebuilt)
+CUR_RESOURCES = \
+	resources/SplitterNS.cur \
+	resources/SplitterWE.cur
+
+RESOURCES = $(RESX_RESOURCES) $(CUR_RESOURCES)
+
+PREBUILT = $(RESX_RESOURCES:=.prebuilt)
 
 EXTRA_DISTFILES = \
 	README System.Windows.Forms.dll.resources \
-	$(RESOURCES:.resources=.resx) $(PREBUILT) build-csproj
+	$(RESX_RESOURCES:.resources=.resx) $(CUR_RESOURCES) $(PREBUILT) build-csproj
 
 TEST_MCS_FLAGS = /r:System.Drawing.dll
 
@@ -33,7 +39,7 @@ include ../../build/library.make
 
 $(the_lib): $(RESOURCES) SWF.csproj
 
-$(RESOURCES): %.resources: %.resx
+$(RESX_RESOURCES): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@
 
 $(PREBUILT): %.prebuilt: %

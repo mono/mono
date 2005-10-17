@@ -1,3 +1,7 @@
+2005-10-17  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (RESOURCES): Distribute newly added cursors.
+
 2005-10-13  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms.dll.resources: Added cursors
