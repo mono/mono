@@ -1,4 +1,10 @@
-2004-08-18  Lluis Sanchez Gual  <lluis@novell.com>
+2005-10-17  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* RemotingConfiguration.cs: Rethrow catched exceptions
+	in ReadConfigFile (patch by Robert Jordan). Fixes bug #76434.
+	Properly set the application name.
+
+2005-08-18  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RemotingServices.cs: Notify marshals, unmarshals and disconnections
 	to TrackingServices. Fixes bug #75814.

@@ -73,24 +73,15 @@ namespace System.Runtime.Remoting
 		public static string ApplicationId 
 		{
 			get 
-			{ 
-				applicationID = AppDomain.CurrentDomain.SetupInformation.ApplicationName; 
+			{
+				applicationID = ApplicationName; 
 				return applicationID;
 			}
 		}
 		
 		public static string ApplicationName 
 		{
-			get { 
-				try {
-					applicationName = AppDomain.CurrentDomain.SetupInformation.ApplicationName; 
-				}
-				catch (Exception e) {
-					throw e;
-				}
-				// We return null if the application name has not been set.
-				return null;
-			}
+			get { return applicationName; }
 			set { applicationName = value; }
 		}
 		
@@ -134,7 +125,7 @@ namespace System.Runtime.Remoting
 			}
 			catch (Exception ex)
 			{
-				throw new RemotingException ("Configuration file '" + filename + "' could not be loaded: " + ex.Message);
+				throw new RemotingException ("Configuration file '" + filename + "' could not be loaded: " + ex.Message, ex);
 			}
 		}
 		
@@ -439,7 +430,7 @@ namespace System.Runtime.Remoting
 			}
 			catch (Exception ex)
 			{
-				throw new RemotingException ("Error in element " + name + ": " + ex.Message);
+				throw new RemotingException ("Error in element " + name + ": " + ex.Message, ex);
 			}
 		}
 		
