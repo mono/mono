@@ -756,7 +756,7 @@ namespace System.Security {
 				if (frame.Deny != null) {
 					// but have restrictions (some denied permissions)
 					CodeAccessPermission.ThrowSecurityException (this, "Deny", frame, SecurityAction.Demand, null);
-				} else if (frame.PermitOnly != null) {
+				} else if ((frame.PermitOnly != null) && !frame.PermitOnly.IsUnrestricted ()) {
 					// but have restrictions (only some permitted permissions)
 					CodeAccessPermission.ThrowSecurityException (this, "PermitOnly", frame, SecurityAction.Demand, null);
 				}
