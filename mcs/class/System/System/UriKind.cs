@@ -1,13 +1,9 @@
-// UriPartial.cs
 //
-// This code was automatically generated from
-// ECMA CLI XML Library Specification.
-// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
-// Created: Wed, 5 Sep 2001 06:33:21 UTC
-// Source file: AllTypes.xml
-// URL: http://msdn.microsoft.com/net/ecma/AllTypes.xml
+// System.UriKind enumeration
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// Author:
+//	Sebastien Pouliot  <sebastien@ximian.com>
+//
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -30,15 +26,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 namespace System {
 
-	public enum UriPartial {
+	public enum UriKind {
 
-		Scheme = 0,
-		Authority = 1,
-		Path = 2,
-#if NET_2_0
-		Query
-#endif
+		RelativeOrAbsolute,
+		Absolute,
+		Relative,
 	}
 }
+
+#endif

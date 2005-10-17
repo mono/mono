@@ -1,3 +1,15 @@
+2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* GenericUriParserOptions.cs: New. 2.0 enum.
+	* UriBuilder.cs: Port == -1 is valid (default) in 2.0. Default name
+	is "localhhost" (not loopback) in 2.0. Fixed case where the Password
+	property could be null (instead of String.Empty).
+	* UriComponents.cs: New. 2.0 enum.
+	* UriFormat.cs: New. 2.0 enum.
+	* UriFormatException.cs: Added comments about GetObjectData.
+	* UriKind.cs: New. 2.0 enum.
+	* UriPartial.cs: Added Query value for 2.0.
+
 2005-08-16  Daniel Drake  <dsd@gentoo.org>
 
 	* Uri.cs: Various parsing fixes from bug #75144.

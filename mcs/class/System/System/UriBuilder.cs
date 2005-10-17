@@ -4,7 +4,7 @@
 // Author:
 //   Lawrence Pit (loz@cable.a2000.nl)
 //
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -52,7 +52,12 @@ namespace System
 		
 		// Constructors		
 		
-		public UriBuilder () : this (Uri.UriSchemeHttp, "loopback")
+		public UriBuilder ()
+#if NET_2_0
+			: this (Uri.UriSchemeHttp, "localhost")
+#else
+			: this (Uri.UriSchemeHttp, "loopback")
+#endif
 		{		
 		}
 
@@ -73,6 +78,8 @@ namespace System
 			if (pos != -1) {
 				password = username.Substring (pos + 1);
 				username = username.Substring (0, pos);
+			} else {
+				password = String.Empty;
 			}
 			modified = true;
 		}
@@ -164,8 +171,13 @@ namespace System
 		public int Port {
 			get { return port; }
 			set {
+#if NET_2_0
+				if (value < -1)
+					throw new ArgumentOutOfRangeException ("value");
+#else
 				if (value < 0)
 					throw new ArgumentOutOfRangeException ("value");
+#endif
 				// apparently it is
 				port = value;
 				modified = true;
