@@ -1,3 +1,8 @@
+2005-10-17  Lluis Sanchez Gual  <lluis@novell.com>
+
+	* XmlSchemaSerializer.cs: Arrays of XmlNode don't
+	need to be all XmlElments. Fix by Atsushi for bug #76288.
+
 2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaUtil.cs: (GetParserContext) if reader is not internal 

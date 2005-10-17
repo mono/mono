@@ -1149,9 +1149,10 @@ namespace System.Xml.Schema
 
 			if (ob.@Markup != null) {
 				foreach (XmlNode o51 in ob.@Markup) {
-					XmlElement o52 = o51 as XmlElement;
-					if (o52 == null) throw CreateUnknownTypeException (o52);
-					WriteElementLiteral (o52, "", "", false, true);
+					XmlNode o52 = o51;
+					if (o52 is XmlElement) {
+						WriteElementLiteral (o52, "", "", false, true);
+					} else o52.WriteTo (Writer);
 				}
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
@@ -1186,9 +1187,10 @@ namespace System.Xml.Schema
 
 			if (ob.@Markup != null) {
 				foreach (XmlNode o53 in ob.@Markup) {
-					XmlElement o54 = o53 as XmlElement;
-					if (o54 == null) throw CreateUnknownTypeException (o54);
-					WriteElementLiteral (o54, "", "", false, true);
+					XmlNode o54 = o53;
+					if (o54 is XmlElement) {
+						WriteElementLiteral (o54, "", "", false, true);
+					} else o54.WriteTo (Writer);
 				}
 			}
 			if (writeWrappingElem) WriteEndElement (ob);
