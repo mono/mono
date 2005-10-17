@@ -1,3 +1,7 @@
+2005-10-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (get_register_spilling): Fix some warnings.
+
 2005-10-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.h mini-amd64.c exceptions-amd64.c: Add support for fp
