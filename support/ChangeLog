@@ -1,5 +1,9 @@
 2005-10-14  Jonathan Pryor  <jonpryor@vt.edu>
 
+	* signal.c: Don't build Syscall wrappers on Win32.
+
+2005-10-14  Jonathan Pryor  <jonpryor@vt.edu>
+
 	* Makefile.am (MPH_UNIX_SOURCE): Add syslog.c.
 	* dirent.c, grp.c, pwd.c, signal.c, stdio.c, stdlib.c: Wrap functions which
 	  return `void' so that they instead: (1) return `int', (2) clear errno

@@ -40,6 +40,7 @@ Mono_Posix_Stdlib_InvokeSignalHandler (int signum, void *handler)
 	_h (signum);
 }
 
+#ifndef PLATFORM_WIN32
 int
 Mono_Posix_Syscall_psignal (int sig, const char* s)
 {
@@ -47,6 +48,7 @@ Mono_Posix_Syscall_psignal (int sig, const char* s)
 	psignal (sig, s);
 	return errno == 0 ? 0 : -1;
 }
+#endif /* ndef PLATFORM_WIN32 */
 
 
 G_END_DECLS
