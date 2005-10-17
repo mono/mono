@@ -19,6 +19,7 @@ namespace MonoCasTests.System.Net {
 
 	[TestFixture]
 	[Category ("CAS")]
+	[Category ("NotWorking")] // compiler (CSC) issue (on Windows)
 	public class DnsCas {
 
 		private const string site = "www.go-mono.com";
