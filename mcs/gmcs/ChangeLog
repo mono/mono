@@ -1,13 +1,3 @@
-2005-10-14  Miguel de Icaza  <miguel@novell.com>
-
-	* codegen.cs (Emit): Add support for generating the
-	RuntimeCompatibilityAttribute(WrapNonExceptionThrows=true) if the
-	user did not specify it on all assemblies generated.  
-
-	Closes #76364
-
-	More indentation police.
-
 2005-10-10  Raja R Harinath  <rharinath@novell.com>
 
 	* ecore.cs (PropertyExpr.Emit): Use Invocation.EmitCall to emit
