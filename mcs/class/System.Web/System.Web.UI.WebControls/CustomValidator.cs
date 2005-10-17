@@ -92,7 +92,10 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		protected override bool ControlPropertiesValid() {
+		protected override bool ControlPropertiesValid ()
+		{
+			if (ControlToValidate == "")
+				return true;
 			return base.ControlPropertiesValid ();
 		}
 

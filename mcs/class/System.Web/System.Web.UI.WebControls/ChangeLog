@@ -1,3 +1,7 @@
+2005-10-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CustomValidator.cs: an empty ControlToValidate is valid.
+
 2005-10-17  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* RequiredFieldValidator.cs: Added missing permissions.
