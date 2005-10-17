@@ -148,9 +148,24 @@ checked (			(ulong) a), checked ((char) a), checked ((float) a), (decimal) a);
 		double dec = (double)d;
 		decimal dec2 = (decimal)dec;
 	}
-
+	
 	static void Main ()
 	{
 
+	}
+}
+
+enum E:byte {
+	Min = 9
+}
+
+class Test2 {
+	void ExtraTst ()
+	{
+		E error = E.Min - 9;
+		string s = (string)null;
+		const decimal d = -10.1m;
+		const long l = (long)d;
+		char ch = (char)E.Min;
 	}
 }
