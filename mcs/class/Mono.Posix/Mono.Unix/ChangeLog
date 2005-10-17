@@ -1,3 +1,13 @@
+2005-10-17  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixGroup.cs, UnixGroupInfo.cs, UnixFile.cs, UnixFileSystemInfo.cs,
+	  UnixStream.cs, UnixSymbolicLinkInfo.cs, UnixUser.cs, UnixUserInfo.cs:
+	  Start migrating uid/gid to long (from uint) for CLS compliance.
+	  (Full migration must wait 'til after the next release as this would
+	  require changes to existing members.)
+	* UnixEnvironment.cs: Above, and add RealUserId/RealGroupId and
+	  EffectiveUserId/EffectiveGroupId.
+
 2005-10-14  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Catalog.cs: Create a constructor and mark it [Obsolete].  It will be made

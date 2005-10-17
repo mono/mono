@@ -354,11 +354,21 @@ namespace Mono.Unix {
 		}
 		
 		[CLSCompliant (false)]
+		[Obsolete ("Use SetOwner (long, long)")]
 		public void SetOwner (uint user, uint group)
 		{
 			AssertNotDisposed ();
 
 			int r = Syscall.fchown (fileDescriptor, user, group);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		public void SetOwner (long user, long group)
+		{
+			AssertNotDisposed ();
+
+			int r = Syscall.fchown (fileDescriptor, 
+					Convert.ToUInt32 (user), Convert.ToUInt32 (group));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 

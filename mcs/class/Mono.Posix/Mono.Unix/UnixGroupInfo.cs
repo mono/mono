@@ -46,11 +46,21 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use UnixGroupInfo(long)")]
 		public UnixGroupInfo (uint group)
 		{
 			this.group = new Group ();
 			Group gr;
 			int r = Syscall.getgrgid_r (group, this.group, out gr);
+			if (r != 0 || gr == null)
+				throw new ArgumentException (Locale.GetText ("invalid group id"), "group");
+		}
+
+		public UnixGroupInfo (long group)
+		{
+			this.group = new Group ();
+			Group gr;
+			int r = Syscall.getgrgid_r (Convert.ToUInt32 (group), this.group, out gr);
 			if (r != 0 || gr == null)
 				throw new ArgumentException (Locale.GetText ("invalid group id"), "group");
 		}
@@ -69,6 +79,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release")]
 		public uint GroupId {
 			get {return group.gr_gid;}
 		}

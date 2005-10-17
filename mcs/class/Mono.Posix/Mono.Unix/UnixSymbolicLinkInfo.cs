@@ -90,9 +90,16 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use SetOwner (long, long)")]
 		public override void SetOwner (uint owner, uint group)
 		{
 			int r = Syscall.lchown (FullPath, owner, group);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		public override void SetOwner (long owner, long group)
+		{
+			int r = Syscall.lchown (FullPath, Convert.ToUInt32 (owner), Convert.ToUInt32 (group));
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 

@@ -37,6 +37,7 @@ namespace Mono.Unix {
 		private UnixGroup () {}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The return type will change in the next release")]
 		public static uint GetGroupId (string group)
 		{
 			return new UnixGroupInfo (group).GroupId;
@@ -48,20 +49,32 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetMembers (long)")]
 		public static string[] GetMembers (uint group)
 		{
 			return new UnixGroupInfo (group).Members;
 		}
 
+		public static string[] GetMembers (long group)
+		{
+			return new UnixGroupInfo (group).GetMembers ();
+		}
+
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetGroupName")]
+		[Obsolete ("Use GetGroupName (long)")]
 		public static string GetName (uint group)
 		{
 			return new UnixGroupInfo (group).GroupName;
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetGroupName(long)")]
 		public static string GetGroupName (uint group)
+		{
+			return new UnixGroupInfo (group).GroupName;
+		}
+
+		public static string GetGroupName (long group)
 		{
 			return new UnixGroupInfo (group).GroupName;
 		}
@@ -72,7 +85,13 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetPassword(long)")]
 		public static string GetPassword (uint group)
+		{
+			return new UnixGroupInfo (group).Password;
+		}
+
+		public static string GetPassword (long group)
 		{
 			return new UnixGroupInfo (group).Password;
 		}

@@ -47,11 +47,21 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use UnixUserInfo (long)")]
 		public UnixUserInfo (uint user)
 		{
 			passwd = new Passwd ();
 			Passwd pw;
 			int r = Syscall.getpwuid_r (user, passwd, out pw);
+			if (r != 0 || pw == null)
+				throw new ArgumentException (Locale.GetText ("invalid user id"), "user");
+		}
+
+		public UnixUserInfo (long user)
+		{
+			passwd = new Passwd ();
+			Passwd pw;
+			int r = Syscall.getpwuid_r (Convert.ToUInt32 (user), passwd, out pw);
 			if (r != 0 || pw == null)
 				throw new ArgumentException (Locale.GetText ("invalid user id"), "user");
 		}
@@ -70,11 +80,13 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release")]
 		public uint UserId {
 			get {return passwd.pw_uid;}
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The type of this property will change in the next release")]
 		public uint GroupId {
 			get {return passwd.pw_gid;}
 		}

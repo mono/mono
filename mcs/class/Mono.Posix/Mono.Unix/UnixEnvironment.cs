@@ -66,6 +66,45 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use RealUserId")]
+		public static uint User {
+			get {return UnixUser.GetCurrentUserId ();}
+		}
+
+		[CLSCompliant (false)]
+		[Obsolete ("Use RealUserId")]
+		public static uint UserId {
+			get {return UnixUser.GetCurrentUserId ();}
+		}
+
+		public static string UserName {
+			get {return UnixUser.GetCurrentUserName();}
+		}
+
+		public static long RealGroupId {
+			get {return Native.Syscall.getgid ();}
+			// set can't be done as setgid(2) modifies effective gid as well
+		}
+
+		public static long RealUserId {
+			get {return Native.Syscall.getuid ();}
+			// set can't be done as setuid(2) modifies effective uid as well
+		}
+
+		public static long EffectiveGroupId {
+			get {return Native.Syscall.getegid ();}
+			set {Native.Syscall.setegid (Convert.ToUInt32 (value));}
+		}
+		public static long EffectiveUserId {
+			get {return Native.Syscall.geteuid ();}
+			set {Native.Syscall.seteuid (Convert.ToUInt32 (value));}
+		}
+
+		public static string Login {
+			get {return UnixUser.GetLogin ();}
+		}
+
+		[CLSCompliant (false)]
 		public static long GetConfigurationValue (SysConf name)
 		{
 			long r = Syscall.sysconf (name);
@@ -89,25 +128,6 @@ namespace Mono.Unix {
 		{
 			int r = Syscall.nice (inc);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
-		[CLSCompliant (false)]
-		[Obsolete ("Use UserId")]
-		public static uint User {
-			get {return UnixUser.GetCurrentUserId ();}
-		}
-
-		[CLSCompliant (false)]
-		public static uint UserId {
-			get {return UnixUser.GetCurrentUserId ();}
-		}
-
-		public static string UserName {
-			get {return UnixUser.GetCurrentUserName();}
-		}
-
-		public static string Login {
-			get {return UnixUser.GetLogin ();}
 		}
 
 		public static int CreateSession ()
@@ -134,6 +154,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The return type of this method will change in the next release")]
 		public static uint[] GetSupplementaryGroupIds ()
 		{
 			int ngroups = Syscall.getgroups (0, new uint[]{});
@@ -146,16 +167,26 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use SetSupplementaryGroupIds")]
+		[Obsolete ("Use SetSupplementaryGroupIds(long[])")]
 		public static void SetSupplementaryGroups (uint[] list)
 		{
 			SetSupplementaryGroupIds (list);
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use SetSupplementaryGroupIds(long[])")]
 		public static void SetSupplementaryGroupIds (uint[] list)
 		{
 			int r = Syscall.setgroups (list);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		public static void SetSupplementaryGroupIds (long[] list)
+		{
+			uint[] _list = new uint [list.Length];
+			for (int i = 0; i < _list.Length; ++i)
+				_list [i] = Convert.ToUInt32 (list [i]);
+			int r = Syscall.setgroups (_list);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 

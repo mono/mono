@@ -336,9 +336,18 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use SetOwner (long, long)")]
 		public virtual void SetOwner (uint owner, uint group)
 		{
 			int r = Syscall.chown (FullPath, owner, group);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		public virtual void SetOwner (long owner, long group)
+		{
+			uint _owner = Convert.ToUInt32 (owner);
+			uint _group = Convert.ToUInt32 (group);
+			int r = Syscall.chown (FullPath, _owner, _group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 

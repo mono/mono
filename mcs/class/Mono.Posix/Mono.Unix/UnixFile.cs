@@ -286,9 +286,18 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use SetOwner (string, long, long)")]
 		public static void SetOwner (string path, uint owner, uint group)
 		{
 			int r = Syscall.chown (path, owner, group);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		public static void SetOwner (string path, long owner, long group)
+		{
+			uint _owner = Convert.ToUInt32 (owner);
+			uint _group = Convert.ToUInt32 (group);
+			int r = Syscall.chown (path, _owner, _group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
@@ -311,9 +320,18 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use SetLinkOwner (string, long, long)")]
 		public static void SetLinkOwner (string path, uint owner, uint group)
 		{
 			int r = Syscall.lchown (path, owner, group);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
+
+		public static void SetLinkOwner (string path, long owner, long group)
+		{
+			uint _owner = Convert.ToUInt32 (owner);
+			uint _group = Convert.ToUInt32 (group);
+			int r = Syscall.lchown (path, _owner, _group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 

@@ -38,12 +38,14 @@ namespace Mono.Unix {
 		private UnixUser () {}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The return type of this method will change after the next release")]
 		public static uint GetUserId (string user)
 		{
 			return new UnixUserInfo (user).UserId;
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The return type of this method will change after the next release")]
 		public static uint GetCurrentUserId ()
 		{
 			return Syscall.getuid ();
@@ -74,13 +76,20 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("The return type of this method will change after the next release")]
 		public static uint GetGroupId (string user)
 		{
 			return new UnixUserInfo (user).GroupId;
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetGroupId (long)")]
 		public static uint GetGroupId (uint user)
+		{
+			return new UnixUserInfo (user).GroupId;
+		}
+
+		public static long GetGroupId (long user)
 		{
 			return new UnixUserInfo (user).GroupId;
 		}
@@ -91,7 +100,13 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetRealName (long)")]
 		public static string GetRealName (uint user)
+		{
+			return new UnixUserInfo (user).RealName;
+		}
+
+		public static string GetRealName (long user)
 		{
 			return new UnixUserInfo (user).RealName;
 		}
@@ -108,14 +123,20 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetUserName")]
+		[Obsolete ("Use GetUserName(long)")]
 		public static string GetName (uint user)
 		{
 			return new UnixUserInfo (user).UserName;
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetUserName(long)")]
 		public static string GetUserName (uint user)
+		{
+			return new UnixUserInfo (user).UserName;
+		}
+
+		public static string GetUserName (long user)
 		{
 			return new UnixUserInfo (user).UserName;
 		}
@@ -126,7 +147,13 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetPassword (long)")]
 		public static string GetPassword (uint user)
+		{
+			return new UnixUserInfo (user).Password;
+		}
+
+		public static string GetPassword (long user)
 		{
 			return new UnixUserInfo (user).Password;
 		}
@@ -137,7 +164,13 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetShellProgram(long)")]
 		public static string GetShellProgram (uint user)
+		{
+			return new UnixUserInfo (user).ShellProgram;
+		}
+
+		public static string GetShellProgram (long user)
 		{
 			return new UnixUserInfo (user).ShellProgram;
 		}
