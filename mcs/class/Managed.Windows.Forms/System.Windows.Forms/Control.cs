@@ -98,8 +98,10 @@ namespace System.Windows.Forms
 		// Layout
 		internal AnchorStyles		anchor_style;		// anchoring requirements for our control
 		internal DockStyle		dock_style;		// docking requirements for our control (supercedes anchoring)
-		internal SizeF			size_ratio;		// size ratio of our control to it's parent; required for anchoring
-		internal Size			prev_size;		// previous size of the control; required for anchoring
+		internal int			dist_left;		// distance to the left border of the parent
+		internal int			dist_top;		// distance to the top border of the parent
+		internal int			dist_right;		// distance to the right border of the parent
+		internal int			dist_bottom;		// distance to the bottom border of the parent
 
 		// to be categorized...
 		static internal ArrayList	controls = new ArrayList();		// All of the application's controls, in a flat list
@@ -636,7 +638,6 @@ namespace System.Windows.Forms
 		public Control() {			
 			creator_thread = Thread.CurrentThread;
 
-			prev_size = Size.Empty;
 			anchor_style = AnchorStyles.Top | AnchorStyles.Left;
 
 			create_handled = false;
@@ -656,6 +657,10 @@ namespace System.Windows.Forms
 			right_to_left = RightToLeft.Inherit;
 			border_style = BorderStyle.None;
 			background_color = Color.Empty;
+			dist_left = 0;
+			dist_right = 0;
+			dist_top = 0;
+			dist_bottom = 0;
 
 			control_style = ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | 
 					ControlStyles.Selectable | ControlStyles.StandardClick | 
@@ -1093,7 +1098,6 @@ namespace System.Windows.Forms
 				binding.Check (binding_context);
 			}
 		}
-
 		#endregion	// Private & Internal Methods
 
 		#region Public Static Properties
@@ -2465,7 +2469,7 @@ namespace System.Windows.Forms
 		public void PerformLayout(Control affectedControl, string affectedProperty) {
 			LayoutEventArgs levent = new LayoutEventArgs(affectedControl, affectedProperty);
 
-			if (layout_suspended>0) {
+			if (layout_suspended > 0) {
 				layout_pending = true;
 				return;
 			}
@@ -2480,17 +2484,8 @@ namespace System.Windows.Forms
 				Control		child;
 				AnchorStyles	anchor;
 				Rectangle	space;
-				int		diff_width;
-				int		diff_height;
 
 				space=this.DisplayRectangle;
-				if (prev_size != Size.Empty) {
-					diff_width = space.Width - prev_size.Width;
-					diff_height = space.Height - prev_size.Height;
-				} else {
-					diff_width = 0;
-					diff_height = 0;
-				}
 
 				// Deal with docking; go through in reverse, MS docs say that lowest Z-order is closest to edge
 				Control [] controls = child_controls.GetAllControls ();
@@ -2542,20 +2537,19 @@ namespace System.Windows.Forms
 
 				space=this.DisplayRectangle;
 
-				// Deal with anchoring
 				for (int i=0; i < controls.Length; i++) {
 					int left;
 					int top;
 					int width;
 					int height;
 
-					child=controls[i];
-					anchor=child.Anchor;
+					child = controls[i];
+					anchor = child.Anchor;
 
-					left=child.Left;
-					top=child.Top;
-					width=child.Width;
-					height=child.Height;
+					left = child.Left;
+					top = child.Top;
+					width = child.Width;
+					height = child.Height;
 
 					// If the control is docked we don't need to do anything
 					if (child.Dock != DockStyle.None) {
@@ -2564,29 +2558,32 @@ namespace System.Windows.Forms
 
 					if ((anchor & AnchorStyles.Left) !=0 ) {
 						if ((anchor & AnchorStyles.Right) != 0) {
-							// Anchoring to left and right
-							width=width+diff_width;
+							width = client_size.Width - child.dist_right - left;
 						} else {
-							; // nothing to do
+							; // Left anchored only, nothing to be done
 						}
 					} else if ((anchor & AnchorStyles.Right) != 0) {
-						left+=diff_width;
+						left = client_size.Width - child.dist_right - width;
 					} else {
-						left+=diff_width/2;
+						// left+=diff_width/2 will introduce rounding errors (diff_width removed from svn after r51780)
+						// This calculates from scratch every time:
+						left = child.dist_left + (client_size.Width - (child.dist_left + width + child.dist_right)) / 2;
 					}
 
 					if ((anchor & AnchorStyles.Top) !=0 ) {
 						if ((anchor & AnchorStyles.Bottom) != 0) {
-							height+=diff_height;
+							height = client_size.Height - child.dist_bottom - top;
 						} else {
-							; // nothing to do
+							; // Top anchored only, nothing to be done
 						}
 					} else if ((anchor & AnchorStyles.Bottom) != 0) {
-						top+=diff_height;
+						top = client_size.Height - child.dist_bottom - height;
 					} else {
-						top+=diff_height/2;
+						// top += diff_height/2 will introduce rounding errors (diff_height removed from after r51780)
+						// This calculates from scratch every time:
+						top = child.dist_top + (client_size.Height - (child.dist_top + height + child.dist_bottom)) / 2;
 					}
-
+					
 					// Sanity
 					if (width < 0) {
 						width=0;
@@ -2888,8 +2885,11 @@ namespace System.Windows.Forms
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		protected virtual void InitLayout() {
+			dist_left = bounds.X;
+			dist_top = bounds.Y;
 			if (parent != null) {
-				parent.PerformLayout(this, "parent");
+				dist_right = parent.ClientSize.Width - bounds.X - bounds.Width;
+				dist_bottom = parent.ClientSize.Height - bounds.Y - bounds.Height;
 			}
 		}
 
@@ -3235,6 +3235,7 @@ namespace System.Windows.Forms
 			if (IsHandleCreated) {
 				XplatUI.SetWindowPos(Handle, x, y, width, height);
 			}
+
 			UpdateBounds(x, y, width, height);
 		}
 
@@ -3374,11 +3375,6 @@ namespace System.Windows.Forms
 			bounds.Height=height;
 
 			// Update client rectangle as well
-			if (this.layout_suspended==0) {
-				prev_size.Width=client_size.Width;
-				prev_size.Height=client_size.Height;
-			}
-
 			client_size.Width=width-client_x_diff;
 			client_size.Height=height-client_y_diff;
 
