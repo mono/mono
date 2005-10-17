@@ -1,6 +1,7 @@
 Assembly/AssemblyInfo.cs
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
 Microsoft.CSharp/CSharpCodeCompiler.cs
 Microsoft.CSharp/CSharpCodeGenerator.cs
 Microsoft.CSharp/CSharpCodeProvider.cs
@@ -15,6 +16,9 @@ Microsoft.Win32/SessionEndedEventHandler.cs
 Microsoft.Win32/SessionEndingEventArgs.cs
 Microsoft.Win32/SessionEndingEventHandler.cs
 Microsoft.Win32/SessionEndReasons.cs
+Microsoft.Win32/SessionSwitchEventArgs.cs
+Microsoft.Win32/SessionSwitchEventHandler.cs
+Microsoft.Win32/SessionSwitchReason.cs
 Microsoft.Win32/SystemEvents.cs
 Microsoft.Win32/TimerElapsedEventArgs.cs
 Microsoft.Win32/TimerElapsedEventHandler.cs
@@ -662,9 +666,12 @@ System.Web/AspNetHostingPermission.cs
 System.Web/AspNetHostingPermissionAttribute.cs
 System.Web/AspNetHostingPermissionLevel.cs
 System/SRDescriptionAttribute.cs
-../../build/common/MonoTODOAttribute.cs
 System/UriBuilder.cs
 System/Uri.cs
+System/UriComponents.cs
+System/UriFormat.cs
 System/UriFormatException.cs
+System/GenericUriParserOptions.cs
 System/UriHostNameType.cs
+System/UriKind.cs
 System/UriPartial.cs

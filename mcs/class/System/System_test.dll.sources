@@ -117,3 +117,16 @@ System.Net/HttpWebRequestCas.cs
 System.Net.Sockets/NetworkStreamCas.cs
 System.Net.Sockets/SocketCas.cs
 System.Net.Sockets/TcpClientCas.cs
+Microsoft.CSharp/CSharpCodeProviderCas.cs
+Microsoft.VisualBasic/VBCodeProviderCas.cs
+Microsoft.Win32/PowerModeChangedEventArgsCas.cs
+Microsoft.Win32/SessionEndedEventArgsCas.cs
+Microsoft.Win32/SessionEndingEventArgsCas.cs
+Microsoft.Win32/SessionSwitchEventArgsCas.cs
+Microsoft.Win32/SessionSwitchEventArgsTest.cs
+Microsoft.Win32/SystemEventsCas.cs
+Microsoft.Win32/TimerElapsedEventArgsCas.cs
+Microsoft.Win32/UserPreferenceChangedEventArgsCas.cs
+Microsoft.Win32/UserPreferenceChangingEventArgsCas.cs
+System/UriBuilderCas.cs
+System/UriFormatExceptionCas.cs
