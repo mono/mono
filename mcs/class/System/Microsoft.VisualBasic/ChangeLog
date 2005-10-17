@@ -1,3 +1,10 @@
+2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* VBCodeProvider.cs: Added a LinkDemand and an InheritanceDemand
+	for FullTrust (i.e. Unrestricted permission set) at the class level.
+	Added [Obsolete] on CreateCompiler and CreateGenerator methods (2.0).
+	Stubbed new method GenerateCodeFromMember (2.0).
+
 2006-07-30  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* VBCodeGenerator.cs: Fixed code generated for NewSlot members.

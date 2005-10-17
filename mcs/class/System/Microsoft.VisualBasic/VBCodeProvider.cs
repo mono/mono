@@ -5,8 +5,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,13 +28,17 @@
 //
 
 using System;
+using System.CodeDom;
 using System.CodeDom.Compiler;
 using System.ComponentModel;
+using System.IO;
+using System.Security.Permissions;
 
-namespace Microsoft.VisualBasic
-{
-	public class VBCodeProvider : CodeDomProvider
-	{
+namespace Microsoft.VisualBasic {
+
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+	public class VBCodeProvider : CodeDomProvider {
 
 		public VBCodeProvider()
 		{
@@ -53,11 +56,17 @@ namespace Microsoft.VisualBasic
 			}
 		}
 
+#if NET_2_0
+		[Obsolete ("Use CodeDomProvider class")]
+#endif
 		public override ICodeCompiler CreateCompiler()
 		{
 			return new Microsoft.VisualBasic.VBCodeCompiler ();
 		}
 
+#if NET_2_0
+		[Obsolete ("Use CodeDomProvider class")]
+#endif
 		public override ICodeGenerator CreateGenerator()
 		{
 			return new Microsoft.VisualBasic.VBCodeGenerator();
@@ -67,5 +76,13 @@ namespace Microsoft.VisualBasic
 		{
 			return TypeDescriptor.GetConverter (type);
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public void GenerateCodeFromMember (CodeTypeMember member, TextWriter writer, CodeGeneratorOptions options)
+		{
+			throw new NotImplementedException();
+		}
+#endif
 	}
 }
