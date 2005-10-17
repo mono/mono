@@ -1,3 +1,7 @@
+2005-10-17  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ThemeWin32Classic.cs: Fixes focus drawing in for non-flat/popup buttons
+
 2005-10-16  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs: 

@@ -264,7 +264,9 @@ namespace System.Windows.Forms
 			if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
 				DrawFlatStyleFocusRectangle (dc, button.ClientRectangle, button, button.ForeColor, button.BackColor);
 			} else { 
-				CPDrawFocusRectangle(dc, button.ClientRectangle, button.ForeColor, button.BackColor);
+				Rectangle rect = button.ClientRectangle;
+				rect.Inflate (-4, -4);
+				CPDrawFocusRectangle(dc, rect, button.ForeColor, button.BackColor);
 			}
 		}
 		
