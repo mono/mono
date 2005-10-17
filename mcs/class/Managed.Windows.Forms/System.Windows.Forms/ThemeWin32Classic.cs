@@ -3019,7 +3019,7 @@ namespace System.Windows.Forms
 			
 			if ( intersect != Rectangle.Empty )
 			{
-				Brush h = ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControlLight, ColorControl );
+				Brush h = ResPool.GetHatchBrush( HatchStyle.Percent50, ColorScrollBar, ColorWindow);
 				dc.FillRectangle( h, intersect );
 			}
 		}
@@ -3031,7 +3031,7 @@ namespace System.Windows.Forms
 			Rectangle intersect = Rectangle.Intersect( clip, r );
 			
 			if ( intersect != Rectangle.Empty )
-				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControlLight, ColorControl ), intersect );
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorScrollBar, ColorWindow ), intersect );
 			
 			r.X = 0;
 			r.Y = thumb_pos.Y + thumb_pos.Height;
@@ -3059,7 +3059,7 @@ namespace System.Windows.Forms
 			
 			intersect = Rectangle.Intersect( clip, r );
 			if ( intersect != Rectangle.Empty )
-				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControlLight, ColorControl ), intersect );
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorScrollBar, ColorWindow), intersect );
 		}
 		
 		protected virtual void ScrollBar_Horizontal_Draw_ThumbMoving_None( int scrollbutton_width, ScrollBar bar, Rectangle clip, Graphics dc )
@@ -3069,7 +3069,7 @@ namespace System.Windows.Forms
 			Rectangle intersect = Rectangle.Intersect( clip, r );
 			
 			if ( intersect != Rectangle.Empty )
-				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControlLight, ColorControl ), intersect );
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorScrollBar, ColorWindow), intersect );
 		}
 		
 		protected virtual void ScrollBar_Horizontal_Draw_ThumbMoving_Forward( int scrollbutton_width, Rectangle thumb_pos, ScrollBar bar, Rectangle clip, Graphics dc )
@@ -3079,7 +3079,7 @@ namespace System.Windows.Forms
 			Rectangle intersect = Rectangle.Intersect( clip, r );
 			
 			if ( intersect != Rectangle.Empty )
-				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControlLight, ColorControl ), intersect );
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorScrollBar, ColorWindow ), intersect );
 			
 			r.X = thumb_pos.X + thumb_pos.Width;
 			r.Y = 0;
@@ -3107,7 +3107,7 @@ namespace System.Windows.Forms
 			
 			intersect = Rectangle.Intersect( clip, r );
 			if ( intersect != Rectangle.Empty )
-				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorControlLight, ColorControl ), intersect );
+				dc.FillRectangle( ResPool.GetHatchBrush( HatchStyle.Percent50, ColorScrollBar, ColorWindow), intersect );
 		}
 
 		public override int ScrollBarButtonSize {
