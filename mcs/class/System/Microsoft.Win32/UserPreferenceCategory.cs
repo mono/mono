@@ -5,8 +5,7 @@
 //  Johannes Roith (johannes@jroith.de)
 //
 // (C) 2002 Johannes Roith
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,11 +26,11 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 namespace Microsoft.Win32 {
 
-	/// <summary>
-	/// </summary>
-	public enum UserPreferenceCategory : int {
+	public enum UserPreferenceCategory {
+
 		Accessibility = 1,
 		Color = 2,
 		Desktop = 3,
@@ -44,6 +43,9 @@ namespace Microsoft.Win32 {
 		Power = 10,
 		Screensaver = 11,
 		Window = 12,
-		Locale = 13
-	};
+		Locale = 13,
+#if NET_2_0
+		VisualStyle
+#endif
+	}
 }

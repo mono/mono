@@ -1,3 +1,32 @@
+2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PowerModeChangedEventArgs.cs: Added a LinkDemand and an 
+	InheritanceDemand for FullTrust (i.e. Unrestricted permission set) at 
+	the class level.
+	* SessionEndingEventArgs.cs: Added a LinkDemand and an 
+	InheritanceDemand for FullTrust (i.e. Unrestricted permission set) at
+	the class level.
+	* SessionEndedEventArgs.cs: Added a LinkDemand and an 
+	InheritanceDemand for FullTrust (i.e. Unrestricted permission set) at
+	the class level.
+	* SessionSwitchReason.cs: New. Enum for 2.0.
+	* SessionSwitchEventArgs.cs: New. Class for 2.0.
+	* SessionSwitchEventHandler.cs: New. Delegate for 2.0.
+	* SystemEvents.cs: Added a LinkDemand for FullTrust (i.e. Unrestricted
+	permission set) at the class level. Added new events 
+	DisplaySettingsChanging and SessionSwitch (2.0). Added [Obsolete], 
+	[Browsable] and [EditorBrowsable] on LowMemory event (2.0).
+	* TimerElapsedEventArgs.cs: Added a LinkDemand and an 
+	InheritanceDemand for FullTrust (i.e. Unrestricted permission set) at 
+	the class level.
+	* UserPreferenceCategory.cs: Added new VisualStyle value for 2.0.
+	* UserPreferenceChangedEventArgs.cs: Added a LinkDemand and an 
+	InheritanceDemand for FullTrust (i.e. Unrestricted permission set) at
+	the class level.
+	* UserPreferenceChangingEventArgs.cs: Added a LinkDemand and an 
+	InheritanceDemand for FullTrust (i.e. Unrestricted permission set) at
+	the class level.
+
 2003-11-12  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* TimerElapsedEventArgs.cs: Added missing Attribute, restyled

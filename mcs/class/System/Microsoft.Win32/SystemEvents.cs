@@ -7,8 +7,7 @@
 //
 // (C) 2002 Johannes Roith
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,11 +30,14 @@
 //
 
 using System;
-using System.Timers;
 using System.Collections;
+using System.ComponentModel;
+using System.Security.Permissions;
+using System.Timers;
 
-namespace Microsoft.Win32 
-{
+namespace Microsoft.Win32 {
+
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public sealed class SystemEvents 
 	{
 		private static Hashtable TimerStore = new Hashtable ();
@@ -71,7 +73,7 @@ namespace Microsoft.Win32
 		private static void InternalTimerElapsed (object e, ElapsedEventArgs args)
 		{
 			if (TimerElapsed != null)
-				TimerElapsed (null, new TimerElapsedEventArgs (new IntPtr(0)));
+				TimerElapsed (null, new TimerElapsedEventArgs (IntPtr.Zero));
 		}
 
 		[MonoTODO]
@@ -86,7 +88,13 @@ namespace Microsoft.Win32
 			add 	{ throw new System.NotImplementedException ();}
 			remove 	{ throw new System.NotImplementedException ();}
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		public static event EventHandler DisplaySettingsChanging {
+			add { throw new NotImplementedException (); }
+			remove { throw new NotImplementedException (); }
+		}
+#endif
 		[MonoTODO]
 		public static event System.EventHandler EventsThreadShutdown 
 		{
@@ -102,6 +110,11 @@ namespace Microsoft.Win32
 		}
 
 		[MonoTODO]
+#if NET_2_0
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]
+		[Obsolete ("")]
+#endif
 		public static event System.EventHandler LowMemory 
 		{
 			add 	{ throw new System.NotImplementedException ();}
@@ -135,7 +148,13 @@ namespace Microsoft.Win32
 			add 	{ throw new System.NotImplementedException ();}
 			remove 	{ throw new System.NotImplementedException ();}
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		public static event SessionSwitchEventHandler SessionSwitch {
+			add { throw new NotImplementedException (); }
+			remove { throw new NotImplementedException (); }
+		}
+#endif
 		[MonoTODO]
 		public static event System.EventHandler TimeChanged 
 		{

@@ -5,8 +5,7 @@
 //  Johannes Roith (johannes@jroith.de)
 //
 // (C) 2002 Johannes Roith
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,28 +26,25 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+using System.Security.Permissions;
+
 namespace Microsoft.Win32 {
 
-	/// <summary>
-	/// </summary>
-public class UserPreferenceChangedEventArgs : System.EventArgs{
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+	public class UserPreferenceChangedEventArgs : System.EventArgs{
 
-	UserPreferenceCategory mycategory;
+		UserPreferenceCategory mycategory;
 
 	
-	public UserPreferenceChangedEventArgs(UserPreferenceCategory category)
-	{
-		this.mycategory = category;
-	}
-	
-	public UserPreferenceCategory Category {
-
-		get{
-			return mycategory;
+		public UserPreferenceChangedEventArgs (UserPreferenceCategory category)
+		{
+			this.mycategory = category;
 		}
-		
-	}
 	
-}
-
+		public UserPreferenceCategory Category {
+			get { return mycategory; }
+		}
+	}
 }

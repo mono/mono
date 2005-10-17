@@ -6,8 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Johannes Roith
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,9 +29,14 @@
 //
 
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
-namespace Microsoft.Win32 
-{
+namespace Microsoft.Win32 {
+
+	// CAS
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+	// attributes
 	[ComVisible(false)]
 	public class TimerElapsedEventArgs : System.EventArgs
 	{

@@ -1,10 +1,9 @@
 //
-// PowerModeChangedEventArgs.cs
+// Microsoft.Win32.SessionSwitchEventArgs class
 //
 // Author:
-//  Johannes Roith (johannes@jroith.de)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2002 Johannes Roith
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,25 +26,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System.Security.Permissions;
 
 namespace Microsoft.Win32 {
 
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
-	public class PowerModeChangedEventArgs : System.EventArgs {
-	
-		PowerModes mymode;
-		
-		public PowerModeChangedEventArgs(PowerModes mode)
+	public class SessionSwitchEventArgs : System.EventArgs {
+
+		SessionSwitchReason reason;
+
+		public SessionSwitchEventArgs (SessionSwitchReason reason)
 		{
-			this.mymode = mode;
+			this.reason = reason;
 		}
-		
-		public PowerModes Mode {
-			get{
-				return mymode;
-			}
+
+		public SessionSwitchReason Reason {
+			get { return reason; }
 		}
 	}
 }
+
+#endif
