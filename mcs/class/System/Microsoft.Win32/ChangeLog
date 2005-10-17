@@ -1,3 +1,9 @@
+2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IntranetZoneCredentialPolicy.cs: New. Implemented (2.0). This class
+	decide if the credentials should be sent if the sepcified uri is in 
+	the intranet zone.
+
 2005-10-17  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* SessionSwitchReason.cs: Fixed start value of enum (no 0 item).
