@@ -1,3 +1,10 @@
+2005-10-18  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.h (MonoLMF): Add rsp field.
+
+	* mini-amd64.c exceptions-amd64.c tramp-amd64.c: Save the sp reg into
+	the lmf too.
+
 2005-10-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (get_register_spilling): Fix some warnings.
