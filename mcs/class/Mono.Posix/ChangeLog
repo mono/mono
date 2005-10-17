@@ -1,3 +1,15 @@
+2005-10-17  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Mono.Posix_test.dll.sources: Add Mono.Unix/UnixMarshalTest.cs.
+
+2005-09-20  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Makefile: Build the make-map.exe in Mono.Unix.Native; add /nowarn:0618 to
+	  the build, so that we don't see dozens of warnings about using [Obsolete]
+	  code.
+	* Mono.Unix.Native: directory added
+	* Mono.Posix.dll.sources: Add Mono.Unix.Native/*.cs sources.
+
 2005-08-24  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* Makefile: Removed System.Runtime.Remoting dependency.

@@ -140,7 +140,17 @@ namespace Mono.Unix {
 			int len = GetStringByteLength (p, encoding);
 			byte[] string_buf = new byte [len];
 			Marshal.Copy (p, string_buf, 0, string_buf.Length);
-			return encoding.GetString (string_buf);
+
+			// Due to variable-length encoding schemes, GetStringByteLength() may
+			// have returned multiple "null" characters.  (For example, when
+			// encoding a string into UTF-8 there will be 4 terminating nulls.)
+			// We don't want these null's to be in the returned string, so strip
+			// them off.
+			char[] chars = encoding.GetChars (string_buf);
+			len = chars.Length;
+			while (len >= 0 && chars [--len] == 0)
+				;
+			return new string (chars, 0, len+1);
 		}
 
 		private static int GetStringByteLength (IntPtr p, Encoding encoding)
@@ -178,17 +188,17 @@ namespace Mono.Unix {
 		private static int GetInt16BufferLength (IntPtr p)
 		{
 			int len = 0;
-			while (Marshal.ReadInt16 (p, len) != 0)
+			while (Marshal.ReadInt16 (p, len*2) != 0)
 				checked {++len;}
-			return len;
+			return checked(len*2);
 		}
 
 		private static int GetInt32BufferLength (IntPtr p)
 		{
 			int len = 0;
-			while (Marshal.ReadInt32 (p, len) != 0)
+			while (Marshal.ReadInt32 (p, len*4) != 0)
 				checked {++len;}
-			return len;
+			return checked(len*4);
 		}
 
 		private static int GetRandomBufferLength (IntPtr p, int nullLength)

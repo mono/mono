@@ -1,5 +1,12 @@
 2005-10-17  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixMarshal.cs: Fix GetIntXxBufferLength to require fewer
+	  Marshal.ReadIntXx() calls; Fix PtrToString so that
+	  ``"foo" == PtrToString (StringToAlloc("foo",enc),enc)'' is true for
+	  "random" encodings.
+
+2005-10-17  Jonathan Pryor <jonpryor@vt.edu>
+
 	* UnixFileSystemInfo.cs: Add OwnerUserId and OwnerGroupId properties.
 
 2005-10-17  Jonathan Pryor <jonpryor@vt.edu>
