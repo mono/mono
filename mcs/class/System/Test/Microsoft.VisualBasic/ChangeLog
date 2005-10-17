@@ -1,3 +1,7 @@
+2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* VBCodeProviderCas.cs: New. CAS unit tests.
+
 2005-10-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorFromTypeTest.cs: Reworked tests to pass 
