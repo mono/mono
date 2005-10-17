@@ -1,5 +1,17 @@
 2005-10-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BaseDataList.cs: Type.GetTypeCode was fixed and now does not
+	throw a nullref, so we have to do it by ourselves here to make
+	the test happy.
+
+	* BaseValidator.cs: render the text of the error message even if
+	we set IsValid programatically. Don't use 'valid' directly, as
+	IsValid is virtual.
+
+	Fixes bug #76299.
+
+2005-10-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* CustomValidator.cs: an empty ControlToValidate is valid.
 
 2005-10-17  Sebastien Pouliot  <sebastien@ximian.com> 

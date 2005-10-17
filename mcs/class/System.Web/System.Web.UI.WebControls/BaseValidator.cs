@@ -235,7 +235,7 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			/* if we're rendering uplevel, add our attributes */
-			if (RenderUplevel) {
+			if (render_uplevel) {
 				/* force an ID here if we weren't assigned one */
 				if (ID == null)
 					writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
@@ -255,11 +255,7 @@ namespace System.Web.UI.WebControls {
 					writer.AddAttribute ("isvalid", "false");
 
 				if (Display == ValidatorDisplay.Static) {
-					writer.AddStyleAttribute ("visibility", "hidden");
-				}
-				else {
-					writer.AddAttribute ("display", Display.ToString());
-					writer.AddStyleAttribute ("display", "none");
+					writer.AddStyleAttribute ("visibility", "static");
 				}
 			}
 
@@ -403,7 +399,7 @@ namespace System.Web.UI.WebControls {
 			pre_render_called = true;
 
 			render_uplevel = DetermineRenderUplevel ();
-			if (RenderUplevel) {
+			if (render_uplevel) {
 				RegisterValidatorCommonScript ();
 
 				Page.ClientScript.RegisterOnSubmitStatement ("Mono-System.Web-ValidationOnSubmitStatement",
@@ -468,7 +464,7 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter writer)
 		{
-			if (RenderUplevel) {
+			if (render_uplevel) {
 				/* according to an msdn article, this is done here */
 				RegisterValidatorDeclaration ();
 			}
@@ -476,21 +472,21 @@ namespace System.Web.UI.WebControls {
 			bool render_tags = false;
 			bool render_text = false;
 			bool render_nbsp = false;
+			bool v = IsValid;
 
 			if (!pre_render_called) {
 				render_tags = true;
 				render_text = true;
 			}
-			else if (RenderUplevel) {
+			else if (render_uplevel) {
 				render_tags = true;
-				if (Display == ValidatorDisplay.Dynamic)
-					render_text = true;
+				render_text = (!v || Display == ValidatorDisplay.Dynamic);
 			}
 			else {
 				if (Display == ValidatorDisplay.Static) {
-					render_tags = !valid;
-					render_text = !valid;
-					render_nbsp = valid;
+					render_tags = !v;
+					render_text = !v;
+					render_nbsp = v;
 				}
 			}
 
@@ -502,17 +498,16 @@ namespace System.Web.UI.WebControls {
 			if (render_text || render_nbsp) {
 				string text;
 				if (render_text) {
-					if (Text != "")
-						text = Text;
-					else
+					text = Text;
+					if (text == "")
 						text = ErrorMessage;
-				}
-				else {
+				} else {
 					text = "&nbsp;";
 				}
 
 				writer.Write (text);
 			}
+
 
 			if (render_tags) {
 				writer.RenderEndTag ();
@@ -523,9 +518,9 @@ namespace System.Web.UI.WebControls {
 		public virtual void Validate ()
 		{
 			if (Enabled && Visible)
-				valid = ControlPropertiesValid () && EvaluateIsValid ();
+				IsValid = ControlPropertiesValid () && EvaluateIsValid ();
 			else
-				valid = true;
+				IsValid = true;
 		}
 	}
 

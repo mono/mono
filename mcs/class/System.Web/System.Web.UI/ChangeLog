@@ -1,3 +1,8 @@
+2005-10-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: don't cache the 'Validate()' results. IsValid retests
+	the validators again.
+
 2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DesignerDataBoundLiteralControl.cs: changed autoid api.

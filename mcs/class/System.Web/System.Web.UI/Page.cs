@@ -75,7 +75,6 @@ public class Page : TemplateControl, IHttpHandler
 	private bool _viewState = true;
 	private bool _viewStateMac;
 	private string _errorPage;
-	private bool _isValid;
 	private bool is_validated;
 	private bool _smartNavigation;
 	private int _transactionMode;
@@ -326,7 +325,8 @@ public class Page : TemplateControl, IHttpHandler
 		get {
 			if (!is_validated)
 				throw new HttpException (Locale.GetText ("Page hasn't been validated."));
-			return _isValid;
+
+			return ValidateCollection (_validators);
 		}
 	}
 
@@ -1025,7 +1025,7 @@ public class Page : TemplateControl, IHttpHandler
 			Trace.Render (output);
 	}
 	
-	internal void RaisePostBackEvents ()
+	void RaisePostBackEvents ()
 	{
 		if (requiresRaiseEvent != null) {
 			RaisePostBackEvent (requiresRaiseEvent, null);
@@ -1245,12 +1245,10 @@ public class Page : TemplateControl, IHttpHandler
 		return uplevel;
 	}
 
-	void ValidateCollection (ValidatorCollection validators)
+	bool ValidateCollection (ValidatorCollection validators)
 	{
-		if (validators == null || validators.Count == 0){
-			_isValid = true;
-			return;
-		}
+		if (validators == null || validators.Count == 0)
+			return true;
 
 		bool all_valid = true;
 		foreach (IValidator v in validators){
@@ -1259,8 +1257,7 @@ public class Page : TemplateControl, IHttpHandler
 				all_valid = false;
 		}
 
-		if (all_valid)
-			_isValid = true;
+		return all_valid;
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -1508,12 +1505,8 @@ public class Page : TemplateControl, IHttpHandler
 		is_validated = true;
 		if (validationGroup == null || validationGroup == "")
 			ValidateCollection (_validators);
-		else {
-			if (_validatorsByGroup != null) {
-				ValidateCollection (_validatorsByGroup [validationGroup] as ValidatorCollection);
-			} else {
-				_isValid = true;
-			}
+		else if (_validatorsByGroup != null) {
+			ValidateCollection (_validatorsByGroup [validationGroup] as ValidatorCollection);
 		}
 	}
 
