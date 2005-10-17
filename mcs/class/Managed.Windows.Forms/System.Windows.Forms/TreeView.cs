@@ -92,6 +92,7 @@ namespace System.Windows.Forms {
 		private TreeViewCancelEventHandler on_before_select;
 
 		private Pen dash;
+		private StringFormat string_format;
 		private int open_node_count = -1;
 
 		private long handle_count = 1;
@@ -119,6 +120,10 @@ namespace System.Windows.Forms {
 
 			dash = new Pen (SystemColors.ControlLight, 1);
 			dash.DashStyle = DashStyle.Dash;
+
+			string_format = new StringFormat ();
+			string_format.LineAlignment = StringAlignment.Center;
+			string_format.Alignment = StringAlignment.Center;
 		}
 
 		#endregion	// Public Constructors
@@ -1040,7 +1045,8 @@ namespace System.Windows.Forms {
 				font = Font;
 
 			if (node.NeedsWidth || update_node_bounds)
-				node.SetWidth ((int) dc.MeasureString (node.Text, font).Width + 3);
+				node.SetWidth ((int) dc.MeasureString (node.Text, font, 0,
+							       string_format).Width + 3);
 			node.SetHeight (item_height);
 			node.SetPosition (x, y);
 		}
@@ -1057,9 +1063,6 @@ namespace System.Windows.Forms {
 		 
 		private void DrawStaticNode (TreeNode node, Graphics dc)
 		{
-			StringFormat format = new StringFormat ();
-			format.LineAlignment = StringAlignment.Center;
-
 			if (!full_row_select)
 				DrawSelectionAndFocus(node, dc, node.Bounds);
 
@@ -1070,7 +1073,7 @@ namespace System.Windows.Forms {
 					ThemeEngine.Current.ColorHighlightText : node.ForeColor);
 			dc.DrawString (node.Text, font,
 					ThemeEngine.Current.ResPool.GetSolidBrush (text_color),
-					node.Bounds, format);
+					node.Bounds, string_format);
 		}
 
 		private void DrawNode (TreeNode node, Graphics dc, Rectangle clip, ref int depth, int item_height, int max_height)

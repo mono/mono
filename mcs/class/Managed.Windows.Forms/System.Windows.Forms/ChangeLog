@@ -1,3 +1,8 @@
+2005-10-17  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Merge in patch by Rafael Teixeira to align strings
+	correctly.
+
 2005-10-17  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
 	* TreeNode.cs : small logical fix (was using local var instead of field)
 	
