@@ -144,12 +144,15 @@ namespace System.Runtime.Remoting.Channels
 			get {
 				lock (registeredChannels.SyncRoot)
 				{
-					IChannel[] channels = new IChannel[registeredChannels.Count];
-	
-					for (int i = 0; i < registeredChannels.Count; i++)
-						channels[i] = (IChannel) registeredChannels[i];
-	
-					return channels;
+					ArrayList list = new ArrayList ();
+					
+					for (int i = 0; i < registeredChannels.Count; i++) {
+						IChannel ch = (IChannel) registeredChannels[i];
+						if (ch is CrossAppDomainChannel) continue;
+						list.Add (ch);
+					}
+
+					return (IChannel[]) list.ToArray (typeof(IChannel));
 				}
 			}
 		}
