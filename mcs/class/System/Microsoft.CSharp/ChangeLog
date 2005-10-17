@@ -1,3 +1,10 @@
+2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CSharpCodeProvider.cs: Added a LinkDemand and an InheritanceDemand
+	for FullTrust (i.e. Unrestricted permission set) at the class level.
+	Added [Obsolete] on CreateCompiler and CreateGenerator methods (2.0).
+	Stubbed new method GenerateCodeFromMember (2.0).
+
 2005-10-15 Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* CSharpCodeGenerator.cs: Support C bracing style. Fixes bug #76286.

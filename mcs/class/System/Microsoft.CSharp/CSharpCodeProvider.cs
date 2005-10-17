@@ -5,8 +5,7 @@
 //   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2002 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,15 +27,19 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace Microsoft.CSharp
-{
-	using System;
-	using System.CodeDom.Compiler;
-	using System.ComponentModel;
+using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
+using System.ComponentModel;
+using System.IO;
+using System.Security.Permissions;
 
-	public class CSharpCodeProvider
-		: CodeDomProvider
-	{
+namespace Microsoft.CSharp {
+
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+	public class CSharpCodeProvider : CodeDomProvider {
+
 		//
 		// Constructors
 		//
@@ -56,11 +59,17 @@ namespace Microsoft.CSharp
 		//
 		// Methods
 		//
+#if NET_2_0
+		[Obsolete ("Use CodeDomProvider class")]
+#endif
 		public override ICodeCompiler CreateCompiler()
 		{
 			return new Mono.CSharp.CSharpCodeCompiler();
 		}
 
+#if NET_2_0
+		[Obsolete ("Use CodeDomProvider class")]
+#endif
 		public override ICodeGenerator CreateGenerator()
 		{
 			return new Mono.CSharp.CSharpCodeGenerator();
@@ -71,5 +80,13 @@ namespace Microsoft.CSharp
 		{
 			throw new NotImplementedException();
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public void GenerateCodeFromMember (CodeTypeMember member, TextWriter writer, CodeGeneratorOptions options)
+		{
+			throw new NotImplementedException();
+		}
+#endif
 	}
 }
