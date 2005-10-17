@@ -249,9 +249,10 @@ namespace System.Web.UI.WebControls {
 					writer.AddAttribute ("text", Text);
 
 				if (!Enabled)
-					writer.AddAttribute ("enabled", Enabled.ToString());
+					writer.AddAttribute ("enabled", "false");
+
 				if (!IsValid)
-					writer.AddAttribute ("isvalid", IsValid.ToString());
+					writer.AddAttribute ("isvalid", "false");
 
 				if (Display == ValidatorDisplay.Static) {
 					writer.AddStyleAttribute ("visibility", "hidden");
