@@ -416,6 +416,133 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 	}
 	#endregion
 
+	#region GraphicsFixtureFillModes
+	[TestFixture]
+	public class GraphicsFixtureFillModes {
+		protected DrawingTest t;
+		protected int TOLERANCE = 3; //in %;
+
+		[SetUp]
+		public virtual void SetUp() {
+			SetUp("GraphicsFixtureFillModes");
+		}
+		public virtual void SetUp(string ownerClass) {
+			t = DrawingTest.Create(512, 512, ownerClass);
+		}
+		[TearDown]
+		public void TearDown() {
+		}
+
+		[Test]
+		public void FillModeAlternate() {
+			GraphicsPath p = new GraphicsPath();
+			Assert.AreEqual(FillMode.Alternate, p.FillMode);
+		}
+		[Test]
+		public void FillModeAlternate_1() {
+			Point [] p = new Point[] {
+										 new Point(50, 100),
+										 new Point(70, 10),
+										 new Point(90, 100),
+										 new Point(140, 10),
+										 new Point(150, 100),
+										 new Point(170, 10),
+										 new Point(50, 100)
+									 };
+
+			GraphicsPath path = new GraphicsPath();
+			path.AddLines( p );
+			path.FillMode = FillMode.Alternate;
+			t.Graphics.FillPath( Brushes.Blue, path );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void FillModeAlternate_2() {
+
+			Rectangle r1 = new Rectangle(100, 100, 100, 100);
+			Rectangle r2 = new Rectangle(125, 125, 50, 50);
+			GraphicsPath path = new GraphicsPath();
+			path.AddRectangle( r1 );
+			path.AddRectangle( r2 );
+			path.FillMode = FillMode.Alternate;
+			t.Graphics.FillPath( Brushes.Blue, path );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void FillModeAlternate_3() {
+			Point [] p = new Point[] {
+										 new Point(50, 100),
+										 new Point(150, 50),
+										 new Point(250, 100),
+										 new Point(50, 75),
+										 new Point(250, 50),
+										 new Point(50, 100)
+									 };
+
+			GraphicsPath path = new GraphicsPath();
+			path.AddLines( p );
+			path.FillMode = FillMode.Alternate;
+			t.Graphics.FillPath( Brushes.Blue, path );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void FillModeWinding_1() {
+			Point [] p = new Point[] {
+										 new Point(50, 100),
+										 new Point(70, 10),
+										 new Point(90, 100),
+										 new Point(140, 10),
+										 new Point(150, 100),
+										 new Point(170, 10),
+										 new Point(50, 100)
+									 };
+
+			GraphicsPath path = new GraphicsPath();
+			path.AddLines( p );
+			path.FillMode = FillMode.Winding;
+			t.Graphics.FillPath( Brushes.Blue, path );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void FillModeWinding_2() {
+
+			Rectangle r1 = new Rectangle(100, 100, 100, 100);
+			Rectangle r2 = new Rectangle(125, 125, 50, 50);
+			GraphicsPath path = new GraphicsPath();
+			path.AddRectangle( r1 );
+			path.AddRectangle( r2 );
+			path.FillMode = FillMode.Winding;
+			t.Graphics.FillPath( Brushes.Blue, path );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void FillModeWinding_3() {
+			Point [] p = new Point[] {
+										 new Point(50, 100),
+										 new Point(150, 50),
+										 new Point(250, 100),
+										 new Point(50, 75),
+										 new Point(250, 50),
+										 new Point(50, 100)
+									 };
+
+			GraphicsPath path = new GraphicsPath();
+			path.AddLines( p );
+			path.FillMode = FillMode.Winding;
+			t.Graphics.FillPath( Brushes.Blue, path );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+
+	}
+	#endregion
+
+
 	#region GraphicsFixture
 	/// <summary>
 	/// Summary description for Graphics.
@@ -433,7 +560,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		public virtual void SetUp(string ownerClass) {
 			t = DrawingTest.Create(512, 512, ownerClass);
 
-			// hashtable of differents tolerance values for specified tests.
+			// hashtable of differents tolerance values for specified tests. (for fft comparer)
 			st["DrawArcTest:6"] = TOLERANCE * 2.5f;
 			st["DrawCurveTestF:4"] = TOLERANCE * 2f;
 			st["DrawPolygonPoint:2"] = TOLERANCE * 2f;

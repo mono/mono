@@ -9,6 +9,9 @@ namespace Test.Sys.Drawing
 	/// <summary>
 	/// Summary description for Brush.
 	/// </summary>
+	
+	#region BrushFixture
+
 	[TestFixture]
 	public class BrushFixture
 	{
@@ -28,4 +31,92 @@ namespace Test.Sys.Drawing
 			t.Show ();
 		}
 	}
+
+	#endregion
+
+	#region TextureBrushFixture
+	[TestFixture]
+	public class GraphicsFixtureFillModes {
+		protected DrawingTest t;
+		protected int TOLERANCE = 3;
+		Image bmp;
+		Image bmp2;
+
+		[SetUp]
+		public virtual void SetUp() {
+			SetUp("TextureBrushFixture");
+		}
+		public virtual void SetUp(string ownerClass) {
+			t = DrawingTest.Create(512, 512, ownerClass);
+			bmp = Bitmap.FromFile(@"..\..\bitmap50.png");
+			bmp2 = Bitmap.FromFile(@"..\..\bitmap25.png");
+		}
+		[TearDown]
+		public void TearDown() {
+		}
+
+		[Test]
+		public void WrapMode_1() {
+			TextureBrush b = new TextureBrush( bmp );
+			Assert.AreEqual(WrapMode.Tile, b.WrapMode);
+		}
+		[Test]
+		public void TextureBush_1() {
+			TextureBrush b = new TextureBrush( bmp );
+			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void TextureBush_2() {
+			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipX );
+			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void TextureBush_3() {
+			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipY );
+			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void TextureBush_4() {
+			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipXY );
+			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void TextureBush_5() {
+			TextureBrush b = new TextureBrush( bmp2, new Rectangle(100, 100, 50, 50) );
+			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void TextureBush_6() {
+			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipX, new Rectangle(100, 100, 50, 50) );
+			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void TextureBush_7() {
+			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipY, new Rectangle(100, 100, 50, 50) );
+			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void TextureBush_8() {
+			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipXY, new Rectangle(100, 100, 50, 50) );
+			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+	}
+	#endregion
+
 }
