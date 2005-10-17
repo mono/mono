@@ -1,3 +1,9 @@
+2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UriBuilderCas.cs: New. CAS unit tests.
+	* UriBuilderTest.cs: Fixed tests to execute without failures under 2.0
+	* UriFormatExceptionCas.cs: New. CAS unit tests.
+
 2005-08-17  Daniel Drake  <dsd@gentoo.org>
 
 	* UriTest.cs: Add some tests from bug #75144

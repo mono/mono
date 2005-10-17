@@ -25,30 +25,45 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		public void Constructors ()
+		public void Constructor_Empty ()
 		{
 			b = new UriBuilder ();
 			AssertEquals ("#1", "http", b.Scheme);
+#if NET_2_0
+			AssertEquals ("#2", "localhost", b.Host);
+#else
 			AssertEquals ("#2", "loopback", b.Host);
+#endif
 			AssertEquals ("#3", -1, b.Port);
-			
-			try {
-				b = new UriBuilder ("http", "www.ximian.com", 80, "foo/bar/index.html", "extras");
-				Fail ("#4 should have thrown an ArgumentException because extraValue must start with '?' or '#' character.");
-			} catch (ArgumentException) {}
-			
+		}
+
+		[Test]
+		public void Constructor_5 ()
+		{
 			b = new UriBuilder ("http", "www.ximian.com", 80, "foo/bar/index.html", "#extras");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Constructor_5_BadExtraValue ()
+		{
+			b = new UriBuilder ("http", "www.ximian.com", 80, "foo/bar/index.html", "extras");
+			// should have thrown an ArgumentException because extraValue must start with '?' or '#' character.
 		}
 		
 		[Test]
 		// This test does not make sense, will fix soon
-		[Ignore ("Bug 75144")]
+		[Category ("NotWorking")] // bug #75144
 		public void UserInfo ()
 		{			
 			b = new UriBuilder ("mailto://myname:mypwd@contoso.com?subject=hello");
+#if NET_2_0
+			AssertEquals ("#1", String.Empty, b.UserName);
+			AssertEquals ("#2", String.Empty, b.Password);
+#else
 			AssertEquals ("#1", "myname", b.UserName);
 			AssertEquals ("#2", "mypwd", b.Password);
-			
+#endif			
 			b = new UriBuilder ("mailto", "contoso.com");
 			b.UserName = "myname";
 			b.Password = "mypwd";
@@ -68,14 +83,22 @@ namespace MonoTests.System
 		{
 			b.Port = -12345;
 		}
-
+#if NET_2_0
+		[Test]
+		public void DefaultPort ()
+		{
+			b.Port = -1;
+			AssertEquals ("Port", -1, b.Port);
+			AssertEquals ("ToString", "http://www.ximian.com/foo/bar/index.html", b.ToString ());
+		}
+#else
 		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void BadPort3 ()
 		{
 			b.Port = -1;
 		}
-
+#endif
 		[Test]
 		public void Query ()
 		{
@@ -120,17 +143,26 @@ namespace MonoTests.System
 		}
 		
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")] // equals changed in 2.0
+#endif
 		public void Equals ()
 		{
 			b = new UriBuilder ("http://", "www.ximian.com", 80, "foo/bar/index.html?item=1");
 			b2 = new UriBuilder ("http", "www.ximian.com", 80, "/foo/bar/index.html", "?item=1");
 			b3 = new UriBuilder (new Uri ("http://www.ximian.com/foo/bar/index.html?item=1"));
-			
+#if NET_2_0
+			Assert ("#1", !b.Equals (b2));
+			Assert ("#2", !b.Uri.Equals (b2.Uri));
+			Assert ("#3", !b.Equals (b3));
+			Assert ("#5", !b3.Equals (b));
+#else
 			Assert ("#1", b.Equals (b2));
 			Assert ("#2", b.Uri.Equals (b2.Uri));
 			Assert ("#3", b.Equals (b3));
-			Assert ("#4", b2.Equals (b3));
 			Assert ("#5", b3.Equals (b));
+#endif
+			Assert ("#4", b2.Equals (b3));
 		}
 		
 		[Test]
