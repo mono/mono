@@ -125,7 +125,6 @@ namespace Mono.Unix {
 		{
 			// throws IOException, UnauthorizedAccessException (no permission)
 			ArrayList entries = new ArrayList ();
-			Syscall.SetLastError ((Error) 0);
 
 			lock (Syscall.fstab_lock) {
 				int r = Syscall.setfsent ();

@@ -270,7 +270,6 @@ namespace Mono.Unix {
 		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.PathconfName)")]
 		public long GetConfigurationValue (PathConf name)
 		{
-			Syscall.SetLastError ((Error) 0);
 			long r = Syscall.pathconf (FullPath, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
@@ -280,7 +279,6 @@ namespace Mono.Unix {
 		[CLSCompliant (false)]
 		public long GetConfigurationValue (Native.PathconfName name)
 		{
-			Syscall.SetLastError ((Error) 0);
 			long r = Native.Syscall.pathconf (FullPath, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
 				UnixMarshal.ThrowExceptionForLastError ();

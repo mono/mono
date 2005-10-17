@@ -99,10 +99,8 @@ namespace Mono.Unix {
 		public static UnixGroupInfo[] GetLocalGroups ()
 		{
 			ArrayList entries = new ArrayList ();
-			Syscall.SetLastError ((Error) 0);
 			lock (Syscall.grp_lock) {
-				Syscall.setgrent ();
-				if (Syscall.GetLastError () != (Error) 0)
+				if (Native.Syscall.setgrent () != 0)
 					UnixMarshal.ThrowExceptionForLastError ();
 				try {
 					Group g;
@@ -112,7 +110,7 @@ namespace Mono.Unix {
 						UnixMarshal.ThrowExceptionForLastError ();
 				}
 				finally {
-					Syscall.endgrent ();
+					Native.Syscall.endgrent ();
 				}
 			}
 			return (UnixGroupInfo[]) entries.ToArray (typeof(UnixGroupInfo));

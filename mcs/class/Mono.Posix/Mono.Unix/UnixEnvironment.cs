@@ -206,13 +206,14 @@ namespace Mono.Unix {
 
 			lock (Syscall.usershell_lock) {
 				try {
-					Syscall.setusershell ();
+					if (Native.Syscall.setusershell () != 0)
+						UnixMarshal.ThrowExceptionForLastError ();
 					string shell;
-					while ((shell = Syscall.getusershell ()) != null)
+					while ((shell = Native.Syscall.getusershell ()) != null)
 						shells.Add (shell);
 				}
 				finally {
-					Syscall.endusershell ();
+					Native.Syscall.endusershell ();
 				}
 			}
 

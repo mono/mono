@@ -398,7 +398,6 @@ namespace Mono.Unix {
 		public long GetConfigurationValue (PathConf name)
 		{
 			AssertNotDisposed ();
-			Syscall.SetLastError ((Error) 0);
 			long r = Syscall.fpathconf (fileDescriptor, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
@@ -409,7 +408,6 @@ namespace Mono.Unix {
 		public long GetConfigurationValue (Native.PathconfName name)
 		{
 			AssertNotDisposed ();
-			Syscall.SetLastError ((Error) 0);
 			long r = Native.Syscall.fpathconf (fileDescriptor, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
 				UnixMarshal.ThrowExceptionForLastError ();

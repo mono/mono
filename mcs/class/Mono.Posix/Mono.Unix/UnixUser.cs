@@ -178,10 +178,8 @@ namespace Mono.Unix {
 		public static UnixUserInfo[] GetLocalUsers ()
 		{
 			ArrayList entries = new ArrayList ();
-			Syscall.SetLastError ((Error) 0);
 			lock (Syscall.pwd_lock) {
-				Syscall.setpwent ();
-				if (Syscall.GetLastError () != (Error) 0) {
+				if (Native.Syscall.setpwent () != 0) {
 					UnixMarshal.ThrowExceptionForLastError ();
 				}
 				try {

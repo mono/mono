@@ -82,7 +82,6 @@ namespace Mono.Unix {
 		[Obsolete ("Use GetConfigurationValue(string, Mono.Unix.Native.PathconfName)")]
 		public static long GetConfigurationValue (string path, PathConf name)
 		{
-			Syscall.SetLastError ((Error) 0);
 			long r = Syscall.pathconf (path, name);
 			if (r == -1 && Syscall.GetLastError() != (Error) 0)
 				UnixMarshal.ThrowExceptionForLastError ();
