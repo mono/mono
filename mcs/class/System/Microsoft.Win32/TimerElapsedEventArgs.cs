@@ -28,16 +28,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.InteropServices;
 using System.Security.Permissions;
 
 namespace Microsoft.Win32 {
 
-	// CAS
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
-	// attributes
-	[ComVisible(false)]
 	public class TimerElapsedEventArgs : System.EventArgs
 	{
 		System.IntPtr mytimerId;

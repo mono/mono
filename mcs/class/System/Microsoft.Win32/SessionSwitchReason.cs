@@ -31,7 +31,7 @@
 namespace Microsoft.Win32 {
 
 	public enum SessionSwitchReason {
-		ConsoleConnect,
+		ConsoleConnect = 1,
 		ConsoleDisconnect,
 		RemoteConnect,
 		RemoteDisconnect,

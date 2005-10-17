@@ -1,3 +1,8 @@
+2005-10-17  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* SessionSwitchReason.cs: Fixed start value of enum (no 0 item).
+	* TimerElapsedEventArgs.cs: Removed [ComVisible (false)] attribute.
+
 2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PowerModeChangedEventArgs.cs: Added a LinkDemand and an 
