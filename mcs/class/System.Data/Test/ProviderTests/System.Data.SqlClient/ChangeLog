@@ -1,3 +1,7 @@
+2005-10-17  Senganal T  <tsenganal@novell.com>
+
+	* SqlDataAdapterTest.cs : Added Testcase for bug #76433.
+
 2005-09-24  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlDataAdapterTest.cs (Fill_Test_Exceptions): passing null

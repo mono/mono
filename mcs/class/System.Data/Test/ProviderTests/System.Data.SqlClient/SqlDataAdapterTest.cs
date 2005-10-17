@@ -630,5 +630,35 @@ namespace MonoTests.System.Data.SqlClient
 			Assert.AreEqual (1, data.Tables[0].Rows.Count,
 				"#10 Data shud be populated if mapping is correct");
 		}
+
+		// Test case for bug #76433 
+		[Test]
+		public void FillSchema_ValuesTest()
+		{
+			SqlConnection conn = new SqlConnection(connectionString);
+			using (conn) {
+				conn.Open();
+				IDbCommand command = conn.CreateCommand();
+
+				// Create Temp Table
+				String cmd = "Create Table #tmp_TestTable (" ;
+				cmd += "Field1 DECIMAL (10) NOT NULL,";
+				cmd += "Field2 DECIMAL(19))";
+				command.CommandText = cmd; 
+				command.ExecuteNonQuery();
+
+				DataSet dataSet = new DataSet();
+				string selectString = "SELECT * FROM #tmp_TestTable";
+				IDbDataAdapter dataAdapter = new SqlDataAdapter (
+									selectString,conn);
+				dataAdapter.FillSchema(dataSet, SchemaType.Mapped);
+
+				Assert.AreEqual (1, dataSet.Tables.Count, "#1");
+
+				DataColumn col = dataSet.Tables[0].Columns[0]; 
+				Assert.IsFalse (dataSet.Tables[0].Columns[0].AllowDBNull,"#2");
+				Assert.IsTrue (dataSet.Tables[0].Columns[1].AllowDBNull,"#3");
+			}
+		}
 	}
 }

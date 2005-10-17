@@ -1,3 +1,9 @@
+2005-10-14  Senganal T  <tsenganal@novell.com>
+
+	* DbDataAdapter.cs : 
+		- BuildSchema() : Set the value of DataColumn Property 'AllowDBNull'
+		as returned by database. Fixes bug#76433. 
+
 2005-09-21 Boris Kirzner <borisk@mainsoft.com>
 	* Index.cs: 
 		- Rebuild index immediately after construction.

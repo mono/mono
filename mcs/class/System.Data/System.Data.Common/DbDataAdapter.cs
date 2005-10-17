@@ -632,6 +632,7 @@ namespace System.Data.Common {
 
 							object value = (AllowDBNullCol != null) ? schemaRow[AllowDBNullCol] : null;
 							bool allowDBNull = value is bool ? (bool)value : true;
+							col.AllowDBNull = allowDBNull; 
 							value = (IsKeyCol != null) ? schemaRow[IsKeyCol] : null;
 							bool isKey = value is bool ? (bool)value : false;
 
