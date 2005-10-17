@@ -321,6 +321,7 @@ System.Web.UI.WebControls/RangeValidatorCas.cs
 System.Web.UI.WebControls/RegularExpressionValidatorCas.cs
 System.Web.UI.WebControls/RepeaterCas.cs
 System.Web.UI.WebControls/RepeatInfoCas.cs
+System.Web.UI.WebControls/RequiredFieldValidatorCas.cs
 System.Web.UI.WebControls/RoleGroupCas.cs
 System.Web.UI.WebControls/RoleGroupCollectionCas.cs
 System.Web.UI.WebControls/SelectedDatesCollectionCas.cs
