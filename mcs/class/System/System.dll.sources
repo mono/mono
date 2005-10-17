@@ -8,6 +8,7 @@ Microsoft.CSharp/CSharpCodeProvider.cs
 Microsoft.VisualBasic/VBCodeCompiler.cs
 Microsoft.VisualBasic/VBCodeGenerator.cs
 Microsoft.VisualBasic/VBCodeProvider.cs
+Microsoft.Win32/IntranetZoneCredentialPolicy.cs
 Microsoft.Win32/PowerModeChangedEventArgs.cs
 Microsoft.Win32/PowerModeChangedEventHandler.cs
 Microsoft.Win32/PowerModes.cs
@@ -509,6 +510,7 @@ System.Net/HttpWebResponse.cs
 System.Net/IAuthenticationModule.cs
 System.Net/ICertificatePolicy.cs
 System.Net/ICredentialLookup.cs
+System.Net/ICredentialPolicy.cs
 System.Net/ICredentialsByHost.cs
 System.Net/IPAddress.cs
 System.Net/IPEndPoint.cs

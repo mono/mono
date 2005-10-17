@@ -12,6 +12,7 @@ Microsoft.VisualBasic/VBCodeProviderTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromCompileUnitTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromExpressionTest.cs
 Microsoft.VisualBasic/CodeGeneratorFromTypeTest.cs
+Microsoft.Win32/IntranetZoneCredentialPolicyTest.cs
 System/UriBuilderTest.cs
 System/UriTest.cs
 System/UriTest2.cs
@@ -119,6 +120,7 @@ System.Net.Sockets/SocketCas.cs
 System.Net.Sockets/TcpClientCas.cs
 Microsoft.CSharp/CSharpCodeProviderCas.cs
 Microsoft.VisualBasic/VBCodeProviderCas.cs
+Microsoft.Win32/IntranetZoneCredentialPolicyCas.cs
 Microsoft.Win32/PowerModeChangedEventArgsCas.cs
 Microsoft.Win32/SessionEndedEventArgsCas.cs
 Microsoft.Win32/SessionEndingEventArgsCas.cs
