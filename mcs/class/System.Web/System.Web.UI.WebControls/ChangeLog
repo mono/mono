@@ -1,3 +1,7 @@
+2005-10-17  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* RequiredFieldValidator.cs: Added missing permissions.
+
 2005-10-10 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* DataList.cs: copied and adapted PrepareControlHierarchy from DataGrid.
