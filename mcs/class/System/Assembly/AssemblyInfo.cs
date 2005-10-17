@@ -32,6 +32,7 @@ using System;
 using System.Reflection;
 using System.Resources;
 using System.Security;
+using System.Security.Permissions;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
@@ -62,6 +63,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 #if ! BOOTSTRAP_WITH_OLDLIB
+[assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification=true)]
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../ecma.pub")]
 #endif
