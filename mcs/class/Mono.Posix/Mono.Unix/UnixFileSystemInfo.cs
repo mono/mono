@@ -132,14 +132,22 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("Use OwnerUserId.")]
 		public uint OwnerUser {
 			get {AssertValid (); return stat.st_uid;}
 		}
 
+		public long OwnerUserId {
+			get {AssertValid (); return stat.st_uid;}
+		}
+
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("Use OwnerGroupId.")]
 		public uint OwnerGroup {
+			get {AssertValid (); return stat.st_gid;}
+		}
+
+		public long OwnerGroupId {
 			get {AssertValid (); return stat.st_gid;}
 		}
 

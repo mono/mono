@@ -1,5 +1,9 @@
 2005-10-17  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixFileSystemInfo.cs: Add OwnerUserId and OwnerGroupId properties.
+
+2005-10-17  Jonathan Pryor <jonpryor@vt.edu>
+
 	* UnixDriveInfo.cs, UnixEnvironment.cs, UnixFile.cs, UnixFileSystemInfo.cs, 
 	  UnixGroup.cs, UnixStream.cs, UnixUser.cs: Don't use SetLastError(), since
 	  it's use is (1) incorrect, and (2) will be going away with the move to
