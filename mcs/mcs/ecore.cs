@@ -1298,12 +1298,6 @@ namespace Mono.CSharp {
 				return false;
 			}
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			throw new NotImplementedException ();
-		}
-
 	}
 
 
@@ -1408,14 +1402,6 @@ namespace Mono.CSharp {
 			get {
 				return Child.IsNegative;
 			}
-		}
-
-		public override Constant Reduce(EmitContext ec, Type target_type)
-		{
-			if (Child.Type == target_type)
-				return Child;
-
-			return Child.Reduce (ec, target_type);
 		}
 
 		public override Constant ToType (Type type, Location loc)

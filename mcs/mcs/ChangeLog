@@ -1,16 +1,3 @@
-2005-10-17  Marek Safar  <marek.safar@seznam.cz>
-
-	Fix #76273.
-	* cfold.cs (BinaryFold): Reduce constant in enum conversion.
-	
-	* constant.cs (Constant.TryReduce): Moved from Cast class.
-	(Reduce): Made little bit more OO and fixed missing conversions.
-	
-	* ecore.cs (Reduce): Implemented.
-	(Binary.EnumLiftUp): New method to upgrade values to enum values.
-	
-	* literal.cs (Reduce): Implemented.
-
 2005-10-14  Miguel de Icaza  <miguel@novell.com>
 
 	* ecore.cs (GetMemberType): Report the correct mapping for the MemberCore

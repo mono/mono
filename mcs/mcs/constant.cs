@@ -3,7 +3,6 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
-//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001 Ximian, Inc.
 //
@@ -206,69 +205,6 @@ namespace Mono.CSharp {
 			return retval;
 		}
 
-		protected void CheckRange (EmitContext ec, ulong value, Type type, ulong max)
-		{
-			if (!ec.ConstantCheckState)
-				return;
-
-			if (value > max)
-				throw new OverflowException ();
-		}
-
-		protected void CheckRange (EmitContext ec, double value, Type type, long min, long max)
-		{
-			if (!ec.ConstantCheckState)
-				return;
-
-			if (((value < min) || (value > max)))
-				throw new OverflowException ();
-		}
-
-		protected void CheckUnsigned (EmitContext ec, long value, Type type)
-		{
-			if (!ec.ConstantCheckState)
-				return;
-
-			if (value < 0)
-				throw new OverflowException ();
-		}
-
-		public abstract Constant Reduce (EmitContext ec, Type target_type);
-
-		/// <summary>
-		///   Attempts to do a compile-time folding of a constant cast.
-		/// </summary>
-		public Constant TryReduce (EmitContext ec, Type target_type, Location loc)
-		{
-			try {
-				return  TryReduce (ec, target_type);
-			}
-			catch (OverflowException) {
-				if (ec.ConstantCheckState) {
-					Report.Error (221, loc, "Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
-						this.GetValue (), TypeManager.CSharpName (target_type));
-				}
-				return null;
-			}
-		}
-
-		Constant TryReduce (EmitContext ec, Type target_type)
-		{
-			if (Type == target_type)
-				return this;
-
-			if (TypeManager.IsEnumType (target_type)) {
-				Constant c = TryReduce (ec, TypeManager.EnumToUnderlying (target_type));
-				if (c == null)
-					return null;
-
-				return new EnumConstant (c, target_type);
-			}
-
-			return Reduce (ec, target_type);
-		}
-
-
 		public virtual DecimalConstant ConvertToDecimal ()
 		{
 			return null;
@@ -374,12 +310,6 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return Value == false; }
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			return null;
-		}
-
 	}
 
 	public class ByteConstant : Constant {
@@ -458,37 +388,6 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, target_type, SByte.MinValue, SByte.MaxValue);
-				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type)
-				return new ShortConstant ((short) Value, Location);
-			if (target_type == TypeManager.ushort_type)
-				return new UShortConstant ((ushort) Value, Location);
-			if (target_type == TypeManager.int32_type)
-				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type)
-				return new UIntConstant ((uint) Value, Location);
-			if (target_type == TypeManager.int64_type)
-				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
-				return new ULongConstant ((ulong) Value, Location);
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type)
-				return new CharConstant ((char) Value, Location);
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
-		}
-
 	}
 
 	public class CharConstant : Constant {
@@ -596,39 +495,6 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return Value == '\0'; }
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, target_type, Byte.MinValue, Byte.MaxValue);
-				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, target_type, SByte.MinValue, SByte.MaxValue);
-				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, target_type, Int16.MinValue, Int16.MaxValue);
-				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type)
-				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type)
-				return new UIntConstant ((uint) Value, Location);
-			if (target_type == TypeManager.int64_type)
-				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
-				return new ULongConstant ((ulong) Value, Location);
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
-		}
-
 	}
 
 	public class SByteConstant : Constant {
@@ -710,43 +576,6 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.byte_type) {
-				CheckUnsigned (ec, Value, target_type);
-				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type)
-				return new ShortConstant ((short) Value, Location);
-			if (target_type == TypeManager.ushort_type) {
-				CheckUnsigned (ec, Value, target_type);
-				return new UShortConstant ((ushort) Value, Location);
-			} if (target_type == TypeManager.int32_type)
-				  return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type) {
-				CheckUnsigned (ec, Value, target_type);
-				return new UIntConstant ((uint) Value, Location);
-			} if (target_type == TypeManager.int64_type)
-				  return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type) {
-				CheckUnsigned (ec, Value, target_type);
-				return new ULongConstant ((ulong) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				CheckUnsigned (ec, Value, target_type);
-				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
-		}
-
 	}
 
 	public class ShortConstant : Constant {
@@ -825,47 +654,6 @@ namespace Mono.CSharp {
 				return Value < 0;
 			}
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, target_type, Byte.MinValue, Byte.MaxValue);
-				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, target_type, SByte.MinValue, SByte.MaxValue);
-				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
-				CheckUnsigned (ec, Value, target_type);
-				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type)
-				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type) {
-				CheckUnsigned (ec, Value, target_type);
-				return new UIntConstant ((uint) Value, Location);
-			}
-			if (target_type == TypeManager.int64_type)
-				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type) {
-				CheckUnsigned (ec, Value, target_type);
-				return new ULongConstant ((ulong) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, target_type, Char.MinValue, Char.MaxValue);
-				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
-		}
-
 	}
 
 	public class UShortConstant : Constant {
@@ -943,42 +731,6 @@ namespace Mono.CSharp {
 	
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
-		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, target_type, Byte.MinValue, Byte.MaxValue);
-				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, target_type, SByte.MinValue, SByte.MaxValue);
-				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, target_type, Int16.MinValue, Int16.MaxValue);
-				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type)
-				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type)
-				return new UIntConstant ((uint) Value, Location);
-			if (target_type == TypeManager.int64_type)
-				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
-				return new ULongConstant ((ulong) Value, Location);
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, target_type, Char.MinValue, Char.MaxValue);
-				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
 		}
 	}
 
@@ -1121,48 +873,6 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, target_type, Byte.MinValue, Byte.MaxValue);
-				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, target_type, SByte.MinValue, SByte.MaxValue);
-				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, target_type, Int16.MinValue, Int16.MaxValue);
-				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
-				CheckRange (ec, Value, target_type, UInt16.MinValue, UInt16.MaxValue);
-				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.uint32_type) {
-				CheckRange (ec, Value, target_type, Int32.MinValue, Int32.MaxValue);
-				return new UIntConstant ((uint) Value, Location);
-			}
-			if (target_type == TypeManager.int64_type)
-				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type) {
-				CheckUnsigned (ec, Value, target_type);
-				return new ULongConstant ((ulong) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, target_type, Char.MinValue, Char.MaxValue);
-				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
-		}
 	}
 
 	public class UIntConstant : Constant {
@@ -1241,47 +951,6 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, target_type, Char.MinValue, Char.MaxValue);
-				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, target_type, SByte.MinValue, SByte.MaxValue);
-				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, target_type, Int16.MinValue, Int16.MaxValue);
-				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
-				CheckRange (ec, Value, target_type, UInt16.MinValue, UInt16.MaxValue);
-				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type) {
-				CheckRange (ec, Value, target_type, Int32.MinValue, Int32.MaxValue);
-				return new IntConstant ((int) Value, Location);
-			}
-			if (target_type == TypeManager.int64_type)
-				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
-				return new ULongConstant ((ulong) Value, Location);
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, target_type, Char.MinValue, Char.MaxValue);
-				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
-		}
-
 	}
 
 	public class LongConstant : Constant {
@@ -1375,51 +1044,6 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, target_type, Byte.MinValue, Byte.MaxValue);
-				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, target_type, SByte.MinValue, SByte.MaxValue);
-				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, target_type, Int16.MinValue, Int16.MaxValue);
-				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
-				CheckRange (ec, Value, target_type, UInt16.MinValue, UInt16.MaxValue);
-				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type) {
-				CheckRange (ec, Value, target_type, Int32.MinValue, Int32.MaxValue);
-				return new IntConstant ((int) Value, Location);
-			}
-			if (target_type == TypeManager.uint32_type) {
-				CheckRange (ec, Value, target_type, UInt32.MinValue, UInt32.MaxValue);
-				return new UIntConstant ((uint) Value, Location);
-			}
-			if (target_type == TypeManager.uint64_type) {
-				CheckUnsigned (ec, Value, target_type);
-				return new ULongConstant ((ulong) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, target_type, Char.MinValue, Char.MaxValue);
-				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
-		}
-
 	}
 
 	public class ULongConstant : Constant {
@@ -1500,51 +1124,6 @@ namespace Mono.CSharp {
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, target_type, Byte.MaxValue);
-				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, target_type, (ulong) SByte.MaxValue);
-				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type) {
-				CheckRange (ec, Value, target_type, (ulong) Int16.MaxValue);
-				return new ShortConstant ((short) Value, Location);
-			}
-			if (target_type == TypeManager.ushort_type) {
-				CheckRange (ec, Value, target_type, UInt16.MaxValue);
-				return new UShortConstant ((ushort) Value, Location);
-			}
-			if (target_type == TypeManager.int32_type) {
-				CheckRange (ec, Value, target_type, Int32.MaxValue);
-				return new IntConstant ((int) Value, Location);
-			}
-			if (target_type == TypeManager.uint32_type) {
-				CheckRange (ec, Value, target_type, UInt32.MaxValue);
-				return new UIntConstant ((uint) Value, Location);
-			}
-			if (target_type == TypeManager.int64_type) {
-				CheckRange (ec, Value, target_type, (ulong) Int64.MaxValue);
-				return new LongConstant ((long) Value, Location);
-			}
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, target_type, Char.MaxValue);
-				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
-		}
-
 	}
 
 	public class FloatConstant : Constant {
@@ -1614,35 +1193,6 @@ namespace Mono.CSharp {
 				return Value < 0;
 			}
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.byte_type)
-				return new ByteConstant ((byte) Value, Location);
-			if (target_type == TypeManager.sbyte_type)
-				return new SByteConstant ((sbyte) Value, Location);
-			if (target_type == TypeManager.short_type)
-				return new ShortConstant ((short) Value, Location);
-			if (target_type == TypeManager.ushort_type)
-				return new UShortConstant ((ushort) Value, Location);
-			if (target_type == TypeManager.int32_type)
-				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type)
-				return new UIntConstant ((uint) Value, Location);
-			if (target_type == TypeManager.int64_type)
-				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
-				return new ULongConstant ((ulong) Value, Location);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double) Value, Location);
-			if (target_type == TypeManager.char_type)
-				return new CharConstant ((char) Value, Location);
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
-		}
-
 	}
 
 	public class DoubleConstant : Constant {
@@ -1717,41 +1267,6 @@ namespace Mono.CSharp {
 				return Value < 0;
 			}
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.byte_type) {
-				CheckRange (ec, Value, target_type, Byte.MinValue, Byte.MaxValue);
-				return new ByteConstant ((byte) Value, Location);
-			}
-			if (target_type == TypeManager.sbyte_type) {
-				CheckRange (ec, Value, target_type, SByte.MinValue, SByte.MaxValue);
-				return new SByteConstant ((sbyte) Value, Location);
-			}
-			if (target_type == TypeManager.short_type)
-				return new ShortConstant ((short) Value, Location);
-			if (target_type == TypeManager.ushort_type)
-				return new UShortConstant ((ushort) Value, Location);
-			if (target_type == TypeManager.int32_type)
-				return new IntConstant ((int) Value, Location);
-			if (target_type == TypeManager.uint32_type)
-				return new UIntConstant ((uint) Value, Location);
-			if (target_type == TypeManager.int64_type)
-				return new LongConstant ((long) Value, Location);
-			if (target_type == TypeManager.uint64_type)
-				return new ULongConstant ((ulong) Value, Location);
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float) Value, Location);
-			if (target_type == TypeManager.char_type) {
-				CheckRange (ec, Value, target_type, char.MinValue, char.MaxValue);
-				return new CharConstant ((char) Value, Location);
-			}
-			if (target_type == TypeManager.decimal_type)
-				return new DecimalConstant ((decimal) Value, Location);
-
-			return null;
-		}
-
 	}
 
 	public class DecimalConstant : Constant {
@@ -1824,35 +1339,6 @@ namespace Mono.CSharp {
 				return Value < 0;
 			}
 		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			if (target_type == TypeManager.sbyte_type)
-				return new SByteConstant ((sbyte)Value, loc);
-			if (target_type == TypeManager.byte_type)
-				return new ByteConstant ((byte)Value, loc);
-			if (target_type == TypeManager.short_type)
-				return new ShortConstant ((short)Value, loc);
-			if (target_type == TypeManager.ushort_type)
-				return new UShortConstant ((ushort)Value, loc);
-			if (target_type == TypeManager.int32_type)
-				return new IntConstant ((int)Value, loc);
-			if (target_type == TypeManager.uint32_type)
-				return new UIntConstant ((uint)Value, loc);
-			if (target_type == TypeManager.int64_type)
-				return new LongConstant ((long)Value, loc);
-			if (target_type == TypeManager.uint64_type)
-				return new ULongConstant ((ulong)Value, loc);
-			if (target_type == TypeManager.char_type)
-				return new CharConstant ((char)Value, loc);
-			if (target_type == TypeManager.float_type)
-				return new FloatConstant ((float)Value, loc);
-			if (target_type == TypeManager.double_type)
-				return new DoubleConstant ((double)Value, loc);
-
-			return null;
-		}
-
 	}
 
 	public class StringConstant : Constant {
@@ -1900,11 +1386,6 @@ namespace Mono.CSharp {
 			get {
 				return false;
 			}
-		}
-
-		public override Constant Reduce (EmitContext ec, Type target_type)
-		{
-			return null;
 		}
 	}
 
