@@ -16,6 +16,7 @@ Microsoft.Win32/IntranetZoneCredentialPolicyTest.cs
 System/UriBuilderTest.cs
 System/UriTest.cs
 System/UriTest2.cs
+System/UriTypeConverterTest.cs
 System.CodeDom/CodeMemberFieldTest.cs
 System.CodeDom/CodeMemberPropertyTest.cs
 System.CodeDom/CodeTypeDelegateTest.cs
@@ -52,6 +53,7 @@ System.ComponentModel/UInt16ConverterTests.cs
 System.ComponentModel/UInt32ConverterTests.cs
 System.ComponentModel/UInt64ConverterTests.cs
 System.ComponentModel.Design/ServiceContainerTest.cs
+System.ComponentModel.Design.Serialization/InstanceDescriptorTest.cs
 System.Diagnostics/TraceTest.cs
 System.Diagnostics/SwitchesTest.cs
 System.Diagnostics/DiagnosticsConfigurationHandlerTest.cs
@@ -110,6 +112,7 @@ System.Text.RegularExpressions/RegexReplace.cs
 System.Timers/TimerTest.cs
 System.Web/AspNetHostingPermissionAttributeTest.cs
 System.Web/AspNetHostingPermissionTest.cs
+System.ComponentModel.Design.Serialization/InstanceDescriptorCas.cs
 System.IO.Compression/DeflateStreamCas.cs
 System.IO.Compression/GZipStreamCas.cs
 System.Net/DnsCas.cs
@@ -132,3 +135,4 @@ Microsoft.Win32/UserPreferenceChangedEventArgsCas.cs
 Microsoft.Win32/UserPreferenceChangingEventArgsCas.cs
 System/UriBuilderCas.cs
 System/UriFormatExceptionCas.cs
+System/UriTypeConverterCas.cs

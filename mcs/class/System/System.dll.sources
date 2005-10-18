@@ -677,3 +677,4 @@ System/GenericUriParserOptions.cs
 System/UriHostNameType.cs
 System/UriKind.cs
 System/UriPartial.cs
+System/UriTypeConverter.cs
