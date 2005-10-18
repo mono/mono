@@ -67,7 +67,7 @@ namespace MonoCasTests.System.ComponentModel.Design.Serialization {
 		[Test]
 		[EnvironmentPermission (SecurityAction.Deny, Read = "Mono")]
 		[ExpectedException (typeof (SecurityException))]
-		public void LinkDemand_Deny_Anything ()
+		public void Ctor2_LinkDemand_Deny_Anything ()
 		{
 			// denying anything -> not unrestricted
 			Type[] types = new Type[2] { typeof (MemberInfo), typeof (ICollection) };
@@ -78,12 +78,59 @@ namespace MonoCasTests.System.ComponentModel.Design.Serialization {
 
 		[Test]
 		[PermissionSet (SecurityAction.PermitOnly, Unrestricted = true)]
-		public void LinkDemand_PermitOnly_Unrestricted ()
+		public void Ctor2_LinkDemand_PermitOnly_Unrestricted ()
 		{
 			Type[] types = new Type[2] { typeof (MemberInfo), typeof (ICollection) };
 			ConstructorInfo ci = typeof (InstanceDescriptor).GetConstructor (types);
 			Assert.IsNotNull (ci, ".ctor(MemberInfo,ICollection)");
 			Assert.IsNotNull (ci.Invoke (new object[2] { null, new object[] { } }), "invoke");
+		}
+
+		[Test]
+		[EnvironmentPermission (SecurityAction.Deny, Read = "Mono")]
+		[ExpectedException (typeof (SecurityException))]
+		public void Ctor3_LinkDemand_Deny_Anything ()
+		{
+			// denying anything -> not unrestricted
+			Type[] types = new Type[3] { typeof (MemberInfo), typeof (ICollection), typeof (bool) };
+			ConstructorInfo ci = typeof (InstanceDescriptor).GetConstructor (types);
+			Assert.IsNotNull (ci, ".ctor(MemberInfo,ICollection,bool)");
+			Assert.IsNotNull (ci.Invoke (new object[3] { null, new object[] { }, false }), "invoke");
+		}
+
+		[Test]
+		[PermissionSet (SecurityAction.PermitOnly, Unrestricted = true)]
+		public void Ctor3_LinkDemand_PermitOnly_Unrestricted ()
+		{
+			Type[] types = new Type[3] { typeof (MemberInfo), typeof (ICollection), typeof (bool) };
+			ConstructorInfo ci = typeof (InstanceDescriptor).GetConstructor (types);
+			Assert.IsNotNull (ci, ".ctor(MemberInfo,ICollection,bool)");
+			Assert.IsNotNull (ci.Invoke (new object[3] { null, new object[] { }, false }), "invoke");
+		}
+
+		[Test]
+		[EnvironmentPermission (SecurityAction.Deny, Read = "Mono")]
+		[ExpectedException (typeof (SecurityException))]
+		public void Property_LinkDemand_Deny_Anything ()
+		{
+			InstanceDescriptor id = new InstanceDescriptor (null, new object[] { });
+			// denying anything -> not unrestricted
+			Type[] types = new Type[3] { typeof (MemberInfo), typeof (ICollection), typeof (bool) };
+			MethodInfo mi = typeof (InstanceDescriptor).GetProperty ("IsComplete").GetGetMethod ();
+			Assert.IsNotNull (mi, "IsComplete)");
+			Assert.IsTrue ((bool)mi.Invoke (id, null), "invoke");
+		}
+
+		[Test]
+		[PermissionSet (SecurityAction.PermitOnly, Unrestricted = true)]
+		public void Property_LinkDemand_PermitOnly_Unrestricted ()
+		{
+			InstanceDescriptor id = new InstanceDescriptor (null, new object[] { });
+			// denying anything -> not unrestricted
+			Type[] types = new Type[3] { typeof (MemberInfo), typeof (ICollection), typeof (bool) };
+			MethodInfo mi = typeof (InstanceDescriptor).GetProperty ("IsComplete").GetGetMethod ();
+			Assert.IsNotNull (mi, "IsComplete)");
+			Assert.IsTrue ((bool) mi.Invoke (id, null), "invoke");
 		}
 	}
 }
