@@ -558,7 +558,8 @@ namespace System.Windows.Forms {
 					if (CanScrollRight) {
 						slider_pos++;
 						SizeTabs ();
-						Refresh ();
+
+						Invalidate (new Rectangle (0, 0, Width, DisplayRectangle.Top));
 					} else {
 						Invalidate (right);
 					}
@@ -568,7 +569,8 @@ namespace System.Windows.Forms {
 					if (CanScrollLeft) {
 						slider_pos--;
 						SizeTabs ();
-						Refresh ();
+
+						Invalidate (new Rectangle (0, 0, Width, DisplayRectangle.Top));
 					} else {
 						Invalidate (left);
 					}

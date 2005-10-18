@@ -1,3 +1,8 @@
+2005-10-18  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs: Don't refresh the whole control when the tabs are
+	scrolled, we just need to refresh the tab area.
+
 2005-10-17  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Compress code a little bit. Only calculate the
