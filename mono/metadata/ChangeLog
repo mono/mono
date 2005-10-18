@@ -1,3 +1,7 @@
+2005-10-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_Type_GetField): Applied patch from Robert Jordan (robertj@gmx.net). Fixes #75515.
+
 2005-10-15  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c: Add generics support to the ldfld/stfld wrappers. Fixes
