@@ -3237,6 +3237,12 @@ namespace System.Windows.Forms
 			}
 
 			UpdateBounds(x, y, width, height);
+
+			// 
+			Control [] controls = child_controls.GetAllControls ();
+			for (int i = controls.Length - 1; i >= 0; i--) {
+				controls[i].InitLayout();
+			}
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

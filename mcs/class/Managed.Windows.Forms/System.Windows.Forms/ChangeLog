@@ -1,5 +1,10 @@
 2005-10-17  Peter Dennis Bartok  <pbartok@novell.com>
 
+	* Control.cs: When the parent size changes, recalculate anchor 
+	  positions. Partial fix for #76462
+
+2005-10-17  Peter Dennis Bartok  <pbartok@novell.com>
+
 	* ThemeWin32Classic.cs: Make sure the picturebox has it's background 
 	  drawn. Fixes #76462
 
