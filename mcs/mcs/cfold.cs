@@ -141,33 +141,6 @@ namespace Mono.CSharp {
 					right = right.ToDecimal (loc);
 				return;
 			} else if (left is EnumConstant || right is EnumConstant){
-				//
-				// If either operand is an enum constant, the other one must
-				// be implicitly convertable to that enum's underlying type.
-				//
-				EnumConstant match;
-				Constant other;
-				if (left is EnumConstant){
-					other = right;
-					match = (EnumConstant) left;
-				} else {
-					other = left;
-					match = (EnumConstant) right;
-				}
-
-				bool need_check = (other is EnumConstant) ||
-					!(oper == Binary.Operator.Addition || 
-					  oper == Binary.Operator.Subtraction ||
-					  (other.IsZeroInteger && other is IntConstant));
-
-				if (need_check &&
-				    !Convert.ImplicitConversionExists (ec, match, other.Type)) {
-					match.Error_ValueCannotBeConverted (loc, other.Type, false);
-					left = null;
-					right = null;
-					return;
-				}
-
 				if (left is EnumConstant)
 					left = ((EnumConstant) left).Child;
 				if (right is EnumConstant)
@@ -555,7 +528,7 @@ namespace Mono.CSharp {
 				}
 
 				if (wrap_as != null)
-					return new EnumConstant (result, wrap_as);
+					return result.TryReduce (ec, wrap_as, loc);
 				else
 					return result;
 
@@ -685,10 +658,11 @@ namespace Mono.CSharp {
 				} catch (OverflowException){
 					Error_CompileTimeOverflow (loc);
 				}
+
 				if (wrap_as != null)
-					return new EnumConstant (result, wrap_as);
-				else
-					return result;
+					return result.TryReduce (ec, wrap_as, loc);
+
+				return result;
 				
 			case Binary.Operator.Multiply:
 				DoConstantNumericPromotions (ec, oper, ref left, ref right, loc);

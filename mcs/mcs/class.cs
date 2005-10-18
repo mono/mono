@@ -1279,6 +1279,14 @@ namespace Mono.CSharp {
 				TypeBuilder.SetParent (ptype);
 			}
 
+			// Attribute is undefined at the begining of corlib compilation
+			if (TypeManager.obsolete_attribute_type != null) {
+				TypeResolveEmitContext.TestObsoleteMethodUsage = GetObsoleteAttribute () == null;
+				if (ptype != null && TypeResolveEmitContext.TestObsoleteMethodUsage) {
+					CheckObsoleteType (base_type);
+				}
+			}
+
 			// add interfaces that were not added at type creation
 			if (iface_exprs != null) {
 				// FIXME: I think this should be ...ExpandInterfaces (Parent.EmitContext, ...).
@@ -1298,14 +1306,6 @@ namespace Mono.CSharp {
 
 			if (!(this is Iterator))
 				RootContext.RegisterOrder (this); 
-
-			// Attribute is undefined at the begining of corlib compilation
-			if (TypeManager.obsolete_attribute_type != null) {
-				TypeResolveEmitContext.TestObsoleteMethodUsage = GetObsoleteAttribute () == null;
-				if (ptype != null && TypeResolveEmitContext.TestObsoleteMethodUsage) {
-					CheckObsoleteType (base_type);
-				}
-			}
 
 			if (!DefineNestedTypes ()) {
 				error = true;
