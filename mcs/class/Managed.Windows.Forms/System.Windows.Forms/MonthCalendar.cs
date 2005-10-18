@@ -165,14 +165,6 @@ namespace System.Windows.Forms {
 			// set up context menu
 			SetUpContextMenu ();
 
-			// set up the year up down control
-			year_updown = new NumericUpDown();
-			year_updown.Font = this.Font;
-			year_updown.Minimum = MinDate.Year;
-			year_updown.Maximum = MaxDate.Year;
-			year_updown.ReadOnly = true;
-			year_updown.Visible = false;
-			this.Controls.AddImplicit (year_updown);
 			
 			// event handlers
 //			LostFocus += new EventHandler (LostFocusHandler);
@@ -182,14 +174,13 @@ namespace System.Windows.Forms {
 			KeyDown += new KeyEventHandler (KeyDownHandler);
 			MouseUp += new MouseEventHandler (MouseUpHandler);
 			KeyUp += new KeyEventHandler (KeyUpHandler);
-			year_updown.ValueChanged += new EventHandler(UpDownYearChangedHandler);
-
+			
 			// this replaces paint so call the control version			
-			((Control)this).Paint += new PaintEventHandler (PaintHandler);
+			base.Paint += new PaintEventHandler (PaintHandler);
 		}
 		
 		// called when this control is added to date time picker
-		internal MonthCalendar (DateTimePicker owner) : this () {	
+		internal MonthCalendar (DateTimePicker owner) : this () {
 			this.owner = owner;
 			this.is_visible = false;
 			this.Size = this.DefaultSize;
@@ -883,6 +874,18 @@ namespace System.Windows.Forms {
 			base.CreateHandle ();
 		}
 
+		private void CreateYearUpDown ()
+		{
+			year_updown = new NumericUpDown ();
+			year_updown.Font = this.Font;
+			year_updown.Minimum = MinDate.Year;
+			year_updown.Maximum = MaxDate.Year;
+			year_updown.ReadOnly = true;
+			year_updown.Visible = false;
+			this.Controls.AddImplicit (year_updown);
+			year_updown.ValueChanged += new EventHandler(UpDownYearChangedHandler);
+		}
+
 		// not sure why this needs to be overriden
 		protected override void Dispose (bool disposing) {
 			base.Dispose (disposing);
@@ -923,6 +926,7 @@ namespace System.Windows.Forms {
 
 		protected override void OnHandleCreated (EventArgs e) {
 			base.OnHandleCreated (e);
+			CreateYearUpDown ();
 		}
 
 		// i think this is overriden to not allow the control to be changed to an arbitrary size

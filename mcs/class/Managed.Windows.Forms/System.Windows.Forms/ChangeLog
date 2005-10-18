@@ -1,5 +1,12 @@
 2005-10-17  Jackson Harper  <jackson@ximian.com>
 
+	* MonthCalendar.cs: Don't create the numeric up down until our
+	handle is created. Otherwise our handle is created in the
+	constructor and we don't know if we are a WS_CHILD or WS_POPUP
+	yet.
+
+2005-10-17  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Merge in patch by Rafael Teixeira to align strings
 	correctly.
 
