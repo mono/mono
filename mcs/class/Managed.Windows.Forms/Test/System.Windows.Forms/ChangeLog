@@ -1,3 +1,7 @@
+2005-10-18  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* ListViewCollectionsTest.cs: Add tests for the ListView Collections
+
 2005-10-17  Ritvik Mayank  <mritvik@novell.com>
 
 	* TabControlTest.cs : Added test case for TabControl
@@ -6,10 +10,9 @@
 
 	* TrackBarTest.cs : Added test case for TrackBar
 
-2005-11-16  Jordi Mas i Hernandez <jordi@ximian.com>
+2005-10-16  Jordi Mas i Hernandez <jordi@ximian.com>
 	 
-	* ControlPaintTest.cs: Adds ControlPaint test unit for testing Dark
-	and Light methods
+	* DataGridBoolColumn.cs: fixes warning
 
 2005-10-10  Peter Dennis Bartok <pbartok@novell.com>
 
