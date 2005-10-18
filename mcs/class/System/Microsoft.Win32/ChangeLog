@@ -1,3 +1,8 @@
+2005-10-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimerElapsedEventArgs.cs: Re-added [ComVisible (false)] attribute 
+	before NET_2_0.
+
 2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IntranetZoneCredentialPolicy.cs: New. Implemented (2.0). This class
