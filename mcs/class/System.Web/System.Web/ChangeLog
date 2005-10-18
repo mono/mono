@@ -1,3 +1,9 @@
+2005-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseStream.cs: when allocating a chunk larger than the
+	default chunk size, mark all the blocks as taken. Fixes bug
+	#76452.
+
 2005-10-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponse.cs: use HaveFilter instead of Filter.

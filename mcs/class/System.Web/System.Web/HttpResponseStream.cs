@@ -205,12 +205,19 @@ namespace System.Web {
 			public Chunk GetChunk (int size)
 			{
 				Chunk c = new Chunk (size);
+				// (number of chunks to allocate - 1)
+				int gimme = (size / ChunkSize);
 				for (int i = 0; i < nchunks; i ++) {
 					if ((taken & (1 << i)) == 0) {
 						c.block = this;
 						c.block_area = 1 << i;
-						c.data = data + i * ChunkSize;
-						taken |= c.block_area;
+						c.data = data + i * (ChunkSize + gimme);
+						int shift = 0;
+						do {
+							taken |= (c.block_area << shift);
+							gimme--;
+							shift++;
+						} while (gimme >= 0);
 						return c;
 					}
 				}
