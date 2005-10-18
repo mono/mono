@@ -1,3 +1,8 @@
+2005-10-18  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* InstanceDescriptor.cs: Added CAS permissions (unrestricted at class
+	level).
+
 2005-10-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* InstanceDescriptor.cs: Fix Invoke method as there's no 'this' for ctors.

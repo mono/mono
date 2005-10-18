@@ -31,11 +31,12 @@
 
 using System.Collections;
 using System.Reflection;
+using System.Security.Permissions;
 
-namespace System.ComponentModel.Design.Serialization
-{
-	public sealed class InstanceDescriptor
-	{
+namespace System.ComponentModel.Design.Serialization {
+
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	public sealed class InstanceDescriptor {
 
 		private MemberInfo member;
 		private ICollection arguments;
