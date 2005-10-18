@@ -72,18 +72,23 @@ namespace System.Net.Configuration
 				}
 
 				if (name == "httpWebRequest") {
-					string value = HandlersUtil.ExtractAttributeValue
-								("maximumResponseHeadersLength", child, false);
+					string max = HandlersUtil.ExtractAttributeValue
+								("maximumResponseHeadersLength", child, true);
+
+					// this one is just ignored
+					HandlersUtil.ExtractAttributeValue ("useUnsafeHeaderParsing", child, true);
 
 					if (child.Attributes != null && child.Attributes.Count != 0)
 						HandlersUtil.ThrowException ("Unrecognized attribute", child);
 
 					try {
-						int val = Int32.Parse (value.Trim ());
-						if (val < -1)
-							HandlersUtil.ThrowException ("Must be -1 or >= 0", child);
+						if (max != null) {
+							int val = Int32.Parse (max.Trim ());
+							if (val < -1)
+								HandlersUtil.ThrowException ("Must be -1 or >= 0", child);
 
-						config.MaxResponseHeadersLength = val;
+							config.MaxResponseHeadersLength = val;
+						}
 					} catch (Exception e) {
 						HandlersUtil.ThrowException ("Invalid int value", child);
 					}
