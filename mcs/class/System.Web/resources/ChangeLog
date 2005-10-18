@@ -1,3 +1,8 @@
+2005-10-18  Chris Toshok  <toshok@ximian.com>
+
+	* WebUIValidation.js: fix handling for validation_result so that
+	buttons that don't cause validation still work.  Fixes bug #76429.
+
 2005-09-13  Chris Toshok  <toshok@ximian.com>
 
 	* WebUIValidation.js (CustomValidatorEvaluateIsValid): the default

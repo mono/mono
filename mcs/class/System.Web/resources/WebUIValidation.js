@@ -53,7 +53,7 @@ function ValidatorOnLoad ()
 	Page_ValidationActive = true;
 }
 
-var validation_result;
+var validation_result = true;
 
 function ValidatorCommonOnSubmit ()
 {
@@ -135,7 +135,9 @@ function ValidatorCommonOnSubmit ()
 		}
 	}
 
-	return validation_result;
+	rv = validation_result;
+	validation_result = true;
+	return rv;
 }
 
 function ValidatorGetValue (controlname)
