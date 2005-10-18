@@ -108,7 +108,7 @@ namespace Mac {
 			writer = new BinaryWriter (File.Create (Path.Combine (opts.output, String.Format ("{0}.app/Contents/Info.plist", opts.appname))));
 			string plist = Encoding.UTF8.GetString (data);
 			plist = plist.Replace ("%APPNAME%", opts.appname);
-			plist = plist.Replace ("%ICONFILE%", opts.icon);
+			plist = plist.Replace ("%ICONFILE%", Path.GetFileName (opts.icon));
 			data = Encoding.UTF8.GetBytes (plist);
 			writer.Write (data, 0, data.Length);
 			writer.Close ();

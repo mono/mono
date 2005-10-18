@@ -1,3 +1,8 @@
+2005-10-18  Geoff Norton  <gnorton@customerdna.com>
+
+	* MacPack.cs: Support Application Icons that are referenced from
+	something other than cwd.
+
 2005-10-13  Geoff Norton  <gnorton@customerdna.com>
 
 	* MacPack.cs:
