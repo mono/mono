@@ -1,5 +1,10 @@
 2005-10-18  Jackson Harper  <jackson@ximian.com>
 
+	* ImageList.cs: Dont kill the list when the colour depth is
+	changed, just change the colour depth of all the images.
+
+2005-10-18  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Don't invalidate empty rectangles.
 
 2005-10-18  Jordi Mas i Hernandez <jordi@ximian.com>

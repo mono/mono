@@ -206,7 +206,9 @@ namespace System.Windows.Forms
 					if (this.colorDepth != value) {
 						this.colorDepth = value;
 						if (handleCreated) {
-							list.Clear();
+							for (int i = 0; i < list.Count; i++) {
+								list [i] = ReduceColorDepth ((Bitmap) list [i]);
+							}
 							owner.OnRecreateHandle();
 						}
 					}
