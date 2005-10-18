@@ -14,4 +14,4 @@ test-xml-027.cs
 
 test-10.cs
 test-463.cs
-gtest-214.cs			# disable because fix was reverted
+gtest-214.cs
