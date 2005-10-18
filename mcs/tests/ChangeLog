@@ -1,3 +1,7 @@
+2005-10-18  Raja R Harinath  <rharinath@novell.com>
+
+	* test-463.cs: New test from #76371.
+
 2005-10-18  Marek Safar <marek.safar@seznam.cz>
 
 	* test-462.cs: Regression spotted by Miguel.

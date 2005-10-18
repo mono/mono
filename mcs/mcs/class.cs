@@ -1214,7 +1214,6 @@ namespace Mono.CSharp {
 				ec = null;
 				foreach (ClassPart part in Parts) {
 					part.TypeBuilder = TypeBuilder;
-					part.ptype = ptype;
 					part.ec = new EmitContext (part, Mono.CSharp.Location.Null, null, null, ModFlags);
 					part.ec.ContainerType = TypeBuilder;
 				}
@@ -1234,6 +1233,19 @@ namespace Mono.CSharp {
 				error = true;
 				return null;
 			}
+
+			//
+			// GetClassBases calls ResolveBaseTypeExpr() on the various type expressions involved,
+			// which in turn should have called DefineType()s on base types if necessary.
+			//
+			// None of the code below should trigger DefineType()s on classes that we depend on.
+			// Thus, we are eligible to be on the topological sort `type_container_resolve_order'.
+			//
+			// Let's do it as soon as possible, since code below can call DefineType() on classes
+			// that depend on us to be populated before they are.
+			//
+			if (!(this is Iterator))
+				RootContext.RegisterOrder (this); 
 
 			if (base_type == null) {
 				if (Kind == Kind.Class){
@@ -1303,9 +1315,6 @@ namespace Mono.CSharp {
 
 				TypeManager.RegisterBuilder (TypeBuilder, ifaces);
 			}
-
-			if (!(this is Iterator))
-				RootContext.RegisterOrder (this); 
 
 			if (!DefineNestedTypes ()) {
 				error = true;

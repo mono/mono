@@ -739,8 +739,6 @@ namespace Mono.CSharp {
 		public TypeExpr ResolveBaseTypeExpr (Expression e, bool silent, Location loc)
 		{
 			TypeResolveEmitContext.loc = loc;
-			TypeResolveEmitContext.ContainerType = TypeBuilder;
-
 			return e.ResolveAsTypeTerminal (TypeResolveEmitContext, silent);
 		}
 		

@@ -1,3 +1,10 @@
+2005-10-18  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76371.
+	* class.cs (TypeContainer.DefineType): Move updating of
+	topological sort earlier in the code.
+	* decl.cs (DeclSpace.ResolveBaseTypeExpr): Don't use TypeBuilder.
+
 2005-10-18  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76273.
