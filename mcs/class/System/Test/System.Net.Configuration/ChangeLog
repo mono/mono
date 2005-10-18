@@ -1,0 +1,3 @@
+2005-10-18  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestElementTest.cs: Added test for default values.

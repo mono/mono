@@ -1,3 +1,8 @@
+2005-10-18 Gert Driesen <drieseng@users.sourceforge.net>
+
+	* HttpWebRequestElement.cs: Added missing properties and 
+	attributes.
+
 2005-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* NetConfigurationHandler.cs: new attribute 'useUnsafeHeaderParsing'.
