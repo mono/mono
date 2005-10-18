@@ -390,6 +390,25 @@ PublicKeyToken=b77a5c561934e089"));
 			typeof(B).InvokeMember ("", BindingFlags.CreateInstance, null, null, new object [] { 1 });
 		}
 
+		class X
+		{
+			public static int Value;
+		}
+
+		class Y  : X
+		{
+		}
+
+		[Test]
+		public void InvokeMemberGetSetField () {
+			typeof (X).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.SetField, null, null, new object [] { 5 });
+
+			Assert.AreEqual (5, X.Value);
+			Assert.AreEqual (5, typeof (X).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.GetField, null, null, new object [0]));
+			Assert.AreEqual (5, Y.Value);
+			Assert.AreEqual (5, typeof (Y).InvokeMember ("Value", BindingFlags.Public|BindingFlags.Static|BindingFlags.FlattenHierarchy|BindingFlags.GetField, null, null, new object [0]));
+		}			
+
 		class TakesInt {
 			public TakesInt (int x) {}
 		}
