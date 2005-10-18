@@ -367,10 +367,16 @@ namespace System.Runtime.Remoting
 
 		internal static void SetCustomErrorsMode (string mode)
 		{
-			if (mode != "on" && mode != "off" && mode != "remoteOnly")
+			if (mode == null)
+				throw new RemotingException ("mode attribute is required");
+
+			// the mode is case insensitive
+			string m = mode.ToLower ();
+
+			if (m != "on" && m != "off" && m != "remoteonly")
 				throw new RemotingException ("Invalid custom error mode: " + mode);
 				
-			_errorMode = mode;
+			_errorMode = m;
 		}
 	}
 
