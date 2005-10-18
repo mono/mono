@@ -2417,7 +2417,7 @@ namespace System.Windows.Forms
 		}
 
 		public void Invalidate(System.Drawing.Rectangle rc, bool invalidateChildren) {
-			if (!IsHandleCreated || !Visible) {
+			if (!IsHandleCreated || !Visible || rc.Width == 0 || rc.Height == 0) {
 				return;
 			}
 
