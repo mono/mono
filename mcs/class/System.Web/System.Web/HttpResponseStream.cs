@@ -60,7 +60,11 @@ namespace System.Web {
 		{
 			this.response = response;
 		}
-		
+
+		internal bool HaveFilter {
+			get { return filter != null; }
+		}
+
 		public Stream Filter {
 			get {
 				if (filter == null)
@@ -126,12 +130,11 @@ namespace System.Web {
 			static Chunk filled;
 			static Chunk empty;
 	
-			// TODO: if cb > chunk size, try to get a larger chunk
 			public static Chunk GetChunk (int cb)
 			{
 				Chunk c;
 				if (empty == null)
-					empty = new Chunk ();
+					empty = new Chunk (cb);
 				
 				c = empty;
 				filled = Chunk.Link (filled, Chunk.Unlink (ref empty, c));
@@ -296,7 +299,6 @@ namespace System.Web {
 			static Block part_filled;
 			static Block empty;
 	
-			// TODO: if cb > chunk size, try to get a larger chunk
 			public static Chunk GetChunk (int cb)
 			{
 				if (cb < Block.ChunkSize)
@@ -400,7 +402,7 @@ namespace System.Web {
 				int copy = Math.Min (rem, count);
 				if (copy == 0)
 					return copy;
-				
+
 				Chunk.Copy (buf, offset, c, pos, copy);
 				
 				pos += copy;

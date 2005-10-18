@@ -1,3 +1,9 @@
+2005-10-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponse.cs: use HaveFilter instead of Filter.
+	* HttpResponseStream.cs: allocate chunks of the requested size
+	when it's > 32KB. Fixes bug #76460.
+
 2005-10-14  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ServerVariablesCollection.cs: Added a demand for 

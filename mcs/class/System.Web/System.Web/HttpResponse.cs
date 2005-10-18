@@ -669,7 +669,7 @@ namespace System.Web {
 
 		internal void DoFilter (bool close)
 		{
-			if (output_stream.Filter != null && context != null && context.Error == null)
+			if (output_stream.HaveFilter && context != null && context.Error == null)
 				output_stream.ApplyFilter (close);
 		}
 
