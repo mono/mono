@@ -30,15 +30,3 @@ cs1528.cs
 cs1586.cs
 cs1641.cs
 cs1666.cs NO ERROR
-
-
-# The following are here until a correct version of  Marek's patch 51787 is applied
-cs0019-12.cs
-cs0019-13.cs
-cs0019-14.cs
-cs0019-15.cs
-cs0030-3.cs
-cs0221-2.cs
-cs0221-3.cs
-cs0221-4.cs
-
