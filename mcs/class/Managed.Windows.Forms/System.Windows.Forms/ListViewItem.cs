@@ -143,10 +143,22 @@ namespace System.Windows.Forms
 			set { 
 				if (is_checked == value)
 					return;
-
-				is_checked = value;
-				if (owner != null)
+				
+				if (owner != null) {
+					is_checked = value;
+					if (is_checked) {
+						if (owner.CheckedItems.Contains (this) == false) {
+							owner.CheckedItems.list.Add (this);
+							owner.CheckedIndices.list.Add (this.Index);
+						}
+					}
+					else {
+						owner.CheckedItems.list.Remove (this);
+						owner.CheckedIndices.list.Remove (this.Index);
+					}
+					
 					owner.Invalidate (Bounds);
+				}			
 			}
 		}
 
@@ -262,9 +274,10 @@ namespace System.Windows.Forms
 
 					selected = value;
 					if (selected) {
-						//do we need !owner.SelectedItems.Contains (this))
-						owner.SelectedItems.list.Add (this);
-						owner.SelectedIndices.list.Add (this.Index);
+						if (owner.SelectedItems.Contains (this) == false) {
+							owner.SelectedItems.list.Add (this);
+							owner.SelectedIndices.list.Add (this.Index);
+						}
 					}
 					else {
 						owner.SelectedItems.list.Remove (this);

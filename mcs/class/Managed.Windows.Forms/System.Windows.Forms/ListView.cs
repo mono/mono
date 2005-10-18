@@ -1451,8 +1451,7 @@ namespace System.Windows.Forms
 		{
 			SetFocusedItem (null);
 			columns.Clear ();
-			items.Clear ();
-			this.Redraw (true);
+			items.Clear ();	// Redraw (true) called here			
 		}
 
 		public void EndUpdate ()
@@ -1577,15 +1576,15 @@ namespace System.Windows.Forms
 			}
 
 			bool ICollection.IsSynchronized {
-				get { return list.IsSynchronized; }
+				get { return false; }
 			}
 
 			object ICollection.SyncRoot {
-				get { return list.SyncRoot; }
+				get { return this; }
 			}
 
 			bool IList.IsFixedSize {
-				get { return list.IsFixedSize; }
+				get { return true; }
 			}
 
 			object IList.this [int index] {
@@ -1689,11 +1688,11 @@ namespace System.Windows.Forms
 			}
 
 			object ICollection.SyncRoot {
-				get { return list.SyncRoot; }
+				get { return this; }
 			}
 
 			bool IList.IsFixedSize {
-				get { return list.IsFixedSize; }
+				get { return true; }
 			}
 
 			object IList.this [int index] {
@@ -1793,11 +1792,11 @@ namespace System.Windows.Forms
 			}
 
 			bool ICollection.IsSynchronized {
-				get { return list.IsSynchronized; }
+				get { return true; }
 			}
 
 			object ICollection.SyncRoot {
-				get { return list.SyncRoot; }
+				get { return this; }
 			}
 
 			bool IList.IsFixedSize {
@@ -1992,11 +1991,11 @@ namespace System.Windows.Forms
 			}
 
 			bool ICollection.IsSynchronized {
-				get { return list.IsSynchronized; }
+				get { return true; }
 			}
 
 			object ICollection.SyncRoot {
-				get { return list.SyncRoot; }
+				get { return this; }
 			}
 
 			bool IList.IsFixedSize {
@@ -2046,6 +2045,10 @@ namespace System.Windows.Forms
 			public void AddRange (ListViewItem [] values)
 			{
 				list.Clear ();
+				owner.SelectedItems.list.Clear ();
+				owner.SelectedIndices.list.Clear ();
+				owner.CheckedItems.list.Clear ();
+				owner.CheckedIndices.list.Clear ();
 
 				foreach (ListViewItem item in values) {
 					item.owner = this.owner;
@@ -2061,6 +2064,11 @@ namespace System.Windows.Forms
 			public virtual void Clear ()
 			{
 				list.Clear ();
+				owner.SelectedItems.list.Clear ();
+				owner.SelectedIndices.list.Clear ();
+				owner.CheckedItems.list.Clear ();
+				owner.CheckedIndices.list.Clear ();
+				owner.Redraw (true);
 			}
 
 			public bool Contains (ListViewItem item)
@@ -2118,10 +2126,7 @@ namespace System.Windows.Forms
 
 			void IList.Remove (object item)
 			{
-				if (list.Contains (item)) {
-					list.Remove (item);
-					owner.Redraw (true);
-				}
+				Remove ((ListViewItem) item);
 			}
 
 			public int IndexOf (ListViewItem item)
@@ -2157,10 +2162,15 @@ namespace System.Windows.Forms
 
 			public virtual void Remove (ListViewItem item)
 			{
-				if (list.Contains (item)) {
-					list.Remove (item);
-					owner.Redraw (true);
-				}
+				if (!list.Contains (item))
+					return;
+	 				
+				owner.SelectedItems.list.Remove (item);
+				owner.SelectedIndices.list.Remove (item.Index);
+				owner.CheckedItems.list.Remove (item);
+				owner.CheckedIndices.list.Remove (item.Index);
+				list.Remove (item);
+				owner.Redraw (true);				
 			}
 
 			public virtual void RemoveAt (int index)
@@ -2169,6 +2179,10 @@ namespace System.Windows.Forms
 					throw new ArgumentOutOfRangeException ("Index out of range.");
 
 				list.RemoveAt (index);
+				owner.SelectedItems.list.RemoveAt (index);
+				owner.SelectedIndices.list.RemoveAt (index);
+				owner.CheckedItems.list.RemoveAt (index);
+				owner.CheckedIndices.list.RemoveAt (index);
 				owner.Redraw (false);
 			}
 			#endregion	// Public Methods
@@ -2211,11 +2225,11 @@ namespace System.Windows.Forms
 			}
 
 			object ICollection.SyncRoot {
-				get { return list.SyncRoot; }
+				get { return this; }
 			}
 
 			bool IList.IsFixedSize {
-				get { return list.IsFixedSize; }
+				get { return true; }
 			}
 
 			object IList.this [int index] {
@@ -2319,11 +2333,11 @@ namespace System.Windows.Forms
 			}
 
 			object ICollection.SyncRoot {
-				get { return list.SyncRoot; }
+				get { return this; }
 			}
 
 			bool IList.IsFixedSize {
-				get { return list.IsFixedSize; }
+				get { return true; }
 			}
 
 			object IList.this [int index] {

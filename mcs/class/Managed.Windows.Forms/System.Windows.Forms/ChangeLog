@@ -1,5 +1,15 @@
 2005-10-18  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* ListViewItem.cs:
+	  - Adds checked item to the Checked/Item lists (where empty before)
+ 	  - Do not add items to the Selected lists if they are already present
+	* ListView.cs:
+ 	  - Fixes IsFixedSize, SyncRoot, IsReadOnly in many collections
+	  - When deleting items make sure that we delete them for the Selected
+	  and Checked list also.
+
+2005-10-18  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* Label.cs: Dispose objects no longer used
 	* ThemeWin32Classic.cs: Dispose objects no longer used
 
