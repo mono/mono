@@ -243,7 +243,9 @@ namespace System.Windows.Forms
 					if (this.imageSize != value) {
 						this.imageSize = value;
 						if (handleCreated) {
-							list.Clear();
+							for (int i = 0; i < list.Count; i++) {
+								list [i] = new Bitmap ((Image) list [i], imageSize);
+							}
 							owner.OnRecreateHandle();
 						}
 					}
