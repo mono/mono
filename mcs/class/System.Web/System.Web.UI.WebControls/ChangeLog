@@ -1,3 +1,8 @@
+2005-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListControl.cs: throw when the selected value is not in the
+	items collection. Fixes bug #76415.
+
 2005-10-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* BaseDataList.cs: Type.GetTypeCode was fixed and now does not

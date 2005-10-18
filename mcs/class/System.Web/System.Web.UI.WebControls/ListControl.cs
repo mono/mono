@@ -253,9 +253,17 @@ namespace System.Web.UI.WebControls {
 
 				int count = Items.Count;
 				ListItemCollection coll = Items;
+				bool thr = true;
 				for (int i = 0; i < count; i++) {
-					if (coll [i].Value == value)
+					if (coll [i].Value == value) {
 						coll [i].Selected = true;
+						thr = false;
+					}
+				}
+
+				if (thr) {
+					string msg = String.Format ("Argument value is out of range: {0}", value);
+					throw new ArgumentOutOfRangeException (msg);
 				}
 			}
 		}

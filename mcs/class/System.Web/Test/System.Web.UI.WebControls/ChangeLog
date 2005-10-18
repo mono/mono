@@ -1,3 +1,7 @@
+2005-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListControlTest.cs: 3 more tests for ListControl.
+
 2005-10-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* CustomValidatorTest.cs: an empty control name is valid.

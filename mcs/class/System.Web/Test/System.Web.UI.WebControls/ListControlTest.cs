@@ -517,6 +517,30 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			changed [sender] = new object ();
 		}
+
+		[Test]
+		public void ValueFound1 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			p.Items.Add ("one");
+			p.SelectedValue = "one";
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ValueNotFound1 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			p.Items.Add ("one");
+			p.SelectedValue = "dos";
+		}
+
+		[Test]
+		public void ValueNotFound2 ()
+		{
+			ListControlPoker p = new ListControlPoker ();
+			p.SelectedValue = "dos";
+		}
 	}
 }
 
