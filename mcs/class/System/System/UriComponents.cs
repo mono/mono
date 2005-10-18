@@ -33,21 +33,22 @@ namespace System {
 	[Flags]
 	public enum UriComponents {
 
-		Schema,
-		UserInfo,
-		Host,
-		Port,
-		Path,
-		Query,
-		Fragment,
-		StrongPort,
+		Scheme = 1,
+		UserInfo = 2,
+		Host = 4,
+		Port = 8,
+		Path = 16,
+		Query = 32,
+		Fragment = 64,
+		StrongPort = 128,
 		KeepDelimiter = 0x40000000,
 
 		HostAndPort = Host | StrongPort,
 		StrongAuthority = Host | UserInfo | StrongPort,
-		AbsoluteUri = Schema | UserInfo | Host | Port | Path | Query | Fragment,
+		AbsoluteUri = Scheme | UserInfo | Host | Port | Path | Query | Fragment,
 		PathAndQuery = Path | Query,
-		SchemaAndServer = Schema | Host | Port,
+		HttpRequestUrl = Scheme | Port| Host | Path | Query,
+		SchemeAndServer = Scheme | Host | Port,
 		SerializationInfoString = Int32.MinValue
 	}
 }
