@@ -1,3 +1,8 @@
+2005-10-17  Jackson Harper  <jackson@ximian.com>
+
+	* XplatUIX11.cs: Compress code a little bit. Only calculate the
+	after handle when we need it.
+
 2005-10-17  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: When the parent size changes, recalculate anchor 

@@ -3478,15 +3478,7 @@ namespace System.Windows.Forms {
 			SetWMStyles(hwnd, cp);
 		}
 		internal override bool SetZOrder(IntPtr handle, IntPtr after_handle, bool top, bool bottom) {
-			Hwnd	hwnd;
-			Hwnd	after_hwnd;
-
-			hwnd = Hwnd.ObjectFromHandle(handle);
-			if (after_handle != IntPtr.Zero) {
-				after_hwnd = Hwnd.ObjectFromHandle(after_handle);
-			} else {
-				after_hwnd = null;
-			}
+			Hwnd	hwnd = Hwnd.ObjectFromHandle(handle);
 
 			if (top) {
 				lock (XlibLock) {
@@ -3494,6 +3486,12 @@ namespace System.Windows.Forms {
 				}
 				return true;
 			} else if (!bottom) {
+				Hwnd	after_hwnd = null;
+
+				if (after_handle != IntPtr.Zero) {
+					after_hwnd = Hwnd.ObjectFromHandle(after_handle);
+				}
+
 				XWindowChanges	values = new XWindowChanges();
 
 				if (after_hwnd == null) {
