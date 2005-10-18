@@ -2568,6 +2568,9 @@ namespace System.Windows.Forms
 		public override void DrawPictureBox (Graphics dc, Rectangle clip, PictureBox pb) {
 			Rectangle client = pb.ClientRectangle;
 
+			// FIXME - instead of drawing the whole picturebox every time
+			// intersect the clip rectangle with the drawn picture and only draw what's needed,
+			// Also, we only need a background fill where no image goes
 			if (pb.Image != null) {
 				switch (pb.SizeMode) {
 				case PictureBoxSizeMode.StretchImage:
@@ -2575,14 +2578,21 @@ namespace System.Windows.Forms
 					break;
 
 				case PictureBoxSizeMode.CenterImage:
+					dc.FillRectangle(ResPool.GetSolidBrush(pb.BackColor), clip);
 					dc.DrawImage (pb.Image, (client.Width / 2) - (pb.Image.Width / 2), (client.Height / 2) - (pb.Image.Height / 2));
 					break;
 				default:
+					dc.FillRectangle(ResPool.GetSolidBrush(pb.BackColor), clip);
 					// Normal, AutoSize
 					dc.DrawImage(pb.Image, 0, 0, pb.Image.Width, pb.Image.Height);
 					break;
 				}
-			}			
+
+				return;
+			}
+
+			// We only get here if no image is set. At least paint the background
+			dc.FillRectangle(ResPool.GetSolidBrush(pb.BackColor), clip);
 		}
 
 		public override Size PictureBoxDefaultSize {
