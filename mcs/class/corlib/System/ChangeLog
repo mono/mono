@@ -1,3 +1,7 @@
+2005-10-16  Michal Moskal  <malekith@nemerle.org>
+
+       * TermInfoDriver.cs: Call Init () in Background/ForegroundColor.
+
 2005-10-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTime.cs : another crappy Windows dependent format.

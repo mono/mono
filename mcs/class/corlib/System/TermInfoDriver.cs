@@ -250,6 +250,7 @@ namespace System {
 		public ConsoleColor BackgroundColor {
 			get { return bgcolor; }
 			set {
+				Init ();
 				bgcolor = value;
 				WriteConsole (String.Format (setabcolor, TranslateColor (value)));
 			}
@@ -258,6 +259,7 @@ namespace System {
 		public ConsoleColor ForegroundColor {
 			get { return fgcolor; }
 			set {
+				Init ();
 				fgcolor = value;
 				WriteConsole (String.Format (setafcolor, TranslateColor (value)));
 			}
