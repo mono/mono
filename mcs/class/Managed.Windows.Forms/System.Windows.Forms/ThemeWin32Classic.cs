@@ -562,6 +562,8 @@ namespace System.Windows.Forms
 			CheckBox_DrawText(checkbox, text_rectangle, dc, text_format);
 
 			CheckBox_DrawFocus(checkbox, dc, text_rectangle);
+
+			text_format.Dispose ();
 		}
 
 		protected virtual void CheckBox_DrawCheckBox( Graphics dc, CheckBox checkbox, ButtonState state, Rectangle checkbox_rectangle )
@@ -850,6 +852,8 @@ namespace System.Windows.Forms
 			if ((e.State & DrawItemState.Focus) == DrawItemState.Focus) {
 				ThemeEngine.Current.CPDrawFocusRectangle (e.Graphics, e.Bounds, fore_color, back_color);
 			}
+
+			string_format.Dispose ();
 		}
 		
 		#endregion ComboBox
@@ -1235,6 +1239,7 @@ namespace System.Windows.Forms
 				text_format.LineAlignment = StringAlignment.Center;
 				text_format.Alignment = StringAlignment.Near;					
 				dc.DrawString (dtp.Text, dtp.Font, ResPool.GetSolidBrush (dtp.ForeColor), Rectangle.Inflate(dtp.date_area_rect, -1, -1), text_format);
+				text_format.Dispose ();
 			}
 		}
 		
@@ -1296,7 +1301,7 @@ namespace System.Windows.Forms
 				CPDrawStringDisabled (dc, box.Text, box.Font, box.ForeColor, 
 					new RectangleF (10, 0, width,  box.Font.Height), text_format);
 			}
-				
+			text_format.Dispose ();	
 		}
 
 		public override Size GroupBoxDefaultSize {
@@ -1717,6 +1722,8 @@ namespace System.Windows.Forms
 				else
 					CPDrawFocusRectangle (dc, text_rect, control.ForeColor, control.BackColor);
 			}
+
+			format.Dispose ();
 		}
 
 		// Sizing
@@ -2143,6 +2150,8 @@ namespace System.Windows.Forms
 							Math.Max(client_rectangle.Width - today_offset, 0),
 							date_cell_size.Height);
 					dc.DrawString ("Today: " + DateTime.Now.ToShortDateString(), bold_font, ResPool.GetSolidBrush (mc.ForeColor), today_rect, text_format);
+					text_format.Dispose ();
+					bold_font.Dispose ();
 				}				
 			}
 			
@@ -2381,6 +2390,7 @@ namespace System.Windows.Forms
 					rectangle.X + date_cell_size.Width - 1,
 					rectangle.Y + title_size.Height + date_cell_size.Height + (month_row_count * date_cell_size.Height) - mc.divider_line_offset);
 			}
+			text_format.Dispose ();
 		}
 
 		// draws the pervious or next button
@@ -2534,6 +2544,7 @@ namespace System.Windows.Forms
 					dc.DrawRectangle (pen, interior);
 				}
 			}
+			text_format.Dispose ();
 		}
 
 		private void DrawTodayCircle (Graphics dc, Rectangle rectangle) {
@@ -2804,6 +2815,7 @@ namespace System.Windows.Forms
 			RadioButton_DrawText(radio_button, text_rectangle, dc, text_format);
 
 			RadioButton_DrawFocus(radio_button, dc, text_rectangle);			
+			text_format.Dispose ();
 		}
 
 		protected virtual void RadioButton_DrawButton(RadioButton radio_button, Graphics dc, ButtonState state, Rectangle radiobutton_rectangle)
@@ -3150,6 +3162,7 @@ namespace System.Windows.Forms
 		
 				dc.DrawString (text, sb.Font, ResPool.GetSolidBrush (sb.ForeColor),
 						new Rectangle(area.X + 2, area.Y + 2, area.Width - 4, area.Height - 4), string_format);
+				string_format.Dispose ();
 			} else if (sb.ShowPanels) {
 				SolidBrush br_forecolor = GetControlForeBrush (sb.ForeColor);
 				int prev_x = area.X + horz_border;
@@ -3220,6 +3233,7 @@ namespace System.Windows.Forms
 				area.Bottom - y - border_size);
 			
 			dc.DrawString (text, panel.Parent.Font, br_forecolor, r, string_format);
+			string_format.Dispose ();
 		}
 
 		public override int StatusBarSizeGripWidth {
@@ -3416,6 +3430,7 @@ namespace System.Windows.Forms
 				interior.Y++;
 				dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), interior, string_format);
 				interior.Y--;
+				string_format.Dispose ();
 			} else {
 				Pen light = ResPool.GetPen (ControlPaint.LightLight (tab.BackColor));
 
@@ -3533,6 +3548,7 @@ namespace System.Windows.Forms
 						interior.X++;
 						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), interior, string_format);
 						interior.X--;
+						string_format.Dispose  ();
 					}
 
 					break;
@@ -3653,6 +3669,7 @@ namespace System.Windows.Forms
 				DrawToolBarButton (dc, button, control.Font, format, paint_area, buttonArea,
 					imgRect, image, txtRect, ddRect, flat);
 			}
+			format.Dispose ();
 		}
 
 		private void DrawToolBarButton (Graphics dc, ToolBarButton button, Font font, StringFormat format,
@@ -4671,6 +4688,7 @@ namespace System.Windows.Forms
 			/* Draw 'arrows' for horizontal lines */
 			graphics.DrawLine(pen, rect.X+3, Y-1, rect.X+3, Y+1);
 			graphics.DrawLine(pen, rect.Right-3, Y-1, rect.Right-3, Y+1);
+			pen.Dispose ();
 
 		}
 

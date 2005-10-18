@@ -447,6 +447,9 @@ namespace System.Windows.Forms
     		protected override void Dispose(bool disposing)
 		{
 			base.Dispose (disposing);
+
+			if (disposing)
+				string_format.Dispose ();
 		}
 
     		protected void DrawImage (Graphics g, Image image, Rectangle area, ContentAlignment img_align)

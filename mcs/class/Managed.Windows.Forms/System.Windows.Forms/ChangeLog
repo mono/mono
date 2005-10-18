@@ -1,3 +1,8 @@
+2005-10-18  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* Label.cs: Dispose objects no longer used
+	* ThemeWin32Classic.cs: Dispose objects no longer used
+
 2005-10-18  Jackson Harper  <jackson@ximian.com>
 
 	* TabControl.cs: Don't refresh the whole control when the tabs are
