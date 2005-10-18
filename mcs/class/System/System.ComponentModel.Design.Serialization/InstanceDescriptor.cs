@@ -7,8 +7,7 @@
 //
 // (C) 2003 Martin Willemoes Hansen
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -50,9 +49,7 @@ namespace System.ComponentModel.Design.Serialization
 		public InstanceDescriptor(MemberInfo member, ICollection arguments, bool isComplete)
 		{
 			this.isComplete = isComplete;
-			if (member == null)
-				throw new ArgumentNullException ("member", "MemberInfo must be valid");
-			if (!IsMemberValid (member, arguments))
+			if ((member != null) && !IsMemberValid (member, arguments))
 				throw new ArgumentException ("Only Constructor, Method, Field or Property members allowed", "member");
 			this.member = member;
 			this.arguments = arguments;
@@ -123,14 +120,36 @@ namespace System.ComponentModel.Design.Serialization
 			get { return member; }
 		}
 
+		private bool HasThis ()
+		{
+			if (member is ConstructorInfo)
+				return false;
+			MethodInfo mi = (member as MethodInfo);
+			if (mi != null)
+				return !mi.IsStatic;
+			FieldInfo fi = (member as FieldInfo);
+			if (fi != null)
+				return !fi.IsStatic;
+			PropertyInfo pi = (member as PropertyInfo);
+			if (pi != null)
+				return !pi.GetGetMethod ().IsStatic;
+			return true;
+		}
+
 		public object Invoke()
 		{
 			object[] parsearguments;
 			if (arguments == null)
 				parsearguments = new object[0];
-			else {
+			else if (HasThis ()) {
 				parsearguments = new object[arguments.Count - 1];
 				arguments.CopyTo (parsearguments, 0);
+			} else {
+				parsearguments = (arguments as object[]);
+				if (parsearguments == null) {
+					parsearguments = new object[arguments.Count];
+					arguments.CopyTo (parsearguments, 0);
+				}
 			}
 
 			//MemberInfo member;

@@ -1,3 +1,7 @@
+2005-10-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* InstanceDescriptor.cs: Fix Invoke method as there's no 'this' for ctors.
+
 2005-01-27  LLuis Sanchez Gual  <lluis@novell.com>
 
 	* InstanceDescriptor.cs: Constructors don't need to be static.
