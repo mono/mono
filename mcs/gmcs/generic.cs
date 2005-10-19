@@ -1395,6 +1395,22 @@ namespace Mono.CSharp {
 			if (TypeManager.IsBuiltinType (atype) || atype.IsValueType)
 				return true;
 
+			if (atype is TypeBuilder) {
+				TypeContainer tc = TypeManager.LookupTypeContainer (atype);
+				foreach (Constructor c in tc.InstanceConstructors) {
+					if ((c.ModFlags & Modifiers.PUBLIC) == 0)
+						continue;
+					if ((c.Parameters.FixedParameters != null) &&
+					    (c.Parameters.FixedParameters.Length != 0))
+						continue;
+					if (c.Parameters.HasArglist ||
+					    (c.Parameters.ArrayParameter != null))
+						continue;
+
+					return true;
+				}
+			}
+
 			MethodGroupExpr mg = Expression.MemberLookup (
 				ec, atype, ".ctor", MemberTypes.Constructor,
 				BindingFlags.Public | BindingFlags.Instance |

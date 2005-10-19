@@ -1,3 +1,8 @@
+2005-10-19  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs (ConstructedType.CheckConstraints): Committing
+	untested fix for #76441.
+
 2005-10-18  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #76371.
