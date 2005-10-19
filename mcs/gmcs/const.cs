@@ -165,7 +165,7 @@ namespace Mono.CSharp {
 		#endregion
 	}
 
-	public class ExternalConstant: IConstant
+	public class ExternalConstant : IConstant
 	{
 		FieldInfo fi;
 		Constant value;

@@ -1311,7 +1311,7 @@ namespace Mono.CSharp {
 	/// For global attributes (assembly, module) we need special handling.
 	/// Attributes can be located in the several files
 	/// </summary>
-	public class GlobalAttribute: Attribute
+	public class GlobalAttribute : Attribute
 	{
 		public readonly NamespaceEntry ns;
 

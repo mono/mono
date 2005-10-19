@@ -58,7 +58,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	/// Class for applying custom attributes on the return type
 	/// </summary>
-	public class ReturnParameter: ParameterBase {
+	public class ReturnParameter : ParameterBase {
 		public ReturnParameter (MethodBuilder mb, Location location):
 			base (null, location)
 		{
@@ -103,7 +103,7 @@ namespace Mono.CSharp {
        /// Class for applying custom attributes on the implicit parameter type
        /// of the 'set' method in properties, and the 'add' and 'remove' methods in events.
 	/// </summary>
-	public class ImplicitParameter: ParameterBase {
+	public class ImplicitParameter : ParameterBase {
 		public ImplicitParameter (MethodBuilder mb, Location loc):
 			base (null, loc)
 		{

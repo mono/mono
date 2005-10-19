@@ -6681,7 +6681,7 @@ namespace Mono.CSharp {
 			// Lookup the type
 			//
 			TypeExpr array_type_expr;
-			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString ());
+			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
 			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec);
 			if (array_type_expr == null)
 				return false;
@@ -9097,7 +9097,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class FixedBufferPtr: Expression {
+	public class FixedBufferPtr : Expression {
 		Expression array;
 
 		public FixedBufferPtr (Expression array, Type array_type, Location l)

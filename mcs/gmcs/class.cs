@@ -78,7 +78,7 @@ namespace Mono.CSharp {
 			}
  		}
 
- 		public class MethodArrayList: MemberCoreArrayList
+ 		public class MethodArrayList : MemberCoreArrayList
  		{
  			[Flags]
  			enum CachedMethods {
@@ -131,7 +131,7 @@ namespace Mono.CSharp {
  
  		}
 
-		public sealed class IndexerArrayList: MemberCoreArrayList
+		public sealed class IndexerArrayList : MemberCoreArrayList
 		{
 			/// <summary>
 			/// The indexer name for this container
@@ -6164,7 +6164,7 @@ namespace Mono.CSharp {
 
 	// Ooouh Martin, templates are missing here.
 	// When it will be possible move here a lot of child code and template method type.
-	public abstract class AbstractPropertyEventMethod: MemberCore, IMethodData {
+	public abstract class AbstractPropertyEventMethod : MemberCore, IMethodData {
 		protected MethodData method_data;
 		protected ToplevelBlock block;
 		protected ListDictionary declarative_security;

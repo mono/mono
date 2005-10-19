@@ -131,7 +131,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		sealed class WarningMessage: AbstractMessage {
+		sealed class WarningMessage : AbstractMessage {
 			Location loc = Location.Null;
 			readonly int Level;
 
@@ -197,7 +197,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		sealed class ErrorMessage: AbstractMessage {
+		sealed class ErrorMessage : AbstractMessage {
 
 			public override void Print(int code, string location, string text)
 			{
@@ -596,7 +596,7 @@ namespace Mono.CSharp {
 			public abstract bool IsEnabled (int code, bool previous);
 		}
 		
-		class Disable: PragmaCmd
+		class Disable : PragmaCmd
 		{
 			int code;
 			public Disable (int line, int code)
@@ -611,7 +611,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class DisableAll: PragmaCmd
+		class DisableAll : PragmaCmd
 		{
 			public DisableAll (int line)
 				: base (line) {}
@@ -622,7 +622,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class Enable: PragmaCmd
+		class Enable : PragmaCmd
 		{
 			int code;
 			public Enable (int line, int code)
@@ -637,7 +637,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class EnableAll: PragmaCmd
+		class EnableAll : PragmaCmd
 		{
 			public EnableAll (int line)
 				: base (line) {}

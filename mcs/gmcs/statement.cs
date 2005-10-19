@@ -3283,7 +3283,7 @@ namespace Mono.CSharp {
 			public abstract void EmitExit (ILGenerator ig);
 		}
 
-		class ExpressionEmitter: Emitter {
+		class ExpressionEmitter : Emitter {
 			public ExpressionEmitter (Expression converted, LocalInfo li) :
 				base (converted, li)
 			{
@@ -3305,7 +3305,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class StringEmitter: Emitter {
+		class StringEmitter : Emitter {
 			LocalBuilder pinned_string;
 			Location loc;
 
@@ -3546,7 +3546,7 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	public class Catch: Statement {
+	public class Catch : Statement {
 		public readonly string Name;
 		public readonly Block  Block;
 
