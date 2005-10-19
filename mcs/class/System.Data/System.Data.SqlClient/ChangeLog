@@ -1,3 +1,10 @@
+2005-10-19  Senganal T  <tsenganal@novell.com>
+	
+	* SqlException.cs (Constructor)
+		- Modified the constructor, so that the message parameter
+		of base class is not the same as that of the Exception message.
+		fixes bug #76468
+		
 2005-09-24  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* SqlParameterCollection.cs (AddWithValue): added method. patch

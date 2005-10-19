@@ -79,7 +79,7 @@ namespace System.Data.SqlClient {
 		}
 
 		internal SqlException (byte theClass, int lineNumber, string message, int number, string procedure, string server, string source, byte state) 
-			: this (message, 
+			: this (null, 
 				null, 
 				new SqlError (theClass, lineNumber, message, 
 					      number, procedure, server, source, 
