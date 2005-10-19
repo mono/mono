@@ -171,12 +171,13 @@ namespace System.Windows.Forms {
 		public virtual void Insert (int index, TreeNode node)
 		{
 			SetData (node);
-			TreeNode [] newlist = new TreeNode [nodes.Length + 1];
-			Array.Copy (nodes, 0, newlist, 0, index);
-			Array.Copy (nodes, index, newlist, index + 1, nodes.Length - index);
-			newlist [index] = node;
-			
-			nodes = newlist;
+
+			if (count >= nodes.Length)
+				Grow ();
+
+			Array.Copy (nodes, index, nodes, index + 1, count - index);
+			nodes [index] = node;
+			count++;
 		}
 
 		public virtual void Remove (TreeNode node)
@@ -188,12 +189,10 @@ namespace System.Windows.Forms {
 
 		public virtual void RemoveAt (int index)
 		{
-			Array.Copy (nodes, index, nodes, index - 1, count - index);
+			Array.Copy (nodes, index, nodes, index + 1, count - index);
 			count--;
 			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
 				Shrink ();
-			if (owner.TreeView != null)
-				owner.TreeView.TotalNodeCount--;
 		}
 
 		int IList.Add (object node)

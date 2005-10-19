@@ -719,11 +719,6 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal int TotalNodeCount {
-			get { return total_node_count; }
-			set { total_node_count = value; }
-		}
-
 		internal IntPtr CreateNodeHandle ()
 		{
 			return (IntPtr) handle_count++;

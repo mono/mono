@@ -1,5 +1,11 @@
 2005-10-18  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: We don't need to keep a count anymore.
+	* TreeNodeCollection.cs: Fix off by one in RemoveAt, Insert can
+	use the Grow method.
+
+2005-10-18  Jackson Harper  <jackson@ximian.com>
+
 	* TreeNodeCollection.cs: Insert is not supported on arrays, so
 	implement it manually here.
 
