@@ -1,3 +1,24 @@
+2005-10-19  Dick Porter  <dick@ximian.com>
+
+	* handles.c:
+	* handles-private.h:
+	* wapi-private.h: 
+	* processes.c: 
+	* mutexes.c:
+	* collection.c (_wapi_handle_collect): Remove the shared handle
+	indirection layer, and use locking instead.  Delete other
+	complexity that is no longer needed.  Refcount shared handles and
+	delete them when needed, but keep the timestamps so that orphaned
+	handles will be cleaned up eventually.
+
+	* shared.c (_wapi_shm_file): Add processor, OS and struct size
+	info to the shared file names, to cope with dual-boot and 32/64bit
+	size issues.  Fixes bug 75839.
+
+	* wait.c (WaitForMultipleObjectsEx): No need to distinguish
+	between shared handles and private, as the wait functions cope
+	with both together now.
+
 2005-10-11 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* io.c: removed NO_SIGPIPE macro.
