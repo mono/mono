@@ -3474,8 +3474,10 @@ namespace System.Windows.Forms
 						dc = paint_event.SetGraphics (DeviceContext);
 					}
 
-					if ((control_style & (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) != (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) {
+					if ((control_style & (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) == (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) {
 						OnPaintBackground(paint_event);
+					} else {
+						PaintControlBackground(paint_event);
 					}
 
 					OnPaint(paint_event);
@@ -3488,22 +3490,11 @@ namespace System.Windows.Forms
 
 					XplatUI.PaintEventEnd(Handle, true);
 
-					if (!GetStyle(ControlStyles.UserPaint)) {
-						DefWndProc(ref m);
-					}
-					
 					return;
 				}
 					
 				case Msg.WM_ERASEBKGND: {
-					if (GetStyle (ControlStyles.UserPaint)) {
-						if (!GetStyle(ControlStyles.AllPaintingInWmPaint)) {
-							PaintEventArgs eraseEventArgs = new PaintEventArgs (m.WParam == IntPtr.Zero ? Graphics.FromHwnd (m.HWnd) :
-									Graphics.FromHdc (m.WParam), new Rectangle (new Point (0,0),Size));
-							OnPaintBackground (eraseEventArgs);
-						}
-					}
-					// The DefWndProc will never have to handle this, we don't ever set hbr on the window
+					// The DefWndProc will never have to handle this, we always paint the background in managed code
 					m.Result = (IntPtr)1;
 					return;
 				}

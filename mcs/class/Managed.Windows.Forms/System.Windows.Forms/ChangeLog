@@ -1,3 +1,9 @@
+2005-10-18  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: Fixed logic flip on when to call OnPaintBackground. 
+	  Obsoleted handling of WM_ERASEBKGND, now always draws our background
+	  inside of WM_PAINT
+
 2005-10-18  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* MenuAPI.cs: Returns after Hidding window
