@@ -824,7 +824,7 @@ namespace Microsoft.VisualBasic
 				} else {
 #endif
 					// call default base ctor
-					Output.WriteLine ("MyBase.New");
+					Output.WriteLine ("MyBase.New()");
 				}
 			}
 			GenerateStatements (constructor.Statements);
