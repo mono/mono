@@ -2422,6 +2422,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_NCLBUTTONDOWN;
 								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
+							// TODO: For WM_NCLBUTTONDOWN wParam specifies a hit-test value not the virtual keys down
 							msg.wParam=GetMousewParam(0);
 							break;
 						}

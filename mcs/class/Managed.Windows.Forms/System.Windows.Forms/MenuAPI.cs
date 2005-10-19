@@ -893,6 +893,7 @@ namespace System.Windows.Forms
     			/* Click outside the client area*/
     			if (ClientRectangle.Contains (e.X, e.Y) == false) {
     				HideWindow ();
+				return;
     			}
     			
     			MenuAPI.MENUITEM item = MenuAPI.FindItemByCoords (hMenu, new Point (e.X, e.Y));
