@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -113,7 +113,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("Use Protection")]
 		public FilePermissions Permissions {
 			get {
 				Stat stat;
@@ -124,6 +124,56 @@ namespace Mono.Unix {
 			set {
 				int r = Syscall.fchmod (fileDescriptor, value);
 				UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			}
+		}
+
+		[CLSCompliant (false)]
+		public Native.FilePermissions Protection {
+			get {
+				Native.Stat stat;
+				int r = Native.Syscall.fstat (fileDescriptor, out stat);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
+				return stat.st_mode;
+			}
+			set {
+				// we can't change file type with fchmod, so clear out that portion
+				value &= ~Native.FilePermissions.S_IFMT;
+				int r = Native.Syscall.fchmod (fileDescriptor, value);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			}
+		}
+
+		public FileTypes FileType {
+			get {
+				int type = (int) Protection;
+				return (FileTypes) (type & (int) FileTypes.AllTypes);
+			}
+			// no set as fchmod(2) won't accept changing the file type.
+		}
+
+		public FileAccessPermissions FileAccessPermissions {
+			get {
+				int perms = (int) Protection;
+				return (FileAccessPermissions) (perms & (int) FileAccessPermissions.AllPermissions);
+			}
+			set {
+				int perms = (int) Protection;
+				perms &= (int) ~FileAccessPermissions.AllPermissions;
+				perms |= (int) value;
+				Protection = (Native.FilePermissions) perms;
+			}
+		}
+
+		public FileSpecialAttributes FileSpecialAttributes {
+			get {
+				int attrs = (int) Protection;
+				return (FileSpecialAttributes) (attrs & (int) FileSpecialAttributes.AllAttributes);
+			}
+			set {
+				int perms = (int) Protection;
+				perms &= (int) ~FileSpecialAttributes.AllAttributes;
+				perms |= (int) value;
+				Protection = (Native.FilePermissions) perms;
 			}
 		}
 

@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -108,13 +108,13 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("Use Protection.")]
 		public FilePermissions Mode {
 			get {AssertValid (); return stat.st_mode;}
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("Use FileAccessPermissions.")]
 		public FilePermissions Permissions {
 			get {AssertValid (); return stat.st_mode & ~FilePermissions.S_IFMT;}
 		}
@@ -123,6 +123,56 @@ namespace Mono.Unix {
 		[Obsolete ("The type of this property will change in the next release.")]
 		public FilePermissions FileType {
 			get {AssertValid (); return stat.st_mode & FilePermissions.S_IFMT;}
+		}
+
+		[CLSCompliant (false)]
+		public Native.FilePermissions Protection {
+			get {AssertValid (); return (Native.FilePermissions) stat.st_mode;}
+			set {
+				int r = Native.Syscall.chmod (FullPath, value);
+				UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			}
+		}
+
+#if false
+		public FileTypes FileType {
+			get {
+				AssertValid ();
+				int type = (int) stat.st_mode;
+				return (FileTypes) (type & (int) FileTypes.AllTypes);
+			}
+			// no set as chmod(2) won't accept changing the file type.
+		}
+#endif
+
+		public FileAccessPermissions FileAccessPermissions {
+			get {
+				AssertValid (); 
+				int perms = (int) stat.st_mode;
+				return (FileAccessPermissions) (perms & (int) FileAccessPermissions.AllPermissions);
+			}
+			set {
+				AssertValid ();
+				int perms = (int) stat.st_mode;
+				perms &= (int) ~FileAccessPermissions.AllPermissions;
+				perms |= (int) value;
+				Protection = (Native.FilePermissions) perms;
+			}
+		}
+
+		public FileSpecialAttributes FileSpecialAttributes {
+			get {
+				AssertValid ();
+				int attrs = (int) stat.st_mode;
+				return (FileSpecialAttributes) (attrs & (int) FileSpecialAttributes.AllAttributes);
+			}
+			set {
+				AssertValid ();
+				int perms = (int) stat.st_mode;
+				perms &= (int) ~FileSpecialAttributes.AllAttributes;
+				perms |= (int) value;
+				Protection = (Native.FilePermissions) perms;
+			}
 		}
 
 		[CLSCompliant (false)]
@@ -327,17 +377,10 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use SetPermissions (Mono.Unix.Native.FilePermissions)")]
+		[Obsolete ("Use Protection setter")]
 		public void SetPermissions (FilePermissions perms)
 		{
 			int r = Syscall.chmod (FullPath, perms);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
-		[CLSCompliant (false)]
-		public void SetPermissions (Native.FilePermissions perms)
-		{
-			int r = Native.Syscall.chmod (FullPath, perms);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 

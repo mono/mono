@@ -3,6 +3,9 @@
 ../../build/common/Locale.cs
 ./Mono.Unix/Catalog.cs
 ./Mono.Unix/CdeclFunction.cs
+./Mono.Unix/FileAccessPermissions.cs
+./Mono.Unix/FileSpecialAttributes.cs
+./Mono.Unix/FileTypes.cs
 ./Mono.Unix/IncludeAttribute.cs
 ./Mono.Unix/MapAttribute.cs
 ./Mono.Unix/PeerCred.cs

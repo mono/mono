@@ -1,3 +1,12 @@
+2005-10-19  Jonathan Pryor <jonpryor@vt.edu>
+
+	* FileAccessPermissions.cs, FileSpecialAttributes.cs, FileTypes.cs: Added.
+	* UnixFileSystemInfo.cs, UnixStream.cs: Replace the old Permission property
+	  with 4 new properties: Protection (for the Native.FilePermissions value),
+	  FileAccessPermissions (for rwxrwxrwx info), FileSpecialAttributes (for
+	  set-user-id, set-group-id, sticky), and FileTypes (directory, socket...).
+	  The new enumeration types have nicer CLS-compliant names.
+
 2005-10-17  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixMarshal.cs: Fix GetIntXxBufferLength to require fewer
