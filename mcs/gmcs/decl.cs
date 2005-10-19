@@ -2109,7 +2109,7 @@ namespace Mono.CSharp {
 		// Because the MemberCache holds members from this class and all the base classes,
 		// we can avoid tons of reflection stuff.
 		//
-		public MemberInfo FindMemberToOverride (Type invocationType, string name, Type [] paramTypes, bool is_property)
+		public MemberInfo FindMemberToOverride (Type invocationType, string name, Type [] paramTypes, GenericMethod genericMethod, bool is_property)
 		{
 			ArrayList applicable;
 			if (method_hash != null && !is_property)
@@ -2185,7 +2185,20 @@ namespace Mono.CSharp {
 					if (!TypeManager.IsEqual (paramTypes [j], cmpAttrs [j]))
 						goto next;
 				}
-				
+
+				//
+				// check generic arguments for methods
+				//
+				if (mi != null) {
+					Type [] cmpGenArgs = mi.GetGenericArguments ();
+					if (genericMethod != null && cmpGenArgs.Length > 0) {
+						if (genericMethod.TypeParameters.Length != cmpGenArgs.Length)
+							goto next;
+					}
+					else if (! (genericMethod == null && cmpGenArgs.Length == 0))
+						goto next;
+				}
+
 				//
 				// get one of the methods because this has the visibility info.
 				//

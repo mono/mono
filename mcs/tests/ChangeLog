@@ -1,5 +1,9 @@
 2005-10-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* gtest-216.cs : new test for #76382.
+
+2005-10-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* gtest-215.cs : make it runnable.
 
 2005-10-18  Raja R Harinath  <rharinath@novell.com>

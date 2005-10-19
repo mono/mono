@@ -1,3 +1,9 @@
+2005-10-19  Atsushi Enomotot  <atsushi@ximian.com>
+
+	* class.cs, decl.cs : (MemberCache.FindMemberToOverride) added 
+	  GenericMethod argument to compare methods' generic type arguments.
+	  Fixed bug #76382.
+
 2005-10-19  Martin Baulig  <martin@ximian.com>
 
 	* class.cs (TypeContainer.DefineType): Only use ResolveAsTypeStep(),

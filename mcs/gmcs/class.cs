@@ -4314,7 +4314,7 @@ namespace Mono.CSharp {
 		protected override MethodInfo FindOutBaseMethod (TypeContainer container, ref Type base_ret_type)
 		{
 			MethodInfo mi = (MethodInfo) container.BaseCache.FindMemberToOverride (
-				container.TypeBuilder, Name, ParameterTypes, false);
+				container.TypeBuilder, Name, ParameterTypes, GenericMethod, false);
 
 			if (mi == null)
 				return null;
@@ -6741,7 +6741,7 @@ namespace Mono.CSharp {
  		protected override MethodInfo FindOutBaseMethod (TypeContainer container, ref Type base_ret_type)
  		{
  			PropertyInfo base_property = container.BaseCache.FindMemberToOverride (
- 				container.TypeBuilder, Name, ParameterTypes, true) as PropertyInfo;
+ 				container.TypeBuilder, Name, ParameterTypes, null, true) as PropertyInfo;
 
  			if (base_property == null)
  				return null;
