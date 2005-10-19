@@ -527,6 +527,7 @@ namespace Mono.CSharp {
 				if (RootContext.StdLib){
 					foreach (TypeContainer tc in type_container_resolve_order)
 						tc.DefineMembers (root);
+
 				} else {
 					foreach (TypeContainer tc in type_container_resolve_order) {
 						// When compiling corlib, these types have already been

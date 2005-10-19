@@ -114,6 +114,13 @@ namespace Mono.CSharp {
 			return base.ToType (type, loc);
 		}
 
+		public override Constant Reduce(EmitContext ec, Type target_type)
+		{
+			if (target_type == TypeManager.string_type)
+				return new NullCast (this, target_type);
+
+			return null;
+		}
 	}
 
 	//
