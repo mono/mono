@@ -1,5 +1,10 @@
 2005-10-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WebClient.cs : added net_2_0 DownloadString() and DownloadData()
+	  with HTTP method as well.
+
+2005-10-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WebClient.cs : added UploadString() and Encoding (net_2_0). Added
 	  some new overloaded stuff that takes Uri instead of string address.
 

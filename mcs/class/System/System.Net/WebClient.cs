@@ -136,7 +136,7 @@ namespace System.Net
 		
 		public byte [] DownloadData (string address)
 		{
-			return DownloadData (MakeUri (address));
+			return DownloadData (address, "POST");
 		}
 
 #if NET_2_0
@@ -144,12 +144,32 @@ namespace System.Net
 #endif
 		byte [] DownloadData (Uri address)
 		{
-			WebRequest request = SetupRequest (address);
+			return DownloadData (address, "POST");
+		}
+		
+#if NET_2_0
+		public
+#endif
+		byte [] DownloadData (string address, string method)
+		{
+			return DownloadData (MakeUri (address), method);
+		}
+
+		// Maybe I should be careful if assuming that setting "POST"
+		// never fails when we setup WebRequest, but the same approach
+		// seems to work on UploadData().
+#if NET_2_0
+		public
+#endif
+		byte [] DownloadData (Uri address, string method)
+		{
+			WebRequest request = SetupRequest (address, method);
+			request.Method = method;
 			WebResponse response = request.GetResponse ();
 			Stream st = ProcessResponse (response);
 			return ReadAll (st, (int) response.ContentLength);
 		}
-		
+
 		public void DownloadFile (string address, string fileName)
 		{
 			DownloadFile (MakeUri (address), fileName);
@@ -372,6 +392,26 @@ namespace System.Net
 		}
 
 #if NET_2_0
+		public string DownloadString (string address)
+		{
+			return encoding.GetString (DownloadData (address));
+		}
+
+		public string DownloadString (string address, string method)
+		{
+			return encoding.GetString (DownloadData (address, method));
+		}
+
+		public string DownloadString (Uri address)
+		{
+			return encoding.GetString (DownloadData (address));
+		}
+
+		public string DownloadString (Uri address, string method)
+		{
+			return encoding.GetString (DownloadData (address, method));
+		}
+
 		public void UploadString (string address, string data)
 		{
 			UploadData (address, encoding.GetBytes (data));
