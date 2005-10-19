@@ -1,3 +1,8 @@
+2005-10-19  Robert Jordan  <robertj@gmx.net>
+
+	* System.Runtime.Remoting.dll.sources: Added S.R.R.Channels.Ipc*
+	* System.Runtime.Remoting_test.dll.sources: Added IpcCalls.cs
+
 2005-10-16  Robert Jordan  <robertj@gmx.net>
 
 	* Added System.Runtime.Remoting.Channels.Ipc* for NET_2_0

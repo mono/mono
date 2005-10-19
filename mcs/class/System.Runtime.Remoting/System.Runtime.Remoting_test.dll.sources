@@ -12,3 +12,4 @@ CrossDomainCalls.cs
 HttpCalls.cs
 ActivationTests.cs
 RemotingServicesTest.cs
+IpcCalls.cs
