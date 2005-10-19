@@ -1,3 +1,17 @@
+2005-10-19 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Brush.jvm.cs: added InternalClone() method
+	changed transformation methods access level
+	* TextureBrush.jvm.cs: refactoring, fixed clone()
+
+2005-10-19 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* AdvancedStroke.jvm.cs: fixed createStrokedShape, check for transform 
+	matrix singularity added
+	* Font.jvm.cs: implemetated ISerializable
+	* Pen.jvm.cs: fixed DashPattern property, 
+	fixed GetNativeObject() dash pattern calculation
+
 2005-10-14 Jordi Mas i Hernandez <jordi@ximian.com> 
 
 	* SystemColors.cs: Fixes the Win32 light and lightlight colours

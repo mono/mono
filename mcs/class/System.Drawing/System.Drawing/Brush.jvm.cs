@@ -11,6 +11,13 @@ using geom = java.awt.geom;
 namespace System.Drawing
 {
 	public abstract class Brush : MarshalByRefObject, ICloneable, IDisposable, awt.Paint {
+		
+		#region fields
+
+		private Matrix _brushTransform = new Matrix();
+
+		#endregion
+
 		protected abstract java.awt.Paint NativeObject {
 			get;
 		}
@@ -43,11 +50,15 @@ namespace System.Drawing
 		protected virtual void Dispose (bool disposing) {
 		}
 
+		protected Brush InternalClone() {
+			Brush brush = (Brush)this.MemberwiseClone();
+			brush._brushTransform = this._brushTransform.Clone();
+			return brush;
+		}
+
 		#region Brush transform
 
-		private readonly Matrix _brushTransform = new Matrix();
-
-		protected Matrix BrushTransform {
+		internal Matrix BrushTransform {
 			get { return _brushTransform.Clone(); }
 			set { 
 				if (value == null)
@@ -57,44 +68,37 @@ namespace System.Drawing
 			}
 		}
 
-		protected void BrushTranslateTransform (float dx, float dy) {
+		protected internal void BrushTranslateTransform (float dx, float dy) {
 			BrushTranslateTransform(dx, dy, MatrixOrder.Prepend);
 		}
-		protected void BrushTranslateTransform (float dx, float dy, MatrixOrder order) {
+		protected internal void BrushTranslateTransform (float dx, float dy, MatrixOrder order) {
 			_brushTransform.Translate(dx,dy,order);
 		}
-		protected void BrushResetTransform () {
+		protected internal void BrushResetTransform () {
 			_brushTransform.Reset();
 		}
-		protected void BrushRotateTransform (float angle) {
+		protected internal void BrushRotateTransform (float angle) {
 			BrushRotateTransform(angle, MatrixOrder.Prepend);
 		}
-		protected void BrushRotateTransform (float angle, MatrixOrder order) {
+		protected internal void BrushRotateTransform (float angle, MatrixOrder order) {
 			_brushTransform.Rotate(angle, order);
 		}
-		protected void BrushScaleTransform (float sx, float sy) {
+		protected internal void BrushScaleTransform (float sx, float sy) {
 			BrushScaleTransform(sx, sy, MatrixOrder.Prepend);
 		}
-		protected void BrushScaleTransform (float sx, float sy, MatrixOrder order) {
+		protected internal void BrushScaleTransform (float sx, float sy, MatrixOrder order) {
 			_brushTransform.Scale(sx, sy, order);
 		}
-		protected void BrushMultiplyTransform (Matrix matrix) {
+		protected internal void BrushMultiplyTransform (Matrix matrix) {
 			BrushMultiplyTransform(matrix, MatrixOrder.Prepend);
 		}
-		protected void BrushMultiplyTransform (Matrix matrix, MatrixOrder order) {
+		protected internal void BrushMultiplyTransform (Matrix matrix, MatrixOrder order) {
 			if (matrix == null)
 				throw new ArgumentNullException("matrix");
 			_brushTransform.Multiply(matrix, order);			
 		}
 
 		#endregion
-
-		// TODO: implement transform methods.
-
-//		~Brush ()
-//		{
-//			Dispose (false);
-//		}
 	}
 }
 

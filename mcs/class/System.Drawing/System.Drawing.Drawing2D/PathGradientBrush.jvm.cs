@@ -261,17 +261,20 @@ namespace System.Drawing.Drawing2D {
 		}
 
 		public override object Clone () {
-			//return new PathGradientBrush( _texturePath, _wrapMode, _centerColor, _surroundColors, _center );
-			PathGradientBrush copy = (PathGradientBrush)MemberwiseClone();
+			PathGradientBrush copy = (PathGradientBrush)InternalClone();
+
 			if (copy._nativeObject != null)
 				copy._nativeObject = (Brush)copy._nativeObject.Clone();
-			//TBD: clone _blend, _interpolationColors
-			//copy._blend = copy._blend
+			
 			if (copy._surroundColors != null)
 				copy._surroundColors = (Color[])copy._surroundColors.Clone();
+			
 			if (copy._texturePath != null)
 				copy._texturePath = (GraphicsPath)copy._texturePath.Clone();
 
+			//TBD: clone _blend, _interpolationColors
+			//copy._blend = copy._blend
+			
 			return copy;
 		}
 

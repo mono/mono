@@ -47,7 +47,7 @@ namespace System.Drawing {
 	public sealed class TextureBrush : Brush {
 		readonly awt.TexturePaint _nativeObject;
 		RectangleF _sourceRectangle;
-		readonly Image _texture = null;
+		Image _texture = null;
 		WrapMode _wrapMode;
 
 		protected override java.awt.Paint NativeObject {
@@ -88,55 +88,46 @@ namespace System.Drawing {
 		public TextureBrush (Image image, WrapMode wrapMode, RectangleF dstRect) {
 			// TBD: check if not metafile
 			_sourceRectangle = dstRect;
-			_texture = (Image)((Bitmap)image).Clone();
+			_texture = (Image)((Bitmap)image).Clone(dstRect, image.PixelFormat);
 			_wrapMode = wrapMode;
 
 			if (wrapMode != Drawing2D.WrapMode.Tile)
-				image = CreateWrappedImage(image, wrapMode, ref dstRect);
+				image = CreateWrappedImage(_texture, wrapMode);
+			else
+				image = _texture;
 
 			_nativeObject = new awt.TexturePaint((image.BufferedImage)image.NativeObject.CurrentImage.NativeImage,
-				new geom.Rectangle2D.Float(dstRect.X, dstRect.Y, dstRect.Width, dstRect.Height));
+				new geom.Rectangle2D.Float(0, 0, image.Width, image.Height));
 		}
 
 		#endregion
 
 		#region CreateWrappedImage
 
-		private Image CreateWrappedImage(Image image, WrapMode wrapMode, ref RectangleF srcRect) {
+		private Image CreateWrappedImage(Image image, WrapMode wrapMode) {
 			Image b = null;
 			Graphics g = null;
-			Image croppedImage = ((Bitmap)image).Clone( srcRect, image.PixelFormat );
 
 			switch (wrapMode) {
 				case Drawing2D.WrapMode.TileFlipX :
-					b = new Bitmap(croppedImage.Width * 2, croppedImage.Height);
+					b = new Bitmap(image.Width * 2, image.Height);
 					g = Graphics.FromImage( b );
-					g.DrawImage(croppedImage, new Matrix());
-					g.DrawImage(croppedImage, new Matrix(-1, 0, 0, 1, croppedImage.Width * 2 - 1, 0));
-					srcRect.Width = croppedImage.Width * 2;
-					srcRect.X = 0;
-					srcRect.Y = 0;
+					g.DrawImage(image, new Matrix());
+					g.DrawImage(image, new Matrix(-1, 0, 0, 1, image.Width * 2 - 1, 0));
 					break;
 				case Drawing2D.WrapMode.TileFlipY :
-					b = new Bitmap(croppedImage.Width, croppedImage.Height * 2);
+					b = new Bitmap(image.Width, image.Height * 2);
 					g = Graphics.FromImage( b );
-					g.DrawImage(croppedImage, new Matrix());
-					g.DrawImage(croppedImage, new Matrix(1, 0, 0, -1, 0, croppedImage.Height * 2 - 1));
-					srcRect.Height = croppedImage.Height * 2;
-					srcRect.X = 0;
-					srcRect.Y = 0;
+					g.DrawImage(image, new Matrix());
+					g.DrawImage(image, new Matrix(1, 0, 0, -1, 0, image.Height * 2 - 1));
 					break;
 				case Drawing2D.WrapMode.TileFlipXY :
-					b = new Bitmap(croppedImage.Width * 2, croppedImage.Height * 2);
+					b = new Bitmap(image.Width * 2, image.Height * 2);
 					g = Graphics.FromImage( b );
-					g.DrawImage(croppedImage, new Matrix());
-					g.DrawImage(croppedImage, new Matrix(-1, 0, 0, 1, croppedImage.Width * 2 - 1, 0));
-					g.DrawImage(croppedImage, new Matrix(1, 0, 0, -1, 0, croppedImage.Height * 2 - 1));
-					g.DrawImage(croppedImage, new Matrix(-1, 0, 0, -1, croppedImage.Width * 2 - 1, croppedImage.Height * 2 - 1));
-					srcRect.Width = croppedImage.Width * 2;
-					srcRect.Height = croppedImage.Height * 2;
-					srcRect.X = 0;
-					srcRect.Y = 0;
+					g.DrawImage(image, new Matrix());
+					g.DrawImage(image, new Matrix(-1, 0, 0, 1, image.Width * 2 - 1, 0));
+					g.DrawImage(image, new Matrix(1, 0, 0, -1, 0, image.Height * 2 - 1));
+					g.DrawImage(image, new Matrix(-1, 0, 0, -1, image.Width * 2 - 1, image.Height * 2 - 1));
 					break;
 				case Drawing2D.WrapMode.Clamp :
 					// TBD: Implement WrapMode.Clamp
@@ -182,7 +173,12 @@ namespace System.Drawing {
 		#region public methods
 
 		public override object Clone () {
-			return (TextureBrush)MemberwiseClone();
+			TextureBrush copy = (TextureBrush)InternalClone();
+
+			if (_texture != null)
+				copy._texture = (Image)_texture.Clone();
+
+			return copy;
 		}
 
 		public void MultiplyTransform (Matrix matrix) {

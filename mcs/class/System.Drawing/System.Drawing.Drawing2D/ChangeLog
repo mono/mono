@@ -1,3 +1,9 @@
+2005-10-19 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* LinearGradientBrush.jvm.cs: fixed clone(), SetBlendTriangularShape, 
+	LinearColors, InterpolationColors, GetMedianeEnclosingRect, Init, NativeObject
+	* PathGradientBrush.jvm.cs: fixed clone()
+
 2005-10-04 Peter Dennis Bartok <pbartok@novell.com>
 
 	* Matrix.cs: Call GC.SuppressFinalize with 'this' instead of 'true'
