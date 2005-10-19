@@ -1094,7 +1094,7 @@ namespace Mono.CSharp {
 
 			AttributeUsageAttribute usage_attr = GetAttributeUsage (ec);
 			if ((usage_attr.ValidOn & Target) == 0) {
-				Report.Error (592, Location, "Attribute `{0}' is not valid on this declaration type.  " +
+				Report.Error (592, Location, "Attribute `{0}' is not valid on this declaration type. " +
 					      "It is valid on `{1}' declarations only",
 					GetSignatureForError (), GetValidTargets ());
 				return;
@@ -1426,7 +1426,7 @@ namespace Mono.CSharp {
 					sb.Append (", ");
 				}
 				sb.Remove (sb.Length - 2, 2);
-				Report.Error (657, a.Location, "`{0}' is not a valid attribute location for this declaration.  " +
+				Report.Error (657, a.Location, "`{0}' is not a valid attribute location for this declaration. " +
 					      "Valid attribute locations for this declaration are `{1}'", a.ExplicitTarget, sb.ToString ());
 				return false;
 			}
