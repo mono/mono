@@ -130,7 +130,7 @@ namespace Mono.Remoting.Channels.Unix
 			if (!url.StartsWith ("unix://")) return null;
 			
 			int i = url.IndexOf ('?');
-			if (i == -1) return null;
+			if (i == -1) return url.Substring (7);
 			
 			objectURI = url.Substring (i+1);
 			

@@ -1,3 +1,8 @@
+2005-10-18  Robert Jordan  <robertj@gmx.net>
+
+	* UnixChannel.cs: fixed ParseUnixURL to support channel URLs (those
+	w/out an objectUri).
+
 2005-09-11  Robert Jordan  <robertj@gmx.net>
 
 	* UnixChannel.cs: fixed default ctor.
