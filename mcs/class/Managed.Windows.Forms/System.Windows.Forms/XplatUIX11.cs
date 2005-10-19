@@ -3384,7 +3384,9 @@ namespace System.Windows.Forms {
 
 			// X requires a sanity check for width & height; otherwise it dies
 			if (hwnd.zero_sized && width > 0 && height > 0) {
-				XMapWindow(DisplayHandle, hwnd.whole_window);
+				if (hwnd.visible) {
+					XMapWindow(DisplayHandle, hwnd.whole_window);
+				}
 				hwnd.zero_sized = false;
 			}
 

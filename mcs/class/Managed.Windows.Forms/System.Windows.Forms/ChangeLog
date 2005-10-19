@@ -1,3 +1,8 @@
+2005-10-18  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Do not re-map the whole window when it's size
+	  becomes non-zero unless it's supposed to be actually visible
+
 2005-10-18  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: We don't need to keep a count anymore.
