@@ -1,3 +1,8 @@
+2005-10-19  Jackson Harper  <jackson@ximian.com>
+
+	* profiler.c: Don't put a . in front of types that are not in a
+	namespace.
+
 2005-10-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_Type_GetField): Applied patch from Robert Jordan (robertj@gmx.net). Fixes #75515.
