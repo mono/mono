@@ -1,3 +1,13 @@
+2005-10-19  Senganal T  <tsenganal@novell.com>
+
+	* TdsConnectionParameter.cs :
+		- Added a class variable 'AttachDBFileName' to store the location
+		of the DB file.
+
+	* Tds70.cs (Connect) :
+		- Modified to append the bytes corresponding to AttachDBFileName 
+		into the Tds Packets. 
+
 2005-08-26  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* Tds70.cs (ExecProc): if no parameters, execute via RPC. parameter

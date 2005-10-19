@@ -45,6 +45,7 @@ namespace Mono.Data.Tds.Protocol {
 		public string User = String.Empty;
 		public bool DomainLogin = false; 
 		public string DefaultDomain = String.Empty; 
+		public string AttachDBFileName = String.Empty; 
 
                 public void Reset ()
                 {
@@ -59,6 +60,7 @@ namespace Mono.Data.Tds.Protocol {
                         User = String.Empty;
                         DomainLogin = false; 
                         DefaultDomain = String.Empty;
+			AttachDBFileName = String.Empty;
                 }
 	}
 }

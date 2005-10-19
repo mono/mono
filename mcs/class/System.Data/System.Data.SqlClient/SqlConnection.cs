@@ -744,7 +744,8 @@ namespace System.Data.SqlClient {
 			case "ATTACHDBFILENAME" :
 			case "EXTENDED PROPERTIES" :
 			case "INITIAL FILE NAME" :
-				throw new NotImplementedException("Attachable database support is not implemented.");
+				parms.AttachDBFileName = value;
+				break;
 			case "TIMEOUT" :
 			case "CONNECT TIMEOUT" :
 			case "CONNECTION TIMEOUT" :

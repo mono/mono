@@ -1,4 +1,9 @@
 2005-10-19  Senganal T  <tsenganal@novell.com>
+
+	* SqlConnection.cs (SetProperties) :
+		- Added support for AttachDBFileName
+
+2005-10-19  Senganal T  <tsenganal@novell.com>
 	
 	* SqlException.cs (Constructor)
 		- Modified the constructor, so that the message parameter

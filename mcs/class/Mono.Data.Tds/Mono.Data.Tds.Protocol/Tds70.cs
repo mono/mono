@@ -199,7 +199,8 @@ namespace Mono.Data.Tds.Protocol {
 				DataSource.Length +
 				connectionParameters.LibraryName.Length +
 				Language.Length +
-				connectionParameters.Database.Length) * 2); 
+				connectionParameters.Database.Length +
+				connectionParameters.AttachDBFileName.Length) * 2); 
 			
 			if(connectionParameters.DomainLogin == true) {
 				authLen = ((short) (32 + (connectionParameters.Hostname.Length +
@@ -297,7 +298,8 @@ namespace Mono.Data.Tds.Protocol {
 			
 			// Unknown
 			Comm.Append (curPos);
-			Comm.Append ((short) 0);
+			Comm.Append ((short)( connectionParameters.AttachDBFileName.Length));
+			curPos += (short)(connectionParameters.AttachDBFileName.Length*2);
 			
 			// Connection Parameters
 			Comm.Append (connectionParameters.Hostname);
@@ -328,6 +330,7 @@ namespace Mono.Data.Tds.Protocol {
 				Comm.Append (msg.GetBytes ());
 			}
 
+			Comm.Append (connectionParameters.AttachDBFileName);
 			Comm.SendPacket ();
 			MoreResults = true;
 			SkipToEnd ();
