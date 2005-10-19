@@ -1,5 +1,13 @@
 2005-10-19  Martin Baulig  <martin@ximian.com>
 
+	* class.cs (TypeContainer.DefineType): Only use ResolveAsTypeStep(),
+	not ResolveType() when resolving the base type, so we're not
+	checking the constraints here.
+	(TypeContainer.ResolveType): Call ResolveType() on our base_type
+	if we have any.
+
+2005-10-19  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs (ConstructedType.CheckConstraints): Committing
 	untested fix for #76441.
 

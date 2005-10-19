@@ -1320,13 +1320,13 @@ namespace Mono.CSharp {
 			if (base_type != null) {
 				// FIXME: I think this should be ...ResolveType (Parent.EmitContext).
 				//        However, if Parent == RootContext.Tree.Types, its NamespaceEntry will be null.
-				ptype = base_type.ResolveType (TypeResolveEmitContext);
-				if (ptype == null) {
+				FullNamedExpression fne = base_type.ResolveAsTypeStep (TypeResolveEmitContext);
+				if ((fne == null) || (fne.Type == null)) {
 					error = true;
 					return null;
 				}
 
-				ptype = base_type.Type;
+				ptype = fne.Type;
 
 				if (IsGeneric && TypeManager.IsAttributeType (ptype)) {
 					Report.Error (698, base_type.Location,
@@ -1392,6 +1392,12 @@ namespace Mono.CSharp {
 
 		public bool ResolveType ()
 		{
+			if ((base_type != null) &&
+			    (base_type.ResolveType (TypeResolveEmitContext) == null)) {
+				error = true;
+				return false;
+			}
+
 			if (!IsGeneric)
 				return true;
 
