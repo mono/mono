@@ -171,8 +171,12 @@ namespace System.Windows.Forms {
 		public virtual void Insert (int index, TreeNode node)
 		{
 			SetData (node);
-			IList list = (IList) nodes;
-			list.Insert (index, node);
+			TreeNode [] newlist = new TreeNode [nodes.Length + 1];
+			Array.Copy (nodes, 0, newlist, 0, index);
+			Array.Copy (nodes, index, newlist, index + 1, nodes.Length - index);
+			newlist [index] = node;
+			
+			nodes = newlist;
 		}
 
 		public virtual void Remove (TreeNode node)
