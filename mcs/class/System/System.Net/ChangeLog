@@ -1,3 +1,8 @@
+2005-10-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebClient.cs : added UploadString() and Encoding (net_2_0). Added
+	  some new overloaded stuff that takes Uri instead of string address.
+
 2005-10-17  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ICredentialPolicy.cs: New. Interface for 2.0.

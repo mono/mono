@@ -50,7 +50,10 @@ namespace System.Net
 		Uri baseAddress;
 		string baseString;
 		NameValueCollection queryString;
-	
+#if NET_2_0
+		Encoding encoding = Encoding.Default;
+#endif
+
 		// Constructors
 		static WebClient ()
 		{
@@ -93,7 +96,7 @@ namespace System.Net
 			get { return credentials; }
 			set { credentials = value; }
 		}
-		
+
 		public WebHeaderCollection Headers {
 			get {
 				if (headers == null)
@@ -118,9 +121,28 @@ namespace System.Net
 			get { return responseHeaders; }
 		}
 
+#if NET_2_0
+		public Encoding Encoding {
+			get { return encoding; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+				encoding = value;
+			}
+		}
+#endif
+
 		// Methods
 		
 		public byte [] DownloadData (string address)
+		{
+			return DownloadData (MakeUri (address));
+		}
+
+#if NET_2_0
+		public
+#endif
+		byte [] DownloadData (Uri address)
 		{
 			WebRequest request = SetupRequest (address);
 			WebResponse response = request.GetResponse ();
@@ -129,6 +151,14 @@ namespace System.Net
 		}
 		
 		public void DownloadFile (string address, string fileName)
+		{
+			DownloadFile (MakeUri (address), fileName);
+		}
+
+#if NET_2_0
+		public
+#endif
+		void DownloadFile (Uri address, string fileName)
 		{
 			WebRequest request = SetupRequest (address);
 			WebResponse response = request.GetResponse ();
@@ -148,6 +178,14 @@ namespace System.Net
 		
 		public Stream OpenRead (string address)
 		{
+			return OpenRead (MakeUri (address));
+		}
+
+#if NET_2_0
+		public
+#endif
+		Stream OpenRead (Uri address)
+		{
 			WebRequest request = SetupRequest (address);
 			WebResponse response = request.GetResponse ();
 			return ProcessResponse (response);
@@ -160,6 +198,14 @@ namespace System.Net
 		
 		public Stream OpenWrite (string address, string method)
 		{
+			return OpenWrite (MakeUri (address), method);
+		}
+
+#if NET_2_0
+		public
+#endif
+		Stream OpenWrite (Uri address, string method)
+		{
 			WebRequest request = SetupRequest (address, method);
 			return request.GetRequestStream ();
 		}
@@ -170,6 +216,21 @@ namespace System.Net
 		}
 		
 		public byte [] UploadData (string address, string method, byte [] data)
+		{
+			return UploadData (MakeUri (address), method, data);
+		}
+
+#if NET_2_0
+		public byte [] UploadData (Uri address, byte [] data)
+		{
+			return UploadData (address, "POST", data);
+		}
+#endif
+
+#if NET_2_0
+		public
+#endif
+		byte [] UploadData (Uri address, string method, byte [] data)
 		{
 			if (data == null)
 				throw new ArgumentNullException ("data");
@@ -191,6 +252,14 @@ namespace System.Net
 		}
 		
 		public byte [] UploadFile (string address, string method, string fileName)
+		{
+			return UploadFile (MakeUri (address), method, fileName);
+		}
+
+#if NET_2_0
+		public
+#endif
+		byte [] UploadFile (Uri address, string method, string fileName)
 		{
 			string fileCType = Headers ["Content-Type"];
 			if (fileCType != null) {
@@ -256,6 +325,14 @@ namespace System.Net
 		
 		public byte[] UploadValues (string address, string method, NameValueCollection data)
 		{
+			return UploadValues (MakeUri (address), method, data);
+		}
+
+#if NET_2_0
+		public
+#endif
+		byte[] UploadValues (Uri uri, string method, NameValueCollection data)
+		{
 			if (data == null)
 				throw new ArgumentNullException ("data"); // MS throws a nullref
 
@@ -265,7 +342,7 @@ namespace System.Net
 							"value for this request.");
 
 			Headers ["Content-Type"] = urlEncodedCType;
-			WebRequest request = SetupRequest (address, method);
+			WebRequest request = SetupRequest (uri, method);
 			Stream rqStream = request.GetRequestStream ();
 			MemoryStream tmpStream = new MemoryStream ();
 			foreach (string key in data) {
@@ -293,6 +370,28 @@ namespace System.Net
 			Stream st = ProcessResponse (response);
 			return ReadAll (st, (int) response.ContentLength);
 		}
+
+#if NET_2_0
+		public void UploadString (string address, string data)
+		{
+			UploadData (address, encoding.GetBytes (data));
+		}
+
+		public void UploadString (string address, string method, string data)
+		{
+			UploadData (address, method, encoding.GetBytes (data));
+		}
+
+		public void UploadString (Uri address, string data)
+		{
+			UploadData (address, encoding.GetBytes (data));
+		}
+
+		public void UploadString (Uri address, string method, string data)
+		{
+			UploadData (address, method, encoding.GetBytes (data));
+		}
+#endif
 
 		Uri MakeUri (string path)
 		{
@@ -335,9 +434,8 @@ namespace System.Net
 			return new Uri (baseAddress, path + query, (query != null));
 		}
 		
-		WebRequest SetupRequest (string address)
+		WebRequest SetupRequest (Uri uri)
 		{
-			Uri uri = MakeUri (address);
 			WebRequest request = WebRequest.Create (uri);
 			request.Credentials = credentials;
 
@@ -382,16 +480,16 @@ namespace System.Net
 			return request;
 		}
 
-		WebRequest SetupRequest (string address, string method)
+		WebRequest SetupRequest (Uri uri, string method)
 		{
-			WebRequest request = SetupRequest (address);
+			WebRequest request = SetupRequest (uri);
 			request.Method = method;
 			return request;
 		}
 
-		WebRequest SetupRequest (string address, string method, int contentLength)
+		WebRequest SetupRequest (Uri uri, string method, int contentLength)
 		{
-			WebRequest request = SetupRequest (address, method);
+			WebRequest request = SetupRequest (uri, method);
 			request.ContentLength = contentLength;
 			return request;
 		}
