@@ -152,9 +152,8 @@ namespace Mono.CSharp
 			// FIXME: these lines had better be platform independent.
 			if (Path.DirectorySeparatorChar == '\\') {
 				mcs.StartInfo.FileName = windowsMonoPath;
-				mcs.StartInfo.Arguments = windowsMcsPath + ' ' + BuildArgs (options, fileNames);
-			}
-			else {
+				mcs.StartInfo.Arguments = "\"" + windowsMcsPath + "\" " + BuildArgs (options, fileNames);
+			} else {
 #if NET_2_0
 				// FIXME: This is a temporary hack to make code genaration work in 2.0
 				mcs.StartInfo.FileName="gmcs";
