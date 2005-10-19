@@ -1,5 +1,9 @@
 2005-10-19  Ankit Jain  <jankit@novell.com>
 
+	* main.c (dis_method_list): Fix warning introduced by my last patch.
+
+2005-10-19  Ankit Jain  <jankit@novell.com>
+
 	* main.c (dis_method_list): Use 'method_context' instead of 'container' for 
 	  mono_metadata_parse_method_signature_full.
 
