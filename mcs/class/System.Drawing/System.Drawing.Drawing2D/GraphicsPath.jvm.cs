@@ -103,7 +103,7 @@ namespace System.Drawing.Drawing2D
 		public FillMode FillMode 
 		{
 			get 
-			{   if(NativeObject.getWindingRule() == GeneralPath.WIND_NON_ZERO)
+			{   if(NativeObject.getWindingRule() == GeneralPath.WIND_EVEN_ODD)
 					return FillMode.Alternate;
 				else
 					return FillMode.Winding;
@@ -112,9 +112,9 @@ namespace System.Drawing.Drawing2D
 			set 
 			{
 				if (value == FillMode.Alternate)
-					NativeObject.setWindingRule (GeneralPath.WIND_NON_ZERO);
-				else
 					NativeObject.setWindingRule (GeneralPath.WIND_EVEN_ODD);
+				else
+					NativeObject.setWindingRule (GeneralPath.WIND_NON_ZERO);
 			}
 		}
 
@@ -203,7 +203,7 @@ namespace System.Drawing.Drawing2D
 			double cosx = 1/Math.Sqrt( sqrd1Tod2 * (tan*tan) + 1);
 			double xRad = Math.Acos(cosx);
 			double x = java.lang.Math.toDegrees(xRad);
-			int q = ((int)angle)/90;
+			int q = (Math.Abs((int)angle))/90;
 
 			switch (q&3) {
 				case 1:
@@ -466,6 +466,9 @@ namespace System.Drawing.Drawing2D
 		#region AddPath
 		public void AddPath (GraphicsPath addingPath, bool connect)
 		{
+			if (NativeObject.LastFigureClosed || addingPath.NativeObject.LastFigureClosed)
+				connect = false;
+
 			NativeObject.append(addingPath.NativeObject,connect);
 		}
 		#endregion
@@ -846,10 +849,10 @@ namespace System.Drawing.Drawing2D
 			Shape = p;
 		}  	
                 
-		public void CloseFigure()
-		{
-			NativeObject.closePath();
-		} 
+		public void CloseFigure() {
+			if (!NativeObject.LastFigureClosed)
+				NativeObject.closePath();
+		}
 		#endregion
 
 		#region Flatten

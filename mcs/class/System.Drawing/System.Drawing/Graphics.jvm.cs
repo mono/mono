@@ -369,7 +369,7 @@ namespace System.Drawing {
 				}
 			}
 		}
-		void FillShape(awt.Paint paint, awt.Shape shape) {
+		void FillShape(Brush paint, awt.Shape shape) {
 			if (paint == null)
 				throw new ArgumentNullException("brush");
 
@@ -419,16 +419,30 @@ namespace System.Drawing {
 			return path;
 		}
 
-		void FillScaledShape(awt.Paint paint, awt.Shape shape, geom.Area clip) {
+		void FillScaledShape(Brush paint, awt.Shape shape, geom.Area clip) {
 			geom.Rectangle2D r = shape.getBounds2D();
 			awt.Paint oldP = NativeObject.getPaint();
-			NativeObject.setPaint(paint);
+
+
+			Matrix m = null;
+			if (!_transform.IsIdentity) {
+				m = paint.BrushTransform;
+				paint.BrushMultiplyTransform( _transform );
+			}
+
 			try {
-				shape = IntersectUserClip(shape, clip);
-				NativeObject.fill(shape);
+				NativeObject.setPaint(paint);
+				try {
+					shape = IntersectUserClip(shape, clip);
+					NativeObject.fill(shape);
+				}
+				finally {
+					NativeObject.setPaint(oldP);
+				}
 			}
 			finally {
-				NativeObject.setPaint(oldP);
+				if (m != null)
+					paint.BrushTransform = m;
 			}
 		}
 
@@ -620,7 +634,7 @@ namespace System.Drawing {
 		
 		#region Clear
 		public void Clear (Color color) {
-			FillScaledShape(color.NativeObject, _clip.NativeObject, null);
+			FillScaledShape(new SolidBrush( color ), _clip.NativeObject, null);
 		}
 		#endregion
 

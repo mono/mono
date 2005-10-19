@@ -149,6 +149,13 @@ namespace System.Drawing
 			if (ic != null) {
 				ic.NativeStream = output;
 				ic.WritePlainImage( CurrentImage );
+				
+				try {
+					output.close();
+				}
+				catch (java.io.IOException ex) {
+					throw new System.IO.IOException(ex.Message, ex);
+				}
 			}
 			else {
 				throw new NotSupportedException("The requested format encoder is not supported");
@@ -178,7 +185,7 @@ namespace System.Drawing
 				case PixelFormat.Indexed:
 					return BufferedImage.TYPE_BYTE_INDEXED;
 				default:
-					return 0;
+					return BufferedImage.TYPE_INT_ARGB;
 			}			
 		}
 
@@ -222,12 +229,11 @@ namespace System.Drawing
 		
 		public Bitmap Clone (RectangleF rect, PixelFormat pixFormat)
 		{
-			PlainImage plainImage = (PlainImage)CurrentImage.Clone();
-			plainImage.NativeImage = ((BufferedImage)plainImage.NativeImage).getSubimage((int)rect.X,(int)rect.Y,(int)rect.Width,(int)rect.Height);
-			
-			if (pixFormat != this.PixelFormat)
-				throw new NotImplementedException ("Converting PixelFormat is not implemented yet.");
-	
+			PlainImage plainImage = CurrentImage.Clone(false);
+			BufferedImage clone = new BufferedImage( (int)rect.Width, (int)rect.Height, ToBufferedImageFormat( pixFormat ) );
+			clone.getGraphics().drawImage( NativeObject, -(int)rect.X, -(int)rect.Y, null );
+
+			plainImage.NativeImage = clone;
 			return new Bitmap(plainImage);
 		}
 		#endregion

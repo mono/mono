@@ -1,5 +1,10 @@
 2005-10-19 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* GraphicsPath.jvm.cs: fixed FillMode, ConvertArcAngle, AddPath,
+	CloseFigure
+	
+2005-10-19 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* LinearGradientBrush.jvm.cs: fixed clone(), SetBlendTriangularShape, 
 	LinearColors, InterpolationColors, GetMedianeEnclosingRect, Init, NativeObject
 	* PathGradientBrush.jvm.cs: fixed clone()

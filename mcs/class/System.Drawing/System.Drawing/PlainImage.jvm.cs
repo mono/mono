@@ -99,20 +99,27 @@ namespace Mainsoft.Drawing.Imaging
 		#region ICloneable members
 
 		public object Clone() {
-			
-			awt.Image img = new BufferedImage(
-				((BufferedImage)NativeObject).getColorModel(), 
-				((BufferedImage)NativeObject).copyData(null), 
-				((BufferedImage)NativeObject).isAlphaPremultiplied(), null);
+			return Clone(true);
+		}
 
-			awt.Image [] th = null;
-			if (Thumbnails != null) {
-				th = new java.awt.Image[ Thumbnails.Length ];
-				for (int i=0; i < Thumbnails.Length; i++) {
-					th[i] = new BufferedImage(
-						((BufferedImage)Thumbnails[i]).getColorModel(), 
-						((BufferedImage)Thumbnails[i]).copyData(null), 
-						((BufferedImage)Thumbnails[i]).isAlphaPremultiplied(), null);
+		public PlainImage Clone(bool cloneImage) {
+			awt.Image img = NativeImage;
+			awt.Image [] th = _thumbnails;
+
+			if (cloneImage) {
+				img = new BufferedImage(
+					((BufferedImage)NativeObject).getColorModel(), 
+					((BufferedImage)NativeObject).copyData(null), 
+					((BufferedImage)NativeObject).isAlphaPremultiplied(), null);
+
+				if (Thumbnails != null) {
+					th = new java.awt.Image[ Thumbnails.Length ];
+					for (int i=0; i < Thumbnails.Length; i++) {
+						th[i] = new BufferedImage(
+							((BufferedImage)Thumbnails[i]).getColorModel(), 
+							((BufferedImage)Thumbnails[i]).copyData(null), 
+							((BufferedImage)Thumbnails[i]).isAlphaPremultiplied(), null);
+					}
 				}
 			}
 

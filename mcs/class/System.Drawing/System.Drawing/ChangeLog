@@ -1,5 +1,11 @@
 2005-10-19 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* Bitmap.jvm.cs: fixed InternalSave, ToBufferedImageFormat, Clone
+	* PlainImage.jvm.cs: fixed Clone
+	* Graphics.jvm.cs: fixed FillShape, Clear, FillScaledShape
+
+2005-10-19 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* Brush.jvm.cs: added InternalClone() method
 	changed transformation methods access level
 	* TextureBrush.jvm.cs: refactoring, fixed clone()
