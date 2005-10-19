@@ -1842,6 +1842,8 @@ namespace Mono.CSharp {
 
 		public static int GetNumberOfTypeArguments (Type t)
 		{
+			if (t.IsGenericParameter)
+				return 0;
 			DeclSpace tc = LookupDeclSpace (t);
 			if (tc != null)
 				return tc.IsGeneric ? tc.CountTypeParameters : 0;
