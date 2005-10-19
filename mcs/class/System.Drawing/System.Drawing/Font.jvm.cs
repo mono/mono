@@ -7,7 +7,8 @@ using TextAttribute = java.awt.font.TextAttribute;
 
 namespace System.Drawing {
 
-	public sealed class Font: IDisposable	
+	[Serializable]
+	public sealed class Font: MarshalByRefObject, ISerializable, ICloneable, IDisposable
 	{
 		const int DPI = 72; 
 		private GraphicsUnit gUnit = GraphicsUnit.Point;
@@ -19,12 +20,23 @@ namespace System.Drawing {
 			}
 		}
 
+		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) {
+			info.AddValue("Name", Name);
+			info.AddValue("Size", Size);
+			info.AddValue("Style", Style, typeof(FontStyle));
+			info.AddValue("Unit", Unit, typeof(GraphicsUnit));
+		}
+
 		public void Dispose()
 		{
-
 		}
 
        	private Font (SerializationInfo info, StreamingContext context)
+			: this(
+			info.GetString("Name"), 
+			info.GetSingle("Size"), 
+			(FontStyle)info.GetValue("Style", typeof(FontStyle)), 
+			(GraphicsUnit)info.GetValue("Unit", typeof(GraphicsUnit)) )
 		{
 			
 		}

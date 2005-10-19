@@ -218,7 +218,7 @@ namespace System.Drawing {
 				stroker.setPenFitting(PenUnits, MinPenUnitsAA);
 
 			float[] t4 = null;
-			if (PenTransform != null && !PenTransform.isIdentity()) {
+			if (PenTransform != null && !PenTransform.isIdentity() && (PenTransform.getDeterminant() > 1e-25)) {
 				t4 = new float[]{
 					(float)PenTransform.getScaleX(), (float)PenTransform.getShearY(), 
 					(float)PenTransform.getShearX(), (float)PenTransform.getScaleY()

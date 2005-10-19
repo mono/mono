@@ -213,7 +213,7 @@ namespace System.Drawing
 		{
 			get 
 			{
-				return _dashPattern;
+				return (float [])_dashPattern.Clone();
 			}
 
 			set 
@@ -471,19 +471,22 @@ namespace System.Drawing
 
 			switch (DashStyle) {
 				case DashStyle.Custom:
-					if (DashPattern != null) {
-						dashPattern = new float[DashPattern.Length];
-						for(int i = 0; i < DashPattern.Length; i++) {
+					if (_dashPattern != null) {
+						dashPattern = new float[_dashPattern.Length];
+						for(int i = 0; i < _dashPattern.Length; i++) {
 
 							if (EndCap == LineCap.Flat)
-								dashPattern[i] = DashPattern[i] * Width;
+								dashPattern[i] = _dashPattern[i] * Width;
 							else {
-								if ((i & 1) == 0)
+								if ((i & 1) == 0) {
 									// remove the size of caps from the opaque parts
-									dashPattern[i] = (DashPattern[i] * Width) - Width;
+									dashPattern[i] = (_dashPattern[i] * Width) - Width;
+									if (_dashPattern[i] < 0)
+										dashPattern[i] = 0;
+								}
 								else
 									// add the size of caps to the transparent parts
-									dashPattern[i] = (DashPattern[i] * Width) + Width;
+									dashPattern[i] = (_dashPattern[i] * Width) + Width;
 							}
 						}
 					}
