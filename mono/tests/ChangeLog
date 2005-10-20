@@ -1,3 +1,8 @@
+2005-10-20  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile.am (testbundle): Use in-tree config, and in-tree
+	shared directory.
+
 2005-10-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain-unload.cs: Allocate some MBR objects between unloads to
