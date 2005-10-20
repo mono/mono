@@ -320,9 +320,11 @@ namespace Mono.CSharp {
 		Type base_type;
 		Type class_constraint;
 		Type[] iface_constraints;
+		string name;
 
 		public ReflectionConstraints (Type t)
 		{
+			name = t.Name;
 			Type[] constraints = t.GetGenericParameterConstraints ();
 			if ((constraints.Length > 0) && !constraints [0].IsInterface) {
 				class_constraint = constraints [0];
@@ -338,6 +340,10 @@ namespace Mono.CSharp {
 				base_type = class_constraint;
 			else
 				base_type = TypeManager.object_type;
+		}
+
+		public override string TypeParameter {
+			get { return name; }
 		}
 
 		public override GenericParameterAttributes Attributes {

@@ -1305,7 +1305,8 @@ namespace Mono.CSharp {
 					}
 				}
 
-				type_params [i] = new TypeParameter (Parent, name, constraints, Location);
+				type_params [i] = new TypeParameter (
+					Parent, this, name, constraints, Location);
 
 				AddToContainer (type_params [i], name);
 			}

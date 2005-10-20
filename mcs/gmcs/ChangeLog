@@ -1,3 +1,12 @@
+2005-10-20  Martin Baulig  <martin@ximian.com>
+
+	* generic.cs
+	(GenericConstraints.TypeParameter): New public property.
+	(TypeParameter.ctor): Also take a `DeclSpace' argument.
+	(TypeParameter.DeclSpace): New public property.
+	(TypeParameter.DefineType): Inflate the constraints if our
+	`DeclSpace' is an `Iterator'.	
+
 2005-10-19  Atsushi Enomotot  <atsushi@ximian.com>
 
 	* class.cs, decl.cs : (MemberCache.FindMemberToOverride) added 

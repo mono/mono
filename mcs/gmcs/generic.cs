@@ -24,6 +24,10 @@ namespace Mono.CSharp {
 	///   The type parameter can come from a generic type definition or from reflection.
 	/// </summary>
 	public abstract class GenericConstraints {
+		public abstract string TypeParameter {
+			get;
+		}
+
 		public abstract GenericParameterAttributes Attributes {
 			get;
 		}
@@ -146,7 +150,7 @@ namespace Mono.CSharp {
 			this.loc = loc;
 		}
 
-		public string TypeParameter {
+		public override string TypeParameter {
 			get {
 				return name;
 			}
@@ -566,16 +570,18 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class TypeParameter : MemberCore, IMemberContainer {
 		string name;
+		DeclSpace decl;
 		GenericConstraints gc;
 		Constraints constraints;
 		Location loc;
 		GenericTypeParameterBuilder type;
 
-		public TypeParameter (TypeContainer parent, string name,
+		public TypeParameter (TypeContainer parent, DeclSpace decl, string name,
 				      Constraints constraints, Location loc)
 			: base (parent, new MemberName (name, loc), null)
 		{
 			this.name = name;
+			this.decl = decl;
 			this.constraints = constraints;
 			this.loc = loc;
 		}
@@ -598,6 +604,12 @@ namespace Mono.CSharp {
 					return constraints.HasConstructorConstraint;
 
 				return false;
+			}
+		}
+
+		public DeclSpace DeclSpace {
+			get {
+				return decl;
 			}
 		}
 
@@ -761,6 +773,14 @@ namespace Mono.CSharp {
 						mparam, TypeManager.CSharpSignature (mb));
 					return false;
 				}
+			} else if (DeclSpace is Iterator) {
+				TypeParameter[] tparams = DeclSpace.TypeParameters;
+				Type[] types = new Type [tparams.Length];
+				for (int i = 0; i < tparams.Length; i++)
+					types [i] = tparams [i].Type;
+
+				if (constraints != null)
+					gc = new InflatedConstraints (constraints, types);
 			} else {
 				gc = (GenericConstraints) constraints;
 			}
@@ -930,10 +950,13 @@ namespace Mono.CSharp {
 			Type[] dargs;
 
 			public InflatedConstraints (GenericConstraints gc, Type declaring)
+				: this (gc, TypeManager.GetTypeArguments (declaring))
+			{ }
+
+			public InflatedConstraints (GenericConstraints gc, Type[] dargs)
 			{
 				this.gc = gc;
-
-				dargs = TypeManager.GetTypeArguments (declaring);
+				this.dargs = dargs;
 
 				ArrayList list = new ArrayList ();
 				if (gc.HasClassConstraint)
@@ -976,6 +999,10 @@ namespace Mono.CSharp {
 				}
 
 				return t;
+			}
+
+			public override string TypeParameter {
+				get { return gc.TypeParameter; }
 			}
 
 			public override GenericParameterAttributes Attributes {
