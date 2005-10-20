@@ -335,7 +335,11 @@ namespace System.Windows.Forms {
 				invalid.Y += 2;
 				
 				Invalidate (invalid);
-				
+
+				// We ensure its visible after we update because
+				// scrolling is used for insure visible
+				selected_node.EnsureVisible ();
+
 				OnAfterSelect (new TreeViewEventArgs (value, TreeViewAction.Unknown));
 			}
 		}
@@ -745,7 +749,7 @@ namespace System.Windows.Forms {
 		}
 
 		// TODO: we shouldn't have to compute this on the fly
-		private Rectangle ViewportRectangle {
+	        internal Rectangle ViewportRectangle {
 			get {
 				Rectangle res = ClientRectangle;
 
@@ -820,17 +824,16 @@ namespace System.Windows.Forms {
 
 		internal void SetBottom (TreeNode node)
 		{
-			int visible = ClientRectangle.Height / ItemHeight;
-
 			OpenTreeNodeEnumerator walk = new OpenTreeNodeEnumerator (node);
-			TreeNode top = null;
 
-			visible--;
-			while (visible-- > 0 && walk.MovePrevious ())
-				top = walk.CurrentNode;
-
-			if (top != null)
-				SetTop (top);
+			int bottom = ViewportRectangle.Bottom;
+			int offset = 0;
+			while (walk.MovePrevious ()) {
+				if (walk.CurrentNode.Bounds.Bottom <= bottom)
+					break;
+				offset++;
+			}
+			vbar.Value += offset;
 		}
 
 		internal void UpdateBelow (TreeNode node)
@@ -1309,6 +1312,10 @@ namespace System.Windows.Forms {
 						Invalidate (selected_node.Bounds);
 					}
 				}
+
+				// We ensure its visible after we update because
+				// scrolling is used for insure visible
+				selected_node.EnsureVisible ();
 			} 
 		}
 

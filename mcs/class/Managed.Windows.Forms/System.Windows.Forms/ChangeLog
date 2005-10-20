@@ -1,5 +1,15 @@
 2005-10-20  Jackson Harper  <jackson@ximian.com>
 
+	* TreeNode.cs: Use the viewport rect for determining if a node
+	needs to be moved for visibility. Don't use Begin/End edit. This
+	calls a full refresh when its done.
+	* TreeView.cs: New SetBottom works correctly.  Make the viewport
+	rect property internal so the treenodes can see it. When clicking
+	on a node we need to ensure that its visible because it might just
+	be partly visible when clicked.
+
+2005-10-20  Jackson Harper  <jackson@ximian.com>
+
 	* TreeNodeCollection.cs: Remove debug code.
 
 2005-10-20  Jordi Mas i Hernandez <jordi@ximian.com>

@@ -402,18 +402,14 @@ namespace System.Windows.Forms {
 			if (TreeView == null)
 				return;
 
-			TreeView.BeginUpdate ();
-
 			if (this.Parent != null)
 				ExpandParentRecursive (this.Parent);
 
 			if (bounds.Y < 0) {
 				TreeView.SetTop (this);
-			} else if (bounds.Y > TreeView.ClientRectangle.Height) {
+			} else if (bounds.Bottom > TreeView.ViewportRectangle.Bottom) {
 				TreeView.SetBottom (this);
 			}
-				
-			TreeView.EndUpdate ();
 		}
 
 		public int GetNodeCount (bool include_subtrees) {
