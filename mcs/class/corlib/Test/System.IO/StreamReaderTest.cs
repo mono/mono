@@ -555,6 +555,103 @@ public class StreamReaderTest : Assertion
 		AssertEquals("line doesn't match", null, r.ReadLine());
 	}
 
+	[Test]
+	public void ReadLine1() {
+		Byte[] b = new Byte[10];
+		b[0] = (byte)'a';
+		b[1] = (byte)'\r';
+		b[2] = (byte)'b';
+		b[3] = (byte)'\n';
+		b[4] = (byte)'c';
+		b[5] = (byte)'\n';
+		b[5] = (byte)'\r';
+		b[6] = (byte)'d';
+		b[7] = (byte)'\n';
+		b[8] = (byte)'\r';
+		b[9] = (byte)'\n';
+		MemoryStream m = new MemoryStream(b);
+		StreamReader r = new StreamReader(m);
+		AssertEquals("line doesn't match", "a", r.ReadLine());
+		AssertEquals("line doesn't match", "b", r.ReadLine());
+		AssertEquals("line doesn't match", "c", r.ReadLine());
+		AssertEquals("line doesn't match", "d", r.ReadLine());
+		AssertEquals("line doesn't match", "", r.ReadLine());
+		AssertEquals("line doesn't match", null, r.ReadLine());
+	}
+
+	[Test]
+	public void ReadLine2() {
+		Byte[] b = new Byte[10];
+		b[0] = (byte)'\r';
+		b[1] = (byte)'\r';
+		b[2] = (byte)'\n';
+		b[3] = (byte)'\n';
+		b[4] = (byte)'c';
+		b[5] = (byte)'\n';
+		b[5] = (byte)'\r';
+		b[6] = (byte)'d';
+		b[7] = (byte)'\n';
+		b[8] = (byte)'\r';
+		b[9] = (byte)'\n';
+		MemoryStream m = new MemoryStream(b);
+		StreamReader r = new StreamReader(m);
+		AssertEquals("line doesn't match", "", r.ReadLine());
+		AssertEquals("line doesn't match", "", r.ReadLine());
+		AssertEquals("line doesn't match", "", r.ReadLine());
+		AssertEquals("line doesn't match", "c", r.ReadLine());
+		AssertEquals("line doesn't match", "d", r.ReadLine());
+		AssertEquals("line doesn't match", "", r.ReadLine());
+		AssertEquals("line doesn't match", null, r.ReadLine());
+	}
+
+	[Test]
+	public void ReadLine3() {
+		StringBuilder sb = new StringBuilder ();
+		sb.Append (new string ('1', 32767));
+		sb.Append ('\r');
+		sb.Append ('\n');
+		sb.Append ("Hola\n");
+		byte [] bytes = Encoding.Default.GetBytes (sb.ToString ());
+		MemoryStream m = new MemoryStream(bytes);
+		StreamReader r = new StreamReader(m);
+		AssertEquals("line doesn't match", new string ('1', 32767), r.ReadLine());
+		AssertEquals("line doesn't match", "Hola", r.ReadLine());
+		AssertEquals("line doesn't match", null, r.ReadLine());
+	}
+
+	[Test]
+	public void ReadLine4() {
+		StringBuilder sb = new StringBuilder ();
+		sb.Append (new string ('1', 32767));
+		sb.Append ('\r');
+		sb.Append ('\n');
+		sb.Append ("Hola\n");
+		sb.Append (sb.ToString ());
+		byte [] bytes = Encoding.Default.GetBytes (sb.ToString ());
+		MemoryStream m = new MemoryStream(bytes);
+		StreamReader r = new StreamReader(m);
+		AssertEquals("line doesn't match", new string ('1', 32767), r.ReadLine());
+		AssertEquals("line doesn't match", "Hola", r.ReadLine());
+		AssertEquals("line doesn't match", new string ('1', 32767), r.ReadLine());
+		AssertEquals("line doesn't match", "Hola", r.ReadLine());
+		AssertEquals("line doesn't match", null, r.ReadLine());
+	}
+
+	[Test]
+	public void ReadLine5() {
+		StringBuilder sb = new StringBuilder ();
+		sb.Append (new string ('1', 32768));
+		sb.Append ('\r');
+		sb.Append ('\n');
+		sb.Append ("Hola\n");
+		byte [] bytes = Encoding.Default.GetBytes (sb.ToString ());
+		MemoryStream m = new MemoryStream(bytes);
+		StreamReader r = new StreamReader(m);
+		AssertEquals("line doesn't match", new string ('1', 32768), r.ReadLine());
+		AssertEquals("line doesn't match", "Hola", r.ReadLine());
+		AssertEquals("line doesn't match", null, r.ReadLine());
+	}
+
 	public void TestReadToEnd() {
 		// TODO Out Of Memory Exc? IO Exc?
 		Byte[] b = new Byte[8];
