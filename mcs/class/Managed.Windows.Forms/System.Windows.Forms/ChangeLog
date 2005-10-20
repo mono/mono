@@ -1,5 +1,12 @@
 2005-10-19  Jackson Harper  <jackson@ximian.com>
 
+	* ColorDialog.cs: Don't show the help button if it is not enabled
+	instead of disabling it	(this is what MS does). Don't create the
+	panel until the dialog is run, otherwise the vars (such as
+	ShowHelp) are not set yet.
+
+2005-10-19  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Implement Begin/EndEdit more correctly so refreshes
 	are reduced when adding nodes.
 	* TreeNode.cs:

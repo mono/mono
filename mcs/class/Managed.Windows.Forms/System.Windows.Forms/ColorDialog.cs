@@ -52,8 +52,6 @@ namespace System.Windows.Forms
 			form.Text = "Color";
 			
 			form.Size = new Size( 221, 332 ); // 300
-			
-			colorDialogPanel = new ColorDialogPanel( this );
 		}
 		#endregion	// Public Constructors
 		
@@ -201,6 +199,7 @@ namespace System.Windows.Forms
 		#region Protected Instance Methods
 		protected override bool RunDialog( IntPtr hwndOwner )
 		{
+			colorDialogPanel = new ColorDialogPanel (this);
 			form.Controls.Add( colorDialogPanel );
 			
 			if ( customColors != null )
@@ -265,7 +264,8 @@ namespace System.Windows.Forms
 				
 				okButton = new Button( );
 				cancelButton = new Button( );
-				helpButton = new Button( );
+				if (colorDialog.ShowHelp)
+					helpButton = new Button( );
 				defineColoursButton = new Button( );
 				addColoursButton = new Button( );
 				
@@ -383,11 +383,14 @@ namespace System.Windows.Forms
 				cancelButton.TabIndex = 1;
 				cancelButton.Text = Locale.GetText( "Cancel" );
 				// helpButton
-				helpButton.FlatStyle = FlatStyle.System;
-				helpButton.Location = new Point( 149, 271 );
-				helpButton.Size = new Size( 66, 22 );
-				helpButton.TabIndex = 5;
-				helpButton.Text = Locale.GetText( "Help" );
+				if (colorDialog.ShowHelp) {
+					helpButton.FlatStyle = FlatStyle.System;
+					helpButton.Location = new Point( 149, 271 );
+					helpButton.Size = new Size( 66, 22 );
+					helpButton.TabIndex = 5;
+					helpButton.Text = Locale.GetText ( "Help" );
+				}
+
 				// addColoursButton
 				addColoursButton.FlatStyle = FlatStyle.System;
 				addColoursButton.Location = new Point( 227, 271 );
@@ -430,7 +433,8 @@ namespace System.Windows.Forms
 				Controls.Add( defineColoursButton );
 				Controls.Add( okButton );
 				Controls.Add( cancelButton );
-				Controls.Add( helpButton );
+				if (colorDialog.ShowHelp)
+					Controls.Add( helpButton );
 				Controls.Add( addColoursButton );
 				
 				Controls.Add( baseColorControl );
@@ -463,16 +467,14 @@ namespace System.Windows.Forms
 				
 				if ( !colorDialog.AllowFullOpen )
 					defineColoursButton.Enabled = false;
-				
-				if ( !colorDialog.ShowHelp )
-					helpButton.Enabled = false;
-				
+
 				if ( colorDialog.FullOpen )
 					DoButtonDefineColours( );
 				
 				defineColoursButton.Click += new EventHandler( OnClickButtonDefineColours );
 				addColoursButton.Click += new EventHandler( OnClickButtonAddColours );
-				helpButton.Click += new EventHandler( OnClickHelpButton );
+				if (colorDialog.ShowHelp)
+					helpButton.Click += new EventHandler( OnClickHelpButton );
 				cancelButton.Click += new EventHandler( OnClickCancelButton );
 				okButton.Click += new EventHandler( OnClickOkButton );
 				
