@@ -26,7 +26,7 @@
 
 // COMPLETE
 
-#define Debug
+#undef Debug
 
 using System;
 using System.ComponentModel;
