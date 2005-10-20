@@ -1,5 +1,13 @@
 2005-10-19  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Implement Begin/EndEdit more correctly so refreshes
+	are reduced when adding nodes.
+	* TreeNode.cs:
+	* TreeNodeCollection.cs: Use UpdateNode instead of refreshing the
+	tree.
+	
+2005-10-19  Jackson Harper  <jackson@ximian.com>
+
 	* FolderBrowserDialog.cs: End editing our treeview so the window
 	actually gets refreshed.
 

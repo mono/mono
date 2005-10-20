@@ -394,7 +394,7 @@ namespace System.Windows.Forms {
 		public void ExpandAll () {
 			ExpandRecursive (this);
 			if(TreeView != null)
-				TreeView.Refresh();
+				TreeView.UpdateNode (TreeView.root_node);
 		}
 
 		public void EnsureVisible ()

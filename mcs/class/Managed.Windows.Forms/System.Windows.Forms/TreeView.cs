@@ -79,7 +79,8 @@ namespace System.Windows.Forms {
 		private bool update_node_bounds;
 		
 		private int update_stack;
-
+		private bool update_needed;
+		
 		private TreeViewEventHandler on_after_check;
 		private TreeViewEventHandler on_after_collapse;
 		private TreeViewEventHandler on_after_expand;
@@ -425,24 +426,24 @@ namespace System.Windows.Forms {
 
 		#region Public Instance Methods
 		public void BeginUpdate () {
-			if (!IsHandleCreated)
-				return;
 			update_stack++;
 		}
 
-		public void CollapseAll () {
+		public void CollapseAll ()
+		{
 			root_node.CollapseAll ();
 		}
 
-		public void EndUpdate () {
-			if (!IsHandleCreated)
-				return;
-
+		public void EndUpdate ()
+		{
 			if (update_stack > 1) {
 				update_stack--;
 			} else {
 				update_stack = 0;
-				Refresh ();
+				if (update_needed) {
+					Invalidate (ViewportRectangle);
+					update_needed = false;
+				}
 			}
 		}
 
@@ -834,6 +835,11 @@ namespace System.Windows.Forms {
 
 		internal void UpdateBelow (TreeNode node)
 		{
+			if (update_stack > 0) {
+				update_needed = true;
+				return;
+			}
+
 			if (node == root_node) {
 				Refresh ();
 				return;
@@ -846,6 +852,11 @@ namespace System.Windows.Forms {
 
 		internal void UpdateNode (TreeNode node)
 		{
+			if (update_stack > 0) {
+				update_needed = true;
+				return;
+			}
+
 			if (node == root_node) {
 				Refresh ();
 				return;
