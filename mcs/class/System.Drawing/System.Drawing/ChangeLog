@@ -1,3 +1,7 @@
+2005-10-20 Konstantin Triger <kostat@mainsoft.com>
+
+        * Font.jvm.cs: make fallbacks for GdiCharSet, GdiVerticalFont
+
 2005-10-19 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Bitmap.jvm.cs: fixed InternalSave, ToBufferedImageFormat, Clone

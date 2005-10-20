@@ -316,13 +316,13 @@ namespace System.Drawing {
 		
 		public byte GdiCharSet {
 			get {
-				throw new NotSupportedException();
+				return 1; //DEFAULT_CHARSET
 			}
 		}
 		
 		public bool GdiVerticalFont {
 			get {
-				throw new NotSupportedException();
+				return false; //Name.StartsWith("@");
 			}
 		}
 		
