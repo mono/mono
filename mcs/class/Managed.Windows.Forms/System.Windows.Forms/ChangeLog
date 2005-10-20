@@ -1,3 +1,7 @@
+2005-10-20  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNodeCollection.cs: Remove debug code.
+
 2005-10-20  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Datagrid.cs: Implements column sorting in Datagrid

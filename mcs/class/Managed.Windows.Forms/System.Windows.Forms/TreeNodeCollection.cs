@@ -188,8 +188,6 @@ namespace System.Windows.Forms {
 			TreeNode removed = nodes [index];
 			Array.Copy (nodes, index + 1, nodes, index, count - index);
 			count--;
-			for (int i = 0; i < count; i++)
-				Console.WriteLine (nodes [i]);
 			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
 				Shrink ();
 			if (owner.TreeView != null)
