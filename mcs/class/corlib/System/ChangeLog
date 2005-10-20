@@ -1,3 +1,7 @@
+2005-10-20  Raja R Harinath  <rharinath@novell.com>
+
+	* Array.cs (Swapper): Remove NET_2_0 guards from nested declaration.
+
 2005-10-16  Michal Moskal  <malekith@nemerle.org>
 
        * TermInfoDriver.cs: Call Init () in Background/ForegroundColor.

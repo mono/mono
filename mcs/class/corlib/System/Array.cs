@@ -894,7 +894,7 @@ namespace System
 			return array.GetLowerBound (0) - 1;
 		}
 
-#if !BOOTSTRAP_WITH_OLDLIB && !NET_2_0
+#if !BOOTSTRAP_WITH_OLDLIB
 		/* delegate used to swap array elements */
 		delegate void Swapper (int i, int j);
 #endif
@@ -2006,7 +2006,7 @@ namespace System
 	}
 #endif
 
-#if BOOTSTRAP_WITH_OLDLIB || NET_2_0
+#if BOOTSTRAP_WITH_OLDLIB
 	/* delegate used to swap array elements, keep defined outside Array */
 	delegate void Swapper (int i, int j);
 #endif
