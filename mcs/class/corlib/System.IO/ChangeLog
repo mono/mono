@@ -1,3 +1,7 @@
+2005-10-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* StreamReader.cs: made ReadLine() less memory-hungry. Fixes bug #76399.
+
 2005-10-04 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* MonoIO.cs: replace FindFirst/FindNext/FindClose with
