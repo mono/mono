@@ -120,9 +120,7 @@ namespace System.Drawing {
 		#endregion
 
 		#region Clone
-		public virtual object Clone() {
-			throw new NotImplementedException ("Must be implemented in child class");
-		}
+		public abstract object Clone();
 		#endregion
 
 		// static

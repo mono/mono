@@ -1,3 +1,7 @@
+2005-10-20 Konstantin Triger <kostat@mainsoft.com>
+
+        * Metafile.jvm.cs: implement abstact Clone
+
 2005-10-04 Peter Dennis Bartok <pbartok@novell.com>
 
 	* EncoderParameter.cs, EncoderParameters.cs: Calling GC.SuppressFinalize

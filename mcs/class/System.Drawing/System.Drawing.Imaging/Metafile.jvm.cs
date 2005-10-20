@@ -299,6 +299,11 @@ namespace System.Drawing.Imaging {
 			throw new NotImplementedException ();
 		}
 
+		#region Clone
+		public override object Clone() {
+			throw new NotImplementedException ();
+		}
+		#endregion
 
 	}
 
