@@ -1,7 +1,7 @@
 2005-10-20  Miguel de Icaza  <miguel@novell.com>
 
 	* Makefile.am (stresstest): Change the strings so we can scan the
-	build logs more easily for failures.
+	build logs more easily for failures (without the word "0 failed".
 
 	* Makefile (stresstest): 
 
