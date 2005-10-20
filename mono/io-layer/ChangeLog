@@ -1,3 +1,13 @@
+2005-10-20  Dick Porter  <dick@ximian.com>
+
+	* processes.c (process_set_current): If the expected process
+	handle slot doesn't contain the correct pid, create a new handle.
+
+	* handles.c (_wapi_search_handle): When the search doesn't find
+	anything, return failure instead of the last handle we looked at.
+	(_wapi_handle_ref, _wapi_handle_unref): Don't try to ref or unref
+	unused handles (makes tracking refcounting bugs easier.)
+
 2005-10-19  Dick Porter  <dick@ximian.com>
 
 	* handles.c:
