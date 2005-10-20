@@ -1,3 +1,8 @@
+2005-10-20  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNodeCollection.cs: Remove items properly. Update the correct
+	area after removing them.
+
 2005-10-20  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* Datagrid.cs: Should not call base.OnPaintBackground

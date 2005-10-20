@@ -185,10 +185,15 @@ namespace System.Windows.Forms {
 
 		public virtual void RemoveAt (int index)
 		{
-			Array.Copy (nodes, index, nodes, index + 1, count - index);
+			TreeNode removed = nodes [index];
+			Array.Copy (nodes, index + 1, nodes, index, count - index);
 			count--;
+			for (int i = 0; i < count; i++)
+				Console.WriteLine (nodes [i]);
 			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
 				Shrink ();
+			if (owner.TreeView != null)
+				owner.TreeView.UpdateNode (removed);
 		}
 
 		int IList.Add (object node)
