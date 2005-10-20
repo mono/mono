@@ -1,3 +1,7 @@
+2005-10-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListBoxTest.cs: a few more tests for ListBox and selection.
+
 2005-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListControlTest.cs: 3 more tests for ListControl.

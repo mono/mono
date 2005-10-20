@@ -3,6 +3,7 @@
 //
 // Author:
 //	Jackson Harper (jackson@ximian.com)
+//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 
 //
@@ -32,6 +33,7 @@ using NUnit.Framework;
 using System;
 using System.IO;
 using System.Drawing;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Web;
 using System.Web.UI;
@@ -46,7 +48,12 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			TrackViewState ();
 		}
-		
+
+		public bool LoadPD (string key, NameValueCollection values)
+		{
+			return ((IPostBackDataHandler) this).LoadPostData (key, values);
+		}
+
 		public object SaveState ()
 		{
 			return SaveViewState ();
@@ -254,6 +261,98 @@ namespace MonoTests.System.Web.UI.WebControls
 			page.Controls.Add (ctrl);
 			ctrl.Controls.Add (list);
 			Assert.IsTrue (-1 != list.Render ().IndexOf (':'), "unique");
+		}
+
+		[Test]
+		public void HtmlEncodedText ()
+		{
+			ListBoxPoker list = new ListBoxPoker ();
+			// The att. value is encoded by the writer, but the text is encoded in ListBox.
+			list.Items.Add (new ListItem ("\"hola", "\"adios"));
+			string output = list.Render ();
+			Assert.IsTrue (-1 != output.IndexOf ("&quot;hola"), "#01");
+			Assert.IsTrue (-1 != output.IndexOf ("&quot;adios"), "#02");
+		}
+
+		[Test]
+		public void SelectSingle1 ()
+		{
+			ListBoxPoker list = new ListBoxPoker ();
+			list.Items.Add (new ListItem ("1", "first"));
+			list.Items.Add (new ListItem ("2", "second"));
+			list.SelectedIndex = 0;
+			NameValueCollection coll = new NameValueCollection ();
+			coll.Add ("2", "second");
+			Assert.IsTrue (list.LoadPD ("2", coll), "#00");
+			Assert.IsFalse (list.Items [0].Selected, "#01");
+			Assert.IsTrue (list.Items [1].Selected, "#02");
+			Assert.AreEqual (1, list.SelectedIndex, "#03");
+		}
+
+		[Test]
+		public void SelectSingle2 ()
+		{
+			ListBoxPoker list = new ListBoxPoker ();
+			list.Items.Add (new ListItem ("1", "first"));
+			list.Items.Add (new ListItem ("2", "second"));
+			list.SelectedIndex = 0;
+			NameValueCollection coll = new NameValueCollection ();
+			coll.Add ("willnotbefound", "second");
+			Assert.IsTrue (list.LoadPD ("2", coll), "#00");
+			Assert.IsFalse (list.Items [0].Selected, "#01");
+			Assert.IsFalse (list.Items [1].Selected, "#02");
+			Assert.AreEqual (-1, list.SelectedIndex, "#03");
+		}
+
+		[Test]
+		public void SelectMultiple1 ()
+		{
+			ListBoxPoker list = new ListBoxPoker ();
+			list.SelectionMode = ListSelectionMode.Multiple;
+			list.Items.Add (new ListItem ("1", "first"));
+			list.Items.Add (new ListItem ("2", "second"));
+			list.SelectedIndex = 0;
+			NameValueCollection coll = new NameValueCollection ();
+			coll.Add ("2", "second");
+			Assert.IsTrue (list.LoadPD ("2", coll), "#00");
+			Assert.IsFalse (list.Items [0].Selected, "#01");
+			Assert.IsTrue (list.Items [1].Selected, "#02");
+			Assert.AreEqual (1, list.SelectedIndex, "#03");
+		}
+
+		[Test]
+		public void SelectMultiple2 ()
+		{
+			ListBoxPoker list = new ListBoxPoker ();
+			list.SelectionMode = ListSelectionMode.Multiple;
+			list.Items.Add (new ListItem ("1", "first"));
+			list.Items.Add (new ListItem ("2", "second"));
+			list.Items.Add (new ListItem ("3", "third"));
+			list.Items.Add (new ListItem ("4", "forth"));
+			NameValueCollection coll = new NameValueCollection ();
+			coll.Add ("key", "second");
+			coll.Add ("key", "forth");
+			Assert.IsTrue (list.LoadPD ("key", coll), "#00");
+			Assert.IsFalse (list.Items [0].Selected, "#01");
+			Assert.IsTrue (list.Items [1].Selected, "#02");
+			Assert.IsFalse (list.Items [2].Selected, "#03");
+			Assert.IsTrue (list.Items [3].Selected, "#04");
+
+			Assert.IsFalse (list.LoadPD ("key", coll), "#05");
+			Assert.IsFalse (list.Items [0].Selected, "#06");
+			Assert.IsTrue (list.Items [1].Selected, "#07");
+			Assert.IsFalse (list.Items [2].Selected, "#08");
+			Assert.IsTrue (list.Items [3].Selected, "#09");
+
+			coll.Clear ();
+			coll.Add ("key", "first");
+			coll.Add ("key", "third");
+			Assert.IsTrue (list.LoadPD ("key", coll), "#10");
+			Assert.IsTrue (list.Items [0].Selected, "#11");
+			Assert.IsFalse (list.Items [1].Selected, "#12");
+			Assert.IsTrue (list.Items [2].Selected, "#13");
+			Assert.IsFalse (list.Items [3].Selected, "#14");
+
 		}
 	}
 }
