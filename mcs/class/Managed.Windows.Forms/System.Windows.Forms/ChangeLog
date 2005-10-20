@@ -1,3 +1,14 @@
+2005-10-20  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs (GetMessage):
+	  - Now properly calculates NC_xBUTTONDOWN coordinates off the whole
+	    window instead of client window
+	  - Now properly calculates NC_xBUTTONUP message coordinates
+	  - ScreenToMenu now properly calculates it's coordinates of whole 
+	    window, since menus are in the whole window, not in the client
+	    window
+	  - Added WholeToScreen coordinate translation method
+
 2005-10-20  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* XplatUIX11.cs (GetMessage): Don't return in situations where we don't

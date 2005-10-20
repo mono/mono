@@ -817,6 +817,22 @@ namespace System.Windows.Forms {
 			AddExpose (xevent);
 		}
 
+		private void WholeToScreen(IntPtr handle, ref int x, ref int y) {
+			int	dest_x_return;
+			int	dest_y_return;
+			IntPtr	child;
+			Hwnd	hwnd;
+
+			hwnd = Hwnd.ObjectFromHandle(handle);
+
+			lock (XlibLock) {
+				XTranslateCoordinates(DisplayHandle, hwnd.whole_window, RootWindow, x, y, out dest_x_return, out dest_y_return, out child);
+			}
+
+			x = dest_x_return;
+			y = dest_y_return;
+		}
+
 		private void AddConfigureNotify (XEvent xevent) {
 			Hwnd	hwnd;
 
@@ -2420,7 +2436,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_LBUTTONDOWN;
 							} else {
 								msg.message = Msg.WM_NCLBUTTONDOWN;
-								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							// TODO: For WM_NCLBUTTONDOWN wParam specifies a hit-test value not the virtual keys down
 							msg.wParam=GetMousewParam(0);
@@ -2433,7 +2449,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_MBUTTONDOWN;
 							} else {
 								msg.message = Msg.WM_NCMBUTTONDOWN;
-								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -2445,7 +2461,7 @@ namespace System.Windows.Forms {
 								msg.message = Msg.WM_RBUTTONDOWN;
 							} else {
 								msg.message = Msg.WM_NCRBUTTONDOWN;
-								ClientToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
 							}
 							msg.wParam=GetMousewParam(0);
 							break;
@@ -2506,21 +2522,36 @@ namespace System.Windows.Forms {
 					switch(xevent.ButtonEvent.button) {
 						case 1: {
 							MouseState &= ~MouseButtons.Left;
-							msg.message = client ? Msg.WM_LBUTTONUP : Msg.WM_NCLBUTTONUP;
+							if (client) {
+								msg.message = Msg.WM_LBUTTONUP;
+							} else {
+								msg.message = Msg.WM_NCLBUTTONUP;
+								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
 							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
 						case 2: {
 							MouseState &= ~MouseButtons.Middle;
-							msg.message = client ? Msg.WM_MBUTTONUP : Msg.WM_NCMBUTTONUP;
+							if (client) {
+								msg.message = Msg.WM_MBUTTONUP;
+							} else {
+								msg.message = Msg.WM_NCMBUTTONUP;
+								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
 							msg.wParam=GetMousewParam(0);
 							break;
 						}
 
 						case 3: {
 							MouseState &= ~MouseButtons.Right;
-							msg.message = client ? Msg.WM_RBUTTONUP : Msg.WM_NCRBUTTONUP;
+							if (client) {
+								msg.message = Msg.WM_RBUTTONUP;
+							} else {
+								msg.message = Msg.WM_NCRBUTTONUP;
+								WholeToScreen (msg.hwnd, ref xevent.ButtonEvent.x, ref xevent.ButtonEvent.y);
+							}
 							msg.wParam=GetMousewParam(0);
 							break;
 						}
@@ -2559,8 +2590,14 @@ namespace System.Windows.Forms {
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): non-client area {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
 						#endif
-						msg.message = Msg.WM_NCHITTEST;
+						msg.message = Msg.WM_NCMOUSEMOVE;
 						msg.lParam = (IntPtr) (xevent.MotionEvent.y << 16 | xevent.MotionEvent.x & 0xFFFF);
+
+						#if notyet
+							// Not sure we need this...
+							HitTest	ht;
+							ht = NativeWindow.WndProc(hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero, msg.lParam);
+						#endif
 
 						MousePosition.X = xevent.MotionEvent.x;
 						MousePosition.Y = xevent.MotionEvent.y;
@@ -3103,7 +3140,7 @@ namespace System.Windows.Forms {
 			hwnd = Hwnd.ObjectFromHandle(handle);
 
 			lock (XlibLock) {
-				XTranslateCoordinates (DisplayHandle, RootWindow, hwnd.client_window, x, y, out dest_x_return, out dest_y_return, out child);
+				XTranslateCoordinates (DisplayHandle, RootWindow, hwnd.whole_window, x, y, out dest_x_return, out dest_y_return, out child);
 			}
 
 			x = dest_x_return;
