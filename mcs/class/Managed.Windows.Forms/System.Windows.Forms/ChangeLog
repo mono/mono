@@ -1,3 +1,9 @@
+2005-10-20  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* XplatUIX11.cs (GetMessage): Don't return in situations where we don't
+	  want to return a message, loop back to the beginning of the function
+	  and grab the next real message to process instead.
+
 2005-10-20  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Splitter.cs: Properly set limits if no filler control is used

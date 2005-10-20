@@ -2526,11 +2526,11 @@ namespace System.Windows.Forms {
 						}
 
 						case 4: {
-							return true;
+							goto ProcessNextMessage;
 						}
 
 						case 5: {
-							return true;
+							goto ProcessNextMessage;
 						}
 					}
 
@@ -2571,7 +2571,7 @@ namespace System.Windows.Forms {
 
 				case XEventName.EnterNotify: {
 					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
-						return true;
+						goto ProcessNextMessage;
 					}
 					msg.message = Msg.WM_MOUSE_ENTER;
 					HoverState.Timer.Enabled = true;
@@ -2581,7 +2581,7 @@ namespace System.Windows.Forms {
 
 				case XEventName.LeaveNotify: {
 					if (xevent.CrossingEvent.mode != NotifyMode.NotifyNormal) {
-						return true;
+						goto ProcessNextMessage;
 					}
 					msg.message=Msg.WM_MOUSE_LEAVE;
 					HoverState.Timer.Enabled = false;
