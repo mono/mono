@@ -2,10 +2,10 @@
 // ProtectedData.cs: Protect (encrypt) data without (user involved) key management
 //
 // Author:
-//	Sebastien Pouliot (spouliot@motus.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,7 +29,10 @@
 
 #if NET_2_0
 
-using System;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
+
+using Mono.Security.Cryptography;
 
 namespace System.Security.Cryptography {
 
@@ -43,29 +46,106 @@ namespace System.Security.Cryptography {
 		{
 		}
 
-		// FIXME: interop could be important under windows - if one application protect some data using
-		// mono and another one unprotects it using ms.net
-
-		[MonoTODO ("interop with MS implementation ?")]
+		[MonoTODO ("not (yet) supported on Windows")]
+// FIXME	[DataProtectionPermission (SecurityAction.Demand, ProtectData = true)]
 		public static byte[] Protect (byte[] userData, byte[] optionalEntropy, DataProtectionScope scope) 
 		{
 			if (userData == null)
 				throw new ArgumentNullException ("userData");
 
 			// on Windows this is supported only under 2000 and later OS
-			throw new PlatformNotSupportedException ();
+			Check (scope);
+
+			switch (impl) {
+			case DataProtectionImplementation.ManagedProtection:
+				try {
+					return ManagedProtection.Protect (userData, optionalEntropy, scope);
+				}
+				catch (Exception e) {
+					string msg = Locale.GetText ("Data protection failed.");
+					throw new CryptographicException (msg, e);
+				}
+			case DataProtectionImplementation.Win32CryptoProtect:
+			default:
+				throw new PlatformNotSupportedException ();
+			}
 		}
 
-		[MonoTODO ("interop with MS implementation ?")]
+		[MonoTODO ("not (yet) supported on Windows")]
+// FIXME	[DataProtectionPermission (SecurityAction.Demand, UnprotectData = true)]
 		public static byte[] Unprotect (byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope) 
 		{
 			if (encryptedData == null)
 				throw new ArgumentNullException ("encryptedData");
 
 			// on Windows this is supported only under 2000 and later OS
-			throw new PlatformNotSupportedException ();
+			Check (scope);
+
+			switch (impl) {
+			case DataProtectionImplementation.ManagedProtection:
+				try {
+					return ManagedProtection.Unprotect (encryptedData, optionalEntropy, scope);
+				}
+				catch (Exception e) {
+					string msg = Locale.GetText ("Data unprotection failed.");
+					throw new CryptographicException (msg, e);
+				}
+			case DataProtectionImplementation.Win32CryptoProtect:
+			default:
+				throw new PlatformNotSupportedException ();
+			}
 		}
- 	} 
+
+		// private stuff
+
+		enum DataProtectionImplementation {
+			Unknown,
+			Win32CryptoProtect,
+			ManagedProtection,
+			Unsupported = Int32.MinValue
+		}
+
+		private static DataProtectionImplementation impl;
+
+		private static void Detect ()
+		{
+			OperatingSystem os = Environment.OSVersion;
+			switch (os.Platform) {
+			case PlatformID.Win32NT:
+				Version v = os.Version;
+				if (v.Major < 5) {
+					impl = DataProtectionImplementation.Unsupported;
+				} else {
+					// Windows 2000 (5.0) and later
+					impl = DataProtectionImplementation.Win32CryptoProtect;
+				}
+				break;
+			case PlatformID.Unix:
+				impl = DataProtectionImplementation.ManagedProtection;
+				break;
+			default:
+				impl = DataProtectionImplementation.Unsupported;
+				break;
+			}
+		}
+
+		private static void Check (DataProtectionScope scope)
+		{
+			if ((scope < DataProtectionScope.CurrentUser) || (scope > DataProtectionScope.LocalMachine)) {
+				string msg = Locale.GetText ("Invalid enum value '{0}' for '{1}'.", 
+					scope, "DataProtectionScope");
+				throw new ArgumentException (msg, "scope");
+			}
+
+			switch (impl) {
+			case DataProtectionImplementation.Unknown:
+				Detect ();
+				break;
+			case DataProtectionImplementation.Unsupported:
+				throw new PlatformNotSupportedException ();
+			}
+		}
+	}
 }
 
 #endif

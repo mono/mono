@@ -1,3 +1,10 @@
+2005-10-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptographicAttributeCollection.cs: Fixed Add and Remove methods.
+	* ProtectedMemory.cs: Implemented (unmanaged) for Windows only.
+	* ProtectedData.cs: Implemented for everything except Windows ;-) by
+	using the new ManagedProtection class.
+
 2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Asn*.cs, Oid*.cs: Moved to System.dll

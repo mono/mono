@@ -63,7 +63,7 @@ namespace System.Security.Cryptography {
 		}
 
 		public object SyncRoot {
-			get { return _list.SyncRoot; }
+			get { return this; }
 		}
 
 		// methods
@@ -73,7 +73,8 @@ namespace System.Security.Cryptography {
 			if (asnEncodedData == null)
 				throw new ArgumentNullException ("asnEncodedData");
 
-			return _list.Add (asnEncodedData);
+			AsnEncodedDataCollection coll = new AsnEncodedDataCollection (asnEncodedData);
+			return Add (new CryptographicAttributeObject (asnEncodedData.Oid, coll));
 		}
 
 		public int Add (CryptographicAttributeObject attribute)
@@ -81,7 +82,23 @@ namespace System.Security.Cryptography {
 			if (attribute == null)
 				throw new ArgumentNullException ("attribute");
 
-			return _list.Add (attribute);
+			int existing = -1;
+			string oid = attribute.Oid.Value;
+			for (int i=0; i < _list.Count; i++) {
+				if ((_list[i] as CryptographicAttributeObject).Oid.Value == oid) {
+					existing = i;
+					break;
+				}
+			}
+			if (existing >= 0) {
+				CryptographicAttributeObject cao = this[existing];
+				foreach (AsnEncodedData value in attribute.Values) {
+					cao.Values.Add (value);
+				}
+				return existing;
+			} else {
+				return _list.Add (attribute);
+			}
 		}
 
 		public void CopyTo (CryptographicAttributeObject[] array, int index)
@@ -106,6 +123,9 @@ namespace System.Security.Cryptography {
 
 		public void Remove (CryptographicAttributeObject attribute) 
 		{
+			if (attribute == null)
+				throw new ArgumentNullException ("attribute");
+
 			_list.Remove (attribute);
 		}
 	}
