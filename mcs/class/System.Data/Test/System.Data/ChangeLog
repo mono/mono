@@ -1,3 +1,7 @@
+2005-10-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataSetTest.cs : added test for #76480.
+
 2005-10-14  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataViewTest_IBindingList.cs (FindTest): mark working. According

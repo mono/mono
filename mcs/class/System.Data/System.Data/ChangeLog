@@ -1,3 +1,8 @@
+2005-10-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaWriter.cs : escape names in the schema with XmlConvert.
+	  Fixed bug #76480.
+
 2005-10-14  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* DataView.cs: Correct multiple throwing of events. Patch from

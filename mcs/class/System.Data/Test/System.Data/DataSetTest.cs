@@ -2058,7 +2058,36 @@ namespace MonoTests.System.Data
 						4,
 						(int) childRow ["parent"]);
 		}
-		
+
+		[Test] // from bug #76480
+		public void WriteXmlEscapeName ()
+		{
+			// create dataset
+			DataSet data = new DataSet();
+
+			DataTable mainTable = data.Tables.Add ("main");
+			DataColumn mainkey = mainTable.Columns.Add ("mainkey", typeof(Guid));
+			mainTable.Columns.Add ("col.2<hi/>", typeof (string));
+			mainTable.Columns.Add ("#col3", typeof (string));
+
+			// populate data
+			mainTable.Rows.Add (new object [] { Guid.NewGuid (), "hi there", "my friend" } );
+			mainTable.Rows.Add (new object [] { Guid.NewGuid (), "what is", "your name" } );
+			mainTable.Rows.Add (new object [] { Guid.NewGuid (), "I have", "a bean" } );
+
+			// write xml
+			StringWriter writer = new StringWriter ();
+			data.WriteXml (writer, XmlWriteMode.WriteSchema);
+			string xml = writer.ToString ();
+			Assert ("#1", xml.IndexOf ("name=\"col.2_x003C_hi_x002F__x003E_\"") > 0);
+			Assert ("#2", xml.IndexOf ("name=\"_x0023_col3\"") > 0);
+			Assert ("#3", xml.IndexOf ("<col.2_x003C_hi_x002F__x003E_>hi there</col.2_x003C_hi_x002F__x003E_>") > 0);
+
+			// read xml
+			DataSet data2 = new DataSet();
+			data2.ReadXml (new StringReader (
+				writer.GetStringBuilder ().ToString ()));
+		}
 
         }
 
