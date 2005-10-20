@@ -1,3 +1,5 @@
+System.Security.Cryptography/CryptographicAttributeObjectCollectionTest.cs
+System.Security.Cryptography/CryptographicAttributeObjectEnumeratorTest.cs
 System.Security.Cryptography/CryptographicAttributeTest.cs
 System.Security.Cryptography/ProtectedDataTest.cs
 System.Security.Cryptography/ProtectedMemoryTest.cs
@@ -38,3 +40,8 @@ System.Security.Cryptography.Xml/XmlDsigC14NWithCommentsTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigXPathTransformTest.cs
 System.Security.Cryptography.Xml/XmlDsigXsltTransformTest.cs
 System.Security.Permissions/DataProtectionPermissionAttributeTest.cs
+System.Security.Cryptography/CryptographicAttributeObjectCas.cs
+System.Security.Cryptography/CryptographicAttributeObjectCollectionCas.cs
+System.Security.Cryptography/CryptographicAttributeObjectEnumeratorCas.cs
+System.Security.Cryptography/ProtectedDataCas.cs
+System.Security.Cryptography/ProtectedMemoryCas.cs
