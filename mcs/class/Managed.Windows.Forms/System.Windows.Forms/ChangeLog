@@ -1,3 +1,8 @@
+2005-10-19  Jackson Harper  <jackson@ximian.com>
+
+	* FolderBrowserDialog.cs: End editing our treeview so the window
+	actually gets refreshed.
+
 2005-10-18  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: Fixed logic flip on when to call OnPaintBackground. 

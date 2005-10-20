@@ -396,6 +396,7 @@ namespace System.Windows.Forms
 					node.Nodes.Add (child);
 				}
 
+				folderBrowserTreeView.EndUpdate ();
 				folderBrowserTreeView.Cursor = old;
 			}
 
