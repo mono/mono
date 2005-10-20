@@ -1,3 +1,10 @@
+2005-10-20  Miguel de Icaza  <miguel@novell.com>
+
+	* Makefile.am (stresstest): Change the strings so we can scan the
+	build logs more easily for failures.
+
+	* Makefile (stresstest): 
+
 2005-10-20  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile.am (testbundle): Use in-tree config, and in-tree
