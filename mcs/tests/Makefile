@@ -62,8 +62,8 @@ COMPILER = $(topdir)/class/lib/$(PROFILE)/mcs.exe
 TEST_PATTERN = 'test-*.cs'
 endif
 
-run-test-local: ilasm test-377-lib.dll test-443-lib.dll
-	MONO_RUNTIME='mono' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe positive $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
+run-test-local: test-377-lib.dll test-443-lib.dll
+	MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe positive $(TEST_PATTERN) $(COMPILER) known-issues-$(COMPILER_NAME) $(COMPILER_NAME).log
 
 # do nothing for this target
 run-test-ondotnet-local:
@@ -85,12 +85,13 @@ dist-local: dist-default
 
 %-il.dll: %-il.il
 	$(ILASM) /dll $<
-	
+
 %-lib.dll: %-lib.il
 	$(ILASM) /dll /out:$@ $<
 
-ilasm:
 ifeq (default, $(PROFILE))
+run-test-local: ilasm
+ilasm:
 	$(ILASM) /dll property-il.il
 	$(CSCOMPILE) /r:property-il.dll property-main.cs /out:property-main.exe
 	$(TEST_RUNTIME) property-main.exe

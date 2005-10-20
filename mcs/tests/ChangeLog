@@ -1,3 +1,8 @@
+2005-10-20  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (run-test-local): Make compiler-tester use $(RUNTIME)
+	when running tests out-of-process.
+
 2005-10-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* gtest-216.cs : new test for #76382.

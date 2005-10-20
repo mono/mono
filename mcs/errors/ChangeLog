@@ -1,3 +1,7 @@
+2005-10-20  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (run-mcs-tests): Set MONO_RUNTIME to $(RUNTIME).
+
 2005-10-07  Raja R Harinath  <rharinath@novell.com>
 
 	* cs0266-8.cs: New test from #76323.
