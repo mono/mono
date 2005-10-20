@@ -56,6 +56,7 @@ SUBDIRS = \
 	Microsoft.VisualC		\
 	Cscompmgd			\
 	Managed.Windows.Forms		\
+	Microsoft.VisualBasic		\
 	System.Design			\
 	PEAPI				\
 	Npgsql				\
