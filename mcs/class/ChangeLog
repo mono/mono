@@ -1,3 +1,7 @@
+2005-10-20  Martin Baulig  <martin@ximian.com>
+
+	* Makefile: Take Microsoft.VisualBasic out of the build.
+
 2005-10-06  Chris Lahey  <clahey@ximian.com>
 
 	* Makefile (SUBDIRS): Compile Mono Posix before Mono SqliteClient.
