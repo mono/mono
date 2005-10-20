@@ -1,3 +1,9 @@
+2005-10-20  Senganal T <tsenganal@novell.com>
+	
+	* TdsMetaParameter.cs: Set default values of Precision
+	and Scale for Decimal Parameters when not explicitly set.
+	Fixes #76467
+
 2005-08-02  Joerg Rosenkranz <joergr@voelcker.com>
 
 	* TdsMetaParameter.cs: Send binary parameters with size > 8000

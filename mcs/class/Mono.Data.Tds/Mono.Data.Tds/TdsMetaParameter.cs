@@ -105,7 +105,16 @@ namespace Mono.Data.Tds {
 		}
 
 		public byte Scale {
-			get { return scale; }
+			get { 
+				if (TypeName == "decimal" || TypeName == "numeric") {
+					if (scale == 0) { 
+						int[] arr = Decimal.GetBits (
+								Convert.ToDecimal(Value));
+						scale = (byte)((arr[3]>>16) & (int)0xFF);
+					}
+				}
+				return scale;
+			}
 			set { scale = value; }
 		}
 
@@ -140,7 +149,9 @@ namespace Mono.Data.Tds {
 			switch (typeName) {
 			case "decimal":
 			case "numeric":
-				result.Append (String.Format ("({0},{1})", Precision, Scale));
+				// msdotnet sends a default precision of 28
+				result.Append (String.Format ("({0},{1})",
+					 (Precision == (byte)0 ? (byte)28 : Precision), Scale));
 				break;
 			case "varchar":
 			case "varbinary":
