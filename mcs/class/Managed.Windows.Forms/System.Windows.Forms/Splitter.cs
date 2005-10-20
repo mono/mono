@@ -26,7 +26,7 @@
 
 // COMPLETE
 
-#undef Debug
+#define Debug
 
 using System;
 using System.ComponentModel;
@@ -372,7 +372,6 @@ namespace System.Windows.Forms {
 
 			base.OnMouseDown (e);
 
-
 			// Only allow if we are set up properly
 			if (affected == null || e.Button != MouseButtons.Left) {
 				return;
@@ -399,6 +398,13 @@ namespace System.Windows.Forms {
 						limit_min = filler.Bounds.Left + min_extra + this.bounds.Left - filler.Bounds.Right;
 						limit_max = affected.Bounds.Right - min_size - this.Width;
 					}
+				}
+			} else {
+				limit_min = 0;
+				if (horizontal) {
+					limit_max = affected.Parent.Height;
+				} else {
+					limit_max = affected.Parent.Width;
 				}
 			}
 
@@ -501,8 +507,14 @@ namespace System.Windows.Forms {
 			// Resize the affected window
 			if (horizontal) {
 				affected.Height = CalculateSplitPosition() - click_offset;
+				#if Debug
+					Console.WriteLine("Setting height of affected control to {0}", CalculateSplitPosition() - click_offset);
+				#endif
 			} else {
 				affected.Width = CalculateSplitPosition() - click_offset;
+				#if Debug
+					Console.WriteLine("Setting width of affected control to {0}", CalculateSplitPosition() - click_offset);
+				#endif
 			}
 
 			base.OnMouseUp (e);

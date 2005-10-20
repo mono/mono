@@ -1,3 +1,7 @@
+2005-10-20  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Splitter.cs: Properly set limits if no filler control is used
+
 2005-10-19  Jackson Harper  <jackson@ximian.com>
 
 	* ColorDialog.cs: Don't show the help button if it is not enabled
