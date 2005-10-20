@@ -1,3 +1,15 @@
+2005-10-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoDebugOptions): Remove 'abort_on_sigsegv' option.
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): New function to 
+	handle SIGSEGVs received while in native code.
+
+	* mini.c (sigsegv_signal_handler): If the SIGSEGV happened in native
+	code, call mono_handle_native_sigsegv which will abort the runtime
+	after printing some diagnostics, instead of converting it into a
+	confusing NullReferenceException.
+
 2005-10-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-pentium.md: Remove unused opcodes.
