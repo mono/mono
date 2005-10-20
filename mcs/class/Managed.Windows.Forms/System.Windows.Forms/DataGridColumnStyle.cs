@@ -106,6 +106,13 @@ namespace System.Windows.Forms
 				}
 			}
 			#endregion Public Instance Methods
+		}
+		
+		internal enum ArrowDrawing
+		{
+			No		= 0,
+			Ascending 	= 1,
+			Descending  	= 2
 		}		
 		
 		#region	Local Variables
@@ -123,6 +130,7 @@ namespace System.Windows.Forms
 		private DataGridColumnHeaderAccessibleObject accesible_object;
 		private StringFormat string_format_hdr;
 		static string def_null_text = "(null)";
+		private ArrowDrawing arrow_drawing = ArrowDrawing.No;
 		#endregion	// Local Variables
 
 		#region Constructors
@@ -329,6 +337,11 @@ namespace System.Windows.Forms
 		#endregion	// Public Instance Properties
 		
 		#region Private Instance Properties
+
+		internal ArrowDrawing ArrowDrawingMode {
+			get { return arrow_drawing; }
+			set { arrow_drawing = value; }
+		}
 		
 		// The logic seems to be that: 
 		// - If DataGrid.ReadOnly is true all the tables and columns are readonly ignoring other settings
@@ -532,6 +545,23 @@ namespace System.Windows.Forms
 			bounds.Width -=	2;
 			g.DrawString (HeaderText, DataGridTableStyle.HeaderFont, ThemeEngine.Current.ResPool.GetSolidBrush (DataGridTableStyle.CurrentHeaderForeColor), 
 				bounds, string_format_hdr);
+
+			if (arrow_drawing != ArrowDrawing.No) {
+				Console.WriteLine ("Drawing arrow {0}", HeaderText);
+				// Draw 6 x 6
+				Point pnt = new Point (bounds.X + bounds.Width  - 12, bounds.Y + ((bounds.Height - 6)/2));
+				
+				if (arrow_drawing == ArrowDrawing.Ascending) {
+					g.DrawLine (SystemPens.ControlLightLight, pnt.X + 6, pnt.Y + 6, pnt.X + 3, pnt.Y);
+					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y + 6, pnt.X + 6, pnt.Y + 6);
+					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y + 6, pnt.X + 3, pnt.Y);
+				} else {
+					g.DrawLine (SystemPens.ControlLightLight, pnt.X + 6, pnt.Y, pnt.X + 3, pnt.Y + 6);
+					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y, pnt.X + 6, pnt.Y);
+					g.DrawLine (SystemPens.ControlDark, pnt.X, pnt.Y, pnt.X + 3, pnt.Y + 6);
+				}
+				
+			}
 		}
 				
 		internal void PaintNewRow (Graphics g, Rectangle bounds, Brush backBrush, Brush foreBrush)

@@ -1341,7 +1341,37 @@ namespace System.Windows.Forms
 				CurrentCell = new DataGridCell (testinfo.Row, current_cell.ColumnNumber);
 				OnRowHeaderClick (EventArgs.Empty);
 				break;
-			}			
+			}
+
+			case HitTestType.ColumnHeader:
+			{
+				if (allow_sorting == false)
+					break;
+
+				if (ListManager.List is IBindingList == false)
+					break;
+			
+				ListSortDirection direction = ListSortDirection.Ascending;
+				PropertyDescriptor prop = CurrentTableStyle.GridColumnStyles[testinfo.Column].PropertyDescriptor;
+				IBindingList list = (IBindingList) ListManager.List;
+
+				if (list.SortProperty != null) {
+					CurrentTableStyle.GridColumnStyles[list.SortProperty].ArrowDrawingMode 
+						= DataGridColumnStyle.ArrowDrawing.No;
+				}
+
+				if (prop == list.SortProperty && list.SortDirection == ListSortDirection.Ascending) {
+					direction = ListSortDirection.Descending;
+				}
+				
+				CurrentTableStyle.GridColumnStyles[testinfo.Column].ArrowDrawingMode =
+					direction == ListSortDirection.Ascending ? 
+					DataGridColumnStyle.ArrowDrawing.Ascending : DataGridColumnStyle.ArrowDrawing.Descending;
+				
+				list.ApplySort (prop, direction);
+				Refresh ();
+				break;
+			}
 			
 			default:
 				break;
