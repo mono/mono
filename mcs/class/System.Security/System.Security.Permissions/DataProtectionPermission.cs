@@ -58,7 +58,7 @@ namespace System.Security.Permissions {
 		public DataProtectionPermissionFlags Flags {
 			get { return _flags; }
 			set {
-				if (!Enum.IsDefined (typeof (DataProtectionPermissionFlags), value)) {
+				if ((value & ~DataProtectionPermissionFlags.AllFlags) != 0) {
 					string msg = String.Format (Locale.GetText ("Invalid enum {0}"), value);
 					throw new ArgumentException (msg, "DataProtectionPermissionFlags");
 				}
