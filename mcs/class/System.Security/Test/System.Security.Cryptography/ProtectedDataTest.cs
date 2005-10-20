@@ -20,30 +20,29 @@ namespace MonoTests.System.Security.Cryptography {
 	[TestFixture]
 	public class ProtectedDataTest {
 
-		private void ProtectUnprotect (byte[] entropy, DataProtectionScope scope) 
-		{
-			byte[] data = new byte [16];
-			byte[] encdata = ProtectedData.Protect (data, entropy, scope);
-			int total = 0;
-			for (int i=0; i < 16; i++)
-				total += encdata [i];
-			Assert.IsFalse ((total == 0), "Protect");
+		private byte[] notMuchEntropy = new byte[16];
 
-			byte[] decdata = ProtectedData.Unprotect (encdata, entropy, scope);
-			total = 0;
-			for (int i=0; i < 16; i++)
-				total += decdata [i];
-			Assert.IsTrue ((total == 0), "Unprotect");
+		private bool IsEmpty (byte[] array)
+		{
+			int total = 0;
+			for (int i = 0; i < array.Length; i++)
+				total += array[i];
+			return (total == 0);
 		}
 
-		[Test]
-		public void ProtectCurrentUser () 
+		private void ProtectUnprotect (byte[] entropy, DataProtectionScope scope) 
 		{
 			try {
-				byte[] notMuchEntropy = new byte [16];
-				// we're testing the DataProtectionScope definition but
-				// not if it's really limited to the scope specified
-				ProtectUnprotect (notMuchEntropy, DataProtectionScope.CurrentUser);
+				byte[] data = new byte [16];
+				byte[] encdata = ProtectedData.Protect (data, entropy, scope);
+				Assert.IsFalse (IsEmpty (encdata), "Protect");
+
+				byte[] decdata = ProtectedData.Unprotect (encdata, entropy, scope);
+				Assert.IsTrue (IsEmpty (decdata), "Unprotect");
+			}
+			catch (CryptographicException ce) {
+				if (ce.InnerException is UnauthorizedAccessException)
+					Assert.Ignore ("The machine key store hasn't yet been created (as root).");
 			}
 			catch (PlatformNotSupportedException) {
 				Assert.Ignore ("Only supported under Windows 2000 and later");
@@ -51,13 +50,53 @@ namespace MonoTests.System.Security.Cryptography {
 		}
 
 		[Test]
+		public void ProtectCurrentUser () 
+		{
+			// we're testing the DataProtectionScope definition but
+			// not if it's really limited to the scope specified
+			ProtectUnprotect (notMuchEntropy, DataProtectionScope.CurrentUser);
+		}
+
+		[Test]
 		public void ProtectLocalMachine () 
 		{
+			// we're testing the DataProtectionScope definition but
+			// not if it's really limited to the scope specified
+			ProtectUnprotect (notMuchEntropy, DataProtectionScope.LocalMachine);
+		}
+
+		[Test]
+		public void DataProtectionScope_All ()
+		{
+			byte[] data = new byte[16];
 			try {
-				byte[] notMuchEntropy = new byte [16];
-				// we're testing the DataProtectionScope definition but
-				// not if it's really limited to the scope specified
-				ProtectUnprotect (notMuchEntropy, DataProtectionScope.LocalMachine);
+				foreach (DataProtectionScope dps in Enum.GetValues (typeof (DataProtectionScope))) {
+					byte[] encdata = ProtectedData.Protect (data, notMuchEntropy, dps);
+					Assert.IsFalse (IsEmpty (encdata), "Protect");
+					Assert.IsTrue (IsEmpty (data), "Protect(original unmodified)");
+					byte[] decdata = ProtectedData.Unprotect (encdata, notMuchEntropy, dps);
+					Assert.IsTrue (IsEmpty (decdata), "Unprotect");
+				}
+			}
+			catch (CryptographicException ce) {
+				if (ce.InnerException is UnauthorizedAccessException)
+					Assert.Ignore ("The machine key store hasn't yet been created (as root).");
+			}
+			catch (PlatformNotSupportedException) {
+				Assert.Ignore ("Only supported under Windows 2000 and later");
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotDotNet")]
+		public void Protect_InvalidDataProtectionScope ()
+		{
+			try {
+				byte[] data = new byte[16];
+				ProtectedData.Protect (data, notMuchEntropy, (DataProtectionScope) Int32.MinValue);
+				// MS doesn't throw an ArgumentException but returning from
+				// this method will throw an UnhandledException in NUnit
 			}
 			catch (PlatformNotSupportedException) {
 				Assert.Ignore ("Only supported under Windows 2000 and later");
@@ -68,21 +107,15 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ProtectNull () 
 		{
-			byte[] notMuchEntropy = new byte [16];
 			ProtectedData.Protect (null, notMuchEntropy, DataProtectionScope.CurrentUser);
 		}
 
 		[Test]
 		public void ProtectNullEntropy () 
 		{
-			try {
-				// we're testing the DataProtectionScope definition but
-				// not if it's really limited to the scope specified
-				ProtectUnprotect (null, DataProtectionScope.LocalMachine);
-			}
-			catch (PlatformNotSupportedException) {
-				Assert.Ignore ("Only supported under Windows 2000 and later");
-			}
+			// we're testing the DataProtectionScope definition but
+			// not if it's really limited to the scope specified
+			ProtectUnprotect (null, DataProtectionScope.CurrentUser);
 		}
 
 		[Test]
@@ -91,8 +124,24 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			try {
 				byte[] baddata = new byte [16];
-				byte[] notMuchEntropy = new byte [16];
 				ProtectedData.Unprotect (baddata, notMuchEntropy, DataProtectionScope.CurrentUser);
+			}
+			catch (PlatformNotSupportedException) {
+				Assert.Ignore ("Only supported under Windows 2000 and later");
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		[Category ("NotDotNet")]
+		public void Unprotect_InvalidDataProtectionScope ()
+		{
+			try {
+				byte[] data = new byte[16];
+				byte[] encdata = ProtectedData.Protect (data, notMuchEntropy, DataProtectionScope.CurrentUser);
+				ProtectedData.Unprotect (encdata, notMuchEntropy, (DataProtectionScope) Int32.MinValue);
+				// MS doesn't throw an ArgumentException but returning from
+				// this method will throw an UnhandledException in NUnit
 			}
 			catch (PlatformNotSupportedException) {
 				Assert.Ignore ("Only supported under Windows 2000 and later");
@@ -103,7 +152,6 @@ namespace MonoTests.System.Security.Cryptography {
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void UnprotectNull () 
 		{
-			byte[] notMuchEntropy = new byte [16];
 			ProtectedData.Unprotect (null, notMuchEntropy, DataProtectionScope.CurrentUser);
 		}
 	}
