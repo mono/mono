@@ -1,3 +1,8 @@
+2005-10-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpResponseStream.cs: reworked buffering so that adjacents blocks are
+	written at once. Also fix bug #76460.
+
 2005-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponseStream.cs: when allocating a chunk larger than the
