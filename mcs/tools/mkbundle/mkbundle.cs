@@ -325,15 +325,25 @@ class MakeBundle {
 				return;
 
 			string zlib = (compress ? "-lz" : "");
-			if (static_link)
+			if (static_link){
+				string static_flags = "";
+				
+				if (style == "linux")
+					static_flags = "-Wl,-Bstatic -lmono -Wl,-Bdynamic";
+				
 				cmd = String.Format ("cc -o {2} -Wall `pkg-config --cflags mono` {0} {3}" +
-						     "`pkg-config --libs-only-L mono` -Wl,-Bstatic -lmono -Wl,-Bdynamic " +
+						     "`pkg-config --libs-only-L mono` " + static_flags + " " + 
 						     "`pkg-config --libs-only-l mono | sed -e \"s/\\-lmono //\"` {1}",
 						     temp_c, temp_o, output, zlib);
-			else
-				cmd = String.Format ("cc -ggdb -o {2} -Wall {0} `pkg-config --cflags --libs mono` {3} {1}",
+			} else {
+				string debugging = "-g";
+				
+				if (style == "linux")
+					debugging = "-ggdb";
+				
+				cmd = String.Format ("cc " + debugging + " -o {2} -Wall {0} `pkg-config --cflags --libs mono` {3} {1}",
 						     temp_c, temp_o, output, zlib);
-
+			}
                             
 			Console.WriteLine (cmd);
 			ret = system (cmd);

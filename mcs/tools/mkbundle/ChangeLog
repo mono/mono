@@ -1,3 +1,8 @@
+2005-10-20  Miguel de Icaza  <miguel@novell.com>
+
+	* mkbundle.cs: Deal with the fact that these were Linux-specific
+	flags.  
+
 2005-10-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TODO: remove obsolete stuff.
