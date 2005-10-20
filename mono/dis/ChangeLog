@@ -1,5 +1,12 @@
 2005-10-20  Ankit Jain  <jankit@novell.com>
 
+	* get.c (get_method_core): Use the parent context for get_methodspec
+	  instead of the inflated method's context.
+	  (get_methodspec): Get the context for the generic method.
+	  Use parent_context for getting the method's type parameters. 
+
+2005-10-20  Ankit Jain  <jankit@novell.com>
+
 	* main.c (dis_method_list): Oops. Check method_context for null.
 
 2005-10-19  Ankit Jain  <jankit@novell.com>
