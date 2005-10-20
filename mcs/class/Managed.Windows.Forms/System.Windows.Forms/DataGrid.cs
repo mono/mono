@@ -1393,7 +1393,6 @@ namespace System.Windows.Forms
 
 		protected override void OnPaintBackground (PaintEventArgs ebe)
 		{
-			base.OnPaintBackground (ebe);
 		}
 
 		protected virtual void OnParentRowsLabelStyleChanged (EventArgs e)
