@@ -1,3 +1,9 @@
+2005-10-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* ListControl.cs: made GetSelectedIndices() internal.
+	* ListBox.cs: html-encode the item text. Fixed single and multiple
+	selection handling. All the tests pass now. Closes bug #76478.
+
 2005-10-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListControl.cs: throw when the selected value is not in the

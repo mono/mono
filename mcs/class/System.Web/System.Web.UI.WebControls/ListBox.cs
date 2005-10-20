@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
@@ -147,6 +148,7 @@ namespace System.Web.UI.WebControls {
 			if (Page != null)
 				Page.VerifyRenderingInServerForm (this);
 
+			base.AddAttributesToRender (writer);
 #if NET_2_0
 			if (ID != null)
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
@@ -178,7 +180,8 @@ namespace System.Web.UI.WebControls {
 				writer.WriteAttribute ("value", item.Value, true);
 
 				writer.Write (">");
-				writer.Write (item.Text);
+				string encoded = HttpUtility.HtmlEncode (item.Text);
+				writer.Write (encoded);
 				writer.WriteEndTag ("option");
 				writer.WriteLine ();
 			}
@@ -201,23 +204,52 @@ namespace System.Web.UI.WebControls {
 #endif
 		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-			string [] items = postCollection.GetValues (postDataKey) as string [];
-			bool res = false;
-
-			if (items == null)
-				return false;
-
-			foreach (string value in items) {
-				ListItem item = Items.FindByValue (value);
-				if (!item.Selected) {
-					item.Selected = true;
-					res = true;
-				}
+			string [] values = postCollection.GetValues (postDataKey);
+			if (values == null || values.Length == 0) {
+				int prev_index = SelectedIndex;
+				SelectedIndex = -1;
+				return (prev_index != -1);
 			}
 
-			// So we can tell when they have been changed
-			((IStateManager) Items).TrackViewState ();
-			return res;
+			if (SelectionMode == ListSelectionMode.Single)
+				return SelectSingle (values);
+			return SelectMultiple (values);
+		}
+
+		bool SelectSingle (string [] values)
+		{
+			string val = values [0];
+			int idx = Items.IndexOf (val);
+			int prev_index = SelectedIndex;
+			if (idx != prev_index) {
+				// This will set both the index value and the item.Selected property
+				SelectedIndex = idx;
+				return true;
+			}
+			return false;
+		}
+
+		bool SelectMultiple (string [] values)
+		{
+			ArrayList prev_selected = GetSelectedIndices ();
+			ClearSelection ();
+			foreach (string val in values) {
+				ListItem item = Items.FindByValue (val);
+				if (item != null)
+					item.Selected = true;
+			}
+
+			ArrayList new_selection = GetSelectedIndices ();
+			int i = prev_selected.Count;
+			if (new_selection.Count != i)
+				return true;
+
+			while (--i >= 0) {
+				if ((int) prev_selected [i] != (int) new_selection [i])
+					return true;
+			}
+
+			return false;
 		}
 
 #if NET_2_0

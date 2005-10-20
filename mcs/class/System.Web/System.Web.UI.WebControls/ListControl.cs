@@ -447,7 +447,7 @@ namespace System.Web.UI.WebControls {
 		}
 #endif		
 
-		ArrayList GetSelectedIndices ()
+		internal ArrayList GetSelectedIndices ()
 		{
 			ArrayList selected = null;
 			if (items != null) {
