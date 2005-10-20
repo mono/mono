@@ -1,0 +1,4 @@
+2005-10-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ManagedProtection.cs: New. A managed class similar to ProtectedData.
+	Source code will be reused in other assemblies to protect data.
