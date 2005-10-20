@@ -1422,7 +1422,22 @@ namespace Mono.CSharp {
 			if (TypeManager.IsBuiltinType (atype) || atype.IsValueType)
 				return true;
 
+			if (HasDefaultConstructor (ec, atype))
+				return true;
+
+			Report.Error (310, loc, "The type `{0}' must have a public " +
+				      "parameterless constructor in order to use it " +
+				      "as parameter `{1}' in the generic type or " +
+				      "method `{2}'", atype, ptype, DeclarationName);
+			return false;
+		}
+
+		bool HasDefaultConstructor (EmitContext ec, Type atype)
+		{
 			if (atype is TypeBuilder) {
+				if (atype.IsAbstract)
+					return false;
+
 				TypeContainer tc = TypeManager.LookupTypeContainer (atype);
 				foreach (Constructor c in tc.InstanceConstructors) {
 					if ((c.ModFlags & Modifiers.PUBLIC) == 0)
@@ -1452,10 +1467,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			Report.Error (310, loc, "The type `{0}' must have a public " +
-				      "parameterless constructor in order to use it " +
-				      "as parameter `{1}' in the generic type or " +
-				      "method `{2}'", atype, ptype, DeclarationName);
 			return false;
 		}
 

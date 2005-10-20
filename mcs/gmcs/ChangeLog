@@ -1,3 +1,10 @@
+2005-10-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* generic.cs : (ConstructedType.CheckConstraints) warn CS0310 when
+	  1) "new()" is specified as generic parameter constraint and 2) the
+	  type is TypeBuilder and 3) the type is abstract even if it has a
+	  default .ctor(). Now errors/gcs0310-3.cs is correctly rejected.
+
 2005-10-20  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs
@@ -7,7 +14,7 @@
 	(TypeParameter.DefineType): Inflate the constraints if our
 	`DeclSpace' is an `Iterator'.	
 
-2005-10-19  Atsushi Enomotot  <atsushi@ximian.com>
+2005-10-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* class.cs, decl.cs : (MemberCache.FindMemberToOverride) added 
 	  GenericMethod argument to compare methods' generic type arguments.
