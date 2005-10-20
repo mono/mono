@@ -439,7 +439,7 @@ namespace System.Web.UI.WebControls {
 			ArrayList second;
 
 			first = base.SaveControlState ();
-			second = GetSelectedIndices();
+			second = GetSelectedIndicesInternal ();
 			if (second == null)
 				second = new ArrayList();
 
@@ -447,7 +447,7 @@ namespace System.Web.UI.WebControls {
 		}
 #endif		
 
-		internal ArrayList GetSelectedIndices ()
+		internal ArrayList GetSelectedIndicesInternal ()
 		{
 			ArrayList selected = null;
 			if (items != null) {
@@ -473,7 +473,7 @@ namespace System.Web.UI.WebControls {
 				second = manager.SaveViewState ();
 
 #if !NET_2_0
-			ArrayList selected = GetSelectedIndices ();
+			ArrayList selected = GetSelectedIndicesInternal ();
 #endif
 
 			if (first == null && second == null

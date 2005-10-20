@@ -136,10 +136,9 @@ namespace System.Web.UI.WebControls {
 #endif		
 
 #if NET_2_0
-		[MonoTODO]
 		public virtual int[] GetSelectedIndices ()
 		{
-			throw new NotImplementedException ();
+			return (int []) GetSelectedIndicesInternal ().ToArray (typeof (int));
 		}
 #endif		
 		
@@ -231,7 +230,7 @@ namespace System.Web.UI.WebControls {
 
 		bool SelectMultiple (string [] values)
 		{
-			ArrayList prev_selected = GetSelectedIndices ();
+			ArrayList prev_selected = GetSelectedIndicesInternal ();
 			ClearSelection ();
 			foreach (string val in values) {
 				ListItem item = Items.FindByValue (val);
@@ -239,7 +238,7 @@ namespace System.Web.UI.WebControls {
 					item.Selected = true;
 			}
 
-			ArrayList new_selection = GetSelectedIndices ();
+			ArrayList new_selection = GetSelectedIndicesInternal ();
 			int i = prev_selected.Count;
 			if (new_selection.Count != i)
 				return true;
