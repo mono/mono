@@ -1,3 +1,8 @@
+2005-10-22  Zoltan Varga  <vargaz@freemail.hu>
+
+	* exceptions-amd64.c (mono_arch_find_jit_info): Fix some corner cases
+	with fp elimination.
+
 2005-10-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_handle_native_sigsegv): Try to print a
