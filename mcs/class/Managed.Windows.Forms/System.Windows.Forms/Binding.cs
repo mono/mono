@@ -153,6 +153,9 @@ namespace System.Windows.Forms {
 
 		internal void PushData ()
 		{
+			if (IsBinding == false)
+				return;
+
 			data = prop_desc.GetValue (control);
 			data = FormatData (data);
 			SetPropertyValue (data);
@@ -160,6 +163,9 @@ namespace System.Windows.Forms {
 
 		internal void PullData ()
 		{
+			if (IsBinding == false)
+				return;
+
 			if (is_null_desc != null) {
 				bool is_null = (bool) is_null_desc.GetValue (manager.Current);
 				if (is_null) {
