@@ -193,6 +193,10 @@ namespace Mono.Data.SqlExpressions {
 				return System.Math.Min ((double)o1, (double)o2);
 			case TypeCode.Decimal:
 				return System.Math.Min ((decimal)o1, (decimal)o2);
+			case TypeCode.String:
+				double val1 = Convert.ToDouble (o1);
+				double val2 = Convert.ToDouble (o2);
+				return (System.Math.Min(val1, val2)).ToString();
 			default:
 				return DBNull.Value;
 			}
@@ -209,6 +213,10 @@ namespace Mono.Data.SqlExpressions {
 				return System.Math.Max ((double)o1, (double)o2);
 			case TypeCode.Decimal:
 				return System.Math.Max ((decimal)o1, (decimal)o2);
+			case TypeCode.String:
+				double val1 = Convert.ToDouble (o1);
+				double val2 = Convert.ToDouble (o2);
+				return (System.Math.Max(val1, val2)).ToString();
 			default:
 				return DBNull.Value;
 			}

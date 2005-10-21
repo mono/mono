@@ -1617,5 +1617,30 @@ namespace MonoTests_System.Data
 			ds.Tables[0].PrimaryKey = new DataColumn[] {ds.Tables[0].Columns[0],ds.Tables[0].Columns[1]}; 
 			Assert.AreEqual(2, ds.Tables[0].PrimaryKey.Length , "DT170");
 		}
+	
+		// Test for bug #76213
+		[Test]
+		public void Compute_WithoutSchemaData_Test()
+		{
+                        DataSet ds = new DataSet ("TestData");
+                        DataTable table = ds.Tables.Add ("TestTable");
+
+                        table.Columns.Add ("Id");
+                        table.Columns.Add ("Value");
+
+                        table.Rows.Add (new object[] {"1","4.5"});
+                        table.Rows.Add (new object[] {"2","7.5"});
+                        table.Rows.Add (new object[] {"3","2.5"});
+                        table.Rows.Add (new object[] {"4","3.5"});
+			
+			Assert.AreEqual ("1",
+				 table.Compute ("Min(Id)",String.Empty),"#1");	
+			Assert.AreEqual ("4",
+				 table.Compute ("Max(Id)",String.Empty),"#2");	
+			Assert.AreEqual ("2.5",
+				 table.Compute ("Min(Value)",String.Empty),"#3");	
+			Assert.AreEqual ("7.5",
+				 table.Compute ("Max(Value)",String.Empty),"#4");	
+		}
 	}
 }
