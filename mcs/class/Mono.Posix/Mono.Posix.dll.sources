@@ -4,6 +4,7 @@
 ./Mono.Unix/Catalog.cs
 ./Mono.Unix/CdeclFunction.cs
 ./Mono.Unix/FileAccessPermissions.cs
+./Mono.Unix/FileAccessPattern.cs
 ./Mono.Unix/FileSpecialAttributes.cs
 ./Mono.Unix/FileTypes.cs
 ./Mono.Unix/IncludeAttribute.cs

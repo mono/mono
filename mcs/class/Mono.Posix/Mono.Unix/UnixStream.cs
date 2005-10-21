@@ -177,61 +177,83 @@ namespace Mono.Unix {
 			}
 		}
 
+		public void AdviseFileAccessPattern (FileAccessPattern pattern, long offset, long len)
+		{
+			UnixFile.AdviseFileAccessPattern (fileDescriptor, pattern, offset, len);
+		}
+
+		public void AdviseFileAccessPattern (FileAccessPattern pattern)
+		{
+			AdviseFileAccessPattern (pattern, 0, 0);
+		}
+
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Normal, offset, len)")]
 		public void AdviseNormalAccess (long offset, long len)
 		{
 			UnixFile.AdviseNormalAccess (fileDescriptor, offset, len);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Normal)")]
 		public void AdviseNormalAccess ()
 		{
 			UnixFile.AdviseNormalAccess (fileDescriptor);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Sequential, offset, len)")]
 		public void AdviseSequentialAccess (long offset, long len)
 		{
 			UnixFile.AdviseSequentialAccess (fileDescriptor, offset, len);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Sequential)")]
 		public void AdviseSequentialAccess ()
 		{
 			UnixFile.AdviseSequentialAccess (fileDescriptor);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Random, offset, len)")]
 		public void AdviseRandomAccess (long offset, long len)
 		{
 			UnixFile.AdviseRandomAccess (fileDescriptor, offset, len);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.Random)")]
 		public void AdviseRandomAccess ()
 		{
 			UnixFile.AdviseRandomAccess (fileDescriptor);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseSoon, offset, len)")]
 		public void AdviseNeedAccess (long offset, long len)
 		{
 			UnixFile.AdviseNeedAccess (fileDescriptor, offset, len);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseSoon)")]
 		public void AdviseNeedAccess ()
 		{
 			UnixFile.AdviseNeedAccess (fileDescriptor);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.WillNotUse, offset, len)")]
 		public void AdviseNoAccess (long offset, long len)
 		{
 			UnixFile.AdviseNoAccess (fileDescriptor, offset, len);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.WillNotUse)")]
 		public void AdviseNoAccess ()
 		{
 			UnixFile.AdviseNoAccess (fileDescriptor);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseOnce, offset, len)")]
 		public void AdviseOnceAccess (long offset, long len)
 		{
 			UnixFile.AdviseOnceAccess (fileDescriptor, offset, len);
 		}
 
+		[Obsolete ("Use AdviseFileAccessPattern (FileAccessPattern.UseOnce)")]
 		public void AdviseOnceAccess ()
 		{
 			UnixFile.AdviseOnceAccess (fileDescriptor);
