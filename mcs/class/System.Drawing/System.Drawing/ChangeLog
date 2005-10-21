@@ -1,3 +1,7 @@
+2005-10-21  Miguel de Icaza  <miguel@novell.com>
+
+	* Graphics.cs: Add various ArgumentNull checks.
+
 2005-10-20 Konstantin Triger <kostat@mainsoft.com>
 
         * Image.jvm.cs: make Clone abstract
