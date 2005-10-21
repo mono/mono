@@ -67,16 +67,12 @@ namespace System.Security.Cryptography {
 	
 		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV)
 		{
-			Key = rgbKey;
-			IV = rgbIV;
-			return new RC2Transform (this, false);
+			return new RC2Transform (this, false, rgbKey, rgbIV);
 		}
 	
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV)
 		{
-			Key = rgbKey;
-			IV = rgbIV;
-			return new RC2Transform (this, true);
+			return new RC2Transform (this, true, rgbKey, rgbIV);
 		}
 	
 		public override void GenerateIV ()
@@ -104,15 +100,32 @@ namespace System.Security.Cryptography {
 		private UInt16[] K;		// expanded key
 		private int j;			// Key indexer
 	
-		public RC2Transform (RC2 rc2Algo, bool encryption) : base (rc2Algo, encryption, rc2Algo.IV)
+		public RC2Transform (RC2 rc2Algo, bool encryption, byte[] key, byte[] iv)
+			: base (rc2Algo, encryption, iv)
 		{
-			byte[] key = rc2Algo.Key;
+#if ONLY_1_1
+			if (key == null)
+				throw new ArgumentNullException ("key");
+#endif
 			int t1 = rc2Algo.EffectiveKeySize;
+			if (key == null) {
+				key = KeyBuilder.Key (rc2Algo.KeySize >> 3);
+			} else {
+				key = (byte[]) key.Clone ();
+				t1 = Math.Min (t1, key.Length << 3);
+			}
+
+			int t = key.Length;
+			if (!KeySizes.IsLegalKeySize (rc2Algo.LegalKeySizes, (t << 3))) {
+				string msg = Locale.GetText ("Key is too small ({0} bytes), it should be between {1} and {2} bytes long.",
+					t, 5, 16);
+				throw new CryptographicException (msg);
+			}
+
 			// Expand key into a byte array, then convert to word
 			// array since we always access the key in 16bit chunks.
 			byte[] L = new byte [128];
 	
-			int t = key.Length;
 			int t8 = ((t1 + 7) >> 3); // divide by 8
 			int tm = 255 % (2 << (8 + t1 - (t8 << 3) - 1));
 	

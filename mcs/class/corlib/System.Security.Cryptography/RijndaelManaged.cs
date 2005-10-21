@@ -60,8 +60,6 @@ namespace System.Security.Cryptography {
 		
 		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
-			Key = rgbKey;
-			IV = rgbIV;
 #if NET_2_0
 			return new RijndaelManagedTransform (this, false, rgbKey, rgbIV);
 #else
@@ -71,8 +69,6 @@ namespace System.Security.Cryptography {
 		
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
-			Key = rgbKey;
-			IV = rgbIV;
 #if NET_2_0
 			return new RijndaelManagedTransform (this, true, rgbKey, rgbIV);
 #else
@@ -107,17 +103,25 @@ namespace System.Security.Cryptography {
 	
 		public RijndaelTransform (Rijndael algo, bool encryption, byte[] key, byte[] iv) : base (algo, encryption, iv)
 		{
-			int keySize = algo.KeySize;
-			if (keySize != 128 && keySize != 192 && keySize != 256) 
-				throw new ArgumentException (Locale.GetText ("Illegal key size"));
-	
+			if (key == null)
+				throw new CryptographicException ("key is null");
+			if ((iv != null) && (iv.Length != (algo.BlockSize >> 3))) {
+				string msg = Locale.GetText ("IV length is invalid ({0} bytes), it should be {1} bytes long.",
+					iv.Length, (algo.BlockSize >> 3));
+				throw new CryptographicException (msg);
+			}
+
+			key = (byte[]) key.Clone ();
+
+			int keySize = key.Length;
+			if (keySize != 16 && keySize != 24 && keySize != 32) {
+				string msg = Locale.GetText ("Key is too small ({0} bytes), it should be {1}, {2} or {3} bytes long.",
+					keySize, 16, 24, 32);
+				throw new CryptographicException (msg);
+			}
+			keySize <<= 3; // bytes -> bits
 			int blockSize = algo.BlockSize;
-			if (blockSize != 128 && blockSize != 192 && blockSize != 256) 
-				throw new ArgumentException (Locale.GetText ("Illegal block size"));
-	
-			if ((key.Length << 3) != keySize) 
-				throw new ArgumentException (Locale.GetText ("Key size doesn't match key"));
-	
+
 			this.key = key;
 			this.Nb = (blockSize >> 5); // div 32
 			this.Nk = (keySize >> 5); // div 32

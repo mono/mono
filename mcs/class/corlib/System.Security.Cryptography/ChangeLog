@@ -1,3 +1,20 @@
+2005-10-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DESCryptoServiceProvider.cs: Don't change the instance key/iv when
+	creating an encryptor or decryptor specifying them. Generate a new key
+	if null is specified (not really useful but compatible with MS 
+	behaviour). Check for weak/semi-weak key when creating transforms.
+	* RC2CryptoServiceProvider.cs: Don't change the instance key/iv when 
+	creating an encryptor or decryptor specifying them. Check legal key
+	sizes when creating transforms.
+	* RijndaelManaged.cs: Don't change the instance key/iv when creating 
+	an encryptor or decryptor specifying them. Check legal key sizes when
+	creating transforms.
+	* TripleDESCryptoServiceProvider.cs: Don't change the instance key/iv
+	when creating an encryptor or decryptor specifying them. Generate a 
+	new key if null is specified (not really useful but compatible with MS
+	behaviour). Check for weak key when creating transforms.
+
 2005-09-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HMACSHA1.cs: Added the new 2.0 ctor that let the programmer choose

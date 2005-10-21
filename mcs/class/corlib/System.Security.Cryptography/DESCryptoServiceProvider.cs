@@ -419,10 +419,26 @@ namespace System.Security.Cryptography {
 		internal DESTransform (SymmetricAlgorithm symmAlgo, bool encryption, byte[] key, byte[] iv) 
 			: base (symmAlgo, encryption, iv)
 		{
+			byte[] clonedKey = null;
+#if NET_2_0
+			if (key == null) {
+				key = GetStrongKey ();
+				clonedKey = key; // no need to clone
+			}
+#endif
+			// note: checking (semi-)weak keys also checks valid key length
+			if (DES.IsWeakKey (key) || DES.IsSemiWeakKey (key)) {
+				string msg = Locale.GetText ("This is a known weak, or semi-weak, key.");
+				throw new CryptographicException (msg);
+			}
+
+			if (clonedKey == null)
+				clonedKey = (byte[]) key.Clone ();
+
 			keySchedule = new byte [KEY_BYTE_SIZE * 16];
 			byteBuff = new byte [BLOCK_BYTE_SIZE];
 			dwordBuff = new uint [BLOCK_BYTE_SIZE / 4];
-			SetKey (key);
+			SetKey (clonedKey);
 		}
 
 /* Permutation Tables are now precomputed.
@@ -633,6 +649,14 @@ namespace System.Security.Cryptography {
 			ProcessBlock (output, byteBuff);
 			Permutation (byteBuff, output, fpTab, true);
 		}
+
+		static internal byte[] GetStrongKey ()
+		{
+			byte[] key = KeyBuilder.Key (DESTransform.KEY_BYTE_SIZE);
+			while (DES.IsWeakKey (key) || DES.IsSemiWeakKey (key))
+				key = KeyBuilder.Key (DESTransform.KEY_BYTE_SIZE);
+			return key;
+		}
 	} 
 	
 #if NET_2_0
@@ -640,35 +664,28 @@ namespace System.Security.Cryptography {
 #endif
 	public sealed class DESCryptoServiceProvider : DES {
 	
-		public DESCryptoServiceProvider () : base ()
+		public DESCryptoServiceProvider ()
 		{
 		}
 	
 		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
-			Key = rgbKey;
-			IV = rgbIV;
 			return new DESTransform (this, false, rgbKey, rgbIV);
 		}
 	
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
-			Key = rgbKey;
-			IV = rgbIV;
 			return new DESTransform (this, true, rgbKey, rgbIV);
 		}
 	
 		public override void GenerateIV () 
 		{
-			IVValue = KeyBuilder.IV (BlockSizeValue >> 3);
+			IVValue = KeyBuilder.IV (DESTransform.BLOCK_BYTE_SIZE);
 		}
 	
 		public override void GenerateKey () 
 		{
-			int size = (KeySizeValue >> 3);
-			KeyValue = KeyBuilder.Key (size);
-			while (IsWeakKey (KeyValue) || IsSemiWeakKey (KeyValue))
-				KeyValue = KeyBuilder.Key (size);
+			KeyValue = DESTransform.GetStrongKey ();
 		}
 	}
 }

@@ -55,20 +55,16 @@ namespace System.Security.Cryptography {
 		
 		public override void GenerateKey () 
 		{
-			KeyValue = KeyBuilder.Key (KeySizeValue >> 3);
+			KeyValue = TripleDESTransform.GetStrongKey ();
 		}
 		
 		public override ICryptoTransform CreateDecryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
-			Key = rgbKey;
-			IV = rgbIV;
 			return new TripleDESTransform (this, false, rgbKey, rgbIV);
 		}
 		
 		public override ICryptoTransform CreateEncryptor (byte[] rgbKey, byte[] rgbIV) 
 		{
-			Key = rgbKey;
-			IV = rgbIV;
 			return new TripleDESTransform (this, true, rgbKey, rgbIV);
 		}
 	}
@@ -88,6 +84,17 @@ namespace System.Security.Cryptography {
 		
 		public TripleDESTransform (TripleDES algo, bool encryption, byte[] key, byte[] iv) : base (algo, encryption, iv) 
 		{
+#if NET_2_0
+			if (key == null) {
+				key = GetStrongKey ();
+			}
+#endif
+			// note: checking weak keys also checks valid key length
+			if (TripleDES.IsWeakKey (key)) {
+				string msg = Locale.GetText ("This is a known weak key.");
+				throw new CryptographicException (msg);
+			}
+
 			byte[] key1 = new byte [8];
 			byte[] key2 = new byte [8];
 			byte[] key3 = new byte [8];
@@ -128,6 +135,15 @@ namespace System.Security.Cryptography {
 				D3.ProcessBlock (output, output);
 			}
 			DESTransform.Permutation (output, output, DESTransform.fpTab, true);
+		}
+
+		static internal byte[] GetStrongKey ()
+		{
+			int size = DESTransform.BLOCK_BYTE_SIZE * 3;
+			byte[] key = KeyBuilder.Key (size);
+			while (TripleDES.IsWeakKey (key))
+				key = KeyBuilder.Key (size);
+			return key;
 		}
 	}
 }
