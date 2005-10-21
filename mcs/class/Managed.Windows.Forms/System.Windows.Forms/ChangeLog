@@ -1,5 +1,10 @@
 2005-10-20  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: We can always get input keys regardless of whether
+	or not editing is enabled. They are used for navigation.
+
+2005-10-20  Jackson Harper  <jackson@ximian.com>
+
 	* TreeNode.cs: Use the viewport rect for determining if a node
 	needs to be moved for visibility. Don't use Begin/End edit. This
 	calls a full refresh when its done.

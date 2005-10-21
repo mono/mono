@@ -499,19 +499,20 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool IsInputKey (Keys key_data) {
-			if (label_edit && (key_data & Keys.Alt) == 0) {
+
+			if ((key_data & Keys.Alt) == 0) {
 				switch (key_data & Keys.KeyCode) {
-					case Keys.Enter:
-					case Keys.Escape:
-					case Keys.Prior:
-					case Keys.Next:
-					case Keys.End:
-					case Keys.Home:
-					case Keys.Left:
-					case Keys.Up:
-					case Keys.Right:
-					case Keys.Down:
-						return true;
+				case Keys.Enter:
+				case Keys.Escape:
+				case Keys.Prior:
+				case Keys.Next:
+				case Keys.End:
+				case Keys.Home:
+				case Keys.Left:
+				case Keys.Up:
+				case Keys.Right:
+				case Keys.Down:
+					return true;
 				}
 			}
 			return base.IsInputKey (key_data);
