@@ -1,3 +1,10 @@
+2005-10-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SemanticAnalizer.cs, Import.cs: Update calls to the
+	latest changes in namespace.cs. Keep the old calls for
+	2.0 profile, and update them as soon as these changes are
+	merged to gmcs.
+	
 2005-09-15  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (COMPILER): New.  Points to mcs.exe or gmcs.exe

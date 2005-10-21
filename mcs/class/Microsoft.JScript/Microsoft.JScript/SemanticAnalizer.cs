@@ -401,7 +401,11 @@ namespace Microsoft.JScript {
 					foreach (string ns in namespaces){
 						if (ns == "")
 							continue;
+#if !NET_2_0
+						Mono.CSharp.RootNamespace.Global.GetNamespace (ns, true);
+#else
 						Mono.CSharp.Namespace.LookupNamespace (ns, true);
+#endif
 					}
 				}
 			} else {
@@ -413,7 +417,11 @@ namespace Microsoft.JScript {
 						if (ns == null || cache.Contains (ns))
 							continue;
 
+#if !NET_2_0
+						Mono.CSharp.RootNamespace.Global.GetNamespace (ns, true);
+#else
 						Mono.CSharp.Namespace.LookupNamespace (ns, true);
+#endif
 						cache.Add (ns, null);
 					}
 				}
