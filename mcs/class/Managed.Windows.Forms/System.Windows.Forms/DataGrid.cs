@@ -1397,14 +1397,27 @@ namespace System.Windows.Forms
 		{
 			base.OnMouseWheel (e);
 
-			if (e.Delta > 0) {
-				if (current_cell.RowNumber > 0) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber - 1, current_cell.ColumnNumber);
+			if (ctrl_pressed == false) { // scroll horizontal
+				if (e.Delta > 0) {
+					if (current_cell.RowNumber > 0) {
+						CurrentCell = new DataGridCell (current_cell.RowNumber - 1, current_cell.ColumnNumber);
+					}
 				}
-			}
-			else {
-				if (current_cell.RowNumber < RowsCount - 1) {
-					CurrentCell = new DataGridCell (current_cell.RowNumber + 1, current_cell.ColumnNumber);					
+				else {
+					if (current_cell.RowNumber < RowsCount - 1) {
+						CurrentCell = new DataGridCell (current_cell.RowNumber + 1, current_cell.ColumnNumber);					
+					}
+				}
+			} else {
+				if (e.Delta > 0) {
+					if (current_cell.ColumnNumber > 0) {
+						CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber - 1);
+					}
+				}
+				else {
+					if (current_cell.ColumnNumber < CurrentTableStyle.GridColumnStyles.Count - 1) {
+						CurrentCell = new DataGridCell (current_cell.RowNumber, current_cell.ColumnNumber + 1);					
+					}
 				}
 			}
 		}

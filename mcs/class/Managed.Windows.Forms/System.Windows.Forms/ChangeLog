@@ -1,5 +1,9 @@
 2005-10-21  Jordi Mas i Hernandez <jordi@ximian.com>
 
+	* DataGrid.cs: Adds support for vertical scrolling using the mousewheel
+
+2005-10-21  Jordi Mas i Hernandez <jordi@ximian.com>
+
 	* Binding.cs: No PushData/PullData if there is no binding (fixes crash)
 
 2005-10-21  Jordi Mas i Hernandez <jordi@ximian.com>
