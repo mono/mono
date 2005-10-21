@@ -1,5 +1,10 @@
 2005-10-21  Miguel de Icaza  <miguel@novell.com>
 
+	* Pen.cs: Add support for returning the Brush from Pens created
+	with a color constructor.
+
+	Plus: code style police, else does not go on its own line.
+
 	* Graphics.cs: Add various ArgumentNull checks.
 
 2005-10-20 Konstantin Triger <kostat@mainsoft.com>
