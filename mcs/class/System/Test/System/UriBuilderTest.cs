@@ -185,6 +185,15 @@ namespace MonoTests.System
 			b = new UriBuilder ("http", "www.ximian.com", 80, "/lalala/lelele.aspx", "?something");
 			AssertEquals ("#04", b.Uri.ToString (), noquery + "?something");
 		}
+
+		[Test] // bug #76501
+		public void TestToString76501 ()
+		{
+			UriBuilder ub = new UriBuilder (
+				"http://mondomaine/trucmuche/login.aspx");
+			ub.Query = ub.Query.TrimStart (new char [] {'?'}) + "&ticket=bla";
+			Assert (ub.ToString ().IndexOf ("80//") < 0);
+		}
 	}
 }
 

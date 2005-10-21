@@ -261,7 +261,9 @@ namespace System
 			if (port > 0)
 				builder.Append (":" + port);
 
-			if (path != String.Empty)
+			if (path != String.Empty &&
+			    builder [builder.Length - 1] != '/' &&
+			    path.Length > 0 && path [0] != '/')
 				builder.Append ('/');
 			builder.Append (path);
 			builder.Append (query);
