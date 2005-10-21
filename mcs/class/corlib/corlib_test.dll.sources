@@ -155,6 +155,7 @@ System.Security.Cryptography/PaddingModeTest.cs
 System.Security.Cryptography/PasswordDeriveBytesTest.cs
 System.Security.Cryptography/PKCS1MaskGenerationMethodTest.cs
 System.Security.Cryptography/RandomNumberGeneratorTest.cs
+System.Security.Cryptography/RC2CryptoServiceProviderTest.cs
 System.Security.Cryptography/RC2Test.cs
 System.Security.Cryptography/RijndaelManagedTest.cs
 System.Security.Cryptography/RijndaelTest.cs
@@ -179,6 +180,7 @@ System.Security.Cryptography/SignatureDescriptionTest.cs
 System.Security.Cryptography/SymmetricAlgorithmTest.cs
 System.Security.Cryptography/SymmetricAlgorithm2Test.cs
 System.Security.Cryptography/ToBase64TransformTest.cs
+System.Security.Cryptography/TripleDESCryptoServiceProviderTest.cs
 System.Security.Cryptography/TripleDESTest.cs
 System.Security.Cryptography.X509Certificates/X509CapiTest.cs
 System.Security.Cryptography.X509Certificates/X509CertificateTest.cs
