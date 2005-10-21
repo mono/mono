@@ -380,7 +380,7 @@ namespace System.Windows.Forms
 			// TODO: Add missing ColumnResize and RowResize checks
 			if (columnshdrs_area.Contains (x, y)) {
 				hit.type = DataGrid.HitTestType.ColumnHeader;
-				hit.column = FromPixelToColumn (x);
+				hit.column = FromPixelToColumn (x + grid.horz_pixeloffset);
 				return hit;
 			}
 

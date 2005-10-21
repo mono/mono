@@ -547,7 +547,6 @@ namespace System.Windows.Forms
 				bounds, string_format_hdr);
 
 			if (arrow_drawing != ArrowDrawing.No) {
-				Console.WriteLine ("Drawing arrow {0}", HeaderText);
 				// Draw 6 x 6
 				Point pnt = new Point (bounds.X + bounds.Width  - 12, bounds.Y + ((bounds.Height - 6)/2));
 				

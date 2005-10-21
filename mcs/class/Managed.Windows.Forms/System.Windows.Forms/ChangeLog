@@ -1,3 +1,8 @@
+2005-10-21  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	* DataGridDrawingLogic.cs: Fixes column hit calcultation
+	* DataGridColumnStyle.cs: Remove debug message
+
 2005-10-20  Jackson Harper  <jackson@ximian.com>
 
 	* TreeView.cs: We can always get input keys regardless of whether
