@@ -122,6 +122,8 @@ namespace System.Windows.Forms {
 			if (owner.TreeView != null && (owner.IsExpanded || owner.IsRoot)) {
 				// XXX: Need to ensure the boxes for the nodes have been created
 				owner.TreeView.UpdateNode (owner);
+			} else if (owner.TreeView != null) {
+				owner.TreeView.UpdateNodePlusMinus (owner);
 			}
 
 			return count;
