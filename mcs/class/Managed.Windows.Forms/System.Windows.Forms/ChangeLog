@@ -1,3 +1,10 @@
+2005-10-21  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Make sure that when we invalidate a node the bounds
+	are big enough to cover the selected box and the focus
+	rectangle. Use a different colour for the lines connecting nodes
+	so they show up with all themes.
+
 2005-10-21  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* NativeWindow.cs: Don't call anything that could call into the driver,

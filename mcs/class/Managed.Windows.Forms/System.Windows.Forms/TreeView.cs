@@ -319,11 +319,15 @@ namespace System.Windows.Forms {
 
 				Rectangle invalid = Rectangle.Empty;
 
-				if (selected_node != null)
-					invalid = selected_node.Bounds;
-				if (focused_node != null)
-					invalid = Rectangle.Union (focused_node.Bounds, invalid);
-				invalid = Rectangle.Union (invalid, value.Bounds);
+				if (selected_node != null) {
+					invalid = Bloat (selected_node.Bounds);
+				}
+				if (focused_node != null) {
+					invalid = Rectangle.Union (invalid,
+							Bloat (focused_node.Bounds));
+				}
+
+				invalid = Rectangle.Union (invalid, Bloat (value.Bounds));
 
 				selected_node = value;
 				focused_node = value;
@@ -332,8 +336,7 @@ namespace System.Windows.Forms {
 					invalid.X = 0;
 					invalid.Width = ViewportRectangle.Width;
 				}
-				invalid.Y += 2;
-				
+
 				Invalidate (invalid);
 
 				// We ensure its visible after we update because
@@ -342,6 +345,15 @@ namespace System.Windows.Forms {
 
 				OnAfterSelect (new TreeViewEventArgs (value, TreeViewAction.Unknown));
 			}
+		}
+
+		private Rectangle Bloat (Rectangle rect)
+		{
+			rect.Y--;
+			rect.X--;
+			rect.Height += 2;
+			rect.Width += 2;
+			return rect;
 		}
 
 		[DefaultValue(true)]
@@ -850,7 +862,8 @@ namespace System.Windows.Forms {
 			}
 				
 			// We need to update the current node so the plus/minus block gets update too
-			Rectangle invalid = new Rectangle (0, node.Bounds.Top + 2, Width, Height - node.Bounds.Top);
+			Rectangle invalid = new Rectangle (0, node.Bounds.Top - 1,
+					Width, Height - node.Bounds.Top + 1);
 			Invalidate (invalid);
 		}
 
@@ -866,7 +879,8 @@ namespace System.Windows.Forms {
 				return;
 			}
 
-			Rectangle invalid = new Rectangle (0, node.Bounds.Top + 2, Width, node.Bounds.Height);
+			Rectangle invalid = new Rectangle (0, node.Bounds.Top - 1, Width,
+					node.Bounds.Height + 1);
 			Invalidate (invalid);
 		}
 
@@ -890,6 +904,12 @@ namespace System.Windows.Forms {
 			add_hscroll = false;
 			
 			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (BackColor), clip);
+
+			Color dash_color = ControlPaint.Dark (BackColor);
+			if (dash_color == BackColor)
+				dash_color = ControlPaint.Light (BackColor);
+			dash = new Pen (dash_color, 1);
+			dash.DashStyle = DashStyle.Dash;
 
 			int depth = 0;
 			int item_height = ItemHeight;
@@ -1307,10 +1327,10 @@ namespace System.Windows.Forms {
 					select_mmove = true;
 					
 					if (old_selected != null) {
-						Invalidate (Rectangle.Union (old_selected.Bounds,
-									    selected_node.Bounds));
+						Invalidate (Rectangle.Union (Bloat (old_selected.Bounds),
+									    Bloat (selected_node.Bounds)));
 					} else {
-						Invalidate (selected_node.Bounds);
+						Invalidate (Bloat (selected_node.Bounds));
 					}
 				}
 
@@ -1331,16 +1351,15 @@ namespace System.Windows.Forms {
 
 			Rectangle invalid;
 			if (!ce.Cancel) {
-				if (focused_node != null)
-					invalid = Rectangle.Union (focused_node.Bounds, selected_node.Bounds);
-				else
-					invalid = selected_node.Bounds;
+				if (focused_node != null) {
+					invalid = Rectangle.Union (Bloat (focused_node.Bounds),
+							Bloat (selected_node.Bounds));
+				} else {
+					invalid = Bloat (selected_node.Bounds);
+				}
 				focused_node = selected_node;
 				OnAfterSelect (new TreeViewEventArgs (selected_node, TreeViewAction.ByMouse));
-				invalid.Y -= 2;
-				invalid.X -= 2;
-				invalid.Height += 4;
-				invalid.Width += 4;
+
 				Invalidate (invalid);
 			} else {
 				selected_node = focused_node;
