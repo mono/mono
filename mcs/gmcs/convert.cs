@@ -90,15 +90,15 @@ namespace Mono.CSharp {
 			Type base_type = TypeParam_EffectiveBaseType (ec, gc);
 
 			if (TypeManager.IsSubclassOf (base_type, target_type))
-				return new BoxedCast (expr, target_type);
+				return new ClassCast (expr, target_type);
 
 			if (target_type.IsInterface) {
 				if (TypeManager.ImplementsInterface (base_type, target_type))
-					return new BoxedCast (expr, target_type);
+					return new ClassCast (expr, target_type);
 
 				foreach (Type t in gc.InterfaceConstraints) {
 					if (TypeManager.IsSubclassOf (t, target_type))
-						return new BoxedCast (expr, target_type);
+						return new ClassCast (expr, target_type);
 				}
 			}
 
@@ -106,7 +106,7 @@ namespace Mono.CSharp {
 				if (!t.IsGenericParameter)
 					continue;
 				if (TypeManager.IsSubclassOf (t, target_type))
-					return new BoxedCast (expr, target_type);
+					return new ClassCast (expr, target_type);
 			}
 
 			return null;
