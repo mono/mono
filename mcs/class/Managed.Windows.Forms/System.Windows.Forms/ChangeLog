@@ -1,3 +1,23 @@
+2005-10-21  Kornél Pál  <kornelpal@hotmail.com>
+
+	* ImageList.cs:
+	  - Reverted r51889 and r51891.
+	  - Added ImageListItem class that stores unmodified image items and image
+	    properties required to create list images until handle is created.
+	  - Added AddItem and moved image creation logic to AddItemInternal.
+	  - Added CreateHandle method that creates images based on unmodified items.
+	  - Added DestroyHandle that changes state to store unmodified items.
+	  - Add and AddStrip methods no more create handle.
+	  - ReduceColorDepth has no return value.
+	  - Dispose destroys handle.
+	  - Modified other methods to reflect the above changes.
+	  - Implemented key support.
+	  - Added profile 2.0 members and attributes.
+	  - Added private Reset and ShouldSerialize methods that provide the same
+	    behavior as MS.NET but the Visual Studio .NET designer seems to ignore
+	    them as they are private.
+	  - Added some more comments about implementation details.
+
 2005-10-21  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* DataGrid.cs: Adds support for vertical scrolling using the mousewheel

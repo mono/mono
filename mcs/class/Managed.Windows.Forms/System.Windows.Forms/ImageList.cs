@@ -48,30 +48,50 @@
 // Handle should be an HIMAGELIST returned by ImageList_Create. This
 // implementation uses (IntPtr)(-1) that is a non-zero but invalid handle.
 //
-// MS.NET creates handle when images are accessed. Add methods are caching the
-// original images without modification. This implementation adds images in
-// Add methods so handle is created in Add methods.
+// MS.NET destroys handles using the garbage collector this implementation
+// does the same with Image objects stored in an ArrayList.
 //
 // MS.NET 1.x shares the same HIMAGELIST between ImageLists that were
 // initialized from the same ImageListStreamer and doesn't update ImageSize
-// and ColorDepth that are treated as bugs.
+// and ColorDepth that are treated as bugs and MS.NET 2.0 behavior is
+// implemented.
+//
+// MS.NET 2.0 initializes TransparentColor to Color.Transparent in
+// constructors but ResetTransparentColor and ShouldSerializeTransparentColor
+// default to Color.LightGray that is treated as a bug.
+//
+// MS.NET 2.0 does not clear keys when handle is destroyed that is treated as
+// a bug.
 //
 
 using System.Collections;
+using System.Collections.Specialized;
 using System.ComponentModel;
+using System.ComponentModel.Design.Serialization;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.Runtime.InteropServices;
 
 namespace System.Windows.Forms
 {
 	[DefaultProperty("Images")]
 	[Designer("System.Windows.Forms.Design.ImageListDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+#if NET_2_0
+	[DesignerSerializer("System.Windows.Forms.Design.ImageListCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
+#endif
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
 	[TypeConverter("System.Windows.Forms.ImageListConverter, " + Consts.AssemblySystem_Windows_Forms)]
 	public sealed class ImageList : System.ComponentModel.Component
 	{
 		#region Private Fields
+		private const ColorDepth DefaultColorDepth = ColorDepth.Depth8Bit;
+		private static readonly Color DefaultTransparentColor = Color.Transparent;
+		private static readonly Size DefaultImageSize = new Size(16, 16);
+
+#if NET_2_0
+		private object tag;
+#endif
 		private EventHandler recreateHandle;
 		private readonly ImageCollection images;
 		#endregion // Private Fields
@@ -172,15 +192,67 @@ namespace System.Windows.Forms
 
 					return nearestColor;
 				}
+			}
 
+			[Flags()]
+			private enum ItemFlags
+			{
+				None = 0,
+				UseTransparentColor = 1,
+				ImageStrip = 2
+			}
+
+			private sealed class ImageListItem
+			{
+				internal readonly object Image;
+				internal readonly ItemFlags Flags;
+				internal readonly Color TransparentColor;
+				internal readonly int ImageCount = 1;
+
+				internal ImageListItem(Icon value)
+				{
+					if (value == null)
+						throw new ArgumentNullException("value");
+
+					// Icons are cloned.
+					this.Image = (Icon)value.Clone();
+				}
+
+				internal ImageListItem(Image value)
+				{
+					if (value == null)
+						throw new ArgumentNullException("value");
+
+					if (!(value is Bitmap))
+						throw new ArgumentException("Image must be a Bitmap.");
+
+					// Images are not cloned.
+					this.Image = value;
+				}
+
+				internal ImageListItem(Image value, Color transparentColor) : this(value)
+				{
+					this.Flags = ItemFlags.UseTransparentColor;
+					this.TransparentColor = transparentColor;
+				}
+
+				internal ImageListItem(Image value, int imageCount) : this(value)
+				{
+					this.Flags = ItemFlags.ImageStrip;
+					this.ImageCount = imageCount;
+				}
 			}
 
 			#region ImageCollection Private Fields
-			private ColorDepth colorDepth = ColorDepth.Depth8Bit;
-			private Color transparentColor = Color.Transparent;
-			private Size imageSize = new Size(16, 16);
+			private ColorDepth colorDepth = DefaultColorDepth;
+			private Color transparentColor = DefaultTransparentColor;
+			private Size imageSize = DefaultImageSize;
+			private ArrayList list = new ArrayList();
+#if NET_2_0
+			private ArrayList keys = new ArrayList();
+#endif
+			private int count;
 			private bool handleCreated;
-			private readonly ArrayList list = new ArrayList();
 			private readonly ImageList owner;
 			#endregion // ImageCollection Private Fields
 
@@ -205,12 +277,7 @@ namespace System.Windows.Forms
 
 					if (this.colorDepth != value) {
 						this.colorDepth = value;
-						if (handleCreated) {
-							for (int i = 0; i < list.Count; i++) {
-								list [i] = ReduceColorDepth ((Bitmap) list [i]);
-							}
-							owner.OnRecreateHandle();
-						}
+						RecreateHandle();
 					}
 				}
 			}
@@ -218,7 +285,7 @@ namespace System.Windows.Forms
 			// For use in ImageList
 			internal IntPtr Handle {
 				get {
-					this.handleCreated = true;
+					CreateHandle();
 					return (IntPtr)(-1);
 				}
 			}
@@ -242,12 +309,7 @@ namespace System.Windows.Forms
 
 					if (this.imageSize != value) {
 						this.imageSize = value;
-						if (handleCreated) {
-							for (int i = 0; i < list.Count; i++) {
-								list [i] = new Bitmap ((Image) list [i], imageSize);
-							}
-							owner.OnRecreateHandle();
-						}
+						RecreateHandle();
 					}
 				}
 			}
@@ -255,7 +317,7 @@ namespace System.Windows.Forms
 			// For use in ImageList
 			internal ImageListStreamer ImageStream {
 				get {
-					return list.Count == 0 ? null : new ImageListStreamer(this);
+					return this.Empty ? null : new ImageListStreamer(this);
 				}
 
 				set {
@@ -264,19 +326,30 @@ namespace System.Windows.Forms
 
 					if (value == null) {
 #if NET_2_0
-						this.handleCreated = false;
-						list.Clear();
+						if (this.handleCreated)
+							DestroyHandle();
+						else
+							this.Clear();
 #endif
 					}
 					else if ((streamImages = value.Images) != null) {
+						this.list = new ArrayList(streamImages.Length);
+						this.count = 0;
 						this.handleCreated = true;
-						list.Clear();
+#if NET_2_0
+						this.keys = new ArrayList(streamImages.Length);
+#endif
 
-						for (index = 0; index < streamImages.Length; index++)
+						for (index = 0; index < streamImages.Length; index++) {
 							list.Add((Image)streamImages[index].Clone());
+#if NET_2_0
+							keys.Add(null);
+#endif
+						}
 
 						this.imageSize = value.ImageSize;
 						this.colorDepth = value.ColorDepth;
+
 #if NET_2_0
 						// Event is raised even when handle was not created yet.
 						owner.OnRecreateHandle();
@@ -301,13 +374,13 @@ namespace System.Windows.Forms
 			[Browsable(false)]
 			public int Count {
 				get {
-					return list.Count;
+					return this.handleCreated ? list.Count : this.count;
 				}
 			}
 
 			public bool Empty {
 				get {
-					return list.Count == 0;
+					return this.Count == 0;
 				}
 			}
 
@@ -325,28 +398,186 @@ namespace System.Windows.Forms
 				}
 
 				set {
-					if (index < 0 || index >= list.Count)
+					Image image;
+
+					if (index < 0 || index >= this.Count)
 						throw new ArgumentOutOfRangeException("index");
 
-					list[index] = CreateImage(value, this.transparentColor);
+					if (value == null)
+						throw new ArgumentNullException("value");
+
+					if (!(value is Bitmap))
+						throw new ArgumentException("Image must be a Bitmap.");
+
+					image = CreateImage(value, this.transparentColor);
+					CreateHandle();
+					list[index] = image;
 				}
 			}
+
+#if NET_2_0
+			public Image this[string key] {
+				get {
+					int index;
+
+					return (index = IndexOfKey(key)) == -1 ? null : this[index];
+				}
+			}
+
+			public StringCollection Keys {
+				get {
+					int index;
+					string key;
+					StringCollection keyCollection;
+
+					keyCollection = new StringCollection();
+					for (index = 0; index < keys.Count; index++)
+						keyCollection.Add(((key = (string)keys[index]) == null || key.Length == 0) ? string.Empty : key);
+
+					return keyCollection;
+				}
+			}
+#endif
 			#endregion // ImageCollection Public Instance Properties
 
+			#region ImageCollection Private Static Methods
+#if NET_2_0
+			private static bool CompareKeys(string key1, string key2)
+			{
+				if (key1 == null || key2 == null || key1.Length != key2.Length)
+					return false;
+
+				return string.Compare(key1, key2, true, CultureInfo.InvariantCulture) == 0;
+			}
+#endif
+			#endregion // ImageCollection Private Static Methods
+
 			#region ImageCollection Private Instance Methods
+#if NET_2_0
+			private int AddItem(string key, ImageListItem item)
+#else
+			private int AddItem(ImageListItem item)
+#endif
+			{
+				int itemIndex;
+#if NET_2_0
+				int index;
+#endif
+
+				if (this.handleCreated)
+					itemIndex = AddItemInternal(item);
+				else {
+					// Image strips are counted as a single item in the return
+					// value of Add and AddStrip until handle is created.
+
+					itemIndex = list.Add(item);
+					this.count += item.ImageCount;
+				}
+
+#if NET_2_0
+				if ((item.Flags & ItemFlags.ImageStrip) == 0)
+					keys.Add(key);
+				else
+					for (index = 0; index < item.ImageCount; index++)
+						keys.Add(null);
+#endif
+
+				return itemIndex;
+			}
+
+			private int AddItemInternal(ImageListItem item)
+			{
+				if (item.Image is Icon) {
+					int imageWidth;
+					int imageHeight;
+					Bitmap bitmap;
+					Graphics graphics;
+
+					bitmap = new Bitmap(imageWidth = this.imageSize.Width, imageHeight = this.imageSize.Height, PixelFormat.Format32bppArgb);
+					graphics = Graphics.FromImage(bitmap);
+					graphics.DrawIcon((Icon)item.Image, new Rectangle(0, 0, imageWidth, imageHeight));
+					graphics.Dispose();
+
+					ReduceColorDepth(bitmap);
+					return list.Add(bitmap);
+				}
+				else if ((item.Flags & ItemFlags.ImageStrip) == 0)
+					return list.Add(CreateImage((Image)item.Image, (item.Flags & ItemFlags.UseTransparentColor) == 0 ? this.transparentColor : item.TransparentColor));
+				else {
+					int imageX;
+					int width;
+					int imageWidth;
+					int imageHeight;
+					int index;
+					Image image;
+					Bitmap bitmap;
+					Graphics graphics;
+					Rectangle imageRect;
+					ImageAttributes imageAttributes;
+
+					// When ImageSize was changed after adding image strips
+					// Count will return invalid values based on old ImageSize
+					// but when creating handle either ArgumentException will
+					// be thrown or image strip will be added according to the
+					// new ImageSize. This can result in image count
+					// difference that can result in exceptions in methods
+					// that use Count before creating handle. In addition this
+					// can result in the loss of sync with keys. When doing
+					// the same after handle was created there are no problems
+					// as handle will be recreated after changing ImageSize
+					// that results in the loss of images added previously.
+
+					if ((width = (image = (Image)item.Image).Width) == 0 || (width % (imageWidth = this.imageSize.Width)) != 0)
+						throw new ArgumentException("Width of image strip must be a positive multiple of ImageSize.Width.", "value");
+
+					if (image.Height != (imageHeight = this.imageSize.Height))
+						throw new ArgumentException("Height of image strip must be equal to ImageSize.Height.", "value");
+
+					imageRect = new Rectangle(0, 0, imageWidth, imageHeight);
+					if (this.transparentColor.A == 0)
+						imageAttributes = null;
+					else {
+						imageAttributes = new ImageAttributes();
+						imageAttributes.SetColorKey(this.transparentColor, this.transparentColor);
+					}
+
+					index = list.Count;
+					for (imageX = 0; imageX < width; imageX += imageWidth) {
+						bitmap = new Bitmap(imageWidth, imageHeight, PixelFormat.Format32bppArgb);
+						graphics = Graphics.FromImage(bitmap);
+						graphics.DrawImage(image, imageRect, imageX, 0, imageWidth, imageHeight, GraphicsUnit.Pixel, imageAttributes);
+						graphics.Dispose();
+
+						ReduceColorDepth(bitmap);
+						list.Add(bitmap);
+					}
+					return index;
+				}
+			}
+
+			private void CreateHandle()
+			{
+				int index;
+				ArrayList items;
+
+				if (!this.handleCreated) {
+					items = this.list;
+					this.list = new ArrayList(this.count);
+					this.count = 0;
+					this.handleCreated = true;
+
+					for (index = 0; index < items.Count; index++)
+						AddItemInternal((ImageListItem)items[index]);
+				}
+			}
+
 			private Image CreateImage(Image value, Color transparentColor)
 			{
-				int width;
-				int height;
+				int imageWidth;
+				int imageHeight;
 				Bitmap bitmap;
 				Graphics graphics;
 				ImageAttributes imageAttributes;
-
-				if (value == null)
-					throw new ArgumentNullException("value");
-
-				if (!(value is Bitmap))
-					throw new ArgumentException("Image must be a Bitmap.");
 
 				if (transparentColor.A == 0)
 					imageAttributes = null;
@@ -355,15 +586,25 @@ namespace System.Windows.Forms
 					imageAttributes.SetColorKey(transparentColor, transparentColor);
 				}
 
-				bitmap = new Bitmap(width = this.imageSize.Width, height = this.imageSize.Height, PixelFormat.Format32bppArgb);
+				bitmap = new Bitmap(imageWidth = this.imageSize.Width, imageHeight = this.imageSize.Height, PixelFormat.Format32bppArgb);
 				graphics = Graphics.FromImage(bitmap);
-				graphics.DrawImage(value, new Rectangle(0, 0, width, height), 0, 0, value.Width, value.Height, GraphicsUnit.Pixel, imageAttributes);
+				graphics.DrawImage(value, new Rectangle(0, 0, imageWidth, imageHeight), 0, 0, value.Width, value.Height, GraphicsUnit.Pixel, imageAttributes);
 				graphics.Dispose();
 
-				return ReduceColorDepth(bitmap);
+				ReduceColorDepth(bitmap);
+				return bitmap;
 			}
 
-			private unsafe Image ReduceColorDepth(Bitmap bitmap)
+			private void RecreateHandle()
+			{
+				if (this.handleCreated) {
+					DestroyHandle();
+					this.handleCreated = true;
+					owner.OnRecreateHandle();
+				}
+			}
+
+			private unsafe void ReduceColorDepth(Bitmap bitmap)
 			{
 				byte* pixelPtr;
 				byte* lineEndPtr;
@@ -415,26 +656,41 @@ namespace System.Windows.Forms
 						bitmap.UnlockBits(bitmapData);
 					}
 				}
-
-				return bitmap;
 			}
 			#endregion // ImageCollection Private Instance Methods
 
 			#region ImageCollection Internal Instance Methods
 			// For use in ImageList
+			internal void DestroyHandle()
+			{
+				if (this.handleCreated) {
+					this.list = new ArrayList();
+					this.count = 0;
+					this.handleCreated = false;
+#if NET_2_0
+					keys = new ArrayList();
+#endif
+				}
+			}
+
+			// For use in ImageList
 			internal Image GetImage(int index)
 			{
-				if (index < 0 || index >= list.Count)
+				if (index < 0 || index >= this.Count)
 					throw new ArgumentOutOfRangeException("index");
 
+				CreateHandle();
 				return (Image)list[index];
 			}
 
 			// For use in ImageListStreamer
 			internal Image[] ToArray()
 			{
-				Image[] images = new Image[list.Count];
+				Image[] images;
 
+				// Handle is created even when the list is empty.
+				CreateHandle();
+				images = new Image[list.Count];
 				list.CopyTo(images);
 				return images;
 			}
@@ -443,109 +699,141 @@ namespace System.Windows.Forms
 			#region ImageCollection Public Instance Methods
 			public void Add(Icon value)
 			{
-				int width;
-				int height;
-				Bitmap bitmap;
-				Graphics graphics;
-
-				if (value == null)
-					throw new ArgumentNullException("value");
-
-				this.handleCreated = true;
-
-				bitmap = new Bitmap(width = this.imageSize.Width, height = this.imageSize.Height, PixelFormat.Format32bppArgb);
-				graphics = Graphics.FromImage(bitmap);
-				graphics.DrawIcon(value, new Rectangle(0, 0, width, height));
-				graphics.Dispose();
-
-				list.Add(ReduceColorDepth(bitmap));
+#if NET_2_0
+				Add(null, value);
+#else
+				AddItem(new ImageListItem(value));
+#endif
 			}
 
 			public void Add(Image value)
 			{
-				Add(value, this.transparentColor);
+#if NET_2_0
+				Add(null, value);
+#else
+				AddItem(new ImageListItem(value));
+#endif
 			}
 
 			public int Add(Image value, Color transparentColor)
 			{
-				this.handleCreated = true;
-				return list.Add(CreateImage(value, transparentColor));
+#if NET_2_0
+				return AddItem(null, new ImageListItem(value, transparentColor));
+#else
+				return AddItem(new ImageListItem(value, transparentColor));
+#endif
 			}
+
+#if NET_2_0
+			public void Add(string key, Icon icon)
+			{
+				AddItem(key, new ImageListItem(icon));
+			}
+
+			public void Add(string key, Image image)
+			{
+				AddItem(key, new ImageListItem(image));
+			}
+
+			public void AddRange(Image[] images)
+			{
+				int index;
+
+				if (images == null)
+					throw new ArgumentNullException("images");
+
+				for (index = 0; index < images.Length; index++)
+					Add(images[index]);
+			}
+#endif
 
 			public int AddStrip(Image value)
 			{
-				int imageX;
-				int imageWidth;
 				int width;
-				int height;
-				int index;
-				Bitmap bitmap;
-				Graphics graphics;
-				Rectangle imageRect;
-				ImageAttributes imageAttributes;
+				int imageWidth;
 
 				if (value == null)
 					throw new ArgumentNullException("value");
 
-				if ((imageWidth = value.Width) == 0 || (imageWidth % (width = this.imageSize.Width)) != 0)
+				if ((width = value.Width) == 0 || (width % (imageWidth = this.imageSize.Width)) != 0)
 					throw new ArgumentException("Width of image strip must be a positive multiple of ImageSize.Width.", "value");
 
-				if (value.Height != (height = this.imageSize.Height))
+				if (value.Height != this.imageSize.Height)
 					throw new ArgumentException("Height of image strip must be equal to ImageSize.Height.", "value");
 
-				if (!(value is Bitmap))
-					throw new ArgumentException("Image must be a Bitmap.");
-
-				this.handleCreated = true;
-
-				imageRect = new Rectangle(0, 0, width, height);
-				if (this.transparentColor.A == 0)
-					imageAttributes = null;
-				else {
-					imageAttributes = new ImageAttributes();
-					imageAttributes.SetColorKey(this.transparentColor, this.transparentColor);
-				}
-
-				index = list.Count;
-				for (imageX = 0; imageX < imageWidth; imageX += width) {
-					bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-					graphics = Graphics.FromImage(bitmap);
-					graphics.DrawImage(value, imageRect, imageX, 0, width, height, GraphicsUnit.Pixel, imageAttributes);
-					graphics.Dispose();
-
-					list.Add(ReduceColorDepth(bitmap));
-				}
-
-				return index;
+#if NET_2_0
+				return AddItem(null, new ImageListItem(value, width / imageWidth));
+#else
+				return AddItem(new ImageListItem(value, width / imageWidth));
+#endif
 			}
 
 			public void Clear()
 			{
 				list.Clear();
+				if (this.handleCreated)
+					this.count = 0;
+#if NET_2_0
+				keys.Clear();
+#endif
 			}
 
+#if NET_2_0
+			[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
 			public bool Contains(Image image)
 			{
 				throw new NotSupportedException();
 			}
 
+#if NET_2_0
+			public bool ContainsKey(string key)
+			{
+				return IndexOfKey(key) != -1;
+			}
+#endif
 
 			public IEnumerator GetEnumerator()
 			{
-				Image[] images = new Image[list.Count];
+				Image[] images = new Image[this.Count];
 				int index;
 
-				for (index = 0; index < images.Length; index++)
-					images[index] = (Image)((Image)list[index]).Clone();
+				if (images.Length != 0) {
+					// Handle is created only when there are images.
+					CreateHandle();
+
+					for (index = 0; index < images.Length; index++)
+						images[index] = (Image)((Image)list[index]).Clone();
+				}
 
 				return images.GetEnumerator();
 			}
 
+#if NET_2_0
+			[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
 			public int IndexOf(Image image)
 			{
 				throw new NotSupportedException();
 			}
 
+#if NET_2_0
+			public int IndexOfKey(string key)
+			{
+				int index;
+
+				if (key != null && key.Length != 0)
+					for (index = 0; index < this.Count; index++)
+						if (CompareKeys((string)keys[index], key))
+							return index;
+
+				return -1;
+			}
+#endif
+
+#if NET_2_0
+			[EditorBrowsable(EditorBrowsableState.Never)]
+#endif
 			public void Remove(Image image)
 			{
 				throw new NotSupportedException();
@@ -553,11 +841,34 @@ namespace System.Windows.Forms
 
 			public void RemoveAt(int index)
 			{
-				if (index < 0 || index >= list.Count)
+				if (index < 0 || index >= this.Count)
 					throw new ArgumentOutOfRangeException("index");
 
+				CreateHandle();
 				list.RemoveAt(index);
+#if NET_2_0
+				keys.RemoveAt(index);
+#endif
 			}
+
+#if NET_2_0
+			public void RemoveByKey(string key)
+			{
+				int index;
+
+				if ((index = IndexOfKey(key)) != -1)
+					RemoveAt(index);
+			}
+
+			public void SetKeyName(int index, string name)
+			{
+				// Only SetKeyName throws IndexOutOfRangeException
+				if (index < 0 || index >= this.Count)
+					throw new IndexOutOfRangeException();
+
+				keys[index] = name;
+			}
+#endif
 			#endregion // ImageCollection Public Instance Methods
 
 			#region ImageCollection Interface Properties
@@ -650,14 +961,60 @@ namespace System.Windows.Forms
 		}
 		#endregion // Public Constructors
 
+		#region Private Instance Methods
 		private void OnRecreateHandle()
 		{
 			if (recreateHandle != null)
 				recreateHandle(this, EventArgs.Empty);
 		}
 
+#if NET_2_0
+		// For use in Designers
+		private void ResetColorDepth()
+		{
+			this.ColorDepth = DefaultColorDepth;
+		}
+
+		// For use in Designers
+		private void ResetImageSize()
+		{
+			this.ImageSize = DefaultImageSize;
+		}
+
+		// For use in Designers
+		private void ResetTransparentColor()
+		{
+			this.TransparentColor = DefaultTransparentColor;
+		}
+
+		// For use in Designers
+		private bool ShouldSerializeColorDepth()
+		{
+			// ColorDepth is serialized in ImageStream when non-empty
+			// It is serialized even if it has it's default value when empty
+			return images.Empty;
+		}
+
+		// For use in Designers
+		private bool ShouldSerializeImageSize()
+		{
+			// ImageSize is serialized in ImageStream when non-empty
+			// It is serialized even if it has it's default value when empty
+			return images.Empty;
+		}
+
+		// For use in Designers
+		private bool ShouldSerializeTransparentColor()
+		{
+			return this.TransparentColor != DefaultTransparentColor;
+		}
+#endif
+		#endregion // Private Instance Methods
+
 		#region Public Instance Properties
-		[DefaultValue(ColorDepth.Depth8Bit)]
+#if !NET_2_0
+		[DefaultValue(DefaultColorDepth)]
+#endif
 		public ColorDepth ColorDepth {
 			get {
 				return images.ColorDepth;
@@ -719,6 +1076,21 @@ namespace System.Windows.Forms
 			}
 		}
 
+#if NET_2_0
+		[Bindable(true)]
+		[DefaultValue(null)]
+		[Localizable(false)]
+		[TypeConverter("System.ComponentModel.StringConverter, " + Consts.AssemblySystem)]
+		public object Tag {
+			get {
+				return this.tag;
+			}
+			set {
+				this.tag = value;
+			}
+		}
+#endif
+
 		public Color TransparentColor {
 			get {
 				return images.TransparentColor;
@@ -755,6 +1127,9 @@ namespace System.Windows.Forms
 		#region Protected Instance Methods
 		protected override void Dispose(bool disposing)
 		{
+			if (disposing)
+				images.DestroyHandle();
+
 			base.Dispose(disposing);
 		}
 		#endregion // Protected Instance Methods
