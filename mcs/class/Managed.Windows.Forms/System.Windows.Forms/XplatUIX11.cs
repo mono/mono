@@ -184,15 +184,6 @@ namespace System.Windows.Forms {
 			ErrorHandler = new XErrorHandler(HandleError);
 			XSetErrorHandler(ErrorHandler);
 		}
-
-		~XplatUIX11() {
-			lock (this) {
-				if (DisplayHandle!=IntPtr.Zero) {
-					XCloseDisplay(DisplayHandle);
-					DisplayHandle=IntPtr.Zero;
-				}
-			}
-		}
 		#endregion	// Constructors
 
 		#region Singleton Specific Code
@@ -2252,6 +2243,7 @@ namespace System.Windows.Forms {
 
 		internal override void Exit() {
 			GetMessageResult = false;
+Console.WriteLine("Exit called");
 		}
 
 		internal override IntPtr GetActive() {

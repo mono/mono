@@ -1,3 +1,9 @@
+2005-10-21  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs: Removed finalizer
+	* XplatUIX11.cs: Removed Destructor, was causing crashes due to X11
+	  not allowing to be called on the finalizer thread.
+
 2005-10-21  Kornél Pál  <kornelpal@hotmail.com>
 
 	* ImageList.cs:
