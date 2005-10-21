@@ -1,3 +1,10 @@
+2005-10-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Clone IV so it cannot be changed once the 
+	transform starts. Generate a new IV if null is specified (not really
+	useful but compatible with MS behaviour). Added a check for IV length
+	on 2.0.
+
 2005-05-26  Ben Maurer  <bmaurer@ximian.com>
 
 	* KeyPairPersistence.cs: Lock *before* checking if things are null

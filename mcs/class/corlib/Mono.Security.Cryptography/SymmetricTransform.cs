@@ -60,9 +60,23 @@ namespace Mono.Security.Cryptography {
 			algo = symmAlgo;
 			encrypt = encryption;
 			BlockSizeByte = (algo.BlockSize >> 3);
+
+			if (rgbIV == null) {
+				rgbIV = KeyBuilder.IV (BlockSizeByte);
+			} else {
+				rgbIV = (byte[]) rgbIV.Clone ();
+			}
+#if NET_2_0
+			// compare the IV length with the "currently selected" block size and *ignore* IV that are too big
+			if (rgbIV.Length < BlockSizeByte) {
+				string msg = Locale.GetText ("IV is too small ({0} bytes), it should be {1} bytes long.",
+					rgbIV.Length, BlockSizeByte);
+				throw new CryptographicException (msg);
+			}
+#endif
 			// mode buffers
 			temp = new byte [BlockSizeByte];
-			Buffer.BlockCopy (rgbIV, 0, temp, 0, BlockSizeByte);
+			Buffer.BlockCopy (rgbIV, 0, temp, 0, System.Math.Min (BlockSizeByte, rgbIV.Length));
 			temp2 = new byte [BlockSizeByte];
 			FeedBackByte = (algo.FeedbackSize >> 3);
 			if (FeedBackByte != 0)
