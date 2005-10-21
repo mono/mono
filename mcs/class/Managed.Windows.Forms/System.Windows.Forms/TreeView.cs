@@ -884,6 +884,25 @@ namespace System.Windows.Forms {
 			Invalidate (invalid);
 		}
 
+		internal void UpdateNodePlusMinus (TreeNode node)
+		{
+			if (update_stack > 0) {
+				update_needed = true;
+				return;
+			}
+
+			int l = node.Bounds.Left + 5;
+
+			if (show_root_lines || node.Parent != null)
+				l -= indent;
+			if (ImageList != null)
+				l -= ImageList.ImageSize.Width + 3;
+			if (checkboxes)
+				l -= 19;
+
+			Invalidate (new Rectangle (l, node.Bounds.Top, 8, node.Bounds.Height));
+		}
+
 		private void DoPaint (PaintEventArgs pe)
 		{
 			if (Width <= 0 || Height <=  0 || Visible == false)

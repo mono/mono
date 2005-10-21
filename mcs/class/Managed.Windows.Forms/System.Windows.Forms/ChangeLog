@@ -1,5 +1,13 @@
 2005-10-21  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: New method to invalidate the plus minus area of a
+	node without invalidating the whole node (maybe this can be used
+	in some more places).
+	* TreeNodeCollection.cs: When adding to an empty node we need to
+	invalidate its plus minus area so the little block shows up.
+	
+2005-10-21  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Make sure that when we invalidate a node the bounds
 	are big enough to cover the selected box and the focus
 	rectangle. Use a different colour for the lines connecting nodes
