@@ -1,3 +1,11 @@
+2005-10-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* test-extern-alias-[0-8].cs, test-externalias-00-lib.cs,
+	test-externalias-01-lib.cs: New tests for extern alias
+	in mcs.
+	* known-issues-gmcs: Add the new extern alias tests, since 
+	these changes are only -by now- in mcs.
+
 2005-10-20  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (run-test-local): Make compiler-tester use $(RUNTIME)
