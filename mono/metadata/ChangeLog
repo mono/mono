@@ -1,3 +1,8 @@
+2005-10-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_vtype): Correctly handle [In,Out] modifiers
+	when passing valuetypes byref. Fixes #76502.
+
 2005-10-19  Jackson Harper  <jackson@ximian.com>
 
 	* profiler.c: Don't put a . in front of types that are not in a
