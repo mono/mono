@@ -1,3 +1,9 @@
+2005-10-21  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* Control.cs(Dispose): Since Dispose might run on a different thread,
+	  make sure that we call methods that could call into the driver via
+	  invoke, to avoid thread issues
+
 2005-10-21  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs: Removed finalizer

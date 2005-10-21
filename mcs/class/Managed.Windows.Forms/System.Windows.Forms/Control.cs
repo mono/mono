@@ -710,6 +710,8 @@ namespace System.Windows.Forms
 			Text=text;
 		}
 
+		private delegate void RemoveDelegate(Control c);
+
 		protected override void Dispose(bool disposing) {
 			is_disposed = true;
 			if (dc_mem!=null) {
@@ -722,8 +724,13 @@ namespace System.Windows.Forms
 				bmp_mem=null;
 			}
 
-			DestroyHandle();
-			controls.Remove(this);
+			if (this.InvokeRequired) {
+				this.Invoke(new MethodInvoker(DestroyHandle));
+				this.Invoke(new RemoveDelegate(controls.Remove), new object[] {this});
+			} else {
+				DestroyHandle();
+				controls.Remove(this);
+			}
 		}
 		#endregion 	// Public Constructors
 
