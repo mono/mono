@@ -42,6 +42,11 @@ namespace Mono.CSharp
 		//
 		static ArrayList soft_references;
 
+		// 
+		// External aliases for assemblies.
+		//
+		static Hashtable external_aliases;
+
 		//
 		// Modules to be linked
 		//
@@ -305,6 +310,11 @@ namespace Mono.CSharp
 
 		static public void LoadAssembly (string assembly, bool soft)
 		{
+			LoadAssembly (assembly, null, soft);
+		}
+
+		static public void LoadAssembly (string assembly, string alias, bool soft)
+		{
 			Assembly a;
 			string total_log = "";
 
@@ -319,7 +329,11 @@ namespace Mono.CSharp
 						ass = assembly.Substring (0, assembly.Length - 4);
 					a = Assembly.Load (ass);
 				}
-				TypeManager.AddAssembly (a);
+				// Extern aliased refs require special handling
+				if (alias == null)
+					TypeManager.AddAssembly (a);
+				else
+					TypeManager.AddExternAlias (alias, a);
 
 			} catch (FileNotFoundException){
 				foreach (string dir in link_paths){
@@ -329,7 +343,10 @@ namespace Mono.CSharp
 
 					try {
 						a = Assembly.LoadFrom (full_path);
-						TypeManager.AddAssembly (a);
+						if (alias == null)
+							TypeManager.AddAssembly (a);
+						else
+							TypeManager.AddExternAlias (alias, a);
 						return;
 					} catch (FileNotFoundException ff) {
 						total_log += ff.FusionLog;
@@ -405,6 +422,9 @@ namespace Mono.CSharp
 
 			foreach (string r in soft_references)
 				LoadAssembly (r, true);
+
+			foreach (DictionaryEntry entry in external_aliases)
+				LoadAssembly ((string) entry.Value, (string) entry.Key, false);
 			
 			return;
 		}
@@ -800,7 +820,16 @@ namespace Mono.CSharp
 					Environment.Exit (1);
 				}
 				
-				references.Add (args [++i]);
+				string val = args [++i];
+				int idx = val.IndexOf ('=');
+				if (idx > -1) {
+					string alias = val.Substring (0, idx);
+					string assembly = val.Substring (idx + 1);
+					AddExternAlias (alias, assembly);
+					return true;
+				}
+
+				references.Add (val);
 				return true;
 				
 			case "-L":
@@ -1092,7 +1121,16 @@ namespace Mono.CSharp
 
 				string [] refs = value.Split (new char [] { ';', ',' });
 				foreach (string r in refs){
-					references.Add (r);
+					string val = r;
+					int index = val.IndexOf ("=");
+					if (index > -1) {
+						string alias = r.Substring (0, index);
+						string assembly = r.Substring (index + 1);
+						AddExternAlias (alias, assembly);
+						return true;
+					}
+					
+					references.Add (val);
 				}
 				return true;
 			}
@@ -1351,6 +1389,44 @@ namespace Mono.CSharp
 
 			return new_args;
 		}
+
+		static void AddExternAlias (string identifier, string assembly)
+		{
+			if (assembly.Length == 0) {
+				Report.Error (1680, "Invalid reference alias '" + identifier + "='. Missing filename");
+				return;
+			}
+
+			if (!IsExternAliasValid (identifier)) {
+				Report.Error (1679, "Invalid extern alias for /reference. Alias '" + identifier + "' is not a valid identifier");
+				return;
+			}
+			
+			// Could here hashtable throw an exception?
+			external_aliases [identifier] = assembly;
+		}
+		
+		static bool IsExternAliasValid (string identifier)
+		{
+			if (identifier.Length == 0)
+				return false;
+			if (identifier [0] != '_' && !Char.IsLetter (identifier [0]))
+				return false;
+
+			for (int i = 1; i < identifier.Length; i++) {
+				char c = identifier [i];
+				if (Char.IsLetter (c) || Char.IsDigit (c))
+					continue;
+
+				UnicodeCategory category = Char.GetUnicodeCategory (c);
+				if (category != UnicodeCategory.Format || category != UnicodeCategory.NonSpacingMark ||
+						category != UnicodeCategory.SpacingCombiningMark ||
+						category != UnicodeCategory.ConnectorPunctuation)
+					return false;
+			}
+			
+			return true;
+		}
 		
 		/// <summary>
 		///    Parses the arguments, and drives the compilation
@@ -1377,6 +1453,7 @@ namespace Mono.CSharp
 			encoding = default_encoding;
 
 			references = new ArrayList ();
+			external_aliases = new Hashtable ();
 			soft_references = new ArrayList ();
 			modules = new ArrayList ();
 			link_paths = new ArrayList ();
@@ -1612,7 +1689,7 @@ namespace Mono.CSharp
 			//
 			// Verify using aliases now
 			//
-			Namespace.VerifyUsing ();
+			GlobalRootNamespace.VerifyUsingForAll ();
 			
 			if (Report.Errors > 0){
 				return false;
@@ -1825,7 +1902,7 @@ namespace Mono.CSharp
 			Report.Reset ();
 			TypeManager.Reset ();
 			TypeHandle.Reset ();
-			Namespace.Reset ();
+			GlobalRootNamespace.Reset ();
 			CodeGen.Reset ();
 		}
 	}
