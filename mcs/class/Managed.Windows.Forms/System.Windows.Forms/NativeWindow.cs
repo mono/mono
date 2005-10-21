@@ -109,9 +109,6 @@ namespace System.Windows.Forms
 
 		#region Protected Instance Methods
 		~NativeWindow() {
-			if (window_handle!=IntPtr.Zero) {
-				DestroyHandle();
-			}
 		}
 
 		protected virtual void OnHandleChange() {

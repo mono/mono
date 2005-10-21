@@ -1,3 +1,8 @@
+2005-10-21  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* NativeWindow.cs: Don't call anything that could call into the driver,
+	  we might be on a different thread.
+
 2005-10-21  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* Control.cs(Dispose): Since Dispose might run on a different thread,
