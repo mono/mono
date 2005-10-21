@@ -1,8 +1,11 @@
 //
 // TestSuite.System.Security.Cryptography.RijndaelManaged.cs
 //
-// Author:
+// Authors:
 //      Andrew Birkett (andy@nobugs.org)
+//      Sebastien Pouliot  <sebastien@ximian.com>
+//
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -12,7 +15,17 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Security.Cryptography {
 
-	public class RijndaelManagedTest : TestCase {
+	[TestFixture]
+	public class RijndaelManagedTest {
+
+		private RijndaelManaged aes;
+
+		[SetUp]
+		public void SetUp ()
+		{
+			aes = new RijndaelManaged ();
+		}
+
 		public void CheckCBC(ICryptoTransform encryptor, ICryptoTransform decryptor, 
 					   byte[] plaintext, byte[] expected) 
 		{
@@ -25,23 +38,17 @@ namespace MonoTests.System.Security.Cryptography {
 			for (int i=0; i < plaintext.Length; i += encryptor.InputBlockSize) {
 				encryptor.TransformBlock(plaintext, i, encryptor.InputBlockSize, ciphertext, i);
 			}
-	
-			for (int i=0; i<32; i++) {
-				AssertEquals("CBC-" + i, expected[i], ciphertext[i]);
-			}
+			Assert.AreEqual (expected, ciphertext, "CBC");
 	
 			byte[] roundtrip = new byte[plaintext.Length];
 			for (int i=0; i < ciphertext.Length; i += decryptor.InputBlockSize) {
 				decryptor.TransformBlock(ciphertext, i, decryptor.InputBlockSize, roundtrip, i);
 			}
-	
-			for (int i=0; i<32; i++) {
-				AssertEquals("CBC-rt-" + i, roundtrip[i], plaintext[i]);
-			}
-	
+			Assert.AreEqual (plaintext, roundtrip, "CBC-rt");
 		}
-	
-		public void TestCBC_0() {
+
+		[Test]
+		public void CBC_0() {
 	
 			byte[] plaintext = new byte[32];
 			for (int i=0; i < plaintext.Length; i++) plaintext[i] = 0;
@@ -68,9 +75,10 @@ namespace MonoTests.System.Security.Cryptography {
 	
 			CheckCBC(r.CreateEncryptor(key, iv), r.CreateDecryptor(key, iv), plaintext, expected);
 		}
-	
-		public void TestCBC_1() {
-	
+
+		[Test]
+		public void CBC_1 ()
+		{
 			byte[] plaintext = new byte[32];
 			for (int i=0; i < plaintext.Length; i++) plaintext[i] = 0;
 	
@@ -102,23 +110,18 @@ namespace MonoTests.System.Security.Cryptography {
 		{
 			byte[] ciphertext = new byte[plaintext.Length];
 			int n = encryptor.TransformBlock(plaintext, 0, plaintext.Length, ciphertext, 0);
-	
-			AssertEquals("ECB-len", n, expected.Length);
-			for (int i=0; i < ciphertext.Length; i++) {
-				AssertEquals("ECB-encrypt-" + i, ciphertext[i], expected[i]);
-			}
+
+			Assert.AreEqual (expected, ciphertext, "ECB");
 	
 			byte[] roundtrip = new byte[plaintext.Length];
 			n = decryptor.TransformBlock(ciphertext, 0, ciphertext.Length, roundtrip, 0);
-	
-			AssertEquals("ECB-rt-len", n, plaintext.Length);
-			for (int i=0; i < roundtrip.Length; i++) {
-				AssertEquals("ECB-rt-" + i, roundtrip[i], plaintext[i]);
-			}
+
+			Assert.AreEqual (plaintext, roundtrip, "ECB-rt-len");
 		}
-	
-		public void TestECB() {
-	
+
+		[Test]
+		public void ECB ()
+		{
 			byte[] plaintext = new byte[16];
 			byte[] iv = new byte[16];
 	
@@ -170,6 +173,192 @@ namespace MonoTests.System.Security.Cryptography {
 				r.CreateEncryptor(key32, iv), r.CreateDecryptor(key32, iv), 
 				plaintext, exp32
 			);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void CreateEncryptor_KeyNull ()
+		{
+			ICryptoTransform encryptor = aes.CreateEncryptor (null, aes.IV);
+			byte[] data = new byte[encryptor.InputBlockSize];
+			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
+
+			ICryptoTransform decryptor = aes.CreateDecryptor (aes.Key, aes.IV);
+			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
+			// null key != SymmetricAlgorithm.Key
+		}
+
+		[Test]
+		public void CreateEncryptor_IvNull ()
+		{
+			ICryptoTransform encryptor = aes.CreateEncryptor (aes.Key, null);
+			byte[] data = new byte[encryptor.InputBlockSize];
+			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
+
+			ICryptoTransform decryptor = aes.CreateDecryptor (aes.Key, aes.IV);
+			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
+			Assert.IsFalse (BitConverter.ToString (data) == BitConverter.ToString (decdata), "Compare");
+			// null iv != SymmetricAlgorithm.IV
+		}
+
+		[Test]
+		public void CreateEncryptor_KeyIv ()
+		{
+			byte[] originalKey = aes.Key;
+			byte[] originalIV = aes.IV;
+
+			byte[] key = (byte[]) aes.Key.Clone ();
+			Array.Reverse (key);
+			byte[] iv = (byte[]) aes.IV.Clone ();
+			Array.Reverse (iv);
+
+			Assert.IsNotNull (aes.CreateEncryptor (key, iv), "CreateEncryptor");
+
+			Assert.AreEqual (originalKey, aes.Key, "Key");
+			Assert.AreEqual (originalIV, aes.IV, "IV");
+			// SymmetricAlgorithm Key and IV not changed by CreateEncryptor
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		[Category ("NotWorking")] // data is bad but no exception is thrown
+		public void CreateDecryptor_KeyNull ()
+		{
+			ICryptoTransform encryptor = aes.CreateEncryptor (aes.Key, aes.IV);
+			byte[] data = new byte[encryptor.InputBlockSize];
+			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
+
+			ICryptoTransform decryptor = aes.CreateDecryptor (null, aes.IV);
+			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
+			// null key != SymmetricAlgorithm.Key
+		}
+
+		[Test]
+		public void CreateDecryptor_IvNull ()
+		{
+			ICryptoTransform encryptor = aes.CreateEncryptor (aes.Key, aes.IV);
+			byte[] data = new byte[encryptor.InputBlockSize];
+			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
+
+			ICryptoTransform decryptor = aes.CreateDecryptor (aes.Key, null);
+			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
+			Assert.IsFalse (BitConverter.ToString (data) == BitConverter.ToString (decdata), "Compare");
+			// null iv != SymmetricAlgorithm.IV
+		}
+
+		[Test]
+		public void CreateDecryptor_KeyIv ()
+		{
+			byte[] originalKey = aes.Key;
+			byte[] originalIV = aes.IV;
+
+			byte[] key = (byte[]) aes.Key.Clone ();
+			Array.Reverse (key);
+			byte[] iv = (byte[]) aes.IV.Clone ();
+			Array.Reverse (iv);
+
+			Assert.IsNotNull (aes.CreateEncryptor (key, iv), "CreateDecryptor");
+
+			Assert.AreEqual (originalKey, aes.Key, "Key");
+			Assert.AreEqual (originalIV, aes.IV, "IV");
+			// SymmetricAlgorithm Key and IV not changed by CreateDecryptor
+		}
+
+		// Setting the IV is more restrictive than supplying an IV to
+		// CreateEncryptor and CreateDecryptor. See bug #76483
+
+		private ICryptoTransform CreateEncryptor_IV (int size)
+		{
+			byte[] iv = (size == -1) ? null : new byte[size];
+			return aes.CreateEncryptor (aes.Key, iv);
+		}
+
+		[Test]
+		public void CreateEncryptor_IV_Null ()
+		{
+			int size = (aes.BlockSize >> 3) - 1;
+			CreateEncryptor_IV (-1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void CreateEncryptor_IV_Zero ()
+		{
+			int size = (aes.BlockSize >> 3) - 1;
+			CreateEncryptor_IV (0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void CreateEncryptor_IV_TooSmall ()
+		{
+			int size = (aes.BlockSize >> 3) - 1;
+			CreateEncryptor_IV (size);
+		}
+
+		[Test]
+		public void CreateEncryptor_IV_BlockSize ()
+		{
+			int size = (aes.BlockSize >> 3);
+			CreateEncryptor_IV (size);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		// Rijndael is the only implementation that has
+		// this behaviour for IV that are too large
+		[Category ("NotWorking")]
+		public void CreateEncryptor_IV_TooBig ()
+		{
+			int size = aes.BlockSize; // 8 times too big
+			CreateEncryptor_IV (size);
+		}
+
+		private ICryptoTransform CreateDecryptor_IV (int size)
+		{
+			byte[] iv = (size == -1) ? null : new byte[size];
+			return aes.CreateDecryptor (aes.Key, iv);
+		}
+
+		[Test]
+		public void CreateDecryptor_IV_Null ()
+		{
+			int size = (aes.BlockSize >> 3) - 1;
+			CreateDecryptor_IV (-1);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void CreateDecryptor_IV_Zero ()
+		{
+			int size = (aes.BlockSize >> 3) - 1;
+			CreateDecryptor_IV (0);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		public void CreateDecryptor_IV_TooSmall ()
+		{
+			int size = (aes.BlockSize >> 3) - 1;
+			CreateDecryptor_IV (size);
+		}
+
+		[Test]
+		public void CreateDecryptor_IV_BlockSize ()
+		{
+			int size = (aes.BlockSize >> 3);
+			CreateDecryptor_IV (size);
+		}
+
+		[Test]
+		[ExpectedException (typeof (CryptographicException))]
+		// Rijndael is the only implementation that has
+		// this behaviour for IV that are too large
+		[Category ("NotWorking")]
+		public void CreateDecryptor_IV_TooBig ()
+		{
+			int size = aes.BlockSize; // 8 times too big
+			CreateDecryptor_IV (size);
 		}
 	}
 }

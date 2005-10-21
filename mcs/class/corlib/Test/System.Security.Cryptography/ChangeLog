@@ -1,3 +1,18 @@
+2005-10-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RC2CryptoServiceProviderTest.cs: New. Unit tests specific to this 
+	implementation (not algorithm specific but required to match MS 
+	behaviour).
+	* RijndaelManagedTest.cs: Added unit tests specific to this 
+	implementation (not algorithm specific but required to match MS
+	behaviour).
+	* DESCryptoServiceProviderTest.cs: Added unit tests specific to this
+	implementation (not algorithm specific but required to match MS
+	behaviour).
+	* TripleDESCryptoServiceProviderTest.cs: New. Unit tests specific to 
+	this implementation (not algorithm specific but required to match MS
+	behaviour).
+
 2005-09-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HMACSHA1Test.cs: Use the new ctor(byte[],bool) introduced in 2.0 RC

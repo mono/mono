@@ -1,10 +1,11 @@
 //
-// TestSuite.System.Security.Cryptography.DESCryptoServiceProviderTest.cs
+// TripleDESCryptoServiceProviderTest.cs - Unit tests for 
+//	System.Security.Cryptography.TripleDESCryptoServiceProvider
 //
 // Author:
 //      Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -34,32 +35,15 @@ using NUnit.Framework;
 namespace MonoTests.System.Security.Cryptography {
 
 	[TestFixture]
-	public class DESCryptoServiceProviderTest : DESFIPS81Test {
+	public class TripleDESCryptoServiceProviderTest {
+
+		private TripleDESCryptoServiceProvider tdes;
 
 		[SetUp]
 		public void SetUp () 
 		{
-			des = new DESCryptoServiceProvider ();
+			tdes = new TripleDESCryptoServiceProvider ();
 		}
-
-		[Test]
-		public void KeyChecks () 
-		{
-			byte[] key = des.Key;
-			Assert.AreEqual (8, key.Length, "Key");
-			Assert.IsFalse (DES.IsWeakKey (key), "IsWeakKey");
-			Assert.IsFalse (DES.IsSemiWeakKey (key), "IsSemiWeakKey");
-		}
-
-		[Test]
-		public void IV () 
-		{
-			byte[] iv = des.IV;
-			Assert.AreEqual (8, iv.Length, "IV");
-		}
-
-		// other tests (test vectors) are inherited from DESFIPS81Test
-		// (in DESTest.cs) but executed here
 
 		[Test]
 #if NET_2_0
@@ -69,11 +53,11 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		public void CreateEncryptor_KeyNull ()
 		{
-			ICryptoTransform encryptor = des.CreateEncryptor (null, des.IV);
+			ICryptoTransform encryptor = tdes.CreateEncryptor (null, tdes.IV);
 			byte[] data = new byte[encryptor.InputBlockSize];
 			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
 
-			ICryptoTransform decryptor = des.CreateDecryptor (des.Key, des.IV);
+			ICryptoTransform decryptor = tdes.CreateDecryptor (tdes.Key, tdes.IV);
 			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
 			// null key != SymmetricAlgorithm.Key
 		}
@@ -81,11 +65,11 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void CreateEncryptor_IvNull ()
 		{
-			ICryptoTransform encryptor = des.CreateEncryptor (des.Key, null);
+			ICryptoTransform encryptor = tdes.CreateEncryptor (tdes.Key, null);
 			byte[] data = new byte[encryptor.InputBlockSize];
 			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
 
-			ICryptoTransform decryptor = des.CreateDecryptor (des.Key, des.IV);
+			ICryptoTransform decryptor = tdes.CreateDecryptor (tdes.Key, tdes.IV);
 			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
 			Assert.IsFalse (BitConverter.ToString (data) == BitConverter.ToString (decdata), "Compare");
 			// null iv != SymmetricAlgorithm.IV
@@ -94,18 +78,18 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void CreateEncryptor_KeyIv ()
 		{
-			byte[] originalKey = des.Key;
-			byte[] originalIV = des.IV;
+			byte[] originalKey = tdes.Key;
+			byte[] originalIV = tdes.IV;
 
-			byte[] key = (byte[]) des.Key.Clone ();
+			byte[] key = (byte[]) tdes.Key.Clone ();
 			Array.Reverse (key);
-			byte[] iv = (byte[]) des.IV.Clone ();
+			byte[] iv = (byte[]) tdes.IV.Clone ();
 			Array.Reverse (iv);
 
-			Assert.IsNotNull (des.CreateEncryptor (key, iv), "CreateEncryptor");
+			Assert.IsNotNull (tdes.CreateEncryptor (key, iv), "CreateEncryptor");
 
-			Assert.AreEqual (originalKey, des.Key, "Key");
-			Assert.AreEqual (originalIV, des.IV, "IV");
+			Assert.AreEqual (originalKey, tdes.Key, "Key");
+			Assert.AreEqual (originalIV, tdes.IV, "IV");
 			// SymmetricAlgorithm Key and IV not changed by CreateEncryptor
 		}
 
@@ -117,11 +101,11 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		public void CreateDecryptor_KeyNull ()
 		{
-			ICryptoTransform encryptor = des.CreateEncryptor (des.Key, des.IV);
+			ICryptoTransform encryptor = tdes.CreateEncryptor (tdes.Key, tdes.IV);
 			byte[] data = new byte[encryptor.InputBlockSize];
 			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
 
-			ICryptoTransform decryptor = des.CreateDecryptor (null, des.IV);
+			ICryptoTransform decryptor = tdes.CreateDecryptor (null, tdes.IV);
 			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
 			// null key != SymmetricAlgorithm.Key
 		}
@@ -129,11 +113,11 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void CreateDecryptor_IvNull ()
 		{
-			ICryptoTransform encryptor = des.CreateEncryptor (des.Key, des.IV);
+			ICryptoTransform encryptor = tdes.CreateEncryptor (tdes.Key, tdes.IV);
 			byte[] data = new byte[encryptor.InputBlockSize];
 			byte[] encdata = encryptor.TransformFinalBlock (data, 0, data.Length);
 
-			ICryptoTransform decryptor = des.CreateDecryptor (des.Key, null);
+			ICryptoTransform decryptor = tdes.CreateDecryptor (tdes.Key, null);
 			byte[] decdata = decryptor.TransformFinalBlock (encdata, 0, encdata.Length);
 			Assert.IsFalse (BitConverter.ToString (data) == BitConverter.ToString (decdata), "Compare");
 			// null iv != SymmetricAlgorithm.IV
@@ -142,18 +126,18 @@ namespace MonoTests.System.Security.Cryptography {
 		[Test]
 		public void CreateDecryptor_KeyIv ()
 		{
-			byte[] originalKey = des.Key;
-			byte[] originalIV = des.IV;
+			byte[] originalKey = tdes.Key;
+			byte[] originalIV = tdes.IV;
 
-			byte[] key = (byte[]) des.Key.Clone ();
+			byte[] key = (byte[]) tdes.Key.Clone ();
 			Array.Reverse (key);
-			byte[] iv = (byte[]) des.IV.Clone ();
+			byte[] iv = (byte[]) tdes.IV.Clone ();
 			Array.Reverse (iv);
 
-			Assert.IsNotNull (des.CreateEncryptor (key, iv), "CreateDecryptor");
+			Assert.IsNotNull (tdes.CreateEncryptor (key, iv), "CreateDecryptor");
 
-			Assert.AreEqual (originalKey, des.Key, "Key");
-			Assert.AreEqual (originalIV, des.IV, "IV");
+			Assert.AreEqual (originalKey, tdes.Key, "Key");
+			Assert.AreEqual (originalIV, tdes.IV, "IV");
 			// SymmetricAlgorithm Key and IV not changed by CreateDecryptor
 		}
 
@@ -163,12 +147,13 @@ namespace MonoTests.System.Security.Cryptography {
 		private ICryptoTransform CreateEncryptor_IV (int size)
 		{
 			byte[] iv = (size == -1) ? null : new byte[size];
-			return des.CreateEncryptor (des.Key, iv);
+			return tdes.CreateEncryptor (tdes.Key, iv);
 		}
 
 		[Test]
 		public void CreateEncryptor_IV_Null ()
 		{
+			int size = (tdes.BlockSize >> 3) - 1;
 			CreateEncryptor_IV (-1);
 		}
 
@@ -178,6 +163,7 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		public void CreateEncryptor_IV_Zero ()
 		{
+			int size = (tdes.BlockSize >> 3) - 1;
 			CreateEncryptor_IV (0);
 		}
 
@@ -187,33 +173,34 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		public void CreateEncryptor_IV_TooSmall ()
 		{
-			int size = (des.BlockSize >> 3) - 1;
+			int size = (tdes.BlockSize >> 3) - 1;
 			CreateEncryptor_IV (size);
 		}
 
 		[Test]
 		public void CreateEncryptor_IV_BlockSize ()
 		{
-			int size = (des.BlockSize >> 3);
+			int size = (tdes.BlockSize >> 3);
 			CreateEncryptor_IV (size);
 		}
 
 		[Test]
 		public void CreateEncryptor_IV_TooBig ()
 		{
-			int size = des.BlockSize; // 8 times too big
+			int size = tdes.BlockSize; // 8 times too big
 			CreateEncryptor_IV (size);
 		}
 
 		private ICryptoTransform CreateDecryptor_IV (int size)
 		{
 			byte[] iv = (size == -1) ? null : new byte[size];
-			return des.CreateDecryptor (des.Key, iv);
+			return tdes.CreateDecryptor (tdes.Key, iv);
 		}
 
 		[Test]
 		public void CreateDecryptor_IV_Null ()
 		{
+			int size = (tdes.BlockSize >> 3) - 1;
 			CreateDecryptor_IV (-1);
 		}
 
@@ -223,6 +210,7 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		public void CreateDecryptor_IV_Zero ()
 		{
+			int size = (tdes.BlockSize >> 3) - 1;
 			CreateDecryptor_IV (0);
 		}
 
@@ -232,21 +220,21 @@ namespace MonoTests.System.Security.Cryptography {
 #endif
 		public void CreateDecryptor_IV_TooSmall ()
 		{
-			int size = (des.BlockSize >> 3) - 1;
+			int size = (tdes.BlockSize >> 3) - 1;
 			CreateDecryptor_IV (size);
 		}
 
 		[Test]
 		public void CreateDecryptor_IV_BlockSize ()
 		{
-			int size = (des.BlockSize >> 3);
+			int size = (tdes.BlockSize >> 3);
 			CreateDecryptor_IV (size);
 		}
 
 		[Test]
 		public void CreateDecryptor_IV_TooBig ()
 		{
-			int size = des.BlockSize; // 8 times too big
+			int size = tdes.BlockSize; // 8 times too big
 			CreateDecryptor_IV (size);
 		}
 	}
