@@ -1,5 +1,12 @@
 2005-10-21  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs
+	(Constraints.Resolve): Also resolve the actual types here.
+	(Constraints.ResolveTypes): Just check the constraints here.
+	Fixes #76363; see gtest-218.cs.
+
+2005-10-21  Martin Baulig  <martin@ximian.com>
+
 	* convert.cs
 	(Convert.ImplicitTypeParameterConversion): Use a `ClassCast'
 	instead of a `BoxedCast'; fixes gtest-217.cs.

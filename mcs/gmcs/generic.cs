@@ -165,6 +165,7 @@ namespace Mono.CSharp {
 		Type[] iface_constraint_types;
 		Type effective_base_type;
 		bool resolved;
+		bool resolved_types;
 
 		/// <summary>
 		///   Resolve the constraints - but only resolve things into Expression's, not
@@ -236,7 +237,7 @@ namespace Mono.CSharp {
 				} else
 					expr = fn.ResolveAsTypeTerminal (ec);
 
-				if (expr == null)
+				if ((expr == null) || (expr.Type == null))
 					return false;
 
 				TypeParameterExpr texpr = expr as TypeParameterExpr;
@@ -260,6 +261,86 @@ namespace Mono.CSharp {
 
 				num_constraints++;
 			}
+
+			ArrayList list = new ArrayList ();
+			foreach (TypeExpr iface_constraint in iface_constraints) {
+				foreach (Type type in list) {
+					if (!type.Equals (iface_constraint.Type))
+						continue;
+
+					Report.Error (405, loc,
+						      "Duplicate constraint `{0}' for type " +
+						      "parameter `{1}'.", iface_constraint.Type,
+						      name);
+					return false;
+				}
+
+				list.Add (iface_constraint.Type);
+			}
+
+			foreach (TypeParameterExpr expr in type_param_constraints) {
+				foreach (Type type in list) {
+					if (!type.Equals (expr.Type))
+						continue;
+
+					Report.Error (405, loc,
+						      "Duplicate constraint `{0}' for type " +
+						      "parameter `{1}'.", expr.Type, name);
+					return false;
+				}
+
+				list.Add (expr.Type);
+			}
+
+			ArrayList new_list = new ArrayList ();
+			foreach (Type iface in list) {
+				if (new_list.Contains (iface))
+					continue;
+
+				new_list.Add (iface);
+
+				Type [] implementing = TypeManager.GetInterfaces (iface);
+
+				foreach (Type imp in implementing) {
+					if (!new_list.Contains (imp))
+						new_list.Add (imp);
+				}
+			}
+
+			iface_constraint_types = new Type [new_list.Count];
+			new_list.CopyTo (iface_constraint_types, 0);
+
+			if (class_constraint != null) {
+				class_constraint_type = class_constraint.Type;
+				if (class_constraint_type == null)
+					return false;
+
+				if (class_constraint_type.IsSealed) {
+					Report.Error (701, loc,
+						      "`{0}' is not a valid bound.  Bounds " +
+						      "must be interfaces or non sealed " +
+						      "classes", class_constraint_type);
+					return false;
+				}
+
+				if ((class_constraint_type == TypeManager.array_type) ||
+				    (class_constraint_type == TypeManager.delegate_type) ||
+				    (class_constraint_type == TypeManager.enum_type) ||
+				    (class_constraint_type == TypeManager.value_type) ||
+				    (class_constraint_type == TypeManager.object_type)) {
+					Report.Error (702, loc,
+						      "Bound cannot be special class `{0}'",
+						      class_constraint_type);
+					return false;
+				}
+			}
+
+			if (class_constraint_type != null)
+				effective_base_type = class_constraint_type;
+			else if (HasValueTypeConstraint)
+				effective_base_type = TypeManager.value_type;
+			else
+				effective_base_type = TypeManager.object_type;
 
 			resolved = true;
 			return true;
@@ -304,8 +385,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public bool ResolveTypes (EmitContext ec)
 		{
-			if (effective_base_type != null)
+			if (resolved_types)
 				return true;
+
+			resolved_types = true;
 
 			foreach (object obj in constraints) {
 				ConstructedType cexpr = obj as ConstructedType;
@@ -322,94 +405,15 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			ArrayList list = new ArrayList ();
-
 			foreach (TypeExpr iface_constraint in iface_constraints) {
-				foreach (Type type in list) {
-					if (!type.Equals (iface_constraint.Type))
-						continue;
-
-					Report.Error (405, loc,
-						      "Duplicate constraint `{0}' for type " +
-						      "parameter `{1}'.", iface_constraint.Type,
-						      name);
+				if (iface_constraint.ResolveType (ec) == null)
 					return false;
-				}
-
-				TypeExpr te = iface_constraint.ResolveAsTypeTerminal (ec);
-				if (te == null)
-					return false;
-
-				list.Add (te.Type);
 			}
-
-			foreach (TypeParameterExpr expr in type_param_constraints) {
-				foreach (Type type in list) {
-					if (!type.Equals (expr.Type))
-						continue;
-
-					Report.Error (405, loc,
-						      "Duplicate constraint `{0}' for type " +
-						      "parameter `{1}'.", expr.Type, name);
-					return false;
-				}
-
-				list.Add (expr.Type);
-			}
-
-			ArrayList new_list = new ArrayList ();
-			foreach (Type iface in list) {
-				if (new_list.Contains (iface))
-					continue;
-
-				new_list.Add (iface);
-
-				Type [] implementing = TypeManager.GetInterfaces (iface);
-			
-				foreach (Type imp in implementing) {
-					if (!new_list.Contains (imp))
-						new_list.Add (imp);
-				}
-			}
-
-			iface_constraint_types = new Type [new_list.Count];
-			new_list.CopyTo (iface_constraint_types, 0);
 
 			if (class_constraint != null) {
-				TypeExpr te = class_constraint.ResolveAsTypeTerminal (ec);
-				if (te == null)
+				if (class_constraint.ResolveType (ec) == null)
 					return false;
-
-				class_constraint_type = te.Type;
-				if (class_constraint_type == null)
-					return false;
-
-				if (class_constraint_type.IsSealed) {
-					Report.Error (701, loc,
-						      "`{0}' is not a valid bound.  Bounds " +
-						      "must be interfaces or non sealed " +
-						      "classes", class_constraint_type);
-					return false;
-				}
-
-				if ((class_constraint_type == TypeManager.array_type) ||
-				    (class_constraint_type == TypeManager.delegate_type) ||
-				    (class_constraint_type == TypeManager.enum_type) ||
-				    (class_constraint_type == TypeManager.value_type) ||
-				    (class_constraint_type == TypeManager.object_type)) {
-					Report.Error (702, loc,
-						      "Bound cannot be special class `{0}'",
-						      class_constraint_type);
-					return false;
-				}
 			}
-
-			if (class_constraint_type != null)
-				effective_base_type = class_constraint_type;
-			else if (HasValueTypeConstraint)
-				effective_base_type = TypeManager.value_type;
-			else
-				effective_base_type = TypeManager.object_type;
 
 			return true;
 		}
