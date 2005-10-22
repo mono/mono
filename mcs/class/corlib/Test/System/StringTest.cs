@@ -1602,6 +1602,15 @@ public class StringTest : Assertion
 		AssertEquals ("#1", -1, String.Compare ("foo.obj", "foobar.obj", false));
 	}
 
+	[Test]
+	[ExpectedException (typeof (ArgumentOutOfRangeException))]
+	public void LastIndexOfAnyBounds1 ()
+	{
+		string mono = "Mono";
+                char [] k = { 'M' };
+                mono.LastIndexOfAny (k, mono.Length, 1);
+	}
+
 #if NET_2_0
 	[Test]
 	[ExpectedException (typeof (ArgumentOutOfRangeException))]
