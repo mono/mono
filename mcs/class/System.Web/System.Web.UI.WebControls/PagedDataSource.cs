@@ -215,7 +215,7 @@ namespace System.Web.UI.WebControls {
 			if (list != null) {
 				first = FirstIndexInPage;
 				count = ((ICollection) source).Count;
-				limit = ((first + page_size) > count) ? count : page_size;
+				limit = ((first + page_size) > count) ? (count - first) : page_size;
 				return GetListEnum (list, first, first + limit);
 			}
 
@@ -223,7 +223,7 @@ namespace System.Web.UI.WebControls {
 			if (col != null) {
 				first = FirstIndexInPage;
 				count = col.Count;
-				limit = ((first + page_size) > count) ? count : page_size;
+				limit = ((first + page_size) > count) ? (count - first) : page_size;
 				return GetEnumeratorEnum (col.GetEnumerator (), first, first + page_size);
 			}
 

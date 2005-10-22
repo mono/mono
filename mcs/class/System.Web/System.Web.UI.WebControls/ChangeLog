@@ -1,3 +1,9 @@
+2005-10-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* PagedDataSource.cs: fix range when we're at the last page.
+	* DataGrid.cs: only need to keep the item count in the viewstate.
+	Fixes bug #76503.
+
 2005-10-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListControl.cs: made GetSelectedIndices() internal.

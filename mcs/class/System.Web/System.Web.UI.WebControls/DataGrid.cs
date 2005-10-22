@@ -898,10 +898,7 @@ namespace System.Web.UI.WebControls {
 				keys = DataKeysArray;
 				keys.Clear ();
 			} else {
-				int npages = ViewState.GetInt ("PageCount", 1);
-				if (AllowCustomPaging)
-					npages = 1;
-				int nitems = ViewState.GetInt ("Items", 0) * npages;
+				int nitems = ViewState.GetInt ("Items", 0);
 				data_source = new NCollection (nitems);
 			}
 
@@ -982,12 +979,8 @@ namespace System.Web.UI.WebControls {
 			if (pds.IsPagingEnabled) {
 				CreateItem (-1, -1, ListItemType.Pager, false, null, paged_data_source);
 				if (useDataSource)
-					ViewState ["PageCount"] = pds.PageCount;
-			} else {
-				ViewState ["PageCount"] = 1;
-			}
-
-			if (useDataSource) {
+					ViewState ["Items"] = pds.DataSourceCount;
+			} else if (useDataSource) {
 				ViewState ["Items"] = index;
 			}
 		}
