@@ -676,7 +676,7 @@ namespace System
 			if (anyOf == null) 
 				throw new ArgumentNullException ("anyOf");
 
-			if (startIndex < 0 || startIndex > this.length)
+			if (startIndex < 0 || startIndex >= this.length)
 				throw new ArgumentOutOfRangeException ();
 
 			if (this.length == 0)
@@ -690,7 +690,7 @@ namespace System
 			if (anyOf == null) 
 				throw new ArgumentNullException ("anyOf");
 
-			if ((startIndex < 0) || (startIndex > this.Length))
+			if ((startIndex < 0) || (startIndex >= this.Length))
 				throw new ArgumentOutOfRangeException ("startIndex", "< 0 || > this.Length");
 			if ((count < 0) || (count > this.Length))
 				throw new ArgumentOutOfRangeException ("count", "< 0 || > this.Length");
