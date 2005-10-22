@@ -1117,17 +1117,33 @@ namespace System.Windows.Forms
 					}
 				}
 			}
-			
+
 			// set the FocusedItem to be the current clicked_item
 			SetFocusedItem (clicked_item);
 
-			if (this.clicked_item != null) {
-				this.clicked_item.Selected = true;
-				// Raise the event
-				this.OnSelectedIndexChanged (new EventArgs ());
+			if (clicked_item != null) {
+				bool changed = !clicked_item.Selected;
+				clicked_item.Selected = true;
+				
+				// Only Raise the event if the selected item has changed
+				if (changed)
+					OnSelectedIndexChanged (EventArgs.Empty);
+
+				// Raise double click if the item was clicked. On MS the
+				// double click is only raised if you double click an item
+				if (me.Clicks > 1 && this.clicked_item != null)
+					OnDoubleClick (EventArgs.Empty);
 
 				this.Redraw (false);
-			}		
+			} else if (selected_indices.Count > 0) {
+				// NOTE: selected_indices isn't computed properly so
+				// this doesn't actually work
+				
+				// Raise the event if there was at least one item
+				// selected and the user click on a dead area (unselecting all)
+				OnSelectedIndexChanged (EventArgs.Empty);
+				Redraw (false);
+			}
 		}
 
 		private void ListView_MouseHover (object sender, EventArgs e)

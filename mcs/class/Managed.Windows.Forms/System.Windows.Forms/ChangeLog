@@ -1,5 +1,11 @@
 2005-10-21  Jackson Harper  <jackson@ximian.com>
 
+	* ListView.cs: Raise a double click event. Also tried to somewhat
+	fix when the selectedindexchanged event is raised. Its still
+	broken though.
+
+2005-10-21  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: New method to invalidate the plus minus area of a
 	node without invalidating the whole node (maybe this can be used
 	in some more places).
