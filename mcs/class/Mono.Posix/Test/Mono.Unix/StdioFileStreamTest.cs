@@ -794,12 +794,18 @@ namespace MonoTests.System.IO
 			}
 		}
 
-		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		public void Constructor_InvalidFileHandle () 
-		{
-			new StdioFileStream ((IntPtr)(-1), FileAccess.Read);
-		}
+		//
+		// This test is invalid as StdioFileStream does not check for
+		// -1 as a special invalid file handle, it tests against *zero* 
+		// only.
+		// See bug: 76506
+		//
+		//[Test]
+		//[ExpectedException (typeof (ArgumentException))]
+		//public void Constructor_InvalidFileHandle () 
+		//{
+		//		new StdioFileStream ((IntPtr)(-1), FileAccess.Read);
+		//}
 
 		[Test]
 		[ExpectedException (typeof (ObjectDisposedException))]
