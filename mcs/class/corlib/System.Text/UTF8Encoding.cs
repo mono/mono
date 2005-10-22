@@ -408,7 +408,7 @@ public class UTF8Encoding : Encoding
 					leftBits = (ch & (uint)0x03);
 					leftSoFar = 1;
 					leftSize = 5;
-				} else if ((ch & (uint)0xFC) == (uint)0xFC) {
+				} else if ((ch & (uint)0xFE) == (uint)0xFC) {
 					// Six-byte UTF-8 character.
 					leftBits = (ch & (uint)0x03);
 					leftSoFar = 1;
@@ -551,7 +551,7 @@ public class UTF8Encoding : Encoding
 					leftBits = (ch & (uint)0x03);
 					leftSoFar = 1;
 					leftSize = 5;
-				} else if ((ch & (uint)0xFC) == (uint)0xFC) {
+				} else if ((ch & (uint)0xFE) == (uint)0xFC) {
 					// Six-byte UTF-8 character.
 					leftBits = (ch & (uint)0x03);
 					leftSoFar = 1;
