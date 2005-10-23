@@ -1,3 +1,9 @@
+2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaTests.cs : some namespace output strategy seems changed
+	  in .NET 2.0 and they still make sense, so just mark them as
+	  NotDotNet and NotWorking under 2.0.
+
 2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlSchemaTests.cs : test for reader position after Read().
