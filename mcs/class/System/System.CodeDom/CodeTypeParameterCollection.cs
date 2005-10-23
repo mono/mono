@@ -57,6 +57,11 @@ namespace System.CodeDom
 			return List.Add (value);
 		}
 
+		public void Add (string value)
+		{
+			List.Add (new CodeTypeParameter (value));
+		}
+
 		public void AddRange (CodeTypeParameter[] value )
 		{
 			if (value == null)

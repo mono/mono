@@ -1,3 +1,7 @@
+2005-10-23  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* CodeTypeParameterCollection.cs: Added missing Add(string) method.
+
 2005-10-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAttributeDeclaration.cs: Added new 2.0 ctor and AttributeType 
