@@ -6,7 +6,8 @@ public class Blah {
 		a = MyEnum.Foo,
 		b = A.c,
 		c = MyEnum.Bar,
-		d = myconstant
+		d = myconstant,
+		e = myconstant | 0x1fff
 	}
 	
 	public enum MyEnum : byte {

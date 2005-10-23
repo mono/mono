@@ -1,3 +1,7 @@
+2005-10-23  Marek Safar <marek.safar@seznam.cz>
+
+	* test-40.cs: Add one test case.
+
 2005-10-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* test-extern-alias-[0-8].cs, test-externalias-00-lib.cs,
