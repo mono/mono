@@ -1,5 +1,9 @@
 2005-10-23 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* Graphics.jvm.cs: DrawImage refactoring
+
+2005-10-23 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* Graphics.jvm.cs: Clipping refactoring
 	fixed FillScaledShape, DrawShape, MeasureDraw, BeginContainer, 
 	ExcludeClip, IntersectClip, ResetClip, CombineClipArea, RestoreBaseClip,

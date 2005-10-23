@@ -826,10 +826,12 @@ namespace System.Drawing {
 		public void DrawImage (Image image, float x, float y) {
 			if ((image.HorizontalResolution != DpiX) || (image.VerticalResolution != DpiY))
 				DrawImage( image, x, y, 
-					(float)image.Width * (DpiX / image.HorizontalResolution), 
-					(float)image.Height * (DpiY / image.VerticalResolution));
+					(float)image.Width * (DpiX / image.HorizontalResolution) / _unitConversion[(int)PageUnit], 
+					(float)image.Height * (DpiY / image.VerticalResolution) / _unitConversion[(int)PageUnit]) ;
 			else
-				DrawImage( image, x, y, (float)image.Width, (float)image.Height );
+				DrawImage( image, x, y, 
+					(float)image.Width / _unitConversion[(int)PageUnit], 
+					(float)image.Height / _unitConversion[(int)PageUnit] );
 		}
 
 		
@@ -874,13 +876,6 @@ namespace System.Drawing {
 			Matrix mx = new Matrix(srcRect, destPoints);
 
 			Region region = new Region(srcRect);
-			region.Transform (mx);
-			
-			geom.AffineTransform t = _transform.NativeObject;
-			if (!t.isIdentity())
-				region.NativeObject.transform(t);
-			region.Intersect(_clip);
-
 			DrawImage(image, mx, region);
 		}
 		
@@ -893,13 +888,6 @@ namespace System.Drawing {
 			Matrix mx = new Matrix(srcRect, destPoints);
 
 			Region region = new Region(srcRect);
-			region.Transform (mx);
-			
-			geom.AffineTransform t = GetFinalTransform();
-			if (!t.isIdentity())
-				region.NativeObject.transform(t);
-			region.Intersect(_clip);
-
 			DrawImage(image, mx, region);
 		}
 
@@ -909,11 +897,8 @@ namespace System.Drawing {
 		}
 
 		public void DrawImage (Image image, float x, float y, float width, float height) {
-			geom.Point2D.Float pt = new geom.Point2D.Float(x, y);
-			GetFinalTransform().transform(pt, pt);
-
 			Matrix mx = new Matrix();
-			mx.Translate((float)pt.getX(), (float)pt.getY());
+			mx.Translate((float)x, (float)y);
 			mx.Scale(width / (float)image.Width, height / (float)image.Height);
 
 			DrawImage( image, mx );
@@ -964,28 +949,28 @@ namespace System.Drawing {
 		internal void DrawImage (Image image, Matrix m, Region clip) {
 			if (clip == null) {
 				clip = new Region( new RectangleF( 0, 0, image.Width, image.Height ) );
-				clip.Transform( m );
 			}
-			clip.Intersect(_clip);
 
-			geom.AffineTransform oldT = NativeObject.getTransform();
-			// must set clip before the base transform is altered
+			geom.AffineTransform t = GetFinalTransform(_transform.NativeObject, PageUnit, 1.0f);
+			if (!t.isIdentity())
+				m.NativeObject.preConcatenate(t);
+
+				clip.Transform( m );
+
 			if (NeedsNormalization) {
 				Matrix normMatrix = ComputeClipNormalization(clip.GetBounds(this));
 				clip.Transform(normMatrix);
 			}
 
+			awt.Shape oldClip = NativeObject.getClip();
 			IntersectScaledClipWithBase(clip);
 			
 			try {
-				NativeObject.transform(_transform.NativeObject);
-				
 				Matrix mm = ComputeImageNormalization(image, m);
 				NativeObject.drawImage(image.NativeObject.CurrentImage.NativeImage, mm.NativeObject, null);
 			}
 			finally {
-				NativeObject.setTransform(oldT);
-				RestoreBaseClip();
+				NativeObject.setClip( oldClip );
 			}
 		}
 
