@@ -358,8 +358,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		private void CheckOutputState ()
 		{
+#if NET_2_0
 			if (ws == WriteState.Error)
 				throw new InvalidOperationException ("Writing at state Error would result in a wrong result.");
+#endif
 			if (!openWriter) {
 				throw new InvalidOperationException ("The Writer is closed.");
 			}
@@ -1147,25 +1149,33 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		private Exception ArgumentError (string message)
 		{
+#if NET_2_0
 			ws = WriteState.Error;
+#endif
 			return new ArgumentException (message);
 		}
 
 		private Exception ArgumentError (string message, string name)
 		{
+#if NET_2_0
 			ws = WriteState.Error;
+#endif
 			return new ArgumentException (message);
 		}
 
 		private Exception InvalidOperationError (string message)
 		{
+#if NET_2_0
 			ws = WriteState.Error;
+#endif
 			return new InvalidOperationException (message);
 		}
 
 		private Exception XmlError (string message)
 		{
+#if NET_2_0
 			ws = WriteState.Error;
+#endif
 			return new XmlException (message);
 		}
 
