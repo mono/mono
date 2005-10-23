@@ -61,8 +61,7 @@ namespace Microsoft.JScript {
 		public object Call (object [] arguments, bool construct, bool brackets,
 					VsaEngine engine)
 		{
-			ScriptObject js_obj = (ScriptObject) obj;
-			object fun = GetObjectProperty (js_obj, right_hand_side);
+			object fun = GetObjectProperty (obj, right_hand_side);
 
 			if (fun == null)
 				Console.WriteLine ("Call: No function for {0} ({1}).{2}", obj, obj.GetType (), right_hand_side);
@@ -255,7 +254,7 @@ namespace Microsoft.JScript {
 					return ((FunctionObject) val).CreateInstance (arguments);
 			} else if (brackets) {
 				object first_arg = arguments.Length > 0 ? arguments [0] : null;
-				return GetObjectProperty ((ScriptObject) val, Convert.ToString (first_arg));
+				return GetObjectProperty (val, Convert.ToString (first_arg));
 			} else {
 				if (val is Closure)
 					return ((Closure) val).func.Invoke (thisObj, arguments);
@@ -294,22 +293,23 @@ namespace Microsoft.JScript {
 			if (obj is Closure)
 				obj = ((Closure) obj).func;
 
-			ScriptObject js_obj = (ScriptObject) obj;
+			ScriptObject js_obj = obj as ScriptObject;
+			if (js_obj != null) {
+				// Numeric index on Array?
+				uint index;
+				if (js_obj is ArrayObject && IsArrayIndex (name, out index)) {
+					if (js_obj.elems.ContainsKey (index)) {
+						js_obj.elems.Remove (index);
+						// Note: It appears that deleting an element should never update length
+						return true;
+					}
+				}
 
-			// Numeric index on Array?
-			uint index;
-			if (js_obj is ArrayObject && IsArrayIndex (name, out index)) {
-				if (js_obj.elems.ContainsKey (index)) {
-					js_obj.elems.Remove (index);
-					// Note: It appears that deleting an element should never update length
+				if (js_obj.elems.ContainsKey (name)) {
+					InvalidateCacheEntry (js_obj, name);
+					js_obj.elems.Remove (name);
 					return true;
 				}
-			}
-			
-			if (js_obj.elems.ContainsKey (name)) {
-				InvalidateCacheEntry (js_obj, name);
-				js_obj.elems.Remove (name);
-				return true;
 			}
  
 			return false;
@@ -334,9 +334,8 @@ namespace Microsoft.JScript {
 		public static void SetIndexedPropertyValueStatic (object obj, object [] arguments,
 								  object value)
 		{
-			ScriptObject js_obj = (ScriptObject) obj;
 			foreach (object key in arguments)
-				DirectSetObjectProperty (js_obj, Convert.ToString (key), value);
+				DirectSetObjectProperty (obj, Convert.ToString (key), value);
 		}
 
 		[DebuggerStepThroughAttribute]
@@ -350,24 +349,27 @@ namespace Microsoft.JScript {
 			DirectSetObjectProperty ((ScriptObject) obj, right_hand_side, value);
 		}
 
-		private static void DirectSetObjectProperty (ScriptObject obj, string rhs, object value)
-		{		
+		private static void DirectSetObjectProperty (object obj, string rhs, object value)
+		{
 			ArrayObject ary = obj as ArrayObject;
+			ScriptObject js_obj = obj as ScriptObject;
+			bool is_js_obj = js_obj != null;
 
-			InvalidateCacheEntry (obj, rhs);
+			if (is_js_obj)
+				InvalidateCacheEntry (js_obj, rhs);
 
 			// Numeric index on Array?
 			uint index;
 			if (ary != null && IsArrayIndex (rhs, out index)) {
-				Hashtable elems = obj.elems;
+				Hashtable elems = js_obj.elems;
 				bool had_value = elems.ContainsKey (index);
 				elems [index] = value;
 				if (!had_value)
 					AdjustArrayLength (ary, index);
-			} else if (!TrySetNativeProperty (obj, rhs, value)) {
-				FieldInfo field = obj.GetField (rhs);
+			} else if (!TrySetNativeProperty (obj, rhs, value) && is_js_obj) {
+				FieldInfo field = js_obj.GetField (rhs);
 				if (field == null)
-					field = obj.AddField (rhs);
+					field = js_obj.AddField (rhs);
 				field.SetValue (rhs, value);
 			}
 		}
@@ -379,7 +381,7 @@ namespace Microsoft.JScript {
 				ary.length = index + 1;
 		}
 
-		private static bool TrySetNativeProperty (ScriptObject obj, string key, object value)
+		private static bool TrySetNativeProperty (object obj, string key, object value)
 		{
 			key = MapToInternalName (key);
 			// * seems to be a wilcard inside member names
@@ -419,17 +421,19 @@ namespace Microsoft.JScript {
 			return false;
 		}
 
-		private static object GetObjectProperty (ScriptObject obj, string key)
+		private static object GetObjectProperty (object obj, string key)
 		{
 			return GetObjectProperty (obj, key, 0);
 		}
 
-		private static object GetObjectProperty (ScriptObject obj, string key, int nesting)
+		private static object GetObjectProperty (object obj, string key, int nesting)
 		{
 			object result;
 
 			ScriptObject prop_obj;
-			if (nesting > 0 && GetCacheEntry (out prop_obj, obj, key)) {
+			ScriptObject js_obj = obj as ScriptObject;
+			bool is_js_obj = js_obj != null;
+			if (is_js_obj && nesting > 0 && GetCacheEntry (out prop_obj, js_obj, key)) {
 				if (prop_obj == null)
 					return null;
 
@@ -438,87 +442,98 @@ namespace Microsoft.JScript {
 			}
 
 			if (TryDirectGetObjectProperty (out result, obj, key)) {
-				if (nesting > 0)
-					SetCacheEntry (obj, key, obj);
+				if (is_js_obj && nesting > 0)
+					SetCacheEntry (js_obj, key, js_obj);
 				return result;
 			}
 
-			ScriptObject cur_obj = obj.proto as ScriptObject;
-			if (cur_obj != null) {
-				result = GetObjectProperty (cur_obj, key, nesting + 1);
-				if (nesting > 0)
-					SetCacheEntry (obj, key, cur_obj);
-				return result;
-			}
+			if (is_js_obj) {
+				ScriptObject cur_obj = js_obj.proto as ScriptObject;
+				if (cur_obj != null) {
+					result = GetObjectProperty (cur_obj, key, nesting + 1);
+					if (nesting > 0)
+						SetCacheEntry (js_obj, key, cur_obj);
+					return result;
+				}
 
-			if (nesting > 0)
-				SetCacheEntry (obj, key, null);
+				if (nesting > 0)
+					SetCacheEntry (js_obj, key, null);
+			}
 			return null;
 		}
 
-		internal static bool HasObjectProperty (ScriptObject obj, string key)
+		internal static bool HasObjectProperty (object obj, string key)
 		{
 			return HasObjectProperty (obj, key, 0);
 		}
 
-		private static bool HasObjectProperty (ScriptObject obj, string key, int nesting)
+		private static bool HasObjectProperty (object obj, string key, int nesting)
 		{
 			ScriptObject prop_obj;
-			if (nesting > 0 && GetCacheEntry (out prop_obj, obj, key))
+			ScriptObject js_obj = obj as ScriptObject;
+			bool is_js_obj = js_obj != null;
+
+			if (is_js_obj && nesting > 0 && GetCacheEntry (out prop_obj, js_obj, key))
 				return prop_obj != null;
 
 			if (DirectHasObjectProperty (obj, key)) {
-				if (nesting > 0)
-					SetCacheEntry (obj, key, obj);
+				if (is_js_obj && nesting > 0)
+					SetCacheEntry (js_obj, key, js_obj);
 				return true;
 			}
 
-			ScriptObject cur_obj = obj.proto as ScriptObject;
-			if (cur_obj != null) {
-				bool success = HasObjectProperty (cur_obj, key, nesting + 1);
-				if (nesting > 0)
-					SetCacheEntry (obj, key, cur_obj);
-				return success;
-			}
+			if (is_js_obj) {
+				ScriptObject cur_obj = js_obj.proto as ScriptObject;
+				if (cur_obj != null) {
+					bool success = HasObjectProperty (cur_obj, key, nesting + 1);
+					if (nesting > 0)
+						SetCacheEntry (js_obj, key, cur_obj);
+					return success;
+				}
 
-			if (nesting > 0)
-				SetCacheEntry (obj, key, null);
+				if (nesting > 0)
+					SetCacheEntry (js_obj, key, null);
+			}
 			return false;
 		}
 
-		internal static bool DirectHasObjectProperty (ScriptObject obj, string key)
+		internal static bool DirectHasObjectProperty (object obj, string key)
 		{
 			object result;
 			return TryDirectGetObjectProperty (out result, obj, key);
 		}
 
-		private static bool TryDirectGetObjectProperty (out object result, ScriptObject obj, string rhs)
+		private static bool TryDirectGetObjectProperty (out object result, object obj, string rhs)
 		{
 			ArrayObject ary = obj as ArrayObject;
-			Hashtable elems = obj.elems;
+			ScriptObject js_obj = obj as ScriptObject;
 
-			// Numeric index on array?
-			uint index;
-			if (ary != null && IsArrayIndex (rhs, out index)) {
-				result = elems [index];
-				return true;
-			}
+			if (js_obj != null) {
+				Hashtable elems = js_obj.elems;
 
-			if (elems.ContainsKey (rhs)) {
-				object val = elems [rhs];
-				JSFieldInfo field = val as JSFieldInfo;
-				if (field != null)
-					result = field.GetValue (rhs);
-				else
-					result = val;
-				return true;
+				// Numeric index on array?
+				uint index;
+				if (ary != null && IsArrayIndex (rhs, out index)) {
+					result = elems [index];
+					return true;
+				}
+
+				if (elems.ContainsKey (rhs)) {
+					object val = elems [rhs];
+					JSFieldInfo field = val as JSFieldInfo;
+					if (field != null)
+						result = field.GetValue (rhs);
+					else
+						result = val;
+					return true;
+				}
 			}
 
 			bool success = TryGetNativeProperty (out result, obj, rhs);
 			return success;
 		}
 
-		private static bool TryGetNativeProperty (out object result, ScriptObject obj, string key)
+		private static bool TryGetNativeProperty (out object result, object obj, string key)
 		{
 			// * seems to be a wilcard inside member names
 			if (key.IndexOf ('*') != -1) {
