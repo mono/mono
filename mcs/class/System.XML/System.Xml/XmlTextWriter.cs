@@ -358,6 +358,8 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 		private void CheckOutputState ()
 		{
+			if (ws == WriteState.Error)
+				throw new InvalidOperationException ("Writing at state Error would result in a wrong result.");
 			if (!openWriter) {
 				throw new InvalidOperationException ("The Writer is closed.");
 			}

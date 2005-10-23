@@ -1,5 +1,10 @@
 2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTextWriter.cs : throw InvalidOperationException if any of
+	  WriteBlah() methods were invoked at error state.
+
+2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextReader.cs, DTDValidatingReader.cs : LookupNamespace("") for
 	  default namespace was returning "" instead of null. It didn't check
 	  empty namespace URI for non-empty prefixes.

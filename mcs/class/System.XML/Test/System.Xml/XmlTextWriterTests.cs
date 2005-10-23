@@ -500,38 +500,56 @@ namespace MonoTests.System.Xml
 			xtw.WriteStartElement ("", "d", "");
 
 			AssertEquals ("<foo>bar</foo><baz><quux><quuux><a><b><c><d", StringWriterText);
+		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NamespacesElementsPassingInNamespacesInvalid1 ()
+		{
 			// These should throw ArgumentException because they pass in a
 			// namespace when Namespaces = false.
-			try {
-				xtw.WriteElementString ("qux", "http://netsack.com/", String.Empty);
-				Fail ("Expected an ArgumentException.");
-			} catch (ArgumentException) {}
+			xtw.Namespaces = false;
+			xtw.WriteElementString ("qux", "http://netsack.com/", String.Empty);
+		}
 
-			try {
-				xtw.WriteStartElement ("foo", "http://netsack.com/");
-				Fail ("Expected an ArgumentException.");
-			} catch (ArgumentException) {}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NamespacesElementsPassingInNamespacesInvalid2 ()
+		{
+			xtw.Namespaces = false;
+			xtw.WriteStartElement ("foo", "http://netsack.com/");
+		}
 
-			try {
-				xtw.WriteStartElement ("foo", "bar", "http://netsack.com/");
-				Fail ("Expected an ArgumentException.");
-			} catch (ArgumentException) {}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NamespacesElementsPassingInNamespacesInvalid3 ()
+		{
+			xtw.Namespaces = false;
+			xtw.WriteStartElement ("foo", "bar", "http://netsack.com/");
+		}
 
-			try {
-				xtw.WriteStartElement ("foo", "bar", null);
-				Fail ("Expected an ArgumentException.");
-			} catch (ArgumentException) {}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NamespacesElementsPassingInNamespacesInvalid4 ()
+		{
+			xtw.Namespaces = false;
+			xtw.WriteStartElement ("foo", "bar", null);
+		}
 
-			try {
-				xtw.WriteStartElement ("foo", "bar", "");
-				Fail ("Expected an ArgumentException.");
-			} catch (ArgumentException) {}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NamespacesElementsPassingInNamespacesInvalid5 ()
+		{
+			xtw.Namespaces = false;
+			xtw.WriteStartElement ("foo", "bar", "");
+		}
 
-			try {
-				xtw.WriteStartElement ("foo", "", "");
-				Fail ("Expected an ArgumentException.");
-			} catch (ArgumentException) {}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void NamespacesElementsPassingInNamespacesInvalid6 ()
+		{
+			xtw.Namespaces = false;
+			xtw.WriteStartElement ("foo", "", "");
 		}
 
 		[Test]
@@ -560,6 +578,9 @@ namespace MonoTests.System.Xml
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
+#if NET_2_0
+		[Category ("NotDotNet")] // ... bug or design?
+#endif
 		public void NamespacesPrefixWithEmptyAndNullNamespaceEmpty ()
 		{
 			xtw.WriteStartElement ("foo", "bar", "");
@@ -593,35 +614,31 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		public void ProcessingInstructionInvalid ()
+		[ExpectedException (typeof (ArgumentException))]
+		public void ProcessingInstructionInvalid1 ()
 		{
-			try 
-			{
-				xtw.WriteProcessingInstruction("fo?>o", "bar");
-				Fail("Should have thrown an ArgumentException.");
-			} 
-			catch (ArgumentException) { }
+			xtw.WriteProcessingInstruction("fo?>o", "bar");
+		}
 
-			try 
-			{
-				xtw.WriteProcessingInstruction("foo", "ba?>r");
-				Fail("Should have thrown an ArgumentException.");
-			} 
-			catch (ArgumentException) { }
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ProcessingInstructionInvalid2 ()
+		{
+			xtw.WriteProcessingInstruction("foo", "ba?>r");
+		}
 
-			try 
-			{
-				xtw.WriteProcessingInstruction("", "bar");
-				Fail("Should have thrown an ArgumentException.");
-			} 
-			catch (ArgumentException) { }
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ProcessingInstructionInvalid3 ()
+		{
+			xtw.WriteProcessingInstruction("", "bar");
+		}
 
-			try 
-			{
-				xtw.WriteProcessingInstruction(null, "bar");
-				Fail("Should have thrown an ArgumentException.");
-			} 
-			catch (ArgumentException) { }
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ProcessingInstructionInvalid4 ()
+		{
+			xtw.WriteProcessingInstruction(null, "bar");
 		}
 
 		[Test]
@@ -716,18 +733,29 @@ namespace MonoTests.System.Xml
 		{
 			try {
 				xtw.WriteEndDocument ();
-				Fail ("Expected an ArgumentException.");
-			} catch (ArgumentException) {}
+				Fail ("Expected an Exception.");
+			// in .NET 2.0 it is InvalidOperationException.
+			// in .NET 1,1 it is ArgumentException.
+			} catch (Exception) {}
+		}
 
+		[Test]
+		public void WriteEndDocument2 ()
+		{
 			xtw.WriteStartDocument ();
-
 			try 
 			{
 				xtw.WriteEndDocument ();
-				Fail ("Expected an ArgumentException.");
-			} 
-			catch (ArgumentException) {}
+				Fail ("Expected an Exception.");
+			// in .NET 2.0 it is InvalidOperationException.
+			// in .NET 1,1 it is ArgumentException.
+			} catch (Exception) {}
+		}
 
+		[Test]
+		public void WriteEndDocument3 ()
+		{
+			xtw.WriteStartDocument ();
 			xtw.WriteStartElement ("foo");
 			xtw.WriteStartAttribute ("bar", null);
 			AssertEquals ("<?xml version='1.0' encoding='utf-16'?><foo bar='", StringWriterText);
@@ -738,17 +766,16 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void WriteEndElement ()
 		{
-			try {
-				xtw.WriteEndElement ();
-				Fail ("Should have thrown an InvalidOperationException.");
-			} catch (InvalidOperationException) {
-				// Don't rely on English message assertion.
-				// It is enough to check an exception occurs.
-//				AssertEquals ("Exception message is incorrect.", "There was no XML start tag open.", e.Message);
-			}
+			// no matching StartElement
+			xtw.WriteEndElement ();
+		}
 
+		[Test]
+		public void WriteEndElement2 ()
+		{
 			xtw.WriteStartElement ("foo");
 			xtw.WriteEndElement ();
 			AssertEquals ("<foo />", StringWriterText);
@@ -869,7 +896,12 @@ namespace MonoTests.System.Xml
 			try {
 				xtw.WriteString("foo");
 			} catch (InvalidOperationException) {}
+		}
 
+		[Test]
+		public void WriteString2 ()
+		{
+			xtw.WriteStartDocument ();
 			// Testing attribute values
 
 			xtw.WriteStartElement ("foo");
@@ -1011,25 +1043,45 @@ namespace MonoTests.System.Xml
 			AssertEquals (XmlSpace.None, xtw.XmlSpace);
 
 			xtw.WriteStartElement ("quux");
-			try {
-				xtw.WriteAttributeString ("xml", "space", null, "bubba");
-			} catch (ArgumentException) {}
+		}
 
-			try {
-				xtw.WriteAttributeString ("xml", "space", null, "PRESERVE");
-			} catch (ArgumentException) {}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void XmlSpaceTestInvalidValue1 ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("xml", "space", null, "bubba");
+		}
 
-			try {
-				xtw.WriteAttributeString ("xml", "space", null, "Preserve");
-			} catch (ArgumentException) {}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void XmlSpaceTestInvalidValue2 ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("xml", "space", null, "PRESERVE");
+		}
 
-			try {
-				xtw.WriteAttributeString ("xml", "space", null, "Default");
-			} catch (ArgumentException) {}
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void XmlSpaceTestInvalidValue3 ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("xml", "space", null, "Default");
+		}
 
-			try {
-				xtw.WriteWhitespace ("x");
-			} catch (ArgumentException) { }
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void XmlSpaceTestInvalidValue4 ()
+		{
+			xtw.WriteStartElement ("foo");
+			xtw.WriteAttributeString ("xml", "space", null, "bubba");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WriteWhitespaceNonWhitespace ()
+		{
+			xtw.WriteWhitespace ("x");
 		}
 
 		[Test]
@@ -1412,5 +1464,19 @@ namespace MonoTests.System.Xml
 				0x90, 0x8c, 0xb9, 0x3c, 0x2f, 0x61, 0x3e};
 			NUnit.Framework.Assert.AreEqual (referent, ms.ToArray ());
 		}
+
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void RejectWritingAtErrorState ()
+		{
+			try {
+				xtw.WriteEndElement ();
+			} catch (Exception) {
+			}
+
+			xtw.WriteStartElement ("foo");
+		}
+#endif
 	}
 }
