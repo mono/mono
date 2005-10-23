@@ -117,6 +117,9 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore (".NET 2.0 XmlNodeReader does not allow undeclared entities at all.")]
+#endif
 		public void ResolveEntity2 ()
 		{
 			document.RemoveAll ();
@@ -151,6 +154,9 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+#if NET_2_0
+		[Ignore (".NET 2.0 XmlNodeReader does not allow undeclared entities at all.")]
+#endif
 		public void ResolveEntityWithoutDTD ()
 		{
 			document.RemoveAll ();

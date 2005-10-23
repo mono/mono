@@ -210,43 +210,45 @@ namespace MonoTests.System.Xml
 		XmlNamespaceScope a = XmlNamespaceScope.All;
 
 		[Test]
+//		[Category ("NotDotNet")] // MS bug
 		public void GetNamespacesInScope ()
 		{
 			XmlNamespaceManager nsmgr =
 				new XmlNamespaceManager (new NameTable ());
 
-			AssertEquals (0, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals (0, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals (1, nsmgr.GetNamespacesInScope (a).Count);
+			AssertEquals ("#1", 0, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals ("#2", 0, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals ("#3", 1, nsmgr.GetNamespacesInScope (a).Count);
 
 			nsmgr.AddNamespace ("foo", "urn:foo");
-			AssertEquals (1, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
+			AssertEquals ("#4", 1, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals ("#5", 1, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals ("#6", 2, nsmgr.GetNamespacesInScope (a).Count);
 
 			// default namespace
 			nsmgr.AddNamespace ("", "urn:empty");
-			AssertEquals (1, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
+			AssertEquals ("#7", 2, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals ("#8", 2, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals ("#9", 3, nsmgr.GetNamespacesInScope (a).Count);
 
 			// PushScope
 			nsmgr.AddNamespace ("foo", "urn:foo");
 			nsmgr.PushScope ();
-			AssertEquals (0, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
+			AssertEquals ("#10", 0, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals ("#11", 2, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals ("#12", 3, nsmgr.GetNamespacesInScope (a).Count);
 
 			// PopScope
 			nsmgr.PopScope ();
-			AssertEquals (1, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
+			AssertEquals ("#13", 2, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals ("#14", 2, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals ("#15", 3, nsmgr.GetNamespacesInScope (a).Count);
 
 			nsmgr.AddNamespace ("", "");
-			AssertEquals (1, nsmgr.GetNamespacesInScope (l).Count);
-			AssertEquals (1, nsmgr.GetNamespacesInScope (x).Count);
-			AssertEquals (2, nsmgr.GetNamespacesInScope (a).Count);
+			// MS bug - it should return 1 for .Local but it returns 2 instead.
+			AssertEquals ("#16", 1, nsmgr.GetNamespacesInScope (l).Count);
+			AssertEquals ("#17", 1, nsmgr.GetNamespacesInScope (x).Count);
+			AssertEquals ("#18", 2, nsmgr.GetNamespacesInScope (a).Count);
 		}
 #endif
 	}

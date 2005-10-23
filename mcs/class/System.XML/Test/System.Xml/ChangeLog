@@ -1,5 +1,13 @@
 2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlNamespaceManagerTests.cs : GetNamespacesInScope() - Added test 
+	   labels. Fixed counts; they count default namespaces. MS seems to
+	   have a bug on declaration removal (xmlns='') on .Local.
+	* XmlNodeReaderTests.cs : in .NET 2.0 undeclared entity are not
+	  allowed at all, so disabled tests that depends on such references.
+
+2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriterTests.cs : split some tests that try to write nodes
 	  at error state (.NET 2.0 correctly rejects them).
 

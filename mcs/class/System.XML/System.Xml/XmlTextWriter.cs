@@ -241,7 +241,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			get { return quoteChar; }
 			set {
 				if ((value != '\'') && (value != '\"'))
-					throw new ArgumentException ("This is an invalid XML attribute quote character. Valid attribute quote characters are ' and \".");
+					throw ArgumentError ("This is an invalid XML attribute quote character. Valid attribute quote characters are ' and \".");
 				
 				quoteChar = value;
 			}
@@ -417,7 +417,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override string LookupPrefix (string ns)
 		{
 			if (ns == null || ns == String.Empty)
-				throw new ArgumentException ("The Namespace cannot be empty.");
+				throw ArgumentError ("The Namespace cannot be empty.");
 
 			string prefix = namespaceManager.LookupPrefix (ns, false);
 			// XmlNamespaceManager might return such prefix that
@@ -462,7 +462,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteCData (string text)
 		{
 			if (text.IndexOf ("]]>") >= 0)
-				throw new ArgumentException ("CDATA section cannot contain text \"]]>\".");
+				throw ArgumentError ("CDATA section cannot contain text \"]]>\".");
 
 			CheckState ();
 			IndentingOverriden = true;
@@ -480,7 +480,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			// Make sure the character is not in the surrogate pair
 			// character range, 0xd800- 0xdfff
 			if ((intCh >= -10240) && (intCh <= -8193))
-				throw new ArgumentException ("Surrogate Pair is invalid.");
+				throw ArgumentError ("Surrogate Pair is invalid.");
 
 			w.Write("&#x{0:X};", intCh);
 		}
@@ -500,9 +500,9 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteComment (string text)
 		{
 			if (text.EndsWith("-"))
-				throw new ArgumentException ("An XML comment cannot contain \"--\" inside.");
+				throw ArgumentError ("An XML comment cannot contain \"--\" inside.");
 			else if (text.IndexOf("--") > 0)
-				throw new ArgumentException ("An XML comment cannot end with \"-\".");
+				throw ArgumentError ("An XML comment cannot end with \"-\".");
 
 			CheckState ();
 			CloseStartElement ();
@@ -517,7 +517,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteDocType (string name, string pubid, string sysid, string subset)
 		{
 			if (name == null || name.Trim (XmlChar.WhitespaceChars).Length == 0)
-				throw new ArgumentException ("Invalid DOCTYPE name", "name");
+				throw ArgumentError ("Invalid DOCTYPE name", "name");
 
 			if (ws == WriteState.Prolog && formatting == Formatting.Indented)
 				w.WriteLine ();
@@ -552,7 +552,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteEndAttribute ()
 		{
 			if (!openAttribute)
-				throw new InvalidOperationException("Token EndAttribute in state Start would result in an invalid XML document.");
+				throw InvalidOperationError ("Token EndAttribute in state Start would result in an invalid XML document.");
 
 			CheckState ();
 
@@ -578,7 +578,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 			if (saveAttributeValue) {
 				if (savedAttributePrefix.Length > 0 && savingAttributeValue.Length == 0)
-					throw new ArgumentException ("Cannot use prefix with an empty namespace.");
+					throw ArgumentError ("Cannot use prefix with an empty namespace.");
 
 				// add namespace
 				if (shouldAddSavedNsToManager) // not OLD one
@@ -595,7 +595,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			CloseOpenAttributeAndElements ();
 
 			if (!hasRoot)
-				throw new ArgumentException ("This document does not have a root element.");
+				throw ArgumentError ("This document does not have a root element.");
 
 			ws = WriteState.Start;
 			hasRoot = false;
@@ -618,7 +618,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		private void WriteEndElementInternal (bool fullEndElement)
 		{
 			if (openElementCount == 0)
-				throw new InvalidOperationException("There was no XML start tag open.");
+				throw InvalidOperationError ("There was no XML start tag open.");
 
 			if (openAttribute)
 				WriteEndAttribute ();
@@ -691,11 +691,11 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteProcessingInstruction (string name, string text)
 		{
 			if ((name == null) || (name == string.Empty))
-				throw new ArgumentException ("Argument processing instruction name must not be null or empty.");
+				throw ArgumentError ("Argument processing instruction name must not be null or empty.");
 			if (!XmlChar.IsName (name))
-				throw new ArgumentException ("Invalid processing instruction name.");
+				throw ArgumentError ("Invalid processing instruction name.");
 			if ((text.IndexOf("?>") > 0))
-				throw new ArgumentException ("Processing instruction cannot contain \"?>\" as its value.");
+				throw ArgumentError ("Processing instruction cannot contain \"?>\" as its value.");
 
 			CheckState ();
 			CloseStartElement ();
@@ -711,7 +711,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteQualifiedName (string localName, string ns)
 		{
 			if (!XmlChar.IsNCName (localName))
-				throw new ArgumentException (String.Format ("Invalid local name '{0}'", localName));
+				throw ArgumentError (String.Format ("Invalid local name '{0}'", localName));
 
 			CheckState ();
 			if (!openAttribute)
@@ -761,7 +761,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 
 			if (prefix.Length > 0 && (ns == null || ns.Length == 0))
 				if (prefix != "xmlns")
-					throw new ArgumentException ("Cannot use prefix with an empty namespace.");
+					throw ArgumentError ("Cannot use prefix with an empty namespace.");
 
 			if (prefix == "xmlns") {
 				if (localName == null || localName.Length == 0) {
@@ -776,12 +776,12 @@ openElements [openElementCount - 1]).IndentingOverriden;
 #else
 			if ((prefix == "xmlns" || localName == "xmlns" && prefix == String.Empty) && ns != null && ns != XmlnsNamespace)
 #endif
-				throw new ArgumentException (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
+				throw ArgumentError (String.Format ("The 'xmlns' attribute is bound to the reserved namespace '{0}'", XmlnsNamespace));
 
 			CheckState ();
 
 			if (ws == WriteState.Content)
-				throw new InvalidOperationException ("Token StartAttribute in state " + WriteState + " would result in an invalid XML document.");
+				throw InvalidOperationError (String.Format ("Token StartAttribute in state {0} would result in an invalid XML document.", ws));
 
 			if (prefix == null)
 				prefix = String.Empty;
@@ -883,10 +883,10 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		private void WriteStartDocument (string standaloneFormatting)
 		{
 			if (documentStarted == true)
-				throw new InvalidOperationException("WriteStartDocument should be the first call.");
+				throw InvalidOperationError ("WriteStartDocument should be the first call.");
 
 			if (hasRoot)
-				throw new XmlException ("WriteStartDocument called twice.");
+				throw XmlError ("WriteStartDocument called twice.");
 			isDocumentEntity = true;
 
 //			CheckState ();
@@ -905,9 +905,9 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		{
 			if (!Namespaces && (((prefix != null) && (prefix != String.Empty))
 				|| ((ns != null) && (ns != String.Empty))))
-				throw new ArgumentException ("Cannot set the namespace if Namespaces is 'false'.");
+				throw ArgumentError ("Cannot set the namespace if Namespaces is 'false'.");
 			if ((prefix != null && prefix != String.Empty) && ((ns == null) || (ns == String.Empty)))
-				throw new ArgumentException ("Cannot use a prefix with an empty namespace.");
+				throw ArgumentError ("Cannot use a prefix with an empty namespace.");
 
 			// ignore non-namespaced node's prefix.
 			if (ns == null || ns == String.Empty)
@@ -974,7 +974,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			case WriteState.Start:
 			case WriteState.Prolog:
 				if (isDocumentEntity)
-					throw new InvalidOperationException ("Token content in state Prolog would result in an invalid XML document.");
+					throw InvalidOperationError ("Token content in state Prolog would result in an invalid XML document.");
 				ws = WriteState.Content;
 				break;
 			}
@@ -1027,7 +1027,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 							continue;
 						} else {
 							if (checkCharacters)
-								throw new ArgumentException (String.Format ("Character hexadecimal value {0:4x} is invalid.", (int) source [i]));
+								throw ArgumentError (String.Format ("Character hexadecimal value {0:4x} is invalid.", (int) source [i]));
 							invalid = source [i];
 							pos = -1;
 							break;
@@ -1105,7 +1105,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 								xmlSpace = XmlSpace.Preserve;
 								break;
 							default:
-								throw new ArgumentException ("'{0}' is an invalid xml:space value.");
+								throw ArgumentError ("'{0}' is an invalid xml:space value.");
 						}
 					}
 				}
@@ -1116,7 +1116,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		{
 			if (lowChar < '\uDC00' || lowChar > '\uDFFF' ||
 				highChar < '\uD800' || highChar > '\uDBFF')
-				throw new ArgumentException ("Invalid (low, high) pair of characters was specified.");
+				throw ArgumentError ("Invalid (low, high) pair of characters was specified.");
 
 			CheckState ();
 
@@ -1133,7 +1133,7 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		public override void WriteWhitespace (string ws)
 		{
 			if (!XmlChar.IsWhitespace (ws))
-				throw new ArgumentException ("Invalid Whitespace");
+				throw ArgumentError ("Invalid Whitespace");
 
 			CheckState ();
 
@@ -1143,6 +1143,30 @@ openElements [openElementCount - 1]).IndentingOverriden;
 			}
 
 			w.Write (ws);
+		}
+
+		private Exception ArgumentError (string message)
+		{
+			ws = WriteState.Error;
+			return new ArgumentException (message);
+		}
+
+		private Exception ArgumentError (string message, string name)
+		{
+			ws = WriteState.Error;
+			return new ArgumentException (message);
+		}
+
+		private Exception InvalidOperationError (string message)
+		{
+			ws = WriteState.Error;
+			return new InvalidOperationException (message);
+		}
+
+		private Exception XmlError (string message)
+		{
+			ws = WriteState.Error;
+			return new XmlException (message);
 		}
 
 		#endregion
