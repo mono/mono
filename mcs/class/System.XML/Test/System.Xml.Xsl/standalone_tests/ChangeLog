@@ -1,5 +1,9 @@
 2005-10-23  Andrew Skiba  <andrews@mainsoft.com>
 
+	* knownFailures.lst, fixme.lst: remove fixed testcases.
+
+2005-10-23  Andrew Skiba  <andrews@mainsoft.com>
+
 	* XsltTestUtils.cs, xslt.vmwcsproj, xslt.sln, xslttest.cs, XmlCompare.cs,
 	Makefile: make XML compare to reduce the noise from attribute order and
 	namespace names (not URIs)
