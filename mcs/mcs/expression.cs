@@ -2342,7 +2342,8 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 			Constant rc = right as Constant;
 
-			if (lc != null && rc != null && (TypeManager.IsEnumType (left.Type) || TypeManager.IsEnumType (right.Type))) {
+			// The conversion rules are ignored in enum context but why
+			if (!ec.InEnumContext && lc != null && rc != null && (TypeManager.IsEnumType (left.Type) || TypeManager.IsEnumType (right.Type))) {
 				left = lc = EnumLiftUp (ec, lc, rc);
 				if (lc == null)
 					return null;
