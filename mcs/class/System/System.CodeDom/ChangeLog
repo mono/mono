@@ -1,3 +1,18 @@
+2005-10-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAttributeDeclaration.cs: Added new 2.0 ctor and AttributeType 
+	property.
+	* CodeDefaultValueExpression.cs: New. Implemented (2.0).
+	* CodeDirectiveCollection.cs: Completed implementation.
+	* CodeGotoStatement.cs: Added default ctor for 2.0.
+	* CodeIndexerExpression.cs: Fixed typo in header.
+	* CodeLinePragma.cs: Added default ctor for 2.0.
+	* CodeRegionMode.cs: Added missing None element.
+	* CodeSnippetCompileUnit.cs: Added default ctor for 2.0.
+	* CodeTypeDeclaration.cs: Added ComVisible(false) on TypeParameters 
+	property.
+	* CodeTypeParameterCollection.cs: Completed implementation.
+
 2005-10-07 Gert Driesen <drieseng@users.sourceforge.net>
 	
 	* CodeTypeReference.cs: Fixed Parse implementation on 1.0 profile.

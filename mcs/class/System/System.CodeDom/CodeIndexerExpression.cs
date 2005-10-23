@@ -1,5 +1,5 @@
 //
-// System.CodeDom CodeFieldReferenceExpression Class implementation
+// System.CodeDom CodeIndexerExpression Class implementation
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)

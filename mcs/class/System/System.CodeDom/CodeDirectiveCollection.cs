@@ -1,12 +1,12 @@
 //
 // System.CodeDom CodeDirectiveCollection class
 //
-// Author:
-//   Marek Safar (marek.safar@seznam.cz)
+// Authors:
+//	Marek Safar (marek.safar@seznam.cz)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,19 +36,75 @@ namespace System.CodeDom
 {
 	[Serializable]
 	[ComVisible (true), ClassInterface (ClassInterfaceType.AutoDispatch)]
-	public class CodeDirectiveCollection: System.Collections.CollectionBase
-	{
-		public CodeDirectiveCollection () {}
+	public class CodeDirectiveCollection: System.Collections.CollectionBase	{
+
+		public CodeDirectiveCollection ()
+		{
+		}
+
+		public CodeDirectiveCollection (CodeDirective[] value)
+		{
+			AddRange (value);
+		}
 
 		public CodeDirectiveCollection (CodeDirectiveCollection value)
 		{
+			AddRange (value);
 		}
+
+
+		public CodeDirective this [int index] {
+			get { return (CodeDirective) List [index]; }
+			set { List [index] = value; }
+		}
+
 
 		public int Add (CodeDirective value)
 		{
 			return List.Add (value);
 		}
 
+		public void AddRange (CodeDirective[] value )
+		{
+			foreach (CodeDirective cd in value)
+				Add (cd);
+		}
+		
+		public void AddRange (CodeDirectiveCollection value)
+		{
+			foreach (CodeDirective cd in value)
+				Add (cd);
+		}
+
+		public bool Contains (CodeDirective value)
+		{
+			return List.Contains (value);
+		}
+		
+		public void CopyTo (CodeDirective[] array, int index)
+		{
+			List.CopyTo (array, index);
+		}
+
+		public int IndexOf (CodeDirective value)
+		{
+			return List.IndexOf (value);
+		}
+
+		public void Insert (int index, CodeDirective value)
+		{
+			List.Insert (index, value);
+		}
+
+		public void Remove (CodeDirective value)
+		{
+			int index = IndexOf (value);
+			if (index < 0) {
+				string msg = Locale.GetText ("The specified object is not found in the collection");
+				throw new ArgumentException (msg, "value");
+			}
+			RemoveAt (index);
+		}
 	}
 }
 

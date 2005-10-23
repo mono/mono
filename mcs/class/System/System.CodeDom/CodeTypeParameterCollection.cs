@@ -1,12 +1,12 @@
 //
 // System.CodeDom CodeTypeParameterCollection class
 //
-// Author:
-//   Marek Safar (marek.safar@seznam.cz)
+// Authors:
+//	Marek Safar (marek.safar@seznam.cz)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2004 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,7 +38,14 @@ namespace System.CodeDom
 	[ComVisible (true), ClassInterface (ClassInterfaceType.AutoDispatch)]
 	public class CodeTypeParameterCollection: System.Collections.CollectionBase
 	{
-		public CodeTypeParameterCollection () {}
+		public CodeTypeParameterCollection ()
+		{
+		}
+
+		public CodeTypeParameterCollection (CodeTypeParameter[] value)
+		{
+			AddRange (value);
+		}
 
 		public CodeTypeParameterCollection (CodeTypeParameterCollection value)
 		{
@@ -50,6 +57,15 @@ namespace System.CodeDom
 			return List.Add (value);
 		}
 
+		public void AddRange (CodeTypeParameter[] value )
+		{
+			if (value == null)
+				return;
+
+			foreach (object o in value)
+				List.Add (o);
+		}
+
 		public void AddRange (CodeTypeParameterCollection value)
 		{
 			if (value == null)
@@ -57,6 +73,36 @@ namespace System.CodeDom
 
 			foreach (object o in value)
 				List.Add (o);
+		}
+
+		public bool Contains (CodeTypeParameter value)
+		{
+			return List.Contains (value);
+		}
+		
+		public void CopyTo (CodeTypeParameter[] array, int index)
+		{
+			List.CopyTo (array, index);
+		}
+
+		public int IndexOf (CodeTypeParameter value)
+		{
+			return List.IndexOf (value);
+		}
+
+		public void Insert (int index, CodeTypeParameter value)
+		{
+			List.Insert (index, value);
+		}
+
+		public void Remove (CodeTypeParameter value)
+		{
+			int index = IndexOf (value);
+			if (index < 0) {
+				string msg = Locale.GetText ("The specified object is not found in the collection");
+				throw new ArgumentException (msg, "value");
+			}
+			RemoveAt (index);
 		}
 
 		public CodeTypeParameter this [int index]

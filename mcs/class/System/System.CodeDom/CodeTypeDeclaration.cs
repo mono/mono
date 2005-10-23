@@ -176,6 +176,7 @@ namespace System.CodeDom
 			}
 		}
 
+		[ComVisible (false)]
 		public CodeTypeParameterCollection TypeParameters {
 			get {
 				if (typeParameters == null)

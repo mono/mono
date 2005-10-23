@@ -1,13 +1,13 @@
 //
 // System.CodeDom CodeAttributeDeclaration Class implementation
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Daniel Stodden (stodden@in.tum.de)
+//   Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2001 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,7 +40,9 @@ namespace System.CodeDom
 	{
 		private string name;
 		private CodeAttributeArgumentCollection arguments;
-		
+#if NET_2_0
+		private CodeTypeReference attribute;
+#endif		
 		//
 		// Constructors
 		//
@@ -58,7 +60,18 @@ namespace System.CodeDom
 			this.name = name;
 			Arguments.AddRange (arguments);
 		}
+#if NET_2_0
+		public CodeAttributeDeclaration (CodeTypeReference attributeType)
+		{
+			attribute = attributeType;
+		}
 
+		public CodeAttributeDeclaration (CodeTypeReference attributeType, params CodeAttributeArgument [] arguments)
+		{
+			attribute = attributeType;
+			Arguments.AddRange (arguments);
+		}
+#endif
 		//
 		// Properties
 		//
@@ -79,6 +92,10 @@ namespace System.CodeDom
 				name = value;
 			}
 		}
+#if NET_2_0
+		public CodeTypeReference AttributeType {
+			get { return attribute; }
+		}
+#endif
 	}
 }
-

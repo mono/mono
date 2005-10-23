@@ -1,12 +1,10 @@
 //
-// System.CodeDom CodeSnippetCompileUnit Class implementation
+// System.CodeDom.CodeDefaultValueExpression class
 //
 // Author:
-//   Daniel Stodden (stodden@in.tum.de)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (C) 2002 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,52 +26,35 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using System.Runtime.InteropServices;
 
-namespace System.CodeDom
-{
+namespace System.CodeDom {
+
 	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDispatch)]
-	[ComVisible(true)]
-	public class CodeSnippetCompileUnit
-		: CodeCompileUnit
-	{
-		private CodeLinePragma linePragma;
-		private string value;
+	[ClassInterface (ClassInterfaceType.AutoDispatch)]
+	[ComVisible (true)]
+	public class CodeDefaultValueExpression : CodeExpression {
 
-		//
-		// Constructors
-		//
-#if NET_2_0
-		public CodeSnippetCompileUnit ()
+		private CodeTypeReference type;
+
+
+		public CodeDefaultValueExpression ()
 		{
-			value = String.Empty;
 		}
-#endif
-		public CodeSnippetCompileUnit( string value )
+
+		public CodeDefaultValueExpression (CodeTypeReference type)
 		{
-			this.value = value;
+			this.type = type;
 		}
 
-		//
-		// Properties
-		//
-		public CodeLinePragma LinePragma {
-			get {
-				return linePragma;
-			}
-			set {
-				linePragma = value;
-			}
-		}
 
-		public string Value {
-			get {
-				return this.value;
-			}
-			set {
-				this.value = value;
-			}
+		public CodeTypeReference Type {
+			get { return type; }
+			set { type = value; }
 		}
 	}
 }
+
+#endif
