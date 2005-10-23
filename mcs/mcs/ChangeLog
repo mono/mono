@@ -1,5 +1,10 @@
 2005-10-23  Marek Safar  <marek.safar@seznam.cz>
 
+	* anonymous.cs (AnonymousContainer): Don't crash when container
+	doesn't exist.
+
+2005-10-23  Marek Safar  <marek.safar@seznam.cz>
+
 	* expression.cs (Binary.DoResolve): Warn when comparing same
 	values.
 
