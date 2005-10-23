@@ -210,7 +210,7 @@ namespace MonoTests.System.Xml
 		XmlNamespaceScope a = XmlNamespaceScope.All;
 
 		[Test]
-//		[Category ("NotDotNet")] // MS bug
+		[Category ("NotDotNet")] // MS bug
 		public void GetNamespacesInScope ()
 		{
 			XmlNamespaceManager nsmgr =
