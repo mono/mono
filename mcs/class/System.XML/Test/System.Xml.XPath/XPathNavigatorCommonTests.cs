@@ -40,17 +40,18 @@ namespace MonoTests.System.Xml
 			return xpathDocument.CreateNavigator ();
 		}
 
-		private void AssertNavigator (XPathNavigator nav, XPathNodeType type, string prefix, string localName, string ns, string name, string value, bool hasAttributes, bool hasChildren, bool isEmptyElement)
+		private void AssertNavigator (string label, XPathNavigator nav, XPathNodeType type, string prefix, string localName, string ns, string name, string value, bool hasAttributes, bool hasChildren, bool isEmptyElement)
 		{
-			AssertEquals ("NodeType", type, nav.NodeType);
-			AssertEquals ("Prefix", prefix, nav.Prefix);
-			AssertEquals ("LocalName", localName, nav.LocalName);
-			AssertEquals ("Namespace", ns, nav.NamespaceURI);
-			AssertEquals ("Name", name, nav.Name);
-			AssertEquals ("Value", value, nav.Value);
-			AssertEquals ("HasAttributes", hasAttributes, nav.HasAttributes);
-			AssertEquals ("HasChildren", hasChildren, nav.HasChildren);
-			AssertEquals ("IsEmptyElement", isEmptyElement, nav.IsEmptyElement);
+			label += nav.GetType ();
+			AssertEquals (label + "NodeType", type, nav.NodeType);
+			AssertEquals (label + "Prefix", prefix, nav.Prefix);
+			AssertEquals (label + "LocalName", localName, nav.LocalName);
+			AssertEquals (label + "Namespace", ns, nav.NamespaceURI);
+			AssertEquals (label + "Name", name, nav.Name);
+			AssertEquals (label + "Value", value, nav.Value);
+			AssertEquals (label + "HasAttributes", hasAttributes, nav.HasAttributes);
+			AssertEquals (label + "HasChildren", hasChildren, nav.HasChildren);
+			AssertEquals (label + "IsEmptyElement", isEmptyElement, nav.IsEmptyElement);
 		}
 
 		[Test]
@@ -67,7 +68,7 @@ namespace MonoTests.System.Xml
 		public void DocumentWithXmlDeclaration (XPathNavigator nav)
 		{
 			nav.MoveToFirstChild ();
-			AssertNavigator (nav, XPathNodeType.Element, "", "foo", "", "foo", "bar", false, true, false);
+			AssertNavigator ("#1", nav, XPathNodeType.Element, "", "foo", "", "foo", "bar", false, true, false);
 		}
 
 		[Test]
@@ -84,7 +85,7 @@ namespace MonoTests.System.Xml
 		public void DocumentWithProcessingInstruction (XPathNavigator nav)
 		{
 			Assert (nav.MoveToFirstChild ());
-			AssertNavigator (nav, XPathNodeType.ProcessingInstruction, "", "xml-stylesheet", "", "xml-stylesheet", "href='foo.xsl' type='text/xsl' ", false, false, false);
+			AssertNavigator ("#1", nav, XPathNodeType.ProcessingInstruction, "", "xml-stylesheet", "", "xml-stylesheet", "href='foo.xsl' type='text/xsl' ", false, false, false);
 			Assert (!nav.MoveToFirstChild ());
 		}
 
@@ -101,14 +102,14 @@ namespace MonoTests.System.Xml
 
 		private void XmlRootElementOnly (XPathNavigator nav)
 		{
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
+			AssertNavigator ("#1", nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
 			Assert (nav.MoveToFirstChild ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "foo", "", "foo", "", false, false, true);
+			AssertNavigator ("#2", nav, XPathNodeType.Element, "", "foo", "", "foo", "", false, false, true);
 			Assert (!nav.MoveToFirstChild ());
 			Assert (!nav.MoveToNext ());
 			Assert (!nav.MoveToPrevious ());
 			nav.MoveToRoot ();
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
+			AssertNavigator ("#3", nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
 			Assert (!nav.MoveToNext ());
 		}
 
@@ -125,24 +126,24 @@ namespace MonoTests.System.Xml
 
 		private void XmlSimpleTextContent (XPathNavigator nav)
 		{
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "Test.", false, true, false);
+			AssertNavigator ("#1", nav, XPathNodeType.Root, "", "", "", "", "Test.", false, true, false);
 			Assert (nav.MoveToFirstChild ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "foo", "", "foo", "Test.", false, true, false);
+			AssertNavigator ("#2", nav, XPathNodeType.Element, "", "foo", "", "foo", "Test.", false, true, false);
 			Assert (!nav.MoveToNext ());
 			Assert (!nav.MoveToPrevious ());
 			Assert (nav.MoveToFirstChild ());
-			AssertNavigator (nav, XPathNodeType.Text, "", "", "", "", "Test.", false, false, false);
+			AssertNavigator ("#3", nav, XPathNodeType.Text, "", "", "", "", "Test.", false, false, false);
 
 			Assert (nav.MoveToParent ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "foo", "", "foo", "Test.", false, true, false);
+			AssertNavigator ("#4", nav, XPathNodeType.Element, "", "foo", "", "foo", "Test.", false, true, false);
 
 			Assert (nav.MoveToParent ());
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "Test.", false, true, false);
+			AssertNavigator ("#5", nav, XPathNodeType.Root, "", "", "", "", "Test.", false, true, false);
 
 			nav.MoveToFirstChild ();
 			nav.MoveToFirstChild ();
 			nav.MoveToRoot ();
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "Test.", false, true, false);
+			AssertNavigator ("#6", nav, XPathNodeType.Root, "", "", "", "", "Test.", false, true, false);
 			Assert (!nav.MoveToNext ());
 		}
 
@@ -159,20 +160,20 @@ namespace MonoTests.System.Xml
 
 		private void XmlSimpleElementContent (XPathNavigator nav)
 		{
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
+			AssertNavigator ("#1", nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
 			Assert (nav.MoveToFirstChild ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "foo", "", "foo", "", false, true, false);
+			AssertNavigator ("#2", nav, XPathNodeType.Element, "", "foo", "", "foo", "", false, true, false);
 			Assert (!nav.MoveToNext ());
 			Assert (!nav.MoveToPrevious ());
 
 			Assert (nav.MoveToFirstChild ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "bar", "", "bar", "", false, false, true);
+			AssertNavigator ("#3", nav, XPathNodeType.Element, "", "bar", "", "bar", "", false, false, true);
 
 			Assert (nav.MoveToParent ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "foo", "", "foo", "", false, true, false);
+			AssertNavigator ("#4", nav, XPathNodeType.Element, "", "foo", "", "foo", "", false, true, false);
 
 			nav.MoveToRoot ();
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
+			AssertNavigator ("#5", nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
 			Assert (!nav.MoveToNext ());
 		}
 
@@ -189,26 +190,26 @@ namespace MonoTests.System.Xml
 
 		private void XmlTwoElementsContent (XPathNavigator nav)
 		{
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
+			AssertNavigator ("#1", nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
 
 			Assert (nav.MoveToFirstChild ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "foo", "", "foo", "", false, true, false);
+			AssertNavigator ("#2", nav, XPathNodeType.Element, "", "foo", "", "foo", "", false, true, false);
 			Assert (!nav.MoveToNext ());
 			Assert (!nav.MoveToPrevious ());
 
 			Assert (nav.MoveToFirstChild ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "bar", "", "bar", "", false, false, true);
+			AssertNavigator ("#3", nav, XPathNodeType.Element, "", "bar", "", "bar", "", false, false, true);
 			Assert (!nav.MoveToFirstChild ());
 
 			Assert (nav.MoveToNext ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "baz", "", "baz", "", false, false, true);
+			AssertNavigator ("#4", nav, XPathNodeType.Element, "", "baz", "", "baz", "", false, false, true);
 			Assert (!nav.MoveToFirstChild ());
 
 			Assert (nav.MoveToPrevious ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "bar", "", "bar", "", false, false, true);
+			AssertNavigator ("#5", nav, XPathNodeType.Element, "", "bar", "", "bar", "", false, false, true);
 
 			nav.MoveToRoot ();
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
+			AssertNavigator ("#6", nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
 			Assert (!nav.MoveToNext ());
 		}
 
@@ -226,33 +227,37 @@ namespace MonoTests.System.Xml
 		private void XmlElementWithAttributes (XPathNavigator nav)
 		{
 			nav.MoveToFirstChild ();
-			AssertNavigator (nav, XPathNodeType.Element, "", "img", "", "img", "", true, false, true);
+			AssertNavigator ("#1", nav, XPathNodeType.Element, "", "img", "", "img", "", true, false, true);
 			Assert (!nav.MoveToNext ());
 			Assert (!nav.MoveToPrevious ());
 
 			Assert (nav.MoveToFirstAttribute ());
-			AssertNavigator (nav, XPathNodeType.Attribute, "", "src", "", "src", "foo.png", false, false, false);
+			AssertNavigator ("#2", nav, XPathNodeType.Attribute, "", "src", "", "src", "foo.png", false, false, false);
 			Assert (!nav.MoveToFirstAttribute ());	// On attributes, it fails.
 
 			Assert (nav.MoveToNextAttribute ());
-			AssertNavigator (nav, XPathNodeType.Attribute, "", "alt", "", "alt", "image Fooooooo!", false, false, false);
+			AssertNavigator ("#3", nav, XPathNodeType.Attribute, "", "alt", "", "alt", "image Fooooooo!", false, false, false);
 			Assert (!nav.MoveToNextAttribute ());
 
 			Assert (nav.MoveToParent ());
-			AssertNavigator (nav, XPathNodeType.Element, "", "img", "", "img", "", true, false, true);
+			AssertNavigator ("#4", nav, XPathNodeType.Element, "", "img", "", "img", "", true, false, true);
 
 			Assert (nav.MoveToAttribute ("alt", ""));
-			AssertNavigator (nav, XPathNodeType.Attribute, "", "alt", "", "alt", "image Fooooooo!", false, false, false);
+			AssertNavigator ("#5", nav, XPathNodeType.Attribute, "", "alt", "", "alt", "image Fooooooo!", false, false, false);
 			Assert (!nav.MoveToAttribute ("src", ""));	// On attributes, it fails.
 			Assert (nav.MoveToParent ());
 			Assert (nav.MoveToAttribute ("src", ""));
-			AssertNavigator (nav, XPathNodeType.Attribute, "", "src", "", "src", "foo.png", false, false, false);
+			AssertNavigator ("#6", nav, XPathNodeType.Attribute, "", "src", "", "src", "foo.png", false, false, false);
 
 			nav.MoveToRoot ();
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
+			AssertNavigator ("#7", nav, XPathNodeType.Root, "", "", "", "", "", false, true, false);
 		}
 
 		[Test]
+		// seems like MS does not want to fix their long-time-known
+		// XPathNavigator bug, so just set it as NotDotNet.
+		// We are better.
+		[Category ("NotDotNet")]
 		public void XmlNamespaceNode ()
 		{
 			string xml = "<html xmlns='http://www.w3.org/1999/xhtml'><body>test.</body></html>";
@@ -268,10 +273,10 @@ namespace MonoTests.System.Xml
 			string xhtml = "http://www.w3.org/1999/xhtml";
 			string xmlNS = "http://www.w3.org/XML/1998/namespace";
 			nav.MoveToFirstChild ();
-			AssertNavigator (nav, XPathNodeType.Element,
+			AssertNavigator ("#1", nav, XPathNodeType.Element,
 				"", "html", xhtml, "html", "test.", false, true, false);
 			Assert (nav.MoveToFirstNamespace (XPathNamespaceScope.Local));
-			AssertNavigator (nav, XPathNodeType.Namespace,
+			AssertNavigator ("#2", nav, XPathNodeType.Namespace,
 				"", "", "", "", xhtml, false, false, false);
 
 			// Test difference between Local, ExcludeXml and All.
@@ -281,42 +286,42 @@ namespace MonoTests.System.Xml
 			// see http://support.microsoft.com/default.aspx?scid=kb;EN-US;Q316808
 #if true
 			Assert (nav.MoveToNextNamespace (XPathNamespaceScope.All));
-			AssertNavigator (nav, XPathNodeType.Namespace,
+			AssertNavigator ("#3", nav, XPathNodeType.Namespace,
 				"", "xml", "", "xml", xmlNS, false, false, false);
 			Assert (!nav.MoveToNextNamespace (XPathNamespaceScope.All));
 #endif
 			// Test to check if MoveToRoot() resets Namespace node status.
 			nav.MoveToRoot ();
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "test.", false, true, false);
+			AssertNavigator ("#4", nav, XPathNodeType.Root, "", "", "", "", "test.", false, true, false);
 			nav.MoveToFirstChild ();
 
 			// Test without XPathNamespaceScope argument.
 			Assert (nav.MoveToFirstNamespace ());
 			Assert (nav.MoveToNextNamespace ());
-			AssertNavigator (nav, XPathNodeType.Namespace,
+			AssertNavigator ("#5", nav, XPathNodeType.Namespace,
 				"", "xml", "", "xml", xmlNS, false, false, false);
 
 			// Test MoveToParent()
 			Assert (nav.MoveToParent ());
-			AssertNavigator (nav, XPathNodeType.Element,
+			AssertNavigator ("#6", nav, XPathNodeType.Element,
 				"", "html", xhtml, "html", "test.", false, true, false);
 
 			nav.MoveToFirstChild ();	// body
 			// Test difference between Local and ExcludeXml
 			Assert (!nav.MoveToFirstNamespace (XPathNamespaceScope.Local));
 			Assert (nav.MoveToFirstNamespace (XPathNamespaceScope.ExcludeXml));
-			AssertNavigator (nav, XPathNodeType.Namespace,
+			AssertNavigator ("#7", nav, XPathNodeType.Namespace,
 				"", "", "", "", xhtml, false, false, false);
 
 			Assert (nav.MoveToNextNamespace (XPathNamespaceScope.All));
-			AssertNavigator (nav, XPathNodeType.Namespace,
+			AssertNavigator ("#8", nav, XPathNodeType.Namespace,
 				"", "xml", "", "xml", xmlNS, false, false, false);
 			Assert (nav.MoveToParent ());
-			AssertNavigator (nav, XPathNodeType.Element,
+			AssertNavigator ("#9", nav, XPathNodeType.Element,
 				"", "body", xhtml, "body", "test.", false, true, false);
 
 			nav.MoveToRoot ();
-			AssertNavigator (nav, XPathNodeType.Root, "", "", "", "", "test.", false, true, false);
+			AssertNavigator ("#10", nav, XPathNodeType.Root, "", "", "", "", "test.", false, true, false);
 		}
 
 		[Test]

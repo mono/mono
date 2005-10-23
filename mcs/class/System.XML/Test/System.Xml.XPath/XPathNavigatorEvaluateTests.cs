@@ -47,6 +47,12 @@ namespace MonoTests.System.Xml
 
 		// Testing Core Funcetion Library functions defined at: http://www.w3.org/TR/xpath#corelib
 		[Test]
+#if NET_2_0
+		// .NET 2.0 is fixed for last() to return 1 for the
+		// initial context position. We should follow the fix.
+		[Category ("NotWorking")]
+		[Category ("NotDotNet")]
+#endif
 		public void CoreFunctionNodeSetLast ()
 		{
 			expression = navigator.Compile("last()");
@@ -61,21 +67,27 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+#if NET_2_0
+		// .NET 2.0 is fixed for position() to return 1 for the
+		// initial context position. We should follow the fix.
+		[Category ("NotWorking")]
+		[Category ("NotDotNet")]
+#endif
 		public void CoreFunctionNodeSetPosition ()
 		{
 			expression = navigator.Compile("position()");
 			iterator = navigator.Select("/foo");
-			AssertEquals ("0", navigator.Evaluate ("position()").ToString ());
-			AssertEquals ("0", navigator.Evaluate (expression, null).ToString ());
-			AssertEquals ("0", navigator.Evaluate (expression, iterator).ToString ());
+			AssertEquals ("#1", "0", navigator.Evaluate ("position()").ToString ());
+			AssertEquals ("#2", "0", navigator.Evaluate (expression, null).ToString ());
+			AssertEquals ("#3", "0", navigator.Evaluate (expression, iterator).ToString ());
 			iterator = navigator.Select("/foo/*");
-			AssertEquals ("0", navigator.Evaluate (expression, iterator).ToString ());
+			AssertEquals ("#4", "0", navigator.Evaluate (expression, iterator).ToString ());
 			iterator.MoveNext();
-			AssertEquals ("1", navigator.Evaluate (expression, iterator).ToString ());
+			AssertEquals ("#5", "1", navigator.Evaluate (expression, iterator).ToString ());
 			iterator.MoveNext ();
-			AssertEquals ("2", navigator.Evaluate (expression, iterator).ToString ());
+			AssertEquals ("#6", "2", navigator.Evaluate (expression, iterator).ToString ());
 			iterator.MoveNext ();
-			AssertEquals ("3", navigator.Evaluate (expression, iterator).ToString ());
+			AssertEquals ("#7", "3", navigator.Evaluate (expression, iterator).ToString ());
 		}
 
 		[Test]
