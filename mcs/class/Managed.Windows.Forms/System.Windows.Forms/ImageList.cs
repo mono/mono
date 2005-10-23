@@ -69,6 +69,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Design.Serialization;
 using System.Drawing;
+using System.Drawing.Design;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -81,7 +82,7 @@ namespace System.Windows.Forms
 	[DesignerSerializer("System.Windows.Forms.Design.ImageListCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 #endif
 	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
-	[TypeConverter("System.Windows.Forms.ImageListConverter, " + Consts.AssemblySystem_Windows_Forms)]
+	[TypeConverter(typeof(ImageListConverter))]
 	public sealed class ImageList : System.ComponentModel.Component
 	{
 		#region Private Fields
@@ -97,7 +98,7 @@ namespace System.Windows.Forms
 		#endregion // Private Fields
 
 		#region Sub-classes
-		[Editor("System.Windows.Forms.Design.ImageCollectionEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
+		[Editor("System.Windows.Forms.Design.ImageCollectionEditor, " + Consts.AssemblySystem_Design, typeof(UITypeEditor))]
 		public sealed class ImageCollection : IList, ICollection, IEnumerable
 		{
 			private const int AlphaMask = unchecked((int)0xFF000000);
@@ -253,6 +254,9 @@ namespace System.Windows.Forms
 #endif
 			private int count;
 			private bool handleCreated;
+#if NET_2_0
+			private int lastKeyIndex = -1;
+#endif
 			private readonly ImageList owner;
 			#endregion // ImageCollection Private Fields
 
@@ -332,6 +336,7 @@ namespace System.Windows.Forms
 							this.Clear();
 #endif
 					}
+					// Only deserialized ImageListStreamers are used.
 					else if ((streamImages = value.Images) != null) {
 						this.list = new ArrayList(streamImages.Length);
 						this.count = 0;
@@ -430,6 +435,9 @@ namespace System.Windows.Forms
 					string key;
 					StringCollection keyCollection;
 
+					// Returns all keys even when there are more keys than
+					// images. Null keys are returned as empty strings.
+
 					keyCollection = new StringCollection();
 					for (index = 0; index < keys.Count; index++)
 						keyCollection.Add(((key = (string)keys[index]) == null || key.Length == 0) ? string.Empty : key);
@@ -444,6 +452,9 @@ namespace System.Windows.Forms
 #if NET_2_0
 			private static bool CompareKeys(string key1, string key2)
 			{
+				// Keys are case-insensitive and keys with different length
+				// are not equal even when string.Compare treats them equal.
+
 				if (key1 == null || key2 == null || key1.Length != key2.Length)
 					return false;
 
@@ -727,11 +738,13 @@ namespace System.Windows.Forms
 #if NET_2_0
 			public void Add(string key, Icon icon)
 			{
+				// Argument has name icon but exceptions use name value.
 				AddItem(key, new ImageListItem(icon));
 			}
 
 			public void Add(string key, Image image)
 			{
+				// Argument has name image but exceptions use name value.
 				AddItem(key, new ImageListItem(image));
 			}
 
@@ -822,12 +835,22 @@ namespace System.Windows.Forms
 			{
 				int index;
 
-				if (key != null && key.Length != 0)
+				if (key != null && key.Length != 0) {
+					// When last IndexOfKey was successful and the same key was
+					// assigned to an image with a lower index than the last
+					// result and the key of the last result equals to key
+					// argument the last result is returned.
+
+					if (this.lastKeyIndex >= 0 && this.lastKeyIndex < this.Count && CompareKeys((string)keys[this.lastKeyIndex], key))
+						return this.lastKeyIndex;
+
+					// Duplicate keys are allowed and first match is returned.
 					for (index = 0; index < this.Count; index++)
 						if (CompareKeys((string)keys[index], key))
-							return index;
+							return this.lastKeyIndex = index;
+				}
 
-				return -1;
+				return this.lastKeyIndex = -1;
 			}
 #endif
 
@@ -862,7 +885,7 @@ namespace System.Windows.Forms
 
 			public void SetKeyName(int index, string name)
 			{
-				// Only SetKeyName throws IndexOutOfRangeException
+				// Only SetKeyName throws IndexOutOfRangeException.
 				if (index < 0 || index >= this.Count)
 					throw new IndexOutOfRangeException();
 
@@ -990,16 +1013,16 @@ namespace System.Windows.Forms
 		// For use in Designers
 		private bool ShouldSerializeColorDepth()
 		{
-			// ColorDepth is serialized in ImageStream when non-empty
-			// It is serialized even if it has it's default value when empty
+			// ColorDepth is serialized in ImageStream when non-empty.
+			// It is serialized even if it has its default value when empty.
 			return images.Empty;
 		}
 
 		// For use in Designers
 		private bool ShouldSerializeImageSize()
 		{
-			// ImageSize is serialized in ImageStream when non-empty
-			// It is serialized even if it has it's default value when empty
+			// ImageSize is serialized in ImageStream when non-empty.
+			// It is serialized even if it has its default value when empty.
 			return images.Empty;
 		}
 
@@ -1080,11 +1103,12 @@ namespace System.Windows.Forms
 		[Bindable(true)]
 		[DefaultValue(null)]
 		[Localizable(false)]
-		[TypeConverter("System.ComponentModel.StringConverter, " + Consts.AssemblySystem)]
+		[TypeConverter(typeof(StringConverter))]
 		public object Tag {
 			get {
 				return this.tag;
 			}
+
 			set {
 				this.tag = value;
 			}
