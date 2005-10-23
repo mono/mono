@@ -2383,15 +2383,15 @@ namespace Mono.CSharp {
 					return e;
 			}
 
-			// Check CS0652 warning here (before resolving operator).
-			if (oper == Operator.Equality ||
-			    oper == Operator.Inequality ||
-			    oper == Operator.LessThanOrEqual ||
-			    oper == Operator.LessThan ||
-			    oper == Operator.GreaterThanOrEqual ||
-			    oper == Operator.GreaterThan){
-				CheckUselessComparison (left as Constant, right.Type);
-				CheckUselessComparison (right as Constant, left.Type);
+			// Comparison warnings
+			if (oper == Operator.Equality || oper == Operator.Inequality ||
+			    oper == Operator.LessThanOrEqual || oper == Operator.LessThan ||
+			    oper == Operator.GreaterThanOrEqual || oper == Operator.GreaterThan){
+				if (left.Equals (right)) {
+					Report.Warning (1718, 3, loc, "Comparison made to same variable; did you mean to compare something else?");
+				}
+				CheckUselessComparison (lc, right.Type);
+				CheckUselessComparison (rc, left.Type);
 			}
 
 			return ResolveOperator (ec);
