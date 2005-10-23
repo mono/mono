@@ -462,6 +462,7 @@ namespace System.Xml.XPath
 			return false;
 		}
 
+		/*
 		public virtual bool MoveToFirst ()
 		{
 			if (MoveToPrevious ()) {
@@ -471,6 +472,12 @@ namespace System.Xml.XPath
 				return true;
 			}
 			return false;
+		}
+		*/
+
+		public virtual bool MoveToFirst ()
+		{
+			return MoveToFirstImpl ();
 		}
 
 		public virtual void MoveToRoot ()
@@ -487,6 +494,22 @@ namespace System.Xml.XPath
 
 		public abstract void MoveToRoot ();
 #endif
+
+		internal bool MoveToFirstImpl ()
+		{
+			switch (NodeType) {
+			case XPathNodeType.Attribute:
+			case XPathNodeType.Namespace:
+				return false;
+			default:
+				if (!MoveToParent ())
+					return false;
+				// Follow these 2 steps so that we can skip 
+				// some types of nodes .
+				MoveToFirstChild ();
+				return true;
+			}
+		}
 
 		public abstract bool MoveToFirstAttribute ();
 

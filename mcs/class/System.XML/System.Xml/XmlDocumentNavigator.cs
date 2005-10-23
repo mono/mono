@@ -357,18 +357,13 @@ namespace System.Xml
 			return false;
 		}
 
+#if NET_2_0
+#else
 		public override bool MoveToFirst ()
 		{
-			if (NsNode == null && node.NodeType != XmlNodeType.Attribute) {
-				if (!MoveToParent ())
-					return false;
-				// Follow these 2 steps so that we can skip 
-				// some types of nodes .
-				MoveToFirstChild ();
-				return true;
-			}
-			return false;
+			return MoveToFirstImpl ();
 		}
+#endif
 
 		public override bool MoveToFirstAttribute ()
 		{

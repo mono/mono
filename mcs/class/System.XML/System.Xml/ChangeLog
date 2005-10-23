@@ -1,5 +1,10 @@
 2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlDocumentNavigator.cs : now MoveToFirst() invokes internal
+	  MoveToFirstImpl().
+
+2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlTextWriter.cs : oops, so WriteState.Error is NET_2_0 only.
 
 2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
