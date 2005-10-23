@@ -1689,7 +1689,7 @@ namespace Mono.CSharp
 			//
 			// Verify using aliases now
 			//
-			GlobalRootNamespace.VerifyUsingForAll ();
+			RootNamespace.Global.VerifyUsingForAll ();
 			
 			if (Report.Errors > 0){
 				return false;
@@ -1902,7 +1902,7 @@ namespace Mono.CSharp
 			Report.Reset ();
 			TypeManager.Reset ();
 			TypeHandle.Reset ();
-			GlobalRootNamespace.Reset ();
+			RootNamespace.Reset ();
 			CodeGen.Reset ();
 		}
 	}

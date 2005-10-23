@@ -600,19 +600,22 @@ public class TypeManager {
 	{
 		foreach (Assembly assembly in assemblies)
 			RootNamespace.Global.AddAssemblyReference (assembly);
-		
+
 		foreach (Module m in modules)
 			RootNamespace.Global.AddModuleReference (m);
-
 	}
 
-	public static Namespace ComputeNamespacesForAlias (string name)
+	public static RootNamespace GetRootNamespace (string name)
 	{
+		// FIXME: Do something about 'using extern global;'  Either error out, or the following.
+		//if (name == "global")
+		//	return RootNamespace.Global;
+
 		Assembly assembly = (Assembly) external_aliases [name];
 		if (assembly == null)
 			return null;
 		
-		return GlobalRootNamespace.DefineRootNamespace (name, assembly);
+		return RootNamespace.DefineRootNamespace (name, assembly);
 	}
 
 	/// <summary>
@@ -631,7 +634,7 @@ public class TypeManager {
 
 	public static bool NamespaceClash (string name, Location loc)
 	{
-		if (RootNamespace.Global.GetNamespace (name, false) == null)
+		if (! RootNamespace.Global.IsNamespace (name))
 			return false;
 
 		Report.Error (519, loc, String.Format ("`{0}' clashes with a predefined namespace", name));

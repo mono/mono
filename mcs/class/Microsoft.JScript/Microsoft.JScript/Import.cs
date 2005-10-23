@@ -56,7 +56,7 @@ namespace Microsoft.JScript {
 				throw new Exception (err);
 			}
 #if !NET_2_0
-			return Mono.CSharp.GlobalRootNamespace.IsNamespace (name);
+			return Mono.CSharp.RootNamespace.Global.IsNamespace (name);
 #else
 			return Mono.CSharp.Namespace.IsNamespace (name);
 #endif

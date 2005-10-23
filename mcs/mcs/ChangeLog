@@ -1,3 +1,18 @@
+2005-10-23  Raja R Harinath  <harinath@gmail.com>
+
+	* namespace.cs (RootNamespace.all_namespaces): Renamed from
+	cached_namespaces.  Improve usage.
+	(RootNamespace.Reset, RootNamespace.RegisterNamespace)
+	(RootNamespace.VerifyUsingForAll, RootNamespace.DefineNamespacesForAll):
+	Move from GlobalRootNamespace and simplify.
+	(RootNamespace.Global): Make instance variable.
+	(RootNamespace.RootNamespace): Add "alias name" parameter.
+	(GlobalRootNamespace): Simplify drastically.
+	(Namespace.Lookup): Don't use GetNamespace.
+	* typemanager.cs (GetRootNamespace): Rename from
+	ComputeNamespaceForAlias.
+	(NamespaceClash): Use Global.IsNamespace instead of GetNamespace.
+
 2005-10-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* anonymous.cs (AnonymousContainer): Don't crash when container

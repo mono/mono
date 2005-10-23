@@ -13,35 +13,54 @@ using System.Reflection;
 
 namespace Mono.CSharp {
 
-	public class RootNamespace : Namespace
-	{
+	public class RootNamespace : Namespace {
 		static MethodInfo get_namespaces_method;
 
+		string alias_name;
 		Assembly referenced_assembly;
-		Hashtable cached_namespaces;
+
+		Hashtable all_namespaces;
+
+		static Hashtable root_namespaces;
+		public static GlobalRootNamespace Global;
 		
 		static RootNamespace ()
 		{
 			get_namespaces_method = typeof (Assembly).GetMethod ("GetNamespaces", BindingFlags.Instance | BindingFlags.NonPublic);
+
+			Reset ();
 		}
 
-		//
-		// We access GlobalRoot here to beautify the code
-		//
-		public static GlobalRootNamespace Global {
-			get {
-				return GlobalRootNamespace.GlobalRoot;
-			}
-		}
-
-		public RootNamespace (Assembly assembly) : base (null, String.Empty)
+		public static void Reset ()
 		{
-			this.referenced_assembly = assembly;
-			this.cached_namespaces = new Hashtable ();
-			this.cached_namespaces.Add ("", null);
+			root_namespaces = new Hashtable ();
+			Global = new GlobalRootNamespace ();
+		}
 
-			if (this.referenced_assembly != null)
+
+		public RootNamespace (string alias_name, Assembly assembly)
+			: base (null, String.Empty)
+		{
+			this.alias_name = alias_name;
+			referenced_assembly = assembly;
+
+			root_namespaces.Add (alias_name, this);
+
+			all_namespaces = new Hashtable ();
+			all_namespaces.Add ("", this);
+
+			if (referenced_assembly != null)
 				ComputeNamespacesForAssembly (this.referenced_assembly);
+		}
+
+		public static RootNamespace DefineRootNamespace (string name, Assembly assembly)
+		{
+			RootNamespace retval = (RootNamespace) root_namespaces [name];
+			if (retval != null)
+				return retval;
+
+			retval = new RootNamespace (name, assembly);
+			return retval;
 		}
 
 		public virtual Type LookupTypeReflection (string name, Location loc)
@@ -49,37 +68,37 @@ namespace Mono.CSharp {
 			return GetTypeInAssembly (referenced_assembly, name);
 		}
 
-		public virtual void RegisterNamespace (Namespace ns)
+		public void RegisterNamespace (Namespace child)
 		{
-			// Do nothing.
+			if (child != this)
+				all_namespaces.Add (child.Name, child);
 		}
-		
+
+		public bool IsNamespace (string name)
+		{
+			return all_namespaces.Contains (name);
+		}
+
+		protected void EnsureNamespace (string dotted_name)
+		{
+			if (dotted_name != null && dotted_name != "" && ! IsNamespace (dotted_name))
+				GetNamespace (dotted_name, true);
+		}
+
 		protected void ComputeNamespacesForAssembly (Assembly assembly)
 		{
 			if (get_namespaces_method != null) {
 				string [] namespaces = (string []) get_namespaces_method.Invoke (assembly, null);
-				foreach (string ns in namespaces) {
-					if (ns.Length == 0)
-						continue;
-
-					// Method from parent class Namespace
-					GetNamespace (ns, true);
-				}
-			} else {
-				//cached_namespaces.Add ("", null);
-				foreach (Type t in assembly.GetExportedTypes ()) {
-					string ns = t.Namespace;
-					if (ns == null || cached_namespaces.Contains (ns))
-						continue;
-
-					// Method from parent class Namespace
-					GetNamespace (ns, true);
-					cached_namespaces.Add (ns, null);
-				}
+				foreach (string ns in namespaces)
+					EnsureNamespace (ns);
+				return;
 			}
+
+			foreach (Type t in assembly.GetExportedTypes ())
+				EnsureNamespace (t.Namespace);
 		}
 		
-		protected Type GetTypeInAssembly (Assembly assembly, string name)
+		protected static Type GetTypeInAssembly (Assembly assembly, string name)
 		{
 			Type t = assembly.GetType (name);
 			if (t == null)
@@ -89,45 +108,46 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Use GetPointerType() to get a pointer");
 			
 			TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
-			if (ta != TypeAttributes.NotPublic && ta != TypeAttributes.NestedPrivate &&
-					ta != TypeAttributes.NestedAssembly && ta != TypeAttributes.NestedFamANDAssem)
-				return t;
+			if (ta == TypeAttributes.NotPublic ||
+			    ta == TypeAttributes.NestedPrivate ||
+			    ta == TypeAttributes.NestedAssembly ||
+			    ta == TypeAttributes.NestedFamANDAssem)
+				return null;
 
-			return null;
+			return t;
 		}
 
-		protected Hashtable CachedNamespaces {
-			get {
-				return cached_namespaces;
-			}
+
+		public void VerifyUsingForAll ()
+		{
+			foreach (Namespace ns in all_namespaces.Values)
+				ns.VerifyUsing ();
 		}
 
+		public void DefineNamespacesForAll (SymbolWriter symwriter)
+		{
+			foreach (Namespace ns in all_namespaces.Values)
+				ns.DefineNamespaces (symwriter);
+		}
+
+
+		public override string ToString ()
+		{
+			return String.Format ("RootNamespace ({0}::)", alias_name);
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return alias_name + "::";
+		}
 	}
 
-	public class GlobalRootNamespace : RootNamespace
-	{
-		static ArrayList all_namespaces;
-		static Hashtable namespaces_map;
-		static Hashtable root_namespaces;
-		internal static GlobalRootNamespace GlobalRoot;
-		
+	public class GlobalRootNamespace : RootNamespace {
 		Assembly [] assemblies;
 		Module [] modules;
-		
-		public static void Reset ()
-		{
-			all_namespaces = new ArrayList ();
-			namespaces_map = new Hashtable ();
-			root_namespaces = new Hashtable ();
-			GlobalRoot = new GlobalRootNamespace ();
-		}
-		
-		static GlobalRootNamespace ()
-		{
-			Reset ();
-		}
 
-		public GlobalRootNamespace () : base (null)
+		public GlobalRootNamespace ()
+			: base ("global", null)
 		{
 			assemblies = new Assembly [0];
 			modules = new Module [0];
@@ -151,20 +171,11 @@ namespace Mono.CSharp {
 
 			modules = tmp;
 			
-			if (module != CodeGen.Module.Builder)
-				ComputeNamespacesForModule (module);
-		}
+			if (module == CodeGen.Module.Builder)
+				return;
 
-		void ComputeNamespacesForModule (Module module)
-		{
-			foreach (Type t in module.GetTypes ()) {
-				string ns = t.Namespace;
-				if (ns == null || CachedNamespaces.Contains (ns))
-					continue;
-
-				GetNamespace (ns, true);
-				CachedNamespaces.Add (ns, null);
-			}
+			foreach (Type t in module.GetTypes ())
+				EnsureNamespace (t.Namespace);
 		}
 
 		public override Type LookupTypeReflection (string name, Location loc)
@@ -207,56 +218,6 @@ namespace Mono.CSharp {
 
 			return found_type;
 		}
-
-		public override void RegisterNamespace (Namespace child)
-		{
-			all_namespaces.Add (child);
-			if (namespaces_map.Contains (child.Name))
-				return;
-			namespaces_map [child.Name] = true;
-		}
-		
-		public static RootNamespace DefineRootNamespace (string name, Assembly assembly)
-		{
-			RootNamespace retval = (RootNamespace) root_namespaces [name];
-			if (retval != null)
-				return retval;
-
-			retval = new RootNamespace (assembly);
-			return retval;
-		}
-		
-		public static bool IsNamespace (string name)
-		{
-			return namespaces_map [name] != null;
-		}
-
-		public static ArrayList UserDefinedNamespaces {
-			get { return all_namespaces; }
-		}
-
-		public static void VerifyUsingForAll ()
-		{
-			foreach (Namespace ns in all_namespaces)
-				ns.VerifyUsing ();
-		}
-		
-		public static void DefineNamespacesForAll (SymbolWriter symwriter)
-		{
-			foreach (Namespace ns in all_namespaces)
-				ns.DefineNamespaces (symwriter);
-		}
-
-		public override string ToString ()
-		{
-			return "Namespace (<root>)";
-		}
-
-		public override string GetSignatureForError ()
-		{
-			return "global::";
-		}
-
 	}
 
 	/// <summary>
@@ -398,9 +359,8 @@ namespace Mono.CSharp {
 
 		public FullNamedExpression Lookup (DeclSpace ds, string name, Location loc)
 		{
-			Namespace ns = GetNamespace (name, false);
-			if (ns != null)
-				return ns;
+			if (namespaces.Contains (name))
+				return (Namespace) namespaces [name];
 
 			TypeExpr te = LookupType (name, loc);
 			if (te == null || !ds.CheckAccessLevel (te.Type))
@@ -573,12 +533,11 @@ namespace Mono.CSharp {
 				if (resolved != null)
 					return resolved;
 
-				resolved = TypeManager.ComputeNamespacesForAlias (Name);
-				if (resolved == null) {
+				resolved = TypeManager.GetRootNamespace (Name);
+				if (resolved == null)
 					Report.Error (430, Location, "The extern alias '" + Name +
 									"' was not specified in a /reference option");
-				}
-				
+
 				return resolved;
 			}
 		}
@@ -599,7 +558,6 @@ namespace Mono.CSharp {
 			
 			ns.AddNamespaceEntry (this);
 		}
-
 
 		private NamespaceEntry (NamespaceEntry parent, SourceFile file, Namespace ns)
 		{
