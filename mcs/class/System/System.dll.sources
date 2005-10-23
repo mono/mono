@@ -50,6 +50,7 @@ System.CodeDom/CodeCommentStatement.cs
 System.CodeDom/CodeCompileUnit.cs
 System.CodeDom/CodeConditionStatement.cs
 System.CodeDom/CodeConstructor.cs
+System.CodeDom/CodeDefaultValueExpression.cs
 System.CodeDom/CodeDelegateCreateExpression.cs
 System.CodeDom/CodeDelegateInvokeExpression.cs
 System.CodeDom/CodeDirectionExpression.cs
