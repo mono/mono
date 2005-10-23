@@ -458,6 +458,9 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
+#if NET_2_0
+	[Category ("NotDotNet")]
+#endif
 	public void core0008E()
         {
             string computedValue = "";
@@ -957,6 +960,9 @@ namespace nist_dom.fundamental
         //----------------------------------------------------------------------------
 
         [Test]
+#if NET_2_0
+	[Category ("NotDotNet")]
+#endif
 	public void core0016E()
         {
             string computedValue = "";

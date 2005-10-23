@@ -1,3 +1,7 @@
+2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* Element.cs : core0008A and core0016A Are not working under .NET 2.0.
+
 2005-01-13  Atsushi Enomoto <atsushi@ximian.com>
 
 	* Element.cs : added Category("NotDotNet") for those tests that
