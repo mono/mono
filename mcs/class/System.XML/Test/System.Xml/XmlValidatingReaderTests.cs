@@ -859,6 +859,7 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
+		//[NotWorking ("default namespace seems null, not String.Empty")]
 #if NET_2_0
 #else
 		// MS.NET 1.x does not consider cases that xmlns* attributes
@@ -881,7 +882,7 @@ namespace MonoTests.System.Xml
 				xmlns CDATA #IMPLIED
 				xmlns:bar CDATA #IMPLIED>
 			]>
-			<X xmlns:baz='&baz;'><Y/><Y>text.</Y><Y xmlns='' xmlns:bar=''>text.</Y></X>";
+			<X xmlns:baz='&baz;'><Y/><Y>text.</Y><Y xmlns='' xmlns:bar='urn:hoge'>text.</Y></X>";
 			XmlValidatingReader xvr = new XmlValidatingReader (
 				xml, XmlNodeType.Document, null);
 			xvr.Read (); // DTD
@@ -909,15 +910,15 @@ namespace MonoTests.System.Xml
 			xvr.Read (); // second Y, end element
 			AssertEquals ("#5-1", "urn:foo", xvr.LookupNamespace (String.Empty));
 			AssertEquals ("#5-2", "urn:bar", xvr.LookupNamespace ("bar"));
-			xvr.Read (); // third Y, suppresses namespaces
-			AssertEquals ("#6-1", String.Empty, xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#6-2", String.Empty, xvr.LookupNamespace ("bar"));
+			xvr.Read (); // third Y, suppresses default namespaces
+			AssertEquals ("#6-1", null, xvr.LookupNamespace (String.Empty));
+			AssertEquals ("#6-2", "urn:hoge", xvr.LookupNamespace ("bar"));
 			xvr.Read (); // inside suppressing Y. Check inheritance
-			AssertEquals ("#7-1", String.Empty, xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#7-2", String.Empty, xvr.LookupNamespace ("bar"));
+			AssertEquals ("#7-1", null, xvr.LookupNamespace (String.Empty));
+			AssertEquals ("#7-2", "urn:hoge", xvr.LookupNamespace ("bar"));
 			xvr.Read (); // end of suppressing element
-			AssertEquals ("#8-1", String.Empty, xvr.LookupNamespace (String.Empty));
-			AssertEquals ("#8-2", String.Empty, xvr.LookupNamespace ("bar"));
+			AssertEquals ("#8-1", null, xvr.LookupNamespace (String.Empty));
+			AssertEquals ("#8-2", "urn:hoge", xvr.LookupNamespace ("bar"));
 		}
 	}
 }

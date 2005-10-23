@@ -194,7 +194,8 @@ namespace Mono.Xml
 
 		public override string LookupNamespace (string prefix)
 		{
-			return nsmgr.LookupNamespace (NameTable.Get (prefix));
+			string s = nsmgr.LookupNamespace (NameTable.Get (prefix));
+			return s == String.Empty ? null : s;
 		}
 
 #if NET_2_0

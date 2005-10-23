@@ -1430,6 +1430,19 @@ namespace MonoTests.System.Xml
 			AssertEquals (String.Empty, xmlReader.ReadInnerXml ());
 		}
 
+		[Test]
+		public void LookupEmptyPrefix ()
+		{
+			string xml = "<root><foo></foo></root>";
+			RunTest (xml, new TestMethod (LookupEmptyPrefix));
+		}
+
+		void LookupEmptyPrefix (XmlReader xmlReader)
+		{
+			xmlReader.Read ();
+			AssertNull (xmlReader.LookupNamespace (String.Empty));
+		}
+
 #if NET_2_0
 		[Test]
 		public void CreateSimple ()

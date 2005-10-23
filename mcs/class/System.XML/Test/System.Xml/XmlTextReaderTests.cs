@@ -1144,5 +1144,14 @@ namespace MonoTests.System.Xml
 				arr [i] = (int) line [i];
 			AssertEquals (new int [] {0xd862, 0xddc0}, arr);
 		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void RejectEmptyNamespaceWithNonEmptyPrefix ()
+		{
+			XmlTextReader xtr = new XmlTextReader ("<root xmlns:my='' />",
+				XmlNodeType.Document, null);
+			xtr.Read ();
+		}
 	}
 }

@@ -454,7 +454,9 @@ namespace System.Xml
 		internal override string LookupNamespace (string prefix, bool atomizedName)
 #endif
 		{
-			return parserContext.NamespaceManager.LookupNamespace (prefix, atomizedName);
+			string s = parserContext.NamespaceManager.LookupNamespace (
+				prefix, atomizedName);
+			return s == String.Empty ? null : s;
 		}
 
 #if NET_2_0
@@ -1287,6 +1289,12 @@ namespace System.Xml
 				attributeTokens [i].FillNamespace ();
 
 			// quick name check
+			if (namespaces)
+				for (int i = 0; i < attributeCount; i++)
+					if (attributeTokens [i].Prefix == "xmlns" &&
+						attributeTokens [i].Value == String.Empty)
+						throw NotWFError ("Empty namespace URI cannot be mapped to non-empty prefix.");
+
 			for (int i = 0; i < attributeCount; i++) {
 				for (int j = i + 1; j < attributeCount; j++)
 					if (Object.ReferenceEquals (attributeTokens [i].Name, attributeTokens [j].Name) ||

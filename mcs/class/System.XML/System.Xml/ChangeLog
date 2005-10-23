@@ -1,3 +1,9 @@
+2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlTextReader.cs, DTDValidatingReader.cs : LookupNamespace("") for
+	  default namespace was returning "" instead of null. It didn't check
+	  empty namespace URI for non-empty prefixes.
+
 2005-10-07  Joshua Tauberer <tauberer@for.net>
 
 	* XmlTextReader.cs: SkipTextDeclaration would not accept processing
