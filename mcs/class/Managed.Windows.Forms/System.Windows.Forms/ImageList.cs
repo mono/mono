@@ -77,11 +77,11 @@ using System.Runtime.InteropServices;
 namespace System.Windows.Forms
 {
 	[DefaultProperty("Images")]
-	[Designer("System.Windows.Forms.Design.ImageListDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
+	[Designer("System.Windows.Forms.Design.ImageListDesigner, " + Consts.AssemblySystem_Design)]
 #if NET_2_0
 	[DesignerSerializer("System.Windows.Forms.Design.ImageListCodeDomSerializer, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design)]
 #endif
-	[ToolboxItemFilter("System.Windows.Forms", ToolboxItemFilterType.Allow)]
+	[ToolboxItemFilter("System.Windows.Forms")]
 	[TypeConverter(typeof(ImageListConverter))]
 	public sealed class ImageList : System.ComponentModel.Component
 	{

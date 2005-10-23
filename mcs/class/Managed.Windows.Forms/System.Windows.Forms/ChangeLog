@@ -1,5 +1,10 @@
 2005-10-22  Kornél Pál  <kornelpal@hotmail.com>
 
+	* ImageList.cs: Use attribute constructors with less arguments where
+	  possible.
+
+2005-10-22  Kornél Pál  <kornelpal@hotmail.com>
+
 	* ImageList.cs: Added lastKeyIndex field and use in IndexOfKey.
 	  Use typeof instead of strings when assembly is referenced. Added
 	  some more comments.
