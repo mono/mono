@@ -35,6 +35,8 @@ namespace System.Threading
 {
 	public class SynchronizationContext
 	{
+		bool notification_required;
+
 		[ThreadStatic]
 		static SynchronizationContext currentContext;
 		
@@ -57,22 +59,17 @@ namespace System.Threading
 			return new SynchronizationContext (this);
 		}
 
-		[MonoTODO]
 		public bool IsWaitNotificationRequired ()
 		{
-			throw new NotImplementedException ();
+			return notification_required;
 		}
 
-		[MonoTODO]
 		public virtual void OperationCompleted ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual void OperationStarted ()
 		{
-			throw new NotImplementedException ();
 		}
 		
 		public virtual void Post (SendOrPostCallback d, object state)
@@ -100,6 +97,7 @@ namespace System.Threading
 		[MonoTODO]
 		protected void SetWaitNotificationRequired ()
 		{
+			notification_required = true;
 			throw new NotImplementedException ();
 		}
 
