@@ -58,8 +58,6 @@ namespace System.Drawing.Drawing2D
 
 		GraphicsState _next = null;
 
-		awt.Shape _finalBaseClip = null;
-
 		internal GraphicsState(Graphics graphics, bool resetState) 
 			: this(graphics, Matrix.IdentityTransform, resetState) {}
 
@@ -125,11 +123,10 @@ namespace System.Drawing.Drawing2D
 			//should be set before the base transform is changed
 			if (_baseClip == null)
 				graphics.IntersectScaledClipWithBase(graphics.VisibleShape);
-			graphics.IntersectScaledClipWithBase(_clip);
 
 			graphics.CompositingMode = CompositingMode.SourceOver;
 			graphics.CompositingQuality = CompositingQuality.Default;
-			graphics.Clip = Region.InfiniteRegion;
+			graphics.ScaledClip = Region.InfiniteRegion;
 			graphics.InterpolationMode = InterpolationMode.Bilinear;
 			graphics.PageScale = 1.0f;
 			graphics.PageUnit = GraphicsUnit.Display;
@@ -144,23 +141,10 @@ namespace System.Drawing.Drawing2D
 			graphics.PrependBaseTransform(matrix.NativeObject);
 			graphics.TextContrast = 4;
 			graphics.TextRenderingHint = TextRenderingHint.SystemDefault;
-
-			geom.AffineTransform finalBaseTransform = graphics.NativeObject.getTransform();
-			graphics.NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
-			_finalBaseClip = graphics.NativeObject.getClip();
-			graphics.NativeObject.setTransform(finalBaseTransform);
 		}
 
 		internal void RestoreBaseClip(Graphics graphics) {
-			if (_finalBaseClip == null) {
-				graphics.NativeObject.setClip(null);
-				return;
-			}
-
-			geom.AffineTransform finalBaseTransform = graphics.NativeObject.getTransform();
-			graphics.NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
-			graphics.NativeObject.setClip(_finalBaseClip);
-			graphics.NativeObject.setTransform(finalBaseTransform);
+			graphics.NativeObject.setClip(_baseClip);
 		}
 	}
 }

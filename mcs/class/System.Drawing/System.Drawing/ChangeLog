@@ -1,3 +1,10 @@
+2005-10-23 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Graphics.jvm.cs: Clipping refactoring
+	fixed FillScaledShape, DrawShape, MeasureDraw, BeginContainer, 
+	ExcludeClip, IntersectClip, ResetClip, CombineClipArea, RestoreBaseClip,
+	TranslateClip, VisibleClipBounds
+
 2005-10-21  Miguel de Icaza  <miguel@novell.com>
 
 	* Pen.cs: Add support for returning the Brush from Pens created
