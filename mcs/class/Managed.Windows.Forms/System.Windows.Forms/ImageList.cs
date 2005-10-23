@@ -562,6 +562,10 @@ namespace System.Windows.Forms
 						ReduceColorDepth(bitmap);
 						list.Add(bitmap);
 					}
+
+					if (imageAttributes != null)
+						imageAttributes.Dispose();
+
 					return index;
 				}
 			}
@@ -601,6 +605,9 @@ namespace System.Windows.Forms
 				graphics = Graphics.FromImage(bitmap);
 				graphics.DrawImage(value, new Rectangle(0, 0, imageWidth, imageHeight), 0, 0, value.Width, value.Height, GraphicsUnit.Pixel, imageAttributes);
 				graphics.Dispose();
+
+				if (imageAttributes != null)
+					imageAttributes.Dispose();
 
 				ReduceColorDepth(bitmap);
 				return bitmap;
