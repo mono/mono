@@ -117,11 +117,30 @@ namespace MonoTests.oasis_xslt {
 			return sb.ToString ();
 		}
 
-		string CompareResult (string actual, string expected)
+		string CompareResult (string actual, string expected, CatalogTestCase.CompareType compare)
 		{
-			//TODO: add xml comparison
-			if (actual == expected)
-				return null;
+			//TODO: add html comparison
+			if (compare== CatalogTestCase.CompareType.XML) {
+				try {
+					XmlDocument actDoc = new XmlDocument();
+					XmlDocument expDoc = new XmlDocument();
+					actDoc.LoadXml (actual);
+					expDoc.LoadXml (expected);
+					XmlCompare.XmlCompare cmp = new XmlCompare.XmlCompare(XmlCompare.XmlCompare.Flags.IgnoreAttribOrder);
+					if (cmp.AreEqual (actDoc, expDoc)) {
+						return null;
+					}
+				}
+				catch (Exception ex) {
+					//could not compare as xml, fallback to text
+					if (actual == expected)
+						return null;
+				}
+			}
+			else
+				if (actual == expected)
+					return null;
+
 			string res = "Different.\nActual*****\n"+actual+"\nReference*****\n"+expected;
 			return EscapeString (res);
 		}
@@ -164,7 +183,7 @@ namespace MonoTests.oasis_xslt {
 			if (_transform.Succeeded) {
 				try {
 					using (StreamReader sr = new StreamReader (_transform.TestCase.OutFile))
-						failureMessage = CompareResult (_transform.Result, sr.ReadToEnd ());
+						failureMessage = CompareResult (_transform.Result, sr.ReadToEnd (), _transform.TestCase.Compare);
 				}
 				catch {
 					//if there is no reference result because of expectedException, we
@@ -172,6 +191,7 @@ namespace MonoTests.oasis_xslt {
 					if (_expectedException!=null)
 						failureMessage = null;
 					else {
+						Console.WriteLine (_transform.TestCase.OutFile);
 						Console.WriteLine ("ERROR: No reference result, and no expected exception.");
 						throw;
 					}

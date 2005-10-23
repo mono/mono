@@ -83,6 +83,12 @@ namespace MonoTests.oasis_xslt {
 		string _stylesheet;
 		string _srcxml;
 		string _outfile;
+		public enum CompareType {
+			Text,
+			HTML,
+			XML
+		}
+		CompareType _compare;
 		XmlElement _testCase;
 		string _outputDir;
 
@@ -134,10 +140,28 @@ namespace MonoTests.oasis_xslt {
 
 			_srcxml = Path.Combine (path, scenario.SelectSingleNode ("input-file[@role='principal-data']").InnerText);
 			XmlNode outputNode = scenario.SelectSingleNode ("output-file[@role='principal']");
-			if (outputNode != null) 
+			if (outputNode != null) {
 				_outfile = Path.Combine (outputPath, outputNode.InnerText);
-			else
+				switch (outputNode.Attributes ["compare"].Value) {
+				case "XML":
+					_compare = CompareType.XML;
+					break;
+				case "HTML":
+					_compare = CompareType.HTML;
+					break;
+				default:
+					_compare = CompareType.Text;
+					break;
+				}
+			}
+			else {
 				_outfile = null;
+				_compare = CompareType.Text;
+			}
+		}
+
+		public CompareType Compare {
+			get {return _compare;}
 		}
 
 		public string StyleSheet {

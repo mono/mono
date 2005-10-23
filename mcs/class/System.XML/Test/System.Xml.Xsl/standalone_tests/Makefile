@@ -84,7 +84,7 @@ endif
 $(GENERATE_EXE) : generate.cs XsltTestUtils.cs
 	$(CSCOMPILE) generate.cs XsltTestUtils.cs -out:$@
 $(TEST_PROG) : xslttest.cs XsltTestUtils.cs
-	$(CSCOMPILE) xslttest.cs XsltTestUtils.cs -r:NUnit.core -r:NUnit.framework -out:$@ -t:library
+	$(CSCOMPILE) xslttest.cs XsltTestUtils.cs XmlCompare.cs -r:NUnit.core -r:NUnit.framework -out:$@ -t:library
 
 catalog-fixed : $(FIXED_CATALOG)
 
