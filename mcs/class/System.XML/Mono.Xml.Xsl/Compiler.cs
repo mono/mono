@@ -842,8 +842,9 @@ namespace Mono.Xml.Xsl
 			if (colon > 0)
 				return new QName (name.Substring (colon + 1), nsDecls [name.Substring (0, colon)] as string);
 			else if (colon < 0)
-				// Default namespace is not used for unprefixed names.
-				return new QName (name, "");
+				return new QName (name,
+					nsDecls.ContainsKey (String.Empty) ?
+					(string) nsDecls [String.Empty] : String.Empty);
 			else
 				throw new ArgumentException ("Invalid name: " + name);
 		}

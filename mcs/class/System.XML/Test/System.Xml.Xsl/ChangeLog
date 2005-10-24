@@ -1,3 +1,7 @@
+2005-10-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslTransformTests.cs : added test for bug #76530.
+
 2005-10-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* XslTransformTests.cs: Remove test which depends on random GC

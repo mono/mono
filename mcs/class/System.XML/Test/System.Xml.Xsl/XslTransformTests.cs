@@ -286,5 +286,49 @@ namespace MonoTests.System.Xml.Xsl
 			while (!reader.EOF)
 				reader.Read (); // btw no XMLdecl output.
 		}
+
+		[Test] // bug #76530
+		// http://www.w3.org/TR/xslt#section-Creating-Elements-with-xsl:element
+		// "If the namespace attribute is not present then the QName
+		// is expanded into an expanded-name using the namespace
+		// declarations in effect for the xsl:element element,
+		// including any default namespace declaration."
+		public void LREDefaultNamespace ()
+		{
+			string xsl = @"<xsl:stylesheet version='1.0'
+  xmlns='urn:foo' xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>
+<xsl:template match='/*'>
+  <xsl:element name='{local-name()}' />
+</xsl:template>
+</xsl:stylesheet>";
+			string xml = "<root/>";
+			XslTransform t = new XslTransform ();
+			t.Load (new XPathDocument (new StringReader (xsl)));
+			StringWriter sw = new StringWriter ();
+			XmlTextWriter xw = new XmlTextWriter (sw);
+			t.Transform (
+				new XPathDocument (new StringReader (xml)),
+				null, xw);
+			AssertEquals ("<root xmlns=\"urn:foo\" />",
+				sw.ToString ());
+
+			string xsl2 = @"<xsl:stylesheet version='1.0'
+  xmlns:xsl='http://www.w3.org/1999/XSL/Transform' xmlns='urn:foo'>
+  <xsl:template match='/*'>
+      <root>
+    <xsl:element name='{local-name()}' />
+      </root>
+  </xsl:template>
+</xsl:stylesheet>";
+			string xml2 = "<page/>";
+			t.Load (new XPathDocument (new StringReader (xsl2)));
+			sw = new StringWriter ();
+			xw = new XmlTextWriter (sw);
+			t.Transform (
+				new XPathDocument (new StringReader (xml2)),
+				null, xw);
+			AssertEquals ("<root xmlns=\"urn:foo\"><page /></root>",
+				sw.ToString ());
+		}
 	}
 }
