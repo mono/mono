@@ -1,3 +1,14 @@
+2005-10-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* cs0430.cs, cs0439.cs, cs0439-2.cs, 
+	  cs1537-2.cs, cs1537-3.cs, cs1679.cs, 
+	  cs1680.cs, cs1681.cs: Added tests for extern alias
+	  feature.
+
+	* known-gmcs-issues: Update the issues to avoid testing
+	the extern alias test in 2.0 profile. We need to change them
+	as soon as the merged is done in gmcs.
+	  
 2005-10-20  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (run-mcs-tests): Set MONO_RUNTIME to $(RUNTIME).
