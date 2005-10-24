@@ -86,7 +86,7 @@ namespace System.Drawing
 
 		protected virtual void Dispose (bool disposing)
 		{
-			if (nativeObject != IntPtr.Zero) {
+			if ((GDIPlus.Display != IntPtr.Zero) && (nativeObject != IntPtr.Zero)) {
 				GDIPlus.GdipDeleteBrush (nativeObject);
 				nativeObject = IntPtr.Zero;
 			}			
