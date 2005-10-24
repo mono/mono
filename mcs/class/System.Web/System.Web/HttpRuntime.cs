@@ -316,6 +316,8 @@ namespace System.Web {
 		//
 		static void ShutdownAppDomain (object args)
 		{
+			// This will call Session_End if needed.
+			Cache.InvokePrivateCallbacks ();
 			// Kill our application.
 			HttpApplicationFactory.Dispose ();
 			ThreadPool.QueueUserWorkItem (new WaitCallback (DoUnload), null);

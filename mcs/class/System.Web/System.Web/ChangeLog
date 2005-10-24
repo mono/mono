@@ -1,3 +1,9 @@
+2005-10-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRuntime.cs: invoke callbacks on private items in the cache before 
+	calling disposing the app. factory. This way we get notifications of
+	removal for all sessions stored in the cache (InProc only).
+
 2005-10-19 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponseStream.cs: reworked buffering so that adjacents blocks are

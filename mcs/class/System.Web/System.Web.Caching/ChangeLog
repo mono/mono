@@ -1,7 +1,11 @@
+2005-10-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Cache.cs: new internal method.
+
 2005-09-08  Eyal Alaluf  <eyala@mainsoft.com>
 	* OutputCacheModule.cs: Use C# 1.0 style of delegate instantiating.
-	  Needed to compile Grasshopper (TARGET_J2EE) which uses MS C# 1.0 compiler
-	  and does not use msc.
+	  Needed to compile Grasshopper (TARGET_J2EE) which uses MS C# 1.0
+	  compiler and does not use msc.
 
 2005-09-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
