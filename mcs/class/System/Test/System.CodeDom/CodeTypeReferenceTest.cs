@@ -70,7 +70,7 @@ namespace MonoTests.System.CodeDom
 		public void ZeroLengthBaseType ()
 		{
 			CodeTypeReference reference = new CodeTypeReference (string.Empty);
-			Assert.AreEqual (typeof (void).FullName, reference.BaseType);
+			Assert.AreEqual (typeof (void).FullName, reference.BaseType, "#1");
 		}
 
 		[Test]
@@ -531,14 +531,74 @@ namespace MonoTests.System.CodeDom
 		}
 #endif
 
+		// bug #76535
 		[Test]
-		[Category ("NotWorking")] // see bug #76535
-		public void BaseType_ArrayElementType_Mixup ()
+		public void BaseType_ArrayElementType ()
 		{
 			CodeTypeReference ctr = new CodeTypeReference ("System.Int32");
-			Assert.IsNull (ctr.ArrayElementType, "ArrayElementType");
+			Assert.IsNull (ctr.ArrayElementType, "#1");
+			Assert.AreEqual (0, ctr.ArrayRank, "#2");
 			ctr.ArrayElementType = new CodeTypeReference ("System.String");
-			Assert.AreEqual ("System.Int32", ctr.BaseType, "BaseType");
+			Assert.IsNotNull (ctr.ArrayElementType, "#3");
+			Assert.AreEqual (0, ctr.ArrayRank, "#4");
+			Assert.AreEqual ("System.Int32", ctr.BaseType, "#4");
+			ctr.ArrayRank = -1;
+			Assert.AreEqual (-1, ctr.ArrayRank, "#5");
+			Assert.AreEqual ("System.Int32", ctr.BaseType, "#6");
+			ctr.ArrayRank = 1;
+			Assert.AreEqual (1, ctr.ArrayRank, "#7");
+			Assert.AreEqual ("System.String", ctr.BaseType, "#8");
+		}
+
+		[Test]
+		public void Null_ArrayElementType ()
+		{
+			CodeTypeReference ctr = new CodeTypeReference ((string) null, 0);
+			Assert.IsNotNull (ctr.ArrayElementType, "#1");
+			Assert.AreEqual (typeof(void).FullName, ctr.ArrayElementType.BaseType, "#2");
+			Assert.AreEqual (0, ctr.ArrayRank, "#3");
+			Assert.AreEqual (string.Empty, ctr.BaseType, "#4");
+			ctr.ArrayRank = 1;
+			Assert.AreEqual (1, ctr.ArrayRank, "#5");
+			Assert.AreEqual (typeof (void).FullName, ctr.BaseType, "#6");
+
+			ctr = new CodeTypeReference ((string) null, 1);
+			Assert.IsNotNull (ctr.ArrayElementType, "#7");
+			Assert.AreEqual (typeof (void).FullName, ctr.ArrayElementType.BaseType, "#8");
+			Assert.AreEqual (1, ctr.ArrayRank, "#9");
+			Assert.AreEqual (typeof (void).FullName, ctr.BaseType, "#10");
+
+			ctr = new CodeTypeReference ((CodeTypeReference) null, 0);
+			Assert.IsNull (ctr.ArrayElementType, "#11");
+			Assert.AreEqual (0, ctr.ArrayRank, "#12");
+			Assert.AreEqual (string.Empty, ctr.BaseType, "#13");
+			ctr.ArrayRank = 1;
+			Assert.AreEqual (1, ctr.ArrayRank, "#14");
+			Assert.AreEqual (string.Empty, ctr.BaseType, "#15");
+
+			ctr = new CodeTypeReference ((CodeTypeReference) null, 1);
+			Assert.IsNull (ctr.ArrayElementType, "#16");
+			Assert.AreEqual (1, ctr.ArrayRank, "#17");
+			Assert.AreEqual (string.Empty, ctr.BaseType, "#18");
+		}
+
+		[Test]
+		public void Empty_ArrayElementType ()
+		{
+			CodeTypeReference ctr = new CodeTypeReference (string.Empty, 0);
+			Assert.IsNotNull (ctr.ArrayElementType, "#1");
+			Assert.AreEqual (typeof (void).FullName, ctr.ArrayElementType.BaseType, "#2");
+			Assert.AreEqual (0, ctr.ArrayRank, "#3");
+			Assert.AreEqual (string.Empty, ctr.BaseType, "#4");
+			ctr.ArrayRank = 1;
+			Assert.AreEqual (1, ctr.ArrayRank, "#5");
+			Assert.AreEqual (typeof (void).FullName, ctr.BaseType, "#6");
+
+			ctr = new CodeTypeReference (string.Empty, 1);
+			Assert.IsNotNull (ctr.ArrayElementType, "#7");
+			Assert.AreEqual (typeof (void).FullName, ctr.ArrayElementType.BaseType, "#8");
+			Assert.AreEqual (1, ctr.ArrayRank, "#9");
+			Assert.AreEqual (typeof (void).FullName, ctr.BaseType, "#10");
 		}
 	}
 }

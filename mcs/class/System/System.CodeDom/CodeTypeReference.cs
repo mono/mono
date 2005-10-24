@@ -153,7 +153,7 @@ namespace System.CodeDom
 
 		public string BaseType {
 			get {
-				if (arrayType != null) {
+				if (arrayType != null && rank > 0) {
 					return arrayType.BaseType;
 				}
 

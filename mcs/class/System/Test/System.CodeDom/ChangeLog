@@ -1,3 +1,8 @@
+2005-10-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeTypeReferenceTest.cs: Enabled test case for bug #76535. Added
+	few additional tests for null or zero length data type of array.
+
 2005-10-24  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* CodeTypeReferenceCas.cs: Fixed test cases not to trigger bug or 

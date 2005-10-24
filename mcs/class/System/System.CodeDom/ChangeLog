@@ -1,3 +1,8 @@
+2005-10-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeTypeReference.cs: Ignore ArrayElementType for determining
+	BaseType if ArrayRank zero or less. Fixes bug #76535.
+
 2005-10-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeArgumentReferenceExpression.cs: Added default value for 
