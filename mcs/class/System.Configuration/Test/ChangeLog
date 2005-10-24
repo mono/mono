@@ -1,5 +1,10 @@
 2005-10-24  Chris Toshok  <toshok@ximian.com>
 
+	* System.Configuration/WhiteSpaceTrimStringConverterTest.cs: new
+	test.
+
+2005-10-24  Chris Toshok  <toshok@ximian.com>
+
 	* standalone/Makefile: hide the output from cmp.
 
 2005-10-24  Chris Toshok  <toshok@ximian.com>
