@@ -34,6 +34,7 @@
 using NUnit.Framework;
 using System;
 using System.Data;
+using System.Data.SqlTypes;
 using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -1430,6 +1431,14 @@ namespace MonoTests.System.Data
 
                         }
                 }
+
+				[Test]
+				public void ColumnObjectTypeTest() {
+					DataTable dt = new DataTable();
+					dt.Columns.Add("Series Label", typeof(SqlInt32));
+					dt.Rows.Add(new object[] {"sss"});
+					AssertEquals(1, dt.Rows.Count);
+				}
 
                 public void OnRowChanging (object src, DataRowChangeEventArgs args)
                 {

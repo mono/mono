@@ -1088,13 +1088,6 @@ namespace System.Data.Common
 				SetValue(index,record.GetValue(field));
 			}
 
-			protected override void SetValue(int index, object value)
-			{
-				if(value != null && value != DBNull.Value && !(Type == DbTypes.TypeOfObject) && !Type.IsAssignableFrom(value.GetType()))
-					value = Convert.ChangeType(value, Type);
-
-				base.SetValue(index, value);
-			}
 			#endregion //Methods
 	 
 		}

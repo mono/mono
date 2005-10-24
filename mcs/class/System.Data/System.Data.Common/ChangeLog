@@ -1,3 +1,7 @@
+2005-10-24  Konstantin Triger <kostat@mainsoft.com>
+
+        * DataContainer.cs: removed extra type validation for object container
+
 2005-10-14  Senganal T  <tsenganal@novell.com>
 
 	* DbDataAdapter.cs : 
