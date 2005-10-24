@@ -5,8 +5,7 @@
 //   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2002 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -45,6 +44,7 @@ namespace System.CodeDom
 		//
 		public CodeSnippetTypeMember()
 		{
+			text = String.Empty;
 		}
 		
 		public CodeSnippetTypeMember( string text )

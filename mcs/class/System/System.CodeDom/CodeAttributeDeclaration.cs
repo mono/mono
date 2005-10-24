@@ -48,6 +48,7 @@ namespace System.CodeDom
 		//
 		public CodeAttributeDeclaration ()
 		{
+			name = String.Empty;
 		}
 
 		public CodeAttributeDeclaration (string name)

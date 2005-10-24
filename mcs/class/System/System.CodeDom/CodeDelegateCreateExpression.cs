@@ -6,8 +6,7 @@
 //   Daniel Stodden (stodden@in.tum.de)
 //
 // (C) 2001 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,6 +47,8 @@ namespace System.CodeDom
 		//
 		public CodeDelegateCreateExpression ()
 		{
+			delegateType = new CodeTypeReference ("System.Void");
+			methodName = String.Empty;
 		}
 
 		public CodeDelegateCreateExpression (CodeTypeReference delegateType,

@@ -1,3 +1,66 @@
+2005-10-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeArgumentReferenceExpression.cs: Added default value for 
+	arameterName.
+	* CodeArrayCreateExpression.cs: Added default value for createType.
+	* CodeAttachEventStatement.cs: Added default value for eventRef.
+	* CodeAttributeArgument.cs: Added default value for name.
+	* CodeAttributeArgumentCollection.cs: Fixed AddRange methods not to
+	throw an exception (as the list was being changed when using an 
+	numerator).
+	* CodeAttributeDeclaration.cs: Added default value for name.
+	* CodeAttributeDeclarationCollection.cs: Fixed AddRange methods not to
+	throw an exception (as the list was being changed when using an 
+	numerator).
+	* CodeCastExpression.cs: Added default value for targetType.
+	* CodeCatchClause.cs: Added default value for catchExceptionType and 
+	ocalName.
+	* CodeCatchClauseCollection.cs: Fixed AddRange methods not to throw an
+	xception (as the list was being changed when using an enumerator).
+	* CodeCommentStatementCollection.cs: Fixed AddRange methods not to 
+	hrow an exception (as the list was being changed when using an 
+	numerator).
+	* CodeDelegateCreateExpression.cs: Added default value for 
+	elegateType and methodName.
+	* CodeEventReferenceExpression.cs: Added default value for eventName.
+	* CodeExpressionCollection.cs: Fixed AddRange methods not to throw an
+	xception (as the list was being changed when using an enumerator).
+	* CodeFieldReferenceExpression.cs: Added default value for fieldName.
+	* CodeMethodInvokeExpression.cs: Added default value for method.
+	* CodeMethodReferenceExpression.cs: Added default value for methodName
+	* CodeNamespace.cs: Added default value for name.
+	* CodeNamespaceCollection.cs: Fixed AddRange methods not to throw an 
+	xception (as the list was being changed when using an enumerator).
+	* CodeNamespaceImport.cs: Added default value for nameSpace.
+	* CodeNamespaceImportCollection.cs: SyncRoot returns null.
+	* CodeObjectCreateExpression.cs: Added default value for createType.
+	* CodeParameterDeclarationExpression.cs: Added default value for name 
+	and type.
+	* CodeParameterDeclarationExpressionCollection.cs: Fixed AddRange 
+	methods not to throw an exception (as the list was being changed when 
+	using an enumerator).
+	* CodePropertyReferenceExpression.cs: Added default value for 
+	propertyName.
+	* CodeRemoveEventStatement.cs: Added default value for eventRef.
+	* CodeSnippetExpression.cs: Added default value for value.
+	* CodeSnippetStatement.cs: Added default value for value.
+	* CodeSnippetTypeMember.cs: Added default value for text.
+	* CodeStatementCollection.cs: Fixed AddRange methods not to throw an 
+	exception (as the list was being changed when using an enumerator).
+	* CodeTypeDeclarationCollection.cs: Fixed AddRange methods not to 
+	throw an exception (as the list was being changed when using an 
+	enumerator).
+	* CodeTypeMemberCollection.cs: Fixed AddRange methods not to throw an
+	exception (as the list was being changed when using an enumerator).
+	* CodeTypeOfExpression.cs: Added default value for type.
+	* CodeTypeReferenceCollection.cs: Fixed AddRange methods not to throw 
+	an exception (as the list was being changed when using an enumerator).
+	* CodeTypeReferenceExpression.cs: Added default value for type.
+	* CodeVariableDeclarationStatement.cs: Added default value for name 
+	and type.
+	* CodeVariableReferenceExpression.cs: Added default value for 
+	variableName.
+
 2005-10-23  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* CodeTypeParameterCollection.cs: Added missing Add(string) method.
