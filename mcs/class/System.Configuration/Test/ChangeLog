@@ -1,5 +1,7 @@
 2005-10-24  Chris Toshok  <toshok@ximian.com>
 
+	* System.Configuration/TypeNameConverterTest.cs: new test.
+
 	* System.Configuration/WhiteSpaceTrimStringConverterTest.cs: new
 	test.
 
