@@ -1089,7 +1089,7 @@ namespace System {
 			get;
 		}
 
-		public extern bool IsGenericTypeDefinition {
+		public virtual extern bool IsGenericTypeDefinition {
 			[MethodImplAttribute(MethodImplOptions.InternalCall)]
 			get;
 		}
