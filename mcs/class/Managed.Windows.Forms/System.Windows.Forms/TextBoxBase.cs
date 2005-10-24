@@ -447,6 +447,7 @@ namespace System.Windows.Forms {
 					for (i = 1; i < document.Lines; i++) {
 						sb.Append(document.GetLine(i).text.ToString() + Environment.NewLine);
 					}
+					sb.Append(document.GetLine(i).text.ToString());
 					return sb.ToString();
 				}
 			}
@@ -463,6 +464,7 @@ namespace System.Windows.Forms {
 						string[]	lines;
 
 						lines = value.Split(new char[] {'\n'});
+
 						for (int i = 0; i < lines.Length; i++) {
 							if (lines[i].EndsWith("\r")) {
 								lines[i] = lines[i].Substring(0, lines[i].Length - 1);
@@ -508,6 +510,7 @@ namespace System.Windows.Forms {
 					for (i = 1; i < document.Lines; i++) {
 						total += document.GetLine(i).text.Length + Environment.NewLine.Length;
 					}
+					total += document.GetLine(i).text.Length;
 
 					return total;
 				}
@@ -626,23 +629,7 @@ namespace System.Windows.Forms {
 		}
 
 		public override string ToString() {
-			StringBuilder	sb;
-			int		i;
-			int		end;
-
-			if (document == null) {
-				return String.Empty;
-			}
-
-			sb = new StringBuilder();
-
-			end = document.Lines;
-
-			for (i = 1; i < end; i++) {
-				sb.Append(document.GetLine(i).text.ToString() + "\n");
-			}
-
-			return sb.ToString();
+			return Text;
 		}
 
 		public void Undo() {
