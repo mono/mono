@@ -69,10 +69,10 @@ namespace MonoCasTests.System.CodeDom {
 		public void Constructor1_Deny_Unrestricted ()
 		{
 			CodeTypeReference ctr = new CodeTypeReference ("System.Int32");
-			Assert.IsNull (ctr.ArrayElementType, "ArrayElementType");
-			ctr.ArrayElementType = new CodeTypeReference ("System.String");
 			Assert.AreEqual ("System.Int32", ctr.BaseType, "BaseType");
 			ctr.BaseType = String.Empty;
+			Assert.IsNull (ctr.ArrayElementType, "ArrayElementType");
+			ctr.ArrayElementType = new CodeTypeReference ("System.String");
 			Assert.AreEqual (0, ctr.ArrayRank, "ArrayRank");
 			ctr.ArrayRank = 1;
 #if NET_2_0
@@ -87,10 +87,10 @@ namespace MonoCasTests.System.CodeDom {
 		public void Constructor2_Deny_Unrestricted ()
 		{
 			CodeTypeReference ctr = new CodeTypeReference (typeof (int));
-			Assert.IsNull (ctr.ArrayElementType, "ArrayElementType");
-			ctr.ArrayElementType = new CodeTypeReference ("System.String");
 			Assert.AreEqual ("System.Int32", ctr.BaseType, "BaseType");
 			ctr.BaseType = String.Empty;
+			Assert.IsNull (ctr.ArrayElementType, "ArrayElementType");
+			ctr.ArrayElementType = new CodeTypeReference ("System.String");
 			Assert.AreEqual (0, ctr.ArrayRank, "ArrayRank");
 			ctr.ArrayRank = 1;
 #if NET_2_0
@@ -189,9 +189,10 @@ namespace MonoCasTests.System.CodeDom {
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void LinkDemand_Deny_Unrestricted ()
 		{
-			ConstructorInfo ci = typeof (CodeTypeReference).GetConstructor (new Type[0]);
-			Assert.IsNotNull (ci, "default .ctor");
-			Assert.IsNotNull (ci.Invoke (null), "invoke");
+			Type[] types = new Type[1] { typeof (string) };
+			ConstructorInfo ci = typeof (CodeTypeReference).GetConstructor (types);
+			Assert.IsNotNull (ci, ".ctor(string)");
+			Assert.IsNotNull (ci.Invoke (new object[1] { String.Empty }), "invoke");
 		}
 	}
 }

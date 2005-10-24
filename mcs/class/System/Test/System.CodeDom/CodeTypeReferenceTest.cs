@@ -4,8 +4,9 @@
 // Authors:
 //   Gert Driesen (drieseng@users.sourceforge.net)
 //
-// (C) 2005 Novell
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
+
 using System;
 using System.CodeDom;
 #if NET_2_0
@@ -529,5 +530,15 @@ namespace MonoTests.System.CodeDom
 			Assert.AreEqual (0, typeArgument.TypeArguments.Count, "#24");
 		}
 #endif
+
+		[Test]
+		[Category ("NotWorking")] // see bug #76535
+		public void BaseType_ArrayElementType_Mixup ()
+		{
+			CodeTypeReference ctr = new CodeTypeReference ("System.Int32");
+			Assert.IsNull (ctr.ArrayElementType, "ArrayElementType");
+			ctr.ArrayElementType = new CodeTypeReference ("System.String");
+			Assert.AreEqual ("System.Int32", ctr.BaseType, "BaseType");
+		}
 	}
 }

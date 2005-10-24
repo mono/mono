@@ -1,3 +1,9 @@
+2005-10-24  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* CodeTypeReferenceCas.cs: Fixed test cases not to trigger bug or 
+	depend on the internal ctor.
+	* CodeTypeReferenceTest.cs: Added a test case for bug #76535.
+
 2005-10-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeArgumentReferenceExpressionCas.cs, 
