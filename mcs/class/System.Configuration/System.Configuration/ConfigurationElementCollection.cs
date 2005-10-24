@@ -463,6 +463,10 @@ namespace System.Configuration
 			}
 			else {
 				if (elementName == clearElementName) {
+					reader.MoveToContent ();
+					if (reader.MoveToNextAttribute ())
+						throw new ConfigurationErrorsException ("Unrecognized attribute '" + reader.LocalName + "'.");
+					reader.MoveToElement ();
 					reader.Skip ();
 					BaseClear ();
 					emitClear = true;

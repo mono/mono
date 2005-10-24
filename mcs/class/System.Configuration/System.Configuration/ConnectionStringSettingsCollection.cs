@@ -79,7 +79,7 @@ namespace System.Configuration
 		[MonoTODO]
 		protected internal override ConfigurationPropertyCollection Properties {
 			get {
-				throw new NotImplementedException ();
+				return base.Properties;
 			}
 		}
 

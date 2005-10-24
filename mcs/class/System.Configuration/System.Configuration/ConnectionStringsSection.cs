@@ -73,6 +73,13 @@ namespace System.Configuration
 #endif
                         }
                 }
+
+		[MonoTODO ("this shouldn't be here, but it's necessary until the ConfigurationPropertyOptions.IsDefaultCollection stuff is hooked up properly.")]
+		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
+		{
+			ConnectionStrings.DeserializeElement (reader, serializeCollectionKey);
+		}
+
                 protected internal override ConfigurationPropertyCollection Properties
                 {
                         get

@@ -1,5 +1,25 @@
 2005-10-24  Chris Toshok  <toshok@ximian.com>
 
+	* AppSettingsSection.cs (DeserializeElement, SerializeSection):
+	split the behavior based on if File == "".  If it is, we do the
+	default.  otherwise we throw NIE.
+
+	* ConnectionStringsSection.cs (DeserializeElement): we shouldn't
+	need this, but we do until the IsDefaultCollection stuff is fixed.
+
+	* ConfigurationElementCollection.cs
+	(OnDeserializeUnrecognizedElement): for clearElementName, make
+	sure we have no attributes.
+
+	* ConnectionStringSettingsCollection.cs (get_Properties): for now
+	just chain up to base.Properties.
+
+	* ConfigurationElement.cs (ReflectProperties): do the default
+	value/property type check in a more robust way, using
+	Convert.ChangeType.
+
+2005-10-24  Chris Toshok  <toshok@ximian.com>
+
 	* ConfigurationElement.cs: treat
 	ConfigurationProperty.NoDefaultValue the same as null when we're
 	checking the default value's type.  this fixes t13 and 14.

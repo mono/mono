@@ -63,10 +63,15 @@ namespace System.Configuration {
 			return Settings.IsModified ();
 		}
 
-		[MonoTODO ("Read file attribute")]
+		[MonoTODO ("Read file attribute, and fix IsDefaultCollection stuff (so we can remove the call to Settings.DeserializeElement)")]
 		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
-			Settings.DeserializeElement (reader, serializeCollectionKey);
+			if (File == "") {
+				Settings.DeserializeElement (reader, serializeCollectionKey);
+			}
+			else {
+				throw new NotImplementedException ();
+			}
 		}
 
 		protected internal override void Reset (ConfigurationElement parentSection)
@@ -80,7 +85,12 @@ namespace System.Configuration {
 		protected internal override string SerializeSection (
 			ConfigurationElement parent, string name, ConfigurationSaveMode mode)
 		{
-			throw new NotImplementedException ();
+			if (File == "") {
+				return base.SerializeSection (parent, name, mode);
+			}
+			else {
+				throw new NotImplementedException ();
+			}
 		}
 
 		[ConfigurationProperty ("file", DefaultValue = "")]
