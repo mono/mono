@@ -149,24 +149,27 @@ namespace System.Configuration
 
 		protected virtual void BaseAdd (ConfigurationElement element, bool throwIfExists)
 		{
-//			if (throwIfExists && BaseIndexOf (element) != -1)
-//				throw new ConfigurationException ("Duplicate element in collection");
+			if (throwIfExists && BaseIndexOf (element) != -1)
+				throw new ConfigurationException ("Duplicate element in collection");
 			if (IsReadOnly ())
 				throw new ConfigurationErrorsException ("Collection is read only.");
 			
+			int old_index = IndexOfKey (GetElementKey (element));
 			if (IsAlternate) {
 				list.Insert (inheritedLimitIndex, element);
 				inheritedLimitIndex++;
 			}
 			else
 				list.Add (element);
+			if (old_index != -1)
+				list.RemoveAt (old_index);
 			modified = true;
 		}
 
 		protected virtual void BaseAdd (int index, ConfigurationElement element)
 		{
-//			if (ThrowOnDuplicate && BaseIndexOf (element) != -1)
-//				throw new ConfigurationException ("Duplicate element in collection");
+			if (ThrowOnDuplicate && BaseIndexOf (element) != -1)
+				throw new ConfigurationException ("Duplicate element in collection");
 			if (IsReadOnly ())
 				throw new ConfigurationErrorsException ("Collection is read only.");
 			
@@ -174,8 +177,11 @@ namespace System.Configuration
 				throw new ConfigurationErrorsException ("Can't insert new elements below the inherited elements.");
 			if (!IsAlternate && (index <= inheritedLimitIndex))
 				throw new ConfigurationErrorsException ("Can't insert new elements above the inherited elements.");
-				
+			
+			int old_index = IndexOfKey (GetElementKey (element));
 			list.Insert (index, element);
+			if (old_index != -1)
+				list.RemoveAt (old_index);
 			modified = true;
 		}
 

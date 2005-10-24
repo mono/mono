@@ -1,5 +1,17 @@
 2005-10-24  Chris Toshok  <toshok@ximian.com>
 
+	* KeyValueConfigurationCollection.cs (GetElementKey): sacrifice
+	one test to get another working.  Return a valid key even if the
+	element is not in this collection.
+	(get_ThrowOnDuplicate): return false.
+
+	* ConfigurationElementCollection.cs (BaseAdd): if we're adding an
+	element with the same key, overwrite the old one (remove the old
+	one after inserting the new one).  Also, re-enable the throwing of
+	exceptions if ThrowOnDuplicate == true.
+
+2005-10-24  Chris Toshok  <toshok@ximian.com>
+
 	* AppSettingsSection.cs (Settings): fix ConfigurationProperty
 	attribute.
 

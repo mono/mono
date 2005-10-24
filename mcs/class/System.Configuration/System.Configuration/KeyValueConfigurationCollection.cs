@@ -77,7 +77,7 @@ namespace System.Configuration
 		
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			if (element == null || BaseIndexOf (element) == -1)
+			if (element == null/* || BaseIndexOf (element) == -1*/)
 				return "";
 
 			return ((KeyValueConfigurationElement)element).Key;
@@ -94,7 +94,7 @@ namespace System.Configuration
 		}
 		
 		protected override bool ThrowOnDuplicate {
-			get { return true; }
+			get { return false; }
 		}
 	}
 }
