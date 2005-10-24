@@ -35,32 +35,37 @@ namespace Mono.CSharp {
 		{
 			root_namespaces = new Hashtable ();
 			Global = new GlobalRootNamespace ();
+			root_namespaces ["global"] = Global;
 		}
 
-
-		public RootNamespace (string alias_name, Assembly assembly)
+		protected RootNamespace (string alias_name, Assembly assembly)
 			: base (null, String.Empty)
 		{
 			this.alias_name = alias_name;
 			referenced_assembly = assembly;
 
-			root_namespaces.Add (alias_name, this);
-
 			all_namespaces = new Hashtable ();
 			all_namespaces.Add ("", this);
 
 			if (referenced_assembly != null)
-				ComputeNamespacesForAssembly (this.referenced_assembly);
+				ComputeNamespaces (this.referenced_assembly);
 		}
 
-		public static RootNamespace DefineRootNamespace (string name, Assembly assembly)
+		public static void DefineRootNamespace (string name, Assembly assembly)
 		{
-			RootNamespace retval = (RootNamespace) root_namespaces [name];
-			if (retval != null)
-				return retval;
+			if (name == "global") {
+				// FIXME: Add proper error number
+				Report.Error (-42, "Cannot define an external alias named `global'");
+				return;
+			}
+			RootNamespace retval = GetRootNamespace (name);
+			if (retval == null || retval.referenced_assembly != assembly)
+				root_namespaces [name] = new RootNamespace (name, assembly);
+		}
 
-			retval = new RootNamespace (name, assembly);
-			return retval;
+		public static RootNamespace GetRootNamespace (string name)
+		{
+			return (RootNamespace) root_namespaces [name];
 		}
 
 		public virtual Type LookupTypeReflection (string name, Location loc)
@@ -85,7 +90,7 @@ namespace Mono.CSharp {
 				GetNamespace (dotted_name, true);
 		}
 
-		protected void ComputeNamespacesForAssembly (Assembly assembly)
+		protected void ComputeNamespaces (Assembly assembly)
 		{
 			if (get_namespaces_method != null) {
 				string [] namespaces = (string []) get_namespaces_method.Invoke (assembly, null);
@@ -150,31 +155,45 @@ namespace Mono.CSharp {
 			: base ("global", null)
 		{
 			assemblies = new Assembly [0];
-			modules = new Module [0];
 		}
 
-		public void AddAssemblyReference (Assembly assembly)
-		{
-			Assembly [] tmp = new Assembly [assemblies.Length + 1];
-			Array.Copy (assemblies, 0, tmp, 0, assemblies.Length);
-			tmp [assemblies.Length] = assembly;
-
-			assemblies = tmp;
-			ComputeNamespacesForAssembly (assembly);
+		public Assembly [] Assemblies {
+			get { return assemblies; }
 		}
 
-		public void AddModuleReference (Module module)
-		{
-			Module [] tmp = new Module [modules.Length + 1];
-			Array.Copy (modules, 0, tmp, 0, modules.Length);
-			tmp [modules.Length] = module;
+		public Module [] Modules {
+			get { return modules; }
+		}
 
-			modules = tmp;
-			
-			if (module == CodeGen.Module.Builder)
+		public void AddAssemblyReference (Assembly a)
+		{
+			foreach (Assembly assembly in assemblies) {
+				if (a == assembly)
+					return;
+			}
+
+			int top = assemblies.Length;
+			Assembly [] n = new Assembly [top + 1];
+			assemblies.CopyTo (n, 0);
+			n [top] = a;
+			assemblies = n;
+
+			ComputeNamespaces (a);
+		}
+
+		public void AddModuleReference (Module m)
+		{
+			int top = modules != null ? modules.Length : 0;
+			Module [] n = new Module [top + 1];
+			if (modules != null)
+				modules.CopyTo (n, 0);
+			n [top] = m;
+			modules = n;
+
+			if (m == CodeGen.Module.Builder)
 				return;
 
-			foreach (Type t in module.GetTypes ())
+			foreach (Type t in m.GetTypes ())
 				EnsureNamespace (t.Namespace);
 		}
 
@@ -533,7 +552,7 @@ namespace Mono.CSharp {
 				if (resolved != null)
 					return resolved;
 
-				resolved = TypeManager.GetRootNamespace (Name);
+				resolved = RootNamespace.GetRootNamespace (Name);
 				if (resolved == null)
 					Report.Error (430, Location, "The extern alias '" + Name +
 									"' was not specified in a /reference option");

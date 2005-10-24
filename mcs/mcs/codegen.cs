@@ -108,7 +108,7 @@ namespace Mono.CSharp {
 			if (an.KeyPair != null) {
 				// If we are going to strong name our assembly make
 				// sure all its refs are strong named
-				foreach (Assembly a in TypeManager.GetAssemblies ()) {
+				foreach (Assembly a in RootNamespace.Global.Assemblies) {
 					AssemblyName ref_name = a.GetName ();
 					byte [] b = ref_name.GetPublicKeyToken ();
 					if (b == null || b.Length == 0) {

@@ -1,3 +1,12 @@
+2005-10-24  Raja R Harinath  <harinath@gmail.com>
+
+	* typemanager.cs (assemblies, external_aliases, modules)
+	(AddAssembly, AddExternAlias, AddModule GetAssemblies, Modules)
+	(ComputeNamespaces, GetRootNamespace): Remove extra staging
+	overhead.  Move resposibility ...
+	* namespace.cs (RootNamespace): ... here.  Update to changes.
+	* driver.cs, attribute.cs, codegen.cs: Update to changes.
+
 2005-10-23  Raja R Harinath  <harinath@gmail.com>
 
 	* namespace.cs (RootNamespace.all_namespaces): Renamed from
