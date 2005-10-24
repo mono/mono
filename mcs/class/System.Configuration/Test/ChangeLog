@@ -1,3 +1,11 @@
+2005-10-24  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration/ConfigurationPermissionTest.cs: lots more
+	tests.
+
+	* System.Configuration/KeyValueConfigurationCollectionTest.cs: add
+	ThrowOnDuplicate check.
+
 2005-10-12  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration/ConfigurationPermissionTest.cs: turn the

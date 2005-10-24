@@ -69,6 +69,11 @@ namespace MonoTests.System.Configuration {
 			{
 				return base.BaseGetAllKeys();
 			}
+
+			public bool GetThrowOnDuplicate ()
+			{
+				return base.ThrowOnDuplicate;
+			}
 		}
 
 		class ElementPoker : KeyValueConfigurationElement
@@ -93,6 +98,13 @@ namespace MonoTests.System.Configuration {
 			public ConfigurationPropertyCollection GetProperties () {
 				return base.Properties;
 			}
+		}
+
+		[Test]
+		public void ThrowOnDuplicate ()
+		{
+			Poker p = new Poker ();
+			Assert.IsFalse (p.GetThrowOnDuplicate (), "A1");
 		}
 
 		[Test]

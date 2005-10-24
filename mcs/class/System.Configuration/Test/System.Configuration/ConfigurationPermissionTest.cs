@@ -50,20 +50,110 @@ namespace MonoTests.System.Configuration {
 		}
 
 		[Test]
+		public void Intersect ()
+		{
+			ConfigurationPermission p1 = new ConfigurationPermission (PermissionState.Unrestricted);
+			ConfigurationPermission p2 = new ConfigurationPermission (PermissionState.None);
+
+			IPermission p3 = p1.Intersect (p2);
+
+			Assert.AreEqual (typeof (ConfigurationPermission), p3.GetType(), "A1");
+
+			Assert.IsFalse (((ConfigurationPermission)p3).IsUnrestricted(), "A2");
+		}
+
+		[Test]
+		public void Intersect_null ()
+		{
+			ConfigurationPermission p1 = new ConfigurationPermission (PermissionState.Unrestricted);
+
+			IPermission p3 = p1.Intersect (null);
+
+			Assert.IsNull (p3, "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Intersect_wrongtype ()
+		{
+			ConfigurationPermission p1 = new ConfigurationPermission (PermissionState.Unrestricted);
+
+			IPermission p3 = p1.Intersect (new StrongNameIdentityPermission (PermissionState.Unrestricted));
+		}
+
+		[Test]
+		public void Union ()
+		{
+			ConfigurationPermission p1 = new ConfigurationPermission (PermissionState.Unrestricted);
+			ConfigurationPermission p2 = new ConfigurationPermission (PermissionState.None);
+
+			IPermission p3 = p1.Union (p2);
+
+			Assert.AreEqual (typeof (ConfigurationPermission), p3.GetType(), "A1");
+
+			Assert.IsTrue (((ConfigurationPermission)p3).IsUnrestricted(), "A2");
+		}
+
+		[Test]
+		public void Union_null ()
+		{
+			ConfigurationPermission p1 = new ConfigurationPermission (PermissionState.Unrestricted);
+
+			IPermission p3 = p1.Union (null);
+
+			Assert.AreEqual (typeof (ConfigurationPermission), p3.GetType(), "A1");
+
+			Assert.IsTrue (((ConfigurationPermission)p3).IsUnrestricted(), "A2");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Union_wrongtypee ()
+		{
+			ConfigurationPermission p1 = new ConfigurationPermission (PermissionState.Unrestricted);
+
+			IPermission p3 = p1.Union (new StrongNameIdentityPermission (PermissionState.Unrestricted));
+		}
+
+		[Test]
+		public void Subset ()
+		{
+			ConfigurationPermission p1 = new ConfigurationPermission (PermissionState.Unrestricted);
+			ConfigurationPermission p2 = new ConfigurationPermission (PermissionState.None);
+
+			Assert.IsFalse (p1.IsSubsetOf (p2), "A1");
+			Assert.IsTrue  (p1.IsSubsetOf (p1), "A2");
+			Assert.IsTrue  (p2.IsSubsetOf (p1), "A3");
+			Assert.IsTrue  (p2.IsSubsetOf (p2), "A4");
+
+			Assert.IsFalse (p1.IsSubsetOf (null), "A5");
+			Assert.IsTrue (p2.IsSubsetOf (null), "A6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Subset_wrongtype ()
+		{
+			ConfigurationPermission p1 = new ConfigurationPermission (PermissionState.Unrestricted);
+
+			Assert.IsFalse (p1.IsSubsetOf (new StrongNameIdentityPermission (PermissionState.Unrestricted)));
+		}
+
+		[Test]
 		public void ToXml ()
 		{
 			ConfigurationPermission p = new ConfigurationPermission (PermissionState.Unrestricted);
 
 			Assert.AreEqual(
-					"<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\r\nversion=\"1\"\r\nUnrestricted=\"true\"/>\r\n",
-					p.ToString(), "A1");
+					"<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\nversion=\"1\"\nUnrestricted=\"true\"/>\n",
+					p.ToString().Replace ("\r\n", "\n"), "A1");
 
 
 			p = new ConfigurationPermission (PermissionState.None);
 
 			Assert.AreEqual (
-					 "<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\r\nversion=\"1\"/>\r\n",
-					 p.ToString(), "A2");
+					 "<IPermission class=\"System.Configuration.ConfigurationPermission, System.Configuration, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"\nversion=\"1\"/>\n",
+					 p.ToString().Replace ("\r\n", "\n"), "A2");
 		}
 	}
 }
