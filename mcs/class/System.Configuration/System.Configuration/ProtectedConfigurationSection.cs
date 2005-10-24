@@ -49,7 +49,7 @@ namespace System.Configuration
 			}
 		}
 
-		[ConfigurationProperty ("providers", DefaultValue="System.Object")] 
+		[ConfigurationProperty ("providers")] 
 		public ProviderSettingsCollection Providers {
 			get {
 				throw new NotImplementedException ();

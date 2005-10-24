@@ -89,7 +89,7 @@ namespace System.Configuration {
 			set { base [configFile] = value; }
 		}
 
-		[ConfigurationProperty ("", DefaultValue = "System.Object", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public KeyValueConfigurationCollection Settings {
 			get {
 				if (values == null)

@@ -1,3 +1,10 @@
+2005-10-24  Chris Toshok  <toshok@ximian.com>
+
+	* AppSettingsSection.cs (Settings): fix ConfigurationProperty
+	attribute.
+
+	* ProtectedConfigurationSection.cs (Providers): same.
+
 2005-10-12  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationPermission.cs: flesh out as per tests.
