@@ -1,5 +1,9 @@
 2005-10-24  Chris Toshok  <toshok@ximian.com>
 
+	* WhiteSpaceTrimStringConverter.cs: new implementation.
+
+2005-10-24  Chris Toshok  <toshok@ximian.com>
+
 	* AppSettingsSection.cs (DeserializeElement, SerializeSection):
 	split the behavior based on if File == "".  If it is, we do the
 	default.  otherwise we throw NIE.
