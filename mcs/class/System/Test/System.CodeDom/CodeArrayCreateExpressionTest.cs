@@ -1,10 +1,10 @@
 //
-// System.CodeDom CodeArgumentReferenceExpression Class implementation
+// CodeArrayCreateExpressionTest.cs
+//	- Unit tests for System.CodeDom.CodeArrayCreateExpression
 //
 // Author:
-//   Daniel Stodden (stodden@in.tum.de)
+//	Gert Driesen  <drieseng@users.sourceforge.net>
 //
-// (C) 2002 Ximian, Inc.
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,43 +27,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.InteropServices;
+using NUnit.Framework;
 
-namespace System.CodeDom {
+using System;
+using System.CodeDom;
 
-	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDispatch)]
-	[ComVisible(true)]
-	public class CodeArgumentReferenceExpression 
-		: CodeExpression
+namespace MonoCasTests.System.CodeDom
+{
+	[TestFixture]
+	public class CodeArrayCreateExpressionTest
 	{
-		private string parameterName;
-
-		//
-		// Constructors
-		//
-		public CodeArgumentReferenceExpression()
+		[Test]
+		public void DefaultConstructor ()
 		{
+			CodeArrayCreateExpression cace = new CodeArrayCreateExpression ();
+			Assert.IsNotNull (cace.CreateType, "#1");
+			Assert.AreEqual (typeof (void).FullName, cace.CreateType.BaseType, "#2");
 		}
 
-		public CodeArgumentReferenceExpression( string name )
+		[Test]
+		public void NullCreateType ()
 		{
-			this.parameterName = name;
-		}
+			CodeArrayCreateExpression cace = new CodeArrayCreateExpression ((CodeTypeReference) null, 0);
+			Assert.IsNotNull (cace.CreateType, "#1");
+			Assert.AreEqual (typeof (void).FullName, cace.CreateType.BaseType, "#2");
 
-		//
-		// Properties
-		//
-		public string ParameterName {
-			get {
-				if (parameterName == null) {
-					return string.Empty;
-				}
-				return parameterName;
-			}
-			set {
-				parameterName = value;
-			}
+			cace.CreateType = null;
+			Assert.IsNotNull (cace.CreateType, "#3");
+			Assert.AreEqual (typeof (void).FullName, cace.CreateType.BaseType, "#4");
 		}
 	}
 }

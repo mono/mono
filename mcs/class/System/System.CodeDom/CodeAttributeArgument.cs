@@ -44,12 +44,10 @@ namespace System.CodeDom
 		//
 		public CodeAttributeArgument ()
 		{
-			name = String.Empty;
 		}
 
 		public CodeAttributeArgument (CodeExpression value)
 		{
-			name = String.Empty;
 			this.value = value;
 		}
 
@@ -64,6 +62,9 @@ namespace System.CodeDom
 		//
 		public string Name {
 			get {
+				if (name == null) {
+					return string.Empty;
+				}
 				return name;
 			}
 			set {

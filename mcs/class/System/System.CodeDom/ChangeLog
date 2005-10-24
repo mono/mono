@@ -1,5 +1,17 @@
 2005-10-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* CodeArgumentReferenceExpression.cs: If ParameterName is null, return
+	string.Empty.
+	* CodeArrayCreateExpression.cs: Implement default value in CreateType
+	property.
+	* CodeAttachEventStatement.cs: Implement default value in Event
+	property.
+	* CodeAttributeArgument.cs: Implement default value in Name property.
+	* CodeAttributeDeclaration.cs: Implement default value in Name
+	property.
+
+2005-10-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* CodeTypeReference.cs: Ignore ArrayElementType for determining
 	BaseType if ArrayRank zero or less. Fixes bug #76535.
 

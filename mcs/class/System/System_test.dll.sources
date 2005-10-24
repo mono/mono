@@ -17,6 +17,11 @@ System/UriBuilderTest.cs
 System/UriTest.cs
 System/UriTest2.cs
 System/UriTypeConverterTest.cs
+System.CodeDom/CodeArgumentReferenceExpressionTest.cs
+System.CodeDom/CodeArrayCreateExpressionTest.cs
+System.CodeDom/CodeAttachEventStatementTest.cs
+System.CodeDom/CodeAttributeArgumentTest.cs
+System.CodeDom/CodeAttributeDeclarationTest.cs
 System.CodeDom/CodeMemberFieldTest.cs
 System.CodeDom/CodeMemberPropertyTest.cs
 System.CodeDom/CodeTypeDelegateTest.cs

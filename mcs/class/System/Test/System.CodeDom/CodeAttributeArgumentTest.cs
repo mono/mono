@@ -1,10 +1,10 @@
 //
-// System.CodeDom CodeArgumentReferenceExpression Class implementation
+// CodeAttributeArgumentTest.cs
+//	- Unit tests for System.CodeDom.CodeAttributeArgument
 //
 // Author:
-//   Daniel Stodden (stodden@in.tum.de)
+//	Gert Driesen  <drieseng@users.sourceforge.net>
 //
-// (C) 2002 Ximian, Inc.
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,43 +27,36 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.InteropServices;
+using NUnit.Framework;
 
-namespace System.CodeDom {
+using System;
+using System.CodeDom;
 
-	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDispatch)]
-	[ComVisible(true)]
-	public class CodeArgumentReferenceExpression 
-		: CodeExpression
+namespace MonoCasTests.System.CodeDom
+{
+	[TestFixture]
+	public class CodeAttributeArgumentTest
 	{
-		private string parameterName;
-
-		//
-		// Constructors
-		//
-		public CodeArgumentReferenceExpression()
+		[Test]
+		public void DefaultConstructor ()
 		{
+			CodeAttributeArgument caa = new CodeAttributeArgument ();
+			Assert.IsNotNull (caa.Name, "#1");
+			Assert.AreEqual (string.Empty, caa.Name, "#2");
+			Assert.IsNull (caa.Value, "#3");
 		}
 
-		public CodeArgumentReferenceExpression( string name )
+		[Test]
+		public void NullName ()
 		{
-			this.parameterName = name;
-		}
+			CodeAttributeArgument caa = new CodeAttributeArgument ((string) null, (CodeExpression) null);
+			Assert.IsNotNull (caa.Name, "#1");
+			Assert.AreEqual (string.Empty, caa.Name, "#2");
+			Assert.IsNull (caa.Value, "#3");
 
-		//
-		// Properties
-		//
-		public string ParameterName {
-			get {
-				if (parameterName == null) {
-					return string.Empty;
-				}
-				return parameterName;
-			}
-			set {
-				parameterName = value;
-			}
+			caa.Name = null;
+			Assert.IsNotNull (caa.Name, "#4");
+			Assert.AreEqual (string.Empty, caa.Name, "#5");
 		}
 	}
 }

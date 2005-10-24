@@ -1,10 +1,10 @@
 //
-// System.CodeDom CodeArgumentReferenceExpression Class implementation
+// CodeArgumentReferenceExpressionTest.cs
+//	- Unit tests for System.CodeDom.CodeArgumentReferenceExpression
 //
 // Author:
-//   Daniel Stodden (stodden@in.tum.de)
+//	Gert Driesen  <drieseng@users.sourceforge.net>
 //
-// (C) 2002 Ximian, Inc.
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,43 +27,30 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.InteropServices;
+using NUnit.Framework;
 
-namespace System.CodeDom {
+using System;
+using System.CodeDom;
 
-	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDispatch)]
-	[ComVisible(true)]
-	public class CodeArgumentReferenceExpression 
-		: CodeExpression
-	{
-		private string parameterName;
-
-		//
-		// Constructors
-		//
-		public CodeArgumentReferenceExpression()
+namespace MonoCasTests.System.CodeDom {
+	[TestFixture]
+	public class CodeArgumentReferenceExpressionTest {
+		[Test]
+		public void DefaultConstructor ()
 		{
+			CodeArgumentReferenceExpression care = new CodeArgumentReferenceExpression ();
+			Assert.AreEqual (string.Empty, care.ParameterName, "#1");
+			care.ParameterName = "mono";
+			Assert.AreEqual ("mono", care.ParameterName, "#2");
 		}
 
-		public CodeArgumentReferenceExpression( string name )
+		[Test]
+		public void NullParameter ()
 		{
-			this.parameterName = name;
-		}
-
-		//
-		// Properties
-		//
-		public string ParameterName {
-			get {
-				if (parameterName == null) {
-					return string.Empty;
-				}
-				return parameterName;
-			}
-			set {
-				parameterName = value;
-			}
+			CodeArgumentReferenceExpression care = new CodeArgumentReferenceExpression ((string) null);
+			Assert.AreEqual (string.Empty, care.ParameterName, "#1");
+			care.ParameterName = null;
+			Assert.AreEqual (string.Empty, care.ParameterName, "#2");
 		}
 	}
 }

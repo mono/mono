@@ -46,7 +46,6 @@ namespace System.CodeDom
 		//
 		public CodeAttachEventStatement ()
 		{
-			eventRef = new CodeEventReferenceExpression (null, String.Empty);
 		}
 
 		public CodeAttachEventStatement (CodeEventReferenceExpression eventRef,
@@ -60,16 +59,17 @@ namespace System.CodeDom
 						 string eventName, 
 						 CodeExpression listener)
 		{
-			this.eventRef = new CodeEventReferenceExpression( targetObject,
-									  eventName );
 			this.listener = listener;
 		}
-								  
+
 		//
 		// Properties
 		//
 		public CodeEventReferenceExpression Event {
 			get {
+				if (eventRef == null) {
+					eventRef = new CodeEventReferenceExpression ();
+				}
 				return eventRef;
 			}
 			set {

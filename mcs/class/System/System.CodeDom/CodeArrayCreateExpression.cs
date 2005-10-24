@@ -48,9 +48,7 @@ namespace System.CodeDom {
 		//
 		public CodeArrayCreateExpression ()
 		{
-			createType = new CodeTypeReference (typeof (void));
 		}
-
 
 		public CodeArrayCreateExpression (CodeTypeReference createType, 
 						  CodeExpression size )
@@ -122,6 +120,9 @@ namespace System.CodeDom {
 		//
 		public CodeTypeReference CreateType {
 			get {
+				if (createType == null) {
+					createType = new CodeTypeReference (typeof (void));
+				}
 				return createType;
 			}
 			set {

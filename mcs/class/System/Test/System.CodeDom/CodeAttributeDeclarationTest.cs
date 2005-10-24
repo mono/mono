@@ -1,10 +1,10 @@
 //
-// System.CodeDom CodeArgumentReferenceExpression Class implementation
+// CodeAttributeDeclarationTest.cs
+//	- Unit tests for System.CodeDom.CodeAttributeDeclaration
 //
 // Author:
-//   Daniel Stodden (stodden@in.tum.de)
+//	Gert Driesen  <drieseng@users.sourceforge.net>
 //
-// (C) 2002 Ximian, Inc.
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,43 +27,44 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.InteropServices;
+using NUnit.Framework;
 
-namespace System.CodeDom {
+using System;
+using System.CodeDom;
 
-	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDispatch)]
-	[ComVisible(true)]
-	public class CodeArgumentReferenceExpression 
-		: CodeExpression
+namespace MonoCasTests.System.CodeDom
+{
+	[TestFixture]
+	public class CodeAttributeDeclarationTest
 	{
-		private string parameterName;
-
-		//
-		// Constructors
-		//
-		public CodeArgumentReferenceExpression()
+		[Test]
+		public void DefaultConstructor ()
 		{
+			CodeAttributeDeclaration cad = new CodeAttributeDeclaration ();
+			Assert.IsNotNull (cad.Name, "#1");
+			Assert.AreEqual (string.Empty, cad.Name, "#2");
+#if NET_2_0
+			Assert.IsNull (cad.AttributeType, "#3");
+#endif
+			Assert.IsNotNull (cad.Arguments, "#4");
+			Assert.AreEqual (0, cad.Arguments.Count, "#5");
 		}
 
-		public CodeArgumentReferenceExpression( string name )
+		[Test]
+		public void NullName ()
 		{
-			this.parameterName = name;
-		}
+			CodeAttributeDeclaration cad = new CodeAttributeDeclaration ((string) null);
+			Assert.IsNotNull (cad.Name, "#1");
+			Assert.AreEqual (string.Empty, cad.Name, "#2");
+#if NET_2_0
+			Assert.IsNull (cad.AttributeType, "#3");
+#endif
+			Assert.IsNotNull (cad.Arguments, "#4");
+			Assert.AreEqual (0, cad.Arguments.Count, "#5");
 
-		//
-		// Properties
-		//
-		public string ParameterName {
-			get {
-				if (parameterName == null) {
-					return string.Empty;
-				}
-				return parameterName;
-			}
-			set {
-				parameterName = value;
-			}
+			cad.Name = null;
+			Assert.IsNotNull (cad.Name, "#4");
+			Assert.AreEqual (string.Empty, cad.Name, "#5");
 		}
 	}
 }

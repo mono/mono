@@ -1,10 +1,10 @@
 //
-// System.CodeDom CodeArgumentReferenceExpression Class implementation
+// CodeAttachEventStatementTest.cs
+//	- Unit tests for System.CodeDom.CodeAttachEventStatement 
 //
 // Author:
-//   Daniel Stodden (stodden@in.tum.de)
+//	Gert Driesen  <drieseng@users.sourceforge.net>
 //
-// (C) 2002 Ximian, Inc.
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,43 +27,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.InteropServices;
+using NUnit.Framework;
 
-namespace System.CodeDom {
+using System;
+using System.CodeDom;
 
-	[Serializable]
-	[ClassInterface(ClassInterfaceType.AutoDispatch)]
-	[ComVisible(true)]
-	public class CodeArgumentReferenceExpression 
-		: CodeExpression
+namespace MonoCasTests.System.CodeDom
+{
+	[TestFixture]
+	public class CodeAttachEventStatementTest
 	{
-		private string parameterName;
-
-		//
-		// Constructors
-		//
-		public CodeArgumentReferenceExpression()
+		[Test]
+		public void DefaultConstructor ()
 		{
+			CodeAttachEventStatement caes = new CodeAttachEventStatement ();
+			Assert.IsNotNull (caes.Event, "#1");
+			Assert.IsNull (caes.Listener, "#2");
+			Assert.AreEqual (string.Empty, caes.Event.EventName, "#3");
+			Assert.IsNull (caes.Event.TargetObject, "#4");
 		}
 
-		public CodeArgumentReferenceExpression( string name )
+		[Test]
+		public void NullEventReference ()
 		{
-			this.parameterName = name;
-		}
+			CodeAttachEventStatement caes = new CodeAttachEventStatement ((CodeEventReferenceExpression) null, (CodeExpression) null);
+			Assert.IsNotNull (caes.Event, "#1");
+			Assert.IsNull (caes.Listener, "#2");
+			Assert.AreEqual (string.Empty, caes.Event.EventName, "#3");
+			Assert.IsNull (caes.Event.TargetObject, "#4");
 
-		//
-		// Properties
-		//
-		public string ParameterName {
-			get {
-				if (parameterName == null) {
-					return string.Empty;
-				}
-				return parameterName;
-			}
-			set {
-				parameterName = value;
-			}
+			caes.Event = null;
+			Assert.IsNotNull (caes.Event, "#5");
+			Assert.AreEqual (string.Empty, caes.Event.EventName, "#6");
+			Assert.IsNull (caes.Event.TargetObject, "#7");
 		}
 	}
 }

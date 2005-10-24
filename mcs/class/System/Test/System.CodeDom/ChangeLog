@@ -1,5 +1,18 @@
 2005-10-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* CodeArgumentReferenceExpressionTest.cs: Added test for default ctor
+	and default value of ParameterName.
+	* CodeArrayCreateExpressionTest.cs: Added test for default ctor and
+	default value of CreateType.
+	* CodeAttachEventStatementTest.cs: Added test for default ctor and
+	default value of Event.
+	* CodeAttributeArgumentTest.cs: Added test for default ctor and 
+	default value of Name.
+	* CodeAttributeDeclarationTest.cs: Added test for default ctor and
+	default value of Name.
+
+2005-10-24  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* CodeTypeReferenceTest.cs: Enabled test case for bug #76535. Added
 	few additional tests for null or zero length data type of array.
 

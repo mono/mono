@@ -42,18 +42,17 @@ namespace System.CodeDom
 		private CodeAttributeArgumentCollection arguments;
 #if NET_2_0
 		private CodeTypeReference attribute;
-#endif		
+#endif
+
 		//
 		// Constructors
 		//
 		public CodeAttributeDeclaration ()
 		{
-			name = String.Empty;
 		}
 
 		public CodeAttributeDeclaration (string name)
 		{
-			this.name = name;
 		}
 
 		public CodeAttributeDeclaration (string name, params CodeAttributeArgument [] arguments)
@@ -61,6 +60,7 @@ namespace System.CodeDom
 			this.name = name;
 			Arguments.AddRange (arguments);
 		}
+
 #if NET_2_0
 		public CodeAttributeDeclaration (CodeTypeReference attributeType)
 		{
@@ -73,13 +73,15 @@ namespace System.CodeDom
 			Arguments.AddRange (arguments);
 		}
 #endif
+
 		//
 		// Properties
 		//
 		public CodeAttributeArgumentCollection Arguments {
 			get {
-				if ( arguments == null )
-					arguments = new CodeAttributeArgumentCollection();
+				if (arguments == null) {
+					arguments = new CodeAttributeArgumentCollection ();
+				}
 
 				return arguments;
 			}
@@ -87,12 +89,16 @@ namespace System.CodeDom
 
 		public string Name {
 			get {
+				if (name == null) {
+					return string.Empty;
+				}
 				return name;
 			}
 			set {
 				name = value;
 			}
 		}
+
 #if NET_2_0
 		public CodeTypeReference AttributeType {
 			get { return attribute; }
