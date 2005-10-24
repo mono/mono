@@ -292,23 +292,8 @@ namespace Mono.CSharp {
 				list.Add (expr.Type);
 			}
 
-			ArrayList new_list = new ArrayList ();
-			foreach (Type iface in list) {
-				if (new_list.Contains (iface))
-					continue;
-
-				new_list.Add (iface);
-
-				Type [] implementing = TypeManager.GetInterfaces (iface);
-
-				foreach (Type imp in implementing) {
-					if (!new_list.Contains (imp))
-						new_list.Add (imp);
-				}
-			}
-
-			iface_constraint_types = new Type [new_list.Count];
-			new_list.CopyTo (iface_constraint_types, 0);
+			iface_constraint_types = new Type [list.Count];
+			list.CopyTo (iface_constraint_types, 0);
 
 			if (class_constraint != null) {
 				class_constraint_type = class_constraint.Type;
@@ -919,7 +904,8 @@ namespace Mono.CSharp {
 				members.AddRange (list);
 			}
 
-			foreach (Type t in gc.InterfaceConstraints) {
+			Type[] ifaces = TypeManager.ExpandInterfaces (gc.InterfaceConstraints);
+			foreach (Type t in ifaces) {
 				MemberList list = TypeManager.FindMembers (
 					t, mt, bf, filter, criteria);
 

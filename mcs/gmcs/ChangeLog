@@ -1,3 +1,15 @@
+2005-10-24  Martin Baulig  <martin@ximian.com>
+
+	* typemanager.cs
+	(TypeManager.ExpandInterfaces): Added overloaded version which
+	just takes a `Type[]' array.
+
+	* generic.cs
+	(Constraints.Resolve): Don't expand the interfaces here; ie. we
+	just use the interfaces which were explicitly specified and not
+	the interfaces they inherit.  Fixes #76482.
+	(TypeParameter.FindMembers): Expand the interfaces here.
+
 2005-10-21  Martin Baulig  <martin@ximian.com>
 
 	* generic.cs

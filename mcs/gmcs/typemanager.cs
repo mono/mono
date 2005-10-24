@@ -2140,6 +2140,28 @@ public partial class TypeManager {
 		new_ifaces.CopyTo (ret, 0);
 		return ret;
 	}
+
+	public static Type[] ExpandInterfaces (Type [] base_interfaces)
+	{
+		ArrayList new_ifaces = new ArrayList ();
+
+		foreach (Type itype in base_interfaces){
+			if (new_ifaces.Contains (itype))
+				continue;
+
+			new_ifaces.Add (itype);
+			
+			Type [] implementing = itype.GetInterfaces ();
+
+			foreach (Type imp in implementing){
+				if (!new_ifaces.Contains (imp))
+					new_ifaces.Add (imp);
+			}
+		}
+		Type [] ret = new Type [new_ifaces.Count];
+		new_ifaces.CopyTo (ret, 0);
+		return ret;
+	}
 		
 	static PtrHashtable iface_cache = new PtrHashtable ();
 		
