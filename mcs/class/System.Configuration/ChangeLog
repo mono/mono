@@ -1,3 +1,11 @@
+2005-10-24  Chris Toshok  <toshok@ximian.com>
+
+	* System.Configuration_test.dll.sources: add
+	WhiteSpaceTrimStringConverterTest.cs
+
+	* System.Configuration.dll.sources: add
+	WhiteSpaceTrimStringConverter.cs
+
 2005-10-06  Chris Toshok  <toshok@ximian.com>
 
 	* System.Configuration_test.dll.sources: add the
