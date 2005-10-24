@@ -1,3 +1,7 @@
+2005-10-24  Martin Baulig  <martin@ximian.com>
+
+	* TypeBuilder.cs (TypeBuilder.IsGenericTypeDefinition): Override this.
+
 2005-10-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomAttributeBuilder.cs : internal attributes should be allowed.
