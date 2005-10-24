@@ -1,3 +1,8 @@
+2005-10-24  Raja R Harinath  <harinath@gmail.com>
+
+	* CodeGeneratorFromTypeTest.cs (CodeGeneratorFromTypeTest_Class)
+	(CodeGeneratorFromTypeTest_Struct): Update to reflect mbas workaround.
+
 2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* VBCodeProviderCas.cs: New. CAS unit tests.

@@ -742,6 +742,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		[Test]
 		public override void ConstructorAttributesTest ()
 		{
+			// FIXME: updated to reflect mbas workaround
 			string code = GenerateConstructorAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
@@ -749,7 +750,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    <A(),  _{0}" +
 				"     B()>  _{0}" +
 				"    Private Sub New(){0}" +
-				"        MyBase.New{0}" +
+				"        MyBase.New(){0}" +
 				"    End Sub{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -757,12 +758,13 @@ namespace MonoTests.Microsoft.VisualBasic
 		[Test]
 		public override void ConstructorParametersTest ()
 		{
+			// FIXME: updated to reflect mbas workaround
 			string code = GenerateConstructorParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
 				"    Public Sub New(ByVal value1 As Object, ByVal value2 As Object, ByRef index As Integer, ByRef count As Integer){0}" +
-				"        MyBase.New{0}" +
+				"        MyBase.New(){0}" +
 				"    End Sub{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -770,12 +772,13 @@ namespace MonoTests.Microsoft.VisualBasic
 		[Test]
 		public override void ConstructorParameterAttributesTest ()
 		{
+			// FIXME: updated to reflect mbas workaround
 			string code = GenerateConstructorParameterAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Class Test1{0}" +
 				"    {0}" +
 				"    Private Sub New(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer){0}" +
-				"        MyBase.New{0}" +
+				"        MyBase.New(){0}" +
 				"    End Sub{0}" +
 				"End Class{0}", NewLine), code);
 		}
@@ -2630,6 +2633,7 @@ namespace MonoTests.Microsoft.VisualBasic
 		[Test]
 		public override void ConstructorAttributesTest ()
 		{
+			// FIXME: updated to reflect mbas workaround
 			string code = GenerateConstructorAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
@@ -2638,7 +2642,7 @@ namespace MonoTests.Microsoft.VisualBasic
 				"     B()>  _{0}" +
 				"    Private Sub New(){0}" +
 #if !NET_2_0
-				"        MyBase.New{0}" +
+				"        MyBase.New(){0}" +
 #endif
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
@@ -2647,13 +2651,14 @@ namespace MonoTests.Microsoft.VisualBasic
 		[Test]
 		public override void ConstructorParametersTest ()
 		{
+			// FIXME: updated to reflect mbas workaround
 			string code = GenerateConstructorParameters (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
 				"    Public Sub New(ByVal value1 As Object, ByVal value2 As Object, ByRef index As Integer, ByRef count As Integer){0}" +
 #if !NET_2_0
-				"        MyBase.New{0}" +
+				"        MyBase.New(){0}" +
 #endif
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
@@ -2662,13 +2667,14 @@ namespace MonoTests.Microsoft.VisualBasic
 		[Test]
 		public override void ConstructorParameterAttributesTest ()
 		{
+			// FIXME: updated to reflect mbas workaround
 			string code = GenerateConstructorParameterAttributes (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Structure Test1{0}" +
 				"    {0}" +
 				"    Private Sub New(<A(), B()> ByVal value As Object, <C(A1:=false, A2:=true), D()> ByRef index As Integer){0}" +
 #if !NET_2_0
-				"        MyBase.New{0}" +
+				"        MyBase.New(){0}" +
 #endif
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
