@@ -1,3 +1,9 @@
+2005-10-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HandlerFactoryConfiguration.cs: when using regex matching, pass the
+	original full virtual path, not just the file name. The regex matches
+	the end of the path. Fixes bug #76536.
+
 2005-10-08 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* WebConfigurationHost.cs: Added stubs for missing implementation

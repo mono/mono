@@ -54,8 +54,14 @@ namespace System.Web.Configuration {
 			if (s.IndexOf ('*') == -1)
 				MatchExact = "/" + s;
 
-			if (MatchExpr != "*")
-				RegExp = new Regex (MatchExpr.Replace(".", "\\.").Replace("?", "\\?").Replace("*", ".*"));
+			if (MatchExpr != "*") {
+				string expr = MatchExpr.Replace(".", "\\.").Replace("?", "\\?").Replace("*", ".*");
+				if (expr.Length > 0 && expr [0] =='/')
+					expr = expr.Substring (1);
+
+				expr += "\\z";
+				RegExp = new Regex (expr);
+			}
 		}
 	}
 	
@@ -115,6 +121,7 @@ namespace System.Web.Configuration {
 		public bool PathMatches (string p)
 		{
 			int slash = p.LastIndexOf ('/');
+			string orig = p;
 			if (slash != -1)
 				p = p.Substring (slash);
 
@@ -132,7 +139,7 @@ namespace System.Web.Configuration {
 					return true;
 
 				/* convert to regexp */
-				return fm.RegExp.IsMatch (p);
+				return fm.RegExp.IsMatch (orig);
 			}
 			return false;
 		}
