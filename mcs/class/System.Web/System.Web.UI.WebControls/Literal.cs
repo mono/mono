@@ -100,9 +100,14 @@ namespace System.Web.UI.WebControls {
 			return new EmptyControlCollection (this);
 		}
 
-		[MonoTODO ("I can't find a type that it can have children of")]
 		protected override void AddParsedSubObject (object obj)
 		{
+			LiteralControl literal = obj as LiteralControl;
+			if (literal != null) {
+				Text = literal.Text;
+				return;
+			}
+
 			throw new HttpException (Locale.GetText (
 			      "'Literal' cannot have children of type '{0}'",
 			      obj.GetType ()));
