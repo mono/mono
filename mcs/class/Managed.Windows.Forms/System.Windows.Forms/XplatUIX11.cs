@@ -2226,7 +2226,7 @@ namespace System.Windows.Forms {
 			MSG msg = new MSG ();
 
 			if (OverrideCursorHandle != IntPtr.Zero) {
-				Cursor.Current = null;
+				OverrideCursorHandle = IntPtr.Zero;
 			}
 
 			while (PeekMessage(ref msg, IntPtr.Zero, 0, 0, (uint)PeekMessageFlags.PM_REMOVE)) {
@@ -2243,7 +2243,7 @@ namespace System.Windows.Forms {
 
 		internal override void Exit() {
 			GetMessageResult = false;
-Console.WriteLine("Exit called");
+			Graphics.FromHdcInternal (IntPtr.Zero);
 		}
 
 		internal override IntPtr GetActive() {
@@ -2783,6 +2783,7 @@ Console.WriteLine("Exit called");
 					if  (xevent.ClientMessageEvent.message_type == (IntPtr)NetAtoms[(int)NA.WM_PROTOCOLS]) {
 						if (xevent.ClientMessageEvent.ptr1 == (IntPtr)NetAtoms[(int)NA.WM_DELETE_WINDOW]) {
 							msg.message = Msg.WM_CLOSE;
+							Graphics.FromHdcInternal (IntPtr.Zero);
 							break;
 						}
 

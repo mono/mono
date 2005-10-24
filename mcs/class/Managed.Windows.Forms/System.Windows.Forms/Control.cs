@@ -710,7 +710,7 @@ namespace System.Windows.Forms
 			Text=text;
 		}
 
-		private delegate void RemoveDelegate(Control c);
+		private delegate void RemoveDelegate(object c);
 
 		protected override void Dispose(bool disposing) {
 			is_disposed = true;

@@ -173,19 +173,22 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO("Implement setting a null cursor, and add XplatUI method to get current cursor")]
 		public static Cursor Current {
 			get {
-				return current;
+				if (current != null) {
+					return current;
+				}
+				return Cursors.Default;
 			}
 
 			set {
 				if (current != value) {
 					current = value;
-					if (value == null){
-						//
-						// The docs state: null value if the cursor is not visible (???)
-						//
-						Console.WriteLine ("FIXME: Should do something when Cursor.Current is set to null");
+					if (value != null){
+						// FIXME - define and set empty cursor
+						current = null;
+						XplatUI.OverrideCursor(IntPtr.Zero);
 					} else
 						XplatUI.OverrideCursor(current.handle);
 				}

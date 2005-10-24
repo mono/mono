@@ -1407,11 +1407,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void SetCursor(IntPtr window, IntPtr cursor) {
-			if (override_cursor == IntPtr.Zero) {
-				Win32SetCursor(cursor);
-				return;
-			}
-			Win32SetCursor(override_cursor);
+			Win32SetCursor(cursor);
+			return;
 		}
 
 		internal override void ShowCursor(bool show) {
@@ -1419,7 +1416,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void OverrideCursor(IntPtr cursor) {
-			override_cursor = cursor;
+			Win32SetCursor(cursor);
 		}
 
 		internal override IntPtr DefineCursor(Bitmap bitmap, Bitmap mask, Color cursor_pixel, Color mask_pixel, int xHotSpot, int yHotSpot) {
