@@ -98,5 +98,6 @@ System.Configuration/TimeSpanMinutesOrInfiniteConverter.cs
 System.Configuration/TimeSpanSecondsConverter.cs
 System.Configuration/TimeSpanValidator.cs
 System.Configuration/TimeSpanValidatorAttribute.cs
+System.Configuration/TypeNameConverter.cs
 System.Configuration/ValidatorCallback.cs
 System.Configuration/WhiteSpaceTrimStringConverter.cs
