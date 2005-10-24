@@ -1,3 +1,8 @@
+2005-10-24  Kornél Pál  <kornelpal@hotmail.com>
+
+	* ButtonBase.cs, ListView.cs, NotifyIcon.cs, PictureBox.cs, ToolBar.cs,
+	  TreeView.cs: Don't dispose objects that are not owned.
+	  
 2005-10-24  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Cursor.cs: Defaulting the Current cursor to Cursors.Default. We

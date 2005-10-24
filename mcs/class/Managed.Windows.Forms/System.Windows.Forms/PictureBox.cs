@@ -185,7 +185,6 @@ namespace System.Windows.Forms {
 		{
 			if (image != null) {
 				StopAnimation ();
-				image.Dispose ();
 				image = null;
 			}
 			base.Dispose (disposing);

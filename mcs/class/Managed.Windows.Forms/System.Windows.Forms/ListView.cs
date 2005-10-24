@@ -1320,14 +1320,9 @@ namespace System.Windows.Forms
 				h_scroll.Dispose ();
 				v_scroll.Dispose ();
 				
-				if (large_image_list != null)
-					large_image_list.Dispose ();
-					
-				if (small_image_list != null)
-					small_image_list.Dispose ();
-					
-				if (state_image_list != null)
-					state_image_list.Dispose ();			
+				large_image_list = null;
+				small_image_list = null;
+				state_image_list = null;
 			}
 			
 			base.Dispose (disposing);

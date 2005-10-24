@@ -221,10 +221,6 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				if (image_list != null) {
-					image_list.Dispose();
-				}
-
 				image_list = value;
 				if (value != null) {
 					if (image != null) {

@@ -299,9 +299,6 @@ namespace System.Windows.Forms {
 
 			set {
 				if (icon != value) {
-					if (icon != null) {
-						icon.Dispose();
-					}
 					icon = value;
 					ShowSystray(true);
 				}
@@ -355,13 +352,13 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 		protected override void Dispose(bool disposing) {
-			if (icon != null) {
-				icon.Dispose();
-			}
-
 			if (icon_bitmap != null) {
 				icon_bitmap.Dispose();
 			}
+
+			if (disposing)
+				icon = null;
+
 			base.Dispose (disposing);
 		}
 

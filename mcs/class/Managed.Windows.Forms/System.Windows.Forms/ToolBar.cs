@@ -440,10 +440,8 @@ namespace System.Windows.Forms
 
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing) {
-				if (imageList != null)
-					imageList.Dispose ();
-			}
+			if (disposing)
+				imageList = null;
 
 			base.Dispose (disposing);
 		}
