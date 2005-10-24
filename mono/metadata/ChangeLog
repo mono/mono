@@ -1,3 +1,8 @@
+2005-10-24  Raja R Harinath  <harinath@gmail.com>
+
+	* icall.c (base64_to_byte_array): Don't pass an out-of-range
+	integer to isspace.
+
 2005-10-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_vtype): Correctly handle [In,Out] modifiers
