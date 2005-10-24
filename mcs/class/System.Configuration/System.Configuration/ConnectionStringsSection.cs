@@ -61,7 +61,7 @@ namespace System.Configuration
 
                 #region Properties
 		ConnectionStringSettingsCollection strings;
-		[ConfigurationProperty ("", DefaultValue = "System.Object", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
                 public ConnectionStringSettingsCollection ConnectionStrings
                 {
                         get {

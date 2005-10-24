@@ -1,5 +1,14 @@
 2005-10-24  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationElement.cs: treat
+	ConfigurationProperty.NoDefaultValue the same as null when we're
+	checking the default value's type.  this fixes t13 and 14.
+
+	* ConnectionStringsSection.cs (ConnectionStrings): fix the
+	DefaultValue in the ConfigurationPropertyAttribute.
+
+2005-10-24  Chris Toshok  <toshok@ximian.com>
+
 	* KeyValueConfigurationCollection.cs (GetElementKey): sacrifice
 	one test to get another working.  Return a valid key even if the
 	element is not in this collection.

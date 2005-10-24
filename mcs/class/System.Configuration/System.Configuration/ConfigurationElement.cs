@@ -480,7 +480,7 @@ namespace System.Configuration
 				if (at == null) continue;
 				string name = at.Name != null ? at.Name : prop.Name;
 
-				if (at.DefaultValue != null && !prop.PropertyType.IsAssignableFrom (at.DefaultValue.GetType()))
+				if (at.DefaultValue != null && at.DefaultValue != ConfigurationProperty.NoDefaultValue && !prop.PropertyType.IsAssignableFrom (at.DefaultValue.GetType()))
 					throw new ConfigurationErrorsException (String.Format ("The default value for property '{0}' has a different type than the one of the property itself",
 											       name));
 
