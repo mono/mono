@@ -126,10 +126,28 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[ExpectedException (typeof (HttpException))]
-		public void AddParsedSubObject ()
+		public void AddParsedSubObject1 ()
 		{
 			LiteralPoker p = new LiteralPoker (true);
 			p.ParsedSubObject (this);
+		}
+
+		[Test]
+		[ExpectedException (typeof (HttpException))]
+		public void AddParsedSubObject2 ()
+		{
+			LiteralPoker p = new LiteralPoker (true);
+			p.Text = "hey";
+			p.ParsedSubObject (p);
+		}
+
+		[Test]
+		public void AddParsedSubObject3 ()
+		{
+			LiteralPoker p = new LiteralPoker (true);
+			p.ParsedSubObject (new LiteralControl ("Hey!"));
+			Assert.AreEqual (0, p.Controls.Count, "#01");
+			Assert.AreEqual ("Hey!", p.Text, "#02");
 		}
 	}
 }

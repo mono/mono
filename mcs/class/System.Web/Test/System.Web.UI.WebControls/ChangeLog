@@ -1,3 +1,7 @@
+2005-10-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* LiteralTest.cs: Literal allows LiteralControl.
+
 2005-10-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListBoxTest.cs: a few more tests for ListBox and selection.
