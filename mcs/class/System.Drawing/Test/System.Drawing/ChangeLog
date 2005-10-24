@@ -1,3 +1,9 @@
+2005-10-23  Jonathan Gilbert  <logic@deltaq.org>
+
+	* TestBitmap.cs (Rotate1bit4bit): Added test for rotation & flipping
+	  of indexed (1- and 4-bit) Bitmaps.
+	* 1bit.png, 4bit.png: Added to 'bitmaps' subdirectory.
+
 2005-09-19  Miguel de Icaza  <miguel@novell.com>
 
 	* TestGraphics.cs (LoadIndexed): Add test for the indexed bug.

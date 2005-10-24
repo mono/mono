@@ -4,6 +4,7 @@
 // Author:
 //
 // 	 Jordi Mas i Hernàndez (jmas@softcatala.org>
+//	 Jonathan Gilbert <logic@deltaq.org>
 //
 // (C) 2004 Ximian, Inc.  http://www.ximian.com
 //
@@ -209,6 +210,57 @@ namespace MonoTests.System.Drawing{
 			hash = new MD5CryptoServiceProvider().ComputeHash (pixels);
 			return ByteArrayToString (hash);
 		}
+
+		public string RotateIndexedBmp (Bitmap src, RotateFlipType type)
+		{
+			int pixels_per_byte;
+
+			switch (src.PixelFormat)
+			{
+				case PixelFormat.Format1bppIndexed: pixels_per_byte = 8; break;
+				case PixelFormat.Format4bppIndexed: pixels_per_byte = 2; break;
+				case PixelFormat.Format8bppIndexed: pixels_per_byte = 1; break;
+
+				default: throw new Exception("Cannot pass a bitmap of format " + src.PixelFormat + " to RotateIndexedBmp");
+			}
+
+			Bitmap test = src.Clone () as Bitmap;
+
+			test.RotateFlip (type);
+
+			BitmapData data = null;
+			byte[] pixel_data;
+
+			try
+			{
+				data = test.LockBits (new Rectangle (0, 0, test.Width, test.Height), ImageLockMode.ReadOnly, test.PixelFormat);
+
+				int scan_size = (data.Width + pixels_per_byte - 1) / pixels_per_byte;
+				pixel_data = new byte[data.Height * scan_size];
+
+				for (int y=0; y < data.Height; y++) {
+					IntPtr src_ptr = (IntPtr)(y * data.Stride + data.Scan0.ToInt64 ());
+					int dest_offset = y * scan_size;
+					for (int x=0; x < scan_size; x++)
+						pixel_data[dest_offset + x] = Marshal.ReadByte (src_ptr, x);
+				}
+			}
+			finally
+			{
+				if (test != null) {
+					if (data != null)
+						try { test.UnlockBits(data); } catch {}
+
+					try { test.Dispose(); } catch {}
+				}
+			}
+
+			if (pixel_data == null)
+				return "--ERROR--";
+
+			byte[] hash = new MD5CryptoServiceProvider().ComputeHash (pixel_data);
+			return ByteArrayToString (hash);
+		}
 		
 		
 		/*
@@ -229,6 +281,64 @@ namespace MonoTests.System.Drawing{
 			Assert.AreEqual ("B1ECB17B5093E13D04FF55CFCF7763", RotateBmp (bmp, RotateFlipType.Rotate180FlipX));
 			Assert.AreEqual ("71A173882C16755D86F4BC26532374", RotateBmp (bmp, RotateFlipType.Rotate270FlipX));
 
+		}
+
+		/*
+			Rotate 1- and 4-bit bitmaps in different ways and check the
+			resulting pixels using MD5
+		*/
+		[Test]
+		public void Rotate1bit4bit()
+		{
+			string[] files = {
+			                   getInFile ("bitmaps/1bit.png"),
+			                   getInFile ("bitmaps/4bit.png")
+			                 };
+
+			StringBuilder md5s = new StringBuilder();
+
+			foreach (string file in files)
+				using (Bitmap bmp = new Bitmap(file))
+					foreach (RotateFlipType type in Enum.GetValues (typeof(RotateFlipType)))
+						md5s.Append (RotateIndexedBmp (bmp, type));
+
+			using (StreamWriter writer = new StreamWriter("/tmp/md5s.txt"))
+				writer.WriteLine(md5s);
+
+			Assert.AreEqual (
+				"A4DAF507C92BDE10626BC7B34FEFE5" + // 1-bit RotateNoneFlipNone
+				"A4DAF507C92BDE10626BC7B34FEFE5" + // 1-bit Rotate180FlipXY
+				"C0975EAFD2FC1CC9CC7AF20B92FC9F" + // 1-bit Rotate90FlipNone
+				"C0975EAFD2FC1CC9CC7AF20B92FC9F" + // 1-bit Rotate270FlipXY
+				"64AE60858A02228F7B1B18C7812FB6" + // 1-bit Rotate180FlipNone
+				"64AE60858A02228F7B1B18C7812FB6" + // 1-bit RotateNoneFlipXY
+				"E96D3390938350F9DE2608C4364424" + // 1-bit Rotate270FlipNone
+				"E96D3390938350F9DE2608C4364424" + // 1-bit Rotate90FlipXY
+				"23947CE822C1DDE6BEA69C01F8D0D9" + // 1-bit RotateNoneFlipX
+				"23947CE822C1DDE6BEA69C01F8D0D9" + // 1-bit Rotate180FlipY
+				"BE45F685BDEBD7079AA1B2CBA46723" + // 1-bit Rotate90FlipX
+				"BE45F685BDEBD7079AA1B2CBA46723" + // 1-bit Rotate270FlipY
+				"353E937CFF31B1BF6C3DD0A031ACB5" + // 1-bit Rotate180FlipX
+				"353E937CFF31B1BF6C3DD0A031ACB5" + // 1-bit RotateNoneFlipY
+				"AEA18A770A845E25B6A8CE28DD6DCB" + // 1-bit Rotate270FlipX
+				"AEA18A770A845E25B6A8CE28DD6DCB" + // 1-bit Rotate90FlipY
+				"3CC874B571902366AACED5D619E87D" + // 4-bit RotateNoneFlipNone
+				"3CC874B571902366AACED5D619E87D" + // 4-bit Rotate180FlipXY
+				"8DE25C7E1BE4A3B535DB5D83198D83" + // 4-bit Rotate90FlipNone
+				"8DE25C7E1BE4A3B535DB5D83198D83" + // 4-bit Rotate270FlipXY
+				"27CF5E9CE70BE9EBC47FB996721B95" + // 4-bit Rotate180FlipNone
+				"27CF5E9CE70BE9EBC47FB996721B95" + // 4-bit RotateNoneFlipXY
+				"A919CCB8F97CAD7DC1F01026D11A5D" + // 4-bit Rotate270FlipNone
+				"A919CCB8F97CAD7DC1F01026D11A5D" + // 4-bit Rotate90FlipXY
+				"545876C99ACF833E69FBFFBF436034" + // 4-bit RotateNoneFlipX
+				"545876C99ACF833E69FBFFBF436034" + // 4-bit Rotate180FlipY
+				"5DB56687757CDEFC52D89C77CA9223" + // 4-bit Rotate90FlipX
+				"5DB56687757CDEFC52D89C77CA9223" + // 4-bit Rotate270FlipY
+				"05A77EDDCDF20D5B0AC0169E95D7D7" + // 4-bit Rotate180FlipX
+				"05A77EDDCDF20D5B0AC0169E95D7D7" + // 4-bit RotateNoneFlipY
+				"B6B6245796C836923ABAABDF368B29" + // 4-bit Rotate270FlipX
+				"B6B6245796C836923ABAABDF368B29",  // 4-bit Rotate90FlipY
+				md5s.ToString ());
 		}
 		
 		public void LockBmp (PixelFormat fmt, PixelFormat fmtlock, string output, 
