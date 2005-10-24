@@ -18,6 +18,8 @@ class T1
 
 			Console.WriteLine("IsMachineLevel: {0}", config.EvaluationContext.IsMachineLevel);
 
+			Console.WriteLine ("appsettings.Settings.AllKeys.Count = {0}", appsettings.Settings.AllKeys.Length);
+
 			foreach (string key in appsettings.Settings.AllKeys) {
 				Console.WriteLine ("settings[{0}] = {1}", appsettings.Settings[key].Key, appsettings.Settings[key].Value);
 			}
