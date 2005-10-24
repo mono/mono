@@ -11,7 +11,7 @@ local: $(TESTS)
 compare:
 	@for i in $(TESTS); do \
 		echo -n "$$i: "; \
-		if cmp $$i.expected $$i.result; then echo "  OK"; else echo "  FAILED"; fi; \
+		if cmp $$i.expected $$i.result >/dev/null ; then echo "  OK"; else echo "  FAILED"; fi; \
 	done
 
 clean:
