@@ -1,3 +1,9 @@
+2005-10-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TempFileCollectionCas.cs: New. CAS unit tests.
+	* TempFileCollectionTest.cs: New. Very basic tests to check the 
+	behaviour of the TempDir property.
+
 2005-10-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeGeneratorOptionsCas.cs: New. CAS unit tests.
