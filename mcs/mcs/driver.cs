@@ -1687,7 +1687,7 @@ namespace Mono.CSharp
 			//
 			// Verify using aliases now
 			//
-			RootNamespace.Global.VerifyUsingForAll ();
+			NamespaceEntry.VerifyAllUsing ();
 			
 			if (Report.Errors > 0){
 				return false;
@@ -1901,6 +1901,7 @@ namespace Mono.CSharp
 			TypeManager.Reset ();
 			TypeHandle.Reset ();
 			RootNamespace.Reset ();
+			NamespaceEntry.Reset ();
 			CodeGen.Reset ();
 		}
 	}

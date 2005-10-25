@@ -1,5 +1,15 @@
 2005-10-25  Raja R Harinath  <rharinath@novell.com>
 
+	* namespace.cs (RootNamespace.VerifyUsingForAll, Namespace.VerifyUsing):
+	Remove.
+	(NamespaceEntry.VerifyAllUsing): New.
+	(NamespaceEntry.AliasEntry.Resolve): New.  Handles common error
+	behaviour.  Delegates actual resolution of alias to ...
+	(NamespaceEntry.DoResolve): ... this.  Renamed from Resolve.
+	(NamespaceEntry.LocalAliasEntry, NamespaceEntry.ExternAliasEntry):
+	Update.
+	* driver.cs (Driver.MainDriver): Update.
+	
 	* namespace.cs (NamespaceEntry.DefineNamespace): Remove.
 	(NamespaceEntry.SymbolFileID): Make into a on-demand computed
 	property.

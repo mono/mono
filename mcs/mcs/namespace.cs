@@ -122,13 +122,6 @@ namespace Mono.CSharp {
 			return t;
 		}
 
-
-		public void VerifyUsingForAll ()
-		{
-			foreach (Namespace ns in all_namespaces.Values)
-				ns.VerifyUsing ();
-		}
-
 		public override string ToString ()
 		{
 			return String.Format ("RootNamespace ({0}::)", alias_name);
@@ -211,21 +204,23 @@ namespace Mono.CSharp {
 				return found_type;
 			}
 
-			foreach (Module module in modules) {
-				Type t = module.GetType (name);
-				if (t == null)
-					continue;
+			if (modules != null) {
+				foreach (Module module in modules) {
+					Type t = module.GetType (name);
+					if (t == null)
+						continue;
 
-				if (found_type == null) {
-					found_type = t;
-					continue;
-				}
+					if (found_type == null) {
+						found_type = t;
+						continue;
+					}
 					
-				Report.SymbolRelatedToPreviousError (t);
-				Report.SymbolRelatedToPreviousError (found_type);
-				Report.Warning (436, 2, loc, "Ignoring imported type `{0}' since the current assembly already has a declaration with the same name",
-							TypeManager.CSharpName (t));
-				return t;
+					Report.SymbolRelatedToPreviousError (t);
+					Report.SymbolRelatedToPreviousError (found_type);
+					Report.Warning (436, 2, loc, "Ignoring imported type `{0}' since the current assembly already has a declaration with the same name",
+						TypeManager.CSharpName (t));
+					return t;
+				}
 			}
 
 			return found_type;
@@ -242,7 +237,6 @@ namespace Mono.CSharp {
 		
 		Namespace parent;
 		string fullname;
-		ArrayList entries;
 		Hashtable namespaces;
 		IDictionary declspaces;
 		Hashtable cached_types;
@@ -289,7 +283,6 @@ namespace Mono.CSharp {
 			else
 				MemberName = new MemberName (name);
 
-			entries = new ArrayList ();
 			namespaces = new Hashtable ();
 			cached_types = new Hashtable ();
 
@@ -381,26 +374,11 @@ namespace Mono.CSharp {
 			return te;
 		}
 
-		public void AddNamespaceEntry (NamespaceEntry entry)
-		{
-			entries.Add (entry);
-		}
-
 		public void AddDeclSpace (string name, DeclSpace ds)
 		{
 			if (declspaces == null)
 				declspaces = new HybridDictionary ();
 			declspaces.Add (name, ds);
-		}
-
-		/// <summary>
-		///   Used to validate that all the using clauses are correct
-		///   after we are finished parsing all the files.  
-		/// </summary>
-		public void VerifyUsing ()
-		{
-			foreach (NamespaceEntry entry in entries)
-				entry.VerifyUsing ();
 		}
 
 		/// <summary>
@@ -428,8 +406,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class NamespaceEntry
-	{
+	public class NamespaceEntry {
 		Namespace ns;
 		NamespaceEntry parent, implicit_parent;
 		SourceFile file;
@@ -438,6 +415,13 @@ namespace Mono.CSharp {
 		ArrayList using_clauses;
 		public bool DeclarationFound = false;
 		public bool UsingFound = false;
+
+		static ArrayList entries = new ArrayList ();
+
+		public static void Reset ()
+		{
+			entries = new ArrayList ();
+		}
 
 		//
 		// This class holds the location where a using definition is
@@ -499,8 +483,19 @@ namespace Mono.CSharp {
 			}
 			
 			protected FullNamedExpression resolved;
+			bool error;
 
-			public abstract FullNamedExpression Resolve ();
+			public FullNamedExpression Resolve ()
+			{
+				if (resolved != null || error)
+					return resolved;
+				resolved = DoResolve ();
+				if (resolved == null)
+					error = true;
+				return resolved;
+			}
+
+			protected abstract FullNamedExpression DoResolve ();
 		}
 
 		public class LocalAliasEntry : AliasEntry
@@ -513,16 +508,15 @@ namespace Mono.CSharp {
 				Alias = alias.GetTypeExpression ();
 			}
 
-			public override FullNamedExpression Resolve ()
+			protected override FullNamedExpression DoResolve ()
 			{
-				if (resolved != null)
-					return resolved;
-
 				DeclSpace root = RootContext.Tree.Types;
 				root.NamespaceEntry = NamespaceEntry;
 				resolved = Alias.ResolveAsTypeStep (root.EmitContext, false);
 				root.NamespaceEntry = null;
 
+				if (resolved == null)
+					Error_NamespaceNotFound (Location, Alias.ToString ());
 				return resolved;
 			}
 		}
@@ -534,11 +528,8 @@ namespace Mono.CSharp {
 			{
 			}
 
-			public override FullNamedExpression Resolve ()
+			protected override FullNamedExpression DoResolve ()
 			{
-				if (resolved != null)
-					return resolved;
-
 				resolved = RootNamespace.GetRootNamespace (Name);
 				if (resolved == null)
 					Report.Error (430, Location, "The extern alias '" + Name +
@@ -553,7 +544,8 @@ namespace Mono.CSharp {
 			this.parent = parent;
 			this.file = file;
 			this.IsImplicit = false;
-			this.ID = ++next_id;
+			entries.Add (this);
+			this.ID = entries.Count;
 
 			if (parent != null)
 				ns = parent.NS.GetNamespace (name, true);
@@ -561,16 +553,15 @@ namespace Mono.CSharp {
 				ns = RootNamespace.Global.GetNamespace (name, true);
 			else
 				ns = RootNamespace.Global;
-			
-			ns.AddNamespaceEntry (this);
 		}
 
 		private NamespaceEntry (NamespaceEntry parent, SourceFile file, Namespace ns)
 		{
 			this.parent = parent;
 			this.file = file;
+			// no need to add self to 'entries', since we don't have any aliases or using entries.
+			this.ID = -1;
 			this.IsImplicit = true;
-			this.ID = ++next_id;
 			this.ns = ns;
 		}
 
@@ -593,7 +584,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static int next_id = 0;
 		public readonly int ID;
 		public readonly bool IsImplicit;
 
@@ -641,7 +631,6 @@ namespace Mono.CSharp {
 					return;
 				}
 			}
-
 
 			UsingEntry ue = new UsingEntry (Doppelganger, name, loc);
 			using_clauses.Add (ue);
@@ -862,7 +851,7 @@ namespace Mono.CSharp {
 		///   Used to validate that all the using clauses are correct
 		///   after we are finished parsing all the files.  
 		/// </summary>
-		public void VerifyUsing ()
+		void VerifyUsing ()
 		{
 			if (using_clauses != null) {
 				foreach (UsingEntry ue in using_clauses)
@@ -870,15 +859,19 @@ namespace Mono.CSharp {
 			}
 
 			if (aliases != null) {
-				foreach (DictionaryEntry de in aliases) {
-					AliasEntry alias = (AliasEntry) de.Value;
-					if (alias.Resolve () == null)
-						if (alias is LocalAliasEntry) {
-							LocalAliasEntry local = alias as LocalAliasEntry;
-							Error_NamespaceNotFound (local.Location, local.Alias.ToString ());
-						}
-				}
+				foreach (DictionaryEntry de in aliases)
+					((AliasEntry) de.Value).Resolve ();
 			}
+		}
+
+		/// <summary>
+		///   Used to validate that all the using clauses are correct
+		///   after we are finished parsing all the files.  
+		/// </summary>
+		static public void VerifyAllUsing ()
+		{
+			foreach (NamespaceEntry entry in entries)
+				entry.VerifyUsing ();
 		}
 
 		public string GetSignatureForError ()
