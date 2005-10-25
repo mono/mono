@@ -99,6 +99,8 @@ namespace Mono.CSharp {
 				foreach (Type t in gc.InterfaceConstraints) {
 					if (TypeManager.IsSubclassOf (t, target_type))
 						return new ClassCast (expr, target_type);
+					if (TypeManager.ImplementsInterface (t, target_type))
+						return new ClassCast (expr, target_type);
 				}
 			}
 
@@ -106,6 +108,8 @@ namespace Mono.CSharp {
 				if (!t.IsGenericParameter)
 					continue;
 				if (TypeManager.IsSubclassOf (t, target_type))
+					return new ClassCast (expr, target_type);
+				if (TypeManager.ImplementsInterface (t, target_type))
 					return new ClassCast (expr, target_type);
 			}
 

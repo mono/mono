@@ -1,5 +1,10 @@
 2005-10-25  Martin Baulig  <martin@ximian.com>
 
+	* convert.cs (ImplicitTypeParameterConversion): Make base
+	interfaces actually work; fixes #76557.
+
+2005-10-25  Martin Baulig  <martin@ximian.com>
+
 	* generic.cs
 	(GenericMethod.Define): Call TypeParameter.DefineConstraints() on
 	all the type parameters; fixes #76551.
