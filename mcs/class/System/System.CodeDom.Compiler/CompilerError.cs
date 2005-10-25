@@ -27,13 +27,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Security.Permissions;
+
 namespace System.CodeDom.Compiler {
 
 #if NET_2_0
 	[Serializable]
+#else
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 #endif
-	public class CompilerError
-	{
+	public class CompilerError {
 		string fileName;
 		int line;
 		int column;

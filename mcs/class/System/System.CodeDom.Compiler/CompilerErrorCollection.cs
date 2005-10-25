@@ -6,8 +6,7 @@
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,10 +27,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System.Collections;
-namespace System.CodeDom.Compiler
-{
-	[Serializable ()]
+using System.Security.Permissions;
+
+namespace System.CodeDom.Compiler {
+
+	[Serializable]
+#if ONLY_1_1
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+#endif
 	public class CompilerErrorCollection : CollectionBase
 	{
 		public CompilerErrorCollection ()

@@ -1,3 +1,9 @@
+2005-10-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CompilerError.cs: Added LinkDemand for Unrestricted before 2.0.
+	* CompilerErrorCollection.cs: Added LinkDemand for Unrestricted before
+	2.0.
+
 2005-10-25  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* CodeGenerator.cs: Fixed OutputAttributeArgument not to assume the
