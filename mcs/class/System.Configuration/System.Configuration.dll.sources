@@ -96,6 +96,7 @@ System.Configuration/SubclassTypeValidatorAttribute.cs
 System.Configuration/TimeSpanMinutesConverter.cs
 System.Configuration/TimeSpanMinutesOrInfiniteConverter.cs
 System.Configuration/TimeSpanSecondsConverter.cs
+System.Configuration/TimeSpanSecondsOrInfiniteConverter.cs
 System.Configuration/TimeSpanValidator.cs
 System.Configuration/TimeSpanValidatorAttribute.cs
 System.Configuration/TypeNameConverter.cs
