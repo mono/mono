@@ -1,3 +1,17 @@
+2005-10-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeGeneratorOptionsCas.cs: New. CAS unit tests.
+	* CodeGeneratorOptionsTest.cs: New. Unit tests.
+	* CodeParserCas.cs: New. CAS unit tests.
+	* CompilerErrorCas.cs: New. CAS unit tests.
+	* CompilerErrorCollectionCas.cs: New. CAS unit tests.
+	* CompilerInfoCas.cs: New. CAS unit tests.
+	* CompilerParametersCas.cs: New. CAS unit tests.
+	* CompilerResultsCas.cs: New. CAS unit tests.
+	* GeneratedCodeAttributeCas.cs: New. CAS unit tests.
+	* GeneratedCodeAttributeTest.cs: New. Unit tests.
+	* IndentedTextWriterCas.cs: New. CAS unit tests.
+
 2005-10-15  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorTestBase.cs: No longer keep instance of StringWriter to
