@@ -52,45 +52,41 @@ namespace System.Configuration {
 			}
 		}
 
-		[MonoTODO ("exception type")]
 		public new string this [int index] {
 			get {
 				return base [index];
 			}
 			set {
 				if (readOnly)
-					throw new NotSupportedException (); /* XXX */
+					throw new ConfigurationErrorsException ("The configuration is read only");
 
 				base [index] = value;
 				modified = true;
 			}
 		}
 
-		[MonoTODO ("exception type")]
 		public new void Add (string value)
 		{
 			if (readOnly)
-				throw new NotSupportedException (); /* XXX */
+				throw new ConfigurationErrorsException ("The configuration is read only");
 
 			base.Add (value);
 			modified = true;
 		}
 
-		[MonoTODO ("exception type")]
 		public new void AddRange (string[] range)
 		{
 			if (readOnly)
-				throw new NotSupportedException (); /* XXX */
+				throw new ConfigurationErrorsException ("The configuration is read only");
 
 			base.AddRange (range);
 			modified = true;
 		}
 
-		[MonoTODO ("exception type")]
 		public new void Clear ()
 		{
 			if (readOnly)
-				throw new NotSupportedException (); /* XXX */
+				throw new ConfigurationErrorsException ("The configuration is read only");
 
 			base.Clear ();
 			modified = true;
@@ -107,21 +103,19 @@ namespace System.Configuration {
 			return col;
 		}
 
-		[MonoTODO ("exception type")]
 		public new void Insert (int index, string value)
 		{
 			if (readOnly)
-				throw new NotSupportedException (); /* XXX */
+				throw new ConfigurationErrorsException ("The configuration is read only");
 
 			base.Insert (index, value);
 			modified = true;
 		}
 
-		[MonoTODO ("exception type")]
 		public new void Remove (string value)
 		{
 			if (readOnly)
-				throw new NotSupportedException (); /* XXX */
+				throw new ConfigurationErrorsException ("The configuration is read only");
 
 			base.Remove (value);
 			modified = true;
@@ -134,6 +128,9 @@ namespace System.Configuration {
 
 		public new string ToString ()
 		{
+			if (this.Count == 0)
+				return null;
+
 			string[] contents = new string[this.Count];
 
 			CopyTo (contents, 0);
