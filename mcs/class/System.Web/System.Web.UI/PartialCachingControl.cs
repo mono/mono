@@ -3,6 +3,7 @@
 //
 // Author:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Andreas Nahr
 // Copyright (C) 2005 Novell, Inc (http://www.novell.com)
@@ -37,24 +38,27 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class PartialCachingControl : BasePartialCachingControl
 	{
+		Type type;
+		Control control;
 
-		//private Type controlType;
-		private Control createdControl;
-
-		internal PartialCachingControl (Type createCachedControlType)
+		internal PartialCachingControl (Type type)
 		{
-		//	controlType = createCachedControlType;
+			this.type = type;
+
 		}
 
-		[MonoTODO ("Implement")]
-		internal override Control CreateControl()
+		internal override Control CreateControl ()
 		{
-			createdControl = null;
-			throw new NotImplementedException ();
+			control = (Control) Activator.CreateInstance (type);
+			if (control is UserControl)
+				((UserControl) control).InitializeAsUserControl (Page);
+
+			return control;
 		}
 
 		public Control CachedControl {
-			get {return createdControl;} 
+			get { return control; } 
 		}
 	}
 }
+

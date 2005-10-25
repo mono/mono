@@ -169,7 +169,18 @@ namespace System.Web.UI {
 			if (virtualPath == null)
 				throw new HttpException ("virtualPath is null");
 #endif
-			object control = Activator.CreateInstance (GetTypeFromControlPath (virtualPath));
+			Type type = GetTypeFromControlPath (virtualPath);
+			object [] attrs = type.GetCustomAttributes (typeof (PartialCachingAttribute), true);
+			if (attrs != null && attrs.Length == 1) {
+				PartialCachingAttribute attr = (PartialCachingAttribute) attrs [0];
+				PartialCachingControl ctrl = new PartialCachingControl (type);
+				ctrl.VaryByParams = attr.VaryByParams;
+				ctrl.VaryByControls = attr.VaryByControls;
+				ctrl.VaryByCustom = attr.VaryByCustom;
+				return ctrl;
+			}
+
+			object control = Activator.CreateInstance (type);
 			if (control is UserControl)
 				((UserControl) control).InitializeAsUserControl (Page);
 

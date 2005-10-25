@@ -1,3 +1,10 @@
+2005-10-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateControl.cs:
+	* PartialCachingControl.cs: if a control is cacheable, LoadControl
+	returns a PartialCachingControl that holds the VaryBy* and takes care
+	of partial caching and rendering. Fixes bug #76547.
+
 2005-10-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: don't cache the 'Validate()' results. IsValid retests
