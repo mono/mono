@@ -1,12 +1,12 @@
 //
 // System.CodeDom.Compiler CodeGeneratorOptions class
 //
-// Author:
-//   Daniel Stodden (stodden@in.tum.de)
+// Authors:
+//	Daniel Stodden (stodden@in.tum.de)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2002 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,14 +28,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Runtime.InteropServices;
+using System.Security.Permissions;
 
-namespace System.CodeDom.Compiler
-{
-	public class CodeGeneratorOptions
-	{
+namespace System.CodeDom.Compiler {
+
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	public class CodeGeneratorOptions {
+
 		private IDictionary properties;
 		
 		//
@@ -44,13 +46,6 @@ namespace System.CodeDom.Compiler
 		public CodeGeneratorOptions()
 		{
 			properties = new ListDictionary();
-			properties.Add( "BlankLinesBetweenMembers", true );
-			properties.Add( "BracingStyle", "Block" );
-			properties.Add( "ElseOnClosing", false );
-			properties.Add( "IndentString", "    " );
-#if NET_2_0
-			properties.Add( "VerbatimOrder", false );
-#endif
 		}
 
 		//
@@ -63,7 +58,8 @@ namespace System.CodeDom.Compiler
 		/// </summary>
 		public bool BlankLinesBetweenMembers {
 			get {
-				return (bool)properties["BlankLinesBetweenMembers"];
+				object o = properties["BlankLinesBetweenMembers"];
+				return ((o == null) ? true : (bool) o);
 			}
 			set {
 				properties["BlankLinesBetweenMembers"] = value;
@@ -77,7 +73,8 @@ namespace System.CodeDom.Compiler
 		/// </summary>
 		public string BracingStyle {
 			get {
-				return (string)properties["BracingStyle"];
+				object o = properties["BracingStyle"];
+				return ((o == null) ? "Block" : (string) o);
 			}
 			set {
 				properties["BracingStyle"] = value;
@@ -92,7 +89,8 @@ namespace System.CodeDom.Compiler
 		/// </summary>
 		public bool ElseOnClosing {
 			get {
-				return (bool)properties["ElseOnClosing"];
+				object o = properties["ElseOnClosing"];
+				return ((o == null) ? false : (bool) o);
 			}
 			set {
 				properties["ElseOnClosing"] = value;
@@ -104,7 +102,8 @@ namespace System.CodeDom.Compiler
 		/// </summary>
 		public string IndentString {
 			get {
-				return (string)properties["IndentString"];
+				object o = properties["IndentString"];
+				return ((o == null) ? "    " : (string) o);
 			}
 			set {
 				properties["IndentString"] = value;
@@ -121,9 +120,11 @@ namespace System.CodeDom.Compiler
 		}
 
 #if NET_2_0
+		[ComVisible (false)]
 		public bool VerbatimOrder {
 			get {
-				return (bool)properties["VerbatimOrder"];
+				object o = properties["VerbatimOrder"];
+				return ((o == null) ? false : (bool) o);
 			}
 			set {
 				properties["VerbatimOrder"] = value;

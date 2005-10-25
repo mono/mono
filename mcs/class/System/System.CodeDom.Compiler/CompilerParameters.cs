@@ -6,8 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,18 +29,25 @@
 //
 
 using System.Collections.Specialized;
-using System.Security.Policy;
 using System.Runtime.InteropServices;
+using System.Security.Permissions;
+using System.Security.Policy;
 
-namespace System.CodeDom.Compiler
-{
+namespace System.CodeDom.Compiler {
+
+#if NET_2_0
+	[Serializable]
+#else
 	[ComVisible (false)]
-	public class CompilerParameters
-	{
+#endif
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+	public class CompilerParameters {
+
 		private string compilerOptions;
-		#if (NET_1_1)
-			private Evidence evidence;
-		#endif
+#if NET_1_1
+		private Evidence evidence;
+#endif
 		private bool generateExecutable = false;
 		private bool generateInMemory = false;
 		private bool includeDebugInformation = false;
@@ -53,6 +59,10 @@ namespace System.CodeDom.Compiler
 		private IntPtr userToken = IntPtr.Zero;
 		private int warningLevel = -1;
 		private string win32Resource;
+#if NET_2_0
+		private StringCollection embedded_resources;
+		private StringCollection linked_resources;
+#endif
 
 		//
 		// Constructors
@@ -94,16 +104,13 @@ namespace System.CodeDom.Compiler
 			}
 		}
 
-		#if (NET_1_1)
+#if NET_1_1
 		public Evidence Evidence {
-			get {
-				return evidence;
-			}
-			set {
-				evidence = value;
-			}
+			get { return evidence; }
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
+			set { evidence = value; }
 		}
-		#endif
+#endif
 
 		public bool GenerateExecutable {
 			get {
@@ -205,5 +212,22 @@ namespace System.CodeDom.Compiler
 				win32Resource = value;
 			}
 		}
+#if NET_2_0
+		public StringCollection EmbeddedResources {
+			get {
+				if (embedded_resources == null)
+					embedded_resources = new StringCollection ();
+				return embedded_resources;
+			}
+		}
+
+		public StringCollection LinkedResources {
+			get {
+				if (linked_resources == null)
+					linked_resources = new StringCollection ();
+				return linked_resources;
+			}
+		}
+#endif
 	}
 }

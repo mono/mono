@@ -30,10 +30,14 @@
 //
 
 #if NET_2_0
-namespace System.CodeDom.Compiler
-{
-	public sealed class CompilerInfo
-	{
+
+using System.Security.Permissions;
+
+namespace System.CodeDom.Compiler {
+
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	public sealed class CompilerInfo {
+
 		internal string Languages;
 		internal string Extensions;
 		internal string TypeName;
@@ -66,6 +70,12 @@ namespace System.CodeDom.Compiler
 
 		public bool IsCodeDomProviderTypeValid {
 			get { return type != null; }
+		}
+
+		[MonoTODO]
+		public CompilerParameters CreateDefaultCompilerParameters ()
+		{
+			throw new NotImplementedException ();
 		}
 
 		public CodeDomProvider CreateProvider ()

@@ -6,8 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,20 +28,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Specialized;
+using System.Reflection;
+using System.Security.Permissions;
 using System.Security.Policy;
 
-namespace System.CodeDom.Compiler
-{
-	using System.Reflection;
-	using System.Collections.Specialized;
+namespace System.CodeDom.Compiler {
 
-	public class CompilerResults
-	{
+#if NET_2_0
+	[Serializable]
+#endif
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	[PermissionSet (SecurityAction.InheritanceDemand, Unrestricted = true)]
+	public class CompilerResults {
+
 		private Assembly compiledAssembly;
 		private CompilerErrorCollection errors = new CompilerErrorCollection ();
-		#if (NET_1_1)
-			private Evidence evidence;
-		#endif
+#if NET_1_1
+		private Evidence evidence;
+#endif
 		private int nativeCompilerReturnValue = 0;
 		private StringCollection output = new StringCollection ();
 		private string pathToAssembly;
@@ -76,16 +80,13 @@ namespace System.CodeDom.Compiler
 			}
 		}
 
-		#if (NET_1_1)
+#if NET_1_1
 		public Evidence Evidence {
-			get {
-				return evidence;
-			}
-			set {
-				evidence = value;
-			}
+			get { return evidence; }
+			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
+			set { evidence = value; }
 		}
-		#endif
+#endif
 
 		public int NativeCompilerReturnValue {
 			get {

@@ -1,12 +1,12 @@
 //
 // System.CodeDom.Compiler.Executor.cs
 //
-// Author(s):
-//   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+// Authors:
+//	Andreas Nahr (ClassDevelopment@A-SoftTech.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +28,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
+using System.Security.Permissions;
+using System.Security.Principal;
 using System.Threading;
 
-namespace System.CodeDom.Compiler
-{
+namespace System.CodeDom.Compiler {
 
-	public sealed class Executor
-	{
-	
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
+	public sealed class Executor {
+
 		class ProcessResultReader
 		{
 			StreamReader reader;
@@ -75,10 +75,9 @@ namespace System.CodeDom.Compiler
 		{
 			string outputName = null;
 			string errorName = null;
-			ExecWaitWithCapture (IntPtr.Zero, cmd, Environment.CurrentDirectory, tempFiles, ref outputName, ref errorName);
+			ExecWaitWithCapture ((IntPtr)(-1), cmd, Environment.CurrentDirectory, tempFiles, ref outputName, ref errorName);
 		}
 
-		[MonoTODO ("Do something with userToken")]
 		public static Int32 ExecWaitWithCapture (IntPtr userToken, string cmd, string currentDir, TempFileCollection tempFiles, ref string outputName, ref string errorName)
 		{
 			if (outputName == null)
@@ -86,35 +85,48 @@ namespace System.CodeDom.Compiler
 			
 			if (errorName == null)
 				errorName = tempFiles.AddExtension ("err");
+
+			int exit_code = -1;
+			WindowsImpersonationContext context = null;
+			try {
+				if (userToken != (IntPtr)(-1)) {
+					context = WindowsIdentity.Impersonate (userToken);
+				}
 				
-			Process proc = new Process();
-			proc.StartInfo.FileName = cmd;
-			proc.StartInfo.CreateNoWindow = true;
-			proc.StartInfo.UseShellExecute = false;
-			proc.StartInfo.RedirectStandardOutput = true;
-			proc.StartInfo.RedirectStandardError = true;
-			proc.StartInfo.WorkingDirectory = currentDir;
+				Process proc = new Process ();
+				proc.StartInfo.FileName = cmd;
+				proc.StartInfo.CreateNoWindow = true;
+				proc.StartInfo.UseShellExecute = false;
+				proc.StartInfo.RedirectStandardOutput = true;
+				proc.StartInfo.RedirectStandardError = true;
+				proc.StartInfo.WorkingDirectory = currentDir;
 			
-			try 
-			{
-				proc.Start();
+				try {
+					proc.Start();
 				
-				ProcessResultReader outReader = new ProcessResultReader (proc.StandardOutput, outputName);
-				ProcessResultReader errReader = new ProcessResultReader (proc.StandardError, errorName);
+					ProcessResultReader outReader = new ProcessResultReader (proc.StandardOutput, outputName);
+					ProcessResultReader errReader = new ProcessResultReader (proc.StandardError, errorName);
 				
-				Thread t = new Thread (new ThreadStart (errReader.Read));
-				t.Start ();
+					Thread t = new Thread (new ThreadStart (errReader.Read));
+					t.Start ();
 				
-				outReader.Read ();
-				t.Join ();
+					outReader.Read ();
+					t.Join ();
 				
-				proc.WaitForExit();
-			} 
-			finally 
-			{
-				proc.Close();
+					proc.WaitForExit();
+				} 
+				finally  {
+					proc.Close ();
+					exit_code = proc.ExitCode;
+				}
 			}
-			return proc.ExitCode;
+			finally {
+				if (context != null) {
+					context.Undo ();
+					context = null;
+				}
+			}
+			return exit_code;
 		}
 		
 		public static Int32 ExecWaitWithCapture (IntPtr userToken, string cmd, TempFileCollection tempFiles, ref string outputName, ref string errorName)
@@ -124,12 +136,12 @@ namespace System.CodeDom.Compiler
 
 		public static Int32 ExecWaitWithCapture (string cmd, string currentDir, TempFileCollection tempFiles, ref string outputName, ref string errorName )
 		{
-			return ExecWaitWithCapture (IntPtr.Zero, cmd, currentDir, tempFiles, ref outputName, ref errorName);
+			return ExecWaitWithCapture ((IntPtr)(-1), cmd, currentDir, tempFiles, ref outputName, ref errorName);
 		}
 
 		public static Int32 ExecWaitWithCapture (string cmd, TempFileCollection tempFiles, ref string outputName, ref string errorName)
 		{
-			return ExecWaitWithCapture (IntPtr.Zero, cmd, Environment.CurrentDirectory, tempFiles, ref outputName, ref errorName);
+			return ExecWaitWithCapture ((IntPtr)(-1), cmd, Environment.CurrentDirectory, tempFiles, ref outputName, ref errorName);
 		}
 	}
 }
