@@ -125,13 +125,11 @@ namespace Microsoft.Web
 			}
 		}
 
-#if notyet
 		public IScriptComponentContainer Container {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
 
 		ScriptEvent propertyChanged = null;
 		public ScriptEvent PropertyChanged {
