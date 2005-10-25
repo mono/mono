@@ -1,3 +1,10 @@
+2005-10-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* gcs1700.cs, gcs1726.cs, gcs0647.cs, gcs0647-2.cs: 
+	  New tests.
+
+	* InternalVisibleTo.snk: New key file for gcs1726.cs.
+	  
 2005-10-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* cs0430.cs, cs0439.cs, cs0439-2.cs, 
