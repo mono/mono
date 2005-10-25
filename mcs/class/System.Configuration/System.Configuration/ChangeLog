@@ -1,5 +1,7 @@
 2005-10-25  Chris Toshok  <toshok@ximian.com>
 
+	* GenericEnumConverter.cs: new implementation.
+
 	* Configuration.cs: we don't need to check with "is" after we use
 	"as"..  just check for null-ness.
 
