@@ -1,5 +1,8 @@
 2005-10-25  Chris Toshok  <toshok@ximian.com>
 
+	* KeyValueConfigurationCollection.cs: GetElementKey should throw
+	NRE if element == null.
+
 	* CommaDelimitedStringCollection.cs: raise the correct exceptions
 	in the read only case, and return null from ToString if there are
 	0 elements.

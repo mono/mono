@@ -75,9 +75,10 @@ namespace System.Configuration
 			return new KeyValueConfigurationElement ("", "");
 		}
 		
+		[MonoTODO ("need to add back in the BaseIndexOf test")]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			if (element == null/* || BaseIndexOf (element) == -1*/)
+			if (false /* BaseIndexOf (element) == -1*/)
 				return "";
 
 			return ((KeyValueConfigurationElement)element).Key;
