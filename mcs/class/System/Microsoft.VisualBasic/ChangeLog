@@ -1,3 +1,8 @@
+2005-10-25  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeGenerator.cs: Do not output name of CodeAttributeArgument if
+	its a zero-length string.
+
 2005-10-19  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* VBCodeGenerator.cs: Generate MyBase.New() with parenthesis as mbas currently chokes without them 
 	

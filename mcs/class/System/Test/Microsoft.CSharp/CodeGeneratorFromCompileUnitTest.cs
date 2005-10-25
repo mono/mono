@@ -117,10 +117,16 @@ namespace MonoTests.Microsoft.CSharp
 				new CodePrimitiveExpression (false)));
 			attrDec.Arguments.Add (new CodeAttributeArgument ("A2",
 				new CodePrimitiveExpression (true)));
+			// null name should not be output
+			attrDec.Arguments.Add (new CodeAttributeArgument (null,
+				new CodePrimitiveExpression (true)));
+			// zero length name should not be output
+			attrDec.Arguments.Add (new CodeAttributeArgument (string.Empty,
+				new CodePrimitiveExpression (false)));
 
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
-				"[assembly: A(A1=false, A2=true)]{0}{0}", NewLine), 
+				"[assembly: A(A1=false, A2=true, true, false)]{0}{0}", NewLine), 
 				Generate ());
 		}
 

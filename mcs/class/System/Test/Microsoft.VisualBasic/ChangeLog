@@ -1,3 +1,14 @@
+2005-10-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorTestBase.cs: Set eol-style to native.
+	* VBCodeProviderTest.cs: Set eol-style to native.
+	* CodeGeneratorFromCompileUnitTest.cs: Modified test to check
+	output for CodeAttributeArgument with no name. Set eol-style to
+	native.
+	* CodeGeneratorFromExpressionTest.cs: Set eol-style to native.
+	* CodeGeneratorFromTypeTest.cs: Fixed line endings. Set eol-style to
+	native.
+
 2005-10-24  Raja R Harinath  <harinath@gmail.com>
 
 	* CodeGeneratorFromTypeTest.cs (CodeGeneratorFromTypeTest_Class)

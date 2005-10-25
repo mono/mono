@@ -1,3 +1,21 @@
+2005-10-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorTestBase.cs: Fixed line endings. Set eol-style to 
+	native.
+	* CodeGeneratorFromCompileUnitTest.cs: Fixed line endings. Set 
+	eol-style to native. Modified test to also check output for
+	CodeAttributeArgument with no name.
+	* CodeGeneratorFromNamespaceTest.cs: Fixed line endings. Set eol-style
+	to native.
+	* CodeGeneratorIdentifierTest.cs: Set eol-style to native.
+	* CodeGeneratorFromExpressionTest.cs: Fixed line endings. Set
+	eol-style to native.
+	* CSharpCodeProviderTest.cs: Set eol-style to native.
+	* CodeGeneratorFromTypeTest.cs: Fixed line endings. Set eol-style to
+	native.
+	* CodeGeneratorFromStatementTest.cs: Fixed line endings. Set
+	eol-style to native.
+
 2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CSharpCodeProviderCas.cs: New. CAS unit tests.

@@ -113,10 +113,16 @@ namespace MonoTests.Microsoft.VisualBasic
 				new CodePrimitiveExpression(false)));
 			attrDec.Arguments.Add (new CodeAttributeArgument("A2", 
 				new CodePrimitiveExpression(true)));
+			// null name should not be output
+			attrDec.Arguments.Add (new CodeAttributeArgument (null,
+				new CodePrimitiveExpression (true)));
+			// zero length name should not be output
+			attrDec.Arguments.Add (new CodeAttributeArgument (string.Empty,
+				new CodePrimitiveExpression (false)));
 
 			codeUnit.AssemblyCustomAttributes.Add (attrDec);
 			Generate ();
-			Assert.AreEqual ("<Assembly: A(A1:=false, A2:=true)> " + 
+			Assert.AreEqual ("<Assembly: A(A1:=false, A2:=true, true, false)> " + 
 				writer.NewLine, Code);
 		}
 

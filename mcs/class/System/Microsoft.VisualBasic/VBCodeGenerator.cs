@@ -1042,7 +1042,7 @@ namespace Microsoft.VisualBasic
 		protected override void OutputAttributeArgument (CodeAttributeArgument argument)
 		{
 			string name = argument.Name;
-			if (name != null) {
+			if (name != null && name.Length > 0) {
 				Output.Write (name);
 				Output.Write (":=");
 			}
