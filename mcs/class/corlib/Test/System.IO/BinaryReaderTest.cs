@@ -1387,7 +1387,17 @@ namespace MonoTests.System.IO
 			stream.Close ();			
 		}
 	}
-	
+
+	[Test]
+	public void Test_ReadZeroBytes ()
+	{
+		MemoryStream stream = new MemoryStream (new byte [] {65, 1, 32, 43, 5, 3, 54, 0, 34, 5, 7, 4, 23, 4, 76, 34, 76, 2, 6,45});
+		BinaryReader reader = new BinaryReader (stream);
+
+		char [] result = reader.ReadChars (0);
+		AssertEquals ("ZERO_1", result.Length, 0);
+	}
+		
 	[Test]
 	[ExpectedException(typeof(EndOfStreamException))]	
 	public void ReadUInt64Exception ()
