@@ -1655,6 +1655,9 @@ namespace Mono.CSharp {
 					return false;
 			}
 
+			for (int i = 0; i < TypeParameters.Length; i++)
+				TypeParameters [i].DefineConstraints ();
+
 			return true;
 		}
 
