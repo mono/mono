@@ -62,6 +62,7 @@ System.Configuration/DefaultValidator.cs
 System.Configuration/ElementInformation.cs
 System.Configuration/ExeConfigurationFileMap.cs
 System.Configuration/ExeContext.cs
+System.Configuration/GenericEnumConverter.cs
 System.Configuration/IConfigXmlNode.cs
 System.Configuration/IgnoreSection.cs
 System.Configuration/IntegerValidator.cs
