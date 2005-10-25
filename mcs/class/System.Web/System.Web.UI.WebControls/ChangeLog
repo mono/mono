@@ -1,3 +1,7 @@
+2005-10-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Repeater.cs: someone forgot the curly brackets. Fixes bug 76537.
+
 2005-10-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Literal.cs: allow LiteralControl as child, but instead of adding it

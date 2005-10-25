@@ -271,7 +271,7 @@ namespace System.Web.UI.WebControls {
 			}
 			
 			set {
-				if (value == null || value is IListSource || value is IEnumerable)
+				if (value == null || value is IListSource || value is IEnumerable) {
 #if NET_2_0
 // FIXME - can't duplicate in a test case ? LAMESPEC ?
 // can't duplicate in a test case
@@ -285,7 +285,7 @@ namespace System.Web.UI.WebControls {
 #else
 					dataSource = value;
 #endif
-				else
+				} else
 					throw new ArgumentException (String.Format (
 					    "An invalid data source is being used for {0}. A valid data source must implement either IListSource or IEnumerable",
 					    ID));
