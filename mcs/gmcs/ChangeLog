@@ -1,3 +1,24 @@
+2005-10-25  Martin Baulig  <martin@ximian.com>
+
+	Fix #76472.
+
+	* generic.cs
+	(GenericMethod.ctor): Added `Expression return_type' and
+	`Parameters parameters' arguments.
+	(GenericMethod.DefineType): Call ResolveAsTypeTerminal() on the
+	parameter and return types to check their constraints if they're
+	generic types.
+
+	* codegen.cs (EmitContext.ResolvingGenericMethod): New public
+	boolean field.
+
+	* ecore.cs (Expression.ResolveAsTypeTerminal): Don't check the
+	constraints of a generic type if `ec.ResolvingGenericMethod'.
+
+	* class.cs (MethodCore.DoDefineParameters): Set
+	`ec.ResolvingGenericMethod' if we're a generic method.
+	(MemberBase.MemberType): Likewise.
+
 2005-10-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* typemanager.cs (TypeManager): Added 

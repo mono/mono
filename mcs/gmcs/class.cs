@@ -3345,7 +3345,6 @@ namespace Mono.CSharp {
 
 	public abstract class MethodCore : MemberBase {
 		public readonly Parameters Parameters;
-		public readonly GenericMethod GenericMethod;
 		protected ToplevelBlock block;
 		
 		//
@@ -3367,12 +3366,11 @@ namespace Mono.CSharp {
 		public MethodCore (TypeContainer parent, GenericMethod generic,
 				   Expression type, int mod, int allowed_mod, bool is_iface,
 				   MemberName name, Attributes attrs, Parameters parameters)
-			: base (parent, generic != null ? generic : (DeclSpace) parent,
-				type, mod, allowed_mod, Modifiers.PRIVATE, name, attrs)
+			: base (parent, generic, type, mod, allowed_mod, Modifiers.PRIVATE,
+				name, attrs)
 		{
 			Parameters = parameters;
 			IsInterface = is_iface;
-			this.GenericMethod = generic;
 		}
 		
 		//
@@ -3688,8 +3686,10 @@ namespace Mono.CSharp {
 
 			bool old_unsafe = ec.InUnsafe;
 			ec.InUnsafe = InUnsafe;
+			ec.ResolvingGenericMethod = GenericMethod != null;
 			// Check if arguments were correct
 			parameter_types = Parameters.GetParameterInfo (ec);
+			ec.ResolvingGenericMethod = false;
 			ec.InUnsafe = old_unsafe;
 
 			if ((parameter_types == null) ||
@@ -5339,6 +5339,7 @@ namespace Mono.CSharp {
 
 		public MethodAttributes flags;
 		public readonly DeclSpace ds;
+		public readonly GenericMethod GenericMethod;
 
 		protected readonly int explicit_mod_flags;
 
@@ -5363,7 +5364,9 @@ namespace Mono.CSharp {
 					EmitContext ec = ds.EmitContext;
 					bool old_unsafe = ec.InUnsafe;
 					ec.InUnsafe = InUnsafe;
+					ec.ResolvingGenericMethod = GenericMethod != null;
 					Type = Type.ResolveAsTypeTerminal (ec);
+					ec.ResolvingGenericMethod = false;
 					ec.InUnsafe = old_unsafe;
 					if (Type != null) {
 						member_type = Type.Type;
@@ -5391,16 +5394,17 @@ namespace Mono.CSharp {
 		//
 		// The constructor is only exposed to our children
 		//
-		protected MemberBase (TypeContainer parent, DeclSpace ds, Expression type, int mod,
-				      int allowed_mod, int def_mod, MemberName name,
-				      Attributes attrs)
+		protected MemberBase (TypeContainer parent, GenericMethod generic,
+				      Expression type, int mod, int allowed_mod, int def_mod,
+				      MemberName name, Attributes attrs)
 			: base (parent, name, attrs)
 		{
-			this.ds = ds;
+			this.ds = generic != null ? generic : (DeclSpace) parent;
 			explicit_mod_flags = mod;
 			Type = type;
 			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, Location);
 			IsExplicitImpl = (MemberName.Left != null);
+			GenericMethod = generic;
 		}
 
 		protected virtual bool CheckBase ()
@@ -5639,7 +5643,7 @@ namespace Mono.CSharp {
 		protected FieldBase (TypeContainer parent, Expression type, int mod,
 				     int allowed_mod, MemberName name, object init,
 				     Attributes attrs)
-			: base (parent, parent, type, mod, allowed_mod, Modifiers.PRIVATE,
+			: base (parent, null, type, mod, allowed_mod, Modifiers.PRIVATE,
 				name, attrs)
 		{
 			this.init = init;

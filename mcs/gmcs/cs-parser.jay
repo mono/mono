@@ -1098,7 +1098,8 @@ method_header
 
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_class, name);
+			generic = new GenericMethod (current_namespace, current_class, name,
+						     (Expression) $3, (Parameters) $6);
 
 			generic.SetParameterInfo ((ArrayList) $9);
 		}
@@ -1133,7 +1134,8 @@ method_header
 		Method method;
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_class, name);
+			generic = new GenericMethod (current_namespace, current_class, name,
+						     TypeManager.system_void_expr, (Parameters) $6);
 
 			generic.SetParameterInfo ((ArrayList) $9);
 		}
@@ -1711,7 +1713,8 @@ interface_method_declaration
 
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_class, name);
+			generic = new GenericMethod (current_namespace, current_class, name,
+						     (Expression) $3, (Parameters) $6);
 
 			generic.SetParameterInfo ((ArrayList) $9);
 		}
@@ -1739,7 +1742,8 @@ interface_method_declaration
 
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
-			generic = new GenericMethod (current_namespace, current_class, name);
+			generic = new GenericMethod (current_namespace, current_class, name,
+						     TypeManager.system_void_expr, (Parameters) $6);
 
 			generic.SetParameterInfo ((ArrayList) $9);
 		}

@@ -192,8 +192,9 @@ namespace Mono.CSharp {
 
 				generic_method = new GenericMethod (
 					ec.DeclSpace.NamespaceEntry,
-					(TypeContainer) ec.TypeContainer,
-					member_name);
+					(TypeContainer) ec.TypeContainer, member_name,
+					new TypeExpression (invoke_mb.ReturnType, loc),
+					Parameters);
 
 				generic_method.SetParameterInfo (null);
 			} else

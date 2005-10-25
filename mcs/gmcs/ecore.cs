@@ -269,7 +269,8 @@ namespace Mono.CSharp {
 			}
 
 			ConstructedType ct = te as ConstructedType;
-			if ((ct != null) && !ec.ResolvingTypeTree && !ct.CheckConstraints (ec))
+			if ((ct != null) && !ec.ResolvingTypeTree && !ec.ResolvingGenericMethod &&
+			    !ct.CheckConstraints (ec))
 				return null;
 
 			te.loc = loc;

@@ -1608,9 +1608,16 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class GenericMethod : DeclSpace
 	{
-		public GenericMethod (NamespaceEntry ns, TypeContainer parent, MemberName name)
+		Expression return_type;
+		Parameters parameters;
+
+		public GenericMethod (NamespaceEntry ns, TypeContainer parent, MemberName name,
+				      Expression return_type, Parameters parameters)
 			: base (ns, parent, name, null)
-		{ }
+		{
+			this.return_type = return_type;
+			this.parameters = parameters;
+		}
 
 		public override TypeBuilder DefineType ()
 		{
@@ -1662,7 +1669,21 @@ namespace Mono.CSharp {
 					    ec, mb, implementing, is_override))
 					return false;
 
-			return true;
+			bool ok = true;
+			if (parameters.FixedParameters != null) {
+				foreach (Parameter p in parameters.FixedParameters){
+					if (!p.Resolve (ec))
+						ok = false;
+				}
+			}
+			if (parameters.ArrayParameter != null) {
+				if (!parameters.ArrayParameter.Resolve (ec))
+					ok = false;
+			}
+			if ((return_type != null) && (return_type.ResolveAsTypeTerminal (ec) == null))
+				ok = false;
+
+			return ok;
 		}
 
 		public override bool DefineMembers (TypeContainer parent)
