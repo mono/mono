@@ -28,15 +28,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 
 namespace System.Diagnostics {
 
 	[AttributeUsageAttribute(AttributeTargets.Field | AttributeTargets.Property)]	
-	public sealed class DebuggerBrowsableAttribute : Attribute {
-
+#if NET_2_0
+	public sealed class DebuggerBrowsableAttribute : Attribute
+#else
+	internal sealed class DebuggerBrowsableAttribute : Attribute
+#endif
+	{
 		DebuggerBrowsableState state;
 
 		public DebuggerBrowsableAttribute (DebuggerBrowsableState state) {
@@ -51,5 +53,3 @@ namespace System.Diagnostics {
 	}
 
 }
-
-#endif

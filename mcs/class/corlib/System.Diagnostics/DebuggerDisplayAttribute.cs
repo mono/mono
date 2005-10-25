@@ -28,22 +28,49 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 
 namespace System.Diagnostics {
 
-	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Struct)]	
-	public sealed class DebuggerDisplayAttribute : Attribute {
-
-		public readonly string Value;
+	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Assembly)]	
+#if NET_2_0
+	public sealed class DebuggerDisplayAttribute : Attribute
+#else
+	internal sealed class DebuggerDisplayAttribute : Attribute
+#endif
+	{
+		string value;
+		string target_type_name;
+		Type target_type;
 
 		public DebuggerDisplayAttribute (string value) {
-			Value = value;
+			this.value = value;
+		}
+
+		public string Value {
+			get {
+				return value;
+			}
+		}
+
+		public Type Target {
+			get {
+				return target_type;
+			}
+			set {
+				target_type = value;
+				target_type_name = target_type.Name;
+			}
+		}
+
+		public string TargetTypeName {
+			get {
+				return target_type_name;
+			}
+			set {
+				target_type_name = value;
+			}
 		}
 	}
 
 }
-
-#endif

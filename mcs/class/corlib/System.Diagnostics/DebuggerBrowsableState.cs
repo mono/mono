@@ -28,12 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Diagnostics {
 
 	// XXX make sure this matches MS's enum
+#if NET_2_0
 	public enum DebuggerBrowsableState
+#else
+	internal enum DebuggerBrowsableState
+#endif
 	{
 		Never,
 		Collapsed,
@@ -41,5 +43,3 @@ namespace System.Diagnostics {
 		RootHidden
 	}
 }
-
-#endif

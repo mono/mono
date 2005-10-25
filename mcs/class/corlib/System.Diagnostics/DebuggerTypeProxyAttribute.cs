@@ -28,26 +28,27 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 
 namespace System.Diagnostics {
 
-	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Struct)]	
-	public sealed class DebuggerTypeProxyAttribute : Attribute {
+	[AttributeUsageAttribute(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Assembly)]	
+#if NET_2_0
+	public sealed class DebuggerTypeProxyAttribute : Attribute
+#else
+	internal sealed class DebuggerTypeProxyAttribute : Attribute
+#endif
+	{
 
 		string proxy_type_name;
-		Type proxy_type;
 		string target_type_name;
 		Type target_type;
 
 		public DebuggerTypeProxyAttribute (string typename) {
-			throw new NotImplementedException ();
+			proxy_type_name = typename;
 		}
 
 		public DebuggerTypeProxyAttribute (Type type) {
-			proxy_type = type;
 			proxy_type_name = type.Name;
 		}
 
@@ -61,15 +62,20 @@ namespace System.Diagnostics {
 			get {
 				return target_type;
 			}
+			set {
+				target_type = value;
+				target_type_name = target_type.Name;
+			}
 		}
 
 		public string TargetTypeName {
 			get {
 				return target_type_name;
 			}
+			set {
+				target_type_name = value;
+			}
 		}
 	}
 
 }
-
-#endif
