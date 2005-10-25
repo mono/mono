@@ -1,3 +1,12 @@
+2005-10-25  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* CompilerErrorCas.cs: Under 1.x CompilerError is protected by a 
+	LinkDemand for Unrestricted.
+	* CompilerErrorCollectionCas.cs: Under 1.x CompilerError is protected
+	by a LinkDemand for Unrestricted.
+	* TempFileCollectionCas.cs: Moved precompiler directive to the right
+	method (to ignore a test under MS 1.x).
+
 2005-10-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TempFileCollectionCas.cs: New. CAS unit tests.
