@@ -124,6 +124,7 @@ System.CodeDom.Compiler/CompilerInfo.cs
 System.CodeDom.Compiler/CompilerParameters.cs
 System.CodeDom.Compiler/CompilerResults.cs
 System.CodeDom.Compiler/Executor.cs
+System.CodeDom.Compiler/GeneratedCodeAttribute.cs
 System.CodeDom.Compiler/GeneratorSupport.cs
 System.CodeDom.Compiler/ICodeCompiler.cs
 System.CodeDom.Compiler/ICodeGenerator.cs

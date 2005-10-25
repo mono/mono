@@ -27,8 +27,10 @@ System.CodeDom/CodeMemberPropertyTest.cs
 System.CodeDom/CodeTypeDelegateTest.cs
 System.CodeDom/CodeTypeReferenceTest.cs
 System.CodeDom.Compiler/CodeGeneratorFromTypeTestBase.cs
+System.CodeDom.Compiler/CodeGeneratorOptionsTest.cs
 System.CodeDom.Compiler/CodeGeneratorTest.cs
 System.CodeDom.Compiler/CodeGeneratorTestBase.cs
+System.CodeDom.Compiler/GeneratedCodeAttributeTest.cs
 System.CodeDom.Compiler/IndentedTextWriterTest.cs
 System.Collections.Generic/QueueTest.cs
 System.Collections.Generic/StackTest.cs
@@ -220,3 +222,12 @@ System.CodeDom/CodeTypeReferenceCollectionCas.cs
 System.CodeDom/CodeTypeReferenceExpressionCas.cs
 System.CodeDom/CodeVariableDeclarationStatementCas.cs
 System.CodeDom/CodeVariableReferenceExpressionCas.cs
+System.CodeDom.Compiler/CodeGeneratorOptionsCas.cs
+System.CodeDom.Compiler/CodeParserCas.cs
+System.CodeDom.Compiler/CompilerErrorCas.cs
+System.CodeDom.Compiler/CompilerErrorCollectionCas.cs
+System.CodeDom.Compiler/CompilerInfoCas.cs
+System.CodeDom.Compiler/CompilerParametersCas.cs
+System.CodeDom.Compiler/CompilerResultsCas.cs
+System.CodeDom.Compiler/GeneratedCodeAttributeCas.cs
+System.CodeDom.Compiler/IndentedTextWriterCas.cs
