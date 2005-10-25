@@ -107,6 +107,7 @@ public partial class TypeManager {
 	static internal Type compiler_generated_attr_type;
 	static internal Type fixed_buffer_attr_type;
 	static internal Type default_charset_type;
+	static internal Type internals_visible_attr_type;
 
 	//
 	// An empty array of types
@@ -1143,6 +1144,7 @@ public partial class TypeManager {
 		compiler_generated_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "CompilerGeneratedAttribute");
 		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "FixedBufferAttribute");
 		default_charset_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultCharSetAttribute");
+		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute");
 		//
 		// When compiling corlib, store the "real" types here.
 		//

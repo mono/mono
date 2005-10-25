@@ -144,6 +144,10 @@ namespace Mono.CSharp {
 				return false;
 			}
 
+			// Get the complete AssemblyName from the builder
+			// (We need to get the public key and token)
+			Assembly.Name = Assembly.Builder.GetName ();
+			
 			//
 			// Pass a path-less name to DefineDynamicModule.  Wonder how
 			// this copes with output in different directories then.
@@ -1006,6 +1010,7 @@ namespace Mono.CSharp {
 	public class AssemblyClass : CommonAssemblyModulClass {
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
+		public AssemblyName Name;
                     
 		bool is_cls_compliant;
 		public Attribute ClsCompliantAttribute;
@@ -1196,6 +1201,35 @@ namespace Mono.CSharp {
 			Report.Error (1548, "Error during assembly signing. " + text);
 		}
 
+		bool CheckInternalsVisibleAttribute (Attribute a)
+		{
+			string assembly_name = a.GetString ();
+			if (assembly_name.Length == 0)
+				return false;
+				
+			AssemblyName aname = null;
+			try {
+				aname = new AssemblyName (assembly_name);
+			} catch (FileLoadException) {
+			} catch (ArgumentException) {
+			}
+				
+			// Bad assembly name format
+			if (aname == null)
+				Report.Warning (1700, 3, a.Location, "Assembly reference `" + assembly_name + "' is invalid and cannot be resolved");
+			// Report error if we have defined Version or Culture
+			else if (aname.Version != null || aname.CultureInfo != null)
+				throw new Exception ("Friend assembly `" + a.GetString () + 
+						"' is invalid. InternalsVisibleTo cannot have version or culture specified.");
+			else if (aname.GetPublicKeyToken () == null && Name.GetPublicKeyToken () != null) {
+				Report.Error (1726, a.Location, "Friend assembly reference `" + aname.Name + "' is invalid." +
+						" Strong named assemblies must specify a public key token in their InternalsVisibleTo declarations");
+				return false;
+			}
+
+			return true;
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
 		{
 			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (true)) {
@@ -1217,6 +1251,9 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (a.Type == TypeManager.internals_visible_attr_type && !CheckInternalsVisibleAttribute (a))
+					return;
+			
 			Builder.SetCustomAttribute (customBuilder);
 		}
 
