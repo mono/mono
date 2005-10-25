@@ -213,6 +213,7 @@ namespace System.CodeDom.Compiler {
 			}
 		}
 #if NET_2_0
+		[ComVisible (false)]
 		public StringCollection EmbeddedResources {
 			get {
 				if (embedded_resources == null)
@@ -221,6 +222,7 @@ namespace System.CodeDom.Compiler {
 			}
 		}
 
+		[ComVisible (false)]
 		public StringCollection LinkedResources {
 			get {
 				if (linked_resources == null)

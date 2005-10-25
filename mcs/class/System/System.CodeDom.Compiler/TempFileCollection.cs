@@ -27,11 +27,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.IO;
 using System.Collections;
+using System.IO;
+using System.Security;
+using System.Security.Permissions;
 
-namespace System.CodeDom.Compiler
-{
+namespace System.CodeDom.Compiler {
+
+#if NET_2_0
+	[Serializable]
+#endif
+	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
 	public class TempFileCollection:ICollection, IEnumerable, IDisposable
 	{
 		Hashtable filehash;
@@ -40,18 +46,20 @@ namespace System.CodeDom.Compiler
 		string basepath;
 		Random rnd;
 		
-		public TempFileCollection(): this(null, false)
+		public TempFileCollection ()
+			: this (String.Empty, false)
 		{
 		}
 
-		public TempFileCollection(string tempDir): this(tempDir, false)
+		public TempFileCollection(string tempDir)
+			: this (tempDir, false)
 		{
 		}
 
 		public TempFileCollection(string tempDir, bool keepFiles)
 		{
 			filehash=new Hashtable();
-			tempdir=tempDir;
+			tempdir = (tempDir == null) ? String.Empty : tempDir;
 			keepfiles=keepFiles;
 		}
 
@@ -59,16 +67,24 @@ namespace System.CodeDom.Compiler
 		{
 			get {
 				if(basepath==null) {
-					if (tempdir==null) {
-						/* Get the system temp dir */
-						MonoIO.GetTempPath(out tempdir);
+					// note: this property *cannot* change TempDir property
+					string temp = tempdir;
+					if (temp.Length == 0) {
+						// this call ensure the Environment permissions check
+						temp = Path.GetTempPath ();
 					}
 
 					if (rnd == null)
 						rnd = new Random ();
 
 					string random = rnd.Next (10000,99999).ToString ();
-					basepath = Path.Combine (tempdir, random);
+					basepath = Path.Combine (temp, random);
+
+					// and you must have discovery access to the combined path
+					// note: the cache behaviour is tested in the CAS tests
+					if (SecurityManager.SecurityEnabled) {
+						new FileIOPermission (FileIOPermissionAccess.PathDiscovery, basepath).Demand ();
+					}
 				}
 
 				return(basepath);
@@ -95,11 +111,9 @@ namespace System.CodeDom.Compiler
 		public string TempDir
 		{
 			get {
-				if(tempdir==null) {
-					return(String.Empty);
-				} else {
-					return(tempdir);
-				}
+				// note: we only return what we were supplied so there
+				// is no permission protecting this information
+				return tempdir;
 			}
 		}
 
@@ -132,7 +146,7 @@ namespace System.CodeDom.Compiler
 
 		object ICollection.SyncRoot {
 			get {
-				return filehash.SyncRoot;
+				return null;
 			}
 		}
 
