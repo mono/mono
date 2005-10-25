@@ -32,7 +32,7 @@ using NUnit.Framework;
 using System;
 using System.CodeDom;
 
-namespace MonoCasTests.System.CodeDom {
+namespace MonoTests.System.CodeDom {
 	[TestFixture]
 	public class CodeArgumentReferenceExpressionTest {
 		[Test]

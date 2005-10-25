@@ -1,3 +1,13 @@
+2005-10-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeArgumentReferenceExpressionTest.cs: Fixed namespace.
+	* CodeArrayCreateExpressionTest.cs: Fixed namespace.
+	* CodeAttachEventStatementTest.cs: Fixed namespace and added tests for
+	contructors that were not covered.
+	* CodeAttributeArgumentTest.cs: Fixed namespace.
+	* CodeAttributeDeclarationTest.cs: Fixed namespace and added tests for
+	constructors that were not covered.
+
 2005-10-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeArgumentReferenceExpressionTest.cs: Added test for default ctor

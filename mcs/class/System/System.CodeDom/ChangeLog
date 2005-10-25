@@ -1,3 +1,10 @@
+2005-10-25  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeAttachEventStatement.cs: Fixed extra removal in r52147.
+	* CodeAttributeDeclaration.cs: Make sure AttributeType is updated
+	when Name is set or changed. For constructors taking attribute type,
+	use BaseType of attribute type as name of CodeAttributeDeclaration.
+
 2005-10-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAttributeDeclaration.cs: Fixed extra removal in r52147.

@@ -53,12 +53,12 @@ namespace System.CodeDom
 
 		public CodeAttributeDeclaration (string name)
 		{
-			this.name = name;
+			this.Name = name;
 		}
 
 		public CodeAttributeDeclaration (string name, params CodeAttributeArgument [] arguments)
 		{
-			this.name = name;
+			this.Name = name;
 			Arguments.AddRange (arguments);
 		}
 
@@ -66,11 +66,17 @@ namespace System.CodeDom
 		public CodeAttributeDeclaration (CodeTypeReference attributeType)
 		{
 			attribute = attributeType;
+			if (attributeType != null) {
+				name = attributeType.BaseType;
+			}
 		}
 
 		public CodeAttributeDeclaration (CodeTypeReference attributeType, params CodeAttributeArgument [] arguments)
 		{
 			attribute = attributeType;
+			if (attributeType != null) {
+				name = attributeType.BaseType;
+			}
 			Arguments.AddRange (arguments);
 		}
 #endif
@@ -97,6 +103,9 @@ namespace System.CodeDom
 			}
 			set {
 				name = value;
+#if NET_2_0
+				attribute = new CodeTypeReference (name);
+#endif
 			}
 		}
 

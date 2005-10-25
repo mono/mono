@@ -59,6 +59,8 @@ namespace System.CodeDom
 						 string eventName, 
 						 CodeExpression listener)
 		{
+			this.eventRef = new CodeEventReferenceExpression (targetObject,
+																eventName);
 			this.listener = listener;
 		}
 
