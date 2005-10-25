@@ -1,5 +1,9 @@
 2005-10-25  Chris Toshok  <toshok@ximian.com>
 
+	* System.Configuration/GenericEnumConverterTest.cs: new test.
+
+2005-10-25  Chris Toshok  <toshok@ximian.com>
+
 	* System.Configuration/PositiveTimeSpanValidatorTest.cs: new test.
 
 2005-10-24  Chris Toshok  <toshok@ximian.com>
