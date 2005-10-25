@@ -1,5 +1,7 @@
 2005-10-24  Chris Toshok  <toshok@ximian.com>
 
+	* TimeSpanSecondsOrInfiniteConverter.cs: new implementation.
+
 	* TypeNameConverter.cs: new implementation.
 
 	* WhiteSpaceTrimStringConverter.cs: new implementation.
