@@ -1,3 +1,7 @@
+2005-10-25  Chris Toshok  <toshok@ximian.com>
+
+	* DataProviderNameConverter.cs: new implementation.
+
 2005-07-08  Duncan Mak  <duncan@novell.com>
 	
 	* BaseDataListComponentEditor.cs:
