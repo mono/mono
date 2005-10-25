@@ -66,13 +66,6 @@ namespace Microsoft.Web.Services.Converters
 					      dt.Year, dt.Month - 1, dt.Day, dt.Hour, dt.Minute, dt.Second);
 		}
 
-		public string JavaScript {
-			get {
-				return null;
-			}
-
-		}
-
 		Type[] supportedTypes;
 		protected override Type[] SupportedTypes {
 			get {
