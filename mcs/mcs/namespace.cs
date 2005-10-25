@@ -129,13 +129,6 @@ namespace Mono.CSharp {
 				ns.VerifyUsing ();
 		}
 
-		public void DefineNamespacesForAll (SymbolWriter symwriter)
-		{
-			foreach (Namespace ns in all_namespaces.Values)
-				ns.DefineNamespaces (symwriter);
-		}
-
-
 		public override string ToString ()
 		{
 			return String.Format ("RootNamespace ({0}::)", alias_name);
@@ -408,12 +401,6 @@ namespace Mono.CSharp {
 		{
 			foreach (NamespaceEntry entry in entries)
 				entry.VerifyUsing ();
-		}
-
-		public void DefineNamespaces (SymbolWriter symwriter)
-		{
-			foreach (NamespaceEntry entry in entries)
-				entry.DefineNamespace (symwriter);
 		}
 
 		/// <summary>
@@ -815,30 +802,22 @@ namespace Mono.CSharp {
 
 		readonly string [] empty_using_list = new string [0];
 
-		public void DefineNamespace (SymbolWriter symwriter)
-		{
-			if (symfile_id != 0)
-				return;
-			if (parent != null)
-				parent.DefineNamespace (symwriter);
-
-			string [] using_list = empty_using_list;
-			if (using_clauses != null) {
-				using_list = new string [using_clauses.Count];
-				for (int i = 0; i < using_clauses.Count; i++)
-					using_list [i] = ((UsingEntry) using_clauses [i]).Name.ToString ();
-			} 
-
-			int parent_id = parent != null ? parent.symfile_id : 0;
-			if (file.SourceFileEntry == null)
-				return;
-
-			symfile_id = symwriter.DefineNamespace (
-				ns.Name, file.SourceFileEntry, using_list, parent_id);
-		}
-
 		public int SymbolFileID {
-			get { return symfile_id; }
+			get {
+				if (symfile_id == 0 && file.SourceFileEntry != null) {
+					int parent_id = parent == null ? 0 : parent.SymbolFileID;
+
+					string [] using_list = empty_using_list;
+					if (using_clauses != null) {
+						using_list = new string [using_clauses.Count];
+						for (int i = 0; i < using_clauses.Count; i++)
+							using_list [i] = ((UsingEntry) using_clauses [i]).Name.ToString ();
+					}
+
+					symfile_id = CodeGen.SymbolWriter.DefineNamespace (ns.Name, file.SourceFileEntry, using_list, parent_id);
+				}
+				return symfile_id;
+			}
 		}
 
 		static void MsgtryRef (string s)

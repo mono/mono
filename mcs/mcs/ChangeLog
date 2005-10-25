@@ -1,3 +1,13 @@
+2005-10-25  Raja R Harinath  <rharinath@novell.com>
+
+	* namespace.cs (NamespaceEntry.DefineNamespace): Remove.
+	(NamespaceEntry.SymbolFileID): Make into a on-demand computed
+	property.
+	(Namespace.DefineNamespaces, RootNamespace.DefineNamespacesForAll):
+	Remove.
+	* symbolwriter.cs (SymbolWriter.Initialize): Don't call
+	RootNamespace.DefineNamespacesForAll.
+
 2005-10-24  Raja R Harinath  <harinath@gmail.com>
 
 	* typemanager.cs (assemblies, external_aliases, modules)
