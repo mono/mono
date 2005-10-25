@@ -1054,7 +1054,8 @@ namespace Mono.CSharp {
 			probe_type_expr = ProbeType.ResolveAsTypeTerminal (ec);
 			if (probe_type_expr == null)
 				return null;
-			Type probe_type = probe_type_expr.ResolveType (ec);
+			if (probe_type_expr.ResolveType (ec) == null)
+				return null;
 
 			expr = expr.Resolve (ec);
 			if (expr == null)
