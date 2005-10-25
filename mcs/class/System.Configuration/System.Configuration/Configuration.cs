@@ -236,11 +236,10 @@ namespace System.Configuration {
 			if (sec != null || !createDefaultInstance) return sec;
 			
 			object secObj = config.CreateInstance () as ConfigurationSection;
-			if (!(secObj is ConfigurationSection))
+			if (secObj == null)
 				sec = new IgnoreSection ();
-			else {
+			else
 				sec = (ConfigurationSection) secObj;
-			}
 				
 			ConfigurationSection parentSection = parent != null ? parent.GetSectionInstance (config, true) : null;
 			sec.RawXml = data as string;

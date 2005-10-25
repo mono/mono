@@ -1,5 +1,8 @@
 2005-10-25  Chris Toshok  <toshok@ximian.com>
 
+	* Configuration.cs: we don't need to check with "is" after we use
+	"as"..  just check for null-ness.
+
 	* KeyValueConfigurationCollection.cs: GetElementKey should throw
 	NRE if element == null.
 
