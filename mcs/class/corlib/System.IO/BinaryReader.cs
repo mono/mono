@@ -340,6 +340,9 @@ namespace System.IO {
 				throw new ArgumentOutOfRangeException("count is less than 0");
 			}
 
+			if (count == 0)
+				return new char [0];
+					
 			char[] full = new char[count];
 			int chars = Read(full, 0, count);
 			
