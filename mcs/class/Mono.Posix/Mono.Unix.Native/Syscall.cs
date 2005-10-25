@@ -177,7 +177,7 @@ namespace Mono.Unix.Native {
 	[CLSCompliant (false)]
 	public enum FilePermissions : uint {
 		S_ISUID     = 0x0800, // Set user ID on execution
-		S_ISGID     = 0x0400, // Set gorup ID on execution
+		S_ISGID     = 0x0400, // Set group ID on execution
 		S_ISVTX     = 0x0200, // Save swapped text after use (sticky).
 		S_IRUSR     = 0x0100, // Read by owner
 		S_IWUSR     = 0x0080, // Write by owner
@@ -1385,7 +1385,9 @@ namespace Mono.Unix.Native {
 		// TODO: scandir(3), alphasort(3), versionsort(3), getdirentries(3)
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern IntPtr opendir (string name);
+		public static extern IntPtr opendir (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name);
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int closedir (IntPtr dir);
@@ -1500,19 +1502,25 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_open")]
-		public static extern int open (string pathname, OpenFlags flags);
+		public static extern int open (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, OpenFlags flags);
 
 		// open(2)
 		//    int open(const char *pathname, int flags, mode_t mode);
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_open_mode")]
-		public static extern int open (string pathname, OpenFlags flags, FilePermissions mode);
+		public static extern int open (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, OpenFlags flags, FilePermissions mode);
 
 		// creat(2)
 		//    int creat(const char *pathname, mode_t mode);
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_creat")]
-		public static extern int creat (string pathname, FilePermissions mode);
+		public static extern int creat (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, FilePermissions mode);
 
 		// posix_fadvise(2)
 		//    int posix_fadvise(int fd, off_t offset, off_t len, int advice);
@@ -1593,7 +1601,9 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_getfsfile")]
-		private static extern int sys_getfsfile (string mount_point, out _Fstab fs);
+		private static extern int sys_getfsfile (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string mount_point, out _Fstab fs);
 
 		public static Fstab getfsfile (string mount_point)
 		{
@@ -1611,7 +1621,9 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_getfsspec")]
-		private static extern int sys_getfsspec (string special_file, out _Fstab fs);
+		private static extern int sys_getfsspec (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string special_file, out _Fstab fs);
 
 		public static Fstab getfsspec (string special_file)
 		{
@@ -1725,7 +1737,9 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_getgrnam_r")]
-		private static extern int sys_getgrnam_r (string name, out _Group grbuf, out IntPtr grbufp);
+		private static extern int sys_getgrnam_r (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name, out _Group grbuf, out IntPtr grbufp);
 
 		public static int getgrnam_r (string name, Group grbuf, out Group grbufp)
 		{
@@ -1898,7 +1912,9 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_getpwnam_r")]
-		private static extern int sys_getpwnam_r (string name, out _Passwd pwbuf, out IntPtr pwbufp);
+		private static extern int sys_getpwnam_r (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name, out _Passwd pwbuf, out IntPtr pwbufp);
 
 		public static int getpwnam_r (string name, Passwd pwbuf, out Passwd pwbufp)
 		{
@@ -2254,7 +2270,9 @@ namespace Mono.Unix.Native {
 		//
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_stat")]
-		public static extern int stat (string file_name, out Stat buf);
+		public static extern int stat (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string file_name, out Stat buf);
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_fstat")]
@@ -2262,7 +2280,9 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_lstat")]
-		public static extern int lstat (string file_name, out Stat buf);
+		public static extern int lstat (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string file_name, out Stat buf);
 
 		// TODO:
 		// S_ISDIR, S_ISCHR, S_ISBLK, S_ISREG, S_ISFIFO, S_ISLNK, S_ISSOCK
@@ -2271,7 +2291,9 @@ namespace Mono.Unix.Native {
 		// chmod(2)
 		//    int chmod(const char *path, mode_t mode);
 		[DllImport (LIBC, SetLastError=true, EntryPoint="chmod")]
-		private static extern int sys_chmod (string path, uint mode);
+		private static extern int sys_chmod (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, uint mode);
 
 		public static int chmod (string path, FilePermissions mode)
 		{
@@ -2305,7 +2327,9 @@ namespace Mono.Unix.Native {
 		// mkdir(2)
 		//    int mkdir(const char *pathname, mode_t mode);
 		[DllImport (LIBC, SetLastError=true, EntryPoint="mkdir")]
-		private static extern int sys_mkdir (string oldpath, uint mode);
+		private static extern int sys_mkdir (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string oldpath, uint mode);
 
 		public static int mkdir (string oldpath, FilePermissions mode)
 		{
@@ -2317,12 +2341,16 @@ namespace Mono.Unix.Native {
 		//    int mknod (const char *pathname, mode_t mode, dev_t dev);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_mknod")]
-		public static extern int mknod (string pathname, FilePermissions mode, ulong dev);
+		public static extern int mknod (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, FilePermissions mode, ulong dev);
 
 		// mkfifo(3)
 		//    int mkfifo(const char *pathname, mode_t mode);
 		[DllImport (LIBC, SetLastError=true, EntryPoint="mkfifo")]
-		private static extern int sys_mkfifo (string pathname, uint mode);
+		private static extern int sys_mkfifo (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, uint mode);
 
 		public static int mkfifo (string pathname, FilePermissions mode)
 		{
@@ -2339,7 +2367,9 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_statvfs")]
-		public static extern int statvfs (string path, out Statvfs buf);
+		public static extern int statvfs (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, out Statvfs buf);
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_fstatvfs")]
@@ -2390,7 +2420,9 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_utimes")]
-		public static extern int utimes (string filename, ref Timeval tvp);
+		public static extern int utimes (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string filename, ref Timeval tvp);
 
 		#endregion
 
@@ -2602,7 +2634,9 @@ namespace Mono.Unix.Native {
 		//       other TODOs listed below.
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="access")]
-		private static extern int sys_access (string pathname, int mode);
+		private static extern int sys_access (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname, int mode);
 
 		public static int access (string pathname, AccessModes mode)
 		{
@@ -2701,7 +2735,9 @@ namespace Mono.Unix.Native {
 		// chown(2)
 		//    int chown(const char *path, uid_t owner, gid_t group);
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int chown (string path, uint owner, uint group);
+		public static extern int chown (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, uint owner, uint group);
 
 		// fchown(2)
 		//    int fchown(int fd, uid_t owner, gid_t group);
@@ -2711,10 +2747,14 @@ namespace Mono.Unix.Native {
 		// lchown(2)
 		//    int lchown(const char *path, uid_t owner, gid_t group);
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int lchown (string path, uint owner, uint group);
+		public static extern int lchown (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, uint owner, uint group);
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int chdir (string path);
+		public static extern int chdir (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path);
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int fchdir (int fd);
@@ -2741,17 +2781,23 @@ namespace Mono.Unix.Native {
 
 		// TODO: does Mono marshal arrays properly?
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int execve (string path, string[] argv, string[] envp);
+		public static extern int execve (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, string[] argv, string[] envp);
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int fexecve (int fd, string[] argv, string[] envp);
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int execv (string path, string[] argv);
+		public static extern int execv (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, string[] argv);
 
 		// TODO: execle, execl, execlp
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int execvp (string path, string[] argv);
+		public static extern int execvp (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, string[] argv);
 
 		[DllImport (LIBC, SetLastError=true)]
 		public static extern int nice (int inc);
@@ -2771,7 +2817,9 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_pathconf")]
-		public static extern long pathconf (string path, PathconfName name, Errno defaultError);
+		public static extern long pathconf (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, PathconfName name, Errno defaultError);
 
 		public static long pathconf (string path, PathconfName name)
 		{
@@ -2960,16 +3008,26 @@ namespace Mono.Unix.Native {
 		}
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int link (string oldpath, string newpath);
+		public static extern int link (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string oldpath, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string newpath);
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int symlink (string oldpath, string newpath);
+		public static extern int symlink (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string oldpath, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string newpath);
 
 		// readlink(2)
 		//    int readlink(const char *path, char *buf, size_t bufsize);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_readlink")]
-		public static extern int readlink (string path, [Out] StringBuilder buf, ulong bufsiz);
+		public static extern int readlink (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, [Out] StringBuilder buf, ulong bufsiz);
 
 		public static int readlink (string path, [Out] StringBuilder buf)
 		{
@@ -2977,10 +3035,14 @@ namespace Mono.Unix.Native {
 		}
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int unlink (string pathname);
+		public static extern int unlink (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname);
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int rmdir (string pathname);
+		public static extern int rmdir (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string pathname);
 
 		// tcgetpgrp(3)
 		//    pid_t tcgetpgrp(int fd);
@@ -3074,12 +3136,16 @@ namespace Mono.Unix.Native {
 
 		// Revoke doesn't appear to be POSIX.  Include it?
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int revoke (string file);
+		public static extern int revoke (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string file);
 
 		// TODO: profil?  It's not POSIX.
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int acct (string filename);
+		public static extern int acct (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string filename);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="getusershell")]
 		private static extern IntPtr sys_getusershell ();
@@ -3128,7 +3194,9 @@ namespace Mono.Unix.Native {
 #endif
 
 		[DllImport (LIBC, SetLastError=true)]
-		public static extern int chroot (string path);
+		public static extern int chroot (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path);
 
 		// skipping getpass(3) as the man page states:
 		//   This function is obsolete.  Do not use it.
@@ -3152,7 +3220,9 @@ namespace Mono.Unix.Native {
 		//    int truncate(const char *path, off_t length);
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_truncate")]
-		public static extern int truncate (string path, long length);
+		public static extern int truncate (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, long length);
 
 		// ftruncate(2)
 		//    int ftruncate(int fd, off_t length);
@@ -3226,7 +3296,9 @@ namespace Mono.Unix.Native {
 
 		[DllImport (MPH, SetLastError=true, 
 				EntryPoint="Mono_Posix_Syscall_utime")]
-		private static extern int sys_utime (string filename, ref Utimbuf buf, int use_buf);
+		private static extern int sys_utime (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string filename, ref Utimbuf buf, int use_buf);
 
 		public static int utime (string filename, ref Utimbuf buf)
 		{

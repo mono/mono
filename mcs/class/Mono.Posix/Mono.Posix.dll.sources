@@ -18,6 +18,7 @@
 ./Mono.Unix/UnixDirectory.cs
 ./Mono.Unix/UnixDirectoryInfo.cs
 ./Mono.Unix/UnixDriveInfo.cs
+./Mono.Unix/UnixEncoding.cs
 ./Mono.Unix/UnixEnvironment.cs
 ./Mono.Unix/UnixEndPoint.cs
 ./Mono.Unix/UnixFile.cs
@@ -35,6 +36,7 @@
 ./Mono.Unix/UnixUser.cs
 ./Mono.Unix/UnixUserInfo.cs
 ./Mono.Unix.Native/CdeclFunction.cs
+./Mono.Unix.Native/FileNameMarshaler.cs
 ./Mono.Unix.Native/HeaderAttribute.cs
 ./Mono.Unix.Native/NativeConvert.cs
 ./Mono.Unix.Native/NativeConvert.generated.cs

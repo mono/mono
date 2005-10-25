@@ -1,3 +1,15 @@
+2005-10-25  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs, Syscall.cs: Filenames need to be marshaled through the 
+	  FileNameMarshaler, which will encode/decode filenames with UnixEncoder.
+	* UnixEncoding.cs: Added (copied from
+	  ../../corlib/System.Text/UTF8Encoding.cs); a hack to permit handling of 
+	  arbitrarily encoded filenames.  It attempts to decode a byte[] array as 
+	  UTF-8, and if the decode fails it prefixes each byte with 
+	  UnixEncoding.EscapeByte (\uFFFF).
+	* UnixMarshal.cs: Use UnixEncoding as the default encoding, and special-case
+	  UnixEncoding to use Stdlib.strlen() for native string lengths.
+
 2005-10-21  Jonathan Pryor <jonpryor@vt.edu>
 
 	* FileAccessPattern.cs: Added

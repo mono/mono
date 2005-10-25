@@ -129,7 +129,7 @@ namespace Mono.Unix {
 		{
 			if (p == IntPtr.Zero)
 				return null;
-			return PtrToString (p, Encoding.Default);
+			return PtrToString (p, UnixEncoding.Instance);
 		}
 
 		public static string PtrToString (IntPtr p, Encoding encoding)
@@ -160,13 +160,14 @@ namespace Mono.Unix {
 			int len = -1;
 
 			// Encodings that will always end with a null byte
-			if (encodingType == typeof(UTF8Encoding) ||
-					encodingType == typeof(UTF7Encoding) ||
-					encodingType == typeof(ASCIIEncoding)) {
+			if (typeof(UTF8Encoding).IsAssignableFrom (encodingType) ||
+					typeof(UTF7Encoding).IsAssignableFrom (encodingType) ||
+					typeof(UnixEncoding).IsAssignableFrom (encodingType) ||
+					typeof(ASCIIEncoding).IsAssignableFrom (encodingType)) {
 				len = checked ((int) Native.Stdlib.strlen (p));
 			}
 			// Encodings that will always end with a 0x0000 16-bit word
-			else if (encodingType == typeof(UnicodeEncoding)) {
+			else if (typeof(UnicodeEncoding).IsAssignableFrom (encodingType)) {
 				len = GetInt16BufferLength (p);
 			}
 			// Some non-public encoding, such as Latin1 or a DBCS charset.
@@ -239,7 +240,7 @@ namespace Mono.Unix {
 		 */
 		public static string[] PtrToStringArray (IntPtr stringArray)
 		{
-			return PtrToStringArray (stringArray, Encoding.Default);
+			return PtrToStringArray (stringArray, UnixEncoding.Instance);
 		}
 
 		public static string[] PtrToStringArray (IntPtr stringArray, Encoding encoding)
@@ -270,7 +271,7 @@ namespace Mono.Unix {
 		 */
 		public static string[] PtrToStringArray (int count, IntPtr stringArray)
 		{
-			return PtrToStringArray (count, stringArray, Encoding.Default);
+			return PtrToStringArray (count, stringArray, UnixEncoding.Instance);
 		}
 
 		public static string[] PtrToStringArray (int count, IntPtr stringArray, Encoding encoding)
@@ -291,7 +292,7 @@ namespace Mono.Unix {
 
 		public static IntPtr StringToAlloc (string s)
 		{
-			return StringToAlloc (s, Encoding.Default);
+			return StringToAlloc (s, UnixEncoding.Instance);
 		}
 
 		public static IntPtr StringToAlloc (string s, Encoding encoding)
@@ -301,7 +302,7 @@ namespace Mono.Unix {
 
 		public static IntPtr StringToAlloc (string s, int index, int count)
 		{
-			return StringToAlloc (s, index, count, Encoding.Default);
+			return StringToAlloc (s, index, count, UnixEncoding.Instance);
 		}
 
 		public static IntPtr StringToAlloc (string s, int index, int count, Encoding encoding)

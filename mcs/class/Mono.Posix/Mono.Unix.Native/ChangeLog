@@ -1,3 +1,11 @@
+2005-10-25  Jonathan Pryor <jonpryor@vt.edu>
+
+	* FileNameMarshaler.cs: Custom marshaler to marshal filenames using
+	  Mono.Unix.UnixEncoding.  A custom marshaler is used to remove the need to
+	  have ~6 lines of boilerplate on every method that takes filenames.
+	* Stdlib.cs, Syscall.cs:  Filenames need to be marshaled through the
+	  FileNameMarshaler, which will encode/decode filenames with UnixEncoder.
+
 2005-10-14  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs, Syscall.cs: Flush naming convention documentation.

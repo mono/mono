@@ -1,3 +1,8 @@
+2005-10-25  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Mono.Posix.dll.sources: Add Mono.Unix.Native/FileNameMarshaler.cs.
+	* Mono.Posix_test.dll.sources: Add Mono.Unix/UnixEncodingTest.cs
+
 2005-10-21  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Mono.Posix.dll.sources: Add new file: Mono.Unix/FileAccessPattern.cs

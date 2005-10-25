@@ -572,10 +572,16 @@ namespace Mono.Unix.Native {
 		public static readonly int    TMP_MAX      = GetTmpMax ();
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
-		public static extern int remove (string filename);
+		public static extern int remove (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string filename);
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
-		public static extern int rename (string oldpath, string newpath);
+		public static extern int rename (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string oldpath, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string newpath);
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
 		public static extern IntPtr tmpfile ();
@@ -613,10 +619,14 @@ namespace Mono.Unix.Native {
 		public static extern int fflush (IntPtr stream);
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
-		public static extern IntPtr fopen (string path, string mode);
+		public static extern IntPtr fopen (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, string mode);
 
 		[DllImport (LIBC, CallingConvention=CallingConvention.Cdecl, SetLastError=true)]
-		public static extern IntPtr freopen (string path, string mode, IntPtr stream);
+		public static extern IntPtr freopen (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, string mode, IntPtr stream);
 
 		[DllImport (MPH, CallingConvention=CallingConvention.Cdecl, 
 				SetLastError=true, EntryPoint="Mono_Posix_Stdlib_setbuf")]
