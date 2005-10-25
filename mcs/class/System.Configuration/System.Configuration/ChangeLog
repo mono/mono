@@ -1,5 +1,7 @@
 2005-10-25  Chris Toshok  <toshok@ximian.com>
 
+	* PositiveTimeSpanValidatorAttribute.cs: new implementation.
+
 	* PositiveTimeSpanValidator.cs: new implementation.
 
 2005-10-24  Chris Toshok  <toshok@ximian.com>

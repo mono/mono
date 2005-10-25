@@ -77,6 +77,7 @@ System.Configuration/LongValidatorAttribute.cs
 System.Configuration/NameValueConfigurationCollection.cs
 System.Configuration/NameValueConfigurationElement.cs
 System.Configuration/PositiveTimeSpanValidator.cs
+System.Configuration/PositiveTimeSpanValidatorAttribute.cs
 System.Configuration/PropertyInformation.cs
 System.Configuration/PropertyInformationCollection.cs
 System.Configuration/PropertyValueOrigin.cs
