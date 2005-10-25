@@ -9,6 +9,7 @@ System.Configuration/IntegerValidatorTest.cs
 System.Configuration/KeyValueConfigurationCollectionTest.cs
 System.Configuration/KeyValueConfigurationElementTest.cs
 System.Configuration/LongValidatorTest.cs
+System.Configuration/PositiveTimeSpanValidatorTest.cs
 System.Configuration/RegexStringValidatorTest.cs
 System.Configuration/StringValidatorTest.cs
 System.Configuration/SubclassTypeValidatorTest.cs
