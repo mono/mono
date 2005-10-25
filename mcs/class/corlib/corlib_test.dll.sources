@@ -32,6 +32,7 @@ System.Collections/StackTest.cs
 System.Collections.Generic/DictionaryTest.cs
 System.Collections.Generic/ListTest.cs
 System.Collections.ObjectModel/CollectionTest.cs
+System.Collections.ObjectModel/KeyedCollectionTest.cs
 System/ConsoleTest.cs
 System/ConvertTest.cs
 System/DateTimeTest.cs

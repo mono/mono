@@ -68,10 +68,16 @@ namespace System.Collections.ObjectModel
 
 		public void Add (T item)
 		{
-			list.Add (item);			
+			int idx = list.Count;
+			InsertItem (idx, item);
 		}
 
 		public void Clear ()
+		{
+			ClearItems ();
+		}
+
+		protected virtual void ClearItems ()
 		{
 			list.Clear ();
 		}
@@ -98,15 +104,31 @@ namespace System.Collections.ObjectModel
 
 		public void Insert (int index, T item)
 		{
+			InsertItem (index, item);
+		}
+
+		protected virtual void InsertItem (int index, T item)
+		{
 			list.Insert (index, item);
 		}
 
 		public bool Remove (T item)
 		{
-			return list.Remove (item);
+			int idx = IndexOf (item);
+			if (idx == -1) 
+				return false;
+			
+			RemoveItem (idx);
+			
+			return true;
 		}
 
 		public void RemoveAt (int index)
+		{
+			RemoveItem (index);
+		}
+
+		protected virtual void RemoveItem (int index)
 		{
 			list.RemoveAt (index);
 		}
@@ -117,12 +139,18 @@ namespace System.Collections.ObjectModel
 
 		public virtual T this [int index] {
 			get { return list [index]; }
-			set { list [index] = value; }
+			set { SetItem (index, value); }
 		}
 
 		public bool IsReadOnly {
 			get { return list.IsReadOnly; }
 		}
+
+		protected virtual void SetItem (int index, T item)
+		{
+			list[index] = item;
+		}
+
 		
 #region Helper methods for non-generic interfaces
 		
@@ -173,8 +201,9 @@ namespace System.Collections.ObjectModel
 				
 		int IList.Add (object item)
 		{
-			list.Add (ConvertItem (item));
-			return list.Count - 1;
+			int idx = list.Count;
+			InsertItem (idx, ConvertItem (item));
+			return idx;
 		}
 		
 		bool IList.Contains (object item)
@@ -193,13 +222,16 @@ namespace System.Collections.ObjectModel
 		
 		void IList.Insert (int index, object item)
 		{
-			list.Insert (index, ConvertItem (item));
+			InsertItem (index, ConvertItem (item));
 		}
 		
 		void IList.Remove (object item)
 		{
 			CheckWritable (list);
-			list.Remove (ConvertItem (item));
+
+			int idx = IndexOf (ConvertItem (item));
+
+			RemoveItem (idx);
 		}
 		
 		bool ICollection.IsSynchronized {
@@ -219,7 +251,7 @@ namespace System.Collections.ObjectModel
 		
 		object IList.this [int index] {
 			get { return list [index]; }
-			set { list [index] = ConvertItem (value); }
+			set { SetItem (index, ConvertItem (value)); }
 		}
 #endregion
 	}

@@ -1,3 +1,9 @@
+2005-10-25  Carlo Kok  <ck@carlo-kok.com>
+
+	* Collection.cs :
+	  Added virtual ClearItems, InsertItem, RemoveItem, SetITem.
+	* KeyedCollection.cs : Implemented.
+
 2005-06-19  David Waite  <mass@akuma.org>
 
         * Collection.cs ReadonlyCollection.cs: Implement all methods

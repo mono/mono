@@ -1,3 +1,7 @@
+2005-10-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KeyedCollectionTest.cs : new file by Carlo Kok (ck@carlo-kok.com).
+
 2005-06-21  Raja R Harinath  <rharinath@novell.com>
 
 	* CollectionTest.cs (IEnumerable.GetEnumerator): Don't prefix with
