@@ -1,3 +1,8 @@
+2005-10-25  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* CodeGenerator.cs: Fixed OutputAttributeArgument not to assume the
+	default value is null (it's String.Empty).
+
 2005-10-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CompilerParameters.cs: Added [ComVisible(false)] on the new (2.0)

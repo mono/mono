@@ -656,7 +656,7 @@ namespace System.CodeDom.Compiler {
 		protected virtual void OutputAttributeArgument (CodeAttributeArgument argument)
 		{
 			string name = argument.Name;
-			if (name != null) {
+			if ((name != null) && (name.Length > 0)) {
 				output.Write (name);
 				output.Write ('=');
 			}
