@@ -1,3 +1,8 @@
+2005-10-24  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c (mono_pmip): Just a wrapper for get_method_from_ip which
+	we expose publicly, this returns the string.
+
 2005-10-22  Zoltan Varga  <vargaz@freemail.hu>
 
 	* exceptions-amd64.c (mono_arch_find_jit_info): Fix some corner cases
