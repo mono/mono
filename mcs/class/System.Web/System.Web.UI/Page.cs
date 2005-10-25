@@ -780,7 +780,7 @@ public class Page : TemplateControl, IHttpHandler
 		return new LosFormatter (config.EnableViewStateMac, vkey);
 	}
 
-	internal string GetViewStateString ()
+	string GetViewStateString ()
 	{
 		if (_savedViewState == null)
 			return null;
