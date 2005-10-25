@@ -53,6 +53,7 @@ namespace System.CodeDom
 
 		public CodeAttributeDeclaration (string name)
 		{
+			this.name = name;
 		}
 
 		public CodeAttributeDeclaration (string name, params CodeAttributeArgument [] arguments)

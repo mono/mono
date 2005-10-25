@@ -1,3 +1,7 @@
+2005-10-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeAttributeDeclaration.cs: Fixed extra removal in r52147.
+
 2005-10-24  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeArgumentReferenceExpression.cs: If ParameterName is null, return
