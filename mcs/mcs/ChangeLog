@@ -1,3 +1,9 @@
+2005-10-26  Raja R Harinath  <harinath@gmail.com>
+
+	Fix #76419.
+	* pending.cs (InterfaceMethod): Allow tm.args [i] to be null --
+	treat it as an empty parameter list.
+
 2005-10-26  Raja R Harinath  <rharinath@novell.com>
 
 	Fix #76271.	
