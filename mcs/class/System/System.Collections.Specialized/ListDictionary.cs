@@ -24,21 +24,24 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Runtime.Serialization;
+
 namespace System.Collections.Specialized
 {
 	[Serializable]
 	public class ListDictionary : IDictionary, ICollection, IEnumerable {
 		private int count;
-		private int modCount;
-		private ListEntry root;
+		private int version;
+		private DictionaryNode head;
 		private IComparer comparer;
 
 		public ListDictionary ()
 		{
 			count = 0;
-			modCount = 0;
+			version = 0;
 			comparer = null;
-			root = null;
+			head = null;
 		}
 
 		public ListDictionary (IComparer comparer) : this ()
@@ -46,12 +49,12 @@ namespace System.Collections.Specialized
 			this.comparer = comparer;
 		}
 
-		private ListEntry FindEntry (object key, out ListEntry prev)
+		private DictionaryNode FindEntry (object key, out DictionaryNode prev)
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key", "Attempted lookup for a null key.");
 
-			ListEntry entry = root;
+			DictionaryNode entry = head;
 			prev = null;
 			if (comparer == null) {
 				while (entry != null) {
@@ -71,27 +74,27 @@ namespace System.Collections.Specialized
 			return entry;
 		}
 
-		private void AddImpl (object key, object value, ListEntry prev)
+		private void AddImpl (object key, object value, DictionaryNode prev)
 		{
 			//
 			// Code in the MCS compiler (doc.cs) appears to depend on the new entry being
 			// added at the end, even though we don't promise any such thing.
 			// Preferably, this code would just have been:
 			//
-			//   root = new ListEntry (key, value, root);
+			//   head = new DictionaryNode (key, value, head);
 			//
 			if (prev == null)
-				root = new ListEntry (key, value, root);
+				head = new DictionaryNode (key, value, head);
 			else
-				prev.next = new ListEntry (key, value, prev.next);
+				prev.next = new DictionaryNode (key, value, prev.next);
 			++count;
-			++modCount;
+			++version;
 		}
 
 		// IEnumerable Interface
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new ListEntryEnumerator (this);
+			return new DictionaryNodeEnumerator (this);
 		}
 
 		// ICollection Interface
@@ -134,14 +137,14 @@ namespace System.Collections.Specialized
 		// Indexer
 		public object this [object key] {
 			get {
-				ListEntry prev;
-				ListEntry entry = FindEntry (key, out prev);
+				DictionaryNode prev;
+				DictionaryNode entry = FindEntry (key, out prev);
 				return entry == null ? null : entry.value;
 			}
 
 			set {
-				ListEntry prev;
-				ListEntry entry = FindEntry (key, out prev);
+				DictionaryNode prev;
+				DictionaryNode entry = FindEntry (key, out prev);
 				if (entry != null)
 					entry.value = value;
 				else
@@ -150,17 +153,17 @@ namespace System.Collections.Specialized
 		}
 
 		public ICollection Keys {
-			get { return new ListEntryCollection (this, true); }
+			get { return new DictionaryNodeCollection (this, true); }
 		}
 
 		public ICollection Values {
-			get { return new ListEntryCollection (this, false); }
+			get { return new DictionaryNodeCollection (this, false); }
 		}
 
 		public void Add (object key, object value)
 		{
-			ListEntry prev;
-			ListEntry entry = FindEntry (key, out prev);
+			DictionaryNode prev;
+			DictionaryNode entry = FindEntry (key, out prev);
 			if (entry != null)
 				throw new ArgumentException ("key", "Duplicate key in add.");
 
@@ -169,44 +172,44 @@ namespace System.Collections.Specialized
 
 		public void Clear ()
 		{
-			root = null;
+			head = null;
 			count = 0;
-			modCount++;
+			version++;
 		}
 
 		public bool Contains (object key)
 		{
-			ListEntry prev;
+			DictionaryNode prev;
 			return FindEntry (key, out prev) != null;
 		}
 
 		public IDictionaryEnumerator GetEnumerator ()
 		{
-			return new ListEntryEnumerator (this);
+			return new DictionaryNodeEnumerator (this);
 		}
 
 		public void Remove (object key)
 		{
-			ListEntry prev;
-			ListEntry entry = FindEntry (key, out prev);
+			DictionaryNode prev;
+			DictionaryNode entry = FindEntry (key, out prev);
 			if (entry == null)
 				return;
 			if (prev == null)
-				root = entry.next;
+				head = entry.next;
 			else
 				prev.next = entry.next;
 			entry.value = null;
 			count--;
-			modCount++;
+			version++;
 		}
 
 
 		[Serializable]
-		private class ListEntry {
+		private class DictionaryNode {
 			public object key;
 			public object value;
-			public ListEntry next;
-			public ListEntry (object key, object value, ListEntry next)
+			public DictionaryNode next;
+			public DictionaryNode (object key, object value, DictionaryNode next)
 			{
 				this.key = key;
 				this.value = value;
@@ -214,22 +217,22 @@ namespace System.Collections.Specialized
 			}
 		}
 
-		private class ListEntryEnumerator : IEnumerator, IDictionaryEnumerator {
+		private class DictionaryNodeEnumerator : IEnumerator, IDictionaryEnumerator {
 			private ListDictionary dict;
 			private bool isAtStart;
-			private ListEntry current;
+			private DictionaryNode current;
 			private int version;
 
-			public ListEntryEnumerator (ListDictionary dict)
+			public DictionaryNodeEnumerator (ListDictionary dict)
 			{
 				this.dict = dict;
-				version = dict.modCount;
+				version = dict.version;
 				Reset();
 			}
 
 			private void FailFast()
 			{
-				if (version != dict.modCount) {
+				if (version != dict.version) {
 					throw new InvalidOperationException (
 						"The ListDictionary's contents changed after this enumerator was instantiated.");
 				}
@@ -240,7 +243,7 @@ namespace System.Collections.Specialized
 				FailFast ();
 				if (current == null && !isAtStart)
 					return false;
-				current = isAtStart ? dict.root : current.next;
+				current = isAtStart ? dict.head : current.next;
 				isAtStart = false;
 				return current != null;
 			}
@@ -256,7 +259,7 @@ namespace System.Collections.Specialized
 				get { return Entry; }
 			}
 
-			private ListEntry ListEntry {
+			private DictionaryNode DictionaryNode {
 				get {
 					FailFast ();
 					if (current == null)
@@ -269,25 +272,25 @@ namespace System.Collections.Specialized
 			// IDictionaryEnumerator
 			public DictionaryEntry Entry {
 				get {
-					object key = ListEntry.key;
+					object key = DictionaryNode.key;
 					return new DictionaryEntry (key, current.value);
 				}
 			}
 
 			public object Key {
-				get { return ListEntry.key; }
+				get { return DictionaryNode.key; }
 			}
 
 			public object Value {
-				get { return ListEntry.value; }
+				get { return DictionaryNode.value; }
 			}
 		}
 
-		private class ListEntryCollection : ICollection {
+		private class DictionaryNodeCollection : ICollection {
 			private ListDictionary dict;
 			private bool isKeyList;
 
-			public ListEntryCollection (ListDictionary dict, bool isKeyList)
+			public DictionaryNodeCollection (ListDictionary dict, bool isKeyList)
 			{
 				this.dict = dict;
 				this.isKeyList = isKeyList;
@@ -324,14 +327,14 @@ namespace System.Collections.Specialized
 			// IEnumerable Interface
 			public IEnumerator GetEnumerator()
 			{
-				return new ListEntryCollectionEnumerator (dict.GetEnumerator (), isKeyList);
+				return new DictionaryNodeCollectionEnumerator (dict.GetEnumerator (), isKeyList);
 			}
 
-			private class ListEntryCollectionEnumerator : IEnumerator {
+			private class DictionaryNodeCollectionEnumerator : IEnumerator {
 				private IDictionaryEnumerator inner;
 				private bool isKeyList;
 
-				public ListEntryCollectionEnumerator (IDictionaryEnumerator inner, bool isKeyList)
+				public DictionaryNodeCollectionEnumerator (IDictionaryEnumerator inner, bool isKeyList)
 				{
 					this.inner = inner;
 					this.isKeyList = isKeyList;

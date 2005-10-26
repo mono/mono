@@ -1,3 +1,10 @@
+2005-10-26  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
+
+	* NameObjectCollectionBase.cs
+      ListDictionary.cs
+      HybridDictionary.cs
+      Fix serialization compatibility with .NET
+
 2005-09-01  Raja R Harinath  <rharinath@novell.com>
 
 	* NameValueCollection.cs (Add): Add a key from the other

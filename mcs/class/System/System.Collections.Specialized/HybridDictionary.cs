@@ -32,16 +32,41 @@
 using System;
 using System.Collections;
 
-namespace System.Collections.Specialized {
+namespace System.Collections.Specialized 
+{
 
 	[Serializable]
 	public class HybridDictionary : IDictionary, ICollection, IEnumerable {
 
 		private const int switchAfter = 10;
 
-		private IDictionary inner;
-		private bool is_list;
+		private IDictionary inner
+		{
+			get
+			{
+				if (list != null)
+					return list;
+				return hashtable;
+			}
+			set
+			{
+				list = value as ListDictionary;
+				hashtable = value as Hashtable;
+			}
+		}
+		private bool is_list
+		{
+			get
+			{
+				if (list != null)
+					return true;
+				return false;
+			}
+		}
+
 		private bool caseInsensitive;
+		private Hashtable hashtable;
+		private ListDictionary list;
 
 		// Constructors
 
@@ -54,12 +79,11 @@ namespace System.Collections.Specialized {
 		public HybridDictionary (int initialSize, bool caseInsensitive)
 		{
 			this.caseInsensitive = caseInsensitive;
-			this.is_list = (initialSize <= switchAfter);
 
 			IComparer comparer = caseInsensitive ? CaseInsensitiveComparer.Default : null;
 			IHashCodeProvider hcp = caseInsensitive ? CaseInsensitiveHashCodeProvider.Default : null;
 
-			if (is_list)
+			if (initialSize <= switchAfter)
 				inner = new ListDictionary (comparer);
 			else
 				inner = new Hashtable (initialSize, hcp, comparer);
@@ -67,7 +91,8 @@ namespace System.Collections.Specialized {
 
 		// Properties
 
-		public int Count {
+		public int Count 
+		{
 			get { return inner.Count; }
 		}
 
@@ -155,7 +180,6 @@ namespace System.Collections.Specialized {
 			IComparer comparer = caseInsensitive ? CaseInsensitiveComparer.Default : null;
 			IHashCodeProvider hcp = caseInsensitive ? CaseInsensitiveHashCodeProvider.Default : null;
 
-			is_list = false;
 			inner = new Hashtable (old, hcp, comparer);
 			old.Clear ();
 		}

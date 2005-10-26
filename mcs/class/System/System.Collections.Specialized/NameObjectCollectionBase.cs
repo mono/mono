@@ -301,11 +301,12 @@ namespace System.Collections.Specialized
 				i++;
 			}
 
-			info.AddValue ("m_hashprovider", m_hashprovider);
-			info.AddValue ("m_comparer", m_comparer);
-			info.AddValue ("m_readonly", m_readonly);
-			info.AddValue ("keys", keys);
-			info.AddValue ("values", values);
+			info.AddValue("HashProvider", m_hashprovider, typeof(IHashCodeProvider));
+			info.AddValue("Comparer", m_comparer, typeof(IComparer));
+			info.AddValue("ReadOnly", m_readonly);
+			info.AddValue("Count", count);
+			info.AddValue("Keys", keys, typeof(string[]));
+			info.AddValue("Values", values, typeof(object[]));
 		}
 
 		// ICollection
@@ -343,22 +344,22 @@ namespace System.Collections.Specialized
 				return;
 
 			infoCopy = null;
-			m_hashprovider = (IHashCodeProvider) info.GetValue ("m_hashprovider",
+			m_hashprovider = (IHashCodeProvider) info.GetValue ("HashProvider",
 									    typeof (IHashCodeProvider));
 
 			if (m_hashprovider == null)
 				throw new SerializationException ("The hash provider is null");
 
-			m_comparer = (IComparer) info.GetValue ("m_comparer", typeof (IComparer));
+			m_comparer = (IComparer) info.GetValue ("Comparer", typeof (IComparer));
 			if (m_comparer == null)
 				throw new SerializationException ("The comparer is null");
 
-			m_readonly = info.GetBoolean ("m_readonly");
-			string [] keys = (string []) info.GetValue ("keys", typeof (string []));
+			m_readonly = info.GetBoolean ("ReadOnly");
+			string [] keys = (string []) info.GetValue ("Keys", typeof (string []));
 			if (keys == null)
 				throw new SerializationException ("keys is null");
 
-			object [] values = (object []) info.GetValue ("values", typeof (object []));
+			object [] values = (object []) info.GetValue ("Values", typeof (object []));
 			if (values == null)
 				throw new SerializationException ("values is null");
 
