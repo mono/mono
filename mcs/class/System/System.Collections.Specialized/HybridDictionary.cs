@@ -40,28 +40,8 @@ namespace System.Collections.Specialized
 
 		private const int switchAfter = 10;
 
-		private IDictionary inner
-		{
-			get
-			{
-				if (list != null)
-					return list;
-				return hashtable;
-			}
-			set
-			{
-				list = value as ListDictionary;
-				hashtable = value as Hashtable;
-			}
-		}
-		private bool is_list
-		{
-			get
-			{
-				if (list != null)
-					return true;
-				return false;
-			}
+		private IDictionary inner {
+			get { return list == null ? (IDictionary) hashtable : (IDictionary) list; }
 		}
 
 		private bool caseInsensitive;
@@ -84,9 +64,9 @@ namespace System.Collections.Specialized
 			IHashCodeProvider hcp = caseInsensitive ? CaseInsensitiveHashCodeProvider.Default : null;
 
 			if (initialSize <= switchAfter)
-				inner = new ListDictionary (comparer);
+				list = new ListDictionary (comparer);
 			else
-				inner = new Hashtable (initialSize, hcp, comparer);
+				hashtable = new Hashtable (initialSize, hcp, comparer);
 		}
 
 		// Properties
@@ -113,7 +93,7 @@ namespace System.Collections.Specialized
 
 			set {
 				inner [key] = value;
-				if (is_list && Count > switchAfter)
+				if (list != null && Count > switchAfter)
 					Switch ();
 			}
 		}
@@ -136,7 +116,7 @@ namespace System.Collections.Specialized
 		public void Add (object key, object value)
 		{
 			inner.Add (key, value);
-			if (is_list && Count > switchAfter)
+			if (list != null && Count > switchAfter)
 				Switch ();
 		}
 
@@ -176,12 +156,12 @@ namespace System.Collections.Specialized
 
 		private void Switch ()
 		{
-			IDictionary old = inner;
 			IComparer comparer = caseInsensitive ? CaseInsensitiveComparer.Default : null;
 			IHashCodeProvider hcp = caseInsensitive ? CaseInsensitiveHashCodeProvider.Default : null;
 
-			inner = new Hashtable (old, hcp, comparer);
-			old.Clear ();
+			hashtable = new Hashtable (list, hcp, comparer);
+			list.Clear ();
+			list = null;
 		}
 	}
 }

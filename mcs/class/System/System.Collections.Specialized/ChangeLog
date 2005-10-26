@@ -1,3 +1,9 @@
+2005-10-26  Raja R Harinath  <rharinath@novell.com>
+
+	* HybridDictionary.cs (is_list): Remove.
+	(inner): Remove 'set' accessor.
+	(HybridDictionary, Switch): Initialize 'list' and 'hashtable' directly.
+
 2005-10-26  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
 
 	* NameObjectCollectionBase.cs
