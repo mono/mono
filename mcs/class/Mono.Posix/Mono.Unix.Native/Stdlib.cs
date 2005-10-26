@@ -175,7 +175,7 @@ namespace Mono.Unix.Native {
 
 	#region Classes
 
-	public sealed class FilePosition : IDisposable {
+	public sealed class FilePosition : MarshalByRefObject, IDisposable {
 
 		private static readonly int FilePositionDumpSize = 
 			Stdlib.DumpFilePosition (null, new HandleRef (null, IntPtr.Zero), 0);
@@ -228,7 +228,8 @@ namespace Mono.Unix.Native {
 
 		public override bool Equals (object obj)
 		{
-			if (obj == null || GetType() != obj.GetType())
+			FilePosition fp = obj as FilePosition;
+			if (obj == null || fp == null)
 				return false;
 			return ToString().Equals (obj.ToString());
 		}
