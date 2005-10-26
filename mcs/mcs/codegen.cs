@@ -992,6 +992,8 @@ namespace Mono.CSharp {
 		// TODO: make it private and move all builder based methods here
 		public AssemblyBuilder Builder;
 		bool is_cls_compliant;
+		bool wrap_non_exception_throws;
+
 		public Attribute ClsCompliantAttribute;
 
 		ListDictionary declarative_security;
@@ -1001,12 +1003,18 @@ namespace Mono.CSharp {
 
 		public AssemblyClass (): base ()
 		{
-			is_cls_compliant = false;
+			wrap_non_exception_throws = true;
 		}
 
 		public bool IsClsCompliant {
 			get {
 				return is_cls_compliant;
+			}
+		}
+
+		public bool WrapNonExceptionThrows {
+			get {
+				return wrap_non_exception_throws;
 			}
 		}
 
@@ -1021,13 +1029,21 @@ namespace Mono.CSharp {
 			return is_cls_compliant;
 		}
 
-		public void ResolveClsCompliance ()
+		public void Resolve ()
 		{
 			ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
-			if (ClsCompliantAttribute == null)
-				return;
+			if (ClsCompliantAttribute != null) {
+				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue (null);
+			}
 
-			is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue (null);
+#if NET_2_0
+			Attribute a = ResolveAttribute (TypeManager.runtime_compatibility_attr_type);
+			if (a != null) {
+				object val = a.GetPropertyValue ("WrapNonExceptionThrows");
+				if (val != null)
+					wrap_non_exception_throws = (bool)val;
+			}
+#endif
 		}
 
 		// fix bug #56621
@@ -1232,6 +1248,15 @@ namespace Mono.CSharp {
 					Report.RuntimeMissingSupport (Location.Null, "assembly permission setting");
 				}
 			}
+
+#if NET_2_0
+			if (!OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type, null)) {
+				ConstructorInfo ci = TypeManager.runtime_compatibility_attr_type.GetConstructor (TypeManager.NoTypes);
+				PropertyInfo pi = TypeManager.runtime_compatibility_attr_type.GetProperty ("WrapNonExceptionThrows");
+				Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], 
+					new PropertyInfo [] { pi }, new object[] { true } ));
+			}
+#endif
 		}
 
 		public override string[] ValidAttributeTargets {

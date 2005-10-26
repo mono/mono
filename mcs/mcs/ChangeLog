@@ -1,3 +1,22 @@
+2005-10-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (GetPropertyValue): Made public.
+
+	* codegen.cs (AssemblyClass): ResolveClsCompliance renamed to
+	Resolve.
+	Add new property WrapNonExceptionThrows to handle 2.0 assembly
+	attribute.
+	(AssemblyClass.Emit): Emit RuntimeCompatibilityAttribute when it
+	is not defined.
+	
+	* driver.cs: Reflect method name change.
+	
+	* statement.cs (Try.Resolve): Warn when try has both general
+	exception handlers.
+	
+	* typemanager.cs: runtime_compatibility_attr_type new predefined
+	type.
+
 2005-10-26  Raja R Harinath  <harinath@gmail.com>
 
 	Fix #76419.

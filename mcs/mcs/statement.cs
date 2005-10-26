@@ -3684,6 +3684,14 @@ namespace Mono.CSharp {
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
 
 			if (General != null){
+				if (CodeGen.Assembly.WrapNonExceptionThrows) {
+					foreach (Catch c in Specific){
+						if (c.CatchType == TypeManager.exception_type) {
+							Report.Warning (1058, 1, c.loc, "A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'");
+						}
+					}
+				}
+
 				ec.CurrentBranching.CreateSibling (
 					General.Block, FlowBranching.SiblingType.Catch);
 
