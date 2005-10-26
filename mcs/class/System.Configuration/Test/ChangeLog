@@ -1,5 +1,7 @@
 2005-10-25  Chris Toshok  <toshok@ximian.com>
 
+	* System.Configuration/InfiniteTimeSpanConverterTest.cs: new test.
+
 	* System.Configuration/InfiniteIntConverterTest.cs: new test.
 
 	* System.Configuration/GenericEnumConverterTest.cs: new test.
