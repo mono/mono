@@ -1,3 +1,8 @@
+2005-10-26  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug-debugger.c
+	(MonoDebuggerMetadataInfo): Added `klass_parent_offset'.
+
 2005-10-24  Raja R Harinath  <harinath@gmail.com>
 
 	* icall.c (base64_to_byte_array): Don't pass an out-of-range
