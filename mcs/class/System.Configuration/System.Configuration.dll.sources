@@ -65,6 +65,7 @@ System.Configuration/ExeContext.cs
 System.Configuration/GenericEnumConverter.cs
 System.Configuration/IConfigXmlNode.cs
 System.Configuration/IgnoreSection.cs
+System.Configuration/InfiniteIntConverter.cs
 System.Configuration/IntegerValidator.cs
 System.Configuration/IntegerValidatorAttribute.cs
 System.Configuration/InternalConfigurationFactory.cs

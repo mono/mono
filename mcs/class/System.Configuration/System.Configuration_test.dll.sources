@@ -6,6 +6,7 @@ System.Configuration/ConfigurationManagerTest.cs
 System.Configuration/DefaultValidatorTest.cs
 System.Configuration/ExeConfigurationFileMapTest.cs
 System.Configuration/GenericEnumConverterTest.cs
+System.Configuration/InfiniteIntConverterTest.cs
 System.Configuration/IntegerValidatorTest.cs
 System.Configuration/KeyValueConfigurationCollectionTest.cs
 System.Configuration/KeyValueConfigurationElementTest.cs
