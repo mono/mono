@@ -106,21 +106,39 @@ namespace Mono.Unix {
 			return ErrorMarshal.Translate ((Error) (int) errno);
 		}
 
+		[Obsolete ("Use AllocHeap(long)")]
 		public static IntPtr Alloc (long size)
+		{
+			return AllocHeap (size);
+		}
+
+		public static IntPtr AllocHeap (long size)
 		{
 			if (size < 0)
 				throw new ArgumentOutOfRangeException ("size", "< 0");
 			return Stdlib.malloc ((ulong) size);
 		}
 
+		[Obsolete ("Use ReAllocHeap(long)")]
 		public static IntPtr ReAlloc (IntPtr ptr, long size)
+		{
+			return ReAllocHeap (ptr, size);
+		}
+
+		public static IntPtr ReAllocHeap (IntPtr ptr, long size)
 		{
 			if (size < 0)
 				throw new ArgumentOutOfRangeException ("size", "< 0");
 			return Stdlib.realloc (ptr, (ulong) size);
 		}
 
+		[Obsolete ("Use FreeHeap(IntPtr)")]
 		public static void Free (IntPtr ptr)
+		{
+			FreeHeap (ptr);
+		}
+
+		public static void FreeHeap (IntPtr ptr)
 		{
 			Stdlib.free (ptr);
 		}
@@ -290,22 +308,28 @@ namespace Mono.Unix {
 			return members;
 		}
 
+		[Obsolete ("Use StringToHeap(string)")]
 		public static IntPtr StringToAlloc (string s)
 		{
-			return StringToAlloc (s, UnixEncoding.Instance);
+			return StringToHeap (s, UnixEncoding.Instance);
 		}
 
-		public static IntPtr StringToAlloc (string s, Encoding encoding)
+		public static IntPtr StringToHeap (string s)
 		{
-			return StringToAlloc (s, 0, s.Length, encoding);
+			return StringToHeap (s, UnixEncoding.Instance);
 		}
 
-		public static IntPtr StringToAlloc (string s, int index, int count)
+		public static IntPtr StringToHeap (string s, Encoding encoding)
 		{
-			return StringToAlloc (s, index, count, UnixEncoding.Instance);
+			return StringToHeap (s, 0, s.Length, encoding);
 		}
 
-		public static IntPtr StringToAlloc (string s, int index, int count, Encoding encoding)
+		public static IntPtr StringToHeap (string s, int index, int count)
+		{
+			return StringToHeap (s, index, count, UnixEncoding.Instance);
+		}
+
+		public static IntPtr StringToHeap (string s, int index, int count, Encoding encoding)
 		{
 			int min_byte_count = encoding.GetMaxByteCount(1);
 			char[] copy = s.ToCharArray (index, count);

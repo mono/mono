@@ -61,7 +61,7 @@ namespace Mono.Unix.Native {
 			string s = obj as string;
 			if (s == null)
 				return IntPtr.Zero;
-			IntPtr p = UnixMarshal.StringToAlloc (s, UnixEncoding.Instance);
+			IntPtr p = UnixMarshal.StringToHeap (s, UnixEncoding.Instance);
 			// Console.WriteLine ("# FileNameMarshaler.MarshalNativeToManaged for `{0}'={1:x}", s, p);
 			return p;
 		}

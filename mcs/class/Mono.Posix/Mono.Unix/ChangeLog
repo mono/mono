@@ -1,5 +1,12 @@
 2005-10-26  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixMarshal.cs: Obsolete heap-related methods to have a Heap suffix
+	  (AllocHeap, FreeHeap, etc.), and change StringToAlloc() to be
+	  StringToHeap().  This creates a stronger name association between related
+	  methods.
+
+2005-10-26  Jonathan Pryor <jonpryor@vt.edu>
+
 	* UnixIOException.cs: Add (string) and (string, Exception) constructors to
 	  silence FxCop; re-work logic so we lookup the error string at construction
 	  time and use this as the message for the base class.

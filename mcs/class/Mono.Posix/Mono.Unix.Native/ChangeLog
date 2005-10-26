@@ -1,5 +1,9 @@
 2005-10-26  Jonathan Pryor <jonpryor@vt.edu>
 
+	* FileNameMarshaler.cs: Deal with UnixMarshal method name changes.
+
+2005-10-26  Jonathan Pryor <jonpryor@vt.edu>
+
 	* Stdlib.cs: FilePosition should derive from MarshalByRefObject, for two
 	  reasons: (1) it's a recommendation from FxCop that classes implementing
 	  IDisposable also derive from MarshalByRefObject; (2) FilePosition is
