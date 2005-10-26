@@ -33,7 +33,7 @@ using System.Globalization;
 
 namespace System.Configuration
 {
-	public class GenericEnumConverter: ConfigurationConverterBase
+	public sealed class GenericEnumConverter: ConfigurationConverterBase
 	{
 		Type typeEnum;
 
