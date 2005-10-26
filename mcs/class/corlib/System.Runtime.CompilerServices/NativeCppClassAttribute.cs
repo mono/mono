@@ -1,5 +1,5 @@
 //
-// System.Runtime.CompilerServices.NGenAttribute
+// System.Runtime.CompilerServices.NativeCppClassAttribute
 //
 // Author: Zoltan Varga (vargaz@gmail.com)
 //
@@ -32,23 +32,11 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
-	[AttributeUsage (AttributeTargets.Assembly)] 
-	[Serializable]
-	[ComVisible (false)]
-	public sealed class NGenAttribute : Attribute
+	[AttributeUsage(AttributeTargets.Struct, Inherited=true)] 
+	[Serializable] 
+	[ComVisible(true)] 
+	public sealed class NativeCppClassAttribute : Attribute
 	{
-		NGenHint hint;
-
-		public NGenAttribute (NGenHint hintArgument)
-		{
-			hint = hintArgument;
-		}
-
-		public NGenHint NGenHint {
-			get {
-				return hint;
-			}
-		}
 	}
 }
 

@@ -1,5 +1,9 @@
 2005-10-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* TypeForwardedToAttribute.cs SuppressIldasmAttribute.cs TypeForwardedToAttribute.cs: Add new net 2.0 classes.
+
+	* NGenHint.cs NGenAttribute.cs: Remove obsolete net 2.0 classes.
+
 	* *.cs: Add/remove net 2.0 attributes.
 
 2005-10-07  Zoltan Varga  <vargaz@gmail.com>

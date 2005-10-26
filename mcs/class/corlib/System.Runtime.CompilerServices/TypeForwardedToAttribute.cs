@@ -1,5 +1,5 @@
 //
-// System.Runtime.CompilerServices.NGenHint
+// System.Runtime.CompilerServices.TypeForwardedToAttribute
 //
 // Author: Zoltan Varga (vargaz@gmail.com)
 //
@@ -32,16 +32,20 @@ using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
-	[ComVisible (false)]
-	public enum NGenHint {
+	[AttributeUsageAttribute(AttributeTargets.Assembly, AllowMultiple=true, Inherited=false)] 
+	public sealed class TypeForwardedToAttribute : Attribute
+	{
+		private Type destination;
 
-		Default = 0,
+		public TypeForwardedToAttribute (Type destination) {
+			this.destination = destination;
+		}
 
-		Eager = 1,
-
-		Lazy = 2,
-
-		Never = 3
+		public Type Destination {
+			get {
+				return destination;
+			}
+		}
 	}
 }
 
