@@ -522,6 +522,7 @@ System.Runtime.CompilerServices/InternalsVisibleToAttribute.cs
 System.Runtime.CompilerServices/IsBoxed.cs
 System.Runtime.CompilerServices/IsByValue.cs
 System.Runtime.CompilerServices/IsConst.cs
+System.Runtime.CompilerServices/IsCopyConstructed.cs
 System.Runtime.CompilerServices/IsExplicitlyDereferenced.cs
 System.Runtime.CompilerServices/IsImplicitlyDereferenced.cs
 System.Runtime.CompilerServices/IsJitIntrinsic.cs
