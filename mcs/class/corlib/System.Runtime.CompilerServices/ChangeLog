@@ -1,3 +1,7 @@
+2005-10-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* *.cs: Add/remove net 2.0 attributes.
+
 2005-10-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* RuntimeCompatibilityAttribute.cs RuntimeWrappedException.cs: New files.

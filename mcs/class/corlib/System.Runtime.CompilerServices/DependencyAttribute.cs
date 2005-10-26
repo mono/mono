@@ -34,7 +34,6 @@ namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple=true)] 
 	[Serializable]
-	[ComVisible (false)]
 	public sealed class DependencyAttribute : Attribute
 	{
 		string dependentAssembly;

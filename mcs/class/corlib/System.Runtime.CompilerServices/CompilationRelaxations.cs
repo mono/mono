@@ -28,10 +28,12 @@
 #if NET_2_0
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
 	[Flags]
+	[ComVisible (true)]
 	public enum CompilationRelaxations {
 		NoStringInterning = 8
 	}

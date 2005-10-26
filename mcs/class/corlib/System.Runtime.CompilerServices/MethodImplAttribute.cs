@@ -37,6 +37,9 @@ namespace System.Runtime.CompilerServices {
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor, 
 			Inherited=false)] 
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class MethodImplAttribute : Attribute {
 		MethodImplOptions _val;
 		

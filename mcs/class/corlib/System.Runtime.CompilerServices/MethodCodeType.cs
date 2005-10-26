@@ -32,10 +32,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Runtime.CompilerServices
 {
 #if !NET_2_0
 [Flags] 
+#endif
+#if NET_2_0
+ [ComVisible (true)]
 #endif
 public enum MethodCodeType
 {

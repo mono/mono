@@ -29,12 +29,16 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
 	[Serializable]
 	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter,
 			 Inherited=false)]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class IDispatchConstantAttribute : CustomConstantAttribute
 	{
 		public IDispatchConstantAttribute ()

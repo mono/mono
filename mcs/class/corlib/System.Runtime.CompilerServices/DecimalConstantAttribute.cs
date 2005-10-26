@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
@@ -38,6 +39,9 @@ namespace System.Runtime.CompilerServices {
 #endif
 	[AttributeUsage (AttributeTargets.Field | AttributeTargets.Parameter,
 			 Inherited=false)]
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	public sealed class DecimalConstantAttribute : Attribute
 	{
 		byte scale;

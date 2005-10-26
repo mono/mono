@@ -29,11 +29,15 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage (AttributeTargets.Parameter | AttributeTargets.Field, Inherited=false)] 
 	[Serializable]
+#if NET_2_0
+	[ComVisible(true)]
+#endif
 	public abstract class CustomConstantAttribute : Attribute
 	{
 		protected CustomConstantAttribute ()

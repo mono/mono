@@ -34,7 +34,6 @@ namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage (AttributeTargets.Assembly)] 
 	[Serializable]
-	[ComVisible (false)]
 	public sealed class DefaultDependencyAttribute : Attribute
 	{
 		LoadHint hint;

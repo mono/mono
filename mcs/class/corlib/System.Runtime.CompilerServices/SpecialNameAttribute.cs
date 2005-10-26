@@ -32,7 +32,6 @@ using System;
 namespace System.Runtime.CompilerServices {
 
 	[AttributeUsage (AttributeTargets.Class|AttributeTargets.Struct|AttributeTargets.Method|AttributeTargets.Property|AttributeTargets.Field|AttributeTargets.Event)]
-	[Serializable]
 	public sealed class SpecialNameAttribute : Attribute
 	{
 		public SpecialNameAttribute ()

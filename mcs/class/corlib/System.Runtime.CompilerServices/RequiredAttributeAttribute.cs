@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
@@ -39,6 +40,9 @@ namespace System.Runtime.CompilerServices {
 #endif
 			Inherited=false)]
 	[Serializable]
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	public sealed class RequiredAttributeAttribute : Attribute
 	{
 		public RequiredAttributeAttribute (Type requiredContract)

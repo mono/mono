@@ -32,6 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
@@ -40,6 +41,10 @@ namespace System.Runtime.CompilerServices {
 	/// </summary>
 #if !NET_2_0
 	[Flags]
+#endif
+#if NET_2_0
+	[Flags]
+	[ComVisible (true)]
 #endif
 	public enum MethodImplOptions {
 

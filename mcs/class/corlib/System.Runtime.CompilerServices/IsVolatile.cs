@@ -27,9 +27,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Runtime.InteropServices;
+
 namespace System.Runtime.CompilerServices {
 
 #if NET_2_0
+	[ComVisible (true)]
 	public static class IsVolatile {
 	}
 #else

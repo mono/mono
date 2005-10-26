@@ -29,12 +29,14 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace System.Runtime.CompilerServices {
 
 #if NET_2_0
 	[AttributeUsage (AttributeTargets.Assembly | AttributeTargets.Module | 
 		 AttributeTargets.Class | AttributeTargets.Method)]
+	[ComVisible(true)]
 #else
 	[AttributeUsage (AttributeTargets.Module)]
 #endif
