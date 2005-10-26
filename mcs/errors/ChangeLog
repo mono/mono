@@ -1,3 +1,7 @@
+2005-10-26  Raja R Harinath  <rharinath@novell.com>
+
+	* cs0103-3.cs: New test for #76271.
+
 2005-10-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* gcs1700.cs, gcs1726.cs, gcs0647.cs, gcs0647-2.cs: 

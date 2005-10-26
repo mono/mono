@@ -1,3 +1,12 @@
+2005-10-26  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76271.	
+	* ecore.cs (SimpleName.DoSimpleNameResolve): Make fall-back 
+	ResolveAsTypeStep silent.
+	* statement.cs (Block.AddConstant): Mark block as used.
+	(Block.ResolveMeta): Avoid piling on error messages
+	if a constant initializer resolution fails.
+
 2005-10-25  Raja R Harinath  <rharinath@novell.com>
 
 	* namespace.cs (RootNamespace.VerifyUsingForAll, Namespace.VerifyUsing):

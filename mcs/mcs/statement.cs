@@ -1563,6 +1563,9 @@ namespace Mono.CSharp {
 				constants = new Hashtable ();
 
 			constants.Add (name, value);
+
+			// A block is considered used if we perform an initialization in a local declaration, even if it is constant.
+			Use ();
 			return true;
 		}
 
@@ -1743,8 +1746,15 @@ namespace Mono.CSharp {
 					if (cv == null)
 						continue;
 
+					// Don't let 'const int Foo = Foo;' succeed.
+					// Removing the name from 'constants' ensures that we get a LocalVariableReference below,
+					// which in turn causes the 'must be constant' error to be triggered.
+					constants.Remove (name);
+
 					ec.CurrentBlock = this;
 					Expression e = cv.Resolve (ec);
+					if (e == null)
+						continue;
 
 					Constant ce = e as Constant;
 					if (ce == null){
@@ -1756,7 +1766,6 @@ namespace Mono.CSharp {
 					if (e == null)
 						continue;
 
-					constants.Remove (name);
 					constants.Add (name, e);
 				}
 			}
