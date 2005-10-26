@@ -1,3 +1,8 @@
+2005-10-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (module_add_cattrs): Save custom attributes for global methods
+	and fields as well.
+
 2005-10-26  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug-debugger.c
