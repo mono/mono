@@ -60,7 +60,7 @@ namespace System.Data.SqlTypes
             if (value != null && value.Length > 0)
             {
                 _value = new byte[value.Length];
-                java.lang.System.arraycopy(value, 0, _value, 0, value.Length);
+                Array.Copy (value, 0, _value, 0, value.Length);
             }
             else
                 _value = new byte[0];

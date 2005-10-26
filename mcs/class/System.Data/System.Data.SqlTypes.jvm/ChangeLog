@@ -1,0 +1,5 @@
+2005-10-26  Boris Kirzner  <borisk@mainsoft.com>
+
+	* SqlBinary.cs : Avoid ArrayTypeMismatch exception by 
+	using Array.Copy().
+
