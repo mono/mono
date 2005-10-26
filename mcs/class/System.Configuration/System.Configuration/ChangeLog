@@ -1,5 +1,7 @@
 2005-10-25  Chris Toshok  <toshok@ximian.com>
 
+	* InfiniteTimeSpanConverter.cs: new implementation.
+
 	* InfiniteIntConverter.cs: new implementation.
 
 	* GenericEnumConverter.cs: new implementation.
