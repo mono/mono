@@ -326,6 +326,7 @@ namespace Mono.Tools {
 			Hashtable asm_info = new Hashtable ();
 
 			foreach (string item in assembly_pieces) {
+				if (item == String.Empty) continue;
 				string[] pieces = item.Trim ().Split (new char[] { '=' }, 2);
 				if(pieces.Length == 1)
 					asm_info ["assembly"] = pieces [0];
