@@ -1,3 +1,7 @@
+2005-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ProtectionLevel.cs : fix enumeration.
+
 2004-09-13  Tim Coleman <tim@timcoleman.com>
 	* AuthenticatedStream.cs AuthenticationLevel.cs LocalCertSelectionCallback.cs
 	* NegotiateStream.cs ProtectionLevel.cs RemoteCertValidationCallback.cs

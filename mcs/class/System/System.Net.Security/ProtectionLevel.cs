@@ -35,9 +35,9 @@ namespace System.Net.Security
 {
 	public enum ProtectionLevel 
 	{
-		EncryptAndSign,
 		None,
-		Sign
+		Sign,
+		EncryptAndSign,
 	}
 }
 
