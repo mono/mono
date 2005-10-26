@@ -1,5 +1,7 @@
 2005-10-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* IsCopyConstructed.cs: New file.
+
 	* TypeForwardedToAttribute.cs SuppressIldasmAttribute.cs TypeForwardedToAttribute.cs: Add new net 2.0 classes.
 
 	* NGenHint.cs NGenAttribute.cs: Remove obsolete net 2.0 classes.
