@@ -34,14 +34,15 @@ using System.Configuration;
 
 namespace System.Net
 {
+	[Flags]
 	public enum AuthenticationSchemes {
 		None,
-		Anonymous,
-		Basic,
-		Digest,
-		Ntlm,
-		IntegratedWindowsAuthentication,
-		Negotiate
+		Digest = 1,
+		Negotiate = 2,
+		Ntlm = 4,
+		IntegratedWindowsAuthentication = 6,
+		Basic = 8,
+		Anonymous = 0x8000,
 	}
 }
 

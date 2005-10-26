@@ -1,3 +1,7 @@
+2005-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AuthenticationSchemes.cs : Fixed enum values and added [Flags].
+
 2005-10-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebClient.cs : added net_2_0 DownloadString() and DownloadData()
