@@ -1,3 +1,8 @@
+2005-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoMethod.cs : (ToString) add suffix " ByRef" for byref parameters.
+	  Fixed bug #76541.
+
 2005-10-04  Martin Baulig  <martin@ximian.com>
 
 	* MonoGenericClass.cs (MonoGenericClass.GetParentType): Changed

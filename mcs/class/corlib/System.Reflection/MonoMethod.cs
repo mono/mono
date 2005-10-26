@@ -225,6 +225,8 @@ namespace System.Reflection {
 					parms = parms + pt.Namespace + "." + pt.Name;
 				else
 					parms = parms + pt.Name;
+				if (pt.IsByRef)
+					parms += " ByRef";
 			}
 			if (ReturnType.IsClass && ReturnType.Namespace != "")
 				return ReturnType.Namespace + "." + ReturnType.Name + " " + Name + "(" + parms + ")";

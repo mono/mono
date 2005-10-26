@@ -109,6 +109,18 @@ namespace MonoTests.System.Reflection
 				a1 = 2;
 		}
 
+		public void HeyHey (out string out1, ref string ref1)
+		{
+			out1 = null;
+		}
+
+		[Test] // bug #76541
+		public void ToStringByRef ()
+		{
+			AssertEquals ("Void HeyHey(System.String ByRef, System.String ByRef)",
+				this.GetType ().GetMethod ("HeyHey").ToString ());
+		}
+
 #if NET_2_0
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]

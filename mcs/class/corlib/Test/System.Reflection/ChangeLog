@@ -1,3 +1,7 @@
+2005-10-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MethodInfoTest.cs : added test for bug #76541.
+
 2005-09-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* AssemblyNameTest.cs: Added some tests for the 2.0 new
