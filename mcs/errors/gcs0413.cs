@@ -1,3 +1,6 @@
+//gcs0413.cs: The as operator requires that the `T' type parameter be constrained by a class
+// Line: 7
+
 public class SomeClass {}
 
 public class Foo<T>  {
