@@ -1,3 +1,9 @@
+2005-10-26  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixIOException.cs: Add (string) and (string, Exception) constructors to
+	  silence FxCop; re-work logic so we lookup the error string at construction
+	  time and use this as the message for the base class.
+
 2005-10-25  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs, Syscall.cs: Filenames need to be marshaled through the 

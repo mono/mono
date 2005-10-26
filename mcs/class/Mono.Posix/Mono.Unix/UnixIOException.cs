@@ -37,36 +37,41 @@ namespace Mono.Unix {
 	[Serializable]
 	public class UnixIOException : IOException
 	{
+		private int error;
+
 		public UnixIOException ()
 			: this (Marshal.GetLastWin32Error())
 		{}
 		
 		public UnixIOException (int error)
+			: base (UnixMarshal.GetErrorDescription (Native.NativeConvert.ToErrno (error)))
 		{
 			this.error = error;
 		}
 		
 		public UnixIOException (int error, Exception inner)
-			: base ("Unix-generated exception", inner)
+			: base (UnixMarshal.GetErrorDescription (Native.NativeConvert.ToErrno (error)), inner)
 		{
 			this.error = error;
 		}
 
 		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno) constructor")]
 		public UnixIOException (Error error)
+			: base (UnixMarshal.GetErrorDescription (error))
 		{
 			this.error = UnixConvert.FromError (error);
 		}
 
 		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno, System.Exception) constructor")]
 		public UnixIOException (Error error, Exception inner)
-			: base ("Unix-generated exception", inner)
+			: base (UnixMarshal.GetErrorDescription (error), inner)
 		{
 			this.error = UnixConvert.FromError (error);
 		}
 
 		[CLSCompliant (false)]
 		public UnixIOException (Native.Errno error)
+			: base (UnixMarshal.GetErrorDescription (error))
 		{
 			this.error = Native.NativeConvert.FromErrno (error);
 		}
@@ -74,9 +79,21 @@ namespace Mono.Unix {
 		[Obsolete ("Use UnixIOException (Mono.Unix.Native.Errno, System.Exception) constructor")]
 		[CLSCompliant (false)]
 		public UnixIOException (Native.Errno error, Exception inner)
-			: base ("Unix-generated exception", inner)
+			: base (UnixMarshal.GetErrorDescription (error), inner)
 		{
 			this.error = Native.NativeConvert.FromErrno (error);
+		}
+
+		public UnixIOException (string message)
+			: base (message)
+		{
+			this.error = 0;
+		}
+
+		public UnixIOException (string message, Exception inner)
+			: base (message, inner)
+		{
+			this.error = 0;
 		}
 
 		protected UnixIOException (SerializationInfo info, StreamingContext context)
@@ -91,13 +108,6 @@ namespace Mono.Unix {
 		[Obsolete ("The type of this property will change in the next release")]
 		public Error ErrorCode {
 			get {return UnixConvert.ToError (error);}
-		}
-
-		private int error;
-
-		public override string ToString ()
-		{
-			return UnixMarshal.GetErrorDescription (ErrorCode);
 		}
 	}
 }
