@@ -1,3 +1,8 @@
+2005-10-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* hps.c (main): Applied patch from Robert Jordan (robertj@gmx.net). Fix
+	compilation with gcc 2.95.
+
 2005-07-04  Dick Porter  <dick@ximian.com>
 
 	* semdel.c: Fixed compilation on macos, put an error message back
