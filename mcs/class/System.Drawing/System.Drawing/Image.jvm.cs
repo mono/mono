@@ -407,7 +407,7 @@ namespace System.Drawing {
 		#region HorizontalResolution
 		public float HorizontalResolution {
 			get {
-				if (CurrentImage.HorizontalResolution == 0)
+				if (CurrentImage.HorizontalResolution <= 1)
 					return Graphics.DefaultScreenResolution;
 
 				return CurrentImage.HorizontalResolution;
@@ -496,7 +496,7 @@ namespace System.Drawing {
 		#region VerticalResolution
 		public float VerticalResolution {
 			get {
-				if (CurrentImage.VerticalResolution == 0)
+				if (CurrentImage.VerticalResolution <= 1)
 					return Graphics.DefaultScreenResolution;
 
 				return CurrentImage.VerticalResolution;

@@ -1,5 +1,9 @@
 2005-10-27 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* Image.jvm.cs: fixed redolution properties
+
+2005-10-27 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* Bitmap.jvm.cs: fixed InternalSave, to remove alpha channel of saved jpeg
 	fixed clone, Initialize
 
