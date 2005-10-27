@@ -99,8 +99,6 @@ namespace Mono.Unix.Native {
 	public enum SyslogFacility {
 		LOG_KERN      = 0 << 3,
 		LOG_USER      = 1 << 3,
-		[Obsolete ("use SyslogFacility.LOG_USER")]
-		LOG_USRE      = 1 << 3,
 		LOG_MAIL      = 2 << 3,
 		LOG_DAEMON    = 3 << 3,
 		LOG_AUTH      = 4 << 3,
@@ -3213,7 +3211,7 @@ namespace Mono.Unix.Native {
 
 		[DllImport (LIBC, SetLastError=true)]
 		[Obsolete ("Dropped in POSIX 1003.1-2001.  " +
-				"Use Unistd.sysconf (SysConf._SC_PAGESIZE).")]
+				"Use Syscall.sysconf (SysconfName._SC_PAGESIZE).")]
 		public static extern int getpagesize ();
 
 		// truncate(2)

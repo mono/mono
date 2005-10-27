@@ -1,3 +1,10 @@
+2005-10-27  Jonathan Pryor <jonpryor@vt.edu>
+
+	* Stdlib.cs: Correct return type of setbuf(IntPtr, byte*).
+	* Syscall.cs: Remove [Obsolete] SyslogFacility.LOG_USRE member
+	  (Mono.Unix.Native hasn't shipped yet, so nobody is using it); correct
+	  [Obsolete] comment for getpagesize().
+
 2005-10-26  Jonathan Pryor <jonpryor@vt.edu>
 
 	* FileNameMarshaler.cs: Deal with UnixMarshal method name changes.

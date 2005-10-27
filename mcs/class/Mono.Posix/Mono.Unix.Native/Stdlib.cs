@@ -634,9 +634,9 @@ namespace Mono.Unix.Native {
 		public static extern int setbuf (IntPtr stream, IntPtr buf);
 
 		[CLSCompliant (false)]
-		public static unsafe void setbuf (IntPtr stream, byte* buf)
+		public static unsafe int setbuf (IntPtr stream, byte* buf)
 		{
-			setbuf (stream, (IntPtr) buf);
+			return setbuf (stream, (IntPtr) buf);
 		}
 
 		[CLSCompliant (false)]
