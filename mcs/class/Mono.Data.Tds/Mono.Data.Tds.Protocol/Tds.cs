@@ -87,7 +87,7 @@ namespace Mono.Data.Tds.Protocol {
 		ArrayList outputParameters = new ArrayList ();
 		protected TdsInternalErrorCollection messages = new TdsInternalErrorCollection ();
 
-		int recordsAffected = 0;
+		int recordsAffected = -1;
 
 		#endregion // Fields
 
@@ -231,6 +231,11 @@ namespace Mono.Data.Tds.Protocol {
 		{
 			database = originalDatabase;
 			return true;
+		}
+
+		protected virtual bool IsValidRowCount (byte status, byte op)
+		{
+			return ((status & (0x10)) != 0) ;
 		}
 
 		public void Execute (string sql)
@@ -1062,14 +1067,15 @@ namespace Mono.Data.Tds.Protocol {
 
 			int rowCount = comm.GetTdsInt ();
 
-			if (op == (byte) 0xc1) 
-				rowCount = 0;
-
-                        bool validRowCount = ( (status & 0x10) != 0);
+			bool validRowCount = IsValidRowCount (status,op);
 
 			if (type == TdsPacketSubType.DoneInProc) {
-                                if (validRowCount && rowCount > 0)
-                                        recordsAffected += rowCount;
+                                if (validRowCount) {
+					if (recordsAffected == -1)
+						recordsAffected = rowCount; 
+					else 
+						recordsAffected += rowCount;
+				}
                         }
                         
 
@@ -1082,9 +1088,12 @@ namespace Mono.Data.Tds.Protocol {
 					goto case TdsPacketSubType.Done;
 
 				case TdsPacketSubType.Done:
-					if (validRowCount && rowCount > 0)
-						recordsAffected += rowCount;
-
+					if (validRowCount) {
+						if (recordsAffected == -1) 
+							recordsAffected = rowCount;
+						else
+							recordsAffected += rowCount;
+					}
 					break;
 			}
 

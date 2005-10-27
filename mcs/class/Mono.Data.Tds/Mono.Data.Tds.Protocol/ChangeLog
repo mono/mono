@@ -1,3 +1,13 @@
+2005-10-27  Senganal T  <tsenganal@novell.com>
+	
+	* Tds.cs :
+		- Added a virtual method IsValidRowCount ()
+		- Modified the way RecordsAffected is being counted
+
+	* Tds70.cs :
+		- Overrode IsValidRowCount(), to check if the rowcount
+		returned by sqlserver is valid.
+
 2005-10-19  Senganal T  <tsenganal@novell.com>
 
 	* TdsConnectionParameter.cs :

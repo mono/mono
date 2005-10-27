@@ -1,3 +1,11 @@
+2005-10-27  Senganal T  <tsenganal@novell.com>
+
+	* SqlCommand.cs 
+	* SqlDataReader.cs 
+	
+	Made changes so that the number of rows affected can be got directly from 
+	Tds regardsless of the type of query.Fixes bug #75698
+
 2005-10-19  Senganal T  <tsenganal@novell.com>
 
 	* SqlConnection.cs (SetProperties) :

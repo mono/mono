@@ -224,9 +224,16 @@ namespace MonoTests.System.Data.SqlClient
 				result = cmd.ExecuteNonQuery ();
 				Assert.AreEqual (1, result, "#3 One row shud be updated");
 
+				// Test Batch Commands 
+				cmd.CommandText = "Select id from numeric_family where id=1;";	
+				cmd.CommandText += "update numeric_family set type_int=10 where id=1000";
+				cmd.CommandText += "update numeric_family set type_int=10 where id=100";
+				result = cmd.ExecuteNonQuery ();	
+				Assert.AreEqual (1, result, "#4 One row shud be updated");
+				
 				cmd.CommandText = "Delete from numeric_family where id=100";
 				result = cmd.ExecuteNonQuery ();
-				Assert.AreEqual (1, result, "#4 One row shud be deleted");
+				Assert.AreEqual (1, result, "#5 One row shud be deleted");
 
 			}finally {
 				trans.Rollback ();

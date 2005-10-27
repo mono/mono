@@ -59,7 +59,6 @@ namespace System.Data.SqlClient {
 		bool disposed = false;
 		int fieldCount;
 		bool isClosed;
-		bool isSelect;
 		bool moreResults;
 		int resultsRead;
 		int rowsRead;
@@ -86,8 +85,7 @@ namespace System.Data.SqlClient {
 			resultsRead = 0;
 			fieldCount = 0;
 			isClosed = false;
-			isSelect = (command.CommandText.Trim ().ToUpper ().StartsWith ("SELECT"));
-			command.Tds.RecordsAffected = 0;
+			command.Tds.RecordsAffected = -1;
 			NextResult ();
 		}
 
@@ -141,10 +139,7 @@ namespace System.Data.SqlClient {
 #endif // NET_2_0
                 int RecordsAffected {
 			get { 
-				if (isSelect) 
-					return -1;
-				else
-					return command.Tds.RecordsAffected; 
+				return command.Tds.RecordsAffected; 
 			}
 		}
 

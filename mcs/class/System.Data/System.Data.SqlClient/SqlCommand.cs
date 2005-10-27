@@ -320,7 +320,7 @@ namespace System.Data.SqlClient {
 
 		private void Execute (CommandBehavior behavior, bool wantResults)
 		{
-                        Connection.Tds.RecordsAffected = 0;
+                        Connection.Tds.RecordsAffected = -1;
 			TdsMetaParameterCollection parms = Parameters.MetaParameters;
 			if (preparedStatement == null) {
 				bool schemaOnly = ((behavior & CommandBehavior.SchemaOnly) > 0);
@@ -370,19 +370,7 @@ namespace System.Data.SqlClient {
 
 			try {
 				Execute (CommandBehavior.Default, false);
-				if (commandType == CommandType.StoredProcedure)
-					result = -1;
-				else {
-					// .NET documentation says that except for INSERT, UPDATE and
-					// DELETE  where the return value is the number of rows affected
-					// for the rest of the commands the return value is -1.	
-					if ((CommandText.ToUpper().IndexOf("UPDATE")!=-1) ||
-					    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||  	
-					    (CommandText.ToUpper().IndexOf("DELETE")!=-1))	
-						result = Connection.Tds.RecordsAffected;
-					else
-						result = -1;
-				      }		
+				result = Connection.Tds.RecordsAffected;
 			}
 			catch (TdsTimeoutException e) {
 				throw SqlException.FromTdsInternalException ((TdsInternalException) e);
@@ -595,7 +583,7 @@ namespace System.Data.SqlClient {
                                                             object state)
                 {
                         IAsyncResult ar = null;
-                        Connection.Tds.RecordsAffected = 0;
+                        Connection.Tds.RecordsAffected = -1;
 			TdsMetaParameterCollection parms = Parameters.MetaParameters;
 			if (preparedStatement == null) {
 				bool schemaOnly = ((behavior & CommandBehavior.SchemaOnly) > 0);
@@ -675,20 +663,8 @@ namespace System.Data.SqlClient {
                         ValidateAsyncResult (ar, "EndExecuteNonQuery");
                         EndExecuteInternal (ar);
                         
-                        int ret;
-                        if (commandType == CommandType.StoredProcedure)
-                                ret = -1;
-                        else {
-                                // .NET documentation says that except for INSERT, UPDATE and
-                                // DELETE  where the return value is the number of rows affected
-                                // for the rest of the commands the return value is -1.	
-                                if ((CommandText.ToUpper().IndexOf("UPDATE")!=-1) ||
-                                    (CommandText.ToUpper().IndexOf("INSERT")!=-1) ||  	
-                                    (CommandText.ToUpper().IndexOf("DELETE")!=-1))	
-                                        ret = Connection.Tds.RecordsAffected;
-                                else
-                                        ret = -1;
-                        }
+			int ret = Connection.Tds.RecordsAffected;
+
                         GetOutputParameters ();
                         ( (SqlAsyncResult) ar).Ended = true;
                         return ret;

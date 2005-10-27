@@ -587,6 +587,13 @@ namespace Mono.Data.Tds.Protocol {
 			parms.Add (new TdsMetaParameter ("@P1", "int", Int32.Parse (statementId)));
 			ExecProc ("sp_unprepare", parms, 0, false);
 		}
+		
+		protected override bool IsValidRowCount (byte status, byte op)
+		{
+			if ((status & (byte)0x10) == 0 || op == (byte)0xc1)
+				return false;
+			return true; 
+		}
 
 		#endregion // Methods
 
