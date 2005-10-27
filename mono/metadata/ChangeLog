@@ -1,3 +1,8 @@
+2005-10-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_reflection_get_custom_attrs_info): Add support
+	for Method/Constructor/FieldBuilders.
+
 2005-10-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (module_add_cattrs): Save custom attributes for global methods
