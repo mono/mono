@@ -97,11 +97,22 @@ namespace System.Reflection.Emit {
 		}
 
 		public override object[] GetCustomAttributes(bool inherit) {
-			throw CreateNotSupportedException ();
+			/*
+			 * On MS.NET, this always returns not_supported, but we can't do this
+			 * since there would be no way to obtain custom attributes of 
+			 * dynamically created ctors.
+			 */
+			if (typeb.is_created)
+				return MonoCustomAttrs.GetCustomAttributes (this, inherit);
+			else
+				throw CreateNotSupportedException ();
 		}
 
 		public override object[] GetCustomAttributes(Type attributeType, bool inherit) {
-			throw CreateNotSupportedException ();
+			if (typeb.is_created)
+				return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+			else
+				throw CreateNotSupportedException ();
 		}
 
 		public FieldToken GetToken() {

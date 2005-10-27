@@ -235,11 +235,24 @@ namespace System.Reflection.Emit {
 			throw NotSupported ();
 		}
 		public override object[] GetCustomAttributes( bool inherit) {
-			throw NotSupported ();
+			/*
+			 * On MS.NET, this always returns not_supported, but we can't do this
+			 * since there would be no way to obtain custom attributes of 
+			 * dynamically created ctors.
+			 */
+			if (type.is_created)
+				return MonoCustomAttrs.GetCustomAttributes (this, inherit);
+			else
+				throw NotSupported ();
 		}
+
 		public override object[] GetCustomAttributes( Type attributeType, bool inherit) {
-			throw NotSupported ();
+			if (type.is_created)
+				return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+			else
+				throw NotSupported ();
 		}
+
 		public ILGenerator GetILGenerator () {
 			return GetILGenerator (64);
 		}

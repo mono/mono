@@ -1,3 +1,10 @@
+2005-10-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldBuilder.cs MethodBuilder.cs ConstructorBuilder.cs: Add support for
+	returing custom attributes in created types. MS.NET supports this by
+	returning non-builder objects from GetMethod/GetField etc., but we return
+	builder objects in this case. Fixes #76521.
+
 2005-10-24  Martin Baulig  <martin@ximian.com>
 
 	* TypeBuilder.cs (TypeBuilder.IsGenericTypeDefinition): Override this.
