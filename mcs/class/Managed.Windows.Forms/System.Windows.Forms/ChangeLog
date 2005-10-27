@@ -1,3 +1,8 @@
+2005-10-27  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIX11.cs: Fixed FIXME - implemented ASCII encoding for XA_STRING
+	  clipboard requests
+
 2005-10-27  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNode.cs: Implement serialization so my DnD examples will work.

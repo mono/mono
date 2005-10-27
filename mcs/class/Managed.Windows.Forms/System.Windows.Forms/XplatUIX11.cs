@@ -1029,25 +1029,36 @@ namespace System.Windows.Forms {
 							IntPtr	buffer;
 							int	buflen;
 
-							buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
 							buflen = 0;
-							while (Marshal.ReadByte(buffer, buflen) != 0) {
-								buflen++;
-							}
 
-							// FIXME - we're sending UTF8 always, probably not so nice...
 							if (xevent.SelectionRequestEvent.target == (int)Atom.XA_STRING) {
-								XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, xevent.SelectionRequestEvent.property, xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
-								sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
+								Byte[] bytes;
+
+								bytes = new ASCIIEncoding().GetBytes((string)Clipboard.Item);
+								buffer = Marshal.AllocHGlobal(bytes.Length);
+								buflen = bytes.Length;
+
+								for (int i = 0; i < buflen; i++) {
+									Marshal.WriteByte(buffer, i, bytes[i]);
+								}
 							} else if (xevent.SelectionRequestEvent.target == NetAtoms[(int)NA.OEMTEXT]) {
-								XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, xevent.SelectionRequestEvent.property, xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
-								sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
+								// FIXME - this should encode into ISO2022
+								buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
+								while (Marshal.ReadByte(buffer, buflen) != 0) {
+									buflen++;
+								}
 							} else if (xevent.SelectionRequestEvent.target == NetAtoms[(int)NA.UNICODETEXT]) {
-								XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, xevent.SelectionRequestEvent.property, xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
-								sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
+								buffer = Marshal.StringToHGlobalAnsi((string)Clipboard.Item);
+								while (Marshal.ReadByte(buffer, buflen) != 0) {
+									buflen++;
+								}
+							} else {
+								buffer = IntPtr.Zero;
 							}
 
 							if (buffer != IntPtr.Zero) {
+								XChangeProperty(DisplayHandle, xevent.SelectionRequestEvent.requestor, xevent.SelectionRequestEvent.property, xevent.SelectionRequestEvent.target, 8, PropertyMode.Replace, buffer, buflen);
+								sel_event.SelectionEvent.property = xevent.SelectionRequestEvent.property;
 								Marshal.FreeHGlobal(buffer);
 							}
 						} else if (Clipboard.Item is Image) {
