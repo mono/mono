@@ -39,7 +39,7 @@ namespace MonoTests.Mono.Unix {
 #endif
 
 		[Test]
-		public void TestStringToAlloc ()
+		public void TestStringToHeap ()
 		{
 			object[] data = {
 				"Hello, world!", true, true,
@@ -51,23 +51,23 @@ namespace MonoTests.Mono.Unix {
 				bool valid_ascii   = (bool)   data [i+1];
 				bool valid_unicode = (bool)   data [i+2];
 
-				TestStringToAlloc (s, valid_ascii, valid_unicode);
+				TestStringToHeap (s, valid_ascii, valid_unicode);
 			}
 		}
 
-		private static void TestStringToAlloc (string s, bool validAscii, bool validUnicode)
+		private static void TestStringToHeap (string s, bool validAscii, bool validUnicode)
 		{
-			TestStringToAlloc (s, Encoding.ASCII, validAscii);
-			TestStringToAlloc (s, Encoding.UTF7, validUnicode);
-			TestStringToAlloc (s, Encoding.UTF8, validUnicode);
-			TestStringToAlloc (s, Encoding.Unicode, validUnicode);
-			TestStringToAlloc (s, Encoding.BigEndianUnicode, validUnicode);
-			TestStringToAlloc (s, new RandomEncoding (), validUnicode);
+			TestStringToHeap (s, Encoding.ASCII, validAscii);
+			TestStringToHeap (s, Encoding.UTF7, validUnicode);
+			TestStringToHeap (s, Encoding.UTF8, validUnicode);
+			TestStringToHeap (s, Encoding.Unicode, validUnicode);
+			TestStringToHeap (s, Encoding.BigEndianUnicode, validUnicode);
+			TestStringToHeap (s, new RandomEncoding (), validUnicode);
 		}
 
-		private static void TestStringToAlloc (string s, Encoding e, bool mustBeEqual)
+		private static void TestStringToHeap (string s, Encoding e, bool mustBeEqual)
 		{
-			IntPtr p = UnixMarshal.StringToAlloc (s, e);
+			IntPtr p = UnixMarshal.StringToHeap (s, e);
 			try {
 				string _s = UnixMarshal.PtrToString (p, e);
 				if (mustBeEqual)

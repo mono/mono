@@ -39,7 +39,7 @@ namespace Mono.Unix {
 
 		public static readonly char DirectorySeparatorChar = '/';
 		public static readonly char AltDirectorySeparatorChar = '/';
-		public static readonly char[] InvalidPathChars = new char[]{'\0'};
+		public static readonly char[] InvalidPathChars = new char[]{};
 		public static readonly char PathSeparator = ':';
 		public static readonly char VolumeSeparatorChar = '/';
 

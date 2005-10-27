@@ -1,5 +1,12 @@
 2005-10-26  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixEncoding.cs: Change EscapeByte to 0x0000, as suggested by Michal
+	  Moskal.
+	* UnixPath.cs: Remove '\0' from InvalidPathChars, since U+0000 is now used
+	  as the path escape character for marshaling purposes.
+
+2005-10-26  Jonathan Pryor <jonpryor@vt.edu>
+
 	* UnixMarshal.cs: Obsolete heap-related methods to have a Heap suffix
 	  (AllocHeap, FreeHeap, etc.), and change StringToAlloc() to be
 	  StringToHeap().  This creates a stronger name association between related

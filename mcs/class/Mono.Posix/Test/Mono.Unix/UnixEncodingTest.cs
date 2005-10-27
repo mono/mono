@@ -112,11 +112,11 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = new byte [] { 0xC0, 0xAF };
 			string s = u.GetString (data);
 			AssertEquals (4, s.Length);
-			AssertEquals (0xFFFF, (int) s [0]);
+			AssertEquals (0x0000, (int) s [0]);
 			AssertEquals (0xC0,   (int) s [1]);
-			AssertEquals (0xFFFF, (int) s [2]);
+			AssertEquals (0x0000, (int) s [2]);
 			AssertEquals (0xAF,   (int) s [3]);
-			AssertEquals ("Output-TestThrowOnInvalid", "\uFFFF\xC0\uFFFF\xAF", s);
+			AssertEquals ("Output-TestThrowOnInvalid", "\u0000\xC0\u0000\xAF", s);
 			AssertEquals ("Reconverted-TestThrowOnInvalid", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 
 			data = new byte [] { 0x30, 0x31, 0xC0, 0xAF, 0x30, 0x32 };
@@ -124,14 +124,14 @@ namespace MonoTests.Mono.Unix {
 			AssertEquals (8, s.Length);
 			AssertEquals (0x30,   (int) s [0]);
 			AssertEquals (0x31,   (int) s [1]);
-			AssertEquals (0xFFFF, (int) s [2]);
+			AssertEquals (0x0000, (int) s [2]);
 			AssertEquals (0xC0,   (int) s [3]);
-			AssertEquals (0xFFFF, (int) s [4]);
+			AssertEquals (0x0000, (int) s [4]);
 			AssertEquals (0xAF,   (int) s [5]);
 			AssertEquals (0x30,   (int) s [6]);
 			AssertEquals (0x32,   (int) s [7]);
 
-			AssertEquals ("Output-TestThrowOnInvalid2", "\x30\x31\uFFFF\xC0\uFFFF\xAF\x30\x32", s);
+			AssertEquals ("Output-TestThrowOnInvalid2", "\x30\x31\u0000\xC0\u0000\xAF\x30\x32", s);
 			AssertEquals ("Reconverted-TestThrowOnInvalid2", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -177,7 +177,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data215 = { 0xF8, 0x88, 0x80, 0x80, 0x80 };
 			string s = unix.GetString (data215);
-			AssertEquals ("Output-5", "\uFFFF\xF8\uFFFF\x88\uFFFF\x80\uFFFF\x80\uFFFF\x80", s);
+			AssertEquals ("Output-5", "\u0000\xF8\u0000\x88\u0000\x80\u0000\x80\u0000\x80", s);
 			AssertEquals ("Reconverted-5", BitConverter.ToString (data215), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -186,7 +186,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data216 = { 0xFC, 0x84, 0x80, 0x80, 0x80, 0x80 };
 			string s = unix.GetString (data216);
-			AssertEquals ("Output-6", "\uFFFF\xFC\uFFFF\x84\uFFFF\x80\uFFFF\x80\uFFFF\x80\uFFFF\x80", s);
+			AssertEquals ("Output-6", "\u0000\xFC\u0000\x84\u0000\x80\u0000\x80\u0000\x80\u0000\x80", s);
 			AssertEquals ("Reconverted-6", BitConverter.ToString (data216), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -216,7 +216,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data224 = { 0x7F, 0xBF, 0xBF, 0xBF };
 			string s = unix.GetString (data224);
 			AssertEquals ("Output-4", 
-					"\x7F\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF", s);
+					"\x7F\u0000\xBF\u0000\xBF\u0000\xBF", s);
 			AssertEquals ("Reconverted-4", BitConverter.ToString (data224), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -225,7 +225,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data225 = { 0xFB, 0xBF, 0xBF, 0xBF, 0xBF };
 			string s = unix.GetString (data225);
-			AssertEquals ("Output-5", "\uFFFF\xFB\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF", s);
+			AssertEquals ("Output-5", "\u0000\xFB\u0000\xBF\u0000\xBF\u0000\xBF\u0000\xBF", s);
 			AssertEquals ("Reconverted-5", BitConverter.ToString (data225), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -234,7 +234,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data226 = { 0xFD, 0xBF, 0xBF, 0xBF, 0xBF, 0xBF };
 			string s = unix.GetString (data226);
-			AssertEquals ("Output-6", "\uFFFF\xFD\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF", s);
+			AssertEquals ("Output-6", "\u0000\xFD\u0000\xBF\u0000\xBF\u0000\xBF\u0000\xBF\u0000\xBF", s);
 			AssertEquals ("Reconverted-6", BitConverter.ToString (data226), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -268,7 +268,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data235 = { 0xF4, 0x90, 0x80, 0x80 };
 			string s = unix.GetString (data235);
-			AssertEquals ("Output-5", "\uFFFF\xF4\uFFFF\x90\uFFFF\x80\uFFFF\x80", s);
+			AssertEquals ("Output-5", "\u0000\xF4\u0000\x90\u0000\x80\u0000\x80", s);
 			AssertEquals ("Reconverted-5", BitConverter.ToString (data235), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -277,7 +277,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data = { 0x80 };
 			string s = unix.GetString (data);
-			AssertEquals ("Output-311", "\uFFFF\x80", s);
+			AssertEquals ("Output-311", "\u0000\x80", s);
 			AssertEquals ("Reconverted-311", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -286,7 +286,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data = { 0xBF };
 			string s = unix.GetString (data);
-			AssertEquals ("Output-312", "\uFFFF\xBF", s);
+			AssertEquals ("Output-312", "\u0000\xBF", s);
 			AssertEquals ("Reconverted-313", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -295,7 +295,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data = { 0x80, 0xBF };
 			string s = unix.GetString (data);
-			AssertEquals ("Output-313", "\uFFFF\x80\uFFFF\xBF", s);
+			AssertEquals ("Output-313", "\u0000\x80\u0000\xBF", s);
 			AssertEquals ("Reconverted-313", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -304,7 +304,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data = { 0x80, 0xBF, 0x80 };
 			string s = unix.GetString (data);
-			AssertEquals ("Output-314", "\uFFFF\x80\uFFFF\xBF\uFFFF\x80", s);
+			AssertEquals ("Output-314", "\u0000\x80\u0000\xBF\u0000\x80", s);
 			AssertEquals ("Reconverted-314", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -313,7 +313,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data = { 0x80, 0xBF, 0x80, 0xBF };
 			string s = unix.GetString (data);
-			AssertEquals ("Output-315", "\uFFFF\x80\uFFFF\xBF\uFFFF\x80\uFFFF\xBF", s);
+			AssertEquals ("Output-315", "\u0000\x80\u0000\xBF\u0000\x80\u0000\xBF", s);
 			AssertEquals ("Reconverted-315", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -323,7 +323,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0x80, 0xBF, 0x80, 0xBF, 0x80 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-316", 
-					"\uFFFF\x80\uFFFF\xBF\uFFFF\x80\uFFFF\xBF\uFFFF\x80", s);
+					"\u0000\x80\u0000\xBF\u0000\x80\u0000\xBF\u0000\x80", s);
 			AssertEquals ("Reconverted-316", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -333,7 +333,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-317", 
-					"\uFFFF\x80\uFFFF\xBF\uFFFF\x80\uFFFF\xBF\uFFFF\x80\uFFFF\xBF", s);
+					"\u0000\x80\u0000\xBF\u0000\x80\u0000\xBF\u0000\x80\u0000\xBF", s);
 			AssertEquals ("Reconverted-317", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -343,7 +343,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF, 0x80 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-318", 
-					"\uFFFF\x80\uFFFF\xBF\uFFFF\x80\uFFFF\xBF\uFFFF\x80\uFFFF\xBF\uFFFF\x80", s);
+					"\u0000\x80\u0000\xBF\u0000\x80\u0000\xBF\u0000\x80\u0000\xBF\u0000\x80", s);
 			AssertEquals ("Reconverted-318", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -358,14 +358,14 @@ namespace MonoTests.Mono.Unix {
 				0xB0, 0xB1, 0xB2, 0xB3, 0xB4, 0xB5, 0xB6, 0xB7, 0xB8, 0xB9, 0xBA, 0xBB, 0xBC, 0xBD, 0xBE, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-319", 
-					"\uFFFF\x80\uFFFF\x81\uFFFF\x82\uFFFF\x83\uFFFF\x84\uFFFF\x85\uFFFF\x86\uFFFF\x87" +
-					"\uFFFF\x88\uFFFF\x89\uFFFF\x8A\uFFFF\x8B\uFFFF\x8C\uFFFF\x8D\uFFFF\x8E\uFFFF\x8F" +
-					"\uFFFF\x90\uFFFF\x91\uFFFF\x92\uFFFF\x93\uFFFF\x94\uFFFF\x95\uFFFF\x96\uFFFF\x97" +
-					"\uFFFF\x98\uFFFF\x99\uFFFF\x9A\uFFFF\x9B\uFFFF\x9C\uFFFF\x9D\uFFFF\x9E\uFFFF\x9F" +
-					"\uFFFF\xA0\uFFFF\xA1\uFFFF\xA2\uFFFF\xA3\uFFFF\xA4\uFFFF\xA5\uFFFF\xA6\uFFFF\xA7" +
-					"\uFFFF\xA8\uFFFF\xA9\uFFFF\xAA\uFFFF\xAB\uFFFF\xAC\uFFFF\xAD\uFFFF\xAE\uFFFF\xAF" +
-					"\uFFFF\xB0\uFFFF\xB1\uFFFF\xB2\uFFFF\xB3\uFFFF\xB4\uFFFF\xB5\uFFFF\xB6\uFFFF\xB7" +
-					"\uFFFF\xB8\uFFFF\xB9\uFFFF\xBA\uFFFF\xBB\uFFFF\xBC\uFFFF\xBD\uFFFF\xBE\uFFFF\xBF",
+					"\u0000\x80\u0000\x81\u0000\x82\u0000\x83\u0000\x84\u0000\x85\u0000\x86\u0000\x87" +
+					"\u0000\x88\u0000\x89\u0000\x8A\u0000\x8B\u0000\x8C\u0000\x8D\u0000\x8E\u0000\x8F" +
+					"\u0000\x90\u0000\x91\u0000\x92\u0000\x93\u0000\x94\u0000\x95\u0000\x96\u0000\x97" +
+					"\u0000\x98\u0000\x99\u0000\x9A\u0000\x9B\u0000\x9C\u0000\x9D\u0000\x9E\u0000\x9F" +
+					"\u0000\xA0\u0000\xA1\u0000\xA2\u0000\xA3\u0000\xA4\u0000\xA5\u0000\xA6\u0000\xA7" +
+					"\u0000\xA8\u0000\xA9\u0000\xAA\u0000\xAB\u0000\xAC\u0000\xAD\u0000\xAE\u0000\xAF" +
+					"\u0000\xB0\u0000\xB1\u0000\xB2\u0000\xB3\u0000\xB4\u0000\xB5\u0000\xB6\u0000\xB7" +
+					"\u0000\xB8\u0000\xB9\u0000\xBA\u0000\xBB\u0000\xBC\u0000\xBD\u0000\xBE\u0000\xBF",
 					s);
 			AssertEquals ("Reconverted-319", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
@@ -380,10 +380,10 @@ namespace MonoTests.Mono.Unix {
 				0xD8, 0x20, 0xD9, 0x20, 0xDA, 0x20, 0xDB, 0x20, 0xDC, 0x20, 0xDD, 0x20, 0xDE, 0x20, 0xDF, 0x20 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_2_LonelyStart_321",
-					"\uFFFF\xC0 \uFFFF\xC1 \uFFFF\xC2 \uFFFF\xC3 \uFFFF\xC4 \uFFFF\xC5 \uFFFF\xC6 \uFFFF\xC7 " +
-					"\uFFFF\xC8 \uFFFF\xC9 \uFFFF\xCA \uFFFF\xCB \uFFFF\xCC \uFFFF\xCD \uFFFF\xCE \uFFFF\xCF " +
-					"\uFFFF\xD0 \uFFFF\xD1 \uFFFF\xD2 \uFFFF\xD3 \uFFFF\xD4 \uFFFF\xD5 \uFFFF\xD6 \uFFFF\xD7 " +
-					"\uFFFF\xD8 \uFFFF\xD9 \uFFFF\xDA \uFFFF\xDB \uFFFF\xDC \uFFFF\xDD \uFFFF\xDE \uFFFF\xDF ",
+					"\u0000\xC0 \u0000\xC1 \u0000\xC2 \u0000\xC3 \u0000\xC4 \u0000\xC5 \u0000\xC6 \u0000\xC7 " +
+					"\u0000\xC8 \u0000\xC9 \u0000\xCA \u0000\xCB \u0000\xCC \u0000\xCD \u0000\xCE \u0000\xCF " +
+					"\u0000\xD0 \u0000\xD1 \u0000\xD2 \u0000\xD3 \u0000\xD4 \u0000\xD5 \u0000\xD6 \u0000\xD7 " +
+					"\u0000\xD8 \u0000\xD9 \u0000\xDA \u0000\xDB \u0000\xDC \u0000\xDD \u0000\xDE \u0000\xDF ",
 					s
 					);
 			AssertEquals ("Reconverted-T3_Malformed_2_LonelyStart_321",
@@ -398,8 +398,8 @@ namespace MonoTests.Mono.Unix {
 				0xE8, 0x20, 0xE9, 0x20, 0xEA, 0x20, 0xEB, 0x20, 0xEC, 0x20, 0xED, 0x20, 0xEE, 0x20, 0xEF, 0x20 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_2_LonelyStart_322",
-					"\uFFFF\xE0 \uFFFF\xE1 \uFFFF\xE2 \uFFFF\xE3 \uFFFF\xE4 \uFFFF\xE5 \uFFFF\xE6 \uFFFF\xE7 " +
-					"\uFFFF\xE8 \uFFFF\xE9 \uFFFF\xEA \uFFFF\xEB \uFFFF\xEC \uFFFF\xED \uFFFF\xEE \uFFFF\xEF ",
+					"\u0000\xE0 \u0000\xE1 \u0000\xE2 \u0000\xE3 \u0000\xE4 \u0000\xE5 \u0000\xE6 \u0000\xE7 " +
+					"\u0000\xE8 \u0000\xE9 \u0000\xEA \u0000\xEB \u0000\xEC \u0000\xED \u0000\xEE \u0000\xEF ",
 					s
 					);
 			AssertEquals ("Reconverted-T3_Malformed_2_LonelyStart_322",
@@ -412,7 +412,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF0, 0x20, 0xF1, 0x20, 0xF2, 0x20, 0xF3, 0x20, 0xF4, 0x20, 0xF5, 0x20, 0xF6, 0x20, 0xF7, 0x20 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_2_LonelyStart_323",
-					"\uFFFF\xF0 \uFFFF\xF1 \uFFFF\xF2 \uFFFF\xF3 \uFFFF\xF4 \uFFFF\xF5 \uFFFF\xF6 \uFFFF\xF7 ",
+					"\u0000\xF0 \u0000\xF1 \u0000\xF2 \u0000\xF3 \u0000\xF4 \u0000\xF5 \u0000\xF6 \u0000\xF7 ",
 					s
 					);
 			AssertEquals ("Reconverted-T3_Malformed_2_LonelyStart_323",
@@ -425,7 +425,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF0, 0x20, 0xF1, 0x20, 0xF2, 0x20, 0xF3, 0x20, 0xF4, 0x20, 0xF5, 0x20, 0xF6, 0x20, 0xF7, 0x20 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_2_LonelyStart_324",
-					"\uFFFF\xF0 \uFFFF\xF1 \uFFFF\xF2 \uFFFF\xF3 \uFFFF\xF4 \uFFFF\xF5 \uFFFF\xF6 \uFFFF\xF7 ",
+					"\u0000\xF0 \u0000\xF1 \u0000\xF2 \u0000\xF3 \u0000\xF4 \u0000\xF5 \u0000\xF6 \u0000\xF7 ",
 					s
 					);
 			AssertEquals ("Reconverted-T3_Malformed_2_LonelyStart_324",
@@ -437,7 +437,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data = { 0xFC, 0x20, 0xFD, 0x20 };
 			string s = unix.GetString (data);
-			AssertEquals ("Output-T3_Malformed_2_LonelyStart_324", "\uFFFF\xFC \uFFFF\xFD ", s);
+			AssertEquals ("Output-T3_Malformed_2_LonelyStart_324", "\u0000\xFC \u0000\xFD ", s);
 			AssertEquals ("Reconverted-T3_Malformed_2_LonelyStart_324",
 					BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
@@ -447,7 +447,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data = { 0xC0 };
 			string s = unix.GetString (data);
-			AssertEquals ("Output-T3_Malformed_3_LastContinuationMissing_331", "\uFFFF\xC0", s);
+			AssertEquals ("Output-T3_Malformed_3_LastContinuationMissing_331", "\u0000\xC0", s);
 			AssertEquals ("Reconverted-T3_Malformed_3_LastContinuationMissing_331",
 					BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
@@ -465,7 +465,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF0, 0x80, 0x80 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_3_LastContinuationMissing_333", 
-					"\uFFFF\xF0\uFFFF\x80\uFFFF\x80", s);
+					"\u0000\xF0\u0000\x80\u0000\x80", s);
 			AssertEquals ("Reconverted-T3_Malformed_3_LastContinuationMissing_333",
 					BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
@@ -476,7 +476,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF8, 0x80, 0x80, 0x80 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_3_LastContinuationMissing_334", 
-					"\uFFFF\xF8\uFFFF\x80\uFFFF\x80\uFFFF\x80", s);
+					"\u0000\xF8\u0000\x80\u0000\x80\u0000\x80", s);
 			AssertEquals ("Reconverted-T3_Malformed_3_LastContinuationMissing_334",
 					BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
@@ -487,7 +487,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xFC, 0x80, 0x80, 0x80, 0x80 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_3_LastContinuationMissing_335", 
-					"\uFFFF\xFC\uFFFF\x80\uFFFF\x80\uFFFF\x80\uFFFF\x80", s);
+					"\u0000\xFC\u0000\x80\u0000\x80\u0000\x80\u0000\x80", s);
 			AssertEquals ("Reconverted-T3_Malformed_3_LastContinuationMissing_335",
 					BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
@@ -498,7 +498,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xDF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_3_LastContinuationMissing_336", 
-					"\uFFFF\xDF", s);
+					"\u0000\xDF", s);
 			AssertEquals ("Reconverted-T3_Malformed_3_LastContinuationMissing_336",
 					BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
@@ -509,7 +509,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xEF, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_3_LastContinuationMissing_337", 
-					"\uFFFF\xEF\uFFFF\xBF", s);
+					"\u0000\xEF\u0000\xBF", s);
 			AssertEquals ("Reconverted-T3_Malformed_3_LastContinuationMissing_337",
 					BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
@@ -520,7 +520,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF7, 0xBF, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_3_LastContinuationMissing_338", 
-					"\uFFFF\xF7\uFFFF\xBF\uFFFF\xBF", s);
+					"\u0000\xF7\u0000\xBF\u0000\xBF", s);
 			AssertEquals ("Reconverted-T3_Malformed_3_LastContinuationMissing_338",
 					BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
@@ -531,7 +531,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF, 0xBF, 0xBF, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-339", 
-					"\xF\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF", s);
+					"\xF\u0000\xBF\u0000\xBF\u0000\xBF", s);
 			AssertEquals ("Reconverted-339", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -541,7 +541,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xFD, 0xBF, 0xBF, 0xBF, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-3310", 
-					"\uFFFF\xFD\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF", s);
+					"\u0000\xFD\u0000\xBF\u0000\xBF\u0000\xBF\u0000\xBF", s);
 			AssertEquals ("Reconverted-3310", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -553,10 +553,10 @@ namespace MonoTests.Mono.Unix {
 				0xEF, 0xBF, 0xF7, 0xBF, 0xBF, 0xFB, 0xBF, 0xBF, 0xBF, 0xFD, 0xBF, 0xBF, 0xBF, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T3_Malformed_4_ConcatenationImcomplete", 
-					"\uFFFF\xC0\uFFFF\xE0\uFFFF\x80\uFFFF\xF0\uFFFF\x80\uFFFF\x80\uFFFF\xF8\uFFFF\x80" +
-					"\uFFFF\x80\uFFFF\x80\uFFFF\xFC\uFFFF\x80\uFFFF\x80\uFFFF\x80\uFFFF\x80\uFFFF\xDF" +
-					"\uFFFF\xEF\uFFFF\xBF\uFFFF\xF7\uFFFF\xBF\uFFFF\xBF\uFFFF\xFB\uFFFF\xBF\uFFFF\xBF" +
-					"\uFFFF\xBF\uFFFF\xFD\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF",
+					"\u0000\xC0\u0000\xE0\u0000\x80\u0000\xF0\u0000\x80\u0000\x80\u0000\xF8\u0000\x80" +
+					"\u0000\x80\u0000\x80\u0000\xFC\u0000\x80\u0000\x80\u0000\x80\u0000\x80\u0000\xDF" +
+					"\u0000\xEF\u0000\xBF\u0000\xF7\u0000\xBF\u0000\xBF\u0000\xFB\u0000\xBF\u0000\xBF" +
+					"\u0000\xBF\u0000\xFD\u0000\xBF\u0000\xBF\u0000\xBF\u0000\xBF",
 					s);
 			AssertEquals ("Reconverted-T3_Malformed_4_ConcatenationImcomplete", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
@@ -566,7 +566,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data = { 0xFE };
 			string s = unix.GetString (data);
-			AssertEquals ("Output-351", "\uFFFF\xFE", s);
+			AssertEquals ("Output-351", "\u0000\xFE", s);
 			AssertEquals ("Reconverted-351", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -575,7 +575,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data = { 0xFF };
 			string s = unix.GetString (data);
-			AssertEquals ("Output-352", "\uFFFF\xFF", s);
+			AssertEquals ("Output-352", "\u0000\xFF", s);
 			AssertEquals ("Reconverted-352", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -584,7 +584,7 @@ namespace MonoTests.Mono.Unix {
 		{
 			byte[] data = { 0xFE, 0xFE, 0xFF, 0xFF };
 			string s = unix.GetString (data);
-			AssertEquals ("Output-352", "\uFFFF\xFE\uFFFF\xFE\uFFFF\xFF\uFFFF\xFF", s);
+			AssertEquals ("Output-352", "\u0000\xFE\u0000\xFE\u0000\xFF\u0000\xFF", s);
 			AssertEquals ("Reconverted-352", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -596,7 +596,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xC0, 0xAF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_1_ASCII_Slash_411", 
-					"\uFFFF\xC0\uFFFF\xAF", s);
+					"\u0000\xC0\u0000\xAF", s);
 			AssertEquals ("Reconverted-T4_Overlong_1_ASCII_Slash_411", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -606,7 +606,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xE0, 0x80, 0xAF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_1_ASCII_Slash_413", 
-					"\uFFFF\xE0\uFFFF\x80\uFFFF\xAF", s);
+					"\u0000\xE0\u0000\x80\u0000\xAF", s);
 			AssertEquals ("Reconverted-T4_Overlong_1_ASCII_Slash_413", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -616,7 +616,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF0, 0x80, 0x80, 0xAF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_1_ASCII_Slash_412", 
-					"\uFFFF\xF0\uFFFF\x80\uFFFF\x80\uFFFF\xAF", s);
+					"\u0000\xF0\u0000\x80\u0000\x80\u0000\xAF", s);
 			AssertEquals ("Reconverted-T4_Overlong_1_ASCII_Slash_412", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -626,7 +626,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF8, 0x80, 0x80, 0x80, 0xAF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_1_ASCII_Slash_414", 
-					"\uFFFF\xF8\uFFFF\x80\uFFFF\x80\uFFFF\x80\uFFFF\xAF", s);
+					"\u0000\xF8\u0000\x80\u0000\x80\u0000\x80\u0000\xAF", s);
 			AssertEquals ("Reconverted-T4_Overlong_1_ASCII_Slash_414", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -636,7 +636,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xFC, 0x80, 0x80, 0x80, 0x80, 0xAF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_1_ASCII_Slash_415", 
-					"\uFFFF\xFC\uFFFF\x80\uFFFF\x80\uFFFF\x80\uFFFF\x80\uFFFF\xAF", s);
+					"\u0000\xFC\u0000\x80\u0000\x80\u0000\x80\u0000\x80\u0000\xAF", s);
 			AssertEquals ("Reconverted-T4_Overlong_1_ASCII_Slash_415", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -646,7 +646,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xC1, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_2_MaximumBoundary_421", 
-					"\uFFFF\xC1\uFFFF\xBF", s);
+					"\u0000\xC1\u0000\xBF", s);
 			AssertEquals ("Reconverted-T4_Overlong_2_MaximumBoundary_421", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -656,7 +656,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xE0, 0x9F, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_2_MaximumBoundary_422", 
-					"\uFFFF\xE0\uFFFF\x9F\uFFFF\xBF", s);
+					"\u0000\xE0\u0000\x9F\u0000\xBF", s);
 			AssertEquals ("Reconverted-T4_Overlong_2_MaximumBoundary_422", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -666,7 +666,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF0, 0x8F, 0xBF, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_2_MaximumBoundary_423", 
-					"\uFFFF\xF0\uFFFF\x8F\uFFFF\xBF\uFFFF\xBF", s);
+					"\u0000\xF0\u0000\x8F\u0000\xBF\u0000\xBF", s);
 			AssertEquals ("Reconverted-T4_Overlong_2_MaximumBoundary_423", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -676,7 +676,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF8, 0x87, 0xBF, 0xBF, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_2_MaximumBoundary_424", 
-					"\uFFFF\xF8\uFFFF\x87\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF", s);
+					"\u0000\xF8\u0000\x87\u0000\xBF\u0000\xBF\u0000\xBF", s);
 			AssertEquals ("Reconverted-T4_Overlong_2_MaximumBoundary_424", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -686,7 +686,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xFC, 0x83, 0xBF, 0xBF, 0xBF, 0xBF };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_2_MaximumBoundary_425", 
-					"\uFFFF\xFC\uFFFF\x83\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF\uFFFF\xBF", s);
+					"\u0000\xFC\u0000\x83\u0000\xBF\u0000\xBF\u0000\xBF\u0000\xBF", s);
 			AssertEquals ("Reconverted-T4_Overlong_2_MaximumBoundary_425", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -696,7 +696,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xC0, 0x80 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_3_NUL_431", 
-					"\uFFFF\xC0\uFFFF\x80", s);
+					"\u0000\xC0\u0000\x80", s);
 			AssertEquals ("Reconverted-T4_Overlong_3_NUL_431", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -706,7 +706,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xE0, 0x80, 0x80 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_3_NUL_432", 
-					"\uFFFF\xE0\uFFFF\x80\uFFFF\x80", s);
+					"\u0000\xE0\u0000\x80\u0000\x80", s);
 			AssertEquals ("Reconverted-T4_Overlong_3_NUL_432", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -716,7 +716,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF0, 0x80, 0x80, 0x80 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_3_NUL_433", 
-					"\uFFFF\xF0\uFFFF\x80\uFFFF\x80\uFFFF\x80", s);
+					"\u0000\xF0\u0000\x80\u0000\x80\u0000\x80", s);
 			AssertEquals ("Reconverted-T4_Overlong_3_NUL_433", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -726,7 +726,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xF8, 0x80, 0x80, 0x80, 0x80 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_3_NUL_434", 
-					"\uFFFF\xF8\uFFFF\x80\uFFFF\x80\uFFFF\x80\uFFFF\x80", s);
+					"\u0000\xF8\u0000\x80\u0000\x80\u0000\x80\u0000\x80", s);
 			AssertEquals ("Reconverted-T4_Overlong_3_NUL_434", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -736,7 +736,7 @@ namespace MonoTests.Mono.Unix {
 			byte[] data = { 0xFC, 0x80, 0x80, 0x80, 0x80, 0x80 };
 			string s = unix.GetString (data);
 			AssertEquals ("Output-T4_Overlong_3_NUL_434", 
-					"\uFFFF\xFC\uFFFF\x80\uFFFF\x80\uFFFF\x80\uFFFF\x80\uFFFF\x80", s);
+					"\u0000\xFC\u0000\x80\u0000\x80\u0000\x80\u0000\x80\u0000\x80", s);
 			AssertEquals ("Reconverted-T4_Overlong_3_NUL_434", BitConverter.ToString (data), BitConverter.ToString (unix.GetBytes (s)));
 		}
 
@@ -957,7 +957,7 @@ namespace MonoTests.Mono.Unix {
 		public void BinaryFilename ()
 		{
 			Compare ("BinaryFilename",
-				"test\uFFFF\xffname",
+				"test\u0000\xffname",
 				new byte[]{
 					(byte) 't',
 					(byte) 'e',
@@ -976,7 +976,7 @@ namespace MonoTests.Mono.Unix {
 		public void SjisFilename ()
 		{
 			string fn = 
-				"\uFFFF\x83\x4a\uFFFF\x83\uFFFF\x81\uFFFF\x83\x6e\uFFFF\x83\uFFFF\x81\uFFFF\x83\x6e.txt";
+				"\u0000\x83\x4a\u0000\x83\u0000\x81\u0000\x83\x6e\u0000\x83\u0000\x81\u0000\x83\x6e.txt";
 			Compare ("SjisFilename",
 				fn,
 				new byte[]{
@@ -1002,7 +1002,7 @@ namespace MonoTests.Mono.Unix {
 		public void SjisFilename2 ()
 		{
 			string fn = 
-				"\uFFFF\x83\x4a\uFFFF\x83\uFFFF\x81\uFFFF\x83\x6e\uFFFF\x83\uFFFF\x81\uFFFF\x83\x6e.txt";
+				"\u0000\x83\x4a\u0000\x83\u0000\x81\u0000\x83\x6e\u0000\x83\u0000\x81\u0000\x83\x6e.txt";
 			Compare ("SjisFilename2",
 				"/home/jon/" + fn + "/baz",
 				new byte[]{

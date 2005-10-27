@@ -38,7 +38,7 @@ public class UnixEncoding : Encoding
 {
 	public static readonly Encoding Instance = new UnixEncoding ();
 
-	public const char EscapeByte = '\uFFFF';
+	public static readonly char EscapeByte = '\u0000';
 
 	// Constructors.
 	public UnixEncoding ()
