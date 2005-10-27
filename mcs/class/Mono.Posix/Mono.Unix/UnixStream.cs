@@ -90,10 +90,8 @@ namespace Mono.Unix {
 				AssertNotDisposed ();
 				if (!CanSeek)
 					throw new NotSupportedException ("File descriptor doesn't support seeking");
-				Stat stat;
-				int r = Syscall.fstat (fileDescriptor, out stat);
-				UnixMarshal.ThrowExceptionForLastErrorIf (r);
-				return (long) stat.st_size;
+				RefreshStat ();
+				return stat.st_size;
 			}
 		}
 
@@ -116,10 +114,8 @@ namespace Mono.Unix {
 		[Obsolete ("Use Protection")]
 		public FilePermissions Permissions {
 			get {
-				Stat stat;
-				int r = Syscall.fstat (fileDescriptor, out stat);
-				UnixMarshal.ThrowExceptionForLastErrorIf (r);
-				return stat.st_mode;
+				RefreshStat ();
+				return (FilePermissions) stat.st_mode;
 			}
 			set {
 				int r = Syscall.fchmod (fileDescriptor, value);
@@ -130,9 +126,7 @@ namespace Mono.Unix {
 		[CLSCompliant (false)]
 		public Native.FilePermissions Protection {
 			get {
-				Native.Stat stat;
-				int r = Native.Syscall.fstat (fileDescriptor, out stat);
-				UnixMarshal.ThrowExceptionForLastErrorIf (r);
+				RefreshStat ();
 				return stat.st_mode;
 			}
 			set {
@@ -175,6 +169,28 @@ namespace Mono.Unix {
 				perms |= (int) value;
 				Protection = (Native.FilePermissions) perms;
 			}
+		}
+
+		public UnixUserInfo OwnerUser {
+			get {RefreshStat (); return new UnixUserInfo (stat.st_uid);}
+		}
+                                                                                                
+		public long OwnerUserId {
+			get {RefreshStat (); return stat.st_uid;}
+		}
+                                                                                                
+		public UnixGroupInfo OwnerGroup {
+			get {RefreshStat (); return new UnixGroupInfo (stat.st_gid);}
+		}
+                                                                                                
+		public long OwnerGroupId {
+			get {RefreshStat (); return stat.st_gid;}
+		}
+
+		private void RefreshStat ()
+		{
+			int r = Native.Syscall.fstat (fileDescriptor, out stat);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
 		public void AdviseFileAccessPattern (FileAccessPattern pattern, long offset, long len)
@@ -520,6 +536,7 @@ namespace Mono.Unix {
 		private bool canWrite = false;
 		private bool owner = true;
 		private int fileDescriptor = InvalidFileDescriptor;
+		private Native.Stat stat;
 	}
 }
 

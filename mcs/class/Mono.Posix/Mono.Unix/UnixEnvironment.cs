@@ -81,9 +81,19 @@ namespace Mono.Unix {
 			get {return UnixUser.GetCurrentUserName();}
 		}
 
+		public static UnixGroupInfo RealGroup {
+			get {return new UnixGroupInfo (RealGroupId);}
+			// set can't be done as setgid(2) modifies effective gid as well
+		}
+
 		public static long RealGroupId {
 			get {return Native.Syscall.getgid ();}
 			// set can't be done as setgid(2) modifies effective gid as well
+		}
+
+		public static UnixUserInfo RealUser {
+			get {return new UnixUserInfo (RealUserId);}
+			// set can't be done as setuid(2) modifies effective uid as well
 		}
 
 		public static long RealUserId {
@@ -91,10 +101,21 @@ namespace Mono.Unix {
 			// set can't be done as setuid(2) modifies effective uid as well
 		}
 
+		public static UnixGroupInfo EffectiveGroup {
+			get {return new UnixGroupInfo (EffectiveGroupId);}
+			set {EffectiveGroupId = value.GroupId;}
+		}
+
 		public static long EffectiveGroupId {
 			get {return Native.Syscall.getegid ();}
 			set {Native.Syscall.setegid (Convert.ToUInt32 (value));}
 		}
+
+		public static UnixUserInfo EffectiveUser {
+			get {return new UnixUserInfo (EffectiveUserId);}
+			set {EffectiveUserId = value.UserId;}
+		}
+
 		public static long EffectiveUserId {
 			get {return Native.Syscall.geteuid ();}
 			set {Native.Syscall.seteuid (Convert.ToUInt32 (value));}
@@ -105,6 +126,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use GetConfigurationValue (Mono.Unix.Native.SysconfName)")]
 		public static long GetConfigurationValue (SysConf name)
 		{
 			long r = Syscall.sysconf (name);
@@ -114,6 +136,16 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		public static long GetConfigurationValue (Native.SysconfName name)
+		{
+			long r = Native.Syscall.sysconf (name);
+			if (r == -1 && Native.Stdlib.GetLastError() == Native.Errno.EINVAL)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return r;
+		}
+
+		[CLSCompliant (false)]
+		[Obsolete ("Use GetConfigurationString (Mono.Unix.Native.ConfstrName)")]
 		public static string GetConfigurationString (ConfStr name)
 		{
 			ulong len = Syscall.confstr (name, null, 0);
@@ -121,6 +153,17 @@ namespace Mono.Unix {
 				return "";
 			StringBuilder buf = new StringBuilder ((int) len+1);
 			len = Syscall.confstr (name, buf, len);
+			return buf.ToString ();
+		}
+
+		[CLSCompliant (false)]
+		public static string GetConfigurationString (Native.ConfstrName name)
+		{
+			ulong len = Native.Syscall.confstr (name, null, 0);
+			if (len == 0)
+				return "";
+			StringBuilder buf = new StringBuilder ((int) len+1);
+			len = Native.Syscall.confstr (name, buf, len);
 			return buf.ToString ();
 		}
 

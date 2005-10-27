@@ -1,3 +1,10 @@
+2005-10-27  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixEnvironment.cs: Add RealUser, RealGroup, EffectiveUser, EffectiveGroup
+	  properties; [Obsolete] necessary methods and provide replacements.
+	* UnixStream.cs: Add OwnerUser(Id), OwnerGroup(Id) properties; 
+	  improve Stat handling.
+
 2005-10-26  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixEncoding.cs: Change EscapeByte to 0x0000, as suggested by Michal
@@ -21,7 +28,7 @@
 2005-10-25  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs, Syscall.cs: Filenames need to be marshaled through the 
-	  FileNameMarshaler, which will encode/decode filenames with UnixEncoder.
+	  FileNameMarshaler, which will encode/decode filenames with UnixEncoding.
 	* UnixEncoding.cs: Added (copied from
 	  ../../corlib/System.Text/UTF8Encoding.cs); a hack to permit handling of 
 	  arbitrarily encoded filenames.  It attempts to decode a byte[] array as 
