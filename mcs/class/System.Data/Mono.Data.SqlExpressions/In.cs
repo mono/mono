@@ -54,15 +54,17 @@ namespace Mono.Data.SqlExpressions {
 			In other = (In) obj;
 			if (other.set.Count != set.Count)
 				return false;	
-	
-			IEnumerator enumerator = set.GetEnumerator ();
-			IEnumerator oenumerator = other.set.GetEnumerator ();
 
-			do {
-				if (!oenumerator.Current.Equals (enumerator.Current))
+			for (int i = 0, count = set.Count; i < count; i++) {
+				object o1 = set[i];
+				object o2 = other.set[i];
+
+				if (o1 == null && o2 != null)
+					return false;
+
+				if (!o1.Equals(o2))
 					return false;
 			}
-			while (enumerator.MoveNext () || oenumerator.MoveNext ());
 
 			return true;
 		}
@@ -70,12 +72,12 @@ namespace Mono.Data.SqlExpressions {
 		public override int GetHashCode()
 		{
 			int hashCode = base.GetHashCode ();
-			IEnumerator enumerator = set.GetEnumerator ();
-
-			do {
-				hashCode ^= enumerator.Current.GetHashCode ();
+			for (int i = 0, count = set.Count; i < count; i++) {
+				object o = set[i];
+				if (o != null)
+					hashCode ^= o.GetHashCode();
 			}
-			while (enumerator.MoveNext ());
+
 			return hashCode;
 		}
 	

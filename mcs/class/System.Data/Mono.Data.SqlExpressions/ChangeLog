@@ -1,3 +1,7 @@
+2005-10-26 Konstantin Triger <kostat@mainsoft.com>
+
+	* In.cs: Fix the enumerator initialization problem.
+
 2005-10-21 Senganal T <tsenganal@novell.com>
 
 	* Numeric.cs :
