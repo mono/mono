@@ -64,6 +64,11 @@ namespace Mono.CSharp {
 					sb.Append (", ");
 				sb.Append (ParameterDesc (i));
 			}
+			if (is_varargs) {
+				if (pi.Length > 0)
+					sb.Append (", ");
+				sb.Append ("__arglist");
+			}
 			sb.Append (')');
 			return sb.ToString ();
 		}
@@ -112,7 +117,7 @@ namespace Mono.CSharp {
 
 			if (pos >= pi.Length - 1 && last_arg_is_params)
 				sb.Append ("params ");
-			
+
 			sb.Append (TypeManager.CSharpName (partype).Replace ("&", ""));
 
 			return sb.ToString ();
@@ -203,6 +208,11 @@ namespace Mono.CSharp {
 					sb.Append (", ");
 				sb.Append (ParameterDesc (i));
 			}
+			if (has_varargs) {
+				if (count > 0)
+					sb.Append (", ");
+				sb.Append ("__arglist");
+			}
 			sb.Append (')');
 			return sb.ToString ();
 		}
@@ -250,7 +260,6 @@ namespace Mono.CSharp {
 				return "out";
 			if (p.ModFlags == Parameter.Modifier.PARAMS)
 				return "params";
-
 			return "";
 		}
 

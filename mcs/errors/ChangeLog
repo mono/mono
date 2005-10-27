@@ -1,3 +1,7 @@
+2005-10-27  Raja R Harinath  <rharinath@novell.com>
+
+	* cs1501-11.cs, cs1502-5.cs: New tests from #76085.
+
 2005-10-26  Raja R Harinath  <harinath@gmail.com>
 
 	* cs0246-14.cs: New test from #76419.

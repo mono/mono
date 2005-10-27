@@ -4821,21 +4821,19 @@ namespace Mono.CSharp {
 				Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
 					TypeManager.CSharpName (delegate_type));
 
-			string par_desc = expected_par.ParameterDesc (idx);
+			Parameter.Modifier mod = expected_par.ParameterModifier (idx);
 
-			if (a.Modifier != expected_par.ParameterModifier (idx)) {
-				if ((expected_par.ParameterModifier (idx) & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) == 0)
+			if (mod != Parameter.Modifier.ARGLIST && mod != a.Modifier) {
+				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) == 0)
 					Report.Error (1615, loc, "Argument `{0}' should not be passed with the `{1}' keyword",
 						idx + 1, Parameter.GetModifierSignature (a.Modifier));
 				else
 					Report.Error (1620, loc, "Argument `{0}' must be passed with the `{1}' keyword",
-						idx + 1, Parameter.GetModifierSignature (expected_par.ParameterModifier (idx)));
-				return;
+						idx + 1, Parameter.GetModifierSignature (mod));
+			} else {
+				Report.Error (1503, loc, "Argument {0}: Cannot convert from `{1}' to `{2}'",
+					idx + 1, Argument.FullDesc (a), expected_par.ParameterDesc (idx));
 			}
-
-			Report.Error (1503, loc,
-				      String.Format ("Argument {0}: Cannot convert from `{1}' to `{2}'",
-						     idx + 1, Argument.FullDesc (a), par_desc));
 		}
 		
 		public static bool VerifyArgumentsCompat (EmitContext ec, ArrayList Arguments,
@@ -4856,15 +4854,18 @@ namespace Mono.CSharp {
 				if (pm == Parameter.Modifier.PARAMS){
 					if ((pm & ~Parameter.Modifier.PARAMS) != a.Modifier) {
 						if (!may_fail)
-							Error_InvalidArguments (
-								loc, j, method, delegate_type,
-								a, pd);
+							Error_InvalidArguments (loc, j, method, delegate_type, a, pd);
 						return false;
 					}
 
 					if (chose_params_expanded)
 						parameter_type = TypeManager.GetElementType (parameter_type);
-				} else if (pm == Parameter.Modifier.ARGLIST){
+				} else if (pm == Parameter.Modifier.ARGLIST) {
+					if (!(a.Expr is Arglist)) {
+						if (!may_fail)
+							Error_InvalidArguments (loc, j, method, delegate_type, a, pd);
+						return false;
+					}
 					continue;
 				} else {
 					//
@@ -4872,9 +4873,7 @@ namespace Mono.CSharp {
 					//
 					if (pd.ParameterModifier (j) != a.Modifier){
 						if (!may_fail)
-							Error_InvalidArguments (
-								loc, j, method, delegate_type,
-								a, pd);
+							Error_InvalidArguments (loc, j, method, delegate_type, a, pd);
 						return false;
 					}
 				}

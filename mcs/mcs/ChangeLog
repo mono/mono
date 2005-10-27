@@ -1,3 +1,14 @@
+2005-10-27  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76085.
+	* expression.cs (Invocation.Error_InvalidArguments): Handle
+	__arglist parameters.
+	(Invocation.VerifyArgumentsCompat): Likewise.
+	* support.cs (ReflectionParameters.GetSignatureForError): Print
+	__arglist parameters.
+	(InternalParamters.GetSignatureForError): Likewise.
+	* parameter.cs (Parameters.GetSignatureForError): Likewise.
+
 2005-10-27  Marek Safar  <marek.safar@seznam.cz>
 
 	* driver.cs: Implemeted resource visibility.
