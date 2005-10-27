@@ -536,6 +536,43 @@ public class MethodBuilderTest : Assertion
 	}
 
 	[Test]
+	public void GetCustomAttributes () {
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		MethodBuilder mb = tb.DefineMethod ("foo", MethodAttributes.Public, 
+											typeof (void),
+											new Type [1] {typeof(int)});
+		mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+		Type attrType = typeof (ObsoleteAttribute);
+		ConstructorInfo ctorInfo =
+			attrType.GetConstructor (new Type [] { typeof (String) });
+
+		mb.SetCustomAttribute (new CustomAttributeBuilder (ctorInfo, new object [] { "FOO" }));
+
+		Type t = tb.CreateType ();
+
+		// Try the created type
+		{
+			MethodInfo mi = t.GetMethod ("foo");
+			object[] attrs = mi.GetCustomAttributes (true);
+
+			AssertEquals (1, attrs.Length);
+			Assert (attrs [0] is ObsoleteAttribute);
+			AssertEquals ("FOO", ((ObsoleteAttribute)attrs [0]).Message);
+		}
+
+		// Try the type builder
+		{
+			MethodInfo mi = tb.GetMethod ("foo");
+			object[] attrs = mi.GetCustomAttributes (true);
+
+			AssertEquals (1, attrs.Length);
+			Assert (attrs [0] is ObsoleteAttribute);
+			AssertEquals ("FOO", ((ObsoleteAttribute)attrs [0]).Message);
+		}
+	}
+
+	[Test]
 	[ExpectedException (typeof (InvalidOperationException))]
 	public void TestAddDeclarativeSecurityAlreadyCreated () {
 		MethodBuilder mb = genClass.DefineMethod (

@@ -310,6 +310,44 @@ public class ConstructorBuilderTest : Assertion
 		}
 	}
 
+	[Test]
+	public void GetCustomAttributes () {
+		TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Public);
+		ConstructorBuilder cb = tb.DefineConstructor (
+			 MethodAttributes.Public, 0, 
+			new Type [1] {typeof(int)});
+		cb.GetILGenerator ().Emit (OpCodes.Ret);
+
+		Type attrType = typeof (ObsoleteAttribute);
+		ConstructorInfo ctorInfo =
+			attrType.GetConstructor (new Type [] { typeof (String) });
+
+		cb.SetCustomAttribute (new CustomAttributeBuilder (ctorInfo, new object [] { "FOO" }));
+
+		Type t = tb.CreateType ();
+
+		// Try the created type
+		{
+			ConstructorInfo ci = t.GetConstructors () [0];
+			object[] attrs = ci.GetCustomAttributes (true);
+
+			AssertEquals (1, attrs.Length);
+			Assert (attrs [0] is ObsoleteAttribute);
+			AssertEquals ("FOO", ((ObsoleteAttribute)attrs [0]).Message);
+		}
+
+		// Try the type builder
+		{
+			ConstructorInfo ci = tb.GetConstructors () [0];
+			object[] attrs = ci.GetCustomAttributes (true);
+
+			AssertEquals (1, attrs.Length);
+			Assert (attrs [0] is ObsoleteAttribute);
+			AssertEquals ("FOO", ((ObsoleteAttribute)attrs [0]).Message);
+		}
+
+	}
+
 	// Same as in MethodBuilderTest
 	[Test]
 	[ExpectedException (typeof (InvalidOperationException))]

@@ -1,3 +1,8 @@
+2005-10-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* FieldBuilderTest.cs MethodBuilderTest.cs ConstructorBuilderTest.cs:
+	Add tests for #76521.
+
 2005-07-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* AssemblyBuilderTest.cs: Add test for #75650.

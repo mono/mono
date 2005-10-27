@@ -81,6 +81,7 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[ExpectedException (typeof(NotSupportedException))]
+		[Ignore ("mono supports this")]
 		public void TestGetCustomAttributesComplete ()
 		{
 			FieldBuilder field = _tb.DefineField ("name",
@@ -100,6 +101,7 @@ namespace MonoTests.System.Reflection.Emit
 
 		[Test]
 		[ExpectedException (typeof(NotSupportedException))]
+		[Ignore ("mono supports this")]
 		public void TestGetCustomAttributesOfTypeComplete ()
 		{
 			FieldBuilder field = _tb.DefineField ("name",
@@ -229,6 +231,41 @@ namespace MonoTests.System.Reflection.Emit
 			_tb.CreateType ();
 			field.SetValue ((object) 1, 1, BindingFlags.Public, null,
 				CultureInfo.InvariantCulture);
+		}
+
+		[Test]
+		public void GetCustomAttributes ()
+		{
+			FieldBuilder field = _tb.DefineField ("name",
+				typeof(string), FieldAttributes.Public);
+
+			Type attrType = typeof (ObsoleteAttribute);
+			ConstructorInfo ctorInfo =
+				attrType.GetConstructor (new Type [] { typeof (String) });
+			
+			field.SetCustomAttribute (new CustomAttributeBuilder (ctorInfo, new object [] { "FOO" }));
+
+			Type t = _tb.CreateType ();
+
+			// Try the created type
+			{
+				FieldInfo fi = t.GetField ("name");
+				object[] attrs = fi.GetCustomAttributes (true);
+
+				Assert.AreEqual (1, attrs.Length);
+				Assert.IsTrue (attrs [0] is ObsoleteAttribute);
+				Assert.AreEqual ("FOO", ((ObsoleteAttribute)attrs [0]).Message);
+			}
+
+			// Try the type builder
+			{
+				FieldInfo fi = _tb.GetField ("name");
+				object[] attrs = fi.GetCustomAttributes (true);
+
+				Assert.AreEqual (1, attrs.Length);
+				Assert.IsTrue (attrs [0] is ObsoleteAttribute);
+				Assert.AreEqual ("FOO", ((ObsoleteAttribute)attrs [0]).Message);
+			}
 		}
 
 		// Return a unique type name
