@@ -1,3 +1,9 @@
+2005-10-27  Marek Safar  <marek.safar@seznam.cz>
+
+	* driver.cs: Implemeted resource visibility.
+	(Resources): New class for code sharing between /res: and
+	/linkres:
+
 2005-10-26  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (GetPropertyValue): Made public.
