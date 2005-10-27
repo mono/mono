@@ -46,7 +46,6 @@ namespace System.Security.Cryptography {
 		{
 		}
 
-		[MonoTODO ("not (yet) supported on Windows")]
 // FIXME	[DataProtectionPermission (SecurityAction.Demand, ProtectData = true)]
 		public static byte[] Protect (byte[] userData, byte[] optionalEntropy, DataProtectionScope scope) 
 		{
@@ -66,12 +65,18 @@ namespace System.Security.Cryptography {
 					throw new CryptographicException (msg, e);
 				}
 			case DataProtectionImplementation.Win32CryptoProtect:
+				try {
+					return NativeDapiProtection.Protect (userData, optionalEntropy, scope);
+				}
+				catch (Exception e) {
+					string msg = Locale.GetText ("Data protection failed.");
+					throw new CryptographicException (msg, e);
+				}
 			default:
 				throw new PlatformNotSupportedException ();
 			}
 		}
 
-		[MonoTODO ("not (yet) supported on Windows")]
 // FIXME	[DataProtectionPermission (SecurityAction.Demand, UnprotectData = true)]
 		public static byte[] Unprotect (byte[] encryptedData, byte[] optionalEntropy, DataProtectionScope scope) 
 		{
@@ -91,6 +96,13 @@ namespace System.Security.Cryptography {
 					throw new CryptographicException (msg, e);
 				}
 			case DataProtectionImplementation.Win32CryptoProtect:
+				try {
+					return NativeDapiProtection.Unprotect (encryptedData, optionalEntropy, scope);
+				}
+				catch (Exception e) {
+					string msg = Locale.GetText ("Data unprotection failed.");
+					throw new CryptographicException (msg, e);
+				}
 			default:
 				throw new PlatformNotSupportedException ();
 			}
