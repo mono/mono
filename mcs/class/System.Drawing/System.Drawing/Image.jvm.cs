@@ -296,17 +296,22 @@ namespace System.Drawing {
 
 		public void Save (Stream stream, ImageCodecInfo encoder, EncoderParameters encoderParams) {
 			//TBD: implement encoderParams
-			java.io.OutputStream jos = vmw.common.IOUtils.ToOutputStream (stream);
-			MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(jos);
-		
-			InternalSave (output, encoder.Clsid);
+			if (encoder == null)
+				throw new ArgumentNullException("Value cannot be null.");
+
+			try {
+				java.io.OutputStream jos = vmw.common.IOUtils.ToOutputStream (stream);
+				MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(jos);
+				InternalSave (output, encoder.Clsid);
+			}
+			catch (java.io.IOException ex) {
+				throw new System.IO.IOException(ex.Message, ex);
+			}
 		}
 	
 		public void Save(string filename, ImageCodecInfo encoder, EncoderParameters encoderParams) {
-			//TBD: implement encoderParams
-			java.io.File jf = vmw.common.IOUtils.getJavaFile (filename);
-			FileImageOutputStream output = new FileImageOutputStream (jf);
-			InternalSave (output, encoder.Clsid);
+			using (Stream outputStream = new FileStream(filename, FileMode.Create))
+				Save(outputStream, encoder, encoderParams);
 		}
 
 		public void Save (string filename) {
@@ -314,13 +319,16 @@ namespace System.Drawing {
 		}
 
 		public void Save (Stream stream, ImageFormat format) {
-			Save (stream, ImageCodec.FindEncoder (
-				ImageCodec.ImageFormatToClsid (format)), null);
+			ImageCodecInfo encoder = ImageCodec.FindEncoder ( ImageCodec.ImageFormatToClsid (format) );
+			if (encoder == null)
+				throw new NotSupportedException("The requested format encoder is not supported");
+
+			Save (stream, encoder, null);
 		}
 
 		public void Save(string filename, ImageFormat format) {
-			Save (filename, ImageCodec.FindEncoder (
-				ImageCodec.ImageFormatToClsid (format)), null);
+			using (Stream outputStream = new FileStream(filename, FileMode.Create))
+				Save(outputStream, format);
 		}
 		#endregion
 

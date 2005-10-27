@@ -1,5 +1,10 @@
 2005-10-27 Vladimir Krasnov <vladimirk@mainsoft.com>
 
+	* Bitmap.jvm.cs: fixed InternalSave
+	* Image.jvm.cs: fixed Save
+
+2005-10-27 Vladimir Krasnov <vladimirk@mainsoft.com>
+
 	* Image.jvm.cs: fixed redolution properties
 
 2005-10-27 Vladimir Krasnov <vladimirk@mainsoft.com>

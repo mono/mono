@@ -187,13 +187,6 @@ namespace System.Drawing
 
 				ic.NativeStream = output;
 				ic.WritePlainImage( plainImage );
-				
-				try {
-					output.close();
-				}
-				catch (java.io.IOException ex) {
-					throw new System.IO.IOException(ex.Message, ex);
-				}
 			}
 		}
 
