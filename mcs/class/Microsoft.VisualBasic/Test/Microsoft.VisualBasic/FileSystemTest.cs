@@ -86,40 +86,12 @@ namespace MonoTests.Microsoft.VisualBasic
 			FileSystem.ChDir ("z:\\home\rob");
 		}
 		
-		[Test]
-		public void TestChDrive()
-		{
-			string[] drives = Directory.GetLogicalDrives ();
-			
-			foreach (string drive in drives) {
-				// skip diskdrive, if no disk is present it fails.
-				if (drive.ToLower()[0] == 'a')
-					continue;
-				FileSystem.ChDrive (drive);
-				Assert ("ChDrive#01", Environment.CurrentDirectory.StartsWith (drive));
-			}
-		}
-		
+	
 		[Test]
 		public void TestCurDir()
 		{
 			string dir = FileSystem.CurDir ();
 			AssertEquals ("CurDir#01", Environment.CurrentDirectory, dir);
 		}
-/*
-		[Test]
-		[ExpectedException(typeof(ArgumentException))]
-		public void TestDir() {
-			FileSystem.Dir();
-			Fail ("Calling as the first thing the parameterless overload of Dir didn't throw an exception");
-		}
-	
-		[Test]
-		public void TestDirWithSourceFile() {
-			AssertEquals("Didn't found the source file with pattern './Microsoft.VisualBasic/FileSystem.cs'",
-				"FileSystem.cs",
-				FileSystem.Dir("./Microsoft.VisualBasic/FileSystem.cs", FileAttribute.Normal)) ;
-		}
-*/
 	}
 }

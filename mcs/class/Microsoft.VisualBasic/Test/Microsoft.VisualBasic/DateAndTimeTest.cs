@@ -323,8 +323,10 @@ namespace MonoTests.Microsoft.VisualBasic
 			catch (Exception e) {
 				Fail ("Unexpected exception:" + e);
 			}
-			AssertEquals("#TV03", new DateTime(1, 1, 1, 16, 35, 17), DateAndTime.TimeValue("16:35:17")); // works in .NET?
+			AssertEquals("#TV03", new DateTime(1, 1, 1, 16, 35, 17), DateAndTime.TimeValue("16:35:17"));
 			AssertEquals("#TV04", new DateTime(1, 1, 1, 16, 35, 17), DateAndTime.TimeValue("4:35:17 PM"));
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("en-US");
+			AssertEquals("#TV05", new DateTime(1, 1, 1, 16, 35, 17), DateAndTime.TimeValue("4:35:17 PM"));
 		}
 
 		[Test]

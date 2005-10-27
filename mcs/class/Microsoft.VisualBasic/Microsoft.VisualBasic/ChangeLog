@@ -1,3 +1,6 @@
+2005-10-27  Alexandre Rocha Lima e Marcondes  <alexandre@psl-pr.softwarelivre.org>
+	* FileSystem.cs : ChdDrive throws InvalidOperationException on Unix platforms.
+	
 2005-09-06 Satya Sudha K <ksathyasudha@novell.com>
 	* Strings.cs, FileSystem.cs : Minor fixes to the 'Join' and 'FileOpen'
                 methods respectively.

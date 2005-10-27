@@ -950,6 +950,12 @@ namespace Microsoft.VisualBasic
 
 		public static void ChDrive(char Drive)
 		{
+#if NET_2_0
+			if (Environment.OSVersion.Platform == PlatformID.Unix)
+#else
+			if (Environment.OSVersion.Platform == (PlatformID) 128)
+#endif
+				throw new InvalidOperationException("ChDrive function is not supported on this platform !");
 			Drive = char.ToUpper(Drive, CultureInfo.InvariantCulture);
 			if ((Drive < 65) || (Drive > 90))
 			{

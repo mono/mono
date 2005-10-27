@@ -33,6 +33,8 @@
 
 using NUnit.Framework;
 using System;
+using System.Threading;
+using System.Globalization;
 using Microsoft.VisualBasic;
 
 namespace MonoTests.Microsoft.VisualBasic
@@ -42,11 +44,18 @@ namespace MonoTests.Microsoft.VisualBasic
 	public class ConversionTest : Assertion
 	{
 	
+		private CultureInfo oldcult;
+		
 		[SetUp]
-		public void GetReady() {}
+		public void GetReady() {
+			oldcult = Thread.CurrentThread.CurrentCulture;
+			Thread.CurrentThread.CurrentCulture = new CultureInfo ("");
+		}
 
 		[TearDown]
-		public void Clear() {}
+		public void Clear() {
+			Thread.CurrentThread.CurrentCulture = oldcult;
+		}
 
 		[Test]
 		public void ErrorToStringEmpty() {
