@@ -899,6 +899,11 @@ public class Page : TemplateControl, IHttpHandler
 
 		try {
 			InternalProcessRequest ();
+		} catch (ThreadAbortException) {
+			// Do nothing, just ignore it by now.
+		} catch (Exception e) {
+			OnError (EventArgs.Empty);
+			throw;
 		} finally {
 			try {
 				UnloadRecursive (true);

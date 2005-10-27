@@ -1,3 +1,8 @@
+2005-10-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: call OnError when there's an exception (not for TAE). Fixes
+	bug #76572.
+
 2005-10-25 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateControl.cs:
