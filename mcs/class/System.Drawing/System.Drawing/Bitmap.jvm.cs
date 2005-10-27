@@ -17,6 +17,12 @@ namespace System.Drawing
 {
 	public sealed class Bitmap : Image {
 
+		# region Static fields
+
+		static readonly image.ColorModel _jpegColorModel = new image.DirectColorModel(24, 0x00ff0000, 0x0000ff00, 0x000000ff, 0x0);
+
+		#endregion
+
 		#region constructors
 
 		Bitmap (PlainImage orig) {
@@ -133,6 +139,9 @@ namespace System.Drawing
 			catch (Exception) {
 				throw new OutOfMemoryException ("Out of memory");
 			}
+			finally {
+				ic.Dispose();
+			}
 		}
 
 		#endregion
@@ -146,9 +155,38 @@ namespace System.Drawing
 			if (ic == null)
 				ic = ImageCodec.CreateWriter( ImageFormat.Png );
 
-			if (ic != null) {
+			if (ic == null)
+				throw new NotSupportedException("The requested format encoder is not supported");
+
+			using (ic) {
+
+				PlainImage plainImage = CurrentImage;
+				plainImage.NativeImage.flush();
+
+				if ( ImageCodec.ClsidToImageFormat( clsid ).Equals( ImageFormat.Jpeg ) ) {
+					image.ColorModel cm = ((image.BufferedImage)CurrentImage.NativeImage).getColorModel();
+					if (cm.hasAlpha()) {
+						if (cm is image.DirectColorModel) {
+							image.Raster raster = ((image.BufferedImage)CurrentImage.NativeImage).getRaster();
+							image.DataBuffer db = raster.getDataBuffer();
+							image.DirectColorModel dcm = (image.DirectColorModel)cm;
+							image.SinglePixelPackedSampleModel jpegSampleModel = new image.SinglePixelPackedSampleModel( 
+								db.getDataType(), Width, Height, 
+								new int[] {dcm.getRedMask(), dcm.getGreenMask(), dcm.getBlueMask()}	);
+		
+							image.BufferedImage tb = new image.BufferedImage( 
+								_jpegColorModel, 
+								image.Raster.createWritableRaster( jpegSampleModel, db, null ),
+								false, null );
+
+							plainImage = new PlainImage( tb, plainImage.Thumbnails, ImageFormat.Jpeg, plainImage.HorizontalResolution, plainImage.VerticalResolution, plainImage.Dimension );
+							plainImage.NativeMetadata = plainImage.NativeMetadata;
+						}
+					}
+				}
+
 				ic.NativeStream = output;
-				ic.WritePlainImage( CurrentImage );
+				ic.WritePlainImage( plainImage );
 				
 				try {
 					output.close();
@@ -156,9 +194,6 @@ namespace System.Drawing
 				catch (java.io.IOException ex) {
 					throw new System.IO.IOException(ex.Message, ex);
 				}
-			}
-			else {
-				throw new NotSupportedException("The requested format encoder is not supported");
 			}
 		}
 
@@ -231,7 +266,13 @@ namespace System.Drawing
 		{
 			PlainImage plainImage = CurrentImage.Clone(false);
 			BufferedImage clone = new BufferedImage( (int)rect.Width, (int)rect.Height, ToBufferedImageFormat( pixFormat ) );
-			clone.getGraphics().drawImage( NativeObject, -(int)rect.X, -(int)rect.Y, null );
+			awt.Graphics2D g = clone.createGraphics();
+			try {
+				g.drawImage( NativeObject, -(int)rect.X, -(int)rect.Y, null );
+			}
+			finally {
+				g.dispose();
+			}
 
 			plainImage.NativeImage = clone;
 			return new Bitmap(plainImage);

@@ -1,3 +1,8 @@
+2005-10-27 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Bitmap.jvm.cs: fixed InternalSave, to remove alpha channel of saved jpeg
+	fixed clone, Initialize
+
 2005-10-24  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Brush.cs: Don't delete the brush if the display handle is no longer
