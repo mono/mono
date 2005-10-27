@@ -1,3 +1,8 @@
+2005-10-27 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Brush.cs: added texture brush with transform tests
+	* Graphics.cs: added DrawImage, BeginContainer tests
+
 2005-10-17 Vladimir Krasnov <vladimirk@mainsoft.com>
 	
 	* Graphics.cs: Added FillMode tests

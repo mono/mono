@@ -116,6 +116,23 @@ namespace Test.Sys.Drawing
 			t.Show();
 			Assert.IsTrue(t.PDCompare());
 		}
+		[Test]
+		public void TextureBush_9() {
+			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipXY, new Rectangle(100, 100, 50, 50) );
+			t.Graphics.RotateTransform(30);
+			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
+		[Test]
+		public void TextureBush_10() {
+			TextureBrush b = new TextureBrush( bmp, WrapMode.TileFlipXY, new Rectangle(100, 100, 50, 50) );
+			t.Graphics.RotateTransform(30);
+			b.RotateTransform(30);
+			t.Graphics.FillRectangle( b, 100, 100, 300, 300 );
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+		}
 	}
 	#endregion
 

@@ -106,12 +106,6 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 
 			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
 
-			cb = t.Graphics.VisibleClipBounds;
-			DrawingTest.AssertAlmostEqual(23, cb.X);
-			DrawingTest.AssertAlmostEqual(24, cb.Y);
-			DrawingTest.AssertAlmostEqual(30, cb.Width);
-			DrawingTest.AssertAlmostEqual(40, cb.Height);
-
 			t.Graphics.RotateTransform(128);
 
 			t.Graphics.TranslateTransform(14, 14);
@@ -385,6 +379,64 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			Assert.IsTrue(t.Compare());
 		}
 		[Test]
+		public void DrawImagePageUnit() {
+			t.Graphics.PageUnit = GraphicsUnit.Document;
+			Point [] p = new Point[]{
+										new Point(100, 100),
+										new Point(200, 100),
+										new Point(50, 200)
+									};
+
+			t.Graphics.DrawImage(bmp2, p, new Rectangle(100, 100, 100, 100), GraphicsUnit.Pixel);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImagePageUnit_2() {
+			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
+			t.Graphics.ScaleTransform(0.3f, 0.3f);
+			Point [] p = new Point[]{
+										new Point(100, 100),
+										new Point(200, 100),
+										new Point(50, 200)
+									};
+
+			t.Graphics.DrawImage(bmp2, p, new Rectangle(100, 100, 100, 100), GraphicsUnit.Pixel);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImagePageUnit_3() {
+			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
+			t.Graphics.ScaleTransform(0.3f, 0.3f);
+			t.Graphics.DrawImage(bmp2, new Rectangle(100, 100, 100, 100));
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImagePageUnit_4() {
+			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
+			t.Graphics.ScaleTransform(0.5f, 0.5f);
+			t.Graphics.DrawImage(bmp, 50, 50);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImagePageUnitClip() {
+			t.Graphics.PageUnit = GraphicsUnit.Millimeter;
+			t.Graphics.ScaleTransform(0.3f, 0.3f);
+			Point [] p = new Point[]{
+										new Point(100, 100),
+										new Point(200, 100),
+										new Point(50, 200)
+									};
+
+			t.Graphics.SetClip( new Rectangle(120, 120, 50, 100) );
+			t.Graphics.DrawImage(bmp2, p, new Rectangle(100, 100, 100, 100), GraphicsUnit.Pixel);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
 		public void DrawImageWithResolution() {
 			t.Graphics.DrawImage(bmp2, 0, 0);
 			t.Show();
@@ -410,6 +462,21 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Graphics.SetClip( new Rectangle(0, 0, 15, 15) );
 			t.Graphics.ScaleTransform(0.5f, 0.5f);
 			t.Graphics.DrawImage(bmp2, 0, 0);
+			t.Show();
+			Assert.IsTrue(t.Compare());
+		}
+		[Test]
+		public void DrawImageInContainer4() {
+			Point [] p = new Point[]{
+										new Point(100, 100),
+										new Point(200, 100),
+										new Point(50, 200)
+									};
+
+			t.Graphics.SetClip( new Rectangle(70, 70, 70, 70) );
+			GraphicsContainer c = t.Graphics.BeginContainer( new Rectangle(20, 20, 10, 10), new Rectangle(77, 77, 7, 7), GraphicsUnit.Pixel);
+			t.Graphics.DrawImage(bmp2, p, new Rectangle(100, 100, 100, 100), GraphicsUnit.Pixel);
+			t.Graphics.EndContainer( c );
 			t.Show();
 			Assert.IsTrue(t.Compare());
 		}
@@ -579,6 +646,7 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 		}
 
 		[Test]
+		[Category ("hehe")]
 		public void BeginContainerTest() {
 			// Define transformation for container.
 			RectangleF srcRect = new RectangleF(0.0F, 0.0F, 200.0F, 200.0F);
@@ -597,7 +665,35 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Show ();
 			Assert.IsTrue(t.PDCompare());
 		}
+		[Test]
+		[Category ("hehe")]
+		public void BeginContainerTest_2() {
+			t.Graphics.DrawRectangle( Pens.Black, new Rectangle(70, 70, 50, 100) );
+			t.Graphics.DrawRectangle( Pens.Black, new Rectangle(50, 100, 150, 50) );
+			t.Graphics.DrawRectangle( Pens.Black, new Rectangle(80, 120, 10, 10) );
 
+			t.Graphics.SetClip( new Rectangle(70, 70, 50, 100) );
+			t.Graphics.Clear( Color.Blue );
+
+			GraphicsContainer c1 = t.Graphics.BeginContainer();
+			t.Graphics.SetClip( new Rectangle(50, 100, 150, 50) );
+			t.Graphics.Clear( Color.Green );
+
+			GraphicsContainer c2 = t.Graphics.BeginContainer();
+			t.Graphics.SetClip( new Rectangle(80, 120, 10, 10) );
+			t.Graphics.Clear( Color.Red );
+
+			t.Graphics.EndContainer( c2 );
+			t.Graphics.FillRectangle( Brushes.Yellow, new Rectangle(100, 120, 10, 10) );
+			t.Graphics.FillRectangle( Brushes.Yellow, new Rectangle(150, 120, 10, 10) );
+
+			t.Graphics.EndContainer( c1 );
+			t.Graphics.FillRectangle( Brushes.Yellow, new Rectangle(100, 80, 10, 10) );
+			t.Graphics.FillRectangle( Brushes.Yellow, new Rectangle(150, 80, 10, 10) );
+
+			t.Show ();
+			Assert.IsTrue(t.PDCompare());
+		}
 		[Test]
 		public void ClearTest() {
 			// Clear screen with teal background.
@@ -639,6 +735,18 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			SetUp();
 			startAngle =  10.0F;
 			sweepAngle = 300.0F;
+			t.Graphics.DrawArc(blackPen, new RectangleF(x, y, width, height), startAngle, sweepAngle);
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+			SetUp();
+			startAngle =  -179.9F;
+			sweepAngle = -359.9F;
+			t.Graphics.DrawArc(blackPen, new RectangleF(x, y, width, height), startAngle, sweepAngle);
+			t.Show();
+			Assert.IsTrue(t.PDCompare());
+			SetUp();
+			startAngle =  -10.0F;
+			sweepAngle = -300.0F;
 			t.Graphics.DrawArc(blackPen, new RectangleF(x, y, width, height), startAngle, sweepAngle);
 			t.Show();
 			Assert.IsTrue(t.PDCompare());
@@ -1353,17 +1461,17 @@ namespace Test.Sys.Drawing.GraphicsFixtures {
 			t.Graphics.FillClosedCurve(redBrush, points);
 			t.Show();
 			Assert.IsTrue(t.PDCompare());
-			SetUp();
 
+			SetUp();
 			t.Graphics.FillClosedCurve(redBrush, points, newFillMode);
 			t.Show();
 			Assert.IsTrue(t.PDCompare());
-			SetUp();
 
+			SetUp();
 			newFillMode = FillMode.Alternate;
 			t.Graphics.FillClosedCurve(redBrush, points, newFillMode, tension);
-			Assert.IsTrue(t.PDCompare());
 			t.Show();
+			Assert.IsTrue(t.PDCompare());
 		}
 
 		[Test]
