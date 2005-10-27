@@ -62,6 +62,22 @@ namespace System.Windows.Forms {
 			is_expanded = true;
 		}
 
+		private TreeNode (SerializationInfo info, StreamingContext context) : this ()
+		{
+			Text = (string) info.GetValue ("Text", typeof (string));
+			prop_bag = (OwnerDrawPropertyBag) info.GetValue ("prop_bag", typeof (OwnerDrawPropertyBag));
+			image_index = (int) info.GetValue ("ImageIndex", typeof (int));
+			selected_image_index = (int) info.GetValue ("SelectedImageIndex", typeof (int));
+			tag = info.GetValue ("Tag", typeof (object));
+			check = (bool) info.GetValue ("Checked", typeof (bool));
+
+			int count = (int) info.GetValue ("NumberOfChildren", typeof (int));
+			for (int i = 0; i < count; i++) {
+				TreeNode node = (TreeNode) info.GetValue ("Child-" + i, typeof (TreeNode));
+				Nodes.Add (node);
+			}
+		}
+
 		#endregion	// Internal Constructors
 
 		#region Public Constructors
@@ -112,9 +128,18 @@ namespace System.Windows.Forms {
 		#endregion	// ICloneable Members
 
 		#region ISerializable Members
-		[MonoTODO]
-		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context) {
-			throw new NotImplementedException();
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue ("Text", Text);
+			info.AddValue ("prop_bag", prop_bag, typeof (OwnerDrawPropertyBag));
+			info.AddValue ("ImageIndex", ImageIndex);
+			info.AddValue ("SelectedImageIndex", SelectedImageIndex);
+			info.AddValue ("Tag", Tag);
+			info.AddValue ("Checked", Checked);
+			
+			info.AddValue ("NumberOfChildren", Nodes.Count);
+			for (int i = 0; i < Nodes.Count; i++)
+				info.AddValue ("Child-" + i, Nodes [i], typeof (TreeNode));
 		}
 		#endregion	// ISerializable Members
 
