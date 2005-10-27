@@ -112,6 +112,10 @@ namespace System.Collections.ObjectModel
 			list.Insert (index, item);
 		}
 
+		protected IList<T> Items {
+			get { return list; }
+		}
+
 		public bool Remove (T item)
 		{
 			int idx = IndexOf (item);

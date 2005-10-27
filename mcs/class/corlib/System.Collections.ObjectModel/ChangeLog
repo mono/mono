@@ -1,3 +1,7 @@
+2005-10-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Collection.cs : added Items.
+
 2005-10-25  Carlo Kok  <ck@carlo-kok.com>
 
 	* Collection.cs :
