@@ -850,6 +850,22 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    End Sub{0}" +
 				"End Class{0}", NewLine), code);
 		}
+
+		[Test]
+		public override void EntryPointMethodTest ()
+		{
+			string code = GenerateEntryPointMethod (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Class Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    <A()>  _{0}" +
+#endif
+				"    Public Shared Sub Main(){0}" +
+				"        Dim x As Test.InnerType{0}" +
+				"    End Sub{0}" +
+				"End Class{0}", NewLine), code);
+		}
 	}
 
 	[TestFixture]
@@ -1310,6 +1326,20 @@ namespace MonoTests.Microsoft.VisualBasic
 			string code = GenerateTypeConstructor (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Delegate Sub Test1(){0}{0}", NewLine), code);
+		}
+
+		[Test]
+		public override void EntryPointMethodTest ()
+		{
+			string code = GenerateEntryPointMethod (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Delegate Sub Test1(){0}{0}" +
+#if NET_2_0
+				"<A()>  _{0}" +
+#endif
+				"Public Shared Sub Main(){0}" +
+				"    Dim x As Test.InnerType{0}" +
+				"End Sub{0}", NewLine), code);
 		}
 	}
 
@@ -1974,6 +2004,22 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Interface Test1{0}" +
 				"    {0}" +
+				"End Interface{0}", NewLine), code);
+		}
+
+		[Test]
+		public override void EntryPointMethodTest ()
+		{
+			string code = GenerateEntryPointMethod (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Interface Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    <A()>  _{0}" +
+#endif
+				"    Public Shared Sub Main(){0}" +
+				"        Dim x As Test.InnerType{0}" +
+				"    End Sub{0}" +
 				"End Interface{0}", NewLine), code);
 		}
 	}
@@ -2747,6 +2793,22 @@ namespace MonoTests.Microsoft.VisualBasic
 				"    End Sub{0}" +
 				"End Structure{0}", NewLine), code);
 		}
+
+		[Test]
+		public override void EntryPointMethodTest ()
+		{
+			string code = GenerateEntryPointMethod (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Structure Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    <A()>  _{0}" +
+#endif
+				"    Public Shared Sub Main(){0}" +
+				"        Dim x As Test.InnerType{0}" +
+				"    End Sub{0}" +
+				"End Structure{0}", NewLine), code);
+		}
 	}
 
 	[TestFixture]
@@ -3303,6 +3365,22 @@ namespace MonoTests.Microsoft.VisualBasic
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"Public Enum Test1{0}" +
 				"    {0}" +
+				"End Enum{0}", NewLine), code);
+		}
+
+		[Test]
+		public override void EntryPointMethodTest ()
+		{
+			string code = GenerateEntryPointMethod (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"Public Enum Test1{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    <A()>  _{0}" +
+#endif
+				"    Public Shared Sub Main(){0}" +
+				"        Dim x As Test.InnerType{0}" +
+				"    End Sub{0}" +
 				"End Enum{0}", NewLine), code);
 		}
 	}

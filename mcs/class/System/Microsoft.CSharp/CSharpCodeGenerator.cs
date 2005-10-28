@@ -588,8 +588,22 @@ namespace Mono.CSharp
 		protected override void GenerateEntryPointMethod (CodeEntryPointMethod method, 
 								  CodeTypeDeclaration declaration)
 		{
-			method.Name = "Main";
-			GenerateMethod (method, declaration);
+#if NET_2_0
+			OutputAttributes (method.CustomAttributes, null, false);
+#endif
+
+			Output.Write ("public static ");
+#if NET_2_0
+			OutputType (method.ReturnType);
+#else
+			Output.Write ("void");
+#endif
+			Output.Write (" Main()");
+			OutputStartBrace ();
+			Indent++;
+			GenerateStatements (method.Statements);
+			Indent--;
+			Output.WriteLine ("}");
 		}
 		
 		protected override void GenerateMethod (CodeMemberMethod method,
@@ -1120,7 +1134,7 @@ namespace Mono.CSharp
 			else
 				return value;
 		}
-
+    
 		protected override string GetTypeOutput (CodeTypeReference type)
 		{
 			string typeOutput = null;
@@ -1248,6 +1262,7 @@ namespace Mono.CSharp
 					typeOutput = sb.ToString ();
 #else
 					typeOutput = GetSafeName (baseType);
+					typeOutput = typeOutput.Replace ('+', '.');
 #endif
 					break;
 			}

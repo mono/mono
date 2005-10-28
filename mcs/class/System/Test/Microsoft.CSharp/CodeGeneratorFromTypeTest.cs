@@ -902,6 +902,24 @@ namespace MonoTests.Microsoft.CSharp
 				"}}{0}", NewLine), code);
 		}
 
+		[Test]
+		public override void EntryPointMethodTest ()
+		{
+			string code = GenerateEntryPointMethod (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public class Test1 {{{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    [A()]{0}" +
+				"    public static int Main() {{{0}" +
+#else
+				"    public static void Main() {{{0}" +
+#endif
+				"        Test.InnerType x;{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
+		}
+
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}
 
@@ -1369,6 +1387,22 @@ namespace MonoTests.Microsoft.CSharp
 			string code = GenerateTypeConstructor (Options);
 			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
 				"public delegate void Test1();{0}{0}", NewLine), code);
+		}
+
+		[Test]
+		public override void EntryPointMethodTest ()
+		{
+			string code = GenerateEntryPointMethod (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public delegate void Test1();{0}{0}" +
+#if NET_2_0
+				"[A()]{0}" +
+				"public static int Main() {{{0}" +
+#else
+				"public static void Main() {{{0}" +
+#endif
+				"    Test.InnerType x;{0}" +
+				"}}{0}", NewLine), code);
 		}
 
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
@@ -2102,6 +2136,24 @@ namespace MonoTests.Microsoft.CSharp
 				"public interface Test1{0}" + 
 				"{{{0}" +
 				"    {0}" +
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public override void EntryPointMethodTest ()
+		{
+			string code = GenerateEntryPointMethod (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public interface Test1 {{{0}" + 
+				"    {0}" +
+#if NET_2_0
+				"    [A()]{0}" +
+				"    public static int Main() {{{0}" +
+#else
+				"    public static void Main() {{{0}" +
+#endif
+				"        Test.InnerType x;{0}" +
+				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
 
@@ -2927,6 +2979,24 @@ namespace MonoTests.Microsoft.CSharp
 				"}}{0}", NewLine), code, "#2");
 		}
 
+		[Test]
+		public override void EntryPointMethodTest ()
+		{
+			string code = GenerateEntryPointMethod (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public struct Test1 {{{0}" +
+				"    {0}" +
+#if NET_2_0
+				"    [A()]{0}" +
+				"    public static int Main() {{{0}" +
+#else
+				"    public static void Main() {{{0}" +
+#endif
+				"        Test.InnerType x;{0}" +
+				"    }}{0}" +
+				"}}{0}", NewLine), code);
+		}
+
 		#endregion Override implementation of CodeGeneratorFromTypeTestBase
 	}
 
@@ -3559,6 +3629,24 @@ namespace MonoTests.Microsoft.CSharp
 				"public enum Test1{0}" + 
 				"{{{0}" +
 				"    {0}" +
+				"}}{0}", NewLine), code);
+		}
+
+		[Test]
+		public override void EntryPointMethodTest ()
+		{
+			string code = GenerateEntryPointMethod (Options);
+			Assert.AreEqual (string.Format (CultureInfo.InvariantCulture,
+				"public enum Test1 {{{0}" + 
+				"    {0}" +
+#if NET_2_0
+				"    [A()]{0}" +
+				"    public static int Main() {{{0}" +
+#else
+				"    public static void Main() {{{0}" +
+#endif
+				"        Test.InnerType x;{0}" +
+				"    }}{0}" +
 				"}}{0}", NewLine), code);
 		}
 

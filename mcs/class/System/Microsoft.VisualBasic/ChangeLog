@@ -1,3 +1,9 @@
+2005-10-28  Gert Driesen <drieseng@users.sourceforge.net>
+
+	* VBCodeGenerator.cs: Use fixed signature for entrypoint method.
+	Only output attributes on 2.0 profile. Replace + with dot in type 
+	name (for nested types). Fixes bug #76580.
+
 2005-10-25  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* VBCodeGenerator.cs: Do not output name of CodeAttributeArgument if

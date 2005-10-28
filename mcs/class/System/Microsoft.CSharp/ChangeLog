@@ -1,3 +1,12 @@
+2005-10-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Use fixed signature for entrypoint method
+	on 1.0 profile. On 2.0 profile output custom attributes, and return
+	type. On 1.0 profile, also replace + with dot (for nested types).
+	Fixes bug #76580. Set eol-style to native.
+	* CSharpCodeCompiler.cs: Set eol-style to native.
+	* CSharpCodeProvider.cs: Set eol-style to native.
+
 2005-10-19  Miguel de Icaza  <miguel@novell.com>
 
 	* CSharpCodeCompiler.cs: Quote the directory, to fix #76469

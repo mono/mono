@@ -177,6 +177,9 @@ namespace MonoTests.System.CodeDom.Compiler
 		[Test]
 		public abstract void TypeConstructorTest ();
 
+		[Test]
+		public abstract void EntryPointMethodTest ();
+
 		protected string GenerateDefaultType (CodeGeneratorOptions options)
 		{
 			return GenerateCodeFromType (TypeDeclaration, options);
@@ -978,6 +981,38 @@ namespace MonoTests.System.CodeDom.Compiler
 			attrDec.Arguments.Add (new CodeAttributeArgument ("A2",
 				new CodePrimitiveExpression (true)));
 			typeCtor.ReturnTypeCustomAttributes.Add (attrDec);
+
+			return GenerateCodeFromType (TypeDeclaration, options);
+		}
+
+		protected string GenerateEntryPointMethod (CodeGeneratorOptions options)
+		{
+			TypeDeclaration.Name = "Test1";
+
+			CodeEntryPointMethod method = new CodeEntryPointMethod ();
+			method.Name = "Something"; // should be ignored in C# and VB
+			method.Attributes = MemberAttributes.Private ; // should be ignored in C# and VB
+			method.ReturnType = new CodeTypeReference (typeof (int)); // should be ignored in C# 1.x and VB 1.x and 2.x
+
+			// parameters on entry point are ignored in C# and VB
+			CodeParameterDeclarationExpression param = new CodeParameterDeclarationExpression (
+				typeof (object), "value1");
+			method.Parameters.Add (param);
+
+			// custom attributes on entry point are ignored in C# 1.x and VB 1.x
+			CodeAttributeDeclaration attrDec = new CodeAttributeDeclaration ();
+			attrDec.Name = "A";
+			method.CustomAttributes.Add (attrDec);
+
+			CodeVariableDeclarationStatement v = new CodeVariableDeclarationStatement ("Test+InnerType", "x");
+			method.Statements.Add (v);
+
+			TypeDeclaration.Members.Add (method);
+
+			/*
+			CodeTypeDeclaration nestedType = new CodeTypeDeclaration ("InnerType");
+			TypeDeclaration.Members.Add (nestedType);
+			*/
 
 			return GenerateCodeFromType (TypeDeclaration, options);
 		}

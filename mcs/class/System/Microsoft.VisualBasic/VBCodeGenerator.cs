@@ -628,10 +628,18 @@ namespace Microsoft.VisualBasic
 			Output.Write (member.Text);
 		}
 		
-		protected override void GenerateEntryPointMethod( CodeEntryPointMethod method, CodeTypeDeclaration declaration )
+		protected override void GenerateEntryPointMethod (CodeEntryPointMethod method, CodeTypeDeclaration declaration)
 		{
-			method.Name = "Main";
-			GenerateMethod (method, declaration);
+#if NET_2_0
+			OutputAttributes (method.CustomAttributes, null, 
+				LineHandling.ContinueLine);
+#endif
+
+			Output.WriteLine ("Public Shared Sub Main()");
+			Indent++;
+			GenerateStatements (method.Statements);
+			Indent--;
+			Output.WriteLine ("End Sub");
 		}
 		
 		[MonoTODO ("partially implemented")]
@@ -1437,7 +1445,7 @@ namespace Microsoft.VisualBasic
 					break;
 #endif
 				default:
-					output = type.BaseType;
+					output = type.BaseType.Replace('+', '.');
 					break;
 				}
 			}

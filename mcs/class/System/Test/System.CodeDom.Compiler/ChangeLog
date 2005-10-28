@@ -1,3 +1,11 @@
+2005-10-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorTestBase.cs: Set eol-style to native.
+	* CodeGeneratorTest.cs: Set eol-style to native.
+        * CodeGeneratorFromTypeTestBase.cs: Added tests for 
+	CodeEntryPointMethod and bug #76580. Set eol-style to native.
+	* IndentedTextWriterTest.cs: Set eol-style to native.
+
 2005-10-25  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* CompilerErrorCas.cs: Under 1.x CompilerError is protected by a 

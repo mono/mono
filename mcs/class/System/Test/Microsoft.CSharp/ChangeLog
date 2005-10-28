@@ -1,3 +1,8 @@
+2005-10-28  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeGeneratorFromTypeTest.cs: Added tests for CodeEntryPointMethod
+	and bug #76580.
+
 2005-10-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeGeneratorTestBase.cs: Fixed line endings. Set eol-style to 
