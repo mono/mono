@@ -1,3 +1,8 @@
+2005-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CriticialFinalizerObject.cs: Added [ReliabilityContract] to ctor.
+	* ReliabilityContractAttribute.cs: Removed (obsoleted) default ctor.
+
 2005-05-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CriticialFinalizerObject.cs: Changed ComVisible to true.

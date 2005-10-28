@@ -37,12 +37,7 @@ namespace System.Runtime.ConstrainedExecution
                 Consistency consistency;
                 Cer cer;
 
-		[Obsolete ()]
-                public ReliabilityContractAttribute ()
-                {
-                }
-
-                public ReliabilityContractAttribute (Consistency consistency, Cer cer)
+		public ReliabilityContractAttribute (Consistency consistency, Cer cer)
                 {
                         this.consistency = consistency;
                         this.cer = cer;
