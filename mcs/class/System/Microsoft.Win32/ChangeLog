@@ -1,3 +1,8 @@
+2005-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IntranetZoneCredentialPolicy.cs: ShouldSendCredential was changed to
+	virtual in 2.0 final.
+
 2005-10-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TimerElapsedEventArgs.cs: Re-added [ComVisible (false)] attribute 

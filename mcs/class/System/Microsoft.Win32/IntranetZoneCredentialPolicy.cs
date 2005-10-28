@@ -43,7 +43,7 @@ namespace Microsoft.Win32 {
 		{
 		}
 
-		public bool ShouldSendCredential (Uri challengeUri, WebRequest request,
+		public virtual bool ShouldSendCredential (Uri challengeUri, WebRequest request,
 			NetworkCredential credential, IAuthenticationModule authenticationModule)
 		{
 			Zone z = Zone.CreateFromUrl (challengeUri.AbsoluteUri);
