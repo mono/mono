@@ -260,6 +260,7 @@ System.Security.Principal/GenericIdentityTest.cs
 System.Security.Principal/GenericPrincipalTest.cs
 System.Security.Principal/WindowsIdentityTest.cs
 System.Security.Principal/WindowsPrincipalTest.cs
+System.Security/SecureStringTest.cs
 System.Security/SecurityContextTest.cs
 System.Security/SecurityCriticalAttributeTest.cs
 System.Security/SecurityElementTest.cs
@@ -321,6 +322,7 @@ System.Resources/ResourceSetCas.cs
 System.Runtime.InteropServices/RuntimeEnvironmentCas.cs
 System.Security/CodeAccessPermissionCas.cs
 System.Security/PermissionSetCas.cs
+System.Security/SecureStringCas.cs
 System.Security/SecurityContextCas.cs
 System.Security/SecurityExceptionCas.cs
 System.Security/SecurityManagerCas.cs
