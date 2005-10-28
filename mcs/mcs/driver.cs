@@ -98,7 +98,6 @@ namespace Mono.CSharp
 		//
 		// Encoding.
 		//
-		static Encoding default_encoding;
 		static Encoding encoding;
 
 
@@ -114,7 +113,7 @@ namespace Mono.CSharp
 			win32ResourceFile = win32IconFile = null;
 			defines = null;
 			output_file = null;
-			encoding = default_encoding = null;
+			encoding = null;
 			first_source = null;
 		}
 
@@ -1344,7 +1343,7 @@ namespace Mono.CSharp
 					encoding = new UTF8Encoding();
 					break;
 				case "reset":
-					encoding = default_encoding;
+					encoding = Encoding.Default;
 					break;
 				default:
 					try {
@@ -1443,14 +1442,7 @@ namespace Mono.CSharp
 			int i;
 			bool parsing_options = true;
 
-			try {
-				// Latin1
-				default_encoding = Encoding.GetEncoding (28591);
-			} catch (Exception) {
-				// iso-8859-1
-				default_encoding = Encoding.GetEncoding (1252);
-			}
-			encoding = default_encoding;
+			encoding = Encoding.Default;
 
 			references = new ArrayList ();
 			external_aliases = new Hashtable ();
