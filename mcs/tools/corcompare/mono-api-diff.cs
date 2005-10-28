@@ -1677,8 +1677,14 @@ namespace Mono.AssemblyCompare
 					(SignatureFlags) methods.signatureFlags [name] :
 					SignatureFlags.None;
 
-				if (flags!= oflags)
-					AddWarning (parent, String.Format ("{0} and should be {1}", oflags, flags));
+				if (flags!= oflags) {
+					if (flags == SignatureFlags.None)
+						AddWarning (parent, String.Format ("should not be {0}", oflags));
+					else if (oflags == SignatureFlags.None)
+						AddWarning (parent, String.Format ("should be {0}", flags));
+					else
+						AddWarning (parent, String.Format ("{0} and should be {1}", oflags, flags));
+				}
 
 				if (returnTypes != null) {
 					string rtype = returnTypes[name] as string;

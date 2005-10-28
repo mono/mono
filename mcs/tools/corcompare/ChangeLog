@@ -1,5 +1,10 @@
 2005-10-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* mono-api-diff.cs :
+	  "None" goes away from static/abstract/sealed diff.
+
+2005-10-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* mono-api-info.cs, mono-api-diff.cs :
 	  Print static/abstract/sealed diffs on methods.
 	  Differentiate generic methods by their type arguments.
