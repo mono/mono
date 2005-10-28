@@ -1,3 +1,8 @@
+2005-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Consts.cs.in: Added RuntimeVersion as most 2.0 assemblies will 
+	require it (for AssemblyFileVersion).
+
 2005-09-21  Kornél Pál  <kornelpal@hotmail.com>
 
 	* Consts.cs.in: Removed UnmanagedType_80 that was required because mcs bug
