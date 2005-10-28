@@ -116,7 +116,7 @@ namespace Mono.CSharp {
 
 		public override Constant Reduce(EmitContext ec, Type target_type)
 		{
-			if (target_type == TypeManager.string_type)
+			if (!TypeManager.IsValueType (target_type))
 				return new NullCast (this, target_type);
 
 			return null;

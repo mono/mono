@@ -292,7 +292,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (Type != TypeManager.string_type && this is Constant) {
+			if (Type != TypeManager.string_type && this is Constant && !(this is NullCast)) {
 				Report.Error (31, loc, "Constant value `{0}' cannot be converted to a `{1}'",
 					GetSignatureForError (), TypeManager.CSharpName (target));
 				return;
@@ -1249,9 +1249,9 @@ namespace Mono.CSharp {
 	// a NullLiteral is still a Constant
 	//
 	public class NullCast : Constant {
-		protected Expression child;
+		public Constant child;
 				
-		public NullCast (Expression child, Type return_type):
+		public NullCast (Constant child, Type return_type):
 			base (Location.Null)
 		{
 			eclass = child.eclass;
