@@ -1,3 +1,9 @@
+2005-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecureString.cs: Changed the previous (and partial) managed 
+	implementation to one (that will be) based on ProtectedMemory. Work in
+	progress...
+
 2005-10-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PermissionSet.cs: If the current permission set is unrestricted then
