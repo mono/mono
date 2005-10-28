@@ -1,3 +1,10 @@
+2005-10-28  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs: Early implementation to support winforms being a drag
+	source for data on X11. Also restructured the converters so they
+	can go both ways now.
+	* XplatUIX11.cs: Tie ins to the the Dnd stuff.
+	
 2005-10-27  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUIX11.cs: Fixed FIXME - implemented ASCII encoding for XA_STRING

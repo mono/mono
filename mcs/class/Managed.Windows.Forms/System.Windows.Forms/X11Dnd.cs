@@ -26,14 +26,34 @@
 
 
 using System;
+using System.IO;
 using System.Text;
+using System.Drawing;
 using System.Collections;
+using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace System.Windows.Forms {
 
 	internal class X11Dnd {
+
+		private enum State {
+			Accepting,
+			Dragging
+		}
+
+		private enum DragState {
+			None,
+			Beginning,
+			Dragging,
+			Entered
+		}
+
+		private interface IDataConverter {
+			void GetData (X11Dnd dnd, DataObject data, ref XEvent xevent);
+			void SetData (X11Dnd dnd, object data, ref XEvent xevent);
+		}
 
 		private delegate void MimeConverter (IntPtr dsp,
 				DataObject data, ref XEvent xevent);
@@ -42,35 +62,215 @@ namespace System.Windows.Forms {
 			public string Name;
 			public IntPtr Type;
 			public IntPtr NonProtocol;
-			public MimeConverter Convert;
+			public IDataConverter Converter;
 			
-			public MimeHandler (string name, MimeConverter converter)
+			public MimeHandler (string name, IDataConverter converter)
 			{
 				Name = name;
-				Convert = converter;
+				Converter = converter;
+			}
+
+			public override string ToString ()
+			{
+				return "MimeHandler {" + Name + "}";
 			}
 		}
 
 		private MimeHandler [] MimeHandlers = {
 //			  new MimeHandler ("WCF_DIB"),
 //			  new MimeHandler ("image/gif", new MimeConverter (ImageConverter)),
+//			new MimeHandler ("text/rtf", new MimeConverter (RtfConverter)),
+//			new MimeHandler ("text/richtext", new MimeConverter (RtfConverter)),
 
-			
-			new MimeHandler ("text/rtf", new MimeConverter (RtfConverter)),
-			new MimeHandler ("text/richtext", new MimeConverter (RtfConverter)),
-			new MimeHandler ("text/plain", new MimeConverter (TextConverter)),
-			new MimeHandler ("text/html", new MimeConverter (HtmlConverter)),
-			new MimeHandler ("text/uri-list", new MimeConverter (UriListConverter)),
+			new MimeHandler ("text/plain", new TextConverter ()),
+			new MimeHandler ("text/html", new HtmlConverter ()),
+			new MimeHandler ("text/uri-list", new UriListConverter ()),
+			new MimeHandler ("application/x-mono-serialized-object",
+					new SerializedObjectConverter ())
 		};
+
+		private class SerializedObjectConverter : IDataConverter {
+
+			public void GetData (X11Dnd dnd, DataObject data, ref XEvent xevent)
+			{
+				MemoryStream stream = dnd.GetData (ref xevent);
+				BinaryFormatter bf = new BinaryFormatter ();
+
+				if (stream.Length == 0)
+					return;
+
+				stream.Seek (0, 0);
+				object obj = bf.Deserialize (stream);
+				data.SetData (obj);
+			}
+
+			public void SetData (X11Dnd dnd, object data, ref XEvent xevent)
+			{
+				MemoryStream stream = new MemoryStream ();
+				BinaryFormatter bf = new BinaryFormatter ();
+
+				bf.Serialize (stream, data);
+
+				IntPtr buffer = Marshal.AllocHGlobal ((int) stream.Length);
+				stream.Seek (0, 0);
+
+				for (int i = 0; i < stream.Length; i++) {
+					Marshal.WriteByte (buffer, i, (byte) stream.ReadByte ());
+				}
+
+				dnd.SetProperty (ref xevent, buffer, (int) stream.Length);
+			}
+		}
+
+		private class HtmlConverter : IDataConverter {
+
+			public void GetData (X11Dnd dnd, DataObject data, ref XEvent xevent)
+			{
+				string text = dnd.GetText (ref xevent, false);
+				if (text == null)
+					return;
+				data.SetData (DataFormats.Text, text);
+				data.SetData (DataFormats.UnicodeText, text);
+			}
+
+			public void SetData (X11Dnd dnd, object data, ref XEvent xevent)
+			{
+				IntPtr buffer;
+				int len;
+
+				if (xevent.SelectionRequestEvent.target == (int) Atom.XA_STRING) {
+					byte [] bytes = Encoding.ASCII.GetBytes ((string) data);
+					buffer = Marshal.AllocHGlobal (bytes.Length);
+					len = bytes.Length;
+					for (int i = 0; i < len; i++)
+						Marshal.WriteByte (buffer, i, bytes [i]);
+				} else {
+					buffer = Marshal.StringToHGlobalAnsi ((string) data);
+					len = 0;
+					while (Marshal.ReadByte (buffer, len) != 0)
+						len++;
+				}
+
+				dnd.SetProperty (ref xevent, buffer, len);
+
+				Marshal.FreeHGlobal (buffer);
+			}
+		}
+
+		private class TextConverter : IDataConverter {
+
+			public void GetData (X11Dnd dnd, DataObject data, ref XEvent xevent)
+			{
+				string text = dnd.GetText (ref xevent, true);
+				if (text == null)
+					return;
+				data.SetData (DataFormats.Text, text);
+				data.SetData (DataFormats.UnicodeText, text);
+			}
+
+			public void SetData (X11Dnd dnd, object data, ref XEvent xevent)
+			{
+				IntPtr buffer;
+				int len;
+
+				if (xevent.SelectionRequestEvent.target == (int) Atom.XA_STRING) {
+					byte [] bytes = Encoding.ASCII.GetBytes ((string) data);
+					buffer = Marshal.AllocHGlobal (bytes.Length);
+					len = bytes.Length;
+					for (int i = 0; i < len; i++)
+						Marshal.WriteByte (buffer, i, bytes [i]);
+				} else {
+					buffer = Marshal.StringToHGlobalAnsi ((string) data);
+					len = 0;
+					while (Marshal.ReadByte (buffer, len) != 0)
+						len++;
+				}
+
+				dnd.SetProperty (ref xevent, buffer, len);
+
+				Marshal.FreeHGlobal (buffer);
+			}
+		}
+
+		private class UriListConverter : IDataConverter {
+
+			public void GetData (X11Dnd dnd, DataObject data, ref XEvent xevent)
+			{
+				string text = dnd.GetText (ref xevent, false);
+				if (text == null)
+					return;
+
+				// TODO: Do this in a loop instead of just splitting
+				ArrayList uri_list = new ArrayList ();
+				string [] lines = text.Split (new char [] { '\r', '\n' });
+				foreach (string line in lines) {
+					// # is a comment line (see RFC 2483)
+					if (line.StartsWith ("#"))
+						continue;
+					try {
+						Uri uri = new Uri (line);
+						uri_list.Add (uri.LocalPath);
+					} catch { }
+				}
+
+				string [] l = (string []) uri_list.ToArray (typeof (string));
+				if (l.Length < 1)
+					return;
+				data.SetData (DataFormats.FileDrop, l);
+				data.SetData ("FileName", l [0]);
+				data.SetData ("FileNameW", l [0]);
+			}
+
+			public void SetData (X11Dnd dnd, object data, ref XEvent xevent)
+			{
+				string [] uri_list = (string []) data;
+				StringBuilder res = new StringBuilder ();
+
+				foreach (string uri_str in uri_list) {
+					Uri uri = new Uri (uri_str);
+					res.Append (uri.ToString ());
+					res.Append ("\r\n");
+				}
+
+				IntPtr buffer = Marshal.StringToHGlobalAnsi ((string) data);
+				int len = 0;
+				while (Marshal.ReadByte (buffer, len) != 0)
+					len++;
+
+				dnd.SetProperty (ref xevent, buffer, len);
+			}
+		}
+
+		private class DragData {
+			public IntPtr Window;
+			public DragState State;
+			public object Data;
+			public IntPtr [] SupportedTypes;
+
+			public IntPtr LastWindow;
+			public IntPtr LastTopLevel;
+
+			public bool WillAccept;
+			
+			public void Reset ()
+			{
+				State = DragState.None;
+				Data = null;
+				SupportedTypes = null;
+				WillAccept = false;
+			}
+		}
+		
+		private class DropData {
+
+		}
 
 		// This version seems to be the most common
 		private static readonly uint [] XdndVersion = new uint [] { 4 }; 
 
 		private IntPtr display;
+		private DragData drag_data;
 		
-	     
-		private bool initialized;
-
 		private IntPtr XdndAware;
 		private IntPtr XdndSelection;
 		private IntPtr XdndEnter;
@@ -88,6 +288,8 @@ namespace System.Windows.Forms {
 		private IntPtr XdndActionDescription;
 		private IntPtr XdndActionAsk;
 
+		private State state;
+
 		private int converts_pending;
 		private bool position_recieved;
 		private bool status_sent;
@@ -95,6 +297,8 @@ namespace System.Windows.Forms {
 		private IntPtr source;
 		private IntPtr toplevel;
 		private DataObject data;
+
+		private IntPtr drag_action;
 		private Control control;
 		private int pos_x, pos_y;
 		private DragDropEffects allowed;
@@ -103,13 +307,11 @@ namespace System.Windows.Forms {
 		public X11Dnd (IntPtr display)
 		{
 			this.display = display;
+			Init ();
 		}
 
 		public void SetAllowDrop (Hwnd hwnd, bool allow)
 		{
-			if (!initialized)
-				Init ();
-
 //			  if (hwnd.allow_drop == allow)
 //				  return;
 
@@ -119,22 +321,172 @@ namespace System.Windows.Forms {
 //			  hwnd.allow_drop = allow;
 		}
 
+		public DragDropEffects StartDrag (IntPtr handle, object data,
+				DragDropEffects allowed_effects)
+		{
+			drag_data = new DragData ();
+			drag_data.Window = handle;
+			drag_data.State = DragState.Beginning;
+			
+			drag_data.Data = data;
+			drag_data.SupportedTypes = DetermineSupportedTypes (data);
+
+			// drag_action = ActionFromEffect (allowed_effects);
+
+			drag_data.LastTopLevel = IntPtr.Zero;
+			return DragDropEffects.Copy;
+		}
+
+		public void HandleButtonRelease (ref XEvent xevent)
+		{
+
+			if (drag_data == null)
+				return;
+
+			if (drag_data.State == DragState.Beginning) {
+				state = State.Accepting;
+			} else if (drag_data.State != DragState.None) {
+
+				if (drag_data.WillAccept) {
+					SendDrop (drag_data.LastTopLevel, xevent.AnyEvent.window,
+							xevent.ButtonEvent.time);
+				}
+
+				XplatUIX11.XUngrabPointer (display, 0);
+				drag_data.Reset ();
+			}
+		}
+
+		public void HandleMotionNotify (ref XEvent xevent)
+		{
+			if (drag_data == null)
+				return;
+
+			if (drag_data.State == DragState.Beginning) {
+				int suc;
+
+				drag_data.State = DragState.Dragging;
+
+				suc = XplatUIX11.XSetSelectionOwner (display, (int) XdndSelection,
+						drag_data.Window,
+						xevent.ButtonEvent.time);
+
+				if (suc == 0) {
+					Console.Error.WriteLine ("Could not take ownership of XdndSelection aborting drag.");
+					drag_data.Reset ();
+					return;
+				}
+
+				suc = XGrabPointer (display, xevent.AnyEvent.window,
+						false,
+						EventMask.ButtonMotionMask |
+						EventMask.PointerMotionMask |
+						EventMask.ButtonPressMask |
+						EventMask.ButtonReleaseMask,
+						GrabMode.GrabModeAsync,
+						GrabMode.GrabModeAsync,
+						IntPtr.Zero, IntPtr.Zero, 0);
+
+				if (suc != 0) {
+					Console.Error.WriteLine ("Could not grab pointer aborting drag.");
+					drag_data.Reset ();
+					return;
+				}
+
+				drag_data.State = DragState.Dragging;
+			} else if (drag_data.State != DragState.None) {
+				XAllowEvents (display, 1 /* SyncPointer */, IntPtr.Zero);
+			
+				bool dnd_aware = false;
+				IntPtr toplevel = IntPtr.Zero;
+				IntPtr window = XplatUIX11.RootWindowHandle;
+
+				IntPtr root, child;
+				int x_temp, y_temp;
+				int mask_return;
+
+				while (XQueryPointer (display,
+						       window,
+						       out root, out child,
+						       out x_temp, out y_temp,
+						       out xevent.MotionEvent.x,
+						       out xevent.MotionEvent.y,
+						       out mask_return)) {
+					
+					if (!dnd_aware) {
+						dnd_aware = IsWindowDndAware (window);
+						if (dnd_aware) {
+							toplevel = window;
+							xevent.MotionEvent.x_root = x_temp;
+							xevent.MotionEvent.y_root = y_temp;
+						}
+					}
+					
+					if (child == IntPtr.Zero)
+						break;
+					
+					window = child;
+				}
+
+				if (window != drag_data.LastWindow && drag_data.State == DragState.Entered) {
+					drag_data.State = DragState.Dragging;
+
+					// TODO: Send a Leave if this is an MWF window
+
+					if (toplevel != drag_data.LastTopLevel)
+						SendLeave (drag_data.LastTopLevel, xevent.MotionEvent.window);
+				}
+
+				drag_data.State = DragState.Entered;
+				if (toplevel != drag_data.LastTopLevel) {
+					// Entering a new toplevel window
+					SendEnter (toplevel, drag_data.Window, drag_data.SupportedTypes);
+				} else {
+					// Already in a toplevel window, so send a position
+					IntPtr action = XdndActionCopy;
+					SendPosition (toplevel, drag_data.Window, action,
+							xevent.MotionEvent.x_root,
+							xevent.MotionEvent.y_root,
+							xevent.MotionEvent.time);
+				}
+
+				drag_data.LastTopLevel = toplevel;
+				drag_data.LastWindow = window;
+			}
+		}
+
+		// DEBUG CODE REMOVE
+		private string GetText (IntPtr handle) {
+			string text = String.Empty;
+			IntPtr	textptr;
+
+			textptr = IntPtr.Zero;
+
+			XFetchName (display, handle, ref textptr);
+			if (textptr != IntPtr.Zero) {
+				text = Marshal.PtrToStringAnsi(textptr);
+				XFree (textptr);
+			}
+
+			return text;
+		}
+
+			
 		// return true if the event is handled here
 		public bool HandleClientMessage (ref XEvent xevent)
 		{
-			if (!initialized)
-				Init ();
-
 			// most common so we check it first
 			if (xevent.ClientMessageEvent.message_type == XdndPosition)
-				return HandlePositionEvent (ref xevent);
+				return Accepting_HandlePositionEvent (ref xevent);
 			if (xevent.ClientMessageEvent.message_type == XdndEnter)
-				return HandleEnterEvent (ref xevent);
+				return Accepting_HandleEnterEvent (ref xevent);
 			if (xevent.ClientMessageEvent.message_type == XdndDrop)
-				return HandleDropEvent (ref xevent);
+				return Accepting_HandleDropEvent (ref xevent);
 			if (xevent.ClientMessageEvent.message_type == XdndLeave)
-				return HandleLeaveEvent (ref xevent);
-			
+				return Accepting_HandleLeaveEvent (ref xevent);
+			if (xevent.ClientMessageEvent.message_type == XdndStatus)
+				return HandleStatusEvent (ref xevent);
+
 			return false;
 		}
 
@@ -149,12 +501,49 @@ namespace System.Windows.Forms {
 			if (data == null)
 				data = new DataObject ();
 
-			handler.Convert (display, data, ref xevent);
+			handler.Converter.GetData (this, data, ref xevent);
 
 			converts_pending--;
 			if (converts_pending <= 0 && position_recieved)
 				SendEnterStatus ();
 			return true;
+		}
+
+		public bool HandleSelectionRequestEvent (ref XEvent xevent)
+		{
+			if (xevent.SelectionRequestEvent.selection != (int) XdndSelection)
+				return false;
+
+			MimeHandler handler = FindHandler ((IntPtr) xevent.SelectionRequestEvent.target);
+			if (handler == null)
+				return false;
+
+			handler.Converter.SetData (this, drag_data.Data, ref xevent);
+
+			return true;
+		}
+
+		private void SetProperty (ref XEvent xevent, IntPtr data, int length)
+		{
+			XEvent sel = new XEvent();
+			sel.SelectionEvent.type = XEventName.SelectionNotify;
+			sel.SelectionEvent.send_event = true;
+			sel.SelectionEvent.display = display;
+			sel.SelectionEvent.selection = xevent.SelectionRequestEvent.selection;
+			sel.SelectionEvent.target = xevent.SelectionRequestEvent.target;
+			sel.SelectionEvent.requestor = xevent.SelectionRequestEvent.requestor;
+			sel.SelectionEvent.time = xevent.SelectionRequestEvent.time;
+			sel.SelectionEvent.property = 0;
+
+			XplatUIX11.XChangeProperty (display, xevent.SelectionRequestEvent.requestor,
+					xevent.SelectionRequestEvent.property,
+					xevent.SelectionRequestEvent.target,
+					8, PropertyMode.Replace, data, length);
+			sel.SelectionEvent.property = xevent.SelectionRequestEvent.property;
+
+			XSendEvent (display, xevent.SelectionRequestEvent.requestor, false,
+					EventMask.NoEventMask, ref sel);
+			return;
 		}
 
 		private void Reset ()
@@ -175,7 +564,7 @@ namespace System.Windows.Forms {
 			status_sent = false;
 		}
 		
-		private bool HandleEnterEvent (ref XEvent xevent)
+		private bool Accepting_HandleEnterEvent (ref XEvent xevent)
 		{
 			Reset ();
 
@@ -188,7 +577,7 @@ namespace System.Windows.Forms {
 			return true;
 		}
 
-		private bool HandlePositionEvent (ref XEvent xevent)
+		private bool Accepting_HandlePositionEvent (ref XEvent xevent)
 		{
 			int x = (int) xevent.ClientMessageEvent.ptr3 >> 16;
 			int y = (int) xevent.ClientMessageEvent.ptr3 & 0xFFFF;
@@ -257,20 +646,33 @@ namespace System.Windows.Forms {
 			ResetTargetData ();
 		}
 
-		private bool HandleDropEvent (ref XEvent xevent)
+		private bool Accepting_HandleDropEvent (ref XEvent xevent)
 		{
-			Console.WriteLine ("DROPPING EVENT");
-			if (control != null && drag_event != null)
+			if (control != null && drag_event != null) {
+				drag_event = new DragEventArgs (data,
+						0, pos_x, pos_y,
+					allowed, DragDropEffects.None);
 				control.DndDrop (drag_event);
+			}
 			SendFinished ();
 			return true;
 		}
 
-		private bool HandleLeaveEvent (ref XEvent xevent)
+		private bool Accepting_HandleLeaveEvent (ref XEvent xevent)
 		{
 			if (control != null && drag_event != null)
 				control.DndLeave (drag_event);
-			Reset ();
+			// Reset ();
+			return true;
+		}
+
+		private bool HandleStatusEvent (ref XEvent xevent)
+		{
+			if (drag_data.State == DragState.Entered) {
+//				bool want_position = ((int) xevent.ClientMessageEvent.ptr2 & 0x2) != 0;
+				drag_data.WillAccept = ((int) xevent.ClientMessageEvent.ptr2 & 0x1) != 0;
+//				IntPtr action = xevent.ClientMessageEvent.ptr5;
+			}
 			return true;
 		}
 
@@ -302,8 +704,11 @@ namespace System.Windows.Forms {
 		{
 			bool match = false;
 
+			XplatUIX11.XGetSelectionOwner (display, (int) XdndSelection);
+
 			foreach (IntPtr atom in SourceSupportedList (ref xevent)) {
 				MimeHandler handler = FindHandler (atom);
+				Console.WriteLine ("handler:  {0}   atom:   {1}", handler, atom);
 				if (handler == null)
 					continue;
 				XConvertSelection (display, XdndSelection, handler.Type,
@@ -320,6 +725,15 @@ namespace System.Windows.Forms {
 				return null;
 			foreach (MimeHandler handler in MimeHandlers) {
 				if (handler.Type == atom)
+					return handler;
+			}
+			return null;
+		}
+
+		private MimeHandler FindHandler (string name)
+		{
+			foreach (MimeHandler handler in MimeHandlers) {
+				if (handler.Name == name)
 					return handler;
 			}
 			return null;
@@ -366,6 +780,78 @@ namespace System.Windows.Forms {
 			status_sent = true;
 		}
 
+		private void SendEnter (IntPtr handle, IntPtr from, IntPtr [] supported)
+		{
+			XEvent xevent = new XEvent ();
+
+			xevent.AnyEvent.type = XEventName.ClientMessage;
+			xevent.AnyEvent.display = display;
+			xevent.ClientMessageEvent.window = handle;
+			xevent.ClientMessageEvent.message_type = XdndEnter;
+			xevent.ClientMessageEvent.format = 32;
+			xevent.ClientMessageEvent.ptr1 = from;
+
+			// (int) xevent.ClientMessageEvent.ptr2 & 0x1)
+			// int ptr2 = 0x1;
+			// xevent.ClientMessageEvent.ptr2 = (IntPtr) ptr2;
+			xevent.ClientMessageEvent.ptr2 = IntPtr.Zero;
+			
+			if (supported.Length > 0)
+				xevent.ClientMessageEvent.ptr3 = supported [0];
+			if (supported.Length > 1)
+				xevent.ClientMessageEvent.ptr4 = supported [1];
+			if (supported.Length > 2)
+				xevent.ClientMessageEvent.ptr5 = supported [2];
+
+			XSendEvent (display, handle, false, 0, ref xevent);
+		}
+
+		private void SendDrop (IntPtr handle, IntPtr from, IntPtr time)
+		{
+			XEvent xevent = new XEvent ();
+
+			xevent.AnyEvent.type = XEventName.ClientMessage;
+			xevent.AnyEvent.display = display;
+			xevent.ClientMessageEvent.window = handle;
+			xevent.ClientMessageEvent.message_type = XdndDrop;
+			xevent.ClientMessageEvent.format = 32;
+			xevent.ClientMessageEvent.ptr1 = from;
+			xevent.ClientMessageEvent.ptr3 = time;
+			
+			XSendEvent (display, handle, false, 0, ref xevent);
+		}
+
+		private void SendPosition (IntPtr handle, IntPtr from, IntPtr action, int x, int y, IntPtr time)
+		{
+			XEvent xevent = new XEvent ();
+
+			xevent.AnyEvent.type = XEventName.ClientMessage;
+			xevent.AnyEvent.display = display;
+			xevent.ClientMessageEvent.window = handle;
+			xevent.ClientMessageEvent.message_type = XdndPosition;
+			xevent.ClientMessageEvent.format = 32;
+			xevent.ClientMessageEvent.ptr1 = from;
+			xevent.ClientMessageEvent.ptr3 = (IntPtr) ((x << 16) | (y & 0xFFFF));
+			xevent.ClientMessageEvent.ptr4 = time;
+			xevent.ClientMessageEvent.ptr5 = action;
+			
+			XSendEvent (display, handle, false, 0, ref xevent);
+		}
+
+		private void SendLeave (IntPtr handle, IntPtr from)
+		{
+			XEvent xevent = new XEvent ();
+
+			xevent.AnyEvent.type = XEventName.ClientMessage;
+			xevent.AnyEvent.display = display;
+			xevent.ClientMessageEvent.window = handle;
+			xevent.ClientMessageEvent.message_type = XdndLeave;
+			xevent.ClientMessageEvent.format = 32;
+			xevent.ClientMessageEvent.ptr1 = from;
+
+			XSendEvent (display, handle, false, 0, ref xevent);
+		}
+
 		private void SendFinished ()
 		{
 			XEvent xevent = new XEvent ();
@@ -402,19 +888,19 @@ namespace System.Windows.Forms {
 			XdndActionDescription = XInternAtom (display, "XdndActionDescription", false);
 			XdndActionAsk = XInternAtom (display, "XdndActionAsk", false);
 
-			foreach (MimeHandler handler in MimeHandlers) {
+		foreach (MimeHandler handler in MimeHandlers) {
 				handler.Type = XInternAtom (display, handler.Name, false);
 				handler.NonProtocol = XInternAtom (display,
 						String.Concat ("MWFNonP+", handler.Name), false);
 			}
 
-			initialized = true;
 		}
 
 		private IntPtr [] SourceSupportedList (ref XEvent xevent)
 		{
 			IntPtr [] res;
 
+			
 			if (((int) xevent.ClientMessageEvent.ptr2 & 0x1) == 0) {
 				res = new IntPtr [3];
 				res [0] = xevent.ClientMessageEvent.ptr3;
@@ -435,65 +921,14 @@ namespace System.Windows.Forms {
 					res [i] = (IntPtr) Marshal.ReadInt32 (data, i *
 							Marshal.SizeOf (typeof (int)));
 				}
+
+				XFree (data);
 			}
 
 			return res;
 		}
 
-		private static void UriListConverter (IntPtr display, DataObject data,
-				ref XEvent xevent)
-		{
-			string text = GetText (display, ref xevent, false);
-			if (text == null)
-				return;
-
-			// TODO: Do this in a loop instead of just splitting
-			ArrayList uri_list = new ArrayList ();
-			string [] lines = text.Split (new char [] { '\r', '\n' });
-			foreach (string line in lines) {
-				// # is a comment line (see RFC 2483)
-				if (line.StartsWith ("#"))
-					continue;
-				try {
-					Uri uri = new Uri (line);
-					uri_list.Add (uri.LocalPath);
-				} catch { }
-			}
-
-			string [] l = (string []) uri_list.ToArray (typeof (string));
-			if (l.Length < 1)
-				return;
-			data.SetData (DataFormats.FileDrop, l);
-			data.SetData ("FileName", l [0]);
-			data.SetData ("FileNameW", l [0]);
-		}
-
-		private static void TextConverter (IntPtr display, DataObject data, ref XEvent xevent)
-		{
-			string text = GetText (display, ref xevent, false);
-			if (text == null)
-				return;
-			data.SetData (DataFormats.Text, text);
-			data.SetData (DataFormats.UnicodeText, text);
-		}
-
-		private static void HtmlConverter (IntPtr display, DataObject data, ref XEvent xevent)
-		{
-			string html = GetText (display, ref xevent, true);
-			if (html == null)
-				return;
-			data.SetData (DataFormats.Html, html);
-		}
-
-		private static void ImageConverter (IntPtr display, DataObject data, ref XEvent xevent)
-		{
-		}
-
-		private static void RtfConverter (IntPtr display, DataObject data, ref XEvent xevent)
-		{
-		}
-
-		private static string GetText (IntPtr display, ref XEvent xevent, bool unicode)
+		private string GetText (ref XEvent xevent, bool unicode)
 		{
 			int nread = 0;
 			int nitems;
@@ -529,6 +964,111 @@ namespace System.Windows.Forms {
 			return builder.ToString ();
 		}
 
+		private MemoryStream GetData (ref XEvent xevent)
+		{
+			int nread = 0;
+			int nitems;
+			int bytes_after;
+
+			MemoryStream res = new MemoryStream ();
+			do {
+				IntPtr actual_type;
+				int actual_fmt;
+				IntPtr data = IntPtr.Zero;
+
+				if (0 != XGetWindowProperty (display,
+						    xevent.AnyEvent.window,
+						    (IntPtr) xevent.SelectionEvent.property,
+						    0, 0xffffff, false,
+						    (IntPtr) Atom.AnyPropertyType, out actual_type,
+						    out actual_fmt, out nitems, out bytes_after,
+						    out data)) {
+					XFree (data);
+					break;
+				}
+
+				for (int i = 0; i < nitems; i++)
+					res.WriteByte (Marshal.ReadByte (data, i * sizeof (byte)));
+				nread += nitems;
+
+				XFree (data);
+			} while (bytes_after > 0);
+			return res;
+		}
+
+		private bool IsWindowDndAware (IntPtr handle)
+		{
+			bool res = true;
+			// Check the version number, we need greater than 3
+			IntPtr actual;
+			int format, count, remaining;
+			IntPtr data = IntPtr.Zero;
+			
+			XGetWindowProperty (display, handle, XdndAware, 0, 0x8000000, false,
+					(IntPtr) Atom.XA_ATOM, out actual, out format,
+					out count, out remaining, out data);
+			
+			if (actual != (IntPtr) Atom.XA_ATOM || format != 32 ||
+					count == 0 || data == IntPtr.Zero) {
+				if (data != IntPtr.Zero)
+					XFree (data);
+				return false;
+			}
+
+			int version = Marshal.ReadInt32 (data, 0);
+
+			if (version < 3) {
+				Console.Error.WriteLine ("XDND Version too old (" + version + ").");
+				XFree (data);
+				return false;
+			}
+
+			// First type is actually the XDND version
+			if (count > 1) {
+				res = false;
+				for (int i = 1; i < count; i++) {
+					IntPtr type = (IntPtr) Marshal.ReadInt32 (data, i *
+							Marshal.SizeOf (typeof (int)));
+					for (int j = 0; j < drag_data.SupportedTypes.Length; j++) {
+						if (drag_data.SupportedTypes [j] == type) {
+							res = true;
+							break;
+						}
+					}
+				}
+			}
+
+			XFree (data);
+			return res;
+		}
+
+		private IntPtr [] DetermineSupportedTypes (object data)
+		{
+			ArrayList res = new ArrayList ();
+
+			if (data is string) {
+				MimeHandler handler = FindHandler ("text/plain");
+				if (handler != null)
+					res.Add (handler.Type);
+			}/* else if (data is Bitmap)
+				res.Add (data);
+
+			 */
+
+			if (data is IDataObject) {
+				
+
+			}
+
+			if (data is ISerializable) {
+				MimeHandler handler = FindHandler ("application/x-mono-serialized-object");
+				if (handler != null)
+					res.Add (handler.Type);
+			}
+
+			return (IntPtr []) res.ToArray (typeof (IntPtr));
+		}
+
 		[DllImport ("libX11")]
 		private extern static string XGetAtomName (IntPtr display, IntPtr atom);
 
@@ -554,10 +1094,26 @@ namespace System.Windows.Forms {
 				IntPtr target, IntPtr property, IntPtr requestor, int time);
 
 		[DllImport ("libX11")]
-		internal extern static IntPtr XGetSelectionOwner(IntPtr display, IntPtr selection);
+		internal extern static IntPtr XGetSelectionOwner (IntPtr display, IntPtr selection);
+
+		[DllImport ("libX11")]
+		internal extern static int XGrabPointer (IntPtr display, IntPtr window,
+				bool owner_events, EventMask event_mask, GrabMode pointer_mode,
+				GrabMode keyboard_mode, IntPtr confine_to, IntPtr cursor, uint timestamp);
+
+		[DllImport ("libX11")]
+		internal extern static bool XQueryPointer (IntPtr display, IntPtr window, out IntPtr root,
+				out IntPtr child, out int root_x, out int root_y, out int win_x,
+				out int win_y, out int keys_buttons);
+
+		[DllImport ("libX11")]
+		internal extern static int XAllowEvents (IntPtr display, int event_mode, IntPtr time);
 
 		[DllImport ("libX11")]
 		internal extern static int XFree(IntPtr data);
+
+		[DllImport ("libX11")]
+		internal extern static int XFetchName (IntPtr display, IntPtr window, ref IntPtr window_name);
 	}
 
 }
