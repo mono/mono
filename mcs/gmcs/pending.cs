@@ -416,25 +416,35 @@ namespace Mono.CSharp {
 					} else if ((need_proxy == null) && (name != mname))
 						continue;
 
-					if (!TypeManager.IsEqual (ret_type, m.ReturnType)){
-						if (!((ret_type == null && m.ReturnType == TypeManager.void_type) ||
-						      (m.ReturnType == null && ret_type == TypeManager.void_type)))
-							continue;
-					}
+					if (!TypeManager.IsEqual (ret_type, m.ReturnType) &&
+					    !(ret_type == null && m.ReturnType == TypeManager.void_type) &&
+					    !(m.ReturnType == null && ret_type == TypeManager.void_type))
+						continue;
 
 					//
 					// Check if we have the same parameters
 					//
-					if (tm.args [i].Length != arg_len)
+
+					if (tm.args [i] == null && arg_len != 0)
+						continue;
+					if (tm.args [i] != null && tm.args [i].Length != arg_len)
 						continue;
 
-					int j, top = args.Count;
+					int j;
 
-					for (j = 0; j < top; j++)
-						if (!TypeManager.IsEqual (tm.args [i][j], args.ParameterType (j)) ||
-						    tm.mods [i][j] != args.ParameterModifier (j))
+					for (j = 0; j < arg_len; j++) {
+						if (!TypeManager.IsEqual (tm.args [i][j], args.ParameterType (j)))
 							break;
-					if (j != top)
+						if (tm.mods [i][j] == args.ParameterModifier (j))
+							continue;
+						// The modifiers are different, but if one of them
+						// is a PARAMS modifier, and the other isn't, ignore
+						// the difference.
+						if (tm.mods [i][j] != Parameter.Modifier.PARAMS &&
+						    args.ParameterModifier (j) != Parameter.Modifier.PARAMS)
+							break;
+					}
+					if (j != arg_len)
 						continue;
 
 					if (op != Operation.Lookup){

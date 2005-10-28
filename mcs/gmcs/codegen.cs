@@ -1018,6 +1018,8 @@ namespace Mono.CSharp {
 		public AssemblyName Name;
                     
 		bool is_cls_compliant;
+		bool wrap_non_exception_throws;
+
 		public Attribute ClsCompliantAttribute;
 
 		ListDictionary declarative_security;
@@ -1027,7 +1029,7 @@ namespace Mono.CSharp {
 
 		public AssemblyClass (): base ()
 		{
-			is_cls_compliant = false;
+			wrap_non_exception_throws = true;
 		}
 
 		public bool IsClsCompliant {
@@ -1035,6 +1037,12 @@ namespace Mono.CSharp {
 				return is_cls_compliant;
 			}
 			}
+
+		public bool WrapNonExceptionThrows {
+			get {
+				return wrap_non_exception_throws;
+			}
+		}
 
 		public override AttributeTargets AttributeTargets {
 			get {
@@ -1047,13 +1055,21 @@ namespace Mono.CSharp {
 			return is_cls_compliant;
 		}
 
-		public void ResolveClsCompliance ()
+		public void Resolve ()
 		{
 			ClsCompliantAttribute = ResolveAttribute (TypeManager.cls_compliant_attribute_type);
-			if (ClsCompliantAttribute == null)
-				return;
+			if (ClsCompliantAttribute != null) {
+				is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue (null);
+			}
 
-			is_cls_compliant = ClsCompliantAttribute.GetClsCompliantAttributeValue (null);
+#if NET_2_0
+			Attribute a = ResolveAttribute (TypeManager.runtime_compatibility_attr_type);
+			if (a != null) {
+				object val = a.GetPropertyValue ("WrapNonExceptionThrows");
+				if (val != null)
+					wrap_non_exception_throws = (bool)val;
+			}
+#endif
 		}
 
 		// fix bug #56621
@@ -1288,6 +1304,19 @@ namespace Mono.CSharp {
 				}
 				catch {
 					Report.RuntimeMissingSupport (Location.Null, "assembly permission setting");
+				}
+			}
+
+			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
+			if (OptAttributes == null || !OptAttributes.Contains (TypeManager.runtime_compatibility_attr_type, null)) {
+				if (RootContext.StdLib) {
+					ConstructorInfo ci = TypeManager.runtime_compatibility_attr_type.GetConstructor (TypeManager.NoTypes);
+					PropertyInfo pi = TypeManager.runtime_compatibility_attr_type.GetProperty ("WrapNonExceptionThrows");
+					Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], 
+						new PropertyInfo [] { pi }, new object[] { true } ));
+				} else {
+					// FIXME: Do something appropriate for 'mscorlib'
+					Report.Warning (-31, "FIXME: Did not emit 'RuntimeComatibilityAttribute' for mscorlib");
 				}
 			}
 		}

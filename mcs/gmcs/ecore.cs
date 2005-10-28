@@ -2132,7 +2132,7 @@ namespace Mono.CSharp {
 					almost_matched_type = ec.ContainerType;
 					almost_matched = (ArrayList) almostMatchedMembers.Clone ();
 				}
-				e = ResolveAsTypeStep (ec, false);
+				e = ResolveAsTypeStep (ec, true);
 			}
 
 			if (e == null) {

@@ -104,6 +104,7 @@ public partial class TypeManager {
 	/// 
 	/// .NET 2.0
 	///
+	static internal Type runtime_compatibility_attr_type;
 	static internal Type compiler_generated_attr_type;
 	static internal Type fixed_buffer_attr_type;
 	static internal Type default_charset_type;
@@ -977,6 +978,7 @@ public partial class TypeManager {
 		fixed_buffer_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "FixedBufferAttribute");
 		default_charset_type = CoreLookupType ("System.Runtime.InteropServices", "DefaultCharSetAttribute");
 		internals_visible_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "InternalsVisibleToAttribute");
+		runtime_compatibility_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RuntimeCompatibilityAttribute");
 		//
 		// When compiling corlib, store the "real" types here.
 		//

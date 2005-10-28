@@ -958,7 +958,7 @@ namespace Mono.CSharp {
 				return value;				
 		}
 
-		object GetPropertyValue (string name)
+		public object GetPropertyValue (string name)
 		{
 			if (prop_info_arr == null)
 				return null;

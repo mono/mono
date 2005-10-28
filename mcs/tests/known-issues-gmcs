@@ -4,7 +4,6 @@
 # csXXXX.cs		: test case causes error
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
-gtest-214.cs
 test-442.cs IGNORE		# Causes runtime to crash
 test-464.cs
 test-50.cs IGNORE	# Windows-only test

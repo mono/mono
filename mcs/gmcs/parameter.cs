@@ -668,6 +668,16 @@ namespace Mono.CSharp {
 						sb.Append (", ");
 				}
 			}
+			if (ArrayParameter != null) {
+				if (sb.Length > 0)
+					sb.Append (", ");
+				sb.Append (ArrayParameter.GetSignatureForError ());
+			}
+			if (HasArglist) {
+				if (sb.Length > 0)
+					sb.Append (", ");
+				sb.Append ("__arglist");
+			}
 			sb.Append (')');
 			return sb.ToString ();
 

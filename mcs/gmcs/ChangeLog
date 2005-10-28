@@ -1,3 +1,53 @@
+2005-10-28  Kornél Pál  <kornelpal@hotmail.com>
+
+	* driver.cs: Use Encoding.Default as default code page instead
+	  of ISO-28591.
+
+2005-10-27  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76085.
+	* expression.cs (Invocation.Error_InvalidArguments): Handle
+	__arglist parameters.
+	(Invocation.VerifyArgumentsCompat): Likewise.
+	* support.cs (ReflectionParameters.GetSignatureForError): Print
+	__arglist parameters.
+	(InternalParamters.GetSignatureForError): Likewise.
+	* parameter.cs (Parameters.GetSignatureForError): Likewise.
+
+2005-10-26  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (GetPropertyValue): Made public.
+
+	* codegen.cs (AssemblyClass): ResolveClsCompliance renamed to
+	Resolve.
+	Add new property WrapNonExceptionThrows to handle 2.0 assembly
+	attribute.
+	(AssemblyClass.Emit): Emit RuntimeCompatibilityAttribute when it
+	is not defined.
+	
+	* driver.cs: Reflect method name change.
+	
+	* statement.cs (Try.Resolve): Warn when try has both general
+	exception handlers.
+	
+	* typemanager.cs: runtime_compatibility_attr_type new predefined
+	type.
+
+2005-10-26  Raja R Harinath  <harinath@gmail.com>
+
+	Fix #76419.
+	* pending.cs (InterfaceMethod): Allow tm.args [i] to be null --
+	treat it as an empty parameter list.
+
+2005-10-26  Raja R Harinath  <rharinath@novell.com>
+
+	Fix #76271.	
+	* ecore.cs (SimpleName.DoSimpleNameResolve): Make fall-back 
+	ResolveAsTypeStep silent.
+	* statement.cs (Block.AddConstant): Mark block as used.
+	(Block.ResolveMeta): Avoid piling on error messages
+	if a constant initializer resolution fails.
+
 2005-10-25  Raja R Harinath  <rharinath@novell.com>
 
 	* namespace.cs (RootNamespace.VerifyUsingForAll, Namespace.VerifyUsing):

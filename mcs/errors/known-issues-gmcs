@@ -11,10 +11,8 @@
 # csXXXX.cs NO ERROR	: error test case doesn't report any error. An exception is considered
 #			  as NO ERROR and CS5001 is automatically ignored.
 
-cs0103-3.cs NO ERROR
 cs0229-2.cs
 cs0229.cs NO ERROR
-cs0246-14.cs NO ERROR
 cs0525.cs
 cs0526.cs
 cs0547-2.cs # new in GMCS; grammar issue
@@ -31,9 +29,7 @@ cs0619-7.cs NO ERROR
 cs0619-8.cs NO ERROR
 cs1013.cs # new in GMCS; grammar issue
 cs1041.cs # new in GMCS; grammar issue
-cs1058.cs NO ERROR
 cs1501-5.cs
-cs1502-5.cs NO ERROR
 cs1507.cs
 cs1508-2.cs NO ERROR
 cs1508.cs NO ERROR

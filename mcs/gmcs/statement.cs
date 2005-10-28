@@ -1563,6 +1563,9 @@ namespace Mono.CSharp {
 				constants = new Hashtable ();
 
 			constants.Add (name, value);
+
+			// A block is considered used if we perform an initialization in a local declaration, even if it is constant.
+			Use ();
 			return true;
 		}
 
@@ -1743,8 +1746,15 @@ namespace Mono.CSharp {
 					if (cv == null)
 						continue;
 
+					// Don't let 'const int Foo = Foo;' succeed.
+					// Removing the name from 'constants' ensures that we get a LocalVariableReference below,
+					// which in turn causes the 'must be constant' error to be triggered.
+					constants.Remove (name);
+
 					ec.CurrentBlock = this;
 					Expression e = cv.Resolve (ec);
+					if (e == null)
+						continue;
 
 					Constant ce = e as Constant;
 					if (ce == null){
@@ -1756,7 +1766,6 @@ namespace Mono.CSharp {
 					if (e == null)
 						continue;
 
-					constants.Remove (name);
 					constants.Add (name, e);
 				}
 			}
@@ -3676,6 +3685,14 @@ namespace Mono.CSharp {
 			Report.Debug (1, "END OF CATCH BLOCKS", ec.CurrentBranching);
 
 			if (General != null){
+				if (CodeGen.Assembly.WrapNonExceptionThrows) {
+					foreach (Catch c in Specific){
+						if (c.CatchType == TypeManager.exception_type) {
+							Report.Warning (1058, 1, c.loc, "A previous catch clause already catches all exceptions. All non-exceptions thrown will be wrapped in a `System.Runtime.CompilerServices.RuntimeWrappedException'");
+						}
+					}
+				}
+
 				ec.CurrentBranching.CreateSibling (
 					General.Block, FlowBranching.SiblingType.Catch);
 
