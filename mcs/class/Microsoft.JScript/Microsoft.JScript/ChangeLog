@@ -1,3 +1,8 @@
+2005-10-28  Raja R Harinath  <rharinath@novell.com>
+
+	* Import.cs (Resolve): Update to changes in GMCS.
+	* SemanticAnalizer.cs (ComputeNamespace): Likewise.
+
 2005-10-23  Florian Gross  <flgr@ccan.de>
 
 	* LateBinding.cs: Changed to accept object instead of ScriptObject in a lot of places
