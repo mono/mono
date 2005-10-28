@@ -1182,7 +1182,26 @@ namespace Mono.AssemblyCompare
 		}
 	}
 
-	class XMLGenericTypeConstraints : XMLNameGroup
+	abstract class XMLGenericGroup : XMLNameGroup
+	{
+		string attributes;
+
+		protected override void LoadExtraData (string name, XmlNode node)
+		{
+			attributes = ((XmlElement) node).GetAttribute ("generic-attribute");
+		}
+
+		protected override void CompareToInner (string name, XmlNode parent, XMLNameGroup other)
+		{
+			base.CompareToInner (name, parent, other);
+
+			XMLGenericGroup g = (XMLGenericGroup) other;
+			if (attributes != g.attributes)
+				AddWarning (parent, "Incorrect generic attributes: '{0}' != '{1}'", attributes, g.attributes);
+		}
+	}
+
+	class XMLGenericTypeConstraints : XMLGenericGroup
 	{
 		public override string GroupName {
 			get { return "generic-type-constraints"; }
@@ -1193,7 +1212,7 @@ namespace Mono.AssemblyCompare
 		}
 	}
 
-	class XMLGenericMethodConstraints : XMLNameGroup
+	class XMLGenericMethodConstraints : XMLGenericGroup
 	{
 		public override string GroupName {
 			get { return "generic-method-constraints"; }
@@ -1581,6 +1600,16 @@ namespace Mono.AssemblyCompare
 		Hashtable returnTypes;
 		Hashtable parameters;
 		Hashtable genericConstraints;
+		Hashtable signatureFlags;
+
+		[Flags]
+		enum SignatureFlags
+		{
+			None = 0,
+			Abstract = 1,
+			Sealed = 2,
+			Static = 4
+		}
 
 		protected override void LoadExtraData (string name, XmlNode node)
 		{
@@ -1590,6 +1619,19 @@ namespace Mono.AssemblyCompare
 					returnTypes = new Hashtable ();
 
 				returnTypes [name] = xatt.Value;
+			}
+
+			SignatureFlags flags = SignatureFlags.None;
+			if (((XmlElement) node).GetAttribute ("abstract") == "true")
+				flags |= SignatureFlags.Abstract;
+			if (((XmlElement) node).GetAttribute ("static") == "true")
+				flags |= SignatureFlags.Static;
+			if (((XmlElement) node).GetAttribute ("sealed") == "true")
+				flags |= SignatureFlags.Sealed;
+			if (flags != SignatureFlags.None) {
+				if (signatureFlags == null)
+					signatureFlags = new Hashtable ();
+				signatureFlags [name] = flags;
 			}
 
 			XmlNode parametersNode = node.SelectSingleNode ("parameters");
@@ -1625,6 +1667,19 @@ namespace Mono.AssemblyCompare
 			try {
 				base.CompareToInner(name, parent, other);
 				XMLMethods methods = (XMLMethods) other;
+
+				SignatureFlags flags = signatureFlags != null &&
+					signatureFlags.ContainsKey (name) ?
+					(SignatureFlags) signatureFlags [name] :
+					SignatureFlags.None;
+				SignatureFlags oflags = methods.signatureFlags != null &&
+					methods.signatureFlags.ContainsKey (name) ?
+					(SignatureFlags) methods.signatureFlags [name] :
+					SignatureFlags.None;
+
+				if (flags!= oflags)
+					AddWarning (parent, String.Format ("{0} and should be {1}", oflags, flags));
+
 				if (returnTypes != null) {
 					string rtype = returnTypes[name] as string;
 					string ortype = null;

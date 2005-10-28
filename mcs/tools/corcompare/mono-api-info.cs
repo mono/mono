@@ -313,6 +313,8 @@ namespace Mono.AssemblyInfo
 					continue;
 				XmlElement el = document.CreateElement ("generic-type-constraint");
 				el.SetAttribute ("name", garg.ToString ());
+				el.SetAttribute ("generic-attribute",
+					garg.GenericParameterAttributes.ToString ());
 				ngeneric.AppendChild (el);
 				foreach (Type ct in csts) {
 					XmlElement cel = document.CreateElement ("type");
@@ -699,6 +701,40 @@ namespace Mono.AssemblyInfo
 			MethodBase method = (MethodBase) member;
 			string name = method.Name;
 			string parms = Parameters.GetSignature (method.GetParameters ());
+			MethodInfo mi = method as MethodInfo;
+#if NET_2_0
+			Type [] genArgs = mi == null ? Type.EmptyTypes :
+				mi.GetGenericArguments ();
+			if (genArgs.Length > 0) {
+				string [] genArgNames = new string [genArgs.Length];
+				for (int i = 0; i < genArgs.Length; i++) {
+					genArgNames [i] = genArgs [i].Name;
+					string genArgCsts = String.Empty;
+					Type [] gcs = genArgs [i].GetGenericParameterConstraints ();
+					if (gcs.Length > 0) {
+						string [] gcNames = new string [gcs.Length];
+						for (int g = 0; g < gcs.Length; g++)
+							gcNames [g] = gcs [g].FullName;
+						genArgCsts = String.Concat (
+							"(",
+							string.Join (", ", gcNames),
+							") ",
+							genArgNames [i]);
+					}
+					else
+						genArgCsts = genArgNames [i];
+					if ((genArgs [i].GenericParameterAttributes & GenericParameterAttributes.ReferenceTypeConstraint) != 0)
+						genArgCsts = "class " + genArgCsts;
+					else if ((genArgs [i].GenericParameterAttributes & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0)
+						genArgCsts = "struct " + genArgCsts;
+					genArgNames [i] = genArgCsts;
+				}
+				return String.Format ("{0}<{2}>({1})",
+					name,
+					parms,
+					string.Join (",", genArgNames));
+			}
+#endif
 			return String.Format ("{0}({1})", name, parms);
 		}
 
@@ -715,6 +751,18 @@ namespace Mono.AssemblyInfo
 			ParameterData parms = new ParameterData (document, p, 
 				((MethodBase) member).GetParameters ());
 			parms.DoOutput ();
+
+			if (!(member is MethodBase))
+				return;
+
+			MethodBase mbase = (MethodBase) member;
+
+			if (mbase.IsAbstract)
+				AddAttribute (p, "abstract", "true");
+			if (mbase.IsFinal)
+				AddAttribute (p, "sealed", "true");
+			if (mbase.IsStatic)
+				AddAttribute (p, "static", "true");
 
 			if (!(member is MethodInfo))
 				return;
@@ -735,6 +783,8 @@ namespace Mono.AssemblyInfo
 					continue;
 				XmlElement el = document.CreateElement ("generic-method-constraint");
 				el.SetAttribute ("name", garg.ToString ());
+				el.SetAttribute ("generic-attribute",
+					garg.GenericParameterAttributes.ToString ());
 				ngeneric.AppendChild (el);
 				foreach (Type ct in csts) {
 					XmlElement cel = document.CreateElement ("type");

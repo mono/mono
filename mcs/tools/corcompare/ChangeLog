@@ -1,3 +1,10 @@
+2005-10-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-api-info.cs, mono-api-diff.cs :
+	  Print static/abstract/sealed diffs on methods.
+	  Differentiate generic methods by their type arguments.
+	  Print generic parameter attribute differences.
+
 2005-10-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cormissing.xsl, mono-api.xsl, mono-api-diff.cs, mono-api-info.cs :
