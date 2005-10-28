@@ -29,6 +29,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Resources;
 using System.Runtime.CompilerServices;
@@ -52,11 +53,12 @@ using System.Security;
 [assembly: AssemblyCopyright ("Copyright (C) 2002-2005 Various Authors")]
 [assembly: AssemblyDefaultAlias ("System.Security.dll")]
 [assembly: AssemblyDescription ("System.Security.dll")]
-[assembly: AssemblyFileVersion ("2.0.50215.44")]
+[assembly: AssemblyFileVersion (Consts.RuntimeVersion)]
 [assembly: AssemblyInformationalVersion ("")]
 [assembly: AssemblyProduct ("MONO CLI")]
 [assembly: AssemblyTitle ("System.Security.dll")]
-[assembly: AllowPartiallyTrustedCallers ()]
-
-[module: CompilationRelaxations (0)]
+[assembly: AllowPartiallyTrustedCallers]
+[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
+[assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
+[assembly: RuntimeCompatibility (WrapNonExceptionThrows = true)]
 #endif
