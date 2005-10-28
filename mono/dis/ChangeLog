@@ -1,5 +1,9 @@
 2005-10-28  Ankit Jain  <jankit@novell.com>
 
+	* dis_stringify_method_signature: Add detail for 'returns:' in the comment.
+
+2005-10-28  Ankit Jain  <jankit@novell.com>
+
 	* tests: Add new directory for test cases.
 
 2005-10-28  Ankit Jain  <jankit@novell.com>
