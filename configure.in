@@ -6,7 +6,7 @@ AC_CANONICAL_SYSTEM
 m4_ifdef([_A][M_PROG_TAR],[_A][M_SET_OPTION([tar-ustar])])
 
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(mono,1.1.7.11)
+AM_INIT_AUTOMAKE(mono,1.1.7.12)
 AM_MAINTAINER_MODE
 
 AC_PROG_LN_S
@@ -40,6 +40,10 @@ libmono_cflags=""
 libmono_ldflags=""
 AC_SUBST(libmono_cflags)
 AC_SUBST(libmono_ldflags)
+
+# Variable to have relocatable .pc files (lib, or lib64)
+reloc_libdir=`basename ${libdir}`
+AC_SUBST(reloc_libdir)
 
 dnl if linker handles the version script
 no_version_script=no

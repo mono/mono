@@ -1,2 +1,6 @@
 #!/bin/sh
-exec @bindir@/@mono_interp@ @mono_one_instdir@/@exe_file@ "$@"
+
+a=`which "$0"`
+d=`dirname "$a"`
+
+exec $d/@mono_interp@ @mono_one_instdir@/@exe_file@ "$@"

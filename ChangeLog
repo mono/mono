@@ -1,3 +1,9 @@
+2005-10-28  Wade Berrier <wberrier@novell.com>
+
+	* mono.pc.in, mint.pc.in, configure.in: Make these relocatable.
+	* scripts: Makefile.am mono-nunit.pc.in script.in mono-service.in 
+	script2.in.  Make all the wrappers relocatable.
+
 2005-05-09  Ben Maurer  <bmaurer@ximian.com>
 
 	* configure.in: 1.1.7.1
