@@ -2406,7 +2406,7 @@ namespace Mono.CSharp {
 				lookup_name = name.Substring (0, pos);
 			}
 
-			FullNamedExpression resolved = Namespace.Root.Lookup (ec.DeclSpace, lookup_name, Location.Null);
+			FullNamedExpression resolved = RootNamespace.Global.Lookup (ec.DeclSpace, lookup_name, Location.Null);
 
 			if (resolved != null && rest != null) {
 				// Now handle the rest of the the name.

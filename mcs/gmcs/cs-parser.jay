@@ -315,10 +315,31 @@ outer_declarations
         ;
  
 outer_declaration
-        : using_directive
+	: extern_alias_directive
+        | using_directive 
         | namespace_member_declaration
         ;
-  
+
+extern_alias_directives
+	: extern_alias_directive
+	| extern_alias_directives extern_alias_directive;
+
+extern_alias_directive
+	: EXTERN IDENTIFIER IDENTIFIER SEMICOLON
+	  {
+		LocatedToken lt = (LocatedToken) $2;
+		string s = lt.Value;
+		if (s != "alias"){
+			Report.Error (1003, lt.Location, "'alias' expected");
+		} else if (RootContext.Version == LanguageVersion.ISO_1) {
+			Report.FeatureIsNotStandardized (lt.Location, "external alias");
+		} else {
+			lt = (LocatedToken) $3; 
+			current_namespace.UsingExternalAlias (lt.Value, lt.Location);
+		}
+	  }
+	;
+ 
 using_directives
 	: using_directive 
 	| using_directives using_directive
@@ -343,6 +364,7 @@ using_alias_directive
 	  {
 		LocatedToken lt = (LocatedToken) $2;
 		current_namespace.UsingAlias (lt.Value, (MemberName) $4, (Location) $1);
+		current_namespace.UsingFound = true;
 	  }
 	| USING error {
 		CheckIdentifierToken (yyToken, GetLocation ($2));
@@ -353,6 +375,7 @@ using_namespace_directive
 	: USING namespace_name SEMICOLON 
 	  {
 		current_namespace.Using ((MemberName) $2, (Location) $1);
+		current_namespace.UsingFound = true;
           }
 	;
 
@@ -409,6 +432,7 @@ namespace_body
 		if (RootContext.Documentation != null)
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
+	  opt_extern_alias_directives
 	  opt_using_directives
 	  opt_namespace_member_declarations
 	  CLOSE_BRACE
@@ -417,6 +441,11 @@ namespace_body
 opt_using_directives
 	: /* empty */
 	| using_directives
+	;
+
+opt_extern_alias_directives
+	: /* empty */
+	| extern_alias_directives
 	;
 
 opt_namespace_member_declarations

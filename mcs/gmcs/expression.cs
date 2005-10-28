@@ -7090,7 +7090,7 @@ namespace Mono.CSharp {
 		public override FullNamedExpression ResolveAsTypeStep (EmitContext ec, bool silent)
 		{
 			if (alias == "global")
-				return new MemberAccess (Namespace.Root, identifier, loc).ResolveAsTypeStep (ec, silent);
+				return new MemberAccess (RootNamespace.Global, identifier, loc).ResolveAsTypeStep (ec, silent);
 
 			int errors = Report.Errors;
 			FullNamedExpression fne = ec.DeclSpace.NamespaceEntry.LookupAlias (alias);
@@ -7111,7 +7111,7 @@ namespace Mono.CSharp {
 		{
 			FullNamedExpression fne;
 			if (alias == "global") {
-				fne = Namespace.Root;
+				fne = RootNamespace.Global;
 			} else {
 				int errors = Report.Errors;
 				fne = ec.DeclSpace.NamespaceEntry.LookupAlias (alias);

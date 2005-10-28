@@ -212,6 +212,8 @@ public partial class TypeManager {
 	// </remarks>
 	static Assembly [] assemblies;
 
+	static Hashtable external_aliases;
+
 	// <remarks>
 	//  Keeps a list of modules. We used this to do lookups
 	//  on the module using GetType -- needed for arrays
@@ -275,6 +277,7 @@ public partial class TypeManager {
 		// Lets get everything clean so that we can collect before generating code
 		assemblies = null;
 		modules = null;
+		external_aliases = null;
 		builder_to_declspace = null;
 		builder_to_member_cache = null;
 		builder_to_ifaces = null;
@@ -378,6 +381,7 @@ public partial class TypeManager {
 		assemblies = new Assembly [0];
 		modules = null;
 		
+		external_aliases = new Hashtable ();
 		builder_to_declspace = new PtrHashtable ();
 		builder_to_member_cache = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
@@ -512,10 +516,21 @@ public partial class TypeManager {
 		assemblies = n;
 	}
 
+	public static void AddExternAlias (string alias, Assembly a)
+	{
+		// Keep the new as the chosen one
+		external_aliases [alias] = a;
+	}
+
         public static Assembly [] GetAssemblies ()
         {
                 return assemblies;
         }
+
+	public static Assembly GetExternAlias (string alias)
+	{
+		return (Assembly) external_aliases [alias];
+	}
 
 	/// <summary>
 	///  Registers a module builder to lookup types from
@@ -629,110 +644,26 @@ public partial class TypeManager {
 		return (Type) ret;
 	}
 
-	public static Type LookupTypeReflection (string name, Location loc)
-	{
-		Type found_type = null;
-
-		foreach (Assembly a in assemblies) {
-			Type t = a.GetType (name);
-			if (t == null)
-				continue;
-
-			if (t.IsPointer)
-				throw new InternalErrorException ("Use GetPointerType() to get a pointer");
-
-			TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
-			if (ta != TypeAttributes.NotPublic && ta != TypeAttributes.NestedPrivate &&
-				ta != TypeAttributes.NestedAssembly && ta != TypeAttributes.NestedFamANDAssem) {
-				if (found_type == null) {
-					found_type = t;
-					continue;
-				}
-
-				Report.SymbolRelatedToPreviousError (found_type);
-				Report.SymbolRelatedToPreviousError (t);
-				Report.Error (433, loc, "The imported type `{0}' is defined multiple times", name);
-				return found_type;
-			}
-		}
-
-		foreach (Module mb in modules) {
-			Type t = mb.GetType (name);
-			if (t == null)
-				continue;
-			
-			if (found_type == null) {
-				found_type = t;
-				continue;
-			}
-
-			Report.SymbolRelatedToPreviousError (t);
-			Report.SymbolRelatedToPreviousError (found_type);
-			Report.Warning (436, 2, loc, "Ignoring imported type `{0}' since the current assembly already has a declaration with the same name",
-				TypeManager.CSharpName (t));
-			return t;
-		}
-
-		return found_type;
-	}
-
 	/// <summary>
 	///   Computes the namespaces that we import from the assemblies we reference.
 	/// </summary>
 	public static void ComputeNamespaces ()
 	{
-		MethodInfo assembly_get_namespaces = typeof (Assembly).GetMethod ("GetNamespaces", BindingFlags.Instance|BindingFlags.NonPublic);
+		foreach (Assembly assembly in assemblies)
+			RootNamespace.Global.AddAssemblyReference (assembly);
+		
+		foreach (Module m in modules)
+			RootNamespace.Global.AddModuleReference (m);
 
-		Hashtable cache = null;
+	}
 
-		//
-		// First add the assembly namespaces
-		//
-		if (assembly_get_namespaces != null){
-			int count = assemblies.Length;
-
-			for (int i = 0; i < count; i++){
-				Assembly a = assemblies [i];
-				string [] namespaces = (string []) assembly_get_namespaces.Invoke (a, null);
-				foreach (string ns in namespaces){
-					if (ns.Length == 0)
-						continue;
-					Namespace.LookupNamespace (ns, true);
-				}
-			}
-		} else {
-			cache = new Hashtable ();
-			cache.Add ("", null);
-			foreach (Assembly a in assemblies) {
-				foreach (Type t in a.GetExportedTypes ()) {
-					string ns = t.Namespace;
-					if (ns == null || cache.Contains (ns))
-						continue;
-
-					Namespace.LookupNamespace (ns, true);
-					cache.Add (ns, null);
-				}
-			}
-		}
-
-		//
-		// Then add module namespaces
-		//
-		foreach (Module m in modules) {
-			if (m == CodeGen.Module.Builder)
-				continue;
-			if (cache == null) {
-				cache = new Hashtable ();
-				cache.Add ("", null);
-			}
-			foreach (Type t in m.GetTypes ()) {
-				string ns = t.Namespace;
-				if (ns == null || cache.Contains (ns))
-					continue;
-				Namespace.LookupNamespace (ns, true);
-				cache.Add (ns, null);
-			}
-		}
+	public static Namespace ComputeNamespacesForAlias (string name)
+	{
+		Assembly assembly = (Assembly) external_aliases [name];
+		if (assembly == null)
+			return null;
+		
+		return GlobalRootNamespace.DefineRootNamespace (name, assembly);
 	}
 
 	/// <summary>
@@ -751,7 +682,7 @@ public partial class TypeManager {
 
 	public static bool NamespaceClash (string name, Location loc)
 	{
-		if (Namespace.LookupNamespace (name, false) == null)
+		if (RootNamespace.Global.GetNamespace (name, false) == null)
 			return false;
 
 		Report.Error (519, loc, String.Format ("`{0}' clashes with a predefined namespace", name));
@@ -943,7 +874,7 @@ public partial class TypeManager {
 	/// </summary>
 	static Type CoreLookupType (string ns_name, string name)
 	{
-		Namespace ns = Namespace.LookupNamespace (ns_name, true);
+		Namespace ns = RootNamespace.Global.GetNamespace (ns_name, true);
 		FullNamedExpression fne = ns.Lookup (RootContext.Tree.Types, name, Location.Null);
 		Type t = fne == null ? null : fne.Type;
 		if (t == null)

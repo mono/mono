@@ -590,7 +590,7 @@ namespace Mono.CSharp {
 			}
 
 			// don't use identifier here. System[] is not alloed.
-			if (Namespace.IsNamespace (name)) {
+			if (GlobalRootNamespace.IsNamespace (name)) {
 				xref.SetAttribute ("cref", "N:" + name);
 				return; // a namespace
 			}

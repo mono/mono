@@ -4,23 +4,10 @@
 # csXXXX.cs		: test case causes error
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
-gtest-187.cs IGNORE
-test-442.cs IGNORE	# Causes runtime to crash
-
+gtest-214.cs
+test-442.cs IGNORE		# Causes runtime to crash
+test-464.cs
 test-50.cs IGNORE	# Windows-only test
 test-67.cs IGNORE	# Windows-only test
 test-anon-27.cs
 test-xml-027.cs
-
-gtest-214.cs
-test-270.cs IGNORE
-
-test-externalias-01.cs IGNORE
-test-externalias-02.cs IGNORE
-test-externalias-03.cs IGNORE
-test-externalias-04.cs IGNORE
-test-externalias-05.cs IGNORE
-test-externalias-06.cs IGNORE
-test-externalias-07.cs IGNORE
-test-externalias-08.cs IGNORE
-test-464.cs

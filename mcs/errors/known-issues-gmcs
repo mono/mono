@@ -33,6 +33,7 @@ cs1013.cs # new in GMCS; grammar issue
 cs1041.cs # new in GMCS; grammar issue
 cs1058.cs NO ERROR
 cs1501-5.cs
+cs1502-5.cs NO ERROR
 cs1507.cs
 cs1508-2.cs NO ERROR
 cs1508.cs NO ERROR
@@ -49,12 +50,3 @@ cs1666.cs NO ERROR
 cs1706.cs
 cs1718.cs NO ERROR
 cs1906.cs NO ERROR
-cs0430.cs IGNORE
-cs0439.cs IGNORE
-cs0439-2.cs IGNORE
-cs1502-5.cs NO ERROR
-cs1537-2.cs IGNORE
-cs1537-3.cs IGNORE
-cs1680.cs IGNORE
-cs1679.cs IGNORE
-cs1681.cs IGNORE
