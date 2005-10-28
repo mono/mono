@@ -1,3 +1,9 @@
+2005-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Marshal.cs: Added null check in SecureStringTo* methods and make 
+	them throw a NotSupportedException otherwise (as existing code must
+	deal with this anyway). Fixed Uni -> Unicode method name changes.
+
 2005-09-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UCOMIBindCtx.cs, UCOMIConnectionPoint.cs, 

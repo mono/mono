@@ -177,27 +177,32 @@ namespace System.Runtime.InteropServices
 
 #if NET_2_0
 		[MonoTODO]
-		public static void ZeroFreeBSTR (IntPtr ptr) {
+		public static void ZeroFreeBSTR (IntPtr ptr)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static void ZeroFreeCoTaskMemAnsi (IntPtr ptr) {
+		public static void ZeroFreeCoTaskMemAnsi (IntPtr ptr)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static void ZeroFreeCoTaskMemUni (IntPtr ptr) {
+		public static void ZeroFreeCoTaskMemUnicode (IntPtr ptr)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static void ZeroFreeGlobalAllocAnsi (IntPtr hglobal) {
+		public static void ZeroFreeGlobalAllocAnsi (IntPtr hglobal)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public static void ZeroFreeGlobalAllocUni (IntPtr hglobal) {
+		public static void ZeroFreeGlobalAllocUnicode (IntPtr hglobal)
+		{
 			throw new NotImplementedException ();
 		}
 #endif
@@ -633,28 +638,43 @@ namespace System.Runtime.InteropServices
 
 #if NET_2_0
 		[MonoTODO]
-		public static IntPtr SecureStringToBSTR (SecureString s) {
-			throw new NotImplementedException ();
+		public static IntPtr SecureStringToBSTR (SecureString s)
+		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]
-		public static IntPtr SecureStringToCoTaskMemAnsi (SecureString s) {
-			throw new NotImplementedException ();
+		public static IntPtr SecureStringToCoTaskMemAnsi (SecureString s)
+		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]
-		public static IntPtr SecureStringToCoTaskMemUni (SecureString s) {
-			throw new NotImplementedException ();
+		public static IntPtr SecureStringToCoTaskMemUnicode (SecureString s)
+		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]
-		public static IntPtr SecureStringToGlobalAllocAnsi (SecureString s) {
-			throw new NotImplementedException ();
+		public static IntPtr SecureStringToGlobalAllocAnsi (SecureString s)
+		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+			throw new NotSupportedException ();
 		}
 
 		[MonoTODO]
-		public static IntPtr SecureStringToGlobalAllocUni (SecureString s) {
-			throw new NotImplementedException ();
+		public static IntPtr SecureStringToGlobalAllocUnicode (SecureString s)
+		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+			throw new NotSupportedException ();
 		}
 #endif
 
