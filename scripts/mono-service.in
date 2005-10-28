@@ -1,6 +1,6 @@
 #!/bin/sh
 a=`which "$0"`
-d=`which "$a"`
+d=`dirname "$a"`
 
 args="$@"
 assembly=
