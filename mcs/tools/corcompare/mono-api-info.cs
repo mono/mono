@@ -701,8 +701,8 @@ namespace Mono.AssemblyInfo
 			MethodBase method = (MethodBase) member;
 			string name = method.Name;
 			string parms = Parameters.GetSignature (method.GetParameters ());
-			MethodInfo mi = method as MethodInfo;
 #if NET_2_0
+			MethodInfo mi = method as MethodInfo;
 			Type [] genArgs = mi == null ? Type.EmptyTypes :
 				mi.GetGenericArguments ();
 			if (genArgs.Length > 0) {
@@ -759,8 +759,8 @@ namespace Mono.AssemblyInfo
 
 			if (mbase.IsAbstract)
 				AddAttribute (p, "abstract", "true");
-			if (mbase.IsFinal)
-				AddAttribute (p, "sealed", "true");
+			if (mbase.IsVirtual)
+				AddAttribute (p, "virtual", "true");
 			if (mbase.IsStatic)
 				AddAttribute (p, "static", "true");
 

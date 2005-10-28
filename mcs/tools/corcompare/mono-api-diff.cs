@@ -1607,7 +1607,7 @@ namespace Mono.AssemblyCompare
 		{
 			None = 0,
 			Abstract = 1,
-			Sealed = 2,
+			Virtual = 2,
 			Static = 4
 		}
 
@@ -1626,8 +1626,8 @@ namespace Mono.AssemblyCompare
 				flags |= SignatureFlags.Abstract;
 			if (((XmlElement) node).GetAttribute ("static") == "true")
 				flags |= SignatureFlags.Static;
-			if (((XmlElement) node).GetAttribute ("sealed") == "true")
-				flags |= SignatureFlags.Sealed;
+			if (((XmlElement) node).GetAttribute ("virtual") == "true")
+				flags |= SignatureFlags.Virtual;
 			if (flags != SignatureFlags.None) {
 				if (signatureFlags == null)
 					signatureFlags = new Hashtable ();

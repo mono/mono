@@ -1,5 +1,10 @@
 2005-10-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* mono-api-info.cs, mono-api-diff.cs : use IsVirtual instead of
+	  IsFinal (bug #76585; it is not working). Fixed new warning.
+
+2005-10-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* mono-api-diff.cs :
 	  "None" goes away from static/abstract/sealed diff.
 
