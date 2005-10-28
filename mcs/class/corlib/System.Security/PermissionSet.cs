@@ -151,7 +151,11 @@ namespace System.Security {
 
 		[MonoTODO ("Imperative mode isn't supported")]
 		[SecurityPermission (SecurityAction.Demand, Assertion = true)]
+#if NET_2_0
+		public void Assert ()
+#else
 		public virtual void Assert ()
+#endif
 		{
 			int count = this.Count;
 
@@ -200,7 +204,11 @@ namespace System.Security {
 			}
 		}
 
+#if NET_2_0
+		public void Demand ()
+#else
 		public virtual void Demand ()
+#endif
 		{
 			// Note: SecurityEnabled only applies to CAS permissions
 			// so we're not checking for it (yet)
@@ -277,7 +285,11 @@ namespace System.Security {
 		}
 
 		[MonoTODO ("Imperative mode isn't supported")]
+#if NET_2_0
+		public void Deny ()
+#else
 		public virtual void Deny ()
+#endif
 		{
 			if (!SecurityManager.SecurityEnabled)
 				return;
@@ -329,7 +341,11 @@ namespace System.Security {
 			}
 		}
 
+#if NET_2_0
+		public IEnumerator GetEnumerator ()
+#else
 		public virtual IEnumerator GetEnumerator ()
+#endif
 		{
 			return list.GetEnumerator ();
 		}
@@ -376,7 +392,11 @@ namespace System.Security {
 		}
 
 		[MonoTODO ("Imperative mode isn't supported")]
+#if NET_2_0
+		public void PermitOnly ()
+#else
 		public virtual void PermitOnly ()
+#endif
 		{
 			if (!SecurityManager.SecurityEnabled)
 				return;
