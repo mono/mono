@@ -1,3 +1,8 @@
+2005-10-28  Ankit Jain  <jankit@novell.com>
+
+	* get.c (dis_stringify_method_signature): Use context instead of container
+	  as container can be NULL.
+
 2005-10-20  Ankit Jain  <jankit@novell.com>
 
 	* get.c (get_method_core): Use the parent context for get_methodspec
