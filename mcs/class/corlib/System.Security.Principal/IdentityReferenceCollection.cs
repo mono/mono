@@ -51,11 +51,11 @@ namespace System.Security.Principal {
 		}
 
 
-		public virtual int Count {
+		public int Count {
 			get { return _list.Count; }
 		}
 
-		public virtual bool IsReadOnly {
+		public bool IsReadOnly {
 			get { return false; }
 		}
 

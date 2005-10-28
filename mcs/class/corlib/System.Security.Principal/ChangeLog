@@ -1,3 +1,9 @@
+2005-10-28  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* IdentityReferenceCollection.cs: Removed virtual from Count and 
+	IsReadOnly properties.
+	* WindowsIdentity.cs: AuthenticationType property isn't virtual in 2.0
+
 2005-09-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityIdentifier.cs: Stubbed ctor(IntPtr) introduced in 2.0 RC.

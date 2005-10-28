@@ -189,8 +189,11 @@ namespace System.Security.Principal {
 
 		// properties
 
-		public virtual string AuthenticationType
-		{
+#if NET_2_0
+		public string AuthenticationType {
+#else
+		public virtual string AuthenticationType {
+#endif
 			get { return _type; }
 		}
 
