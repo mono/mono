@@ -3,13 +3,15 @@
 //
 // Authors:
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (c) 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using NUnit.Framework;
 using System;
 using System.Runtime.InteropServices;
+using System.Security;
 
 namespace MonoTests.System.Runtime.InteropServices
 {
@@ -150,6 +152,143 @@ namespace MonoTests.System.Runtime.InteropServices
 			s = Marshal.PtrToStringUni (handle);
 			Assert.AreEqual (19, s.Length, "#2");
 		}
+#if NET_2_0
+		private const string NotSupported = "Not supported before Windows 2000 Service Pack 3";
+		private static char[] PlainText = new char[] { 'a', 'b', 'c' };
+		private static byte[] AsciiPlainText = new byte[] { (byte) 'a', (byte) 'b', (byte) 'c' };
+
+		private unsafe SecureString GetSecureString ()
+		{
+			fixed (char* p = &PlainText[0]) {
+				return new SecureString (p, PlainText.Length);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void SecureStringToBSTR_Null ()
+		{
+			Marshal.SecureStringToBSTR (null);
+		}
+
+		[Test]
+		public void SecureStringToBSTR ()
+		{
+			try {
+				SecureString ss = GetSecureString ();
+				IntPtr p = Marshal.SecureStringToBSTR (ss);
+
+				char[] decrypted = new char[ss.Length];
+				Marshal.Copy (p, decrypted, 0, decrypted.Length);
+				Assert.AreEqual (PlainText, decrypted, "Decrypted");
+
+				Marshal.ZeroFreeBSTR (p);
+			}
+			catch (NotSupportedException) {
+				Assert.Ignore (NotSupported);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void SecureStringToCoTaskMemAnsi_Null ()
+		{
+			Marshal.SecureStringToCoTaskMemAnsi (null);
+		}
+
+		[Test]
+		public void SecureStringToCoTaskMemAnsi ()
+		{
+			try {
+				SecureString ss = GetSecureString ();
+				IntPtr p = Marshal.SecureStringToCoTaskMemAnsi (ss);
+
+				byte[] decrypted = new byte[ss.Length];
+				Marshal.Copy (p, decrypted, 0, decrypted.Length);
+				Assert.AreEqual (AsciiPlainText, decrypted, "Decrypted");
+
+				Marshal.ZeroFreeCoTaskMemAnsi (p);
+			}
+			catch (NotSupportedException) {
+				Assert.Ignore (NotSupported);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void SecureStringToCoTaskMemUnicode_Null ()
+		{
+			Marshal.SecureStringToCoTaskMemUnicode (null);
+		}
+
+		[Test]
+		public void SecureStringToCoTaskMemUnicode ()
+		{
+			try {
+				SecureString ss = GetSecureString ();
+				IntPtr p = Marshal.SecureStringToCoTaskMemUnicode (ss);
+
+				char[] decrypted = new char[ss.Length];
+				Marshal.Copy (p, decrypted, 0, decrypted.Length);
+				Assert.AreEqual (PlainText, decrypted, "Decrypted");
+
+				Marshal.ZeroFreeCoTaskMemUnicode (p);
+			}
+			catch (NotSupportedException) {
+				Assert.Ignore (NotSupported);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void SecureStringToGlobalAllocAnsi_Null ()
+		{
+			Marshal.SecureStringToGlobalAllocAnsi (null);
+		}
+
+		[Test]
+		public void SecureStringToGlobalAllocAnsi ()
+		{
+			try {
+				SecureString ss = GetSecureString ();
+				IntPtr p = Marshal.SecureStringToGlobalAllocAnsi (ss);
+
+				byte[] decrypted = new byte[ss.Length];
+				Marshal.Copy (p, decrypted, 0, decrypted.Length);
+				Assert.AreEqual (AsciiPlainText, decrypted, "Decrypted");
+
+				Marshal.ZeroFreeGlobalAllocAnsi (p);
+			}
+			catch (NotSupportedException) {
+				Assert.Ignore (NotSupported);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void SecureStringToGlobalAllocUnicode_Null ()
+		{
+			Marshal.SecureStringToGlobalAllocUnicode (null);
+		}
+
+		[Test]
+		public void SecureStringToGlobalAllocUnicode ()
+		{
+			try {
+				SecureString ss = GetSecureString ();
+				IntPtr p = Marshal.SecureStringToGlobalAllocUnicode (ss);
+
+				char[] decrypted = new char[ss.Length];
+				Marshal.Copy (p, decrypted, 0, decrypted.Length);
+				Assert.AreEqual (PlainText, decrypted, "Decrypted");
+
+				Marshal.ZeroFreeGlobalAllocUnicode (p);
+			}
+			catch (NotSupportedException) {
+				Assert.Ignore (NotSupported);
+			}
+		}
+#endif
 	}
 }
 

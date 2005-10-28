@@ -1,3 +1,7 @@
+2005-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MarshalTest.cs: Added tests for 2.0 SecureTo* and ZeroFree* methods.
+
 2005-09-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* MarshalTest.cs: Added test for bug #76123.
