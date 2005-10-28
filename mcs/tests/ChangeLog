@@ -1,3 +1,7 @@
+2005-10-28  Marek Safar <marek.safar@seznam.cz>
+
+	* test-10.cs: Test for #76568.
+
 2005-10-27  Marek Safar <marek.safar@seznam.cz>
 
 	* test-464.cs: New test.

@@ -167,5 +167,6 @@ class Test2 {
 		const decimal d = -10.1m;
 		const long l = (long)d;
 		char ch = (char)E.Min;
+		bool b = (DBNull) null == null;
 	}
 }
