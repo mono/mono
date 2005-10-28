@@ -1,3 +1,8 @@
+2005-10-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecureStringCas.cs: New. CAS unit tests for SecureString.
+	* SecureStringTest.cs: New. Unit tests for SecureString.
+
 2005-06-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeAccessPermissionCas.cs: New. CAS unit tests for using the
