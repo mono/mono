@@ -332,9 +332,9 @@ namespace Mono.CSharp
 				}
 				// Extern aliased refs require special handling
 				if (alias == null)
-					TypeManager.AddAssembly (a);
+					RootNamespace.Global.AddAssemblyReference (a);
 				else
-					TypeManager.AddExternAlias (alias, a);
+					RootNamespace.DefineRootNamespace (alias, a);
 
 			} catch (FileNotFoundException){
 				foreach (string dir in link_paths){
@@ -345,9 +345,9 @@ namespace Mono.CSharp
 					try {
 						a = Assembly.LoadFrom (full_path);
 						if (alias == null)
-							TypeManager.AddAssembly (a);
+							RootNamespace.Global.AddAssemblyReference (a);
 						else
-							TypeManager.AddExternAlias (alias, a);
+							RootNamespace.DefineRootNamespace (alias, a);
 						return;
 					} catch (FileNotFoundException ff) {
 						total_log += ff.FusionLog;
@@ -379,7 +379,7 @@ namespace Mono.CSharp
 				catch (TargetInvocationException ex) {
 					throw ex.InnerException;
 				}
-				TypeManager.AddModule (m);
+				RootNamespace.Global.AddModuleReference (m);
 
 			} 
 			catch (FileNotFoundException){
@@ -395,7 +395,7 @@ namespace Mono.CSharp
 						catch (TargetInvocationException ex) {
 							throw ex.InnerException;
 						}
-						TypeManager.AddModule (m);
+						RootNamespace.Global.AddModuleReference (m);
 						return;
 					} catch (FileNotFoundException ff) {
 						total_log += ff.FusionLog;
@@ -1628,7 +1628,7 @@ namespace Mono.CSharp
 				set_method.Invoke (CodeGen.Assembly.Builder, BindingFlags.Default, null, new object[]{true}, null);
 			}
 
-			TypeManager.AddModule (CodeGen.Module.Builder);
+			RootNamespace.Global.AddModuleReference (CodeGen.Module.Builder);
 
 			if (modules.Count > 0) {
 				MethodInfo adder_method = typeof (AssemblyBuilder).GetMethod ("AddModule", BindingFlags.Instance|BindingFlags.NonPublic);
@@ -1640,8 +1640,6 @@ namespace Mono.CSharp
 				foreach (string module in modules)
 					LoadModule (adder_method, module);
 			}
-
-			TypeManager.ComputeNamespaces ();
 			
 			//
 			// Before emitting, we need to get the core
@@ -1689,7 +1687,7 @@ namespace Mono.CSharp
 			//
 			// Verify using aliases now
 			//
-			GlobalRootNamespace.VerifyUsingForAll ();
+			NamespaceEntry.VerifyAllUsing ();
 			
 			if (Report.Errors > 0){
 				return false;
@@ -1902,7 +1900,8 @@ namespace Mono.CSharp
 			Report.Reset ();
 			TypeManager.Reset ();
 			TypeHandle.Reset ();
-			GlobalRootNamespace.Reset ();
+			RootNamespace.Reset ();
+			NamespaceEntry.Reset ();
 			CodeGen.Reset ();
 		}
 	}

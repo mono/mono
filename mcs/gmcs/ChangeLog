@@ -1,3 +1,47 @@
+2005-10-25  Raja R Harinath  <rharinath@novell.com>
+
+	* namespace.cs (RootNamespace.VerifyUsingForAll, Namespace.VerifyUsing):
+	Remove.
+	(NamespaceEntry.VerifyAllUsing): New.
+	(NamespaceEntry.AliasEntry.Resolve): New.  Handles common error
+	behaviour.  Delegates actual resolution of alias to ...
+	(NamespaceEntry.DoResolve): ... this.  Renamed from Resolve.
+	(NamespaceEntry.LocalAliasEntry, NamespaceEntry.ExternAliasEntry):
+	Update.
+	* driver.cs (Driver.MainDriver): Update.
+	
+	* namespace.cs (NamespaceEntry.DefineNamespace): Remove.
+	(NamespaceEntry.SymbolFileID): Make into a on-demand computed
+	property.
+	(Namespace.DefineNamespaces, RootNamespace.DefineNamespacesForAll):
+	Remove.
+	* symbolwriter.cs (SymbolWriter.Initialize): Don't call
+	RootNamespace.DefineNamespacesForAll.
+
+2005-10-24  Raja R Harinath  <harinath@gmail.com>
+
+	* typemanager.cs (assemblies, external_aliases, modules)
+	(AddAssembly, AddExternAlias, AddModule GetAssemblies, Modules)
+	(ComputeNamespaces, GetRootNamespace): Remove extra staging
+	overhead.  Move resposibility ...
+	* namespace.cs (GlobalRootNamespace): ... here.  Update to changes.
+	* driver.cs, attribute.cs, codegen.cs: Update to changes.
+
+2005-10-23  Raja R Harinath  <harinath@gmail.com>
+
+	* namespace.cs (RootNamespace.all_namespaces): Renamed from
+	cached_namespaces.  Improve usage.
+	(RootNamespace.Reset, RootNamespace.RegisterNamespace)
+	(RootNamespace.VerifyUsingForAll, RootNamespace.DefineNamespacesForAll):
+	Move from GlobalRootNamespace and simplify.
+	(RootNamespace.Global): Make instance variable.
+	(RootNamespace.RootNamespace): Add "alias name" parameter.
+	(GlobalRootNamespace): Simplify drastically.
+	(Namespace.Lookup): Don't use GetNamespace.
+	* typemanager.cs (GetRootNamespace): Rename from
+	ComputeNamespaceForAlias.
+	(NamespaceClash): Use Global.IsNamespace instead of GetNamespace.
+
 2005-10-23  Marek Safar  <marek.safar@seznam.cz>
 
 	* anonymous.cs (AnonymousContainer): Don't crash when container

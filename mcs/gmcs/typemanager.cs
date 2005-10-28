@@ -205,21 +205,6 @@ public partial class TypeManager {
 	static internal CustomAttributeBuilder compiler_generated_attr;
 	static internal ConstructorInfo fixed_buffer_attr_ctor;
 
-	// <remarks>
-	//   Holds the Array of Assemblies that have been loaded
-	//   (either because it is the default or the user used the
-	//   -r command line option)
-	// </remarks>
-	static Assembly [] assemblies;
-
-	static Hashtable external_aliases;
-
-	// <remarks>
-	//  Keeps a list of modules. We used this to do lookups
-	//  on the module using GetType -- needed for arrays
-	// </remarks>
-	static Module [] modules;
-
 	static PtrHashtable builder_to_declspace;
 
 	static PtrHashtable builder_to_member_cache;
@@ -275,9 +260,6 @@ public partial class TypeManager {
 	public static void CleanUp ()
 	{
 		// Lets get everything clean so that we can collect before generating code
-		assemblies = null;
-		modules = null;
-		external_aliases = null;
 		builder_to_declspace = null;
 		builder_to_member_cache = null;
 		builder_to_ifaces = null;
@@ -378,10 +360,6 @@ public partial class TypeManager {
 
 	static public void Reset ()
 	{
-		assemblies = new Assembly [0];
-		modules = null;
-		
-		external_aliases = new Hashtable ();
 		builder_to_declspace = new PtrHashtable ();
 		builder_to_member_cache = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
@@ -496,61 +474,6 @@ public partial class TypeManager {
 	{
 		return (Class) builder_to_declspace [t];
 	}
-	
-	/// <summary>
-	///   Registers an assembly to load types from.
-	/// </summary>
-	public static void AddAssembly (Assembly a)
-	{
-		foreach (Assembly assembly in assemblies) {
-			if (a == assembly)
-				return;
-		}
-
-		int top = assemblies.Length;
-		Assembly [] n = new Assembly [top + 1];
-
-		assemblies.CopyTo (n, 0);
-		
-		n [top] = a;
-		assemblies = n;
-	}
-
-	public static void AddExternAlias (string alias, Assembly a)
-	{
-		// Keep the new as the chosen one
-		external_aliases [alias] = a;
-	}
-
-        public static Assembly [] GetAssemblies ()
-        {
-                return assemblies;
-        }
-
-	public static Assembly GetExternAlias (string alias)
-	{
-		return (Assembly) external_aliases [alias];
-	}
-
-	/// <summary>
-	///  Registers a module builder to lookup types from
-	/// </summary>
-	public static void AddModule (Module mb)
-	{
-		int top = modules != null ? modules.Length : 0;
-		Module [] n = new Module [top + 1];
-
-		if (modules != null)
-			modules.CopyTo (n, 0);
-		n [top] = mb;
-		modules = n;
-	}
-
-	public static Module[] Modules {
-		get {
-			return modules;
-		}
-	}
 
 	//
 	// We use this hash for multiple kinds of constructed types:
@@ -645,35 +568,13 @@ public partial class TypeManager {
 	}
 
 	/// <summary>
-	///   Computes the namespaces that we import from the assemblies we reference.
-	/// </summary>
-	public static void ComputeNamespaces ()
-	{
-		foreach (Assembly assembly in assemblies)
-			RootNamespace.Global.AddAssemblyReference (assembly);
-		
-		foreach (Module m in modules)
-			RootNamespace.Global.AddModuleReference (m);
-
-	}
-
-	public static Namespace ComputeNamespacesForAlias (string name)
-	{
-		Assembly assembly = (Assembly) external_aliases [name];
-		if (assembly == null)
-			return null;
-		
-		return GlobalRootNamespace.DefineRootNamespace (name, assembly);
-	}
-
-	/// <summary>
 	/// Fills static table with exported types from all referenced assemblies.
 	/// This information is required for CLS Compliance tests.
 	/// </summary>
 	public static void LoadAllImportedTypes ()
 	{
 		AllClsTopLevelTypes = new Hashtable (1500);
-		foreach (Assembly a in assemblies) {
+		foreach (Assembly a in RootNamespace.Global.Assemblies) {
 			foreach (Type t in a.GetExportedTypes ()) {
 				AllClsTopLevelTypes [t.FullName.ToLower (System.Globalization.CultureInfo.InvariantCulture)] = null;
 			}
@@ -682,7 +583,7 @@ public partial class TypeManager {
 
 	public static bool NamespaceClash (string name, Location loc)
 	{
-		if (RootNamespace.Global.GetNamespace (name, false) == null)
+		if (! RootNamespace.Global.IsNamespace (name))
 			return false;
 
 		Report.Error (519, loc, String.Format ("`{0}' clashes with a predefined namespace", name));

@@ -1631,7 +1631,7 @@ namespace Mono.CSharp {
 
 		public static void VerifyModulesClsCompliance ()
 		{
-			Module[] modules = TypeManager.Modules;
+			Module[] modules = RootNamespace.Global.Modules;
 			if (modules == null)
 				return;
 
@@ -1648,7 +1648,7 @@ namespace Mono.CSharp {
 
 		public static Type GetImportedIgnoreCaseClsType (string name)
 		{
-			foreach (Assembly a in TypeManager.GetAssemblies ()) {
+			foreach (Assembly a in RootNamespace.Global.Assemblies) {
 				Type t = a.GetType (name, false, true);
 				if (t == null)
 					continue;

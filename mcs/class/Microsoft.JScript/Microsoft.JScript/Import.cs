@@ -55,11 +55,7 @@ namespace Microsoft.JScript {
 				"error JS1229: The import statement is not valid in this context";
 				throw new Exception (err);
 			}
-#if !NET_2_0
 			return Mono.CSharp.RootNamespace.Global.IsNamespace (name);
-#else
-			return Mono.CSharp.GlobalRootNamespace.IsNamespace (name);
-#endif
 		}
 
 		internal override void Emit (EmitContext ec)

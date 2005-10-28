@@ -51,7 +51,6 @@ namespace Mono.CSharp {
 				typeof (GetGuidFunc), mi);
 
 			Location.DefineSymbolDocuments (this);
-			GlobalRootNamespace.DefineNamespacesForAll (this);
 
 			return true;
 		}
