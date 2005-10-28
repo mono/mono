@@ -1,5 +1,9 @@
 2005-10-28  Ankit Jain  <jankit@novell.com>
 
+	* tests: Add new directory for test cases.
+
+2005-10-28  Ankit Jain  <jankit@novell.com>
+
 	* get.c (dis_stringify_method_signature): Use context instead of container
 	  as container can be NULL.
 
