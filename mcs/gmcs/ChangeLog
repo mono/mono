@@ -1,3 +1,17 @@
+2005-10-28  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76568.
+	* cfold.cs (ConstantFold.BinaryFold): Implemented null cast
+	folding.
+	
+	* convert (Convert.ImplicitReferenceConversion): NullCast holds
+	contants only.
+	
+	* ecore.cs (NullCast): Child is contant only.
+	
+	* literal.cs (NullLiteral.Reduce): null can be converted to any
+	reference type.
+
 2005-10-28  Kornél Pál  <kornelpal@hotmail.com>
 
 	* driver.cs: Use Encoding.Default as default code page instead

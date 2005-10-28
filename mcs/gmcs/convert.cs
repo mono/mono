@@ -29,7 +29,7 @@ namespace Mono.CSharp {
 		//
 		public static EmitContext ConstantEC = null;
 		
-		static Expression TypeParameter_to_Null (Expression expr, Type target_type,
+		static Expression TypeParameter_to_Null (Constant expr, Type target_type,
 							 Location loc)
 		{
 			if (!TypeParameter_to_Null (target_type)) {
@@ -157,7 +157,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsValueType (expr_type))
 					return new BoxedCast (expr, target_type);
 				if (expr_type == TypeManager.null_type)
-					return new NullCast (expr, target_type);
+					return new NullCast ((Constant)expr, target_type);
 
 				return null;
 			} else if (TypeManager.IsSubclassOf (expr_type, target_type)) {
@@ -182,8 +182,14 @@ namespace Mono.CSharp {
 				if (target_type.IsPointer)
 					return new EmptyCast (NullPointer.Null, target_type);
 					
-				if (!target_type.IsValueType)
-					return new NullCast (expr, target_type);
+				if (!target_type.IsValueType) {
+					if (expr is Constant)
+						return new NullCast ((Constant)expr, target_type);
+
+					// I found only one case when it happens -- Foo () ? null : null;
+					Report.Warning (-100, 1, expr.Location, "The result of the expression is always `null'");
+					return new NullCast (new NullLiteral (expr.Location), target_type);
+				}
 			}
 
 			// from any class-type S to any interface-type T.
@@ -1206,7 +1212,7 @@ namespace Mono.CSharp {
 
 			if (expr is NullLiteral) {
 				if (target_type.IsGenericParameter)
-					return TypeParameter_to_Null (expr, target_type, loc);
+					return TypeParameter_to_Null ((Constant) expr, target_type, loc);
 
 				if (TypeManager.IsNullableType (target_type))
 					return new Nullable.NullableLiteral (target_type, loc);
