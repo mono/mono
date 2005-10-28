@@ -1,3 +1,19 @@
+2005-10-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* anonymous.cs (AnonymousContainer): Don't crash when container
+	doesn't exist.
+
+2005-10-23  Marek Safar  <marek.safar@seznam.cz>
+
+	* expression.cs (Binary.DoResolve): Warn when comparing same
+	values.
+
+2005-10-23  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76486.
+	* expression.cs (Binary.DoResolve): It looks like there are no
+	convetsion rules in enum context.
+
 2005-10-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	Add support for extern alias qualifiers.

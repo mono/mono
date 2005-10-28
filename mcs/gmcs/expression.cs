@@ -2416,7 +2416,8 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 			Constant rc = right as Constant;
 
-			if (lc != null && rc != null && (TypeManager.IsEnumType (left.Type) || TypeManager.IsEnumType (right.Type))) {
+			// The conversion rules are ignored in enum context but why
+			if (!ec.InEnumContext && lc != null && rc != null && (TypeManager.IsEnumType (left.Type) || TypeManager.IsEnumType (right.Type))) {
 				left = lc = EnumLiftUp (ec, lc, rc);
 				if (lc == null)
 					return null;
@@ -2459,15 +2460,15 @@ namespace Mono.CSharp {
 			if (TypeManager.IsNullableType (left.Type) || TypeManager.IsNullableType (right.Type))
 				return new Nullable.LiftedBinaryOperator (oper, left, right, loc).Resolve (ec);
 
-			// Check CS0652 warning here (before resolving operator).
-			if (oper == Operator.Equality ||
-			    oper == Operator.Inequality ||
-			    oper == Operator.LessThanOrEqual ||
-			    oper == Operator.LessThan ||
-			    oper == Operator.GreaterThanOrEqual ||
-			    oper == Operator.GreaterThan){
-				CheckUselessComparison (left as Constant, right.Type);
-				CheckUselessComparison (right as Constant, left.Type);
+			// Comparison warnings
+			if (oper == Operator.Equality || oper == Operator.Inequality ||
+			    oper == Operator.LessThanOrEqual || oper == Operator.LessThan ||
+			    oper == Operator.GreaterThanOrEqual || oper == Operator.GreaterThan){
+				if (left.Equals (right)) {
+					Report.Warning (1718, 3, loc, "Comparison made to same variable; did you mean to compare something else?");
+				}
+				CheckUselessComparison (lc, right.Type);
+				CheckUselessComparison (rc, left.Type);
 			}
 
 			return ResolveOperator (ec);

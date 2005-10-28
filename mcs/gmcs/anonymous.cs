@@ -79,22 +79,18 @@ namespace Mono.CSharp {
 			//
 			// The order is important: this setups the CaptureContext tree hierarchy.
 			//
+			if (container == null) {
+				Report.Error (1706, l, "Anonymous methods are not allowed in attribute declaration");
+				return;
+			}
 			container.SetHaveAnonymousMethods (l, this);
 			block.SetHaveAnonymousMethods (l, this);
 		}
 
 		protected AnonymousContainer (Parameters parameters, ToplevelBlock container,
-					      Location l)
+					      Location l):
+			this (parameters, container, new ToplevelBlock (container, parameters, l), l)
 		{
-			Parameters = parameters;
-			Block = new ToplevelBlock (container, Parameters, l);
-			loc = l;
-
-			//
-			// The order is important: this setups the CaptureContext tree hierarchy.
-			//
-			container.SetHaveAnonymousMethods (loc, this);
-			Block.SetHaveAnonymousMethods (loc, this);
 		}
 
 		public override Expression DoResolve (EmitContext ec)
