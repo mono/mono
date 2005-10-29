@@ -12,12 +12,15 @@ IFS=$'\n'
 filelist=($(grep -Ev '/usr/doc/|/usr/share/doc/'))
 monolist=($(printf "%s\n" "${filelist[@]}" | egrep "\\.(exe|dll)\$"))
 
-# Set the prefix, unless it is overriden (used when building mono rpms)
-: ${prefix=@prefix@}
+a=`which "$0"`
+d=`dirname "$a"`
 
-exec_prefix=@exec_prefix@
-libdir=@libdir@
-bindir=@bindir@
+# Set the prefix, unless it is overriden (used when building mono rpms)
+: ${prefix=$d/..}
+
+exec_prefix=$d/..
+libdir=$prefix/@reloc_libdir@
+bindir=$d
 
 [ -x $bindir/monodis ] || exit 0;
 [ -f $libdir/libmono.so ] || exit 0;

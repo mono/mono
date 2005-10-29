@@ -65,7 +65,7 @@ plat_bindir = $(shell cygpath -m $(libdir))
 mono_instdir = $(shell cygpath -m $(libdir))/mono
 else
 plat_bindir = $(bindir)
-mono_instdir = $(prefix)/lib/mono
+mono_instdir = $$d/../lib/mono
 endif
 
 REWRITE = sed \
