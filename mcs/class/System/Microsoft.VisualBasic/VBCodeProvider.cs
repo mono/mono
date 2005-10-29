@@ -79,7 +79,7 @@ namespace Microsoft.VisualBasic {
 
 #if NET_2_0
 		[MonoTODO]
-		public void GenerateCodeFromMember (CodeTypeMember member, TextWriter writer, CodeGeneratorOptions options)
+		public override void GenerateCodeFromMember (CodeTypeMember member, TextWriter writer, CodeGeneratorOptions options)
 		{
 			throw new NotImplementedException();
 		}
