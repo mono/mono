@@ -127,8 +127,8 @@ namespace System.Web.Configuration
 				return;
 
 			encoding_warning = true;
-			Console.WriteLine ("Encoding {1} cannot be loaded. Perhaps your runtime \n" +
-					   "don't have ICU support?\n{0}=\"{1}\"\n", att, enc);
+			Console.WriteLine ("Encoding {1} cannot be loaded.\n" +
+					   "{0}=\"{1}\"\n", att, enc);
 		}
 
 		static void CultureFailed (XmlNode section, string att, string cul)

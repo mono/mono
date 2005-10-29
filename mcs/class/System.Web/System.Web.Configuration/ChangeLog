@@ -1,3 +1,7 @@
+2005-10-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GlobalizationConfigurationHandler.cs : we don't use ICU.
+
 2005-10-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HandlerFactoryConfiguration.cs: when using regex matching, pass the
