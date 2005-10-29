@@ -1,3 +1,8 @@
+2005-10-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal):
+	Add support for FieldBuilders.
+
 2005-10-29  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c
