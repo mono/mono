@@ -1,3 +1,8 @@
+2005-10-29  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_compute_omit_fp): Move the check for the
+	debugger to the proper place.
+
 2005-10-29  Martin Baulig  <martin@ximian.com>
 
 	* mini-amd64.c (debug_omit_fp): Temporarily disable fp elimination
