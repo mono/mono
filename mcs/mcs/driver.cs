@@ -1948,6 +1948,12 @@ namespace Mono.CSharp
 				Reset ();
 			}
 		}
+
+		public static int[] AllWarningNumbers {
+			get {
+				return Report.AllWarnings;
+			}
+		}
 		
 		static void Reset ()
 		{

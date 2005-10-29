@@ -1,5 +1,14 @@
 2005-10-29  Marek Safar  <marek.safar@seznam.cz>
  
+ 	* cs-tokenizer.cs: Warning text fix.
+
+	* driver.cs: AllWarningNumbers exposed on public interface.
+
+	* report.cs (): Reviewed warning numbers.
+	(IsValidWarning): Use binary search.
+
+2005-10-29  Marek Safar  <marek.safar@seznam.cz>
+ 
  	* driver.cs: Implemeted resource visibility.
  	(Resources): New class for code sharing between /res: and
  	/linkres:
