@@ -1,3 +1,9 @@
+2005-10-29  Marek Safar  <marek.safar@seznam.cz>
+ 
+ 	* driver.cs: Implemeted resource visibility.
+ 	(Resources): New class for code sharing between /res: and
+ 	/linkres:
+ 
 2005-10-28  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76568.
