@@ -6,9 +6,7 @@
 //   Marek Safar (marek.safar@seznam.cz)
 //   Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// copyright (C) 2002,2003,2004,2005 Novell, Inc.
-//
-
+// Copyright (C) 2002,2003,2004,2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,9 +31,13 @@
 using System.ComponentModel;
 using System.Configuration;
 using System.IO;
+using System.Runtime.InteropServices;
 
-namespace System.CodeDom.Compiler
-{
+namespace System.CodeDom.Compiler {
+
+#if NET_2_0
+	[ComVisible (true)]
+#endif
 	[ToolboxItem ("")]
 	public abstract class CodeDomProvider : Component
 	{
@@ -106,9 +108,33 @@ namespace System.CodeDom.Compiler
 			CreateGenerator ().GenerateCodeFromCompileUnit (compileUnit, writer, options);
 		}
 
+		[MonoTODO]
+		public virtual void GenerateCodeFromExpression (CodeExpression expression, TextWriter writer, CodeGeneratorOptions options)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual void GenerateCodeFromMember (CodeTypeMember member, TextWriter writer, CodeGeneratorOptions options)
+		{
+			throw new NotImplementedException();
+		}
+
+		[MonoTODO]
+		public virtual void GenerateCodeFromNamespace (CodeNamespace codeNamespace, TextWriter writer, CodeGeneratorOptions options)
+		{
+			throw new NotImplementedException();
+		}
+
 		public virtual void GenerateCodeFromStatement (CodeStatement statement, TextWriter writer, CodeGeneratorOptions options)
 		{
 			CreateGenerator ().GenerateCodeFromStatement (statement, writer, options);
+		}
+
+		[MonoTODO]
+		public virtual void GenerateCodeFromType (CodeTypeDeclaration codeType, TextWriter writer, CodeGeneratorOptions options)
+		{
+			throw new NotImplementedException();
 		}
 
 		public static CompilerInfo GetCompilerInfo (string language)

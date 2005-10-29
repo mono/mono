@@ -1,3 +1,8 @@
+2005-10-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	CodeDomProvider.cs: Stubbed a few 2.0 methods to fix API errors in 
+	derived classes.
+
 2005-10-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CompilerError.cs: Added LinkDemand for Unrestricted before 2.0.
