@@ -116,7 +116,11 @@ namespace System.Security {
 
 		// methods
 
+#if NET_2_0
+		public IPermission AddPermission (IPermission perm)
+#else
 		public virtual IPermission AddPermission (IPermission perm)
+#endif
 		{
 			if ((perm == null) || _readOnly)
 				return perm;
@@ -492,7 +496,11 @@ namespace System.Security {
 			throw new SerializationException (String.Format (Locale.GetText ("Unknown output format {0}."), outFormat));
 		}
 
-		public virtual IPermission GetPermission (Type permClass) 
+#if NET_2_0
+		public IPermission GetPermission (Type permClass)
+#else
+		public virtual IPermission GetPermission (Type permClass)
+#endif
 		{
 			if ((permClass == null) || (list.Count == 0))
 				return null;
@@ -505,7 +513,11 @@ namespace System.Security {
 			return null;
 		}
 
-		public virtual PermissionSet Intersect (PermissionSet other) 
+#if NET_2_0
+		public PermissionSet Intersect (PermissionSet other)
+#else
+		public virtual PermissionSet Intersect (PermissionSet other)
+#endif
 		{
 			// no intersection possible
 			if ((other == null) || (other.IsEmpty ()) || (this.IsEmpty ()))
@@ -565,7 +577,11 @@ namespace System.Security {
 			}
 		}
 
-		public virtual bool IsEmpty () 
+#if NET_2_0
+		public bool IsEmpty ()
+#else
+		public virtual bool IsEmpty ()
+#endif
 		{
 			// note: Unrestricted isn't empty
 			if (state == PermissionState.Unrestricted)
@@ -581,12 +597,20 @@ namespace System.Security {
 			return true;
 		}
 
-		public virtual bool IsUnrestricted () 
+#if NET_2_0
+		public bool IsUnrestricted ()
+#else
+		public virtual bool IsUnrestricted ()
+#endif
 		{
 			return (state == PermissionState.Unrestricted);
 		}
 
-		public virtual IPermission RemovePermission (Type permClass) 
+#if NET_2_0
+		public IPermission RemovePermission (Type permClass)
+#else
+		public virtual IPermission RemovePermission (Type permClass)
+#endif
 		{
 			if ((permClass == null) || _readOnly)
 				return null;
@@ -600,7 +624,11 @@ namespace System.Security {
 			return null;
 		}
 
-		public virtual IPermission SetPermission (IPermission perm) 
+#if NET_2_0
+		public IPermission SetPermission (IPermission perm)
+#else
+		public virtual IPermission SetPermission (IPermission perm)
+#endif
 		{
 			if ((perm == null) || _readOnly)
 				return perm;
@@ -640,7 +668,11 @@ namespace System.Security {
 			return se;
 		}
 
+#if NET_2_0
+		public PermissionSet Union (PermissionSet other)
+#else
 		public virtual PermissionSet Union (PermissionSet other)
+#endif
 		{
 			if (other == null)
 				return this.Copy ();
