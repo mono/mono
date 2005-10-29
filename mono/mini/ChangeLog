@@ -1,5 +1,8 @@
 2005-10-29  Zoltan Varga  <vargaz@freemail.hu>
 
+	* mini-amd64.c exceptions-amd64.c: Allow fp elimination in methods
+	which have save_lmf set. Reorganize methods prologs a bit.
+	
 	* mini-amd64.c (mono_arch_compute_omit_fp): Move the check for the
 	debugger to the proper place.
 
