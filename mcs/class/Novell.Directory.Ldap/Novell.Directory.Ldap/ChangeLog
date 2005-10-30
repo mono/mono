@@ -1,0 +1,4 @@
+2005-10-30 Konstantin Triger <kostat@mainsoft.com>
+
+	* LdapConnection.cs: TARGET_JVM: if no credentials supplied, 
+	  try to login with current user credentials.

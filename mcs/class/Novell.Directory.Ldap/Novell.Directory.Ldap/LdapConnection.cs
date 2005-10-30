@@ -1592,8 +1592,13 @@ namespace Novell.Directory.Ldap
 			if ((authenticationTypes & AuthenticationTypes.Secure) != 0) {			
 				LoginContext loginContext = null;
 				try {					
-					AuthenticationCallbackHandler callbackHandler = new AuthenticationCallbackHandler (username,password);
-					loginContext = new LoginContext (SecurityAppName, callbackHandler);
+					if (username != null && password != null) {
+						AuthenticationCallbackHandler callbackHandler = new AuthenticationCallbackHandler (username,password);
+						loginContext = new LoginContext (SecurityAppName, callbackHandler);
+					}
+					else
+						loginContext = new LoginContext (SecurityAppName);
+
 					loginContext.login ();
 				}
 				catch (LoginException e) {
