@@ -1,3 +1,8 @@
+2005-10-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-ia64.c (mono_arch_ip_from_context): Fix this, the previous
+	version seemed to skip a frame.
+
 2005-10-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini.c: Clean up the usage of sig->pinvoke flag. Now
