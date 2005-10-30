@@ -1,3 +1,7 @@
+2005-10-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* ia64/ia64-codegen.h (ia64_m17): Fix a warning.
+
 2005-10-16  Zoltan Varga  <vargaz@freemail.hu>
 
 	* amd64/amd64-codegen.h (AMD64_CALLEE_SAVED_REGS): Add %rbp.
