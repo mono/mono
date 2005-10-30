@@ -1,3 +1,8 @@
+2005-10-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini.c: Clean up the usage of sig->pinvoke flag. Now
+	only calls which are made to native code use this flag.
+
 2005-10-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_compute_omit_fp): Disable fp elimination for
