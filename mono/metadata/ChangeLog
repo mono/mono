@@ -1,3 +1,7 @@
+2005-10-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* icall.c (ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal): Remove the check for FieldBuilders as it is now done in managed code.
+
 2005-10-29  Zoltan Varga  <vargaz@freemail.hu>
 
 	* icall.c (ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal):
