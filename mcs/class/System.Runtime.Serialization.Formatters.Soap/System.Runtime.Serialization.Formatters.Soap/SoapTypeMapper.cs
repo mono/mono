@@ -263,11 +263,19 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 					namespaceToPrefixTable[namespaceURI] = prefix;
 
 				}
+
 				int i = typeName.IndexOf ("[");
 				if (i != -1)
 					typeName = XmlConvert.EncodeName (typeName.Substring (0, i)) + typeName.Substring (i);
 				else
-					typeName = XmlConvert.EncodeName (typeName);
+				{
+					int j = typeName.IndexOf ("&");
+					if (j != -1)
+						typeName = XmlConvert.EncodeName (typeName.Substring (0, j)) + typeName.Substring (j);
+					else
+						typeName = XmlConvert.EncodeName (typeName);
+				}
+
 				element = new Element(
 					prefix, 
 					typeName, 
@@ -493,7 +501,7 @@ namespace System.Runtime.Serialization.Formatters.Soap {
 			reader.XmlReader.MoveToElement ();
 			if (reader.XmlReader.IsEmptyElement) {
 				reader.XmlReader.Skip ();
-				return null;
+				return new Type[0];
 			}
 			reader.XmlReader.ReadStartElement ();
 			string names = reader.XmlReader.ReadString ();

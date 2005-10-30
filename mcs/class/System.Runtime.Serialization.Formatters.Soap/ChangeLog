@@ -1,3 +1,12 @@
+2005-10-30  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
+
+    * Add Mainsoft's files System.Runtime.Serialization.Formatters.Soap.vmwcsproj and
+      System.Runtime.Serialization.Formatters.Soap.sln to the svn
+    * Add some TARGET_JVM conditions to the AssemblyInfo.cs
+	* Fix SoapTypeMapper.cs:
+	    - MethodSignature.ReadXmlValue method to return empty Type array instead of null.
+        - SoapTypeMapper.GetXmlElement method to exclude '&' from the encoded string.
+
 2004-09-14  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (EXTRA_DISTFILES): Remove Soap.cmbx.

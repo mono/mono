@@ -53,8 +53,12 @@ using System.Runtime.InteropServices;
 //[assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 //[assembly: AssemblyTrademark("")]
 
+#if !TARGET_JVM
 [assembly: CLSCompliant(true)]
+#endif
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: AssemblyDelaySign(true)]
+#if !TARGET_JVM
 [assembly: AssemblyKeyFile("../msfinal.pub")]
+#endif
