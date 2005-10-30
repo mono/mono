@@ -1,5 +1,7 @@
 2005-10-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c: Fix some warnings.
+
 	* exceptions-ia64.c (mono_arch_ip_from_context): Fix this, the previous
 	version seemed to skip a frame.
 
