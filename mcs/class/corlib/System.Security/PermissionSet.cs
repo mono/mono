@@ -354,9 +354,9 @@ namespace System.Security {
 			return list.GetEnumerator ();
 		}
 
-		public virtual bool IsSubsetOf (PermissionSet target)
-		{
 #if NET_2_0
+		public bool IsSubsetOf (PermissionSet target)
+		{
 			// if target is empty we must be empty too
 			if ((target == null) || (target.IsEmpty ()))
 				return this.IsEmpty ();
@@ -366,6 +366,9 @@ namespace System.Security {
 				return true;
 			if (this.IsUnrestricted ())
 				return false;
+#else
+		public virtual bool IsSubsetOf (PermissionSet target)
+		{
 #endif
 			if (this.IsUnrestricted () && ((target == null) || !target.IsUnrestricted ()))
 				return false;

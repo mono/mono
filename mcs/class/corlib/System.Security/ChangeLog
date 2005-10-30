@@ -1,3 +1,7 @@
+2005-10-30  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* PermissionSet.cs: Forgot to remove virtual from 2.0 IsSubsetOf.
+
 2005-10-29  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* PermissionSet.cs: Another update to corcompare shows that even more
