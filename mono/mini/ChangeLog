@@ -1,5 +1,10 @@
 2005-10-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* cpu-ia64.md: Remove unused opcodes.
+
+	* mini.c (GET_CONTEXT): Simplify this somewhat by removing arch
+	specific defines for architectures defining USE_SIGACTION.
+
 	* mini-ia64.c: Fix some warnings.
 
 	* exceptions-ia64.c (mono_arch_ip_from_context): Fix this, the previous
