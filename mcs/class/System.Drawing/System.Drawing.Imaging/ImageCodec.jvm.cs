@@ -17,7 +17,7 @@ namespace Mainsoft.Drawing.Imaging {
 	/// <summary>
 	/// Summary description for ImageCodec.
 	/// </summary>
-	public class ImageCodec {
+	public class ImageCodec : IDisposable {
 
 		#region Members
 
@@ -47,6 +47,8 @@ namespace Mainsoft.Drawing.Imaging {
 			get { return _nativeReader; }
 			set { 
 				_nativeReader = value; 
+				if (value == null)
+					return;
 				_imageFormat = MimeTypesToImageFormat( value.getOriginatingProvider().getMIMETypes() );
 			}
 		}
@@ -54,6 +56,8 @@ namespace Mainsoft.Drawing.Imaging {
 			get { return _nativeWriter; }
 			set { 
 				_nativeWriter = value; 
+				if (value == null)
+					return;
 				_imageFormat = MimeTypesToImageFormat( value.getOriginatingProvider().getMIMETypes() );
 			}
 		}
@@ -61,10 +65,9 @@ namespace Mainsoft.Drawing.Imaging {
 		internal stream.ImageInputStream NativeStream {
 			get { return _nativeStream; }
 			set {
-				if (value == null)
-					throw new ArgumentNullException("stream");
-
 				_nativeStream = value;
+				if (value == null)
+					return;
 
 				if (NativeReader != null)
 					NativeReader.setInput( value );
@@ -449,6 +452,7 @@ namespace Mainsoft.Drawing.Imaging {
 				throw new Exception("Output stream not specified");
 
 			NativeWriter.write( iio );
+			NativeStream.flush();
 		}
 		
 		private imageio.IIOImage GetIIOImageContainer(PlainImage pi) {
@@ -464,7 +468,7 @@ namespace Mainsoft.Drawing.Imaging {
 			// prepare IIOImage container
 			if (pi.NativeImage is image.BufferedImage) {
 				imageio.IIOImage iio = new javax.imageio.IIOImage(
-					(image.BufferedImage)pi.NativeImage, al, pi.NativeMetadata);
+					(image.BufferedImage)pi.NativeImage, al, null /*pi.NativeMetadata*/);
 				return iio;
 			}
 			else
@@ -633,6 +637,22 @@ namespace Mainsoft.Drawing.Imaging {
 			}
 			catch (Exception) {
 				return float.NaN;
+			}
+		}
+
+		#endregion
+
+		#region IDisposable members
+
+		public void Dispose() {
+			if (NativeReader != null) {
+				NativeReader.dispose();
+				NativeReader = null;
+			}
+
+			if (NativeWriter != null) {
+				NativeWriter.dispose();
+				NativeWriter = null;
 			}
 		}
 
