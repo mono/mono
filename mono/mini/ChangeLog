@@ -1,3 +1,14 @@
+2005-10-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-amd64.c (mono_arch_output_basic_block): Remove unused
+	OP_LCONV_TO_OVF_I implementation.
+
+	* mini-amd64.c: Add support for the throw->branch exception 
+	optimization.
+
+	* branch-opts.c (mono_branch_optimize_exception_target): Allow the case
+	when the catch clause catches a more general exception, i.e. Object.
+
 2005-10-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-ia64.md: Remove unused opcodes.
