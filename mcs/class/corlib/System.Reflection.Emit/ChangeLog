@@ -1,3 +1,7 @@
+2005-10-30  Zoltan Varga  <vargaz@freemail.hu>
+
+	* FieldBuilder.cs: Add implementation of new UMarshal property.
+
 2005-10-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* FieldBuilder.cs MethodBuilder.cs ConstructorBuilder.cs: Add support for
