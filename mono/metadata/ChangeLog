@@ -1,5 +1,8 @@
 2005-10-30  Zoltan Varga  <vargaz@freemail.hu>
 
+	* marshal.c icall.c: Clean up the usage of sig->pinvoke flag. Now
+	only calls which are made to native code use this flag.
+
 	* icall.c (ves_icall_System_Reflection_FieldInfo_GetUnmanagedMarshal): Remove the check for FieldBuilders as it is now done in managed code.
 
 2005-10-29  Zoltan Varga  <vargaz@freemail.hu>
