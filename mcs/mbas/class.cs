@@ -871,8 +871,14 @@ namespace Mono.MonoBASIC {
 			    (base_class_type == TypeManager.attribute_type ||
 			     base_class_type.IsSubclassOf (TypeManager.attribute_type))) {
 				RootContext.RegisterAttribute (this);
-			} else
-				RootContext.RegisterOrder (this); 
+			}
+		       	else
+			{
+				if ( this is Interface)
+					RootContext.RegisterOrder ((Interface) this); 
+				else	
+					RootContext.RegisterOrder (this); 
+			}
 				
 			if (Interfaces != null) {
 				foreach (Interface iface in Interfaces)

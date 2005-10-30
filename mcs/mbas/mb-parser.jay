@@ -4352,6 +4352,8 @@ variable_declarator
 			exp = (Expression)$3;
 
 
+			// FIXME: Check whether exp is a Type and not a class member or something
+			// FIXME: Check whether vname and exp are not both arrays.
 			if (VariableDeclaration.IsArrayDecl (this) &&  (exp is MemberAccess))
                                 Report.Error (
                                         31087, (Location)$1,
@@ -6328,6 +6330,7 @@ void HandleConditionalDirective(IfElseStateMachine.Token tok, BoolLiteral expr)
 }
 /* end end end */
 }
+
 
 
 
