@@ -30,6 +30,7 @@
 
 using System;
 using System.Reflection;
+using System.Resources;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
