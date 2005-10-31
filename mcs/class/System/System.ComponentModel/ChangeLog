@@ -1,3 +1,7 @@
+2005-10-31  Dick Porter  <dick@ximian.com>
+
+	* Win32Exception.cs: Add another error code.
+
 2005-09-20  Chris Toshok  <toshok@ximian.com>
 
 	* INotifyPropertyChanged.cs: new interface.

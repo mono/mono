@@ -110,6 +110,9 @@ namespace System.ComponentModel
 			case 3:
 				message = Locale.GetText ("Cannot find the specified file");
 				break;
+			case 267:
+				message = Locale.GetText ("Is a directory");
+				break;
 			case 10004:
 				message = Locale.GetText ("interrupted");
 				break;
