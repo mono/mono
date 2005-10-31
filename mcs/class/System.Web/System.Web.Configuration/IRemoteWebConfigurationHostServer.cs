@@ -40,7 +40,7 @@ namespace System.Web.Configuration
 		    bool do_encrypt, string xml_string, string protection_provider_name,
 		    string protection_provider_type, string [] params_keys, string [] param_values);
 
-		byte [] GetData (string filename, out long readTime);
+		byte [] GetData (string filename, bool getReadTimeOnly, out long readTime);
 
 		void GetFileDetails (string name, out bool exists, out long size, out long create_data, out long last_write_date);
 

@@ -1,3 +1,7 @@
+2005-10-31  Chris Toshok  <toshok@ximian.com>
+
+	* IRemoteWebConfigurationHostServer.cs: fix interface.
+
 2005-10-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GlobalizationConfigurationHandler.cs : we don't use ICU.
