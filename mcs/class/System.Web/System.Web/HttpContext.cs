@@ -297,6 +297,12 @@ namespace System.Web {
 			l.Add (errorInfo);
 		}
 
+		internal void ClearError (Exception e)
+		{
+			if (errors == e)
+				errors = null;
+		}
+
 		public void ClearError ()
 		{
 			errors = null;

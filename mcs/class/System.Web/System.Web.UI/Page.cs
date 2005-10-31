@@ -902,7 +902,11 @@ public class Page : TemplateControl, IHttpHandler
 		} catch (ThreadAbortException) {
 			// Do nothing, just ignore it by now.
 		} catch (Exception e) {
+			context.AddError (e); // OnError might access LastError
 			OnError (EventArgs.Empty);
+			context.ClearError (e);
+			// We want to remove that error, as we're rethrowing to stop
+			// further processing.
 			throw;
 		} finally {
 			try {

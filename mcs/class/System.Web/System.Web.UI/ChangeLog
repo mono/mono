@@ -1,3 +1,7 @@
+2005-10-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: add/remove the error before/after invoking OnError.
+
 2005-10-27 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: call OnError when there's an exception (not for TAE). Fixes

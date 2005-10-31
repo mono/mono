@@ -1,3 +1,7 @@
+2005-10-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpContext.cs: added a new internal overload for ClearError.
+
 2005-10-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRuntime.cs: invoke callbacks on private items in the cache before 
