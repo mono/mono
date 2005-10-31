@@ -78,11 +78,9 @@ System.Web.Configuration/HttpModulesConfigurationHandler.cs
 System.Web.Configuration/HttpRuntimeConfig.cs
 System.Web.Configuration/HttpRuntimeConfigurationHandler.cs
 System.Web.Configuration/InternalSection.cs
-System.Web.Configuration/IRemoteWebConfigurationHostServer.cs
 System.Web.Configuration/MachineKeyConfig.cs
 System.Web.Configuration/MachineKeyConfigHandler.cs
 System.Web.Configuration/MachineKeyValidation.cs
-System.Web.Configuration/MembershipSection.cs
 System.Web.Configuration/ModulesConfiguration.cs
 System.Web.Configuration/PagesConfiguration.cs
 System.Web.Configuration/PagesConfigurationHandler.cs
@@ -106,6 +104,14 @@ System.Web.Configuration/WebConfigurationHost.cs
 System.Web.Configuration/WebConfigurationManager.cs
 System.Web.Configuration/WebConfigurationSettings.cs
 System.Web.Configuration/WebControlsSectionHandler.cs
+System.Web.Configuration_2.0/HttpHandlerAction.cs
+System.Web.Configuration_2.0/HttpHandlerActionCollection.cs
+System.Web.Configuration_2.0/HttpHandlersSection.cs
+System.Web.Configuration_2.0/IRemoteWebConfigurationHostServer.cs
+System.Web.Configuration_2.0/MembershipSection.cs
+System.Web.Configuration_2.0/PagesSection.cs
+System.Web.Configuration_2.0/SystemWebSectionGroup.cs
+System.Web.Configuration_2.0/XhtmlConformanceMode.cs
 System.Web/EndEventHandler.cs
 System.Web.Handlers/AssemblyResourceLoader.cs
 System.Web.Handlers/TraceHandler.cs
