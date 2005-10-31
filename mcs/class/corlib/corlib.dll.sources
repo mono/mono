@@ -310,6 +310,7 @@ System.Globalization/JulianCalendar.cs
 System.Globalization/KoreanCalendar.cs
 System.Globalization/NumberFormatInfo.cs
 System.Globalization/NumberStyles.cs
+System.Globalization/PersianCalendar.cs
 System.Globalization/RegionInfo.cs
 System.Globalization/StringInfo.cs
 System.Globalization/TaiwanCalendar.cs
