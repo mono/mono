@@ -370,7 +370,7 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 		ImageCodecInfo encoder = null;
 		
 		if (format.Guid.Equals (ImageFormat.MemoryBmp.Guid))
-			format = ImageFormat.Bmp;
+			format = ImageFormat.Png;
 	
 		/* Look for the right encoder for our format*/
 		for (int i = 0; i < encoders.Length; i++) {

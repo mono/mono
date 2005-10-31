@@ -1,3 +1,7 @@
+2005-10-31  Jordi Mas i Hernandez <jordi@ximian.com>
+
+	*  TestImageFormat.cs: New test unit
+
 2005-09-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TestBmpCodec.cs, TestColorMatrix.cs, TestImageAttributes.cs, 

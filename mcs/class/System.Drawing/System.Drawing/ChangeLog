@@ -1,3 +1,7 @@
+2005-10-31 Jordi Mas i Hernandez <jordi@ximian.com> 
+
+	* Image.cs: Default format for MemoryBMP should be Png
+
 2005-10-27 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* Bitmap.jvm.cs: fixed InternalSave
