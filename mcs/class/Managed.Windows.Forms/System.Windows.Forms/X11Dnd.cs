@@ -988,7 +988,7 @@ namespace System.Windows.Forms {
 				}
 
 				for (int i = 0; i < nitems; i++)
-					res.WriteByte (Marshal.ReadByte (data, i * sizeof (byte)));
+					res.WriteByte (Marshal.ReadByte (data, i));
 				nread += nitems;
 
 				XFree (data);

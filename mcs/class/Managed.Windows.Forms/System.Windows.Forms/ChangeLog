@@ -1,3 +1,7 @@
+2005-10-31  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs: Don't need the sizeof here. Patch by Jordi Mas.
+
 2005-10-31  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* PictureBox.cs: Fixes 76512
