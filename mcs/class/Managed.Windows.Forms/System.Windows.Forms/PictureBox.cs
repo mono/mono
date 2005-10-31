@@ -51,7 +51,7 @@ namespace System.Windows.Forms {
 			recalc = true;
 			allow_drop = false;
 			SetStyle (ControlStyles.Selectable, false);
-			SetStyle (ControlStyles.DoubleBuffer | ControlStyles.SupportsTransparentBackColor, true);
+			SetStyle (ControlStyles.SupportsTransparentBackColor, true);
 		}
 
 		[DefaultValue(PictureBoxSizeMode.Normal)]
