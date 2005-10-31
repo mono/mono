@@ -85,7 +85,7 @@ namespace System.Windows.Forms
 		internal object			control_tag;		// object that contains data about our control
 		internal int			mouse_clicks;		// Counter for mouse clicks
 		internal Cursor			cursor;			// Cursor for the window
-		private bool			allow_drop;		// true if the control accepts droping objects on it   
+		internal bool			allow_drop;		// true if the control accepts droping objects on it   
 
 		// Visuals
 		internal Color			foreground_color;	// foreground color for control
@@ -919,22 +919,33 @@ namespace System.Windows.Forms
 
 		internal void DndEnter (DragEventArgs e)
 		{
-			OnDragEnter (e);
+			try {
+				OnDragEnter (e);
+			} catch { }
 		}
 
 		internal void DndOver (DragEventArgs e)
 		{
-			OnDragOver (e);
+			try {
+				OnDragOver (e);
+			} catch { }
 		}
 
 		internal void DndDrop (DragEventArgs e)
 		{
-			OnDragDrop (e);
+			try {
+				OnDragDrop (e);
+			} catch (Exception exc) {
+				Console.Error.WriteLine ("MWF: Exception while dropping:");
+				Console.Error.WriteLine (exc);
+			}
 		}
 
 		internal void DndLeave (EventArgs e)
 		{
-			OnDragLeave (e);
+			try {
+				OnDragLeave (e);
+			} catch { }
 		}
 
 		internal void DnDFeedback(GiveFeedbackEventArgs e)

@@ -106,6 +106,9 @@ namespace System.Windows.Forms {
 
 			public void SetData (X11Dnd dnd, object data, ref XEvent xevent)
 			{
+				if (data == null)
+					return;
+
 				MemoryStream stream = new MemoryStream ();
 				BinaryFormatter bf = new BinaryFormatter ();
 
@@ -137,15 +140,19 @@ namespace System.Windows.Forms {
 			{
 				IntPtr buffer;
 				int len;
+				string str = data as string;
+
+				if (str == null)
+					return;
 
 				if (xevent.SelectionRequestEvent.target == (int) Atom.XA_STRING) {
-					byte [] bytes = Encoding.ASCII.GetBytes ((string) data);
+					byte [] bytes = Encoding.ASCII.GetBytes (str);
 					buffer = Marshal.AllocHGlobal (bytes.Length);
 					len = bytes.Length;
 					for (int i = 0; i < len; i++)
 						Marshal.WriteByte (buffer, i, bytes [i]);
 				} else {
-					buffer = Marshal.StringToHGlobalAnsi ((string) data);
+					buffer = Marshal.StringToHGlobalAnsi (str);
 					len = 0;
 					while (Marshal.ReadByte (buffer, len) != 0)
 						len++;
@@ -172,15 +179,19 @@ namespace System.Windows.Forms {
 			{
 				IntPtr buffer;
 				int len;
+				string str = data as string;
 
+				if (data == null)
+					return;
+				
 				if (xevent.SelectionRequestEvent.target == (int) Atom.XA_STRING) {
-					byte [] bytes = Encoding.ASCII.GetBytes ((string) data);
+					byte [] bytes = Encoding.ASCII.GetBytes (str);
 					buffer = Marshal.AllocHGlobal (bytes.Length);
 					len = bytes.Length;
 					for (int i = 0; i < len; i++)
 						Marshal.WriteByte (buffer, i, bytes [i]);
 				} else {
-					buffer = Marshal.StringToHGlobalAnsi ((string) data);
+					buffer = Marshal.StringToHGlobalAnsi (str);
 					len = 0;
 					while (Marshal.ReadByte (buffer, len) != 0)
 						len++;
@@ -223,9 +234,12 @@ namespace System.Windows.Forms {
 
 			public void SetData (X11Dnd dnd, object data, ref XEvent xevent)
 			{
-				string [] uri_list = (string []) data;
-				StringBuilder res = new StringBuilder ();
+				string [] uri_list = data as string [];
 
+				if (uri_list == null)
+					return;
+
+				StringBuilder res = new StringBuilder ();
 				foreach (string uri_str in uri_list) {
 					Uri uri = new Uri (uri_str);
 					res.Append (uri.ToString ());
@@ -312,13 +326,13 @@ namespace System.Windows.Forms {
 
 		public void SetAllowDrop (Hwnd hwnd, bool allow)
 		{
-//			  if (hwnd.allow_drop == allow)
-//				  return;
+			if (hwnd.allow_drop == allow)
+				return;
 
 			XChangeProperty (display, hwnd.whole_window, XdndAware,
 					(IntPtr) Atom.XA_ATOM, 32,
 					PropertyMode.Replace, XdndVersion, allow ? 1 : 0);
-//			  hwnd.allow_drop = allow;
+			hwnd.allow_drop = allow;
 		}
 
 		public DragDropEffects StartDrag (IntPtr handle, object data,
@@ -353,7 +367,9 @@ namespace System.Windows.Forms {
 				}
 
 				XplatUIX11.XUngrabPointer (display, 0);
-				drag_data.Reset ();
+				// WE can't reset the drag data yet as it is still
+				// most likely going to be used by the SelectionRequest
+				// handlers
 			}
 		}
 
@@ -611,10 +627,10 @@ namespace System.Windows.Forms {
 
 			if (c == null)
 				return true;
-//			if (!c.AllowDrop) {
-//				Finish ();
-//				return true;
-//			}
+			if (!c.allow_drop) {
+				Finish ();
+				return true;
+			}
 
 			control = c;
 			position_recieved = true;			
@@ -708,7 +724,6 @@ namespace System.Windows.Forms {
 
 			foreach (IntPtr atom in SourceSupportedList (ref xevent)) {
 				MimeHandler handler = FindHandler (atom);
-				Console.WriteLine ("handler:  {0}   atom:   {1}", handler, atom);
 				if (handler == null)
 					continue;
 				XConvertSelection (display, XdndSelection, handler.Type,
@@ -794,7 +809,8 @@ namespace System.Windows.Forms {
 			// (int) xevent.ClientMessageEvent.ptr2 & 0x1)
 			// int ptr2 = 0x1;
 			// xevent.ClientMessageEvent.ptr2 = (IntPtr) ptr2;
-			xevent.ClientMessageEvent.ptr2 = IntPtr.Zero;
+			// (e)->xclient.data.l[1] = ((e)->xclient.data.l[1] & ~(0xFF << 24)) | ((v) << 24)
+			xevent.ClientMessageEvent.ptr2 = (IntPtr) (XdndVersion [0] << 24);
 			
 			if (supported.Length > 0)
 				xevent.ClientMessageEvent.ptr3 = supported [0];

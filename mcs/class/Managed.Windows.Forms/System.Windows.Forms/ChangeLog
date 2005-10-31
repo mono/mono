@@ -1,5 +1,15 @@
 2005-10-31  Jackson Harper  <jackson@ximian.com>
 
+	* Control.cs: Make the dnd_aware flag internal so the dnd
+	subsystem can check it. Catch exceptions thrown in dnd handlers to
+	match MS behavoir.
+	* Hwnd.cs: Add a flag for whether or not a window is dnd aware.
+	* X11Dnd.cs: Handle null data in the converters. Set the XDND
+	version when sending a XdndEnter. Use the control/hwnd dnd_aware
+	flags to reduce the number of dnd enters/status's sent.
+
+2005-10-31  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs: Don't need the sizeof here. Patch by Jordi Mas.
 
 2005-10-31  Jordi Mas i Hernandez <jordi@ximian.com>

@@ -53,6 +53,7 @@ namespace System.Windows.Forms {
 		internal int		y;
 		internal int		width;
 		internal int		height;
+		internal bool		allow_drop;
 		internal Hwnd		parent;
 		internal bool		visible;
 		internal bool		zero_sized;
