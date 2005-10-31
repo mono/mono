@@ -3742,6 +3742,17 @@ namespace Mono.MonoBASIC {
 			ILGenerator ig = ec.ig;
 			
 			base.Emit (ec);
+			
+			ig.Emit (OpCodes.Dup);
+			Label unbox = ig.DefineLabel ();
+			ig.Emit (OpCodes.Brtrue, unbox);
+			ig.Emit (OpCodes.Pop);
+			ig.Emit (OpCodes.Ldtoken, t);
+			ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
+			MethodInfo createInst =  Type.GetType("System.Activator").GetMethod ("CreateInstance", new Type[]{Type.GetType("System.Type")} );
+			ig.Emit (OpCodes.Call, createInst );
+			
+			ig.MarkLabel (unbox);		
 			ig.Emit (OpCodes.Unbox, t);
 
 			LoadFromPtr (ig, t);

@@ -1,4 +1,8 @@
- 2005-10-29 Renato Suga<renato@psl-pr.softwarelivre.org>
+2005-10-31 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+ 	* ecore.cs: Fix UnboxCast Emit calling Activator.CreateInstance when
+ 	necessary.
+
+2005-10-29 Renato Suga<renato@psl-pr.softwarelivre.org>
  	* codegen.cs: Added static global ArrayList ArrListVersion to keep the 
  	assembly's version numbers. reating a new Version(string str) is not 
  	working. The Init() method was modified to correctly set the version value;
