@@ -367,6 +367,7 @@ namespace System.Windows.Forms {
 				}
 
 				XplatUIX11.XUngrabPointer (display, 0);
+				drag_data.State = DragState.None;
 				// WE can't reset the drag data yet as it is still
 				// most likely going to be used by the SelectionRequest
 				// handlers
