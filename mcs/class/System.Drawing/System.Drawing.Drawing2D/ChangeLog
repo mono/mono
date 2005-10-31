@@ -1,3 +1,7 @@
+2005-10-31 Konstantin Triger <kostat@mainsoft.com>
+
+	* ExtendedGeneralPath.jvm.cs: forward quadTo to curveTo
+
 2005-10-23 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* GraphicsState.jvm.cs: fixed ResetState, RestoreBaseClip

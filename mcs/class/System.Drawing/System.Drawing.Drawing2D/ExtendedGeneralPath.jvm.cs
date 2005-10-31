@@ -439,13 +439,37 @@ namespace System.Drawing.Drawing2D
 
 		public void quadTo(float x1, float y1, float x2, float y2) 
 		{
-			ClearCache ();
-			needRoom (1, 4, true);
-			_types [_typesCount++] = SEG_QUADTO;
-			_coords [_coordsCount++] = x1;
-			_coords [_coordsCount++] = y1;
-			_coords [_coordsCount++] = x2;
-			_coords [_coordsCount++] = y2;
+//			ClearCache ();
+//			needRoom (1, 4, true);
+//			_types [_typesCount++] = SEG_QUADTO;
+//			_coords [_coordsCount++] = x1;
+//			_coords [_coordsCount++] = y1;
+//			_coords [_coordsCount++] = x2;
+//			_coords [_coordsCount++] = y2;
+
+			/*
+			  .net does not support Quadratic curves, so convert to Cubic according to http://pfaedit.sourceforge.net/bezier.html
+			  
+			  The end points of the cubic will be the same as the quadratic's.
+			  CP0 = QP0
+			  CP3 = QP2 
+
+			  The two control points for the cubic are:
+
+			  CP1 = QP0 + 2/3 *(QP1-QP0)
+			  CP2 = CP1 + 1/3 *(QP2-QP0) 
+			*/
+
+			float x0 = _coords[_coordsCount-2];
+			float y0 = _coords[_coordsCount-1];
+
+			float cx1 = x0 + (2/3 * (x1-x0));
+			float cy1 = y0 + (2/3 * (y1-y0));
+
+			float cx2 = cx1 + (1/3 * (x2-x0));
+			float cy2 = cy1 + (1/3 * (y2-y0));
+
+			curveTo(cx1, cy1, cx2, cy2, x2, y2);
 		}
 
 		public void reset() 
