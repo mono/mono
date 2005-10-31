@@ -116,7 +116,8 @@ namespace System.Windows.Forms {
 			MouseMove += new MouseEventHandler(MouseMoveHandler);
 			SizeChanged += new EventHandler (SizeChangedHandler);
 			FontChanged += new EventHandler (FontChangedHandler);
-			
+			LostFocus += new EventHandler (LostFocusHandler);
+
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 
 			dash = new Pen (SystemColors.ControlLight, 1);
@@ -1315,6 +1316,12 @@ namespace System.Windows.Forms {
 		private void FontChangedHandler (object sender, EventArgs e)
 		{
 			update_node_bounds = true;
+		}
+
+		private void LostFocusHandler (object sender, EventArgs e)
+		{
+			if (selected_node != null)
+				UpdateNode (selected_node);
 		}
 
 		private void MouseDownHandler (object sender, MouseEventArgs e)

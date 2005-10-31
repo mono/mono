@@ -1,5 +1,9 @@
 2005-10-31  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Don't draw the selected node when we lose focus.
+
+2005-10-31  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs: We still need to reset the state even though a full
 	reset isn't being done, otherwise status's still get sent all over
 	the place.
