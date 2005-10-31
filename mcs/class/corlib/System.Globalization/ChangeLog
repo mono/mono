@@ -1,3 +1,14 @@
+2005-10-31  Miguel de Icaza  <miguel@novell.com>
+
+	* HijriCalendar.cs, HebrewCalendar.cs, JulianCalendar.cs,
+	GregorianCalendar.cs, JapaneseCalendar.cs, Calendar.cs,
+	TaiwanCalendar.cs, HijriCalendar.cs: Add
+	CalendarAlgorithmType, MinSupportedDateTime, MaxSupportedDateTime
+	properties. 
+
+	* Added ComVisibleAttribute in a bunch of places, using the fully
+	qualified name to speed up cut and paste.
+	
 2005-10-14  Ben Maurer  <bmaurer@ximian.com>
 
 	* DateTimeFormatInfo.cs: Speed up GetAllDateTimePatterns by

@@ -820,6 +820,30 @@ public class JapaneseCalendar : Calendar {
 		M_CheckYE(year, ref era);
 		return year;
 	}
+
+#if NET_2_0
+	public override CalendarAlgorithmType AlgorithmType {
+		get {
+			return CalendarAlgorithmType.SolarCalendar;
+		}
+	}
+
+	static DateTime JapanMin = new DateTime (1868, 9, 8, 0, 0, 0);
+	static DateTime JapanMax = new DateTime (9999, 12, 31, 11, 59, 59);
+		
+	public override DateTime MinSupportedDateTime {
+		get {
+			return JapanMin;
+		}
+	}
+
+	public override DateTime MaxSupportedDateTime {
+		get {
+			return JapanMax;
+		}
+	}
+#endif
+
 } // class JapaneseCalendar
 	
 } // namespace System.Globalization

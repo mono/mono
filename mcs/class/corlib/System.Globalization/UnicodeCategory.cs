@@ -30,8 +30,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+
 namespace System.Globalization {
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible(true)]
+#endif
 	public enum UnicodeCategory {
 		UppercaseLetter         =  0,
 		LowercaseLetter         =  1,

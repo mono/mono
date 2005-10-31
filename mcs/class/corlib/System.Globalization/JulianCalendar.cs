@@ -482,6 +482,29 @@ public class JulianCalendar : Calendar {
 	{
 		throw new NotImplementedException();
 	}
+
+#if NET_2_0
+	public override CalendarAlgorithmType AlgorithmType {
+		get {
+			return CalendarAlgorithmType.SolarCalendar;
+		}
+	}
+
+	static DateTime JulianMin = new DateTime (1, 1, 1, 0, 0, 0);
+	static DateTime JulianMax = new DateTime (9999, 12, 31, 11, 59, 59);
+		
+	public override DateTime MinSupportedDateTime {
+		get {
+			return JulianMin;
+		}
+	}
+
+	public override DateTime MaxSupportedDateTime {
+		get {
+			return JulianMax;
+		}
+	}
+#endif
 	
 } // class JulianCalendar
 	

@@ -485,6 +485,28 @@ public class ThaiBuddhistCalendar : Calendar {
 		throw new NotImplementedException();
 	}
 	
+#if NET_2_0
+	public override CalendarAlgorithmType AlgorithmType {
+		get {
+			return CalendarAlgorithmType.SolarCalendar;
+		}
+	}
+
+	static DateTime ThaiMin = new DateTime (1, 1, 1, 0, 0, 0);
+	static DateTime ThaiMax = new DateTime (9999, 12, 31, 11, 59, 59);
+		
+	public override DateTime MinSupportedDateTime {
+		get {
+			return ThaiMin;
+		}
+	}
+
+	public override DateTime MaxSupportedDateTime {
+		get {
+			return ThaiMax;
+		}
+	}
+#endif
 } // class ThaiBuddhistCalendar
 	
 } // namespace System.Globalization

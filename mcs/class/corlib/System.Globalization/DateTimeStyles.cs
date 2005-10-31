@@ -35,39 +35,22 @@
 
 namespace System.Globalization {
 
-
-	/// <summary>
-	/// </summary>
 	[Flags]
+	[Serializable]
+	[System.Runtime.InteropServices.ComVisible(true)]
 	public enum DateTimeStyles {
-
-		/// <summary>
-		/// </summary>
-		None = 0x00000000,
-
-		/// <summary>
-		/// </summary>
-		AllowLeadingWhite = 0x00000001,
-
-		/// <summary>
-		/// </summary>
-		AllowTrailingWhite = 0x00000002,
-
-		/// <summary>
-		/// </summary>
-		AllowInnerWhite = 0x00000004,
-
-		/// <summary>
-		/// </summary>
-		AllowWhiteSpaces = AllowLeadingWhite | AllowTrailingWhite | AllowInnerWhite,
-
-		/// <summary>
-		/// </summary>
+		None                 = 0x00000000,
+		AllowLeadingWhite    = 0x00000001,
+		AllowTrailingWhite   = 0x00000002,
+		AllowInnerWhite      = 0x00000004,
+		AllowWhiteSpaces     = AllowLeadingWhite | AllowTrailingWhite | AllowInnerWhite,
 		NoCurrentDateDefault = 0x00000008,
-
-		/// <summary>
-		/// </summary>
-		AdjustToUniversal = 0x00000010,
+		AdjustToUniversal    = 0x00000010,
+#if NET_2_0
+		AssumeLocal          = 0x00000020,
+		AssumeUniversal      = 0x00000040,
+		RoundtripKind        = 0x00000080,
+#endif
 	} // DateTimeStyles
 
 } // System.Globalization

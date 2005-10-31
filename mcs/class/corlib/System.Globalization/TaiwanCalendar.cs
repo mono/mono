@@ -41,6 +41,9 @@ using System;
 /// <see cref="N:CalendricalCalculations"/> namespace.
 /// </para>
 /// </remarks>
+#if NET_2_0
+[System.Runtime.InteropServices.ComVisible(true)]
+#endif
 [Serializable]
 [MonoTODO ("Fix serialization compatibility with MS.NET")]
 public class TaiwanCalendar : Calendar {
@@ -783,6 +786,29 @@ public class TaiwanCalendar : Calendar {
 		M_CheckYE(year, ref era);
 		return year;
 	}
+#if NET_2_0
+	public override CalendarAlgorithmType AlgorithmType {
+		get {
+			return CalendarAlgorithmType.SolarCalendar;
+		}
+	}
+
+	static DateTime TaiwanMin = new DateTime (1912, 1, 1, 0, 0, 0);
+	static DateTime TaiwanMax = new DateTime (9999, 12, 31, 11, 59, 59);
+		
+	public override DateTime MinSupportedDateTime {
+		get {
+			return TaiwanMin;
+		}
+	}
+
+	public override DateTime MaxSupportedDateTime {
+		get {
+			return TaiwanMax;
+		}
+	}
+#endif
+	
 } // class TaiwanCalendar
 	
 } // namespace System.Globalization

@@ -929,6 +929,29 @@ public class HijriCalendar : Calendar {
 	{
 		throw new NotImplementedException();
 	}
+
+#if NET_2_0
+	public override CalendarAlgorithmType AlgorithmType  {
+		get {
+			return CalendarAlgorithmType.LunarCalendar;
+		}
+	}
+
+	static DateTime Min = new DateTime (622, 7, 18, 0, 0, 0);
+	static DateTime Max = new DateTime (9999, 12, 31, 11, 59, 59);
+		
+	public override DateTime MinSupportedDateTime {
+		get {
+			return Min;
+		}
+	}
+
+	public override DateTime MaxSupportedDateTime {
+		get {
+			return Max;
+		}
+	}
+#endif
 	
 } // class HijriCalendar
 	

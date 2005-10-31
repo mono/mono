@@ -32,6 +32,9 @@ using System.Runtime.CompilerServices;
 
 namespace System.Globalization
 {
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible(true)]
+#endif
 	[Serializable]
 	public class RegionInfo
 	{
@@ -87,6 +90,7 @@ namespace System.Globalization
 		private extern bool construct_internal_region_from_name (string name);
 
 #if NET_2_0
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public virtual string CurrencyEnglishName {
 			get { return currencyEnglishName; }
 		}
@@ -123,6 +127,7 @@ namespace System.Globalization
 
 #if NET_2_0
 		[MonoTODO]
+		[System.Runtime.InteropServices.ComVisible(false)]
 		public virtual string NativeName {
 			get { return DisplayName; }
 		}

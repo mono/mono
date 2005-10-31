@@ -36,42 +36,23 @@
 namespace System.Globalization {
 
 
-	/// <summary>
-	/// </summary>
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible(true)]
+#endif
 	[Flags]
 	public enum CompareOptions {
-
-		/// <summary>
-		/// </summary>
 		None = 0,
-
-		/// <summary>
-		/// </summary>
 		IgnoreCase = 1,
-
-		/// <summary>
-		/// </summary>
 		IgnoreNonSpace = 2,
-
-		/// <summary>
-		/// </summary>
 		IgnoreSymbols = 4,
-
-		/// <summary>
-		/// </summary>
 		IgnoreKanaType = 8,
-
-		/// <summary>
-		/// </summary>
 		IgnoreWidth = 16,
 
-		/// <summary>
-		/// </summary>
-		StringSort = 536870912,
-
-		/// <summary>
-		/// </summary>
-		Ordinal = 1073741824,
+		StringSort = 0x20000000,
+		Ordinal = 0x40000000,
+#if NET_2_0
+		OrdinalIgnoreCase = 0x10000000
+#endif
 	} // CompareOptions
 
 } // System.Globalization

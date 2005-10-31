@@ -39,6 +39,9 @@ namespace System.Globalization {
 
 	[Flags]
 	[Serializable]
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible(true)]
+#endif
 	public enum NumberStyles {
 		None                 = 0x00000000,
 		AllowLeadingWhite    = 0x00000001,

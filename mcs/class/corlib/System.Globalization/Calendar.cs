@@ -122,6 +122,28 @@ public abstract class Calendar {
 	/// </value>
 	public abstract int[] Eras { get; }
 
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible(false)]
+	public virtual CalendarAlgorithmType AlgorithmType {
+		get {
+			return CalendarAlgorithmType.Unknown;
+		}
+	}
+
+	[System.Runtime.InteropServices.ComVisible(false)]
+	public virtual DateTime MaxSupportedDateTime {
+		get {
+			return DateTime.MaxValue;
+		}
+	}
+
+	[System.Runtime.InteropServices.ComVisible(false)]
+	public virtual DateTime MinSupportedDateTime {
+		get {
+			return DateTime.MinValue;
+		}
+	}
+#endif
 	/// <summary>
 	/// The protected member stores the value for the
 	/// <see cref="P:TwoDigitYearMax"/>

@@ -190,12 +190,6 @@ public class GregorianCalendar : Calendar {
 		return CCGregorianCalendar.AddMonths(time, months);
 	}
 
-	[MonoTODO]
-	public override DateTime AddWeeks(DateTime time, int weeks) 
-	{
-		throw new NotImplementedException();
-	}
-
 	/// <summary>
 	/// Overridden. Adds years to a given date.
 	/// </summary>
@@ -486,6 +480,29 @@ public class GregorianCalendar : Calendar {
 		if (M_TwoDigitYearMax == 99)
 			M_TwoDigitYearMax = 2029;
 	}
+	
+#if NET_2_0
+	public override CalendarAlgorithmType AlgorithmType {
+		get {
+			return CalendarAlgorithmType.SolarCalendar;
+		}
+	}
+
+	static DateTime Min = new DateTime (1, 1, 1, 0, 0, 0);
+	static DateTime Max = new DateTime (9999, 12, 31, 11, 59, 59);
+		
+	public override DateTime MinSupportedDateTime {
+		get {
+			return Min;
+		}
+	}
+
+	public override DateTime MaxSupportedDateTime {
+		get {
+			return Max;
+		}
+	}
+#endif
 	
 	/// <summary>
 	/// Default constructor. Sets the Gregorian calendar type to 

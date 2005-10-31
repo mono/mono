@@ -36,8 +36,9 @@
 namespace System.Globalization {
 
 
-	/// <summary>
-	/// </summary>
+#if NET_2_0
+	[System.Runtime.InteropServices.ComVisible(true)]
+#endif
 	public enum GregorianCalendarTypes {
 
 		/// <summary>
