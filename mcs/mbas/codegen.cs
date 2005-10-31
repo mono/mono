@@ -44,6 +44,7 @@ namespace Mono.MonoBASIC {
 
 		public static AssemblyClass Assembly;
 		public static ModuleClass Module;
+		public static ArrayList ArrListVersion = new ArrayList();//keeps the version's 4 numbers
 
 		static public ISymbolWriter SymbolWriter;
 
@@ -174,6 +175,12 @@ namespace Mono.MonoBASIC {
 			an = new AssemblyName ();
 			an.Name = TrimExt (Basename (name));
 			current_domain = AppDomain.CurrentDomain;
+			
+			if (ArrListVersion.Count < 4)//4 -> Major, Minor,Version, Build
+			for(int i=ArrListVersion.Count-1;i<4;i++)
+				ArrListVersion.Add(0);
+			an.Version = new Version (Convert.ToInt32(ArrListVersion[0]), Convert.ToInt32(ArrListVersion[1]), Convert.ToInt32(ArrListVersion[2]), Convert.ToInt32(ArrListVersion[3]));
+	
 			AssemblyBuilder = current_domain.DefineDynamicAssembly (
 				an, AssemblyBuilderAccess.RunAndSave, Dirname (name));
 
@@ -185,6 +192,7 @@ namespace Mono.MonoBASIC {
 			// If the third argument is true, the ModuleBuilder will dynamically
 			// load the default symbol writer.
 			//
+			
 			ModuleBuilder = AssemblyBuilder.DefineDynamicModule (
 				Basename (name), Basename (output), want_debugging_support);
 
@@ -235,9 +243,13 @@ namespace Mono.MonoBASIC {
 		{
 			foreach (Attribute attr in attrs) {
 				if (attr.IsAssemblyAttribute)
+				{
 					Assembly.AddAttribute (attr);
+				}
 				else if (attr.IsModuleAttribute)
+				{
 					Module.AddAttribute (attr);
+				}
 			}
 		}
 
@@ -245,6 +257,7 @@ namespace Mono.MonoBASIC {
 		{
 			//Assembly.Emit (Tree.Types);
 			//Module.Emit (Tree.Types);
+			
 
 		}
 	}
@@ -254,9 +267,11 @@ namespace Mono.MonoBASIC {
 	///   properties bodies, indexer bodies or constructor bodies)
 	/// </summary>
 	public class EmitContext {
+		
 		public DeclSpace DeclSpace;
 		public TypeContainer TypeContainer;
 		public ILGenerator   ig;
+	
 
 		/// <summary>
 		///   This variable tracks the `checked' state of the compilation,
@@ -400,7 +415,6 @@ namespace Mono.MonoBASIC {
 				    Type return_type, int code_flags, bool is_constructor)
 		{
 			this.ig = ig;
-
 			TypeContainer = parent;
 			DeclSpace = ds;
 			CheckState = RootContext.Checked;
@@ -767,8 +781,8 @@ namespace Mono.MonoBASIC {
  		{
  			if (OptAttributes == null)
  				return;
- 			EmitContext ec = new EmitContext (tc, Location.Null, null, null, 0, false);
-
+			EmitContext ec = new EmitContext (tc, Location.Null, null, null, 0, false);
+			
 			if (OptAttributes != null)
 	 			OptAttributes.Emit (ec, this);
   		}
@@ -788,7 +802,7 @@ namespace Mono.MonoBASIC {
 		
  		public override void Emit (TypeContainer tc)
  		{
- 			base.Emit (tc);
+			base.Emit (tc);
  		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder customBuilder)
@@ -823,3 +837,5 @@ namespace Mono.MonoBASIC {
 		}
 	}
 }
+
+

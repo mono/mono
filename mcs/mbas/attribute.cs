@@ -18,7 +18,7 @@ using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Text;
-
+using System.Text.RegularExpressions;
 namespace Mono.MonoBASIC {
 
 	/// <summary>
@@ -57,6 +57,7 @@ namespace Mono.MonoBASIC {
 	public class Attribute {
 		public readonly string ExplicitTarget;
 		public readonly string    Name;
+		
 		public readonly ArrayList Arguments;
 
 		public Location Location;
@@ -84,10 +85,37 @@ namespace Mono.MonoBASIC {
 			Arguments = args;
 			Location = loc;
 		}
-		
+	
 		public Attribute (string target, string name, ArrayList args, Location loc) 
 		{
 			ExplicitTarget = target;
+			Object myObject;
+			if (name=="AssemblyVersion")
+			for (int i=0;i<args.Count;i++)
+				{
+				myObject=args[i];
+				
+					ArrayList arrList=(ArrayList)myObject;
+					for (int j=0;j<arrList.Count;j++)
+						{
+						
+						Argument arg = (Argument)arrList[i];
+						string strVersion = Regex.Replace(arg.Expr.ToString(),"StringLiteral","");
+						strVersion = Regex.Replace(strVersion,@"\(|\)","");
+						
+						//Version = new Version(strVersion); it does not work. but it should
+						//Making an ArrayList of integer to instatiate a new Version
+						for(int cont=0; cont<strVersion.Length;cont++)
+							if (Regex.IsMatch(strVersion[cont].ToString(),@"\d"))
+							{
+								
+								CodeGen.ArrListVersion.Add(Convert.ToInt32(strVersion[cont].ToString()));
+								
+							}//for
+						
+						}//for
+				}//for
+			
 		}
 
 		void Error_InvalidNamedArgument (string name)
@@ -363,11 +391,12 @@ namespace Mono.MonoBASIC {
 			prop_infos.CopyTo   (prop_info_arr, 0);
 
 			try {
+			
 				cb = new CustomAttributeBuilder (
 					(ConstructorInfo) constructor, pos_values,
 					prop_info_arr, prop_values_arr,
 					field_info_arr, field_values_arr); 
-
+				
 			} catch (NullReferenceException) {
 				// 
 				// Don't know what to do here
@@ -869,3 +898,5 @@ namespace Mono.MonoBASIC {
  		}
 	}
 }
+
+

@@ -1,9 +1,18 @@
+ 2005-10-29 Renato Suga<renato@psl-pr.softwarelivre.org>
+ 	* codegen.cs: Added static global ArrayList ArrListVersion to keep the 
+ 	assembly's version numbers. reating a new Version(string str) is not 
+ 	working. The Init() method was modified to correctly set the version value;
+ 	* attribute.cs: one of its constructor was modified to pass the string 
+ 	version to CodeGen.ArrListVersion so that at Init () CodeGen sets the 
+ 	correct version.
+ 
 2005-10-19 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	* class.cs: Casting TypeContainer to Interface in order to call the
 	correct overload of RootContext.RegisterOrder.
 
 2005-10-12 Renato Suga <renato@psl-pr.softwarelivre.org>
- 	* mb-parser.jay: foreach_statement now emits the correct error code for test ForEachC1.vb, which is an error test
+ 	* mb-parser.jay: foreach_statement now emits the correct error code for 
+ 	test ForEachC1.vb, which is an error test
 
 2005-10-11 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
            
@@ -34,7 +43,8 @@
 	references a FieldBase indicated by the alias.
 		Added a field assign treatment if the foreach variable references
 	a non static field, in EmitCollectionForeach and EmitArrayForeach.
-	* mb-parser.jay, block.cs, statement.cs, expression.cs: Remove Bool Static Attribute from VariableInfo class.
+	* mb-parser.jay, block.cs, statement.cs, expression.cs: Remove Bool Static
+	Attribute from VariableInfo class.
 
 2005-09-22 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	* mb-parser.jay: Throws error for Option Strict on with Propeties
@@ -42,11 +52,14 @@
 	Shared modifiers.
 
 2005-09-16  Renato Suga <renato@psl-pr.softwarelivre.org>
-	* mb-parser.jay:rules goto_statement and for_statement changed in order to recognize error BC30757
-	
-	* statement.cs: class added property LabelName and uncomented string label_name. These changes allow one to get the LabelName when reporting an error
-
-	* block.cs: added property bool HasGotoStatement and property String LAbelName. The first one combined with HasLabeledStatement allows one to identify the aforementioned error.
+	* mb-parser.jay:rules goto_statement and for_statement changed in order 
+	to recognize error BC30757
+	* statement.cs: class added property LabelName and uncomented string 
+	label_name. These changes allow one to get the LabelName when reporting 
+	an error
+	* block.cs: added property bool HasGotoStatement and property String 
+	LabelName. The first one combined with HasLabeledStatement allows one to
+	identify the aforementioned error.
 
 2005-09-15  Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	    Alexandre Rocha Lima e Marcondes
@@ -180,7 +193,8 @@ Rocha Lima e Marcondes <alexandre@psl-pr.softwarelivre.org>
 2005-07-13 Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	*statement.cs: extract class Block into new source block.cs
 	*mbas.exe.sources: added newly extracted block.cs
-	*block.cs: eliminated "block.cs(252) warning CS0219: The variable 'cur' is assigned but its value is never used"
+	*block.cs: eliminated "block.cs(252) warning CS0219: The variable 'cur' 
+	is assigned but its value is never used"
 
 2005-07-12 Manjula GHM <mmanjula@novell.com>
 	* parameter.cs , ecore.cs : Changed error number and message according to .NET
