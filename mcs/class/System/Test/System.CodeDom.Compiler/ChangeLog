@@ -1,3 +1,7 @@
+2005-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+ 
+	* CodeGeneratorCas.cs: New. CAS unit tests.
+
 2005-11-01  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* CodeDomProviderCas.cs: New. CAS unit tests.
