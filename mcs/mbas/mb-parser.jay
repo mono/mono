@@ -1900,25 +1900,21 @@ interface_declaration
 		int modifiers = (implicit_modifiers) ?  (current_modifiers & ~ (Modifiers.STATIC) ) : current_modifiers;
 		new_interface = new Interface (current_container, full_interface_name, modifiers,
 					       (Attributes) current_attributes, (Location)$2);
-		if (current_interface != null) {
-			Report.Error (-2, (Location)$2, "Internal compiler error: interface inside interface");
-		}
 		current_interface = new_interface;
 		new_interface.Namespace = current_namespace;
 		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
 	  }
 	  opt_interface_base
 	  interface_body
-	  { 
+ 	  { 
 		Interface new_interface = (Interface) current_interface;
 
 		if ($6 != null)
 			new_interface.Bases = (ArrayList) $6;
 
 		current_interface = null;
-		CheckDef (current_container.AddInterface (new_interface),
-			  new_interface.Name, new_interface.Location);
 
+		CheckDef (current_container.AddInterface (new_interface),new_interface.Name, new_interface.Location);
 	  }
 	  opt_end_block 
 	  {
@@ -1948,7 +1944,46 @@ interface_base
 
 interface_body
 	: opt_interface_member_declarations
+	| opt_interface_declaration
 	;
+
+opt_interface_declaration
+	: INTERFACE _mark_ identifier logical_end_of_line
+	  {
+		push_into_stack((int)Start_block.INTERFACE, (Location)$2);
+		Interface new_interface;
+		string full_interface_name = MakeName ((string) $3);
+
+		int modifiers = (implicit_modifiers) ?  (current_modifiers & ~ (Modifiers.STATIC) ) : current_modifiers;
+		new_interface = new Interface (current_interface, full_interface_name, modifiers,
+					       (Attributes) current_attributes, (Location)$2);
+
+		CheckDef (current_interface.AddInterface (new_interface),new_interface.Name, new_interface.Location);
+		
+		current_interface = new_interface;
+
+		new_interface.Namespace = current_namespace;
+		RootContext.Tree.RecordDecl (full_interface_name, new_interface);
+	  }
+	  opt_interface_base
+	  interface_body
+ 	  { 
+		Interface new_interface = (Interface) current_interface;
+
+		if ($6 != null)
+			new_interface.Bases = (ArrayList) $6;
+	  }
+	  opt_end_block 
+	  {
+		current_interface = (Interface)current_interface.Parent;
+
+		pop_out_of_stack((int)$9, lexer.Location);
+	 }
+	  logical_end_of_line
+	;
+
+
+
 
 opt_interface_member_declarations
 	: /* empty */
@@ -2984,7 +3019,7 @@ exit_statement
 	
 exit_type
 	: DO 		{ $$ = ExitType.DO;		}
-	| FOR 		{ $$ = ExitType.FOR;		}
+	| FOR 		{ $$ = ExitType.FOR; 	}
 	| WHILE 	{ $$ = ExitType.WHILE;		}
 	| SELECT 	{ $$ = ExitType.SELECT;		}
 	| SUB 		{ $$ = ExitType.SUB;		}
@@ -5398,7 +5433,13 @@ pp_directive
 			}	
 			object o = ((Constant) express).GetValue ();
 			bool temp = Convert.ToBoolean(o);
-			constPreDir.Add($3,temp);
+
+			string key = Convert.ToString($3);
+
+			if (constPreDir.Contains(key))
+				constPreDir[key] = temp;
+			else
+				constPreDir.Add($3,temp);
 	  	}
 	  }
 	| HASH IF _mark_   

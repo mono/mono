@@ -1,3 +1,9 @@
+2005-11-01 Aldo Monteiro do Nascimento <aldo@psl-pr.softwarelivre.org>
+ 	* mb-parser.jay: created a new parser rule to match a interface
+ 	declared inside another interface: "opt_interface_declaration"
+ 	* mb-parser.jay: when redeclare compiler constants no compilation
+ 	error is raised, and than the redeclaring works as expected.
+ 
 2005-10-31 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
  	* ecore.cs: Fix UnboxCast Emit calling Activator.CreateInstance when
  	necessary.
