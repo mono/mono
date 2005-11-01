@@ -2066,6 +2066,11 @@
                     BuildAction = "EmbeddedResource"
                 />
                 <File
+                    RelPath = "resources\DnDLink.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.DnDLink.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
                     RelPath = "resources\DnDMove.cur"
                     CustomToolNameSpace = "System.Windows.Forms.DnDMove.cur"
                     BuildAction = "EmbeddedResource"

@@ -11,7 +11,7 @@ LIB_MCS_FLAGS = /unsafe \
 	/r:System.Drawing.dll /r:Accessibility.dll \
 	/r:System.Data.dll /r:Mono.Posix.dll \
 	@System.Windows.Forms.dll.resources \
-	/nowarn:649 /nowarn:169 /nowarn:67 /nowarn:108 /nowarn:114
+	/nowarn:649 /nowarn:169 /nowarn:67 /nowarn:108 /nowarn:114 -debug
 
 RESX_RESOURCES = \
 	resources/System.Windows.Forms.resources \
@@ -23,6 +23,7 @@ CUR_RESOURCES = \
 	resources/SplitterWE.cur \
 	resources/DnDNo.cur \
 	resources/DnDCopy.cur \
+	resources/DnDLink.cur \
 	resources/DnDMove.cur
 
 RESOURCES = $(RESX_RESOURCES) $(CUR_RESOURCES)

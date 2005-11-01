@@ -1,3 +1,8 @@
+2005-11-01  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Makefile, System.Windows.Forms.dll.resources, SWF.csproj: Added
+	  DnDLink cursor
+
 2005-10-31  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Makefile: Added new cursors; added dependency rule on
