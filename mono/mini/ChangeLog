@@ -1,3 +1,8 @@
+2005-11-01  Zoltan Varga  <vargaz@freemail.hu>
+
+	* mini-exceptions.c (print_stack_frame): Output to stderr.
+	(mono_handle_native_sigsegv): Ditto.
+
 2005-10-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* mini-amd64.c (mono_arch_output_basic_block): Remove unused
