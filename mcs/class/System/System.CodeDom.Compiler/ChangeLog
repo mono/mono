@@ -1,3 +1,9 @@
+2005-11-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	CodeDomProvider.cs: Added missing 2.0 methods. Added CAS permissions.
+	Added protection against NullReferenceException when no config is
+	available.
+
 2005-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	CodeDomProvider.cs: Stubbed a few 2.0 methods to fix API errors in 
