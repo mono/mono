@@ -1,3 +1,15 @@
+2005-11-01  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76590.
+	* ecore.cs (NullCast.Reduce): Implemented.
+
+	* expression.cs (ArrayCreation.CheckIndices): Correcly check
+	constant type.
+	
+	* statement.cs (SwitchLabel.ResolveAndReduce): Catch null
+	properly.
+	(Foreach.Resolve): Catch null properly.
+
 2005-10-29  Marek Safar  <marek.safar@seznam.cz>
  
  	* cs-tokenizer.cs: Warning text fix.

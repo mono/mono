@@ -2359,7 +2359,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (required_type == TypeManager.string_type && e is NullLiteral) {
+			if (required_type == TypeManager.string_type && c.GetValue () == null) {
 				converted = NullStringCase;
 				return true;
 			}
@@ -2377,7 +2377,7 @@ namespace Mono.CSharp {
 			string label;
 			if (converted == null)
 				label = "default";
-			else if (converted is NullLiteral)
+			else if (converted == NullStringCase)
 				label = "null";
 			else
 				label = converted.ToString ();
@@ -4130,7 +4130,8 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (expr is NullLiteral) {
+			Constant c = expr as Constant;
+			if (c != null && c.GetValue () == null) {
 				Report.Error (186, loc, "Use of null is not valid in this context");
 				return false;
 			}

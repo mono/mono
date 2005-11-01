@@ -5873,16 +5873,21 @@ namespace Mono.CSharp {
 		{
 			if (specified_dims) { 
 				Argument a = (Argument) arguments [idx];
-				
+
 				if (!a.Resolve (ec, loc))
 					return false;
-				
-				if (!(a.Expr is Constant)) {
-					Error (150, "A constant value is expected");
+
+				Constant c = a.Expr as Constant;
+				if (c != null) {
+					c = c.ToType (TypeManager.int32_type, a.Expr.Location);
+				}
+
+				if (c == null) {
+					Report.Error (150, a.Expr.Location, "A constant value is expected");
 					return false;
 				}
-				
-				int value = (int) ((Constant) a.Expr).GetValue ();
+
+				int value = (int) c.GetValue ();
 				
 				if (value != probe.Count) {
 					Error_IncorrectArrayInitializer ();

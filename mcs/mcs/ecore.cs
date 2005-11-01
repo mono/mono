@@ -1301,7 +1301,10 @@ namespace Mono.CSharp {
 
 		public override Constant Reduce (EmitContext ec, Type target_type)
 		{
-			throw new NotImplementedException ();
+			if (type == target_type)
+				return child.Reduce (ec, target_type);
+
+			return null;
 		}
 
 	}
