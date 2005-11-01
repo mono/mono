@@ -309,8 +309,8 @@ namespace System.Windows.Forms
 			public virtual int Add (MenuItem mi)
 			{
 				mi.parent_menu = owner;
-				mi.Index = items.Count;
 				items.Add (mi);
+				mi.Index = items.Count - 1;
 
 				owner.IsDirty = true;
 				return items.Count - 1;

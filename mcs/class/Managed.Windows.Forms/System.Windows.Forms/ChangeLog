@@ -1,3 +1,9 @@
+2005-10-31  Mike Kestner  <mkestner@novell.com>
+
+	* Menu.cs: Add items to collection before setting their index.
+	* MenuItem.cs : add range checking with ArgumentException like MS.
+	[Fixes #76510]
+
 2005-10-31  Jackson Harper  <jackson@ximian.com>
 
 	* ListBox.cs: Invalidate if the area is visible at all not just

@@ -179,7 +179,11 @@ namespace System.Windows.Forms
 		[Browsable(false)]
 		public int Index {
 			get { return index; }
-			set { index = value; }
+			set { 
+				if (Parent != null && Parent.MenuItems != null && (value < 0 || value >= Parent.MenuItems.Count))
+					throw new ArgumentException ("'" + value + "' is not a valid value for 'value'");
+				index = value; 
+			}
 		}
 
 		[Browsable(false)]
