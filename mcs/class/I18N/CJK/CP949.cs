@@ -11,15 +11,102 @@ using I18N.Common;
 
 namespace I18N.CJK
 {
-    internal class CP949 : DbcsEncoding
+    internal class CP949 : KoreanEncoding
     {
         // Magic number used by Windows for the UHC code page.
         private const int UHC_CODE_PAGE = 949;
 
         // Constructor.
-        public CP949() : base(UHC_CODE_PAGE) {
-            convert = KSConvert.Convert;
+        public CP949 () : base (UHC_CODE_PAGE, true)
+        {
         }
+
+        // Get the mail body name for this encoding.
+        public override String BodyName
+        {
+            get { return "ks_c_5601-1987"; }
+        }
+
+        // Get the human-readable name for this encoding.
+        public override String EncodingName
+        {
+            get { return "Korean (UHC)"; }
+        }
+
+        // Get the mail agent header name for this encoding.
+        public override String HeaderName
+        {
+            get { return "ks_c_5601-1987"; }
+        }
+
+        // Get the IANA-preferred Web name for this encoding.
+        public override String WebName
+        {
+            get { return "ks_c_5601-1987"; }
+        }
+
+        /*
+        // Get the Windows code page represented by this object.
+        public override int WindowsCodePage
+        {
+            get { return UHC_PAGE; }
+        }
+        */
+    }
+
+    internal class CP51949 : KoreanEncoding
+    {
+        // Magic number used by Windows for the euc-kr code page.
+        private const int EUCKR_CODE_PAGE = 51949;
+
+        // Constructor.
+        public CP51949 () : base (EUCKR_CODE_PAGE, false)
+        {
+        }
+
+        // Get the mail body name for this encoding.
+        public override String BodyName
+        {
+            get { return "euc-kr"; }
+        }
+
+        // Get the human-readable name for this encoding.
+        public override String EncodingName
+        {
+            get { return "Korean (EUC)"; }
+        }
+
+        // Get the mail agent header name for this encoding.
+        public override String HeaderName
+        {
+            get { return "euc-kr"; }
+        }
+
+        // Get the IANA-preferred Web name for this encoding.
+        public override String WebName
+        {
+            get { return "euc-kr"; }
+        }
+
+        /*
+        // Get the Windows code page represented by this object.
+        public override int WindowsCodePage
+        {
+            get { return UHC_PAGE; }
+        }
+        */
+
+    }
+
+    internal class KoreanEncoding : DbcsEncoding
+    {
+        // Constructor.
+        public KoreanEncoding (int codepage, bool useUHC) : base (codepage) {
+            convert = KSConvert.Convert;
+            this.useUHC = useUHC;
+        }
+
+        bool useUHC;
 
         // Get the bytes that result from encoding a character buffer.
         public override int GetBytes(char[] chars, int charIndex, int charCount,
@@ -67,7 +154,7 @@ namespace I18N.CJK
                 }
 
                 char c1;
-                if (lastByte < 0xa1) { // UHC Level 1
+                if (useUHC && lastByte < 0xa1) { // UHC Level 1
                     int ord = 8836 + (lastByte - 0x81) * 178;
 
                     if (b >= 0x41 && b <= 0x5A)
@@ -84,7 +171,7 @@ namespace I18N.CJK
                                     convert.n2u[ord*2 + 1] * 256);
                     else
                         c1 = (char)0;
-                } else if (lastByte <= 0xC6 && b < 0xa1) { // UHC Level 2
+                } else if (useUHC && lastByte <= 0xC6 && b < 0xa1) { // UHC Level 2
                     int ord = 14532 + (lastByte - 0x81) * 84;
 
                     if (b >= 0x41 && b <= 0x5A)
@@ -121,46 +208,19 @@ namespace I18N.CJK
         // Get a decoder that handles a rolling UHC state.
         public override Decoder GetDecoder()
         {
-            return new CP949Decoder(convert);
+            return new KoreanDecoder (convert, useUHC);
         }
-
-        // Get the mail body name for this encoding.
-        public override String BodyName
-        {
-            get { return "ks_c_5601-1987"; }
-        }
-
-        // Get the human-readable name for this encoding.
-        public override String EncodingName
-        {
-            get { return "Korean (UHC)"; }
-        }
-
-        // Get the mail agent header name for this encoding.
-        public override String HeaderName
-        {
-            get { return "ks_c_5601-1987"; }
-        }
-
-        // Get the IANA-preferred Web name for this encoding.
-        public override String WebName
-        {
-            get { return "euc-kr"; }
-        }
-
-        /*
-        // Get the Windows code page represented by this object.
-        public override int WindowsCodePage
-        {
-            get { return UHC_PAGE; }
-        }
-        */
 
         // Decoder that handles a rolling UHC state.
-        private sealed class CP949Decoder : DbcsDecoder
+        private sealed class KoreanDecoder : DbcsDecoder
         {
             // Constructor.
-            public CP949Decoder(DbcsConvert convert) : base(convert) {}
+            public KoreanDecoder (DbcsConvert convert, bool useUHC)
+                : base(convert)
+            {
+                this.useUHC = useUHC;
+            }
+            bool useUHC;
 
             public override int GetChars(byte[] bytes, int byteIndex,
                                 int byteCount, char[] chars, int charIndex)
@@ -180,7 +240,7 @@ namespace I18N.CJK
                     }
 
                     char c1;
-                    if (lastByte < 0xa1) { // UHC Level 1
+                    if (useUHC && lastByte < 0xa1) { // UHC Level 1
                         int ord = 8836 + (lastByte - 0x81) * 178;
 
                         if (b >= 0x41 && b <= 0x5A)
@@ -197,7 +257,7 @@ namespace I18N.CJK
                                         convert.n2u[ord*2 + 1] * 256);
                         else
                             c1 = (char)0;
-                    } else if (lastByte <= 0xC6 && b < 0xA1) { // UHC Level 2
+                    } else if (useUHC && lastByte <= 0xC6 && b < 0xA1) { // UHC Level 2
                         int ord = 14532 + (lastByte - 0xA1) * 84;
 
                         if (b >= 0x41 && b <= 0x5A)
@@ -236,6 +296,11 @@ namespace I18N.CJK
     internal class ENCuhc : CP949
     {
         public ENCuhc() {}
+    }
+
+    internal class ENCeuc_kr: CP51949
+    {
+        public ENCeuc_kr() {}
     }
 }
 

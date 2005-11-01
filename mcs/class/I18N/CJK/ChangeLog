@@ -1,3 +1,8 @@
+2005-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP949.cs : Now it contains both CP949 (UHC) and CP51949 (EUC) for
+	  Korean encoding. This should fix bug #76588.
+
 2005-09-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* I18N.CJK.dll.sources : needs fix as well.

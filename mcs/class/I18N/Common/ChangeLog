@@ -1,3 +1,7 @@
+2005-11-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Handler.cs : added 51949 (true euc-kr).
+
 2005-09-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Handler.cs : added 50220 and 50222.
