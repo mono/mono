@@ -1,3 +1,9 @@
+2005-10-31  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Makefile: Added new cursors; added dependency rule on
+	  cursors to force rebuild when cursors are changed or added
+	* System.Windows.Forms.dll.resources: Added new cursors
+
 2005-10-17  Raja R Harinath  <rharinath@novell.com>
 
 	* Makefile (RESOURCES): Distribute newly added cursors.

@@ -20,7 +20,10 @@ RESX_RESOURCES = \
 
 CUR_RESOURCES = \
 	resources/SplitterNS.cur \
-	resources/SplitterWE.cur
+	resources/SplitterWE.cur \
+	resources/DnDNo.cur \
+	resources/DnDCopy.cur \
+	resources/DnDMove.cur
 
 RESOURCES = $(RESX_RESOURCES) $(CUR_RESOURCES)
 
@@ -41,6 +44,8 @@ $(the_lib): $(RESOURCES) SWF.csproj
 
 $(RESX_RESOURCES): %.resources: %.resx
 	$(RESGEN) $< || cp $@.prebuilt $@
+
+$(LIBRARY): $(CUR_RESOURCES)
 
 $(PREBUILT): %.prebuilt: %
 	cp $* $@

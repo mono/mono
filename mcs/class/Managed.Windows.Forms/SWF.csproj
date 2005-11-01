@@ -2029,6 +2029,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = ""
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "resources\System.Windows.Forms.resources"
                     BuildAction = "EmbeddedResource"
                 />
@@ -2048,6 +2053,21 @@
                 <File
                     RelPath = "resources\SplitterWE.cur"
                     CustomToolNameSpace = "System.Windows.Forms.SplitterWE.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\DnDNo.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.DnDNo.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\DnDCopy.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.DnDCopy.cur"
+                    BuildAction = "EmbeddedResource"
+                />
+                <File
+                    RelPath = "resources\DnDMove.cur"
+                    CustomToolNameSpace = "System.Windows.Forms.DnDMove.cur"
                     BuildAction = "EmbeddedResource"
                 />
             </Include>
