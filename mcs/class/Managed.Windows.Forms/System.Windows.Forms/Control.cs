@@ -917,21 +917,21 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal void DndEnter (DragEventArgs e)
+		internal virtual void DndEnter (DragEventArgs e)
 		{
 			try {
 				OnDragEnter (e);
 			} catch { }
 		}
 
-		internal void DndOver (DragEventArgs e)
+		internal virtual void DndOver (DragEventArgs e)
 		{
 			try {
 				OnDragOver (e);
 			} catch { }
 		}
 
-		internal void DndDrop (DragEventArgs e)
+		internal virtual void DndDrop (DragEventArgs e)
 		{
 			try {
 				OnDragDrop (e);
@@ -941,20 +941,25 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal void DndLeave (EventArgs e)
+		internal virtual void DndLeave (EventArgs e)
 		{
 			try {
 				OnDragLeave (e);
 			} catch { }
 		}
 
-		internal void DnDFeedback(GiveFeedbackEventArgs e)
+		internal virtual void DndFeedback(GiveFeedbackEventArgs e)
 		{
-			OnGiveFeedback(e);
+			try {
+				OnGiveFeedback(e);
+			} catch { }
 		}
 
-		internal void DnDContinueDrag(QueryContinueDragEventArgs e) {
-			OnQueryContinueDrag(e);
+		internal virtual void DndContinueDrag(QueryContinueDragEventArgs e)
+		{
+			try {
+				OnQueryContinueDrag(e);
+			} catch { }
 		}
 		
 		internal static MouseButtons FromParamToMouseButtons (int param) {		

@@ -644,7 +644,7 @@ namespace System.Windows.Forms {
 				DragContinueEventArgs.escape_pressed = fEscapePressed;
 				DragContinueEventArgs.key_state = (int)grfkeyState;
 
-				Control.FromHandle(window).DnDContinueDrag(DragContinueEventArgs);
+				Control.FromHandle(window).DndContinueDrag(DragContinueEventArgs);
 
 				if (DragContinueEventArgs.drag_action == DragAction.Cancel) {
 					return DRAGDROP_S_CANCEL;
@@ -662,7 +662,7 @@ namespace System.Windows.Forms {
 				DragFeedbackEventArgs.effect = (DragDropEffects)pdwEffect;
 				DragFeedbackEventArgs.use_default_cursors = true;
 
-				Control.FromHandle(window).DnDFeedback(DragFeedbackEventArgs);
+				Control.FromHandle(window).DndFeedback(DragFeedbackEventArgs);
 
 				if (DragFeedbackEventArgs.use_default_cursors) {
 					return DRAGDROP_S_USEDEFAULTCURSORS;

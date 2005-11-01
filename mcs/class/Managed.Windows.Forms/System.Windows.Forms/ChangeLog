@@ -1,5 +1,12 @@
 2005-10-31  Jackson Harper  <jackson@ximian.com>
 
+	* Control.cs: Consistently name the dnd methods. Make them
+	internal so we can override them to match some MS behavoir
+	internally.
+	* Win32DnD.cs: Use the new consistent names.
+
+2005-10-31  Jackson Harper  <jackson@ximian.com>
+
 	* TreeView.cs: Don't draw the selected node when we lose focus.
 
 2005-10-31  Jackson Harper  <jackson@ximian.com>
