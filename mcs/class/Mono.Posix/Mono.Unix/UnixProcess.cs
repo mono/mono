@@ -78,7 +78,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("The type of this property will change to Mono.Unix.Native.Signum in the next release.")]
 		public Signum TerminationSignal {
 			get {
 				if (!HasSignaled)
@@ -97,7 +97,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("The type of this property will change to Mono.Unix.Native.Signum in the next release.")]
 		public Signum StopSignal {
 			get {
 				if (!HasStopped)

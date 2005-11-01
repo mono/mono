@@ -92,7 +92,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release")]
+		[Obsolete ("The type of this property will change to Int64 in the next release")]
 		public uint UserId {
 			get {return passwd.pw_uid;}
 		}
@@ -102,7 +102,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release")]
+		[Obsolete ("The type of this property will change to Int64 in the next release")]
 		public uint GroupId {
 			get {return passwd.pw_gid;}
 		}
@@ -164,7 +164,7 @@ namespace Mono.Unix {
 			return buf.ToString ();
 		}
 
-		[Obsolete ("The return type of this method will change in the next release")]
+		[Obsolete ("The return type of this method will change to Mono.Unix.Native.Passwd in the next release")]
 		public Passwd ToPasswd ()
 		{
 			return passwd;

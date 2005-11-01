@@ -96,13 +96,13 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("The type of this property will change to Int64 in the next release.")]
 		public ulong Device {
 			get {AssertValid (); return stat.st_dev;}
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("The type of this property will change to Int64 in the next release.")]
 		public ulong Inode {
 			get {AssertValid (); return stat.st_ino;}
 		}
@@ -120,7 +120,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("The type of this property will change to FileTypes in the next release.")]
 		public FilePermissions FileType {
 			get {AssertValid (); return stat.st_mode & FilePermissions.S_IFMT;}
 		}
@@ -176,13 +176,14 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("The type of this property will change to Int64 in the next release.")]
 		public ulong LinkCount {
 			get {AssertValid (); return (ulong) stat.st_nlink;}
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use OwnerUserId.")]
+		[Obsolete ("Use OwnerUserId.  " +
+				"The type of this property will change to UnixUserInfo in the next release.")]
 		public uint OwnerUser {
 			get {AssertValid (); return stat.st_uid;}
 		}
@@ -192,7 +193,8 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use OwnerGroupId.")]
+		[Obsolete ("Use OwnerGroupId.  " +
+				"The type of this property will change to UnixGroupInfo in the next release.")]
 		public uint OwnerGroup {
 			get {AssertValid (); return stat.st_gid;}
 		}
@@ -202,7 +204,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release.")]
+		[Obsolete ("The type of this property will change to Int64 in the next release.")]
 		public ulong DeviceType {
 			get {AssertValid (); return stat.st_rdev;}
 		}

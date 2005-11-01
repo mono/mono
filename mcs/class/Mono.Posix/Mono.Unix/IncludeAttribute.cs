@@ -32,34 +32,28 @@ using System;
 namespace Mono.Unix {
 
 	[AttributeUsage (AttributeTargets.Assembly)]
+	[Obsolete ("Use Mono.Unix.Native.HeaderAttribute", true)]
 	internal class IncludeAttribute : Attribute {
 		string [] includes;
 		string [] defines;
 		
 		public IncludeAttribute (string [] includes)
 		{
-			this.includes = includes;
 		}
 
 		public IncludeAttribute (string [] includes, string [] defines)
 		{
-			this.includes = includes;
-			this.defines = defines;
 		}
 
 		public string [] Includes {
 			get {
-				if (includes == null)
-					return new string [0];
-				return includes;
+				return null;
 			}
 		}
 
 		public string [] Defines {
 			get {
-				if (defines == null)
-					return new string [0];
-				return defines;
+				return null;
 			}
 		}
 		

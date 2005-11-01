@@ -116,7 +116,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant(false)]
-		[Obsolete ("The return type of this property will change in the next release.")]
+		[Obsolete ("The return type will change to Int64 in the next release")]
 		public ulong MaximumFilenameLength {
 			get {Refresh (); return stat.f_namemax;}
 		}

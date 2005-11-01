@@ -190,14 +190,15 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetSupplementaryGroupIds")]
+		[Obsolete ("Use GetSupplementaryGroupIds.  " +
+				"The return type will change to UnixGroupInfo[] in the next release.")]
 		public static uint[] GetSupplementaryGroups ()
 		{
 			return GetSupplementaryGroupIds ();
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The return type of this method will change in the next release")]
+		[Obsolete ("The return type will change to Int64[] in the next release")]
 		public static uint[] GetSupplementaryGroupIds ()
 		{
 			int ngroups = Syscall.getgroups (0, new uint[]{});

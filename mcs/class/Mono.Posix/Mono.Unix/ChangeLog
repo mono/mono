@@ -1,5 +1,12 @@
 2005-11-01  Jonathan Pryor <jonpryor@vt.edu>
 
+	* UnixDirectoryInfo.cs, UnixDriveInfo.cs, UnixEnvironment.cs, 
+	  UnixFileSystemInfo.cs, UnixGroupInfo.cs, UnixProcess.cs, UnixUserInfoc.cs:
+	  Obsolete statements now specify in what way the return type will change.
+	* IncludeAttribute.cs: Obsoleted.  It's an error to use it now.
+
+2005-11-01  Jonathan Pryor <jonpryor@vt.edu>
+
 	* FileAccessPattern.cs: Change enumeration names to match Robert Love's more
 	  sensible names from his FileAdvise class used in Beagle
 	  (UseSoon --> PreLoad, WillNotUse --> FlushCache).

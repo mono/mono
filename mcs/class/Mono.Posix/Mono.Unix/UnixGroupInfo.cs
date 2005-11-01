@@ -90,7 +90,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The type of this property will change in the next release")]
+		[Obsolete ("The type of this property will change to Int64 in the next release")]
 		public uint GroupId {
 			get {return group.gr_gid;}
 		}
@@ -128,7 +128,7 @@ namespace Mono.Unix {
 			return group.ToString();
 		}
 
-		[Obsolete ("The return type of this method will change in the next release")]
+		[Obsolete ("The return type of this method will change to Mono.Unix.Native.Group in the next release")]
 		public Group ToGroup ()
 		{
 			return group;
