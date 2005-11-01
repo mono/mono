@@ -1,5 +1,11 @@
 2005-10-31  Jackson Harper  <jackson@ximian.com>
 
+	* ListBox.cs: Invalidate if the area is visible at all not just
+	contained in the visible rect. Fixes unselection of semi visible
+	items.
+
+2005-10-31  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Consistently name the dnd methods. Make them
 	internal so we can override them to match some MS behavoir
 	internally.

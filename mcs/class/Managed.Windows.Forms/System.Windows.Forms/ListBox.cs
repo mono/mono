@@ -1500,7 +1500,7 @@ namespace System.Windows.Forms
     			selected_indices.AddIndex (index);
     			selected_items.AddObject (Items[index]);
 
-    			if (ClientRectangle.Contains (invalidate))
+    			if (ClientRectangle.IntersectsWith (invalidate))
     				Invalidate (invalidate);
 
 		}		
@@ -1628,7 +1628,7 @@ namespace System.Windows.Forms
 				selected_items.RemoveObject (Items[index]);
 			}
 
-			if (ClientRectangle.Contains (invalidate))
+			if (ClientRectangle.IntersectsWith (invalidate))
 				Invalidate (invalidate);
 		}
 
