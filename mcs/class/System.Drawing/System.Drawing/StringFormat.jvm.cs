@@ -32,203 +32,193 @@
 using System;
 using System.Drawing.Text;
 
-namespace System.Drawing
-{
+namespace System.Drawing {
 	/// <summary>
 	/// Summary description for StringFormat.
 	/// </summary>
-	public sealed class StringFormat : IDisposable, ICloneable
-	{
-		private static StringFormat genericDefault;
-		private int language = 0;
-		internal CharacterRange [] CharRanges;
+	public sealed class StringFormat : MarshalByRefObject, IDisposable, ICloneable {
+		
+		
+		private CharacterRange [] _charRanges;
+		private StringAlignment _alignment;
+		private StringAlignment _lineAlignment;
+		private HotkeyPrefix _hotkeyPrefix;
+		private StringFormatFlags _flags;
+		private StringDigitSubstitute _digitSubstituteMethod;
+		private int _digitSubstituteLanguage;
+		private StringTrimming _trimming;
+		
+		private float _firstTabOffset;
+		private float [] _tabStops;
+		
+		#region Constructors
 
-		//local storage
-		internal StringAlignment alignment;
-		internal StringAlignment linealignment;
-		internal HotkeyPrefix prefix;
-		internal StringFormatFlags flags;
-		internal StringDigitSubstitute subst;
-		internal StringTrimming trimming;
-		internal float firstTabOffset;
-		internal float [] tabStops;
-		
-		public StringFormat()
-		{					   
-			
-		}		
-		
-		public StringFormat(StringFormatFlags options, int lang)
-		{
-				flags = options;
-				LineAlignment =  StringAlignment.Near;
-				Alignment =  StringAlignment.Near;			
-				language = lang;
+		public StringFormat() : this(0, 0) {					   
 		}
 		
-		public StringFormat(StringFormatFlags options):this(options,0)
-		{
+		public StringFormat(StringFormatFlags options) : this(options,0) {
 		}
 		
-//		~StringFormat()
-//		{	
-//			Dispose ();
-//		}
+		public StringFormat(StringFormatFlags options, int lang) {
+			_alignment = StringAlignment.Near;
+			_digitSubstituteLanguage = lang;
+			_digitSubstituteMethod = StringDigitSubstitute.User;
+			_flags = options;
+			_hotkeyPrefix = HotkeyPrefix.None;
+			_lineAlignment = StringAlignment.Near;
+			_trimming = StringTrimming.Character;
+		}
 		
-		public void Dispose()
-		{	
+		public StringFormat (StringFormat source) {
+			if (source == null)
+				throw new ArgumentNullException("format");
+
+			_alignment = source.LineAlignment;
+			_digitSubstituteLanguage = source.DigitSubstitutionLanguage;
+			_digitSubstituteMethod = source.DigitSubstitutionMethod;
+			_flags = source.FormatFlags;
+			_hotkeyPrefix = source.HotkeyPrefix;
+			_lineAlignment = source.LineAlignment;
+			_trimming = source.Trimming;
 		}
 
 
-		public StringFormat (StringFormat source)
-		{
-			Alignment = source.Alignment;
-			LineAlignment = source.LineAlignment;
-			HotkeyPrefix = source.HotkeyPrefix;
-			subst = source.subst;
-			flags = source.flags;
+		#endregion
+
+		#region IDisposable
+
+		public void Dispose() {	
 		}
 
-		
-		public StringAlignment Alignment 
-		{
-			get 
-			{
-				return alignment;
+		#endregion
+
+		#region Public properties
+
+		public StringAlignment Alignment {
+			get {
+				return _alignment;
 			}
 
-			set 
-			{
-				alignment = value;
-			}
-		}
-
-		public StringAlignment LineAlignment 
-		{
-			get 
-			{
-				return linealignment;
-			}
-			set 
-			{
-				linealignment = value;
+			set {
+				_alignment = value;
 			}
 		}
 
-		public StringFormatFlags FormatFlags 
-		{
-			get 
-			{				
-				return flags;
+		public StringAlignment LineAlignment {
+			get {
+				return _lineAlignment;
 			}
-
-			set 
-			{
-				flags = value;
+			set {
+				_lineAlignment = value;
 			}
 		}
 
-		public HotkeyPrefix HotkeyPrefix 
-		{
-			get 
-			{				
-				return prefix;
+		public StringFormatFlags FormatFlags {
+			get {				
+				return _flags;
 			}
 
-			set 
-			{
-				prefix = value;
+			set {
+				_flags = value;
+			}
+		}
+
+		public HotkeyPrefix HotkeyPrefix {
+			get {				
+				return _hotkeyPrefix;
+			}
+
+			set {
+				_hotkeyPrefix = value;
+			}
+		}
+
+		public StringTrimming Trimming {
+			get {
+				return _trimming;
+			}
+
+			set {
+				_trimming = value;
+			}
+		}
+
+		public int DigitSubstitutionLanguage {
+			get {
+				return _digitSubstituteLanguage;
+			}
+		}
+
+		public StringDigitSubstitute DigitSubstitutionMethod {
+			get {
+				return _digitSubstituteMethod;     
 			}
 		}
 
 
-		public StringTrimming Trimming 
-		{
-			get 
-			{
-				return trimming;
-			}
+		#endregion
 
-			set 
-			{
-				trimming = value;
-			}
-		}
+		#region static properties
 
-		public static StringFormat GenericDefault 
-		{
-			get 
-			{
+		public static StringFormat GenericDefault {
+			get {
+				StringFormat genericDefault = new StringFormat();
 				return genericDefault;
 			}
 		}
 		
-		
-		public int DigitSubstitutionLanguage 
-		{
-			get
-			{
-				return language;
+		public static StringFormat GenericTypographic {
+			get {
+				StringFormat genericTypographic = new StringFormat(
+					StringFormatFlags.FitBlackBox |
+					StringFormatFlags.LineLimit |
+					StringFormatFlags.NoClip, 
+					0 );
+				genericTypographic.Trimming = StringTrimming.None;
+				return genericTypographic;
 			}
 		}
 
-		
-		public static StringFormat GenericTypographic 
-		{
-			get 
-			{
-				throw new NotImplementedException();
-			}
+		#endregion
+
+		#region public methods
+
+		public void SetMeasurableCharacterRanges (CharacterRange [] range) {
+			_charRanges = (CharacterRange [])range.Clone();
 		}
 
-		public StringDigitSubstitute  DigitSubstitutionMethod  
-		{
-			get 
-			{
-				return subst;     
-			}
-		}
-
-
-		public void SetMeasurableCharacterRanges (CharacterRange [] range)
-		{
-			CharRanges=(CharacterRange [])range.Clone();
-		}
-
-		internal CharacterRange [] GetCharRanges
-		{
-			get 
-			{
-				return(CharRanges);
+		internal CharacterRange [] GetCharRanges {
+			get {
+				return _charRanges;
 			}
 		}
 	
-		public object Clone()
-		{
-			throw new NotImplementedException();
+		public object Clone() {
+			StringFormat copy = (StringFormat)MemberwiseClone();
+			copy._charRanges = (CharacterRange [])_charRanges.Clone();
+			copy._tabStops = (float[])_tabStops.Clone();
+			return copy;
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			return "[StringFormat, FormatFlags=" + this.FormatFlags.ToString() + "]";
 		}
 		
-		public void SetTabStops(float firstTabOffset, float[] tabStops)
-		{
-			this.firstTabOffset = firstTabOffset;
-			this.tabStops = tabStops;
+		public void SetTabStops(float firstTabOffset, float[] tabStops) {
+			_firstTabOffset = firstTabOffset;
+			_tabStops = (float[])tabStops.Clone();
 		}
 
-		public void SetDigitSubstitution(int language,  StringDigitSubstitute substitute)
-		{
-			subst = substitute;
+		public void SetDigitSubstitution(int language,  StringDigitSubstitute substitute) {
+			_digitSubstituteMethod = substitute;
+			_digitSubstituteLanguage = language;
 		}
 
-		public float[] GetTabStops(out float firstTabOffset)
-		{
-			firstTabOffset = this.firstTabOffset;
-			return this.tabStops;
+		public float[] GetTabStops(out float firstTabOffset) {
+			firstTabOffset = _firstTabOffset;
+			return (float[])_tabStops.Clone();
 		}
 
+		#endregion
 	}
 }
