@@ -516,6 +516,21 @@ class X {
 		return 3;
 	}
 	
+	static void test_76590 (string s)
+	{
+       switch (s) {
+        case "null":
+		case (string)null:
+          break;
+          
+        case "#":
+          break;
+          
+        default:
+          break;
+        }		
+	}
+	
 	static int Main ()
 	{
 		byte b;
