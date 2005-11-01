@@ -1,3 +1,22 @@
+2005-11-01  Miguel de Icaza  <miguel@novell.com>
+
+	* string-icalls.c (ves_icall_System_String_ctor_encoding): Make
+	sure that we lookup GetString method from the System.Text.Encoding
+	class, not the derived class or we get an empty method.
+
+	Fixed class #76612.
+
+2005-10-25  Miguel de Icaza  <miguel@novell.com>
+
+	* assembly.c (mono_assemblies_init): Do not set the Mono root dir
+	if it has been previously set (embedders). 
+
+	Make mono_set_rootdir available also on Unix.
+
+005-10-24  Robert Jordan  <robertj@gmx.net>
+
+	* assembly.c: fixed MONO_ASSEMBLIES to be NULL on cygwin as well.
+
 2005-10-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* marshal.c icall.c: Clean up the usage of sig->pinvoke flag. Now

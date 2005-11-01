@@ -1,3 +1,7 @@
+2005-11-01  Miguel de Icaza  <miguel@novell.com>
+
+	* unix/util.c (set_dirs): Implement a relocatable version.
+
 2005-03-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* gc_wrapper.h: Add required winsock2.h header for compiling with 
