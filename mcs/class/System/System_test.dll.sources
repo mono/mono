@@ -223,6 +223,7 @@ System.CodeDom/CodeTypeReferenceCollectionCas.cs
 System.CodeDom/CodeTypeReferenceExpressionCas.cs
 System.CodeDom/CodeVariableDeclarationStatementCas.cs
 System.CodeDom/CodeVariableReferenceExpressionCas.cs
+System.CodeDom.Compiler/CodeDomProviderCas.cs
 System.CodeDom.Compiler/CodeGeneratorOptionsCas.cs
 System.CodeDom.Compiler/CodeParserCas.cs
 System.CodeDom.Compiler/CompilerErrorCas.cs
