@@ -68,12 +68,9 @@ namespace System.Web.Hosting {
 			if (physicalDir == null)
 				throw new NullReferenceException ();
 
-#pragma warning disable 219
-			//
-			// This is done just for validation: it might throw an exception
-			//
+			// This might throw
 			Uri u = new Uri (physicalDir);
-#pragma warning restore 219 
+			physicalDir = u.AbsolutePath;
 
 			if (hostType == null)
 				throw new NullReferenceException ();
