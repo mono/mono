@@ -291,6 +291,7 @@ System.Diagnostics.SymbolStore/SymDocumentType.cs
 System.Diagnostics.SymbolStore/SymLanguageType.cs
 System.Diagnostics.SymbolStore/SymLanguageVendor.cs
 System.Globalization/Calendar.cs
+System.Globalization/CalendarAlgorithmType.cs
 System.Globalization/CalendarWeekRule.cs
 System.Globalization/CalendricalCalculations.cs
 System.Globalization/CharUnicodeInfo.cs
@@ -301,6 +302,7 @@ System.Globalization/CultureTypes.cs
 System.Globalization/DateTimeFormatInfo.cs
 System.Globalization/DateTimeStyles.cs
 System.Globalization/DaylightTime.cs
+System.Globalization/DigitShapes.cs
 System.Globalization/GregorianCalendar.cs
 System.Globalization/GregorianCalendarTypes.cs
 System.Globalization/HebrewCalendar.cs
