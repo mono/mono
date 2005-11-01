@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.Collections;
 using System.Text;
 using Mono.Unix;
 
@@ -65,9 +66,19 @@ namespace Mono.Unix {
 				throw new ArgumentException (Locale.GetText ("invalid group id"), "group");
 		}
 
+		[Obsolete ("Use UnixGroupInfo(Mono.Unix.Native.Group)")]
 		public UnixGroupInfo (Group group)
 		{
 			this.group = group;
+		}
+
+		public UnixGroupInfo (Native.Group group)
+		{
+			this.group = new Group ();
+			this.group.gr_name    = group.gr_name;
+			this.group.gr_passwd  = group.gr_passwd;
+			this.group.gr_gid     = group.gr_gid;
+			this.group.gr_mem     = group.gr_mem;
 		}
 
 		public string GroupName {
@@ -84,12 +95,18 @@ namespace Mono.Unix {
 			get {return group.gr_gid;}
 		}
 
-		[Obsolete ("Use GetMembers()")]
+		[Obsolete ("Use GetMemberNames()")]
 		public string[] Members {
 			get {return group.gr_mem;}
 		}
 
+		[Obsolete ("The return type will change to UnixUserInfo[] in the next release")]
 		public string[] GetMembers ()
+		{
+			return group.gr_mem;
+		}
+
+		public string[] GetMemberNames ()
 		{
 			return group.gr_mem;
 		}
@@ -115,6 +132,26 @@ namespace Mono.Unix {
 		public Group ToGroup ()
 		{
 			return group;
+		}
+
+		public static UnixGroupInfo[] GetLocalGroups ()
+		{
+			ArrayList entries = new ArrayList ();
+			lock (Syscall.grp_lock) {
+				if (Native.Syscall.setgrent () != 0)
+					UnixMarshal.ThrowExceptionForLastError ();
+				try {
+					Group g;
+					while ((g = Syscall.getgrent()) != null)
+						entries.Add (new UnixGroupInfo (g));
+					if (Syscall.GetLastError() != (Error) 0)
+						UnixMarshal.ThrowExceptionForLastError ();
+				}
+				finally {
+					Native.Syscall.endgrent ();
+				}
+			}
+			return (UnixGroupInfo[]) entries.ToArray (typeof(UnixGroupInfo));
 		}
 	}
 }

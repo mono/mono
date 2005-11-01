@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,12 +35,13 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
+	[Obsolete ("Use UnixDirectoryInfo")]
 	public sealed class UnixDirectory
 	{
 		private UnixDirectory () {}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use CreateDirectory (string, Mono.Unix.Native.FilePermissions)")]
+		[Obsolete ("Use new UnixDirectoryInfo(path).Create (mode)")]
 		public static UnixDirectoryInfo CreateDirectory (string path, FilePermissions mode)
 		{
 			int r = Syscall.mkdir (path, mode);
@@ -48,30 +49,26 @@ namespace Mono.Unix {
 			return new UnixDirectoryInfo (path);
 		}
 
-		[CLSCompliant (false)]
-		public static UnixDirectoryInfo CreateDirectory (string path, Native.FilePermissions mode)
-		{
-			int r = Native.Syscall.mkdir (path, mode);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-			return new UnixDirectoryInfo (path);
-		}
-
+		[Obsolete ("Use new UnixDirectoryInfo(path).Create ()")]
 		public static UnixDirectoryInfo CreateDirectory (string path)
 		{
 			FilePermissions mode = FilePermissions.ACCESSPERMS;
 			return CreateDirectory (path, mode);
 		}
 
+		[Obsolete ("Use new UnixDirectoryInfo(path).Delete ()")]
 		public static void Delete (string path)
 		{
 			Delete (path, false);
 		}
 
+		[Obsolete ("Use new UnixDirectoryInfo(path).Delete (recursive)")]
 		public static void Delete (string path, bool recursive)
 		{
 			new UnixDirectoryInfo (path).Delete (recursive);
 		}
 
+		[Obsolete ("Use new UnixDirectoryInfo(path).Exists")]
 		public static bool Exists (string path)
 		{
 			int r = Syscall.access (path, AccessMode.F_OK);
@@ -80,45 +77,49 @@ namespace Mono.Unix {
 			return false;
 		}
 
-		[Obsolete ("The return type of this method will change in the next release")]
+		[Obsolete ("Use new UnixDirectoryInfo(path).GetEntries()")]
 		public static Dirent[] GetEntries (string path)
 		{
 			return new UnixDirectoryInfo(path).GetEntries ();
 		}
 
-		[Obsolete ("The return type of this method will change in the next release")]
+		[Obsolete ("Use new UnixDirectoryInfo(path).GetEntries(regex)")]
 		public static Dirent[] GetEntries (string path, Regex regex)
 		{
 			return new UnixDirectoryInfo(path).GetEntries (regex);
 		}
 
-		[Obsolete ("The return type of this method will change in the next release")]
+		[Obsolete ("Use new UnixDirectoryInfo(path).GetEntries(regex)")]
 		public static Dirent[] GetEntries (string path, string regex)
 		{
 			return new UnixDirectoryInfo(path).GetEntries (regex);
 		}
 
+		[Obsolete ("Use new UnixDirectoryInfo(path).GetFileSystemEntries()")]
 		public static UnixFileSystemInfo[] GetFileSystemEntries (string path)
 		{
 			return new UnixDirectoryInfo(path).GetFileSystemEntries ();
 		}
 
+		[Obsolete ("Use new UnixDirectoryInfo(path).GetFileSystemEntries(regex)")]
 		public static UnixFileSystemInfo[] GetFileSystemEntries (string path, Regex regex)
 		{
 			return new UnixDirectoryInfo(path).GetFileSystemEntries (regex);
 		}
 
+		[Obsolete ("Use new UnixDirectoryInfo(path).GetFileSystemEntries(regex)")]
 		public static UnixFileSystemInfo[] GetFileSystemEntries (string path, string regex)
 		{
 			return new UnixDirectoryInfo(path).GetFileSystemEntries (regex);
 		}
 
-		[Obsolete ("The return type of this method will change in the next release")]
+		[Obsolete ("Use new UnixDirectoryInfo(path).ToStat()")]
 		public static Stat GetDirectoryStatus (string path)
 		{
 			return UnixFile.GetFileStatus (path);
 		}
 
+		[Obsolete ("Use new UnixDirectoryInfo.GetCurrentDirectory()")]
 		public static string GetCurrentDirectory ()
 		{
 			StringBuilder buf = new StringBuilder (16);
@@ -132,6 +133,7 @@ namespace Mono.Unix {
 			return buf.ToString ();
 		}
 
+		[Obsolete ("Use new UnixDirectoryInfo.SetCurrentDirectory(path)")]
 		public static void SetCurrentDirectory (string path)
 		{
 			int r = Syscall.chdir (path);

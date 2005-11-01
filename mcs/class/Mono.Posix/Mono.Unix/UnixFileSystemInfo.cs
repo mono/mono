@@ -423,6 +423,25 @@ namespace Mono.Unix {
 			return FullPath;
 		}
 
+		public Native.Stat ToStat ()
+		{
+			Native.Stat stat = new Native.Stat ();
+			stat.st_dev     = this.stat.st_dev;
+			stat.st_ino     = this.stat.st_ino;
+			stat.st_mode    = (Native.FilePermissions) this.stat.st_mode;
+			stat.st_nlink   = this.stat.st_nlink;
+			stat.st_uid     = this.stat.st_uid;
+			stat.st_gid     = this.stat.st_gid;
+			stat.st_rdev    = this.stat.st_rdev;
+			stat.st_size    = this.stat.st_size;
+			stat.st_blksize = this.stat.st_blksize;
+			stat.st_blocks  = this.stat.st_blocks;
+			stat.st_atime   = this.stat.st_atime;
+			stat.st_mtime   = this.stat.st_mtime;
+			stat.st_ctime   = this.stat.st_ctime;
+			return stat;
+		}
+
 		internal static UnixFileSystemInfo Create (string path)
 		{
 			Stat stat;

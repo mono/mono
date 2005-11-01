@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,29 +33,32 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
+	[Obsolete ("Use UnixUserInfo")]
 	public sealed class UnixUser
 	{
 		private UnixUser () {}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The return type of this method will change after the next release")]
+		[Obsolete ("Use new UnixUserInfo(user).UserId")]
 		public static uint GetUserId (string user)
 		{
 			return new UnixUserInfo (user).UserId;
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The return type of this method will change after the next release")]
+		[Obsolete ("Use UnixUserInfo.GetRealUserId()")]
 		public static uint GetCurrentUserId ()
 		{
 			return Syscall.getuid ();
 		}
 
+		[Obsolete ("Use UnixUserInfo.GetRealUser().UserName")]
 		public static string GetCurrentUserName ()
 		{
 			return GetName (GetCurrentUserId ());
 		}
 
+		[Obsolete ("Use UnixUserInfo.GetRealUser()")]
 		public static UnixUserInfo GetCurrentUser ()
 		{
 			return new UnixUserInfo (GetCurrentUserId ());
@@ -63,6 +66,7 @@ namespace Mono.Unix {
 
 		// I would hope that this is the same as GetCurrentUserName, but it is a
 		// different syscall, so who knows.
+		[Obsolete ("Use UnixUserInfo.GetLoginName()")]
 		public static string GetLogin ()
 		{
 			StringBuilder buf = new StringBuilder (4);
@@ -76,105 +80,86 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("The return type of this method will change after the next release")]
+		[Obsolete ("Use new UnixUserInfo(user).GroupId")]
 		public static uint GetGroupId (string user)
 		{
 			return new UnixUserInfo (user).GroupId;
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetGroupId (long)")]
+		[Obsolete ("Use new UnixUserInfo(user).GroupId")]
 		public static uint GetGroupId (uint user)
 		{
 			return new UnixUserInfo (user).GroupId;
 		}
 
-		public static long GetGroupId (long user)
-		{
-			return new UnixUserInfo (user).GroupId;
-		}
-
+		[Obsolete ("Use new UnixUserInfo(user).RealName")]
 		public static string GetRealName (string user)
 		{
 			return new UnixUserInfo (user).RealName;
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetRealName (long)")]
+		[Obsolete ("Use new UnixUserInfo(user).RealName")]
 		public static string GetRealName (uint user)
 		{
 			return new UnixUserInfo (user).RealName;
 		}
 
-		public static string GetRealName (long user)
-		{
-			return new UnixUserInfo (user).RealName;
-		}
-
+		[Obsolete ("Use new UnixUserInfo(user).HomeDirectory")]
 		public static string GetHomeDirectory (string user)
 		{
 			return new UnixUserInfo (user).HomeDirectory;
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use new UnixUserInfo(user).HomeDirectory")]
 		public static string GetHomeDirectory (uint user)
 		{
 			return new UnixUserInfo (user).HomeDirectory;
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetUserName(long)")]
+		[Obsolete ("Use new UnixUserInfo(user).UserName")]
 		public static string GetName (uint user)
 		{
 			return new UnixUserInfo (user).UserName;
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetUserName(long)")]
+		[Obsolete ("Use new UnixUserInfo(user).UserName")]
 		public static string GetUserName (uint user)
 		{
 			return new UnixUserInfo (user).UserName;
 		}
 
-		public static string GetUserName (long user)
-		{
-			return new UnixUserInfo (user).UserName;
-		}
-
+		[Obsolete ("Use new UnixUserInfo(user).Password")]
 		public static string GetPassword (string user)
 		{
 			return new UnixUserInfo (user).Password;
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetPassword (long)")]
+		[Obsolete ("Use new UnixUserInfo(user).Password")]
 		public static string GetPassword (uint user)
 		{
 			return new UnixUserInfo (user).Password;
 		}
 
-		public static string GetPassword (long user)
-		{
-			return new UnixUserInfo (user).Password;
-		}
-
+		[Obsolete ("Use new UnixUserInfo(user).ShellProgram")]
 		public static string GetShellProgram (string user)
 		{
 			return new UnixUserInfo (user).ShellProgram;
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetShellProgram(long)")]
+		[Obsolete ("Use new UnixUserInfo(user).ShellProgram")]
 		public static string GetShellProgram (uint user)
 		{
 			return new UnixUserInfo (user).ShellProgram;
 		}
 
-		public static string GetShellProgram (long user)
-		{
-			return new UnixUserInfo (user).ShellProgram;
-		}
-
+		[Obsolete ("Use UnixUserInfo.GetLocalUsers")]
 		public static UnixUserInfo[] GetLocalUsers ()
 		{
 			ArrayList entries = new ArrayList ();

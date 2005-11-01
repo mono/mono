@@ -229,6 +229,25 @@ namespace Mono.Unix {
 			Regex re = new Regex (regex);
 			return GetFileSystemEntries (re);
 		}
+
+		public static string GetCurrentDirectory ()
+		{
+			StringBuilder buf = new StringBuilder (16);
+			IntPtr r = IntPtr.Zero;
+			do {
+				buf.Capacity *= 2;
+				r = Syscall.getcwd (buf, (ulong) buf.Capacity);
+			} while (r == IntPtr.Zero && Syscall.GetLastError() == Error.ERANGE);
+			if (r == IntPtr.Zero)
+				UnixMarshal.ThrowExceptionForLastError ();
+			return buf.ToString ();
+		}
+
+		public static void SetCurrentDirectory (string path)
+		{
+			int r = Syscall.chdir (path);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+		}
 	}
 }
 

@@ -118,7 +118,11 @@ namespace Mono.Unix {
 
 		private string TryReadLink ()
 		{
-			return UnixPath.ReadSymbolicLink (FullPath);
+			StringBuilder sb = new StringBuilder ((int) base.Length+1);
+			int r = Syscall.readlink (FullPath, sb);
+			if (r == -1)
+				return null;
+			return sb.ToString (0, r);
 		}
 	}
 }

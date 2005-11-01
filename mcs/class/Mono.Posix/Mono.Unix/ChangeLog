@@ -1,3 +1,27 @@
+2005-11-01  Jonathan Pryor <jonpryor@vt.edu>
+
+	* FileAccessPattern.cs: Change enumeration names to match Robert Love's more
+	  sensible names from his FileAdvise class used in Beagle
+	  (UseSoon --> PreLoad, WillNotUse --> FlushCache).
+	* FileHandleOperations.cs: Added; contains AdviseFileAccessPattern()
+	  (moved from UnixFile.cs).
+	* UnixDirectory.cs: Obsolete the class; use UnixDirectoryInfo instead.
+	* UnixDirectoryInfo.cs: Add GetCurrentDirectory(), SetCurrentDirectory().
+	* UnixFile.cs: Obsolete the class; use UnixFileInfo, FileHandleOperations,
+	  or UnixPipes instead.
+	* UnixFileSystemInfo.cs: Add ToStat() method.
+	* UnixGroup.cs: Obsolete the class; use UnixGroupInfo instead.
+	* UnixGroupInfo.cs: Obsolete & Replace constructor, add GetMemberNames(),
+	  GetLocalGroups().
+	* UnixPipes.cs: Added (type moved from UnixFile.cs).
+	* UnixStream.cs: AdviseFileAccessPattern() uses FileHandleOperations now.
+	* UnixSymbolicLinkInfo.cs: Implement TryReadLink() to avoid constant buffer
+	  re-sizing.  Stevens states that the file size of the symlink is the number
+	  of bytes needed to hold the symlink, so this should be faster.
+	* UnixUser.cs: Obsolete the class; use UnixUserInfo instead.
+	* UnixUserInfo.cs: Obsolete & Replace constructor; add useful static members
+	  from UnixUser such as GetLoginName(), GetLocalUsers(), etc.
+
 2005-10-27  Jonathan Pryor <jonpryor@vt.edu>
 
 	* UnixEnvironment.cs: Add RealUser, RealGroup, EffectiveUser, EffectiveGroup

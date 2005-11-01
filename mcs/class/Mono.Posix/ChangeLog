@@ -1,3 +1,8 @@
+2005-11-01  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* Mono.Posix.dll.sources: Add new files: Mono.Unix/FileHandleOperations.cs,
+	  Mono.Unix/UnixPipes.cs.
+
 2005-10-25  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* Mono.Posix.dll.sources: Add Mono.Unix.Native/FileNameMarshaler.cs.

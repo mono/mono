@@ -195,7 +195,7 @@ namespace Mono.Unix {
 
 		public void AdviseFileAccessPattern (FileAccessPattern pattern, long offset, long len)
 		{
-			UnixFile.AdviseFileAccessPattern (fileDescriptor, pattern, offset, len);
+			FileHandleOperations.AdviseFileAccessPattern (fileDescriptor, pattern, offset, len);
 		}
 
 		public void AdviseFileAccessPattern (FileAccessPattern pattern)

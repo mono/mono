@@ -5,6 +5,7 @@
 ./Mono.Unix/CdeclFunction.cs
 ./Mono.Unix/FileAccessPermissions.cs
 ./Mono.Unix/FileAccessPattern.cs
+./Mono.Unix/FileHandleOperations.cs
 ./Mono.Unix/FileSpecialAttributes.cs
 ./Mono.Unix/FileTypes.cs
 ./Mono.Unix/IncludeAttribute.cs
@@ -30,6 +31,7 @@
 ./Mono.Unix/UnixListener.cs
 ./Mono.Unix/UnixMarshal.cs
 ./Mono.Unix/UnixPath.cs
+./Mono.Unix/UnixPipes.cs
 ./Mono.Unix/UnixProcess.cs
 ./Mono.Unix/UnixStream.cs
 ./Mono.Unix/UnixSymbolicLinkInfo.cs

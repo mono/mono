@@ -33,24 +33,13 @@ using Mono.Unix;
 
 namespace Mono.Unix {
 
-	public struct UnixPipes
-	{
-		public UnixPipes (UnixStream reading, UnixStream writing)
-		{
-			Reading = reading;
-			Writing = writing;
-		}
-
-		public UnixStream Reading;
-		public UnixStream Writing;
-	}
-
+	[Obsolete ("Use UnixFileInfo or FileHandleOperations")]
 	public sealed /* static */ class UnixFile
 	{
 		private UnixFile () {}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use CanAccess(string, Mono.Unix.Native.AccessModes)")]
+		[Obsolete ("Use new UnixFileInfo(path).CanAccess (mode)")]
 		public static bool CanAccess (string path, AccessMode mode)
 		{
 			int r = Syscall.access (path, mode);
@@ -58,18 +47,21 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use new UnixFileInfo(path).CanAccess (mode)")]
 		public static bool CanAccess (string path, Native.AccessModes mode)
 		{
 			int r = Native.Syscall.access (path, mode);
 			return r == 0;
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).Delete()")]
 		public static void Delete (string path)
 		{
 			int r = Syscall.unlink (path);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).Exists")]
 		public static bool Exists (string path)
 		{
 			int r = Syscall.access (path, AccessMode.F_OK);
@@ -79,7 +71,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use GetConfigurationValue(string, Mono.Unix.Native.PathconfName)")]
+		[Obsolete ("Use new UnixFileInfo(path).GetConfigurationValue(name)")]
 		public static long GetConfigurationValue (string path, PathConf name)
 		{
 			long r = Syscall.pathconf (path, name);
@@ -89,6 +81,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use new UnixFileInfo(path).GetConfigurationValue(name)")]
 		public static long GetConfigurationValue (string path, Native.PathconfName name)
 		{
 			long r = Native.Syscall.pathconf (path, name, (Native.Errno) 0);
@@ -97,12 +90,13 @@ namespace Mono.Unix {
 			return r;
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).LastAccessTime")]
 		public static DateTime GetLastAccessTime (string path)
 		{
 			return new UnixFileInfo (path).LastAccessTime;
 		}
 
-		[Obsolete ("The return type of this method will change in the next release")]
+		[Obsolete ("Use new UnixFileInfo(path).ToStat()")]
 		public static Stat GetFileStatus (string path)
 		{
 			Stat stat;
@@ -111,23 +105,26 @@ namespace Mono.Unix {
 			return stat;
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).LastWriteTime")]
 		public static DateTime GetLastWriteTime (string path)
 		{
 			return new UnixFileInfo(path).LastWriteTime;
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).LastStatusChangeTime")]
 		public static DateTime GetLastStatusChangeTime (string path)
 		{
 			return new UnixFileInfo (path).LastStatusChangeTime;
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Return Type will change in next release")]
+		[Obsolete ("Use new UnixFileInfo(path).Protection")]
 		public static FilePermissions GetPermissions (string path)
 		{
 			return new UnixFileInfo (path).Permissions;
 		}
 
+		[Obsolete ("Use new UnixSymbolicLinkInfo(path).ContentsPath")]
 		public static string ReadLink (string path)
 		{
 			string r = TryReadLink (path);
@@ -136,6 +133,7 @@ namespace Mono.Unix {
 			return r;
 		}
 
+		[Obsolete ("Use new UnixSymbolicLinkInfo(path).TryReadLink")]
 		public static string TryReadLink (string path)
 		{
 			// Who came up with readlink(2)?  There doesn't seem to be a way to
@@ -148,7 +146,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete("Use SetPermissions(string, Mono.Unix.Native.FilePermissions)")]
+		[Obsolete ("Use new UnixFileInfo(path).Protection = perms")]
 		public static void SetPermissions (string path, FilePermissions perms)
 		{
 			int r = Syscall.chmod (path, perms);
@@ -156,12 +154,14 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use new UnixFileInfo(path).Protection = perms")]
 		public static void SetPermissions (string path, Native.FilePermissions perms)
 		{
 			int r = Native.Syscall.chmod (path, perms);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).Create ()")]
 		public static UnixStream Create (string path)
 		{
 			FilePermissions mode = // 0644
@@ -171,7 +171,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Create(string, Mono.Unix.Native.FilePermissions)")]
+		[Obsolete ("Use new UnixFileInfo(path).Create (mode)")]
 		public static UnixStream Create (string path, FilePermissions mode)
 		{
 			int fd = Syscall.creat (path, mode);
@@ -181,6 +181,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use new UnixFileInfo(path).Create (mode)")]
 		public static UnixStream Create (string path, Native.FilePermissions mode)
 		{
 			int fd = Native.Syscall.creat (path, mode);
@@ -189,6 +190,7 @@ namespace Mono.Unix {
 			return new UnixStream (fd);
 		}
 
+		[Obsolete ("Use UnixPipes.CreatePipes()")]
 		public static UnixPipes CreatePipes ()
 		{
 			int reading, writing;
@@ -198,7 +200,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Open(string, Mono.Unix.Native.OpenFlags)")]
+		[Obsolete ("Use new UnixFileInfo(path).Open (flags)")]
 		public static UnixStream Open (string path, OpenFlags flags)
 		{
 			int fd = Syscall.open (path, flags);
@@ -208,6 +210,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use new UnixFileInfo(path).Open (flags)")]
 		public static UnixStream Open (string path, Native.OpenFlags flags)
 		{
 			int fd = Native.Syscall.open (path, flags);
@@ -217,7 +220,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Open(string, Mono.Unix.Native.OpenFlags, Mono.Unix.Native.FilePermissions)")]
+		[Obsolete ("Use new UnixFileInfo(path).Open (flags, mode)")]
 		public static UnixStream Open (string path, OpenFlags flags, FilePermissions mode)
 		{
 			int fd = Syscall.open (path, flags, mode);
@@ -227,6 +230,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use new UnixFileInfo(path).Open (flags, mode)")]
 		public static UnixStream Open (string path, Native.OpenFlags flags, Native.FilePermissions mode)
 		{
 			int fd = Native.Syscall.open (path, flags, mode);
@@ -235,6 +239,7 @@ namespace Mono.Unix {
 			return new UnixStream (fd);
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).Open (mode)")]
 		public static UnixStream Open (string path, FileMode mode)
 		{
 			OpenFlags flags = UnixConvert.ToOpenFlags (mode, FileAccess.ReadWrite);
@@ -244,6 +249,7 @@ namespace Mono.Unix {
 			return new UnixStream (fd);
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).Open (mode, access)")]
 		public static UnixStream Open (string path, FileMode mode, FileAccess access)
 		{
 			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
@@ -254,7 +260,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use Open(string, FileMode, FileAccess, Mono.Unix.Native.FilePermissions)")]
+		[Obsolete ("Use new UnixFileInfo(path).Open (mode, access, perms)")]
 		public static UnixStream Open (string path, FileMode mode, FileAccess access, FilePermissions perms)
 		{
 			OpenFlags flags = UnixConvert.ToOpenFlags (mode, access);
@@ -265,6 +271,7 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
+		[Obsolete ("Use new UnixFileInfo(path).Open (mode, access, perms)")]
 		public static UnixStream Open (string path, FileMode mode, FileAccess access, Native.FilePermissions perms)
 		{
 			Native.OpenFlags flags = Native.NativeConvert.ToOpenFlags (mode, access);
@@ -274,32 +281,27 @@ namespace Mono.Unix {
 			return new UnixStream (fd);
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).OpenRead ()")]
 		public static UnixStream OpenRead (string path)
 		{
 			return Open (path, FileMode.Open, FileAccess.Read);
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).OpenWrite ()")]
 		public static UnixStream OpenWrite (string path)
 		{
 			return Open (path, FileMode.OpenOrCreate, FileAccess.Write);
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use SetOwner (string, long, long)")]
+		[Obsolete ("Use new UnixFileInfo(path).SetOwner (owner, group)")]
 		public static void SetOwner (string path, uint owner, uint group)
 		{
 			int r = Syscall.chown (path, owner, group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
-		public static void SetOwner (string path, long owner, long group)
-		{
-			uint _owner = Convert.ToUInt32 (owner);
-			uint _group = Convert.ToUInt32 (group);
-			int r = Syscall.chown (path, _owner, _group);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
+		[Obsolete ("Use new UnixFileInfo(path).SetOwner (owner)")]
 		public static void SetOwner (string path, string owner)
 		{
 			Passwd pw = Syscall.getpwnam (owner);
@@ -310,6 +312,7 @@ namespace Mono.Unix {
 			SetOwner (path, uid, gid);
 		}
 
+		[Obsolete ("Use new UnixFileInfo(path).SetOwner (owner, group)")]
 		public static void SetOwner (string path, string owner, string group)
 		{
 			uint uid = UnixUser.GetUserId (owner);
@@ -319,21 +322,14 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use SetLinkOwner (string, long, long)")]
+		[Obsolete ("Use new UnixSymbolicLinkInfo(path).SetOwner (owner, group)")]
 		public static void SetLinkOwner (string path, uint owner, uint group)
 		{
 			int r = Syscall.lchown (path, owner, group);
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
-		public static void SetLinkOwner (string path, long owner, long group)
-		{
-			uint _owner = Convert.ToUInt32 (owner);
-			uint _group = Convert.ToUInt32 (group);
-			int r = Syscall.lchown (path, _owner, _group);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
+		[Obsolete ("Use new UnixSymbolicLinkInfo(path).SetOwner (owner)")]
 		public static void SetLinkOwner (string path, string owner)
 		{
 			Passwd pw = Syscall.getpwnam (owner);
@@ -344,6 +340,7 @@ namespace Mono.Unix {
 			SetLinkOwner (path, uid, gid);
 		}
 
+		[Obsolete ("Use new UnixSymbolicLinkInfo(path).SetOwner (owner, group)")]
 		public static void SetLinkOwner (string path, string owner, string group)
 		{
 			uint uid = UnixUser.GetUserId (owner);
@@ -352,43 +349,7 @@ namespace Mono.Unix {
 			SetLinkOwner (path, uid, gid);
 		}
 
-		public static void AdviseFileAccessPattern (int fd, FileAccessPattern pattern, long offset, long len)
-		{
-			int r = Syscall.posix_fadvise (fd, offset, len,
-				(PosixFadviseAdvice) pattern);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
-		public static void AdviseFileAccessPattern (int fd, FileAccessPattern pattern)
-		{
-			AdviseFileAccessPattern (fd, pattern, 0, 0);
-		}
-
-		public static void AdviseFileAccessPattern (FileStream file, FileAccessPattern pattern, long offset, long len)
-		{
-			int r = Syscall.posix_fadvise (file.Handle.ToInt32(), offset, len,
-				(PosixFadviseAdvice) pattern);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
-		public static void AdviseFileAccessPattern (FileStream file, FileAccessPattern pattern)
-		{
-			AdviseFileAccessPattern (file, pattern, 0, 0);
-		}
-
-		public static void AdviseFileAccessPattern (UnixStream stream, FileAccessPattern pattern, long offset, long len)
-		{
-			int r = Syscall.posix_fadvise (stream.Handle, offset, len,
-				(PosixFadviseAdvice) pattern);
-			UnixMarshal.ThrowExceptionForLastErrorIf (r);
-		}
-
-		public static void AdviseFileAccessPattern (UnixStream stream, FileAccessPattern pattern)
-		{
-			AdviseFileAccessPattern (stream, pattern, 0, 0);
-		}
-
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.Normal, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.Normal, offset, len)")]
 		public static void AdviseNormalAccess (int fd, long offset, long len)
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
@@ -396,37 +357,37 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.Normal)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.Normal)")]
 		public static void AdviseNormalAccess (int fd)
 		{
 			AdviseNormalAccess (fd, 0, 0);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.Normal, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.Normal, offset, len)")]
 		public static void AdviseNormalAccess (FileStream file, long offset, long len)
 		{
 			AdviseNormalAccess (file.Handle.ToInt32(), offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.Normal)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.Normal)")]
 		public static void AdviseNormalAccess (FileStream file)
 		{
 			AdviseNormalAccess (file.Handle.ToInt32());
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.Normal, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.Normal, offset, len)")]
 		public static void AdviseNormalAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseNormalAccess (stream.Handle, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.Normal)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.Normal)")]
 		public static void AdviseNormalAccess (UnixStream stream)
 		{
 			AdviseNormalAccess (stream.Handle);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.Sequential, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.Sequential, offset, len)")]
 		public static void AdviseSequentialAccess (int fd, long offset, long len)
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
@@ -434,37 +395,37 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.Sequential)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.Sequential)")]
 		public static void AdviseSequentialAccess (int fd)
 		{
 			AdviseSequentialAccess (fd, 0, 0);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.Sequential, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.Sequential, offset, len)")]
 		public static void AdviseSequentialAccess (FileStream file, long offset, long len)
 		{
 			AdviseSequentialAccess (file.Handle.ToInt32(), offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.Sequential)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.Sequential)")]
 		public static void AdviseSequentialAccess (FileStream file)
 		{
 			AdviseSequentialAccess (file.Handle.ToInt32());
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.Sequential, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.Sequential, offset, len)")]
 		public static void AdviseSequentialAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseSequentialAccess (stream.Handle, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.Sequential)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.Sequential)")]
 		public static void AdviseSequentialAccess (UnixStream stream)
 		{
 			AdviseSequentialAccess (stream.Handle);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.Random, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.Random, offset, len)")]
 		public static void AdviseRandomAccess (int fd, long offset, long len)
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
@@ -472,37 +433,37 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.Random)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.Random)")]
 		public static void AdviseRandomAccess (int fd)
 		{
 			AdviseRandomAccess (fd, 0, 0);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.Random, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.Random, offset, len)")]
 		public static void AdviseRandomAccess (FileStream file, long offset, long len)
 		{
 			AdviseRandomAccess (file.Handle.ToInt32(), offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.Random)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.Random)")]
 		public static void AdviseRandomAccess (FileStream file)
 		{
 			AdviseRandomAccess (file.Handle.ToInt32());
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.Random, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.Random, offset, len)")]
 		public static void AdviseRandomAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseRandomAccess (stream.Handle, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.Random)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.Random)")]
 		public static void AdviseRandomAccess (UnixStream stream)
 		{
 			AdviseRandomAccess (stream.Handle);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.UseSoon, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.PreLoad, offset, len)")]
 		public static void AdviseNeedAccess (int fd, long offset, long len)
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
@@ -510,37 +471,37 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.UseSoon)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.PreLoad)")]
 		public static void AdviseNeedAccess (int fd)
 		{
 			AdviseNeedAccess (fd, 0, 0);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.UseSoon, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.PreLoad, offset, len)")]
 		public static void AdviseNeedAccess (FileStream file, long offset, long len)
 		{
 			AdviseNeedAccess (file.Handle.ToInt32(), offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.UseSoon)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.PreLoad)")]
 		public static void AdviseNeedAccess (FileStream file)
 		{
 			AdviseNeedAccess (file.Handle.ToInt32());
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.UseSoon, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.PreLoad, offset, len)")]
 		public static void AdviseNeedAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseNeedAccess (stream.Handle, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.UseSoon)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.PreLoad)")]
 		public static void AdviseNeedAccess (UnixStream stream)
 		{
 			AdviseNeedAccess (stream.Handle);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.WillNotUse, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.FlushCache, offset, len)")]
 		public static void AdviseNoAccess (int fd, long offset, long len)
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
@@ -548,37 +509,37 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.WillNotUse)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.FlushCache)")]
 		public static void AdviseNoAccess (int fd)
 		{
 			AdviseNoAccess (fd, 0, 0);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.WillNotUse, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.FlushCache, offset, len)")]
 		public static void AdviseNoAccess (FileStream file, long offset, long len)
 		{
 			AdviseNoAccess (file.Handle.ToInt32(), offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.WillNotUse)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.FlushCache)")]
 		public static void AdviseNoAccess (FileStream file)
 		{
 			AdviseNoAccess (file.Handle.ToInt32());
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.WillNotUse, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.FlushCache, offset, len)")]
 		public static void AdviseNoAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseNoAccess (stream.Handle, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.WillNotUse)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.FlushCache)")]
 		public static void AdviseNoAccess (UnixStream stream)
 		{
 			AdviseNoAccess (stream.Handle);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.UseOnce, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.NoReuse, offset, len)")]
 		public static void AdviseOnceAccess (int fd, long offset, long len)
 		{
 			int r = Syscall.posix_fadvise (fd, offset, len,
@@ -586,31 +547,31 @@ namespace Mono.Unix {
 			UnixMarshal.ThrowExceptionForLastErrorIf (r);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (fd, FileAccessPattern.UseOnce)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (fd, FileAccessPattern.NoReuse)")]
 		public static void AdviseOnceAccess (int fd)
 		{
 			AdviseOnceAccess (fd, 0, 0);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.UseOnce, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.NoReuse, offset, len)")]
 		public static void AdviseOnceAccess (FileStream file, long offset, long len)
 		{
 			AdviseOnceAccess (file.Handle.ToInt32(), offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (file, FileAccessPattern.UseOnce)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (file, FileAccessPattern.NoReuse)")]
 		public static void AdviseOnceAccess (FileStream file)
 		{
 			AdviseOnceAccess (file.Handle.ToInt32());
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.UseOnce, offset, len)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.NoReuse, offset, len)")]
 		public static void AdviseOnceAccess (UnixStream stream, long offset, long len)
 		{
 			AdviseOnceAccess (stream.Handle, offset, len);
 		}
 
-		[Obsolete ("Use AdviseFileAccessPattern (stream, FileAccessPattern.UseOnce)")]
+		[Obsolete ("Use FileHandleOperations.AdviseFileAccessPattern (stream, FileAccessPattern.NoReuse)")]
 		public static void AdviseOnceAccess (UnixStream stream)
 		{
 			AdviseOnceAccess (stream.Handle);

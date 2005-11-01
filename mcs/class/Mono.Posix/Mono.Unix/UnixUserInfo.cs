@@ -4,7 +4,7 @@
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2004 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,7 +47,6 @@ namespace Mono.Unix {
 		}
 
 		[CLSCompliant (false)]
-		[Obsolete ("Use UnixUserInfo (long)")]
 		public UnixUserInfo (uint user)
 		{
 			passwd = new Passwd ();
@@ -66,9 +65,22 @@ namespace Mono.Unix {
 				throw new ArgumentException (Locale.GetText ("invalid user id"), "user");
 		}
 
+		[Obsolete ("Use UnixUserInfo (Mono.Unix.Native.Passwd)")]
 		public UnixUserInfo (Passwd passwd)
 		{
 			this.passwd = passwd;
+		}
+
+		public UnixUserInfo (Native.Passwd passwd)
+		{
+			this.passwd = new Passwd ();
+			this.passwd.pw_name   = passwd.pw_name;
+			this.passwd.pw_passwd = passwd.pw_passwd;
+			this.passwd.pw_uid    = passwd.pw_uid;
+			this.passwd.pw_gid    = passwd.pw_gid;
+			this.passwd.pw_gecos  = passwd.pw_gecos;
+			this.passwd.pw_dir    = passwd.pw_dir;
+			this.passwd.pw_shell  = passwd.pw_shell;
 		}
 
 		public string UserName {
@@ -83,6 +95,10 @@ namespace Mono.Unix {
 		[Obsolete ("The type of this property will change in the next release")]
 		public uint UserId {
 			get {return passwd.pw_uid;}
+		}
+
+		public UnixGroupInfo Group {
+			get {return new UnixGroupInfo (passwd.pw_gid);}
 		}
 
 		[CLSCompliant (false)]
@@ -124,10 +140,55 @@ namespace Mono.Unix {
 			return passwd.ToString ();
 		}
 
+		public static UnixUserInfo GetRealUser ()
+		{
+			return new UnixUserInfo (GetRealUserId ());
+		}
+
+		public static long GetRealUserId ()
+		{
+			return Syscall.getuid ();
+		}
+
+		// I would hope that this is the same as GetCurrentUserName, but it is a
+		// different syscall, so who knows.
+		public static string GetLoginName ()
+		{
+			StringBuilder buf = new StringBuilder (4);
+			int r;
+			do {
+				buf.Capacity *= 2;
+				r = Syscall.getlogin_r (buf, (ulong) buf.Capacity);
+			} while (r == (-1) && Syscall.GetLastError() == Error.ERANGE);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			return buf.ToString ();
+		}
+
 		[Obsolete ("The return type of this method will change in the next release")]
 		public Passwd ToPasswd ()
 		{
 			return passwd;
+		}
+
+		public static UnixUserInfo[] GetLocalUsers ()
+		{
+			ArrayList entries = new ArrayList ();
+			lock (Syscall.pwd_lock) {
+				if (Native.Syscall.setpwent () != 0) {
+					UnixMarshal.ThrowExceptionForLastError ();
+				}
+				try {
+					Passwd p;
+					while ((p = Syscall.getpwent()) != null)
+						entries.Add (new UnixUserInfo (p));
+					if (Syscall.GetLastError () != (Error) 0)
+						UnixMarshal.ThrowExceptionForLastError ();
+				}
+				finally {
+					Syscall.endpwent ();
+				}
+			}
+			return (UnixUserInfo[]) entries.ToArray (typeof(UnixUserInfo));
 		}
 	}
 }

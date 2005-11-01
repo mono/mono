@@ -1,10 +1,10 @@
 //
-// Mono.Unix/FileAccessPattern.cs
+// Mono.Unix/UnixPipes.cs
 //
 // Authors:
 //   Jonathan Pryor (jonpryor@vt.edu)
 //
-// (C) 2005 Jonathan Pryor
+// (C) 2004-2005 Jonathan Pryor
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,17 +27,31 @@
 //
 
 using System;
+using System.IO;
+using System.Text;
 using Mono.Unix;
 
 namespace Mono.Unix {
 
-	public enum FileAccessPattern {
-		Normal     = Native.PosixFadviseAdvice.POSIX_FADV_NORMAL,
-		Sequential = Native.PosixFadviseAdvice.POSIX_FADV_SEQUENTIAL,
-		Random     = Native.PosixFadviseAdvice.POSIX_FADV_RANDOM,
-		NoReuse    = Native.PosixFadviseAdvice.POSIX_FADV_NOREUSE,
-		PreLoad    = Native.PosixFadviseAdvice.POSIX_FADV_WILLNEED,
-		FlushCache = Native.PosixFadviseAdvice.POSIX_FADV_DONTNEED,
+	public struct UnixPipes
+	{
+		public UnixPipes (UnixStream reading, UnixStream writing)
+		{
+			Reading = reading;
+			Writing = writing;
+		}
+
+		public UnixStream Reading;
+		public UnixStream Writing;
+
+		public static UnixPipes CreatePipes ()
+		{
+			int reading, writing;
+			int r = Syscall.pipe (out reading, out writing);
+			UnixMarshal.ThrowExceptionForLastErrorIf (r);
+			return new UnixPipes (new UnixStream (reading), new UnixStream (writing));
+		}
 	}
 }
 
+// vim: noexpandtab
