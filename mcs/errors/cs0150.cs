@@ -1,5 +1,5 @@
 // cs0150.cs: A constant value is expected
-// Line :
+// Line : 12
 
 using System;
 
