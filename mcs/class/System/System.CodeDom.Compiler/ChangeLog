@@ -1,3 +1,7 @@
+2005-11-01  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* CodeGenerator.cs: Added/stubbed missing 2.0 stuff.
+
 2005-11-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	CodeDomProvider.cs: Added missing 2.0 methods. Added CAS permissions.

@@ -57,6 +57,14 @@ namespace System.CodeDom.Compiler {
 		//
 		// Properties
 		//
+#if NET_2_0
+		protected CodeTypeDeclaration CurrentClass {
+			get {
+				return currentType;
+			}
+		}
+#endif
+
 		protected CodeTypeMember CurrentMember {
 			get {
 				return currentMember;
@@ -65,8 +73,8 @@ namespace System.CodeDom.Compiler {
 		
 		protected string CurrentMemberName {
 			get {
-				if (currentType == null)
-					return null;
+				if (currentMember == null)
+					return "<% unknown %>";
 				return currentMember.Name;
 			}
 		}
@@ -74,7 +82,7 @@ namespace System.CodeDom.Compiler {
 		protected string CurrentTypeName {
 			get {
 				if (currentType == null)
-					return null;
+					return "<% unknown %>";
 				return currentType.Name;
 			}
 		}
@@ -175,6 +183,13 @@ namespace System.CodeDom.Compiler {
 		}
 
 		protected abstract void GenerateCastExpression (CodeCastExpression e);
+#if NET_2_0
+		[MonoTODO]
+		public virtual void GenerateCodeFromMember (CodeTypeMember member, TextWriter writer, CodeGeneratorOptions options)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		protected abstract void GenerateComment (CodeComment comment);
 
 		protected virtual void GenerateCommentStatement (CodeCommentStatement statement)
@@ -234,7 +249,13 @@ namespace System.CodeDom.Compiler {
 		{
 			Output.Write (d.ToString (CultureInfo.InvariantCulture));
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		protected virtual void GenerateDefaultValueExpression (CodeDefaultValueExpression e)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		protected abstract void GenerateDelegateCreateExpression (CodeDelegateCreateExpression e);
 		protected abstract void GenerateDelegateInvokeExpression (CodeDelegateInvokeExpression e);
 
@@ -1252,12 +1273,10 @@ namespace System.CodeDom.Compiler {
 						typeof (CodeEntryPointMethod)
 					};
 
-
 #if NET_2_0
 		protected virtual void GenerateDirectives (CodeDirectiveCollection directives)
 		{
 		}
 #endif
-
 	}
 }
