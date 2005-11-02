@@ -695,7 +695,7 @@ namespace System.Windows.Forms
 			internal Image GetImage(int index)
 			{
 				if (index < 0 || index >= this.Count)
-					throw new ArgumentOutOfRangeException("index");
+					throw new ArgumentOutOfRangeException("index", String.Format ("index is {0}, range is [0,{1})", 0, list.Count));
 
 				CreateHandle();
 				return (Image)list[index];

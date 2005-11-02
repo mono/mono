@@ -1015,6 +1015,11 @@ namespace System.Windows.Forms {
 			if (current_size == autoscale_base_size)
 				return;
 
+			if (Environment.GetEnvironmentVariable ("MONO_MWF_SCALING") == "disable"){
+				Console.WriteLine ("Not scaling");
+				return;
+			}
+			
 			//
 			// I tried applying the Fudge height factor from:
 			// http://blogs.msdn.com/mharsh/archive/2004/01/25/62621.aspx

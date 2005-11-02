@@ -387,15 +387,10 @@ namespace System.Windows.Forms {
             
 			cursor_dir = new CursorDir ();
 			cursor_dir.idReserved = reader.ReadUInt16();
-			if (cursor_dir.idReserved != 0) {
-				throw new System.ArgumentException ("Invalid Argument", "stream");
-			}
-			
 			cursor_dir.idType = reader.ReadUInt16();
-			if (cursor_dir.idType != 2) { //must be 2
-				throw new System.ArgumentException ("Invalid Argument", "stream");
-			}
-
+			if (cursor_dir.idReserved != 0 || !(cursor_dir.idType == 2 || cursor_dir.idType == 1))
+				throw new System.ArgumentException ("Invalid Argument, format error", "stream");
+		
 			entry_count = reader.ReadUInt16();
 			cursor_dir.idCount = entry_count;
 			cursor_dir.idEntries = new CursorEntry[entry_count];
@@ -574,29 +569,33 @@ namespace System.Windows.Forms {
 					}
 					writer.Write(cih.biXPelsPerMeter);
 					writer.Write(cih.biYPelsPerMeter);
-					writer.Write(cih.biClrUsed);
-					writer.Write(cih.biClrImportant);
 
 					// write color table
 					if (xor) {
+						writer.Write(cih.biClrUsed);
+						writer.Write(cih.biClrImportant);
 						color_count = ci.cursorColors.Length;
 						for (int j = 0; j < color_count; j++) {
 							writer.Write (ci.cursorColors[j]);
 						}
 					} else {
+						// 2 used colors
+						writer.Write(2);
+						// 2 important colors
+						writer.Write(2);
+						
 						writer.Write((uint)0x00000000);
 						writer.Write((uint)0x00ffffff);
 					}
 
 					// write image bits
-					if (xor) {
+					if (xor) 
 						writer.Write(ci.cursorXOR);
-					} else {
+					else
 						writer.Write(ci.cursorAND);
-					}
+
 					writer.Flush();
 
-					// create bitmap from stream and return
 					bmp = new Bitmap(stream);
 
 					if (transparent) {

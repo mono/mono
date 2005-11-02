@@ -9,6 +9,7 @@ System.Windows.Forms/ControlEventTest.cs
 System.Windows.Forms/ControlTest.cs
 System.Windows.Forms/ControlPaintTest.cs
 System.Windows.Forms/ControlStyleTest.cs
+System.Windows.Forms/CursorTest.cs
 System.Windows.Forms/DataGridTableStyleTest.cs
 System.Windows.Forms/DataGridTest.cs
 System.Windows.Forms/DataGridTextBoxColumnTest.cs

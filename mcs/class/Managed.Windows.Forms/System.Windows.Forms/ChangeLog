@@ -1,3 +1,14 @@
+2005-11-02  Miguel de Icaza  <miguel@novell.com>
+
+	* Cursor.cs: When writing the AND-mask bitmap do not include the
+	number of colors, but hardcode those to two (black and white),
+	fixes the loading of color cursors (Paint Dot Net).
+
+	* Form.cs: To debug, allow MONO_MWF_SCALING=disable variable to
+	turn off autoscaling.
+
+	* Cursor.cs: Allow resource type to be 1 or 2 (from ImageMagic).
+
 2005-11-02  Jackson Harper  <jackson@ximian.com>
 
 	* X11Dnd.cs: Make sure to send a status message if the pointer
