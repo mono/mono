@@ -1,3 +1,8 @@
+2005-11-02  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Executor.cs: Reworked (for permissions) and fixed ExitCode (must be 
+	called before Close).
+
 2005-11-01  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* CodeGenerator.cs: Added/stubbed missing 2.0 stuff.
