@@ -2582,7 +2582,8 @@ namespace System.Windows.Forms {
 							Console.WriteLine("GetMessage(): Window {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
 						#endif
 
-						Dnd.HandleMotionNotify (ref xevent);
+						if (Dnd.HandleMotionNotify (ref xevent))
+							goto ProcessNextMessage;
 						NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
 
 						msg.message = Msg.WM_MOUSEMOVE;

@@ -395,10 +395,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public void HandleMotionNotify (ref XEvent xevent)
+		public bool HandleMotionNotify (ref XEvent xevent)
 		{
 			if (drag_data == null)
-				return;
+				return false;
 
 			if (drag_data.State == DragState.Beginning) {
 				int suc;
@@ -412,7 +412,7 @@ namespace System.Windows.Forms {
 				if (suc == 0) {
 					Console.Error.WriteLine ("Could not take ownership of XdndSelection aborting drag.");
 					drag_data.Reset ();
-					return;
+					return false;
 				}
 
 				suc = XGrabPointer (display, xevent.AnyEvent.window,
@@ -428,7 +428,7 @@ namespace System.Windows.Forms {
 				if (suc != 0) {
 					Console.Error.WriteLine ("Could not grab pointer aborting drag.");
 					drag_data.Reset ();
-					return;
+					return false;
 				}
 
 				drag_data.State = DragState.Dragging;
@@ -488,7 +488,9 @@ namespace System.Windows.Forms {
 
 				drag_data.LastTopLevel = toplevel;
 				drag_data.LastWindow = window;
+				return true;
 			}
+			return false;
 		}
 
 		// DEBUG CODE REMOVE

@@ -1,5 +1,12 @@
 2005-11-02  Jackson Harper  <jackson@ximian.com>
 
+	* X11Dnd.cs:
+	* XplatUIX11.cs: When in a drag we don't want motion notify
+	messages to get passed on to the other controls. This prevents
+	mouse move messages from showing up in the drag source.
+
+2005-11-02  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs: Remove unneeded call to XAllowEvents.  Make sure that
 	the correct button is release to end a drag.
 	* XplatUIX11.cs: Make the button state internal so the drag system
