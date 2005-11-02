@@ -1,3 +1,7 @@
+2005-11-01  Chris Toshok  <toshok@ximian.com>
+
+	* VirtualPathUtilityTest.cs: new tests.
+
 2005-10-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpResponseCas.cs:
