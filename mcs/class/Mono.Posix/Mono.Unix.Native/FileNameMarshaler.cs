@@ -48,7 +48,7 @@ namespace Mono.Unix.Native {
 		public void CleanUpNativeData (IntPtr pNativeData)
 		{
 			// Console.WriteLine ("# FileNameMarshaler.CleanUpManagedData ({0:x})", pNativeData);
-			UnixMarshal.Free (pNativeData);
+			UnixMarshal.FreeHeap (pNativeData);
 		}
 
 		public int GetNativeDataSize ()

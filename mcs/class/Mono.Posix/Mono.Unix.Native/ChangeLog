@@ -1,3 +1,7 @@
+2005-11-02  Jonathan Pryor <jonpryor@vt.edu>
+
+	* FileNameMarshaler.cs: Use UnixMarshal.FreeHeap().  .Free() is obsolete.
+
 2005-10-27  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Stdlib.cs: Correct return type of setbuf(IntPtr, byte*).
