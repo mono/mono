@@ -1,3 +1,7 @@
+2005-11-03  Kornél Pál  <kornelpal@hotmail.com>
+
+	* Consts.cs.in: Added RuntimeVersion numbers for 1.0 and 1.1 as well.
+
 2005-10-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Consts.cs.in: Added RuntimeVersion as most 2.0 assemblies will 
