@@ -4,6 +4,9 @@
 
 2005-11-02  Miguel de Icaza  <miguel@novell.com>
 
+	* Form.cs (Icon): If the icon is null, reset the icon to the
+	default value. 
+
 	* Cursor.cs: When writing the AND-mask bitmap do not include the
 	number of colors, but hardcode those to two (black and white),
 	fixes the loading of color cursors (Paint Dot Net).

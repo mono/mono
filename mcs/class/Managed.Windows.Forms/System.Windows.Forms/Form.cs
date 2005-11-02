@@ -356,7 +356,7 @@ namespace System.Windows.Forms {
 					icon = value;
 
 					if (IsHandleCreated) {
-						XplatUI.SetIcon(Handle, icon);
+						XplatUI.SetIcon(Handle, icon == null ? default_icon : icon);
 					}
 				}
 			}
