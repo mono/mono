@@ -499,9 +499,9 @@ public class TypeManager {
 		standardModules = n;
 	}
 
-	/// 
-	///  Registers a existing 'standard module' to lookup short-qualified or unqualified members
-	/// 
+	// 
+	//  Registers an existing 'standard module' to lookup short-qualified or unqualified members
+	// 
 	private static void AddStandardModule(Type type)
 	{
 	    object[] attributes = type.GetCustomAttributes(false);
@@ -519,23 +519,25 @@ public class TypeManager {
         }
 	}
 
-	//
-	// 
-	//
+	/// <summary>
+	/// Find types from pertinent standard modules (from those namespaces in the scope)
+	/// <summary>
 	public static Type[] GetPertinentStandardModules(params string[] namespaces)
 	{
 		ArrayList list = new ArrayList();
-		foreach(string Namespace in namespaces)
-		{ 
-			for(int i = 0; i < standardModules.Length; i++) {
-				if (standardModules[i].Namespace.ToLower () == Namespace.ToLower ()) {
-					string name = standardModules[i].ToString();
-					Type t = LookupType(name);
-					if (t == null) {
-						System.Console.WriteLine("Could not find standard module '" + name + "'"); 
-					}
-					else {
-						list.Add(t);
+		if (standardModules != null && namespaces != null) {
+			foreach(string Namespace in namespaces)
+			{ 
+				for(int i = 0; i < standardModules.Length; i++) {
+					if (standardModules[i].Namespace.ToLower () == Namespace.ToLower ()) {
+						string name = standardModules[i].ToString();
+						Type t = LookupType(name);
+						if (t == null) {
+							System.Console.WriteLine("Could not find standard module '" + name + "'"); 
+						}
+						else {
+							list.Add(t);
+						}
 					}
 				}
 			}
