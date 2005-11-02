@@ -1,3 +1,9 @@
+2005-11-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpApplication.cs: ignore TAE in ProcesssError. The Error event might
+	redirect or transfer and that causes a TAE to be thrown. Fixes
+	bug #76573.
+
 2005-11-01  Chris Toshok  <toshok@ximian.com>
 
 	* VirtualPathUtility.cs: new (partial implementation) to get some
