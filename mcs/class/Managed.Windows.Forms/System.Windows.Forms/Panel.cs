@@ -17,13 +17,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 //
 
-// NOT COMPLETE
+// COMPLETE
 
 using System;
 using System.ComponentModel;
@@ -120,12 +120,6 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event EventHandler		TextChanged;
 		#endregion
-
-		#region Internal Methods
-		internal override void PaintControlBackground(PaintEventArgs pevent) {
-			pevent.Graphics.FillRectangle(ThemeEngine.Current.ResPool.GetSolidBrush(this.BackColor), pevent.ClipRectangle);
-		}
-		#endregion	// Internal methods
 	}
 }
 

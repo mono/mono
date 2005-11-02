@@ -3497,12 +3497,7 @@ namespace System.Windows.Forms
 						dc = paint_event.SetGraphics (DeviceContext);
 					}
 
-					if ((control_style & (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) == (ControlStyles.AllPaintingInWmPaint | ControlStyles.UserPaint)) {
-						OnPaintBackground(paint_event);
-					} else {
-						PaintControlBackground(paint_event);
-					}
-
+					OnPaintBackground(paint_event);
 					OnPaint(paint_event);
 
 					if ((control_style & ControlStyles.DoubleBuffer) != 0) {

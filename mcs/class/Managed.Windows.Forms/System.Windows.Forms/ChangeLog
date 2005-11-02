@@ -1,3 +1,12 @@
+2005-11-01  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs: We always need to call OnPaintBackground. We pretty much
+	  ignore AllPaintingInWmPaint and always do the painting there, whether 
+	  it's set or not, since we always ignore the WM_ERASEBKGND message 
+	  (which we don't generate on X11). This fixes #76616.
+	* Panel.cs: Removed unneeded background painting. This happens properly
+	  in Control.cs already
+
 2005-10-31  Mike Kestner  <mkestner@novell.com>
 
 	* Menu.cs: Add items to collection before setting their index.
