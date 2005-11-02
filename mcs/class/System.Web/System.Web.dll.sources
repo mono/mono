@@ -117,6 +117,7 @@ System.Web.Handlers/AssemblyResourceLoader.cs
 System.Web.Handlers/TraceHandler.cs
 System.Web.Hosting/AppDomainFactory.cs
 System.Web.Hosting/ApplicationHost.cs
+System.Web.Hosting/HostingEnvironment.cs
 System.Web.Hosting/IAppDomainFactory.cs
 System.Web.Hosting/IApplicationHost.cs
 System.Web.Hosting/IAppManagerAppDomainFactory.cs
