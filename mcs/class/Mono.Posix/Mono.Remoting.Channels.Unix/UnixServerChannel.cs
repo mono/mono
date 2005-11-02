@@ -210,13 +210,13 @@ namespace Mono.Remoting.Channels.Unix
         public void StartListening (object data)
         {
             listener = new UnixListener (path);
-            Mono.Unix.Syscall.chmod (path,
-                                     Mono.Unix.FilePermissions.S_IRUSR |
-                                     Mono.Unix.FilePermissions.S_IWUSR |
-                                     Mono.Unix.FilePermissions.S_IRGRP |
-                                     Mono.Unix.FilePermissions.S_IWGRP |
-                                     Mono.Unix.FilePermissions.S_IROTH |
-                                     Mono.Unix.FilePermissions.S_IWOTH);
+            Mono.Unix.Native.Syscall.chmod (path,
+                                     Mono.Unix.Native.FilePermissions.S_IRUSR |
+                                     Mono.Unix.Native.FilePermissions.S_IWUSR |
+                                     Mono.Unix.Native.FilePermissions.S_IRGRP |
+                                     Mono.Unix.Native.FilePermissions.S_IWGRP |
+                                     Mono.Unix.Native.FilePermissions.S_IROTH |
+                                     Mono.Unix.Native.FilePermissions.S_IWOTH);
 
             if (server_thread == null) 
             {
