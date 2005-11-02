@@ -283,7 +283,6 @@ namespace Mono.Unix.Native {
 	}
 
 	[Map]
-	[CLSCompliant (false)]
 	public enum Signum : int {
 		SIGHUP    =  1, // Hangup (POSIX).
 		SIGINT    =  2, // Interrupt (ANSI).
@@ -323,7 +322,6 @@ namespace Mono.Unix.Native {
 	}
 
 	[Flags][Map]
-	[CLSCompliant (false)]
 	public enum WaitOptions : int {
 		WNOHANG   = 1,  // Don't block waiting
 		WUNTRACED = 2,  // Report status of stopped children
@@ -632,7 +630,6 @@ namespace Mono.Unix.Native {
 	}
 
 	[Map][Flags]
-	[CLSCompliant (false)]
 	public enum PollEvents : short {
 		POLLIN      = 0x0001, // There is data to read
 		POLLPRI     = 0x0002, // There is urgent data to read
@@ -807,7 +804,6 @@ namespace Mono.Unix.Native {
 
 	#region Classes
 
-	[CLSCompliant (false)]
 	public sealed class Dirent
 	{
 		[CLSCompliant (false)]

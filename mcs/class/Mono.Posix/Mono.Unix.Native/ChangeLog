@@ -1,5 +1,9 @@
 2005-11-02  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Syscall.cs: Remove [CLSCompliant(false)] when it isn't needed.
+
+2005-11-02  Jonathan Pryor <jonpryor@vt.edu>
+
 	* FileNameMarshaler.cs: Use UnixMarshal.FreeHeap().  .Free() is obsolete.
 
 2005-10-27  Jonathan Pryor <jonpryor@vt.edu>
