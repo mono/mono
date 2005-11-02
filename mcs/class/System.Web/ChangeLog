@@ -1,3 +1,8 @@
+2005-11-02  Chris Toshok  <toshok@ximian.com>
+
+	* System.Web.dll.sources: add
+	System.Web.Hosting/HostingEnvironment.cs
+
 2005-10-02  Eyal Alaluf <eyala@mainsoft.com>
 	* System.Web.vmwcsproj - Added System.Web/HttpApplication.jvm.cs
 

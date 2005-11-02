@@ -994,16 +994,25 @@ namespace System.Web {
 			string verb = request.RequestType;
 			string url = request.FilePath;
 			
+			IHttpHandler handler = null;
+#if false
+			System.Configuration.Configuration config = WebConfiguration.OpenWebConfiguration (request.PhysicalApplicationPath);
+			HttpHandlersSection section;
+			/* XXX once SystemWebSectionGroup is working, use the following:
+			   section = ((SystemWebSectionGroup)config.GetSection ("system.web")).HttpHandlers;
+			 */
+			section = (HttpHandlersSection)config.GetSection ("system.web/httpHandlers");
+#else
 			HandlerFactoryConfiguration factory_config = (HandlerFactoryConfiguration) HttpContext.GetAppConfig ("system.web/httpHandlers");
 			object o = factory_config.LocateHandler (verb, url);
 			factory = o as IHttpHandlerFactory;
-			IHttpHandler handler;
 			
 			if (factory == null) {
 				handler = (IHttpHandler) o;
 			} else {
 				handler = factory.GetHandler (context, verb, url, request.PhysicalPath);
 			}
+#endif
 			context.Handler = handler;
 
 			return handler;
