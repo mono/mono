@@ -30,6 +30,7 @@ System.CodeDom.Compiler/CodeGeneratorFromTypeTestBase.cs
 System.CodeDom.Compiler/CodeGeneratorOptionsTest.cs
 System.CodeDom.Compiler/CodeGeneratorTest.cs
 System.CodeDom.Compiler/CodeGeneratorTestBase.cs
+System.CodeDom.Compiler/ExecutorTest.cs
 System.CodeDom.Compiler/GeneratedCodeAttributeTest.cs
 System.CodeDom.Compiler/IndentedTextWriterTest.cs
 System.CodeDom.Compiler/TempFileCollectionTest.cs
@@ -232,6 +233,7 @@ System.CodeDom.Compiler/CompilerErrorCollectionCas.cs
 System.CodeDom.Compiler/CompilerInfoCas.cs
 System.CodeDom.Compiler/CompilerParametersCas.cs
 System.CodeDom.Compiler/CompilerResultsCas.cs
+System.CodeDom.Compiler/ExecutorCas.cs
 System.CodeDom.Compiler/GeneratedCodeAttributeCas.cs
 System.CodeDom.Compiler/IndentedTextWriterCas.cs
 System.CodeDom.Compiler/TempFileCollectionCas.cs
