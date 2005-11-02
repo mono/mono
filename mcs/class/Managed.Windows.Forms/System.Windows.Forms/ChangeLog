@@ -1,5 +1,12 @@
 2005-11-02  Jackson Harper  <jackson@ximian.com>
 
+	* X11Dnd.cs: Make sure to send a status message if the pointer
+	enters a control that can not accept a drop, otherwise the cursor
+	isn't updated correctly. Also tried to compress the lines of code
+	a bit.
+
+2005-11-02  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs: Change cursors based on drag action. Also attempt to
 	set actions correctly.  This isn't perfect as XDND and win32 have
 	some differences on how you allow actions. I'll clear this up by

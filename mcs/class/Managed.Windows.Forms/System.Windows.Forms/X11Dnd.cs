@@ -536,8 +536,13 @@ namespace System.Windows.Forms {
 			handler.Converter.GetData (this, data, ref xevent);
 
 			converts_pending--;
-			if (converts_pending <= 0 && position_recieved)
-				SendEnterStatus ();
+			if (converts_pending <= 0 && position_recieved) {
+				drag_event = new DragEventArgs (data, 0, pos_x, pos_y,
+					allowed, DragDropEffects.None);
+				control.DndEnter (drag_event);
+				SendStatus (source, drag_event.Effect);
+				status_sent = true;
+			}
 			return true;
 		}
 
@@ -644,6 +649,7 @@ namespace System.Windows.Forms {
 			if (c == null)
 				return true;
 			if (!c.allow_drop) {
+				SendStatus (source, DragDropEffects.None);
 				Finish ();
 				return true;
 			}
@@ -654,9 +660,13 @@ namespace System.Windows.Forms {
 			if (converts_pending > 0)
 				return true;
 			if (!status_sent) {
-				SendEnterStatus ();
+				drag_event = new DragEventArgs (data, 0, pos_x, pos_y,
+					allowed, DragDropEffects.None);
+				control.DndEnter (drag_event);
+				SendStatus (source, drag_event.Effect);
+				status_sent = true;
 			} else {
-				SendStatus ();
+				SendStatus (source, drag_event.Effect);
 				control.DndOver (drag_event);
 			}
 			
@@ -705,8 +715,8 @@ namespace System.Windows.Forms {
 				Cursor cursor = CursorNo;
 				if (drag_data.WillAccept) {
 					// Same order as on MS
-					IntPtr action = (int) xevent.ClientMessageEvent.ptr5;
-					if ((action == XdndActionCopy)
+					IntPtr action = xevent.ClientMessageEvent.ptr5;
+					if (action == XdndActionCopy)
 						cursor = CursorCopy;
 					else if (action == XdndActionLink)
 						cursor = CursorLink;
@@ -795,7 +805,7 @@ namespace System.Windows.Forms {
 			return null;
 		}
 
-		private void SendStatus ()
+		private void SendStatus (IntPtr source, DragDropEffects effect)
 		{
 			XEvent xevent = new XEvent ();
 
@@ -805,34 +815,11 @@ namespace System.Windows.Forms {
 			xevent.ClientMessageEvent.message_type = XdndStatus;
 			xevent.ClientMessageEvent.format = 32;
 			xevent.ClientMessageEvent.ptr1 = toplevel;
-			if (drag_event.Effect != DragDropEffects.None)
+			if (effect != DragDropEffects.None)
 				xevent.ClientMessageEvent.ptr2 = (IntPtr) 1;
 
-			xevent.ClientMessageEvent.ptr5 = ActionFromEffect (drag_event.Effect);
+			xevent.ClientMessageEvent.ptr5 = ActionFromEffect (effect);
 			XSendEvent (display, source, false, 0, ref xevent);
-		}
-
-		private void SendEnterStatus ()
-		{
-			drag_event = new DragEventArgs (data, 0, pos_x, pos_y,
-					allowed, DragDropEffects.None);
-			control.DndEnter (drag_event);
-
-			XEvent xevent = new XEvent ();
-
-			xevent.AnyEvent.type = XEventName.ClientMessage;
-			xevent.AnyEvent.display = display;
-			xevent.ClientMessageEvent.window = source;
-			xevent.ClientMessageEvent.message_type = XdndStatus;
-			xevent.ClientMessageEvent.format = 32;
-			xevent.ClientMessageEvent.ptr1 = toplevel;
-			if (drag_event.Effect != DragDropEffects.None)
-				xevent.ClientMessageEvent.ptr2 = (IntPtr) 1;
-
-			xevent.ClientMessageEvent.ptr5 = ActionFromEffect (drag_event.Effect);
-			XSendEvent (display, source, false, 0, ref xevent);
-
-			status_sent = true;
 		}
 
 		private void SendEnter (IntPtr handle, IntPtr from, IntPtr [] supported)
