@@ -939,6 +939,7 @@ System.Web.Util/WebEncoding.cs
 System.Web.Util/WebTrace.cs
 System.Web.Util/WorkItemCallback.cs
 System.Web.Util/WorkItem.cs
+System.Web/VirtualPathUtility.cs
 System.Web/WebCategoryAttribute.cs
 System.Web/WebROCollection.cs
 System.Web/WebSysDescriptionAttribute.cs

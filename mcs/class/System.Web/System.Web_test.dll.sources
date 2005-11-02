@@ -137,6 +137,7 @@ System.Web.UI.WebControls/XmlTest.cs
 System.Web.UI.WebControls/XmlDataSourceTest.cs
 System.Web.UI.WebControls.WebParts/ConnectionInterfaceCollectionTest.cs
 System.Web.UI.WebControls.WebParts/WebPartTest.cs
+System.Web/VirtualPathUtilityTest.cs
 Cas/AspNetHostingPermissionHelper.cs
 Cas/AspNetHostingMinimal.cs
 Cas/AspNetHostingNone.cs
