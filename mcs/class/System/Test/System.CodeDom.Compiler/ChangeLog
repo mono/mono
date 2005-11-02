@@ -1,3 +1,9 @@
+2005-11-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeCompilerCas.cs: New. CAS unit tests.
+	* ExecutorCas.cs: New. CAS unit tests.
+	* ExecutorTest.cs: New. Unit tests for Executor.
+
 2005-11-01  Sebastien Pouliot  <sebastien@ximian.com>
  
 	* CodeGeneratorCas.cs: New. CAS unit tests.
