@@ -1,3 +1,7 @@
+2005-11-02  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs: Remove unneeded call to XAllowEvents.
+
 2005-11-02  Miguel de Icaza  <miguel@novell.com>
 
 	* Cursor.cs: When writing the AND-mask bitmap do not include the

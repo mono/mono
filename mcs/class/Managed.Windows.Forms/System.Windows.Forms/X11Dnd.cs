@@ -427,8 +427,6 @@ namespace System.Windows.Forms {
 
 				drag_data.State = DragState.Dragging;
 			} else if (drag_data.State != DragState.None) {
-				XAllowEvents (display, 1 /* SyncPointer */, IntPtr.Zero);
-			
 				bool dnd_aware = false;
 				IntPtr toplevel = IntPtr.Zero;
 				IntPtr window = XplatUIX11.RootWindowHandle;
