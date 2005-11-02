@@ -723,11 +723,21 @@ namespace System.Windows.Forms
 				if ((layout_ht + h_scroll.Height) > client_area.Bottom) {
 					v_scroll.Visible = true;					
 				}
+				else {
+					v_scroll.Visible = false;
+				}
 			} else if (layout_ht > client_area.Bottom) {				
 				v_scroll.Visible = true;
-				if ((layout_wd + v_scroll.Width) > client_area.Right)
+				if ((layout_wd + v_scroll.Width) > client_area.Right) {
 					h_scroll.Visible = true;
-			}
+				}
+				else {
+					h_scroll.Visible = false;
+				}
+			} else {
+				h_scroll.Visible = false;
+				v_scroll.Visible = false;
+			}			
 
 			if (h_scroll.Visible) {
 				h_scroll.Location = new Point (client_area.X, client_area.Bottom - h_scroll.Height);

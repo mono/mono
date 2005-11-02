@@ -1,3 +1,9 @@
+2005-11-02  Jordi Mas i Hernandez <jmas@softcatala.org>
+
+	* ListView.cs: Fixes scroll bar visibility. Hide them if they were
+	previously shown but they are no longer need it. Very obvious when 
+	browsing files with FileDialog.
+
 2005-11-01  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* Control.cs: We always need to call OnPaintBackground. We pretty much
