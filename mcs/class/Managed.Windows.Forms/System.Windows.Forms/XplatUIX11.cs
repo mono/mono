@@ -138,7 +138,7 @@ namespace System.Windows.Forms {
 
 		// State
 		private static Point		MousePosition;		// Last position of mouse, in screen coords
-		private static MouseButtons	MouseState;		// Last state of mouse buttons
+		internal static MouseButtons	MouseState;		// Last state of mouse buttons
 
 		// Timers
 		private static ArrayList	TimerList;		// Holds SWF.Timers
@@ -2523,10 +2523,9 @@ namespace System.Windows.Forms {
 				}
 
 				case XEventName.ButtonRelease: {
+					Dnd.HandleButtonRelease (ref xevent);
 					switch(xevent.ButtonEvent.button) {
 						case 1: {
-							Dnd.HandleButtonRelease (ref xevent);
-
 							MouseState &= ~MouseButtons.Left;
 							if (client) {
 								msg.message = Msg.WM_LBUTTONUP;

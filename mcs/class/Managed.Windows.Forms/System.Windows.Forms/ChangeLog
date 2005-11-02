@@ -1,6 +1,10 @@
 2005-11-02  Jackson Harper  <jackson@ximian.com>
 
-	* X11Dnd.cs: Remove unneeded call to XAllowEvents.
+	* X11Dnd.cs: Remove unneeded call to XAllowEvents.  Make sure that
+	the correct button is release to end a drag.
+	* XplatUIX11.cs: Make the button state internal so the drag system
+	can access it.  Dragging needs to know about all button releases,
+	not just left button.
 
 2005-11-02  Miguel de Icaza  <miguel@novell.com>
 

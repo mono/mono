@@ -261,7 +261,8 @@ namespace System.Windows.Forms {
 			public object Data;
 			public IntPtr Action;
 			public IntPtr [] SupportedTypes;
-
+			public MouseButtons MouseState;
+			
 			public IntPtr LastWindow;
 			public IntPtr LastTopLevel;
 
@@ -348,7 +349,7 @@ namespace System.Windows.Forms {
 			drag_data = new DragData ();
 			drag_data.Window = handle;
 			drag_data.State = DragState.Beginning;
-			
+			drag_data.MouseState = XplatUIX11.MouseState;
 			drag_data.Data = data;
 			drag_data.SupportedTypes = DetermineSupportedTypes (data);
 
@@ -368,8 +369,13 @@ namespace System.Windows.Forms {
 
 		public void HandleButtonRelease (ref XEvent xevent)
 		{
-
 			if (drag_data == null)
+				return;
+
+			if (!((drag_data.MouseState == MouseButtons.Left &&
+					      xevent.ButtonEvent.button == 1) ||
+					    (drag_data.MouseState == MouseButtons.Right &&
+							    xevent.ButtonEvent.button == 3)))
 				return;
 
 			if (drag_data.State == DragState.Beginning) {
