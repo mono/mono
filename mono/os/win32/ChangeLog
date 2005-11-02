@@ -1,3 +1,7 @@
+2005-11-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* util.c: build fix.
+
 2005-03-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* util.c: Fix buffer length in mono_set_rootdir.
