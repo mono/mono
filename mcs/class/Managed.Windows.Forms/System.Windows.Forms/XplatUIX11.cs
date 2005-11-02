@@ -993,6 +993,8 @@ namespace System.Windows.Forms {
 					}
 
 					case XEventName.SelectionRequest: {
+						if (Dnd.HandleSelectionRequestEvent (ref xevent))
+							break;
 						XEvent sel_event;
 
 						sel_event = new XEvent();
@@ -1074,9 +1076,6 @@ namespace System.Windows.Forms {
 					}
 
 					case XEventName.SelectionNotify: {
-						if (Dnd.HandleSelectionNotifyEvent (ref xevent)) {
-							break;
-						}
 						if (Clipboard.Enumerating) {
 							Clipboard.Enumerating = false;
 							if (xevent.SelectionEvent.property != 0) {
@@ -1095,6 +1094,8 @@ namespace System.Windows.Forms {
 							} else {
 								Clipboard.Item = null;
 							}
+						} else {
+							Dnd.HandleSelectionNotifyEvent (ref xevent);
 						}
 						break;
 					}
@@ -2524,6 +2525,8 @@ namespace System.Windows.Forms {
 				case XEventName.ButtonRelease: {
 					switch(xevent.ButtonEvent.button) {
 						case 1: {
+							Dnd.HandleButtonRelease (ref xevent);
+
 							MouseState &= ~MouseButtons.Left;
 							if (client) {
 								msg.message = Msg.WM_LBUTTONUP;
@@ -2579,6 +2582,8 @@ namespace System.Windows.Forms {
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
 						#endif
+
+						Dnd.HandleMotionNotify (ref xevent);
 						NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
 
 						msg.message = Msg.WM_MOUSEMOVE;
@@ -3231,6 +3236,17 @@ namespace System.Windows.Forms {
 		internal override void SetAllowDrop (IntPtr handle, bool value)
 		{
 			// We allow drop on all windows
+		}
+
+		internal override DragDropEffects StartDrag (IntPtr handle, object data,
+				DragDropEffects allowed_effects)
+		{
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+
+			if (hwnd == null)
+				throw new ArgumentException ("Attempt to begin drag from invalid window handle (" + handle.ToInt32 () + ").");
+
+			return Dnd.StartDrag (hwnd.client_window, data, allowed_effects);
 		}
 
 		internal override void SetBorderStyle(IntPtr handle, FormBorderStyle border_style) {

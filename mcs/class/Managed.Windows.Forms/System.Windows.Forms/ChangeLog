@@ -1,3 +1,11 @@
+2005-11-02  Jackson Harper  <jackson@ximian.com>
+
+	* X11Dnd.cs: Change cursors based on drag action. Also attempt to
+	set actions correctly.  This isn't perfect as XDND and win32 have
+	some differences on how you allow actions. I'll clear this up by
+	adding a path for drag from MWF to MWF windows.
+	* XplatUIX11.cs: Hook into the dnd system.
+
 2005-11-02  Jordi Mas i Hernandez <jmas@softcatala.org>
 
 	* ListView.cs: Fixes scroll bar visibility. Hide them if they were

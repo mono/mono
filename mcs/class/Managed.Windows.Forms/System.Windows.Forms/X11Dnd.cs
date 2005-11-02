@@ -259,6 +259,7 @@ namespace System.Windows.Forms {
 			public IntPtr Window;
 			public DragState State;
 			public object Data;
+			public IntPtr Action;
 			public IntPtr [] SupportedTypes;
 
 			public IntPtr LastWindow;
@@ -318,6 +319,12 @@ namespace System.Windows.Forms {
 		private DragDropEffects allowed;
 		private DragEventArgs drag_event;
 
+		private Cursor CursorNo;
+		private Cursor CursorCopy;
+		private Cursor CursorMove;
+		private Cursor CursorLink;
+		private IntPtr CurrentCursorHandle;
+		
 		public X11Dnd (IntPtr display)
 		{
 			this.display = display;
@@ -345,7 +352,15 @@ namespace System.Windows.Forms {
 			drag_data.Data = data;
 			drag_data.SupportedTypes = DetermineSupportedTypes (data);
 
-			// drag_action = ActionFromEffect (allowed_effects);
+			drag_data.Action = ActionFromEffect (allowed_effects);
+
+			if (CursorNo == null) {
+				// Make sure the cursors are created
+				CursorNo = new Cursor (typeof (X11Dnd), "DnDNo.cur");
+				CursorCopy = new Cursor (typeof (X11Dnd), "DnDCopy.cur");
+				CursorMove = new Cursor (typeof (X11Dnd), "DnDMove.cur");
+				CursorLink = new Cursor (typeof (X11Dnd), "DnDLink.cur");
+			}
 
 			drag_data.LastTopLevel = IntPtr.Zero;
 			return DragDropEffects.Copy;
@@ -402,7 +417,7 @@ namespace System.Windows.Forms {
 						EventMask.ButtonReleaseMask,
 						GrabMode.GrabModeAsync,
 						GrabMode.GrabModeAsync,
-						IntPtr.Zero, IntPtr.Zero, 0);
+						IntPtr.Zero, IntPtr.Zero/*CursorCopy.Handle*/, 0);
 
 				if (suc != 0) {
 					Console.Error.WriteLine ("Could not grab pointer aborting drag.");
@@ -460,8 +475,8 @@ namespace System.Windows.Forms {
 					SendEnter (toplevel, drag_data.Window, drag_data.SupportedTypes);
 				} else {
 					// Already in a toplevel window, so send a position
-					IntPtr action = XdndActionCopy;
-					SendPosition (toplevel, drag_data.Window, action,
+					SendPosition (toplevel, drag_data.Window,
+							drag_data.Action,
 							xevent.MotionEvent.x_root,
 							xevent.MotionEvent.y_root,
 							xevent.MotionEvent.time);
@@ -685,10 +700,31 @@ namespace System.Windows.Forms {
 
 		private bool HandleStatusEvent (ref XEvent xevent)
 		{
-			if (drag_data.State == DragState.Entered) {
-//				bool want_position = ((int) xevent.ClientMessageEvent.ptr2 & 0x2) != 0;
+			if (drag_data != null && drag_data.State == DragState.Entered) {
 				drag_data.WillAccept = ((int) xevent.ClientMessageEvent.ptr2 & 0x1) != 0;
-//				IntPtr action = xevent.ClientMessageEvent.ptr5;
+				Cursor cursor = CursorNo;
+				if (drag_data.WillAccept) {
+					// Same order as on MS
+					IntPtr action = (int) xevent.ClientMessageEvent.ptr5;
+					if ((action == XdndActionCopy)
+						cursor = CursorCopy;
+					else if (action == XdndActionLink)
+						cursor = CursorLink;
+					else if (action == XdndActionMove)
+						cursor = CursorMove;
+
+				}
+
+					// TODO: Try not to set the cursor so much
+				//if (cursor.Handle != CurrentCursorHandle) {
+					XChangeActivePointerGrab (display,
+							EventMask.ButtonMotionMask |
+							EventMask.PointerMotionMask |
+							EventMask.ButtonPressMask |
+							EventMask.ButtonReleaseMask,
+							cursor.Handle, IntPtr.Zero);
+					CurrentCursorHandle = cursor.Handle;
+					//}	
 			}
 			return true;
 		}
@@ -696,23 +732,27 @@ namespace System.Windows.Forms {
 		private DragDropEffects EffectFromAction (IntPtr action)
 		{
 			DragDropEffects allowed = DragDropEffects.None;
+
 			if (action == XdndActionCopy)
 				allowed = DragDropEffects.Copy;
-			if (action == XdndActionMove)
-				allowed = DragDropEffects.Move;
+			else if (action == XdndActionMove)
+				allowed |= DragDropEffects.Move;
 			if (action == XdndActionLink)
-				allowed = DragDropEffects.Link;
+				allowed |= DragDropEffects.Link;
 			return allowed;
 		}
 
 		private IntPtr ActionFromEffect (DragDropEffects effect)
 		{
 			IntPtr action = IntPtr.Zero;
-			if (effect == DragDropEffects.Copy)
+
+			// We can't OR together actions on XDND so sadly the primary
+			// is the only one shown here
+			if ((effect & DragDropEffects.Copy) != 0)
 				action = XdndActionCopy;
-			if (effect == DragDropEffects.Move)
+			else if ((effect & DragDropEffects.Move) != 0)
 				action = XdndActionMove;
-			if (effect == DragDropEffects.Link)
+			else if ((effect & DragDropEffects.Link) != 0)
 				action = XdndActionLink;
 			return action;
 		}
@@ -757,7 +797,6 @@ namespace System.Windows.Forms {
 
 		private void SendStatus ()
 		{
-			DragDropEffects action = drag_event.Effect;
 			XEvent xevent = new XEvent ();
 
 			xevent.AnyEvent.type = XEventName.ClientMessage;
@@ -769,7 +808,7 @@ namespace System.Windows.Forms {
 			if (drag_event.Effect != DragDropEffects.None)
 				xevent.ClientMessageEvent.ptr2 = (IntPtr) 1;
 
-			xevent.ClientMessageEvent.ptr5 = ActionFromEffect (action);
+			xevent.ClientMessageEvent.ptr5 = ActionFromEffect (drag_event.Effect);
 			XSendEvent (display, source, false, 0, ref xevent);
 		}
 
@@ -1013,6 +1052,16 @@ namespace System.Windows.Forms {
 			return res;
 		}
 
+		private Control MwfWindow (IntPtr window)
+		{
+			Hwnd hwnd = Hwnd.ObjectFromHandle (window);
+			if (hwnd == null)
+				return null;
+
+			Control res = Control.FromHandle (hwnd.client_window);
+			return res;
+		}
+
 		private bool IsWindowDndAware (IntPtr handle)
 		{
 			bool res = true;
@@ -1131,6 +1180,8 @@ namespace System.Windows.Forms {
 
 		[DllImport ("libX11")]
 		internal extern static int XFetchName (IntPtr display, IntPtr window, ref IntPtr window_name);
+		[DllImport ("libX11")]
+		internal extern static int XChangeActivePointerGrab (IntPtr display, EventMask event_mask, IntPtr cursor, IntPtr time);
 	}
 
 }
