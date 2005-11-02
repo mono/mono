@@ -1,3 +1,8 @@
+2005-11-01  Chris Toshok  <toshok@ximian.com>
+
+	* VirtualPathUtility.cs: new (partial implementation) to get some
+	MS provider examples compiling.
+
 2005-10-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpContext.cs: added a new internal overload for ClearError.
