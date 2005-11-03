@@ -1,5 +1,10 @@
 2005-11-03 Konstantin Triger <kostat@mainsoft.com>
 
+	* LdapConnection.cs: TARGET_JVM: throw an exception if failed during
+		secure binding.
+
+2005-11-03 Konstantin Triger <kostat@mainsoft.com>
+
 	* Connection.cs: TARGET_JVM: ifdef the unsupported method
 
 2005-10-30 Konstantin Triger <kostat@mainsoft.com>

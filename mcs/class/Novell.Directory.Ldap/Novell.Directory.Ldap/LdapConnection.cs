@@ -1613,6 +1613,9 @@ namespace Novell.Directory.Ldap
 				for (;;) {
 					LdapResponseQueue queue = Bind(LdapConnection.Ldap_V3, username, token, null, null, AuthenticationMech);
 					LdapResponse res = (LdapResponse) queue.getResponse ();
+					if (res.ResultCode != LdapException.SASL_BIND_IN_PROGRESS &&
+						res.ResultCode != LdapException.SUCCESS)
+						throw new LdapException(ExceptionMessages.CONNECTION_ERROR, res.ResultCode, res.ErrorMessage);
 					Asn1OctetString serverSaslCreds = ((RfcBindResponse)res.Asn1Object.Response).ServerSaslCreds;
 					token = serverSaslCreds != null ? serverSaslCreds.byteValue () : null;
 
