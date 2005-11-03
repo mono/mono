@@ -28,6 +28,7 @@
 
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Globalization;
 using System.Security.Permissions;
 
 namespace System.Web.UI.WebControls {
@@ -239,56 +240,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		protected override void AddAttributesToRender (HtmlTextWriter w)
-		{
-			if (Page != null)
-				Page.VerifyRenderingInServerForm (this);
-
-			/* This is a nasty kludge to avoid rendering
-			 * "style" and the ControlStyle in checkboxes
-			 * (we use a surrounding <span> instead), but
-			 * still pass the unit test that shows the
-			 * style being rendered in multiple calls to
-			 * Render () (which means we can't just delete
-			 * Attributes["style"] or ControlStyle.Reset()
-			 * in Render ())
-			 */
-			string css_style = Attributes ["style"];
-			if (css_style != null) {
-				Attributes.Remove ("style");
-			}
-
-			Style style = new Style ();
-			if (ControlStyleCreated) {
-				style.CopyFrom (ControlStyle);
-				ControlStyle.Reset ();
-			}
-			
-			base.AddAttributesToRender (w);
-
-			if (css_style != null) {
-				Attributes ["style"] = css_style;
-			}
-			if (!style.IsEmpty) {
-				ApplyStyle (style);
-			}
-			
-			InternalAddAttributesToRender (w);
-			
-			w.AddAttribute (HtmlTextWriterAttribute.Type,
-					render_type);
-			w.AddAttribute (HtmlTextWriterAttribute.Name,
-					NameAttribute);
-			
-			if (AutoPostBack) {
-				w.AddAttribute (HtmlTextWriterAttribute.Onclick, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
-			}
-
-			if (Checked) {
-				w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
-			}
-		}
-
 #if NET_2_0
 		protected override void LoadViewState (object savedState)
 		{
@@ -359,20 +310,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		void RenderLabel (HtmlTextWriter w)
-		{
-			if (Text.Length > 0) {
-#if NET_2_0
-				if (labelAttributes != null)
-					labelAttributes.AddAttributes (w);
-#endif
-				w.AddAttribute (HtmlTextWriterAttribute.For, ClientID);
-				w.RenderBeginTag (HtmlTextWriterTag.Label);
-				w.Write (this.Text);
-				w.RenderEndTag ();
-			}
-		}
-		
 #if NET_2_0
 		protected internal
 #else		
@@ -380,43 +317,107 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render (HtmlTextWriter w)
 		{
-			bool control_style = false;
-			
-			/* Need to apply the styles around the text
-			 * label too
-			 */
-			if (ControlStyleCreated) {
+			if (Page != null)
+				Page.VerifyRenderingInServerForm (this);
+
+			bool need_span = ControlStyleCreated;
+			if (need_span)
 				ControlStyle.AddAttributesToRender (w, this);
-				w.RenderBeginTag (HtmlTextWriterTag.Span);
 
-				control_style = true;
-			} else if (Attributes ["style"] != null) {
-				/* TODO: check if this or the style
-				 * has precendence, or if they should
-				 * be merged (if I can figure out how
-				 * to turn a CssStyleCollection into a
-				 * Style)
-				 */
-				CssStyleCollection style = Attributes.CssStyle;
-				
-				w.AddAttribute (HtmlTextWriterAttribute.Style,
-						style.Value);
-				w.RenderBeginTag (HtmlTextWriterTag.Span);
-
-				control_style = true;
+			if (!Enabled) {
+				w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+				//need_span = true;
 			}
-			
-			if (TextAlign == TextAlign.Left) {
-				RenderLabel (w);
-				base.Render (w);
+
+			string tt = ToolTip;
+			if (tt != ""){
+				w.AddAttribute ("title", tt);
+				need_span = true;
+			}
+
+			if (Attributes.Count > 0){
+				Attributes.AddAttributes (w);
+				need_span = true;
+			}
+
+			if (need_span)
+				w.RenderBeginTag (HtmlTextWriterTag.Span);
+
+			TextAlign align = TextAlign;
+			if (align == TextAlign.Right) {
+				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
+				w.AddAttribute (HtmlTextWriterAttribute.Type, render_type);
+				w.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+				if (Checked)
+					w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
+
+				if (AutoPostBack){
+					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
+							     Page.ClientScript.GetPostBackClientEvent (this, String.Empty));
+					w.AddAttribute ("language", "javascript");
+				}
+
+				if (AccessKey.Length > 0)
+					w.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
+
+				if (TabIndex != 0)
+					w.AddAttribute (HtmlTextWriterAttribute.Tabindex,
+							     TabIndex.ToString (CultureInfo.InvariantCulture));
+
+				w.RenderBeginTag (HtmlTextWriterTag.Input);
+				w.RenderEndTag ();
+				string text = Text;
+				if (text != "") {
+#if NET_2_0
+					if (labelAttributes != null)
+						labelAttributes.AddAttributes (w);
+#endif
+					w.AddAttribute (HtmlTextWriterAttribute.For, ClientID);
+					w.RenderBeginTag (HtmlTextWriterTag.Label);
+					w.Write (text);
+					w.RenderEndTag ();
+				}
 			} else {
-				base.Render (w);
-				RenderLabel (w);
-			}
+				string text = Text;
+				if (text != "") {
+#if NET_2_0
+					if (labelAttributes != null)
+						labelAttributes.AddAttributes (w);
+#endif
+					w.AddAttribute (HtmlTextWriterAttribute.For, ClientID);
+					w.RenderBeginTag (HtmlTextWriterTag.Label);
+					w.Write (text);
+					w.RenderEndTag ();
+				}
 
-			if (control_style) {
+				if (!Enabled)
+					w.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled");
+
+				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
+				w.AddAttribute (HtmlTextWriterAttribute.Type, render_type);
+				w.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+				if (Checked)
+					w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
+
+				if (AutoPostBack){
+					w.AddAttribute (HtmlTextWriterAttribute.Onclick,
+							     Page.ClientScript.GetPostBackClientEvent (this, String.Empty));
+					w.AddAttribute ("language", "javascript");
+				}
+
+				if (AccessKey.Length > 0)
+					w.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
+
+				if (TabIndex != 0)
+					w.AddAttribute (HtmlTextWriterAttribute.Tabindex,
+							     TabIndex.ToString (NumberFormatInfo.InvariantInfo));
+
+				w.RenderBeginTag (HtmlTextWriterTag.Input);
 				w.RenderEndTag ();
 			}
+
+			if (need_span)
+				w.RenderEndTag ();
 		}
 
 #if NET_2_0
@@ -458,8 +459,16 @@ namespace System.Web.UI.WebControls {
 			RaisePostDataChangedEvent ();
 		}
 
+#if NET_2_0
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
+		{
+			base.AddAttributesToRender (writer);
+		}
+#endif
+
 		internal virtual void InternalAddAttributesToRender (HtmlTextWriter w)
 		{
+			AddAttributesToRender (w);
 		}
 	}
 }
