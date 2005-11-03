@@ -155,6 +155,10 @@ namespace System.Web.UI.WebControls {
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 #endif
 
+			if (AutoPostBack)
+				writer.AddAttribute (HtmlTextWriterAttribute.Onchange,
+						Page.ClientScript.GetPostBackClientHyperlink (this, ""));
+
 			if (SelectionMode == ListSelectionMode.Multiple)
 				writer.AddAttribute (HtmlTextWriterAttribute.Multiple,
 						"multiple");

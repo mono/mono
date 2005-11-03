@@ -1,5 +1,10 @@
 2005-11-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* ListBox.cs: render the 'onchange' attribute when AutoPostback is
+	enabled. Fixes bug #76608.
+
+2005-11-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* CheckBox.cs: AddAttributesToRender was extra in 1.1, so moved all
 	the logic to Render and make it render the ID, which fixes bug #76596.
 
