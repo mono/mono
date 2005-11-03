@@ -1,3 +1,11 @@
+2005-11-03  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76599.
+	* expression.cs (ElementAccess.DoResolveLValue): Fixed buffer
+	access has to be fixed.
+	
+	* typemanager.cs (IsUnmanagedType): Wrong common field type.
+
 2005-11-01  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76590.

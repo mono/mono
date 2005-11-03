@@ -1334,7 +1334,7 @@ public class TypeManager {
 		if (t is TypeBuilder){
 			TypeContainer tc = LookupTypeContainer (t);
 			if (tc.Fields != null){
-				foreach (Field f in tc.Fields){
+				foreach (FieldMember f in tc.Fields){
 					// Avoid using f.FieldBuilder: f.Define () may not yet have been invoked.
 					if ((f.ModFlags & Modifiers.STATIC) != 0)
 						continue;

@@ -7346,11 +7346,10 @@ namespace Mono.CSharp {
 						Report.Error (1708, loc, "Fixed size buffers can only be accessed through locals or fields");
 						return null;
 					}
-// TODO: not sure whether it is correct
-//					if (!ec.InFixedInitializer) {
-//						Error (1666, "You cannot use fixed sized buffers contained in unfixed expressions. Try using the fixed statement");
-//						return null;
-//					}
+					if (!ec.InFixedInitializer && ec.ContainerType.IsValueType) {
+						Error (1666, "You cannot use fixed size buffers contained in unfixed expressions. Try using the fixed statement");
+						return null;
+					}
 					return MakePointerAccess (ec, ff.ElementType);
 				}
 			}
