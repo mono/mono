@@ -35,7 +35,7 @@ namespace System.Windows.Forms {
 
 		private static readonly int OrigSize = 50;
 
-		public TreeNode owner;
+		private TreeNode owner;
 		private int count;
 		private TreeNode [] nodes;
 
