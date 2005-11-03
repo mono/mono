@@ -1115,8 +1115,10 @@ namespace Novell.Directory.Ldap
 			
 			if (socket != null)
 			{
+#if !TARGET_JVM
 				// Just before closing the sockets, abort the reader thread
 				reader.Abort();
+#endif
 				// Close the socket
 				try
 				{
