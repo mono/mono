@@ -57,10 +57,12 @@ public class Program {
 	[SecurityPermission (SecurityAction.Demand, Flags = SecurityPermissionFlag.AllFlags, UnmanagedCode=true)]
 	static public int Main (string[] args)
 	{
+		// TODO: this will not be working for .NET 2.0 as attributes are decoded back
 		Type program = typeof (Program);
+		
 		if (program.GetCustomAttributes (true).Length != 0)
 			return 1;
-
+		
 		if (program.GetConstructor (System.Type.EmptyTypes).GetCustomAttributes (true).Length != 0)
 			return 2;
 
@@ -73,7 +75,17 @@ public class Program {
 		if (program.GetMethod ("Test2").GetCustomAttributes (true).Length != 0)
 			return 5;		
 		
-		Console.WriteLine (Message);
+		Type test2 = typeof (Test2);
+		if (test2.GetCustomAttributes (true).Length != 0)
+			return 6;
+		
+		Console.WriteLine ("OK");
 		return 0;
 	}
 }
+
+[SecurityPermission (SecurityAction.Demand, ControlAppDomain=true)]
+public partial class Test2 {}
+
+[SecurityPermission (SecurityAction.Demand, ControlAppDomain=true)]
+public partial class Test2 {}
