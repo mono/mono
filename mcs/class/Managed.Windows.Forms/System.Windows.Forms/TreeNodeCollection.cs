@@ -181,7 +181,7 @@ namespace System.Windows.Forms {
 			count++;
 		}
 
-		public virtual void Remove (TreeNode node)
+		public void Remove (TreeNode node)
 		{
 			int index = IndexOf (node);
 			if (index > 0)
