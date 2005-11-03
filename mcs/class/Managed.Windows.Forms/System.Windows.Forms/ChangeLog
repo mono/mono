@@ -1,5 +1,11 @@
 2005-11-02  Jackson Harper  <jackson@ximian.com>
 
+	* X11Dnd.cs: If the drag is going to and from a MWF window just
+	copy the data instead of sending it out through the X Selection
+	mechanism.
+
+2005-11-02  Jackson Harper  <jackson@ximian.com>
+
 	* X11Dnd.cs:
 	* XplatUIX11.cs: When in a drag we don't want motion notify
 	messages to get passed on to the other controls. This prevents

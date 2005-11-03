@@ -777,7 +777,23 @@ namespace System.Windows.Forms {
 		{
 			bool match = false;
 
-			XplatUIX11.XGetSelectionOwner (display, (int) XdndSelection);
+			if (source != XplatUIX11.XGetSelectionOwner (display, (int) XdndSelection)) {
+				return false;
+			}
+
+			Control mwfcontrol = MwfWindow (source);
+
+			if (mwfcontrol != null && drag_data != null) {
+				DataObject dragged = drag_data.Data as DataObject;
+				if (dragged != null) {
+					data = dragged;
+				} else {
+					if (data == null)
+						data = new DataObject ();
+					data.SetData (drag_data.Data);
+				}
+				return true;
+			}
 
 			foreach (IntPtr atom in SourceSupportedList (ref xevent)) {
 				MimeHandler handler = FindHandler (atom);
