@@ -32,7 +32,8 @@ using System.Collections;
 
 namespace System.Web.Profile
 {
-	public sealed class ProfileInfoCollection
+	[Serializable]
+	public sealed class ProfileInfoCollection : ICollection, IEnumerable
 	{
 		public ProfileInfoCollection()
 		{

@@ -1,8 +1,10 @@
 //
-// System.Web.Profile.ProfileAuthenticationOption.cs
+// System.Web.UI.WebControls.ProfileGroupBase.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
+//
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,17 +25,49 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 
 #if NET_2_0
+using System;
+using System.Configuration;
+
 namespace System.Web.Profile
 {
-        public enum ProfileAuthenticationOption
-        {
-                Anonymous = 0,
-                Authenticated = 1,
-                All = 2
-        }
+	public class ProfileGroupBase
+	{
+		[MonoTODO]
+		public ProfileGroupBase ()
+		{
+		}
+
+		[MonoTODO]
+		public object GetPropertyValue (string propertyName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Init (ProfileBase parent, string myName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void SetPropertyValue (string propertyName, object propertyValue)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public object this [string propertyName] {
+			get {
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
+			}
+		}
+
+	}
 }
+
 #endif

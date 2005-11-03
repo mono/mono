@@ -1,8 +1,10 @@
 //
-// System.Web.Profile.ProfileAuthenticationOption.cs
+// System.Web.UI.WebControls.ProfileMigrateEventArgs.cs
 //
 // Authors:
-//	Duncan Mak (duncan@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
+//
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,17 +25,36 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 
 #if NET_2_0
+using System;
+using System.Web;
+
 namespace System.Web.Profile
 {
-        public enum ProfileAuthenticationOption
-        {
-                Anonymous = 0,
-                Authenticated = 1,
-                All = 2
-        }
+	public sealed class ProfileMigrateEventArgs : System.EventArgs
+	{
+		public ProfileMigrateEventArgs (HttpContext context, string anonymousId)
+		{
+			this.context = context;
+			this.anonymousId = anonymousId;
+		}
+
+		public string AnonymousID {
+			get {
+				return anonymousId;
+			}
+		}
+
+		public HttpContext Context {
+			get {
+				return context;
+			}
+		}
+
+		HttpContext context;
+		string anonymousId;
+	}
 }
+
 #endif

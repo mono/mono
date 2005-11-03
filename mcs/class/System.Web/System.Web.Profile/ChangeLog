@@ -1,5 +1,20 @@
 2005-11-03  Chris Toshok  <toshok@ximian.com>
 
+	* ProfileEventArgs.cs, ProfileProviderCollection.cs,
+	ProfileAutoSaveEventArgs.cs, ProfileMigrateEventArgs.cs,
+	ProfileBase.cs, ProfileManager.cs,
+	SettingsAllowAnonymousAttribute.cs, ProfileProviderAttribute.cs,
+	ProfileEventHandler.cs, CustomProviderDataAttribute.cs,
+	DefaultProfile.cs, ProfileModule.cs,
+	ProfileAutoSaveEventHandler.cs, ProfileGroupBase.cs,
+	ProfileMigrateEventHandler.cs: 90% unimplemented skeletons.
+	
+	* ProfileInfoCollection.cs: make serializable.
+
+	* ProfileAuthenticationOption.cs: fix ordering of enum elements.
+
+2005-11-03  Chris Toshok  <toshok@ximian.com>
+
 	* ProfileInfoCollection.cs: new implementation.
 
 	* ProfileProvider.cs: new implementation.
