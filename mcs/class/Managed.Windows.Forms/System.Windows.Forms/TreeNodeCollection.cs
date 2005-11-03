@@ -35,7 +35,7 @@ namespace System.Windows.Forms {
 
 		private static readonly int OrigSize = 50;
 
-		private TreeNode owner;
+		public TreeNode owner;
 		private int count;
 		private TreeNode [] nodes;
 
@@ -81,7 +81,7 @@ namespace System.Windows.Forms {
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
 				TreeNode node = (TreeNode) value;
-				SetData (node);
+				node.parent = owner;
 				nodes [index] = node;
 			}
 		}
@@ -95,7 +95,7 @@ namespace System.Windows.Forms {
 			set {
 				if (index < 0 || index >= Count)
 					throw new ArgumentOutOfRangeException ("index");
-				SetData (value);
+				value.parent = owner;
 				nodes [index] = value;
 			}
 		}
@@ -112,9 +112,12 @@ namespace System.Windows.Forms {
 			if (node == null)
 				throw new ArgumentNullException("node");
 
+			// Remove it from any old parents
+			node.Remove ();
+
 			if (owner != null && owner.TreeView != null && owner.TreeView.Sorted)
 				return AddSorted (node);
-			SetData (node);
+			node.parent = owner;
 			if (count >= nodes.Length)
 				Grow ();
 			nodes [count++] = node;
@@ -168,7 +171,7 @@ namespace System.Windows.Forms {
 
 		public virtual void Insert (int index, TreeNode node)
 		{
-			SetData (node);
+			node.parent = owner;
 
 			if (count >= nodes.Length)
 				Grow ();
@@ -188,12 +191,15 @@ namespace System.Windows.Forms {
 		public virtual void RemoveAt (int index)
 		{
 			TreeNode removed = nodes [index];
+			TreeNode parent = removed.parent;
+			removed.parent = null;
+
 			Array.Copy (nodes, index + 1, nodes, index, count - index);
 			count--;
 			if (nodes.Length > OrigSize && nodes.Length > (count * 2))
 				Shrink ();
 			if (owner.TreeView != null)
-				owner.TreeView.UpdateNode (removed);
+				owner.TreeView.UpdateBelow (parent);
 		}
 
 		int IList.Add (object node)
@@ -246,12 +252,11 @@ namespace System.Windows.Forms {
 			// Move the nodes up and adjust their indices
 			for (int i = count - 1; i >= pos; i--) {
 				nodes [i + 1] = nodes [i];
-				nodes [i + 1].SetIndex (i + 1);
 			}
 			count++;
 			nodes [pos] = node;
 
-			SetData (node, pos);
+			node.parent = owner;
 			return count;
 		}
 
@@ -261,19 +266,8 @@ namespace System.Windows.Forms {
 			Array.Sort (nodes, 0, count, new TreeNodeComparer (Application.CurrentCulture.CompareInfo));
 
 			for (int i = 0; i < count; i++) {
-				nodes [i].SetIndex (i);
 				nodes [i].Nodes.Sort ();
 			}
-		}
-
-		private void SetData (TreeNode node)
-		{
-			SetData (node, count);
-		}
-
-		private void SetData (TreeNode node, int pos)
-		{
-			node.SetAddedData ((owner != null ? owner.TreeView : null), owner, pos);
 		}
 
 		private void Grow ()

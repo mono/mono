@@ -36,7 +36,6 @@ namespace System.Windows.Forms {
 		#region Fields
 		private TreeView tree_view;
 		internal TreeNode parent;
-		private int index;
 
 		private string text;
 		private int image_index = -1;
@@ -259,6 +258,7 @@ namespace System.Windows.Forms {
 			get {
 				if (parent == null)
 					return null;
+				int index = Index;
 				if (parent.Nodes.Count > index + 1)
 					return parent.Nodes [index + 1];
 				return null;
@@ -305,6 +305,7 @@ namespace System.Windows.Forms {
 
 		public TreeNode Parent {
 			get {
+				TreeView tree_view = TreeView;
 				if (tree_view != null && tree_view.root_node == parent)
 					return null;
 				return parent;
@@ -315,7 +316,8 @@ namespace System.Windows.Forms {
 			get {
 				if (parent == null)
 					return null;
-				if (index == 0 || index > parent.Nodes.Count)
+				int index = Index;
+				if (index <= 0 || index > parent.Nodes.Count)
 					return null;
 				return parent.Nodes [index - 1];
 			}
@@ -370,17 +372,19 @@ namespace System.Windows.Forms {
 				TreeNode walk = parent;
 				while (walk != null) {
 					if (walk.TreeView != null)
-						tree_view = walk.TreeView;
+						break;
 					walk = walk.parent;
 				}
-				return tree_view;
+				if (walk == null)
+					return null;
+				return walk.TreeView;
 			}
 		}
 
                 public IntPtr Handle {
 			get {
 				// MS throws a NullReferenceException if the TreeView isn't set...
-				if (handle == IntPtr.Zero)
+				if (handle == IntPtr.Zero && TreeView != null)
 					handle = TreeView.CreateNodeHandle ();
 				return handle;
 			}
@@ -450,7 +454,8 @@ namespace System.Windows.Forms {
 		public void Remove () {
 			if (parent == null)
 				return;
-			parent.Nodes.RemoveAt (Index);
+			int index = Index;
+			parent.Nodes.RemoveAt (index);
 		}
 
 		public void Toggle () {
@@ -470,6 +475,7 @@ namespace System.Windows.Forms {
 
 		internal bool IsRoot {
 			get {
+				TreeView tree_view = TreeView;
 				if (tree_view == null)
 					return false;
 				if (tree_view.root_node == this)
@@ -484,14 +490,18 @@ namespace System.Windows.Forms {
 				return false;
 
 			if (parent.BuildFullPath (path))
-				path.Append (tree_view.PathSeparator);
+				path.Append (TreeView.PathSeparator);
 
 			path.Append (text);
 			return true;
 		}
 
 		public int Index {
-			get { return index; }
+			get {
+				if (parent == null)
+					return -1;
+				return parent.Nodes.IndexOf (this);
+			}
 		}
 
 		private void Expand (bool byInternal)
@@ -519,7 +529,7 @@ namespace System.Windows.Forms {
 			if (!is_expanded)
 				return;
 
-			if (tree_view != null && tree_view.root_node == this)
+			if (IsRoot)
 				return;
 
 			bool cancel = false;
@@ -631,16 +641,9 @@ namespace System.Windows.Forms {
 			bounds.Y = y;
 		}
 
-		internal void SetAddedData (TreeView tree_view, TreeNode parent, int index)
+		internal void SetParent (TreeNode parent)
 		{
-			this.tree_view = tree_view;
 			this.parent = parent;
-			this.index = index;
-		}
-
-		internal void SetIndex (int index)
-		{
-			this.index = index;
 		}
 
 		private bool IsInClippingRect
@@ -648,7 +651,7 @@ namespace System.Windows.Forms {
 			get {
 				if (TreeView == null)
 					return false;
-				if (bounds.Y < 0 && bounds.Y > tree_view.ClientRectangle.Height)
+				if (bounds.Y < 0 && bounds.Y > TreeView.ClientRectangle.Height)
 					return false;
 				return true;
 			}
