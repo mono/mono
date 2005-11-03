@@ -61,7 +61,7 @@ namespace System.Windows.Forms {
 		#region	Public Instance Properties
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Color BackColor {
+		public override Color BackColor {
 			get { return base.BackColor; }
 			set {
 				if (value == BackColor)
@@ -75,7 +75,7 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Image BackgroundImage {
+		public override Image BackgroundImage {
 			get { return base.BackgroundImage; }
 			set {
 				if (value == BackgroundImage)
@@ -111,7 +111,7 @@ namespace System.Windows.Forms {
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Color ForeColor {
+		public override Color ForeColor {
 			get { return base.ForeColor; }
 			set {
 				if (value == ForeColor)
@@ -481,7 +481,7 @@ namespace System.Windows.Forms {
 				owner.Refresh ();
 			}
 
-			public virtual bool Contains (StatusBarPanel panel) {
+			public bool Contains (StatusBarPanel panel) {
 				return panels.Contains (panel);
 			}
 
@@ -489,7 +489,7 @@ namespace System.Windows.Forms {
 				return panels.GetEnumerator ();
 			}
 
-			public virtual int IndexOf (StatusBarPanel panel) {
+			public int IndexOf (StatusBarPanel panel) {
 				return panels.IndexOf (panel);
 			}
 

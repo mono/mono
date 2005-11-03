@@ -218,7 +218,7 @@ namespace System.Windows.Forms {
 
 
 		// the back color for the main part of the calendar
-		public Color BackColor {
+		public override Color BackColor {
 			set {
 				if (back_color != value) {
 					back_color = value;
@@ -303,7 +303,7 @@ namespace System.Windows.Forms {
 		}
 
 		// the fore color for the main part of the calendar
-		public Color ForeColor {
+		public override Color ForeColor {
 			set {
 				if (fore_color != value) {
 					fore_color = value;

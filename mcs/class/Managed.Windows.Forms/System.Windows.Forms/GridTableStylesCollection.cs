@@ -98,7 +98,7 @@ namespace System.Windows.Forms
 			return cnt;
 		}
 
-		public void AddRange (DataGridTableStyle[] tables)
+		public virtual void AddRange (DataGridTableStyle[] tables)
 		{
 			foreach (DataGridTableStyle mi in tables)
 				AddInternal (mi);

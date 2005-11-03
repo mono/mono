@@ -288,7 +288,7 @@ namespace System.Windows.Forms
 				get { return false;}
 			}
 
-			public MenuItem this [int index] {
+			public virtual MenuItem this [int index] {
 				get {
 					if (index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("Index of out range");

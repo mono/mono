@@ -1,5 +1,16 @@
 2005-11-03  Jackson Harper  <jackson@ximian.com>
 
+	* Menu.cs:
+	* MainMenu.cs:
+	* GrigTableStylesCollection.cs:
+	* Timer.cs:
+	* TabPage.cs:
+	* HelpProvider.cs:
+	* StatusBar.cs:
+	* MonthCalendar.cs: Signature fixes
+
+2005-11-03  Jackson Harper  <jackson@ximian.com>
+
 	* TreeNodeCollection.cs: Remove should not be virtual.
 	* TreeView.cs: Implement the last of the missing methods.
 

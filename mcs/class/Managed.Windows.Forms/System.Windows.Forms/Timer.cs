@@ -51,7 +51,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue (false)]
-		public bool Enabled {
+		public virtual bool Enabled {
 			get {
 				return enabled;
 			}

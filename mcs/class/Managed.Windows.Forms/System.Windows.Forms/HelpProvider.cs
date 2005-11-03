@@ -108,7 +108,7 @@ namespace System.Windows.Forms {
 		[DefaultValue(null)]
 		[Editor ("System.Windows.Forms.Design.HelpNamespaceEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[Localizable(true)]
-		public string HelpNamespace {
+		public virtual string HelpNamespace {
 			get {
 				return helpnamespace;
 			}

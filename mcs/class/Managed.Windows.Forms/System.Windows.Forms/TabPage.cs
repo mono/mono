@@ -257,7 +257,7 @@ namespace System.Windows.Forms {
 				this.owner = owner;
 			}
 
-			public void Add (Control value)
+			public override void Add (Control value)
 			{
 				base.Add (value);
 			}
