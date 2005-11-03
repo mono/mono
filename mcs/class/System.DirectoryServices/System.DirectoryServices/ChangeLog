@@ -1,3 +1,7 @@
+2005-30-10  Boris Kirzner <borisk@mainsoft.com>
+	* DirectoryEntries.cs: fix for null base dn.
+	* DirectorySearcher.cs: use server root authentication type for binding.
+
 2005-28-07  Boris Kirzner <borisk@mainsoft.com>
 	* DirectoryEntry.cs: pass AuthenticationType as a parameter for
 	LdapConnection.Bind.

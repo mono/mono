@@ -84,7 +84,7 @@ namespace System.DirectoryServices
 			_Host=lUrl.Host;
 			_Port=lUrl.Port;
 			_conn.Connect(_Host,_Port);
-			_conn.Bind(SearchRoot.Username,SearchRoot.Password);
+			_conn.Bind(SearchRoot.Username,SearchRoot.Password,(Novell.Directory.Ldap.AuthenticationTypes)SearchRoot.AuthenticationType);
 
 		}
 

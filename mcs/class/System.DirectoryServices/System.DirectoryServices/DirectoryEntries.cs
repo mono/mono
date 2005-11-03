@@ -190,7 +190,8 @@ namespace System.DirectoryServices
 		{
 			DirectoryEntry ent=new DirectoryEntry(Conn);
 			LdapUrl Burl=new LdapUrl(_Bpath);
-			string eFdn=name+","+Burl.getDN();
+			string baseDn = Burl.getDN();
+			string eFdn=((baseDn != null && baseDn.Length != 0) ? (name + "," + baseDn) : name);
 			LdapUrl curl=new LdapUrl(Burl.Host,Burl.Port,eFdn);
 			ent.Path=curl.ToString();
 			ent.Nflag = true;
