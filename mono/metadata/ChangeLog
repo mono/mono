@@ -1,3 +1,8 @@
+2005-11-03  Martin Baulig  <martin@ximian.com>
+
+	* class.c (mono_class_setup_vtable_general): Also add generic
+	methods to the vtable; fixes #76581.
+
 2005-11-01  Miguel de Icaza  <miguel@novell.com>
 
 	* string-icalls.c (ves_icall_System_String_ctor_encoding): Make
