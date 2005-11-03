@@ -96,6 +96,8 @@ namespace System.Windows.Forms {
 		private StringFormat string_format;
 		private int open_node_count = -1;
 
+		private int drag_begin_x = 0;
+		private int drag_begin_y = 0;
 		private long handle_count = 1;
 
 		#endregion	// Fields
@@ -633,7 +635,13 @@ namespace System.Windows.Forms {
 				e.Handled = true;
 			}
 		}
-		
+
+		protected virtual void OnItemDrag (ItemDragEventArgs e)
+		{
+			if (ItemDrag != null)
+				ItemDrag (this, e);
+		}
+
 		protected virtual void OnAfterCheck (TreeViewEventArgs e) {
 			if (on_after_check != null)
 				on_after_check (this, e);
@@ -1366,6 +1374,10 @@ namespace System.Windows.Forms {
 		}
 
 		private void MouseUpHandler (object sender, MouseEventArgs e) {
+
+			drag_begin_x = -1;
+			drag_begin_y = -1;
+
 			if (!select_mmove)
 				return;
 				
@@ -1394,6 +1406,27 @@ namespace System.Windows.Forms {
 		}
 
 		private void MouseMoveHandler (object sender, MouseEventArgs e) {
+
+			if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right) {
+				if (drag_begin_x == -1 && drag_begin_y == -1) {
+					drag_begin_x = e.X;
+					drag_begin_y = e.Y;
+				} else {
+					double rise = Math.Pow (drag_begin_x - e.X, 2);
+					double run = Math.Pow (drag_begin_y - e.Y, 2);
+					double move = Math.Sqrt (rise + run);
+					if (move > 3) {
+						TreeNode drag = GetNodeAt (e.X, e.Y);
+						
+						if (drag != null) {
+							OnItemDrag (new ItemDragEventArgs (e.Button, drag));
+						}
+						drag_begin_x = -1;
+						drag_begin_y = -1;
+					}
+				}
+				
+			}
 			if(!select_mmove)
 				return;
 			TreeNode node = GetNodeAt(e.X,e.Y);
@@ -1422,6 +1455,8 @@ namespace System.Windows.Forms {
 		#endregion	// Internal & Private Methods and Properties
 
 		#region Events
+		public event ItemDragEventHandler ItemDrag;
+
 		public event TreeViewEventHandler AfterCheck {
 			add { on_after_check += value; }
 			remove { on_after_check -= value; }
