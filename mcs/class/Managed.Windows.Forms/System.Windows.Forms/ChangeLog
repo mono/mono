@@ -1,3 +1,17 @@
+2005-11-03  Jackson Harper  <jackson@ximian.com>
+
+	* TreeNodeConverter.cs: Implement to get off my class-status back.
+
+2005-11-03  Jackson Harper  <jackson@ximian.com>
+
+	* TreeView.cs: Hookup the bits for drag and drop.
+	* TreeNode.cs: Don't cache the tree_view or index anymore, now
+	that nodes can be moved from tree to tree easily this just causes
+	all sorts of problems.
+	* TreeNodeCollection: Don't need to give treenodes an index and
+	treeview anymore when they are added, these are computed on the
+	fly. Also make sure to remove a node before its added.
+
 2005-11-03  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs:
