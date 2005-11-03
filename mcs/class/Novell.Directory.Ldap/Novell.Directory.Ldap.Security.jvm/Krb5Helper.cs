@@ -56,7 +56,6 @@ namespace Novell.Directory.Ldap.Security
 		private readonly bool _delegation;
 
 		private readonly GSSContext _context;
-		private readonly MessageProp _messageProperties; 
 
 		private readonly string _name;
 		private readonly Subject _subject;
@@ -78,9 +77,6 @@ namespace Novell.Directory.Ldap.Security
 
 			CreateContextPrivilegedAction action = new CreateContextPrivilegedAction (_name,_mech,_encryption,_signing,_delegation);
 			_context = (GSSContext) Subject.doAs (_subject,action);
-
-			// 0 is a default JGSS QoP
-			_messageProperties = new MessageProp (0, _encryption);
 		}
 
 		#endregion // Constructors
@@ -102,11 +98,9 @@ namespace Novell.Directory.Ldap.Security
 				if (clientToken == null || clientToken.Length == 0)
 					return Krb5Helper.EmptyToken;
 
-				MessageProp messageProp = new MessageProp (0, false);
-
 				//final handshake
 				byte [] challengeData = (byte []) TypeUtils.ToByteArray (clientToken);
-				byte [] gssOutToken = Unwrap (challengeData, 0, challengeData.Length, messageProp);
+				byte [] gssOutToken = Unwrap (challengeData, 0, challengeData.Length, new MessageProp (false));
 
 				QOP myCop = QOP.NO_PROTECTION;
 
@@ -127,7 +121,7 @@ namespace Novell.Directory.Ldap.Security
 
 				SecureStream.IntToNetworkByteOrder (srvMaxBufSize, gssInToken, 1, 3);
 
-				gssOutToken = Wrap (gssInToken, 0, gssInToken.Length, messageProp);
+				gssOutToken = Wrap (gssInToken, 0, gssInToken.Length, new MessageProp (true));
 
 				return TypeUtils.ToSByteArray (gssOutToken);
 			}
@@ -160,7 +154,7 @@ namespace Novell.Directory.Ldap.Security
 
 		public byte [] Wrap(byte [] outgoing, int start, int len) 
 		{
-			return Wrap (outgoing, start, len, _messageProperties);
+			return Wrap (outgoing, start, len, new MessageProp(true));
 		}
 
 		public byte [] Wrap(byte [] outgoing, int start, int len, MessageProp messageProp)
@@ -186,7 +180,7 @@ namespace Novell.Directory.Ldap.Security
 
 		public byte [] Unwrap(byte [] incoming, int start, int len) 
 		{
-			return Unwrap (incoming, start, len, _messageProperties);
+			return Unwrap (incoming, start, len, new MessageProp(true));
 		}
 
 		public byte [] Unwrap(byte [] incoming, int start, int len, MessageProp messageProp)

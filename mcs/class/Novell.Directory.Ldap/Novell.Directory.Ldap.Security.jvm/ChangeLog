@@ -1,3 +1,10 @@
+2005-11-03  Konstantin Triger <kostat@mainsoft.com>
+
+	* CreateContextPrivilegedAction.cs: always require mutual auth;
+		require integrity by default.
+	* Krb5Helper.cs: for wrap/unwrap: always create MessageProp with 
+		pribState set.
+
 2005-14-08  Boris Kirzner <borisk@mainsoft.com>
 	* Krb5Helper.cs: ExchangeTokens does proper final handshaking. Wrap/Unwrap
 	perform no action if no integrity and encryption accured.

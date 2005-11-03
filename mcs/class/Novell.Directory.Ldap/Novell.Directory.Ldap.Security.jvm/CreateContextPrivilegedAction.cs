@@ -71,10 +71,10 @@ namespace Novell.Directory.Ldap.Security
 				GSSName serverName = manager.createName (_name, GSSName__Finals.NT_HOSTBASED_SERVICE, krb5Oid);
 				GSSContext context = manager.createContext (serverName, krb5Oid, null, GSSContext__Finals.INDEFINITE_LIFETIME);
 
-				//context.requestMutualAuth(true);  
+				context.requestMutualAuth(true);  
 				context.requestConf (_encryption);
-				if (_signing)
-					context.requestInteg (_signing); 
+				if (!_encryption || _signing)
+					context.requestInteg (!_encryption || _signing); 
 				context.requestCredDeleg (_delegation);
 
 				return context;
