@@ -47,12 +47,45 @@ namespace System.Drawing
 	{
 		private IntPtr	fontObject = IntPtr.Zero;
 
+		private void CreateFont(string familyName, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical) {
+                        Status		status;                  
+                        FontFamily	family;                      
+
+			// NOTE: If family name is null, empty or invalid,
+			// MS creates Microsoft Sans Serif font.
+			try {
+				family = new FontFamily (familyName);
+			}
+			catch (Exception){
+				family = FontFamily.GenericSansSerif;
+			}
+
+			setProperties (family, emSize, style, unit, charSet, isVertical);           
+			status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style, unit, out fontObject);
+			GDIPlus.CheckStatus (status);
+		}
+
        		private Font (SerializationInfo info, StreamingContext context)
 		{
+			string		name;
+			float		size;
+			FontStyle	style;
+			GraphicsUnit	unit;
+
+			name = (string)info.GetValue("Name", typeof(string));
+			size = (float)info.GetValue("Size", typeof(float));
+			style = (FontStyle)info.GetValue("Style", typeof(FontStyle));
+			unit = (GraphicsUnit)info.GetValue("Unit", typeof(GraphicsUnit));
+ 
+			CreateFont(name, size, style, unit, (byte)0, false);
 		}
 
 		void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
 		{
+			info.AddValue("Name", Name);
+			info.AddValue("Size", Size);
+			info.AddValue("Style", Style);
+			info.AddValue("Unit", Unit);
 		}
 
 		~Font()
@@ -320,21 +353,7 @@ namespace System.Drawing
 		public Font (string familyName, float emSize, FontStyle style,
 				GraphicsUnit unit, byte charSet, bool isVertical)
 		{
-			// NOTE: If family name is null, empty or invalid,
-			// MS creates Microsoft Sans Serif font.
-			Status status;			
-			FontFamily family;			
-			try {
-				family = new FontFamily (familyName);
-			}
-			catch (Exception){
-				family = FontFamily.GenericSansSerif;
-			}
-			
-			setProperties (family, emSize, style, unit, charSet, isVertical);				
-
-			status = GDIPlus.GdipCreateFont (family.NativeObject, emSize,  style, unit, out fontObject);
-			GDIPlus.CheckStatus (status);			
+			CreateFont(familyName, emSize, style, unit, charSet, isVertical);
 		}
 
 		public object Clone ()
