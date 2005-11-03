@@ -1,5 +1,5 @@
 //
-// System.Web.UI.WebControls.DataGrid.cs
+// System.Web.Profile.ProfileInfo.cs
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -31,6 +31,7 @@ using System;
 
 namespace System.Web.Profile
 {
+	[Serializable]
 	public class ProfileInfo
 	{
 		string user_name;

@@ -1,3 +1,9 @@
+2005-11-03  Chris Toshok  <toshok@ximian.com>
+
+	* ProfileInfoCollection.cs: new implementation.
+
+	* ProfileProvider.cs: new implementation.
+
 2005-08-19  Chris Toshok  <toshok@ximian.com>
 
 	* ProfileInfo.cs: I was bored.  implement this.
