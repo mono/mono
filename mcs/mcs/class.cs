@@ -2133,7 +2133,7 @@ namespace Mono.CSharp {
 		///   Emits the code, this step is performed after all
 		///   the types, enumerations, constructors
 		/// </summary>
-		public void EmitType ()
+		public virtual void EmitType ()
 		{
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, this);
@@ -2547,6 +2547,7 @@ namespace Mono.CSharp {
 		public readonly int OriginalModFlags;
 		public readonly int AllowedModifiers;
 		public readonly TypeAttributes DefaultTypeAttributes;
+		public ListDictionary DeclarativeSecurity;
 
 		static PartialContainer Create (NamespaceEntry ns, TypeContainer parent,
 						MemberName member_name, int mod_flags, Kind kind)
@@ -2672,6 +2673,17 @@ namespace Mono.CSharp {
 			this.OriginalModFlags = mod;
 		}
 
+		public override void EmitType ()
+		{
+			base.EmitType ();
+
+			if (DeclarativeSecurity != null) {
+				foreach (DictionaryEntry de in DeclarativeSecurity) {
+					TypeBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
+				}
+			}
+		}
+
 		public override PendingImplementation GetPendingImplementations ()
 		{
 			return PendingImplementation.GetPendingImplementations (this);
@@ -2707,6 +2719,19 @@ namespace Mono.CSharp {
 				accmods = Modifiers.PRIVATE;
 
 			this.ModFlags = Modifiers.Check (pc.AllowedModifiers, mod, accmods, pc.MemberName.Location);
+		}
+
+		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb)
+		{
+			if (a.Type.IsSubclassOf (TypeManager.security_attr_type) && a.CheckSecurityActionValidity (false)) {
+				if (PartialContainer.DeclarativeSecurity == null)
+					PartialContainer.DeclarativeSecurity = new ListDictionary ();
+
+				a.ExtractSecurityPermissionSet (PartialContainer.DeclarativeSecurity);
+				return;
+			}
+
+			base.ApplyAttributeBuilder (a, cb);
 		}
 
 		public override PendingImplementation GetPendingImplementations ()

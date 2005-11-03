@@ -1,5 +1,13 @@
 2005-11-03  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix #75969.
+	* class.cs (PartialContainer.EmitType): Customized to emit
+	security attributes.
+	(ClassPart.ApplyAttributeBuilder): Transform security attribute
+	for partial classes.
+
+2005-11-03  Marek Safar  <marek.safar@seznam.cz>
+
 	Fix #76599.
 	* expression.cs (ElementAccess.DoResolveLValue): Fixed buffer
 	access has to be fixed.
