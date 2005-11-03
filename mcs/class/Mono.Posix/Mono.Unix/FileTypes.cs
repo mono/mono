@@ -37,11 +37,11 @@ namespace Mono.Unix {
 		CharacterSpecial  = (int) Native.FilePermissions.S_IFCHR,
 		BlockSpecial      = (int) Native.FilePermissions.S_IFBLK,
 		RegularFile       = (int) Native.FilePermissions.S_IFREG,
-		FIFO              = (int) Native.FilePermissions.S_IFIFO,
+		Fifo              = (int) Native.FilePermissions.S_IFIFO,
 		SymbolicLink      = (int) Native.FilePermissions.S_IFLNK,
 		Socket            = (int) Native.FilePermissions.S_IFSOCK,
 		AllTypes          = 
-			Directory | CharacterSpecial | BlockSpecial | RegularFile | FIFO | 
+			Directory | CharacterSpecial | BlockSpecial | RegularFile | Fifo | 
 			SymbolicLink | Socket,
 	}
 }

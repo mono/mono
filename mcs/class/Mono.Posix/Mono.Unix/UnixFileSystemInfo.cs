@@ -261,7 +261,13 @@ namespace Mono.Unix {
 			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFREG);}
 		}
 
+		[Obsolete ("Use IsFifo")]
+		[CLSCompliant (false)]
 		public bool IsFIFO {
+			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFIFO);}
+		}
+
+		public bool IsFifo {
 			get {AssertValid (); return IsType (stat.st_mode, FilePermissions.S_IFIFO);}
 		}
 
