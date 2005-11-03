@@ -636,6 +636,20 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		protected override void OnKeyPress (KeyPressEventArgs e)
+		{
+			base.OnKeyPress (e);
+			if (e.KeyChar == ' ')
+				e.Handled = true;
+		}
+
+		protected override void OnKeyUp (KeyEventArgs e)
+		{
+			base.OnKeyUp (e);
+			if ((e.KeyData & Keys.KeyCode) == Keys.Space)
+				e.Handled = true;
+		}
+
 		protected virtual void OnItemDrag (ItemDragEventArgs e)
 		{
 			if (ItemDrag != null)

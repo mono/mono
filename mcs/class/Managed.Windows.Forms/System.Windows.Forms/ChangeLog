@@ -1,5 +1,9 @@
 2005-11-03  Jackson Harper  <jackson@ximian.com>
 
+	* TreeView.cs: Implement the last of the missing methods.
+
+2005-11-03  Jackson Harper  <jackson@ximian.com>
+
 	* TreeNodeConverter.cs: Implement to get off my class-status back.
 
 2005-11-03  Jackson Harper  <jackson@ximian.com>
