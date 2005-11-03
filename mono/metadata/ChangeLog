@@ -1,3 +1,8 @@
+2005-11-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* marshal.c, icall.c : reverted sig->pinvoke changes which broke
+	  Windows build (r51396-51397).
+
 2005-11-03  Martin Baulig  <martin@ximian.com>
 
 	* class.c (mono_class_setup_vtable_general): Also add generic
