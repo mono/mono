@@ -275,7 +275,7 @@ namespace System.Windows.Forms
 				}
 			}
 
-			public bool IsReadOnly {
+			public virtual bool IsReadOnly {
 				get {
 					return list.IsReadOnly;
 				}
@@ -422,7 +422,7 @@ namespace System.Windows.Forms
 				return Contains (value) || ImplicitContains (value);
 			}
 
-			public void CopyTo (Array array, int index)
+			public virtual void CopyTo (Array array, int index)
 			{
 				list.CopyTo(array, index);
 			}

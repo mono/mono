@@ -124,7 +124,7 @@ namespace System.Windows.Forms {
 		// no reason why this is overridden
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Color BackColor {
+		public override Color BackColor {
 			set {
 				base.BackColor = value;
 			}
@@ -365,7 +365,7 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		public string Text {
+		public override string Text {
 			set {
 				// TODO: if the format is a custom format we need to do a custom parse here
 				DateTime parsed_value = DateTime.Parse (value);

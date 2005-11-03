@@ -101,7 +101,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue(null)]
-		public PropertyDescriptor PropertyDescriptor {
+		public override PropertyDescriptor PropertyDescriptor {
 			set {
 				base.PropertyDescriptor = value;
 			}

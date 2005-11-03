@@ -360,7 +360,7 @@ namespace System.Windows.Forms
 		}
 
 		[Localizable (true)]
-		public virtual int ItemHeight {
+		public int ItemHeight {
 			get { return combobox_info.item_height; }
 			set {
 				if (value < 0)

@@ -1,8 +1,15 @@
+2005-11-03  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUI.cs: Updated build rev/date
+	* ComboBox.cs, DataGridTextBoxColumn.cs Control.cs, 
+	  DataGridTableStyle.cs, DataGrid.cs, DateTimePicker.cs: Signature fixes
+	* Application.cs: Trigger context-specific ExitThread events
+
 2005-11-03  Jackson Harper  <jackson@ximian.com>
 
 	* Menu.cs:
 	* MainMenu.cs:
-	* GrigTableStylesCollection.cs:
+	* GridTableStylesCollection.cs:
 	* Timer.cs:
 	* TabPage.cs:
 	* HelpProvider.cs:

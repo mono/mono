@@ -364,6 +364,10 @@ namespace System.Windows.Forms {
 			if (ApplicationExit != null) {
 				ApplicationExit(null, EventArgs.Empty);
 			}
+
+			if (app_context != null) {
+				app_context.ExitThread();
+			}
 		}
 
 		public static void Run(Form mainForm) {

@@ -298,7 +298,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public Color BackColor {
+		public override Color BackColor {
 			get {
 				return backColor;
 			}
@@ -322,7 +322,7 @@ namespace System.Windows.Forms
 
 		[Browsable(false)]
 		[EditorBrowsable(EditorBrowsableState.Never)]
-		public Image BackgroundImage {
+		public override Image BackgroundImage {
 			get {
 				return base.BackgroundImage;
 			}
@@ -565,7 +565,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public Color ForeColor {
+		public override Color ForeColor {
 			get {
 				return base.ForeColor;
 			}

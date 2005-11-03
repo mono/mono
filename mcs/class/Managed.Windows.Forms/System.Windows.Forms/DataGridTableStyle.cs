@@ -421,7 +421,7 @@ namespace System.Windows.Forms
 		}
 
 		[DefaultValue(false)]
-		public bool ReadOnly {
+		public virtual bool ReadOnly {
 			get {
 				return _readonly;
 			}
