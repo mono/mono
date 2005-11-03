@@ -60,6 +60,12 @@ namespace System.Windows.Forms {
 		Black	= 1
 	}
 
+	internal enum CaretSelection {
+		Position,	// Selection=Caret
+		Word,		// Selection=Word under caret
+		Line		// Selection=Line under caret
+	}
+
 	internal enum CaretDirection {
 		CharForward,	// Move a char to the right
 		CharBack,	// Move a char to the left
@@ -72,7 +78,9 @@ namespace System.Windows.Forms {
 		CtrlHome,	// Move to the beginning of the document
 		CtrlEnd,	// Move to the end of the document
 		WordBack,	// Move to the beginning of the previous word (or beginning of line)
-		WordForward	// Move to the beginning of the next word (or end of line)
+		WordForward,	// Move to the beginning of the next word (or end of line)
+		SelectionStart,	// Move to the beginning of the current selection
+		SelectionEnd	// Move to the end of the current selection
 	}
 
 	// Being cloneable should allow for nice line and document copies...
@@ -516,11 +524,66 @@ namespace System.Windows.Forms {
 
 	internal class Document : ICloneable, IEnumerable {
 		#region Structures
+		// FIXME - go through code and check for places where
+		// we do explicit comparisons instead of using the compare overloads
 		internal struct Marker {
 			internal Line		line;
 			internal LineTag	tag;
 			internal int		pos;
 			internal int		height;
+
+			public static bool operator<(Marker lhs, Marker rhs) {
+				if (lhs.line.line_no < rhs.line.line_no) {
+					return true;
+				}
+
+				if (lhs.line.line_no == rhs.line.line_no) {
+					if (lhs.pos < rhs.pos) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			public static bool operator>(Marker lhs, Marker rhs) {
+				if (lhs.line.line_no > rhs.line.line_no) {
+					return true;
+				}
+
+				if (lhs.line.line_no == rhs.line.line_no) {
+					if (lhs.pos > rhs.pos) {
+						return true;
+					}
+				}
+				return false;
+			}
+
+			public static bool operator==(Marker lhs, Marker rhs) {
+				if ((lhs.line.line_no == rhs.line.line_no) && (lhs.pos == rhs.pos)) {
+					return true;
+				}
+				return false;
+			}
+
+			public static bool operator!=(Marker lhs, Marker rhs) {
+				if ((lhs.line.line_no != rhs.line.line_no) || (lhs.pos != rhs.pos)) {
+					return true;
+				}
+				return false;
+			}
+
+			public override bool Equals(object obj) {
+				   return this==(Marker)obj;
+			}
+
+			public override int GetHashCode() {
+				return base.GetHashCode ();
+			}
+
+			public override string ToString() {
+				return "Marker Line " + line + ", Position " + pos;
+			}
+
 		}
 		#endregion Structures
 
@@ -540,6 +603,7 @@ namespace System.Windows.Forms {
 		internal Marker		selection_end;
 		internal bool		selection_visible;
 		internal Marker		selection_anchor;
+		internal Marker		selection_prev;
 		internal bool		selection_end_anchor;
 
 		internal int		viewport_x;
@@ -695,6 +759,12 @@ namespace System.Windows.Forms {
 		internal int Height {
 			get {
 				return this.document_y;
+			}
+		}
+
+		internal bool SelectionVisible {
+			get {
+				return selection_visible;
 			}
 		}
 
@@ -1056,7 +1126,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal void CaretHasFocus() {
-			if (caret.tag != null) {
+			if ((caret.tag != null) && (!selection_visible)) {
 				XplatUI.CreateCaret(owner.Handle, 2, caret.height);
 				XplatUI.SetCaretPos(owner.Handle, (int)caret.tag.line.widths[caret.pos] + caret.line.align_shift - viewport_x, caret.line.Y + caret.tag.shift - viewport_y);
 				XplatUI.CaretVisible(owner.Handle, true);
@@ -1102,6 +1172,8 @@ namespace System.Windows.Forms {
 		}
 
 		internal void MoveCaret(CaretDirection direction) {
+			// FIXME should we use IsWordSeparator to detect whitespace, instead 
+			// of looking for actual spaces in the Word move cases?
 			switch(direction) {
 				case CaretDirection.CharForward: {
 					caret.pos++;
@@ -1152,12 +1224,12 @@ namespace System.Windows.Forms {
 
 					len = caret.line.text.Length;
 					if (caret.pos < len) {
-						while ((caret.pos < len) && (caret.line.text.ToString(caret.pos, 1) != " ")) {
+						while ((caret.pos < len) && (caret.line.text[caret.pos] != ' ')) {
 							caret.pos++;
 						}
 						if (caret.pos < len) {
 							// Skip any whitespace
-							while ((caret.pos < len) && (caret.line.text.ToString(caret.pos, 1) == " ")) {
+							while ((caret.pos < len) && (caret.line.text[caret.pos] == ' ')) {
 								caret.pos++;
 							}
 						}
@@ -1176,11 +1248,11 @@ namespace System.Windows.Forms {
 					if (caret.pos > 0) {
 						caret.pos--;
 
-						while ((caret.pos > 0) && (caret.line.text.ToString(caret.pos, 1) == " ")) {
+						while ((caret.pos > 0) && (caret.line.text[caret.pos] == ' ')) {
 							caret.pos--;
 						}
 
-						while ((caret.pos > 0) && (caret.line.text.ToString(caret.pos, 1) != " ")) {
+						while ((caret.pos > 0) && (caret.line.text[caret.pos] != ' ')) {
 							caret.pos--;
 						}
 
@@ -1265,6 +1337,24 @@ namespace System.Windows.Forms {
 					caret.line = GetLine(lines);
 					caret.pos = 0;
 					caret.tag = caret.line.tags;
+
+					UpdateCaret();
+					return;
+				}
+
+				case CaretDirection.SelectionStart: {
+					caret.line = selection_start.line;
+					caret.pos = selection_start.pos;
+					caret.tag = selection_start.tag;
+
+					UpdateCaret();
+					return;
+				}
+
+				case CaretDirection.SelectionEnd: {
+					caret.line = selection_end.line;
+					caret.pos = selection_end.pos;
+					caret.tag = selection_end.tag;
 
 					UpdateCaret();
 					return;
@@ -1681,7 +1771,6 @@ namespace System.Windows.Forms {
 
 			UpdateView(line, pos);
 		}
-
 
 		// Deletes a character at or after the given position (depending on forward); it will not delete past line limits
 		internal void DeleteChar(LineTag tag, int pos, bool forward) {
@@ -2141,6 +2230,10 @@ namespace System.Windows.Forms {
 					p2 = start_pos;
 				}
 
+				#if Debug
+					Console.WriteLine("Invaliding from {0}:{1} to {2}:{3}", l1.line_no, p1, l2.line_no, p2);
+				#endif
+
 				owner.Invalidate(
 					new Rectangle(
 						(int)l1.widths[p1] + l1.align_shift - viewport_x, 
@@ -2152,6 +2245,10 @@ namespace System.Windows.Forms {
 				return;
 			}
 
+			#if Debug
+				Console.WriteLine("Invaliding from {0}:{1} to {2}:{3} Start  => x={4}, y={5}, {6}x{7}", l1.line_no, p1, l2.line_no, p2, (int)l1.widths[p1] + l1.align_shift - viewport_x, l1.Y - viewport_y, viewport_width, l1.height);
+			#endif
+
 			// Three invalidates:
 			// First line from start
 			owner.Invalidate(new Rectangle((int)l1.widths[p1] + l1.align_shift - viewport_x, l1.Y - viewport_y, viewport_width, l1.height));
@@ -2161,14 +2258,181 @@ namespace System.Windows.Forms {
 				int	y;
 
 				y = GetLine(l1.line_no + 1).Y;
-				owner.Invalidate(new Rectangle(0, y - viewport_y, viewport_width, GetLine(l2.line_no).Y - viewport_y));
+				owner.Invalidate(new Rectangle(0, y - viewport_y, viewport_width, GetLine(l2.line_no).Y - y - viewport_y));
+
+				#if Debug
+					Console.WriteLine("Invaliding from {0}:{1} to {2}:{3} Middle => x={4}, y={5}, {6}x{7}", l1.line_no, p1, l2.line_no, p2, 0, y - viewport_y, viewport_width, GetLine(l2.line_no).Y - y - viewport_y);
+				#endif
 			}
 
 			// Last line to end
 			owner.Invalidate(new Rectangle((int)l2.widths[0] + l2.align_shift - viewport_x, l2.Y - viewport_y, (int)l2.widths[p2] + 1, l2.height));
+			#if Debug
+				Console.WriteLine("Invaliding from {0}:{1} to {2}:{3} End    => x={4}, y={5}, {6}x{7}", l1.line_no, p1, l2.line_no, p2, (int)l2.widths[0] + l2.align_shift - viewport_x, l2.Y - viewport_y, (int)l2.widths[p2] + 1, l2.height);
+			#endif
 		}
 
-		
+		/// <summary>Select text around caret</summary>
+		internal void ExpandSelection(CaretSelection mode, bool to_caret) {
+			if (to_caret) {
+				// We're expanding the selection to the caret position
+				switch(mode) {
+					case CaretSelection.Line: {
+						// Invalidate the selection delta
+						if (caret > selection_prev) {
+							Invalidate(selection_prev.line, 0, caret.line, caret.line.text.Length);
+						} else {
+							Invalidate(selection_prev.line, selection_prev.line.text.Length, caret.line, 0);
+						}
+
+						if (caret.line.line_no <= selection_anchor.line.line_no) {
+							selection_start.line = caret.line;
+							selection_start.tag = caret.line.tags;
+							selection_start.pos = 0;
+
+							selection_end.line = selection_anchor.line;
+							selection_end.tag = selection_anchor.tag;
+							selection_end.pos = selection_anchor.pos;
+
+							selection_end_anchor = true;
+						} else {
+							selection_start.line = selection_anchor.line;
+							selection_start.tag = selection_anchor.tag;
+							selection_start.pos = selection_anchor.height;
+
+							selection_end.line = caret.line;
+							selection_end.tag = caret.line.tags;
+							selection_end.pos = caret.line.text.Length;
+
+							selection_end_anchor = false;
+						}
+						selection_prev.line = caret.line;
+						selection_prev.tag = caret.tag;
+						selection_prev.pos = caret.pos;
+
+						break;
+					}
+
+					case CaretSelection.Word: {
+						int	start_pos;
+						int	end_pos;
+
+						start_pos = FindWordSeparator(caret.line, caret.pos, false);
+						end_pos = FindWordSeparator(caret.line, caret.pos, true);
+
+						
+						// Invalidate the selection delta
+						if (caret > selection_prev) {
+							Invalidate(selection_prev.line, selection_prev.pos, caret.line, end_pos);
+						} else {
+							Invalidate(selection_prev.line, selection_prev.pos, caret.line, start_pos);
+						}
+
+						if (caret < selection_anchor) {
+							selection_start.line = caret.line;
+							selection_start.tag = caret.line.FindTag(start_pos);
+							selection_start.pos = start_pos;
+
+							selection_end.line = selection_anchor.line;
+							selection_end.tag = selection_anchor.tag;
+							selection_end.pos = selection_anchor.pos;
+
+							selection_prev.line = caret.line;
+							selection_prev.tag = caret.tag;
+							selection_prev.pos = start_pos;
+
+							selection_end_anchor = true;
+						} else {
+							selection_start.line = selection_anchor.line;
+							selection_start.tag = selection_anchor.tag;
+							selection_start.pos = selection_anchor.height;
+
+							selection_end.line = caret.line;
+							selection_end.tag = caret.line.FindTag(end_pos);
+							selection_end.pos = end_pos;
+
+							selection_prev.line = caret.line;
+							selection_prev.tag = caret.tag;
+							selection_prev.pos = end_pos;
+
+							selection_end_anchor = false;
+						}
+						break;
+					}
+
+					case CaretSelection.Position: {
+						SetSelectionToCaret(false);
+						return;
+					}
+				}
+			} else {
+				// We're setting the selection 'around' the caret position
+				switch(mode) {
+					case CaretSelection.Line: {
+						this.Invalidate(caret.line, 0, caret.line, caret.line.text.Length);
+
+						selection_start.line = caret.line;
+						selection_start.tag = caret.line.tags;
+						selection_start.pos = 0;
+
+						selection_end.line = caret.line;
+						selection_end.pos = caret.line.text.Length;
+						selection_end.tag = caret.line.FindTag(selection_end.pos);
+
+						selection_anchor.line = selection_end.line;
+						selection_anchor.tag = selection_end.tag;
+						selection_anchor.pos = selection_end.pos;
+						selection_anchor.height = 0;
+
+						selection_prev.line = caret.line;
+						selection_prev.tag = caret.tag;
+						selection_prev.pos = caret.pos;
+
+						this.selection_end_anchor = true;
+
+						break;
+					}
+
+					case CaretSelection.Word: {
+						int	start_pos;
+						int	end_pos;
+
+						start_pos = FindWordSeparator(caret.line, caret.pos, false);
+						end_pos = FindWordSeparator(caret.line, caret.pos, true);
+
+						this.Invalidate(selection_start.line, start_pos, caret.line, end_pos);
+
+						selection_start.line = caret.line;
+						selection_start.tag = caret.line.FindTag(start_pos);
+						selection_start.pos = start_pos;
+
+						selection_end.line = caret.line;
+						selection_end.tag = caret.line.FindTag(end_pos);
+						selection_end.pos = end_pos;
+
+						selection_anchor.line = selection_end.line;
+						selection_anchor.tag = selection_end.tag;
+						selection_anchor.pos = selection_end.pos;
+						selection_anchor.height = start_pos;
+
+						selection_prev.line = caret.line;
+						selection_prev.tag = caret.tag;
+						selection_prev.pos = caret.pos;
+
+						this.selection_end_anchor = true;
+
+						break;
+					}
+				}
+			}
+
+			if (selection_start == selection_end) {
+				selection_visible = false;
+			} else {
+				selection_visible = true;
+			}
+		}
+
 		internal void SetSelectionToCaret(bool start) {
 			if (start) {
 				// Invalidate old selection; selection is being reset to empty
@@ -2189,16 +2453,16 @@ namespace System.Windows.Forms {
 			} else {
 				// Invalidate from previous end to caret (aka new end)
 				if (selection_end_anchor) {
-					if ((selection_start.line != caret.line) || (selection_start.pos != caret.pos)) {
+					if (selection_start != caret) {
 						this.Invalidate(selection_start.line, selection_start.pos, caret.line, caret.pos);
 					}
 				} else {
-					if ((selection_end.line != caret.line) || (selection_end.pos != caret.pos)) {
+					if (selection_end != caret) {
 						this.Invalidate(selection_end.line, selection_end.pos, caret.line, caret.pos);
 					}
 				}
 
-				if ((caret.line.line_no < selection_anchor.line.line_no) || ((caret.line == selection_anchor.line) && (caret.pos <= selection_anchor.pos))) {
+				if (caret < selection_anchor) {
 					selection_start.line = caret.line;
 					selection_start.tag = caret.tag;
 					selection_start.pos = caret.pos;
@@ -2221,7 +2485,7 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			if ((selection_start.line == selection_end.line) && (selection_start.pos == selection_end.pos)) {
+			if (selection_start == selection_end) {
 				selection_visible = false;
 			} else {
 				selection_visible = true;
@@ -2895,6 +3159,42 @@ namespace System.Windows.Forms {
 		private void owner_HandleCreated(object sender, EventArgs e) {
 			this.RecalculateDocument(owner.CreateGraphics());
 			PositionCaret(0, 0);
+		}
+
+		internal static bool IsWordSeparator(char ch) {
+			switch(ch) {
+				case ' ':
+				case '\t':
+				case '(':
+				case ')': {
+					return true;
+				}
+
+				default: {
+					return false;
+				}
+			}
+		}
+		internal int FindWordSeparator(Line line, int pos, bool forward) {
+			int len;
+
+			len = line.text.Length;
+
+			if (forward) {
+				for (int i = pos + 1; i < len; i++) {
+					if (IsWordSeparator(line.Text[i])) {
+						return i + 1;
+					}
+				}
+				return len;
+			} else {
+				for (int i = pos - 1; i > 0; i--) {
+					if (IsWordSeparator(line.Text[i - 1])) {
+						return i;
+					}
+				}
+				return 0;
+			}
 		}
 		#endregion	// Internal Methods
 

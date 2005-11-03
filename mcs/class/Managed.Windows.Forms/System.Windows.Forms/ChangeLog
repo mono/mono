@@ -1,3 +1,43 @@
+2005-11-03  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs:
+	  - Added CaretSelection enum
+	  - Added comparison methods to Marker struct, makes selection code
+	    more readable
+	  - Added SelectionStart and SelectionEnd as 'moveable' location for
+	    the CaretDirection enum and handler
+	  - Added selection_prev variable to track optimized invalidation for
+	    word and line selection
+	  - Added SelectionVisible property (returns true if there is a valid 
+	    selection)
+	  - Switched CaretHasFocus to only display the caret if there is no
+	    visible selection
+	  - Avoiding StringBuilder.ToString to retrieve a single char, instead
+	    using the direct character index; should be much faster
+	  - Added various conditional debug statements
+	  - Fixed invalidation calculation for selection ranges
+	  - Added ExpandSelection() method to support word and line selection
+	  - Switched SetSelectionToCaret to use new Marker compare overloads
+	  - Added central IsWordSeparator() method to determine word 
+	    separators/whitespace and FindWordSeparator() to streamline common
+	    usage of IsWordSeparator()
+	* TextBoxBase.cs:
+	  - Removed unneeded grabbed variable, it was just mirroring
+	    Control.Capture
+	  - No longer firing OnTextChanged event when Text setter is called,
+	    since the base will fire the event for us
+	  - Added handling of Ctrl-Up/Down selection
+	  - Added handling of Shift-Cursorkey selection
+	  - Added handling for Ctrl-Delete and Ctrl-Backspace to remove
+	    words
+	  - Added handling of Shift and Ctrl-Shift-Home/End selection
+	  - Removed some debug output
+	  - Added handling for single/double/tripple-click to place caret/
+	    select word/select line respectively (Fixes bug #76031)
+	  - Added support for drag expansion of word/line selection
+	* RichTextBox.cs: Handle GotFocus event to trigger redrawing of
+	  current selection
+
 2005-11-02  Jackson Harper  <jackson@ximian.com>
 
 	* X11Dnd.cs: If the drag is going to and from a MWF window just

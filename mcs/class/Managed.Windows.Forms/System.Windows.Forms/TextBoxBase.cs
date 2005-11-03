@@ -26,6 +26,7 @@
 
 // NOT COMPLETE
 #undef Debug
+#undef DebugClick
 
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -57,12 +58,13 @@ namespace System.Windows.Forms {
 		internal HScrollBar		hscroll;
 		internal VScrollBar		vscroll;
 		internal RichTextBoxScrollBars	scrollbars;
-		internal bool			grabbed;
 		internal bool			richtext;
 		internal int			requested_height;
 		internal int			canvas_width;
 		internal int			canvas_height;
 		internal int			track_width = 20;
+		internal DateTime		click_last;
+		internal CaretSelection		click_mode;
 		#if Debug
 		internal static bool	draw_lines = false;
 		#endif
@@ -92,6 +94,8 @@ namespace System.Windows.Forms {
 			//document.CaretMoved += new EventHandler(CaretMoved);
 			document.Wrap = false;
 			requested_height = -1;
+			click_last = DateTime.Now;
+			click_mode = CaretSelection.Position;
 
 			MouseDown += new MouseEventHandler(TextBoxBase_MouseDown);
 			MouseUp += new MouseEventHandler(TextBoxBase_MouseUp);
@@ -489,7 +493,8 @@ namespace System.Windows.Forms {
 					}
 				}
 				base.Text = value;
-				OnTextChanged(EventArgs.Empty);
+				// Not needed, base.Text already fires it
+				// OnTextChanged(EventArgs.Empty);
 			}
 		}
 
@@ -610,8 +615,7 @@ namespace System.Windows.Forms {
 		}
 
 		public void ScrollToCaret() {
-			// FIXME
-			throw new NotImplementedException();
+			this.CaretMoved(this, EventArgs.Empty);
 		}
 
 		public void Select(int start, int length) {
@@ -726,65 +730,126 @@ namespace System.Windows.Forms {
 		}
 
 		protected override bool ProcessDialogKey(Keys keyData) {
+			bool control;
+			bool shift;
+
+			control = (Control.ModifierKeys & Keys.Control) != 0;
+			shift = (Control.ModifierKeys & Keys.Shift) != 0;
+
 			switch (keyData & Keys.KeyCode) {
 				case Keys.Left: {
-					document.SetSelectionToCaret(true);
-
-					if ((Control.ModifierKeys & Keys.Control) != 0) {
+					if (control) {
 						document.MoveCaret(CaretDirection.WordBack);
 					} else {
-						document.MoveCaret(CaretDirection.CharBack);
+						if (!document.selection_visible || shift) {
+							document.MoveCaret(CaretDirection.CharBack);
+						} else {
+							document.MoveCaret(CaretDirection.SelectionStart);
+						}
 					}
+
+					if (!shift) {
+						document.SetSelectionToCaret(true);
+					} else {
+						document.SetSelectionToCaret(false);
+					}
+
 					CaretMoved(this, null);
 					return true;
 				}
 
 				case Keys.Right: {
-					document.SetSelectionToCaret(true);
-
-					if ((Control.ModifierKeys & Keys.Control) != 0) {
+					if (control) {
 						document.MoveCaret(CaretDirection.WordForward);
 					} else {
-						document.MoveCaret(CaretDirection.CharForward);
+						if (!document.selection_visible || shift) {
+							document.MoveCaret(CaretDirection.CharForward);
+						} else {
+							document.MoveCaret(CaretDirection.SelectionEnd);
+						}
 					}
+					if (!shift) {
+						document.SetSelectionToCaret(true);
+					} else {
+						document.SetSelectionToCaret(false);
+					}
+
 					CaretMoved(this, null);
 					return true;
 				}
 
 				case Keys.Up: {
-					document.SetSelectionToCaret(true);
-					document.MoveCaret(CaretDirection.LineUp);
+					if (control) {
+						if (document.CaretPosition == 0) {
+							document.MoveCaret(CaretDirection.LineUp);
+						} else {
+							document.MoveCaret(CaretDirection.Home);
+						}
+					} else {
+						document.MoveCaret(CaretDirection.LineUp);
+					}
+
+					if ((Control.ModifierKeys & Keys.Shift) == 0) {
+						document.SetSelectionToCaret(true);
+					} else {
+						document.SetSelectionToCaret(false);
+					}
+
 					CaretMoved(this, null);
 					return true;
 				}
 
 				case Keys.Down: {
-					document.SetSelectionToCaret(true);
-					document.MoveCaret(CaretDirection.LineDown);
+					if (control) {
+						if (document.CaretPosition == document.CaretLine.Text.Length) {
+							document.MoveCaret(CaretDirection.LineDown);
+						} else {
+							document.MoveCaret(CaretDirection.End);
+						}
+					} else {
+						document.MoveCaret(CaretDirection.LineDown);
+					}
+
+					if ((Control.ModifierKeys & Keys.Shift) == 0) {
+						document.SetSelectionToCaret(true);
+					} else {
+						document.SetSelectionToCaret(false);
+					}
+
 					CaretMoved(this, null);
 					return true;
 				}
 
 				case Keys.Home: {
-					document.SetSelectionToCaret(true);
-
 					if ((Control.ModifierKeys & Keys.Control) != 0) {
 						document.MoveCaret(CaretDirection.CtrlHome);
 					} else {
 						document.MoveCaret(CaretDirection.Home);
 					}
+
+					if ((Control.ModifierKeys & Keys.Shift) == 0) {
+						document.SetSelectionToCaret(true);
+					} else {
+						document.SetSelectionToCaret(false);
+					}
+
 					CaretMoved(this, null);
 					return true;
 				}
 
 				case Keys.End: {
-					document.SetSelectionToCaret(true);
-
 					if ((Control.ModifierKeys & Keys.Control) != 0) {
 						document.MoveCaret(CaretDirection.CtrlEnd);
 					} else {
 						document.MoveCaret(CaretDirection.End);
 					}
+
+					if ((Control.ModifierKeys & Keys.Shift) == 0) {
+						document.SetSelectionToCaret(true);
+					} else {
+						document.SetSelectionToCaret(false);
+					}
+
 					CaretMoved(this, null);
 					return true;
 				}
@@ -837,6 +902,7 @@ namespace System.Windows.Forms {
 						document.ReplaceSelection("");
 					}
 					document.SetSelectionToCaret(true);
+
 					if (document.CaretPosition == 0) {
 						if (document.CaretLine.LineNo > 1) {
 							Line	line;
@@ -853,8 +919,21 @@ namespace System.Windows.Forms {
 							OnTextChanged(EventArgs.Empty);
 						}
 					} else {
-						document.DeleteChar(document.CaretTag, document.CaretPosition, false);
-						document.MoveCaret(CaretDirection.CharBack);
+						if (!control || document.CaretPosition == 0) {
+							document.DeleteChar(document.CaretTag, document.CaretPosition, false);
+							document.MoveCaret(CaretDirection.CharBack);
+						} else {
+							int start_pos;
+
+							start_pos = document.CaretPosition - 1;
+
+							while ((start_pos > 0) && !Document.IsWordSeparator(document.CaretLine.Text[start_pos - 1])) {
+								start_pos--;
+							}
+							document.DeleteChars(document.CaretTag, start_pos, document.CaretPosition - start_pos);
+							document.PositionCaret(document.CaretLine, start_pos);
+						}
+						document.UpdateCaret();
 						OnTextChanged(EventArgs.Empty);
 					}
 					CaretMoved(this, null);
@@ -867,7 +946,7 @@ namespace System.Windows.Forms {
 					}
 
 					// delete only deletes on the line, doesn't do the combine
-					if (document.CaretPosition == document.CaretLine.text.Length) {
+					if (document.CaretPosition == document.CaretLine.Text.Length) {
 						if (document.CaretLine.LineNo < document.Lines) {
 							Line	line;
 
@@ -889,7 +968,22 @@ namespace System.Windows.Forms {
 							// Caret doesn't move
 						}
 					} else {
-						document.DeleteChar(document.CaretTag, document.CaretPosition, true);
+						if (!control) {
+							document.DeleteChar(document.CaretTag, document.CaretPosition, true);
+						} else {
+							int end_pos;
+
+							end_pos = document.CaretPosition;
+
+							while ((end_pos < document.CaretLine.Text.Length) && !Document.IsWordSeparator(document.CaretLine.Text[end_pos])) {
+								end_pos++;
+							}
+
+							if (end_pos < document.CaretLine.Text.Length) {
+								end_pos++;
+							}
+							document.DeleteChars(document.CaretTag, document.CaretPosition, end_pos - document.CaretPosition);
+						}
 						OnTextChanged(EventArgs.Empty);
 					}
 					document.AlignCaret();
@@ -937,7 +1031,6 @@ namespace System.Windows.Forms {
 				case Msg.WM_SETFOCUS: {
 					// Set caret
 					document.CaretHasFocus();
-Console.WriteLine("Creating caret");
 					base.WndProc(ref m);
 					return;
 				}
@@ -945,7 +1038,6 @@ Console.WriteLine("Creating caret");
 				case Msg.WM_KILLFOCUS: {
 					// Kill caret
 					document.CaretLostFocus();
-Console.WriteLine("Destroying caret");
 					base.WndProc(ref m);
 					return;
 				}
@@ -960,6 +1052,11 @@ Console.WriteLine("Destroying caret");
 					}
 
 					if (ProcessKeyMessage(ref m)) {
+						return;
+					}
+
+					// Ctrl-Backspace generates a real char, whack it
+					if (m.WParam.ToInt32() == 127) {
 						return;
 					}
 
@@ -1085,10 +1182,43 @@ static int current;
 
 		private void TextBoxBase_MouseDown(object sender, MouseEventArgs e) {
 			if (e.Button == MouseButtons.Left) {
+				TimeSpan interval;
+
+				interval = DateTime.Now - click_last;
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
-				document.SetSelectionToCaret(true);
-				this.grabbed = true;
 				this.Capture = true;
+				
+				// Handle place caret/select word/select line behaviour
+				if (e.Clicks == 1) {
+					if (SystemInformation.DoubleClickTime < interval.TotalMilliseconds) {
+						#if DebugClick
+							Console.WriteLine("Single Click Invalidating from char {0} to char {1} ({2})", document.selection_start.pos, document.selection_end.pos, document.selection_start.line.text.ToString(document.selection_start.pos, document.selection_end.pos - document.selection_start.pos));
+						#endif
+						document.SetSelectionToCaret(true);
+						click_mode = CaretSelection.Position;
+					} else {
+						#if DebugClick
+							Console.WriteLine("Tripple Click Selecting line");
+						#endif
+						document.ExpandSelection(CaretSelection.Line, false);
+						click_mode = CaretSelection.Line;
+					}
+				} else {
+					// We select the line if the word is already selected, and vice versa
+					if (click_mode != CaretSelection.Word) {
+						if (click_mode == CaretSelection.Line) {
+							document.Invalidate(document.selection_start.line, 0, document.selection_start.line, document.selection_start.line.text.Length);
+						}
+						click_mode = CaretSelection.Word;
+						document.ExpandSelection(CaretSelection.Word, false);	// Setting initial selection
+					} else {
+						click_mode = CaretSelection.Line;
+						document.ExpandSelection(CaretSelection.Line, false);	// Setting initial selection
+					}
+				}
+
+				// Reset
+				click_last = DateTime.Now;
 				return;
 			}
 
@@ -1136,11 +1266,14 @@ static int current;
 
 		private void TextBoxBase_MouseUp(object sender, MouseEventArgs e) {
 			this.Capture = false;
-			this.grabbed = false;
 			if (e.Button == MouseButtons.Left) {
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
-				document.SetSelectionToCaret(false);
-				document.DisplayCaret();
+				if (click_mode == CaretSelection.Position) {
+					document.SetSelectionToCaret(false);
+					document.DisplayCaret();
+				} else {
+					document.ExpandSelection(click_mode, true);
+				}
 				return;
 			}
 		}
@@ -1242,10 +1375,14 @@ static int current;
 
 		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {
 			// FIXME - handle auto-scrolling if mouse is to the right/left of the window
-			if (grabbed) {
+			if (Capture) {
 				document.PositionCaret(e.X + document.ViewPortX, e.Y + document.ViewPortY);
-				document.SetSelectionToCaret(false);
-				document.DisplayCaret();
+				if (click_mode == CaretSelection.Position) {
+					document.SetSelectionToCaret(false);
+					document.DisplayCaret();
+				} else {
+					document.ExpandSelection(click_mode, true);
+				}
 			}
 		}
 									      
