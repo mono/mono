@@ -1,3 +1,8 @@
+2005-11-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequest.cs: no need to allocate the buffer when all the content
+	is preloaded.
+
 2005-11-02 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpApplication.cs: ignore TAE in ProcesssError. The Error event might

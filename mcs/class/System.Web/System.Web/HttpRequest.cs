@@ -582,6 +582,9 @@ namespace System.Web {
 			if (input_filter == null || filter == null)
 				return;
 
+			if (buffer.Length < 1024)
+				buffer = new byte [1024];
+
 			// Replace the input with the filtered input
 			input_filter.BaseStream = input_stream;
 			MemoryStream ms = new MemoryStream ();
@@ -642,7 +645,7 @@ namespace System.Web {
 				if (total > 0)
 					Marshal.Copy (buffer, 0, content, total);
 
-				buffer = new byte [Math.Min (content_length, INPUT_BUFFER_SIZE)];
+				buffer = new byte [Math.Min (content_length - total, INPUT_BUFFER_SIZE)];
 				while (total < content_length){
 					int n;
 					n = worker_request.ReadEntityBody (buffer, Math.Min (content_length-total, INPUT_BUFFER_SIZE));
