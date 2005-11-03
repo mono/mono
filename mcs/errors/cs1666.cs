@@ -1,4 +1,4 @@
-// cs1666.cs: You cannot use fixed sized buffers contained in unfixed expressions. Try using the fixed statement.
+// cs1666.cs: You cannot use fixed size buffers contained in unfixed expressions. Try using the fixed statement
 // Line: 11
 // Compiler options: -unsafe
 
