@@ -1,3 +1,11 @@
+2005-11-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StrongName.cs: Added new constructor to specify the strongname key 
+	size (which can vary from 384 bits to 16384 bits in 2.0). Fixed 
+	PublicKey property not to assume a 1024 bits public key. Verification
+	was *already* working for any key length (so *much* older version of 
+	Mono can verify new assemblies signatures without problem :-).
+
 2005-10-06  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1Convert.cs: Better handle big integer than cannot be interpreted

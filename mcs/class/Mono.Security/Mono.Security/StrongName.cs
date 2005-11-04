@@ -114,6 +114,11 @@ namespace Mono.Security {
 		{
 		}
 
+		public StrongName (int keySize)
+		{
+			rsa = new RSAManaged (keySize);
+		}
+
 		public StrongName (byte[] data)
 		{
 			if (data == null)
@@ -195,8 +200,9 @@ namespace Mono.Security {
 		public byte[] PublicKey {
 			get { 
 				if (publicKey == null) {
-					byte[] keyPair = CryptoConvert.ToCapiKeyBlob (rsa, false); 
-					publicKey = new byte [32 + 128]; // always 1024 bits
+					byte[] keyPair = CryptoConvert.ToCapiKeyBlob (rsa, false);
+					// since 2.0 public keys can vary from 384 to 16384 bits
+					publicKey = new byte [32 + (rsa.KeySize >> 3)];
 
 					// The first 12 bytes are documented at:
 					// http://msdn.microsoft.com/library/en-us/cprefadd/html/grfungethashfromfile.asp
