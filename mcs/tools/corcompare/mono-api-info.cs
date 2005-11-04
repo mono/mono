@@ -640,7 +640,7 @@ namespace Mono.AssemblyInfo
 		protected override string GetMemberAttributes (MemberInfo member)
 		{
 			PropertyInfo prop = (PropertyInfo) member;
-			return ((int) prop.Attributes).ToString (CultureInfo.InvariantCulture);
+			return ((int) prop.Attributes & (0xFFFFFFFF ^ (int) PropertyAttributes.ReservedMask)).ToString (CultureInfo.InvariantCulture);
 		}
 
 		public override string ParentTag {
