@@ -156,6 +156,9 @@ namespace Mono.CSharp {
 
 			must_do_cs1540_check = false; // by default we do not check for this
 
+			if (ma == MethodAttributes.Public)
+				return true;
+			
 			//
 			// If only accessible to the current class or children
 			//
@@ -163,7 +166,8 @@ namespace Mono.CSharp {
 				return TypeManager.IsPrivateAccessible (invocation_type, mi.DeclaringType) ||
 					TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType);
 
-			if (mi.DeclaringType.Assembly == invocation_type.Assembly) {
+			if (mi.DeclaringType.Assembly == invocation_type.Assembly ||
+					TypeManager.IsFriendAssembly (mi.DeclaringType.Assembly)) {
 				if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
 					return true;
 			} else {
@@ -173,17 +177,11 @@ namespace Mono.CSharp {
 
 			// Family and FamANDAssem require that we derive.
 			// FamORAssem requires that we derive if in different assemblies.
-			if (ma == MethodAttributes.Family ||
-			    ma == MethodAttributes.FamANDAssem ||
-			    ma == MethodAttributes.FamORAssem) {
-				if (!TypeManager.IsNestedFamilyAccessible (invocation_type, mi.DeclaringType))
-					return false;
+			if (!TypeManager.IsNestedFamilyAccessible (invocation_type, mi.DeclaringType))
+				return false;
 
-				if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))
-					must_do_cs1540_check = true;
-
-				return true;
-			}
+			if (!TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType))
+				must_do_cs1540_check = true;
 
 			return true;
 		}

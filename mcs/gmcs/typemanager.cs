@@ -253,6 +253,8 @@ public partial class TypeManager {
 	static Hashtable fieldbuilders_to_fields;
 	static Hashtable fields;
 
+	static PtrHashtable assembly_internals_vis_attrs;
+
 	struct Signature {
 		public string name;
 		public Type [] args;
@@ -275,6 +277,8 @@ public partial class TypeManager {
 		priv_fields_events = null;
 
 		type_hash = null;
+
+		assembly_internals_vis_attrs = null;
 		
 		CleanUpGenerics ();
 		TypeHandle.CleanUp ();
@@ -376,6 +380,8 @@ public partial class TypeManager {
 		fieldbuilders_to_fields = new Hashtable ();
 		fields = new Hashtable ();
 		type_hash = new DoubleHash ();
+
+		assembly_internals_vis_attrs = new PtrHashtable ();
 		
 		InitGenerics ();
 	}
@@ -1656,6 +1662,74 @@ public partial class TypeManager {
 		return false;
 	}
 
+	//
+	// Checks whether `extern_type' is friend of the output assembly
+	//
+	public static bool IsFriendAssembly (Assembly assembly)
+	{
+		if (assembly_internals_vis_attrs.Contains (assembly))
+			return (bool)(assembly_internals_vis_attrs [assembly]);
+		
+		object [] attrs = assembly.GetCustomAttributes (internals_visible_attr_type, false);
+		if (attrs.Length == 0) {
+			assembly_internals_vis_attrs.Add (assembly, false);
+			return false;
+		}
+
+		AssemblyName this_name = CodeGen.Assembly.Name;
+		byte [] this_token = this_name.GetPublicKeyToken ();
+		bool is_friend = false;
+		foreach (InternalsVisibleToAttribute attr in attrs) {
+			if (attr.AssemblyName == null || attr.AssemblyName.Length == 0)
+				continue;
+			
+			AssemblyName aname = null;
+			try {
+				aname = new AssemblyName (attr.AssemblyName);
+			} catch (FileLoadException) {
+			} catch (ArgumentException) {
+			}
+
+			if (aname == null || aname.Name != this_name.Name)
+				continue;
+			
+			byte [] key_token = aname.GetPublicKeyToken ();
+			if (key_token != null) {
+				if (this_token == null) {
+					// Same name, but key token is null
+					Error_FriendAccessNameNotMatching (aname.FullName);
+					break;
+				}
+				
+				if (!CompareKeyTokens (this_token, key_token))
+					continue;
+			}
+
+			is_friend = true;
+			break;
+		}
+
+		assembly_internals_vis_attrs.Add (assembly, is_friend);
+		return is_friend;
+	}
+
+	static bool CompareKeyTokens (byte [] token1, byte [] token2)
+	{
+		for (int i = 0; i < token1.Length; i++)
+			if (token1 [i] != token2 [i])
+				return false;
+
+		return true;
+	}
+
+	static void Error_FriendAccessNameNotMatching (string other_name)
+	{
+		Report.Error (281, "Friend access was granted to `" + other_name + 
+				"', but the output assembly is named `" + CodeGen.Assembly.Name.FullName +
+				"'. Try adding a reference to `" + other_name + 
+				"' or change the output assembly name to match it");
+	}
+	
         //
         // Do the right thing when returning the element type of an
         // array type based on whether we are compiling corlib or not
@@ -2480,12 +2554,16 @@ public partial class TypeManager {
 				MethodBase mb = (MethodBase) m;
 				MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
 
+				if (ma == MethodAttributes.Public)
+					return true;
+				
 				if (ma == MethodAttributes.Private)
 					return private_ok ||
 						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
 						IsNestedChildOf (invocation_type, m.DeclaringType);
 
-				if (invocation_assembly == mb.DeclaringType.Assembly) {
+				if (invocation_assembly == mb.DeclaringType.Assembly ||
+						TypeManager.IsFriendAssembly (mb.DeclaringType.Assembly)) {
 					if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
 						return true;
 				} else {
@@ -2493,25 +2571,24 @@ public partial class TypeManager {
 						return false;
 				}
 
-				if (ma == MethodAttributes.Family ||
-				    ma == MethodAttributes.FamANDAssem ||
-				    ma == MethodAttributes.FamORAssem)
-					return CheckValidFamilyAccess (mb.IsStatic, m);
-				
-				// Public.
-				return true;
+				// Family, FamORAssem or FamANDAssem
+				return CheckValidFamilyAccess (mb.IsStatic, m);
 			}
 			
 			if (m is FieldInfo){
 				FieldInfo fi = (FieldInfo) m;
 				FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
 				
+				if (fa == FieldAttributes.Public)
+					return true;
+				
 				if (fa == FieldAttributes.Private)
 					return private_ok ||
 						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
 						IsNestedChildOf (invocation_type, m.DeclaringType);
 
-				if (invocation_assembly == fi.DeclaringType.Assembly) {
+				if (invocation_assembly == fi.DeclaringType.Assembly ||
+						TypeManager.IsFriendAssembly (fi.DeclaringType.Assembly)) {
 					if (fa == FieldAttributes.Assembly || fa == FieldAttributes.FamORAssem)
 						return true;
 				} else {
@@ -2519,13 +2596,8 @@ public partial class TypeManager {
 						return false;
 				}
 
-				if (fa == FieldAttributes.Family ||
-				    fa == FieldAttributes.FamANDAssem ||
-				    fa == FieldAttributes.FamORAssem)
-					return CheckValidFamilyAccess (fi.IsStatic, m);
-				
-				// Public.
-				return true;
+				// Family, FamORAssem or FamANDAssem
+				return CheckValidFamilyAccess (fi.IsStatic, m);
 			}
 
 			//
@@ -2786,7 +2858,7 @@ public partial class TypeManager {
 		}
 		return false;
 	}
-		
+
 #endregion
 	
 }

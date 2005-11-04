@@ -1,3 +1,25 @@
+2005-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	Add friend assembly access support.
+	* typemanager.cs: assembly_internals_vis_attrs
+	cache for friend assembly access. 
+	(TypeManager.IsFriendAssembly): New method for
+	checking friend assembly access.
+	(TypeManager.Error_FriendAccessNameNotMatching): New
+	helper method.
+	(TypeManager.CompareKeyTokens): Likewise.
+	(TypeManager.Filter): Handle friend accessible
+	members.
+
+	* namespace.cs (RootNamespace.GetTypeInAssembly): Return
+	friend accessible types.
+
+	* ecore.cs (Expression.IsAccessorAccessible): Handle
+	friend accessible properties.
+
+	* decl.cs (DeclSpace.CheckAccessLevel): Handle friend
+	accessible types.
+	
 2005-10-28  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76568.

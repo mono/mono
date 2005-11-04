@@ -925,7 +925,8 @@ namespace Mono.CSharp {
   				//
   				// This test should probably use the declaringtype.
   				//
-				return check_type.Assembly == TypeBuilder.Assembly;
+				return check_type.Assembly == TypeBuilder.Assembly ||
+					TypeManager.IsFriendAssembly (check_type.Assembly);
 
 			case TypeAttributes.NestedPublic:
 				return true;
@@ -940,15 +941,18 @@ namespace Mono.CSharp {
 				return FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedFamANDAssem:
-				return (check_type.Assembly == tb.Assembly) &&
+				return ((check_type.Assembly == tb.Assembly) || 
+						TypeManager.IsFriendAssembly (check_type.Assembly)) && 
 					FamilyAccessible (tb, check_type);
 
 			case TypeAttributes.NestedFamORAssem:
 				return (check_type.Assembly == tb.Assembly) ||
-					FamilyAccessible (tb, check_type);
+					FamilyAccessible (tb, check_type) ||
+					TypeManager.IsFriendAssembly (check_type.Assembly);
 
 			case TypeAttributes.NestedAssembly:
-				return check_type.Assembly == tb.Assembly;
+				return check_type.Assembly == tb.Assembly ||
+					TypeManager.IsFriendAssembly (check_type.Assembly);
 			}
 
 			Console.WriteLine ("HERE: " + check_attr);

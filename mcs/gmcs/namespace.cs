@@ -112,12 +112,16 @@ namespace Mono.CSharp {
 			if (t.IsPointer)
 				throw new InternalErrorException ("Use GetPointerType() to get a pointer");
 			
+			
 			TypeAttributes ta = t.Attributes & TypeAttributes.VisibilityMask;
-			if (ta == TypeAttributes.NotPublic ||
-			    ta == TypeAttributes.NestedPrivate ||
-			    ta == TypeAttributes.NestedAssembly ||
-			    ta == TypeAttributes.NestedFamANDAssem)
+			if (ta == TypeAttributes.NestedPrivate)
 				return null;
+			
+			if (ta == TypeAttributes.NotPublic ||
+					ta == TypeAttributes.NestedAssembly ||
+					ta == TypeAttributes.NestedFamANDAssem)
+				if (!TypeManager.IsFriendAssembly (t.Assembly))
+					return null;
 
 			return t;
 		}
