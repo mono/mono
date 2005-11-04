@@ -1,6 +1,9 @@
 2005-11-04  Jackson Harper  <jackson@ximian.com>
 
-	* CurrencyManager.cs: Implement the MetaDataChanged event.
+	* CurrencyManager.cs: Implement the MetaDataChanged event, the
+	Reset method, and the CheckEmpty. CheckEmpty is just a total guess
+	as to what the method may do as there is no real way of creating a
+	derived CurrencyManager and calling the method. 
 
 2005-11-03  Jackson Harper  <jackson@ximian.com>
 

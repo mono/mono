@@ -201,6 +201,19 @@ namespace System.Windows.Forms {
 			editable.EndEdit ();
 		}
 
+		public void Refresh ()
+		{
+			PullData ();
+		}
+
+		[MonoTODO ("This is just a guess, as I can't figure out how to test this method")]
+		protected void CheckEmpty ()
+		{
+			if (list == null || list.Count < 1)
+				throw new Exception ("List is empty.");
+				
+		}
+
 		protected internal override void OnCurrentChanged (EventArgs e)
 		{
 			PullData ();
