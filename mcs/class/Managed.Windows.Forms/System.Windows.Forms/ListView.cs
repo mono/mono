@@ -41,6 +41,7 @@ using System.ComponentModel;
 using System.ComponentModel.Design;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Globalization;
 
 namespace System.Windows.Forms
 {
@@ -88,6 +89,9 @@ namespace System.Windows.Forms
 		internal int h_marker;		// Position markers for scrolling
 		internal int v_marker;
 		internal Rectangle client_area; // ClientRectangle - scrollbars
+		private int keysearch_tickcnt;
+		private string keysearch_text;
+		static private readonly int keysearch_keydelay = 1000;
 
 		// internal variables
 		internal ImageList large_image_list;
@@ -136,6 +140,7 @@ namespace System.Windows.Forms
 			h_scroll = new HScrollBar ();
 			v_scroll = new VScrollBar ();
 			h_marker = v_marker = 0;
+			keysearch_tickcnt = 0;
 
 			// scroll bars are disabled initially
 			h_scroll.Visible = false;
@@ -539,6 +544,7 @@ namespace System.Windows.Forms
 				}
 				
 				if (view != value) {
+					h_scroll.Value = v_scroll.Value = 0;
 					view = value; 
 					Redraw (true);
 				}
@@ -959,6 +965,34 @@ namespace System.Windows.Forms
                         CalculateScrollBars ();
                         
 		}
+
+		private bool KeySearchString (KeyEventArgs ke)
+		{
+			int current_tickcnt = Environment.TickCount;
+			if (keysearch_tickcnt > 0 && current_tickcnt - keysearch_tickcnt > keysearch_keydelay) {
+				keysearch_text = string.Empty;
+			}
+			
+			keysearch_text += (char) ke.KeyData;
+			keysearch_tickcnt = current_tickcnt;
+
+			int i = FocusedItem.Index;
+			while (true) {
+				if (CultureInfo.CurrentCulture.CompareInfo.IsPrefix (Items[i].Text, keysearch_text,
+					CompareOptions.IgnoreCase)) {
+					SetFocusedItem (Items [i]);
+					items [i].Selected = true;
+					EnsureVisible (i);
+					break;
+				}
+				i = (i + 1  < Items.Count) ? i+1 : 0;
+
+				if (i == FocusedItem.Index)
+					break;
+			}
+			return true;
+		}
+
 				
 		// Event Handlers
 		private void ListView_DoubleClick (object sender, EventArgs e)
@@ -1038,8 +1072,12 @@ namespace System.Windows.Forms
 				break;
 
 			default:
-				ke.Handled = false;
-				break;
+				if (KeySearchString (ke)) {
+					ke.Handled = true;
+				} else {
+					ke.Handled = false;
+				}
+				return;
 			}
 			
 			if (index != -1) {
@@ -1470,7 +1508,6 @@ namespace System.Windows.Forms
 
 		public void Clear ()
 		{
-			SetFocusedItem (null);
 			columns.Clear ();
 			items.Clear ();	// Redraw (true) called here			
 		}
@@ -2084,6 +2121,8 @@ namespace System.Windows.Forms
 
 			public virtual void Clear ()
 			{
+				owner.SetFocusedItem (null);
+				owner.h_scroll.Value = owner.v_scroll.Value = 0;
 				list.Clear ();
 				owner.SelectedItems.list.Clear ();
 				owner.SelectedIndices.list.Clear ();

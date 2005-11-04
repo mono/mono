@@ -1,3 +1,9 @@
+2005-11-04  Jordi Mas i Hernandez <jordimash@gmail.com>
+
+	* ListView.cs: 
+	  - Implements key search for items. Useful when browsing files with FileDialog
+	  - When changing view mode or when clear the items reset scrollbar positions
+
 2005-11-04  Jackson Harper  <jackson@ximian.com>
 
 	* CurrencyManager.cs: Implement the MetaDataChanged event, the
