@@ -1,3 +1,10 @@
+2005-11-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs: Added MaximumPasswordLength property to allow decoding 
+	the password with a length limits like MS PFXImportCertStore does.
+	In this case you just have to assign the value CryptoApiPasswordLimit
+	to the new static property.
+
 2005-10-11  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* X509Certificate.cs: Fixed bug #76407. ValidFrom and ValidUntil are

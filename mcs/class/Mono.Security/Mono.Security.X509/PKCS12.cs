@@ -5,12 +5,10 @@
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell Inc. (http://www.novell.com)
 //
 // Key derivation translated from Bouncy Castle JCE (http://www.bouncycastle.org/)
 // See bouncycastle.txt for license.
-//
-
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -428,13 +426,21 @@ namespace Mono.Security.X509 {
 		public string Password {
 			set {
 				if (value != null) {
-					if (value.EndsWith ("\0"))
-						_password = Encoding.BigEndianUnicode.GetBytes (value);	
-					else
-						_password = Encoding.BigEndianUnicode.GetBytes (value + "\0");					
+					int size = value.Length;
+					int nul = 0;
+					if (size < MaximumPasswordLength) {
+						// if not present, add space for a NULL (0x00) character
+						if (value[size - 1] != 0x00)
+							nul = 1;
+					} else {
+						size = MaximumPasswordLength;
+					}
+					_password = new byte[(size + nul) << 1]; // double for unicode
+					Encoding.BigEndianUnicode.GetBytes (value, 0, size, _password, 0);
+				} else {
+					// no password
+					_password = null;
 				}
-				else
-					_password = null;	// no password
 			}
 		}
 
@@ -1706,6 +1712,29 @@ namespace Mono.Security.X509 {
 			clone.IterationCount = this.IterationCount;
 
 			return clone;
+		}
+
+		// static
+
+		public const int CryptoApiPasswordLimit = 32;
+		
+		static private int password_max_length = Int32.MaxValue;
+
+		// static properties
+		
+		// MS CryptoAPI limits the password to a maximum of 31 characters
+		// other implementations, like OpenSSL, have no such limitation.
+		// Setting a maximum value will truncate the password length to 
+		// ensure compatibility with MS's PFXImportCertStore API.
+		static public int MaximumPasswordLength {
+			get { return password_max_length; }
+			set {
+				if (value < CryptoApiPasswordLimit) {
+					string msg = Locale.GetText ("Maximum password length cannot be less than {0}.", CryptoApiPasswordLimit);
+					throw new ArgumentOutOfRangeException (msg);
+				}
+				password_max_length = value;
+			}
 		}
 
 		// static methods
