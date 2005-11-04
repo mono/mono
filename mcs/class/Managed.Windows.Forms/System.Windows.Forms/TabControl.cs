@@ -410,6 +410,11 @@ namespace System.Windows.Forms {
 			return new TabControl.ControlCollection (this);
 		}
 
+		protected void UpdateTabSelection (bool uiselected)
+		{
+			ResizeTabPages ();
+		}
+
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
@@ -424,6 +429,17 @@ namespace System.Windows.Forms {
 		protected override void OnHandleDestroyed (EventArgs e)
 		{
 			base.OnHandleDestroyed (e);
+		}
+
+		protected virtual void OnDrawItem (DrawItemEventArgs e)
+		{
+			if (DrawItem != null && DrawMode == TabDrawMode.OwnerDrawFixed)
+				DrawItem (this, e);
+		}
+
+		internal void OnDrawItemInternal (DrawItemEventArgs e)
+		{
+			OnDrawItem (e);
 		}
 
 		protected override void OnFontChanged (EventArgs e)

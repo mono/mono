@@ -1,5 +1,11 @@
 2005-11-03  Jackson Harper  <jackson@ximian.com>
 
+	* ThemeWin32Classic.cs: Implement ownerdrawing in the tab control
+	* TabControl.cs: Add Ownerdrawing bits, add the UpdateTabSelection
+	method which seems to just be used internally to refresh the tabs.
+
+2005-11-03  Jackson Harper  <jackson@ximian.com>
+
 	* TabControl.cs: Implement the remove method. Fix some broken
 	comments.
 

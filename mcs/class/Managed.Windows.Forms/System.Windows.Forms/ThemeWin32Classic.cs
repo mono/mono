@@ -3394,14 +3394,16 @@ namespace System.Windows.Forms
 
 		protected virtual int DrawTab (Graphics dc, TabPage page, TabControl tab, Rectangle bounds, bool is_selected)
 		{
-			int FlatButtonSpacing = 8;			
+			int FlatButtonSpacing = 8;
 			Rectangle interior;
 			int res = bounds.Width;
 
+			
+			
 			// we can't fill the background right away because the bounds might be adjusted if the tab is selected
 
+			StringFormat string_format = new StringFormat ();
 			if (tab.Appearance == TabAppearance.Buttons || tab.Appearance == TabAppearance.FlatButtons) {
-
 				dc.FillRectangle (GetControlBackBrush (tab.BackColor), bounds);
 
 				// Separators
@@ -3422,15 +3424,9 @@ namespace System.Windows.Forms
 				interior = new Rectangle (bounds.Left + 2, bounds.Top + 2, bounds.Width - 4, bounds.Height - 4);
 
                                 
-				StringFormat string_format = new StringFormat ();
 				string_format.Alignment = StringAlignment.Center;
 				string_format.LineAlignment = StringAlignment.Center;
 				string_format.FormatFlags = StringFormatFlags.NoWrap;
-
-				interior.Y++;
-				dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), interior, string_format);
-				interior.Y--;
-				string_format.Dispose ();
 			} else {
 				Pen light = ResPool.GetPen (ControlPaint.LightLight (tab.BackColor));
 
@@ -3451,15 +3447,9 @@ namespace System.Windows.Forms
 
 					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
 
-					if (page.Text != String.Empty) {
-						StringFormat string_format = new StringFormat ();
-						string_format.Alignment = StringAlignment.Center;
-						string_format.LineAlignment = StringAlignment.Center;
-						string_format.FormatFlags = StringFormatFlags.NoWrap;
-						interior.Y++;
-						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), interior, string_format);
-						interior.Y--;
-					}
+					string_format.Alignment = StringAlignment.Center;
+					string_format.LineAlignment = StringAlignment.Center;
+					string_format.FormatFlags = StringFormatFlags.NoWrap;
 
 					break;
 
@@ -3479,15 +3469,9 @@ namespace System.Windows.Forms
 
 					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
 
-					if (page.Text != String.Empty) {
-						StringFormat string_format = new StringFormat ();
-						string_format.Alignment = StringAlignment.Center;
-						string_format.LineAlignment = StringAlignment.Center;
-						string_format.FormatFlags = StringFormatFlags.NoWrap;
-						interior.Y++;
-						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), interior, string_format);
-						interior.Y--;
-					}
+					string_format.Alignment = StringAlignment.Center;
+					string_format.LineAlignment = StringAlignment.Center;
+					string_format.FormatFlags = StringFormatFlags.NoWrap;
 
 					break;
 
@@ -3506,20 +3490,10 @@ namespace System.Windows.Forms
 
 					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
 
-					if (page.Text != String.Empty) {
-						StringFormat string_format = new StringFormat ();
-						// Flip the text around
-						string_format.Alignment = StringAlignment.Center;
-						string_format.LineAlignment = StringAlignment.Center;
-						string_format.FormatFlags = StringFormatFlags.NoWrap;
-						string_format.FormatFlags = StringFormatFlags.DirectionVertical;
-						int wo = interior.Width / 2;
-						int ho = interior.Height / 2;
-						dc.TranslateTransform (interior.X + wo, interior.Y + ho);
-						dc.RotateTransform (180);
-						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), 0, 0, string_format);
-						dc.ResetTransform ();
-					}
+					string_format.Alignment = StringAlignment.Center;
+					string_format.LineAlignment = StringAlignment.Center;
+					string_format.FormatFlags = StringFormatFlags.NoWrap;
+					string_format.FormatFlags = StringFormatFlags.DirectionVertical;
 
 					break;
 
@@ -3539,19 +3513,36 @@ namespace System.Windows.Forms
 
 					interior = new Rectangle (bounds.Left + 4, bounds.Top + 4, bounds.Width - 8, bounds.Height - 8);
 
-					if (page.Text != String.Empty) {
-						StringFormat string_format = new StringFormat ();
-						string_format.Alignment = StringAlignment.Center;
-						string_format.LineAlignment = StringAlignment.Center;
-						string_format.FormatFlags = StringFormatFlags.NoWrap;
-						string_format.FormatFlags = StringFormatFlags.DirectionVertical;
-						interior.X++;
-						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), interior, string_format);
-						interior.X--;
-						string_format.Dispose  ();
-					}
+					string_format.Alignment = StringAlignment.Center;
+					string_format.LineAlignment = StringAlignment.Center;
+					string_format.FormatFlags = StringFormatFlags.NoWrap;
+					string_format.FormatFlags = StringFormatFlags.DirectionVertical;
 
 					break;
+				}
+
+				if (tab.DrawMode == TabDrawMode.Normal && page.Text != null) {
+					if (tab.Alignment == TabAlignment.Left) {
+						int wo = interior.Width / 2;
+						int ho = interior.Height / 2;
+						dc.TranslateTransform (interior.X + wo, interior.Y + ho);
+						dc.RotateTransform (180);
+						dc.DrawString (page.Text, page.Font, ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText), 0, 0, string_format);
+						dc.ResetTransform ();
+					} else {
+						dc.DrawString (page.Text, page.Font,
+								ThemeEngine.Current.ResPool.GetSolidBrush (SystemColors.ControlText),
+								interior, string_format);
+					}
+				} else if (page.Text != null) {
+					DrawItemState state = DrawItemState.None;
+					if (page == tab.SelectedTab)
+						state |= DrawItemState.Selected;
+					DrawItemEventArgs e = new DrawItemEventArgs (dc,
+							tab.Font, bounds, tab.IndexForTabPage (page),
+							state, page.ForeColor, page.BackColor);
+					tab.OnDrawItemInternal (e);
+					return res;
 				}
 			}
 
