@@ -1,3 +1,8 @@
+2005-11-03  Jackson Harper  <jackson@ximian.com>
+
+	* TabControl.cs: Implement the remove method. Fix some broken
+	comments.
+
 2005-11-03  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* DateTimePicker.cs:

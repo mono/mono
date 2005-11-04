@@ -453,9 +453,9 @@ namespace System.Windows.Forms {
 		{
 			if (e.KeyCode == Keys.Tab && (e.KeyData & Keys.Control) != 0) {
 				if ((e.KeyData & Keys.Shift) == 0)
-					SelectedIndex = (SelectedIndex + 1) % (TabCount);
+					SelectedIndex = (SelectedIndex + 1) % TabCount;
 				else
-					SelectedIndex = (SelectedIndex - 1) % (TabCount);
+					SelectedIndex = (SelectedIndex - 1) % TabCount;
 				e.Handled = true;
 			} else if (e.KeyCode == Keys.Home) {
 				SelectedIndex = 0;
@@ -1016,7 +1016,7 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 
-		#region Class TabPage.ControlCollection
+		#region Class TaControl.ControlCollection
 		public class ControlCollection : System.Windows.Forms.Control.ControlCollection {
 
 			private TabControl owner;
@@ -1044,8 +1044,19 @@ namespace System.Windows.Forms {
 					owner.ResizeTabPages ();
 				}
 			}
+
+			public override void Remove (Control value)
+			{
+				TabPage page = value as TabPage;
+				if (page != null) {
+					int index = owner.IndexForTabPage (page);
+					if (index == owner.SelectedIndex)
+						owner.SelectedIndex = (index + 1) % owner.TabCount;
+				}
+				base.Remove (value);
+			}
 		}
-		#endregion	// Class TabPage.ControlCollection
+		#endregion	// Class TabControl.ControlCollection
 
 		#region Class TabPage.TabPageCollection
 		public class TabPageCollection	: IList, ICollection, IEnumerable {
