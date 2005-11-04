@@ -5,7 +5,7 @@
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (C) 2003 Motus Technologies Inc. (http://www.motus.com)
-// (C) 2004 Novell (http://www.novell.com)
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 using System;
@@ -108,7 +108,8 @@ namespace Mono.Tools {
 				if ((i % 39 == 0) && (data.Length > 39))
 					sb.Append (Environment.NewLine);
 				sb.Append (data [i].ToString ("x2"));
-				if (i > 1000) {
+				if (i > 2080) {
+					// ensure we can display up to 16384 bits keypair
 					sb.Append (" !!! TOO LONG !!!");
 					break;
 				}
@@ -340,10 +341,20 @@ namespace Mono.Tools {
 				case "-k":
 					// Create a new strong name key pair
 					// (a new RSA keypair automagically if none is present)
-					sn = new StrongName ();
+					int size = 1024;
+					if (i < args.Length + 2) {
+						try {
+							size = Int32.Parse (args[i++]);
+						}
+						catch {
+							// oops, that wasn't a valid key size (assume 1024 bits)
+							i--;
+						}
+					}
+					sn = new StrongName (size);
 					WriteToFile (args[i], CryptoConvert.ToCapiKeyBlob (sn.RSA, true));
 					if (!quiet)
-						Console.WriteLine ("A new strong name keypair has been generated in {0}", args [i]);
+						Console.WriteLine ("A new {0} bits strong name keypair has been generated in file '{1}'.", size, args [i]);
 					break;
 				case "-m":
 					Console.WriteLine ("Unimplemented option");

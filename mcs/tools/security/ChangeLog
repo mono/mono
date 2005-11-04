@@ -1,3 +1,9 @@
+2005-11-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* sn.cs: Added optional keysize argument to -k (generate keypair). 
+	This is required as 2.0 allows key length from 384 to 16384 bits (i.e.
+	which are the CryptoAPI limitations on RSA).
+
 2005-10-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mozroots.cs: Fix confirmations and "really" import the certificates.
