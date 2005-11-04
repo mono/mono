@@ -1,3 +1,9 @@
+2005-11-04  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* PKCS12Test.cs: Added tests for adding multiple keys with the same 
+	size inside a pkcs12 file. Fixed test when removing different keys
+	from the structure (removed only it the public key match).
+
 2005-11-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12.cs: Added tests for MaximumPasswordLength property wrt to the

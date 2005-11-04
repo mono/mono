@@ -423,14 +423,16 @@ namespace MonoTests.Mono.Security.X509 {
 		public void RemovePkcs8ShroudedKeyBag_Test ()
 		{
 			PKCS12 p12 = new PKCS12 ();
-
-			p12.AddPkcs8ShroudedKeyBag (RSA.Create ());
-
+			RSAManaged rsa = new RSAManaged (384);
+			p12.AddPkcs8ShroudedKeyBag (rsa);
 			AssertEquals ("RP.1", p12.Keys.Count, 1);
 
-			p12.RemovePkcs8ShroudedKeyBag (RSA.Create ());
+			RSAManaged rsa2 = new RSAManaged (384);
+			p12.RemovePkcs8ShroudedKeyBag (rsa2);
+			AssertEquals ("RP.2", p12.Keys.Count, 1);
 
-			AssertEquals ("RP.2", p12.Keys.Count, 0);
+			p12.RemovePkcs8ShroudedKeyBag (rsa);
+			AssertEquals ("RP.3", p12.Keys.Count, 0);
 		}
 
 		[Test]
@@ -462,14 +464,16 @@ namespace MonoTests.Mono.Security.X509 {
 		public void RemoveKeyBag_Test ()
 		{
 			PKCS12 p12 = new PKCS12 ();
-
-			p12.AddKeyBag (RSA.Create ());
-
+			RSAManaged rsa = new RSAManaged (384);
+			p12.AddKeyBag (rsa);
 			AssertEquals ("RK.1", p12.Keys.Count, 1);
 
-			p12.RemoveKeyBag (RSA.Create ());
+			RSAManaged rsa2 = new RSAManaged (384);
+			p12.RemoveKeyBag (rsa2);
+			AssertEquals ("RK.2", p12.Keys.Count, 1);
 
-			AssertEquals ("RK.2", p12.Keys.Count, 0);
+			p12.RemoveKeyBag (rsa);
+			AssertEquals ("RK.3", p12.Keys.Count, 0);
 		}
 
 		[Test]
@@ -609,6 +613,22 @@ namespace MonoTests.Mono.Security.X509 {
 			PKCS12.MaximumPasswordLength = PKCS12.CryptoApiPasswordLimit;
 			// password too short
 			new PKCS12 (p12_truncated, "1234567890123456789012345678901");
+		}
+
+		[Test] // see bug #76627
+		public void MultipleKeys ()
+		{
+			RSAManaged r384a = new RSAManaged (384);
+			RSAManaged r384b = new RSAManaged (384);
+			RSAManaged r512 = new RSAManaged (512);
+			PKCS12 p12 = new PKCS12 ();
+			AssertEquals ("0", 0, p12.Keys.Count);
+			p12.AddPkcs8ShroudedKeyBag (r512);
+			AssertEquals ("1", 1, p12.Keys.Count);
+			p12.AddPkcs8ShroudedKeyBag (r384a);
+			AssertEquals ("2", 2, p12.Keys.Count);
+			p12.AddPkcs8ShroudedKeyBag (r384b);
+			AssertEquals ("3", 3, p12.Keys.Count);
 		}
 	}
 }
