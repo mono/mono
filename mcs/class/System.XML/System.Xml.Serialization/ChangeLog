@@ -1,3 +1,8 @@
+2005-11-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlElementAttribute.cs : gimme Order; it fixes 100 or more
+	  sys.xml.schema corcompare diffs.
+
 2005-10-17  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* SerializationCodeGenerator.cs: 

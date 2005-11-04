@@ -46,6 +46,7 @@ namespace System.Xml.Serialization
 		private string ns;
 		private bool isNullable;
 		private Type type;
+		private int order = -1;
 
 		public XmlElementAttribute ()
 		{	
@@ -110,6 +111,14 @@ namespace System.Xml.Serialization
 				isNullable = value;
 			}
 		}
+
+#if NET_2_0
+		[MonoTODO]
+		public int Order {
+			get { return order; }
+			set { order = value; }
+		}
+#endif
 
 		public Type Type {
 			get {
