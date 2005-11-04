@@ -1,3 +1,8 @@
+2005-11-04  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* PKCS12.cs: It's now possible to add multiple keys of the same size
+	inside a pkcs12 file. Fix bug #76627.
+
 2005-11-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PKCS12.cs: Added MaximumPasswordLength property to allow decoding 

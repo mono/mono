@@ -1248,28 +1248,11 @@ namespace Mono.Security.X509 {
 
 		private bool CompareAsymmetricAlgorithm (AsymmetricAlgorithm a1, AsymmetricAlgorithm a2)
 		{
-			bool result = a1.KeyExchangeAlgorithm.Equals (a2.KeyExchangeAlgorithm);
-			result = result && a1.KeySize == a2.KeySize;
-
-			KeySizes[] keysizes = a2.LegalKeySizes;
-			if (a1.LegalKeySizes.Length != keysizes.Length)
+			// fast path
+			if (a1.KeySize != a2.KeySize)
 				return false;
-
-			for (int i = 0; i < a1.LegalKeySizes.Length; i++) {
-				result = result && CompareKeySizes (a1.LegalKeySizes [i], keysizes [i]);
-			}
-
-			result = result && a1.SignatureAlgorithm == a2.SignatureAlgorithm;
-			
-			return result;
-		}
-
-		private bool CompareKeySizes (KeySizes k1, KeySizes k2)
-		{ 
-			bool result = k1.MaxSize == k2.MaxSize;
-			result = result && k1.MinSize == k2.MinSize;
-			result = result && k1.SkipSize == k2.SkipSize;
-			return result;
+			// compare public keys - if they match we can assume the private match too
+			return (a1.ToXmlString (false) == a2.ToXmlString (false));
 		}
 
 		public void AddPkcs8ShroudedKeyBag (AsymmetricAlgorithm aa)
