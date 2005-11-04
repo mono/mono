@@ -1,3 +1,7 @@
+2005-11-04  Jackson Harper  <jackson@ximian.com>
+
+	* CurrencyManager.cs: Implement the MetaDataChanged event.
+
 2005-11-03  Jackson Harper  <jackson@ximian.com>
 
 	* ThemeWin32Classic.cs: Implement ownerdrawing in the tab control

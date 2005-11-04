@@ -24,6 +24,7 @@
 //
 
 using System;
+using System.Data;
 using System.Reflection;
 using System.Collections;
 using System.ComponentModel;
@@ -58,7 +59,18 @@ namespace System.Windows.Forms {
 					finalType = null;
 				}
 			}
-		}		
+
+			DataTable table = data_source as DataTable;
+			if (table == null && data_source is DataView)
+				table = ((DataView) data_source).Table;
+
+			if (table != null) {
+				table.Columns.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
+				table.ChildRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
+				table.ParentRelations.CollectionChanged  += new CollectionChangeEventHandler (MetaDataChangedHandler);
+				table.Constraints.CollectionChanged += new CollectionChangeEventHandler (MetaDataChangedHandler);
+			}
+		}
 
 		public IList List {
 			get { return list; }
@@ -251,7 +263,14 @@ namespace System.Windows.Forms {
 			return TypeDescriptor.GetProperties (t, att);
 		}
 
+		private void MetaDataChangedHandler (object sender, CollectionChangeEventArgs e)
+		{
+			if (MetaDataChanged != null)
+				MetaDataChanged (this, EventArgs.Empty);
+		}
+
 		public event ItemChangedEventHandler ItemChanged;
+		public event EventHandler MetaDataChanged;
 	}
 }
 
