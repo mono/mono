@@ -30,4 +30,12 @@ public class Blah {
 
 		return 0;
 	}
+    
+    public static void Test_1 ()
+    {
+        const long lk = 1024;
+        const long lM = 1024 * lk;
+        const long lG = 1024 * lM;
+        const long lT = 1024 * lG;
+    }
 }
