@@ -1,5 +1,11 @@
 2005-11-04  Dick Porter  <dick@ximian.com>
 
+	* sockets.c (ioctlsocket): Use select instead of if to avoid a
+	type promotion problem on 64bit freebsd.  Based on patch by Lou
+	Kamenov <kamenovl@gmail.com>, fixes bug 76447.
+
+2005-11-04  Dick Porter  <dick@ximian.com>
+
 	* io.c (file_write): Only do the file locking if
 	MONO_STRICT_IO_EMULATION is set.
 
