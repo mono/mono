@@ -643,6 +643,10 @@ interpreter.  The possible values are `no' to disable the use of a
 custom serializer or a number to indicate when the XmlSerializer
 should start serializing.   The default value is 50, which means that
 the a custom serializer will be produced on the 50th use.
+.TP
+.I "MONO_STRICT_IO_EMULATION"
+If set, extra checks are made during IO operations.  Currently, this
+includes only advisory locks around file writes.
 .SH FILES
 On Unix assemblies are loaded from the installation lib directory.  If you set
 `prefix' to /usr, the assemblies will be located in /usr/lib.  On

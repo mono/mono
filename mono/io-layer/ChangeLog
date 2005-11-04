@@ -1,3 +1,8 @@
+2005-11-04  Dick Porter  <dick@ximian.com>
+
+	* io.c (file_write): Only do the file locking if
+	MONO_STRICT_IO_EMULATION is set.
+
 2005-10-21  Dick Porter  <dick@ximian.com>
 
 	* processes.c: 
