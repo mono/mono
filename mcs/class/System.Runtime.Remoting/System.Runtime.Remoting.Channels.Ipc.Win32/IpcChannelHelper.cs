@@ -50,7 +50,7 @@ namespace System.Runtime.Remoting.Channels.Ipc.Win32
         }
 
         static readonly char[] InvalidPipeNameChars =
-            new char[] {'\\', '/', ':'};
+            new char[] {'\\', '/'};
 
         /// <summary>
         /// Validates a pipe name.
