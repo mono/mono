@@ -387,6 +387,8 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Form ActiveMdiChild {
 			get {
 				if (!IsMdiContainer)

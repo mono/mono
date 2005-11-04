@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2004 Novell, Inc.
+// Copyright (c) 2004-2005 Novell, Inc.
 //
 // Authors:
 //	John BouAntoun	jba-mono@optusnet.com.au
@@ -34,6 +34,7 @@ using System;
 using System.Drawing;
 using System.Collections;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace System.Windows.Forms {
@@ -75,6 +76,43 @@ namespace System.Windows.Forms {
 		
 		#endregion	// Local variables
 		
+		#region DateTimePickerAccessibleObject Subclass
+		[ComVisible(true)]
+		public class DateTimePickerAccessibleObject : ControlAccessibleObject {
+			#region DateTimePickerAccessibleObject Local Variables
+			private DateTimePicker	owner;
+			#endregion	// DateTimePickerAccessibleObject Local Variables
+
+			#region DateTimePickerAccessibleObject Constructors
+			public DateTimePickerAccessibleObject(DateTimePicker owner) : base(owner) {
+				this.owner = owner;
+			}
+			#endregion	// DateTimePickerAccessibleObject Constructors
+
+			#region DateTimePickerAccessibleObject Properties
+			public override AccessibleStates State {
+				get {
+					AccessibleStates	retval;
+
+					retval = AccessibleStates.Default;
+
+					if (owner.Checked) {
+						retval |= AccessibleStates.Checked;
+					}
+
+					return retval;
+				}
+			}
+
+			public override string Value {
+				get {
+					return owner.text;
+				}
+			}
+			#endregion	// DateTimePickerAccessibleObject Properties
+		}
+		#endregion	// DateTimePickerAccessibleObject Sub-class
+
 		#region public constructors
 		
 		// only public constructor
@@ -419,7 +457,66 @@ namespace System.Windows.Forms {
 		
 		// raised when the date Value is changed
 		public event EventHandler ValueChanged;
-		
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler BackColorChanged {
+			add {
+				base.BackColorChanged += value;
+			}
+
+			remove {
+				base.BackColorChanged -= value;
+			}
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler BackgroundImageChanged {
+			add {
+				base.BackgroundImageChanged += value;
+			}
+
+			remove {
+				base.BackgroundImageChanged -= value;
+			}
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event EventHandler ForeColorChanged {
+			add {
+				base.ForeColorChanged += value;
+			}
+
+			remove {
+				base.ForeColorChanged -= value;
+			}
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public new event PaintEventHandler Paint {
+			add {
+				base.Paint += value;
+			}
+
+			remove {
+				base.Paint -= value;
+			}
+		}
+
+		[Browsable(false)]
+		[EditorBrowsable(EditorBrowsableState.Advanced)]
+		public new event EventHandler TextChanged {
+			add {
+				base.TextChanged += value;
+			}
+
+			remove {
+				base.TextChanged -= value;
+			}
+		}
 		#endregion	// public events
 		
 		#region protected properties
@@ -481,6 +578,11 @@ namespace System.Windows.Forms {
 			if (this.DropDown != null) {
 				this.DropDown (this, eventargs);
 			}
+		}
+
+		protected override void OnFontChanged(EventArgs e) {
+			// FIXME - do we need to update/invalidate/recalc our stuff?
+			base.OnFontChanged (e);
 		}
 		
 		// raises the format changed event

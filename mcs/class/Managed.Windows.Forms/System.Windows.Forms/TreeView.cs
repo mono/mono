@@ -1496,6 +1496,8 @@ namespace System.Windows.Forms {
 			remove { on_after_select -= value; }
 		}
 
+		[Browsable (false)]
+		[EditorBrowsable (EditorBrowsableState.Never)]	
 		public event EventHandler BackgroundImageChanged {
 			add { base.BackgroundImageChanged += value; }
 			remove { base.BackgroundImageChanged -= value; }

@@ -1,3 +1,12 @@
+2005-11-03  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* DateTimePicker.cs:
+	  - Added missing DateTimePickerAccessibleObject class
+	  - Added missing events
+	  - Added OnFontChanged method
+	* Form.cs: Added missing attributes
+	* TreeView.cs: Added missing attributes
+
 2005-11-03  Peter Dennis Bartok  <pbartok@novell.com> 
 
 	* GridItemCollection.cs: Fix signatures
