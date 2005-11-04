@@ -65,6 +65,8 @@ namespace System.CodeDom.Compiler {
 		//
 		public Assembly CompiledAssembly {
 			get {
+				if ((compiledAssembly == null) && (pathToAssembly != null))
+					compiledAssembly = Assembly.LoadFrom (pathToAssembly);
 				return compiledAssembly;
 			}
 			set {

@@ -7,8 +7,7 @@
 //
 // (C) 2002 Jackson Harper, All rights reserved
 // (C) 2003 Andreas Nahr
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,13 +29,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.IO;
 using System.Text;
 using System.Reflection;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Security.Permissions;
 
 namespace System.CodeDom.Compiler {
 
@@ -121,6 +120,7 @@ namespace System.CodeDom.Compiler {
 			return Compile (options, fileNames, false);
 		}
 
+		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		private CompilerResults Compile (CompilerParameters options, string[] fileNames, bool keepFiles)
 		{
 			if (null == options)
@@ -128,45 +128,26 @@ namespace System.CodeDom.Compiler {
 			if (null == fileNames)
 				throw new ArgumentNullException ("fileNames");
 
-			options.TempFiles = new TempFileCollection ();
-			foreach (string file in fileNames)
-			{
+			options.TempFiles = new TempFileCollection (Path.GetTempPath ());
+			foreach (string file in fileNames) {
 				options.TempFiles.AddFile (file, keepFiles);
 			}
 			options.TempFiles.KeepFiles = keepFiles;
 
-			CompilerResults results = new CompilerResults (new TempFileCollection());
+			string std_output = String.Empty;
+			string err_output = String.Empty;
+			string cmd = String.Concat (CompilerName, " ", CmdArgsFromParameters (options));
 
-			// FIXME this should probably be done by the System.CodeDom.Compiler.Executor class
-			Process compiler = new Process();
+			CompilerResults results = new CompilerResults (new TempFileCollection ());
+			results.NativeCompilerReturnValue = Executor.ExecWaitWithCapture (cmd,
+				options.TempFiles, ref std_output, ref err_output);
 
-			string compiler_output;
-			string[] compiler_output_lines;
-			compiler.StartInfo.FileName = CompilerName;
-			compiler.StartInfo.Arguments = CmdArgsFromParameters (options);
-			compiler.StartInfo.CreateNoWindow = true;
-			compiler.StartInfo.UseShellExecute = false;
-			compiler.StartInfo.RedirectStandardOutput = true;
-			try {
-				compiler.Start();
-				compiler_output = compiler.StandardOutput.ReadToEnd();
-				compiler.WaitForExit();
-			} 
-			finally {
-				results.NativeCompilerReturnValue = compiler.ExitCode;
-				compiler.Close();
-			}
-
-			// END FIXME
-
-			compiler_output_lines = compiler_output.Split(
-				System.Environment.NewLine.ToCharArray());
+			string[] compiler_output_lines = std_output.Split (Environment.NewLine.ToCharArray ());
 			foreach (string error_line in compiler_output_lines)
 				ProcessCompilerOutputLine (results, error_line);
+
 			if (results.Errors.Count == 0)
-				results.CompiledAssembly = Assembly.LoadFrom (options.OutputAssembly);
-			else
-				results.CompiledAssembly = null;
+				results.PathToAssembly = options.OutputAssembly;
 			return results;
 		}
 
@@ -212,9 +193,20 @@ namespace System.CodeDom.Compiler {
 		protected static string JoinStringArray (string[] sa, string separator)
 		{
 			StringBuilder sb = new StringBuilder ();
-
-			foreach (string s in sa)
-				sb.Append (s + separator);
+			int length = sa.Length;
+			if (length > 1) {
+				for (int i=0; i < length - 1; i++) {
+					sb.Append ("\"");
+					sb.Append (sa [i]);
+					sb.Append ("\"");
+					sb.Append (separator);
+				}
+			}
+			if (length > 0) {
+				sb.Append ("\"");
+				sb.Append (sa [length - 1]);
+				sb.Append ("\"");
+			}
 			return sb.ToString ();
 		}
 
