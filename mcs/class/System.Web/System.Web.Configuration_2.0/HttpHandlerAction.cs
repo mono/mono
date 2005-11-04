@@ -65,10 +65,10 @@ namespace System.Web.Configuration
 
 		public HttpHandlerAction (string path, string type, string verb, bool validate)
 		{
-			this.path = path;
-			this.type = type;
-			this.verb = verb;
-			this.validate = validate;
+			Path = path;
+			Type = type;
+			Verb = verb;
+			Validate = validate;
 		}
 
 		[ConfigurationProperty ("path", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
@@ -100,11 +100,6 @@ namespace System.Web.Configuration
 				return _properties;
 			}
 		}
-
-		string path;
-		string verb;
-		string type;
-		bool validate;
 	}
 
 }

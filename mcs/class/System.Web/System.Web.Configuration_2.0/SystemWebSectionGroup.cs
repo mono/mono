@@ -118,11 +118,10 @@ namespace System.Web.Configuration
 			get { return (HttpHandlersSection)Sections ["httpHandlers"]; }
 		}
 
-#if notyet
+		[ConfigurationProperty ("httpModules")]
 		public HttpModulesSection HttpModules {
 			get { return (HttpModulesSection)Sections ["httpModules"]; }
 		}
-#endif
 
 #if notyet
 		public HttpRuntimeSection HttpRuntime {

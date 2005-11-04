@@ -90,7 +90,9 @@ System.Web.Configuration_2.0/FormsAuthenticationConfiguration.cs
 System.Web.Configuration_2.0/HttpHandlerAction.cs
 System.Web.Configuration_2.0/HttpHandlerActionCollection.cs
 System.Web.Configuration_2.0/HttpHandlersSection.cs
-System.Web.Configuration_2.0/InternalSection.cs
+System.Web.Configuration_2.0/HttpModuleAction.cs
+System.Web.Configuration_2.0/HttpModuleActionCollection.cs
+System.Web.Configuration_2.0/HttpModulesSection.cs
 System.Web.Configuration_2.0/IRemoteWebConfigurationHostServer.cs
 System.Web.Configuration_2.0/MembershipSection.cs
 System.Web.Configuration_2.0/PagesEnableSessionState.cs

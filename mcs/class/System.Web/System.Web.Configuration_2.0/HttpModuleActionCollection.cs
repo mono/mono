@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.HttpHandlerActionCollection
+// System.Web.Configuration.HttpModuleActionCollection
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -35,16 +35,16 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	[ConfigurationCollection (typeof (HttpHandlerAction), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMapAlternate)]
-	public sealed class HttpHandlerActionCollection : ConfigurationElementCollection
+	[ConfigurationCollection (typeof (HttpModuleAction), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
+	public sealed class HttpModuleActionCollection : ConfigurationElementCollection
 	{
 		[MonoTODO]
-		public HttpHandlerActionCollection ()
+		public HttpModuleActionCollection ()
 		{
 		}
 			
 		[MonoTODO]
-		public void Add (HttpHandlerAction httpHandlerAction)
+		public void Add (HttpModuleAction httpModuleAction)
 		{
 		}
 
@@ -66,18 +66,18 @@ namespace System.Web.Configuration
 		}
 
 		[MonoTODO]
-		public int IndexOf (HttpHandlerAction action)
+		public int IndexOf (HttpModuleAction action)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Remove (string verb, string path)
+		public void Remove (string name)
 		{
 		}
 
 		[MonoTODO]
-		public void Remove (HttpHandlerAction action)
+		public void Remove (HttpModuleAction action)
 		{
 		}
 
@@ -87,10 +87,9 @@ namespace System.Web.Configuration
 		}
 
 		[MonoTODO]
-		protected override ConfigurationElementCollectionType CollectionType {
-			get {
-				throw new NotImplementedException ();
-			}
+		public bool IsElementRemovable (ConfigurationElement element)
+		{
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
@@ -101,18 +100,11 @@ namespace System.Web.Configuration
 		}
 
 		[MonoTODO]
-		public HttpHandlerAction this[int index] {
+		public HttpModuleAction this[int index] {
 			get {
 				throw new NotImplementedException ();
 			}
 			set {
-			}
-		}
-
-		[MonoTODO]
-		protected override bool ThrowOnDuplicate {
-			get {
-				throw new NotImplementedException ();
 			}
 		}
 	}

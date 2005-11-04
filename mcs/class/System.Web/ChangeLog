@@ -1,3 +1,38 @@
+2005-11-04  Chris Toshok  <toshok@ximian.com>
+
+	* System.Web.dll.sources: add the S.W.C_2.0/HttpModule*.cs files,
+	and nuke S.W.C_2.0/InternalSection.cs.
+
+	* System.Web.Configuration_2.0/SystemWebSectionGroup.cs: enable
+	the HttpModules property.
+
+	* System.Web.Configuration_2.0/HttpHandlerActionCollection.cs:
+	reindent, and add MonoTODO's.
+
+	* System.Web.Configuration_2.0/HttpHandlerAction.cs: use
+	properties in the ctor, and remove the instance variables.
+
+	* System.Web.Configuration_2.0/InternalSection.cs: nuke.
+
+	* System.Web.Configuration_2.0/HttpModuleActionCollection.cs: new
+	stubs.
+
+	* System.Web.Configuration_2.0/HttpModuleAction.cs: new stubs.
+
+	* System.Web.Configuration_2.0/HttpModulesSection.cs: new stubs.
+
+	* System.Web.Configuration_2.0/CompilationSection.cs: inherit from
+	ConfigurationSection, not InternalSection.
+
+	* System.Web.Configuration_2.0/SiteMapSection.cs: same.
+
+	* System.Web.Configuration_2.0/PagesSection.cs: same.
+
+	* System.Web.Configuration_2.0/MembershipSection.cs: same.
+
+	* System.Web.Configuration_2.0/AnonymousIdentificationSection.cs:
+	same.
+
 2005-11-02  Chris Toshok  <toshok@ximian.com>
 
 	* System.Web.dll.sources: add

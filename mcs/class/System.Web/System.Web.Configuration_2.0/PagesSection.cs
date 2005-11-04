@@ -38,7 +38,7 @@ using System.Xml;
 
 namespace System.Web.Configuration
 {
-	public class PagesSection: InternalSection
+	public sealed class PagesSection: ConfigurationSection
 	{
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty asyncTimeoutProp;

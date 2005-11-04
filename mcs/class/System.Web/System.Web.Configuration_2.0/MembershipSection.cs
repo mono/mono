@@ -37,7 +37,7 @@ using System.ComponentModel;
 
 namespace System.Web.Configuration
 {
-	public sealed class MembershipSection: InternalSection
+	public sealed class MembershipSection: ConfigurationSection
 	{
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("defaultProvider", DefaultValue = "AspNetSqlMembershipProvider")]

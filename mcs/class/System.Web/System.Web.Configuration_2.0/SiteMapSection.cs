@@ -36,7 +36,7 @@ using System.Web.Security;
 
 namespace System.Web.Configuration
 {
-	public sealed class SiteMapSection: InternalSection
+	public sealed class SiteMapSection: ConfigurationSection
 	{
 		[ConfigurationProperty ("defaultProvider", DefaultValue = "AspNetXmlSiteMapProvider")]
 		public string DefaultProvider {

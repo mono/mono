@@ -37,9 +37,9 @@ using System.ComponentModel;
 
 namespace System.Web.Configuration
 {
-	public sealed class AnonymousIdentificationSection: InternalSection
+	public sealed class AnonymousIdentificationSection: ConfigurationSection
 	{
-/*		static ConfigurationPropertyCollection properties;
+		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty enabledProp;
 		static ConfigurationProperty cookieNameProp;
 		static ConfigurationProperty cookieTimeoutProp;
@@ -49,13 +49,13 @@ namespace System.Web.Configuration
 		static ConfigurationProperty cookieProtectionProp;
 		static ConfigurationProperty cookilessProp;
 		static ConfigurationProperty domainProp;
-*/
+
 		static AnonymousIdentificationSection ()
 		{
-/*			enabledProp = new ConfigurationProperty ("enabled", typeof(bool), false);
-			cookieNameProp = new NonEmptyStringConfigurationProperty ("cookieName", ".ASPXANONYMOUS", ConfigurationPropertyFlags.None);
-			cookieTimeoutProp = new TimeSpanConfigurationProperty ("cookieTimeout", new TimeSpan (69,10,40,0), TimeSpanSerializedFormat.Minutes, TimeSpanPropertyFlags.AllowInfinite | TimeSpanPropertyFlags.ProhibitZero, ConfigurationPropertyFlags.None);
-			cookiePathProp = new NonEmptyStringConfigurationProperty ("cookiePath", "/", ConfigurationPropertyFlags.None);
+			enabledProp = new ConfigurationProperty ("enabled", typeof(bool), false);
+			//			cookieNameProp = new NonEmptyStringConfigurationProperty ("cookieName", ".ASPXANONYMOUS", ConfigurationPropertyFlags.None);
+			//			cookieTimeoutProp = new TimeSpanConfigurationProperty ("cookieTimeout", new TimeSpan (69,10,40,0), TimeSpanSerializedFormat.Minutes, TimeSpanPropertyFlags.AllowInfinite | TimeSpanPropertyFlags.ProhibitZero, ConfigurationPropertyFlags.None);
+			//			cookiePathProp = new NonEmptyStringConfigurationProperty ("cookiePath", "/", ConfigurationPropertyFlags.None);
 			cookieRequireSSLProp = new ConfigurationProperty ("cookieRequireSSL", typeof(bool), false);
 			cookieSlidingExpirationProp = new ConfigurationProperty ("cookieSlidingExpiration", typeof(bool), true);
 			cookieProtectionProp = new ConfigurationProperty ("cookieProtection", typeof(CookieProtection), CookieProtection.Validation);
@@ -72,7 +72,7 @@ namespace System.Web.Configuration
 			properties.Add (cookieProtectionProp);
 			properties.Add (cookilessProp);
 			properties.Add (domainProp);
-*/		}
+		}
 		
 		[ConfigurationProperty ("cookieless", DefaultValue = HttpCookieMode.UseCookies)]
 		public HttpCookieMode Cookieless {
@@ -80,15 +80,15 @@ namespace System.Web.Configuration
 			set { base ["cookieless"] = value; }
 		}
 		
-	    [StringValidator (MaxLength = 1)]
-	    [ConfigurationProperty ("cookieName", DefaultValue = ".ASPXANONYMOUS")]
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("cookieName", DefaultValue = ".ASPXANONYMOUS")]
 		public string CookieName {
 			get { return (string) base ["cookieName"]; }
 			set { base ["cookieName"] = value; }
 		}
 		
-	    [StringValidator (MaxLength = 1)]
-	    [ConfigurationProperty ("cookiePath", DefaultValue = "/")]
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("cookiePath", DefaultValue = "/")]
 		public string CookiePath {
 			get { return (string) base ["cookiePath"]; }
 			set { base ["cookiePath"] = value; }
@@ -112,7 +112,7 @@ namespace System.Web.Configuration
 			set { base ["cookieSlidingExpiration"] = value; }
 		}
 		
-		[ConfigurationValidator (typeof(PositiveTimeSpanValidator))]
+		[TimeSpanValidator ()]
 		[TypeConverter (typeof(TimeSpanMinutesOrInfiniteConverter))]
 		[ConfigurationProperty ("cookieTimeout", DefaultValue = "69.10:40:00")]
 		public TimeSpan CookieTimeout {
@@ -120,22 +120,21 @@ namespace System.Web.Configuration
 			set { base ["cookieTimeout"] = value; }
 		}
 		
-		[ConfigurationProperty ("domain", DefaultValue = "")]
+		[ConfigurationProperty ("domain")]
 		public string Domain {
 			get { return (string) base ["domain"]; }
 			set { base ["domain"] = value; }
 		}
 		
-	    [ConfigurationProperty ("enabled", DefaultValue = false)]
+		[ConfigurationProperty ("enabled", DefaultValue = false)]
 		public bool Enabled {
 			get { return (bool) base ["enabled"]; }
 			set { base ["enabled"] = value; }
 		}
 
-/*		protected override ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
-		}
-*/
+		}		
 	}
 }
 

@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.HttpHandlerActionCollection
+// System.Web.Configuration.HttpModuleAction
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -35,84 +35,49 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	[ConfigurationCollection (typeof (HttpHandlerAction), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMapAlternate)]
-	public sealed class HttpHandlerActionCollection : ConfigurationElementCollection
+	public sealed class HttpModuleAction: ConfigurationElement
 	{
+		static ConfigurationPropertyCollection _properties;
+		static ConfigurationProperty nameProp;
+		static ConfigurationProperty typeProp;
+
 		[MonoTODO]
-		public HttpHandlerActionCollection ()
+		static HttpModuleAction ()
 		{
-		}
-			
-		[MonoTODO]
-		public void Add (HttpHandlerAction httpHandlerAction)
-		{
+			/* XXX fill in _properties */
 		}
 
 		[MonoTODO]
-		public void Clear ()
+		public HttpModuleAction (string name, string type)
 		{
+			Name = name;
+			Type = type;
 		}
-
+#if notyet
 		[MonoTODO]
-		protected override ConfigurationElement CreateNewElement ()
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		protected override object GetElementKey (ConfigurationElement element)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public int IndexOf (HttpHandlerAction action)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public void Remove (string verb, string path)
-		{
-		}
-
-		[MonoTODO]
-		public void Remove (HttpHandlerAction action)
-		{
-		}
-
-		[MonoTODO]
-		public void RemoveAt (int index)
-		{
-		}
-
-		[MonoTODO]
-		protected override ConfigurationElementCollectionType CollectionType {
+		protected override ConfigurationElementProperty ElementProperty {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+#endif
 
-		[MonoTODO]
+		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		[StringValidator (MinLength = 1)]
+		public string Name {
+			get { return (string)base[nameProp]; }
+			set { base[nameProp] = value; }
+		}
+
+		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
+		public string Type {
+			get { return (string)base[typeProp]; }
+			set { base[typeProp] = value; }
+		}
+
 		protected override ConfigurationPropertyCollection Properties {
 			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		public HttpHandlerAction this[int index] {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-			}
-		}
-
-		[MonoTODO]
-		protected override bool ThrowOnDuplicate {
-			get {
-				throw new NotImplementedException ();
+				return _properties;
 			}
 		}
 	}

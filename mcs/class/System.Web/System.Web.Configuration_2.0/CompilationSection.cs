@@ -34,7 +34,7 @@ using System.ComponentModel;
 
 namespace System.Web.Configuration
 {
-	public sealed class CompilationSection : InternalSection
+	public sealed class CompilationSection : ConfigurationSection
 	{
 		static ConfigurationPropertyCollection props;
 		static ConfigurationProperty compilers;

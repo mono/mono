@@ -1,10 +1,10 @@
 //
-// System.Web.Configuration.InternalSection.cs
+// System.Web.Configuration.HttpModulesSection
 //
 // Authors:
-//	Lluis Sanchez Gual (lluis@novell.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -35,18 +35,25 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	public class InternalSection: ConfigurationSection
+	public sealed class HttpModulesSection: ConfigurationSection
 	{
-		[MonoTODO]
-		protected virtual object GetRuntimeConfig ()
+		public HttpModulesSection ()
 		{
-			return null;
 		}
-		
+
 		[MonoTODO]
-		protected override object GetRuntimeObject ()
-		{
-			return this;
+		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		public HttpModuleActionCollection Modules {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		protected override ConfigurationPropertyCollection Properties {
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 	}
 }
