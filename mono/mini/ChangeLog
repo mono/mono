@@ -1,3 +1,9 @@
+
+Fri Nov 4 12:34:15 GMT 2005 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: fixed compatibility with the new
+	floating point emulator package for compares.
+
 2005-11-03  Atsushi Enomoto  <atsushi@ximian.com?
 
 	* mini.c : reverted sig->pinvoke changes (r51396-51397).
