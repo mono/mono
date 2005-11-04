@@ -1,3 +1,9 @@
+2005-11-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PKCS12.cs: Added tests for MaximumPasswordLength property wrt to the
+	CryptoAPI limits on the password length (32 characters) when importing
+	and exporting PKCS #12 files.
+
 2005-08-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X501NameTest.cs: Added test cases for quoted and escaped values.
