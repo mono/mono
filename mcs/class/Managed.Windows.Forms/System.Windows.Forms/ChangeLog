@@ -1,3 +1,7 @@
+2005-11-03  Peter Dennis Bartok  <pbartok@novell.com> 
+
+	* GridItemCollection.cs: Fix signatures
+
 2005-11-03  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* XplatUI.cs: Updated build rev/date

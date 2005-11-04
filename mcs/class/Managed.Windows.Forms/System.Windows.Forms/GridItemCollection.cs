@@ -88,7 +88,7 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Enumerator Class
-		public class GridItemEnumerator : IEnumerator{
+		internal class GridItemEnumerator : IEnumerator{
 			int nIndex;
 			GridItemCollection collection;
 			public GridItemEnumerator(GridItemCollection coll) {
@@ -115,7 +115,7 @@ namespace System.Windows.Forms
 
 		#region ICollection Members
 
-		public bool IsSynchronized
+		bool ICollection.IsSynchronized
 		{
 			get
 			{
@@ -123,12 +123,12 @@ namespace System.Windows.Forms
 			}
 		}
 
-		public void CopyTo(Array array, int index)
+		void ICollection.CopyTo(Array array, int index)
 		{
 			list.CopyTo(array, index);
 		}
 
-		public object SyncRoot
+		object ICollection.SyncRoot
 		{
 			get
 			{
