@@ -1,7 +1,7 @@
 .\" 
 .\" sn manual page.
 .\" Copyright 2003 Motus Technologies
-.\" Copyright 2004 Novell
+.\" Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 .\" Author:
 .\"   Sebastien Pouliot <sebastien@ximian.com>
 .\"
@@ -71,9 +71,13 @@ Convert the input file to a CSV file (using hexadecimal).
 Compare if assembly1 and assembly are the same exception for their signature.
 This is done by comparing the hash of the metadata of both assembly.
 .TP
-.I "-k keypair.snk"
-Create a new strongname keypair (a 1024 bits RSA keypair) in the specified 
-file.
+.I "-k [size] keypair.snk"
+Create a new strongname keypair in the specified file. The default key 
+length is 1024 bits and MUST ALWAYS be used when signing 1.x assemblies. 
+Any value from 384 to 16384 bits (in increments of 8 bits) is a valid key 
+length to sign 2.x assemblies. To ensure maximum compatibility you may 
+want to continue using 1024 bits keys. Note that there's no good reason, 
+even if it's possible, to use length lesser than 1024 bits.
 .TP
 .I "-R assembly keypair.snk"
 Resign the specified assembly using the specified strongname keypair file 
