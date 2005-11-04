@@ -400,6 +400,7 @@ namespace System.Windows.Forms {
 					sorted = value;
 				if (sorted) {
 					Nodes.Sort ();
+					top_node = null;
 					Refresh ();
 				}
 			}
