@@ -46,7 +46,6 @@ namespace System.CodeDom
 		//
 		public CodePropertyReferenceExpression () 
 		{
-			propertyName = String.Empty;
 		}
 
 		public CodePropertyReferenceExpression (CodeExpression targetObject,
@@ -61,6 +60,9 @@ namespace System.CodeDom
 		//
 		public string PropertyName {
 			get {
+				if (propertyName == null) {
+					return string.Empty;
+				}
 				return propertyName;
 			}
 			set {

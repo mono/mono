@@ -47,6 +47,7 @@ namespace System.CodeDom
 		//
 		public CodeConstructor()
 		{
+			this.Name = ".ctor";
 		}
 
 		//

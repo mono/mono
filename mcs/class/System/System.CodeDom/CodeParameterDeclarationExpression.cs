@@ -47,8 +47,6 @@ namespace System.CodeDom
 		//
 		public CodeParameterDeclarationExpression ()
 		{
-			name = String.Empty;
-			type = new CodeTypeReference ("System.Void");
 		}
 
 		public CodeParameterDeclarationExpression( CodeTypeReference type, string name )
@@ -94,6 +92,9 @@ namespace System.CodeDom
 
 		public string Name {
 			get {
+				if (name == null) {
+					return string.Empty;
+				}
 				return name;
 			}
 			set {
@@ -103,6 +104,9 @@ namespace System.CodeDom
 
 		public CodeTypeReference Type {
 			get {
+				if (type == null) {
+					type = new CodeTypeReference (string.Empty);
+				}
 				return type;
 			}
 			set {

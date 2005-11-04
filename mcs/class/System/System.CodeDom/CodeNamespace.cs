@@ -48,7 +48,6 @@ namespace System.CodeDom
 		//
 		public CodeNamespace()
 		{
-			name = String.Empty;
 		}
 
 		public CodeNamespace(string name)
@@ -83,6 +82,9 @@ namespace System.CodeDom
 
 		public string Name {
 			get {
+				if (name == null) {
+					return string.Empty;
+				}
 				return name;
 			}
 			set {

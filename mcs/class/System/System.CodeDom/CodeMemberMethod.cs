@@ -93,7 +93,7 @@ namespace System.CodeDom
 		public CodeTypeReference ReturnType {
 			get {
 				if ( returnType == null )
-					return new CodeTypeReference( typeof(void) );
+					return new CodeTypeReference (typeof (void));
 				return returnType;
 			}
 			set {

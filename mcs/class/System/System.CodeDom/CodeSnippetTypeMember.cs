@@ -44,7 +44,6 @@ namespace System.CodeDom
 		//
 		public CodeSnippetTypeMember()
 		{
-			text = String.Empty;
 		}
 		
 		public CodeSnippetTypeMember( string text )
@@ -57,6 +56,9 @@ namespace System.CodeDom
 		//
 		public string Text {
 			get {
+				if (text == null) {
+					return string.Empty;
+				}
 				return text;
 			}
 			set {

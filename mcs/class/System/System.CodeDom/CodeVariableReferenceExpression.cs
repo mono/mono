@@ -44,7 +44,6 @@ namespace System.CodeDom
 		//
 		public CodeVariableReferenceExpression() 
 		{
-			variableName = String.Empty;
 		}
 
 		public CodeVariableReferenceExpression( string variableName )
@@ -57,6 +56,9 @@ namespace System.CodeDom
 		//
 		public string VariableName {
 			get {
+				if (variableName == null) {
+					return string.Empty;
+				}
 				return variableName;
 			}
 			set {

@@ -35,8 +35,7 @@ namespace System.CodeDom
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.AutoDispatch)]
 	[ComVisible(true)]
-	public class CodeCastExpression
-		: CodeExpression 
+	public class CodeCastExpression : CodeExpression
 	{
 		private CodeTypeReference targetType;
 		private CodeExpression expression;
@@ -46,7 +45,6 @@ namespace System.CodeDom
 		//
 		public CodeCastExpression ()
 		{
-			targetType = new CodeTypeReference (typeof (void));
 		}
 
 		public CodeCastExpression (CodeTypeReference targetType, CodeExpression expression)
@@ -57,13 +55,13 @@ namespace System.CodeDom
 
 		public CodeCastExpression (string targetType, CodeExpression expression)
 		{
-			this.targetType = new CodeTypeReference( targetType );
+			this.targetType = new CodeTypeReference (targetType);
 			this.expression = expression;
 		}
 
 		public CodeCastExpression (Type targetType, CodeExpression expression)
 		{
-			this.targetType = new CodeTypeReference( targetType );
+			this.targetType = new CodeTypeReference (targetType);
 			this.expression = expression;
 		}
 
@@ -82,6 +80,9 @@ namespace System.CodeDom
 
 		public CodeTypeReference TargetType {
 			get {
+				if (targetType == null) {
+					targetType = new CodeTypeReference (string.Empty);
+				}
 				return targetType;
 			}
 			set {

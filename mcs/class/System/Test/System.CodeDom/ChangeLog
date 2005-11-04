@@ -1,3 +1,39 @@
+2005-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeTypeReferenceExpressionTest.cs: Added tests.
+	* CodeVariableDeclarationStatementTest.cs: Added tests.
+	* CodePropertyReferenceExpressionTest.cs: Added tests.
+	* CodeNamespaceImportTest.cs: Added tests.
+	* CodeTypeConstructorTest.cs: Added tests.
+	* CodeSnippetExpressionTest.cs: Added tests.
+	* CodeParameterDeclarationExpressionTest.cs: Added tests.
+	* CodeObjectCreateExpressionTest.cs: Added tests.
+	* CodeTypeDelegateTest.cs: Set eol-style to native.
+	* CodeLabeledStatementTest.cs: Added tests.
+	* CodeConstructorTest.cs: Added tests.
+	* CodeTypeOfExpressionTest.cs: Added tests.
+	* CodeGotoStatementTest.cs: Added tests.
+	* CodeCastExpressionTest.cs: Added tests.
+	* CodeMemberFieldTest.cs: Set eol-style to native.
+	* CodeMethodInvokeExpressionTest.cs: Added tests.
+	* CodeEventReferenceExpressionTest.cs: Added tests.
+	* CodeChecksumPragmaTest.cs: Added tests.
+	* CodeSnippetCompileUnitTest.cs: Added tests.
+	* CodeNamespaceTest.cs: Added tests.
+	* CodeSnippetStatementTest.cs: Added tests.
+	* CodeMemberMethodTest.cs: Added tests.
+	* CodeMemberPropertyTest.cs: Set eol-style to native.
+	* CodeCatchClauseTest.cs: Added tests.
+	* CodeStatementCollectionTest.cs: Added tests.
+	* CodeRegionDirectiveTest.cs: Added tests.
+	* CodeTypeParameterTest.cs: Added tests.
+	* CodeVariableReferenceExpressionTest.cs: Added tests.
+	* CodeDefaultValueExpressionTest.cs: Added tests.
+	* CodeSnippetTypeMemberTest.cs: Added tests.
+	* CodeDelegateCreateExpressionTest.cs: Added tests.
+	* CodeLinePragmaTest.cs: Added tests.
+	* CodeMethodReferenceExpressionTest.cs: Added tests.
+
 2005-10-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeArgumentReferenceExpressionTest.cs: Fixed namespace.

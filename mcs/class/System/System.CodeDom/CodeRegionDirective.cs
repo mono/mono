@@ -60,6 +60,9 @@ namespace System.CodeDom
 
 		public string RegionText {
 			get {
+				if (regionText == null) {
+					return string.Empty;
+				}
 				return regionText;
 			}
 			set {

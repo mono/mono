@@ -1,3 +1,8 @@
+2005-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CSharpCodeGenerator.cs: Ignore ChecksumData of CodeChecksumPragma
+	if null.
+
 2005-10-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CSharpCodeProvider.cs: GenerateCodeFromMember method is an override 

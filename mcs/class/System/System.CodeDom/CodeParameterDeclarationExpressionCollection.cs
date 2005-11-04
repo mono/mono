@@ -79,12 +79,24 @@ namespace System.CodeDom
 
 		public void AddRange (CodeParameterDeclarationExpression [] value )
 		{
-			InnerList.AddRange (value);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			for (int i = 0; i < value.Length; i++) {
+				Add (value[i]);
+			}
 		}
 		
 		public void AddRange (CodeParameterDeclarationExpressionCollection value)
 		{
-			InnerList.AddRange (value);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			for (int i = 0; i < value.Count; i++) {
+				Add (value[i]);
+			}
 		}
 
 		public bool Contains( CodeParameterDeclarationExpression value )

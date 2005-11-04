@@ -44,7 +44,6 @@ namespace System.CodeDom
 
 		public CodeChecksumPragma ()
 		{
-			checksumData = new byte[0];
 		}
 
 		public CodeChecksumPragma (string fileName, Guid checksumAlgorithmId, byte[] checksumData)
@@ -74,6 +73,9 @@ namespace System.CodeDom
 
 		public string FileName {
 			get {
+				if (fileName == null) {
+					return string.Empty;
+				}
 				return fileName;
 			}
 			set {

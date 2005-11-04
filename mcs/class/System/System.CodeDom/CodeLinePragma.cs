@@ -50,7 +50,6 @@ namespace System.CodeDom
 #if NET_2_0
 		public CodeLinePragma ()
 		{
-			fileName = String.Empty;
 		}
 #endif
 		public CodeLinePragma (string fileName, int lineNumber)
@@ -64,6 +63,9 @@ namespace System.CodeDom
 		//
 		public string FileName {
 			get {
+				if (fileName == null) {
+					return string.Empty;
+				}
 				return fileName;
 			}
 			set {

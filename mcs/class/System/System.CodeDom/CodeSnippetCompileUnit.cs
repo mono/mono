@@ -47,7 +47,6 @@ namespace System.CodeDom
 #if NET_2_0
 		public CodeSnippetCompileUnit ()
 		{
-			value = String.Empty;
 		}
 #endif
 		public CodeSnippetCompileUnit( string value )
@@ -69,6 +68,9 @@ namespace System.CodeDom
 
 		public string Value {
 			get {
+				if (this.value == null) {
+					return string.Empty;
+				}
 				return this.value;
 			}
 			set {

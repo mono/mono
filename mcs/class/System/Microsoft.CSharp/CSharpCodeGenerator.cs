@@ -1305,8 +1305,10 @@ namespace Mono.CSharp
 			Output.Write ("\" \"");
 			Output.Write (pragma.ChecksumAlgorithmId.ToString ("B"));
 			Output.Write ("\" \"");
-			foreach (byte b in pragma.ChecksumData) {
-				Output.Write (b.ToString ("X2"));
+			if (pragma.ChecksumData != null) {
+				foreach (byte b in pragma.ChecksumData) {
+					Output.Write (b.ToString ("X2"));
+				}
 			}
 			Output.WriteLine ("\"");
 		}

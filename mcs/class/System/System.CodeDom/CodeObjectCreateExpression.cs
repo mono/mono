@@ -46,7 +46,6 @@ namespace System.CodeDom
 		//
 		public CodeObjectCreateExpression () 
 		{
-			createType = new CodeTypeReference ("System.Void");
 		}
 
 		public CodeObjectCreateExpression (CodeTypeReference createType, 
@@ -75,6 +74,9 @@ namespace System.CodeDom
 		//
 		public CodeTypeReference CreateType {
 			get {
+				if (createType == null) {
+					createType = new CodeTypeReference (string.Empty);
+				}
 				return createType;
 			}
 			set {

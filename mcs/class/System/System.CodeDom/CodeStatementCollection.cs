@@ -46,14 +46,14 @@ namespace System.CodeDom
 		{
 		}
 
-		public CodeStatementCollection( CodeStatement[] value )
+		public CodeStatementCollection (CodeStatement[] value)
 		{
-			AddRange( value );
+			AddRange (value);
 		}
 
-		public CodeStatementCollection( CodeStatementCollection value )
+		public CodeStatementCollection (CodeStatementCollection value)
 		{
-			AddRange( value );
+			AddRange (value);
 		}
 
 		//
@@ -62,7 +62,7 @@ namespace System.CodeDom
 		public CodeStatement this[int index]
 		{
 			get {
-				return (CodeStatement)List[index];
+				return (CodeStatement) List[index];
 			}
 			set {
 				List[index] = value;
@@ -74,50 +74,62 @@ namespace System.CodeDom
 		//
 		public int Add (CodeStatement value)
 		{
-			return List.Add( value );
+			return List.Add (value);
 		}
 
 		public int Add (CodeExpression value)
 		{
-			return Add( new CodeExpressionStatement( value ) );
+			return Add (new CodeExpressionStatement (value));
 		}
 
-		public void AddRange (CodeStatement [] statements )
+		public void AddRange (CodeStatement [] value)
 		{
-			InnerList.AddRange (statements);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			for (int i = 0; i < value.Length; i++) {
+				Add (value[i]);
+			}
 		}
 		
-		public void AddRange( CodeStatementCollection value )
+		public void AddRange (CodeStatementCollection value)
 		{
-			InnerList.AddRange (value);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			for (int i = 0; i < value.Count; i++) {
+				Add (value[i]);
+			}
 		}
 
-		public bool Contains( CodeStatement value )
+		public bool Contains (CodeStatement value)
 		{
-			return List.Contains( value );
+			return List.Contains (value);
 		}
 		
-		public void CopyTo( CodeStatement[] array, int index )
+		public void CopyTo (CodeStatement[] array, int index)
 		{
-			List.CopyTo( array, index );
+			List.CopyTo (array, index);
 		}
 
-		public int IndexOf( CodeStatement value )
+		public int IndexOf (CodeStatement value)
 		{
-			return List.IndexOf( value );
+			return List.IndexOf (value);
 		}
 
-		public void Insert( int index, CodeStatement value )
+		public void Insert (int index, CodeStatement value)
 		{
-			List.Insert( index, value );
+			List.Insert (index, value);
 		}
 
-		public void Remove( CodeStatement value )
+		public void Remove (CodeStatement value)
 		{
-			int index = IndexOf( value );
-			if ( index < 0 )
-				throw( new ArgumentException( "The specified object is not found in the collection" ) );
-			RemoveAt( index );
+			int index = IndexOf (value);
+			if (index < 0)
+				throw new ArgumentException ("The specified object is not found in the collection");
+			RemoveAt (index);
 		}
 	}
 }

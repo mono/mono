@@ -45,7 +45,6 @@ namespace System.CodeDom
 		//
 		public CodeEventReferenceExpression()
 		{
-			eventName = String.Empty;
 		}
 
 		public CodeEventReferenceExpression( CodeExpression targetObject, string eventName )
@@ -59,6 +58,9 @@ namespace System.CodeDom
 		//
 		public string EventName {
 			get {
+				if (eventName == null) {
+					return string.Empty;
+				}
 				return eventName;
 			}
 			set {

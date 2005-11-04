@@ -38,5 +38,9 @@ namespace System.CodeDom
 	public class CodeTypeConstructor
 		: CodeMemberMethod
 	{
+		public CodeTypeConstructor ()
+		{
+			this.Name = ".cctor";
+		}
 	}
 }

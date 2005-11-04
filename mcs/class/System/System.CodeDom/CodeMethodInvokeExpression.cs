@@ -46,7 +46,6 @@ namespace System.CodeDom
 		//
 		public CodeMethodInvokeExpression () 
 		{
-			method = new CodeMethodReferenceExpression (null, String.Empty);
 		}
 
 		public CodeMethodInvokeExpression (CodeMethodReferenceExpression method, params CodeExpression[] parameters)
@@ -68,6 +67,9 @@ namespace System.CodeDom
 		//
 		public CodeMethodReferenceExpression Method {
 			get {
+				if (method == null) {
+					method = new CodeMethodReferenceExpression ();
+				}
 				return method;
 			}
 			set {

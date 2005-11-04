@@ -50,7 +50,6 @@ namespace System.CodeDom
 		//
 		public CodeMethodReferenceExpression ()
 		{
-			methodName = String.Empty;
 		}
 
 		public CodeMethodReferenceExpression (CodeExpression targetObject, 
@@ -75,6 +74,9 @@ namespace System.CodeDom
 		//
 		public string MethodName {
 			get {
+				if (methodName == null) {
+					return string.Empty;
+				}
 				return methodName;
 			}
 			set {

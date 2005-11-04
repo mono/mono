@@ -64,6 +64,9 @@ namespace System.CodeDom
 		//
 		public string Label {
 			get {
+				if (label == null) {
+					return string.Empty;
+				}
 				return label;
 			}
 			set {

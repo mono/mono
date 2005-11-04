@@ -44,7 +44,6 @@ namespace System.CodeDom
 		//
 		public CodeSnippetExpression()
 		{
-			value = String.Empty;
 		}
 
 		public CodeSnippetExpression( string value )
@@ -57,6 +56,9 @@ namespace System.CodeDom
 		//
 		public string Value {
 			get {
+				if (this.value == null) {
+					return string.Empty;
+				}
 				return this.value;
 			}
 			set {

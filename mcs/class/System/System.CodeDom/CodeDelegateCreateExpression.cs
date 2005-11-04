@@ -47,8 +47,6 @@ namespace System.CodeDom
 		//
 		public CodeDelegateCreateExpression ()
 		{
-			delegateType = new CodeTypeReference ("System.Void");
-			methodName = String.Empty;
 		}
 
 		public CodeDelegateCreateExpression (CodeTypeReference delegateType,
@@ -66,6 +64,9 @@ namespace System.CodeDom
 		//
 		public CodeTypeReference DelegateType {
 			get {
+				if (delegateType == null) {
+					delegateType = new CodeTypeReference (string.Empty);
+				}
 				return delegateType;
 			}
 			set {
@@ -75,6 +76,9 @@ namespace System.CodeDom
 
 		public string MethodName {
 			get {
+				if (methodName == null) {
+					return string.Empty;
+				}
 				return methodName;
 			}
 			set {

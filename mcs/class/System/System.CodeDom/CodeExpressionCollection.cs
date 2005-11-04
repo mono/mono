@@ -79,12 +79,24 @@ namespace System.CodeDom
 
 		public void AddRange (CodeExpression [] value )
 		{
-			InnerList.AddRange (value);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			for (int i = 0; i < value.Length; i++) {
+				Add (value[i]);
+			}
 		}
 		
 		public void AddRange (CodeExpressionCollection value)
 		{
-			InnerList.AddRange (value);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			for (int i = 0; i < value.Count; i++) {
+				Add (value[i]);
+			}
 		}
 
 		public bool Contains( CodeExpression value )

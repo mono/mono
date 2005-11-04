@@ -1,3 +1,76 @@
+2005-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeEventReferenceExpression.cs: EventName now returns zero-length
+	string if underlying value is null.
+	* CodeParameterDeclarationExpressionCollection.cs: Fixed AddRange to
+	add each item to collection using Add method to ensure validation
+	is performed.
+	* CodeChecksumPragma.cs: FileName now returns zero-length string
+	if underlying value is null.
+	* CodeSnippetCompileUnit.cs: Value now returns zero-length string if
+	underlying value is null.
+	* CodeNamespace.cs: Name now returns zero-length string if underlying
+	value is null.
+	* CodeSnippetStatement.cs: Value now returns zero-length string if
+	underlying value is null.
+	* CodeMemberMethod.cs: code formatting change.
+	* CodeCatchClause.cs: CatchExceptionType now returns CodeTypeReference
+	instance for System.Exception if underlying value is null. LocalName
+	now returns zero-length string if underlying value is null.
+	* CodeStatementCollection.cs: Fixed AddRange to add each item to
+	collection using Add method to ensure validation is performed. Code
+	formatting changes.
+	* CodeRegionDirective.cs: RegionText now returns zero-length string
+	if underlying value is null.
+	* CodeTypeParameter.cs: Name now returns zero-length string if
+	underlying value is null.
+	* CodeVariableReferenceExpression.cs: VariableName now returns
+	zero-length string if underlying value is null.
+	* CodeDefaultValueExpression.cs: Type now returns CodeTypeReference
+	for void if underlying value is null.
+	* CodeExpressionCollection.cs: Fixed AddRange to add each item to
+	collection using Add method to ensure validation is performed.
+	* CodeSnippetTypeMember.cs: Text now returns zero-length string if
+	underlying value is null.
+	* CodeTypeReferenceCollection.cs: Fixed AddRange to add each item
+	to collection using Add method to ensure validation is performed.
+	* CodeDelegateCreateExpression.cs: DelegateType now returns
+	CodeTypeReference for void if underlying value is null. MethodName
+	now returns zero-length string if underlying value is null.
+	* CodeMethodReferenceExpression.cs: MethodName now returns
+	zero-length string if underlying value is null.
+	* CodeLinePragma.cs: FileName now returns zero-length string if
+	underlying value is null.
+	* CodeTypeReferenceExpression.cs: Type now return CodeTypeReference
+	for void if underlying value is null.
+	* CodeVariableDeclarationStatement.cs: Name now return zero-length
+	string if underlying value is null. Type returns CodeTypeReference
+	for void if underlying value is null.
+	* CodePropertyReferenceExpression.cs: PropertyName now returns
+	zero-length string if underlying value is null.
+	* CodeNamespaceImport.cs: Namespace now returns zero-length string
+	if underlying value is null.
+	* CodeTypeConstructor.cs: Name is fixed to ".cctor" to match MS.NET.
+	* CodeSnippetExpression.cs: Value now returns zero-length string if
+	underlying value is null.
+	* CodeParameterDeclarationExpression.cs: Name now returns zero-length
+	string if underlying value is null. Type now returns CodeTypeReference
+	for void if underlying value is null.
+	* CodeObjectCreateExpression.cs: CreateType now returns 
+	CodeTypeReference for void if underlying value is null.
+	* CodeLabeledStatement.cs: Label returns zero-length string if
+	underlying value is null.
+	* CodeConstructor.cs: Name is fixed to ".ctor" to match MS.NET.
+	* CodeTypeOfExpression.cs: Type returns CodeTypeReference for void
+	if underlying value is null.
+	* CodeGotoStatement.cs: Only throw ArgumentNullException for null or
+	zero-length label on 2.0 profile.
+	* CodeCastExpression.cs: TargetType returns CodeTypeReference for void
+	if underlying value is null.
+	* CodeMethodInvokeExpression.cs: Method returns a default
+	CodeMethodReferenceExpression instance if the underlying value is
+	null.
+
 2005-10-25  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeAttachEventStatement.cs: Fixed extra removal in r52147.

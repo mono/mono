@@ -46,14 +46,11 @@ namespace System.CodeDom
 		//
 		public CodeCatchClause ()
 		{
-			catchExceptionType = new CodeTypeReference (typeof (Exception));
-			localName = String.Empty;
 		}
 
 		public CodeCatchClause ( string localName )
 		{
 			this.localName = localName;
-			this.catchExceptionType = new CodeTypeReference (typeof (Exception));
 		}
 
 		public CodeCatchClause ( string localName,
@@ -69,7 +66,7 @@ namespace System.CodeDom
 		{
 			this.localName = localName;
 			this.catchExceptionType = catchExceptionType;
-			this.Statements.AddRange( statements );
+			this.Statements.AddRange (statements);
 		}
 
 		//
@@ -77,6 +74,9 @@ namespace System.CodeDom
 		//
 		public CodeTypeReference CatchExceptionType {
 			get {
+				if (catchExceptionType == null) {
+					catchExceptionType = new CodeTypeReference (typeof (Exception));
+				}
 				return catchExceptionType;
 			}
 			set {
@@ -86,6 +86,9 @@ namespace System.CodeDom
 
 		public string LocalName {
 			get {
+				if (localName == null) {
+					return string.Empty;
+				}
 				return localName;
 			}
 			set {

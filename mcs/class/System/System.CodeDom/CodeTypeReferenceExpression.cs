@@ -45,7 +45,6 @@ namespace System.CodeDom
 		//
 		public CodeTypeReferenceExpression ()
 		{
-			type = new CodeTypeReference ("System.Void");
 		}
 
 		public CodeTypeReferenceExpression (CodeTypeReference type)
@@ -68,6 +67,9 @@ namespace System.CodeDom
 		//
 		public CodeTypeReference Type {
 			get {
+				if (type == null) {
+					return new CodeTypeReference (string.Empty);
+				}
 				return type;
 			}
 			set {

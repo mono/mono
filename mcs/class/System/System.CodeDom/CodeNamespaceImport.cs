@@ -46,7 +46,6 @@ namespace System.CodeDom
 		//
 		public CodeNamespaceImport ()
 		{
-			nameSpace = String.Empty;
 		}
 
 		public CodeNamespaceImport (string nameSpace)
@@ -68,6 +67,9 @@ namespace System.CodeDom
 
 		public string Namespace {
 			get {
+				if (nameSpace == null) {
+					return string.Empty;
+				}
 				return nameSpace;
 			}
 			set {
