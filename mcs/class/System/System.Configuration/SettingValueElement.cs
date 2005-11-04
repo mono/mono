@@ -28,7 +28,9 @@
 
 #if NET_2_0
 using System;
+#if (XML_DEP)
 using System.Xml;
+#endif
 
 namespace System.Configuration
 {
@@ -46,6 +48,7 @@ namespace System.Configuration
 			}
 		}
 
+#if (XML_DEP)
 		[MonoTODO]
 		public XmlNode ValueXml {
 			get {
@@ -60,6 +63,7 @@ namespace System.Configuration
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		public override bool Equals (object settingValue)
 		{
@@ -86,10 +90,12 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 
+#if (XML_DEP)
 		protected override bool SerializeToXmlElement (XmlWriter writer, string elementName)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 		protected override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 		{

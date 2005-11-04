@@ -21,7 +21,6 @@
 //
 
 #if NET_2_0
-using System.Configuration.Provider;
 using System.ComponentModel;
 using System.Reflection;
 using System.Collections.Specialized;
