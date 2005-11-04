@@ -147,6 +147,9 @@ namespace System.Windows.Forms {
 		{
 			Array.Clear (nodes, 0, count);
 			count = 0;
+
+			if (owner.TreeView != null)
+				owner.TreeView.UpdateBelow (owner);
 		}
 
 		public bool Contains (TreeNode node)
