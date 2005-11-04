@@ -1,5 +1,5 @@
 //
-// System.Configuration.SettingAttribute.cs
+// System.Web.UI.WebControls.SettingElementCollection.cs
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -31,9 +31,61 @@ using System;
 
 namespace System.Configuration
 {
-	[AttributeUsageAttribute(AttributeTargets.Property)]
-	public class SettingAttribute : Attribute
+	public sealed class SettingElementCollection : ConfigurationElementCollection
 	{
+		public SettingElementCollection ()
+		{
+		}
+
+		[MonoTODO]
+		public void Add (SettingElement element)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Clear ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public SettingElement Get (string elementKey)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Remove (string elementKey)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override ConfigurationElement CreateNewElement ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override object GetElementKey (ConfigurationElement element)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected override ConfigurationElementCollectionType CollectionType {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		protected override string ElementName {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
 	}
 
 }

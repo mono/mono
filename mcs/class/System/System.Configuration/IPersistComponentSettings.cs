@@ -1,10 +1,12 @@
 //
-// System.Configuration.SettingAttribute.cs
+// System.Configuration.IPersistComponentSettings
 //
 // Authors:
-//	Chris Toshok (toshok@ximian.com)
+//	Chris Tosok (toshok@ximian.com)
 //
 // (C) 2005 Novell, Inc (http://www.novell.com)
+//
+
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,15 +29,18 @@
 //
 
 #if NET_2_0
-using System;
 
 namespace System.Configuration
 {
-	[AttributeUsageAttribute(AttributeTargets.Property)]
-	public class SettingAttribute : Attribute
+	public interface IPersistComponentSettings
 	{
-	}
+		bool SaveSettings { get; set; }
+		string SettingsKey { get; set; }
 
+		void LoadComponentSettings ();
+		void ResetComponentSettings ();
+		void SaveComponentSettings ();
+	}
 }
 
 #endif

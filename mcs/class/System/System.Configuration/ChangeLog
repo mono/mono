@@ -1,3 +1,20 @@
+2005-11-03  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationSettings.cs: add ObsoleteAttribute's.
+
+	* ConfigurationException.cs: add ObsoleteAttribute's.
+
+	* IConfigurationSystem.cs: add ComVisibleAttribute.
+
+	* ApplicationSettingsBase.cs: new stubs, with a broken/naive
+	implementation.
+
+	* SettingElementCollection.cs, IPersistComponentSettings.cs,
+	SettingElement.cs, LocalFileSettingsProvider.cs,
+	SettingValueElement.cs: new stubs.
+
+	* SettingAttribute.cs: fix typo.
+
 2005-09-22  Chris Toshok  <toshok@ximian.com>
 
 	* SettingsPropertyWrongTypeException.cs: new exception.

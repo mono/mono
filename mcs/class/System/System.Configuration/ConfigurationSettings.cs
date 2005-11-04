@@ -57,33 +57,28 @@ namespace System.Configuration
 			return config.GetConfig (sectionName);
 		}
 
+#if NET_2_0
+		[Obsolete ("This property is obsolete.  Please use System.Configuration.ConfigurationManager.AppSettings")]
+#endif
 		public static NameValueCollection AppSettings
 		{
 			get {
+#if NET_2_0
+				/* XXX figure out the cyclic
+				 * dependency foo between System and
+				 * System.Configuration so this will
+				 * work */
+//				return ConfigurationManager.AppSettings;
+				return new NameValueCollection ();
+#else
 				object appSettings = GetConfig ("appSettings");
 				if (appSettings == null)
 					appSettings = new NameValueCollection ();
 
 				return (NameValueCollection) appSettings;
+#endif
 			}
 		}
-
-#if NET_2_0 && CONFIGURATION_DEP
-                public static ConnectionStringSettingsCollection ConnectionStrings
-		{
-			get {
-                                ConnectionStringsSection connSection = (ConnectionStringsSection) GetConfig ("connectionStrings");
-                                ConnectionStringSettingsCollection connectionStrings = null;
-                                
-                                if (connSection != null)
-                                        connectionStrings = connSection.ConnectionStrings;
-                                else 
-                                        connectionStrings = new ConnectionStringSettingsCollection ();
-                                
-				return connectionStrings;
-			}
-		}
-#endif // NET_2_0 && CONFIGURATION_DEP
 
 		// Invoked from System.Web
 		static IConfigurationSystem ChangeConfigurationSystem (IConfigurationSystem newSystem)
@@ -117,6 +112,9 @@ namespace System.Configuration
 			return instance;
 		}
 
+#if NET_2_0
+		[Obsolete ("This method is obsolete.  Please use System.Configuration.ConfigurationManager.GetConfig")]
+#endif
 		public object GetConfig (string sectionName)
 		{
 			Init ();
@@ -276,9 +274,11 @@ namespace System.Configuration
 			if (t == null)
 				throw new ConfigurationException ("Cannot get Type for " + section.TypeName);
 
+#if false
 			Type iconfig = typeof (IConfigurationSectionHandler);
 			if (!iconfig.IsAssignableFrom (t))
 				throw new ConfigurationException (sectionName + " does not implement " + iconfig);
+#endif
 			
 			object o = Activator.CreateInstance (t, true);
 			if (o == null)
