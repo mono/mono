@@ -1,3 +1,9 @@
+2005-11-04  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CodeCompiler.cs: Compile now use the Executor class (instead of the
+	Process class). Fixed JoinStringArray.
+	* CompilerResults.cs: Load assembly only when the property is called.
+
 2005-11-02  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Executor.cs: Reworked (for permissions) and fixed ExitCode (must be 
