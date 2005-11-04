@@ -4,6 +4,7 @@
 	collection.
 	* TreeView.cs: When the tree is sorted null out the top_node so
 	that it is recalculated.
+	- Use dotted lines instead of dashed lines to match MS better.
 
 2005-11-04  Jordi Mas i Hernandez <jordimash@gmail.com>
 

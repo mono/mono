@@ -122,9 +122,6 @@ namespace System.Windows.Forms {
 
 			SetStyle (ControlStyles.UserPaint | ControlStyles.StandardClick, false);
 
-			dash = new Pen (SystemColors.ControlLight, 1);
-			dash.DashStyle = DashStyle.Dash;
-
 			string_format = new StringFormat ();
 			string_format.LineAlignment = StringAlignment.Center;
 			string_format.Alignment = StringAlignment.Center;
@@ -951,7 +948,7 @@ namespace System.Windows.Forms {
 			if (dash_color == BackColor)
 				dash_color = ControlPaint.Light (BackColor);
 			dash = new Pen (dash_color, 1);
-			dash.DashStyle = DashStyle.Dash;
+			dash.DashStyle = DashStyle.Dot;
 
 			int depth = 0;
 			int item_height = ItemHeight;
