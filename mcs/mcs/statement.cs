@@ -1239,7 +1239,7 @@ namespace Mono.CSharp {
 		//
 		// Keeps track of (name, type) pairs
 		//
-		Hashtable variables;
+		IDictionary variables;
 
 		//
 		// Keeps track of constants
@@ -1309,10 +1309,10 @@ namespace Mono.CSharp {
 			get { return this_id; }
 		}
 
-		protected Hashtable Variables {
+		protected IDictionary Variables {
 			get {
 				if (variables == null)
-					variables = new Hashtable ();
+					variables = new ListDictionary ();
 				return variables;
 			}
 		}
@@ -1615,15 +1615,6 @@ namespace Mono.CSharp {
 			return null;
 		}
 		
-		/// <summary>
-		///   True if the variable named @name is a constant
-		///  </summary>
-		public bool IsConstant (string name)
-		{
-			Expression e = GetConstantExpression (name);
-			return e != null;
-		}
-
 		public void AddStatement (Statement s)
 		{
 			statements.Add (s);
