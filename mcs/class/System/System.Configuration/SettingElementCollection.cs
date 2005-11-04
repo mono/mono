@@ -31,7 +31,10 @@ using System;
 
 namespace System.Configuration
 {
-	public sealed class SettingElementCollection : ConfigurationElementCollection
+	public sealed class SettingElementCollection
+#if (CONFIGURATION_DEP)
+		: ConfigurationElementCollection
+#endif
 	{
 		public SettingElementCollection ()
 		{
@@ -61,6 +64,7 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 
+#if (CONFIGURATION_DEP)
 		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
@@ -86,6 +90,7 @@ namespace System.Configuration
 				throw new NotImplementedException ();
 			}
 		}
+#endif
 	}
 
 }

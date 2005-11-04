@@ -29,12 +29,16 @@
 #if NET_2_0
 using System;
 
+#if (CONFIGURATION_DEP)
 using System.Configuration.Provider;
+#endif
 
 namespace System.Configuration
 {
-
-	public abstract class SettingsProvider : ProviderBase
+	public abstract class SettingsProvider
+#if (CONFIGURATION_DEP)
+		: ProviderBase
+#endif
 	{
 		protected SettingsProvider ()
 		{

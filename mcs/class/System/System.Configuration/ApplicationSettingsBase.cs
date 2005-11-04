@@ -73,15 +73,18 @@ namespace System.Configuration {
 
 		public void Reload ()
 		{
+#if (CONFIGURATION_DEP)
 			foreach (SettingsProvider provider in Providers) {
 				IApplicationSettingsProvider iasp = provider as IApplicationSettingsProvider;
 				if (iasp != null)
 					iasp.Reset (Context);
 			}
+#endif
 		}
 
 		public void Reset()
 		{
+#if (CONFIGURATION_DEP)
 			foreach (SettingsProvider provider in Providers) {
 				IApplicationSettingsProvider iasp = provider as IApplicationSettingsProvider;
 				if (iasp != null)
@@ -89,10 +92,12 @@ namespace System.Configuration {
 			}
 
 			Reload ();
+#endif
 		}
 
 		public override void Save()
 		{
+#if (CONFIGURATION_DEP)
 			/* ew.. this needs to be more efficient */
 			foreach (SettingsProvider provider in Providers) {
 				SettingsPropertyValueCollection cache = new SettingsPropertyValueCollection ();
@@ -105,6 +110,7 @@ namespace System.Configuration {
 				if (cache.Count > 0)
 					provider.SetPropertyValues (Context, cache);
 			}
+#endif
 		}
 
 		public virtual void Upgrade()
@@ -224,6 +230,7 @@ namespace System.Configuration {
 			}
 		}
 
+#if (CONFIGURATION_DEP)
 		[Browsable (false)]
 		public override SettingsPropertyCollection Properties {
 			get {
@@ -302,6 +309,7 @@ namespace System.Configuration {
 				return properties;
 			}
 		}
+#endif
 
 		[Browsable (false)]
 		public override SettingsPropertyValueCollection PropertyValues {

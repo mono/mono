@@ -29,11 +29,16 @@
 #if NET_2_0
 using System;
 using System.Collections;
+#if (CONFIGURATION_DEP)
 using System.Configuration.Provider;
+#endif
 
 namespace System.Configuration
 {
-	public class SettingsProviderCollection : System.Configuration.Provider.ProviderCollection
+	public class SettingsProviderCollection
+#if (CONFIGURATION_DEP)
+		: ProviderCollection
+#endif
 	{
 		Hashtable providers;
 
@@ -42,10 +47,12 @@ namespace System.Configuration
 			providers = new Hashtable ();
 		}
 
+#if (CONFIGURATION_DEP)
 		public override void Add (ProviderBase provider)
 		{
 			providers.Add (provider.Name, provider);
 		}
+#endif
 
 		public new SettingsProvider this [ string name ] { 
 			get {

@@ -30,7 +30,9 @@
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+#if (XML_DEP)
 using System.Xml.Serialization;
+#endif
 
 namespace System.Configuration
 {
@@ -114,6 +116,7 @@ namespace System.Configuration
 						/* the docs say use a string type converter.. this means what? */
 						serializedValue = propertyValue.ToString();
 						break;
+#if (XML_DEP)
 					case SettingsSerializeAs.Xml:
 						XmlSerializer serializer = new XmlSerializer (propertyValue.GetType());
 						StringWriter w = new StringWriter();
@@ -121,6 +124,7 @@ namespace System.Configuration
 						serializer.Serialize (w, propertyValue);
 						serializedValue = w.ToString();
 						break;
+#endif
 					case SettingsSerializeAs.Binary:
 						BinaryFormatter bf = new BinaryFormatter ();
 						MemoryStream ms = new MemoryStream ();

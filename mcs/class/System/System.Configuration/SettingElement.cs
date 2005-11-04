@@ -31,7 +31,10 @@ using System;
 
 namespace System.Configuration
 {
-	public sealed class SettingElement : ConfigurationElement
+	public sealed class SettingElement
+#if (CONFIGURATION_DEP)
+		: ConfigurationElement
+#endif
 	{
 		[MonoTODO]
 		public SettingElement ()
@@ -45,8 +48,10 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
+#if (CONFIGURATION_DEP)
 		[ConfigurationProperty ("name", DefaultValue="",
 					Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+#endif
 		public string Name {
 			get {
 				throw new NotImplementedException ();
@@ -57,8 +62,10 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
+#if (CONFIGURATION_DEP)
 		[ConfigurationProperty ("value", DefaultValue=null,
 					Options = ConfigurationPropertyOptions.IsRequired)]
+#endif
 		public SettingValueElement Value {
 			get {
 				throw new NotImplementedException ();
@@ -69,8 +76,10 @@ namespace System.Configuration
 		}
 
 		[MonoTODO]
+#if (CONFIGURATION_DEP)
 		[ConfigurationProperty ("Serialize", DefaultValue=SettingsSerializeAs.String,
 					Options = ConfigurationPropertyOptions.IsRequired)]
+#endif
 		public SettingsSerializeAs SerializeAs {
 			get {
 				throw new NotImplementedException ();
@@ -80,12 +89,14 @@ namespace System.Configuration
 			}
 		}
 
+#if (CONFIGURATION_DEP)
 		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+#endif
 
 		public override bool Equals (object o)
 		{

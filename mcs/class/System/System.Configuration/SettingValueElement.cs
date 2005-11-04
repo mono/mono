@@ -34,19 +34,24 @@ using System.Xml;
 
 namespace System.Configuration
 {
-	public sealed class SettingValueElement : ConfigurationElement
+	public sealed class SettingValueElement
+#if (CONFIGURATION_DEP)
+		: ConfigurationElement
+#endif
 	{
 		[MonoTODO]
 		public SettingValueElement ()
 		{
 		}
 
+#if (CONFIGURATION_DEP)
 		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
+#endif
 
 #if (XML_DEP)
 		[MonoTODO]
@@ -75,6 +80,7 @@ namespace System.Configuration
 			throw new NotImplementedException ();
 		}
 
+#if (CONFIGURATION_DEP)
 		protected override bool IsModified ()
 		{
 			throw new NotImplementedException ();
@@ -89,6 +95,7 @@ namespace System.Configuration
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
 #if (XML_DEP)
 		protected override bool SerializeToXmlElement (XmlWriter writer, string elementName)
@@ -97,10 +104,12 @@ namespace System.Configuration
 		}
 #endif
 
+#if (CONFIGURATION_DEP)
 		protected override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 	}
 
 }

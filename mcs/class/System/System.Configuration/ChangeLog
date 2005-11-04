@@ -1,5 +1,14 @@
 2005-11-04  Chris Toshok  <toshok@ximian.com>
 
+	* SettingsProvider.cs, SettingsPropertyValueCollection.cs,
+	SettingValueElement.cs, SettingElement.cs,
+	SettingsPropertyValue.cs, ApplicationSettingsBase.cs,
+	SettingsPropertyCollection.cs, SettingsProviderCollection.cs,
+	SettingElementCollection.cs: Add XML_DEPS and CONFIGURATION_DEPS
+	to get this to bootstrap compile.  What a pain.
+	
+2005-11-04  Chris Toshok  <toshok@ximian.com>
+
 	* ApplicationSettingsBase.cs: remove unnecessary using.
 
 	* SettingValueElement.cs: add XML_DEP's.
