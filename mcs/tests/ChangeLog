@@ -1,3 +1,11 @@
+2005-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* gtest-friend-[01-12].cs, gtest-friend-00-lib.cs,
+	gtest-friend-01-lib.cs, gtest-friend-02-lib.cs: 
+	New tests for friend assembly access.
+	* InternalsVisibleTest.snk, InternalsVisibleTest2.snk:
+	Helper keys for our new friend access tests.
+	
 2005-10-28  Marek Safar <marek.safar@seznam.cz>
 
 	* test-10.cs: Test for #76568.
