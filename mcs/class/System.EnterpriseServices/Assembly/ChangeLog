@@ -1,3 +1,8 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyInfo.cs: Use Consts.FxFileVersion as AssemblyFileVersion and
+	  AssemblyInformationalVersion.
+
 2004-05-15  Gert Driesen (drieseng@users.sourceforge.net)
 	
 	* AssemblyInfo.cs: fixed assembly attributes to match MS

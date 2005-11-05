@@ -1,3 +1,8 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* xamlc.cs: Use Consts.MonoVersion as AssemblyVersion.
+	* xamlc.exe.sources: Added Consts.cs.
+
 2005-08-28  Iain McCoy  <iain@mccoy.id.au>
 
 	* demo/TestVocab/ConsoleApp.cs, 

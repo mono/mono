@@ -4,7 +4,7 @@ using Mono.GetOptions;
 
 // Attributes visible in " --help"
 [assembly: AssemblyTitle ("macpack.exe")]
-[assembly: AssemblyVersion ("1.0.*")]
+[assembly: AssemblyVersion (Consts.MonoVersion)]
 [assembly: AssemblyDescription ("MacPack")]
 [assembly: AssemblyCopyright ("MIT/X11")]
 

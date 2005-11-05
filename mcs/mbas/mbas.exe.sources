@@ -34,3 +34,4 @@ statement.cs
 support.cs
 tree.cs
 typemanager.cs
+../build/common/Consts.cs

@@ -44,16 +44,15 @@ using System.Runtime.InteropServices;
 #if (NET_2_0)
 [assembly: SatelliteContractVersion (Consts.VsVersion)]
 #endif
+[assembly: AssemblyFileVersion (Consts.VsFileVersion)]
 
 #if (NET_1_0)
 	[assembly: AssemblyDescription ("Managed interface for C# compiler")]
-	[assembly: AssemblyFileVersion ("7.0.9466.0")]
 	[assembly: AssemblyTitle ("Managed C# Compiler")]
 #elif (NET_2_0)
 	[assembly: AssemblyDefaultAlias ("cscompmgd.dll")]
 	[assembly: AssemblyDescription ("cscompmgd.dll")]
-	[assembly: AssemblyFileVersion ("8.0.50215.44")]
-	[assembly: AssemblyInformationalVersion ("8.0.50215.44")]
+	[assembly: AssemblyInformationalVersion (Consts.VsFileVersion)]
 	[assembly: AssemblyTitle ("cscompmgd.dll")]
 	[assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
 	[assembly: Debuggable(DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
@@ -61,7 +60,6 @@ using System.Runtime.InteropServices;
 	[assembly: ReliabilityContract(Consistency.MayCorruptProcess, Cer.None)]
 #elif (NET_1_1)
 	[assembly: AssemblyDescription ("Managed interface for C# compiler")]
-	[assembly: AssemblyFileVersion ("7.10.3052.4")]
 	[assembly: AssemblyTitle ("Managed C# Compiler")]
 #endif
 

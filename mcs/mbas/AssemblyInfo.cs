@@ -46,7 +46,7 @@ using System.Runtime.CompilerServices;
 [assembly: Mono.AdditionalInfo("For more information: http://www.mono-project.com/Language_BASIC")]
 [assembly: Mono.ReportBugsTo(" http://bugzilla.ximian.com/enter_bug.cgi?product=Mono%3A+Compilers&component=Basic ")]
 
-[assembly: AssemblyVersion("0.96.2.0")]
+[assembly: AssemblyVersion(Consts.MonoVersion)]
 
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]

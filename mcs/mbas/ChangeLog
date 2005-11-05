@@ -1,3 +1,8 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyInfo.cs: Use Consts.MonoVersion as AssemblyVersion.
+	* mbas.exe.sources: Added Consts.cs.
+
 2005-11-02  Rafael Teixeira <rafaelteixeirabr@hotmail.com> 
 	* typemanager.cs: avoiding some Null Pointer Exceptions in GetPertinentStandardModules
 

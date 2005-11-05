@@ -1,3 +1,8 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* Environment.cs: Use Consts.RuntimeVersion as Environment.Version that
+	  makes maintenance easier.
+
 2005-10-24  Martin Baulig  <martin@ximian.com>
 
 	* Type.cs (Type.IsGenericTypeDefinition): Make this virtual.

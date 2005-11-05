@@ -1,3 +1,7 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyInfo.cs: Use Consts.MonoVersion as AssemblyVersion.
+
 2005-09-22  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Main.cs: Changed binPath to directory where all files are stored.

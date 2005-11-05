@@ -1,3 +1,7 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* nunit-console.exe.config: Updated runtime version to v2.0.50727 (2.0 RTM).
+
 2005-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConsoleUI.cs : at least it should flush stream, even though it

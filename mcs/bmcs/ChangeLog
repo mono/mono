@@ -1,3 +1,9 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyInfo.cs: Use Consts.MonoVersion as AssemblyVersion.
+	* bmcs.exe.config: Updated runtime version to v2.0.50727 (2.0 RTM).
+	* bmcs.exe.sources: Added Consts.cs.
+
 2005-07-10  Kamil Skalski <nazgul@nemerle.org>
 
 	* generic.cs: Use MakeGenericType instead of BindGenericParameters.

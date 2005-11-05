@@ -89,7 +89,7 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (16, l.PreferredHeight, "#50");
 			Assert.AreEqual (0, l.PreferredWidth, "#51");
 			Assert.AreEqual ("Novell Mono MWF", l.ProductName, "#52");
-			Assert.AreEqual ("1.1.4322.573", l.ProductVersion, "#53");
+			Assert.AreEqual ("1.1.4322.2032", l.ProductVersion, "#53");
 
 			Assert.AreEqual (false, l.RecreatingHandle, "#54");
 			Assert.AreEqual (null, l.Region, "#55");

@@ -36,7 +36,7 @@ using Mono.GetOptions;
 using Mono.Windows.Serialization;
 
 [assembly: AssemblyTitle ("xamlc.exe")]
-[assembly: AssemblyVersion ("1.0.*")]
+[assembly: AssemblyVersion (Consts.MonoVersion)]
 [assembly: AssemblyDescription ("Compiler from XAML to more conventional languages")]
 [assembly: AssemblyCopyright ("(c) Iain McCoy")]
 

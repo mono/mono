@@ -53,7 +53,7 @@ using System.Security;
 [assembly: AssemblyCopyright ("Copyright (C) 2002-2005 Various Authors")]
 [assembly: AssemblyDefaultAlias ("System.Security.dll")]
 [assembly: AssemblyDescription ("System.Security.dll")]
-[assembly: AssemblyFileVersion (Consts.RuntimeVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: AssemblyInformationalVersion ("")]
 [assembly: AssemblyProduct ("MONO CLI")]
 [assembly: AssemblyTitle ("System.Security.dll")]

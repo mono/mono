@@ -19,13 +19,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion (Consts.FxVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 
-#if (NET_1_0)
-	[assembly: AssemblyInformationalVersion("1.0.3705.0")]
-#elif (NET_2_0)
-	[assembly: AssemblyInformationalVersion("2.0.40301.9")]
-	[assembly: AssemblyFileVersion("2.0.40301.9")]
-#elif (NET_1_1)
-	[assembly: AssemblyInformationalVersion("1.1.4322.573")]
+[assembly: AssemblyInformationalVersion(Consts.FxFileVersion)]
+#if (NET_2_0)
+	[assembly: AssemblyFileVersion(Consts.FxFileVersion)]
 #endif
 
 [assembly: AssemblyTitle("ResGen.exe")]

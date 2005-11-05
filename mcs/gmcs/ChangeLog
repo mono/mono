@@ -1,3 +1,7 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* gmcs.exe.config: Updated runtime version to v2.0.50727 (2.0 RTM).
+
 2005-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	Add friend assembly access support.

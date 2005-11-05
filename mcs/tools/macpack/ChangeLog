@@ -1,3 +1,8 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyInfo.cs: Use Consts.MonoVersion as AssemblyVersion.
+	* macpack.exe.sources: Added Consts.cs.
+
 2005-10-18  Geoff Norton  <gnorton@customerdna.com>
 
 	* MacPack.cs: Support Application Icons that are referenced from

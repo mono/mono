@@ -50,8 +50,8 @@ using System.EnterpriseServices;
 [assembly: AssemblyProduct("MONO CLI")]
 [assembly: AssemblyCopyright("(c) 2004 Various Authors")]
 [assembly: AssemblyTrademark("")]
-[assembly: AssemblyInformationalVersion("2.0.40301.9")]
-[assembly: AssemblyFileVersion("2.0.40301.9")]
+[assembly: AssemblyInformationalVersion(Consts.FxFileVersion)]
+[assembly: AssemblyFileVersion(Consts.FxFileVersion)]
 #endif
 
 [assembly: CLSCompliant(true)]

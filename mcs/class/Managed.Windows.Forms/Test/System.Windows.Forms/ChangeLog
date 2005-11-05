@@ -1,3 +1,7 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* LabelPropertyTest.cs: Updated product version to 1.1.4322.2032 (1.1 SP1).
+
 2005-10-18  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ListViewCollectionsTest.cs: Add tests for the ListView Collections

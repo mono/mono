@@ -1,3 +1,7 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyTest.cs: Updated runtime version to v2.0.50727 (2.0 RTM).
+
 2005-10-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MethodInfoTest.cs : added test for bug #76541.

@@ -1,3 +1,7 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* app-net_2_0.config: Updated assembly versions to 2.0.0.0 (2.0 RTM).
+
 2005-09-16  Senganal T  <tsenganal@novell.com>
 
 	* System.Data.Connected.Tests.dll.sources: added more source files 

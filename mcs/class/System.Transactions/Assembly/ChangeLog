@@ -1,3 +1,8 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* AssemblyInfo.cs: Use Consts.FxVersion as AssemblyVersion and
+	  SatelliteContractVersion.
+
 2005-09-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AssemblyInfo.cs : new file.
