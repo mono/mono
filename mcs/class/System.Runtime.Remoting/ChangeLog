@@ -1,3 +1,7 @@
+2005-11-05  Robert Jordan  <robertj@gmx.net>
+
+	* System.Runtime.Remoting.dll.sources: Removed Ipc/IpcChannelFactory.cs
+
 2005-10-19  Robert Jordan  <robertj@gmx.net>
 
 	* System.Runtime.Remoting.dll.sources: Added S.R.R.Channels.Ipc*
