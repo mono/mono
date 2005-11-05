@@ -1,3 +1,8 @@
+2005-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* gcs0281.cs: New test.
+	* CSFriendAssembly-lib.cs: New helper file.
+	
 2005-10-27  Raja R Harinath  <rharinath@novell.com>
 
 	* cs1501-11.cs, cs1502-5.cs: New tests from #76085.
