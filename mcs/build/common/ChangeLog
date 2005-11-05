@@ -1,3 +1,7 @@
+2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
+
+	* Consts.cs.in: Removed obsolete using System.Runtime.InteropServices.
+
 2005-11-03  Kornél Pál  <kornelpal@hotmail.com>
 
 	* Consts.cs.in: Added FxFileVersion for use in assemblies instead of
