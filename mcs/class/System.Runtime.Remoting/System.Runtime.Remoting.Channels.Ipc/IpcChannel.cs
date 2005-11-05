@@ -33,42 +33,62 @@ using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 
+using Unix  = System.Runtime.Remoting.Channels.Ipc.Unix;
+using Win32 = System.Runtime.Remoting.Channels.Ipc.Win32;
+
 namespace System.Runtime.Remoting.Channels.Ipc
 {
         public class IpcChannel : IChannelReceiver, IChannelSender, IChannel
         {
-                object _innerChannel;
+                IChannel _innerChannel;
+
+                internal static bool IsUnix
+                {
+                        get { 
+                                int p = (int) Environment.OSVersion.Platform;
+                                return ((p == 4) || (p == 128));
+                        }
+                }
 
                 public IpcChannel ()
                 {
-                        _innerChannel = Activator.CreateInstance (IpcChannelFactory.LoadChannel ());
+                        if (IsUnix)
+                                _innerChannel = new Unix.IpcChannel ();
+                        else
+                                _innerChannel = new Win32.IpcChannel ();
                 }
 
                 public IpcChannel (string portName)
                 {
-                        _innerChannel = Activator.CreateInstance (IpcChannelFactory.LoadChannel (), new object [] {portName});
+                        if (IsUnix)
+                                _innerChannel = new Unix.IpcChannel (portName);
+                        else
+                                _innerChannel = new Win32.IpcChannel (portName);
                 }
 
                 public IpcChannel (IDictionary properties,
                                    IClientChannelSinkProvider clientSinkProvider,
                                    IServerChannelSinkProvider serverSinkProvider)
                 {
-                        _innerChannel = Activator.CreateInstance (IpcChannelFactory.LoadChannel (), new object [] {properties, clientSinkProvider, serverSinkProvider});
+                        if (IsUnix)
+                                _innerChannel = new Unix.IpcChannel (properties, clientSinkProvider, serverSinkProvider);
+                        else
+                                _innerChannel = new Win32.IpcChannel (properties, clientSinkProvider, serverSinkProvider);
                 }
 
                 public string ChannelName
                 {
-                        get { return ((IChannel)_innerChannel).ChannelName; }
+                        get { return _innerChannel.ChannelName; }
                 }
 
                 public int ChannelPriority
                 {
-                        get { return ((IChannel)_innerChannel).ChannelPriority; }
+                        get { return _innerChannel.ChannelPriority; }
                 }
 
                 public string Parse (string url, out string objectUri)
                 {
-                        return ((IChannel)_innerChannel).Parse (url, out objectUri);
+                        return _innerChannel.Parse (url, out objectUri);
                 }
 
                 public IMessageSink CreateMessageSink (string url,

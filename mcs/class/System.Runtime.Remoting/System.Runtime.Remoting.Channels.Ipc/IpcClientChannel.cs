@@ -33,27 +33,39 @@ using System.Collections;
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Messaging;
 
+using Unix  = System.Runtime.Remoting.Channels.Ipc.Unix;
+using Win32 = System.Runtime.Remoting.Channels.Ipc.Win32;
+
 namespace System.Runtime.Remoting.Channels.Ipc
 {
         public class IpcClientChannel : IChannelSender, IChannel
         {
-                object _innerChannel;
+                IChannelSender _innerChannel;
 
                 public IpcClientChannel ()
                 {
-                        _innerChannel = Activator.CreateInstance (IpcChannelFactory.LoadClientChannel ());
+                        if (IpcChannel.IsUnix)
+                                _innerChannel = new Unix.IpcClientChannel ();
+                        else
+                                _innerChannel = new Win32.IpcClientChannel ();
                 }
 
                 public IpcClientChannel (IDictionary properties,
                                          IClientChannelSinkProvider sinkProvider)
                 {
-                        _innerChannel = Activator.CreateInstance (IpcChannelFactory.LoadClientChannel (), new object [] {properties, sinkProvider});
+                        if (IpcChannel.IsUnix)
+                                _innerChannel = new Unix.IpcClientChannel (properties, sinkProvider);
+                        else
+                                _innerChannel = new Win32.IpcClientChannel (properties, sinkProvider);
                 }
 
                 public IpcClientChannel (string name,
                                          IClientChannelSinkProvider sinkProvider)
                 {
-                        _innerChannel = Activator.CreateInstance (IpcChannelFactory.LoadClientChannel (), new object [] {name, sinkProvider});
+                        if (IpcChannel.IsUnix)
+                                _innerChannel = new Unix.IpcClientChannel (name, sinkProvider);
+                        else
+                                _innerChannel = new Win32.IpcClientChannel (name, sinkProvider);
                 }
 
                 public string ChannelName
@@ -75,7 +87,7 @@ namespace System.Runtime.Remoting.Channels.Ipc
                                                        object remoteChannelData,
                                                        out string objectUri)
                 {
-                        return ((IChannelSender)_innerChannel).CreateMessageSink (url, remoteChannelData, out objectUri);
+                        return _innerChannel.CreateMessageSink (url, remoteChannelData, out objectUri);
                 }
     }
 }
