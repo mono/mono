@@ -1,3 +1,7 @@
+2005-11-05  Robert Jordan  <robertj@gmx.net>
+
+	* IpcClientChannel.cs, IpcServerChannel.cs: Added missing ctors.
+
 2005-11-04  Robert Jordan  <robertj@gmx.net>
 
 	* IpcChannelHelper.cs: Removed the colon from the invalid pipe name

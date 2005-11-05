@@ -47,7 +47,17 @@ namespace System.Runtime.Remoting.Channels.Ipc.Win32
         /// Creates a default client channel.
         /// </summary>
         public IpcClientChannel()
-            : this (null, null)
+            : this ((IDictionary)null, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a default client channel.
+        /// </summary>
+        /// <param name="name">The channel name.</param>
+        /// <param name="sinkProvider">The provider</param>
+        public IpcClientChannel(string name, IClientChannelSinkProvider provider)
+            : this (IpcServerChannel.BuildDefaultProperties (name), provider)
         {
         }
 

@@ -49,11 +49,11 @@ namespace System.Runtime.Remoting.Channels.Ipc.Win32
         Thread worker;
 
         /// <summary>
-        /// Gets the default channel properties
+        /// Builds the default channel properties
         /// </summary>
         /// <param name="portName">The pipe name.</param>
         /// <returns></returns>
-        static IDictionary GetDefaultProperties(string portName)
+        internal static IDictionary BuildDefaultProperties(string portName)
         {
             Hashtable h = new Hashtable();
             h.Add("portName", portName);
@@ -61,11 +61,46 @@ namespace System.Runtime.Remoting.Channels.Ipc.Win32
         }
 
         /// <summary>
-        /// Creates a server channel w/out impersonation.
+        /// Builds the default channel properties
+        /// </summary>
+        /// <param name="portName">The pipe name.</param>
+        /// <returns></returns>
+        internal static IDictionary BuildDefaultProperties(string name, string portName)
+        {
+            Hashtable h = new Hashtable();
+            h.Add("name", name);
+            h.Add("portName", portName);
+            return h;
+        }
+
+        /// <summary>
+        /// Creates a server channel
         /// </summary>
         /// <param name="portName">The port name.</param>
         public IpcServerChannel(string portName)
-            : this(GetDefaultProperties(portName), null)
+            : this(BuildDefaultProperties(portName), null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a server channel
+        /// </summary>
+        /// <param name="mame">The channel name.</param>
+        /// <param name="portName">The port name.</param>
+        public IpcServerChannel(string name, string portName)
+            : this(BuildDefaultProperties(name, portName), null)
+        {
+        }
+
+        /// <summary>
+        /// Creates a server channel
+        /// </summary>
+        /// <param name="mame">The channel name.</param>
+        /// <param name="portName">The port name.</param>
+        /// <param name="provider">The sink provider.</param>
+        public IpcServerChannel(string name, string portName,
+                                IServerChannelSinkProvider provider)
+            : this(BuildDefaultProperties(name, portName), provider)
         {
         }
 
