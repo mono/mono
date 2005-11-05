@@ -136,7 +136,7 @@ namespace System.Net
 		
 		public byte [] DownloadData (string address)
 		{
-			return DownloadData (address, "POST");
+			return DownloadData (address, "GET");
 		}
 
 #if NET_2_0
@@ -144,7 +144,7 @@ namespace System.Net
 #endif
 		byte [] DownloadData (Uri address)
 		{
-			return DownloadData (address, "POST");
+			return DownloadData (address, "GET");
 		}
 		
 #if NET_2_0
@@ -155,9 +155,6 @@ namespace System.Net
 			return DownloadData (MakeUri (address), method);
 		}
 
-		// Maybe I should be careful if assuming that setting "POST"
-		// never fails when we setup WebRequest, but the same approach
-		// seems to work on UploadData().
 #if NET_2_0
 		public
 #endif

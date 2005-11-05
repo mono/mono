@@ -1,3 +1,7 @@
+2005-11-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebClient: use POST for DownloadData(). Fixed bug #76631.
+
 2005-10-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AuthenticationSchemes.cs : Fixed enum values and added [Flags].
