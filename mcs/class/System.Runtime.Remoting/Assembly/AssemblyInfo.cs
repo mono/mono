@@ -56,4 +56,6 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: AssemblyDelaySign(true)]
+#if !TARGET_JVM
 [assembly: AssemblyKeyFile("../ecma.pub")]
+#endif

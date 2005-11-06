@@ -56,6 +56,10 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		
 		RemotingThreadPool threadPool;
 		
+#if TARGET_JVM
+		private volatile bool stopped = false;
+#endif
+
 		void Init (IServerChannelSinkProvider serverSinkProvider) 
 		{
 			if (serverSinkProvider == null) 
@@ -200,22 +204,38 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			try
 			{
-				while (true) 
+#if !TARGET_JVM
+				while(true)
+#else
+				while(!stopped)
+#endif
 				{
 					Socket socket = listener.AcceptSocket ();
 					ClientConnection reader = new ClientConnection (this, socket, sink);
 					try {
 						if (!threadPool.RunThread (new ThreadStart (reader.ProcessMessages)))
 							socket.Close ();
-					} catch {}
+					} catch (Exception e) 
+					{
+#if DEBUG
+						Console.WriteLine("Exception caught in TcpServerChannel.WaitForConnections during start process message: {0} {1}", e.GetType(), e.Message);
+#endif
+					}
 				}
 			}
-			catch
-			{}
+			catch (Exception e) 
+			{
+#if DEBUG
+				Console.WriteLine("Exception caught in TcpServerChannel.WaitForConnections, stop channel's thread : {0} {1}", e.GetType(), e.Message);
+#endif
+			}
 		}
 
 		public void StartListening (object data)
 		{
+#if TARGET_JVM
+			stopped = false;
+#endif 
 			listener = new TcpListener (bindAddress, port);
 			if (server_thread == null) 
 			{
@@ -238,13 +258,21 @@ namespace System.Runtime.Remoting.Channels.Tcp
 
 		public void StopListening (object data)
 		{
+#if TARGET_JVM
+			stopped = true;
+#endif 
 			if (server_thread == null) return;
 			
+#if !TARGET_JVM
 			server_thread.Abort ();
+#else
+			server_thread.Interrupt ();
+#endif
+			server_thread = null;
 			listener.Stop ();
 			threadPool.Free ();
 			server_thread.Join ();
-			server_thread = null;
+			server_thread = null;			
 		}
 	}
 
@@ -304,7 +332,9 @@ namespace System.Runtime.Remoting.Channels.Tcp
 			}
 			catch (Exception ex)
 			{
-//				Console.WriteLine (ex);
+#if DEBUG
+				Console.WriteLine ("The exception was caught during TcpServerChannel.ProcessMessages: {0}, {1}", ex.GetType(), ex.Message);
+#endif
 			}
 			finally
 			{

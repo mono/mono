@@ -59,14 +59,16 @@ namespace System.Runtime.Remoting.Channels.Tcp
 		{
 			// This thread will close unused connections
 			_poolThread = new Thread (new ThreadStart (ConnectionCollector));
-			_poolThread.Start();
 			_poolThread.IsBackground = true;
+			_poolThread.Start();
 		}
 
 		public static void Shutdown ()
 		{
+#if !TARGET_JVM
 			if (_poolThread != null)
 				_poolThread.Abort();
+#endif
 		}
 
 		public static int MaxOpenConnections

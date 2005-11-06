@@ -1,5 +1,6 @@
 2005-11-06  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
 
+    * SoapMessageFormatter.cs, RemotingThreadPool.cs: only TARGET_JVM changes
 	* Create new dictionary object for Properties during initialization:
 	  - SoapCore.cs
 	  - BinaryCore.cs

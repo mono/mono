@@ -1,3 +1,7 @@
+2005-11-06  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
+
+    * MetaData.cs: only TARGET_JVM changes
+    
 2005-01-14  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MetaDataCodeGenerator.cs: Fix warning.
