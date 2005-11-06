@@ -1,3 +1,11 @@
+2005-06-11  Boris Kirzner <borisk@mainsoft.com>
+	* DirectoryEntry.cs: fixes for RefreshCache()
+		-Property names should be sent to server if only particular properties
+		need to be updated.
+		-Refreshing all the properties should work with separate list,
+		so the original properties values are not damaged if the refresh
+		fails for some reason.
+
 2005-30-10  Boris Kirzner <borisk@mainsoft.com>
 	* DirectoryEntries.cs: fix for null base dn.
 	* DirectorySearcher.cs: use server root authentication type for binding.

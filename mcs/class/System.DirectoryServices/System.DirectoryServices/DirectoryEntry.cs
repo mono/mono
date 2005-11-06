@@ -664,7 +664,7 @@ namespace System.DirectoryServices
 		{
 			_inPropertiesLoading = true;
 			try	{
-				LdapSearchResults lsc=conn.Search (Fdn,LdapConnection.SCOPE_BASE,"objectClass=*",null,false);
+				LdapSearchResults lsc=conn.Search (Fdn,LdapConnection.SCOPE_BASE,"objectClass=*",propertyNames,false);
 				if (lsc.hasMore ()) {
 					LdapEntry nextEntry = lsc.next ();
 					string [] lowcasePropertyNames = null;
@@ -1060,7 +1060,9 @@ namespace System.DirectoryServices
 		public void RefreshCache ()
 		{
 			// note that GetProperties must be called with false, elswere infinite loop will be caused
-			LoadProperties(GetProperties(false),null);
+			PropertyCollection properties = new PropertyCollection ();
+			LoadProperties(properties, null);
+			SetProperties (properties);
 		}
 
 		/// <summary>
