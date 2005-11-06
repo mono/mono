@@ -1,3 +1,13 @@
+2005-11-06 Boris Kirzner <borisk@mainsoft.coim>
+	* TestConfiguration.cs: added. 
+	Class to read tests configuration from app config.
+	* example.app.config: added. 
+	Example app config file for tests configuration.
+	* DirectoryServicesDirectoryEntryTest.cs,
+	DirectoryServicesDirectorySearcherTest.cs,
+	DirectoryServicesSearchResultTest.cs: work with TestConfiguration
+	instead of hardcoded values.
+
 2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryServicesPermissionAttributeTest.cs: Removed *Choice 

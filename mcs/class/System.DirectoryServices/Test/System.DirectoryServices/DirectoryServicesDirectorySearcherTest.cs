@@ -10,6 +10,8 @@ using System;
 using System.DirectoryServices;
 using System.Collections;
 
+using System.Threading;
+
 namespace MonoTests.System.DirectoryServices 
 {
 	[TestFixture]
@@ -18,10 +20,7 @@ namespace MonoTests.System.DirectoryServices
 	{
 		#region Fields
 
-		static string LDAPServerRoot;
-		static string LDAPServerConnectionString;
-		static string LDAPServerUsername;
-		static string LDAPServerPassword;
+		static TestConfiguration configuration;
 		static DirectoryEntry de;
 		static DirectorySearcher ds;
 
@@ -33,12 +32,7 @@ namespace MonoTests.System.DirectoryServices
 		public void TestFixtureSetUp()
 		{
 			de = null;			
-			string ldapServerName = Environment.GetEnvironmentVariable("MONO_LDAP_TEST_SERVER");
-			Assert.IsFalse((ldapServerName == null || ldapServerName == String.Empty),"This test fixture requires environment variable MONO_LDAP_TEST_SERVER to be set up to LDAP server name.");
-			LDAPServerRoot = "LDAP://" + ldapServerName + "/";
-			LDAPServerConnectionString = LDAPServerRoot + "dc=myhosting,dc=example";
-			LDAPServerUsername = "cn=Manager,dc=myhosting,dc=example";
-			LDAPServerPassword = "secret";
+			configuration = new TestConfiguration ();
 		}
 
 
@@ -57,10 +51,10 @@ namespace MonoTests.System.DirectoryServices
 
 			#region Initialize basics
 
-			DirectoryEntry root = new DirectoryEntry(	LDAPServerConnectionString,
-														LDAPServerUsername,
-														LDAPServerPassword,
-														AuthenticationTypes.ServerBind);
+			DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
+														configuration.Username,
+														configuration.Password,
+														configuration.AuthenticationType);
 
 			DirectoryEntry ouPeople = root.Children.Add("ou=people","Class");
 			ouPeople.Properties["objectClass"].Value = "organizationalUnit";
@@ -188,6 +182,7 @@ namespace MonoTests.System.DirectoryServices
 			DirectoryEntry cnManager = root.Children.Add("cn=Manager","Class");
 			cnManager.Properties["objectClass"].Value = "organizationalRole";
 			cnManager.Properties["cn"].Value = "Manager";
+			cnManager.Properties["facsimileTelephoneNumber"].Value = "+1 602 333 1238";
 			cnManager.CommitChanges();
 
 			DirectoryEntry cnUziCohen_ = cnManager.Children.Add("cn=Uzi Cohen","Class");
@@ -227,10 +222,10 @@ namespace MonoTests.System.DirectoryServices
 			ds = null;
 			de = null;
 
-			DirectoryEntry root = new DirectoryEntry(	LDAPServerConnectionString,
-													LDAPServerUsername,
-													LDAPServerPassword,
-													AuthenticationTypes.ServerBind);
+			DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
+													configuration.Username,
+													configuration.Password,
+													configuration.AuthenticationType);
 			
 			foreach(DirectoryEntry child in root.Children) {
 				DeleteTree_DFS(child);
@@ -266,14 +261,14 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_DirectorySearcher_De()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 
 			ds = new DirectorySearcher(de);
 
-			Assert.AreEqual(ds.SearchRoot.Name,"dc=myhosting");
+			Assert.AreEqual(ds.SearchRoot.Name,GetName (configuration.BaseDn));
 			Assert.AreEqual(ds.Filter,"(objectClass=*)");
 			Assert.AreEqual(ds.PropertiesToLoad.Count,0);
 			Assert.AreEqual(ds.SearchScope,SearchScope.Subtree);
@@ -296,14 +291,14 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_DirectorySearcher_DeStr()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 
 			ds = new DirectorySearcher(de,"(objectClass=organizationalRole)");
 
-			Assert.AreEqual(ds.SearchRoot.Name,"dc=myhosting");
+			Assert.AreEqual(ds.SearchRoot.Name,GetName (configuration.BaseDn));
 			Assert.AreEqual(ds.Filter,"(objectClass=organizationalRole)");
 			Assert.AreEqual(ds.PropertiesToLoad.Count,0);
 			Assert.AreEqual(ds.SearchScope,SearchScope.Subtree);
@@ -331,14 +326,14 @@ namespace MonoTests.System.DirectoryServices
 		public void DirectorySearcher_DirectorySearcher_DeStrStrArr()
 		{
 			string[] properties = new string[] {"objectClass","ou","cn"};
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 
 			ds = new DirectorySearcher(de,"(objectClass=organizationalRole)",properties);
 
-			Assert.AreEqual(ds.SearchRoot.Name,"dc=myhosting");
+			Assert.AreEqual(ds.SearchRoot.Name,GetName (configuration.BaseDn));
 			Assert.AreEqual(ds.Filter,"(objectClass=organizationalRole)");
 			Assert.AreEqual(ds.PropertiesToLoad.Count,3);
 			foreach(string s in properties) {
@@ -369,14 +364,14 @@ namespace MonoTests.System.DirectoryServices
 		public void DirectorySearcher_DirectorySearcher_DeStrStrArrScp()
 		{
 			string[] properties = new string[] {"objectClass","ou","cn"};
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 
 			ds = new DirectorySearcher(de,"(objectClass=organizationalRole)",properties,SearchScope.Base);
 
-			Assert.AreEqual(ds.SearchRoot.Name,"dc=myhosting");
+			Assert.AreEqual(ds.SearchRoot.Name,GetName (configuration.BaseDn));
 			Assert.AreEqual(ds.Filter,"(objectClass=organizationalRole)");
 			Assert.AreEqual(ds.PropertiesToLoad.Count,3);
 			foreach(string s in properties) {
@@ -390,10 +385,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_CacheResults()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 
 			ds = new DirectorySearcher(de,"(cn=Barak Tsabari)");
 			ds.CacheResults = true;
@@ -456,10 +451,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_Filter1()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 			
 			ds.Filter = "(objectClass=person)";
@@ -478,10 +473,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_Filter2()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 			
 			ds.Filter = "((objectClass=person))";
@@ -501,10 +496,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_PageSize()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			Assert.AreEqual(ds.PageSize,0);
@@ -526,10 +521,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_PropertiesToLoad()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			Assert.AreEqual(ds.PropertiesToLoad.Count,0);
@@ -597,10 +592,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_PropertyNamesOnly()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			Assert.AreEqual(ds.PropertyNamesOnly,false);
@@ -635,10 +630,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_ReferralChasing()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			Assert.AreEqual(ds.ReferralChasing,ReferralChasingOption.External);
@@ -661,33 +656,33 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_SearchRoot()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher();
 			ds.SearchRoot = de;
 
-			Assert.AreEqual(ds.SearchRoot.Name,"dc=myhosting");
+			Assert.AreEqual(ds.SearchRoot.Name,GetName (configuration.BaseDn));
 
 			ds.Filter = "(objectClass=person)";
 			SearchResultCollection results = ds.FindAll();
 			Assert.AreEqual(results.Count,8);
 
-			de = new DirectoryEntry(LDAPServerRoot + "ou=people,dc=myhosting,dc=example",
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ServerRoot + "ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds.SearchRoot = de;
 			Assert.AreEqual(ds.SearchRoot.Name,"ou=people");
 
 			results = ds.FindAll();
 			Assert.AreEqual(results.Count,7);
 
-			de = new DirectoryEntry(LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example",
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds.SearchRoot = de;
 			Assert.AreEqual(ds.SearchRoot.Name,"ou=Human Resources");
 
@@ -698,10 +693,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_SearchScope()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 			
 			Assert.AreEqual(ds.SearchScope,SearchScope.Subtree);
@@ -729,10 +724,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_ServerPageTimeLimit()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			Assert.AreEqual(ds.ServerPageTimeLimit,new TimeSpan(-10000000));
@@ -754,10 +749,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_ServerTimeLimit()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			Assert.AreEqual(ds.ServerTimeLimit,new TimeSpan(-10000000));
@@ -779,10 +774,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_SizeLimit()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			Assert.AreEqual(ds.SizeLimit,0);
@@ -811,10 +806,10 @@ namespace MonoTests.System.DirectoryServices
 		[ExpectedException(typeof(ArgumentException))]
 		public void DirectorySearcher_SizeLimit_Neg()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 			ds.SizeLimit = -1;
 			Assert.AreEqual(ds.SizeLimit,-1);
@@ -831,20 +826,20 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_FindAll()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			ds.Filter = "(objectClass=person)";
 			SearchResultCollection results = ds.FindAll();
 			Assert.AreEqual(results.Count,8);
 
-			de = new DirectoryEntry(LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example",
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			results = ds.FindAll();
@@ -854,10 +849,10 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void DirectorySearcher_FindOne()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			ds.Filter = "(objectClass=person)";
@@ -866,10 +861,10 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(result.GetDirectoryEntry().Name,"cn=Barak Tsabari");
 			
 
-			de = new DirectoryEntry(LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example",
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn)),
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			result = ds.FindOne();
@@ -883,6 +878,26 @@ namespace MonoTests.System.DirectoryServices
 
 
 		#endregion Tests
+
+		private static string GetName (string baseDn)
+		{
+			if (baseDn == null || baseDn.Length == 0 || baseDn.IndexOf (',') == -1)
+				return baseDn;
+
+			int index = baseDn.IndexOf (',');
+
+			return baseDn.Substring (0, index);
+		}
+
+		private static string GetParentDN (string baseDn)
+		{
+			if (baseDn == null || baseDn.Length == 0 || baseDn.IndexOf (',') == -1)
+				return String.Empty;
+
+			int index = baseDn.IndexOf (',');
+
+			return baseDn.Substring (index + 1,baseDn.Length - index - 1);
+		}
 	}
 }
 

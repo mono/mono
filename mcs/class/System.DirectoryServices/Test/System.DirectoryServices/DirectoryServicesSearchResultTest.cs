@@ -18,10 +18,7 @@ namespace MonoTests.System.DirectoryServices
 	{
 		#region Fields
 
-		static string LDAPServerRoot;
-		static string LDAPServerConnectionString;
-		static string LDAPServerUsername;
-		static string LDAPServerPassword;
+		static TestConfiguration configuration;
 		static DirectoryEntry de;
 		static DirectorySearcher ds;
 
@@ -33,12 +30,7 @@ namespace MonoTests.System.DirectoryServices
 		public void TestFixtureSetUp()
 		{
 			de = null;
-			string ldapServerName = Environment.GetEnvironmentVariable("MONO_LDAP_TEST_SERVER");
-			Assert.IsFalse((ldapServerName == null || ldapServerName == String.Empty),"This test fixture requires environment variable MONO_LDAP_TEST_SERVER to be set up to LDAP server name.");
-			LDAPServerRoot = "LDAP://" + ldapServerName + "/";
-			LDAPServerConnectionString = LDAPServerRoot + "dc=myhosting,dc=example";
-			LDAPServerUsername = "cn=Manager,dc=myhosting,dc=example";
-			LDAPServerPassword = "secret";
+			configuration = new TestConfiguration ();
 		}
 
 
@@ -56,10 +48,10 @@ namespace MonoTests.System.DirectoryServices
 
 			#region Initialize basics
 
-			DirectoryEntry root = new DirectoryEntry(	LDAPServerConnectionString,
-														LDAPServerUsername,
-														LDAPServerPassword,
-														AuthenticationTypes.ServerBind);
+			DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
+														configuration.Username,
+														configuration.Password,
+														configuration.AuthenticationType);
 
 			DirectoryEntry ouPeople = root.Children.Add("ou=people","Class");
 			ouPeople.Properties["objectClass"].Value = "organizationalUnit";
@@ -187,6 +179,7 @@ namespace MonoTests.System.DirectoryServices
 			DirectoryEntry cnManager = root.Children.Add("cn=Manager","Class");
 			cnManager.Properties["objectClass"].Value = "organizationalRole";
 			cnManager.Properties["cn"].Value = "Manager";
+			cnManager.Properties["facsimileTelephoneNumber"].Value = "+1 602 333 1238";
 			cnManager.CommitChanges();
 
 			DirectoryEntry cnUziCohen_ = cnManager.Children.Add("cn=Uzi Cohen","Class");
@@ -226,10 +219,10 @@ namespace MonoTests.System.DirectoryServices
 			ds = null;
 			de = null;
 
-			DirectoryEntry root = new DirectoryEntry(	LDAPServerConnectionString,
-													LDAPServerUsername,
-													LDAPServerPassword,
-													AuthenticationTypes.ServerBind);
+			DirectoryEntry root = new DirectoryEntry(	configuration.ConnectionString,
+														configuration.Username,
+														configuration.Password,
+														configuration.AuthenticationType);
 			
 			foreach(DirectoryEntry child in root.Children) {
 				DeleteTree_DFS(child);
@@ -252,40 +245,39 @@ namespace MonoTests.System.DirectoryServices
 		[Test]
 		public void SearchResult_Path()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 
 			ds = new DirectorySearcher(de);
 
 			SearchResultCollection results = ds.FindAll();
 
 			// MS works only with "LDAP" while RFC2255 states "ldap"
-			Assert.AreEqual(results[0].Path.ToLower(),(LDAPServerRoot + "dc=myhosting,dc=example").ToLower());
+			Assert.AreEqual(results[0].Path.ToLower(),(configuration.ServerRoot + configuration.BaseDn).ToLower());
 			Assert.AreEqual(results[0].Path,results[0].GetDirectoryEntry().Path);
 
 			// MS works only with "LDAP" while RFC2255 states "ldap"
-			Assert.AreEqual(results[1].Path.ToLower(),(LDAPServerRoot + "ou=people,dc=myhosting,dc=example").ToLower());
+			Assert.AreEqual(results[1].Path.ToLower(),(configuration.ServerRoot + "ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn))).ToLower());
 			Assert.AreEqual(results[1].Path,results[1].GetDirectoryEntry().Path);
 
 			// MS works only with "LDAP" while RFC2255 states "ldap"
-			Assert.AreEqual(results[2].Path.ToLower(),(LDAPServerRoot + "ou=Human Resources,ou=people,dc=myhosting,dc=example").ToLower());
+			Assert.AreEqual(results[2].Path.ToLower(),(configuration.ServerRoot + "ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn))).ToLower());
 			Assert.AreEqual(results[2].Path,results[2].GetDirectoryEntry().Path);
 
 			// MS works only with "LDAP" while RFC2255 states "ldap"
-			Assert.AreEqual(results[3].Path.ToLower(),(LDAPServerRoot + "cn=John Smith,ou=Human Resources,ou=people,dc=myhosting,dc=example").ToLower());
+			Assert.AreEqual(results[3].Path.ToLower(),(configuration.ServerRoot + "cn=John Smith,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn))).ToLower());
 			Assert.AreEqual(results[3].Path,results[3].GetDirectoryEntry().Path);
 		}
 
 		[Test]
 		public void SearchResult_Properties()
 		{
-			de = new DirectoryEntry(LDAPServerConnectionString,
-									LDAPServerUsername,
-									LDAPServerPassword,
-									AuthenticationTypes.ServerBind);
-
+			de = new DirectoryEntry(configuration.ConnectionString,
+									configuration.Username,
+									configuration.Password,
+									configuration.AuthenticationType);
 			ds = new DirectorySearcher(de);
 
 			ds.PropertiesToLoad.Add("cn");
@@ -328,7 +320,7 @@ namespace MonoTests.System.DirectoryServices
 			Assert.AreEqual(((ResultPropertyValueCollection)result.Properties["cn"])[0],"Barak Tsabari");
 			Assert.AreEqual(((ResultPropertyValueCollection)result.Properties["objectClass"])[0],"person");
 			// MS works only with "LDAP" while RFC2255 states "ldap"
-			Assert.AreEqual(((string)((ResultPropertyValueCollection)result.Properties["AdsPath"])[0]).ToLower(),(LDAPServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people,dc=myhosting,dc=example").ToLower());
+			Assert.AreEqual(((string)((ResultPropertyValueCollection)result.Properties["AdsPath"])[0]).ToLower(),(configuration.ServerRoot + "cn=Barak Tsabari,ou=Human Resources,ou=people" + ((configuration.BaseDn.Length == 0) ? String.Empty : ("," + configuration.BaseDn))).ToLower());
 		}
 
 		#endregion Tests
