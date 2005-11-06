@@ -1,3 +1,9 @@
+2005-11-06  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
+
+	* RemotingConfiguration.cs: Fix ConfigHandler.OnEndElement to handle case
+	when the configuration file contains custom providers with child elements.
+	* ServerIdentity.cs: clear _serverSink field in the DisposeServerObject method.
+
 2005-10-18  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* RemotingConfiguration.cs: The value for customErrors tag must be

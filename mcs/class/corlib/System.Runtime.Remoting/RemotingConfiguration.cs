@@ -578,8 +578,8 @@ namespace System.Runtime.Remoting
 			if (currentProviderData != null)
 			{
 				currentProviderData.Pop ();
-				if (currentProviderData.Count > 0) return;
-				currentProviderData = null;
+				if (currentProviderData.Count == 0) 
+					currentProviderData = null;
 			}
 			
 			currentXmlPath = currentXmlPath.Substring (0, currentXmlPath.Length - name.Length - 1);

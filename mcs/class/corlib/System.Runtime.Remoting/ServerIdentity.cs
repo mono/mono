@@ -103,6 +103,8 @@ namespace System.Runtime.Remoting
 
 		public void AttachServerObject (MarshalByRefObject serverObject, Context context)
 		{
+			DisposeServerObject();
+
 			_context = context;
 			_serverObject = serverObject;
 			
@@ -143,6 +145,7 @@ namespace System.Runtime.Remoting
 			if (_serverObject != null) {
 				_serverObject.ObjectIdentity = null;
 				_serverObject = null;
+				_serverSink = null;
 			}
 		}
 	}
