@@ -61,6 +61,14 @@ namespace System.Reflection.Emit {
 		{
 			return (label == obj.label);
 		}
+
+		public static bool operator == (Label a, Label b) {
+			return a.Equals (b);
+		}
+
+		public static bool operator != (Label a, Label b) {
+			return !(a == b);
+		}
 #endif
 
 		public override int GetHashCode () {
