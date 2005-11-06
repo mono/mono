@@ -53,6 +53,11 @@ namespace System.Runtime.Remoting.Channels
 		{
 			_properties = properties;
 
+			if (_properties == null)
+			{
+				_properties = new Hashtable(10);
+			}
+			
 			foreach(DictionaryEntry property in properties)
 			{
 				string key = (string) property.Key;
@@ -86,6 +91,7 @@ namespace System.Runtime.Remoting.Channels
 		
 		public SoapCore ()
 		{
+			_properties = new Hashtable(10);
 			Init ();
 		}
 		

@@ -1,3 +1,9 @@
+2005-11-06  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
+
+	* Create new dictionary object for Properties during initialization:
+	  - SoapCore.cs
+	  - BinaryCore.cs
+
 2005-05-18  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* BinaryServerFormatterSink.cs: Properly handle exceptions raised
