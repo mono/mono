@@ -9,6 +9,7 @@ System.Runtime.Remoting.Channels/BinaryServerFormatterSink.cs
 System.Runtime.Remoting.Channels/BinaryServerFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/ChannelCore.cs
 System.Runtime.Remoting.Channels/CommonTransportKeys.cs
+System.Runtime.Remoting.Channels/IAuthorizeRemotingConnection.cs
 System.Runtime.Remoting.Channels/RemotingThreadPool.cs
 System.Runtime.Remoting.Channels/SoapClientFormatterSink.cs
 System.Runtime.Remoting.Channels/SoapCore.cs

@@ -1,8 +1,12 @@
+2005-11-05  Robert Jordan  <robertj@gmx.net>
+
+	* System.Runtime.Remoting.dll.sources: Added Channels/IAuthorizeRemotingConnection.cs
+
 2005-11-06  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
 
     * Add System.Runtime.Remoting.vmwcsproj and System.Runtime.Remoting.sln
     * AssemblyInfo.cs: only TARGET_JVM changes
-    
+
 2005-11-05  Robert Jordan  <robertj@gmx.net>
 
 	* System.Runtime.Remoting.dll.sources: Removed Ipc/IpcChannelFactory.cs
