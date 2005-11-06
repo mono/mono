@@ -1,3 +1,14 @@
+2005-11-06  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
+
+    * Add HttpHandlerFactory.jvm.cs
+	* HttpHandlerFactory.cs: Create and register HttpChannel in case it 
+	was not registered before.
+	* HttpHandler.cs: Send response headers.
+	* HttpServerChannel.cs:
+	  - Change default port to -1.
+	  - Don't start a listener if the port == -1
+	  - Send response to the client also in case of DispatchRequest fails
+
 2005-10-10  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* HttpServer.cs: Removed all non-sense regular expressions for

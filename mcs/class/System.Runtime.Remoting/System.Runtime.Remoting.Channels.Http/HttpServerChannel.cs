@@ -58,7 +58,7 @@ namespace System.Runtime.Remoting.Channels.Http
 		private int               _channelPriority = 1;  // priority of channel (default=1)
 		private String            _channelName = "http"; // channel name
 		private String            _machineName = null;   // machine name
-		private int               _port = 0;            // port to listen on
+		private int               _port = -1;            // port to listen on
 		private ChannelDataStore  _channelData = null;   // channel data
 		
 		private bool _bUseIpAddress = true; // by default, we'll use the ip address.
@@ -76,6 +76,10 @@ namespace System.Runtime.Remoting.Channels.Http
 		private bool        _bListening = false; // are we listening at the moment?
 
 		RemotingThreadPool threadPool;
+
+#if TARGET_JVM
+		private volatile bool stopped = false;
+#endif
 
 		public HttpServerChannel() : base()
 		{
@@ -182,7 +186,11 @@ namespace System.Runtime.Remoting.Channels.Http
 		internal void Listen()
 		{
 			try {
+	#if !TARGET_JVM
 				while(true)
+	#else
+				while(!stopped)
+	#endif
 				{
 					Socket socket = _tcpListener.AcceptSocket();
 					RequestArguments request = new RequestArguments (socket, _transportSink);
@@ -194,8 +202,11 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		public void StartListening (Object data)
 		{
-			if (_bListening) return;
+			if (_bListening || _port < 0) return;
 			
+#if TARGET_JVM
+			stopped = false;
+#endif 
 			threadPool = RemotingThreadPool.GetSharedPool ();
 			
 			_tcpListener = new TcpListener (_bindToAddr, _port);
@@ -222,9 +233,16 @@ namespace System.Runtime.Remoting.Channels.Http
 
 		public void StopListening(Object data)
 		{
+#if TARGET_JVM
+			stopped = true;
+#endif 
 			if( _bListening)
 			{
+#if !TARGET_JVM
 				_listenerThread.Abort ();
+#else
+				_listenerThread.Interrupt ();
+#endif 
 				_tcpListener.Stop();
 				threadPool.Free ();
 				_listenerThread.Join ();
@@ -350,10 +368,12 @@ namespace System.Runtime.Remoting.Channels.Http
 			ITransportHeaders responseHeaders;
 			Stream responseStream;
 
+			bool requestDispatched = false;
 			ServerProcessing processing;
 			try
 			{
 				processing = DispatchRequest (requestStream, headers, out responseStream, out responseHeaders);
+				requestDispatched = true;
 
 				switch (processing)
 				{                    
@@ -371,6 +391,22 @@ namespace System.Runtime.Remoting.Channels.Http
 			}
 			catch (Exception ex)
 			{
+#if DEBUG
+				Console.WriteLine("The exception was caught during HttpServerChannel.ServiceRequest: {0}, {1}", ex.GetType(), ex.Message);
+#endif
+				if (!requestDispatched)
+				{
+					try 
+					{
+						HttpServer.SendResponse (reqArg, 400, null, null);
+					}
+					catch (Exception e)
+					{
+#if DEBUG
+						Console.WriteLine("Fail to send response in HttpServerChannels.ServiceRequest: {0}, {1}", e.GetType(), e.Message);
+#endif
+					}
+				}
 			}
 		}
 

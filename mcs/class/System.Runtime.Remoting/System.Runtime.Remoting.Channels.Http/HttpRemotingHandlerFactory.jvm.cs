@@ -38,31 +38,42 @@ namespace System.Runtime.Remoting.Channels.Http
 {
 	public class HttpRemotingHandlerFactory : IHttpHandlerFactory
 	{
-		static bool webConfigLoaded = false;
-		static HttpServerTransportSink transportSink = null;
-		
 		public HttpRemotingHandlerFactory ()
 		{
 		}
 
+		private static HttpRemotingHandlerFactoryData CurrentHttpRemotingHandlerFactoryData
+		{
+			get
+			{
+				HttpRemotingHandlerFactoryData res = (HttpRemotingHandlerFactoryData)AppDomain.CurrentDomain.GetData("HttpRemotingHandlerFactory");
+				if (res == null) 
+				{
+					res = new HttpRemotingHandlerFactoryData();
+					AppDomain.CurrentDomain.SetData("HttpRemotingHandlerFactory", res);
+				}
+				return res;
+			}
+		}
+		
 		public IHttpHandler GetHandler (HttpContext context,
 						string verb,
 						string url,
 						string filePath)
 		{
-			if (!webConfigLoaded)
+			if (!CurrentHttpRemotingHandlerFactoryData.webConfigLoaded)
 				ConfigureHttpChannel (context);
 			
-			return new HttpRemotingHandler (transportSink);
+			return new HttpRemotingHandler (CurrentHttpRemotingHandlerFactoryData.transportSink);
 		}
 		
 		void ConfigureHttpChannel (HttpContext context)
 		{
 			lock (GetType())
 			{
-				if (webConfigLoaded) return;
-							
-				// Look for a channel that wants to receive http request
+				if (CurrentHttpRemotingHandlerFactoryData.webConfigLoaded) return;
+				
+				// Look for a channel that wants to receive http request				
 				IChannelReceiverHook chook = null;
 				foreach (IChannel channel in ChannelServices.RegisteredChannels)
 				{
@@ -77,7 +88,7 @@ namespace System.Runtime.Remoting.Channels.Http
 						chook = null;
 						continue;
 					}
-					
+
 					//found chook
 					break;
 				}
@@ -95,9 +106,10 @@ namespace System.Runtime.Remoting.Channels.Http
 				string channelUrl = context.Request.Url.GetLeftPart(UriPartial.Authority);
 				channelUrl += context.Request.ApplicationPath;
 				chook.AddHookChannelUri (channelUrl);
-					
-				transportSink = new HttpServerTransportSink (chook.ChannelSinkChain, null);
-				webConfigLoaded = true;
+
+				CurrentHttpRemotingHandlerFactoryData.transportSink = new HttpServerTransportSink (chook.ChannelSinkChain, null);
+
+				CurrentHttpRemotingHandlerFactoryData.webConfigLoaded = true;
 			}
 		}
 
@@ -105,4 +117,12 @@ namespace System.Runtime.Remoting.Channels.Http
 		{
 		}
 	}
+
+	internal class HttpRemotingHandlerFactoryData 
+	{
+
+		internal bool webConfigLoaded = false;
+		internal HttpServerTransportSink transportSink = null;
+		
+	}	
 }

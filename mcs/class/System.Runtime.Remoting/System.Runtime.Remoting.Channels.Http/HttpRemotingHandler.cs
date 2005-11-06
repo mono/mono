@@ -32,6 +32,7 @@
 using System;
 using System.IO;
 using System.Web;
+using System.Collections;
 
 namespace System.Runtime.Remoting.Channels.Http 
 {
@@ -69,7 +70,12 @@ namespace System.Runtime.Remoting.Channels.Http
 
 			string objectUri = request.RawUrl;
 			objectUri = objectUri.Substring (request.ApplicationPath.Length);	// application path is not part of the uri
-			
+			if (request.ApplicationPath.Length > 0 && 
+			   (objectUri.StartsWith("/") || objectUri.StartsWith(@"\")) )
+			{
+				objectUri = objectUri.Substring(1);
+			}
+
 			theaders ["__RequestUri"] = objectUri;
 			theaders ["Content-Type"] = request.ContentType;
 			theaders ["__RequestVerb"]= request.HttpMethod;
@@ -93,6 +99,16 @@ namespace System.Runtime.Remoting.Channels.Http
 				response.StatusDescription = (string) responseHeaders["__HttpReasonPhrase"];
 			}
 			
+			if (responseHeaders != null)
+			{
+				foreach (DictionaryEntry entry in responseHeaders)
+				{
+					string key = entry.Key.ToString();
+					if (key != CommonTransportKeys.HttpStatusCode && key != CommonTransportKeys.HttpReasonPhrase)
+						response.AppendHeader(key, entry.Value.ToString());
+				}
+			}
+
 			byte[] bodyBuffer = bodyBuffer = new byte [responseStream.Length];
 			responseStream.Seek (0, SeekOrigin.Begin);
 			
