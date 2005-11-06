@@ -1,3 +1,7 @@
+2005-11-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* SearchOption.cs: New file.
+
 2005-10-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StreamReader.cs: made ReadLine() less memory-hungry. Fixes bug #76399.
