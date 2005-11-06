@@ -1,3 +1,7 @@
+2005-11-05  Robert Jordan  <robertj@gmx.net>
+
+	* ISecurableChannel.cs: Added.
+
 2005-10-17  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* ChannelServices.cs: RegisteredChannels should not include the
