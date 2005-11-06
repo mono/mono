@@ -349,6 +349,7 @@ System.IO/MonoFileType.cs
 System.IO/MonoIOStat.cs
 System.IO/Path.cs
 System.IO/PathTooLongException.cs
+System.IO/SearchOption.cs
 System.IO/SearchPattern.cs
 System.IO/SeekOrigin.cs
 System.IO/Stream.cs

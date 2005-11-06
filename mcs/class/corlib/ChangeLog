@@ -1,3 +1,7 @@
+2005-11-06  Zoltan Varga  <vargaz@freemail.hu>
+
+	* corlib.dll.sources: Add System.IO/SearchOption.cs.
+
 2005-11-05  Robert Jordan  <robertj@gmx.net>
 
 	* corlib.dll.sources: Added System.Runtime.Remoting.Channels/ISecurableChannel.cs
