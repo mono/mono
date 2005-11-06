@@ -1,5 +1,7 @@
 2005-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
+	* Directory.cs: Add stub for net 2.0 GetFiles method.
+
 	* SearchOption.cs: New file.
 
 2005-10-20 Gonzalo Paniagua Javier <gonzalo@ximian.com>

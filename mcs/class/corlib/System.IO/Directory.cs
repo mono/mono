@@ -249,6 +249,14 @@ namespace System.IO
 			return GetFileSystemEntries (path, pattern, FileAttributes.Directory, 0);
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public static string[] GetFiles (string path, string searchPattern, SearchOption searchOption)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
+
 		public static string [] GetFileSystemEntries (string path)
 		{
 			return GetFileSystemEntries (path, "*");
