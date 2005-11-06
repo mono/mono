@@ -1601,21 +1601,27 @@ namespace Novell.Directory.Ldap
 
 					loginContext.login ();
 				}
-				catch (LoginException e) {
+				catch (Exception e) {
 					throw new LdapException ("Failed to create login security context", 80, "", e);
 				}
 
-				Subject subject = loginContext.getSubject ();
-
-				Krb5Helper krb5Helper = new Krb5Helper ("ldap@" + conn.Host, subject, authenticationTypes, SecurityMech);
+				Krb5Helper krb5Helper = null;
+				try {
+					krb5Helper = new Krb5Helper ("ldap@" + conn.Host, username, loginContext.getSubject (), authenticationTypes, SecurityMech);
+				}
+				finally {
+					loginContext.logout();
+				}
 				sbyte [] token = krb5Helper.ExchangeTokens (Krb5Helper.EmptyToken);
 
 				for (;;) {
 					LdapResponseQueue queue = Bind(LdapConnection.Ldap_V3, username, token, null, null, AuthenticationMech);
 					LdapResponse res = (LdapResponse) queue.getResponse ();
 					if (res.ResultCode != LdapException.SASL_BIND_IN_PROGRESS &&
-						res.ResultCode != LdapException.SUCCESS)
+						res.ResultCode != LdapException.SUCCESS) {
+						krb5Helper.Dispose();
 						throw new LdapException(ExceptionMessages.CONNECTION_ERROR, res.ResultCode, res.ErrorMessage);
+					}
 					Asn1OctetString serverSaslCreds = ((RfcBindResponse)res.Asn1Object.Response).ServerSaslCreds;
 					token = serverSaslCreds != null ? serverSaslCreds.byteValue () : null;
 
@@ -1635,7 +1641,7 @@ namespace Novell.Directory.Ldap
 			}		
 		}
 
-		private string SecurityMech
+		static string SecurityMech
 		{
 			get {
 				string securityMech = null;
@@ -1650,7 +1656,7 @@ namespace Novell.Directory.Ldap
 			}
 		}
 
-		private string SecurityAppName
+		static string SecurityAppName
 		{
 			get {
 				string securityAppName = null; 
@@ -1665,7 +1671,7 @@ namespace Novell.Directory.Ldap
 			}
 		}
 
-		private string AuthenticationMech
+		static string AuthenticationMech
 		{
 			get {
 				string authenticationMech = null;

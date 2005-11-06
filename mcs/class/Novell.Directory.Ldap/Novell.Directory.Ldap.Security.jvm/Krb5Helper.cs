@@ -39,7 +39,7 @@ using org.ietf.jgss;
 
 namespace Novell.Directory.Ldap.Security
 {
-	internal class Krb5Helper
+	internal class Krb5Helper : IDisposable
 	{
 		enum QOP {
 			NO_PROTECTION = 1,
@@ -57,26 +57,23 @@ namespace Novell.Directory.Ldap.Security
 
 		private readonly GSSContext _context;
 
-		private readonly string _name;
-		private readonly Subject _subject;
-		private readonly string _mech;
-
 		#endregion // Fields
 
 		#region Constructors
 
-		public Krb5Helper(string name, Subject subject, AuthenticationTypes authenticationTypes, string mech)
+		public Krb5Helper(string name, string clientName, Subject subject, AuthenticationTypes authenticationTypes, string mech)
 		{
-			_name = name;
-			_subject = subject;
-			_mech = mech;
-
 			_encryption = (authenticationTypes & AuthenticationTypes.Sealing) != 0;
 			_signing = (authenticationTypes & AuthenticationTypes.Signing) != 0;
 			_delegation = (authenticationTypes & AuthenticationTypes.Delegation) != 0;
 
-			CreateContextPrivilegedAction action = new CreateContextPrivilegedAction (_name,_mech,_encryption,_signing,_delegation);
-			_context = (GSSContext) Subject.doAs (_subject,action);
+			CreateContextPrivilegedAction action = new CreateContextPrivilegedAction (name, clientName, mech,_encryption,_signing,_delegation);
+			try {
+				_context = (GSSContext) Subject.doAs (subject,action);
+			}
+			catch (PrivilegedActionException e) {
+				throw new LdapException ("Problem performing token exchange with the server",LdapException.OTHER,"",e.getCause()); 
+			}
 		}
 
 		#endregion // Constructors
@@ -126,14 +123,7 @@ namespace Novell.Directory.Ldap.Security
 				return TypeUtils.ToSByteArray (gssOutToken);
 			}
 
-			sbyte [] token;
-			try {
-				ExchangeTokenPrivilegedAction action = new ExchangeTokenPrivilegedAction (Context, clientToken);
-				token = (sbyte []) Subject.doAs (_subject, action);
-			} 
-			catch (PrivilegedActionException e) {
-				throw new LdapException ("Problem performing token exchange with the server",LdapException.OTHER,"",e); 
-			}
+			sbyte [] token = Context.initSecContext (clientToken, 0, clientToken.Length);
 
 			if (Context.isEstablished ()) {
 				
@@ -169,13 +159,8 @@ namespace Novell.Directory.Ldap.Security
 				return buff;
 			}
 
-			try {
-				WrapPrivilegedAction action = new WrapPrivilegedAction (Context, outgoing, start, len, messageProp);
-				return (byte []) Subject.doAs (_subject, action);				
-			} 
-			catch (PrivilegedActionException e) {
-				throw new LdapException ("Problem performing GSS wrap",LdapException.OTHER,"",e); 
-			}
+			sbyte [] result = Context.wrap (TypeUtils.ToSByteArray (outgoing), start, len, messageProp);
+			return (byte []) TypeUtils.ToByteArray (result);
 		}
 
 		public byte [] Unwrap(byte [] incoming, int start, int len) 
@@ -195,15 +180,18 @@ namespace Novell.Directory.Ldap.Security
 				return buff;
 			}
 
-			try {
-				UnwrapPrivilegedAction action = new UnwrapPrivilegedAction (Context, incoming, start, len, messageProp);
-				return (byte []) Subject.doAs (_subject, action);
-			} 
-			catch (PrivilegedActionException e) {
-				throw new LdapException("Problems unwrapping SASL buffer",LdapException.OTHER,"",e);
-			}
+			sbyte [] result = Context.unwrap (TypeUtils.ToSByteArray (incoming), start, len, messageProp);
+			return (byte []) TypeUtils.ToByteArray (result);
 		}
 
 		#endregion // Methods
+
+		#region IDisposable Members
+
+		public void Dispose() {
+			Context.dispose();
+		}
+
+		#endregion
 	}
 }

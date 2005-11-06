@@ -44,15 +44,17 @@ namespace Novell.Directory.Ldap.Security
 		private readonly bool _signing;
 		private readonly bool _delegation;
 		private readonly string _name;
+		private readonly string _clientName;
 		private readonly string _mech;
 
 		#endregion //Fields
 
 		#region Constructors
 
-		public CreateContextPrivilegedAction(string name, string mech, bool encryption, bool signing, bool delegation)
+		public CreateContextPrivilegedAction(string name, string clientName, string mech, bool encryption, bool signing, bool delegation)
 		{
 			_name = name;
+			_clientName = clientName;
 			_mech = mech;
 			_encryption = encryption;
 			_signing = signing;
@@ -68,16 +70,30 @@ namespace Novell.Directory.Ldap.Security
 			try {				
 				Oid krb5Oid = new Oid (_mech);
 				GSSManager manager = GSSManager.getInstance ();
-				GSSName serverName = manager.createName (_name, GSSName__Finals.NT_HOSTBASED_SERVICE, krb5Oid);
-				GSSContext context = manager.createContext (serverName, krb5Oid, null, GSSContext__Finals.INDEFINITE_LIFETIME);
+				GSSName clientName = 
+					manager.createName(_clientName, GSSName__Finals.NT_USER_NAME);
+				GSSCredential clientCreds =
+					manager.createCredential(clientName,
+					GSSContext__Finals.INDEFINITE_LIFETIME,
+					krb5Oid,
+					GSSCredential__Finals.INITIATE_ONLY);
 
-				context.requestMutualAuth(true);  
-				context.requestConf (_encryption);
-				if (!_encryption || _signing)
-					context.requestInteg (!_encryption || _signing); 
-				context.requestCredDeleg (_delegation);
+//				try {
+					GSSName serverName = manager.createName (_name, GSSName__Finals.NT_HOSTBASED_SERVICE, krb5Oid);
+					GSSContext context = manager.createContext (serverName, krb5Oid, clientCreds, GSSContext__Finals.INDEFINITE_LIFETIME);
 
-				return context;
+					context.requestMutualAuth(true);  
+					context.requestConf (_encryption);
+					if (!_encryption || _signing)
+						context.requestInteg (!_encryption || _signing); 
+					context.requestCredDeleg (_delegation);
+
+					return context;
+//				}
+//				finally {
+//					// Calling this throws GSSException: Operation unavailable...
+//					clientCreds.dispose();
+//				}
 			}
 			catch (GSSException e) {
 				throw new PrivilegedActionException (e);

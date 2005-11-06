@@ -1,3 +1,8 @@
+2005-11-06  Konstantin Triger <kostat@mainsoft.com>
+
+	* SecureStream.cs, CreateContextPrivilegedAction.cs, Krb5Helper.cs:
+		create GSSCredential only once, cleanup
+
 2005-11-03  Konstantin Triger <kostat@mainsoft.com>
 
 	* CreateContextPrivilegedAction.cs: always require mutual auth;

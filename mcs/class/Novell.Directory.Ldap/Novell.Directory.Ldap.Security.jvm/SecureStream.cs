@@ -118,6 +118,11 @@ namespace Novell.Directory.Ldap.Security
 			}		
 		}
 
+		public override void Close() {
+			_stream.Close();
+			_helper.Dispose();
+		}
+
 		private int Fill()
 		{
 			int actual = ReadAll (_lenBuf, 4);
