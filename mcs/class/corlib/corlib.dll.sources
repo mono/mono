@@ -826,6 +826,7 @@ System.Runtime.Remoting.Channels/IClientChannelSinkStack.cs
 System.Runtime.Remoting.Channels/IClientFormatterSink.cs
 System.Runtime.Remoting.Channels/IClientFormatterSinkProvider.cs
 System.Runtime.Remoting.Channels/IClientResponseChannelSinkStack.cs
+System.Runtime.Remoting.Channels/ISecurableChannel.cs
 System.Runtime.Remoting.Channels/IServerResponseChannelSinkStack.cs
 System.Runtime.Remoting.Channels/ServerDispatchSink.cs
 System.Runtime.Remoting.Channels/ServerDispatchSinkProvider.cs

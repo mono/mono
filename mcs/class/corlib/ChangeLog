@@ -1,3 +1,7 @@
+2005-11-05  Robert Jordan  <robertj@gmx.net>
+
+	* corlib.dll.sources: Added System.Runtime.Remoting.Channels/ISecurableChannel.cs
+
 2005-10-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* corlib.dll.sources: Add System.Runtime.InteropServices/IsCopyConstructed.cs.
