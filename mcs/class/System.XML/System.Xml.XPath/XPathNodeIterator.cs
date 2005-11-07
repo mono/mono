@@ -37,7 +37,7 @@ using System.Diagnostics;
 namespace System.Xml.XPath
 {
 #if NET_2_0
-	[DebuggerDisplay ("Current")]
+	[DebuggerDisplay ("Position={CurrentPosition}, Current={Current == null ? null : (object) new XPathNavigator.DebuggerDisplayProxy(Current)}")]
 	public abstract class XPathNodeIterator : ICloneable, IEnumerable
 #else
 	public abstract class XPathNodeIterator : ICloneable

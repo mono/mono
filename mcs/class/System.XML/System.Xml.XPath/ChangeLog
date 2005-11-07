@@ -1,5 +1,11 @@
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathNavigator.cs, XPathNodeIterator.cs : DebuggerDisplayAttribute
+	  values are fixed. However, they totally do not make sense since
+	  there is no DebuggerDisplayProxy type in our impl.
+
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathException.cs : Message property is back in 2.0 RTM.
 
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
