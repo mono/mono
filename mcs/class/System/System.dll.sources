@@ -189,6 +189,9 @@ System.ComponentModel/EventHandlerList.cs
 System.ComponentModel/ExpandableObjectConverter.cs
 System.ComponentModel/ExtenderProvidedPropertyAttribute.cs
 System.ComponentModel/IBindingList.cs
+System.ComponentModel/IBindingListView.cs
+System.ComponentModel/HandledEventArgs.cs
+System.ComponentModel/HandledEventHandler.cs
 System.ComponentModel/IChangeTracking.cs
 System.ComponentModel/IComponent.cs
 System.ComponentModel/IComNativeDescriptorHandler.cs
@@ -214,6 +217,8 @@ System.ComponentModel/ListChangedEventArgs.cs
 System.ComponentModel/ListChangedEventHandler.cs
 System.ComponentModel/ListChangedType.cs
 System.ComponentModel/ListSortDirection.cs
+System.ComponentModel/ListSortDescription.cs
+System.ComponentModel/ListSortDescriptionCollection.cs
 System.ComponentModel/LocalizableAttribute.cs
 System.ComponentModel/MarshalByValueComponent.cs
 System.ComponentModel/MemberDescriptor.cs

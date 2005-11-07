@@ -1,3 +1,11 @@
+2005-11-07  Pedro Martinez Julia <pedromj@gmail.com>
+
+	* IBindingListView.cs Initial implementation
+	* HandledEventArgs.cs Initial implementation
+	* HandledEventHandler.cs Initial implementation
+	* ListSortDescription.cs: Initial implementation
+	* ListSortDescriptionCollection.cs: Initial implementation
+
 2005-10-31  Dick Porter  <dick@ximian.com>
 
 	* Win32Exception.cs: Add another error code.
