@@ -1149,7 +1149,11 @@ namespace Mono.Unix.Native {
 		//        const void *value, size_t size, int flags);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_setxattr")]
-		public static extern int setxattr (string path, string name, byte[] value, ulong size, XattrFlags flags);
+		public static extern int setxattr (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name, byte[] value, ulong size, XattrFlags flags);
 
 		public static int setxattr (string path, string name, byte [] value, ulong size)
 		{
@@ -1171,7 +1175,11 @@ namespace Mono.Unix.Native {
 		//                   const void *value, size_t size, int flags);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_lsetxattr")]
-		public static extern int lsetxattr (string path, string name, byte[] value, ulong size, XattrFlags flags);
+		public static extern int lsetxattr (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name, byte[] value, ulong size, XattrFlags flags);
 
 		public static int lsetxattr (string path, string name, byte [] value, ulong size)
 		{
@@ -1193,7 +1201,9 @@ namespace Mono.Unix.Native {
 		//                   const void *value, size_t size, int flags);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_fsetxattr")]
-		public static extern int fsetxattr (int fd, string name, byte[] value, ulong size, XattrFlags flags);
+		public static extern int fsetxattr (int fd, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name, byte[] value, ulong size, XattrFlags flags);
 
 		public static int fsetxattr (int fd, string name, byte [] value, ulong size)
 		{
@@ -1215,7 +1225,11 @@ namespace Mono.Unix.Native {
 		//                      void *value, size_t size);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_getxattr")]
-		public static extern long getxattr (string path, string name, byte[] value, ulong size);
+		public static extern long getxattr (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name, byte[] value, ulong size);
 
 		public static long getxattr (string path, string name, byte [] value)
 		{
@@ -1238,7 +1252,11 @@ namespace Mono.Unix.Native {
 		//                       void *value, size_t size);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_lgetxattr")]
-		public static extern long lgetxattr (string path, string name, byte[] value, ulong size);
+		public static extern long lgetxattr (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name, byte[] value, ulong size);
 
 		public static long lgetxattr (string path, string name, byte [] value)
 		{
@@ -1260,7 +1278,9 @@ namespace Mono.Unix.Native {
 		// 	  ssize_t fgetxattr (int fd, const char *name, void *value, size_t size);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_fgetxattr")]
-		public static extern long fgetxattr (int fd, string name, byte[] value, ulong size);
+		public static extern long fgetxattr (int fd, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name, byte[] value, ulong size);
 
 		public static long fgetxattr (int fd, string name, byte [] value)
 		{
@@ -1282,7 +1302,9 @@ namespace Mono.Unix.Native {
 		// 	  ssize_t listxattr (const char *path, char *list, size_t size);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_listxattr")]
-		public static extern long listxattr (string path, byte[] list, ulong size);
+		public static extern long listxattr (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, byte[] list, ulong size);
 
 		// Slight modification: returns 0 on success, negative on error
 		public static long listxattr (string path, Encoding encoding, out string [] values)
@@ -1299,17 +1321,40 @@ namespace Mono.Unix.Native {
 			if (ret < 0)
 				return (int) ret;
 
-			string [] output = encoding.GetString (list).Split((char) 0);
-			values = new string [output.Length - 1];
-			Array.Copy (output, 0, values, 0, output.Length - 1);
+			GetValues (list, encoding, out values);
 			return 0;
+		}
+
+		public static long listxattr (string path, out string[] values)
+		{
+			return listxattr (path, UnixEncoding.Instance, out values);
+		}
+
+		private static void GetValues (byte[] list, Encoding encoding, out string[] values)
+		{
+			int num_values = 0;
+			for (int i = 0; i < list.Length; ++i)
+				if (list [i] == 0)
+					++num_values;
+
+			values = new string [num_values];
+			num_values = 0;
+			int str_start = 0;
+			for (int i = 0; i < list.Length; ++i) {
+				if (list [i] == 0) {
+					values [num_values++] = encoding.GetString (list, str_start, i - str_start);
+					str_start = i+1;
+				}
+			}
 		}
 
 		// llistxattr(2)
 		// 	  ssize_t llistxattr (const char *path, char *list, size_t size);
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_llistxattr")]
-		public static extern long llistxattr (string path, byte[] list, ulong size);
+		public static extern long llistxattr (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, byte[] list, ulong size);
 
 		// Slight modification: returns 0 on success, negative on error
 		public static long llistxattr (string path, Encoding encoding, out string [] values)
@@ -1326,10 +1371,13 @@ namespace Mono.Unix.Native {
 			if (ret < 0)
 				return (int) ret;
 
-			string [] output = encoding.GetString (list).Split((char) 0);
-			values = new string [output.Length - 1];
-			Array.Copy (output, 0, values, 0, output.Length - 1);
+			GetValues (list, encoding, out values);
 			return 0;
+		}
+
+		public static long llistxattr (string path, out string[] values)
+		{
+			return llistxattr (path, UnixEncoding.Instance, out values);
 		}
 
 		// flistxattr(2)
@@ -1353,23 +1401,36 @@ namespace Mono.Unix.Native {
 			if (ret < 0)
 				return (int) ret;
 
-			string [] output = encoding.GetString (list).Split((char) 0);
-			values = new string [output.Length - 1];
-			Array.Copy (output, 0, values, 0, output.Length - 1);
+			GetValues (list, encoding, out values);
 			return 0;
+		}
+
+		public static long flistxattr (int fd, out string[] values)
+		{
+			return flistxattr (fd, UnixEncoding.Instance, out values);
 		}
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_removexattr")]
-		public static extern int removexattr (string path, string name);
+		public static extern int removexattr (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name);
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_lremovexattr")]
-		public static extern int lremovexattr (string path, string name);
+		public static extern int lremovexattr (
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string path, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name);
 
 		[DllImport (MPH, SetLastError=true,
 				EntryPoint="Mono_Posix_Syscall_fremovexattr")]
-		public static extern int fremovexattr (int fd, string name);
+		public static extern int fremovexattr (int fd, 
+				[MarshalAs (UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(FileNameMarshaler))]
+				string name);
 		#endregion
 
 		#region <dirent.h> Declarations

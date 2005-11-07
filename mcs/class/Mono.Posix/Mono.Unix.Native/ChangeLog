@@ -1,5 +1,9 @@
 2005-11-07  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Syscall.cs: *xattr functions should use the FileNameMarshaler for filenames.
+
+2005-11-07  Jonathan Pryor <jonpryor@vt.edu>
+
 	* make-map.cs: Always use ordinal string sorting behavior.  The string
 	  collation sorting has changed, so to keep the mono/support diff sizes down
 	  we have to explicitly specify the previous implicit ordering.
