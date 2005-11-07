@@ -192,6 +192,9 @@ namespace System.Xml.Xsl {
 		void Transform (XPathNavigator input, XsltArgumentList args, TextWriter output, XmlResolver resolver)
 #endif
 		{
+			if (s == null)
+				throw new XsltException ("No stylesheet was loaded.", null);
+
 			Outputter outputter = new GenericOutputter(output, s.Outputs, output.Encoding);			
 			new XslTransformProcessor (s).Process (input, outputter, args, resolver);
 			outputter.Done ();

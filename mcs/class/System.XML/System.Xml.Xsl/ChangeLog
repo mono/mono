@@ -1,3 +1,8 @@
+2005-11-07  Andrew Skiba  <andrews@mainsoft.com>
+
+	* XslTransform.cs: throw meaningful exception when Transform is
+	called before Load
+
 2005-10-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* XsltSettings.cs: Marked sealed.
