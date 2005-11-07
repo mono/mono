@@ -1,5 +1,14 @@
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlReader.cs : dependent XmlSchemaValidationFlags fix.
+	  Added ReadElementContentAsObject() and ReadContentAsObject().
+	* XmlReader.cs, XmlTextReader.cs :
+	  LookupNamespace(string,bool) is now private.
+	* XmlReader.cs, XmlNode,cs :
+	  [DebuggerDisplay].
+
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlElement.cs, XmlCDataSection.cs, XmlText.cs, XmlWhitespace.cs,
 	  XmlSignificantWhitespace.cs : added ParentNode overrides (actually
 	  they don't make sense since it just calls base.)

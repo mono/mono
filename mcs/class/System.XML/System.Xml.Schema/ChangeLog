@@ -1,5 +1,10 @@
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaValidationFlags.cs : updated to match 2.0 RTM.
+	* XmlSchemaValidator.cs : related fix.
+
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlValueGetter.cs, XmlSchemaValidator.cs, XmlSchemaException.cs,
 	  XmlSchemaAttribute.cs : Updated API to match 2.0 RTM. Most of the
 	  changes are related to XmlValueGetter change.

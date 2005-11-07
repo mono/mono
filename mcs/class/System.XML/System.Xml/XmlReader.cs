@@ -32,6 +32,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml.Schema; // only required for NET_2_0 (SchemaInfo)
@@ -42,6 +43,7 @@ using Mono.Xml.Schema; // only required for NET_2_0
 namespace System.Xml
 {
 #if NET_2_0
+	[DebuggerDisplay ("Name")]
 	public abstract class XmlReader : IDisposable
 #else
 	public abstract class XmlReader
@@ -418,7 +420,7 @@ namespace System.Xml
 				throw new NotImplementedException ();
 			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessSchemaLocation) != 0)
 				throw new NotImplementedException ();
-			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ProcessValidationWarnings) == 0)
+			if ((settings.ValidationFlags & XmlSchemaValidationFlags.ReportValidationWarnings) == 0)
 				throw new NotImplementedException ();
 
 			return xvr != null ? xvr : reader;
@@ -478,15 +480,6 @@ namespace System.Xml
 		}
 
 		public abstract string LookupNamespace (string prefix);
-
-#if NET_2_0
-		public virtual string LookupNamespace (string prefix, bool atomizedNames)
-#else
-		internal virtual string LookupNamespace (string prefix, bool atomizedNames)
-#endif
-		{
-			return LookupNamespace (prefix);
-		}
 
 		public abstract void MoveToAttribute (int i);
 
@@ -884,6 +877,24 @@ namespace System.Xml
 				throw new InvalidOperationException (String.Format ("This method does not support node type {0}.", NodeType));
 			}
 			return ReadString ();
+		}
+
+		[MonoTODO]
+		public virtual object ReadElementContentAsObject ()
+		{
+			return ReadElementContentAs (ValueType, null);
+		}
+
+		[MonoTODO]
+		public virtual object ReadElementContentAsObject (string localName, string namespaceURI)
+		{
+			return ReadElementContentAs (ValueType, null, localName, namespaceURI);
+		}
+
+		[MonoTODO]
+		public virtual object ReadContentAsObject ()
+		{
+			return ReadContentAs (ValueType, null);
 		}
 
 		[MonoTODO]

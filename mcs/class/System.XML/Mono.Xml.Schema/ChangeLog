@@ -1,5 +1,9 @@
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaValidatingReader.cs : XmlSchemaValidationFlags is updated.
+
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdValidatingReader.cs, XmlSchemaValidatingReader.cs,
 	  XsdIdentityState.cs :
 	  Dependent changes caused by XmlValueGetter changes.

@@ -36,7 +36,7 @@ namespace System.Xml.Schema
 		None = 0,
 		ProcessInlineSchema = 1,
 		ProcessSchemaLocation = 2,
-		ProcessValidationWarnings = 4,
+		ReportValidationWarnings = 4,
 		ProcessIdentityConstraints = 8,
 		// LAMESPEC: It is really idiotic idea to include such
 		// validation option that breaks W3C XML Schema specification

@@ -37,11 +37,15 @@ using System.IO;
 using System.Text;
 using System.Xml.XPath;
 #if NET_2_0
+using System.Diagnostics;
 using System.Xml.Schema;
 #endif
 
 namespace System.Xml
 {
+#if NET_2_0
+	[DebuggerDisplay ("Name")]
+#endif
 	public abstract class XmlNode : ICloneable, IEnumerable, IXPathNavigable
 	{
 		#region Fields

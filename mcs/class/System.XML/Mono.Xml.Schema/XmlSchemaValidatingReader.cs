@@ -114,7 +114,7 @@ namespace Mono.Xml.Schema
 			nsResolver = reader as IXmlNamespaceResolver;
 			if (nsResolver == null)
 				throw new ArgumentException ("Argument XmlReader must implement IXmlNamespaceResolver.");
-			options = ValidationFlags.ProcessValidationWarnings
+			options = ValidationFlags.ReportValidationWarnings
 				| ValidationFlags.ProcessSchemaLocation
 				| ValidationFlags.ProcessInlineSchema;
 

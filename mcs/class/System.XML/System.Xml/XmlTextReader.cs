@@ -448,14 +448,10 @@ namespace System.Xml
 			return LookupNamespace (prefix, false);
 		}
 
-#if NET_2_0
-		public override string LookupNamespace (string prefix, bool atomizedName)
-#else
-		internal override string LookupNamespace (string prefix, bool atomizedName)
-#endif
+		private string LookupNamespace (string prefix, bool atomizedNames)
 		{
 			string s = parserContext.NamespaceManager.LookupNamespace (
-				prefix, atomizedName);
+				prefix, atomizedNames);
 			return s == String.Empty ? null : s;
 		}
 

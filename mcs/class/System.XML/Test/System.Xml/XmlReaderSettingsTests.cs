@@ -42,7 +42,7 @@ namespace MonoTests.System.Xml
 			Assert (0 == (s.ValidationFlags &
 				ValidationFlags.ProcessSchemaLocation));
 			Assert (0 == (s.ValidationFlags &
-				ValidationFlags.ProcessValidationWarnings));
+				ValidationFlags.ReportValidationWarnings));
 			Assert (0 != (s.ValidationFlags &
 				ValidationFlags.ProcessIdentityConstraints));
 			Assert (0 == (s.ValidationFlags &

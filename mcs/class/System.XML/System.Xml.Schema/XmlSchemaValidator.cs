@@ -202,7 +202,7 @@ namespace System.Xml.Schema
 
 		private bool IgnoreWarnings {
 			get { return (options & ValidationFlags
-				.ProcessValidationWarnings) == 0; }
+				.ReportValidationWarnings) == 0; }
 		}
 
 		private bool IgnoreIdentity {
