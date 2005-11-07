@@ -1,5 +1,16 @@
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlElement.cs, XmlCDataSection.cs, XmlText.cs, XmlWhitespace.cs,
+	  XmlSignificantWhitespace.cs : added ParentNode overrides (actually
+	  they don't make sense since it just calls base.)
+	* XmlNode.cs, XmlDocument.cs : changed .NET 2.0 CreateNavigator() impl
+	  to match signature and skip OwnerDocument check in XmlNode (since
+	  it is overriden). Maybe MS does not have ownerDocument as a field and
+	  costs too much on OwnerDocument property.
+	  Added missing bits in XmlDocument.
+
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlAttribute.cs : added new overrides in 2.0 RTM (this scarcely
 	  makes sense without real optimization though).
 	* XmlDocument.cs, XmlElement.cs, XmlNode.cs : avoid ChildNodes and

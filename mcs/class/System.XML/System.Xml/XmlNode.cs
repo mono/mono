@@ -323,12 +323,21 @@ namespace System.Xml
 
 		public abstract XmlNode CloneNode (bool deep);
 
+#if NET_2_0
+		public virtual XPathNavigator CreateNavigator ()
+		{
+			// XmlDocument has overriden definition, so it is safe
+			// to use OwnerDocument here.
+			return OwnerDocument.CreateNavigator (this);
+		}
+#else
 		public XPathNavigator CreateNavigator ()
 		{
 			XmlDocument document = this.NodeType == XmlNodeType.Document ?
 				this as XmlDocument : this.ownerDocument;
 			return document.CreateNavigator (this);
 		}
+#endif
 
 		public IEnumerator GetEnumerator ()
 		{

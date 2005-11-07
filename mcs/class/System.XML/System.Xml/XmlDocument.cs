@@ -62,6 +62,7 @@ namespace System.Xml
 		XmlNameEntryCache nameCache = new XmlNameEntryCache ();
 #if NET_2_0
 		XmlSchemaSet schemas;
+		IXmlSchemaInfo schemaInfo;
 #endif
 
 		// MS.NET rejects undeclared entities _only_ during Load(),
@@ -237,9 +238,18 @@ namespace System.Xml
 		}
 
 #if NET_2_0
+		public override XmlNode ParentNode {
+			get { return null; }
+		}
+
 		public XmlSchemaSet Schemas {
 			get { return schemas; }
 			set { schemas = value; }
+		}
+
+		public override IXmlSchemaInfo SchemaInfo {
+			get { return schemaInfo; }
+			internal set { schemaInfo = value; }
 		}
 #endif
 
@@ -371,6 +381,13 @@ namespace System.Xml
 		{
 			return new XmlEntityReference (name, this);
 		}
+
+#if NET_2_0
+		public override XPathNavigator CreateNavigator ()
+		{
+			return CreateNavigator (this);
+		}
+#endif
 
 		protected internal virtual XPathNavigator CreateNavigator (XmlNode node)
 		{
@@ -773,6 +790,10 @@ namespace System.Xml
 			case ReadState.Interactive:
 				break;
 			case ReadState.Initial:
+#if NET_2_0
+				if (reader.SchemaInfo != null)
+					this.SchemaInfo = new XmlSchemaInfo (reader.SchemaInfo);
+#endif
 				reader.Read ();
 				break;
 			default:

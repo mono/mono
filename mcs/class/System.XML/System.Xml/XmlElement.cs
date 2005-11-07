@@ -226,6 +226,10 @@ namespace System.Xml
 		}
 
 #if NET_2_0
+		public override XmlNode ParentNode {
+			get { return base.ParentNode; }
+		}
+
 		public override IXmlSchemaInfo SchemaInfo {
 			get { return schemaInfo; }
 			internal set { schemaInfo = value; }
