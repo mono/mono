@@ -58,7 +58,7 @@ namespace System.Xml
 		#region Properties
 
 #if NET_2_0
-		public XmlWriterSettings Settings {
+		public virtual XmlWriterSettings Settings {
 			get {
 				if (settings == null)
 					settings = new XmlWriterSettings ();

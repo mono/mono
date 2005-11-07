@@ -1,3 +1,11 @@
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNamespaceManager.cs : NameTable is virtual in 2.0 RTM.
+	* XmlReader.cs : IsEmptyElement is reverted to be abstract in 2.0 RTM.
+	  ReadTypedValue() is removed.
+	* XmlValidatingReader.cs : ReadTypedValue() is not virtual now.
+	* XmlWriter.cs : Settings is virtual.
+
 2005-10-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlDocumentNavigator.cs : now MoveToFirst() invokes internal

@@ -120,7 +120,11 @@ namespace System.Xml
 			get { return defaultNamespace == null ? string.Empty : defaultNamespace; }
 		}
 
+#if NET_2_0
+		public virtual XmlNameTable NameTable {
+#else
 		public XmlNameTable NameTable {
+#endif
 			get { return nameTable; }
 		}
 

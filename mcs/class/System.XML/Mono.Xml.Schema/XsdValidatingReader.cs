@@ -218,12 +218,7 @@ namespace Mono.Xml.Schema
 		}
 
 		// It is used only for independent XmlReader use, not for XmlValidatingReader.
-#if NET_2_0
-		[Obsolete]
-		public override object ReadTypedValue ()
-#else
 		public object ReadTypedValue ()
-#endif
 		{
 			object o = XmlSchemaUtil.ReadTypedValue (this,
 				SchemaType, NamespaceManager,

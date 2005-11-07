@@ -1,3 +1,8 @@
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XsdValidatingReader.cs : XmlReader.ReadTypedValue() does not exist 
+	  anymore, so it is not override.
+
 2005-09-30  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XsdValidatingReader.cs: make ParserContext and its NamespaceManager

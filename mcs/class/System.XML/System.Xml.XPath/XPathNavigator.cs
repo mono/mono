@@ -50,6 +50,7 @@ using NSResolver = System.Xml.XmlNamespaceManager;
 namespace System.Xml.XPath
 {
 #if NET_2_0
+	[DebuggerDisplay ("Name")]
 	public abstract class XPathNavigator : XPathItem,
 		ICloneable, IXPathNavigable, IXmlNamespaceResolver
 #else
@@ -851,7 +852,7 @@ namespace System.Xml.XPath
 			return SelectSingleNode (expr);
 		}
 
-		public XPathNavigator SelectSingleNode (XPathExpression expression)
+		public virtual XPathNavigator SelectSingleNode (XPathExpression expression)
 		{
 			XPathNodeIterator iter = Select (expression);
 			if (iter.MoveNext ())
@@ -1043,7 +1044,7 @@ namespace System.Xml.XPath
 			AppendChild (new XPathNavigatorReader (nav));
 		}
 
-		public void AppendChildElement (string prefix, string name, string ns, string value)
+		public virtual void AppendChildElement (string prefix, string name, string ns, string value)
 		{
 			XmlWriter xw = AppendChild ();
 			xw.WriteStartElement (prefix, name, ns);

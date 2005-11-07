@@ -122,12 +122,10 @@ namespace System.Xml
 
 		public abstract bool HasValue { get; }
 
+		public abstract bool IsEmptyElement { get; }
+
 #if NET_2_0
 		public virtual bool IsDefault {
-			get { return false; }
-		}
-
-		public virtual bool IsEmptyElement {
 			get { return false; }
 		}
 
@@ -144,8 +142,6 @@ namespace System.Xml
 		}
 #else
 		public abstract bool IsDefault { get; }
-
-		public abstract bool IsEmptyElement { get; }
 
 		public abstract string this [int i] { get; }
 
@@ -874,16 +870,6 @@ namespace System.Xml
 		public virtual XmlReader ReadSubtree ()
 		{
 			return new SubtreeXmlReader (this);
-		}
-
-		[MonoTODO]
-		[Obsolete]
-		public virtual object ReadTypedValue ()
-		{
-			if (NodeType == XmlNodeType.Element)
-				return ReadElementContentAs (ValueType, this as IXmlNamespaceResolver);
-			else
-				return ReadContentAs (ValueType, this as IXmlNamespaceResolver);
 		}
 
 		private string ReadContentString ()
