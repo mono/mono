@@ -1796,7 +1796,6 @@ namespace Mono.CSharp {
 		//
 		// A list of core types that the compiler requires or uses
 		//
-		static public Type new_constraint_attr_type;
 		static public Type activator_type;
 		static public Type generic_ienumerator_type;
 		static public Type generic_ienumerable_type;
@@ -1825,8 +1824,6 @@ namespace Mono.CSharp {
 		static void InitGenericCoreTypes ()
 		{
 			activator_type = CoreLookupType ("System", "Activator");
-			new_constraint_attr_type = CoreLookupType (
-				"System.Runtime.CompilerServices", "NewConstraintAttribute");
 
 			generic_ienumerator_type = CoreLookupType (
 				"System.Collections.Generic", "IEnumerator", 1);
