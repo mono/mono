@@ -61,12 +61,9 @@ namespace System.Xml.XPath
 
 #region Properties
 
-#if NET_2_0
-#else
 		public override string Message {
 			get { return base.Message; }
 		}
-#endif
 
 #endregion
 

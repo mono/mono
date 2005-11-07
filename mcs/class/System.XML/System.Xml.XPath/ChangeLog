@@ -1,5 +1,9 @@
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XPathException.cs : Message property is back in 2.0 RTM.
+
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XPathNodeIterator.cs : added [DebuggerDisplay]. pretty useless tho.
 	* XPathNavigator.cs : [DebuggerDisplay] as well.
 	  SelectSingleNode() and AppendChildElement() are now virtual.
