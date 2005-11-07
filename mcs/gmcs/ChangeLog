@@ -1,3 +1,7 @@
+2005-11-07  Marek Safar  <marek.safar@seznam.cz>
+
+	gmcs.exe.sources: Use CryptoConvert.cs from corlib.
+
 2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* gmcs.exe.config: Updated runtime version to v2.0.50727 (2.0 RTM).
