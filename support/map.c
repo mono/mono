@@ -7976,7 +7976,6 @@ int Mono_Posix_FromSyslogFacility (int x, int *r)
 #else /* def LOG_USER */
 		{errno = EINVAL; return -1;}
 #endif /* ndef LOG_USER */
-	/* Mono_Posix_SyslogFacility_LOG_USRE is obsolete; ignoring */
 	if (x == Mono_Posix_SyslogFacility_LOG_UUCP)
 #ifdef LOG_UUCP
 		{*r = LOG_UUCP; return 0;}
@@ -8067,10 +8066,6 @@ int Mono_Posix_ToSyslogFacility (int x, int *r)
 	if (x == LOG_USER)
 		{*r = Mono_Posix_SyslogFacility_LOG_USER; return 0;}
 #endif /* ndef LOG_USER */
-#ifdef LOG_USRE
-	if (x == LOG_USRE)
-		{*r = Mono_Posix_SyslogFacility_LOG_USRE; return 0;}
-#endif /* ndef LOG_USRE */
 #ifdef LOG_UUCP
 	if (x == LOG_UUCP)
 		{*r = Mono_Posix_SyslogFacility_LOG_UUCP; return 0;}

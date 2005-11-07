@@ -849,7 +849,6 @@ int Mono_Posix_ToSysconfName (int x, int *r);
 #define Mono_Posix_SyslogFacility_LOG_NEWS 0x00000038
 #define Mono_Posix_SyslogFacility_LOG_SYSLOG 0x00000028
 #define Mono_Posix_SyslogFacility_LOG_USER 0x00000008
-#define Mono_Posix_SyslogFacility_LOG_USRE 0x00000008
 #define Mono_Posix_SyslogFacility_LOG_UUCP 0x00000040
 int Mono_Posix_FromSyslogFacility (int x, int *r);
 int Mono_Posix_ToSyslogFacility (int x, int *r);

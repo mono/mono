@@ -1,3 +1,9 @@
+2005-11-07  Jonathan Pryor  <jonpryor@vt.edu>
+
+	* map-icalls.h: Oddly, this file didn't get the new functions added in
+	  2005-10-14 -- ToConfstrName, FromConfstrName, etc.  Add them.
+	* map.c, map.h: Remove invalid enumeration value SyslogFacility.LOG_USRE.
+
 2005-10-14  Jonathan Pryor  <jonpryor@vt.edu>
 
 	* signal.c: Don't build Syscall wrappers on Win32.
