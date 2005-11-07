@@ -3754,12 +3754,15 @@ namespace Mono.CSharp {
 					if (vi == null)
 						throw new Exception ("Variable does not exist in this block");
 
-					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 					if (vi.IsCaptured){
+						LocalBuilder e = ig.DeclareLocal (vi.VariableType);
+						ig.Emit (OpCodes.Stloc, e);
+						
 						ec.EmitCapturedVariableInstance (vi);
-						ig.Emit (OpCodes.Ldloc, vi.LocalBuilder);
+						ig.Emit (OpCodes.Ldloc, e);
 						ig.Emit (OpCodes.Stfld, vi.FieldBuilder);
-					}
+					} else
+						ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 				} else
 					ig.Emit (OpCodes.Pop);
 				

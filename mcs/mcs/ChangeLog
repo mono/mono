@@ -1,3 +1,10 @@
+2005-11-07  Miguel de Icaza  <miguel@novell.com>
+
+	* statement.cs (Try.DoEmit): When a variable is captured, do not
+	try to emit the vi.LocalBuilder variable as it has been captured.
+	Create a temporary variable and store the results on the
+	FieldBuilder.  Fixes #76642
+
 2005-11-07  Marek Safar  <marek.safar@seznam.cz>
 
 	* class.cs (CheckPairedOperators): Made compilable with csc 2.0.
