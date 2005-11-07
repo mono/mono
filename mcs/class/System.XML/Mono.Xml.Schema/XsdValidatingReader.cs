@@ -1120,7 +1120,16 @@ namespace Mono.Xml.Schema
 						case XmlSchema.InstanceNamespace:
 							continue;
 						}
-						entry.ProcessMatch (true, elementQNameStack, this, NameTable, BaseURI, SchemaType, NamespaceManager, readerLineInfo, Depth, LocalName, NamespaceURI, Value, false, CurrentKeyFieldConsumers);
+						XmlSchemaDatatype dt = SchemaType as XmlSchemaDatatype;
+						XmlSchemaSimpleType st = SchemaType as XmlSchemaSimpleType;
+						if (dt == null && st != null)
+							dt = st.Datatype;
+						object identity = null;
+						if (dt != null)
+							identity = dt.ParseValue (Value, NameTable, NamespaceManager);
+						if (identity == null)
+							identity = Value;
+						entry.ProcessMatch (true, elementQNameStack, this, NameTable, BaseURI, SchemaType, NamespaceManager, readerLineInfo, Depth, LocalName, NamespaceURI, identity, false, CurrentKeyFieldConsumers);
 					} while (MoveToNextAttribute ());
 				} finally {
 					MoveToElement ();
@@ -1783,11 +1792,6 @@ namespace Mono.Xml.Schema
 				break;
 			}
 			return null;
-		}
-
-		public object FindID (string name)
-		{
-			return idList [name];
 		}
 
 		public bool HasMissingIDReferences ()

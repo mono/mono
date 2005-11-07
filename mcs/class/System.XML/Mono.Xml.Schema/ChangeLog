@@ -1,5 +1,11 @@
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XsdValidatingReader.cs, XmlSchemaValidatingReader.cs,
+	  XsdIdentityState.cs :
+	  Dependent changes caused by XmlValueGetter changes.
+
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XsdValidatingReader.cs : XmlReader.ReadTypedValue() does not exist 
 	  anymore, so it is not override.
 

@@ -177,8 +177,6 @@ USAGE: mono xsdtest.exe options target-pattern
 					XmlReaderSettings settings =
 						new XmlReaderSettings ();
 					settings.ValidationType = ValidationType.Schema;
-					settings.ValidationFlags =
-						XmlSchemaValidationFlags.IgnoreValidationWarnings;
 					if (noValidate)
 						settings.ValidationEventHandler +=
 							noValidateHandler;
@@ -186,9 +184,8 @@ USAGE: mono xsdtest.exe options target-pattern
 						settings.Schemas.XmlResolver = null;
 					settings.Schemas.Add (schema);
 					if (noResolver)
-						xvr = XmlReader.Create (ixtr, null, settings);
-					else
-						xvr = XmlReader.Create (ixtr, settings);
+						settings.XmlResolver = null;
+					xvr = XmlReader.Create (ixtr, settings);
 				} else {
 #endif
 					XmlValidatingReader vr = new XmlValidatingReader (ixtr);

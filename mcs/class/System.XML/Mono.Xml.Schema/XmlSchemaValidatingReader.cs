@@ -794,7 +794,7 @@ namespace Mono.Xml.Schema
 				defaultAttributes = (XsAttr [])
 					defaultAttributesCache.ToArray (
 					typeof (XsAttr));
-				v.ValidateEndOfAttributes ();
+				v.ValidateEndOfAttributes (xsinfo);
 				defaultAttributesCache.Clear ();
 
 				if (reader.IsEmptyElement)

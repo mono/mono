@@ -106,7 +106,7 @@ namespace Mono.Xml.Schema
 		}
 
 		// if (elementPath) check only elements; else only attributes.
-		internal XsdIdentityPath Matches (bool matchesAttr, object sender, XmlNameTable nameTable, ArrayList qnameStack, string sourceUri, object schemaType, NSResolver nsResolver, IXmlLineInfo lineInfo, int depth, string attrName, string attrNS, string attrValue)
+		internal XsdIdentityPath Matches (bool matchesAttr, object sender, XmlNameTable nameTable, ArrayList qnameStack, string sourceUri, object schemaType, NSResolver nsResolver, IXmlLineInfo lineInfo, int depth, string attrName, string attrNS, object attrValue)
 		{
 			for (int i = 0; i < field.Paths.Length; i++) {
 				XsdIdentityPath path = field.Paths [i];
@@ -174,7 +174,7 @@ namespace Mono.Xml.Schema
 			return null;
 		}
 
-		private void FillAttributeFieldValue (object sender, XmlNameTable nameTable, string sourceUri, object schemaType, NSResolver nsResolver, string value, IXmlLineInfo lineInfo, int depth)
+		private void FillAttributeFieldValue (object sender, XmlNameTable nameTable, string sourceUri, object schemaType, NSResolver nsResolver, object identity, IXmlLineInfo lineInfo, int depth)
 		{
 			if (this.FieldFound)
 				throw new ValException ("The key value was already found."
@@ -186,12 +186,7 @@ namespace Mono.Xml.Schema
 			XmlSchemaSimpleType st = schemaType as XmlSchemaSimpleType;
 			if (dt == null && st != null)
 				dt = st.Datatype;
-			object identity = null;
 			try {
-				if (dt != null)
-					identity = dt.ParseValue (value, nameTable, nsResolver);
-				if (identity == null)
-					identity = value;
 				if (!this.SetIdentityField (identity, false, dt as XsdAnySimpleType, depth, lineInfo))
 					throw new ValException ("Two or more identical field was found.",
 						sender, sourceUri, entry.OwnerSequence.SourceSchemaIdentity, null);
@@ -287,7 +282,7 @@ namespace Mono.Xml.Schema
 
 		// In this method, attributes are ignored.
 		// It might throw Exception.
-		public void ProcessMatch (bool isAttribute, ArrayList qnameStack, object sender, XmlNameTable nameTable, string sourceUri, object schemaType, NSResolver nsResolver, IXmlLineInfo li, int depth, string attrName, string attrNS, string attrValue, bool isXsiNil, ArrayList currentKeyFieldConsumers)
+		public void ProcessMatch (bool isAttribute, ArrayList qnameStack, object sender, XmlNameTable nameTable, string sourceUri, object schemaType, NSResolver nsResolver, IXmlLineInfo li, int depth, string attrName, string attrNS, object attrValue, bool isXsiNil, ArrayList currentKeyFieldConsumers)
 		{
 			for (int i = 0; i < KeyFields.Count; i++) {
 				XsdKeyEntryField keyField = KeyFields [i];

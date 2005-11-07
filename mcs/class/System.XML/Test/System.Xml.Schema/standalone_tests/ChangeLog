@@ -1,3 +1,7 @@
+2005-11-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* xsdtest.cs : updated to match 2.0 RTM API.
+
 2005-09-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* xsdtest.cs : noResolver option.

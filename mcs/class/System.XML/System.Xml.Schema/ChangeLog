@@ -1,5 +1,11 @@
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlValueGetter.cs, XmlSchemaValidator.cs, XmlSchemaException.cs,
+	  XmlSchemaAttribute.cs : Updated API to match 2.0 RTM. Most of the
+	  changes are related to XmlValueGetter change.
+
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaValidator.cs : sealed.
 	* ValidationEventArgs.cs : not sealed in 2.0.
 	* XmlSchemaCollection.cs : added private ICollection.Count (to erase

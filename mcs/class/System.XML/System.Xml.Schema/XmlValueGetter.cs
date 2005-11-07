@@ -25,7 +25,7 @@ namespace System.Xml.Schema
 {
 	/// <summary>
 	/// </summary>
-	public delegate string XmlValueGetter ();
+	public delegate object XmlValueGetter ();
 }
 
 

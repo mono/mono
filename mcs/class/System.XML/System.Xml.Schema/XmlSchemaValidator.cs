@@ -270,12 +270,6 @@ namespace System.Xml.Schema
 			list.AddRange (defaultAttributes);
 		}
 
-		public object FindID (string name)
-		{
-			// It looks returning the element's local name (string)
-			return idManager.FindID (name);
-		}
-
 		// State Controller
 
 		public void AddSchema (XmlSchema schema)
@@ -325,6 +319,17 @@ namespace System.Xml.Schema
 			if (schemas.Count == 0)
 				return;
 			state.PopContext ();
+		}
+
+		public object ValidateAttribute (
+			string localName,
+			string ns,
+			string attributeValue,
+			XmlSchemaInfo info)
+		{
+			return ValidateAttribute (localName, ns,
+				delegate () { return info.SchemaType.Datatype.ParseValue (attributeValue, nameTable, nsResolver); },
+				info);
 		}
 
 		// I guess this weird XmlValueGetter is for such case that
@@ -423,9 +428,9 @@ namespace System.Xml.Schema
 			}
 		}
 
-		public object ValidateEndElement (XmlSchemaInfo schemaInfo)
+		public object ValidateEndElement (XmlSchemaInfo info)
 		{
-			return ValidateEndElement (schemaInfo, null);
+			return ValidateEndElement (info, null);
 		}
 
 		// The return value is typed primitive, if supplied.
@@ -434,13 +439,13 @@ namespace System.Xml.Schema
 		// some kind of object to this method to check the behavior.)
 		// EndTagDeriv
 		[MonoTODO ("Handle 'var' parameter.")]
-		public object ValidateEndElement (XmlSchemaInfo schemaInfo,
+		public object ValidateEndElement (XmlSchemaInfo info,
 			object var)
 		{
 			// If it is going to validate an empty element, then
 			// first validate end of attributes.
 			if (transition == Transition.StartTag)
-				ValidateEndOfAttributes ();
+				ValidateEndOfAttributes (info);
 
 			CheckState (Transition.Content);
 
@@ -457,12 +462,13 @@ namespace System.Xml.Schema
 			if (depth == skipValidationDepth)
 				skipValidationDepth = -1;
 			else if (skipValidationDepth < 0 || depth <= skipValidationDepth)
-				ret = AssessEndElementSchemaValidity (schemaInfo);
+				ret = AssessEndElementSchemaValidity (info);
 			return ret;
 		}
 
 		// StartTagCloseDeriv
-		public void ValidateEndOfAttributes ()
+		// FIXME: fill validity inside this invocation.
+		public void ValidateEndOfAttributes (XmlSchemaInfo info)
 		{
 			try {
 				CheckState (Transition.StartTag);
@@ -470,7 +476,7 @@ namespace System.Xml.Schema
 				if (schemas.Count == 0)
 					return;
 
-				AssessCloseStartElementSchemaValidity ();
+				AssessCloseStartElementSchemaValidity (info);
 			} finally {
 				occuredAtts.Clear ();
 			}
@@ -623,16 +629,16 @@ namespace System.Xml.Schema
 #endregion
 		}
 
-		private void AssessCloseStartElementSchemaValidity ()
+		private void AssessCloseStartElementSchemaValidity (XmlSchemaInfo info)
 		{
 			if (Context.XsiType != null)
-				AssessCloseStartElementLocallyValidType ();
+				AssessCloseStartElementLocallyValidType (info);
 			else if (Context.Element != null) {
 				// element locally valid is checked only when
 				// xsi:type does not exist.
 				AssessElementLocallyValidElement ();
 				if (Context.Element.ElementType != null)
-					AssessCloseStartElementLocallyValidType ();
+					AssessCloseStartElementLocallyValidType (info);
 			}
 
 			if (Context.Element == null) {
@@ -689,7 +695,7 @@ namespace System.Xml.Schema
 		}
 
 		// 3.3.4 Element Locally Valid (Type)
-		private void AssessCloseStartElementLocallyValidType ()
+		private void AssessCloseStartElementLocallyValidType (XmlSchemaInfo info)
 		{
 			object schemaType = Context.ActualType;
 			if (schemaType == null) {	// 1.
@@ -703,12 +709,13 @@ namespace System.Xml.Schema
 				// Attributes are checked in ValidateAttribute().
 			} else if (cType != null) {
 				// 3.2. Also, 2. is checked there.
-				AssessCloseStartElementLocallyValidComplexType (cType);
+				AssessCloseStartElementLocallyValidComplexType (cType, info);
 			}
 		}
 
 		// 3.4.4 Element Locally Valid (Complex Type)
-		private void AssessCloseStartElementLocallyValidComplexType (ComplexType cType)
+		// FIXME: use SchemaInfo for somewhere (? it is passed to ValidateEndOfAttributes() for some reason)
+		private void AssessCloseStartElementLocallyValidComplexType (ComplexType cType, XmlSchemaInfo info)
 		{
 			// 1.
 			if (cType.IsAbstract) {
@@ -752,13 +759,13 @@ namespace System.Xml.Schema
 			XsAttribute attdecl = attMatch as XsAttribute;
 			if (attdecl != null) {
 				AssessAttributeLocallyValidUse (attdecl);
-				return AssessAttributeLocallyValid (attdecl, getter);
+				return AssessAttributeLocallyValid (attdecl, info, getter);
 			} // otherwise anyAttribute or null.
 			return null;
 		}
 
 		// 3.2.4 Attribute Locally Valid and 3.4.4
-		private object AssessAttributeLocallyValid (XsAttribute attr, XmlValueGetter getter)
+		private object AssessAttributeLocallyValid (XsAttribute attr, XmlSchemaInfo info, XmlValueGetter getter)
 		{
 			// 2. - 4.
 			if (attr.AttributeType == null)
@@ -768,16 +775,18 @@ namespace System.Xml.Schema
 				dt = ((SimpleType) attr.AttributeType).Datatype;
 			// It is a bit heavy process, so let's omit as long as possible ;-)
 			if (dt != SimpleType.AnySimpleType || attr.ValidatedFixedValue != null) {
-				string normalized = dt.Normalize (getter ());
 				object parsedValue = null;
 				try {
-					parsedValue = dt.ParseValue (normalized, nameTable, nsResolver);
+					parsedValue = getter ();
 				} catch (Exception ex) { // FIXME: (wishlist) It is bad manner ;-(
 					HandleError ("Attribute value is invalid against its data type " + dt.TokenizedType, ex);
 				}
-				if (attr.ValidatedFixedValue != null && attr.ValidatedFixedValue != normalized) {
+				XmlSchemaType type = info != null ? info.SchemaType : null;
+				if (attr.ValidatedFixedValue != null && 
+					!XmlSchemaUtil.IsSchemaDatatypeEquals (
+					attr.AttributeSchemaType.Datatype as XsdAnySimpleType, attr.ValidatedFixedTypedValue, type != null ? type.Datatype as XsdAnySimpleType : null, parsedValue)) {
 					HandleError ("The value of the attribute " + attr.QualifiedName + " does not match with its fixed value.");
-					parsedValue = dt.ParseValue (attr.ValidatedFixedValue, nameTable, nsResolver);
+					parsedValue = attr.ValidatedFixedTypedValue;
 				}
 #region ID Constraints
 				if (!IgnoreIdentity) {

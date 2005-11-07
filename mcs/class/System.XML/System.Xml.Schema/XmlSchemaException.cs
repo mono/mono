@@ -162,12 +162,9 @@ namespace System.Xml.Schema
 			return msg;
 		}
 
-#if NET_2_0
-#else
 		public override string Message {
 			get { return base.Message; }
 		}
-#endif
 
 		// Methods
 

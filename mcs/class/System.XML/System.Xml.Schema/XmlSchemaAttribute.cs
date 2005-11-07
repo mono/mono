@@ -46,6 +46,7 @@ namespace System.Xml.Schema
 		private string fixedValue;
 		private string validatedDefaultValue;
 		private string validatedFixedValue;
+		private object validatedFixedTypedValue;
 		private XmlSchemaForm form;
 		private string name;
 		private string targetNamespace;
@@ -194,6 +195,12 @@ namespace System.Xml.Schema
 			// FixedValue can be overriden in case of ref.
 			get { return validatedFixedValue; }
 		}
+
+		internal object ValidatedFixedTypedValue
+		{
+			get { return validatedFixedTypedValue; }
+		}
+
 		internal XmlSchemaUse ValidatedUse
 		{
 			get { return validatedUse; }
@@ -427,7 +434,7 @@ namespace System.Xml.Schema
 					try {
 						if (fixedValue != null) {
 							validatedFixedValue = datatype.Normalize (fixedValue);
-							datatype.ParseValue (validatedFixedValue, null, null);
+							validatedFixedTypedValue = datatype.ParseValue (validatedFixedValue, null, null);
 						}
 					} catch (Exception ex) {
 						// FIXME: This is not a good way to handle exception.
