@@ -45,7 +45,8 @@ namespace System.Data.OleDb
 
 		protected static Hashtable _skippedUserParameters = new Hashtable(new CaseInsensitiveHashCodeProvider(),new CaseInsensitiveComparer());
 
-		private static DbStringManager _stringManager = new DbStringManager("System.Data.System.Data.ProviderBase.jvm.OleDbStrings");
+		private static readonly object _lockObjectStringManager = new object();
+		//private static DbStringManager _stringManager = new DbStringManager("System.Data.System.Data.ProviderBase.jvm.OleDbStrings");
 
 		private static readonly string[] _resourceIgnoredKeys = new string[] {"CON_PROVIDER","CON_DATA_SOURCE","CON_DATABASE",
 																			  "CON_PASSWORD","CON_USER_ID","CON_TIMEOUT",
@@ -186,7 +187,19 @@ namespace System.Data.OleDb
 
 		protected override DbStringManager StringManager
 		{
-			get { return _stringManager; }
+			get {
+				object stringManager = AppDomain.CurrentDomain.GetData("System.Data.OleDbConnection.stringManager");
+				if (stringManager == null) {
+					lock(_lockObjectStringManager) {
+						stringManager = AppDomain.CurrentDomain.GetData("System.Data.OleDbConnection.stringManager");
+						if (stringManager != null)
+							return (DbStringManager)stringManager;
+						stringManager = new DbStringManager("System.Data.System.Data.ProviderBase.jvm.OleDbStrings");
+						AppDomain.CurrentDomain.SetData("System.Data.OleDbConnection.stringManager", stringManager);
+					}
+				}
+				return (DbStringManager)stringManager;
+			}
 		}
 
 		#endregion // Properties

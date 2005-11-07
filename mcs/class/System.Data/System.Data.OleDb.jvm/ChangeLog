@@ -1,3 +1,8 @@
+2005-11-07 Konstantin Triger <kostat@mainsoft.com>
+
+	* OleDbConnection.cs: retrieve the StringManager from AppDomain
+		to workaround lack of correct AppDomain management in GH
+
 2005-09-05 Boris Kirzner <borisk@mainsoft.com>
 	* OleDbConvert.cs: return underlined value type in case of enum value.
 	* OleDbParameter.cs:
