@@ -482,6 +482,14 @@ namespace System.Xml.Schema
 			}
 		}
 
+		// LAMESPEC: It should also receive XmlSchemaInfo so that
+		// a validator application can receive simple type or
+		// or content type validation errors.
+		public void ValidateText (string value)
+		{
+			ValidateText (delegate () { return value; });
+		}
+
 		// TextDeriv ... without text. Maybe typed check is done by
 		// ValidateAtomicValue().
 		public void ValidateText (XmlValueGetter getter)
@@ -501,6 +509,11 @@ namespace System.Xml.Schema
 			}
 
 			ValidateCharacters (getter);
+		}
+
+		public void ValidateWhitespace (string value)
+		{
+			ValidateWhitespace (delegate () { return value; });
 		}
 
 		// TextDeriv...?

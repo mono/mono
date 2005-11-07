@@ -1,5 +1,10 @@
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlSchemaValidator.cs : added missing ValidateWhitespace and
+	  ValidateText, though the latter I think is LAMESPEC.
+
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlSchemaValidationFlags.cs : updated to match 2.0 RTM.
 	* XmlSchemaValidator.cs : related fix.
 
