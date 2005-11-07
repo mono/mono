@@ -548,7 +548,9 @@ namespace System.Windows.Forms {
 
 				hscrollbar.Left = 0;
 				hscrollbar.Top = client.Height - SystemInformation.HorizontalScrollBarHeight;
-				hscrollbar.Maximum = Math.Max(0, canvas.Width - client.Width + SystemInformation.VerticalScrollBarWidth);
+				hscrollbar.LargeChange = DisplayRectangle.Width;
+				hscrollbar.SmallChange = DisplayRectangle.Width / 10;
+				hscrollbar.Maximum = canvas.Width - 1;
 
 				hscroll_visible = true;
 			} else {
@@ -562,7 +564,9 @@ namespace System.Windows.Forms {
 				vscrollbar.Top = 0;
 
 				// FIXME - Working around some scrollbar bugs here; shouldn't have to add the height again (see canvas+= above)
-				vscrollbar.Maximum = Math.Max(0, canvas.Height - client.Height + SystemInformation.HorizontalScrollBarHeight);
+				vscrollbar.LargeChange = DisplayRectangle.Height;
+				vscrollbar.SmallChange = DisplayRectangle.Height / 10;
+				vscrollbar.Maximum = canvas.Height - 1;
 				vscroll_visible = true;
 			} else {
 				vscroll_visible = false;

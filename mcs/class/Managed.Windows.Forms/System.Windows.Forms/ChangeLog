@@ -1,3 +1,8 @@
+2005-11-07  Jackson Harper  <jackson@ximian.com>
+
+	* ScrollableControl.cs: Calculate the maximum and change vars
+	(more) correctly so that scrollbars appear as a sensible size.
+
 2005-11-04  Jackson Harper  <jackson@ximian.com>
 
 	* TreeNodeCollection.cs: Refresh when nodes are cleared from the
