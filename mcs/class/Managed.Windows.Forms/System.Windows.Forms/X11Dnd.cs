@@ -622,8 +622,8 @@ namespace System.Windows.Forms {
 
 		private bool Accepting_HandlePositionEvent (ref XEvent xevent)
 		{
-			int x = (int) xevent.ClientMessageEvent.ptr3 >> 16;
-			int y = (int) xevent.ClientMessageEvent.ptr3 & 0xFFFF;
+			pos_x = (int) xevent.ClientMessageEvent.ptr3 >> 16;
+			pos_y = (int) xevent.ClientMessageEvent.ptr3 & 0xFFFF;
 
 			allowed = EffectFromAction (xevent.ClientMessageEvent.ptr5);
 
@@ -635,7 +635,7 @@ namespace System.Windows.Forms {
 				new_child = IntPtr.Zero;
 				
 				if (!XplatUIX11.XTranslateCoordinates (display,
-						    parent, child, x, y,
+						    parent, child, pos_x, pos_y,
 						    out xd, out yd, out new_child))
 					break;
 				if (new_child == IntPtr.Zero)
@@ -672,6 +672,8 @@ namespace System.Windows.Forms {
 				SendStatus (source, drag_event.Effect);
 				status_sent = true;
 			} else {
+				drag_event.x = pos_x;
+				drag_event.y = pos_y;
 				SendStatus (source, drag_event.Effect);
 				control.DndOver (drag_event);
 			}

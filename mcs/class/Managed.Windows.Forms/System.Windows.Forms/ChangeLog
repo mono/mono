@@ -1,5 +1,9 @@
 2005-11-07  Jackson Harper  <jackson@ximian.com>
 
+	* X11Dnd.cs: Set the X/Y positions on the DragEventArgs correctly.
+
+2005-11-07  Jackson Harper  <jackson@ximian.com>
+
 	* ScrollableControl.cs: Calculate the maximum and change vars
 	(more) correctly so that scrollbars appear as a sensible size.
 
