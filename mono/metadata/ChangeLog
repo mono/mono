@@ -1,3 +1,10 @@
+2005-11-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-manager.h: Added definitions to deal with strongname key 
+	pairs bigger (and smaller) than 1024 bits.
+	* reflection.c: Remove hardcoded strongname size (128 bytes) and 
+	adjust wrt the public key length being used.
+
 2005-11-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* marshal.c, icall.c : reverted sig->pinvoke changes which broke
