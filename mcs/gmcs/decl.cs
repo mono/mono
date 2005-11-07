@@ -1327,7 +1327,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected TypeParameter[] CurrentTypeParameters {
+		public TypeParameter[] CurrentTypeParameters {
 			get {
 				if (!IsGeneric)
 					throw new InvalidOperationException ();

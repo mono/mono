@@ -1,5 +1,13 @@
 2005-11-07  Marek Safar  <marek.safar@seznam.cz>
 
+	decl.cs (CurrentTypeParameters): Fixed to be public.
+
+2005-11-07  Marek Safar  <marek.safar@seznam.cz>
+
+	generic.cs, rootcontext.cs: Removed NewConstraintAttribute.
+
+2005-11-07  Marek Safar  <marek.safar@seznam.cz>
+
 	gmcs.exe.sources: Use CryptoConvert.cs from corlib.
 
 2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
