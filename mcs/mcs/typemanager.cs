@@ -379,7 +379,7 @@ public class TypeManager {
 		type_hash = new DoubleHash ();
 	}
 
-	public static void AddUserType (string name, DeclSpace ds)
+	public static void AddUserType (DeclSpace ds)
 	{
 		builder_to_declspace.Add (ds.TypeBuilder, ds);
 	}
@@ -1138,7 +1138,7 @@ public class TypeManager {
 		// a TypeBuilder array will return a Type, not a TypeBuilder,
 		// and we can not call FindMembers on this type.
 		//
-		if (t.IsSubclassOf (TypeManager.array_type))
+		if (TypeManager.IsSubclassOf (t, TypeManager.array_type))
 			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
 
 		//

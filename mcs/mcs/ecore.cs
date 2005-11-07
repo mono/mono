@@ -267,6 +267,16 @@ namespace Mono.CSharp {
 			Report.Error (122, loc, "`{0}' is inaccessible due to its protection level", name);
 		}
 
+		protected static void Error_CannotAccessProtected (Location loc, MemberInfo m, Type qualifier, Type container)
+		{
+			Report.Error (1540, loc, "Cannot access protected member `{0}' via a qualifier of type `{1}';"
+				+ " the qualifier must be of type `{2}' (or derived from it)", 
+				TypeManager.GetFullNameSignature (m),
+				TypeManager.CSharpName (qualifier),
+				TypeManager.CSharpName (container));
+
+		}
+
 		public virtual void Error_ValueCannotBeConverted (Location loc, Type target, bool expl)
 		{
 			if (Type.Name == target.Name){
@@ -725,12 +735,7 @@ namespace Mono.CSharp {
 						// base class (CS1540).  If the qualifier_type is a base of the
 						// ec.ContainerType and the lookup succeeds with the latter one,
 						// then we are in this situation.
-						Report.Error (1540, loc, 
-							      "Cannot access protected member `{0}' via a qualifier of type `{1}';"
-							      + " the qualifier must be of type `{2}' (or derived from it)", 
-							      TypeManager.GetFullNameSignature (m),
-							      TypeManager.CSharpName (qualifier_type),
-							      TypeManager.CSharpName (ec.ContainerType));
+						Error_CannotAccessProtected (loc, m, qualifier_type, ec.ContainerType);
 					} else {
 						ErrorIsInaccesible (loc, TypeManager.GetFullNameSignature (m));
 					}
@@ -3217,18 +3222,12 @@ namespace Mono.CSharp {
 			
 			InstanceExpression.CheckMarshallByRefAccess (ec.ContainerType);
 
-			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null) {
-				if ((InstanceExpression.Type != ec.ContainerType) &&
-				    ec.ContainerType.IsSubclassOf (InstanceExpression.Type)) {
-					Report.Error (1540, loc, "Cannot access protected member `" +
-						      PropertyInfo.DeclaringType + "." + PropertyInfo.Name + 
-						      "' via a qualifier of type `" +
-						      TypeManager.CSharpName (InstanceExpression.Type) +
-						      "'; the qualifier must be of type `" +
-						      TypeManager.CSharpName (ec.ContainerType) +
-						      "' (or derived from it)");
+			if (must_do_cs1540_check && InstanceExpression != EmptyExpression.Null &&
+				InstanceExpression.Type != ec.ContainerType && 
+				ec.ContainerType.IsSubclassOf (PropertyInfo.DeclaringType) &&
+				InstanceExpression.Type.IsSubclassOf (PropertyInfo.DeclaringType)) {
+					Error_CannotAccessProtected (loc, PropertyInfo, InstanceExpression.Type, ec.ContainerType);
 					return false;
-				}
 			}
 
 			return true;

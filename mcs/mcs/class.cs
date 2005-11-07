@@ -270,7 +270,7 @@ namespace Mono.CSharp {
 			//
 			void CheckPairedOperators ()
 			{
-				Hashtable pairs = new Hashtable (null, null);
+				IDictionary pairs = new HybridDictionary ();
 				Operator true_op = null;
 				Operator false_op = null;
 				bool has_equality_or_inequality = false;
@@ -1208,7 +1208,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			TypeManager.AddUserType (Name, this);
+			TypeManager.AddUserType (this);
 
 			if (Parts != null) {
 				ec = null;

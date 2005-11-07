@@ -291,7 +291,7 @@ namespace Mono.CSharp {
 						 FieldAttributes.Public | FieldAttributes.SpecialName
 						 | FieldAttributes.RTSpecialName);
 
-			TypeManager.AddUserType (Name, this);
+			TypeManager.AddUserType (this);
 
 			foreach (EnumMember em in defined_names.Values) {
 				if (!em.Define ())

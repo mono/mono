@@ -2373,6 +2373,11 @@ namespace Mono.CSharp {
 				if (rc is EnumConstant &&
 				    lc != null && lc.IsZeroInteger)
 					return rc;
+			} else if (oper == Operator.LogicalAnd) {
+				if (rc != null && rc.IsDefaultValue && rc.Type == TypeManager.bool_type)
+					return rc;
+				if (lc != null && lc.IsDefaultValue && lc.Type == TypeManager.bool_type)
+					return lc;
 			}
 
 			if (rc != null && lc != null){
