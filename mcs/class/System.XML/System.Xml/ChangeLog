@@ -1,5 +1,12 @@
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlAttribute.cs : added new overrides in 2.0 RTM (this scarcely
+	  makes sense without real optimization though).
+	* XmlDocument.cs, XmlElement.cs, XmlNode.cs : avoid ChildNodes and
+	  save extra XmlNodeList creation cost.
+
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlNamespaceManager.cs : NameTable is virtual in 2.0 RTM.
 	* XmlReader.cs : IsEmptyElement is reverted to be abstract in 2.0 RTM.
 	  ReadTypedValue() is removed.

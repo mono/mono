@@ -421,7 +421,7 @@ namespace System.Xml
 			XmlNode argNode = null;
 			if (refChild != null)
 				argNode = refChild.NextSibling;
-			else if (ChildNodes.Count > 0)
+			else if (FirstChild != null)
 				argNode = FirstChild;
 			return InsertBefore (newChild, argNode);
 		}
@@ -458,11 +458,15 @@ namespace System.Xml
 				newChild.ParentNode.RemoveChild (newChild, checkNodeType);
 
 			if (newChild.NodeType == XmlNodeType.DocumentFragment) {
+				// This recursively invokes events. (It is compatible with MS implementation.)
+				while (newChild.FirstChild != null)
+					this.InsertBefore (newChild.FirstChild, refChild);
+				/*
 				int x = newChild.ChildNodes.Count;
 				for (int i = 0; i < x; i++) {
 					XmlNode n = newChild.ChildNodes [0];
-					this.InsertBefore (n, refChild);	// recursively invokes events. (It is compatible with MS implementation.)
-				}
+					this.InsertBefore (n, refChild);					}
+				*/
 			}
 			else {
 				XmlLinkedNode newLinkedChild = (XmlLinkedNode) newChild;
@@ -728,8 +732,7 @@ namespace System.Xml
 
 		internal void SearchDescendantElements (string name, bool matchAll, ArrayList list)
 		{
-			for (int i = 0; i < ChildNodes.Count; i++) {
-				XmlNode n = ChildNodes [i];
+			for (XmlNode n = FirstChild; n != null; n = n.NextSibling) {
 				if (n.NodeType != XmlNodeType.Element)
 					continue;
 				if (matchAll || n.Name == name)
@@ -740,8 +743,7 @@ namespace System.Xml
 
 		internal void SearchDescendantElements (string name, bool matchAllName, string ns, bool matchAllNS, ArrayList list)
 		{
-			for (int i = 0; i < ChildNodes.Count; i++) {
-				XmlNode n = ChildNodes [i];
+			for (XmlNode n = FirstChild; n != null; n = n.NextSibling) {
 				if (n.NodeType != XmlNodeType.Element)
 					continue;
 				if ((matchAllName || n.LocalName == name)

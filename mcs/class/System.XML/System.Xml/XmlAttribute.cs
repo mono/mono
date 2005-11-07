@@ -258,6 +258,38 @@ namespace System.Xml
 
 		#region Methods
 
+#if NET_2_0
+		public override XmlNode AppendChild (XmlNode child)
+		{
+			return base.AppendChild (child);
+		}
+
+		public override XmlNode InsertBefore (XmlNode newChild, XmlNode refChild)
+		{
+			return base.InsertBefore (newChild, refChild);
+		}
+
+		public override XmlNode InsertAfter (XmlNode newChild, XmlNode refChild)
+		{
+			return base.InsertAfter (newChild, refChild);
+		}
+
+		public override XmlNode PrependChild (XmlNode node)
+		{
+			return base.PrependChild (node);
+		}
+
+		public override XmlNode RemoveChild (XmlNode node)
+		{
+			return base.RemoveChild (node);
+		}
+
+		public override XmlNode ReplaceChild (XmlNode newChild, XmlNode oldChild)
+		{
+			return base.ReplaceChild (newChild, oldChild);
+		}
+#endif
+
 		public override XmlNode CloneNode (bool deep)
 		{
 			XmlNode node = new XmlAttribute (name.Prefix, name.LocalName, name.NS,

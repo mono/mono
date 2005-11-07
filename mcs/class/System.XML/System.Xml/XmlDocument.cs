@@ -139,11 +139,10 @@ namespace System.Xml
 
 		public virtual XmlDocumentType DocumentType {
 			get {
-				for (int i = 0; i < ChildNodes.Count; i++) {
-					XmlNode n = ChildNodes [i];
+				for (XmlNode n = FirstChild; n != null; n = n.NextSibling)
 					if(n.NodeType == XmlNodeType.DocumentType)
 						return (XmlDocumentType)n;
-				}
+
 				return null;
 			}
 		}
@@ -259,8 +258,8 @@ namespace System.Xml
 
 			if(deep)
 			{
-				for (int i = 0; i < ChildNodes.Count; i++)
-					doc.AppendChild (doc.ImportNode (ChildNodes [i], deep));
+				for (XmlNode n = FirstChild; n != null; n = n.NextSibling)
+					doc.AppendChild (doc.ImportNode (n, deep));
 			}
 			return doc;
 		}
@@ -536,8 +535,8 @@ namespace System.Xml
 			case XmlNodeType.Attribute:
 				XmlAttribute srcAtt = node as XmlAttribute;
 				XmlAttribute dstAtt = this.CreateAttribute (srcAtt.Prefix, srcAtt.LocalName, srcAtt.NamespaceURI);
-				for (int i = 0; i < srcAtt.ChildNodes.Count; i++)
-					dstAtt.AppendChild (this.ImportNode (srcAtt.ChildNodes [i], deep));
+				for (XmlNode n = srcAtt.FirstChild; n != null; n = n.NextSibling)
+					dstAtt.AppendChild (this.ImportNode (n, deep));
 				return dstAtt;
 
 			case XmlNodeType.CDATA:
@@ -552,8 +551,8 @@ namespace System.Xml
 			case XmlNodeType.DocumentFragment:
 				XmlDocumentFragment df = this.CreateDocumentFragment ();
 				if(deep)
-					for (int i = 0; i < node.ChildNodes.Count; i++)
-						df.AppendChild (this.ImportNode (node.ChildNodes [i], deep));
+					for (XmlNode n = node.FirstChild; n != null; n = n.NextSibling)
+						df.AppendChild (this.ImportNode (n, deep));
 				return df;
 
 			case XmlNodeType.DocumentType:
@@ -568,8 +567,8 @@ namespace System.Xml
 						dst.SetAttributeNode ((XmlAttribute) this.ImportNode (attr, deep));
 				}
 				if(deep)
-					for (int i = 0; i < src.ChildNodes.Count; i++)
-						dst.AppendChild (this.ImportNode (src.ChildNodes [i], deep));
+					for (XmlNode n = src.FirstChild; n != null; n = n.NextSibling)
+						dst.AppendChild (this.ImportNode (n, deep));
 				return dst;
 
 			case XmlNodeType.EndElement:
@@ -958,8 +957,8 @@ namespace System.Xml
 
 		public override void WriteContentTo (XmlWriter w)
 		{
-			for (int i = 0; i < ChildNodes.Count; i++)
-				ChildNodes [i].WriteTo (w);
+			for (XmlNode n = FirstChild; n != null; n = n.NextSibling)
+				n.WriteTo (w);
 		}
 
 		public override void WriteTo (XmlWriter w)

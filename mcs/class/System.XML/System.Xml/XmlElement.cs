@@ -121,7 +121,7 @@ namespace System.Xml
 			}
 			set {
 				// Why its behavior (of MS FCL) is different from InnerXml...?
-				if (ChildNodes != null && ChildNodes.Count == 1 && FirstChild.NodeType == XmlNodeType.Text)
+				if (FirstChild != null && FirstChild.NextSibling == null && FirstChild.NodeType == XmlNodeType.Text)
 					FirstChild.Value = value;
 				else {
 					while (FirstChild != null)
