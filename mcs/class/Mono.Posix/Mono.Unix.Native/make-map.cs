@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -112,7 +113,8 @@ class MakeMap {
 				return 1;
 			if (t2 == null)
 				return -1;
-			return Comparer.DefaultInvariant.Compare (t1.FullName, t2.FullName);
+			return CultureInfo.InvariantCulture.CompareInfo.Compare (
+					t1.FullName, t2.FullName, CompareOptions.Ordinal);
 		}
 	}
 
@@ -127,11 +129,29 @@ class MakeMap {
 				return 1;
 			if (m2 == null)
 				return -1;
-			return Comparer.DefaultInvariant.Compare (m1.Name, m2.Name);
+			return CultureInfo.InvariantCulture.CompareInfo.Compare (
+					m1.Name, m2.Name, CompareOptions.Ordinal);
+		}
+	}
+
+	private class _OrdinalStringComparer : IComparer {
+		public int Compare (object o1, object o2)
+		{
+			string s1 = o1 as string;
+			string s2 = o2 as string;
+			if (object.ReferenceEquals (s1, s2))
+				return 0;
+			if (s1 == null)
+				return 1;
+			if (s2 == null)
+				return -1;
+			return CultureInfo.InvariantCulture.CompareInfo.Compare (s1, s2, 
+					CompareOptions.Ordinal);
 		}
 	}
 
 	internal static IComparer MemberNameComparer = new _MemberNameComparer ();
+	internal static IComparer OrdinalStringComparer = new _OrdinalStringComparer ();
 
 	internal static string GetNativeName (string fn)
 	{
@@ -797,7 +817,7 @@ class MphPrototypeFileGenerator : FileGenerator {
 	private static IEnumerable Sort (ICollection c)
 	{
 		ArrayList al = new ArrayList (c);
-		al.Sort ();
+		al.Sort (MakeMap.OrdinalStringComparer);
 		return al;
 	}
 

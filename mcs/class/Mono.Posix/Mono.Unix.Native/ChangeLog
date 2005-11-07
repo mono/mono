@@ -1,3 +1,9 @@
+2005-11-07  Jonathan Pryor <jonpryor@vt.edu>
+
+	* make-map.cs: Always use ordinal string sorting behavior.  The string
+	  collation sorting has changed, so to keep the mono/support diff sizes down
+	  we have to explicitly specify the previous implicit ordering.
+
 2005-11-02  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Syscall.cs: Remove [CLSCompliant(false)] when it isn't needed.
