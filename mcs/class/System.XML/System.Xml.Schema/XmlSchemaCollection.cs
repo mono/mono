@@ -179,6 +179,10 @@ namespace System.Xml.Schema
 			return new XmlSchemaCollectionEnumerator(schemaSet.Schemas());
 		}
 
+		int ICollection.Count {
+			get { return Count; }
+		}
+
 		// interface Methods
 		void ICollection.CopyTo (Array array, int index)
 		{

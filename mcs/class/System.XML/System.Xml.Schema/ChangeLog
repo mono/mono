@@ -1,3 +1,10 @@
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs : sealed.
+	* ValidationEventArgs.cs : not sealed in 2.0.
+	* XmlSchemaCollection.cs : added private ICollection.Count (to erase
+	  IsVirtual difference).
+
 2005-10-17  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSchemaSerializer.cs: Arrays of XmlNode don't

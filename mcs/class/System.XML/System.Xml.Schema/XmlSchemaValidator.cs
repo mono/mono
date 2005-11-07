@@ -80,7 +80,7 @@ using ValException = System.Xml.Schema.XmlSchemaValidationException;
 
 namespace System.Xml.Schema
 {
-	public class XmlSchemaValidator
+	public sealed class XmlSchemaValidator
 	{
 		enum Transition {
 			None,
