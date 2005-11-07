@@ -1132,7 +1132,7 @@ namespace System.Xml.Serialization
 			if (IsPrimitiveTypeNamespace (qname.Namespace))
 				return TypeTranslator.GetPrimitiveTypeData (qname.Name);
 
-			throw new InvalidOperationException ("Definition of type " + qname + " not found");
+			throw new InvalidOperationException ("Definition of type '" + qname + "' not found");
 		}
 
 		TypeData FindBuiltInType (XmlQualifiedName qname, XmlSchemaSimpleType st)
@@ -1141,7 +1141,12 @@ namespace System.Xml.Serialization
 				return ImportType (qname, null, true).TypeData;
 
 			if (st.Content is XmlSchemaSimpleTypeRestriction) {
-				return FindBuiltInType (GetContentBaseType (st.Content));
+				XmlSchemaSimpleTypeRestriction rest = (XmlSchemaSimpleTypeRestriction) st.Content;
+				XmlQualifiedName bn = GetContentBaseType (rest);
+				if (bn == XmlQualifiedName.Empty && rest.BaseType != null)
+					return FindBuiltInType (qname, rest.BaseType);
+				else
+					return FindBuiltInType (bn);
 			}
 			else if (st.Content is XmlSchemaSimpleTypeList) {
 				return FindBuiltInType (GetContentBaseType (st.Content)).ListTypeData;
