@@ -1,4 +1,8 @@
 
+Mon Nov 7 16:13:21 CET 2005 Paolo Molaro <lupus@ximian.com>
+
+	* aot.c: fix compilation with --enable-minimal=aot.
+
 Fri Nov 4 12:34:15 GMT 2005 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.c: fixed compatibility with the new
