@@ -80,6 +80,10 @@ namespace Mono.Xml
 			get { return eof || Reader.EOF; }
 		}
 
+		public override bool IsEmptyElement {
+			get { return Reader.IsEmptyElement; }
+		}
+
 		public int LineNumber {
 			get { return initial ? 0 : li != null ? li.LineNumber : 0; }
 		}

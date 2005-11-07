@@ -1,3 +1,8 @@
+2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
+
+	* SubtreeXmlReader.cs : XmlReader.IsEmptyElement is not virtual
+	  anymore, so added it.
+
 2005-08-03  Gert Driesen <drieseng@users.sourceforge.net>
 
 	* SubtreeXmlReader.cs: GetNamespacesInScope now returns generic
