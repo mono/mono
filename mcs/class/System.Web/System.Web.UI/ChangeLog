@@ -1,3 +1,7 @@
+2005-11-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* TemplateParser.cs: fixes #76423. Not tested properly.
+
 2005-11-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: call LoadViewStateRecursive when the Form collection has

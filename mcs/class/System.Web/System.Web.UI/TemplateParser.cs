@@ -431,7 +431,10 @@ namespace System.Web.UI {
 
 			string inherits = GetString (atts, "Inherits", null);
 #if NET_2_0
-			className = inherits;
+			if (srcAssembly == null)
+				className = inherits;
+			else
+				SetBaseType (inherits);
 #else
 			if (inherits != null)
 				SetBaseType (inherits);
