@@ -1,3 +1,7 @@
+2005-11-08  Ankit Jain  <jankit@novell.com>
+
+	* get.c (init_key_table): Add keywords - callconv and flags.
+
 2005-10-28  Ankit Jain  <jankit@novell.com>
 
 	* dis_stringify_method_signature: Add detail for 'returns:' in the comment.
