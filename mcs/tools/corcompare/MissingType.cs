@@ -419,7 +419,7 @@ namespace Mono.Util.CorCompare
 				}
 
 				// serializable attribute
-				AddFakeAttribute (typeMono.IsSerializable, typeMS.IsSerializable, "System.SerializableAttribute");
+				// AddFakeAttribute (typeMono.IsSerializable, typeMS.IsSerializable, "System.SerializableAttribute");
 				AddFakeAttribute (typeMono.IsAutoLayout, typeMS.IsAutoLayout, "System.AutoLayoutAttribute");
 				AddFakeAttribute (typeMono.IsExplicitLayout, typeMS.IsExplicitLayout, "System.ExplicitLayoutAttribute");
 				AddFakeAttribute (typeMono.IsLayoutSequential, typeMS.IsLayoutSequential, "System.SequentialLayoutAttribute");
