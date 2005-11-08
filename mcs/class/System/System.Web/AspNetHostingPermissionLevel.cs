@@ -4,7 +4,7 @@
 // Author:
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,10 +28,12 @@
 
 #if NET_1_1
 
-namespace System.Web
-{
-	public enum AspNetHostingPermissionLevel
-	{
+namespace System.Web {
+
+#if NET_2_0
+	[Serializable]
+#endif
+	public enum AspNetHostingPermissionLevel {
 		None = 100,
 		Minimal = 200,
 		Low = 300,

@@ -1,3 +1,7 @@
+2005-11-08  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* AspNetHostingPermissionLevel.cs: The enum is [Serializable] in 2.0.
+
 2005-09-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* AspNetHostingPermission.cs: Add "Unrestricted=true" in 2.0 (it was 
