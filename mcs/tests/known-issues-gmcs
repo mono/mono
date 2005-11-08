@@ -5,14 +5,7 @@
 # csXXXX.cs IGNORE 	: adds test to ignore list
 
 test-442.cs IGNORE		# Causes runtime to crash
-test-464.cs
 test-50.cs IGNORE	# Windows-only test
 test-67.cs IGNORE	# Windows-only test
 test-anon-27.cs
 test-xml-027.cs
-
-test-49.cs
-test-466.cs
-test-311.cs
-test-467.cs
-test-468.cs

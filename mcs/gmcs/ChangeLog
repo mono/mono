@@ -1,3 +1,81 @@
+2005-11-07  Miguel de Icaza  <miguel@novell.com>
+
+	* anonymous.cs (CaptureContext.AddParameterToContext): The fact
+	that a parameter has been captured does not mean that we do not
+	have to do the rest of the processing.  This fixes the second part
+	of #76592.  If there was another anonymous method capturing
+	values in the past, the Scope would never be set for the second
+	method that captured the same parameter.
+
+	(CaptureContext.EmitAssignParameter): When `leave_copy' is passed,
+	properly manipulate the stack.   Second part of fix for #76592.
+
+	* expression.cs (New): Add support for invoking "new" on
+	interfaces that have been flagged with the ComImport attribute and
+	the CoClass.  Fixes #76637 
+
+	* statement.cs (Try.DoEmit): When a variable is captured, do not
+	try to emit the vi.LocalBuilder variable as it has been captured.
+	Create a temporary variable and store the results on the
+	FieldBuilder.  Fixes #76642
+
+2005-11-07  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs (CheckPairedOperators): Made compilable with csc 2.0.
+
+	* ecore.cs (InstanceResolve): Fixed CS1540 detection.
+
+	* expression.cs (Binary.DoResolve): Added && optimalization.
+    
+	* typemanager.cs (AddUserType): Removed useless argument.
+
+2005-11-04  Marek Safar  <marek.safar@seznam.cz>
+
+	* statement.cs (Block.variables): Uses ListDictionary.
+
+2005-11-03  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #75969.
+	* class.cs (PartialContainer.EmitType): Customized to emit
+	security attributes.
+	(ClassPart.ApplyAttributeBuilder): Transform security attribute
+	for partial classes.
+
+2005-11-03  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76599.
+	* expression.cs (ElementAccess.DoResolveLValue): Fixed buffer
+	access has to be fixed.
+	
+	* typemanager.cs (IsUnmanagedType): Wrong common field type.
+
+2005-11-01  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76590.
+	* ecore.cs (NullCast.Reduce): Implemented.
+
+	* expression.cs (ArrayCreation.CheckIndices): Correcly check
+	constant type.
+	
+	* statement.cs (SwitchLabel.ResolveAndReduce): Catch null
+	properly.
+	(Foreach.Resolve): Catch null properly.
+
+2005-10-29  Marek Safar  <marek.safar@seznam.cz>
+ 
+ 	* cs-tokenizer.cs: Warning text fix.
+
+	* driver.cs: AllWarningNumbers exposed on public interface.
+
+	* report.cs (): Reviewed warning numbers.
+	(IsValidWarning): Use binary search.
+
+2005-10-29  Marek Safar  <marek.safar@seznam.cz>
+ 
+ 	* driver.cs: Implemeted resource visibility.
+ 	(Resources): New class for code sharing between /res: and
+ 	/linkres:
+ 
 2005-11-07  Marek Safar  <marek.safar@seznam.cz>
 
 	decl.cs (CurrentTypeParameters): Fixed to be public.

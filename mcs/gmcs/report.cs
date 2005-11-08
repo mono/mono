@@ -6,9 +6,6 @@
 // (C) 2001 Ximian, Inc. (http://www.ximian.com)
 //
 
-//
-// FIXME: currently our class library does not support custom number format strings
-//
 using System;
 using System.IO;
 using System.Text;
@@ -70,6 +67,30 @@ namespace Mono.CSharp {
 		/// List of symbols related to reported error/warning. You have to fill it before error/warning is reported.
 		/// </summary>
 		static StringCollection extra_information = new StringCollection ();
+
+		// 
+		// IF YOU ADD A NEW WARNING YOU HAVE TO ADD ITS ID HERE
+		//
+		public static readonly int[] AllWarnings = new int[] {
+																 28, 67, 78,
+																 105, 108, 109, 114, 162, 164, 168, 169, 183, 184, 197,
+																 219, 251, 252, 253, 282,
+																 419, 420, 429, 436, 440, 465,
+																 612, 618, 626, 628, 642, 649, 652, 658, 659, 660, 661, 665, 672,
+																 1030, 1058,
+																 1522, 1570, 1571, 1572, 1573, 1574, 1580, 1581, 1584, 1587, 1589, 1590, 1591, 1592,
+																 1616, 1633, 1634, 1635, 1691, 1692,
+																 1717, 1718,
+																 1901,
+																 2002, 2023,
+																 3005, 3012, 3019, 3021, 3022, 3023, 3026, 3027
+															 };
+
+		static Report ()
+		{
+			// Just to be sure that binary search is working
+			Array.Sort (AllWarnings);
+		}
 
 		public static void Reset ()
 		{
@@ -268,21 +289,9 @@ namespace Mono.CSharp {
 			Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
 		}
 
-		// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		// IF YOU ADD A NEW WARNING YOU HAVE TO DUPLICATE ITS ID HERE
-		//
 		public static bool IsValidWarning (int code)
-		{
-			int[] all_warnings = new int[] {
-				28, 67, 78, 105, 108, 109, 114, 192, 168, 169, 183, 184, 219, 251, 612, 618, 626, 628, 642, 649,
-				659, 660, 661, 672, 1030, 1522, 1616, 1691, 1692, 1901, 2002, 2023, 3012, 3019, 8024, 8028, 3005
-			};
-			
-			foreach (int i in all_warnings) {
-				if (i == code)
-					return true;
-			}
-			return false;
+		{	
+			return Array.BinarySearch (AllWarnings, code) >= 0;
 		}
 		
 		static public void LocationOfPreviousError (Location loc)

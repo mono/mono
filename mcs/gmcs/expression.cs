@@ -2447,6 +2447,11 @@ namespace Mono.CSharp {
 				if (rc is EnumConstant &&
 				    lc != null && lc.IsZeroInteger)
 					return rc;
+			} else if (oper == Operator.LogicalAnd) {
+				if (rc != null && rc.IsDefaultValue && rc.Type == TypeManager.bool_type)
+					return rc;
+				if (lc != null && lc.IsDefaultValue && lc.Type == TypeManager.bool_type)
+					return lc;
 			}
 
 			if (rc != null && lc != null){
@@ -3863,7 +3868,7 @@ namespace Mono.CSharp {
 			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
 				if (leave_copy)
 					throw new InternalErrorException ();
-
+				
 				ec.EmitParameter (name);
 				return;
 			}
@@ -3960,6 +3965,10 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override string ToString ()
+		{
+			return "ParameterReference[" + name + "]";
+		}
 	}
 	
 	/// <summary>
@@ -5730,6 +5739,34 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		//
+		// Checks whether the type is an interface that has the
+		// [ComImport, CoClass] attributes and must be treated
+		// specially
+		//
+		public Expression CheckComImport (EmitContext ec)
+		{
+			if (!type.IsInterface)
+				return null;
+			System.Attribute attr = System.Attribute.GetCustomAttribute (type, TypeManager.comimport_attr_type);
+			if (attr == null)
+				return null;
+
+			attr = System.Attribute.GetCustomAttribute (type, TypeManager.coclass_attr_type);
+			if (attr == null)
+				return null;
+
+			//
+			// Turn the call into:
+			// (the-interface-stated) (new class-referenced-in-coclassattribute ())
+			//
+			Type real_class = ((System.Runtime.InteropServices.CoClassAttribute) attr).CoClass;
+
+			New proxy = new New (new TypeExpression (real_class, loc), null, loc);
+			Cast cast = new Cast (new TypeExpression (type, loc), proxy, loc);
+			return cast.Resolve (ec);
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//
@@ -5798,6 +5835,11 @@ namespace Mono.CSharp {
 			}
 
 			if (type.IsInterface || type.IsAbstract){
+				Expression r = CheckComImport (ec);
+
+				if (r != null)
+					return r;
+				
 				Report.SymbolRelatedToPreviousError (type);
 				Report.Error (144, loc, "Cannot create an instance of the abstract class or interface `{0}'", TypeManager.CSharpName (type));
 				return null;
@@ -6063,16 +6105,21 @@ namespace Mono.CSharp {
 		{
 			if (specified_dims) { 
 				Argument a = (Argument) arguments [idx];
-				
+
 				if (!a.Resolve (ec, loc))
 					return false;
-				
-				if (!(a.Expr is Constant)) {
-					Error (150, "A constant value is expected");
+
+				Constant c = a.Expr as Constant;
+				if (c != null) {
+					c = c.ToType (TypeManager.int32_type, a.Expr.Location);
+				}
+
+				if (c == null) {
+					Report.Error (150, a.Expr.Location, "A constant value is expected");
 					return false;
 				}
-				
-				int value = (int) ((Constant) a.Expr).GetValue ();
+
+				int value = (int) c.GetValue ();
 				
 				if (value != probe.Count) {
 					Error_IncorrectArrayInitializer ();
@@ -7618,11 +7665,10 @@ namespace Mono.CSharp {
 						Report.Error (1708, loc, "Fixed size buffers can only be accessed through locals or fields");
 						return null;
 					}
-// TODO: not sure whether it is correct
-//					if (!ec.InFixedInitializer) {
-//						Error (1666, "You cannot use fixed sized buffers contained in unfixed expressions. Try using the fixed statement");
-//						return null;
-//					}
+					if (!ec.InFixedInitializer && ec.ContainerType.IsValueType) {
+						Error (1666, "You cannot use fixed size buffers contained in unfixed expressions. Try using the fixed statement");
+						return null;
+					}
 					return MakePointerAccess (ec, ff.ElementType);
 				}
 			}

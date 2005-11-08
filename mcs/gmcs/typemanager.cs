@@ -100,6 +100,8 @@ public partial class TypeManager {
 	static public Type required_attr_type;
 	static public Type guid_attr_type;
 	static public Type assembly_culture_attribute_type;
+	static public Type coclass_attr_type;
+	static public Type comimport_attr_type;
 
 	/// 
 	/// .NET 2.0
@@ -386,7 +388,7 @@ public partial class TypeManager {
 		InitGenerics ();
 	}
 
-	public static void AddUserType (string name, DeclSpace ds)
+	public static void AddUserType (DeclSpace ds)
 	{
 		builder_to_declspace.Add (ds.TypeBuilder, ds);
 	}
@@ -974,6 +976,8 @@ public partial class TypeManager {
 		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RequiredAttributeAttribute");
 		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices", "GuidAttribute");
 		assembly_culture_attribute_type = CoreLookupType ("System.Reflection", "AssemblyCultureAttribute");
+		comimport_attr_type = CoreLookupType ("System.Runtime.InteropServices", "ComImportAttribute");
+		coclass_attr_type = CoreLookupType ("System.Runtime.InteropServices", "CoClassAttribute");
 
 		InitGenericCoreTypes ();
 
@@ -1488,21 +1492,19 @@ public partial class TypeManager {
 		if (!IsValueType (t))
 			return false;
 
+		for (Type p = t.DeclaringType; p != null; p = p.DeclaringType) {
+			if (p.IsGenericTypeDefinition)
+				return false;
+		}
+
 		unmanaged_enclosing_types.Push (t);
 
 		bool retval = true;
 
-		for (Type p = t.DeclaringType; p != null; p = p.DeclaringType) {
-			if (p.IsGenericTypeDefinition) {
-				retval = false;
-				break;
-			}
-		}
-
-		if (t is TypeBuilder && retval) {
+		if (t is TypeBuilder) {
 			TypeContainer tc = LookupTypeContainer (t);
 			if (tc.Fields != null){
-				foreach (Field f in tc.Fields){
+				foreach (FieldMember f in tc.Fields){
 					// Avoid using f.FieldBuilder: f.Define () may not yet have been invoked.
 					if ((f.ModFlags & Modifiers.STATIC) != 0)
 						continue;
@@ -1514,7 +1516,7 @@ public partial class TypeManager {
 					}
 				}
 			}
-		} else if (retval) {
+		} else {
 			FieldInfo [] fields = t.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			
 			foreach (FieldInfo f in fields){

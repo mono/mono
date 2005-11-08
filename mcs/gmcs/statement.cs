@@ -1239,7 +1239,7 @@ namespace Mono.CSharp {
 		//
 		// Keeps track of (name, type) pairs
 		//
-		Hashtable variables;
+		IDictionary variables;
 
 		//
 		// Keeps track of constants
@@ -1309,10 +1309,10 @@ namespace Mono.CSharp {
 			get { return this_id; }
 		}
 
-		protected Hashtable Variables {
+		protected IDictionary Variables {
 			get {
 				if (variables == null)
-					variables = new Hashtable ();
+					variables = new ListDictionary ();
 				return variables;
 			}
 		}
@@ -1613,15 +1613,6 @@ namespace Mono.CSharp {
 				}
 			}
 			return null;
-		}
-		
-		/// <summary>
-		///   True if the variable named @name is a constant
-		///  </summary>
-		public bool IsConstant (string name)
-		{
-			Expression e = GetConstantExpression (name);
-			return e != null;
 		}
 		
 		public void AddStatement (Statement s)
@@ -2360,7 +2351,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			if (required_type == TypeManager.string_type && e is NullLiteral) {
+			if (required_type == TypeManager.string_type && c.GetValue () == null) {
 				converted = NullStringCase;
 				return true;
 			}
@@ -2378,7 +2369,7 @@ namespace Mono.CSharp {
 			string label;
 			if (converted == null)
 				label = "default";
-			else if (converted is NullLiteral)
+			else if (converted == NullStringCase)
 				label = "null";
 			else
 				label = converted.ToString ();
@@ -3764,12 +3755,15 @@ namespace Mono.CSharp {
 					if (vi == null)
 						throw new Exception ("Variable does not exist in this block");
 
-					ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 					if (vi.IsCaptured){
+						LocalBuilder e = ig.DeclareLocal (vi.VariableType);
+						ig.Emit (OpCodes.Stloc, e);
+						
 						ec.EmitCapturedVariableInstance (vi);
-						ig.Emit (OpCodes.Ldloc, vi.LocalBuilder);
+						ig.Emit (OpCodes.Ldloc, e);
 						ig.Emit (OpCodes.Stfld, vi.FieldBuilder);
-					}
+					} else
+						ig.Emit (OpCodes.Stloc, vi.LocalBuilder);
 				} else
 					ig.Emit (OpCodes.Pop);
 				
@@ -4134,7 +4128,8 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			if (expr is NullLiteral) {
+			Constant c = expr as Constant;
+			if (c != null && c.GetValue () == null) {
 				Report.Error (186, loc, "Use of null is not valid in this context");
 				return false;
 			}
