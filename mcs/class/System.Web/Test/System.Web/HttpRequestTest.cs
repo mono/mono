@@ -656,5 +656,212 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (0, req.ContentLength, "#01");
 		}
 	}
+
+	// This class is defined here to make it easy to create fake
+	// HttpWorkerRequest-derived classes by only overriding the methods
+	// necessary for testing.
+	class BaseFakeHttpWorkerRequest : HttpWorkerRequest
+	{
+		public override void EndOfRequest()
+		{
+		}
+
+		public override void FlushResponse(bool finalFlush)
+		{
+		}
+
+		public override string GetHttpVerbName()
+		{
+			return "GET";
+		}
+
+		public override string GetHttpVersion()
+		{
+			return "HTTP/1.1";
+		}
+
+		public override string GetLocalAddress()
+		{
+			return "localhost";
+		}
+
+		public override int GetLocalPort()
+		{
+			return 8080;
+		}
+
+		public override string GetQueryString()
+		{
+			return String.Empty;
+		}
+
+		public override string GetRawUrl()
+		{
+			string rawUrl = GetUriPath();
+			string queryString = GetQueryString();
+			if (queryString != null && queryString.Length > 0)
+			{
+				rawUrl += "?" + queryString;
+			}
+			return rawUrl;
+		}
+
+		public override string GetRemoteAddress()
+		{
+			return "remotehost";
+		}
+
+		public override int GetRemotePort()
+		{
+			return 8080;
+		}
+
+		public override string GetUriPath()
+		{
+			return "default.aspx";
+		}
+
+		public override void SendKnownResponseHeader(int index, string value)
+		{
+		}
+
+		public override void SendResponseFromFile(IntPtr handle, long offset, long length)
+		{
+		}
+
+		public override void SendResponseFromFile(string filename, long offset, long length)
+		{
+		}
+
+		public override void SendResponseFromMemory(byte[] data, int length)
+		{
+		}
+
+		public override void SendStatus(int statusCode, string statusDescription)
+		{
+		}
+
+		public override void SendUnknownResponseHeader(string name, string value)
+		{
+		}
+	}
+
+	// This test ensures accessing the Form property does not throw an
+	// exception when the length of data in the request exceeds the length
+	// as reported by the Content-Length header. This bug was discovered
+	// with an AJAX application using XMLHttpRequest to POST back to the
+	// server. The Content-Length header was two bytes less than the length
+	// of the buffer returned from GetPreloadedEntityBody. This was causing
+	// an exception to be thrown by Mono because it was trying to allocate
+	// a buffer that was -2 bytes in length.
+	[TestFixture]
+	public class Test_UrlEncodedBodyWithExtraCRLF
+	{
+		class FakeHttpWorkerRequest : BaseFakeHttpWorkerRequest
+		{
+			// This string is 9 bytes in length. That's 2 more than
+			// the Content-Length header says it should be.
+			string data = "foo=bar\r\n";
+
+			public override string GetKnownRequestHeader(int index)
+			{
+				switch (index)
+				{
+					case HttpWorkerRequest.HeaderContentLength:
+						return (data.Length - 2).ToString();
+					case HttpWorkerRequest.HeaderContentType:
+						return "application/x-www-form-urlencoded";
+				}
+				return String.Empty;
+			}
+
+			public override byte[] GetPreloadedEntityBody()
+			{
+				return Encoding.ASCII.GetBytes(data);
+			}
+		}
+
+		HttpContext context = null;
+
+		[SetUp]
+		public void SetUp()
+		{
+			HttpWorkerRequest workerRequest = new FakeHttpWorkerRequest();
+			context = new HttpContext(workerRequest);
+		}
+
+		[Test]
+		public void ContentLength()
+		{
+			Assert.AreEqual(7, context.Request.ContentLength);
+		}
+
+		[Test]
+		public void Form_Count()
+		{
+			Assert.AreEqual(1, context.Request.Form.Count);
+		}
+
+		[Test]
+		public void Form_Item()
+		{
+			// I would have expected the extra two characters to be stripped
+			// but Microsoft's CLR keeps them so Mono should, too.
+			Assert.AreEqual("bar\r\n", context.Request.Form["foo"]);
+		}
+	}
+
+	// This test ensures the HttpRequet object's Form property gets
+	// properly constructed and populated when the Content-Type header
+	// includes a charset parameter and that the charset parameter is
+	// respected.
+	[TestFixture]
+	public class Test_UrlEncodedBodyWithUtf8CharsetParameter
+	{
+		class FakeHttpWorkerRequest : BaseFakeHttpWorkerRequest
+		{
+			// The two funny-looking characters are really a single
+			// accented "a" character encoded in UTF-8.
+			string data = "foo=b%C3%A1r";
+
+			public override string GetKnownRequestHeader(int index)
+			{
+				switch (index)
+				{
+					case HttpWorkerRequest.HeaderContentLength:
+						return data.Length.ToString();
+					case HttpWorkerRequest.HeaderContentType:
+						return "application/x-www-form-urlencoded; charset=utf-8";
+				}
+				return String.Empty;
+			}
+
+			public override byte[] GetPreloadedEntityBody()
+			{
+				return Encoding.ASCII.GetBytes(data);
+			}
+		}
+
+		HttpContext context = null;
+
+		[SetUp]
+		public void SetUp()
+		{
+			HttpWorkerRequest workerRequest = new FakeHttpWorkerRequest();
+			context = new HttpContext(workerRequest);
+		}
+
+		[Test]
+		public void Form_Count()
+		{
+			Assert.AreEqual(1, context.Request.Form.Count);
+		}
+
+		[Test]
+		public void Form_Item()
+		{
+			Assert.AreEqual("b\xE1r", context.Request.Form["foo"]);
+		}
+	}
 }
 

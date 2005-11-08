@@ -457,7 +457,7 @@ namespace System.Web {
 					form = new WebROCollection ();
 					files = new HttpFileCollection ();
 
-					if (IsContentType ("application/x-www-form-urlencoded", false))
+					if (IsContentType ("application/x-www-form-urlencoded", true))
 						LoadWwwForm ();
 					else if (IsContentType ("multipart/form-data", true))
 						LoadMultiPart ();
@@ -645,7 +645,7 @@ namespace System.Web {
 				if (total > 0)
 					Marshal.Copy (buffer, 0, content, total);
 
-				buffer = new byte [Math.Min (content_length - total, INPUT_BUFFER_SIZE)];
+				buffer = new byte [Math.Min (Math.Max (content_length - total, 0), INPUT_BUFFER_SIZE)];
 				while (total < content_length){
 					int n;
 					n = worker_request.ReadEntityBody (buffer, Math.Min (content_length-total, INPUT_BUFFER_SIZE));

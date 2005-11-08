@@ -1,3 +1,9 @@
+2005-11-07  Jason Diamond  <jason@diamond.name>
+
+	* HttpRequest.cs: Don't throw exception when Content-Length doesn't
+	match length of POSTed data. Also, allow charset parameter on
+	Content-Type header when type is "application/x-www-form-urlencoded".
+
 2005-11-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* WebROCollection.cs: add an ID for the collection. Page needs it.
