@@ -59,7 +59,7 @@ namespace System.Net.Mail {
 		public MailAddress (string address, string name, Encoding displayNameEncoding)
 		{
 			this.address = address;
-			this.displayName = displayName;
+			this.displayName = name;
 			this.displayNameEncoding = displayNameEncoding;
 		}
 
