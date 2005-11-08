@@ -1,3 +1,11 @@
+2005-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeExpressionCollection.cs: Fixed OutOfMemoryException when
+	passing collection to AddRange method on itself.
+	* CodeTypeReferenceCollection.cs: same.
+	* CodeParameterDeclarationExpressionCollection.cs: same.
+	* CodeStatementCollection.cs: same.
+
 2005-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeEventReferenceExpression.cs: EventName now returns zero-length

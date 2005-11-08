@@ -103,7 +103,8 @@ namespace System.CodeDom
 				throw new ArgumentNullException ("value");
 			}
 
-			for (int i = 0; i < value.Count; i++) {
+			int count = value.Count;
+			for (int i = 0; i < count; i++) {
 				Add (value[i]);
 			}
 		}
