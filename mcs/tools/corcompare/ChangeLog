@@ -1,4 +1,8 @@
-2005-11-07  Atsushi Enomoto  <atsushi@ximian.com>
+2005-11-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-api.xsl : part of XHTMLification.
+
+2005-11-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mono-api.xsl : Use indent; it is practically impossible to improve
 	  generated HTML w/o indentation.
