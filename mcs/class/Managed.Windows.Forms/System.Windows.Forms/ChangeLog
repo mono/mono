@@ -1,3 +1,11 @@
+2005-11-08  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* ThemeWin32Classic.cs: 
+	  - Draw the outside focus rectangle around buttons
+	  - Use CPDrawFocusRectangle to draw focus rectangles until Cairo
+	    doesn't use end caps for every dash of a line anymore. This
+	    workaround ignores the forecolor.
+
 2005-11-08  Kornél Pál  <kornelpal@hotmail.com>
 
 	* ImageList.cs: Don't use ArgbColor with LayoutKind.Explicit as it isn't

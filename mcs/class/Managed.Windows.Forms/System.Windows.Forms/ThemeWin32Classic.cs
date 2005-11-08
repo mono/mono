@@ -155,11 +155,14 @@ namespace System.Windows.Forms
 			} else {
 				borderRectangle = buttonRectangle;
 			}
-			
+
 			if (button.FlatStyle == FlatStyle.Flat || button.FlatStyle == FlatStyle.Popup) {
 				DrawFlatStyleButton (dc, borderRectangle, button);
 			} else {
 				CPDrawButton(dc, borderRectangle, button.ButtonState);
+				if (button.has_focus) {
+					dc.DrawRectangle(ResPool.GetPen(button.ForeColor), borderRectangle);
+				}
 			}
 		}
 
@@ -4711,14 +4714,19 @@ namespace System.Windows.Forms
 			// make a rectange to trace around border of the button
 			Rectangle trace_rectangle = new Rectangle(rectangle.X, rectangle.Y, Math.Max (rectangle.Width-1, 0), Math.Max (rectangle.Height-1, 0));
 			
+#if NotUntilCairoIsFixed
 			Color colorBackInverted = Color.FromArgb (Math.Abs (backColor.R-255), Math.Abs (backColor.G-255), Math.Abs (backColor.B-255));
 			DashStyle oldStyle; // used for caching old penstyle
 			Pen pen = ResPool.GetPen (colorBackInverted);
-			
+
 			oldStyle = pen.DashStyle; 
 			pen.DashStyle = DashStyle.Dot;
+
 			graphics.DrawRectangle (pen, trace_rectangle);
 			pen.DashStyle = oldStyle;
+#else
+			CPDrawFocusRectangle(graphics, trace_rectangle, Color.Wheat, backColor);
+#endif
 		}
 				
 
