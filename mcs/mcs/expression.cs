@@ -3788,7 +3788,7 @@ namespace Mono.CSharp {
 			if (ec.HaveCaptureInfo && ec.IsParameterCaptured (name)){
 				if (leave_copy)
 					throw new InternalErrorException ();
-
+				
 				ec.EmitParameter (name);
 				return;
 			}
@@ -3885,6 +3885,10 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public override string ToString ()
+		{
+			return "ParameterReference[" + name + "]";
+		}
 	}
 	
 	/// <summary>

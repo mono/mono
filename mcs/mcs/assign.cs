@@ -574,7 +574,7 @@ namespace Mono.CSharp {
 				}
 			} else
 				temp_source = source;
-		
+
 			am.EmitAssign (ec, temp_source, !is_statement, this is CompoundAssign);
 				
 			if (embedded != null) {

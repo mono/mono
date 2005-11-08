@@ -157,11 +157,9 @@ namespace Mono.CSharp {
 
 			if (current_type != type_host)
 				method_modifiers = Modifiers.INTERNAL;
-			
+
 			if (current_type == type_host && ec.IsStatic){
-				if (ec.IsStatic){
-					method_modifiers |= Modifiers.STATIC;
-				}
+				method_modifiers |= Modifiers.STATIC;
 				current_type = null;
 			} 
 
@@ -972,9 +970,8 @@ namespace Mono.CSharp {
 		{
 			if (captured_parameters == null)
 				captured_parameters = new Hashtable ();
-			if (captured_parameters [name] != null)
-				return;
-			captured_parameters [name] = new CapturedParameter (t, idx);
+			if (captured_parameters [name] == null)
+				captured_parameters [name] = new CapturedParameter (t, idx);
 
 			if (topmost == null){
 				//
@@ -1223,10 +1220,13 @@ namespace Mono.CSharp {
 			CapturedParameter par_info = (CapturedParameter) captured_parameters [name];
 
 			EmitParameterInstance (ec, name);
-			source.Emit (ec);
 			if (leave_copy)
 				ig.Emit (OpCodes.Dup);
+			source.Emit (ec);
 			ig.Emit (OpCodes.Stfld, par_info.FieldBuilder);
+			if (leave_copy){
+				ig.Emit (OpCodes.Ldfld, par_info.FieldBuilder);
+			}
 		}
 
 		//
