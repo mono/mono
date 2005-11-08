@@ -10,6 +10,8 @@ ifeq (default, $(PROFILE))
 # means we can use --options, yay.
 
 MCS = $(with_mono_path) $(INTERNAL_MCS)
+else
+EXTRA_SUPPORT_FILES = CSFriendAssembly-lib.dll
 endif
 
 ilasm = $(topdir)/class/lib/net_1_1_bootstrap/ilasm.exe
@@ -32,7 +34,8 @@ TEST_SUPPORT_FILES = \
 	CS0118-2-lib.dll CS0122-10-lib.dll CS0122-14-lib.dll CS0122-15-lib.dll CS0433-lib.dll CS0433-2-lib.dll \
 	CS0534-3-lib.dll CS0534-4-lib.dll CS0571-3-lib.dll \
 	CS0612-2-lib.dll CS0618-2-lib.dll CS0619-8-lib.dll CS0619-17-lib.dll CS0619-32-lib.dll CS0619-33-lib.dll CS0619-36-lib.dll CS0619-42-lib.dll \
-	CS0619-43-lib.dll CS1546-lib.dll CS2015-lib.dll CS3005-16-lib.dll CS3013-module.dll CSExternAlias-lib.dll CSFriendAssembly-lib.dll
+	CS0619-43-lib.dll CS1546-lib.dll CS2015-lib.dll CS3005-16-lib.dll CS3013-module.dll CSExternAlias-lib.dll \
+	$(EXTRA_SUPPORT_FILES) 
 
 all-local:
 
