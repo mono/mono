@@ -1,3 +1,8 @@
+2005-11-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	*  CodeMethodInvokeExpressionTest.cs: Fixed some failures on 2.0 
+	tests.
+
 2005-11-04  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeTypeReferenceExpressionTest.cs: Added tests.
