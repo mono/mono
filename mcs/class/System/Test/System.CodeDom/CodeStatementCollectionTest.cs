@@ -187,5 +187,13 @@ namespace MonoTests.System.CodeDom {
 			CodeStatementCollection coll = new CodeStatementCollection ();
 			coll.AddRange ((CodeStatementCollection) null);
 		}
+
+		[Test]
+		public void AddRange_Self ()
+		{
+			CodeStatementCollection coll = new CodeStatementCollection ();
+			coll.AddRange (coll);
+			Assert.AreEqual (0, coll.Count, "0");
+		}
 	}
 }

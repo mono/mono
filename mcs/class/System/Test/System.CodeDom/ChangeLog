@@ -1,3 +1,10 @@
+2005-11-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CodeExpressionCollectionTest.cs: Added test case for AddRange(self).
+	* CodeStatementCollectionTest.cs: Added test case for AddRange(self).
+	* CodeTypeReferenceCollectionTest.cs: Added test case for 
+	AddRange(self).
+
 2005-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeExpressionCollectionTest.cs: Added tests for ctors and AddRange
