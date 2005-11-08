@@ -1,6 +1,13 @@
+2005-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeExpressionCollectionTest.cs: Added tests for ctors and AddRange
+	changes made in r52579.
+	* CodeParameterDeclarationExpressionCollectionTest.cs: same.
+	* CodeTypeReferenceCollectionTest.cs: same.
+
 2005-11-07  Sebastien Pouliot  <sebastien@ximian.com>
 
-	*  CodeMethodInvokeExpressionTest.cs: Fixed some failures on 2.0 
+	* CodeMethodInvokeExpressionTest.cs: Fixed some failures on 2.0 
 	tests.
 
 2005-11-04  Gert Driesen  <drieseng@users.sourceforge.net>

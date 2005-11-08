@@ -29,6 +29,7 @@ System.CodeDom/CodeConstructorTest.cs
 System.CodeDom/CodeDefaultValueExpressionTest.cs
 System.CodeDom/CodeDelegateCreateExpressionTest.cs
 System.CodeDom/CodeEventReferenceExpressionTest.cs
+System.CodeDom/CodeExpressionCollectionTest.cs
 System.CodeDom/CodeGotoStatementTest.cs
 System.CodeDom/CodeLabeledStatementTest.cs
 System.CodeDom/CodeLinePragmaTest.cs
@@ -41,6 +42,7 @@ System.CodeDom/CodeNamespaceImportTest.cs
 System.CodeDom/CodeNamespaceTest.cs
 System.CodeDom/CodeObjectCreateExpressionTest.cs
 System.CodeDom/CodeParameterDeclarationExpressionTest.cs
+System.CodeDom/CodeParameterDeclarationExpressionCollectionTest.cs
 System.CodeDom/CodePropertyReferenceExpressionTest.cs
 System.CodeDom/CodeRegionDirectiveTest.cs
 System.CodeDom/CodeSnippetCompileUnitTest.cs
@@ -53,6 +55,7 @@ System.CodeDom/CodeTypeDelegateTest.cs
 System.CodeDom/CodeTypeParameterTest.cs
 System.CodeDom/CodeTypeOfExpressionTest.cs
 System.CodeDom/CodeTypeReferenceTest.cs
+System.CodeDom/CodeTypeReferenceCollectionTest.cs
 System.CodeDom/CodeTypeReferenceExpressionTest.cs
 System.CodeDom/CodeVariableDeclarationStatementTest.cs
 System.CodeDom/CodeVariableReferenceExpressionTest.cs
