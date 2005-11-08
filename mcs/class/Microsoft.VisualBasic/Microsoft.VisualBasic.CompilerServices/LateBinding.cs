@@ -163,7 +163,7 @@ namespace Microsoft.VisualBasic.CompilerServices {
 					return;
 				}
 
-				fi.SetValue (o, value);
+				fi.SetValue (o, ObjectType.CTypeHelper(value, fi.FieldType));
 				return;
 			}
 

@@ -1,3 +1,7 @@
+ 2005-11-07 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+ 	* LateBinding.cs: Revised patch from Tobias Käs <tobias.kaes@gmx.de>
+ 	for fixes data types conversions in LateSet.
+
 2005-11-06 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	* LateBinding.cs : Calling 'LateIndexSet' if the member resolves to a
 	field, but arguments length are greater than one.
@@ -11,7 +15,6 @@
 		Modified the 'FromString' method to :
 		- Throw an InvalidCastException whenever 'Convert.ToDouble' throws a FormatException
 		- Support conversion of octal and hex literals to all numeric types.
-		
 
 2005-06-06  Rafael Teixeira <rafaelteixeirabr@hotmail.com>
 	* VBBinder.cs : Made it internal as it isn't public in 1.1 API

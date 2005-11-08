@@ -1,3 +1,6 @@
+2005-11-07 Maverson Eduardo Schulze Rosa (maverson@gmail.com)
+        * Added TypeMemberY.vb testing bug #76453
+
 2005-04-29 Satya Sudha K <ksathyasudha@novell.com>
 	* Some testcases for late binding
 
