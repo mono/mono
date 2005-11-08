@@ -1,3 +1,8 @@
+2005-11-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* mono-api.xsl : Use indent; it is practically impossible to improve
+	  generated HTML w/o indentation.
+
 2005-11-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* mono-api-info.cs : filter property ReservedMask out; they show
