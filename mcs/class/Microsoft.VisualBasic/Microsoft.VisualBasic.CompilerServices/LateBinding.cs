@@ -157,6 +157,11 @@ namespace Microsoft.VisualBasic.CompilerServices {
 				object value = null;
 				if (args.Length == 1)
 					value = args [0];
+				else
+				{
+					LateIndexSet( fi.GetValue(o), args, paramnames);
+					return;
+				}
 
 				fi.SetValue (o, value);
 				return;

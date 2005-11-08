@@ -1,3 +1,7 @@
+2005-11-06 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* LateBinding.cs : Calling 'LateIndexSet' if the member resolves to a
+	field, but arguments length are greater than one.
+
 2005-08-22  Satya Sudha K <ksathyasudha@novell.com>
 	* StringType.cs : Fixed the 'FromObject' function
 
