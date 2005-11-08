@@ -1,5 +1,10 @@
 2005-11-08  Ankit Jain  <jankit@novell.com>
 
+	* dump.c (dump_table_method): Get the type/method context required for parsing
+	  method signature and dis_stringify'ing it.
+
+2005-11-08  Ankit Jain  <jankit@novell.com>
+
 	* get.c (init_key_table): Add keywords - callconv and flags.
 
 2005-10-28  Ankit Jain  <jankit@novell.com>
