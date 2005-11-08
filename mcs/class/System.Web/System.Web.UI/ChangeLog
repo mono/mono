@@ -1,3 +1,12 @@
+2005-11-07 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* Page.cs: call LoadViewStateRecursive when the Form collection has
+	not been used by a different page (GetTypeHashCode). This fixes problems
+	when calling Server.Transfer while preserving Form and QueryString,
+	as the page we transfer to used the view state stored in the Form, which
+	contained the serialized data for the page calling Server.Transfer
+	instead.
+
 2005-10-31 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Page.cs: add/remove the error before/after invoking OnError.

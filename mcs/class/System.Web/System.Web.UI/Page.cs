@@ -94,6 +94,7 @@ public class Page : TemplateControl, IHttpHandler
 	NameValueCollection _requestValueCollection;
 	string clientTarget;
 	ClientScriptManager scriptManager;
+	bool allow_load; // true when the Form collection belongs to this page (GetTypeHashCode)
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected const string postEventArgumentID = "__EVENTARGUMENT";
@@ -571,10 +572,18 @@ public class Page : TemplateControl, IHttpHandler
 			return null;
 
 		NameValueCollection coll = null;
-		if (0 == String.Compare (Request.HttpMethod, "POST", true))
+		if (0 == String.Compare (Request.HttpMethod, "POST", true, CultureInfo.InvariantCulture)) {
 			coll =	req.Form;
-		else 
+			WebROCollection c = (WebROCollection) coll;
+			allow_load = !c.GotID;
+			if (allow_load) {
+				c.ID = GetTypeHashCode ();
+			} else {
+				allow_load = (c.ID == GetTypeHashCode ());
+			}
+		} else  {
 			coll = req.QueryString;
+		}
 
 		
 		if (coll == null || coll ["__VIEWSTATE"] == null)
@@ -1186,13 +1195,17 @@ public class Page : TemplateControl, IHttpHandler
 		if (sState != null) {
 #if NET_2_0
 			Triplet data = (Triplet) sState;
-			LoadPageControlState (data.Third);
-			LoadViewStateRecursive (data.First);
-			_requiresPostBack = data.Second as ArrayList;
+			if (allow_load) {
+				LoadPageControlState (data.Third);
+				LoadViewStateRecursive (data.First);
+				_requiresPostBack = data.Second as ArrayList;
+			}
 #else
 			Pair pair = (Pair) sState;
-			LoadViewStateRecursive (pair.First);
-			_requiresPostBack = pair.Second as ArrayList;
+			if (allow_load) {
+				LoadViewStateRecursive (pair.First);
+				_requiresPostBack = pair.Second as ArrayList;
+			}
 #endif
 		}
 	}
