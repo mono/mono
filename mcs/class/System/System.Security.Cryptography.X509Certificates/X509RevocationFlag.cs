@@ -27,11 +27,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if NET_2_0
 
 namespace System.Security.Cryptography.X509Certificates {
 
-	[Serializable]
 	public enum X509RevocationFlag {
 		EndCertificateOnly = 0,
 		EntireChain = 1,
