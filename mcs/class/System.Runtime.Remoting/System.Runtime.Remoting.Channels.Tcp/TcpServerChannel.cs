@@ -268,7 +268,6 @@ namespace System.Runtime.Remoting.Channels.Tcp
 #else
 			server_thread.Interrupt ();
 #endif
-			server_thread = null;
 			listener.Stop ();
 			threadPool.Free ();
 			server_thread.Join ();

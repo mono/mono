@@ -1,7 +1,11 @@
+2005-11-08  Lluis Sanchez Gual  <lluis@novell.com> 
+
+	* TcpServerChannel.cs: Fix null ref exception.
+
 2005-11-06  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
 
-    * TcpServerChannel.cs, TcpConnectionPool.cs: only TARGET_JVM changes
-    
+	* TcpServerChannel.cs, TcpConnectionPool.cs: only TARGET_JVM changes
+
 2005-07-25  Lluis Sanchez Gual  <lluis@novell.com> 
 
 	* TcpChannel.cs: Don't create a server channel when the
