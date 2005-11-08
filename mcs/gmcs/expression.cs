@@ -3,6 +3,7 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@seznam.cz)
 //
 // (C) 2001, 2002, 2003 Ximian, Inc.
 // (C) 2003, 2004 Novell, Inc.
@@ -5748,21 +5749,16 @@ namespace Mono.CSharp {
 		{
 			if (!type.IsInterface)
 				return null;
-			System.Attribute attr = System.Attribute.GetCustomAttribute (type, TypeManager.comimport_attr_type);
-			if (attr == null)
-				return null;
-
-			attr = System.Attribute.GetCustomAttribute (type, TypeManager.coclass_attr_type);
-			if (attr == null)
-				return null;
 
 			//
 			// Turn the call into:
 			// (the-interface-stated) (new class-referenced-in-coclassattribute ())
 			//
-			Type real_class = ((System.Runtime.InteropServices.CoClassAttribute) attr).CoClass;
+			Type real_class = AttributeTester.GetCoClassAttribute (type);
+			if (real_class == null)
+				return null;
 
-			New proxy = new New (new TypeExpression (real_class, loc), null, loc);
+			New proxy = new New (new TypeExpression (real_class, loc), Arguments, loc);
 			Cast cast = new Cast (new TypeExpression (type, loc), proxy, loc);
 			return cast.Resolve (ec);
 		}
@@ -5835,10 +5831,9 @@ namespace Mono.CSharp {
 			}
 
 			if (type.IsInterface || type.IsAbstract){
-				Expression r = CheckComImport (ec);
-
-				if (r != null)
-					return r;
+				RequestedType = CheckComImport (ec);
+				if (RequestedType != null)
+					return RequestedType;
 				
 				Report.SymbolRelatedToPreviousError (type);
 				Report.Error (144, loc, "Cannot create an instance of the abstract class or interface `{0}'", TypeManager.CSharpName (type));

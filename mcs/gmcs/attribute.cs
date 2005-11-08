@@ -815,6 +815,17 @@ namespace Mono.CSharp {
 			return (bool)pos_values [0];
 		}
 
+		public Type GetCoClassAttributeValue (EmitContext ec)
+		{
+			if (pos_values == null)
+				Resolve (ec);
+
+			if (resolve_error)
+				return null;
+
+			return (Type)pos_values [0];
+		}
+
 		/// <summary>
 		/// Tests permitted SecurityAction for assembly or other types
 		/// </summary>
@@ -1834,6 +1845,24 @@ namespace Mono.CSharp {
 			}
 
 			return class_decl.IsExcluded ();
+		}
+
+		public static Type GetCoClassAttribute (Type type)
+		{
+			TypeContainer tc = TypeManager.LookupInterface (type);
+			if (tc == null) {
+				object[] o = type.GetCustomAttributes (TypeManager.coclass_attr_type, false);
+				return ((System.Runtime.InteropServices.CoClassAttribute)o[0]).CoClass;
+			}
+
+			if (tc.OptAttributes == null)
+				return null;
+
+			Attribute a = tc.OptAttributes.Search (TypeManager.coclass_attr_type, tc.EmitContext);
+			if (a == null)
+				return null;
+
+			return a.GetCoClassAttributeValue (tc.EmitContext);
 		}
 	}
 }
