@@ -1244,7 +1244,7 @@ namespace System {
 			int count = 0;
 
 			/* IsSerializable returns true for delegates/enums as well */
-			if (Attributes & TypeAttributes.Serializable) != 0)
+			if ((Attributes & TypeAttributes.Serializable) != 0)
 				count ++;
 
 			if (count == 0)
@@ -1252,7 +1252,7 @@ namespace System {
 			object[] attrs = new object [count];
 			count = 0;
 
-			if (Attributes & TypeAttributes.Serializable) != 0)
+			if ((Attributes & TypeAttributes.Serializable) != 0)
 				attrs [count ++] = new SerializableAttribute ();
 
 			return attrs;
