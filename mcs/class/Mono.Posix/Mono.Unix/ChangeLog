@@ -1,3 +1,8 @@
+2005-11-08  Jonathan Pryor <jonpryor@vt.edu>
+
+	* UnixPipes.cs: Provide Equals, GetHashCode, and operator==/operator!= to
+	  conform with FxCop guidelines for structures.
+
 2005-11-03  Jonathan Pryor <jonpryor@vt.edu>
 
 	* FileTypes.cs, UnixFileSystemInfo.cs: s/FIFO/Fifo/ to follow .NET
