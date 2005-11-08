@@ -50,13 +50,13 @@
 					<table>
 						<tr>
 							<td>
-								<input type="checkbox" ID="ComVisible" onClick="toggleAttributeFilter('ComVisible');" checked="1" />
+								<input type="checkbox" ID="ComVisible" onClick="toggleAttributeFilter('ComVisible');" />
 							</td>
 							<td> ComVisibleAttribute </td>
 						</tr>
 						<tr>
 							<td>
-								<input type="checkbox" ID="DebuggerDisplay" onClick="toggleAttributeFilter('DebuggerDisplay');" checked="1" />
+								<input type="checkbox" ID="DebuggerDisplay" onClick="toggleAttributeFilter('DebuggerDisplay');" />
 							</td>
 							<td> DebuggerDisplayAttribute </td>
 						</tr>
