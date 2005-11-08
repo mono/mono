@@ -726,7 +726,11 @@ namespace Mono.Unix.Native {
 
 	#region Structures
 
-	public struct Flock {
+	public struct Flock
+#if NET_2_0
+		: IEquatable <Flock>
+#endif
+	{
 		[CLSCompliant (false)]
 		public LockType         l_type;    // Type of lock: F_RDLCK, F_WRLCK, F_UNLCK
 		[CLSCompliant (false)]
@@ -734,18 +738,87 @@ namespace Mono.Unix.Native {
 		public /* off_t */ long l_start;   // Starting offset for lock
 		public /* off_t */ long l_len;     // Number of bytes to lock
 		public /* pid_t */ int  l_pid;     // PID of process blocking our lock (F_GETLK only)
+
+		public override int GetHashCode ()
+		{
+			return l_type.GetHashCode () ^ l_whence.GetHashCode () ^ 
+				l_start.GetHashCode () ^ l_len.GetHashCode () ^
+				l_pid.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj.GetType() != GetType())
+				return false;
+			Flock value = (Flock) obj;
+			return l_type == value.l_type && l_whence == value.l_whence && 
+				l_start == value.l_start && l_len == value.l_len && 
+				l_pid == value.l_pid;
+		}
+
+		public bool Equals (Flock value)
+		{
+			return l_type == value.l_type && l_whence == value.l_whence && 
+				l_start == value.l_start && l_len == value.l_len && 
+				l_pid == value.l_pid;
+		}
+
+		public static bool operator== (Flock lhs, Flock rhs)
+		{
+			return lhs.Equals (rhs);
+		}
+
+		public static bool operator!= (Flock lhs, Flock rhs)
+		{
+			return !lhs.Equals (rhs);
+		}
 	}
 
-	[StructLayout(LayoutKind.Sequential)]
-	public struct Pollfd {
+	public struct Pollfd
+#if NET_2_0
+		: IEquatable <Pollfd>
+#endif
+	{
 		public int fd;
 		[CLSCompliant (false)]
 		public PollEvents events;
 		[CLSCompliant (false)]
 		public PollEvents revents;
+
+		public override int GetHashCode ()
+		{
+			return events.GetHashCode () ^ revents.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || obj.GetType () != GetType ())
+				return false;
+			Pollfd value = (Pollfd) obj;
+			return value.events == events && value.revents == revents;
+		}
+
+		public bool Equals (Pollfd value)
+		{
+			return value.events == events && value.revents == revents;
+		}
+
+		public static bool operator== (Pollfd lhs, Pollfd rhs)
+		{
+			return lhs.Equals (rhs);
+		}
+
+		public static bool operator!= (Pollfd lhs, Pollfd rhs)
+		{
+			return !lhs.Equals (rhs);
+		}
 	}
 
-	public struct Stat {
+	public struct Stat
+#if NET_2_0
+		: IEquatable <Stat>
+#endif
+	{
 		[CLSCompliant (false)]
 		public  /* dev_t */     ulong   st_dev;     // device
 		[CLSCompliant (false)]
@@ -768,10 +841,78 @@ namespace Mono.Unix.Native {
 		public  /* time_t */    long    st_atime;   // time of last access
 		public  /* time_t */    long    st_mtime;   // time of last modification
 		public  /* time_t */    long    st_ctime;   // time of last status change
+
+		public override int GetHashCode ()
+		{
+			return st_dev.GetHashCode () ^
+				st_ino.GetHashCode () ^
+				st_mode.GetHashCode () ^
+				st_nlink.GetHashCode () ^
+				st_uid.GetHashCode () ^
+				st_gid.GetHashCode () ^
+				st_rdev.GetHashCode () ^
+				st_size.GetHashCode () ^
+				st_blksize.GetHashCode () ^
+				st_blocks.GetHashCode () ^
+				st_atime.GetHashCode () ^
+				st_mtime.GetHashCode () ^
+				st_ctime.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || obj.GetType() != GetType ())
+				return false;
+			Stat value = (Stat) obj;
+			return value.st_dev == st_dev &&
+				value.st_ino == st_ino &&
+				value.st_mode == st_mode &&
+				value.st_nlink == st_nlink &&
+				value.st_uid == st_uid &&
+				value.st_gid == st_gid &&
+				value.st_rdev == st_rdev &&
+				value.st_size == st_size &&
+				value.st_blksize == st_blksize &&
+				value.st_blocks == st_blocks &&
+				value.st_atime == st_atime &&
+				value.st_mtime == st_mtime &&
+				value.st_ctime == st_ctime;
+		}
+
+		public bool Equals (Stat value)
+		{
+			return value.st_dev == st_dev &&
+				value.st_ino == st_ino &&
+				value.st_mode == st_mode &&
+				value.st_nlink == st_nlink &&
+				value.st_uid == st_uid &&
+				value.st_gid == st_gid &&
+				value.st_rdev == st_rdev &&
+				value.st_size == st_size &&
+				value.st_blksize == st_blksize &&
+				value.st_blocks == st_blocks &&
+				value.st_atime == st_atime &&
+				value.st_mtime == st_mtime &&
+				value.st_ctime == st_ctime;
+		}
+
+		public static bool operator== (Stat lhs, Stat rhs)
+		{
+			return lhs.Equals (rhs);
+		}
+
+		public static bool operator!= (Stat lhs, Stat rhs)
+		{
+			return !lhs.Equals (rhs);
+		}
 	}
 
 	[CLSCompliant (false)]
-	public struct Statvfs {
+	public struct Statvfs
+#if NET_2_0
+		: IEquatable <Statvfs>
+#endif
+	{
 		public                  ulong f_bsize;	  // file system block size
 		public                  ulong f_frsize;   // fragment size
 		public /* fsblkcnt_t */ ulong f_blocks;   // size of fs in f_frsize units
@@ -783,21 +924,175 @@ namespace Mono.Unix.Native {
 		public                  ulong f_fsid;     // file system id
 		public MountFlags             f_flag;     // mount flags
 		public                  ulong f_namemax;  // maximum filename length
+
+		public override int GetHashCode ()
+		{
+			return f_bsize.GetHashCode () ^
+				f_frsize.GetHashCode () ^
+				f_blocks.GetHashCode () ^
+				f_bfree.GetHashCode () ^
+				f_bavail.GetHashCode () ^
+				f_files.GetHashCode () ^
+				f_ffree.GetHashCode () ^
+				f_favail.GetHashCode () ^
+				f_fsid.GetHashCode () ^
+				f_flag.GetHashCode () ^
+				f_namemax.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || obj.GetType() != GetType ())
+				return false;
+			Statvfs value = (Statvfs) obj;
+			return value.f_bsize == f_bsize &&
+				value.f_frsize == f_frsize &&
+				value.f_blocks == f_blocks &&
+				value.f_bfree == f_bfree &&
+				value.f_bavail == f_bavail &&
+				value.f_files == f_files &&
+				value.f_ffree == f_ffree &&
+				value.f_favail == f_favail &&
+				value.f_fsid == f_fsid &&
+				value.f_flag == f_flag &&
+				value.f_namemax == f_namemax;
+		}
+
+		public bool Equals (Statvfs value)
+		{
+			return value.f_bsize == f_bsize &&
+				value.f_frsize == f_frsize &&
+				value.f_blocks == f_blocks &&
+				value.f_bfree == f_bfree &&
+				value.f_bavail == f_bavail &&
+				value.f_files == f_files &&
+				value.f_ffree == f_ffree &&
+				value.f_favail == f_favail &&
+				value.f_fsid == f_fsid &&
+				value.f_flag == f_flag &&
+				value.f_namemax == f_namemax;
+		}
+
+		public static bool operator== (Statvfs lhs, Statvfs rhs)
+		{
+			return lhs.Equals (rhs);
+		}
+
+		public static bool operator!= (Statvfs lhs, Statvfs rhs)
+		{
+			return !lhs.Equals (rhs);
+		}
 	}
 
-	public struct Timeval {
+	public struct Timeval
+#if NET_2_0
+		: IEquatable <Timeval>
+#endif
+	{
 		public  /* time_t */      long    tv_sec;   // seconds
 		public  /* suseconds_t */ long    tv_usec;  // microseconds
+
+		public override int GetHashCode ()
+		{
+			return tv_sec.GetHashCode () ^ tv_usec.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || obj.GetType () != GetType ())
+				return false;
+			Timeval value = (Timeval) obj;
+			return value.tv_sec == tv_sec && value.tv_usec == tv_usec;
+		}
+
+		public bool Equals (Timeval value)
+		{
+			return value.tv_sec == tv_sec && value.tv_usec == tv_usec;
+		}
+
+		public static bool operator== (Timeval lhs, Timeval rhs)
+		{
+			return lhs.Equals (rhs);
+		}
+
+		public static bool operator!= (Timeval lhs, Timeval rhs)
+		{
+			return !lhs.Equals (rhs);
+		}
 	}
 
-	public struct Timezone {
+	public struct Timezone
+#if NET_2_0
+		: IEquatable <Timezone>
+#endif
+	{
 		public  int tz_minuteswest; // minutes W of Greenwich
 		private int tz_dsttime;     // type of dst correction (OBSOLETE)
+
+		public override int GetHashCode ()
+		{
+			return tz_minuteswest.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || obj.GetType () != GetType ())
+				return false;
+			Timezone value = (Timezone) obj;
+			return value.tz_minuteswest == tz_minuteswest;
+		}
+
+		public bool Equals (Timezone value)
+		{
+			return value.tz_minuteswest == tz_minuteswest;
+		}
+
+		public static bool operator== (Timezone lhs, Timezone rhs)
+		{
+			return lhs.Equals (rhs);
+		}
+
+		public static bool operator!= (Timezone lhs, Timezone rhs)
+		{
+			return !lhs.Equals (rhs);
+		}
 	}
 
-	public struct Utimbuf {
+	public struct Utimbuf
+#if NET_2_0
+		: IEquatable <Utimbuf>
+#endif
+	{
 		public  /* time_t */      long    actime;   // access time
 		public  /* time_t */      long    modtime;  // modification time
+
+		public override int GetHashCode ()
+		{
+			return actime.GetHashCode () ^ modtime.GetHashCode ();
+		}
+
+		public override bool Equals (object obj)
+		{
+			if (obj == null || obj.GetType () != GetType ())
+				return false;
+			Utimbuf value = (Utimbuf) obj;
+			return value.actime == actime && value.modtime == modtime;
+		}
+
+		public bool Equals (Utimbuf value)
+		{
+			return value.actime == actime && value.modtime == modtime;
+		}
+
+		public static bool operator== (Utimbuf lhs, Utimbuf rhs)
+		{
+			return lhs.Equals (rhs);
+		}
+
+		public static bool operator!= (Utimbuf lhs, Utimbuf rhs)
+		{
+			return !lhs.Equals (rhs);
+		}
 	}
 
 	#endregion
@@ -805,6 +1100,9 @@ namespace Mono.Unix.Native {
 	#region Classes
 
 	public sealed class Dirent
+#if NET_2_0
+		: IEquatable <Dirent>
+#endif
 	{
 		[CLSCompliant (false)]
 		public /* ino_t */ ulong  d_ino;
@@ -826,9 +1124,16 @@ namespace Mono.Unix.Native {
 			if (obj == null || GetType() != obj.GetType())
 				return false;
 			Dirent d = (Dirent) obj;
-			return d.d_ino == d_ino && d.d_off == d_off &&
-				d.d_reclen == d_reclen && d.d_type == d_type &&
-				d.d_name == d_name;
+			return Equals (d);
+		}
+
+		public bool Equals (Dirent value)
+		{
+			if (value == null)
+				return false;
+			return value.d_ino == d_ino && value.d_off == d_off &&
+				value.d_reclen == d_reclen && value.d_type == d_type &&
+				value.d_name == d_name;
 		}
 
 		public override string ToString ()
@@ -848,6 +1153,9 @@ namespace Mono.Unix.Native {
 	}
 
 	public sealed class Fstab
+#if NET_2_0
+		: IEquatable <Fstab>
+#endif
 	{
 		public string fs_spec;
 		public string fs_file;
@@ -868,11 +1176,18 @@ namespace Mono.Unix.Native {
 		{
 			if (obj == null || GetType() != obj.GetType())
 				return false;
-			Fstab  f = (Fstab) obj;
-			return f.fs_spec == fs_spec && f.fs_file == fs_file &&
-				f.fs_vfstype == fs_vfstype && f.fs_mntops == fs_mntops &&
-				f.fs_type == fs_type && f.fs_freq == fs_freq && 
-				f.fs_passno == fs_passno;
+			Fstab f = (Fstab) obj;
+			return Equals (f);
+		}
+
+		public bool Equals (Fstab value)
+		{
+			if (value == null)
+				return false;
+			return value.fs_spec == fs_spec && value.fs_file == fs_file &&
+				value.fs_vfstype == fs_vfstype && value.fs_mntops == fs_mntops &&
+				value.fs_type == fs_type && value.fs_freq == fs_freq && 
+				value.fs_passno == fs_passno;
 		}
 
 		public override string ToString ()
@@ -892,6 +1207,9 @@ namespace Mono.Unix.Native {
 	}
 
 	public sealed class Group
+#if NET_2_0
+		: IEquatable <Group>
+#endif
 	{
 		public string           gr_name;
 		public string           gr_passwd;
@@ -914,18 +1232,25 @@ namespace Mono.Unix.Native {
 			if (obj == null || GetType() != obj.GetType())
 				return false;
 			Group g = (Group) obj;
-			if (g.gr_gid != gr_gid)
+			return Equals (g);
+		}
+
+		public bool Equals (Group value)
+		{
+			if (value == null)
 				return false;
-			if (g.gr_gid == gr_gid && g.gr_name == gr_name &&
-				g.gr_passwd == gr_passwd) {
-				if (g.gr_mem == gr_mem)
+			if (value.gr_gid != gr_gid)
+				return false;
+			if (value.gr_gid == gr_gid && value.gr_name == gr_name &&
+				value.gr_passwd == gr_passwd) {
+				if (value.gr_mem == gr_mem)
 					return true;
-				if (g.gr_mem == null || gr_mem == null)
+				if (value.gr_mem == null || gr_mem == null)
 					return false;
-				if (g.gr_mem.Length != gr_mem.Length)
+				if (value.gr_mem.Length != gr_mem.Length)
 					return false;
 				for (int i = 0; i < gr_mem.Length; ++i)
-					if (gr_mem[i] != g.gr_mem[i])
+					if (gr_mem[i] != value.gr_mem[i])
 						return false;
 				return true;
 			}
@@ -936,7 +1261,8 @@ namespace Mono.Unix.Native {
 		public override string ToString ()
 		{
 			StringBuilder sb = new StringBuilder ();
-			sb.AppendFormat ("{0}:{1}:{2}:", gr_name, gr_passwd, gr_gid);
+			sb.Append (gr_name).Append (":").Append (gr_passwd).Append (":");
+			sb.Append (gr_gid).Append (":");
 			GetMembers (sb, gr_mem);
 			return sb.ToString ();
 		}
@@ -963,6 +1289,9 @@ namespace Mono.Unix.Native {
 	}
 
 	public sealed class Passwd
+#if NET_2_0
+		: IEquatable <Passwd>
+#endif
 	{
 		public string           pw_name;
 		public string           pw_passwd;
@@ -987,9 +1316,17 @@ namespace Mono.Unix.Native {
 			if (obj == null || GetType() != obj.GetType())
 				return false;
 			Passwd p = (Passwd) obj;
-			return p.pw_uid == pw_uid && p.pw_gid == pw_gid && p.pw_name == pw_name && 
-				p.pw_passwd == pw_passwd && p.pw_gecos == pw_gecos && 
-				p.pw_dir == pw_dir && p.pw_shell == pw_shell;
+			return Equals (p);
+		}
+
+		public bool Equals (Passwd value)
+		{
+			if (value == null)
+				return false;
+			return value.pw_uid == pw_uid && value.pw_gid == pw_gid && 
+				value.pw_name == pw_name && value.pw_passwd == pw_passwd && 
+				value.pw_gecos == pw_gecos && value.pw_dir == pw_dir && 
+				value.pw_shell == pw_shell;
 		}
 
 		// Generate string in /etc/passwd format

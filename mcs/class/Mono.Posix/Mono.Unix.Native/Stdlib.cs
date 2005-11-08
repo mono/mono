@@ -175,7 +175,11 @@ namespace Mono.Unix.Native {
 
 	#region Classes
 
-	public sealed class FilePosition : MarshalByRefObject, IDisposable {
+	public sealed class FilePosition : MarshalByRefObject, IDisposable 
+#if NET_2_0
+		, IEquatable <FilePosition>
+#endif
+	{
 
 		private static readonly int FilePositionDumpSize = 
 			Stdlib.DumpFilePosition (null, new HandleRef (null, IntPtr.Zero), 0);
@@ -232,6 +236,13 @@ namespace Mono.Unix.Native {
 			if (obj == null || fp == null)
 				return false;
 			return ToString().Equals (obj.ToString());
+		}
+
+		public bool Equals (FilePosition value)
+		{
+			if (object.ReferenceEquals (this, value))
+				return true;
+			return ToString().Equals (value.ToString());
 		}
 
 		public override int GetHashCode ()
