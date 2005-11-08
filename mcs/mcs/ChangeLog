@@ -1,5 +1,9 @@
 2005-11-07  Miguel de Icaza  <miguel@novell.com>
 
+	* expression.cs (New): Add support for invoking "new" on
+	interfaces that have been flagged with the ComImport attribute and
+	the CoClass.  Fixes #76637 
+
 	* statement.cs (Try.DoEmit): When a variable is captured, do not
 	try to emit the vi.LocalBuilder variable as it has been captured.
 	Create a temporary variable and store the results on the

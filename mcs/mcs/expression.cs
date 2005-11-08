@@ -5590,6 +5590,34 @@ namespace Mono.CSharp {
 			return null;
 		}
 
+		//
+		// Checks whether the type is an interface that has the
+		// [ComImport, CoClass] attributes and must be treated
+		// specially
+		//
+		public Expression CheckComImport (EmitContext ec)
+		{
+			if (!type.IsInterface)
+				return null;
+			System.Attribute attr = System.Attribute.GetCustomAttribute (type, TypeManager.comimport_attr_type);
+			if (attr == null)
+				return null;
+
+			attr = System.Attribute.GetCustomAttribute (type, TypeManager.coclass_attr_type);
+			if (attr == null)
+				return null;
+
+			//
+			// Turn the call into:
+			// (the-interface-stated) (new class-referenced-in-coclassattribute ())
+			//
+			Type real_class = ((System.Runtime.InteropServices.CoClassAttribute) attr).CoClass;
+
+			New proxy = new New (new TypeExpression (real_class, loc), null, loc);
+			Cast cast = new Cast (new TypeExpression (type, loc), proxy, loc);
+			return cast.Resolve (ec);
+		}
+		
 		public override Expression DoResolve (EmitContext ec)
 		{
 			//
@@ -5633,6 +5661,11 @@ namespace Mono.CSharp {
 			}
 
 			if (type.IsInterface || type.IsAbstract){
+				Expression r = CheckComImport (ec);
+
+				if (r != null)
+					return r;
+				
 				Report.SymbolRelatedToPreviousError (type);
 				Report.Error (144, loc, "Cannot create an instance of the abstract class or interface `{0}'", TypeManager.CSharpName (type));
 				return null;

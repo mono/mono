@@ -100,6 +100,8 @@ public class TypeManager {
 	static public Type required_attr_type;
 	static public Type guid_attr_type;
 	static public Type assembly_culture_attribute_type;
+	static public Type coclass_attr_type;
+	static public Type comimport_attr_type;
 
 	/// 
 	/// .NET 2.0
@@ -860,6 +862,8 @@ public class TypeManager {
 		required_attr_type = CoreLookupType ("System.Runtime.CompilerServices", "RequiredAttributeAttribute");
 		guid_attr_type = CoreLookupType ("System.Runtime.InteropServices", "GuidAttribute");
 		assembly_culture_attribute_type = CoreLookupType ("System.Reflection", "AssemblyCultureAttribute");
+		comimport_attr_type = CoreLookupType ("System.Runtime.InteropServices", "ComImportAttribute");
+		coclass_attr_type = CoreLookupType ("System.Runtime.InteropServices", "CoClassAttribute");
 
 		//
 		// .NET 2.0
