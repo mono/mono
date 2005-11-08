@@ -1243,7 +1243,8 @@ namespace System {
 		internal object[] GetPseudoCustomAttributes () {
 			int count = 0;
 
-			if (IsSerializable)
+			/* IsSerializable returns true for delegates/enums as well */
+			if (Attributes & TypeAttributes.Serializable) != 0)
 				count ++;
 
 			if (count == 0)
@@ -1251,7 +1252,7 @@ namespace System {
 			object[] attrs = new object [count];
 			count = 0;
 
-			if (IsSerializable)
+			if (Attributes & TypeAttributes.Serializable) != 0)
 				attrs [count ++] = new SerializableAttribute ();
 
 			return attrs;

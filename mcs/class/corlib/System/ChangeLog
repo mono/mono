@@ -1,3 +1,8 @@
+2005-11-08  Zoltan Varga  <vargaz@freemail.hu>
+
+	* Type.cs (GetPseudoCustomAttributes): Check for TypeAttributes.Serializable instead of
+	IsSerializable property, since the latter returns true for delegates/enums.
+
 2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* Environment.cs: Use Consts.RuntimeVersion as Environment.Version that
