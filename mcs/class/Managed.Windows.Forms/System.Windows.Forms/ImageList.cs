@@ -87,8 +87,8 @@ namespace System.Windows.Forms
 	{
 		#region Private Fields
 		private const ColorDepth DefaultColorDepth = ColorDepth.Depth8Bit;
-		private static readonly Color DefaultTransparentColor = Color.Transparent;
 		private static readonly Size DefaultImageSize = new Size(16, 16);
+		private static readonly Color DefaultTransparentColor = Color.Transparent;
 
 #if NET_2_0
 		private object tag;
@@ -103,21 +103,6 @@ namespace System.Windows.Forms
 		{
 			private const int AlphaMask = unchecked((int)0xFF000000);
 
-			[StructLayout(LayoutKind.Explicit)]
-			private struct ArgbColor
-			{
-				[FieldOffset(0)]
-				internal int Argb;
-				[FieldOffset(0)]
-				internal byte Blue;
-				[FieldOffset(1)]
-				internal byte Green;
-				[FieldOffset(2)]
-				internal byte Red;
-				[FieldOffset(3)]
-				internal byte Alpha;
-			}
-
 			private
 #if NET_2_0
 			static
@@ -131,39 +116,29 @@ namespace System.Windows.Forms
 				{
 				}
 #endif
-				internal static readonly ArgbColor[] Palette4Bit;
-				internal static readonly ArgbColor[] Palette8Bit;
+				internal static readonly ColorPalette Palette4Bit;
+				internal static readonly ColorPalette Palette8Bit;
 				private static readonly int[] squares;
 
 				static IndexedColorDepths()
 				{
-					Color[] palette;
 					Bitmap bitmap;
 					int index;
-					int count;
 
 					bitmap = new Bitmap(1, 1, PixelFormat.Format4bppIndexed);
-					palette = bitmap.Palette.Entries;
+					Palette4Bit = bitmap.Palette;
 					bitmap.Dispose();
-
-					Palette4Bit = new ArgbColor[count = palette.Length];
-					for (index = 0; index < count; index++)
-						Palette4Bit[index].Argb = palette[index].ToArgb();
 
 					bitmap = new Bitmap(1, 1, PixelFormat.Format8bppIndexed);
-					palette = bitmap.Palette.Entries;
+					Palette8Bit = bitmap.Palette;
 					bitmap.Dispose();
-
-					Palette8Bit = new ArgbColor[count = palette.Length];
-					for (index = 0; index < count; index++)
-						Palette8Bit[index].Argb = palette[index].ToArgb();
 
 					squares = new int[511];
 					for (index = 0; index < 256; index++)
 						squares[255 + index] = squares[255 - index] = index * index;
 				}
 
-				internal static int GetNearestColor(ArgbColor[] palette, int color)
+				internal static int GetNearestColor(Color[] palette, int color)
 				{
 					int index;
 					int count;
@@ -176,7 +151,7 @@ namespace System.Windows.Forms
 
 					count = palette.Length;
 					for (index = 0; index < count; index++)
-						if (palette[index].Argb == color)
+						if (palette[index].ToArgb() == color)
 							return color;
 
 					red = unchecked((int)(unchecked((uint)color) >> 16) & 0xFF);
@@ -186,8 +161,8 @@ namespace System.Windows.Forms
 					minDistance = int.MaxValue;
 
 					for (index = 0; index < count; index++)
-						if ((distance = squares[255 + palette[index].Red - red] + squares[255 + palette[index].Green - green] + squares[255 + palette[index].Blue - blue]) < minDistance) {
-							nearestColor = palette[index].Argb;
+						if ((distance = squares[255 + palette[index].R - red] + squares[255 + palette[index].G - green] + squares[255 + palette[index].B - blue]) < minDistance) {
+							nearestColor = palette[index].ToArgb();
 							minDistance = distance;
 						}
 
@@ -246,8 +221,8 @@ namespace System.Windows.Forms
 
 			#region ImageCollection Private Fields
 			private ColorDepth colorDepth = DefaultColorDepth;
-			private Color transparentColor = DefaultTransparentColor;
 			private Size imageSize = DefaultImageSize;
+			private Color transparentColor = DefaultTransparentColor;
 			private ArrayList list = new ArrayList();
 #if NET_2_0
 			private ArrayList keys = new ArrayList();
@@ -352,8 +327,10 @@ namespace System.Windows.Forms
 #endif
 						}
 
+						// Invalid ColorDepth values are ignored.
+						if (Enum.IsDefined(typeof(ColorDepth), value.ColorDepth))
+							this.colorDepth = (ColorDepth)value.ColorDepth;
 						this.imageSize = value.ImageSize;
-						this.colorDepth = value.ColorDepth;
 
 #if NET_2_0
 						// Event is raised even when handle was not created yet.
@@ -633,7 +610,7 @@ namespace System.Windows.Forms
 				int widthBytes;
 				int stride;
 				BitmapData bitmapData;
-				ArgbColor[] palette;
+				Color[] palette;
 
 				if (this.colorDepth < ColorDepth.Depth32Bit) {
 					bitmapData = bitmap.LockBits(new Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
@@ -644,7 +621,7 @@ namespace System.Windows.Forms
 						stride = bitmapData.Stride;
 
 						if (this.colorDepth < ColorDepth.Depth16Bit) {
-							palette = this.colorDepth < ColorDepth.Depth8Bit ? IndexedColorDepths.Palette4Bit : IndexedColorDepths.Palette8Bit;
+							palette = (this.colorDepth < ColorDepth.Depth8Bit ? IndexedColorDepths.Palette4Bit : IndexedColorDepths.Palette8Bit).Entries;
 
 							for (line = 0; line < height; line++) {
 								lineEndPtr = linePtr + widthBytes;
@@ -695,7 +672,7 @@ namespace System.Windows.Forms
 			internal Image GetImage(int index)
 			{
 				if (index < 0 || index >= this.Count)
-					throw new ArgumentOutOfRangeException("index", String.Format ("index is {0}, range is [0,{1})", 0, list.Count));
+					throw new ArgumentOutOfRangeException("index");
 
 				CreateHandle();
 				return (Image)list[index];
@@ -994,8 +971,8 @@ namespace System.Windows.Forms
 		#region Private Instance Methods
 		private void OnRecreateHandle()
 		{
-			if (recreateHandle != null)
-				recreateHandle(this, EventArgs.Empty);
+			if (this.recreateHandle != null)
+				this.recreateHandle(this, EventArgs.Empty);
 		}
 
 #if NET_2_0
@@ -1151,7 +1128,7 @@ namespace System.Windows.Forms
 
 		public override string ToString()
 		{
-			return base.ToString() + " Images.Count: " + images.Count.ToString() + ", ImageSize: " + images.ImageSize.ToString();
+			return base.ToString() + " Images.Count: " + images.Count.ToString() + ", ImageSize: " + this.ImageSize.ToString();
 		}
 		#endregion // Public Instance Methods
 
@@ -1170,11 +1147,11 @@ namespace System.Windows.Forms
 		[EditorBrowsable(EditorBrowsableState.Advanced)]
 		public event EventHandler RecreateHandle {
 			add {
-				recreateHandle += value;
+				this.recreateHandle += value;
 			}
 
 			remove {
-				recreateHandle -= value;
+				this.recreateHandle -= value;
 			}
 		}
 		#endregion // Events
