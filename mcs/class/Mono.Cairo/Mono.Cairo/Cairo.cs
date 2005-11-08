@@ -110,27 +110,27 @@ namespace Cairo {
 
                 [DllImport (CairoImp)]                
                 public static extern void cairo_rotate (IntPtr cr, double angle);
-
-                [DllImport (CairoImp)]
-                public static extern void cairo_transform (IntPtr cr, out Matrix_T matrix);
+		
+		[DllImport (CairoImp)]
+		public static extern void cairo_transform (IntPtr cr, Matrix matrix);
                 
                 [DllImport (CairoImp)]
-                public static extern void cairo_set_matrix (IntPtr cr, Matrix_T matrix);
+                public static extern void cairo_set_matrix (IntPtr cr, Matrix matrix);
                 
                 [DllImport (CairoImp)]
                 public static extern void cairo_identity_matrix (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_user_to_device (IntPtr cr, out double x, out double y);
+                public static extern void cairo_user_to_device (IntPtr cr, ref double x, ref double y);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_user_to_device_distance (IntPtr cr, out double dx, out double dy);
+                public static extern void cairo_user_to_device_distance (IntPtr cr, ref double dx, ref double dy);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_device_to_user (IntPtr cr, out double x, out double y);
+                public static extern void cairo_device_to_user (IntPtr cr, ref double x, ref double y);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_device_to_user_distance (IntPtr cr, out double dx, out double dy);
+                public static extern void cairo_device_to_user_distance (IntPtr cr, ref double dx, ref double dy);
 		
                 //
                 // Path creation
@@ -222,8 +222,7 @@ namespace Cairo {
 							     double size);
 		
 		[DllImport (CairoImp)]
-                public static extern void cairo_set_font_matrix (IntPtr cr,
-							     Matrix_T matrix);
+                public static extern void cairo_set_font_matrix (IntPtr cr, Matrix matrix);
 		
                 [DllImport (CairoImp)]
                 public static extern void cairo_show_text (IntPtr cr, string utf8);
@@ -305,7 +304,7 @@ namespace Cairo {
 		public static extern double cairo_get_miter_limit (IntPtr cr);
 
                 [DllImport (CairoImp)]
-                public static extern void cairo_get_matrix (IntPtr cr, Matrix_T matrix);
+                public static extern void cairo_get_matrix (IntPtr cr, Matrix matrix);
 
                 [DllImport (CairoImp)]
                 public static extern IntPtr cairo_get_target (IntPtr cr);
@@ -380,54 +379,39 @@ namespace Cairo {
                 //
                 // Matrix
                 //
-
-                [DllImport (CairoImp)]                
-                public static extern void cairo_matrix_init (ref Matrix_T matrix,
-		 double xx, double yx, double xy, double yy, double x0, double y0);
 		
 		[DllImport (CairoImp)]                
-                public static extern void cairo_matrix_init_translate (ref Matrix_T matrix,
-							 double tx, double ty);
+		public static extern void cairo_matrix_init_translate (Matrix matrix, double tx, double ty);
 		
 		[DllImport (CairoImp)]                
-                public static extern void cairo_matrix_translate (ref Matrix_T matrix,
-							 double tx, double ty);
+		public static extern void cairo_matrix_translate (Matrix matrix, double tx, double ty);
 		
-                [DllImport (CairoImp)]
-                public static extern void cairo_matrix_init_identity (ref Matrix_T matrix);
+		[DllImport (CairoImp)]
+		public static extern void cairo_matrix_init_identity (Matrix matrix);
 
-                [DllImport (CairoImp)]                
-                public static extern void cairo_matrix_init_scale (ref Matrix_T matrix,
-								   double sx, 
-								   double sy);
+		[DllImport (CairoImp)]                
+		public static extern void cairo_matrix_init_scale (Matrix matrix, double sx, double sy);
 		
-                [DllImport (CairoImp)]                
-                public static extern void cairo_matrix_scale (ref Matrix_T matrix,
-								   double sx, 
-								   double sy);
+		[DllImport (CairoImp)]                
+		public static extern void cairo_matrix_scale (Matrix matrix, double sx, double sy);
 
-                [DllImport (CairoImp)]
-                public static extern void cairo_matrix_init_rotate (
-                        ref Matrix_T matrix, double radians);		
+		[DllImport (CairoImp)]
+		public static extern void cairo_matrix_init_rotate (Matrix matrix, double radians);		
 		
-                [DllImport (CairoImp)]                                
-                public static extern void cairo_matrix_rotate (
-                        ref Matrix_T matrix, double radians);
+		[DllImport (CairoImp)]                                
+		public static extern void cairo_matrix_rotate (Matrix matrix, double radians);
 
-                [DllImport (CairoImp)]                                
-                public static extern Cairo.Status cairo_matrix_invert (ref Matrix_T matrix);
+		[DllImport (CairoImp)]                                
+		public static extern Cairo.Status cairo_matrix_invert (Matrix matrix);
 
-                [DllImport (CairoImp)]                                
-                public static extern void cairo_matrix_multiply (
-                        ref Matrix_T result, ref Matrix_T a, ref Matrix_T b);
+		[DllImport (CairoImp)]                                
+		public static extern void cairo_matrix_multiply (Matrix result, Matrix a, Matrix b);
 
-                [DllImport (CairoImp)]                                
-                public static extern void cairo_matrix_transform_distance (
-                        ref Matrix_T matrix, ref double dx, ref double dy);
+		[DllImport (CairoImp)]                                
+		public static extern void cairo_matrix_transform_distance (Matrix matrix, ref double dx, ref double dy);
 
-                [DllImport (CairoImp)]                                
-                public static extern void cairo_matrix_transform_point (
-                        ref Matrix_T matrix, ref double x, ref double y);
+		[DllImport (CairoImp)]                                
+		public static extern void cairo_matrix_transform_point (Matrix matrix, ref double x, ref double y);
 
                 //
                 // Pattern functions
@@ -469,10 +453,10 @@ namespace Cairo {
 		        double offset, double red, double green, double blue);
 
                 [DllImport (CairoImp)]
-                public static extern Status cairo_pattern_set_matrix (IntPtr pattern, IntPtr matrix);
+                public static extern Status cairo_pattern_set_matrix (IntPtr pattern, Matrix matrix);
 
                 [DllImport (CairoImp)]
-                public static extern Status cairo_pattern_get_matrix (IntPtr pattern, IntPtr matrix);
+                public static extern Status cairo_pattern_get_matrix (IntPtr pattern, Matrix matrix);
 
                 [DllImport (CairoImp)]
                 public static extern Status cairo_pattern_set_extend (IntPtr pattern, Extend extend);

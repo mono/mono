@@ -124,13 +124,14 @@ namespace Cairo {
                 protected virtual void Dispose (bool disposing)
                 {
 			if (!disposing){
-				//Console.WriteLine ("Cairo.Graphics: called from thread");
+				Console.WriteLine ("Cairo.Graphics: called from thread");
 				return;
 			}
 			
 			if (state == IntPtr.Zero)
 				return;
 
+			Console.WriteLine ("Destroying");
                         CairoAPI.cairo_destroy (state);
 			state = IntPtr.Zero;
                 }
@@ -488,52 +489,42 @@ namespace Cairo {
                 {
                         CairoAPI.cairo_translate (state, tx, ty);
                 }
+                
+		public void Transform (Matrix m)
+		{
+			CairoAPI.cairo_transform (state, m);
+		}
+                	
 
-                public PointD TransformPoint
-                {
-			get {
-				double x; double y;				
-				CairoAPI.cairo_user_to_device (state, out x, out y);
-				return new PointD(x, y);
-			}
-                }
+		public void TransformPoint (ref double x, ref double y)
+		{
+                	CairoAPI.cairo_user_to_device (state, ref x, ref y);
+		}
 		
-                public Distance TransformDistance 
-                {
-			get {
-				double dx; double dy;
-				CairoAPI.cairo_user_to_device_distance (state, out dx, out dy);
-				return new Distance(dx, dy);
-			}
-                }
+                public void TransformDistance (ref double dx, ref double dy) 
+		{
+			CairoAPI.cairo_user_to_device_distance (state, ref dx, ref dy);
+		}
+			
+		public void InverseTransformPoint (ref double x, ref double y)
+		{
+			CairoAPI.cairo_device_to_user (state, ref x, ref y);
+		}
 
-                public PointD InverseTransformPoint
-                {
-			get {
-				double x; double y;
-				CairoAPI.cairo_device_to_user (state, out x, out y);
-				return new PointD (x, y);
-			}
-                }
-
-                public Distance InverseTransformDistance
-                {
-			get {
-				double dx; double dy;
-				CairoAPI.cairo_device_to_user_distance (state, out dx, out dy);
-				return new Distance (dx, dy);
-			}
-                }
+		public void InverseTransformDistance (ref double dx, ref double dy)
+		{
+			CairoAPI.cairo_device_to_user_distance (state, ref dx, ref dy);
+		}
 		
                 public Cairo.Matrix Matrix {
                         set {
-                                CairoAPI.cairo_set_matrix (state, value.Pointer);
+                                CairoAPI.cairo_set_matrix (state, value);
                         }
 
                         get {
-				Matrix_T m = new Matrix_T ();
+				Matrix m = new Matrix();
 				CairoAPI.cairo_get_matrix (state, m);
-                                return new Matrix (m);
+                                return m;
                         }
                 }
 		/*
@@ -553,14 +544,16 @@ namespace Cairo {
                 }
 		 */ 
 
+		// FIXME should be made into a property
                 public void FontSetSize (double size)
                 {
                         CairoAPI.cairo_set_font_size (state, size);
                 }
 		
+		// FIXME should be made into a property
 		public void FontSetMatrix (Matrix m)
 		{
-			CairoAPI.cairo_set_font_matrix (state, m.Pointer);
+			CairoAPI.cairo_set_font_matrix (state, m);
 		}
                 
 		/*

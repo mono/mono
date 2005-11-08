@@ -155,7 +155,9 @@ namespace Cairo {
                 internal IntPtr surface = IntPtr.Zero;
 
 		protected Surface()
-		{}
+		{
+			Console.WriteLine (Environment.StackTrace);
+		}
 		
                 private Surface (IntPtr ptr, bool owns)
                 {
@@ -229,9 +231,10 @@ namespace Cairo {
 		{
 			if (surface == (IntPtr) 0)
 				return;
-			lock (surfaces.SyncRoot){
+			
+			lock (surfaces.SyncRoot)
 				surfaces.Remove (surface);
-			}
+
 			CairoAPI.cairo_surface_destroy (surface);
 			surface = (IntPtr) 0;
 		}
@@ -242,13 +245,14 @@ namespace Cairo {
 		}
 		
                 public IntPtr Handle {
-                        get { return surface; }
+                        get {
+				return surface;
+			}
                 }
 
 		public PointD DeviceOffset {
-			set { CairoAPI.cairo_surface_set_device_offset (surface,
-								    value.X,
-								    value.Y);
+			set {
+				CairoAPI.cairo_surface_set_device_offset (surface, value.X, value.Y);
 			}
 		}
 		
@@ -263,12 +267,14 @@ namespace Cairo {
 		}
 		
                 public IntPtr Pointer {
-                        get { return surface; }
+                        get {
+				return surface;
+			}
                 }
-
-				public Status Status {
-					get { return CairoAPI.cairo_surface_status (surface); }
-				}
+		
+		public Status Status {
+			get { return CairoAPI.cairo_surface_status (surface); }
+		}
 
         }
 }

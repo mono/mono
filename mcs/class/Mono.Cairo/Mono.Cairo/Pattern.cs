@@ -131,18 +131,13 @@ namespace Cairo {
 		
                 public Matrix Matrix {
                         set { 
-				CairoAPI.cairo_pattern_set_matrix (pattern,
-								   value.Raw);
+				CairoAPI.cairo_pattern_set_matrix (pattern, value);
 			}
 
                         get {
-				Matrix_T matrix = new Matrix_T ();				
-				IntPtr p = Marshal.AllocCoTaskMem ( Marshal.SizeOf (matrix));
-				Marshal.StructureToPtr (matrix, p, true);
-				CairoAPI.cairo_pattern_get_matrix (pattern, p);
-				matrix = (Matrix_T)Marshal.PtrToStructure(p, typeof(Matrix_T));
-				Marshal.FreeCoTaskMem (p);
-				return new Cairo.Matrix (matrix);
+				Matrix m = new Matrix ();
+				CairoAPI.cairo_pattern_get_matrix (pattern, m);
+				return m;
                         }
                 }
 
