@@ -855,6 +855,15 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsComImport {
+			get {
+				if (OptAttributes == null)
+					return false;
+
+				return OptAttributes.Contains (TypeManager.comimport_attr_type, EmitContext);
+			}
+		}
+
 		public virtual void RegisterFieldForInitialization (FieldMember field)
 		{
 			if ((field.ModFlags & Modifiers.STATIC) != 0){
@@ -4404,6 +4413,15 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.UNSAFE) != 0)
 				ConstructorBuilder.InitLocals = false;
+
+			if (Parent.IsComImport) {
+				if (!IsDefault ()) {
+					Report.Error (669, Location, "`{0}': A class with the ComImport attribute cannot have a user-defined constructor",
+						Parent.GetSignatureForError ());
+					return false;
+				}
+				ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall);
+			}
 			
 			TypeManager.AddMethod (ConstructorBuilder, this);
 
