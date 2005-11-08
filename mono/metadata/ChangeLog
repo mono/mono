@@ -1,3 +1,7 @@
+2005-11-08  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 53.
+
 2005-11-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-manager.h: Added definitions to deal with strongname key 
