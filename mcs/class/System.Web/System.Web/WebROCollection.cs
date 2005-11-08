@@ -32,6 +32,20 @@ namespace System.Web
 {
 	class WebROCollection : NameValueCollection
 	{
+		bool got_id;
+		int id;
+
+		public bool GotID {
+			get { return got_id; }
+		}
+
+		public int ID {
+			get { return id; }
+			set {
+				got_id = true;
+				id = value;
+			}
+		}
 		public void Protect ()
 		{
 			IsReadOnly = true;
