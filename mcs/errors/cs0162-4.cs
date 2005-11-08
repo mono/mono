@@ -13,3 +13,5 @@ class C {
 			Console.WriteLine ("error");
 	}
 }
+
+class XXXX { static void Main () {} }
