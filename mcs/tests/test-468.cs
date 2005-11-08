@@ -10,7 +10,12 @@ CoClass(typeof(CorMetaDataDispenserExClass))]
 
 public class Test {
 	
-	public static void Main () {
+	public static void XXX () {
 		Object o = new MetaDataDispenserEx ();
 	}
+
+	static void Main ()
+	{
+}
+	
 }
