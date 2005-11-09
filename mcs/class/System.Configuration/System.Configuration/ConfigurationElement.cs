@@ -42,6 +42,7 @@ namespace System.Configuration
 		bool modified;
 		ElementMap map;
 		ConfigurationPropertyCollection keyProps;
+		ConfigurationElementCollection defaultCollection;
 		bool readOnly;
 		ElementInformation elementInfo;
 		ConfigurationElementProperty elementProperty;
@@ -147,7 +148,7 @@ namespace System.Configuration
 		{
 			if (keyProps != null) return keyProps;
 			
-			if (map.Properties == Properties)
+			if (map != null && map.Properties == Properties)
 				keyProps = map.KeyProperties;
 			else {
 				keyProps = new ConfigurationPropertyCollection ();
@@ -157,6 +158,31 @@ namespace System.Configuration
 				}
 			}
 			return keyProps;
+		}
+
+		internal ConfigurationElementCollection GetDefaultCollection ()
+		{
+			if (defaultCollection != null) return defaultCollection;
+
+			ConfigurationProperty defaultCollectionProp = null;
+
+			if (map != null && map.Properties == Properties) {
+				defaultCollectionProp = map.DefaultCollectionProperty;
+			}
+			else {
+				foreach (ConfigurationProperty prop in Properties) {
+					if (prop.IsDefaultCollection) {
+						defaultCollectionProp = prop;
+						break;
+					}
+				}
+			}
+
+			if (defaultCollectionProp != null) {
+				defaultCollection = this [defaultCollectionProp] as ConfigurationElementCollection;
+			}
+
+			return defaultCollection;
 		}
 
 		protected internal object this [ConfigurationProperty property] {
@@ -169,7 +195,7 @@ namespace System.Configuration
 				PropertyInformation pi = ElementInformation.Properties [property_name];
 				if (pi == null)
 					throw new InvalidOperationException ("Property '" + property_name + "' not found in configuration element");
-				
+
 				return pi.Value;
 			}
 
@@ -258,8 +284,15 @@ namespace System.Configuration
 					
 					PropertyInformation prop = ElementInformation.Properties [reader.LocalName];
 					if (prop == null || (serializeCollectionKey && !prop.IsKey)) {
-						if (!OnDeserializeUnrecognizedElement (reader.LocalName, reader))
+						if (prop == null) {
+							ConfigurationElementCollection c = GetDefaultCollection ();
+							if (c != null && c.OnDeserializeUnrecognizedElement (reader.LocalName, reader))
+								continue;
+						}
+
+						if (!OnDeserializeUnrecognizedElement (reader.LocalName, reader)) {
 							throw new ConfigurationException ("Unrecognized element '" + reader.LocalName + "'.");
+						}
 						continue;
 					}
 					
@@ -450,7 +483,8 @@ namespace System.Configuration
 		
 		ConfigurationPropertyCollection properties;
 		ConfigurationPropertyCollection keyProperties;
-		
+		ConfigurationProperty defaultCollectionProperty;
+
 		ConfigurationCollectionAttribute collectionAttribute;
 		
 		public static ElementMap GetMap (Type t)
@@ -535,6 +569,19 @@ namespace System.Configuration
 		
 		public ConfigurationCollectionAttribute CollectionAttribute {
 			get { return collectionAttribute; }
+		}
+		
+		public ConfigurationProperty DefaultCollectionProperty {
+			get {
+				if (defaultCollectionProperty == null) {
+					if (properties != null)
+						foreach (ConfigurationProperty p in properties) {
+							if (p.IsDefaultCollection) defaultCollectionProperty = p;
+							break;
+						}
+				}
+				return defaultCollectionProperty;
+			}
 		}
 	}
 }

@@ -1,3 +1,14 @@
+2005-11-09  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationElement.cs: Add support for DefaultCollection
+	attributes.
+
+	* PropertyInformation.cs (PropertyInformation.Value): add case for
+	IsDefaultCollection.
+
+	* SectionGroupInfo.cs (SectionGroupInfo.ReadConfig): when we read
+	a "type" attribute, make sure the cached System.Type is cleared.
+
 2005-10-25  Chris Toshok  <toshok@ximian.com>
 
 	* InfiniteTimeSpanConverter.cs: new implementation.

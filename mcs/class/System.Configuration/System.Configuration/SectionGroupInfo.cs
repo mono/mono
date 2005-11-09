@@ -146,8 +146,10 @@ namespace System.Configuration
 				while (reader.MoveToNextAttribute ()) {
 					if (reader.Name == "name")
 						Name = reader.Value;
-					else if (reader.Name == "type")
+					else if (reader.Name == "type") {
 						TypeName = reader.Value;
+						Type = null;
+					}
 					else
 						ThrowException ("Unrecognized attribute", reader);
 				}
