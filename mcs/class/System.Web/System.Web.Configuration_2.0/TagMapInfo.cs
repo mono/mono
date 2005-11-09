@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.HttpModuleAction
+// System.Web.Configuration.TagMapInfo
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -32,56 +32,67 @@
 
 using System;
 using System.Configuration;
+using System.Xml;
 
 namespace System.Web.Configuration
 {
-	public sealed class HttpModuleAction: ConfigurationElement
+	public sealed class TagMapInfo : ConfigurationElement
 	{
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty nameProp;
-		static ConfigurationProperty typeProp;
+		static ConfigurationProperty mappedTagTypeProp;
+		static ConfigurationProperty tagTypeProp;
 
-		static HttpModuleAction ()
+
+		static TagMapInfo ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
+			mappedTagTypeProp = new ConfigurationProperty ("mappedTagType", typeof (string));
+			tagTypeProp = new ConfigurationProperty ("tagType", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+
 			properties = new ConfigurationPropertyCollection ();
-			properties.Add (nameProp);
-			properties.Add (typeProp);
+			properties.Add (mappedTagTypeProp);
+			properties.Add (tagTypeProp);
 		}
 
-		[MonoTODO]
-		public HttpModuleAction (string name, string type)
+		public TagMapInfo (string tagTypeName, string mappedTagTypeName)
 		{
-			this.Name = name;
-			this.Type = type;
+			this.TagType = tagTypeName;
+			this.MappedTagType = mappedTagTypeName;
 		}
-#if notyet
+
 		[MonoTODO]
-		protected override ConfigurationElementProperty ElementProperty {
-			get {
-				throw new NotImplementedException ();
-			}
+		public override bool Equals (object map)
+		{
+			return base.Equals (map);
 		}
-#endif
 
-		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		[MonoTODO]
+		protected override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
+		{
+			return base.SerializeElement (writer, serializeCollectionKey);
+		}
+
+		[MonoTODO]
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
 		[StringValidator (MinLength = 1)]
-		public new string Name {
-			get { return (string)base[nameProp]; }
-			set { base[nameProp] = value; }
+		[ConfigurationProperty ("mappedTagType")]
+		public string MappedTagType {
+			get { return (string) base[mappedTagTypeProp]; }
+			set { base[mappedTagTypeProp] = value; }
 		}
 
-		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
-		public string Type {
-			get { return (string)base[typeProp]; }
-			set { base[typeProp] = value; }
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("tagType", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		public string TagType {
+			get { return (string) base[tagTypeProp]; }
+			set { base[tagTypeProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				return properties;
-			}
+			get { return properties; }
 		}
 	}
 }

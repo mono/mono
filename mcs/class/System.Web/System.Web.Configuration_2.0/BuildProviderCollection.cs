@@ -34,6 +34,7 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
+	[ConfigurationCollection (typeof (BuildProvider), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class BuildProviderCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection props;
@@ -88,7 +89,7 @@ namespace System.Web.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new BuildProvider (null, null, BuildProviderAppliesTo.Web);
+			return new BuildProvider (null, null);
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)

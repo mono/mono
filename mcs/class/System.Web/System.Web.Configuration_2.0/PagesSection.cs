@@ -44,21 +44,77 @@ namespace System.Web.Configuration
 		static ConfigurationProperty asyncTimeoutProp;
 		static ConfigurationProperty autoEventWireupProp;
 		static ConfigurationProperty bufferProp;
+		static ConfigurationProperty controlsProp;
+		static ConfigurationProperty enableEventValidationProp;
+		static ConfigurationProperty enableSessionStateProp;
+		static ConfigurationProperty enableViewStateProp;
+		static ConfigurationProperty enableViewStateMacProp;
+		static ConfigurationProperty maintainScrollPositionOnPostBackProp;
+		static ConfigurationProperty masterPageFileProp;
+		static ConfigurationProperty maxPageStateFieldLengthProp;
 		static ConfigurationProperty modeProp;
-		
+		static ConfigurationProperty namespacesProp;
+		static ConfigurationProperty pageBaseTypeProp;
+		static ConfigurationProperty pageParserFilterTypeProp;
+		static ConfigurationProperty smartNavigationProp;
+		static ConfigurationProperty styleSheetThemeProp;
+		static ConfigurationProperty tagMappingProp;
+		static ConfigurationProperty themeProp;
+		static ConfigurationProperty userControlBaseTypeProp;
+		static ConfigurationProperty validateRequestProp;
+		static ConfigurationProperty viewStateEncryptionModeProp;
+
 		static PagesSection ()
 		{
-			properties = new ConfigurationPropertyCollection ();
 			asyncTimeoutProp = new ConfigurationProperty ("asyncTimeout", typeof(TimeSpan), null);
 			autoEventWireupProp = new ConfigurationProperty ("autoEventWireup", typeof(bool), true);
 			bufferProp = new ConfigurationProperty ("buffer", typeof(bool), false);
+			controlsProp = new ConfigurationProperty ("controls", typeof(TagPrefixCollection), null);
+			enableEventValidationProp = new ConfigurationProperty ("enableEventValidation", typeof (bool), true);
+			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (bool), true);
+			enableViewStateProp = new ConfigurationProperty ("enableViewState", typeof (bool), true);
+			enableViewStateMacProp = new ConfigurationProperty ("enableViewStateMac", typeof (bool), true);
+			maintainScrollPositionOnPostBackProp = new ConfigurationProperty ("maintainScrollPositionOnPostBack", typeof (bool), false);
+			masterPageFileProp = new ConfigurationProperty ("masterPageFile", typeof (string), "");
+			maxPageStateFieldLengthProp = new ConfigurationProperty ("maxPageStateFieldLength", typeof (int), -1);
 			modeProp = new ConfigurationProperty ("compilationMode", typeof (CompilationMode), CompilationMode.Always);
+			namespacesProp = new ConfigurationProperty ("namespacesProp", typeof (NamespaceCollection), null);
+			pageBaseTypeProp = new ConfigurationProperty ("pageBaseType", typeof (string), "System.Web.UI.Page");
+			pageParserFilterTypeProp = new ConfigurationProperty ("pageParserFilterTypeProp", typeof (string), "");
+			smartNavigationProp = new ConfigurationProperty ("smartNavigation", typeof (bool), false);
+			styleSheetThemeProp = new ConfigurationProperty ("styleSheetTheme", typeof (string), "");
+			tagMappingProp = new ConfigurationProperty ("tagMapping", typeof (TagMapCollection), null);
+			themeProp = new ConfigurationProperty ("theme", typeof (string), "");
+			userControlBaseTypeProp = new ConfigurationProperty ("userControlBaseTypeProp", typeof (string), "System.Web.UI.UserControl");
+			validateRequestProp = new ConfigurationProperty ("validateRequestProp", typeof (bool), true);
+			viewStateEncryptionModeProp = new ConfigurationProperty ("viewStateEncryptionModeProp", typeof (ViewStateEncryptionMode), ViewStateEncryptionMode.Auto);
+
+			properties = new ConfigurationPropertyCollection ();
+			properties.Add (asyncTimeoutProp);
+			properties.Add (autoEventWireupProp);
+			properties.Add (bufferProp);
+			properties.Add (enableEventValidationProp);
+			properties.Add (enableSessionStateProp);
+			properties.Add (enableViewStateProp);
+			properties.Add (enableViewStateMacProp);
+			properties.Add (maintainScrollPositionOnPostBackProp);
+			properties.Add (masterPageFileProp);
+			properties.Add (maxPageStateFieldLengthProp);
+			properties.Add (modeProp);
+			properties.Add (pageBaseTypeProp);
+			properties.Add (pageParserFilterTypeProp);
+			properties.Add (smartNavigationProp);
+			properties.Add (styleSheetThemeProp);
+			properties.Add (themeProp);
+			properties.Add (userControlBaseTypeProp);
+			properties.Add (validateRequestProp);
+			properties.Add (viewStateEncryptionModeProp);
 		}
 
 		public PagesSection ()
 		{
 		}
-
+		
 		[TimeSpanValidator (MinValueString = "00:00:00",
 				    MaxValueString = "10675199.02:48:05.4775807")]
 		[TypeConverter (typeof (TimeSpanSecondsConverter))]
@@ -68,216 +124,133 @@ namespace System.Web.Configuration
 			set { base [asyncTimeoutProp] = value; }
 		}
 
-		[ConfigurationProperty ("autoEventWireup", DefaultValue = true)]
+		[ConfigurationProperty ("autoEventWireup", DefaultValue = "True")]
 		public bool AutoEventWireup {
 			get { return (bool) base [autoEventWireupProp]; }
 			set { base [autoEventWireupProp] = value; }
 		}
 
-		[ConfigurationProperty ("buffer", DefaultValue = true)]
+		[ConfigurationProperty ("buffer", DefaultValue = "True")]
 		public bool Buffer {
 			get { return (bool) base [bufferProp]; }
 			set { base [bufferProp] = value; }
 		}
 
-		[ConfigurationProperty ("compilationMode", DefaultValue = CompilationMode.Always)]
+		[ConfigurationProperty ("compilationMode", DefaultValue = "Always")]
 		public CompilationMode CompilationMode {
 			get { return (CompilationMode) base [modeProp]; }
 			set { base [modeProp] = value; }
 		}
 
-#if notyet
-		[MonoTODO]
+		[ConfigurationProperty ("controls")]
 		public TagPrefixCollection Controls {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return (TagPrefixCollection) base[controlsProp]; }
 		}
-#endif
 
-		[MonoTODO]
-		[ConfigurationProperty ("enableSessionState", DefaultValue = true)]
+		[ConfigurationProperty ("enableEventValidation", DefaultValue = "True")]
+		public bool EnableEventValidation {
+			get { return (bool) base[enableEventValidationProp]; }
+			set { base[enableEventValidationProp] = value; }
+		}
+
+		[ConfigurationProperty ("enableSessionState", DefaultValue = "true")]
 		public PagesEnableSessionState EnableSessionState {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (PagesEnableSessionState) base[enableSessionStateProp]; }
+			set { base[enableSessionStateProp] = value; }
 		}
 
-		[MonoTODO]
-		[ConfigurationProperty ("enableViewState", DefaultValue = true)]
+		[ConfigurationProperty ("enableViewState", DefaultValue = "True")]
 		public bool EnableViewState {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (bool) base[enableViewStateProp]; }
+			set { base[enableViewStateProp] = value; }
 		}
 
-		[MonoTODO]
-		[ConfigurationProperty ("enableViewStateMac", DefaultValue = true)]
+		[ConfigurationProperty ("enableViewStateMac", DefaultValue = "True")]
 		public bool EnableViewStateMac {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (bool) base[enableViewStateMacProp]; }
+			set { base[enableViewStateMacProp] = value; }
 		}
 
-		[MonoTODO]
-		[ConfigurationProperty ("maintainScrollPositionOnPostBack", DefaultValue = false)]
+		[ConfigurationProperty ("maintainScrollPositionOnPostBack", DefaultValue = "False")]
 		public bool MaintainScrollPositionOnPostBack {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (bool) base[maintainScrollPositionOnPostBackProp]; }
+			set { base [maintainScrollPositionOnPostBackProp] = value; }
 		}
 
-		[MonoTODO]
 		[ConfigurationProperty ("masterPageFile", DefaultValue = "")]
 		public string MasterPageFile {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (string) base[masterPageFileProp]; }
+			set { base[masterPageFileProp] = value; }
 		}
 
-		[MonoTODO]
-		[ConfigurationProperty ("maxPageStateFieldLength", DefaultValue = -1)]
+		[ConfigurationProperty ("maxPageStateFieldLength", DefaultValue = "-1")]
 		public int MaxPageStateFieldLength {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (int) base[maxPageStateFieldLengthProp]; }
+			set { base[maxPageStateFieldLengthProp] = value; }
 		}
 
-#if notyet
-		[MonoTODO]
 		[ConfigurationProperty ("namespaces")]
 		public NamespaceCollection Namespaces {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return (NamespaceCollection) base[namespacesProp]; }
 		}
-#endif
 
-		[MonoTODO]
 		[ConfigurationProperty ("pageBaseType", DefaultValue = "System.Web.UI.Page")]
 		public string PageBaseType {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (string) base[pageBaseTypeProp]; }
+			set { base[pageBaseTypeProp] = value; }
 		}
 
-		[MonoTODO]
 		[ConfigurationProperty ("pageParserFilterType", DefaultValue = "")]
 		public string PageParserFilterType {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (string) base[pageParserFilterTypeProp]; }
+			set { base [pageParserFilterTypeProp] = value; }
 		}
 
-		[MonoTODO]
-		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
-		[MonoTODO]
-		[ConfigurationProperty ("smartNavigation", DefaultValue = false)]
+		[ConfigurationProperty ("smartNavigation", DefaultValue = "False")]
 		public bool SmartNavigation {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (bool) base[smartNavigationProp]; }
+			set { base[smartNavigationProp] = value; }
 		}
 
-		[MonoTODO]
 		[ConfigurationProperty ("styleSheetTheme", DefaultValue = "")]
 		public string StyleSheetTheme {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (string) base[styleSheetThemeProp]; }
+			set { base[styleSheetThemeProp] = value; }
 		}
 
-#if notyet
-		[MonoTODO]
 		[ConfigurationProperty ("tagMapping")]
 		public TagMapCollection TagMapping {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return (TagMapCollection) base [tagMappingProp]; }
 		}
-#endif
 
-		[MonoTODO]
 		[ConfigurationProperty ("theme", DefaultValue = "")]
 		public string Theme {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (string) base[themeProp]; }
+			set { base[themeProp] = value; }
 		}
 
-		[MonoTODO]
 		[ConfigurationProperty ("userControlBaseType", DefaultValue = "System.Web.UI.UserControl")]
 		public string UserControlBaseType {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (string) base[userControlBaseTypeProp]; }
+			set { base[userControlBaseTypeProp] = value; }
 		}
 
-		[MonoTODO]
-		[ConfigurationProperty ("validateRequest", DefaultValue = true)]
+		[ConfigurationProperty ("validateRequest", DefaultValue = "True")]
 		public bool ValidateRequest {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (bool) base[validateRequestProp]; }
+			set { base[validateRequestProp] = value; }
 		}
 
-#if notyet
-		[MonoTODO]
-		[ConfigurationProperty ("viewStateEncryptionMode", DefaultValue = ViewStateEncryptionMode.Auto)]
+		[ConfigurationProperty ("viewStateEncryptionMode", DefaultValue = "Auto")]
 		public ViewStateEncryptionMode ViewStateEncryptionMode {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (ViewStateEncryptionMode) base [viewStateEncryptionModeProp]; }
+			set { base [viewStateEncryptionModeProp] = value; }
 		}
-#endif
-		
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+
 		[MonoTODO]
 		protected override void DeserializeSection (XmlReader reader)
 		{

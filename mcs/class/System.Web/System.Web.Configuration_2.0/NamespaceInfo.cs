@@ -1,10 +1,10 @@
 //
-// System.Web.Configuration.CodeSubDirectory
+// System.Web.Configuration.NamespaceInfo
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// (c) Copyright 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,43 +27,57 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
+
 using System;
-using System.Configuration;
 using System.ComponentModel;
+using System.Configuration;
+using System.Web.UI;
+using System.Xml;
 
 namespace System.Web.Configuration
 {
-	public sealed class CodeSubDirectory : ConfigurationElement
+	public sealed class NamespaceInfo : ConfigurationElement
 	{
-		static ConfigurationPropertyCollection props;
-		string directoryName;
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty namespaceProp;
 
-		static CodeSubDirectory ()
+		static NamespaceInfo ()
 		{
-			props = new ConfigurationPropertyCollection ();
-/*			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.IsKey | ConfigurationPropertyFlags.Required;
-			NonEmptyStringFlags strFlags = NonEmptyStringFlags.TrimWhitespace;
-			ConfigurationProperty prop = new NonEmptyStringConfigurationProperty ("directoryName", "", flags, strFlags);
-			props.Add (prop);
-*/		}
-
-		public CodeSubDirectory (string directoryName)
-		{
-			this.directoryName = directoryName;
+			namespaceProp = new ConfigurationProperty ("namespace", typeof (string), "");
+			properties = new ConfigurationPropertyCollection ();
 		}
 
-		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
-		[ConfigurationProperty ("directoryName", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		public string DirectoryName {
-			get { return directoryName; }
-			set { directoryName = value; }
+		public NamespaceInfo (string name)
+		{
+			Namespace = name;
+		}
+
+		[MonoTODO]
+		public override bool Equals (object namespaceInformation)
+		{
+			return base.Equals (namespaceInformation);
+		}
+
+		[MonoTODO]
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("namespace", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		public string Namespace {
+			get { return (string) base[namespaceProp]; }
+			set { base[namespaceProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return props; }
+			get { return properties; }
 		}
+
 	}
 }
-#endif // NET_2_0
 
+#endif

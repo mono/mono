@@ -44,10 +44,11 @@ namespace System.Web.Configuration
 		
 		static AuthenticationSection ()
 		{
-			properties = new ConfigurationPropertyCollection ();
 			formsProp = new ConfigurationProperty ("forms", typeof(FormsAuthenticationConfiguration), null);
 			passportProp = new ConfigurationProperty ("passport", typeof(PassportAuthentication), null);
-			modeProp = new ConfigurationProperty ("mode", typeof(AuthenticationMode), null);
+			modeProp = new ConfigurationProperty ("mode", typeof(AuthenticationMode), AuthenticationMode.Windows);
+
+			properties = new ConfigurationPropertyCollection ();
 			properties.Add (formsProp);
 			properties.Add (passportProp);
 			properties.Add (modeProp);
@@ -57,24 +58,26 @@ namespace System.Web.Configuration
 		{
 		}
 		
+		[ConfigurationProperty ("forms")]
 		public FormsAuthenticationConfiguration Forms {
 			get { return (FormsAuthenticationConfiguration) base [formsProp]; }
 		}
 		
+		[ConfigurationProperty ("passport")]
 		public PassportAuthentication Passport {
 			get { return (PassportAuthentication) base [passportProp]; }
 		}
 		
+		[ConfigurationProperty ("mode", DefaultValue = "Windows")]
 		public AuthenticationMode Mode {
 			get { return (AuthenticationMode) base [modeProp]; }
 			set { base [modeProp] = value; }
 		}
 		
-/*		
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-*/
+
 	}
 }
 

@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.HttpModuleAction
+// System.Web.Configuration.NamespaceCollection
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -31,59 +31,77 @@
 #if NET_2_0
 
 using System;
+using System.ComponentModel;
 using System.Configuration;
+using System.Web.UI;
+using System.Xml;
 
 namespace System.Web.Configuration
 {
-	public sealed class HttpModuleAction: ConfigurationElement
+	[ConfigurationCollection (typeof (NamespaceInfo), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
+	public sealed class NamespaceCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty nameProp;
-		static ConfigurationProperty typeProp;
+		static ConfigurationProperty autoImportProp;
 
-		static HttpModuleAction ()
+		static NamespaceCollection ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
-			properties.Add (nameProp);
-			properties.Add (typeProp);
+			properties.Add (autoImportProp);
 		}
 
-		[MonoTODO]
-		public HttpModuleAction (string name, string type)
+		public NamespaceCollection ()
 		{
-			this.Name = name;
-			this.Type = type;
-		}
-#if notyet
-		[MonoTODO]
-		protected override ConfigurationElementProperty ElementProperty {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-#endif
-
-		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		[StringValidator (MinLength = 1)]
-		public new string Name {
-			get { return (string)base[nameProp]; }
-			set { base[nameProp] = value; }
 		}
 
-		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
-		public string Type {
-			get { return (string)base[typeProp]; }
-			set { base[typeProp] = value; }
+		public void Add (NamespaceInfo namespaceInformation)
+		{
+			BaseAdd (namespaceInformation);
+		}
+
+		public void Clear ()
+		{
+			BaseClear ();
+		}
+
+		protected override ConfigurationElement CreateNewElement ()
+		{
+			return new NamespaceInfo ("");
+		}
+
+		protected override object GetElementKey (ConfigurationElement element)
+		{
+			return ((NamespaceInfo)element).Namespace;
+		}
+
+		public void Remove (string s)
+		{
+			BaseRemove (s);
+		}
+
+		public void RemoveAt (int index)
+		{
+			BaseRemoveAt (index);
+		}
+
+		[ConfigurationProperty ("autoImportVBNamespace", DefaultValue = true)]
+		public bool AutoImportVBNamespace {
+			get { return (bool) base[autoImportProp]; }
+			set { base[autoImportProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				return properties;
-			}
+			get { return properties; }
 		}
+
+		public NamespaceInfo this[int index] {
+			get { return (NamespaceInfo) BaseGet (index); }
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
+		}
+
 	}
+
 }
 
 #endif

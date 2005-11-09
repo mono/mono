@@ -37,24 +37,49 @@ namespace System.Web.Configuration
 {
 	public sealed class HttpModulesSection: ConfigurationSection
 	{
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty modulesProp;
+
 		public HttpModulesSection ()
 		{
+			properties = new ConfigurationPropertyCollection ();
+			modulesProp = new ConfigurationProperty ("", typeof (HttpModuleActionCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+			properties.Add (modulesProp);
 		}
 
-		[MonoTODO]
 		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public HttpModuleActionCollection Modules {
 			get {
-				throw new NotImplementedException ();
+				return (HttpModuleActionCollection) base [modulesProp];
 			}
 		}
 
 		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
 			get {
-				throw new NotImplementedException ();
+				return properties;
 			}
 		}
+
+		/* stolen from the 1.0 S.W.Config ModulesConfiguration.cs */
+		[MonoTODO]
+		internal HttpModuleCollection LoadModules (HttpApplication app)
+		{
+			HttpModuleCollection coll = new HttpModuleCollection ();
+			foreach (HttpModuleAction item in Modules){
+				Type type = Type.GetType (item.Type);
+				if (type == null) {
+					/* XXX should we throw here? */
+					continue;
+				}
+				IHttpModule module = (IHttpModule) Activator.CreateInstance (type);
+				module.Init (app);
+				coll.AddModule (item.Name, module);
+			}
+
+			return coll;
+		}
+
 	}
 }
 

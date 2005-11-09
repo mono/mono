@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -31,11 +32,148 @@
 #if NET_2_0
 
 using System.Configuration;
+using System.ComponentModel;
 
 namespace System.Web.Configuration
 {
 	public sealed class FormsAuthenticationConfiguration: ConfigurationElement
 	{
+		static ConfigurationPropertyCollection properties;
+
+		static ConfigurationProperty cookielessProp;
+		static ConfigurationProperty credentialsProp;
+		static ConfigurationProperty defaultUrlProp;
+		static ConfigurationProperty domainProp;
+		static ConfigurationProperty enableCrossAppRedirectsProp;
+		static ConfigurationProperty loginUrlProp;
+		static ConfigurationProperty nameProp;
+		static ConfigurationProperty pathProp;
+		static ConfigurationProperty protectionProp;
+		static ConfigurationProperty requireSSLProp;
+		static ConfigurationProperty slidingExpirationProp;
+		static ConfigurationProperty timeoutProp;
+
+		static FormsAuthenticationConfiguration ()
+		{
+			cookielessProp = new ConfigurationProperty ("cookieless", typeof (HttpCookieMode), HttpCookieMode.UseDeviceProfile);
+			credentialsProp = new ConfigurationProperty ("credentials", typeof (FormsAuthenticationCredentials), null);
+			defaultUrlProp = new ConfigurationProperty ("defaultUrl", typeof (string), "default.aspx");
+			domainProp = new ConfigurationProperty ("domain", typeof (string), "");
+			enableCrossAppRedirectsProp = new ConfigurationProperty ("enableCrossAppRedirects", typeof (bool), false);
+			loginUrlProp = new ConfigurationProperty ("loginUrl", typeof (string), "login.aspx");
+			nameProp = new ConfigurationProperty ("name", typeof (string), ".ASPXAUTH");
+			pathProp = new ConfigurationProperty ("path", typeof (string), "/");
+			protectionProp = new ConfigurationProperty ("protection", typeof (FormsProtectionEnum), FormsProtectionEnum.All);
+			requireSSLProp = new ConfigurationProperty ("requireSSL", typeof (bool), false);
+			slidingExpirationProp = new ConfigurationProperty ("slidingExpiration", typeof (bool), true);
+			timeoutProp = new ConfigurationProperty ("timeout", typeof (TimeSpan), TimeSpan.FromMinutes (30));
+
+			properties = new ConfigurationPropertyCollection ();
+			properties.Add (cookielessProp);
+			properties.Add (credentialsProp);
+			properties.Add (defaultUrlProp);
+			properties.Add (domainProp);
+			properties.Add (enableCrossAppRedirectsProp);
+			properties.Add (loginUrlProp);
+			properties.Add (nameProp);
+			properties.Add (pathProp);
+			properties.Add (protectionProp);
+			properties.Add (requireSSLProp);
+			properties.Add (slidingExpirationProp);
+			properties.Add (timeoutProp);
+		}
+
+		public FormsAuthenticationConfiguration ()
+		{
+		}
+
+		[ConfigurationProperty ("cookieless", DefaultValue = "UseDeviceProfile")]
+		public HttpCookieMode Cookieless {
+			get { return (HttpCookieMode)base[cookielessProp]; }
+			set { base[cookielessProp] = value; }
+		}
+
+		[ConfigurationProperty ("credentials")]
+		public FormsAuthenticationCredentials Credentials {
+			get { return (FormsAuthenticationCredentials) base[credentialsProp]; }
+		}
+
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("defaultUrl", DefaultValue = "default.aspx")]
+		public string DefaultUrl {
+			get { return (string) base[defaultUrlProp]; }
+			set { base[defaultUrlProp] = value; }
+		}
+
+		[ConfigurationProperty ("domain", DefaultValue = "")]
+		public string Domain {
+			get { return (string) base[domainProp]; }
+			set { base[domainProp] = value; }
+		}
+
+		[ConfigurationProperty ("enableCrossAppRedirects", DefaultValue = "False")]
+		public bool EnableCrossAppRedirects {
+			get { return (bool) base[enableCrossAppRedirectsProp]; }
+			set { base[enableCrossAppRedirectsProp] = value; }
+		}
+
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("loginUrl", DefaultValue = "login.aspx")]
+		public string LoginUrl {
+			get { return (string) base[loginUrlProp]; }
+			set { base[loginUrlProp] = value; }
+		}
+
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("name", DefaultValue = ".ASPXAUTH")]
+		public string Name {
+			get { return (string) base[nameProp]; }
+			set { base[nameProp] = value; }
+		}
+
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("path", DefaultValue = "/")]
+		public string Path {
+			get { return (string) base[pathProp]; }
+			set { base[pathProp] = value; }
+		}
+
+		[ConfigurationProperty ("protection", DefaultValue = "All")]
+		public FormsProtectionEnum Protection {
+			get { return (FormsProtectionEnum) base[protectionProp]; }
+			set { base[protectionProp] = value; }
+		}
+
+		[ConfigurationProperty ("requireSSL", DefaultValue = "False")]
+		public bool RequireSSL {
+			get { return (bool) base[requireSSLProp]; }
+			set { base[requireSSLProp] = value; }
+		}
+
+		[ConfigurationProperty ("slidingExpiration", DefaultValue = "True")]
+		public bool SlidingExpiration {
+			get { return (bool) base[slidingExpirationProp]; }
+			set { base[slidingExpirationProp] = value; }
+		}
+
+		[TypeConverter (typeof (TimeSpanMinutesConverter))]
+		[TimeSpanValidator (MinValueString = "00:00:00")]
+		[ConfigurationProperty ("timeout", DefaultValue = "00:30:00")]
+		public TimeSpan Timeout {
+			get { return (TimeSpan) base[timeoutProp]; }
+			set { base [timeoutProp] = value; }
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+
+#if notyet
+		[MonoTODO]
+		protected override ConfigurationElementProperty ElementProperty {
+			get { throw new NotImplementedException (); }
+		}
+#endif
 	}
 }
 

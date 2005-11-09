@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.HttpModuleAction
+// System.Web.Configuration.FormsAuthenticationUser
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -30,58 +30,53 @@
 
 #if NET_2_0
 
-using System;
 using System.Configuration;
+using System.ComponentModel;
 
 namespace System.Web.Configuration
 {
-	public sealed class HttpModuleAction: ConfigurationElement
+	public sealed class FormsAuthenticationUser : ConfigurationElement
 	{
-		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty nameProp;
-		static ConfigurationProperty typeProp;
+		static ConfigurationProperty passwordProp;
+		static ConfigurationPropertyCollection properties;
 
-		static HttpModuleAction ()
+		static FormsAuthenticationUser ()
 		{
 			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
+			passwordProp = new ConfigurationProperty ("password", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
+
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (nameProp);
-			properties.Add (typeProp);
+			properties.Add (passwordProp);
 		}
 
-		[MonoTODO]
-		public HttpModuleAction (string name, string type)
+		public FormsAuthenticationUser (string name, string password)
 		{
 			this.Name = name;
-			this.Type = type;
+			this.Password = password;
 		}
-#if notyet
-		[MonoTODO]
-		protected override ConfigurationElementProperty ElementProperty {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-#endif
 
+		[MonoTODO ("enable type converter")]
+		[StringValidator]
+#if notyet
+		[TypeConverter (typeof (LowerCaseStringConverter))]
+#endif
 		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		[StringValidator (MinLength = 1)]
-		public new string Name {
-			get { return (string)base[nameProp]; }
+		public string Name {
+			get { return (string) base[nameProp]; }
 			set { base[nameProp] = value; }
 		}
 
-		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
-		public string Type {
-			get { return (string)base[typeProp]; }
-			set { base[typeProp] = value; }
+		[StringValidator]
+		[ConfigurationProperty ("password", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
+		public string Password {
+			get { return (string) base[passwordProp]; }
+			set { base[passwordProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				return properties;
-			}
+			get { return properties; }
 		}
 	}
 }

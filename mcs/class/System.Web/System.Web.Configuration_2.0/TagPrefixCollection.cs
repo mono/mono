@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.HttpModuleAction
+// System.Web.Configuration.TagPrefixCollection
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -31,57 +31,78 @@
 #if NET_2_0
 
 using System;
+using System.Collections;
 using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	public sealed class HttpModuleAction: ConfigurationElement
+	[ConfigurationCollection (typeof (TagPrefixInfo))]
+	public sealed class TagPrefixCollection : ConfigurationElementCollection, ICollection, IEnumerable
 	{
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty nameProp;
-		static ConfigurationProperty typeProp;
 
-		static HttpModuleAction ()
+		static TagPrefixCollection ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection ();
-			properties.Add (nameProp);
-			properties.Add (typeProp);
+		}
+
+		public TagPrefixCollection ()
+		{
+		}
+
+		public void Add (TagPrefixInfo tagPrefixInformation)
+		{
+			BaseAdd (tagPrefixInformation);
+		}
+
+		public void Clear ()
+		{
+			BaseClear ();
+		}
+
+		protected override ConfigurationElement CreateNewElement ()
+		{
+			return new TagPrefixInfo ("", "", "", "", "");
 		}
 
 		[MonoTODO]
-		public HttpModuleAction (string name, string type)
+		protected override object GetElementKey (ConfigurationElement element)
 		{
-			this.Name = name;
-			this.Type = type;
+			return ((TagPrefixInfo)element).TagPrefix;
 		}
-#if notyet
+
+		public void Remove (TagPrefixInfo tagPrefixInformation)
+		{
+			BaseRemove (tagPrefixInformation);
+		}
+
 		[MonoTODO]
-		protected override ConfigurationElementProperty ElementProperty {
+		protected override ConfigurationElementCollectionType CollectionType {
+			get {
+				return ConfigurationElementCollectionType.BasicMap;
+			}
+		}
+
+		[MonoTODO]
+		protected override string ElementName {
 			get {
 				throw new NotImplementedException ();
 			}
 		}
-#endif
-
-		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		[StringValidator (MinLength = 1)]
-		public new string Name {
-			get { return (string)base[nameProp]; }
-			set { base[nameProp] = value; }
-		}
-
-		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
-		public string Type {
-			get { return (string)base[typeProp]; }
-			set { base[typeProp] = value; }
-		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				return properties;
+			get { return properties; }
+		}
+
+		public TagPrefixInfo this[int index] {
+			get { return (TagPrefixInfo) BaseGet (index);
 			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
+		}
+
+		protected override bool ThrowOnDuplicate {
+			get { return false; }
 		}
 	}
 }

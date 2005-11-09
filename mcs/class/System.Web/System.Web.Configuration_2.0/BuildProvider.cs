@@ -36,29 +36,25 @@ namespace System.Web.Configuration
 	public sealed class BuildProvider : ConfigurationElement {
 		string extension;
 		string type;
-		BuildProviderAppliesTo appliesTo;
 
-
-		public BuildProvider (string extension, string type, BuildProviderAppliesTo appliesTo)
+		public BuildProvider (string extension, string type)
 		{
 			this.extension = extension;
 			this.type = type;
-			this.appliesTo = appliesTo;
 		}
 
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("extension", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Extension {
 			get { return extension; }
 			set { extension = value; }
 		}
 
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
 		public string Type {
 			get { return type; }
 			set { type = value; }
-		}
-
-		public BuildProviderAppliesTo AppliesTo {
-			get { return appliesTo; }
-			set { appliesTo = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
@@ -73,12 +69,12 @@ namespace System.Web.Configuration
 				return false;
 
 			BuildProvider p = (BuildProvider) provider;
-			return (extension == p.extension && type == p.type && appliesTo == p.appliesTo);
+			return (extension == p.extension && type == p.type);
 		}
 
 		public override int GetHashCode ()
 		{
-			return (extension.GetHashCode () ^ (int) appliesTo + type.GetHashCode ());
+			return (extension.GetHashCode () + type.GetHashCode ());
 		}
 	}
 	

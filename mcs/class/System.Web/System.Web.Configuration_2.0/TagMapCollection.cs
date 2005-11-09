@@ -1,10 +1,10 @@
 //
-// System.Web.Configuration.CodeSubDirectory
+// System.Web.Configuration.TagMapCollection
 //
 // Authors:
-//	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// (c) Copyright 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,43 +27,65 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
+
 using System;
+using System.Collections;
 using System.Configuration;
-using System.ComponentModel;
 
 namespace System.Web.Configuration
 {
-	public sealed class CodeSubDirectory : ConfigurationElement
+	[ConfigurationCollection (typeof (TagMapInfo), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
+	public sealed class TagMapCollection : ConfigurationElementCollection
 	{
-		static ConfigurationPropertyCollection props;
-		string directoryName;
+		static ConfigurationPropertyCollection properties;
 
-		static CodeSubDirectory ()
+		static TagMapCollection ()
 		{
-			props = new ConfigurationPropertyCollection ();
-/*			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.IsKey | ConfigurationPropertyFlags.Required;
-			NonEmptyStringFlags strFlags = NonEmptyStringFlags.TrimWhitespace;
-			ConfigurationProperty prop = new NonEmptyStringConfigurationProperty ("directoryName", "", flags, strFlags);
-			props.Add (prop);
-*/		}
-
-		public CodeSubDirectory (string directoryName)
-		{
-			this.directoryName = directoryName;
+			properties = new ConfigurationPropertyCollection ();
 		}
 
-		[TypeConverter (typeof (WhiteSpaceTrimStringConverter))]
-		[ConfigurationProperty ("directoryName", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		public string DirectoryName {
-			get { return directoryName; }
-			set { directoryName = value; }
+		public TagMapCollection ()
+		{
+		}
+
+		public void Add (TagMapInfo tagMapInformation)
+		{
+			BaseAdd (tagMapInformation);
+		}
+
+		public void Clear ()
+		{
+			BaseClear ();
+		}
+
+		protected override ConfigurationElement CreateNewElement ()
+		{
+			return new TagMapInfo ("", "");
+		}
+
+		protected override object GetElementKey (ConfigurationElement element)
+		{
+			return ((TagMapInfo)element).TagType;
+		}
+
+		public void Remove (TagMapInfo tagMapInformation)
+		{
+			BaseRemove (tagMapInformation);
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return props; }
+			get { return properties; }
+		}
+
+		public TagMapInfo this[int index] {
+			get { return (TagMapInfo) BaseGet (index);
+			}
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 	}
 }
-#endif // NET_2_0
 
+#endif

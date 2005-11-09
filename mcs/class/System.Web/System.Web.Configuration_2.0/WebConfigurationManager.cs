@@ -39,7 +39,7 @@ using _Configuration = System.Configuration.Configuration;
 
 namespace System.Web.Configuration {
 
-	public abstract class WebConfigurationManager
+	public static class WebConfigurationManager
 	{
 		static IInternalConfigConfigurationFactory configFactory;
 		static Hashtable configurations = new Hashtable ();
@@ -50,11 +50,43 @@ namespace System.Web.Configuration {
 			if (prop != null)
 				configFactory = prop.GetValue (null, null) as IInternalConfigConfigurationFactory;
 		}
-		
-		WebConfigurationManager ()
+
+		[MonoTODO]
+		public static _Configuration OpenMachineConfiguration ()
 		{
+			throw new NotImplementedException ();
 		}
 		
+		[MonoTODO]
+		public static _Configuration OpenMachineConfiguration (string locationSubPath)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static _Configuration OpenMachineConfiguration (string locationSubPath,
+								       string server)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static _Configuration OpenMachineConfiguration (string locationSubPath,
+								       string server,
+								       IntPtr userToken)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static _Configuration OpenMachineConfiguration (string locationSubPath,
+								       string server,
+								       string userName,
+								       string password)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static _Configuration OpenWebConfiguration (string path)
 		{
 			return OpenWebConfiguration (path, null, null, null, IntPtr.Zero, null);
@@ -69,7 +101,13 @@ namespace System.Web.Configuration {
 		{
 			return OpenWebConfiguration (path, site, locationSubPath, null, IntPtr.Zero, null);
 		}
-		
+
+		[MonoTODO]
+		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, IntPtr userToken)
 		{
 			return OpenWebConfiguration (path, site, locationSubPath, server, userToken, null);
@@ -109,7 +147,13 @@ namespace System.Web.Configuration {
 			}
 			return conf;
 		}
-		
+
+		[MonoTODO]
+		public static _Configuration OpenWebConfiguration (string path, string site, string locationSubPath, string server, string userName, string password)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public static _Configuration OpenMappedWebConfiguration (WebConfigurationFileMap fileMap, string path)
 		{
 			return ConfigurationFactory.Create (typeof(WebConfigurationHost), fileMap, path);
@@ -131,7 +175,51 @@ namespace System.Web.Configuration {
 		{
 			return ConfigurationFactory.Create (typeof(WebConfigurationHost), fileMap);
 		}
-		
+
+		[MonoTODO]
+		public static _Configuration OpenMappedMachineConfiguration (ConfigurationFileMap fileMap,
+									     string locationSubPath)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO ("this shouldn't call ConfigurationManager.GetSection")]
+		public static object GetSection (string sectionName)
+		{
+			return ConfigurationManager.GetSection (sectionName);
+		}
+
+		[MonoTODO]
+		public static object GetSection (string sectionName, string path)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static object GetWebApplicationSection (string sectionName)
+		{
+			if (HttpContext.Current == null)
+				Console.WriteLine ("um, ugh.");
+
+			_Configuration config = OpenWebConfiguration (HttpContext.Current.Request.PhysicalApplicationPath);
+
+			return config.GetSection (sectionName);
+		}
+
+		[MonoTODO]
+		public static NameValueCollection AppSettings {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		public static ConnectionStringSettingsCollection ConnectionStrings {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 		internal static IInternalConfigConfigurationFactory ConfigurationFactory {
 			get { return configFactory; }
 		}

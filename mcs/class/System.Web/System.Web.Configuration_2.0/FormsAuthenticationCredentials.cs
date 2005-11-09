@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.HttpModuleAction
+// System.Web.Configuration.FormsAuthenticationCredentials
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -30,59 +30,46 @@
 
 #if NET_2_0
 
-using System;
 using System.Configuration;
+using System.ComponentModel;
 
 namespace System.Web.Configuration
 {
-	public sealed class HttpModuleAction: ConfigurationElement
+	public sealed class FormsAuthenticationCredentials: ConfigurationElement
 	{
 		static ConfigurationPropertyCollection properties;
-		static ConfigurationProperty nameProp;
-		static ConfigurationProperty typeProp;
+		static ConfigurationProperty passwordFormatProp;
+		static ConfigurationProperty usersProp;
 
-		static HttpModuleAction ()
+		static FormsAuthenticationCredentials ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
+			passwordFormatProp = new ConfigurationProperty ("passwordFormat", typeof (FormsAuthPasswordFormat), FormsAuthPasswordFormat.SHA1);
+			usersProp = new ConfigurationProperty ("users", typeof (FormsAuthenticationUserCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+
 			properties = new ConfigurationPropertyCollection ();
-			properties.Add (nameProp);
-			properties.Add (typeProp);
+			properties.Add (passwordFormatProp);
+			properties.Add (usersProp);
 		}
 
-		[MonoTODO]
-		public HttpModuleAction (string name, string type)
+		public FormsAuthenticationCredentials ()
 		{
-			this.Name = name;
-			this.Type = type;
-		}
-#if notyet
-		[MonoTODO]
-		protected override ConfigurationElementProperty ElementProperty {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-#endif
-
-		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		[StringValidator (MinLength = 1)]
-		public new string Name {
-			get { return (string)base[nameProp]; }
-			set { base[nameProp] = value; }
 		}
 
-		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
-		public string Type {
-			get { return (string)base[typeProp]; }
-			set { base[typeProp] = value; }
+		[ConfigurationProperty ("passwordFormat", DefaultValue = "SHA1")]
+		public FormsAuthPasswordFormat PasswordFormat {
+			get { return (FormsAuthPasswordFormat) base[passwordFormatProp]; }
+			set { base[passwordFormatProp] = value; }
+		}
+
+		[ConfigurationProperty ("users", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		public FormsAuthenticationUserCollection Users {
+			get { return (FormsAuthenticationUserCollection) base[usersProp]; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				return properties;
-			}
+			get { return properties; }
 		}
+		
 	}
 }
 

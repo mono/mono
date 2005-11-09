@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.HttpHandlerActionCollection
+// System.Web.Configuration.ProfilePropertySettingsCollection
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -32,61 +32,101 @@
 
 using System;
 using System.Configuration;
+using System.Xml;
 
 namespace System.Web.Configuration
 {
-	[ConfigurationCollection (typeof (HttpHandlerAction), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMapAlternate)]
-	public sealed class HttpHandlerActionCollection : ConfigurationElementCollection
+	public class ProfilePropertySettingsCollection : ConfigurationElementCollection
 	{
-		public HttpHandlerActionCollection ()
+		[MonoTODO]
+		public ProfilePropertySettingsCollection ()
 		{
-		}
-			
-		public void Add (HttpHandlerAction httpHandlerAction)
-		{
-			BaseAdd (httpHandlerAction);
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public void Add (ProfilePropertySettings propertySettings)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public void Clear ()
 		{
-			BaseClear ();
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new HttpHandlerAction ("", "", "");
+			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		public ProfilePropertySettings Get (int index)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public ProfilePropertySettings Get (string name)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			return ((HttpHandlerAction)element).Path;
-		}
-
-		public int IndexOf (HttpHandlerAction action)
-		{
-			return BaseIndexOf (action);
+			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Remove (string verb, string path)
+		public string GetKey (int index)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public void Remove (HttpHandlerAction action)
+		public int IndexOf (ProfilePropertySettings propertySettings)
 		{
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO]
+		protected override bool OnDeserializeUnrecognizedElement (string elementName, XmlReader reader)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void Remove (string name)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public void RemoveAt (int index)
 		{
-			BaseRemoveAt (index);
+			throw new NotImplementedException ();
 		}
 
-		protected override ConfigurationElementCollectionType CollectionType {
+		[MonoTODO]
+		public void Set (ProfilePropertySettings propertySettings)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public string[ ] AllKeys {
 			get {
-				return ConfigurationElementCollectionType.AddRemoveClearMapAlternate;
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		protected virtual bool AllowClear {
+			get {
+				throw new NotImplementedException ();
 			}
 		}
 
@@ -97,17 +137,30 @@ namespace System.Web.Configuration
 			}
 		}
 
-		public HttpHandlerAction this[int index] {
-			get { return (HttpHandlerAction)BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
-		}
-
-		protected override bool ThrowOnDuplicate {
+		[MonoTODO]
+		public ProfilePropertySettings this[int index] {
 			get {
-				return false;
+				throw new NotImplementedException ();
+			}
+			set {
+				throw new NotImplementedException ();
 			}
 		}
+
+		[MonoTODO]
+		public new ProfilePropertySettings this[string name] {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		[MonoTODO]
+		protected override bool ThrowOnDuplicate {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
 	}
 }
 

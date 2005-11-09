@@ -38,7 +38,6 @@ namespace System.Web.Configuration
 	[ConfigurationCollection (typeof (HttpModuleAction), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class HttpModuleActionCollection : ConfigurationElementCollection
 	{
-		[MonoTODO]
 		public HttpModuleActionCollection ()
 		{
 		}
@@ -46,50 +45,49 @@ namespace System.Web.Configuration
 		[MonoTODO]
 		public void Add (HttpModuleAction httpModuleAction)
 		{
+			BaseAdd (httpModuleAction);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
+			BaseClear ();
 		}
 
 		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			throw new NotImplementedException ();
+			return new HttpModuleAction("", "");
 		}
 
-		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return ((HttpModuleAction)element).Name;
 		}
 
-		[MonoTODO]
 		public int IndexOf (HttpModuleAction action)
 		{
-			throw new NotImplementedException ();
+			return BaseIndexOf (action);
 		}
 
-		[MonoTODO]
 		public void Remove (string name)
 		{
+			BaseRemove (name);
 		}
 
-		[MonoTODO]
 		public void Remove (HttpModuleAction action)
 		{
+			BaseRemove (action.Name);
 		}
 
-		[MonoTODO]
 		public void RemoveAt (int index)
 		{
+			BaseRemoveAt (index);
 		}
 
 		[MonoTODO]
 		public bool IsElementRemovable (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return base.IsElementRemovable (element);
 		}
 
 		[MonoTODO]
@@ -99,13 +97,10 @@ namespace System.Web.Configuration
 			}
 		}
 
-		[MonoTODO]
 		public HttpModuleAction this[int index] {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-			}
+			get { return (HttpModuleAction)BaseGet (index); }
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
 		}
 	}
 }

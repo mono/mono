@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.HttpModuleAction
+// System.Web.Configuration.ProfileGroupSettings
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -35,47 +35,55 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
-	public sealed class HttpModuleAction: ConfigurationElement
+	public sealed class ProfileGroupSettings : ConfigurationElement
 	{
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty nameProp;
-		static ConfigurationProperty typeProp;
+		static ConfigurationProperty propertySettingsProp;
 
-		static HttpModuleAction ()
+		static ProfileGroupSettings ()
 		{
-			nameProp = new ConfigurationProperty ("name", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
+			nameProp = new ConfigurationProperty ("name", typeof (string), null, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			propertySettingsProp = new ConfigurationProperty ("", typeof (ProfilePropertySettingsCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (nameProp);
-			properties.Add (typeProp);
+			properties.Add (propertySettingsProp);
 		}
 
 		[MonoTODO]
-		public HttpModuleAction (string name, string type)
+		public ProfileGroupSettings (string name)
 		{
 			this.Name = name;
-			this.Type = type;
 		}
-#if notyet
+
 		[MonoTODO]
-		protected override ConfigurationElementProperty ElementProperty {
+		public override bool Equals (object obj)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override int GetHashCode ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		public string Name {
 			get {
-				throw new NotImplementedException ();
+				return (string)base [nameProp];
+			}
+			internal set{
+				base [nameProp] = value;
 			}
 		}
-#endif
 
-		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		[StringValidator (MinLength = 1)]
-		public new string Name {
-			get { return (string)base[nameProp]; }
-			set { base[nameProp] = value; }
-		}
-
-		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
-		public string Type {
-			get { return (string)base[typeProp]; }
-			set { base[typeProp] = value; }
+		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		public ProfilePropertySettingsCollection PropertySettings {
+			get {
+				return (ProfilePropertySettingsCollection) base [propertySettingsProp];
+			}
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

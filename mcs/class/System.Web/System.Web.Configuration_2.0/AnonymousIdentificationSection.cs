@@ -74,7 +74,7 @@ namespace System.Web.Configuration
 			properties.Add (domainProp);
 		}
 		
-		[ConfigurationProperty ("cookieless", DefaultValue = HttpCookieMode.UseCookies)]
+		[ConfigurationProperty ("cookieless", DefaultValue = "UseCookies")]
 		public HttpCookieMode Cookieless {
 			get { return (HttpCookieMode) base ["cookieless"]; }
 			set { base ["cookieless"] = value; }
@@ -94,25 +94,25 @@ namespace System.Web.Configuration
 			set { base ["cookiePath"] = value; }
 		}
 		
-		[ConfigurationProperty ("cookieProtection", DefaultValue = CookieProtection.Validation)]
+		[ConfigurationProperty ("cookieProtection", DefaultValue = "Validation")]
 		public CookieProtection CookieProtection {
 			get { return (CookieProtection) base ["cookieProtection"]; }
 			set { base ["cookieProtection"] = value; }
 		}
 		
-		[ConfigurationProperty ("cookieRequireSSL", DefaultValue = false)]
+		[ConfigurationProperty ("cookieRequireSSL", DefaultValue = "False")]
 		public bool CookieRequireSSL {
 			get { return (bool) base ["cookieRequireSSL"]; }
 			set { base ["cookieRequireSSL"] = value; }
 		}
 		
-		[ConfigurationProperty ("cookieSlidingExpiration", DefaultValue = true)]
+		[ConfigurationProperty ("cookieSlidingExpiration", DefaultValue = "True")]
 		public bool CookieSlidingExpiration {
 			get { return (bool) base ["cookieSlidingExpiration"]; }
 			set { base ["cookieSlidingExpiration"] = value; }
 		}
 		
-		[TimeSpanValidator ()]
+		[TimeSpanValidator (MinValueString = "00:00:00", MaxValueString = "10675199.02:48:05.4775807")]
 		[TypeConverter (typeof(TimeSpanMinutesOrInfiniteConverter))]
 		[ConfigurationProperty ("cookieTimeout", DefaultValue = "69.10:40:00")]
 		public TimeSpan CookieTimeout {
@@ -126,7 +126,7 @@ namespace System.Web.Configuration
 			set { base ["domain"] = value; }
 		}
 		
-		[ConfigurationProperty ("enabled", DefaultValue = false)]
+		[ConfigurationProperty ("enabled", DefaultValue = "False")]
 		public bool Enabled {
 			get { return (bool) base ["enabled"]; }
 			set { base ["enabled"] = value; }

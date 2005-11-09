@@ -34,6 +34,7 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
+	[ConfigurationCollection (typeof (CodeSubDirectory), CollectionType = ConfigurationElementCollectionType.BasicMap)]
 	public sealed class CodeSubDirectoriesCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection props;
@@ -59,7 +60,7 @@ namespace System.Web.Configuration
 		}
 
 		protected override ConfigurationElementCollectionType CollectionType {
-			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
+			get { return ConfigurationElementCollectionType.BasicMap; }
 		}
 
 		protected override string ElementName {
@@ -75,6 +76,11 @@ namespace System.Web.Configuration
 			BaseAdd (codeSubDirectory);
 		}
 
+		public void Clear ()
+		{
+			BaseClear ();
+		}
+
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			return new CodeSubDirectory (null);
@@ -84,6 +90,16 @@ namespace System.Web.Configuration
 		{
 			CodeSubDirectory sd = (CodeSubDirectory) element;
 			return sd.DirectoryName;
+		}
+
+		public void Remove (string directoryName)
+		{
+			BaseRemove (directoryName);
+		}
+
+		public void RemoveAt (int index)
+		{
+			BaseRemoveAt (index);
 		}
 	}
 }

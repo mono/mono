@@ -38,6 +38,7 @@ namespace System.Web.Configuration
 {
 	public sealed class SiteMapSection: ConfigurationSection
 	{
+		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("defaultProvider", DefaultValue = "AspNetXmlSiteMapProvider")]
 		public string DefaultProvider {
 			get { return (string) base ["defaultProvider"]; }
