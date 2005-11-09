@@ -1,3 +1,8 @@
+2005-11-07 Renato Suga <renato.suga@gmail.com>
+	* Expression.cs: commented this line: 
+	 //      SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
+
+
 2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* AssemblyInfo.cs: Use Consts.MonoVersion as AssemblyVersion.

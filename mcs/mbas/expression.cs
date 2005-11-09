@@ -6508,7 +6508,7 @@ namespace Mono.MonoBASIC {
 							if (IdenticalNameAndTypeName (ec, left_original, loc))
 								return member_lookup;
 	
-							SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
+						//	SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);
 							return null;
 						}
 					}
