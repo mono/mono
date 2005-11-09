@@ -1,3 +1,11 @@
+2005-11-09  Miguel de Icaza  <miguel@novell.com>
+
+	* unix/util.c (set_dirs): Instead of hardcoding the value to
+	/usr/bin, use MONO_BINDIR which comes from Automake's bindir.  If
+	the executable is in the place configured, use the Automake
+	settings.  Otherwise use the standard-layout based computed
+	paths. 
+
 2005-11-08  Miguel de Icaza  <miguel@novell.com>
 
 	* unix/util.c (set_dirs): The buffer is overwritten by the
