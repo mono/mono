@@ -1,3 +1,10 @@
+2005-11-09  Chris Toshok  <toshok@ximian.com>
+
+	* ConfigurationSettings.cs (AppSettings): remove the #if NET_2_0
+	block breaks this.
+	(ReadSectionGroup): allow the "type" atrribute so we don't break
+	when reading a 2.0 config file using the 1.0 stuff.
+
 2005-11-04  Chris Toshok  <toshok@ximian.com>
 
 	* SettingsProvider.cs, SettingsPropertyValueCollection.cs,

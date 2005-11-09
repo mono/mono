@@ -63,20 +63,11 @@ namespace System.Configuration
 		public static NameValueCollection AppSettings
 		{
 			get {
-#if NET_2_0
-				/* XXX figure out the cyclic
-				 * dependency foo between System and
-				 * System.Configuration so this will
-				 * work */
-//				return ConfigurationManager.AppSettings;
-				return new NameValueCollection ();
-#else
 				object appSettings = GetConfig ("appSettings");
 				if (appSettings == null)
 					appSettings = new NameValueCollection ();
 
 				return (NameValueCollection) appSettings;
-#endif
 			}
 		}
 
@@ -225,6 +216,7 @@ namespace System.Configuration
 
 		public bool Load (string fileName)
 		{
+			Console.WriteLine ("ConfigurationData.Load ({0})\n{1}", fileName, Environment.StackTrace);
 			this.fileName = fileName;
 			if (fileName == null || !File.Exists (fileName))
 				return false;
@@ -514,13 +506,23 @@ namespace System.Configuration
 			if (!reader.MoveToNextAttribute ())
 				ThrowException ("sectionGroup must have a 'name' attribute.", reader);
 
-			if (reader.Name != "name")
-				ThrowException ("Unrecognized attribute.", reader);
+			string value = null;
+			do {
+				if (reader.Name == "name") {
+					if (value != null)
+						ThrowException ("Duplicate 'name' attribute.", reader);
+					value = reader.Value;
+				}
+				else 
+#if NET_2_0
+				if (reader.Name != "type")
+#endif
+					ThrowException ("Unrecognized attribute.", reader);
+			} while (reader.MoveToNextAttribute ());
 
-			if (reader.MoveToNextAttribute ())
-				ThrowException ("Unrecognized attribute.", reader);
+			if (value == null)
+				ThrowException ("No 'name' attribute.", reader);
 
-			string value = reader.Value;
 			if (value == "location")
 				ThrowException ("location is a reserved section name", reader);
 			
