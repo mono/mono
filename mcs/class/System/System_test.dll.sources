@@ -70,6 +70,7 @@ System.CodeDom.Compiler/TempFileCollectionTest.cs
 System.Collections.Generic/QueueTest.cs
 System.Collections.Generic/StackTest.cs
 System.Collections.Generic/LinkedListTest.cs
+System.Collections.Generic/SortedListTest.cs
 System.Collections.Specialized/BasicOperationsTest.cs
 System.Collections.Specialized/BitVector32Test.cs
 System.Collections.Specialized/HybridDictionaryTest.cs
