@@ -37,6 +37,7 @@ namespace System.Security.Permissions {
 	[Flags]
 #if NET_2_0
 	[ComVisible (true)]
+	[Serializable]
 #endif
 	public enum ReflectionPermissionFlag {
 

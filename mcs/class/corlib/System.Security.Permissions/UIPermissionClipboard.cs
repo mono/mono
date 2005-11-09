@@ -36,6 +36,7 @@ namespace System.Security.Permissions {
 
 #if NET_2_0
 	[ComVisible (true)]
+	[Serializable]
 #endif
 	public enum UIPermissionClipboard {
 

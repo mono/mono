@@ -1,3 +1,13 @@
+2005-11-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* EnvironmentPermissionAccess.cs: Added missing [Serializable] (2.0).
+	* FileIOPermissionAccess.cs: Added missing [Serializable] (2.0).
+	* PermissionState.cs: Added missing [Serializable] (2.0).
+	* ReflectionPermissionFlag.cs: Added missing [Serializable] (2.0).
+	* RegistryPermissionAccess.cs: Added missing [Serializable] (2.0).
+	* UIPermissionClipboard.cs: Added missing [Serializable] (2.0).
+	* UIPermissionWindow.cs: Added missing [Serializable] (2.0).
+
 2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ReflectionPermissionAttribute.cs: TypeInformation is obsolete.
