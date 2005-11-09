@@ -1,3 +1,11 @@
+2005-11-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_ftnptr_to_delegate): Throw a NotSupportedException if
+	the ftnptr was created from a delegate in a domain other than the
+	current domain. Fixes #75377.
+
+	* exception.h exception.c: Add mono_get_exception_not_supported ().
+
 2005-11-08  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.h (MONO_DEBUGGER_VERSION): Bump to 53.
