@@ -1,3 +1,7 @@
+2005-11-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IsolatedStorageScope.cs: Added missing [Serializable] in 2.0 profile
+
 2005-10-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFile.cs: Add a call to GC.SuppressFinalize in Dispose
