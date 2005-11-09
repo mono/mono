@@ -109,6 +109,8 @@ System/Convert.cs
 System/CrossAppDomainDelegate.cs
 System/DataMisalignedException.cs
 System/DateTime.cs
+System/DateTimeKind.cs
+System/DayOfWeek.cs
 System/DBNull.cs
 System/Decimal.cs
 System/DecimalFormatter.cs
@@ -206,6 +208,7 @@ System/STAThreadAttribute.cs
 System/String.cs
 System/StringSplitOptions.cs
 System/StringComparer.cs
+System/StringComparison.cs
 System/SystemException.cs
 System/TermInfoBooleans.cs
 System/TermInfoDriver.cs
