@@ -4,7 +4,7 @@
 // Authors:
 //  Marek Safar (marek.safar@seznam.cz)
 //
-// Copyright (C) 2004 Novell
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,12 +27,17 @@
 //
 
 #if NET_2_0
+
+using System.Runtime.InteropServices;
+
 namespace System {
+
+	[ComVisible (true)]
 	public enum EnvironmentVariableTarget
 	{
-		Process =	0x01, 
-		User =		0x02, 
-		Machine =	0x03
+		Process, 
+		User, 
+		Machine
 	}
 }
 #endif

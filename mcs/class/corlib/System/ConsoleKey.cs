@@ -29,18 +29,16 @@
 //
 #if NET_2_0
 namespace System {
+
+	[Serializable]
 	public enum ConsoleKey {
-#pragma warning disable 3005
 		Backspace = 8,
-#pragma warning restore
 		Tab = 9,
 		Clear = 12,
 		Enter = 13,
 		Pause = 19,
 		Escape = 27,
-#pragma warning disable 3005
 		Spacebar = 32,
-#pragma warning restore
 		PageUp = 33,
 		PageDown = 34,
 		End = 35,
@@ -178,14 +176,6 @@ namespace System {
 		NoName = 252,
 		Pa1 = 253,
 		OemClear = 254,
-
-#pragma warning disable 3005
-		// These are the old names
-		
-		BackSpace = 8,
-		SpaceBar = 32,
-#pragma warning restore
-		
 	}
 }
 #endif

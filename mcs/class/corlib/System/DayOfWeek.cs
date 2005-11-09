@@ -1,9 +1,12 @@
 //
-// System.AppDomainManagerInitializationOptions flags
+// System.DayOfWeek.cs
 //
-// Author:
-//	Sebastien Pouliot  <sebastien@ximian.com>
+// author:
+//   Marcel Narings (marcel@narings.nl)
+//   Martin Baulig (martin@gnome.org)
+//   Atsushi Enomoto (atsushi@ximian.com)
 //
+//   (C) 2001 Marcel Narings
 // Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -26,18 +29,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Runtime.InteropServices;
 
 namespace System {
 
-	[Flags]
+#if NET_2_0
 	[ComVisible (true)]
-	public enum AppDomainManagerInitializationOptions {
-		None = 0,
-		RegisterWithHost = 1,
+	[Serializable]
+#endif
+	public enum DayOfWeek {
+
+		Sunday,
+		Monday,
+		Tuesday,
+		Wednesday,
+		Thursday,
+		Friday,
+		Saturday
 	}
 }
-
-#endif

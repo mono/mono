@@ -5,7 +5,7 @@
 //	Tim Coleman (tim@timcoleman.com)
 //
 // Copyright (C) Tim Coleman, 2004
-// Copyright (C) 2004 Novell
+// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +31,7 @@
 
 namespace System
 {
+	[Flags]
 	public enum Base64FormattingOptions 
 	{
 		InsertLineBreaks = 0x1,

@@ -239,6 +239,7 @@ namespace System
 #if ONLY_1_1
 		[ReflectionPermission (SecurityAction.Assert, TypeInformation = true)]
 #endif
+		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			if (info == null)
