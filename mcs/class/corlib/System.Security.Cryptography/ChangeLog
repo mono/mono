@@ -1,3 +1,7 @@
+2005-11-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* KeyNumber.cs: Added missing [Serializable] present in 2.0.
+
 2005-10-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DESCryptoServiceProvider.cs: Don't change the instance key/iv when
