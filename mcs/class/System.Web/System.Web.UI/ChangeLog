@@ -1,3 +1,7 @@
+2005-11-09  Chris Toshok  <toshok@ximian.com>
+
+	* ViewStateEncryptionMode.cs: new 2.0 enum.
+
 2005-11-08 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* TemplateParser.cs: fixes #76423. Not tested properly.
