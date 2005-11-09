@@ -1,3 +1,10 @@
+2005-11-09  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeExpressionCollectionTest.cs: Fixed test case for AddRange_Self
+	to really discover regressions.
+	* CodeStatementCollectionTest.cs: same.
+	* CodeTypeReferenceCollectionTest.cs: same.
+
 2005-11-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CodeExpressionCollectionTest.cs: Added test case for AddRange(self).

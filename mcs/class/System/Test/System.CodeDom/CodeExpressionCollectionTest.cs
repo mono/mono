@@ -192,8 +192,10 @@ namespace MonoTests.System.CodeDom {
 		public void AddRange_Self ()
 		{
 			CodeExpressionCollection coll = new CodeExpressionCollection ();
+			coll.Add (new CodeExpression ());
+			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
-			Assert.AreEqual (0, coll.Count, "0");
+			Assert.AreEqual (2, coll.Count, "#2");
 		}
 	}
 }

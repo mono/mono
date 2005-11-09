@@ -196,8 +196,10 @@ namespace MonoTests.System.CodeDom
 		public void AddRange_Self ()
 		{
 			CodeTypeReferenceCollection coll = new CodeTypeReferenceCollection ();
+			coll.Add (new CodeTypeReference (string.Empty));
+			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
-			Assert.AreEqual (0, coll.Count, "0");
+			Assert.AreEqual (2, coll.Count, "#2");
 		}
 	}
 }
