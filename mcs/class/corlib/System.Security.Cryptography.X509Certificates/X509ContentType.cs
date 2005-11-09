@@ -33,7 +33,6 @@ namespace System.Security.Cryptography.X509Certificates {
 // Note: Definitions are useful for 1.0 and 1.1 so we declare them internal
 
 #if NET_2_0
-	[Serializable]
 	[ComVisible (true)]
 	public
 #else

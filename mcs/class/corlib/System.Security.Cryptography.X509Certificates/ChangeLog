@@ -1,3 +1,7 @@
+2005-11-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509ContentType.cs: Removed extra [Serializable] (2.0).
+
 2005-09-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Fix date/time reporting for NET_2_0 profile (bug
