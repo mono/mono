@@ -1,5 +1,10 @@
 2005-11-08  Jonathan Pryor <jonpryor@vt.edu>
 
+	* Catalog.cs: Exception safety improvements (don't let memory leak!); check
+	  for errors with bindtextdomain(3) et. al.
+
+2005-11-08  Jonathan Pryor <jonpryor@vt.edu>
+
 	* UnixPipes.cs: Provide Equals, GetHashCode, and operator==/operator!= to
 	  conform with FxCop guidelines for structures.
 

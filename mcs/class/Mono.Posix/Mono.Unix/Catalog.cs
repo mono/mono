@@ -1,10 +1,12 @@
 //
 // Mono.Unix.Catalog.cs: Wrappers for the libintl library.
 //
-// Author:
+// Authors:
 //   Edd Dumbill (edd@usefulinc.com)
+//   Jonathan Pryor (jonpryor@vt.edu)
 //
 // (C) 2004 Edd Dumbill
+// (C) 2005 Jonathan Pryor
 //
 // This file implements the low-level syscall interface to the POSIX
 // subsystem.
@@ -49,15 +51,45 @@ namespace Mono.Unix {
 		
 		public static void Init (String package, String localedir)
 		{
-			IntPtr ipackage = Marshal.StringToHGlobalAuto (package);
-			IntPtr ilocaledir = Marshal.StringToHGlobalAuto (localedir);
-			IntPtr iutf8 = Marshal.StringToHGlobalAuto ("UTF-8");
-			bindtextdomain (ipackage, ilocaledir);
-			bind_textdomain_codeset (ipackage, iutf8);
-			textdomain (ipackage);
-			Marshal.FreeHGlobal (ipackage);
-			Marshal.FreeHGlobal (ilocaledir);
-			Marshal.FreeHGlobal (iutf8);
+			IntPtr ipackage, ilocaledir, iutf8;
+			MarshalStrings (package, out ipackage, localedir, out ilocaledir, 
+					"UTF-8", out iutf8);
+			try {
+				if (bindtextdomain (ipackage, ilocaledir) == IntPtr.Zero)
+					throw new OutOfMemoryException ("bindtextdomain");
+				if (bind_textdomain_codeset (ipackage, iutf8) == IntPtr.Zero)
+					throw new OutOfMemoryException ("bind_textdomain_codeset");
+				if (textdomain (ipackage) == IntPtr.Zero)
+					throw new OutOfMemoryException ("textdomain");
+			}
+			finally {
+				Marshal.FreeHGlobal (ipackage);
+				Marshal.FreeHGlobal (ilocaledir);
+				Marshal.FreeHGlobal (iutf8);
+			}
+		}
+
+		private static void MarshalStrings (string s1, out IntPtr p1, 
+				string s2, out IntPtr p2, string s3, out IntPtr p3)
+		{
+			p1 = p2 = p3 = IntPtr.Zero;
+
+			bool cleanup = true;
+
+			try {
+				p1 = Marshal.StringToHGlobalAuto (s1);
+				p2 = Marshal.StringToHGlobalAuto (s2);
+				if (s3 != null)
+					p3 = Marshal.StringToHGlobalAuto (s3);
+				cleanup = false;
+			}
+			finally {
+				if (cleanup) {
+					Marshal.FreeHGlobal (p1);
+					Marshal.FreeHGlobal (p2);
+					Marshal.FreeHGlobal (p3);
+				}
+			}
 		}
 	
 		[DllImport("libintl")]
@@ -66,9 +98,16 @@ namespace Mono.Unix {
 		public static String GetString (String s)
 		{
 			IntPtr ints = Marshal.StringToHGlobalAuto (s);
-			String t = Marshal.PtrToStringAuto (gettext (ints));
-			Marshal.FreeHGlobal (ints);
-			return t;
+			try {
+				// gettext(3) returns the input pointer if no translation is found
+				IntPtr r = gettext (ints);
+				if (r != ints)
+					return Marshal.PtrToStringAuto (r);
+				return s;
+			}
+			finally {
+				Marshal.FreeHGlobal (ints);
+			}
 		}
 	
 		[DllImport("libintl")]
@@ -76,13 +115,23 @@ namespace Mono.Unix {
 		
 		public static String GetPluralString (String s, String p, Int32 n)
 		{
-			IntPtr ints = Marshal.StringToHGlobalAuto (s);
-			IntPtr intp = Marshal.StringToHGlobalAuto (p);
-			String t = Marshal.PtrToStringAnsi (ngettext (ints, intp, n));
-			Marshal.FreeHGlobal (ints);
-			Marshal.FreeHGlobal (intp);
-			return t;
+			IntPtr ints, intp, _ignore;
+			MarshalStrings (s, out ints, p, out intp, null, out _ignore);
+
+			try {
+				// ngettext(3) returns an input pointer if no translation is found
+				IntPtr r = ngettext (ints, intp, n);
+				if (r == ints)
+					return s;
+				if (r == intp)
+					return p;
+				return Marshal.PtrToStringAnsi (r); 
+			}
+			finally {
+				Marshal.FreeHGlobal (ints);
+				Marshal.FreeHGlobal (intp);
+			}
 		}
-	
 	}
 }
+
