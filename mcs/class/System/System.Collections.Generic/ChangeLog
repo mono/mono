@@ -1,3 +1,7 @@
+2005-11-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* SortedList.cs: New file.
+
 2005-09-04  David Waite  <mass@akuma.org>
 
 	* LinkedList.cs, LinkedListNode.cs: added implementation of LinkedList<T>
