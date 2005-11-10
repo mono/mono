@@ -653,7 +653,7 @@ namespace System.Xml {
 
 		public static string VerifyName (string name)
 		{
-			if (name == null)
+			if (name == null || name.Length == 0)
 				throw new ArgumentNullException("name");
 
 			if (!XmlChar.IsName (name))
@@ -664,7 +664,7 @@ namespace System.Xml {
 
 		public static string VerifyNCName (string ncname)
 		{
-			if (ncname == null)
+			if (ncname == null || ncname.Length == 0)
 				throw new ArgumentNullException("ncname");
 
 			if (!XmlChar.IsNCName (ncname))

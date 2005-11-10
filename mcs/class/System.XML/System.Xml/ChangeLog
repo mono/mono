@@ -1,3 +1,8 @@
+2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlConvert.cs : VerifyNCName() and VerifyName() throws
+	  ArgumentNullException for "".
+
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs : dependent XmlSchemaValidationFlags fix.

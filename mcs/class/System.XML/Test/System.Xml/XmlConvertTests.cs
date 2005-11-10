@@ -7,8 +7,11 @@
 //
 
 using System;
+using System.Globalization;
 using System.Xml;
 using NUnit.Framework;
+
+using AssertType = NUnit.Framework.Assert;
 
 namespace MonoTests.System.Xml
 {
@@ -217,13 +220,61 @@ namespace MonoTests.System.Xml
 		[Test]
 		public void ToInt16 ()//not done
 		{
-			
+			AssertType.AreEqual (0, XmlConvert.ToInt16 ("0"), "0");
+			AssertType.AreEqual (-1, XmlConvert.ToInt16 ("-1"), "-1");
+			AssertType.AreEqual (1, XmlConvert.ToInt16 ("1"), "1");
+			AssertType.AreEqual (32767, XmlConvert.ToInt16 ("32767"), "32767");
+			AssertType.AreEqual (-32768, XmlConvert.ToInt16 ("-32768"), "-32768");
+			try {
+				XmlConvert.ToInt16 ("32768");
+				AssertType.Fail ("32768");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToInt16 ("-32769");
+				AssertType.Fail ("-32769");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToInt16 ("0x100");
+				AssertType.Fail ("0x100");
+			} catch (FormatException) {
+			}
 		}
 		
 		[Test]
-		public void ToInt32 ()//not done
+		public void ToInt32 ()
 		{
-			
+			AssertType.AreEqual (0, XmlConvert.ToInt32 ("0"), "0");
+			AssertType.AreEqual (-1, XmlConvert.ToInt32 ("-1"), "-1");
+			AssertType.AreEqual (1, XmlConvert.ToInt32 ("1"), "1");
+			AssertType.AreEqual (int.MaxValue, XmlConvert.ToInt32 ("2147483647"), "2147483647");
+			AssertType.AreEqual (int.MinValue, XmlConvert.ToInt32 ("-2147483648"), "-2147483648");
+			try {
+				int.Parse ("2147483648", CultureInfo.CurrentCulture);
+				AssertType.Fail ("int.Parse(current culture)");
+			} catch (OverflowException) {
+			}
+			try {
+				int.Parse ("2147483648", CultureInfo.InvariantCulture);
+				AssertType.Fail ("int.Parse(invariant culture)");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToInt32 ("2147483648");
+				AssertType.Fail ("2147483648");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToInt32 ("-2147483649");
+				AssertType.Fail ("-2147483649");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToInt32 ("0x10000");
+				AssertType.Fail ("0x10000");
+			} catch (FormatException) {
+			}
 		}
 		
 		[Test]
@@ -288,11 +339,61 @@ namespace MonoTests.System.Xml
 		}
 		
 		[Test]
-		public void VerifyName ()//not done
+		public void VerifyName ()
 		{
-			
+			VerifyNameValid ("a");
+			VerifyNameValid ("a1");
+			VerifyNameValid ("\u3041");
+			VerifyNameValid ("a:b");
+			VerifyNameValid ("_");
+			VerifyNameValid ("__");
+			VerifyNameValid ("_1");
+			VerifyNameValid (":");
+			VerifyNameValid (":a");
+			VerifyNameValid ("a.b");
 		}
-		
+
+		[Test]
+		public void VerifyNameInvalid ()
+		{
+			VerifyNameInvalid ("!");
+			VerifyNameInvalid ("_a!b");
+			VerifyNameInvalid ("?a");
+			VerifyNameInvalid (" ");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void VerifyNameNull ()
+		{
+			XmlConvert.VerifyName (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void VerifyNameEmpty ()
+		{
+			XmlConvert.VerifyName ("");
+		}
+
+		private void VerifyNameValid (string value)
+		{
+			try {
+				XmlConvert.VerifyName (value);
+			} catch (XmlException) {
+				AssertType.Fail (String.Format ("'{0}'", value));
+			}
+		}
+
+		private void VerifyNameInvalid (string value)
+		{
+			try {
+				XmlConvert.VerifyName (value);
+				AssertType.Fail (value);
+			} catch (XmlException) {
+			}
+		}
+
 		[Test]
 		public void VerifyNCName ()
 		{
@@ -313,6 +414,20 @@ namespace MonoTests.System.Xml
 				XmlConvert.VerifyNCName ("foo:bar:baz");
 				Fail ();
 			} catch (XmlException) {}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void VerifyNCNameNull ()
+		{
+			XmlConvert.VerifyNCName (null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void VerifyNCNameEmpty ()
+		{
+			XmlConvert.VerifyNCName ("");
 		}
 	}
 }
