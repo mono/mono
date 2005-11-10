@@ -1,5 +1,9 @@
 2005-11-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Int64.cs : ditto for long.
+
+2005-11-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Int32.cs : Parse("2147483648", format_provider) should be rejected.
 
 2005-11-09  Sebastien Pouliot  <sebastien@ximian.com>

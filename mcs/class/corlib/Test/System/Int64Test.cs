@@ -12,6 +12,8 @@ using System;
 using System.Globalization;
 using System.Threading;
 
+using AssertType = NUnit.Framework.Assert;
+
     /// <summary>
     /// Tests for System.Int64
     /// </summary>
@@ -227,68 +229,80 @@ public class Int64Test : Assertion
 	Assert(MyInt64_3 == Int64.Parse(MyString3));
 	try {
 		Int64.Parse(null);
-		Fail("Should raise a System.ArgumentNullException");
+		Fail("#1:Should raise a System.ArgumentNullException");
 	}
 	catch (Exception e) {
-		Assert(typeof(ArgumentNullException) == e.GetType());
+		Assert("#2", typeof(ArgumentNullException) == e.GetType());
 	}
 	try {
 		Int64.Parse("not-a-number");
-		Fail("Should raise a System.FormatException");
+		Fail("#3:Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		Assert(typeof(FormatException) == e.GetType());
+		Assert("#4", typeof(FormatException) == e.GetType());
 	}
 	//test Parse(string s, NumberStyles style)
 	try {
 		double OverInt = (double)Int64.MaxValue + 1;
 		Int64.Parse(OverInt.ToString(), NumberStyles.Float);
-		Fail("Should raise a System.OverflowException");
+		Fail("#5:Should raise a System.OverflowException");
 	}
 	catch (Exception e) {
-		Assert(typeof(OverflowException) == e.GetType());
+		Assert("#6", typeof(OverflowException) == e.GetType());
 	}
 	try {
 		Int64.Parse("10000000000000000", NumberStyles.HexNumber);
-		Fail("Should raise a System.OverflowException");
+		Fail("#7:Should raise a System.OverflowException");
 	}
 	catch (Exception e) {
-		Assert(typeof(OverflowException) == e.GetType());
+		Assert("#8", typeof(OverflowException) == e.GetType());
 	}
 	try {
 		double OverInt = (double)Int64.MaxValue + 1;
 		Int64.Parse(OverInt.ToString(), NumberStyles.Integer);
-		Fail("Should raise a System.FormatException");
+		Fail("#9:Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		Assert(typeof(FormatException) == e.GetType());
+		Assert("#10", typeof(FormatException) == e.GetType());
 	}
 	AssertEquals("A1", (long)42, Int64.Parse(" "+NumberFormatInfo.CurrentInfo.CurrencySymbol+"42 ", NumberStyles.Currency));
 	try {
 		Int64.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer);
-		Fail("Should raise a System.FormatException");
+		Fail("#11:Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		Assert(typeof(FormatException) == e.GetType());
+		Assert("#12", typeof(FormatException) == e.GetType());
 	}
 	//test Parse(string s, IFormatProvider provider)
-	Assert(-42 == Int64.Parse(" -42 ", Nfi));
+	Assert("A2", -42 == Int64.Parse(" -42 ", Nfi));
 	try {
 		Int64.Parse("%42", Nfi);
-		Fail("Should raise a System.FormatException");
+		Fail("#13:Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		Assert(typeof(FormatException) == e.GetType());
+		Assert("#14", typeof(FormatException) == e.GetType());
 	}
 	//test Parse(string s, NumberStyles style, IFormatProvider provider)
-	Assert(16 == Int64.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
+	Assert("A3", 16 == Int64.Parse(" 10 ", NumberStyles.HexNumber, Nfi));
 	try {
 		Int64.Parse(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42", NumberStyles.Integer, Nfi);
-		Fail("Should raise a System.FormatException");
+		Fail("#15:Should raise a System.FormatException");
 	}
 	catch (Exception e) {
-		Assert(typeof(FormatException) == e.GetType());
-	}    
+		Assert("#16", typeof(FormatException) == e.GetType());
+	}
+	try {
+		long.Parse ("9223372036854775808");
+		AssertType.Fail ("#17:should raise an OverflowException");
+	} catch (Exception e) {
+		Assert("#18", typeof(OverflowException) == e.GetType());
+	}
+	try {
+		long.Parse ("9223372036854775808", CultureInfo.InvariantCulture);
+		AssertType.Fail ("#19:should raise an OverflowException");
+	} catch (Exception e) {
+		Assert("#20", typeof(OverflowException) == e.GetType());
+	}
     }
 
     public void TestToString() 
