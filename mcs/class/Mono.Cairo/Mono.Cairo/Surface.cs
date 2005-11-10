@@ -156,7 +156,6 @@ namespace Cairo {
 
 		protected Surface()
 		{
-			Console.WriteLine (Environment.StackTrace);
 		}
 		
                 private Surface (IntPtr ptr, bool owns)

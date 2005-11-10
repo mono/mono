@@ -1,3 +1,8 @@
+2005-11-10  John Luke  <john.luke@gmail.com>
+
+	* Mono.Cairo/Graphics.cs:
+	* Mono.Cairo/Surface.cs: remove debugging output
+	
 2005-10-09  Miguel de Icaza  <miguel@novell.com>
 
 	* Samples/gtk/sysdraw.cs: Fix the sample

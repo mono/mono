@@ -124,14 +124,14 @@ namespace Cairo {
                 protected virtual void Dispose (bool disposing)
                 {
 			if (!disposing){
-				Console.WriteLine ("Cairo.Graphics: called from thread");
+				//Console.WriteLine ("Cairo.Graphics: called from thread");
 				return;
 			}
 			
 			if (state == IntPtr.Zero)
 				return;
 
-			Console.WriteLine ("Destroying");
+			//Console.WriteLine ("Destroying");
                         CairoAPI.cairo_destroy (state);
 			state = IntPtr.Zero;
                 }
