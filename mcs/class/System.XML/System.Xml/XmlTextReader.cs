@@ -425,6 +425,11 @@ namespace System.Xml
 		{
 			return parserContext.NamespaceManager.GetNamespacesInScope (scope);
 		}
+
+		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			return GetNamespacesInScope (scope);
+		}
 #endif
 
 		public TextReader GetRemainder ()

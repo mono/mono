@@ -37,7 +37,6 @@ using System.Text;
 
 namespace System.Xml
 {
-	[MonoTODO ("NormalizeNewLines")]
 	public class XmlTextWriter : XmlWriter
 	{
 		#region Fields
@@ -86,7 +85,6 @@ namespace System.Xml
 		bool checkCharacters;
 		bool closeOutput = true;
 		bool newLineOnAttributes;
-		bool normalizeNewLines = false;
 		string newLineChars;
 #if NET_2_0
 		bool outputXmlDeclaration;
@@ -215,10 +213,6 @@ openElements [openElementCount - 1]).IndentingOverriden;
 		internal bool NewLineOnAttributes {
 //			get { return newLineOnAttributes; }
 			set { newLineOnAttributes = value; }
-		}
-
-		internal bool NormalizeNewLines {
-			set { normalizeNewLines = value; }
 		}
 
 		internal bool OmitXmlDeclaration {
@@ -1013,11 +1007,11 @@ openElements [openElementCount - 1]).IndentingOverriden;
 					if (QuoteChar == '\"') continue;
 					pos = 4; break;
 				case '\r':
-					if (!normalizeNewLines && outsideAttribute)
+					if (outsideAttribute)
 						continue;
 					pos = 5; break;
 				case '\n':
-					if (!normalizeNewLines && outsideAttribute)
+					if (outsideAttribute)
 						continue;
 					pos = 6; break;
 				default:

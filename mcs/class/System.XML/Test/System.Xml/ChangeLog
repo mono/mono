@@ -1,5 +1,9 @@
 2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlWriterSettingsTests.cs : NormalizeNewLines does not exist anymore
+
+2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlConvertTests.cs : tests for ToUInt16/32/64() and VerifyTOKEN().
 
 2005-11-09  Atsushi Enomoto <atsushi@ximian.com>

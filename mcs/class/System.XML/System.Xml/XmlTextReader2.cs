@@ -438,6 +438,11 @@ namespace System.Xml
 			return ((IXmlNamespaceResolver) Current).GetNamespacesInScope (scope);
 		}
 
+		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			return GetNamespacesInScope (scope);
+		}
+
 		public override string LookupNamespace (string prefix)
 		{
 			return Current.LookupNamespace (prefix);

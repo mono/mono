@@ -1,5 +1,13 @@
 2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlValidatingReader.cs : added CanReadBinaryContent.
+	* XmlTextReader.cs, XmlTextReader2.cs : GetNamespacesInScope() are
+	  now both public and private (i.e. hush IsVirtual).
+	* XmlWriterSettings.cs, XmlWriter.cs, XmlTextWriter.cs :
+	  NormalizeNewLines vanished.
+
+2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlReader.cs : MoveToAttribute(int) is virtual in NET_2_0.
 
 2005-11-09  Atsushi Enomoto <atsushi@ximian.com>

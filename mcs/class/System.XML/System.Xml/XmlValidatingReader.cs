@@ -103,6 +103,12 @@ namespace System.Xml
 			get { return validatingReader == null ? sourceReader.BaseURI : validatingReader.BaseURI; }
 		}
 
+#if NET_2_0
+		public override bool CanReadBinaryContent {
+			get { return true; }
+		}
+#endif
+
 		// This property for this class always return true.
 		public override bool CanResolveEntity {
 			get { return true; }

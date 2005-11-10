@@ -170,8 +170,6 @@ namespace System.Xml
 			xtw.CloseOutput = settings.CloseOutput;
 			// ConformanceLevel
 			xtw.ConformanceLevel = settings.ConformanceLevel;
-			// NormalizeNewLines
-			xtw.NormalizeNewLines = settings.NormalizeNewLines;
 			// OmitXmlDeclaration
 			xtw.OmitXmlDeclaration = settings.OmitXmlDeclaration;
 			// CheckCharacters
