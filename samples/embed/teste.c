@@ -49,6 +49,7 @@ main(int argc, char* argv[]) {
 	 * if you are planning on using the dllmaps defined on the
 	 * system configuration
 	 */
+	mono_set_dirs (NULL, NULL);
 	mono_config_parse (NULL);
 	/*
 	 * mono_jit_init() creates a domain: each assembly is

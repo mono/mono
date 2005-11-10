@@ -158,4 +158,20 @@ FindWindowExW (gpointer hwndParent, gpointer hwndChildAfter, const char *classw,
 	return func (hwndParent, hwndChildAfter, classw, window);
 }
 
+int
+SetWindowPos (gpointer hwnd, gpointer hwndInsertAfter, int x, int y, int cx, int cy, uint flags)
+{
+	fprintf (stderr, "SetWindowPos 0x%x 0x%x to [%d,%dx%d,%d] %d\n", hwnd, hwndInsertAfter, x, y, cx, cy, flags);
+	return 1;
+}
 
+int
+SendMessageA (gpointer hwnd, uint msg, gpointer wparam, gpointer lparam)
+{
+	fprintf (stderr, "SendMessage (%d, 0x%x, 0x%x, 0x%x)\n", hwnd, msg, wparam, lparam);
+}
+
+int
+GetWindowLongA (gpointer hwnd, int a)
+{
+}
