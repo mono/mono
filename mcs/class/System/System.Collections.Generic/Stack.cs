@@ -133,16 +133,11 @@ namespace System.Collections.Generic
 			CopyTo (copy, 0);
 			return copy;
 		}
-		
-		public void TrimToSize ()
+
+		[MonoTODO]
+		public void TrimExcess ()
 		{
-			// for some broken reason, msft increments the version here
-			ver ++;
-			
-			if (size == 0)
-				data = null;
-			else
-				Array.Resize <T> (ref data, size);
+			throw new NotImplementedException ();
 		}
 		
 		public int Count {

@@ -68,28 +68,28 @@ namespace System.Collections.Generic {
 		// Constructors
 		//
 		public SortedList () 
-			: this (null, INITIAL_SIZE)
+			: this (INITIAL_SIZE, null)
 		{
 		}
 
-		public SortedList (int initialCapacity)
-			: this (null, initialCapacity)
+		public SortedList (int capacity)
+			: this (capacity, null)
 		{
 		}
 
-		public SortedList (IComparer<TKey> comparer, int initialCapacity)
+		public SortedList (int capacity, IComparer<TKey> comparer)
 		{
-			if (initialCapacity < 0)
+			if (capacity < 0)
 				throw new ArgumentOutOfRangeException ("initialCapacity");
 
-			if (initialCapacity == 0)
+			if (capacity == 0)
 				defaultCapacity = 0;
 			else
 				defaultCapacity = INITIAL_SIZE;
-			Init (comparer, initialCapacity, true);
+			Init (comparer, capacity, true);
 		}
 
-		public SortedList (IComparer<TKey> comparer) : this (comparer, INITIAL_SIZE)
+		public SortedList (IComparer<TKey> comparer) : this (INITIAL_SIZE, comparer)
 		{
 		}
 
@@ -120,13 +120,13 @@ namespace System.Collections.Generic {
 			}
 		}
 
-		public virtual bool IsSynchronized {
+		bool ICollection.IsSynchronized {
 			get {
 				return false;
 			}
 		}
 
-		public virtual Object SyncRoot {
+		Object ICollection.SyncRoot {
 			get {
 				return this;
 			}
@@ -134,13 +134,13 @@ namespace System.Collections.Generic {
 
 		// IDictionary
 
-		public virtual bool IsFixedSize {
+		bool IDictionary.IsFixedSize {
 			get {
 				return false;
 			}
 		}
 
-		public virtual bool IsReadOnly {
+		bool IDictionary.IsReadOnly {
 			get {
 				return false;
 			}
@@ -183,7 +183,7 @@ namespace System.Collections.Generic {
 			}
 		}
 
-		public virtual int Capacity {
+		public int Capacity {
 			get {
 				return table.Length;
 			}
@@ -256,6 +256,12 @@ namespace System.Collections.Generic {
 			}
 		}
 
+		public IComparer<TKey> Comparer {
+			get {
+				return comparer;
+			}
+		}
+
 		//
 		// Public instance methods.
 		//
@@ -311,7 +317,7 @@ namespace System.Collections.Generic {
 			modificationCount++;
 		}
 
-		public virtual void CopyTo (Array array, int arrayIndex)
+		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo (Array array, int arrayIndex)
 		{
 			if (null == array)
 				throw new ArgumentNullException();
@@ -437,7 +443,7 @@ namespace System.Collections.Generic {
 		// SortedList<TKey, TValue>
 		//
 
-		public virtual void RemoveAt (int index)
+		public void RemoveAt (int index)
 		{
 			KeyValuePair<TKey, TValue> [] table = this.table;
 			int cnt = Count;
