@@ -1,3 +1,7 @@
+2005-11-10 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* System.XML.vmwcsproj: removed XmlSchemaBuiltInType.cs
+
 2005-09-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : removed XmlSchemaBuiltInType.cs.
