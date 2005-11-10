@@ -1,3 +1,9 @@
+2005-11-10 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* FontCollection.jvm.cs: refactoring, added GetInitialFont()
+	* InstalledFontCollection.jvm.cs: refactoring, removed GetFamilyName
+	* PrivateFontCollection.jvm.cs: refactoring
+
 2005-08-03  Andrew Skiba <andrews@mainsoft.com>
 
 	* FontCollection.jvm.cs, InstalledFontCollection.jvm.cs,

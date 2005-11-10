@@ -34,6 +34,7 @@ using System.Globalization;
 using awt = java.awt;
 using geom = java.awt.geom;
 using font = java.awt.font;
+using TextAttribute = java.awt.font.TextAttribute;
 
 namespace System.Drawing {
 
@@ -43,6 +44,7 @@ namespace System.Drawing {
 		static readonly FontFamily _genericSansSerif;
 		static readonly FontFamily _genericSerif;
 		static readonly FontCollection _installedFonts;
+		static readonly awt.Container _container = new awt.Container();
 
 		static FontFamily() {
 			_installedFonts = new InstalledFontCollection();
@@ -52,31 +54,34 @@ namespace System.Drawing {
 		}
 		
 		private readonly string _name;
+		private readonly FontCollection _fontCollection;
+
+		private awt.FontMetrics _fontMetrics = null;
+		private FontStyle _lastStyle = FontStyle.Regular;
+		private awt.Font _font;
 
 		// this is unavailable through Java API, usually 2048 for TT fonts
 		const int UnitsPerEm = 2048;
-		
-		
-//		~FontFamily()
-//		{	
-//		}
 
+		#region ctors
+		
 		// dummy ctors to work around convertor problems
 		internal FontFamily() {}
 		internal FontFamily(IntPtr family) {}
 		
-		public FontFamily(string familyName) : this(familyName, null)
-		{}
+		public FontFamily(string familyName) : this(familyName, null) {
+		}
 
 		public FontFamily(string name, FontCollection fontCollection) {
 			if (fontCollection == null)
-				fontCollection = _installedFonts;
+				_fontCollection = _installedFonts;
+			else
+				_fontCollection = fontCollection;
 
-			string familyName = fontCollection.GetFamilyName(name);
-			if (familyName == null)
-				throw new ArgumentException(String.Format("Font family '{0}' not found", name));
+			if ( !_fontCollection.Contains(name) )
+				_name = _genericSansSerif._name;
 
-			_name = familyName;
+			_name = name;
 		}
 
 		public FontFamily(GenericFontFamilies genericFamily) {
@@ -93,50 +98,21 @@ namespace System.Drawing {
 			}
 		}
 		
-		
+		#endregion
+
 		public string Name {
 			get {
 				return _name;
 			}
 		}
 
-		public static FontFamily[] Families {
-			get {
-				return _installedFonts.Families;
-			}
-		}
-		
-		public static FontFamily GenericMonospace {
-			get {
-				return _genericMonospace;
-			}
-		}
-		
-		public static FontFamily GenericSansSerif {
-			get {
-				return _genericSansSerif;
-			}
-		}
-		
-		public static FontFamily GenericSerif {
-			get {
-				return _genericSerif;
-			}
-		}		
-
-		public override bool Equals(object obj) {
-			if (this == obj)
-				return true;
-
-			if (!(obj is FontFamily))
-				return false;
-
-			return string.Compare(Name, ((FontFamily)obj).Name, true) == 0;
-		}
-
 		awt.FontMetrics GetMetrics(FontStyle style) {
-			awt.Container c = new awt.Container();
-			return c.getFontMetrics(new Font(this, (float)(UnitsPerEm<<1), style, GraphicsUnit.World).NativeObject);
+			if ((_lastStyle != style) || (_fontMetrics == null)) {	
+				java.util.Map attrib = Font.DeriveStyle( FamilyFont.getAttributes(), style, true);
+				attrib.put(TextAttribute.SIZE, new java.lang.Float((float)(UnitsPerEm<<1)));
+				_fontMetrics = _container.getFontMetrics( FamilyFont.deriveFont( attrib ) );
+			}
+			return _fontMetrics;
 		}
 
 		public int GetCellAscent(FontStyle style) {
@@ -151,6 +127,54 @@ namespace System.Drawing {
 			return UnitsPerEm;
 		}
 
+		public int GetLineSpacing(FontStyle style) {
+			return GetMetrics(style).getHeight()>>1;
+		}
+
+		public string GetName(int language) {
+			CultureInfo culture;
+			java.util.Locale locale;
+			try {
+				culture = new CultureInfo(language, false);
+				locale = vmw.@internal.EnvironmentUtils.getLocaleFromCultureInfo( culture );
+			}
+			catch(Exception) {
+				locale = new java.util.Locale("en");
+			}
+			return FamilyFont.getFamily( locale );
+		}
+
+		public bool IsStyleAvailable(FontStyle style) {
+			//unable to get this infromation from java
+			return true;
+		}
+
+		#region static members
+
+		public static FontFamily[] Families {
+			get {
+				return _installedFonts.Families;
+			}
+		}
+		
+		public static FontFamily GenericMonospace {
+			get {
+				return (FontFamily)_genericMonospace.MemberwiseClone();
+			}
+		}
+		
+		public static FontFamily GenericSansSerif {
+			get {
+				return (FontFamily)_genericSansSerif.MemberwiseClone();
+			}
+		}
+		
+		public static FontFamily GenericSerif {
+			get {
+				return (FontFamily)_genericSerif.MemberwiseClone();
+			}
+		}		
+
 		public static FontFamily[] GetFamilies(Graphics graphics) {
 			if (graphics == null) {
 				throw new ArgumentNullException("graphics");
@@ -158,29 +182,29 @@ namespace System.Drawing {
 			return _installedFonts.Families;
 		}
 
+		#endregion
+
+		#region Object members
+
+		public override bool Equals(object obj) {
+			if (this == obj)
+				return true;
+
+			if (!(obj is FontFamily))
+				return false;
+
+			return string.Compare(Name, ((FontFamily)obj).Name, true) == 0;
+		}
+
 		public override int GetHashCode() {
 			return Name.ToLower().GetHashCode();
-		}
-
-		public int GetLineSpacing(FontStyle style) {
-			return GetMetrics(style).getHeight()>>1;
-		}
-
-		public string GetName(int language) {
-			CultureInfo culture = new CultureInfo(language, false);
-			//TBD: get java locale
-			return new awt.Font(_name, awt.Font.PLAIN, 1).getFamily(null);
-		}
-
-		public bool IsStyleAvailable(FontStyle style) {
-			return (new Font(this, (float)(UnitsPerEm<<1), style, GraphicsUnit.World).Style & style) == style;
 		}
 
 		public override string ToString() {
 			return string.Format("[{0}: Name={1}]", GetType().Name, Name);
 		}
 
-
+		#endregion
 
 		#region IDisposable Members
 
@@ -189,6 +213,15 @@ namespace System.Drawing {
 		}
 
 		#endregion
+
+		internal awt.Font FamilyFont {
+			get {
+				if (_font == null)
+					_font = _fontCollection.GetInitialFont( _name );
+
+				return _font;
+			}
+		}
 	}
 }
 

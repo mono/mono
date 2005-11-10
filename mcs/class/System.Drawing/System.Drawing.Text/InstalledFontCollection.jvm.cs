@@ -38,25 +38,20 @@ namespace System.Drawing.Text
 	/// </summary>
 	public sealed class InstalledFontCollection : FontCollection
 	{
-		Hashtable _names;
-		public InstalledFontCollection()
+		static readonly Hashtable _installedFonts;
+
+		static InstalledFontCollection()
 		{
-			_fonts.AddRange(
-				java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts());
-
-			Hashtable h = CollectionsUtil.CreateCaseInsensitiveHashtable(_fonts.Count);
-			for (int i = 0; i < _fonts.Count; i++) {
-				string family = ((awt.Font)_fonts[i]).getFamily();
-				if (!h.ContainsKey(family))
-					h[family] = family;
+			_installedFonts = CollectionsUtil.CreateCaseInsensitiveHashtable( new Hashtable() );
+			java.awt.Font [] fonts = java.awt.GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
+			for (int i = 0; i < fonts.Length; i++) {
+				string fontFamilyName = fonts[i].getFamily();
+				if (!_installedFonts.ContainsKey( fontFamilyName ))
+					_installedFonts.Add(fontFamilyName, fonts[i]);
 			}
-
-			_names = h;
 		}
 
-		internal override string GetFamilyName(string name) {
-			return (string)_names[name];
+		public InstalledFontCollection() : base( _installedFonts ) {
 		}
-
 	}
 }

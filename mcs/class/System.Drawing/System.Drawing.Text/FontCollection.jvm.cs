@@ -40,38 +40,44 @@ namespace System.Drawing.Text
 	/// </summary>
 	public abstract class FontCollection : IDisposable
 	{
-		protected ArrayList _fonts;
+		private readonly Hashtable _fonts;
 
 		protected FontCollection()
 		{
-			_fonts = new ArrayList();
+			_fonts = CollectionsUtil.CreateCaseInsensitiveHashtable( new Hashtable() );
+		}
+
+		protected FontCollection(Hashtable fonts) {
+			_fonts = fonts;
 		}
 
 		public FontFamily[] Families {
 			get {
-				Hashtable h = CollectionsUtil.CreateCaseInsensitiveHashtable(_fonts.Count);
-				for (int i = 0; i < _fonts.Count; i++) {
-					string family = ((awt.Font)_fonts[i]).getFamily();
-					if (!h.ContainsKey(family))
-						h[family] = new FontFamily(family);
-				}
-
-				ICollection values = h.Values;
+				ICollection values = _fonts.Keys;
 				FontFamily[] families = new FontFamily[values.Count];
-				values.CopyTo(families, 0);
+				
+				string [] keys = new string[_fonts.Count];
+				_fonts.Keys.CopyTo(keys, 0);
+
+				for (int i = 0; i < _fonts.Count; i++)
+					families[i] = new FontFamily( keys[i] );
+
 				return families;
 			}
 		}
 
-		internal virtual string GetFamilyName(string name) {
-			for (int i = 0; i < _fonts.Count; i++) {
-				string family = ((awt.Font)_fonts[i]).getFamily();
-				if (string.Compare(family, name, true) == 0)
-					return family;
-			}
-
-			return null;
+		internal virtual awt.Font GetInitialFont(string familyName) {
+			return (awt.Font)_fonts[familyName];
 		}
+
+		internal virtual bool Contains(string familyName) {
+			return _fonts.ContainsKey( familyName );
+		}
+
+		protected void AddFont(awt.Font font) {
+			_fonts.Add(font.getFamily(), font);
+		}
+
 		#region IDisposable Members
 
 		public void Dispose() {

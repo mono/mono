@@ -241,6 +241,12 @@ namespace System.Drawing {
 		
 		#region Internal Accessors
 
+		static internal float [] UnitConversion {
+			get {
+				return _unitConversion;
+			}
+		}
+		
 		static internal int DefaultScreenResolution {
 			get {
 				return IsHeadless ? 96 :

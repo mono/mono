@@ -46,7 +46,8 @@ namespace System.Drawing.Text
 			io.File file = IOUtils.getJavaFile(filename);
 			io.FileInputStream stream = new io.FileInputStream(file);
 			try {
-				_fonts.Add(awt.Font.createFont(awt.Font.TRUETYPE_FONT, stream));
+				awt.Font font = awt.Font.createFont(awt.Font.TRUETYPE_FONT, stream);
+				AddFont(font);
 			}
 			finally {
 				stream.close();
