@@ -1,3 +1,11 @@
+2005-11-09  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-config.c (mono_get_config_dir): Set the system defaults if
+	none is specified.
+
+	* assembly.c (mono_set_dirs): New API entry point to set the
+	assembly and the config directory in one call
+
 2005-11-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_ftnptr_to_delegate): Throw a NotSupportedException if
