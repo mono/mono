@@ -216,7 +216,6 @@ namespace System.Configuration
 
 		public bool Load (string fileName)
 		{
-			Console.WriteLine ("ConfigurationData.Load ({0})\n{1}", fileName, Environment.StackTrace);
 			this.fileName = fileName;
 			if (fileName == null || !File.Exists (fileName))
 				return false;
