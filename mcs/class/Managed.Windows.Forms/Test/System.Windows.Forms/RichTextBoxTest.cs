@@ -18,6 +18,7 @@ namespace MonoTests.System.Windows.Forms
 	[TestFixture]
 	public class RichTextBoxBaseTest
 	{
+#if not
 		[Test]
 		public void RichTextBoxPropertyTest ()
 		{
@@ -109,6 +110,7 @@ namespace MonoTests.System.Windows.Forms
 			DataFormats.Format myFormat = DataFormats.GetFormat (DataFormats.Bitmap);
 			Assert.AreEqual (true, rTextBox.CanPaste (myFormat), "#Mtd1");
 		}
+#endif
 		
 		[Test]
 		public void FindCharTest ()
@@ -135,6 +137,40 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual (16, indexToText4, "#Mtd7");
 			int indexToText5 = rTextBox.Find ("text", RichTextBoxFinds.MatchCase);
 			Assert.AreEqual (7, indexToText5, "#Mtd8");
+		}
+
+		[Test]
+		public void FindTest() {
+			RichTextBox t = new RichTextBox();
+
+			t.Text = "Testtext and arglblah may not be what we're looking for\n, but blah Blah is";
+
+			Assert.AreEqual(t.Find(new char[] {'b', 'l', 'a', 'h'}), 9, "Find1");
+			Assert.AreEqual(t.Find(new char[] {'b', 'l', 'a', 'h'}, 20), 20, "Find2");
+			Assert.AreEqual(t.Find(new char[] {'b', 'l', 'a', 'h'}, 25, 30), -1, "Find3");
+			Assert.AreEqual(t.Find("blah"), 17, "Find4");
+			Assert.AreEqual(t.Find("blah", 10, 30, RichTextBoxFinds.None), 17, "Find5");
+			Assert.AreEqual(t.Find("blah", 10, 30, RichTextBoxFinds.WholeWord), -1, "Find6");
+			Assert.AreEqual(t.Find("blah", 10, 30, RichTextBoxFinds.MatchCase), 17, "Find7");
+			Assert.AreEqual(t.Find("blah", 10, 70, RichTextBoxFinds.Reverse), 62, "Find8");
+			Assert.AreEqual(t.Find("blah", 10, 73, RichTextBoxFinds.Reverse), 67, "Find9");
+			Assert.AreEqual(t.Find("blah", 10, 73, RichTextBoxFinds.Reverse | RichTextBoxFinds.MatchCase), 62, "Find10");
+			Assert.AreEqual(t.Find("blah", 10, RichTextBoxFinds.None), 17, "Find11");
+			Assert.AreEqual(t.Find("blah", 10, RichTextBoxFinds.WholeWord), 62, "Find12");
+			Assert.AreEqual(t.Find("blah", 10, RichTextBoxFinds.MatchCase), 17, "Find13");
+			Assert.AreEqual(t.Find("blah", 10, RichTextBoxFinds.Reverse), 67, "Find14");
+			Assert.AreEqual(t.Find("blah", 10, RichTextBoxFinds.Reverse | RichTextBoxFinds.MatchCase), 62, "Find15");
+			Assert.AreEqual(t.Find("blah", RichTextBoxFinds.Reverse), 67, "Find16");
+			Assert.AreEqual(t.Find("blah", RichTextBoxFinds.MatchCase), 17, "Find17");
+			Assert.AreEqual(t.Find("blah", RichTextBoxFinds.WholeWord), 62, "Find18");
+
+			// Special cases
+			AreEqual(t.Find("blah", 10, 11, RichTextBoxFinds.None), -1, "Find19");	// Range to short to ever match
+			AreEqual(t.Find("blah", 17, 18, RichTextBoxFinds.None), -1, "Find20");	// Range to short to ever match, but starts matching
+			AreEqual(t.Find("is", RichTextBoxFinds.WholeWord), 72, "Find21");	// Last word in document
+			AreEqual(t.Find("for", RichTextBoxFinds.WholeWord), 52, "Find22");	// word followed by \n
+			AreEqual(t.Find("Testtext", RichTextBoxFinds.WholeWord), 0, "Find23");	// First word in document
+			AreEqual(t.Find("Testtext", RichTextBoxFinds.WholeWord | RichTextBoxFinds.Reverse), 0, "Find24");	// First word in document, searched in reverse
 		}
 
 		[Test]

@@ -1,3 +1,7 @@
+2005-11-09  Peter Dennis Bartok <pbartok@novell.com>
+
+	* RichTextBoxTest.cs: Added Find() tests
+
 2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* LabelPropertyTest.cs: Updated product version to 1.1.4322.2032 (1.1 SP1).
