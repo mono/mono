@@ -189,15 +189,6 @@ namespace MonoTests.System.Collections.Generic {
 		}
 		
 		[Test]
-		public void TestTrimToSize ()
-		{
-			Stack <int> s = new Stack <int> ();
-			s.TrimToSize ();
-			s.Push (1);
-			s.TrimToSize ();
-		}
-		
-		[Test]
 		public void TestEnumerator ()
 		{
 			Stack <int> s = new Stack <int> ();

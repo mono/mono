@@ -1,3 +1,8 @@
+2005-11-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* StackTest.cs QueueTest.cs: Remove tests for removed TrimToSize ()
+	method.
+
 2005-11-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* SortedListTest.cs: New file.

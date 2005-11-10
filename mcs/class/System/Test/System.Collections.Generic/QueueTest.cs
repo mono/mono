@@ -186,16 +186,7 @@ namespace MonoTests.System.Collections.Generic {
 			AssertEquals (x.Length, 1);
 			AssertEquals (x [0], 1);
 		}
-		
-		[Test]
-		public void TestTrimToSize ()
-		{
-			Queue <int> s = new Queue <int> ();
-			s.TrimToSize ();
-			s.Enqueue (1);
-			s.TrimToSize ();
-		}
-		
+
 		[Test]
 		public void TestEnumerator ()
 		{
