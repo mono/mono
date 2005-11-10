@@ -481,7 +481,18 @@ namespace System.Xml
 
 		public abstract string LookupNamespace (string prefix);
 
+#if NET_2_0
+		public virtual void MoveToAttribute (int i)
+		{
+			if (i >= AttributeCount)
+				throw new ArgumentOutOfRangeException ();
+			MoveToFirstAttribute ();
+			for (int a = 1; a < i; a++)
+				MoveToNextAttribute ();
+		}
+#else
 		public abstract void MoveToAttribute (int i);
+#endif
 
 		public abstract bool MoveToAttribute (string name);
 
