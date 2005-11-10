@@ -1,3 +1,8 @@
+2005-11-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XPathNavigator.cs, XPathNodeIterator.cs :
+	  [DebuggerDisplay] are not worthy of existing.
+
 2005-11-07  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigator.cs, XPathNodeIterator.cs : DebuggerDisplayAttribute

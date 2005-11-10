@@ -1,3 +1,8 @@
+2005-11-10  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlReader.cs, XmlNode.cs :
+	  [DebuggerDisplay] are not worthy of existing.
+
 2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlTokenizedType.cs, XmlNodeOrder.cs : so those enums happen to

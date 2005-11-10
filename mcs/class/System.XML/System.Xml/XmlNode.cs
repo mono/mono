@@ -43,9 +43,6 @@ using System.Xml.Schema;
 
 namespace System.Xml
 {
-#if NET_2_0
-	[DebuggerDisplay ("Name")]
-#endif
 	public abstract class XmlNode : ICloneable, IEnumerable, IXPathNavigable
 	{
 		#region Fields

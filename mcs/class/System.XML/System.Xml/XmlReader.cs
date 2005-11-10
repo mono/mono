@@ -43,7 +43,6 @@ using Mono.Xml.Schema; // only required for NET_2_0
 namespace System.Xml
 {
 #if NET_2_0
-	[DebuggerDisplay ("Name")]
 	public abstract class XmlReader : IDisposable
 #else
 	public abstract class XmlReader
