@@ -1359,7 +1359,13 @@ namespace System
 		}
 
 #if NET_2_0
-		public static void Resize <T> (ref T [] array, int newSize) {
+		public static void Resize<T> (ref T [] array, int newSize)
+		{
+			Resize<T> (ref array, array.Length, newSize);
+		}
+
+		internal static void Resize<T> (ref T[] array, int length, int newSize)
+		{
 			if (newSize < 0)
 				throw new ArgumentOutOfRangeException ();
 			
@@ -1372,7 +1378,7 @@ namespace System
 				return;
 			
 			T [] a = new T [newSize];
-			Array.Copy (array, a, Math.Min (newSize, array.Length));
+			Array.Copy (array, a, Math.Min (newSize, length));
 			array = a;
 		}
 		
