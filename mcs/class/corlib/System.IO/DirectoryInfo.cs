@@ -48,7 +48,7 @@ namespace System.IO {
 			FullPath = Path.GetFullPath (path);
 
 			// Path.GetFullPath ends with / when it's the root directory (fix endless recursion problem)
-			if ((path.Length > 1) || ((path [0] != Path.DirectorySeparatorChar) && (path [0] != Path.AltDirectorySeparatorChar))) {
+			if (Path.GetPathRoot (path) != path) {
 				char end = path [path.Length - 1];
 				if ((end == Path.DirectorySeparatorChar) || (end == Path.AltDirectorySeparatorChar))
 					FullPath += Path.DirectorySeparatorChar;

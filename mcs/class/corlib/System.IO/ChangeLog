@@ -1,3 +1,8 @@
+2005-11-10  Dick Porter  <dick@ximian.com>
+
+	* DirectoryInfo.cs: Fix endless recursion problem with root
+	directory on windows too.  Fixes bug 76191.
+
 2005-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Directory.cs: Add stub for net 2.0 GetFiles method.

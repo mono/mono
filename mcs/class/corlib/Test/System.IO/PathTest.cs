@@ -259,6 +259,16 @@ namespace MonoTests.System.IO
 			} catch (Exception e) {
 				AssertEquals ("GetDirectoryName Exc. #03", typeof (ArgumentException), e.GetType ());
 			}
+
+			if (Windows) {
+				AssertEquals ("GetDirectoryName #04", null, Path.GetDirectoryName ("C:"));
+				AssertEquals ("GetDirectoryName #05", null, Path.GetDirectoryName (@"C:\"));
+				AssertEquals ("GetDirectoryName #06", @"C:\", Path.GetDirectoryName (@"C:\dir"));
+				AssertEquals ("GetDirectoryName #07", @"C:\dir", Path.GetDirectoryName (@"C:\dir\"));
+				AssertEquals ("GetDirectoryName #08", @"C:\dir", Path.GetDirectoryName (@"C:\dir\dir"));
+				AssertEquals ("GetDirectoryName #09", @"C:\dir\dir", Path.GetDirectoryName (@"C:\dir\dir\"));
+			}
+					
 		}
 
 		public void TestGetExtension ()
@@ -508,6 +518,8 @@ namespace MonoTests.System.IO
 				AssertEquals ("GetPathRoot w#12", String.Empty, Path.GetPathRoot ("abc//def"));
 				AssertEquals ("GetPathRoot w#13", "\\", Path.GetPathRoot ("/abc/def"));
 				AssertEquals ("GetPathRoot w#14", "\\\\abc\\def", Path.GetPathRoot ("//abc/def"));
+				AssertEquals ("GetPathRoot w#15", @"C:\", Path.GetPathRoot (@"C:\"));
+				AssertEquals ("GetPathRoot w#16", @"C:\", Path.GetPathRoot (@"C:\\"));
 			} else {
 				// TODO: Same tests for Unix.
 			}
