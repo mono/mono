@@ -198,9 +198,6 @@ namespace System.Web.Configuration {
 		[MonoTODO]
 		public static object GetWebApplicationSection (string sectionName)
 		{
-			if (HttpContext.Current == null)
-				Console.WriteLine ("um, ugh.");
-
 			_Configuration config = OpenWebConfiguration (HttpContext.Current.Request.PhysicalApplicationPath);
 
 			return config.GetSection (sectionName);
