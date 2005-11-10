@@ -457,10 +457,6 @@ namespace Mono.CSharp {
 			if (Increment != null){
 				if (!Increment.Resolve (ec))
 					ok = false;
-
-				Block b = Statement as Block;
-				if (b != null && b.HasRet && ec.CurrentBranching.CurrentUsageVector.Reachability.Barrier == FlowBranching.FlowReturns.Never)
-                    Report.Warning (162, 2, Increment.loc, "Unreachable code detected");
 			}
 
 			ec.CurrentBranching.Infinite = infinite;
