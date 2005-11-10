@@ -352,8 +352,9 @@ namespace Mono.CSharp {
 					dict.Add (em.Name, em);
 				}
 				catch (ArgumentException) {
-					Report.SymbolRelatedToPreviousError ((MemberCore)dict [em.Name]);
-					Report.Warning (3005, em.Location, "Identifier `{0}' differing only in case is not CLS-compliant", em.GetSignatureForError ());
+					Report.SymbolRelatedToPreviousError (em);
+					MemberCore col = (MemberCore)dict [em.Name];
+					Report.Warning (3005, col.Location, "Identifier `{0}' differing only in case is not CLS-compliant", col.GetSignatureForError ());
 				}
 			}
   		}
@@ -365,7 +366,9 @@ namespace Mono.CSharp {
 
 			VerifyClsName ();
 
-			if (!AttributeTester.IsClsCompliant (UnderlyingType)) {
+			if (UnderlyingType == TypeManager.uint32_type ||
+				UnderlyingType == TypeManager.uint64_type ||
+				UnderlyingType == TypeManager.ushort_type) {
 				Report.Error (3009, Location, "`{0}': base type `{1}' is not CLS-compliant", GetSignatureForError (), TypeManager.CSharpName (UnderlyingType));
 			}
 

@@ -83,7 +83,9 @@ namespace Mono.CSharp {
 																 1717, 1718,
 																 1901,
 																 2002, 2023,
-																 3005, 3012, 3019, 3021, 3022, 3023, 3026, 3027
+																 3005, 3012, 3019, 3021, 3022, 3023, 3026, 3027,
+																// gmcs warnings start here
+																 414, 1700
 															 };
 
 		static Report ()
@@ -342,6 +344,15 @@ namespace Mono.CSharp {
 		{
 			if (type.IsGenericInstance)
 				type = type.GetGenericTypeDefinition ();
+
+			if (type.IsGenericParameter) {
+				TypeParameter tp = TypeManager.LookupTypeParameter (type);
+				if (tp != null) {
+					SymbolRelatedToPreviousError (tp.Location, "");
+					return;
+				}
+			}
+
 			if (type is TypeBuilder) {
 				DeclSpace temp_ds = TypeManager.LookupDeclSpace (type);
 				SymbolRelatedToPreviousError (temp_ds.Location, TypeManager.CSharpName (type));

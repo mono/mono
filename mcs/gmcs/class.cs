@@ -1093,8 +1093,8 @@ namespace Mono.CSharp {
 				if (base_class is TypeParameterExpr){
 					Report.Error (
 						689, base_class.Location,
-						"Type parameter `{0}' can not be used as a " +
-						"base class or interface", base_class.Name);
+						"Cannot derive from `{0}' because it is a type parameter",
+						base_class.GetSignatureForError ());
 					error = true;
 					return null;
 				}
@@ -1191,13 +1191,11 @@ namespace Mono.CSharp {
 					if (!TypeManager.MayBecomeEqualGenericInstances (iface, t, infered, null))
 						continue;
 
-					Report.Error (
-						695, Location,
+					Report.Error (695, Location,
 						"`{0}' cannot implement both `{1}' and `{2}' " +
-						"because they may unify for some type " +
-						"parameter substitutions",
-						TypeManager.GetFullName (TypeBuilder),
-						iface, t);
+						"because they may unify for some type parameter substitutions",
+						TypeManager.CSharpName (TypeBuilder), TypeManager.CSharpName (iface),
+						TypeManager.CSharpName (t));
 					return false;
 				}
 
@@ -4236,8 +4234,12 @@ namespace Mono.CSharp {
 			if (GenericMethod != null) {
 				string method_name = MemberName.Name;
 
-				if (IsExplicitImpl)
-					method_name = TypeManager.GetFullName (InterfaceType) + "." + method_name;
+				if (IsExplicitImpl) {
+					string iname = InterfaceType.FullName;
+					if (iname == null)
+						iname = InterfaceType.Name;
+					method_name = SimpleName.RemoveGenericArity (iname) + "." + method_name;
+				}
 
 				mb = Parent.TypeBuilder.DefineGenericMethod (method_name, flags);
 				if (!GenericMethod.Define (mb))
@@ -5095,7 +5097,10 @@ namespace Mono.CSharp {
 						return false;
 					}
 
-					method_name = TypeManager.GetFullName (member.InterfaceType) + "." + method_name;
+					string iname = member.InterfaceType.FullName;
+					if (iname == null)
+						iname = member.InterfaceType.Name;
+					method_name = SimpleName.RemoveGenericArity (iname) + '.' + method_name;
 				} else {
 					if (implementing != null) {
 						AbstractPropertyEventMethod prop_method = method as AbstractPropertyEventMethod;

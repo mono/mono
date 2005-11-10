@@ -35,7 +35,7 @@ namespace Mono.CSharp {
 			if (!TypeParameter_to_Null (target_type)) {
 				Report.Error (403, loc, "Cannot convert null to the type " +
 					      "parameter `{0}' becaues it could be a value " +
-					      "type.  Consider using `default ({0})' instead.",
+					      "type. Consider using `default ({0})' instead.",
 					      target_type);
 				return null;
 			}

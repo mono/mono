@@ -790,7 +790,7 @@ namespace Mono.CSharp {
 					Report.Error (305, loc,
 						      "Using the generic type `{0}' " +
 						      "requires {1} type arguments",
-						      TypeManager.GetFullName (t),
+							  TypeManager.CSharpName (t),
 						      TypeManager.GetNumberOfTypeArguments (t));
 					return;
 				}
@@ -2559,7 +2559,7 @@ namespace Mono.CSharp {
 				Report.Error (305, loc,
 					      "Using the generic type `{0}' " +
 					      "requires {1} type arguments",
-					      TypeManager.GetFullName (type), num_args);
+					      TypeManager.CSharpName (type), num_args);
 				return null;
 			}
 

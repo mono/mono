@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 		}
 
 		public MemberName (MemberName left, MemberName right)
-			: this (left, right, left != null ? left.Location : right != null ? right.Location : Location.Null)
+			: this (left, right, right.Location)
 		{
 		}
 
@@ -722,7 +722,7 @@ namespace Mono.CSharp {
 				if (symbol is TypeParameter)
 					Report.Error (694, symbol.Location,
 						      "Type parameter `{0}' has same name as " +
-						      "containing type or method", name);
+						      "containing type, or method", name);
 				else {
 					Report.SymbolRelatedToPreviousError (this);
 					Report.Error (542,  symbol.Location,
@@ -830,7 +830,10 @@ namespace Mono.CSharp {
 		}
 
 		public override string GetSignatureForError ()
-		{	
+		{
+			if (IsGeneric) {
+				return SimpleName.RemoveGenericArity (Name) + TypeParameter.GetSignatureForError (CurrentTypeParameters);
+			}
 			// Parent.GetSignatureForError
 			return Name;
 		}
@@ -1281,7 +1284,7 @@ namespace Mono.CSharp {
 			if (!is_generic) {
 				if (constraints_list != null) {
 					Report.Error (
-						80, Location, "Contraints are not allowed " +
+						80, Location, "Constraints are not allowed " +
 						"on non-generic declarations");
 				}
 

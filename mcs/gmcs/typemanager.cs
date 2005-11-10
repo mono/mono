@@ -651,51 +651,38 @@ public partial class TypeManager {
 			: CSharpName (mi.DeclaringType) + '.' + mi.Name;
 	}
 
-	private static void GetFullName_recursed (StringBuilder sb, Type t, Type original_type,
-						  ref int pos, bool recursed)
+	static string GetFullName (Type t)
 	{
-		if (t.IsGenericParameter) {
-			sb.Append (t.Name);
-			return;
-		}
+		if (t.IsGenericParameter)
+			return t.Name;
 
-		if (!recursed) {
-			string ns = t.Namespace;
-			if ((ns != null) && (ns != "")) {
-				sb.Append (ns);
-				sb.Append (".");
-			}
-		}
+		string name = t.FullName;
+		if (name == null) // It looks like mono bug
+			name = t.Name;
 
-		if (t.DeclaringType != null) {
-			GetFullName_recursed (sb, t.DeclaringType, t, ref pos, true);
-			sb.Append (".");
-		}
+		StringBuilder sb = new StringBuilder (RemoveGenericArity (name));
 
-		sb.Append (SimpleName.RemoveGenericArity (t.Name));
-
-		Type[] args = GetTypeArguments (original_type);
 		Type[] this_args = GetTypeArguments (t);
 
-		if (this_args.Length > pos) {
-			sb.Append ("<");
-			for (int i = pos; i < this_args.Length; i++) {
-				if (i > pos)
-					sb.Append (",");
-				sb.Append (GetFullName (args [i]));
+		if (this_args.Length > 0) {
+			sb.Append ('<');
+			for (int i = 0; i < this_args.Length; i++) {
+				if (i > 0)
+					sb.Append (',');
+				sb.Append (CSharpName (this_args[i]));
 			}
-			sb.Append (">");
+			sb.Append ('>');
 		}
 
-		pos += this_args.Length;
+		return sb.ToString ();
 	}
 
-	static public string GetFullName (Type t)
+	static string RemoveGenericArity (string from)
 	{
-		StringBuilder sb = new StringBuilder ();
-		int pos = 0;
-		GetFullName_recursed (sb, t, t, ref pos, false);
-		return sb.ToString ();
+		int i = from.IndexOf ('`');
+		if (i > 0)
+			return from.Substring (0, i);
+		return from;
 	}
 
 	/// <summary>
@@ -1460,7 +1447,7 @@ public partial class TypeManager {
 
 	public static bool IsAttributeType (Type t)
 	{
-		return (t == attribute_type) || t.IsSubclassOf (attribute_type);
+		return t == attribute_type && t.BaseType != null || IsSubclassOf (t, attribute_type);
 	}
 	
 	static Stack unmanaged_enclosing_types = new Stack (4);

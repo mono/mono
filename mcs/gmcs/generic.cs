@@ -756,7 +756,7 @@ namespace Mono.CSharp {
 						425, loc, "The constraints for type " +
 						"parameter `{0}' of method `{1}' must match " +
 						"the constraints for type parameter `{2}' " +
-						"of interface method `{3}'.  Consider using " +
+						"of interface method `{3}'. Consider using " +
 						"an explicit interface implementation instead",
 						Name, TypeManager.CSharpSignature (builder),
 						mparam, TypeManager.CSharpSignature (mb));
@@ -929,6 +929,21 @@ namespace Mono.CSharp {
 		public override string ToString ()
 		{
 			return "TypeParameter[" + name + "]";
+		}
+
+		public static string GetSignatureForError (TypeParameter[] tp)
+		{
+			if (tp == null || tp.Length == 0)
+				return "";
+
+			StringBuilder sb = new StringBuilder ("<");
+			for (int i = 0; i < tp.Length; ++i) {
+				if (i > 0)
+					sb.Append (",");
+				sb.Append (tp[i].GetSignatureForError ());
+			}
+			sb.Append ('>');
+			return sb.ToString ();
 		}
 
 		protected class InflatedConstraints : GenericConstraints
@@ -1279,19 +1294,9 @@ namespace Mono.CSharp {
 			get { return args; }
 		}
 
-		protected string DeclarationName {
-			get {
-				StringBuilder sb = new StringBuilder ();
-				sb.Append (gt.FullName);
-				sb.Append ("<");
-				for (int i = 0; i < gen_params.Length; i++) {
-					if (i > 0)
-						sb.Append (",");
-					sb.Append (gen_params [i]);
-				}
-				sb.Append (">");
-				return sb.ToString ();
-			}
+		public override string GetSignatureForError ()
+		{
+			return TypeManager.CSharpName (gt);
 		}
 
 		protected bool CheckConstraint (EmitContext ec, Type ptype, Expression expr,
@@ -1357,14 +1362,14 @@ namespace Mono.CSharp {
 					      "a reference type in order to use it " +
 					      "as type parameter `{1}' in the " +
 					      "generic type or method `{2}'.",
-					      atype, ptype, DeclarationName);
+						  atype, ptype, GetSignatureForError ());
 				return false;
 			} else if (gc.HasValueTypeConstraint && !is_struct) {
 				Report.Error (453, loc, "The type `{0}' must be " +
 					      "a value type in order to use it " +
 					      "as type parameter `{1}' in the " +
 					      "generic type or method `{2}'.",
-					      atype, ptype, DeclarationName);
+						  atype, ptype, GetSignatureForError ());
 				return false;
 			}
 
@@ -1373,11 +1378,7 @@ namespace Mono.CSharp {
 			//
 			if (gc.HasClassConstraint) {
 				if (!CheckConstraint (ec, ptype, aexpr, gc.ClassConstraint)) {
-					Report.Error (309, loc, "The type `{0}' must be " +
-						      "convertible to `{1}' in order to " +
-						      "use it as parameter `{2}' in the " +
-						      "generic type or method `{3}'",
-						      atype, gc.ClassConstraint, ptype, DeclarationName);
+					Error_TypeMustBeConvertible (atype, gc.ClassConstraint, ptype);
 					return false;
 				}
 			}
@@ -1393,11 +1394,7 @@ namespace Mono.CSharp {
 					itype = it;
 
 				if (!CheckConstraint (ec, ptype, aexpr, itype)) {
-					Report.Error (309, loc, "The type `{0}' must be " +
-						      "convertible to `{1}' in order to " +
-						      "use it as parameter `{2}' in the " +
-						      "generic type or method `{3}'",
-						      atype, itype, ptype, DeclarationName);
+					Error_TypeMustBeConvertible (atype, itype, ptype);
 					return false;
 				}
 			}
@@ -1415,11 +1412,23 @@ namespace Mono.CSharp {
 			if (HasDefaultConstructor (ec, atype))
 				return true;
 
+			Report.SymbolRelatedToPreviousError (gt);
+			Report.SymbolRelatedToPreviousError (atype);
 			Report.Error (310, loc, "The type `{0}' must have a public " +
 				      "parameterless constructor in order to use it " +
 				      "as parameter `{1}' in the generic type or " +
-				      "method `{2}'", atype, ptype, DeclarationName);
+					  "method `{2}'", atype, ptype, GetSignatureForError ());
 			return false;
+		}
+
+		void Error_TypeMustBeConvertible (Type atype, Type gc, Type ptype)
+		{
+			Report.SymbolRelatedToPreviousError (gt);
+			Report.SymbolRelatedToPreviousError (atype);
+			Report.Error (309, loc, "The type `{0}' must be convertible to `{1}' in order to " +
+					  "use it as parameter `{2}' in the generic type or method `{3}'",
+					  TypeManager.CSharpName (atype), TypeManager.CSharpName (gc),
+					  TypeManager.CSharpName (ptype), GetSignatureForError ());
 		}
 
 		bool HasDefaultConstructor (EmitContext ec, Type atype)
@@ -1529,7 +1538,7 @@ namespace Mono.CSharp {
 				Report.Error (305, loc,
 					      "Using the generic type `{0}' " +
 					      "requires {1} type arguments",
-					      TypeManager.GetFullName (gt),
+						  TypeManager.CSharpName (gt),
 					      gen_params.Length);
 				return false;
 			}

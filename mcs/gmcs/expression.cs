@@ -95,7 +95,6 @@ namespace Mono.CSharp {
 		public ParenthesizedExpression (Expression expr)
 		{
 			this.Expr = expr;
-			this.loc = expr.Location;
 		}
 
 		public override Expression DoResolve (EmitContext ec)

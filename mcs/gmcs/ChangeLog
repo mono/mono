@@ -1,3 +1,20 @@
+2005-11-10  Marek Safar  <marek.safar@seznam.cz>
+
+	* class.cs,
+	* convert.cs,
+	* cs-parser.jay,
+	* decl.cs,
+	* enum.cs,
+	* expression.cs,
+	* generic.cs,
+	* pending.cs,
+	* report.cs: Fixed error reporting and typos.
+
+	* generic.cs (TypeParameter.GetSignatureForError): New method.
+	(ConstructedType.GetSignatureForError): Instead of DeclarationName.
+
+	* typemanager.cs (GetFullName): Refactored.
+
 2005-11-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute.GetCoClassAttributeValue): New method.
