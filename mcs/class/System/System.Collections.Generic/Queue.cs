@@ -45,16 +45,21 @@ namespace System.Collections.Generic
 		int tail;
 		int size;
 		int version;
+		int defaultCapacity;
+
+		private readonly static int INITIAL_SIZE = 16;
 		
 		public Queue ()
 		{
+			defaultCapacity = INITIAL_SIZE;
 		}
 		
 		public Queue (int count)
 		{
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
-			
+
+			defaultCapacity = count;
 			data = new T [count];
 		}
 		
@@ -63,8 +68,9 @@ namespace System.Collections.Generic
 			if (collection == null)
 				throw new ArgumentNullException ("collection");
 			
-				foreach (T t in collection)
-					Enqueue (t);
+			foreach (T t in collection)
+				Enqueue (t);
+			defaultCapacity = size;
 		}
 		
 		public void Clear ()
@@ -186,10 +192,11 @@ namespace System.Collections.Generic
 			CopyTo (t, 0);
 			return t;
 		}
-		
-		public void TrimToSize ()
+
+		public void TrimExcess ()
 		{
-			SetCapacity (size);
+			if (data != null && (size < data.Length * 0.9))
+				Array.Resize <T> (ref data, size == 0 ? defaultCapacity : size);
 		}
 		
 		void SetCapacity (int new_size)

@@ -43,16 +43,21 @@ namespace System.Collections.Generic
 		T [] data;
 		int size;
 		int ver;
+		int defaultCapacity;
 		
+		private readonly static int INITIAL_SIZE = 16;
+
 		public Stack ()
 		{
+			defaultCapacity = INITIAL_SIZE;
 		}
 		
 		public Stack (int count)
 		{
 			if (count < 0)
 				throw new ArgumentOutOfRangeException ("count");
-			
+
+			defaultCapacity = count;			
 			data = new T [count];
 		}
 		
@@ -62,8 +67,7 @@ namespace System.Collections.Generic
 				throw new ArgumentNullException ("collection");
 			
 			ICollection <T> col = collection as ICollection <T>;
-			
-			
+						
 			if (col != null) {
 				size = col.Count;
 				data = new T [size];
@@ -72,6 +76,7 @@ namespace System.Collections.Generic
 				foreach (T t in collection)
 					Push (t);
 			}
+			defaultCapacity = size;
 		}
 		
 		public void Clear ()
@@ -120,7 +125,7 @@ namespace System.Collections.Generic
 		public void Push (T t)
 		{
 			if (size == 0 || size == data.Length)
-				Array.Resize <T> (ref data, size == 0 ? 10 : 2 * size);
+				Array.Resize <T> (ref data, size == 0 ? INITIAL_SIZE : 2 * size);
 			
 			ver ++;
 			
@@ -134,10 +139,10 @@ namespace System.Collections.Generic
 			return copy;
 		}
 
-		[MonoTODO]
 		public void TrimExcess ()
 		{
-			throw new NotImplementedException ();
+			if (data != null && (size < data.Length * 0.9))
+				Array.Resize <T> (ref data, size == 0 ? defaultCapacity : size);
 		}
 		
 		public int Count {

@@ -492,10 +492,10 @@ namespace System.Collections.Generic {
 			return IndexOfValue (value) >= 0;
 		}
 
-		[MonoTODO]
 		public void TrimExcess ()
 		{
-			throw new NotImplementedException ();
+			if (inUse < table.Length * 0.9)
+				Capacity = inUse;
 		}
 
 		public bool TryGetValue (TKey key, out TValue value)
@@ -518,14 +518,6 @@ namespace System.Collections.Generic {
 		//
 		// Private methods
 		//
-
-		private void Resize (int n, bool copy)
-		{
-			KeyValuePair<TKey, TValue> [] table = this.table;
-			KeyValuePair<TKey, TValue> [] newTable = new KeyValuePair<TKey, TValue> [n];
-			if (copy) Array.Copy (table, 0, newTable, 0, n);
-			this.table = newTable;
-		}
 
 		private void EnsureCapacity (int n, int free)
 		{
