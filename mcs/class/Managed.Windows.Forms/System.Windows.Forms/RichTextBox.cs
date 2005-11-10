@@ -27,6 +27,7 @@
 // NOT COMPLETE
 
 using System;
+using System.Collections;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -76,10 +77,12 @@ namespace System.Windows.Forms {
 
 			scrollbars = RichTextBoxScrollBars.Both;
 			alignment = HorizontalAlignment.Left;
-			this.LostFocus += new EventHandler(RichTextBox_LostFocus);
-			this.GotFocus += new EventHandler(RichTextBox_GotFocus);
-			this.BackColor = ThemeEngine.Current.ColorWindow;
-			this.ForeColor = ThemeEngine.Current.ColorWindowText;
+			LostFocus += new EventHandler(RichTextBox_LostFocus);
+			GotFocus += new EventHandler(RichTextBox_GotFocus);
+			BackColor = ThemeEngine.Current.ColorWindow;
+			ForeColor = ThemeEngine.Current.ColorWindowText;
+			base.HScrolled += new EventHandler(RichTextBox_HScrolled);
+			base.VScrolled += new EventHandler(RichTextBox_VScrolled);
 
 			Console.WriteLine("A friendly request: Do not log a bug about debug messages being emitted when\n" +
 				"using RichTextBox. It's not yet finished, it will spew debug information, and\n" +
@@ -113,6 +116,7 @@ namespace System.Windows.Forms {
 		}
 
 		[DefaultValue(false)]
+		[Localizable(true)]
 		public override bool AutoSize {
 			get {
 				return auto_size;
@@ -184,6 +188,9 @@ namespace System.Windows.Forms {
 
 			set {
 				if (font != value) {
+					Line	start;
+					Line	end;
+
 					if (auto_size) {
 						if (PreferredHeight != Height) {
 							Height = PreferredHeight;
@@ -191,6 +198,11 @@ namespace System.Windows.Forms {
 					}
 
 					base.Font = value;
+
+					// Font changes always set the whole doc to that font
+					start = document.GetLine(1);
+					end = document.GetLine(document.Lines);
+					document.FormatText(start, 1, end, end.text.Length, base.Font, new SolidBrush(this.ForeColor));
 				}
 			}
 		}
@@ -252,11 +264,17 @@ namespace System.Windows.Forms {
 		[Browsable(false)]
 		[DefaultValue("")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[MonoTODO("finish and plug in the rtf parser/generator")]
+		[MonoTODO("Implement setter")]
 		public string Rtf {
 			get {
-				// FIXME
-				return null;
+				Line		start_line;
+				Line		end_line;
+				int		current;
+				int		total;
+
+				start_line = document.GetLine(1);
+				end_line = document.GetLine(document.Lines);
+				return GenerateRTF(start_line, 0, end_line, end_line.text.Length).ToString();
 			}
 
 			set {
@@ -276,18 +294,22 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		[MonoTODO("finish and plug in rtf parser/generator")]
+		[Browsable(false)]
+		[DefaultValue("")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		[MonoTODO("Implement setter")]
 		public string SelectedRtf {
 			get {
-				// FIXME
-				return null;
+				return GenerateRTF(document.selection_start.line, document.selection_start.pos, document.selection_end.line, document.selection_end.pos).ToString();
 			}
 
 			set {
-				// FIXME
 			}
 		}
 
+		[Browsable(false)]
+		[DefaultValue("")]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public override string SelectedText {
 			get {
 				return base.SelectedText;
@@ -352,7 +374,31 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		[MonoTODO]
+		public Color SelectionColor {
+			get {
+				throw new NotImplementedException();
+			}
 
+			set {
+				int	sel_start;
+				int	sel_end;
+
+				sel_start = document.LineTagToCharIndex(document.selection_start.line, document.selection_start.pos);
+				sel_end = document.LineTagToCharIndex(document.selection_end.line, document.selection_end.pos);
+Console.WriteLine("FIXME - SelectionColor should not alter font");
+				document.FormatText(document.selection_start.line, document.selection_start.pos + 1, document.selection_end.line, document.selection_end.pos, document.selection_start.tag.font, new SolidBrush(value));
+
+				document.CharIndexToLineTag(sel_start, out document.selection_start.line, out document.selection_start.tag, out document.selection_start.pos);
+				document.CharIndexToLineTag(sel_end, out document.selection_end.line, out document.selection_end.tag, out document.selection_end.pos);
+
+				document.UpdateView(document.selection_start.line, 0);
+				document.AlignCaret();
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public Font SelectionFont {
 			get {
 				Font	font;
@@ -399,6 +445,23 @@ namespace System.Windows.Forms {
 				document.UpdateView(document.selection_start.line, 0);
 				document.AlignCaret();
 				
+			}
+		}
+
+		[Browsable(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public RichTextBoxSelectionTypes SelectionType {
+			get {
+				if (document.selection_start == document.selection_end) {
+					return RichTextBoxSelectionTypes.Empty;
+				}
+
+				// Lazy, but works
+				if (SelectedText.Length > 1) {
+					return RichTextBoxSelectionTypes.MultiChar | RichTextBoxSelectionTypes.Text;
+				}
+
+				return RichTextBoxSelectionTypes.Text;
 			}
 		}
 
@@ -456,6 +519,155 @@ namespace System.Windows.Forms {
 		#endregion	// Protected Instance Properties
 
 		#region Public Instance Methods
+		public int Find(char[] characterSet) {
+			return Find(characterSet, -1, -1);
+		}
+
+		public int Find(char[] characterSet, int start) {
+			return Find(characterSet, start, -1);
+		}
+
+		public int Find(char[] characterSet, int start, int end) {
+			Document.Marker	start_mark;
+			Document.Marker end_mark;
+			Document.Marker result;
+
+			if (start == -1) {
+				document.GetMarker(out start_mark, true);
+			} else {
+				Line line;
+				LineTag tag;
+				int pos;
+
+				start_mark = new Document.Marker();
+
+				document.CharIndexToLineTag(start, out line, out tag, out pos);
+				start_mark.line = line;
+				start_mark.tag = tag;
+				start_mark.pos = pos;
+			}
+
+			if (end == -1) {
+				document.GetMarker(out end_mark, false);
+			} else {
+				Line line;
+				LineTag tag;
+				int pos;
+
+				end_mark = new Document.Marker();
+
+				document.CharIndexToLineTag(end, out line, out tag, out pos);
+				end_mark.line = line;
+				end_mark.tag = tag;
+				end_mark.pos = pos;
+			}
+
+			if (document.FindChars(characterSet, start_mark, end_mark, out result)) {
+				return document.LineTagToCharIndex(result.line, result.pos);
+			}
+
+			return -1;
+		}
+
+		public int Find(string str) {
+			return Find(str, -1, -1, RichTextBoxFinds.None);
+		}
+
+		public int Find(string str, int start, int end, RichTextBoxFinds options) {
+			Document.Marker	start_mark;
+			Document.Marker end_mark;
+			Document.Marker result;
+
+			if (start == -1) {
+				document.GetMarker(out start_mark, true);
+			} else {
+				Line line;
+				LineTag tag;
+				int pos;
+
+				start_mark = new Document.Marker();
+
+				document.CharIndexToLineTag(start, out line, out tag, out pos);
+
+				start_mark.line = line;
+				start_mark.tag = tag;
+				start_mark.pos = pos;
+			}
+
+			if (end == -1) {
+				document.GetMarker(out end_mark, false);
+			} else {
+				Line line;
+				LineTag tag;
+				int pos;
+
+				end_mark = new Document.Marker();
+
+				document.CharIndexToLineTag(end, out line, out tag, out pos);
+
+				end_mark.line = line;
+				end_mark.tag = tag;
+				end_mark.pos = pos;
+			}
+
+			if (document.Find(str, start_mark, end_mark, out result, options)) {
+				return document.LineTagToCharIndex(result.line, result.pos);
+			}
+
+			return -1;
+		}
+
+		public int Find(string str, int start, RichTextBoxFinds options) {
+			return Find(str, start, -1, options);
+		}
+
+		public int Find(string str, RichTextBoxFinds options) {
+			return Find(str, -1, -1, options);
+		}
+
+		public char GetCharFromPosition(Point pt) {
+			LineTag	tag;
+			int	pos;
+
+			PointToTagPos(pt, out tag, out pos);
+
+			if (pos >= tag.line.text.Length) {
+				return '\n';
+			}
+
+			return tag.line.text[pos];
+			
+		}
+
+		public int GetCharIndexFromPosition(Point pt) {
+			LineTag	tag;
+			int	pos;
+
+			PointToTagPos(pt, out tag, out pos);
+
+			return document.LineTagToCharIndex(tag.line, pos);
+		}
+
+		public int GetLineFromCharIndex(int index) {
+			Line	line;
+			LineTag	tag;
+			int	pos;
+
+			document.CharIndexToLineTag(index, out line, out tag, out pos);
+
+			return line.LineNo - 1;
+		}
+
+		public Point GetPositionFromCharIndex(int index) {
+			Line	line;
+			LineTag	tag;
+			int	pos;
+
+			document.CharIndexToLineTag(index, out line, out tag, out pos);
+
+			return new Point((int)line.widths[pos] + 1, line.Y + 1);
+		}
+
 		public void LoadFile(System.IO.Stream data, RichTextBoxStreamType fileType) {
 			RTF.RTF rtf;	// Not 'using SWF.RTF' to avoid ambiguities with font and color
 
@@ -510,6 +722,7 @@ namespace System.Windows.Forms {
 			document.RecalculateDocument(CreateGraphics());
 		}
 
+		[MonoTODO("Make smarter RTF detection")]
 		public void LoadFile(string path) {
 			if (path.EndsWith(".rtf")) {
 				LoadFile(path, RichTextBoxStreamType.RichText);
@@ -523,32 +736,77 @@ namespace System.Windows.Forms {
 
 			data = null;
 
-//			try {
+			try {
 				data = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 1024);
 				LoadFile(data, fileType);
-//			}
+			}
 
-//			catch {
-//				throw new IOException("Could not open file " + path);
-//			}
+			catch {
+				throw new IOException("Could not open file " + path);
+			}
 
-//			finally {
+			finally {
 				if (data != null) {
 					data.Close();
-//				}
+				}
 			}
 		}
 
 		public void SaveFile(Stream data, RichTextBoxStreamType fileType) {
-			#if later
 			Encoding	encoding;
+			int		i;
+			Byte[]		bytes;
+
 
 			if (fileType == RichTextBoxStreamType.UnicodePlainText) {
 				encoding = Encoding.Unicode;
 			} else {
 				encoding = Encoding.ASCII;
 			}
-			#endif
+
+			switch(fileType) {
+				case RichTextBoxStreamType.PlainText: 
+				case RichTextBoxStreamType.TextTextOleObjs: 
+				case RichTextBoxStreamType.UnicodePlainText: {
+					if (!multiline) {
+						bytes = encoding.GetBytes(document.Root.text.ToString());
+						data.Write(bytes, 0, bytes.Length);
+						return;
+					}
+
+					for (i = 1; i < document.Lines; i++) {
+						bytes = encoding.GetBytes(document.GetLine(i).text.ToString() + Environment.NewLine);
+						data.Write(bytes, 0, bytes.Length);
+					}
+					bytes = encoding.GetBytes(document.GetLine(document.Lines).text.ToString());
+					data.Write(bytes, 0, bytes.Length);
+					return;
+				}
+			}
+
+			// If we're here we're saving RTF
+			Line		start_line;
+			Line		end_line;
+			StringBuilder	rtf;
+			int		current;
+			int		total;
+
+			start_line = document.GetLine(1);
+			end_line = document.GetLine(document.Lines);
+			rtf = GenerateRTF(start_line, 0, end_line, end_line.text.Length);
+			total = rtf.Length;
+			bytes = new Byte[4096];
+
+			// Let's chunk it so we don't use up all memory...
+			for (i = 0; i < total; i += 1024) {
+				if ((i + 1024) < total) {
+					current = encoding.GetBytes(rtf.ToString(i, 1024), 0, 1024, bytes, 0);
+				} else {
+					current = total - i;
+					current = encoding.GetBytes(rtf.ToString(i, current), 0, current, bytes, 0);
+				}
+				data.Write(bytes, 0, current);
+			}
 		}
 
 		public void SaveFile(string path) {
@@ -564,20 +822,20 @@ namespace System.Windows.Forms {
 
 			data = null;
 
-			try {
+//			try {
 				data = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, 1024, false);
 				SaveFile(data, fileType);
-			}
+//			}
 
-			catch {
-				throw new IOException("Could not write document to file " + path);
-			}
+//			catch {
+//				throw new IOException("Could not write document to file " + path);
+//			}
 
-			finally {
+//			finally {
 				if (data != null) {
 					data.Close();
 				}
-			}
+//			}
 		}
 
 		#endregion	// Public Instance Methods
@@ -599,6 +857,12 @@ namespace System.Windows.Forms {
 			base.OnHandleDestroyed (e);
 		}
 
+		protected virtual void OnHScroll(EventArgs e) {
+			if (HScroll != null) {
+				HScroll(this, e);
+			}
+		}
+
 		protected override void OnRightToLeftChanged(EventArgs e) {
 			base.OnRightToLeftChanged (e);
 		}
@@ -609,6 +873,12 @@ namespace System.Windows.Forms {
 
 		protected override void OnTextChanged(EventArgs e) {
 			base.OnTextChanged (e);
+		}
+
+		protected virtual void OnVScroll(EventArgs e) {
+			if (VScroll != null) {
+				VScroll(this, e);
+			}
 		}
 
 		protected override void WndProc(ref Message m) {
@@ -660,7 +930,7 @@ namespace System.Windows.Forms {
 		#endregion	// Events
 
 		#region Private Methods
-		void HandleControl(RTF.RTF rtf) {
+		private void HandleControl(RTF.RTF rtf) {
 			switch(rtf.Major) {
 				case RTF.Major.Unicode: {
 					switch(rtf.Minor) {
@@ -780,7 +1050,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		void SpecialChar(RTF.RTF rtf) {
+		private void SpecialChar(RTF.RTF rtf) {
 			switch(rtf.Minor) {
 				case Minor.Page:
 				case Minor.Sect:
@@ -853,8 +1123,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-
-		void HandleText(RTF.RTF rtf) {
+		private void HandleText(RTF.RTF rtf) {
 			if (rtf_skip_count > 0) {
 				rtf_skip_count--;
 				return;
@@ -872,7 +1141,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		void FlushText(bool newline) {
+		private void FlushText(bool newline) {
 			int		length;
 			Font		font;
 
@@ -904,6 +1173,251 @@ namespace System.Windows.Forms {
 				rtf_cursor_x += length;
 			}
 			rtf_line.Length = 0;	// Empty line
+		}
+
+		private void RichTextBox_HScrolled(object sender, EventArgs e) {
+			OnHScroll(e);
+		}
+
+		private void RichTextBox_VScrolled(object sender, EventArgs e) {
+			OnVScroll(e);
+		}
+		private void PointToTagPos(Point pt, out LineTag tag, out int pos) {
+			Point p;
+
+			p = pt;
+
+			if (p.X >= document.ViewPortWidth) {
+				p.X = document.ViewPortWidth - 1;
+			} else if (p.X < 0) {
+				p.X = 0;
+			}
+
+			if (p.Y >= document.ViewPortHeight) {
+				p.Y = document.ViewPortHeight - 1;
+			} else if (p.Y < 0) {
+				p.Y = 0;
+			}
+
+			tag = document.FindCursor(p.X + document.ViewPortX, p.Y + document.ViewPortY, out pos);
+		}
+		private void EmitRTFFontProperties(StringBuilder rtf, int prev_index, int font_index, Font prev_font, Font font) {
+			if (prev_index != font_index) {
+				rtf.Append(String.Format("\\f{0}", font_index));	// Font table entry
+			}
+
+			if ((prev_font == null) || (prev_font.Height != font.Height)) {
+				rtf.Append(String.Format("\\fs{0}", font.Height * 2));		// Font size
+			}
+
+			if ((prev_font == null) || (font.Bold != prev_font.Bold)) {
+				if (font.Bold) {
+					rtf.Append("\\b");
+				} else {
+					if (prev_font != null) {
+						rtf.Append("\\b0");
+					}
+				}
+			}
+
+			if ((prev_font == null) || (font.Italic != prev_font.Italic)) {
+				if (font.Italic) {
+					rtf.Append("\\i");
+				} else {
+					if (prev_font != null) {
+						rtf.Append("\\i0");
+					}
+				}
+			}
+
+			if ((prev_font == null) || (font.Strikeout != prev_font.Strikeout)) {
+				if (font.Strikeout) {
+					rtf.Append("\\strike");
+				} else {
+					if (prev_font != null) {
+						rtf.Append("\\strike0");
+					}
+				}
+			}
+
+			if ((prev_font == null) || (font.Underline != prev_font.Underline)) {
+				if (font.Underline) {
+					rtf.Append("\\ul");
+				} else {
+					if (prev_font != null) {
+						rtf.Append("\\ul0");
+					}
+				}
+			}
+		}
+
+		[MonoTODO("Emit unicode and other special characters properly")]
+		private void EmitRTFText(StringBuilder rtf, string text) {
+			rtf.Append(text);
+		}
+
+		private StringBuilder GenerateRTF(Line start_line, int start_pos, Line end_line, int end_pos) {
+			StringBuilder	sb;
+			ArrayList	fonts;
+			ArrayList	colors;
+			Color		color;
+			Font		font;
+			Line		line;
+			LineTag		tag;
+			int		pos;
+			int		line_no;
+			int		line_len;
+			int		i;
+			int		length;
+
+			sb = new StringBuilder();
+			fonts = new ArrayList(10);
+			colors = new ArrayList(10);
+
+			// Two runs, first we parse to determine tables;
+			// and unlike most of our processing here we work on tags
+
+			line = start_line;
+			line_no = start_line.line_no;
+			pos = start_pos;
+
+			// Add default font and color; to optimize document content we don't
+			// use this.Font and this.ForeColor but the font/color from the first tag
+			tag = LineTag.FindTag(start_line, pos);
+			font = tag.font;
+			color = ((SolidBrush)tag.color).Color;
+			fonts.Add(font.Name);
+			colors.Add(color);
+
+			while (line_no <= end_line.line_no) {
+				line = document.GetLine(line_no);
+				tag = LineTag.FindTag(line, pos);
+
+				if (line_no != end_line.line_no) {
+					line_len = line.text.Length;
+				} else {
+					line_len = end_pos;
+				}
+
+				while (pos < line_len) {
+					if (tag.font.Name != font.Name) {
+						font = tag.font;
+						if (!fonts.Contains(font.Name)) {
+							fonts.Add(font.Name);
+						}
+					}
+
+					if (((SolidBrush)tag.color).Color != color) {
+						color = ((SolidBrush)tag.color).Color;
+						if (!colors.Contains(color)) {
+							colors.Add(color);
+						}
+					}
+
+					pos += tag.length;
+					tag = tag.next;
+				}
+				pos = 0;
+				line_no++;
+			}
+
+			// We have the tables, emit the header
+			sb.Append("{\\rtf1\\ansi");
+			sb.Append("\\ansicpg1252");	// FIXME - is this correct?
+
+			// Default Font
+			sb.Append(String.Format("\\deff{0}", fonts.IndexOf(this.Font.Name)));
+
+			// Default Language 
+			sb.Append("\\deflang1033\n");	// FIXME - always 1033?
+
+			// Emit the font table
+			sb.Append("{\\fonttbl");
+			for (i = 0; i < fonts.Count; i++) {
+				sb.Append(String.Format("{{\\f{0}", i));	// {Font 
+				sb.Append("\\fnil");			// Family
+				sb.Append("\\fcharset0 ");		// Charset ANSI<space>
+				sb.Append((string)fonts[i]);		// Font name
+				sb.Append(";}");			// }
+			}
+			sb.Append("}\n");
+
+			// Emit the color table (if needed)
+			if (colors.Count > 1) {
+				sb.Append("{\\colortbl ");			// Header and NO! default color
+				for (i = 0; i < colors.Count; i++) {
+					sb.Append(String.Format("\\red{0}", ((Color)colors[i]).R));
+					sb.Append(String.Format("\\green{0}", ((Color)colors[i]).G));
+					sb.Append(String.Format("\\blue{0}", ((Color)colors[i]).B));
+					sb.Append(";");
+				}
+				sb.Append("}\n");
+			}
+
+			sb.Append("{\\*\\generator Mono RichTextBox;}");
+			// Emit initial paragraph settings
+			tag = LineTag.FindTag(start_line, start_pos);
+			sb.Append("\\pard");	// Reset to default paragraph properties
+			EmitRTFFontProperties(sb, -1, fonts.IndexOf(tag.font.Name), null, tag.font);	// Font properties
+			sb.Append(" ");		// Space separator
+
+			font = tag.font;
+			color = (Color)colors[0];
+			line = start_line;
+			line_no = start_line.line_no;
+			pos = start_pos;
+
+			while (line_no <= end_line.line_no) {
+				line = document.GetLine(line_no);
+				tag = LineTag.FindTag(line, pos);
+
+				if (line_no != end_line.line_no) {
+					line_len = line.text.Length;
+				} else {
+					line_len = end_pos;
+				}
+
+				while (pos < line_len) {
+					length = sb.Length;
+
+					if (tag.font != font) {
+						EmitRTFFontProperties(sb, fonts.IndexOf(font.Name), fonts.IndexOf(tag.font.Name), font, tag.font);
+						font = tag.font;
+					}
+
+					if (((SolidBrush)tag.color).Color != color) {
+						color = ((SolidBrush)tag.color).Color;
+						sb.Append(String.Format("\\cf{0}", colors.IndexOf(color)));
+					}
+					if (length != sb.Length) {
+						sb.Append(" ");	// Emit space to separate keywords from text
+					}
+
+					// Emit the string itself
+					if (line_no != end_line.line_no) {
+						EmitRTFText(sb, tag.line.text.ToString(pos, tag.start + tag.length - pos - 1));
+					} else {
+						if (end_pos < (tag.start + tag.length - 1)) {
+							// Emit partial tag only, end_pos is inside this tag
+							EmitRTFText(sb, tag.line.text.ToString(tag.start - 1, end_pos - tag.start - 1));
+						} else {
+							EmitRTFText(sb, tag.line.text.ToString(pos, tag.start + tag.length - pos - 1));
+						}
+					}
+
+					pos += tag.length;
+					tag = tag.next;
+				}
+				if (!line.soft_break) {
+					sb.Append("\\par\n");
+				}
+				pos = 0;
+				line_no++;
+			}
+
+			sb.Append("}\n");
+
+			return sb;
 		}
 		#endregion	// Private Methods
 	}

@@ -103,6 +103,7 @@ namespace System.Windows.Forms {
 			SizeChanged += new EventHandler(TextBoxBase_SizeChanged);
 			FontChanged += new EventHandler(TextBoxBase_FontOrColorChanged);
 			ForeColorChanged += new EventHandler(TextBoxBase_FontOrColorChanged);
+			MouseWheel += new MouseEventHandler(TextBoxBase_MouseWheel);
 			
 			scrollbars = RichTextBoxScrollBars.None;
 
@@ -451,7 +452,7 @@ namespace System.Windows.Forms {
 					for (i = 1; i < document.Lines; i++) {
 						sb.Append(document.GetLine(i).text.ToString() + Environment.NewLine);
 					}
-					sb.Append(document.GetLine(i).text.ToString());
+					sb.Append(document.GetLine(document.Lines).text.ToString());
 					return sb.ToString();
 				}
 			}
@@ -1121,6 +1122,9 @@ namespace System.Windows.Forms {
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public event PaintEventHandler	Paint;
 		public event EventHandler	ReadOnlyChanged;
+
+		internal event EventHandler	HScrolled;
+		internal event EventHandler	VScrolled;
 		#endregion	// Events
 
 		#region Private Methods
@@ -1277,8 +1281,6 @@ static int current;
 				return;
 			}
 		}
-		#endregion	// Private Methods
-
 
 		private void TextBoxBase_SizeChanged(object sender, EventArgs e) {
 			canvas_width = ClientSize.Width;
@@ -1288,6 +1290,35 @@ static int current;
 			hscroll.Bounds = new Rectangle (ClientRectangle.Left, ClientRectangle.Bottom - hscroll.Height, ClientSize.Width, hscroll.Height);
 			vscroll.Bounds = new Rectangle (ClientRectangle.Right - vscroll.Width, ClientRectangle.Top, vscroll.Width, ClientSize.Height);
 			
+		}
+
+		private void TextBoxBase_MouseWheel(object sender, MouseEventArgs e) {
+			Line	line;
+			int	line_no;
+			int	target;
+
+			if (!vscroll.Enabled) {
+				return;
+			}
+
+			if (e.Delta < 0) {
+				line_no = document.GetLineByPixel(document.ViewPortY, false).line_no + SystemInformation.MouseWheelScrollLines;
+				if (line_no > document.Lines) {
+					line_no = document.Lines;
+				}
+			} else {
+				line_no = document.GetLineByPixel(document.ViewPortY, false).line_no - SystemInformation.MouseWheelScrollLines;
+				if (line_no < 1) {
+					line_no = 1;
+				}
+			}
+
+			line = document.GetLine(line_no);
+			if (line.Y < vscroll.Maximum) {
+				vscroll.Value = line.Y;
+			} else {
+				vscroll.Value = vscroll.Maximum;
+			}
 		}
 
 		internal void CalculateDocument() {
@@ -1363,14 +1394,20 @@ static int current;
 			XplatUI.ScrollWindow(this.Handle, document.ViewPortX-this.hscroll.Value, 0, false);
 			document.ViewPortX = this.hscroll.Value;
 			document.UpdateCaret();
-			//Console.WriteLine("Dude scrolled horizontal");
+
+			if (HScrolled != null) {
+				HScrolled(this, EventArgs.Empty);
+			}
 		}
 
 		private void vscroll_ValueChanged(object sender, EventArgs e) {
 			XplatUI.ScrollWindow(this.Handle, 0, document.ViewPortY-this.vscroll.Value, false);
 			document.ViewPortY = this.vscroll.Value;
 			document.UpdateCaret();
-			//Console.WriteLine("Dude scrolled vertical");
+
+			if (VScrolled != null) {
+				VScrolled(this, EventArgs.Empty);
+			}
 		}
 
 		private void TextBoxBase_MouseMove(object sender, MouseEventArgs e) {
@@ -1460,5 +1497,6 @@ static int current;
 				vscroll.Value = pos.Y - canvas_height + height;
 			}
 		}
+		#endregion	// Private Methods
 	}
 }

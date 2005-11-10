@@ -1,3 +1,33 @@
+2005-11-10  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* TextControl.cs: Added backend code for finding char arrays and strings
+	* TextBoxBase.cs:
+	  - Added mouse wheel scroll support
+	  - Added support for VScroll and HScroll events
+	* RichTextBox.cs:
+	  - Implemented all seven Find() variants
+	  - Implemented GetCharFromPosition()
+	  - Implemented GetCharIndexFromPosition()
+	  - Implemented GetLineFromIndex()
+	  - Implemented GetPositionFromCharIndex();
+	  - Implemented SaveFile for PlainText and UnicodeText
+	  - Fixed set_Font, now setting a new font applies that font to
+	    the whole document
+	  - Implemented generic Document to RTF converter
+	  - Implemented SaveFile for RichText format (still missing unicode
+	    conversion for non-ansi chars)
+	  - Implemented get_Rtf
+	  - Implemented get_SelectedRtf
+
+2005-11-09  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* Control.cs (WndProc): Call HandleClick after having sent OnMouseUp
+	  to allow any captures to be released before triggering OnClick. This
+	  way a click handler may capture the mouse without interference.
+	* XplatUIX11.cs: Always send mouse messages to grab window if one exists.
+	  This way we send them even though X may not allow a grab (if the window
+	  isn't visible, for example)
+
 2005-11-08  Pedro Martinez Julia <pedromj@gmail.com>
 
 	* DataGridViewRowEventArgs.cs: DataGridView implementation

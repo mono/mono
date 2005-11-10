@@ -3518,11 +3518,11 @@ namespace System.Windows.Forms
 				}
 
 				case Msg.WM_LBUTTONUP: {
-					HandleClick(mouse_clicks);
 					OnMouseUp (new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()) | MouseButtons.Left, 
 						mouse_clicks, 
 						LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 
 						0));
+					HandleClick(mouse_clicks);
 					if (mouse_clicks > 1) {
 						mouse_clicks = 1;
 					}

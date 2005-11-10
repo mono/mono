@@ -2489,6 +2489,10 @@ namespace System.Windows.Forms {
 					MousePosition.X = xevent.ButtonEvent.x;
 					MousePosition.Y = xevent.ButtonEvent.y;
 
+					if (Grab.Hwnd != IntPtr.Zero) {
+						msg.hwnd = Grab.Hwnd;
+					}
+
 					if (!ClickPending.Pending) {
 						ClickPending.Pending = true;
 						ClickPending.Hwnd = msg.hwnd;
@@ -2570,6 +2574,10 @@ namespace System.Windows.Forms {
 						}
 					}
 
+					if (Grab.Hwnd != IntPtr.Zero) {
+						msg.hwnd = Grab.Hwnd;
+					}
+
 					msg.lParam=(IntPtr) (xevent.ButtonEvent.y << 16 | xevent.ButtonEvent.x);
 					MousePosition.X = xevent.ButtonEvent.x;
 					MousePosition.Y = xevent.ButtonEvent.y;
@@ -2582,9 +2590,15 @@ namespace System.Windows.Forms {
 							Console.WriteLine("GetMessage(): Window {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
 						#endif
 
-						if (Dnd.HandleMotionNotify (ref xevent))
+						if (Dnd.HandleMotionNotify (ref xevent)) {
 							goto ProcessNextMessage;
-						NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
+						}
+
+						if (Grab.Hwnd != IntPtr.Zero) {
+							msg.hwnd = Grab.Hwnd;
+						} else {
+							NativeWindow.WndProc(msg.hwnd, Msg.WM_SETCURSOR, msg.hwnd, (IntPtr)HitTest.HTCLIENT);
+						}
 
 						msg.message = Msg.WM_MOUSEMOVE;
 						msg.wParam = GetMousewParam(0);

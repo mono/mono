@@ -3196,6 +3196,253 @@ namespace System.Windows.Forms {
 				return 0;
 			}
 		}
+
+		/* Search document for text */
+		internal bool FindChars(char[] chars, Marker start, Marker end, out Marker result) {
+			Line	line;
+			int	line_no;
+			int	pos;
+			int	line_len;
+
+			// Search for occurence of any char in the chars array
+			result = new Marker();
+
+			line = start.line;
+			line_no = start.line.line_no;
+			pos = start.pos;
+			while (line_no <= end.line.line_no) {
+				line_len = line.text.Length;
+				while (pos < line_len) {
+					for (int i = 0; i < chars.Length; i++) {
+						if (line.text[pos] == chars[i]) {
+							// Special case
+							if ((line.line_no == end.line.line_no) && (pos >= end.pos)) {
+								return false;
+							}
+
+							result.line = line;
+							result.pos = pos;
+							return true;
+						}
+					}
+					pos++;
+				}
+
+				pos = 0;
+				line_no++;
+				line = GetLine(line_no);
+			}
+
+			return false;
+		}
+
+		// This version does not build one big string for searching, instead it handles 
+		// line-boundaries, which is faster and less memory intensive
+		// FIXME - Depending on culture stuff we might have to create a big string and use culturespecific 
+		// search stuff and change it to accept and return positions instead of Markers (which would match 
+		// RichTextBox behaviour better but would be inconsistent with the rest of TextControl)
+		internal bool Find(string search, Marker start, Marker end, out Marker result, RichTextBoxFinds options) {
+			Marker	last;
+			string	search_string;
+			Line	line;
+			int	line_no;
+			int	pos;
+			int	line_len;
+			int	current;
+			bool	word;
+			bool	word_option;
+			bool	ignore_case;
+			bool	reverse;
+			char	c;
+
+			result = new Marker();
+			word_option = ((options & RichTextBoxFinds.WholeWord) != 0);
+			ignore_case = ((options & RichTextBoxFinds.MatchCase) == 0);
+			reverse = ((options & RichTextBoxFinds.Reverse) != 0);
+
+			line = start.line;
+			line_no = start.line.line_no;
+			pos = start.pos;
+			current = 0;
+
+			// Prep our search string, lowercasing it if we do case-independent matching
+			if (ignore_case) {
+				StringBuilder	sb;
+				sb = new StringBuilder(search);
+				for (int i = 0; i < sb.Length; i++) {
+					sb[i] = Char.ToLower(sb[i]);
+				}
+				search_string = sb.ToString();
+			} else {
+				search_string = search;
+			}
+
+			// We need to check if the character before our start position is a wordbreak
+			if (word_option) {
+				if (line_no == 1) {
+					if ((pos == 0) || (IsWordSeparator(line.text[pos - 1]))) {
+						word = true;
+					} else {
+						word = false;
+					}
+				} else {
+					if (pos > 0) {
+						if (IsWordSeparator(line.text[pos - 1])) {
+							word = true;
+						} else {
+							word = false;
+						}
+					} else {
+						// Need to check the end of the previous line
+						Line	prev_line;
+
+						prev_line = GetLine(line_no - 1);
+						if (prev_line.soft_break) {
+							if (IsWordSeparator(prev_line.text[prev_line.text.Length - 1])) {
+								word = true;
+							} else {
+								word = false;
+							}
+						} else {
+							word = true;
+						}
+					}
+				}
+			} else {
+				word = false;
+			}
+
+			// To avoid duplication of this loop with reverse logic, we search
+			// through the document, remembering the last match and when returning
+			// report that last remembered match
+
+			last = new Marker();
+			last.height = -1;	// Abused - we use it to track change
+
+			while (line_no <= end.line.line_no) {
+				if (line_no != end.line.line_no) {
+					line_len = line.text.Length;
+				} else {
+					line_len = end.pos;
+				}
+
+				while (pos < line_len) {
+					if (word_option && (current == search_string.Length)) {
+						if (IsWordSeparator(line.text[pos])) {
+							if (!reverse) {
+								goto FindFound;
+							} else {
+								last = result;
+								current = 0;
+							}
+						} else {
+							current = 0;
+						}
+					}
+
+					if (ignore_case) {
+						c = Char.ToLower(line.text[pos]);
+					} else {
+						c = line.text[pos];
+					}
+
+					if (c == search_string[current]) {
+						if (current == 0) {
+							result.line = line;
+							result.pos = pos;
+						}
+						if (!word_option || (word_option && (word || (current > 0)))) {
+							current++;
+						}
+
+						if (!word_option && (current == search_string.Length)) {
+							if (!reverse) {
+								goto FindFound;
+							} else {
+								last = result;
+								current = 0;
+							}
+						}
+					} else {
+						current = 0;
+					}
+					pos++;
+
+					if (!word_option) {
+						continue;
+					}
+
+					if (IsWordSeparator(c)) {
+						word = true;
+					} else {
+						word = false;
+					}
+				}
+
+				if (word_option) {
+					// Mark that we just saw a word boundary
+					if (!line.soft_break) {
+						word = true;
+					}
+
+					if (current == search_string.Length) {
+						if (word) {
+							if (!reverse) {
+								goto FindFound;
+							} else {
+								last = result;
+								current = 0;
+							}
+						} else {
+							current = 0;
+						}
+					}
+				}
+
+				pos = 0;
+				line_no++;
+				line = GetLine(line_no);
+			}
+
+			if (reverse) {
+				if (last.height != -1) {
+					result = last;
+					return true;
+				}
+			}
+
+			return false;
+
+			FindFound:
+			if (!reverse) {
+//				if ((line.line_no == end.line.line_no) && (pos >= end.pos)) {
+//					return false;
+//				}
+				return true;
+			}
+
+			result = last;
+			return true;
+
+		}
+
+		/* Marker stuff */
+		internal void GetMarker(out Marker mark, bool start) {
+			mark = new Marker();
+
+			if (start) {
+				mark.line = GetLine(1);
+				mark.tag = mark.line.tags;
+				mark.pos = 0;
+			} else {
+				mark.line = GetLine(lines);
+				mark.tag = mark.line.tags;
+				while (mark.tag.next != null) {
+					mark.tag = mark.tag.next;
+				}
+				mark.pos = mark.line.text.Length;
+			}
+		}
 		#endregion	// Internal Methods
 
 		#region Events
