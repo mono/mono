@@ -272,11 +272,13 @@ namespace System.Configuration
 				reader.Skip ();
 			}
 			else {
+
+				int depth = reader.Depth;
+
 				reader.ReadStartElement ();
 				reader.MoveToContent ();
-				
-				while (reader.NodeType != XmlNodeType.EndElement)
-				{
+
+				do {
 					if (reader.NodeType != XmlNodeType.Element) {
 						reader.Skip ();
 						continue;
@@ -305,7 +307,13 @@ namespace System.Configuration
 					ConfigurationElement val = (ConfigurationElement) prop.Value;
 					val.DeserializeElement (reader, serializeCollectionKey);
 					readProps [prop] = prop.Name;
-				}
+
+					reader.Read();
+
+				} while (depth < reader.Depth);
+
+				if (reader.NodeType == XmlNodeType.EndElement)
+					reader.Read ();
 			}
 			
 			modified = false;

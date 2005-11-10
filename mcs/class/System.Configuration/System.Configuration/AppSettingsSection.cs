@@ -63,13 +63,11 @@ namespace System.Configuration {
 			return Settings.IsModified ();
 		}
 
-		[MonoTODO ("Read file attribute, and fix IsDefaultCollection stuff (so we can remove the call to Settings.DeserializeElement)")]
+		[MonoTODO ("Read file attribute")]
 		protected internal override void DeserializeElement (XmlReader reader, bool serializeCollectionKey)
 		{
-			if (File == "") {
-				Settings.DeserializeElement (reader, serializeCollectionKey);
-			}
-			else {
+			if (File != "") {
+				/* deserialize from the file */
 				throw new NotImplementedException ();
 			}
 		}

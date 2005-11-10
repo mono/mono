@@ -1,3 +1,12 @@
+2005-11-10  Chris Toshok  <toshok@ximian.com>
+
+	* AppSettingsSection.cs (DeserializeElement): stop explicitly
+	calling Settings.DeserializeElement, as the DefaultCollection
+	works now.
+
+	* ConfigurationElement.cs (DeserializeElement): rework the loop
+	here so that we actually loop over all the content elements.
+
 2005-11-09  Chris Toshok  <toshok@ximian.com>
 
 	* ConfigurationElement.cs: Add support for DefaultCollection
