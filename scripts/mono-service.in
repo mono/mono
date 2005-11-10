@@ -1,7 +1,4 @@
 #!/bin/sh
-a=`which "$0"`
-d=`dirname "$a"`
-
 args="$@"
 assembly=
 while test x$1 != x; do
@@ -32,4 +29,4 @@ if test x$assembly = x; then
 fi
 
 export MONO_DISABLE_SHM=1
-exec $d/@mono_interp@ @mono_instdir@/@framework_version@/@exe_name@.exe $args </dev/null >& /dev/null &
+exec @bindir@/@mono_interp@ @mono_instdir@/@framework_version@/@exe_name@.exe $args </dev/null >& /dev/null &
