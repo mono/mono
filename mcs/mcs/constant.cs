@@ -246,7 +246,7 @@ namespace Mono.CSharp {
 			catch (OverflowException) {
 				if (ec.ConstantCheckState) {
 					Report.Error (221, loc, "Constant value `{0}' cannot be converted to a `{1}' (use `unchecked' syntax to override)",
-						this.GetValue (), TypeManager.CSharpName (target_type));
+						GetValue ().ToString (), TypeManager.CSharpName (target_type));
 				}
 				return null;
 			}

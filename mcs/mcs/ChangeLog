@@ -1,3 +1,13 @@
+2005-11-10  Marek Safar  <marek.safar@seznam.cz>
+
+	* report.cs: Made error/warning methods more strict to avoid
+	their misuse.
+
+	* anonymous.cs, attribute.cs, class.cs, codegen.cs, constant.cs,
+	convert.cs, cs-parser.jay, cs-tokenizer.cs, decl.cs, delegate.cs,
+	doc.cs, driver.cs, ecore.cs, expression.cs, location.cs,
+	namespace.cs, parameter.cs, statement.cs, typemanager.cs: Updated.
+
 2005-11-08  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (Attribute.GetCoClassAttributeValue): New method.

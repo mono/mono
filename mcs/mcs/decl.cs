@@ -495,9 +495,9 @@ namespace Mono.CSharp {
 			if (!IsClsCompliaceRequired (ds)) {
 				if (HasClsCompliantAttribute && RootContext.WarningLevel >= 2) {
 					if (!IsExposedFromAssembly (ds))
-						Report.Warning (3019, Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
+						Report.Warning (3019, 2, Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
 					if (!CodeGen.Assembly.IsClsCompliant)
-						Report.Warning (3021, Location, "`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant", GetSignatureForError ());
+						Report.Warning (3021, 2, Location, "`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant", GetSignatureForError ());
 				}
 				return false;
 			}

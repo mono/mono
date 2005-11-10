@@ -4812,7 +4812,7 @@ namespace Mono.CSharp {
 		public static void Error_WrongNumArguments (Location loc, String name, int arg_count)
 		{
 			Report.Error (1501, loc, "No overload for method `{0}' takes `{1}' arguments",
-				name, arg_count);
+				name, arg_count.ToString ());
 		}
 
                 static void Error_InvokeOnDelegate (Location loc)
@@ -4833,16 +4833,17 @@ namespace Mono.CSharp {
 
 			Parameter.Modifier mod = expected_par.ParameterModifier (idx);
 
+			string index = (idx + 1).ToString ();
 			if (mod != Parameter.Modifier.ARGLIST && mod != a.Modifier) {
 				if ((mod & (Parameter.Modifier.REF | Parameter.Modifier.OUT)) == 0)
 					Report.Error (1615, loc, "Argument `{0}' should not be passed with the `{1}' keyword",
-						idx + 1, Parameter.GetModifierSignature (a.Modifier));
+						index, Parameter.GetModifierSignature (a.Modifier));
 				else
 					Report.Error (1620, loc, "Argument `{0}' must be passed with the `{1}' keyword",
-						idx + 1, Parameter.GetModifierSignature (mod));
+						index, Parameter.GetModifierSignature (mod));
 			} else {
 				Report.Error (1503, loc, "Argument {0}: Cannot convert from `{1}' to `{2}'",
-					idx + 1, Argument.FullDesc (a), expected_par.ParameterDesc (idx));
+					index, Argument.FullDesc (a), expected_par.ParameterDesc (idx));
 			}
 		}
 		
@@ -7111,10 +7112,8 @@ namespace Mono.CSharp {
 		{
 			FullNamedExpression new_expr = expr.ResolveAsTypeStep (ec, silent);
 
-			if (new_expr == null) {
-				Report.Error (234, "No such name or typespace {0}", expr);
+			if (new_expr == null)
 				return null;
-			}
 
 			if (new_expr is Namespace) {
 				Namespace ns = (Namespace) new_expr;
@@ -7439,7 +7438,7 @@ namespace Mono.CSharp {
 			Type t = ea.Expr.Type;
 			if (t.GetArrayRank () != ea.Arguments.Count){
 				Report.Error (22, ea.Location, "Wrong number of indexes `{0}' inside [], expected `{1}'",
-					  ea.Arguments.Count, t.GetArrayRank ());
+					  ea.Arguments.Count.ToString (), t.GetArrayRank ().ToString ());
 				return null;
 			}
 

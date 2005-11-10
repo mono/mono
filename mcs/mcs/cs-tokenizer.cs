@@ -743,7 +743,7 @@ namespace Mono.CSharp
 							// if we have not seen anything in between
 							// report this error
 							//
-							Report.Warning (78, Location, "The 'l' suffix is easily confused with the digit '1' (use 'L' for clarity)");
+							Report.Warning (78, 4, Location, "The 'l' suffix is easily confused with the digit '1' (use 'L' for clarity)");
 						}
 						//
 						// This goto statement causes the MS CLR 2.0 beta 1 csc to report an error, so
@@ -1077,7 +1077,7 @@ namespace Mono.CSharp
 					goto default;
 				return v;
 			default:
-				Report.Error (1009, Location, "Unrecognized escape sequence `\\{0}'", (char)d);
+				Report.Error (1009, Location, "Unrecognized escape sequence `\\{0}'", ((char)d).ToString ());
 				return d;
 			}
 			getChar ();
@@ -1375,7 +1375,7 @@ namespace Mono.CSharp
 				Hashtable w_table = Report.warning_ignore_table;
 				foreach (int code in codes) {
 					if (w_table != null && w_table.Contains (code))
-						Report.Warning (1635, 1, Location, "Cannot restore warning `CS{0:0000}' because it was disabled globally", code);
+						Report.Warning (1635, 1, Location, String.Format ("Cannot restore warning `CS{0:0000}' because it was disabled globally", code));
 					Report.RegisterWarningRegion (Location).WarningEnable (Location, code);
 				}
 				return;
@@ -1399,7 +1399,7 @@ namespace Mono.CSharp
 					values[index++] = int.Parse (string_code, System.Globalization.CultureInfo.InvariantCulture);
 				}
 				catch (FormatException) {
-					Report.Warning (1692, Location, "Invalid number");
+					Report.Warning (1692, 1, Location, "Invalid number");
 				}
 			}
 			return values;
@@ -1787,7 +1787,7 @@ namespace Mono.CSharp
 				return true;
 
 			case "warning":
-				Report.Warning (1030, Location, "#warning: `{0}'", arg);
+				Report.Warning (1030, 1, Location, "#warning: `{0}'", arg);
 				return true;
 			}
 
@@ -1933,7 +1933,7 @@ namespace Mono.CSharp
 				for (int i = 1; i < id_builder.Length; i += 3) {
 					if (id_builder [i] == '_' && (id_builder [i - 1] == '_' || id_builder [i + 1] == '_')) {
 						Report.Error (1638, Location, 
-							"`{0}': Any identifier with double underscores cannot be used when ISO language version mode is specified", val);
+							"`{0}': Any identifier with double underscores cannot be used when ISO language version mode is specified", val.ToString ());
 						break;
 					}
 				}

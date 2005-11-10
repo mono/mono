@@ -449,7 +449,7 @@ namespace Mono.CSharp {
 
 				if (member == null){
 					Report.Error (117, Location, "`{0}' does not contain a definition for `{1}'",
-						      Type, member_name);
+						      TypeManager.CSharpName (Type), member_name);
 					return null;
 				}
 				
@@ -1759,11 +1759,10 @@ namespace Mono.CSharp {
 			}
 
 			if (oa.Message == null) {
-				Report.Warning (612, loc, "`{0}' is obsolete", member);
+				Report.Warning (612, 1, loc, "`{0}' is obsolete", member);
 				return;
 			}
-			if (RootContext.WarningLevel >= 2)
-				Report.Warning (618, loc, "`{0}' is obsolete: `{1}'", member, oa.Message);
+			Report.Warning (618, 2, loc, "`{0}' is obsolete: `{1}'", member, oa.Message);
 		}
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb)

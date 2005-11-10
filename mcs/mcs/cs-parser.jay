@@ -2165,7 +2165,7 @@ event_declaration
 
 		if ($8 == null){
 			Report.Error (65, (Location) $3, "`{0}.{1}': event property must have both add and remove accessors",
-				current_container.Name, name);
+				current_container.Name, name.ToString ());
 			$$ = null;
 		} else {
 			Pair pair = (Pair) $8;
@@ -3886,11 +3886,9 @@ if_statement
 
 		$$ = new If ((Expression) $3, (Statement) $5, l);
 
-		if (RootContext.WarningLevel >= 3){
-			// FIXME: location for warning should be loc property of $5.
-			if ($5 == EmptyStatement.Value)
-				Report.Warning (642, l, "Possible mistaken empty statement");
-		}
+		// FIXME: location for warning should be loc property of $5.
+		if ($5 == EmptyStatement.Value)
+			Report.Warning (642, 3, l, "Possible mistaken empty statement");
 
 	  }
 	| IF OPEN_PARENS boolean_expression CLOSE_PARENS
@@ -3900,13 +3898,11 @@ if_statement
 
 		$$ = new If ((Expression) $3, (Statement) $5, (Statement) $7, l);
 
-		if (RootContext.WarningLevel >= 3){
-			// FIXME: location for warning should be loc property of $5 and $7.
-			if ($5 == EmptyStatement.Value)
-				Report.Warning (642, l, "Possible mistaken empty statement");
-			if ($7 == EmptyStatement.Value)
-				Report.Warning (642, l, "Possible mistaken empty statement");
-		}
+		// FIXME: location for warning should be loc property of $5 and $7.
+		if ($5 == EmptyStatement.Value)
+			Report.Warning (642, 3, l, "Possible mistaken empty statement");
+		if ($7 == EmptyStatement.Value)
+			Report.Warning (642, 3, l, "Possible mistaken empty statement");
 	  }
 	;
 
@@ -4117,9 +4113,10 @@ statement_expression_list
 	: statement_expression	
 	  {
 		// CHANGE: was `null'
-		Block b = new Block (current_block, Block.Flags.Implicit);   
+		Statement s = (Statement) $1;
+		Block b = new Block (current_block, Block.Flags.Implicit, s.loc, lexer.Location);   
 
-		b.AddStatement ((Statement) $1);
+		b.AddStatement (s);
 		$$ = b;
 	  }
 	| statement_expression_list COMMA statement_expression

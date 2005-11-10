@@ -134,14 +134,6 @@ namespace Mono.CSharp {
 				Report.Error (error, loc, s);
 		}
 
-		/// <summary>
-		///   Utility wrapper routine for Warning, just to beautify the code
-		/// </summary>
-		public void Warning (int code, string format, params object[] args)
-		{
-			Report.Warning (code, loc, format, args);
-		}
-
 		// Not nice but we have broken hierarchy
 		public virtual void CheckMarshallByRefAccess (Type container) {}
 
@@ -915,7 +907,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.Error (119, loc, 
-				"Expression denotes a `{0}', where a `{1}' was expected", ExprClassName, sb);
+				"Expression denotes a `{0}', where a `{1}' was expected", ExprClassName, sb.ToString ());
 		}
 		
 		public static void UnsafeError (Location loc)

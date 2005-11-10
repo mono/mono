@@ -626,8 +626,7 @@ namespace Mono.CSharp {
 
 			foreach (UsingEntry old_entry in using_clauses) {
 				if (name.Equals (old_entry.Name)) {
-					if (RootContext.WarningLevel >= 3)
-						Report.Warning (105, loc, "The using directive for `{0}' appeared previously in this namespace", name);
+					Report.Warning (105, 3, loc, "The using directive for `{0}' appeared previously in this namespace", name.GetName ());
 					return;
 				}
 			}
@@ -656,7 +655,7 @@ namespace Mono.CSharp {
 
 			if (RootContext.Version == LanguageVersion.Default &&
 			    name == "global" && RootContext.WarningLevel >= 2)
-				Report.Warning (440, loc, "An alias named `global' will not be used when resolving 'global::';" +
+				Report.Warning (440, 2, loc, "An alias named `global' will not be used when resolving 'global::';" +
 					" the global namespace will be used instead");
 
 			aliases [name] = new LocalAliasEntry (Doppelganger, name, alias, loc);
