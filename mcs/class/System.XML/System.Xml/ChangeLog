@@ -1,5 +1,11 @@
 2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlTokenizedType.cs, XmlNodeOrder.cs : so those enums happen to
+	  have [Serializable] in .NET 1.x, and removed in 2.0 (enums are
+	  anyways serializable, so those attributes do not make sense).
+
+2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlValidatingReader.cs : added CanReadBinaryContent.
 	* XmlTextReader.cs, XmlTextReader2.cs : GetNamespacesInScope() are
 	  now both public and private (i.e. hush IsVirtual).

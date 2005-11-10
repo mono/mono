@@ -29,7 +29,11 @@
 
 namespace System.Xml
 {
-	[Serializable] public enum XmlTokenizedType
+#if NET_2_0
+#else
+	[Serializable]
+#endif
+	public enum XmlTokenizedType
 	{
 		CDATA = 0,
 		ID = 1,

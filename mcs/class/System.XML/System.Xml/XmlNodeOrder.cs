@@ -29,7 +29,10 @@
 
 namespace System.Xml
 {
+#if NET_2_0
+#else
 	[Serializable]
+#endif
 	public enum XmlNodeOrder
 	{
 		Before = 0,
