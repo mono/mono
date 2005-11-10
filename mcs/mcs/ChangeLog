@@ -1,5 +1,9 @@
 2005-11-10  Marek Safar  <marek.safar@seznam.cz>
 
+	* statement.cs (Block.Resolve): Ignore empty statement.
+
+2005-11-10  Marek Safar  <marek.safar@seznam.cz>
+
 	* report.cs: Made error/warning methods more strict to avoid
 	their misuse.
 

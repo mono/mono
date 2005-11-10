@@ -1903,6 +1903,9 @@ namespace Mono.CSharp {
 				// Warn if we detect unreachable code.
 				//
 				if (unreachable) {
+					if (s is EmptyStatement)
+						continue;
+
 					if (s is Block)
 						((Block) s).unreachable = true;
 
