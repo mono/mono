@@ -1,3 +1,7 @@
+2005-11-09 Renato Suga <renato.suga@gmail.com>
+	* mb-parser.jay: added STOP to statement rule to allow a keyword STOP
+	in an iteration_statement.
+
 2005-11-07 Renato Suga <renato.suga@gmail.com>
 	* Expression.cs: commented this line: 
 	 //      SimpleName.Error_ObjectRefRequired (ec, loc, me.Name);

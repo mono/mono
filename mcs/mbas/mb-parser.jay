@@ -2762,10 +2762,11 @@ statement_list
 	  statement
 	;
 
-statement 
-	  : declaration_statement
+statement
+	:STOP 
+	  | declaration_statement
 	    {
-		  if ($1 != null && (Block) $1 != current_block){
+		if ($1 != null && (Block) $1 != current_block){
 			current_block.AddStatement ((Statement) $1);
 			current_block = (Block) $1;
 		  }
@@ -3636,6 +3637,7 @@ while_statement
 for_statement
 	: FOR _mark_ identifier opt_type_spec ASSIGN expression TO expression opt_step end_of_stmt
 	  {
+		
 		push_into_stack((int)Start_block.FOR, (Location)$2);
 		if ($4 != null)
 		{
@@ -3650,7 +3652,7 @@ for_statement
 		}
 		start_block();
 	  }
-	  opt_statement_list
+	  opt_statement_list 
    	  opt_end_block
           {
 		pop_out_of_stack((int)$13,lexer.Location);
