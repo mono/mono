@@ -161,10 +161,6 @@ namespace System.Collections.Generic {
 			set {
 				if (key == null)
 					throw new ArgumentNullException("key");
-				if (IsReadOnly)
-					throw new NotSupportedException("SortedList<TKey, TValue>is Read Only.");
-				if (Find(key) < 0 && IsFixedSize)
-					throw new NotSupportedException("Key not found and SortedList<TKey, TValue>is fixed size.");
 
 				PutImpl (key, value, true);
 			}
@@ -262,6 +258,12 @@ namespace System.Collections.Generic {
 			}
 		}
 
+		bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly {
+			get {
+				return false;
+			}
+		}
+
 		//
 		// Public instance methods.
 		//
@@ -315,29 +317,6 @@ namespace System.Collections.Generic {
 			this.table = new KeyValuePair<TKey, TValue> [defaultCapacity];
 			inUse = 0;
 			modificationCount++;
-		}
-
-		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo (Array array, int arrayIndex)
-		{
-			if (null == array)
-				throw new ArgumentNullException();
-
-			if (arrayIndex < 0)
-				throw new ArgumentOutOfRangeException();
-			
-			if (array.Rank > 1)
-				throw new ArgumentException("array is multi-dimensional");
-			if (arrayIndex >= array.Length)
-				throw new ArgumentNullException("arrayIndex is greater than or equal to array.Length");
-			if (Count > (array.Length - arrayIndex))
-				throw new ArgumentNullException("Not enough space in array from arrayIndex to end of array");
-
-			IEnumerator<KeyValuePair<TKey,TValue>> it = GetEnumerator ();
-			int i = arrayIndex;
-
-			while (it.MoveNext ()) {
-				array.SetValue (it.Current, i++);
-			}
 		}
 
 		void ICollection<KeyValuePair<TKey, TValue>>.CopyTo (KeyValuePair<TKey, TValue>[] array, int arrayIndex)
@@ -436,7 +415,25 @@ namespace System.Collections.Generic {
 
 		void ICollection.CopyTo (Array array, int arrayIndex)
 		{
-			CopyTo (array, arrayIndex);
+			if (null == array)
+				throw new ArgumentNullException();
+
+			if (arrayIndex < 0)
+				throw new ArgumentOutOfRangeException();
+			
+			if (array.Rank > 1)
+				throw new ArgumentException("array is multi-dimensional");
+			if (arrayIndex >= array.Length)
+				throw new ArgumentNullException("arrayIndex is greater than or equal to array.Length");
+			if (Count > (array.Length - arrayIndex))
+				throw new ArgumentNullException("Not enough space in array from arrayIndex to end of array");
+
+			IEnumerator<KeyValuePair<TKey,TValue>> it = GetEnumerator ();
+			int i = arrayIndex;
+
+			while (it.MoveNext ()) {
+				array.SetValue (it.Current, i++);
+			}
 		}
 
 		//
@@ -897,7 +894,7 @@ namespace System.Collections.Generic {
 
 			public virtual bool IsSynchronized {
 				get {
-					return host.IsSynchronized;
+					return ((ICollection)host).IsSynchronized;
 				}
 			}
 
@@ -909,7 +906,7 @@ namespace System.Collections.Generic {
 
 			public virtual Object SyncRoot {
 				get {
-					return host.SyncRoot;
+					return ((ICollection)host).SyncRoot;
 				}
 			}
 
@@ -1020,7 +1017,7 @@ namespace System.Collections.Generic {
 
 			public virtual bool IsSynchronized {
 				get {
-					return host.IsSynchronized;
+					return ((ICollection)host).IsSynchronized;
 				}
 			}
 
@@ -1032,7 +1029,7 @@ namespace System.Collections.Generic {
 
 			public virtual Object SyncRoot {
 				get {
-					return host.SyncRoot;
+					return ((ICollection)host).SyncRoot;
 				}
 			}
 

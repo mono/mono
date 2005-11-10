@@ -1,5 +1,7 @@
 2005-11-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* SortedList.cs: Fix build.
+
 	* Stack.cs SortedList.cs LinkedList.cs: Update to net 2.0 RTM.
 
 2005-11-09  Zoltan Varga  <vargaz@gmail.com>
