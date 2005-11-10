@@ -1,5 +1,9 @@
 2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlConvert.cs : implemented VerifyTOKEN().
+
+2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlConvert.cs : VerifyNCName() and VerifyName() throws
 	  ArgumentNullException for "".
 

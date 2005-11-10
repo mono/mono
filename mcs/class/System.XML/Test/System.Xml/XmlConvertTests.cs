@@ -303,7 +303,7 @@ namespace MonoTests.System.Xml
 		}
 		
 		[Test]
-		public void ToSByte ()//not done
+		public void ToSByte ()
 		{
 			AssertType.AreEqual (0, XmlConvert.ToSByte ("0"), "0");
 			AssertType.AreEqual (-1, XmlConvert.ToSByte ("-1"), "-1");
@@ -360,21 +360,87 @@ namespace MonoTests.System.Xml
 		}
 		
 		[Test]
-		public void ToUInt16 ()//not done
+		public void ToUInt16 ()
 		{
-			
+			AssertType.AreEqual (0, XmlConvert.ToUInt16 ("0"), "0");
+			AssertType.AreEqual (1, XmlConvert.ToUInt16 ("1"), "1");
+			AssertType.AreEqual (ushort.MaxValue, XmlConvert.ToUInt16 ("65535"), "65535");
+			try {
+				ushort.Parse ("65536", CultureInfo.CurrentCulture);
+				AssertType.Fail ("ushort.Parse(current culture)");
+			} catch (OverflowException) {
+			}
+			try {
+				ushort.Parse ("65536", CultureInfo.InvariantCulture);
+				AssertType.Fail ("ushort.Parse(invariant culture)");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToUInt16 ("65536");
+				AssertType.Fail ("65536");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToUInt16 ("0x10000");
+				AssertType.Fail ("0x10000");
+			} catch (FormatException) {
+			}
 		}
 		
 		[Test]
-		public void ToUInt32 ()//not done
+		public void ToUInt32 ()
 		{
-			
+			AssertType.AreEqual (0, XmlConvert.ToUInt32 ("0"), "0");
+			AssertType.AreEqual (1, XmlConvert.ToUInt32 ("1"), "1");
+			AssertType.AreEqual (uint.MaxValue, XmlConvert.ToUInt32 ("4294967295"), "4294967295");
+			try {
+				uint.Parse ("4294967296", CultureInfo.CurrentCulture);
+				AssertType.Fail ("uint.Parse(current culture)");
+			} catch (OverflowException) {
+			}
+			try {
+				uint.Parse ("4294967296", CultureInfo.InvariantCulture);
+				AssertType.Fail ("uint.Parse(invariant culture)");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToUInt32 ("4294967296");
+				AssertType.Fail ("4294967296");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToUInt32 ("0x10000");
+				AssertType.Fail ("0x10000");
+			} catch (FormatException) {
+			}
 		}
 		
 		[Test]
-		public void ToUInt64 ()//not done
+		public void ToUInt64 ()
 		{
-			
+			AssertType.AreEqual (0, XmlConvert.ToUInt64 ("0"), "0");
+			AssertType.AreEqual (1, XmlConvert.ToUInt64 ("1"), "1");
+			AssertType.AreEqual (ulong.MaxValue, XmlConvert.ToUInt64 ("18446744073709551615"), "18446744073709551615");
+			try {
+				ulong.Parse ("18446744073709551616", CultureInfo.CurrentCulture);
+				AssertType.Fail ("ulong.Parse(current culture)");
+			} catch (OverflowException) {
+			}
+			try {
+				ulong.Parse ("18446744073709551616", CultureInfo.InvariantCulture);
+				AssertType.Fail ("ulong.Parse(invariant culture)");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToUInt64 ("18446744073709551616");
+				AssertType.Fail ("18446744073709551616");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToUInt64 ("0x10000");
+				AssertType.Fail ("0x10000");
+			} catch (FormatException) {
+			}
 		}
 		
 		[Test]
@@ -468,6 +534,37 @@ namespace MonoTests.System.Xml
 		{
 			XmlConvert.VerifyNCName ("");
 		}
+
+#if NET_2_0
+		[Test]
+		public void VerifyTOKEN ()
+		{
+			VerifyToken ("", true);
+			VerifyToken (" ", false);
+			VerifyToken ("A", true);
+			VerifyToken ("!", true);
+			VerifyToken (" !", false);
+			VerifyToken ("! ", false);
+			VerifyToken ("! !", true);
+			VerifyToken ("!\t!", false);
+			VerifyToken ("!\n!", false);
+			VerifyToken ("!\r!", false);
+			VerifyToken ("###", true);
+		}
+
+		private void VerifyToken (string s, bool success)
+		{
+			try {
+				XmlConvert.VerifyTOKEN (s);
+				if (success)
+					return;
+				AssertType.Fail (s + "should fail");
+			} catch (XmlException ex) {
+				if (success)
+					AssertType.Fail (s + "should not fail");
+			}
+		}
+#endif
 	}
 }
 

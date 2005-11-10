@@ -673,6 +673,29 @@ namespace System.Xml {
 		}
 
 #if NET_2_0
+		public static string VerifyTOKEN (string name)
+#else
+		internal static string VerifyTOKEN (string name)
+#endif
+		{
+			if (name == null)
+				throw new ArgumentNullException("name");
+
+			if (name.Length == 0)
+				return name;
+
+			if (XmlChar.IsWhitespace (name [0]) ||
+				XmlChar.IsWhitespace (name [name.Length - 1]))
+				throw new XmlException ("Whitespace characters (#xA, #xD, #x9, #x20) are not allowed as leading or trailing whitespaces of xs:token.");
+
+			for (int i = 0; i < name.Length; i++)
+				if (XmlChar.IsWhitespace (name [i]) && name [i] != ' ')
+				throw new XmlException ("Either #xA, #xD or #x9 are not allowed inside xs:token.");
+
+			return name;
+		}
+
+#if NET_2_0
 		public static string VerifyNMTOKEN (string name)
 #else
 		internal static string VerifyNMTOKEN (string name)
