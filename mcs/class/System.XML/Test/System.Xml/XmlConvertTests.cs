@@ -218,7 +218,7 @@ namespace MonoTests.System.Xml
 		}
 	
 		[Test]
-		public void ToInt16 ()//not done
+		public void ToInt16 ()
 		{
 			AssertType.AreEqual (0, XmlConvert.ToInt16 ("0"), "0");
 			AssertType.AreEqual (-1, XmlConvert.ToInt16 ("-1"), "-1");
@@ -278,14 +278,53 @@ namespace MonoTests.System.Xml
 		}
 		
 		[Test]
-		public void ToInt64 ()//not done
+		public void ToInt64 ()
 		{
-			
+			AssertType.AreEqual (0, XmlConvert.ToInt64 ("0"), "0");
+			AssertType.AreEqual (-1, XmlConvert.ToInt64 ("-1"), "-1");
+			AssertType.AreEqual (1, XmlConvert.ToInt64 ("1"), "1");
+			AssertType.AreEqual (long.MaxValue, XmlConvert.ToInt64 ("9223372036854775807"), "9223372036854775807");
+			AssertType.AreEqual (long.MinValue, XmlConvert.ToInt64 ("-9223372036854775808"), "-9223372036854775808");
+			try {
+				XmlConvert.ToInt64 ("9223372036854775808");
+				AssertType.Fail ("9223372036854775808");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToInt64 ("-9223372036854775809");
+				AssertType.Fail ("-9223372036854775809");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToInt64 ("0x10000");
+				AssertType.Fail ("0x10000");
+			} catch (FormatException) {
+			}
 		}
 		
 		[Test]
 		public void ToSByte ()//not done
 		{
+			AssertType.AreEqual (0, XmlConvert.ToSByte ("0"), "0");
+			AssertType.AreEqual (-1, XmlConvert.ToSByte ("-1"), "-1");
+			AssertType.AreEqual (1, XmlConvert.ToSByte ("1"), "1");
+			AssertType.AreEqual (127, XmlConvert.ToSByte ("127"), "127");
+			AssertType.AreEqual (-128, XmlConvert.ToSByte ("-128"), "-128");
+			try {
+				XmlConvert.ToSByte ("128");
+				AssertType.Fail ("128");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToSByte ("-129");
+				AssertType.Fail ("-129");
+			} catch (OverflowException) {
+			}
+			try {
+				XmlConvert.ToSByte ("0x80");
+				AssertType.Fail ("0x80");
+			} catch (FormatException) {
+			}
 		}
 		
 		[Test]

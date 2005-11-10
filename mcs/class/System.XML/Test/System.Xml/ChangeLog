@@ -1,5 +1,9 @@
 2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
 
+	* XmlConvertTests.cs : some tests for ToInt64(), ToSByte(),
+
+2005-11-09  Atsushi Enomoto <atsushi@ximian.com>
+
 	* XmlConvertTests.cs : some tests for ToInt16(), ToInt32(),
 	  VerifyName() and VerifyNCName().
 
