@@ -1,5 +1,12 @@
 2005-11-10  Ankit Jain  <jankit@novell.com>
 
+	* dump.c (dump_table_method): Load generic param constraints.
+	* get.c (dis_stringify_method_signature): Likewise.
+	* main.c (dis_method_list): Likewise.
+	  (dis_type): Likewise.
+
+2005-11-10  Ankit Jain  <jankit@novell.com>
+
 	* get.c (init_key_table): Add keyword - uint.
 
 2005-11-08  Ankit Jain  <jankit@novell.com>
