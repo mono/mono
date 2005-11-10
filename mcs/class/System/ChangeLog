@@ -1,3 +1,7 @@
+2005-11-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* System.dll.sources: Add System.Collections.Generic/SortedList.cs.
+
 2005-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System_test.dll.sources: Added CodeExpressionCollectionTest.cs,

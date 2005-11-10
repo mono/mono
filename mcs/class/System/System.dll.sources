@@ -138,6 +138,7 @@ System.Collections.Generic/Queue.cs
 System.Collections.Generic/Stack.cs
 System.Collections.Generic/LinkedList.cs
 System.Collections.Generic/LinkedListNode.cs
+System.Collections.Generic/SortedList.cs
 System.Collections.Specialized/BitVector32.cs
 System.Collections.Specialized/CollectionsUtil.cs
 System.Collections.Specialized/HybridDictionary.cs
