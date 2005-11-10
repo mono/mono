@@ -31,6 +31,7 @@ System.Windows.Forms/MonthCalendarTest.cs
 System.Windows.Forms/PictureBoxTest.cs
 System.Windows.Forms/ProgressBarTest.cs
 System.Windows.Forms/RadioButtonTest.cs
+System.Windows.Forms/RichTextBoxTest.cs
 System.Windows.Forms/ScrollBarTest.cs
 System.Windows.Forms/StatusBarTest.cs
 System.Windows.Forms/TestImageIndexConverter.cs
