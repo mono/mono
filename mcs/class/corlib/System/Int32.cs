@@ -501,7 +501,7 @@ namespace System {
 			}
 			
 			if (!negative && !AllowHexSpecifier)
-				number = -number;
+				number = checked (-number);
 
 			result = number;
 

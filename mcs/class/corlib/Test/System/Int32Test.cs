@@ -197,6 +197,18 @@ public class Int32Test : Assertion
 		} catch (Exception e){
 			Assert ("#C34", typeof (OverflowException) == e.GetType ());
 		}
+		try {
+			Int32.Parse ("2147483648");
+			Fail ("C#35: should raise OverflowException");
+		} catch (Exception e) {
+			Assert ("C#36", typeof (OverflowException) == e.GetType ());
+		}
+		try {
+			Int32.Parse ("2147483648", CultureInfo.InvariantCulture);
+			Fail ("C#37: should raise OverflowException");
+		} catch (Exception e) {
+			Assert ("C#38", typeof (OverflowException) == e.GetType ());
+		}
 	}
 
 #if NET_2_0	

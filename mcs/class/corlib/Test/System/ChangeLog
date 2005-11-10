@@ -1,3 +1,7 @@
+2005-11-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Int32Test.cs : Added tests for parsing "2147483648" (should be error)
+
 2005-10-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* StringTest.cs: new test for LastIndexOfAny.
