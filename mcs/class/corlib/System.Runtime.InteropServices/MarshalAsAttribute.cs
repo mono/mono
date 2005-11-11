@@ -45,7 +45,7 @@ namespace System.Runtime.InteropServices {
 		public short SizeParamIndex;
 		public Type SafeArrayUserDefinedSubType;
 #if NET_2_0
-		public int IidParamIndex;
+		public int IidParameterIndex;
 #endif
 
 		public MarshalAsAttribute (short unmanagedType) {

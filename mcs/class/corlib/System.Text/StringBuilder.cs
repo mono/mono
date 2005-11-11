@@ -36,13 +36,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
 
 namespace System.Text {
 	
 	[Serializable]
 	[MonoTODO ("Fix serialization compatibility with MS.NET")]
-	public sealed class StringBuilder 
+	public sealed class StringBuilder
+#if NET_2_0
+		: ISerializable
+#endif
 	{
 		private int _length;
 		private string _str;
@@ -677,5 +681,42 @@ namespace System.Text {
 
 			_cached_str = null;
 		}
+
+#if NET_2_0
+		public void CopyTo (int sourceIndex, char [] destination, int destinationIndex, int count)
+		{
+			if (destination == null)
+				throw new ArgumentNullException ("destination");
+			if ((Length < sourceIndex + count) ||
+			    (destination.Length < destinationIndex + count) ||
+			    (sourceIndex < 0 || destinationIndex < 0 || count < 0))
+				throw new ArgumentOutOfRangeException ();
+
+			for (int i = 0; i < count; i++)
+				destination [destinationIndex+i] = _str [sourceIndex+i];
+		}
+
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			info.AddValue ("m_MaxCapacity", _maxCapacity);
+			info.AddValue ("Capacity", Capacity);
+			info.AddValue ("m_StringValue", _str);
+			info.AddValue ("m_currentThread", 0);
+		}
+
+		StringBuilder (SerializationInfo info, StreamingContext context)
+		{
+			string s = info.GetString ("m_StringValue");
+			if (s == null)
+				s = "";
+			_length = s.Length;
+			_str = _cached_str = s;
+			
+			_maxCapacity = info.GetInt32 ("m_MaxCapacity");
+			if (_maxCapacity < 0)
+				_maxCapacity = Int32.MaxValue;
+			Capacity = info.GetInt32 ("Capacity");
+		}
+#endif
 	}
 }       

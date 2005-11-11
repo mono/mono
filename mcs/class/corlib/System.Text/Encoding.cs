@@ -795,6 +795,41 @@ public abstract class Encoding
 
 	} // class ForwardingEncoder
 
+#if NET_2_0
+	[CLSCompliantAttribute(false)]
+	public unsafe virtual int GetByteCount (char *chars, int count)
+	{
+		char [] c = new char [count];
+
+		for (int p = 0; p < count; p++)
+			c [p] = chars [p];
+
+		return GetByteCount (c);
+	}
+
+	[CLSCompliantAttribute(false)]
+	public unsafe virtual int GetCharCount (byte *bytes, int count)
+	{
+		byte [] ba = new byte [count];
+		for (int i = 0; i < count; i++)
+			ba [i] = bytes [i];
+		return GetCharCount (ba, 0, count);
+	}
+
+	[CLSCompliantAttribute(false)]
+	public unsafe virtual int GetChars (byte *bytes, int byteCount, char *chars, int charCount)
+	{
+		byte [] ba = new byte [byteCount];
+		for (int i = 0; i < byteCount; i++)
+			ba [i] = bytes [i];
+		char [] ret = GetChars (ba, 0, byteCount);
+		int top = Math.Min (ret.Length, charCount);
+		for (int i = 0; i < top; i++)
+			chars [i] = ret [i];
+		return top;
+	}
+#endif
+
 }; // class Encoding
 
 }; // namespace System.Text
