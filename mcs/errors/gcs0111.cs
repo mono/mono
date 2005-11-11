@@ -1,4 +1,4 @@
-// CS0111: Class `Dictionary`2' already defines a member called `Add' with the same parameter types
+// CS0111: `Dictionary<K,V>.Add(V)' is already defined. Rename this member or use different parameter types
 // Line: 14
 using System;
 using System.Collections.Generic;

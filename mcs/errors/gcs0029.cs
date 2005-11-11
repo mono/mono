@@ -1,4 +1,4 @@
-// CS0029: Cannot convert implicitly from `Bar`1' to `Foo`1'
+// CS0029: Cannot implicitly convert type `Bar<long>' to `Foo<int>'
 // Line: 15
 class Foo<T>
 {

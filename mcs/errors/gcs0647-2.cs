@@ -1,4 +1,4 @@
-// gcs0647-2.cs: Error during emitting `System.Runtime.CompilerServices.InternalsVisibleToAttribute' attribute. The reason is `Friend assembly 'AssemblySomething, Culture=en-US' is invalid. InternalsVisibleTo cannot have version or culture specified.'
+// gcs0647-2.cs: Error during emitting `System.Runtime.CompilerServices.InternalsVisibleToAttribute' attribute. The reason is `Friend assembly `AssemblySomething, Culture=en-US' is invalid. InternalsVisibleTo cannot have version or culture specified.'
 // Line: 8
 
 using System;

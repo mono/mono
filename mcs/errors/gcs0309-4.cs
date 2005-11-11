@@ -1,4 +1,4 @@
-// gcs0309.cs: The type `U' must be convertible to `System.IComparable' in order to use it as parameter `T' in the generic type or method `A`1<T>'
+ // gcs0309.cs: The type `U' must be convertible to `System.IComparable' in order to use it as parameter `T' in the generic type or method `A<T>'
 // Line: 13
 
 using System;

@@ -1,4 +1,4 @@
-// CS0305: Using the generic type `N1.A<T>' requires 1 type arguments
+// CS0305: Using the generic type `N1.A<T>' requires `1' type arguments
 // Line: 12
 namespace N1
 {

@@ -1,5 +1,6 @@
-// CS0146: Class definition is circular: `A`1'
-// Line: 3
+// CS0146: Circular base class dependency involving `B<T>' and `A<float>'
+// Line: 8
+
 class A<T> : B<int>
 {
 }
