@@ -1,3 +1,8 @@
+2005-11-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StringBuilder.cs: Fix ISerializable.GetObjectData (remoting tests 
+	were failing under 2.0) and two possible integer overflow in CopyTo.
+
 2005-11-11  Miguel de Icaza  <miguel@novell.com>
 
 	* StringBuilder.cs (Text): Added serialization support in 2.x. 

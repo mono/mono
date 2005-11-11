@@ -687,8 +687,8 @@ namespace System.Text {
 		{
 			if (destination == null)
 				throw new ArgumentNullException ("destination");
-			if ((Length < sourceIndex + count) ||
-			    (destination.Length < destinationIndex + count) ||
+			if ((Length - count < sourceIndex) ||
+			    (destination.Length -count < destinationIndex) ||
 			    (sourceIndex < 0 || destinationIndex < 0 || count < 0))
 				throw new ArgumentOutOfRangeException ();
 
@@ -700,7 +700,7 @@ namespace System.Text {
 		{
 			info.AddValue ("m_MaxCapacity", _maxCapacity);
 			info.AddValue ("Capacity", Capacity);
-			info.AddValue ("m_StringValue", _str);
+			info.AddValue ("m_StringValue", ToString ());
 			info.AddValue ("m_currentThread", 0);
 		}
 
