@@ -1,3 +1,7 @@
+2005-11-11  Dick Porter  <dick@ximian.com>
+
+	* hps.c: Thread handles are shared again
+
 2005-10-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* hps.c (main): Applied patch from Robert Jordan (robertj@gmx.net). Fix
