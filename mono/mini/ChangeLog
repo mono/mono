@@ -1,3 +1,7 @@
+2005-11-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_emit_epilog): Use G_STRUCT_OFFSET instead of hard
+	coded offsets.
 
 Tue Nov 8 11:28:20 GMT 2005 Paolo Molaro <lupus@ximian.com>
 
