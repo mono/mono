@@ -353,7 +353,9 @@ namespace System.Reflection.Emit
 		}
 
 		public override MethodInfo DeclaringMethod {
-			get { return mbuilder; }
+			get { 
+				return mbuilder;
+			}
 		}
 
 		private Exception not_supported ()

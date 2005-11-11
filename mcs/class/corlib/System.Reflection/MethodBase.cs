@@ -193,6 +193,12 @@ namespace System.Reflection {
 			}
 		}
 
+		public virtual bool ContainsGenericParameters {
+			get {
+				return false;
+			}
+		}
+
 		public virtual bool HasGenericParameters {
 			get {
 				throw new NotSupportedException ();

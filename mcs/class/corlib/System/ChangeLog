@@ -1,3 +1,7 @@
+2005-11-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* Type.cs: IsNested implemented, signature fixes.
+
 2005-11-11  Raja R Harinath  <rharinath@novell.com>
 
 	* Array.cs (Resize<T>) [2-argument variant]: Fix nullref.

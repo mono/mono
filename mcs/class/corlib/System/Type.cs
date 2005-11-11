@@ -1083,7 +1083,10 @@ namespace System {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		public abstract Type[] GetGenericArguments ();
+		public virtual Type[] GetGenericArguments ()
+		{
+			throw new NotSupportedException ();
+		}
 
 		public abstract bool ContainsGenericParameters {
 			get;
@@ -1133,8 +1136,16 @@ namespace System {
 			return res;
 		}
 
-		public abstract bool IsGenericParameter {
-			get;
+		public virtual bool IsGenericParameter {
+			get {
+				return false;
+			}
+		}
+
+		public bool IsNested {
+			get {
+				return DeclaringType != null;
+			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1172,8 +1183,10 @@ namespace System {
 			return GetGenericParameterConstraints_impl ();
 		}
 
-		public abstract MethodInfo DeclaringMethod {
-			get;
+		public virtual MethodInfo DeclaringMethod {
+			get {
+				return null;
+			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -1240,7 +1253,8 @@ namespace System {
 			}
 		}
 
-		internal object[] GetPseudoCustomAttributes () {
+		internal object[] GetPseudoCustomAttributes ()
+		{
 			int count = 0;
 
 			/* IsSerializable returns true for delegates/enums as well */

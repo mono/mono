@@ -279,12 +279,6 @@ namespace System.Reflection {
 			}
 		}
 
-		public override MethodInfo DeclaringMethod {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
-
 		public override int MetadataToken {
 			get {
 				return typeImpl.MetadataToken;

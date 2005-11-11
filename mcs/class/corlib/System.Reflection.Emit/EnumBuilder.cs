@@ -380,13 +380,6 @@ namespace System.Reflection.Emit {
 				throw new NotImplementedException ();
 			}
 		}
-
-		[MonoTODO]
-		public override MethodInfo DeclaringMethod {
-			get {
-				throw new NotImplementedException ();
-			}
-		}
 #endif
 
 		private Exception CreateNotSupportedException ()

@@ -1,3 +1,7 @@
+2005-11-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* EnumBuilder.cs, GenericTypeParameterBuilder.cs: Reflect Type changes.
+
 2005-11-06  Zoltan Varga  <vargaz@freemail.hu>
 
 	* Label.cs: Add == and != operators.

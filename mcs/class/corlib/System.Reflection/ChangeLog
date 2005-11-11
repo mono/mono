@@ -1,3 +1,7 @@
+2005-11-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* MethodBase.cs, TypeDelegator.cs: Reflect Type changes.
+
 2005-10-30  Zoltan Varga  <vargaz@freemail.hu>
 
 	* FieldInfo.cs: Add an internal UMarshal property which can by
