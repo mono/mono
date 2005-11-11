@@ -835,6 +835,11 @@ namespace Mono.CSharp
 				val = 0ul;
 				return Token.LITERAL_INTEGER;
 			}
+			catch (FormatException) {
+				Report.Error (1013, Location, "Invalid number");
+				val = 0ul;
+				return Token.LITERAL_INTEGER;
+			}
 		}
 		
 		int adjust_real (int t)

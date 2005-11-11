@@ -829,7 +829,7 @@ namespace Mono.CSharp {
 					return true;
 			}
 
-			Error_AttributeEmitError (String.Concat ("SecurityAction '", action, "' is not valid for this declaration"));
+			Error_AttributeEmitError (String.Concat ("SecurityAction `", action, "' is not valid for this declaration"));
 			return false;
 		}
 

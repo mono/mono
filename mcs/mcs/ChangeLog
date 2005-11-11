@@ -1,3 +1,9 @@
+2005-11-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs: Changed error message.
+
+	* cs-tokenizer.cs: One more check.
+
 2005-11-10  Marek Safar  <marek.safar@seznam.cz>
 
 	* statement.cs (Block.Resolve): Ignore empty statement.
