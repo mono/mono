@@ -1,3 +1,7 @@
+2005-11-11  Ankit Jain  <jankit@novell.com>
+
+	* RichTextBoxTest.cs: Fix typos.
+
 2005-11-09  Peter Dennis Bartok <pbartok@novell.com>
 
 	* RichTextBoxTest.cs: Added Find() tests

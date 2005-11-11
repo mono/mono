@@ -165,12 +165,12 @@ namespace MonoTests.System.Windows.Forms
 			Assert.AreEqual(t.Find("blah", RichTextBoxFinds.WholeWord), 62, "Find18");
 
 			// Special cases
-			AreEqual(t.Find("blah", 10, 11, RichTextBoxFinds.None), -1, "Find19");	// Range to short to ever match
-			AreEqual(t.Find("blah", 17, 18, RichTextBoxFinds.None), -1, "Find20");	// Range to short to ever match, but starts matching
-			AreEqual(t.Find("is", RichTextBoxFinds.WholeWord), 72, "Find21");	// Last word in document
-			AreEqual(t.Find("for", RichTextBoxFinds.WholeWord), 52, "Find22");	// word followed by \n
-			AreEqual(t.Find("Testtext", RichTextBoxFinds.WholeWord), 0, "Find23");	// First word in document
-			AreEqual(t.Find("Testtext", RichTextBoxFinds.WholeWord | RichTextBoxFinds.Reverse), 0, "Find24");	// First word in document, searched in reverse
+			Assert.AreEqual(t.Find("blah", 10, 11, RichTextBoxFinds.None), -1, "Find19");	// Range to short to ever match
+			Assert.AreEqual(t.Find("blah", 17, 18, RichTextBoxFinds.None), -1, "Find20");	// Range to short to ever match, but starts matching
+			Assert.AreEqual(t.Find("is", RichTextBoxFinds.WholeWord), 72, "Find21");	// Last word in document
+			Assert.AreEqual(t.Find("for", RichTextBoxFinds.WholeWord), 52, "Find22");	// word followed by \n
+			Assert.AreEqual(t.Find("Testtext", RichTextBoxFinds.WholeWord), 0, "Find23");	// First word in document
+			Assert.AreEqual(t.Find("Testtext", RichTextBoxFinds.WholeWord | RichTextBoxFinds.Reverse), 0, "Find24");	// First word in document, searched in reverse
 		}
 
 		[Test]
