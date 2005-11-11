@@ -11,20 +11,27 @@ namespace TestRunner {
 	{
 		string Output { get; }
 		bool Invoke (string[] args);
+		bool IsWarning (int warningNumber);
 	}
 
 	class ReflectionTester: ITester {
 		MethodInfo ep;
 		object[] method_arg;
 		StringWriter output;
+		int[] all_warnings;
 
 		public ReflectionTester (Assembly a)
 		{
-			ep = a.GetType ("Mono.CSharp.CompilerCallableEntryPoint").GetMethod ("InvokeCompiler", 
+			Type t = a.GetType ("Mono.CSharp.CompilerCallableEntryPoint");
+			ep = t.GetMethod ("InvokeCompiler", 
 				BindingFlags.Static | BindingFlags.Public);
 			if (ep == null)
 				throw new MissingMethodException ("static InvokeCompiler");
 			method_arg = new object [2];
+
+			PropertyInfo pi = t.GetProperty ("AllWarningNumbers");
+			all_warnings = (int[])pi.GetValue (null, null);
+			Array.Sort (all_warnings);
 		}
 
 		public string Output {
@@ -39,6 +46,11 @@ namespace TestRunner {
 			method_arg [0] = args;
 			method_arg [1] = output;
 			return (bool)ep.Invoke (null, method_arg);
+		}
+
+		public bool IsWarning (int warningNumber)
+		{
+			return Array.BinarySearch (all_warnings, warningNumber) >= 0;
 		}
 	}
 
@@ -78,6 +90,11 @@ namespace TestRunner {
 			    output = p.StandardOutput.ReadToEnd ();
 			p.WaitForExit ();
 			return p.ExitCode == 0;
+		}
+
+		public bool IsWarning (int warningNumber)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 
@@ -195,7 +212,7 @@ namespace TestRunner {
 			}
 		}
 
-		public void PrintSummary ()
+		public virtual void PrintSummary ()
 		{
 			LogLine ("Done" + Environment.NewLine);
 			LogLine ("{0} test cases passed ({1:.##%})", success, (float) (success) / (float)total);
@@ -483,6 +500,8 @@ namespace TestRunner {
 		string error_message;
 		bool check_msg;
 		bool check_error_line;
+		bool is_warning;
+		IDictionary wrong_warning;
 
 		protected enum CompilerError {
 			Expected,
@@ -495,10 +514,8 @@ namespace TestRunner {
 		public NegativeChecker (ITester tester, string log_file, string issue_file, bool check_msg):
 			base (tester, log_file, issue_file)
 		{
-//TODO: need to review gmcs first
-#if !NET_2_0
 			this.check_msg = check_msg;
-#endif
+			wrong_warning = new Hashtable ();
 		}
 
 		protected override bool AnalyzeTestFile(int row, string line)
@@ -528,7 +545,17 @@ namespace TestRunner {
 				}
 			}
 
-			return base.AnalyzeTestFile (row, line);
+			if (!base.AnalyzeTestFile (row, line))
+				return false;
+
+			is_warning = false;
+			if (compiler_options != null) {
+				foreach (string s in compiler_options) {
+					if (s.EndsWith ("warnaserror"))
+						is_warning = true;
+				}
+			}
+			return true;
 		}
 
 
@@ -551,6 +578,15 @@ namespace TestRunner {
 				HandleFailure (filename, CompilerError.Missing);
 				Log (e.ToString ());
 				return false;
+			}
+
+			int err_id = int.Parse (expected, System.Globalization.CultureInfo.InvariantCulture);
+			if (tester.IsWarning (err_id)) {
+				if (!is_warning)
+					wrong_warning [err_id] = true;
+			} else {
+				if (is_warning)
+					wrong_warning [err_id] = false;
 			}
 
 			CompilerError result_code = GetCompilerError (expected, tester.Output);
@@ -684,6 +720,20 @@ namespace TestRunner {
 			regression.Add (file);
 			return false;
 		}
+
+		public override void PrintSummary()
+		{
+			base.PrintSummary ();
+
+			if (wrong_warning.Count > 0) {
+				LogLine ("");
+				LogLine ("List of not corectly defined warnings which should be either defined in compiler as a warning or their test case has redundant `warnaserror' option");
+				LogLine ("");
+				foreach (DictionaryEntry de in wrong_warning)
+					LogLine ("CS{0:0000} : {1}", de.Key, (bool)de.Value ? "incorrect warning definition" : "missing warning definition");
+			}
+		}
+
 	}
 
 	class Tester {

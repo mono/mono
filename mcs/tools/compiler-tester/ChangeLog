@@ -1,3 +1,8 @@
+2005-11-11  Marek Safar  <marek.safar@seznam.cz>
+
+	* compiler-tester.cs: Implemented compiler warning map checking.
+	Enabled message ckeck for gmcs.
+
 2005-09-27  Marek Safar  <marek.safar@seznam.cz>
 
 	* compiler-tester.cs (GetCompilerError): Small fix when no error
