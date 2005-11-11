@@ -1243,7 +1243,7 @@ namespace Mono.CSharp {
 				throw new Exception ("Friend assembly `" + a.GetString () + 
 						"' is invalid. InternalsVisibleTo cannot have version or culture specified.");
 			else if (aname.GetPublicKeyToken () == null && Name.GetPublicKeyToken () != null) {
-				Report.Error (1726, a.Location, "Friend assembly reference `" + aname.Name + "' is invalid." +
+				Report.Error (1726, a.Location, "Friend assembly reference `" + aname.FullName + "' is invalid." +
 						" Strong named assemblies must specify a public key token in their InternalsVisibleTo declarations");
 				return false;
 			}
