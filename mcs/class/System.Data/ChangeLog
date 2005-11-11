@@ -1,3 +1,8 @@
+2005-11-11  Senganal T  <tsenganal@novell.com>
+
+	* System.Data.dll.sources: added
+	System.Data/SchemaSerializationMode.cs : Enumeration for NET_2_0 compatibility	
+
 2005-10-08  Sureshkumar T  <tsureshkumar@novell.com>
 
 	* System.Data.dll.sources: added

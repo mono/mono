@@ -2735,5 +2735,22 @@ namespace MonoTests_System.Data
 			// Checking ExtendedProperties count
 			Assert.AreEqual(0, pc.Count , "DS374");
 		}
+
+#if NET_2_0
+		// Test for bug #76517
+		[Test] public void SchemaSerializationModeTest ()
+		{
+			DataSet ds = new DataSet ();
+			Assert.AreEqual (SchemaSerializationMode.IncludeSchema,
+					ds.SchemaSerializationMode, "#1");
+			try {
+				ds.SchemaSerializationMode = SchemaSerializationMode.ExcludeSchema;
+				Assert.Fail ("#2 InvalidOperationException must be thrown");
+			}catch (InvalidOperationException e) {
+				//ok 	
+			}	
+		}	
+#endif
+
 	}
 }

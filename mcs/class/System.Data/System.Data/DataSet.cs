@@ -336,6 +336,21 @@ namespace System.Data {
 			get { return tableCollection; }
 		}
 
+#if NET_2_0
+		public virtual SchemaSerializationMode SchemaSerializationMode {
+
+			get {
+				return SchemaSerializationMode.IncludeSchema;		
+			}
+
+			set {
+				if (value != SchemaSerializationMode.IncludeSchema) 
+					throw new InvalidOperationException (
+							"Only IncludeSchema Mode can be set for Untyped DataSet");
+			}
+		}
+#endif 
+
 		#endregion // Public Properties
 
 		#region Public Methods

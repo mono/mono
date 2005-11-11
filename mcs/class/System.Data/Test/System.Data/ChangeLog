@@ -1,3 +1,7 @@
+2005-11-11 Senganal T <tsenganal@novell.com>
+
+	* DataSetTest2.cs : Added a testcase for bug#76517 
+
 2005-10-24  Konstantin Triger <kostat@mainsoft.com>
 
 	* DataTableTest.cs: Added test for object type validation (ColumnObjectTypeTest)

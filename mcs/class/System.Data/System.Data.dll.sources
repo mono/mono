@@ -112,6 +112,7 @@ System.Data/ResultSetSensitivity.cs
 System.Data/RowNotInTableException.cs
 System.Data/Rule.cs
 System.Data/SchemaType.cs
+System.Data/SchemaSerializationMode.cs
 System.Data/SqlDbType.cs
 System.Data/StateChangeEventArgs.cs
 System.Data/StateChangeEventHandler.cs
