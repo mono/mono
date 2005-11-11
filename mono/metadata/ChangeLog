@@ -1,3 +1,9 @@
+2005-11-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_loader_set_error_type_load): Log a warning to the
+	console about the missing type.
+	(mono_loader_set_error_method_load): Ditto.
+
 2005-11-09  Miguel de Icaza  <miguel@novell.com>
 
 	* mono-config.c (mono_get_config_dir): Set the system defaults if
