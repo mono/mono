@@ -852,11 +852,11 @@ namespace Mono.CSharp {
 				break;
 
 			default:
-				Error_AttributeEmitError ("SecurityAction is out of range X");
+				Error_AttributeEmitError ("SecurityAction is out of range");
 				return false;
 			}
 
-			Error_AttributeEmitError (String.Concat ("SecurityAction '", action, "' is not valid for this declaration"));
+			Error_AttributeEmitError (String.Concat ("SecurityAction `", action, "' is not valid for this declaration"));
 			return false;
 		}
 

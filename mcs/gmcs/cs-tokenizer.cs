@@ -1056,6 +1056,11 @@ namespace Mono.CSharp
 				val = 0ul;
 				return Token.LITERAL_INTEGER;
 			}
+			catch (FormatException) {
+				Report.Error (1013, Location, "Invalid number");
+				val = 0ul;
+				return Token.LITERAL_INTEGER;
+			}
 			
 			return integer_type_suffix (ul, peekChar ());
 		}
@@ -1884,9 +1889,7 @@ namespace Mono.CSharp
 
 			case "else":
 				if (ifstack == null || ifstack.Count == 0){
-					Report.Error (
-						1028, Location,
-						"Unexpected processor directive (no #if for this #else)");
+					Error_UnexpectedDirective ("no #if for this #else");
 					return true;
 				} else {
 					int state = (int) ifstack.Peek ();
@@ -2491,7 +2494,7 @@ namespace Mono.CSharp
 				if ((state & REGION) != 0)
 					Report.Error (1038, Location, "#endregion directive expected");
 				else 
-					Report.Error (1027, Location, "#endif directive expected");
+					Report.Error (1027, "Expected `#endif' directive");
 			}
 				
 		}
