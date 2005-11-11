@@ -1,5 +1,10 @@
 2005-11-11  Marek Safar  <marek.safar@seznam.cz>
 
+	Fix #76369.
+	* doc.cs (FindDocumentedTypeNonArray): Don't resolve again.
+
+2005-11-11  Marek Safar  <marek.safar@seznam.cz>
+
 	* attribute.cs: Changed error message.
 
 	* cs-tokenizer.cs: One more check.
