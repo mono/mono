@@ -1,3 +1,7 @@
+2005-11-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* Type.cs (GetPseudoCustomAttributes): Return ComImportAttribute as well.
+
 2005-11-11  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* TimeZone.cs: Removed incorrect double-check lock and unneeded

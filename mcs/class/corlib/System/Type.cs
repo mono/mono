@@ -1260,6 +1260,8 @@ namespace System {
 			/* IsSerializable returns true for delegates/enums as well */
 			if ((Attributes & TypeAttributes.Serializable) != 0)
 				count ++;
+			if ((Attributes & TypeAttributes.Import) != 0)
+				count ++;
 
 			if (count == 0)
 				return null;
@@ -1268,6 +1270,8 @@ namespace System {
 
 			if ((Attributes & TypeAttributes.Serializable) != 0)
 				attrs [count ++] = new SerializableAttribute ();
+			if ((Attributes & TypeAttributes.Import) != 0)
+				attrs [count ++] = new ComImportAttribute ();
 
 			return attrs;
 		}			
