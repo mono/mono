@@ -2729,6 +2729,13 @@ public class ArrayTest : Assertion
 		AssertEquals (45, sum);
 	}
 
+	[Test]
+	public void Resize_null ()
+	{
+		int [] arr = null;
+		Array.Resize (ref arr, 10);
+		AssertEquals (arr.Length, 10);
+	}
 #endif
 }
 

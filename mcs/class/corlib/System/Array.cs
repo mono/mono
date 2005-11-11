@@ -1361,7 +1361,7 @@ namespace System
 #if NET_2_0
 		public static void Resize<T> (ref T [] array, int newSize)
 		{
-			Resize<T> (ref array, array.Length, newSize);
+			Resize<T> (ref array, array == null ? 0 : array.Length, newSize);
 		}
 
 		internal static void Resize<T> (ref T[] array, int length, int newSize)

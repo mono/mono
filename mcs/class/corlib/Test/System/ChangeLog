@@ -1,3 +1,7 @@
+2005-11-11  Raja R Harinath  <rharinath@novell.com>
+
+	* ArrayTest.cs (Resize_null): New.  Test Resize<T> with a null argument.
+
 2005-11-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Int64Test.cs : ditto for long. Numbered tests.
