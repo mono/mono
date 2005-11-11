@@ -1,3 +1,7 @@
+2005-11-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h: Add prototype for mono_type_get_full_name ().
+
 2005-11-11  Dick Porter  <dick@ximian.com>
 
 	* threads.c (mono_thread_manage): Make sure the main thread has
