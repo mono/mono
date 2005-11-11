@@ -36,7 +36,7 @@ using System.Security.Permissions;
 
 namespace System.Security {
 
-	[MonoTODO ("work in progress")]
+	[MonoTODO ("work in progress - encryption is missing")]
 	public sealed class SecureString : CriticalFinalizerObject, IDisposable {
 
 		private const int BlockSize = 16;
@@ -75,6 +75,7 @@ namespace System.Security {
 				data[n++] = (byte) (c >> 8);
 				data[n++] = (byte) c;
 			}
+			Encrypt ();
 		}
 
 		// properties
@@ -100,13 +101,10 @@ namespace System.Security {
 
 			try {
 				Decrypt ();
-				if (length >= data.Length) {
-					Alloc (length + 1, true);
-				}
 				int n = length * 2;
+				Alloc (++length, true);
 				data[n++] = (byte) (c >> 8);
 				data[n++] = (byte) c;
-				length++;
 			}
 			finally {
 				Encrypt ();
@@ -163,7 +161,11 @@ namespace System.Security {
 
 			try {
 				Decrypt ();
-				// TODO
+				Alloc (++length, true);
+				int n = index * 2;
+				Buffer.BlockCopy (data, n, data, n + 2, data.Length - 2);
+				data[n++] = (byte) (c >> 8);
+				data[n] = (byte) c;
 			}
 			finally {
 				Encrypt ();
@@ -195,8 +197,8 @@ namespace System.Security {
 
 			try {
 				Decrypt ();
-				Buffer.BlockCopy (data, index, data, index - 1, data.Length - index);
-				length--;
+				Buffer.BlockCopy (data, index + 1, data, index, data.Length - index - 1);
+				Alloc (--length, true);
 			}
 			finally {
 				Encrypt ();
@@ -227,18 +229,20 @@ namespace System.Security {
 
 		// internal/private stuff
 
+		[MonoTODO ("ProtectedMemory is in System.Security.dll - move this into the runtime/icall")]
 		private void Encrypt ()
 		{
-			throw new NotSupportedException ();
-// ProtectedMemory was moved into System.Security.dll
-//			ProtectedMemory.Protect (data, MemoryProtectionScope.SameProcess);
+			if ((data != null) && (data.Length > 0)) {
+//				ProtectedMemory.Protect (data, MemoryProtectionScope.SameProcess);
+			}
 		}
 
+		[MonoTODO ("ProtectedMemory is in System.Security.dll - move this into the runtime/icall")]
 		private void Decrypt ()
 		{
-			throw new NotSupportedException ();
-// ProtectedMemory was moved into System.Security.dll
-//			ProtectedMemory.Unprotect (data, MemoryProtectionScope.SameProcess);
+			if ((data != null) && (data.Length > 0)) {
+//				ProtectedMemory.Unprotect (data, MemoryProtectionScope.SameProcess);
+			}
 		}
 
 		// note: realloc only work for bigger buffers. Clear will 
@@ -252,10 +256,16 @@ namespace System.Security {
 			// where size = length * 2 (unicode) and blocksize == 16 (ProtectedMemory)
 			// length * 2 (unicode) / 16 (blocksize)
 			int size = (length >> 3) + (((length & 0x7) == 0) ? 0 : 1) << 4;
+
+			// is re-allocation necessary ? (i.e. grow or shrink 
+			// but do not re-allocate the same amount of memory)
+			if (realloc && (data != null) && (size == data.Length))
+				return;
+
 			if (realloc) {
 				// copy, then clear
 				byte[] newdata = new byte[size];
-				Array.Copy (data, 0, newdata, 0, data.Length);
+				Array.Copy (data, 0, newdata, 0, Math.Min (data.Length, newdata.Length));
 				Array.Clear (data, 0, data.Length);
 				data = newdata;
 			} else {
@@ -266,10 +276,10 @@ namespace System.Security {
 		// dangerous method (put a LinkDemand on it)
 		internal byte[] GetBuffer ()
 		{
-			byte[] secret = null;
+			byte[] secret = new byte[length << 1];
 			try {
 				Decrypt ();
-				secret = (byte[]) data.Clone ();
+				Buffer.BlockCopy (data, 0, secret, 0, secret.Length);
 			}
 			finally {
 				Encrypt ();

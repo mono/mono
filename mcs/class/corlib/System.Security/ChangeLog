@@ -1,3 +1,9 @@
+2005-11-11  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* SecureString.cs: Completed InsertAt, fixed Alloc not to re-alloc a
+	block of the same size. Fixed missing encryption for the char* ctor.
+	Only missing is access to ProtectedMemory do to the [en|de]cryption.
+
 2005-10-30  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* PermissionSet.cs: Forgot to remove virtual from 2.0 IsSubsetOf.
