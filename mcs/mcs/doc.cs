@@ -321,7 +321,7 @@ namespace Mono.CSharp {
 			if (e != null) {
 				if (!(e is TypeExpr))
 					return null;
-				return ((TypeExpr) e).Type;
+				return ((TypeExpr) e).ResolveType (ds.EmitContext);
 			}
 			int index = identifier.LastIndexOf ('.');
 			if (index < 0)
@@ -333,7 +333,7 @@ namespace Mono.CSharp {
 			// no need to detect warning 419 here
 			return FindDocumentedMember (mc, parent,
 				identifier.Substring (index + 1),
-				emptyParamList,
+				Type.EmptyTypes,
 				ds, out warn, cref) as Type;
 		}
 
@@ -489,8 +489,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		private static Type [] emptyParamList = new Type [0];
-
 		//
 		// Processes "see" or "seealso" elements.
 		// Checks cref attribute.
@@ -557,7 +555,7 @@ namespace Mono.CSharp {
 			}
 
 			// check if parameters are valid
-			Type [] parameterTypes = emptyParamList;
+			Type [] parameterTypes = Type.EmptyTypes;
 			if (parameters.Length > 0) {
 				string [] paramList = parameters.Split (',');
 				ArrayList plist = new ArrayList ();

@@ -776,7 +776,7 @@ namespace Mono.CSharp
 						if (parameters != null)
 							parameters.And (vector.parameters);
 					}
-						
+
 					Reachability.And (ref reachability, vector.Reachability, true);
 
 					Report.Debug (1, "  MERGING JUMP ORIGIN #1", vector);
@@ -2044,14 +2044,14 @@ namespace Mono.CSharp
 
 				if ((mod & Parameter.Modifier.OUT) == 0)
 					continue;
-				
+
 				// Dont allocate till we find an out var.
 				if (map == null)
 					map = new VariableInfo [Count];
 
 				map [i] = new VariableInfo (ip.ParameterName (i),
 					TypeManager.GetElementType (ip.ParameterType (i)), i, Length);
-				
+
 				Length += map [i].Length;
 			}
 		}
