@@ -263,7 +263,7 @@ namespace Mono.CSharp
 						 (throws == FlowReturns.Never) &&
 						 (barrier == FlowReturns.Never))
 						return FlowReturns.Always;
-				else
+					else
 						return FlowReturns.Sometimes;
 				}
 			}
@@ -495,7 +495,7 @@ namespace Mono.CSharp
 
 				if (parent != null) {
 					if (num_locals > 0)
-					locals = new MyBitVector (parent.locals, CountLocals);
+						locals = new MyBitVector (parent.locals, CountLocals);
 					
 					if (num_params > 0)
 						parameters = new MyBitVector (parent.parameters, num_params);
@@ -503,7 +503,7 @@ namespace Mono.CSharp
 					reachability = parent.Reachability.Clone ();
 				} else {
 					if (num_locals > 0)
-					locals = new MyBitVector (null, CountLocals);
+						locals = new MyBitVector (null, CountLocals);
 					
 					if (num_params > 0)
 						parameters = new MyBitVector (null, num_params);
@@ -545,7 +545,7 @@ namespace Mono.CSharp
 					CountParameters, CountLocals);
 
 				if (retval.locals != null)
-				retval.locals = locals.Clone ();
+					retval.locals = locals.Clone ();
 				
 				if (parameters != null)
 					retval.parameters = parameters.Clone ();
@@ -678,9 +678,9 @@ namespace Mono.CSharp
 				if ((Type == SiblingType.SwitchSection) && !new_r.IsUnreachable) {
 					Report.Error (163, Location,
 						      "Control cannot fall through from one " +
-							      "case label to another");
+						      "case label to another");
 					return result;
-					}
+				}
 
 				if (locals != null && result.LocalVector != null)
 					locals.Or (result.LocalVector);
@@ -699,7 +699,7 @@ namespace Mono.CSharp
 				IsDirty = true;
 
 				return result;
-				}
+			}
 
 			protected void MergeFinally (FlowBranching branching, UsageVector f_origins,
 						     MyBitVector f_params)
@@ -796,7 +796,7 @@ namespace Mono.CSharp
 				reachability = Reachability.Never ();
 
 				for (UsageVector vector = f_origins; vector != null; vector = vector.Next) {
-					Report.Debug (1, "  MERGING FINALLY ORIGIN", vector);
+					Report.Debug (1, "    MERGING FINALLY ORIGIN", vector);
 
 					if (parameters != null)
 						parameters.And (vector.parameters);
@@ -896,7 +896,7 @@ namespace Mono.CSharp
 			public MyBitVector Locals {
 				get {
 					if (locals != null)
-					return locals.Clone ();
+						return locals.Clone ();
 					else
 						return null;
 				}
@@ -1032,7 +1032,7 @@ namespace Mono.CSharp
 		}
 
 		protected UsageVector Merge (UsageVector sibling_list)
-			{
+		{
 			if (sibling_list.Next == null)
 				return sibling_list;
 
@@ -1046,13 +1046,13 @@ namespace Mono.CSharp
 			for (UsageVector child = sibling_list; child != null; child = child.Next) {
 				bool do_break = (Type != BranchingType.Switch) &&
 					(Type != BranchingType.Loop);
-				
+
 				Report.Debug (2, "    MERGING SIBLING   ", child,
 					      child.ParameterVector, child.LocalVector,
 					      reachability, child.Reachability, do_break);
 
 				Reachability.And (ref reachability, child.Reachability, do_break);
-					
+
 				// A local variable is initialized after a flow branching if it
 				// has been initialized in all its branches which do neither
 				// always return or always throw an exception.
@@ -1321,7 +1321,7 @@ namespace Mono.CSharp
 				UsageVector vector = CurrentUsageVector.Clone ();
 				vector.Next = origin_vectors;
 				origin_vectors = vector;
-		}
+			}
 
 			CurrentUsageVector.MergeJumpOrigins (origin_vectors);
 		}
@@ -2303,7 +2303,7 @@ namespace Mono.CSharp
 		{
 			if (vector != null)
 				return;
-
+			
 			vector = new BitArray (Count, false);
 			if (InheritsFrom != null)
 				Vector = InheritsFrom.Vector;

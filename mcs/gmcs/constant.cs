@@ -437,7 +437,7 @@ namespace Mono.CSharp {
 		{
 			return new IntConstant (Value, loc);
 		}
-		
+
 		public override Constant Increment ()
 		{
 			return new ByteConstant (checked ((byte)(Value + 1)), loc);
@@ -689,7 +689,7 @@ namespace Mono.CSharp {
 		{
 			return new IntConstant (Value, loc);
 		}
-		
+
 		public override Constant Increment ()
 		{
 		    return new SByteConstant (checked((sbyte)(Value + 1)), loc);
@@ -923,7 +923,7 @@ namespace Mono.CSharp {
 		{
 			return new IntConstant (Value, loc);
 		}
-		
+	
 		public override Constant Increment ()
 		{
 			return new UShortConstant (checked((ushort)(Value + 1)), loc);
@@ -1479,7 +1479,7 @@ namespace Mono.CSharp {
 		{
 			return null;
 		}
-		
+
 		public override Constant Increment ()
 		{
 			return new ULongConstant (checked(Value + 1), loc);

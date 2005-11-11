@@ -133,7 +133,7 @@ namespace Mono.CSharp {
 		{
 			Null = new NullPointer ();
 		}
-		
+
 		private NullPointer ():
 			base (Location.Null)
 		{
