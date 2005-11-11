@@ -1,3 +1,7 @@
+2005-11-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilder.cs (SetCustomAttribute): Handle ComImportAttribute as well.
+
 2005-11-11  Marek Safar  <marek.safar@seznam.cz>
 
 	* EnumBuilder.cs, GenericTypeParameterBuilder.cs: Reflect Type changes.

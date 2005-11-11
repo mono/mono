@@ -975,7 +975,7 @@ namespace System.Reflection.Emit {
 			}
 			else
 				candidates = methods;
-					
+
 			if (candidates == null)
 				return new MethodInfo [0];
 
@@ -1283,7 +1283,11 @@ namespace System.Reflection.Emit {
 			} else if (attrname == "System.SerializableAttribute") {
 				attrs |= TypeAttributes.Serializable;
 				return;
+			} else if (attrname == "System.Runtime.InteropServices.ComImportAttribute") {
+				attrs |= TypeAttributes.Import;
+				return;
 			}
+
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);
