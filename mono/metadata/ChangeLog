@@ -1,3 +1,8 @@
+2005-11-11  Dick Porter  <dick@ximian.com>
+
+	* threads.c (mono_thread_manage): Make sure the main thread has
+	abandoned all its mutexes when cleaning up.  Fixes bug 74680.
+
 2005-11-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_loader_set_error_type_load): Log a warning to the

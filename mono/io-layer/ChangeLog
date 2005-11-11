@@ -1,5 +1,14 @@
 2005-11-11  Dick Porter  <dick@ximian.com>
 
+	* threads.c: Give mutex abandoning its own exported function, so
+	it can be called when the runtime is cleaning up.
+
+	* handles.c (_wapi_search_handle_namespace): Do a handle
+	collection befre starting to check namespace strings, so that any
+	stale cruft gets removed.
+
+2005-11-11  Dick Porter  <dick@ximian.com>
+
 	* threads.c: Move thread handles back into the shared space.
 
 	* handles.c (_wapi_handle_unref): Add support for shared handles
