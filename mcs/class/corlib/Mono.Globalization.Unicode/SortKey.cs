@@ -83,11 +83,11 @@ namespace System.Globalization
 			this.options = opt;
 		}
 
-		public string OriginalString {
+		public virtual string OriginalString {
 			get { return source; }
 		}
 
-		public byte [] KeyData {
+		public virtual byte [] KeyData {
 			get { return key; }
 		}
 

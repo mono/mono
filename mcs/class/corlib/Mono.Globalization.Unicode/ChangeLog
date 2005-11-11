@@ -1,3 +1,8 @@
+2005-11-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : Now use MONO_DISABLE_MANAGED_COLLATION.
+	* SortKey.cs : some members are virtual.
+
 2005-10-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SimpleCollator.cs : modified to use stackalloc for byte array.
