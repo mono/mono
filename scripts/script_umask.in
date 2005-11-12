@@ -1,0 +1,3 @@
+#!/bin/sh
+umask 077
+exec @bindir@/@mono_interp@ @mono_instdir@/@framework_version@/@exe_name@.exe "$@"

@@ -1,4 +1,4 @@
-bin_SCRIPTS = $(scripts_1_0) $(scripts_2_0) gmcs mono-service $(scripts_rpmhelpers)
+bin_SCRIPTS = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) gmcs mono-service $(scripts_rpmhelpers)
 
 scripts_1_0 = \
 	al			\
@@ -12,7 +12,6 @@ scripts_1_0 = \
 	gacutil			\
 	genxs			\
 	ilasm			\
-	makecert		\
 	macpack			\
 	mbas			\
 	mcs			\
@@ -28,11 +27,14 @@ scripts_1_0 = \
 	secutil			\
 	setreg			\
 	signcode		\
-	sn			\
 	soapsuds		\
 	sqlsharp		\
 	wsdl			\
 	xsd
+
+scripts_1_0_umask = \
+	makecert		\
+	sn
 
 scripts_2_0 = \
 	monop2 			\
@@ -44,11 +46,12 @@ scripts_rpmhelpers = mono-find-provides mono-find-requires
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA= mono-nunit.pc
 
-CLEANFILES = $(scripts_1_0) $(scripts_2_0) gmcs mono-service
+CLEANFILES = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) gmcs mono-service
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =                   \
 	script.in              \
+	script_umask.in        \
 	mono-service.in        \
 	mono-nunit.pc.in       \
 	mono-find-provides.in  \
@@ -84,6 +87,10 @@ mono-service: mono-service.in Makefile
 
 $(scripts_1_0): script.in Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/script.in > $@.tmp
+	mv $@.tmp $@
+
+$(scripts_1_0_umask): script_umask.in Makefile
+	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/script_umask.in > $@.tmp
 	mv $@.tmp $@
 
 gmcs: script.in Makefile
