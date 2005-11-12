@@ -4,13 +4,14 @@
 // Authos:
 //	Erik LeBel (eriklebel@yahoo.ca)
 //      Jackson Harper (jackson@ximian.com)
+//      Miguel de Icaza (miguel@gnome.org)
 //
 // Copyright (C) Erik LeBel 2004
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004, 2005 Novell, Inc (http://www.novell.com)
 // 
 
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,7 +34,9 @@
 //
 
 using System;
+using System.Collections;
 using System.Runtime.InteropServices;
+using System.Security;
 using System.Text;
 
 namespace Microsoft.Win32
@@ -45,244 +48,411 @@ namespace Microsoft.Win32
 	internal class Win32RegistryApi : IRegistryApi
 	{
 		// bit masks for registry key open access permissions
-		public int OpenRegKeyRead {
-			get { return 0x00020019; }
-		}
+		const int OpenRegKeyRead = 0x00020019; 
+		const int OpenRegKeyWrite = 0x00020006; 
 
-		public int OpenRegKeyWrite {
-			get { return 0x00020006; }
+		// FIXME must be a way to determin this dynamically?
+		const int Int32ByteSize = 4;
+
+		// FIXME this is hard coded on Mono, can it be determined dynamically? 
+		readonly int NativeBytesPerCharacter = Marshal.SystemDefaultCharSize;
+
+		internal enum RegistryType {
+			String = 1,
+			EnvironmentString = 2,
+			Binary = 3,
+			Dword = 4,
+			StringArray = 7,
 		}
 		
-		// type values for registry value data
-		public int RegStringType {
-			get { return 1; }
-		}
-
-		public int RegEnvironmentString {
-			get { return 2; }
-		}
-
-		public int RegBinaryType {
-			get { return 3; }
-		}
-
-		public int RegDwordType {
-			get { return 4; }
-		}
-
-		public int RegStringArrayType {
-			get { return 7; }
-		}
-
-		/// <summary>
-		///	Create a registry key.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegCreateKey")]
-		private static extern int RegCreateKey_Internal (IntPtr keyBase, 
-				string keyName, out IntPtr keyHandle);
-
-		public int RegCreateKey (IntPtr keybase, string keyname, out IntPtr handle)
-		{
-			return RegCreateKey_Internal (keybase, keyname, out handle);
-		}
+		static extern int RegCreateKey (IntPtr keyBase, string keyName, out IntPtr keyHandle);
 	       
-		/// <summary>
-		///	Close a registry key.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegCloseKey")]
-		private static extern int RegCloseKey_Internal (IntPtr keyHandle);
+		static extern int RegCloseKey (IntPtr keyHandle);
 
-		public int RegCloseKey (IntPtr handle)
-		{
-			return RegCloseKey_Internal (handle);
-		}
-
-		/// <summary>
-		///	Flush a registry key's current state to disk.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegFlushKey")]
-		private static extern int RegFlushKey_Internal (IntPtr keyHandle);
+		private static extern int RegFlushKey (IntPtr keyHandle);
 
-		public int RegFlushKey (IntPtr handle)
-		{
-			return RegFlushKey_Internal (handle);
-		}
-
-		/// <summary>
-		///	Open a registry key.
-		///	'unknown' must be zero.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegOpenKeyEx")]
-		private static extern int RegOpenKeyEx_Internal (IntPtr keyBase,
+		private static extern int RegOpenKeyEx (IntPtr keyBase,
 				string keyName, IntPtr reserved, int access,
 				out IntPtr keyHandle);
 
-		public int RegOpenKeyEx (IntPtr keybase, string keyname, IntPtr reserved,
-				int access, out IntPtr handle)
-		{
-			return RegOpenKeyEx_Internal (keybase, keyname, reserved, access, out handle);
-		}
-
-		/// <summary>
-		///	Delete a registry key.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegDeleteKey")]
-		private static extern int RegDeleteKey_Internal (IntPtr keyHandle, 
-				string valueName);
+		private static extern int RegDeleteKey (IntPtr keyHandle, string valueName);
 
-		public int RegDeleteKey (IntPtr handle, string valuename)
-		{
-			return RegDeleteKey_Internal (handle, valuename);
-		}
-
-		/// <summary>
-		///	Delete a registry value.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegDeleteValue")]
-		private static extern int RegDeleteValue_Internal (IntPtr keyHandle, 
-				string valueName);
+		private static extern int RegDeleteValue (IntPtr keyHandle, string valueName);
 
-		public int RegDeleteValue (IntPtr handle, string valuename)
-		{
-			return RegDeleteValue_Internal (handle, valuename);
-		}
-
-		/// <summary>
-		///	Fetch registry key subkeys itteratively.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumKey")]
-		private static extern int RegEnumKey_Internal (IntPtr keyBase, int index,
-				[Out] byte[] nameBuffer, int bufferLength);
+		private static extern int RegEnumKey (IntPtr keyBase, int index, [Out] byte[] nameBuffer, int bufferLength);
 
-		public int RegEnumKey (IntPtr keybase, int index,
-				[Out] byte [] namebuffer, int buffer_length)
-		{
-			return RegEnumKey_Internal (keybase, index, namebuffer, buffer_length);
-		}
-
-		/// <summary>
-		///	Fetch registry key value names itteratively.
-		///
-		///	Arguments 'reserved', 'data', 'dataLength' 
-		///	should be set to IntPtr.Zero.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegEnumValue")]
-		private static extern int RegEnumValue_Internal (IntPtr keyBase, 
+		private static extern int RegEnumValue (IntPtr keyBase, 
 				int index, StringBuilder nameBuffer, 
 				ref int nameLength, IntPtr reserved, 
-				ref int type, IntPtr data, IntPtr dataLength);
+				ref RegistryType type, IntPtr data, IntPtr dataLength);
 
-		public int RegEnumValue (IntPtr keybase, int index, StringBuilder namebuffer,
-				ref int namelength, IntPtr reserved, ref int type, IntPtr data,
-				IntPtr datalength)
-		{
-			return RegEnumValue_Internal (keybase, index, namebuffer, ref namelength,
-					reserved, ref type, data, datalength);
-		}
-
-		/// <summary>
-		///	Set a registry value with string builder data.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
-		private static extern int RegSetValueEx_Internal (IntPtr keyBase, 
-				string valueName, IntPtr reserved, int type,
+		private static extern int RegSetValueEx (IntPtr keyBase, 
+				string valueName, IntPtr reserved, RegistryType type,
 				StringBuilder data, int rawDataLength);
 
-		public int RegSetValueEx (IntPtr keybase, string valuename, IntPtr reserved,
-				int type, StringBuilder data, int datalength)
-		{
-			return RegSetValueEx_Internal (keybase, valuename, reserved,
-					type, data, datalength);
-		}
-
-		/// <summary>
-		///	Set a registry value with string data.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
-		private static extern int RegSetValueEx_Internal (IntPtr keyBase, 
-				string valueName, IntPtr reserved, int type,
+		private static extern int RegSetValueEx (IntPtr keyBase, 
+				string valueName, IntPtr reserved, RegistryType type,
 				string data, int rawDataLength);
 
-		public int RegSetValueEx (IntPtr keybase, string valuename, IntPtr reserved,
-				int type, string data, int datalength)
-		{
-			return RegSetValueEx_Internal (keybase, valuename, reserved,
-					type, data, datalength);
-		}
-		
-		/// <summary>
-		///	Set a registry value with binary data (a byte array).
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
-		private static extern int RegSetValueEx_Internal (IntPtr keyBase, 
-				string valueName, IntPtr reserved, int type,
+		private static extern int RegSetValueEx (IntPtr keyBase, 
+				string valueName, IntPtr reserved, RegistryType type,
 				byte[] rawData, int rawDataLength);
 
-		public int RegSetValueEx (IntPtr keybase, string valuename, IntPtr reserved,
-				int type, byte [] data, int datalength)
-		{
-			return RegSetValueEx_Internal (keybase, valuename, reserved,
-					type, data, datalength);
-		}
-		
-		/// <summary>
-		///	Set a registry value to a DWORD value.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegSetValueEx")]
-		private static extern int RegSetValueEx_Internal (IntPtr keyBase, 
-				string valueName, IntPtr reserved, int type,
+		private static extern int RegSetValueEx (IntPtr keyBase, 
+				string valueName, IntPtr reserved, RegistryType type,
 				ref int data, int rawDataLength);
 
-		public int RegSetValueEx (IntPtr keybase, string valuename, IntPtr reserved,
-				int type, ref int data, int datalength)
-		{
-			return RegSetValueEx_Internal (keybase, valuename, reserved, type,
-					ref data, datalength);
-		}
-
-		/// <summary>
-		///	Get a registry value's info. No data.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegQueryValueEx")]
-		private static extern int RegQueryValueEx_Internal (IntPtr keyBase,
-				string valueName, IntPtr reserved, ref int type,
+		private static extern int RegQueryValueEx (IntPtr keyBase,
+				string valueName, IntPtr reserved, ref RegistryType type,
 				IntPtr zero, ref int dataSize);
 
-		public int RegQueryValueEx (IntPtr keybase, string valuename, IntPtr reserved,
-				ref int type, IntPtr zero, ref int datasize)
-		{
-			return RegQueryValueEx_Internal (keybase, valuename, reserved,
-					ref type, zero, ref datasize);
-		}
-
-		/// <summary>
-		///	Get a registry value. Binary data.
-		/// </summary>
 		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegQueryValueEx")]
-		private static extern int RegQueryValueEx_Internal (IntPtr keyBase,
-				string valueName, IntPtr reserved, ref int type,
+		private static extern int RegQueryValueEx (IntPtr keyBase,
+				string valueName, IntPtr reserved, ref RegistryType type,
 				[Out] byte[] data, ref int dataSize);
 
-		public int RegQueryValueEx (IntPtr keybase, string valuename, IntPtr reserved,
-				ref int type, [Out] byte [] data, ref int datasize)
+		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegQueryValueEx")]
+		private static extern int RegQueryValueEx (IntPtr keyBase,
+				string valueName, IntPtr reserved, ref RegistryType type,
+				ref int data, ref int dataSize);
+
+		/// <summary>
+		///	Acctually read a registry value. Requires knoledge of the
+		///	value's type and size.
+		/// </summary>
+		public object GetValue (RegistryKey rkey, string name, bool returnDefaultValue, object defaultValue)
 		{
-			return RegQueryValueEx_Internal (keybase, valuename, reserved,
-					ref type, data, ref datasize);
+			RegistryType type = 0;
+			int size = 0;
+			object obj = null;
+			IntPtr handle = (IntPtr)rkey.Data;
+			int result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, IntPtr.Zero, ref size);
+
+			if (result == Win32ResultCode.FileNotFound) {
+				if (returnDefaultValue) {
+					return defaultValue;
+				}
+				return null;
+			}
+			
+			if (result != Win32ResultCode.MoreData && result != Win32ResultCode.Success ) {
+				GenerateException (result);
+			}
+			
+			if (type == RegistryType.String || type == RegistryType.EnvironmentString) {
+				byte[] data;
+				result = GetBinaryValue (rkey, name, type, out data, size);
+				obj = RegistryKey.DecodeString (data);
+			} else if (type == RegistryType.Dword) {
+				int data = 0;
+				result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, ref data, ref size);
+				obj = data;
+			} else if (type == RegistryType.Binary) {
+				byte[] data;
+				result = GetBinaryValue (rkey, name, type, out data, size);
+				obj = data;
+			} else if (type == RegistryType.StringArray) {
+				obj = null;
+				byte[] data;
+				result = GetBinaryValue (rkey, name, type, out data, size);
+				
+				if (result == Win32ResultCode.Success)
+					obj = RegistryKey.DecodeString (data).Split ('\0');
+			} else {
+				// should never get here
+				throw new SystemException ();
+			}
+
+			// check result codes again:
+			if (result != Win32ResultCode.Success)
+			{
+				GenerateException (result);
+			}
+			
+
+			return obj;
+		}
+
+		public void SetValue (RegistryKey rkey, string name, object value)
+		{
+			Type type = value.GetType ();
+			int result;
+			IntPtr handle = (IntPtr)rkey.Data;
+
+			if (type == typeof (int)) {
+				int rawValue = (int)value;
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryType.Dword, ref rawValue, Int32ByteSize); 
+			} else if (type == typeof (byte[])) {
+				byte[] rawValue = (byte[]) value;
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryType.Binary, rawValue, rawValue.Length);
+			} else if (type == typeof (string[])) {
+				string[] vals = (string[]) value;
+				StringBuilder fullStringValue = new StringBuilder ();
+				foreach (string v in vals)
+				{
+					fullStringValue.Append (v);
+					fullStringValue.Append ('\0');
+				}
+				fullStringValue.Append ('\0');
+
+				byte[] rawValue = Encoding.Unicode.GetBytes (fullStringValue.ToString ());
+			
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryType.StringArray, rawValue, rawValue.Length); 
+			} else if (type.IsArray) {
+				throw new ArgumentException ("Only string and byte arrays can written as registry values");
+			} else {
+				string rawValue = String.Format ("{0}{1}", value, '\0');
+				result = RegSetValueEx (handle, name, IntPtr.Zero, RegistryType.String, rawValue,
+							rawValue.Length * NativeBytesPerCharacter);
+			}
+
+			// handle the result codes
+			if (result != Win32ResultCode.Success)
+			{
+				GenerateException (result);
+			}
 		}
 
 		/// <summary>
-		///	Get a registry value. DWORD data.
+		///	Get a binary value.
 		/// </summary>
-		[DllImport ("advapi32.dll", CharSet=CharSet.Unicode, EntryPoint="RegQueryValueEx")]
-		private static extern int RegQueryValueEx_Internal (IntPtr keyBase,
-				string valueName, IntPtr reserved, ref int type,
-				ref int data, ref int dataSize);
-
-		public int RegQueryValueEx (IntPtr keybase, string valuename, IntPtr reserved,
-				ref int type, ref int data, ref int datasize)
+		private int GetBinaryValue (RegistryKey rkey, string name, RegistryType type, out byte[] data, int size)
 		{
-			return RegQueryValueEx_Internal (keybase, valuename, reserved,
-					ref type, ref data, ref datasize);
+			byte[] internalData = new byte [size];
+			IntPtr handle = (IntPtr)rkey.Data;
+			int result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, internalData, ref size);
+			data = internalData;
+			return result;
+		}
+
+		
+		// Arbitrary max size for key/values names that can be fetched.
+		// .NET framework SDK docs say that the max name length that can 
+		// be used is 255 characters, we'll allow for a bit more.
+		const int BufferMaxLength = 1024;
+		
+		public int SubKeyCount (RegistryKey rkey)
+		{
+			int index, result;
+			byte[] stringBuffer = new byte [BufferMaxLength];
+			IntPtr handle = (IntPtr)rkey.Data;
+			
+			for (index = 0; true; index ++) {
+				result = RegEnumKey (handle, index, stringBuffer, BufferMaxLength);
+				
+				if (result == Win32ResultCode.Success)
+					continue;
+				
+				if (result == Win32ResultCode.NoMoreEntries)
+					break;
+				
+				// something is wrong!!
+				GenerateException (result);
+			}
+			return index;
+		}
+
+		public int ValueCount (RegistryKey rkey)
+		{
+			int index, result, bufferCapacity;
+			RegistryType type;
+			StringBuilder buffer = new StringBuilder (BufferMaxLength);
+			
+			IntPtr handle = (IntPtr)rkey.Data;
+			for (index = 0; true; index ++) {
+				type = 0;
+				bufferCapacity = buffer.Capacity;
+				result = RegEnumValue (handle, index, 
+						       buffer, ref bufferCapacity,
+						       IntPtr.Zero, ref type, 
+						       IntPtr.Zero, IntPtr.Zero);
+				
+				if (result == Win32ResultCode.Success || result == Win32ResultCode.MoreData)
+					continue;
+				
+				if (result == Win32ResultCode.NoMoreEntries)
+					break;
+				
+				// something is wrong
+				GenerateException (result);
+			}
+			return index;
+		}
+		
+		public RegistryKey OpenSubKey (RegistryKey rkey, string keyName, bool writtable)
+		{
+			int access = OpenRegKeyRead;
+			if (writtable) access |= OpenRegKeyWrite;
+			IntPtr handle = (IntPtr)rkey.Data;
+			
+			IntPtr subKeyHandle;
+			int result = RegOpenKeyEx (handle, keyName, IntPtr.Zero, access, out subKeyHandle);
+
+			if (result == Win32ResultCode.FileNotFound)
+				return null;
+			
+			if (result != Win32ResultCode.Success)
+				GenerateException (result);
+			
+			return new RegistryKey (subKeyHandle, CombineName (rkey, keyName));
+		}
+
+		public void Flush (RegistryKey rkey)
+		{
+			IntPtr handle = (IntPtr)rkey.Data;
+			RegFlushKey (handle);
+		}
+
+		public void Close (RegistryKey rkey)
+		{
+			IntPtr handle = (IntPtr)rkey.Data;
+			RegCloseKey (handle);
+		}
+
+		public RegistryKey CreateSubKey (RegistryKey rkey, string keyName)
+		{
+			IntPtr handle = (IntPtr)rkey.Data;
+			IntPtr subKeyHandle;
+			int result = RegCreateKey (handle , keyName, out subKeyHandle);
+
+			if (result != Win32ResultCode.Success) {
+				GenerateException (result);
+			}
+			
+			RegistryKey subKey = new RegistryKey (subKeyHandle, CombineName (rkey, keyName));
+
+			return subKey;
+		}
+
+		public void DeleteKey (RegistryKey rkey, string keyName, bool shouldThrowWhenKeyMissing)
+		{
+			IntPtr handle = (IntPtr)rkey.Data;
+			int result = RegDeleteKey (handle, keyName);
+
+			if (result == Win32ResultCode.FileNotFound) {
+				if (shouldThrowWhenKeyMissing)
+					throw new ArgumentException ("key " + keyName);
+				return;
+			}
+			
+			if (result != Win32ResultCode.Success)
+				GenerateException (result);
+		}
+
+		public void DeleteValue (RegistryKey rkey, string value, bool shouldThrowWhenKeyMissing)
+		{
+			IntPtr handle = (IntPtr)rkey.Data;
+			int result = RegDeleteValue (handle, value);
+			
+			if (result == Win32ResultCode.FileNotFound){
+				if (shouldThrowWhenKeyMissing)
+					throw new ArgumentException ("value " + value);
+				return;
+			}
+			
+			if (result != Win32ResultCode.Success)
+				GenerateException (result);
+		}
+
+		public string [] GetSubKeyNames (RegistryKey rkey)
+		{
+			IntPtr handle = (IntPtr)rkey.Data;
+			byte[] buffer = new byte [BufferMaxLength];
+			int bufferCapacity = BufferMaxLength;
+			ArrayList keys = new ArrayList ();
+				
+			for (int index = 0; true; index ++) {
+				int result = RegEnumKey (handle, index, buffer, bufferCapacity);
+
+				if (result == Win32ResultCode.Success) {
+					keys.Add (RegistryKey.DecodeString (buffer));
+					continue;
+				}
+
+				if (result == Win32ResultCode.NoMoreEntries)
+					break;
+
+				// should not be here!
+				GenerateException (result);
+			}
+			return (string []) keys.ToArray (typeof(String));
+		}
+
+
+		public string [] GetValueNames (RegistryKey rkey)
+		{
+			IntPtr handle = (IntPtr)rkey.Data;
+			ArrayList values = new ArrayList ();
+			
+			for (int index = 0; true; index ++)
+			{
+				StringBuilder buffer = new StringBuilder (BufferMaxLength);
+				int bufferCapacity = buffer.Capacity;
+				RegistryType type = 0;
+				
+				int result = RegEnumValue (handle, index, buffer, ref bufferCapacity,
+							IntPtr.Zero, ref type, IntPtr.Zero, IntPtr.Zero);
+
+				if (result == Win32ResultCode.Success || result == Win32ResultCode.MoreData) {
+					values.Add (buffer.ToString ());
+					continue;
+				}
+				
+				if (result == Win32ResultCode.NoMoreEntries)
+					break;
+					
+				GenerateException (result);
+			}
+
+			return (string []) values.ToArray (typeof(String));
+		}
+
+		/// <summary>
+		/// convert a win32 error code into an appropriate exception.
+		/// </summary>
+		private void GenerateException (int errorCode)
+		{
+			switch (errorCode) {
+				case Win32ResultCode.FileNotFound:
+				case Win32ResultCode.InvalidParameter:
+					throw new ArgumentException ();
+				
+				case Win32ResultCode.AccessDenied:
+					throw new SecurityException ();
+
+				default:
+					// unidentified system exception
+					throw new SystemException ();
+			}
+		}
+
+		public string ToString (RegistryKey rkey)
+		{
+			IntPtr handle = (IntPtr)rkey.Data;
+			
+			return String.Format ("{0} [0x{1:X}]", rkey.Name, handle.ToInt32 ());
+		}
+
+		/// <summary>
+		///	utility: Combine the sub key name to the current name to produce a 
+		///	fully qualified sub key name.
+		/// </summary>
+		internal static string CombineName (RegistryKey rkey, string localName)
+		{
+			return String.Concat (rkey.Name, "\\", localName);
 		}
 	}
 }

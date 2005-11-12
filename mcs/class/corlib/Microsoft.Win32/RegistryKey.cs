@@ -44,78 +44,45 @@ namespace Microsoft.Win32
 	/// </summary>
 	public sealed class RegistryKey : MarshalByRefObject, IDisposable 
 	{
-		const char NullChar = '\0';
+		//
+		// This represents the backend data, used when creating the
+		// RegistryKey object
+		//
+		public object Data;
 		
-		// Arbitrary max size for key/values names that can be fetched.
-		// .NET framework SDK docs say that the max name length that can 
-		// be used is 255 characters, we'll allow for a bit more.
-		const int BufferMaxLength = 1024;
-
-		// FIXME must be a way to determin this dynamically?
-		const int Int32ByteSize = 4;
-
-		// FIXME this is hard coded on Mono, can it be determined dynamically? 
-		readonly int NativeBytesPerCharacter = Marshal.SystemDefaultCharSize;
-
-		// FIXME this should be determined dynamically.
-		// It will be used to decode some return strings
-		// for which embeded '\0' must be preserved.
-		readonly Encoding Decoder = Encoding.Unicode;
-		
-		
-		IntPtr hkey;	// the reg key handle
 		string qname;	// the fully qualified registry key name
 		bool isRoot;	// is the an instance of a root key?
 		
-		IRegistryApi reg_api;
+		static readonly IRegistryApi RegistryApi;
+
+		static RegistryKey ()
+		{
+			if (Path.DirectorySeparatorChar == '\\')
+				RegistryApi = new Win32RegistryApi ();
+			else
+				RegistryApi = new UnixRegistryApi ();
+		}
 
 		/// <summary>
 		///	Construct an instance of a root registry key entry.
 		/// </summary>
 		internal RegistryKey (RegistryHive hiveId, string keyName)
 		{
-			hkey = new IntPtr ((int)hiveId);
+			Data = hiveId;
 			qname = keyName;
 			isRoot = true;
-
-			InitRegistryApi ();
 		}
 		
 		/// <summary>
 		///	Construct an instance of a registry key entry.
 		/// </summary>
-		internal RegistryKey (IntPtr hkey, string keyName)
+		internal RegistryKey (object data, string keyName)
 		{
-			this.hkey = hkey;
+			Data = data;
 			qname = keyName;
 			isRoot = false;
-
-			InitRegistryApi ();
 		}
 
-		internal void InitRegistryApi ()
-		{
-			if (Path.DirectorySeparatorChar == '\\')
-				reg_api = new Win32RegistryApi ();
-		}
-
-		private IRegistryApi RegistryApi {
-			get {
-				if (reg_api == null)
-					throw new NotImplementedException ("The registry is" +
-							" only available on Windows.");
-				return reg_api;
-			}
-		}
-
-		/// <summary>
-		///	Fetch the inetrnal registry key.
-		/// </summary>
-		private IntPtr Handle {
-			get { return hkey; }
-		}
-
-		
 		#region PublicAPI
 
 		/// <summary>
@@ -152,9 +119,7 @@ namespace Microsoft.Win32
 		/// </summary>
 		public void Flush()
 		{
-			RegTrace (" +Flush");
-			RegistryApi.RegFlushKey (Handle);
-			RegTrace (" -Flush");
+			RegistryApi.Flush (this);
 		}
 		
 		
@@ -167,10 +132,8 @@ namespace Microsoft.Win32
 			if (isRoot)
 				return;
 			
-			RegTrace (" +Close");
-			RegistryApi.RegCloseKey (Handle);
-			hkey = IntPtr.Zero;
-			RegTrace (" -Close");
+			RegistryApi.Close (this);
+			Data = null;
 		}
 		
 		
@@ -179,31 +142,9 @@ namespace Microsoft.Win32
 		/// </summary>
 		public int SubKeyCount {
 			get {
-				RegTrace (" +SubKeyCount");
 				AssertKeyStillValid ();
-				
-				int index, result;
-				byte[] stringBuffer = new byte [BufferMaxLength];
 
-				for (index = 0; true; index ++)
-				{
-					result = RegistryApi.RegEnumKey (Handle, index, 
-							stringBuffer, BufferMaxLength);
-					
-					if (result == Win32ResultCode.Success)
-						continue;
-					
-					if (result == Win32ResultCode.NoMoreEntries)
-						break;
-					
-					// something is wrong!!
-					RegTrace ("Win32Api::ReEnumKey	result='{0}'  name='{1}'", 
-							result, Name);
-					GenerateException (result);
-				}
-				
-				RegTrace (" -SubKeyCount");
-				return index;
+				return RegistryApi.SubKeyCount (this);
 			}
 		}
 
@@ -213,35 +154,9 @@ namespace Microsoft.Win32
 		/// </summary>
 		public int ValueCount {
 			get {
-				RegTrace (" +ValueCount");	
 				AssertKeyStillValid ();
-			
-				int index, result, type, bufferCapacity;
-				StringBuilder buffer = new StringBuilder (BufferMaxLength);
-				
-				for (index = 0; true; index ++)
-				{
-					type = 0;
-					bufferCapacity = buffer.Capacity;
-					result = RegistryApi.RegEnumValue (Handle, index, 
-							buffer, ref bufferCapacity,
-							IntPtr.Zero, ref type, 
-							IntPtr.Zero, IntPtr.Zero);
 
-					if (result == Win32ResultCode.Success || result == Win32ResultCode.MoreData)
-						continue;
-					
-					if (result == Win32ResultCode.NoMoreEntries)
-						break;
-
-					// something is wrong
-					RegTrace ("Win32Api::RegEnumValue  result='{0}'	 name='{1}'", 
-							result, Name);
-					GenerateException (result);
-				}
-
-				RegTrace (" -ValueCount");
-				return index;
+				return RegistryApi.ValueCount (this);
 			}
 		}
 
@@ -251,66 +166,15 @@ namespace Microsoft.Win32
 		/// </summary>
 		public void SetValue (string name, object value)
 		{
-			RegTrace (" +SetValue");
 			AssertKeyStillValid ();
 			
 			if (value == null)
 				throw new ArgumentNullException ();
-			
-			Type type = value.GetType ();
-			int result;
 
-			if (type == typeof (int))
-			{
-				int rawValue = (int)value;
-				result = RegistryApi.RegSetValueEx (Handle, name, 
-						IntPtr.Zero, RegistryApi.RegDwordType, 
-						ref rawValue, Int32ByteSize); 
-			}
-			else if (type == typeof (byte[]))
-			{
-				byte[] rawValue = (byte[]) value;
-				result = RegistryApi.RegSetValueEx (Handle, name,
-						IntPtr.Zero, RegistryApi.RegBinaryType,
-						rawValue, rawValue.Length);
-			}
-			else if (type == typeof (string[]))
-			{
-				string[] vals = (string[]) value;
-				StringBuilder fullStringValue = new StringBuilder ();
-				foreach (string v in vals)
-				{
-					fullStringValue.Append (v);
-					fullStringValue.Append (NullChar);
-				}
-				fullStringValue.Append (NullChar);
-
-				byte[] rawValue = Decoder.GetBytes (fullStringValue.ToString ());
+			if (isRoot)
+				throw new UnauthorizedAccessException ();
 			
-				result = RegistryApi.RegSetValueEx (Handle, name, 
-						IntPtr.Zero, RegistryApi.RegStringArrayType, 
-						rawValue, rawValue.Length); 
-			}
-			else if (type.IsArray)
-			{
-				throw new ArgumentException ("Only string and byte arrays can written as registry values");
-			}
-			else
-			{
-				string rawValue = String.Format ("{0}{1}", value, NullChar);
-				result = RegistryApi.RegSetValueEx (Handle, name,
-						IntPtr.Zero, RegistryApi.RegStringType,
-						rawValue, rawValue.Length * NativeBytesPerCharacter);
-			}
-
-			// handle the result codes
-			if (result != Win32ResultCode.Success)
-			{
-				RegTrace ("Win32Api::RegSetValueEx: result: {0}", result);
-				GenerateException (result);
-			}
-			
-			RegTrace (" -SetValue");
+			RegistryApi.SetValue (this, name, value);
 		}
 
 		
@@ -328,33 +192,10 @@ namespace Microsoft.Win32
 		/// </summary>
 		public RegistryKey OpenSubKey (string keyName, bool writtable)
 		{
-			RegTrace (" +OpenSubKey");
 			AssertKeyStillValid ();
 			AssertKeyNameNotNull (keyName);
-			
-			int access = RegistryApi.OpenRegKeyRead;
-			if (writtable) access |= RegistryApi.OpenRegKeyWrite;
-			
-			IntPtr subKeyHandle;
-			int result = RegistryApi.RegOpenKeyEx (Handle, keyName, IntPtr.Zero, 
-					access, out subKeyHandle);
 
-			if (result == Win32ResultCode.FileNotFound)
-			{
-				RegTrace (" -OpenSubKey");
-				return null;
-			}
-			
-			if (result != Win32ResultCode.Success)
-			{
-				RegTrace ("Win32Api::RegOpenKeyEx  result='{0}'	 key name='{1}'", 
-						result, CombineName (keyName));
-				GenerateException (result);
-			}
-			
-			RegistryKey subKey = new RegistryKey (subKeyHandle, CombineName (keyName));
-			RegTrace (" -OpenSubKey");
-			return subKey;
+			return RegistryApi.OpenSubKey (this, keyName, writtable);
 		}
 		
 		
@@ -363,10 +204,7 @@ namespace Microsoft.Win32
 		/// </summary>
 		public object GetValue (string name)
 		{
-			RegTrace (" +GetValue");
-			object obj = GetValueImpl (name, false, null);
-			RegTrace (" -GetValue");
-			return obj;
+			return RegistryApi.GetValue (this, name, false, null);
 		}
 
 		
@@ -375,35 +213,23 @@ namespace Microsoft.Win32
 		/// </summary>
 		public object GetValue (string name, object defaultValue)
 		{
-			RegTrace (" +GetValue");
-			object obj = GetValueImpl (name, true, defaultValue);
-			RegTrace (" -GetValue");
-			return obj;
+			AssertKeyStillValid ();
+			
+			return RegistryApi.GetValue (this, name, true, defaultValue);
 		}
 
 		
 		/// <summary>
 		///	Create a sub key.
 		/// </summary>
-		public RegistryKey CreateSubKey (string keyName)
+		[MonoTODO("RegistryPermission")]
+		public RegistryKey CreateSubKey (string subkey)
 		{
-			RegTrace (" +CreateSubKey");
 			AssertKeyStillValid ();
-			AssertKeyNameNotNull (keyName);
-			
-			IntPtr subKeyHandle;
-			int result = RegistryApi.RegCreateKey (Handle , keyName, out subKeyHandle);
-
-			if (result != Win32ResultCode.Success)
-			{
-				RegTrace ("Win32Api::RegCreateKey: result='{0}' key name='{1}'", 
-						result, CombineName (keyName));
-				GenerateException (result);
-			}
-			
-			RegistryKey subKey = new RegistryKey (subKeyHandle, CombineName (keyName));
-			RegTrace (" -CreateSubKey");
-			return subKey;
+			AssertKeyNameNotNull (subkey);
+			if (subkey.Length > 255)
+				throw new ArgumentException ("keyName length is larger than 255 characters", subkey);
+			return RegistryApi.CreateSubKey (this, subkey);
 		}
 		
 		
@@ -419,44 +245,26 @@ namespace Microsoft.Win32
 		/// <summary>
 		///	Delete the specified subkey.
 		/// </summary>
-		public void DeleteSubKey(string keyName, bool shouldThrowWhenKeyMissing)
+		public void DeleteSubKey(string subkey, bool throwOnMissingSubKey)
 		{
-			RegTrace (" +DeleteSubKey");
 			AssertKeyStillValid ();
-			AssertKeyNameNotNull (keyName);
+			AssertKeyNameNotNull (subkey);
+
+			RegistryKey child = OpenSubKey (subkey);
 			
-			RegistryKey child = OpenSubKey (keyName);
-			
-			if (child == null)
-			{
-				if (shouldThrowWhenKeyMissing)
-					throw new ArgumentException ("key " + keyName);
-				RegTrace (" -DeleteSubKey");
+			if (child == null) {
+				if (throwOnMissingSubKey)
+					throw new ArgumentException ("key missing: " + subkey, "subkey");
 				return;
 			}
 
-			if (child.SubKeyCount > 0)
-				throw new InvalidOperationException ("key " + keyName + " has sub keys");
+			if (child.SubKeyCount > 0){
+				throw new InvalidOperationException ("key " + subkey + " has sub keys");
+			}
 			
 			child.Close ();
 
-			int result = RegistryApi.RegDeleteKey (Handle, keyName);
-			if (result == Win32ResultCode.FileNotFound)
-			{
-				if (shouldThrowWhenKeyMissing)
-					throw new ArgumentException ("key " + keyName);
-				RegTrace (" -DeleteSubKey");
-				return;
-			}
-			
-			if (result != Win32ResultCode.Success)
-			{
-				RegTrace ("Win32Api::RegDeleteKey: result='{0}' key name='{1}'", 
-						result, CombineName (keyName));
-				GenerateException (result);
-			}
-
-			RegTrace (" -DeleteSubKey");
+			RegistryApi.DeleteKey (this, subkey, throwOnMissingSubKey);
 		}
 		
 		
@@ -468,18 +276,17 @@ namespace Microsoft.Win32
 			// Note: this is done by deleting sub-nodes recursively.
 			// The preformance is not very good. There may be a 
 			// better way to implement this.
-			RegTrace (" +DeleteSubKeyTree");
+			
 			AssertKeyStillValid ();
 			AssertKeyNameNotNull (keyName);
 			
 			RegistryKey child = OpenSubKey (keyName, true);
 			if (child == null)
-				throw new ArgumentException ("key " + keyName);
+				throw new ArgumentException ("key " + keyName + " at " + Name);
 
 			child.DeleteChildKeysAndValues ();
 			child.Close ();
 			DeleteSubKey (keyName, false);
-			RegTrace (" -DeleteSubKeyTree");
 		}
 		
 
@@ -497,28 +304,10 @@ namespace Microsoft.Win32
 		/// </summary>
 		public void DeleteValue(string value, bool shouldThrowWhenKeyMissing)
 		{
-			RegTrace (" +DeleteValue");
 			AssertKeyStillValid ();
 			AssertKeyNameNotNull (value);
-			
-			int result = RegistryApi.RegDeleteValue (Handle, value);
-			
-			if (result == Win32ResultCode.FileNotFound)
-			{
-				if (shouldThrowWhenKeyMissing)
-					throw new ArgumentException ("value " + value);
-				RegTrace (" -DeleteValue");
-				return;
-			}
-			
-			if (result != Win32ResultCode.Success)
-			{
-				RegTrace ("Win32Api::RegDeleteValue: result='{0}' value name='{1}'", 
-						result, CombineName (value));
-				GenerateException (result);
-			}
-			
-			RegTrace (" -DeleteValue");
+
+			RegistryApi.DeleteValue (this, value, shouldThrowWhenKeyMissing);
 		}
 		
 		
@@ -527,34 +316,9 @@ namespace Microsoft.Win32
 		/// </summary>
 		public string[] GetSubKeyNames()
 		{
-			RegTrace (" +GetSubKeyNames");
 			AssertKeyStillValid ();
-			
-			byte[] buffer = new byte [BufferMaxLength];
-			int bufferCapacity = BufferMaxLength;
-			ArrayList keys = new ArrayList ();
-				
-			for (int index = 0; true; index ++)
-			{
-				int result = RegistryApi.RegEnumKey (Handle, index, buffer, bufferCapacity);
 
-				if (result == Win32ResultCode.Success)
-				{
-					keys.Add (DecodeString (buffer));
-					continue;
-				}
-
-				if (result == Win32ResultCode.NoMoreEntries)
-					break;
-
-				// should not be here!
-				RegTrace ("Win32Api::RegEnumKey: result='{0}' value name='{1}'", 
-						result, CombineName (Name));
-				GenerateException (result);
-			}
-
-			RegTrace (" -GetSubKeyNames");
-			return (string []) keys.ToArray (typeof(String));
+			return RegistryApi.GetSubKeyNames (this);
 		}
 		
 		
@@ -563,37 +327,8 @@ namespace Microsoft.Win32
 		/// </summary>
 		public string[] GetValueNames()
 		{
-			RegTrace (" +GetValueNames");
 			AssertKeyStillValid ();
-			
-			ArrayList values = new ArrayList ();
-			
-			for (int index = 0; true; index ++)
-			{
-				StringBuilder buffer = new StringBuilder (BufferMaxLength);
-				int bufferCapacity = buffer.Capacity;
-				int type = 0;
-				
-				int result = RegistryApi.RegEnumValue (Handle, index, buffer, ref bufferCapacity,
-							IntPtr.Zero, ref type, IntPtr.Zero, IntPtr.Zero);
-
-				if (result == Win32ResultCode.Success || result == Win32ResultCode.MoreData)
-				{
-					values.Add (buffer.ToString ());
-					continue;
-				}
-				
-				if (result == Win32ResultCode.NoMoreEntries)
-					break;
-					
-				// should not be here!
-				RegTrace ("RegistryApi.RegEnumValue: result code='{0}' name='{1}'", 
-						result, CombineName (Name));
-				GenerateException (result);
-			}
-
-			RegTrace (" -GetValueNames");
-			return (string []) values.ToArray (typeof(String));
+			return RegistryApi.GetValueNames (this);
 		}
 		
 		
@@ -611,7 +346,7 @@ namespace Microsoft.Win32
 		/// </summary>
 		public override string ToString()
 		{
-			return String.Format ("{0} [0x{1:X}]", Name, Handle.ToInt32 ());
+			return RegistryApi.ToString (this);
 		}
 
 		#endregion // PublicAPI
@@ -622,7 +357,7 @@ namespace Microsoft.Win32
 		/// </summary>
 		private void AssertKeyStillValid ()
 		{
-			if (Handle == IntPtr.Zero)
+			if (Data == null)
 				throw new ObjectDisposedException ("Microsoft.Win32.RegistryKey");
 		}
 
@@ -645,12 +380,8 @@ namespace Microsoft.Win32
 		/// </summary>
 		private void DeleteChildKeysAndValues ()
 		{
-			RegTrace (" +DeleteChildKeysAndValues");
 			if (isRoot)
-			{
-				RegTrace (" -DeleteChildKeysAndValues");
 				return;
-			}
 			
 			string[] subKeys = GetSubKeyNames ();
 			foreach (string subKey in subKeys)
@@ -662,166 +393,21 @@ namespace Microsoft.Win32
 			}
 
 			string[] values = GetValueNames ();
-			foreach (string value in values)
-			{
+			foreach (string value in values) {
 				DeleteValue (value, false);
 			}
-			
-			RegTrace (" -DeleteChildKeysAndValues");
 		}
 
-
-		/// <summary>
-		///	Acctually read a registry value. Requires knoledge of the
-		///	value's type and size.
-		/// </summary>
-		private object GetValueImpl (string name, bool returnDefaultValue, object defaultValue)
-		{
-			RegTrace (" +GetValueImpl");
-			AssertKeyStillValid ();
-			
-			int type = 0;
-			int size = 0;
-			object obj = null;
-			
-			int result = RegistryApi.RegQueryValueEx (Handle, name, IntPtr.Zero,
-					ref type, IntPtr.Zero, ref size);
-
-			if (result == Win32ResultCode.FileNotFound)
-			{
-				if (returnDefaultValue) {
-					RegTrace (" -GetValueImpl");
-					return defaultValue;
-				}
-				return null;
-			}
-			
-			if (result != Win32ResultCode.MoreData && result != Win32ResultCode.Success )
-			{
-				RegTrace ("Win32Api::RegQueryValueEx: result='{0}'  name='{1}'	type='{2}'  size='{3}'",	
-						result, name, type, size);
-				GenerateException (result);
-			}
-			
-			if (type == RegistryApi.RegStringType || type == RegistryApi.RegEnvironmentString)
-			{
-				byte[] data;
-				result = GetBinaryValue (name, type, out data, size);
-				obj = DecodeString (data);
-			}
-			else if (type == RegistryApi.RegDwordType)
-			{
-				int data = 0;
-				result = RegistryApi.RegQueryValueEx (Handle, name, IntPtr.Zero,
-						ref type, ref data, ref size);
-				obj = data;
-			}
-			else if (type == RegistryApi.RegBinaryType)
-			{
-				byte[] data;
-				result = GetBinaryValue (name, type, out data, size);
-				obj = data;
-			}
-			else if (type == RegistryApi.RegStringArrayType)
-			{
-				obj = null;
-				byte[] data;
-				result = GetBinaryValue (name, type, out data, size);
-				
-				if (result == Win32ResultCode.Success)
-					obj = DecodeString (data).Split (NullChar);
-			}
-			else
-			{
-				// should never get here
-				throw new SystemException ();
-			}
-
-			// check result codes again:
-			if (result != Win32ResultCode.Success)
-			{
-				RegTrace ("Win32Api::RegQueryValueEx: result='{0}' name='{1}'", 
-						result, name);
-				GenerateException (result);
-			}
-			
-			RegTrace (" -ReadValueImpl");
-			return obj;
-		}
-
-		
-		/// <summary>
-		///	Get a binary value.
-		/// </summary>
-		private int GetBinaryValue (string name, int type, out byte[] data, int size)
-		{
-			byte[] internalData = new byte [size];
-			int result = RegistryApi.RegQueryValueEx (Handle, name, 
-					IntPtr.Zero, ref type, internalData, ref size);
-			data = internalData;
-			return result;
-		}
-
-		
 		/// <summary>
 		///	decode a byte array as a string, and strip trailing nulls
 		/// </summary>
-		private string DecodeString (byte[] data)
+		static internal string DecodeString (byte[] data)
 		{
-			string stringRep = Decoder.GetString (data);
-			int idx = stringRep.IndexOf (NullChar);
+			string stringRep = Encoding.Unicode.GetString (data);
+			int idx = stringRep.IndexOf ('\0');
 			if (idx >= 0)
-					stringRep = stringRep.Substring (0, idx);
+				stringRep = stringRep.Substring (0, idx);
 			return stringRep;
-		}
-		
-		
-		/// <summary>
-		///	utility: Combine the sub key name to the current name to produce a 
-		///	fully qualified sub key name.
-		/// </summary>
-		private string CombineName (string localName)
-		{
-			return String.Format ("{0}\\{1}", Name, localName);
-		}
-		
-		
-		/// <summary>
-		/// convert a win32 error code into an appropriate exception.
-		/// </summary>
-		private void GenerateException (int errorCode)
-		{
-			switch (errorCode) {
-				case Win32ResultCode.FileNotFound:
-				case Win32ResultCode.InvalidParameter:
-					throw new ArgumentException ();
-				
-				case Win32ResultCode.AccessDenied:
-					throw new SecurityException ();
-
-				default:
-					// unidentified system exception
-					throw new SystemException ();
-			}
-		}
-		
-#if (false)
-		/// <summary>
-		///	dump trace messages if this code was compiled with tracing enabled.
-		/// </summary>
-		[Conditional("TRACE")]
-		private static void RegTrace (string message, params object[] args)
-		{
-			message = "REG " + message;
-			if (args.Length > 0)
-				message = String.Format (message, args);
-
-			Trace.WriteLine (message);
-			//Console.WriteLine (message);
-		}
-#endif		
-		private static void RegTrace (string message, params object[] args)
-		{
 		}
 	}
 }
