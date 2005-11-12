@@ -1,3 +1,25 @@
+2005-11-12  Chris Toshok  <toshok@ximian.com>
+
+	* AuthorizationRuleCollection.cs, AuthorizationRule.cs,
+	AuthorizationSection.cs, BufferModesCollection.cs,
+	BufferModeSettings.cs, CacheSection.cs, CompilerCollection.cs,
+	Compiler.cs, DeploymentSection.cs,
+	EventMappingSettingsCollection.cs, EventMappingSettings.cs,
+	GlobalizationSection.cs, HealthMonitoringSection.cs,
+	IdentitySection.cs, OutputCacheProfileCollection.cs,
+	OutputCacheProfile.cs, OutputCacheSection.cs,
+	OutputCacheSettingsSection.cs, ProfileSettingsCollection.cs,
+	ProfileSettings.cs, RuleSettingsCollection.cs, RuleSettings.cs,
+	SqlCacheDependencyDatabaseCollection.cs,
+	SqlCacheDependencyDatabase.cs, SqlCacheDependencySection.cs,
+	SystemWebCachingSectionGroup.cs, TraceSection.cs,
+	TransformerInfoCollection.cs, TransformerInfo.cs, TrustSection.cs,
+	WebControlsSection.cs, WebPartsPersonalizationAuthorization.cs,
+	WebPartsPersonalization.cs, WebPartsSection.cs,
+	XhtmlConformanceSection.cs: a whole slew of new classes.  the
+	fruits of tons of c&p and ibuprofen.
+
+
 2005-11-09  Chris Toshok  <toshok@ximian.com>
 
 	* PagesSection.cs, AuthenticationSection.cs, BuildProvider.cs,
