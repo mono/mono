@@ -15,6 +15,7 @@ cs0229-2.cs
 cs0229.cs NO ERROR
 cs0525.cs
 cs0526.cs
+cs0531.cs
 cs0547-2.cs # new in GMCS; grammar issue
 cs0547.cs
 cs0548-4.cs
@@ -22,8 +23,13 @@ cs0548.cs
 cs0560.cs
 cs0567.cs
 cs0612-2.cs NO ERROR
-cs0619-42.cs
+cs0619-18.cs
 cs0619-24.cs
+cs0619-42.cs
+cs0647-3.cs
+cs1035.cs
+cs1040-2.cs
+cs1040.cs
 cs1041.cs # new in GMCS; grammar issue
 cs1501-5.cs
 cs1513.cs
@@ -33,24 +39,20 @@ cs1528.cs
 cs1540-2.cs # new in GMCS
 cs1540-3.cs NO ERROR # new in GMCS
 cs1540-5.cs NO ERROR # new in GMCS
+cs1548-2.cs
+cs1548-3.cs
+cs1548.cs
 cs1586.cs
 cs1641.cs
-cs0531.cs
-gcs0146.cs
-gcs0208-2.cs
-gcs0208-3.cs
-gcs0208-4.cs
-gcs0305.cs
-gcs0305-2.cs
-gcs0308.cs
-gcs0309-5.cs
-
-cs0619-18.cs
-cs0647-3.cs
-cs1035.cs
-cs1040-2.cs
-cs1040.cs
 cs1667-3.cs
 cs1667-4.cs
 cs1667-5.cs
 cs1667.cs
+gcs0146.cs
+gcs0208-2.cs
+gcs0208-3.cs
+gcs0208-4.cs
+gcs0305-2.cs
+gcs0305.cs
+gcs0308.cs
+gcs0309-5.cs
