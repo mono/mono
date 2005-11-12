@@ -1071,7 +1071,7 @@ namespace Mono.CSharp {
 				}
 			}
 			catch (Exception) {
-				Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' is incorrectly encoded");
+				Error_AssemblySigning ("The specified file `" + RootContext.StrongNameKeyFile + "' is incorrectly encoded");
 				Environment.Exit (1);
 			}
 		}
@@ -1177,7 +1177,7 @@ namespace Mono.CSharp {
 									"ECMA key can only be used to delay-sign assemblies");
 							}
 							else {
-								Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' does not have a private key");
+								Error_AssemblySigning ("The specified file `" + RootContext.StrongNameKeyFile + "' does not have a private key");
 							}
 							return null;
 						}
@@ -1185,7 +1185,7 @@ namespace Mono.CSharp {
 				}
 			}
 			else {
-				Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' does not exist");
+				Error_AssemblySigning ("The specified file `" + RootContext.StrongNameKeyFile + "' does not exist");
 				return null;
 			}
 			return an;

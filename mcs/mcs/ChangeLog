@@ -1,3 +1,7 @@
+2005-11-12  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* codegen.cs: Fixed typo (speficied -> specified).
+
 2005-11-11  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76369.
