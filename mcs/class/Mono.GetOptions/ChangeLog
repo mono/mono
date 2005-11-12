@@ -1,3 +1,7 @@
+2005-11-12  Joshua Tauberer  <tauberer@for.net>
+	* Mono.GetOptions/OptionDetails.cs: Don't split on commas for options that have
+	  a MaxOccurs of 1 (it would try, show an error, and ignore text after comma).
+
 2005-08-05  Rafael Teixeira  <rafaelteixeirabr@hotmail.com>
 	* Mono.GetOptions.Useful/CommonCompilerOptions.cs: fix some descriptions
 	

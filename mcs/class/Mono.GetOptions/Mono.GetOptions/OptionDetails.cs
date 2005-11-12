@@ -322,7 +322,7 @@ namespace Mono.GetOptions
 
 			string[] parameterValues;
 			
-			if (dontSplitOnCommas)
+			if (dontSplitOnCommas || MaxOccurs == 1)
 				parameterValues = new string[] { parameterValue };
 			else
 				parameterValues = parameterValue.Split(',');
