@@ -341,7 +341,7 @@ namespace Mono.CSharp {
   		{
 			HybridDictionary dict = new HybridDictionary (defined_names.Count, true);
 			foreach (EnumMember em in defined_names.Values) {
-				if (!em.IsClsCompliaceRequired (this))
+				if (!em.IsClsComplianceRequired (this))
 					continue;
 
 				try {

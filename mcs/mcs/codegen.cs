@@ -1024,7 +1024,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override bool IsClsCompliaceRequired(DeclSpace ds)
+		public override bool IsClsComplianceRequired(DeclSpace ds)
 		{
 			return is_cls_compliant;
 		}
@@ -1287,7 +1287,7 @@ namespace Mono.CSharp {
  			}
 		}
 
-		public override bool IsClsCompliaceRequired(DeclSpace ds)
+		public override bool IsClsComplianceRequired(DeclSpace ds)
 		{
 			return CodeGen.Assembly.IsClsCompliant;
 		}

@@ -49,7 +49,7 @@ namespace Mono.CSharp {
 			builder.SetCustomAttribute (cb);
 		}
 
-		public override bool IsClsCompliaceRequired(DeclSpace ds)
+		public override bool IsClsComplianceRequired(DeclSpace ds)
 		{
 			return false;
 		}

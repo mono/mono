@@ -84,7 +84,7 @@ namespace Mono.CSharp
 			throw new InvalidOperationException ();
 		}
 
-		public override bool IsClsCompliaceRequired (DeclSpace ds)
+		public override bool IsClsComplianceRequired (DeclSpace ds)
 		{
 			return true;
 		}
