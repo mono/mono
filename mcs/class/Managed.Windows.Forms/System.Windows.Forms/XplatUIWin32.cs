@@ -1897,7 +1897,9 @@ namespace System.Windows.Forms {
 
 			obj = null;
 
-			switch ((ClipboardFormats)type) {
+			if (type == DataFormats.GetFormat(DataFormats.Rtf).Id) {
+				obj = AnsiToString(data);
+			} else switch ((ClipboardFormats)type) {
 				case ClipboardFormats.CF_TEXT: {
 					obj = AnsiToString(data);
 					break;
@@ -1949,10 +1951,19 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			switch((ClipboardFormats)type) {
+			if (type == DataFormats.GetFormat(DataFormats.Rtf).Id) {
+				hmem = Marshal.StringToHGlobalAnsi((string)obj);
+				Win32SetClipboardData((uint)type, hmem);
+				return;
+			} else switch((ClipboardFormats)type) {
 				case ClipboardFormats.CF_UNICODETEXT: {
 					hmem = Marshal.StringToHGlobalUni((string)obj);
-					Win32EmptyClipboard();
+					Win32SetClipboardData((uint)type, hmem);
+					return;
+				}
+
+				case ClipboardFormats.CF_TEXT: {
+					hmem = Marshal.StringToHGlobalAnsi((string)obj);
 					Win32SetClipboardData((uint)type, hmem);
 					return;
 				}
@@ -1964,7 +1975,6 @@ namespace System.Windows.Forms {
 					hmem_ptr = Win32GlobalLock(hmem);
 					Marshal.Copy(data, 0, hmem_ptr, data.Length);
 					Win32GlobalUnlock(hmem);
-					Win32EmptyClipboard();
 					Win32SetClipboardData((uint)type, hmem);
 					return;
 				}
@@ -1975,7 +1985,6 @@ namespace System.Windows.Forms {
 						hmem_ptr = Win32GlobalLock(hmem);
 						Marshal.Copy(data, 0, hmem_ptr, data.Length);
 						Win32GlobalUnlock(hmem);
-						Win32EmptyClipboard();
 						Win32SetClipboardData((uint)type, hmem);
 					}
 					return;

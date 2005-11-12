@@ -32,7 +32,6 @@
 // - Align text after RecalculateLine
 // - Implement tag types for hotlinks, images, etc.
 // - Implement CaretPgUp/PgDown
-// - Finish selection calculations (invalidate only changed, more ways to select)
 // - Implement C&P
 
 
@@ -260,7 +259,7 @@ namespace System.Windows.Forms {
 				current = next;
 				next = current.next;
 			}
-			
+
 			if (next == null) {
 				return;
 			}
@@ -782,7 +781,11 @@ namespace System.Windows.Forms {
 
 		#region Private Methods
 		// For debugging
-		internal void DumpTree(Line line, bool with_tags) {
+		internal int DumpTree(Line line, bool with_tags) {
+			int	total;
+
+			total = 1;
+
 			Console.Write("Line {0}, Y: {1} Text {2}", line.line_no, line.Y, line.text != null ? line.text.ToString() : "undefined");
 
 			if (line.left == sentinel) {
@@ -802,12 +805,16 @@ namespace System.Windows.Forms {
 			if (with_tags) {
 				LineTag	tag;
 				int	count;
+				int	length;
 
 				tag = line.tags;
 				count = 1;
+				length = 0;
 				Console.Write("   Tags: ");
 				while (tag != null) {
 					Console.Write("{0} <{1}>-<{2}> ", count++, tag.start, tag.length);
+					length += tag.length;
+
 					if (tag.line != line) {
 						Console.Write("BAD line link");
 						throw new Exception("Bad line link in tree");
@@ -817,11 +824,16 @@ namespace System.Windows.Forms {
 						Console.Write(", ");
 					}
 				}
+				if (length > line.text.Length) {
+					throw new Exception(String.Format("Length of tags more than length of text on line (expected {0} calculated {1})", line.text.Length, length));
+				} else if (length < line.text.Length) {
+					throw new Exception(String.Format("Length of tags less than length of text on line (expected {0} calculated {1})", line.text.Length, length));
+				}
 				Console.WriteLine("");
 			}
 			if (line.left != null) {
 				if (line.left != sentinel) {
-					DumpTree(line.left, with_tags);
+					total += DumpTree(line.left, with_tags);
 				}
 			} else {
 				if (line != sentinel) {
@@ -831,13 +843,29 @@ namespace System.Windows.Forms {
 
 			if (line.right != null) {
 				if (line.right != sentinel) {
-					DumpTree(line.right, with_tags);
+					total += DumpTree(line.right, with_tags);
 				}
 			} else {
 				if (line != sentinel) {
 					throw new Exception("Right should not be NULL");
 				}
 			}
+
+			for (int i = 1; i <= this.lines; i++) {
+				if (GetLine(i) == null) {
+					throw new Exception(String.Format("Hole in line order, missing {0}", i));
+				}
+			}
+
+			if (line == this.Root) {
+				if (total < this.lines) {
+					throw new Exception(String.Format("Not enough nodes in tree, found {0}, expected {1}", total, this.lines));
+				} else if (total > this.lines) {
+					throw new Exception(String.Format("Too many nodes in tree, found {0}, expected {1}", total, this.lines));
+				}
+			}
+
+			return total;
 		}
 
 		private void DecrementLines(int line_no) {
@@ -1033,15 +1061,12 @@ namespace System.Windows.Forms {
 				// Lineheight changed, invalidate the rest of the document
 				if ((line.Y - viewport_y) >=0 ) {
 					// We formatted something that's in view, only draw parts of the screen
-//blah Console.WriteLine("TextControl.cs(961) Invalidate called in UpdateView(line, pos)");
 					owner.Invalidate(new Rectangle(0, line.Y - viewport_y, viewport_width, owner.Height - line.Y - viewport_y));
 				} else {
 					// The tag was above the visible area, draw everything
-//blah Console.WriteLine("TextControl.cs(965) Invalidate called in UpdateView(line, pos)");
 					owner.Invalidate();
 				}
 			} else {
-//blah Console.WriteLine("TextControl.cs(969) Invalidate called in UpdateView(line, pos)");
 				owner.Invalidate(new Rectangle((int)line.widths[pos] - viewport_x - 1, line.Y - viewport_y, viewport_width, line.height));
 			}
 		}
@@ -1233,6 +1258,7 @@ namespace System.Windows.Forms {
 								caret.pos++;
 							}
 						}
+						caret.tag = LineTag.FindTag(caret.line, caret.pos);
 					} else {
 						if (caret.line.line_no < this.lines) {
 							caret.line = GetLine(caret.line.line_no+1);
@@ -1262,9 +1288,9 @@ namespace System.Windows.Forms {
 							} else {
 								caret.line = GetLine(caret.line.line_no - 1);
 								caret.pos = caret.line.text.Length;
-								caret.tag = LineTag.FindTag(caret.line, caret.pos);
 							}
 						}
+						caret.tag = LineTag.FindTag(caret.line, caret.pos);
 					} else {
 						if (caret.line.line_no > 1) {
 							caret.line = GetLine(caret.line.line_no - 1);
@@ -1595,6 +1621,63 @@ namespace System.Windows.Forms {
 
 		}
 
+		internal void Insert(Line line, int pos, string s) {
+			Insert(line, pos, false, s);
+		}
+
+		// Insert multi-line text at the given position; use formatting at insertion point for inserted text
+		internal void Insert(Line line, int pos, bool update_caret, string s) {
+			int		i;
+			int		base_line;
+			string[]	ins;
+			int		insert_lines;
+			LineTag		tag;
+
+			// The formatting at the insertion point is used for the inserted text
+			tag = LineTag.FindTag(line, pos);
+
+			base_line = line.line_no;
+
+			ins = s.Split(new char[] {'\n'});
+
+			for (int j = 0; j < ins.Length; j++) {
+				if (ins[j].EndsWith("\r")) {
+					ins[j] = ins[j].Substring(0, ins[j].Length - 1);
+				}
+			}
+
+			insert_lines = ins.Length;
+
+			// Bump the text at insertion point a line down if we're inserting more than one line
+			if (insert_lines > 1) {
+				Split(line, pos);
+				// Remainder of start line is now in base_line + 1
+			}
+
+			// Insert the first line
+			InsertString(line, pos, ins[0]);
+
+			if (insert_lines > 1) {
+				for (i = 1; i < insert_lines; i++) {
+					Add(base_line + i, ins[i], line.alignment, tag.font, tag.color);
+				}
+				if (!s.EndsWith("\n")) {
+					this.Combine(base_line + insert_lines - 1, base_line + insert_lines);
+				}
+			}
+
+			UpdateView(line, insert_lines + 1, pos);
+
+			if (update_caret) {
+				// Move caret to the end of the inserted text
+				if (insert_lines > 1) {
+					PositionCaret(GetLine(line.line_no + insert_lines - 1), ins[ins.Length - 1].Length);
+				} else {
+					PositionCaret(line, pos + ins[0].Length);
+				}
+				XplatUI.CaretVisible(owner.Handle, true);
+			}
+		}
 
 		// Inserts a character at the given position
 		internal void InsertString(Line line, int pos, string s) {
@@ -1733,11 +1816,12 @@ namespace System.Windows.Forms {
 				streamline = true;
 				left = count;
 
-				left -= pos - tag.start + 1;
-				tag.length -= pos - tag.start + 1;
+				left -= tag.start + tag.length - pos - 1;
+				tag.length -= tag.start + tag.length - pos - 1;
 
 				tag = tag.next;
 				while ((tag != null) && (left > 0)) {
+					tag.start -= count - left;
 					if (tag.length > left) {
 						tag.length -= left;
 						left = 0;
@@ -1758,10 +1842,13 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			tag = tag.next;
-			while (tag != null) {
-				tag.start -= count;
+			// Adjust the start point of any tags following
+			if (tag != null) {
 				tag = tag.next;
+				while (tag != null) {
+					tag.start -= count;
+					tag = tag.next;
+				}
 			}
 
 			line.recalc = true;
@@ -1924,14 +2011,14 @@ namespace System.Windows.Forms {
 			move_sel_end = false;
 
 			// Adjust selection and cursors
-			if (soft && (caret.line == line) && (caret.pos >= pos)) {
+			if (soft && (caret.line == line) && (caret.pos > pos)) {
 				move_caret = true;
 			}
-			if (selection_start.line == line && selection_start.pos >= pos) {
+			if (selection_start.line == line && selection_start.pos > pos) {
 				move_sel_start = true;
 			}
 
-			if (selection_end.line == line && selection_end.pos >= pos) {
+			if (selection_end.line == line && selection_end.pos > pos) {
 				move_sel_end = true;
 			}
 
@@ -2121,11 +2208,15 @@ namespace System.Windows.Forms {
 		}
 
 		internal void Delete(int LineNo) {
+			Line	line;
+
 			if (LineNo>lines) {
 				return;
 			}
 
-			Delete(GetLine(LineNo));
+			line = GetLine(LineNo);
+			DecrementLines(LineNo + 1);
+			Delete(line);
 		}
 
 		internal void Delete(Line line1) {
@@ -2643,84 +2734,55 @@ namespace System.Windows.Forms {
 		}
 
 		internal void ReplaceSelection(string s) {
-			// The easiest is to break the lines where the selection tags are and delete those lines
-			if ((selection_start.pos == selection_end.pos) && (selection_start.line == selection_end.line)) {
-				// Nothing to delete, simply insert
-				InsertString(selection_start.tag, selection_start.pos, s);
-			}
+			int		i;
+			int		base_line;
+			string[]	ins;
+			int		insert_lines;
 
-			if (!multiline || (selection_start.line == selection_end.line)) {
-				DeleteChars(selection_start.tag, selection_start.pos, selection_end.pos - selection_start.pos);
+			base_line = selection_start.line.line_no;
 
-				// The tag might have been removed, we need to recalc it
-				selection_start.tag = selection_start.line.FindTag(selection_start.pos);
+			// First, delete any selected text
+			if ((selection_start.pos != selection_end.pos) || (selection_start.line != selection_end.line)) {
+				if (!multiline || (selection_start.line == selection_end.line)) {
+					DeleteChars(selection_start.tag, selection_start.pos, selection_end.pos - selection_start.pos);
 
-				InsertString(selection_start.tag, selection_start.pos, s);
-			} else {
-				int		i;
-				int		start;
-				int		end;
-				int		base_line;
-				string[]	ins;
-				int		insert_lines;
+					// The tag might have been removed, we need to recalc it
+					selection_start.tag = selection_start.line.FindTag(selection_start.pos);
+				} else {
+					int		start;
+					int		end;
 
-				start = selection_start.line.line_no;
-				end = selection_end.line.line_no;
+					start = selection_start.line.line_no;
+					end = selection_end.line.line_no;
 
-				// Delete first line
-				DeleteChars(selection_start.tag, selection_start.pos, selection_start.line.text.Length - selection_start.pos);
+					// Delete first line
+					DeleteChars(selection_start.tag, selection_start.pos, selection_start.line.text.Length - selection_start.pos);
 
-				start++;
-				if (start < end) {
-					for (i = end - 1; i >= start; i--) {
-						Delete(i);
+					// Delete last line
+					DeleteChars(selection_end.line.tags, 0, selection_end.pos);
+
+					start++;
+					if (start < end) {
+						for (i = end - 1; i >= start; i--) {
+							Delete(i);
+						}
 					}
-				}
 
-				// Delete last line
-				DeleteChars(selection_end.line.tags, 0, selection_end.pos);
+					// BIG FAT WARNING - selection_end.line might be stale due 
+					// to the above Delete() call. DONT USE IT before hitting the end of this method!
 
-				ins = s.Split(new char[] {'\n'});
-
-				for (int j = 0; j < ins.Length; j++) {
-					if (ins[j].EndsWith("\r")) {
-						ins[j] = ins[j].Substring(0, ins[j].Length - 1);
-					}
-				}
-
-				insert_lines = ins.Length;
-
-				// Bump the text at insertion point a line down if we're inserting more than one line
-				if (insert_lines > 1) {
-					Split(selection_start.line, selection_start.pos);
-
-					// Reminder of start line is now in startline+1
-
-					// if the last line does not end with a \n we will insert the last line in front of the just moved text
-					if (s.EndsWith("\n")) {
-						insert_lines--;	// We don't want to insert the last line as part of the loop anymore
-
-						InsertString(GetLine(selection_start.line.line_no + 1), 0, ins[insert_lines - 1]);
-					}
-				}
-
-				// Insert the first line
-				InsertString(selection_start.line, selection_start.pos, ins[0]);
-
-				if (insert_lines > 1) {
-					base_line = selection_start.line.line_no + 1;
-
-					for (i = 1; i < insert_lines; i++) {
-						Add(base_line + i, ins[i], selection_start.line.alignment, selection_start.tag.font, selection_start.tag.color);
-					}
+					// Join start and end
+					Combine(selection_start.line.line_no, start);
 				}
 			}
+
+			Insert(selection_start.line, selection_start.pos, true, s);
+
 			selection_end.line = selection_start.line;
 			selection_end.pos = selection_start.pos;
 			selection_end.tag = selection_start.tag;
+
 			selection_visible = false;
-			PositionCaret(selection_start.line, selection_start.pos);
-			InvalidateSelectionArea();
 		}
 
 		internal void CharIndexToLineTag(int index, out Line line_out, out LineTag tag_out, out int pos) {
@@ -3022,17 +3084,21 @@ namespace System.Windows.Forms {
 			Line    l;
 
 			// First, format the first line
-			LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, font, color);
+			if (start_line != end_line) {
+				// First line
+				LineTag.FormatText(start_line, start_pos, start_line.text.Length - start_pos + 1, font, color);
 
-			// Format last line
-			if (end_line != start_line) {
+				// Format last line
 				LineTag.FormatText(end_line, 1, end_pos, font, color);
-			}
 
-			// Now all the lines inbetween
-			for (int i = start_line.line_no + 1; i < end_line.line_no; i++) {
-				l = GetLine(i);
-				LineTag.FormatText(l, 1, l.text.Length, font, color);
+				// Now all the lines inbetween
+				for (int i = start_line.line_no + 1; i < end_line.line_no; i++) {
+					l = GetLine(i);
+					LineTag.FormatText(l, 1, l.text.Length, font, color);
+				}
+			} else {
+				// Special case, single line
+				LineTag.FormatText(start_line, start_pos, end_pos - start_pos, font, color);
 			}
 		}
 

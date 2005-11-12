@@ -1,3 +1,51 @@
+2005-11-11  Peter Dennis Bartok  <pbartok@novell.com>
+
+	* XplatUIWin32.cs: 
+	  - Clipboard methods now can translate Rtf format
+	  - No longer removes clipboard contents whenever a new format is added
+	    to allow placing multiple formats on the clipboard
+	* Clipboard.cs: Clipboard now supports getting a IDataObject and
+	  will place all formats contained in it onto the clipboard. Also
+	  now cleans the clipboard before placing a new object onto it
+	* RichTextBox.cs:
+	  - Implemented set_Rtf
+	  - Implemented set_SelectedRtf
+	  - Created InsertRTFFromStream() method to allow single code base
+	    for all properties and methods that insert RTF into document
+	  - Removed debug output
+	* TextControl.cs:
+	  - Fixed Delete(int) to fix up line numbers
+	  - Fixed ReplaceSelection to combine start and end line
+	  - Fixed serious DeleteChars bug that would leave the document tree
+	    broken
+	  - Improved DumpTree with several logic checks to detect broken
+	    document trees
+	  - Removed debug lines
+	  - Fixed Caret.WordForward/WordBack moving code, now always also 
+	    updates caret.tag (fixes crash when word-selecting across tag
+	    boundaries via keyboard)
+	  - Added Insert() method for inserting multiline text into documents
+	  - Fixed DeleteChars() calculation errors that would cause a broken
+	    tag chain with multiple tag lines
+	  - DeleteChars() no longer crashes on multi-tag lines if not all tags
+	  - Split() no longer moves caret if split is at caret location
+	  - ReplaceSelection() now updates the cursor and re-displays it
+	  - ReplaceSelection() now uses new Insert() method to avoid code
+	    duplication
+	  - FormatText() can now handle formatting partial lines
+	* TextBoxBase.cs:
+	  - Append now uses new TextControl.Insert() method (this avoids 
+	    duplicate code)
+	  - Implemented Ctrl-X (Cut) (
+	  - Implemented Ctrl-C (Copy)
+	  - Implemented Ctrl-V (Paste) (Still some bugs related to screen 
+	    regeneration when pasting text; roundtripping Copy&Paste within
+	    edit control still fails due to some calculation bugs in GenerateRTF)
+	  - The Delete key will now remove the current selection if it is visible
+	* TextBox.cs: Removed debug lines
+	* XplatUI.cs: Trigger initialization of DataFormats (which requires the
+	  driver to be initialized and can't therefore be done via a static ctor)
+
 2005-11-10  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* TextControl.cs: Added backend code for finding char arrays and strings

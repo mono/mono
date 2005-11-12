@@ -78,6 +78,7 @@ namespace System.Windows.Forms {
 			for (int i = 0; i < native_formats.Length; i++) {
 				// We might get a format we don't understand or know
 				item_format = DataFormats.GetFormat(native_formats[i]);
+
 				if (item_format != null) {
 					managed_clipboard_item = XplatUI.ClipboardRetrieve(clipboard_handle, native_formats[i], converter);
 
@@ -110,15 +111,30 @@ namespace System.Windows.Forms {
 			converter = new XplatUI.ObjectToClipboard(ConvertToClipboardData);
 
 			clipboard_handle = XplatUI.ClipboardOpen();
+			XplatUI.ClipboardStore(clipboard_handle, null, 0, null);	// Empty clipboard
 
 			native_format = -1;
 
-			item_format = DataFormats.Format.Find(data.GetType().FullName);
-			if ((item_format != null) && (item_format.Name != DataFormats.StringFormat)) {
-				native_format = item_format.Id;
-			}
+			if (data is IDataObject) {
+				string[] formats;
 
-			XplatUI.ClipboardStore(clipboard_handle, data, native_format, converter);
+				formats = ((IDataObject)data).GetFormats();
+				for (int i = 0; i < formats.Length; i++) {
+					item_format = DataFormats.GetFormat(formats[i]);
+					if ((item_format != null) && (item_format.Name != DataFormats.StringFormat)) {
+						native_format = item_format.Id;
+					}
+
+					XplatUI.ClipboardStore(clipboard_handle, ((IDataObject)data).GetData(formats[i]), native_format, converter);
+				}
+			} else {
+				item_format = DataFormats.Format.Find(data.GetType().FullName);
+				if ((item_format != null) && (item_format.Name != DataFormats.StringFormat)) {
+					native_format = item_format.Id;
+				}
+
+				XplatUI.ClipboardStore(clipboard_handle, data, native_format, converter);
+			}
 			XplatUI.ClipboardClose(clipboard_handle);
 		}
 		#endregion	// Public Static Methods

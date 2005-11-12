@@ -558,34 +558,15 @@ namespace System.Windows.Forms {
 		#region Public Instance Methods
 		public void AppendText(string text) {
 			if (multiline) {
-				string[]	lines;
-				int		linecount;
-
-				// Break the string into separate lines
-				lines = text.Split(new char[] {'\n'});
-				linecount = lines.Length;
-				for (int i = 0; i < linecount; i++) {
-					if (lines[i].EndsWith("\r")) {
-						lines[i] = lines[i].Substring(0, lines[i].Length - 1);
-					}
-				}
-
 				// Grab the formatting for the last element
 				document.MoveCaret(CaretDirection.CtrlEnd);
-
-				// Insert the first line
-				document.InsertString(document.CaretLine, document.CaretPosition, lines[0]);
-
-				for (int i = 1; i < linecount; i++) {
-					document.Add(document.CaretLine.LineNo+i, CaseAdjust(lines[i]), alignment, document.CaretTag.font, document.CaretTag.color);
-				}
+				document.Insert(document.CaretLine, document.CaretPosition, text);
 
 				CalculateDocument();
 				document.MoveCaret(CaretDirection.CtrlEnd);
 			} else {
 				document.MoveCaret(CaretDirection.CtrlEnd);
 				document.InsertStringAtCaret(text, true);
-//blah Console.WriteLine("TextBox.cs(582) Invalidate called in AppendText");
 				Invalidate();
 			}
 			OnTextChanged(EventArgs.Empty);
@@ -738,6 +719,53 @@ namespace System.Windows.Forms {
 			shift = (Control.ModifierKeys & Keys.Shift) != 0;
 
 			switch (keyData & Keys.KeyCode) {
+				case Keys.X: {	// Cut (Ctrl-X)
+					if (control) {
+						DataObject	o;
+
+						o = new DataObject(DataFormats.Text, SelectedText);
+						if (this is RichTextBox) {
+							o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
+						}
+						Clipboard.SetDataObject(o);
+						document.ReplaceSelection("");
+						return true;
+					}
+					return false;
+				}
+
+				case Keys.C: {	// Copy (Ctrl-C)
+					if (control) {
+						DataObject	o;
+
+						o = new DataObject(DataFormats.Text, SelectedText);
+						if (this is RichTextBox) {
+							o.SetData(DataFormats.Rtf, ((RichTextBox)this).SelectedRtf);
+						}
+						Clipboard.SetDataObject(o);
+						return true;
+					}
+					return false;
+				}
+
+				case Keys.V: {	// Paste (Ctrl-V)
+					if (control) {
+						IDataObject	clip;
+
+						clip = Clipboard.GetDataObject();
+
+						if ((this is RichTextBox) && clip.GetDataPresent(DataFormats.Rtf)) {
+							((RichTextBox)this).SelectedRtf = (string)clip.GetData(DataFormats.Rtf);
+						} else if (clip.GetDataPresent(DataFormats.UnicodeText)) {
+							this.SelectedText = (string)clip.GetData(DataFormats.UnicodeText);
+						} else if (clip.GetDataPresent(DataFormats.Text)) {
+							this.SelectedText = (string)clip.GetData(DataFormats.Text);
+						}
+						return true;
+					}
+					return false;
+				}
+
 				case Keys.Left: {
 					if (control) {
 						document.MoveCaret(CaretDirection.WordBack);
@@ -946,47 +974,51 @@ namespace System.Windows.Forms {
 						break;
 					}
 
-					// delete only deletes on the line, doesn't do the combine
-					if (document.CaretPosition == document.CaretLine.Text.Length) {
-						if (document.CaretLine.LineNo < document.Lines) {
-							Line	line;
-
-							line = document.GetLine(document.CaretLine.LineNo + 1);
-							document.Combine(document.CaretLine, line);
-							document.UpdateView(document.CaretLine, 2, 0);
-							OnTextChanged(EventArgs.Empty);
-
-							#if not_Debug
-							Line	check_first;
-							Line	check_second;
-
-							check_first = document.GetLine(document.CaretLine.LineNo);
-							check_second = document.GetLine(check_first.line_no + 1);
-
-							Console.WriteLine("Post-UpdateView: Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
-							#endif
-
-							// Caret doesn't move
-						}
+					if (document.selection_visible) {
+						document.ReplaceSelection("");
 					} else {
-						if (!control) {
-							document.DeleteChar(document.CaretTag, document.CaretPosition, true);
+						// DeleteChar only deletes on the line, doesn't do the combine
+						if (document.CaretPosition == document.CaretLine.Text.Length) {
+							if (document.CaretLine.LineNo < document.Lines) {
+								Line	line;
+
+								line = document.GetLine(document.CaretLine.LineNo + 1);
+								document.Combine(document.CaretLine, line);
+								document.UpdateView(document.CaretLine, 2, 0);
+
+								#if not_Debug
+								Line	check_first;
+								Line	check_second;
+
+								check_first = document.GetLine(document.CaretLine.LineNo);
+								check_second = document.GetLine(check_first.line_no + 1);
+
+								Console.WriteLine("Post-UpdateView: Y of first line: {0}, second line: {1}", check_first.Y, check_second.Y);
+								#endif
+
+								// Caret doesn't move
+							}
 						} else {
-							int end_pos;
+							if (!control) {
+								document.DeleteChar(document.CaretTag, document.CaretPosition, true);
+							} else {
+								int end_pos;
 
-							end_pos = document.CaretPosition;
+								end_pos = document.CaretPosition;
 
-							while ((end_pos < document.CaretLine.Text.Length) && !Document.IsWordSeparator(document.CaretLine.Text[end_pos])) {
-								end_pos++;
+								while ((end_pos < document.CaretLine.Text.Length) && !Document.IsWordSeparator(document.CaretLine.Text[end_pos])) {
+									end_pos++;
+								}
+
+								if (end_pos < document.CaretLine.Text.Length) {
+									end_pos++;
+								}
+								document.DeleteChars(document.CaretTag, document.CaretPosition, end_pos - document.CaretPosition);
 							}
-
-							if (end_pos < document.CaretLine.Text.Length) {
-								end_pos++;
-							}
-							document.DeleteChars(document.CaretTag, document.CaretPosition, end_pos - document.CaretPosition);
 						}
-						OnTextChanged(EventArgs.Empty);
 					}
+
+					OnTextChanged(EventArgs.Empty);
 					document.AlignCaret();
 					document.UpdateCaret();
 					CaretMoved(this, null);

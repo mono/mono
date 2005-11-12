@@ -83,12 +83,6 @@ namespace System.Windows.Forms {
 			ForeColor = ThemeEngine.Current.ColorWindowText;
 			base.HScrolled += new EventHandler(RichTextBox_HScrolled);
 			base.VScrolled += new EventHandler(RichTextBox_VScrolled);
-
-			Console.WriteLine("A friendly request: Do not log a bug about debug messages being emitted when\n" +
-				"using RichTextBox. It's not yet finished, it will spew debug information, and\n" +
-				"it may not work the way you like it just yet. Some methods also are also not yet\n" + 
-				"implemented. And we're also aware that text gets bolder with every change.");
-			Console.WriteLine("To quote Sean Gilkes: Patience is a virtue, waiting doesn't hurt you :-)");
 		}
 		#endregion	// Public Constructors
 
@@ -278,7 +272,14 @@ namespace System.Windows.Forms {
 			}
 
 			set {
-				// FIXME
+				MemoryStream	data;
+
+				document.Empty();
+				data = new MemoryStream(Encoding.ASCII.GetBytes(value), false);
+
+				InsertRTFFromStream(data, 0, 1);
+
+				data.Close();
 			}
 		}
 
@@ -304,6 +305,24 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				MemoryStream	data;
+				int		x;
+				int		y;
+				Line		line;
+
+				if (document.selection_visible) {
+					document.ReplaceSelection("");
+				}
+
+				data = new MemoryStream(Encoding.ASCII.GetBytes(value), false);
+				InsertRTFFromStream(data, document.selection_start.pos, document.selection_start.line.line_no, out x, out y);
+				data.Close();
+
+				line = document.GetLine(y);
+				document.SetSelection(document.GetLine(y), x);
+				document.PositionCaret(line, x);
+
+				OnTextChanged(EventArgs.Empty);
 			}
 		}
 
@@ -697,29 +716,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 				return;
 			}
 
-
-			rtf = new RTF.RTF(data);
-
-			// Prepare
-			rtf.ClassCallback[RTF.TokenClass.Text] = new RTF.ClassDelegate(HandleText);
-			rtf.ClassCallback[RTF.TokenClass.Control] = new RTF.ClassDelegate(HandleControl);
-
-			rtf_skip_width = 0;
-			rtf_skip_count = 0;
-			rtf_line = new StringBuilder();
-			rtf_font = Font;
-			rtf_color = new SolidBrush(ForeColor);
-			rtf_rtffont_size = this.Font.Height;
-			rtf_rtfalign = HorizontalAlignment.Left;
-			rtf_rtffont = null;
-			rtf_cursor_x = 0;
-			rtf_cursor_y = 1;
-
-			rtf_text_map = new RTF.TextMap();
-			RTF.TextMap.SetupStandardTable(rtf_text_map.Table);
-
-			rtf.Read();	// That's it
-			document.RecalculateDocument(CreateGraphics());
+			InsertRTFFromStream(data, 0, 1);
 		}
 
 		[MonoTODO("Make smarter RTF detection")]
@@ -1163,7 +1160,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 
 				line = document.GetLine(rtf_cursor_y);
 				document.InsertString(line, rtf_cursor_x, rtf_line.ToString());
-				document.FormatText(line, rtf_cursor_x, line, rtf_cursor_x + length, font, rtf_color);
+				document.FormatText(line, rtf_cursor_x + 1, line, rtf_cursor_x + 1 + length, font, rtf_color); // FormatText is 1-based
 			}
 
 			if (newline) {
@@ -1175,6 +1172,52 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 			rtf_line.Length = 0;	// Empty line
 		}
 
+		private void InsertRTFFromStream(Stream data, int cursor_x, int cursor_y) {
+			int	x;
+			int	y;
+
+			InsertRTFFromStream(data, cursor_x, cursor_y, out x, out y);
+		}
+		private void InsertRTFFromStream(Stream data, int cursor_x, int cursor_y, out int to_x, out int to_y) {
+			RTF.RTF		rtf;
+
+			rtf = new RTF.RTF(data);
+
+			// Prepare
+			rtf.ClassCallback[RTF.TokenClass.Text] = new RTF.ClassDelegate(HandleText);
+			rtf.ClassCallback[RTF.TokenClass.Control] = new RTF.ClassDelegate(HandleControl);
+
+			rtf_skip_width = 0;
+			rtf_skip_count = 0;
+			rtf_line = new StringBuilder();
+			rtf_font = Font;
+			rtf_color = new SolidBrush(ForeColor);
+			rtf_rtffont_size = this.Font.Height;
+			rtf_rtfalign = HorizontalAlignment.Left;
+			rtf_rtffont = null;
+			rtf_cursor_x = cursor_x;
+			rtf_cursor_y = cursor_y;
+
+			rtf_text_map = new RTF.TextMap();
+			RTF.TextMap.SetupStandardTable(rtf_text_map.Table);
+
+			try {
+				rtf.Read();	// That's it
+				FlushText(false);
+			}
+
+			catch (RTF.RTFException) {
+				// Seems to be plain text...
+				
+			}
+
+			to_x = rtf_cursor_x;
+			to_y = rtf_cursor_y;
+
+			document.RecalculateDocument(CreateGraphics(), cursor_y, document.Lines, false);
+			document.Invalidate(document.GetLine(cursor_y), 0, document.GetLine(document.Lines), -1);
+		}
+
 		private void RichTextBox_HScrolled(object sender, EventArgs e) {
 			OnHScroll(e);
 		}
@@ -1182,6 +1225,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 		private void RichTextBox_VScrolled(object sender, EventArgs e) {
 			OnVScroll(e);
 		}
+
 		private void PointToTagPos(Point pt, out LineTag tag, out int pos) {
 			Point p;
 
@@ -1201,6 +1245,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 
 			tag = document.FindCursor(p.X + document.ViewPortX, p.Y + document.ViewPortY, out pos);
 		}
+
 		private void EmitRTFFontProperties(StringBuilder rtf, int prev_index, int font_index, Font prev_font, Font font) {
 			if (prev_index != font_index) {
 				rtf.Append(String.Format("\\f{0}", font_index));	// Font table entry
@@ -1399,7 +1444,7 @@ Console.WriteLine("FIXME - SelectionColor should not alter font");
 					} else {
 						if (end_pos < (tag.start + tag.length - 1)) {
 							// Emit partial tag only, end_pos is inside this tag
-							EmitRTFText(sb, tag.line.text.ToString(tag.start - 1, end_pos - tag.start - 1));
+							EmitRTFText(sb, tag.line.text.ToString(pos, end_pos - pos));
 						} else {
 							EmitRTFText(sb, tag.line.text.ToString(pos, tag.start + tag.length - pos - 1));
 						}
