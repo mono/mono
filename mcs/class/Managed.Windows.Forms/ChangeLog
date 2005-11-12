@@ -1,3 +1,10 @@
+2005-11-12  Pedro Martínez Juliá  <pedromj@gmail.com>
+
+	* System.Windows.Forms_test.dll.sources: Added DataGridViewElementTest.cs
+	DataGridViewBandTest.cs DataGridViewCellTest.cs
+	DataGridViewAdvancedBorderStyleTest.cs DataGridViewCellStyleTest.cs
+	DataGridViewRowTest.cs DataGridViewTest.cs
+
 2005-11-09  Peter Dennis Bartok  <pbartok@novell.com>
 
 	* System.Windows.Forms_test.dll.sources: Added RichTextBoxTest.cs
