@@ -1,3 +1,8 @@
+2005-11-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SqlConnection.cs: don't throw NotImplementedException when using
+	'PERSIST SECUTIRY INFO'. Just do nothing.
+
 2005-10-27  Senganal T  <tsenganal@novell.com>
 
 	* SqlCommand.cs 
@@ -24,6 +29,7 @@
 	from awaddell@fnfr.com (Andy Waddell).
 
 2005-09-21 Senganal T <tsenganal@novell.com>
+
 
 	* SqlConnection.cs : 
 		- Set the correct Default Values for Parameters.

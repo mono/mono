@@ -836,8 +836,8 @@ namespace System.Data.SqlClient {
 				break;
 			case "PERSISTSECURITYINFO" :
 			case "PERSIST SECURITY INFO" :
-			// FIXME : not implemented
-				throw new NotImplementedException ();
+				// FIXME : not implemented
+				// throw new NotImplementedException ();
 				break;
 			case "POOLING" :
 				pooling = ConvertToBoolean("pooling", value);
