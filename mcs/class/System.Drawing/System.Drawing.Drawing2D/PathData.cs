@@ -55,11 +55,11 @@ namespace System.Drawing.Drawing2D
 			set { types = value; }
 		}
 
-		public PointF[] InternalPoints {
+		internal PointF[] InternalPoints {
 			get { return points; } 
 		}
 
-		public byte[] InternalTypes {
+		internal byte[] InternalTypes {
 			get { return types; }
 		}
 	}

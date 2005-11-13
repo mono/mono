@@ -1,3 +1,7 @@
+2005-11-13 Konstantin Triger <kostat@mainsoft.com>
+
+        * PathData.cs: fixing access modifiers.
+
 2005-10-31 Konstantin Triger <kostat@mainsoft.com>
 
 	* ExtendedGeneralPath.jvm.cs: forward quadTo to curveTo
