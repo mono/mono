@@ -55,8 +55,10 @@ namespace System.Web.Configuration {
 
 		}
 
-		public void PostDeserialize ()
+		[MonoTODO]
+		protected override void PostDeserialize ()
 		{
+			base.PostDeserialize ();
 		}
 
 		[ConfigurationProperty ("databases")]

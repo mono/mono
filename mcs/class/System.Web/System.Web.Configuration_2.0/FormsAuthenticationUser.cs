@@ -59,9 +59,7 @@ namespace System.Web.Configuration
 
 		[MonoTODO ("enable type converter")]
 		[StringValidator]
-#if notyet
 		[TypeConverter (typeof (LowerCaseStringConverter))]
-#endif
 		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Name {
 			get { return (string) base[nameProp]; }

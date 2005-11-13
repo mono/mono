@@ -83,13 +83,15 @@ namespace System.Web.Configuration {
 		}
 
 		[MonoTODO]
-		public void PostDeserialize ()
+		protected override void PostDeserialize ()
 		{
+			base.PostDeserialize();
 		}
 
 		[MonoTODO]
-		public void PreSerialize (XmlWriter writer)
+		protected override void PreSerialize (XmlWriter writer)
 		{
+			base.PreSerialize (writer);
 		}
 
 		[MonoTODO]
@@ -111,13 +113,15 @@ namespace System.Web.Configuration {
 		}
 
 		[MonoTODO]
-		public void SetReadOnly ()
+		protected override void SetReadOnly ()
 		{
+			base.SetReadOnly();
 		}
 
 		[MonoTODO]
-		public void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
+		protected override void Unmerge (ConfigurationElement sourceElement, ConfigurationElement parentElement, ConfigurationSaveMode saveMode)
 		{
+			base.Unmerge (sourceElement, parentElement, saveMode);
 		}
 
 		public AuthorizationRuleAction Action {

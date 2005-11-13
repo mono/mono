@@ -44,7 +44,7 @@ namespace System.Web.Configuration
 		static FormsAuthenticationCredentials ()
 		{
 			passwordFormatProp = new ConfigurationProperty ("passwordFormat", typeof (FormsAuthPasswordFormat), FormsAuthPasswordFormat.SHA1);
-			usersProp = new ConfigurationProperty ("users", typeof (FormsAuthenticationUserCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
+			usersProp = new ConfigurationProperty ("", typeof (FormsAuthenticationUserCollection), null, ConfigurationPropertyOptions.IsDefaultCollection);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (passwordFormatProp);
@@ -61,7 +61,7 @@ namespace System.Web.Configuration
 			set { base[passwordFormatProp] = value; }
 		}
 
-		[ConfigurationProperty ("users", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public FormsAuthenticationUserCollection Users {
 			get { return (FormsAuthenticationUserCollection) base[usersProp]; }
 		}

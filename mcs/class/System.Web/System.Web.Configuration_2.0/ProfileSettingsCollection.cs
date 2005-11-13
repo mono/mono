@@ -63,7 +63,7 @@ namespace System.Web.Configuration {
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new ProfileSettings ("", 0, 0, TimeSpan.FromSeconds (0));
+			return new ProfileSettings ("");
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)

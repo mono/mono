@@ -1,5 +1,59 @@
 2005-11-13  Chris Toshok  <toshok@ximian.com>
 
+	* AuthorizationRuleCollection.cs: fix ConfigurationCollection
+	attribute.
+
+	* TransformerInfo.cs: fix corcompare.
+
+	* SqlCacheDependencyDatabase.cs: mark ctor internal to fix
+	corcompare.
+
+	* AuthenticationSection.cs: add missing Reset stub.
+
+	* ProfileSettingsCollection.cs: use the more succint ctor.
+
+	* FormsAuthenticationUser.cs: enable the TypeConverter on "name".
+
+	* GlobalizationSection.cs: fix up corcompare.
+
+	* WebPartsSection.cs: fix up corcompare.
+
+	* ProfileGroupSettingsCollection.cs: add missing
+	ConfigurationCollection attribute.
+
+	* ExpressionBuilder.cs: implement.
+
+	* FormsAuthenticationCredentials.cs: fix up corcompare.
+
+	* AssemblyCollection.cs: implement Properties.
+
+	* SiteMapSection.cs: implement Properties.
+
+	* ExpressionBuilderCollection.cs: fix up corcompare.
+
+	* ProfileSettings.cs: add missing ctor.
+
+	* PassportAuthentication.cs: new implementation.
+
+	* SqlCacheDependencySection.cs: fix up corcompare.
+
+	* ProfilePropertySettingsCollection.cs: fix up corcompare.
+
+	* HttpModuleActionCollection.cs: fix up corcompare.
+
+	* EventMappingSettingsCollection.cs: fix up corcompare.
+
+	* AuthorizationRule.cs: fix up corcompare.
+
+	* WebControlsSection.cs: fix up corcompare.
+
+	* AuthorizationSection.cs: fix up corcompare.
+
+	* MembershipSection.cs: clean this up, implement Properties, fix
+	up corcompare, etc.
+
+2005-11-13  Chris Toshok  <toshok@ximian.com>
+
 	* UrlMapping.cs, CustomErrorCollection.cs, CustomError.cs,
 	HostingEnvironmentSection.cs, TrustLevel.cs,
 	HttpCookiesSection.cs, UrlMappingsSection.cs,

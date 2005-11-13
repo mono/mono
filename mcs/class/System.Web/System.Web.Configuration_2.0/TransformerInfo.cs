@@ -59,13 +59,13 @@ namespace System.Web.Configuration {
 		}
 
 		[MonoTODO]
-		public bool Equals (object o)
+		public override bool Equals (object o)
 		{
 			return base.Equals (o);
 		}
 
 		[MonoTODO]
-		public int GetHashCode ()
+		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
 		}

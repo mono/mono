@@ -38,6 +38,23 @@ namespace System.Web.Configuration
 {
 	public sealed class SiteMapSection: ConfigurationSection
 	{
+		static ConfigurationProperty defaultProviderProp;
+		static ConfigurationProperty enabledProp;
+		static ConfigurationProperty providersProp;
+		static ConfigurationPropertyCollection properties;
+		
+		static SiteMapSection ()
+		{
+			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetXmlSiteMapProvider");
+			enabledProp = new ConfigurationProperty ("enabled", typeof (bool), true);
+			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection));
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (defaultProviderProp);
+			properties.Add (enabledProp);
+			properties.Add (providersProp);
+		}
+
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("defaultProvider", DefaultValue = "AspNetXmlSiteMapProvider")]
 		public string DefaultProvider {
@@ -45,7 +62,7 @@ namespace System.Web.Configuration
 			set { base ["defaultProvider"] = value; }
 		}
 		
-		[ConfigurationProperty ("enabled", DefaultValue = true)]
+		[ConfigurationProperty ("enabled", DefaultValue = "True")]
 		public bool Enabled {
 			get { return (bool) base ["enabled"]; }
 			set { base ["enabled"] = value; }
@@ -56,10 +73,10 @@ namespace System.Web.Configuration
 			get { return (ProviderSettingsCollection) base ["providers"]; }
 		}
 
-/*		protected override ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-*/	}
+	}
 }
 
 #endif

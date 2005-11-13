@@ -62,6 +62,11 @@ namespace System.Web.Configuration {
 
 		}
 
+		public ProfileSettings (string name)
+		{
+			this.Name = name;
+		}
+
 		public ProfileSettings (string name, int minInstances, int maxLimit, TimeSpan minInterval, string custom)
 		{
 			this.Name = name;

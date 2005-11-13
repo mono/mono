@@ -35,6 +35,7 @@ using System.Configuration;
 
 namespace System.Web.Configuration {
 
+	[ConfigurationCollection (typeof (EventMappingSettings), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class EventMappingSettingsCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection properties;

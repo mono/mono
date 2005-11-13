@@ -46,12 +46,16 @@ namespace System.Web.Configuration {
 			properties.Add (uiCultureProp);
 		}
 
-		public void PostDeserialize ()
+		[MonoTODO]
+		protected override void PostDeserialize ()
 		{
+			base.PostDeserialize();
 		}
 
-		public void PreSerialize (XmlWriter writer)
+		[MonoTODO]
+		protected override void PreSerialize (XmlWriter writer)
 		{
+			base.PostDeserialize();
 		}
 
 		[ConfigurationProperty ("culture", DefaultValue = "")]

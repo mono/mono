@@ -85,7 +85,7 @@ namespace System.Web.Configuration
 		}
 
 		[MonoTODO]
-		public bool IsElementRemovable (ConfigurationElement element)
+		protected override bool IsElementRemovable (ConfigurationElement element)
 		{
 			return base.IsElementRemovable (element);
 		}

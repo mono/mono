@@ -35,6 +35,7 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
+	[ConfigurationCollection (typeof (ProfileGroupSettings), AddItemName = "group", CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class ProfileGroupSettingsCollection : ConfigurationElementCollection
 	{
 		[MonoTODO]

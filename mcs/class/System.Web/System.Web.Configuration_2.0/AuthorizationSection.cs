@@ -46,19 +46,20 @@ namespace System.Web.Configuration {
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (rulesProp);
-
 		}
 
-		public void PostDeserialize()
+		[MonoTODO]
+		protected override void PostDeserialize()
 		{
+			base.PostDeserialize ();
 		}
 
-		[ConfigurationProperty ("rules", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		[ConfigurationProperty ("", Options = ConfigurationPropertyOptions.IsDefaultCollection)]
 		public AuthorizationRuleCollection Rules {
 			get { return (AuthorizationRuleCollection) base [rulesProp];}
 		}
 
-		public ConfigurationPropertyCollection Properties {
+		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
 

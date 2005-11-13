@@ -57,7 +57,13 @@ namespace System.Web.Configuration
 		public AuthenticationSection ()
 		{
 		}
-		
+
+		[MonoTODO]
+		protected override void Reset (ConfigurationElement parentElement)
+		{
+			base.Reset (parentElement);
+		}
+
 		[ConfigurationProperty ("forms")]
 		public FormsAuthenticationConfiguration Forms {
 			get { return (FormsAuthenticationConfiguration) base [formsProp]; }

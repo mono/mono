@@ -54,7 +54,7 @@ namespace System.Web.Configuration {
 			properties.Add (pollTimeProp);
 		}
 
-		public SqlCacheDependencyDatabase ()
+		internal SqlCacheDependencyDatabase ()
 		{
 		}
 

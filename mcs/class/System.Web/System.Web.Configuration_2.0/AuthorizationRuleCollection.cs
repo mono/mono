@@ -35,7 +35,7 @@ using System.Configuration;
 
 namespace System.Web.Configuration {
 
-	[ConfigurationCollection (typeof (AuthorizationRule), AddItemName="add,deny", CollectionType = ConfigurationElementCollectionType.BasicMapAlternate)]
+	[ConfigurationCollection (typeof (AuthorizationRule), AddItemName="allow,deny", CollectionType = ConfigurationElementCollectionType.BasicMapAlternate)]
 	public sealed class AuthorizationRuleCollection : ConfigurationElementCollection
 	{
 		static ConfigurationPropertyCollection properties;

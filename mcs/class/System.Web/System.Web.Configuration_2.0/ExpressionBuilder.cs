@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // (C) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -27,45 +28,54 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System;
-using System.Collections;
 using System.Configuration;
 
-namespace System.Web.Configuration
-{
+#if NET_2_0
+
+namespace System.Web.Configuration {
+
 	public sealed class ExpressionBuilder : ConfigurationElement
 	{
-		static ConfigurationPropertyCollection props;
-		static ConfigurationProperty expressionPrefix;
-		static ConfigurationProperty type;
+		static ConfigurationProperty expressionPrefixProp;
+		static ConfigurationProperty typeProp;
+		static ConfigurationPropertyCollection properties;
 
 		static ExpressionBuilder ()
 		{
-/*			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.Required | ConfigurationPropertyFlags.IsKey;
-			type = new NonEmptyStringConfigurationProperty ("type", "", flags);
-			flags = ConfigurationPropertyFlags.Required;
-			expressionPrefix = new NonEmptyStringConfigurationProperty ("expressionPrefix", "", flags);
+			expressionPrefixProp = new ConfigurationProperty ("expressionPrefix", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
+			properties = new ConfigurationPropertyCollection ();
 
-			props = new ConfigurationPropertyCollection ();
-			props.Add (type);
-			props.Add (expressionPrefix);
-*/		}
-
-		public string ExpressionPrefix {
-			get { return (string) this [expressionPrefix]; }
-			set { this [expressionPrefix] = value; }
+			properties.Add (expressionPrefixProp);
+			properties.Add (typeProp);
 		}
 
+		public ExpressionBuilder (string expressionPrefix, string theType)
+		{
+			this.ExpressionPrefix = expressionPrefix;
+			this.Type = theType;
+		}
+
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("expressionPrefix", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
+		public string ExpressionPrefix {
+			get { return (string) base[expressionPrefixProp]; }
+			set { base[expressionPrefixProp] = value; }
+		}
+
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
 		public string Type {
-			get { return (string) this [type]; }
-			set { this [type] = value; }
+			get { return (string) base[typeProp]; }
+			set { base[typeProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return props; }
+			get { return properties; }
 		}
 	}
 }
-#endif // NET_2_0
 
+#endif

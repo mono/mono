@@ -36,6 +36,7 @@ using System.Xml;
 
 namespace System.Web.Configuration
 {
+	[ConfigurationCollection (typeof (ProfilePropertySettings), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public class ProfilePropertySettingsCollection : ConfigurationElementCollection
 	{
 		[MonoTODO]

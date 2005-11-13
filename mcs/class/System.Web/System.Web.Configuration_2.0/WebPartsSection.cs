@@ -55,7 +55,7 @@ namespace System.Web.Configuration {
 		}
 
 		[MonoTODO]
-		public object GetRuntimeObject ()
+		protected override object GetRuntimeObject ()
 		{
 			return this;
 		}

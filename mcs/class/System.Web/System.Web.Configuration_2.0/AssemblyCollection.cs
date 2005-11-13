@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -35,8 +36,16 @@ using System.Configuration;
 
 namespace System.Web.Configuration
 {
+	[ConfigurationCollection (typeof (AssemblyInfo), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class AssemblyCollection: ConfigurationElementCollection
 	{
+		static ConfigurationPropertyCollection properties;
+
+		static AssemblyCollection ()
+		{
+			properties = new ConfigurationPropertyCollection();
+		}
+
 		public void Add (AssemblyInfo info)
 		{
 			BaseAdd (info);
@@ -49,7 +58,7 @@ namespace System.Web.Configuration
 		
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new AssemblyInfo ();
+			return new AssemblyInfo ("");
 		}
 		
 		protected override object GetElementKey (ConfigurationElement element)
@@ -66,10 +75,20 @@ namespace System.Web.Configuration
 		{
 			BaseRemoveAt (index);
 		}
-		
-		public AssemblyInfo this [int n]
-		{
-			get { return (AssemblyInfo) BaseGet (n); }
+
+		public AssemblyInfo this [int index] {
+			get { return (AssemblyInfo) BaseGet (index); }
+			[MonoTODO]
+			set { throw new NotImplementedException (); }
+		}
+
+		public new AssemblyInfo this [string assemblyName] {
+			get { return (AssemblyInfo) BaseGet (assemblyName); }
+		}
+
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
 		}
 	}
 }

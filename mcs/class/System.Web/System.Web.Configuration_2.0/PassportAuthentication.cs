@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,15 +29,42 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Configuration;
 
-namespace System.Web.Configuration
-{
-	public sealed class PassportAuthentication: ConfigurationElement
+#if NET_2_0
+
+namespace System.Web.Configuration {
+
+	public sealed class PassportAuthentication : ConfigurationElement
 	{
+		static ConfigurationProperty redirectUrlProp;
+		static ConfigurationPropertyCollection properties;
+
+		static PassportAuthentication ()
+		{
+			redirectUrlProp = new ConfigurationProperty ("redirectUrl", typeof (string), "internal");
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (redirectUrlProp);
+		}
+
+#if notyet
+		protected override ConfigurationElementProperty ElementProperty {
+			get { }
+		}
+#endif
+
+		[StringValidator]
+		[ConfigurationProperty ("redirectUrl", DefaultValue = "internal")]
+		public string RedirectUrl {
+			get { return (string) base [redirectUrlProp];}
+			set { base[redirectUrlProp] = value; }
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
 	}
 }
 

@@ -3,8 +3,9 @@
 //
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
+//	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004,2005 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,41 +29,64 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.ComponentModel;
+using System.Configuration;
+
 #if NET_2_0
 
-using System;
-using System.Configuration;
-using System.Web.Security;
-using System.ComponentModel;
+namespace System.Web.Configuration {
 
-namespace System.Web.Configuration
-{
-	public sealed class MembershipSection: ConfigurationSection
+	public sealed class MembershipSection : ConfigurationSection
 	{
+		static ConfigurationProperty defaultProviderProp;
+		static ConfigurationProperty hashAlgorithmTypeProp;
+		static ConfigurationProperty providersProp;
+		static ConfigurationProperty userIsOnlineTimeWindowProp;
+		static ConfigurationPropertyCollection properties;
+
+		static MembershipSection ()
+		{
+			defaultProviderProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetSqlMembershipProvider");
+			hashAlgorithmTypeProp = new ConfigurationProperty ("hashAlgorithmType", typeof (string), "");
+			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection));
+			userIsOnlineTimeWindowProp = new ConfigurationProperty ("userIsOnlineTimeWindow", typeof (TimeSpan), TimeSpan.FromMinutes (15));
+			properties = new ConfigurationPropertyCollection ();
+
+			properties.Add (defaultProviderProp);
+			properties.Add (hashAlgorithmTypeProp);
+			properties.Add (providersProp);
+			properties.Add (userIsOnlineTimeWindowProp);
+		}
+
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("defaultProvider", DefaultValue = "AspNetSqlMembershipProvider")]
 		public string DefaultProvider {
-			get { return (string) base ["defaultProvider"]; }
-			set { base ["defaultProvider"] = value; }
+			get { return (string) base [defaultProviderProp];}
+			set { base[defaultProviderProp] = value; }
 		}
-		
+
 		[ConfigurationProperty ("hashAlgorithmType", DefaultValue = "")]
 		public string HashAlgorithmType {
-			get { return (string) base ["hashAlgorithmType"]; }
-			set { base ["hashAlgorithmType"] = value; }
+			get { return (string) base [hashAlgorithmTypeProp];}
+			set { base[hashAlgorithmTypeProp] = value; }
 		}
-		
+
 		[ConfigurationProperty ("providers")]
 		public ProviderSettingsCollection Providers {
-			get { return (ProviderSettingsCollection) base ["providers"]; }
+			get { return (ProviderSettingsCollection) base [providersProp];}
 		}
-		
-		[TypeConverter (typeof(TimeSpanMinutesConverter))]
-		[ConfigurationProperty ("userIsOnlineTimeWindow", DefaultValue = "00:15:00")]
+
+		[TypeConverter (typeof (TimeSpanMinutesConverter))]
 		[TimeSpanValidator (MinValueString = "00:01:00")]
+		[ConfigurationProperty ("userIsOnlineTimeWindow", DefaultValue = "00:15:00")]
 		public TimeSpan UserIsOnlineTimeWindow {
-			get { return (TimeSpan) base ["userIsOnlineTimeWindow"]; }
-			set { base ["userIsOnlineTimeWindow"] = value; }
+			get { return (TimeSpan) base [userIsOnlineTimeWindowProp];}
+			set { base[userIsOnlineTimeWindowProp] = value; }
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
 		}
 	}
 }
