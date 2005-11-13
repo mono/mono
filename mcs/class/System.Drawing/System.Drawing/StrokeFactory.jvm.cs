@@ -10,15 +10,15 @@ namespace System.Drawing {
 		interface StrokeCreator {
 			awt.Stroke Create(float width, int cap, int join, float miterlimit,
 				float[] dash, float dash_phase, geom.AffineTransform penTransform,
-				geom.AffineTransform outputTransform, bool fitPen);
+				geom.AffineTransform outputTransform, PenFit penFit);
 		}
 
 		sealed class AdvancedCreator : StrokeCreator {
 			#region StrokeCreator Members
 
 			public awt.Stroke Create(float width, int cap, int join, float miterlimit, float[] dash, float dash_phase, geom.AffineTransform penTransform,
-				geom.AffineTransform outputTransform, bool fitPen) {
-				return new System.Drawing.AdvancedStroke(width, cap, join, miterlimit, dash, dash_phase, penTransform, outputTransform, fitPen);
+				geom.AffineTransform outputTransform, PenFit penFit) {
+				return new System.Drawing.AdvancedStroke(width, cap, join, miterlimit, dash, dash_phase, penTransform, outputTransform, penFit);
 			}
 
 			#endregion
@@ -28,7 +28,7 @@ namespace System.Drawing {
 			#region StrokeCreator Members
 
 			public awt.Stroke Create(float width, int cap, int join, float miterlimit, float[] dash, float dash_phase, geom.AffineTransform penTransform,
-				geom.AffineTransform outputTransform, bool fitPen) {
+				geom.AffineTransform outputTransform, PenFit penFit) {
 				return new awt.BasicStroke(width, cap, join, miterlimit, dash, dash_phase);
 			}
 
@@ -55,9 +55,9 @@ namespace System.Drawing {
 
 		static public awt.Stroke CreateStroke(float width, int cap, int join, float miterlimit,
 			float[] dash, float dash_phase, geom.AffineTransform penTransform,
-			geom.AffineTransform outputTransform, bool fitPen) {
+			geom.AffineTransform outputTransform, PenFit penFit) {
 
-			return Creator.Create(width, cap, join, miterlimit, dash, dash_phase, penTransform, outputTransform, fitPen);
+			return Creator.Create(width, cap, join, miterlimit, dash, dash_phase, penTransform, outputTransform, penFit);
 		}
 	}
 }
