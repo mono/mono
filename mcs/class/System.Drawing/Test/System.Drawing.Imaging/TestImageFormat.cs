@@ -51,6 +51,7 @@ namespace MonoTests.System.Drawing
 		private static ImageFormat IconImageFormat = new ImageFormat (new Guid ("b96b3cb5-0728-11d3-9d7b-0000f81ef32e"));
 		private static ImageFormat JpegImageFormat = new ImageFormat(new Guid("b96b3cae-0728-11d3-9d7b-0000f81ef32e"));
 		private static ImageFormat WmfImageFormat = new ImageFormat (new Guid ("b96b3cad-0728-11d3-9d7b-0000f81ef32e"));
+		private static ImageFormat CustomImageFormat = new ImageFormat (new Guid ("48749428-316f-496a-ab30-c819a92b3137"));
 
 		[Test]
 		public void DefaultImageFormats ()
@@ -67,5 +68,20 @@ namespace MonoTests.System.Drawing
 			Assert.AreEqual (WmfImageFormat.Guid, ImageFormat.Wmf.Guid, "DefaultImageFormats#10");
 		}
 
+		[Test]
+		public void ToStringTest ()
+		{
+			Assert.AreEqual (BmpImageFormat.ToString (), "Bmp", "ToStringTest#1");
+			Assert.AreEqual (EmfImageFormat.ToString (), "Emf", "ToStringTest#2");
+			Assert.AreEqual (ExifImageFormat.ToString (), "Exif", "ToStringTest#3");
+			Assert.AreEqual (GifImageFormat.ToString (), "Gif", "ToStringTest#4");
+			Assert.AreEqual (TiffImageFormat.ToString (), "Tiff", "ToStringTest#5");
+			Assert.AreEqual (PngImageFormat.ToString (), "Png", "ToStringTest#6");
+			Assert.AreEqual (MemoryBmpImageFormat.ToString (), "MemoryBmp", "ToStringTest#7");
+			Assert.AreEqual (IconImageFormat.ToString (), "Icon", "ToStringTest#8");
+			Assert.AreEqual (JpegImageFormat.ToString (), "Jpeg", "ToStringTest#9");
+			Assert.AreEqual (WmfImageFormat.ToString (), "Wmf", "ToStringTest#10");
+			Assert.AreEqual (CustomImageFormat.ToString (), "[ImageFormat: 48749428-316f-496a-ab30-c819a92b3137]", "ToStringTest#11");
+		}
 	}
 }

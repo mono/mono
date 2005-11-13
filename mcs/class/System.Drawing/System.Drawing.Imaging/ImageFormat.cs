@@ -80,28 +80,34 @@ namespace System.Drawing.Imaging {
 		
 		public override string ToString() 
 		{			
-			if (Guid.Equals (Bmp))
+			if (this.Equals (Bmp))
 				return "Bmp";			
 				
-			if (Guid.Equals (Emf))
+			if (this.Equals (Emf))
 				return "Emf";			
 				
-			if (Guid.Equals (Gif))
+			if (this.Equals (Exif))
+				return "Exif";			
+				
+			if (this.Equals (Gif))
 				return "Gif";			
 				
-			if (Guid.Equals (Jpeg))
-				return "Jpeg";							
-				
-			if (Guid.Equals (MemoryBmp))
-				return "MemoryBmp";			
-				
-			if (Guid.Equals (Png))
-				return "Png";			
-				
-			if (Guid.Equals (Tiff))
+			if (this.Equals (Tiff))
 				return "Tiff";			
 				
-			if (Guid.Equals (Wmf))
+			if (this.Equals (Png))
+				return "Png";			
+				
+			if (this.Equals (MemoryBmp))
+				return "MemoryBmp";			
+				
+			if (this.Equals (Icon))
+				return "Icon";			
+				
+			if (this.Equals (Jpeg))
+				return "Jpeg";							
+				
+			if (this.Equals (Wmf))
 				return "Wmf";												
 			
 			// Default			

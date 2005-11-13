@@ -1,3 +1,7 @@
+2005-11-13  Kornél Pál  <kornelpal@hotmail.com>
+
+	* TestImageFormat.cs: Added ToStringTest.
+
 2005-10-31  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	*  TestImageFormat.cs: New test unit
