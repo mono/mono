@@ -1,5 +1,12 @@
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs :
+	  Now it should detect indexers. Fixed primary concern in bug #76685.
+	  Fixed CS0419 message to not show the identical member signature in
+	  the message.
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs : (FindDocumentedMember) use TypeManager.MemberLookup()
 	  instead of Type.FindMembers() since it does not handle events.
 	  Fixed bug #71604.

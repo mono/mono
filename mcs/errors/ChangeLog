@@ -1,3 +1,8 @@
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs0419.cs : The error message is fixed to show an alternative, not
+	  the identical one.
+
 2005-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* gcs0281.cs: New test.
