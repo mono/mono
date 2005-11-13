@@ -1,5 +1,9 @@
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* known-issues-gmcs : updated.
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* test-xml-041.xml test-xml-041.cs : new test for bug #76691.
 
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>

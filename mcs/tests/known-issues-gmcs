@@ -12,3 +12,7 @@ test-xml-027.cs
 
 test-470.cs
 test-471.cs
+
+test-xml-039.cs		# wait for merge
+test-xml-040.cs		# wait for merge
+test-xml-041.cs		# wait for merge
