@@ -179,8 +179,13 @@ namespace System.Drawing.Drawing2D
 		private PathData GetPathData ()
 		{
 			PathData pathData = new PathData();
-			pathData.Types = new byte [PointCount];
-			pathData.Points = new PointF [PointCount];
+			int nPts = PointCount;
+			for (int i = 0; i < TypesCount; i++)
+				if ((Types [i] & SEG_MASK) == SEG_QUADTO)
+					nPts++;
+
+			pathData.Types = new byte [nPts];
+			pathData.Points = new PointF [nPts];
 			int tpos = 0;
 			int ppos = 0;
 			int cpos = 0;
@@ -206,11 +211,37 @@ namespace System.Drawing.Drawing2D
 						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
 						break;
 					case SEG_QUADTO:
-						// FIXME : use 4 cp , two of which 
+						/*
+							.net does not support Quadratic curves, so convert to Cubic according to http://pfaedit.sourceforge.net/bezier.html
+							  
+							The end points of the cubic will be the same as the quadratic's.
+							CP0 = QP0
+							CP3 = QP2 
+
+							The two control points for the cubic are:
+
+							CP1 = QP0 + 2/3 *(QP1-QP0)
+							CP2 = CP1 + 1/3 *(QP2-QP0) 
+						*/
+
+						float x0 = Coords[cpos-2]; //QP0
+						float y0 = Coords[cpos-1]; //QP0
+			
+						float x1 = x0 + (2/3 * (Coords [cpos++]-x0));
+						float y1 = y0 + (2/3 * (Coords [cpos++]-y0));
+
+						float x3 = Coords [cpos++]; //QP2
+						float y3 = Coords [cpos++]; //QP2
+						
+						float x2 = x1 + (1/3 * (x3-x0));
+						float y2 = y1 + (1/3 * (y3-y0));
+
 						pathData.InternalTypes [tpos++] = (byte)(byte) PathPointType.Bezier;
-						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						pathData.InternalPoints [ppos++] = new PointF (x1, y1);
+						pathData.InternalTypes [tpos++] = (byte)(byte) PathPointType.Bezier;
+						pathData.InternalPoints [ppos++] = new PointF (x2, y2);
 						pathData.InternalTypes [tpos++] = (byte) ((byte)PathPointType.Bezier | marker);
-						pathData.InternalPoints [ppos++] = new PointF (Coords [cpos++], Coords [cpos++]);
+						pathData.InternalPoints [ppos++] = new PointF (x3, y3);
 						break;
 					case SEG_CUBICTO:
 						pathData.InternalTypes [tpos++] = (byte)(byte) PathPointType.Bezier3;
@@ -439,37 +470,14 @@ namespace System.Drawing.Drawing2D
 
 		public void quadTo(float x1, float y1, float x2, float y2) 
 		{
-//			ClearCache ();
-//			needRoom (1, 4, true);
-//			_types [_typesCount++] = SEG_QUADTO;
-//			_coords [_coordsCount++] = x1;
-//			_coords [_coordsCount++] = y1;
-//			_coords [_coordsCount++] = x2;
-//			_coords [_coordsCount++] = y2;
-
-			/*
-			  .net does not support Quadratic curves, so convert to Cubic according to http://pfaedit.sourceforge.net/bezier.html
-			  
-			  The end points of the cubic will be the same as the quadratic's.
-			  CP0 = QP0
-			  CP3 = QP2 
-
-			  The two control points for the cubic are:
-
-			  CP1 = QP0 + 2/3 *(QP1-QP0)
-			  CP2 = CP1 + 1/3 *(QP2-QP0) 
-			*/
-
-			float x0 = _coords[_coordsCount-2];
-			float y0 = _coords[_coordsCount-1];
-
-			float cx1 = x0 + (2/3 * (x1-x0));
-			float cy1 = y0 + (2/3 * (y1-y0));
-
-			float cx2 = cx1 + (1/3 * (x2-x0));
-			float cy2 = cy1 + (1/3 * (y2-y0));
-
-			curveTo(cx1, cy1, cx2, cy2, x2, y2);
+			// restore quadTo as cubic affects quality
+			ClearCache ();
+			needRoom (1, 4, true);
+			_types [_typesCount++] = SEG_QUADTO;
+			_coords [_coordsCount++] = x1;
+			_coords [_coordsCount++] = y1;
+			_coords [_coordsCount++] = x2;
+			_coords [_coordsCount++] = y2;
 		}
 
 		public void reset() 
@@ -489,8 +497,12 @@ namespace System.Drawing.Drawing2D
 
 		public void transform(AffineTransform at) 
 		{
+			transform(at, 0, CoordsCount);
+		}
+
+		public void transform(AffineTransform at, int startCoord, int numCoords) {
 			ClearCache ();
-			at.transform (_coords, 0, _coords, 0, _coordsCount/2);
+			at.transform (_coords, startCoord, _coords, startCoord, numCoords/2);
 		}
 
 		private void needRoom(int newTypes, int newCoords, bool needMove) 
