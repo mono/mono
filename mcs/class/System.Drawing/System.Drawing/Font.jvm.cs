@@ -11,9 +11,9 @@ namespace System.Drawing {
 
 		#region variables
 
-		private GraphicsUnit _gUnit = GraphicsUnit.Point;
-		private FontFamily _fontFamily;
-		awt.Font _jFont;
+		private readonly GraphicsUnit _gUnit = GraphicsUnit.Point;
+		private readonly FontFamily _fontFamily;
+		private readonly awt.Font _jFont;
 
 		#endregion
 
@@ -182,7 +182,7 @@ namespace System.Drawing {
 
 		public float Size {
 			get {
-				return _jFont.getSize2D() / Graphics.UnitConversion[ (int)_gUnit ];
+				return SizeInPoints / Graphics.UnitConversion[ (int)_gUnit ];
 			}
 		}
 		

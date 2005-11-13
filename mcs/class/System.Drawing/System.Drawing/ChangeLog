@@ -1,5 +1,9 @@
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>
 
+        * Font.jvm.cs: Refactoring.
+
+2005-11-13 Konstantin Triger <kostat@mainsoft.com>
+
         * StringFormat.jvm.cs, Graphics.jvm.cs: DrawString,
 		MeasureString support
 
