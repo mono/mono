@@ -568,16 +568,6 @@ namespace Mono.CSharp {
 					plist.Add (paramType);
 				}
 				parameterTypes = plist.ToArray (typeof (Type)) as Type [];
-				StringBuilder sb = new StringBuilder ();
-				sb.Append ('(');
-				for (int i = 0; i < parameterTypes.Length; i++) {
-					Type t = parameterTypes [i];
-					if (sb.Length > 1)
-						sb.Append (',');
-					sb.Append (t.FullName.Replace ('+', '.'));
-				}
-				sb.Append (')');
-				parameters = sb.ToString ();
 			}
 
 			Type type = FindDocumentedType (mc, name, ds, cref);
@@ -609,7 +599,7 @@ namespace Mono.CSharp {
 					if (warnResult > 0)
 						return;
 					if (mi != null) {
-						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + type.FullName.Replace ("+", ".") + "." + memberName + parameters);
+						xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + type.FullName.Replace ("+", ".") + "." + memberName + GetParametersFormatted (mi));
 						return; // a member of a type
 					}
 				}
@@ -620,7 +610,7 @@ namespace Mono.CSharp {
 				if (warnResult > 0)
 					return;
 				if (mi != null) {
-					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + ds.TypeBuilder.FullName.Replace ("+", ".") + "." + name + parameters);
+					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + ds.TypeBuilder.FullName.Replace ("+", ".") + "." + name + GetParametersFormatted (mi));
 					return; // local member name
 				}
 			}
@@ -629,6 +619,39 @@ namespace Mono.CSharp {
 				mc.GetSignatureForError (), cref);
 
 			xref.SetAttribute ("cref", "!:" + name);
+		}
+
+		static string GetParametersFormatted (MemberInfo mi)
+		{
+			MethodBase mb = mi as MethodBase;
+			bool isSetter = false;
+			PropertyInfo pi = mi as PropertyInfo;
+			if (pi != null) {
+				mb = pi.GetGetMethod ();
+				if (mb == null) {
+					isSetter = true;
+					mb = pi.GetSetMethod ();
+				}
+			}
+			if (mb == null)
+				return String.Empty;
+
+			ParameterData parameters = TypeManager.GetParameterData (mb);
+			if (parameters == null || parameters.Count == 0)
+				return String.Empty;
+
+			StringBuilder sb = new StringBuilder ();
+			sb.Append ('(');
+			for (int i = 0; i < parameters.Count; i++) {
+				if (isSetter && i + 1 == parameters.Count)
+					break; // skip "value".
+				if (i > 0)
+					sb.Append (',');
+				Type t = parameters.ParameterType (i);
+				sb.Append (t.FullName.Replace ('+', '.').Replace ('&', '@'));
+			}
+			sb.Append (')');
+			return sb.ToString ();
 		}
 
 		static string GetBodyIdentifierFromName (string name)
@@ -692,7 +715,7 @@ namespace Mono.CSharp {
 				StringBuilder psb = new StringBuilder ();
 				foreach (Parameter p in plist) {
 					psb.Append (psb.Length != 0 ? "," : "(");
-					psb.Append (p.ParameterType.FullName.Replace ("+", "."));
+					psb.Append (p.ExternalType ().FullName.Replace ("+", ".").Replace ('&', '@'));
 				}
 				paramSpec = psb.ToString ();
 			}

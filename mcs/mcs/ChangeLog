@@ -1,5 +1,10 @@
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs : ref/out parameters are represented as '@' (instead of
+	  '&' in type FullName). Fixed bug #76630 (additionally crefs).
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs : when there was no '.' in cref to methods in doc comment,
 	  then parameters were missing in the output. Fixed bug #76691.
 
