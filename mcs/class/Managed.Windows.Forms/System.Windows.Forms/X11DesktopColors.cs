@@ -21,11 +21,13 @@
 //
 // Authors:
 //	Peter Dennis Bartok	(pbartok@novell.com)
+//	Alexander Olk		(alex.olk@googlemail.com)
 //
 //
 
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace System.Windows.Forms {
 	internal class X11DesktopColors {
@@ -78,9 +80,8 @@ namespace System.Windows.Forms {
 
 		#region Constructors
 		static X11DesktopColors() {
-			// FIXME - figure out what desktop manager we're using; for now we hardcode gtk
-			desktop = Desktop.Gtk;
-
+			FindDesktopEnvironment();
+			
 			switch(desktop) {
 				case Desktop.Gtk: {
 					//IntPtr		dispmgr;
@@ -130,9 +131,17 @@ namespace System.Windows.Forms {
 					}
 					break;
 				}
-
+					
+				case Desktop.KDE: {
+						if ( ReadKDEColorsheme() )
+							Console.WriteLine("KDE colorscheme read");
+						else
+							Console.WriteLine("KDE colorscheme read failure, using built-in colorscheme");
+						break;
+					}
+					
 				default: {
-					Console.WriteLine("Unknown destop manager, using default colors");
+					Console.WriteLine("Unknown desktop manager, using default colors");
 					break;
 				}
 			}
@@ -140,6 +149,23 @@ namespace System.Windows.Forms {
 		#endregion	// Constructors
 
 		#region Properties
+		static void FindDesktopEnvironment() {
+			desktop = Desktop.Gtk;
+			string session =  Environment.GetEnvironmentVariable("DESKTOP_SESSION");
+				
+			if ( session != null ) {
+				session = session.ToUpper( );
+					
+				if ( session == "DEFAULT" ) {
+					string helper = Environment.GetEnvironmentVariable("KDE_FULL_SESSION");
+						
+					if ( helper != null )
+						desktop = Desktop.KDE;
+				} else
+				if ( session == "KDE" )
+					desktop = Desktop.KDE;
+			}
+		}
 		#endregion	// Properties
 
 		#region Methods
@@ -154,6 +180,81 @@ namespace System.Windows.Forms {
 				(gtkcolor.blue >> 8) & 0xff );
 		}
 		
+		private static bool ReadKDEColorsheme() {
+			string full_kdegloabals_filename = Environment.GetFolderPath(Environment.SpecialFolder.Personal)
+				+ "/"
+				+ ".kde/share/config/kdeglobals";
+			
+			if (!File.Exists(full_kdegloabals_filename)) 
+				return false;
+			
+			StreamReader sr = new StreamReader(full_kdegloabals_filename);
+			
+			string line = sr.ReadLine();
+			
+			Color tmp_color;
+			
+			while (line != null) {
+				line = line.Trim();
+				
+				if (line.StartsWith( "background=")) {
+					tmp_color = GetColorFromKDEString(line);
+					
+					if (tmp_color != Color.Empty) {
+						ThemeEngine.Current.ColorControl = tmp_color;
+						ThemeEngine.Current.ColorMenu = tmp_color;
+					}
+				} else
+				if (line.StartsWith( "foreground=")) {
+					tmp_color = GetColorFromKDEString(line);
+					
+					if (tmp_color != Color.Empty) {
+						ThemeEngine.Current.ColorControlText = tmp_color;
+						ThemeEngine.Current.ColorMenuText = tmp_color;						
+					}
+				} else
+				if (line.StartsWith("selectBackground")) {
+					tmp_color = GetColorFromKDEString(line);
+					
+					if (tmp_color != Color.Empty) {
+						ThemeEngine.Current.ColorHighlight = tmp_color;
+					}
+				} else
+				if (line.StartsWith("selectForeground")) {
+					tmp_color = GetColorFromKDEString(line);
+					
+					if (tmp_color != Color.Empty) {
+						ThemeEngine.Current.ColorHighlightText = tmp_color;
+					}
+				}
+				
+				line = sr.ReadLine();
+			}
+			
+			sr.Close();
+			
+			return true;
+		}
+		
+		private static Color GetColorFromKDEString(string line) {
+			string[] split = line.Split(new char[] {'='});
+			
+			if (split.Length > 0) {
+				line = split[1];
+				
+				split = line.Split(new char[] {','});
+				
+				if (split.Length == 3) {
+					int r = System.Convert.ToInt32(split[0]);
+					int g = System.Convert.ToInt32(split[1]);
+					int b = System.Convert.ToInt32(split[2]);
+					
+					return Color.FromArgb(r, g, b);
+				}
+			}
+			
+			return Color.Empty;
+		}
 		#endregion	// Methods
 
 		#region	DllImports
