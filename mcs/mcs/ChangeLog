@@ -1,5 +1,10 @@
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* driver.cs : don't output docs when there is an error.
+	  Fixed bug #76693.
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs :
 	  Now it should detect indexers. Fixed primary concern in bug #76685.
 	  Fixed CS0419 message to not show the identical member signature in
