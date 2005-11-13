@@ -267,36 +267,8 @@ namespace System.Drawing {
 		}
 		#endregion
 
-		#region Workers [INTERNAL]
-		void InternalSetBrush(Brush b) {
-			java.awt.Graphics2D g = NativeObject;
-			g.setPaint (b);
-			SolidBrush sb = b as SolidBrush;
-			if(sb != null) {
-				g.setColor(sb.Color.NativeObject);
-			}
-			else if(b is LinearGradientBrush) {
-#if DEBUG_GRADIENT_BRUSH
-				if(((LinearGradientBrush)b).dPoints != null)
-				{
-					PointF []pts = ((LinearGradientBrush)b).dPoints;
-					java.awt.Shape s = g.getClip();
-					g.setClip(0,0,99999,99999);
-					g.setPaint(new java.awt.Color(255,0,0));
-					g.drawLine((int)pts[0].X,(int)pts[0].Y,(int)pts[1].X,(int)pts[1].Y);
-					g.setPaint(new java.awt.Color(0,255,0));
-					g.drawLine((int)pts[1].X,(int)pts[1].Y,(int)pts[2].X,(int)pts[2].Y);
-					g.setPaint(new java.awt.Color(255,0,0));
-					g.drawLine((int)pts[2].X,(int)pts[2].Y,(int)pts[3].X,(int)pts[3].Y);
-					g.setPaint(new java.awt.Color(0,255,0));
-					g.drawLine((int)pts[3].X,(int)pts[3].Y,(int)pts[0].X,(int)pts[0].Y);
-					
-					g.setClip(s);
-				}
-#endif
-			}
-		}
 
+		#region Workers [INTERNAL]
 		void DrawShape(Pen pen, awt.Shape shape) {
 			if (pen == null)
 				throw new ArgumentNullException("pen");
@@ -324,6 +296,8 @@ namespace System.Drawing {
 						AdvancedStroke.MinPenSizeAASquared :
 						AdvancedStroke.MinPenSizeSquared));
 
+					PenFit penFit = thin ? (antiAlias ? PenFit.ThinAntiAlias : PenFit.Thin) : PenFit.NotThin;
+
 					if (NeedsNormalization) {
 
 						bool normThin = 
@@ -332,15 +306,15 @@ namespace System.Drawing {
 						if (normThin) {
 							shape = GetNormalizedShape(shape, t);
 							shape = pen.GetNativeObject(
-								t, null, thin).createStrokedShape(shape);
+								t, null, penFit).createStrokedShape(shape);
 						}
 						else {
-							shape = pen.GetNativeObject(t, thin).createStrokedShape(shape);
+							shape = pen.GetNativeObject(t, penFit).createStrokedShape(shape);
 							shape = GetNormalizedShape(shape, null);
 						}
 					}
 					else {
-						shape = pen.GetNativeObject(t, thin).createStrokedShape(shape);
+						shape = pen.GetNativeObject(t, penFit).createStrokedShape(shape);
 					}
 
 					FillScaledShape(pen.Brush, shape, clip);
@@ -351,7 +325,7 @@ namespace System.Drawing {
 			}
 			else {
 				awt.Stroke oldStroke = NativeObject.getStroke();
-				NativeObject.setStroke(pen.GetNativeObject(null, false));
+				NativeObject.setStroke(pen.GetNativeObject(null, PenFit.NotThin));
 				try {
 					awt.Paint oldPaint = NativeObject.getPaint();
 					NativeObject.setPaint(pen.Brush);
@@ -539,7 +513,7 @@ namespace System.Drawing {
 				if(!fDraw)
 					return retVal;
 
-				InternalSetBrush(brush);
+				NativeObject.setPaint(brush);
 				g.setRenderingHint(awt.RenderingHints.KEY_TEXT_ANTIALIASING, awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
 				//end measurment

@@ -8,6 +8,13 @@ using sun.dc.path;
 using sun.dc.pr;
 
 namespace System.Drawing {
+
+	internal enum PenFit {
+		NotThin,
+		Thin,
+		ThinAntiAlias
+	}
+
 	internal class AdvancedStroke : Stroke {
 
 		public const float PenUnits = 0.01f;
@@ -68,7 +75,7 @@ namespace System.Drawing {
 
 		AffineTransform _penTransform;
 		AffineTransform _outputTransform;
-		bool _fitPen;
+		PenFit _penFit;
 
 		/**
 		 * Constructs a new <code>AdvancedStroke</code> with the specified
@@ -99,7 +106,7 @@ namespace System.Drawing {
 		 */
 		public AdvancedStroke(float width, int cap, int join, float miterlimit,
 			float[] dash, float dash_phase, AffineTransform penTransform,
-			AffineTransform outputTransform, bool fitPen) {
+			AffineTransform outputTransform, PenFit penFit) {
 			if (width < 0.0f) {
 				throw new IllegalArgumentException("negative width");
 			}
@@ -140,7 +147,7 @@ namespace System.Drawing {
 			this.dash_phase	= dash_phase;
 			this._penTransform = penTransform;
 			this._outputTransform = outputTransform;
-			this._fitPen = fitPen;
+			this._penFit = penFit;
 		}
 
 		/**
@@ -159,7 +166,7 @@ namespace System.Drawing {
 		 *         either JOIN_ROUND, JOIN_BEVEL, or JOIN_MITER
 		 */
 		public AdvancedStroke(float width, int cap, int join, float miterlimit) :
-			this(width, cap, join, miterlimit, null, 0.0f, null, null, false) {
+			this(width, cap, join, miterlimit, null, 0.0f, null, null, PenFit.NotThin) {
 		}
 
 		/**
@@ -177,7 +184,7 @@ namespace System.Drawing {
 		 *         either JOIN_ROUND, JOIN_BEVEL, or JOIN_MITER
 		 */
 		public AdvancedStroke(float width, int cap, int join) :
-			this(width, cap, join, 10.0f, null, 0.0f, null, null, false) {
+			this(width, cap, join, 10.0f, null, 0.0f, null, null, PenFit.NotThin) {
 		}
 
 		/**
@@ -188,7 +195,7 @@ namespace System.Drawing {
 		 * @throws IllegalArgumentException if <code>width</code> is negative
 		 */
 		public AdvancedStroke(float width) :
-			this(width, CAP_SQUARE, JOIN_MITER, 10.0f, null, 0.0f, null, null, false) {
+			this(width, CAP_SQUARE, JOIN_MITER, 10.0f, null, 0.0f, null, null, PenFit.NotThin) {
 		}
 
 		/**
@@ -198,7 +205,7 @@ namespace System.Drawing {
 		 * JOIN_MITER, a miter limit of 10.0.
 		 */
 		public AdvancedStroke() :
-			this(1.0f, CAP_SQUARE, JOIN_MITER, 10.0f, null, 0.0f, null, null, false) {
+			this(1.0f, CAP_SQUARE, JOIN_MITER, 10.0f, null, 0.0f, null, null, PenFit.NotThin) {
 		}
 
 
@@ -214,8 +221,14 @@ namespace System.Drawing {
 			PathConsumer consumer;
 
 			stroker.setPenDiameter(width);
-			if (_fitPen)
-				stroker.setPenFitting(PenUnits, MinPenUnitsAA);
+			switch (_penFit) {
+				case PenFit.Thin:
+					stroker.setPenFitting(PenUnits, MinPenUnits);
+					break;
+				case PenFit.ThinAntiAlias:
+					stroker.setPenFitting(PenUnits, MinPenUnitsAA);
+					break;
+			}
 
 			float[] t4 = null;
 			if (PenTransform != null && !PenTransform.isIdentity() && (PenTransform.getDeterminant() > 1e-25)) {

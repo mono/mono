@@ -457,8 +457,8 @@ namespace System.Drawing
 			return Math.Abs(Width*Width * (AD*KN_LM - BC*KN_LM));
 		}
 
-		internal awt.Stroke GetNativeObject(geom.AffineTransform outputTransform, bool fitPen) {
-			return GetNativeObject(null, outputTransform, fitPen);
+		internal awt.Stroke GetNativeObject(geom.AffineTransform outputTransform, PenFit penFit) {
+			return GetNativeObject(null, outputTransform, penFit);
 		}
 		/// <summary>
 		/// 
@@ -466,7 +466,7 @@ namespace System.Drawing
 		/// <param name="outputTransform">transform which will be applied on the final shape</param>
 		/// <param name="fitPen">ensure the shape will wide enough to be visible</param>
 		/// <returns></returns>
-		internal awt.Stroke GetNativeObject(geom.AffineTransform penTransform, geom.AffineTransform outputTransform, bool fitPen) {
+		internal awt.Stroke GetNativeObject(geom.AffineTransform penTransform, geom.AffineTransform outputTransform, PenFit penFit) {
 			float[] dashPattern = null;
 
 			switch (DashStyle) {
@@ -546,13 +546,13 @@ namespace System.Drawing
 
 			return StrokeFactory.CreateStroke(Width, cap, 
 				join, MiterLimit, dashPattern, DashOffset,
-				penT, outputTransform, fitPen);
+				penT, outputTransform, penFit);
 		}
 
 		#region Stroke Members
 
 		awt.Shape awt.Stroke.createStrokedShape(awt.Shape arg_0) {
-			return GetNativeObject(null, false).createStrokedShape(arg_0);
+			return GetNativeObject(null, PenFit.NotThin).createStrokedShape(arg_0);
 		}
 
 		#endregion
