@@ -62,6 +62,8 @@ namespace System.Drawing {
 
 		// this is unavailable through Java API, usually 2048 for TT fonts
 		const int UnitsPerEm = 2048;
+		// the margin for text drawing
+		const int DrawMargin = 571;
 
 		#region ctors
 		
@@ -106,6 +108,10 @@ namespace System.Drawing {
 			}
 		}
 
+		internal int GetDrawMargin(FontStyle style) {
+			return DrawMargin;
+		}
+
 		awt.FontMetrics GetMetrics(FontStyle style) {
 			if ((_lastStyle != style) || (_fontMetrics == null)) {	
 				java.util.Map attrib = Font.DeriveStyle( FamilyFont.getAttributes(), style, true);
@@ -132,15 +138,9 @@ namespace System.Drawing {
 		}
 
 		public string GetName(int language) {
-			CultureInfo culture;
-			java.util.Locale locale;
-			try {
-				culture = new CultureInfo(language, false);
-				locale = vmw.@internal.EnvironmentUtils.getLocaleFromCultureInfo( culture );
-			}
-			catch(Exception) {
-				locale = new java.util.Locale("en");
-			}
+			CultureInfo culture = new CultureInfo(language, false);
+			java.util.Locale locale = vmw.@internal.EnvironmentUtils.getLocaleFromCultureInfo( culture );
+
 			return FamilyFont.getFamily( locale );
 		}
 
