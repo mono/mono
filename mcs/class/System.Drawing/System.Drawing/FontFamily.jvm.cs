@@ -48,9 +48,9 @@ namespace System.Drawing {
 
 		static FontFamily() {
 			_installedFonts = new InstalledFontCollection();
-			_genericMonospace = new FontFamily("Monospaced");
-			_genericSansSerif = new FontFamily("SansSerif");
-			_genericSerif = new FontFamily("Serif");
+			_genericMonospace = new FontFamily(GenericFontFamilies.Monospace);
+			_genericSansSerif = new FontFamily(GenericFontFamilies.SansSerif);
+			_genericSerif = new FontFamily(GenericFontFamilies.Serif);
 		}
 		
 		private readonly string _name;
@@ -58,7 +58,7 @@ namespace System.Drawing {
 
 		private awt.FontMetrics _fontMetrics = null;
 		private FontStyle _lastStyle = FontStyle.Regular;
-		private awt.Font _font;
+		private readonly awt.Font _font;
 
 		// this is unavailable through Java API, usually 2048 for TT fonts
 		const int UnitsPerEm = 2048;
@@ -70,6 +70,17 @@ namespace System.Drawing {
 		// dummy ctors to work around convertor problems
 		internal FontFamily() {}
 		internal FontFamily(IntPtr family) {}
+
+		static string ToGenericFontName(GenericFontFamilies genericFamily) {
+			switch(genericFamily) {
+				case GenericFontFamilies.SansSerif:
+					return "SansSerif";
+				case GenericFontFamilies.Serif:
+					return "Serif";
+				default:
+					return "Monospaced";
+			}
+		}
 		
 		public FontFamily(string familyName) : this(familyName, null) {
 		}
@@ -84,22 +95,10 @@ namespace System.Drawing {
 				_name = _genericSansSerif._name;
 
 			_name = name;
+			_font = _fontCollection.GetInitialFont( _name );
 		}
 
-		public FontFamily(GenericFontFamilies genericFamily) {
-			switch(genericFamily) {
-				case GenericFontFamilies.SansSerif:
-					_name = _genericSansSerif._name;
-					break;
-				case GenericFontFamilies.Serif:
-					_name = _genericSerif._name;
-					break;
-				default:
-					_name = _genericMonospace._name;
-					break;
-			}
-
-			_fontCollection = _installedFonts;
+		public FontFamily(GenericFontFamilies genericFamily) : this(ToGenericFontName(genericFamily)) {
 		}
 		
 		#endregion
@@ -221,9 +220,6 @@ namespace System.Drawing {
 
 		internal awt.Font FamilyFont {
 			get {
-				if (_font == null)
-					_font = _fontCollection.GetInitialFont( _name );
-
 				return _font;
 			}
 		}
