@@ -1,5 +1,9 @@
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>
 
+        * FontFamily.jvm.cs: correctly initialize fontcollection
+
+2005-11-13 Konstantin Triger <kostat@mainsoft.com>
+
         * FontFamily.jvm.cs: DrawMargin, refactoring.
 
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>

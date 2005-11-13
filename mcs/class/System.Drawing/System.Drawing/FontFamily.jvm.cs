@@ -98,6 +98,8 @@ namespace System.Drawing {
 					_name = _genericMonospace._name;
 					break;
 			}
+
+			_fontCollection = _installedFonts;
 		}
 		
 		#endregion
@@ -138,6 +140,9 @@ namespace System.Drawing {
 		}
 
 		public string GetName(int language) {
+			if (language == 0)
+				return Name;
+
 			CultureInfo culture = new CultureInfo(language, false);
 			java.util.Locale locale = vmw.@internal.EnvironmentUtils.getLocaleFromCultureInfo( culture );
 
