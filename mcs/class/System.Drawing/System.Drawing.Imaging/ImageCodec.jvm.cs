@@ -91,14 +91,26 @@ namespace Mainsoft.Drawing.Imaging {
 		}
 
 		public static ImageCodec CreateReader(Guid clsid) {
-			ImageCodecInfo codecInfo = (ImageCodecInfo) Decoders[clsid];
-			java.util.Iterator iter = imageio.ImageIO.getImageReadersByMIMEType( codecInfo.MimeType );
-			return CreateReader(iter);
+			ImageCodec codec = null;
+			try {
+				ImageCodecInfo codecInfo = (ImageCodecInfo) Decoders[clsid];
+				java.util.Iterator iter = imageio.ImageIO.getImageReadersByMIMEType( codecInfo.MimeType );
+				codec = CreateReader(iter);
+			}
+			catch {}
+
+			if (codec == null) {
+				ImageFormat format = ClsidToImageFormat(clsid);
+				string name = (format != null) ? format.ToString() : clsid.ToString();
+				throw new NotSupportedException(String.Format("The '{0}' format decoder is not installed.", name));
+			}
+
+			return codec;
 		}
 
 		private static ImageCodec CreateReader(java.util.Iterator iter) {
 			if ( !iter.hasNext() )
-				throw new OutOfMemoryException ("Out of memory"); 
+				return null;
 
 			ImageCodec imageCodec = new ImageCodec();
 			imageCodec.NativeReader = (imageio.ImageReader) iter.next();
@@ -110,14 +122,26 @@ namespace Mainsoft.Drawing.Imaging {
 		}
 
 		public static ImageCodec CreateWriter(Guid clsid) {
-			ImageCodecInfo codecInfo = (ImageCodecInfo) Encoders[clsid];
-			java.util.Iterator iter = imageio.ImageIO.getImageWritersByMIMEType( codecInfo.MimeType );
-			return CreateWriter(iter);
+			ImageCodec codec = null;
+			try {
+				ImageCodecInfo codecInfo = (ImageCodecInfo) Encoders[clsid];
+				java.util.Iterator iter = imageio.ImageIO.getImageWritersByMIMEType( codecInfo.MimeType );
+				codec = CreateWriter(iter);
+			}
+			catch {}
+
+			if (codec == null) {
+				ImageFormat format = ClsidToImageFormat(clsid);
+				string name = (format != null) ? format.ToString() : clsid.ToString();
+				throw new NotSupportedException(String.Format("The '{0}' format encoder is not installed.", name));
+			}
+
+			return codec;
 		}
 
-		public static ImageCodec CreateWriter(java.util.Iterator iter) {
+		private static ImageCodec CreateWriter(java.util.Iterator iter) {
 			if ( !iter.hasNext() )
-				throw new OutOfMemoryException ("Out of memory"); 
+				return null;
 			
 			ImageCodec imageCodec = new ImageCodec();
 			imageCodec.NativeWriter = (imageio.ImageWriter) iter.next();

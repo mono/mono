@@ -1,3 +1,7 @@
+2005-11-13 Konstantin Triger <kostat@mainsoft.com>
+
+        * ImageCodec.jvm.cs: throw an exception if codec is not found.
+
 2005-10-31  Jordi Mas i Hernandez <jordi@ximian.com>
 
 	* ImageFormat.cs: Fixes ToString method
