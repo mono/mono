@@ -1,5 +1,9 @@
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* known-issues-gmcs : oops, didn't know that comments do not work.
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* known-issues-gmcs : updated.
 
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
