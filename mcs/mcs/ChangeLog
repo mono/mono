@@ -1,5 +1,10 @@
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs : when there was no '.' in cref to methods in doc comment,
+	  then parameters were missing in the output. Fixed bug #76691.
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* driver.cs : don't output docs when there is an error.
 	  Fixed bug #76693.
 

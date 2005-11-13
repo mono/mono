@@ -620,7 +620,7 @@ namespace Mono.CSharp {
 				if (warnResult > 0)
 					return;
 				if (mi != null) {
-					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + ds.TypeBuilder.FullName.Replace ("+", ".") + "." + name);
+					xref.SetAttribute ("cref", GetMemberDocHead (mi.MemberType) + ds.TypeBuilder.FullName.Replace ("+", ".") + "." + name + parameters);
 					return; // local member name
 				}
 			}
