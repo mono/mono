@@ -1,3 +1,7 @@
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-xml-039.xml test-xml-039.cs : new test for bug #71604.
+
 2005-11-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* gtest-friend-[01-12].cs, gtest-friend-00-lib.cs,

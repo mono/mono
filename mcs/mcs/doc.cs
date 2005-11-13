@@ -360,12 +360,11 @@ namespace Mono.CSharp {
 
 			if (paramList.Length == 0) {
 				// search for fields/events etc.
-				mis = type.FindMembers (
-					MemberTypes.All,
+				mis = TypeManager.MemberLookup (null, null,
+					type, MemberTypes.All,
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
-					Type.FilterName,
-					memberName);
-				if (mis.Length == 0)
+					memberName, null);
+				if (mis == null || mis.Length == 0)
 					return null;
 				if (IsAmbiguous (mis))
 					warningType = 419;

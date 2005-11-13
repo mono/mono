@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>71604</name>
+    </assembly>
+    <members>
+        <member name="T:ITest">
+            <summary>
+            <see cref="E:ITest.Start"/>
+            <see cref="P:ITest.Foo"/>
+            </summary>
+        </member>
+        <member name="E:ITest.Start">
+            <summary>whatever</summary>
+        </member>
+        <member name="P:ITest.Foo">
+            <summary>hogehoge</summary>
+        </member>
+    </members>
+</doc>
