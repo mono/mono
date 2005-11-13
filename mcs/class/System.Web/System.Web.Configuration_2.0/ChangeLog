@@ -1,3 +1,18 @@
+2005-11-13  Chris Toshok  <toshok@ximian.com>
+
+	* UrlMapping.cs, CustomErrorCollection.cs, CustomError.cs,
+	HostingEnvironmentSection.cs, TrustLevel.cs,
+	HttpCookiesSection.cs, UrlMappingsSection.cs,
+	UrlMappingCollection.cs, LowerCaseStringConverter.cs,
+	RoleManagerSection.cs, ProcessModelSection.cs,
+	TrustLevelCollection.cs, ClientTarget.cs, CustomErrorsSection.cs,
+	MachineKeySection.cs, SessionPageStateSection.cs,
+	SessionStateSection.cs, ProvidersHelper.cs,
+	ClientTargetCollection.cs, SecurityPolicySection.cs,
+	HttpCapabilitiesBase.cs, ClientTargetSection.cs: Another large
+	swath.
+
+
 2005-11-12  Chris Toshok  <toshok@ximian.com>
 
 	* AuthorizationRuleCollection.cs, AuthorizationRule.cs,
