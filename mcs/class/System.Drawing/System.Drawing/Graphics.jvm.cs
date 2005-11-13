@@ -167,6 +167,7 @@ namespace System.Drawing {
 		readonly awt.Graphics2D _nativeObject;
 		PixelOffsetMode _pixelOffsetMode = PixelOffsetMode.Default;
 		int _textContrast = 4;
+		TextRenderingHint _textRenderingHint;
 		readonly Image _image;
 		
 		readonly Matrix _transform;
@@ -232,6 +233,7 @@ namespace System.Drawing {
 			NativeObject.setRenderingHint(awt.RenderingHints.KEY_COLOR_RENDERING, awt.RenderingHints.VALUE_COLOR_RENDER_QUALITY);
 
 			InterpolationMode = InterpolationMode.Bilinear;
+			TextRenderingHint = TextRenderingHint.SystemDefault;
 
 			_windowRect = new awt.Rectangle(_image.Width, _image.Height);
 			_clip = new Region();
@@ -1195,46 +1197,96 @@ namespace System.Drawing {
 
 		#region DrawString
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle) {			
-			MeasureDraw(s,font,brush,layoutRectangle,null,true);
+			DrawString(s, font, brush, layoutRectangle.X, layoutRectangle.Y, layoutRectangle.Width, layoutRectangle.Height, null);
 		}
 		
 		public void DrawString (string s, Font font, Brush brush, PointF point) {
-			MeasureDraw(s,font,brush,new RectangleF(point.X,point.Y,99999f,99999f),null,true);
+			DrawString(s, font, brush, point.X, point.Y, float.PositiveInfinity, float.PositiveInfinity, null);
 		}
 		
 		public void DrawString (string s, Font font, Brush brush, PointF point, StringFormat format) {
-			MeasureDraw(s,font,brush,new RectangleF(point.X,point.Y,99999f,99999f),format,true);
+			DrawString(s, font, brush, point.X, point.Y, float.PositiveInfinity, float.PositiveInfinity, format);
 		}
 
 		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format) {
-			MeasureDraw(s,font,brush,layoutRectangle,format,true);
+			DrawString(s, font, brush, layoutRectangle.X, layoutRectangle.Y, layoutRectangle.Width, layoutRectangle.Height, format);
 		}
-	
-#if false		
-		public void DrawString (string s, Font font, Brush brush, RectangleF layoutRectangle, StringFormat format)
-		{
-			java.awt.Graphics2D g = (java.awt.Graphics2D)nativeObject;			
-			//set
-			java.awt.Paint oldpaint = g.getPaint();
-			g.setPaint(brush.NativeObject);
-			java.awt.Font oldfont = g.getFont();
-			g.setFont(font.NativeObject);
-			java.awt.Shape oldb = g.getClip();
-			g.setClip(new java.awt.geom.Rectangle2D.Float(layoutRectangle.X,layoutRectangle.Y,layoutRectangle.Width,layoutRectangle.Height));
-			//draw
-			g.drawString(s,layoutRectangle.X,layoutRectangle.Y+layoutRectangle.Height);
-			//restore
-			g.setPaint(oldpaint);
-			g.setClip(oldb);
-			g.setFont(oldfont);
-		}
-#endif
+
 		public void DrawString (string s, Font font, Brush brush, float x, float y) {
-			MeasureDraw(s,font,brush,new RectangleF(x,y,99999f,99999f),null,true);
+			DrawString(s, font, brush, x, y, float.PositiveInfinity, float.PositiveInfinity, null);
 		}
 
 		public void DrawString (string s, Font font, Brush brush, float x, float y, StringFormat format) {
-			MeasureDraw(s,font,brush,new RectangleF(x,y,99999f,99999f),format,true);
+			DrawString(s, font, brush, x, y, float.PositiveInfinity, float.PositiveInfinity, format);
+		}
+
+		void DrawString (string s, Font font, Brush brush, 
+			float x, float y, float width, float height, 
+			StringFormat format) {
+			if (brush == null)
+				throw new ArgumentNullException("brush");
+
+			if (font == null)
+				throw new ArgumentNullException("font");
+
+			if (format != null && format.LineAlignment != StringAlignment.Near) {
+
+				SizeF sizeF = MeasureString(s, font, format, width, height, null);
+
+				float lineAWidth = width;
+				float lineAHeight = height;
+
+				if (float.IsPositiveInfinity(width))
+					lineAWidth = lineAHeight = 0;
+
+				float wdelta = format.IsVertical ? lineAWidth - sizeF.Width : lineAHeight - sizeF.Height;
+				float pdelta = format.LineAlignment == StringAlignment.Center ? wdelta/2 : wdelta;
+				if (format.IsVertical) {
+					if (!(format.IsRightToLeft && format.LineAlignment == StringAlignment.Far))
+						x += pdelta;
+					if (!float.IsPositiveInfinity(width))
+						width -= wdelta;
+				}
+				else {
+					y += pdelta;
+					if (!float.IsPositiveInfinity(width))
+						height -= wdelta;
+				}
+			}
+
+			awt.Paint oldP = NativeObject.getPaint();
+			NativeObject.setPaint(brush);
+			try {
+				geom.AffineTransform oldT = NativeObject.getTransform();
+				NativeObject.transform(GetFinalTransform());
+				try {
+
+					bool noclip = float.IsPositiveInfinity(width) || (format != null && format.NoClip);
+
+					awt.Shape oldClip = null;
+					if (!noclip) {
+						oldClip = NativeObject.getClip();
+						NativeObject.clip(new geom.Rectangle2D.Float(x, y, width, height));
+					}
+					try {
+						TextLineIterator iter = new TextLineIterator(s, font, NativeObject.getFontRenderContext(), format, width, height);
+						NativeObject.transform(iter.Transform);
+						for (LineLayout layout = iter.NextLine(); layout != null; layout = iter.NextLine()) {
+							layout.Draw(NativeObject, x, y);
+						}
+					}
+					finally {
+						if (!noclip)
+							NativeObject.setClip(oldClip);
+					}
+				}
+				finally {
+					NativeObject.setTransform(oldT);
+				}
+			}
+			finally {
+				NativeObject.setPaint(oldP);
+			}
 		}
 		#endregion
 
@@ -1838,47 +1890,178 @@ namespace System.Drawing {
 		}
 		#endregion
 
-		#region MeasureCharacterRanges [TODO]
+		#region MeasureCharacterRanges
 		public Region [] MeasureCharacterRanges (string text, Font font, RectangleF layoutRect, StringFormat stringFormat) {
-			throw new NotImplementedException();
+			if (stringFormat == null)
+				throw new ArgumentException("stringFormat");
+
+			CharacterRange[] ranges = stringFormat.CharRanges;
+			if (ranges == null || ranges.Length == 0)
+				return new Region[0];
+
+			GraphicsPath[] pathes = new GraphicsPath[ranges.Length];
+			for (int i = 0; i < pathes.Length; i++)
+				pathes[i] = new GraphicsPath();
+
+			TextLineIterator iter = new TextLineIterator(text, font, NativeObject.getFontRenderContext(),
+				stringFormat, layoutRect.Width, layoutRect.Height);
+			
+			for (LineLayout layout = iter.NextLine(); layout != null; layout = iter.NextLine()) {
+
+				for (int i = 0; i < ranges.Length; i++) {
+					int start = ranges[i].First;
+					int length = ranges[i].Length;
+					start -= iter.CharsConsumed;
+					int limit = start + length;
+					int layoutStart = iter.CurrentPosition - layout.CharacterCount;
+					if (start < iter.CurrentPosition && limit > layoutStart) {
+
+						float layoutOffset;
+						if (start > layoutStart)
+							layoutOffset = iter.GetAdvanceBetween(layoutStart, start);
+						else {
+							layoutOffset = 0;
+							start = layoutStart;
+						}
+
+						float width = (limit < iter.CurrentPosition) ?
+							iter.GetAdvanceBetween(start, limit) :
+							layout.Width - layoutOffset;
+
+						float height = layout.Ascent + layout.Descent;
+
+						float x = layout.NativeX;
+						float y = layout.NativeY;
+
+						if (stringFormat.IsVertical) {
+							y += layoutOffset;
+							x -= layout.Descent;
+						}
+						else {
+							x += layoutOffset;
+							y -= layout.Ascent;
+						}
+
+						if (layout.AccumulatedHeight + height > iter.WrapHeight) {
+							float diff = iter.WrapHeight - layout.AccumulatedHeight;
+							if (stringFormat.IsVertical && stringFormat.IsRightToLeft) {
+								x += diff;
+								height -= diff;
+							}
+							else
+								height = diff;
+						}
+
+						if (stringFormat.IsVertical)
+							pathes[i].AddRectangle(x + layoutRect.X, y + layoutRect.Y, height, width);
+						else
+							pathes[i].AddRectangle(x + layoutRect.X, y + layoutRect.Y, width, height);
+					}
+				}
+			}
+
+			geom.AffineTransform lineAlignT = iter.CalcLineAlignmentTransform();
+			if (lineAlignT != null) {
+				for (int i = 0; i < pathes.Length; i++)
+					pathes[i].NativeObject.transform(lineAlignT);
+			}
+
+			Region[] regions = new Region[ranges.Length];
+			for (int i = 0; i < regions.Length; i++)
+				regions[i] = new Region(pathes[i]);
+
+			return regions;
 		}
 		#endregion
 		
-		#region MeasureString [1 method still TODO]
+		#region MeasureString
 		public SizeF MeasureString (string text, Font font) {
-			return MeasureDraw(text,font,null,new RectangleF(0,0,99999f,99999f),null,false);
+			return MeasureString(text, font, null, float.PositiveInfinity, float.PositiveInfinity, null); 
 		}
 
 		
 		public SizeF MeasureString (string text, Font font, SizeF layoutArea) {
-			return MeasureDraw(text,font,null,new RectangleF(0,0,layoutArea.Width,layoutArea.Height),null,false);
+			return MeasureString(text, font, layoutArea, null);
 		}
 
 		
 		public SizeF MeasureString (string text, Font font, int width) {
-			return MeasureDraw(text,font,null,new RectangleF(0,0,(float)width,99999f),null,false);
+			return MeasureString(text, font, width, null);
 		}
 
 
 		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat format) {
-			return MeasureDraw(text,font,null,new RectangleF(0,0,layoutArea.Width,layoutArea.Height),format,false);
+			return MeasureString(text, font, format, layoutArea.Width, layoutArea.Height, null);
 		}
 
 		
 		public SizeF MeasureString (string text, Font font, int width, StringFormat format) {
-			return MeasureDraw(text,font,null,new RectangleF(0,0,(float)width,99999f),format,false);
+			return MeasureString(text, font, format, width, float.PositiveInfinity, null);
 		}
 
 		
 		public SizeF MeasureString (string text, Font font, PointF origin, StringFormat format) {
-			//TBD: MeasureDraw still not dealing with clipping region of dc
-			return MeasureDraw(text,font,null,new RectangleF(origin.X,origin.Y,99999f,99999f),format,false);
+			return MeasureString(text, font, format, float.PositiveInfinity, float.PositiveInfinity, null);
+		}
+
+		SizeF MeasureString (string text, Font font, StringFormat format, float width, float height, int[] statistics) {
+
+			if (statistics != null) {
+				statistics[0] = 0;
+				statistics[1] = 0;
+			}
+
+			TextLineIterator iter = new TextLineIterator(text, font, NativeObject.getFontRenderContext(), format, width, height);
+
+			float mwidth = 0;
+			int linesFilled = 0;
+			for (LineLayout layout = iter.NextLine(); layout != null; layout = iter.NextLine()) {
+
+				linesFilled ++;
+				float w = layout.MeasureWidth;
+
+				if (w > mwidth)
+					mwidth = w;
+			}
+
+			if (linesFilled == 0)
+				return SizeF.Empty;
+
+			float mheight = iter.AccumulatedHeight;
+
+			if (format != null) {
+				if (format.IsVertical) {
+					float temp = mheight;
+					mheight = mwidth;
+					mwidth = temp;
+				}
+			}
+
+			if (!(format != null && format.NoClip)) {
+				if (mwidth > width)
+					mwidth = width;
+				if (mheight > height)
+					mheight = height;
+			}
+
+			if (statistics != null) {
+				statistics[0] = linesFilled;
+				statistics[1] = iter.CharsConsumed;
+			}
+
+			return new SizeF(mwidth, mheight);
 		}
 
 		
 		public SizeF MeasureString (string text, Font font, SizeF layoutArea, StringFormat stringFormat, out int charactersFitted, out int linesFilled) {	
-			//TBD: charcount
-			throw new NotImplementedException();
+			linesFilled = 0;
+			charactersFitted = 0;
+
+			int[] statistics = new int[2];
+			SizeF sz = MeasureString(text, font, stringFormat, layoutArea.Width, layoutArea.Height, statistics);
+			linesFilled = statistics[0];
+			charactersFitted = statistics[1];
+			return sz;
 		}
 		#endregion
 
@@ -2401,30 +2584,49 @@ namespace System.Drawing {
 
 		public TextRenderingHint TextRenderingHint {
 			get {
-				awt.RenderingHints hints = NativeObject.getRenderingHints();
-				if(hints.containsKey(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING)) {
-					if(hints.get(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING) == 
-						java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
-						return TextRenderingHint.AntiAlias;
-					if(hints.get(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING) == 
-						java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_OFF)
-						return TextRenderingHint.SingleBitPerPixel;
-				}
-				return TextRenderingHint.SystemDefault;
+				return _textRenderingHint;
+//				awt.RenderingHints hints = NativeObject.getRenderingHints();
+//				if(hints.containsKey(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING)) {
+//					if(hints.get(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING) == 
+//						java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON)
+//						return TextRenderingHint.AntiAlias;
+//					if(hints.get(java.awt.RenderingHints.KEY_TEXT_ANTIALIASING) == 
+//						java.awt.RenderingHints.VALUE_TEXT_ANTIALIAS_OFF)
+//						return TextRenderingHint.SingleBitPerPixel;
+//				}
+//				//return TextRenderingHint.SystemDefault;
+//				return TextRenderingHint.SingleBitPerPixelGridFit;
 			}
 
 			set {
-				// TODO implement
+				_textRenderingHint = value;
 				awt.RenderingHints hints = NativeObject.getRenderingHints();
 				switch (value) {
 					case TextRenderingHint.AntiAlias:
 					case TextRenderingHint.AntiAliasGridFit:
 					case TextRenderingHint.ClearTypeGridFit:
-					case TextRenderingHint.SingleBitPerPixel:
+//					case TextRenderingHint.SystemDefault:
+						hints.put(awt.RenderingHints.KEY_TEXT_ANTIALIASING,
+							awt.RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+						break;
+					
 					case TextRenderingHint.SingleBitPerPixelGridFit:
+						hints.put(awt.RenderingHints.KEY_TEXT_ANTIALIASING,
+							awt.RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
+						break;
+
+					case TextRenderingHint.SingleBitPerPixel:
+						hints.put(awt.RenderingHints.KEY_TEXT_ANTIALIASING,
+							awt.RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+						break;
+
 					case TextRenderingHint.SystemDefault:
+						hints.put(awt.RenderingHints.KEY_TEXT_ANTIALIASING,
+							awt.RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
 						break;
 				}
+				
+				NativeObject.setRenderingHints(hints);
 			}
 		}
 

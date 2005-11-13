@@ -1,5 +1,9 @@
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>
 
+        * GraphicsPath.jvm.cs: AddString support.
+
+2005-11-13 Konstantin Triger <kostat@mainsoft.com>
+
         * ExtendedGeneralPath.jvm.cs: restore quadTo as curveTo affects quality
 
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>

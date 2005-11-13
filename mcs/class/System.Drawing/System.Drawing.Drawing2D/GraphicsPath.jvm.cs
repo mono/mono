@@ -28,6 +28,7 @@
 //
 using System;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Collections;
 using java.awt.geom;
 using java.awt;
@@ -775,28 +776,49 @@ namespace System.Drawing.Drawing2D
 		#endregion
 
 		#region AddString
-		[MonoTODO]
 		public void AddString (string s, FontFamily family, int style,  float emSize,  Point origin,   StringFormat format)
 		{
-			throw new NotImplementedException ();
+			AddString(s, new Font(family, emSize, (FontStyle)style, GraphicsUnit.World), origin.X, origin.Y, float.PositiveInfinity, float.PositiveInfinity,
+				format);
 		}  	
                 
-		[MonoTODO]
 		public void AddString (string s,  FontFamily family,  int style,  float emSize,  PointF origin,   StringFormat format)
 		{
-			throw new NotImplementedException ();
+			AddString(s, new Font(family, emSize, (FontStyle)style, GraphicsUnit.World), origin.X, origin.Y, float.PositiveInfinity, float.PositiveInfinity,
+				format);
 		}  	
   		
-		[MonoTODO]
 		public void AddString (string s, FontFamily family, int style, float emSize,  Rectangle layoutRect, StringFormat format)
 		{
-			throw new NotImplementedException ();
+			AddString(s, new Font(family, emSize, (FontStyle)style, GraphicsUnit.World),
+				layoutRect.X, layoutRect.Y, layoutRect.Width, layoutRect.Height,
+				format);
 		}  	
   		
-		[MonoTODO]
 		public void AddString (string s, FontFamily family, int style, float emSize,  RectangleF layoutRect,   StringFormat format)
 		{
-			throw new NotImplementedException ();
+			AddString(s, new Font(family, emSize, (FontStyle)style, GraphicsUnit.World),
+				layoutRect.X, layoutRect.Y, layoutRect.Width, layoutRect.Height,
+				format);
+		}
+
+		void AddString (string s, Font font,
+			float x, float y, float width, float height, 
+			StringFormat format) {
+
+			TextLineIterator iter = new TextLineIterator(s, font,
+				new java.awt.font.FontRenderContext(null, false, false),
+				format, width, height);
+
+			int coordsCount = NativeObject.CoordsCount;
+
+			for (LineLayout layout = iter.NextLine(); layout != null; layout = iter.NextLine()) {
+				NativeObject.append(layout.GetOutline(x, y), false);
+			}
+
+			AffineTransform lineAlignT = iter.CalcLineAlignmentTransform();
+			if (lineAlignT != null)
+				NativeObject.transform(lineAlignT, coordsCount, NativeObject.CoordsCount - coordsCount);
 		}
 		#endregion
                 

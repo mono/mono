@@ -181,22 +181,62 @@ namespace System.Drawing {
 
 		#endregion
 
-		#region public methods
-
-		public void SetMeasurableCharacterRanges (CharacterRange [] range) {
-			_charRanges = (CharacterRange [])range.Clone();
+		#region internal accessors
+		internal bool NoWrap {
+			get {
+				return (FormatFlags & StringFormatFlags.NoWrap) != 0;
+			}
 		}
 
-		internal CharacterRange [] GetCharRanges {
+		internal bool IsVertical {
+			get {
+				return (FormatFlags & StringFormatFlags.DirectionVertical) != 0;
+			}
+		}
+
+		internal bool MeasureTrailingSpaces {
+			get {
+				return (FormatFlags & StringFormatFlags.MeasureTrailingSpaces) != 0;
+			}
+		}
+
+		internal bool LineLimit {
+			get {
+				return (FormatFlags & StringFormatFlags.LineLimit) != 0;
+			}
+		}
+
+		internal bool NoClip {
+			get {
+				return (FormatFlags & StringFormatFlags.NoClip) != 0;
+			}
+		}
+
+		internal bool IsRightToLeft {
+			get {
+				return (FormatFlags & StringFormatFlags.DirectionRightToLeft) != 0;
+			}
+		}
+		
+		internal CharacterRange [] CharRanges {
 			get {
 				return _charRanges;
 			}
 		}
+		#endregion
+
+		#region public methods
+
+		public void SetMeasurableCharacterRanges (CharacterRange [] range) {
+			_charRanges = range != null ? (CharacterRange [])range.Clone() : null;
+		}
 	
 		public object Clone() {
 			StringFormat copy = (StringFormat)MemberwiseClone();
-			copy._charRanges = (CharacterRange [])_charRanges.Clone();
-			copy._tabStops = (float[])_tabStops.Clone();
+			if (_charRanges != null)
+				copy._charRanges = (CharacterRange [])_charRanges.Clone();
+			if (_tabStops != null)
+				copy._tabStops = (float[])_tabStops.Clone();
 			return copy;
 		}
 
@@ -206,7 +246,7 @@ namespace System.Drawing {
 		
 		public void SetTabStops(float firstTabOffset, float[] tabStops) {
 			_firstTabOffset = firstTabOffset;
-			_tabStops = (float[])tabStops.Clone();
+			_tabStops = tabStops != null ? (float[])tabStops.Clone() : null;
 		}
 
 		public void SetDigitSubstitution(int language,  StringDigitSubstitute substitute) {
@@ -216,7 +256,7 @@ namespace System.Drawing {
 
 		public float[] GetTabStops(out float firstTabOffset) {
 			firstTabOffset = _firstTabOffset;
-			return (float[])_tabStops.Clone();
+			return _tabStops != null ? (float[])_tabStops.Clone() : null;
 		}
 
 		#endregion

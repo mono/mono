@@ -1,5 +1,10 @@
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>
 
+        * StringFormat.jvm.cs, Graphics.jvm.cs: DrawString,
+		MeasureString support
+
+2005-11-13 Konstantin Triger <kostat@mainsoft.com>
+
         * FontFamily.jvm.cs: correctly initialize fontcollection
 
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>

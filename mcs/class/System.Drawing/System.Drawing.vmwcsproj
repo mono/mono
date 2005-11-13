@@ -150,7 +150,9 @@
 				<File RelPath="System.Drawing.Text\GenericFontFamilies.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Text\HotkeyPrefix.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Text\InstalledFontCollection.jvm.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing.Text\LineLayout.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Text\PrivateFontCollection.jvm.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Drawing.Text\TextLineIterator.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Drawing.Text\TextRenderingHint.cs" SubType="Code" BuildAction="Compile"/>
 			</Include>
 		</Files>
