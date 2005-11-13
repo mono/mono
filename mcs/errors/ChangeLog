@@ -1,5 +1,9 @@
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* cs1591-19.cs : evidence for that bug #76692 is not a real bug.
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* cs0419.cs : The error message is fixed to show an alternative, not
 	  the identical one.
 
