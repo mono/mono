@@ -1,3 +1,9 @@
+2005-11-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_handle_exception_internal): Remove the 
+	fp >= end_of_stack exit condition, as it is not needed, and it might
+	become true for fp eliminated frames.
+
 2005-11-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_emit_epilog): Use G_STRUCT_OFFSET instead of hard
