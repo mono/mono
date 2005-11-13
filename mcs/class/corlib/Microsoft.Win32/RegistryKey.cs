@@ -48,7 +48,7 @@ namespace Microsoft.Win32
 		// This represents the backend data, used when creating the
 		// RegistryKey object
 		//
-		public object Data;
+		internal object Data;
 		
 		string qname;	// the fully qualified registry key name
 		bool isRoot;	// is the an instance of a root key?
