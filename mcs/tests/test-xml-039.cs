@@ -1,3 +1,4 @@
+// Compiler options: -doc:xml-039.xml -warnaserror
 using System;
 
 /// <summary>
