@@ -1,3 +1,10 @@
+2005-11-14  Andrew Skiba  <andrews@mainsoft.com>
+
+	* net_1_1_java_System.Drawing.dll.sources,
+	net_1_1_java_System.Drawing.dll.exclude.sources: added java profile
+	sources lists
+	* Makefile: add java profile section
+
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>
 
 	* System.Drawing.vmwcsproj: Added System.Drawing.Text/LineLayout.jvm.cs,
