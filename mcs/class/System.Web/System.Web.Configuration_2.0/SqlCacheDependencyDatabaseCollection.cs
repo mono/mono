@@ -98,8 +98,7 @@ namespace System.Web.Configuration {
 
 		public SqlCacheDependencyDatabase this [int index] {
 			get { return (SqlCacheDependencyDatabase) BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		public new SqlCacheDependencyDatabase this [string name] {
