@@ -85,28 +85,28 @@ namespace Microsoft.Win32 {
 		[MonoTODO]
 		public static event System.EventHandler DisplaySettingsChanged 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 #if NET_2_0
 		[MonoTODO]
 		public static event EventHandler DisplaySettingsChanging {
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
+			add {  }
+			remove { }
 		}
 #endif
 		[MonoTODO]
 		public static event System.EventHandler EventsThreadShutdown 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 
 		[MonoTODO]
 		public static event System.EventHandler InstalledFontsChanged 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 
 		[MonoTODO]
@@ -117,49 +117,49 @@ namespace Microsoft.Win32 {
 #endif
 		public static event System.EventHandler LowMemory 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 
 		[MonoTODO]
 		public static event System.EventHandler PaletteChanged 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 
 		[MonoTODO]
 		public static event PowerModeChangedEventHandler PowerModeChanged 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 
 		[MonoTODO]
 		public static event SessionEndedEventHandler SessionEnded 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 
 		[MonoTODO]
 		public static event SessionEndingEventHandler SessionEnding 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 #if NET_2_0
 		[MonoTODO]
 		public static event SessionSwitchEventHandler SessionSwitch {
-			add { throw new NotImplementedException (); }
-			remove { throw new NotImplementedException (); }
+			add    { }
+			remove { }
 		}
 #endif
 		[MonoTODO]
 		public static event System.EventHandler TimeChanged 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 
 		public static event TimerElapsedEventHandler TimerElapsed;
@@ -174,8 +174,8 @@ namespace Microsoft.Win32 {
 		[MonoTODO]
 		public static event UserPreferenceChangingEventHandler UserPreferenceChanging 
 		{
-			add 	{ throw new System.NotImplementedException ();}
-			remove 	{ throw new System.NotImplementedException ();}
+			add 	{ }
+			remove 	{ }
 		}
 	}
 }
