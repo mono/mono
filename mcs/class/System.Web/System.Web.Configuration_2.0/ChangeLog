@@ -1,5 +1,12 @@
 2005-11-13  Chris Toshok  <toshok@ximian.com>
 
+	* AnonymousIdentificationSection.cs: rework this class a bit to
+	fit in with the rest of S.W.C.  Add validators to the
+	ConfigurationProperty ctor calls, a pattern which will need to be
+	replicated across the entire assembly, it appears (uggggh).
+
+2005-11-13  Chris Toshok  <toshok@ximian.com>
+
 	* AuthorizationRuleCollection.cs: fix ConfigurationCollection
 	attribute.
 

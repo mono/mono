@@ -41,6 +41,7 @@ namespace System.Web.Configuration
 	{
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty enabledProp;
+		static ConfigurationProperty cookielessProp;
 		static ConfigurationProperty cookieNameProp;
 		static ConfigurationProperty cookieTimeoutProp;
 		static ConfigurationProperty cookiePathProp;
@@ -53,9 +54,14 @@ namespace System.Web.Configuration
 		static AnonymousIdentificationSection ()
 		{
 			enabledProp = new ConfigurationProperty ("enabled", typeof(bool), false);
-			//			cookieNameProp = new NonEmptyStringConfigurationProperty ("cookieName", ".ASPXANONYMOUS", ConfigurationPropertyFlags.None);
-			//			cookieTimeoutProp = new TimeSpanConfigurationProperty ("cookieTimeout", new TimeSpan (69,10,40,0), TimeSpanSerializedFormat.Minutes, TimeSpanPropertyFlags.AllowInfinite | TimeSpanPropertyFlags.ProhibitZero, ConfigurationPropertyFlags.None);
-			//			cookiePathProp = new NonEmptyStringConfigurationProperty ("cookiePath", "/", ConfigurationPropertyFlags.None);
+			cookielessProp = new ConfigurationProperty ("cookieless", typeof (HttpCookieMode), HttpCookieMode.UseCookies);
+			cookieNameProp = new ConfigurationProperty ("cookieName", typeof (string), ".ASPXANONYMOUS", TypeDescriptor.GetConverter (typeof (string)),
+								    new StringValidator (1), ConfigurationPropertyOptions.None);
+			cookieTimeoutProp = new ConfigurationProperty ("cookieTimeout", typeof (TimeSpan), new TimeSpan (69,10,40,0), new TimeSpanMinutesOrInfiniteConverter(),
+								       new TimeSpanValidator (TimeSpan.Zero, TimeSpan.MaxValue),
+								       ConfigurationPropertyOptions.None);
+			cookiePathProp = new ConfigurationProperty ("cookiePath", typeof (string), "/", TypeDescriptor.GetConverter (typeof (string)),
+								    new StringValidator (1), ConfigurationPropertyOptions.None);
 			cookieRequireSSLProp = new ConfigurationProperty ("cookieRequireSSL", typeof(bool), false);
 			cookieSlidingExpirationProp = new ConfigurationProperty ("cookieSlidingExpiration", typeof(bool), true);
 			cookieProtectionProp = new ConfigurationProperty ("cookieProtection", typeof(CookieProtection), CookieProtection.Validation);
@@ -64,6 +70,7 @@ namespace System.Web.Configuration
 			
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (enabledProp);
+			properties.Add (cookielessProp);
 			properties.Add (cookieNameProp);
 			properties.Add (cookieTimeoutProp);
 			properties.Add (cookiePathProp);
@@ -76,60 +83,60 @@ namespace System.Web.Configuration
 		
 		[ConfigurationProperty ("cookieless", DefaultValue = "UseCookies")]
 		public HttpCookieMode Cookieless {
-			get { return (HttpCookieMode) base ["cookieless"]; }
-			set { base ["cookieless"] = value; }
+			get { return (HttpCookieMode) base [cookielessProp]; }
+			set { base [cookielessProp] = value; }
 		}
 		
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("cookieName", DefaultValue = ".ASPXANONYMOUS")]
 		public string CookieName {
-			get { return (string) base ["cookieName"]; }
-			set { base ["cookieName"] = value; }
+			get { return (string) base [cookieNameProp]; }
+			set { base [cookieNameProp] = value; }
 		}
 		
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("cookiePath", DefaultValue = "/")]
 		public string CookiePath {
-			get { return (string) base ["cookiePath"]; }
-			set { base ["cookiePath"] = value; }
+			get { return (string) base [cookiePathProp]; }
+			set { base [cookiePathProp] = value; }
 		}
 		
 		[ConfigurationProperty ("cookieProtection", DefaultValue = "Validation")]
 		public CookieProtection CookieProtection {
-			get { return (CookieProtection) base ["cookieProtection"]; }
-			set { base ["cookieProtection"] = value; }
+			get { return (CookieProtection) base [cookieProtectionProp]; }
+			set { base [cookieProtectionProp] = value; }
 		}
 		
 		[ConfigurationProperty ("cookieRequireSSL", DefaultValue = "False")]
 		public bool CookieRequireSSL {
-			get { return (bool) base ["cookieRequireSSL"]; }
-			set { base ["cookieRequireSSL"] = value; }
+			get { return (bool) base [cookieRequireSSLProp]; }
+			set { base [cookieRequireSSLProp] = value; }
 		}
 		
 		[ConfigurationProperty ("cookieSlidingExpiration", DefaultValue = "True")]
 		public bool CookieSlidingExpiration {
-			get { return (bool) base ["cookieSlidingExpiration"]; }
-			set { base ["cookieSlidingExpiration"] = value; }
+			get { return (bool) base [cookieSlidingExpirationProp]; }
+			set { base [cookieSlidingExpirationProp] = value; }
 		}
 		
 		[TimeSpanValidator (MinValueString = "00:00:00", MaxValueString = "10675199.02:48:05.4775807")]
 		[TypeConverter (typeof(TimeSpanMinutesOrInfiniteConverter))]
 		[ConfigurationProperty ("cookieTimeout", DefaultValue = "69.10:40:00")]
 		public TimeSpan CookieTimeout {
-			get { return (TimeSpan) base ["cookieTimeout"]; }
-			set { base ["cookieTimeout"] = value; }
+			get { return (TimeSpan) base [cookieTimeoutProp]; }
+			set { base [cookieTimeoutProp] = value; }
 		}
 		
 		[ConfigurationProperty ("domain")]
 		public string Domain {
-			get { return (string) base ["domain"]; }
-			set { base ["domain"] = value; }
+			get { return (string) base [domainProp]; }
+			set { base [domainProp] = value; }
 		}
 		
 		[ConfigurationProperty ("enabled", DefaultValue = "False")]
 		public bool Enabled {
-			get { return (bool) base ["enabled"]; }
-			set { base ["enabled"] = value; }
+			get { return (bool) base [enabledProp]; }
+			set { base [enabledProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
