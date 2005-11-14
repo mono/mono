@@ -319,7 +319,7 @@ namespace Mono.CSharp {
 			if (e != null) {
 				if (!(e is TypeExpr))
 					return null;
-				return ((TypeExpr) e).ResolveType (ds.EmitContext);
+				return e.Type;
 			}
 			int index = identifier.LastIndexOf ('.');
 			if (index < 0)
@@ -562,7 +562,8 @@ namespace Mono.CSharp {
 					Normalize (mc, ref paramTypeName);
 					Type paramType = FindDocumentedType (mc, paramTypeName, ds, cref);
 					if (paramType == null) {
-						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter `{0}' in XML comment cref attribute `{1}'", i + 1, cref);
+						Report.Warning (1580, 1, mc.Location, "Invalid type for parameter `{0}' in XML comment cref attribute `{1}'",
+							(i + 1).ToString (), cref);
 						return;
 					}
 					plist.Add (paramType);

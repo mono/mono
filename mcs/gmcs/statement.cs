@@ -46,8 +46,8 @@ namespace Mono.CSharp {
 			// in unreachable code, for instance.
 			//
 
-			if (warn && (RootContext.WarningLevel >= 2))
-				Report.Warning (162, loc, "Unreachable code detected");
+			if (warn)
+				Report.Warning (162, 2, loc, "Unreachable code detected");
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
 			bool ok = Resolve (ec);
@@ -808,7 +808,7 @@ namespace Mono.CSharp {
 			sl = (SwitchLabel) ec.Switch.Elements [val];
 
 			if (sl == null){
-				Report.Error (159, loc, "No such label `case {0}:' within the scope of the goto statement", c.GetValue () == null ? "null" : val);
+				Report.Error (159, loc, "No such label `case {0}:' within the scope of the goto statement", c.GetValue () == null ? "null" : val.ToString ());
 				return false;
 			}
 
@@ -1837,9 +1837,9 @@ namespace Mono.CSharp {
 					name = (string) de.Key;
 						
 					if (vector.IsAssigned (vi.VariableInfo)){
-						Report.Warning (219, vi.Location, "The variable `{0}' is assigned but its value is never used", name);
+						Report.Warning (219, 3, vi.Location, "The variable `{0}' is assigned but its value is never used", name);
 					} else {
-						Report.Warning (168, vi.Location, "The variable `{0}' is declared but never used", name);
+						Report.Warning (168, 3, vi.Location, "The variable `{0}' is declared but never used", name);
 					}
 				}
 			}
@@ -1906,12 +1906,14 @@ namespace Mono.CSharp {
 					CheckPossibleMistakenEmptyStatement (s);
 
 				if (unreachable) {
+					if (s is EmptyStatement)
+						continue;
+
 					if (s is Block)
 						((Block) s).unreachable = true;
 
-					if (!unreachable_shown && (RootContext.WarningLevel >= 2)) {
-						Report.Warning (
-							162, s.loc, "Unreachable code detected");
+					if (!unreachable_shown) {
+						Report.Warning (162, 2, s.loc, "Unreachable code detected");
 						unreachable_shown = true;
 					}
 				}
@@ -1949,7 +1951,7 @@ namespace Mono.CSharp {
 			if ((labels != null) && (RootContext.WarningLevel >= 2)) {
 				foreach (LabeledStatement label in labels.Values)
 					if (!label.HasBeenReferenced)
-						Report.Warning (164, label.loc,
+						Report.Warning (164, 2, label.loc,
 								"This label has not been referenced");
 			}
 
@@ -1973,8 +1975,8 @@ namespace Mono.CSharp {
 			unreachable_shown = true;
 			unreachable = true;
 
-			if (warn && (RootContext.WarningLevel >= 2))
-				Report.Warning (162, loc, "Unreachable code detected");
+			if (warn)
+				Report.Warning (162, 2, loc, "Unreachable code detected");
 
 			ec.StartFlowBranching (FlowBranching.BranchingType.Block, loc);
 			bool ok = Resolve (ec);

@@ -215,7 +215,7 @@ namespace Mono.CSharp {
 		void Error_ParameterMismatch (Type t)
 		{
 			Report.Error (1661, loc, "Anonymous method could not be converted to delegate `" +
-				      "{0}' since there is a parameter mismatch", t);
+				      "{0}' since there is a parameter mismatch", TypeManager.CSharpName (t));
 	}
 
 		//
@@ -285,7 +285,7 @@ namespace Mono.CSharp {
 			if (amp.Count != invoke_pd.Count){
 				if (!probe){
 					Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
-						TypeManager.CSharpName (delegate_type), amp.Count);
+						TypeManager.CSharpName (delegate_type), amp.Count.ToString ());
 					Error_ParameterMismatch (delegate_type);
 				}
 				return null;
@@ -297,21 +297,21 @@ namespace Mono.CSharp {
 				if (!probe) {
 					if ((amp_mod & (Parameter.Modifier.OUT | Parameter.Modifier.REF)) != 0){
 						Report.Error (1677, loc, "Parameter `{0}' should not be declared with the `{1}' keyword", 
-							i+1, amp.ModifierDesc (i));
+							(i+1).ToString (), amp.ModifierDesc (i));
 						Error_ParameterMismatch (delegate_type);
 						return null;
 					}
 
 					if (amp_mod != invoke_pd.ParameterModifier (i)){
 						Report.Error (1676, loc, "Parameter `{0}' must be declared with the `{1}' keyword",
-							i+1, Parameter.GetModifierSignature (invoke_pd.ParameterModifier (i)));
+							(i+1).ToString (), Parameter.GetModifierSignature (invoke_pd.ParameterModifier (i)));
 						Error_ParameterMismatch (delegate_type);
 						return null;
 					}
 				
 					if (amp.ParameterType (i) != invoke_pd.ParameterType (i)){
 						Report.Error (1678, loc, "Parameter `{0}' is declared as type `{1}' but should be `{2}'",
-							i+1,
+							(i+1).ToString (),
 							TypeManager.CSharpName (amp.ParameterType (i)),
 							TypeManager.CSharpName (invoke_pd.ParameterType (i)));
 						Error_ParameterMismatch (delegate_type);

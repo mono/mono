@@ -1,4 +1,4 @@
-// gcs0702.cs: Bound cannot be special class `System.Object'
+// gcs0702.cs: Bound cannot be special class `object'
 // Line: 8
 
 using System;

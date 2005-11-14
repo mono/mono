@@ -223,7 +223,7 @@ namespace Mono.CSharp {
 					if (errors != Report.Errors)
 						return false;
 
-					Report.Error (246, loc, "Cannot find type '{0}'", obj);
+					Report.Error (246, loc, "Cannot find type '{0}'", ((Expression) obj).GetSignatureForError ());
 					return false;
 				}
 
@@ -270,7 +270,7 @@ namespace Mono.CSharp {
 
 					Report.Error (405, loc,
 						      "Duplicate constraint `{0}' for type " +
-						      "parameter `{1}'.", iface_constraint.Type,
+						      "parameter `{1}'.", iface_constraint.GetSignatureForError (),
 						      name);
 					return false;
 				}
@@ -285,7 +285,7 @@ namespace Mono.CSharp {
 
 					Report.Error (405, loc,
 						      "Duplicate constraint `{0}' for type " +
-						      "parameter `{1}'.", expr.Type, name);
+						      "parameter `{1}'.", expr.GetSignatureForError (), name);
 					return false;
 				}
 
@@ -304,7 +304,7 @@ namespace Mono.CSharp {
 					Report.Error (701, loc,
 						      "`{0}' is not a valid bound.  Bounds " +
 						      "must be interfaces or non sealed " +
-						      "classes", class_constraint_type);
+						      "classes", TypeManager.CSharpName (class_constraint_type));
 					return false;
 				}
 
@@ -315,7 +315,7 @@ namespace Mono.CSharp {
 				    (class_constraint_type == TypeManager.object_type)) {
 					Report.Error (702, loc,
 						      "Bound cannot be special class `{0}'",
-						      class_constraint_type);
+						      TypeManager.CSharpName (class_constraint_type));
 					return false;
 				}
 			}
@@ -431,7 +431,7 @@ namespace Mono.CSharp {
 			if (HasValueTypeConstraint && constraints.HasClassConstraint) {
 				Report.Error (455, loc, "Type parameter `{0}' inherits " +
 					      "conflicting constraints `{1}' and `{2}'",
-					      name, constraints.ClassConstraint,
+					      name, TypeManager.CSharpName (constraints.ClassConstraint),
 					      "System.ValueType");
 				return false;
 			}
@@ -447,7 +447,7 @@ namespace Mono.CSharp {
 					Report.Error (455, loc,
 						      "Type parameter `{0}' inherits " +
 						      "conflicting constraints `{1}' and `{2}'",
-						      name, t1, t2);
+						      name, TypeManager.CSharpName (t1), TypeManager.CSharpName (t2));
 					return false;
 				}
 			}
@@ -759,7 +759,7 @@ namespace Mono.CSharp {
 						"of interface method `{3}'. Consider using " +
 						"an explicit interface implementation instead",
 						Name, TypeManager.CSharpSignature (builder),
-						mparam, TypeManager.CSharpSignature (mb));
+						TypeManager.CSharpName (mparam), TypeManager.CSharpSignature (mb));
 					return false;
 				}
 			} else if (DeclSpace is Iterator) {
@@ -1362,14 +1362,18 @@ namespace Mono.CSharp {
 					      "a reference type in order to use it " +
 					      "as type parameter `{1}' in the " +
 					      "generic type or method `{2}'.",
-						  atype, ptype, GetSignatureForError ());
+					      TypeManager.CSharpName (atype),
+					      TypeManager.CSharpName (ptype),
+					      GetSignatureForError ());
 				return false;
 			} else if (gc.HasValueTypeConstraint && !is_struct) {
 				Report.Error (453, loc, "The type `{0}' must be " +
 					      "a value type in order to use it " +
 					      "as type parameter `{1}' in the " +
 					      "generic type or method `{2}'.",
-						  atype, ptype, GetSignatureForError ());
+					      TypeManager.CSharpName (atype),
+					      TypeManager.CSharpName (ptype),
+					      GetSignatureForError ());
 				return false;
 			}
 
@@ -1417,7 +1421,10 @@ namespace Mono.CSharp {
 			Report.Error (310, loc, "The type `{0}' must have a public " +
 				      "parameterless constructor in order to use it " +
 				      "as parameter `{1}' in the generic type or " +
-					  "method `{2}'", atype, ptype, GetSignatureForError ());
+				      "method `{2}'",
+				      TypeManager.CSharpName (atype),
+				      TypeManager.CSharpName (ptype),
+				      GetSignatureForError ());
 			return false;
 		}
 
@@ -1538,8 +1545,8 @@ namespace Mono.CSharp {
 				Report.Error (305, loc,
 					      "Using the generic type `{0}' " +
 					      "requires {1} type arguments",
-						  TypeManager.CSharpName (gt),
-					      gen_params.Length);
+					      TypeManager.CSharpName (gt),
+					      gen_params.Length.ToString ());
 				return false;
 			}
 

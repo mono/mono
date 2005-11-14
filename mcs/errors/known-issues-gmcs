@@ -13,6 +13,7 @@
 
 cs0229-2.cs
 cs0229.cs NO ERROR
+cs0419.cs
 cs0525.cs
 cs0526.cs
 cs0531.cs
@@ -39,9 +40,6 @@ cs1528.cs
 cs1540-2.cs # new in GMCS
 cs1540-3.cs NO ERROR # new in GMCS
 cs1540-5.cs NO ERROR # new in GMCS
-cs1548-2.cs
-cs1548-3.cs
-cs1548.cs
 cs1586.cs
 cs1641.cs
 cs1667-3.cs
@@ -55,4 +53,3 @@ gcs0208-4.cs
 gcs0305-2.cs
 gcs0305.cs
 gcs0308.cs
-gcs0309-5.cs

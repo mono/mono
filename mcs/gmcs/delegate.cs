@@ -582,7 +582,7 @@ namespace Mono.CSharp {
 
 			if (!is_applicable && !params_method && arg_count != pd_count) {
 				Report.Error (1593, loc, "Delegate `{0}' does not take `{1}' arguments",
-					TypeManager.CSharpName (delegate_type), arg_count);
+					TypeManager.CSharpName (delegate_type), arg_count.ToString ());
 				return false;
 			}
 

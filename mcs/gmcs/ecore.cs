@@ -134,14 +134,6 @@ namespace Mono.CSharp {
 				Report.Error (error, loc, s);
 		}
 
-		/// <summary>
-		///   Utility wrapper routine for Warning, just to beautify the code
-		/// </summary>
-		public void Warning (int code, string format, params object[] args)
-		{
-			Report.Warning (code, loc, format, args);
-		}
-
 		// Not nice but we have broken hierarchy
 		public virtual void CheckMarshallByRefAccess (Type container) {}
 
@@ -790,8 +782,8 @@ namespace Mono.CSharp {
 					Report.Error (305, loc,
 						      "Using the generic type `{0}' " +
 						      "requires {1} type arguments",
-							  TypeManager.CSharpName (t),
-						      TypeManager.GetNumberOfTypeArguments (t));
+						      TypeManager.CSharpName (t),
+						      TypeManager.GetNumberOfTypeArguments (t).ToString ());
 					return;
 				}
 			}
@@ -954,7 +946,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.Error (119, loc, 
-				"Expression denotes a `{0}', where a `{1}' was expected", ExprClassName, sb);
+				"Expression denotes a `{0}', where a `{1}' was expected", ExprClassName, sb.ToString ());
 		}
 		
 		public static void UnsafeError (Location loc)
@@ -2559,7 +2551,7 @@ namespace Mono.CSharp {
 				Report.Error (305, loc,
 					      "Using the generic type `{0}' " +
 					      "requires {1} type arguments",
-					      TypeManager.CSharpName (type), num_args);
+					      TypeManager.CSharpName (type), num_args.ToString ());
 				return null;
 			}
 
@@ -2939,7 +2931,7 @@ namespace Mono.CSharp {
 				Report.Error (
 					305, loc, "Using the generic method `{0}' " +
 					"requires {1} type arguments", Name,
-					first_count);
+					first_count.ToString ());
 			else
 				Report.Error (
 					308, loc, "The non-generic method `{0}' " +

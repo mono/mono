@@ -685,7 +685,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--main": case "-m":
-				Report.Warning (-29, "Compatibility: Use -main:CLASS instead of --main CLASS or -m CLASS");
+				Report.Warning (-29, 1, "Compatibility: Use -main:CLASS instead of --main CLASS or -m CLASS");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
@@ -694,7 +694,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--unsafe":
-				Report.Warning (-29, "Compatibility: Use -unsafe instead of --unsafe");
+				Report.Warning (-29, 1, "Compatibility: Use -unsafe instead of --unsafe");
 				RootContext.Unsafe = true;
 				return true;
 				
@@ -705,7 +705,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--define":
-				Report.Warning (-29, "Compatibility: Use -d:SYMBOL instead of --define SYMBOL");
+				Report.Warning (-29, 1, "Compatibility: Use -d:SYMBOL instead of --define SYMBOL");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
@@ -736,7 +736,7 @@ namespace Mono.CSharp
 				
 			case "-o": 
 			case "--output":
-				Report.Warning (-29, "Compatibility: Use -out:FILE instead of --output FILE or -o FILE");
+				Report.Warning (-29, 1, "Compatibility: Use -out:FILE instead of --output FILE or -o FILE");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
@@ -745,7 +745,7 @@ namespace Mono.CSharp
 				return true;
 
 			case "--checked":
-				Report.Warning (-29, "Compatibility: Use -checked instead of --checked");
+				Report.Warning (-29, 1, "Compatibility: Use -checked instead of --checked");
 				RootContext.Checked = true;
 				return true;
 				
@@ -755,7 +755,7 @@ namespace Mono.CSharp
 				
 			case "--linkresource":
 			case "--linkres":
-				Report.Warning (-29, "Compatibility: Use -linkres:VALUE instead of --linkres VALUE");
+				Report.Warning (-29, 1, "Compatibility: Use -linkres:VALUE instead of --linkres VALUE");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Report.Error (5, "Missing argument to --linkres"); 
@@ -769,7 +769,7 @@ namespace Mono.CSharp
 				
 			case "--resource":
 			case "--res":
-				Report.Warning (-29, "Compatibility: Use -res:VALUE instead of --res VALUE");
+				Report.Warning (-29, 1, "Compatibility: Use -res:VALUE instead of --res VALUE");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Report.Error (5, "Missing argument to --resource"); 
@@ -782,7 +782,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--target":
-				Report.Warning (-29, "Compatibility: Use -target:KIND instead of --target KIND");
+				Report.Warning (-29, 1, "Compatibility: Use -target:KIND instead of --target KIND");
 				if ((i + 1) >= args.Length){
 					Environment.Exit (1);
 					return true;
@@ -814,7 +814,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "-r":
-				Report.Warning (-29, "Compatibility: Use -r:LIBRARY instead of -r library");
+				Report.Warning (-29, 1, "Compatibility: Use -r:LIBRARY instead of -r library");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
@@ -833,7 +833,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "-L":
-				Report.Warning (-29, "Compatibility: Use -lib:ARG instead of --L arg");
+				Report.Warning (-29, 1, "Compatibility: Use -lib:ARG instead of --L arg");
 				if ((i + 1) >= args.Length){
 					Usage ();	
 					Environment.Exit (1);
@@ -842,7 +842,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--nostdlib":
-				Report.Warning (-29, "Compatibility: Use -nostdlib instead of --nostdlib");
+				Report.Warning (-29, 1, "Compatibility: Use -nostdlib instead of --nostdlib");
 				RootContext.StdLib = false;
 				return true;
 				
@@ -851,12 +851,12 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--werror":
-				Report.Warning (-29, "Compatibility: Use -warnaserror: option instead of --werror");
+				Report.Warning (-29, 1, "Compatibility: Use -warnaserror: option instead of --werror");
 				Report.WarningsAreErrors = true;
 				return true;
 				
 			case "--nowarn":
-				Report.Warning (-29, "Compatibility: Use -nowarn instead of --nowarn");
+				Report.Warning (-29, 1, "Compatibility: Use -nowarn instead of --nowarn");
 				if ((i + 1) >= args.Length){
 					Usage ();
 					Environment.Exit (1);
@@ -873,7 +873,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--wlevel":
-				Report.Warning (-29, "Compatibility: Use -warn:LEVEL instead of --wlevel LEVEL");
+				Report.Warning (-29, 1, "Compatibility: Use -warn:LEVEL instead of --wlevel LEVEL");
 				if ((i + 1) >= args.Length){
 					Report.Error (
 						1900,
@@ -903,7 +903,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--recurse":
-				Report.Warning (-29, "Compatibility: Use -recurse:PATTERN option instead --recurse PATTERN");
+				Report.Warning (-29, 1, "Compatibility: Use -recurse:PATTERN option instead --recurse PATTERN");
 				if ((i + 1) >= args.Length){
 					Report.Error (5, "--recurse requires an argument");
 					Environment.Exit (1);
@@ -921,12 +921,12 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--debug": case "-g":
-				Report.Warning (-29, "Compatibility: Use -debug option instead of -g or --debug");
+				Report.Warning (-29, 1, "Compatibility: Use -debug option instead of -g or --debug");
 				want_debugging_support = true;
 				return true;
 				
 			case "--noconfig":
-				Report.Warning (-29, "Compatibility: Use -noconfig option instead of --noconfig");
+				Report.Warning (-29, 1, "Compatibility: Use -noconfig option instead of --noconfig");
 				load_default_config = false;
 				return true;
 			}
@@ -1052,7 +1052,7 @@ namespace Mono.CSharp
 				}
 
 				if (p.StandardOutput == null){
-					Report.Warning (-27, "Specified package did not return any information");
+					Report.Warning (-27, 1, "Specified package did not return any information");
 					return true;
 				}
 				string pkgout = p.StandardOutput.ReadToEnd ();
@@ -1778,14 +1778,14 @@ namespace Mono.CSharp
 					CodeGen.Assembly.Builder.DefineUnmanagedResource (win32ResourceFile);
 				}
 				catch (ArgumentException) {
-					Report.Warning (0, new Location (-1), "Cannot embed win32 resources on this runtime: try the Mono runtime instead.");
+					Report.RuntimeMissingSupport (Location.Null, "resource embeding");
 				}
 			}
 
 			if (win32IconFile != null) {
 				MethodInfo define_icon = typeof (AssemblyBuilder).GetMethod ("DefineIconResource", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 				if (define_icon == null) {
-					Report.Warning (0, new Location (-1), "Cannot embed icon resource on this runtime: try the Mono runtime instead.");
+					Report.RuntimeMissingSupport (Location.Null, "resource embeding");
 				}
 				define_icon.Invoke (CodeGen.Assembly.Builder, new object [] { win32IconFile });
 			}

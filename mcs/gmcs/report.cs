@@ -2,6 +2,7 @@
 // report.cs: report errors and warnings.
 //
 // Author: Miguel de Icaza (miguel@ximian.com)
+//         Marek Safar (marek.safar@seznam.cz)         
 //
 // (C) 2001 Ximian, Inc. (http://www.ximian.com)
 //
@@ -158,9 +159,6 @@ namespace Mono.CSharp {
 			Location loc = Location.Null;
 			readonly int Level;
 
-			public WarningMessage ():
-				this (-1) {}
-
 			public WarningMessage (int level)
 			{
 				Level = level;
@@ -295,12 +293,7 @@ namespace Mono.CSharp {
 		{	
 			return Array.BinarySearch (AllWarnings, code) >= 0;
 		}
-		
-		static public void LocationOfPreviousError (Location loc)
-		{
-			Stderr.WriteLine (String.Format ("{0} (Location of symbol related to previous error)", loc));
-		}    
-        
+		        
 		static public void RuntimeMissingSupport (Location loc, string feature) 
 		{
 			Report.Error (-88, loc, "Your .NET Runtime does not support `{0}'. Please use the latest Mono runtime instead.", feature);
@@ -386,42 +379,28 @@ namespace Mono.CSharp {
 			return regions;
 		}
 
-		static public void Warning (int code, int level, Location loc, string format, params object[] args)
+		static public void Warning (int code, int level, Location loc, string format, params string[] args)
 		{
 			WarningMessage w = new WarningMessage (level);
 			w.Print (code, loc, String.Format (format, args));
 		}
 
-		static public void Warning (int code, Location loc, string format, params object[] args)
+		static public void Warning (int code, int level, string format, params string[] args)
 		{
-			WarningMessage w = new WarningMessage ();
-			w.Print (code, loc, String.Format (format, args));
+			Warning (code, level, Location.Null, String.Format (format, args));
 		}
 
-		static public void Warning (int code, string format, params object[] args)
-		{
-			Warning (code, Location.Null, String.Format (format, args));
-		}
-
-		/// <summary>
-		/// Did you test your WarningLevel, that you use this method
-		/// </summary>
-		static public void Warning (int code, string text)
-		{
-			Warning (code, Location.Null, text);
-		}
-
-		static public void Error (int code, string format, params object[] args)
+		static public void Error (int code, string format, params string[] args)
 		{
 			Error (code, Location.Null, String.Format (format, args));
 		}
 
-		static public void Error (int code, Location loc, string format, params object[] args)
+		static public void Error (int code, Location loc, string format, params string[] args)
 		{
 			Error (code, loc, String.Format (format, args));
 		}
 
-		static public void Error (int code, Location loc, string error)
+		static void Error (int code, Location loc, string error)
 		{
 			new ErrorMessage ().Print (code, loc, error);
 		}
@@ -710,7 +689,7 @@ namespace Mono.CSharp {
 			if (Report.IsValidWarning (code))
 				return true;
 
-			Report.Warning (1691, 1, loc, "`{0}' is not a valid warning number", code);
+			Report.Warning (1691, 1, loc, "`{0}' is not a valid warning number", code.ToString ());
 			return false;
 		}
 	}

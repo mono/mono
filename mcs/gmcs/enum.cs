@@ -354,7 +354,7 @@ namespace Mono.CSharp {
 				catch (ArgumentException) {
 					Report.SymbolRelatedToPreviousError (em);
 					MemberCore col = (MemberCore)dict [em.Name];
-					Report.Warning (3005, col.Location, "Identifier `{0}' differing only in case is not CLS-compliant", col.GetSignatureForError ());
+					Report.Warning (3005, 1, col.Location, "Identifier `{0}' differing only in case is not CLS-compliant", col.GetSignatureForError ());
 				}
 			}
   		}

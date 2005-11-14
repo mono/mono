@@ -90,7 +90,7 @@ namespace Mono.CSharp {
 			//
 			if (SymbolWriter == null) {
 				Report.Warning (
-					-18, "Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll). This is normally an installation problem. Please make sure to compile and install the mcs/class/Mono.CompilerServices.SymbolWriter directory.");
+					-18, 1, "Could not find the symbol writer assembly (Mono.CompilerServices.SymbolWriter.dll). This is normally an installation problem. Please make sure to compile and install the mcs/class/Mono.CompilerServices.SymbolWriter directory.");
 				return;
 			}
 		}
@@ -112,7 +112,7 @@ namespace Mono.CSharp {
 					AssemblyName ref_name = a.GetName ();
 					byte [] b = ref_name.GetPublicKeyToken ();
 					if (b == null || b.Length == 0) {
-						Report.Warning (1577, "Assembly generation failed " +
+						Report.Error (1577, "Assembly generation failed " +
 								"-- Referenced assembly '" +
 								ref_name.Name +
 								"' does not have a strong name.");
@@ -1097,7 +1097,7 @@ namespace Mono.CSharp {
 				}
 			}
 			catch (Exception) {
-				Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' is incorrectly encoded");
+				Error_AssemblySigning ("The specified file `" + RootContext.StrongNameKeyFile + "' is incorrectly encoded");
 				Environment.Exit (1);
 			}
 		}
@@ -1121,7 +1121,7 @@ namespace Mono.CSharp {
                                                case "System.Reflection.AssemblyKeyFileAttribute":
 							if (RootContext.StrongNameKeyFile != null) {
 								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
-								Report.Warning (1616, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
+								Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
                                     "keyfile", "System.Reflection.AssemblyKeyFileAttribute");
 							}
 							else {
@@ -1135,7 +1135,7 @@ namespace Mono.CSharp {
                                                case "System.Reflection.AssemblyKeyNameAttribute":
 							if (RootContext.StrongNameKeyContainer != null) {
 								Report.SymbolRelatedToPreviousError (a.Location, a.Name);
-								Report.Warning (1616, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
+								Report.Warning (1616, 1, "Option `{0}' overrides attribute `{1}' given in a source file or added module",
 									"keycontainer", "System.Reflection.AssemblyKeyNameAttribute");
 							}
 							else {
@@ -1203,7 +1203,7 @@ namespace Mono.CSharp {
 									"ECMA key can only be used to delay-sign assemblies");
 							}
 							else {
-								Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' does not have a private key");
+								Error_AssemblySigning ("The specified file `" + RootContext.StrongNameKeyFile + "' does not have a private key");
 							}
 							return null;
 						}
@@ -1211,7 +1211,7 @@ namespace Mono.CSharp {
 				}
 			}
 			else {
-				Error_AssemblySigning ("The speficied file `" + RootContext.StrongNameKeyFile + "' does not exist");
+				Error_AssemblySigning ("The specified file `" + RootContext.StrongNameKeyFile + "' does not exist");
 				return null;
 			}
 			return an;
@@ -1316,7 +1316,7 @@ namespace Mono.CSharp {
 						new PropertyInfo [] { pi }, new object[] { true } ));
 				} else {
 					// FIXME: Do something appropriate for 'mscorlib'
-					Report.Warning (-31, "FIXME: Did not emit 'RuntimeComatibilityAttribute' for mscorlib");
+					Report.Warning (-31, 1, "FIXME: Did not emit 'RuntimeComatibilityAttribute' for mscorlib");
 				}
 			}
 		}
@@ -1373,7 +1373,7 @@ namespace Mono.CSharp {
 		{
 			if (a.Type == TypeManager.cls_compliant_attribute_type) {
 				if (CodeGen.Assembly.ClsCompliantAttribute == null) {
-					Report.Warning (3012, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
+					Report.Warning (3012, 1, a.Location, "You must specify the CLSCompliant attribute on the assembly, not the module, to enable CLS compliance checking");
 				}
 				else if (CodeGen.Assembly.IsClsCompliant != a.GetBoolean ()) {
 					Report.SymbolRelatedToPreviousError (CodeGen.Assembly.ClsCompliantAttribute.Location, CodeGen.Assembly.ClsCompliantAttribute.GetSignatureForError ());

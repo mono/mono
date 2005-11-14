@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 				Report.Error (403, loc, "Cannot convert null to the type " +
 					      "parameter `{0}' becaues it could be a value " +
 					      "type. Consider using `default ({0})' instead.",
-					      target_type);
+					      target_type.ToString ());
 				return null;
 			}
 
@@ -1249,9 +1249,7 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 			
-			if ((target_type == TypeManager.enum_type ||
-			     target_type.IsSubclassOf (TypeManager.enum_type)) &&
-			    expr is IntLiteral){
+			if (TypeManager.IsEnumType (target_type) && expr is IntLiteral){
 				IntLiteral i = (IntLiteral) expr;
 
 				if (i.Value == 0)

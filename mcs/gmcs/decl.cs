@@ -583,9 +583,9 @@ namespace Mono.CSharp {
 			if (!IsClsComplianceRequired (ds)) {
 				if (HasClsCompliantAttribute && RootContext.WarningLevel >= 2) {
 					if (!IsExposedFromAssembly (ds))
-						Report.Warning (3019, Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
+						Report.Warning (3019, 2, Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
 					if (!CodeGen.Assembly.IsClsCompliant)
-						Report.Warning (3021, Location, "`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant", GetSignatureForError ());
+						Report.Warning (3021, 2, Location, "`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant", GetSignatureForError ());
 				}
 				return false;
 			}
@@ -1234,12 +1234,9 @@ namespace Mono.CSharp {
 				if (param.Name != name)
 					continue;
 
-				if (RootContext.WarningLevel >= 3)
-					Report.Warning (
-						693, Location,
-						"Type parameter `{0}' has same name " +
-						"as type parameter from outer type `{1}'",
-						name, Parent.GetInstantiationName ());
+				Report.Warning (693, 3, Location,
+					"Type parameter `{0}' has same name as type parameter from outer type `{1}'",
+					name, Parent.GetInstantiationName ());
 
 				return false;
 			}
@@ -1401,7 +1398,7 @@ namespace Mono.CSharp {
 
 				Report.SymbolRelatedToPreviousError ((DeclSpace)val);
 			}
-			Report.Warning (3005, Location, "Identifier `{0}' differing only in case is not CLS-compliant", GetSignatureForError ());
+			Report.Warning (3005, 1, Location, "Identifier `{0}' differing only in case is not CLS-compliant", GetSignatureForError ());
 			return true;
 		}
 	}

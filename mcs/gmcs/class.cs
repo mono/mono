@@ -124,8 +124,8 @@ namespace Mono.CSharp {
  			{
  				base.DefineContainerMembers ();
  
- 				if ((RootContext.WarningLevel >= 3) && HasEquals && !HasGetHashCode) {
- 					Report.Warning (659, container.Location, "`{0}' overrides Object.Equals(object) but does not override Object.GetHashCode()", container.GetSignatureForError ());
+ 				if (HasEquals && !HasGetHashCode) {
+ 					Report.Warning (659, 3, container.Location, "`{0}' overrides Object.Equals(object) but does not override Object.GetHashCode()", container.GetSignatureForError ());
  				}
  			}
  
@@ -364,10 +364,10 @@ namespace Mono.CSharp {
 
  				if (has_equality_or_inequality && (RootContext.WarningLevel > 2)) {
  					if (container.Methods == null || !container.Methods.HasEquals)
- 						Report.Warning (660, container.Location, "`{0}' defines operator == or operator != but does not override Object.Equals(object o)", container.GetSignatureForError ());
+ 						Report.Warning (660, 2, container.Location, "`{0}' defines operator == or operator != but does not override Object.Equals(object o)", container.GetSignatureForError ());
  
  					if (container.Methods == null || !container.Methods.HasGetHashCode)
- 						Report.Warning (661, container.Location, "`{0}' defines operator == or operator != but does not override Object.GetHashCode()", container.GetSignatureForError ());
+ 						Report.Warning (661, 2, container.Location, "`{0}' defines operator == or operator != but does not override Object.GetHashCode()", container.GetSignatureForError ());
  				}
 			}
 
@@ -570,7 +570,7 @@ namespace Mono.CSharp {
 				if (c.IsDefault ()){
 					if (default_constructor != null) {
 						Report.SymbolRelatedToPreviousError (default_constructor);
-						Report.Error (111, c.Location, Error111, c.Location, c.GetSignatureForError ());
+						Report.Error (111, c.Location, Error111, c.GetSignatureForError ());
 						return;
 					}
 					default_constructor = c;
@@ -627,7 +627,7 @@ namespace Mono.CSharp {
 			    first_nonstatic_field.Parent != field.Parent &&
 			    RootContext.WarningLevel >= 3) {
 				Report.SymbolRelatedToPreviousError (first_nonstatic_field.Parent);
-				Report.Warning (282, field.Location,
+				Report.Warning (282, 3, field.Location,
 					"struct instance field `{0}' found in different declaration from instance field `{1}'",
 					field.GetSignatureForError (), first_nonstatic_field.GetSignatureForError ());
 			}
@@ -975,7 +975,6 @@ namespace Mono.CSharp {
 			ArrayList ifaces = new ArrayList ();
 
 			base_class = null;
-			Location base_loc = Location.Null;
 
 			foreach (ClassPart part in parts) {
 				TypeExpr new_base_class;
@@ -987,20 +986,17 @@ namespace Mono.CSharp {
 
 				if ((base_class != null) && (new_base_class != null) &&
 				    !base_class.Equals (new_base_class)) {
+					Report.SymbolRelatedToPreviousError (base_class.Location, "");
 					Report.Error (263, part.Location,
 						      "Partial declarations of `{0}' must " +
 						      "not specify different base classes",
 						      Name);
-
-					if (!base_loc.IsNull)
-						Report.LocationOfPreviousError (base_loc);
 
 					return null;
 				}
 
 				if ((base_class == null) && (new_base_class != null)) {
 					base_class = new_base_class;
-					base_loc = part.Location;
 				}
 
 				if (new_ifaces == null)
@@ -1577,11 +1573,11 @@ namespace Mono.CSharp {
 				MemberInfo conflict_symbol = Parent.MemberCache.FindMemberWithSameName (Basename, false, TypeBuilder);
 				if (conflict_symbol == null) {
 					if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0))
-						Report.Warning (109, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
+						Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
 				} else {
 					if ((ModFlags & Modifiers.NEW) == 0) {
 						Report.SymbolRelatedToPreviousError (conflict_symbol);
-						Report.Warning (108, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
+						Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
 							GetSignatureForError (), TypeManager.GetFullNameSignature (conflict_symbol));
 					}
 				}
@@ -2228,7 +2224,7 @@ namespace Mono.CSharp {
 					continue;
 
 				if (!mc.IsUsed) {
-					Report.Warning (169, mc.Location, "The private {0} `{1}' is never used", member_type, mc.GetSignatureForError ());
+					Report.Warning (169, 3, mc.Location, "The private {0} `{1}' is never used", member_type, mc.GetSignatureForError ());
 				}
 			}
 		}
@@ -2272,7 +2268,7 @@ namespace Mono.CSharp {
 						if ((f.caching_flags & Flags.IsAssigned) != 0)
 							continue;
 						
-						Report.Warning (649, f.Location, "Field `{0}' is never assigned to, and will always have its default value `{1}'",
+						Report.Warning (649, 4, f.Location, "Field `{0}' is never assigned to, and will always have its default value `{1}'",
 							f.GetSignatureForError (), f.Type.Type.IsValueType ? Activator.CreateInstance (f.Type.Type).ToString() : "null");
 					}
 				}
@@ -2607,7 +2603,7 @@ namespace Mono.CSharp {
 				} else {
 					Report.SymbolRelatedToPreviousError ((MemberCore) found);
 				}
-				Report.Warning (3005, mc.Location, "Identifier `{0}' differing only in case is not CLS-compliant", mc.GetSignatureForError ());
+				Report.Warning (3005, 1, mc.Location, "Identifier `{0}' differing only in case is not CLS-compliant", mc.GetSignatureForError ());
 			}
 		}
 
@@ -3458,7 +3454,7 @@ namespace Mono.CSharp {
 			// Is null for System.Object while compiling corlib and base interfaces
 			if (Parent.BaseCache == null) {
 				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
-					Report.Warning (109, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
+					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
 				}
 				return true;
 			}
@@ -3535,7 +3531,7 @@ namespace Mono.CSharp {
 
 			if (conflict_symbol == null) {
 				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
-					Report.Warning (109, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
+					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
 				}
 				return true;
 			}
@@ -3545,7 +3541,7 @@ namespace Mono.CSharp {
 					return true;
 
 				Report.SymbolRelatedToPreviousError (conflict_symbol);
-				Report.Warning (108, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
+				Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
 					GetSignatureForError (), TypeManager.GetFullNameSignature (conflict_symbol));
 			}
 
@@ -3595,10 +3591,10 @@ namespace Mono.CSharp {
 				ModFlags |= Modifiers.NEW;
 				Report.SymbolRelatedToPreviousError (base_method);
 				if (!IsInterface && (base_method.IsVirtual || base_method.IsAbstract)) {
-					if (RootContext.WarningLevel >= 2)
-						Report.Warning (114, Location, "`{0}' hides inherited member `{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword", GetSignatureForError (), TypeManager.CSharpSignature (base_method));
+					Report.Warning (114, 2, Location, "`{0}' hides inherited member `{1}'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword",
+						GetSignatureForError (), TypeManager.CSharpSignature (base_method));
 				} else {
-					Report.Warning (108, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
+					Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
 						GetSignatureForError (), TypeManager.CSharpSignature (base_method));
 				}
 			}
@@ -3919,7 +3915,7 @@ namespace Mono.CSharp {
 				Report.Error (408, Location,
 					      "`{0}' cannot define overload members that " +
 					      "may unify for some type parameter substitutions",
-					      Parent.MemberName);
+					      Parent.MemberName.ToString ());
 				return true;
 			}
 
@@ -4312,7 +4308,7 @@ namespace Mono.CSharp {
                                         }
                                 } else {
 					if (RootContext.WarningLevel >= 4)
-						Report.Warning (28, Location, "`{0}' has the wrong signature to be an entry point", TypeManager.CSharpSignature(MethodBuilder));
+						Report.Warning (28, 4, Location, "`{0}' has the wrong signature to be an entry point", TypeManager.CSharpSignature(MethodBuilder));
 				}
 			}
 
@@ -4736,7 +4732,7 @@ namespace Mono.CSharp {
 			}
 			
 			if ((RootContext.WarningLevel >= 4) && ((Parent.ModFlags & Modifiers.SEALED) != 0 && (ModFlags & Modifiers.PROTECTED) != 0)) {
-				Report.Warning (628, Location, "`{0}': new protected member declared in sealed class", GetSignatureForError ());
+				Report.Warning (628, 4, Location, "`{0}': new protected member declared in sealed class", GetSignatureForError ());
 			}
 			
 			return true;
@@ -5466,7 +5462,7 @@ namespace Mono.CSharp {
 			    ((Parent.ModFlags & Modifiers.SEALED) != 0) &&
 			    ((ModFlags & Modifiers.PROTECTED) != 0) &&
 			    ((ModFlags & Modifiers.OVERRIDE) == 0) && (Name != "Finalize")) {
-  				Report.Warning (628, Location, "`{0}': new protected member declared in sealed class", GetSignatureForError ());
+  				Report.Warning (628, 4, Location, "`{0}': new protected member declared in sealed class", GetSignatureForError ());
    			}
   			return true;
 		}
@@ -5785,14 +5781,14 @@ namespace Mono.CSharp {
  			conflict_symbol = Parent.FindBaseMemberWithSameName (Name, false);
  			if (conflict_symbol == null) {
  				if ((RootContext.WarningLevel >= 4) && ((ModFlags & Modifiers.NEW) != 0)) {
- 					Report.Warning (109, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
+ 					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
  				}
  				return true;
  			}
 
  			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE)) == 0) {
 				Report.SymbolRelatedToPreviousError (conflict_symbol);
-				Report.Warning (108, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
+				Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
 					GetSignatureForError (), TypeManager.GetFullNameSignature (conflict_symbol));
 			}
 
@@ -5992,6 +5988,11 @@ namespace Mono.CSharp {
 
 		public override bool Define()
 		{
+#if !NET_2_0
+			if ((ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) != 0)
+				Report.Warning (-23, 1, Location, "Only private or internal fixed sized buffers are supported by .NET 1.x");
+#endif
+
 			if (Parent.Kind != Kind.Struct) {
 				Report.Error (1642, Location, "`{0}': Fixed size buffer fields may only be members of structs",
 					GetSignatureForError ());
@@ -6177,7 +6178,7 @@ namespace Mono.CSharp {
 			TypeManager.RegisterFieldBase (FieldBuilder, this);
 			}
 			catch (ArgumentException) {
-				Report.Warning (-24, Location, "The Microsoft runtime is unable to use [void|void*] as a field type, try using the Mono runtime.");
+				Report.Warning (-24, 1, Location, "The Microsoft runtime is unable to use [void|void*] as a field type, try using the Mono runtime.");
 				return false;
 			}
 
