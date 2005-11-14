@@ -1,3 +1,6 @@
+2005-14-11 Boris Kirzner <borisk@mainsoft.com>
+	* AbstractDBCommand.cs: TARGET_JVM fix. Provider name can be in any case..
+
 2005-13-09 Boris Kirzner <borisk@mainsoft.com>
 	* AbstractDBCommand.cs: TARGET_JVM fix. Check for derived parameters
 	array length.

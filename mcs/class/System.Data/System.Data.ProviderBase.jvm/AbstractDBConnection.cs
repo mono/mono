@@ -496,7 +496,7 @@ namespace System.Data.Common
 					return PROVIDER_TYPE.NONE;
 				}
 				
-				string providerStr = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_PROVIDER"));
+				string providerStr = ConnectionStringHelper.FindValue(UserParameters,StringManager.GetStringArray("CON_PROVIDER")).ToUpper();
 				if (providerStr.StartsWith("SQLOLEDB")) {
 					return PROVIDER_TYPE.SQLOLEDB;
 				}
