@@ -121,11 +121,8 @@ namespace System.Security.Permissions {
 				}
 				a = esd.Attribute ("UserQuota");
 				if (a != null) {
-					try {
-						Int64.Parse (a, true, out m_userQuota);
-					}
-					catch (Exception) {
-					}
+					Exception exc;
+					Int64.Parse (a, true, out m_userQuota, out exc);
 				}
 			}
 		}

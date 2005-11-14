@@ -1,3 +1,9 @@
+2005-11-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStoragePermission.cs: Updated FromXml with
+	the latest signature modifications to Parse methods 
+	inside System ns.
+
 2005-11-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* EnvironmentPermissionAccess.cs: Added missing [Serializable] (2.0).
