@@ -715,7 +715,7 @@ namespace System
 		{
 			if (cachedToString != null) 
 				return cachedToString;
-			string q = query.StartsWith ("?") ? '?' + Unescape (query.Substring (1)) : Unescape (query);
+			string q = query.StartsWith ("?") ? '?' + Unescape (query.Substring (1), true) : Unescape (query, true);
 			cachedToString = Unescape (GetLeftPart (UriPartial.Path), true) + q + fragment;
 			return cachedToString;
 		}
@@ -814,7 +814,7 @@ namespace System
 			return Unescape (str, false);
 		}
 		
-		private string Unescape (string str, bool excludeSharp) 
+		private string Unescape (string str, bool excludeSpecial) 
 		{
 			if (str == null)
 				return String.Empty;
@@ -825,8 +825,12 @@ namespace System
 				if (c == '%') {
 					char surrogate;
 					char x = HexUnescapeMultiByte (str, ref i, out surrogate);
-					if (excludeSharp && x == '#')
+					if (excludeSpecial && x == '#')
 						s.Append ("%23");
+					else if (excludeSpecial && x == '%')
+						s.Append ("%25");
+					else if (excludeSpecial && x == '?')
+						s.Append ("%3F");
 					else {
 						s.Append (x);
 						if (surrogate != char.MinValue)

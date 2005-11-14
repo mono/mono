@@ -388,6 +388,38 @@ namespace MonoTests.System
 			AssertEquals("#6c", "file", uri.Scheme);
 			AssertEquals("#6d", "one_file.txt", uri.Host);
 			AssertEquals("#6e", "", uri.AbsolutePath);
+
+			// escape
+			uri = new Uri ("file:///tmp/a%20a");
+			if (isWin32)
+				// actually MS.NET treats /// as \\ thus it fails here.
+				Assert ("#7a:" + uri.LocalPath, uri.LocalPath.EndsWith ("\\tmp\\a a"));
+			else
+				AssertEquals ("#7b", "/tmp/a a", uri.LocalPath);
+
+			uri = new Uri ("file:///tmp/foo%25bar");
+			if (isWin32) {
+				// actually MS.NET treats /// as \\ thus it fails here.
+				Assert ("#8a:" + uri.LocalPath, uri.LocalPath.EndsWith ("\\tmp\\foo%bar"));
+				// ditto, file://tmp/foo%25bar (bug in 1.x)
+				Assert ("#8c:" + uri.ToString (), uri.ToString ().EndsWith ("//tmp/foo%25bar"));
+			}
+			else {
+				AssertEquals ("#8b", "/tmp/foo%bar", uri.LocalPath);
+				AssertEquals ("#8d", "file:///tmp/foo%25bar", uri.ToString ());
+			}
+			// bug #76643
+			uri = new Uri ("file:///foo%25bar");
+			if (isWin32) {
+				// actually MS.NET treats /// as \\ thus it fails here.
+				Assert ("#9a:" + uri.LocalPath, uri.LocalPath.EndsWith ("\\foo%bar"));
+				// ditto, file://tmp/foo%25bar (bug in 1.x)
+				Assert ("#9c:" + uri.ToString (), uri.ToString ().EndsWith ("//foo%25bar"));
+			}
+			else {
+				AssertEquals ("#9b", "/foo%bar", uri.LocalPath);
+				AssertEquals ("#9d", "file:///foo%25bar", uri.ToString ());
+			}
 		}
 		
 		[Test]
@@ -1072,19 +1104,24 @@ namespace MonoTests.System
 		// You are surrounded by conditional-compilation code, all alike.
 		// You are likely to be eaten by a Grue...
 		[Test]
-#if ONLY_1_1
-		[Category ("NotWorking")]
+#if !NET_2_0
+		[Category ("NotDotNet")]
 #endif
 		public void UnixLocalPath_WTF ()
 		{
 			// Empty path == localhost, in theory
 			string path = "file:///tmp/foo/bar";
 			Uri fileUri = new Uri( path );
-#if NET_2_0
+//#if NET_2_0
 			AssertEquals (path, "/tmp/foo/bar", fileUri.AbsolutePath);
-#else
-			AssertEquals (path, "/foo/bar", fileUri.AbsolutePath);
-#endif
+//#else
+//			AssertEquals (path, "/foo/bar", fileUri.AbsolutePath);
+//#endif
+
+			// bug #76643
+			string path2 = "file:///foo%25bar";
+			fileUri = new Uri (path2);
+			AssertEquals (path2, "file:///foo%25bar", fileUri.ToString ());
 		}
 
 		public static void Print (Uri uri)

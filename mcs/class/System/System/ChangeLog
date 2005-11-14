@@ -1,3 +1,8 @@
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : Unescape(string,bool) should also handle % and ?.
+	  In ToString(), unescape query part as well. Fixed bug #76643.
+
 2005-10-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriBuilder.cs : ToString() should not add duplicate '/' before path.
