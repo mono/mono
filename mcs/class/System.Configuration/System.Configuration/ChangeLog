@@ -1,3 +1,12 @@
+2005-11-14  Chris Toshok  <toshok@ximian.com>
+
+	* CommaDelimitedStringCollection.cs: reformat things a bit, and
+	flag ToString() as override.
+
+	* DefaultSection.cs: new stubbed out implementation.
+
+	* CommaDelimitedStringCollectionConverter.cs: new implementation.
+
 2005-11-10  Chris Toshok  <toshok@ximian.com>
 
 	* AppSettingsSection.cs (DeserializeElement): stop explicitly
