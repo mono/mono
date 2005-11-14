@@ -799,6 +799,10 @@ public abstract class Encoding
 	[CLSCompliantAttribute(false)]
 	public unsafe virtual int GetByteCount (char *chars, int count)
 	{
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (count < 0)
+			throw new ArgumentOutOfRangeException ("count");
 		char [] c = new char [count];
 
 		for (int p = 0; p < count; p++)
@@ -810,6 +814,11 @@ public abstract class Encoding
 	[CLSCompliantAttribute(false)]
 	public unsafe virtual int GetCharCount (byte *bytes, int count)
 	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (count < 0)
+			throw new ArgumentOutOfRangeException ("count");
+		
 		byte [] ba = new byte [count];
 		for (int i = 0; i < count; i++)
 			ba [i] = bytes [i];
@@ -819,14 +828,55 @@ public abstract class Encoding
 	[CLSCompliantAttribute(false)]
 	public unsafe virtual int GetChars (byte *bytes, int byteCount, char *chars, int charCount)
 	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (charCount < 0)
+			throw new ArgumentOutOfRangeException ("charCount");
+		if (byteCount < 0)
+			throw new ArgumentOutOfRangeException ("byteCount");
+		
 		byte [] ba = new byte [byteCount];
 		for (int i = 0; i < byteCount; i++)
 			ba [i] = bytes [i];
 		char [] ret = GetChars (ba, 0, byteCount);
-		int top = Math.Min (ret.Length, charCount);
+		int top = ret.Length;
+
+		if (top > charCount)
+			throw new ArgumentException ("charCount is less than the number of characters produced", "charCount");
+		
 		for (int i = 0; i < top; i++)
 			chars [i] = ret [i];
 		return top;
+	}
+
+	[CLSCompliantAttribute(false)]
+	public unsafe virtual int GetBytes (char *chars, int charCount, byte *bytes, int byteCount)
+	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (charCount < 0)
+			throw new ArgumentOutOfRangeException ("charCount");
+		if (byteCount < 0)
+			throw new ArgumentOutOfRangeException ("byteCount");
+		
+		char [] c = new char [charCount];
+		
+		for (int i = 0; i < charCount; i++)
+			c [i] = chars [i];
+
+		byte [] b = GetBytes (c, 0, charCount);
+		int top = b.Length;
+		if (top > byteCount)
+			throw new ArgumentException ("byteCount is less that the number of bytes produced", "byteCount");
+
+		for (int i = 0; i < top; i++)
+			bytes [i] = b [i];
+		
+		return b.Length;
 	}
 #endif
 

@@ -104,8 +104,7 @@ public class ASCIIEncoding : Encoding
 	}
 
 	// Convenience wrappers for "GetBytes".
-	public override int GetBytes (String s, int charIndex, int charCount,
-								 byte[] bytes, int byteIndex)
+	public override int GetBytes (String s, int charIndex, int charCount, byte[] bytes, int byteIndex)
 	{
 		if (s == null) {
 			throw new ArgumentNullException ("s");
@@ -154,27 +153,22 @@ public class ASCIIEncoding : Encoding
 	}
 
 	// Get the characters that result from decoding a byte buffer.
-	public override int GetChars (byte[] bytes, int byteIndex, int byteCount,
-								 char[] chars, int charIndex)
+	public override int GetChars (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex)
 	{
-		if (bytes == null) {
+		if (bytes == null)
 			throw new ArgumentNullException ("bytes");
-		}
-		if (chars == null) {
+		if (chars == null) 
 			throw new ArgumentNullException ("chars");
-		}
-		if (byteIndex < 0 || byteIndex > bytes.Length) {
+		if (byteIndex < 0 || byteIndex > bytes.Length) 
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
-		}
-		if (byteCount < 0 || byteCount > (bytes.Length - byteIndex)) {
+		if (byteCount < 0 || byteCount > (bytes.Length - byteIndex)) 
 			throw new ArgumentOutOfRangeException ("byteCount", _("ArgRange_Array"));
-		}
-		if (charIndex < 0 || charIndex > chars.Length) {
+		if (charIndex < 0 || charIndex > chars.Length) 
 			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
-		}
-		if ((chars.Length - charIndex) < byteCount) {
+
+		if ((chars.Length - charIndex) < byteCount) 
 			throw new ArgumentException (_("Arg_InsufficientSpace"));
-		}
+
 		int count = byteCount;
 		while (count-- > 0) {
 			char c = (char)(bytes [byteIndex++]);
@@ -218,13 +212,73 @@ public class ASCIIEncoding : Encoding
 			throw new ArgumentOutOfRangeException ("count", _("ArgRange_Array"));
 		}
 		if (count == 0)
-		    return String.Empty;
+			return String.Empty;
+		
 		unsafe {
 			fixed (byte *ss = &bytes [0]) {
 				return new String ((sbyte*)ss, index, count);
 			}
 		}
 	}
+
+#if NET_2_0
+	[CLSCompliantAttribute (false)]
+	public unsafe override int GetBytes (char *chars, int charCount, byte *bytes, int byteCount)
+	{
+		if (chars == null)
+			throw new ArgumentNullException ("chars");
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (charCount < 0)
+			throw new ArgumentOutOfRangeException ("charCount");
+		if (byteCount < 0)
+			throw new ArgumentOutOfRangeException ("byteCount");
+
+		if (byteCount < charCount)
+			throw new ArgumentException ("bytecount is less than the number of bytes required", "byteCount");
+
+		for (int i = 0; i < charCount; i++){
+			char c = chars [i];
+			bytes [i] = (byte) ((c < (char) 0x80) ? c : '?');
+		}
+		return charCount;
+	}
+
+	[CLSCompliantAttribute(false)]
+	public unsafe override int GetChars (byte *bytes, int byteCount, char *chars, int charCount)
+	{
+		if (bytes == null)
+			throw new ArgumentNullException ("bytes");
+		if (chars == null) 
+			throw new ArgumentNullException ("chars");
+		if (charCount < 0)
+			throw new ArgumentOutOfRangeException ("charCount");
+		if (byteCount < 0)
+			throw new ArgumentOutOfRangeException ("byteCount");
+		if (charCount < byteCount)
+			throw new ArgumentException ("charcount is less than the number of bytes required", "charCount");
+
+		for (int i = 0; i < byteCount; i++){
+			byte b = bytes [i];
+			chars [i] = b > 127 ? '?' : (char) b;
+		}
+		return byteCount;
+		
+	}
+
+	[CLSCompliantAttribute(false)]
+	public unsafe override int GetCharCount (byte *bytes, int count)
+	{
+		return count;
+	}
+
+	[CLSCompliantAttribute(false)]
+	public unsafe override int GetByteCount (char *chars, int count)
+	{
+		return count;
+	}
+#else
+	// This routine is gone in 2.x
 	public override String GetString (byte[] bytes)
 	{
 		if (bytes == null) {
@@ -239,7 +293,8 @@ public class ASCIIEncoding : Encoding
 			}
 		}
 	}
-
+#endif
+	
 }; // class ASCIIEncoding
 
 }; // namespace System.Text
