@@ -97,6 +97,7 @@ System.Web.Configuration_2.0/HttpModuleAction.cs
 System.Web.Configuration_2.0/HttpModuleActionCollection.cs
 System.Web.Configuration_2.0/HttpModulesSection.cs
 System.Web.Configuration_2.0/HttpRuntimeSection.cs
+System.Web.Configuration_2.0/LowerCaseStringConverter.cs
 System.Web.Configuration_2.0/IRemoteWebConfigurationHostServer.cs
 System.Web.Configuration_2.0/MembershipSection.cs
 System.Web.Configuration_2.0/NamespaceCollection.cs
