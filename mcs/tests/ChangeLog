@@ -1,6 +1,6 @@
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* test-xml-043.xml test-xml-043.cs : new test for bug #76630.
+	* test-xml-043.xml test-xml-043.cs : new test for bug #76690.
 	* known-issues-gmcs : added above.
 
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
