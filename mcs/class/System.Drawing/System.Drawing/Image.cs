@@ -656,7 +656,8 @@ public abstract class Image : MarshalByRefObject, IDisposable , ICloneable, ISer
 				return items;			
 					
 			/* Get PropertyItem list*/
-			properties = Marshal.AllocHGlobal (propsSize);
+			properties = Marshal.AllocHGlobal (propsSize * propNums);
+			
 			status = GDIPlus.GdipGetAllPropertyItems (nativeObject, propsSize, 
 								propNums, properties);
 			GDIPlus.CheckStatus (status);
