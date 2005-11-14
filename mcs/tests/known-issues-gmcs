@@ -9,7 +9,3 @@ test-50.cs IGNORE	# Windows-only test
 test-67.cs IGNORE	# Windows-only test
 test-anon-27.cs
 test-xml-027.cs
-test-xml-039.cs
-test-xml-040.cs
-test-xml-041.cs
-test-xml-043.cs

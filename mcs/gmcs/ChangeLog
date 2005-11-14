@@ -1,3 +1,42 @@
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : use Invocation.IsOverride() to do real override check.
+	* expression.cs : made Invocation.IsOverride() internal.
+
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : use TypeManager.FindMembers() instead of (possible)
+	  TypeBuilder.FindMembers() and filter overriden base members out.
+	  Fixed bug #76990.
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : ref/out parameters are represented as '@' (instead of
+	  '&' in type FullName). Fixed bug #76630 (additionally crefs).
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : when there was no '.' in cref to methods in doc comment,
+	  then parameters were missing in the output. Fixed bug #76691.
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* driver.cs : don't output docs when there is an error.
+	  Fixed bug #76693.
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs :
+	  Now it should detect indexers. Fixed primary concern in bug #76685.
+	  Fixed CS0419 message to not show the identical member signature in
+	  the message.
+
+2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : (FindDocumentedMember) use TypeManager.MemberLookup()
+	  instead of Type.FindMembers() since it does not handle events.
+	  Fixed bug #71604.
+
 2005-11-12  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* codegen.cs: Fixed typo (speficied -> specified).

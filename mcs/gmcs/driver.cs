@@ -1671,7 +1671,8 @@ namespace Mono.CSharp
 
 			RootContext.DefineTypes ();
 			
-			if (RootContext.Documentation != null &&
+			if (Report.Errors == 0 &&
+				RootContext.Documentation != null &&
 				!RootContext.Documentation.OutputDocComment (
 					output_file))
 				return false;
