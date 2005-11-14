@@ -1,3 +1,9 @@
+2005-11-13  Chris Toshok  <toshok@ximian.com>
+
+	* AssemblyInfoTest.cs: programmatic property access tests.
+
+	* AnonymousIdentificationSectionTest.cs: same.
+
 2005-09-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpCapabilitiesBaseCas.cs: New. CAS unit tests for 
