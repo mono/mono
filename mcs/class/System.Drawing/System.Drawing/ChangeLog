@@ -1,3 +1,8 @@
+2005-11-14 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* Bitmap.jvm.cs: fixed InternalSave() error handling
+	* Image.jvm.cs: fixed Save() error handling
+
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>
 
         * FontFamily.jvm.cs: Refactoring.

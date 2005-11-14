@@ -150,14 +150,6 @@ namespace System.Drawing
 		protected override void InternalSave (stream.ImageOutputStream output, Guid clsid) {
 
 			ImageCodec ic = ImageCodec.CreateWriter( clsid );
-
-			// .net saves in png if cannot find requested encoder. act id 316563
-			if (ic == null)
-				ic = ImageCodec.CreateWriter( ImageFormat.Png );
-
-			if (ic == null)
-				throw new NotSupportedException("The requested format encoder is not supported");
-
 			using (ic) {
 
 				PlainImage plainImage = CurrentImage;

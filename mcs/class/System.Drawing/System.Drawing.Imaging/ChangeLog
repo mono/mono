@@ -1,3 +1,7 @@
+2005-11-14 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* ImageCodec.jvm.cs: Fixed error handling in codecs emumeration flow
+
 2005-11-13  Kornél Pál  <kornelpal@hotmail.com>
 
 	* ImageFormat.cs: Fixed ToString to use this.Equals to reflect argument

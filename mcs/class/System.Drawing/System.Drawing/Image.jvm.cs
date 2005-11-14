@@ -320,9 +320,6 @@ namespace System.Drawing {
 
 		public void Save (Stream stream, ImageFormat format) {
 			ImageCodecInfo encoder = ImageCodec.FindEncoder ( ImageCodec.ImageFormatToClsid (format) );
-			if (encoder == null)
-				throw new NotSupportedException("The requested format encoder is not supported");
-
 			Save (stream, encoder, null);
 		}
 

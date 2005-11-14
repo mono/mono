@@ -93,7 +93,7 @@ namespace Mainsoft.Drawing.Imaging {
 		public static ImageCodec CreateReader(Guid clsid) {
 			ImageCodec codec = null;
 			try {
-				ImageCodecInfo codecInfo = (ImageCodecInfo) Decoders[clsid];
+				ImageCodecInfo codecInfo = FindDecoder(clsid);
 				java.util.Iterator iter = imageio.ImageIO.getImageReadersByMIMEType( codecInfo.MimeType );
 				codec = CreateReader(iter);
 			}
@@ -124,7 +124,7 @@ namespace Mainsoft.Drawing.Imaging {
 		public static ImageCodec CreateWriter(Guid clsid) {
 			ImageCodec codec = null;
 			try {
-				ImageCodecInfo codecInfo = (ImageCodecInfo) Encoders[clsid];
+				ImageCodecInfo codecInfo = FindEncoder(clsid);
 				java.util.Iterator iter = imageio.ImageIO.getImageWritersByMIMEType( codecInfo.MimeType );
 				codec = CreateWriter(iter);
 			}
@@ -177,11 +177,22 @@ namespace Mainsoft.Drawing.Imaging {
 		}
 
 		internal static ImageCodecInfo FindEncoder (Guid clsid) {
-			return (ImageCodecInfo) Encoders[clsid];
+			ImageCodecInfo codec = (ImageCodecInfo) Encoders[clsid];
+			if (codec == null) {
+				// .net saves in png if cannot find requested encoder. atc id 316563
+				codec = (ImageCodecInfo) Encoders[ ImageCodec.PngClsid ];
+			}
+			return codec;
 		}
 
 		internal static ImageCodecInfo FindDecoder (Guid clsid) {
-			return (ImageCodecInfo) Decoders[clsid];
+			ImageCodecInfo codec = (ImageCodecInfo) Decoders[clsid];
+			if (codec == null) {
+				ImageFormat format = ClsidToImageFormat(clsid);
+				string name = (format != null) ? format.ToString() : clsid.ToString();
+				throw new NotSupportedException(String.Format("The '{0}' format decoder is not installed.", name));
+			}
+			return codec;
 		}
 
 		#endregion
@@ -198,7 +209,13 @@ namespace Mainsoft.Drawing.Imaging {
 				ici.Clsid = clsid;
 				ici.FormatID = formatID;
 				ici.MimeType = mimeType;
-				java.util.Iterator iter = GetIterator (mimeType);
+				java.util.Iterator iter = null;
+				try {
+					iter = GetIterator (mimeType);
+				}
+				catch(Exception) {
+					return null;
+				}
 				while (iter.hasNext ()) {
 					spi.ImageReaderWriterSpi rw = GetNext (iter);
 					try {
@@ -242,7 +259,7 @@ namespace Mainsoft.Drawing.Imaging {
 					Guid clsid = new Guid (nvc.GetKey (i));
 					ImageFormat format = ClsidToImageFormat (clsid);
 					ImageCodecInfo codec = ProcessOneCodec (clsid, format.Guid, nvc[i]);
-					if (codec.FilenameExtension != null)
+					if ((codec != null) && (codec.FilenameExtension != null))
 						codecs [clsid] = codec;
 				}
 				return codecs;
