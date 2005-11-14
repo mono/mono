@@ -466,7 +466,12 @@ namespace System.Globalization
 			bool first)
 		{
 			return UseManagedCollation &&
+#if NET_2_0
+				((CompareOptions.Ordinal & opt) == 0 ||
+				(CompareOptions.OrdinalIgnoreCase & opt) == 0) ?
+#else
 				(CompareOptions.Ordinal & opt) == 0 ?
+#endif
 				internal_index_managed (s, sindex, count, c, opt, first) :
 				internal_index (s, sindex, count, c, opt, first);
 		}
@@ -529,7 +534,12 @@ namespace System.Globalization
 			bool first)
 		{
 			return UseManagedCollation &&
+#if NET_2_0
+				((CompareOptions.Ordinal & opt) == 0 ||
+				(CompareOptions.OrdinalIgnoreCase & opt) == 0) ?
+#else
 				(CompareOptions.Ordinal & opt) == 0 ?
+#endif
 				internal_index_managed (s1, sindex, count, s2, opt, first) :
 				internal_index (s1, sindex, count, s2, opt, first);
 		}

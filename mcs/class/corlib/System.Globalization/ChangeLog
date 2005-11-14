@@ -1,3 +1,7 @@
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfo.cs : added support for OrdinalIgnoreCase.
+
 2005-10-31  Miguel de Icaza  <miguel@novell.com>
 
 	* HijriCalendar.cs, HebrewCalendar.cs, JulianCalendar.cs,

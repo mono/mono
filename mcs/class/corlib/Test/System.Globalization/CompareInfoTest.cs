@@ -1028,6 +1028,35 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#6", 0, "\uFF8A\uFF9E\uFF70\uFF99",
 			"\u30D0\u30FC\u30EB", CompareOptions.IgnoreWidth);
 	}
+
+#if NET_2_0
+	[Test]
+	public void OrdinalIgnoreCaseCompare ()
+	{
+		if (!doTest)
+			return;
+
+		// matches
+		AssertCompare ("#1", 0, "AE", "\u00C6", CompareOptions.None);
+		// should not match since it is Ordinal
+		AssertCompare ("#2", -133, "AE", "\u00C6", CompareOptions.OrdinalIgnoreCase);
+
+		AssertCompare ("#3", 1, "AE", "\u00E6", CompareOptions.None);
+		// matches
+		AssertCompare ("#4", 0, "AE", "\u00E6", CompareOptions.IgnoreCase);
+		// should not match since it is Ordinal
+		AssertCompare ("#5", -133, "AE", "\u00E6", CompareOptions.OrdinalIgnoreCase);
+
+		AssertCompare ("#6", 0, "AE", "ae", CompareOptions.OrdinalIgnoreCase);
+		AssertCompare ("#7", 0, "aE", "ae", CompareOptions.OrdinalIgnoreCase);
+		AssertCompare ("#8", 0, "aE", "ae", CompareOptions.OrdinalIgnoreCase);
+		AssertCompare ("#9", 0, "ae", "ae", CompareOptions.OrdinalIgnoreCase);
+		AssertCompare ("#10", 0, "AE", "AE", CompareOptions.OrdinalIgnoreCase);
+		AssertCompare ("#11", 0, "aE", "AE", CompareOptions.OrdinalIgnoreCase);
+		AssertCompare ("#12", 0, "aE", "AE", CompareOptions.OrdinalIgnoreCase);
+		AssertCompare ("#13", 0, "ae", "AE", CompareOptions.OrdinalIgnoreCase);
+	}
+#endif
 }
 
 }
