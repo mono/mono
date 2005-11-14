@@ -1,3 +1,8 @@
+2005-11-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_object): Throw an exception when
+	marshalling 'object' instead of crashing. Fixes #76696.
+
 2005-11-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* class-internals.h: Add prototype for mono_type_get_full_name ().
