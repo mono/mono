@@ -1,5 +1,9 @@
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CompareInfoTest.cs : added NullCharacter() for bug #76702.
+
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CompareInfoTest.cs : added test for Compare() w/ OrdinalIgnoreCase.
 
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>

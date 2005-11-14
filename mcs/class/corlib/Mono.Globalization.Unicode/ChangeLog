@@ -1,5 +1,10 @@
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MSCompatUnicodeTable.cs : (IsIgnorable) \0 is not ignorable.
+	  Fixed bug 76702.
+
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SimpleCollator.cs :
 	  Created another struct to reduce method arguments. Created another
 	  flags that keeps "once-matched" state (counterpart of
