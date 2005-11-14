@@ -90,7 +90,7 @@ namespace System
 		}
 #endif
 
-		internal static bool Parse (string s, bool tryParse, out sbyte result)
+		internal static bool Parse (string s, bool tryParse, out sbyte result, out Exception exc)
 		{
 			int ival = 0;
 			int len;
@@ -99,12 +99,13 @@ namespace System
 			bool digits_seen = false;
 
 			result = 0;
+			exc = null;
 
-			if (s == null)
-				if (tryParse)
-					return false;
-				else
-					throw new ArgumentNullException ("s");
+			if (s == null) {
+				if (!tryParse)
+					exc = new ArgumentNullException ("s");
+				return false;
+			}
 
 			len = s.Length;
 
@@ -115,11 +116,11 @@ namespace System
 					break;
 			}
 
-			if (i == len)
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ();
+			if (i == len) {
+				if (!tryParse)
+					exc = Int32.GetFormatException ();
+				return false;
+			}
 
 			c = s [i];
 			if (c == '+')
@@ -138,32 +139,32 @@ namespace System
 				} else {
 					if (Char.IsWhiteSpace (c)) {
 						for (i++; i < len; i++) {
-							if (!Char.IsWhiteSpace (s [i]))
-								if (tryParse)
-									return false;
-								else
-									throw new FormatException ();
+							if (!Char.IsWhiteSpace (s [i])) {
+								if (!tryParse)
+									exc = Int32.GetFormatException ();
+								return false;
+							}
 						}
 						break;
-					} else
-						if (tryParse)
-							return false;
-						else
-							throw new FormatException ();
+					} else {
+						if (!tryParse)
+							exc = Int32.GetFormatException ();
+						return false;
+					}
 				}
 			}
-			if (!digits_seen)
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ();
+			if (!digits_seen) {
+				if (!tryParse)
+					exc = Int32.GetFormatException ();
+				return false;
+			}
 
 			ival = neg ? ival : -ival;
-			if (ival < SByte.MinValue || ival > SByte.MaxValue)
-				if (tryParse)
-					return false;
-				else
-					throw new OverflowException ();
+			if (ival < SByte.MinValue || ival > SByte.MaxValue) {
+				if (!tryParse)
+					exc = new OverflowException ();
+				return false;
+			}
 
 			result = (sbyte)ival;
 			return true;
@@ -192,43 +193,43 @@ namespace System
 		}
 
 		[CLSCompliant(false)]
-		public static sbyte Parse (string s) {
+		public static sbyte Parse (string s) 
+		{
+			Exception exc;
 			sbyte res;
 
-			Parse (s, false, out res);
+			if (!Parse (s, false, out res, out exc))
+				throw exc;
 
 			return res;
 		}
 
 #if NET_2_0
 		[CLSCompliant(false)]
-		public static bool TryParse (string s, out sbyte result) {
-			try {
-				return Parse (s, true, out result);
-			}
-			catch (Exception) {
+		public static bool TryParse (string s, out sbyte result) 
+		{
+			Exception exc;
+			if (!Parse (s, true, out result, out exc)) {
 				result = 0;
 				return false;
 			}
+
+			return true;
 		}
 
 		[CLSCompliant(false)]
-		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out sbyte result) {
-			try {
-				int tmpResult;
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out sbyte result) 
+		{
+			int tmpResult;
+			result = 0;
 
-				result = 0;
-				if (!Int32.TryParse (s, style, provider, out tmpResult))
-					return false;
-				if (tmpResult > SByte.MaxValue || tmpResult < SByte.MinValue)
-					return false;
-				result = (sbyte)tmpResult;
-				return true;
-			}
-			catch (Exception) {
-				result = 0;
+			if (!Int32.TryParse (s, style, provider, out tmpResult))
 				return false;
-			}
+			if (tmpResult > SByte.MaxValue || tmpResult < SByte.MinValue)
+				return false;
+				
+			result = (sbyte)tmpResult;
+			return true;
 		}
 #endif
 

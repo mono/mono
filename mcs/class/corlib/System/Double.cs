@@ -199,19 +199,50 @@ namespace System {
 		private const int State_Exponent = 5;
 		private const int State_ConsumeWhiteSpace = 6;
 		
-		[MonoTODO("check if digits are group in correct numbers between the group separators")]
 		public static double Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
-			if (s == null) throw new ArgumentNullException();
-			if (style > NumberStyles.Any)
-			{
-				throw new ArgumentException();
+			Exception exc;
+			double result;
+			
+			if (!Parse (s, style, provider, false, out result, out exc))
+				throw exc;
+
+			return result;
+		}
+		
+		[MonoTODO("check if digits are group in correct numbers between the group separators")]
+		internal static bool Parse (string s, NumberStyles style, IFormatProvider provider, bool tryParse, out double result, out Exception exc)
+		{
+			result = 0;
+			exc = null;
+			
+			if (s == null) {
+				if (!tryParse)
+					exc = new ArgumentNullException ("s");
+				return false;
 			}
+			
+			if (style > NumberStyles.Any) {
+				if (!tryParse)
+					exc = new ArgumentException();
+				return false;
+			}
+			
 			NumberFormatInfo format = NumberFormatInfo.GetInstance(provider);
 			if (format == null) throw new Exception("How did this happen?");
-			if (s == format.NaNSymbol) return Double.NaN;
-			if (s == format.PositiveInfinitySymbol) return Double.PositiveInfinity;
-			if (s == format.NegativeInfinitySymbol) return Double.NegativeInfinity;
+			
+			if (s == format.NaNSymbol) {
+				result = Double.NaN;
+				return true;
+			}
+			if (s == format.PositiveInfinitySymbol) {
+				result = Double.PositiveInfinity;
+				return true;
+			}
+			if (s == format.NegativeInfinitySymbol) {
+				result = Double.NegativeInfinity;
+				return true;
+			}
 
 			//
 			// validate and prepare string for C
@@ -226,8 +257,11 @@ namespace System {
 				while (sidx < len && Char.IsWhiteSpace (c = s [sidx]))
 				       sidx++;
 
-				if (sidx == len)
-					throw new FormatException();
+				if (sidx == len) {
+					if (!tryParse)
+						exc = Int32.GetFormatException ();
+					return true;
+				}
 			}
 
 			bool allow_trailing_white = ((style & NumberStyles.AllowTrailingWhite) != 0);
@@ -314,7 +348,9 @@ namespace System {
 					if (Char.IsWhiteSpace (c))
 						goto case State_ConsumeWhiteSpace;
 
-					throw new FormatException ("Unknown char: " + c);
+					if (!tryParse)
+						exc = new FormatException ("Unknown char: " + c);
+					return false;
 
 				case State_Decimal:
 					if (Char.IsDigit (c)){
@@ -332,7 +368,10 @@ namespace System {
 					
 					if (Char.IsWhiteSpace (c))
 						goto case State_ConsumeWhiteSpace;
-					throw new FormatException ("Unknown char: " + c);
+					
+					if (!tryParse)
+						exc = new FormatException ("Unknown char: " + c);
+					return false;
 
 				case State_ExponentSign:
 					if (Char.IsDigit (c)){
@@ -358,8 +397,10 @@ namespace System {
 					if (Char.IsWhiteSpace (c))
 						goto case State_ConsumeWhiteSpace;
 					
-					throw new FormatException ("Unknown char: " + c);
-
+					if (!tryParse)
+						exc = new FormatException ("Unknown char: " + c);
+					return false;
+					
 				case State_Exponent:
 					if (Char.IsDigit (c)){
 						b [didx++] = (byte) c;
@@ -368,42 +409,57 @@ namespace System {
 					
 					if (Char.IsWhiteSpace (c))
 						goto case State_ConsumeWhiteSpace;
-					throw new FormatException ("Unknown char: " + c);
+					
+					if (!tryParse)
+						exc = new FormatException ("Unknown char: " + c);
+					return false;
 
 				case State_ConsumeWhiteSpace:
 					if (allow_trailing_white && Char.IsWhiteSpace (c))
 						break;
-					throw new FormatException ("Unknown char");
+					
+					if (!tryParse)
+						exc = new FormatException ("Unknown char");
+					return false;
 				}
 			}
 
 			b [didx] = 0;
 			unsafe {
 				fixed (byte *p = &b [0]){
-					double retVal = ParseImpl (p);
-					if (IsPositiveInfinity(retVal) || IsNegativeInfinity(retVal))
-						throw new OverflowException();
+					double retVal;
+					if (!ParseImpl (p, out retVal)) {
+						if (!tryParse)
+							exc = Int32.GetFormatException ();
+						return false;
+					}
+					if (IsPositiveInfinity(retVal) || IsNegativeInfinity(retVal)) {
+						if (!tryParse)
+							exc = new OverflowException ();
+						return false;
+					}
 
-					return retVal;
+					result = retVal;
+					return true;
 				}
 			}
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		unsafe private static extern double ParseImpl (byte *byte_ptr);
+		unsafe private static extern bool ParseImpl (byte *byte_ptr, out double value);
 		
 		public static bool TryParse (string s,
 					     NumberStyles style,
 					     IFormatProvider provider,
 					     out double result)
 		{
-			try {
-				result = Parse (s, style, provider);
-				return true;
-			} catch {
+			Exception exc;
+			if (!Parse (s, style, provider, true, out result, out exc)) {
 				result = 0;
 				return false;
 			}
+
+			return true;
 		}
 
 		public override string ToString ()

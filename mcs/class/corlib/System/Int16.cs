@@ -90,7 +90,7 @@ namespace System {
 		}
 #endif
 
-		internal static bool Parse (string s, bool tryParse, out short result)
+		internal static bool Parse (string s, bool tryParse, out short result, out Exception exc)
 		{
 			short val = 0;
 			int len;
@@ -98,12 +98,13 @@ namespace System {
 			bool digits_seen = false;
 
 			result = 0;
+			exc = null;
 
-			if (s == null)
-				if (tryParse)
-					return false;
-				else
-					throw new ArgumentNullException ("s");
+			if (s == null) {
+				if (!tryParse)
+					exc = new ArgumentNullException ("s");
+				return false;
+			}
 
 			len = s.Length;
 
@@ -114,11 +115,11 @@ namespace System {
 					break;
 			}
 			
-			if (i == len)
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ();
+			if (i == len) {
+				if (!tryParse)
+					exc = Int32.GetFormatException ();
+				return false;
+			}
 
 			c = s [i];
 			if (c == '+')
@@ -137,25 +138,25 @@ namespace System {
 				} else {
 					if (Char.IsWhiteSpace (c)){
 						for (i++; i < len; i++){
-							if (!Char.IsWhiteSpace (s [i]))
-								if (tryParse)
-									return false;
-								else
-									throw new FormatException ();
+							if (!Char.IsWhiteSpace (s [i])) {
+								if (!tryParse)
+									exc = Int32.GetFormatException ();
+								return false;
+							}
 						}
 						break;
-					} else
-						if (tryParse)
-							return false;
-						else
-							throw new FormatException ();
+					} else {
+						if (!tryParse)
+							exc = Int32.GetFormatException ();
+						return false;
+					}
 				}
 			}
-			if (!digits_seen)
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ();
+			if (!digits_seen) {
+				if (!tryParse)
+					exc = Int32.GetFormatException ();
+				return false;
+			}
 			
 			result = val;
 			return true;
@@ -180,41 +181,42 @@ namespace System {
 			return (short) tmpResult;
 		}
 
-		public static short Parse (string s) {
+		public static short Parse (string s) 
+		{
+			Exception exc;
 			short res;
 
-			Parse (s, false, out res);
+			if (!Parse (s, false, out res, out exc))
+				throw exc;
 
 			return res;
 		}
 
 #if NET_2_0
-		public static bool TryParse (string s, out short result) {
-			try {
-				return Parse (s, true, out result);
-			}
-			catch (Exception) {
+		public static bool TryParse (string s, out short result) 
+		{
+			Exception exc;
+			if (!Parse (s, true, out result, out exc)) {
 				result = 0;
 				return false;
 			}
+
+			return true;
 		}
 
-		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out short result) {
-			try {
-				int tmpResult;
-
-				result = 0;
-				if (!Int32.TryParse (s, style, provider, out tmpResult))
-					return false;
-				if (tmpResult > Int16.MaxValue || tmpResult < Int16.MinValue)
-					return false;
-				result = (short)tmpResult;
-				return true;
-			}
-			catch (Exception) {
-				result = 0;
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out short result) 
+		{
+			int tmpResult;
+			result = 0;
+				
+			if (!Int32.TryParse (s, style, provider, out tmpResult))
 				return false;
-			}
+			
+			if (tmpResult > Int16.MaxValue || tmpResult < Int16.MinValue)
+				return false;
+				
+			result = (short)tmpResult;
+			return true;
 		}
 #endif
 

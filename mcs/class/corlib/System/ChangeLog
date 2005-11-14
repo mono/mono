@@ -1,3 +1,12 @@
+2005-11-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Int32.cs, UInt32.cs, Int16.cs, UInt16.cs, Int64.cs,
+	UInt64.cs, Byte.cs, SByte.cs, Double.cs : Modify internal Parse
+	methods to return the exception as an out parameter,
+	instead of throwing it. This will be of special help
+	to TryParse methods.
+	* Environment.cs: Update corlib version to 42.
+	
 2005-11-14  Raja R Harinath  <rharinath@novell.com>
 
 	* EventHandler.cs (EventHandler<TEventArgs>): Rename from EventHandler<T>.

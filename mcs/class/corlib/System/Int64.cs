@@ -92,7 +92,7 @@ namespace System {
 		}
 #endif
 
-		internal static bool Parse (string s, bool tryParse, out long result)
+		internal static bool Parse (string s, bool tryParse, out long result, out Exception exc)
 		{
 			long val = 0;
 			int len;
@@ -101,12 +101,13 @@ namespace System {
 			bool digits_seen = false;
 
 			result = 0;
+			exc = null;
 
-			if (s == null)
-				if (tryParse)
-					return false;
-				else
-					throw new ArgumentNullException ("s");
+			if (s == null) {
+				if (!tryParse) 
+					exc = new ArgumentNullException ("s");
+				return false;
+			}
 
 			len = s.Length;
 
@@ -117,11 +118,11 @@ namespace System {
 					break;
 			}
 			
-			if (i == len)
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ();
+			if (i == len) {
+				if (!tryParse)
+					exc = Int32.GetFormatException ();
+				return false;
+			}
 
 			c = s [i];
 			if (c == '+')
@@ -140,25 +141,25 @@ namespace System {
 				} else {
 					if (Char.IsWhiteSpace (c)){
 						for (i++; i < len; i++){
-							if (!Char.IsWhiteSpace (s [i]))
-								if (tryParse)
-									return false;
-								else
-									throw new FormatException ();
+							if (!Char.IsWhiteSpace (s [i])) {
+								if (!tryParse)
+									exc = Int32.GetFormatException ();
+								return false;
+							}
 						}
 						break;
-					} else
-						if (tryParse)
-							return false;
-						else
-							throw new FormatException ();
+					} else {
+						if (!tryParse)
+							exc = Int32.GetFormatException ();
+						return false;
+					}
 				}
 			}
-			if (!digits_seen)
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ();
+			if (!digits_seen) {
+				if (!tryParse)
+					exc = Int32.GetFormatException ();
+				return false;
+			}
 			
 			result = val;
 			return true;
@@ -174,22 +175,23 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		internal static bool Parse (string s, NumberStyles style, IFormatProvider fp, bool tryParse, out long result)
+		internal static bool Parse (string s, NumberStyles style, IFormatProvider fp, bool tryParse, out long result, out Exception exc)
 		{
 			result = 0;
+			exc = null;
 
-			if (s == null)
-				if (tryParse)
-					return false;
-				else
-					throw new ArgumentNullException ();
+			if (s == null) {
+				if (!tryParse)
+					exc = new ArgumentNullException ("s");
+				return false;
+			}
 
-			if (s.Length == 0)
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ("Input string was not " + 
-											   "in the correct format: s.Length==0.");
+			if (s.Length == 0) {
+				if (!tryParse)
+					exc = new FormatException ("Input string was not " + 
+							"in the correct format: s.Length==0.");
+				return false;
+			}
 
 			NumberFormatInfo nfi;
 			if (fp != null) {
@@ -199,7 +201,8 @@ namespace System {
 			else
 				nfi = Thread.CurrentThread.CurrentCulture.NumberFormat;
 
-			Int32.CheckStyle (style);
+			if (!Int32.CheckStyle (style, tryParse, ref exc))
+				return false;
 
 			bool AllowCurrencySymbol = (style & NumberStyles.AllowCurrencySymbol) != 0;
 			bool AllowHexSpecifier = (style & NumberStyles.AllowHexSpecifier) != 0;
@@ -213,8 +216,8 @@ namespace System {
 
 			int pos = 0;
 
-			if (AllowLeadingWhite)
-				pos = Int32.JumpOverWhite (pos, s, true);
+			if (AllowLeadingWhite && !Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
+				return false;
 
 			bool foundOpenParentheses = false;
 			bool negative = false;
@@ -228,34 +231,35 @@ namespace System {
 				negative = true; // MS always make the number negative when there parentheses
 						 // even when NumberFormatInfo.NumberNegativePattern != 0!!!
 				pos++;
-				if (AllowLeadingWhite)
-					pos = Int32.JumpOverWhite (pos, s, true);
+				if (AllowLeadingWhite && !Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
+					return false;
 
-				if (s.Substring (pos, nfi.NegativeSign.Length) == nfi.NegativeSign)
-					if (tryParse)
-						return false;
-					else
-						throw new FormatException ("Input string was not in the correct " +
-												   "format: Has Negative Sign.");
-				if (s.Substring (pos, nfi.PositiveSign.Length) == nfi.PositiveSign)
-					if (tryParse)
-						return false;
-					else
-						throw new FormatException ("Input string was not in the correct " +
-												   "format: Has Positive Sign.");
+				if (s.Substring (pos, nfi.NegativeSign.Length) == nfi.NegativeSign) {
+					if (!tryParse)
+						exc = new FormatException ("Input string was not in the correct " +
+								"format: Has Negative Sign.");
+					return false;
+				}
+				if (s.Substring (pos, nfi.PositiveSign.Length) == nfi.PositiveSign) {
+					if (!tryParse)
+						exc = new FormatException ("Input string was not in the correct " +
+								"format: Has Positive Sign.");
+					return false;
+				}
 			}
 
 			if (AllowLeadingSign && !foundSign) {
 				// Sign + Currency
 				Int32.FindSign (ref pos, s, nfi, ref foundSign, ref negative);
 				if (foundSign) {
-					if (AllowLeadingWhite)
-						pos = Int32.JumpOverWhite (pos, s, true);
+					if (AllowLeadingWhite && !Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
+						return false;
 					if (AllowCurrencySymbol) {
 						Int32.FindCurrency (ref pos, s, nfi,
 								    ref foundCurrency);
-						if (foundCurrency && AllowLeadingWhite)
-							pos = Int32.JumpOverWhite (pos, s, true);
+						if (foundCurrency && AllowLeadingWhite && 
+								!Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
+							return false;
 					}
 				}
 			}
@@ -264,14 +268,15 @@ namespace System {
 				// Currency + sign
 				Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
 				if (foundCurrency) {
-					if (AllowLeadingWhite)
-						pos = Int32.JumpOverWhite (pos, s, true);
+					if (AllowLeadingWhite && !Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
+							return false;
 					if (foundCurrency) {
 						if (!foundSign && AllowLeadingSign) {
 							Int32.FindSign (ref pos, s, nfi, ref foundSign,
 									ref negative);
-							if (foundSign && AllowLeadingWhite)
-								pos = Int32.JumpOverWhite (pos, s, true);
+							if (foundSign && AllowLeadingWhite &&
+								!Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
+								return false;
 						}
 					}
 				}
@@ -318,12 +323,12 @@ namespace System {
 					nDigits++;
 					// Allows decimal point as long as it's only 
 					// followed by zeroes.
-					if (s [pos++] != '0')
-						if (tryParse)
-							return false;
-						else
-							throw new OverflowException ("Value too large or too " +
-														 "small.");
+					if (s [pos++] != '0') {
+						if (!tryParse)
+							exc = new OverflowException ("Value too large or too " +
+									"small.");
+						return false;
+					}
 				}
 				else {
 					nDigits++;
@@ -336,28 +341,27 @@ namespace System {
 							(long) (s [pos++] - '0')
 							);
 					} catch (OverflowException) {
-						if (tryParse)
-							return false;
-						else
-							throw new OverflowException ("Value too large or too " +
-														 "small.");
+						if (!tryParse)
+							exc = new OverflowException ("Value too large or too " +
+									"small.");
+						return false;
 					}
 				}
 			} while (pos < s.Length);
 
 			// Post number stuff
-			if (nDigits == 0)
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ("Input string was not in the correct format: nDigits == 0.");
+			if (nDigits == 0) {
+				if (!tryParse)
+					exc = new FormatException ("Input string was not in the correct format: nDigits == 0.");
+				return false;
+			}
 
 			if (AllowTrailingSign && !foundSign) {
 				// Sign + Currency
 				Int32.FindSign (ref pos, s, nfi, ref foundSign, ref negative);
 				if (foundSign) {
-					if (AllowTrailingWhite)
-						pos = Int32.JumpOverWhite (pos, s, true);
+					if (AllowTrailingWhite && !Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
+						return false;
 					if (AllowCurrencySymbol)
 						Int32.FindCurrency (ref pos, s, nfi,
 								    ref foundCurrency);
@@ -374,34 +378,34 @@ namespace System {
 
 				Int32.FindCurrency (ref pos, s, nfi, ref foundCurrency);
 				if (foundCurrency && pos < s.Length) {
-					if (AllowTrailingWhite)
-						pos = Int32.JumpOverWhite (pos, s, true);
+					if (AllowTrailingWhite && !Int32.JumpOverWhite (ref pos, s, true, tryParse, ref exc))
+						return false;
 					if (!foundSign && AllowTrailingSign)
 						Int32.FindSign (ref pos, s, nfi, ref foundSign,
 								ref negative);
 				}
 			}
 			
-			if (AllowTrailingWhite && pos < s.Length)
-				pos = Int32.JumpOverWhite (pos, s, false);
+			if (AllowTrailingWhite && pos < s.Length && !Int32.JumpOverWhite (ref pos, s, false, tryParse, ref exc))
+				return false;
 
 			if (foundOpenParentheses) {
-				if (pos >= s.Length || s [pos++] != ')')
-					if (tryParse)
-						return false;
-					else
-						throw new FormatException ("Input string was not in the correct " +
-												   "format: No room for close parens.");
-				if (AllowTrailingWhite && pos < s.Length)
-					pos = Int32.JumpOverWhite (pos, s, false);
+				if (pos >= s.Length || s [pos++] != ')') {
+					if (!tryParse)
+						exc = new FormatException ("Input string was not in the correct " +
+								"format: No room for close parens.");
+					return false;
+				}
+				if (AllowTrailingWhite && pos < s.Length && !Int32.JumpOverWhite (ref pos, s, false, tryParse, ref exc))
+					return false;
 			}
 
-			if (pos < s.Length && s [pos] != '\u0000')
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ("Input string was not in the correct format: Did not parse entire string. pos = " 
-											   + pos + " s.Length = " + s.Length);
+			if (pos < s.Length && s [pos] != '\u0000') {
+				if (!tryParse)
+					exc = new FormatException ("Input string was not in the correct format: Did not parse entire string. pos = " 
+							+ pos + " s.Length = " + s.Length);
+				return false;
+			}
 
 			
 			if (!negative && !AllowHexSpecifier)
@@ -411,41 +415,49 @@ namespace System {
 			return true;
 		}
 
-		public static long Parse (string s) {
+		public static long Parse (string s) 
+		{
+			Exception exc;
 			long res;
 
-			Parse (s, false, out res);
+			if (!Parse (s, false, out res, out exc))
+				throw exc;
 
 			return res;
 		}
 
-		public static long Parse (string s, NumberStyles style, IFormatProvider fp) {
+		public static long Parse (string s, NumberStyles style, IFormatProvider fp) 
+		{
+			Exception exc;
 			long res;
 
-			Parse (s, style, fp, false, out res);
+			if (!Parse (s, style, fp, false, out res, out exc))
+				throw exc;
 
 			return res;
 		}
 
 #if NET_2_0
-		public static bool TryParse (string s, out long result) {
-			try {
-				return Parse (s, true, out result);
-			}
-			catch (Exception) {
+		public static bool TryParse (string s, out long result) 
+		{
+			Exception exc;
+			if (!Parse (s, true, out result, out exc)) {
 				result = 0;
 				return false;
 			}
+
+			return true;
 		}
 
-		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out long result) {
-			try {
-				return Parse (s, style, provider, true, out result);
-			}
-			catch (Exception) {
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out long result) 
+		{
+			Exception exc;
+			if (!Parse (s, style, provider, true, out result, out exc)) {
 				result = 0;
 				return false;
 			}
+
+			return true;
 		}
 #endif
 

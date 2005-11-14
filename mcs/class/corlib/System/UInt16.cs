@@ -84,7 +84,7 @@ namespace System
 		}
 #endif
 
-		internal static bool Parse (string s, bool tryParse, out ushort result)
+		internal static bool Parse (string s, bool tryParse, out ushort result, out Exception exc)
 		{
 			ushort val = 0;
 			int len;
@@ -93,12 +93,13 @@ namespace System
 			bool has_negative_sign = false;
 
 			result = 0;
+			exc = null;
 
-			if (s == null)
-				if (tryParse)
-					return false;
-				else
-					throw new ArgumentNullException ("s");
+			if (s == null) {
+				if (!tryParse)
+					exc = new ArgumentNullException ("s");
+				return false;
+			}
 
 			len = s.Length;
 
@@ -109,11 +110,11 @@ namespace System
 					break;
 			}
 
-			if (i == len)
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ();
+			if (i == len) {
+				if (!tryParse)
+					exc = Int32.GetFormatException ();
+				return false;
+			}
 
 			if (s [i] == '+')
 				i++;
@@ -135,34 +136,33 @@ namespace System
 				else {
 					if (Char.IsWhiteSpace (c)) {
 						for (i++; i < len; i++) {
-							if (!Char.IsWhiteSpace (s [i]))
-								if (tryParse)
-									return false;
-								else
-									throw new FormatException ();
+							if (!Char.IsWhiteSpace (s [i])) {
+								if (!tryParse)
+									exc = Int32.GetFormatException ();
+								return false;
+							}
 						}
 						break;
 					}
-					else
-						if (tryParse)
-							return false;
-						else
-							throw new FormatException ();
+					else {
+						if (!tryParse)
+							exc = Int32.GetFormatException ();
+						return false;
+					}
 				}
 			}
-			if (!digits_seen)
-				if (tryParse)
-					return false;
-				else
-					throw new FormatException ();
+			if (!digits_seen) {
+				if (!tryParse)
+					exc = Int32.GetFormatException ();
+				return false;
+			}
 
 			// -0 is legal but other negative values are not
 			if (has_negative_sign && (val > 0)) {
-				if (tryParse)
-					return false;
-				else
-					throw new OverflowException (
+				if (!tryParse)
+					exc = new OverflowException (
 					    Locale.GetText ("Negative number"));
+				return false;
 			}
 
 			result = val;
@@ -192,43 +192,44 @@ namespace System
 		}
 
 		[CLSCompliant(false)]
-		public static ushort Parse (string s) {
+		public static ushort Parse (string s) 
+		{
+			Exception exc;
 			ushort res;
 
-			Parse (s, false, out res);
+			if (!Parse (s, false, out res, out exc))
+				throw exc;
 
 			return res;
 		}
 
 #if NET_2_0
 		[CLSCompliant(false)]
-		public static bool TryParse (string s, out ushort result) {
-			try {
-				return Parse (s, true, out result);
-			}
-			catch (Exception) {
+		public static bool TryParse (string s, out ushort result) 
+		{
+			Exception exc;
+			if (!Parse (s, true, out result, out exc)) {
 				result = 0;
 				return false;
 			}
+
+			return true;
 		}
 
 		[CLSCompliant(false)]
-		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out ushort result) {
-			try {
-				uint tmpResult;
-
-				result = 0;
-				if (!UInt32.TryParse (s, style, provider, out tmpResult))
-					return false;
-				if (tmpResult > UInt16.MaxValue || tmpResult < UInt16.MinValue)
-					return false;
-				result = (ushort)tmpResult;
-				return true;
-			}
-			catch (Exception) {
-				result = 0;
+		public static bool TryParse (string s, NumberStyles style, IFormatProvider provider, out ushort result) 
+		{
+			uint tmpResult;
+			result = 0;
+				
+			if (!UInt32.TryParse (s, style, provider, out tmpResult))
 				return false;
-			}
+				
+			if (tmpResult > UInt16.MaxValue || tmpResult < UInt16.MinValue)
+				return false;
+				
+			result = (ushort)tmpResult;
+			return true;
 		}
 #endif
 
