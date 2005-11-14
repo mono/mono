@@ -23,6 +23,7 @@ System.Configuration/AppSettingsSection.cs
 System.Configuration/CallbackValidator.cs
 System.Configuration/CallbackValidatorAttribute.cs
 System.Configuration/CommaDelimitedStringCollection.cs
+System.Configuration/CommaDelimitedStringCollectionConverter.cs
 System.Configuration/ConfigHelper.cs
 System.Configuration/ConfigInfo.cs
 System.Configuration/Configuration.cs
@@ -58,6 +59,7 @@ System.Configuration/ConnectionStringsSection.cs
 System.Configuration/ConnectionStringSettingsCollection.cs
 System.Configuration/ConnectionStringSettings.cs
 System.Configuration/ContextInformation.cs
+System.Configuration/DefaultSection.cs
 System.Configuration/DefaultValidator.cs
 System.Configuration/ElementInformation.cs
 System.Configuration/ExeConfigurationFileMap.cs
