@@ -1,3 +1,11 @@
+2005-11-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* appdomain.c: Update MONO_CORLIB_VERSION to 42, since
+	we changed the signature of an icall.
+	* icall.c: Modify to mono_double_ParseImpl return true/false 
+	depending on the success, instead of throwing the exception. This will
+	help us in Double.TryParse methods.
+	
 2005-11-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_marshal_object): Throw an exception when
