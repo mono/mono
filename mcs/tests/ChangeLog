@@ -1,11 +1,18 @@
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* test-xml-043.xml test-xml-043.cs : new test for bug #76690.
+	* test-xml-043.cs : fixed -doc option output filename.
+	* test-xml-044-ref.xml test-xml-044.cs : another test to not miss
+	  "virtual not overriden" methods.
+	* known-issues-gmcs : added above.
+
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-xml-043-ref.xml test-xml-043.cs : new test for bug #76690.
 	* known-issues-gmcs : added above.
 
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* test-xml-042.xml test-xml-042.cs : new test for bug #76630.
+	* test-xml-042-ref.xml test-xml-042.cs : new test for bug #76630.
 	* known-issues-gmcs : added above.
 
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
@@ -18,11 +25,11 @@
 
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* test-xml-041.xml test-xml-041.cs : new test for bug #76691.
+	* test-xml-041-ref.xml test-xml-041.cs : new test for bug #76691.
 
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* test-xml-040.xml test-xml-040.cs : new test for bug #76685.
+	* test-xml-040-ref.xml test-xml-040.cs : new test for bug #76685.
 
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 

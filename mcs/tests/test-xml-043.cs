@@ -1,4 +1,4 @@
-// Compiler options: -doc:test-xml-043.xml -warnaserror -warn:4
+// Compiler options: -doc:xml-043.xml -warnaserror -warn:4
 /// <summary />
 public class EntryPoint
 {

@@ -1,5 +1,10 @@
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs : use Invocation.IsOverride() to do real override check.
+	* expression.cs : made Invocation.IsOverride() internal.
+
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs : use TypeManager.FindMembers() instead of (possible)
 	  TypeBuilder.FindMembers() and filter overriden base members out.
 	  Fixed bug #76990.

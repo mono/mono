@@ -349,8 +349,21 @@ namespace Mono.CSharp {
 			ArrayList al = new ArrayList (ml.Count);
 			for (int i = 0; i < ml.Count; i++) {
 				MethodBase x = ml [i] as MethodBase;
-				if (x != null && x.DeclaringType != type && x.IsVirtual && !TypeManager.IsOverride (x))
-					continue;
+				if (x != null) {
+					bool overriden = false;
+					for (int j = 0; j < ml.Count; j++) {
+						if (j == i)
+							continue;
+						MethodBase y = ml [j] as MethodBase;
+						if (y != null &&
+							Invocation.IsOverride (y, x)) {
+							overriden = true;
+							break;
+						}
+					}
+					if (overriden)
+						continue;
+				}
 				al.Add (ml [i]);
 			}
 			return al.ToArray (typeof (MemberInfo)) as MemberInfo [];

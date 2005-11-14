@@ -4278,7 +4278,7 @@ namespace Mono.CSharp {
                         return !candidate_params && best_params;
 		}
 
-		static bool IsOverride (MethodBase cand_method, MethodBase base_method)
+		internal static bool IsOverride (MethodBase cand_method, MethodBase base_method)
 		{
 			if (!IsAncestralType (base_method.DeclaringType, cand_method.DeclaringType))
 				return false;
