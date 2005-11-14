@@ -139,13 +139,15 @@ namespace System.Drawing {
 		}
 
 		public string GetName(int language) {
-			if (language == 0)
+			try {
+				CultureInfo culture = new CultureInfo(language, false);
+				java.util.Locale locale = vmw.@internal.EnvironmentUtils.getLocaleFromCultureInfo( culture );
+
+				return FamilyFont.getFamily( locale );
+			}
+			catch {
 				return Name;
-
-			CultureInfo culture = new CultureInfo(language, false);
-			java.util.Locale locale = vmw.@internal.EnvironmentUtils.getLocaleFromCultureInfo( culture );
-
-			return FamilyFont.getFamily( locale );
+			}
 		}
 
 		public bool IsStyleAvailable(FontStyle style) {
