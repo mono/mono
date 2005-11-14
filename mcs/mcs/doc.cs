@@ -337,6 +337,25 @@ namespace Mono.CSharp {
 				ds, out warn, cref, false, null) as Type;
 		}
 
+		private static MemberInfo [] FindMembers (Type type,
+			BindingFlags bindingFlags, MethodSignature signature)
+		{
+			MemberList ml = TypeManager.FindMembers (
+				type,
+				MemberTypes.Constructor | MemberTypes.Method | MemberTypes.Property | MemberTypes.Custom,
+				bindingFlags,
+				MethodSignature.method_signature_filter,
+				signature);
+			ArrayList al = new ArrayList (ml.Count);
+			for (int i = 0; i < ml.Count; i++) {
+				MethodBase x = ml [i] as MethodBase;
+				if (x != null && x.DeclaringType != type && x.IsVirtual && !TypeManager.IsOverride (x))
+					continue;
+				al.Add (ml [i]);
+			}
+			return al.ToArray (typeof (MemberInfo)) as MemberInfo [];
+		}
+
 		//
 		// Returns a MemberInfo that is referenced in XML documentation
 		// (by "see" or "seealso" elements).
@@ -348,11 +367,10 @@ namespace Mono.CSharp {
 		{
 			warningType = 0;
 			MethodSignature msig = new MethodSignature (memberName, null, paramList);
-			MemberInfo [] mis = type.FindMembers (
-				MemberTypes.All,
+			MemberInfo [] mis = FindMembers (type, 
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
-				MethodSignature.method_signature_filter,
 				msig);
+
 			if (warn419 && mis.Length > 0) {
 				if (IsAmbiguous (mis))
 					Report419 (mc, nameForError, mis);
@@ -452,10 +470,9 @@ namespace Mono.CSharp {
 			// here we still don't consider return type (to
 			// detect CS1581 or CS1002+CS1584).
 			msig = new MethodSignature (oper, null, paramList);
-			mis = type.FindMembers (
-				MemberTypes.Method,
-				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static,
-				MethodSignature.method_signature_filter,
+
+			mis = FindMembers (type, 
+				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 				msig);
 			if (mis.Length == 0)
 				return null; // CS1574
@@ -872,9 +889,9 @@ namespace Mono.CSharp {
 				w.WriteWhitespace (Environment.NewLine);
 				w.WriteEndDocument ();
 				return true;
-			} catch (Exception ex) {
-				Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", docfilename, ex.Message);
-				return false;
+//			} catch (Exception ex) {
+//				Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", docfilename, ex.Message);
+//				return false;
 			} finally {
 				if (w != null)
 					w.Close ();

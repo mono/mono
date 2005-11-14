@@ -1,3 +1,9 @@
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : use TypeManager.FindMembers() instead of (possible)
+	  TypeBuilder.FindMembers() and filter overriden base members out.
+	  Fixed bug #76990.
+
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs : ref/out parameters are represented as '@' (instead of
