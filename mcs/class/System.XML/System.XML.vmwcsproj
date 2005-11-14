@@ -69,7 +69,7 @@
 				<File RelPath="Mono.Xml.Xsl\TextOutputter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\XmlWriterEmitter.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\XslAttributeSet.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="Mono.Xml.Xsl\XslDecimalFormat.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="Mono.Xml.Xsl\XslDecimalFormat.jvm.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\XslFunctions.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\XslKey.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="Mono.Xml.Xsl\XslOutput.cs" SubType="Code" BuildAction="Compile"/>
@@ -157,7 +157,7 @@
 				<File RelPath="System.Xml\XmlNodeList.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlNodeListChildren.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlNodeOrder.cs" SubType="Code" BuildAction="Compile"/>
-				<File RelPath="System.Xml\XmlNodeReader.cs" SubType="Code" BuildAction="Compile"/>
+				<File RelPath="System.Xml\XmlNodeReader2.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlNodeReaderImpl.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlNodeType.cs" SubType="Code" BuildAction="Compile"/>
 				<File RelPath="System.Xml\XmlNotation.cs" SubType="Code" BuildAction="Compile"/>

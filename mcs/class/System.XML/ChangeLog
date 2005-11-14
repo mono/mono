@@ -1,3 +1,11 @@
+2005-11-14  Andrew Skiba  <andrews@mainsoft.com>
+
+	* Makefile: add java build profile
+	* System.Xml.vmwcsproj: replace XmlNodeReader.cs with XmlNodeReader2.cs
+	and XslDecimalFormat.cs with XslDecimalFormat.jvm.cs
+	* net_1_1_java_System.Xml.dll.exclude.sources,
+	net_1_1_java_System.dll.sources: add source lists for java profile
+
 2005-11-10 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* System.XML.vmwcsproj: removed XmlSchemaBuiltInType.cs
