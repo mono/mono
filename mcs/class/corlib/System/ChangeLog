@@ -1,3 +1,7 @@
+2005-11-14  Raja R Harinath  <rharinath@novell.com>
+
+	* EventHandler.cs (EventHandler<TEventArgs>): Rename from EventHandler<T>.
+
 2005-11-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* Type.cs (GetPseudoCustomAttributes): Return ComImportAttribute as well.
