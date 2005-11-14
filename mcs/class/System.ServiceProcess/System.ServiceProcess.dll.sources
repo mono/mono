@@ -4,6 +4,7 @@ Assembly/AssemblyInfo.cs
 ../../build/common/MonoTODOAttribute.cs
 System.ServiceProcess/PowerBroadcastStatus.cs
 System.ServiceProcess/ServiceAccount.cs
+System.ServiceProcess/ServiceController.cs
 System.ServiceProcess/ServiceControllerPermissionAccess.cs
 System.ServiceProcess/ServiceControllerStatus.cs
 System.ServiceProcess/ServiceInstaller.cs

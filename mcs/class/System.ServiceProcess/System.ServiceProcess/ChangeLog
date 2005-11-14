@@ -1,3 +1,7 @@
+2005-11-14  Marek Safar  <marek.safar@seznam.cz>
+
+	* ServiceController.cs: Simple stub only.
+
 2005-05-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ServiceControllerPermission.cs: Accept empty service name before 2.0
