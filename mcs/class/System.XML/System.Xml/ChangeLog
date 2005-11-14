@@ -1,3 +1,7 @@
+2005-11-14  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlNodeReader.cs : removed historical one.
+
 2005-11-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlReader.cs, XmlNode.cs :
