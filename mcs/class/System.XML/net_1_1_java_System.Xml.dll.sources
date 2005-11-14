@@ -1,2 +1,2 @@
 #include System.Xml.dll.sources
-Mono.Xml.Xsl/XslDecimalFormatting.jvm.cs
+Mono.Xml.Xsl/XslDecimalFormat.jvm.cs

@@ -48,13 +48,16 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 [assembly: AssemblyTrademark("")]
 
+#if !TARGET_JVM
 [assembly: CLSCompliant(true)]
+#endif
 [assembly: AssemblyDefaultAlias("System.Xml.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]
 
 [assembly: ComVisible(false)]
 [assembly: AllowPartiallyTrustedCallers]
-
+#if !TARGET_JVM
 [assembly: AssemblyDelaySign(true)]
 [assembly: AssemblyKeyFile("../ecma.pub")]
+#endif

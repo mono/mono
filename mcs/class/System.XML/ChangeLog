@@ -1,5 +1,10 @@
 2005-11-14  Andrew Skiba  <andrews@mainsoft.com>
 
+	* net_1_1_java_System.Xml.dll.exclude.sources,
+	net_1_1_java_System.dll.sources: fix filename
+
+2005-11-14  Andrew Skiba  <andrews@mainsoft.com>
+
 	* Makefile: add java build profile
 	* System.Xml.vmwcsproj: replace XmlNodeReader.cs with XmlNodeReader2.cs
 	and XslDecimalFormat.cs with XslDecimalFormat.jvm.cs
