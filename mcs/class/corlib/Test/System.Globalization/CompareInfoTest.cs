@@ -785,6 +785,9 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#8-2", 1, "UAEE", '\u00C6');
 		AssertLastIndexOf ("#9", -1, "UA", '\u00C6');
 		AssertLastIndexOf ("#10", -1, "UE", '\u00C6');
+		AssertLastIndexOf ("#11", 0, "\\", '\\');
+		AssertEquals ("#11en", 0, new CultureInfo ("en").CompareInfo.LastIndexOf ("\\", '\\'));
+		AssertEquals ("#11ja", 0, new CultureInfo ("ja").CompareInfo.LastIndexOf ("\\", '\\'));
 	}
 
 	[Test]
@@ -821,6 +824,9 @@ public class CompareInfoTest : Assertion
 		AssertIsPrefix ("#14", true, "\uff21\uff21", "\uff21", CompareOptions.None);
 		AssertIsPrefix ("#15", true, "\uff21\uff21", "\u3007\uff21", CompareOptions.None);
 		AssertIsPrefix ("#16", true, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
+		AssertIsPrefix ("#17", true, "\\b\\a a", "\\b\\a a");
+		Assert ("#17en", new CultureInfo ("en").CompareInfo.IsPrefix ("\\b\\a a", "\\b\\a a"));
+		Assert ("#17ja", new CultureInfo ("ja").CompareInfo.IsPrefix ("\\b\\a a", "\\b\\a a"));
 	}
 
 	[Test]
@@ -889,6 +895,10 @@ public class CompareInfoTest : Assertion
 		// empty suffix always matches the source.
 		AssertIsSuffix ("#17", true, "", "");
 		AssertIsSuffix ("#18", true, "/test.css", "");
+		AssertIsSuffix ("#19", true, "/test.css", "/test.css");
+		AssertIsSuffix ("#20", true, "\\b\\a a", "\\b\\a a");
+		Assert ("#20en", new CultureInfo ("en").CompareInfo.IsSuffix ("\\b\\a a", "\\b\\a a"));
+		Assert ("#20ja", new CultureInfo ("ja").CompareInfo.IsSuffix ("\\b\\a a", "\\b\\a a"));
 	}
 
 	[Test]
@@ -929,6 +939,10 @@ public class CompareInfoTest : Assertion
 		AssertIndexOf ("#16", -1, String.Empty, "\u3007");
 		AssertIndexOf ("#17", 0, "A", "\u3007");
 		AssertIndexOf ("#18", 0, "ABC", "\u3007");
+
+		AssertIndexOf ("#19", 0, "\\b\\a a", "\\b\\a a");
+		AssertEquals ("#19en", 0, new CultureInfo ("en").CompareInfo.IndexOf ("\\b\\a a", "\\b\\a a"));
+		AssertEquals ("#19ja", 0, new CultureInfo ("ja").CompareInfo.IndexOf ("\\b\\a a", "\\b\\a a"));
 	}
 
 	[Test]
@@ -981,6 +995,9 @@ public class CompareInfoTest : Assertion
 		AssertLastIndexOf ("#16", 1, "\uff21\uff21", "\uff21\u3007", CompareOptions.None);
 		AssertLastIndexOf ("#17", 1, "\uff21\uff21", "\u3007", CompareOptions.None);
 		AssertLastIndexOf ("#18", 1, "\u3007\uff21", "\uff21", CompareOptions.None);
+		AssertLastIndexOf ("#19", 0, "\\b\\a a", "\\b\\a a");
+		AssertEquals ("#19en", 0, new CultureInfo ("en").CompareInfo.LastIndexOf ("\\b\\a a", "\\b\\a a"));
+		AssertEquals ("#19ja", 0, new CultureInfo ("ja").CompareInfo.LastIndexOf ("\\b\\a a", "\\b\\a a"));
 	}
 
 	[Test]

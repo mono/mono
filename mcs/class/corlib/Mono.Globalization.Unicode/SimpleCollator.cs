@@ -187,7 +187,7 @@ namespace Mono.Globalization.Unicode
 
 /*
 // dump tailoring table
-Console.WriteLine ("******** building table for {0} : c - {1} d - {2}",
+Console.WriteLine ("******** building table for {0} : contractions - {1} diacritical - {2}",
 culture.LCID, contractions.Length, level2Maps.Length);
 foreach (Contraction c in contractions) {
 foreach (char cc in c.Source)
@@ -313,20 +313,22 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 
 		Contraction GetTailContraction (string s, int start, int end, Contraction [] clist)
 		{
+			if (start == end || end < -1 || start >= s.Length || s.Length <= end + 1)
+				throw new SystemException (String.Format ("MONO internal error. Failed to get TailContraction. start = {0} end = {1} string = '{2}'", start, end, s));
 			for (int i = 0; i < clist.Length; i++) {
 				Contraction ct = clist [i];
-				int diff = ct.Source [0] - s [end];
+				int diff = ct.Source [0] - s [end + 1];
 				if (diff > 0)
 					return null; // it's already sorted
 				else if (diff < 0)
 					continue;
 				char [] chars = ct.Source;
-				if (start - end + 1 < chars.Length)
-					continue;
+
 				bool match = true;
-				int offset = start - chars.Length + 1;
+				if (chars.Length > start - end)
+					continue;
 				for (int n = 0; n < chars.Length; n++)
-					if (s [offset + n] != chars [n]) {
+					if (s [start - n] != chars [chars.Length - 1 - n]) {
 						match = false;
 						break;
 					}
@@ -667,6 +669,23 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 				len1 == min ? - 1 : 1;
 		}
 
+		private int CompareOrdinalIgnoreCase (string s1, int idx1, int len1,
+			string s2, int idx2, int len2)
+		{
+			int min = len1 < len2 ? len1 : len2;
+			int end1 = idx1 + min;
+			int end2 = idx2 + min;
+			if (idx1 < 0 || idx2 < 0 || end1 > s1.Length || end2 > s2.Length)
+				throw new SystemException (String.Format ("CompareInfo Internal Error: Should not happen. {0} {1} {2} {3} {4} {5}", idx1, idx2, len1, len2, s1.Length, s2.Length));
+			TextInfo ti = invariant.textInfo;
+			for (int i1 = idx1, i2 = idx2;
+				i1 < end1 && i2 < end2; i1++, i2++)
+				if (ti.ToLower (s1 [i1]) != ti.ToLower (s2 [i2]))
+					return ti.ToLower (s1 [i1]) - ti.ToLower (s2 [i2]);
+			return len1 == len2 ? 0 :
+				len1 == min ? - 1 : 1;
+		}
+
 		public unsafe int Compare (string s1, int idx1, int len1,
 			string s2, int idx2, int len2, CompareOptions options)
 		{
@@ -681,6 +700,10 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 //				return 0;
 			if (options == CompareOptions.Ordinal)
 				return CompareOrdinal (s1, idx1, len1, s2, idx2, len2);
+#if NET_2_0
+			if (options == CompareOptions.OrdinalIgnoreCase)
+				return CompareOrdinalIgnoreCase (s1, idx1, len1, s2, idx2, len2);
+#endif
 
 #if false // stable easy version, depends on GetSortKey().
 			SortKey sk1 = GetSortKey (s1, idx1, len1, options);
@@ -1156,7 +1179,7 @@ Console.WriteLine (" -> '{0}'", c.Replacement);
 			return IsSuffix (src, target, src.Length - 1, src.Length, opt);
 		}
 
-		public bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
+		public unsafe bool IsSuffix (string s, string target, int start, int length, CompareOptions opt)
 		{
 			if (target.Length == 0)
 				return true;
@@ -1448,7 +1471,8 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			ClearBuffer (sk1, 4);
 			ClearBuffer (sk2, 4);
 
-			// If target is contraction, then use string search.
+			// If target is a replacement contraction, then use 
+			// string search.
 			Contraction ct = GetContraction (target);
 			if (ct != null) {
 				if (ct.Replacement != null)
@@ -1460,7 +1484,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 						sk2 [bi] = ct.SortKey [bi];
 					return LastIndexOfSortKey (opt, s, start,
 						start, length, sk2,
-						char.MinValue, -1, true,
+						-1, true,
 						checkedFlags, ref prev, sk1);
 				}
 			}
@@ -1472,14 +1496,14 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 					targetSortKey [2] = Level2 (ti, ExtenderType.None);
 				targetSortKey [3] = Uni.Level3 (ti);
 				return LastIndexOfSortKey (opt, s, start, start,
-					length, targetSortKey, target,
+					length, targetSortKey,
 					ti, !Uni.HasSpecialWeight ((char) ti),
 					checkedFlags, ref prev, sk1);
 			}
 		}
 
 		// Searches target byte[] keydata
-		unsafe int LastIndexOfSortKey (COpt opt, string s, int start, int orgStart, int length, byte* sortkey, char target, int ti, bool noLv4, byte* checkedFlags, ref PreviousInfo prev, byte* sk)
+		unsafe int LastIndexOfSortKey (COpt opt, string s, int start, int orgStart, int length, byte* sortkey, int ti, bool noLv4, byte* checkedFlags, ref PreviousInfo prev, byte* sk)
 		{
 			int end = start - length;
 			int idx = start;
@@ -1541,7 +1565,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 						start, length, checkedFlags,
 						targetSortKey, ref prev, sk1, sk2);
 				else
-					idx = LastIndexOfSortKey (opt, s, start, orgStart, length, sk, tc, ti, noLv4, checkedFlags, ref prev, sk1);
+					idx = LastIndexOfSortKey (opt, s, start, orgStart, length, sk, ti, noLv4, checkedFlags, ref prev, sk1);
 				if (idx < 0)
 					return -1;
 				length -= start - idx;
@@ -1736,7 +1760,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 				idx--;
 			}
 			if (ext == ExtenderType.None)
-				ct = GetContraction (s, idx, end);
+				ct = GetTailContraction (s, idx, end);
 			// if lv4 exists, it never matches contraction
 			if (ct != null) {
 				idx -= ct.Source.Length;
@@ -1751,10 +1775,11 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 					// Here is the core of LAMESPEC
 					// described at the top of the source.
 					int dummy = ct.Replacement.Length - 1;
-					return MatchesBackward (opt, 
-						ct.Replacement, ref dummy,
-						dummy, -1, ti, sortkey, noLv4,
-						checkedFlags, ref prev, charSortKey);
+					return 0 <= LastIndexOfSortKey (opt,
+						ct.Replacement, dummy, dummy,
+						ct.Replacement.Length, sortkey,
+						ti, noLv4, checkedFlags,
+						ref prev, charSortKey);
 				}
 			} else if (ext == ExtenderType.None) {
 				if (si < 0)

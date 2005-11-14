@@ -1,3 +1,14 @@
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs :
+	  - Added CompareOrdinalIgnoreCase() for NET_2_0 RTM.
+	  - Reduced extra parameter from LastIndexOfSortKey().
+	  - LastIndexOf() should use GetTailContraction for the source string.
+	    And then, target could match in the middle of the possible
+	    "replacement contraction" of the source string, so use
+	    LastIndexOfSortKey() to catch them.
+	  - Fixed GetTailContraction() that caused index out of range.
+
 2005-11-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : Now use MONO_DISABLE_MANAGED_COLLATION.

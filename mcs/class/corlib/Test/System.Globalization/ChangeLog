@@ -1,3 +1,10 @@
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoTest.cs : added more tests for some specific cultures
+	  (say, Japanese) that have replacement contraction in ASCII range
+	  and caused incorrect results for LastIndexOf() and all dependent
+	  members.
+
 2005-10-14  Ben Maurer  <bmaurer@ximian.com>
 
 	* DateTimeFormatInfoTest.cs: New test to make sure we do not
