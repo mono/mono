@@ -72,16 +72,21 @@ namespace System.Web.Configuration
 			this.Source = source;
 		}
 
-		[MonoTODO]
 		public override bool Equals (object prefix)
 		{
-			return base.Equals (prefix);
+			TagPrefixInfo info = prefix as TagPrefixInfo;
+			if (info == null)
+				return false;
+
+			return (Namespace == info.Namespace
+				&& Source == info.Source
+				&& TagName == info.TagName
+				&& TagPrefix == info.TagPrefix);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return Namespace.GetHashCode() + Source.GetHashCode() + TagName.GetHashCode() + TagPrefix.GetHashCode();
 		}
 
 		[ConfigurationProperty ("assembly")]

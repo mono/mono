@@ -138,14 +138,9 @@ namespace System.Web.Configuration
 			}
 		}
 
-		[MonoTODO]
 		public ProfilePropertySettings this[int index] {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return (ProfilePropertySettings) BaseGet (index); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		[MonoTODO]

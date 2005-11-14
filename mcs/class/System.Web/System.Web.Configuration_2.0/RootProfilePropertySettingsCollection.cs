@@ -93,7 +93,11 @@ namespace System.Web.Configuration
 		[MonoTODO]
 		protected override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
 		{
-			throw new NotImplementedException ();
+			bool ret = base.SerializeElement (writer, serializeCollectionKey);
+
+			/* XXX more here? .. */
+
+			return ret;
 		}
 
 		[MonoTODO]

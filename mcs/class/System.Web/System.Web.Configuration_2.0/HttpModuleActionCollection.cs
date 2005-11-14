@@ -99,8 +99,7 @@ namespace System.Web.Configuration
 
 		public HttpModuleAction this[int index] {
 			get { return (HttpModuleAction)BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 	}
 }

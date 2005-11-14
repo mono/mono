@@ -59,22 +59,29 @@ namespace System.Web.Configuration
 			this.MappedTagType = mappedTagTypeName;
 		}
 
-		[MonoTODO]
 		public override bool Equals (object map)
 		{
-			return base.Equals (map);
+			TagMapInfo info = map as TagMapInfo;
+			if (info == null)
+				return false;
+
+			return (MappedTagType == info.MappedTagType
+				&& TagType == info.TagType);
+		}
+
+		public override int GetHashCode ()
+		{
+			return MappedTagType.GetHashCode() + TagType.GetHashCode();
 		}
 
 		[MonoTODO]
 		protected override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
 		{
-			return base.SerializeElement (writer, serializeCollectionKey);
-		}
+			bool ret = base.SerializeElement (writer, serializeCollectionKey);
 
-		[MonoTODO]
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode ();
+			/* XXX more here? .. */
+
+			return ret;
 		}
 
 		[StringValidator (MinLength = 1)]

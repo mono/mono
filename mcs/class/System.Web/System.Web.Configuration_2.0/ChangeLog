@@ -1,3 +1,98 @@
+2005-11-14  Chris Toshok  <toshok@ximian.com>
+
+	* TagPrefixCollection.cs (Remove): pass the key to BaseRemove.
+	(set_Item (int index)): implement.
+	
+	* TagPrefixInfo.cs (Equals): implement.
+	(GetHashCode): implement.
+
+	* AuthorizationRuleCollection.cs (CreateNewElement(string)):
+	implement propertly.
+	(IndexOf): implement.
+	(IsElementName): implement.
+	(ElementName): implement.
+	(Item (int index)): implement.
+	
+	* FormsAuthenticationUserCollection.cs (set_Item (int index)): implement.
+
+	* UrlMappingCollection.cs (set_Item (int index)): implement.
+
+	* OutputCacheProfileCollection.cs (set_Item (int index)): implement.
+
+	* TransformerInfo.cs (Equals): implement.
+	(GetHashCode): implement.
+
+	* NamespaceInfo.cs (Equals): implement.
+	(GetHashCode): implement.
+	
+	* ProfileSettingsCollection.cs (set_Item (int index)): implement.
+
+	* TransformerInfoCollection.cs (set_Item (int index)): implement.
+
+	* HttpHandlerActionCollection.cs (set_Item (int index)): implement.
+
+	* BufferModesCollection.cs (set_Item (int index)): implement.
+
+	* BuildProvider.cs: use the base[fooProp] pattern instead of
+	instance fields.
+
+	* ProfileGroupSettingsCollection.cs: implement most of this class.
+
+	* RuleSettingsCollection.cs (set_Item (int index)): implement.
+
+	* ClientTargetCollection.cs (set_Item (int index)): implement.
+
+	* AssemblyCollection.cs (set_Item (int index)): implement.
+
+	* BuildProviderCollection.cs (set_Item (int index)): reformat.
+
+	* CustomError.cs (Equals): implement.
+	(GetHashCode): implement.
+
+	* ExpressionBuilderCollection.cs (set_Item (int index)): reformat.
+
+	* PassportAuthentication.cs (RedirectUrl): express consternation
+	in comment form.
+
+	* NamespaceCollection.cs (set_Item (int index)): implement.
+
+	* RootProfilePropertySettingsCollection.cs (SerializeElement): add
+	comment.
+
+	* ProfilePropertySettingsCollection.cs (set_Item (int index)):
+	implement.
+
+	* CustomErrorCollection.cs (set_Item (int index)): implement.
+
+	* HttpModuleActionCollection.cs (set_Item (int index)): implement.
+
+	* CodeSubDirectoriesCollection.cs (set_Item (int index)):
+	implement.
+
+	* CustomErrorsSection.cs (DeserializeSection): include call to
+	base.DeserializeSection, and add MonoTODO.
+
+	* EventMappingSettingsCollection.cs (set_Item (int index)):
+	implement.
+
+	* AuthorizationRule.cs (Equals): implement.
+	(GetHashCode): implement.
+	(SerializeElement): add comment.
+
+	* TagMapCollection.cs (Remove): pass the key to BaseRemove.
+	(set_Item (int index)): implement.
+	
+	* TagMapInfo.cs (Equals): implement.
+	(GetHashCode): implement.
+	(SerializeElement): add call to base.SerializeElement.
+
+	* TrustLevelCollection.cs (Remove): pass the key to BaseRemove.
+	(GetElementKey): implement.
+
+	* SqlCacheDependencyDatabase.cs (set_Item (int index)): implement.
+
+	* WebContext.cs: new implementation.
+
 2005-11-13  Chris Toshok  <toshok@ximian.com>
 
 	* AnonymousIdentificationSection.cs: rework this class a bit to

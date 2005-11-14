@@ -3,6 +3,7 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Chris Toshok (toshok@ximian.com)
 //
 // Copyright (c) 2005 Novell, Inc (http://www.novell.com)
 //
@@ -27,6 +28,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
 using System;
 using System.Configuration;
@@ -34,47 +36,57 @@ using System.Configuration;
 namespace System.Web.Configuration
 {
 	public sealed class BuildProvider : ConfigurationElement {
-		string extension;
-		string type;
+
+		static ConfigurationProperty extensionProp;
+		static ConfigurationProperty typeProp;
+		static ConfigurationPropertyCollection properties;
+
+		static BuildProvider ()
+		{
+			extensionProp = new ConfigurationProperty ("extension", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
+			properties = new ConfigurationPropertyCollection();
+
+			properties.Add (extensionProp);
+			properties.Add (typeProp);
+		}
 
 		public BuildProvider (string extension, string type)
 		{
-			this.extension = extension;
-			this.type = type;
+			this.Extension = extension;
+			this.Type = type;
 		}
 
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("extension", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Extension {
-			get { return extension; }
-			set { extension = value; }
+			get { return (string) base[extensionProp]; }
+			set { base[extensionProp] = value; }
 		}
 
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired)]
 		public string Type {
-			get { return type; }
-			set { type = value; }
+			get { return (string) base[typeProp]; }
+			set { base[typeProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				return base.Properties;
-			}
+			get { return properties; }
 		}
 
 		public override bool Equals (object provider)
 		{
-			if (!(provider is BuildProvider))
+			BuildProvider p = provider as BuildProvider;
+			if (p == null)
 				return false;
 
-			BuildProvider p = (BuildProvider) provider;
-			return (extension == p.extension && type == p.type);
+			return (Extension == p.Extension && Type == p.Type);
 		}
 
 		public override int GetHashCode ()
 		{
-			return (extension.GetHashCode () + type.GetHashCode ());
+			return (Extension.GetHashCode () + Type.GetHashCode ());
 		}
 	}
 	

@@ -73,7 +73,7 @@ namespace System.Web.Configuration
 
 		public void Remove (TagPrefixInfo tagPrefixInformation)
 		{
-			BaseRemove (tagPrefixInformation);
+			BaseRemove (tagPrefixInformation.TagPrefix);
 		}
 
 		[MonoTODO]
@@ -95,10 +95,8 @@ namespace System.Web.Configuration
 		}
 
 		public TagPrefixInfo this[int index] {
-			get { return (TagPrefixInfo) BaseGet (index);
-			}
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			get { return (TagPrefixInfo) BaseGet (index); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		protected override bool ThrowOnDuplicate {

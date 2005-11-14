@@ -38,46 +38,45 @@ namespace System.Web.Configuration
 	[ConfigurationCollection (typeof (ProfileGroupSettings), AddItemName = "group", CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
 	public sealed class ProfileGroupSettingsCollection : ConfigurationElementCollection
 	{
-		[MonoTODO]
+		static ConfigurationPropertyCollection properties;
+
+		static ProfileGroupSettingsCollection ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+		}
+
 		public ProfileGroupSettingsCollection ()
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void Add (ProfileGroupSettings group)
 		{
-			throw new NotImplementedException ();
+			BaseAdd (group);
 		}
 
-		[MonoTODO]
 		public void Clear ()
 		{
-			throw new NotImplementedException ();
+			BaseClear ();
 		}
 
-		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			throw new NotImplementedException ();
+			return new ProfileGroupSettings ("");
 		}
 
-		[MonoTODO]
 		public ProfileGroupSettings Get (int index)
 		{
-			throw new NotImplementedException ();
+			return (ProfileGroupSettings) BaseGet (index);
 		}
 
-		[MonoTODO]
 		public ProfileGroupSettings Get (string name)
 		{
-			throw new NotImplementedException ();
+			return (ProfileGroupSettings) BaseGet (name);
 		}
 
-		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return ((ProfileGroupSettings)element).Name;
 		}
 
 		[MonoTODO]
@@ -86,10 +85,9 @@ namespace System.Web.Configuration
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public int IndexOf (ProfileGroupSettings group)
 		{
-			throw new NotImplementedException ();
+			return BaseIndexOf (group);
 		}
 
 		[MonoTODO]
@@ -98,16 +96,14 @@ namespace System.Web.Configuration
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public void Remove (string name)
 		{
-			throw new NotImplementedException ();
+			BaseRemove (name);
 		}
 
-		[MonoTODO]
 		public void RemoveAt (int index)
 		{
-			throw new NotImplementedException ();
+			BaseRemoveAt (index);
 		}
 
 		[MonoTODO]
@@ -124,33 +120,20 @@ namespace System.Web.Configuration
 
 		[MonoTODO]
 		public string[ ] AllKeys {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { throw new NotImplementedException (); }
 		}
 
-		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return properties; }
 		}
 
-		[MonoTODO]
 		public ProfileGroupSettings this[int index] {
-			get {
-				throw new NotImplementedException ();
-			}
-			set {
-				throw new NotImplementedException ();
-			}
+			get { return Get (index); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
-		[MonoTODO]
 		public new ProfileGroupSettings this[string name] {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return (ProfileGroupSettings) BaseGet (name); }
 		}
 
 	}

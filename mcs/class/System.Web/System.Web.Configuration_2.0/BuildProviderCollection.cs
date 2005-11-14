@@ -51,12 +51,7 @@ namespace System.Web.Configuration
 
 		public BuildProvider this [int index] {
 			get { return (BuildProvider) BaseGet (index); }
-			set {
-				if (BaseGet (index) != null)
-					BaseRemoveAt (index);
-
-				BaseAdd (index, value);
-			}
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		public new BuildProvider this [string name] {

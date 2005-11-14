@@ -57,16 +57,18 @@ namespace System.Web.Configuration {
 			this.Redirect = redirect;
 		}
 
-		[MonoTODO]
 		public override bool Equals (object customError)
 		{
-			return base.Equals (customError);
+			CustomError e = customError as CustomError;
+			if (e == null)
+				return false;
+
+			return (Redirect == e.Redirect && StatusCode == e.StatusCode);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return Redirect.GetHashCode () + StatusCode;
 		}
 
 		[StringValidator (MinLength = 1)]

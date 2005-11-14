@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.TagMapCollection
+// System.Web.Configuration.WebContext
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -28,62 +28,51 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
-using System.Collections;
 using System.Configuration;
 
-namespace System.Web.Configuration
-{
-	[ConfigurationCollection (typeof (TagMapInfo), CollectionType = ConfigurationElementCollectionType.AddRemoveClearMap)]
-	public sealed class TagMapCollection : ConfigurationElementCollection
+#if NET_2_0
+
+namespace System.Web.Configuration {
+
+	public sealed class WebContext
 	{
-		static ConfigurationPropertyCollection properties;
+		WebApplicationLevel pathLevel;
+		string site;
+		string applicationPath;
+		string path;
+		string locationSubPath;
 
-		static TagMapCollection ()
+		public WebContext (WebApplicationLevel pathLevel, string site, string applicationPath, string path, string locationSubPath)
 		{
-			properties = new ConfigurationPropertyCollection ();
+			this.pathLevel = pathLevel;
+			this.site = site;
+			this.applicationPath = applicationPath;
+			this.path = path;
+			this.locationSubPath = locationSubPath;
 		}
 
-		public TagMapCollection ()
-		{
+		public WebApplicationLevel ApplicationLevel {
+			get { return pathLevel; }
 		}
 
-		public void Add (TagMapInfo tagMapInformation)
-		{
-			BaseAdd (tagMapInformation);
+		public string ApplicationPath {
+			get { return applicationPath; }
 		}
 
-		public void Clear ()
-		{
-			BaseClear ();
+		public string LocationSubPath {
+			get { return locationSubPath; }
 		}
 
-		protected override ConfigurationElement CreateNewElement ()
-		{
-			return new TagMapInfo ("", "");
+		public string Path {
+			get { return path; }
 		}
 
-		protected override object GetElementKey (ConfigurationElement element)
-		{
-			return ((TagMapInfo)element).TagType;
-		}
-
-		public void Remove (TagMapInfo tagMapInformation)
-		{
-			BaseRemove (tagMapInformation.TagType);
-		}
-
-		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
-		}
-
-		public TagMapInfo this[int index] {
-			get { return (TagMapInfo) BaseGet (index); }
-			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
+		public string Site {
+			get { return site; }
 		}
 	}
 }
 
 #endif
+

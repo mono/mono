@@ -55,10 +55,9 @@ namespace System.Web.Configuration {
 			BaseClear ();
 		}
 
-		[MonoTODO]
 		protected override ConfigurationElement CreateNewElement (string elementName)
 		{
-			return new AuthorizationRule (AuthorizationRuleAction.Allow);
+			return new AuthorizationRule (elementName == "allow" ? AuthorizationRuleAction.Allow : AuthorizationRuleAction.Deny);
 		}
 
 		[MonoTODO]
@@ -78,16 +77,14 @@ namespace System.Web.Configuration {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public int IndexOf (AuthorizationRule rule)
 		{
-			throw new NotImplementedException ();
+			return BaseIndexOf (rule);
 		}
 
-		[MonoTODO]
 		protected override bool IsElementName (string elementname)
 		{
-			throw new NotImplementedException ();
+			return (elementname == "allow" || elementname == "deny");
 		}
 
 		public void Remove (AuthorizationRule rule)
@@ -112,13 +109,12 @@ namespace System.Web.Configuration {
 
 		[MonoTODO]
 		protected override string ElementName {
-			get { throw new NotImplementedException (); }
+			get { return "allow,deny"; }
 		}
 
-		[MonoTODO]
 		public AuthorizationRule this [int index] {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get { return Get (index); }
+			set {  if (BaseGet(index) != null)  BaseRemoveAt(index);  BaseAdd(index, value); }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

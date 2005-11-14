@@ -78,8 +78,7 @@ namespace System.Web.Configuration
 
 		public AssemblyInfo this [int index] {
 			get { return (AssemblyInfo) BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set {  if (BaseGet(index) != null)  BaseRemoveAt(index);  BaseAdd(index, value); }
 		}
 
 		public new AssemblyInfo this [string assemblyName] {

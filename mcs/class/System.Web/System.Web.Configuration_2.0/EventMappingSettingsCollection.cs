@@ -95,8 +95,7 @@ namespace System.Web.Configuration {
 
 		public EventMappingSettings this [int index] {
 			get { return (EventMappingSettings) BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		public new EventMappingSettings this [string name] {

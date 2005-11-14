@@ -62,7 +62,7 @@ namespace System.Web.Configuration {
 
 		public void Remove (TrustLevel trustLevel)
 		{
-			BaseRemove (trustLevel);
+			BaseRemove (trustLevel.Name);
 		}
 
 		public void RemoveAt (int index)
@@ -81,10 +81,9 @@ namespace System.Web.Configuration {
 			return new TrustLevel ("", "");
 		}
 
-		[MonoTODO]
 		protected override object GetElementKey (ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return ((TrustLevel)element).Name;
 		}
 
 		[MonoTODO]
@@ -108,8 +107,7 @@ namespace System.Web.Configuration {
 
 		public TrustLevel this [int index] {
 			get { return (TrustLevel) BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		[MonoTODO]

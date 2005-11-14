@@ -77,8 +77,7 @@ namespace System.Web.Configuration {
 
 		public TransformerInfo this [int index] {
 			get { return (TransformerInfo) BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

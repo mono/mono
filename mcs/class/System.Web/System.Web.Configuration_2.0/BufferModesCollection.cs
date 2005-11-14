@@ -72,8 +72,7 @@ namespace System.Web.Configuration {
 
 		public BufferModeSettings this [int index] {
 			get { return (BufferModeSettings)BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set {  if (BaseGet(index) != null)  BaseRemoveAt(index);  BaseAdd(index, value); }
 		}
 
 		public new BufferModeSettings this [string name] {

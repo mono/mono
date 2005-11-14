@@ -99,8 +99,7 @@ namespace System.Web.Configuration {
 
 		public ProfileSettings this [int index] {
 			get { return (ProfileSettings)BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {

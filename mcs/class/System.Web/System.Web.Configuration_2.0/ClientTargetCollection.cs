@@ -93,8 +93,7 @@ namespace System.Web.Configuration {
 
 		public ClientTarget this [int index] {
 			get { return (ClientTarget) BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		public new ClientTarget this [string name] {

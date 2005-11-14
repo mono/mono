@@ -53,12 +53,7 @@ namespace System.Web.Configuration
 
 		public ExpressionBuilder this [int index] {
 			get { return (ExpressionBuilder) BaseGet (index); }
-			set {
-				if (BaseGet (index) != null)
-					BaseRemoveAt (index);
-
-				BaseAdd (index, value);
-			}
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		public new ExpressionBuilder this [string name] {

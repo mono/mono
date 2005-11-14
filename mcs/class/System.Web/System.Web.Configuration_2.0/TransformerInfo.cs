@@ -58,16 +58,15 @@ namespace System.Web.Configuration {
 			this.Type = type;
 		}
 
-		[MonoTODO]
 		public override bool Equals (object o)
 		{
-			return base.Equals (o);
+			TransformerInfo info = o as TransformerInfo;
+			return (Name == info.Name && Type == info.Type);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return Name.GetHashCode () + Type.GetHashCode ();
 		}
 
 		[StringValidator (MinLength = 1)]

@@ -55,7 +55,7 @@ namespace System.Web.Configuration {
 		}
 #endif
 
-		[StringValidator]
+		[StringValidator] /* why is this here? */
 		[ConfigurationProperty ("redirectUrl", DefaultValue = "internal")]
 		public string RedirectUrl {
 			get { return (string) base [redirectUrlProp];}

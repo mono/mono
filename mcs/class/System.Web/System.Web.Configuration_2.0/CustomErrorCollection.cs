@@ -115,8 +115,7 @@ namespace System.Web.Configuration {
 
 		public CustomError this [int index] {
 			get { return (CustomError)BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		[MonoTODO]

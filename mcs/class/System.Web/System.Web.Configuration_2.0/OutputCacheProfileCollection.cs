@@ -104,8 +104,7 @@ namespace System.Web.Configuration {
 
 		public OutputCacheProfile this [int index] {
 			get { return (OutputCacheProfile) BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		public new OutputCacheProfile this [string name] {

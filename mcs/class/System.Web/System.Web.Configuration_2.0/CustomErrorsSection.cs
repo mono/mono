@@ -56,8 +56,12 @@ namespace System.Web.Configuration {
 
 		}
 
+		[MonoTODO]
 		protected override void DeserializeSection (XmlReader reader)
 		{
+			base.DeserializeSection (reader);
+
+			/* XXX more here?.. */
 		}
 
 		protected override void Reset (ConfigurationElement parentElement)

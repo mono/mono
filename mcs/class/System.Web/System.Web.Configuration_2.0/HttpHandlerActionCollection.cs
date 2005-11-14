@@ -99,8 +99,7 @@ namespace System.Web.Configuration
 
 		public HttpHandlerAction this[int index] {
 			get { return (HttpHandlerAction)BaseGet (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		protected override bool ThrowOnDuplicate {

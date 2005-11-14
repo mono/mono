@@ -64,16 +64,52 @@ namespace System.Web.Configuration {
 			this.action = action;
 		}
 
-		[MonoTODO]
 		public override bool Equals (object obj)
 		{
-			return base.Equals (obj);
+			AuthorizationRule auth = obj as AuthorizationRule;
+			if (auth == null)
+				return false;
+
+			if (action != auth.Action)
+				return false;
+
+			if (Roles.Count != auth.Roles.Count
+			    || Users.Count != auth.Users.Count
+			    || Verbs.Count != auth.Verbs.Count)
+				return false;
+
+			int i;
+
+			for (i = 0; i < Roles.Count; i ++)
+				if (Roles[i] != auth.Roles[i])
+					return false;
+
+			for (i = 0; i < Users.Count; i ++)
+				if (Users[i] != auth.Users[i])
+					return false;
+
+			for (i = 0; i < Verbs.Count; i ++)
+				if (Verbs[i] != auth.Verbs[i])
+					return false;
+				
+			return true;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			int hashCode = (int)action;
+			int i;
+
+			for (i = 0; i < Roles.Count; i ++)
+				hashCode += Roles[i].GetHashCode();
+
+			for (i = 0; i < Users.Count; i ++)
+				hashCode += Users[i].GetHashCode();
+
+			for (i = 0; i < Verbs.Count; i ++)
+				hashCode += Verbs[i].GetHashCode();
+
+			return hashCode;
 		}
 
 		[MonoTODO]
@@ -109,7 +145,11 @@ namespace System.Web.Configuration {
 		[MonoTODO]
 		protected override bool SerializeElement (XmlWriter writer, bool serializeCollectionKey)
 		{
-			return base.SerializeElement (writer, serializeCollectionKey);
+			bool ret = base.SerializeElement (writer, serializeCollectionKey);
+
+			/* XXX more here? .. */
+
+			return ret;
 		}
 
 		[MonoTODO]

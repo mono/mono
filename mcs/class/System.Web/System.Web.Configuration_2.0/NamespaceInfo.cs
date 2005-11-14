@@ -54,16 +54,18 @@ namespace System.Web.Configuration
 			Namespace = name;
 		}
 
-		[MonoTODO]
 		public override bool Equals (object namespaceInformation)
 		{
-			return base.Equals (namespaceInformation);
+			NamespaceInfo info = namespaceInformation as NamespaceInfo;
+			if (info == null)
+				return false;
+
+			return (Namespace == info.Namespace);
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return Namespace.GetHashCode ();
 		}
 
 		[StringValidator (MinLength = 1)]

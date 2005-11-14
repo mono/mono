@@ -122,8 +122,7 @@ namespace System.Web.Configuration
 
 		public FormsAuthenticationUser this[int index] {
 			get { return (FormsAuthenticationUser) Get (index); }
-			[MonoTODO]
-			set { throw new NotImplementedException (); }
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		public new FormsAuthenticationUser this[string name] {

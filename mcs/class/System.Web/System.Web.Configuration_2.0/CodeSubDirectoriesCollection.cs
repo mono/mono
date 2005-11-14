@@ -51,12 +51,7 @@ namespace System.Web.Configuration
 
 		public CodeSubDirectory this [int index] {
 			get { return (CodeSubDirectory) BaseGet (index); }
-			set {
-				if (BaseGet (index) != null)
-					BaseRemoveAt (index);
-
-				BaseAdd (index, value);
-			}
+			set { if (BaseGet (index) != null) BaseRemoveAt (index); BaseAdd (index, value); }
 		}
 
 		protected override ConfigurationElementCollectionType CollectionType {
