@@ -666,7 +666,7 @@ namespace System {
 			return true;
 		}
 
-		public static bool IsAlpha (char c)
+		private static bool IsAlpha (char c)
 		{
 #if NET_2_0
 			// as defined in rfc2234
@@ -988,6 +988,9 @@ namespace System {
 			}
 		}
 
+#if NET_2_0
+		[Obsolete]
+#endif
 		protected virtual string Unescape (string str)
 		{
 			return Unescape (str, false);
