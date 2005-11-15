@@ -105,7 +105,12 @@ namespace System.Reflection {
 		public extern int MetadataToken {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
-		}		
+		}
+
+		public extern int MDStreamVersion {
+			[MethodImplAttribute (MethodImplOptions.InternalCall)]
+			get;
+		}
 #endif
 	
 		public virtual Type[] FindTypes(TypeFilter filter, object filterCriteria) 
