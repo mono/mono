@@ -1,3 +1,6 @@
+2005-11-15 Vlad Spivak <spivak@mainsoft.com>
+	* net_1_1_java profile related changes
+
 2005-10-03  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make (monolite_flag, use_monolite): New.  Used to

@@ -9,6 +9,11 @@ PLATFORM_RUNTIME =
 PLATFORM_CORLIB = mscorlib.dll
 
 EXTERNAL_MCS = mcs
+
+ifeq (net_1_1_java,$(PROFILE))
+EXTERNAL_MCS = csc.exe
+endif
+
 EXTERNAL_MBAS = vbc.exe
 EXTERNAL_RUNTIME =
 

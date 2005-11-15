@@ -41,6 +41,7 @@ makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
 the_lib = $(topdir)/class/lib/$(PROFILE)/$(LIBRARY_NAME)
 the_pdb = $(the_lib:.dll=.pdb)
 the_mdb = $(the_lib).mdb
+the_jar = $(the_lib:.dll=.jar)
 library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_pdb) $(the_mdb)
 
 ifdef LIBRARY_NEEDS_POSTPROCESSING
@@ -278,14 +279,24 @@ endif
 $(build_lib): $(response) $(sn) $(BUILT_SOURCES)
 ifdef LIBRARY_USE_INTERMEDIATE_FILE
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$(LIBRARY_NAME) $(BUILT_SOURCES_cmdline) @$(response)
+ifneq (net_1_1_java,$(PROFILE))
 	$(SN) $(SNFLAGS) $(LIBRARY_NAME) $(LIBRARY_SNK)
+endif
 	mv $(LIBRARY_NAME) $@
+ifeq (net_1_1_java,$(PROFILE))
+	mv $(LIBRARY_NAME:.dll=.pdb) $(the_pdb)
+endif
 	test ! -f $(LIBRARY_NAME).mdb || mv $(LIBRARY_NAME).mdb $@.mdb
 else
 	$(LIBRARY_COMPILE) $(LIBRARY_FLAGS) $(LIB_MCS_FLAGS) -target:library -out:$@ $(BUILT_SOURCES_cmdline) @$(response)
+ifneq (net_1_1_java,$(PROFILE))
 	$(SN) $(SNFLAGS) $@ $(LIBRARY_SNK)
 endif
+endif
 
+ifeq (net_1_1_java,$(PROFILE))
+	converter.exe /debug:3 ../../class/lib/$(PROFILE)/$(LIBRARY) /out:$(the_jar) $(KEY) /lib:../../class/lib/net_1_1_java
+endif
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
 	@sed 's,^,$(build_lib): ,' $< >$@
