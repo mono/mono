@@ -37,9 +37,8 @@ using System.Text;
 
 namespace System.Reflection {
 
-#if NET_2_0
 	[ComVisible (true)]
-#endif
+	[Serializable]
 	public sealed class CustomAttributeData {
 		ConstructorInfo ctorInfo;
 		IList<CustomAttributeTypedArgument> ctorArgs;

@@ -707,40 +707,9 @@ namespace System.Reflection {
 		}
 
 		[ComVisible (false)]
-		[Obsolete ("Please use Assembly.ManifestModule.GetPEKind() instead - this will be removed before Whidbey ships.")]
-		public ImageFileMachine ImageFileMachine {
-			get {
-				ImageFileMachine machine;
-				PortableExecutableKinds kind;
-				ModuleHandle handle = ManifestModule.ModuleHandle;
-				handle.GetPEKind (out kind, out machine);
-				return machine;
-			}
-		}
-
-		[ComVisible (false)]
 		public extern Module ManifestModule {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
-		}
-
-		[ComVisible (false)]
-		[Obsolete ("This method has been deprecated and will be removed before v2.0 RTM is released.")]
-		public extern int MetadataToken {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
-		}
-
-		[ComVisible (false)]
-		[Obsolete ("Please use Assembly.ManifestModule.GetPEKind() instead - this will be removed before Whidbey ships.")]
-		public PortableExecutableKinds PortableExecutableKinds {
-			get {
-				ImageFileMachine machine;
-				PortableExecutableKinds kind;
-				ModuleHandle handle = ManifestModule.ModuleHandle;
-				handle.GetPEKind (out kind, out machine);
-				return kind;
-			}
 		}
 
 		[ComVisible (false)]

@@ -62,16 +62,6 @@ namespace System.Reflection
 				strip = value;
 			}
 		}
-
-		[Obsolete ("Use 'StripAfterObfuscation' instead.")]
-		public bool Strip {
-			get {
-				return strip;
-			}
-			set {
-				strip = value;
-			}
-		}
 	}
 }
 

@@ -70,16 +70,6 @@ namespace System.Reflection
 			}
 		}
 
-		[Obsolete ("Use 'StripAfterObfuscation' instead.")]
-		public bool Strip {
-			get {
-				return strip;
-			}
-			set {
-				strip = value;
-			}
-		}
-
 		public bool ApplyToMembers {
 			get {
 				return applyToMembers;

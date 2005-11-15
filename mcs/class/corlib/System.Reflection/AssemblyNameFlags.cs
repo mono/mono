@@ -60,18 +60,6 @@ namespace System.Reflection {
 #endif
 
 #if NET_2_0
-		[Obsolete ("This will be removed before Whidbey ships.  There will be no replacement for Whidbey.")]
-		Library = 0x2,
-		[Obsolete ("This will be removed before Whidbey ships.  There will be no replacement for Whidbey.")]
-		AppDomainPlatform = 0x4,
-		[Obsolete ("This will be removed before Whidbey ships.  There will be no replacement for Whidbey.")]
-		ProcessPlatform = 0x6,
-		[Obsolete ("This will be removed before Whidbey ships.  There will be no replacement for Whidbey.")]
-		SystemPlatform = 0x8,
-		[Obsolete ("This will be removed before Whidbey ships.  There will be no replacement for Whidbey.")]
-		LongevityMask = 0xe,
-		[Obsolete ("This will be removed before Whidbey ships.  There will be no replacement for Whidbey.")]
-		LongevityUnspecified = 0x0,
 		EnableJITcompileOptimizer = 0x4000,
 		EnableJITcompileTracking = 0x8000
 #endif

@@ -26,10 +26,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-//
-// TODO: Mucho left to implement.
-//
-
 using System.Diagnostics;
 using System.Reflection.Emit;
 using System.Globalization;
@@ -228,20 +224,6 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
-		[Obsolete ("Use FieldInfo.GetOptionalCustomModifiers().")]
-		public virtual Type[] OptionalCustomModifiers {
-			get {
-				return GetOptionalCustomModifiers ();
-			}
-		}
-
-		[Obsolete ("Use FieldInfo.GetRequiredCustomModifiers().")]
-		public virtual Type[] RequiredCustomModifiers {
-			get {
-				return GetRequiredCustomModifiers ();
-			}
-		}
-
 		[MonoTODO]
 		public virtual Type[] GetOptionalCustomModifiers () {
 			throw new NotImplementedException ();

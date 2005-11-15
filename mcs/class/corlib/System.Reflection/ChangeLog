@@ -1,3 +1,10 @@
+2005-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* Assembly.cs AssemblyNameFlags.cs FieldInfo.cs PropertyInfo.cs 
+	CustomAttributeData.cs PortableExecutableKinds.cs 
+	ObfuscateAssemblyAttribute.cs Module.cs ObfuscationAttribute.cs: Net 2.0 RTM
+	updates.
+
 2005-11-11  Marek Safar  <marek.safar@seznam.cz>
 
 	* MethodBase.cs, TypeDelegator.cs: Reflect Type changes.

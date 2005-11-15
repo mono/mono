@@ -44,8 +44,6 @@ namespace System.Reflection {
 		NotAPortableExecutableImage = 0,
 		ILOnly = 1,
 		Required32Bit = 2,
-		[Obsolete ("Please use PE32Plus instead - this will be removed before Whidbey ships")]
-		Plus32Bit = 4,
 		PE32Plus = 4,
 		Unmanaged32Bit = 8
 	}
