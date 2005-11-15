@@ -1,3 +1,20 @@
+2005-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata-internals.h (_MonoImage): Add 'md_version_major/minor'
+	fields.
+
+	* image.c (load_metadata_ptrs): Initialize the new fields.
+
+	* reflection.c (create_dynamic_mono_image): Ditto.
+
+	* reflection.c (build_compressed_metadata): Use the new fields.
+
+	* icall.c (ves_icall_System_Reflection_Module_get_MDStreamVersion): New
+	icall.
+
+	* icall.c (mono_assembly_icalls): Remove obsolete get_MetadataToken
+	icall.
+	
 2005-11-15  Ankit Jain  <jankit@novell.com>
 	    Raja R Harinath  <harinath@gmail.com>
 
