@@ -32,7 +32,8 @@
 
 namespace System.Text
 {
-	public class DecoderReplacementFallback : DecoderFallback
+	[Serializable]
+	public sealed class DecoderReplacementFallback : DecoderFallback
 	{
 		[MonoTODO]
 		public DecoderReplacementFallback ()

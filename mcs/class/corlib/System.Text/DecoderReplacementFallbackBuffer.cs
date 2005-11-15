@@ -65,6 +65,12 @@ namespace System.Text
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
+		public override void Reset ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
 

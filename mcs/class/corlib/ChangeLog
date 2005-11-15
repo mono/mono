@@ -1,3 +1,7 @@
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib.dll.sources: Encoder support types in System.Text as well.
+
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib.dll.sources: added new .NET 2.0 Decoder support types in

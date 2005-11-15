@@ -32,6 +32,7 @@
 
 namespace System.Text
 {
+	[Serializable]
 	public abstract class DecoderFallback
 	{
 		static DecoderFallback exception_fallback =

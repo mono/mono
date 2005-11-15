@@ -1250,6 +1250,13 @@ System.Text/DecoderFallbackException.cs
 System.Text/DecoderReplacementFallback.cs
 System.Text/DecoderReplacementFallbackBuffer.cs
 System.Text/Encoder.cs
+System.Text/EncoderExceptionFallback.cs
+System.Text/EncoderExceptionFallbackBuffer.cs
+System.Text/EncoderFallback.cs
+System.Text/EncoderFallbackBuffer.cs
+System.Text/EncoderFallbackException.cs
+System.Text/EncoderReplacementFallback.cs
+System.Text/EncoderReplacementFallbackBuffer.cs
 System.Text/Encoding.cs
 System.Text/Latin1Encoding.cs
 System.Text/NormalizationForm.cs

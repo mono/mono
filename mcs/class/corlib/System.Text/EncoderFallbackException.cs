@@ -1,5 +1,5 @@
 //
-// DecoderFallbackException.cs
+// EncoderFallbackException.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -33,45 +33,66 @@
 namespace System.Text
 {
 	[Serializable]
-	public sealed class DecoderFallbackException : ArgumentException
+	public sealed class EncoderFallbackException : ArgumentException
 	{
 		const string defaultMessage =
 			"Failed to decode the input byte sequence to Unicode characters.";
 
-		public DecoderFallbackException ()
+		public EncoderFallbackException ()
 			: this (null)
 		{
 		}
 
-		public DecoderFallbackException (string message)
+		public EncoderFallbackException (string message)
 			: base (message)
 		{
 		}
 
-		public DecoderFallbackException (string message, Exception innerException)
+		public EncoderFallbackException (string message, Exception innerException)
 			: base (message, innerException)
 		{
 		}
 
-		public DecoderFallbackException (string message,
-			byte [] bytesUnknown, int index)
-			: base (message)
+		internal EncoderFallbackException (char charUnknown, int index)
+			: base (null)
 		{
-			bytes_unknown = bytesUnknown;
+			char_unknown = charUnknown;
 			this.index = index;
 		}
 
-		byte [] bytes_unknown;
+		internal EncoderFallbackException (char charUnknownHigh,
+			char charUnknownLow, int index)
+			: base (null)
+		{
+			char_unknown_high = charUnknownHigh;
+			char_unknown_low = charUnknownLow;
+			this.index = index;
+		}
+
+		char char_unknown, char_unknown_high, char_unknown_low;
 		int index = - 1;
 
-		[MonoTODO]
-		public byte [] BytesUnknown {
-			get { return bytes_unknown; }
+		public char CharUnknown {
+			get { return char_unknown; }
+		}
+
+		public char CharUnknownHigh {
+			get { return char_unknown_high; }
+		}
+
+		public char CharUnknownLow {
+			get { return char_unknown_low; }
 		}
 
 		[MonoTODO]
 		public int Index {
 			get { return index; }
+		}
+
+		[MonoTODO]
+		public bool IsUnknownSurrogate ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

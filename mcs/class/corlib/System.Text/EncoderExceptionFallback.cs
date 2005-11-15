@@ -1,5 +1,5 @@
 //
-// DecoderFallbackException.cs
+// EncoderExceptionFallback.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -27,51 +27,34 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 #if NET_2_0
 
 namespace System.Text
 {
 	[Serializable]
-	public sealed class DecoderFallbackException : ArgumentException
+	public sealed class EncoderExceptionFallback : EncoderFallback
 	{
-		const string defaultMessage =
-			"Failed to decode the input byte sequence to Unicode characters.";
-
-		public DecoderFallbackException ()
-			: this (null)
+		public EncoderExceptionFallback ()
 		{
 		}
 
-		public DecoderFallbackException (string message)
-			: base (message)
+		public override int MaxCharCount {
+			get { return 0; }
+		}
+
+		public override EncoderFallbackBuffer CreateFallbackBuffer ()
 		{
+			return new EncoderExceptionFallbackBuffer ();
 		}
 
-		public DecoderFallbackException (string message, Exception innerException)
-			: base (message, innerException)
+		public override bool Equals (object value)
 		{
+			return value as EncoderExceptionFallback != null;
 		}
 
-		public DecoderFallbackException (string message,
-			byte [] bytesUnknown, int index)
-			: base (message)
+		public override int GetHashCode ()
 		{
-			bytes_unknown = bytesUnknown;
-			this.index = index;
-		}
-
-		byte [] bytes_unknown;
-		int index = - 1;
-
-		[MonoTODO]
-		public byte [] BytesUnknown {
-			get { return bytes_unknown; }
-		}
-
-		[MonoTODO]
-		public int Index {
-			get { return index; }
+			return 0;
 		}
 	}
 }

@@ -1,5 +1,5 @@
 //
-// DecoderFallbackException.cs
+// EncoderReplacementFallbackBuffer.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -32,46 +32,50 @@
 
 namespace System.Text
 {
-	[Serializable]
-	public sealed class DecoderFallbackException : ArgumentException
+	public sealed class EncoderReplacementFallbackBuffer
+		: EncoderFallbackBuffer
 	{
-		const string defaultMessage =
-			"Failed to decode the input byte sequence to Unicode characters.";
+		EncoderReplacementFallback fallback;
 
-		public DecoderFallbackException ()
-			: this (null)
+		public EncoderReplacementFallbackBuffer (
+			EncoderReplacementFallback fallback)
 		{
-		}
-
-		public DecoderFallbackException (string message)
-			: base (message)
-		{
-		}
-
-		public DecoderFallbackException (string message, Exception innerException)
-			: base (message, innerException)
-		{
-		}
-
-		public DecoderFallbackException (string message,
-			byte [] bytesUnknown, int index)
-			: base (message)
-		{
-			bytes_unknown = bytesUnknown;
-			this.index = index;
-		}
-
-		byte [] bytes_unknown;
-		int index = - 1;
-
-		[MonoTODO]
-		public byte [] BytesUnknown {
-			get { return bytes_unknown; }
+			this.fallback = fallback;
 		}
 
 		[MonoTODO]
-		public int Index {
-			get { return index; }
+		public override int Remaining {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public override bool Fallback (char charUnknown, int index)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override bool Fallback (char charUnknownHigh, char charUnknownLow, int index)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override char GetNextChar ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override bool MovePrevious ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public override void Reset ()
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

@@ -31,7 +31,8 @@
 
 namespace System.Text
 {
-	public class DecoderExceptionFallback : DecoderFallback
+	[Serializable]
+	public sealed class DecoderExceptionFallback : DecoderFallback
 	{
 		public DecoderExceptionFallback ()
 		{

@@ -1,5 +1,5 @@
 //
-// DecoderFallbackException.cs
+// EncoderExceptionFallbackBuffer.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -32,46 +32,35 @@
 
 namespace System.Text
 {
-	[Serializable]
-	public sealed class DecoderFallbackException : ArgumentException
+	public sealed class EncoderExceptionFallbackBuffer
+		: EncoderFallbackBuffer
 	{
-		const string defaultMessage =
-			"Failed to decode the input byte sequence to Unicode characters.";
-
-		public DecoderFallbackException ()
-			: this (null)
+		public EncoderExceptionFallbackBuffer ()
 		{
 		}
 
-		public DecoderFallbackException (string message)
-			: base (message)
+		public override int Remaining {
+			get { return 0; }
+		}
+
+		public override bool Fallback (char charUnknown, int index)
 		{
+			throw new EncoderFallbackException (charUnknown, index);
 		}
 
-		public DecoderFallbackException (string message, Exception innerException)
-			: base (message, innerException)
+		public override bool Fallback (char charUnknownHigh, char charUnknownLow, int index)
 		{
+			throw new EncoderFallbackException (charUnknownHigh, charUnknownLow, index);
 		}
 
-		public DecoderFallbackException (string message,
-			byte [] bytesUnknown, int index)
-			: base (message)
+		public override char GetNextChar ()
 		{
-			bytes_unknown = bytesUnknown;
-			this.index = index;
+			return char.MinValue;
 		}
 
-		byte [] bytes_unknown;
-		int index = - 1;
-
-		[MonoTODO]
-		public byte [] BytesUnknown {
-			get { return bytes_unknown; }
-		}
-
-		[MonoTODO]
-		public int Index {
-			get { return index; }
+		public override bool MovePrevious ()
+		{
+			return false;
 		}
 	}
 }

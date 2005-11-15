@@ -1,3 +1,15 @@
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EncoderFallbackBuffer.cs, EncoderFallback.cs,
+	  EncoderExceptionFallbackBuffer.cs,
+	  EncoderReplacementFallbackBuffer.cs,
+	  EncoderFallbackException.cs,
+	  EncoderExceptionFallback.cs,
+	  EncoderReplacementFallback.cs : new files (not actually used yet).
+	* DecoderExceptionFallback.cs, DecoderFallbackException.cs,
+	  DecoderReplacementFallback.cs : [Serializable] and sealed.
+	* DecoderReplacementFallbackBuffer.cs : Reset() was missing.
+
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DecoderFallbackBuffer.cs, DecoderFallback.cs,
