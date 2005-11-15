@@ -1,5 +1,7 @@
 2005-11-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* NewConstraintAttribute.cs: Re-add this as gmcs depends on it.
+
 	* RuntimeHelpers.cs: Net 2.0 RTM updates.
 
 	* NewConstraintAttribute.cs SuppressMergeCheckAttribute.cs: Remove
