@@ -1,3 +1,7 @@
+2005-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyTest.cs: Fix build.
+
 2005-11-05  Kornél Pál  <kornelpal@hotmail.com>
 
 	* AssemblyTest.cs: Updated runtime version to v2.0.50727 (2.0 RTM).

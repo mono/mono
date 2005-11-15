@@ -115,7 +115,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (0, corlib.HostContext, "HostContext");
 			Assert.AreEqual ("v2.0.50727", corlib.ImageRuntimeVersion, "ImageRuntimeVersion");
 			Assert.IsFalse (corlib.ReflectionOnly, "ReflectionOnly");
-			Assert.AreEqual (0x20000001, corlib.MetadataToken);
 			Assert.AreEqual (0x1, corlib.ManifestModule.MetadataToken);
 #elif NET_1_1
 			Assert.IsFalse (corlib.GlobalAssemblyCache, "GlobalAssemblyCache");
