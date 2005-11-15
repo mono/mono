@@ -1,3 +1,6 @@
+2005-11-15 Vlad Spivak <spivak@mainsoft.com>
+	* Added TARGET_JVM related source includes and excludes
+
 2005-09-26 Boris Kirzner <borisk@mainsoft.com>
 	* System.DirectoryServices.dll.sources: changed reference to Consts.cs.in.
 
