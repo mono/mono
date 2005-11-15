@@ -177,5 +177,62 @@ TextWriter sw = Console.Out;
 		{
 			new Uri ("http://w*w*w.go-mono.com");
 		}
+
+		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // 1.x throws an UriFormatException
+#endif
+		public void NoHostName1_Bug76146 ()
+		{
+			Uri u = new Uri ("foo:///?bar");
+			Assert.AreEqual ("/", u.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("foo:///?bar", u.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual (String.Empty, u.Authority, "Authority");
+			Assert.AreEqual (String.Empty, u.Fragment, "Fragment");
+			Assert.AreEqual (String.Empty, u.Host, "Host");
+			// FIXME (2.0) - Normally this is never Basic without an Host name :(
+			// Assert.AreEqual (UriHostNameType.Basic, u.HostNameType, "HostNameType");
+			Assert.IsTrue (u.IsDefaultPort, "IsDefaultPort");
+			Assert.IsFalse (u.IsFile, "IsFile");
+			// FIXME Assert.IsTrue (u.IsLoopback, "IsLoopback");
+			Assert.IsFalse (u.IsUnc, "IsUnc");
+			Assert.AreEqual ("/", u.LocalPath, "LocalPath");
+			Assert.AreEqual ("/?bar", u.PathAndQuery, "PathAndQuery");
+			Assert.AreEqual ("foo", u.Scheme, "Scheme");
+			Assert.IsFalse (u.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, u.UserInfo, "UserInfo");
+		}
+
+		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // 1.x throws an UriFormatException
+#endif
+		public void NoHostName2_Bug76146 ()
+		{
+			Uri u = new Uri ("foo:///bar");
+			Assert.AreEqual ("/bar", u.AbsolutePath, "AbsolutePath");
+			Assert.AreEqual ("foo:///bar", u.AbsoluteUri, "AbsoluteUri");
+			Assert.AreEqual (String.Empty, u.Authority, "Authority");
+			Assert.AreEqual (String.Empty, u.Fragment, "Fragment");
+			Assert.AreEqual (String.Empty, u.Host, "Host");
+			// FIXME (2.0) - Normally this is never Basic without an Host name :(
+			// Assert.AreEqual (UriHostNameType.Basic, u.HostNameType, "HostNameType");
+			Assert.IsTrue (u.IsDefaultPort, "IsDefaultPort");
+			Assert.IsFalse (u.IsFile, "IsFile");
+			// FIXME Assert.IsTrue (u.IsLoopback, "IsLoopback");
+			Assert.IsFalse (u.IsUnc, "IsUnc");
+			Assert.AreEqual ("/bar", u.LocalPath, "LocalPath");
+			Assert.AreEqual ("/bar", u.PathAndQuery, "PathAndQuery");
+			Assert.AreEqual ("foo", u.Scheme, "Scheme");
+			Assert.IsFalse (u.UserEscaped, "UserEscaped");
+			Assert.AreEqual (String.Empty, u.UserInfo, "UserInfo");
+		}
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void InvalidIPAddress_Bug76659 ()
+		{
+			new Uri ("http://127.0.0.1::::/");
+		}
 	}
 }

@@ -1,3 +1,8 @@
+2005-11-15  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* UriTest2.cs: Added some new test cases for old (and now fixed) Uri
+	bugs - #76146 and #76659. May they never surface again...
+
 2005-11-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileStyleUriParserCas.cs: New. CAS unit tests.
