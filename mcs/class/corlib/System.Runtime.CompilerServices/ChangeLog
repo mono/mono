@@ -1,3 +1,8 @@
+2005-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* NewConstraintAttribute.cs SuppressMergeCheckAttribute.cs: Remove
+	obsolete net 2.0 classes.
+
 2005-10-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* IsCopyConstructed.cs: New file.
