@@ -1,3 +1,7 @@
+2005-11-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* corlib.dll.sources: Remove obsolete net 2.0 classes.
+
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* corlib_test.dll.sources: added new tests for
