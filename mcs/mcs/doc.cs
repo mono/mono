@@ -73,7 +73,7 @@ namespace Mono.CSharp {
 					c.GenerateDocComment (t);
 
 			if (t.Fields != null)
-				foreach (Field f in t.Fields)
+				foreach (FieldBase f in t.Fields)
 					f.GenerateDocComment (t);
 
 			if (t.Events != null)
@@ -902,9 +902,9 @@ namespace Mono.CSharp {
 				w.WriteWhitespace (Environment.NewLine);
 				w.WriteEndDocument ();
 				return true;
-//			} catch (Exception ex) {
-//				Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", docfilename, ex.Message);
-//				return false;
+			} catch (Exception ex) {
+				Report.Error (1569, "Error generating XML documentation file `{0}' (`{1}')", docfilename, ex.Message);
+				return false;
 			} finally {
 				if (w != null)
 					w.Close ();

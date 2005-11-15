@@ -1,3 +1,8 @@
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* doc.cs : (GenerateTypeDocComment) Fields could be FixedField.
+	  Fixed bug #76705.  CS1569 was incorrectly commented out.
+
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs : use Invocation.IsOverride() to do real override check.
