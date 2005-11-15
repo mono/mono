@@ -26,8 +26,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyProduct("MONO CLI")]
 [assembly: AssemblyCopyright("(c) 2003 Various Authors")]
 [assembly: AssemblyTrademark("")]
-
+#if (!TARGET_JVM)
 [assembly: CLSCompliant(true)]
+#endif
 [assembly: AssemblyDefaultAlias("System.DirectoryServices.dll")]
 [assembly: AssemblyInformationalVersion("0.0.0.1")]
 [assembly: NeutralResourcesLanguage("en-US")]

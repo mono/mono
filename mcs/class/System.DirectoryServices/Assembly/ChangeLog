@@ -1,3 +1,6 @@
+2005-11-15 Vlad Spivak <spivak@mainsoft.coim>
+	* AssemblyInfo.cs: Added #if ! on attributes not used in TARGET_JVM.
+
 2005-06-19 Boris Kirzner <borisk@mainsoft.coim>
 	* AssemblyInfo.cs: Added #ifdef on attributes not used in TARGET_JVM.
 	
