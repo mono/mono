@@ -347,6 +347,19 @@ namespace System.Net {
 			return s.ToString ();
 		}
 
+		public string ToString (bool fullLength)
+		{
+			if (!fullLength)
+				return ToString ();
+
+			StringBuilder sb = new StringBuilder ();
+			for (int i=0; i < address.Length - 1; i++) {
+				sb.AppendFormat ("{0:X4}:", address [i]);
+			}
+			sb.AppendFormat ("{0:X4}", address [address.Length - 1]);
+			return sb.ToString ();
+		}
+
 		/// <returns>
 		///   Whether both objects are equal.
 		/// </returns>
