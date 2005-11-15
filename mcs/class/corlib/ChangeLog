@@ -1,5 +1,7 @@
 2005-11-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* corlib.dll.sources: Readd NewConstraintAttribute.cs as gmcs depends on it.
+	
 	* corlib.dll.sources: Remove obsolete net 2.0 classes.
 
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
