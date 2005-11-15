@@ -34,9 +34,16 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Runtime.CompilerServices
 {
+#if !NET_2_0
 	[Serializable]
+#endif
 	public sealed class RuntimeHelpers
 	{
+#if NET_2_0
+		public delegate void TryCode (Object userData);
+
+		public delegate void CleanupCode (Object userData, bool exceptionThrown);
+#endif
 		private RuntimeHelpers () {}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -86,6 +93,11 @@ namespace System.Runtime.CompilerServices
 
 #if NET_2_0
 		[MonoTODO]
+		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static void PrepareConstrainedRegions () {
 			throw new NotImplementedException ();
@@ -117,6 +129,11 @@ namespace System.Runtime.CompilerServices
 
 		[MonoTODO]
 		public static void PrepareMethod (RuntimeMethodHandle method, RuntimeTypeHandle[] instantiation) {
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static void RunModuleConstructor (ModuleHandle module) {
 			throw new NotImplementedException ();
 		}
 #endif

@@ -1,5 +1,7 @@
 2005-11-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* RuntimeHelpers.cs: Net 2.0 RTM updates.
+
 	* NewConstraintAttribute.cs SuppressMergeCheckAttribute.cs: Remove
 	obsolete net 2.0 classes.
 
