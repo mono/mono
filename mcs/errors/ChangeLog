@@ -1,3 +1,7 @@
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* cs0419-2.cs : test to check error message problem in #76685.
+
 2005-11-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs1591-19.cs : evidence for that bug #76692 is not a real bug.
