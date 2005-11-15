@@ -1,4 +1,9 @@
-2005-10-18  Sebastien Pouliot  <sebastien@ximian.com>
+2005-11-15  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* Uri.cs: Temporary fix for monodoc (which current Uri system won't
+	work under 2.0).
+
+2005-11-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* FileStyleUriParser.cs: New. 2.0 Uri parser class.
 	* FtpStyleUriParser.cs: New. 2.0 Uri parser class.
