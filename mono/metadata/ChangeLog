@@ -1,3 +1,14 @@
+2005-11-15  Ankit Jain  <jankit@novell.com>
+	    Raja R Harinath  <harinath@gmail.com>
+
+	* class-internals.h (_MonoGenericContainer.types): New. Cache for MonoTypes.
+	* metadata.c (mono_type_create_from_typespec_full): Use MonoType from the
+	new per-generic_container cache if the cached MonoType's context matches
+	the current context.
+	  (has_same_context): New. Check if the VARs or MVARs in a GENERIC_INST refer
+	to the expected context.
+	  (unwrap_arrays): New. Get the element MonoType for an ARRAY/SZARRAY.
+
 2005-11-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* appdomain.c: Update MONO_CORLIB_VERSION to 42, since
