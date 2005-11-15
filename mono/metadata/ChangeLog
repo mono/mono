@@ -1,3 +1,8 @@
+2005-11-15  Martin Baulig  <martin@ximian.com>
+
+	* object.c (set_value): Use mono_class_from_mono_type() instead of
+	the hack for generic instances; fixes #76136.
+
 2005-11-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata-internals.h (_MonoImage): Add 'md_version_major/minor'
