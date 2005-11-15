@@ -1,3 +1,8 @@
+2005-11-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IPAddressTest.cs: Fixed an LoopbackIPv6 test case (missing '[') that
+	doesn't work on either MS 1.x or 2.0 (and won't work for long on Mono)
+
 2005-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DnsPermissionAttributeTest.cs: Removed *Choice security actions.

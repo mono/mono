@@ -319,7 +319,7 @@ public class IPAddressTest
 	public void LoopbackIPv6 ()
 	{
 		Assertion.AssertEquals ("#01", true, new Uri("http://[0:0:0:0::127.0.0.1]/").IsLoopback);
-		Assertion.AssertEquals ("#02", false, new Uri("http://0:0:0:0::127.1.2.3]/").IsLoopback);
+		Assertion.AssertEquals ("#02", false, new Uri("http://[0:0:0:0::127.1.2.3]/").IsLoopback);
 		Assertion.AssertEquals ("#03", true, new Uri("http://[0:0:0:0::0.0.0.1]/").IsLoopback);
 	}
 }
