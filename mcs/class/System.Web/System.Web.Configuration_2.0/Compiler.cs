@@ -110,6 +110,7 @@ namespace System.Web.Configuration
 			get { return properties; }
 		}
 
+#region CompatabilityCode
 		[MonoTODO ("we shouldn't need this")]
 		CodeDomProvider provider;
 		internal CodeDomProvider Provider {
@@ -124,6 +125,7 @@ namespace System.Web.Configuration
 				provider = value;
 			}
 		}
+#endregion
 	}
 }
 

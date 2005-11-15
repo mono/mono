@@ -1,5 +1,21 @@
 2005-11-14  Chris Toshok  <toshok@ximian.com>
 
+	* BufferModeSettings.cs: add validators/converters to the
+	programmatic property list.
+	
+	* BuildProvider.cs: add validators/converters to the programmatic
+	property list, and add an internal ctor with no args.
+
+	* Compiler.cs: wrap the code i hacked from the 1.1 stuff with a
+	#region.
+
+	* BuildProviderCollection.cs (CreateNewElement): use the internal
+	BuildProvider ctor to get around validation.
+
+	* AssemblyCollection.cs: same.
+
+2005-11-14  Chris Toshok  <toshok@ximian.com>
+
 	* TagPrefixCollection.cs (Remove): pass the key to BaseRemove.
 	(set_Item (int index)): implement.
 	

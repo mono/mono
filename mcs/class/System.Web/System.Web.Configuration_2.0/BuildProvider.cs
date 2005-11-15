@@ -43,12 +43,17 @@ namespace System.Web.Configuration
 
 		static BuildProvider ()
 		{
-			extensionProp = new ConfigurationProperty ("extension", typeof (string), "", ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
-			typeProp = new ConfigurationProperty ("type", typeof (string), "", ConfigurationPropertyOptions.IsRequired);
+			StringValidator sv = new StringValidator (1);
+			extensionProp = new ConfigurationProperty ("extension", typeof (string), "", null, sv, ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey);
+			typeProp = new ConfigurationProperty ("type", typeof (string), "", null, sv, ConfigurationPropertyOptions.IsRequired);
 			properties = new ConfigurationPropertyCollection();
 
 			properties.Add (extensionProp);
 			properties.Add (typeProp);
+		}
+
+		internal BuildProvider ()
+		{
 		}
 
 		public BuildProvider (string extension, string type)

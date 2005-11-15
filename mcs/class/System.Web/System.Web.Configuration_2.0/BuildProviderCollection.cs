@@ -84,7 +84,7 @@ namespace System.Web.Configuration
 
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			return new BuildProvider (null, null);
+			return new BuildProvider ();
 		}
 
 		protected override object GetElementKey (ConfigurationElement element)
