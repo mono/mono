@@ -46,7 +46,10 @@ namespace System.Runtime.CompilerServices
 
 		public delegate void CleanupCode (Object userData, bool exceptionThrown);
 #endif
+
+#if !NET_2_0
 		private RuntimeHelpers () {}
+#endif
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void InitializeArray (Array array, IntPtr fldHandle);

@@ -1,5 +1,7 @@
 2005-11-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* RuntimeHelpers.cs: Really fix build.
+
 	* RuntimeHelper.cs: Fix build.
 	
 	* RuntimeHelpers.cs: Make this class static in 2.0.
