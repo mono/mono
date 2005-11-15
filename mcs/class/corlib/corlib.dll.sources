@@ -1242,6 +1242,13 @@ System.Security.Principal/WindowsImpersonationContext.cs
 System.Security.Principal/WindowsPrincipal.cs
 System.Text/ASCIIEncoding.cs
 System.Text/Decoder.cs
+System.Text/DecoderExceptionFallback.cs
+System.Text/DecoderExceptionFallbackBuffer.cs
+System.Text/DecoderFallback.cs
+System.Text/DecoderFallbackBuffer.cs
+System.Text/DecoderFallbackException.cs
+System.Text/DecoderReplacementFallback.cs
+System.Text/DecoderReplacementFallbackBuffer.cs
 System.Text/Encoder.cs
 System.Text/Encoding.cs
 System.Text/Latin1Encoding.cs

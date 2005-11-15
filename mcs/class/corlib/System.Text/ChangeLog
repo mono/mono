@@ -1,3 +1,12 @@
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DecoderFallbackBuffer.cs, DecoderFallback.cs,
+	  DecoderExceptionFallbackBuffer.cs,
+	  DecoderReplacementFallbackBuffer.cs,
+	  DecoderFallbackException.cs,
+	  DecoderExceptionFallback.cs,
+	  DecoderReplacementFallback.cs : new files (not actually used yet).
+
 2005-11-14  Miguel de Icaza  <miguel@novell.com>
 
 	* ASCIIEncoding.cs, Encoding: Another snack, just a few methods
