@@ -1,3 +1,20 @@
+2005-10-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileStyleUriParser.cs: New. 2.0 Uri parser class.
+	* FtpStyleUriParser.cs: New. 2.0 Uri parser class.
+	* GenericUriParser.cs: New. 2.0 Uri parser class.
+	* GopherStyleUriParser.cs: New. 2.0 Uri parser class.
+	* HttpStyleUriParser.cs: New. 2.0 Uri parser class.
+	* LdapStyleUriParser.cs: New. 2.0 Uri parser class.
+	* NetPipeStyleUriParser.cs: New. 2.0 Uri parser class.
+	* NetTcpStyleUriParser.cs: New. 2.0 Uri parser class.
+	* NewsStyleUriParser.cs: New. 2.0 Uri parser class.
+	* Uri.cs: Lots of small fixes for both 1.x and 2.0. Some *big* bugs
+	in 1.x (fixed in 2.0) aren't fixed for Mono (and probably never will).
+	This class still needs to be refactored to be usable with the new
+	parsers.
+	* UriParser.cs: New. 2.0 Uri parser base class.
+
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : Unescape(string,bool) should also handle % and ?.
