@@ -1,3 +1,7 @@
+2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CompareInfoTest.cs : added NullCharacter() for bug #76702.
+
 2005-10-14  Ben Maurer  <bmaurer@ximian.com>
 
 	* DateTimeFormatInfoTest.cs: New test to make sure we do not

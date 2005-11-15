@@ -984,6 +984,16 @@ public class CompareInfoTest : Assertion
 	}
 
 	[Test]
+	// for bug #76702
+	public void NullCharacter ()
+	{
+		AssertEquals ("#1", -1, "MONO".IndexOf ("\0\0\0"));
+		AssertEquals ("#2", -1, "MONO".LastIndexOf ("\0\0\0"));
+		AssertEquals ("#3", 1, "MONO".CompareTo ("\0\0\0"));
+		AssertEquals ("#4", -1, "MONO".CompareTo ("MONO\0\0\0"));
+	}
+    
+	[Test]
 	public void LastIndexOfSpecialWeight ()
 	{
 		if (!doTest)
