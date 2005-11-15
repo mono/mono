@@ -1,5 +1,9 @@
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Encoding.cs : added ICloneable, Clone() and new GetEncoding().
+
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Encoding.cs : Added IsReadOnly, DecoderFallback and EncoderFallback.
 	* Encoder.cs : Added Fallback property.
 	* Decoder.cs : Added Fallback property.

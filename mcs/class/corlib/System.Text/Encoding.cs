@@ -32,9 +32,13 @@ using System.Reflection;
 using System.Globalization;
 using System.Security;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 [Serializable]
 public abstract class Encoding
+#if NET_2_0
+	: ICloneable
+#endif
 {
 	// Code page used by this encoding.
 	internal int codePage;
@@ -65,12 +69,13 @@ public abstract class Encoding
 	DecoderFallback decoder_fallback = new DecoderReplacementFallback (String.Empty);
 	EncoderFallback encoder_fallback = new EncoderReplacementFallback (String.Empty);
 
-	[MonoTODO]
+	[ComVisible (false)]
 	public bool IsReadOnly {
 		get { return is_readonly; }
 	}
 
 	[MonoTODO ("not used yet")]
+	[ComVisible (false)]
 	public DecoderFallback DecoderFallback {
 		get { return decoder_fallback; }
 		set {
@@ -83,6 +88,7 @@ public abstract class Encoding
 	}
 
 	[MonoTODO ("not used yet")]
+	[ComVisible (false)]
 	public EncoderFallback EncoderFallback {
 		get { return encoder_fallback; }
 		set {
@@ -404,6 +410,44 @@ public abstract class Encoding
 	}
 
 #if !ECMA_COMPAT
+
+#if NET_2_0
+
+	public virtual object Clone ()
+	{
+		return MemberwiseClone ();
+	}
+
+	public static Encoding GetEncoding (int codePage,
+		EncoderFallback encoderFallback, DecoderFallback decoderFallback)
+	{
+		if (encoderFallback == null)
+			throw new ArgumentNullException ("encoderFallback");
+		if (decoderFallback == null)
+			throw new ArgumentNullException ("decoderFallback");
+
+		Encoding e = GetEncoding (codePage).Clone () as Encoding;
+		e.is_readonly = false;
+		e.EncoderFallback = encoderFallback;
+		e.DecoderFallback = decoderFallback;
+		return e;
+	}
+
+	public static Encoding GetEncoding (string name,
+		EncoderFallback encoderFallback, DecoderFallback decoderFallback)
+	{
+		if (encoderFallback == null)
+			throw new ArgumentNullException ("encoderFallback");
+		if (decoderFallback == null)
+			throw new ArgumentNullException ("decoderFallback");
+
+		Encoding e = GetEncoding (name).Clone () as Encoding;
+		e.is_readonly = false;
+		e.EncoderFallback = encoderFallback;
+		e.DecoderFallback = decoderFallback;
+		return e;
+	}
+#endif
 
 	// Table of builtin web encoding names and the corresponding code pages.
 	private static readonly object[] encodings =
