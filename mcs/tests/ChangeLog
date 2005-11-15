@@ -1,3 +1,7 @@
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* test-xml-045-ref.xml test-xml-045.cs : new test for bug #76692.
+
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* test-xml-043.cs : fixed -doc option output filename.

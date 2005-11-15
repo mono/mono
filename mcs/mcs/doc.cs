@@ -392,7 +392,7 @@ namespace Mono.CSharp {
 
 			if (paramList.Length == 0) {
 				// search for fields/events etc.
-				mis = TypeManager.MemberLookup (null, null,
+				mis = TypeManager.MemberLookup (type, null,
 					type, MemberTypes.All,
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 					memberName, null);
