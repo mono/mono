@@ -31,7 +31,7 @@ readlist () {
 	OFS="$IFS"
 	IFS=":"
 	for line in $onelistcontent ; do
-		line2=${line##\#include }
+		line2=${line##\#}
 		if [ ":$line:" = ":$line2:" ] ; then
 			for linex in $excludelist ; do
 				if [ ":${line##$linex}:" = "::" ] ; then line="" ; fi
@@ -43,8 +43,11 @@ readlist () {
 					list="$list$separator$line"
 				fi
 			fi
-		elif [ ":$line2:" != "::" ] ; then
-			readlist "$line2"
+		else
+			line3=${line2##include }
+			if [ ":$line3:" != ":$line2:" -a ":$line3:" != "::" ] ; then
+				readlist "$line3"
+			fi
 		fi
 	done
 	IFS="$OFS"
