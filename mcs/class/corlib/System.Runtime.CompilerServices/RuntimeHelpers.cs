@@ -36,8 +36,10 @@ namespace System.Runtime.CompilerServices
 {
 #if !NET_2_0
 	[Serializable]
-#endif
+	public static class RuntimeHelpers
+#else
 	public sealed class RuntimeHelpers
+#endif
 	{
 #if NET_2_0
 		public delegate void TryCode (Object userData);
