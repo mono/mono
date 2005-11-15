@@ -1,0 +1,9 @@
+#include System.Data.dll.sources
+System.Data.Common/DbConvert.cs
+System.Data.Common/DbMetaDataCache.cs
+System.Data.Configuration.jvm/*.cs
+System.Data.OleDb.jvm/*.cs
+System.Data.ProviderBase.jvm/*.cs
+System.Data.SqlClient.jvm/*.cs
+System.Data.SqlTypes.jvm/*.cs
+System.Data/Res.cs
