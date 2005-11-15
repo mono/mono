@@ -274,7 +274,10 @@ System/SingleTest.cs
 System/SingleFormatterTest.cs
 System/StringTest.cs
 System.Text/ASCIIEncodingTest.cs
+System.Text/DecoderReplacementFallbackTest.cs
+System.Text/EncoderReplacementFallbackTest.cs
 System.Text/StringBuilderTest.cs
+System.Text/TestEncoding.cs
 System.Text/UnicodeEncodingTest.cs
 System.Text/UTF7EncodingTest.cs
 System.Text/UTF8EncodingTest.cs

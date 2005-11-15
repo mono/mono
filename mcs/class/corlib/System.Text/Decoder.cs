@@ -34,6 +34,19 @@ public abstract class Decoder
 	// Constructor.
 	protected Decoder () {}
 
+#if NET_2_0
+	DecoderFallback fallback;
+
+	public DecoderFallback Fallback {
+		get { return fallback; }
+		set {
+			if (value == null)
+				throw new ArgumentNullException ();
+			fallback = value;
+		}
+	}
+#endif
+
 	// Get the number of characters needed to decode a buffer.
 	public abstract int GetCharCount (byte[] bytes, int index, int count);
 

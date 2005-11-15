@@ -34,6 +34,19 @@ public abstract class Encoder
 	// Constructor.
 	protected Encoder() {}
 
+#if NET_2_0
+	EncoderFallback fallback;
+
+	public EncoderFallback Fallback {
+		get { return fallback; }
+		set {
+			if (value == null)
+				throw new ArgumentNullException ();
+			fallback = value;
+		}
+	}
+#endif
+
 	// Get the number of bytes needed to encode a buffer.
 	public abstract int GetByteCount(char[] chars, int index,
 									 int count, bool flush);

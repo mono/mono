@@ -39,6 +39,7 @@ public abstract class Encoding
 	// Code page used by this encoding.
 	internal int codePage;
 	internal int windows_code_page;
+	bool is_readonly;
 
 	// Constructor.
 	protected Encoding ()
@@ -59,6 +60,40 @@ public abstract class Encoding
 	internal static string _ (string arg) {
 		return arg;
 	}
+
+#if NET_2_0
+	DecoderFallback decoder_fallback = new DecoderReplacementFallback (String.Empty);
+	EncoderFallback encoder_fallback = new EncoderReplacementFallback (String.Empty);
+
+	[MonoTODO]
+	public bool IsReadOnly {
+		get { return is_readonly; }
+	}
+
+	[MonoTODO ("not used yet")]
+	public DecoderFallback DecoderFallback {
+		get { return decoder_fallback; }
+		set {
+			if (IsReadOnly)
+				throw new InvalidOperationException ("This Encoding is readonly.");
+			if (value == null)
+				throw new ArgumentNullException ();
+			decoder_fallback = value;
+		}
+	}
+
+	[MonoTODO ("not used yet")]
+	public EncoderFallback EncoderFallback {
+		get { return encoder_fallback; }
+		set {
+			if (IsReadOnly)
+				throw new InvalidOperationException ("This Encoding is readonly.");
+			if (value == null)
+				throw new ArgumentNullException ();
+			encoder_fallback = value;
+		}
+	}
+#endif
 
 	// Convert between two encodings.
 	public static byte[] Convert (Encoding srcEncoding, Encoding dstEncoding,
@@ -338,6 +373,7 @@ public abstract class Encoding
 		// Try to obtain a code page handler from the I18N handler.
 		Encoding enc = (Encoding)(InvokeI18N ("GetEncoding", codePage));
 		if (enc != null) {
+			enc.is_readonly = true;
 			return enc;
 		}
 
@@ -348,14 +384,18 @@ public abstract class Encoding
 		Assembly assembly = Assembly.GetExecutingAssembly ();
 		Type type = assembly.GetType (cpName);
 		if (type != null) {
-			return (Encoding)(Activator.CreateInstance (type));
+			enc = (Encoding)(Activator.CreateInstance (type));
+			enc.is_readonly = true;
+			return enc;
 		}
 
 		// Look in any assembly, in case the application
 		// has provided its own code page handler.
 		type = Type.GetType (cpName);
 		if (type != null) {
-			return (Encoding)(Activator.CreateInstance (type));
+			enc = (Encoding)(Activator.CreateInstance (type));
+			enc.is_readonly = true;
+			return enc;
 		}
 
 		// We have no idea how to handle this code page.
@@ -593,6 +633,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (asciiEncoding == null) {
 						asciiEncoding = new ASCIIEncoding ();
+						asciiEncoding.is_readonly = true;
 					}
 				}
 			}
@@ -609,6 +650,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (bigEndianEncoding == null) {
 						bigEndianEncoding = new UnicodeEncoding (true, true);
+						bigEndianEncoding.is_readonly = true;
 					}
 				}
 			}
@@ -651,6 +693,7 @@ public abstract class Encoding
 						} catch (NotSupportedException) {
 							defaultEncoding = UTF8Unmarked;
 						}
+						defaultEncoding.is_readonly = true;
 					}
 				}
 			}
@@ -667,6 +710,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (isoLatin1Encoding == null) {
 						isoLatin1Encoding = new Latin1Encoding ();
+						isoLatin1Encoding.is_readonly = true;
 					}
 				}
 			}
@@ -688,6 +732,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (utf7Encoding == null) {
 						utf7Encoding = new UTF7Encoding ();
+						utf7Encoding.is_readonly = true;
 					}
 				}
 			}
@@ -704,6 +749,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (utf8EncodingWithMarkers == null) {
 						utf8EncodingWithMarkers = new UTF8Encoding (true);
+						utf8EncodingWithMarkers.is_readonly = true;
 					}
 				}
 			}
@@ -721,6 +767,7 @@ public abstract class Encoding
 				lock (lockobj){
 					if (utf8EncodingWithoutMarkers == null){
 						utf8EncodingWithoutMarkers = new UTF8Encoding (false, false);
+						utf8EncodingWithoutMarkers.is_readonly = true;
 					}
 				}
 			}
@@ -737,6 +784,7 @@ public abstract class Encoding
 				lock (lockobj) {
 					if (unicodeEncoding == null) {
 						unicodeEncoding = new UnicodeEncoding (false, true);
+						unicodeEncoding.is_readonly = true;
 					}
 				}
 			}
@@ -754,6 +802,9 @@ public abstract class Encoding
 		public ForwardingDecoder (Encoding enc)
 		{
 			encoding = enc;
+#if NET_2_0
+			Fallback = encoding.DecoderFallback;
+#endif
 		}
 
 		// Override inherited methods.
@@ -779,6 +830,9 @@ public abstract class Encoding
 		public ForwardingEncoder (Encoding enc)
 		{
 			encoding = enc;
+#if NET_2_0
+			Fallback = encoding.EncoderFallback;
+#endif
 		}
 
 		// Override inherited methods.
