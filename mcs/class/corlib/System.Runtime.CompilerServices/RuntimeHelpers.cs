@@ -34,10 +34,10 @@ using System.Runtime.ConstrainedExecution;
 
 namespace System.Runtime.CompilerServices
 {
-#if !NET_2_0
-	[Serializable]
+#if NET_2_0
 	public static class RuntimeHelpers
 #else
+	[Serializable]
 	public sealed class RuntimeHelpers
 #endif
 	{
