@@ -1,6 +1,6 @@
 //
-// AnonymousIdentificationSectionTest.cs 
-//	- unit tests for System.Web.Configuration.AnonymousIdentificationSection
+// BuildProviderTest.cs 
+//	- unit tests for System.Web.Configuration.BuildProvider
 //
 // Author:
 //	Chris Toshok  <toshok@ximian.com>
@@ -40,56 +40,52 @@ using System.Web.Security;
 namespace MonoTests.System.Web.Configuration {
 
 	[TestFixture]
-	public class AnonymousIdentificationSectionTest  {
+	public class BuildProviderTest  {
 
 		[Test]
-		public void Defaults()
+		public void EqualsAndHashCode ()
 		{
-			AnonymousIdentificationSection a = new AnonymousIdentificationSection();
+			BuildProvider b1, b2;
 
-			Assert.AreEqual (HttpCookieMode.UseCookies, a.Cookieless, "A1");
-			Assert.AreEqual (".ASPXANONYMOUS", a.CookieName, "A2");
-			Assert.AreEqual ("/", a.CookiePath, "A3");
-			Assert.AreEqual (CookieProtection.Validation, a.CookieProtection, "A4");
-			Assert.AreEqual (false, a.CookieRequireSSL, "A5");
-			Assert.AreEqual (true, a.CookieSlidingExpiration, "A6");
-			Assert.AreEqual (TimeSpan.Parse ("69.10:40:00"), a.CookieTimeout, "A7");
-			Assert.AreEqual (null, a.Domain, "A8");
-			Assert.AreEqual (false, a.Enabled, "A9");
+			b1 = new BuildProvider (".hi", "System.Bye");
+			b2 = new BuildProvider (".hi", "System.Bye");
+
+			Assert.IsTrue (b1.Equals (b2), "A1");
+			Assert.AreEqual (b1.GetHashCode (), b2.GetHashCode (), "A2");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ConfigurationErrorsException))]
-		public void CookieName_validationFailure ()
+		public void ctor_validationFailure1 ()
 		{
-			AnonymousIdentificationSection a = new AnonymousIdentificationSection();
-
-			a.CookieName = "";
-			Assert.AreEqual ("", a.CookieName, "A1");
+			BuildProvider b = new BuildProvider ("", "hi");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ConfigurationErrorsException))]
-		public void CookiePath_validationFailure ()
+		public void ctor_validationFailure2 ()
 		{
-			AnonymousIdentificationSection a = new AnonymousIdentificationSection();
-
-			a.CookiePath = "";
-			Assert.AreEqual ("", a.CookiePath, "A1");
+			BuildProvider b = new BuildProvider ("hi", "");
 		}
+		
+		[Test]
+		[ExpectedException (typeof (ConfigurationErrorsException))]
+		public void Extension_validationFailure ()
+		{
+			BuildProvider b = new BuildProvider ("hi", "bye");
 
+			b.Extension = "";
+		}
 
 		[Test]
 		[ExpectedException (typeof (ConfigurationErrorsException))]
-		public void CookieTimeout_validationFailure ()
+		public void Type_validationFailure ()
 		{
-			AnonymousIdentificationSection a = new AnonymousIdentificationSection();
+			BuildProvider b = new BuildProvider ("hi", "bye");
 
-			a.CookieTimeout = TimeSpan.FromSeconds (-30);
-			Assert.AreEqual (TimeSpan.FromSeconds (-30), a.CookieTimeout, "A1");
+			b.Type = "";
 		}
 	}
-
 }
 
 #endif

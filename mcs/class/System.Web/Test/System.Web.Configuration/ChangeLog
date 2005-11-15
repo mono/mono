@@ -1,3 +1,18 @@
+2005-11-14  Chris Toshok  <toshok@ximian.com>
+
+	* AnonymousIdentificationSectionTest.cs: remove MS stacktrace
+	comment.
+
+	* BuildProviderTest.cs: new tests.
+
+	* AuthorizationRuleTest.cs: new tests.
+
+	* AuthorizationSectionTest.cs: new tests.
+
+	* AuthenticationSectionTest.cs: new tests.
+
+	* BufferModeSettingsTest.cs: new tests.
+
 2005-11-13  Chris Toshok  <toshok@ximian.com>
 
 	* AssemblyInfoTest.cs: programmatic property access tests.
