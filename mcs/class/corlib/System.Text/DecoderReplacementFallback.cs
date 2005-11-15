@@ -35,7 +35,6 @@ namespace System.Text
 	[Serializable]
 	public sealed class DecoderReplacementFallback : DecoderFallback
 	{
-		[MonoTODO]
 		public DecoderReplacementFallback ()
 			: this ("?")
 		{
@@ -53,30 +52,25 @@ namespace System.Text
 
 		string replacement;
 
-		[MonoTODO]
 		public string DefaultString {
 			get { return replacement; }
 		}
 
-		[MonoTODO]
 		public override int MaxCharCount {
 			get { return replacement.Length; }
 		}
 
-		[MonoTODO]
 		public override DecoderFallbackBuffer CreateFallbackBuffer ()
 		{
 			return new DecoderReplacementFallbackBuffer (this);
 		}
 
-		[MonoTODO]
 		public override bool Equals (object value)
 		{
 			DecoderReplacementFallback f = value as DecoderReplacementFallback;
 			return f != null && replacement == f.replacement;
 		}
 
-		[MonoTODO]
 		public override int GetHashCode ()
 		{
 			return replacement.GetHashCode ();

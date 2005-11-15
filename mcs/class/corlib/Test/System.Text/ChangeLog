@@ -1,5 +1,10 @@
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EncoderReplacementFallbackBufferTest.cs : new test (it's weird, but
+	  mostly identical to DecoderReplacementFallbackBufferTest...)
+
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DecoderReplacementFallbackBufferTest.cs : new test.
 
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>

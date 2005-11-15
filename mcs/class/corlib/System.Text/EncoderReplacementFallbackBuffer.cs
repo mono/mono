@@ -32,50 +32,71 @@
 
 namespace System.Text
 {
+	// This EncoderFallbackBuffer is simple. It ignores the input buffers.
+	// EncoderFallbackBuffer users could implement their own complex 
+	// fallback buffers.
+
 	public sealed class EncoderReplacementFallbackBuffer
 		: EncoderFallbackBuffer
 	{
-		EncoderReplacementFallback fallback;
+		string replacement;
+		int current;
+		bool fallback_assigned;
 
 		public EncoderReplacementFallbackBuffer (
 			EncoderReplacementFallback fallback)
 		{
-			this.fallback = fallback;
+			if (fallback == null)
+				throw new ArgumentNullException ("fallback");
+			replacement = fallback.DefaultString;
+			current = 0;
 		}
 
-		[MonoTODO]
 		public override int Remaining {
-			get { throw new NotImplementedException (); }
+			get { return replacement.Length - current; }
 		}
 
-		[MonoTODO]
 		public override bool Fallback (char charUnknown, int index)
 		{
-			throw new NotImplementedException ();
+			return Fallback (index);
 		}
 
-		[MonoTODO]
 		public override bool Fallback (char charUnknownHigh, char charUnknownLow, int index)
 		{
-			throw new NotImplementedException ();
+			return Fallback (index);
 		}
 
-		[MonoTODO]
+		// hmm, what is this index for???
+		private bool Fallback (int index)
+		{
+			if (fallback_assigned && Remaining != 0)
+				throw new ArgumentException ("Reentrant Fallback method invocation occured. It might be because either this FallbackBuffer is incorrectly shared by multiple threads, invoked inside Encoding recursively, or Reset invocation is forgotten.");
+			if (index < 0)
+				throw new ArgumentOutOfRangeException ("index");
+			fallback_assigned = true;
+			current = 0;
+
+			return replacement.Length > 0;
+		}
+
 		public override char GetNextChar ()
 		{
-			throw new NotImplementedException ();
+			if (current >= replacement.Length)
+				return char.MinValue;
+			return replacement [current++];
 		}
 
-		[MonoTODO]
 		public override bool MovePrevious ()
 		{
-			throw new NotImplementedException ();
+			if (current == 0)
+				return false;
+			current--;
+			return true;
 		}
 
-		[MonoTODO]
 		public override void Reset ()
 		{
-			throw new NotImplementedException ();
+			current = 0;
 		}
 	}
 }

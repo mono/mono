@@ -277,6 +277,7 @@ System.Text/ASCIIEncodingTest.cs
 System.Text/DecoderReplacementFallbackTest.cs
 System.Text/DecoderReplacementFallbackBufferTest.cs
 System.Text/EncoderReplacementFallbackTest.cs
+System.Text/EncoderReplacementFallbackBufferTest.cs
 System.Text/StringBuilderTest.cs
 System.Text/TestEncoding.cs
 System.Text/UnicodeEncodingTest.cs

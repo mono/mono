@@ -32,13 +32,15 @@
 
 namespace System.Text
 {
-	[MonoTODO ("Find out how bytesUnknown is used")]
+	// This DecoderFallbackBuffer is simple. It ignores the input buffers.
+	// DecoderFallbackBuffer users could implement their own complex 
+	// fallback buffers.
+
 	public sealed class DecoderReplacementFallbackBuffer
 		: DecoderFallbackBuffer
 	{
-		DecoderReplacementFallback fallback;
-		byte [] bytes;
-		int index, current;
+		bool fallback_assigned;
+		int current;
 		string replacement;
 
 		public DecoderReplacementFallbackBuffer (
@@ -46,7 +48,6 @@ namespace System.Text
 		{
 			if (fallback == null)
 				throw new ArgumentNullException ("fallback");
-			this.fallback = fallback;
 			replacement = fallback.DefaultString;
 			current = 0;
 		}
@@ -59,12 +60,11 @@ namespace System.Text
 		{
 			if (bytesUnknown == null)
 				throw new ArgumentNullException ("bytesUnknown");
-			if (bytes != null && Remaining != 0)
+			if (fallback_assigned && Remaining != 0)
 				throw new ArgumentException ("Reentrant Fallback method invocation occured. It might be because either this FallbackBuffer is incorrectly shared by multiple threads, invoked inside Encoding recursively, or Reset invocation is forgotten.");
 			if (index < 0 || bytesUnknown.Length < index)
 				throw new ArgumentOutOfRangeException ("index");
-			bytes = bytesUnknown;
-			this.index = index;
+			fallback_assigned = true;
 			current = 0;
 
 			return replacement.Length > 0;
@@ -87,7 +87,6 @@ namespace System.Text
 
 		public override void Reset ()
 		{
-			bytes = null;
 			current = 0;
 		}
 	}

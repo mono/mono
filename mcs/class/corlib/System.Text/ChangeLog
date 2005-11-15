@@ -1,5 +1,13 @@
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DecoderReplacementFallbackBuffer.cs : it does not have to preserve
+	  byte buffer.
+	* EncoderReplacementFallbackBuffer.cs : implemented.
+	* DecoderReplacementFallback.cs, EncoderReplacementFallback.cs :
+	  Removed MonoTODO.
+
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DecoderFallbackBuffer.cs : Reset() does nothing here.
 	* DecoderReplacementFallbackBuffer.cs : implemented, but no idea how
 	  bytesUnknown is used.
