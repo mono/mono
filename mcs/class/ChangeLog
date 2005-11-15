@@ -1,5 +1,7 @@
-2005-10-06  Chris Lahey  <clahey@ximian.com>
+2005-11-15 Vlad Spivak <spivak@mainsoft.com>
+	* Makefile: define net_1_1_java profile subdirs
 
+2005-10-06  Chris Lahey  <clahey@ximian.com>
 	* Makefile (SUBDIRS): Compile Mono Posix before Mono SqliteClient.
 
 2005-06-14  Lluis Sanchez Gual <lluis@novell.com>

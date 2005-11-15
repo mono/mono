@@ -22,6 +22,17 @@ net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 
 include ../build/rules.make
 
+ifeq (net_1_1_java, $(PROFILE))
+SUBDIRS = \
+	System.Xml	\
+	System.Data	\
+	System.Drawing	\
+	Novell.Directory.Ldap	\
+	System.DirectoryServices \
+	System.Runtime.Serialization.Formatters.Soap \
+	System.Runtime.Remoting
+
+else
 # For now, Mono.Security.Win32 is built on Linux too.
 # However, it isn't tested on Linux, since it depends on a Win32 dll.
 SUBDIRS = \
@@ -75,7 +86,7 @@ SUBDIRS = \
 	IBM.Data.DB2			\
 	Microsoft.JScript		\
 	FirebirdSql.Data.Firebird
-
+endif
 # Starting with Microsoft.Vsa, the libraries above weren't in the
 # Linux makefile.gnu before, but they build fine, so might as well
 # include them ...
