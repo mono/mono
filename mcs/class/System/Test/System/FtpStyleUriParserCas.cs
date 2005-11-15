@@ -1,5 +1,5 @@
 //
-// UriBuilderCas.cs - CAS unit tests for System
+// FtpStyleUriParserCas.cs - CAS unit tests for System.FtpStyleUriParser
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -26,13 +26,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_2_0
+
 using NUnit.Framework;
 
 using System;
+using System.IO;
 using System.Reflection;
 using System.Security;
 using System.Security.Permissions;
-using Microsoft.Win32;
 
 using MonoTests.System;
 
@@ -40,10 +42,19 @@ namespace MonoCasTests.System {
 
 	[TestFixture]
 	[Category ("CAS")]
-	public class UriBuilderCas {
+	public class FtpStyleUriParserCas {
+
+		private FtpStyleUriParserTest unit;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			unit = new FtpStyleUriParserTest ();
+			unit.FixtureSetUp (); // fulltrust
+		}
 
 		[SetUp]
-		public virtual void SetUp ()
+		public void SetUp ()
 		{
 			if (!SecurityManager.SecurityEnabled)
 				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
@@ -51,35 +62,29 @@ namespace MonoCasTests.System {
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void UnitTestReuse ()
+		public void Deny_Unrestricted ()
 		{
-			UriBuilderTest unit = new UriBuilderTest ();
-			unit.Constructor_Empty ();
-			unit.Constructor_5 ();
-			unit.Equals ();
-			unit.EmptyQuery ();
+			FtpStyleUriParser parser = new FtpStyleUriParser ();
+		}
 
-			unit.GetReady ();
-			unit.Path ();
-			unit.Query ();
-			unit.Fragment ();
-			unit.Scheme ();
-
-			unit.GetReady ();
-			unit.ToStringTest ();
-#if NET_2_0
-			unit.GetReady ();
-			unit.DefaultPort ();
-#endif
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void ReuseUnitTests ()
+		{
+			unit.Ftpx ();
+			unit.Ftpx_Methods ();
+			unit.SecureFtpx ();
 		}
 
 		[Test]
 		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
 		public void LinkDemand_Deny_Unrestricted ()
 		{
-			ConstructorInfo ci = typeof (UriBuilder).GetConstructor (new Type [0]);
-			Assert.IsNotNull (ci, "default .ctor");
+			ConstructorInfo ci = typeof (FtpStyleUriParser).GetConstructor (new Type[0]);
+			Assert.IsNotNull (ci, "default .ctor()");
 			Assert.IsNotNull (ci.Invoke (null), "invoke");
 		}
 	}
 }
+
+#endif

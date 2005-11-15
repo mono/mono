@@ -1,3 +1,31 @@
+2005-11-15  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileStyleUriParserCas.cs: New. CAS unit tests.
+	* FileStyleUriParserTest.cs: New. Unit tests.
+	* FtpStyleUriParserCas.cs: New. CAS unit tests.
+	* FtpStyleUriParserTest.cs: New. Unit tests.
+	* GenericUriParserCas.cs: New. CAS unit tests.
+	* GenericUriParserTest.cs: New. Unit tests.
+	* GopherStyleUriParserCas.cs: New. CAS unit tests.
+	* GopherStyleUriParserTest.cs: New. Unit tests.
+	* HttpStyleUriParserCas.cs: New. CAS unit tests.
+	* HttpStyleUriParserTest.cs: New. Unit tests.
+	* LdapStyleUriParserCas.cs: New. CAS unit tests.
+	* LdapStyleUriParserTest.cs: New. Unit tests.
+	* NetPipeStyleUriParserCas.cs: New. CAS unit tests.
+	* NetPipeStyleUriParserTest.cs: New. Unit tests.
+	* NetTcpStyleUriParserCas.cs: New. CAS unit tests.
+	* NetTcpStyleUriParserTest.cs: New. Unit tests.
+	* NewsStyleUriParserCas.cs: New. CAS unit tests.
+	* NewsStyleUriParserTest.cs: New. Unit tests.
+	* UriBuilderCas.cs: Fixed line-endings.
+	* UriCas.cs: New. CAS unit tests.
+	* UriParserCas.cs: New. CAS unit tests.
+	* UriParserTest.cs: New. Unit tests.
+	* UriTest2.cs: Added some new test cases.
+	* UriTest3.cs: New. Unit tests for new 2.0 stuff in Uri.
+	* UriTest.cs: Updated and fixed (1.x/2.0 diffs) test cases.
+
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTest.cs : Added test for bug #76643. Also commented non-2.0 test

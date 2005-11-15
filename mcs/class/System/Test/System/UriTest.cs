@@ -21,7 +21,7 @@ namespace MonoTests.System
 	{
 		protected bool isWin32 = false;
 
-		[SetUp]
+		[TestFixtureSetUp]
 		public void GetReady () 
 		{
 			isWin32 = (Path.DirectorySeparatorChar == '\\');
@@ -137,8 +137,7 @@ namespace MonoTests.System
 			AssertEquals ("#rel2b", false, uri.UserEscaped);
 			uri = new Uri (new Uri("http://www.contoso.com"), "http://www.xxx.com/Hello World.htm", false);
 			AssertEquals ("#rel3", "http://www.xxx.com/Hello%20World.htm", uri.AbsoluteUri);
-			//uri = new Uri (new Uri("http://www.contoso.com"), "foo:8080/bar/Hello World.htm", false);
-			//AssertEquals ("#rel4", "foo:8080/bar/Hello%20World.htm", uri.AbsoluteUri);
+
 			uri = new Uri (new Uri("http://www.contoso.com"), "foo/bar/Hello World.htm?x=0:8", false);
 			AssertEquals ("#rel5", "http://www.contoso.com/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
 			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "foo/bar/Hello World.htm?x=0:8", false);
@@ -148,25 +147,16 @@ namespace MonoTests.System
 			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "../foo/bar/Hello World.htm?x=0:8", false);
 			AssertEquals ("#rel8", "http://www.contoso.com/xxx/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
 			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "../../../foo/bar/Hello World.htm?x=0:8", false);
+#if NET_2_0
+			AssertEquals ("#rel9", "http://www.contoso.com/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
+#else
 			AssertEquals ("#rel9", "http://www.contoso.com/../foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
+#endif
 			uri = new Uri (new Uri("http://www.contoso.com/xxx/yyy/index.htm"), "./foo/bar/Hello World.htm?x=0:8", false);
 			AssertEquals ("#rel10", "http://www.contoso.com/xxx/yyy/foo/bar/Hello%20World.htm?x=0:8", uri.AbsoluteUri);
 
-			try {
-				uri = new Uri (null, "http://www.contoso.com/index.htm", false);
-				Fail ("#rel20");
-			} catch (NullReferenceException) {
-			}
-			try {
-				uri = new Uri (new Uri("http://www.contoso.com"), null, false);
-				Fail ("#rel21");
-			} catch (NullReferenceException) {
-			}
-			try {
-				uri = new Uri (new Uri("http://www.contoso.com/foo/bar/index.html?x=0"), String.Empty, false);
-				AssertEquals("#22", "http://www.contoso.com/foo/bar/index.html?x=0", uri.ToString ());
-			} catch (NullReferenceException) {
-			}
+			uri = new Uri (new Uri("http://www.contoso.com/foo/bar/index.html?x=0"), String.Empty, false);
+			AssertEquals("#22", "http://www.contoso.com/foo/bar/index.html?x=0", uri.ToString ());
 
 			uri = new Uri (new Uri("http://www.xxx.com"), "?x=0");
 			AssertEquals ("#rel30", "http://www.xxx.com/?x=0", uri.ToString());
@@ -176,12 +166,65 @@ namespace MonoTests.System
 			AssertEquals ("#rel32", "http://www.xxx.com/index.htm#here", uri.ToString());
 		}
 
+		[Test]
+		public void Constructor_DualHostPort ()
+		{
+			string relative = "foo:8080/bar/Hello World.htm";
+			Uri uri = new Uri (new Uri("http://www.contoso.com"), relative, false);
+			AssertEquals ("AbsolutePath", "8080/bar/Hello%20World.htm", uri.AbsolutePath);
+			AssertEquals ("AbsoluteUri", "foo:8080/bar/Hello%20World.htm", uri.AbsoluteUri);
+			AssertEquals ("Authority", String.Empty, uri.Authority);
+			AssertEquals ("Fragment", String.Empty, uri.Fragment);
+			AssertEquals ("Host", String.Empty, uri.Host);
+			AssertEquals ("PathAndQuery", "8080/bar/Hello%20World.htm", uri.PathAndQuery);
+			AssertEquals ("Port", -1, uri.Port);
+			AssertEquals ("Query", String.Empty, uri.Query);
+			AssertEquals ("Scheme", "foo", uri.Scheme);
+			AssertEquals ("Query", String.Empty, uri.UserInfo);
+
+			AssertEquals ("Segments[0]", "8080/", uri.Segments[0]);
+			AssertEquals ("Segments[1]", "bar/", uri.Segments[1]);
+			AssertEquals ("Segments[2]", "Hello%20World.htm", uri.Segments[2]);
+
+			Assert ("IsDefaultPort", uri.IsDefaultPort);
+			Assert ("IsFile", !uri.IsFile);
+			Assert ("IsLoopback", !uri.IsLoopback);
+			Assert ("IsUnc", !uri.IsUnc);
+			Assert ("UserEscaped", !uri.UserEscaped);
+#if NET_2_0
+			AssertEquals ("HostNameType", UriHostNameType.Unknown, uri.HostNameType);
+			Assert ("IsAbsoluteUri", uri.IsAbsoluteUri);
+			AssertEquals ("OriginalString", relative, uri.OriginalString);
+#else
+			AssertEquals ("HostNameType", UriHostNameType.Basic, uri.HostNameType);
+#endif
+		}
+
+		[Test]
+#if NET_2_0
+		[ExpectedException (typeof (ArgumentNullException))]
+#else
+		[ExpectedException (typeof (NullReferenceException))]
+#endif
+		public void Constructor_NullStringBool ()
+		{
+			new Uri (null, "http://www.contoso.com/index.htm", false);
+		}
+
+		[Test]
+#if ONLY_1_1
+		[ExpectedException (typeof (NullReferenceException))]
+#endif
+		public void Constructor_UriNullBool ()
+		{
+			new Uri (new Uri ("http://www.contoso.com"), null, false);
+		}
+
 		// regression for bug #47573
 		[Test]
 		public void RelativeCtor ()
 		{
 			Uri b = new Uri ("http://a/b/c/d;p?q");
-//			AssertEquals ("g:h", "g:h", new Uri (b, "g:h").ToString ()); this causes crash under MS.NET 1.1
 			AssertEquals ("#1", "http://a/g", new Uri (b, "/g").ToString ());
 			AssertEquals ("#2", "http://g/", new Uri (b, "//g").ToString ());
 			AssertEquals ("#3", "http://a/b/c/?y", new Uri (b, "?y").ToString ());
@@ -196,41 +239,213 @@ namespace MonoTests.System
 			AssertEquals ("#6", "?q=r;.%20a", u.Query);
 		}
 
+#if NET_2_0
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void RelativeCtor_11_Crasher ()
+		{
+			Uri b = new Uri ("http://a/b/c/d;p?q");
+			// this causes crash under MS.NET 1.1
+			AssertEquals ("g:h", "g:h", new Uri (b, "g:h").ToString ());
+		}
+#endif
+
+		[Test]
+		[ExpectedException (typeof (UriFormatException))]
+		public void Bad_IPv6 ()
+		{
+			new Uri ("http://0:0:0:0::127.1.2.3]/");
+		}
+
+		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")]
+#endif
+		public void LeadingSlashes_ShouldFailOn1x ()
+		{
+			// doesn't (but should) fail under 1.x
+			AssertEquals ("#1", "file:///", new Uri ("file:///").ToString ());
+			AssertEquals ("#2", "file:///", new Uri ("file://").ToString ());
+		}
+
+		[Test]
+#if ONLY_1_1
+		[Category ("NotWorking")]
+#endif
+		public void LeadingSlashes_BadResultsOn1x ()
+		{
+			// strange behaviours of 1.x - it's probably not worth to fix it
+			// on Mono as 2.0 has been fixed
+			Uri u = new Uri ("file:///foo/bar");
+#if NET_2_0
+			AssertEquals ("#3a", String.Empty, u.Host);
+			AssertEquals ("#3b", UriHostNameType.Basic, u.HostNameType);
+			AssertEquals ("#3c", "file:///foo/bar", u.ToString ());
+			AssertEquals ("#3d", false, u.IsUnc);
+#else
+			// 1.x misinterpret the first path element as the host name
+			AssertEquals ("#3a", "foo", u.Host);
+			AssertEquals ("#3b", UriHostNameType.Dns, u.HostNameType);
+			AssertEquals ("#3c", "file://foo/bar", u.ToString ());
+			AssertEquals ("#3d", true, u.IsUnc);
+#endif
+			u = new Uri ("mailto:/foo");
+#if NET_2_0
+			AssertEquals ("#13a", String.Empty, u.Host);
+			AssertEquals ("#13b", UriHostNameType.Basic, u.HostNameType);
+			AssertEquals ("#13c", "mailto:/foo", u.ToString ());
+#else
+			// 1.x misinterpret the first path element as the host name
+			AssertEquals ("#13a", "foo", u.Host);
+			AssertEquals ("#13b", UriHostNameType.Dns, u.HostNameType);
+			AssertEquals ("#13c", "mailto:foo", u.ToString ());
+#endif
+			u = new Uri ("mailto://foo");
+#if NET_2_0
+			AssertEquals ("#14a", String.Empty, u.Host);
+			AssertEquals ("#14b", UriHostNameType.Basic, u.HostNameType);
+			AssertEquals ("#14c", "mailto://foo", u.ToString ());
+#else
+			// 1.x misinterpret the first path element as the host name
+			AssertEquals ("#14a", "foo", u.Host);
+			AssertEquals ("#14b", UriHostNameType.Dns, u.HostNameType);
+			AssertEquals ("#14c", "mailto://foo/", u.ToString ());
+#endif
+			u = new Uri ("news:/");
+			AssertEquals ("#18a", String.Empty, u.Host);
+#if NET_2_0
+			AssertEquals ("#18b", UriHostNameType.Unknown, u.HostNameType);
+			AssertEquals ("#18c", "news:/", u.ToString ());
+			AssertEquals ("#18d", "/", u.AbsolutePath);
+			AssertEquals ("#18e", "news:/", u.AbsoluteUri);
+#else
+			AssertEquals ("#18b", UriHostNameType.Basic, u.HostNameType);
+			AssertEquals ("#18c", "news:", u.ToString ());
+			AssertEquals ("#18d", String.Empty, u.AbsolutePath);
+			AssertEquals ("#18e", "news:", u.AbsoluteUri);
+#endif
+			u = new Uri ("news:/foo");
+			AssertEquals ("#19a", String.Empty, u.Host);
+#if NET_2_0
+			AssertEquals ("#19b", UriHostNameType.Unknown, u.HostNameType);
+			AssertEquals ("#19c", "news:/foo", u.ToString ());
+			AssertEquals ("#19d", "/foo", u.AbsolutePath);
+			AssertEquals ("#19e", "news:/foo", u.AbsoluteUri);
+#else
+			AssertEquals ("#19b", UriHostNameType.Basic, u.HostNameType);
+			AssertEquals ("#19c", "news:foo", u.ToString ());
+			AssertEquals ("#19d", "foo", u.AbsolutePath);
+			AssertEquals ("#19e", "news:foo", u.AbsoluteUri);
+#endif
+			u = new Uri ("news://foo");
+#if NET_2_0
+			AssertEquals ("#20a", String.Empty, u.Host);
+			AssertEquals ("#20b", UriHostNameType.Unknown, u.HostNameType);
+			AssertEquals ("#20c", "news://foo", u.ToString ());
+			AssertEquals ("#20d", "//foo", u.AbsolutePath);
+			AssertEquals ("#20e", "news://foo", u.AbsoluteUri);
+#else
+			AssertEquals ("#20a", "foo", u.Host);
+			AssertEquals ("#20b", UriHostNameType.Dns, u.HostNameType);
+			AssertEquals ("#20c", "news://foo/", u.ToString ());
+			AssertEquals ("#20d", "/", u.AbsolutePath);
+			AssertEquals ("#20e", "news://foo/", u.AbsoluteUri);
+#endif
+			u = new Uri ("news://foo/bar");
+#if NET_2_0
+			AssertEquals ("#22a", String.Empty, u.Host);
+			AssertEquals ("#22b", UriHostNameType.Unknown, u.HostNameType);
+			AssertEquals ("#22c", "news://foo/bar", u.ToString ());
+			AssertEquals ("#22d", "//foo/bar", u.AbsolutePath);
+			AssertEquals ("#22e", "news://foo/bar", u.AbsoluteUri);
+#else
+			AssertEquals ("#22a", "foo", u.Host);
+			AssertEquals ("#22b", UriHostNameType.Dns, u.HostNameType);
+			AssertEquals ("#22c", "news://foo/bar", u.ToString ());
+			AssertEquals ("#22d", "/bar", u.AbsolutePath);
+			AssertEquals ("#22e", "news://foo/bar", u.AbsoluteUri);
+#endif
+		}
+
+		[Test]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // does (but shouldn't) fail under 1.x
+#endif
+		public void LeadingSlashes_FailOn1x ()
+		{
+			// 1.x throws an UriFormatException because it can't decode the host name
+			Uri u = new Uri ("mailto:");
+			AssertEquals ("#10a", String.Empty, u.Host);
+			AssertEquals ("#10b", UriHostNameType.Basic, u.HostNameType);
+			AssertEquals ("#10c", "mailto:", u.ToString ());
+
+			// 1.x throws an UriFormatException because it can't decode the host name
+			u = new Uri ("mailto:/");
+			AssertEquals ("#12a", String.Empty, u.Host);
+			AssertEquals ("#12b", UriHostNameType.Basic, u.HostNameType);
+			AssertEquals ("#12c", "mailto:/", u.ToString ());
+
+			// 1.x throws an UriFormatException because it cannot detect the format
+			u = new Uri ("mailto:///foo");
+			AssertEquals ("#15a", String.Empty, u.Host);
+			AssertEquals ("#15b", UriHostNameType.Basic, u.HostNameType);
+			AssertEquals ("#15c", "mailto:///foo", u.ToString ());
+
+			// 1.x throws an UriFormatException because it cannot detect the format
+			u = new Uri ("news:///foo");
+			AssertEquals ("#21a", String.Empty, u.Host);
+#if NET_2_0
+			AssertEquals ("#21b", UriHostNameType.Unknown, u.HostNameType);
+#else
+			AssertEquals ("#21b", UriHostNameType.Basic, u.HostNameType);
+#endif
+			AssertEquals ("#21c", "news:///foo", u.ToString ());
+			AssertEquals ("#21d", "///foo", u.AbsolutePath);
+			AssertEquals ("#21e", "news:///foo", u.AbsoluteUri);
+		}
+
 		[Test]
 		// some tests from bug 75144
 		public void LeadingSlashes ()
 		{
-			Uri u;
-			AssertEquals ("#1", "file:///", new Uri ("file:///").ToString());
-			AssertEquals ("#2", "file:///", new Uri ("file://").ToString());
-
-			u = new Uri ("file:///foo/bar");
-			AssertEquals ("#3", "file:///foo/bar", u.ToString());
-			AssertEquals ("#4", false, u.IsUnc);
-
-			u = new Uri ("file://foo/bar");
-			AssertEquals ("#5", "file://foo/bar", u.ToString());
-			AssertEquals ("#6", true, u.IsUnc);
+			Uri u = new Uri ("file://foo/bar");
+			AssertEquals ("#5a", "foo", u.Host);
+			AssertEquals ("#5b", UriHostNameType.Dns, u.HostNameType);
+			AssertEquals ("#5c", "file://foo/bar", u.ToString ());
+			AssertEquals ("#5d", true, u.IsUnc);
 
 			u = new Uri ("file:////foo/bar");
-			AssertEquals ("#7", "file://foo/bar", u.ToString());
-			AssertEquals ("#8", true, u.IsUnc); 
+			AssertEquals ("#7a", "foo", u.Host);
+			AssertEquals ("#7b", UriHostNameType.Dns, u.HostNameType);
+			AssertEquals ("#7c", "file://foo/bar", u.ToString ());
+			AssertEquals ("#7d", true, u.IsUnc); 
 
 			AssertEquals ("#9", "file://foo/bar", new Uri ("file://///foo/bar").ToString());
 
-			AssertEquals ("#10", "mailto:", new Uri ("mailto:").ToString());
-			AssertEquals ("#11", "mailto:foo", new Uri ("mailto:foo").ToString());
-			AssertEquals ("#12", "mailto:/", new Uri ("mailto:/").ToString());
-			AssertEquals ("#13", "mailto:/foo", new Uri ("mailto:/foo").ToString());
-			AssertEquals ("#14", "mailto://foo", new Uri ("mailto://foo").ToString());
-			AssertEquals ("#15", "mailto:///foo", new Uri ("mailto:///foo").ToString());
+			u = new Uri ("mailto:foo");
+			AssertEquals ("#11a", "foo", u.Host);
+			AssertEquals ("#11b", UriHostNameType.Dns, u.HostNameType);
+			AssertEquals ("#11c", "mailto:foo", u.ToString ());
 
-			AssertEquals ("#16", "news:", new Uri ("news:").ToString());
-			AssertEquals ("#17", "news:foo", new Uri ("news:foo").ToString());
-			AssertEquals ("#18", "news:/", new Uri ("news:/").ToString());
-			AssertEquals ("#19", "news:/foo", new Uri ("news:/foo").ToString());
-			AssertEquals ("#20", "news://foo", new Uri ("news://foo").ToString());
-			AssertEquals ("#21", "news:///foo", new Uri ("news:///foo").ToString());
+			u = new Uri ("news:");
+			AssertEquals ("#16a", String.Empty, u.Host);
+#if NET_2_0
+			AssertEquals ("#16b", UriHostNameType.Unknown, u.HostNameType);
+#else
+			AssertEquals ("#16b", UriHostNameType.Basic, u.HostNameType);
+#endif
+			AssertEquals ("#16c", "news:", u.ToString ());
+
+			u = new Uri ("news:foo");
+			AssertEquals ("#17a", String.Empty, u.Host);
+#if NET_2_0
+			AssertEquals ("#17b", UriHostNameType.Unknown, u.HostNameType);
+#else
+			AssertEquals ("#17b", UriHostNameType.Basic, u.HostNameType);
+#endif
+			AssertEquals ("#17c", "news:foo", u.ToString ());
+			AssertEquals ("#17d", "foo", u.AbsolutePath);
+			AssertEquals ("#17e", "news:foo", u.AbsoluteUri);
 		}
 
 		[Test]
@@ -242,6 +457,9 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (UriFormatException))]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // doesn't fail under 1.x
+#endif
 		public void HttpHostname2 ()
 		{
 			new Uri ("http:a");
@@ -256,6 +474,9 @@ namespace MonoTests.System
 
 		[Test]
 		[ExpectedException (typeof (UriFormatException))]
+#if ONLY_1_1
+		[Category ("NotDotNet")] // doesn't fail under 1.x
+#endif
 		public void HttpHostname4 ()
 		{
 			new Uri ("http:/foo");
@@ -341,7 +562,6 @@ namespace MonoTests.System
 			}
 		}
 
-
 		[Test]
 		public void LocalPath ()
 		{
@@ -378,45 +598,88 @@ namespace MonoTests.System
 			AssertEquals ("#5c", "file", uri.Scheme);
 			AssertEquals ("#5d", "", uri.Host);
 			AssertEquals ("#5e", "c:/cygwin/tmp/hello.txt", uri.AbsolutePath);
+		}
+
+		[Test]
+		public void LocalPath_FileHost ()
+		{
 			// Hmm, they should be regarded just as a host name, since all URIs are base on absolute path.
-			uri = new Uri("file://one_file.txt");
+			Uri uri = new Uri("file://one_file.txt");
+#if NET_2_0
+			AssertEquals("#6a", "file://one_file.txt/", uri.ToString());
+			AssertEquals ("#6e", "/", uri.AbsolutePath);
+			AssertEquals ("#6f", "/", uri.PathAndQuery);
+			AssertEquals ("#6g", "file://one_file.txt/", uri.GetLeftPart (UriPartial.Path));
+#else
 			AssertEquals("#6a", "file://one_file.txt", uri.ToString());
+			AssertEquals("#6e", "", uri.AbsolutePath);
+			AssertEquals ("#6f", "", uri.PathAndQuery);
+			AssertEquals ("#6g", "file://one_file.txt", uri.GetLeftPart (UriPartial.Path));
+#endif
 			if (isWin32)
 				AssertEquals("#6b", "\\\\one_file.txt", uri.LocalPath);
 			else
 				AssertEquals("#6b", "/", uri.LocalPath);
 			AssertEquals("#6c", "file", uri.Scheme);
 			AssertEquals("#6d", "one_file.txt", uri.Host);
-			AssertEquals("#6e", "", uri.AbsolutePath);
 
-			// escape
-			uri = new Uri ("file:///tmp/a%20a");
+			// same tests - but original Uri is now ending with a '/'
+
+			uri = new Uri ("file://one_file.txt/");
+			AssertEquals ("#7a", "file://one_file.txt/", uri.ToString ());
+			AssertEquals ("#7e", "/", uri.AbsolutePath);
+			AssertEquals ("#7f", "/", uri.PathAndQuery);
+			AssertEquals ("#7g", "file://one_file.txt/", uri.GetLeftPart (UriPartial.Path));
 			if (isWin32)
+				AssertEquals ("#7b", "\\\\one_file.txt\\", uri.LocalPath);
+			else
+				AssertEquals ("#7b", "/", uri.LocalPath);
+			AssertEquals ("#7c", "file", uri.Scheme);
+			AssertEquals ("#7d", "one_file.txt", uri.Host);
+		}
+
+		[Test]
+		public void LocalPath_Escape ()
+		{
+			// escape
+			Uri uri = new Uri ("file:///tmp/a%20a");
+			if (isWin32) {
+#if NET_2_0
+				Assert ("#7a:" + uri.LocalPath, uri.LocalPath.EndsWith ("/tmp/a a"));
+#else
 				// actually MS.NET treats /// as \\ thus it fails here.
 				Assert ("#7a:" + uri.LocalPath, uri.LocalPath.EndsWith ("\\tmp\\a a"));
-			else
+#endif
+			} else
 				AssertEquals ("#7b", "/tmp/a a", uri.LocalPath);
 
 			uri = new Uri ("file:///tmp/foo%25bar");
 			if (isWin32) {
+#if NET_2_0
+				Assert ("#8a:" + uri.LocalPath, uri.LocalPath.EndsWith ("/tmp/foo%bar"));
+				Assert ("#8c:" + uri.ToString (), uri.ToString ().EndsWith ("//tmp/foo%25bar"));
+#else
 				// actually MS.NET treats /// as \\ thus it fails here.
 				Assert ("#8a:" + uri.LocalPath, uri.LocalPath.EndsWith ("\\tmp\\foo%bar"));
 				// ditto, file://tmp/foo%25bar (bug in 1.x)
-				Assert ("#8c:" + uri.ToString (), uri.ToString ().EndsWith ("//tmp/foo%25bar"));
-			}
-			else {
+				Assert ("#8c:" + uri.ToString (), uri.ToString ().EndsWith ("//tmp/foo%bar"));
+#endif
+			} else {
 				AssertEquals ("#8b", "/tmp/foo%bar", uri.LocalPath);
 				AssertEquals ("#8d", "file:///tmp/foo%25bar", uri.ToString ());
 			}
 			// bug #76643
 			uri = new Uri ("file:///foo%25bar");
 			if (isWin32) {
+#if NET_2_0
+				Assert ("#9a:" + uri.LocalPath, uri.LocalPath.EndsWith ("/foo%bar"));
+#else
 				// actually MS.NET treats /// as \\ thus it fails here.
-				Assert ("#9a:" + uri.LocalPath, uri.LocalPath.EndsWith ("\\foo%bar"));
+				Assert ("#9a:" + uri.LocalPath, uri.LocalPath.EndsWith ("\\foo%25bar"));
+#endif
 				// ditto, file://tmp/foo%25bar (bug in 1.x)
 				Assert ("#9c:" + uri.ToString (), uri.ToString ().EndsWith ("//foo%25bar"));
-			}
-			else {
+			} else {
 				AssertEquals ("#9b", "/foo%bar", uri.LocalPath);
 				AssertEquals ("#9d", "file:///foo%25bar", uri.ToString ());
 			}
@@ -664,7 +927,7 @@ namespace MonoTests.System
 			AssertEquals ("#3", n.Fragment, "#main%23start");
 			
 			n = new Uri (b, "blah#main#start", true);
-			AssertEquals ("#3", n.Fragment, "#main#start");
+			AssertEquals ("#4", n.Fragment, "#main#start");
 		}
 			
 		[Test]
@@ -731,6 +994,10 @@ namespace MonoTests.System
 			AssertEquals ("#42", UriHostNameType.Unknown, Uri.CheckHostName ("::abcg"));
 			AssertEquals ("#43", UriHostNameType.Unknown, Uri.CheckHostName (":::"));
 			AssertEquals ("#44", UriHostNameType.Unknown, Uri.CheckHostName (":"));
+
+			AssertEquals ("#45", UriHostNameType.Unknown, Uri.CheckHostName ("*"));
+			AssertEquals ("#46", UriHostNameType.Unknown, Uri.CheckHostName ("*.go-mono.com"));
+			AssertEquals ("#47", UriHostNameType.Unknown, Uri.CheckHostName ("www*.go-mono.com"));
 		}
 		
 		[Test]
@@ -763,7 +1030,34 @@ namespace MonoTests.System
 			uri = new Uri("http://[1:0:0:0::1]:8080");
 			AssertEquals ("#13", false, uri.IsLoopback);
 		}
-		
+
+		[Test]
+		public void IsLoopback_File ()
+		{
+			Uri uri = new Uri ("file:///index.html");
+#if NET_2_0
+			Assert ("file", uri.IsLoopback);
+#else
+			Assert ("file", !uri.IsLoopback);
+#endif
+		}
+
+		[Test]
+		public void IsLoopback_Relative_Http ()
+		{
+			string relative = "http:8080/bar/Hello World.htm";
+			Uri uri = new Uri (new Uri ("http://www.contoso.com"), relative, false);
+			Assert ("http", !uri.IsLoopback);
+		}
+
+		[Test]
+		public void IsLoopback_Relative_Unknown ()
+		{
+			string relative = "foo:8080/bar/Hello World.htm";
+			Uri uri = new Uri (new Uri ("http://www.contoso.com"), relative, false);
+			Assert ("foo", !uri.IsLoopback);
+		}
+
 		[Test]
 		public void Equals1 ()
 		{
@@ -795,13 +1089,37 @@ namespace MonoTests.System
 
 			a = new Uri ("mailto:user:pwd@go-mono.com?subject=uri");
 			b = new Uri ("MAILTO:USER:PWD@GO-MONO.COM?SUBJECT=URI");
-
+#if NET_2_0
+			Assert ("#2", a != b);
+			AssertEquals ("#2a", "mailto:user:pwd@go-mono.com?subject=uri", a.ToString ());
+			AssertEquals ("#2b", "mailto:USER:PWD@go-mono.com?SUBJECT=URI", b.ToString ());
+#else
 			AssertEquals ("#2", a, b);
-
+#endif
 			a = new Uri ("http://www.go-mono.com/ports/");
 			b = new Uri ("http://www.go-mono.com/PORTS/");
 
 			Assert ("#3", !a.Equals (b));
+		}
+
+		[Test]
+		public void CaseSensitivity ()
+		{
+			Uri mailto = new Uri ("MAILTO:USER:PWD@GO-MONO.COM?SUBJECT=URI");
+			AssertEquals ("#1", "mailto", mailto.Scheme);
+			AssertEquals ("#2", "go-mono.com", mailto.Host);
+			AssertEquals ("#3", "mailto:USER:PWD@go-mono.com?SUBJECT=URI", mailto.ToString ());
+
+			Uri http = new Uri ("HTTP://GO-MONO.COM/INDEX.HTML");
+			AssertEquals ("#4", "http", http.Scheme);
+			AssertEquals ("#5", "go-mono.com", http.Host);
+			AssertEquals ("#6", "http://go-mono.com/INDEX.HTML", http.ToString ());
+
+			// IPv6 Address
+			Uri ftp = new Uri ("FTP://[::ffFF:169.32.14.5]/");
+			AssertEquals ("#7", "ftp", ftp.Scheme);
+			AssertEquals ("#8", "[0000:0000:0000:0000:0000:FFFF:A920:0E05]", ftp.Host);
+			AssertEquals ("#9", "ftp://[0000:0000:0000:0000:0000:FFFF:A920:0E05]/", ftp.ToString ());
 		}
 
 		[Test]
@@ -900,7 +1218,45 @@ namespace MonoTests.System
 			AssertEquals ("#09", false, Uri.CheckSchemeName ("+http"));
 			AssertEquals ("#10", true, Uri.CheckSchemeName ("htt+p6"));
 			// 0x00E1 -> &atilde;
-			AssertEquals ("#11", true, Uri.CheckSchemeName ("htt\u00E1+p6"));
+#if NET_2_0
+			Assert ("#11", !Uri.CheckSchemeName ("htt\u00E1+p6"));
+#else
+			Assert ("#11", Uri.CheckSchemeName ("htt\u00E1+p6"));
+#endif
+		}
+
+		[Test]
+		public void CheckSchemeName_FirstChar ()
+		{
+			for (int i = 0; i < 256; i++) {
+				string s = String.Format ("#{0}", i);
+				char c = (char) i;
+				bool b = Uri.CheckSchemeName (c.ToString ());
+#if NET_2_0
+				bool valid = (((i >= 0x41) && (i <= 0x5A)) || ((i >= 0x61) && (i <= 0x7A)));
+				AssertEquals (s, valid, b);
+#else
+				AssertEquals (s, Char.IsLetter (c), b);
+#endif
+			}
+		}
+
+		[Test]
+		public void CheckSchemeName_AnyOtherChar ()
+		{
+			for (int i = 0; i < 256; i++) {
+				string s = String.Format ("#{0}", i);
+				char c = (char) i;
+				string scheme = String.Format ("a+b-c.d{0}", c);
+				bool b = Uri.CheckSchemeName (scheme);
+				bool common = Char.IsDigit (c) || (c == '+') || (c == '-') || (c == '.');
+#if NET_2_0
+				bool valid = (common || ((i >= 0x41) && (i <= 0x5A)) || ((i >= 0x61) && (i <= 0x7A)));
+				AssertEquals (s, valid, b);
+#else
+				AssertEquals (s, (Char.IsLetter (c) || common), b);
+#endif
+			}
 		}
 
 		[Test]
@@ -915,9 +1271,9 @@ namespace MonoTests.System
 		// MS.NET 1.x throws an IndexOutOfRangeException
 		[Category("NotDotNet")]
 #endif
-		[Ignore("Bug #74144")]
 		public void NoHostname2 ()
 		{
+			// bug 75144
 			Uri uri = new Uri ("file://");
 			AssertEquals ("#1", true, uri.IsFile);
 			AssertEquals ("#2", false, uri.IsUnc);
@@ -931,7 +1287,11 @@ namespace MonoTests.System
 			AssertEquals ("#10", UriHostNameType.Basic, uri.HostNameType);
 			AssertEquals ("#11", string.Empty, uri.Fragment);
 			AssertEquals ("#12", true, uri.IsDefaultPort);
-			AssertEquals ("#13", true, uri.IsLoopback);
+#if NET_2_0
+			Assert ("#13", uri.IsLoopback);
+#else
+			Assert ("#13", !uri.IsLoopback);
+#endif
 			AssertEquals ("#14", "/", uri.PathAndQuery);
 			AssertEquals ("#15", false, uri.UserEscaped);
 			AssertEquals ("#16", string.Empty, uri.UserInfo);
@@ -947,7 +1307,6 @@ namespace MonoTests.System
 			string [] segments = uri.Segments;
 			AssertEquals ("#01", 1, segments.Length);
 			AssertEquals ("#02", "/", segments [0]);
-			
 		}
 
 		[Test]
@@ -959,7 +1318,6 @@ namespace MonoTests.System
 			AssertEquals ("#02", "/", segments [0]);
 			AssertEquals ("#03", "dir/", segments [1]);
 			AssertEquals ("#04", "dummypage.html", segments [2]);
-			
 		}
 
 		[Test]
@@ -971,19 +1329,25 @@ namespace MonoTests.System
 			AssertEquals ("#02", "/", segments [0]);
 			AssertEquals ("#03", "dir/", segments [1]);
 			AssertEquals ("#04", "dummypage/", segments [2]);
-			
 		}
 
 		[Test]
+#if NET_2_0
+		[Category ("NotWorking")]
+#endif
 		public void Segments4 ()
 		{
 			Uri uri = new Uri ("file:///c:/hello");
 			string [] segments = uri.Segments;
 			AssertEquals ("#01", 3, segments.Length);
+#if NET_2_0
+			AssertEquals ("#02", "/", segments [0]);
+			AssertEquals ("#03", "c:/", segments[1]);
+#else
 			AssertEquals ("#02", "c:", segments [0]);
 			AssertEquals ("#03", "/", segments [1]);
+#endif
 			AssertEquals ("#04", "hello", segments [2]);
-			
 		}
 
 		[Test]
@@ -1155,7 +1519,6 @@ namespace MonoTests.System
 					Console.WriteLine ("\t" + segments[i]);					
 			Console.WriteLine ("");
 		}
-
 	}
 }
 
