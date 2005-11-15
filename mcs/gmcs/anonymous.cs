@@ -409,17 +409,41 @@ namespace Mono.CSharp {
 
 			Type [] constructor_types = TypeManager.NoTypes;
 			Parameters constructor_parameters = Parameters.EmptyReadOnlyParameters;
-			scope.ScopeConstructor = scope.ScopeTypeBuilder.DefineConstructor (
+			ConstructorBuilder ctor = scope.ScopeTypeBuilder.DefineConstructor (
 				MethodAttributes.Public | MethodAttributes.HideBySig |
 				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
 				CallingConventions.HasThis, constructor_types);
 			InternalParameters parameter_info = new InternalParameters (constructor_types, constructor_parameters);
-			TypeManager.RegisterMethod (scope.ScopeConstructor, parameter_info, constructor_types);
+			TypeManager.RegisterMethod (ctor, parameter_info, constructor_types);
 
-			ILGenerator cig = scope.ScopeConstructor.GetILGenerator ();
+			ILGenerator cig = ctor.GetILGenerator ();
 			cig.Emit (OpCodes.Ldarg_0);
 			cig.Emit (OpCodes.Call, TypeManager.object_ctor);
 			cig.Emit (OpCodes.Ret);
+
+			if (ec.TypeContainer.IsGeneric) {
+				TypeParameter[] tparam = ec.TypeContainer.TypeParameters;
+				string[] names = new string [tparam.Length];
+				Type[] types = new Type [tparam.Length];
+
+				for (int i = 0; i < names.Length; i++) {
+					names [i] = tparam [i].Name;
+					types [i] = tparam [i].Type;
+				}
+
+				scope.ScopeTypeBuilder.DefineGenericParameters (names);
+				scope.ScopeTypeBuilder.GetGenericTypeDefinition ();
+
+				scope.ScopeType = scope.ScopeTypeBuilder.MakeGenericType (types);
+			} else
+				scope.ScopeType = scope.ScopeTypeBuilder;
+
+
+			if (ec.TypeContainer.IsGeneric)
+				scope.ScopeConstructor = TypeBuilder.GetConstructor (
+					scope.ScopeType, ctor);
+			else
+				scope.ScopeConstructor = ctor;
 		}
 
 		public static void Error_AddressOfCapturedVar (string name, Location loc)
@@ -523,7 +547,8 @@ namespace Mono.CSharp {
 		// The types and fields generated
 		//
 		public TypeBuilder ScopeTypeBuilder;
-		public ConstructorBuilder ScopeConstructor;
+		public Type ScopeType;
+		public ConstructorInfo ScopeConstructor;
 		public FieldBuilder THIS;
 		public FieldBuilder ParentLink;
 
@@ -641,8 +666,8 @@ namespace Mono.CSharp {
 				}
 
 				if (ParentScope.ScopeTypeBuilder != ScopeTypeBuilder)
-					ParentLink = ScopeTypeBuilder.DefineField ("<>parent", ParentScope.ScopeTypeBuilder,
-										   FieldAttributes.Assembly);
+					ParentLink = ScopeTypeBuilder.DefineField (
+						"<>parent", ParentScope.ScopeType, FieldAttributes.Assembly);
 			}
 			
 			if (NeedThis && ParentScope != null)
@@ -691,8 +716,8 @@ namespace Mono.CSharp {
 				throw new Exception ("ScopeConstructor is null for" + this.ToString ());
 			
 			if (!CaptureContext.Host.IsIterator) {
-				scope_instance = ig.DeclareLocal (ScopeTypeBuilder);
-				ig.Emit (OpCodes.Newobj, (ConstructorInfo) ScopeConstructor);
+				scope_instance = ig.DeclareLocal (ScopeType);
+				ig.Emit (OpCodes.Newobj, ScopeConstructor);
 				ig.Emit (OpCodes.Stloc, scope_instance);
 			}
 

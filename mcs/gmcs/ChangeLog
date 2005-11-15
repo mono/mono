@@ -1,3 +1,10 @@
+2005-11-15  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs (ScopeInfo.ScopeType): New public field; use this
+	instead of `ScopeTypeBuilder' to refer to the "current" type.
+	(AnonymousMethod.CreateScopeType): Correctly create the helper
+	class if we're inside a generic type definition.
+
 2005-11-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs : use Invocation.IsOverride() to do real override check.
