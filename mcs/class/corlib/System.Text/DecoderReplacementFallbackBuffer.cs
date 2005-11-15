@@ -32,44 +32,63 @@
 
 namespace System.Text
 {
+	[MonoTODO ("Find out how bytesUnknown is used")]
 	public sealed class DecoderReplacementFallbackBuffer
 		: DecoderFallbackBuffer
 	{
 		DecoderReplacementFallback fallback;
+		byte [] bytes;
+		int index, current;
+		string replacement;
 
 		public DecoderReplacementFallbackBuffer (
 			DecoderReplacementFallback fallback)
 		{
+			if (fallback == null)
+				throw new ArgumentNullException ("fallback");
 			this.fallback = fallback;
+			replacement = fallback.DefaultString;
+			current = 0;
 		}
 
-		[MonoTODO]
 		public override int Remaining {
-			get { throw new NotImplementedException (); }
+			get { return replacement.Length - current; }
 		}
 
-		[MonoTODO]
 		public override bool Fallback (byte [] bytesUnknown, int index)
 		{
-			throw new NotImplementedException ();
+			if (bytesUnknown == null)
+				throw new ArgumentNullException ("bytesUnknown");
+			if (bytes != null && Remaining != 0)
+				throw new ArgumentException ("Reentrant Fallback method invocation occured. It might be because either this FallbackBuffer is incorrectly shared by multiple threads, invoked inside Encoding recursively, or Reset invocation is forgotten.");
+			if (index < 0 || bytesUnknown.Length < index)
+				throw new ArgumentOutOfRangeException ("index");
+			bytes = bytesUnknown;
+			this.index = index;
+			current = 0;
+
+			return replacement.Length > 0;
 		}
 
-		[MonoTODO]
 		public override char GetNextChar ()
 		{
-			throw new NotImplementedException ();
+			if (current >= replacement.Length)
+				return char.MinValue;
+			return replacement [current++];
 		}
 
-		[MonoTODO]
 		public override bool MovePrevious ()
 		{
-			throw new NotImplementedException ();
+			if (current == 0)
+				return false;
+			current--;
+			return true;
 		}
 
-		[MonoTODO]
 		public override void Reset ()
 		{
-			throw new NotImplementedException ();
+			bytes = null;
+			current = 0;
 		}
 	}
 }

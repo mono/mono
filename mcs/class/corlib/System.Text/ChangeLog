@@ -1,5 +1,11 @@
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DecoderFallbackBuffer.cs : Reset() does nothing here.
+	* DecoderReplacementFallbackBuffer.cs : implemented, but no idea how
+	  bytesUnknown is used.
+
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Encoding.cs : added ICloneable, Clone() and new GetEncoding().
 
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>

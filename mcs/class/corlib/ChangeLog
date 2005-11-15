@@ -1,3 +1,8 @@
+2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* corlib_test.dll.sources:
+	  Added DecoderReplacementFallbackBudderTest.cs.
+
 2005-11-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* corlib.dll.sources: Readd NewConstraintAttribute.cs as gmcs depends on it.
