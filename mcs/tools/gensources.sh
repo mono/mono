@@ -26,7 +26,7 @@ readlist () {
 	if [ ":${filelist##*:$onelist:*}:" = "::" ]  ; then return ; fi
 	filelist=":$onelist$filelist"
 
-	onelistcontent=`cat $onelist | while read line ; do echo -n $line ; echo -n ":" ; done`
+	onelistcontent=`cat $onelist | sed "s=[ \t]*$==g" | while read line ; do echo -n $line ; echo -n ":" ; done`
 
 	OFS="$IFS"
 	IFS=":"
