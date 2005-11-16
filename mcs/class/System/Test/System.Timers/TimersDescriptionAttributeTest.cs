@@ -1,6 +1,6 @@
 //
-// TimersDescriptionAttributeCas.cs 
-//	- CAS unit tests for System.Timers.TimersDescriptionAttributeCas
+// TimersDescriptionAttributeTest.cs 
+//	- Unit tests for System.Timers.TimersDescriptionAttribute
 //
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
@@ -30,43 +30,28 @@
 using NUnit.Framework;
 
 using System;
-using System.Reflection;
-using System.Security;
-using System.Security.Permissions;
 using System.Timers;
 
-namespace MonoCasTests.System.Timers {
+namespace MonoTests.System.Timers {
 
 	[TestFixture]
-	[Category ("CAS")]
-	public class TimersDescriptionAttributeCas {
-
-		[SetUp]
-		public void SetUp ()
-		{
-			if (!SecurityManager.SecurityEnabled)
-				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
-		}
+	public class TimersDescriptionAttributeTest {
 
 		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void Constructor_Deny_Unrestricted ()
+		[Category ("NotWorking")]
+		public void AnyString ()
 		{
 			TimersDescriptionAttribute tda = new TimersDescriptionAttribute ("Mono");
-			// Note: see unit tests for why we're not expecting "Mono" as the value
-			Assert.AreEqual (tda.Description, tda.Description, "Description");
-			// this assert doesn't do anything (except removing warning) but we know,
-			// for CAS, that nothing protects the property getter
+			Assert.IsNull (tda.Description, "Description");
 		}
 
 		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void LinkDemand_Deny_Unrestricted ()
+		[Category ("NotWorking")]
+		public void ExistingResourceName ()
 		{
-			Type[] types = new Type[1] { typeof (string) };
-			ConstructorInfo ci = typeof (TimersDescriptionAttribute).GetConstructor (types);
-			Assert.IsNotNull (ci, ".ctor(string)");
-			Assert.IsNotNull (ci.Invoke (new object[1] { "Mono" }), "invoke");
+			TimersDescriptionAttribute tda = new TimersDescriptionAttribute ("TimerEnabled");
+			Assert.IsNotNull (tda.Description, "Description");
+			Assert.IsFalse ("TimerEnabled" == tda.Description, "!Equal");
 		}
 	}
 }

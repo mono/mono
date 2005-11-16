@@ -1,3 +1,10 @@
+2005-11-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TimersDescriptionAttributeCas.cs: Updated comments (thanks to Gert
+	Driesen for the solution).
+	* TimersDescriptionAttributeTest.cs: New. Unit tests to show that the
+	description string is a resource name (and not the description itself)
+
 2005-11-16  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* TimersDescriptionAttributeCas.cs: Fixed test as the Description
