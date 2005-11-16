@@ -61,10 +61,11 @@ namespace Cairo.Snippets
 			da.GdkWindow.GetSize (out w, out h);
 
 			// set window bg
-			cr.ColorRgb = new Color (1, 1, 1);
+			cr.ColorRgb = new Color (1, 1, 1 );
 			cr.Rectangle (0, 0, w, h);
 			cr.Fill ();
-			cr.ColorRgb = new Color (1, 1, 1);
+			// reset it
+			cr.ColorRgb = new Color (0, 0, 0);
 
 			Snippets.InvokeSnippet (snips, selected, cr, w, h);
 
