@@ -70,6 +70,9 @@ namespace System.Drawing {
 		}
 		
 		public Font(FontFamily family, float emSize, FontStyle style, GraphicsUnit unit, byte charSet, bool isVertical) {
+			if (family == null)
+				throw new ArgumentNullException("family");
+
 			//TODO: charset management
 			_gUnit = unit;
 			_fontFamily = family;

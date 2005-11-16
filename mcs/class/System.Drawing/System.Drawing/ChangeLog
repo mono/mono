@@ -1,5 +1,9 @@
 2005-11-16 Konstantin Triger <kostat@mainsoft.com>
 
+        * FontFamily.jvm.cs, Font.jvm.cs: throw exception if invalid params.
+
+2005-11-16 Konstantin Triger <kostat@mainsoft.com>
+
         * FontFamily.jvm.cs: fix for custom font collection
 
 2005-11-14 Vladimir Krasnov <vladimirk@mainsoft.com>

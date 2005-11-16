@@ -85,6 +85,9 @@ namespace System.Drawing {
 		}
 
 		public FontFamily(string name, FontCollection fontCollection) {
+			if (name == null)
+				throw new ArgumentNullException("name");
+
 			if (fontCollection == null)
 				fontCollection = _installedFonts;
 
