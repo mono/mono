@@ -4,7 +4,7 @@ System.Data.Common/DbConnectionStringBuilder.cs
 System.Data.Common/DbConnectionStringBuilderHelper.cs
 System.Data.Common/DbException.cs
 System.Data.Common/DbProviderSpecificTypePropertyAttribute.cs
-System.Data.Odbc/OdbcCategoryAttribute.cs
+System.Data.Odbc/*.cs
 System.Data.Odbc/OdbcColumn.cs
 System.Data.Odbc/OdbcCommand.cs
 System.Data.Odbc/OdbcCommandBuilder.cs
@@ -30,6 +30,7 @@ System.Data.Odbc/OdbcRowUpdatingEventArgs.cs
 System.Data.Odbc/OdbcRowUpdatingEventHandler.cs
 System.Data.Odbc/OdbcTransaction.cs
 System.Data.Odbc/OdbcType.cs
+System.Data.Odbc/OdbcTypeMap.cs
 System.Data.Odbc/OdbcTypeConverter.cs
 System.Data.Odbc/libodbc.cs
 System.Data.OleDb/OleDbCommand.cs
