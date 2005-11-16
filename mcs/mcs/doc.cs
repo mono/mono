@@ -337,7 +337,10 @@ namespace Mono.CSharp {
 				ds, out warn, cref, false, null) as Type;
 		}
 
-		private static MemberInfo [] FindMembers (Type type,
+		private static MemberInfo [] empty_member_infos =
+			new MemberInfo [0];
+
+		private static MemberInfo [] FindMethodBase (Type type,
 			BindingFlags bindingFlags, MethodSignature signature)
 		{
 			MemberList ml = TypeManager.FindMembers (
@@ -346,8 +349,25 @@ namespace Mono.CSharp {
 				bindingFlags,
 				MethodSignature.method_signature_filter,
 				signature);
+
+			if (type.IsInterface)
+				return ml != null ? (MemberInfo []) ml :
+					empty_member_infos;
+
 			ArrayList al = new ArrayList (ml.Count);
 			for (int i = 0; i < ml.Count; i++) {
+				// Interface methods which are returned
+				// from the filter must exist in the 
+				// target type (if there is only a 
+				// private implementation, then the 
+				// filter should not return it.)
+				// This filtering is required to 
+				// deambiguate results.
+				//
+				// It is common to properties, so check it here.
+				if (ml [i].DeclaringType.IsInterface)
+					continue;
+
 				MethodBase x = ml [i] as MethodBase;
 				if (x != null) {
 					bool overriden = false;
@@ -380,7 +400,7 @@ namespace Mono.CSharp {
 		{
 			warningType = 0;
 			MethodSignature msig = new MethodSignature (memberName, null, paramList);
-			MemberInfo [] mis = FindMembers (type, 
+			MemberInfo [] mis = FindMethodBase (type, 
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 				msig);
 
@@ -484,7 +504,7 @@ namespace Mono.CSharp {
 			// detect CS1581 or CS1002+CS1584).
 			msig = new MethodSignature (oper, null, paramList);
 
-			mis = FindMembers (type, 
+			mis = FindMethodBase (type, 
 				BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 				msig);
 			if (mis.Length == 0)

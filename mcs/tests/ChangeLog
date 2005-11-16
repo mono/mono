@@ -1,5 +1,10 @@
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* test-xml-046-ref.xml test-xml-046.cs : new test for bug #76726.
+	* known-issues-gmcs : added above.
+
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* known-issues-gmcs : Forgot to add test-xml-045.cs.
 
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>

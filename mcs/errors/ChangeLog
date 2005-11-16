@@ -1,5 +1,11 @@
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* cs1574-7.cs : new test to warn doc reference to interface members 
+	  which is not exposed publicly.
+	* known-issues-gmcs : added above.
+
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* known-issues-gmcs : added cs0419-2.cs
 
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
