@@ -1,3 +1,7 @@
+2005-11-16  John Luke  <john.luke@gmail.com>
+
+	* snippets/*.cs: add snippets port
+	
 2005-11-10  John Luke  <john.luke@gmail.com>
 
 	* Mono.Cairo/Graphics.cs:
