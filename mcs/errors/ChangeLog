@@ -1,5 +1,12 @@
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* cs1574-7.cs : fixed code format ("Line") to make it working.
+	* cs0419-3.cs : new test for ambiguity resolution.
+	* known-issues-gmcs : actually cs1574-7.cs is kind of regression,
+	  thus no need to be added here.
+
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* cs1574-7.cs : new test to warn doc reference to interface members 
 	  which is not exposed publicly.
 	* known-issues-gmcs : added above.

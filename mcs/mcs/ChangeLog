@@ -1,5 +1,10 @@
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs : apply "override filter" also to properties.
+	  Fixed bug #76730.
+
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs : renamed FindMembers() to FindMethodBase(). For interfaces,
 	  no need to check overrides. For classes, omit those results from 
 	  interfaces since they must exist in the class. Fixed bug #76726.

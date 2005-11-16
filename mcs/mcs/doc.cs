@@ -349,13 +349,22 @@ namespace Mono.CSharp {
 				bindingFlags,
 				MethodSignature.method_signature_filter,
 				signature);
+			if (ml == null)
+				return empty_member_infos;
 
+			return FilterOverridenMembersOut (type, (MemberInfo []) ml);
+		}
+
+		private static MemberInfo [] FilterOverridenMembersOut (
+			Type type, MemberInfo [] ml)
+		{
+			if (ml == null)
+				return empty_member_infos;
 			if (type.IsInterface)
-				return ml != null ? (MemberInfo []) ml :
-					empty_member_infos;
+				return ml;
 
-			ArrayList al = new ArrayList (ml.Count);
-			for (int i = 0; i < ml.Count; i++) {
+			ArrayList al = new ArrayList (ml.Length);
+			for (int i = 0; i < ml.Length; i++) {
 				// Interface methods which are returned
 				// from the filter must exist in the 
 				// target type (if there is only a 
@@ -371,7 +380,7 @@ namespace Mono.CSharp {
 				MethodBase x = ml [i] as MethodBase;
 				if (x != null) {
 					bool overriden = false;
-					for (int j = 0; j < ml.Count; j++) {
+					for (int j = 0; j < ml.Length; j++) {
 						if (j == i)
 							continue;
 						MethodBase y = ml [j] as MethodBase;
@@ -416,6 +425,7 @@ namespace Mono.CSharp {
 					type, MemberTypes.All,
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance,
 					memberName, null);
+				mis = FilterOverridenMembersOut (type, mis);
 				if (mis == null || mis.Length == 0)
 					return null;
 				if (warn419 && IsAmbiguous (mis))

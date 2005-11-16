@@ -1,6 +1,6 @@
 // cs1574-7.cs: XML comment on `A' has cref attribute `ExecuteSilently' that could not be resolved
-// Compiler options: -doc:dummy.xml -warnaserror
 // Line: 11
+// Compiler options: -doc:dummy.xml -warnaserror
 /// <summary />
 public interface IExecutable {
 	/// <summary />
