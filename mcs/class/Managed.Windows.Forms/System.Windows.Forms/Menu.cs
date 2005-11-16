@@ -308,6 +308,8 @@ namespace System.Windows.Forms
 
 			public virtual int Add (MenuItem mi)
 			{
+				if (mi.Parent != null)
+					mi.Parent.MenuItems.Remove (mi);
 				mi.parent_menu = owner;
 				items.Add (mi);
 				mi.Index = items.Count - 1;

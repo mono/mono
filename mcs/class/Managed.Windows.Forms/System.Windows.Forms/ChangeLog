@@ -1,3 +1,8 @@
+2005-11-15  Mike Kestner  <mkestner@novell.com>
+
+	* Menu.cs: when adding an item to the collection, if item is already 
+	parented, remove it from the parent.
+
 2005-11-13  Alexander Olk  <alex.olk@googlemail.com>
 
 	* X11DesktopColors.cs: Added KDE support
