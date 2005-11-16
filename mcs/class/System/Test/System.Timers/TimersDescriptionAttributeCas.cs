@@ -53,7 +53,12 @@ namespace MonoCasTests.System.Timers {
 		public void Constructor_Deny_Unrestricted ()
 		{
 			TimersDescriptionAttribute tda = new TimersDescriptionAttribute ("Mono");
-			Assert.IsNull (tda.Description, "Description");
+			// note: in the unit tests MS always (1.x and 2.0) return null
+			// but when "created" indirectly (e.g. corcompare) the real value is returned
+			// note: Mono always return the value
+			Assert.AreEqual (tda.Description, tda.Description, "Description");
+			// this assert doesn't do anything (except removing warning) but we know,
+			// for CAS, that nothing protects the property getter
 		}
 
 		[Test]

@@ -1,3 +1,8 @@
+2005-11-16  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* TimersDescriptionAttributeCas.cs: Fixed test as the Description
+	property doesn't always returns null (exact conditions unknown).
+
 2005-11-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ElapsedEventArgsCas.cs: New. CAS unit tests.
