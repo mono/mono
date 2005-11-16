@@ -1,3 +1,6 @@
+2005-11-16  Vladislav Spivak  <spivak@mainsoft.com>
+	* Added net_1_1_java source includes
+
 2005-10-30  Svetlana Zholkovsky  <svetlanaz@mainsoft.com>
 
     * Add Mainsoft's files System.Runtime.Serialization.Formatters.Soap.vmwcsproj and
