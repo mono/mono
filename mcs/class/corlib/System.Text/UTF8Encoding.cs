@@ -763,9 +763,7 @@ public class UTF8Encoding : Encoding
 	public override Decoder GetDecoder ()
 	{
 #if NET_2_0
-		UTF8Decoder ret = new UTF8Decoder ();
-		ret.Fallback = DecoderFallback;
-		return ret;
+		return new UTF8Decoder (DecoderFallback);
 #else
 		return new UTF8Decoder (throwOnInvalid);
 #endif
@@ -840,12 +838,14 @@ public class UTF8Encoding : Encoding
 
 		// Constructor.
 #if NET_2_0
-		public UTF8Decoder ()
+		public UTF8Decoder (DecoderFallback fallback)
 #else
 		public UTF8Decoder (bool throwOnInvalid)
 #endif
 		{
-#if !NET_2_0
+#if NET_2_0
+			Fallback = fallback;
+#else
 			this.throwOnInvalid = throwOnInvalid;
 #endif
 			leftOverBits = 0;

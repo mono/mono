@@ -1,5 +1,9 @@
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* UTF8Encoding.cs : safer UTF8Decoder ctor.
+
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Decoder.cs : added FallbackBuffer property.
 	* UTF8Encoding.cs : In NET_2_0, use DecoderFallbackBuffer instead of
 	  "throwOnInvalid".
