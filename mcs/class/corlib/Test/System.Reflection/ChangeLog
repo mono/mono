@@ -1,3 +1,7 @@
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MethodInfoTest.cs : added MakeGenericMethod test for #76575.
+
 2005-11-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyTest.cs: Fix build.

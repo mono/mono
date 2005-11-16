@@ -1,3 +1,8 @@
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MonoMethod.cs : made MakeGenericMethod() indirect icall to
+	  MakeGenericMethod_impl() and raise an error when it returns null.
+
 2005-11-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* Module.cs: Add MDStreamVersion property.

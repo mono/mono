@@ -254,8 +254,18 @@ namespace System.Reflection {
 		}
 
 #if NET_2_0 || BOOTSTRAP_NET_2_0
+		public override MethodInfo MakeGenericMethod (Type [] types)
+		{
+			if (types == null)
+				throw new ArgumentNullException ("types");
+			MethodInfo ret = MakeGenericMethod_impl (types);
+			if (ret == null)
+				throw new ArgumentException (String.Format ("The method has {0} generic parameter(s) but {1} generic argument(s) were provided.", GetGenericArguments ().Length, types.Length));
+			return ret;
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public override extern MethodInfo MakeGenericMethod (Type [] types);
+		extern MethodInfo MakeGenericMethod_impl (Type [] types);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern Type [] GetGenericArguments ();

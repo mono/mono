@@ -189,6 +189,16 @@ namespace MonoTests.System.Reflection
 			m.Invoke (null, new object [0]);
 		}
 
+		public void MakeGenericMethodArgsMismatchFoo<T> () {}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void MakeGenericMethodArgsMismatch ()
+		{
+			MethodInfo gmi = this.GetType ().GetMethod (
+				"MakeGenericMethodArgsMismatchFoo")
+				.MakeGenericMethod ();
+		}
 #endif
 	}
 	
