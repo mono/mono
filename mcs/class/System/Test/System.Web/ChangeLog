@@ -1,3 +1,8 @@
+2005-11-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AspNetHostingPermissionAttributeCas.cs: New. CAS unit tests.
+	* AspNetHostingPermissionCas.cs: New. CAS unit tests.
+
 2005-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AspNetHostingPermissionTest.cs: 2.0 RC fixed the "unrestricted" XML
