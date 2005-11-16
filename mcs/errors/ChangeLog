@@ -1,3 +1,7 @@
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* known-issues-gmcs : added cs0419-2.cs
+
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* cs0419-2.cs : test to check error message problem in #76685.
