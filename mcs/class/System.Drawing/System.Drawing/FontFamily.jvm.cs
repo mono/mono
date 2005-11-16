@@ -54,7 +54,6 @@ namespace System.Drawing {
 		}
 		
 		private readonly string _name;
-		private readonly FontCollection _fontCollection;
 
 		private awt.FontMetrics _fontMetrics = null;
 		private FontStyle _lastStyle = FontStyle.Regular;
@@ -87,15 +86,16 @@ namespace System.Drawing {
 
 		public FontFamily(string name, FontCollection fontCollection) {
 			if (fontCollection == null)
-				_fontCollection = _installedFonts;
-			else
-				_fontCollection = fontCollection;
+				fontCollection = _installedFonts;
 
-			if ( !_fontCollection.Contains(name) )
-				_name = _genericSansSerif._name;
+			if (fontCollection.Contains(name))
+				_name = name;
+			else {
+				_name = ToGenericFontName(GenericFontFamilies.SansSerif);
+				fontCollection = _installedFonts;
+			}
 
-			_name = name;
-			_font = _fontCollection.GetInitialFont( _name );
+			_font = fontCollection.GetInitialFont( _name );
 		}
 
 		public FontFamily(GenericFontFamilies genericFamily) : this(ToGenericFontName(genericFamily)) {
