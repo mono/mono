@@ -1,3 +1,7 @@
+2005-11-16 Konstantin Triger <kostat@mainsoft.com>
+
+        * ImageCodec.jvm.cs: refactoring.
+
 2005-11-14 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* ImageCodec.jvm.cs: Fixed error handling in codecs emumeration flow

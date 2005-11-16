@@ -218,32 +218,25 @@ namespace Mainsoft.Drawing.Imaging {
 				}
 				while (iter.hasNext ()) {
 					spi.ImageReaderWriterSpi rw = GetNext (iter);
-					try {
-						ici.CodecName = rw.getDescription (java.util.Locale.getDefault ());
-						ici.DllName = null;
-						foreach (string suffix in rw.getFileSuffixes ()) {
-							if (ici.FilenameExtension != null)
-								ici.FilenameExtension += ";";
-							ici.FilenameExtension += "*."+suffix;
-						}
-						ici.Flags = ImageCodecFlags.Builtin|ImageCodecFlags.SupportBitmap;
-						if (rw is spi.ImageReaderSpi) {
-							ici.Flags |= ImageCodecFlags.Decoder;
-							if ((rw as spi.ImageReaderSpi).getImageWriterSpiNames().Length != 0)
-								ici.Flags |= ImageCodecFlags.Encoder;
-						}
-						if (rw is spi.ImageWriterSpi) {
-							ici.Flags |= ImageCodecFlags.Encoder;
-							if ((rw as spi.ImageWriterSpi).getImageReaderSpiNames().Length != 0)
-								ici.Flags |= ImageCodecFlags.Decoder;
-						}
-						ici.FormatDescription = string.Join(";",
-							rw.getFormatNames());
-						ici.Version = (int)Convert.ToDouble(rw.getVersion ());
-						break;
+
+					ici.CodecName = rw.getDescription (java.util.Locale.getDefault ());
+					ici.DllName = null;
+					foreach (string suffix in rw.getFileSuffixes ()) {
+						if (ici.FilenameExtension != null)
+							ici.FilenameExtension += ";";
+						ici.FilenameExtension += "*."+suffix;
 					}
-					catch {
-					}
+					ici.Flags = ImageCodecFlags.Builtin|ImageCodecFlags.SupportBitmap;
+					if (rw is spi.ImageReaderSpi)
+						ici.Flags |= ImageCodecFlags.Decoder;
+
+					if (rw is spi.ImageWriterSpi)
+						ici.Flags |= ImageCodecFlags.Encoder;
+
+					ici.FormatDescription = string.Join(";",
+						rw.getFormatNames());
+					ici.Version = (int)Convert.ToDouble(rw.getVersion ());
+					break;
 				}
 				return ici;
 			}
