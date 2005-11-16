@@ -1,3 +1,12 @@
+2005-11-16  Ankit Jain  <jankit@novell.com>
+
+	* class.c (my_mono_class_from_generic_parameter): param->owner can be null.
+	* metadata.c (mono_metadata_parse_generic_param): Create a dummy MonoGenericParam 
+	if generic_context is null.
+	  (mono_metadata_generic_param_equal): param->owner can be null.
+	  (mono_type_create_from_typespec_full): Don't cache the MonoType if param->owner is
+	null.
+
 2005-11-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (create_dynamic_mono_image): Set md_version_minor to
