@@ -1,5 +1,11 @@
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* doc.cs : the previous patch does not actually fix the bug.
+	  PropertyInfo override check is now implemented and really fixed it.
+	* expression.cs : Invocation.IsAncestralType() is used from doc.cs.
+
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* doc.cs : apply "override filter" also to properties.
 	  Fixed bug #76730.
 

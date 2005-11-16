@@ -355,6 +355,30 @@ namespace Mono.CSharp {
 			return FilterOverridenMembersOut (type, (MemberInfo []) ml);
 		}
 
+		static bool IsOverride (PropertyInfo deriv_prop, PropertyInfo base_prop)
+		{
+			if (!Invocation.IsAncestralType (base_prop.DeclaringType, deriv_prop.DeclaringType))
+				return false;
+
+			Type [] deriv_pd = TypeManager.GetArgumentTypes (deriv_prop);
+			Type [] base_pd = TypeManager.GetArgumentTypes (base_prop);
+		
+			if (deriv_pd.Length != base_pd.Length)
+				return false;
+
+			for (int j = 0; j < deriv_pd.Length; ++j) {
+				if (deriv_pd [j] != base_pd [j])
+					return false;
+				Type ct = TypeManager.TypeToCoreType (deriv_pd [j]);
+				Type bt = TypeManager.TypeToCoreType (base_pd [j]);
+
+				if (ct != bt)
+					return false;
+			}
+
+			return true;
+		}
+
 		private static MemberInfo [] FilterOverridenMembersOut (
 			Type type, MemberInfo [] ml)
 		{
@@ -376,16 +400,24 @@ namespace Mono.CSharp {
 				// It is common to properties, so check it here.
 				if (ml [i].DeclaringType.IsInterface)
 					continue;
-
-				MethodBase x = ml [i] as MethodBase;
-				if (x != null) {
+				MethodBase mx = ml [i] as MethodBase;
+				PropertyInfo px = ml [i] as PropertyInfo;
+				if (mx != null || px != null) {
 					bool overriden = false;
 					for (int j = 0; j < ml.Length; j++) {
 						if (j == i)
 							continue;
-						MethodBase y = ml [j] as MethodBase;
-						if (y != null &&
-							Invocation.IsOverride (y, x)) {
+						MethodBase my = ml [j] as MethodBase;
+						if (mx != null && my != null &&
+							Invocation.IsOverride (my, mx)) {
+							overriden = true;
+							break;
+						}
+						else if (mx != null)
+							continue;
+						PropertyInfo py = ml [j] as PropertyInfo;
+						if (px != null && py != null &&
+							IsOverride (py, px)) {
 							overriden = true;
 							break;
 						}

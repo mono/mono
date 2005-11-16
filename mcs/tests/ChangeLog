@@ -1,5 +1,10 @@
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* test-xml-048-ref.xml test-xml-048.cs : test for bug #76730
+	  (works with gmcs).
+
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* test-xml-047-ref.xml test-xml-047.cs :
 	  Another override filtering test (works with gmcs).
 
