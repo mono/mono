@@ -1,3 +1,6 @@
+2005-16-11  Eyal Alaluf <eyala@mainsoft.com>
+	* Makefile: Ignore ClsCompliant warnings for java profile
+	
 2005-27-09  Boris Kirzner <borisk@mainsoft.com>
 	* Novell.Directory.Ldap.vmwcsproj: added reference to resx files.
 	
