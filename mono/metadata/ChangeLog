@@ -1,3 +1,8 @@
+2005-11-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_class_compute_gc_descriptor): Disable typed allocation
+	for types with non-auto layout. Fixes #76717.
+
 2005-11-16  Ankit Jain  <jankit@novell.com>
 
 	* class.c (my_mono_class_from_generic_parameter): param->owner can be null.
