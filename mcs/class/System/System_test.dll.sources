@@ -293,3 +293,8 @@ System.CodeDom.Compiler/ExecutorCas.cs
 System.CodeDom.Compiler/GeneratedCodeAttributeCas.cs
 System.CodeDom.Compiler/IndentedTextWriterCas.cs
 System.CodeDom.Compiler/TempFileCollectionCas.cs
+System.Timers/TimersDescriptionAttributeCas.cs
+System.Timers/ElapsedEventArgsCas.cs
+System.Timers/TimerCas.cs
+System.Web/AspNetHostingPermissionCas.cs
+System.Web/AspNetHostingPermissionAttributeCas.cs
