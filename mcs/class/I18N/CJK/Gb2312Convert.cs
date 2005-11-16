@@ -110,10 +110,6 @@ namespace I18N.CJK
 
 		public int UcsToGbk (int ch)
 		{
-			if (ch <= 0x80 || ch == 0xFF)
-				// Character maps to itself
-				return ch;
-
 			byte byte1 = 0, byte2 = 0;
 			int tablepos;
 

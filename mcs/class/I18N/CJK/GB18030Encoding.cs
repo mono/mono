@@ -272,16 +272,23 @@ namespace I18N.CJK
 					continue;
 				}
 
-				long value = GB18030Source.FromUCS (ch);
-				if (value == 0) {
+				if (ch < 0x80 || ch == 0xFF) {
+					// ASCII
+					ret++;
+					start++;
+					continue;
+				}
+				long value = gb2312.UcsToGbk (ch);
+				if (value != 0) {
 					// GB2312
 					ret += 2;
 					start++;
-				} else {
-					// non-GB2312
-					ret += 4;
-					start++;
+					continue;
 				}
+
+				// non-GB2312
+				ret += 4;
+				start++;
 			}
 			return ret;
 		}
@@ -331,17 +338,24 @@ namespace I18N.CJK
 					continue;
 				}
 
-				long value = GB18030Source.FromUCS (ch);
-				if (value == 0) {
-					// GB2312
-					value = gb2312.UcsToGbk (ch);
+
+				if (ch <= 0x80 || ch == 0xFF) {
+					// Character maps to itself
+					bytes [byteIndex++] = (byte) ch;
+					continue;
+				}
+
+				long value = gb2312.UcsToGbk (ch);
+				if (value != 0) {
 					bytes [byteIndex++] = (byte) (value / 0x100);
 					bytes [byteIndex++] = (byte) (value % 0x100);
-				} else {
-					// non-GB2312
-					GB18030Source.Unlinear (bytes, byteIndex, value);
-					byteIndex += 4;
+					continue;
 				}
+
+				value = GB18030Source.FromUCS (ch);
+				// non-GB2312
+				GB18030Source.Unlinear (bytes, byteIndex, value);
+				byteIndex += 4;
 			}
 			return byteIndex - byteStart;
 		}
