@@ -1,3 +1,6 @@
+2005-11-16  Vladislav Spivak  <spivak@mainsoft.com>
+	* Added net_1_1_java source includes and excludes
+
 2005-11-05  Robert Jordan  <robertj@gmx.net>
 
 	* System.Runtime.Remoting.dll.sources: Added Channels/IAuthorizeRemotingConnection.cs
