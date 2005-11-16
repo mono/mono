@@ -1,3 +1,8 @@
+2005-11-16  Sebastien Pouliot  <sebastien@ximian.com> 
+ 
+	* TimersDescriptionAttribute.cs: Revert Description property fix 
+	because it doesn't always returns null (exact conditions unknown).
+
 2005-11-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ElapsedEventHandler.cs: Remove [Serializable] from 2.0 profile.

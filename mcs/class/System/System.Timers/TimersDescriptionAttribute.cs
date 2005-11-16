@@ -39,9 +39,9 @@ namespace System.Timers
 		{
 		}
 
+		// FIXME: when created in the unit test Description always return null
 		public override string Description {
-			get { return null; }
+			get { return base.Description; }
 		}
 	}
 }
-
