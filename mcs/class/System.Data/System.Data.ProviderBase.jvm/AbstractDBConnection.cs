@@ -574,7 +574,9 @@ namespace System.Data.Common
 						}
 						// todo : what should we do if all the timeout spent on port resolution ?
 						if ("-1".Equals(port)) {
-							port = StringManager.GetString("SQL_CON_PORT", "1433"); //default port of MSSql Server 3167.
+							string message = String.Format ("Unable to retrieve the port number for {0} using UDP on port 1434. Please see your network administrator to solve this problem or add the port number of your SQL server instance to your connection string (i.e. port=1681).",ServerName);
+							Exception e = CreateException (message);
+							throw e;
 						}
 						ConnectionStringHelper.AddValue(UserParameters,StringManager.GetStringArray("CON_PORT"),port);
 						break;
@@ -704,6 +706,8 @@ namespace System.Data.Common
 		internal abstract void OnStateChanged(ConnectionState orig, ConnectionState current);
 
 		protected abstract SystemException CreateException(SQLException e);
+
+		protected abstract SystemException CreateException(string message);
 
 		public override void Close()
 		{

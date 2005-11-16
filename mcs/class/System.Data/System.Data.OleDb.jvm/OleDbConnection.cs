@@ -247,6 +247,11 @@ namespace System.Data.OleDb
 			return new OleDbException(e,this);		
 		}
 
+		protected override SystemException CreateException(string message)
+		{
+			return new OleDbException(message, null, this);	
+		}
+
 		public DataTable GetOleDbSchemaTable (Guid schema, object[] restrictions)
 		{
 			DataTable schemaTable = new DataTable("Tables");

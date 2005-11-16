@@ -212,6 +212,11 @@ namespace System.Data.SqlClient
 			return new SqlException(e, this);		
 		}
 
+		protected override SystemException CreateException(string message)
+		{
+			return new SqlException(message, null, this);		
+		}
+
 		private void OnSqlInfoMessage (SqlInfoMessageEventArgs value)
 		{
 			if (InfoMessage != null) {

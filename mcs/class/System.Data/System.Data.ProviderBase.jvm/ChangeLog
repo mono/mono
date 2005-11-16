@@ -1,3 +1,7 @@
+2005-16-11 Boris Kirzner <borisk@mainsoft.com>
+	* AbstractDBConnection.cs: TARGET_JVM fix. Throw exception if MSSQL port
+	resolution failed.
+
 2005-14-11 Boris Kirzner <borisk@mainsoft.com>
 	* AbstractDBCommand.cs: TARGET_JVM fix. Provider name can be in any case..
 
