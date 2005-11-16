@@ -12,11 +12,14 @@ namespace Cairo.Snippets
 			"arc",
 			"arc_negative",
 			"clip",
-			"curve_to",
+			"clip_image",
 			"curve_rectangle",
+			"curve_to",
 			"fill_and_stroke",
 			"fill_and_stroke2",
 			"gradient",
+			"image",
+			"imagepattern",
 			"path",
 			"set_line_cap",
 			"set_line_join",
@@ -106,6 +109,25 @@ namespace Cairo.Snippets
 			cr.MoveTo(1, 0);
 			cr.LineTo(0, 1);
 			cr.Stroke();
+		}
+
+		public void clip_image(Graphics cr, double width, double height)
+		{
+			Normalize (cr, width, height);
+			cr.Arc (0.5, 0.5, 0.3, 0, 2*M_PI);
+			cr.Clip ();
+			cr.NewPath (); // path not consumed by clip()
+
+			ImageSurface image = new ImageSurface ("data/romedalen.png");
+			int w = image.Width;
+			int h = image.Height;
+
+			cr.Scale (1.0/w, 1.0/h);
+
+			cr.SetSourceSurface (image, 0, 0);
+			cr.Paint ();
+
+			image.Destroy ();
 		}
 
 		public void curve_to(Graphics cr, double width, double height)
@@ -199,13 +221,12 @@ namespace Cairo.Snippets
 			cr.LineTo(0.9, 0.9);
 			cr.RelLineTo(-0.4, 0.0);
 			cr.CurveTo(0.2, 0.9, 0.2, 0.5, 0.5, 0.5);
-
-			cr.Save();
-			cr.SetSourceRGB(0, 0, 1);
-			cr.Fill();
-			cr.Restore();
-
 			cr.ClosePath();
+
+			cr.SetSourceRGB(0, 0, 1);
+			cr.FillPreserve();
+			cr.SetSourceRGB(0, 0, 0);
+
 			cr.Stroke();
 		}
 
@@ -225,10 +246,9 @@ namespace Cairo.Snippets
 			cr.RelLineTo(-0.2, -0.2);
 			cr.ClosePath();
 
-			cr.Save();
 		    cr.SetSourceRGB(0, 0, 1);
-		    cr.Fill();
-			cr.Restore();
+		    cr.FillPreserve();
+			cr.SetSourceRGB(0, 0, 0);
 
 			cr.Stroke();
 		}
@@ -252,6 +272,52 @@ namespace Cairo.Snippets
 			cr.Fill();
 		}
 
+		public void image(Graphics cr, double width, double height)
+		{
+			Normalize (cr, width, height);
+			ImageSurface image = new ImageSurface ("data/romedalen.png");
+			int w = image.Width;
+			int h = image.Height;
+
+			cr.Translate (0.5, 0.5);
+			cr.Rotate (45* M_PI/180);
+			cr.Scale  (1.0/w, 1.0/h);
+			cr.Translate (-0.5*w, -0.5*h);
+
+			cr.SetSourceSurface (image, 0, 0);
+			cr.Paint ();
+			image.Destroy ();
+		}
+		
+		public void imagepattern(Graphics cr, double width, double height)
+		{
+			Normalize (cr, width, height);
+			
+			ImageSurface image = new ImageSurface ("data/romedalen.png");
+			int w = image.Width;
+			int h = image.Height;
+
+			SurfacePattern pattern = new SurfacePattern (image);
+			pattern.Extend = Extend.Repeat;
+
+			cr.Translate (0.5, 0.5);
+			cr.Rotate (M_PI / 4);
+			cr.Scale (1 / Math.Sqrt (2), 1 / Math.Sqrt (2));
+			cr.Translate (- 0.5, - 0.5);
+
+			Matrix matrix = new Matrix ();
+			matrix.InitScale (w * 5.0, h * 5.0);
+			pattern.Matrix = matrix;
+
+			cr.Source = pattern;
+
+			cr.Rectangle (0, 0, 1.0, 1.0);
+			cr.Fill ();
+
+			pattern.Destroy ();
+			image.Destroy ();
+		}
+		
 		public void path(Graphics cr, double width, double height)
 		{
 			Normalize(cr, width, height);
