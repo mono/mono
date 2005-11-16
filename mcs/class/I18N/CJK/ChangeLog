@@ -1,3 +1,8 @@
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* GB2312Convert.cs , CP936.cs, GB18030Encoding.cs : don't handle
+	  single byte characters in UcsToGbk. Fixed GB2312 part of #76722.
+
 2005-11-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP949.cs : Now it contains both CP949 (UHC) and CP51949 (EUC) for

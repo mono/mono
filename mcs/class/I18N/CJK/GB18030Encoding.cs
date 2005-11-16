@@ -333,6 +333,9 @@ namespace I18N.CJK
 
 				long value = GB18030Source.FromUCS (ch);
 				if (value == 0) {
+					if (ch <= 0x80 || ch == 0xFF)
+						// Character maps to itself
+						return ch;
 					// GB2312
 					value = gb2312.UcsToGbk (ch);
 					bytes [byteIndex++] = (byte) (value / 0x100);

@@ -77,13 +77,13 @@ namespace I18N.CJK
 				if (posn >= byteLength)
 					throw new ArgumentException ("bytes", Strings.GetString ("Arg_InsufficientSpace"));
 
-/*
 				if (ch <= 0x80 || ch == 0xFF) {
 					// Character maps to itself
 					bytes[posn++] = (byte)ch;
 					continue;
 				}
 
+/*
 				byte byte1=0, byte2=0;
 				int tablepos;
 				
