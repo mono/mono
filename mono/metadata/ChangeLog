@@ -1,3 +1,8 @@
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* icall.c : renamed MakeGenericMethod -> MakeGenericMethod_impl for
+	  bug #76575.
+
 2005-11-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_class_compute_gc_descriptor): Disable typed allocation
