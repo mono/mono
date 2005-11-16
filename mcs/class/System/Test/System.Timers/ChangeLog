@@ -1,3 +1,9 @@
+2005-11-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ElapsedEventArgsCas.cs: New. CAS unit tests.
+	* TimerCas.cs: New. CAS unit tests.
+	* TimersDescriptionAttributeCas.cs: New. CAS unit tests.
+
 2005-05-28  Kornél Pál <kornelpal@hotmail.com>
 
 	* TimerTest.cs: New test file for System.Timers.Timer.
