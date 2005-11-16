@@ -12,8 +12,7 @@ LIB_MCS_FLAGS = \
 ifeq (net_1_1_java, $(PROFILE))
 LIB_MCS_FLAGS +=	\
 	-r:rt.dll				\
-	-r:J2SE.Helpers.dll \
-	/nowarn:3021
+	-r:J2SE.Helpers.dll
 endif
 
 NO_TEST = yes
