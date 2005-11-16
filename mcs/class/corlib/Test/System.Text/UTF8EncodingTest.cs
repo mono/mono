@@ -13,6 +13,12 @@ using NUnit.Framework;
 using System;
 using System.Text;
 
+#if NET_2_0
+using DecoderException = System.Text.DecoderFallbackException;
+#else
+using DecoderException = System.ArgumentException;
+#endif
+
 namespace MonoTests.System.Text {
 
 	[TestFixture]
@@ -158,7 +164,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 		// Fail on MS Fx 1.1
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T2_Boundary_1_FirstPossibleSequence_Fail_5 () 
 		{
 			byte[] data215 = { 0xF8, 0x88, 0x80, 0x80, 0x80 };
@@ -169,7 +175,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 		// Fail on MS Fx 1.1
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T2_Boundary_1_FirstPossibleSequence_Fail_6 () 
 		{
 			byte[] data216 = { 0xFC, 0x84, 0x80, 0x80, 0x80, 0x80 };
@@ -200,7 +206,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 		// Fail on MS Fx 1.1
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T2_Boundary_2_LastPossibleSequence_Fail_4 () 
 		{
 			byte[] data224 = { 0x7F, 0xBF, 0xBF, 0xBF };
@@ -211,7 +217,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 		// Fail on MS Fx 1.1
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T2_Boundary_2_LastPossibleSequence_Fail_5 () 
 		{
 			byte[] data225 = { 0xFB, 0xBF, 0xBF, 0xBF, 0xBF };
@@ -222,7 +228,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 		// Fail on MS Fx 1.1
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T2_Boundary_2_LastPossibleSequence_Fail_6 () 
 		{
 			byte[] data226 = { 0xFD, 0xBF, 0xBF, 0xBF, 0xBF, 0xBF };
@@ -258,7 +264,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 		// Fail on MS Fx 1.1
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T2_Boundary_3_Other_Fail_5 () 
 		{
 			byte[] data235 = { 0xF4, 0x90, 0x80, 0x80 };
@@ -268,7 +274,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_1_UnexpectedContinuation_311 () 
 		{
 			byte[] data = { 0x80 };
@@ -277,7 +283,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_1_UnexpectedContinuation_312 () 
 		{
 			byte[] data = { 0xBF };
@@ -286,7 +292,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_1_UnexpectedContinuation_313 () 
 		{
 			byte[] data = { 0x80, 0xBF };
@@ -295,7 +301,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_1_UnexpectedContinuation_314 () 
 		{
 			byte[] data = { 0x80, 0xBF, 0x80 };
@@ -304,7 +310,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_1_UnexpectedContinuation_315 () 
 		{
 			byte[] data = { 0x80, 0xBF, 0x80, 0xBF };
@@ -313,7 +319,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_1_UnexpectedContinuation_316 () 
 		{
 			byte[] data = { 0x80, 0xBF, 0x80, 0xBF, 0x80 };
@@ -322,7 +328,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_1_UnexpectedContinuation_317 () 
 		{
 			byte[] data = { 0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF };
@@ -331,7 +337,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_1_UnexpectedContinuation_318 () 
 		{
 			byte[] data = { 0x80, 0xBF, 0x80, 0xBF, 0x80, 0xBF, 0x80 };
@@ -340,7 +346,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_1_UnexpectedContinuation_319 () 
 		{
 			// 64 different continuation characters
@@ -354,7 +360,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_2_LonelyStart_321 ()
 		{
 			byte[] data = { 
@@ -367,7 +373,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_2_LonelyStart_322 () 
 		{
 			byte[] data = { 
@@ -378,7 +384,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_2_LonelyStart_323 () 
 		{
 			byte[] data = { 0xF0, 0x20, 0xF1, 0x20, 0xF2, 0x20, 0xF3, 0x20, 0xF4, 0x20, 0xF5, 0x20, 0xF6, 0x20, 0xF7, 0x20 };
@@ -387,7 +393,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_2_LonelyStart_324 () 
 		{
 			byte[] data = { 0xF0, 0x20, 0xF1, 0x20, 0xF2, 0x20, 0xF3, 0x20, 0xF4, 0x20, 0xF5, 0x20, 0xF6, 0x20, 0xF7, 0x20 };
@@ -396,7 +402,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_2_LonelyStart_325 () 
 		{
 			byte[] data = { 0xFC, 0x20, 0xFD, 0x20 };
@@ -405,7 +411,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_331 () 
 		{
 			byte[] data = { 0xC0 };
@@ -414,7 +420,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_332 () 
 		{
 			byte[] data = { 0xE0, 0x80 };
@@ -423,7 +429,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_333 () 
 		{
 			byte[] data = { 0xF0, 0x80, 0x80 };
@@ -432,7 +438,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_334 () 
 		{
 			byte[] data = { 0xF8, 0x80, 0x80, 0x80 };
@@ -441,7 +447,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_335 () 
 		{
 			byte[] data = { 0xFC, 0x80, 0x80, 0x80, 0x80 };
@@ -451,7 +457,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_336 () 
 		{
 			byte[] data = { 0xDF };
@@ -460,14 +466,14 @@ namespace MonoTests.System.Text {
 				// exception is "really" expected here
 				AssertEquals ("MS FX 1.1 behaviour", String.Empty, s);
 			}
-			catch (ArgumentException) {
+			catch (DecoderException) {
 				// but Mono doesn't - better stick to the standard
 			}
 		}
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_337 () 
 		{
 			byte[] data = { 0xEF, 0xBF };
@@ -476,13 +482,13 @@ namespace MonoTests.System.Text {
 				// exception is "really" expected here
 				AssertEquals ("MS FX 1.1 behaviour", String.Empty, s);
 			}
-			catch (ArgumentException) {
+			catch (DecoderException) {
 				// but Mono doesn't - better stick to the standard
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_338 () 
 		{
 			byte[] data = { 0xF7, 0xBF, 0xBF };
@@ -491,7 +497,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_339 () 
 		{
 			byte[] data = { 0xF, 0xBF, 0xBF, 0xBF };
@@ -500,7 +506,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_3_LastContinuationMissing_3310 () 
 		{
 			byte[] data = { 0xFD, 0xBF, 0xBF, 0xBF, 0xBF };
@@ -509,7 +515,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_4_ConcatenationImcomplete () 
 		{
 			byte[] data = {
@@ -520,7 +526,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_5_ImpossibleBytes_351 () 
 		{
 			byte[] data = { 0xFE };
@@ -529,7 +535,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_5_ImpossibleBytes_352 () 
 		{
 			byte[] data = { 0xFF };
@@ -538,7 +544,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T3_Malformed_5_ImpossibleBytes_353 () 
 		{
 			byte[] data = { 0xFE, 0xFE, 0xFF, 0xFF };
@@ -549,7 +555,7 @@ namespace MonoTests.System.Text {
 		// Overlong == dangereous -> "safe" decoder should reject them
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_1_ASCII_Slash_411 () 
 		{
 			byte[] data = { 0xC0, 0xAF };
@@ -558,7 +564,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_1_ASCII_Slash_412 () 
 		{
 			byte[] data = { 0xE0, 0x80, 0xAF };
@@ -567,7 +573,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_1_ASCII_Slash_413 () 
 		{
 			byte[] data = { 0xF0, 0x80, 0x80, 0xAF };
@@ -576,7 +582,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_1_ASCII_Slash_414 () 
 		{
 			byte[] data = { 0xF8, 0x80, 0x80, 0x80, 0xAF };
@@ -585,7 +591,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_1_ASCII_Slash_415 () 
 		{
 			byte[] data = { 0xFC, 0x80, 0x80, 0x80, 0x80, 0xAF };
@@ -594,7 +600,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_2_MaximumBoundary_421 () 
 		{
 			byte[] data = { 0xC1, 0xBF };
@@ -603,7 +609,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_2_MaximumBoundary_422 () 
 		{
 			byte[] data = { 0xE0, 0x9F, 0xBF };
@@ -612,7 +618,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_2_MaximumBoundary_423 () 
 		{
 			byte[] data = { 0xF0, 0x8F, 0xBF, 0xBF };
@@ -621,7 +627,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_2_MaximumBoundary_424 () 
 		{
 			byte[] data = { 0xF8, 0x87, 0xBF, 0xBF, 0xBF };
@@ -630,7 +636,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_2_MaximumBoundary_425 () 
 		{
 			byte[] data = { 0xFC, 0x83, 0xBF, 0xBF, 0xBF, 0xBF };
@@ -639,7 +645,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_3_NUL_431 () 
 		{
 			byte[] data = { 0xC0, 0x80 };
@@ -648,7 +654,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_3_NUL_432 () 
 		{
 			byte[] data = { 0xE0, 0x80, 0x80 };
@@ -657,7 +663,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_3_NUL_433 () 
 		{
 			byte[] data = { 0xF0, 0x80, 0x80, 0x80 };
@@ -666,7 +672,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_3_NUL_434 () 
 		{
 			byte[] data = { 0xF8, 0x80, 0x80, 0x80, 0x80 };
@@ -675,7 +681,7 @@ namespace MonoTests.System.Text {
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
+		[ExpectedException (typeof (DecoderException))]
 		public void T4_Overlong_3_NUL_435 () 
 		{
 			byte[] data = { 0xFC, 0x80, 0x80, 0x80, 0x80, 0x80 };
@@ -685,7 +691,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 			public void T5_IllegalCodePosition_1_UTF16Surrogates_511 () 
 		{
 			byte[] data = { 0xED, 0xA0, 0x80 };
@@ -696,7 +702,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_512 () 
 		{
 			byte[] data = { 0xED, 0xAD, 0xBF };
@@ -707,7 +713,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_513 ()
 		{
 			byte[] data = { 0xED, 0xAE, 0x80 };
@@ -718,7 +724,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_514 () 
 		{
 			byte[] data = { 0xED, 0xAF, 0xBF };
@@ -729,7 +735,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_515 ()
 		{
 			byte[] data = { 0xED, 0xB0, 0x80 };
@@ -740,7 +746,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_516 () 
 		{
 			byte[] data = { 0xED, 0xBE, 0x80 };
@@ -751,7 +757,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_1_UTF16Surrogates_517 () 
 		{
 			byte[] data = { 0xED, 0xBF, 0xBF };
@@ -762,7 +768,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_521 () 
 		{
 			byte[] data = { 0xED, 0xA0, 0x80, 0xED, 0xB0, 0x80 };
@@ -774,7 +780,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_522 () 
 		{
 			byte[] data = { 0xED, 0xA0, 0x80, 0xED, 0xBF, 0xBF };
@@ -786,7 +792,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_523 () 
 		{
 			byte[] data = { 0xED, 0xAD, 0xBF, 0xED, 0xB0, 0x80 };
@@ -798,7 +804,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_524 () 
 		{
 			byte[] data = { 0xED, 0xAD, 0xBF, 0xED, 0xBF, 0xBF };
@@ -810,7 +816,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_525 () 
 		{
 			byte[] data = { 0xED, 0xAE, 0x80, 0xED, 0xB0, 0x80 };
@@ -822,7 +828,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_526 () 
 		{
 			byte[] data = { 0xED, 0xAE, 0x80, 0xED, 0xBF, 0x8F };
@@ -834,7 +840,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_527 () 
 		{
 			byte[] data = { 0xED, 0xAF, 0xBF, 0xED, 0xB0, 0x80 };
@@ -846,7 +852,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_2_PairedUTF16Surrogates_528 () 
 		{
 			byte[] data = { 0xED, 0xAF, 0xBF, 0xED, 0xBF, 0xBF };
@@ -858,7 +864,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_3_Other_531 () 
 		{
 			byte[] data = { 0xEF, 0xBF, 0xBE };
@@ -869,7 +875,7 @@ namespace MonoTests.System.Text {
 
 		[Test]
 // MS Fx 1.1 accept this
-//		[ExpectedException (typeof (ArgumentException))]
+//		[ExpectedException (typeof (DecoderException))]
 		public void T5_IllegalCodePosition_3_Other_532 () 
 		{
 			byte[] data = { 0xEF, 0xBF, 0xBF };

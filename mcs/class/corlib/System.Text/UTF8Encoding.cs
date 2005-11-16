@@ -30,6 +30,9 @@ using System;
 
 [Serializable]
 [MonoTODO ("Fix serialization compatibility with MS.NET")]
+#if NET_2_0
+[MonoTODO ("EncoderFallback is not handled")]
+#endif
 public class UTF8Encoding : Encoding
 {
 	// Magic number used by Windows for UTF-8.
@@ -37,7 +40,9 @@ public class UTF8Encoding : Encoding
 
 	// Internal state.
 	private bool emitIdentifier;
+#if !NET_2_0
 	private bool throwOnInvalid;
+#endif
 
 	// Constructors.
 	public UTF8Encoding () : this (false, false) {}
@@ -48,7 +53,14 @@ public class UTF8Encoding : Encoding
 		: base (UTF8_CODE_PAGE)
 	{
 		emitIdentifier = encoderShouldEmitUTF8Identifier;
+#if NET_2_0
+		if (throwOnInvalidBytes)
+			DecoderFallback = new DecoderExceptionFallback ();
+		else
+			DecoderFallback = new DecoderReplacementFallback (String.Empty);
+#else
 		throwOnInvalid = throwOnInvalidBytes;
+#endif
 
 		web_name = body_name = header_name = "utf-8";
 		encoding_name = "Unicode (UTF-8)";
@@ -358,10 +370,17 @@ public class UTF8Encoding : Encoding
 
 	// Internal version of "GetCharCount" which can handle a rolling
 	// state between multiple calls to this method.
-	private static int InternalGetCharCount (byte[] bytes, int index, int count,
-										   uint leftOverBits,
-										   uint leftOverCount,
-										   bool throwOnInvalid, bool flush)
+#if NET_2_0
+	// Internal version of "GetCharCount" which can handle a rolling
+	// state between multiple calls to this method.
+	private static int InternalGetCharCount (
+		byte[] bytes, int index, int count, uint leftOverBits,
+		uint leftOverCount, DecoderFallbackBuffer fallbackBuffer, bool flush)
+#else
+	private static int InternalGetCharCount (
+		byte[] bytes, int index, int count, uint leftOverBits,
+		uint leftOverCount, bool throwOnInvalid, bool flush)
+#endif
 	{
 		// Validate the parameters.
 		if (bytes == null) {
@@ -415,9 +434,12 @@ public class UTF8Encoding : Encoding
 					leftSize = 6;
 				} else {
 					// Invalid UTF-8 start character.
-					if (throwOnInvalid) {
+#if NET_2_0
+					length += Fallback (fallbackBuffer, bytes, index - 1);
+#else
+					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
-					}
+#endif
 				}
 			} else {
 				// Process an extra byte in a multi-byte sequence.
@@ -446,51 +468,96 @@ public class UTF8Encoding : Encoding
 								break;
 							}
 							if (overlong) {
+#if NET_2_0
+								length += Fallback (fallbackBuffer, bytes, index - 1);
+#else
 								if (throwOnInvalid)
 									throw new ArgumentException (_("Overlong"), leftBits.ToString ());
+#endif
 							}
 							else
 								++length;
 						} else if (leftBits < (uint)0x110000) {
 							length += 2;
-						} else if (throwOnInvalid) {
-							throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
+						} else {
+#if NET_2_0
+							length += Fallback (fallbackBuffer, bytes, index - 1);
+#else
+							if (throwOnInvalid)
+								throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
+#endif
 						}
 						leftSize = 0;
 					}
 				} else {
 					// Invalid UTF-8 sequence: clear and restart.
-					if (throwOnInvalid) {
+#if NET_2_0
+					length += Fallback (fallbackBuffer, bytes, index - 1);
+#else
+					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
-					}
+#endif
 					leftSize = 0;
 					--index;
 					++count;
 				}
 			}
 		}
-		if (flush && leftSize != 0 && throwOnInvalid) {
+		if (flush && leftSize != 0) {
 			// We had left-over bytes that didn't make up
 			// a complete UTF-8 character sequence.
-			throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
+#if NET_2_0
+			length += Fallback (fallbackBuffer, bytes, index - 1);
+#else
+			if (throwOnInvalid)
+				throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
+#endif
 		}
 
 		// Return the final length to the caller.
 		return length;
 	}
 
+#if NET_2_0
+	// for GetCharCount()
+	static int Fallback (DecoderFallbackBuffer buffer, byte [] bytes, int index)
+	{
+		buffer.Fallback (bytes, index - 1);
+		return buffer.Remaining;
+	}
+
+	// for GetChars()
+	static void Fallback (DecoderFallbackBuffer buffer, byte [] bytes, int byteIndex,
+		char [] chars, ref int charIndex)
+	{
+		buffer.Fallback (bytes, byteIndex - 1);
+		while (buffer.Remaining > 0)
+			chars [charIndex++] = buffer.GetNextChar ();
+	}
+#endif
+
 	// Get the number of characters needed to decode a byte buffer.
 	public override int GetCharCount (byte[] bytes, int index, int count)
 	{
+#if NET_2_0
+		return InternalGetCharCount (bytes, index, count, 0, 0, DecoderFallback.CreateFallbackBuffer (), true);
+#else
 		return InternalGetCharCount (bytes, index, count, 0, 0, throwOnInvalid, true);
+#endif
 	}
 
 	// Get the characters that result from decoding a byte buffer.
-	private static int InternalGetChars (byte[] bytes, int byteIndex,
-									   int byteCount, char[] chars,
-									   int charIndex, ref uint leftOverBits,
-									   ref uint leftOverCount,
-									   bool throwOnInvalid, bool flush)
+#if NET_2_0
+	private static int InternalGetChars (
+		byte[] bytes, int byteIndex, int byteCount, char[] chars,
+		int charIndex, ref uint leftOverBits, ref uint leftOverCount,
+		DecoderFallbackBuffer fallbackBuffer, bool flush)
+#else
+	private static int InternalGetChars (
+		byte[] bytes, int byteIndex, int byteCount, char[] chars,
+		int charIndex, ref uint leftOverBits, ref uint leftOverCount,
+		bool throwOnInvalid, bool flush)
+#endif
 	{
 		// Validate the parameters.
 		if (bytes == null) {
@@ -558,9 +625,12 @@ public class UTF8Encoding : Encoding
 					leftSize = 6;
 				} else {
 					// Invalid UTF-8 start character.
-					if (throwOnInvalid) {
+#if NET_2_0
+					Fallback (fallbackBuffer, bytes, byteIndex, chars, ref posn);
+#else
+					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
-					}
+#endif
 				}
 			} else {
 				// Process an extra byte in a multi-byte sequence.
@@ -589,8 +659,12 @@ public class UTF8Encoding : Encoding
 								break;
 							}
 							if (overlong) {
+#if NET_2_0
+								Fallback (fallbackBuffer, bytes, byteIndex, chars, ref posn);
+#else
 								if (throwOnInvalid)
 									throw new ArgumentException (_("Overlong"), leftBits.ToString ());
+#endif
 							}
 							else {
 								if (posn >= length) {
@@ -609,26 +683,39 @@ public class UTF8Encoding : Encoding
 												   (uint)0xD800);
 							chars[posn++] =
 								(char)((leftBits & (uint)0x3FF) + (uint)0xDC00);
-						} else if (throwOnInvalid) {
-							throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
+						} else {
+#if NET_2_0
+							Fallback (fallbackBuffer, bytes, byteIndex, chars, ref posn);
+#else
+							if (throwOnInvalid)
+								throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
+#endif
 						}
 						leftSize = 0;
 					}
 				} else {
 					// Invalid UTF-8 sequence: clear and restart.
-					if (throwOnInvalid) {
+#if NET_2_0
+					Fallback (fallbackBuffer, bytes, byteIndex, chars, ref posn);
+#else
+					if (throwOnInvalid)
 						throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
-					}
+#endif
 					leftSize = 0;
 					--byteIndex;
 					++byteCount;
 				}
 			}
 		}
-		if (flush && leftSize != 0 && throwOnInvalid) {
+		if (flush && leftSize != 0) {
 			// We had left-over bytes that didn't make up
 			// a complete UTF-8 character sequence.
-			throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
+#if NET_2_0
+			Fallback (fallbackBuffer, bytes, byteIndex, chars, ref posn);
+#else
+			if (throwOnInvalid)
+				throw new ArgumentException (_("Arg_InvalidUTF8"), "bytes");
+#endif
 		}
 		leftOverBits = leftBits;
 		leftOverCount = (leftSoFar | (leftSize << 4));
@@ -643,8 +730,13 @@ public class UTF8Encoding : Encoding
 	{
 		uint leftOverBits = 0;
 		uint leftOverCount = 0;
+#if NET_2_0
+		return InternalGetChars (bytes, byteIndex, byteCount, chars, 
+				charIndex, ref leftOverBits, ref leftOverCount, DecoderFallback.CreateFallbackBuffer (), true);
+#else
 		return InternalGetChars (bytes, byteIndex, byteCount, chars, 
 				charIndex, ref leftOverBits, ref leftOverCount, throwOnInvalid, true);
+#endif
 	}
 
 	// Get the maximum number of bytes needed to encode a
@@ -670,7 +762,13 @@ public class UTF8Encoding : Encoding
 	// Get a UTF8-specific decoder that is attached to this instance.
 	public override Decoder GetDecoder ()
 	{
+#if NET_2_0
+		UTF8Decoder ret = new UTF8Decoder ();
+		ret.Fallback = DecoderFallback;
+		return ret;
+#else
 		return new UTF8Decoder (throwOnInvalid);
+#endif
 	}
 
 	// Get a UTF8-specific encoder that is attached to this instance.
@@ -698,9 +796,16 @@ public class UTF8Encoding : Encoding
 	{
 		UTF8Encoding enc = (value as UTF8Encoding);
 		if (enc != null) {
+#if NET_2_0
+			return (codePage == enc.codePage &&
+					emitIdentifier == enc.emitIdentifier &&
+					DecoderFallback == enc.DecoderFallback &&
+					EncoderFallback == enc.EncoderFallback);
+#else
 			return (codePage == enc.codePage &&
 					emitIdentifier == enc.emitIdentifier &&
 					throwOnInvalid == enc.throwOnInvalid);
+#endif
 		} else {
 			return false;
 		}
@@ -727,14 +832,22 @@ public class UTF8Encoding : Encoding
 	[Serializable]
 	private class UTF8Decoder : Decoder
 	{
+#if !NET_2_0
 		private bool throwOnInvalid;
+#endif
 		private uint leftOverBits;
 		private uint leftOverCount;
 
 		// Constructor.
+#if NET_2_0
+		public UTF8Decoder ()
+#else
 		public UTF8Decoder (bool throwOnInvalid)
+#endif
 		{
+#if !NET_2_0
 			this.throwOnInvalid = throwOnInvalid;
+#endif
 			leftOverBits = 0;
 			leftOverCount = 0;
 		}
@@ -742,14 +855,24 @@ public class UTF8Encoding : Encoding
 		// Override inherited methods.
 		public override int GetCharCount (byte[] bytes, int index, int count)
 		{
+#if NET_2_0
+			return InternalGetCharCount (bytes, index, count,
+				leftOverBits, leftOverCount, FallbackBuffer, false);
+#else
 			return InternalGetCharCount (bytes, index, count,
 					leftOverBits, leftOverCount, throwOnInvalid, false);
+#endif
 		}
 		public override int GetChars (byte[] bytes, int byteIndex,
 						 int byteCount, char[] chars, int charIndex)
 		{
+#if NET_2_0
+			return InternalGetChars (bytes, byteIndex, byteCount,
+				chars, charIndex, ref leftOverBits, ref leftOverCount, FallbackBuffer, false);
+#else
 			return InternalGetChars (bytes, byteIndex, byteCount,
 				chars, charIndex, ref leftOverBits, ref leftOverCount, throwOnInvalid, false);
+#endif
 		}
 
 	} // class UTF8Decoder

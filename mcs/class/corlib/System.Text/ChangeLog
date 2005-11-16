@@ -1,3 +1,9 @@
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Decoder.cs : added FallbackBuffer property.
+	* UTF8Encoding.cs : In NET_2_0, use DecoderFallbackBuffer instead of
+	  "throwOnInvalid".
+
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DecoderReplacementFallbackBuffer.cs : it does not have to preserve

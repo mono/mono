@@ -1,3 +1,8 @@
+2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UTF8EncodingTest.cs : Simply replaced all ArgumentException with
+	  switched alias (it is DecodefFallbackException in NET_2_0).
+
 2005-11-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EncoderReplacementFallbackBufferTest.cs : new test (it's weird, but

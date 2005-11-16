@@ -36,6 +36,7 @@ public abstract class Decoder
 
 #if NET_2_0
 	DecoderFallback fallback;
+	DecoderFallbackBuffer fallback_buffer;
 
 	public DecoderFallback Fallback {
 		get { return fallback; }
@@ -43,6 +44,15 @@ public abstract class Decoder
 			if (value == null)
 				throw new ArgumentNullException ();
 			fallback = value;
+			fallback_buffer = null;
+		}
+	}
+
+	public DecoderFallbackBuffer FallbackBuffer {
+		get {
+			if (fallback_buffer == null)
+				fallback_buffer = fallback.CreateFallbackBuffer ();
+			return fallback_buffer;
 		}
 	}
 #endif
