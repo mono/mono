@@ -1,3 +1,10 @@
+2005-11-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ElapsedEventHandler.cs: Remove [Serializable] from 2.0 profile.
+	* Timer.cs: Add [Browsable(false)] to SynchronizingObject property for
+	2.0 profile.
+	* TimersDescriptionAttribute.cs: Description always returns null.
+
 2005-05-27  Kornél Pál <kornelpal@hotmail.com>
 
 	* Timer.cs: Fixed bug #75068 - Close() does not disable the timer

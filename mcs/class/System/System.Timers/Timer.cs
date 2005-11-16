@@ -5,6 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // The docs talk about server timers and such...
 
@@ -29,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
 using System.Threading;
 
@@ -118,6 +118,9 @@ namespace System.Timers
 		[DefaultValue(null)]
 		[TimersDescriptionAttribute("The object used to marshal the event handler calls issued " +
 					    "when an interval has elapsed.")]
+#if NET_2_0
+		[Browsable (false)]
+#endif
 		public ISynchronizeInvoke SynchronizingObject
 		{
 			get { return so; }
