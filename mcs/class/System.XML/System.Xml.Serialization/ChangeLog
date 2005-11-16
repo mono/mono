@@ -1,3 +1,8 @@
+2005-11-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
+	
+	* XmlReflectionImporter.cs: fixed field order returned by 
+	reflection in method GetReflectionMembers. TARGET_JVM only.
+
 2005-11-07  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* XmlSchemaImporter.cs: Added support for restrictions with

@@ -606,6 +606,16 @@ namespace System.Xml.Serialization {
 			// Read all Fields via reflection.
 			ArrayList fieldList = new ArrayList();
 			FieldInfo[] tfields = type.GetFields (BindingFlags.Instance | BindingFlags.Public);
+#if TARGET_JVM
+			// This statement ensures fields are ordered starting from the base type.
+			for (int ti=0; ti<typeList.Count; ti++) {
+				for (int i=0; i<tfields.Length; i++) {
+					FieldInfo field = tfields[i];
+					if (field.DeclaringType == typeList[ti])
+						fieldList.Add (field);
+				}
+			}
+#else
 			currentType = null;
 			int currentIndex = 0;
 			foreach (FieldInfo field in tfields)
@@ -618,10 +628,22 @@ namespace System.Xml.Serialization {
 				}
 				fieldList.Insert(currentIndex++, field);
 			}
-
+#endif
 			// Read all Properties via reflection.
 			ArrayList propList = new ArrayList();
 			PropertyInfo[] tprops = type.GetProperties (BindingFlags.Instance | BindingFlags.Public);
+#if TARGET_JVM
+			// This statement ensures properties are ordered starting from the base type.
+			for (int ti=0; ti<typeList.Count; ti++) {
+				for (int i=0; i<tprops.Length; i++) {
+					PropertyInfo prop = tprops[i];
+					if (!prop.CanRead) continue;
+					if (prop.GetIndexParameters().Length > 0) continue;
+					if (prop.DeclaringType == typeList[ti])
+						propList.Add (prop);
+				}
+			}
+#else
 			currentType = null;
 			currentIndex = 0;
 			foreach (PropertyInfo prop in tprops)
@@ -636,7 +658,7 @@ namespace System.Xml.Serialization {
 				if (prop.GetIndexParameters().Length > 0) continue;
 				propList.Insert(currentIndex++, prop);
 			}
-
+#endif
 			ArrayList members = new ArrayList();
 			int fieldIndex=0;
 			int propIndex=0;
