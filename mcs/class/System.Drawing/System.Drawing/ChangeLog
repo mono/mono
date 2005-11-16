@@ -1,5 +1,9 @@
 2005-11-16 Konstantin Triger <kostat@mainsoft.com>
 
+        * Bitmap.jvm.cs: open a correct stream.
+
+2005-11-16 Konstantin Triger <kostat@mainsoft.com>
+
         * FontFamily.jvm.cs, Font.jvm.cs: throw exception if invalid params.
 
 2005-11-16 Konstantin Triger <kostat@mainsoft.com>

@@ -1,3 +1,7 @@
+2005-11-16 Konstantin Triger <kostat@mainsoft.com>
+
+        * PrivateFontCollection.jvm.cs: open a correct stream.
+
 2005-11-13 Konstantin Triger <kostat@mainsoft.com>
 
 	* Added LineLayout.jvm.cs, TextLineIterator.jvm.cs for text support

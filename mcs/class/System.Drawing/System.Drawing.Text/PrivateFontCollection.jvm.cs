@@ -27,6 +27,7 @@
 //
 
 using System;
+using System.IO;
 using awt = java.awt;
 using io = java.io;
 using vmw.common;
@@ -43,14 +44,10 @@ namespace System.Drawing.Text
 		}
 
 		public void AddFontFile(string filename) {
-			io.File file = IOUtils.getJavaFile(filename);
-			io.FileInputStream stream = new io.FileInputStream(file);
-			try {
+			using(FileStream fs = new FileStream(filename, FileMode.Open, FileAccess.Read)) {
+				io.InputStream stream = vmw.common.IOUtils.ToInputStream (fs);
 				awt.Font font = awt.Font.createFont(awt.Font.TRUETYPE_FONT, stream);
 				AddFont(font);
-			}
-			finally {
-				stream.close();
 			}
 		}
 #if INTPTR_SUPPORT

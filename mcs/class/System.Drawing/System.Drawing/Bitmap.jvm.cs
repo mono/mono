@@ -86,11 +86,11 @@ namespace System.Drawing
 		}
 
 		internal Bitmap (string filename, bool useIcm, ImageFormat format) {
-			// TBD: useIcm param
-			java.io.File file = vmw.common.IOUtils.getJavaFile (filename);
-			if (!file.exists ())
-				 throw new System.IO.FileNotFoundException (filename);
-			Initialize (new stream.FileImageInputStream (file), format);
+			using(FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read)) {
+				// TBD: useIcm param
+				io.InputStream jis = vmw.common.IOUtils.ToInputStream (stream);
+				Initialize (new stream.MemoryCacheImageInputStream (jis), format);
+			}
 		}
 
 		public Bitmap (Type type, string resource) {
