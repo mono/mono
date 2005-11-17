@@ -1,5 +1,9 @@
 2005-11-17  Ankit Jain  <jankit@novell.com>
 
+	* get.c (dis_stringify_type): Escape generic type parameter names.
+
+2005-11-17  Ankit Jain  <jankit@novell.com>
+
 	* get.c (str_escape): New. Escape a given list of characters.
 	  (get_escaped_name): Escape ' and \ using str_escape, and 
 	allow ` .
