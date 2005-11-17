@@ -1,3 +1,14 @@
+2005-11-17  Dick Porter  <dick@ximian.com>
+
+	* icall.c: 
+	* process.h: 
+	* process.c: Split the Process Start_internal icall into
+	ShellExecuteEx_internal and CreateProcess_internal, which are
+	called depending on whether UseShellExecute is true.  Fixes bug
+	76670.
+
+	* appdomain.c (MONO_CORLIB_VERSION): Incremented
+
 2005-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (emit_ptr_to_object_conv): Get rid of the 'usize' and
