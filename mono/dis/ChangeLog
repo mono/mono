@@ -1,3 +1,9 @@
+2005-11-17  Ankit Jain  <jankit@novell.com>
+
+	* get.c (str_escape): New. Escape a given list of characters.
+	  (get_escaped_name): Escape ' and \ using str_escape, and 
+	allow ` .
+
 2005-11-10  Ankit Jain  <jankit@novell.com>
 
 	* dump.c (dump_table_method): Load generic param constraints.
