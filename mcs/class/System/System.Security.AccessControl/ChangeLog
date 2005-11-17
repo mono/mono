@@ -1,0 +1,6 @@
+2005-11-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SemaphoreRights.cs: New (2.0). Enum of all the rights applicable to
+	semaphores.
+	* SemaphoreSecurity.cs: New (2.0). Very incomplete - to allow the 
+	Semaphore to compile.
