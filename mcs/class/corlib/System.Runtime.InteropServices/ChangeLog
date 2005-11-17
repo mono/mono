@@ -1,3 +1,7 @@
+2005-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* DefaultParameterValueAttribute.cs: New file.
+
 2005-10-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Marshal.cs: Added null check in SecureStringTo* methods and make 
