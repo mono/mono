@@ -1,3 +1,12 @@
+2005-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_ptr_to_object_conv): Get rid of the 'usize' and
+	'msize' parameters, use the information in 'mspec' instead.
+	(emit_object_to_ptr_conv): Ditto.
+
+	* marshal.c (emit_struct_conv): Handle explicit layout structs with
+	fields out of order. Fixes #76733.
+
 2005-11-17  Ankit Jain  <jankit@novell.com>
 
 	* metadata.c (mono_type_create_from_typespec_full): Remove unnecessary g_assert.
