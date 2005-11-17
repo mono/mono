@@ -1,3 +1,9 @@
+2005-11-17  Martin Baulig  <martin@ximian.com>
+
+	* anonymous.cs
+	(CaptureContext.EmitMethodHostInstance): Use `Ldarg_0' if we
+	inherit the scope from our parent.  Fixes #76653.
+
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* doc.cs : the previous patch does not actually fix the bug.
