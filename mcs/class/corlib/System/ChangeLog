@@ -1,3 +1,7 @@
+2005-11-17  Dick Porter  <dick@ximian.com>
+
+	* Environment.cs: Incremented corlib version
+
 2005-11-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Int32.cs, UInt32.cs, Int16.cs, UInt16.cs, Int64.cs,

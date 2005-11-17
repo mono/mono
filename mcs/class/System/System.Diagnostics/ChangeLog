@@ -1,3 +1,9 @@
+2005-11-17  Dick Porter  <dick@ximian.com>
+
+	* Process.cs: Split Start_common into Start_shell and
+	Start_noshell, which call ShellExecuteEx and CreateProcess
+	respectively.  Fixes bug 76670.
+
 2005-09-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* Process.cs: deal with the fact that someone can enable raising events
