@@ -1,3 +1,10 @@
+2005-11-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpListenerPrefixCollectionTest.cs:
+	* HttpListenerTest.cs:
+	* HttpListenerBasicIdentityTest.cs:
+	* HttpListener2Test.cs: tests for HttpListener and related classes.
+
 2005-11-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IPAddressTest.cs: Fixed an LoopbackIPv6 test case (missing '[') that
