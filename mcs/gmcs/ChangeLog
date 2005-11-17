@@ -1,5 +1,10 @@
 2005-11-17  Martin Baulig  <martin@ximian.com>
 
+	* expression.cs (Indexers.GetIndexersForType): Added support for
+	generic parameters; fixes #76587.
+
+2005-11-17  Martin Baulig  <martin@ximian.com>
+
 	* anonymous.cs
 	(CaptureContext.EmitMethodHostInstance): Use `Ldarg_0' if we
 	inherit the scope from our parent.  Fixes #76653.

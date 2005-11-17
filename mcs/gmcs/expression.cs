@@ -8115,6 +8115,21 @@ namespace Mono.CSharp {
 		{
 			Indexers ix = empty;
 
+			if (lookup_type.IsGenericParameter) {
+				GenericConstraints gc = TypeManager.GetTypeParameterConstraints (lookup_type);
+				if (gc == null)
+					return empty;
+
+				if (gc.HasClassConstraint)
+					Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, gc.ClassConstraint));
+
+				Type[] ifaces = gc.InterfaceConstraints;
+				foreach (Type itype in ifaces)
+					Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, itype));
+
+				return ix;
+			}
+
 			Type copy = lookup_type;
 			while (copy != TypeManager.object_type && copy != null){
 				Append (ref ix, caller_type, GetIndexersForTypeOrInterface (caller_type, copy));
