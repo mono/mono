@@ -647,6 +647,8 @@ System.Net.Mime/ContentType.cs
 System.Net.Mime/DispositionTypeNames.cs
 System.Net.Mime/MediaTypeNames.cs
 System.Net.Mime/TransferEncoding.cs
+System.Security.AccessControl/SemaphoreSecurity.cs
+System.Security.AccessControl/SemaphoreRights.cs
 System.Security.Authentication/CipherAlgorithmType.cs
 System.Security.Authentication/ExchangeAlgorithmType.cs
 System.Security.Authentication/HashAlgorithmType.cs
@@ -719,6 +721,8 @@ System.Text.RegularExpressions/RegexRunner.cs
 System.Text.RegularExpressions/RegexRunnerFactory.cs
 System.Text.RegularExpressions/replace.cs
 System.Text.RegularExpressions/syntax.cs
+System.Threading/Semaphore.cs
+System.Threading/SemaphoreFullException.cs
 System.Threading/ThreadExceptionEventArgs.cs
 System.Threading/ThreadExceptionEventHandler.cs
 System.Timers/ElapsedEventArgs.cs
