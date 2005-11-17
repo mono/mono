@@ -486,7 +486,6 @@ namespace Mainsoft.Drawing.Imaging {
 				throw new Exception("Output stream not specified");
 
 			NativeWriter.write( iio );
-			NativeStream.flush();
 		}
 		
 		private imageio.IIOImage GetIIOImageContainer(PlainImage pi) {

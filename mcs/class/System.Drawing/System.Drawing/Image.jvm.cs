@@ -303,6 +303,7 @@ namespace System.Drawing {
 				java.io.OutputStream jos = vmw.common.IOUtils.ToOutputStream (stream);
 				MemoryCacheImageOutputStream output = new MemoryCacheImageOutputStream(jos);
 				InternalSave (output, encoder.Clsid);
+				output.flush();
 			}
 			catch (java.io.IOException ex) {
 				throw new System.IO.IOException(ex.Message, ex);

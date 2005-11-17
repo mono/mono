@@ -1,3 +1,8 @@
+2005-11-17 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* ImageCodec.jvm.cs: fixed WriteImage, removed flush 
+	of native output
+
 2005-11-17  Raja R Harinath  <rharinath@novell.com>
 
 	* ColorMatrix.cs: Make it have Sequential layout.
