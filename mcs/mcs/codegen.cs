@@ -511,7 +511,7 @@ namespace Mono.CSharp {
 
 		public void CaptureThis ()
 		{
-			capture_context.CaptureThis ();
+			capture_context.CaptureThis (CurrentAnonymousMethod);
 		}
 		
 		
