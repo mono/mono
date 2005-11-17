@@ -240,18 +240,26 @@ namespace Mono.Data.SqliteClient
 			}
 			
 			IntPtr errmsg = IntPtr.Zero;
+			Exception dll_error = null;
+
+			if (Version == 2){
+				try {
+					sqlite_handle = Sqlite.sqlite_open(db_file, db_mode, out errmsg);
+					if (errmsg != IntPtr.Zero) {
+						string msg = Marshal.PtrToStringAnsi (errmsg);
+						Sqlite.sqliteFree (errmsg);
+						throw new ApplicationException (msg);
+					}
+				} catch (DllNotFoundException dll){
+					dll_error = dll;
+					db_version = 3;
+				}
+			}
 			if (Version == 3) {
 				int err = Sqlite.sqlite3_open(db_file, out sqlite_handle);
 				if (err == (int)SqliteError.ERROR)
 					throw new ApplicationException (Marshal.PtrToStringAnsi( Sqlite.sqlite3_errmsg (sqlite_handle)));
 			} else {
-				sqlite_handle = Sqlite.sqlite_open(db_file, db_mode, out errmsg);
-			
-				if (errmsg != IntPtr.Zero) {
-					string msg = Marshal.PtrToStringAnsi (errmsg);
-					Sqlite.sqliteFree (errmsg);
-					throw new ApplicationException (msg);
-				}
 			}
 			state = ConnectionState.Open;
 		}
