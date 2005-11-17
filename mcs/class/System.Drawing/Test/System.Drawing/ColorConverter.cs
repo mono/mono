@@ -115,6 +115,20 @@ namespace MonoTests.System.Drawing {
 			Assert.AreEqual (0, color.G, "CF7#3");
 			Assert.AreEqual (0, color.B, "CF7#4");
 
+			color = (Color) colconv.ConvertFrom (null, CultureInfo.InvariantCulture,
+				"0x123");
+			Assert.AreEqual (255, color.A, "CF8#1");
+			Assert.AreEqual (17, color.R, "CF8#2");
+			Assert.AreEqual (34, color.G, "CF8#3");
+			Assert.AreEqual (51, color.B, "CF8#4");
+
+			color = (Color) colconv.ConvertFrom (null, CultureInfo.InvariantCulture,
+				"#123");
+			Assert.AreEqual (255, color.A, "CF9#1");
+			Assert.AreEqual (17, color.R, "CF9#2");
+			Assert.AreEqual (34, color.G, "CF9#3");
+			Assert.AreEqual (51, color.B, "CF9#4");
+
 			Assert.AreEqual (col, (Color) colconv.ConvertFrom (null,
 				CultureInfo.InvariantCulture, colStrInvariant), "CF#1");
 			Assert.AreEqual (colnamed, (Color) colconv.ConvertFrom (null,

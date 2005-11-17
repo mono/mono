@@ -1,3 +1,8 @@
+2005-11-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* ColorConverter.cs: added testcases for ConvertFrom and 
+	three digit notaion color.
+
 2005-10-23  Jonathan Gilbert  <logic@deltaq.org>
 
 	* TestBitmap.cs (Rotate1bit4bit): Added test for rotation & flipping
