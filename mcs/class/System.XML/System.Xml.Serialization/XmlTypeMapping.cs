@@ -665,7 +665,12 @@ namespace System.Xml.Serialization
 			foreach (EnumMapMember mem in _members)
 				if (mem.EnumName == enumName) return mem.XmlName;
 			
-			return Convert.ToInt64(enumValue).ToString(CultureInfo.InvariantCulture);
+			// Enum default value will not be written
+			// unless it is one of the enum legal values
+			if (enumName.Equals("0"))
+				return String.Empty;
+			else
+				return Convert.ToInt64(enumValue).ToString(CultureInfo.InvariantCulture);
 		}
 
 		public string GetEnumName (string xmlName)

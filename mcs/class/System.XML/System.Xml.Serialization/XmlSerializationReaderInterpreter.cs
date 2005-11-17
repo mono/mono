@@ -756,7 +756,7 @@ namespace System.Xml.Serialization
 		{
 			Reader.ReadStartElement ();
 			object o = GetEnumValue (typeMap, Reader.ReadString());
-			Reader.ReadEndElement ();
+			ReadEndElement ();
 			return o;
 		}
 

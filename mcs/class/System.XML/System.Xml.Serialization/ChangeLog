@@ -1,3 +1,10 @@
+2005-11-17  Vladimir Krasnov  <vladimirk@mainsoft.com>
+	
+	* XmlSerializationReaderInterpreter.cs: fixed ReadEnumElement 
+	method, ReadEndElement should check XmlNodeType.
+	* XmlTypeMapping.cs: fixed GetXmlName method, it should not
+	write zero as default enum value.
+
 2005-11-16  Vladimir Krasnov  <vladimirk@mainsoft.com>
 	
 	* XmlReflectionImporter.cs: fixed field order returned by 
