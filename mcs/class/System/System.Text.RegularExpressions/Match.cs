@@ -68,7 +68,7 @@ namespace System.Text.RegularExpressions {
 
 		// internal
 
-		private Match () : base ()
+		private Match ()
 		{
 			this.regex = null;
 			this.machine = null;

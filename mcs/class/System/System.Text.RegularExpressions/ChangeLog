@@ -1,3 +1,8 @@
+2005-11-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Match.cs: Removed the ": base ()" on the private ctor as it is
+	unrequired and cause an extra public ctor to added (bug #76736).
+
 2005-09-23  Raja R Harinath  <rharinath@novell.com>
 
 	* interpreter.cs (Interpreter.Eval) [OpCode.Until]: Invert the
