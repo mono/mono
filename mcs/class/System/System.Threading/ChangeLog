@@ -1,3 +1,8 @@
+2005-11-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Semaphore.cs: New (2.0). Incomplete (missing runtime support).
+	* SemaphoreFullException.cs: New (2.0).
+
 2001-09-21  Dick Porter  <dick@ximian.com>
 
 	* ThreadExceptionEventArgs.cs: Implemented
