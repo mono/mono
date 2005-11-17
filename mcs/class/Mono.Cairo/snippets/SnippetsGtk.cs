@@ -7,7 +7,7 @@ namespace Cairo.Snippets
 	public class CairoSnippetsGtk
 	{
 		int width = 400;
-		int height = 400;
+		int height = 200;
 
 		DrawingArea da = new DrawingArea ();
 
@@ -55,7 +55,9 @@ namespace Cairo.Snippets
 
 		void OnExposed (object sender, ExposeEventArgs e)
 		{
-			Graphics cr = Gdk.CairoHelper.Create (da.GdkWindow);
+			// this is for gtk > 2.7:
+			// Graphics cr = Gdk.CairoHelper.Create (da.GdkWindow);
+			Graphics cr = Gdk.Graphics.CreateDrawable (da.GdkWindow);
 
 			int w, h;
 			da.GdkWindow.GetSize (out w, out h);

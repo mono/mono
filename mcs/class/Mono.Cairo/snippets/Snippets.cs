@@ -205,10 +205,8 @@ namespace Cairo.Snippets
 			cr.ClosePath();
 
 			// and fill/stroke it
-			cr.Save();
 	    	cr.SetSourceRGB(0.5, 0.5, 1);
-	    	cr.Fill();
-			cr.Restore();
+	    	cr.FillPreserve();
 			cr.SetSourceRGBA(0.5, 0, 0, 0.5);
 			cr.Stroke();
 		}
