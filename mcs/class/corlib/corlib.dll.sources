@@ -1300,6 +1300,7 @@ System.Threading/Timer.cs
 System.Threading/TimerCallback.cs
 System.Threading/WaitCallback.cs
 System.Threading/WaitHandle.cs
+System.Threading/WaitHandleCannotBeOpenedException.cs
 System.Threading/WaitOrTimerCallback.cs
 System.Collections.Generic/Dictionary.cs
 System.Collections.Generic/ICollection.cs
