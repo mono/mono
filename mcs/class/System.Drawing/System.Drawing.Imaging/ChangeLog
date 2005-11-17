@@ -1,3 +1,7 @@
+2005-11-17  Raja R Harinath  <rharinath@novell.com>
+
+	* ColorMatrix.cs: Make it have Sequential layout.
+
 2005-11-16 Konstantin Triger <kostat@mainsoft.com>
 
         * ImageCodec.jvm.cs: refactoring.
