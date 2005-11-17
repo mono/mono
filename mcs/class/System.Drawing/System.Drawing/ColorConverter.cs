@@ -98,6 +98,14 @@ namespace System.Drawing
 					|| (s.Length == 7 && s.StartsWith ("#"))) {
 					result = Color.FromArgb (-16777216 | (int) converter.
 						ConvertFromString (context, culture, s));
+				} 
+				else if ((s.Length == 5 && (s.StartsWith ("0x") || s.StartsWith ("0X"))) 
+					|| (s.Length == 4 && s.StartsWith ("#"))) {
+					int i = (int) converter.ConvertFromString (context, culture, s);
+					i = ((i & 0xf00) << 12) | ((i & 0xf00) << 8) |
+						((i & 0xf0) << 8) | ((i & 0xf0) << 4) |
+						((i & 0xf) << 4) | (i & 0xf);
+					result = Color.FromArgb ( -16777216 | i );
 				}
 			}
 

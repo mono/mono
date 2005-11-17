@@ -1,3 +1,8 @@
+2005-11-17 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* ColorConverter.cs: fixed ConvertFrom, to be able
+	to convert from three digit notation color (#abc)
+
 2005-11-16 Konstantin Triger <kostat@mainsoft.com>
 
         * Bitmap.jvm.cs: open a correct stream.
