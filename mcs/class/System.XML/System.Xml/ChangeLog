@@ -1,3 +1,8 @@
+2005-11-17  Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* XmlInputStream.cs: fixed Initialize method to be able 
+	to read unicode file without BOM. TARGET_JVM only.
+
 2005-11-14  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XmlNodeReader.cs : removed historical one.
