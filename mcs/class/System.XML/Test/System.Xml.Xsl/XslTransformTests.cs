@@ -330,5 +330,35 @@ namespace MonoTests.System.Xml.Xsl
 			AssertEquals ("<root xmlns=\"urn:foo\"><page /></root>",
 				sw.ToString ());
 		}
+
+		[Test]
+		// http://lists.ximian.com/pipermail/mono-devel-list/2005-November/015812.html
+		public void WhitespaceHandling ()
+		{
+			string ref_out = @"XML 
+        Extensible Markup language
+         Great stuffs 
+    XSLT  
+        Extensible Markup language
+         Great stuffs 
+    XPATH 
+        Extensible Markup language
+         Great stuffs 
+    XSD 
+        Extensible Markup language
+         Great stuffs 
+    ";
+
+			XmlDocument d = new XmlDocument ();
+			d.Load ("Test/XmlFiles/xsl/91834.xml");
+
+			XslTransform t = new XslTransform ();
+			t.Load ("Test/XmlFiles/xsl/91834.xsl");
+
+			StringWriter sw_raw = new StringWriter ();
+			t.Transform (d, null, sw_raw);
+
+			AssertEquals (ref_out, sw_raw.ToString ().Replace ("\r\n", "\n"));
+		}
 	}
 }
