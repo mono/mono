@@ -333,7 +333,7 @@ namespace System.Net {
 		{
 			return null;
 		}
-
+#if SECURITY_DEP
 		public X509Certificate2 EndGetClientCertificate (IAsyncResult asyncResult)
 		{
 			return null;
@@ -347,7 +347,7 @@ namespace System.Net {
 			// InvalidOp if call in progress.
 			return null;
 		}
-
+#endif
 		public override bool Equals (object obj)
 		{
 			return false;
