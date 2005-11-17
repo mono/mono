@@ -62,7 +62,7 @@ namespace System.Text.RegularExpressions
 		}
 
 
-		public Match this [int i] {
+		public virtual Match this [int i] {
 			get {
 				if (i < 0 || !TryToGet (i))
 					throw new ArgumentOutOfRangeException ("i");
