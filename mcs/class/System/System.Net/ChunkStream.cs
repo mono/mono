@@ -62,7 +62,7 @@ namespace System.Net
 			}
 		}
 
-		WebHeaderCollection headers;
+		internal WebHeaderCollection headers;
 		int chunkSize;
 		int chunkRead;
 		State state;
@@ -73,12 +73,17 @@ namespace System.Net
 		ArrayList chunks;
 		
 		public ChunkStream (byte [] buffer, int offset, int size, WebHeaderCollection headers)
+					: this (headers)
+		{
+			Write (buffer, offset, size);
+		}
+
+		public ChunkStream (WebHeaderCollection headers)
 		{
 			this.headers = headers;
 			saved = new StringBuilder ();
 			chunks = new ArrayList ();
 			chunkSize = -1;
-			Write (buffer, offset, size);
 		}
 
 		public void ResetBuffer ()

@@ -1,3 +1,31 @@
+2005-11-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpListenerPrefixCollection.cs:
+	* EndPointListener.cs:
+	* HttpStreamAsyncResult.cs:
+	* HttpListenerContext.cs:
+	* HttpListenerBasicIdentity.cs:
+	* AuthenticationSchemeSelector.cs:
+	* HttpListener.cs:
+	* WebHeaderCollection.cs:
+	* ListenerPrefix.cs:
+	* HttpListenerException.cs:
+	* HttpResponseHeader.cs:
+	* EndPointManager.cs:
+	* HttpListenerRequest.cs:
+	* HttpRequestHeader.cs:
+	* BindIPEndPoint.cs:
+	* ResponseStream.cs:
+	* ChunkedInputStream.cs:
+	* HttpStatusCode.cs:
+	* ListenerAsyncResult.cs:
+	* ChunkStream.cs:
+	* HttpConnection.cs:
+	* HttpUtility.cs:
+	* HttpListenerResponse.cs:
+	* RequestStream.cs: initial implementation of HttpListener. There are
+	a few TODOs left (cookies, HTTPS) but almost everything else is in.
+
 2005-11-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IPv6Address.cs: Added on overload to ToString to get a the full 

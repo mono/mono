@@ -1,0 +1,363 @@
+//
+// System.Net.HttpListenerRequest
+//
+// Author:
+//	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//
+// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+//
+// Permission is hereby granted, free of charge, to any person obtaining
+// a copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to
+// permit persons to whom the Software is furnished to do so, subject to
+// the following conditions:
+// 
+// The above copyright notice and this permission notice shall be
+// included in all copies or substantial portions of the Software.
+// 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+// EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+// NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+// LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+// OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+// WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
+#if NET_2_0
+using System.Collections;
+using System.Collections.Specialized;
+using System.Globalization;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
+namespace System.Net {
+	public sealed class HttpListenerRequest
+	{
+		string [] accept_types;
+		int client_cert_error;
+		Encoding content_encoding;
+		long content_length;
+		bool cl_set;
+		CookieCollection cookies;
+		WebHeaderCollection headers;
+		string method;
+		Stream input_stream;
+		bool is_authenticated;
+		Version version;
+		NameValueCollection query_string; // check if null is ok, check if read-only, check case-sensitiveness
+		string raw_url;
+		Guid identifier;
+		Uri url;
+		Uri referrer;
+		string [] user_languages;
+		bool no_get_certificate;
+		HttpListenerContext context;
+		bool is_chunked;
+		static byte [] _100continue = Encoding.ASCII.GetBytes ("HTTP/1.1 100 Continue\r\n\r\n");
+
+		internal HttpListenerRequest (HttpListenerContext context)
+		{
+			this.context = context;
+			headers = new WebHeaderCollection ();
+			input_stream = Stream.Null;
+		}
+
+		static char [] separators = new char [] { ' ' };
+		// From WebRequestMethods.Http
+		static readonly string [] methods = new string [] { "GET", "POST", "HEAD",
+								"PUT", "CONNECT", "MKCOL" };
+		internal void SetRequestLine (string req)
+		{
+			string [] parts = req.Split (separators, 3);
+			if (parts.Length != 3) {
+				context.ErrorMessage = "Invalid request line (parts).";
+				return;
+			}
+
+			method = parts [0];
+			if (Array.IndexOf (methods, method) == -1) {
+				context.ErrorMessage = "Invalid request line (verb).";
+				return;
+			}
+
+			raw_url = parts [1];
+			if (parts [2].Length != 8 || !parts [2].StartsWith ("HTTP/")) {
+				context.ErrorMessage = "Invalid request line (version).";
+				return;
+			}
+
+			try {
+				version = new Version (parts [2].Substring (5));
+				if (version.Major < 1)
+					throw new Exception ();
+			} catch {
+				context.ErrorMessage = "Invalid request line (version).";
+				return;
+			}
+		}
+
+		void CreateQueryString (string query)
+		{
+			query_string = new NameValueCollection ();
+			if (query == null || query.Length == 0)
+				return;
+
+			string [] components = query.Split ('&');
+			foreach (string kv in components) {
+				int pos = kv.IndexOf ('=');
+				if (pos == -1) {
+					query_string.Add (null, HttpUtility.UrlDecode (kv));
+				} else {
+					string key = HttpUtility.UrlDecode (kv.Substring (0, pos));
+					string val = HttpUtility.UrlDecode (kv.Substring (pos + 1));
+					
+					query_string.Add (key, val);
+				}
+			}
+		}
+
+		internal void FinishInitialization ()
+		{
+			string host = UserHostName;
+			if (host == null || host == "") {
+				context.ErrorMessage = "Invalid host name";
+				return;
+			}
+
+			int colon = host.IndexOf (':');
+			if (colon >= 0)
+				host = host.Substring (0, colon);
+
+			string base_uri = String.Format ("{0}://{1}:{2}",
+								(IsSecureConnection) ? "https" : "http",
+								host,
+								LocalEndPoint.Port);
+			try {
+				url = new Uri (base_uri + raw_url);
+			} catch {
+				context.ErrorMessage = "Invalid url";
+				return;
+			}
+
+			CreateQueryString (url.Query);
+
+			if (method == "GET" || method == "HEAD")
+				return;
+
+			string t_encoding = null;
+			if (version >= HttpVersion.Version11) {
+				t_encoding = Headers ["Transfer-Encoding"];
+				// 'identity' is not valid!
+				if (t_encoding != null && t_encoding != "chunked") {
+					context.Connection.SendError (null, 501);
+					return;
+				}
+			}
+
+			bool is_chunked = (t_encoding == "chunked");
+			if (!is_chunked && !cl_set) {
+				context.Connection.SendError (null, 411);
+				return;
+			}
+
+			input_stream = context.Connection.GetRequestStream (is_chunked);
+			if (Headers ["Expect"] == "100-continue") {
+				ResponseStream output = context.Connection.GetResponseStream ();
+				output.InternalWrite (_100continue, 0, _100continue.Length);
+			}
+		}
+
+		internal void AddHeader (string header)
+		{
+			int colon = header.IndexOf (':');
+			if (colon == -1 || colon == 0) {
+				context.ErrorMessage = "Bad Request";
+				return;
+			}
+
+			string name = header.Substring (0, colon).Trim ();
+			string val = header.Substring (colon + 1).Trim ();
+			string lower = name.ToLower (CultureInfo.InvariantCulture);
+			headers.SetInternal (name, val);
+			switch (lower) {
+				case "accept-language":
+					user_languages = val.Split (','); // yes, only split with a ','
+					break;
+				case "accept-types":
+					accept_types = val.Split (','); // yes, only split with a ','
+					break;
+				case "content-length":
+					try {
+						//TODO: max. content_length?
+						content_length = Int64.Parse (val.Trim ());
+						if (content_length < 0)
+							context.ErrorMessage = "Invalid Content-Length.";
+						cl_set = true;
+					} catch {
+						context.ErrorMessage = "Invalid Content-Length.";
+					}
+
+					break;
+				case "referer":
+					try {
+						referrer = new Uri (val);
+					} catch {
+						referrer = new Uri ("http://someone.is.screwing.with.the.headers.com/");
+					}
+					break;
+				//TODO: cookie headers
+			}
+		}
+
+		public string [] AcceptTypes {
+			get { return accept_types; }
+		}
+
+		public int ClientCertificateError {
+			get {
+				if (no_get_certificate)
+					throw new InvalidOperationException (
+						"Call GetClientCertificate() before calling this method.");
+				return client_cert_error;
+			}
+		}
+
+		public Encoding ContentEncoding {
+			get {
+				if (content_encoding == null)
+					content_encoding = Encoding.Default;
+				return content_encoding;
+			}
+		}
+
+		public long ContentLength64 {
+			get { return content_length; }
+		}
+
+		public string ContentType {
+			get { return headers ["content-type"]; }
+		}
+
+		public CookieCollection Cookies {
+			get {
+				// TODO: check if the collection is read-only
+				if (cookies == null)
+					cookies = new CookieCollection ();
+				return cookies;
+			}
+		}
+
+		public bool HasEntityBody {
+			get { return (method == "GET" || method == "HEAD" || content_length <= 0 || is_chunked); }
+		}
+
+		public NameValueCollection Headers {
+			get { return headers; }
+		}
+
+		public string HttpMethod {
+			get { return method; }
+		}
+
+		public Stream InputStream {
+			get { return input_stream; }
+		}
+
+		public bool IsAuthenticated {
+			get { return is_authenticated; }
+		}
+
+		public bool IsLocal {
+			get { return IPAddress.IsLoopback (RemoteEndPoint.Address); }
+		}
+
+		public bool IsSecureConnection {
+			get { return context.Connection.IsSecure; } 
+		}
+
+		public bool KeepAlive {
+			get { return false; }
+		}
+
+		public IPEndPoint LocalEndPoint {
+			get { return context.Connection.LocalEndPoint; }
+		}
+
+		public Version ProtocolVersion {
+			get { return version; }
+		}
+
+		public NameValueCollection QueryString {
+			get { return query_string; }
+		}
+
+		public string RawUrl {
+			get { return raw_url; }
+		}
+
+		public IPEndPoint RemoteEndPoint {
+			get { return context.Connection.RemoteEndPoint; }
+		}
+
+		public Guid RequestTraceIdentifier {
+			get { return identifier; }
+		}
+
+		public Uri Url {
+			get { return url; }
+		}
+
+		public Uri UrlReferrer {
+			get { return referrer; }
+		}
+
+		public string UserAgent {
+			get { return headers ["user-agent"]; }
+		}
+
+		public string UserHostAddress {
+			get { return LocalEndPoint.ToString (); }
+		}
+
+		public string UserHostName {
+			get { return headers ["host"]; }
+		}
+
+		public string [] UserLanguages {
+			get { return user_languages; }
+		}
+
+		public IAsyncResult BeginGetClientCertificate (AsyncCallback requestCallback, Object state)
+		{
+			return null;
+		}
+
+		public X509Certificate2 EndGetClientCertificate (IAsyncResult asyncResult)
+		{
+			return null;
+			// set no_client_certificate once done.
+		}
+
+		public X509Certificate2 GetClientCertificate ()
+		{
+			// set no_client_certificate once done.
+
+			// InvalidOp if call in progress.
+			return null;
+		}
+
+		public override bool Equals (object obj)
+		{
+			return false;
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode (); // May be use the Guid?
+		}
+	}
+}
+#endif
+
