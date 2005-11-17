@@ -49,12 +49,19 @@ namespace Mono.Xml.Xsl
 {
 	internal class XsltCompiledContext : XsltContext 
 	{
-		struct XsltContextInfo
+		class XsltContextInfo
 		{
 			public bool IsCData;
-			public bool PreserveWhitespace;
+			public bool PreserveWhitespace = true;
 			public string ElementPrefix;
 			public string ElementNamespace;
+
+			public void Clear ()
+			{
+				IsCData = false;
+				PreserveWhitespace = true;
+				ElementPrefix = ElementNamespace = null;
+			}
 		}
 
 		Hashtable keyNameCache = new Hashtable ();
@@ -62,7 +69,7 @@ namespace Mono.Xml.Xsl
 		Hashtable patternNavCaches = new Hashtable ();
 
 		XslTransformProcessor p;
-		XsltContextInfo [] scopes = new XsltContextInfo [40];
+		XsltContextInfo [] scopes;
 		int scopeAt = 0;
 		
 
@@ -71,6 +78,9 @@ namespace Mono.Xml.Xsl
 		public XsltCompiledContext (XslTransformProcessor p) : base (new NameTable ())
 		{
 			this.p = p;
+			scopes = new XsltContextInfo [10];
+			for (int i = 0; i < 10; i++)
+				scopes [i] = new XsltContextInfo ();
 		}
 
 		public override string DefaultNamespace { get { return String.Empty; }}
@@ -298,6 +308,10 @@ namespace Mono.Xml.Xsl
 			scopeAt++;
 			if (scopeAt == scopes.Length)
 				ExtendScope ();
+			if (scopes [scopeAt] == null)
+				scopes [scopeAt] = new XsltContextInfo ();
+			else
+				scopes [scopeAt].Clear ();
 		}
 	}
 }

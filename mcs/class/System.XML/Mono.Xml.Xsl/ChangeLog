@@ -1,3 +1,9 @@
+2005-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCompiledContext.cs : since XsltContextInfo is struct, having
+	  an array of this type and setting fields of each struct didn't
+	  make sense. It thus blocked expected PreserveWhitespace behavior.
+
 2005-10-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Compiler.cs : (FromString(s, hashtable)) pull default namespace
