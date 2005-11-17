@@ -28,6 +28,7 @@
 
 #if NET_2_0
 
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
 
@@ -35,7 +36,7 @@ namespace System.Threading {
 
 	[ComVisible (false)]
 	[MonoTODO ("not supported by the runtime")]
-	public class Semaphore : WaitHandle {
+	public sealed class Semaphore : WaitHandle {
 
 		[MonoTODO]
 		public Semaphore (int initialCount, int maximumCount)
@@ -84,12 +85,15 @@ namespace System.Threading {
 		}
 
 		[MonoTODO]
+		[PrePrepareMethod]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public int Release ()
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public int Release (int releaseCount)
 		{
 			if (releaseCount < 1)
