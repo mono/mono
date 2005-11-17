@@ -1,3 +1,8 @@
+2005-11-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ops.h: Add missing OP_I opcodes so it is in synch with the
+	OP_L opcodes.
+
 2005-11-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-exceptions.c (mono_handle_exception_internal): Remove the 
