@@ -224,12 +224,13 @@ namespace System.Net
 		}
 
 		// Methods
-		
+#if !NET_2_0
 		public override int GetHashCode ()
 		{
 			CheckDisposed ();
 			return base.GetHashCode ();
 		}
+#endif
 		
 		public string GetResponseHeader (string headerName)
 		{
@@ -288,8 +289,11 @@ namespace System.Net
 			Dispose (true);
 			GC.SuppressFinalize (this);  
 		}
-		
-		protected virtual void Dispose (bool disposing) 
+
+#if !NET_2_0
+		protected virtual
+#endif
+		void Dispose (bool disposing) 
 		{
 			if (this.disposed)
 				return;

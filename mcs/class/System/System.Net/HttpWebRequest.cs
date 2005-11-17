@@ -552,11 +552,12 @@ namespace System.Net
 				throw new InvalidOperationException ("rangeSpecifier");
 			webHeaders.RemoveAndAdd ("Range", value + from + "-" + to);	
 		}
-		
+#if !NET_2_0
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
 		}
+#endif
 		
 		void CommonChecks (bool putpost)
 		{

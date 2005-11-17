@@ -1,6 +1,15 @@
 2005-11-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpListenerPrefixCollection.cs:
+	* HttpWebResponse.cs:
+	* Dns.cs:
+	* HttpListenerRequest.cs:
+	* HttpWebRequest.cs:
+	* HttpListenerResponse.cs: a few signature fixes for 2.0.
+
+2005-11-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpListenerPrefixCollection.cs:
 	* EndPointListener.cs:
 	* HttpStreamAsyncResult.cs:
 	* HttpListenerContext.cs:

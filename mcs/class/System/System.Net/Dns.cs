@@ -35,9 +35,14 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 
 namespace System.Net {
+#if NET_2_0
+	public static class Dns {
+#else
 	public sealed class Dns {
 
 		private Dns () {}
+#endif
+
 		static Dns ()
 		{
 			System.Net.Sockets.Socket.CheckProtocolSupport();

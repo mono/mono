@@ -370,16 +370,6 @@ namespace System.Net {
 			version = templateResponse.version;
 		}
 
-		public override bool Equals (object obj)
-		{
-			return false;
-		}
-
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode ();
-		}
-
 		public void Redirect (string url)
 		{
 			StatusCode = 302; // Found

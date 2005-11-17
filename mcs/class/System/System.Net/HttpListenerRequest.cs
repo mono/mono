@@ -348,15 +348,6 @@ namespace System.Net {
 			return null;
 		}
 #endif
-		public override bool Equals (object obj)
-		{
-			return false;
-		}
-
-		public override int GetHashCode ()
-		{
-			return base.GetHashCode (); // May be use the Guid?
-		}
 	}
 }
 #endif

@@ -89,12 +89,12 @@ namespace System.Net {
 			((ICollection) prefixes).CopyTo (array, offset);
 		}
 
-		public IEnumerator GetEnumerator ()
+		public IEnumerator<string> GetEnumerator ()
 		{
 			return prefixes.GetEnumerator ();
 		}
 
-		IEnumerator<string> IEnumerable<string>.GetEnumerator ()
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return prefixes.GetEnumerator ();
 		}
