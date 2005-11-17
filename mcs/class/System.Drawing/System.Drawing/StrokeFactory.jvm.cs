@@ -18,6 +18,8 @@ namespace System.Drawing {
 
 			public awt.Stroke Create(float width, int cap, int join, float miterlimit, float[] dash, float dash_phase, geom.AffineTransform penTransform,
 				geom.AffineTransform outputTransform, PenFit penFit) {
+				if ((outputTransform == null || outputTransform.isIdentity()) && (penFit == PenFit.NotThin))
+					return new awt.BasicStroke(width, cap, join, miterlimit, dash, dash_phase);
 				return new System.Drawing.AdvancedStroke(width, cap, join, miterlimit, dash, dash_phase, penTransform, outputTransform, penFit);
 			}
 

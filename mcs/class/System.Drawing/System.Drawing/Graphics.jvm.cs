@@ -275,17 +275,14 @@ namespace System.Drawing {
 			if (pen == null)
 				throw new ArgumentNullException("pen");
 
-			if (StrokeFactory.CanCreateAdvancedStroke) {
+			if (StrokeFactory.CanCreateAdvancedStroke && 
+				(!pen.CanCreateBasicStroke || !NeedsNormalization)) {
 				geom.AffineTransform oldT = NativeObject.getTransform();
 				NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
 
 				try {
-					geom.Area clip = _clip.NativeObject;
 					geom.AffineTransform t = GetFinalTransform();
 					if (!oldT.isIdentity()) {
-						clip = (geom.Area)clip.clone();
-						clip.transform(oldT);
-
 						t = (geom.AffineTransform)t.clone();
 						t.preConcatenate(oldT);
 					}
@@ -319,7 +316,7 @@ namespace System.Drawing {
 						shape = pen.GetNativeObject(t, penFit).createStrokedShape(shape);
 					}
 
-					FillScaledShape(pen.Brush, shape, clip);
+					FillScaledShape(pen.Brush, shape);
 				}
 				finally {
 					NativeObject.setTransform(oldT);
@@ -329,20 +326,16 @@ namespace System.Drawing {
 				awt.Stroke oldStroke = NativeObject.getStroke();
 				NativeObject.setStroke(pen.GetNativeObject(null, PenFit.NotThin));
 				try {
-					awt.Paint oldPaint = NativeObject.getPaint();
+
 					NativeObject.setPaint(pen.Brush);
+
+					geom.AffineTransform oldT = NativeObject.getTransform();
+					NativeObject.transform(GetFinalTransform());
 					try {
-						geom.AffineTransform oldT = NativeObject.getTransform();
-						NativeObject.transform(GetFinalTransform());
-						try {
-							NativeObject.draw(shape);
-						}
-						finally {
-							NativeObject.setTransform(oldT);
-						}
+						NativeObject.draw(shape);
 					}
 					finally {
-						NativeObject.setPaint(oldPaint);
+						NativeObject.setTransform(oldT);
 					}
 				}
 				finally {
@@ -355,15 +348,12 @@ namespace System.Drawing {
 				throw new ArgumentNullException("brush");
 
 			geom.AffineTransform oldT = null;
-			geom.Area clip = _clip.NativeObject;
 			if (NeedsNormalization) {
 				oldT = NativeObject.getTransform();
 				geom.AffineTransform t = GetFinalTransform();
 				if (!oldT.isIdentity()) {
 					t = (geom.AffineTransform)t.clone();
 					t.preConcatenate(oldT);
-					clip = (geom.Area)clip.clone();
-					clip.transform(oldT);
 				}
 				shape = GetNormalizedShape(shape, t);
 			}
@@ -377,7 +367,7 @@ namespace System.Drawing {
 				NativeObject.setTransform(Matrix.IdentityTransform.NativeObject);
 
 			try {
-				FillScaledShape(paint, shape, clip);
+				FillScaledShape(paint, shape);
 			}
 			finally {
 				if (oldT != null)
@@ -400,25 +390,16 @@ namespace System.Drawing {
 			return path;
 		}
 
-		void FillScaledShape(Brush paint, awt.Shape shape, geom.Area clip) {
-			geom.Rectangle2D r = shape.getBounds2D();
-			awt.Paint oldP = NativeObject.getPaint();
-
-
+		void FillScaledShape(Brush paint, awt.Shape shape) {
 			Matrix m = null;
-			if (!_transform.IsIdentity) {
+			if (!(paint is SolidBrush || paint is HatchBrush) && !_transform.IsIdentity) {
 				m = paint.BrushTransform;
 				paint.BrushMultiplyTransform( _transform );
 			}
 
 			try {
 				NativeObject.setPaint(paint);
-				try {
-					NativeObject.fill(shape);
-				}
-				finally {
-					NativeObject.setPaint(oldP);
-				}
+				NativeObject.fill(shape);
 			}
 			finally {
 				if (m != null)
@@ -605,7 +586,7 @@ namespace System.Drawing {
 		
 		#region Clear
 		public void Clear (Color color) {
-			FillScaledShape(new SolidBrush( color ), _clip.NativeObject, null);
+			FillScaledShape(new SolidBrush( color ), _clip.NativeObject);
 		}
 		#endregion
 

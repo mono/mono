@@ -1,3 +1,7 @@
+2005-11-17 Konstantin Triger <kostat@mainsoft.com>
+
+        * StrokeFactory.jvm.cs, Pen.jvm.cs, Graphics.jvm.cs: performance - use BasicStroke when possible.
+
 2005-11-17 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* ColorConverter.cs: fixed ConvertFrom, to be able

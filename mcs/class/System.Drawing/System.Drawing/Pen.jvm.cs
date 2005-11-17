@@ -457,6 +457,18 @@ namespace System.Drawing
 			return Math.Abs(Width*Width * (AD*KN_LM - BC*KN_LM));
 		}
 
+		
+		internal bool CanCreateBasicStroke {
+			get {
+				if (!_transform.IsIdentity)
+					return false;
+
+				//FIXME: add more logic when more features will
+				// be implemented.
+				return true;
+			}
+		}
+
 		internal awt.Stroke GetNativeObject(geom.AffineTransform outputTransform, PenFit penFit) {
 			return GetNativeObject(null, outputTransform, penFit);
 		}
