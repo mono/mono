@@ -1337,7 +1337,9 @@ namespace Mono.CSharp {
 			ILGenerator ig = target.ig;
 			ScopeInfo si = am.Scope;
 
-			if (si == null){
+			AnonymousContainer container = am.ContainerAnonymousMethod;
+
+			if ((si == null) || ((container != null) && (si == container.Scope))) {
 				ig.Emit (OpCodes.Ldarg_0);
 				return;
 			}
