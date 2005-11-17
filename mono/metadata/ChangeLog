@@ -1,3 +1,7 @@
+2005-11-17  Ankit Jain  <jankit@novell.com>
+
+	* metadata.c (mono_type_create_from_typespec_full): Remove unnecessary g_assert.
+
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* icall.c : renamed MakeGenericMethod -> MakeGenericMethod_impl for
