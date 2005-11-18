@@ -57,8 +57,7 @@ namespace System.Net.Configuration
 				
 				string name = child.Name;
 				if (name == "proxy") {
-					// ignored
-					HandlersUtil.ExtractAttributeValue ("usesystemdefault", child, true);
+					string sysdefault = HandlersUtil.ExtractAttributeValue ("usesystemdefault", child, true);
 					string bypass = HandlersUtil.ExtractAttributeValue ("bypassonlocal", child, true);
 					string address = HandlersUtil.ExtractAttributeValue ("proxyaddress", child, true);
 					if (child.Attributes != null && child.Attributes.Count != 0) {
@@ -76,14 +75,22 @@ namespace System.Net.Configuration
 						continue;
 
 					((WebProxy) result).BypassProxyOnLocal = bp;
-					if (address == null)
-						continue;
-
-					try {
-						((WebProxy) result).Address = new Uri (address);
-					} catch (Exception) {
-						HandlersUtil.ThrowException ("invalid uri", child);
+					
+					if (address != null)
+						try {
+							((WebProxy) result).Address = new Uri (address);
+							continue;
+						} catch (UriFormatException) {} //MS: ignore bad URIs, fall through to default
+					
+					//MS: presence of valid address URI takes precedence over usesystemdefault
+					if (sysdefault != null && String.Compare (sysdefault, "true", true) == 0) {
+						address = Environment.GetEnvironmentVariable ("http_proxy");
+						if (address != null)
+							try {
+								((WebProxy) result).Address = new Uri (address);
+							} catch (UriFormatException) {}
 					}
+					
 					continue;
 				}
 

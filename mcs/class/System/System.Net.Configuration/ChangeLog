@@ -1,3 +1,8 @@
+2005-11-09 Michael Hutchinson <m.j.hutchinson@gmail.com>
+
+	* DefaultProxyHandler.cs: Read proxy address from environment, fall
+	back on unvalid URIs
+
 2005-10-18 Gert Driesen <drieseng@users.sourceforge.net>
 
 	* HttpWebRequestElement.cs: Added missing properties and 
