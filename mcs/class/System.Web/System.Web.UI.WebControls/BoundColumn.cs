@@ -100,6 +100,10 @@ namespace System.Web.UI.WebControls {
 				cell.DataBinding += new EventHandler (ItemDataBinding);
 				break;
 			case ListItemType.EditItem:
+				if (ReadOnly) {
+					cell.DataBinding += new EventHandler (ItemDataBinding);
+					break;
+				}
 				string df = DataField;
 				TextBox tb = new TextBox ();
 				if (df != null && df != "")

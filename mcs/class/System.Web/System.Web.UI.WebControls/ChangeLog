@@ -1,3 +1,8 @@
+2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* BoundColumn.cs: when the column is readonly and we're in edit mode,
+	keep it as a TextBox. Fixes bug #76714.
+
 2005-11-03 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* ListBox.cs: render the 'onchange' attribute when AutoPostback is
