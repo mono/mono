@@ -1,3 +1,7 @@
+2005-11-18  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* X509Extension.cs: Keep in sync with Mono.Security.dll.
+
 2005-10-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate.cs: Fixed bug #76407. ValidFrom and ValidUntil are
