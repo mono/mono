@@ -156,6 +156,9 @@ namespace System.Windows.Forms {
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
 
 			form.PointToClient (ref x, ref y);
+
+			// Need to adjust because we are in NC land
+			y += TitleBarHeight;
 			FormPos pos = FormPosForCoords (x, y);
 
 			start = new Point (x, y);

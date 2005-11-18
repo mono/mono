@@ -2,6 +2,8 @@
 
 	* MdiClient.cs: Calculate when to add and remove scrollbars
 	correctly.
+	* MdiChildContext.cs: Adjust the y position to take the titlebar
+	into account.
 
 2005-11-18  Jackson Harper  <jackson@ximian.com>
 
