@@ -1,3 +1,18 @@
+2005-11-18  Massimiliano Mantione  <massi@ximian.com>
+
+	* mini.c: Added "fastpath" deadce (deadce without SSA), and a simple
+	alias analysis pass to support it.
+	* mini.h: Likewise.
+	* ssa.c: Likewise.
+	* liveness.c: Likewise (liveness computation can use aliasing
+	information to be more accurate).
+	* driver.c: Added an "ssa" option go tell the JIT to use SSA, and
+	moreover made so that "--compile-all" uses the given optimization
+	flags and not the default ones.
+	* aliasing.c: Alias analysis (new file).
+	* aliasing.h: Likewise.
+	* Makefile.am: added "aliasing.c" and "aliasing.h".
+	
 2005-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ops.h: Add missing OP_I opcodes so it is in synch with the
