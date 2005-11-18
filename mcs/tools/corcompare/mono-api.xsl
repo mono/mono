@@ -20,49 +20,46 @@
 					<H1>Mono Class Library Status</H1>
 				</P>
 -->
+
+				<table>
+					<tr>
+						<td> <input type="checkbox" ID="todo" onClick="selectTodo()" checked="1"/> </td>
+						<td> <img src="cm/st.gif"/> </td>
+						<td> TODO </td>
+						<td width="20"/>
+						<td> <input type="checkbox" ID="missing" onClick="selectMissing()" checked="1"/> </td>
+						<td> <img src="cm/sm.gif"/> </td>
+						<td> Missing </td>
+					</tr>
+					<tr>
+						<td> <input type="checkbox" ID="extra" onClick="selectExtra()" checked="1"/> </td>
+						<td> <img src="cm/sx.gif"/> </td>
+						<td> Extra </td>
+						<td width="20"/>
+						<td> <input type="checkbox" ID="errors" onClick="selectErrors()" checked="1"/> </td>
+						<td> <img src="cm/se.gif"/> </td>
+						<td> Errors </td>
+					</tr>
+					<tr>
+						<td> </td>
+						<td> <img src="cm/sc.gif"/> </td>
+						<td> Completed </td>
+					</tr>
+				</table>
+
 				<p>
-					<table>
-						<tr>
-							<td> <input type="checkbox" ID="todo" onClick="selectTodo();" checked="1"/> </td>
-							<td> <img src="cm/st.gif"/> </td>
-							<td> TODO </td>
-							<td width="20"/>
-							<td> <input type="checkbox" ID="missing" onClick="selectMissing();" checked="1"/> </td>
-							<td> <img src="cm/sm.gif"/> </td>
-							<td> Missing </td>
-						</tr>
-						<tr>
-							<td> <input type="checkbox" ID="extra" onClick="selectExtra();" checked="1"/> </td>
-							<td> <img src="cm/sx.gif"/> </td>
-							<td> Extra </td>
-							<td width="20"/>
-							<td> <input type="checkbox" ID="errors" onClick="selectErrors();" checked="1"/> </td>
-							<td> <img src="cm/se.gif"/> </td>
-							<td> Errors </td>
-						</tr>
-						<tr>
-							<td> </td>
-							<td> <img src="cm/sc.gif"/> </td>
-							<td> Completed </td>
-						</tr>
-					</table>
-
-					<table>
-						<tr>
-							<td>
-								<input type="checkbox" ID="ComVisible" onClick="toggleAttributeFilter('ComVisible');" />
-							</td>
-							<td> ComVisibleAttribute </td>
-						</tr>
-						<tr>
-							<td>
-								<input type="checkbox" ID="DebuggerDisplay" onClick="toggleAttributeFilter('DebuggerDisplay');" />
-							</td>
-							<td> DebuggerDisplayAttribute </td>
-						</tr>
-					</table>
-
+					<select id="FilteredAttributes">
+						<option>System.Runtime.InteropServices.ComVisibleAttribute</option>
+						<option>System.Diagnostics.DebuggerDisplayAttribute</option>
+						<option>System.Diagnostics.DebuggerTypeProxyAttribute</option>
+					</select>
+					<input type="button" onclick="removeAndFilter()" value="Unfilter attribute" />
 				</p>
+				<p>
+					<input type="text" id="NewFilterTarget" length="60" />
+					<input type="button" onclick="addAndFilter()" value="Add to attribute filter" />
+				</p>
+
 				<div ID="ROOT">
 					<xsl:apply-templates/>
 				</div>
