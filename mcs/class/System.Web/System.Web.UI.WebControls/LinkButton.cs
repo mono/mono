@@ -64,7 +64,7 @@ namespace System.Web.UI.WebControls {
 				Page.VerifyRenderingInServerForm (this);
 
 			base.AddAttributesToRender (w);
-			if (Page == null)
+			if (Page == null || !Enabled)
 				return;
 			
 			if (CausesValidation && Page.AreValidatorsUplevel ()) {

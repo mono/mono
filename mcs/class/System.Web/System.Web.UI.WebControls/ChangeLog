@@ -1,5 +1,10 @@
 2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* LinkButton.cs: don't output any javascript when the linkbutton is
+	disabled. Fixes bug #76713.
+
+2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* DataGrid.cs: use TableHeaderCell instead of TableCell for headers when
 	UseAccesibleHeader property is true. Patch by Robert Jordan.
 
