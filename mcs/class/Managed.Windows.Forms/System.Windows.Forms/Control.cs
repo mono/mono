@@ -741,8 +741,10 @@ namespace System.Windows.Forms
 			}
 
 			set {
+				/*
 				if (!Enum.IsDefined (typeof (BorderStyle), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for BorderStyle", value));
+				*/
 
 				if (border_style != value) {
 					border_style = value;
@@ -791,6 +793,17 @@ namespace System.Windows.Forms
 
 			XplatUI.SendAsyncMethod (data);
 			return result;
+		}
+
+		
+		internal void PointToClient (ref int x, ref int y)
+		{
+			XplatUI.ScreenToClient (Handle, ref x, ref y);
+		}
+
+		internal void PointToScreen (ref int x, ref int y)
+		{
+			XplatUI.ClientToScreen (Handle, ref x, ref y);
 		}
 
 		internal Graphics DeviceContext {
@@ -2857,13 +2870,6 @@ namespace System.Windows.Forms
 
 			window.CreateHandle(CreateParams);
 
-			// Find out where the window manager placed us
-			UpdateStyles();
-			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) != 0) {
-				XplatUI.SetBorderStyle(window.Handle, (FormBorderStyle)border_style);
-			}
-			UpdateBounds();
-
 			if (window.Handle!=IntPtr.Zero) {
 				if (!controls.Contains(window.Handle)) {
 					controls.Add(this);
@@ -2873,6 +2879,13 @@ namespace System.Windows.Forms
 
 				OnHandleCreated(EventArgs.Empty);
 			}
+
+			// Find out where the window manager placed us
+			UpdateStyles();
+			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) != 0) {
+				XplatUI.SetBorderStyle(window.Handle, (FormBorderStyle)border_style);
+			}
+			UpdateBounds();
 		}
 
 		[EditorBrowsable(EditorBrowsableState.Advanced)]

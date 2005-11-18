@@ -558,11 +558,14 @@ namespace System.Windows.Forms {
 			XSendEvent(DisplayHandle, window, false, EventMask.NoEventMask, ref xev);
 		}
 
-
-		private void DeriveStyles(IntPtr handle, int Style, int ExStyle, out FormBorderStyle border_style, out TitleStyle title_style) {
+		private void DeriveStyles(IntPtr handle, int Style, int ExStyle, out FormBorderStyle border_style, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
 			Control		control;
 
 			control = Control.FromHandle(handle);
+
+			// Only MDI windows get caption_heights
+			caption_height = 0;
+			tool_caption_height = 19;
 
 			if ( !(control is Form)) {
 				if (control != null) {
@@ -572,6 +575,11 @@ namespace System.Windows.Forms {
 				}
 				title_style = TitleStyle.None;
 			} else {
+
+				if (((Form) control).IsMdiChild) {
+					caption_height = 26;
+				}
+
 				title_style = TitleStyle.None;
 				if ((Style & (int)WindowStyles.WS_CAPTION) != 0) {
 					if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
@@ -599,11 +607,18 @@ namespace System.Windows.Forms {
 				} else {
 					border_style = FormBorderStyle.Fixed3D;
 				}
+
+				if (((Form) control).IsMdiChild) {
+					Form form = (Form) control;
+					border_style = (FormBorderStyle) 0xFFFF;
+					if (form.FormBorderStyle == FormBorderStyle.None)
+						border_style = FormBorderStyle.None;
+				}
 			}
 		}
 
 		private void SetHwndStyles(Hwnd hwnd, CreateParams cp) {
-			DeriveStyles(hwnd.Handle, cp.Style, cp.ExStyle, out hwnd.border_style, out hwnd.title_style);
+			DeriveStyles(hwnd.Handle, cp.Style, cp.ExStyle, out hwnd.border_style, out hwnd.title_style, out hwnd.caption_height, out hwnd.tool_caption_height);
 		}
 
 		private void SetWMStyles(Hwnd hwnd, CreateParams cp) {
@@ -665,7 +680,6 @@ namespace System.Windows.Forms {
 
 			mwmHints.functions = (IntPtr)functions;
 			mwmHints.decorations = (IntPtr)decorations;
-
 
 			client_rect = hwnd.ClientRect;
 			lock (XlibLock) {
@@ -1261,7 +1275,7 @@ namespace System.Windows.Forms {
 
 		internal override int Caption {
 			get {
-				throw new NotImplementedException(); 
+				return 25; 
 			}
 		}
 
@@ -1586,9 +1600,15 @@ namespace System.Windows.Forms {
 		internal override bool CalculateWindowRect(IntPtr handle, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect) {
 			FormBorderStyle	border_style;
 			TitleStyle	title_style;
+			int caption_height;
+			int tool_caption_height;
 
-			DeriveStyles(handle, Style, ExStyle, out border_style, out title_style);
-			WindowRect = Hwnd.GetWindowRectangle(border_style, MenuHandle, title_style, ClientRect);
+			DeriveStyles(handle, Style, ExStyle, out border_style, out title_style,
+				out caption_height, out tool_caption_height);
+
+			WindowRect = Hwnd.GetWindowRectangle(border_style, MenuHandle, title_style,
+					caption_height, tool_caption_height,
+					ClientRect);
 
 			return true;
 		}
@@ -1819,8 +1839,6 @@ namespace System.Windows.Forms {
 
 			hwnd.WholeWindow = WholeWindow;
 			hwnd.ClientWindow = ClientWindow;
-
-			SetHwndStyles(hwnd, cp);
 
 			#if DriverDebug
 				Console.WriteLine("Created window {0:X} / {1:X} parent {2:X}", ClientWindow.ToInt32(), WholeWindow.ToInt32(), hwnd.parent != null ? hwnd.parent.Handle.ToInt32() : 0);
@@ -2590,10 +2608,8 @@ namespace System.Windows.Forms {
 							Console.WriteLine("GetMessage(): Window {0:X} MotionNotify x={1} y={2}", client ? hwnd.client_window.ToInt32() : hwnd.whole_window.ToInt32(), xevent.MotionEvent.x, xevent.MotionEvent.y);
 						#endif
 
-						if (Dnd.HandleMotionNotify (ref xevent)) {
+						if (Dnd.HandleMotionNotify (ref xevent))
 							goto ProcessNextMessage;
-						}
-
 						if (Grab.Hwnd != IntPtr.Zero) {
 							msg.hwnd = Grab.Hwnd;
 						} else {
@@ -2869,7 +2885,7 @@ namespace System.Windows.Forms {
 				width = hwnd.width;
 				height = hwnd.height;
 
-				rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle, hwnd.title_style, width, height);
+				rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
 
 				client_width = rect.Width;
 				client_height = rect.Height;
@@ -3472,7 +3488,7 @@ namespace System.Windows.Forms {
 				XUnmapWindow(DisplayHandle, hwnd.whole_window);
 			}
 
-			client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle, hwnd.title_style, width, height);
+			client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
 
 			// Save a server roundtrip (and prevent a feedback loop)
 			if ((hwnd.x == x) && (hwnd.y == y) && 

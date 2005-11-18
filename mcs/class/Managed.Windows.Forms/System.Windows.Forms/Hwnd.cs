@@ -40,9 +40,7 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private static Hashtable	windows	= new Hashtable(100, 0.5f);
 		//private const int	menu_height = 14;			// FIXME - Read this value from somewhere
-		private const int	caption_height = 0;			// FIXME - Read this value from somewhere
-		private const int	tool_caption_height = 0;		// FIXME - Read this value from somewhere
-
+		
 		private IntPtr		handle;
 		internal IntPtr		client_window;
 		internal IntPtr		whole_window;
@@ -65,6 +63,8 @@ namespace System.Windows.Forms {
 		internal object		user_data;
 		internal Rectangle	client_rectangle;
 		internal ArrayList	marshal_free_list;
+		internal int		caption_height;
+		internal int		tool_caption_height;
 		#endregion	// Local Variables
 
 		#region Constructors and destructors
@@ -130,7 +130,10 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public static Rectangle GetWindowRectangle(FormBorderStyle border_style, IntPtr menu_handle, TitleStyle title_style, Rectangle client_rect) {
+		public static Rectangle GetWindowRectangle(FormBorderStyle border_style,
+				IntPtr menu_handle, TitleStyle title_style, int caption_height,
+				int tool_caption_height, Rectangle client_rect)
+		{
 			Rectangle	rect;
 
 			rect = new Rectangle(client_rect.Location, client_rect.Size);
@@ -145,22 +148,21 @@ namespace System.Windows.Forms {
 					Console.WriteLine("Hwnd.GetWindowRectangle: No MENU for menu_handle = {0}", menu_handle);
 			}
 
-			switch(border_style) {
-				case FormBorderStyle.Fixed3D: {
-					rect.X -= 2;
-					rect.Y -= 2;
-					rect.Width += 4;
-					rect.Height += 4;
-					break;
-				}
-
-				case FormBorderStyle.FixedSingle: {
-					rect.X -= 1;
-					rect.Y -= 1;
-					rect.Width += 2;
-					rect.Height += 2;
-					break;
-				}
+			if (border_style == FormBorderStyle.Fixed3D) {
+				rect.X -= 2;
+				rect.Y -= 2;
+				rect.Width += 4;
+				rect.Height += 4;
+			} else if (border_style == FormBorderStyle.FixedSingle) {
+				rect.X -= 1;
+				rect.Y -= 1;
+				rect.Width += 2;
+				rect.Height += 2;
+			} else if ((int) border_style == 0xFFFF) {
+				rect.X -= 3;
+				rect.Y -= 3;
+				rect.Width += 6;
+				rect.Height += 6;
 			}
 
 			if (title_style == TitleStyle.Normal) {
@@ -174,7 +176,7 @@ namespace System.Windows.Forms {
 			return rect;
 		}
 
-		public static Rectangle GetClientRectangle(FormBorderStyle border_style, IntPtr menu_handle, TitleStyle title_style, int width, int height) {
+		public static Rectangle GetClientRectangle(FormBorderStyle border_style, IntPtr menu_handle, TitleStyle title_style, int caption_height, int tool_caption_height, int width, int height) {
 			Rectangle rect;
 
 			rect = new Rectangle(0, 0, width, height);
@@ -199,12 +201,17 @@ namespace System.Windows.Forms {
 				rect.Y += 1;
 				rect.Width -= 2;
 				rect.Height -= 2;
+			} else if ((int) border_style == 0xFFFF) {
+				rect.X += 3;
+				rect.Y += 3;
+				rect.Width -= 6;
+				rect.Height -= 6;
 			}
 
 			if (title_style == TitleStyle.Normal)  {
 				rect.Y += caption_height;
 				rect.Height -= caption_height;
-			} else if (title_style == TitleStyle.Normal)  {
+			} else if (title_style == TitleStyle.Tool)  {
 				rect.Y += tool_caption_height;
 				rect.Height -= tool_caption_height;
 			}
@@ -264,31 +271,8 @@ namespace System.Windows.Forms {
 
 		public Rectangle DefaultClientRect {
 			get {
-				Rectangle rect;
-
-				rect = new Rectangle(0, 0, width, height);
-
-				if (border_style == FormBorderStyle.Fixed3D) {
-					rect.X += 2;
-					rect.Y += 2;
-					rect.Width -= 4;
-					rect.Height -= 4;
-				} else if (border_style == FormBorderStyle.FixedSingle) {
-					rect.X += 1;
-					rect.Y += 1;
-					rect.Width -= 2;
-					rect.Height -= 2;
-				}
-
-				if (this.title_style == TitleStyle.Normal)  {
-					rect.Y += caption_height;
-					rect.Height -= caption_height;
-				} else if (this.title_style == TitleStyle.Normal)  {
-					rect.Y += tool_caption_height;
-					rect.Height -= tool_caption_height;
-				}
-
-				return rect;
+				return GetClientRectangle (border_style, menu_handle, title_style,
+						caption_height, tool_caption_height, width, height);
 			}
 		}
 
@@ -382,6 +366,16 @@ namespace System.Windows.Forms {
 			set {
 				parent = value;
 			}
+		}
+
+		public int CaptionHeight {
+			get { return caption_height; }
+			set { caption_height = value; }
+		}
+
+		public int ToolCaptionHeight {
+			get { return tool_caption_height; }
+			set { tool_caption_height = value; }
 		}
 
 		public TitleStyle TitleStyle {

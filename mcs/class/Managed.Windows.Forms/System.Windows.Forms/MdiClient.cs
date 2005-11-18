@@ -37,6 +37,9 @@ namespace System.Windows.Forms {
 		#region Local Variables
 		private int mdi_created;
 		private Form active;
+		private HScrollBar hbar;
+		private VScrollBar vbar;
+		
 		#endregion	// Local Variables
 
 		#region Public Classes
@@ -88,6 +91,13 @@ namespace System.Windows.Forms {
 			*/
 			base.WndProc (ref m);
 		}
+
+		protected override void OnResize (EventArgs e)
+		{
+			base.OnResize (e);
+//			CalcBars ();
+		}
+
 		#region Public Instance Properties
 		[Localizable(true)]
 		public override System.Drawing.Image BackgroundImage {
@@ -127,6 +137,56 @@ namespace System.Windows.Forms {
 
 		#region Protected Instance Methods
 		#endregion	// Protected Instance Methods
+
+		internal void EnsureScrollBars (int right, int bottom)
+		{
+			if (right > Right) {
+				if (hbar == null) {
+					hbar = new HScrollBar ();
+					Controls.AddImplicit (hbar);
+				}
+				hbar.Visible = true;
+			} else {
+				if (hbar != null)
+					hbar.Visible = false;
+			}
+
+			if (bottom > Bottom) {
+				if (vbar == null) {
+					vbar = new VScrollBar ();
+					Controls.AddImplicit (vbar);
+				}
+				vbar.Visible = true;
+			} else {
+				if (vbar != null)
+					vbar.Visible = false;
+			}
+
+			if (hbar != null && hbar.Visible)
+				CalcHBar (right, vbar != null && vbar.Visible);
+			if (vbar != null && vbar.Visible)
+				CalcVBar (bottom, hbar != null && hbar.Visible);
+		}
+
+		private void CalcHBar (int right, bool vert_vis)
+		{
+			hbar.Left = 0;
+			hbar.Top = Height - hbar.Height;
+			hbar.Width = Width - (vert_vis ? vbar.Width : 0);
+			hbar.LargeChange = right;
+			hbar.SmallChange = right / 10;
+			hbar.Maximum = right - 1;
+		}
+
+		private void CalcVBar (int bottom, bool horz_vis)
+		{
+			vbar.Left = Width - vbar.Width;
+			vbar.Top = 0;
+			vbar.Height = Height - (horz_vis ? hbar.Height : 0);
+			vbar.LargeChange = bottom;
+			vbar.SmallChange = bottom / 10;
+			vbar.Maximum = bottom - 1;
+		}
 
 		internal int ChildrenCreated {
 			get { return mdi_created; }

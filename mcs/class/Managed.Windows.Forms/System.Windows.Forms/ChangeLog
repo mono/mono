@@ -1,3 +1,40 @@
+2005-11-18  Jackson Harper  <jackson@ximian.com>
+
+	* Control.cs: Allow non enum values to be used for
+	InternalBorderStyle.  MDI does this to set a special border style.
+	- New utility methods for converting points to/from client coords
+	- Add the newly created control to the Controls collection before
+	updating its style. This way UpdateStyle can walk the control
+	heirarchy to find the control if needed.
+	so I don't need to create a new Point object all the time.
+	* Form.cs: Let MDI windows handle their border styles.
+	- Set styles on MDI windows so the correct title style is derived.
+	* MdiChildContext.cs: Move all the painting and window handling
+	into the non client area.
+	- Use correct sizing and put correct buttons on frames based on
+	the FormBorderStyle.
+	- Notify the mdi client about scrolling
+	- Need to handle the buttons ourselves now, because they are all
+	in non client areas and we can't add controls there.
+	* MdiClient.cs: Halfway to scrolling, this implementation is
+	somewhat broken though, we need to check to make sure other
+	windows aren't causing scrolling before removing the bars. Also
+	the bars need to be drawn on top, maybe I can switch implicit
+	controls to be on top.
+	* Hwnd.cs: caption_height and tool_caption_height are now
+	properties of an hwnd, this way they can be set by the driver
+	based on the type of window they are.  In X11 the window manager
+	handles the decorations so caption_height is zero unless its an
+	MDI window.
+	- Add 3 pixel borders for MDI windows (0xFFFF).
+	- Get rid of some code duplication, have DefaultClientRectanle
+	just call GetClientRectangle.
+	* XplatUIX11.cs: Pass caption_height and tool_caption_height to
+	Hwnd now.
+	- Set border styles differently for mdi windows.
+	* XplatUIOSX.cs: Pass caption_height and tool_caption_height to
+	Hwnd now.
+	
 2005-11-15  Mike Kestner  <mkestner@novell.com>
 
 	* Menu.cs: when adding an item to the collection, if item is already 

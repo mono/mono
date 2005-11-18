@@ -323,10 +323,18 @@ namespace System.Windows.Forms {
 			}
 			set {
 				form_border_style = value;
-				if (IsHandleCreated) {
-					XplatUI.SetBorderStyle(window.Handle, form_border_style);
+
+				// MDI windows handle borders themselves
+				if (!IsMdiChild) {
+					if (IsHandleCreated) {
+						XplatUI.SetBorderStyle(window.Handle, form_border_style);
+					}
+					UpdateStyles();
+				} else {
+					if (mdi_child_context != null)
+						mdi_child_context.UpdateBorderStyle (value);
+					UpdateStyles ();
 				}
-				UpdateStyles();
 			} 
 		}
 
@@ -777,9 +785,23 @@ namespace System.Windows.Forms {
 				if (IsMdiChild) {
 					cp.Style |= (int)WindowStyles.WS_CHILD;
 					cp.Parent = Parent.Handle;
-				}
 
-				if (!IsMdiChild) {
+					cp.ExStyle |= (int) WindowStyles.WS_EX_WINDOWEDGE;
+					switch (FormBorderStyle) {
+					case FormBorderStyle.None:
+						break;
+					case FormBorderStyle.FixedToolWindow:
+					case FormBorderStyle.SizableToolWindow:
+						cp.ExStyle |= (int) WindowStyles.WS_EX_TOOLWINDOW;
+						goto default;
+					default:
+						cp.Style |= (int) WindowStyles.WS_OVERLAPPEDWINDOW;
+						break;
+					}
+					
+				} else {
+					
+				
 					switch (FormBorderStyle) {
 
 					case FormBorderStyle.Fixed3D: {

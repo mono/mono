@@ -819,7 +819,9 @@ namespace System.Windows.Forms {
 				border_style = FormBorderStyle.Fixed3D;
 			}
 
-			WindowRect = Hwnd.GetWindowRectangle(border_style, MenuHandle, title_style, ClientRect);
+			WindowRect = Hwnd.GetWindowRectangle(border_style, MenuHandle, title_style,
+					SystemInformation.CaptionHeight,
+					SystemInformation.ToolWindowCaptionHeight, ClientRect);
 
 			return true;
 		}
@@ -1579,7 +1581,9 @@ namespace System.Windows.Forms {
 		
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			Rectangle client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle, hwnd.title_style, width, height);
+			Rectangle client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle,
+					hwnd.title_style, SystemInformation.CaptionHeight,
+					SystemInformation.ToolWindowCaptionHeight, width, height);
 
 			// Save a server roundtrip (and prevent a feedback loop)
 			if ((hwnd.x == x) && (hwnd.y == y) && (hwnd.width == width) && (hwnd.height == height)) {

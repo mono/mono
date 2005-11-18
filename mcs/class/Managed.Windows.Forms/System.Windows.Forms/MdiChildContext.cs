@@ -7,18 +7,20 @@ namespace System.Windows.Forms {
 
 	internal class MdiChildContext {
 
+		private static readonly int MdiBorderStyle = 0xFFFF;
 		private static Color titlebar_color;
 
 		private int BorderWidth = 3;
-		private int TitleBarHeight = 25;
+//		private int TitleBarHeight = 26;
+//		private int ToolTitleBarHeight = 19;
 		private Size MinTitleBarSize = new Size (115, 25);
-		
+
 		private Form form;
 		private MdiClient mdi_container;
 		private Button close_button;
 		private Button maximize_button;
 		private Button minimize_button;
-		
+
 		// moving windows
 		private Point start;
 		private State state;
@@ -27,7 +29,7 @@ namespace System.Windows.Forms {
 		private Rectangle prev_virtual_position;
 		private Rectangle prev_bounds;
 		private bool maximized;
-		
+
 		private enum State {
 			Idle,
 			Moving,
@@ -60,11 +62,15 @@ namespace System.Windows.Forms {
 			this.form = form;
 			this.mdi_container = mdi_container;
 
-			form.Paint += new PaintEventHandler (PaintWindowDecorations);
+			if (form.FormBorderStyle != FormBorderStyle.None)
+				form.InternalBorderStyle = (BorderStyle) MdiBorderStyle;
+			else
+				form.InternalBorderStyle = BorderStyle.None;
 
+			/*
 			minimize_button = new Button ();
 			minimize_button.Bounds = new Rectangle (form.Width - 62,
-					BorderWidth + 2, 18, 22);
+					-26, 18, 22);
 			minimize_button.Anchor = AnchorStyles.Top | AnchorStyles.Right;
 			minimize_button.Paint += new PaintEventHandler (PaintButtonHandler);
 			minimize_button.Click += new EventHandler (OnMinimizeHandler);
@@ -83,36 +89,73 @@ namespace System.Windows.Forms {
 			close_button.Paint += new PaintEventHandler (PaintButtonHandler);
 			close_button.Click += new EventHandler (CloseButtonClicked);
 
+
 			form.Controls.AddImplicit (close_button);
 			form.Controls.AddImplicit (maximize_button);
 			form.Controls.AddImplicit (minimize_button);
+			*/
 		}
 
 		public bool HandleMessage (ref Message m)
 		{
 			switch ((Msg)m.Msg) {
 
-			case Msg.WM_LBUTTONDOWN:
-				return HandleLButtonDown (form, ref m);
+
+				// The mouse handling messages are actually
+				// not WM_NC* messages except for the first button and NCMOVEs
+				// down because we capture on the form
 
 			case Msg.WM_MOUSEMOVE:
 				return HandleMouseMove (form, ref m);
-				 
+
 			case Msg.WM_LBUTTONUP:
 				HandleLButtonUp (ref m);
+				break;
+
+			case Msg.WM_RBUTTONDOWN:
+			case Msg.WM_LBUTTONDOWN:
+				return HandleButtonDown (ref m);
+
+			case Msg.WM_NCMOUSEMOVE:
+				return HandleNCMouseMove (form, ref m);
+
+			case Msg.WM_NCLBUTTONDOWN:
+				return HandleNCLButtonDown (ref m);
+
+			case Msg.WM_NCPAINT:
+//				form.UpdateStyles ();
+				PaintWindowDecorations ();
+				// Graphics g = XplatUI.GetMenuDC (form.Handle, IntPtr.Zero);
+				// g.Clear (Color.Red);
 				break;
 			}
 			return false;
 		}
 
-		
-		private bool HandleLButtonDown (Form form, ref Message m)
+		public void UpdateBorderStyle (FormBorderStyle border_style)
+		{
+			if (border_style != FormBorderStyle.None)
+				XplatUI.SetBorderStyle (form.Handle, (FormBorderStyle) MdiBorderStyle);
+			else
+				XplatUI.SetBorderStyle (form.Handle, FormBorderStyle.None);
+		}
+
+		private bool HandleButtonDown (ref Message m)
+		{
+			form.BringToFront ();
+			mdi_container.ActiveMdiChild = form;
+			return false;
+		}
+
+		private bool HandleNCLButtonDown (ref Message m)
 		{
 			form.BringToFront ();
 			mdi_container.ActiveMdiChild = form;
 
 			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
+
+			form.PointToClient (ref x, ref y);
 			FormPos pos = FormPosForCoords (x, y);
 
 			start = new Point (x, y);
@@ -123,6 +166,7 @@ namespace System.Windows.Forms {
 				return true;
 			}
 
+			/*
 			if (IsSizable) {
 				SetCursorForPos (pos);
 			
@@ -134,6 +178,7 @@ namespace System.Windows.Forms {
 				form.Capture = true;
 				return true;
 			}
+			*/
 
 			return false;
 		}
@@ -155,11 +200,29 @@ namespace System.Windows.Forms {
 				return true;
 			}
 
+			/*
 			if (IsSizable) {
 				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
 				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
 				FormPos pos = FormPosForCoords (x, y);
+				Console.WriteLine ("position:   " + pos);
+				SetCursorForPos (pos);
 
+				ClearVirtualPosition ();
+				state = State.Idle;
+			}
+			*/
+			
+			return false;
+		}
+
+		private bool HandleNCMouseMove (Form form, ref Message m)
+		{
+			if (IsSizable) {
+				int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
+				int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
+				FormPos pos = FormPosForCoords (x, y);
+				Console.WriteLine ("position:   " + pos);
 				SetCursorForPos (pos);
 
 				ClearVirtualPosition ();
@@ -168,7 +231,7 @@ namespace System.Windows.Forms {
 
 			return false;
 		}
-	
+
 		private void SetCursorForPos (FormPos pos)
 		{
 			switch (pos) {
@@ -202,6 +265,8 @@ namespace System.Windows.Forms {
 			virtual_position.Y = form.Top + move.Y;
 			virtual_position.Width = form.Width;
 			virtual_position.Height = form.Height;
+
+			mdi_container.EnsureScrollBars (virtual_position.Right, virtual_position.Bottom);
 
 			DrawVirtualPosition ();
 		}
@@ -258,6 +323,29 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		private bool HasBorders {
+			get {
+				return form.FormBorderStyle != FormBorderStyle.None;
+			}
+		}
+
+		private bool IsToolWindow {
+			get {
+				if (form.FormBorderStyle == FormBorderStyle.SizableToolWindow ||
+						form.FormBorderStyle == FormBorderStyle.FixedToolWindow)
+					return true;
+				return false;
+			}
+		}
+
+		private int TitleBarHeight {
+			get {
+				if (IsToolWindow)
+					return 19;
+				return 26;
+			}
+		}
+
 		private void UpdateVP (Rectangle r)
 		{
 			UpdateVP (r.X, r.Y, r.Width, r.Height);
@@ -290,30 +378,82 @@ namespace System.Windows.Forms {
 			state = State.Idle;
 		}
 
-		private void PaintWindowDecorations (object sender, PaintEventArgs pe)
+		private void PaintWindowDecorations ()
 		{
-			Color color = titlebar_color;
-			if (maximized)
-				color = ThemeEngine.Current.ColorControl;
+			Graphics dc = XplatUI.GetMenuDC (form.Handle, IntPtr.Zero);
+
+			if (HasBorders) {
+				Rectangle borders = new Rectangle (0, 0, form.Width, form.Height);
+//			dc.FillRectangle (new SolidBrush (Color.Black), borders);
+				
+/*			
+			dc.DrawRectangle (new Pen (SystemColors.ControlLight, 1), borders);
+			borders.Inflate (-2, -2);
+			dc.DrawRectangle (new Pen (SystemColors.ControlDark, 1), borders);
+			borders.X++;
+			borders.Width -= 2;
+			dc.DrawRectangle (new Pen (SystemColors.ControlLight, 1), borders);
+*/
+			
+				ControlPaint.DrawBorder3D (dc, borders,	Border3DStyle.Raised);
+
+				if (IsSizable) {
+					borders.Inflate (-1, -1);
+					ControlPaint.DrawFocusRectangle (dc, borders);
+				}
+			}
+
+			Color color = ThemeEngine.Current.ColorControlDark;
+			if (form == mdi_container.ActiveMdiChild && !maximized)
+				color = titlebar_color;
+
 			Rectangle tb = new Rectangle (BorderWidth, BorderWidth,
-					form.Width - BorderWidth, TitleBarHeight);
+					form.Width - (BorderWidth * 2), TitleBarHeight - 1);
 
-			pe.Graphics.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color),
-						BorderWidth, BorderWidth,
-						form.Width - BorderWidth, TitleBarHeight);
+			dc.FillRectangle (ThemeEngine.Current.ResPool.GetSolidBrush (color), tb);
 
-			tb.X += 18; // Room for the icon
+			dc.DrawLine (new Pen (Color.White, 1), BorderWidth,
+					TitleBarHeight + BorderWidth, form.Width - BorderWidth,
+					TitleBarHeight + BorderWidth);
+
+			if (!IsToolWindow) {
+				tb.X += 18; // Room for the icon and the buttons
+				tb.Width = (form.Width - 62) - tb.X;
+			}
+
 			if (form.Text != null) {
 				StringFormat format = new StringFormat ();
+				format.FormatFlags = StringFormatFlags.NoWrap;
+				format.Trimming = StringTrimming.EllipsisCharacter;
 				format.LineAlignment = StringAlignment.Center;
-				pe.Graphics.DrawString (form.Text, form.Font,
-						ThemeEngine.Current.ResPool.GetSolidBrush (form.ForeColor),
+				dc.DrawString (form.Text, form.Font,
+						ThemeEngine.Current.ResPool.GetSolidBrush (Color.White),
 						tb, format);
 			}
 
-			if (form.Icon != null) {
-				pe.Graphics.DrawIcon (form.Icon, new Rectangle (BorderWidth + 2,
-								      BorderWidth + 2, 16, 16));
+			if (!IsToolWindow) {
+				if (form.Icon != null) {
+					dc.DrawIcon (form.Icon, new Rectangle (BorderWidth + 3,
+								     BorderWidth + 3, 16, 16));
+				}
+
+				Rectangle r = new Rectangle (form.Width - 62, BorderWidth + 2, 18, 22);
+				dc.FillRectangle (SystemBrushes.Control, r);
+				ControlPaint.DrawCaptionButton (dc, r, CaptionButton.Minimize, ButtonState.Normal);
+
+				r = new Rectangle (form.Width - 44,	BorderWidth + 2, 18, 22);
+				dc.FillRectangle (SystemBrushes.Control, r);
+				ControlPaint.DrawCaptionButton (dc, r, CaptionButton.Maximize, ButtonState.Normal);
+
+				r = new Rectangle (form.Width - 24,	BorderWidth + 2, 18, 22);
+				dc.FillRectangle (SystemBrushes.Control, r);
+				ControlPaint.DrawCaptionButton (dc, r, CaptionButton.Close, ButtonState.Normal);
+			} else {
+				Rectangle r = new Rectangle (form.Width - BorderWidth - 2 - 13,
+						BorderWidth + 2, 13, 13);
+				dc.FillRectangle (SystemBrushes.Control, r);
+				ControlPaint.DrawCaptionButton (dc, r, CaptionButton.Close, ButtonState.Normal);
+				
 			}
 		}
 
@@ -439,7 +579,7 @@ namespace System.Windows.Forms {
 			} else if (x > form.Width - BorderWidth) {
 				return FormPos.Right;
 			}
-
+			
 			return FormPos.None;
 		}
 	}
