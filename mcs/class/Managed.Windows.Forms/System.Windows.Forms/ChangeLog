@@ -1,5 +1,10 @@
 2005-11-18  Jackson Harper  <jackson@ximian.com>
 
+	* MdiClient.cs: Calculate when to add and remove scrollbars
+	correctly.
+
+2005-11-18  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Allow non enum values to be used for
 	InternalBorderStyle.  MDI does this to set a special border style.
 	- New utility methods for converting points to/from client coords

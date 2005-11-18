@@ -140,26 +140,54 @@ namespace System.Windows.Forms {
 
 		internal void EnsureScrollBars (int right, int bottom)
 		{
-			if (right > Right) {
+			int width = Width;
+			int height = Height;
+
+			if (vbar != null && vbar.Visible)
+				width -= vbar.Width;
+			if (hbar != null && hbar.Visible)
+				height -= hbar.Width;
+
+			if (right > width) {
 				if (hbar == null) {
 					hbar = new HScrollBar ();
 					Controls.AddImplicit (hbar);
 				}
 				hbar.Visible = true;
 			} else {
-				if (hbar != null)
-					hbar.Visible = false;
+				if (hbar != null) {
+					bool found = false;
+					foreach (Form child in Controls) {
+						if (child == ActiveMdiChild)
+							continue;
+						if (child.Right < width)
+							continue;
+						found = true;
+						break;
+					}
+					hbar.Visible = found;
+				}
 			}
 
-			if (bottom > Bottom) {
+			if (bottom > height) {
 				if (vbar == null) {
 					vbar = new VScrollBar ();
 					Controls.AddImplicit (vbar);
 				}
 				vbar.Visible = true;
 			} else {
-				if (vbar != null)
-					vbar.Visible = false;
+				if (vbar != null) {
+					bool found = false;
+					foreach (Form child in Controls) {
+						if (child == ActiveMdiChild)
+							continue;
+						if (child.Bottom < height)
+							continue;
+						found = true;
+						break;
+					}
+					vbar.Visible = found;
+				}
 			}
 
 			if (hbar != null && hbar.Visible)
