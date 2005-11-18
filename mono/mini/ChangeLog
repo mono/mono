@@ -1,5 +1,9 @@
 2005-11-18  Massimiliano Mantione  <massi@ximian.com>
 
+	* mini.c: Enabled "fastpath" deadce :-)
+	
+2005-11-18  Massimiliano Mantione  <massi@ximian.com>
+
 	* mini.c: Added "fastpath" deadce (deadce without SSA), and a simple
 	alias analysis pass to support it.
 	* mini.h: Likewise.
