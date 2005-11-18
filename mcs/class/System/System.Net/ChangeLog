@@ -1,3 +1,7 @@
+2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpRequestHeader.cs: add missing values.
+
 2005-11-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpListenerPrefixCollection.cs:

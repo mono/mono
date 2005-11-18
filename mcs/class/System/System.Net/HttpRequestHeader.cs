@@ -57,7 +57,18 @@ namespace System.Net {
 		Expect,
 		From,
 		Host,
-		IfMatch
+		IfMatch,
+		IfModifiedSince,
+		IfNoneMatch,
+		IfRange,
+		IfUnmodifiedSince,
+		MaxForwards,
+		ProxyAuthorization,
+		Referer,
+		Range,
+		Te,
+		Translate,
+		UserAgent
 	}
 }
 #endif
