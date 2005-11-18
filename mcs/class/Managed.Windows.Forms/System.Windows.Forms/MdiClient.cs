@@ -146,7 +146,7 @@ namespace System.Windows.Forms {
 			if (vbar != null && vbar.Visible)
 				width -= vbar.Width;
 			if (hbar != null && hbar.Visible)
-				height -= hbar.Width;
+				height -= hbar.Height;
 
 			if (right > width) {
 				if (hbar == null) {
