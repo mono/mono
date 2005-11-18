@@ -786,7 +786,7 @@ namespace System.Windows.Forms {
 					cp.Style |= (int)WindowStyles.WS_CHILD;
 					cp.Parent = Parent.Handle;
 
-					cp.ExStyle |= (int) WindowStyles.WS_EX_WINDOWEDGE;
+					cp.ExStyle |= (int) (WindowStyles.WS_EX_WINDOWEDGE | WindowStyles.WS_EX_MDICHILD);
 					switch (FormBorderStyle) {
 					case FormBorderStyle.None:
 						break;

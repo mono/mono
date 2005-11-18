@@ -2179,6 +2179,15 @@ namespace System.Windows.Forms
 					create_params.Style |= (int)WindowStyles.WS_VISIBLE;
 				}
 
+				switch (border_style) {
+				case BorderStyle.FixedSingle:
+					create_params.Style |= (int) WindowStyles.WS_BORDER;
+					break;
+				case BorderStyle.Fixed3D:
+					create_params.ExStyle |= (int) WindowStyles.WS_EX_CLIENTEDGE;
+					break;
+				}
+
 				return create_params;
 			}
 		}

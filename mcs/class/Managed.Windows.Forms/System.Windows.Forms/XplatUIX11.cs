@@ -559,25 +559,26 @@ namespace System.Windows.Forms {
 		}
 
 		private void DeriveStyles(IntPtr handle, int Style, int ExStyle, out FormBorderStyle border_style, out TitleStyle title_style, out int caption_height, out int tool_caption_height) {
-			Control		control;
-
-			control = Control.FromHandle(handle);
 
 			// Only MDI windows get caption_heights
 			caption_height = 0;
 			tool_caption_height = 19;
 
-			if ( !(control is Form)) {
-				if (control != null) {
-					border_style = (FormBorderStyle)control.border_style;
+			if ((Style & (int) WindowStyles.WS_OVERLAPPEDWINDOW) == 0) {
+				if ((Style & (int) WindowStyles.WS_BORDER) != 0) {
+					border_style = FormBorderStyle.FixedSingle;
+				} else if ((ExStyle & (int) WindowStyles.WS_EX_CLIENTEDGE) != 0) {
+					border_style = FormBorderStyle.Fixed3D;
 				} else {
 					border_style = FormBorderStyle.None;
 				}
 				title_style = TitleStyle.None;
 			} else {
+				bool is_mdi = false;
 
-				if (((Form) control).IsMdiChild) {
+				if ((ExStyle & (int) WindowStyles.WS_EX_MDICHILD) != 0) {
 					caption_height = 26;
+					is_mdi = true;
 				}
 
 				title_style = TitleStyle.None;
@@ -608,12 +609,9 @@ namespace System.Windows.Forms {
 					border_style = FormBorderStyle.Fixed3D;
 				}
 
-				if (((Form) control).IsMdiChild) {
-					Form form = (Form) control;
+				// Magic style for MDI windows
+				if (is_mdi && border_style != FormBorderStyle.None)
 					border_style = (FormBorderStyle) 0xFFFF;
-					if (form.FormBorderStyle == FormBorderStyle.None)
-						border_style = FormBorderStyle.None;
-				}
 			}
 		}
 

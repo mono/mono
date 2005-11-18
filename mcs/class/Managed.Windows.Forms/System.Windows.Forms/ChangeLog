@@ -1,5 +1,16 @@
 2005-11-18  Jackson Harper  <jackson@ximian.com>
 
+	* Control.cs: Set WS_ styles for borders, so that the driver does
+	not have to retrieve the control instance to figure out what kind
+	of borders it should have.
+	* Form.cs: Set the WS_EX_MDICHILD flag on mdi children, so the
+	driver can know its an mdi child easily.
+	* XplatUIX11.cs: Get the border styles and whether the window is
+	MDI from the Styles and ExStyles params instead of having to get a
+	control. This prevents a chicken and egg problem.	
+
+2005-11-18  Jackson Harper  <jackson@ximian.com>
+
 	* MdiClient.cs: Fix typo so scrollbars show up correctly.
 
 2005-11-18  Jackson Harper  <jackson@ximian.com>
