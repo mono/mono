@@ -241,7 +241,7 @@ namespace System.Web.UI.WebControls {
 					writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
 
 				if (ControlToValidate != String.Empty)
-					writer.AddAttribute ("controltovalidate", ControlToValidate);
+					writer.AddAttribute ("controltovalidate", GetControlRenderID (ControlToValidate));
 
 				if (ErrorMessage != String.Empty)
 					writer.AddAttribute ("errormessage", ErrorMessage);

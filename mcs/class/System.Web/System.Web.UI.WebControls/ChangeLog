@@ -1,5 +1,10 @@
 2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* BaseValidator.cs: 'controltovalidate' must be the ClientID of the
+	control to validate. Fixes bug #76641.
+
+2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* BoundColumn.cs: when the column is readonly and we're in edit mode,
 	keep it as a TextBox. Fixes bug #76714.
 
