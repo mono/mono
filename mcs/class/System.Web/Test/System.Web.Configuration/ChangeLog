@@ -1,3 +1,11 @@
+2005-11-18  Chris Toshok  <toshok@ximian.com>
+
+	* GlobalizationSectionTest.cs, HostingEnvironmentSectionTest.cs,
+	CacheSectionTest.cs, CustomErrorsSectionTest.cs,
+	HealthMonitoringSectionTest.cs, CompilationSectionTest.cs,
+	DeploymentSectionTest.cs, ClientTargetSectionTest.cs: new tests.
+
+
 2005-11-14  Chris Toshok  <toshok@ximian.com>
 
 	* AnonymousIdentificationSectionTest.cs: remove MS stacktrace
