@@ -345,6 +345,8 @@ namespace System.Windows.Forms {
 			get {
 				if (IsToolWindow)
 					return 19;
+				if (form.FormBorderStyle == FormBorderStyle.None)
+					return 0;
 				return 26;
 			}
 		}

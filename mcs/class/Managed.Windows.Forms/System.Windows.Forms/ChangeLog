@@ -4,6 +4,7 @@
 	correctly.
 	* MdiChildContext.cs: Adjust the y position to take the titlebar
 	into account.
+	- No height for FormBorderStyle.None
 
 2005-11-18  Jackson Harper  <jackson@ximian.com>
 
