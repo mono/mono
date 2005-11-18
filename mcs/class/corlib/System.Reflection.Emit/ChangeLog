@@ -1,3 +1,10 @@
+2005-11-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* ParameterBuilder.cs (SetCustomAttribute): Handle DefaultParameterValueAttribute as well.
+
+	* CustomAttributeBuilder.cs: Add support for decoding more types of
+	constructor parameters.
+
 2005-11-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeBuilder.cs (SetCustomAttribute): Handle ComImportAttribute as well.

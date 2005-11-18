@@ -108,7 +108,14 @@ namespace System.Reflection.Emit {
 				marshal_info = CustomAttributeBuilder.get_umarshal (customBuilder, true);
 				/* FIXME: check for errors */
 				return;
+			} else if (attrname == "System.Runtime.InteropServices.DefaultParameterValueAttribute") {
+				/* MS.NET doesn't handle this attribute but we handle it for consistency */
+				CustomAttributeBuilder.CustomAttributeInfo cinfo = CustomAttributeBuilder.decode_cattr (customBuilder);
+				/* FIXME: check for type compatibility */
+				SetConstant (cinfo.ctorArgs [0]);
+				return;
 			}
+
 			if (cattrs != null) {
 				CustomAttributeBuilder[] new_array = new CustomAttributeBuilder [cattrs.Length + 1];
 				cattrs.CopyTo (new_array, 0);

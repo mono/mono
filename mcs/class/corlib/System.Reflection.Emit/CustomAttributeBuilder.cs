@@ -305,9 +305,47 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		static Type elementTypeToType (int elementType) {
+			/* Partition II, section 23.1.16 */
+			switch (elementType) {
+			case 0x02:
+				return typeof (bool);
+			case 0x03:
+				return typeof (char);
+			case 0x04:
+				return typeof (sbyte);
+			case 0x05:
+				return typeof (byte);
+			case 0x06:
+				return typeof (short);
+			case 0x07:
+				return typeof (ushort);
+			case 0x08:
+				return typeof (int);
+			case 0x09:
+				return typeof (uint);
+			case 0x0a:
+				return typeof (long);
+			case 0x0b:
+				return typeof (ulong);
+			case 0x0c:
+				return typeof (float);
+			case 0x0d:
+				return typeof (double);
+			case 0x0e:
+				return typeof (string);
+			default:
+				throw new Exception ("Unknown element type '" + elementType + "'");
+			}
+		}
+
 		static object decode_cattr_value (Type t, byte[] data, int pos, out int rpos) {
 			switch (Type.GetTypeCode (t)) {
 			case TypeCode.String:
+				if (data [pos] == 0xff) {
+					rpos = pos + 1;
+					return null;
+				}
 				int len = decode_len (data, pos, out pos);
 				rpos = pos + len;
 				return string_from_bytes (data, pos, len);
@@ -317,6 +355,14 @@ namespace System.Reflection.Emit {
 			case TypeCode.Boolean:
 				rpos = pos + 1;
 				return (data [pos] == 0) ? false : true;
+			case TypeCode.Object:
+				int subtype = data [pos];
+				pos += 1;
+
+				if (subtype >= 0x02 && subtype <= 0x0e)
+					return decode_cattr_value (elementTypeToType (subtype), data, pos, out rpos);
+				else
+					throw new Exception ("Subtype '" + subtype + "' of type object not yet handled in decode_cattr_value");
 			default:
 				throw new Exception ("FIXME: Type " + t + " not yet handled in decode_cattr_value.");
 			}
@@ -338,9 +384,9 @@ namespace System.Reflection.Emit {
 
 			// Prolog
 			if (data.Length < 2)
-				throw new Exception ();
+				throw new Exception ("Custom attr length is only '" + data.Length + "'");
 			if ((data [0] != 0x1) || (data [1] != 0x00))
-				throw new Exception ();
+				throw new Exception ("Prolog invalid");
 			pos = 2;
 
 			ParameterInfo [] pi = ctor.GetParameters ();
@@ -386,7 +432,7 @@ namespace System.Reflection.Emit {
 				}
 				else
 					// FIXME:
-					throw new Exception ();
+					throw new Exception ("Unknown named type: " + named_type);
 			}
 
 			return info;
