@@ -52,7 +52,7 @@ namespace Mono.Security.X509 {
 		protected bool extnCritical;
 		protected ASN1 extnValue;
 
-		internal X509Extension () 
+		protected X509Extension () 
 		{
 			extnCritical = false;
 		}

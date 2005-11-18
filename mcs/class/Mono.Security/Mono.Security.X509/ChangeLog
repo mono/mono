@@ -1,3 +1,8 @@
+2005-11-18  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* X509Extension.cs: Changed default ctor to protected to help 
+	extensibility outside of Mono.Security.dll (fix bug #76742).
+
 2005-11-04  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* PKCS12.cs: It's now possible to add multiple keys of the same size
