@@ -141,7 +141,7 @@ namespace Mono.CSharp {
 		//
 		TypeContainer container;
 		Type this_type;
-		InternalParameters parameters;
+		Parameters parameters;
 		IMethodData orig_method;
 
 		MoveNextMethod move_next_method;
@@ -182,7 +182,7 @@ namespace Mono.CSharp {
 			resume_points.Add (entry_point);
 			entry_point.Define (ig);
 
-			ec.EmitTopBlock (orig_method, original_block, parameters);
+			ec.EmitTopBlock (orig_method, original_block);
 
 			EmitYieldBreak (ig);
 
@@ -339,7 +339,6 @@ namespace Mono.CSharp {
 		// Our constructor
 		//
 		public Iterator (IMethodData m_container, TypeContainer container,
-				 InternalParameters parameters,
 				 int modifiers)
 			: base (container.NamespaceEntry, container, MakeProxyName (m_container.MethodName.Name, m_container.Location),
 				(modifiers & Modifiers.UNSAFE) | Modifiers.PRIVATE, null)
@@ -347,9 +346,9 @@ namespace Mono.CSharp {
 			this.orig_method = m_container;
 
 			this.container = container;
-			this.parameters = parameters;
+			this.parameters = m_container.ParameterInfo;
 			this.original_block = orig_method.Block;
-			this.block = new ToplevelBlock (orig_method.Block, parameters.Parameters, orig_method.Location);
+			this.block = new ToplevelBlock (orig_method.Block, parameters, orig_method.Location);
 
 			IsStatic = (modifiers & Modifiers.STATIC) != 0;
 		}
@@ -541,18 +540,16 @@ namespace Mono.CSharp {
 					"this", Parameter.Modifier.NONE,
 					null, Location));
 			list.Add (new Parameter (
-				TypeManager.system_boolean_expr, "initialized",
+				TypeManager.bool_type, "initialized",
 				Parameter.Modifier.NONE, null, Location));
 
-			Parameter[] old_fixed = parameters.Parameters.FixedParameters;
-			if (old_fixed != null)
-				list.AddRange (old_fixed);
+			Parameter[] old_fixed = parameters.FixedParameters;
+			list.AddRange (old_fixed);
 
 			Parameter[] fixed_params = new Parameter [list.Count];
 			list.CopyTo (fixed_params);
 
-			ctor_params = new Parameters (
-				fixed_params, parameters.Parameters.ArrayParameter);
+			ctor_params = new Parameters (fixed_params);
 
 			ctor = new Constructor (
 				this, Name, Modifiers.PUBLIC, ctor_params,
@@ -560,7 +557,7 @@ namespace Mono.CSharp {
 				Location);
 			AddConstructor (ctor);
 
-			ctor.Block = new ToplevelBlock (block, parameters.Parameters, Location);
+			ctor.Block = new ToplevelBlock (block, parameters, Location);
 
 			int first = IsStatic ? 2 : 3;
 
@@ -595,7 +592,7 @@ namespace Mono.CSharp {
 		void Define_Current ()
 		{
 			ToplevelBlock get_block = new ToplevelBlock (
-				block, parameters.Parameters, Location);
+				block, parameters, Location);
 			MemberName left = new MemberName ("System.Collections.IEnumerator");
 			MemberName name = new MemberName (left, "Current", Location);
 
@@ -642,7 +639,7 @@ namespace Mono.CSharp {
 			AddMethod (get_enumerator);
 
 			get_enumerator.Block = new ToplevelBlock (
-				block, parameters.Parameters, Location);
+				block, parameters, Location);
 
 			get_enumerator.Block.SetHaveAnonymousMethods (Location, move_next_method);
 
@@ -825,7 +822,7 @@ namespace Mono.CSharp {
 			Iterator iterator;
 
 			public MoveNextMethod (Iterator iterator, Location loc)
-				: base (iterator.parameters.Parameters, iterator.original_block, loc)
+				: base (iterator.parameters, iterator.original_block, loc)
 			{
 				this.iterator = iterator;
 			}
@@ -996,7 +993,7 @@ namespace Mono.CSharp {
 			AddMethod (reset);
 
 			reset.Block = new ToplevelBlock (Location);
-			reset.Block = new ToplevelBlock (block, parameters.Parameters, Location);
+			reset.Block = new ToplevelBlock (block, parameters, Location);
 			reset.Block.SetHaveAnonymousMethods (Location, move_next_method);
 
 			reset.Block.AddStatement (Create_ThrowNotSupported ());
@@ -1010,7 +1007,7 @@ namespace Mono.CSharp {
 				Parameters.EmptyReadOnlyParameters, null);
 			AddMethod (dispose);
 
-			dispose.Block = new ToplevelBlock (block, parameters.Parameters, Location);
+			dispose.Block = new ToplevelBlock (block, parameters, Location);
 			dispose.Block.SetHaveAnonymousMethods (Location, move_next_method);
 
 			dispose.Block.AddStatement (new DisposeMethod (this, Location));

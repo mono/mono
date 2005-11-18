@@ -47,7 +47,7 @@ namespace Mono.CSharp {
 		
 		// The emit context for the anonymous method
 		public EmitContext aec;
-		public InternalParameters amp;
+		public Parameters amp;
 		protected bool unreachable;
 
 		//
@@ -201,44 +201,27 @@ namespace Mono.CSharp {
 			invoke_mb = (MethodInfo) Delegate.GetInvokeMethod (ec, delegate_type, loc);
 			ParameterData invoke_pd = TypeManager.GetParameterData (invoke_mb);
 
-			if (Parameters == null){
-				int i, j;
-				
+			if (Parameters == null){				
 				//
 				// We provide a set of inaccessible parameters
 				//
-				int params_idx = -1;
-				for (i = 0; i < invoke_pd.Count; i++){
-					if (invoke_pd.ParameterModifier (i) == Parameter.Modifier.PARAMS)
-						params_idx = i;
-				}
-				int n = invoke_pd.Count - (params_idx != -1 ? 1 : 0);
-				Parameter [] fixedpars = new Parameter [n];
+				Parameter [] fixedpars = new Parameter [invoke_pd.Count];
 				
-				for (i =  j = 0; i < invoke_pd.Count; i++){
-					if (invoke_pd.ParameterModifier (i) == Parameter.Modifier.PARAMS)
-						continue;
-					fixedpars [j] = new Parameter (
-						new TypeExpression (invoke_pd.ParameterType (i), loc),
-						"+" + j, invoke_pd.ParameterModifier (i), null, loc);
-					j++;
+				for (int i = 0; i < invoke_pd.Count; i++){
+					fixedpars [i] = new Parameter (
+						invoke_pd.ParameterType (i),
+						"+" + i, invoke_pd.ParameterModifier (i), null, loc);
 				}
 				
-				Parameter variable = null;
-				if (params_idx != -1){
-					variable = new Parameter (
-						new TypeExpression (invoke_pd.ParameterType (params_idx), loc),
-						"+" + params_idx, invoke_pd.ParameterModifier (params_idx), null, loc);
-				}
-
-				Parameters = new Parameters (fixedpars, variable);
+				Parameters = new Parameters (fixedpars);
 			}
 			
 			//
 			// First, parameter types of `delegate_type' must be compatible
 			// with the anonymous method.
 			//
-			amp = new InternalParameters (Parameters.GetParameterInfo (ec), Parameters);
+			Parameters.Resolve (ec);
+			amp = Parameters;
 			
 			if (amp.Count != invoke_pd.Count){
 				if (!probe){
@@ -255,7 +238,7 @@ namespace Mono.CSharp {
 				if (!probe) {
 					if ((amp_mod & (Parameter.Modifier.OUT | Parameter.Modifier.REF)) != 0){
 						Report.Error (1677, loc, "Parameter `{0}' should not be declared with the `{1}' keyword", 
-							(i+1).ToString (), amp.ModifierDesc (i));
+							(i+1).ToString (), Parameter.GetModifierSignature (amp_mod));
 						Error_ParameterMismatch (delegate_type);
 						return null;
 					}
@@ -339,7 +322,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = builder.GetILGenerator ();
 			aec.ig = ig;
 			
-			Parameters.LabelParameters (aec, builder);
+			Parameters.ApplyAttributes (aec, builder);
 
 			//
 			// Adjust based on the computed state of the
@@ -347,7 +330,7 @@ namespace Mono.CSharp {
 			
 			aec.MethodIsStatic = (method_modifiers & Modifiers.STATIC) != 0;
 			
-			aec.EmitMeta (Block, amp);
+			aec.EmitMeta (Block);
 			aec.EmitResolvedTopBlock (Block, unreachable);
 			return true;
 		}
@@ -362,13 +345,12 @@ namespace Mono.CSharp {
 				TypeAttributes.NestedAssembly, TypeManager.object_type, null);
 
 			Type [] constructor_types = TypeManager.NoTypes;
-			Parameters constructor_parameters = Parameters.EmptyReadOnlyParameters;
 			scope.ScopeConstructor = scope.ScopeTypeBuilder.DefineConstructor (
 				MethodAttributes.Public | MethodAttributes.HideBySig |
 				MethodAttributes.SpecialName | MethodAttributes.RTSpecialName,
 				CallingConventions.HasThis, constructor_types);
-			InternalParameters parameter_info = new InternalParameters (constructor_types, constructor_parameters);
-			TypeManager.RegisterMethod (scope.ScopeConstructor, parameter_info, constructor_types);
+
+			TypeManager.RegisterMethod (scope.ScopeConstructor, Parameters.EmptyReadOnlyParameters);
 
 			ILGenerator cig = scope.ScopeConstructor.GetILGenerator ();
 			cig.Emit (OpCodes.Ldarg_0);

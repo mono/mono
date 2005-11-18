@@ -1818,7 +1818,7 @@ namespace Mono.CSharp {
 					}
 				} else {
 					mi = (MethodInfo) entry.Member;
-					cmpAttrs = TypeManager.GetArgumentTypes (mi);
+					cmpAttrs = TypeManager.GetParameterData (mi).Types;
 				}
 
 				if (fi != null) {
@@ -2030,7 +2030,7 @@ namespace Mono.CSharp {
  		
 				MethodBase method_to_compare = (MethodBase)entry.Member;
 				AttributeTester.Result result = AttributeTester.AreOverloadedMethodParamsClsCompliant (
-					method.ParameterTypes, TypeManager.GetArgumentTypes (method_to_compare));
+					method.ParameterTypes, TypeManager.GetParameterData (method_to_compare).Types);
 
  				if (result == AttributeTester.Result.Ok)
  					continue;

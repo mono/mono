@@ -186,9 +186,8 @@ namespace Mono.CSharp {
 					if (m == null)
 						continue;
 
-					pending_implementations [i].args [j] = TypeManager.GetArgumentTypes (m);
-
  					ParameterData pd = TypeManager.GetParameterData (m);
+					pending_implementations [i].args [j] = pd.Types;
  					
  					if (pd.Count > 0){
  						Parameter.Modifier [] pm = new Parameter.Modifier [pd.Count];
@@ -221,8 +220,8 @@ namespace Mono.CSharp {
 				foreach (MemberInfo m in abstract_methods){
 					MethodInfo mi = (MethodInfo) m;
 					
-					Type [] types = TypeManager.GetArgumentTypes (mi);
 					ParameterData pd = TypeManager.GetParameterData (mi);
+					Type [] types = pd.Types;
 					
 					pending_implementations [i].args [j] = types;
 					pending_implementations [i].mods [j] = null;
@@ -522,7 +521,7 @@ namespace Mono.CSharp {
 		{
 			MethodSignature ms;
 			
-			Type [] args = TypeManager.GetArgumentTypes (mi);
+			Type [] args = TypeManager.GetParameterData (mi).Types;
 			ms = new MethodSignature (mi.Name, mi.ReturnType, args);
 			MemberList list = TypeContainer.FindMembers (
 				container.TypeBuilder.BaseType, MemberTypes.Method | MemberTypes.Property,
@@ -571,7 +570,7 @@ namespace Mono.CSharp {
 							pending_implementations [i].need_proxy [j];
 
 						if (need_proxy != null) {
-							Type [] args = TypeManager.GetArgumentTypes (mi);
+							Type [] args = TypeManager.GetParameterData (mi).Types;
 							DefineProxy (type, need_proxy, mi, args);
 							continue;
 						}

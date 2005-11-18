@@ -3,6 +3,7 @@
 //
 // Author: Miguel de Icaza (miguel@gnu.org)
 //         Ravi Pratap     (ravi@ximian.com)
+//         Marek Safar     (marek.safar@seznam.cz)
 //
 // Licensed under the terms of the GNU GPL
 //
@@ -222,12 +223,6 @@ public class TypeManager {
 	static PtrHashtable builder_to_ifaces;
 
 	// <remarks>
-	//   Maps MethodBase.RuntimeTypeHandle to a Type array that contains
-	//   the arguments to the method
-	// </remarks>
-	static Hashtable method_arguments;
-
-	// <remarks>
 	//   Maps PropertyBuilder to a Type array that contains
 	//   the arguments to the indexer
 	// </remarks>
@@ -269,7 +264,6 @@ public class TypeManager {
 		builder_to_declspace = null;
 		builder_to_member_cache = null;
 		builder_to_ifaces = null;
-		method_arguments = null;
 		indexer_arguments = null;
 		method_params = null;
 		builder_to_method = null;
@@ -300,7 +294,7 @@ public class TypeManager {
 		int count = sig.args.Length;
 		
 		if (mi is MethodBuilder || mi is ConstructorBuilder){
-			Type [] candidate_args = GetArgumentTypes ((MethodBase) mi);
+			Type [] candidate_args = GetParameterData ((MethodBase) mi).Types;
 
 			if (candidate_args.Length != count)
 				return false;
@@ -367,7 +361,6 @@ public class TypeManager {
 		builder_to_declspace = new PtrHashtable ();
 		builder_to_member_cache = new PtrHashtable ();
 		builder_to_method = new PtrHashtable ();
-		method_arguments = new PtrHashtable ();
 		method_params = new PtrHashtable ();
 		method_overrides = new PtrHashtable ();
 		indexer_arguments = new PtrHashtable ();
@@ -398,6 +391,7 @@ public class TypeManager {
 	public static void AddMethod (MethodBase builder, IMethodData method)
 	{
 		builder_to_method.Add (builder, method);
+		method_params.Add (builder, method.ParameterInfo);
 	}
 
 	public static IMethodData GetMethod (MethodBase builder)
@@ -1475,26 +1469,22 @@ public class TypeManager {
 	///   for anything which is dynamic, and we need this in a number of places,
 	///   we register this information here, and use it afterwards.
 	/// </remarks>
-	static public void RegisterMethod (MethodBase mb, InternalParameters ip, Type [] args)
+	static public void RegisterMethod (MethodBase mb, Parameters ip)
 	{
-		if (args == null)
-			args = NoTypes;
-				
-		method_arguments.Add (mb, args);
 		method_params.Add (mb, ip);
 	}
 	
 	static public ParameterData GetParameterData (MethodBase mb)
 	{
-		object pd = method_params [mb];
+		ParameterData pd = (ParameterData)method_params [mb];
 		if (pd == null) {
 			if (mb is MethodBuilder || mb is ConstructorBuilder)
 				throw new InternalErrorException ("Argument for Method not registered" + mb);
 
-			method_params [mb] = pd = new ReflectionParameters (mb);
+			pd = new ReflectionParameters (mb);
+			method_params.Add (mb, pd);
 		}
-
-		return (ParameterData) pd;
+		return pd;
 	}
 
 	static public void RegisterOverride (MethodBase override_method, MethodBase base_method)
@@ -1512,34 +1502,6 @@ public class TypeManager {
 		return m.IsVirtual &&
 			(m.Attributes & MethodAttributes.NewSlot) == 0 &&
 			(m is MethodBuilder || method_overrides.Contains (m));
-	}
-
-	/// <summary>
-	///    Returns the argument types for a method based on its methodbase
-	///
-	///    For dynamic methods, we use the compiler provided types, for
-	///    methods from existing assemblies we load them from GetParameters,
-	///    and insert them into the cache
-	/// </summary>
-	static public Type [] GetArgumentTypes (MethodBase mb)
-	{
-		object t = method_arguments [mb];
-		if (t != null)
-			return (Type []) t;
-
-		ParameterInfo [] pi = mb.GetParameters ();
-		int c = pi.Length;
-		Type [] types;
-
-		if (c == 0) {
-			types = NoTypes;
-		} else {
-			types = new Type [c];
-			for (int i = 0; i < c; i++)
-				types [i] = pi [i].ParameterType;
-		}
-		method_arguments.Add (mb, types);
-		return types;
 	}
 
 	/// <summary>
@@ -2083,7 +2045,7 @@ public class TypeManager {
 	//
 	public static bool ArrayContainsMethod (MemberInfo [] array, MethodBase new_method)
 	{
-		Type [] new_args = TypeManager.GetArgumentTypes (new_method);
+		Type [] new_args = TypeManager.GetParameterData (new_method).Types;
 		
 		foreach (MethodBase method in array) {
 			if (method.Name != new_method.Name)
@@ -2094,7 +2056,7 @@ public class TypeManager {
                                         continue;
 
                         
-			Type [] old_args = TypeManager.GetArgumentTypes (method);
+			Type [] old_args = TypeManager.GetParameterData (method).Types;
 			int old_count = old_args.Length;
 			int i;
 			

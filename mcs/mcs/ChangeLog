@@ -1,3 +1,40 @@
+2005-11-18  Marek Safar  <marek.safar@seznam.cz>
+
+	* attribute.cs (AreParametersCompliant): Moved to Parameter.
+
+	* class.cs (MethodCore): Parameter clean up.
+	(IMethodData): Added ParameterInfo.
+	(MethodData): Parameter clean up.
+	(Indexer.Define): Parameter clean up.
+
+	* anonymous.cs,
+	* codegen.cs,
+	* cs-parser.jay,
+	* decl.cs,
+	* doc.cs,
+	* ecore.cs,
+	* flowanalysis.cs,
+	* iterators.cs,
+	* pending.cs,
+	* statement.cs,
+	* typemanager.cs: Parameter clean up.
+
+	* delegate.cs (Define): Get rid of duplicated code.
+
+	* expression.cs (ParameterReference): Removed useless parameters
+	and simplified.
+	(Invocation): Ditto.
+
+	* parameter.cs (ParamsParameter): New class, params specialization.
+	(ArglistParameter): Attemp to separate arglist.
+	(Parameter): Refactored to be reusable and faster.
+	(Parameter.Modifier): Made understandable.
+	(Parameters): Changed to be used as a class for `this' assembly
+	parameters. Refactored to use new specialized classes.
+
+	* support.cs (ParameterData): Added Types property.
+	(InternalParameters): Deleted.
+
 2005-08-20  Martin Baulig  <martin@ximian.com>
 
 	Merging this patch from GMCS to fix #75867.

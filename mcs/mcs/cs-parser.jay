@@ -1150,20 +1150,22 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-	  	$$ = new Parameters (pars, null); 
+	  	$$ = new Parameters (pars); 
 	  } 
 	| fixed_parameters COMMA parameter_array
 	  {
 		ArrayList pars_list = (ArrayList) $1;
+		pars_list.Add ($3);
 
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-		$$ = new Parameters (pars, (Parameter) $3); 
+		$$ = new Parameters (pars); 
 	  }
 	| fixed_parameters COMMA ARGLIST
 	  {
 		ArrayList pars_list = (ArrayList) $1;
+		//pars_list.Add (new ArglistParameter (GetLocation ($3)));
 
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
@@ -1183,11 +1185,11 @@ formal_parameter_list
 	  }
 	| parameter_array 
 	  {
-		$$ = new Parameters (null, (Parameter) $1);
+		$$ = new Parameters (new Parameter[] { (Parameter) $1 } );
 	  }
 	| ARGLIST
 	  {
-		$$ = new Parameters (null, true);
+		$$ = new Parameters (new Parameter[0], true);
 	  }
 	;
 
@@ -1259,15 +1261,15 @@ opt_parameter_modifier
 	;
 
 parameter_modifier
-	: REF			{ $$ = Parameter.Modifier.REF | Parameter.Modifier.ISBYREF; }
-	| OUT			{ $$ = Parameter.Modifier.OUT | Parameter.Modifier.ISBYREF; }
+	: REF			{ $$ = Parameter.Modifier.REF; }
+	| OUT			{ $$ = Parameter.Modifier.OUT; }
 	;
 
 parameter_array
 	: opt_attributes PARAMS type IDENTIFIER
 	  { 
 		LocatedToken lt = (LocatedToken) $4;
-		$$ = new Parameter ((Expression) $3, lt.Value, Parameter.Modifier.PARAMS, (Attributes) $1, lt.Location);
+		$$ = new ParamsParameter ((Expression) $3, lt.Value, (Attributes) $1, lt.Location);
 		note ("type must be a single-dimension array type"); 
 	  }
 	| opt_attributes PARAMS parameter_modifier type IDENTIFIER 
@@ -1401,7 +1403,7 @@ set_accessor_declaration
 		if (parsing_indexer == false) {
 			args  = new Parameter [1];
 			args [0] = implicit_value_parameter;
-			current_local_parameters = new Parameters (args, null);
+			current_local_parameters = new Parameters (args);
 		} else {
 			Parameter [] fpars = indexer_parameters.FixedParameters;
 
@@ -1414,7 +1416,7 @@ set_accessor_declaration
 			} else 
 				args = null;
 			current_local_parameters = new Parameters (
-				args, indexer_parameters.ArrayParameter);
+				args);
 		}
 		
 		lexer.PropertyParsing = false;
@@ -1813,7 +1815,7 @@ operator_declaration
 
 		Operator op = new Operator (
 			current_class, decl.optype, decl.ret_type, (int) $2, 
-			new Parameters (param_list, null),
+			new Parameters (param_list),
 			(ToplevelBlock) $5, (Attributes) $1, decl.location);
 
 		if (RootContext.Documentation != null) {
@@ -1855,7 +1857,7 @@ operator_declarator
 
 		pars [0] = new Parameter (type, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 
-		current_local_parameters = new Parameters (pars, null);
+		current_local_parameters = new Parameters (pars);
 
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -1883,7 +1885,7 @@ operator_declarator
 	       pars [0] = new Parameter (typeL, ltParam1.Value, Parameter.Modifier.NONE, null, ltParam1.Location);
 	       pars [1] = new Parameter (typeR, ltParam2.Value, Parameter.Modifier.NONE, null, ltParam2.Location);
 
-	       current_local_parameters = new Parameters (pars, null);
+	       current_local_parameters = new Parameters (pars);
 
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -1951,7 +1953,7 @@ conversion_operator_declarator
 
 		pars [0] = new Parameter ((Expression) $5, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 
-		current_local_parameters = new Parameters (pars, null);  
+		current_local_parameters = new Parameters (pars);  
 		  
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -1968,7 +1970,7 @@ conversion_operator_declarator
 
 		pars [0] = new Parameter ((Expression) $5, lt.Value, Parameter.Modifier.NONE, null, lt.Location);
 
-		current_local_parameters = new Parameters (pars, null);  
+		current_local_parameters = new Parameters (pars);  
 		  
 		if (RootContext.Documentation != null) {
 			tmpComment = Lexer.consume_doc_comment ();
@@ -2115,7 +2117,7 @@ destructor_declaration
                         
 			Method d = new Destructor (
 				current_class, TypeManager.system_void_expr, m, "Finalize", 
-				new Parameters (null, null), (Attributes) $1, l);
+				Parameters.EmptyReadOnlyParameters, (Attributes) $1, l);
 			if (RootContext.Documentation != null)
 				d.DocComment = ConsumeStoredComment ();
 		  
@@ -2228,7 +2230,7 @@ add_accessor_declaration
 
 		args [0] = implicit_value_parameter;
 		
-		current_local_parameters = new Parameters (args, null);  
+		current_local_parameters = new Parameters (args);  
 		lexer.EventParsing = false;
 	  }
           block
@@ -2256,7 +2258,7 @@ remove_accessor_declaration
 
 		args [0] = implicit_value_parameter;
 		
-		current_local_parameters = new Parameters (args, null);  
+		current_local_parameters = new Parameters (args);  
 		lexer.EventParsing = false;
 	  }
           block
@@ -2335,7 +2337,7 @@ indexer_declarator
 		if (pars.HasArglist) {
 			// "__arglist is not valid in this context"
 			Report.Error (1669, (Location) $2, "__arglist is not valid in this context");
-		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
+		} else if (pars.Empty){
 			Report.Error (1551, (Location) $2, "Indexers must have at least one parameter");
 		}
 		if (RootContext.Documentation != null) {
@@ -2352,7 +2354,7 @@ indexer_declarator
 		if (pars.HasArglist) {
 			// "__arglist is not valid in this context"
 			Report.Error (1669, (Location) $4, "__arglist is not valid in this context");
-		} else if (pars.FixedParameters == null && pars.ArrayParameter == null){
+		} else if (pars.Empty){
 			Report.Error (1551, (Location) $4, "Indexers must have at least one parameter");
 		}
 
@@ -3154,7 +3156,7 @@ anonymous_method_signature
 			ArrayList par_list = (ArrayList) $2;
 			Parameter [] pars = new Parameter [par_list.Count];
 			par_list.CopyTo (pars);
-			$$ = new Parameters (pars, null);
+			$$ = new Parameters (pars);
 		}
 	  }
 	;

@@ -801,7 +801,6 @@ namespace Mono.CSharp {
 		public static string GetMethodDocCommentName (MethodCore mc, DeclSpace ds)
 		{
 			Parameter [] plist = mc.Parameters.FixedParameters;
-			Parameter parr = mc.Parameters.ArrayParameter;
 			string paramSpec = String.Empty;
 			if (plist != null) {
 				StringBuilder psb = new StringBuilder ();
@@ -811,10 +810,6 @@ namespace Mono.CSharp {
 				}
 				paramSpec = psb.ToString ();
 			}
-			if (parr != null)
-				paramSpec += String.Concat (
-					paramSpec == String.Empty ? "(" : ",",
-					parr.ParameterType.FullName.Replace ("+", "."));
 
 			if (paramSpec.Length > 0)
 				paramSpec += ")";
@@ -858,12 +853,10 @@ namespace Mono.CSharp {
 				paramTags [xname] = xname;
 			}
 			Parameter [] plist = mc.Parameters.FixedParameters;
-			if (plist != null) {
-				foreach (Parameter p in plist) {
-					if (paramTags.Count > 0 && paramTags [p.Name] == null)
-						Report.Warning (1573, 4, mc.Location, "Parameter `{0}' has no matching param tag in the XML comment for `{1}'",
-							p.Name, mc.GetSignatureForError ());
-				}
+			foreach (Parameter p in plist) {
+				if (paramTags.Count > 0 && paramTags [p.Name] == null)
+					Report.Warning (1573, 4, mc.Location, "Parameter `{0}' has no matching param tag in the XML comment for `{1}'",
+						p.Name, mc.GetSignatureForError ());
 			}
 		}
 
