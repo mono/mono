@@ -590,28 +590,32 @@ namespace System.Windows.Forms {
 					}
 				}
 
-				border_style = FormBorderStyle.None;
-				if ((ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
-					if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
-						if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
-							border_style = FormBorderStyle.SizableToolWindow;
+				if (!is_mdi) {
+					border_style = FormBorderStyle.None;
+					if ((ExStyle & (int)WindowStyles.WS_EX_WINDOWEDGE) != 0) {
+						if ((ExStyle & (int)WindowStyles.WS_EX_TOOLWINDOW) != 0) {
+							if ((Style & (int)WindowStyles.WS_THICKFRAME) != 0) {
+								border_style = FormBorderStyle.SizableToolWindow;
+							} else {
+								border_style = FormBorderStyle.FixedToolWindow;
+							}
+						} else if ((ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
+							border_style = FormBorderStyle.FixedDialog;
+						} else if ((ExStyle & (int)WindowStyles.WS_THICKFRAME) != 0) {
+							border_style = FormBorderStyle.Sizable;
 						} else {
-							border_style = FormBorderStyle.FixedToolWindow;
+							border_style = FormBorderStyle.FixedSingle;
 						}
-					} else if ((ExStyle & (int)WindowStyles.WS_EX_DLGMODALFRAME) != 0) {
-						border_style = FormBorderStyle.FixedDialog;
-					} else if ((ExStyle & (int)WindowStyles.WS_THICKFRAME) != 0) {
-						border_style = FormBorderStyle.Sizable;
 					} else {
-						border_style = FormBorderStyle.FixedSingle;
+						border_style = FormBorderStyle.Fixed3D;
 					}
 				} else {
-					border_style = FormBorderStyle.Fixed3D;
+					if ((Style & (int) WindowStyles.WS_OVERLAPPEDWINDOW) != 0 ||
+							(ExStyle & (int) WindowStyles.WS_EX_TOOLWINDOW) != 0)
+						border_style = (FormBorderStyle) 0xFFFF;
+					else
+						border_style = FormBorderStyle.None;
 				}
-
-				// Magic style for MDI windows
-				if (is_mdi && border_style != FormBorderStyle.None)
-					border_style = (FormBorderStyle) 0xFFFF;
 			}
 		}
 

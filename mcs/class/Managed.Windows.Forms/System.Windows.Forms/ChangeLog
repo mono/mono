@@ -1,5 +1,10 @@
 2005-11-18  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIX11.cs: Just compute the mdi borders separately as they
+	don't totally match up with normal form borders.
+
+2005-11-18  Jackson Harper  <jackson@ximian.com>
+
 	* Control.cs: Set WS_ styles for borders, so that the driver does
 	not have to retrieve the control instance to figure out what kind
 	of borders it should have.
