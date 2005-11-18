@@ -701,8 +701,9 @@ namespace System.Web.UI.WebControls {
 
 		protected virtual void InitializeItem (DataGridItem item, DataGridColumn [] columns)
 		{
+			bool th = UseAccessibleHeader && item.ItemType == ListItemType.Header;
 			for (int i = 0; i < columns.Length; i++) {
-				TableCell cell  = new TableCell ();
+				TableCell cell = (th) ? new TableHeaderCell () : new TableCell ();
 				columns [i].InitializeCell (cell, i, item.ItemType);
 				item.Cells.Add (cell);
 			}

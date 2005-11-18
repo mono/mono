@@ -1,5 +1,10 @@
 2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* DataGrid.cs: use TableHeaderCell instead of TableCell for headers when
+	UseAccesibleHeader property is true. Patch by Robert Jordan.
+
+2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* BaseValidator.cs: 'controltovalidate' must be the ClientID of the
 	control to validate. Fixes bug #76641.
 
