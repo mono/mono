@@ -1,3 +1,8 @@
+2005-11-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyBuilder.cs: Add support for setting FileVersion unmanaged 
+	resource. Fixes #64427.
+
 2005-11-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* ParameterBuilder.cs (SetCustomAttribute): Handle DefaultParameterValueAttribute as well.

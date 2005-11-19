@@ -525,7 +525,9 @@ namespace System.Reflection.Emit {
 
 		private void DefineVersionInfoResourceImpl (string fileName) {
 			// Add missing info
-			if (version_res.FileVersion == "0.0.0.0")
+			if (version_res.Version == "0.0.0.0")
+				version_res.Version = version;
+			if (version_res.FileVersion.Trim () == "" && version != null)
 				version_res.FileVersion = version;
 			version_res.InternalName = Path.GetFileNameWithoutExtension (fileName);
 			version_res.OriginalFilename = fileName;
