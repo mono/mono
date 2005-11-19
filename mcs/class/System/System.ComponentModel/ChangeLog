@@ -1,3 +1,8 @@
+2005-11-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeDescriptor.cs: Small changes to make this more compliant with
+	MSDN docs and actual MS behaviour.
+
 2005-11-07  Pedro Martinez Julia <pedromj@gmail.com>
 
 	* IBindingListView.cs Initial implementation

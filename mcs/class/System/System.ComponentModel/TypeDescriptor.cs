@@ -142,7 +142,12 @@ public sealed class TypeDescriptor
 		    throw new ArgumentNullException ("component", "component cannot be null");
 
 		if (noCustomTypeDesc == false && component is ICustomTypeDescriptor) {
-		    return ((ICustomTypeDescriptor) component).GetClassName ();
+		    String res = ((ICustomTypeDescriptor) component).GetClassName ();
+			if (res == null)
+				res = ((ICustomTypeDescriptor) component).GetComponentName ();
+			if (res == null)
+				res = component.GetType ().FullName;
+			return res;
 		} else {
 		    return component.GetType ().FullName;
 		}
@@ -167,15 +172,14 @@ public sealed class TypeDescriptor
 #if NET_2_0
 			return null;
 #else
-
-#endif
 			return component.GetType().Name;
+#endif
 		}
 	}
 
 	public static TypeConverter GetConverter (object component)
 	{
-		return GetConverter (component.GetType ());
+		return GetConverter (component, false);
 	}
 
 	public static TypeConverter GetConverter (object component, bool noCustomTypeDesc)
@@ -394,6 +398,8 @@ public sealed class TypeDescriptor
 	[MonoTODO]
 	public static object GetEditor (object component, Type editorBaseType, bool noCustomTypeDesc)
 	{
+		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
+			return ((ICustomTypeDescriptor) component).GetEditor (editorBaseType);
 		throw new NotImplementedException ();
 	}
 
@@ -414,7 +420,15 @@ public sealed class TypeDescriptor
 
 	public static EventDescriptorCollection GetEvents (object component, bool noCustomTypeDesc)
 	{
-		return GetEvents (component, null, noCustomTypeDesc);
+		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
+			return ((ICustomTypeDescriptor) component).GetEvents ();
+		else {
+			IComponent com = component as IComponent;
+			if (com != null)
+				return GetComponentInfo (com).GetEvents ();
+			else
+				return GetTypeInfo (component.GetType()).GetEvents ();
+		}
 	}
 
 	public static EventDescriptorCollection GetEvents (Type componentType, Attribute [] attributes)
@@ -453,7 +467,7 @@ public sealed class TypeDescriptor
 	public static PropertyDescriptorCollection GetProperties (object component, Attribute [] attributes, bool noCustomTypeDesc)
 	{
 		if (component == null)
-			throw new ArgumentNullException ("component");
+			return PropertyDescriptorCollection.Empty;
 
 		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
 			return ((ICustomTypeDescriptor) component).GetProperties (attributes);
@@ -468,7 +482,18 @@ public sealed class TypeDescriptor
 
 	public static PropertyDescriptorCollection GetProperties (object component, bool noCustomTypeDesc)
 	{
-		return GetProperties (component, null, noCustomTypeDesc);
+		if (component == null)
+			return PropertyDescriptorCollection.Empty;
+
+		if (!noCustomTypeDesc && (component is ICustomTypeDescriptor))
+			return ((ICustomTypeDescriptor) component).GetProperties ();
+		else {
+			IComponent com = component as IComponent;
+			if (com != null)
+				return GetComponentInfo (com).GetProperties ();
+			else
+				return GetTypeInfo (component.GetType()).GetProperties ();
+		}
 	}
 
 	public static PropertyDescriptorCollection GetProperties (Type componentType, Attribute [] attributes)
