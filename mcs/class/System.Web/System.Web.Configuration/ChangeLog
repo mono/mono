@@ -1,3 +1,8 @@
+2005-11-19  Chris Toshok  <toshok@ximian.com>
+
+	* Compiler.cs: wrap in #if !NET_2_0 and remove a lot of stubs that
+	now exist in System.Web.Configuration_2.0.
+
 2005-11-18  Chris Toshok  <toshok@ximian.com>
 
 	* CompilerCollection.cs: wrap in #if !NET_2_0, and remove a lot of

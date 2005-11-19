@@ -27,6 +27,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if !NET_2_0
+
 using System;
 using System.CodeDom.Compiler;
 using System.Collections;
@@ -52,65 +55,6 @@ namespace System.Web.Configuration
 				"CompilerOptions: " + CompilerOptions + "\n";
 		}
 	}
-#if false
-	public sealed class Compiler : ConfigurationElement
-	{
-		static ConfigurationPropertyCollection props;
-		static ConfigurationProperty compilerOptions;
-		static ConfigurationProperty extension;
-		static ConfigurationProperty language;
-		static ConfigurationProperty type;
-		static ConfigurationProperty warningLevel;
-
-		CodeDomProvider provider;
-
-		static Compiler ()
-		{
-			Type strType = typeof (string);
-			compilerOptions = new ConfigurationProperty ("compilerOptions", strType, "", 0);
-			extension = new ConfigurationProperty ("extension", strType, "", 0);
-			language = new ConfigurationProperty ("language", strType, "", 0);
-			ConfigurationPropertyFlags flags = ConfigurationPropertyFlags.Required | ConfigurationPropertyFlags.IsKey;
-			type = new ConfigurationProperty ("type", strType, "", flags);
-			warningLevel = new ConfigurationProperty ("warningLevel", typeof (int), 0, 0);
-
-			props = new ConfigurationPropertyCollection ();
-			props.Add (compilerOptions);
-			props.Add (extension);
-			props.Add (language);
-			props.Add (type);
-			props.Add (warningLevel);
-		}
-
-		public string CompilerOptions {
-			get { return (string) this [compilerOptions]; }
-		}
-
-		public string Extension {
-			get { return (string) this [extension]; }
-		}
-
-		public string Language {
-			get { return (string) this [language]; }
-		}
-
-		public string Type {
-			get { return (string) this [type]; }
-		}
-
-		internal CodeDomProvider Provider {
-			get { return provider; }
-			set { provider = value; }
-		}
-
-		public int WarningLevel {
-			get { return (int) this [warningLevel]; }
-		}
-
-		protected override ConfigurationPropertyCollection Properties {
-			get { return props; }
-		}
-	}
-#endif
 }
 
+#endif
