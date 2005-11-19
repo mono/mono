@@ -1,3 +1,10 @@
+2005-11-19  Jackson Harper  <jackson@ximian.com>
+
+	* MdiChildContext.cs: Handle all the buttons ourselves. We can't
+	use real buttons anymore because they are in non client area. The
+	one TODO here is that I need to somehow invalidate a section of
+	the non client area.
+
 2005-11-18  Jackson Harper  <jackson@ximian.com>
 
 	* Control.cs: Put the enum check back in now that MDI doesnt have

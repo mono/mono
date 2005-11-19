@@ -17,10 +17,13 @@ namespace System.Windows.Forms {
 
 		private Form form;
 		private MdiClient mdi_container;
-		private Button close_button;
-		private Button maximize_button;
-		private Button minimize_button;
 
+		private TitleButton close_button;
+		private TitleButton maximize_button;
+		private TitleButton minimize_button;
+
+		private TitleButton [] title_buttons = new TitleButton [3];
+		
 		// moving windows
 		private Point start;
 		private State state;
@@ -29,6 +32,19 @@ namespace System.Windows.Forms {
 		private Rectangle prev_virtual_position;
 		private Rectangle prev_bounds;
 		private bool maximized;
+
+		private class TitleButton {
+			public Rectangle Rectangle;
+			public ButtonState State;
+			public CaptionButton Caption;
+			public EventHandler Clicked;
+			
+			public TitleButton (CaptionButton caption, EventHandler clicked)
+			{
+				Caption = caption;
+				Clicked = clicked;
+			}
+		}
 
 		private enum State {
 			Idle,
@@ -89,6 +105,8 @@ namespace System.Windows.Forms {
 			form.Controls.AddImplicit (maximize_button);
 			form.Controls.AddImplicit (minimize_button);
 			*/
+
+			CreateButtons ();
 		}
 
 		public bool HandleMessage (ref Message m)
@@ -114,6 +132,9 @@ namespace System.Windows.Forms {
 			case Msg.WM_NCMOUSEMOVE:
 				return HandleNCMouseMove (form, ref m);
 
+			case Msg.WM_NCLBUTTONUP:
+				return HandleNCLButtonUp (ref m);
+
 			case Msg.WM_NCLBUTTONDOWN:
 				return HandleNCLButtonDown (ref m);
 
@@ -133,6 +154,36 @@ namespace System.Windows.Forms {
 				XplatUI.SetBorderStyle (form.Handle, (FormBorderStyle) MdiBorderStyle);
 			else
 				XplatUI.SetBorderStyle (form.Handle, FormBorderStyle.None);
+
+			CreateButtons ();
+		}
+
+		private void CreateButtons ()
+		{
+			switch (form.FormBorderStyle) {
+			case FormBorderStyle.None:
+				close_button = null;
+				minimize_button = null;
+				maximize_button = null;
+				break;
+			case FormBorderStyle.FixedSingle:
+			case FormBorderStyle.Fixed3D:
+			case FormBorderStyle.FixedDialog:
+			case FormBorderStyle.Sizable:
+				close_button = new TitleButton (CaptionButton.Close, new EventHandler (CloseClicked));
+				minimize_button = new TitleButton (CaptionButton.Minimize, new EventHandler (MinimizeClicked));
+				maximize_button = new TitleButton (CaptionButton.Maximize, new EventHandler (MaximizeClicked));
+				break;
+			case FormBorderStyle.FixedToolWindow:
+			case FormBorderStyle.SizableToolWindow:
+				close_button = new TitleButton (CaptionButton.Close, new EventHandler (CloseClicked));
+				break;
+			}
+
+			title_buttons [0] = close_button;
+			title_buttons [1] = minimize_button;
+			title_buttons [2] = maximize_button;
+
 		}
 
 		private bool HandleButtonDown (ref Message m)
@@ -183,6 +234,13 @@ namespace System.Windows.Forms {
 
 		private void HandleTitleBarDown (int x, int y)
 		{
+			foreach (TitleButton button in title_buttons) {
+				if (button != null && button.Rectangle.Contains (x, y)) {
+					button.State = ButtonState.Pushed;
+					return;
+				}
+			}
+
 			state = State.Moving;			     
 			form.Capture = true;
 		}
@@ -368,6 +426,7 @@ namespace System.Windows.Forms {
 
 		private void HandleLButtonUp (ref Message m)
 		{
+			
 			if (state == State.Idle)
 				return;
 
@@ -376,6 +435,27 @@ namespace System.Windows.Forms {
 			form.Capture = false;
 			form.Bounds = virtual_position;
 			state = State.Idle;
+		}
+
+		private bool HandleNCLButtonUp (ref Message m)
+		{
+			int x = Control.LowOrder ((int) m.LParam.ToInt32 ());
+			int y = Control.HighOrder ((int) m.LParam.ToInt32 ());
+
+			form.PointToClient (ref x, ref y);
+
+			// Need to adjust because we are in NC land
+			y += TitleBarHeight;
+
+			Console.WriteLine ("{0},  {1}", x, y);
+			foreach (TitleButton button in title_buttons) {
+				if (button != null && button.Rectangle.Contains (x, y)) {
+					button.Clicked (this, EventArgs.Empty);
+					return true;
+				}
+			}
+
+			return true;
 		}
 
 		private void PaintWindowDecorations ()
@@ -431,53 +511,40 @@ namespace System.Windows.Forms {
 						tb, format);
 			}
 
-			if (!IsToolWindow) {
+			if (!IsToolWindow && HasBorders) {
 				if (form.Icon != null) {
 					dc.DrawIcon (form.Icon, new Rectangle (BorderWidth + 3,
 								     BorderWidth + 3, 16, 16));
 				}
+					
+				minimize_button.Rectangle = new Rectangle (form.Width - 62,
+						BorderWidth + 2, 18, 22);
 
-				Rectangle r = new Rectangle (form.Width - 62, BorderWidth + 2, 18, 22);
-				dc.FillRectangle (SystemBrushes.Control, r);
-				ControlPaint.DrawCaptionButton (dc, r, CaptionButton.Minimize, ButtonState.Normal);
-
-				r = new Rectangle (form.Width - 44,	BorderWidth + 2, 18, 22);
-				dc.FillRectangle (SystemBrushes.Control, r);
-				ControlPaint.DrawCaptionButton (dc, r, CaptionButton.Maximize, ButtonState.Normal);
-
-				r = new Rectangle (form.Width - 24,	BorderWidth + 2, 18, 22);
-				dc.FillRectangle (SystemBrushes.Control, r);
-				ControlPaint.DrawCaptionButton (dc, r, CaptionButton.Close, ButtonState.Normal);
-			} else {
-				Rectangle r = new Rectangle (form.Width - BorderWidth - 2 - 13,
-						BorderWidth + 2, 13, 13);
-				dc.FillRectangle (SystemBrushes.Control, r);
-				ControlPaint.DrawCaptionButton (dc, r, CaptionButton.Close, ButtonState.Normal);
+				maximize_button.Rectangle = new Rectangle (form.Width - 44,
+						BorderWidth + 2, 18, 22);
 				
+				close_button.Rectangle = new Rectangle (form.Width - 24,
+						BorderWidth + 2, 18, 22);
+
+				DrawTitleButton (dc, minimize_button);
+				DrawTitleButton (dc, maximize_button);
+				DrawTitleButton (dc, close_button);
+			} else {
+				close_button.Rectangle = new Rectangle (form.Width - BorderWidth - 2 - 13,
+						BorderWidth + 2, 13, 13);
+				DrawTitleButton (dc, close_button);
 			}
 		}
 
-		private void PaintButtonHandler (object sender, PaintEventArgs pe)
+		private void DrawTitleButton (Graphics dc, TitleButton button)
 		{
-			if (sender == close_button) {
-				ControlPaint.DrawCaptionButton (pe.Graphics,
-						close_button.ClientRectangle,
-						CaptionButton.Close,
-						close_button.ButtonState);
-			} else if (sender == maximize_button) {
-				ControlPaint.DrawCaptionButton (pe.Graphics,
-						maximize_button.ClientRectangle,
-						CaptionButton.Maximize,
-						maximize_button.ButtonState);
-			} else if (sender == minimize_button) {
-				ControlPaint.DrawCaptionButton (pe.Graphics,
-						minimize_button.ClientRectangle,
-						CaptionButton.Minimize,
-						minimize_button.ButtonState);
-			}
+			dc.FillRectangle (SystemBrushes.Control, button.Rectangle);
+
+			ControlPaint.DrawCaptionButton (dc, button.Rectangle,
+					button.Caption, ButtonState.Normal);
 		}
 
-		private void CloseButtonClicked (object sender, EventArgs e)
+		private void CloseClicked (object sender, EventArgs e)
 		{
 			form.Close ();
 			// form.Close should set visibility to false somewhere
@@ -485,7 +552,7 @@ namespace System.Windows.Forms {
 			form.Visible = false;
 		}
 
-		private void OnMinimizeHandler (object sender, EventArgs e)
+		private void MinimizeClicked (object sender, EventArgs e)
 		{
 			form.SuspendLayout ();
 			form.Width = MinTitleBarSize.Width + (BorderWidth * 2);
@@ -493,7 +560,7 @@ namespace System.Windows.Forms {
 			form.ResumeLayout ();
 		}
 
-		private void OnMaximizeHandler (object sender, EventArgs e)
+		private void MaximizeClicked (object sender, EventArgs e)
 		{
 			if (maximized) {
 				form.Bounds = prev_bounds;
