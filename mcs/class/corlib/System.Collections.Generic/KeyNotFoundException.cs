@@ -35,7 +35,7 @@ namespace System.Collections.Generic {
 	[Serializable]
 	public class KeyNotFoundException : SystemException, ISerializable {
 		public KeyNotFoundException ()
-			: base () {}
+			: base ("The given key was not present in the dictionary.") {}
 
 		public KeyNotFoundException (string message)
 			: base (message) {}

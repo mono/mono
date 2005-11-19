@@ -1,3 +1,7 @@
+2005-11-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* KeyNotFoundException.cs: Add default message.
+
 2005-09-18  Miguel de Icaza  <miguel@novell.com>
 
 	* Dictionary.cs: Change style for internal fields.
