@@ -27,6 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 using System;
 using System.Collections;
 using System.Configuration;
@@ -98,7 +99,11 @@ namespace System.Web.Configuration
 				compiler.Type = AttValue ("type", child);
 				compiler.CompilerOptions = AttValue ("compilerOptions", child, true, true);
 				compiler.WarningLevel = AttUIntValue ("warningLevel", child, 0);
+#if NET_2_0
+				config.Compilers.Add (compiler);
+#else
 				config.Compilers [compiler.Language] = compiler;
+#endif
 			}
 		}
 

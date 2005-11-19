@@ -1,5 +1,15 @@
 2005-11-19  Chris Toshok  <toshok@ximian.com>
 
+	* CompilationConfigurationHandler.cs (ReadCompilers): call
+	CompilerCollection.Add in the 2.0 case, as it doesn't expose a
+	setter indexer.
+
+	* CompilationConfiguration.cs: need this to keep things compiling,
+	even though CompilationConfiguration doesn't need to be used in
+	the 2.0 case.
+
+2005-11-19  Chris Toshok  <toshok@ximian.com>
+
 	* Compiler.cs: wrap in #if !NET_2_0 and remove a lot of stubs that
 	now exist in System.Web.Configuration_2.0.
 
