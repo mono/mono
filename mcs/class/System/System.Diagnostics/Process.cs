@@ -60,7 +60,6 @@ namespace System.Diagnostics {
 			public int tid;
 			public string [] envKeys;
 			public string [] envValues;
-			public bool useShellExecute;
 		};
 		
 		IntPtr process_handle;
@@ -194,6 +193,10 @@ namespace System.Diagnostics {
 		[MonitoringDescription ("Process identifier.")]
 		public int Id {
 			get {
+				if (pid == 0) {
+					throw new InvalidOperationException ("Process ID has not been set.");
+				}
+
 				return(pid);
 			}
 		}
@@ -720,38 +723,56 @@ namespace System.Diagnostics {
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		private extern static bool Start_internal(string appname,
-							  string cmdline,
-							  string dir,
-							  IntPtr stdin,
-							  IntPtr stdout,
-							  IntPtr stderr,
-							  ref ProcInfo proc_info);
+		private extern static bool ShellExecuteEx_internal(ProcessStartInfo startInfo,
+								   ref ProcInfo proc_info);
 
-		private static bool Start_common(ProcessStartInfo startInfo,
-						 Process process) {
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private extern static bool CreateProcess_internal(ProcessStartInfo startInfo,
+								  IntPtr stdin,
+								  IntPtr stdout,
+								  IntPtr stderr,
+								  ref ProcInfo proc_info);
+
+		private static bool Start_shell (ProcessStartInfo startInfo,
+						 Process process)
+		{
+			ProcInfo proc_info=new ProcInfo();
+			bool ret;
+
+			if (startInfo.RedirectStandardInput ||
+			    startInfo.RedirectStandardOutput ||
+			    startInfo.RedirectStandardError) {
+				throw new InvalidOperationException ("UseShellExecute must be false when redirecting I/O.");
+			}
+
+			if (startInfo.HaveEnvVars) {
+				throw new InvalidOperationException ("UseShellExecute must be false in order to use environment variables.");
+			}
+
+			ret = ShellExecuteEx_internal (startInfo,
+						       ref proc_info);
+			if (!ret) {
+				throw new Win32Exception (-proc_info.pid);
+			}
+
+			process.process_handle = proc_info.process_handle;
+			process.pid = proc_info.pid;
+
+			process.StartExitCallbackIfNeeded ();
+
+			return(ret);
+		}
+
+		private static bool Start_noshell (ProcessStartInfo startInfo,
+						   Process process)
+		{
 			ProcInfo proc_info=new ProcInfo();
 			IntPtr stdin_rd, stdin_wr;
 			IntPtr stdout_rd, stdout_wr;
 			IntPtr stderr_rd, stderr_wr;
 			bool ret;
-			
-			if(startInfo.FileName == null || startInfo.FileName == "") {
-				throw new InvalidOperationException("File name has not been set");
-			}
-			
-			proc_info.useShellExecute = startInfo.UseShellExecute;
-			if (proc_info.useShellExecute && (startInfo.RedirectStandardInput ||
-			    startInfo.RedirectStandardOutput || startInfo.RedirectStandardError)) {
-				throw new InvalidOperationException ("UseShellExecute must be false when " +
-								     "redirecting I/O.");
-			}
 
 			if (startInfo.HaveEnvVars) {
-				if (startInfo.UseShellExecute)
-					throw new InvalidOperationException ("UseShellExecute must be false in order " +
-									     "to use environment variables.");
-
 				string [] strs = new string [startInfo.EnvironmentVariables.Count];
 				startInfo.EnvironmentVariables.Keys.CopyTo (strs, 0);
 				proc_info.envKeys = strs;
@@ -761,62 +782,46 @@ namespace System.Diagnostics {
 				proc_info.envValues = strs;
 			}
 
-			if(startInfo.RedirectStandardInput==true) {
-				ret=MonoIO.CreatePipe(out stdin_rd,
-						      out stdin_wr);
+			if (startInfo.RedirectStandardInput == true) {
+				ret = MonoIO.CreatePipe (out stdin_rd,
+						         out stdin_wr);
 				if (ret == false) {
-					throw new IOException("Error creating standard input pipe");
+					throw new IOException ("Error creating standard input pipe");
 				}
 			} else {
-				stdin_rd=MonoIO.ConsoleInput;
+				stdin_rd = MonoIO.ConsoleInput;
 				/* This is required to stop the
 				 * &$*£ing stupid compiler moaning
 				 * that stdin_wr is unassigned, below.
 				 */
-				stdin_wr=(IntPtr)0;
+				stdin_wr = (IntPtr)0;
 			}
 
-			if(startInfo.RedirectStandardOutput==true) {
-				ret=MonoIO.CreatePipe(out stdout_rd,
-						      out stdout_wr);
+			if (startInfo.RedirectStandardOutput == true) {
+				ret = MonoIO.CreatePipe (out stdout_rd,
+						         out stdout_wr);
 				if (ret == false) {
-					throw new IOException("Error creating standard output pipe");
+					throw new IOException ("Error creating standard output pipe");
 				}
 			} else {
-				stdout_rd=(IntPtr)0;
-				stdout_wr=MonoIO.ConsoleOutput;
+				stdout_rd = (IntPtr)0;
+				stdout_wr = MonoIO.ConsoleOutput;
 			}
 
-			if(startInfo.RedirectStandardError==true) {
-				ret=MonoIO.CreatePipe(out stderr_rd,
-						      out stderr_wr);
+			if (startInfo.RedirectStandardError == true) {
+				ret = MonoIO.CreatePipe (out stderr_rd,
+						         out stderr_wr);
 				if (ret == false) {
-					throw new IOException("Error creating standard error pipe");
+					throw new IOException ("Error creating standard error pipe");
 				}
 			} else {
-				stderr_rd=(IntPtr)0;
-				stderr_wr=MonoIO.ConsoleError;
+				stderr_rd = (IntPtr)0;
+				stderr_wr = MonoIO.ConsoleError;
 			}
 			
-			string cmdline;
-			string appname;
-			if (startInfo.UseShellExecute) {
-				appname = null;
-				string args = startInfo.Arguments;
-				if (args == null || args.Trim () == "")
-					cmdline = startInfo.FileName;
-				else
-					cmdline = startInfo.FileName + " " + startInfo.Arguments.Trim ();
-			} else {
-				appname = startInfo.FileName;
-				cmdline = startInfo.Arguments.Trim ();
-			}
-
-			ret=Start_internal(appname,
-					   cmdline,
-					   startInfo.WorkingDirectory,
-					   stdin_rd, stdout_wr, stderr_wr,
-					   ref proc_info);
+			ret = CreateProcess_internal (startInfo,
+						      stdin_rd, stdout_wr, stderr_wr,
+						      ref proc_info);
 
 			MonoIOError error;
 			
@@ -833,28 +838,43 @@ namespace System.Diagnostics {
 				throw new Win32Exception (-proc_info.pid);
 			}
 
-			process.process_handle=proc_info.process_handle;
-			process.pid=proc_info.pid;
+			process.process_handle = proc_info.process_handle;
+			process.pid = proc_info.pid;
 			
-			if(startInfo.RedirectStandardInput==true) {
-				MonoIO.Close(stdin_rd, out error);
-				process.input_stream=new StreamWriter(new FileStream(stdin_wr, FileAccess.Write, true));
-				process.input_stream.AutoFlush=true;
+			if (startInfo.RedirectStandardInput == true) {
+				MonoIO.Close (stdin_rd, out error);
+				process.input_stream = new StreamWriter (new FileStream (stdin_wr, FileAccess.Write, true));
+				process.input_stream.AutoFlush = true;
 			}
 
-			if(startInfo.RedirectStandardOutput==true) {
-				MonoIO.Close(stdout_wr, out error);
-				process.output_stream=new StreamReader(new FileStream(stdout_rd, FileAccess.Read, true));
+			if (startInfo.RedirectStandardOutput == true) {
+				MonoIO.Close (stdout_wr, out error);
+				process.output_stream = new StreamReader (new FileStream (stdout_rd, FileAccess.Read, true));
 			}
 
-			if(startInfo.RedirectStandardError==true) {
-				MonoIO.Close(stderr_wr, out error);
-				process.error_stream=new StreamReader(new FileStream(stderr_rd, FileAccess.Read, true));
+			if (startInfo.RedirectStandardError == true) {
+				MonoIO.Close (stderr_wr, out error);
+				process.error_stream = new StreamReader (new FileStream (stderr_rd, FileAccess.Read, true));
 			}
 
 			process.StartExitCallbackIfNeeded ();
 
 			return(ret);
+		}
+
+		private static bool Start_common (ProcessStartInfo startInfo,
+						  Process process)
+		{
+			if(startInfo.FileName == null ||
+			   startInfo.FileName == "") {
+				throw new InvalidOperationException("File name has not been set");
+			}
+			
+			if (startInfo.UseShellExecute) {
+				return (Start_shell (startInfo, process));
+			} else {
+				return (Start_noshell (startInfo, process));
+			}
 		}
 		
 		public bool Start() {
