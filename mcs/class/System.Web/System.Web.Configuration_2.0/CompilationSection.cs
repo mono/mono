@@ -74,7 +74,7 @@ namespace System.Web.Configuration
 			numRecompilesBeforeAppRestartProp = new ConfigurationProperty ("numRecompilesBeforeAppRestart", typeof (int), 15);
 			strictProp = new ConfigurationProperty ("strict", typeof (bool), false);
 			tempDirectoryProp = new ConfigurationProperty ("tempDirectory", typeof (string), "");
-			urlLinePragmasProp = new ConfigurationProperty ("urlLinePragmas", typeof (bool));
+			urlLinePragmasProp = new ConfigurationProperty ("urlLinePragmas", typeof (bool), false);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (assembliesProp);

@@ -1,5 +1,12 @@
 2005-11-18  Chris Toshok  <toshok@ximian.com>
 
+	* HostingEnvironmentSection.cs (.cctor): add validators.
+
+	* CompilationSection.cs (.cctor): fix defaultvalue of
+	urlLinePragmas.
+
+2005-11-18  Chris Toshok  <toshok@ximian.com>
+
 	* SystemWebSectionGroup.cs: enable a whole slew of properties.
 
 	* RegexWorker.cs: stub this out.

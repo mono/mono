@@ -45,9 +45,15 @@ namespace System.Web.Configuration {
 
 		static HostingEnvironmentSection ()
 		{
-			idleTimeoutProp = new ConfigurationProperty ("idleTimeout", typeof (TimeSpan), TimeSpan.MaxValue);
+			idleTimeoutProp = new ConfigurationProperty ("idleTimeout", typeof (TimeSpan), TimeSpan.MaxValue,
+								     new TimeSpanMinutesOrInfiniteConverter (),
+								     new TimeSpanValidator (TimeSpan.Zero, TimeSpan.MaxValue),
+								     ConfigurationPropertyOptions.None);
 			shadowCopyBinAssembliesProp = new ConfigurationProperty ("shadowCopyBinAssemblies", typeof (bool), true);
-			shutdownTimeoutProp = new ConfigurationProperty ("shutdownTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (30));
+			shutdownTimeoutProp = new ConfigurationProperty ("shutdownTimeout", typeof (TimeSpan), TimeSpan.FromSeconds (30),
+									 new TimeSpanSecondsConverter (),
+									 new TimeSpanValidator (TimeSpan.Zero, TimeSpan.MaxValue),
+									 ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (idleTimeoutProp);
