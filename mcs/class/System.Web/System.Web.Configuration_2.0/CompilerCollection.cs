@@ -111,6 +111,11 @@ namespace System.Web.Configuration
 		{
 			return (this [lang1] == this [lang2]);
 		}
+
+		internal void Add (Compiler compiler)
+		{
+			BaseAdd (compiler);
+		}
 	}
 }
 

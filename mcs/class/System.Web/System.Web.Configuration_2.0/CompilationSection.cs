@@ -27,6 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
 #if NET_2_0
 using System;
 using System.Configuration;
@@ -36,152 +37,182 @@ namespace System.Web.Configuration
 {
 	public sealed class CompilationSection : ConfigurationSection
 	{
-		static ConfigurationPropertyCollection props;
-		static ConfigurationProperty compilers;
-		static ConfigurationProperty tempDirectory;
-		static ConfigurationProperty debug;
-		static ConfigurationProperty strict;
-		static ConfigurationProperty _explicit;
-		static ConfigurationProperty batch;
-		static ConfigurationProperty batchTimeout;
-		static ConfigurationProperty maxBatchSize;
-		static ConfigurationProperty maxBatchGeneratedFileSize;
-		static ConfigurationProperty numRecompilesBeforeAppRestart;
-		static ConfigurationProperty defaultLanguage;
-		static ConfigurationProperty assemblies;
-		static ConfigurationProperty buildProviders;
-		static ConfigurationProperty expressionBuilders;
-		static ConfigurationProperty urlLinePragmas;
-		static ConfigurationProperty codeSubDirectories;
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty compilersProp;
+		static ConfigurationProperty tempDirectoryProp;
+		static ConfigurationProperty debugProp;
+		static ConfigurationProperty strictProp;
+		static ConfigurationProperty explicitProp;
+		static ConfigurationProperty batchProp;
+		static ConfigurationProperty batchTimeoutProp;
+		static ConfigurationProperty maxBatchSizeProp;
+		static ConfigurationProperty maxBatchGeneratedFileSizeProp;
+		static ConfigurationProperty numRecompilesBeforeAppRestartProp;
+		static ConfigurationProperty defaultLanguageProp;
+		static ConfigurationProperty assembliesProp;
+		static ConfigurationProperty assemblyPostProcessorTypeProp;
+		static ConfigurationProperty buildProvidersProp;
+		static ConfigurationProperty expressionBuildersProp;
+		static ConfigurationProperty urlLinePragmasProp;
+		static ConfigurationProperty codeSubDirectoriesProp;
 
 		static CompilationSection ()
 		{
-			props = new ConfigurationPropertyCollection ();
-			Type strType = typeof (string);
-			TypeConverter strTypeConv = new StringConverter ();
-			Type boolType = typeof (bool);
-			TypeConverter boolTypeConv = new BooleanConverter ();
-			Type intType = typeof (int);
-			TypeConverter intTypeConv = new Int32Converter ();
+			assembliesProp = new ConfigurationProperty ("assemblies", typeof (AssemblyCollection), null);
+			assemblyPostProcessorTypeProp = new ConfigurationProperty ("assemblyPostProcessorType", typeof (string), "");
+			batchProp = new ConfigurationProperty ("batch", typeof (bool), true);
+			buildProvidersProp = new ConfigurationProperty ("buidProviders", typeof (BuildProviderCollection), null);
+			batchTimeoutProp = new ConfigurationProperty ("batchTimeout", typeof (TimeSpan), new TimeSpan (0, 15, 0));
+			codeSubDirectoriesProp = new ConfigurationProperty ("codeSubDirectories", typeof (CodeSubDirectoriesCollection), null);
+			compilersProp = new ConfigurationProperty ("compilers", typeof (CompilerCollection), null);
+			debugProp = new ConfigurationProperty ("debug", typeof (bool), false);
+			defaultLanguageProp = new ConfigurationProperty ("defaultLanguage", typeof (string), "vb");
+			expressionBuildersProp = new ConfigurationProperty ("expressionBuilders", typeof (ExpressionBuilderCollection), null);
+			explicitProp = new ConfigurationProperty ("explicit", typeof (bool), true);
+			maxBatchSizeProp = new ConfigurationProperty ("maxBatchSize", typeof (int), 1000);
+			maxBatchGeneratedFileSizeProp = new ConfigurationProperty ("maxBatchGeneratedFileSize", typeof (int), 3000);
+			numRecompilesBeforeAppRestartProp = new ConfigurationProperty ("numRecompilesBeforeAppRestart", typeof (int), 15);
+			strictProp = new ConfigurationProperty ("strict", typeof (bool), false);
+			tempDirectoryProp = new ConfigurationProperty ("tempDirectory", typeof (string), "");
+			urlLinePragmasProp = new ConfigurationProperty ("urlLinePragmas", typeof (bool));
 
-			assemblies = new ConfigurationProperty ("assemblies", typeof (AssemblyCollection), 0);
-			props.Add (assemblies);
-			batch = new ConfigurationProperty ("batch", boolType, true, boolTypeConv, null, 0);
-			props.Add (batch);
-			buildProviders = new ConfigurationProperty ("buidProviders", typeof (BuildProviderCollection), 0);
-			props.Add (buildProviders);
-			batchTimeout = new ConfigurationProperty ("batchTimeout", typeof (TimeSpan), new TimeSpan (0, 15, 0),
-							new TimeSpanConverter (), null, 0);
-			props.Add (batchTimeout);
-			codeSubDirectories = new ConfigurationProperty ("codeSubDirectories", typeof (CodeSubDirectoriesCollection), 0);
-			props.Add (codeSubDirectories);
-			//compilers = new ConfigurationProperty ("compilers", typeof (CompilerCollection), 0);
-			//props.Add (compilers);
-			debug = new ConfigurationProperty ("debug", boolType, false, boolTypeConv, null, 0);
-			props.Add (debug);
-			defaultLanguage = new ConfigurationProperty ("defaultLanguage", strType, "c#", strTypeConv, null, 0);
-			props.Add (defaultLanguage);
-			expressionBuilders = new ConfigurationProperty ("expressionBuilders", typeof (ExpressionBuilderCollection), 0);
-			props.Add (expressionBuilders);
-			_explicit = new ConfigurationProperty ("explicit", boolType, true, boolTypeConv, null, 0);
-			props.Add (_explicit);
-			maxBatchSize = new ConfigurationProperty ("maxBatchSize", intType, 1000, intTypeConv, null, 0);
-			props.Add (maxBatchSize);
-			maxBatchGeneratedFileSize = new ConfigurationProperty ("maxBatchGeneratedFileSize", intType, 3000, intTypeConv, null, 0);
-			props.Add (maxBatchGeneratedFileSize);
-			numRecompilesBeforeAppRestart = new ConfigurationProperty ("numRecompilesBeforeAppRestart", intType, 15, intTypeConv, null, 0);
-			props.Add (numRecompilesBeforeAppRestart);
-			strict = new ConfigurationProperty ("strict", boolType, false, boolTypeConv, null, 0);
-			props.Add (strict);
-			tempDirectory = new ConfigurationProperty ("tempDirectory", strType, "", strTypeConv, null, 0);
-			props.Add (tempDirectory);
-			urlLinePragmas = new ConfigurationProperty ("urlLinePragmas", boolType, false, boolTypeConv, null, 0);
-			props.Add (urlLinePragmas);
+			properties = new ConfigurationPropertyCollection ();
+			properties.Add (assembliesProp);
+			properties.Add (assemblyPostProcessorTypeProp);
+			properties.Add (batchProp);
+			properties.Add (buildProvidersProp);
+			properties.Add (batchTimeoutProp);
+			properties.Add (codeSubDirectoriesProp);
+			properties.Add (compilersProp);
+			properties.Add (debugProp);
+			properties.Add (defaultLanguageProp);
+			properties.Add (expressionBuildersProp);
+			properties.Add (explicitProp);
+			properties.Add (maxBatchSizeProp);
+			properties.Add (maxBatchGeneratedFileSizeProp);
+			properties.Add (numRecompilesBeforeAppRestartProp);
+			properties.Add (strictProp);
+			properties.Add (tempDirectoryProp);
+			properties.Add (urlLinePragmasProp);
 		}
 
 		public CompilationSection ()
 		{
 		}
 
+		[MonoTODO]
+		protected override void PostDeserialize ()
+		{
+			base.PostDeserialize ();
+		}
+
+		[MonoTODO]
+		protected override object GetRuntimeObject ()
+		{
+			return this;
+		}
+
+		[ConfigurationProperty ("assemblies")]
 		public AssemblyCollection Assemblies {
-			get { return (AssemblyCollection) this [assemblies]; }
+			get { return (AssemblyCollection) base [assembliesProp]; }
 		}
 
+		[ConfigurationProperty ("assemblyPostProcessorType", DefaultValue = "")]
+		public string AssemblyPostProcessorType {
+			get { return (string) base[assemblyPostProcessorTypeProp]; }
+			set { base[assemblyPostProcessorTypeProp] = value; }
+		}
+
+		[ConfigurationProperty ("batch", DefaultValue = "True")]
 		public bool Batch {
-			get { return (bool) this [batch]; }
-			set { this [batch] = value; }
+			get { return (bool) base [batchProp]; }
+			set { base [batchProp] = value; }
 		}
 
+		[TypeConverter (typeof (TimeSpanSecondsOrInfiniteConverter))]
+		[TimeSpanValidator (MinValueString = "00:00:00")]
+		[ConfigurationProperty ("batchTimeout", DefaultValue = "00:15:00")]
 		public TimeSpan BatchTimeout {
-			get { return (TimeSpan) this [batchTimeout]; }
-			set { this [batchTimeout] = value; }
+			get { return (TimeSpan) base [batchTimeoutProp]; }
+			set { base [batchTimeoutProp] = value; }
 		}
 
+		[ConfigurationProperty ("buildProviders")]
 		public BuildProviderCollection BuildProviders {
-			get { return (BuildProviderCollection) this [buildProviders]; }
+			get { return (BuildProviderCollection) base [buildProvidersProp]; }
 		}
 
+		[ConfigurationProperty ("codeSubDirectories")]
 		public CodeSubDirectoriesCollection CodeSubDirectories {
-			get { return (CodeSubDirectoriesCollection) this [codeSubDirectories]; }
+			get { return (CodeSubDirectoriesCollection) base [codeSubDirectoriesProp]; }
 		}
 
-		/*
+		[ConfigurationProperty ("compilers")]
 		public CompilerCollection Compilers {
-			get { return (CompilerCollection) this [compilers]; }
+			get { return (CompilerCollection) base [compilersProp]; }
 		}
-		*/
 
+		[ConfigurationProperty ("debug", DefaultValue = "False")]
 		public bool Debug {
-			get { return (bool) this [debug]; }
-			set { this [debug] = value; }
+			get { return (bool) base [debugProp]; }
+			set { base [debugProp] = value; }
 		}
 
+		[ConfigurationProperty ("defaultLanguage", DefaultValue = "vb")]
 		public string DefaultLanguage {
-			get { return (string) this [defaultLanguage]; }
-			set { this [defaultLanguage] = value; }
+			get { return (string) base [defaultLanguageProp]; }
+			set { base [defaultLanguageProp] = value; }
 		}
 
+		[ConfigurationProperty ("explicit", DefaultValue = "True")]
 		public bool Explicit {
-			get { return (bool) this [_explicit]; }
-			set { this [_explicit] = value; }
+			get { return (bool) base [explicitProp]; }
+			set { base [explicitProp] = value; }
 		}
 
+		[ConfigurationProperty ("expressionBuilders")]
 		public ExpressionBuilderCollection ExpressionBuilders {
-			get { return (ExpressionBuilderCollection) this [expressionBuilders]; }
+			get { return (ExpressionBuilderCollection) base [expressionBuildersProp]; }
 		}
 
+		[ConfigurationProperty ("maxBatchGeneratedFileSize", DefaultValue = "1000")]
 		public int MaxBatchGeneratedFileSize {
-			get { return (int) this [maxBatchGeneratedFileSize]; }
-			set { this [maxBatchGeneratedFileSize] = value; }
+			get { return (int) base [maxBatchGeneratedFileSizeProp]; }
+			set { base [maxBatchGeneratedFileSizeProp] = value; }
 		}
 
+		[ConfigurationProperty ("maxBatchSize", DefaultValue = "1000")]
 		public int MaxBatchSize {
-			get { return (int) this [maxBatchSize]; }
-			set { this [maxBatchSize] = value; }
+			get { return (int) base [maxBatchSizeProp]; }
+			set { base [maxBatchSizeProp] = value; }
 		}
 
+		[ConfigurationProperty ("numRecompilesBeforeAppRestart", DefaultValue = "15")]
 		public int NumRecompilesBeforeAppRestart {
-			get { return (int) this [numRecompilesBeforeAppRestart]; }
-			set { this [numRecompilesBeforeAppRestart] = value; }
+			get { return (int) base [numRecompilesBeforeAppRestartProp]; }
+			set { base [numRecompilesBeforeAppRestartProp] = value; }
 		}
 
+		[ConfigurationProperty ("strict", DefaultValue = "False")]
 		public bool Strict {
-			get { return (bool) this [strict]; }
-			set { this [strict] = value; }
+			get { return (bool) base [strictProp]; }
+			set { base [strictProp] = value; }
 		}
 
+		[ConfigurationProperty ("tempDirectory", DefaultValue = "")]
 		public string TempDirectory {
-			get { return (string) this [tempDirectory]; }
-			set { this [tempDirectory] = value; }
+			get { return (string) base [tempDirectoryProp]; }
+			set { base [tempDirectoryProp] = value; }
 		}
 
+		[ConfigurationProperty ("urlLinePragmas", DefaultValue = "False")]
 		public bool UrlLinePragmas {
-			get { return (bool) this [urlLinePragmas]; }
-			set { this [urlLinePragmas] = value; }
+			get { return (bool) base [urlLinePragmasProp]; }
+			set { base [urlLinePragmasProp] = value; }
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return props; }
+			get { return properties; }
 		}
 	}
 }

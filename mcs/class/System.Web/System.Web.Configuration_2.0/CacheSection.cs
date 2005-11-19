@@ -49,8 +49,14 @@ namespace System.Web.Configuration {
 		{
 			disableExpirationProp = new ConfigurationProperty("disableExpiration", typeof (bool), false);
 			disableMemoryCollectionProp = new ConfigurationProperty("disableMemoryCollection", typeof (bool), false);
-			percentagePhysicalMemoryUsedLimitProp = new ConfigurationProperty("percentagePhysicalMemoryUsedLimit", typeof (int), 89);
-			privateBytesLimitProp = new ConfigurationProperty("privateBytesLimit", typeof (long), 0);
+			percentagePhysicalMemoryUsedLimitProp = new ConfigurationProperty("percentagePhysicalMemoryUsedLimit", typeof (int), 89,
+											  TypeDescriptor.GetConverter (typeof (int)),
+											  new IntegerValidator (0, Int32.MaxValue),
+											  ConfigurationPropertyOptions.None);
+			privateBytesLimitProp = new ConfigurationProperty("privateBytesLimit", typeof (long), 0,
+									  TypeDescriptor.GetConverter (typeof (long)),
+									  new LongValidator (0, Int64.MaxValue),
+									  ConfigurationPropertyOptions.None);
 			privateBytesPollTimeProp = new ConfigurationProperty("privateBytesPollTime", typeof (TimeSpan), TimeSpan.FromMinutes (2));
 			properties = new ConfigurationPropertyCollection();
 

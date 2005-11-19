@@ -37,7 +37,6 @@ namespace System.Web.Configuration
 {
 	public partial class HttpCapabilitiesBase: IFilterResolutionService
 	{
-
 		int IFilterResolutionService.CompareFilters (string filter1, string filter2)
 		{
 			throw new NotImplementedException ();
@@ -59,11 +58,6 @@ namespace System.Web.Configuration
 
 		public void DisableOptimizedCacheKey ()
 		{
-		}
-
-		public Version[] GetClrVersions ()
-		{
-			throw new NotImplementedException ();
 		}
 
 		public HttpCapabilitiesBase GetConfigCapabilities ()

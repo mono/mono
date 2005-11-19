@@ -1,3 +1,24 @@
+2005-11-18  Chris Toshok  <toshok@ximian.com>
+
+	* SystemWebSectionGroup.cs: enable a whole slew of properties.
+
+	* RegexWorker.cs: stub this out.
+
+	* HttpCapabilitiesBase.cs: remove GetClrVersions since it's in one
+	of the other partial files.
+
+	* CompilationSection.cs: fix this up.
+
+	* PagesSection.cs: fix some types and add a comment to
+	DeserializeSection.
+
+	* CompilerCollection.cs (Add): new internal method.
+
+	* ProvidersHelper.cs: put the using System.Configuration.Provider
+	inside the NET_2_0 block.
+
+	* CacheSection.cs: add validators.
+
 2005-11-14  Chris Toshok  <toshok@ximian.com>
 
 	* BufferModeSettings.cs: add validators/converters to the

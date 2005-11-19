@@ -71,7 +71,7 @@ namespace System.Web.Configuration
 			bufferProp = new ConfigurationProperty ("buffer", typeof(bool), false);
 			controlsProp = new ConfigurationProperty ("controls", typeof(TagPrefixCollection), null);
 			enableEventValidationProp = new ConfigurationProperty ("enableEventValidation", typeof (bool), true);
-			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (bool), true);
+			enableSessionStateProp = new ConfigurationProperty ("enableSessionState", typeof (PagesEnableSessionState), true);
 			enableViewStateProp = new ConfigurationProperty ("enableViewState", typeof (bool), true);
 			enableViewStateMacProp = new ConfigurationProperty ("enableViewStateMac", typeof (bool), true);
 			maintainScrollPositionOnPostBackProp = new ConfigurationProperty ("maintainScrollPositionOnPostBack", typeof (bool), false);
@@ -86,8 +86,8 @@ namespace System.Web.Configuration
 			tagMappingProp = new ConfigurationProperty ("tagMapping", typeof (TagMapCollection), null);
 			themeProp = new ConfigurationProperty ("theme", typeof (string), "");
 			userControlBaseTypeProp = new ConfigurationProperty ("userControlBaseTypeProp", typeof (string), "System.Web.UI.UserControl");
-			validateRequestProp = new ConfigurationProperty ("validateRequestProp", typeof (bool), true);
-			viewStateEncryptionModeProp = new ConfigurationProperty ("viewStateEncryptionModeProp", typeof (ViewStateEncryptionMode), ViewStateEncryptionMode.Auto);
+			validateRequestProp = new ConfigurationProperty ("validateRequest", typeof (bool), true);
+			viewStateEncryptionModeProp = new ConfigurationProperty ("viewStateEncryptionMode", typeof (ViewStateEncryptionMode), ViewStateEncryptionMode.Auto);
 
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (asyncTimeoutProp);
@@ -254,7 +254,9 @@ namespace System.Web.Configuration
 		[MonoTODO]
 		protected override void DeserializeSection (XmlReader reader)
 		{
-			throw new NotImplementedException ();
+			base.DeserializeSection (reader);
+
+			/* XXX more here?.. */
 		}
 	}
 }

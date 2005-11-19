@@ -1,5 +1,5 @@
 //
-// System.Web.Configuration.ProvidersHelper
+// System.Web.Configuration.RegexWorker
 //
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
@@ -26,34 +26,32 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 
 using System;
 using System.Configuration;
 
 #if NET_2_0
 
-using System.Configuration.Provider;
-
 namespace System.Web.Configuration {
 
-	public static class ProvidersHelper
+	public class RegexWorker
 	{
-		[MonoTODO ("is this right?")]
-		public static ProviderBase InstantiateProvider (ProviderSettings providerSettings, Type providerType)
+		public RegexWorker (HttpBrowserCapabilities browserCaps)
 		{
-			ProviderBase provider = Activator.CreateInstance (providerType) as ProviderBase;
-
-			provider.Initialize (providerSettings.Name, providerSettings.Parameters);
-
-			return provider;
 		}
 
-		[MonoTODO ("is this right?")]
-		public static void InstantiateProviders (ProviderSettingsCollection configProviders, ProviderCollection providers, Type providerType)
+		[MonoTODO]
+		public bool ProcessRegex (string target, string regexExpression)
 		{
-			foreach (ProviderSettings settings in configProviders)
-				providers.Add (InstantiateProvider (settings, providerType));
+			return false;
 		}
+
+		[MonoTODO]
+		public string this [string key] {
+			get { throw new NotImplementedException (); }
+		}
+
 	}
 
 }
