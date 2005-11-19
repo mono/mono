@@ -6,6 +6,9 @@
 	been created.
 	* MdiChildContext.cs: Don't set the InternalBorderStyle, just pass
 	this directly on to the driver.
+	- Get the move start position before adjusting for the titlebar
+	height, this fixes the windows "skipping" when they are first
+	moved.
 
 2005-11-18  Jackson Harper  <jackson@ximian.com>
 

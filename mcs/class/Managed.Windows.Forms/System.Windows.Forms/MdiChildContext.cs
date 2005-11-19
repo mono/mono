@@ -152,12 +152,12 @@ namespace System.Windows.Forms {
 
 			form.PointToClient (ref x, ref y);
 
+			start = new Point (x, y);
+			virtual_position = form.Bounds;
+
 			// Need to adjust because we are in NC land
 			y += TitleBarHeight;
 			FormPos pos = FormPosForCoords (x, y);
-
-			start = new Point (x, y);
-			virtual_position = form.Bounds;
 
 			if (pos == FormPos.TitleBar) {
 				HandleTitleBarDown (x, y);
