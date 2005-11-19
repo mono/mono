@@ -1,3 +1,7 @@
+2005-11-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* ArrayTest.cs: Reenable some previously not-working 2.0 tests.
+
 2005-11-11  Raja R Harinath  <rharinath@novell.com>
 
 	* ArrayTest.cs (Resize_null): New.  Test Resize<T> with a null argument.
