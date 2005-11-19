@@ -33,6 +33,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 #if NET_2_0
 using System.Runtime.ConstrainedExecution;
@@ -112,6 +113,10 @@ namespace System.Threading
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static double CompareExchange(ref double location1, double value, double comparand);
 
+		[ComVisible (false)]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static T CompareExchange<T> (ref T location, T value, T comparand);
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long Exchange(ref long location1, long value);
 
@@ -121,6 +126,10 @@ namespace System.Threading
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static double Exchange(ref double location1, double value);
+
+		[ComVisible (false)]
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		public extern static T Exchange<T> (ref T location1, T value);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long Read(ref long location1);
