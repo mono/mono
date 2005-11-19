@@ -1,5 +1,10 @@
 2005-11-19  Jackson Harper  <jackson@ximian.com>
 
+	* XplatUIX11.cs: Create an HGRN of the invalid area for WM_NCPAINT
+	(just like on windows).
+
+2005-11-19  Jackson Harper  <jackson@ximian.com>
+
 	* MdiChildContext.cs: Handle all the buttons ourselves. We can't
 	use real buttons anymore because they are in non client area. The
 	one TODO here is that I need to somehow invalidate a section of

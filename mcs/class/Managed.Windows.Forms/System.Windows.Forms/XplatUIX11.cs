@@ -2755,7 +2755,12 @@ namespace System.Windows.Forms {
 						#if DriverDebugExtra
 							Console.WriteLine("GetMessage(): Window {0:X} Exposed non-client area {1},{2} {3}x{4}", hwnd.client_window.ToInt32(), xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
 						#endif
+
+						Rectangle rect = new Rectangle (xevent.ExposeEvent.x, xevent.ExposeEvent.y, xevent.ExposeEvent.width, xevent.ExposeEvent.height);
+						Region region = new Region (rect);
+						IntPtr hrgn = region.GetHrgn (null); // Graphics object isn't needed
 						msg.message = Msg.WM_NCPAINT;
+						msg.wParam = hrgn;
 						hwnd.nc_expose_pending = false;
 						break;
 					}
