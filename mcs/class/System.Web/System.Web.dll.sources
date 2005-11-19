@@ -83,6 +83,8 @@ System.Web.Configuration_2.0/BuildProvider.cs
 System.Web.Configuration_2.0/CodeSubDirectoriesCollection.cs
 System.Web.Configuration_2.0/CodeSubDirectory.cs
 System.Web.Configuration_2.0/CompilationSection.cs
+System.Web.Configuration_2.0/Compiler.cs
+System.Web.Configuration_2.0/CompilerCollection.cs
 System.Web.Configuration_2.0/CustomErrorsMode.cs
 System.Web.Configuration_2.0/ExpressionBuilderCollection.cs
 System.Web.Configuration_2.0/ExpressionBuilder.cs
