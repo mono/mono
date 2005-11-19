@@ -426,7 +426,6 @@ namespace System.Windows.Forms {
 
 		private void HandleLButtonUp (ref Message m)
 		{
-			
 			if (state == State.Idle)
 				return;
 
@@ -447,7 +446,6 @@ namespace System.Windows.Forms {
 			// Need to adjust because we are in NC land
 			y += TitleBarHeight;
 
-			Console.WriteLine ("{0},  {1}", x, y);
 			foreach (TitleButton button in title_buttons) {
 				if (button != null && button.Rectangle.Contains (x, y)) {
 					button.Clicked (this, EventArgs.Empty);
