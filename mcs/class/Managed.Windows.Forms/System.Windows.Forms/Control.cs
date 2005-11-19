@@ -741,10 +741,8 @@ namespace System.Windows.Forms
 			}
 
 			set {
-				/*
 				if (!Enum.IsDefined (typeof (BorderStyle), value))
 					throw new InvalidEnumArgumentException (string.Format("Enum argument value '{0}' is not valid for BorderStyle", value));
-				*/
 
 				if (border_style != value) {
 					border_style = value;

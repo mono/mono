@@ -331,7 +331,7 @@ namespace System.Windows.Forms {
 					}
 					UpdateStyles();
 				} else {
-					if (mdi_child_context != null)
+					if (mdi_child_context != null && IsHandleCreated)
 						mdi_child_context.UpdateBorderStyle (value);
 					UpdateStyles ();
 				}
@@ -800,8 +800,7 @@ namespace System.Windows.Forms {
 					}
 					
 				} else {
-					
-				
+
 					switch (FormBorderStyle) {
 
 					case FormBorderStyle.Fixed3D: {

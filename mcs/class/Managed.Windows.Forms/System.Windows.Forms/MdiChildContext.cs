@@ -62,11 +62,6 @@ namespace System.Windows.Forms {
 			this.form = form;
 			this.mdi_container = mdi_container;
 
-			if (form.FormBorderStyle != FormBorderStyle.None)
-				form.InternalBorderStyle = (BorderStyle) MdiBorderStyle;
-			else
-				form.InternalBorderStyle = BorderStyle.None;
-
 			/*
 			minimize_button = new Button ();
 			minimize_button.Bounds = new Rectangle (form.Width - 62,

@@ -1,5 +1,14 @@
 2005-11-18  Jackson Harper  <jackson@ximian.com>
 
+	* Control.cs: Put the enum check back in now that MDI doesnt have
+	to use this to set border styles.
+	* Form.cs: Only set mdi child windows borders if the handle has
+	been created.
+	* MdiChildContext.cs: Don't set the InternalBorderStyle, just pass
+	this directly on to the driver.
+
+2005-11-18  Jackson Harper  <jackson@ximian.com>
+
 	* XplatUIX11.cs: Just compute the mdi borders separately as they
 	don't totally match up with normal form borders.
 
