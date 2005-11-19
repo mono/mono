@@ -284,7 +284,7 @@ internal class Win32VersionResource : Win32Resource {
 			properties [s] = " ";
 	}
 
-	public string FileVersion {
+	public string Version {
 		get {
 			return 
 				"" + (file_version >> 48) + 
@@ -407,6 +407,15 @@ internal class Win32VersionResource : Win32Resource {
 		}
 		set {
 			file_lang = value;
+		}
+	}
+
+	public virtual string FileVersion {
+		get {
+			return (string)properties ["FileVersion"];
+		}
+		set {
+			properties ["FileVersion"] = value == String.Empty ? " " : value;
 		}
 	}
 
