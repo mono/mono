@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if !NET_2_0
+
 using System;
 using System.Collections;
 using System.Configuration;
@@ -69,72 +71,5 @@ namespace System.Web.Configuration
 			return (this [lang1] == this [lang2]);
 		}
 	}
-#if false
-	public sealed class CompilerCollection : ConfigurationElementCollection
-	{
-		static ConfigurationPropertyCollection props;
-
-		static CompilerCollection ()
-		{
-			//FIXME: add properties
-			props = new ConfigurationPropertyCollection ();
-		}
-
-		public string [] AllKeys {
-			get { return BaseGetAllKeys (); }
-		}
-
-		public Compiler this [int index] {
-			get { return (Compiler) BaseGet (index); }
-		}
-
-		public new Compiler this [string language] {
-			get { return (Compiler) BaseGet (language); }
-		}
-
-		protected override ConfigurationElementCollectionType CollectionType {
-			get { return ConfigurationElementCollectionType.AddRemoveClearMap; }
-		}
-
-		protected override string ElementName {
-			get { return "compiler"; }
-		}
-
-		protected override ConfigurationPropertyCollection Properties {
-			get { return props; }
-		}
-
-		public Compiler Get (int index)
-		{
-			return (Compiler) BaseGet (index);
-		}
-
-		public Compiler Get (string language)
-		{
-			return (Compiler) BaseGet (language);
-		}
-
-		public string GetKey (int index)
-		{
-			return BaseGetKey (index);
-		}
-
-		protected override bool CompareKeys (object key1, object key2)
-		{
-			return (0 == CaseInsensitiveComparer.DefaultInvariant.Compare ((string) key1, (string) key2));
-		}
-
-		protected override ConfigurationElement CreateNewElement ()
-		{
-			return new Compiler ();
-		}
-
-		protected override object GetElementKey (ConfigurationElement element)
-		{
-			Compiler c = (Compiler) element;
-			return c.Language;
-		}
-	}
-#endif
 }
-
+#endif
