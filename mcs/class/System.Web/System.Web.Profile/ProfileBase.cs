@@ -74,7 +74,7 @@ namespace System.Web.Profile
 		[MonoTODO]
 		public override void Save ()
 		{
-			throw new NotImplementedException ();
+			base.Save ();
 		}
 
 		[MonoTODO]

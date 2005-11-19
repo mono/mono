@@ -1,3 +1,9 @@
+2005-11-18  Chris Toshok  <toshok@ximian.com>
+
+	* ProfileModule.cs: hook up saving of the request's profile.
+
+	* ProfileBase.cs (Save): call base.Save instead of throwing NIE.
+
 2005-11-03  Chris Toshok  <toshok@ximian.com>
 
 	* ProfileEventArgs.cs, ProfileProviderCollection.cs,

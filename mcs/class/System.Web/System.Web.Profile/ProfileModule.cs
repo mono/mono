@@ -34,6 +34,9 @@ namespace System.Web.Profile
 {
 	public sealed class ProfileModule : IHttpModule
 	{
+		HttpApplication app;
+		ProfileBase profile;
+
 		[MonoTODO]
 		public ProfileModule ()
 		{
@@ -42,11 +45,29 @@ namespace System.Web.Profile
 		[MonoTODO]
 		public void Dispose ()
 		{
+			app.EndRequest -= OnLeave;
 		}
 
 		[MonoTODO]
 		public void Init (HttpApplication app)
 		{
+			this.app = app;
+			app.EndRequest += OnLeave;
+		}
+
+		void OnLeave (object o, EventArgs eventArgs)
+		{
+			if (profile == null)
+				return;
+
+			if (ProfileAutoSaving != null) {
+				ProfileAutoSaveEventArgs args = new ProfileAutoSaveEventArgs (app.Context);
+				ProfileAutoSaving (this, args);
+				if (!args.ContinueWithProfileAutoSave)
+					return;
+			}
+
+			profile.Save();
 		}
 
 		public event ProfileMigrateEventHandler MigrateAnonymous;
