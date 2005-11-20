@@ -62,14 +62,14 @@ namespace System.CodeDom
 			List.Add (new CodeTypeParameter (value));
 		}
 
-		public void AddRange (CodeTypeParameter[] value )
+		public void AddRange (CodeTypeParameter[] value)
 		{
 			if (value == null) {
 				throw new ArgumentNullException ("value");
 			}
 
-			foreach (CodeTypeParameter ctp in value) {
-				Add (ctp);
+			for (int i = 0; i < value.Length; i++) {
+				Add (value[i]);
 			}
 		}
 

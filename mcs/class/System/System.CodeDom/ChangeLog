@@ -1,3 +1,95 @@
+2005-11-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeEventReferenceExpression.cs: Set eol-style to native.
+	* CodeArgumentReferenceExpression.cs: Set eol-style to native.
+	* CodeParameterDeclarationExpressionCollection.cs: Set eol-style to 
+	native.
+	* CodeRegionMode.cs: Set eol-style to native.
+	* FieldDirection.cs: Set eol-style to native.
+	* CodeChecksumPragma.cs: Set eol-style to native.
+	* CodeCatchClauseCollection.cs: Set eol-style to native.
+	* CodeAttachEventStatement.cs: Set eol-style to native.
+	* CodeSnippetCompileUnit.cs: Set eol-style to native.
+	* CodeNamespace.cs: Set eol-style to native.
+	* CodePropertySetValueReferenceExpression.cs: Set eol-style to native.
+	* CodeTypeReference.cs: Set eol-style to native.
+	* CodeDirectionExpression.cs: Set eol-style to native.
+	* CodeThisReferenceExpression.cs: Set eol-style to native.
+	* CodeSnippetStatement.cs: Set eol-style to native.
+	* CodeMemberMethod.cs: Set eol-style to native.
+	* CodeMemberProperty.cs: Set eol-style to native.
+	* CodeEntryPointMethod.cs: Set eol-style to native.
+	* CodeTypeReferenceOptions.cs: Set eol-style to native.
+	* CodeIndexerExpression.cs: Set eol-style to native.
+	* CodeCatchClause.cs: Set eol-style to native.
+	* CodeStatementCollection.cs: Set eol-style to native.
+	* CodeRegionDirective.cs: Set eol-style to native.
+	* CodeTypeParameter.cs: Set eol-style to native.
+	* CodeIterationStatement.cs: Set eol-style to native.
+	* CodeRemoveEventStatement.cs: Set eol-style to native.
+	* CodeVariableReferenceExpression.cs: Set eol-style to native.
+	* CodeAttributeDeclarationCollection.cs: Set eol-style to native.
+	* CodeTryCatchFinallyStatement.cs: Set eol-style to native.
+	* CodeTypeMemberCollection.cs: Set eol-style to native.
+	* CodeCompileUnit.cs: Set eol-style to native.
+	* CodePrimitiveExpression.cs: Set eol-style to native.
+	* CodeDirectiveCollection.cs: Fixed line endings. Set eol-style to 
+	native.
+	* CodeTypeDeclarationCollection.cs: Set eol-style to native.
+	* CodeNamespaceImportCollection.cs: Set eol-style to native.
+	* CodeNamespaceCollection.cs: Set eol-style to native.
+	* CodeTypeMember.cs: Set eol-style to native.
+	* CodeAttributeDeclaration.cs: Set eol-style to native.
+	* CodeConditionStatement.cs: Set eol-style to native.
+	* CodeExpressionCollection.cs: Set eol-style to native.
+	* CodeTypeReferenceCollection.cs: Set eol-style to native.
+	* CodeSnippetTypeMember.cs: Set eol-style to native.
+	* CodeDelegateCreateExpression.cs: Set eol-style to native.
+	* CodeLinePragma.cs: Set eol-style to native.
+	* CodeMethodReferenceExpression.cs: Set eol-style to native.
+	* CodeVariableDeclarationStatement.cs: Set eol-style to native.
+	* CodeTypeReferenceExpression.cs: Set eol-style to native.
+	* CodeArrayCreateExpression.cs: Set eol-style to native.
+	* CodeFieldReferenceExpression.cs: Set eol-style to native.
+	* CodePropertyReferenceExpression.cs: Set eol-style to native.
+	* CodeTypeDeclaration.cs: Set eol-style to native.
+	* CodeTypeConstructor.cs: Set eol-style to native.
+	* CodeNamespaceImport.cs: Set eol-style to native.
+	* CodeTypeParameterCollection.cs: Use for loop instead of foreach to 
+	add elements in AddRange method. Fixed line endings. Set eol-style to
+	native.
+	* CodeTypeParameterCollection.cs: Set eol-style to native.
+	* CodeExpression.cs: Set eol-style to native.
+	* CodeBinaryOperatorType.cs: Set eol-style to native.
+	* CodeSnippetExpression.cs: Set eol-style to native.
+	* CodeCommentStatementCollection.cs: Set eol-style to native.
+	* CodeMethodReturnStatement.cs: Set eol-style to native.
+	* CodeObject.cs: Set eol-style to native.
+	* CodeParameterDeclarationExpression.cs: Set eol-style to native.
+	* CodeDelegateInvokeExpression.cs: Set eol-style to native.
+	* CodeThrowExceptionStatement.cs: Set eol-style to native.
+	* CodeObjectCreateExpression.cs: Set eol-style to native.
+	* CodeTypeDelegate.cs: Set eol-style to native.
+	* CodeLabeledStatement.cs: Set eol-style to native.
+	* CodeArrayIndexerExpression.cs: Set eol-style to native.
+	* CodeBinaryOperatorExpression.cs: Set eol-style to native.
+	* CodeAttributeArgumentCollection.cs: Set eol-style to native.
+	* MemberAttributes.cs: Set eol-style to native.
+	* CodeExpressionStatement.cs: Set eol-style to native.
+	* CodeConstructor.cs: Set eol-style to native.
+	* CodeTypeOfExpression.cs: Set eol-style to native.
+	* CodeCommentStatement.cs: Set eol-style to native.
+	* CodeGotoStatement.cs: Set eol-style to native.
+	* CodeComment.cs: Set eol-style to native.
+	* CodeStatement.cs: Set eol-style to native.
+	* CodeMemberEvent.cs: Set eol-style to native.
+	* CodeBaseReferenceExpression.cs: Set eol-style to native.
+	* CodeAssignStatement.cs: Set eol-style to native.
+	* CodeCastExpression.cs: Set eol-style to native.
+	* CodeMemberField.cs: Set eol-style to native.
+	* CodeMethodInvokeExpression.cs: Set eol-style to native.
+	* CodeDirective.cs: Set eol-style to native.
+
 2005-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeCatchClauseCollection.cs: Added null check to AddRange overloads
