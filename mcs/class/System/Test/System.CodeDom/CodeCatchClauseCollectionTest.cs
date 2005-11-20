@@ -156,21 +156,27 @@ namespace MonoTests.System.CodeDom {
 		{
 			CodeCatchClause cc1 = new CodeCatchClause ();
 			CodeCatchClause cc2 = new CodeCatchClause ();
+			CodeCatchClause cc3 = new CodeCatchClause ();
 
 			CodeCatchClauseCollection coll1 = new CodeCatchClauseCollection ();
 			coll1.Add (cc1);
 			coll1.Add (cc2);
 
-			CodeCatchClauseCollection coll2 = new CodeCatchClauseCollection(coll1);
-			Assert.AreEqual (2, coll2.Count, "#1");
-			Assert.AreEqual (0, coll2.IndexOf (cc1), "#2");
-			Assert.AreEqual (1, coll2.IndexOf (cc2), "#3");
+			CodeCatchClauseCollection coll2 = new CodeCatchClauseCollection ();
+			coll2.Add (cc3);
+			coll2.AddRange (coll1);
+			Assert.AreEqual (3, coll2.Count, "#1");
+			Assert.AreEqual (1, coll2.IndexOf (cc1), "#2");
+			Assert.AreEqual (2, coll2.IndexOf (cc2), "#3");
+			Assert.AreEqual (0, coll2.IndexOf (cc3), "#4");
 
-			CodeCatchClauseCollection coll3 = new CodeCatchClauseCollection(
-				new CodeCatchClause[] {cc1, cc2});
-			Assert.AreEqual (2, coll2.Count, "#4");
-			Assert.AreEqual (0, coll2.IndexOf (cc1), "#5");
-			Assert.AreEqual (1, coll2.IndexOf (cc2), "#6");
+			CodeCatchClauseCollection coll3 = new CodeCatchClauseCollection ();
+			coll3.Add (cc3);
+			coll3.AddRange (new CodeCatchClause[] { cc1, cc2 });
+			Assert.AreEqual (3, coll2.Count, "#5");
+			Assert.AreEqual (1, coll2.IndexOf (cc1), "#6");
+			Assert.AreEqual (2, coll2.IndexOf (cc2), "#7");
+			Assert.AreEqual (0, coll2.IndexOf (cc3), "#8");
 		}
 
 		[Test]
@@ -205,6 +211,40 @@ namespace MonoTests.System.CodeDom {
 			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
 			Assert.AreEqual (2, coll.Count, "#2");
+		}
+
+		[Test]
+		public void Remove ()
+		{
+			CodeCatchClause ccc1 = new CodeCatchClause ();
+			CodeCatchClause ccc2 = new CodeCatchClause ();
+
+			CodeCatchClauseCollection coll = new CodeCatchClauseCollection ();
+			coll.Add (ccc1);
+			coll.Add (ccc2);
+			Assert.AreEqual (2, coll.Count, "#1");
+			Assert.AreEqual (0, coll.IndexOf (ccc1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (ccc2), "#3");
+			coll.Remove (ccc1);
+			Assert.AreEqual (1, coll.Count, "#4");
+			Assert.AreEqual (-1, coll.IndexOf (ccc1), "#5");
+			Assert.AreEqual (0, coll.IndexOf (ccc2), "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Remove_NotInCollection ()
+		{
+			CodeCatchClauseCollection coll = new CodeCatchClauseCollection ();
+			coll.Remove (new CodeCatchClause ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Remove_Null ()
+		{
+			CodeCatchClauseCollection coll = new CodeCatchClauseCollection ();
+			coll.Remove ((CodeCatchClause) null);
 		}
 	}
 }

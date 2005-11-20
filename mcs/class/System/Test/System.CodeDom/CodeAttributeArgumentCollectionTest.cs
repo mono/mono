@@ -156,21 +156,27 @@ namespace MonoTests.System.CodeDom {
 		{
 			CodeAttributeArgument caa1 = new CodeAttributeArgument ();
 			CodeAttributeArgument caa2 = new CodeAttributeArgument ();
+			CodeAttributeArgument caa3 = new CodeAttributeArgument ();
 
 			CodeAttributeArgumentCollection coll1 = new CodeAttributeArgumentCollection ();
 			coll1.Add (caa1);
 			coll1.Add (caa2);
 
-			CodeAttributeArgumentCollection coll2 = new CodeAttributeArgumentCollection(coll1);
-			Assert.AreEqual (2, coll2.Count, "#1");
-			Assert.AreEqual (0, coll2.IndexOf (caa1), "#2");
-			Assert.AreEqual (1, coll2.IndexOf (caa2), "#3");
+			CodeAttributeArgumentCollection coll2 = new CodeAttributeArgumentCollection();
+			coll2.Add (caa3);
+			coll2.AddRange (coll1);
+			Assert.AreEqual (3, coll2.Count, "#1");
+			Assert.AreEqual (1, coll2.IndexOf (caa1), "#2");
+			Assert.AreEqual (2, coll2.IndexOf (caa2), "#3");
+			Assert.AreEqual (0, coll2.IndexOf (caa3), "#4");
 
-			CodeAttributeArgumentCollection coll3 = new CodeAttributeArgumentCollection(
-				new CodeAttributeArgument[] {caa1, caa2});
-			Assert.AreEqual (2, coll2.Count, "#4");
-			Assert.AreEqual (0, coll2.IndexOf (caa1), "#5");
-			Assert.AreEqual (1, coll2.IndexOf (caa2), "#6");
+			CodeAttributeArgumentCollection coll3 = new CodeAttributeArgumentCollection();
+			coll3.Add (caa3);
+			coll3.AddRange (new CodeAttributeArgument[] {caa1, caa2});
+			Assert.AreEqual (3, coll2.Count, "#5");
+			Assert.AreEqual (1, coll2.IndexOf (caa1), "#6");
+			Assert.AreEqual (2, coll2.IndexOf (caa2), "#7");
+			Assert.AreEqual (0, coll2.IndexOf (caa3), "#8");
 		}
 
 		[Test]
@@ -205,6 +211,40 @@ namespace MonoTests.System.CodeDom {
 			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
 			Assert.AreEqual (2, coll.Count, "#2");
+		}
+
+		[Test]
+		public void Remove ()
+		{
+			CodeAttributeArgument caa1 = new CodeAttributeArgument ();
+			CodeAttributeArgument caa2 = new CodeAttributeArgument ();
+
+			CodeAttributeArgumentCollection coll = new CodeAttributeArgumentCollection ();
+			coll.Add (caa1);
+			coll.Add (caa2);
+			Assert.AreEqual (2, coll.Count, "#1");
+			Assert.AreEqual (0, coll.IndexOf (caa1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (caa2), "#3");
+			coll.Remove (caa1);
+			Assert.AreEqual (1, coll.Count, "#4");
+			Assert.AreEqual (-1, coll.IndexOf (caa1), "#5");
+			Assert.AreEqual (0, coll.IndexOf (caa2), "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Remove_NotInCollection ()
+		{
+			CodeAttributeArgumentCollection coll = new CodeAttributeArgumentCollection ();
+			coll.Remove (new CodeAttributeArgument ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Remove_Null ()
+		{
+			CodeAttributeArgumentCollection coll = new CodeAttributeArgumentCollection ();
+			coll.Remove ((CodeAttributeArgument) null);
 		}
 	}
 }

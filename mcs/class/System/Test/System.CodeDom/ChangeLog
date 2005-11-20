@@ -1,5 +1,22 @@
 2005-11-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* CodeTypeParameterCollectionTest.cs: Improve coverage of AddRange 
+	test. Added Remove tests.
+	* CodeParameterDeclarationExpressionCollectionTest.cs: Same.
+	* CodeCatchClauseCollectionTest.cs: Same.
+	* CodeStatementCollectionTest.cs: Same.
+	* CodeTypeMemberCollectionTest.cs: Same.
+	* CodeExpressionCollectionTest.cs: Same.
+	* CodeTypeReferenceCollectionTest.cs: Same.
+	* CodeCommentStatementCollectionTest.cs: Same.
+	* CodeAttributeArgumentCollectionTest.cs: Same.
+	* CodeAttributeDeclarationCollectionTest.cs: Same.
+	* CodeDirectiveCollectionTest.cs: Same.
+	* CodeTypeDeclarationCollectionTest.cs: Same.
+	* CodeNamespaceCollectionTest.cs: Same.
+
+2005-11-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* CodeTypeParameterCollectionTest.cs: Added tests for ctors, and
 	Add/AddRange/Insert methods.
 	* CodeCatchClauseCollectionTest.cs: Added tests for ctors, and

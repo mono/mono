@@ -121,10 +121,7 @@ namespace System.CodeDom
 
 		public void Remove( CodeNamespace value )
 		{
-			int index = IndexOf( value );
-			if ( index < 0 )
-				throw( new ArgumentException( "The specified object is not found in the collection" ) );
-			RemoveAt( index );
+			List.Remove (value);
 		}
 	}
 }

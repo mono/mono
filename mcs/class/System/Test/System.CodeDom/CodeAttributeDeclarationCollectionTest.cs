@@ -156,21 +156,27 @@ namespace MonoTests.System.CodeDom {
 		{
 			CodeAttributeDeclaration cad1 = new CodeAttributeDeclaration ();
 			CodeAttributeDeclaration cad2 = new CodeAttributeDeclaration ();
+			CodeAttributeDeclaration cad3 = new CodeAttributeDeclaration ();
 
 			CodeAttributeDeclarationCollection coll1 = new CodeAttributeDeclarationCollection ();
 			coll1.Add (cad1);
 			coll1.Add (cad2);
 
-			CodeAttributeDeclarationCollection coll2 = new CodeAttributeDeclarationCollection(coll1);
-			Assert.AreEqual (2, coll2.Count, "#1");
-			Assert.AreEqual (0, coll2.IndexOf (cad1), "#2");
-			Assert.AreEqual (1, coll2.IndexOf (cad2), "#3");
+			CodeAttributeDeclarationCollection coll2 = new CodeAttributeDeclarationCollection ();
+			coll2.Add (cad3);
+			coll2.AddRange (coll1);
+			Assert.AreEqual (3, coll2.Count, "#1");
+			Assert.AreEqual (1, coll2.IndexOf (cad1), "#2");
+			Assert.AreEqual (2, coll2.IndexOf (cad2), "#3");
+			Assert.AreEqual (0, coll2.IndexOf (cad3), "#4");
 
-			CodeAttributeDeclarationCollection coll3 = new CodeAttributeDeclarationCollection(
-				new CodeAttributeDeclaration[] {cad1, cad2});
-			Assert.AreEqual (2, coll2.Count, "#4");
-			Assert.AreEqual (0, coll2.IndexOf (cad1), "#5");
-			Assert.AreEqual (1, coll2.IndexOf (cad2), "#6");
+			CodeAttributeDeclarationCollection coll3 = new CodeAttributeDeclarationCollection ();
+			coll3.Add (cad3);
+			coll3.AddRange (new CodeAttributeDeclaration[] { cad1, cad2 });
+			Assert.AreEqual (3, coll2.Count, "#5");
+			Assert.AreEqual (1, coll2.IndexOf (cad1), "#6");
+			Assert.AreEqual (2, coll2.IndexOf (cad2), "#7");
+			Assert.AreEqual (0, coll2.IndexOf (cad3), "#8");
 		}
 
 		[Test]
@@ -205,6 +211,40 @@ namespace MonoTests.System.CodeDom {
 			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
 			Assert.AreEqual (2, coll.Count, "#2");
+		}
+
+		[Test]
+		public void Remove ()
+		{
+			CodeAttributeDeclaration cad1 = new CodeAttributeDeclaration ();
+			CodeAttributeDeclaration cad2 = new CodeAttributeDeclaration ();
+
+			CodeAttributeDeclarationCollection coll = new CodeAttributeDeclarationCollection ();
+			coll.Add (cad1);
+			coll.Add (cad2);
+			Assert.AreEqual (2, coll.Count, "#1");
+			Assert.AreEqual (0, coll.IndexOf (cad1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (cad2), "#3");
+			coll.Remove (cad1);
+			Assert.AreEqual (1, coll.Count, "#4");
+			Assert.AreEqual (-1, coll.IndexOf (cad1), "#5");
+			Assert.AreEqual (0, coll.IndexOf (cad2), "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Remove_NotInCollection ()
+		{
+			CodeAttributeDeclarationCollection coll = new CodeAttributeDeclarationCollection ();
+			coll.Remove (new CodeAttributeDeclaration ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Remove_Null ()
+		{
+			CodeAttributeDeclarationCollection coll = new CodeAttributeDeclarationCollection ();
+			coll.Remove ((CodeAttributeDeclaration) null);
 		}
 	}
 }

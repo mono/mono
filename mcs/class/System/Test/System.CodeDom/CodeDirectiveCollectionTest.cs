@@ -157,21 +157,27 @@ namespace MonoTests.System.CodeDom {
 		{
 			CodeDirective cd1 = new CodeDirective ();
 			CodeDirective cd2 = new CodeDirective ();
+			CodeDirective cd3 = new CodeDirective ();
 
 			CodeDirectiveCollection coll1 = new CodeDirectiveCollection ();
 			coll1.Add (cd1);
 			coll1.Add (cd2);
 
-			CodeDirectiveCollection coll2 = new CodeDirectiveCollection(coll1);
-			Assert.AreEqual (2, coll2.Count, "#1");
-			Assert.AreEqual (0, coll2.IndexOf (cd1), "#2");
-			Assert.AreEqual (1, coll2.IndexOf (cd2), "#3");
+			CodeDirectiveCollection coll2 = new CodeDirectiveCollection ();
+			coll2.Add (cd3);
+			coll2.AddRange (coll1);
+			Assert.AreEqual (3, coll2.Count, "#1");
+			Assert.AreEqual (1, coll2.IndexOf (cd1), "#2");
+			Assert.AreEqual (2, coll2.IndexOf (cd2), "#3");
+			Assert.AreEqual (0, coll2.IndexOf (cd3), "#4");
 
-			CodeDirectiveCollection coll3 = new CodeDirectiveCollection(
-				new CodeDirective[] {cd1, cd2});
-			Assert.AreEqual (2, coll2.Count, "#4");
-			Assert.AreEqual (0, coll2.IndexOf (cd1), "#5");
-			Assert.AreEqual (1, coll2.IndexOf (cd2), "#6");
+			CodeDirectiveCollection coll3 = new CodeDirectiveCollection ();
+			coll3.Add (cd3);
+			coll3.AddRange (new CodeDirective[] { cd1, cd2 });
+			Assert.AreEqual (3, coll2.Count, "#5");
+			Assert.AreEqual (1, coll2.IndexOf (cd1), "#6");
+			Assert.AreEqual (2, coll2.IndexOf (cd2), "#7");
+			Assert.AreEqual (0, coll2.IndexOf (cd3), "#8");
 		}
 
 		[Test]
@@ -198,7 +204,40 @@ namespace MonoTests.System.CodeDom {
 			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
 			Assert.AreEqual (2, coll.Count, "#2");
+		}
 
+		[Test]
+		public void Remove ()
+		{
+			CodeDirective cd1 = new CodeDirective ();
+			CodeDirective cd2 = new CodeDirective ();
+
+			CodeDirectiveCollection coll = new CodeDirectiveCollection ();
+			coll.Add (cd1);
+			coll.Add (cd2);
+			Assert.AreEqual (2, coll.Count, "#1");
+			Assert.AreEqual (0, coll.IndexOf (cd1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (cd2), "#3");
+			coll.Remove (cd1);
+			Assert.AreEqual (1, coll.Count, "#4");
+			Assert.AreEqual (-1, coll.IndexOf (cd1), "#5");
+			Assert.AreEqual (0, coll.IndexOf (cd2), "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Remove_NotInCollection ()
+		{
+			CodeDirectiveCollection coll = new CodeDirectiveCollection ();
+			coll.Remove (new CodeDirective ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Remove_Null ()
+		{
+			CodeDirectiveCollection coll = new CodeDirectiveCollection ();
+			coll.Remove ((CodeDirective) null);
 		}
 	}
 }

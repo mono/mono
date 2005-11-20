@@ -1,5 +1,23 @@
 2005-11-20  Gert Driesen  <drieseng@users.sourceforge.net>
 
+	* CodeParameterDeclarationExpressionCollection.cs: Use CollectionBase
+	implementation of IList.Remove to handle removal of item from
+	collection.
+	* CodeCatchClauseCollection.cs: Same.
+	* CodeStatementCollection.cs: Same.
+	* CodeAttributeDeclarationCollection.cs: Same.
+	* CodeTypeMemberCollection.cs: Same.
+	* CodeDirectiveCollection.cs: Same.
+	* CodeTypeDeclarationCollection.cs: Same.
+	* CodeNamespaceCollection.cs: Same.
+	* CodeExpressionCollection.cs: Same.
+	* CodeTypeReferenceCollection.cs: Same.
+	* CodeTypeParameterCollection.cs: Same.
+	* CodeCommentStatementCollection.cs: Same.
+	* CodeAttributeArgumentCollection.cs: Same.
+
+2005-11-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
 	* CodeEventReferenceExpression.cs: Set eol-style to native.
 	* CodeArgumentReferenceExpression.cs: Set eol-style to native.
 	* CodeParameterDeclarationExpressionCollection.cs: Set eol-style to 

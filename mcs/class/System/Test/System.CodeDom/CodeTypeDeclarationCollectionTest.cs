@@ -156,21 +156,27 @@ namespace MonoTests.System.CodeDom {
 		{
 			CodeTypeDeclaration td1 = new CodeTypeDeclaration ();
 			CodeTypeDeclaration td2 = new CodeTypeDeclaration ();
+			CodeTypeDeclaration td3 = new CodeTypeDeclaration ();
 
 			CodeTypeDeclarationCollection coll1 = new CodeTypeDeclarationCollection ();
 			coll1.Add (td1);
 			coll1.Add (td2);
 
-			CodeTypeDeclarationCollection coll2 = new CodeTypeDeclarationCollection(coll1);
-			Assert.AreEqual (2, coll2.Count, "#1");
-			Assert.AreEqual (0, coll2.IndexOf (td1), "#2");
-			Assert.AreEqual (1, coll2.IndexOf (td2), "#3");
+			CodeTypeDeclarationCollection coll2 = new CodeTypeDeclarationCollection ();
+			coll2.Add (td3);
+			coll2.AddRange (coll1);
+			Assert.AreEqual (3, coll2.Count, "#1");
+			Assert.AreEqual (1, coll2.IndexOf (td1), "#2");
+			Assert.AreEqual (2, coll2.IndexOf (td2), "#3");
+			Assert.AreEqual (0, coll2.IndexOf (td3), "#4");
 
-			CodeTypeDeclarationCollection coll3 = new CodeTypeDeclarationCollection(
-				new CodeTypeDeclaration[] {td1, td2});
-			Assert.AreEqual (2, coll2.Count, "#4");
-			Assert.AreEqual (0, coll2.IndexOf (td1), "#5");
-			Assert.AreEqual (1, coll2.IndexOf (td2), "#6");
+			CodeTypeDeclarationCollection coll3 = new CodeTypeDeclarationCollection ();
+			coll3.Add (td3);
+			coll3.AddRange (new CodeTypeDeclaration[] { td1, td2 });
+			Assert.AreEqual (3, coll2.Count, "#5");
+			Assert.AreEqual (1, coll2.IndexOf (td1), "#6");
+			Assert.AreEqual (2, coll2.IndexOf (td2), "#7");
+			Assert.AreEqual (0, coll2.IndexOf (td3), "#8");
 		}
 
 		[Test]
@@ -205,6 +211,40 @@ namespace MonoTests.System.CodeDom {
 			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
 			Assert.AreEqual (2, coll.Count, "#2");
+		}
+
+		[Test]
+		public void Remove ()
+		{
+			CodeTypeDeclaration td1 = new CodeTypeDeclaration ();
+			CodeTypeDeclaration td2 = new CodeTypeDeclaration ();
+
+			CodeTypeDeclarationCollection coll = new CodeTypeDeclarationCollection ();
+			coll.Add (td1);
+			coll.Add (td2);
+			Assert.AreEqual (2, coll.Count, "#1");
+			Assert.AreEqual (0, coll.IndexOf (td1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (td2), "#3");
+			coll.Remove (td1);
+			Assert.AreEqual (1, coll.Count, "#4");
+			Assert.AreEqual (-1, coll.IndexOf (td1), "#5");
+			Assert.AreEqual (0, coll.IndexOf (td2), "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Remove_NotInCollection ()
+		{
+			CodeTypeDeclarationCollection coll = new CodeTypeDeclarationCollection ();
+			coll.Remove (new CodeTypeDeclaration ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Remove_Null ()
+		{
+			CodeTypeDeclarationCollection coll = new CodeTypeDeclarationCollection ();
+			coll.Remove ((CodeTypeDeclaration) null);
 		}
 	}
 }

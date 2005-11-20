@@ -109,12 +109,7 @@ namespace System.CodeDom
 
 		public void Remove (CodeDirective value)
 		{
-			int index = IndexOf (value);
-			if (index < 0) {
-				string msg = Locale.GetText ("The specified object is not found in the collection");
-				throw new ArgumentException (msg, "value");
-			}
-			RemoveAt (index);
+			List.Remove (value);
 		}
 	}
 }

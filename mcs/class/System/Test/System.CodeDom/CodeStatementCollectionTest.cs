@@ -156,21 +156,27 @@ namespace MonoTests.System.CodeDom {
 		{
 			CodeStatement cs1 = new CodeStatement ();
 			CodeStatement cs2 = new CodeStatement ();
+			CodeStatement cs3 = new CodeStatement ();
 
 			CodeStatementCollection coll1 = new CodeStatementCollection ();
 			coll1.Add (cs1);
 			coll1.Add (cs2);
 
-			CodeStatementCollection coll2 = new CodeStatementCollection(coll1);
-			Assert.AreEqual (2, coll2.Count, "#1");
-			Assert.AreEqual (0, coll2.IndexOf (cs1), "#2");
-			Assert.AreEqual (1, coll2.IndexOf (cs2), "#3");
+			CodeStatementCollection coll2 = new CodeStatementCollection ();
+			coll2.Add (cs3);
+			coll2.AddRange (coll1);
+			Assert.AreEqual (3, coll2.Count, "#1");
+			Assert.AreEqual (1, coll2.IndexOf (cs1), "#2");
+			Assert.AreEqual (2, coll2.IndexOf (cs2), "#3");
+			Assert.AreEqual (0, coll2.IndexOf (cs3), "#4");
 
-			CodeStatementCollection coll3 = new CodeStatementCollection(
-				new CodeStatement[] {cs1, cs2});
-			Assert.AreEqual (2, coll2.Count, "#4");
-			Assert.AreEqual (0, coll2.IndexOf (cs1), "#5");
-			Assert.AreEqual (1, coll2.IndexOf (cs2), "#6");
+			CodeStatementCollection coll3 = new CodeStatementCollection ();
+			coll3.Add (cs3);
+			coll3.AddRange (new CodeStatement[] { cs1, cs2 });
+			Assert.AreEqual (3, coll2.Count, "#5");
+			Assert.AreEqual (1, coll2.IndexOf (cs1), "#6");
+			Assert.AreEqual (2, coll2.IndexOf (cs2), "#7");
+			Assert.AreEqual (0, coll2.IndexOf (cs3), "#8");
 		}
 
 		[Test]
@@ -205,6 +211,40 @@ namespace MonoTests.System.CodeDom {
 			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
 			Assert.AreEqual (2, coll.Count, "#2");
+		}
+
+		[Test]
+		public void Remove ()
+		{
+			CodeStatement cs1 = new CodeStatement ();
+			CodeStatement cs2 = new CodeStatement ();
+
+			CodeStatementCollection coll = new CodeStatementCollection ();
+			coll.Add (cs1);
+			coll.Add (cs2);
+			Assert.AreEqual (2, coll.Count, "#1");
+			Assert.AreEqual (0, coll.IndexOf (cs1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (cs2), "#3");
+			coll.Remove (cs1);
+			Assert.AreEqual (1, coll.Count, "#4");
+			Assert.AreEqual (-1, coll.IndexOf (cs1), "#5");
+			Assert.AreEqual (0, coll.IndexOf (cs2), "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Remove_NotInCollection ()
+		{
+			CodeStatementCollection coll = new CodeStatementCollection ();
+			coll.Remove (new CodeStatement ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Remove_Null ()
+		{
+			CodeStatementCollection coll = new CodeStatementCollection ();
+			coll.Remove ((CodeStatement) null);
 		}
 	}
 }

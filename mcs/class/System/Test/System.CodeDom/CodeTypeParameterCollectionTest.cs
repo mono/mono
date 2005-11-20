@@ -157,21 +157,27 @@ namespace MonoTests.System.CodeDom {
 		{
 			CodeTypeParameter tp1 = new CodeTypeParameter ();
 			CodeTypeParameter tp2 = new CodeTypeParameter ();
+			CodeTypeParameter tp3 = new CodeTypeParameter ();
 
 			CodeTypeParameterCollection coll1 = new CodeTypeParameterCollection ();
 			coll1.Add (tp1);
 			coll1.Add (tp2);
 
-			CodeTypeParameterCollection coll2 = new CodeTypeParameterCollection(coll1);
-			Assert.AreEqual (2, coll2.Count, "#1");
-			Assert.AreEqual (0, coll2.IndexOf (tp1), "#2");
-			Assert.AreEqual (1, coll2.IndexOf (tp2), "#3");
+			CodeTypeParameterCollection coll2 = new CodeTypeParameterCollection ();
+			coll2.Add (tp3);
+			coll2.AddRange (coll1);
+			Assert.AreEqual (3, coll2.Count, "#1");
+			Assert.AreEqual (1, coll2.IndexOf (tp1), "#2");
+			Assert.AreEqual (2, coll2.IndexOf (tp2), "#3");
+			Assert.AreEqual (0, coll2.IndexOf (tp3), "#4");
 
-			CodeTypeParameterCollection coll3 = new CodeTypeParameterCollection(
-				new CodeTypeParameter[] {tp1, tp2});
-			Assert.AreEqual (2, coll2.Count, "#4");
-			Assert.AreEqual (0, coll2.IndexOf (tp1), "#5");
-			Assert.AreEqual (1, coll2.IndexOf (tp2), "#6");
+			CodeTypeParameterCollection coll3 = new CodeTypeParameterCollection ();
+			coll3.Add (tp3);
+			coll3.AddRange (new CodeTypeParameter[] { tp1, tp2 });
+			Assert.AreEqual (3, coll2.Count, "#5");
+			Assert.AreEqual (1, coll2.IndexOf (tp1), "#6");
+			Assert.AreEqual (2, coll2.IndexOf (tp2), "#7");
+			Assert.AreEqual (0, coll2.IndexOf (tp3), "#8");
 		}
 
 		[Test]
@@ -198,7 +204,40 @@ namespace MonoTests.System.CodeDom {
 			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
 			Assert.AreEqual (2, coll.Count, "#2");
+		}
 
+		[Test]
+		public void Remove ()
+		{
+			CodeTypeParameter ctp1 = new CodeTypeParameter ();
+			CodeTypeParameter ctp2 = new CodeTypeParameter ();
+
+			CodeTypeParameterCollection coll = new CodeTypeParameterCollection ();
+			coll.Add (ctp1);
+			coll.Add (ctp2);
+			Assert.AreEqual (2, coll.Count, "#1");
+			Assert.AreEqual (0, coll.IndexOf (ctp1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (ctp2), "#3");
+			coll.Remove (ctp1);
+			Assert.AreEqual (1, coll.Count, "#4");
+			Assert.AreEqual (-1, coll.IndexOf (ctp1), "#5");
+			Assert.AreEqual (0, coll.IndexOf (ctp2), "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Remove_NotInCollection ()
+		{
+			CodeTypeParameterCollection coll = new CodeTypeParameterCollection ();
+			coll.Remove (new CodeTypeParameter ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Remove_Null ()
+		{
+			CodeTypeParameterCollection coll = new CodeTypeParameterCollection ();
+			coll.Remove ((CodeTypeParameter) null);
 		}
 	}
 }

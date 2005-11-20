@@ -155,21 +155,27 @@ namespace MonoTests.System.CodeDom {
 		{
 			CodeParameterDeclarationExpression param1 = new CodeParameterDeclarationExpression ();
 			CodeParameterDeclarationExpression param2 = new CodeParameterDeclarationExpression ();
+			CodeParameterDeclarationExpression param3 = new CodeParameterDeclarationExpression ();
 
 			CodeParameterDeclarationExpressionCollection coll1 = new CodeParameterDeclarationExpressionCollection ();
 			coll1.Add (param1);
 			coll1.Add (param2);
 
-			CodeParameterDeclarationExpressionCollection coll2 = new CodeParameterDeclarationExpressionCollection(coll1);
-			Assert.AreEqual (2, coll2.Count, "#1");
-			Assert.AreEqual (0, coll2.IndexOf (param1), "#2");
-			Assert.AreEqual (1, coll2.IndexOf (param2), "#3");
+			CodeParameterDeclarationExpressionCollection coll2 = new CodeParameterDeclarationExpressionCollection ();
+			coll2.Add (param3);
+			coll2.AddRange (coll1);
+			Assert.AreEqual (3, coll2.Count, "#1");
+			Assert.AreEqual (1, coll2.IndexOf (param1), "#2");
+			Assert.AreEqual (2, coll2.IndexOf (param2), "#3");
+			Assert.AreEqual (0, coll2.IndexOf (param3), "#4");
 
-			CodeParameterDeclarationExpressionCollection coll3 = new CodeParameterDeclarationExpressionCollection(
-				new CodeParameterDeclarationExpression[] {param1, param2});
-			Assert.AreEqual (2, coll2.Count, "#4");
-			Assert.AreEqual (0, coll2.IndexOf (param1), "#5");
-			Assert.AreEqual (1, coll2.IndexOf (param2), "#6");
+			CodeParameterDeclarationExpressionCollection coll3 = new CodeParameterDeclarationExpressionCollection ();
+			coll3.Add (param3);
+			coll3.AddRange (new CodeParameterDeclarationExpression[] { param1, param2 });
+			Assert.AreEqual (3, coll2.Count, "#5");
+			Assert.AreEqual (1, coll2.IndexOf (param1), "#6");
+			Assert.AreEqual (2, coll2.IndexOf (param2), "#7");
+			Assert.AreEqual (0, coll2.IndexOf (param3), "#8");
 		}
 
 		[Test]
@@ -182,10 +188,62 @@ namespace MonoTests.System.CodeDom {
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
+		public void AddRange_Null_Item ()
+		{
+			CodeParameterDeclarationExpressionCollection coll = new CodeParameterDeclarationExpressionCollection ();
+			coll.AddRange (new CodeParameterDeclarationExpression[] { null });
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
 		public void AddRange_Null_Collection ()
 		{
 			CodeParameterDeclarationExpressionCollection coll = new CodeParameterDeclarationExpressionCollection ();
 			coll.AddRange ((CodeParameterDeclarationExpressionCollection) null);
+		}
+
+		[Test]
+		public void AddRange_Self ()
+		{
+			CodeParameterDeclarationExpressionCollection coll = new CodeParameterDeclarationExpressionCollection ();
+			coll.Add (new CodeParameterDeclarationExpression ());
+			Assert.AreEqual (1, coll.Count, "#1");
+			coll.AddRange (coll);
+			Assert.AreEqual (2, coll.Count, "#2");
+		}
+
+		[Test]
+		public void Remove ()
+		{
+			CodeParameterDeclarationExpression cpde1 = new CodeParameterDeclarationExpression ();
+			CodeParameterDeclarationExpression cpde2 = new CodeParameterDeclarationExpression ();
+
+			CodeParameterDeclarationExpressionCollection coll = new CodeParameterDeclarationExpressionCollection ();
+			coll.Add (cpde1);
+			coll.Add (cpde2);
+			Assert.AreEqual (2, coll.Count, "#1");
+			Assert.AreEqual (0, coll.IndexOf (cpde1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (cpde2), "#3");
+			coll.Remove (cpde1);
+			Assert.AreEqual (1, coll.Count, "#4");
+			Assert.AreEqual (-1, coll.IndexOf (cpde1), "#5");
+			Assert.AreEqual (0, coll.IndexOf (cpde2), "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Remove_NotInCollection ()
+		{
+			CodeParameterDeclarationExpressionCollection coll = new CodeParameterDeclarationExpressionCollection ();
+			coll.Remove (new CodeParameterDeclarationExpression ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Remove_Null ()
+		{
+			CodeParameterDeclarationExpressionCollection coll = new CodeParameterDeclarationExpressionCollection ();
+			coll.Remove ((CodeParameterDeclarationExpression) null);
 		}
 	}
 }

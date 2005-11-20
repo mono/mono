@@ -156,21 +156,27 @@ namespace MonoTests.System.CodeDom {
 		{
 			CodeNamespace ns1 = new CodeNamespace ();
 			CodeNamespace ns2 = new CodeNamespace ();
+			CodeNamespace ns3 = new CodeNamespace ();
 
 			CodeNamespaceCollection coll1 = new CodeNamespaceCollection ();
 			coll1.Add (ns1);
 			coll1.Add (ns2);
 
-			CodeNamespaceCollection coll2 = new CodeNamespaceCollection(coll1);
-			Assert.AreEqual (2, coll2.Count, "#1");
-			Assert.AreEqual (0, coll2.IndexOf (ns1), "#2");
-			Assert.AreEqual (1, coll2.IndexOf (ns2), "#3");
+			CodeNamespaceCollection coll2 = new CodeNamespaceCollection ();
+			coll2.Add (ns3);
+			coll2.AddRange (coll1);
+			Assert.AreEqual (3, coll2.Count, "#1");
+			Assert.AreEqual (1, coll2.IndexOf (ns1), "#2");
+			Assert.AreEqual (2, coll2.IndexOf (ns2), "#3");
+			Assert.AreEqual (0, coll2.IndexOf (ns3), "#4");
 
-			CodeNamespaceCollection coll3 = new CodeNamespaceCollection(
-				new CodeNamespace[] {ns1, ns2});
-			Assert.AreEqual (2, coll2.Count, "#4");
-			Assert.AreEqual (0, coll2.IndexOf (ns1), "#5");
-			Assert.AreEqual (1, coll2.IndexOf (ns2), "#6");
+			CodeNamespaceCollection coll3 = new CodeNamespaceCollection ();
+			coll3.Add (ns3);
+			coll3.AddRange (new CodeNamespace[] { ns1, ns2 });
+			Assert.AreEqual (3, coll2.Count, "#5");
+			Assert.AreEqual (1, coll2.IndexOf (ns1), "#6");
+			Assert.AreEqual (2, coll2.IndexOf (ns2), "#7");
+			Assert.AreEqual (0, coll2.IndexOf (ns3), "#8");
 		}
 
 		[Test]
@@ -205,6 +211,40 @@ namespace MonoTests.System.CodeDom {
 			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
 			Assert.AreEqual (2, coll.Count, "#2");
+		}
+
+		[Test]
+		public void Remove ()
+		{
+			CodeNamespace cns1 = new CodeNamespace ();
+			CodeNamespace cns2 = new CodeNamespace ();
+
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			coll.Add (cns1);
+			coll.Add (cns2);
+			Assert.AreEqual (2, coll.Count, "#1");
+			Assert.AreEqual (0, coll.IndexOf (cns1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (cns2), "#3");
+			coll.Remove (cns1);
+			Assert.AreEqual (1, coll.Count, "#4");
+			Assert.AreEqual (-1, coll.IndexOf (cns1), "#5");
+			Assert.AreEqual (0, coll.IndexOf (cns2), "#6");
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void Remove_NotInCollection ()
+		{
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			coll.Remove (new CodeNamespace ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Remove_Null ()
+		{
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			coll.Remove ((CodeNamespace) null);
 		}
 	}
 }
