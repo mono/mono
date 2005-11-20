@@ -1,5 +1,11 @@
 2005-11-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c (mono_arch_emit_exceptions): Optimize size of exception
+	throwing code.
+
+	 * mini-ia64.c: Add support for the throw->branch exception 
+	optimization.	
+
 	* driver.c (DEFAULT_OPTIMIZATIONS): Add MONO_OPT_EXCEPTION.
 
 2005-11-18  Massimiliano Mantione  <massi@ximian.com>
