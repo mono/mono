@@ -1,5 +1,8 @@
 2005-11-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ia64.c exceptions-ia64.c: Simplify the way filters/finally
+	handlers are called.
+
 	* mini-ia64.c (mono_arch_emit_exceptions): Optimize size of exception
 	throwing code.
 
