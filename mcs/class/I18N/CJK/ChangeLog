@@ -1,3 +1,8 @@
+2005-11-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CP949.cs : UHC level 2 base number is wrong.
+	  Fixed bug #76760 Patch by Hye-Shik Chang.
+
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* GB18030Encoding.cs : check GB2312 first, and then check GB18030.

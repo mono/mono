@@ -172,7 +172,7 @@ namespace I18N.CJK
                     else
                         c1 = (char)0;
                 } else if (useUHC && lastByte <= 0xC6 && b < 0xa1) { // UHC Level 2
-                    int ord = 14532 + (lastByte - 0x81) * 84;
+                    int ord = 14532 + (lastByte - 0xA1) * 84;
 
                     if (b >= 0x41 && b <= 0x5A)
                         ord += b - 0x41;
