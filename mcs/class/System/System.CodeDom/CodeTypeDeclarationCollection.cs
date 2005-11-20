@@ -78,12 +78,25 @@ namespace System.CodeDom
 
 		public void AddRange (CodeTypeDeclaration [] value)
 		{
-			InnerList.AddRange (value);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			for (int i = 0; i < value.Length; i++) {
+				Add (value[i]);
+			}
 		}
 
 		public void AddRange (CodeTypeDeclarationCollection value)
 		{
-			InnerList.AddRange (value);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			int count = value.Count;
+			for (int i = 0; i < count; i++) {
+				Add (value[i]);
+			}
 		}
 
 		public bool Contains( CodeTypeDeclaration value )

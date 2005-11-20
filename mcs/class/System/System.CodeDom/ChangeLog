@@ -1,3 +1,27 @@
+2005-11-19  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeCatchClauseCollection.cs: Added null check to AddRange overloads
+	and use for loop to add elements.
+	* CodeAttributeDeclarationCollection.cs: Added null check to AddRange
+	overloads and use for loop to add elements.
+	* CodeTypeMemberCollection.cs: Added null check to AddRange overloads
+	and use for loop to add elements.
+	* CodeTypeDeclarationCollection.cs: Added null check to AddRange
+	overloads and use for loop to add elements.
+	* CodeNamespaceImportCollection.cs: Added null check to Add and perform
+	case-insensitive check on namespace to avoid duplicate namespace 
+	imports. Added null check to AddRange method.
+	* CodeNamespaceCollection.cs: Added null check to AddRange overloads
+	and use for loop to add elements.
+	* CodeCommentStatementCollection.cs: Added null check to AddRange
+	overloads and use for loop to add elements.
+	* CodeAttributeArgumentCollection.cs: Added null check to AddRange
+	overloads and use for loop to add elements.
+	* CodeDirectiveCollection.cs: Added null check to AddRange overloads
+	and use for loop to add elements.
+	* CodeTypeParameterCollection.cs: Added null check to AddRange 
+	overloads and use for loop to add elements.
+
 2005-11-08  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeExpressionCollection.cs: Fixed OutOfMemoryException when

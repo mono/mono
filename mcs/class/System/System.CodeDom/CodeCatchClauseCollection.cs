@@ -58,14 +58,14 @@ namespace System.CodeDom
 		//
 		// Properties
 		//
-                public CodeCatchClause this[int index] {
-                        get {
-                                return (CodeCatchClause)List[index];
-                        }
+		public CodeCatchClause this[int index] {
+			get {
+				return (CodeCatchClause)List[index];
+			}
 			set {
 				List[index] = value;
 			}
-                }
+		}
 
 		//
 		// Methods
@@ -77,12 +77,25 @@ namespace System.CodeDom
 
 		public void AddRange (CodeCatchClause [] value)
 		{
-			InnerList.AddRange (value);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			for (int i = 0; i < value.Length; i++) {
+				Add (value[i]);
+			}
 		}
 
 		public void AddRange (CodeCatchClauseCollection value )
 		{
-			InnerList.AddRange (value);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			int count = value.Count;
+			for (int i = 0; i < count; i++) {
+				Add (value[i]);
+			}
 		}
 
 		public bool Contains( CodeCatchClause value )

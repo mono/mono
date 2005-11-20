@@ -64,20 +64,25 @@ namespace System.CodeDom
 
 		public void AddRange (CodeTypeParameter[] value )
 		{
-			if (value == null)
-				return;
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
 
-			foreach (object o in value)
-				List.Add (o);
+			foreach (CodeTypeParameter ctp in value) {
+				Add (ctp);
+			}
 		}
 
 		public void AddRange (CodeTypeParameterCollection value)
 		{
-			if (value == null)
-				return;
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
 
-			foreach (object o in value)
-				List.Add (o);
+			int count = value.Count;
+			for (int i = 0; i < count; i++) {
+				Add (value[i]);
+			}
 		}
 
 		public bool Contains (CodeTypeParameter value)

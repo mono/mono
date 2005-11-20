@@ -63,27 +63,45 @@ namespace System.CodeDom
 			}
 		}
 
-                public CodeNamespaceImport this [int index] {
-                        get {
-                                return (CodeNamespaceImport)namespaceImports[index];
-                        }
+		public CodeNamespaceImport this [int index] {
+			get {
+				return (CodeNamespaceImport)namespaceImports[index];
+			}
 			set {
 				namespaceImports[index] = value;
 			}
-                }
+		}
 
 		//
 		// Methods
 		//
 		public void Add (CodeNamespaceImport value)
 		{
+			if (value == null) {
+				throw new NullReferenceException ();
+			}
+
+			// perform case-insensitive check to see if the namespace of the 
+			// entry to add is not already in the collection
+			foreach (CodeNamespaceImport import in this) {
+				if (string.Compare(import.Namespace, value.Namespace, true) == 0) {
+					// skip duplicate namespaces
+					return;
+				}
+			}
+
 			namespaceImports.Add (value);
 		}
 
 		public void AddRange (CodeNamespaceImport [] value)
 		{
-			foreach (CodeNamespaceImport elem in value) 
-				namespaceImports.Add (elem);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			foreach (CodeNamespaceImport elem in value) {
+				Add (elem);
+			}
 		}
 
 		public void Clear ()

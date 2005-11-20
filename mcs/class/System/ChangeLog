@@ -1,3 +1,13 @@
+2005-11-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* System_test.dll.sources: Added CodeNamespaceImportCollectionTest.cs,
+	CodeNamespaceCollectionTest.cs, CodeTypeDeclarationCollectionTest.cs,
+	CodeTypeMemberCollectionTest.cs, CodeTypeParameterCollectionTest.cs,
+	CodeAttributeArgumentCollectionTest.cs, CodeDirectiveCollectionTest.cs,
+	CodeAttributeDeclarationCollectionTest.cs, 
+	CodeCatchClauseCollectionTest.cs, 
+	CodeCommentStatementCollectionTest.cs.
+
 2005-11-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* System_test.dll.sources: Add Test/System.Collections.Generic/SortedListTest.cs.

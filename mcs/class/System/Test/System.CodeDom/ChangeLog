@@ -1,3 +1,27 @@
+2005-11-20  Gert Driesen  <drieseng@users.sourceforge.net>
+
+	* CodeTypeParameterCollectionTest.cs: Added tests for ctors, and
+	Add/AddRange/Insert methods.
+	* CodeCatchClauseCollectionTest.cs: Added tests for ctors, and
+	Add/AddRange/Insert methods.
+	* CodeStatementCollectionTest.cs: Added AddRange test for null item.
+	* CodeTypeMemberCollectionTest.cs: Added tests for ctors, and
+	Add/AddRange/Insert methods.
+	* CodeCommentStatementCollectionTest.cs: Added tests for ctors, and
+	Add/AddRange/Insert methods.
+	* CodeAttributeArgumentCollectionTest.cs: Added tests for ctors, and
+	Add/AddRange/Insert methods.
+	* CodeAttributeDeclarationCollectionTest.cs: Added tests for ctors,
+	and Add/AddRange/Insert methods.
+	* CodeDirectiveCollectionTest.cs: Added tests for ctors, and
+	Add/AddRange/Insert methods.
+	* CodeTypeDeclarationCollectionTest.cs: Added tests for ctors, and
+	Add/AddRange/Insert methods.
+	* CodeNamespaceImportCollectionTest.cs: Added tests for ctor, Add and
+	AddRange methods.
+	* CodeNamespaceCollectionTest.cs: Added tests for ctors, and
+	Add/AddRange/Insert methods.
+
 2005-11-09  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* CodeExpressionCollectionTest.cs: Fixed test case for AddRange_Self

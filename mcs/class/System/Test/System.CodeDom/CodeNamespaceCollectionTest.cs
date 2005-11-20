@@ -1,6 +1,6 @@
 //
-// CodeStatementCollectionTest.cs 
-//	- Unit tests for System.CodeDom.CodeStatementCollection
+// CodeNamespaceCollectionTest.cs 
+//	- Unit tests for System.CodeDom.CodeNamespaceCollection
 //
 // Author:
 //	Gert Driesen  <drieseng@users.sourceforge.net>
@@ -35,11 +35,11 @@ using System.CodeDom;
 
 namespace MonoTests.System.CodeDom {
 	[TestFixture]
-	public class CodeStatementCollectionTest {
+	public class CodeNamespaceCollectionTest {
 		[Test]
 		public void Constructor0 ()
 		{
-			CodeStatementCollection coll = new CodeStatementCollection ();
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
 			Assert.IsFalse (((IList) coll).IsFixedSize, "#1");
 			Assert.IsFalse (((IList) coll).IsReadOnly, "#2");
 			Assert.AreEqual (0, coll.Count, "#3");
@@ -50,158 +50,158 @@ namespace MonoTests.System.CodeDom {
 		[Test]
 		public void Constructor1 ()
 		{
-			CodeStatement cs1 = new CodeStatement ();
-			CodeStatement cs2 = new CodeStatement ();
+			CodeNamespace ns1 = new CodeNamespace ();
+			CodeNamespace ns2 = new CodeNamespace ();
 
-			CodeStatement[] statements = new CodeStatement[] { cs1, cs2 };
-			CodeStatementCollection coll = new CodeStatementCollection (
-				statements);
+			CodeNamespace[] namespaces = new CodeNamespace[] { ns1, ns2 };
+			CodeNamespaceCollection coll = new CodeNamespaceCollection (
+				namespaces);
 
 			Assert.AreEqual (2, coll.Count, "#1");
-			Assert.AreEqual (0, coll.IndexOf (cs1), "#2");
-			Assert.AreEqual (1, coll.IndexOf (cs2), "#3");
+			Assert.AreEqual (0, coll.IndexOf (ns1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (ns2), "#3");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor1_NullItem ()
 		{
-			CodeStatement[] statements = new CodeStatement[] { 
-				new CodeStatement (), null };
+			CodeNamespace[] namespaces = new CodeNamespace[] { 
+				new CodeNamespace (), null };
 
-			CodeStatementCollection coll = new CodeStatementCollection (
-				statements);
+			CodeNamespaceCollection coll = new CodeNamespaceCollection (
+				namespaces);
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor1_Null () {
-			CodeStatementCollection coll = new CodeStatementCollection (
-				(CodeStatement[]) null);
+			CodeNamespaceCollection coll = new CodeNamespaceCollection (
+				(CodeNamespace[]) null);
 		}
 
 		[Test]
 		public void Constructor2 ()
 		{
-			CodeStatement cs1 = new CodeStatement ();
-			CodeStatement cs2 = new CodeStatement ();
+			CodeNamespace ns1 = new CodeNamespace ();
+			CodeNamespace ns2 = new CodeNamespace ();
 
-			CodeStatementCollection c = new CodeStatementCollection ();
-			c.Add (cs1);
-			c.Add (cs2);
+			CodeNamespaceCollection c = new CodeNamespaceCollection ();
+			c.Add (ns1);
+			c.Add (ns2);
 
-			CodeStatementCollection coll = new CodeStatementCollection (c);
+			CodeNamespaceCollection coll = new CodeNamespaceCollection (c);
 			Assert.AreEqual (2, coll.Count, "#1");
-			Assert.AreEqual (0, coll.IndexOf (cs1), "#2");
-			Assert.AreEqual (1, coll.IndexOf (cs2), "#3");
+			Assert.AreEqual (0, coll.IndexOf (ns1), "#2");
+			Assert.AreEqual (1, coll.IndexOf (ns2), "#3");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Constructor2_Null ()
 		{
-			CodeStatementCollection coll = new CodeStatementCollection (
-				(CodeStatementCollection) null);
+			CodeNamespaceCollection coll = new CodeNamespaceCollection (
+				(CodeNamespaceCollection) null);
 		}
 
 		[Test]
 		public void Add ()
 		{
-			CodeStatement cs1 = new CodeStatement ();
-			CodeStatement cs2 = new CodeStatement ();
+			CodeNamespace ns1 = new CodeNamespace ();
+			CodeNamespace ns2 = new CodeNamespace ();
 
-			CodeStatementCollection coll = new CodeStatementCollection ();
-			Assert.AreEqual (0, coll.Add (cs1), "#1");
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			Assert.AreEqual (0, coll.Add (ns1), "#1");
 			Assert.AreEqual (1, coll.Count, "#2");
-			Assert.AreEqual (0, coll.IndexOf (cs1), "#3");
+			Assert.AreEqual (0, coll.IndexOf (ns1), "#3");
 
-			Assert.AreEqual (1, coll.Add (cs2), "#4");
+			Assert.AreEqual (1, coll.Add (ns2), "#4");
 			Assert.AreEqual (2, coll.Count, "#5");
-			Assert.AreEqual (1, coll.IndexOf (cs2), "#6");
+			Assert.AreEqual (1, coll.IndexOf (ns2), "#6");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Add_Null () {
-			CodeStatementCollection coll = new CodeStatementCollection ();
-			coll.Add ((CodeStatement) null);
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			coll.Add ((CodeNamespace) null);
 		}
 
 		[Test]
 		public void Insert ()
 		{
-			CodeStatement cs1 = new CodeStatement ();
-			CodeStatement cs2 = new CodeStatement ();
+			CodeNamespace ns1 = new CodeNamespace ();
+			CodeNamespace ns2 = new CodeNamespace ();
 
-			CodeStatementCollection coll = new CodeStatementCollection ();
-			coll.Add (cs1);
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			coll.Add (ns1);
 			Assert.AreEqual (1, coll.Count, "#1");
-			Assert.AreEqual (0, coll.IndexOf (cs1), "#2");
-			coll.Insert (0, cs2);
+			Assert.AreEqual (0, coll.IndexOf (ns1), "#2");
+			coll.Insert (0, ns2);
 			Assert.AreEqual (2, coll.Count, "#3");
-			Assert.AreEqual (1, coll.IndexOf (cs1), "#4");
-			Assert.AreEqual (0, coll.IndexOf (cs2), "#5");
+			Assert.AreEqual (1, coll.IndexOf (ns1), "#4");
+			Assert.AreEqual (0, coll.IndexOf (ns2), "#5");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Insert_Null ()
 		{
-			CodeStatementCollection coll = new CodeStatementCollection ();
-			coll.Insert (0, (CodeStatement) null);
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			coll.Insert (0, (CodeNamespace) null);
 		}
 
 		[Test]
 		public void AddRange ()
 		{
-			CodeStatement cs1 = new CodeStatement ();
-			CodeStatement cs2 = new CodeStatement ();
+			CodeNamespace ns1 = new CodeNamespace ();
+			CodeNamespace ns2 = new CodeNamespace ();
 
-			CodeStatementCollection coll1 = new CodeStatementCollection ();
-			coll1.Add (cs1);
-			coll1.Add (cs2);
+			CodeNamespaceCollection coll1 = new CodeNamespaceCollection ();
+			coll1.Add (ns1);
+			coll1.Add (ns2);
 
-			CodeStatementCollection coll2 = new CodeStatementCollection(coll1);
+			CodeNamespaceCollection coll2 = new CodeNamespaceCollection(coll1);
 			Assert.AreEqual (2, coll2.Count, "#1");
-			Assert.AreEqual (0, coll2.IndexOf (cs1), "#2");
-			Assert.AreEqual (1, coll2.IndexOf (cs2), "#3");
+			Assert.AreEqual (0, coll2.IndexOf (ns1), "#2");
+			Assert.AreEqual (1, coll2.IndexOf (ns2), "#3");
 
-			CodeStatementCollection coll3 = new CodeStatementCollection(
-				new CodeStatement[] {cs1, cs2});
+			CodeNamespaceCollection coll3 = new CodeNamespaceCollection(
+				new CodeNamespace[] {ns1, ns2});
 			Assert.AreEqual (2, coll2.Count, "#4");
-			Assert.AreEqual (0, coll2.IndexOf (cs1), "#5");
-			Assert.AreEqual (1, coll2.IndexOf (cs2), "#6");
+			Assert.AreEqual (0, coll2.IndexOf (ns1), "#5");
+			Assert.AreEqual (1, coll2.IndexOf (ns2), "#6");
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void AddRange_Null_Array ()
 		{
-			CodeStatementCollection coll = new CodeStatementCollection ();
-			coll.AddRange ((CodeStatement[]) null);
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			coll.AddRange ((CodeNamespace[]) null);
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void AddRange_Null_Item ()
 		{
-			CodeStatementCollection coll = new CodeStatementCollection ();
-			coll.AddRange (new CodeStatement[] { null });
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			coll.AddRange (new CodeNamespace[] { null });
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void AddRange_Null_Collection ()
 		{
-			CodeStatementCollection coll = new CodeStatementCollection ();
-			coll.AddRange ((CodeStatementCollection) null);
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			coll.AddRange ((CodeNamespaceCollection) null);
 		}
 
 		[Test]
 		public void AddRange_Self ()
 		{
-			CodeStatementCollection coll = new CodeStatementCollection ();
-			coll.Add (new CodeStatement ());
+			CodeNamespaceCollection coll = new CodeNamespaceCollection ();
+			coll.Add (new CodeNamespace ());
 			Assert.AreEqual (1, coll.Count, "#1");
 			coll.AddRange (coll);
 			Assert.AreEqual (2, coll.Count, "#2");

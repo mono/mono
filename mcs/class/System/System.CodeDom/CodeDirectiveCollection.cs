@@ -36,7 +36,7 @@ namespace System.CodeDom
 {
 	[Serializable]
 	[ComVisible (true), ClassInterface (ClassInterfaceType.AutoDispatch)]
-	public class CodeDirectiveCollection: System.Collections.CollectionBase	{
+	public class CodeDirectiveCollection: System.Collections.CollectionBase {
 
 		public CodeDirectiveCollection ()
 		{
@@ -64,16 +64,27 @@ namespace System.CodeDom
 			return List.Add (value);
 		}
 
-		public void AddRange (CodeDirective[] value )
+		public void AddRange (CodeDirective[] value)
 		{
-			foreach (CodeDirective cd in value)
-				Add (cd);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			for (int i = 0; i < value.Length; i++) {
+				Add (value[i]);
+			}
 		}
 		
 		public void AddRange (CodeDirectiveCollection value)
 		{
-			foreach (CodeDirective cd in value)
-				Add (cd);
+			if (value == null) {
+				throw new ArgumentNullException ("value");
+			}
+
+			int count = value.Count;
+			for (int i = 0; i < count; i++) {
+				Add (value[i]);
+			}
 		}
 
 		public bool Contains (CodeDirective value)
