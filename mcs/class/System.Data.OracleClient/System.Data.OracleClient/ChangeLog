@@ -1,3 +1,10 @@
+2005-11-21  Senganal T   <tsenganal@novell.com>
+
+	* OracleCommandBuilder.cs :
+		- ApplyParameterInfo - modified the args list
+		- GetParameterName (string) - added
+	Changes for ado.net 2.0 api compatibility 
+
 2005-04-06  Daniel Morgan <danielmorgan@verizon.net>
 
 	* OracleParameter.cs: implement IClonable.Clone() 
