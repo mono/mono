@@ -164,7 +164,7 @@ namespace System.Net {
 		[MonoTODO]
 		public static IPHostEntry GetHostEntry (string hostNameOrAddress)
 		{
-			if (address == null)
+			if (hostNameOrAddress == null)
 				throw new ArgumentNullException ("hostNameOrAddress");
 
 			return Resolve (hostNameOrAddress);
