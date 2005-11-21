@@ -4,12 +4,12 @@ MONO_POSIX := Mono.Posix
 MONO_SYMBOLWRITER := Mono.CompilerServices.SymbolWriter
 
 bootstrap_dirs := \
-	corlib 					\
+	corlib					\
 	System					\
 	System.XML				\
 	Mono.Security				\
 	System.Security				\
-	System.Configuration		\
+	System.Configuration			\
 	System					\
 	$(MONO_SYMBOLWRITER)
 
@@ -18,21 +18,19 @@ bootstrap_dirs := \
 basic_SUBDIRS := corlib System System.XML System
 
 net_1_1_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
-net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
+net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs) PEAPI
+
+net_1_1_java_SUBDIRS = \
+	System.Xml					\
+	System.Data					\
+	System.Drawing					\
+	Novell.Directory.Ldap				\
+	System.DirectoryServices			\
+	System.Runtime.Serialization.Formatters.Soap	\
+	System.Runtime.Remoting
 
 include ../build/rules.make
 
-ifeq (net_1_1_java, $(PROFILE))
-SUBDIRS = \
-	System.Xml	\
-	System.Data	\
-	System.Drawing	\
-	Novell.Directory.Ldap	\
-	System.DirectoryServices \
-	System.Runtime.Serialization.Formatters.Soap \
-	System.Runtime.Remoting
-
-else
 # For now, Mono.Security.Win32 is built on Linux too.
 # However, it isn't tested on Linux, since it depends on a Win32 dll.
 SUBDIRS = \
@@ -86,7 +84,7 @@ SUBDIRS = \
 	IBM.Data.DB2			\
 	Microsoft.JScript		\
 	FirebirdSql.Data.Firebird
-endif
+
 # Starting with Microsoft.Vsa, the libraries above weren't in the
 # Linux makefile.gnu before, but they build fine, so might as well
 # include them ...

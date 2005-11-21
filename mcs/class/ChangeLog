@@ -1,7 +1,15 @@
+2005-11-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (net_2_0_bootstrap_SUBDIRS): Add PEAPI.
+	(net_1_1_java_SUBDIRS): New.  Don't use 'ifeq ($(PROFILE))' to
+	define SUBDIRS.
+
 2005-11-15 Vlad Spivak <spivak@mainsoft.com>
+
 	* Makefile: define net_1_1_java profile subdirs
 
 2005-10-06  Chris Lahey  <clahey@ximian.com>
+
 	* Makefile (SUBDIRS): Compile Mono Posix before Mono SqliteClient.
 
 2005-06-14  Lluis Sanchez Gual <lluis@novell.com>

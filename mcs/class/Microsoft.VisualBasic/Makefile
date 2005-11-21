@@ -20,8 +20,14 @@ TXT_RES = Microsoft.VisualBasic.VBUtils.resources
 
 with_mono_path = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" 
 
-ilasm = $(topdir)/class/lib/net_1_1_bootstrap/ilasm.exe
-ILASM = MONO_PATH="$(topdir)/class/lib/net_1_1_bootstrap$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
+ifeq ($(PROFILE), default)
+bootstrap_profile = net_1_1_bootstrap
+else
+bootstrap_profile = $(PROFILE)_bootstrap
+endif
+
+ilasm = $(topdir)/class/lib/$(bootstrap_profile)/ilasm.exe
+ILASM = MONO_PATH="$(topdir)/class/lib/$(bootstrap_profile)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(RUNTIME) $(RUNTIME_FLAGS) $(ilasm)
 
 the_il = fixup/$(PROFILE)/Microsoft.VisualBasic.il
 
@@ -43,6 +49,7 @@ $(the_lib): $(the_il)
 	$(SN) $(SNFLAGS) $@ $(topdir)/class/mono.snk
 
 $(the_il): $(build_lib) fixup/fixup.pl
-	$(with_mono_path) $(ILDISASM) $< > fixup/$(PROFILE)/t1 || { rm -f fixup/$(PROFILE)/t1; exit 1; }
-	$(PERL) fixup/fixup.pl fixup/$(PROFILE)/t1 > fixup/$(PROFILE)/t2 && rm -f fixup/$(PROFILE)/t1
+	$(with_mono_path) $(ILDISASM) $< > fixup/$(PROFILE)/t1
+	$(PERL) fixup/fixup.pl fixup/$(PROFILE)/t1 > fixup/$(PROFILE)/t2
+	rm -f fixup/$(PROFILE)/t1
 	mv fixup/$(PROFILE)/t2 $@

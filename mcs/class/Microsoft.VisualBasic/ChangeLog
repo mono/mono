@@ -1,3 +1,10 @@
+2005-11-21  Raja R Harinath  <rharinath@novell.com>
+
+	* Makefile (bootstrap_profile): New.  Defines the bootstrap
+	profile associated with the current profile.
+	(ilasm, ILASM): Use it.
+	($(the_il)): Don't be too eager to delete temporary files.
+
 2005-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Microsoft.VisualBasic.dll.sources : removed StringsTest.cs (see
