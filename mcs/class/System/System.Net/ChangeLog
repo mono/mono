@@ -1,3 +1,7 @@
+2005-11-21 Senganal T   <tsenganal@novell.com>
+
+        * Dns.cs : added GetHostEntry() method for 2.0 api conformance
+
 2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpRequestHeader.cs: add missing values.

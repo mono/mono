@@ -49,7 +49,7 @@ namespace System.Data.Common {
 		#region Properties
 
 		[MonoTODO]	
-		public ConflictOptions ConflictDetection {
+		public ConflictOption ConflictOption {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}

@@ -1,12 +1,9 @@
-
-// System.Data.Common.DbTransaction.cs
+//
+// System.Data.ConflictOption.cs
 //
 // Author:
-//   Tim Coleman (tim@timcoleman.com)
+//   Senganal T
 //
-// Copyright (C) Tim Coleman, 2003
-//
-
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -30,53 +27,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 || TARGET_JVM
+#if NET_2_0
 
-namespace System.Data.Common {
-	public abstract class DbTransaction : MarshalByRefObject, IDbTransaction, IDisposable
+namespace System.Data {
+	public enum ConflictOption
 	{
-		#region Constructors
-
-		[MonoTODO]
-		protected DbTransaction ()
-		{
-		}
-
-		#endregion // Constructors
-
-		#region Properties
-
-		public DbConnection Connection {
-			get { return DbConnection; }
-		}
-
-		protected abstract DbConnection DbConnection { get; }
-
-		IDbConnection IDbTransaction.Connection {
-			get { return (IDbConnection) Connection; }
-		}
-
-		public abstract IsolationLevel IsolationLevel { get; }
-
-		#endregion // Properties
-
-		#region Methods
-
-		public abstract void Commit ();
-		public abstract void Rollback ();
-
-		public virtual void Dispose ()
-		{
-			Dispose (true);
-		}
-
-		protected virtual void Dispose (bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
-
-		#endregion // Methods
+		CompareAllSearchableValues,
+		CompareRowVersion,
+		OverwriteChanges
 	}
 }
 
-#endif
+#endif // NET_2_0

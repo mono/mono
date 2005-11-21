@@ -211,8 +211,10 @@ namespace System.Data.SqlClient {
 
 			return schemaTable;
 		}
-
-		private void Dispose (bool disposing) 
+#if NET_2_0
+		protected override
+#endif
+		void Dispose (bool disposing) 
 		{
 			if (!disposed) {
 				if (disposing) {
@@ -1026,7 +1028,7 @@ namespace System.Data.SqlClient {
                 }
 
                 [MonoTODO]
-                public override Type GetFieldProviderSpecificType (int position)
+                public override Type GetProviderSpecificFieldType (int position)
                 {
                         throw new NotImplementedException ();
                 }

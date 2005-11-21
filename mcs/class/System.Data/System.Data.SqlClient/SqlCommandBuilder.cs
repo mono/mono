@@ -528,13 +528,22 @@ namespace System.Data.SqlClient {
 
 #if NET_2_0
                 [MonoTODO]
-                protected override void ApplyParameterInfo (IDbDataParameter dbParameter, DataRow row)
+                protected override void ApplyParameterInfo (DbParameter dbParameter,
+							    DataRow row,
+							    StatementType statementType,
+							    bool whereClause)
                 {
                         throw new NotImplementedException ();
                 }
 
                 [MonoTODO]
                 protected override string GetParameterName (int position)
+                {
+                        throw new NotImplementedException ();                        
+                }
+
+                [MonoTODO]
+                protected override string GetParameterName (string parameterName)
                 {
                         throw new NotImplementedException ();                        
                 }
@@ -546,11 +555,6 @@ namespace System.Data.SqlClient {
                         throw new NotImplementedException ();                        
                 }
                 
-                [MonoTODO]
-                protected override DbProviderFactory ProviderFactory
-                {
-                        get {throw new NotImplementedException ();}
-                }
 #endif // NET_2_0
 		#endregion // Methods
 

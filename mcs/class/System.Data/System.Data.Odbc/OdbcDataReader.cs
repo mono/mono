@@ -806,26 +806,22 @@ namespace System.Data.Odbc
 			throw new NotImplementedException ();
 		}
 
-#if ONLY_1_1
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
 			GC.SuppressFinalize (this);
 		}
-#else
-		public override void Dispose ()
-		{
-			Dispose (true);
-			GC.SuppressFinalize (this);
-		}
-#endif
+
                 IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return new DbEnumerator (this);
 		}
 #endif // ONLY_1_1
 
-		private void Dispose (bool disposing)
+#if NET_2_0
+		protected override
+#endif
+		void Dispose (bool disposing)
 		{
 			if (disposed)
 				return;
@@ -1079,7 +1075,7 @@ namespace System.Data.Odbc
                 }
 
                 [MonoTODO]
-		public override Type GetFieldProviderSpecificType (int i)
+		public override Type GetProviderSpecificFieldType (int i)
                 {
 			throw new NotImplementedException ();
                 }

@@ -87,7 +87,7 @@ namespace System.Data.Odbc {
 		[OdbcDescription ("Used during Update for deleted rows in DataSet.")]
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OdbcCommand DeleteCommand {
+		public new OdbcCommand DeleteCommand {
 			get { return deleteCommand; }
 			set { deleteCommand = value; }
 		}
@@ -96,7 +96,7 @@ namespace System.Data.Odbc {
 		[OdbcDescription ("Used during Update for new rows in DataSet.")]
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OdbcCommand InsertCommand {
+		public new OdbcCommand InsertCommand {
 			get { return insertCommand; }
 			set { insertCommand = value; }
 		}
@@ -105,7 +105,7 @@ namespace System.Data.Odbc {
 		[OdbcDescription ("Used during Fill/FillSchema.")]
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OdbcCommand SelectCommand {
+		public new OdbcCommand SelectCommand {
 			get { return selectCommand; }
 			set { selectCommand = value; }
 		}
@@ -114,7 +114,7 @@ namespace System.Data.Odbc {
 		[OdbcDescription ("Used during Update for modified rows in DataSet.")]
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public OdbcCommand UpdateCommand {
+		public new OdbcCommand UpdateCommand {
 			get { return updateCommand; }
 			set { updateCommand = value; }
 		}

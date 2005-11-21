@@ -57,7 +57,12 @@ namespace System.Data.SqlClient
                         }
                 }
                 #endregion //Constructors
-                
+
+		[MonoTODO]
+		public override bool CanCreateDataSourceEnumerator {
+			get { throw new NotImplementedException ();}
+		}               
+ 
                 #region public overrides
                 public override DbCommand CreateCommand ()
                 {
@@ -91,7 +96,7 @@ namespace System.Data.SqlClient
                         return (DbParameter) new SqlParameter ();
                 }
                 
-                public  new DbProviderSupportedClasses SupportedClasses
+                public new DbProviderSupportedClasses SupportedClasses
                 {
                         get
                         {

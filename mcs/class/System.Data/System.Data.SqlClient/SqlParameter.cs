@@ -253,8 +253,8 @@ namespace System.Data.SqlClient {
 		public 
 #if NET_2_0
 		override
-#endif // NET_2_0
-	 int Offset {
+#endif
+	 	int Offset {
 			get { return offset; }
 			set { offset = value; }
 		}
@@ -393,6 +393,12 @@ namespace System.Data.SqlClient {
 //		public SqlCompareOptions CompareInfo{
 
 //#endif
+#if NET_2_0
+		public override bool SourceColumnNullMapping {
+			get { return false ; }
+			set { }
+		}
+#endif
 
 		#endregion // Properties
 

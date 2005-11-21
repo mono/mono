@@ -445,7 +445,10 @@ namespace System.Data.Odbc
                 
 #if NET_2_0
                 [MonoTODO]
-                protected override void ApplyParameterInfo (IDbDataParameter dbParameter, DataRow row)
+                protected override void ApplyParameterInfo (DbParameter dbParameter,
+							    DataRow row,
+							    StatementType statementType,
+							    bool whereClause)
                 {
                         throw new NotImplementedException ();
                 }
@@ -455,20 +458,19 @@ namespace System.Data.Odbc
                 {
                         throw new NotImplementedException ();                        
                 }
-                
 
+                [MonoTODO]
+                protected override string GetParameterName (string parameterName)
+                {
+                        throw new NotImplementedException ();                        
+                }
+                
                 [MonoTODO]
                 protected override string GetParameterPlaceholder (int position)
                 {
                         throw new NotImplementedException ();                        
                 }
                 
-                [MonoTODO]
-                protected override DbProviderFactory ProviderFactory
-                {
-                        get {throw new NotImplementedException ();}
-                }
-
                 [MonoTODO]
                 protected override void SetRowUpdatingHandler (DbDataAdapter adapter)
                 {

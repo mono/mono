@@ -44,7 +44,7 @@ namespace System.Data {
 
 		#region Methods
 #if NET_2_0
-		Type GetFieldProviderSpecificType (int i);
+		Type GetProviderSpecificFieldType (int i);
 		object GetProviderSpecificValue (int i);
 		int GetProviderSpecificValues (object[] values);
 #endif

@@ -1,3 +1,10 @@
+2005-11-21 Senganal T <tsenganal@novell.com>
+	
+	* DbParameterCollectionBase.cs 
+		- Marked CheckName method as virtual
+	* DbParameterBase.cs
+		- Marked Offset property and CopyTo method as virtual
+
 2005-05-29 Boris Kirzner <borisk@mainsoft.com>
 	* DbCommandBase.cs 
 		- Private members names changed.

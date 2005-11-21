@@ -8,6 +8,7 @@ System.Data/CommandBehavior.cs
 System.Data/CommandType.cs
 System.Data/ConnectionState.cs
 System.Data/ConflictOptions.cs
+System.Data/ConflictOption.cs
 System.Data/Constraint.cs
 System.Data/ConstraintCollection.cs
 System.Data/ConstraintConverter.cs
@@ -163,6 +164,7 @@ System.Data.Common/DbDataSourceEnumerator.cs
 System.Data.Common/DbDataUpdatableRecord.cs
 System.Data.Common/DbEnumerator.cs
 System.Data.Common/DbException.cs
+System.Data.Common/DbMetaDataCollectionNames.cs
 System.Data.Common/DbParameterCollection.cs
 System.Data.Common/DbParameter.cs
 System.Data.Common/DbProviderConfigurationHandler.cs

@@ -1,4 +1,12 @@
 2005-11-11  Senganal T <tsenganal@novell.com>
+	
+	* ConflictOption.cs (new file)
+		- Added ConflictOption Enumeration 
+	* DataTableReader.cs
+	* IDataRecord2.cs 
+		- GetProviderSpecificFieldType : Corrected the method name
+
+2005-11-11  Senganal T <tsenganal@novell.com>
 
 	* DataSet.cs : Added the SchemaSerializationMode Property for NET_2_0
 	compatibility.

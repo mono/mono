@@ -1,3 +1,15 @@
+2005-11-21  Senganal T  <tsenganal@novell.com>
+
+	* SqlClientFactory.cs
+	* SqlCommandBuilder.cs
+	* SqlParameterCollection.cs
+	* SqlDataReader.cs
+	* SqlDataAdapter.cs
+	* SqlParameter.cs
+	* SqlTransaction.cs
+
+	Added stubs and other changes for ADO.NET 2.0 compatibility
+	
 2005-11-12 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* SqlConnection.cs: don't throw NotImplementedException when using

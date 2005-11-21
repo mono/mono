@@ -105,8 +105,10 @@ namespace System.Data.SqlClient {
 			connection.Transaction = null;
 			isOpen = false;
 		}		
-
-		private void Dispose (bool disposing)
+#if NET_2_0
+		protected override
+#endif
+		void Dispose (bool disposing)
 		{
 			if (!disposed)  {
 				if (disposing) {

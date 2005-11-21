@@ -33,7 +33,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
 
-namespace System.Data {
+namespace System.Data.Common {
 	[Serializable]
 	public abstract class DbException : ExternalException
 	{

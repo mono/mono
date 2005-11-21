@@ -62,7 +62,7 @@ namespace System.Data.Common {
 		}
 
 		[MonoTODO]
-		public virtual ConflictOptions ConflictDetection {
+		public virtual ConflictOption ConflictOption {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
@@ -72,8 +72,6 @@ namespace System.Data.Common {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-
-		protected abstract DbProviderFactory ProviderFactory { get; }
 
 		[MonoTODO]
 		public virtual string QuotePrefix {
@@ -98,12 +96,15 @@ namespace System.Data.Common {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-
+		
 		#endregion // Properties
 
 		#region Methods
 
-		protected abstract void ApplyParameterInfo (IDbDataParameter p, DataRow row);
+		protected abstract void ApplyParameterInfo (DbParameter parameter, 
+							    DataRow row, 
+							    StatementType statementType, 
+							    bool whereClause);
 
 		[MonoTODO]
 		protected virtual void BuildCache (bool closeConnection, DataRow dataRow)
@@ -136,6 +137,12 @@ namespace System.Data.Common {
 		}
 
 		[MonoTODO]
+		public DbCommand GetDeleteCommand (bool option)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public DbCommand GetDeleteCommand (DataRow dataRow)
 		{
 			throw new NotImplementedException ();
@@ -148,12 +155,19 @@ namespace System.Data.Common {
 		}
 
 		[MonoTODO]
+		public DbCommand GetInsertCommand (bool option)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
 		public DbCommand GetInsertCommand (DataRow dataRow)
 		{
 			throw new NotImplementedException ();
 		}
 
 		protected abstract string GetParameterName (int parameterOrdinal);
+		protected abstract string GetParameterName (String parameterName);
 		protected abstract string GetParameterPlaceholder (int parameterOrdinal);
 
 		[MonoTODO]
@@ -164,6 +178,12 @@ namespace System.Data.Common {
 
 		[MonoTODO]
 		public DbCommand GetUpdateCommand ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public DbCommand GetUpdateCommand (bool option)
 		{
 			throw new NotImplementedException ();
 		}
@@ -200,6 +220,12 @@ namespace System.Data.Common {
 
 		[MonoTODO]
 		public virtual void ResolveObjectName (DbConnection connection, string objectType, string[] identifierParts)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		protected void RowUpdatingHandler (RowUpdatingEventArgs rowUpdatingEvent)
 		{
 			throw new NotImplementedException ();
 		}

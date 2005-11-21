@@ -478,6 +478,12 @@ namespace System.Data.Odbc
 		}
 
 #if NET_2_0
+		[MonoTODO]
+		public override bool SourceColumnNullMapping {
+			get {return false;}
+			set {}
+		}
+
                 [MonoTODO]
                 public override void PropertyChanging () 
                 {

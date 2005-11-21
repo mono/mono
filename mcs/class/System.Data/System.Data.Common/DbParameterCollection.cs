@@ -91,7 +91,9 @@ namespace System.Data.Common {
 
 #if NET_2_0
 		public abstract void AddRange (Array values);
-		protected abstract int CheckName (string parameterName);
+		protected abstract DbParameter GetParameter (String parameterName);
+		protected abstract void SetParameter (String parameterName, 
+						      DbParameter value);
 #endif
 
 		public abstract void Clear ();

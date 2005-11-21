@@ -39,19 +39,13 @@ using System.Collections;
 using System.Configuration;
 
 namespace System.Data.Common {
-	public sealed class DbProviderFactories
+	public static class DbProviderFactories
 	{
 		private static object configEntries = null; // DataSet
 
                 private const string CONFIG_SECTION_NAME        = "system.data";
                 private const string CONFIG_SEC_TABLE_NAME      = "DbProviderFactories";
                 
-		#region Constructors
-		private DbProviderFactories ()
-		{
-		}
-		#endregion Constructors
-
 		#region Methods
 
 		public static DbProviderFactory GetFactory (DataRow providerRow)

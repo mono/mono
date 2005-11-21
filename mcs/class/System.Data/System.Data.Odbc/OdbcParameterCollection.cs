@@ -444,7 +444,18 @@ namespace System.Data.Odbc
                 }
 
 
-
+#if NET_2_0
+		[MonoTODO]
+		protected override DbParameter GetParameter (string name)
+		{
+			throw new NotImplementedException ();
+		}
+		[MonoTODO]
+		protected override void SetParameter (string name, DbParameter value)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		#endregion // Methods
 
 	}

@@ -87,7 +87,10 @@ namespace System.Data.Odbc
 
 		#region Implementation of IDisposable
 
-		private void Dispose(bool disposing) {
+#if NET_2_0
+		protected override
+#endif
+		void Dispose(bool disposing) {
 			if (!disposed) {
 				if (disposing) {
 					Rollback();

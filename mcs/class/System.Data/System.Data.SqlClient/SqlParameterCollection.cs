@@ -159,15 +159,25 @@ namespace System.Data.SqlClient {
 		}
 
 #if NET_2_0
-		protected  DbParameter GetParameter (int index)
+		protected  override DbParameter GetParameter (int index)
 		{
 			throw new NotImplementedException();
 		}
 
-		 protected  void SetParameter (int index, DbParameter value)
+		protected override DbParameter GetParameter (string parameterName)
+		{
+			throw new NotImplementedException ();
+		}
+	
+		protected  override void SetParameter (int index, DbParameter value)
 		{
                         throw new NotImplementedException();
                 }
+		protected override void SetParameter (string parameterName, DbParameter value)
+		{
+                        throw new NotImplementedException();
+                }
+		/*public IEnumerator GetEnumerator ()
 		/*public IEnumerator GetEnumerator ()
 			 {
                         throw new NotImplementedException();

@@ -229,7 +229,7 @@ namespace System.Data {
                 }
 
                 [MonoTODO]
-                public override Type GetFieldProviderSpecificType (int i)
+                public override Type GetProviderSpecificFieldType (int i)
                 {
                         throw new NotImplementedException ();
                 }

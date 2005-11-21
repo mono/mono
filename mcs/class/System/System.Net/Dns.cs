@@ -160,6 +160,16 @@ namespace System.Net {
 			return (hostent_to_IPHostEntry (h_name, h_aliases, h_addrlist));
 		}
 
+#if NET_2_0
+		[MonoTODO]
+		public static IPHostEntry GetHostEntry (string hostNameOrAddress)
+		{
+			if (address == null)
+				throw new ArgumentNullException ("hostNameOrAddress");
+
+			return Resolve (hostNameOrAddress);
+		}
+#endif
 		public static IPHostEntry GetHostByName(string hostName) 
 		{
 			if (hostName == null)

@@ -54,7 +54,10 @@ namespace System.Data.Common {
 
 		#region Properties
 
-		public abstract DbProviderSupportedClasses SupportedClasses { get; }
+		[MonoTODO]
+		public virtual bool CanCreateDataSourceEnumerator { 
+			get {throw new NotImplementedException ();}
+		}
 		#endregion // Properties
 
 		#region Methods
@@ -113,7 +116,12 @@ namespace System.Data.Common {
 			throw new NotImplementedException ();
 		}
 
-
+		[MonoTODO]
+		public virtual DbConnectionStringBuilder CreateConnectionStringBuilder ()
+		{
+			throw new NotImplementedException ();
+		}
+		
 		#endregion // Methods
 	}
 }

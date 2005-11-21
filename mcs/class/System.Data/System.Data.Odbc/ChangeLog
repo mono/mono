@@ -1,3 +1,15 @@
+2005-11-21  Senganal T <tsenganal@novell.com>
+
+	* OdbcTransaction.cs
+	* OdbcCommandBuilder.cs
+	* OdbcParameterCollection.cs
+	* OdbcDataReader.cs
+	* OdbcFactory.cs
+	* OdbcDataAdapter.cs
+	* OdbcParameter.cs
+	
+	Added stubs and other changes for ADO.NET 2.0 compatibility
+
 2005-10-14  Senganal T <tsenganal@novell.com>
 
 	* OdbcColumn.cs : Changed the mapping of OdbcType.Char to string

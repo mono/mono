@@ -64,13 +64,21 @@ namespace System.Data.Common {
 		#region Methods
 
 		public abstract void Close ();
-		public abstract void Dispose ();
 		public abstract bool GetBoolean (int i);
 		public abstract byte GetByte (int i);
 		public abstract long GetBytes (int i, long fieldOffset, byte[] buffer, int bufferOffset, int length);
 		public abstract char GetChar (int i);
 		public abstract long GetChars (int i, long dataIndex, char[] buffer, int bufferIndex, int length);
-
+		public virtual void Dispose ()
+		{
+			Dispose (true);	
+		}
+		
+		[MonoTODO]
+		protected virtual void Dispose (bool disposing)
+		{
+			throw new NotImplementedException ();
+		}
 #if NET_2_0
 		[MonoTODO]
 		public DbDataReader GetData (int i)
@@ -84,9 +92,6 @@ namespace System.Data.Common {
 		public abstract decimal GetDecimal (int i);
 		public abstract double GetDouble (int i);
 		public abstract IEnumerator GetEnumerator ();
-#if NET_2_0
-		public abstract Type GetFieldProviderSpecificType (int i);
-#endif
 		public abstract Type GetFieldType (int i);
 		public abstract float GetFloat (int i);
 		public abstract Guid GetGuid (int i);
@@ -97,9 +102,30 @@ namespace System.Data.Common {
 		public abstract int GetOrdinal (string name);
 
 #if NET_2_0
-		public abstract object GetProviderSpecificValue (int i);
-		public abstract int GetProviderSpecificValues (object[] values);
-#endif
+		[MonoTODO]
+		public virtual Type GetProviderSpecificFieldType (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual object GetProviderSpecificValue (int i)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public virtual int GetProviderSpecificValues (object[] values)
+		{
+			throw new NotImplementedException ();
+		}
+	
+		[MonoTODO]
+		public virtual int GetDbDataReader (int ordinal)
+		{
+			throw new NotImplementedException ();
+		}
+#endif 
 
 		public abstract DataTable GetSchemaTable ();
 		public abstract string GetString (int i);

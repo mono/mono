@@ -105,7 +105,7 @@ namespace System.Data.ProviderBase {
 		}
 
 		[MonoTODO]
-		protected override int CheckName (string parameterName)
+		protected virtual int CheckName (string parameterName)
 		{
 			throw new NotImplementedException ();
 		}

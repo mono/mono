@@ -40,7 +40,11 @@ using System.Data;
 using System.Runtime.InteropServices;
 
 namespace System.Data.Common {
+#if NET_2_0
+	public abstract class DbDataAdapter : DataAdapter, IDbDataAdapter, IDataAdapter, ICloneable
+#else
 	public abstract class DbDataAdapter : DataAdapter, ICloneable
+#endif
 	{
 		#region Fields
 
@@ -77,9 +81,6 @@ namespace System.Data.Common {
 		}
 #endif
 
-		IDbCommand DeleteCommand {
-			get { return ((IDbDataAdapter) this).DeleteCommand; }
-		}
 
 #if NET_2_0
 		protected internal CommandBehavior FillCommandBehavior {
@@ -88,9 +89,6 @@ namespace System.Data.Common {
 		}
 #endif
 
-		IDbCommand InsertCommand {
-			get { return ((IDbDataAdapter) this).InsertCommand; }
-		}
 
 #if NET_2_0
 		[MonoTODO]
@@ -99,16 +97,59 @@ namespace System.Data.Common {
 			set { throw new NotImplementedException (); }
 		}
 
+		[MonoTODO]
 		protected virtual DbProviderFactory ProviderFactory {
 			get { throw new NotImplementedException (); }
 		}
-#endif
 
-		IDbCommand SelectCommand {
-			get { return ((IDbDataAdapter) this).SelectCommand; }
+		[MonoTODO]
+		IDbCommand IDbDataAdapter.SelectCommand {
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
-#if NET_2_0
+		[MonoTODO]
+		IDbCommand IDbDataAdapter.UpdateCommand{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO]
+		IDbCommand IDbDataAdapter.DeleteCommand{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO]
+		IDbCommand IDbDataAdapter.InsertCommand{
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+		
+		[MonoTODO]
+		public DbCommand SelectCommand {
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO]
+		public DbCommand DeleteCommand {
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO]
+		public DbCommand InsertCommand {
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
+		[MonoTODO]
+		public DbCommand UpdateCommand {
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
+		}
+
 		[MonoTODO]
 		public IDbTransaction Transaction {
 			get { throw new NotImplementedException (); }
@@ -120,11 +161,23 @@ namespace System.Data.Common {
 			get { throw new NotImplementedException (); }
 			set { throw new NotImplementedException (); }
 		}
-#endif
+#else
+		IDbCommand SelectCommand {
+			get { return ((IDbDataAdapter) this).SelectCommand; }
+		}
 
 		IDbCommand UpdateCommand {
 			get { return ((IDbDataAdapter) this).UpdateCommand; }
 		}
+
+		IDbCommand DeleteCommand {
+			get { return ((IDbDataAdapter) this).DeleteCommand; }
+		}
+
+		IDbCommand InsertCommand {
+			get { return ((IDbDataAdapter) this).InsertCommand; }
+		} 
+#endif
 
 		#endregion // Properties
 		

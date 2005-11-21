@@ -1,14 +1,9 @@
+// System.Data.Common.DbMetaDataCollectionNames
+//
+// Author: Senganal T	(tsenganal@novell.com)
+//
+// (C)  Senganal T 2005
 
-// System.Data.Common.DbTransaction.cs
-//
-// Author:
-//   Tim Coleman (tim@timcoleman.com)
-//
-// Copyright (C) Tim Coleman, 2003
-//
-
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,53 +25,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 || TARGET_JVM
-
+#if NET_2_0
 namespace System.Data.Common {
-	public abstract class DbTransaction : MarshalByRefObject, IDbTransaction, IDisposable
-	{
-		#region Constructors
+	[MonoTODO]
+	public static class DbMetaDataCollectionNames {
 
-		[MonoTODO]
-		protected DbTransaction ()
-		{
-		}
-
-		#endregion // Constructors
-
-		#region Properties
-
-		public DbConnection Connection {
-			get { return DbConnection; }
-		}
-
-		protected abstract DbConnection DbConnection { get; }
-
-		IDbConnection IDbTransaction.Connection {
-			get { return (IDbConnection) Connection; }
-		}
-
-		public abstract IsolationLevel IsolationLevel { get; }
-
-		#endregion // Properties
-
-		#region Methods
-
-		public abstract void Commit ();
-		public abstract void Rollback ();
-
-		public virtual void Dispose ()
-		{
-			Dispose (true);
-		}
-
-		protected virtual void Dispose (bool disposing)
-		{
-			throw new NotImplementedException ();
-		}
-
-		#endregion // Methods
+		public static readonly string DataSourceInformation = "DataSourceInformation";
+		public static readonly string DataTypes = "DataTypes" ;
+		public static readonly string MetaDataCollections = "MetaDataCollections";
+		public static readonly string ReservedWords = "ReservedWords";
+		public static readonly string Restrictions = "Restrictions";
 	}
 }
-
 #endif

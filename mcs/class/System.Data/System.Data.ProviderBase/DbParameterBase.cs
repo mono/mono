@@ -109,7 +109,7 @@ namespace System.Data.ProviderBase {
 		}
 
 		
-		public override int Offset {
+		public virtual int Offset {
 			get { return _offset; }
 			set { _offset = value; }			
 		}
@@ -193,7 +193,7 @@ namespace System.Data.ProviderBase {
 		#region Methods
 
 		[MonoTODO]
-		public override void CopyTo (DbParameter destination)
+		public virtual void CopyTo (DbParameter destination)
 		{
 			if (destination == null)
 				throw ExceptionHelper.ArgumentNull ("destination");

@@ -1,3 +1,19 @@
+2005-11-21  Senganal T <tsenganal@novell.com>
+
+	* DbDataAdapter.cs
+	* DbParameter.cs
+	* DbTransaction.cs
+	* DbTable.cs
+	* DbProviderFactories.cs
+	* DbException.cs
+	* DbProviderFactory.cs
+	* DbCommandBuilder.cs
+	* DbDataReader.cs
+	* DbParameterCollection.cs
+		- Added stubs and other changes for ADO.NET 2.0 compatibility.
+	* DbMetaDataCollectionNames.cs (new file)
+		- Added DbMetaDataCollectionNames Enumeration 
+
 2005-10-24  Konstantin Triger <kostat@mainsoft.com>
 
         * DataContainer.cs: removed extra type validation for object container

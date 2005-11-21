@@ -73,7 +73,7 @@ namespace System.Data.Odbc
                 #endregion //Constructors
 
                 #region Properties
-                public override DbProviderSupportedClasses SupportedClasses { 
+                public DbProviderSupportedClasses SupportedClasses { 
                         get {                                
                                 return (DbProviderSupportedClasses) (
                                                                      DbProviderSupportedClasses.DbConnection | 
@@ -87,7 +87,12 @@ namespace System.Data.Odbc
                                                                      );
                         }
                 }
-                
+
+		[MonoTODO]
+		public override bool CanCreateDataSourceEnumerator {
+			get { throw new NotImplementedException ();}
+		}               
+ 
                 #endregion //Properties
 
                 #region Methods
@@ -122,7 +127,7 @@ namespace System.Data.Odbc
                 {
                         return new OdbcParameter () as DbParameter;
                 }
-                
+
 //                 public override CodeAccessPermission CreatePermission(PermissionState state)
 //                 {
 //                         throw new NotImplementedException ();

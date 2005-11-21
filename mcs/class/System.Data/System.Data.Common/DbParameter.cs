@@ -54,7 +54,6 @@ namespace System.Data.Common {
 		public abstract int Size { get; set; }
 		public abstract object Value { get; set; }
 		public abstract bool IsNullable { get; set; }
-		public abstract int Offset { get; set; }
 		public abstract string SourceColumn { get; set; }
 		public abstract DataRowVersion SourceVersion { get; set; }
 
@@ -62,12 +61,10 @@ namespace System.Data.Common {
 
 		#region Methods
 
-		public abstract void CopyTo (DbParameter destination);
-
 #if NET_2_0
+		public abstract bool SourceColumnNullMapping { get; set; }
 		public abstract void ResetDbType ();
 #endif
-
 		#endregion // Methods
 	}
 }
