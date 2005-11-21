@@ -1,3 +1,20 @@
+2005-11-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CaptureCas.cs: New. CAS tests.
+	* CaptureCollectionCas.cs: New. CAS tests.
+	* GroupCas.cs: New. CAS tests.
+	* GroupCollectionCas.cs: New. CAS tests.
+	* GroupTest.cs: New. Unit tests.
+	* MatchCas.cs: New. CAS tests.
+	* MatchCollectionCas.cs: New. CAS tests.
+	* MatchTest.cs: New. Unit tests.
+	* RegexCas.cs: New. CAS tests.
+	* RegexCompilationInfoCas.cs: New. CAS tests.
+	* RegexCompilationInfoTest.cs: New. Unit tests.
+	* RegexRunnerCas.cs: New. CAS tests.
+	* RegexRunnerFactoryCas.cs: New. CAS tests.
+	* RegexTest.cs: Added test cases for new (2.0) CacheSize property.
+
 2005-07-08  Raja R Harinath  <rharinath@novell.com>
 
 	* RegexTest.cs (Matches1, Matches2, ..., Matches10): Combine into ...

@@ -18,6 +18,21 @@ namespace MonoTests.System.Text.RegularExpressions {
 	[TestFixture]
 	public class RegexTest {
 
+#if NET_2_0
+		private int cache_initial_value;
+
+		[TestFixtureSetUp]
+		public void FixtureSetUp ()
+		{
+			cache_initial_value = Regex.CacheSize;
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			Regex.CacheSize = cache_initial_value;
+		}
+#endif
 		[Test]
 		public void Simple ()
 		{
@@ -158,5 +173,28 @@ namespace MonoTests.System.Text.RegularExpressions {
 			foreach (MatchCollectionTrial t in trials)
 				runTrial (t);
 		}
+#if NET_2_0
+		[Test]
+		public void CacheSize ()
+		{
+			Assert.AreEqual (15, Regex.CacheSize, "CacheSize");
+			Regex.CacheSize = 0;
+			Regex.CacheSize = Int32.MaxValue;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void CacheSize_Negative ()
+		{
+			Regex.CacheSize = -1;
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void CacheSize_Min ()
+		{
+			Regex.CacheSize = Int32.MinValue;
+		}
+#endif
 	}
 }
