@@ -560,6 +560,9 @@ typedef struct {
 	
 	MonoDomain      *domain;
 
+	/* The current virtual register numbers */
+	guint32 max_ivreg, max_lvreg, max_fvreg;
+
 	unsigned char   *native_code;
 	guint            code_size;
 	guint            code_len;

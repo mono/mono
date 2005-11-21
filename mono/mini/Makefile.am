@@ -168,6 +168,7 @@ ia64_sources = \
 
 common_sources = \
 	mini.c		\
+	method-to-ir.c \
 	mini.h		\
 	trace.c		\
 	trace.h		\
