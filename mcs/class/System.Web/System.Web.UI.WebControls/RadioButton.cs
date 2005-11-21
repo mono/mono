@@ -66,7 +66,15 @@ namespace System.Web.UI.WebControls {
 		internal override string NameAttribute 
 		{
 			get {
-				return (GroupName);
+				string unique = UniqueID;
+				string gn = GroupName;
+				int colon = -1;
+				if (unique != null)
+					colon = unique.IndexOf (':');
+				if (colon == -1)
+					return gn;
+
+				return unique.Substring (0, colon + 1) + gn;
 			}
 		}
 

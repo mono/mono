@@ -1,3 +1,9 @@
+2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* CheckBox.cs: use the NameAttribute property for setting 'name'.
+	* RadioButton.cs: get a UniqueID based identifier for 'name'.
+	Fixes bug #76710.
+
 2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LinkButton.cs: don't output any javascript when the linkbutton is

@@ -347,7 +347,7 @@ namespace System.Web.UI.WebControls {
 			if (align == TextAlign.Right) {
 				w.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 				w.AddAttribute (HtmlTextWriterAttribute.Type, render_type);
-				w.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
+				w.AddAttribute (HtmlTextWriterAttribute.Name, NameAttribute);
 				if (Checked)
 					w.AddAttribute (HtmlTextWriterAttribute.Checked, "checked");
 
