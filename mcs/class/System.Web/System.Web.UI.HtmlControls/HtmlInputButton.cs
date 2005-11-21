@@ -27,6 +27,7 @@
 //
 
 using System.ComponentModel;
+using System.Globalization;
 using System.Security.Permissions;
 
 namespace System.Web.UI.HtmlControls {
@@ -140,9 +141,27 @@ namespace System.Web.UI.HtmlControls {
 				server_click (this, e);
 		}
 
+		bool RenderOnClick ()
+		{
+			if (Page == null || !CausesValidation)
+				return false;
+
+			CultureInfo inv = CultureInfo.InvariantCulture;
+			string input_type = Type;
+			if (0 == String.Compare (input_type, "submit", true, inv) &&
+				Page.Validators.Count > 0)
+				return true;
+
+			if (0 == String.Compare (input_type, "button", true, inv) &&
+				Events [ServerClickEvent] != null)
+				return true;
+
+			return false;
+		}
+
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-			if (CausesValidation && Page != null) {
+			if (RenderOnClick ()) {
 				string oc = null;
 				ClientScriptManager csm = new ClientScriptManager (Page);
 				if (Page.AreValidatorsUplevel ()) {

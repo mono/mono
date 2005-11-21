@@ -1,3 +1,9 @@
+2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlInputButton.cs: render the onclick attribute only when the
+	button is a 'submit' and no validators or when the button is a
+	'button' and there's a registered ServerClick event. Fixes bug #76781.
+
 2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlForm.cs: register the form and require viewstate hidden field to
