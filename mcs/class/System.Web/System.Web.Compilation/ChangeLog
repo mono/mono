@@ -1,3 +1,8 @@
+2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* AspParser.cs: don't change case for verbatim IDs.
+	Fixes bug #76657.
+
 2005-09-23 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspParser.cs: when processing verbatim input, throw if we reach EOF

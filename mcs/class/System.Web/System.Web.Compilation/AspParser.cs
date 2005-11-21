@@ -90,7 +90,7 @@ namespace System.Web.Compilation
 		public string VerbatimID {
 			set {
 				tokenizer.Verbatim = true;
-				verbatimID = value.ToUpper (CultureInfo.InvariantCulture);
+				verbatimID = value;
 			}
 		}
 		
@@ -364,8 +364,9 @@ namespace System.Web.Compilation
 				token = tokenizer.get_token ();
 			}
 
+			end = end.ToLower (CultureInfo.InvariantCulture);
 			while (token != Token.EOF){
-				if (Char.ToUpper ((char) token, CultureInfo.InvariantCulture) == end [i]){
+				if (Char.ToLower ((char) token, CultureInfo.InvariantCulture) == end [i]){
 					if (++i >= end.Length)
 						break;
 					token = tokenizer.get_token ();
