@@ -5104,11 +5104,11 @@ namespace PEAPI {
 				// Console.WriteLine("coded index = " + ix + " row = " + elem.Row);
 				//} else {
 				// Console.WriteLine("elem for coded index is null");
-		}
-		if (lgeCIx[(uint)code]) 
-			output.Write(ix);
-		else
-			output.Write((ushort)ix);
+			}
+			if (lgeCIx[(uint)code]) 
+				output.Write(ix);
+			else
+				output.Write((ushort)ix);
 		}
 
 	}

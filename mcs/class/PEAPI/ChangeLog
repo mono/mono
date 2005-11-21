@@ -1,5 +1,9 @@
 2005-11-21  Ankit Jain  <jankit@novell.com>
 
+	* Metadata.cs (MetaData.WriteCodedIndex): Fix indentation.
+
+2005-11-21  Ankit Jain  <jankit@novell.com>
+
 	* Metadata.cs (GenericParameter.SortKey2): New. Use index as the secondary key.
 	(GenericParameter.Size): Set size correctly.
 	(GenericParameter.Write): Use StringsIndex to write the index.
