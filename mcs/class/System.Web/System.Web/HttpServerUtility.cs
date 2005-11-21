@@ -148,6 +148,8 @@ namespace System.Web {
 
 		public Exception GetLastError ()
 		{
+			if (context == null)
+				return HttpContext.Current.Error;
 			return context.Error;
 		}
 

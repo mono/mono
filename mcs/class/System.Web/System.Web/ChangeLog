@@ -1,3 +1,7 @@
+2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HttpServerUtility.cs: prevent possible nullref in GetLastError().
+
 2005-11-07  Jason Diamond  <jason@diamond.name>
 
 	* HttpRequest.cs: Don't throw exception when Content-Length doesn't
