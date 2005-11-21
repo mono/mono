@@ -1,3 +1,7 @@
+2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* HtmlInputButtonTest.cs: more tests for 'onclick'.
+
 2005-09-29 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HtmlFormTest.cs: Trim() the rendered form when comparing (\n vs \r\n).

@@ -31,6 +31,7 @@ using System;
 using System.IO;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 
 using NUnit.Framework;
 
@@ -39,6 +40,11 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 	public class HtmlInputButtonPoker : HtmlInputButton {
 
 		public HtmlInputButtonPoker ()
+		{
+			TrackViewState ();
+		}
+
+		public HtmlInputButtonPoker (string type) : base (type)
 		{
 			TrackViewState ();
 		}
@@ -56,6 +62,13 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 		public void DoRenderAttributes (HtmlTextWriter writer)
 		{
 			RenderAttributes (writer);
+		}
+
+		public string RenderToString ()
+		{
+			StringWriter sr = new StringWriter ();
+			RenderAttributes (new HtmlTextWriter (sr));
+			return sr.ToString ();
 		}
 	}
 
@@ -153,6 +166,65 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 
 		private static void EmptyHandler (object sender, EventArgs e)
 		{
+		}
+
+		[Test]
+		public void RenderOnclick1 ()
+		{
+			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("button");
+			it.ID = "id1";
+			it.ServerClick += new EventHandler (EmptyHandler);
+			string rendered = it.RenderToString ();
+			Assert.IsTrue (rendered.IndexOf ("onclick") == -1, "#01");
+		}
+
+		[Test]
+		public void RenderOnclick2 ()
+		{
+			Page page = new Page ();
+			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("button");
+			page.Controls.Add (it);
+			it.ID = "id1";
+			it.ServerClick += new EventHandler (EmptyHandler);
+			string rendered = it.RenderToString ();
+			Assert.IsTrue (rendered.IndexOf ("onclick") != -1, "#01");
+		}
+
+		[Test]
+		public void RenderOnclick3 ()
+		{
+			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("submit");
+			it.ID = "id1";
+			it.ServerClick += new EventHandler (EmptyHandler);
+			string rendered = it.RenderToString ();
+			Assert.IsTrue (rendered.IndexOf ("onclick") == -1, "#01");
+		}
+
+		[Test]
+		public void RenderOnclick4 ()
+		{
+			Page page = new Page ();
+			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("submit");
+			page.Controls.Add (it);
+			it.ID = "id1";
+			it.ServerClick += new EventHandler (EmptyHandler);
+			string rendered = it.RenderToString ();
+			Assert.IsTrue (rendered.IndexOf ("onclick") == -1, "#01");
+		}
+
+		[Test]
+		public void RenderOnclick5 ()
+		{
+			Page page = new Page ();
+			RequiredFieldValidator val = new RequiredFieldValidator ();
+			val.ControlToValidate = "id1";
+			page.Validators.Add (val);
+			HtmlInputButtonPoker it = new HtmlInputButtonPoker ("submit");
+			page.Controls.Add (it);
+			it.ID = "id1";
+			it.ServerClick += new EventHandler (EmptyHandler);
+			string rendered = it.RenderToString ();
+			Assert.IsTrue (rendered.IndexOf ("onclick") != -1, "#01");
 		}
 	}	
 }
