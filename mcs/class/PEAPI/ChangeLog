@@ -1,3 +1,13 @@
+2005-11-21  Ankit Jain  <jankit@novell.com>
+
+	* Metadata.cs (GenericParameter.SortKey2): New. Use index as the secondary key.
+	(GenericParameter.Size): Set size correctly.
+	(GenericParameter.Write): Use StringsIndex to write the index.
+	(MetaData.WriteTildeStream): Emit 2,0 as version for NET_2_0 profile.
+	(MetaData.version): Use 'v2.0.50727' for NET_2_0 profile.
+	(MetaData.BuildMetaData): Build and sort GenericParam, MethodSpec and 
+	GenericParamConstraint tables only for NET_2_0 profile.
+
 2005-09-16  Ankit Jain  <jankit@novell.com>
 
 	* PEAPI.cs: Clean up indentation. Split into ...
