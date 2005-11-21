@@ -230,7 +230,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			if (a.Type == TypeManager.out_attribute_type && (ModFlags & Modifier.REF) != 0 &&
+			if (a.Type == TypeManager.out_attribute_type && (ModFlags & Modifier.REF) == Modifier.REF &&
 			    !OptAttributes.Contains (TypeManager.in_attribute_type, ec)) {
 				Report.Error (662, a.Location,
 					"Cannot specify only `Out' attribute on a ref parameter. Use both `In' and `Out' attributes or neither");

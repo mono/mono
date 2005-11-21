@@ -1,3 +1,8 @@
+2005-11-21  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76761.
+	* parameter.cs (Parameter.ApplyAttributeBuilder): Fixed `ref' detection.
+
 2005-11-18  Marek Safar  <marek.safar@seznam.cz>
 
 	* attribute.cs (AreParametersCompliant): Moved to Parameter.
