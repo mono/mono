@@ -1,3 +1,22 @@
+2005-11-21  Martin Baulig  <martin@ximian.com>
+
+	* class-internals.h
+	(MonoMethod): Moved the `generic_container' here from
+	`MonoMethodNormal' since we now also need it for
+	`MonoMethodPInvoke';
+	(MonoMethodNormal): Moved the `generic_container' to `MonoMethod'.
+	(MonoMethodInflated): Replaced the `MonoMethodNormal nmethod' with
+	an union containing both `MonoMethodNormal' and
+	`MonoMethodPInvoke'.
+
+	* loader.c
+	(mono_get_method_from_token): Allow implementing generic methods
+	as interncalls.
+
+	* threads.c
+	(ves_icall_System_Threading_Interlocked_CompareExchange_T): New
+	icall.
+
 2005-11-17  Dick Porter  <dick@ximian.com>
 
 	* icall.c: 
