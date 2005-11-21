@@ -1,4 +1,4 @@
-bin_SCRIPTS = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) gmcs mono-service $(scripts_rpmhelpers)
+bin_SCRIPTS = $(scripts_1_0) $(scripts_1_0_umask) $(scripts_2_0) mono-service $(scripts_rpmhelpers)
 
 scripts_1_0 = \
 	al			\
@@ -37,9 +37,11 @@ scripts_1_0_umask = \
 	sn
 
 scripts_2_0 = \
+	gmcs			\
+	ilasm2			\
 	monop2 			\
-	xbuild			\
-	wsdl2
+	wsdl2			\
+	xbuild
 
 scripts_rpmhelpers = mono-find-provides mono-find-requires
 
@@ -91,10 +93,6 @@ $(scripts_1_0): script.in Makefile
 
 $(scripts_1_0_umask): script_umask.in Makefile
 	$(REWRITE1) -e 's,@''exe_name@,$@,g' $(srcdir)/script_umask.in > $@.tmp
-	mv $@.tmp $@
-
-gmcs: script.in Makefile
-	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/script.in > $@.tmp
 	mv $@.tmp $@
 
 $(scripts_2_0): script.in Makefile
