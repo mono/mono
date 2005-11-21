@@ -5,7 +5,7 @@
 //
 // author:	Dan Lewis (dlewis@gmx.co.uk)
 // 		(c) 2002
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,5 +28,9 @@
 //
 
 namespace System.Text.RegularExpressions {
+
+#if NET_2_0
+	[Serializable]
+#endif
 	public delegate string MatchEvaluator (Match match);
 }

@@ -1,3 +1,15 @@
+2005-11-21  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* CaptureCollection.cs: Fixed length check.
+	* Group.cs: Added missing validation for Synchronized method.
+	* Match.cs: Added missing validation for Synchronized and Result 
+	methods.
+	* MatchEvaluator.cs: Added [Serializable] for 2.0 profile.
+	* RegexCompilationInfo.cs: Added missing property validation.
+	* Regex.cs: Implemented UseOptionC and UseOptionR protected methods
+	(now documented). Fixed API for 2.0 profile.
+	* RegexRunner.cs: Stubbed CharInClass for 2.0 profile.
+
 2005-11-17  Sebastien Pouliot  <sebastien@ximian.com> 
  
 	* Match.cs: Removed the ": base ()" on the private ctor as it is

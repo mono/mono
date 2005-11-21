@@ -5,7 +5,7 @@
 //
 // author:	Dan Lewis (dihlewis@yahoo.co.uk)
 // 		(c) 2002
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,17 +27,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.ComponentModel;
 
 namespace System.Text.RegularExpressions {
+
 	[EditorBrowsable (EditorBrowsableState.Never)]
+	[MonoTODO ("RegexRunner is not supported by Mono.")]
 	public abstract class RegexRunner {
 		// constructor
 
 		[MonoTODO]
-		protected internal RegexRunner () {
-			throw new NotImplementedException ("RegexRunner is not supported by Mono.");
+		protected internal RegexRunner ()
+		{
 		}
 
 		// protected abstract
@@ -54,7 +55,13 @@ namespace System.Text.RegularExpressions {
 		protected void Capture (int capnum, int start, int end) {
 			throw new NotImplementedException ();
 		}
-
+#if NET_2_0
+		[MonoTODO]
+		protected static bool CharInClass (char ch, string charClass)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 		[MonoTODO]
 		protected static bool CharInSet (char ch, string set, string category) {
 			throw new NotImplementedException ();

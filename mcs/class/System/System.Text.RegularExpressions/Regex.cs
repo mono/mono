@@ -44,11 +44,18 @@ namespace System.Text.RegularExpressions {
 	
 	[Serializable]
 	public class Regex : ISerializable {
+
+#if NET_2_0
+		private static int cache_size = 15;
+#endif
+
+		[MonoTODO]
 		public static void CompileToAssembly (RegexCompilationInfo [] regexes, AssemblyName aname)
 		{
 			Regex.CompileToAssembly(regexes, aname, new CustomAttributeBuilder [] {}, null);
 		}
 
+		[MonoTODO]
 		public static void CompileToAssembly (RegexCompilationInfo [] regexes, AssemblyName aname,
 						      CustomAttributeBuilder [] attribs)
 		{
@@ -168,6 +175,18 @@ namespace System.Text.RegularExpressions {
 			return re.Split (input);
 		}
 
+#if NET_2_0
+		[MonoTODO ("should be used somewhere ? FactoryCache ?")]
+		public static int CacheSize {
+			get { return cache_size; }
+			set {
+				if (value < 0)
+					throw new ArgumentOutOfRangeException ("CacheSize");
+				cache_size = value;
+			}
+		}
+#endif
+
 		// private
 
 		private static FactoryCache cache = new FactoryCache (200);	// TODO put some meaningful number here
@@ -221,17 +240,23 @@ namespace System.Text.RegularExpressions {
 			}
 		}
 
-		private Regex (SerializationInfo info, StreamingContext context) :
+#if NET_2_0
+		protected
+#else
+		private
+#endif
+		Regex (SerializationInfo info, StreamingContext context) :
 			this (info.GetString ("pattern"), 
 			      (RegexOptions) info.GetValue ("options", typeof (RegexOptions)))
 		{
 		}
 
+#if ONLY_1_1
 		// fixes public API signature
 		~Regex ()
 		{
 		}
-
+#endif
 		// public instance properties
 		
 		public RegexOptions Options {
@@ -444,23 +469,20 @@ namespace System.Text.RegularExpressions {
 			return (string []) splits.ToArray (typeof (string));
 		}
 
-		// MS undocummented method
 		[MonoTODO]
 		protected void InitializeReferences()
 		{
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
-		protected bool UseOptionC()
+		protected bool UseOptionC ()
 		{
-			throw new NotImplementedException ();
+			return ((roptions & RegexOptions.Compiled) != 0);
 		}
 
-		[MonoTODO]
-		protected bool UseOptionR()
+		protected bool UseOptionR ()
 		{
-			throw new NotImplementedException ();
+			return ((roptions & RegexOptions.RightToLeft) != 0);
 		}
 
 		// object methods

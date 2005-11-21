@@ -5,7 +5,7 @@
 //
 // author:	Dan Lewis (dlewis@gmx.co.uk)
 // 		(c) 2002
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,15 +27,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
-
 namespace System.Text.RegularExpressions {
 
 	[Serializable]
 	public class Group : Capture {
+
+		[MonoTODO ("not thread-safe")]
 		public static Group Synchronized (Group inner)
 		{
-			return inner;	// is this enough?
+			if (inner == null)
+				throw new ArgumentNullException ("inner");
+			return inner;
 		}
 
 		internal static Group Fail = new Group ();

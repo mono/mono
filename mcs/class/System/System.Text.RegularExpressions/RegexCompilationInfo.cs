@@ -5,7 +5,7 @@
 //
 // author:	Dan Lewis (dlewis@gmx.co.uk)
 // 		(c) 2002
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,19 +27,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System.Runtime.Serialization;
-
 namespace System.Text.RegularExpressions {
 
 	[Serializable]
 	public class RegexCompilationInfo {
-		public RegexCompilationInfo (string pattern, RegexOptions options, string name, string nspace, bool isPublic)
+
+		public RegexCompilationInfo (string pattern, RegexOptions options, string name, string fullnamespace, bool ispublic)
 		{
-			this.pattern = pattern;
-			this.options = options;
-			this.name = name;
-			this.nspace = nspace;
-			this.isPublic = isPublic;
+			Pattern = pattern;
+			Options = options;
+			Name = name;
+			Namespace = fullnamespace;
+			IsPublic = ispublic;
 		}
 
 		public bool IsPublic {
@@ -49,12 +48,24 @@ namespace System.Text.RegularExpressions {
 
 		public string Name {
 			get { return name; }
-			set { name = value; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("Name");
+#if NET_2_0
+				if (value.Length == 0)
+					throw new ArgumentException ("Name");
+#endif
+				name = value;
+			}
 		}
 
 		public string Namespace {
 			get { return nspace; }
-			set { nspace = value; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("Namespace");
+				nspace = value;
+			}
 		}
 
 		public RegexOptions Options {
@@ -64,7 +75,11 @@ namespace System.Text.RegularExpressions {
 
 		public string Pattern {
 			get { return pattern; }
-			set { pattern = value; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("pattern");
+				pattern = value;
+			}
 		}
 
 		// private

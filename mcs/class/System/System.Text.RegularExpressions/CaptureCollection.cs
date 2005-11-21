@@ -6,9 +6,7 @@
 //	Dick Porter (dick@ximian.com)
 //
 // (C) 2002 Dan Lewis
-// (C) 2004 Novell, Inc.
-//
-
+// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 
 namespace System.Text.RegularExpressions 
@@ -60,7 +57,7 @@ namespace System.Text.RegularExpressions
 
 		public Capture this [int i] {
 			get {
-				if (i < 0 || i > Count)
+				if (i < 0 || i >= Count)
 					throw new ArgumentOutOfRangeException ("Index is out of range");
 				return list [i];
 			}
@@ -86,6 +83,3 @@ namespace System.Text.RegularExpressions
 		}
 	}
 }
-
-		
-		
