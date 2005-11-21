@@ -158,5 +158,22 @@ namespace MonoTests.System.Web.UI.WebControls {
 			s = r.Render ();
 			Assert.IsTrue (s.IndexOf ("/><label for") > 0, "text right");
 		}
+
+		[Test]
+		public void NameAttr1 ()
+		{
+			TestRadioButton b1 = new TestRadioButton ();
+			b1.GroupName = "mono";
+			TestRadioButton b2 = new TestRadioButton ();
+			b2.GroupName = "mono";
+			Page p = new Page ();
+			p.ID = "MyPage";
+			p.Controls.Add (b1);
+			p.Controls.Add (b2);
+			string t1 = b1.Render ();
+			Assert.IsTrue (t1.IndexOf ("name=\"mono\"") != -1, "#01");
+			string t2 = b2.Render ();
+			Assert.IsTrue (t2.IndexOf ("name=\"mono\"") != -1, "#02");
+		}
 	}
 }

@@ -1,3 +1,7 @@
+2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* RadioButtonTest.cs: more tests for the 'name' attribute.
+
 2005-10-24 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* LiteralTest.cs: Literal allows LiteralControl.
