@@ -27,6 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System.Collections.Specialized;
+using System.Text;
 
 namespace System.Web
 {
@@ -54,6 +55,21 @@ namespace System.Web
 		public void Unprotect ()
 		{
 			IsReadOnly = false;
+		}
+
+		public override string ToString ()
+		{
+			StringBuilder result = new StringBuilder ();
+			foreach (string key in AllKeys) {
+				if (result.Length > 0)
+					result.Append ('&');
+
+				result.Append (key);
+				result.Append ('=');
+				result.Append (Get (key));
+			}
+
+			return result.ToString ();
 		}
 	}
 }

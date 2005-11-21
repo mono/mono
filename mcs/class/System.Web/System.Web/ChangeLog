@@ -1,5 +1,10 @@
 2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
+	* WebROCollection.cs: override ToString and generate a query string from
+	the key/value pairs. Fixes bug #76779.
+
+2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
 	* HttpServerUtility.cs: prevent possible nullref in GetLastError().
 
 2005-11-07  Jason Diamond  <jason@diamond.name>
