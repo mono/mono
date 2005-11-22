@@ -1,3 +1,8 @@
+2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StorePermission.cs: Fix a few bugs (flags/union) and a strange 
+	behaviour where Copy can return null (reported as FDBK40928).
+
 2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Store*.cs: Moved from System.Security.dll

@@ -58,7 +58,7 @@ namespace System.Security.Permissions {
 		public StorePermissionFlags Flags {
 			get { return _flags; }
 			set {
-				if (!Enum.IsDefined (typeof (StorePermissionFlags), value)) {
+				if ((value != 0) && (value & StorePermissionFlags.AllFlags) == 0) {
 					string msg = String.Format (Locale.GetText ("Invalid enum {0}"), value);
 					throw new ArgumentException (msg, "StorePermissionFlags");
 				}
@@ -73,6 +73,11 @@ namespace System.Security.Permissions {
 
 		public override IPermission Copy () 
 		{
+			// buggy behaviour - affects other operations that use Copy
+			// reported as FDBK40928
+			if (_flags == StorePermissionFlags.NoFlags)
+				return null;
+
 			return new StorePermission (_flags);
 		}
 
@@ -88,19 +93,28 @@ namespace System.Security.Permissions {
 				return dp.Copy ();
 			if (dp.IsUnrestricted ())
 				return this.Copy ();
-			return new StorePermission (_flags & dp._flags);
+
+			StorePermissionFlags spf = _flags & dp._flags;
+			if (spf == StorePermissionFlags.NoFlags)
+				return null;
+
+			return new StorePermission (spf);
 		}
 
 		public override IPermission Union (IPermission target) 
 		{
 			StorePermission dp = Cast (target);
 			if (dp == null)
-				return this.Copy ();
+				return this.Copy (); // will return null for NoFlags
 
 			if (this.IsUnrestricted () || dp.IsUnrestricted ())
-				return new SecurityPermission (PermissionState.Unrestricted);
+				return new StorePermission (PermissionState.Unrestricted);
 			
-			return new StorePermission (_flags | dp._flags);
+			StorePermissionFlags spf = _flags | dp._flags;
+			if (spf == StorePermissionFlags.NoFlags)
+				return null;
+
+			return new StorePermission (spf);
 		}
 
 		public override bool IsSubsetOf (IPermission target) 
@@ -124,14 +138,21 @@ namespace System.Security.Permissions {
 			// Note: we do not (yet) care about the return value 
 			// as we only accept version 1 (min/max values)
 
-			_flags = (StorePermissionFlags) Enum.Parse (
-				typeof (StorePermissionFlags), e.Attribute ("Flags"));
+			string s = e.Attribute ("Flags");
+			if (s == null)
+				_flags = StorePermissionFlags.NoFlags;
+			else
+				_flags = (StorePermissionFlags) Enum.Parse (typeof (StorePermissionFlags), s);
 		}
 
 		public override SecurityElement ToXml () 
 		{
 			SecurityElement e = PermissionHelper.Element (typeof (StorePermission), version);
-			e.AddAttribute ("Flags", _flags.ToString ());
+			if (this.IsUnrestricted ()) {
+				e.AddAttribute ("Unrestricted", Boolean.TrueString);
+			} else {
+				e.AddAttribute ("Flags", _flags.ToString ());
+			}
 			return e;
 		}
 
