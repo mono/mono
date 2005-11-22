@@ -115,13 +115,13 @@ namespace System.Data.Common {
 		{
 			throw new NotImplementedException ();
 		}
-
+#if NET_2_0 
 		[MonoTODO]
 		public virtual DbConnectionStringBuilder CreateConnectionStringBuilder ()
 		{
 			throw new NotImplementedException ();
 		}
-		
+#endif
 		#endregion // Methods
 	}
 }

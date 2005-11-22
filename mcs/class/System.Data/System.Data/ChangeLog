@@ -1,3 +1,7 @@
+2005-11-26  Konstantin Triger <kostat@mainsoft.com>
+
+	* ConflictOption.cs: TARGET_JVM include.
+
 2005-11-11  Senganal T <tsenganal@novell.com>
 	
 	* ConflictOption.cs (new file)
