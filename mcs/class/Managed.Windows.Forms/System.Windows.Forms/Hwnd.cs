@@ -181,6 +181,7 @@ namespace System.Windows.Forms {
 
 			rect = new Rectangle(0, 0, width, height);
 
+			/*
 			if (menu_handle != IntPtr.Zero) {
 				MenuAPI.MENU menu = MenuAPI.GetMenuFromID (menu_handle);
 				if (menu != null) {
@@ -190,7 +191,8 @@ namespace System.Windows.Forms {
 				} else
 					Console.WriteLine("Hwnd.GetClientRectangle: No MENU for menu_handle = {0}", menu_handle);
 			}
-
+			*/
+			
 			if (border_style == FormBorderStyle.Fixed3D) {
 				rect.X += 2;
 				rect.Y += 2;

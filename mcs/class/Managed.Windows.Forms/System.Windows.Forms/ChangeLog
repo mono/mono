@@ -1,3 +1,8 @@
+2005-11-22  Jackson Harper  <jackson@ximian.com>
+
+	* Hwnd.cs: The adjustments for the menu bar are made when it is
+	attached to the form.
+
 2005-11-19  Jackson Harper  <jackson@ximian.com>
 
 	* XplatUIX11.cs: Create an HGRN of the invalid area for WM_NCPAINT
