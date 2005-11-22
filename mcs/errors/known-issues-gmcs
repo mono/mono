@@ -13,6 +13,7 @@
 
 cs0229-2.cs
 cs0229.cs NO ERROR
+cs0231-2.cs
 cs0419-2.cs
 cs0525.cs
 cs0526.cs
@@ -27,6 +28,7 @@ cs0612-2.cs NO ERROR
 cs0619-18.cs
 cs0619-24.cs
 cs0619-42.cs
+cs0631-2.cs
 cs0647-3.cs
 cs1035.cs
 cs1040-2.cs
@@ -35,6 +37,7 @@ cs1041.cs # new in GMCS; grammar issue
 cs1501-5.cs
 cs1513.cs
 cs1518.cs
+cs1521-3.cs
 cs1525.cs
 cs1528.cs
 cs1540-2.cs # new in GMCS
@@ -46,6 +49,7 @@ cs1667-3.cs
 cs1667-4.cs
 cs1667-5.cs
 cs1667.cs
+cs1670-2.cs
 gcs0146.cs
 gcs0208-2.cs
 gcs0208-3.cs
