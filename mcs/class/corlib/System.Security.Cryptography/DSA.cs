@@ -148,9 +148,13 @@ namespace System.Security.Cryptography {
 				sb.Append (Convert.ToBase64String (dsaParams.Y));
 				sb.Append( "</Y>");
 
-				sb.Append ("<J>");
-				sb.Append (Convert.ToBase64String (dsaParams.J));
-				sb.Append ("</J>");
+				if (dsaParams.J != null) {
+					// if J wasn't imported then it's not exported and neither 
+					// is part of the XML output
+					sb.Append ("<J>");
+					sb.Append (Convert.ToBase64String (dsaParams.J));
+					sb.Append ("</J>");
+				}
 
 				if (dsaParams.Seed != null) {
 					sb.Append ("<Seed>");

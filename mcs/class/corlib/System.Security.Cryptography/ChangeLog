@@ -1,3 +1,9 @@
+2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSAManaged.cs: Don't output J in the XML if it's not exported (i.e.
+	if it wasn't imported too but instead calculated from the other 
+	parameters ;-).
+
 2005-11-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyNumber.cs: Added missing [Serializable] present in 2.0.
