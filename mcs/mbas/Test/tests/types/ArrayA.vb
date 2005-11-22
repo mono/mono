@@ -10,6 +10,7 @@ Module VariableC
     Dim h() as Integer
     Dim i as integer(,)
     Dim j as integer()
+    Dim k(4) as System.String
 
     Sub Main()
 

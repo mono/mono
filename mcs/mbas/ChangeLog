@@ -1,3 +1,7 @@
+2005-11-19 Jelmer Vernooij <jelmer@samba.org>
+ 	* mb-parser.jay: fix error handling when array modifiers are specified
+ 	on both type and variable name
+
 2005-11-18 Jelmer Vernooij <jelmer@samba.org>
  	* mb-tokenizer.cs: add fix so the tokenizer no longer parses label 
  	names at the start of continuation lines

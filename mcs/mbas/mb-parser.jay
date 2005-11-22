@@ -4375,7 +4375,6 @@ variable_declarator
 		ArrayList VarDeclarations = new ArrayList();
 	  	Expression vartype;
 	  	ArrayList a_dims = null;
-		Expression exp;
 
 		if ((names.Count > 1) && (varinit != null)) 
 			Report.Error (
@@ -4390,16 +4389,11 @@ variable_declarator
 			current_rank_specifiers = (ArrayList) vname.Rank;
 			a_dims = null;
 			varinit = $4;
-			exp = (Expression)$3;
 
-
-			// FIXME: Check whether exp is a Type and not a class member or something
-			// FIXME: Check whether vname and exp are not both arrays.
-			if (VariableDeclaration.IsArrayDecl (this) &&  (exp is MemberAccess))
+			if (VariableDeclaration.IsArrayDecl (this) && $3.ToString().IndexOf('[') >= 0)
                                 Report.Error (
-                                        31087, (Location)$1,
-                                        "Array modifiers can not specified on both a variable and its type" );
-
+                                      31087, (Location)$1,
+                                       "Array modifiers can not specified on both a variable and its type" );
 
 	  		if(vname.Type != null && $3 != null)
 				Report.Error (
