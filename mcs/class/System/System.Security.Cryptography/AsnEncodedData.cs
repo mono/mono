@@ -78,7 +78,8 @@ namespace System.Security.Cryptography {
 			if (asnEncodedData == null)
 				throw new ArgumentNullException ("asnEncodedData");
 
-			Oid = new Oid (asnEncodedData._oid);
+			if (asnEncodedData._oid != null)
+				Oid = new Oid (asnEncodedData._oid);
 			RawData = asnEncodedData._raw;
 		}
 

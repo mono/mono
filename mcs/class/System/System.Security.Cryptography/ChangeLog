@@ -1,3 +1,8 @@
+2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsnEncodedData.cs: Create a new Oid instance _only_ if the supplied
+	Oid isn't null.
+
 2005-09-27  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsnEncodedDataCollection.cs: Added new ctor.
