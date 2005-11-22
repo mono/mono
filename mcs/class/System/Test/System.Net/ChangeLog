@@ -1,3 +1,7 @@
+2005-11-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IPAddressTest.cs: more tests for the byte[] ctor.
+
 2005-11-17 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* HttpListenerPrefixCollectionTest.cs:

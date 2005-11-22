@@ -322,6 +322,36 @@ public class IPAddressTest
 		Assertion.AssertEquals ("#02", false, new Uri("http://[0:0:0:0::127.1.2.3]/").IsLoopback);
 		Assertion.AssertEquals ("#03", true, new Uri("http://[0:0:0:0::0.0.0.1]/").IsLoopback);
 	}
+
+#if NET_2_0
+	[Test]
+	public void FromBytes3 ()
+	{
+		// This one works in 2.0
+		new IPAddress (new byte [4]);
+	}
+	
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromBytes4 ()
+	{
+		new IPAddress (new byte [4], 0);
+	}
+#else
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromBytes1 ()
+	{
+		new IPAddress (new byte [4]);
+	}
+	
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void FromBytes2 ()
+	{
+		new IPAddress (new byte [4], 0);
+	}
+#endif
 }
 }
 
