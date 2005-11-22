@@ -1,3 +1,11 @@
+2005-11-16 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
+	* mb-parser.jay: Do not create a set_block with ReadOnly Properties.
+	* typemanager.cs: Search for correct DefaultPropName and the class
+	Type that contains the Default Property.
+	* expression.cs: Send the correct Type for porperties search;
+	Fix Error with uses of default properties without a Default Property
+	definition.
+	
 2005-11-09 Renato Suga <renato.suga@gmail.com>
 	* mb-parser.jay: added STOP to statement rule to allow a keyword STOP
 	in an iteration_statement.

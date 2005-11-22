@@ -2016,8 +2016,10 @@ public class TypeManager {
 	///
 	///   For example, the String class indexer is named 'Chars' not 'Item' 
 	/// </remarks>
-	public static string IndexerPropertyName (Type t)
+	public static string IndexerPropertyName (Type t, out Type innerType)
 	{
+		innerType = t;
+		
 		if (t is TypeBuilder) {
 			if (t.IsInterface) {
 				Interface i = LookupInterface (t);
@@ -2029,8 +2031,29 @@ public class TypeManager {
 			} else {
 				TypeContainer tc = LookupTypeContainer (t);
 
-				if ((tc == null) || (tc.DefaultPropName == null))
-					return "Item";
+				if ( tc == null )
+					return null;
+
+				if ( tc.DefaultPropName == null )
+				{
+					while ( tc is Class )
+					{
+						innerType = innerType.BaseType;
+						
+						tc = LookupTypeContainer (innerType);
+						
+						if (tc == null)
+						{	
+							innerType = t;
+							return null;
+						}
+						else if ( tc.DefaultPropName != null )
+							return tc.DefaultPropName;
+					}
+				}
+				
+				//if ((tc == null) || (tc.DefaultPropName == null))
+				//	return "Item";
 
 				return tc.DefaultPropName;
 			}

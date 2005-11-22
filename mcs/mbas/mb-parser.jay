@@ -2075,7 +2075,11 @@ interface_property_declaration
 		lexer.PropertyParsing = true;
 		
 		Accessor get_block = new Accessor (null, null);	
-		Accessor set_block = new Accessor (null, null);	
+
+		Accessor set_block = null;
+
+		if ((current_modifiers & Modifiers.READONLY) == 0)
+			set_block = new Accessor (null, null);	
 		
 		int modifiers = (implicit_modifiers) ? (current_modifiers & ~ (Modifiers.STATIC) ): current_modifiers;
 		Property prop = new Property ((Expression) ftype, (string) $2, modifiers,

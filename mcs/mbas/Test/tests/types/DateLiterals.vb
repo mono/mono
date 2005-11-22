@@ -1,5 +1,11 @@
+Imports System.Threading
+Imports System.Globalization
+
 Module DateLiterals
     Sub Main()
+    Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+	
+
         Dim d As Date
 	dim d1 as Date
 

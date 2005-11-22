@@ -7364,17 +7364,22 @@ namespace Mono.MonoBASIC {
 			if (ix != null)
 				return ix;
 
-			string p_name = TypeManager.IndexerPropertyName (lookup_type);
+			Type innerType;
+			string p_name = TypeManager.IndexerPropertyName (lookup_type, out innerType);
+			
+			if ( p_name == null )
+				return null;
 
 			MemberInfo [] mi = TypeManager.MemberLookup (
-				caller_type, lookup_type, MemberTypes.Property,
+				caller_type, innerType, MemberTypes.Property,
 				BindingFlags.Public | BindingFlags.Instance, p_name);
 
 			if (mi == null || mi.Length == 0)
 				return null;
 
 			ix = new Indexers (mi);
-			map [lookup_type] = ix;
+			//map [lookup_type] = ix;
+			map [innerType] = ix;
 
 			return ix;
 		}
@@ -7470,10 +7475,14 @@ namespace Mono.MonoBASIC {
 					current_type, indexer_type, loc);
 
 				if (ilist == null && indexer_type != TypeManager.object_type) {
-					Report.Error (21, loc,
+					Report.Error (30367, loc,
 					      	"Type '" + TypeManager.MonoBASIC_Name (indexer_type) +
 					      	"' does not have any indexers defined");
 					return null;
+					//Report.Error (21, loc,
+					//      	"Type '" + TypeManager.MonoBASIC_Name (indexer_type) +
+					//      	"' does not have any indexers defined");
+					//return null;
 				}
 			}
 
