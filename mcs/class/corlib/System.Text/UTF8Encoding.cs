@@ -55,9 +55,9 @@ public class UTF8Encoding : Encoding
 		emitIdentifier = encoderShouldEmitUTF8Identifier;
 #if NET_2_0
 		if (throwOnInvalidBytes)
-			DecoderFallback = new DecoderExceptionFallback ();
+			SetFallbackInternal (null, new DecoderExceptionFallback ());
 		else
-			DecoderFallback = new DecoderReplacementFallback (String.Empty);
+			SetFallbackInternal (null, new DecoderReplacementFallback (String.Empty));
 #else
 		throwOnInvalid = throwOnInvalidBytes;
 #endif

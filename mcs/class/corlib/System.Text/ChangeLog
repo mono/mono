@@ -1,3 +1,11 @@
+2005-11-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ASCIIEncoding.cs, Latin1Encoding.cs : added EncoderFallback support.
+	* Encoding.cs : changed default fallback selection. Seems like only
+	  ASCII and GB18030 uses '?' for replacement.
+	* UTF8Encoding.cs : now that Fallback is read only by default, we
+	  need special setter.
+
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8Encoding.cs : safer UTF8Decoder ctor.

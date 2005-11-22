@@ -68,6 +68,20 @@ internal class Latin1Encoding : Encoding
 	public override int GetBytes (char[] chars, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex)
 	{
+#if NET_2_0
+// well, yes, I know this #if is ugly, but I think it is the simplest switch.
+		EncoderFallbackBuffer buffer = null;
+		char [] fallback_chars = null;
+		return GetBytes (chars, charIndex, charCount, bytes,
+			byteIndex, ref buffer, ref fallback_chars);
+	}
+
+	int GetBytes (char[] chars, int charIndex, int charCount,
+		      byte[] bytes, int byteIndex,
+		      ref EncoderFallbackBuffer buffer,
+		      ref char [] fallback_chars)
+	{
+#endif
 		if (chars == null) {
 			throw new ArgumentNullException ("chars");
 		}
@@ -95,7 +109,24 @@ internal class Latin1Encoding : Encoding
 			} else if (ch >= '\uFF01' && ch <= '\uFF5E') {
 				bytes [byteIndex++] = (byte)(ch - 0xFEE0);
 			} else {
+#if NET_2_0
+				if (buffer == null)
+					buffer = EncoderFallback.CreateFallbackBuffer ();
+				if (Char.IsSurrogate (ch) && count > 1 &&
+				    Char.IsSurrogate (chars [charIndex]))
+					buffer.Fallback (ch, chars [charIndex], charIndex++ - 1);
+				else
+					buffer.Fallback (ch, charIndex - 1);
+				if (fallback_chars == null || fallback_chars.Length < buffer.Remaining)
+					fallback_chars = new char [buffer.Remaining];
+				for (int i = 0; i < fallback_chars.Length; i++)
+					fallback_chars [i] = buffer.GetNextChar ();
+				byteIndex += GetBytes (fallback_chars, 0, 
+					fallback_chars.Length, bytes, byteIndex,
+					ref buffer, ref fallback_chars);
+#else
 				bytes [byteIndex++] = (byte)'?';
+#endif
 			}
 		}
 		return charCount;
@@ -105,6 +136,20 @@ internal class Latin1Encoding : Encoding
 	public override int GetBytes (String s, int charIndex, int charCount,
 								 byte[] bytes, int byteIndex)
 	{
+#if NET_2_0
+// I know this #if is ugly, but I think it is the simplest switch.
+		EncoderFallbackBuffer buffer = null;
+		char [] fallback_chars = null;
+		return GetBytes (s, charIndex, charCount, bytes, byteIndex,
+			ref buffer, ref fallback_chars);
+	}
+
+	int GetBytes (String s, int charIndex, int charCount,
+		      byte[] bytes, int byteIndex,
+		      ref EncoderFallbackBuffer buffer,
+		      ref char [] fallback_chars)
+	{
+#endif
 		if (s == null) {
 			throw new ArgumentNullException ("s");
 		}
@@ -132,7 +177,25 @@ internal class Latin1Encoding : Encoding
 			} else if (ch >= '\uFF01' && ch <= '\uFF5E') {
 				bytes [byteIndex++] = (byte)(ch - 0xFEE0);
 			} else {
+
+#if NET_2_0
+				if (buffer == null)
+					buffer = EncoderFallback.CreateFallbackBuffer ();
+				if (Char.IsSurrogate (ch) && count > 1 &&
+				    Char.IsSurrogate (s [charIndex]))
+					buffer.Fallback (ch, s [charIndex], charIndex++ - 1);
+				else
+					buffer.Fallback (ch, charIndex - 1);
+				if (fallback_chars == null || fallback_chars.Length < buffer.Remaining)
+					fallback_chars = new char [buffer.Remaining];
+				for (int i = 0; i < fallback_chars.Length; i++)
+					fallback_chars [i] = buffer.GetNextChar ();
+				byteIndex += GetBytes (fallback_chars, 0, 
+					fallback_chars.Length, bytes, byteIndex,
+					ref buffer, ref fallback_chars);
+#else
 				bytes [byteIndex++] = (byte)'?';
+#endif
 			}
 		}
 		return charCount;

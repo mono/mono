@@ -36,10 +36,11 @@ namespace MonoTests.System.Text
 			Assert.AreEqual (String.Empty, f.DefaultString, "#6");
 			Assert.AreEqual (0, f.MaxCharCount, "#7");
 
-			f = new MyEncoding ().EncoderFallback as EncoderReplacementFallback;
-			Assert.IsNotNull (f, "#8");
-			Assert.AreEqual (String.Empty, f.DefaultString, "#9");
-			Assert.AreEqual (0, f.MaxCharCount, "#10");
+			// after beta2 this test became invalid.
+			//f = new MyEncoding ().EncoderFallback as EncoderReplacementFallback;
+			//Assert.IsNotNull (f, "#8");
+			//Assert.AreEqual (String.Empty, f.DefaultString, "#9");
+			//Assert.AreEqual (0, f.MaxCharCount, "#10");
 
 			f = EncoderFallback.ReplacementFallback as EncoderReplacementFallback;
 			Assert.AreEqual ("?", f.DefaultString, "#11");
@@ -63,30 +64,43 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		// Don't throw an exception
-		public void SetEncoderFallback ()
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void CustomEncodingSetEncoderFallback ()
 		{
 			new MyEncoding ().EncoderFallback =
 				new EncoderReplacementFallback ();
-			new MyEncoding (1).EncoderFallback =
-				new EncoderReplacementFallback ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void EncodingSetNullEncoderFallback ()
+		{
+			Encoding.Default.EncoderFallback = null;
+		}
+
+		[Test]
+		// Don't throw an exception
+		public void SetEncoderFallback ()
+		{
 			Encoding.Default.GetEncoder ().Fallback =
 				new EncoderReplacementFallback ();
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
-		public void EncodingSetNullEncoderFallback ()
-		{
-			new MyEncoding ().EncoderFallback = null;
-		}
-
-
-		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
 		public void EncoderSetNullFallback ()
 		{
 			Encoding.Default.GetEncoder ().Fallback = null;
+		}
+
+		[Test]
+		public void Latin1Replacement ()
+			// coz Latin1 is easy single byte encoding.
+		{
+			Encoding enc = Encoding.GetEncoding (28591); // Latin1
+			byte [] reference = new byte [] {0x58, 0x58, 0x3F, 0x3F, 0x3F, 0x5A, 0x5A};
+			byte [] bytes = enc.GetBytes ("XX\u3007\u4E00\u9780ZZ");
+			Assert.AreEqual (reference, bytes, "#1");
 		}
 	}
 }

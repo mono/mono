@@ -1,3 +1,10 @@
+2005-11-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EncoderReplacementFallbackTest.cs :
+	  Added Latin1 replacement test.
+	  Updated some test results changed from beta2 to RTM.
+	* DecoderReplacementFallbackTest.cs : the same updates.
+
 2005-11-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UTF8EncodingTest.cs : Simply replaced all ArgumentException with

@@ -36,10 +36,11 @@ namespace MonoTests.System.Text
 			Assert.AreEqual (String.Empty, f.DefaultString, "#6");
 			Assert.AreEqual (0, f.MaxCharCount, "#7");
 
-			f = new MyEncoding ().DecoderFallback as DecoderReplacementFallback;
-			Assert.IsNotNull (f, "#8");
-			Assert.AreEqual (String.Empty, f.DefaultString, "#9");
-			Assert.AreEqual (0, f.MaxCharCount, "#10");
+			// after beta2 this test became invalid.
+			//f = new MyEncoding ().DecoderFallback as DecoderReplacementFallback;
+			//Assert.IsNotNull (f, "#8");
+			//Assert.AreEqual (String.Empty, f.DefaultString, "#9");
+			//Assert.AreEqual (0, f.MaxCharCount, "#10");
 
 			f = DecoderFallback.ReplacementFallback as DecoderReplacementFallback;
 			Assert.AreEqual ("?", f.DefaultString, "#11");
@@ -63,22 +64,27 @@ namespace MonoTests.System.Text
 		}
 
 		[Test]
-		// Don't throw an exception
-		public void SetDecoderFallback ()
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void CustomEncodingSetEncoderFallback ()
 		{
 			new MyEncoding ().DecoderFallback =
-				new DecoderReplacementFallback ();
-			new MyEncoding (1).DecoderFallback =
 				new DecoderReplacementFallback ();
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentNullException))]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void EncodingSetNullDecoderFallback ()
 		{
-			new MyEncoding ().DecoderFallback = null;
+			Encoding.Default.DecoderFallback = null;
 		}
 
+		[Test]
+		// Don't throw an exception
+		public void SetDecoderFallback ()
+		{
+			Encoding.Default.GetDecoder ().Fallback =
+				new DecoderReplacementFallback ();
+		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]

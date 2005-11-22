@@ -43,13 +43,13 @@ public abstract class Encoding
 	// Code page used by this encoding.
 	internal int codePage;
 	internal int windows_code_page;
-	bool is_readonly;
+	bool is_readonly = true;
 
 	// Constructor.
 	protected Encoding ()
 	{
-		codePage = 0;
 	}
+
 #if ECMA_COMPAT
 	protected internal
 #else
@@ -58,6 +58,31 @@ public abstract class Encoding
 	Encoding (int codePage)
 	{
 		this.codePage = windows_code_page = codePage;
+
+#if NET_2_0
+		switch (codePage) {
+		default:
+			// MS has "InternalBestFit{Decoder|Encoder}Fallback
+			// here, but we dunno what they are for.
+			decoder_fallback = DecoderFallback.ReplacementFallback;
+			encoder_fallback = EncoderFallback.ReplacementFallback;
+			break;
+		case 20127: // ASCII
+		case 54936: // GB18030
+			decoder_fallback = DecoderFallback.ReplacementFallback;
+			encoder_fallback = EncoderFallback.ReplacementFallback;
+			break;
+		case 1200: // UTF16
+		case 1201: // UTF16
+		case 12000: // UTF32
+		case 12001: // UTF32
+		case 65000: // UTF7
+		case 65001: // UTF8
+			decoder_fallback = new DecoderReplacementFallback (String.Empty);
+			encoder_fallback = new EncoderReplacementFallback (String.Empty);
+			break;
+		}
+#endif
 	}
 
 	// until we change the callers:
@@ -66,8 +91,8 @@ public abstract class Encoding
 	}
 
 #if NET_2_0
-	DecoderFallback decoder_fallback = new DecoderReplacementFallback (String.Empty);
-	EncoderFallback encoder_fallback = new EncoderReplacementFallback (String.Empty);
+	DecoderFallback decoder_fallback;
+	EncoderFallback encoder_fallback;
 
 	[ComVisible (false)]
 	public bool IsReadOnly {
@@ -77,7 +102,11 @@ public abstract class Encoding
 	[MonoTODO ("not used yet")]
 	[ComVisible (false)]
 	public DecoderFallback DecoderFallback {
-		get { return decoder_fallback; }
+		get {
+			if (decoder_fallback == null)
+				decoder_fallback = new DecoderReplacementFallback (String.Empty);
+			return decoder_fallback;
+		}
 		set {
 			if (IsReadOnly)
 				throw new InvalidOperationException ("This Encoding is readonly.");
@@ -90,7 +119,11 @@ public abstract class Encoding
 	[MonoTODO ("not used yet")]
 	[ComVisible (false)]
 	public EncoderFallback EncoderFallback {
-		get { return encoder_fallback; }
+		get {
+			if (encoder_fallback == null)
+				encoder_fallback = new EncoderReplacementFallback (String.Empty);
+			return encoder_fallback;
+		}
 		set {
 			if (IsReadOnly)
 				throw new InvalidOperationException ("This Encoding is readonly.");
@@ -98,6 +131,14 @@ public abstract class Encoding
 				throw new ArgumentNullException ();
 			encoder_fallback = value;
 		}
+	}
+
+	internal void SetFallbackInternal (EncoderFallback e, DecoderFallback d)
+	{
+		if (e != null)
+			encoder_fallback = e;
+		if (d != null)
+			decoder_fallback = d;
 	}
 #endif
 
@@ -428,8 +469,8 @@ public abstract class Encoding
 
 		Encoding e = GetEncoding (codePage).Clone () as Encoding;
 		e.is_readonly = false;
-		e.EncoderFallback = encoderFallback;
-		e.DecoderFallback = decoderFallback;
+		e.encoder_fallback = encoderFallback;
+		e.decoder_fallback = decoderFallback;
 		return e;
 	}
 
@@ -443,8 +484,8 @@ public abstract class Encoding
 
 		Encoding e = GetEncoding (name).Clone () as Encoding;
 		e.is_readonly = false;
-		e.EncoderFallback = encoderFallback;
-		e.DecoderFallback = decoderFallback;
+		e.encoder_fallback = encoderFallback;
+		e.decoder_fallback = decoderFallback;
 		return e;
 	}
 #endif
