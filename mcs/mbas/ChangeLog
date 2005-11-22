@@ -1,3 +1,7 @@
+2005-11-20 Jelmer Vernooij <jelmer@samba.org>
+	* genericparser.cs,decl.cs,class.cs: allow members with the same name 
+ 	as their enclosing type, just like vbc does
+
 2005-11-19 Jelmer Vernooij <jelmer@samba.org>
  	* mb-parser.jay: fix error handling when array modifiers are specified
  	on both type and variable name

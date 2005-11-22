@@ -256,9 +256,6 @@ namespace Mono.MonoBASIC {
 			if (value != null && (!(value is Method)))
 				return AdditionResult.NameExists;
 
-			if (basename == Basename)
-				return AdditionResult.EnclosingClash;
-			
 			if (methods == null)
 				methods = new ArrayList ();
 

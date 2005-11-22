@@ -296,10 +296,6 @@ namespace Mono.Languages
 						name + "' with the same parameter types (more than one default constructor)");
 					break;
 
-				case AdditionResult.EnclosingClash:
-					Report.Error (542, l, "Member names cannot be the same as their enclosing type");
-					break;
-		
 				case AdditionResult.NotAConstructor:
 					Report.Error (1520, l, "Class, struct, or interface method must have a return type");
 					break;

@@ -199,15 +199,6 @@ namespace Mono.MonoBASIC {
 			NameExists,
 
 			/// <summary>
-			///   Returned if the declation being added to the
-			///   name space clashes with its container name.
-			///
-			///   The only exceptions for this are constructors
-			///   and static constructors
-			/// </summary>
-			EnclosingClash,
-
-			/// <summary>
 			///   Returned if a constructor was created (because syntactically
 			///   it looked like a constructor) but was not (because the name
 			///   of the method is not the same as the container class
@@ -273,9 +264,6 @@ namespace Mono.MonoBASIC {
 		/// </summary>
 		protected AdditionResult IsValid (string name)
 		{
-			if (name == Basename)
-				return AdditionResult.EnclosingClash;
-
 			if (defined_names.Contains (name))
 				return AdditionResult.NameExists;
 
