@@ -24,7 +24,8 @@ Public Class PublicationAttribute
 End Class
 
 
-<Publication("Tata McGraw"),AuthorAttribute("Robin Cook",No:=47),Author(10)> _
+<Publication("Tata McGraw"),AuthorAttribute("Robin Cook", _
+	No:=47),Author(10)> _
 Public Class C1
 	<Author("John"),Publication("Tata McGraw")> _
 	Public Sub S1()

@@ -924,8 +924,9 @@ namespace Mono.MonoBASIC
 					int d = peekChar();
 					if (!is_identifier_part_character((char)d)) {
 						while ((c = getChar ()) != -1 && !IsEOL(c)) {}
-						c = getChar ();			
-					}		
+						c = getChar ();
+						tokens_seen = true;
+					}
 				}
 					
 				

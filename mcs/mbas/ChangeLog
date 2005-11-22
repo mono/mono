@@ -1,3 +1,7 @@
+2005-11-18 Jelmer Vernooij <jelmer@samba.org>
+ 	* mb-tokenizer.cs: add fix so the tokenizer no longer parses label 
+ 	names at the start of continuation lines
+
 2005-11-16 Maverson Eduardo Schulze Rosa <maverson@gmail.com>
 	* mb-parser.jay: Do not create a set_block with ReadOnly Properties.
 	* typemanager.cs: Search for correct DefaultPropName and the class
