@@ -197,7 +197,7 @@ namespace Microsoft.JScript {
 			not_void_return = true;
 		}
 
-		protected Type HandleReturnType {
+		internal Type HandleReturnType {
 			get {
 				Type ret_type;
 				if (not_void_return)

@@ -1,3 +1,13 @@
+2005-11-22  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Statement.cs (Return.Resolve): Added field exp_returns_void
+	which allow us to return a method call as the return expression
+	value even when the method call returns void; we emit null in such
+	a case.
+
+	* ast.cs (Function): switch from 'protected' to 'internal'
+	property HandleReturnType.
+
 2005-11-21  Cesar Lopez Nataren  <cnataren@novell.com>
 
 	* Statement.cs (class Switch): Preserve the value of

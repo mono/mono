@@ -211,7 +211,8 @@ namespace Microsoft.JScript {
 	
 	internal class Return : AST {
 
-		internal AST expression;		
+		internal AST expression;
+		private bool exp_returns_void = false;
 		public event NotVoidReturnEventHandler not_void_return;
 	
 		internal Return (Location location)
@@ -246,6 +247,17 @@ namespace Microsoft.JScript {
 			if (!InFunction)
 				throw new Exception ("error JS1018: 'return' statement outside of function");
 			if (expression != null) {
+				if (expression is Expression) {
+					AST ast = ((Expression) expression).Last;
+					if (ast is Call) {
+						Call call = (Call) ast;
+						if (call.member_exp is Identifier) {
+							object obj = env.Get (String.Empty, ((Identifier) call.member_exp).name);
+							if (obj is Function)
+								exp_returns_void = ((Function) obj).HandleReturnType == typeof (void);
+						}
+					}
+				}					
 				OnNotVoidReturn (null);
 				return expression.Resolve (env);
 			} else 
@@ -261,6 +273,10 @@ namespace Microsoft.JScript {
 			if (expression != null) {
 				expression.Emit (ec);
 				loc = ig.DeclareLocal (typeof (object));
+
+				if (exp_returns_void)
+					ig.Emit (OpCodes.Ldnull);
+
 				ig.Emit (OpCodes.Stloc, loc);
 			}
 					 
