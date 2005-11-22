@@ -1,3 +1,8 @@
+2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PublicKey.cs: Completed implementation for both RSA and DSA public
+	keys.
+
 2005-11-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* OpenFlags.cs: Removed extra [Serializable] (not in 2.0).
