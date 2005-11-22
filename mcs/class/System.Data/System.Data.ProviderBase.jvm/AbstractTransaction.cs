@@ -105,7 +105,7 @@ namespace System.Data.Common
             }
             catch (SQLException exp)
             {
-                throw new SystemException(exp.Message);
+                throw new SystemException(exp.Message, exp);
             }
         }
 
@@ -125,7 +125,7 @@ namespace System.Data.Common
             }
             catch (SQLException exp)
             {
-                throw new SystemException(exp.Message);
+                throw new SystemException(exp.Message, exp);
             }
         }
 
