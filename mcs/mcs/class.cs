@@ -4875,13 +4875,12 @@ namespace Mono.CSharp {
 			if (method.GetObsoleteAttribute () != null || container.GetObsoleteAttribute () != null)
 				ec.TestObsoleteMethodUsage = false;
 
+			method.ParameterInfo.ApplyAttributes (ec, MethodBuilder);
+
 			Attributes OptAttributes = method.OptAttributes;
 
 			if (OptAttributes != null)
 				OptAttributes.Emit (ec, kind);
-
-			if (member is MethodCore)
-				((MethodCore) member).Parameters.ApplyAttributes (ec, MethodBuilder);
 
 			ToplevelBlock block = method.Block;
 			

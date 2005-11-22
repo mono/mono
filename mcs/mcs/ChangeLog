@@ -1,3 +1,8 @@
+2005-11-22  Marek Safar  <marek.safar@seznam.cz>
+
+	Fix #76783.
+	* class.cs (MethodData.Emit): Parameters should be labeled first.
+
 2005-11-21  Marek Safar  <marek.safar@seznam.cz>
 
 	Fix #76761.
