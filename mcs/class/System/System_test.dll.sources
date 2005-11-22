@@ -172,6 +172,7 @@ System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierExtensionT
 System.Security.Permissions/ResourcePermissionBaseEntryTest.cs
 System.Security.Permissions/ResourcePermissionBaseTest.cs
 System.Security.Permissions/StorePermissionAttributeTest.cs
+System.Security.Permissions/StorePermissionTest.cs
 System.Text.RegularExpressions/GroupTest.cs
 System.Text.RegularExpressions/MatchTest.cs
 System.Text.RegularExpressions/PerlTest.cs
@@ -311,6 +312,10 @@ System.CodeDom.Compiler/ExecutorCas.cs
 System.CodeDom.Compiler/GeneratedCodeAttributeCas.cs
 System.CodeDom.Compiler/IndentedTextWriterCas.cs
 System.CodeDom.Compiler/TempFileCollectionCas.cs
+System.Security.Permissions/ResourcePermissionBaseCas.cs
+System.Security.Permissions/ResourcePermissionBaseEntryCas.cs
+System.Security.Permissions/StorePermissionAttributeCas.cs
+System.Security.Permissions/StorePermissionCas.cs
 System.Text.RegularExpressions/CaptureCas.cs
 System.Text.RegularExpressions/CaptureCollectionCas.cs
 System.Text.RegularExpressions/GroupCas.cs
