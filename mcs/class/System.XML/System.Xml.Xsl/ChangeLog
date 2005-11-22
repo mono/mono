@@ -1,3 +1,7 @@
+2005-11-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XslCompiledTransform.cs : added non-compiler transformer (aka. stub).
+
 2005-11-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsltException.cs : under 2.0, some properties are virtual.

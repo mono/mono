@@ -175,6 +175,7 @@ System.Xml.XPath/Iterator.cs
 System.Xml.XPath/Tokenizer.cs
 System.Xml.Xsl/IXsltContextFunction.cs
 System.Xml.Xsl/IXsltContextVariable.cs
+System.Xml.Xsl/XslCompiledTransform.cs
 System.Xml.Xsl/XslTransform.cs
 System.Xml.Xsl/XsltArgumentList.cs
 System.Xml.Xsl/XsltCompileException.cs
