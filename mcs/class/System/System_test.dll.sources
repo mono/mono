@@ -160,6 +160,7 @@ System.Security.Cryptography/AsnEncodedDataTest.cs
 System.Security.Cryptography/OidCollectionTest.cs
 System.Security.Cryptography/OidEnumeratorTest.cs
 System.Security.Cryptography/OidTest.cs
+System.Security.Cryptography.X509Certificates/PublicKeyTest.cs
 System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionTest.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollectionTest.cs
 System.Security.Cryptography.X509Certificates/X509ChainPolicyTest.cs
@@ -312,6 +313,7 @@ System.CodeDom.Compiler/ExecutorCas.cs
 System.CodeDom.Compiler/GeneratedCodeAttributeCas.cs
 System.CodeDom.Compiler/IndentedTextWriterCas.cs
 System.CodeDom.Compiler/TempFileCollectionCas.cs
+System.Security.Cryptography.X509Certificates/PublicKeyCas.cs
 System.Security.Permissions/ResourcePermissionBaseCas.cs
 System.Security.Permissions/ResourcePermissionBaseEntryCas.cs
 System.Security.Permissions/StorePermissionAttributeCas.cs
