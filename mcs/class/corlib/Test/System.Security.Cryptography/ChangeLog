@@ -1,3 +1,9 @@
+2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSATest.cs: Added test case where J isn't imported. In this case we
+	don't export (our internally calculated) J and it's also not part of 
+	the XML output.
+
 2005-10-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RC2CryptoServiceProviderTest.cs: New. Unit tests specific to this 
