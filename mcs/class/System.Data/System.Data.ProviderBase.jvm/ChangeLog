@@ -1,3 +1,7 @@
+2006-22-11 Konstantin Triger <kostat@mainsoft.com>
+
+	* AbstractTransaction.cs: set inner exception.
+
 2005-16-11 Boris Kirzner <borisk@mainsoft.com>
 	* AbstractDBConnection.cs: TARGET_JVM fix. Throw exception if MSSQL port
 	resolution failed.

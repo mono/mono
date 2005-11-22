@@ -62,7 +62,7 @@ namespace System.Data.Common
             }
             catch (SQLException exp)
             {
-                throw new System.InvalidOperationException(exp.Message);
+                throw new System.InvalidOperationException(exp.Message, exp);
             }
         }
 
