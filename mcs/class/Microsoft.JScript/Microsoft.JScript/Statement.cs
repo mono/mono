@@ -596,6 +596,7 @@ namespace Microsoft.JScript {
 			ILGenerator ig = ec.ig;
 			Label init_default = ig.DefineLabel ();
 			Label end_of_default = ig.DefineLabel ();
+			Label old_end = ec.LoopEnd;
 			ec.LoopEnd = ig.DefineLabel ();
 
 			LocalBuilder loc = ig.DeclareLocal (typeof (object));
@@ -632,7 +633,8 @@ namespace Microsoft.JScript {
 					c.EmitStms (ec);				
 				}
 			} 
-			ig.MarkLabel (ec.LoopEnd);			
+			ig.MarkLabel (ec.LoopEnd);
+			ec.LoopEnd = old_end;
 		}
 	}
 

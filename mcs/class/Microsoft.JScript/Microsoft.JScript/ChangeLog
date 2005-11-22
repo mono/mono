@@ -1,3 +1,9 @@
+2005-11-21  Cesar Lopez Nataren  <cnataren@novell.com>
+
+	* Statement.cs (class Switch): Preserve the value of
+	EmitContext.LoopEnd as can be overriden in nested blocks, for
+	example in a switch statement inside a for-loop.
+
 2005-10-28  Raja R Harinath  <rharinath@novell.com>
 
 	* Import.cs (Resolve): Update to changes in GMCS.
