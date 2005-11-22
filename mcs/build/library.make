@@ -14,8 +14,9 @@ sourcefile = $(LIBRARY).sources
 PROFILE_sources = $(PROFILE)_$(LIBRARY).sources
 ifeq ($(wildcard $(PROFILE_sources)), $(PROFILE_sources))
 PROFILE_excludes = $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources)
+COMMON_sourcefile := $(sourcefile)
 sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes)
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(COMMON_sourcefile)
 	@echo Creating the per profile list $@ ...
 	$(topdir)/tools/gensources.sh $(PROFILE_sources) $(PROFILE_excludes) > $@
 endif

@@ -1,3 +1,9 @@
+2005-11-22  Vladislav Spivak <spivak@mainsoft.com>
+	* Missed dependency. 
+	<profile>.sources file is supporting #include directive
+	Usually it includes common .sources file.
+	Let's make it dependency of <profile>.sources
+
 2005-10-03  Raja R Harinath  <rharinath@novell.com>
 
 	* profiles/basic.make (monolite_flag, use_monolite): New.  Used to
