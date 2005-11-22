@@ -1,3 +1,8 @@
+2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PublicKeyCas.cs: New (2.0). CAS tests.
+	* PublicKeyTest.cs: New (2.0). Unit tests.
+
 2005-09-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Most tests moved from System.Security.dll assembly.
