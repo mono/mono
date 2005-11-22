@@ -1,3 +1,8 @@
+2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DSAManaged.cs: Don't export J if it wasn't imported (i.e. it was 
+	calculated from the other parameters).
+
 2005-10-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SymmetricTransform.cs: Clone IV so it cannot be changed once the 

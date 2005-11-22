@@ -63,6 +63,7 @@ namespace Mono.Security.Cryptography {
 		private BigInteger j;
 		private BigInteger seed;
 		private int counter;
+		private bool j_missing;
 
 		private RandomNumberGenerator rng;
 
@@ -278,7 +279,9 @@ namespace Mono.Security.Cryptography {
 			param.Q = NormalizeArray (q.GetBytes ());
 			param.G = NormalizeArray (g.GetBytes ());
 			param.Y = NormalizeArray (y.GetBytes ());
-			param.J = NormalizeArray (j.GetBytes ());
+			if (!j_missing) {
+				param.J = NormalizeArray (j.GetBytes ());
+			}
 			if (seed != 0) {
 				param.Seed = NormalizeArray (seed.GetBytes ());
 				param.Counter = counter;
@@ -311,10 +314,12 @@ namespace Mono.Security.Cryptography {
 			else
 				x = null;
 			// optional parameter - pre-computation
-			if (parameters.J != null)
+			if (parameters.J != null) {
 				j = new BigInteger (parameters.J);
-			else
+			} else {
 				j = (p - 1) / q;
+				j_missing = true;
+			}
 			// optional - seed and counter must both be present (or absent)
 			if (parameters.Seed != null) {
 				seed = new BigInteger (parameters.Seed);
