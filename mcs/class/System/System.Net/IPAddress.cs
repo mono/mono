@@ -139,13 +139,29 @@ namespace System.Net {
 		}
 
 #if NET_1_1
-		public IPAddress(byte[] address) : this(address, 0)
+		public IPAddress (byte[] address)
 		{
+			int len = address.Length;
+#if NET_2_0
+			if (len != 16 && len != 4)
+				throw new ArgumentException ("address");
+#else
+			if (len != 16)
+				throw new ArgumentException ("address");
+#endif
+			if (len == 16) {
+				Buffer.BlockCopy(address, 0, m_Numbers, 0, 16);
+				m_Family = AddressFamily.InterNetworkV6;
+				m_ScopeId = 0;
+			} else {
+				m_Address = (address [3] << 24) + (address [2] << 16) +
+					(address [1] << 8) + address [0];
+			}
 		}
 
 		public IPAddress(byte[] address, long scopeId)
 		{
-			if(address.Length != 16)
+			if (address.Length != 16)
 				throw new ArgumentException("address");
 
 			Buffer.BlockCopy(address, 0, m_Numbers, 0, 16);

@@ -1,10 +1,15 @@
+2005-11-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* IPAddress.cs: the byte[] ctor supports length 4 in .NET 2.0.
+	Fixes bug #76792.
+
 2005-11-21 Senganal T   <tsenganal@novell.com>
 
-        * Dns.cs : corrected a mistake in GetHostEntry ()
+	* Dns.cs : corrected a mistake in GetHostEntry ()
 
 2005-11-21 Senganal T   <tsenganal@novell.com>
 
-        * Dns.cs : added GetHostEntry() method for 2.0 api conformance
+	* Dns.cs : added GetHostEntry() method for 2.0 api conformance
 
 2005-11-18 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
