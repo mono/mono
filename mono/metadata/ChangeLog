@@ -1,3 +1,13 @@
+2005-11-23  Raja R Harinath  <rharinath@novell.com>
+	    Ankit Jain  <jankit@novell.com>
+
+	* metadata.c (mono_metadata_class_equal): Pass signature_only when
+	comparing VARs too.
+	* icall.c (ves_icall_MonoType_get_DeclaringMethod): Look at 
+	type->data.generic_param only if the type is an MVAR.
+	(ves_icall_MonoMethod_GetGenericArguments): Ensure that we don't
+	leak owner-less VARs and MVARs into managed space.
+
 2005-11-21  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h
