@@ -534,7 +534,8 @@ namespace System.Xml.Serialization {
 
 		void ImportNamespace (XmlSchema schema, string ns)
 		{
-			if (ns == schema.TargetNamespace || ns == XmlSchema.Namespace) return;
+			if (ns == null || ns.Length == 0 ||
+				ns == schema.TargetNamespace || ns == XmlSchema.Namespace) return;
 
 			foreach (XmlSchemaObject sob in schema.Includes)
 				if ((sob is XmlSchemaImport) && ((XmlSchemaImport)sob).Namespace == ns) return;
