@@ -1484,7 +1484,6 @@ namespace System.Windows.Forms {
 					return;
 				}
 
-				// This message is only received under Win32
 				case Msg.WM_NCCALCSIZE: {
 					XplatUIWin32.NCCALCSIZE_PARAMS	ncp;
 

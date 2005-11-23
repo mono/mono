@@ -1,5 +1,12 @@
 2005-11-22  Jackson Harper  <jackson@ximian.com>
 
+	* Hwnd.cs: Don't compute the menu size for
+	DefaultClientRectangle.
+	- Reenable menu sizes being computed for GetClienRectangle.
+	* Form.cs: Remove comment of trechery
+	
+2005-11-22  Jackson Harper  <jackson@ximian.com>
+
 	* Hwnd.cs: The adjustments for the menu bar are made when it is
 	attached to the form.
 
