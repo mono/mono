@@ -43,9 +43,9 @@ namespace System.Windows.Forms
 	{
 		internal MenuItemCollection menu_items;
 		internal IntPtr menu_handle = IntPtr.Zero;
-		internal bool is_dirty = true;
-		internal bool creating = false;
 		internal Menu parent_menu = null;
+		System.Drawing.Rectangle rect;
+		internal Control Wnd;
 
 		public const int FindHandle = 0;
 		public const int FindShortcut = 1;
@@ -64,24 +64,11 @@ namespace System.Windows.Forms
 		[EditorBrowsableAttribute(EditorBrowsableState.Advanced)]
 		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
 		public IntPtr Handle {
-			get {
-				if (IsDirty && creating == false) {					
-					Dispose (true);
-				}
-
-				if (menu_handle == IntPtr.Zero) {
-					MenuChanged ();
-				}
-
-				return menu_handle;
-			}
+			get { return menu_handle; }
 		}
 
 		internal virtual void MenuChanged ()
 		{
-			menu_handle = CreateMenuHandle ();
-			CreateItems ();
-			IsDirty = false;
 		}
 
 		[BrowsableAttribute(false)]
@@ -114,9 +101,40 @@ namespace System.Windows.Forms
 
 		#region Private Properties
 
-		internal bool IsDirty {
-			get { return is_dirty; }
-			set { is_dirty = value; }
+		internal System.Drawing.Rectangle Rect {
+			get {
+				return rect;
+			}
+		}
+
+		internal MenuItem SelectedItem  {
+			get {
+				foreach (MenuItem item in MenuItems)
+					if ((item.Status & DrawItemState.Selected) == DrawItemState.Selected)
+						return item;
+
+				return null;
+			}
+		}
+
+		internal int Height {
+			get { return rect.Height; }
+			set { rect.Height = value; }
+		}
+
+		internal int Width {
+			get { return rect.Width; }
+			set { rect.Width = value; }
+		}
+
+		internal int X {
+			get { return rect.X; }
+			set { rect.X = value; }
+		}
+
+		internal int Y {
+			get { return rect.Y; }
+			set { rect.Y = value; }
 		}
 
 		#endregion Private Properties
@@ -133,19 +151,10 @@ namespace System.Windows.Forms
 				menu_items.Add (menuSrc.MenuItems [i].CloneMenu ());
 		}
 
-		protected virtual IntPtr CreateMenuHandle ()
-		{
-			IntPtr menu;
-
-			menu = MenuAPI.CreatePopupMenu (this);
-			return menu;
-		}
-
 		protected override void Dispose (bool disposing)
 		{		
 			if (disposing) {
 				if (menu_handle != IntPtr.Zero) {
-					MenuAPI.DestroyMenu (menu_handle);
 					menu_handle = IntPtr.Zero;
 				}
 			}
@@ -241,19 +250,6 @@ namespace System.Windows.Forms
 
 		#endregion Public Methods
 
-		#region Private Methods
-
-		internal void CreateItems ()
-		{
-			creating = true;
-
-			for (int i = 0; i < menu_items.Count; i++)
-				menu_items[i].Create ();
-
-			creating = false;
-		}
-
-		#endregion Private Methods
 
 		[ListBindable(false)]
 		public class MenuItemCollection : IList, ICollection, IEnumerable
@@ -314,7 +310,9 @@ namespace System.Windows.Forms
 				items.Add (mi);
 				mi.Index = items.Count - 1;
 
-				owner.IsDirty = true;
+				owner.MenuChanged ();
+				if (owner.parent_menu != null)
+					owner.parent_menu.MenuChanged ();
 				return items.Count - 1;
 			}
 
@@ -342,7 +340,7 @@ namespace System.Windows.Forms
 
 				items = new_items;
 				UpdateItemsIndices ();
-				owner.IsDirty = true;
+				owner.MenuChanged ();
 
 				return index;
 			}
@@ -375,7 +373,7 @@ namespace System.Windows.Forms
 			public virtual void Clear ()
 			{
 				items.Clear ();
-				owner.IsDirty = true;
+				owner.MenuChanged ();
 			}
 
 			public bool Contains (MenuItem value)
@@ -436,7 +434,7 @@ namespace System.Windows.Forms
 				items.RemoveAt (index);
 
 				UpdateItemsIndices ();
-				owner.IsDirty = true;
+				owner.MenuChanged ();
 			}
 
 			#endregion Public Methods

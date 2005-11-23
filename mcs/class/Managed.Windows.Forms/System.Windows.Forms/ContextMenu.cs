@@ -85,7 +85,7 @@ namespace System.Windows.Forms
 			src_control = control;
 
 			OnPopup (EventArgs.Empty);
-			MenuAPI.TrackPopupMenu (Handle, Handle,	Control.MousePosition, false, control);
+			MenuTracker.TrackPopupMenu (this, Control.MousePosition);
 		}
 
 		#endregion Public Methods

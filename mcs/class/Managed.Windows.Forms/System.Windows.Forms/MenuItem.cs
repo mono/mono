@@ -62,6 +62,7 @@ namespace System.Windows.Forms
 		private bool menubar;
 		private DrawItemState status;
 		private MenuMerge mergetype;
+		internal Rectangle bounds;
 		
 		public MenuItem (): base (null)
 		{	
@@ -289,16 +290,19 @@ namespace System.Windows.Forms
 						mi.Visible = value;
 				}
 
-				if (parent_menu != null) {
-					parent_menu.IsDirty = true;
-					parent_menu.creating = false;
-				}
+				if (parent_menu != null)
+					parent_menu.MenuChanged ();
 			}
 		}
 
 		#endregion Public Properties
 
 		#region Private Properties
+
+		internal new int Height {
+			get { return bounds.Height; }
+			set { bounds.Height = value; }
+		}
 
 		internal bool IsPopup {
 			get {
@@ -339,9 +343,24 @@ namespace System.Windows.Forms
 			set { status = value; }
 		}
 		
+		internal new int Width {
+			get { return bounds.Width; }
+			set { bounds.Width = value; }
+		}
+
+		internal new int X {
+			get { return bounds.X; }
+			set { bounds.X = value; }
+		}
+
 		internal int XTab {
 			get { return xtab; }
 			set { xtab = value; }
+		}
+
+		internal new int Y {
+			get { return bounds.Y; }
+			set { bounds.Y = value; }
 		}
 
 		#endregion Private Properties
@@ -460,19 +479,6 @@ namespace System.Windows.Forms
 
 		#region Private Methods
 
-		internal void Create ()
-		{
-			IntPtr hSubMenu = IntPtr.Zero;
-
-			menuid = index = MenuAPI.InsertMenuItem (Parent.Handle, -1, true, this, ref hSubMenu);
-			IsDirty = false;
-
-			if (IsPopup) {
-				menu_handle = hSubMenu;
-				CreateItems ();
-			}
-		}
-		
 		internal void PerformDrawItem (DrawItemEventArgs e)
 		{
 			OnDrawItem (e);

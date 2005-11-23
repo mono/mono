@@ -675,7 +675,7 @@ namespace System.Windows.Forms
 			child_controls = CreateControlsInstance();
 			client_size = new Size(DefaultSize.Width, DefaultSize.Height);
 			client_rect = new Rectangle(0, 0, DefaultSize.Width, DefaultSize.Height);
-			XplatUI.CalculateWindowRect(IntPtr.Zero, ref client_rect, CreateParams.Style, CreateParams.ExStyle, IntPtr.Zero, out bounds);
+			XplatUI.CalculateWindowRect(IntPtr.Zero, ref client_rect, CreateParams.Style, CreateParams.ExStyle, null, out bounds);
 			if ((CreateParams.Style & (int)WindowStyles.WS_CHILD) == 0) {
 				bounds.X=-1;
 				bounds.Y=-1;
@@ -3298,7 +3298,7 @@ namespace System.Windows.Forms
 			ClientRect = new Rectangle(0, 0, x, y);
 			cp = this.CreateParams;
 
-			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, cp.ExStyle, IntPtr.Zero, out WindowRect)==false) {
+			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, cp.ExStyle, null, out WindowRect)==false) {
 				return;
 			}
 

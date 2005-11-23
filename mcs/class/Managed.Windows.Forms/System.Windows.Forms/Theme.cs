@@ -561,12 +561,12 @@ namespace System.Windows.Forms
 		#endregion	// ListView
 		
 		#region Menus
-		public abstract void CalcItemSize (Graphics dc, MenuAPI.MENUITEM item, int y, int x, bool menuBar);
-		public abstract void CalcPopupMenuSize (Graphics dc, IntPtr hMenu);
-		public abstract int CalcMenuBarSize (Graphics dc, IntPtr hMenu, int width);
-		public abstract void DrawMenuBar (Graphics dc, IntPtr hMenu, Rectangle rect);
+		public abstract void CalcItemSize (Graphics dc, MenuItem item, int y, int x, bool menuBar);
+		public abstract void CalcPopupMenuSize (Graphics dc, Menu menu);
+		public abstract int CalcMenuBarSize (Graphics dc, Menu menu, int width);
+		public abstract void DrawMenuBar (Graphics dc, Menu menu, Rectangle rect);
 		public abstract void DrawMenuItem (MenuItem item, DrawItemEventArgs e);
-		public abstract void DrawPopupMenu (Graphics dc, IntPtr hMenu, Rectangle cliparea, Rectangle rect);		
+		public abstract void DrawPopupMenu (Graphics dc, Menu menu, Rectangle cliparea, Rectangle rect);		
 		#endregion 	// Menus
 
 		#region MonthCalendar

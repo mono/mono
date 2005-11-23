@@ -518,14 +518,13 @@ namespace System.Windows.Forms {
 
 					if (menu != null) {
 						menu.SetForm (this);
-						MenuAPI.SetMenuBarWindow (menu.Handle, this);
 
 						if (IsHandleCreated) {
-							XplatUI.SetMenu (window.Handle, menu.Handle);
+							XplatUI.SetMenu (window.Handle, menu);
 						}
 
 						UpdateBounds (bounds.X, bounds.Y, bounds.Width, bounds.Height, ClientSize.Width, ClientSize.Height - 
-							ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu.Handle, ClientSize.Width));
+							ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu, ClientSize.Width));
 					} else
 						UpdateBounds ();
 				}
@@ -1181,7 +1180,7 @@ namespace System.Windows.Forms {
 			}
 
 			if (menu != null) {
-				XplatUI.SetMenu(window.Handle, menu.Handle);
+				XplatUI.SetMenu(window.Handle, menu);
 			}
 
 			OnLoad(EventArgs.Empty);
@@ -1393,9 +1392,7 @@ namespace System.Windows.Forms {
 			Rectangle WindowRect;
 			CreateParams cp = this.CreateParams;
 
-			IntPtr menu_handle = (menu == null)?IntPtr.Zero:menu.Handle;
-
-			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, cp.ExStyle, menu_handle, out WindowRect) )
+			if (XplatUI.CalculateWindowRect(Handle, ref ClientRect, cp.Style, cp.ExStyle, menu, out WindowRect) )
 				SetBoundsCore(bounds.X, bounds.Y, WindowRect.Width, WindowRect.Height, BoundsSpecified.Size);
 		}
 
@@ -1457,9 +1454,7 @@ namespace System.Windows.Forms {
 				// Menu drawing
 				case Msg.WM_NCLBUTTONDOWN: {
 					if (this.menu != null) {
-						int x = LowOrder ((int) m.LParam.ToInt32 ()) ;
-						int y = HighOrder ((int) m.LParam.ToInt32 ());
-						menu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, x, y, 0));
+						menu.OnMouseDown(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
 					}
 					base.WndProc(ref m);
 					return;
@@ -1467,8 +1462,7 @@ namespace System.Windows.Forms {
 
 				case Msg.WM_NCMOUSEMOVE: {
 					if (this.menu != null) {
-						menu.OnMouseMove(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), 
-							mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
+						menu.OnMouseMove(this, new MouseEventArgs (FromParamToMouseButtons ((int) m.WParam.ToInt32()), mouse_clicks, LowOrder ((int) m.LParam.ToInt32 ()), HighOrder ((int) m.LParam.ToInt32 ()), 0));
 					}
 					base.WndProc(ref m);
 					return;
@@ -1477,7 +1471,7 @@ namespace System.Windows.Forms {
 				case Msg.WM_NCPAINT: {
 					if (this.menu != null) {
 						Point pnt = XplatUI.GetMenuOrigin(window.Handle);
-						MenuAPI.DrawMenuBar (menu.Handle, new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
+						menu.Draw (new Rectangle (pnt.X, pnt.Y, ClientSize.Width, 0));
 					}
 
 					base.WndProc(ref m);
@@ -1491,7 +1485,7 @@ namespace System.Windows.Forms {
 						ncp = (XplatUIWin32.NCCALCSIZE_PARAMS)Marshal.PtrToStructure(m.LParam, typeof(XplatUIWin32.NCCALCSIZE_PARAMS));
 
 						// Adjust for menu
-						ncp.rgrc1.top += ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu.menu_handle, ClientSize.Width);
+						ncp.rgrc1.top += ThemeEngine.Current.CalcMenuBarSize (DeviceContext, menu, ClientSize.Width);
 						Marshal.StructureToPtr(ncp, m.LParam, true);
 					}
 					DefWndProc(ref m);

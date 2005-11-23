@@ -44,7 +44,7 @@ namespace System.Windows.Forms {
 		private IntPtr		handle;
 		internal IntPtr		client_window;
 		internal IntPtr		whole_window;
-		internal IntPtr		menu_handle;
+		internal Menu		menu;
 		internal TitleStyle	title_style;
 		internal FormBorderStyle	border_style;
 		internal int		x;
@@ -74,7 +74,7 @@ namespace System.Windows.Forms {
 			width = 0;
 			height = 0;
 			visible = false;
-			menu_handle = IntPtr.Zero;
+			menu = null;
 			border_style = FormBorderStyle.None;
 			client_window = IntPtr.Zero;
 			whole_window = IntPtr.Zero;
@@ -131,21 +131,17 @@ namespace System.Windows.Forms {
 		}
 
 		public static Rectangle GetWindowRectangle(FormBorderStyle border_style,
-				IntPtr menu_handle, TitleStyle title_style, int caption_height,
+				Menu menu, TitleStyle title_style, int caption_height,
 				int tool_caption_height, Rectangle client_rect)
 		{
 			Rectangle	rect;
 
 			rect = new Rectangle(client_rect.Location, client_rect.Size);
 
-			if (menu_handle != IntPtr.Zero) {
-				MenuAPI.MENU menu = MenuAPI.GetMenuFromID (menu_handle);
-				if (menu != null) {
-					int menu_height = menu.Height;
-					rect.Y -= menu_height;
-					rect.Height += menu_height;
-				} else
-					Console.WriteLine("Hwnd.GetWindowRectangle: No MENU for menu_handle = {0}", menu_handle);
+			if (menu != null) {
+				int menu_height = menu.Rect.Height;
+				rect.Y -= menu_height;
+				rect.Height += menu_height;
 			}
 
 			if (border_style == FormBorderStyle.Fixed3D) {
@@ -176,19 +172,15 @@ namespace System.Windows.Forms {
 			return rect;
 		}
 
-		public static Rectangle GetClientRectangle(FormBorderStyle border_style, IntPtr menu_handle, TitleStyle title_style, int caption_height, int tool_caption_height, int width, int height) {
+		public static Rectangle GetClientRectangle(FormBorderStyle border_style, Menu menu, TitleStyle title_style, int caption_height, int tool_caption_height, int width, int height) {
 			Rectangle rect;
 
 			rect = new Rectangle(0, 0, width, height);
 
-			if (menu_handle != IntPtr.Zero) {
-				MenuAPI.MENU menu = MenuAPI.GetMenuFromID (menu_handle);
-				if (menu != null) {
-					int menu_height = menu.Height;
-					rect.Y += menu_height;
-					rect.Height -= menu_height;
-				} else
-					Console.WriteLine("Hwnd.GetClientRectangle: No MENU for menu_handle = {0}", menu_handle);
+			if (menu != null) {
+				int menu_height = menu.Rect.Height;
+				rect.Y += menu_height;
+				rect.Height -= menu_height;
 			}
 			
 			if (border_style == FormBorderStyle.Fixed3D) {
@@ -273,7 +265,7 @@ namespace System.Windows.Forms {
 			get {
 				// We pass a Zero for the menu handle so the menu size is
 				// not computed this is done via an WM_NCCALC
-				return GetClientRectangle (border_style, IntPtr.Zero, title_style,
+				return GetClientRectangle (border_style, null, title_style,
 						caption_height, tool_caption_height, width, height);
 			}
 		}
@@ -307,13 +299,13 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		public IntPtr MenuHandle {
+		public Menu Menu {
 			get {
-				return menu_handle;
+				return menu;
 			}
 
 			set {
-				menu_handle = value;
+				menu = value;
 			}
 		}
 

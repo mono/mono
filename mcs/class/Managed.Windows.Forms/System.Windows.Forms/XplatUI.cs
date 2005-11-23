@@ -237,11 +237,11 @@ namespace System.Windows.Forms {
 			driver.Activate(handle);
 		}
 
-		internal static bool CalculateWindowRect(IntPtr handle, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect) {
+		internal static bool CalculateWindowRect(IntPtr handle, ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
 			#if DriverDebug
 				Console.WriteLine("CalculateWindowRect({0:X}): Called", handle.ToInt32());
 			#endif
-			return driver.CalculateWindowRect(handle, ref ClientRect, Style, ExStyle, MenuHandle, out WindowRect);
+			return driver.CalculateWindowRect(handle, ref ClientRect, Style, ExStyle, menu, out WindowRect);
 		}
 
 		internal static void CaretVisible(IntPtr handle, bool visible) {
@@ -639,11 +639,11 @@ namespace System.Windows.Forms {
 			driver.SetIcon(handle, icon);
 		}
 
-		internal static void SetMenu(IntPtr handle, IntPtr menu_handle) {
+		internal static void SetMenu(IntPtr handle, Menu menu) {
 			#if DriverDebug
-				Console.WriteLine("SetMenu({0:X}, {1:X}): Called", handle.ToInt32(), menu_handle.ToInt32());
+				Console.WriteLine("SetMenu({0:X}, {1}): Called", handle.ToInt32(), menu);
 			#endif
-			driver.SetMenu(handle, menu_handle);
+			driver.SetMenu(handle, menu);
 		}
 
 		internal static void SetModal(IntPtr handle, bool Modal) {

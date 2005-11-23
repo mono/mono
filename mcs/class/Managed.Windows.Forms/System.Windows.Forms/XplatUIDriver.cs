@@ -133,7 +133,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal abstract void SetBorderStyle(IntPtr handle, FormBorderStyle border_style);
-		internal abstract void SetMenu(IntPtr handle, IntPtr menu_handle);
+		internal abstract void SetMenu(IntPtr handle, Menu menu);
 
 		internal abstract bool GetText(IntPtr handle, out string text);
 		internal abstract bool Text(IntPtr handle, string text);
@@ -163,7 +163,7 @@ namespace System.Windows.Forms {
 		internal abstract bool SetZOrder(IntPtr hWnd, IntPtr AfterhWnd, bool Top, bool Bottom);
 		internal abstract bool SetTopmost(IntPtr hWnd, IntPtr hWndOwner, bool Enabled);
 
-		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect);
+		internal abstract bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect);
 
 		internal abstract void SetCursor(IntPtr hwnd, IntPtr cursor);
 		internal abstract void ShowCursor(bool show);

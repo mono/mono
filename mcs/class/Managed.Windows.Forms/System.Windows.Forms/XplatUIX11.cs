@@ -1599,7 +1599,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override bool CalculateWindowRect(IntPtr handle, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect) {
+		internal override bool CalculateWindowRect(IntPtr handle, ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
 			FormBorderStyle	border_style;
 			TitleStyle	title_style;
 			int caption_height;
@@ -1608,7 +1608,7 @@ namespace System.Windows.Forms {
 			DeriveStyles(handle, Style, ExStyle, out border_style, out title_style,
 				out caption_height, out tool_caption_height);
 
-			WindowRect = Hwnd.GetWindowRectangle(border_style, MenuHandle, title_style,
+			WindowRect = Hwnd.GetWindowRectangle(border_style, menu, title_style,
 					caption_height, tool_caption_height,
 					ClientRect);
 
@@ -2892,7 +2892,7 @@ namespace System.Windows.Forms {
 				width = hwnd.width;
 				height = hwnd.height;
 
-				rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
+				rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
 
 				client_width = rect.Width;
 				client_height = rect.Height;
@@ -3381,11 +3381,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override void SetMenu(IntPtr handle, IntPtr menu_handle) {
+		internal override void SetMenu(IntPtr handle, Menu menu) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			hwnd.menu_handle = menu_handle;
+			hwnd.menu = menu;
 
 			// FIXME - do we need to trigger some resize?
 		}
@@ -3495,7 +3495,7 @@ namespace System.Windows.Forms {
 				XUnmapWindow(DisplayHandle, hwnd.whole_window);
 			}
 
-			client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
+			client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu, hwnd.title_style, hwnd.caption_height, hwnd.tool_caption_height, width, height);
 
 			// Save a server roundtrip (and prevent a feedback loop)
 			if ((hwnd.x == x) && (hwnd.y == y) && 

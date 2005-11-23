@@ -787,7 +787,7 @@ namespace System.Windows.Forms {
 			}
 		}
 		
-		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, int ExStyle, IntPtr MenuHandle, out Rectangle WindowRect) {
+		internal override bool CalculateWindowRect(IntPtr hWnd, ref Rectangle ClientRect, int Style, int ExStyle, Menu menu, out Rectangle WindowRect) {
 			FormBorderStyle	border_style;
 			TitleStyle	title_style;
 
@@ -819,7 +819,7 @@ namespace System.Windows.Forms {
 				border_style = FormBorderStyle.Fixed3D;
 			}
 
-			WindowRect = Hwnd.GetWindowRectangle(border_style, MenuHandle, title_style,
+			WindowRect = Hwnd.GetWindowRectangle(border_style, menu, title_style,
 					SystemInformation.CaptionHeight,
 					SystemInformation.ToolWindowCaptionHeight, ClientRect);
 
@@ -1570,18 +1570,18 @@ namespace System.Windows.Forms {
 			// FIXME - do we need to trigger some resize?
 		}
 
-		internal override void SetMenu(IntPtr handle, IntPtr menu_handle) {
+		internal override void SetMenu(IntPtr handle, Menu menu) {
 			Hwnd	hwnd;
 
 			hwnd = Hwnd.ObjectFromHandle(handle);
-			hwnd.menu_handle = menu_handle;
+			hwnd.menu = menu;
 
 			// FIXME - do we need to trigger some resize?
 		}
 		
 		internal override void SetWindowPos(IntPtr handle, int x, int y, int width, int height) {
 			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
-			Rectangle client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu_handle,
+			Rectangle client_rect = Hwnd.GetClientRectangle(hwnd.border_style, hwnd.menu,
 					hwnd.title_style, SystemInformation.CaptionHeight,
 					SystemInformation.ToolWindowCaptionHeight, width, height);
 

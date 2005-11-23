@@ -1,3 +1,30 @@
+2005-11-23  Mike Kestner  <mkestner@novell.com>
+
+	* ContextMenu.cs: use MenuTracker.
+	* Control.cs: remove menu handle usage.
+	* Form.cs: remove menu handle usage.
+	* Hwnd.cs: remove menu handle usage.
+	* MainMenu.cs: Draw method moved here from MenuAPI.DrawMenuBar. Proxy
+	motion and clicks to the new Tracker handlers.
+	* Menu.cs: add sizing accessors, SelectedItem prop, kill CreateItems
+	and handle usage.
+	* MenuAPI.cs: refactored to combine popup and menubar event handling.
+	Killed the MENU and MENUITEM data types and associated collections
+	since we now keep the info on Menu and MenuItem. Expanded TRACKER into
+	MenuTracker class that exposes the leftovers from the old MenuAPI
+	static methods. Restructured Capture handling so that only one grab is
+	done for the entire menu hierarchy instead of handing off grabs to
+	submenus. Tracker now has an invisible control to Capture when active.
+	* MenuItem.cs: add sizing accessors, kill Create
+	and handle usage.
+	* Theme.cs: remove menu handle and MENU(ITEM) usage.
+	* ThemeWin32Classic.cs: use Menu/MenuItem sizing props instead of
+	MENU(ITEM). remove menu handle usage, use Menu directly.
+	* XplatUIDriver.cs: remove menu handle usage.
+	* XplatUIOSX.cs: remove menu handle usage.
+	* XplatUIWin32.cs: remove menu handle usage.
+	* XplatUIX11.cs: remove menu handle usage.
+
 2005-11-22  Jackson Harper  <jackson@ximian.com>
 
 	* Hwnd.cs: Don't compute the menu size for

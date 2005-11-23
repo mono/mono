@@ -27,6 +27,7 @@
 // COMPLETE
 
 using System.ComponentModel;
+using System.Drawing;
 
 namespace System.Windows.Forms
 {
@@ -35,7 +36,7 @@ namespace System.Windows.Forms
 	{
 		private RightToLeft right_to_left = RightToLeft.Inherit;
 		private Form form = null;
-		private MenuAPI.TRACKER tracker = null;
+		internal MenuTracker tracker = null;
 
     		public MainMenu () : base (null)
     		{
@@ -65,11 +66,6 @@ namespace System.Windows.Forms
 			return new_menu;
 		}
 		
-		protected override IntPtr CreateMenuHandle ()
-		{				
-			return MenuAPI.CreateMenu (this);						
-		}
-
 		protected override void Dispose (bool disposing)
 		{			
 			base.Dispose (disposing);			
@@ -88,38 +84,56 @@ namespace System.Windows.Forms
 		#endregion Public Methods
 		
 		#region Private Methods
+
+		internal void Draw () 		
+		{
+			Draw (Rect);
+		}
+
+		internal void Draw (Rectangle rect)
+		{
+			Graphics g;
+
+			if (Wnd.window.Handle == IntPtr.Zero)
+				return;
+
+			X = rect.X;
+			Y = rect.Y;
+			Height = Rect.Height;
+
+			g = XplatUI.GetMenuDC(Wnd.window.Handle, IntPtr.Zero);
+			ThemeEngine.Current.DrawMenuBar (g, this, rect);
+			XplatUI.ReleaseMenuDC(Wnd.window.Handle, g);
+		}
 		
 		internal void SetForm (Form form)
 		{
 			this.form = form;
+			Wnd = form;
 			
-			if (tracker == null) {
-				tracker = new MenuAPI.TRACKER (); 
-				tracker.hCurrentMenu = tracker.hTopMenu = Handle;
-			}
+			if (tracker == null)
+				tracker = new MenuTracker (this); 
 		}
 		
 		internal override void MenuChanged ()
 		{
 			base.MenuChanged ();
-			tracker = new MenuAPI.TRACKER (); 
-			tracker.hCurrentMenu = tracker.hTopMenu = menu_handle;
+			if (form == null)
+				return;
 
-			MenuAPI.SetMenuBarWindow (menu_handle, form);
-			// TODO: Need to invalidate & redraw topmenu
+			Draw ();
 		}
-
 
 		/* Mouse events from the form */
-		internal void OnMouseDown (Form window, MouseEventArgs e)
+		internal void OnMouseDown (object window, MouseEventArgs args)
 		{			
-			MenuAPI.TrackBarMouseEvent (Handle, window, e, MenuAPI.MenuMouseEvent.Down, tracker);
+			tracker.OnClick (args);
 		}
 		
-		internal void OnMouseMove (Form window, MouseEventArgs e)
+		internal void OnMouseMove (object window, MouseEventArgs e)
 		{			
-			MouseEventArgs ev = new MouseEventArgs (e.Button, e.Clicks, Control.MousePosition.X, Control.MousePosition.Y, e.Delta);
-			MenuAPI.TrackBarMouseEvent (Handle, window, ev, MenuAPI.MenuMouseEvent.Move, tracker);
+			MouseEventArgs args = new MouseEventArgs (e.Button, e.Clicks, Control.MousePosition.X, Control.MousePosition.Y, e.Delta);
+			tracker.OnMotion (args);
 		}
 		
 		#endregion Private Methods
