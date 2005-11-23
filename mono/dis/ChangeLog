@@ -1,3 +1,12 @@
+2005-11-23  Ankit Jain  <jankit@novell.com>
+
+	* dump.c (has_cattr_get_table): Handle GenericParam.
+	* get.c (dis_get_custom_attrs): Likewise.
+	* main.c (dump_cattrs_for_type_params): New. Dump custom attributes
+	for type parameters.
+	(dis_method_list): Call dump_cattrs_for_type_params.
+	(dis_type): Likewise.
+
 2005-11-17  Ankit Jain  <jankit@novell.com>
 
 	* get.c (dis_stringify_type): Escape generic type parameter names.
