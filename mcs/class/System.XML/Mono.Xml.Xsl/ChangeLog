@@ -1,3 +1,8 @@
+2005-11-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* XslKey.cs: fixed KeyIndexTable.Evaluate method, changed
+	XPathNavigator given to GetNodesByValue()
+
 2005-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XslCompiledContext.cs : since XsltContextInfo is struct, having
