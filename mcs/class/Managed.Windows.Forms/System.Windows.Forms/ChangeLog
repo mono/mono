@@ -1,3 +1,7 @@
+2005-11-23  Jackson Harper  <jackson@ximian.com>
+
+	* MdiChildContext.cs: Don't size windows if they are maximized.
+
 2005-11-23  Mike Kestner  <mkestner@novell.com>
 
 	* ContextMenu.cs: use MenuTracker.

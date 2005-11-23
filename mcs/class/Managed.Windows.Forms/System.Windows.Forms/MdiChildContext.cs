@@ -241,6 +241,9 @@ namespace System.Windows.Forms {
 				}
 			}
 
+			if (maximized)
+				return;
+
 			state = State.Moving;			     
 			form.Capture = true;
 		}
