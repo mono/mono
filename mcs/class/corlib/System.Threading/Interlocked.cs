@@ -115,7 +115,7 @@ namespace System.Threading
 
 		[ComVisible (false)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static T CompareExchange<T> (ref T location, T value, T comparand);
+		public extern static T CompareExchange<T> (ref T location, T value, T comparand) where T:class;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long Exchange(ref long location1, long value);
@@ -129,7 +129,7 @@ namespace System.Threading
 
 		[ComVisible (false)]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public extern static T Exchange<T> (ref T location1, T value);
+		public extern static T Exchange<T> (ref T location1, T value) where T:class;
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static long Read(ref long location1);

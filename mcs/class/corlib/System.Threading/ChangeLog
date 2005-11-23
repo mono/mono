@@ -1,3 +1,8 @@
+2005-11-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* Interlocked.cs: Add T:class constraint to the generic 
+	CompareExchange and Exchange methods.
+
 2005-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* Interlocked.cs: Add generic CompareExchange and Exchange methods.
