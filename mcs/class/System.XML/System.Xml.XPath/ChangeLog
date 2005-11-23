@@ -1,3 +1,8 @@
+2005-11-23  Vladimir Krasnov  <vladimirk@mainsoft.com>
+
+	* Iterator.cs: fixed SimpleSlashIterator.MoveNextCore method, the
+	navigators may be from different xml files.
+
 2005-11-10  Atsushi Enomoto <atsushi@ximian.com>
 
 	* XPathNavigator.cs, XPathNodeIterator.cs :

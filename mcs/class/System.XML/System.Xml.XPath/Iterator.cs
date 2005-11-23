@@ -820,7 +820,8 @@ namespace System.Xml.XPath
 			if (_current == null)
 				_current = _right.Current.Clone ();
 			else
-				_current.MoveTo (_right.Current);
+				if (! _current.MoveTo (_right.Current) )
+					_current = _right.Current.Clone ();
 			return true;
 		}
 
