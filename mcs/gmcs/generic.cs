@@ -463,18 +463,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		/// <summary>
-		///   Set the attributes on the GenericTypeParameterBuilder.
-		/// </summary>
-		/// <remarks>
-		///   This is not done in Resolve() since Resolve() may be called before
-		///   the GenericTypeParameterBuilder is created (partial generic classes).
-		/// </remarks>
-		public void Define (GenericTypeParameterBuilder type)
-		{
-			type.SetGenericParameterAttributes (attrs);
-		}
-
 		public override GenericParameterAttributes Attributes {
 			get { return attrs; }
 		}
@@ -653,23 +641,6 @@ namespace Mono.CSharp {
 
 		/// <summary>
 		///   This is the third method which is called during the resolving
-		///   process.  We're called immediately after calling Resolve() on
-		///   all of the current class'es type parameters.
-		///
-		///   All we do is setting the attributes on the GenericTypeParameterBuilder.
-		/// </summary>
-		/// <remarks>
-		///   This is not done in Resolve() since Resolve() may be called before
-		///   Define() for partial generic classes.
-		/// </remarks>
-		public void DefineConstraints ()
-		{
-			if (constraints != null)
-				constraints.Define (type);
-		}
-
-		/// <summary>
-		///   This is the forth method which is called during the resolving
 		///   process.  We're called immediately after calling DefineConstraints()
 		///   on all of the current class'es type parameters.
 		///
@@ -691,7 +662,7 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   This is the fith and last method which is called during the resolving
+		///   This is the fourth and last method which is called during the resolving
 		///   process.  We're called after everything is fully resolved and actually
 		///   register the constraints with SRE and the TypeManager.
 		/// </summary>
@@ -781,6 +752,7 @@ namespace Mono.CSharp {
 				type.SetBaseTypeConstraint (gc.ClassConstraint);
 
 			type.SetInterfaceConstraints (gc.InterfaceConstraints);
+			type.SetGenericParameterAttributes (gc.Attributes);
 			TypeManager.RegisterBuilder (type, gc.InterfaceConstraints);
 
 			return true;
@@ -1670,9 +1642,6 @@ namespace Mono.CSharp {
 				if (!TypeParameters [i].ResolveType (ec))
 					return false;
 			}
-
-			for (int i = 0; i < TypeParameters.Length; i++)
-				TypeParameters [i].DefineConstraints ();
 
 			return true;
 		}

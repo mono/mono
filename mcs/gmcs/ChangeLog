@@ -1,5 +1,12 @@
 2005-11-23  Martin Baulig  <martin@ximian.com>
 
+	* generic.cs (Constraints.Define): Removed.
+	(TypeParameter.DefineConstraints): Removed.
+	(TypeParameter.DefineType): Call SetGenericParameterAttributes()
+	on the GenericTypeParameterBuilder here.
+
+2005-11-23  Martin Baulig  <martin@ximian.com>
+
 	* typemanager.cs (TypeManager.GetProperty): Make this public.
 
 	* generic.cs (Nullable.NullableInfo.ctor): Use

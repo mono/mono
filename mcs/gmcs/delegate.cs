@@ -134,9 +134,6 @@ namespace Mono.CSharp {
 						return null;
 				}
 
-				for (int i = offset; i < gen_params.Length; i++)
-					CurrentTypeParameters [i - offset].DefineConstraints ();
-
 				Expression current = new SimpleName (
 					MemberName.Basename, TypeParameters, Location);
 				current = current.ResolveAsTypeTerminal (ec);

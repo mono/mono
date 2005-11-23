@@ -1420,10 +1420,6 @@ namespace Mono.CSharp {
 					}
 				}
 
-				int offset = CountTypeParameters - CurrentTypeParameters.Length;
-				for (int i = offset; i < gen_params.Length; i++)
-					CurrentTypeParameters [i - offset].DefineConstraints ();
-
 				foreach (TypeParameter type_param in TypeParameters) {
 					if (!type_param.DefineType (ec)) {
 						error = true;
@@ -2967,9 +2963,6 @@ namespace Mono.CSharp {
 				if (!current_params [i].Resolve (this))
 					return false;
 			}
-
-			for (int i = 0; i < current_params.Length; i++)
-				current_params [i].DefineConstraints ();
 
 			foreach (TypeParameter type_param in PartialContainer.TypeParameters) {
 				if (!type_param.DefineType (ec))
