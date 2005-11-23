@@ -1,3 +1,7 @@
+2005-11-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* WebServiceCompiler.cs: fixed caching for web handlers.
+
 2005-11-21 Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* AspParser.cs: don't change case for verbatim IDs.

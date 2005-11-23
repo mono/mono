@@ -112,7 +112,6 @@ namespace System.Web.Compilation
 
 			results.TempFiles.Delete ();
 			type = assembly.GetType (parser.ClassName, true);
-			CachingCompiler.InsertType (type, parser.PhysicalPath);
 			return type;
 		}
 
