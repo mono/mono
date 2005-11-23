@@ -1163,7 +1163,8 @@ namespace System.Xml.XPath
 			if (_current == null)
 				_current = iter.Current.Clone ();
 			else
-				_current.MoveTo (iter.Current);
+				if (! _current.MoveTo (iter.Current) )
+					_current = iter.Current.Clone ();
 		}
 
 		public override XPathNavigator Current
