@@ -1,3 +1,8 @@
+2005-11-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Virtualized some methods (like Dispose). Fix
+	bug #76801.
+
 2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DSAManaged.cs: Don't export J if it wasn't imported (i.e. it was 

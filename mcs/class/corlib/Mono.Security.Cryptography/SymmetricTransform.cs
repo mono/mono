@@ -99,7 +99,7 @@ namespace Mono.Security.Cryptography {
 
 		// MUST be overriden by classes using unmanaged ressources
 		// the override method must call the base class
-		protected void Dispose (bool disposing) 
+		protected virtual void Dispose (bool disposing) 
 		{
 			if (!m_disposed) {
 				if (disposing) {
@@ -117,7 +117,7 @@ namespace Mono.Security.Cryptography {
 			get { return true; }
 		}
 
-		public bool CanReuseTransform {
+		public virtual bool CanReuseTransform {
 			get { return false; }
 		}
 
@@ -131,7 +131,7 @@ namespace Mono.Security.Cryptography {
 
 		// note: Each block MUST be BlockSizeValue in size!!!
 		// i.e. Any padding must be done before calling this method
-		protected void Transform (byte[] input, byte[] output) 
+		protected virtual void Transform (byte[] input, byte[] output) 
 		{
 			switch (algo.Mode) {
 			case CipherMode.ECB:
