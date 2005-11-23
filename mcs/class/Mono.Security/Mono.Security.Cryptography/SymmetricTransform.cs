@@ -60,9 +60,23 @@ namespace Mono.Security.Cryptography {
 			algo = symmAlgo;
 			encrypt = encryption;
 			BlockSizeByte = (algo.BlockSize >> 3);
+
+			if (rgbIV == null) {
+				rgbIV = KeyBuilder.IV (BlockSizeByte);
+			} else {
+				rgbIV = (byte[]) rgbIV.Clone ();
+			}
+#if NET_2_0
+			// compare the IV length with the "currently selected" block size and *ignore* IV that are too big
+			if (rgbIV.Length < BlockSizeByte) {
+				string msg = Locale.GetText ("IV is too small ({0} bytes), it should be {1} bytes long.",
+					rgbIV.Length, BlockSizeByte);
+				throw new CryptographicException (msg);
+			}
+#endif
 			// mode buffers
 			temp = new byte [BlockSizeByte];
-			Buffer.BlockCopy (rgbIV, 0, temp, 0, BlockSizeByte);
+			Buffer.BlockCopy (rgbIV, 0, temp, 0, System.Math.Min (BlockSizeByte, rgbIV.Length));
 			temp2 = new byte [BlockSizeByte];
 			FeedBackByte = (algo.FeedbackSize >> 3);
 			if (FeedBackByte != 0)
@@ -85,7 +99,7 @@ namespace Mono.Security.Cryptography {
 
 		// MUST be overriden by classes using unmanaged ressources
 		// the override method must call the base class
-		protected void Dispose (bool disposing) 
+		protected virtual void Dispose (bool disposing) 
 		{
 			if (!m_disposed) {
 				if (disposing) {
@@ -103,7 +117,7 @@ namespace Mono.Security.Cryptography {
 			get { return true; }
 		}
 
-		public bool CanReuseTransform {
+		public virtual bool CanReuseTransform {
 			get { return false; }
 		}
 
@@ -117,7 +131,7 @@ namespace Mono.Security.Cryptography {
 
 		// note: Each block MUST be BlockSizeValue in size!!!
 		// i.e. Any padding must be done before calling this method
-		protected void Transform (byte[] input, byte[] output) 
+		protected virtual void Transform (byte[] input, byte[] output) 
 		{
 			switch (algo.Mode) {
 			case CipherMode.ECB:

@@ -1,3 +1,8 @@
+2005-11-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SymmetricTransform.cs: Synched with corlib version (IV behaviour for
+	NET_2_0). Virtualized some methods (like Dispose). Fix bug #76801.
+
 2005-05-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* KeyPairPersistence.cs: Use PlatformID.Unix under NET_2_0. 
