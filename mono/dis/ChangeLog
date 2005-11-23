@@ -1,5 +1,10 @@
 2005-11-23  Ankit Jain  <jankit@novell.com>
 
+	* get.c (get_methodspec): Use mono_get_method_full so as to handle
+	methodspecs that refer to generic methods in other assemblies.
+
+2005-11-23  Ankit Jain  <jankit@novell.com>
+
 	* dump.c (has_cattr_get_table): Handle GenericParam.
 	* get.c (dis_get_custom_attrs): Likewise.
 	* main.c (dump_cattrs_for_type_params): New. Dump custom attributes
