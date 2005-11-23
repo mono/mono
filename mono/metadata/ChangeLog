@@ -1,3 +1,10 @@
+2005-11-23  Raja R Harinath  <rharinath@novell.com>
+	    Ankit Jain  <jankit@novell.com>
+
+	* loader.c (mono_get_method_from_token): Initialize 'method' field
+	of all generic parameters before parsing the signature.  Remove
+	code that "fixed"-up MVAR references.
+
 2005-11-23  Ankit Jain  <jankit@novell.com>
 
 	* metadata.c (mono_metadata_has_generic_params):
