@@ -826,10 +826,10 @@ public partial class TypeManager {
 	///   Returns the PropertyInfo for a property named `name' defined
 	///   in type `t'
 	/// </summary>
-	static PropertyInfo GetProperty (Type t, string name)
+	public static PropertyInfo GetProperty (Type t, string name)
 	{
 		MemberList list = FindMembers (t, MemberTypes.Property, BindingFlags.Public |
-				    BindingFlags.Instance, Type.FilterName, name);
+					       BindingFlags.Instance, Type.FilterName, name);
 		if (list.Count == 0) {
 			Report.Error (-19, "Can not find the core property `" + name + "'");
 			return null;

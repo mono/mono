@@ -2508,8 +2508,8 @@ namespace Mono.CSharp {
 				Type = type;
 				UnderlyingType = TypeManager.GetTypeArguments (type) [0];
 
-				PropertyInfo has_value_pi = type.GetProperty ("HasValue");
-				PropertyInfo value_pi = type.GetProperty ("Value");
+				PropertyInfo has_value_pi = TypeManager.GetProperty (type, "HasValue");
+				PropertyInfo value_pi = TypeManager.GetProperty (type, "Value");
 
 				HasValue = has_value_pi.GetGetMethod (false);
 				Value = value_pi.GetGetMethod (false);
