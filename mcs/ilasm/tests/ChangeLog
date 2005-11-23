@@ -1,3 +1,8 @@
+2005-11-23  Ankit Jain  <jankit@novell.com>
+
+	* test-33.il:
+	* test-34.il: New. Tests for custom attributes on type parameters.
+
 2005-09-15  Ankit Jain  <jankit@novell.com>
 
 	* test-perm_fail-[1234].il: New. Negative Tests for .permission directive.
