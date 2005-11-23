@@ -1,3 +1,7 @@
+2005-11-22 Gonzalo Paniagua Javier <gonzalo@ximian.com>
+
+	* SimpleWebHandlerParser.cs: removed 'codebehind' related stuff.
+
 2005-11-09  Chris Toshok  <toshok@ximian.com>
 
 	* ViewStateEncryptionMode.cs: new 2.0 enum.

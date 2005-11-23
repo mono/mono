@@ -48,7 +48,6 @@ namespace System.Web.UI
 		string vPath;
 		string physPath;
 		string className;
-		string codeBehind;
 		bool debug;
 		string language;
 		string program;
@@ -194,7 +193,7 @@ namespace System.Web.UI
 			if (language == null)
 				language = CompilationConfig.DefaultLanguage;
 
-			codeBehind = GetAndRemove (attributes, "codebehind");
+			GetAndRemove (attributes, "codebehind");
 			if (attributes.Count > 0)
 				throw new ParseException (location, "Unrecognized attribute in " +
 							  DefaultDirectiveName + " directive");
@@ -378,10 +377,6 @@ namespace System.Web.UI
 
 		internal string ClassName {
 			get { return className; }
-		}
-
-		internal string CodeBehind {
-			get { return codeBehind; }
 		}
 
 		internal bool Debug {
