@@ -478,9 +478,9 @@ namespace Mono.Data.Tds.Protocol {
 
 		internal void ResizeOutBuf (int newSize)
 		{
-			if (newSize > outBufferLength) {
+			if (newSize != outBufferLength) {
 				byte[] newBuf = new byte [newSize];
-				Array.Copy (outBuffer, 0, newBuf, 0, outBufferLength);
+				Array.Copy (outBuffer, 0, newBuf, 0, newSize);
 				outBufferLength = newSize;
 				outBuffer = newBuf;
 			}

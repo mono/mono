@@ -1,3 +1,9 @@
+2005-11-23  Senganal T  <tsenganal@novell.com>
+	
+	* TdsComm.cs : 
+		- ResizeOutBuf : Modified to shrink the output buffer if
+		the block size is reduced. Fixed bug #76778 	
+
 2005-10-27  Senganal T  <tsenganal@novell.com>
 	
 	* Tds.cs :
