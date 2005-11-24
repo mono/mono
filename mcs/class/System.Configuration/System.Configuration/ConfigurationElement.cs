@@ -74,7 +74,7 @@ namespace System.Configuration
 		{
 		}
 
-		public ConfigurationElementProperty ElementProperty {
+		protected internal virtual ConfigurationElementProperty ElementProperty {
 			get {
 				if (elementProperty == null)
 					elementProperty = new ConfigurationElementProperty (ElementInformation.Validator);
@@ -141,7 +141,21 @@ namespace System.Configuration
 		[MonoTODO]
 		public void SetPropertyValue (ConfigurationProperty prop, object value, bool ignoreLocks)
 		{
-			throw new NotImplementedException ();
+			try {
+				/* XXX all i know for certain is that Validation happens here */
+				prop.Validate (value);
+
+				/* XXX presumably the actual setting of the
+				 * property happens here instead of in the
+				 * set_Item code below, but that would mean
+				 * the Value needs to be stuffed in the
+				 * property, not the propertyinfo (or else the
+				 * property needs a ref to the property info
+				 * to correctly set the value). */
+			}
+			catch (Exception e) {
+				throw new ConfigurationErrorsException (String.Format ("The value for the property '{0}' is not valid. The error is: {1}", prop.Name, e.Message), e);
+			}
 		}
 
 		internal ConfigurationPropertyCollection GetKeyProperties ()
@@ -203,7 +217,9 @@ namespace System.Configuration
 				PropertyInformation pi = ElementInformation.Properties [property_name];
 				if (pi == null)
 					throw new InvalidOperationException ("Property '" + property_name + "' not found in configuration element");
-				
+
+				SetPropertyValue (pi.Property, value, false);
+
 				pi.Value = value;
 				modified = true;
 			}
