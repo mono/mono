@@ -43,6 +43,8 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty pollTimeProp;
 		static ConfigurationPropertyCollection properties;
 
+		static ConfigurationElementProperty elementProperty;
+
 		static SqlCacheDependencyDatabase ()
 		{
 			connectionStringNameProp = new ConfigurationProperty ("connectionStringName", typeof (string), null,
@@ -59,6 +61,8 @@ namespace System.Web.Configuration {
 			properties.Add (connectionStringNameProp);
 			properties.Add (nameProp);
 			properties.Add (pollTimeProp);
+
+			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (SqlCacheDependencyDatabase), ValidateElement));
 		}
 
 		internal SqlCacheDependencyDatabase ()
@@ -78,18 +82,22 @@ namespace System.Web.Configuration {
 			this.PollTime = pollTime;
 		}
 
+		[MonoTODO]
+		static void ValidateElement (object o)
+		{
+			/* XXX do some sort of element validation here? */
+		}
+
+		protected override ConfigurationElementProperty ElementProperty {
+			get { return elementProperty; }
+		}
+
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("connectionStringName", Options = ConfigurationPropertyOptions.IsRequired)]
 		public string ConnectionStringName {
 			get { return (string) base [connectionStringNameProp];}
 			set { base[connectionStringNameProp] = value; }
 		}
-
-#if notyet
-		protected override ConfigurationElementProperty ElementProperty {
-			get { throw new NotImplementedException (); }
-		}
-#endif
 
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]

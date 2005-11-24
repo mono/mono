@@ -41,19 +41,27 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty redirectUrlProp;
 		static ConfigurationPropertyCollection properties;
 
+		static ConfigurationElementProperty elementProperty;
+
 		static PassportAuthentication ()
 		{
 			redirectUrlProp = new ConfigurationProperty ("redirectUrl", typeof (string), "internal");
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (redirectUrlProp);
+
+			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (PassportAuthentication), ValidateElement));
 		}
 
-#if notyet
-		protected override ConfigurationElementProperty ElementProperty {
-			get { }
+		[MonoTODO]
+		static void ValidateElement (object o)
+		{
+			/* XXX do some sort of element validation here? */
 		}
-#endif
+
+		protected override ConfigurationElementProperty ElementProperty {
+			get { return elementProperty; }
+		}
 
 		[StringValidator] /* why is this here? */
 		[ConfigurationProperty ("redirectUrl", DefaultValue = "internal")]

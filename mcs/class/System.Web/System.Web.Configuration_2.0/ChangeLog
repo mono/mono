@@ -1,3 +1,14 @@
+2005-11-24  Chris Toshok  <toshok@ximian.com>
+
+	* ProcessModelSection.cs, SqlCacheDependencySection.cs,
+	SessionStateSection.cs, PassportAuthentication.cs,
+	FormsAuthenticationConfiguration.cs,
+	SqlCacheDependencyDatabase.cs, HttpModuleAction.cs,
+	BufferModeSettings.cs, TagPrefixInfo.cs (..cctor): init
+	elementProperty.
+	(ValidateElement): new static validator callback.
+	(ElementProperty): enable this, return elementProperty.
+	
 2005-11-23  Chris Toshok  <toshok@ximian.com>
 
 	* ProfilePropertyNameValidator.cs: new implementation.

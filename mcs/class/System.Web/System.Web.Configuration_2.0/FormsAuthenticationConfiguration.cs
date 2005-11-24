@@ -53,6 +53,8 @@ namespace System.Web.Configuration
 		static ConfigurationProperty slidingExpirationProp;
 		static ConfigurationProperty timeoutProp;
 
+		static ConfigurationElementProperty elementProperty;
+
 		static FormsAuthenticationConfiguration ()
 		{
 			cookielessProp = new ConfigurationProperty ("cookieless", typeof (HttpCookieMode), HttpCookieMode.UseDeviceProfile,
@@ -103,10 +105,22 @@ namespace System.Web.Configuration
 			properties.Add (requireSSLProp);
 			properties.Add (slidingExpirationProp);
 			properties.Add (timeoutProp);
+
+			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (FormsAuthenticationConfiguration), ValidateElement));
 		}
 
 		public FormsAuthenticationConfiguration ()
 		{
+		}
+
+		[MonoTODO]
+		static void ValidateElement (object o)
+		{
+			/* XXX do some sort of element validation here? */
+		}
+
+		protected override ConfigurationElementProperty ElementProperty {
+			get { return elementProperty; }
 		}
 
 		[ConfigurationProperty ("cookieless", DefaultValue = "UseDeviceProfile")]
@@ -189,13 +203,6 @@ namespace System.Web.Configuration
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-
-#if notyet
-		[MonoTODO]
-		protected override ConfigurationElementProperty ElementProperty {
-			get { throw new NotImplementedException (); }
-		}
-#endif
 	}
 }
 

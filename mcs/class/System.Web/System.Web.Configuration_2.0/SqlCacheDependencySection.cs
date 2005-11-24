@@ -42,6 +42,8 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty pollTimeProp;
 		static ConfigurationPropertyCollection properties;
 
+		static ConfigurationElementProperty elementProperty;
+
 		static SqlCacheDependencySection ()
 		{
 			databasesProp = new ConfigurationProperty ("databases", typeof (SqlCacheDependencyDatabaseCollection));
@@ -53,6 +55,17 @@ namespace System.Web.Configuration {
 			properties.Add (enabledProp);
 			properties.Add (pollTimeProp);
 
+			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (SqlCacheDependencySection), ValidateElement));
+		}
+
+		[MonoTODO]
+		static void ValidateElement (object o)
+		{
+			/* XXX do some sort of element validation here? */
+		}
+
+		protected override ConfigurationElementProperty ElementProperty {
+			get { return elementProperty; }
 		}
 
 		[MonoTODO]
@@ -65,12 +78,6 @@ namespace System.Web.Configuration {
 		public SqlCacheDependencyDatabaseCollection Databases {
 			get { return (SqlCacheDependencyDatabaseCollection) base [databasesProp];}
 		}
-
-#if notyet
-		protected override ConfigurationElementProperty ElementProperty {
-			get { throw new NotImplementedException (); }
-		}
-#endif
 
 		[ConfigurationProperty ("enabled", DefaultValue = "True")]
 		public bool Enabled {

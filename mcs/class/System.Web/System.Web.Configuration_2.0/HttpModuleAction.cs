@@ -42,6 +42,8 @@ namespace System.Web.Configuration
 		static ConfigurationProperty nameProp;
 		static ConfigurationProperty typeProp;
 
+		static ConfigurationElementProperty elementProperty;
+
 		static HttpModuleAction ()
 		{
 			nameProp = new ConfigurationProperty ("name", typeof (string), "",
@@ -52,6 +54,8 @@ namespace System.Web.Configuration
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (nameProp);
 			properties.Add (typeProp);
+
+			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (HttpModuleAction), ValidateElement));
 		}
 
 		[MonoTODO]
@@ -60,14 +64,16 @@ namespace System.Web.Configuration
 			this.Name = name;
 			this.Type = type;
 		}
-#if notyet
+
 		[MonoTODO]
-		protected override ConfigurationElementProperty ElementProperty {
-			get {
-				throw new NotImplementedException ();
-			}
+		static void ValidateElement (object o)
+		{
+			/* XXX do some sort of element validation here? */
 		}
-#endif
+
+		protected override ConfigurationElementProperty ElementProperty {
+			get { return elementProperty; }
+		}
 
 		[StringValidator (MinLength = 1)]
 		[ConfigurationProperty ("name", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]

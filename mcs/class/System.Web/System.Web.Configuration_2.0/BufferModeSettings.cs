@@ -46,6 +46,7 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty urgentFlushIntervalProp;
 		static ConfigurationProperty urgentFlushThresholdProp;
 		static ConfigurationPropertyCollection properties;
+		static ConfigurationElementProperty elementProperty;
 
 		static BufferModeSettings ()
 		{
@@ -83,6 +84,7 @@ namespace System.Web.Configuration {
 			properties.Add (urgentFlushIntervalProp);
 			properties.Add (urgentFlushThresholdProp);
 
+			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (BufferModeSettings), ValidateElement));
 		}
 
 		internal BufferModeSettings ()
@@ -101,11 +103,15 @@ namespace System.Web.Configuration {
 			this.MaxBufferThreads = maxBufferThreads;
 		}
 
-#if notyet
-		protected override ConfigurationElementProperty ElementProperty {
-			get { }
+		[MonoTODO]
+		static void ValidateElement (object o)
+		{
+			/* XXX do some sort of element validation here? */
 		}
-#endif
+
+		protected override ConfigurationElementProperty ElementProperty {
+			get { return elementProperty; }
+		}
 
 		[TypeConverter (typeof (InfiniteIntConverter))]
 		[IntegerValidator (MinValue = 1, MaxValue = Int32.MaxValue)]

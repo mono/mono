@@ -47,6 +47,8 @@ namespace System.Web.Configuration
 		static ConfigurationProperty tagNameProp;
 		static ConfigurationProperty sourceProp;
 
+		static ConfigurationElementProperty elementProperty;
+
 		static TagPrefixInfo ()
 		{
 			tagPrefixProp = new ConfigurationProperty ("tagPrefix", typeof (string), "/",
@@ -64,6 +66,8 @@ namespace System.Web.Configuration
 			properties.Add (assemblyProp);
 			properties.Add (tagNameProp);
 			properties.Add (sourceProp);
+
+			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (TagPrefixInfo), ValidateElement));
 		}
 
 		public TagPrefixInfo (string tagPrefix, string nameSpace, string assembly, string tagName, string source)
@@ -73,6 +77,16 @@ namespace System.Web.Configuration
 			this.Assembly = assembly;
 			this.TagName = tagName;
 			this.Source = source;
+		}
+
+		[MonoTODO]
+		static void ValidateElement (object o)
+		{
+			/* XXX do some sort of element validation here? */
+		}
+
+		protected override ConfigurationElementProperty ElementProperty {
+			get { return elementProperty; }
 		}
 
 		public override bool Equals (object prefix)
@@ -97,13 +111,6 @@ namespace System.Web.Configuration
 			get { return (string) base[assemblyProp]; }
 			set { base[assemblyProp] = value; }
 		}
-
-#if notyet
-		[MonoTODO]
-		protected override ConfigurationElementProperty ElementProperty {
-			get { return base.ElementProperty; }
-		}
-#endif
 
 		[ConfigurationProperty ("namespace")]
 		public string Namespace {

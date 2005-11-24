@@ -67,6 +67,8 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty webGardenProp;
 		static ConfigurationPropertyCollection properties;
 
+		static ConfigurationElementProperty elementProperty;
+
 		static ProcessModelSection ()
 		{
 			autoConfigProp = new ConfigurationProperty ("autoConfig", typeof (bool), false);
@@ -182,6 +184,18 @@ namespace System.Web.Configuration {
 			properties.Add (timeoutProp);
 			properties.Add (userNameProp);
 			properties.Add (webGardenProp);
+
+			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (ProcessModelSection), ValidateElement));
+		}
+
+		[MonoTODO]
+		static void ValidateElement (object o)
+		{
+			/* XXX do some sort of element validation here? */
+		}
+
+		protected override ConfigurationElementProperty ElementProperty {
+			get { return elementProperty; }
 		}
 
 		[ConfigurationProperty ("autoConfig", DefaultValue = "False")]
@@ -366,13 +380,6 @@ namespace System.Web.Configuration {
 			get { return (bool) base [webGardenProp];}
 			set { base[webGardenProp] = value; }
 		}
-
-#if notyet
-		[MonoTODO]
-		public ConfigurationElementProperty ElementProperty {
-			get { throw new NotImplementedException (); }
-		}
-#endif
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }

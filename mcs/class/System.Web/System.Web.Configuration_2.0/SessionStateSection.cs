@@ -56,6 +56,8 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty useHostingIdentityProp;
 		static ConfigurationPropertyCollection properties;
 
+		static ConfigurationElementProperty elementProperty;
+
 		static SessionStateSection ()
 		{
 			allowCustomSqlDatabaseProp = new ConfigurationProperty ("allowCustomSqlDatabase", typeof (bool), false);
@@ -96,6 +98,8 @@ namespace System.Web.Configuration {
 			properties.Add (stateNetworkTimeoutProp);
 			properties.Add (timeoutProp);
 			properties.Add (useHostingIdentityProp);
+
+			elementProperty = new ConfigurationElementProperty (new CallbackValidator (typeof (SessionStateSection), ValidateElement));
 		}
 
 		[MonoTODO]
@@ -198,12 +202,15 @@ namespace System.Web.Configuration {
 			set { base[useHostingIdentityProp] = value; }
 		}
 
-#if notyet
 		[MonoTODO]
-		public ConfigurationElementProperty ElementProperty {
-			get { throw new NotImplementedException (); }
+		static void ValidateElement (object o)
+		{
+			/* XXX do some sort of element validation here? */
 		}
-#endif
+
+		protected override ConfigurationElementProperty ElementProperty {
+			get { return elementProperty; }
+		}
 
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
