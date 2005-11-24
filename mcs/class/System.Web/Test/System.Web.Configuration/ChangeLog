@@ -1,3 +1,7 @@
+2005-11-23  Chris Toshok  <toshok@ximian.com>
+
+	* MachineKeyValidationConverterTest.cs: new test.
+
 2005-11-18  Chris Toshok  <toshok@ximian.com>
 
 	* GlobalizationSectionTest.cs, HostingEnvironmentSectionTest.cs,
