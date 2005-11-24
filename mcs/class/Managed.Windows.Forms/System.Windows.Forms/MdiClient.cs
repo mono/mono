@@ -283,15 +283,13 @@ namespace System.Windows.Forms {
 
 		private void SizeMaximized ()
 		{
-			/*
-			foreach (Form child in controls) {
+			foreach (Form child in Controls) {
 				if (!child.Visible)
 					continue;
 
 				if (child.MdiChildContext.Maximized)
 					child.Bounds = Bounds;
 			}
-			*/
 		}
 
 		internal int ChildrenCreated {

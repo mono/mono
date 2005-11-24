@@ -1,6 +1,7 @@
 2005-11-24  Jackson Harper  <jackson@ximian.com>
 
 	* MdiClient.cs: Size the scrollbars when resizing the window.
+	- Resize the maximized windows when the client is resized
 
 2005-11-23  Jackson Harper  <jackson@ximian.com>
 
