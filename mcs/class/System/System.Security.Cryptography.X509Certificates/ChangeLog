@@ -1,3 +1,8 @@
+2005-11-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X500DistinguishedName.cs: Added validation (still missing parsing).
+	* X509Certificate2Enumerator.cs: Add missing IEnumerator.* methods.
+
 2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PublicKey.cs: Completed implementation for both RSA and DSA public

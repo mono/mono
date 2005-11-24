@@ -48,10 +48,6 @@ namespace System.Security.Cryptography.X509Certificates {
 			get { return (X509Certificate2) enumerator.Current; }
 		}
 
-		object IEnumerator.Current {
-			get { return enumerator.Current; }
-		}
-
 		// methods
 
 		public bool MoveNext () 
@@ -60,6 +56,22 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 
 		public void Reset ()
+		{
+			enumerator.Reset ();
+		}
+
+		// IEnumerator
+
+		object IEnumerator.Current {
+			get { return enumerator.Current; }
+		}
+
+		bool IEnumerator.MoveNext ()
+		{
+			return enumerator.MoveNext ();
+		}
+
+		void IEnumerator.Reset ()
 		{
 			enumerator.Reset ();
 		}
