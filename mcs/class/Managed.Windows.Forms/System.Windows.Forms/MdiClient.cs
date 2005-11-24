@@ -95,7 +95,10 @@ namespace System.Windows.Forms {
 		protected override void OnResize (EventArgs e)
 		{
 			base.OnResize (e);
-//			CalcBars ();
+
+			// Should probably make this into one loop
+			SizeScrollBars ();
+			SizeMaximized ();
 		}
 
 		#region Public Instance Properties
@@ -196,6 +199,68 @@ namespace System.Windows.Forms {
 				CalcVBar (bottom, hbar != null && hbar.Visible);
 		}
 
+		private void SizeScrollBars ()
+		{
+			int right = 0;
+			foreach (Form child in Controls) {
+				if (!child.Visible)
+					continue;
+				if (child.Right > right)
+					right = child.Right;
+			}
+
+			int bottom = 0;
+			foreach (Form child in Controls) {
+				if (!child.Visible)
+					continue;
+				if (child.Bottom > bottom)
+					bottom = child.Bottom;
+			}
+
+			bool hvis = false;
+			bool vvis = false;
+			int right_edge = Right;
+			int bottom_edge = Bottom;
+			int prev_right_edge;
+			int prev_bottom_edge;
+
+			do {
+
+				prev_right_edge = right_edge;
+				prev_bottom_edge = bottom_edge;
+
+				if (right > right_edge) {
+					if (hbar == null) {
+						hbar = new HScrollBar ();
+						Controls.AddImplicit (hbar);
+					}
+					hbar.Visible = true;
+					bottom_edge = Bottom - hbar.Height;
+				} else {
+					hbar.Visible = false;
+					bottom_edge = Bottom;
+				}
+
+				if (bottom > bottom_edge) {
+					if (vbar == null) {
+						vbar = new VScrollBar ();
+						Controls.AddImplicit (vbar);
+					}
+					vbar.Visible = true;
+					right_edge = Right - vbar.Width;
+				} else {
+					vbar.Visible = false;
+					right_edge = Right;
+				}
+
+			} while (right_edge != prev_right_edge || bottom_edge != prev_bottom_edge);
+
+			if (hbar != null && hbar.Visible)
+				CalcHBar (right, vbar != null && vbar.Visible);
+			if (vbar != null && vbar.Visible)
+				CalcVBar (bottom, hbar != null && hbar.Visible);
+		}
+
 		private void CalcHBar (int right, bool vert_vis)
 		{
 			hbar.Left = 0;
@@ -214,6 +279,19 @@ namespace System.Windows.Forms {
 			vbar.LargeChange = bottom;
 			vbar.SmallChange = bottom / 10;
 			vbar.Maximum = bottom - 1;
+		}
+
+		private void SizeMaximized ()
+		{
+			/*
+			foreach (Form child in controls) {
+				if (!child.Visible)
+					continue;
+
+				if (child.MdiChildContext.Maximized)
+					child.Bounds = Bounds;
+			}
+			*/
 		}
 
 		internal int ChildrenCreated {
