@@ -667,7 +667,7 @@ namespace System.Xml.Serialization
 			
 			// Enum default value will not be written
 			// unless it is one of the enum legal values
-			if (enumName.Equals("0"))
+			if (enumName == "0" && IsFlags)
 				return String.Empty;
 			else
 				return Convert.ToInt64(enumValue).ToString(CultureInfo.InvariantCulture);
