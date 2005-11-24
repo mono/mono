@@ -1,5 +1,9 @@
 2005-11-24  Chris Toshok  <toshok@ximian.com>
 
+	* ConfigurationProperty.cs (Validate): add internal method.
+
+2005-11-24  Chris Toshok  <toshok@ximian.com>
+
 	* ConfigurationElement.cs (ElementProperty): make this protected
 	internal virtual instead of public.
 	(SetPropertyValue): add a validator call and a blurb about the

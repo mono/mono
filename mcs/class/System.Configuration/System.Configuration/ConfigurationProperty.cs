@@ -146,6 +146,12 @@ namespace System.Configuration
 			get { return collectionAttribute; }
 			set { collectionAttribute = value; }
 		}
+
+		internal void Validate (object value)
+		{
+			if (validation != null)
+				validation.Validate (value);
+		}
 	}
 }
 #endif
