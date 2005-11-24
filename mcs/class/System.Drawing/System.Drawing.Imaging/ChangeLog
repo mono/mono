@@ -1,3 +1,8 @@
+2005-11-23 Vladimir Krasnov <vladimirk@mainsoft.com>
+
+	* ImageCodec.jvm.cs: fixed ProcessOneCodec, sometime it was failed
+	on parsing version of codec
+
 2005-11-17 Vladimir Krasnov <vladimirk@mainsoft.com>
 
 	* ImageCodec.jvm.cs: fixed WriteImage, removed flush 
