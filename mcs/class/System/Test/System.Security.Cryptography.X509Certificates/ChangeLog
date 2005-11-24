@@ -1,3 +1,19 @@
+2005-11-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X500DistinguishedNameCas.cs: New. CAS tests (some are disabled).
+	* X500DistinguishedNameTest.cs: New. Unit tests (some are disabled).
+	* X509BasicConstraintsExtensionCas.cs: New (2.0). CAS tests.
+	* X509CertificateCollectionCas.cs: New (2.0). CAS tests.
+	* X509ChainCas.cs: New (2.0). CAS tests.
+	* X509ChainPolicyCas.cs: New (2.0). CAS tests.
+	* X509EnhancedKeyUsageExtensionCas.cs: New (2.0). CAS tests.
+	* X509ExtensionCas.cs: New (2.0). CAS tests.
+	* X509KeyUsageExtensionCas.cs: New (2.0). CAS tests.
+	* X509KeyUsageExtensionTest.cs: Updated test case where MS 2.0 beta 
+	bug was fixed.
+	* X509StoreCas.cs: New (2.0). CAS tests.
+	* X509SubjectKeyIdentifierExtensionCas.cs: New (2.0). CAS tests.
+
 2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* PublicKeyCas.cs: New (2.0). CAS tests.

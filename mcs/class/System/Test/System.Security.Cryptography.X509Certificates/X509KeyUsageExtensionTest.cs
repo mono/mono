@@ -52,13 +52,6 @@ namespace MonoTests.System.Security.Cryptography.X509Certificates {
 			Assert.AreEqual (fname, ku.Oid.FriendlyName, "Oid.FriendlyName");
 			Assert.AreEqual (String.Empty, ku.Format (true), "Format(true)");
 			Assert.AreEqual (String.Empty, ku.Format (false), "Format(false)");
-		}
-
-		[Test]
-		[Category ("NotDotNet")] // MS bug reported as http://lab.msdn.microsoft.com/ProductFeedback/viewfeedback.aspx?feedbackid=34cdc5e9-c7f9-4f55-b390-288bfef6e44e
-		public void ConstructorEmpty_KeyUsage ()
-		{
-			X509KeyUsageExtension ku = new X509KeyUsageExtension ();
 			Assert.AreEqual (0, (int)ku.KeyUsages, "KeyUsages");
 		}
 
