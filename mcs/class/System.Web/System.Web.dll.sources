@@ -114,9 +114,11 @@ System.Web.Configuration_2.0/ProcessModelComImpersonationLevel.cs
 System.Web.Configuration_2.0/ProcessModelLogLevel.cs
 System.Web.Configuration_2.0/ProfileGroupSettings.cs
 System.Web.Configuration_2.0/ProfileGroupSettingsCollection.cs
-System.Web.Configuration_2.0/ProfileSection.cs
+System.Web.Configuration_2.0/ProfilePropertyNameValidator.cs
 System.Web.Configuration_2.0/ProfilePropertySettings.cs
 System.Web.Configuration_2.0/ProfilePropertySettingsCollection.cs
+System.Web.Configuration_2.0/ProfileSection.cs
+System.Web.Configuration_2.0/PropertyHelper.cs
 System.Web.Configuration_2.0/RootProfilePropertySettingsCollection.cs
 System.Web.Configuration_2.0/SerializationMode.cs
 System.Web.Configuration_2.0/SiteMapSection.cs
