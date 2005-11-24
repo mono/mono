@@ -72,12 +72,12 @@ bin_PROGRAMS = mono
 
 noinst_PROGRAMS = genmdesc
 
-lib_LTLIBRARIES = libmono.la
-noinst_LTLIBRARIES = libmono-static.la
+#lib_LTLIBRARIES = libmono.la
+#noinst_LTLIBRARIES = libmono-static.la
 endif
 
 mono_SOURCES = \
-	main.c
+	$(common_sources) $(x86_sources) main.c inssel.c inssel.h
 
 if STATIC_MONO
 # Link libmono into mono statically
@@ -88,7 +88,7 @@ MONO_LIB=libmono.la
 endif
 
 mono_LDADD = \
-	$(MONO_LIB)			\
+	$(static_libs) \
 	$(PLATFORM_LIB)		\
 	$(GLIB_LIBS)		\
 	$(GMODULE_LIBS) -lm	\

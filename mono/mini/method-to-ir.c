@@ -95,16 +95,6 @@ static MonoMethodSignature *helper_sig_domain_get = NULL;
 
 static guint32 default_opt = 0;
 
-guint32 mono_jit_tls_id = -1;
-MonoTraceSpec *mono_jit_trace_calls = NULL;
-gboolean mono_break_on_exc = FALSE;
-#ifndef DISABLE_AOT
-gboolean mono_compile_aot = FALSE;
-#endif
-gboolean mono_use_security_manager = FALSE;
-
-static int mini_verbose = 0;
-
 #define mono_jit_lock() EnterCriticalSection (&jit_mutex)
 #define mono_jit_unlock() LeaveCriticalSection (&jit_mutex)
 static CRITICAL_SECTION jit_mutex;
@@ -116,16 +106,6 @@ static MonoCodeManager *global_codeman = NULL;
 static GHashTable *jit_icall_name_hash = NULL;
 
 static MonoDebugOptions debug_options;
-
-MonoJumpInfoToken *
-mono_jump_info_token_new (MonoMemPool *mp, MonoImage *image, guint32 token)
-{
-	MonoJumpInfoToken *res = mono_mempool_alloc0 (mp, sizeof (MonoJumpInfoToken));
-	res->image = image;
-	res->token = token;
-
-	return res;
-}
 
 #define MONO_INIT_VARINFO(vi,id) do { \
 	(vi)->range.first_use.pos.bid = 0xffff; \
@@ -302,10 +282,10 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 
 #define NEW_DOMAINCONST(cfg,dest) do { \
 		if (cfg->opt & MONO_OPT_SHARED) { \
-            NOT_IMPLEMENTED; \
 			/* avoid depending on undefined C behavior in sequence points */ \
 			MonoInst* __domain_var = mono_get_domainvar (cfg); \
 			NEW_TEMPLOAD (cfg, dest, __domain_var->inst_c0); \
+            NOT_IMPLEMENTED; \
 		} else { \
 			NEW_PCONST (cfg, dest, (cfg)->domain); \
 		} \
@@ -314,6 +294,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 #define GET_VARINFO_INST(cfg,num) ((cfg)->varinfo [(num)]->inst)
 
 #define NEW_ARGLOAD(cfg,dest,num) do {	\
+        NOT_IMPLEMENTED; \
                 if (arg_array [(num)]->opcode == OP_ICONST) (dest) = arg_array [(num)]; else { \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->ssa_op = MONO_SSA_LOAD;	\
@@ -324,6 +305,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	}} while (0)
 
 #define NEW_LOCLOAD(cfg,dest,num) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->ssa_op = MONO_SSA_LOAD;	\
 		(dest)->inst_i0 = (cfg)->varinfo [locals_offset + (num)];	\
@@ -333,6 +315,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_LOCLOADA(cfg,dest,num) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
 		(dest)->inst_i0 = (cfg)->varinfo [locals_offset + (num)];	\
@@ -345,6 +328,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_RETLOADA(cfg,dest) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
 		(dest)->inst_i0 = (cfg)->ret;	\
@@ -356,6 +340,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_ARGLOADA(cfg,dest,num) do {	\
+        NOT_IMPLEMENTED; \
                 if (arg_array [(num)]->opcode == OP_ICONST) goto inline_failure; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
@@ -368,6 +353,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_TEMPLOAD(cfg,dest,num) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->ssa_op = MONO_SSA_LOAD;	\
 		(dest)->inst_i0 = (cfg)->varinfo [(num)];	\
@@ -377,6 +363,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_TEMPLOADA(cfg,dest,num) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->ssa_op = MONO_SSA_ADDRESS_TAKEN;	\
 		(dest)->inst_i0 = (cfg)->varinfo [(num)];	\
@@ -390,6 +377,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 
 
 #define NEW_INDLOAD(cfg,dest,addr,vtype) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->inst_left = addr;	\
 		(dest)->opcode = mono_type_to_ldind (vtype);	\
@@ -398,6 +386,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_INDSTORE(cfg,dest,addr,value,vtype) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->inst_i0 = addr;	\
 		(dest)->opcode = mono_type_to_stind (vtype);	\
@@ -406,6 +395,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_TEMPSTORE(cfg,dest,num,inst) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->ssa_op = MONO_SSA_STORE;	\
 		(dest)->inst_i0 = (cfg)->varinfo [(num)];	\
@@ -415,6 +405,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_LOCSTORE(cfg,dest,num,inst) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = mono_type_to_stind (header->locals [(num)]);	\
 		(dest)->ssa_op = MONO_SSA_STORE;	\
@@ -424,6 +415,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_ARGSTORE(cfg,dest,num,inst) do {	\
+        NOT_IMPLEMENTED; \
                 if (arg_array [(num)]->opcode == OP_ICONST) goto inline_failure; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = mono_type_to_stind (param_types [(num)]);	\
@@ -434,12 +426,14 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_DUMMY_USE(cfg,dest,load) do { \
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = OP_DUMMY_USE; \
 		(dest)->inst_left = (load); \
     } while (0)
 
 #define NEW_DUMMY_STORE(cfg,dest,num) do { \
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->inst_i0 = (cfg)->varinfo [(num)];	\
 		(dest)->opcode = OP_DUMMY_STORE; \
@@ -447,6 +441,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define ADD_BINOP(op) do {	\
+        NOT_IMPLEMENTED; \
 		MONO_INST_NEW (cfg, ins, (op));	\
 		ins->cil_code = ip;	\
 		sp -= 2;	\
@@ -458,6 +453,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define ADD_UNOP(op) do {	\
+        NOT_IMPLEMENTED; \
 		MONO_INST_NEW (cfg, ins, (op));	\
 		ins->cil_code = ip;	\
 		sp--;	\
@@ -470,6 +466,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 #define ADD_BINCOND(next_block) do {	\
 		MonoInst *cmp;	\
 		sp -= 2;		\
+        NOT_IMPLEMENTED; \
 		MONO_INST_NEW(cfg, cmp, OP_COMPARE);	\
 		cmp->inst_i0 = sp [0];	\
 		cmp->inst_i1 = sp [1];	\
@@ -499,6 +496,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 #define ADD_UNCOND(istrue) do {	\
 		MonoInst *cmp;	\
 		sp--;		\
+        NOT_IMPLEMENTED; \
 		MONO_INST_NEW(cfg, cmp, OP_COMPARE);	\
 		cmp->inst_i0 = sp [0];	\
                 switch (cmp->inst_i0->type) { \
@@ -532,6 +530,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_LDELEMA(cfg,dest,sp,k) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = CEE_LDELEMA;	\
 		(dest)->inst_left = (sp) [0];	\
@@ -542,6 +541,7 @@ alloc_dreg (MonoCompile *cfg, MonoStackType stack_type)
 	} while (0)
 
 #define NEW_GROUP(cfg,dest,el1,el2) do {	\
+        NOT_IMPLEMENTED; \
 		(dest) = mono_mempool_alloc0 ((cfg)->mempool, sizeof (MonoInst));	\
 		(dest)->opcode = OP_GROUP;	\
 		(dest)->inst_left = (el1);	\
@@ -689,12 +689,6 @@ mono_find_final_block (MonoCompile *cfg, unsigned char *ip, unsigned char *targe
 		}
 	}
 	return res;
-}
-
-MonoInst *
-mono_find_spvar_for_region (MonoCompile *cfg, int region)
-{
-	return g_hash_table_lookup (cfg->spvars, GINT_TO_POINTER (region));
 }
 
 static void
@@ -865,117 +859,6 @@ reverse_branch_op (guint32 opcode)
 		g_assert_not_reached ();
 
 	return opcode;
-}
-
-guint
-mono_type_to_ldind (MonoType *type)
-{
-	if (type->byref)
-		return CEE_LDIND_I;
-
-handle_enum:
-	switch (type->type) {
-	case MONO_TYPE_I1:
-		return CEE_LDIND_I1;
-	case MONO_TYPE_U1:
-	case MONO_TYPE_BOOLEAN:
-		return CEE_LDIND_U1;
-	case MONO_TYPE_I2:
-		return CEE_LDIND_I2;
-	case MONO_TYPE_U2:
-	case MONO_TYPE_CHAR:
-		return CEE_LDIND_U2;
-	case MONO_TYPE_I4:
-		return CEE_LDIND_I4;
-	case MONO_TYPE_U4:
-		return CEE_LDIND_U4;
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
-	case MONO_TYPE_FNPTR:
-		return CEE_LDIND_I;
-	case MONO_TYPE_CLASS:
-	case MONO_TYPE_STRING:
-	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_SZARRAY:
-	case MONO_TYPE_ARRAY:    
-		return CEE_LDIND_REF;
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-		return CEE_LDIND_I8;
-	case MONO_TYPE_R4:
-		return CEE_LDIND_R4;
-	case MONO_TYPE_R8:
-		return CEE_LDIND_R8;
-	case MONO_TYPE_VALUETYPE:
-		if (type->data.klass->enumtype) {
-			type = type->data.klass->enum_basetype;
-			goto handle_enum;
-		}
-		return CEE_LDOBJ;
-	case MONO_TYPE_TYPEDBYREF:
-		return CEE_LDOBJ;
-	case MONO_TYPE_GENERICINST:
-		type = &type->data.generic_class->container_class->byval_arg;
-		goto handle_enum;
-	default:
-		g_error ("unknown type 0x%02x in type_to_ldind", type->type);
-	}
-	return -1;
-}
-
-guint
-mono_type_to_stind (MonoType *type)
-{
-	if (type->byref)
-		return CEE_STIND_I;
-
-handle_enum:
-	switch (type->type) {
-	case MONO_TYPE_I1:
-	case MONO_TYPE_U1:
-	case MONO_TYPE_BOOLEAN:
-		return CEE_STIND_I1;
-	case MONO_TYPE_I2:
-	case MONO_TYPE_U2:
-	case MONO_TYPE_CHAR:
-		return CEE_STIND_I2;
-	case MONO_TYPE_I4:
-	case MONO_TYPE_U4:
-		return CEE_STIND_I4;
-	case MONO_TYPE_I:
-	case MONO_TYPE_U:
-	case MONO_TYPE_PTR:
-	case MONO_TYPE_FNPTR:
-		return CEE_STIND_I;
-	case MONO_TYPE_CLASS:
-	case MONO_TYPE_STRING:
-	case MONO_TYPE_OBJECT:
-	case MONO_TYPE_SZARRAY:
-	case MONO_TYPE_ARRAY:    
-		return CEE_STIND_REF;
-	case MONO_TYPE_I8:
-	case MONO_TYPE_U8:
-		return CEE_STIND_I8;
-	case MONO_TYPE_R4:
-		return CEE_STIND_R4;
-	case MONO_TYPE_R8:
-		return CEE_STIND_R8;
-	case MONO_TYPE_VALUETYPE:
-		if (type->data.klass->enumtype) {
-			type = type->data.klass->enum_basetype;
-			goto handle_enum;
-		}
-		return CEE_STOBJ;
-	case MONO_TYPE_TYPEDBYREF:
-		return CEE_STOBJ;
-	case MONO_TYPE_GENERICINST:
-		type = &type->data.generic_class->container_class->byval_arg;
-		goto handle_enum;
-	default:
-		g_error ("unknown type 0x%02x in type_to_stind", type->type);
-	}
-	return -1;
 }
 
 /*
@@ -1446,7 +1329,7 @@ mono_get_got_var (MonoCompile *cfg)
 }
 
 MonoInst*
-mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
+mono_compile_create_var2 (MonoCompile *cfg, MonoType *type, int opcode)
 {
 	MonoInst *inst;
 	int num = cfg->num_varinfo;
@@ -1481,7 +1364,7 @@ mono_compile_create_var (MonoCompile *cfg, MonoType *type, int opcode)
  * Transform a MonoInst into a load from the variable of index var_index.
  */
 void
-mono_compile_make_var_load (MonoCompile *cfg, MonoInst *dest, gssize var_index) {
+mono_compile_make_var_load2 (MonoCompile *cfg, MonoInst *dest, gssize var_index) {
 	memset (dest, 0, sizeof (MonoInst));
 	dest->ssa_op = MONO_SSA_LOAD;
 	dest->inst_i0 = cfg->varinfo [var_index];
@@ -1494,7 +1377,7 @@ mono_compile_make_var_load (MonoCompile *cfg, MonoInst *dest, gssize var_index) 
  * Create a MonoInst that is a load from the variable of index var_index.
  */
 MonoInst*
-mono_compile_create_var_load (MonoCompile *cfg, gssize var_index) {
+mono_compile_create_var_load2 (MonoCompile *cfg, gssize var_index) {
 	MonoInst *dest;
 	NEW_TEMPLOAD (cfg,dest,var_index);
 	return dest;
@@ -1504,7 +1387,7 @@ mono_compile_create_var_load (MonoCompile *cfg, gssize var_index) {
  * Create a MonoInst that is a store of the given value into the variable of index var_index.
  */
 MonoInst*
-mono_compile_create_var_store (MonoCompile *cfg, gssize var_index, MonoInst *value) {
+mono_compile_create_var_store2 (MonoCompile *cfg, gssize var_index, MonoInst *value) {
 	MonoInst *dest;
 	NEW_TEMPSTORE (cfg, dest, var_index, value);
 	return dest;
@@ -1524,11 +1407,6 @@ type_from_stack_type (MonoInst *ins) {
 		g_error ("stack type %d to montype not handled\n", ins->type);
 	}
 	return NULL;
-}
-
-MonoType*
-mono_type_from_stack_type (MonoInst *ins) {
-	return type_from_stack_type (ins);
 }
 
 static MonoClass*
@@ -1572,7 +1450,7 @@ array_access_to_klass (int opcode)
 }
 
 void
-mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
+mono_add_ins_to_end2 (MonoBasicBlock *bb, MonoInst *inst)
 {
 	MonoInst *prev;
 	if (!bb->code) {
@@ -1616,7 +1494,7 @@ mono_add_ins_to_end (MonoBasicBlock *bb, MonoInst *inst)
 }
 
 void
-mono_add_varcopy_to_end (MonoCompile *cfg, MonoBasicBlock *bb, int src, int dest)
+mono_add_varcopy_to_end2 (MonoCompile *cfg, MonoBasicBlock *bb, int src, int dest)
 {
 	MonoInst *inst, *load;
 
@@ -1844,23 +1722,6 @@ handle_enum:
 		g_error ("unknown type 0x%02x in ret_type_to_call_opcode", type->type);
 	}
 	return -1;
-}
-
-void
-mono_create_jump_table (MonoCompile *cfg, MonoInst *label, MonoBasicBlock **bbs, int num_blocks)
-{
-	MonoJumpInfo *ji = mono_mempool_alloc (cfg->mempool, sizeof (MonoJumpInfo));
-	MonoJumpInfoBBTable *table;
-
-	table = mono_mempool_alloc (cfg->mempool, sizeof (MonoJumpInfoBBTable));
-	table->table = bbs;
-	table->table_size = num_blocks;
-	
-	ji->ip.label = label;
-	ji->type = MONO_PATCH_INFO_SWITCH;
-	ji->data.table = table;
-	ji->next = cfg->patch_info;
-	cfg->patch_info = ji;
 }
 
 /*
@@ -2895,7 +2756,10 @@ inline_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig,
 	prev_inlined_method = cfg->inlined_method;
 	cfg->inlined_method = cmethod;
 
-	costs = mono_method_to_ir (cfg, cmethod, sbblock, ebblock, new_locals_offset, rvar, dont_inline, sp, real_offset, *ip == CEE_CALLVIRT);
+	costs = 0;
+	//costs = mono_method_to_ir (cfg, cmethod, sbblock, ebblock, new_locals_offset, rvar, dont_inline, sp, real_offset, *ip == CEE_CALLVIRT);
+
+	NOT_IMPLEMENTED;
 
 	cfg->inlined_method = prev_inlined_method;
 
@@ -3413,6 +3277,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 		param_types [n + sig->hasthis] = sig->params [n];
 	class_inits = NULL;
 
+#if 0
 	/* do this somewhere outside - not here */
 	NEW_ICONST (cfg, zero_int32, 0);
 	NEW_ICONST (cfg, zero_int64, 0);
@@ -3424,6 +3289,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 	MONO_INST_NEW (cfg, zero_r8, OP_R8CONST);
 	zero_r8->type = STACK_R8;
 	zero_r8->inst_p0 = &r8_0;
+#endif
 
 	/* add a check for this != NULL to inlined methods */
 	if (is_virtual_call) {
@@ -3505,10 +3371,14 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			MONO_ADD_INS (bblock, store);
 		}
 
-		if (cfg->verbose_level > 3)
+		/* FIXME: */
+		if (cfg->verbose_level > 0)
 			g_print ("converting (in B%d: stack: %d) %s", bblock->block_num, (int)(sp - stack_start), mono_disasm_code_one (NULL, method, ip, NULL));
 
+		cfg->cbb = bblock;
+
 		switch (*ip) {
+#if 0
 		case CEE_NOP:
 		case CEE_BREAK:
 			MONO_INST_NEW (cfg, ins, *ip);
@@ -6510,6 +6380,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			}
 			break;
 		}
+#endif
 		default:
 			g_error ("opcode 0x%02x not handled", *ip);
 		}
@@ -6638,7 +6509,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 }
 
 void
-mono_print_tree (MonoInst *tree) {
+mono_print_tree2 (MonoInst *tree) {
 	int arity;
 
 	if (!tree)

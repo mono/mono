@@ -9206,11 +9206,16 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	 */
 	mono_compile_create_vars (cfg);
 
-	if ((i = mono_method_to_ir (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE)) < 0) {
-		if (cfg->prof_options & MONO_PROFILE_JIT_COMPILATION)
-			mono_profiler_method_end_jit (method, MONO_PROFILE_FAILED);
-		mono_destroy_compile (cfg);
-		return NULL;
+	if (strstr (method->name, "test_") == method->name) {
+		i = mono_method_to_ir2 (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE);
+	}
+	else {
+		if ((i = mono_method_to_ir (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE)) < 0) {
+			if (cfg->prof_options & MONO_PROFILE_JIT_COMPILATION)
+				mono_profiler_method_end_jit (method, MONO_PROFILE_FAILED);
+			mono_destroy_compile (cfg);
+			return NULL;
+		}
 	}
 
 	mono_jit_stats.basic_blocks += cfg->num_bblocks;
