@@ -235,7 +235,12 @@ namespace Mainsoft.Drawing.Imaging {
 
 					ici.FormatDescription = string.Join(";",
 						rw.getFormatNames());
-					ici.Version = (int)Convert.ToDouble(rw.getVersion ());
+					try {
+						ici.Version = (int)Convert.ToDouble(rw.getVersion ());
+					}
+					catch (Exception) {
+						ici.Version = 1;
+					}
 					break;
 				}
 				return ici;
