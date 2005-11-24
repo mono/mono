@@ -243,7 +243,7 @@ namespace Mono.Xml.Xsl
 			if (it != null) {
 				while (it.MoveNext()) {
 					ArrayList nodes = GetNodesByValue (
-						it.Current, it.Current.Value, ctx);
+						nav, it.Current.Value, ctx);
 					if (nodes == null)
 						continue;
 					ListIterator tmp =
