@@ -8513,9 +8513,7 @@ mono_compile_create_vars (MonoCompile *cfg)
 	if (cfg->verbose_level > 2)
 		g_print ("locals done\n");
 
-#ifdef MONO_ARCH_HAVE_CREATE_VARS
 	mono_arch_create_vars (cfg);
-#endif
 }
 
 void
@@ -9174,6 +9172,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	MonoJitInfo *jinfo;
 	int dfn = 0, i, code_size_ratio;
 	gboolean deadce_has_run = FALSE;
+	gboolean new_ir = FALSE;
 
 	if (!header)
 		return NULL;
@@ -9201,12 +9200,20 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->verbose_level > 2)
 		g_print ("converting method %s\n", mono_method_full_name (method, TRUE));
 
+	if (strstr (method->name, "test_") == method->name)
+		new_ir = TRUE;
+
 	/*
 	 * create MonoInst* which represents arguments and local variables
 	 */
 	mono_compile_create_vars (cfg);
 
-	if (strstr (method->name, "test_") == method->name) {
+	if (new_ir) {
+		cfg->rs = mono_regstate_new ();
+		cfg->next_ivreg = cfg->rs->next_vireg;
+		cfg->next_fvreg = cfg->rs->next_vfreg;
+		cfg->opt &= MONO_OPT_PEEPHOLE | MONO_OPT_BRANCH | MONO_OPT_INTRINS | MONO_OPT_LOOP | MONO_OPT_EXCEPTION | MONO_OPT_AOT;
+
 		i = mono_method_to_ir2 (cfg, method, NULL, NULL, cfg->locals_start, NULL, NULL, NULL, 0, FALSE);
 	}
 	else {
@@ -9362,7 +9369,7 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		g_list_free (regs);
 	}
 
-	if (cfg->opt & MONO_OPT_LINEARS) {
+	if (!new_ir && (cfg->opt & MONO_OPT_LINEARS)) {
 		GList *vars, *regs;
 		
 		/* For now, compute aliasing info only if needed for deadce... */
@@ -9403,7 +9410,19 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	if (cfg->opt & MONO_OPT_CFOLD)
 		mono_constant_fold (cfg);
 
-	mini_select_instructions (cfg);
+	if (new_ir) {
+		MonoBasicBlock *bb;
+
+		/* FIXME: branch inverting */	
+
+		/* FIXME: */
+		for (bb = cfg->bb_entry; bb; bb = bb->next_bb) {
+			bb->max_ireg = 64000;
+			bb->max_freg = 64000;
+		}
+	}
+	else
+		mini_select_instructions (cfg);
 
 	mono_codegen (cfg);
 	if (cfg->verbose_level >= 2) {

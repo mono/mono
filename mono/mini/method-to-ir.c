@@ -116,13 +116,13 @@ static MonoDebugOptions debug_options;
 static inline
 alloc_ireg (MonoCompile *cfg)
 {
-	return cfg->max_ivreg ++;
+	return cfg->next_ivreg ++;
 }
 
 static inline
 alloc_freg (MonoCompile *cfg)
 {
-	return cfg->max_fvreg ++;
+	return cfg->next_fvreg ++;
 }
 
 static inline
@@ -3493,6 +3493,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ip += 2;
 			inline_costs += 1;
 			break;
+#endif
 		case CEE_LDNULL:
 			CHECK_STACK_OVF (1);
 			NEW_PCONST (cfg, ins, NULL);
@@ -3540,6 +3541,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ip += 5;
 			*sp++ = ins;
 			break;
+#if 0
 		case CEE_LDC_I8:
 			CHECK_OPSIZE (9);
 			CHECK_STACK_OVF (1);
@@ -4023,9 +4025,11 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			ip += 5;
 			break;
 		}
+#endif
 		case CEE_RET:
 			if (cfg->method != method) {
 				/* return from inlined methode */
+				NOT_IMPLEMENTED;
 				if (return_var) {
 					MonoInst *store;
 					CHECK_STACK (1);
@@ -4048,13 +4052,14 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 					MONO_INST_NEW (cfg, ins, CEE_NOP);
 					ins->opcode = mono_type_to_stind (mono_method_signature (method)->ret);
 					if (ins->opcode == CEE_STOBJ) {
+						NOT_IMPLEMENTED;
 						NEW_RETLOADA (cfg, ins);
 						handle_stobj (cfg, bblock, ins, *sp, ip, ins->klass, FALSE, FALSE);
 					} else {
-						ins->opcode = OP_SETRET;
+						ins->opcode = OP_MOVE;
+						ins->sreg1 = (*sp)->dreg;
+						ins->dreg = cfg->ret->dreg;
 						ins->cil_code = ip;
-						ins->inst_i0 = *sp;;
-						ins->inst_i1 = NULL;
 						MONO_ADD_INS (bblock, ins);
 					}
 				}
@@ -4068,6 +4073,7 @@ mono_method_to_ir2 (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_
 			link_bblock (cfg, bblock, end_bblock);
 			start_new_bblock = 1;
 			break;
+#if 0
 		case CEE_BR_S:
 			CHECK_OPSIZE (2);
 			MONO_INST_NEW (cfg, ins, CEE_BR);

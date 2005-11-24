@@ -56,6 +56,7 @@
 #
 # See the code in mini-x86.c for more details on how the specifiers are used.
 #
+nop: len:0
 break: len:1
 jmp: len:32
 call: dest:a clob:c len:17

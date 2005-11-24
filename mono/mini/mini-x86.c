@@ -846,6 +846,9 @@ mono_arch_create_vars (MonoCompile *cfg)
 	if (cinfo->ret.storage == ArgValuetypeInReg)
 		cfg->ret_var_is_local = TRUE;
 
+	if (cfg->ret)
+		cfg->ret->dreg = cinfo->ret.reg;
+
 	g_free (cinfo);
 }
 
@@ -1839,6 +1842,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			break;
 		case CEE_BREAK:
 			x86_breakpoint (code);
+			break;
+		case CEE_NOP:
 			break;
 		case OP_ADDCC:
 		case CEE_ADD:
