@@ -210,16 +210,16 @@ namespace Mono.Data.Tds.Protocol {
 			else 
 				partialPacketSize += ((short) ((username.Length + connectionParameters.Password.Length) * 2));
 			
-			short totalPacketSize = (short) partialPacketSize;
+			int totalPacketSize = partialPacketSize;
 			
 			Comm.StartPacket (TdsPacketType.Logon70);
 			
 			Comm.Append (totalPacketSize);
-			Comm.Append (empty, 5, pad);
 
-			Comm.Append ((byte) 0x70); // TDS Version 7
 			Comm.Append (empty, 3, pad);
-			Comm.Append (empty, 4, pad);
+			Comm.Append ((byte) 0x70); // TDS Version 7
+			Comm.Append ((int)this.PacketSize); // Set the Block Size
+			Comm.Append (empty, 3, pad);
 			Comm.Append (magic);
 
 			short curPos = 86;

@@ -1,3 +1,10 @@
+2005-11-24  Senganal T  <tsenganal@novell.com>
+
+	* Tds.cs 
+	* Tds70.cs : 
+		- Modifications to set the desired packetsize info when connecting
+		to database
+
 2005-11-23  Senganal T  <tsenganal@novell.com>
 	
 	* TdsComm.cs : 

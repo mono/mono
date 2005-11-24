@@ -200,7 +200,11 @@ namespace System.Data.SqlClient {
 		[DataSysDescription ("Network packet size, 'Packet Size=x' in the connection string.")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public int PacketSize {
-			get { return packetSize; }
+			get {	
+				if (State == ConnectionState.Open) 
+					return ((Tds)tds).PacketSize ;
+				return packetSize; 
+			}
 		}
 
 		[Browsable (false)]

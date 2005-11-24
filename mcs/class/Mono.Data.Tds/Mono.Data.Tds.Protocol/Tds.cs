@@ -1121,8 +1121,9 @@ namespace Mono.Data.Tds.Protocol {
 					comm.Skip (len - 2 - cLen * 2);
 				else 
 					comm.Skip (len - 2 - cLen);
-				
-				comm.ResizeOutBuf (Int32.Parse (blockSize));
+
+				packetSize = Int32.Parse (blockSize);	
+				comm.ResizeOutBuf (packetSize);
 				break;
 			case TdsEnvPacketSubType.CharSet :
 				cLen = comm.GetByte () & 0xff;
