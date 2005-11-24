@@ -42,7 +42,10 @@ namespace System.Web.Configuration {
 
 		static XhtmlConformanceSection ()
 		{
-			modeProp = new ConfigurationProperty ("mode", typeof (XhtmlConformanceMode), XhtmlConformanceMode.Transitional);
+			modeProp = new ConfigurationProperty ("mode", typeof (XhtmlConformanceMode), XhtmlConformanceMode.Transitional,
+							      new GenericEnumConverter (typeof (XhtmlConformanceMode)),
+							      PropertyHelper.DefaultValidator,
+							      ConfigurationPropertyOptions.None);
 			properties = new ConfigurationPropertyCollection ();
 
 			properties.Add (modeProp);

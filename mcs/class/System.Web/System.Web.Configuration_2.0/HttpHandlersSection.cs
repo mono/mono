@@ -37,6 +37,13 @@ namespace System.Web.Configuration
 {
 	public sealed class HttpHandlersSection: ConfigurationSection
 	{
+		static ConfigurationPropertyCollection properties;
+
+		static HttpHandlersSection ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+		}
+
 		public HttpHandlersSection ()
 		{
 		}
@@ -49,11 +56,8 @@ namespace System.Web.Configuration
 			}
 		}
 
-		[MonoTODO]
 		protected override ConfigurationPropertyCollection Properties {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return properties; }
 		}
 	}
 }

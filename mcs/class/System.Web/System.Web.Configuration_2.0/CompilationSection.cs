@@ -58,16 +58,29 @@ namespace System.Web.Configuration
 
 		static CompilationSection ()
 		{
-			assembliesProp = new ConfigurationProperty ("assemblies", typeof (AssemblyCollection), null);
+			assembliesProp = new ConfigurationProperty ("assemblies", typeof (AssemblyCollection), null,
+								    null, PropertyHelper.DefaultValidator,
+								    ConfigurationPropertyOptions.None);
 			assemblyPostProcessorTypeProp = new ConfigurationProperty ("assemblyPostProcessorType", typeof (string), "");
 			batchProp = new ConfigurationProperty ("batch", typeof (bool), true);
-			buildProvidersProp = new ConfigurationProperty ("buidProviders", typeof (BuildProviderCollection), null);
-			batchTimeoutProp = new ConfigurationProperty ("batchTimeout", typeof (TimeSpan), new TimeSpan (0, 15, 0));
-			codeSubDirectoriesProp = new ConfigurationProperty ("codeSubDirectories", typeof (CodeSubDirectoriesCollection), null);
-			compilersProp = new ConfigurationProperty ("compilers", typeof (CompilerCollection), null);
+			buildProvidersProp = new ConfigurationProperty ("buidProviders", typeof (BuildProviderCollection), null,
+									null, PropertyHelper.DefaultValidator,
+									ConfigurationPropertyOptions.None);
+			batchTimeoutProp = new ConfigurationProperty ("batchTimeout", typeof (TimeSpan), new TimeSpan (0, 15, 0),
+								      PropertyHelper.TimeSpanSecondsOrInfiniteConverter,
+								      PropertyHelper.PositiveTimeSpanValidator,
+								      ConfigurationPropertyOptions.None);
+			codeSubDirectoriesProp = new ConfigurationProperty ("codeSubDirectories", typeof (CodeSubDirectoriesCollection), null,
+									    null, PropertyHelper.DefaultValidator,
+									    ConfigurationPropertyOptions.None);
+			compilersProp = new ConfigurationProperty ("compilers", typeof (CompilerCollection), null,
+								   null, PropertyHelper.DefaultValidator,
+								   ConfigurationPropertyOptions.None);
 			debugProp = new ConfigurationProperty ("debug", typeof (bool), false);
 			defaultLanguageProp = new ConfigurationProperty ("defaultLanguage", typeof (string), "vb");
-			expressionBuildersProp = new ConfigurationProperty ("expressionBuilders", typeof (ExpressionBuilderCollection), null);
+			expressionBuildersProp = new ConfigurationProperty ("expressionBuilders", typeof (ExpressionBuilderCollection), null,
+									    null, PropertyHelper.DefaultValidator,
+									    ConfigurationPropertyOptions.None);
 			explicitProp = new ConfigurationProperty ("explicit", typeof (bool), true);
 			maxBatchSizeProp = new ConfigurationProperty ("maxBatchSize", typeof (int), 1000);
 			maxBatchGeneratedFileSizeProp = new ConfigurationProperty ("maxBatchGeneratedFileSize", typeof (int), 3000);
@@ -214,6 +227,26 @@ namespace System.Web.Configuration
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
+
+#region CompatabilityCode
+		[MonoTODO ("we really shouldn't need this..")]
+		internal static CompilationSection GetInstance ()
+		{
+			CompilationSection config;
+
+			if (HttpContext.Current != null) {
+				config = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
+				if (config == null)
+					throw new Exception ("Configuration error.");
+			} else {
+				// empty config (as used in unit tests)
+				config = new CompilationSection ();
+			}
+
+			return config;
+		}
+#endregion
+
 	}
 }
 #endif // NET_2_0
