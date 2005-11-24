@@ -1,3 +1,12 @@
+2005-11-23  Chris Toshok  <toshok@ximian.com>
+
+	* MachineKeyValidationConverter.cs: new converter (and a pretty
+	silly one, considering all it seems to do is convert "TripleDES"
+	to "3DES").
+
+	* HostingEnvironmentSection.cs (.cctor): use
+	PositiveTimeSpanValidator like MS does.
+
 2005-11-18  Chris Toshok  <toshok@ximian.com>
 
 	* HostingEnvironmentSection.cs (.cctor): add validators.
