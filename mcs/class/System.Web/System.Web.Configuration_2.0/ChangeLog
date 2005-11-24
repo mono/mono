@@ -1,5 +1,13 @@
 2005-11-24  Chris Toshok  <toshok@ximian.com>
 
+	* AssemblyInfo.cs: move this here from System.Web.Configuration,
+	and fix up the properties.
+
+	* SystemWebSectionGroup.cs: enable most of the sections (2
+	remaining to be enabled.)
+
+2005-11-24  Chris Toshok  <toshok@ximian.com>
+
 	* ProcessModelSection.cs, SqlCacheDependencySection.cs,
 	SessionStateSection.cs, PassportAuthentication.cs,
 	FormsAuthenticationConfiguration.cs,
