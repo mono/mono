@@ -161,6 +161,7 @@ System.Security.Cryptography/OidCollectionTest.cs
 System.Security.Cryptography/OidEnumeratorTest.cs
 System.Security.Cryptography/OidTest.cs
 System.Security.Cryptography.X509Certificates/PublicKeyTest.cs
+System.Security.Cryptography.X509Certificates/X500DistinguishedNameTest.cs
 System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionTest.cs
 System.Security.Cryptography.X509Certificates/X509CertificateCollectionTest.cs
 System.Security.Cryptography.X509Certificates/X509ChainPolicyTest.cs
@@ -314,6 +315,16 @@ System.CodeDom.Compiler/GeneratedCodeAttributeCas.cs
 System.CodeDom.Compiler/IndentedTextWriterCas.cs
 System.CodeDom.Compiler/TempFileCollectionCas.cs
 System.Security.Cryptography.X509Certificates/PublicKeyCas.cs
+System.Security.Cryptography.X509Certificates/X500DistinguishedNameCas.cs
+System.Security.Cryptography.X509Certificates/X509BasicConstraintsExtensionCas.cs
+System.Security.Cryptography.X509Certificates/X509CertificateCollectionCas.cs
+System.Security.Cryptography.X509Certificates/X509ChainCas.cs
+System.Security.Cryptography.X509Certificates/X509ChainPolicyCas.cs
+System.Security.Cryptography.X509Certificates/X509EnhancedKeyUsageExtensionCas.cs
+System.Security.Cryptography.X509Certificates/X509ExtensionCas.cs
+System.Security.Cryptography.X509Certificates/X509KeyUsageExtensionCas.cs
+System.Security.Cryptography.X509Certificates/X509StoreCas.cs
+System.Security.Cryptography.X509Certificates/X509SubjectKeyIdentifierExtensionCas.cs
 System.Security.Permissions/ResourcePermissionBaseCas.cs
 System.Security.Permissions/ResourcePermissionBaseEntryCas.cs
 System.Security.Permissions/StorePermissionAttributeCas.cs
